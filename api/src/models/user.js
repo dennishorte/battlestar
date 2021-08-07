@@ -35,6 +35,12 @@ User.checkPassword = async function(name, password) {
   return user
 }
 
+User.deactivate = async function(id) {
+  const filter = { _id: ObjectId(id) }
+  const updater = { $set: { deactivated: true } }
+  return await dbUsers.updateOne(filter, updater)
+}
+
 User.isEmpty = async function() {
   try {
     const one = await dbUsers.findOne({})

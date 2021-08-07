@@ -14,13 +14,12 @@
     </b-dropdown-item>
   </b-dropdown>
 
-  <h1>Vue Auth Skeleton</h1>
+  <h1>Game Center</h1>
 
 </div>
 </template>
 
 <script>
-
 export default {
   name: 'Header',
 }

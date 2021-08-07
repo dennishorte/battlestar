@@ -71,6 +71,7 @@ app.post('/api/guest/login', routes.login)
 
 app.post('/api/user/all', routes.user.all)
 app.post('/api/user/create', routes.user.create)
+app.post('/api/user/deactivate', routes.user.deactivate)
 
 
 ////////////////////////////////////////////////////////////

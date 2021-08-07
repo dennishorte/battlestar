@@ -58,19 +58,15 @@ module.exports.user.create = async function(req, res) {
 }
 
 module.exports.user.deactivate = async function(req, res) {
-  const user = db.user.findByName(req.body.name)
+  const result = await db.user.deactivate(req.body.id)
 
-  if (!user) {
+  if (result.modifiedCount == 1) {
+    res.json({ status: 'success' })
+  }
+  else {
     res.json({
       status: 'error',
-      message: 'user not found',
+      message: 'User not deactivated',
     })
-  }
-
-  else {
-    const filter = { _id: user._id }
-    const updater = { $set: { deactivated: true } }
-    const result = await dbUsers.updateOne(filter, updater)
-
   }
 }

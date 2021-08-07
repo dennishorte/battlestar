@@ -18,7 +18,7 @@
 
     <div class="row">
       <div class="col">
-        <UserList :users="users" />
+        <UserList :users="users" v-on:users-updated="getAllUsers" />
       </div>
     </div>
   </div>
