@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import Header from './Header.vue'
 
 export default {
@@ -27,14 +26,5 @@ export default {
       message: "Hello, World!",
     }
   },
-  methods: {
-    async getAllUsers() {
-      const response = await axios('/api/users')
-      console.log(response)
-    },
-  },
-  mounted() {
-    this.getAllUsers()
-  }
 }
 </script>

@@ -10,7 +10,14 @@ const dbUsers = user_db.collection('user')
 const User = {}  // This will be the exported module
 
 User.all = async function() {
-  return dbUsers.find({}).toArray()
+  const filter = {
+    deactivated: { $exists: false }
+  }
+  const projection = {
+    name: 1,
+    slack: 1,
+  }
+  return dbUsers.find(filter).project(projection).toArray()
 }
 
 User.checkPassword = async function(name, password) {
@@ -38,7 +45,7 @@ User.isEmpty = async function() {
   }
 }
 
-User.create = async function(name, password, slack) {
+User.create = async function({ name, password, slack }) {
   const existingUser = await User.findByName(name)
   if (!!existingUser) {
     throw `User with name (${name}) already exists`
@@ -72,7 +79,7 @@ User.findByName = async function(name) {
 
 User.setTokenForUserById = async function(object_id) {
   const filter = { _id: object_id }
-  const updater = { $set: { token: User.util.generateToken(id) } }
+  const updater = { $set: { token: User.util.generateToken(object_id) } }
   const result = await dbUsers.updateOne(filter, updater)
 }
 
@@ -83,6 +90,10 @@ User.setTokenForUserById = async function(object_id) {
 User.util = {}
 
 User.util.generateToken = function(id) {
+  if (typeof id === 'object') {  // Probably a mongodb ObjectId
+    id = id.toString()
+  }
+
   return jwt.sign({ user_id: id }, process.env.SECRET_KEY)
 }
 

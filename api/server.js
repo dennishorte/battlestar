@@ -69,11 +69,8 @@ app.get('/', (req, res) => {
 
 app.post('/api/guest/login', routes.login)
 
-
-app.get('/api/users', async (req, res) => {
-  const users = await db.user.all()
-  res.json(users)
-})
+app.post('/api/user/all', routes.user.all)
+app.post('/api/user/create', routes.user.create)
 
 
 ////////////////////////////////////////////////////////////

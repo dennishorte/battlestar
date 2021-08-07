@@ -2,6 +2,14 @@
 <div class="header">
   <b-dropdown id="header-dropdown" text="menu" right>
     <b-dropdown-item>
+      <router-link to="/">home</router-link>
+    </b-dropdown-item>
+
+    <b-dropdown-item>
+      <router-link to="/admin">admin</router-link>
+    </b-dropdown-item>
+
+    <b-dropdown-item>
       <router-link to="/logout">logout</router-link>
     </b-dropdown-item>
   </b-dropdown>

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Home from '@/components/Home'
+import adminRoutes from '@/modules/admin/router.js'
 import authRoutes from '@/modules/auth/router.js'
 import authUtil from '@/modules/auth/util.js'
 
@@ -16,6 +17,7 @@ const router = new Router({
       name: 'Home',
       component: Home,
     },
+    ...adminRoutes,
     ...authRoutes,
   ]
 })
