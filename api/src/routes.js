@@ -1,7 +1,12 @@
 const db = require('./models/db.js')
 
+module.exports = {
+  lobby: {},
+  user: {}
+}
 
-async function createFirstUserIfNone(name, password) {
+
+async function _createFirstUserIfNone(name, password) {
   if (await db.user.isEmpty()) {
     console.log('User db is empty. Creating first user.')
     const user = await db.user.create({
@@ -12,9 +17,12 @@ async function createFirstUserIfNone(name, password) {
   }
 }
 
+module.exports.sendVueApp = function(req, res) {
+  res.sendFile(path.join(__dirname, '../app/build/index.html'))
+}
 
 module.exports.login = async function(req, res) {
-  await createFirstUserIfNone(req.body.name, req.body.password)
+  await _createFirstUserIfNone(req.body.name, req.body.password)
   const user = await db.user.checkPassword(req.body.name, req.body.password)
 
   if (user.deactivated) {
@@ -33,8 +41,59 @@ module.exports.login = async function(req, res) {
   }
 }
 
+module.exports.lobby.all = async function(req, res) {
+  const lobbiesCursor = await db.lobby.all()
+  const lobbiesArray = await lobbiesCursor.toArray()
+  res.json({
+    status: 'success',
+    lobbies: lobbiesArray,
+  })
+}
 
-module.exports.user = {}
+module.exports.lobby.create = async function(req, res) {
+  const lobbyId = await db.lobby.create()
+
+  if (!lobbyId) {
+    res.json({
+      status: 'error',
+      message: 'Failed to create new lobby',
+    })
+    return
+  }
+
+  const addResult = await db.lobby.addUser(lobbyId, req.user._id)
+
+  if (!addResult) {
+    res.json({
+      status: 'error',
+      message: `New lobby ${lobbyId} created, but error adding user to lobby.`,
+    })
+  }
+
+  res.json({
+    status: 'success',
+    lobbyId,
+  })
+}
+
+
+module.exports.lobby.info = async function(req, res) {
+  const lobby = await db.lobby.findById(req.body.id)
+
+  if (!lobby) {
+    res.json({
+      status: 'error',
+      message: `Lobby with id ${req.body.id} not found`,
+    })
+    return
+  }
+
+  res.json({
+    status: 'success',
+    lobby,
+  })
+}
+
 
 module.exports.user.all = async function(req, res) {
   const users = await db.user.all()
@@ -69,4 +128,14 @@ module.exports.user.deactivate = async function(req, res) {
       message: 'User not deactivated',
     })
   }
+}
+
+module.exports.user.fetchMany = async function(req, res) {
+  const usersCursor = await db.user.findByIds(req.body.userIds)
+  const usersArray = await usersCursor.toArray()
+
+  res.json({
+    status: 'success',
+    users: usersArray,
+  })
 }

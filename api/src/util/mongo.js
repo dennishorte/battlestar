@@ -15,5 +15,4 @@ client.connect()
 
 module.exports = {
   client,
-  user_db: client.db('user'),
 }

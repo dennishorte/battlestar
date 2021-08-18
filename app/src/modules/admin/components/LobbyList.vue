@@ -1,9 +1,9 @@
 <template>
 <div class='user-list'>
-  <h3>User List</h3>
+  <h3>Lobby List</h3>
 
   <b-table
-    :items="users"
+    :items="lobbies"
     :fields="fields"
     :small="true"
     head-variant="light">
@@ -20,6 +20,10 @@
           <b-dropdown-item-button @click="deactivate(row.item._id)">
             deactivate
           </b-dropdown-item-button>
+
+          <b-dropdown-item-button @click="visit(row.item._id)">
+            visit
+          </b-dropdown-item-button>
         </b-dropdown>
       </div>
     </template>
@@ -33,31 +37,36 @@
 import axios from 'axios'
 
 export default {
-  name: 'UserList',
+  name: 'LobbyList',
   props: {
-    users: Array,
+    lobbies: Array,
   },
   data() {
     return {
       fields: [
         { key: '_id', label: 'ID', sortable: true },
         { key: 'name', sortable: true },
-        { key: 'slack', sortable: true },
+        { key: 'status', sortable: true },
+        { key: 'users', sortable: false },
         { key: 'actions', label: 'Actions' },
       ],
     }
   },
   methods: {
     async deactivate(id) {
-      const result = await axios.post('/api/user/deactivate', { id })
+      const result = await axios.post('/api/lobby/deactivate', { id })
       if (result.data.status === 'success') {
-        this.$emit('users-updated')
+        this.$emit('lobbies-updated')
       }
       else {
-        console.log('error deactivating user: ', result)
+        console.log('error deactivating lobby: ', result)
         alert("Error. See console for details.")
       }
-    }
+    },
+
+    visit(id) {
+      this.$router.push(`/lobby/${id}`)
+    },
   },
 }
 </script>

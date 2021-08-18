@@ -1,10 +1,9 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 
-const { user_db } = require('../util/mongo.js')
-const ObjectId = require('mongodb').ObjectId
-
-const dbUsers = user_db.collection('user')
+const databaseClient = require('../util/mongo.js').client
+const userDatabase = databaseClient.db('user')
+const userCollection = userDatabase.collection('user')
 
 
 const User = {}  // This will be the exported module
@@ -17,7 +16,7 @@ User.all = async function() {
     name: 1,
     slack: 1,
   }
-  return dbUsers.find(filter).project(projection).toArray()
+  return userCollection.find(filter).project(projection).toArray()
 }
 
 User.checkPassword = async function(name, password) {
@@ -36,14 +35,14 @@ User.checkPassword = async function(name, password) {
 }
 
 User.deactivate = async function(id) {
-  const filter = { _id: ObjectId(id) }
+  const filter = { _id: id }
   const updater = { $set: { deactivated: true } }
-  return await dbUsers.updateOne(filter, updater)
+  return await userCollection.updateOne(filter, updater)
 }
 
 User.isEmpty = async function() {
   try {
-    const one = await dbUsers.findOne({})
+    const one = await userCollection.findOne({})
     return !one
   }
   catch (err) {
@@ -58,10 +57,11 @@ User.create = async function({ name, password, slack }) {
   }
 
   const passwordHash = await bcrypt.hash(password, 10)
-  const insertResult = await dbUsers.insertOne({
+  const insertResult = await userCollection.insertOne({
     name,
     slack,
     passwordHash,
+    createdTimestamp: Date.now(),
   })
   const { insertedId } = insertResult
 
@@ -75,18 +75,21 @@ User.create = async function({ name, password, slack }) {
 }
 
 User.findById = async function(id) {
-  const oid = new ObjectId(id)
-  return await dbUsers.findOne({ _id: oid })
+  return await userCollection.findOne({ _id: id })
+}
+
+User.findByIds = async function(ids) {
+  return await userCollection.find({ _id: { $in: ids } })
 }
 
 User.findByName = async function(name) {
-  return await dbUsers.findOne({ name })
+  return await userCollection.findOne({ name })
 }
 
 User.setTokenForUserById = async function(object_id) {
   const filter = { _id: object_id }
   const updater = { $set: { token: User.util.generateToken(object_id) } }
-  const result = await dbUsers.updateOne(filter, updater)
+  const result = await userCollection.updateOne(filter, updater)
 }
 
 
