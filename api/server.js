@@ -5,7 +5,7 @@ const express = require('express')
 const path = require('path')
 
 const middleware = require('./src/middleware.js')
-const routes = require('./src/routes.js')
+const routes = require('./src/routes')
 
 const app = express()
 const port = 3000
