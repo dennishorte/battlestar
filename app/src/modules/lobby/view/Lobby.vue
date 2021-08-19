@@ -2,26 +2,24 @@
 <div class='lobby'>
   <Header />
 
-  <div class="container">
-    <div class="row">
-      <div class="col">
+  <b-container>
+    <b-row>
+      <b-col>
         <h2><span class="text-secondary">Lobby - </span>{{ this.lobby.name }}</h2>
-      </div>
-    </div>
+      </b-col>
+    </b-row>
 
 
-    <div class="row">
-      <div class="col-6">
+    <b-row>
+      <b-col cols="6">
         <h3>Settings</h3>
-      </div>
+      </b-col>
 
-      <div class="col-6">
+      <b-col cols="6">
         <LobbyPlayerList :lobby-id="id" :players="players" @users-updated="getLobbyInfo" />
-
-      </div>
-    </div>
-
-  </div>
+      </b-col>
+    </b-row>
+  </b-container>
 
 </div>
 </template>
