@@ -32,6 +32,8 @@ app.post('/api/guest/login', routes.login)
 app.post('/api/lobby/all', routes.lobby.all)
 app.post('/api/lobby/create', routes.lobby.create)
 app.post('/api/lobby/info', routes.lobby.info)
+app.post('/api/lobby/player_add', routes.lobby.playerAdd)
+app.post('/api/lobby/player_remove', routes.lobby.playerRemove)
 
 // User Routes
 app.post('/api/user/all', routes.user.all)

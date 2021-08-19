@@ -8,14 +8,18 @@ const userCollection = userDatabase.collection('user')
 
 const User = {}  // This will be the exported module
 
-User.all = async function() {
+User.all = async function(projection) {
   const filter = {
     deactivated: { $exists: false }
   }
-  const projection = {
-    name: 1,
-    slack: 1,
+
+  if (!projection) {
+    projection = {
+      name: 1,
+      slack: 1,
+    }
   }
+
   return userCollection.find(filter).project(projection).toArray()
 }
 

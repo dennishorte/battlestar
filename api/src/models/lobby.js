@@ -18,15 +18,15 @@ Lobby.factory = function() {
   }
 }
 
-Lobby.all = async function() {
-  return await lobbyCollection.find({})
-}
-
-Lobby.addUser = async function(lobbyId, userId) {
+Lobby.addUsers = async function(lobbyId, userIds) {
   const filter = { _id: lobbyId }
-  const updater = { $addToSet: { userIds: userId } }
+  const updater = { $addToSet: { userIds: { $each: userIds } } }
   const updateResult = await lobbyCollection.updateOne(filter, updater)
   return updateResult
+}
+
+Lobby.all = async function() {
+  return await lobbyCollection.find({})
 }
 
 Lobby.create = async function(lobbyDict) {
@@ -36,4 +36,11 @@ Lobby.create = async function(lobbyDict) {
 
 Lobby.findById = async function(lobbyId) {
   return await lobbyCollection.findOne({ _id: lobbyId })
+}
+
+Lobby.removeUsers = async function(lobbyId, userIds) {
+  const filter = { _id: lobbyId }
+  const updater = { $pull: { userIds: { $in: userIds } } }
+  const updateResult = await lobbyCollection.updateOne(filter, updater)
+  return updateResult
 }

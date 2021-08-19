@@ -22,7 +22,7 @@ Lobby.create = async function(req, res) {
     return
   }
 
-  const addResult = await db.lobby.addUser(lobbyId, req.user._id)
+  const addResult = await db.lobby.addUsers(lobbyId, [req.user._id])
 
   if (!addResult) {
     res.json({
@@ -36,7 +36,6 @@ Lobby.create = async function(req, res) {
     lobbyId,
   })
 }
-
 
 Lobby.info = async function(req, res) {
   const lobby = await db.lobby.findById(req.body.id)
@@ -52,6 +51,22 @@ Lobby.info = async function(req, res) {
   res.json({
     status: 'success',
     lobby,
+  })
+}
+
+Lobby.playerAdd = async function(req, res) {
+  const addResult = await db.lobby.addUsers(req.body.lobbyId, req.body.userIds)
+  res.json({
+    status: 'success',
+    message: 'Users successfully added.',
+  })
+}
+
+Lobby.playerRemove = async function(req, res) {
+  const removeResult = await db.lobby.removeUsers(req.body.lobbyId, req.body.userIds)
+  res.json({
+    status: 'success',
+    message: 'Users successfully removed.',
   })
 }
 

@@ -5,7 +5,7 @@
   <div class="container">
     <div class="row">
       <div class="col">
-        <h2>Lobby - {{ this.name }}</h2>
+        <h2><span class="text-secondary">Lobby - </span>{{ this.lobby.name }}</h2>
       </div>
     </div>
 
@@ -16,17 +16,50 @@
       </div>
 
       <div class="col-6">
-        <h3>Players</h3>
+        <div>
+          <div style="float: right;">
+            <b-button
+              size="sm"
+              variant="outline-success"
+              v-b-modal.add-players-modal>
+              +
+            </b-button>
+
+            <b-modal
+              id="add-players-modal"
+              @show="fetchUsersForAddPlayers"
+              @ok="addPlayers">
+
+              <template #modal-title="">
+                Add Players
+              </template>
+
+              <b-form>
+
+                <b-form-select
+                  id="add-players-input"
+                  v-model="addPlayersForm.data.users"
+                  :options="addPlayersForm.userOptions"
+                  multiple
+                  required>
+                </b-form-select>
+
+              </b-form>
+            </b-modal>
+          </div>
+          <h3>Players</h3>
+        </div>
+
         <b-table
-          :items="users"
-          :fields="userFields"
+          :items="players"
+          :fields="playerFields"
           :small="true"
           head-variant="light">
 
           <template #cell(actions)="row">
             <div class="text-right">
               <b-dropdown size="sm" right>
-                <b-dropdown-item-button @click="removeUser(row.item._id)">
+                <b-dropdown-item-button @click="removePlayer(row.item._id)">
                   remove
                 </b-dropdown-item-button>
               </b-dropdown>
@@ -58,11 +91,16 @@ export default {
       id: this.$route.params.id,
       error: false,
       errorMessage: '',
-      name: '',
-      settings: {},
 
-      users: [],
-      userFields: [
+      addPlayersForm: {
+        userOptions: [],
+        data: {
+          users: [],
+        },
+      },
+
+      players: [],
+      playerFields: [
         { key: 'name' },
         { key: 'actions', label: '' },
       ],
@@ -71,12 +109,33 @@ export default {
     }
   },
   methods: {
+    async addPlayers() {
+      const result = await axios.post('/api/lobby/player_add', {
+        lobbyId: this.id,
+        userIds: this.addPlayersForm.data.users,
+      })
+      if (result.data.status == 'success') {
+        this.getLobbyInfo()
+      }
+      else {
+        alert('Error adding players: ' + result.data.message)
+      }
+    },
+
+    async fetchUsersForAddPlayers() {
+      const userRequestResult = await axios.post('/api/user/all')
+      const formattedUsers = userRequestResult.data.users.map(user => ({
+        value: user._id,
+        text: user.name
+      }))
+      formattedUsers.sort((left, right) => left.text.localeCompare(right.text))
+      this.addPlayersForm.userOptions = formattedUsers
+    },
+
     async getLobbyInfo() {
       const infoRequestResult = await axios.post('/api/lobby/info', {
         id: this.id,
       })
-
-      console.log('getLobbyInfo: ', infoRequestResult)
 
       if (infoRequestResult.status === 'error') {
         this.error = true
@@ -85,31 +144,35 @@ export default {
       else {
         this.lobby = infoRequestResult.data.lobby
 
-        this.name = this.lobby.name
-        this.settings = this.lobby.settings
-
-        await this.getUserInfo()
+        await this.getPlayerInfo()
       }
     },
 
-    async getUserInfo() {
-      const userRequestResult = await axios.post('/api/user/fetch_many', {
+    async getPlayerInfo() {
+      const playerRequestResult = await axios.post('/api/user/fetch_many', {
         userIds: this.lobby.userIds
       })
 
-      console.log('getUserInfo: ', userRequestResult)
-
-      if (userRequestResult.status === 'error') {
+      if (playerRequestResult.status === 'error') {
         this.error = true
-        this.errorMessage = userRequestResult.message
+        this.errorMessage = playerRequestResult.message
       }
       else {
-        this.users = userRequestResult.data.users
+        this.players = playerRequestResult.data.users
       }
     },
 
-    async removeUser(id) {
-      alert('not implemented', id)
+    async removePlayer(id) {
+      const result = await axios.post('/api/lobby/player_remove', {
+        lobbyId: this.id,
+        userIds: [id],
+      })
+      if (result.data.status == 'success') {
+        this.getLobbyInfo()
+      }
+      else {
+        alert('Error adding players: ' + result.data.message)
+      }
     }
 
   },
