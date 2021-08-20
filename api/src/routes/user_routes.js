@@ -47,4 +47,14 @@ User.fetchMany = async function(req, res) {
   })
 }
 
+User.lobbies = async function(req, res) {
+  const lobbyCursor = await db.lobby.findByUserId(req.body.userId)
+  const lobbyArray = await lobbyCursor.toArray()
+
+  res.json({
+    status: 'success',
+    lobbies: lobbyArray,
+  })
+}
+
 module.exports = User

@@ -14,10 +14,15 @@ function canAccess(routeRecord) {
    If the user has a locally cached auth token, load it up.
  */
 function initialize() {
-  const token = localStorage.getItem('auth_token')
-
-  if (token) {
-    store.commit('auth/auth_success', token)
+  const userString = localStorage.getItem('auth.user')
+  try {
+    const user = JSON.parse(userString)
+    if (user && user.token) {
+      store.commit('auth/auth_success', user)
+    }
+  }
+  catch {
+    // Ignore malformed user
   }
 }
 

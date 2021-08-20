@@ -1,28 +1,36 @@
 <template>
-<div class="header">
-  <b-dropdown id="header-dropdown" text="menu" right>
-    <b-dropdown-item>
-      <router-link to="/">home</router-link>
-    </b-dropdown-item>
+<b-container>
+  <b-row>
+    <b-col>
+      <div class="header text-left">
+        <b-dropdown id="header-dropdown" text="menu" right>
+          <b-dropdown-item>
+            <router-link to="/">home</router-link>
+          </b-dropdown-item>
 
-    <b-dropdown-item>
-      <router-link to="/lobby/create">new lobby</router-link>
-    </b-dropdown-item>
+          <b-dropdown-item>
+            <router-link to="/lobby/create">new lobby</router-link>
+          </b-dropdown-item>
 
-    <b-dropdown-divider></b-dropdown-divider>
+          <b-dropdown-divider></b-dropdown-divider>
 
-    <b-dropdown-item>
-      <router-link to="/admin">admin</router-link>
-    </b-dropdown-item>
+          <b-dropdown-item>
+            <router-link to="/admin">admin</router-link>
+          </b-dropdown-item>
 
-    <b-dropdown-item>
-      <router-link to="/logout">logout</router-link>
-    </b-dropdown-item>
-  </b-dropdown>
+          <b-dropdown-item>
+            <router-link to="/logout">logout</router-link>
+          </b-dropdown-item>
+        </b-dropdown>
 
-  <h1>Game Center</h1>
+        <a href="/" class="link-unstyled">
+          <h1>Game Center</h1>
+        </a>
 
-</div>
+      </div>
+    </b-col>
+  </b-row>
+</b-container>
 </template>
 
 <script>

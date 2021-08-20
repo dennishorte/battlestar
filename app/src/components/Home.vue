@@ -1,29 +1,32 @@
 <template>
-<div class="hello">
+<div class="home">
   <Header />
 
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        {{ message }}
-      </div>
-    </div>
-  </div>
+  <b-container>
+    <b-row>
+      <b-col>
+
+        <MyLobbies />
+
+      </b-col>
+    </b-row>
+  </b-container>
 
 </div>
 </template>
 
 <script>
-import Header from './Header.vue'
+import Header from './Header'
+import MyLobbies from './MyLobbies'
 
 export default {
-  name: 'Dashboard',
+  name: 'Home',
   components: {
     Header,
+    MyLobbies,
   },
   data() {
     return {
-      message: "Hello, World!",
     }
   },
 }

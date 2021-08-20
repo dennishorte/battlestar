@@ -1,16 +1,36 @@
 import axios from 'axios'
 
 
+function getCachedUser() {
+  const userString = localStorage.getItem('auth.user')
+  if (userString) {
+    try {
+      return JSON.parse(userString)
+    }
+    catch {
+      return {}
+    }
+  }
+  else {
+    return {}
+  }
+}
+
+function setCachedUser(user) {
+  localStorage.setItem('auth.user', JSON.stringify(user))
+}
+
+
 export default {
   namespaced: true,
 
   state: () => ({
     status: '',
-    token: localStorage.getItem('auth.token') || '',
+    user: getCachedUser(),
   }),
 
   getters : {
-    isLoggedIn: state => !!state.token,
+    isLoggedIn: state => !!state.user.token,
     authStatus: state => state.status,
   },
 
@@ -23,17 +43,17 @@ export default {
       state.status = 'loading'
     },
 
-    auth_success(state, token) {
+    auth_success(state, user) {
       state.status = 'success'
-      state.token = token
-      localStorage.setItem('auth_token', token)
-      axios.defaults.headers.common['Authorization'] = 'bearer ' + token
+      state.user = user
+      setCachedUser(user)
+      axios.defaults.headers.common['Authorization'] = 'bearer ' + user.token
     },
 
     logout(state) {
       state.status = ''
-      state.token = ''
-      localStorage.removeItem('auth_token')
+      state.user = {}
+      localStorage.removeItem('auth.user')
       delete axios.defaults.headers.common['Authorization']
     }
   },
@@ -48,8 +68,8 @@ export default {
           data: user,
         })
           .then(resp => {
-            const token = resp.data.token
-            commit('auth_success', token)
+            const user = resp.data.user
+            commit('auth_success', user)
             resolve(resp)
           })
           .catch(err => {

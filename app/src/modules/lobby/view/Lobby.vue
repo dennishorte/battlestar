@@ -5,18 +5,24 @@
   <b-container>
     <b-row>
       <b-col>
-        <h2><span class="text-secondary">Lobby - </span>{{ this.lobby.name }}</h2>
+        <h2>{{ this.lobby.name }}</h2>
       </b-col>
     </b-row>
 
 
     <b-row>
       <b-col cols="6">
-        <h3>Settings</h3>
+        <LobbySettings :lobby-id="id" :settingsIn="lobby.settings" @settings-updated="getLobbyInfo" />
       </b-col>
 
       <b-col cols="6">
         <LobbyPlayerList :lobby-id="id" :players="players" @users-updated="getLobbyInfo" />
+      </b-col>
+    </b-row>
+
+    <b-row>
+      <b-col>
+        <b-button block variant="success" @click="startGame">Start!</b-button>
       </b-col>
     </b-row>
   </b-container>
@@ -29,12 +35,14 @@ import axios from 'axios'
 
 import Header from '../../../../src/components/Header'
 import LobbyPlayerList from '../components/PlayerList'
+import LobbySettings from '../components/Settings'
 
 export default {
   name: 'Lobby',
   components: {
     Header,
     LobbyPlayerList,
+    LobbySettings,
   },
   data() {
     return {
@@ -76,10 +84,14 @@ export default {
       }
     },
 
+    async startGame() {
+      console.log('start game')
+    },
   },
 
-  mounted() {
-    this.getLobbyInfo()
+  async mounted() {
+    await this.getLobbyInfo()
+    console.log(this.lobby)
   },
 }
 </script>

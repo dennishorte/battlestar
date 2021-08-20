@@ -34,12 +34,14 @@ app.post('/api/lobby/create', routes.lobby.create)
 app.post('/api/lobby/info', routes.lobby.info)
 app.post('/api/lobby/player_add', routes.lobby.playerAdd)
 app.post('/api/lobby/player_remove', routes.lobby.playerRemove)
+app.post('/api/lobby/settings_update', routes.lobby.settingsUpdate)
 
 // User Routes
 app.post('/api/user/all', routes.user.all)
 app.post('/api/user/create', routes.user.create)
 app.post('/api/user/deactivate', routes.user.deactivate)
 app.post('/api/user/fetch_many', routes.user.fetchMany)
+app.post('/api/user/lobbies', routes.user.lobbies)
 
 
 ////////////////////////////////////////////////////////////

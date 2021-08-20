@@ -35,7 +35,10 @@ module.exports.login = async function(req, res) {
   else {
     res.json({
       status: 'success',
-      token: user.token,
+      user: {
+        _id: user._id,
+        token: user.token,
+      },
     })
     return
   }

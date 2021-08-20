@@ -10,7 +10,9 @@
       </b-button>
     </div>
 
-    <h3>Players</h3>
+    <div class="section-heading">
+      Players
+    </div>
   </div>
 
   <b-table

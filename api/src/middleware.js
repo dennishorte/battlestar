@@ -46,9 +46,14 @@ function _coerceIdsRecurse(obj) {
   for (const [key, value] of Object.entries(obj)) {
     const lowKey = key.toLowerCase()
 
-    if (typeof value === 'object' && !Array.isArray(value)) {
+    if (value === undefined || value === null) {
+      continue
+    }
+
+    else if (typeof value === 'object' && !Array.isArray(value)) {
       _coerceIdsRecurse(value)
     }
+
     else if (lowKey.endsWith('id') || lowKey.endsWith('ids')) {
       if (Array.isArray(value)) {
         // Modify in place

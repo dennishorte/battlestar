@@ -38,9 +38,20 @@ Lobby.findById = async function(lobbyId) {
   return await lobbyCollection.findOne({ _id: lobbyId })
 }
 
+Lobby.findByUserId = async function(userId) {
+  return await lobbyCollection.find({ userIds: userId })
+}
+
 Lobby.removeUsers = async function(lobbyId, userIds) {
   const filter = { _id: lobbyId }
   const updater = { $pull: { userIds: { $in: userIds } } }
+  const updateResult = await lobbyCollection.updateOne(filter, updater)
+  return updateResult
+}
+
+Lobby.updateSettings = async function(lobbyId, settings) {
+  const filter = { _id: lobbyId }
+  const updater = { $set: { settings: settings } }
   const updateResult = await lobbyCollection.updateOne(filter, updater)
   return updateResult
 }
