@@ -1,3 +1,6 @@
+const Haikunator = require('haikunator')
+const haikunator = new Haikunator()
+
 // Database and collection
 const databaseClient = require('../util/mongo.js').client
 const lobbyDatabase = databaseClient.db('lobby')
@@ -10,7 +13,7 @@ module.exports = Lobby
 
 Lobby.factory = function() {
   return {
-    name: 'New Lobby',
+    name: haikunator.haikunate({tokenLength: 0}),
     createdTimestamp: Date.now(),
     userIds: [],
     game: null,
@@ -49,9 +52,9 @@ Lobby.removeUsers = async function(lobbyId, userIds) {
   return updateResult
 }
 
-Lobby.updateSettings = async function(lobbyId, settings) {
+Lobby.updateSettings = async function(lobbyId, game, options) {
   const filter = { _id: lobbyId }
-  const updater = { $set: { settings: settings } }
+  const updater = { $set: { game, options } }
   const updateResult = await lobbyCollection.updateOne(filter, updater)
   return updateResult
 }

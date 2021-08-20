@@ -8,15 +8,15 @@
     <b-form-select
       id="game-select"
       @change="gameSelected"
-      v-model="settings.game"
+      v-model="game"
       :options="gameNames">
     </b-form-select>
   </div>
 
-  <div class="game-settings mt-2">
+  <div class="game-options mt-2">
 
-    <div v-if="settings.game === 'Battlestar Galactica'">
-      No Additional Settings
+    <div v-if="game === 'Battlestar Galactica'">
+      No Game Options
     </div>
 
   </div>
@@ -33,52 +33,50 @@ export default {
 
   props: {
     lobbyId: String,
-    settingsIn: Object,
+    gameIn: String,
+    optionsIn: Object,
   },
 
   data() {
     return {
       gameNames: ['Battlestar Galactica'],
-      settings: this.cloneSettings(),
+      game: this.gameIn,
+      options: this.cloneOptions(),
     }
   },
 
   watch: {
-    settingsIn: {
+    gameIn: function(val) {
+      this.game = val
+    },
+
+    optionsIn: {
       handler: function() {
-        this.cloneSettings()
+        this.cloneOptions()
       },
       deep: true,
     },
   },
 
-  mounted() {
-    console.log(this.settingsIn)
-  },
-
   methods: {
-    cloneSettings() {
-      if (this.settingsIn && this.settingsIn.game) {
-        return JSON.parse(JSON.stringify(this.settingsIn))
+    cloneOptions() {
+      if (this.optionsIn) {
+        return JSON.parse(JSON.stringify(this.optionsIn))
       }
       else {
-        return {
-          game: null,
-          options: {},
-        }
+        return {}
       }
     },
 
     async gameSelected() {
-      await this.saveSettings()
+      await this.save()
     },
 
-    async saveSettings() {
+    async save() {
       await axios.post('/api/lobby/settings_update', {
         lobbyId: this.lobbyId,
-        settings: {
-          game: this.settings.game,
-        },
+        game: this.game,
+        options: this.options,
       })
       this.$emit('settings-updated')
     },

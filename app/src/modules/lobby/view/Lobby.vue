@@ -12,7 +12,12 @@
 
     <b-row>
       <b-col cols="6">
-        <LobbySettings :lobby-id="id" :settingsIn="lobby.settings" @settings-updated="getLobbyInfo" />
+        <LobbySettings
+          :lobby-id="id"
+          :gameIn="lobby.game"
+          :optionsIn="lobby.options"
+          @settings-updated="getLobbyInfo"
+          />
       </b-col>
 
       <b-col cols="6">
@@ -89,9 +94,14 @@ export default {
     },
   },
 
+  async beforeRouteUpdate(to, from, next) {
+    this.id = to.params.id
+    await this.getLobbyInfo()
+    next()
+  },
+
   async mounted() {
     await this.getLobbyInfo()
-    console.log(this.lobby)
   },
 }
 </script>

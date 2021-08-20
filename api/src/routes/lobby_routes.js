@@ -71,7 +71,11 @@ Lobby.playerRemove = async function(req, res) {
 }
 
 Lobby.settingsUpdate = async function(req, res) {
-  const updateResult = await db.lobby.updateSettings(req.body.lobbyId, req.body.settings)
+  const updateResult = await db.lobby.updateSettings(
+    req.body.lobbyId,
+    req.body.game,
+    req.body.options,
+  )
   console.log({ updateResult })
   res.json({
     status: 'success',

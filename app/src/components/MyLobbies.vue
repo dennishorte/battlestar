@@ -16,6 +16,10 @@
         </router-link>
       </template>
 
+      <template #cell(age)="row">
+        {{ lobbyAge(row.item.createdTimestamp) }}
+      </template>
+
     </b-table>
 
 </div>
@@ -28,15 +32,29 @@ export default {
   name: 'MyLobbies',
   data() {
     return {
-      fields: ['name'],
+      fields: ['name', 'age'],
       lobbies: [],
     }
   },
 
   methods: {
+    lobbyAge(timestamp) {
+      const millis = Date.now() - timestamp
+      const years = Math.floor(millis / (365 * 24 * 60 * 60 * 1000))
+      const days = Math.floor(millis /  (24 * 60 * 60 * 1000))
+      if (years) return `${years} years ${days} days`
+      if (days) return `${days} days`
+
+      const hours = Math.floor(millis / (60 * 60 * 1000))
+      if (hours) return `${hours} hours`
+
+      const minutes = Math.floor(millis / (60 * 1000))
+      return `${minutes} minutes`
+    },
+
     lobbyLink(lobbyId) {
       return `/lobby/${lobbyId}`
-    }
+    },
   },
 
   async mounted() {
