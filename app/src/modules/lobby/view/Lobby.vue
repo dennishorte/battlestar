@@ -5,7 +5,9 @@
   <b-container>
     <b-row>
       <b-col>
-        <h2>{{ this.lobby.name }}</h2>
+        <h2>
+          <EditableText @text-edited="updateName">{{ this.lobby.name }}</EditableText>
+        </h2>
       </b-col>
     </b-row>
 
@@ -38,6 +40,7 @@
 <script>
 import axios from 'axios'
 
+import EditableText from '../../../../src/components/EditableText'
 import Header from '../../../../src/components/Header'
 import LobbyPlayerList from '../components/PlayerList'
 import LobbySettings from '../components/Settings'
@@ -45,6 +48,7 @@ import LobbySettings from '../components/Settings'
 export default {
   name: 'Lobby',
   components: {
+    EditableText,
     Header,
     LobbyPlayerList,
     LobbySettings,
@@ -91,6 +95,15 @@ export default {
 
     async startGame() {
       console.log('start game')
+    },
+
+    async updateName({ to }) {
+      const data = {
+        lobbyId: this.lobby._id,
+        name: to,
+      }
+      await axios.post('/api/lobby/name_update', data)
+      await this.getLobbyInfo()
     },
   },
 

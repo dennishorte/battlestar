@@ -54,6 +54,17 @@ Lobby.info = async function(req, res) {
   })
 }
 
+Lobby.nameUpdate = async function(req, res) {
+  const updateResult = await db.lobby.nameUpdate(
+    req.body.lobbyId,
+    req.body.name,
+  )
+  res.json({
+    status: 'success',
+    message: 'Name updated',
+  })
+}
+
 Lobby.playerAdd = async function(req, res) {
   const addResult = await db.lobby.addUsers(req.body.lobbyId, req.body.userIds)
   res.json({
