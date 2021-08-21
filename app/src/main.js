@@ -7,6 +7,13 @@ import router from '@/router'
 import store from '@/store'
 import authUtil from '@/modules/auth/util.js'
 
+// FontAwesome
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+library.add(faUserSecret)
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+
 
 Vue.config.devtools = true
 Vue.config.productionTip = false

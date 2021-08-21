@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Home from '@/components/Home'
+import Battlestar from '@/modules/games/battlestar/components/Battlestar'
+
 import adminRoutes from '@/modules/admin/router.js'
 import authRoutes from '@/modules/auth/router.js'
 import lobbyRoutes from '@/modules/lobby/router.js'
@@ -17,6 +19,11 @@ const router = new Router({
       path: '/',
       name: 'Home',
       component: Home,
+    },
+    {
+      path: '/bsg',
+      name: 'bsg',
+      component: Battlestar,
     },
     ...adminRoutes,
     ...authRoutes,

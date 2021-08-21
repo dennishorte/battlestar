@@ -21,6 +21,10 @@
     "rules": {}
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-regular-svg-icons": "^5.15.4",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/vue-fontawesome": "^2.0.2",
     "axios": "^0.21.1",
     "boostrap": "^2.0.0",
     "bootstrap-vue": "^2.21.2",
