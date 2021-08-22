@@ -1,13 +1,6 @@
-const util = {}
+const Util = {}
+module.exports = Util
 
-
-util.foo = function() {
-  console.log('Hello')
-}
-
-
-export default {
-  install: function(Vue) {
-    Object.defineProperty(Vue.prototype, '$util', { value: util })
-  },
+Util.deepcopy = function(obj) {
+  return JSON.parse(JSON.stringify(obj))
 }
