@@ -35,10 +35,12 @@ const locations = {
     {
       name: "Brig",
       desc: "",
+      hazard: true,
     },
     {
       name: "Sickbay",
       desc: "",
+      hazard: true,
     },
   ],
 
@@ -61,18 +63,22 @@ const locations = {
     {
       name: "Caprica",
       desc: "",
+      cylon: true,
     },
     {
       name: "Cylon Fleet",
       desc: "",
+      cylon: true,
     },
     {
       name: "Human Fleet",
       desc: "",
+      cylon: true,
     },
     {
       name: "Resurrection Ship",
       desc: "",
+      cylon: true,
     },
   ],
 }

@@ -6,8 +6,12 @@
     <div style="float: right;" @click="increment">
       <font-awesome-icon :icon="['far', 'plus-square']" />
     </div>
-    <slot></slot>:
-    {{ value }}
+    <div>
+      {{ name }}: {{ value }}
+      <div v-if="!!notes" class="notes">
+        {{ notes }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -21,6 +25,8 @@ export default {
   name: 'Location',
 
   props: {
+    name: String,
+    notes: String,
     value: Number,
   },
 
@@ -35,10 +41,17 @@ export default {
 
     resourceChanged(amt) {
       this.$emit('resource-changed', {
-        name: this.$slots.default[0].text,
+        name: this.name,
         amount: amt,
       })
     },
   },
 }
 </script>
+
+<style>
+.notes {
+    font-size: .6em;
+    color: #777;
+}
+</style>
