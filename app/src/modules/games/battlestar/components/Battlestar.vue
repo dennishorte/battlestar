@@ -14,16 +14,7 @@
       </b-col>
 
       <b-col>
-        <div class="players">
-          <div class="heading">
-            Players
-          </div>
-
-          <b-list-group>
-            <b-list-group-item>Dennis</b-list-group-item>
-            <b-list-group-item>Micah</b-list-group-item>
-          </b-list-group>
-        </div>
+        <Players :players="players" />
 
         <div class="resources">
           <div class="heading">
@@ -96,6 +87,7 @@
       <b-col>
         <LocationGroup
           name="Galactica"
+          :players="players"
           :locations="locations.Galactica"
           @visit-location="visitLocation">
         </LocationGroup>
@@ -104,12 +96,14 @@
       <b-col>
         <LocationGroup
           name="Colonial One"
+          :players="players"
           :locations="locations.ColonialOne"
           @visit-location="visitLocation">
         </LocationGroup>
 
         <LocationGroup
           name="Cylon Locations"
+          :players="players"
           :locations="locations.Cylon"
           @visit-location="visitLocation">
         </LocationGroup>
@@ -128,6 +122,7 @@
 <script>
 import GameLog from './GameLog'
 import LocationGroup from './LocationGroup'
+import Players from './Players'
 import ResourceCounter from './ResourceCounter'
 import SpaceZone from './SpaceZone'
 
@@ -139,6 +134,7 @@ export default {
   components: {
     GameLog,
     LocationGroup,
+    Players,
     ResourceCounter,
     SpaceZone,
   },
@@ -159,6 +155,32 @@ export default {
         jump_track: 0,
         boarding_party: 0,
       },
+
+      players: [
+        {
+          _id: 'asdf',
+          index: 0,
+          name: 'Dennis',
+          character: 'Adama',
+          characterShort: 'adama',
+          location: "Admiral's Quarters",
+          admiral: true,
+          president: false,
+          active: false,
+        },
+        {
+          _id: 'jkl',
+          index: 1,
+          name: 'Micah',
+          character: 'Starbuck',
+          characterShort: 'starbuck',
+          location: "Hangar Deck",
+          admiral: false,
+          president: true,
+          active: true,
+        },
+      ],
+
     }
   },
 
@@ -187,6 +209,14 @@ export default {
 
 
 <style>
+.adama {
+    color: blue;
+}
+
+.starbuck {
+    color: red;
+}
+
 .action-buttons {
     display: flex;
     justify-content: space-between;

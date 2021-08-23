@@ -76,8 +76,6 @@ export default {
     background-color: #33a;
 }
 
-
-
 .space-region {
     min-height: 5em;
     border-style: solid;
