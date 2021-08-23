@@ -4,6 +4,14 @@
 
   <b-container fluid>
     <b-row>
+      <b-col>
+        <div class="action-buttons">
+          <b-button variant="warning" @click="undo">undo</b-button>
+          <b-button variant="outline-primary" @click="passPriority">pass</b-button>
+        </div>
+
+        <GameLog />
+      </b-col>
 
       <b-col>
         <div class="players">
@@ -118,6 +126,7 @@
 
 
 <script>
+import GameLog from './GameLog'
 import LocationGroup from './LocationGroup'
 import ResourceCounter from './ResourceCounter'
 import SpaceZone from './SpaceZone'
@@ -128,6 +137,7 @@ export default {
   name: 'Battlestar',
 
   components: {
+    GameLog,
     LocationGroup,
     ResourceCounter,
     SpaceZone,
@@ -153,11 +163,19 @@ export default {
   },
 
   methods: {
+    passPriority() {
+      console.log('pass priority')
+    },
+
     resourceChanged({ name, amount }) {
       name = name.trim().toLowerCase().replace(' ', '_')
       this.counters[name] += amount
       this.counters[name] = Math.max(0, this.counters[name])
       this.counters[name] = Math.min(15, this.counters[name])
+    },
+
+    undo() {
+      console.log('undo')
     },
 
     visitLocation(name) {
@@ -169,6 +187,11 @@ export default {
 
 
 <style>
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
 .space-zone {
     background: #abd;
     margin-top: 4px;
