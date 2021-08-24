@@ -129,7 +129,7 @@ import Players from './Players'
 import ResourceCounter from './ResourceCounter'
 import SpaceZone from './SpaceZone'
 
-import { locations } from '../res.js'
+import { locations } from '../res/old.js'
 
 export default {
   name: 'Battlestar',

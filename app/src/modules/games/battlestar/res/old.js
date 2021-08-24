@@ -1,4 +1,4 @@
-const cards = {
+const cards = [
   {
     name: 'Admiral',
     kind: 'role',
@@ -104,8 +104,8 @@ const cards = {
         score: 'fail',
         result: [
           "-2 morale",
-          "All characters on Colonial One are sent to sickbay."
-          "Keep this card in play. Characters may not move to Colonial One for the rest of the game."
+          "All characters on Colonial One are sent to sickbay.",
+          "Keep this card in play. Characters may not move to Colonial One for the rest of the game.",
         ],
       },
     ],
@@ -137,7 +137,7 @@ const cards = {
       },
     ],
   },
-}
+]
 
 const civilianShips = [
   {
