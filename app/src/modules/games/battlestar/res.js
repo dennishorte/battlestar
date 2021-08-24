@@ -1,3 +1,144 @@
+const cards = {
+  {
+    name: 'Admiral',
+    kind: 'role',
+    abilities: [
+      "When the fleet jumps, you draw 2 Destination Cards and choose 1.",
+      "You control the nuke tokens.",
+    ],
+    action: "Launch 1 nuke at a basestar. (The nuke is used up.)",
+    reminder: "Nukes damage a basestar twice on a roll of 1-2, and automatically destroy a basestar on a roll of 3-8.",
+  },
+  {
+    name: "President",
+    kind: 'role',
+    abilities: [
+      "At the start of the game, draw 1 Quorum Card. You control the hand of Quorum Cards.",
+    ],
+    action: "Draw a Quorum Card into your hand.",
+    reminder: "Quorum cards can be played as an action and specialize in increasing resources and dealing with unrevealed Cylons.",
+  },
+
+  ////////////////////////////////////////////////////////////
+  // super crises
+
+  {
+    name: "Massive Assault",
+    kind: 'super_crisis',
+    skill: {
+      difficulty: 24,
+      skills: ['leadership', 'tactics', 'piloting', 'engineering'],
+    },
+    outcome: [
+      {
+        score: 'pass',
+        result: ['activate basestars', 'launch raiders'],
+      },
+      {
+        score: 'fail',
+        result: [
+          'activate basestars',
+          'activate raiders',
+          'activate heavy raiders and centurions',
+          'launch raiders',
+        ],
+      },
+    ],
+    flavor: "You know the drill, people. Scatter formation, keep 'em off the civies and don't stray beyond the recovery line. --Lee Adama"
+  },
+  {
+    name: "Cylon Intruders",
+    kind: 'super_crisis',
+    skill: {
+      difficulty: 18,
+      skills: ['leadership', 'tactics'],
+    },
+    outcome: [
+      {
+        score: 'pass',
+        result: ["no effect"],
+      },
+      {
+        score: 14,
+        result: "Place 1 centurion marker at the start of the boarding party track."
+      },
+      {
+        score: 'fail',
+        result: "Damage Galactica and place 2 centurion markers at the start of the Boarding Party track."
+      },
+    ],
+    flavor: "If they succeed, they'll override the decompression safeties and vent us all into space. Once we're all dead, they'll turn the ship's guns on the fleet and wipe it out, once and for all. --Saul Tigh",
+  },
+  {
+    name: "Inbound Nukes",
+    kind: 'super_crisis',
+    skill: {
+      difficulty: 15,
+      skills: ['leadership', 'tactics'],
+    },
+    outcome: [
+      {
+        score: 'pass',
+        result: ["no effect"],
+      },
+      {
+        score: 'fail',
+        result: ["-1 fuel", "-1 food", "-1 population"],
+      },
+    ],
+    flavor: "Spread out the fleet. No ship closer than five hundred clicks from any other ship. If there is a nuke, I want to limit the damage. --William Adama",
+  },
+  {
+    name: "Bomb on Colonial One",
+    kind: 'super_crisis',
+    skill: {
+      difficulty: 15,
+      skills: ['tactics', 'piloting', 'engineering'],
+    },
+    outcome: [
+      {
+        score: 'pass',
+        result: ["no effect"],
+      },
+      {
+        score: 'fail',
+        result: [
+          "-2 morale",
+          "All characters on Colonial One are sent to sickbay."
+          "Keep this card in play. Characters may not move to Colonial One for the rest of the game."
+        ],
+      },
+    ],
+    flavor: "We're running out of time. There's four minutes until your bomb goes off. I'm here to tell you that this conflict between out people... it doesn't have to continue. --Laura Roslin",
+  },
+  {
+    name: "Massive Assault",
+    kind: 'super_crisis',
+    components: [
+      ['basestar', 'raider', 'raider', 'raider', 'raider'],
+      ['basestar', 'raider', 'raider', 'heavy raider'],
+      [],
+      ['viper', 'civilian', 'civilian'],
+      ['viper', 'civilian', 'civilian'],
+      [],
+    ],
+    instructions: [
+      {
+        name: 'activate',
+        components: ['heavy raider', 'basestar'],
+      },
+      {
+        name: 'setup',
+      },
+      {
+        name: 'special rule',
+        heading: 'Power Failure',
+        text: "Move the fleet token 2 spaces towards the start of the Jump Preparation track",
+      },
+    ],
+  },
+}
+
 const civilianShips = [
   {
     id: 0,
@@ -170,6 +311,7 @@ const locations = {
 }
 
 module.exports = {
+  cards,
   civilianShips,
   locations,
 }
