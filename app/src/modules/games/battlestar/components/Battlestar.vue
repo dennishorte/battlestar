@@ -111,7 +111,10 @@
 
     </b-row>
 
-    <SpaceZone />
+    <SpaceZone
+      @move-space-component="moveSpaceComponent"
+      :deployedComponents="deployedComponents"
+      />
 
   </b-container>
 
@@ -149,7 +152,7 @@ export default {
         population: 12,
 
         raptors: 4,
-        vipers: 8,
+        vipers: 6,
         damaged_vipers: 0,
 
         jump_track: 0,
@@ -181,6 +184,14 @@ export default {
         },
       ],
 
+      deployedComponents: [
+        [],
+        [],
+        [ 'civilian', 'civilian' ],
+        [ 'viper' ],
+        [ 'viper' ],
+        [ 'basestar', 'raider', 'raider', 'raider' ],
+      ],
     }
   },
 
@@ -203,6 +214,10 @@ export default {
     movePlayer(data) {
       console.log(data)
     },
+
+    moveSpaceComponent(data) {
+      console.log(data)
+    },
   },
 }
 </script>
@@ -220,10 +235,5 @@ export default {
 .action-buttons {
     display: flex;
     justify-content: space-between;
-}
-
-.space-zone {
-    background: #abd;
-    margin-top: 4px;
 }
 </style>

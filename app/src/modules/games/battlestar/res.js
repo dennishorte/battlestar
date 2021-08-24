@@ -1,3 +1,78 @@
+const civilianShips = [
+  {
+    id: 0,
+    population: 0,
+    morale: 0,
+    fuel: 0,
+  },
+  {
+    id: 1,
+    population: 0,
+    morale: 0,
+    fuel: 0,
+  },
+  {
+    id: 2,
+    population: 1,
+    morale: 0,
+    fuel: 0,
+  },
+  {
+    id: 3,
+    population: 1,
+    morale: 0,
+    fuel: 0,
+  },
+  {
+    id: 4,
+    population: 1,
+    morale: 0,
+    fuel: 0,
+  },
+  {
+    id: 5,
+    population: 1,
+    morale: 0,
+    fuel: 0,
+  },
+  {
+    id: 6,
+    population: 1,
+    morale: 0,
+    fuel: 0,
+  },
+  {
+    id: 7,
+    population: 1,
+    morale: 0,
+    fuel: 0,
+  },
+  {
+    id: 8,
+    population: 2,
+    morale: 0,
+    fuel: 0,
+  },
+  {
+    id: 9,
+    population: 2,
+    morale: 0,
+    fuel: 0,
+  },
+  {
+    id: 10,
+    population: 1,
+    morale: 1,
+    fuel: 0,
+  },
+  {
+    id: 11,
+    population: 1,
+    morale: 0,
+    fuel: 1,
+  },
+]
+
 const locations = {
   'Galactica': [
     {
@@ -95,5 +170,6 @@ const locations = {
 }
 
 module.exports = {
+  civilianShips,
   locations,
 }
