@@ -6,6 +6,7 @@
 
   <b-list-group>
     <b-list-group-item
+      @click="showLocationDescription(loc)"
       @dragenter="dragEnter"
       @dragleave="dragLeave"
       @drop="drop"
@@ -34,6 +35,32 @@
 
     </b-list-group-item>
   </b-list-group>
+
+  <b-modal
+    :title="locationModalLoc.name"
+    ok-only
+    ok-title="done"
+    v-model="locationModalShow">
+
+    <div v-show="!!locationModalLoc.hazard">
+      {{ locationModalLoc.hazard }}
+    </div>
+
+    <div v-show="!!locationModalLoc.action">
+      <strong>Action:</strong> {{ locationModalLoc.action }}
+    </div>
+
+    <div v-if="!!locationModalLoc.skill">
+      <span class="skill-difficulty">{{ locationModalLoc.skill.difficulty }}</span>
+      <span
+        v-for="skill in locationModalLoc.skill.skills"
+        :key="skill"
+        :class="`skill-${skill}`">
+        {{ skill }}
+      </span>
+    </div>
+
+  </b-modal>
 </div>
 </template>
 
@@ -51,6 +78,13 @@ export default {
     name: String,
     locations: Array,
     players: Array,
+  },
+
+  data() {
+    return {
+      locationModalLoc: {},
+      locationModalShow: false,
+    }
   },
 
   methods: {
@@ -84,6 +118,11 @@ export default {
 
     playersAt(location) {
       return this.players.filter(p =>  p.location === location.name)
+    },
+
+    showLocationDescription(location) {
+      this.locationModalLoc = location
+      this.locationModalShow = true
     },
   },
 }
