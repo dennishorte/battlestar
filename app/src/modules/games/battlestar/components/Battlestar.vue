@@ -89,7 +89,7 @@
           name="Galactica"
           :players="players"
           :locations="locations.Galactica"
-          @visit-location="visitLocation">
+          @move-player="movePlayer">
         </LocationGroup>
       </b-col>
 
@@ -98,14 +98,14 @@
           name="Colonial One"
           :players="players"
           :locations="locations.ColonialOne"
-          @visit-location="visitLocation">
+          @move-player="movePlayer">
         </LocationGroup>
 
         <LocationGroup
           name="Cylon Locations"
           :players="players"
           :locations="locations.Cylon"
-          @visit-location="visitLocation">
+          @move-player="movePlayer">
         </LocationGroup>
       </b-col>
 
@@ -200,8 +200,8 @@ export default {
       console.log('undo')
     },
 
-    visitLocation(name) {
-      console.log(name)
+    movePlayer(data) {
+      console.log(data)
     },
   },
 }

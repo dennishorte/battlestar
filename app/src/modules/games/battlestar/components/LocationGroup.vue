@@ -6,9 +6,14 @@
 
   <b-list-group>
     <b-list-group-item
-      @click="visitLocation(loc.name)"
+      @dragenter="dragEnter"
+      @dragleave="dragLeave"
+      @drop="drop"
+      @dragover.prevent
+      @dragenter.prevent
       v-for="loc in locations"
       class="location-item"
+      :data-location="loc.name"
       :key="loc.name">
 
       {{ loc.name }}
@@ -16,6 +21,8 @@
       <div class="player-holder">
 
         <div
+          draggable
+          @dragstart="dragStart($event, player)"
           v-for="player in playersAt(loc)"
           :key="player.index">
 
@@ -46,30 +53,37 @@ export default {
     players: Array,
   },
 
-  data() {
-    return {
-      dropPlaceholderOptions: {
-        className: "drop-preview",
-        animationDuration: "150",
-        showOnTop: true
-      },
-    }
-  },
-
   methods: {
     drop(event) {
-      console.log(event)
+      event.target.classList.remove('location-drop')
+      const playerId = event.dataTransfer.getData('playerId')
+      const locationName = event.target.getAttribute('data-location')
+      this.$emit('move-player', {
+        playerId,
+        zone: this.name,
+        location: locationName,
+      })
+    },
+
+    dragEnter(event) {
+      event.preventDefault()
+      if (event.target.classList.contains('location-item')) {
+        event.target.classList.add('location-drop')
+      }
+    },
+
+    dragLeave(event) {
+      event.target.classList.remove('location-drop')
+    },
+
+    dragStart(event, player) {
+      event.dataTransfer.dropEffect = 'move'
+      event.dataTransfer.effectAllowed = 'move'
+      event.dataTransfer.setData('playerId', player._id)
     },
 
     playersAt(location) {
       return this.players.filter(p =>  p.location === location.name)
-    },
-
-    visitLocation(name) {
-      this.$emit('visit-location', {
-        zone: this.name,
-        location: name,
-      })
     },
   },
 }
@@ -77,6 +91,10 @@ export default {
 
 
 <style>
+.location-drop {
+    background-color: #ddf!important;
+}
+
 .location-item {
     padding: .3em .4em!important;
     display: flex!important;
