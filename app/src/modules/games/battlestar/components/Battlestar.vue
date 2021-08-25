@@ -88,7 +88,7 @@
         <LocationGroup
           name="Galactica"
           :players="players"
-          :locations="locations.Galactica"
+          :locations="locationsGalactica"
           @move-player="movePlayer">
         </LocationGroup>
       </b-col>
@@ -97,14 +97,14 @@
         <LocationGroup
           name="Colonial One"
           :players="players"
-          :locations="locations.ColonialOne"
+          :locations="locationsColonialOne"
           @move-player="movePlayer">
         </LocationGroup>
 
         <LocationGroup
           name="Cylon Locations"
           :players="players"
-          :locations="locations.Cylon"
+          :locations="locationsCylonLocations"
           @move-player="movePlayer">
         </LocationGroup>
       </b-col>
@@ -129,7 +129,35 @@ import Players from './Players'
 import ResourceCounter from './ResourceCounter'
 import SpaceZone from './SpaceZone'
 
-import { locations } from '../res/old.js'
+import locations from '../res/location.js'
+
+
+function locationCompare(l, r) {
+  if (l.hazardous && !r.hazardous) {
+    return 1
+  }
+  else if (!l.hazardous && r.hazardous) {
+    return -1
+  }
+  else {
+    return l.name.localeCompare(r.name)
+  }
+}
+
+/*
+  TODO (dennis): Locations are often replaced with updated versions in expansions.
+  It is important that this handles the case of duplicate locations correctly when
+  expansions become supported.
+ */
+function locationFilter(locations, expansions, area) {
+  const passOne = locations
+    .filter(x => x.area === area)
+    .filter(x => expansions.includes(x.expansion))
+    .sort(locationCompare)
+
+  return passOne
+}
+
 
 export default {
   name: 'Battlestar',
@@ -144,7 +172,12 @@ export default {
 
   data() {
     return {
-      locations: locations,
+      locations,
+
+      settings: {
+        expansions: ['base game'],
+      },
+
       counters: {
         food: 8,
         fuel: 8,
@@ -192,6 +225,18 @@ export default {
         [ 'viper' ],
         [ 'basestar', 'raider', 'raider', 'raider' ],
       ],
+    }
+  },
+
+  computed: {
+    locationsColonialOne() {
+      return locationFilter(this.locations, this.settings.expansions, 'Colonial One')
+    },
+    locationsCylonLocations() {
+      return locationFilter(this.locations, this.settings.expansions, 'Cylon Locations')
+    },
+    locationsGalactica() {
+      return locationFilter(this.locations, this.settings.expansions, 'Galactica')
     }
   },
 
