@@ -6,6 +6,7 @@
   @dragover.prevent
   @dragenter.prevent
   class="space-region"
+  :data-index="index"
   md="4">
 
   <div class="space-region-components">
@@ -45,9 +46,10 @@ export default {
 
     drop(event) {
       event.target.classList.remove('space-region-drop')
-      this.$parent.$emit('move-space-component', {
-        source: event.dataTransfer.getData('source'),
+      this.$parent.$emit('space-component-move', {
         component: event.dataTransfer.getData('component'),
+        source: event.dataTransfer.getData('source'),
+        target: parseInt(event.target.getAttribute('data-index')),
       })
     },
   },

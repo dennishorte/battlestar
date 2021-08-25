@@ -89,7 +89,7 @@
           name="Galactica"
           :players="players"
           :locations="locationsGalactica"
-          @move-player="movePlayer">
+          @player-move="playerMove">
         </LocationGroup>
       </b-col>
 
@@ -98,21 +98,23 @@
           name="Colonial One"
           :players="players"
           :locations="locationsColonialOne"
-          @move-player="movePlayer">
+          @player-move="playerMove">
         </LocationGroup>
 
         <LocationGroup
           name="Cylon Locations"
           :players="players"
           :locations="locationsCylonLocations"
-          @move-player="movePlayer">
+          @player-move="playerMove">
         </LocationGroup>
       </b-col>
 
     </b-row>
 
     <SpaceZone
-      @move-space-component="moveSpaceComponent"
+      @space-component-move="spaceComponentMove"
+      @space-component-remove="spaceComponentRemove"
+      @space-components-clear="spaceComponentsClear"
       :deployedComponents="deployedComponents"
       />
 
@@ -245,6 +247,10 @@ export default {
       console.log('pass priority')
     },
 
+    playerMove(data) {
+      console.log('playerMove', data)
+    },
+
     resourceChanged({ name, amount }) {
       name = name.trim().toLowerCase().replace(' ', '_')
       this.counters[name] += amount
@@ -252,16 +258,20 @@ export default {
       this.counters[name] = Math.min(15, this.counters[name])
     },
 
+    spaceComponentsClear() {
+      console.log('spaceComponentsClear')
+    },
+
+    spaceComponentMove(data) {
+      console.log('spaceComponentMove', data)
+    },
+
+    spaceComponentRemove(data) {
+      console.log('spaceComponentRemove', data)
+    },
+
     undo() {
       console.log('undo')
-    },
-
-    movePlayer(data) {
-      console.log(data)
-    },
-
-    moveSpaceComponent(data) {
-      console.log(data)
     },
   },
 }

@@ -92,7 +92,7 @@ export default {
       event.target.classList.remove('location-drop')
       const playerId = event.dataTransfer.getData('playerId')
       const locationName = event.target.getAttribute('data-location')
-      this.$emit('move-player', {
+      this.$emit('player-move', {
         playerId,
         zone: this.name,
         location: locationName,
