@@ -1,10 +1,9 @@
-import { BootstrapVue } from 'bootstrap-vue'
-import Vue from 'vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 
-import App from '@/App.vue'
-import router from '@/router'
-import store from '@/store'
-import authUtil from '@/modules/auth/util.js'
+import Vue from 'vue'
+Vue.config.devtools = true
+Vue.config.productionTip = false
 
 // FontAwesome
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -13,20 +12,15 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(faUserSecret)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
-
-Vue.config.devtools = true
-Vue.config.productionTip = false
-
+import authUtil from '@/modules/auth/util.js'
 authUtil.initialize()
 
-
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
-
-
+import { BootstrapVue } from 'bootstrap-vue'
 Vue.use(BootstrapVue)
 
-
+import App from '@/App.vue'
+import router from '@/router'
+import store from '@/store'
 new Vue({
   render: h => h(App),
   router,
