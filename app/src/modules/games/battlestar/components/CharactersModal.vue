@@ -19,6 +19,10 @@
     <div class="col">
 
       <div v-if="!!selectedData">
+        <div class="selected-role">
+          <span class="selected-heading">Role: </span>{{ selectedData.role }}
+        </div>
+
         <div class="selected-ability">
           <div class="selected-heading">Ability</div>
           {{ selectedData.ability }}
@@ -32,6 +36,21 @@
         <div class="selected-weakness">
           <div class="selected-heading">Weakness</div>
           {{ selectedData.weakness }}
+        </div>
+
+        <div class="selected-skill-cards">
+          <div class="selected-heading">Skills</div>
+          <template v-for="skill in skillList">
+            <div v-if="!!selectedData[skill]" :key="skill">
+              {{ skill }}: {{ selectedData[skill] }}
+            </div>
+          </template>
+        </div>
+
+        <div class="selected-succession">
+          <div class="selected-heading">Succession</div>
+          <div>Admiral: {{ selectedData["admiral line of succession order"] }}</div>
+          <div>President: {{ selectedData["president line of succession order"] }}</div>
         </div>
       </div>
 
@@ -47,11 +66,27 @@
 
 
 <script>
+
+const skillList = [
+  'politics',
+  'leadership',
+  'tactics',
+  'piloting',
+  'engineering',
+  'treachery',
+]
+
 export default {
   name: 'CharactersModal',
 
   props: {
     characters: Array,
+  },
+
+  data() {
+    return {
+      skillList,
+    }
   },
 
   computed: {
