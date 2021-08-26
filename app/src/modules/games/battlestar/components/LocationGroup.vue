@@ -46,18 +46,21 @@
       {{ locationModalLoc.hazard }}
     </div>
 
-    <div v-show="!!locationModalLoc.action">
-      <strong>Action:</strong> {{ locationModalLoc.action }}
+    <div>
+      {{ locationModalLoc.text }}
     </div>
 
-    <div v-if="!!locationModalLoc.skill">
-      <span class="skill-difficulty">{{ locationModalLoc.skill.difficulty }}</span>
-      <span
-        v-for="skill in locationModalLoc.skill.skills"
-        :key="skill"
-        :class="`skill-${skill}`">
-        {{ skill }}
-      </span>
+    <div v-if="!!locationModalLoc['skill check value']">
+      <span class="skill-difficulty">{{ locationModalLoc['skill check value'] }}</span>
+
+      <template v-for="skill in skillList">
+        <div
+          v-if="!!locationModalLoc[skill]"
+          :key="skill"
+          :class="`skill-${skill}`">
+          {{ skill }}
+        </div>
+      </template>
     </div>
 
   </b-modal>
@@ -83,6 +86,7 @@ export default {
 
   data() {
     return {
+      skillList: util.skillList,
       locationModalLoc: {},
       locationModalShow: false,
     }

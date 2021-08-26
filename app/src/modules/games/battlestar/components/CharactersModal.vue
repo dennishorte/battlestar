@@ -66,15 +66,8 @@
 
 
 <script>
+import { skillList } from '../util.js'
 
-const skillList = [
-  'politics',
-  'leadership',
-  'tactics',
-  'piloting',
-  'engineering',
-  'treachery',
-]
 
 export default {
   name: 'CharactersModal',
