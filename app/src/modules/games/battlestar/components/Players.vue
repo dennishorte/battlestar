@@ -15,7 +15,14 @@
       <div v-show="player.president" style="float: right;">
         P
       </div>
-      {{ player.name }}
+
+      <div>
+        {{ player.name }}
+      </div>
+
+      <div class='player-character-name'>
+        <CharacterLink :name="player.character" />
+      </div>
     </b-list-group-item>
   </b-list-group>
 </div>
@@ -23,8 +30,14 @@
 
 
 <script>
+import CharacterLink from './CharacterLink'
+
 export default {
   name: "Players",
+
+  components: {
+    CharacterLink,
+  },
 
   props: {
     players: Array,
@@ -43,8 +56,14 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .active-player {
     background-color: #fef;
+}
+
+.player-character-name {
+    font-size: .7em;
+    margin-left: 1em;
+    line-height: .3;
 }
 </style>

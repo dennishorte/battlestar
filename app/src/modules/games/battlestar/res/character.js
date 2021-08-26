@@ -198,7 +198,7 @@ module.exports =  [
     'cag line of succession order': 22
   },
   {
-    name: 'Gaius Baltar (Original)',
+    name: 'Gaius Baltar',
     expansion: 'base game',
     role: 'Politics',
     politics: false,
@@ -270,7 +270,7 @@ module.exports =  [
     'cag line of succession order': 4
   },
   {
-    name: 'Karl "Helo" Agathon (Original)',
+    name: 'Karl "Helo" Agathon',
     expansion: 'base game',
     role: 'Military',
     politics: false,
@@ -306,7 +306,7 @@ module.exports =  [
     'cag line of succession order': 26
   },
   {
-    name: 'Lee "Apollo" Adama (Original)',
+    name: 'Lee "Apollo" Adama',
     expansion: 'base game',
     role: 'Pilot',
     politics: false,
@@ -540,7 +540,7 @@ module.exports =  [
     'cag line of succession order': 16
   },
   {
-    name: 'Tom Zarek (Original)',
+    name: 'Tom Zarek',
     expansion: 'base game',
     role: 'Politics',
     politics: false,

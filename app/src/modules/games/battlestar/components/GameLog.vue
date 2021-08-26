@@ -53,7 +53,7 @@ export default {
             },
             character: {
               value: 'Adama',
-              classes: ['character-name'],
+              classes: ['character-name adama'],
             },
           },
         },
@@ -144,10 +144,6 @@ export default {
 
 .name-player-1 {
     font-weight: bold;
-}
-
-.character-name {
-    color: red;
 }
 
 </style>

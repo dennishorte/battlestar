@@ -6,8 +6,13 @@
     <b-row>
       <b-col>
         <div class="action-buttons">
-          <b-button variant="warning" @click="undo">undo</b-button>
-          <b-button variant="outline-primary" @click="passPriority">pass</b-button>
+          <b-button variant="outline-danger" @click="passPriority">pass</b-button>
+          <b-button variant="outline-warning" @click="undo">undo</b-button>
+          <b-dropdown variant="primary" text="menu">
+            <b-dropdown-item @click="$bvModal.show('characters-modal')">
+              Characters
+            </b-dropdown-item>
+          </b-dropdown>
         </div>
 
         <GameLog />
@@ -120,17 +125,21 @@
 
   </b-container>
 
+  <CharactersModal :characters="charactersAvailable" />
+
 </div>
 </template>
 
 
 <script>
+import CharactersModal from './CharactersModal'
 import GameLog from './GameLog'
 import LocationGroup from './LocationGroup'
 import Players from './Players'
 import ResourceCounter from './ResourceCounter'
 import SpaceZone from './SpaceZone'
 
+import characters from '../res/character.js'
 import locations from '../res/location.js'
 
 
@@ -162,9 +171,14 @@ function locationFilter(locations, expansions, area) {
 
 
 export default {
+  mounted() {
+    this.$bvModal.show('characters-modal')
+  },
+
   name: 'Battlestar',
 
   components: {
+    CharactersModal,
     GameLog,
     LocationGroup,
     Players,
@@ -174,8 +188,11 @@ export default {
 
   data() {
     return {
+      // Constant Data
+      characters,
       locations,
 
+      // Game state that should be serialized
       settings: {
         expansions: ['base game'],
       },
@@ -199,7 +216,7 @@ export default {
           _id: 'asdf',
           index: 0,
           name: 'Dennis',
-          character: 'Adama',
+          character: 'William Adama',
           characterShort: 'adama',
           location: "Admiral's Quarters",
           admiral: true,
@@ -210,7 +227,7 @@ export default {
           _id: 'jkl',
           index: 1,
           name: 'Micah',
-          character: 'Starbuck',
+          character: 'Kara "Starbuck" Thrace',
           characterShort: 'starbuck',
           location: "Hangar Deck",
           admiral: false,
@@ -231,6 +248,11 @@ export default {
   },
 
   computed: {
+    charactersAvailable() {
+      return this.characters
+        .filter(c => this.settings.expansions.includes(c.expansion))
+        .sort((l, r) => l.name.localeCompare(r.name))
+    },
     locationsColonialOne() {
       return locationFilter(this.locations, this.settings.expansions, 'Colonial One')
     },
@@ -275,16 +297,50 @@ export default {
     },
   },
 }
+
+// '#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'
 </script>
 
 
 <style>
-.adama {
-    color: blue;
+.chief-galen-tyrol {
+    color: #e6194b;
 }
 
-.starbuck {
-    color: red;
+.gaius-baltar {
+    color: #3cb44b;
+}
+
+.kara-starbuck-thrace {
+    color: #ffe119;
+}
+
+.karl-helo-agathon {
+    color: #4363d8;
+}
+
+.laura-roslin {
+    color: #f58231;
+}
+
+.lee-apollo-adama {
+    color: #911eb4;
+}
+
+.saul-tigh {
+    color: #46f0f0;
+}
+
+.sharon-boomer-valerii {
+    color: #f032e6;
+}
+
+.tom-zarek {
+    color: #bcf60c;
+}
+
+.william-adama {
+    color: #fabebe;
 }
 
 .action-buttons {

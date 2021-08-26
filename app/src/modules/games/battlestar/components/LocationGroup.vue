@@ -27,7 +27,7 @@
           v-for="player in playersAt(loc)"
           :key="player.index">
 
-          <div :class="player.characterShort">
+          <div :class="characterNameToCssClass(player.character)">
             <font-awesome-icon :icon="['fas', 'user']" />
           </div>
         </div>
@@ -70,6 +70,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 library.add(faUser)
 
+import util from '../util.js'
 
 export default {
   name: 'LocationGroup',
@@ -88,6 +89,8 @@ export default {
   },
 
   methods: {
+    characterNameToCssClass: util.characterNameToCssClass,
+
     drop(event) {
       event.target.classList.remove('location-drop')
       const playerId = event.dataTransfer.getData('playerId')
