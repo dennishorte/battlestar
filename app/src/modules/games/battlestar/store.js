@@ -1,11 +1,22 @@
+import util from './util.js'
+
+
 export default {
   namespaced: true,
 
   state() {
     return {
+      ////////////////////////////////////////////////////////////
+      // UI State
+
       charactersModal: {
         selected: '',
       },
+
+      ////////////////////////////////////////////////////////////
+      // Game State
+
+      log: [],
 
       players: [
         {
@@ -36,6 +47,22 @@ export default {
     character_assign(state, { playerId, characterName }) {
       const player = state.players.find(p => p._id === playerId)
       player.character = characterName
+
+      state.log.push({
+        id: state.log.length,
+        template: "{player} chooses {character}",
+        classes: ['character-selection', 'player-action'],
+        args: {
+          player: {
+            value: player.name,
+            classes: ['player-name']
+          },
+          character: {
+            value: characterName,
+            classes: [util.characterNameToCssClass(characterName)],
+          },
+        }
+      })
     },
 
     character_info_request(state, name) {

@@ -35,30 +35,13 @@ export default {
   data() {
     return {
       doLogNavigation: false,
-      log: [
-        {
-          id: 1,
-          template: "Character selection",
-          classes: ['character-selection', 'round-start'],
-        },
-
-        {
-          id: 2,
-          template: "{player} chooses {character}",
-          classes: ['character-selection', 'player-action'],
-          args: {
-            player: {
-              value: 'Dennis',
-              classes: ['name-player-1'],
-            },
-            character: {
-              value: 'Adama',
-              classes: ['character-name adama'],
-            },
-          },
-        },
-      ],
     }
+  },
+
+  computed: {
+    log() {
+      return this.$store.state.bsg.log
+    },
   },
 
   methods: {
