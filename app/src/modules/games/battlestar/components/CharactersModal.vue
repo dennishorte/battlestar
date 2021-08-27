@@ -96,10 +96,10 @@ export default {
 
   computed: {
     players() {
-      return this.$store.state.bsg.players
+      return this.$store.state.bsg.game.players
     },
     selected() {
-      return this.$store.state.bsg.charactersModal.selected
+      return this.$store.state.bsg.ui.charactersModal.selected
     },
     selectedData() {
       return this.characters.find(ch => ch.name === this.selected)

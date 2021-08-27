@@ -22,7 +22,7 @@ export default {
       return !this.$store.getters['bsg/spaceComponentGrabbing']
     },
     message() {
-      return this.$store.state.bsg.spaceComponentGrab.message
+      return this.$store.state.bsg.ui.spaceComponentGrab.message
     },
   },
 

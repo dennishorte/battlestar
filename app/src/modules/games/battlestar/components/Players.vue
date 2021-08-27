@@ -41,7 +41,7 @@ export default {
 
   computed: {
     players() {
-      return this.$store.state.bsg.players
+      return this.$store.state.bsg.game.players
     },
   },
 

@@ -8,72 +8,74 @@ export default {
     return {
       ////////////////////////////////////////////////////////////
       // UI State
+      ui: {
+        charactersModal: {
+          selected: '',
+        },
 
-      charactersModal: {
-        selected: '',
-      },
-
-      spaceComponentGrab: {
-        component: '',
-        source: '',
-        message: '',
+        spaceComponentGrab: {
+          component: '',
+          source: '',
+          message: '',
+        },
       },
 
       ////////////////////////////////////////////////////////////
       // Game State
 
-      log: [],
+      game: {
+        log: [],
 
-      players: [
-        {
-          _id: 'asdf',
-          index: 0,
-          name: 'Dennis',
-          character: 'William Adama',
-          location: "Admiral's Quarters",
-          admiral: true,
-          president: false,
-          active: false,
-        },
-        {
-          _id: 'jkl',
-          index: 1,
-          name: 'Micah',
-          character: 'Kara "Starbuck" Thrace',
-          location: "Hangar Deck",
-          admiral: false,
-          president: true,
-          active: true,
-        },
-      ],
-
-      space: {
-        deployed: [
-          [],
-          [],
-          [ 'civilian', 'civilian' ],
-          [ 'viper' ],
-          [ 'viper' ],
-          [ 'basestar', 'raider', 'raider', 'raider' ],
+        players: [
+          {
+            _id: 'asdf',
+            index: 0,
+            name: 'Dennis',
+            character: 'William Adama',
+            location: "Admiral's Quarters",
+            admiral: true,
+            president: false,
+            active: false,
+          },
+          {
+            _id: 'jkl',
+            index: 1,
+            name: 'Micah',
+            character: 'Kara "Starbuck" Thrace',
+            location: "Hangar Deck",
+            admiral: false,
+            president: true,
+            active: true,
+          },
         ],
-      },
 
+        space: {
+          deployed: [
+            [],
+            [],
+            [ 'civilian', 'civilian' ],
+            [ 'viper' ],
+            [ 'viper' ],
+            [ 'basestar', 'raider', 'raider', 'raider' ],
+          ],
+        },
+      }
     }
   },
 
   getters: {
     spaceComponentGrabbing(state) {
-      return !!state.spaceComponentGrab.component
+      return !!state.ui.spaceComponentGrab.component
     },
   },
 
   mutations: {
     character_assign(state, { playerId, characterName }) {
-      const player = state.players.find(p => p._id === playerId)
+      const player = state.game.players.find(p => p._id === playerId)
       player.character = characterName
 
-      state.log.push({
-        id: state.log.length,
+      state.game.log.push({
+        id: state.game.log.length,
         template: "{player} chooses {character}",
         classes: ['character-selection', 'player-action'],
         args: {
@@ -90,34 +92,34 @@ export default {
     },
 
     character_info_request(state, name) {
-      state.charactersModal.selected = name
+      state.ui.charactersModal.selected = name
     },
 
     spaceComponentCancel(state) {
-      state.spaceComponentGrab.component = ''
-      state.spaceComponentGrab.source = ''
-      state.spaceComponentGrab.message = ''
+      state.ui.spaceComponentGrab.component = ''
+      state.ui.spaceComponentGrab.source = ''
+      state.ui.spaceComponentGrab.message = ''
     },
 
     spaceComponentDrop(state, target) {
-      const { component, source } = state.spaceComponentGrab
+      const { component, source } = state.ui.spaceComponentGrab
 
-      state.spaceComponentGrab.component = ''
-      state.spaceComponentGrab.source = ''
-      state.spaceComponentGrab.message = ''
+      state.ui.spaceComponentGrab.component = ''
+      state.ui.spaceComponentGrab.source = ''
+      state.ui.spaceComponentGrab.message = ''
 
       // Remove the component from its original region
       if (source !== 'supply') {
-        const deployRegion = state.space.deployed[source]
+        const deployRegion = state.game.space.deployed[source]
         const idx = deployRegion.indexOf(component)
         deployRegion.splice(idx, 1)
       }
 
       // Add the component to the new region
-      state.space.deployed[target].push(component)
+      state.game.space.deployed[target].push(component)
 
-      state.log.push({
-        id: state.log.length,
+      state.game.log.push({
+        id: state.game.log.length,
         template: "{player} moved {component} from {source} to {target}",
         classes: ['space-action', 'player-action'],
         args: {
@@ -142,9 +144,9 @@ export default {
     },
 
     spaceComponentGrab(state, { component, source, message }) {
-      state.spaceComponentGrab.component = component
-      state.spaceComponentGrab.source = source
-      state.spaceComponentGrab.message = message
+      state.ui.spaceComponentGrab.component = component
+      state.ui.spaceComponentGrab.source = source
+      state.ui.spaceComponentGrab.message = message
     },
   },
 }

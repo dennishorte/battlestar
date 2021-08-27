@@ -40,7 +40,7 @@ export default {
 
   computed: {
     log() {
-      return this.$store.state.bsg.log
+      return this.$store.state.bsg.game.log
     },
   },
 

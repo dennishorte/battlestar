@@ -39,7 +39,7 @@ export default {
     },
 
     components() {
-      return this.$store.state.bsg.space.deployed[this.index]
+      return this.$store.state.bsg.game.space.deployed[this.index]
     },
   },
 
