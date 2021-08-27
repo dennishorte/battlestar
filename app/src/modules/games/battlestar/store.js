@@ -13,6 +13,12 @@ export default {
         selected: '',
       },
 
+      spaceComponentGrab: {
+        component: '',
+        source: '',
+        message: '',
+      },
+
       ////////////////////////////////////////////////////////////
       // Game State
 
@@ -43,6 +49,12 @@ export default {
     }
   },
 
+  getters: {
+    spaceComponentGrabbing(state) {
+      return !!state.spaceComponentGrab.component
+    },
+  },
+
   mutations: {
     character_assign(state, { playerId, characterName }) {
       const player = state.players.find(p => p._id === playerId)
@@ -67,6 +79,28 @@ export default {
 
     character_info_request(state, name) {
       state.charactersModal.selected = name
-    }
+    },
+
+    spaceComponentCancel(state) {
+      state.spaceComponentGrab.component = ''
+      state.spaceComponentGrab.source = ''
+      state.spaceComponentGrab.message = ''
+    },
+
+    spaceComponentDrop(state, target) {
+      const { component, source } = state.spaceComponentGrab
+
+      state.spaceComponentGrab.component = ''
+      state.spaceComponentGrab.source = ''
+      state.spaceComponentGrab.message = ''
+
+      console.log( component, source, target )
+    },
+
+    spaceComponentGrab(state, { component, source, message }) {
+      state.spaceComponentGrab.component = component
+      state.spaceComponentGrab.source = source
+      state.spaceComponentGrab.message = message
+    },
   },
 }

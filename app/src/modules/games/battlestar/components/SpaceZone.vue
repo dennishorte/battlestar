@@ -2,14 +2,13 @@
 <div class="space-zone">
 
   <b-row no-gutters>
-    <b-col class="space-menu" md="2">
+    <b-col class="space-menu" cols="2">
       <div class="space-components">
         <div class="galactica-components">
           <div
             v-for="c in galacticaComponents"
             :key="c.name"
-            @dragstart="grabComponent($event, c)"
-            draggable>
+            @click="clickComponent($event, c)">
 
             {{ c.name }}
           </div>
@@ -19,8 +18,7 @@
           <div
             v-for="c in cylonComponents"
             :key="c.name"
-            @dragstart="grabComponent($event, c)"
-            draggable>
+            @click="clickComponent($event, c)">
 
             {{ c.name }}
           </div>
@@ -37,7 +35,7 @@
     <b-col class="space-regions">
 
       <b-row no-gutters>
-        <b-col md="2"></b-col>
+        <b-col cols="1"></b-col>
         <SpaceRegion :index="0" :components="deployedComponents[0]" />
         <SpaceRegion :index="1" :components="deployedComponents[1]" />
       </b-row>
@@ -45,7 +43,7 @@
       <b-row no-gutters>
         <SpaceRegion :index="5" :components="deployedComponents[5]" />
 
-        <b-col class="space-galactica" md="4">
+        <b-col class="space-galactica" cols="2">
           galactica
         </b-col>
 
@@ -53,14 +51,10 @@
       </b-row>
 
       <b-row no-gutters>
-        <b-col class="space-remover-wrapper" md="2">
+        <b-col class="space-remover-wrapper" cols="1">
           <div
-            class="space-remover"
-            @dragenter="dragEnterRemove"
-            @dragleave="dragLeaveRemove"
-            @drop="dropRemove"
-            @dragover.prevent
-            @dragenter.prevent>
+            @click="spaceComponentRemove"
+            class="space-remover">
             remover
           </div>
         </b-col>
@@ -131,7 +125,7 @@ export default {
     },
     galacticaComponents() {
       return components.filter(c => c.faction === 'galactica')
-    }
+    },
   },
 
   methods: {
@@ -139,43 +133,22 @@ export default {
       this.$emit('space-components-clear')
     },
 
-    dragEnterRemove() {
-      event.preventDefault()
-      if (event.target.classList.contains('space-remover')) {
-        event.target.classList.add('space-remover-drop')
-      }
-    },
-
-    dragLeaveRemove() {
-      event.target.classList.remove('space-remover-drop')
-    },
-
-    dropRemove() {
-      event.target.classList.add('space-remover-drop')
-      this.$emit('space-component-remove', {
-        component: event.dataTransfer.getData('component'),
-        source: event.dataTransfer.getData('source'),
+    clickComponent(event, component) {
+      this.$store.commit('bsg/spaceComponentGrab', {
+        component: component.name,
+        source: 'supply',
+        message: `Holding ${component.name} from supply`,
       })
     },
 
-    grabComponent(event, component) {
-      event.dataTransfer.dropEffect = 'copy'
-      event.dataTransfer.effectAllowed = 'copy'
-      event.dataTransfer.setData('component', component.name)
-      event.dataTransfer.setData('source', 'supply')
-    },
-
-    removeComponent(event) {
-      this.$emit('space-component-remove', {
-        compoenent: event.dataTransfer.getValue('component'),
-        source: event.dataTransfer.getValue('source'),
-      })
+    spaceComponentRemove() {
+      console.log('spaceComponentRemove')
     },
   }
 }
 </script>
 
-<style>
+<style scoped>
 .space-galactica {
     border: 1px solid #ddd;
     border-radius: 8em/1.5em;

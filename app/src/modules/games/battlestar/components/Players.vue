@@ -63,9 +63,17 @@ export default {
     background-color: #fef;
 }
 
+.list-group-item {
+    padding: .3rem .7rem;
+}
+
 .player-character-name {
     font-size: .7em;
     margin-left: 1em;
-    line-height: .3;
+    margin-top: -.5em;
+
+    height: 1.2em;
+    width: 100%;
+    overflow: hidden;
 }
 </style>

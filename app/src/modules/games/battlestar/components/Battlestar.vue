@@ -127,6 +127,8 @@
     @character-assign="characterAssign"
     />
 
+  <HoldingMessage />
+
 </div>
 </template>
 
@@ -134,6 +136,7 @@
 <script>
 import CharactersModal from './CharactersModal'
 import GameLog from './GameLog'
+import HoldingMessage from './HoldingMessage'
 import LocationGroup from './LocationGroup'
 import Players from './Players'
 import ResourceCounter from './ResourceCounter'
@@ -171,15 +174,12 @@ function locationFilter(locations, expansions, area) {
 
 
 export default {
-  mounted() {
-    this.$bvModal.show('characters-modal')
-  },
-
   name: 'Battlestar',
 
   components: {
     CharactersModal,
     GameLog,
+    HoldingMessage,
     LocationGroup,
     Players,
     ResourceCounter,
@@ -321,6 +321,10 @@ export default {
 
 .william-adama {
     color: #fabebe;
+}
+
+.d-none {
+    display: none;
 }
 
 .action-buttons {

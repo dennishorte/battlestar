@@ -5,9 +5,13 @@
   @drop="drop"
   @dragover.prevent
   @dragenter.prevent
-  class="space-region"
+  @click="dropComponent"
+  :class="[
+          'space-region',
+          highlighted ? 'highlighted' : '',
+  ]"
   :data-index="index"
-  md="4">
+  cols="5">
 
   <div class="space-region-components">
     <div
@@ -36,6 +40,12 @@ export default {
     components: Array,
   },
 
+  computed: {
+    highlighted() {
+      return this.$store.getters['bsg/spaceComponentGrabbing']
+    }
+  },
+
   methods: {
     dragEnter(event) {
       event.preventDefault()
@@ -61,6 +71,14 @@ export default {
       })
     },
 
+    dropComponent(event) {
+      if (this.$store.getters['bsg/spaceComponentGrabbing']) {
+        const targetRegion = event.target.closest('.space-region')
+        const target = parseInt(targetRegion.getAttribute('data-index'))
+        this.$store.commit('bsg/spaceComponentDrop', target)
+      }
+    },
+
     grabComponent(event, name) {
       const zoneElem = event.target.closest('.space-region')
       const zoneIndex = zoneElem.getAttribute('data-index')
@@ -76,7 +94,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .space-region {
     min-height: 5em;
     border-style: solid;
@@ -93,8 +111,8 @@ export default {
     position: relative;
 }
 
-.space-region-drop {
-    background-color: #55d;
+.highlighted, .space-region-drop {
+    box-shadow: inset 10px 10px 20px #9df, inset -10px -10px 20px #9df;
 }
 
 .space-region-index {
