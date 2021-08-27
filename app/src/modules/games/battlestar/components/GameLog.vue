@@ -1,14 +1,16 @@
 <template>
 <div class="game-log">
 
-  <div class="heading">
+  <div>
     <div style="float: right;">
       <b-form-checkbox v-model="doLogNavigation" size="sm" switch>
         navigate
       </b-form-checkbox>
     </div>
 
-    Log
+    <span class="heading">
+      Log
+    </span>
   </div>
 
   <div class="log-entries">

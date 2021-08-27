@@ -321,4 +321,8 @@ export default {
     display: flex;
     justify-content: space-between;
 }
+
+.heading {
+    font-weight: bold;
+}
 </style>
