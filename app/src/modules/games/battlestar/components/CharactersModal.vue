@@ -108,7 +108,7 @@ export default {
 
   methods: {
     assign(playerId) {
-      this.$emit('character-assign', {
+      this.$store.commit('bsg/character_assign', {
         playerId,
         characterName: this.selected,
       })

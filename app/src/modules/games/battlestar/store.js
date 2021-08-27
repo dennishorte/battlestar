@@ -13,7 +13,6 @@ export default {
           index: 0,
           name: 'Dennis',
           character: 'William Adama',
-          characterShort: 'adama',
           location: "Admiral's Quarters",
           admiral: true,
           president: false,
@@ -24,7 +23,6 @@ export default {
           index: 1,
           name: 'Micah',
           character: 'Kara "Starbuck" Thrace',
-          characterShort: 'starbuck',
           location: "Hangar Deck",
           admiral: false,
           president: true,
@@ -35,6 +33,11 @@ export default {
   },
 
   mutations: {
+    character_assign(state, { playerId, characterName }) {
+      const player = state.players.find(p => p._id === playerId)
+      player.character = characterName
+    },
+
     character_info_request(state, name) {
       state.charactersModal.selected = name
     }
