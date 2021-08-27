@@ -31,13 +31,16 @@ export default {
 
   props: {
     index: Number,
-    components: Array,
   },
 
   computed: {
     highlighted() {
       return this.$store.getters['bsg/spaceComponentGrabbing']
-    }
+    },
+
+    components() {
+      return this.$store.state.bsg.space.deployed[this.index]
+    },
   },
 
   methods: {

@@ -46,6 +46,18 @@ export default {
           active: true,
         },
       ],
+
+      space: {
+        deployed: [
+          [],
+          [],
+          [ 'civilian', 'civilian' ],
+          [ 'viper' ],
+          [ 'viper' ],
+          [ 'basestar', 'raider', 'raider', 'raider' ],
+        ],
+      },
+
     }
   },
 
@@ -94,7 +106,39 @@ export default {
       state.spaceComponentGrab.source = ''
       state.spaceComponentGrab.message = ''
 
-      console.log( component, source, target )
+      // Remove the component from its original region
+      if (source !== 'supply') {
+        const deployRegion = state.space.deployed[source]
+        const idx = deployRegion.indexOf(component)
+        deployRegion.splice(idx, 1)
+      }
+
+      // Add the component to the new region
+      state.space.deployed[target].push(component)
+
+      state.log.push({
+        id: state.log.length,
+        template: "{player} moved {component} from {source} to {target}",
+        classes: ['space-action', 'player-action'],
+        args: {
+          player: {
+            value: 'tbd',
+            classes: ['player-name'],
+          },
+          component: {
+            value: component,
+            classes: ['space-component'],
+          },
+          source: {
+            value: source,
+            classes: ['space-location'],
+          },
+          target: {
+            value: target,
+            classes: ['space-location'],
+          },
+        },
+      })
     },
 
     spaceComponentGrab(state, { component, source, message }) {

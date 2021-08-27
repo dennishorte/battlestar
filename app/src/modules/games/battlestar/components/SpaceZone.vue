@@ -36,18 +36,18 @@
 
       <b-row no-gutters>
         <b-col cols="1"></b-col>
-        <SpaceRegion :index="0" :components="deployedComponents[0]" />
-        <SpaceRegion :index="1" :components="deployedComponents[1]" />
+        <SpaceRegion :index="0" />
+        <SpaceRegion :index="1" />
       </b-row>
 
       <b-row no-gutters>
-        <SpaceRegion :index="5" :components="deployedComponents[5]" />
+        <SpaceRegion :index="5" />
 
         <b-col class="space-galactica" cols="2">
           galactica
         </b-col>
 
-        <SpaceRegion :index="2" :components="deployedComponents[2]" />
+        <SpaceRegion :index="2" />
       </b-row>
 
       <b-row no-gutters>
@@ -58,8 +58,8 @@
             remover
           </div>
         </b-col>
-        <SpaceRegion :index="4" :components="deployedComponents[4]" />
-        <SpaceRegion :index="3" :components="deployedComponents[3]" />
+        <SpaceRegion :index="4" />
+        <SpaceRegion :index="3" />
       </b-row>
 
     </b-col>
@@ -107,10 +107,6 @@ export default {
 
   components: {
     SpaceRegion,
-  },
-
-  props: {
-    deployedComponents: Array,
   },
 
   data() {

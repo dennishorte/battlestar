@@ -117,7 +117,6 @@
       @space-component-move="spaceComponentMove"
       @space-component-remove="spaceComponentRemove"
       @space-components-clear="spaceComponentsClear"
-      :deployedComponents="deployedComponents"
       />
 
   </b-container>
@@ -211,15 +210,6 @@ export default {
         boarding_party: 0,
       },
 
-
-      deployedComponents: [
-        [],
-        [],
-        [ 'civilian', 'civilian' ],
-        [ 'viper' ],
-        [ 'viper' ],
-        [ 'basestar', 'raider', 'raider', 'raider' ],
-      ],
     }
   },
 
