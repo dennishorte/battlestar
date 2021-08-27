@@ -81,7 +81,6 @@ export default {
   props: {
     name: String,
     locations: Array,
-    players: Array,
   },
 
   data() {
@@ -90,6 +89,12 @@ export default {
       locationModalLoc: {},
       locationModalShow: false,
     }
+  },
+
+  computed: {
+    players() {
+      return this.$store.state.bsg.players
+    },
   },
 
   methods: {

@@ -19,7 +19,7 @@
       </b-col>
 
       <b-col>
-        <Players :players="players" />
+        <Players />
 
         <div class="resources">
           <div class="heading">
@@ -92,7 +92,6 @@
       <b-col>
         <LocationGroup
           name="Galactica"
-          :players="players"
           :locations="locationsGalactica"
           @player-move="playerMove">
         </LocationGroup>
@@ -101,14 +100,12 @@
       <b-col>
         <LocationGroup
           name="Colonial One"
-          :players="players"
           :locations="locationsColonialOne"
           @player-move="playerMove">
         </LocationGroup>
 
         <LocationGroup
           name="Cylon Locations"
-          :players="players"
           :locations="locationsCylonLocations"
           @player-move="playerMove">
         </LocationGroup>
@@ -125,7 +122,10 @@
 
   </b-container>
 
-  <CharactersModal :characters="charactersAvailable" />
+  <CharactersModal
+    :characters="charactersAvailable"
+    @character-assign="characterAssign"
+    />
 
 </div>
 </template>
@@ -211,30 +211,6 @@ export default {
         boarding_party: 0,
       },
 
-      players: [
-        {
-          _id: 'asdf',
-          index: 0,
-          name: 'Dennis',
-          character: 'William Adama',
-          characterShort: 'adama',
-          location: "Admiral's Quarters",
-          admiral: true,
-          president: false,
-          active: false,
-        },
-        {
-          _id: 'jkl',
-          index: 1,
-          name: 'Micah',
-          character: 'Kara "Starbuck" Thrace',
-          characterShort: 'starbuck',
-          location: "Hangar Deck",
-          admiral: false,
-          president: true,
-          active: true,
-        },
-      ],
 
       deployedComponents: [
         [],
@@ -265,6 +241,10 @@ export default {
   },
 
   methods: {
+    characterAssign(data) {
+      console.log('characterAssign', data)
+    },
+
     passPriority() {
       console.log('pass priority')
     },

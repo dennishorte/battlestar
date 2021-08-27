@@ -19,6 +19,18 @@
     <div class="col">
 
       <div v-if="!!selectedData">
+        <div style="float: right;">
+          <b-dropdown text="assign" size="sm" variant="primary">
+            <b-dropdown-item
+              v-for="player in players"
+              :key="player._id"
+              @click="assign(player._id)"
+              >
+              {{ player.name }}
+            </b-dropdown-item>
+          </b-dropdown>
+        </div>
+
         <div class="selected-role">
           <span class="selected-heading">Role: </span>{{ selectedData.role }}
         </div>
@@ -83,6 +95,9 @@ export default {
   },
 
   computed: {
+    players() {
+      return this.$store.state.bsg.players
+    },
     selected() {
       return this.$store.state.bsg.charactersModal.selected
     },
@@ -92,8 +107,15 @@ export default {
   },
 
   methods: {
+    assign(playerId) {
+      this.$emit('character-assign', {
+        playerId,
+        characterName: this.selected,
+      })
+    },
+
     characterCloseup(name) {
-      this.$store.commit('bsg/character_request', name)
+      this.$store.commit('bsg/character_info_request', name)
     },
 
     classes(name) {

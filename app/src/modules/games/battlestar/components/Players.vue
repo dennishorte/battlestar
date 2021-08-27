@@ -39,8 +39,10 @@ export default {
     CharacterLink,
   },
 
-  props: {
-    players: Array,
+  computed: {
+    players() {
+      return this.$store.state.bsg.players
+    },
   },
 
   methods: {
