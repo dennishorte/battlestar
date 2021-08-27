@@ -6,12 +6,7 @@
 
   <b-list-group>
     <b-list-group-item
-      @click="showLocationDescription(loc)"
-      @dragenter="dragEnter"
-      @dragleave="dragLeave"
-      @drop="drop"
-      @dragover.prevent
-      @dragenter.prevent
+      @click="locationClick($event, loc)"
       v-for="loc in locations"
       class="location-item"
       :data-location="loc.name"
@@ -22,8 +17,7 @@
       <div class="player-holder">
 
         <div
-          draggable
-          @dragstart="dragStart($event, player)"
+          @click="pawnGrab($event, player._id)"
           v-for="player in playersAt(loc)"
           :key="player.index">
 
@@ -92,6 +86,9 @@ export default {
   },
 
   computed: {
+    grabbingPawn() {
+      return this.$store.getters['bsg/isPawnGrabbing']
+    },
     players() {
       return this.$store.state.bsg.game.players
     },
@@ -111,30 +108,26 @@ export default {
       })
     },
 
-    dragEnter(event) {
-      event.preventDefault()
-      if (event.target.classList.contains('location-item')) {
-        event.target.classList.add('location-drop')
+    locationClick(event, loc) {
+      event.stopPropagation()
+      if (this.grabbingPawn) {
+        this.$store.commit('bsg/pawnDrop', loc.name)
+      }
+      else {
+        this.locationModalLoc = loc
+        this.locationModalShow = true
       }
     },
 
-    dragLeave(event) {
-      event.target.classList.remove('location-drop')
-    },
-
-    dragStart(event, player) {
-      event.dataTransfer.dropEffect = 'move'
-      event.dataTransfer.effectAllowed = 'move'
-      event.dataTransfer.setData('playerId', player._id)
+    pawnGrab(event, playerId) {
+      if (!this.$store.state.bsg.ui.grabbing.message) {
+        this.$store.commit('bsg/pawnGrab', playerId)
+        event.stopPropagation()
+      }
     },
 
     playersAt(location) {
       return this.players.filter(p =>  p.location === location.name)
-    },
-
-    showLocationDescription(location) {
-      this.locationModalLoc = location
-      this.locationModalShow = true
     },
   },
 }

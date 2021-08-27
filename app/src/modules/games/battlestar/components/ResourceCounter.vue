@@ -1,13 +1,16 @@
 <template>
   <div class="resource-counter">
-    <div style="float: right; margin-left: 2px;" @click="decrement">
+    <div style="float: left; margin-right: 2px;" @click="decrement">
       <font-awesome-icon :icon="['far', 'minus-square']" />
     </div>
     <div style="float: right;" @click="increment">
       <font-awesome-icon :icon="['far', 'plus-square']" />
     </div>
     <div>
-      {{ name }}: {{ value }}
+      <div class="name-value-wrapper">
+        <div>{{ name }}:</div>
+        <div>{{ value }}</div>
+      </div>
       <div v-if="!!notes" class="notes">
         {{ notes }}
       </div>
@@ -49,9 +52,20 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.name-value-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-right: .25em;
+}
+
 .notes {
     font-size: .6em;
     color: #777;
+}
+
+.resource-counter {
+    font-size: .8em;
 }
 </style>

@@ -67,7 +67,7 @@
 
             <ResourceCounter
               @resource-changed="resourceChanged"
-              name="Damaged Vipers"
+              name="Dmgd Vipers"
               :value="counters.damaged_vipers" />
           </div>
         </div>
@@ -320,6 +320,10 @@ export default {
 .action-buttons {
     display: flex;
     justify-content: space-between;
+}
+
+.row {
+    margin-bottom: .25em;
 }
 
 .heading {

@@ -1,6 +1,62 @@
 import util from './util.js'
 
 
+function clearGrab(state) {
+  // Pawn
+  state.ui.pawnGrab.playerId = ''
+
+  // Space Component
+  state.ui.spaceComponentGrab.component = ''
+  state.ui.spaceComponentGrab.source = ''
+
+  // Grab Message
+  state.ui.grabbing.message = ''
+}
+
+function logEnrichArgClasses(msg) {
+  if (!msg.args)
+    return
+
+  for (const key of Object.keys(msg.args)) {
+    // Convert string args to a dict
+    if (typeof msg.args[key] === 'string') {
+      msg.args[key] = {
+        value: msg.args[key],
+      }
+    }
+
+    // Ensure the dict has a classes entry
+    const classes = msg.args[key].classes || []
+    msg.args[key].classes = classes
+
+    if (key === 'player') {
+      pushUnique(classes, 'player-name')
+    }
+    else if (key === 'character') {
+      pushUnique(classes, 'character-name')
+      pushUnique(classes, util.characterNameToCssClass(msg.args[key].value))
+    }
+        else if (key === 'location') {
+      pushUnique(classes, 'location-name')
+    }
+  }
+}
+
+function log(state, msgObject) {
+  logEnrichArgClasses(msgObject)
+
+  const log = state.game.log
+  msgObject.id = log.length
+  log.push(msgObject)
+}
+
+function pushUnique(array, value) {
+  if (array.indexOf(value) === -1) {
+    array.push(value)
+  }
+}
+
+
 export default {
   namespaced: true,
 
@@ -13,10 +69,17 @@ export default {
           selected: '',
         },
 
+        grabbing: {
+          message: '',
+        },
+
+        pawnGrab: {
+          playerId: '',
+        },
+
         spaceComponentGrab: {
           component: '',
           source: '',
-          message: '',
         },
       },
 
@@ -64,6 +127,10 @@ export default {
   },
 
   getters: {
+    isPawnGrabbing(state) {
+      return !!state.ui.pawnGrab.playerId
+    },
+
     spaceComponentGrabbing(state) {
       return !!state.ui.spaceComponentGrab.component
     },
@@ -74,19 +141,12 @@ export default {
       const player = state.game.players.find(p => p._id === playerId)
       player.character = characterName
 
-      state.game.log.push({
-        id: state.game.log.length,
+      log(state, {
         template: "{player} chooses {character}",
         classes: ['character-selection', 'player-action'],
         args: {
-          player: {
-            value: player.name,
-            classes: ['player-name']
-          },
-          character: {
-            value: characterName,
-            classes: [util.characterNameToCssClass(characterName)],
-          },
+          player: player.name,
+          character: characterName,
         }
       })
     },
@@ -95,18 +155,37 @@ export default {
       state.ui.charactersModal.selected = name
     },
 
-    spaceComponentCancel(state) {
-      state.ui.spaceComponentGrab.component = ''
-      state.ui.spaceComponentGrab.source = ''
-      state.ui.spaceComponentGrab.message = ''
+    grabCancel(state) {
+      clearGrab(state)
+    },
+
+    pawnDrop(state, targetRoomName) {
+      const playerId = state.ui.pawnGrab.playerId
+      const player = state.game.players.find(p => p._id === playerId)
+      clearGrab(state)
+
+      player.location = targetRoomName
+
+      log(state, {
+        template: "{player} moves {character} to {location}",
+        classes: ['pawn-move', 'player-action'],
+        args: {
+          player: 'tbd',
+          character: player.character,
+          location: targetRoomName,
+        },
+      })
+    },
+
+    pawnGrab(state, playerId) {
+      const player = state.game.players.find(p => p._id === playerId)
+      state.ui.grabbing.message = `Holding pawn ${player.character}`
+      state.ui.pawnGrab.playerId = playerId
     },
 
     spaceComponentDrop(state, target) {
       const { component, source } = state.ui.spaceComponentGrab
-
-      state.ui.spaceComponentGrab.component = ''
-      state.ui.spaceComponentGrab.source = ''
-      state.ui.spaceComponentGrab.message = ''
+      clearGrab(state)
 
       // Remove the component from its original region
       if (source !== 'supply') {
@@ -118,19 +197,12 @@ export default {
       // Add the component to the new region
       state.game.space.deployed[target].push(component)
 
-      state.game.log.push({
-        id: state.game.log.length,
+      log(state, {
         template: "{player} moved {component} from {source} to {target}",
         classes: ['space-action', 'player-action'],
         args: {
-          player: {
-            value: 'tbd',
-            classes: ['player-name'],
-          },
-          component: {
-            value: component,
-            classes: ['space-component'],
-          },
+          player: 'tbd',
+          component,
           source: {
             value: source,
             classes: ['space-location'],
@@ -146,7 +218,7 @@ export default {
     spaceComponentGrab(state, { component, source, message }) {
       state.ui.spaceComponentGrab.component = component
       state.ui.spaceComponentGrab.source = source
-      state.ui.spaceComponentGrab.message = message
+      state.ui.grabbing.message = message
     },
   },
 }

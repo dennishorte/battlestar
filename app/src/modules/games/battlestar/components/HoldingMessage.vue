@@ -19,16 +19,16 @@ export default {
 
   computed: {
     hidden() {
-      return !this.$store.getters['bsg/spaceComponentGrabbing']
+      return !this.$store.state.bsg.ui.grabbing.message
     },
     message() {
-      return this.$store.state.bsg.ui.spaceComponentGrab.message
+      return this.$store.state.bsg.ui.grabbing.message
     },
   },
 
   methods: {
     cancel() {
-      this.$store.commit('bsg/spaceComponentCancel')
+      this.$store.commit('bsg/grabCancel')
     },
   },
 }
