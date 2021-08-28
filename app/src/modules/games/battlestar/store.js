@@ -69,6 +69,10 @@ export default {
           selected: '',
         },
 
+        skillCardsModal: {
+          selected: '',
+        },
+
         grabbing: {
           message: '',
         },
@@ -112,6 +116,19 @@ export default {
           },
         ],
 
+        settings: {
+          expansions: ['base game'],
+        },
+
+        skillCheck: {
+          past: [],
+          active: {
+            card: {},
+            logIds: [],  // List of log ids that were created during resolution
+            skillCards: {},
+          }
+        },
+
         space: {
           deployed: [
             [],
@@ -137,6 +154,10 @@ export default {
   },
 
   mutations: {
+    beginSkillCheck(state, card) {
+      state.game.skillCheck.active.card = card
+    },
+
     character_assign(state, { playerId, characterName }) {
       const player = state.game.players.find(p => p._id === playerId)
       player.character = characterName
@@ -181,6 +202,10 @@ export default {
       const player = state.game.players.find(p => p._id === playerId)
       state.ui.grabbing.message = `Holding pawn ${player.character}`
       state.ui.pawnGrab.playerId = playerId
+    },
+
+    skillCardInfoRequest(state, cardName) {
+      state.ui.skillCardsModal.selected = cardName
     },
 
     spaceComponentDrop(state, target) {

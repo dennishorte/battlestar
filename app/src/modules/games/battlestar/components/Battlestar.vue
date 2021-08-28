@@ -9,12 +9,23 @@
           <b-button variant="success" v-b-modal.game-log-modal>log</b-button>
           <b-button variant="outline-danger" @click="passPriority">pass</b-button>
           <b-button variant="outline-warning" @click="undo">undo</b-button>
+
           <b-dropdown variant="primary" text="menu" right>
             <b-dropdown-item @click="$bvModal.show('characters-modal')">
               Characters
             </b-dropdown-item>
+            <b-dropdown-item @click="$bvModal.show('skill-cards-modal')">
+              Skill Cards
+            </b-dropdown-item>
           </b-dropdown>
+
         </div>
+      </b-col>
+    </b-row>
+
+    <b-row>
+      <b-col>
+        <SkillCheck />
       </b-col>
     </b-row>
 
@@ -131,6 +142,13 @@
     />
 
   <b-modal
+    id="skill-cards-modal"
+    title="Skill Cards"
+    ok-only>
+    <SkillCards />
+  </b-modal>
+
+  <b-modal
     id="game-log-modal"
     title="game-log"
     ok-only>
@@ -151,6 +169,8 @@ import HoldingMessage from './HoldingMessage'
 import LocationGroup from './LocationGroup'
 import Players from './Players'
 import ResourceCounter from './ResourceCounter'
+import SkillCards from './SkillCards'
+import SkillCheck from './SkillCheck'
 import SpaceZone from './SpaceZone'
 
 import characters from '../res/character.js'
@@ -194,6 +214,8 @@ export default {
     LocationGroup,
     Players,
     ResourceCounter,
+    SkillCards,
+    SkillCheck,
     SpaceZone,
   },
 
@@ -204,9 +226,6 @@ export default {
       locations,
 
       // Game state that should be serialized
-      settings: {
-        expansions: ['base game'],
-      },
 
       counters: {
         food: 8,
@@ -227,18 +246,22 @@ export default {
 
   computed: {
     charactersAvailable() {
+      const expansions = this.$store.state.bsg.game.settings.expansions
       return this.characters
-        .filter(c => this.settings.expansions.includes(c.expansion))
+        .filter(c => expansions.includes(c.expansion))
         .sort((l, r) => l.name.localeCompare(r.name))
     },
     locationsColonialOne() {
-      return locationFilter(this.locations, this.settings.expansions, 'Colonial One')
+      const expansions = this.$store.state.bsg.game.settings.expansions
+      return locationFilter(this.locations, expansions, 'Colonial One')
     },
     locationsCylonLocations() {
-      return locationFilter(this.locations, this.settings.expansions, 'Cylon Locations')
+      const expansions = this.$store.state.bsg.game.settings.expansions
+      return locationFilter(this.locations, expansions, 'Cylon Locations')
     },
     locationsGalactica() {
-      return locationFilter(this.locations, this.settings.expansions, 'Galactica')
+      const expansions = this.$store.state.bsg.game.settings.expansions
+      return locationFilter(this.locations, expansions, 'Galactica')
     }
   },
 
