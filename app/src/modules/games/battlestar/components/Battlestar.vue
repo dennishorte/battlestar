@@ -6,21 +6,25 @@
     <b-row>
       <b-col>
         <div class="action-buttons">
+          <b-button variant="success" v-b-modal.game-log-modal>log</b-button>
           <b-button variant="outline-danger" @click="passPriority">pass</b-button>
           <b-button variant="outline-warning" @click="undo">undo</b-button>
-          <b-dropdown variant="primary" text="menu">
+          <b-dropdown variant="primary" text="menu" right>
             <b-dropdown-item @click="$bvModal.show('characters-modal')">
               Characters
             </b-dropdown-item>
           </b-dropdown>
         </div>
-
-        <GameLog />
       </b-col>
+    </b-row>
+
+    <b-row>
 
       <b-col>
         <Players />
+      </b-col>
 
+      <b-col>
         <div class="resources">
           <div class="heading">
             Resources
@@ -125,6 +129,14 @@
     :characters="charactersAvailable"
     @character-assign="characterAssign"
     />
+
+  <b-modal
+    id="game-log-modal"
+    title="game-log"
+    ok-only>
+
+    <GameLog />
+  </b-modal>
 
   <HoldingMessage />
 
