@@ -31,11 +31,11 @@
 
     <b-row>
 
-      <b-col>
+      <b-col cols="6" md="3">
         <Players />
       </b-col>
 
-      <b-col>
+      <b-col cols="6" md="3">
         <div class="resources">
           <div class="heading">
             Resources
@@ -104,7 +104,7 @@
         </div>
       </b-col>
 
-      <b-col>
+      <b-col cols="6" md="3">
         <LocationGroup
           name="Galactica"
           :locations="locationsGalactica"
@@ -112,7 +112,7 @@
         </LocationGroup>
       </b-col>
 
-      <b-col>
+      <b-col cols="6" md="3">
         <LocationGroup
           name="Colonial One"
           :locations="locationsColonialOne"

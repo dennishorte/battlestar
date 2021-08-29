@@ -103,6 +103,7 @@ export default {
             admiral: true,
             president: false,
             active: false,
+            skillCards: [],
           },
           {
             _id: 'jkl',
@@ -113,6 +114,7 @@ export default {
             admiral: false,
             president: true,
             active: true,
+            skillCards: [],
           },
         ],
 

@@ -5,26 +5,27 @@
   </div>
 
   <div v-if="choice">
-    {{ card['who chooses?'] }} Chooses
+    {{ card['who chooses?'] }} chooses
   </div>
 
   <div v-if="cylonAttack" class="cylon-attack">
     Cylon Attack!
   </div>
 
-  <div v-if="optionOne" class="option">
-    <template v-if="card.type === 'Choice'">
+  <b-list-group>
+    <b-list-group-item v-if="card.type === 'Choice'">
       {{ card['fail effect / choose option 1 / cac effect'] }}
-    </template>
+    </b-list-group-item>
 
-    <template v-if="!!card['pass effect']">
+    <b-list-group-item v-else-if="!!card['pass effect']">
       <SkillCheck :card="card" :showTitle="false" />
-    </template>
-  </div>
+    </b-list-group-item>
 
-  <div v-if="optionTwo" class="option">
-    {{ card['choose option 2'] }}
-  </div>
+    <b-list-group-item v-if="optionTwo" class="option">
+      {{ card['choose option 2'] }}
+    </b-list-group-item>
+  </b-list-group>
+
 
   <div v-if="!!card.consequence" class="consequence">
     {{ card.consequence }}
@@ -84,9 +85,14 @@ export default {
 
 
 <style scoped>
-.option {
-    border: 1px solid black;
-    border-radius: .25em;
-    padding: .5em;
+.crisis-card {
+    border: 1px solid #aaa;
+    border-radius: .5em;
+    padding: .25em;
+    background-color: #ddd;
+}
+
+.list-group-item {
+    background-color: #eee;
 }
 </style>

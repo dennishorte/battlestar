@@ -9,15 +9,17 @@
       v-for="player in players"
       :key="player._id"
       :class="playerClasses(player)">
-      <div v-show="player.admiral" style="float: right;">
-        A
-      </div>
-      <div v-show="player.president" style="float: right;">
-        P
-      </div>
 
-      <div>
-        {{ player.name }}
+      <div class="name-row">
+        <div>
+          {{ player.name }}
+        </div>
+
+        <div>
+          <span v-show="player.admiral">A</span>
+          <span v-show="player.president">P</span>
+          <span>{{ player.skillCards.length }}</span>
+        </div>
       </div>
 
       <div class='player-character-name'>
@@ -65,6 +67,16 @@ export default {
 
 .list-group-item {
     padding: .3rem .7rem;
+}
+
+.name-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.name-row span {
+    margin-left: .25em;
 }
 
 .player-character-name {

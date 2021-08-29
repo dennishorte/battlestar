@@ -87,16 +87,4 @@ export default {
     display: flex;
     flex-direction: row;
 }
-
-/* .skill-check { */
-/*     border: 1px solid #aaa; */
-/*     border-radius: .5em; */
-/*     padding: .25em; */
-/*     background: #ddd; */
-/* } */
-
-ul {
-    margin-left: .5em;
-    margin-bottom: 0;
-}
 </style>
