@@ -4,7 +4,7 @@
   <b-row>
     <b-col class="title-col">
 
-      <div class="heading">
+      <div v-show="showTitle" class="heading">
         {{ card.name }}
       </div>
 
@@ -55,30 +55,24 @@
 <script>
 import SkillLink from './SkillLink'
 
-import crisisCards from '../res/crisis.js'
 import { skillList } from '../util.js'
 
 export default {
-  mounted() {
-    this.$store.commit('bsg/beginSkillCheck', crisisCards[50])
-  },
-
   name: 'SkillCheck',
 
   components: {
     SkillLink,
   },
 
+  props: {
+    card: Object,
+    showTitle: Boolean,
+  },
+
   data() {
     return {
       skillList,
     }
-  },
-
-  computed: {
-    card() {
-      return this.$store.state.bsg.game.skillCheck.active.card
-    },
   },
 }
 </script>
@@ -94,12 +88,12 @@ export default {
     flex-direction: row;
 }
 
-.skill-check {
-    border: 1px solid #aaa;
-    border-radius: .5em;
-    padding: .25em;
-    background: #ddd;
-}
+/* .skill-check { */
+/*     border: 1px solid #aaa; */
+/*     border-radius: .5em; */
+/*     padding: .25em; */
+/*     background: #ddd; */
+/* } */
 
 ul {
     margin-left: .5em;

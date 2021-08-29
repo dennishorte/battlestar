@@ -25,7 +25,7 @@
 
     <b-row>
       <b-col>
-        <SkillCheck />
+        <CrisisCard :card="crisisCards[44]" />
       </b-col>
     </b-row>
 
@@ -164,16 +164,17 @@
 
 <script>
 import CharactersModal from './CharactersModal'
+import CrisisCard from './CrisisCard'
 import GameLog from './GameLog'
 import HoldingMessage from './HoldingMessage'
 import LocationGroup from './LocationGroup'
 import Players from './Players'
 import ResourceCounter from './ResourceCounter'
 import SkillCards from './SkillCards'
-import SkillCheck from './SkillCheck'
 import SpaceZone from './SpaceZone'
 
 import characters from '../res/character.js'
+import crisisCards from '../res/crisis.js'
 import locations from '../res/location.js'
 
 
@@ -209,13 +210,13 @@ export default {
 
   components: {
     CharactersModal,
+    CrisisCard,
     GameLog,
     HoldingMessage,
     LocationGroup,
     Players,
     ResourceCounter,
     SkillCards,
-    SkillCheck,
     SpaceZone,
   },
 
@@ -223,6 +224,7 @@ export default {
     return {
       // Constant Data
       characters,
+      crisisCards,
       locations,
 
       // Game state that should be serialized
