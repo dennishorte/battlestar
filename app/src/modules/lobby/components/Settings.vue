@@ -7,7 +7,6 @@
   <div class="game-picker">
     <b-form-select
       id="game-select"
-      @change="gameSelected"
       v-model="game"
       :options="gameNames">
     </b-form-select>
@@ -16,9 +15,18 @@
   <div class="game-options mt-2">
 
     <div v-if="game === 'Battlestar Galactica'">
-      No Game Options
+      <b-form-checkbox-group
+        v-model="options.bsg.expansions"
+        :options="other.bsg.expansions"
+      >
+
+      </b-form-checkbox-group>
     </div>
 
+  </div>
+
+  <div>
+    <b-button @click="save" variant="primary">save</b-button>
   </div>
 
 </div>
@@ -26,7 +34,7 @@
 
 
 <script>
-import axios from 'axios'
+import util from '@/util.js'
 
 export default {
   name: 'LobbySettings',
@@ -41,7 +49,39 @@ export default {
     return {
       gameNames: ['Battlestar Galactica'],
       game: this.gameIn,
-      options: this.cloneOptions(),
+
+      other: {
+        bsg: {
+          expansions: [
+            {
+              text: 'Base Game',
+              value: 'base game',
+              disabled: true,
+            },
+            {
+              text: 'Pegasus',
+              value: 'pegasus',
+              /* disabled: true, */
+            },
+            {
+              text: 'Exodus',
+              value: 'exodus',
+              /* disabled: true, */
+            },
+            {
+              text: 'Daybreak',
+              value: 'daybreak',
+              /* disabled: true, */
+            },
+          ],
+        },
+      },
+
+      options: {
+        bsg: {
+          expansions: ['base game'],
+        },
+      },
     }
   },
 
@@ -52,33 +92,20 @@ export default {
 
     optionsIn: {
       handler: function() {
-        this.cloneOptions()
+        if (this.game === 'Battlestar Galactica') {
+          this.options.bsg = util.deepcopy(this.optionsIn)
+        }
       },
       deep: true,
     },
   },
 
   methods: {
-    cloneOptions() {
-      if (this.optionsIn) {
-        return JSON.parse(JSON.stringify(this.optionsIn))
-      }
-      else {
-        return {}
-      }
-    },
-
-    async gameSelected() {
-      await this.save()
-    },
-
-    async save() {
-      await axios.post('/api/lobby/settings_update', {
-        lobbyId: this.lobbyId,
+    save() {
+      this.$emit('settings-updated', {
         game: this.game,
-        options: this.options,
+        options: this.options.bsg,
       })
-      this.$emit('settings-updated')
     },
   },
 }

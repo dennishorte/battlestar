@@ -36,8 +36,9 @@
 
 
 <script>
+import bsgutil from '../util.js'
 import skillCardsList from '../res/skill.js'
-import util from '../util.js'
+import util from '@/util.js'
 
 export default {
   name: 'SkillCards',
@@ -45,13 +46,13 @@ export default {
   data() {
     return {
       skillCardsList,
-      skillList: util.skillList,
+      skillList: bsgutil.skillList,
     }
   },
 
   computed: {
     cardsAll() {
-      const expansions = this.$store.state.bsg.game.settings.expansions
+      const expansions = this.$store.state.bsg.game.options.expansions
       return this.skillCardsList.filter(c => expansions.includes(c.expansion))
     },
 
@@ -94,7 +95,7 @@ export default {
 
     sortedNames() {
       const sorted = {}
-      util.skillList.forEach(skill => {
+      bsgutil.skillList.forEach(skill => {
         sorted[skill] = Object.values(this.cardsByName)
           .filter(c => c[skill])
           .map(c => c.name)

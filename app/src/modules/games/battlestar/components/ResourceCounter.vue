@@ -25,7 +25,7 @@ import { faPlusSquare, faMinusSquare } from '@fortawesome/free-regular-svg-icons
 library.add(faPlusSquare, faMinusSquare)
 
 export default {
-  name: 'Location',
+  name: 'ResourceCounter',
 
   props: {
     name: String,

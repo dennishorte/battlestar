@@ -67,7 +67,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 library.add(faUser)
 
-import util from '../util.js'
+import bsgutil from '../util.js'
 
 export default {
   name: 'LocationGroup',
@@ -79,7 +79,7 @@ export default {
 
   data() {
     return {
-      skillList: util.skillList,
+      skillList: bsgutil.skillList,
       locationModalLoc: {},
       locationModalShow: false,
     }
@@ -95,7 +95,7 @@ export default {
   },
 
   methods: {
-    characterNameToCssClass: util.characterNameToCssClass,
+    characterNameToCssClass: bsgutil.characterNameToCssClass,
 
     drop(event) {
       event.target.classList.remove('location-drop')

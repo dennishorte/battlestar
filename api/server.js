@@ -37,6 +37,10 @@ app.post('/api/lobby/player_add', routes.lobby.playerAdd)
 app.post('/api/lobby/player_remove', routes.lobby.playerRemove)
 app.post('/api/lobby/settings_update', routes.lobby.settingsUpdate)
 
+// Game Routes
+app.post('/api/game/create', routes.game.create)
+app.post('/api/game/fetch', routes.game.fetch)
+
 // User Routes
 app.post('/api/user/all', routes.user.all)
 app.post('/api/user/create', routes.user.create)

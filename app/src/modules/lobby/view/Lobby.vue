@@ -18,7 +18,7 @@
           :lobby-id="id"
           :gameIn="lobby.game"
           :optionsIn="lobby.options"
-          @settings-updated="getLobbyInfo"
+          @settings-updated="settingsUpdated"
           />
       </b-col>
 
@@ -63,51 +63,94 @@ export default {
     }
   },
   methods: {
+    processRequestResult(res) {
+      if (res.data.status === 'error') {
+        this.error = true
+        this.errorMessage = res.data.message
+        return null
+      }
+      else {
+        return res.data
+      }
+    },
+
     async getLobbyInfo() {
-      const infoRequestResult = await axios.post('/api/lobby/info', {
+      const requestResult = await axios.post('/api/lobby/info', {
         id: this.id,
       })
 
-      if (infoRequestResult.status === 'error') {
-        this.error = true
-        this.errorMessage = infoRequestResult.message
-      }
-      else {
-        this.lobby = infoRequestResult.data.lobby
-
+      const data = this.processRequestResult(requestResult)
+      if (data) {
+        this.lobby = data.lobby
         await this.getPlayerInfo()
       }
     },
 
     async getPlayerInfo() {
-      const playerRequestResult = await axios.post('/api/user/fetch_many', {
+      const requestResult = await axios.post('/api/user/fetch_many', {
         userIds: this.lobby.userIds
       })
 
-      if (playerRequestResult.status === 'error') {
-        this.error = true
-        this.errorMessage = playerRequestResult.message
+      const data = this.processRequestResult(requestResult)
+      if (data) {
+        this.players = data.users
       }
-      else {
-        this.players = playerRequestResult.data.users
+    },
+
+    async saveSettings(game, options) {
+      const requestResult = await axios.post('/api/lobby/settings_update', {
+        lobbyId: this.lobby._id,
+        game: game,
+        options: options,
+      })
+
+      const data = this.processRequestResult(requestResult)
+      if (data.status === 'success') {
+        this.$bvToast.toast('Settings saved', {
+          autoHideDelay: 2000,
+          noCloseButton: true,
+          solid: true,
+          variant: 'success',
+        })
       }
+      return data.status === 'success'
+    },
+
+    async settingsUpdated({ game, options }) {
+      await this.saveSettings(game, options)
+      await this.getLobbyInfo()
     },
 
     async startGame() {
-      console.log('start game')
+      const savedSuccessfully = await this.saveSettings()
+      if (!savedSuccessfully) return
+
+      const requestResult = await axios.post('/api/game/create', {
+        lobbyId: this.lobby._id,
+      })
+      const data = this.processRequestResult(requestResult)
+      console.log('game started', data)
+      // if (data) {
+      //   this.$router.push('/game/' + data.gameId)
+      // }
     },
 
     async updateName({ to }) {
-      const data = {
+      const requestResult = await axios.post('/api/lobby/name_update', {
         lobbyId: this.lobby._id,
         name: to,
-      }
-      await axios.post('/api/lobby/name_update', data)
+      })
+
+      const data = this.processRequestResult(requestResult)
+      if (!data) return
+
       await this.getLobbyInfo()
     },
   },
 
   async beforeRouteUpdate(to, from, next) {
+    // This ensures that if a new lobby is loaded without navigating from another
+    // view that the lobby data is updated.
     this.id = to.params.id
     await this.getLobbyInfo()
     next()

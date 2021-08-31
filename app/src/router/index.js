@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Home from '@/components/Home'
+import Game from '@/components/Game'
 import Battlestar from '@/modules/games/battlestar/components/Battlestar'
 
 import adminRoutes from '@/modules/admin/router.js'
@@ -19,6 +20,11 @@ const router = new Router({
       path: '/',
       name: 'Home',
       component: Home,
+    },
+    {
+      path: '/game/:id',
+      name: 'game',
+      component: Game,
     },
     {
       path: '/bsg',

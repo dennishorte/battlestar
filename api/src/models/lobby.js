@@ -59,6 +59,10 @@ Lobby.removeUsers = async function(lobbyId, userIds) {
 
 Lobby.updateSettings = async function(lobbyId, game, options) {
   const filter = { _id: lobbyId }
-  const updater = { $set: { game, options } }
+  const updater = { $set: {
+    game: game,
+    options: options
+  } }
+  console.log(updater)
   return await lobbyCollection.updateOne(filter, updater)
 }

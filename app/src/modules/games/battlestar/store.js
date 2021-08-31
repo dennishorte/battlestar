@@ -1,4 +1,4 @@
-import util from './util.js'
+import bsgutil from './util.js'
 
 
 function clearGrab(state) {
@@ -34,7 +34,7 @@ function logEnrichArgClasses(msg) {
     }
     else if (key === 'character') {
       pushUnique(classes, 'character-name')
-      pushUnique(classes, util.characterNameToCssClass(msg.args[key].value))
+      pushUnique(classes, bsgutil.characterNameToCssClass(msg.args[key].value))
     }
         else if (key === 'location') {
       pushUnique(classes, 'location-name')
@@ -91,7 +91,25 @@ export default {
       // Game State
 
       game: {
+        counters: {
+          food: 8,
+          fuel: 8,
+          morale: 10,
+          population: 12,
+
+          raptors: 4,
+          vipers: 6,
+          damaged_vipers: 0,
+
+          jump_track: 0,
+          boarding_party: 0,
+        },
+
         log: [],
+
+        options: {
+          expansions: ['base game'],
+        },
 
         players: [
           {
@@ -117,10 +135,6 @@ export default {
             skillCards: [],
           },
         ],
-
-        settings: {
-          expansions: ['base game'],
-        },
 
         skillCheck: {
           past: [],

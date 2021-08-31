@@ -1,164 +1,110 @@
 <template>
-<div class="battlestar">
-  Battlestar Galactica
+  <div class="battlestar">
 
-  <b-container fluid>
-    <b-row>
-      <b-col>
-        <div class="action-buttons">
-          <b-button variant="success" v-b-modal.game-log-modal>log</b-button>
-          <b-button variant="outline-danger" @click="passPriority">pass</b-button>
-          <b-button variant="outline-warning" @click="undo">undo</b-button>
-
-          <b-dropdown variant="primary" text="menu" right>
-            <b-dropdown-item @click="$bvModal.show('characters-modal')">
-              Characters
-            </b-dropdown-item>
-            <b-dropdown-item @click="$bvModal.show('skill-cards-modal')">
-              Skill Cards
-            </b-dropdown-item>
-          </b-dropdown>
-
-        </div>
-      </b-col>
-    </b-row>
-
-    <b-row>
-      <b-col>
-        <CrisisCard :card="crisisCards[44]" />
-      </b-col>
-    </b-row>
-
-    <b-row>
-
-      <b-col cols="6" md="3">
-        <Players />
-      </b-col>
-
-      <b-col cols="6" md="3">
-        <div class="resources">
-          <div class="heading">
-            Resources
+    <b-container fluid>
+      <b-row>
+        <b-col class="title-bar">
+          <div>
+            Battlestar Galactica
           </div>
 
-          <div class="resources-counters">
-            <ResourceCounter
-              @resource-changed="resourceChanged"
-              name="Food"
-              :value="counters.food" />
-
-            <ResourceCounter
-              @resource-changed="resourceChanged"
-              name="Fuel"
-              :value="counters.fuel" />
-
-            <ResourceCounter
-              @resource-changed="resourceChanged"
-              name="Morale"
-              :value="10" />
-
-            <ResourceCounter
-              @resource-changed="resourceChanged"
-              name="Population"
-              :value="12" />
+          <div>
+            <router-link to="/">home</router-link>
           </div>
-        </div>
+        </b-col>
+      </b-row>
 
-        <div class="resources fighter-bay">
-          <div class="heading">
-            Hangar
+      <b-row>
+        <b-col>
+          <div class="action-buttons">
+            <b-button variant="success" v-b-modal.game-log-modal>log</b-button>
+            <b-button variant="outline-danger" @click="passPriority">pass</b-button>
+            <b-button variant="outline-warning" @click="undo">undo</b-button>
+
+            <b-dropdown variant="primary" text="info" right>
+              <b-dropdown-item @click="$bvModal.show('characters-modal')">
+                Characters
+              </b-dropdown-item>
+              <b-dropdown-item @click="$bvModal.show('skill-cards-modal')">
+                Skill Cards
+              </b-dropdown-item>
+            </b-dropdown>
+
           </div>
+        </b-col>
+      </b-row>
 
-          <div class="resources-counters">
-            <ResourceCounter
-              @resource-changed="resourceChanged"
-              name="Raptors"
-              :value="counters.raptors" />
+      <b-row>
+        <b-col>
+          <CrisisCard :card="crisisCards[44]" />
+        </b-col>
+      </b-row>
 
-            <ResourceCounter
-              @resource-changed="resourceChanged"
-              name="Vipers"
-              :value="counters.vipers" />
+      <b-row>
 
-            <ResourceCounter
-              @resource-changed="resourceChanged"
-              name="Dmgd Vipers"
-              :value="counters.damaged_vipers" />
-          </div>
-        </div>
+        <b-col cols="6" md="3">
+          <Players />
+        </b-col>
 
-        <div class="resources jump-track">
-          <ResourceCounter
-            @resource-changed="resourceChanged"
-            name="Jump Track"
-            notes="0 = start, 3 = -3 pop, 4 = -1 pop, 5 = auto"
-            :value="counters.jump_track" />
-        </div>
+        <b-col cols="6" md="3">
+          <Resources />
+        </b-col>
 
-        <div class="resources boarding-party">
-          <ResourceCounter
-            @resource-changed="resourceChanged"
-            name="Boarding Party"
-            notes="1 = start, 5 = death"
-            :value="counters.boarding_party" />
-        </div>
-      </b-col>
+        <b-col cols="6" md="3">
+          <LocationGroup
+            name="Galactica"
+            :locations="locationsGalactica"
+            @player-move="playerMove">
+          </LocationGroup>
+        </b-col>
 
-      <b-col cols="6" md="3">
-        <LocationGroup
-          name="Galactica"
-          :locations="locationsGalactica"
-          @player-move="playerMove">
-        </LocationGroup>
-      </b-col>
+        <b-col cols="6" md="3">
+          <LocationGroup
+            name="Colonial One"
+            :locations="locationsColonialOne"
+            @player-move="playerMove">
+          </LocationGroup>
 
-      <b-col cols="6" md="3">
-        <LocationGroup
-          name="Colonial One"
-          :locations="locationsColonialOne"
-          @player-move="playerMove">
-        </LocationGroup>
+          <LocationGroup
+            name="Cylon Locations"
+            :locations="locationsCylonLocations"
+            @player-move="playerMove">
+          </LocationGroup>
+        </b-col>
 
-        <LocationGroup
-          name="Cylon Locations"
-          :locations="locationsCylonLocations"
-          @player-move="playerMove">
-        </LocationGroup>
-      </b-col>
+      </b-row>
 
-    </b-row>
-
-    <SpaceZone
-      @space-component-move="spaceComponentMove"
-      @space-component-remove="spaceComponentRemove"
-      @space-components-clear="spaceComponentsClear"
+      <SpaceZone
+        @space-component-move="spaceComponentMove"
+        @space-component-remove="spaceComponentRemove"
+        @space-components-clear="spaceComponentsClear"
       />
 
-  </b-container>
+    </b-container>
 
-  <CharactersModal
-    :characters="charactersAvailable"
-    @character-assign="characterAssign"
+    <CharactersModal
+      :characters="charactersAvailable"
+      @character-assign="characterAssign"
     />
 
-  <b-modal
-    id="skill-cards-modal"
-    title="Skill Cards"
-    ok-only>
-    <SkillCards />
-  </b-modal>
+    <b-modal
+      id="skill-cards-modal"
+      title="Skill Cards"
+      ok-only>
+      <SkillCards />
+    </b-modal>
 
-  <b-modal
-    id="game-log-modal"
-    title="game-log"
-    ok-only>
+    <b-modal
+      id="game-log-modal"
+      title="game-log"
+      ok-only>
 
-    <GameLog />
-  </b-modal>
+      <GameLog />
+    </b-modal>
 
-  <HoldingMessage />
+    <HoldingMessage />
 
-</div>
+  </div>
 </template>
 
 
@@ -169,7 +115,7 @@ import GameLog from './GameLog'
 import HoldingMessage from './HoldingMessage'
 import LocationGroup from './LocationGroup'
 import Players from './Players'
-import ResourceCounter from './ResourceCounter'
+import Resources from './Resources'
 import SkillCards from './SkillCards'
 import SpaceZone from './SpaceZone'
 
@@ -191,9 +137,9 @@ function locationCompare(l, r) {
 }
 
 /*
-  TODO (dennis): Locations are often replaced with updated versions in expansions.
-  It is important that this handles the case of duplicate locations correctly when
-  expansions become supported.
+   TODO (dennis): Locations are often replaced with updated versions in expansions.
+   It is important that this handles the case of duplicate locations correctly when
+   expansions become supported.
  */
 function locationFilter(locations, expansions, area) {
   const passOne = locations
@@ -215,7 +161,7 @@ export default {
     HoldingMessage,
     LocationGroup,
     Players,
-    ResourceCounter,
+    Resources,
     SkillCards,
     SpaceZone,
   },
@@ -226,43 +172,26 @@ export default {
       characters,
       crisisCards,
       locations,
-
-      // Game state that should be serialized
-
-      counters: {
-        food: 8,
-        fuel: 8,
-        morale: 10,
-        population: 12,
-
-        raptors: 4,
-        vipers: 6,
-        damaged_vipers: 0,
-
-        jump_track: 0,
-        boarding_party: 0,
-      },
-
     }
   },
 
   computed: {
     charactersAvailable() {
-      const expansions = this.$store.state.bsg.game.settings.expansions
+      const expansions = this.$store.state.bsg.game.options.expansions
       return this.characters
-        .filter(c => expansions.includes(c.expansion))
-        .sort((l, r) => l.name.localeCompare(r.name))
+                 .filter(c => expansions.includes(c.expansion))
+                 .sort((l, r) => l.name.localeCompare(r.name))
     },
     locationsColonialOne() {
-      const expansions = this.$store.state.bsg.game.settings.expansions
+      const expansions = this.$store.state.bsg.game.options.expansions
       return locationFilter(this.locations, expansions, 'Colonial One')
     },
     locationsCylonLocations() {
-      const expansions = this.$store.state.bsg.game.settings.expansions
+      const expansions = this.$store.state.bsg.game.options.expansions
       return locationFilter(this.locations, expansions, 'Cylon Locations')
     },
     locationsGalactica() {
-      const expansions = this.$store.state.bsg.game.settings.expansions
+      const expansions = this.$store.state.bsg.game.options.expansions
       return locationFilter(this.locations, expansions, 'Galactica')
     }
   },
@@ -311,59 +240,65 @@ export default {
 
 <style>
 .chief-galen-tyrol {
-    color: #e6194b;
+  color: #e6194b;
 }
 
 .gaius-baltar {
-    color: #3cb44b;
+  color: #3cb44b;
 }
 
 .kara-starbuck-thrace {
-    color: #ffe119;
+  color: #ffe119;
 }
 
 .karl-helo-agathon {
-    color: #4363d8;
+  color: #4363d8;
 }
 
 .laura-roslin {
-    color: #f58231;
+  color: #f58231;
 }
 
 .lee-apollo-adama {
-    color: #911eb4;
+  color: #911eb4;
 }
 
 .saul-tigh {
-    color: #46f0f0;
+  color: #46f0f0;
 }
 
 .sharon-boomer-valerii {
-    color: #f032e6;
+  color: #f032e6;
 }
 
 .tom-zarek {
-    color: #bcf60c;
+  color: #bcf60c;
 }
 
 .william-adama {
-    color: #fabebe;
+  color: #fabebe;
 }
 
 .d-none {
-    display: none;
+  display: none;
 }
 
 .action-buttons {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .row {
-    margin-bottom: .25em;
+  margin-bottom: .25em;
 }
 
 .heading {
-    font-weight: bold;
+  font-weight: bold;
+}
+
+.title-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 </style>

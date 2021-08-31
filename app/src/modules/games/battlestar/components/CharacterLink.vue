@@ -6,7 +6,7 @@
 
 
 <script>
-import util from '../util.js'
+import bsgutil from '../util.js'
 
 export default {
   name: 'CharacterLink',
@@ -17,7 +17,7 @@ export default {
 
   computed: {
     classes() {
-      return ['character-link', util.characterNameToCssClass(this.name)]
+      return ['character-link', bsgutil.characterNameToCssClass(this.name)]
     },
   },
 

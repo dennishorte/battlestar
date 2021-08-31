@@ -87,7 +87,6 @@ Lobby.settingsUpdate = async function(req, res) {
     req.body.game,
     req.body.options,
   )
-  console.log({ updateResult })
   res.json({
     status: 'success',
     message: 'Settings updated',
