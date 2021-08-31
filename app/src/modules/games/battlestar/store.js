@@ -1,4 +1,6 @@
+import axios from 'axios'
 import bsgutil from './util.js'
+import factory from './factory.js'
 
 
 function clearGrab(state) {
@@ -90,72 +92,7 @@ export default {
       ////////////////////////////////////////////////////////////
       // Game State
 
-      game: {
-        counters: {
-          food: 8,
-          fuel: 8,
-          morale: 10,
-          population: 12,
-
-          raptors: 4,
-          vipers: 6,
-          damaged_vipers: 0,
-
-          jump_track: 0,
-          boarding_party: 0,
-        },
-
-        log: [],
-
-        options: {
-          expansions: ['base game'],
-        },
-
-        players: [
-          {
-            _id: 'asdf',
-            index: 0,
-            name: 'Dennis',
-            character: 'William Adama',
-            location: "Admiral's Quarters",
-            admiral: true,
-            president: false,
-            active: false,
-            skillCards: [],
-          },
-          {
-            _id: 'jkl',
-            index: 1,
-            name: 'Micah',
-            character: 'Kara "Starbuck" Thrace',
-            location: "Hangar Deck",
-            admiral: false,
-            president: true,
-            active: true,
-            skillCards: [],
-          },
-        ],
-
-        skillCheck: {
-          past: [],
-          active: {
-            card: {},
-            logIds: [],  // List of log ids that were created during resolution
-            skillCards: {},
-          }
-        },
-
-        space: {
-          deployed: [
-            [],
-            [],
-            [ 'civilian', 'civilian' ],
-            [ 'viper' ],
-            [ 'viper' ],
-            [ 'basestar', 'raider', 'raider', 'raider' ],
-          ],
-        },
-      }
+      game: {},
     }
   },
 
@@ -194,6 +131,10 @@ export default {
 
     grabCancel(state) {
       clearGrab(state)
+    },
+
+    loadGameData(state, data) {
+      this.state.bsg.game = data
     },
 
     pawnDrop(state, targetRoomName) {
@@ -260,6 +201,29 @@ export default {
       state.ui.spaceComponentGrab.component = component
       state.ui.spaceComponentGrab.source = source
       state.ui.grabbing.message = message
+    },
+  },
+
+  actions: {
+    async load(context, data) {
+      if (data) {
+        if (!data.initialized) {
+          await factory.initialize(data)
+        }
+
+        context.commit('loadGameData', data)
+        await context.dispatch('save')
+      }
+      else {
+        context.commit('loadGameData', data)
+      }
+    },
+
+    async save({ state }) {
+      const requestResult = await axios.post('/api/game/save', state.game)
+      if (requestResult.data.status !== 'success') {
+        throw requestResult.data.message
+      }
     },
   },
 }

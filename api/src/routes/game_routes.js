@@ -10,7 +10,7 @@ Game.create = async function(req, res) {
 
   if (gameId) {
     // Save the game id in the lobby
-    db.lobby.gameLaunched(lobby.id)
+    db.lobby.gameLaunched(lobby.id, gameId)
 
     res.json({
       status: 'success',
@@ -30,5 +30,12 @@ Game.fetch = async function(req, res) {
   res.json({
     status: 'success',
     game,
+  })
+}
+
+Game.save = async function(req, res) {
+  await db.game.save(req.body)
+  res.json({
+    status: 'success',
   })
 }

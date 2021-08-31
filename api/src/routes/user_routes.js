@@ -57,4 +57,14 @@ User.lobbies = async function(req, res) {
   })
 }
 
+User.games = async function(req, res) {
+  const gameCursor = await db.game.findByUserId(req.body.userId)
+  const gameArray = await gameCursor.toArray()
+
+  res.json({
+    status: 'success',
+    games: gameArray,
+  })
+}
+
 module.exports = User

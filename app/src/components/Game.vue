@@ -1,9 +1,10 @@
 <template>
   <div class="game">
 
-    <Battlestar v-if="game === 'Battlestar Galactica'" />
+    <Battlestar v-if="game === 'Battlestar Galactica'" :data="gameData" />
     <div v-else>
-      Unknown game: {{ game }}
+      Loading...
+      ...or maybe unknown game '{{ this.game }}'
     </div>
 
   </div>
@@ -22,6 +23,7 @@
      return {
        id: this.$route.params.id,
        game: null,
+       gameData: null,
      }
    },
 
@@ -30,8 +32,8 @@
        gameId: this.id,
      })
      if (requestResult.data.status === 'success') {
+       await this.$store.dispatch('bsg/load', requestResult.data.game)
        this.game = requestResult.data.game.game
-       console.log('Loaded game data: ', requestResult.data.game)
      }
      else {
        alert('Error loading game data')

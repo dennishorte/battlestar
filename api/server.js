@@ -40,12 +40,14 @@ app.post('/api/lobby/settings_update', routes.lobby.settingsUpdate)
 // Game Routes
 app.post('/api/game/create', routes.game.create)
 app.post('/api/game/fetch', routes.game.fetch)
+app.post('/api/game/save', routes.game.save)
 
 // User Routes
 app.post('/api/user/all', routes.user.all)
 app.post('/api/user/create', routes.user.create)
 app.post('/api/user/deactivate', routes.user.deactivate)
 app.post('/api/user/fetch_many', routes.user.fetchMany)
+app.post('/api/user/games', routes.user.games)
 app.post('/api/user/lobbies', routes.user.lobbies)
 
 

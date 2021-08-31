@@ -1,17 +1,20 @@
 import axios from 'axios'
-import util from './util.js'
+import util from '@/util.js'
 
 
 async function makePlayers(userIds, factory) {
-  const users = await axios.post('/api/user/fetch_many', {
+  const requestResponse = await axios.post('/api/user/fetch_many', {
     userIds,
   })
+  const users = requestResponse.data.users
   const players = users.map(factory)
   return util.shuffleArray(players)
 }
 
+const Factory = {}
+export default Factory
 
-module.exports = async function(game) {
+Factory.initialize = async function(game) {
   if (game.initialized) {
     throw "Game already initialized"
   }
@@ -64,9 +67,7 @@ module.exports = async function(game) {
       [ 'viper' ],
       [ 'basestar', 'raider', 'raider', 'raider' ],
     ],
-  },
-
-
+  }
 
   return game
 }

@@ -6,6 +6,8 @@
     <b-row>
       <b-col>
 
+        <MyGames />
+
         <MyLobbies />
 
       </b-col>
@@ -17,12 +19,14 @@
 
 <script>
 import Header from './Header'
+import MyGames from './MyGames'
 import MyLobbies from './MyLobbies'
 
 export default {
   name: 'Home',
   components: {
     Header,
+    MyGames,
     MyLobbies,
   },
   data() {

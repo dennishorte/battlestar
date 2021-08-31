@@ -26,3 +26,11 @@ Game.create = async function(lobby) {
 Game.findById = async function(gameId) {
   return await gameCollection.findOne({ _id: gameId })
 }
+
+Game.findByUserId = async function(userId) {
+  return await gameCollection.find({ userIds: userId })
+}
+
+Game.save = async function(record) {
+  return await gameCollection.replaceOne({ _id: record._id}, record)
+}
