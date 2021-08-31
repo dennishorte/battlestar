@@ -18,6 +18,7 @@ Lobby.factory = function() {
     userIds: [],
     game: null,
     options: {},
+    gameLaunched: false,
   }
 }
 
@@ -43,6 +44,12 @@ Lobby.findById = async function(lobbyId) {
 
 Lobby.findByUserId = async function(userId) {
   return await lobbyCollection.find({ userIds: userId })
+}
+
+Lobby.gameLaunched = async function(lobbyId) {
+  const filter = { _id: lobbyId }
+  const updater = { $set: { gameLaunched: true } }
+  return await lobbyCollection.updateOne(filter, updater)
 }
 
 Lobby.nameUpdate = async function(lobbyId, name) {

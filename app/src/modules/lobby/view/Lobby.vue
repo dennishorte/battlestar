@@ -18,8 +18,9 @@
           :lobby-id="id"
           :gameIn="lobby.game"
           :optionsIn="lobby.options"
+          @settings-save="settingsSave"
           @settings-updated="settingsUpdated"
-          />
+        />
       </b-col>
 
       <b-col cols="6">
@@ -29,7 +30,8 @@
 
     <b-row>
       <b-col>
-        <b-button block variant="success" @click="startGame">Start!</b-button>
+        <b-button v-if="lobby.gameLaunched" block variant="primary" @click="goToGame">Go to Game</b-button>
+        <b-button v-else block variant="success" @click="startGame">Start!</b-button>
       </b-col>
     </b-row>
   </b-container>
@@ -97,11 +99,15 @@ export default {
       }
     },
 
-    async saveSettings(game, options) {
+    async goToGame() {
+      console.log('go to game')
+    },
+
+    async settingsSave() {
       const requestResult = await axios.post('/api/lobby/settings_update', {
         lobbyId: this.lobby._id,
-        game: game,
-        options: options,
+        game: this.lobby.game,
+        options: this.lobby.options,
       })
 
       const data = this.processRequestResult(requestResult)
@@ -117,22 +123,21 @@ export default {
     },
 
     async settingsUpdated({ game, options }) {
-      await this.saveSettings(game, options)
-      await this.getLobbyInfo()
+      this.lobby.game = game
+      this.lobby.options = options
     },
 
     async startGame() {
-      const savedSuccessfully = await this.saveSettings()
+      const savedSuccessfully = await this.settingsSave()
       if (!savedSuccessfully) return
 
       const requestResult = await axios.post('/api/game/create', {
         lobbyId: this.lobby._id,
       })
       const data = this.processRequestResult(requestResult)
-      console.log('game started', data)
-      // if (data) {
-      //   this.$router.push('/game/' + data.gameId)
-      // }
+      if (data) {
+        this.$router.push('/game/' + data.gameId)
+      }
     },
 
     async updateName({ to }) {

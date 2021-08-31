@@ -7,6 +7,7 @@
   <div class="game-picker">
     <b-form-select
       id="game-select"
+      @change="settingsUpdated"
       v-model="game"
       :options="gameNames">
     </b-form-select>
@@ -16,6 +17,7 @@
 
     <div v-if="game === 'Battlestar Galactica'">
       <b-form-checkbox-group
+        @change="settingsUpdated"
         v-model="options.bsg.expansions"
         :options="other.bsg.expansions"
       >
@@ -61,17 +63,17 @@ export default {
             {
               text: 'Pegasus',
               value: 'pegasus',
-              /* disabled: true, */
+              disabled: true,
             },
             {
               text: 'Exodus',
               value: 'exodus',
-              /* disabled: true, */
+              disabled: true,
             },
             {
               text: 'Daybreak',
               value: 'daybreak',
-              /* disabled: true, */
+              disabled: true,
             },
           ],
         },
@@ -102,6 +104,10 @@ export default {
 
   methods: {
     save() {
+      this.$emit('settings-save')
+    },
+
+    settingsUpdated() {
       this.$emit('settings-updated', {
         game: this.game,
         options: this.options.bsg,

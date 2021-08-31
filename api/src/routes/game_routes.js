@@ -9,6 +9,9 @@ Game.create = async function(req, res) {
   const gameId = await db.game.create(lobby)
 
   if (gameId) {
+    // Save the game id in the lobby
+    db.lobby.gameLaunched(lobby.id)
+
     res.json({
       status: 'success',
       gameId,
