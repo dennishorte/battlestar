@@ -60,7 +60,6 @@ export default {
   methods: {
     async getAllLobbies() {
       const response = await axios.post('/api/lobby/all')
-      console.log(response)
       this.lobbies = response.data.lobbies
     },
 

@@ -1,4 +1,4 @@
-import Admin from './view/Admin'
+import Admin from './components/Admin'
 
 export default [
   {

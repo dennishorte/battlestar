@@ -1,7 +1,7 @@
 // Database and collection
 const databaseClient = require('../util/mongo.js').client
-const gameDatabase = databaseClient.db('game')
-const gameCollection = gameDatabase.collection('game')
+const database = databaseClient.db('games')
+const gameCollection = database.collection('game')
 
 const Game = {}
 module.exports = Game

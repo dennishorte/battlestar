@@ -1,5 +1,5 @@
 import store from '@/store'
-import Login from './view/Login'
+import Login from './components/Login'
 
 export default [
   {

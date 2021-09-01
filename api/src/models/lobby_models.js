@@ -3,8 +3,8 @@ const haikunator = new Haikunator()
 
 // Database and collection
 const databaseClient = require('../util/mongo.js').client
-const lobbyDatabase = databaseClient.db('lobby')
-const lobbyCollection = lobbyDatabase.collection('lobby')
+const database = databaseClient.db('games')
+const lobbyCollection = database.collection('lobby')
 
 // Exports
 const Lobby = {}

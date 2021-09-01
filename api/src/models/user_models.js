@@ -2,8 +2,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 
 const databaseClient = require('../util/mongo.js').client
-const userDatabase = databaseClient.db('user')
-const userCollection = userDatabase.collection('user')
+const database = databaseClient.db('games')
+const userCollection = database.collection('user')
 
 
 const User = {}  // This will be the exported module
