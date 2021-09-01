@@ -64,7 +64,6 @@ export default {
 
   computed: {
     choice() {
-      console.log(this.card.type)
       return this.card.type === "Optional Skill Check" || this.card.type === "Choice"
     },
     cylonAttack() {

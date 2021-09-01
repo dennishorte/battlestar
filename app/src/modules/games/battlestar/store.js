@@ -44,6 +44,9 @@ function logEnrichArgClasses(msg) {
     else if (key === 'phase') {
       pushUnique(classes, 'phase-name')
     }
+    else if (key === 'title') {
+      pushUnique(classes, 'title-name')
+    }
   }
 }
 
@@ -215,6 +218,18 @@ export default {
       state.ui.spaceComponentGrab.source = source
       state.ui.grabbing.message = message
     },
+
+    titleAssign(state, { title, character }) {
+      state.game.titles[title] = character
+      log(state, {
+        template: "{character} becomes the {title}",
+        classes: ['title-assign'],
+        args: {
+          title,
+          character,
+        },
+      })
+    }
   },
 
   actions: {

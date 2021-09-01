@@ -25,7 +25,12 @@
         <p>You can see and select characters from the info menu.</p>
         <p>There are four character types: political leader, military leader, pilot, support.</p>
         <p>Starting with the first player ({{ firstPlayer }}), each player chooses from the remaining characters a character of the type that is most plentiful. The exception is that a support character can be chosen at any time.</p>
+        <p class="heading">Remaining:</p>
         <b-table small :items="characterTypeCounts"></b-table>
+      </div>
+
+      <div v-if="phase === 'setup-distribute-title-cards'">
+        <b-button block @click="distributeTitleCards">click to distribute title cards</b-button>
       </div>
 
     </div>
@@ -185,8 +190,32 @@ export default {
   },
 
   methods: {
+    _assignTitle(title) {
+      const key = `${title} line of succession order`
+      const characterOrdering = [...this.characters].sort((l, r) => l[key] - r[key])
+      const players = this.$store.state.bsg.game.players
+
+      for (const char of characterOrdering) {
+        for (const player of players) {
+          if (player.character === char.name) {
+            this.$store.commit('bsg/titleAssign', {
+              title: title,
+              character: char.name,
+            })
+            return
+          }
+        }
+      }
+
+      throw "Unable to assign title: " + title
+    },
+
+    distributeTitleCards() {
+      this._assignTitle('admiral')
+      this._assignTitle('president')
+    },
+
     phaseChanged(value) {
-      console.log(value)
       this.$store.commit('bsg/phaseSet', value)
     },
   },

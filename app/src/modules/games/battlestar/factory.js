@@ -45,8 +45,6 @@ Factory.initialize = async function(game) {
       name: user.name,
       character: '',
       location: '',
-      admiral: false,
-      president: false,
       active: false,
       skillCards: [],
     }
@@ -71,6 +69,11 @@ Factory.initialize = async function(game) {
       [ 'viper' ],
       [ 'basestar', 'raider', 'raider', 'raider' ],
     ],
+  }
+
+  game.titles = {
+    admiral: '',
+    president: '',
   }
 
   return game

@@ -16,8 +16,8 @@
         </div>
 
         <div>
-          <span v-show="player.admiral">A</span>
-          <span v-show="player.president">P</span>
+          <span v-if="isAdmiral(player)">A</span>
+          <span v-if="isPresident(player)">P</span>
           <span>{{ player.skillCards.length }}</span>
         </div>
       </div>
@@ -48,6 +48,16 @@ export default {
   },
 
   methods: {
+    isAdmiral(player) {
+      const admiral = this.$store.state.bsg.game.titles.admiral
+      return admiral && player.character === admiral
+    },
+
+    isPresident(player) {
+      const president = this.$store.state.bsg.game.titles.president
+      return president && player.character === president
+    },
+
     playerClasses(player) {
       const classes = [`player-${player.index}`]
       if (player.admiral) classes.push('admiral')
