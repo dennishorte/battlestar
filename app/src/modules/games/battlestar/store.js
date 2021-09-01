@@ -38,8 +38,11 @@ function logEnrichArgClasses(msg) {
       pushUnique(classes, 'character-name')
       pushUnique(classes, bsgutil.characterNameToCssClass(msg.args[key].value))
     }
-        else if (key === 'location') {
+    else if (key === 'location') {
       pushUnique(classes, 'location-name')
+    }
+    else if (key === 'phase') {
+      pushUnique(classes, 'phase-name')
     }
   }
 }
@@ -159,6 +162,16 @@ export default {
       const player = state.game.players.find(p => p._id === playerId)
       state.ui.grabbing.message = `Holding pawn ${player.character}`
       state.ui.pawnGrab.playerId = playerId
+    },
+
+    phaseSet(state, phase) {
+      state.game.phase = phase
+
+      log(state, {
+        template: "Phase set to {phase}",
+        classes: ['phase-change'],
+        args: { phase },
+      })
     },
 
     skillCardInfoRequest(state, cardName) {

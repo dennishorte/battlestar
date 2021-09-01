@@ -36,7 +36,9 @@
 
       <b-row>
         <b-col>
-          <CrisisCard :card="crisisCards[44]" />
+          <PhasePanel :characters="charactersAvailable" />
+
+          <CrisisCard style="display:none;" :card="crisisCards[44]" />
         </b-col>
       </b-row>
 
@@ -114,6 +116,7 @@ import CrisisCard from './CrisisCard'
 import GameLog from './GameLog'
 import HoldingMessage from './HoldingMessage'
 import LocationGroup from './LocationGroup'
+import PhasePanel from './PhasePanel'
 import Players from './Players'
 import Resources from './Resources'
 import SkillCards from './SkillCards'
@@ -160,6 +163,7 @@ export default {
     GameLog,
     HoldingMessage,
     LocationGroup,
+    PhasePanel,
     Players,
     Resources,
     SkillCards,

@@ -21,6 +21,9 @@ Factory.initialize = async function(game) {
 
   game.initialized = true
 
+  // Game phase and step of phase
+  game.phase = 'setup-character_creation'
+
   game.counters = {
     food: 8,
     fuel: 8,
@@ -48,6 +51,7 @@ Factory.initialize = async function(game) {
       skillCards: [],
     }
   })
+  game.players[0].active = true
 
   game.skillCheck = {
     past: [],
