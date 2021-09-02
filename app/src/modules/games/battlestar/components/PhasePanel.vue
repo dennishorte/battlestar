@@ -54,6 +54,16 @@
 
       </div>
 
+      <div v-if="phase === 'main-receive-skills'">
+        <p>The active player draws all of the skill cards listed on his character sheet.</p>
+        <p>If the character sheet shows skills with a star, the player draws a card for only one of the starred skills.</p>
+
+        <SkillCardDrawButton
+          v-for="skill in skillList"
+          :key="skill"
+          :name="skill" />
+      </div>
+
     </div>
   </div>
 </template>
