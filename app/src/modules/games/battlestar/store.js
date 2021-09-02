@@ -1,6 +1,7 @@
 import axios from 'axios'
 import bsgutil from './util.js'
 import factory from './factory.js'
+import util from '@/util.js'
 
 
 function clearGrab(state) {
@@ -61,6 +62,23 @@ function log(state, msgObject) {
 function pushUnique(array, value) {
   if (array.indexOf(value) === -1) {
     array.push(value)
+  }
+}
+
+// If the specified skill deck is empty, reshuffle the discard pile into it.
+function maybeReshuffleSkill(state, skill) {
+  if (state.game.skillDecks[skill].length == 0
+    && state.game.skillDiscards[skill].length > 0
+  ) {
+    const shuffled = util.shuffleArray([...state.game.skillDiscards[skill]])
+    state.game.skillDecks[skill] = shuffled
+    state.game.skillDiscards[skill] = []
+
+    log(state, {
+      template: "{skill} discard shuffled back into deck",
+      classes: ['admin-action', 'skill-deck-shuffle'],
+      args: { skill },
+    })
   }
 }
 
@@ -211,6 +229,34 @@ export default {
 
     playerShow(state, playerId) {
       state.ui.playerModal.playerId = playerId
+    },
+
+    skillCardDraw(state, { skill, playerId }) {
+      skill = skill.toLowerCase()
+      maybeReshuffleSkill(state, skill)
+
+      const player = state.game.players.find(p => p._id === playerId)
+      const draw = state.game.skillDecks[skill].pop()
+
+      if (draw) {
+        player.skillCards.push(draw)
+
+        log(state, {
+          template: "{player} drew a {skill} card",
+          classes: ['player-action', 'skill-card-draw'],
+          args: {
+            player: player.name,
+            skill: skill,
+          },
+        })
+      }
+      else {
+        log(state, {
+          template: "{skill} deck and discard are empty",
+          classes: ['admin-action'],
+          args: { skill },
+        })
+      }
     },
 
     skillCardInfoRequest(state, cardName) {

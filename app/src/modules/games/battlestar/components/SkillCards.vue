@@ -110,15 +110,7 @@ export default {
       this.$store.commit('bsg/skillCardInfoRequest', name)
     },
 
-    skillType(card) {
-      if (card.politics) return 'politics'
-      if (card.leadership) return 'leadership'
-      if (card.tactics) return 'tactics'
-      if (card.piloting) return 'piloting'
-      if (card.engineering) return 'engineering'
-      if (card.treachery) return 'treachery'
-      return 'UNKNOWN'
-    },
+    skillType: bsgutil.skillType,
   },
 }
 </script>

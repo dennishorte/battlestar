@@ -1,6 +1,16 @@
 import axios from 'axios'
 import util from '@/util.js'
 
+import bsgutil from './util.js'
+import skillCards from './res/skill.js'
+
+
+function fillSkillDecks(decks, expansions) {
+  const cards = bsgutil.expansionFilter(skillCards, expansions)
+  Object.keys(decks).forEach(skill => {
+    decks[skill] = util.shuffleArray(cards.filter(c => c[skill]))
+  })
+}
 
 async function makePlayers(userIds, factory) {
   const requestResponse = await axios.post('/api/user/fetch_many', {
@@ -22,7 +32,7 @@ Factory.initialize = async function(game) {
   game.initialized = true
 
   // Game phase and step of phase
-  game.phase = 'setup-character_creation'
+  game.phase = 'setup-character-creation'
 
   game.counters = {
     food: 8,
@@ -62,6 +72,25 @@ Factory.initialize = async function(game) {
       logIds: [],  // List of log ids that were created during resolution
       skillCards: {},
     }
+  }
+
+  game.skillDecks = {
+    politics: [],
+    leadership: [],
+    tactics: [],
+    piloting: [],
+    engineering: [],
+    treachery: [],
+  }
+  fillSkillDecks(game.skillDecks, game.options.expansions)
+
+  game.skillDiscards = {
+    politics: [],
+    leadership: [],
+    tactics: [],
+    piloting: [],
+    engineering: [],
+    treachery: [],
   }
 
   game.space = {

@@ -1,30 +1,32 @@
 <template>
   <span :class="classes" @click="openSkillInfo()">
-    {{ skillName }}
+    {{ card.value }}: {{ card.name }}
   </span>
 </template>
 
 
 <script>
+import bsgutil from '../util.js'
+
 export default {
-  name: 'SkillLink',
+  name: 'SkillCardLink',
 
   props: {
-    skillName: String,
+    card: Object,
   },
 
   computed: {
     classes() {
       return [
-        'skill-link',
-        this.skillName ? `skill-${this.skillName}` : '',
+        'skill-card-link',
+        `skill-${bsgutil.skillType(this.card)}`,
       ]
     },
   },
 
   methods: {
     openSkillInfo() {
-      this.$store.commit('bsg/skillCardInfoRequest', '')
+      this.$store.commit('bsg/skillCardInfoRequest', this.card.name)
       this.$bvModal.show('skill-cards-modal')
     }
   },
@@ -33,9 +35,8 @@ export default {
 
 
 <style scoped>
-.skill-link {
+.skill-card-link {
   border-radius: .25em;
   padding: .25em;
-  color: lightgray;
 }
 </style>

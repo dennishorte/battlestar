@@ -27,15 +27,29 @@
     </b-table-simple>
 
     <div v-if="viewerIsThisPlayer">
-      <div class="heading">Loyalty Card Details</div>
-      <b-card
-        v-for="(card, index) in player.loyaltyCards"
-        :key="index"
-        :title="card.name"
-        :bg-variant="card.name === 'You Are a Cylon' ? 'danger' : ''"
-      >
-        <b-card-text>{{ card.text }}</b-card-text>
-      </b-card>
+      <div>
+        <div class="heading">Skill Card Details</div>
+        <b-list-group>
+          <b-list-group-item
+            class="skill-card-wrapper"
+            v-for="(card, index) in player.skillCards"
+            :key="index">
+            <SkillCardLink :card="card" />
+          </b-list-group-item>
+        </b-list-group>
+      </div>
+
+      <div>
+        <div class="heading">Loyalty Card Details</div>
+        <b-card
+          v-for="(card, index) in player.loyaltyCards"
+          :key="index"
+          :title="card.name"
+          :bg-variant="card.name === 'You Are a Cylon' ? 'danger' : ''"
+        >
+          <b-card-text>{{ card.text }}</b-card-text>
+        </b-card>
+      </div>
     </div>
 
   </div>
@@ -44,12 +58,14 @@
 
 <script>
 import CharacterLink from './CharacterLink'
+import SkillCardLink from './SkillCardLink'
 
 export default {
   name: "PlayerInfo",
 
   components: {
     CharacterLink,
+    SkillCardLink,
   },
 
   computed: {
@@ -60,9 +76,6 @@ export default {
     viewerIsThisPlayer() {
       return this.player._id === this.$store.state.auth.user._id
     },
-  },
-
-  methods: {
   },
 }
 </script>

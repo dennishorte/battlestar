@@ -138,6 +138,8 @@ import crisisCards from '../res/crisis.js'
 import loyaltyCards from '../res/loyalty.js'
 import locations from '../res/location.js'
 
+import bsgutil from '../util.js'
+
 
 function locationCompare(l, r) {
   if (l.hazardous && !r.hazardous) {
@@ -157,12 +159,10 @@ function locationCompare(l, r) {
    expansions become supported.
  */
 function locationFilter(locations, expansions, area) {
-  const passOne = locations
+  return bsgutil
+    .expansionFilter(locations, expansions)
     .filter(x => x.area === area)
-    .filter(x => expansions.includes(x.expansion))
     .sort(locationCompare)
-
-  return passOne
 }
 
 
@@ -195,13 +195,13 @@ export default {
   computed: {
     charactersAvailable() {
       const expansions = this.$store.state.bsg.game.options.expansions
-      return this.characters
-                 .filter(c => expansions.includes(c.expansion))
-                 .sort((l, r) => l.name.localeCompare(r.name))
+      return bsgutil
+        .expansionFilter(this.characters, expansions)
+        .sort((l, r) => l.name.localeCompare(r.name))
     },
     loyaltyCardsAvailable() {
       const expansions = this.$store.state.bsg.game.options.expansions
-      return loyaltyCards.filter(c => expansions.includes(c.expansion))
+      return bsgutil.expansionFilter(loyaltyCards, expansions)
     },
     locationsColonialOne() {
       const expansions = this.$store.state.bsg.game.options.expansions
@@ -298,6 +298,36 @@ export default {
 
 .william-adama {
   color: #fabebe;
+}
+
+.skill-politics {
+  color: #555;
+  background-color: yellow;
+}
+
+.skill-leadership {
+  color: lightgray;
+  background-color: green;
+}
+
+.skill-tactics {
+  color: lightgray;
+  background-color: purple;
+}
+
+.skill-piloting {
+  color: lightgray;
+  background-color: red;
+}
+
+.skill-engineering {
+  color: lightgray;
+  background-color: blue;
+}
+
+.skill-treachery {
+  color: #555;
+  background-color: beige;
 }
 
 .d-none {

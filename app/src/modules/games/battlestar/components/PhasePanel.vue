@@ -44,12 +44,25 @@
         <p>Clicking this a second time will redistribute all of the loyalty cards.</p>
       </div>
 
+      <div v-if="phase === 'setup-receive-skills'">
+        <p>Each player, <strong>except</strong> the starting player, receives three skill cards of types they could normally receive during the receive skills step.</p>
+
+        <SkillCardDrawButton
+          v-for="skill in skillList"
+          :key="skill"
+          :name="skill" />
+
+      </div>
+
     </div>
   </div>
 </template>
 
 
 <script>
+import SkillCardDrawButton from './SkillCardDrawButton'
+
+import bsgutil from '../util.js'
 import util from '@/util.js'
 import loyaltyCards from '../res/loyalty.js'
 
@@ -160,6 +173,10 @@ const options = [
 export default {
   name: 'PhasePanel',
 
+  components: {
+    SkillCardDrawButton,
+  },
+
   props: {
     characters: Array,
     loyaltyCards: Array,
@@ -201,6 +218,10 @@ export default {
 
     phase() {
       return this.$store.state.bsg.game.phase
+    },
+
+    skillList() {
+      return bsgutil.skillList
     },
   },
 
