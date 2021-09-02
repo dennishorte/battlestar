@@ -21,7 +21,7 @@ function logEnrichArgClasses(msg) {
 
   for (const key of Object.keys(msg.args)) {
     // Convert string args to a dict
-    if (typeof msg.args[key] === 'string') {
+    if (typeof msg.args[key] !== 'object') {
       msg.args[key] = {
         value: msg.args[key],
       }
@@ -75,6 +75,10 @@ export default {
       ui: {
         charactersModal: {
           selected: '',
+        },
+
+        playerModal: {
+          playerId: '',
         },
 
         skillCardsModal: {
@@ -143,6 +147,34 @@ export default {
       this.state.bsg.game = data
     },
 
+    loyaltyCardDraw(state, playerId) {
+      const player = state.game.players.find(p => p._id === playerId)
+      const deck = state.game.loyaltyDeck
+      player.loyaltyCards.push(deck.pop())
+
+      log(state, {
+        template: "{player} ({character}) drew a loyalty card",
+        classes: ['loyalty-draw'],
+        args: {
+          player: player.name,
+          character: player.character,
+        },
+      })
+    },
+
+    loyaltyDeckSet(state, deck) {
+      state.game.players.forEach(p => p.loyaltyCards = [])
+      state.game.loyaltyDeck = deck
+      log(state, {
+        template: "Loyalty deck created with {numHuman} Human cards and {numCylon} Cylon cards",
+        classes: ['loyalty-deck'],
+        args: {
+          numHuman: deck.filter(c => c.team === 'Human').length,
+          numCylon: deck.filter(c => c.team === 'Cylon').length,
+        },
+      })
+    },
+
     pawnDrop(state, targetRoomName) {
       const playerId = state.ui.pawnGrab.playerId
       const player = state.game.players.find(p => p._id === playerId)
@@ -175,6 +207,10 @@ export default {
         classes: ['phase-change'],
         args: { phase },
       })
+    },
+
+    playerShow(state, playerId) {
+      state.ui.playerModal.playerId = playerId
     },
 
     skillCardInfoRequest(state, cardName) {

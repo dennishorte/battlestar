@@ -33,12 +33,26 @@
         <b-button block @click="distributeTitleCards">click to distribute title cards</b-button>
       </div>
 
+      <div v-if="phase === 'setup-distribute-loyalty-cards'">
+        <b-button
+          block
+          variant="primary"
+          @click="distributeLoyaltyCards"
+        >
+          click to distribute loyalty cards
+        </b-button>
+        <p>Clicking this a second time will redistribute all of the loyalty cards.</p>
+      </div>
+
     </div>
   </div>
 </template>
 
 
 <script>
+import util from '@/util.js'
+import loyaltyCards from '../res/loyalty.js'
+
 const options = [
   {
     label: 'Setup',
@@ -148,6 +162,7 @@ export default {
 
   props: {
     characters: Array,
+    loyaltyCards: Array,
   },
 
   data() {
@@ -208,6 +223,38 @@ export default {
       }
 
       throw "Unable to assign title: " + title
+    },
+
+    distributeLoyaltyCards() {
+      const players = this.$store.state.bsg.game.players
+      const numPlayers = players.length
+
+      let humanCards = loyaltyCards.filter(c => c.name === 'You Are Not a Cylon')
+      const cylonCards = loyaltyCards.filter(c => c.name === 'You Are a Cylon')
+      util.shuffleArray(humanCards)
+      util.shuffleArray(cylonCards)
+
+      const numCylons = numPlayers < 5 ? 1 : 2
+      let numHumans = numPlayers < 5 ? numPlayers + 2 : numPlayers + 3
+      if (players.some(p => p.character === "Gaius Baltar")) {
+        numHumans += 1
+      }
+      if (players.some(p => p.character === "Sharon Valerii")) {
+        numHumans += 1
+      }
+
+      // Build the initial deck
+      const deck = [...cylonCards.slice(0, numCylons), ...humanCards.slice(0, numHumans)]
+      util.shuffleArray(deck)
+      this.$store.commit('bsg/loyaltyDeckSet', deck)
+
+      for (const player of players) {
+        this.$store.commit('bsg/loyaltyCardDraw', player._id)
+
+        if (player.character === 'Gaius Baltar') {
+          this.$store.commit('bsg/loyaltyCardDraw', player._id)
+        }
+      }
     },
 
     distributeTitleCards() {

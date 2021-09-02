@@ -36,7 +36,10 @@
 
       <b-row>
         <b-col>
-          <PhasePanel :characters="charactersAvailable" />
+          <PhasePanel
+            :characters="charactersAvailable"
+            :loyaltyCards="loyaltyCardsAvailable"
+          />
 
           <CrisisCard style="display:none;" :card="crisisCards[44]" />
         </b-col>
@@ -104,6 +107,13 @@
       <GameLog />
     </b-modal>
 
+    <b-modal
+      id="player-modal"
+      title="Player Info"
+      ok-only>
+      <PlayerInfo />
+    </b-modal>
+
     <HoldingMessage />
 
   </div>
@@ -117,6 +127,7 @@ import GameLog from './GameLog'
 import HoldingMessage from './HoldingMessage'
 import LocationGroup from './LocationGroup'
 import PhasePanel from './PhasePanel'
+import PlayerInfo from './PlayerInfo'
 import Players from './Players'
 import Resources from './Resources'
 import SkillCards from './SkillCards'
@@ -124,6 +135,7 @@ import SpaceZone from './SpaceZone'
 
 import characters from '../res/character.js'
 import crisisCards from '../res/crisis.js'
+import loyaltyCards from '../res/loyalty.js'
 import locations from '../res/location.js'
 
 
@@ -164,6 +176,7 @@ export default {
     HoldingMessage,
     LocationGroup,
     PhasePanel,
+    PlayerInfo,
     Players,
     Resources,
     SkillCards,
@@ -185,6 +198,10 @@ export default {
       return this.characters
                  .filter(c => expansions.includes(c.expansion))
                  .sort((l, r) => l.name.localeCompare(r.name))
+    },
+    loyaltyCardsAvailable() {
+      const expansions = this.$store.state.bsg.game.options.expansions
+      return loyaltyCards.filter(c => expansions.includes(c.expansion))
     },
     locationsColonialOne() {
       const expansions = this.$store.state.bsg.game.options.expansions

@@ -38,6 +38,9 @@ Factory.initialize = async function(game) {
   }
 
   game.log = []
+
+  game.loyaltyDeck = []
+
   game.players = await makePlayers(game.userIds, (user) => {
     return {
       _id: user._id,
@@ -46,6 +49,7 @@ Factory.initialize = async function(game) {
       character: '',
       location: '',
       active: false,
+      loyaltyCards: [],
       skillCards: [],
     }
   })
