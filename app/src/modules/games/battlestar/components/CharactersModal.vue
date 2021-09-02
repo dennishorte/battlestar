@@ -108,9 +108,9 @@ export default {
 
   methods: {
     assign(playerId) {
-      this.$store.commit('bsg/character_assign', {
+      this.$store.commit('bsg/characterAssign', {
         playerId,
-        characterName: this.selected,
+        character: this.selectedData,
       })
     },
 

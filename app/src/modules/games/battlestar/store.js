@@ -139,16 +139,23 @@ export default {
       state.game.skillCheck.active.card = card
     },
 
-    character_assign(state, { playerId, characterName }) {
+    characterAssign(state, { playerId, character }) {
       const player = state.game.players.find(p => p._id === playerId)
-      player.character = characterName
+      player.character = character.name
+      player.location = character.setup
+
+      // Helo starts "Stranded on Caprica".
+      // Rather than make a special location for him, just put him on Caprica.
+      if (character.name === 'Karl "Helo" Agathon') {
+        player.location = 'Caprica'
+      }
 
       log(state, {
         template: "{player} chooses {character}",
         classes: ['character-selection', 'player-action'],
         args: {
           player: player.name,
-          character: characterName,
+          character: character.name,
         }
       })
     },
