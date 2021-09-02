@@ -70,6 +70,11 @@
         <p>You can move your pawn by clicking on it and then clicking on the location you want to move to.</p>
       </div>
 
+      <div v-if="phase ==='main-action'">
+        <p>Take a single action.</p>
+        <p>Actions can be selected from the character's location, skill cards, quorum cards, or character abilities. All actions have the prefix "Action:"</p>
+      </div>
+
     </div>
   </div>
 </template>

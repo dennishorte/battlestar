@@ -2,6 +2,7 @@ import axios from 'axios'
 import util from '@/util.js'
 
 import bsgutil from './util.js'
+import quorumCards from './res/quorum.js'
 import skillCards from './res/skill.js'
 
 
@@ -20,6 +21,12 @@ async function makePlayers(userIds, factory) {
   const players = users.map(factory)
   return util.shuffleArray(players)
 }
+
+function makeQuorumDeck(expansions) {
+  const cards = bsgutil.expansionFilter(quorumCards, expansions)
+  return util.shuffleArray(cards)
+}
+
 
 const Factory = {}
 export default Factory
@@ -44,6 +51,8 @@ Factory.initialize = async function(game) {
     vipers: 6,
     damaged_vipers: 0,
 
+    nukes: 2,
+
     jump_track: 0,
   }
 
@@ -61,9 +70,13 @@ Factory.initialize = async function(game) {
       active: false,
       loyaltyCards: [],
       skillCards: [],
+      oncePerGameActionUsed: false,
     }
   })
   game.players[0].active = true
+
+  game.quorumDeck = makeQuorumDeck()
+  game.quroumHand = [game.quorumDeck.pop()]
 
   game.skillCheck = {
     past: [],
