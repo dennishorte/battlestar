@@ -58,6 +58,16 @@
         </template>
       </div>
 
+      <template #modal-footer="{ ok }">
+        <b-button v-if="locationModalDamaged" size="sm" variant="danger" @click="repair">
+          repair
+        </b-button>
+
+        <b-button size="sm" variant="success" @click="ok()">
+          OK
+        </b-button>
+      </template>
+
     </b-modal>
   </div>
 </template>
@@ -81,6 +91,7 @@ export default {
   data() {
     return {
       skillList: bsgutil.skillList,
+      locationModalDamaged: false,
       locationModalLoc: {},
       locationModalShow: false,
     }
@@ -122,6 +133,7 @@ export default {
       }
       else {
         this.locationModalLoc = loc
+        this.locationModalDamaged = this.damageReport.includes(loc.name)
         this.locationModalShow = true
       }
     },
@@ -135,6 +147,11 @@ export default {
 
     playersAt(location) {
       return this.players.filter(p =>  p.location === location.name)
+    },
+
+    repair() {
+      this.$store.commit('bsg/locationRepair', this.locationModalLoc.name)
+      this.locationModalShow = false
     },
   },
 }

@@ -217,6 +217,18 @@ export default {
       this.state.bsg.game = data
     },
 
+    locationRepair(state, name) {
+      const damagedLocations = state.game.space.ships.galactica.damage
+      const damagedIndex = damagedLocations.indexOf(name)
+
+      if (damagedIndex === -1) {
+        alert(`That location is not damaged. ${name}`)
+      }
+
+      damagedLocations.splice(damagedIndex, 1)
+      state.game.space.galacticaDamageTokens.push(name)
+    },
+
     loyaltyCardDraw(state, playerId) {
       const player = state.game.players.find(p => p._id === playerId)
       const deck = state.game.loyaltyDeck
@@ -356,7 +368,6 @@ export default {
           return
         }
 
-        state.game.space.ships.galactica.damage.push(damageToken)
         log(state, {
           template: `Galactica gains {token} damage token`,
           classes: ['space-action', 'admin-action'],
@@ -365,7 +376,15 @@ export default {
           },
         })
 
-        console.log(state.game.space.ships.galactica.damage)
+        if (damageToken === '-1 fuel') {
+          adjustCounter(state, 'fuel', -1)
+        }
+        else if (damageToken === '-1 food') {
+          adjustCounter(state, 'food', -1)
+        }
+        else {
+          state.game.space.ships.galactica.damage.push(damageToken)
+        }
       }
 
       clearGrab(state)
