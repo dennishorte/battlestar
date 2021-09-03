@@ -14,7 +14,7 @@
         </b-col>
       </b-row>
 
-      <b-row>
+      <b-row class="action-buttons-wrapper">
         <b-col>
           <div class="action-buttons">
             <b-button variant="success" v-b-modal.game-log-modal>log</b-button>
@@ -337,6 +337,13 @@ export default {
 .action-buttons {
   display: flex;
   justify-content: space-between;
+}
+
+.action-buttons-wrapper {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 2;
 }
 
 .row {
