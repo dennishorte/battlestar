@@ -4,6 +4,20 @@ import factory from './factory.js'
 import util from '@/util.js'
 
 
+function adjustCounter(state, counter, amount) {
+  if (amount === 0) return
+
+  state.game.counters[counter] += amount
+  log(state, {
+    template: `${counter} adjusted by {amount}`,
+    classes: [
+      amount > 0 ? 'resource-up' : 'resource-down',
+      'admin-action',
+    ],
+    args: { amount },
+  })
+}
+
 function clearGrab(state) {
   // Pawn
   state.ui.pawnGrab.playerId = ''
@@ -14,6 +28,21 @@ function clearGrab(state) {
 
   // Grab Message
   state.ui.grabbing.message = ''
+}
+
+function doSpaceComponentRemove(state) {
+  const { component, source } = state.ui.spaceComponentGrab
+  removeFromSpaceRegion(state)
+  clearGrab(state)
+
+  log(state, {
+    template: "{component} returned to supply from {region}",
+    classes: ['player-action', 'space-action'],
+    args: {
+      component: component,
+      region: source,
+    },
+  })
 }
 
 function logEnrichArgClasses(msg) {
@@ -79,6 +108,19 @@ function maybeReshuffleSkill(state, skill) {
       classes: ['admin-action', 'skill-deck-shuffle'],
       args: { skill },
     })
+  }
+}
+
+function removeFromSpaceRegion(state) {
+  const { component, source } = state.ui.spaceComponentGrab
+  if (source !== 'supply') {
+    const deployRegion = state.game.space.deployed[source]
+    const idx = deployRegion.indexOf(component)
+    deployRegion.splice(idx, 1)
+  }
+
+  if (component.startsWith('basestar')) {
+    state.game.space.ships[component].damage = 0
   }
 }
 
@@ -270,16 +312,77 @@ export default {
       state.ui.skillCardsModal.selected = cardName
     },
 
+    spaceComponentDamage(state) {
+      const { component, source } = state.ui.spaceComponentGrab
+
+      if (component === 'viper') {
+        state.game.space.ships.viper.damaged += 1
+        removeFromSpaceRegion(state)
+        log(state, {
+          template: 'Viper from region {region} damaged',
+          classes: ['space-action', 'admin-action'],
+          args: {
+            region: source,
+          },
+        })
+      }
+      else if (component.startsWith('basestar')) {
+        const letter = component[component.length - 1].toUpperCase()
+        const key = 'basestar' + letter
+        state.game.space.ships[key].damage += 1
+        log(state, {
+          template: `{basestar} takes 1 damage`,
+          classes: ['space-action', 'admin-action'],
+          args: {
+            basestar: key,
+          },
+        })
+      }
+
+      clearGrab(state)
+    },
+
+    spaceComponentDestroy(state) {
+      const { component, source } = state.ui.spaceComponentGrab
+
+      if (component === 'viper') {
+        state.game.space.ships.viper.destroyed += 1
+        log(state, {
+          template: 'Viper from region {region} destroyed',
+          classes: ['space-action', 'admin-action'],
+          args: {
+            region: source,
+          },
+        })
+        removeFromSpaceRegion(state)
+        clearGrab(state)
+      }
+      else if (component === 'civilian') {
+        state.game.space.ships.civilian.destroyed += 1
+        const destroyed = state.game.space.ships.civilian.remaining.pop()
+        log(state, {
+          template: 'Civilian ship destroyed: {effect}',
+          classes: ['space-action', 'admin-action'],
+          args: {
+            effect: destroyed.effect,
+          },
+        })
+        adjustCounter(state, 'population', destroyed.population)
+        adjustCounter(state, 'morale', destroyed.morale)
+        adjustCounter(state, 'fuel', destroyed.fuel)
+        removeFromSpaceRegion(state)
+        clearGrab(state)
+      }
+      else {
+        doSpaceComponentRemove(state)
+      }
+    },
+
     spaceComponentDrop(state, target) {
       const { component, source } = state.ui.spaceComponentGrab
-      clearGrab(state)
 
-      // Remove the component from its original region
-      if (source !== 'supply') {
-        const deployRegion = state.game.space.deployed[source]
-        const idx = deployRegion.indexOf(component)
-        deployRegion.splice(idx, 1)
-      }
+      removeFromSpaceRegion(state)
+      clearGrab(state)
 
       // Add the component to the new region
       state.game.space.deployed[target].push(component)
@@ -306,6 +409,20 @@ export default {
       state.ui.spaceComponentGrab.component = component
       state.ui.spaceComponentGrab.source = source
       state.ui.grabbing.message = message
+    },
+
+    spaceComponentRemove(state) {
+      doSpaceComponentRemove(state)
+    },
+
+    spaceComponentsClear(state) {
+      state.game.space.deployed = [[], [], [], [], [], []]
+
+      log(state, {
+        template: "All space components returned to the supply",
+        classes: ['admin-action', 'space-action'],
+        args: {},
+      })
     },
 
     titleAssign(state, { title, character }) {

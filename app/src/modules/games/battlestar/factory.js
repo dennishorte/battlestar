@@ -2,6 +2,7 @@ import axios from 'axios'
 import util from '@/util.js'
 
 import bsgutil from './util.js'
+import civilianDistribution from './res/civilian_ships.js'
 import quorumCards from './res/quorum.js'
 import skillCards from './res/skill.js'
 
@@ -11,6 +12,44 @@ function fillSkillDecks(decks, expansions) {
   Object.keys(decks).forEach(skill => {
     decks[skill] = util.shuffleArray(cards.filter(c => c[skill]))
   })
+}
+
+function initializeCivilians() {
+  const civilians = []
+  for (let j = 0; j < civilianDistribution.length; j++) {
+    const { effect, quantity } = civilianDistribution[j]
+    for (let i = 0; i < quantity; i++) {
+      const ship = {
+        effect,
+        population: 0,
+        morale: 0,
+        fuel: 0,
+      }
+      if (effect === '-1 population') {
+        ship.population = -1
+      }
+      else if (effect === '-2 population') {
+        ship.population = -2
+      }
+      else if (effect === '-1 population, -1 fuel') {
+        ship.population = -1
+        ship.fuel = 1
+      }
+      else if (effect === '-1 population, -1 morale') {
+        ship.population = -1
+        ship.morale = -1
+      }
+      else if (effect === 'Nothing') {
+        // do nothing
+      }
+      else {
+        throw "Unknown ship effect: " + effect
+      }
+      civilians.push(ship)
+    }
+  }
+
+  return util.shuffleArray(civilians)
 }
 
 async function makePlayers(userIds, factory) {
@@ -48,7 +87,6 @@ Factory.initialize = async function(game) {
     population: 12,
 
     raptors: 4,
-    vipers: 6,
     damaged_vipers: 0,
 
     nukes: 2,
@@ -75,7 +113,7 @@ Factory.initialize = async function(game) {
   })
   game.players[0].active = true
 
-  game.quorumDeck = makeQuorumDeck()
+  game.quorumDeck = makeQuorumDeck(game.options.expansions)
   game.quroumHand = [game.quorumDeck.pop()]
 
   game.skillCheck = {
@@ -107,13 +145,38 @@ Factory.initialize = async function(game) {
   }
 
   game.space = {
+    ships: {
+      civilian: {
+        max: 12,
+        destroyed: 0,
+        remaining: initializeCivilians(),
+      },
+      viper: {
+        max: 6,
+        damaged: 0,
+        destroyed: 0,
+        piloted: 0,
+      },
+      basestarA: {
+        max: 1,
+        damage: 0,
+        name: 'Basestar A',
+      },
+      basestarB: {
+        max: 1,
+        damage: 0,
+        name: 'Basestar B',
+      },
+      raider: { max: 16 },
+      heavyRaider: { max: 2 },
+    },
     deployed: [
       [],
       [],
       [ 'civilian', 'civilian' ],
       [ 'viper' ],
       [ 'viper' ],
-      [ 'basestar', 'raider', 'raider', 'raider' ],
+      [ 'basestarA', 'raider', 'raider', 'raider' ],
     ],
   }
 
