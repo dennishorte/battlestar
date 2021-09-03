@@ -21,14 +21,28 @@
         <div @click="clickComponent('basestarA')">
           <div>Basestar A</div>
           <div class="ship-stats">
-            {{ status.basestarA.damage }} damage
+            <div v-if="status.basestarA.damage.length === 0">
+              undamaged
+            </div>
+            <template v-else>
+              <div v-for="dmg in status.basestarA.damage" :key="dmg">
+                {{ dmg }}
+              </div>
+            </template>
           </div>
         </div>
 
         <div @click="clickComponent('basestarB')">
           <div>Basestar B</div>
           <div class="ship-stats">
-            {{ status.basestarB.damage }} damage
+            <div v-if="status.basestarB.damage.length === 0">
+              undamaged
+            </div>
+            <template v-else>
+              <div v-for="dmg in status.basestarB.damage" :key="dmg">
+                {{ dmg }}
+              </div>
+            </template>
           </div>
         </div>
 
@@ -53,7 +67,7 @@
         <b-row no-gutters>
           <SpaceRegion :index="5" />
 
-          <b-col class="space-galactica" cols="2">
+          <b-col @click="clickComponent('galactica')" class="space-galactica" cols="2">
             galactica
           </b-col>
 

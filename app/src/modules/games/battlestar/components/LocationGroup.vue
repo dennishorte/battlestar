@@ -1,64 +1,65 @@
 <template>
-<div class="location-group">
-  <div class="locations-heading heading">
-    {{ name }}
-  </div>
+  <div class="location-group">
+    <div class="locations-heading heading">
+      {{ name }}
+    </div>
 
-  <b-list-group>
-    <b-list-group-item
-      @click="locationClick($event, loc)"
-      v-for="loc in locations"
-      class="location-item"
-      :data-location="loc.name"
-      :key="loc.name">
+    <b-list-group :key="damageTrigger">
+      <b-list-group-item
+        @click="locationClick($event, loc)"
+        v-for="loc in locations"
+        class="location-item"
+        :class="[damageReport.includes(loc.name) ? 'location-damaged' : '']"
+        :data-location="loc.name"
+        :key="loc.name">
 
-      {{ loc.name }}
+        {{ loc.name }}
 
-      <div class="player-holder">
+        <div class="player-holder">
 
-        <div
-          @click="pawnGrab($event, player._id)"
-          v-for="player in playersAt(loc)"
-          :key="player.index">
+          <div
+            @click="pawnGrab($event, player._id)"
+            v-for="player in playersAt(loc)"
+            :key="player.index">
 
-          <div :class="characterNameToCssClass(player.character)">
-            <font-awesome-icon :icon="['fas', 'user']" />
+            <div :class="characterNameToCssClass(player.character)">
+              <font-awesome-icon :icon="['fas', 'user']" />
+            </div>
           </div>
         </div>
+
+      </b-list-group-item>
+    </b-list-group>
+
+    <b-modal
+      :title="locationModalLoc.name"
+      ok-only
+      ok-title="done"
+      v-model="locationModalShow">
+
+      <div v-show="!!locationModalLoc.hazard">
+        {{ locationModalLoc.hazard }}
       </div>
 
-    </b-list-group-item>
-  </b-list-group>
+      <div>
+        {{ locationModalLoc.text }}
+      </div>
 
-  <b-modal
-    :title="locationModalLoc.name"
-    ok-only
-    ok-title="done"
-    v-model="locationModalShow">
+      <div v-if="!!locationModalLoc['skill check value']">
+        <span class="skill-difficulty">{{ locationModalLoc['skill check value'] }}</span>
 
-    <div v-show="!!locationModalLoc.hazard">
-      {{ locationModalLoc.hazard }}
-    </div>
+        <template v-for="skill in skillList">
+          <div
+            v-if="!!locationModalLoc[skill]"
+            :key="skill"
+            :class="`skill-${skill}`">
+            {{ skill }}
+          </div>
+        </template>
+      </div>
 
-    <div>
-      {{ locationModalLoc.text }}
-    </div>
-
-    <div v-if="!!locationModalLoc['skill check value']">
-      <span class="skill-difficulty">{{ locationModalLoc['skill check value'] }}</span>
-
-      <template v-for="skill in skillList">
-        <div
-          v-if="!!locationModalLoc[skill]"
-          :key="skill"
-          :class="`skill-${skill}`">
-          {{ skill }}
-        </div>
-      </template>
-    </div>
-
-  </b-modal>
-</div>
+    </b-modal>
+  </div>
 </template>
 
 
@@ -86,6 +87,12 @@ export default {
   },
 
   computed: {
+    damageTrigger() {
+      return this.$store.state.bsg.game.space.ships.galactica.damage.length
+    },
+    damageReport() {
+      return this.$store.state.bsg.game.space.ships.galactica.damage
+    },
     grabbingPawn() {
       return this.$store.getters['bsg/isPawnGrabbing']
     },
@@ -134,21 +141,26 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
+.location-damaged {
+  background-color: #fbc;
+  color: #d77
+}
+
 .location-drop {
-    background-color: #ddf!important;
+  background-color: #ddf!important;
 }
 
 .location-item {
-    padding: .3em .4em!important;
-    display: flex!important;
-    align-items: center;
-    justify-content: space-between;
+  padding: .3em .4em!important;
+  display: flex!important;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .player-holder {
-    display: flex!important;
-    align-items: center;
-    justify-content: center;
+  display: flex!important;
+  align-items: center;
+  justify-content: center;
 }
 </style>

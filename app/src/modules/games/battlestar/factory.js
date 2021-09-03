@@ -157,19 +157,41 @@ Factory.initialize = async function(game) {
         destroyed: 0,
         piloted: 0,
       },
+      galactica: {
+        damage: [],
+      },
       basestarA: {
         max: 1,
-        damage: 0,
+        damage: [],
         name: 'Basestar A',
       },
       basestarB: {
         max: 1,
-        damage: 0,
+        damage: [],
         name: 'Basestar B',
       },
       raider: { max: 16 },
       heavyRaider: { max: 2 },
     },
+
+    basestarDamageTokens: [
+      "critical hit (2 damage)",
+      "disabled hangar (can't launch)",
+      "disabled weapons (can't shoot)",
+      "structural damage (+2 to hit)",
+    ],
+
+    galacticaDamageTokens: [
+      "-1 fuel",
+      "-1 food",
+      "Hangar Deck",
+      "Armory",
+      "Command",
+      "Admiral's Quarters",
+      "FTL Control",
+      "Weapons Control",
+    ],
+
     deployed: [
       [],
       [],

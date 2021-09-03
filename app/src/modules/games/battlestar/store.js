@@ -120,7 +120,10 @@ function removeFromSpaceRegion(state) {
   }
 
   if (component.startsWith('basestar')) {
-    state.game.space.ships[component].damage = 0
+    state.game.space.ships[component].damage.forEach(token => {
+      state.game.space.basestarDamageTokens.push(token)
+    })
+    state.game.space.ships[component].damage = []
   }
 }
 
@@ -329,14 +332,40 @@ export default {
       else if (component.startsWith('basestar')) {
         const letter = component[component.length - 1].toUpperCase()
         const key = 'basestar' + letter
-        state.game.space.ships[key].damage += 1
+
+        const damageToken = util.shuffleArray(state.game.space.basestarDamageTokens).pop()
+        if (!damageToken) {
+          alert('No more damage tokens for basestars')
+          return
+        }
+
+        state.game.space.ships[key].damage.push(damageToken)
         log(state, {
-          template: `{basestar} takes 1 damage`,
+          template: `{basestar} gains {token} damage token`,
           classes: ['space-action', 'admin-action'],
           args: {
             basestar: key,
+            token: damageToken,
           },
         })
+      }
+      else if (component === 'galactica') {
+        const damageToken = util.shuffleArray(state.game.space.galacticaDamageTokens).pop()
+        if (!damageToken) {
+          alert('No more damage tokens for galactica. Usually this means humans lose.')
+          return
+        }
+
+        state.game.space.ships.galactica.damage.push(damageToken)
+        log(state, {
+          template: `Galactica gains {token} damage token`,
+          classes: ['space-action', 'admin-action'],
+          args: {
+            token: damageToken,
+          },
+        })
+
+        console.log(state.game.space.ships.galactica.damage)
       }
 
       clearGrab(state)
