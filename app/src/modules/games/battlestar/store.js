@@ -111,6 +111,13 @@ function maybeReshuffleSkill(state, skill) {
   }
 }
 
+function healBasestar(state, name) {
+  state.game.space.ships[name].damage.forEach(token => {
+    state.game.space.basestarDamageTokens.push(token)
+  })
+  state.game.space.ships[name].damage = []
+}
+
 function removeFromSpaceRegion(state) {
   const { component, source } = state.ui.spaceComponentGrab
   if (source !== 'supply') {
@@ -120,10 +127,7 @@ function removeFromSpaceRegion(state) {
   }
 
   if (component.startsWith('basestar')) {
-    state.game.space.ships[component].damage.forEach(token => {
-      state.game.space.basestarDamageTokens.push(token)
-    })
-    state.game.space.ships[component].damage = []
+    healBasestar(state, component)
   }
 }
 
@@ -465,6 +469,8 @@ export default {
 
     spaceComponentsClear(state) {
       state.game.space.deployed = [[], [], [], [], [], []]
+      healBasestar('basestarA')
+      healBasestar('basestarB')
 
       log(state, {
         template: "All space components returned to the supply",
