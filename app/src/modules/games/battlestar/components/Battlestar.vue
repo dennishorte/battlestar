@@ -18,8 +18,32 @@
         <b-col>
           <div class="action-buttons">
             <b-button variant="success" v-b-modal.game-log-modal>log</b-button>
-            <b-button variant="outline-danger" @click="passPriority">pass</b-button>
-            <b-button variant="outline-warning" @click="undo">undo</b-button>
+            <b-dropdown variant="warning" text="pass to" left>
+              <b-dropdown-item>
+                next
+              </b-dropdown-item>
+
+              <b-dropdown-divider />
+
+              <b-dropdown-item>
+                current player
+              </b-dropdown-item>
+              <b-dropdown-item>
+                admiral
+              </b-dropdown-item>
+              <b-dropdown-item>
+                president
+              </b-dropdown-item>
+
+              <b-dropdown-divider />
+
+              <b-dropdown-item
+                v-for="player in players"
+                :key="player.name"
+              >
+                {{ player.name }}
+              </b-dropdown-item>
+            </b-dropdown>
 
             <b-dropdown variant="primary" text="info" right>
               <b-dropdown-item @click="$bvModal.show('characters-modal')">
@@ -214,7 +238,10 @@ export default {
     locationsGalactica() {
       const expansions = this.$store.state.bsg.game.options.expansions
       return locationFilter(this.locations, expansions, 'Galactica')
-    }
+    },
+    players() {
+      return this.$store.state.bsg.game.players
+    },
   },
 
   methods: {
