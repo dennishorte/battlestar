@@ -173,7 +173,7 @@ import crisisCards from '../res/crisis.js'
 import loyaltyCards from '../res/loyalty.js'
 import locations from '../res/location.js'
 
-import bsgutil from '../util.js'
+import bsgutil from '../lib/util.js'
 
 
 function locationCompare(l, r) {

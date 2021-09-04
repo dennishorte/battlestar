@@ -36,7 +36,7 @@
 
 
 <script>
-import bsgutil from '../util.js'
+import bsgutil from '../lib/util.js'
 import skillCardsList from '../res/skill.js'
 import util from '@/util.js'
 

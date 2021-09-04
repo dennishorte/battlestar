@@ -107,7 +107,7 @@
 <script>
 import SkillCardDrawButton from './SkillCardDrawButton'
 
-import bsgutil from '../util.js'
+import bsgutil from '../lib/util.js'
 import util from '@/util.js'
 import loyaltyCards from '../res/loyalty.js'
 

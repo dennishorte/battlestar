@@ -78,7 +78,7 @@
 
 
 <script>
-import { skillList } from '../util.js'
+import { skillList } from '../lib/util.js'
 
 
 export default {

@@ -1,11 +1,11 @@
 import axios from 'axios'
 import util from '@/util.js'
 
-import bsgutil from './util.js'
-import civilianDistribution from './res/civilian_ships.js'
-import destinationCards from './res/destination.js'
-import quorumCards from './res/quorum.js'
-import skillCards from './res/skill.js'
+import bsgutil from '../lib/util.js'
+import civilianDistribution from '../res/civilian_ships.js'
+import destinationCards from '../res/destination.js'
+import quorumCards from '../res/quorum.js'
+import skillCards from '../res/skill.js'
 
 
 function fillSkillDecks(decks, expansions) {
@@ -83,7 +83,6 @@ Factory.initialize = async function(game) {
 
   game.initialized = true
 
-  // Game phase and step of phase
   game.phase = 'setup-character-creation'
 
   game.counters = {
@@ -99,6 +98,35 @@ Factory.initialize = async function(game) {
 
     jump_track: 0,
   }
+
+  game.decks = {
+    crisis: {
+      cards: [],
+      discard: [],
+    },
+    destination: {
+      cards: [],
+      discard: [],
+    },
+    loyalty: {
+      cards: [],
+      discard: [],  // Not used
+    },
+    quorum: {
+      cards: [],
+      discard: [],
+    },
+    skill: {
+      politics: {
+        cards: [],
+        discard: [],
+      },
+    },
+    superCrisis: {
+      cards: [],
+      discard: [],
+    },
+  },
 
   game.destination = {
     deck: makeDestinationDeck(game.options.expansions),

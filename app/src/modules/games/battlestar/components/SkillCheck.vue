@@ -55,7 +55,7 @@
 <script>
 import SkillLink from './SkillLink'
 
-import { skillList } from '../util.js'
+import { skillList } from '../lib/util.js'
 
 export default {
   name: 'SkillCheck',

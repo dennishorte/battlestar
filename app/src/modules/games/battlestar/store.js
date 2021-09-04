@@ -1,6 +1,6 @@
 import axios from 'axios'
-import bsgutil from './util.js'
-import factory from './factory.js'
+import bsgutil from './lib/util.js'
+import factory from './lib/factory.js'
 import util from '@/util.js'
 
 

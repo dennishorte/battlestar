@@ -6,7 +6,7 @@
 
 
 <script>
-import bsgutil from '../util.js'
+import bsgutil from '../lib/util.js'
 
 export default {
   name: 'SkillCardLink',
