@@ -174,6 +174,12 @@ export default {
   },
 
   getters: {
+    distanceTraveled(state) {
+      const cardDistance = state.game.destination.chosen
+                                .reduce((acc, next) => acc + next.distance, 0)
+      return state.game.destination.bonusDistance + cardDistance
+    },
+
     isPawnGrabbing(state) {
       return !!state.ui.pawnGrab.playerId
     },
@@ -211,6 +217,30 @@ export default {
 
     character_info_request(state, name) {
       state.ui.charactersModal.selected = name
+    },
+
+    destinationCardChoose(state, index) {
+      state.game.destination.admiralViewing.forEach((viewIdx, card) => {
+        if (viewIdx === index) {
+          state.game.destination.active = card
+        }
+        else {
+          state.game.destination.discard.push(card)
+        }
+      })
+      state.game.destination.admiralViewing = []
+
+
+    },
+
+    destinationCardDraw(state) {
+      util.shuffleArray(state.game.destination.deck)
+      state.game.destination.admiralViewing.push(state.game.destination.deck.pop())
+      log(state, {
+        template: "Admiral draws a destination card",
+        classes: [],
+        args: {},
+      })
     },
 
     grabCancel(state) {

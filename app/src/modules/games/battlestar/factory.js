@@ -3,6 +3,7 @@ import util from '@/util.js'
 
 import bsgutil from './util.js'
 import civilianDistribution from './res/civilian_ships.js'
+import destinationCards from './res/destination.js'
 import quorumCards from './res/quorum.js'
 import skillCards from './res/skill.js'
 
@@ -52,6 +53,11 @@ function initializeCivilians() {
   return util.shuffleArray(civilians)
 }
 
+function makeDestinationDeck(expansions) {
+  const cards = bsgutil.expansionFilter(destinationCards, expansions)
+  return util.shuffleArray(cards)
+}
+
 async function makePlayers(userIds, factory) {
   const requestResponse = await axios.post('/api/user/fetch_many', {
     userIds,
@@ -92,6 +98,14 @@ Factory.initialize = async function(game) {
     nukes: 2,
 
     jump_track: 0,
+  }
+
+  game.destination = {
+    deck: makeDestinationDeck(game.options.expansions),
+    discard: [],
+    admiralViewing: [],
+    chosen: [],
+    bonusDistance: 0,
   }
 
   game.log = []

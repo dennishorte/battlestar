@@ -49,6 +49,9 @@
               <b-dropdown-item @click="$bvModal.show('characters-modal')">
                 Characters
               </b-dropdown-item>
+              <b-dropdown-item @click="$bvModal.show('destination-modal')">
+                Destinations
+              </b-dropdown-item>
               <b-dropdown-item @click="$bvModal.show('skill-cards-modal')">
                 Skill Cards
               </b-dropdown-item>
@@ -117,6 +120,13 @@
     />
 
     <b-modal
+      id="destination-modal"
+      title="Destination"
+      ok-only>
+      <Destination />
+    </b-modal>
+
+    <b-modal
       id="skill-cards-modal"
       title="Skill Cards"
       ok-only>
@@ -147,6 +157,7 @@
 <script>
 import CharactersModal from './CharactersModal'
 import CrisisCard from './CrisisCard'
+import Destination from './Destination'
 import GameLog from './GameLog'
 import HoldingMessage from './HoldingMessage'
 import LocationGroup from './LocationGroup'
@@ -196,6 +207,7 @@ export default {
   components: {
     CharactersModal,
     CrisisCard,
+    Destination,
     GameLog,
     HoldingMessage,
     LocationGroup,

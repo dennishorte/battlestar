@@ -75,6 +75,30 @@
         <p>Actions can be selected from the character's location, skill cards, quorum cards, or character abilities. All actions have the prefix "Action:"</p>
       </div>
 
+      <div v-if="phase === 'jump-choose-destination'">
+        <p>The admiral looks at two destination cards and selects one of them to be the destination.</p>
+        <b-button block variant="primary" @click="$bvModal.show('destination-modal')">Open Destination Panel</b-button>
+        <b-button block variant="primary" @click="drawDestinationCard">Draw Destination Card</b-button>
+
+        <div
+          v-for="(card, index) in admiralDestinationCards"
+          :key="index"
+          class="mb-2 mt-2"
+        >
+          <div style="float: right;">
+            <b-button
+              variant="success"
+              @click="chooseDestination(index)"
+            >
+              {{ card.name }}
+            </b-button>
+          </div>
+          <div>name: {{ card.name }}</div>
+          <div>distance: {{ card.distance }}</div>
+          <div>effect: {{ card.text }}</div>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -210,6 +234,10 @@ export default {
   },
 
   computed: {
+    admiralDestinationCards() {
+      return this.$store.state.bsg.game.destination.admiralViewing
+    },
+
     characterTypeCounts() {
       const claimed = this.$store.state.bsg.game.players.map(p => p.character)
       const counts = {
@@ -267,6 +295,10 @@ export default {
       throw "Unable to assign title: " + title
     },
 
+    chooseDestination(index) {
+      this.$store.commit('bsg/destinationCardChoose', index)
+    },
+
     distributeLoyaltyCards() {
       const players = this.$store.state.bsg.game.players
       const numPlayers = players.length
@@ -302,6 +334,10 @@ export default {
     distributeTitleCards() {
       this._assignTitle('admiral')
       this._assignTitle('president')
+    },
+
+    drawDestinationCard() {
+      this.$store.commit('bsg/destinationCardDraw')
     },
 
     phaseChanged(value) {
