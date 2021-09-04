@@ -1,19 +1,9 @@
 import axios from 'axios'
 import util from '@/util.js'
 
-import bsgutil from '../lib/util.js'
 import civilianDistribution from '../res/civilian_ships.js'
-import destinationCards from '../res/destination.js'
-import quorumCards from '../res/quorum.js'
-import skillCards from '../res/skill.js'
+import decks from '../lib/decks.js'
 
-
-function fillSkillDecks(decks, expansions) {
-  const cards = bsgutil.expansionFilter(skillCards, expansions)
-  Object.keys(decks).forEach(skill => {
-    decks[skill] = util.shuffleArray(cards.filter(c => c[skill]))
-  })
-}
 
 function initializeCivilians() {
   const civilians = []
@@ -53,11 +43,6 @@ function initializeCivilians() {
   return util.shuffleArray(civilians)
 }
 
-function makeDestinationDeck(expansions) {
-  const cards = bsgutil.expansionFilter(destinationCards, expansions)
-  return util.shuffleArray(cards)
-}
-
 async function makePlayers(userIds, factory) {
   const requestResponse = await axios.post('/api/user/fetch_many', {
     userIds,
@@ -65,11 +50,6 @@ async function makePlayers(userIds, factory) {
   const users = requestResponse.data.users
   const players = users.map(factory)
   return util.shuffleArray(players)
-}
-
-function makeQuorumDeck(expansions) {
-  const cards = bsgutil.expansionFilter(quorumCards, expansions)
-  return util.shuffleArray(cards)
 }
 
 
@@ -99,38 +79,9 @@ Factory.initialize = async function(game) {
     jump_track: 0,
   }
 
-  game.decks = {
-    crisis: {
-      cards: [],
-      discard: [],
-    },
-    destination: {
-      cards: [],
-      discard: [],
-    },
-    loyalty: {
-      cards: [],
-      discard: [],  // Not used
-    },
-    quorum: {
-      cards: [],
-      discard: [],
-    },
-    skill: {
-      politics: {
-        cards: [],
-        discard: [],
-      },
-    },
-    superCrisis: {
-      cards: [],
-      discard: [],
-    },
-  },
+  game.decks = decks.factory(game.options.expansions)
 
   game.destination = {
-    deck: makeDestinationDeck(game.options.expansions),
-    discard: [],
     admiralViewing: [],
     chosen: [],
     bonusDistance: 0,
@@ -155,8 +106,7 @@ Factory.initialize = async function(game) {
   })
   game.players[0].active = true
 
-  game.quorumDeck = makeQuorumDeck(game.options.expansions)
-  game.quroumHand = [game.quorumDeck.pop()]
+  game.quroumHand = [game.decks.quorum.cards.pop()]
 
   game.skillCheck = {
     past: [],
@@ -165,25 +115,6 @@ Factory.initialize = async function(game) {
       logIds: [],  // List of log ids that were created during resolution
       skillCards: {},
     }
-  }
-
-  game.skillDecks = {
-    politics: [],
-    leadership: [],
-    tactics: [],
-    piloting: [],
-    engineering: [],
-    treachery: [],
-  }
-  fillSkillDecks(game.skillDecks, game.options.expansions)
-
-  game.skillDiscards = {
-    politics: [],
-    leadership: [],
-    tactics: [],
-    piloting: [],
-    engineering: [],
-    treachery: [],
   }
 
   game.space = {

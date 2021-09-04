@@ -96,12 +96,12 @@ function pushUnique(array, value) {
 
 // If the specified skill deck is empty, reshuffle the discard pile into it.
 function maybeReshuffleSkill(state, skill) {
-  if (state.game.skillDecks[skill].length == 0
-    && state.game.skillDiscards[skill].length > 0
+  if (state.game.decks.skill[skill].cards.length == 0
+    && state.game.decks.skill[skill].discard.length > 0
   ) {
-    const shuffled = util.shuffleArray([...state.game.skillDiscards[skill]])
-    state.game.skillDecks[skill] = shuffled
-    state.game.skillDiscards[skill] = []
+    const shuffled = util.shuffleArray([...state.game.decks.skill[skill].discard])
+    state.game.decks.skill[skill].cards = shuffled
+    state.game.decks.skill[skill].discard = []
 
     log(state, {
       template: "{skill} discard shuffled back into deck",
@@ -225,7 +225,7 @@ export default {
           state.game.destination.active = card
         }
         else {
-          state.game.destination.discard.push(card)
+          state.game.decks.destination.discard.push(card)
         }
       })
       state.game.destination.admiralViewing = []
@@ -234,8 +234,8 @@ export default {
     },
 
     destinationCardDraw(state) {
-      util.shuffleArray(state.game.destination.deck)
-      state.game.destination.admiralViewing.push(state.game.destination.deck.pop())
+      util.shuffleArray(state.game.decks.destination.cards)
+      state.game.destination.admiralViewing.push(state.game.decks.destinaion.cards.pop())
       log(state, {
         template: "Admiral draws a destination card",
         classes: [],
@@ -334,7 +334,7 @@ export default {
       maybeReshuffleSkill(state, skill)
 
       const player = state.game.players.find(p => p._id === playerId)
-      const draw = state.game.skillDecks[skill].pop()
+      const draw = state.game.decks.skills[skill].cards.pop()
 
       if (draw) {
         player.skillCards.push(draw)

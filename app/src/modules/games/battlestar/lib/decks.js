@@ -1,10 +1,11 @@
-import crisisCards from 'crisis.js'
-import destinationCards from 'destination.js'
-import locationCards from 'location.js'
-import loyaltyCards from 'loyalty.js'
-import quorumCards from 'quorum.js'
-import skillCards from 'skill.js'
-import superCrisisCards from 'super_crisis.js'
+import crisisCards from '../res/crisis.js'
+import destinationCards from '../res/destination.js'
+import loyaltyCards from '../res/loyalty.js'
+import quorumCards from '../res/quorum.js'
+import skillCards from '../res/skill.js'
+import superCrisisCards from '../res/super_crisis.js'
+
+import { shuffleArray } from '@/util.js'
 
 const Decks = {}
 export default Decks
@@ -18,7 +19,7 @@ Decks.factory = function(expansions) {
     return maker(skill, skillCards)
   }
 
-  const decks = {
+  return {
     crisis: makeDeck('crisis', crisisCards),
     destination: makeDeck('destination', destinationCards),
     loyalty: makeDeck('loyalty', loyaltyCards),
@@ -43,6 +44,8 @@ function makeDeckWithFilter(filter) {
         c.kind = kind
         return c
       })
+
+    shuffleArray(cards)
 
     return {
       cards,
