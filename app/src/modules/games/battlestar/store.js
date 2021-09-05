@@ -30,6 +30,22 @@ function clearGrab(state) {
   state.ui.grabbing.message = ''
 }
 
+function deckGet(state, deckName) {
+  return state.game.zones.decks[deckName]
+}
+
+function drawRandom(state, kind) {
+  const deck = deckGet(state, kind)
+  util.shuffleArray(deck)
+  return deck.pop()
+}
+
+function drawTop(state, path) {
+  maybeReshuffleDiscard(state, path)
+  const deck = deckGet(state, path).cards
+  return deck.shift()
+}
+
 function doSpaceComponentRemove(state) {
   const { component, source } = state.ui.spaceComponentGrab
   removeFromSpaceRegion(state)
@@ -80,6 +96,19 @@ function logEnrichArgClasses(msg) {
   }
 }
 
+function handGet(state, playerId) {
+  const player = playerById(state, playerId)
+  const hand = state.game.zones.players[player.name]
+  return hand
+}
+
+function healBasestar(state, name) {
+  state.game.space.ships[name].damage.forEach(token => {
+    state.game.space.basestarDamageTokens.push(token)
+  })
+  state.game.space.ships[name].damage = []
+}
+
 function log(state, msgObject) {
   logEnrichArgClasses(msgObject)
 
@@ -88,34 +117,37 @@ function log(state, msgObject) {
   log.push(msgObject)
 }
 
-function pushUnique(array, value) {
-  if (array.indexOf(value) === -1) {
-    array.push(value)
-  }
-}
+function maybeReshuffleDiscard(state, path) {
+  if (!path.endsWith('deck'))
+    return
 
-// If the specified skill deck is empty, reshuffle the discard pile into it.
-function maybeReshuffleSkill(state, skill) {
-  if (state.game.decks.skill[skill].cards.length == 0
-    && state.game.decks.skill[skill].discard.length > 0
-  ) {
-    const shuffled = util.shuffleArray([...state.game.decks.skill[skill].discard])
-    state.game.decks.skill[skill].cards = shuffled
-    state.game.decks.skill[skill].discard = []
+  const discardPath = path.replace('deck', 'discard')
+
+  let deck = deckGet(state, path)
+  let discard = deckGet(state, discardPath)
+
+  if (deck.length == 0 && discard.length > 0) {
+    deck = util.shuffleArray([...discard])
+    discard = []
 
     log(state, {
-      template: "{skill} discard shuffled back into deck",
+      template: "Shuffled this discard pile back into {deck}",
       classes: ['admin-action', 'skill-deck-shuffle'],
-      args: { skill },
+      args: {
+        deck: path,
+      },
     })
   }
 }
 
-function healBasestar(state, name) {
-  state.game.space.ships[name].damage.forEach(token => {
-    state.game.space.basestarDamageTokens.push(token)
-  })
-  state.game.space.ships[name].damage = []
+function playerById(state, playerId) {
+  return state.game.players.find(p => p._id === playerId)
+}
+
+function pushUnique(array, value) {
+  if (array.indexOf(value) === -1) {
+    array.push(value)
+  }
 }
 
 function removeFromSpaceRegion(state) {
@@ -174,6 +206,13 @@ export default {
   },
 
   getters: {
+    deck: (state) => (key) => deckGet(state, key),
+    players: (state) => state.game.players,
+
+
+    ////////////////////////////////////////////////////////////
+    // Older ones
+
     distanceTraveled(state) {
       const cardDistance = state.game.destination.chosen
                                 .reduce((acc, next) => acc + next.distance, 0)
@@ -190,12 +229,34 @@ export default {
   },
 
   mutations: {
+    ////////////////////////////////////////////////////////////
+    // New Deck Mutations
+
+    draw(state, { playerId, deckName }) {
+      const card = drawTop(state, deckName)
+      handGet(state, playerId).cards.push(card)
+
+      const playerName = playerById(state, playerId).name
+
+      log(state, {
+        template: "{player} draw a card from {deck}",
+        classes: ['player-action', 'draw'],
+        args: {
+          player: playerName,
+          deck: deckName,
+        },
+      })
+    },
+
+    ////////////////////////////////////////////////////////////
+    // Older mutations
+
     beginSkillCheck(state, card) {
       state.game.skillCheck.active.card = card
     },
 
     characterAssign(state, { playerId, character }) {
-      const player = state.game.players.find(p => p._id === playerId)
+      const player = playerById(state, playerId)
       player.character = character.name
       player.location = character.setup
 
@@ -264,7 +325,7 @@ export default {
     },
 
     loyaltyCardDraw(state, playerId) {
-      const player = state.game.players.find(p => p._id === playerId)
+      const player = playerById(state, playerId)
       const deck = state.game.loyaltyDeck
       player.loyaltyCards.push(deck.pop())
 
@@ -293,7 +354,7 @@ export default {
 
     pawnDrop(state, targetRoomName) {
       const playerId = state.ui.pawnGrab.playerId
-      const player = state.game.players.find(p => p._id === playerId)
+      const player = playerById(state, playerId)
       clearGrab(state)
 
       player.location = targetRoomName
@@ -310,7 +371,7 @@ export default {
     },
 
     pawnGrab(state, playerId) {
-      const player = state.game.players.find(p => p._id === playerId)
+      const player = playerById(state, playerId)
       state.ui.grabbing.message = `Holding pawn ${player.character}`
       state.ui.pawnGrab.playerId = playerId
     },
@@ -331,10 +392,8 @@ export default {
 
     skillCardDraw(state, { skill, playerId }) {
       skill = skill.toLowerCase()
-      maybeReshuffleSkill(state, skill)
-
-      const player = state.game.players.find(p => p._id === playerId)
-      const draw = state.game.decks.skills[skill].cards.pop()
+      const player = playerById(state, playerId)
+      const draw = drawTop(state, 'skill.' + skill)
 
       if (draw) {
         player.skillCards.push(draw)
@@ -379,7 +438,7 @@ export default {
         const letter = component[component.length - 1].toUpperCase()
         const key = 'basestar' + letter
 
-        const damageToken = util.shuffleArray(state.game.space.basestarDamageTokens).pop()
+        const damageToken = drawRandom(state, 'damageBasestar')
         if (!damageToken) {
           alert('No more damage tokens for basestars')
           return
@@ -396,7 +455,7 @@ export default {
         })
       }
       else if (component === 'galactica') {
-        const damageToken = util.shuffleArray(state.game.space.galacticaDamageTokens).pop()
+        const damageToken = drawRandom(state, 'damageGalactica')
         if (!damageToken) {
           alert('No more damage tokens for galactica. Usually this means humans lose.')
           return

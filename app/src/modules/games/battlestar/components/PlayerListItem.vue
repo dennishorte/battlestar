@@ -12,7 +12,7 @@
       <div>
         <span v-if="isAdmiral">A</span>
         <span v-if="isPresident">P</span>
-        <span>{{ player.skillCards.length }}</span>
+        <span>*</span>
       </div>
     </div>
 
@@ -49,20 +49,22 @@ export default {
 
   computed: {
     hasLoyaltyCard() {
-      return (
-        this.player._id === this.$store.state.auth.user._id
-        && this.player.loyaltyCards.length > 0
-      )
+      return false
+      /* return (
+       *   this.player._id === this.$store.state.auth.user._id
+       *   && this.player.loyaltyCards.length > 0
+       * ) */
     },
     isAdmiral() {
       const admiral = this.$store.state.bsg.game.titles.admiral
       return admiral && admiral === this.player.character
     },
     isCylon() {
-      return (
-        this.player._id === this.$store.state.auth.user._id
-        && this.player.loyaltyCards.some(c => c.name === 'You Are a Cylon')
-      )
+      return false
+      /* return (
+       *   this.player._id === this.$store.state.auth.user._id
+       *   && this.player.loyaltyCards.some(c => c.name === 'You Are a Cylon')
+       * ) */
     },
     isPresident() {
       const president = this.$store.state.bsg.game.titles.president

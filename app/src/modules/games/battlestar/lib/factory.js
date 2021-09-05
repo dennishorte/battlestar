@@ -1,70 +1,24 @@
 import axios from 'axios'
 import util from '@/util.js'
 
-import civilianDistribution from '../res/civilian_ships.js'
-import decks from '../lib/decks.js'
+import Decks from '../lib/decks.js'
 
 
-function initializeCivilians() {
-  const civilians = []
-  for (let j = 0; j < civilianDistribution.length; j++) {
-    const { effect, quantity } = civilianDistribution[j]
-    for (let i = 0; i < quantity; i++) {
-      const ship = {
-        effect,
-        population: 0,
-        morale: 0,
-        fuel: 0,
-      }
-      if (effect === '-1 population') {
-        ship.population = -1
-      }
-      else if (effect === '-2 population') {
-        ship.population = -2
-      }
-      else if (effect === '-1 population, -1 fuel') {
-        ship.population = -1
-        ship.fuel = 1
-      }
-      else if (effect === '-1 population, -1 morale') {
-        ship.population = -1
-        ship.morale = -1
-      }
-      else if (effect === 'Nothing') {
-        // do nothing
-      }
-      else {
-        throw "Unknown ship effect: " + effect
-      }
-      civilians.push(ship)
-    }
-  }
-
-  return util.shuffleArray(civilians)
+export default {
+  initialize,
 }
 
-async function makePlayers(userIds, factory) {
-  const requestResponse = await axios.post('/api/user/fetch_many', {
-    userIds,
-  })
-  const users = requestResponse.data.users
-  const players = users.map(factory)
-  return util.shuffleArray(players)
-}
-
-
-const Factory = {}
-export default Factory
-
-Factory.initialize = async function(game) {
+async function initialize(game) {
   if (game.initialized) {
     throw "Game already initialized"
   }
 
+  // Top-level values
   game.initialized = true
-
   game.phase = 'setup-character-creation'
+  game.log = []
 
+  // Counters
   game.counters = {
     food: 8,
     fuel: 8,
@@ -79,18 +33,7 @@ Factory.initialize = async function(game) {
     jump_track: 0,
   }
 
-  game.decks = decks.factory(game.options.expansions)
-
-  game.destination = {
-    admiralViewing: [],
-    chosen: [],
-    bonusDistance: 0,
-  }
-
-  game.log = []
-
-  game.loyaltyDeck = []
-
+  // Players
   game.players = await makePlayers(game.userIds, (user) => {
     return {
       _id: user._id,
@@ -99,14 +42,45 @@ Factory.initialize = async function(game) {
       character: '',
       location: '',
       active: false,
-      loyaltyCards: [],
-      skillCards: [],
       oncePerGameActionUsed: false,
     }
   })
   game.players[0].active = true
 
-  game.quroumHand = [game.decks.quorum.cards.pop()]
+  // Zones
+  const decks = Decks.factory(game.options.expansions)
+  game.zones = {
+    common: {
+      name: 'common',
+      cards: [],
+      visiblility: 'visible',
+    },
+    decks: makeDeckZones(decks),
+    exile: {
+      name: 'exile',
+      cards: [],
+      visibility: 'visible',
+    },
+    quorum: {
+      name: 'quorum',
+      cards: [],
+      visibility: 'president',
+    },
+    players: makePlayerZones(game.players),
+    ships: {}, // TODO
+    space: makeSpaceZones(),
+  }
+
+  ////////////////////////////////////////////////////////////
+
+
+  game.destination = {
+    admiralViewing: [],
+    chosen: [],
+    bonusDistance: 0,
+  }
+
+  game.loyaltyDeck = []
 
   game.skillCheck = {
     past: [],
@@ -122,7 +96,6 @@ Factory.initialize = async function(game) {
       civilian: {
         max: 12,
         destroyed: 0,
-        remaining: initializeCivilians(),
       },
       viper: {
         max: 6,
@@ -147,24 +120,6 @@ Factory.initialize = async function(game) {
       heavyRaider: { max: 2 },
     },
 
-    basestarDamageTokens: [
-      "critical hit (2 damage)",
-      "disabled hangar (can't launch)",
-      "disabled weapons (can't shoot)",
-      "structural damage (+2 to hit)",
-    ],
-
-    galacticaDamageTokens: [
-      "-1 fuel",
-      "-1 food",
-      "Hangar Deck",
-      "Armory",
-      "Command",
-      "Admiral's Quarters",
-      "FTL Control",
-      "Weapons Control",
-    ],
-
     deployed: [
       [],
       [],
@@ -181,4 +136,58 @@ Factory.initialize = async function(game) {
   }
 
   return game
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Helper Functions
+
+async function makePlayers(userIds, factory) {
+  const requestResponse = await axios.post('/api/user/fetch_many', {
+    userIds,
+  })
+  const users = requestResponse.data.users
+  const players = users.map(factory)
+  return util.shuffleArray(players)
+}
+
+function makeDeckZones(decks) {
+  const zones = {}
+
+  for (const [name, value] of Object.entries(decks)) {
+    zones[name] = {
+      name: `${name}.deck`,
+      cards: value,
+      visibility: 'hidden',
+    }
+  }
+
+  return zones
+}
+
+function makePlayerZones(players) {
+  const zones = {}
+
+  for (const player of players) {
+    zones[player.name] = {
+      name: player.name,
+      cards: [],
+      visibility: 'hidden',
+    }
+  }
+
+  return zones
+}
+
+function makeSpaceZones() {
+  const zones = {}
+  for (let i = 0; i < 6; i++) {
+    const name = `zone${i}`
+    zones[name] = {
+      name,
+      cards: [],
+      visibility: 'visible',
+    }
+  }
+  return zones
 }

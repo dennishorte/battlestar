@@ -17,7 +17,7 @@ const port = 3000
 
 app.use(express.static(path.join(__dirname, '../app/dist')))
 app.use(middleware.authenticate)
-app.use(bodyParser.json())
+app.use(bodyParser.json({ limit: "500kb" }))
 app.use(middleware.coerceIds)
 
 

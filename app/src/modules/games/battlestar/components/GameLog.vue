@@ -117,7 +117,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .log-entry {
     font-size: .7em;
 }

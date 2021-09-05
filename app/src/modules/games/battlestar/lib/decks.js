@@ -1,3 +1,4 @@
+import civilianDistribution from '../res/civilian_ships.js'
 import crisisCards from '../res/crisis.js'
 import destinationCards from '../res/destination.js'
 import loyaltyCards from '../res/loyalty.js'
@@ -7,11 +8,12 @@ import superCrisisCards from '../res/super_crisis.js'
 
 import { shuffleArray } from '@/util.js'
 
-const Decks = {}
-export default Decks
+export default {
+  factory,
+}
 
 
-Decks.factory = function(expansions) {
+function factory(expansions) {
   const makeDeck = makeDeckWithFilter(c => expansions.includes(c.expansion))
   const makeSkillDeck = function(skill, skillCards) {
     const filter = c => expansions.includes(c.expansion) && c[skill]
@@ -19,21 +21,94 @@ Decks.factory = function(expansions) {
     return maker(skill, skillCards)
   }
 
-  return {
+  const decks = {
+    damageBasestar,
+    damageGalactica,
+
+    civilians: makeDeck('civilians', makeCivilians()),
     crisis: makeDeck('crisis', crisisCards),
     destination: makeDeck('destination', destinationCards),
     loyalty: makeDeck('loyalty', loyaltyCards),
     quorum: makeDeck('quorum', quorumCards),
-    skill: {
-      politics: makeSkillDeck('politics', skillCards),
-      leadership: makeSkillDeck('leadership', skillCards),
-      tactics: makeSkillDeck('tactics', skillCards),
-      piloting: makeSkillDeck('piloting', skillCards),
-      engineering: makeSkillDeck('engineering', skillCards),
-      treachery: makeSkillDeck('treachery', skillCards),
-    },
     superCrisis: makeDeck('super-crisis', superCrisisCards),
+
+    politics: makeSkillDeck('politics', skillCards),
+    leadership: makeSkillDeck('leadership', skillCards),
+    tactics: makeSkillDeck('tactics', skillCards),
+    piloting: makeSkillDeck('piloting', skillCards),
+    engineering: makeSkillDeck('engineering', skillCards),
+    treachery: makeSkillDeck('treachery', skillCards),
   }
+
+  console.log(decks)
+  return decks
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Helper functions
+
+const damageBasestar = makeCards('damageBasestar', [
+  "critical hit (2 damage)",
+  "disabled hangar (can't launch)",
+  "disabled weapons (can't shoot)",
+  "structural damage (+2 to hit)",
+])
+
+const damageGalactica = makeCards('damageGalactica', [
+  "-1 fuel",
+  "-1 food",
+  "Hangar Deck",
+  "Armory",
+  "Command",
+  "Admiral's Quarters",
+  "FTL Control",
+  "Weapons Control",
+])
+
+function makeCivilians() {
+  const civilians = []
+  for (let j = 0; j < civilianDistribution.length; j++) {
+    const { effect, quantity } = civilianDistribution[j]
+    for (let i = 0; i < quantity; i++) {
+      const ship = {
+        effect,
+        population: 0,
+        morale: 0,
+        fuel: 0,
+      }
+      if (effect === '-1 population') {
+        ship.population = -1
+      }
+      else if (effect === '-2 population') {
+        ship.population = -2
+      }
+      else if (effect === '-1 population, -1 fuel') {
+        ship.population = -1
+        ship.fuel = 1
+      }
+      else if (effect === '-1 population, -1 morale') {
+        ship.population = -1
+        ship.morale = -1
+      }
+      else if (effect === 'Nothing') {
+        // do nothing
+      }
+      else {
+        throw "Unknown ship effect: " + effect
+      }
+      civilians.push(ship)
+    }
+  }
+
+  return civilians
+}
+
+function makeCards(kind, namelist) {
+  return namelist.map(name => ({
+    name,
+    kind,
+    expansion: 'base game',
+  }))
 }
 
 function makeDeckWithFilter(filter) {
@@ -42,14 +117,11 @@ function makeDeckWithFilter(filter) {
       .filter(filter)
       .map(c => {
         c.kind = kind
+        c.visibility = []
         return c
       })
 
     shuffleArray(cards)
-
-    return {
-      cards,
-      discard: [],
-    }
+    return cards
   }
 }

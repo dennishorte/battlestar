@@ -14,7 +14,7 @@
         <div @click="clickComponent('civilian')">
           <div>Civilian</div>
           <div class="ship-stats">
-            {{ status.civilian.remaining.length }} remain
+            remaining
           </div>
         </div>
 

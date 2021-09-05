@@ -47,21 +47,14 @@
       <div v-if="phase === 'setup-receive-skills'">
         <p>Each player, <strong>except</strong> the starting player, receives three skill cards of types they could normally receive during the receive skills step.</p>
 
-        <SkillCardDrawButton
-          v-for="skill in skillList"
-          :key="skill"
-          :name="skill" />
-
+        <SkillDecks />
       </div>
 
       <div v-if="phase === 'main-receive-skills'">
         <p>The active player draws all of the skill cards listed on his character sheet.</p>
         <p>If the character sheet shows skills with a star, the player draws a card for only one of the starred skills.</p>
 
-        <SkillCardDrawButton
-          v-for="skill in skillList"
-          :key="skill"
-          :name="skill" />
+        <SkillDecks />
       </div>
 
       <div v-if="phase === 'main-movement'">
@@ -105,9 +98,8 @@
 
 
 <script>
-import SkillCardDrawButton from './SkillCardDrawButton'
+import SkillDecks from './SkillDecks'
 
-import bsgutil from '../lib/util.js'
 import util from '@/util.js'
 import loyaltyCards from '../res/loyalty.js'
 
@@ -219,7 +211,7 @@ export default {
   name: 'PhasePanel',
 
   components: {
-    SkillCardDrawButton,
+    SkillDecks,
   },
 
   props: {
@@ -267,10 +259,6 @@ export default {
 
     phase() {
       return this.$store.state.bsg.game.phase
-    },
-
-    skillList() {
-      return bsgutil.skillList
     },
   },
 
