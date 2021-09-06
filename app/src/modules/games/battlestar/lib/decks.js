@@ -22,11 +22,10 @@ function factory(expansions) {
   }
 
   const decks = {
-    damageBasestar,
-    damageGalactica,
-
     civilians: makeDeck('civilians', makeCivilians()),
     crisis: makeDeck('crisis', crisisCards),
+    damageBasestar: makeDeck('damageBasestar', damageBasestar),
+    damageGalactica: makeDeck('damageGalactica', damageGalactica),
     destination: makeDeck('destination', destinationCards),
     loyalty: makeDeck('loyalty', loyaltyCards),
     quorum: makeDeck('quorum', quorumCards),
@@ -40,21 +39,20 @@ function factory(expansions) {
     treachery: makeSkillDeck('treachery', skillCards),
   }
 
-  console.log(decks)
   return decks
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper functions
 
-const damageBasestar = makeCards('damageBasestar', [
+const damageBasestar = makeCards([
   "critical hit (2 damage)",
   "disabled hangar (can't launch)",
   "disabled weapons (can't shoot)",
   "structural damage (+2 to hit)",
 ])
 
-const damageGalactica = makeCards('damageGalactica', [
+const damageGalactica = makeCards([
   "-1 fuel",
   "-1 food",
   "Hangar Deck",
@@ -69,8 +67,11 @@ function makeCivilians() {
   const civilians = []
   for (let j = 0; j < civilianDistribution.length; j++) {
     const { effect, quantity } = civilianDistribution[j]
+    console.log('making civilians: ', quantity, effect)
     for (let i = 0; i < quantity; i++) {
       const ship = {
+        name: 'civilian',
+        expansion: 'base game',
         effect,
         population: 0,
         morale: 0,
@@ -103,10 +104,9 @@ function makeCivilians() {
   return civilians
 }
 
-function makeCards(kind, namelist) {
+function makeCards(namelist) {
   return namelist.map(name => ({
     name,
-    kind,
     expansion: 'base game',
   }))
 }
@@ -115,7 +115,9 @@ function makeDeckWithFilter(filter) {
   return function(kind, cardsIn) {
     const cards = cardsIn
       .filter(filter)
-      .map(c => {
+      .map((c, idx) => {
+        c.kindId = idx
+        c.id = `${kind}-${idx}`,
         c.kind = kind
         c.visibility = []
         return c
