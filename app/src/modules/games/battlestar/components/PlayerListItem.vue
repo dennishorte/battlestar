@@ -82,7 +82,7 @@ export default {
     },
 
     playerShow() {
-      this.$store.commit('bsg/playerShow', this.player._id)
+      this.$store.commit('bsg/playerShow', this.player)
       this.$bvModal.show('player-modal')
     },
   },

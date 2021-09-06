@@ -39,7 +39,6 @@ async function initialize(game) {
       _id: user._id,
       index: 0,
       name: user.name,
-      character: '',
       location: '',
       active: false,
       oncePerGameActionUsed: false,

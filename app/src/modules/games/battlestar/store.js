@@ -177,7 +177,7 @@ export default {
         },
 
         playerModal: {
-          playerId: '',
+          player: {},
         },
 
         skillCardsModal: {
@@ -206,8 +206,17 @@ export default {
   },
 
   getters: {
+    ////////////////////////////////////////////////////////////
+    // Game
     deck: (state) => (key) => deckGet(state, key),
+    hand: (state) => (playerName) => state.game.zones.players[playerName],
     players: (state) => state.game.players,
+
+
+
+    ////////////////////////////////////////////////////////////
+    // UI
+    playerModal: (state) => state.ui.playerModal,
 
 
     ////////////////////////////////////////////////////////////
@@ -386,8 +395,8 @@ export default {
       })
     },
 
-    playerShow(state, playerId) {
-      state.ui.playerModal.playerId = playerId
+    playerShow(state, player) {
+      state.ui.playerModal.player = player
     },
 
     skillCardDraw(state, { skill, playerId }) {
