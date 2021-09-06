@@ -1,14 +1,10 @@
 <template>
-<b-modal
-  id="characters-modal"
-  title="Characters"
-  ok-only>
-
   <div class="row">
     <div class="col-5">
       <div
         v-for="ch in characters"
         :key="ch.name"
+        class="character-name"
         :class="classes(ch.name)"
         @click="characterCloseup(ch.name)"
         >
@@ -24,7 +20,7 @@
             <b-dropdown-item
               v-for="player in players"
               :key="player._id"
-              @click="assign(player._id)"
+              @click="assign(player.name)"
               >
               {{ player.name }}
             </b-dropdown-item>
@@ -72,8 +68,6 @@
     </div>
 
   </div>
-
-</b-modal>
 </template>
 
 
@@ -82,11 +76,7 @@ import { skillList } from '../lib/util.js'
 
 
 export default {
-  name: 'CharactersModal',
-
-  props: {
-    characters: Array,
-  },
+  name: 'Characters',
 
   data() {
     return {
@@ -95,6 +85,11 @@ export default {
   },
 
   computed: {
+    characters() {
+      const characters = [...this.$store.getters['bsg/deckData']('character')]
+      characters.sort((l, r) => l.name.localeCompare(r.name))
+      return characters
+    },
     players() {
       return this.$store.state.bsg.game.players
     },
@@ -107,10 +102,11 @@ export default {
   },
 
   methods: {
-    assign(playerId) {
-      this.$store.commit('bsg/characterAssign', {
-        playerId,
-        character: this.selectedData,
+    assign(playerName) {
+      this.$store.commit('bsg/move', {
+        cardId: this.selectedData.id,
+        source: 'decks.character',
+        target: `players.${playerName}`,
       })
     },
 
@@ -132,9 +128,24 @@ export default {
 
 
 <style scoped>
+.character-name {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: .85em;
+  line-height: 1;
+  padding: .25em;
+
+  min-height: 2rem;
+}
+
+/* .character-name:nth-of-type(odd) {
+   background: #e0e0e0;
+   }
+ */
 .highlighted-character {
-    background-color: #ddd;
-    border-radius: .25em;
+  border: 1px solid black;
+  border-radius: .25em;
 }
 
 .selected-heading {

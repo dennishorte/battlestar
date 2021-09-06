@@ -22,7 +22,7 @@
             v-for="player in playersAt(loc)"
             :key="player.index">
 
-            <div :class="characterNameToCssClass(player.character)">
+            <div>
               <font-awesome-icon :icon="['fas', 'user']" />
             </div>
           </div>
@@ -113,8 +113,6 @@ export default {
   },
 
   methods: {
-    characterNameToCssClass: bsgutil.characterNameToCssClass,
-
     drop(event) {
       event.target.classList.remove('location-drop')
       const playerId = event.dataTransfer.getData('playerId')

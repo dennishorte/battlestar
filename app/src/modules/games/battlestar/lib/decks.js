@@ -1,3 +1,4 @@
+import characterCards from '../res/character.js'
 import civilianDistribution from '../res/civilian_ships.js'
 import crisisCards from '../res/crisis.js'
 import destinationCards from '../res/destination.js'
@@ -22,7 +23,8 @@ function factory(expansions) {
   }
 
   const decks = {
-    civilians: makeDeck('civilians', makeCivilians()),
+    character: makeDeck('character', characterCards),
+    civilian: makeDeck('civilian', makeCivilians()),
     crisis: makeDeck('crisis', crisisCards),
     damageBasestar: makeDeck('damageBasestar', damageBasestar),
     damageGalactica: makeDeck('damageGalactica', damageGalactica),
@@ -67,7 +69,6 @@ function makeCivilians() {
   const civilians = []
   for (let j = 0; j < civilianDistribution.length; j++) {
     const { effect, quantity } = civilianDistribution[j]
-    console.log('making civilians: ', quantity, effect)
     for (let i = 0; i < quantity; i++) {
       const ship = {
         name: 'civilian',

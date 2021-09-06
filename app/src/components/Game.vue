@@ -32,8 +32,13 @@
        gameId: this.id,
      })
      if (requestResult.data.status === 'success') {
+       // Load the game data into the store.
        await this.$store.dispatch('bsg/load', requestResult.data.game)
        this.game = requestResult.data.game.game
+
+       // Make the active player visible to the game store.
+       const user = this.$store.getters['auth/user']
+       this.$store.commit('bsg/userSet', user)
      }
      else {
        alert('Error loading game data')

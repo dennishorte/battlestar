@@ -64,7 +64,6 @@
       <b-row>
         <b-col>
           <PhasePanel
-            :characters="charactersAvailable"
             :loyaltyCards="loyaltyCardsAvailable"
           />
 
@@ -114,10 +113,12 @@
 
     </b-container>
 
-    <CharactersModal
-      :characters="charactersAvailable"
-      @character-assign="characterAssign"
-    />
+    <b-modal
+      id="characters-modal"
+      title="Characters"
+      ok-only>
+      <Characters />
+    </b-modal>
 
     <b-modal
       id="destination-modal"
@@ -155,7 +156,7 @@
 
 
 <script>
-import CharactersModal from './CharactersModal'
+import Characters from './Characters'
 import CrisisCard from './CrisisCard'
 import Destination from './Destination'
 import GameLog from './GameLog'
@@ -168,7 +169,6 @@ import Resources from './Resources'
 import SkillCards from './SkillCards'
 import SpaceZone from './SpaceZone'
 
-import characters from '../res/character.js'
 import crisisCards from '../res/crisis.js'
 import loyaltyCards from '../res/loyalty.js'
 import locations from '../res/location.js'
@@ -205,7 +205,7 @@ export default {
   name: 'Battlestar',
 
   components: {
-    CharactersModal,
+    Characters,
     CrisisCard,
     Destination,
     GameLog,
@@ -222,19 +222,12 @@ export default {
   data() {
     return {
       // Constant Data
-      characters,
       crisisCards,
       locations,
     }
   },
 
   computed: {
-    charactersAvailable() {
-      const expansions = this.$store.state.bsg.game.options.expansions
-      return bsgutil
-        .expansionFilter(this.characters, expansions)
-        .sort((l, r) => l.name.localeCompare(r.name))
-    },
     loyaltyCardsAvailable() {
       const expansions = this.$store.state.bsg.game.options.expansions
       return bsgutil.expansionFilter(loyaltyCards, expansions)
@@ -257,10 +250,6 @@ export default {
   },
 
   methods: {
-    characterAssign(data) {
-      console.log('characterAssign', data)
-    },
-
     passPriority() {
       console.log('pass priority')
     },

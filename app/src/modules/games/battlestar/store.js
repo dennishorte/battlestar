@@ -1,5 +1,6 @@
 import axios from 'axios'
 import bsgutil from './lib/util.js'
+import decks from './lib/decks.js'
 import factory from './lib/factory.js'
 import util from '@/util.js'
 
@@ -61,6 +62,19 @@ function doSpaceComponentRemove(state) {
   })
 }
 
+function handGet(state, playerId) {
+  const player = playerById(state, playerId)
+  const hand = state.game.zones.players[player.name]
+  return hand
+}
+
+function healBasestar(state, name) {
+  state.game.space.ships[name].damage.forEach(token => {
+    state.game.space.basestarDamageTokens.push(token)
+  })
+  state.game.space.ships[name].damage = []
+}
+
 function logEnrichArgClasses(msg) {
   if (!msg.args)
     return
@@ -93,24 +107,24 @@ function logEnrichArgClasses(msg) {
     else if (key === 'title') {
       pushUnique(classes, 'title-name')
     }
+    else if (key === 'card') {
+      const card = msg.args['card']
+      if (typeof card !== 'object') {
+        throw `Pass whole card object to log for better logging. Got: ${card}`
+      }
+      msg.args['card'] = {
+        value: card.name,
+        visibility: card.visibility,
+        kind: card.kind,
+        classes: [`card-${card.kind}`],
+      }
+    }
   }
-}
-
-function handGet(state, playerId) {
-  const player = playerById(state, playerId)
-  const hand = state.game.zones.players[player.name]
-  return hand
-}
-
-function healBasestar(state, name) {
-  state.game.space.ships[name].damage.forEach(token => {
-    state.game.space.basestarDamageTokens.push(token)
-  })
-  state.game.space.ships[name].damage = []
 }
 
 function log(state, msgObject) {
   logEnrichArgClasses(msgObject)
+  msgObject.actor = state.ui.player.name
 
   const log = state.game.log
   msgObject.id = log.length
@@ -163,6 +177,20 @@ function removeFromSpaceRegion(state) {
   }
 }
 
+function zoneGet(state, name) {
+  const tokens = name.split('.')
+  let zone = state.game.zones
+  while (tokens.length) {
+    const next = tokens.shift()
+    zone = zone[next]
+    if (!zone) {
+      throw `Error loading ${next} of zone ${name}.`
+    }
+  }
+
+  return zone
+}
+
 
 export default {
   namespaced: true,
@@ -170,7 +198,15 @@ export default {
   state() {
     return {
       ////////////////////////////////////////////////////////////
+      // Data
+
+      data: {
+        decks: {},  // All of the raw decks, for displaying information.
+      },
+
+      ////////////////////////////////////////////////////////////
       // UI State
+
       ui: {
         charactersModal: {
           selected: '',
@@ -192,6 +228,8 @@ export default {
           playerId: '',
         },
 
+        player: {},
+
         spaceComponentGrab: {
           component: '',
           source: '',
@@ -208,14 +246,21 @@ export default {
   getters: {
     ////////////////////////////////////////////////////////////
     // Game
+
     deck: (state) => (key) => deckGet(state, key),
     hand: (state) => (playerName) => state.game.zones.players[playerName],
     players: (state) => state.game.players,
 
 
+    ////////////////////////////////////////////////////////////
+    // Data
+
+    deckData: (state) => (key) => state.data.decks[key],
+
 
     ////////////////////////////////////////////////////////////
     // UI
+
     playerModal: (state) => state.ui.playerModal,
 
 
@@ -257,32 +302,40 @@ export default {
       })
     },
 
+    move(state, data) {
+      const source = zoneGet(state, data.source).cards
+      const target = zoneGet(state, data.target).cards
+
+      const sourceIdx = source.findIndex(x => x.id === data.cardId)
+      const targetIdx = data.targetIdx || target.length
+
+      if (sourceIdx === -1) {
+        throw `Card not found in source. ${data.cardId}, ${data.source}`
+      }
+
+      const card = source.splice(sourceIdx, 1)[0]
+      target.splice(targetIdx, 0, card)
+
+      log(state, {
+        template: "{card} moved from {source} to {target}",
+        classes: ['card-move'],
+        args: {
+          card,
+          source: data.source,
+          target: data.target,
+        },
+      })
+    },
+
+    userSet(state, user) {
+      state.ui.player = user
+    },
+
     ////////////////////////////////////////////////////////////
     // Older mutations
 
     beginSkillCheck(state, card) {
       state.game.skillCheck.active.card = card
-    },
-
-    characterAssign(state, { playerId, character }) {
-      const player = playerById(state, playerId)
-      player.character = character.name
-      player.location = character.setup
-
-      // Helo starts "Stranded on Caprica".
-      // Rather than make a special location for him, just put him on Caprica.
-      if (character.name === 'Karl "Helo" Agathon') {
-        player.location = 'Caprica'
-      }
-
-      log(state, {
-        template: "{player} chooses {character}",
-        classes: ['character-selection', 'player-action'],
-        args: {
-          player: player.name,
-          character: character.name,
-        }
-      })
     },
 
     character_info_request(state, name) {
@@ -317,8 +370,12 @@ export default {
       clearGrab(state)
     },
 
+    loadDeckData(state, data) {
+      state.data.decks = data
+    },
+
     loadGameData(state, data) {
-      this.state.bsg.game = data
+      state.game = data
     },
 
     locationRepair(state, name) {
@@ -592,11 +649,13 @@ export default {
 
   actions: {
     async load(context, data) {
+      const deckData = decks.factory(data.options.expansions)
+      context.commit('loadDeckData', deckData)
+
       if (data) {
         if (!data.initialized) {
           await factory.initialize(data)
         }
-
         context.commit('loadGameData', data)
         await context.dispatch('save')
       }
