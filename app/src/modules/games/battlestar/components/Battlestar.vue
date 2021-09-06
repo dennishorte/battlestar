@@ -63,6 +63,8 @@
 
       <b-row>
         <b-col>
+          <LoyaltySetup />
+
           <PhasePanel
             :loyaltyCards="loyaltyCardsAvailable"
           />
@@ -156,6 +158,8 @@
 
 
 <script>
+import LoyaltySetup from './LoyaltySetup'
+
 import Characters from './Characters'
 import CrisisCard from './CrisisCard'
 import Destination from './Destination'
@@ -205,6 +209,8 @@ export default {
   name: 'Battlestar',
 
   components: {
+    LoyaltySetup,
+
     Characters,
     CrisisCard,
     Destination,

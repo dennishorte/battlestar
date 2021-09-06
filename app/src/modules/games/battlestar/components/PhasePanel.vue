@@ -19,6 +19,9 @@
       </b-form-select>
     </b-form-group>
 
+    <LoyaltySetup v-if="phase === 'setup-distribute-loyalty-cards'" />
+
+
     <div class="phase-description">
 
       <div v-if="phase === 'setup-character-selection'">
@@ -31,17 +34,6 @@
 
       <div v-if="phase === 'setup-distribute-title-cards'">
         <b-button block @click="distributeTitleCards">click to distribute title cards</b-button>
-      </div>
-
-      <div v-if="phase === 'setup-distribute-loyalty-cards'">
-        <b-button
-          block
-          variant="primary"
-          @click="distributeLoyaltyCards"
-        >
-          click to distribute loyalty cards
-        </b-button>
-        <p>Clicking this a second time will redistribute all of the loyalty cards.</p>
       </div>
 
       <div v-if="phase === 'setup-receive-skills'">
@@ -98,6 +90,7 @@
 
 
 <script>
+import LoyaltySetup from './LoyaltySetup'
 import SkillDecks from './SkillDecks'
 
 import util from '@/util.js'
@@ -211,6 +204,7 @@ export default {
   name: 'PhasePanel',
 
   components: {
+    LoyaltySetup,
     SkillDecks,
   },
 
@@ -259,6 +253,10 @@ export default {
 
     phase() {
       return this.$store.state.bsg.game.phase
+    },
+
+    setupLoyaltyComplete() {
+      return this.$store.getters['bsg/setupLoyaltyComplete']
     },
   },
 

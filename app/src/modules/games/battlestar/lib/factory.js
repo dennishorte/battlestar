@@ -15,6 +15,7 @@ async function initialize(game) {
 
   // Top-level values
   game.initialized = true
+  game.setupLoyaltyComplete = true
   game.phase = 'setup-character-creation'
   game.log = []
 
@@ -68,6 +69,12 @@ async function initialize(game) {
     players: makePlayerZones(game.players),
     ships: {}, // TODO
     space: makeSpaceZones(),
+  }
+
+  game.zones.decks.loyalty = {
+    name: 'loyalty',
+    cards: [],
+    visibility: 'hidden',
   }
 
   ////////////////////////////////////////////////////////////

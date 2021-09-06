@@ -32,7 +32,11 @@ function clearGrab(state) {
 }
 
 function deckGet(state, deckName) {
-  return state.game.zones.decks[deckName]
+  const deck = state.game.zones.decks[deckName]
+  if (!deck) {
+    throw `Unknown deck name: ${deckName}`
+  }
+  return deck
 }
 
 function drawRandom(state, kind) {
@@ -154,8 +158,35 @@ function maybeReshuffleDiscard(state, path) {
   }
 }
 
-function playerById(state, playerId) {
-  return state.game.players.find(p => p._id === playerId)
+function moveCard(state, data) {
+  const source = zoneGet(state, data.source).cards
+  const target = zoneGet(state, data.target).cards
+
+  const sourceIdx = data.cardId
+                  ? source.findIndex(x => x.id === data.cardId)
+                  : source[data.sourceIndex]
+  const targetIdx = data.targetIdx || target.length
+
+  if (sourceIdx === -1) {
+    throw `Card not found in source. ${data.cardId}, ${data.source}`
+  }
+
+  const card = source.splice(sourceIdx, 1)[0]
+  target.splice(targetIdx, 0, card)
+
+  log(state, {
+    template: "{card} moved from {source} to {target}",
+    classes: ['card-move'],
+    args: {
+      card,
+      source: data.source,
+      target: data.target,
+    },
+  })
+}
+
+  function playerById(state, playerId) {
+    return state.game.players.find(p => p._id === playerId)
 }
 
 function pushUnique(array, value) {
@@ -220,6 +251,11 @@ export default {
           selected: '',
         },
 
+        grab: {
+          source: '',
+          sourceIndex: -1,
+        },
+
         grabbing: {
           message: '',
         },
@@ -250,6 +286,9 @@ export default {
     deck: (state) => (key) => deckGet(state, key),
     hand: (state) => (playerName) => state.game.zones.players[playerName],
     players: (state) => state.game.players,
+    zone: (state) => (key) => zoneGet(state, key),
+
+    setupLoyaltyComplete: (state) => state.game.setupLoyaltyComplete,
 
 
     ////////////////////////////////////////////////////////////
@@ -261,6 +300,7 @@ export default {
     ////////////////////////////////////////////////////////////
     // UI
 
+    grab: (state) => state.ui.grab,
     playerModal: (state) => state.ui.playerModal,
 
 
@@ -303,32 +343,29 @@ export default {
     },
 
     move(state, data) {
-      const source = zoneGet(state, data.source).cards
-      const target = zoneGet(state, data.target).cards
-
-      const sourceIdx = source.findIndex(x => x.id === data.cardId)
-      const targetIdx = data.targetIdx || target.length
-
-      if (sourceIdx === -1) {
-        throw `Card not found in source. ${data.cardId}, ${data.source}`
-      }
-
-      const card = source.splice(sourceIdx, 1)[0]
-      target.splice(targetIdx, 0, card)
-
-      log(state, {
-        template: "{card} moved from {source} to {target}",
-        classes: ['card-move'],
-        args: {
-          card,
-          source: data.source,
-          target: data.target,
-        },
-      })
+      moveCard(state, data)
     },
 
     userSet(state, user) {
       state.ui.player = user
+    },
+
+    zoneClick(state, data) {
+      if (state.ui.grab.source) {
+        if (state.ui.grab.source !== data.source) {
+          moveCard(state, {
+            source: state.ui.grab.source,
+            sourceIndex: state.ui.grab.sourceIndex,
+            target: data.source,
+            targetIndex: data.sourceIndex,
+          })
+        }
+
+        state.ui.grab = {}
+      }
+      else {
+        state.ui.grab = data
+      }
     },
 
     ////////////////////////////////////////////////////////////

@@ -3,67 +3,67 @@ module.exports =  [
     name: 'You Are Not a Cylon',
     expansion: 'base game',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are Not a Cylon',
     expansion: 'base game',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are Not a Cylon',
     expansion: 'base game',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are Not a Cylon',
     expansion: 'base game',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are Not a Cylon',
     expansion: 'base game',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are Not a Cylon',
     expansion: 'base game',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are Not a Cylon',
     expansion: 'base game',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are Not a Cylon',
     expansion: 'base game',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are Not a Cylon',
     expansion: 'base game',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are Not a Cylon',
     expansion: 'base game',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are Not a Cylon',
     expansion: 'base game',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are a Cylon',
@@ -92,14 +92,14 @@ module.exports =  [
   {
     name: 'You Are a Sympathizer',
     expansion: 'base game',
-    team: 'human/cylon',
+    team: 'sympathizer',
     text: 'IMMEDIATELY REVEAL THIS CARD. It at least 1 resource is half full or lower (red), you are moved to the "Brig". Otherwise you become a revealed Cylon player. You do not receive a Super Crisis Card and may not activate the "Cylon Fleet" location'
   },
   {
     name: 'You Are Not a Cylon',
     expansion: 'pegasus',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are a Cylon',
@@ -117,31 +117,31 @@ module.exports =  [
     name: 'You Are Not a Cylon',
     expansion: 'exodus',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are Not a Cylon',
     expansion: 'exodus',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are Not a Cylon',
     expansion: 'exodus',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are Not a Cylon',
     expansion: 'exodus',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are Not a Cylon',
     expansion: 'exodus',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are a Cylon',
@@ -237,7 +237,7 @@ module.exports =  [
     name: 'You Are Not a Cylon',
     expansion: 'daybreak',
     team: 'human',
-    text: undefined
+    text: ''
   },
   {
     name: 'You Are The Mutineer',

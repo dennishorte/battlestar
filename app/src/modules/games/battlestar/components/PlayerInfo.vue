@@ -16,8 +16,8 @@
         </b-tr>
 
         <b-tr>
-          <b-th>Cards</b-th>
-          <b-td>{{ cards.length }}</b-td>
+          <b-th>Loyalty Cards</b-th>
+          <b-td>{{ loyaltyCards.length }}</b-td>
         </b-tr>
 
       </b-tbody>
@@ -49,6 +49,9 @@ export default {
     },
     cards() {
       return this.$store.getters['bsg/hand'](this.player.name).cards
+    },
+    loyaltyCards() {
+      return this.cardsBy('loyalty')
     },
     player() {
       return this.$store.getters['bsg/playerModal'].player

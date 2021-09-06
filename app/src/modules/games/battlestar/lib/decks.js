@@ -15,11 +15,17 @@ export default {
 
 
 function factory(expansions) {
-  const makeDeck = makeDeckWithFilter(c => expansions.includes(c.expansion))
-  const makeSkillDeck = function(skill, skillCards) {
-    const filter = c => expansions.includes(c.expansion) && c[skill]
+  const expansionFilter = c => expansions.includes(c.expansion)
+  const makeDeck = makeDeckWithFilter(expansionFilter)
+  const makeLoyaltyDeck = function(kind, cards) {
+    const filter = c => expansionFilter(c) && c.team.toLowerCase() === kind
     const maker = makeDeckWithFilter(filter)
-    return maker(skill, skillCards)
+    return maker(kind, cards)
+  }
+  const makeSkillDeck = function(skill, cards) {
+    const filter = c => expansionFilter(c) && c[skill]
+    const maker = makeDeckWithFilter(filter)
+    return maker(skill, cards)
   }
 
   const decks = {
@@ -29,10 +35,15 @@ function factory(expansions) {
     damageBasestar: makeDeck('damageBasestar', damageBasestar),
     damageGalactica: makeDeck('damageGalactica', damageGalactica),
     destination: makeDeck('destination', destinationCards),
-    loyalty: makeDeck('loyalty', loyaltyCards),
     quorum: makeDeck('quorum', quorumCards),
     superCrisis: makeDeck('super-crisis', superCrisisCards),
 
+    // Loyalty Decks
+    cylon: makeLoyaltyDeck('cylon', loyaltyCards),
+    human: makeLoyaltyDeck('human', loyaltyCards),
+    sympathizer: makeLoyaltyDeck('sympathizer', loyaltyCards),
+
+    // Skill Decks
     politics: makeSkillDeck('politics', skillCards),
     leadership: makeSkillDeck('leadership', skillCards),
     tactics: makeSkillDeck('tactics', skillCards),
