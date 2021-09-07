@@ -63,7 +63,7 @@
 
       <b-row>
         <b-col>
-          <LoyaltySetup />
+          <ZoneViewer zoneName="decks.politics" />
 
           <PhasePanel
             :loyaltyCards="loyaltyCardsAvailable"
@@ -116,6 +116,13 @@
     </b-container>
 
     <b-modal
+      id="zone-viewer-modal"
+      title="Zone Viewer"
+      ok-only>
+      <ZoneViewer />
+    </b-modal>
+
+    <b-modal
       id="characters-modal"
       title="Characters"
       ok-only>
@@ -127,13 +134,6 @@
       title="Destination"
       ok-only>
       <Destination />
-    </b-modal>
-
-    <b-modal
-      id="skill-cards-modal"
-      title="Skill Cards"
-      ok-only>
-      <SkillCards />
     </b-modal>
 
     <b-modal
@@ -151,6 +151,13 @@
       <PlayerInfo />
     </b-modal>
 
+    <b-modal
+      id="skill-cards-modal"
+      title="Skill Cards"
+      ok-only>
+      <SkillCards />
+    </b-modal>
+
     <HoldingMessage />
 
   </div>
@@ -158,8 +165,7 @@
 
 
 <script>
-import LoyaltySetup from './LoyaltySetup'
-
+import ZoneViewer from './ZoneViewer'
 import Characters from './Characters'
 import CrisisCard from './CrisisCard'
 import Destination from './Destination'
@@ -209,8 +215,7 @@ export default {
   name: 'Battlestar',
 
   components: {
-    LoyaltySetup,
-
+    ZoneViewer,
     Characters,
     CrisisCard,
     Destination,
@@ -252,6 +257,9 @@ export default {
     },
     players() {
       return this.$store.state.bsg.game.players
+    },
+    politicsCards() {
+      return this.$store.getters['bsg/deck']('politics').cards
     },
   },
 

@@ -19,6 +19,10 @@ function adjustCounter(state, counter, amount) {
   })
 }
 
+function cardView(card, player) {
+  pushUnique(card.visibility, player.name)
+}
+
 function clearGrab(state) {
   // Pawn
   state.ui.pawnGrab.playerId = ''
@@ -77,6 +81,10 @@ function healBasestar(state, name) {
     state.game.space.basestarDamageTokens.push(token)
   })
   state.game.space.ships[name].damage = []
+}
+
+function isVisible(state, card) {
+  return card.visibility.includes(state.ui.player.name)
 }
 
 function logEnrichArgClasses(msg) {
@@ -286,6 +294,7 @@ export default {
     deck: (state) => (key) => deckGet(state, key),
     hand: (state) => (playerName) => state.game.zones.players[playerName],
     players: (state) => state.game.players,
+    visible: (state) => (card) => isVisible(state, card),
     zone: (state) => (key) => zoneGet(state, key),
 
     setupLoyaltyComplete: (state) => state.game.setupLoyaltyComplete,
@@ -365,6 +374,16 @@ export default {
       }
       else {
         state.ui.grab = data
+      }
+    },
+
+    zoneViewNext(state, zoneName) {
+      const cards = zoneGet(state, zoneName).cards
+      for (const card of cards) {
+        if (!isVisible(state, card)) {
+          cardView(card, state.ui.player)
+          break
+        }
       }
     },
 

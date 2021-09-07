@@ -18,7 +18,7 @@
       </b-dropdown-item>
 
       <b-dropdown-item>
-        peek
+        view all
       </b-dropdown-item>
     </b-dropdown>
   </div>
