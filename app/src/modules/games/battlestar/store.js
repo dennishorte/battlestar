@@ -92,7 +92,6 @@ function isRevealed(state, card) {
 }
 
 function isVisible(state, card) {
-  console.log(state.ui.player.name)
   return card.visibility.includes(state.ui.player.name)
 }
 
@@ -394,7 +393,12 @@ export default {
           break
         }
       }
-      console.log(cards.map(c => c.visibility))
+    },
+
+    zoneShuffle(state, zoneName) {
+      const cards = zoneGet(state, zoneName).cards
+      cards.forEach(c => c.visibility = [])
+      util.shuffleArray(cards)
     },
 
     zoneViewNext(state, zoneName) {
@@ -405,7 +409,6 @@ export default {
           break
         }
       }
-      console.log(cards.map(c => c.visibility))
     },
 
     ////////////////////////////////////////////////////////////

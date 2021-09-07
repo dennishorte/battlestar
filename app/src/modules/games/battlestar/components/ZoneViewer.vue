@@ -15,7 +15,9 @@
       <b-button @click="viewNext">view next</b-button>
       <b-button @click="revealNext">reveal next</b-button>
       <b-dropdown right text="other">
-        <b-dropdown-item>shuffle</b-dropdown-item>
+        <b-dropdown-item @click="shuffle">
+          shuffle
+        </b-dropdown-item>
       </b-dropdown>
     </div>
 
@@ -92,6 +94,9 @@ export default {
   methods: {
     revealNext() {
       this.$store.commit('bsg/zoneRevealNext', this.zoneName)
+    },
+    shuffle() {
+      this.$store.commit('bsg/zoneShuffle', this.zoneName)
     },
     viewNext() {
       this.$store.commit('bsg/zoneViewNext', this.zoneName)
