@@ -19,7 +19,11 @@ function adjustCounter(state, counter, amount) {
   })
 }
 
-function cardView(card, player) {
+function cardReveal(state, card) {
+  card.visibility = state.game.players.map(p => p.name)
+}
+
+function cardView(state, card, player) {
   pushUnique(card.visibility, player.name)
 }
 
@@ -83,7 +87,12 @@ function healBasestar(state, name) {
   state.game.space.ships[name].damage = []
 }
 
+function isRevealed(state, card) {
+  return card.visibility.length === state.game.players.length
+}
+
 function isVisible(state, card) {
+  console.log(state.ui.player.name)
   return card.visibility.includes(state.ui.player.name)
 }
 
@@ -377,14 +386,26 @@ export default {
       }
     },
 
+    zoneRevealNext(state, zoneName) {
+      const cards = zoneGet(state, zoneName).cards
+      for (const card of cards) {
+        if (!isRevealed(state, card)) {
+          cardReveal(state, card)
+          break
+        }
+      }
+      console.log(cards.map(c => c.visibility))
+    },
+
     zoneViewNext(state, zoneName) {
       const cards = zoneGet(state, zoneName).cards
       for (const card of cards) {
         if (!isVisible(state, card)) {
-          cardView(card, state.ui.player)
+          cardView(state, card, state.ui.player)
           break
         }
       }
+      console.log(cards.map(c => c.visibility))
     },
 
     ////////////////////////////////////////////////////////////

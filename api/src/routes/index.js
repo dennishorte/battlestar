@@ -38,6 +38,7 @@ module.exports.login = async function(req, res) {
       status: 'success',
       user: {
         _id: user._id,
+        name: user.name,
         token: user.token,
       },
     })

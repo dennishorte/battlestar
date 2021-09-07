@@ -91,7 +91,7 @@ export default {
 
   methods: {
     revealNext() {
-      //
+      this.$store.commit('bsg/zoneRevealNext', this.zoneName)
     },
     viewNext() {
       this.$store.commit('bsg/zoneViewNext', this.zoneName)
