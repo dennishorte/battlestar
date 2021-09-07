@@ -276,6 +276,10 @@ export default {
           message: '',
         },
 
+        modalZone: {
+          name: '',
+        },
+
         pawnGrab: {
           playerId: '',
         },
@@ -319,6 +323,7 @@ export default {
 
     grab: (state) => state.ui.grab,
     playerModal: (state) => state.ui.playerModal,
+    uiModalZone: (state) => state.ui.modalZone,
 
 
     ////////////////////////////////////////////////////////////
@@ -409,6 +414,10 @@ export default {
           break
         }
       }
+    },
+
+    uiZoneViewer(state, zoneName) {
+      state.ui.modalZone.name = zoneName
     },
 
     ////////////////////////////////////////////////////////////

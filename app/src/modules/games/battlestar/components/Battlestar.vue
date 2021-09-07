@@ -63,8 +63,6 @@
 
       <b-row>
         <b-col>
-          <ZoneViewer zoneName="decks.politics" />
-
           <PhasePanel
             :loyaltyCards="loyaltyCardsAvailable"
           />
@@ -115,12 +113,7 @@
 
     </b-container>
 
-    <b-modal
-      id="zone-viewer-modal"
-      title="Zone Viewer"
-      ok-only>
-      <ZoneViewer />
-    </b-modal>
+    <ZoneViewerModal />
 
     <b-modal
       id="characters-modal"
@@ -165,7 +158,6 @@
 
 
 <script>
-import ZoneViewer from './ZoneViewer'
 import Characters from './Characters'
 import CrisisCard from './CrisisCard'
 import Destination from './Destination'
@@ -178,6 +170,7 @@ import Players from './Players'
 import Resources from './Resources'
 import SkillCards from './SkillCards'
 import SpaceZone from './SpaceZone'
+import ZoneViewerModal from './ZoneViewerModal'
 
 import crisisCards from '../res/crisis.js'
 import loyaltyCards from '../res/loyalty.js'
@@ -215,7 +208,6 @@ export default {
   name: 'Battlestar',
 
   components: {
-    ZoneViewer,
     Characters,
     CrisisCard,
     Destination,
@@ -228,6 +220,7 @@ export default {
     Resources,
     SkillCards,
     SpaceZone,
+    ZoneViewerModal,
   },
 
   data() {

@@ -9,16 +9,8 @@
     </div>
 
     <b-dropdown right>
-      <b-dropdown-item>
-        draw
-      </b-dropdown-item>
-
-      <b-dropdown-item>
-        shuffle
-      </b-dropdown-item>
-
-      <b-dropdown-item>
-        view all
+      <b-dropdown-item @click="details">
+        details
       </b-dropdown-item>
     </b-dropdown>
   </div>
@@ -62,6 +54,11 @@ export default {
         source: this.deckName,
         sourceIndex: 0,
       })
+    },
+
+    details() {
+      this.$store.commit('bsg/uiZoneViewer', this.deckName)
+      this.$bvModal.show('zone-modal')
     },
   },
 }

@@ -1,6 +1,5 @@
 <template>
   <div class="zone-viewer">
-    Zone Viewer
     <div>
       <span class="heading">name:</span>
       {{ zone.name }}
