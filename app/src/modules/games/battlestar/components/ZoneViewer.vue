@@ -17,6 +17,15 @@
         <b-dropdown-item @click="shuffle">
           shuffle
         </b-dropdown-item>
+
+        <b-dropdown-divider></b-dropdown-divider>
+
+        <b-dropdown-item @click="revealAll">
+          reveal all
+        </b-dropdown-item>
+        <b-dropdown-item @click="viewAll">
+          view all
+        </b-dropdown-item>
       </b-dropdown>
     </div>
 
@@ -91,11 +100,17 @@ export default {
   },
 
   methods: {
+    revealAll() {
+      this.$store.commit('bsg/zoneRevealAll', this.zoneName)
+    },
     revealNext() {
       this.$store.commit('bsg/zoneRevealNext', this.zoneName)
     },
     shuffle() {
       this.$store.commit('bsg/zoneShuffle', this.zoneName)
+    },
+    viewAll() {
+      this.$store.commit('bsg/zoneViewAll', this.zoneName)
     },
     viewNext() {
       this.$store.commit('bsg/zoneViewNext', this.zoneName)

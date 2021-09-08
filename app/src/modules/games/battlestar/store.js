@@ -390,6 +390,15 @@ export default {
       }
     },
 
+    zoneRevealAll(state, zoneName) {
+      const cards = zoneGet(state, zoneName).cards
+      for (const card of cards) {
+        if (!isRevealed(state, card)) {
+          cardReveal(state, card)
+        }
+      }
+    },
+
     zoneRevealNext(state, zoneName) {
       const cards = zoneGet(state, zoneName).cards
       for (const card of cards) {
@@ -404,6 +413,15 @@ export default {
       const cards = zoneGet(state, zoneName).cards
       cards.forEach(c => c.visibility = [])
       util.shuffleArray(cards)
+    },
+
+    zoneViewAll(state, zoneName) {
+      const cards = zoneGet(state, zoneName).cards
+      for (const card of cards) {
+        if (!isVisible(state, card)) {
+          cardView(state, card, state.ui.player)
+        }
+      }
     },
 
     zoneViewNext(state, zoneName) {
