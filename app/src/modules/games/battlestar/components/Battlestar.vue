@@ -55,6 +55,9 @@
               <b-dropdown-item @click="$bvModal.show('skill-cards-modal')">
                 Skill Cards
               </b-dropdown-item>
+              <b-dropdown-item @click="$bvModal.show('zones-modal')">
+                Zones
+              </b-dropdown-item>
             </b-dropdown>
 
           </div>
@@ -63,6 +66,8 @@
 
       <b-row>
         <b-col>
+          <ZonesModal />
+
           <PhasePanel
             :loyaltyCards="loyaltyCardsAvailable"
           />
@@ -170,6 +175,7 @@ import Players from './Players'
 import Resources from './Resources'
 import SkillCards from './SkillCards'
 import SpaceZone from './SpaceZone'
+import ZonesModal from './ZonesModal'
 import ZoneViewerModal from './ZoneViewerModal'
 
 import crisisCards from '../res/crisis.js'
@@ -220,6 +226,7 @@ export default {
     Resources,
     SkillCards,
     SpaceZone,
+    ZonesModal,
     ZoneViewerModal,
   },
 
@@ -387,6 +394,11 @@ export default {
 
 .heading {
   font-weight: bold;
+}
+
+.reminder-text {
+  color: #444;
+  font-size: .7em;
 }
 
 .title-bar {

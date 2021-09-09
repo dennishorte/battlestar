@@ -2,6 +2,8 @@ import axios from 'axios'
 import util from '@/util.js'
 
 import Decks from '../lib/decks.js'
+import bsgutil from '../lib/util.js'
+import locations from '../res/location.js'
 
 
 export default {
@@ -53,28 +55,42 @@ async function initialize(game) {
     common: {
       name: 'common',
       cards: [],
-      visiblility: 'visible',
+      kind: 'open',
     },
-    decks: makeDeckZones(decks),
+    decks,
     exile: {
       name: 'exile',
       cards: [],
-      visibility: 'visible',
+      kind: 'open',
     },
     quorum: {
       name: 'quorum',
       cards: [],
+      kind: 'hand',
       visibility: 'president',
     },
     players: makePlayerZones(game.players),
-    ships: {}, // TODO
+    ships: {
+      vipers: makeVipersZone(),
+      damagedVipers: makeDamagedVipersZone(),
+      raiders: makeRaidersZone(),
+      heavyRaiders: makeHeavyRaidersZone(),
+      basestarA: makeBasestarZone('A'),
+      basestarB: makeBasestarZone('B'),
+    },
     space: makeSpaceZones(),
+
+    locations: {
+      galactica: makeLocations('Galactica', game.options.expansions),
+      colonialOne: makeLocations('Colonial One', game.options.expansions),
+      cylonLocations: makeLocations('Cylon Locations', game.options.expansions),
+    },
   }
 
   game.zones.decks.loyalty = {
     name: 'loyalty',
     cards: [],
-    visibility: 'hidden',
+    kind: 'bag',
   }
 
   ////////////////////////////////////////////////////////////
@@ -157,29 +173,64 @@ async function makePlayers(userIds, factory) {
   return util.shuffleArray(players)
 }
 
-function makeDeckZones(decks) {
-  const zones = {}
 
-  for (const [name, value] of Object.entries(decks)) {
-    zones[name] = {
-      name: `${name}.deck`,
-      cards: value,
-      visibility: 'hidden',
-    }
+function locationCompare(l, r) {
+  if (l.hazardous && !r.hazardous) {
+    return 1
   }
+  else if (!l.hazardous && r.hazardous) {
+    return -1
+  }
+  else {
+    return l.name.localeCompare(r.name)
+  }
+}
 
-  return zones
+function makeLocations(area, expansions) {
+  const areaPath = util.toCamelCase(area)
+
+  const locs = bsgutil
+    .expansionFilter(locations, expansions)
+    .filter(x => x.area === area)
+    .sort(locationCompare)
+    .map(loc => {
+      const locPath = util.toCamelCase(loc.name)
+      return {
+        name: `locations.${areaPath}.${locPath}`,
+        cards: [],
+        kind: 'open',
+        details: loc,
+      }
+    })
+
+  const locMap = {}
+  for (const loc of locs) {
+    const nameSuffix = loc.name.split('.').slice(-1)[0]
+    locMap[nameSuffix] = loc
+  }
+  return locMap
 }
 
 function makePlayerZones(players) {
   const zones = {}
+  const allPlayerNames = players.map(p => p.name)
 
+  let idx = 0
   for (const player of players) {
     zones[player.name] = {
-      name: player.name,
-      cards: [],
-      visibility: 'hidden',
+      name: `players.${player.name}`,
+      cards: [{
+        name: player.name,
+        kindId: idx,
+        id: `player-token-${idx}`,
+        kind: 'player-token',
+        expansion: 'base game',
+        visibility: allPlayerNames,
+      }],
+      kind: 'hand',
+      visibility: 'owner',
     }
+    idx += 1
   }
 
   return zones
@@ -188,12 +239,52 @@ function makePlayerZones(players) {
 function makeSpaceZones() {
   const zones = {}
   for (let i = 0; i < 6; i++) {
-    const name = `zone${i}`
+    const name = `space${i}`
     zones[name] = {
       name,
       cards: [],
-      visibility: 'visible',
+      kind: 'open',
     }
   }
   return zones
+}
+
+function makeShipsZone(zoneName, shipName, count) {
+  const zone = {
+    name: zoneName,
+    cards: [],
+    kind: 'bag',
+    visibility: 'identical',
+  }
+  for (let i = 0; i < count; i++) {
+    zone.cards.push({
+      name: shipName,
+      expansion: 'base game',
+      kind: zoneName,
+      kindId: i,
+      id: `${zoneName}-${i}`,
+      visibility: 'always',
+    })
+  }
+  return zone
+}
+
+function makeVipersZone() {
+  return makeShipsZone('ships.vipers', 'viper', 6)
+}
+
+function makeDamagedVipersZone() {
+  return makeShipsZone('ships.damagedVipers', '', 0)
+}
+
+function makeRaidersZone() {
+  return makeShipsZone('ships.raiders', 'raider', 16)
+}
+
+function makeHeavyRaidersZone() {
+  return makeShipsZone('ships.heavyRaiders', 'heavy raider', 2)
+}
+
+function makeBasestarZone(key) {
+  return makeShipsZone(`ships.basestar${key}`, `Basestar ${key}`, 1)
 }

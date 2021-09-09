@@ -1,18 +1,44 @@
 <template>
   <div class="deck-zone">
-    <div
-      class="deck-name"
-      :class="classes"
-      @click="click">
-      {{ name }}
-      {{ cards.length }}
+    <div class="top-row">
+      <div
+        class="deck-name"
+        :class="classes"
+        @click="click">
+        {{ name }}
+        {{ cards.length }}
+      </div>
+
+      <b-dropdown right>
+        <b-dropdown-item @click="details">
+          details
+        </b-dropdown-item>
+
+        <b-dropdown-item @click="toggleExpand">
+          <span v-if="expand">collapse</span>
+          <span v-else>expand</span>
+        </b-dropdown-item>
+
+      </b-dropdown>
     </div>
 
-    <b-dropdown right>
-      <b-dropdown-item @click="details">
-        details
-      </b-dropdown-item>
-    </b-dropdown>
+    <div v-if="expand" class="bottom-row">
+      <span v-if="cards.length === 0">empty</span>
+
+      <div
+        v-for="(card, index) in cards"
+        :key="card.id"
+        class="expanded-card"
+        :class="[
+          index === grabbedIndex ? 'grabbed-card' : '',
+          grabbed && index !== grabbedIndex ? 'ungrabbed-card' : '',
+        ]
+        "
+        @click="clickCard(index)"
+      >
+        {{ card.name }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -24,6 +50,17 @@ export default {
   props: {
     name: String,
     deckName: String,
+
+    expanded: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  data() {
+    return {
+      expand: this.expanded,
+    }
   },
 
   computed: {
@@ -46,6 +83,9 @@ export default {
     grabbed() {
       return this.$store.getters['bsg/grab'].source === this.deckName
     },
+    grabbedIndex() {
+      return this.grabbed ? this.$store.getters['bsg/grab'].sourceIndex : -1
+    },
   },
 
   methods: {
@@ -56,9 +96,20 @@ export default {
       })
     },
 
+    clickCard(index) {
+      this.$store.commit('bsg/zoneClick', {
+        source: this.deckName,
+        sourceIndex: index,
+      })
+    },
+
     details() {
       this.$store.commit('bsg/uiZoneViewer', this.deckName)
       this.$bvModal.show('zone-modal')
+    },
+
+    toggleExpand() {
+      this.expand = !this.expand
     },
   },
 }
@@ -81,12 +132,31 @@ export default {
 }
 
 .deck-zone {
+  margin-bottom: .5em;
+}
+
+.expanded-card {
+  padding: .25em;
+}
+
+.expanded-card:not(:first-of-type) {
+  border-top: 1px solid darkgray;
+}
+
+.top-row {
   align-items: stretch;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   font-size: 1rem;
-  margin-bottom: .5em;
+}
+
+.bottom-row {
+  border-bottom: 1px solid darkgray;
+  border-left: 1px solid darkgray;
+  border-right: 1px solid darkgray;
+  border-radius: .25em;
+  font-size: .7em;
 }
 
 .droppable {
@@ -96,5 +166,14 @@ export default {
 .grabbed {
   box-shadow: inset 10px 10px 20px #444, inset -10px -10px 20px #444;
   color: #ddd;
+}
+
+.grabbed-card {
+  box-shadow: inset 5px 5px 20px #444, inset -5px -5px 20px #444;
+  color: #ddd;
+}
+
+.ungrabbed-card {
+  background-color: #444;
 }
 </style>

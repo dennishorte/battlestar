@@ -180,7 +180,7 @@ function moveCard(state, data) {
 
   const sourceIdx = data.cardId
                   ? source.findIndex(x => x.id === data.cardId)
-                  : source[data.sourceIndex]
+                  : data.sourceIndex
   const targetIdx = data.targetIdx || target.length
 
   if (sourceIdx === -1) {
@@ -308,6 +308,7 @@ export default {
     players: (state) => state.game.players,
     visible: (state) => (card) => isVisible(state, card),
     zone: (state) => (key) => zoneGet(state, key),
+    zones: (state) => state.game.zones,
 
     setupLoyaltyComplete: (state) => state.game.setupLoyaltyComplete,
 

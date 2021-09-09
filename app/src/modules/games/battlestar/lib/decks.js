@@ -13,43 +13,140 @@ export default {
   factory,
 }
 
+/*
+Zone Structure
+{
+   // Required
+   name: String                     // Full pathname within the zones dict
+   cards: Array[Card]               //
+   kind: String                     // 'open', 'hidden', 'hand', 'deck'
+
+   // Optional
+   discard: String                  // How to handle discarded cards of this zone
+   visibility: String               // Special visibility rules for this zone
+}
+
+Card Structure
+{
+   // Required
+   name: String,                    // Possibly not unique
+   expansion: String,               // Expansion names, including 'base game'
+   kind: String,                    // Just a name
+   kindId: Number,                  // Unique by kind.
+   id: String,                      // `${kind}-{id}`
+   visibility: Array[String],       // player name
+
+   // Additional fields possible per card type
+}
+*/
+
 
 function factory(expansions) {
   const expansionFilter = c => expansions.includes(c.expansion)
   const makeDeck = makeDeckWithFilter(expansionFilter)
-  const makeLoyaltyDeck = function(kind, cards) {
+  const makeLoyaltyDeck = function(cards, options) {
+    const kind = options.name
     const filter = c => expansionFilter(c) && c.team.toLowerCase() === kind
     const maker = makeDeckWithFilter(filter)
-    return maker(kind, cards)
+    return maker(cards, options)
   }
-  const makeSkillDeck = function(skill, cards) {
+  const makeSkillDeck = function(cards, options) {
+    const skill = options.name
     const filter = c => expansionFilter(c) && c[skill]
     const maker = makeDeckWithFilter(filter)
-    return maker(skill, cards)
+    return maker(cards, options)
   }
 
   const decks = {
-    character: makeDeck('character', characterCards),
-    civilian: makeDeck('civilian', makeCivilians()),
-    crisis: makeDeck('crisis', crisisCards),
-    damageBasestar: makeDeck('damageBasestar', damageBasestar),
-    damageGalactica: makeDeck('damageGalactica', damageGalactica),
-    destination: makeDeck('destination', destinationCards),
-    quorum: makeDeck('quorum', quorumCards),
-    superCrisis: makeDeck('super-crisis', superCrisisCards),
+    character: makeDeck(characterCards, {
+      name: 'character',
+      kind: 'open',
+      discard: 'visible',
+    }),
+    civilian: makeDeck(makeCivilians(), {
+      name: 'civilian',
+      kind: 'bag',
+      discard: 'exile',
+    }),
+    crisis: makeDeck(crisisCards, {
+      name: 'crisis',
+      kind: 'deck',
+      discard: 'hidden',
+    }),
+    damageBasestar: makeDeck(damageBasestar, {
+      name: 'damageBasestar',
+      kind: 'bag',
+      discard: 'reshuffle',
+    }),
+    damageGalactica: makeDeck(damageGalactica, {
+      name: 'damageGalactica',
+      kind: 'bag',
+      discard: 'variable',
+    }),
+    destination: makeDeck(destinationCards, {
+      name: 'destination',
+      kind: 'deck',
+      discard: 'hidden',
+    }),
+    quorum: makeDeck(quorumCards, {
+      name: 'quorum',
+      kind: 'deck',
+      discard: 'hidden',
+    }),
+    superCrisis: makeDeck(superCrisisCards, {
+      name: 'superCrisis',
+      kind: 'deck',
+      discard: 'hidden',
+    }),
 
     // Loyalty Decks
-    cylon: makeLoyaltyDeck('cylon', loyaltyCards),
-    human: makeLoyaltyDeck('human', loyaltyCards),
-    sympathizer: makeLoyaltyDeck('sympathizer', loyaltyCards),
+    cylon: makeLoyaltyDeck(loyaltyCards, {
+      name: 'cylon',
+      kind: 'bag',
+      discard: 'none',
+    }),
+    human: makeLoyaltyDeck(loyaltyCards, {
+      name: 'human',
+      kind: 'bag',
+      discard: 'none',
+    }),
+    sympathizer: makeLoyaltyDeck(loyaltyCards, {
+      name: 'sympathizer',
+      kind: 'bag',
+      discard: 'none',
+    }),
 
     // Skill Decks
-    politics: makeSkillDeck('politics', skillCards),
-    leadership: makeSkillDeck('leadership', skillCards),
-    tactics: makeSkillDeck('tactics', skillCards),
-    piloting: makeSkillDeck('piloting', skillCards),
-    engineering: makeSkillDeck('engineering', skillCards),
-    treachery: makeSkillDeck('treachery', skillCards),
+    politics: makeSkillDeck(skillCards, {
+      name: 'politics',
+      kind: 'deck',
+      discard: 'visible',
+    }),
+    leadership: makeSkillDeck(skillCards, {
+      name: 'leadership',
+      kind: 'deck',
+      discard: 'visible',
+    }),
+    tactics: makeSkillDeck(skillCards, {
+      name: 'tactics',
+      kind: 'deck',
+      discard: 'visible',
+    }),
+    piloting: makeSkillDeck(skillCards, {
+      name: 'piloting',
+      kind: 'deck',
+      discard: 'visible',
+    }),
+    engineering: makeSkillDeck(skillCards, {
+      name: 'engineering',
+      kind: 'deck',
+      discard: 'visible',
+    }),
+    treachery: makeSkillDeck(skillCards, {
+      name: 'treachery',
+      kind: 'deck',
+      discard: 'visible',
+    }),
   }
 
   return decks
@@ -124,18 +221,23 @@ function makeCards(namelist) {
 }
 
 function makeDeckWithFilter(filter) {
-  return function(kind, cardsIn) {
+  return function(cardsIn, options) {
     const cards = cardsIn
       .filter(filter)
       .map((c, idx) => {
         c.kindId = idx
-        c.id = `${kind}-${idx}`,
-        c.kind = kind
+        c.id = `${options.name}-${idx}`,
+        c.kind = name
         c.visibility = []
         return c
       })
 
     shuffleArray(cards)
-    return cards
+
+    options.name = `decks.${options.name}`
+    return {
+      cards,
+      ...options,
+    }
   }
 }

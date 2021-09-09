@@ -1,6 +1,10 @@
 const Util = {}
 module.exports = Util
 
+Util.toCamelCase = function(str) {
+  const downCased = str[0].toLowerCase() + str.slice(1)
+  return downCased.replace(/\W/, '').replace(' ', '')
+}
 
 Util.deepcopy = function(obj) {
   return JSON.parse(JSON.stringify(obj))
