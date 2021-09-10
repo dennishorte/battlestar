@@ -232,8 +232,8 @@ function makeDeckWithFilter(filter) {
       .filter(filter)
       .map((c, idx) => {
         c.kindId = idx
-        c.id = `${options.name}-${idx}`,
-        c.kind = name
+        c.id = `${options.name}-${idx}`
+        c.kind = options.name
         c.visibility = []
         return c
       })

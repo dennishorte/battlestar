@@ -201,6 +201,16 @@ function moveCard(state, data) {
   })
 }
 
+function playerCanSeeCard(state, player, card) {
+  return card.visibility === 'all'
+      || (card.visibility === 'president' && playerIsPresident(state, player))
+      || card.visibility.includes(player.name)
+}
+
+function playerIsPresident(state, player) {
+  return player.name === presidentName(state)
+}
+
 function playerById(state, playerId) {
   return state.game.players.find(p => p._id === playerId)
 }
@@ -234,8 +244,12 @@ function removeFromSpaceRegion(state) {
   }
 }
 
+function viewerCanSeeCard(state, card) {
+  return playerCanSeeCard(state, state.ui.player, card)
+}
+
 function viewerIsPresident(state) {
-  return state.ui.player.name === presidentName(state)
+  return playerIsPresident(state, state.ui.player)
 }
 
 function zoneGet(state, name) {
@@ -332,6 +346,8 @@ export default {
     zones: (state) => state.game.zones,
 
     setupLoyaltyComplete: (state) => state.game.setupLoyaltyComplete,
+
+    viewerCanSeeCard: (state) => (card) => viewerCanSeeCard(state, card),
     viewerIsPresident: (state) => viewerIsPresident(state),
 
 
@@ -440,6 +456,14 @@ export default {
       const cards = zoneGet(state, zoneName).cards
       cards.forEach(c => c.visibility = [])
       util.shuffleArray(cards)
+
+      log(state, {
+        template: "{zone} shuffled",
+        classes: [],
+        args: {
+          zone: zoneName,
+        },
+      })
     },
 
     zoneViewAll(state, zoneName) {

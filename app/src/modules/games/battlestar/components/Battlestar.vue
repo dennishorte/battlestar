@@ -43,6 +43,13 @@
               >
                 {{ player.name }}
               </b-dropdown-item>
+
+              <b-dropdown-divider />
+
+              <b-dropdown-item @click="save">
+                save
+              </b-dropdown-item>
+
             </b-dropdown>
 
             <b-dropdown variant="primary" text="info" right>
@@ -192,6 +199,15 @@ export default {
       this.counters[name] += amount
       this.counters[name] = Math.max(0, this.counters[name])
       this.counters[name] = Math.min(15, this.counters[name])
+    },
+
+    async save() {
+      await this.$store.dispatch('bsg/save')
+      this.$bvToast.toast('saved', {
+        autoHideDelay: 300,
+        noCloseButton: true,
+        solid: true,
+      })
     },
 
     undo() {

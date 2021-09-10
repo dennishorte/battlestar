@@ -34,7 +34,7 @@
         "
         @click="clickCard(index)"
       >
-        {{ card.name }}
+        {{ displayName(card) }}
       </div>
     </div>
   </div>
@@ -104,6 +104,10 @@ export default {
     details() {
       this.$store.commit('bsg/uiZoneViewer', this.deckName)
       this.$bvModal.show('zone-modal')
+    },
+
+    displayName(card) {
+      return this.$store.getters['bsg/viewerCanSeeCard'](card) ? card.name : card.kind
     },
 
     toggleExpand() {
