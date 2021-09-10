@@ -66,6 +66,12 @@
 
       <b-row>
         <b-col>
+          <Resources />
+        </b-col>
+      </b-row>
+
+      <b-row>
+        <b-col>
           <ZonesModal />
 
           <PhasePanel
@@ -75,24 +81,6 @@
           <CrisisCard style="display:none;" :card="crisisCards[44]" />
         </b-col>
       </b-row>
-
-      <b-row>
-
-        <b-col>
-          <Players />
-        </b-col>
-
-        <b-col>
-          <Resources />
-        </b-col>
-
-      </b-row>
-
-      <SpaceZone
-        @space-component-move="spaceComponentMove"
-        @space-component-remove="spaceComponentRemove"
-        @space-components-clear="spaceComponentsClear"
-      />
 
     </b-container>
 
@@ -148,10 +136,8 @@ import GameLog from './GameLog'
 import HoldingMessage from './HoldingMessage'
 import PhasePanel from './PhasePanel'
 import PlayerInfo from './PlayerInfo'
-import Players from './Players'
 import Resources from './Resources'
 import SkillCards from './SkillCards'
-import SpaceZone from './SpaceZone'
 import ZonesModal from './ZonesModal'
 import ZoneViewerModal from './ZoneViewerModal'
 
@@ -198,10 +184,8 @@ export default {
     HoldingMessage,
     PhasePanel,
     PlayerInfo,
-    Players,
     Resources,
     SkillCards,
-    SpaceZone,
     ZonesModal,
     ZoneViewerModal,
   },
@@ -253,18 +237,6 @@ export default {
       this.counters[name] += amount
       this.counters[name] = Math.max(0, this.counters[name])
       this.counters[name] = Math.min(15, this.counters[name])
-    },
-
-    spaceComponentsClear() {
-      console.log('spaceComponentsClear')
-    },
-
-    spaceComponentMove(data) {
-      console.log('spaceComponentMove', data)
-    },
-
-    spaceComponentRemove(data) {
-      console.log('spaceComponentRemove', data)
     },
 
     undo() {
