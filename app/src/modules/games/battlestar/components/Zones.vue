@@ -19,7 +19,7 @@
         </div>
 
       </b-col>
-      <b-col>
+      <b-col class="zone-col">
 
         <div class="heading">
           Skill Decks
@@ -135,47 +135,50 @@
 
 
       </b-col>
+
+      <hr>
     </b-row>
 
-    <b-row>
-      <b-col>
-        <hr>
-        <div class="heading">
-          Space
-        </div>
-        <div class="reminder-text">
-          <p>Ships can only move clockwise or counter-clockwise around these zones.</p>
-          <p>Vipers can launch into the lower zones.</p>
-        </div>
-      </b-col>
-    </b-row>
+    <div class="space-zones">
+      <b-row>
+        <b-col>
+          <div class="heading">
+            Space
+          </div>
+          <div class="reminder-text">
+            <p>Ships can only move clockwise or counter-clockwise around these zones.</p>
+            <p>Vipers can launch into the lower zones.</p>
+          </div>
+        </b-col>
+      </b-row>
 
-    <b-row>
-      <b-col>
-        <DeckZone name="Upper Left" deck-name="space.space1" :expanded="true" />
-      </b-col>
-      <b-col>
-        <DeckZone name="Upper Right" deck-name="space.space2" :expanded="true" />
-      </b-col>
-    </b-row>
+      <b-row>
+        <b-col>
+          <DeckZone name="Upper Left" deck-name="space.space1" :expanded="true" />
+        </b-col>
+        <b-col>
+          <DeckZone name="Upper Right" deck-name="space.space2" :expanded="true" />
+        </b-col>
+      </b-row>
 
-    <b-row>
-      <b-col>
-        <DeckZone name="Front" deck-name="space.space0" :expanded="true" />
-      </b-col>
-      <b-col>
-        <DeckZone name="Back" deck-name="space.space3" :expanded="true" />
-      </b-col>
-    </b-row>
+      <b-row>
+        <b-col>
+          <DeckZone name="Front" deck-name="space.space0" :expanded="true" />
+        </b-col>
+        <b-col>
+          <DeckZone name="Back" deck-name="space.space3" :expanded="true" />
+        </b-col>
+      </b-row>
 
-    <b-row>
-      <b-col>
-        <DeckZone name="Lower Left" deck-name="space.space5" :expanded="true" />
-      </b-col>
-      <b-col>
-        <DeckZone name="Lower Right" deck-name="space.space4" :expanded="true" />
-      </b-col>
-    </b-row>
+      <b-row>
+        <b-col>
+          <DeckZone name="Lower Left" deck-name="space.space5" :expanded="true" />
+        </b-col>
+        <b-col>
+          <DeckZone name="Lower Right" deck-name="space.space4" :expanded="true" />
+        </b-col>
+      </b-row>
+    </div>
 
     <b-row>
       <b-col>
@@ -242,4 +245,20 @@ export default {
 
 
 <style scoped>
+.space-zones {
+  border-radius: .5em;
+  color: #3b69ef;
+  background-color: #003b59;
+  margin-right: -15px;
+  margin-left: -15px;
+  padding-top: .25em;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.zone-col {
+  border: 1px solid gray;
+  border-radius: .25em;
+  background-color: lightgray;
+}
 </style>

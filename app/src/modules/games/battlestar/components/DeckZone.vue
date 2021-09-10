@@ -159,15 +159,18 @@ export default {
 }
 
 .droppable {
+  background-color: white;
   box-shadow: inset 10px 10px 20px #ccf, inset -10px -10px 20px #ccf;
 }
 
 .grabbed {
+  background-color: white;
   box-shadow: inset 10px 10px 20px #444, inset -10px -10px 20px #444;
   color: #ddd;
 }
 
 .grabbed-card {
+  background-color: white;
   box-shadow: inset 5px 5px 20px #444, inset -5px -5px 20px #444;
   color: #ddd;
 }
