@@ -66,6 +66,13 @@
 
       <b-row>
         <b-col>
+          <CrisisCard style="display:none;" :card="crisisCards[44]" />
+          <PhasePanel />
+        </b-col>
+      </b-row>
+
+      <b-row>
+        <b-col>
           <Resources />
         </b-col>
       </b-row>
@@ -73,12 +80,6 @@
       <b-row>
         <b-col>
           <ZonesModal />
-
-          <PhasePanel
-            :loyaltyCards="loyaltyCardsAvailable"
-          />
-
-          <CrisisCard style="display:none;" :card="crisisCards[44]" />
         </b-col>
       </b-row>
 
@@ -142,35 +143,6 @@ import ZonesModal from './ZonesModal'
 import ZoneViewerModal from './ZoneViewerModal'
 
 import crisisCards from '../res/crisis.js'
-import loyaltyCards from '../res/loyalty.js'
-import locations from '../res/location.js'
-
-import bsgutil from '../lib/util.js'
-
-
-function locationCompare(l, r) {
-  if (l.hazardous && !r.hazardous) {
-    return 1
-  }
-  else if (!l.hazardous && r.hazardous) {
-    return -1
-  }
-  else {
-    return l.name.localeCompare(r.name)
-  }
-}
-
-/*
-   TODO (dennis): Locations are often replaced with updated versions in expansions.
-   It is important that this handles the case of duplicate locations correctly when
-   expansions become supported.
- */
-function locationFilter(locations, expansions, area) {
-  return bsgutil
-    .expansionFilter(locations, expansions)
-    .filter(x => x.area === area)
-    .sort(locationCompare)
-}
 
 
 export default {
@@ -194,27 +166,10 @@ export default {
     return {
       // Constant Data
       crisisCards,
-      locations,
     }
   },
 
   computed: {
-    loyaltyCardsAvailable() {
-      const expansions = this.$store.state.bsg.game.options.expansions
-      return bsgutil.expansionFilter(loyaltyCards, expansions)
-    },
-    locationsColonialOne() {
-      const expansions = this.$store.state.bsg.game.options.expansions
-      return locationFilter(this.locations, expansions, 'Colonial One')
-    },
-    locationsCylonLocations() {
-      const expansions = this.$store.state.bsg.game.options.expansions
-      return locationFilter(this.locations, expansions, 'Cylon Locations')
-    },
-    locationsGalactica() {
-      const expansions = this.$store.state.bsg.game.options.expansions
-      return locationFilter(this.locations, expansions, 'Galactica')
-    },
     players() {
       return this.$store.state.bsg.game.players
     },
