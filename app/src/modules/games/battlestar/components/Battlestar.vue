@@ -79,7 +79,7 @@
 
       <b-row>
         <b-col>
-          <ZonesModal />
+          <Zones />
         </b-col>
       </b-row>
 
@@ -139,7 +139,7 @@ import PhasePanel from './PhasePanel'
 import PlayerInfo from './PlayerInfo'
 import Resources from './Resources'
 import SkillCards from './SkillCards'
-import ZonesModal from './ZonesModal'
+import Zones from './Zones'
 import ZoneViewerModal from './ZoneViewerModal'
 
 import crisisCards from '../res/crisis.js'
@@ -158,7 +158,7 @@ export default {
     PlayerInfo,
     Resources,
     SkillCards,
-    ZonesModal,
+    Zones,
     ZoneViewerModal,
   },
 
