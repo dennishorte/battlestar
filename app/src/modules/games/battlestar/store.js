@@ -201,14 +201,24 @@ function moveCard(state, data) {
   })
 }
 
-  function playerById(state, playerId) {
-    return state.game.players.find(p => p._id === playerId)
+function playerById(state, playerId) {
+  return state.game.players.find(p => p._id === playerId)
 }
 
 function pushUnique(array, value) {
   if (array.indexOf(value) === -1) {
     array.push(value)
   }
+}
+
+function presidentName(state) {
+  for (const player of state.game.players) {
+    const zone = zoneGet(state, `players.${player.name}`)
+    if (zone.cards.find(c => c.name === 'President')) {
+      return player.name
+    }
+  }
+  return ''
 }
 
 function removeFromSpaceRegion(state) {
@@ -222,6 +232,10 @@ function removeFromSpaceRegion(state) {
   if (component.startsWith('basestar')) {
     healBasestar(state, component)
   }
+}
+
+function viewerIsPresident(state) {
+  return state.ui.player.name === presidentName(state)
 }
 
 function zoneGet(state, name) {
@@ -311,6 +325,7 @@ export default {
     zones: (state) => state.game.zones,
 
     setupLoyaltyComplete: (state) => state.game.setupLoyaltyComplete,
+    viewerIsPresident: (state) => viewerIsPresident(state),
 
 
     ////////////////////////////////////////////////////////////

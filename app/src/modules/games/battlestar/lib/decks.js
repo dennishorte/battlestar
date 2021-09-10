@@ -6,6 +6,7 @@ import loyaltyCards from '../res/loyalty.js'
 import quorumCards from '../res/quorum.js'
 import skillCards from '../res/skill.js'
 import superCrisisCards from '../res/super_crisis.js'
+import titleCards from '../res/title.js'
 
 import { shuffleArray } from '@/util.js'
 
@@ -97,6 +98,11 @@ function factory(expansions) {
       name: 'superCrisis',
       kind: 'deck',
       discard: 'hidden',
+    }),
+    title: makeDeck(titleCards, {
+      name: 'title',
+      kind: 'open',
+      discard: 'none',
     }),
 
     // Loyalty Decks

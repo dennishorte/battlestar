@@ -23,8 +23,6 @@
     </div>
 
     <div v-if="expand" class="bottom-row">
-      <span v-if="cards.length === 0">empty</span>
-
       <div
         v-for="(card, index) in cards"
         :key="card.id"
@@ -157,6 +155,7 @@ export default {
   border-right: 1px solid darkgray;
   border-radius: .25em;
   font-size: .7em;
+  min-height: .5em;
 }
 
 .droppable {

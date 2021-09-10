@@ -40,7 +40,7 @@
         <div class="heading">
           Open
         </div>
-        <DeckZone name="Common" deck-name="common" />
+        <DeckZone name="Common" deck-name="common" :expanded="true" />
         <DeckZone name="Exile" deck-name="exile" />
 
       </b-col>
@@ -50,7 +50,11 @@
           Quorum
         </div>
         <DeckZone name="Quroum Deck" deck-name="decks.quorum" />
-        <DeckZone name="Quroum Hand" deck-name="quorum" />
+        <DeckZone
+          name="Quroum Hand"
+          deck-name="quorum"
+          :expanded="viewerIsPresident"
+        />
 
       </b-col>
     </b-row>
@@ -64,26 +68,12 @@
         <DeckZone name="Crisis Deck" deck-name="decks.crisis" />
         <DeckZone name="Super Crisis" deck-name="decks.superCrisis" />
 
-      </b-col>
-      <b-col>
-
         <div class="heading">
           Other
         </div>
         <DeckZone name="Destination" deck-name="decks.destination" />
         <DeckZone name="Characters" deck-name="decks.character" />
-
-      </b-col>
-    </b-row>
-
-    <b-row>
-      <b-col>
-
-        <div class="heading">
-          Damage Tokens
-        </div>
-        <DeckZone name="Basestar Damage" deck-name="decks.damageBasestar" />
-        <DeckZone name="Galactica Damage" deck-name="decks.damageGalactica" />
+        <DeckZone name="Titles" deck-name="decks.title" />
 
       </b-col>
       <b-col>
@@ -116,6 +106,7 @@
         <DeckZone
           v-for="(loc, index) in zones.locations.galactica"
           :key="index"
+          :expanded="true"
           :name="loc.details.name"
           :deck-name="loc.name" />
 
@@ -127,6 +118,7 @@
         <DeckZone
           v-for="(loc, index) in zones.locations.colonialOne"
           :key="index"
+          :expanded="true"
           :name="loc.details.name"
           :deck-name="loc.name" />
 
@@ -137,6 +129,7 @@
         <DeckZone
           v-for="(loc, index) in zones.locations.cylonLocations"
           :key="index"
+          :expanded="true"
           :name="loc.details.name"
           :deck-name="loc.name" />
 
@@ -159,14 +152,28 @@
 
     <b-row>
       <b-col>
-        <DeckZone name="Upper Left" deck-name="space.space1" />
-        <DeckZone name="Front" deck-name="space.space0" />
-        <DeckZone name="Lower Left" deck-name="space.space5" />
+        <DeckZone name="Upper Left" deck-name="space.space1" :expanded="true" />
       </b-col>
       <b-col>
-        <DeckZone name="Upper Right" deck-name="space.space2" />
-        <DeckZone name="Back" deck-name="space.space3" />
-        <DeckZone name="Lower Right" deck-name="space.space4" />
+        <DeckZone name="Upper Right" deck-name="space.space2" :expanded="true" />
+      </b-col>
+    </b-row>
+
+    <b-row>
+      <b-col>
+        <DeckZone name="Front" deck-name="space.space0" :expanded="true" />
+      </b-col>
+      <b-col>
+        <DeckZone name="Back" deck-name="space.space3" :expanded="true" />
+      </b-col>
+    </b-row>
+
+    <b-row>
+      <b-col>
+        <DeckZone name="Lower Left" deck-name="space.space5" :expanded="true" />
+      </b-col>
+      <b-col>
+        <DeckZone name="Lower Right" deck-name="space.space4" :expanded="true" />
       </b-col>
     </b-row>
 
@@ -181,8 +188,15 @@
       </b-col>
       <b-col>
         <div class="heading">Basestars</div>
-        <DeckZone name="Basestar A" deck-name="ships.basestarA" />
-        <DeckZone name="Basestar B" deck-name="ships.basestarB" />
+        <DeckZone name="Basestar A" deck-name="ships.basestarA" :expanded="true" />
+        <DeckZone name="Basestar B" deck-name="ships.basestarB" :expanded="true" />
+
+        <div class="heading">
+          Damage Tokens
+        </div>
+        <DeckZone name="Basestar Damage" deck-name="decks.damageBasestar" />
+        <DeckZone name="Galactica Damage" deck-name="decks.damageGalactica" />
+
       </b-col>
     </b-row>
 
@@ -212,6 +226,9 @@ export default {
   computed: {
     playerNames() {
       return Object.keys(this.zones.players)
+    },
+    viewerIsPresident() {
+      return false
     },
     zones() {
       return this.$store.getters['bsg/zones']
