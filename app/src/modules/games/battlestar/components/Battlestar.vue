@@ -78,34 +78,12 @@
 
       <b-row>
 
-        <b-col cols="6" md="3">
+        <b-col>
           <Players />
         </b-col>
 
-        <b-col cols="6" md="3">
+        <b-col>
           <Resources />
-        </b-col>
-
-        <b-col cols="6" md="3">
-          <LocationGroup
-            name="Galactica"
-            :locations="locationsGalactica"
-            @player-move="playerMove">
-          </LocationGroup>
-        </b-col>
-
-        <b-col cols="6" md="3">
-          <LocationGroup
-            name="Colonial One"
-            :locations="locationsColonialOne"
-            @player-move="playerMove">
-          </LocationGroup>
-
-          <LocationGroup
-            name="Cylon Locations"
-            :locations="locationsCylonLocations"
-            @player-move="playerMove">
-          </LocationGroup>
         </b-col>
 
       </b-row>
@@ -168,7 +146,6 @@ import CrisisCard from './CrisisCard'
 import Destination from './Destination'
 import GameLog from './GameLog'
 import HoldingMessage from './HoldingMessage'
-import LocationGroup from './LocationGroup'
 import PhasePanel from './PhasePanel'
 import PlayerInfo from './PlayerInfo'
 import Players from './Players'
@@ -219,7 +196,6 @@ export default {
     Destination,
     GameLog,
     HoldingMessage,
-    LocationGroup,
     PhasePanel,
     PlayerInfo,
     Players,
