@@ -317,6 +317,13 @@ export default {
     ////////////////////////////////////////////////////////////
     // Game
 
+    countersFood: (state) => state.game.counters.food,
+    countersFuel: (state) => state.game.counters.fuel,
+    countersMorale: (state) => state.game.counters.morale,
+    countersPopulation: (state) => state.game.counters.population,
+    countersNukes: (state) => state.game.counters.nukes,
+    countersJumpTrack: (state) => state.game.counters.jumpTrack,
+
     deck: (state) => (key) => deckGet(state, key),
     hand: (state) => (playerName) => state.game.zones.players[playerName],
     players: (state) => state.game.players,
@@ -382,6 +389,10 @@ export default {
 
     move(state, data) {
       moveCard(state, data)
+    },
+
+    resourceChange(state, { name, amount }) {
+      state.game.counters[name] += amount
     },
 
     userSet(state, user) {

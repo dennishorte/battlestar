@@ -28,12 +28,9 @@ async function initialize(game) {
     morale: 10,
     population: 12,
 
-    raptors: 4,
-    damaged_vipers: 0,
-
     nukes: 2,
 
-    jump_track: 0,
+    jumpTrack: 0,
   }
 
   // Players

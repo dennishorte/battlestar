@@ -8,7 +8,7 @@
     </div>
     <div>
       <div class="name-value-wrapper">
-        <div>{{ name }}:</div>
+        <div>{{ title }}:</div>
         <div>{{ value }}</div>
       </div>
       <div v-if="!!notes" class="notes">
@@ -30,6 +30,7 @@ export default {
   props: {
     name: String,
     notes: String,
+    title: String,
     value: Number,
   },
 
