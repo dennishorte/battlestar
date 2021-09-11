@@ -107,7 +107,7 @@ export default {
 
   methods: {
     selectCard(event, name) {
-      this.$store.commit('bsg/skillCardInfoRequest', name)
+      this.$store.dispatch('bsg/skillCardInfoRequest', name)
     },
 
     skillType: bsgutil.skillType,

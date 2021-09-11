@@ -88,21 +88,21 @@ export default {
 
   methods: {
     click() {
-      this.$store.commit('bsg/zoneClick', {
+      this.$store.dispatch('bsg/zoneClick', {
         source: this.deckName,
         sourceIndex: 0,
       })
     },
 
     clickCard(index) {
-      this.$store.commit('bsg/zoneClick', {
+      this.$store.dispatch('bsg/zoneClick', {
         source: this.deckName,
         sourceIndex: index,
       })
     },
 
     details() {
-      this.$store.commit('bsg/uiZoneViewer', this.deckName)
+      this.$store.dispatch('bsg/zoneViewer', this.deckName)
       this.$bvModal.show('zone-modal')
     },
 

@@ -24,7 +24,7 @@ export default {
 
   methods: {
     openSkillInfo() {
-      this.$store.commit('bsg/skillCardInfoRequest', '')
+      this.$store.dispatch('bsg/skillCardInfoRequest', '')
       this.$bvModal.show('skill-cards-modal')
     }
   },

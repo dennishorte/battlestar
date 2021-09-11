@@ -59,26 +59,6 @@
 
       <div v-if="phase === 'jump-choose-destination'">
         <p>The admiral looks at two destination cards and selects one of them to be the destination.</p>
-        <b-button block variant="primary" @click="$bvModal.show('destination-modal')">Open Destination Panel</b-button>
-        <b-button block variant="primary" @click="drawDestinationCard">Draw Destination Card</b-button>
-
-        <div
-          v-for="(card, index) in admiralDestinationCards"
-          :key="index"
-          class="mb-2 mt-2"
-        >
-          <div style="float: right;">
-            <b-button
-              variant="success"
-              @click="chooseDestination(index)"
-            >
-              {{ card.name }}
-            </b-button>
-          </div>
-          <div>name: {{ card.name }}</div>
-          <div>distance: {{ card.distance }}</div>
-          <div>effect: {{ card.text }}</div>
-        </div>
       </div>
 
     </div>
@@ -257,14 +237,6 @@ export default {
   },
 
   methods: {
-    chooseDestination(index) {
-      this.$store.commit('bsg/destinationCardChoose', index)
-    },
-
-    drawDestinationCard() {
-      this.$store.commit('bsg/destinationCardDraw')
-    },
-
     phaseChanged(value) {
       this.$store.commit('bsg/phaseSet', value)
     },

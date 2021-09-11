@@ -86,7 +86,8 @@ export default {
 
   computed: {
     characters() {
-      const characters = [...this.$store.getters['bsg/deckData']('character')]
+      const charactersRaw = this.$store.getters['bsg/deckData']('character').cards
+      const characters = [...charactersRaw]
       characters.sort((l, r) => l.name.localeCompare(r.name))
       return characters
     },
@@ -111,7 +112,7 @@ export default {
     },
 
     characterCloseup(name) {
-      this.$store.commit('bsg/character_info_request', name)
+      this.$store.dispatch('bsg/characterInfoRequest', name)
     },
 
     classes(name) {

@@ -21,7 +21,7 @@ export default {
 
   methods: {
     openCharacterInfo() {
-      this.$store.commit('bsg/character_info_request', this.name)
+      this.$store.dispatch('bsg/characterInfoRequest', this.name)
       this.$bvModal.show('characters-modal')
     }
   },

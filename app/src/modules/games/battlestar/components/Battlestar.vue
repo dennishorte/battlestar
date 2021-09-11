@@ -56,9 +56,6 @@
               <b-dropdown-item @click="$bvModal.show('characters-modal')">
                 Characters
               </b-dropdown-item>
-              <b-dropdown-item @click="$bvModal.show('destination-modal')">
-                Destinations
-              </b-dropdown-item>
               <b-dropdown-item @click="$bvModal.show('skill-cards-modal')">
                 Skill Cards
               </b-dropdown-item>
@@ -73,7 +70,6 @@
 
       <b-row>
         <b-col>
-          <CrisisCard style="display:none;" :card="crisisCards[44]" />
           <PhasePanel />
         </b-col>
       </b-row>
@@ -102,25 +98,11 @@
     </b-modal>
 
     <b-modal
-      id="destination-modal"
-      title="Destination"
-      ok-only>
-      <Destination />
-    </b-modal>
-
-    <b-modal
       id="game-log-modal"
       title="game-log"
       ok-only>
 
       <GameLog />
-    </b-modal>
-
-    <b-modal
-      id="player-modal"
-      title="Player Info"
-      ok-only>
-      <PlayerInfo />
     </b-modal>
 
     <b-modal
@@ -130,26 +112,18 @@
       <SkillCards />
     </b-modal>
 
-    <HoldingMessage />
-
   </div>
 </template>
 
 
 <script>
 import Characters from './Characters'
-import CrisisCard from './CrisisCard'
-import Destination from './Destination'
 import GameLog from './GameLog'
-import HoldingMessage from './HoldingMessage'
 import PhasePanel from './PhasePanel'
-import PlayerInfo from './PlayerInfo'
 import Resources from './Resources'
 import SkillCards from './SkillCards'
 import Zones from './Zones'
 import ZoneViewerModal from './ZoneViewerModal'
-
-import crisisCards from '../res/crisis.js'
 
 
 export default {
@@ -157,23 +131,12 @@ export default {
 
   components: {
     Characters,
-    CrisisCard,
-    Destination,
     GameLog,
-    HoldingMessage,
     PhasePanel,
-    PlayerInfo,
     Resources,
     SkillCards,
     Zones,
     ZoneViewerModal,
-  },
-
-  data() {
-    return {
-      // Constant Data
-      crisisCards,
-    }
   },
 
   computed: {
