@@ -234,7 +234,7 @@ function makeDeckWithFilter(filter) {
         c.kindId = idx
         c.id = `${options.name}-${idx}`
         c.kind = options.name
-        c.visibility = []
+        c.visibility = options.kind === 'open' ? 'all' : []
         return c
       })
 
