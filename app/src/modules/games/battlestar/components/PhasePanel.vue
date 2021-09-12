@@ -185,10 +185,6 @@ export default {
     SkillDecks,
   },
 
-  props: {
-    characters: Array,
-  },
-
   data() {
     return {
       options,
@@ -201,7 +197,19 @@ export default {
     },
 
     characterTypeCounts() {
-      const claimed = this.$store.state.bsg.game.players.map(p => p.character)
+      const players = this.$store.getters['bsg/players']
+      const playerCharacters = players
+        .map(player => {
+          const hand = this.$store.getters['bsg/hand'](player.name).cards
+          for (const card of hand) {
+            if (card.kind === 'character') {
+              return card
+            }
+          }
+          return null
+        })
+        .filter(x => !!x)
+
       const counts = {
         Politics: 0,
         Military: 0,
@@ -209,8 +217,9 @@ export default {
         Support: 0,
       }
 
-      for (const char of this.characters) {
-        if (!claimed.includes(char.name)) {
+      const characterData = this.$store.getters['bsg/deckData']('character').cards
+      for (const char of characterData) {
+        if (!playerCharacters.find(ch => ch.name === char.name)) {
           counts[char['role']] += 1
         }
       }
