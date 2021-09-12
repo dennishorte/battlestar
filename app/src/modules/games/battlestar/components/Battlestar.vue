@@ -139,6 +139,12 @@ export default {
     ZoneViewerModal,
   },
 
+  data() {
+    return {
+      unsubscribe: null,
+    }
+  },
+
   computed: {
     players() {
       return this.$store.state.bsg.game.players
@@ -176,6 +182,30 @@ export default {
     undo() {
       console.log('undo')
     },
+  },
+
+  beforeDestroy() {
+    if (this.unsubscribe) {
+      this.unsubscribe()
+    }
+  },
+
+  mounted() {
+    this.unsubscribe = this.$store.subscribe(mutation => {
+      const state = this.$store.state.bsg
+
+      if (!mutation.type.startsWith('bsg/') || state.ui.undoing) {
+        return
+      }
+
+      // A new action is performed. Clear the redo, since it probably doesn't make sense anymore.
+      if (!state.ui.redoing) {
+        state.ui.undone = []
+      }
+
+      state.game.history.push(mutation)
+      console.log(mutation)
+    })
   },
 }
 

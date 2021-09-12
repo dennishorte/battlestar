@@ -234,6 +234,9 @@ export default {
         },
 
         player: {},
+
+        undone: [],
+        undoing: false,
       },
 
       ////////////////////////////////////////////////////////////
@@ -371,7 +374,6 @@ export default {
         }
       }
     },
-
   },
 
   actions: {
@@ -404,7 +406,7 @@ export default {
     zoneClick({ commit, state }, data) {
       if (state.ui.grab.source) {
         if (state.ui.grab.source !== data.source) {
-          commit('bsg/move', {
+          commit('move', {
             source: state.ui.grab.source,
             sourceIndex: state.ui.grab.sourceIndex,
             target: data.source,
@@ -422,5 +424,35 @@ export default {
     zoneViewer({ state }, zoneName) {
       state.ui.modalZone.name = zoneName
     },
+
+    undo({ state, commit, dispatch }) {
+      state.ui.undoing = true
+
+      state.ui.undone.push(state.game.history.pop())
+      dispatch('reset')
+      for (const mutation of state.game.history) {
+        commit(mutation.type, mutation.payload)
+      }
+
+      state.ui.undoing = false
+    },
+
+    redo({ state, commit }) {
+      if (state.ui.undone.length === 0) {
+        return
+      }
+
+      state.ui.redoing = true
+
+      const mutation = state.ui.undone.pop()
+      commit(mutation.type, mutation.payload)
+
+      state.ui.redoing = false
+    },
+
+    reset({ state }) {
+      console.log('reset', state)
+    },
+
   },
 }

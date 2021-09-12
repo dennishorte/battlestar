@@ -21,6 +21,8 @@ async function initialize(game) {
   game.phase = 'setup-character-creation'
   game.log = []
 
+  game.history = []
+
   // Counters
   game.counters = {
     food: 8,
