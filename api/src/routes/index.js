@@ -4,6 +4,7 @@ const db = require('../models/db.js')
 module.exports = {
   lobby: require('./lobby_routes.js'),
   game: require('./game_routes.js'),
+  snapshot: require('./snapshot_routes.js'),
   user: require('./user_routes.js'),
 }
 

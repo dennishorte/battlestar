@@ -42,6 +42,10 @@ app.post('/api/game/create', routes.game.create)
 app.post('/api/game/fetch', routes.game.fetch)
 app.post('/api/game/save', routes.game.save)
 
+// Snapshot Routes
+app.post('/api/snapshot/create', routes.snapshot.create)
+app.post('/api/snapshot/fetch', routes.snapshot.fetch)
+
 // User Routes
 app.post('/api/user/all', routes.user.all)
 app.post('/api/user/create', routes.user.create)

@@ -18,6 +18,9 @@
         <b-col>
           <div class="action-buttons">
             <b-button variant="success" v-b-modal.game-log-modal>log</b-button>
+            <b-button variant="danger" @click="undo">undo</b-button>
+            <b-button variant="info" @click="redo">redo</b-button>
+
             <b-dropdown variant="warning" text="pass to" left>
               <b-dropdown-item>
                 next
@@ -159,10 +162,6 @@ export default {
       console.log('pass priority')
     },
 
-    playerMove(data) {
-      console.log('playerMove', data)
-    },
-
     resourceChanged({ name, amount }) {
       name = name.trim().toLowerCase().replace(' ', '_')
       this.counters[name] += amount
@@ -179,8 +178,12 @@ export default {
       })
     },
 
+    redo() {
+      this.$store.dispatch('bsg/redo')
+    },
+
     undo() {
-      console.log('undo')
+      this.$store.dispatch('bsg/undo')
     },
   },
 
@@ -198,13 +201,16 @@ export default {
         return
       }
 
+      // Strip the 'bsg/' from the front, since we'll be replaying them from local context.
+      mutation.type = mutation.type.slice(4)
+
       // A new action is performed. Clear the redo, since it probably doesn't make sense anymore.
       if (!state.ui.redoing) {
         state.ui.undone = []
       }
 
-      state.game.history.push(mutation)
       console.log(mutation)
+      state.game.history.push(mutation)
     })
   },
 }

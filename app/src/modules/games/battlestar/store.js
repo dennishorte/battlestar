@@ -389,6 +389,7 @@ export default {
       if (!data.initialized) {
         await factory.initialize(data)
         await dispatch('save')
+        await dispatch('snapshotCreate')
       }
     },
 
@@ -397,6 +398,21 @@ export default {
       if (requestResult.data.status !== 'success') {
         throw requestResult.data.message
       }
+    },
+
+    async snapshotCreate({ state }) {
+      const requestResult = await axios.post('/api/snapshot/create', { gameId: state.game._id })
+      if (requestResult.data.status !== 'success') {
+        throw requestResult.data.message
+      }
+    },
+
+    async snapshotFetch({ state }) {
+      const requestResult = await axios.post('/api/snapshot/fetch', { gameId: state.game._id })
+      if (requestResult.data.status !== 'success') {
+        throw requestResult.data.message
+      }
+      return requestResult.data.snapshots
     },
 
     skillCardInfoRequest({ state }, cardName) {
@@ -425,14 +441,22 @@ export default {
       state.ui.modalZone.name = zoneName
     },
 
-    undo({ state, commit, dispatch }) {
+    async undo({ state, commit, dispatch }) {
+      if (state.game.history.length === 0) {
+        return
+      }
+
       state.ui.undoing = true
 
       state.ui.undone.push(state.game.history.pop())
-      dispatch('reset')
-      for (const mutation of state.game.history) {
+      const history = [...state.game.history]
+
+      await dispatch('reset')
+      for (const mutation of history) {
         commit(mutation.type, mutation.payload)
       }
+
+      state.game.history = history
 
       state.ui.undoing = false
     },
@@ -450,8 +474,10 @@ export default {
       state.ui.redoing = false
     },
 
-    reset({ state }) {
-      console.log('reset', state)
+    async reset({ state, dispatch }) {
+      const snapshots = await dispatch('snapshotFetch')
+      const oldest = snapshots[0]
+      state.game = oldest.game
     },
 
   },
