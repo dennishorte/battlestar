@@ -19,19 +19,12 @@
       </b-form-select>
     </b-form-group>
 
+    <SetupCharacterSelection v-if="phase === 'setup-character-selection'" />
     <SetupDistributeTitleCards v-if="phase === 'setup-distribute-title-cards'" />
     <SetupDistributeLoyaltyCards v-if="phase === 'setup-distribute-loyalty-cards'" />
 
 
     <div class="phase-description">
-
-      <div v-if="phase === 'setup-character-selection'">
-        <p>You can see and select characters from the info menu.</p>
-        <p>There are four character types: political leader, military leader, pilot, support.</p>
-        <p>Starting with the first player ({{ firstPlayer }}), each player chooses from the remaining characters a character of the type that is most plentiful. The exception is that a support character can be chosen at any time.</p>
-        <p class="heading">Remaining:</p>
-        <b-table small :items="characterTypeCounts"></b-table>
-      </div>
 
       <div v-if="phase === 'setup-receive-skills'">
         <p>Each player, <strong>except</strong> the starting player, receives three skill cards of types they could normally receive during the receive skills step.</p>
@@ -67,6 +60,7 @@
 
 
 <script>
+import SetupCharacterSelection from './SetupCharacterSelection'
 import SetupDistributeLoyaltyCards from './SetupDistributeLoyaltyCards'
 import SetupDistributeTitleCards from './SetupDistributeTitleCards'
 import SkillDecks from './SkillDecks'
@@ -180,6 +174,7 @@ export default {
   name: 'PhasePanel',
 
   components: {
+    SetupCharacterSelection,
     SetupDistributeLoyaltyCards,
     SetupDistributeTitleCards,
     SkillDecks,
@@ -194,46 +189,6 @@ export default {
   computed: {
     admiralDestinationCards() {
       return this.$store.state.bsg.game.destination.admiralViewing
-    },
-
-    characterTypeCounts() {
-      const players = this.$store.getters['bsg/players']
-      const playerCharacters = players
-        .map(player => {
-          const hand = this.$store.getters['bsg/hand'](player.name).cards
-          for (const card of hand) {
-            if (card.kind === 'character') {
-              return card
-            }
-          }
-          return null
-        })
-        .filter(x => !!x)
-
-      const counts = {
-        Politics: 0,
-        Military: 0,
-        Pilot: 0,
-        Support: 0,
-      }
-
-      const characterData = this.$store.getters['bsg/deckData']('character').cards
-      for (const char of characterData) {
-        if (!playerCharacters.find(ch => ch.name === char.name)) {
-          counts[char['role']] += 1
-        }
-      }
-
-      const tableItems = Object.entries(counts).map(arr => ({
-        role: arr[0],
-        count: arr[1]
-      }))
-
-      return tableItems
-    },
-
-    firstPlayer() {
-      return this.$store.state.bsg.game.players[0].name
     },
 
     phase() {
