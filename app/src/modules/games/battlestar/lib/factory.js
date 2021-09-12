@@ -212,7 +212,6 @@ function makeLocations(area, expansions) {
 
 function makePlayerZones(players) {
   const zones = {}
-  const allPlayerNames = players.map(p => p.name)
 
   let idx = 0
   for (const player of players) {
@@ -224,10 +223,11 @@ function makePlayerZones(players) {
         id: `player-token-${idx}`,
         kind: 'player-token',
         expansion: 'base game',
-        visibility: allPlayerNames,
+        visibility: 'all',
       }],
       kind: 'hand',
       visibility: 'owner',
+      owner: player.name,
     }
     idx += 1
   }

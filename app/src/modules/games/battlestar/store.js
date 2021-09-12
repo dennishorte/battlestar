@@ -5,6 +5,29 @@ import factory from './lib/factory.js'
 import util from '@/util.js'
 
 
+function cardAdjustVisibility(state, card, zoneName) {
+  const zone = zoneGet(state, zoneName)
+
+  if (zone.visibility === 'open') {
+    card.visibility = 'all'
+  }
+  else if (zone.visibility === 'president') {
+    card.visibility = [presidentName()]
+  }
+  else if (zone.visibility === 'owner') {
+    if (card.visibility !== 'all') {
+      pushUnique(card.visibility, zone.owner)
+    }
+  }
+  else if (zone.visibility === 'deck'
+           || zone.visibility === 'bag') {
+    card.visibility = []
+  }
+  else {
+    throw `Unknown zone visibility (${zone.visibility}) for zone ${zone.name}`
+  }
+}
+
 function cardReveal(state, card) {
   card.visibility = state.game.players.map(p => p.name)
 }
@@ -133,8 +156,16 @@ function moveCard(state, data) {
     throw `Card not found in source. ${data.cardId}, ${data.source}`
   }
 
+  // The actual state updates
   const card = source.splice(sourceIdx, 1)[0]
   target.splice(targetIdx, 0, card)
+
+  // Adjust the card's visibility based on its new zone
+  cardAdjustVisibility(
+    state,
+    card,
+    data.target,
+  )
 
   log(state, {
     template: "{card} moved from {source} to {target}",
