@@ -20,7 +20,7 @@
     </b-form-group>
 
     <SetupDistributeTitleCards v-if="phase === 'setup-distribute-title-cards'" />
-    <LoyaltySetup v-if="phase === 'setup-distribute-loyalty-cards'" />
+    <SetupDistributeLoyaltyCards v-if="phase === 'setup-distribute-loyalty-cards'" />
 
 
     <div class="phase-description">
@@ -67,7 +67,7 @@
 
 
 <script>
-import LoyaltySetup from './LoyaltySetup'
+import SetupDistributeLoyaltyCards from './SetupDistributeLoyaltyCards'
 import SetupDistributeTitleCards from './SetupDistributeTitleCards'
 import SkillDecks from './SkillDecks'
 
@@ -180,7 +180,7 @@ export default {
   name: 'PhasePanel',
 
   components: {
-    LoyaltySetup,
+    SetupDistributeLoyaltyCards,
     SetupDistributeTitleCards,
     SkillDecks,
   },
