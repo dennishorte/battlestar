@@ -7,24 +7,25 @@ import util from '@/util.js'
 
 function cardAdjustVisibility(state, card, zoneName) {
   const zone = zoneGet(state, zoneName)
+  const zoneVis = zone.visibility || zone.kind
 
-  if (zone.visibility === 'open') {
+  if (zoneVis === 'open') {
     card.visibility = 'all'
   }
-  else if (zone.visibility === 'president') {
+  else if (zoneVis === 'president') {
     card.visibility = [presidentName()]
   }
-  else if (zone.visibility === 'owner') {
+  else if (zoneVis === 'owner') {
     if (card.visibility !== 'all') {
       pushUnique(card.visibility, zone.owner)
     }
   }
-  else if (zone.visibility === 'deck'
-           || zone.visibility === 'bag') {
+  else if (zoneVis === 'deck'
+           || zoneVis === 'bag') {
     card.visibility = []
   }
   else {
-    throw `Unknown zone visibility (${zone.visibility}) for zone ${zone.name}`
+    throw `Unknown zone visibility (${zoneVis}) for zone ${zone.name}`
   }
 }
 

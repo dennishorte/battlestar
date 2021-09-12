@@ -108,16 +108,19 @@ function factory(expansions) {
     // Loyalty Decks
     cylon: makeLoyaltyDeck(loyaltyCards, {
       name: 'cylon',
+      cardKind: 'loyalty',
       kind: 'bag',
       discard: 'none',
     }),
     human: makeLoyaltyDeck(loyaltyCards, {
       name: 'human',
+      cardKind: 'loyalty',
       kind: 'bag',
       discard: 'none',
     }),
     sympathizer: makeLoyaltyDeck(loyaltyCards, {
       name: 'sympathizer',
+      cardKind: 'loyalty',
       kind: 'bag',
       discard: 'none',
     }),
@@ -231,9 +234,11 @@ function makeDeckWithFilter(filter) {
     const cards = cardsIn
       .filter(filter)
       .map((c, idx) => {
+        const kind = options.cardKind || options.name
+
         c.kindId = idx
-        c.id = `${options.name}-${idx}`
-        c.kind = options.name
+        c.id = `${kind}-${idx}`
+        c.kind = kind
         c.visibility = options.kind === 'open' ? 'all' : []
         return c
       })
