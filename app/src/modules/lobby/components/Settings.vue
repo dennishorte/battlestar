@@ -27,10 +27,6 @@
 
   </div>
 
-  <div>
-    <b-button @click="save" variant="primary">save</b-button>
-  </div>
-
 </div>
 </template>
 
@@ -103,10 +99,10 @@ export default {
   },
 
   methods: {
-    save() {
-      this.$emit('settings-save')
-    },
-
+    /* save() {
+     *   this.$emit('settings-save')
+     * },
+     */
     settingsUpdated() {
       this.$emit('settings-updated', {
         game: this.game,

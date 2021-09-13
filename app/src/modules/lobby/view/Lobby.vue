@@ -113,7 +113,7 @@ export default {
       const data = this.processRequestResult(requestResult)
       if (data.status === 'success') {
         this.$bvToast.toast('Settings saved', {
-          autoHideDelay: 2000,
+          autoHideDelay: 500,
           noCloseButton: true,
           solid: true,
           variant: 'success',
@@ -125,6 +125,7 @@ export default {
     async settingsUpdated({ game, options }) {
       this.lobby.game = game
       this.lobby.options = options
+      await this.settingsSave()
     },
 
     async startGame() {
