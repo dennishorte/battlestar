@@ -61,12 +61,25 @@
 
     <b-row>
       <b-col>
-
         <div class="heading">
           Crisis
         </div>
+      </b-col>
+    </b-row>
+
+    <b-row>
+      <b-col>
         <DeckZone name="Crisis Deck" deck-name="decks.crisis" />
         <DeckZone name="Super Crisis" deck-name="decks.superCrisis" />
+      </b-col>
+      <b-col>
+        <DeckZone name="Crisis Pool" deck-name="crisisPool" />
+        <DeckZone name="Destiny" deck-name="destiny" />
+      </b-col>
+    </b-row>
+
+    <b-row>
+      <b-col>
 
         <div class="heading">
           Other

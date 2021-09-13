@@ -53,13 +53,7 @@ export default {
   },
 
   props: {
-    card: {}
-  },
-
-  data() {
-    return {
-
-    }
+    card: Object,
   },
 
   computed: {

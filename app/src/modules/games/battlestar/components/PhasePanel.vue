@@ -23,6 +23,8 @@
     <SetupDistributeTitleCards v-if="phase === 'setup-distribute-title-cards'" />
     <SetupDistributeLoyaltyCards v-if="phase === 'setup-distribute-loyalty-cards'" />
 
+    <MainCrisis v-if="phase === 'main-crisis'" />
+
 
     <div class="phase-description">
 
@@ -60,6 +62,7 @@
 
 
 <script>
+import MainCrisis from './MainCrisis'
 import SetupCharacterSelection from './SetupCharacterSelection'
 import SetupDistributeLoyaltyCards from './SetupDistributeLoyaltyCards'
 import SetupDistributeTitleCards from './SetupDistributeTitleCards'
@@ -174,6 +177,7 @@ export default {
   name: 'PhasePanel',
 
   components: {
+    MainCrisis,
     SetupCharacterSelection,
     SetupDistributeLoyaltyCards,
     SetupDistributeTitleCards,

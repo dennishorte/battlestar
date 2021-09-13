@@ -56,7 +56,17 @@ async function initialize(game) {
       cards: [],
       kind: 'open',
     },
+    crisisPool: {
+      name: 'crisisPool',
+      cards: [],
+      kind: 'bag',
+    },
     decks,
+    destiny: {
+      name: 'destiny',
+      cards: [],
+      kind: 'bag',
+    },
     exile: {
       name: 'exile',
       cards: [],
