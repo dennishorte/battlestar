@@ -128,31 +128,37 @@ function factory(expansions) {
     // Skill Decks
     politics: makeSkillDeck(skillCards, {
       name: 'politics',
+      cardKind: 'skill',
       kind: 'deck',
       discard: 'visible',
     }),
     leadership: makeSkillDeck(skillCards, {
       name: 'leadership',
+      cardKind: 'skill',
       kind: 'deck',
       discard: 'visible',
     }),
     tactics: makeSkillDeck(skillCards, {
       name: 'tactics',
+      cardKind: 'skill',
       kind: 'deck',
       discard: 'visible',
     }),
     piloting: makeSkillDeck(skillCards, {
       name: 'piloting',
+      cardKind: 'skill',
       kind: 'deck',
       discard: 'visible',
     }),
     engineering: makeSkillDeck(skillCards, {
       name: 'engineering',
+      cardKind: 'skill',
       kind: 'deck',
       discard: 'visible',
     }),
     treachery: makeSkillDeck(skillCards, {
       name: 'treachery',
+      cardKind: 'skill',
       kind: 'deck',
       discard: 'visible',
     }),
