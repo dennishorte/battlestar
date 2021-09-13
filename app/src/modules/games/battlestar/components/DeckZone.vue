@@ -82,7 +82,7 @@ export default {
       return this.$store.getters['bsg/grab'].source === this.deckName
     },
     grabbedIndex() {
-      return this.grabbed ? this.$store.getters['bsg/grab'].sourceIndex : -1
+      return this.grabbed ? this.$store.getters['bsg/grab'].index : -1
     },
   },
 
@@ -90,14 +90,14 @@ export default {
     click() {
       this.$store.dispatch('bsg/zoneClick', {
         source: this.deckName,
-        sourceIndex: 0,
+        index: 0,
       })
     },
 
     clickCard(index) {
       this.$store.dispatch('bsg/zoneClick', {
         source: this.deckName,
-        sourceIndex: index,
+        index: index,
       })
     },
 

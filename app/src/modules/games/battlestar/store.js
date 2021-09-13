@@ -267,7 +267,11 @@ export default {
 
         grab: {
           source: '',
-          sourceIndex: -1,
+          index: -1,
+        },
+
+        modalCard: {
+          card: {},
         },
 
         modalZone: {
@@ -322,6 +326,7 @@ export default {
     // UI
 
     grab: (state) => state.ui.grab,
+    uiModalCard: (state) => state.ui.modalCard,
     uiModalZone: (state) => state.ui.modalZone,
   },
 
@@ -427,6 +432,13 @@ export default {
       grabCancel(state)
     },
 
+    grabInfo({ state, getters }) {
+      const grab = getters.grab
+      const card = getters.cardAt(grab.source, grab.index)
+      state.ui.modalCard.card = card
+      grabCancel(state)
+    },
+
     async load({ dispatch, state }, data) {
       // Load the static deck data (used in info panels)
       state.data.decks = decks.factory(data.options.expansions)
@@ -470,7 +482,7 @@ export default {
         if (state.ui.grab.source !== data.source) {
           commit('move', {
             source: state.ui.grab.source,
-            sourceIndex: state.ui.grab.sourceIndex,
+            sourceIndex: state.ui.grab.index,
             target: data.source,
             targetIndex: data.sourceIndex,
           })

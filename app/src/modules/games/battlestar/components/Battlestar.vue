@@ -91,6 +91,7 @@
 
     </b-container>
 
+    <CardInfoModal />
     <ZoneViewerModal />
 
     <b-modal
@@ -122,6 +123,7 @@
 
 
 <script>
+import CardInfoModal from './CardInfoModal'
 import Characters from './Characters'
 import GameLog from './GameLog'
 import GrabMessage from './GrabMessage'
@@ -136,6 +138,7 @@ export default {
   name: 'Battlestar',
 
   components: {
+    CardInfoModal,
     Characters,
     GameLog,
     GrabMessage,

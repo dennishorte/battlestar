@@ -8,6 +8,7 @@
       {{ message }}
     </div>
 
+    <b-button v-if="visible" @click="info" variant="success">info</b-button>
     <b-button @click="cancel" variant="primary">cancel</b-button>
   </div>
 </template>
@@ -28,15 +29,26 @@ export default {
       if (this.hidden)
         return ''
 
-      const card = this.$store.getters['bsg/cardAt'](this.grab.source, this.grab.sourceIndex)
+      const card = this.$store.getters['bsg/cardAt'](this.grab.source, this.grab.index)
       const cardName = this.$store.getters['bsg/visible'](card) ? card.name : card.kind
       return `Holding ${cardName} from ${this.grab.source}`
+    },
+    visible() {
+      if (this.hidden)
+        return false
+      const card = this.$store.getters['bsg/cardAt'](this.grab.source, this.grab.index)
+      return this.$store.getters['bsg/visible'](card)
     },
   },
 
   methods: {
     cancel() {
       this.$store.dispatch('bsg/grabCancel')
+    },
+
+    info() {
+      this.$store.dispatch('bsg/grabInfo')
+      this.$bvModal.show('card-modal')
     },
   },
 }
