@@ -34,7 +34,8 @@
         "
         @click="clickCard(index)"
       >
-        {{ displayName(card) }}
+        <div>{{ displayName(card) }}</div>
+        <div>{{ displayExtra(card) }}</div>
       </div>
     </div>
   </div>
@@ -106,6 +107,16 @@ export default {
       this.$bvModal.show('zone-modal')
     },
 
+    displayExtra(card) {
+      if (!this.$store.getters['bsg/viewerCanSeeCard'](card)) {
+        return ''
+      }
+
+      if (card.kind === 'skill') {
+        return card.value
+      }
+    },
+
     displayName(card) {
       return this.$store.getters['bsg/viewerCanSeeCard'](card) ? card.name : card.kind
     },
@@ -139,6 +150,9 @@ export default {
 
 .expanded-card {
   padding: .25em;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .expanded-card:not(:first-of-type) {
