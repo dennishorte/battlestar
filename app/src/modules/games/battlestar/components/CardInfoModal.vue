@@ -5,6 +5,7 @@
     ok-only>
 
     <CrisisCard v-if="card.kind === 'crisis'" :card="card" />
+    <SkillCard v-if="card.kind === 'skill'" :card="card" />
 
     <div v-else-if="card.kind === 'player-token'">
       <p><span class="heading">Name:</span> {{ card.name }}</p>
@@ -24,12 +25,14 @@
 
 <script>
 import CrisisCard from './CrisisCard'
+import SkillCard from './SkillCard'
 
 export default {
   name: 'CardInfoModal',
 
   components: {
     CrisisCard,
+    SkillCard,
   },
 
   computed: {

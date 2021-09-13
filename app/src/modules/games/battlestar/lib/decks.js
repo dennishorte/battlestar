@@ -52,8 +52,7 @@ function factory(expansions) {
     return maker(cards, options)
   }
   const makeSkillDeck = function(cards, options) {
-    const skill = options.name
-    const filter = c => expansionFilter(c) && c[skill]
+    const filter = c => expansionFilter(c) && c.skill === options.name
     const maker = makeDeckWithFilter(filter)
     return maker(cards, options)
   }
