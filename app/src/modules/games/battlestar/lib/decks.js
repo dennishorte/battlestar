@@ -237,21 +237,25 @@ function makeCards(namelist) {
 
 function makeDeckWithFilter(filter) {
   return function(cardsIn, options) {
+    const deckSuffix = options.name
+    const deckName = `decks.${deckSuffix}`
+
     const cards = cardsIn
       .filter(filter)
       .map((c, idx) => {
         const kind = options.cardKind || options.name
 
         c.kindId = idx
-        c.id = `${kind}-${idx}`
+        c.id = `${deckSuffix}-${idx}`
         c.kind = kind
+        c.deck = deckName
         c.visibility = options.kind === 'open' ? 'all' : []
         return c
       })
 
     shuffleArray(cards)
 
-    options.name = `decks.${options.name}`
+    options.name = deckName
     return {
       cards,
       ...options,
