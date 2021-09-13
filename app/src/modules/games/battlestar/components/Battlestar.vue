@@ -115,6 +115,8 @@
       <SkillCards />
     </b-modal>
 
+    <GrabMessage />
+
   </div>
 </template>
 
@@ -122,6 +124,7 @@
 <script>
 import Characters from './Characters'
 import GameLog from './GameLog'
+import GrabMessage from './GrabMessage'
 import PhasePanel from './PhasePanel'
 import Resources from './Resources'
 import SkillCards from './SkillCards'
@@ -135,6 +138,7 @@ export default {
   components: {
     Characters,
     GameLog,
+    GrabMessage,
     PhasePanel,
     Resources,
     SkillCards,

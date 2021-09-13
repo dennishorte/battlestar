@@ -51,6 +51,11 @@ function drawTop(state, path) {
   return deck.shift()
 }
 
+function grabCancel(state) {
+  state.ui.grab.source = ''
+  state.ui.grab.index = -1
+}
+
 function handGet(state, playerId) {
   const player = playerById(state, playerId)
   const hand = state.game.zones.players[player.name]
@@ -62,7 +67,11 @@ function isRevealed(state, card) {
 }
 
 function isVisible(state, card) {
-  return card.visibility.includes(state.ui.player.name)
+  return (
+    card.visibility === 'all'
+    || (card.visibility === 'president' && presidentName(state) === state.ui.player.name)
+    || card.visibility.includes(state.ui.player.name)
+  )
 }
 
 function logEnrichArgClasses(msg) {
@@ -289,6 +298,7 @@ export default {
     countersNukes: (state) => state.game.counters.nukes,
     countersJumpTrack: (state) => state.game.counters.jumpTrack,
 
+    cardAt: (state) => (source, index) => zoneGet(state, source).cards[index],
     deck: (state) => (key) => deckGet(state, key),
     hand: (state) => (playerName) => state.game.zones.players[playerName],
     players: (state) => state.game.players,
@@ -413,6 +423,10 @@ export default {
       state.ui.charactersModal.selected = name
     },
 
+    grabCancel({ state }) {
+      grabCancel(state)
+    },
+
     async load({ dispatch, state }, data) {
       // Load the static deck data (used in info panels)
       state.data.decks = decks.factory(data.options.expansions)
@@ -462,7 +476,7 @@ export default {
           })
         }
 
-        state.ui.grab = {}
+        grabCancel(state)
       }
       else {
         state.ui.grab = data
