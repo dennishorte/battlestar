@@ -19,7 +19,7 @@
   <b-col cols="7">
     <template v-if="selectedName">
       <div class="heading">{{ selected.name }}</div>
-      <div class="skill-type">{{ skillType(selected) }}</div>
+      <div class="skill-type">{{ selected.skill }}</div>
       {{ selected.text }}
 
       <div class="distribution-caption">Card Distribution</div>
@@ -97,7 +97,7 @@ export default {
       const sorted = {}
       bsgutil.skillList.forEach(skill => {
         sorted[skill] = Object.values(this.cardsByName)
-          .filter(c => c[skill])
+          .filter(c => c.skill === skill)
           .map(c => c.name)
           .sort()
       })
@@ -109,8 +109,6 @@ export default {
     selectCard(event, name) {
       this.$store.dispatch('bsg/skillCardInfoRequest', name)
     },
-
-    skillType: bsgutil.skillType,
   },
 }
 </script>

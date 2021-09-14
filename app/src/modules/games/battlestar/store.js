@@ -441,6 +441,10 @@ export default {
         state.ui.charactersModal.selected = card.name
         return 'characters-modal'
       }
+      else if (card.kind === 'skill') {
+        state.ui.skillCardsModal.selected = card.name
+        return 'skill-cards-modal'
+      }
       else {
         state.ui.modalCard.card = card
         return 'card-modal'
