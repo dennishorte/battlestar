@@ -91,7 +91,7 @@ export default {
     click() {
       this.$store.dispatch('bsg/zoneClick', {
         source: this.deckName,
-        index: 0,
+        index: 'top',
       })
     },
 

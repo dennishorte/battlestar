@@ -209,6 +209,7 @@ function makeLocations(area, expansions) {
         cards: [],
         kind: 'open',
         details: loc,
+        noTopDeck: true,
       }
     })
 
@@ -238,6 +239,7 @@ function makePlayerZones(players) {
       kind: 'hand',
       visibility: 'owner',
       owner: player.name,
+      noTopDeck: true,
     }
     idx += 1
   }
@@ -253,6 +255,7 @@ function makeSpaceZones() {
       name,
       cards: [],
       kind: 'open',
+      noTopDeck: true,
     }
   }
   return zones

@@ -13,7 +13,7 @@ function cardAdjustVisibility(state, card, zoneName) {
     card.visibility = 'all'
   }
   else if (zoneVis === 'president') {
-    card.visibility = [presidentName()]
+    card.visibility = [presidentName(state)]
   }
   else if (zoneVis === 'owner') {
     if (card.visibility !== 'all') {
@@ -490,19 +490,31 @@ export default {
     },
 
     zoneClick({ commit, state }, data) {
+      const topDeck = data.index === 'top'
+      data.index = topDeck ? 0 : data.index
+
       if (state.ui.grab.source) {
         if (state.ui.grab.source !== data.source) {
           commit('move', {
             source: state.ui.grab.source,
             sourceIndex: state.ui.grab.index,
             target: data.source,
-            targetIndex: data.sourceIndex,
+            targetIndex: data.index,
           })
         }
 
         grabCancel(state)
       }
       else {
+        const zone = zoneGet(state, data.source)
+        if (topDeck && zone.noTopDeck) {
+          return
+        }
+
+        if (zone.cards.length === 0) {
+          return
+        }
+
         state.ui.grab = data
       }
     },
