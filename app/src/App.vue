@@ -12,16 +12,18 @@ export default {
 
 <style lang="css">
 #app {
-    font-family: Verdana, sans-serif;
+  font-family: Verdana, sans-serif;
+  max-width: 400px;
+  margin: auto;
 }
 
 .section-heading {
-    font-size: 1.6em;
-    font-weight: 450;
+  font-size: 1.6em;
+  font-weight: 450;
 }
 
 .link-unstyled, .link-unstyled:link, .link-unstyled:hover {
-    color: inherit;
-    text-decoration: inherit;
+  color: inherit;
+  text-decoration: inherit;
 }
 </style>
