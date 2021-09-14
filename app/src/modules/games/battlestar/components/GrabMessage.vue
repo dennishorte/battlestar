@@ -46,9 +46,9 @@ export default {
       this.$store.dispatch('bsg/grabCancel')
     },
 
-    info() {
-      this.$store.dispatch('bsg/grabInfo')
-      this.$bvModal.show('card-modal')
+    async info() {
+      const modal = await this.$store.dispatch('bsg/grabInfo')
+      this.$bvModal.show(modal)
     },
   },
 }
@@ -59,7 +59,7 @@ export default {
 .grab-message {
   position: fixed;
   top: 0;
-  width: 100%;
+  width: inherit;
   height: 4em;
   z-index: 1000;
 

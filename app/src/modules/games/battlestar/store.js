@@ -435,8 +435,16 @@ export default {
     grabInfo({ state, getters }) {
       const grab = getters.grab
       const card = getters.cardAt(grab.source, grab.index)
-      state.ui.modalCard.card = card
       grabCancel(state)
+
+      if (card.kind === 'character') {
+        state.ui.charactersModal.selected = card.name
+        return 'characters-modal'
+      }
+      else {
+        state.ui.modalCard.card = card
+        return 'card-modal'
+      }
     },
 
     async load({ dispatch, state }, data) {
