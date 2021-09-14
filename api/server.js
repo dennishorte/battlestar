@@ -26,10 +26,11 @@ app.use(middleware.coerceIds)
 
 // Guest routes
 app.get('/', routes.sendVueApp)
+app.post('/api/guest/slack_test', routes.slackTest)
 app.post('/api/guest/login', routes.login)
 
-// Lobby Routes
-app.post('/api/lobby/all', routes.lobby.all)
+  // Lobby Routes
+  app.post('/api/lobby/all', routes.lobby.all)
 app.post('/api/lobby/create', routes.lobby.create)
 app.post('/api/lobby/info', routes.lobby.info)
 app.post('/api/lobby/name_update', routes.lobby.nameUpdate)

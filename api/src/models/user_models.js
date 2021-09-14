@@ -32,7 +32,7 @@ User.checkPassword = async function(name, password) {
 
   const passwordMatches = await bcrypt.compare(password, user.passwordHash)
   if (!passwordMatches) {
-    throw `Invalid password for user (${name})`
+    return null
   }
 
   return user

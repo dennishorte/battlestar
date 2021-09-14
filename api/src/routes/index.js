@@ -1,4 +1,6 @@
 const db = require('../models/db.js')
+const path = require('path')
+const slack = require('../util/slack.js')
 
 
 module.exports = {
@@ -19,6 +21,11 @@ async function _createFirstUserIfNone(name, password) {
   }
 }
 
+module.exports.slackTest = async function(req, res) {
+  const slackRes = await slack.test()
+  res.json(slackRes)
+}
+
 module.exports.sendVueApp = function(req, res) {
   res.sendFile(path.join(__dirname, '../app/build/index.html'))
 }
@@ -27,12 +34,17 @@ module.exports.login = async function(req, res) {
   await _createFirstUserIfNone(req.body.name, req.body.password)
   const user = await db.user.checkPassword(req.body.name, req.body.password)
 
-  if (user.deactivated) {
+  if (!user) {
+    res.json({
+      status: 'error',
+      message: 'User not found',
+    })
+  }
+  else if (user.deactivated) {
     res.json({
       status: 'error',
       message: `User (${req.body.name}) has been deactivated`,
     })
-    return
   }
   else {
     res.json({
@@ -43,6 +55,5 @@ module.exports.login = async function(req, res) {
         token: user.token,
       },
     })
-    return
   }
 }
