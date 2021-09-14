@@ -60,6 +60,11 @@
           <div>Admiral: {{ selectedData["admiral line of succession order"] }}</div>
           <div>President: {{ selectedData["president line of succession order"] }}</div>
         </div>
+
+        <div>
+          <div class="selected-heading">Starting Location</div>
+          {{ selectedData.setup }}
+        </div>
       </div>
 
       <div v-else>
