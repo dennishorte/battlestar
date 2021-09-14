@@ -26,10 +26,6 @@ module.exports.slackTest = async function(req, res) {
   res.json(slackRes)
 }
 
-module.exports.sendVueApp = function(req, res) {
-  res.sendFile(path.join(__dirname, '../app/build/index.html'))
-}
-
 module.exports.login = async function(req, res) {
   await _createFirstUserIfNone(req.body.name, req.body.password)
   const user = await db.user.checkPassword(req.body.name, req.body.password)

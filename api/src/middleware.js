@@ -33,7 +33,7 @@ passport.use(new JwtStrategy(
    Routes that start with '/api/guest/' do not require authentication.
  */
 Middleware.authenticate = (req, res, next)  => {
-  if (req.path.startsWith('/api/guest/') || req.path == '/') {
+  if (req.path.startsWith('/api/guest/') || req.method === 'GET') {
     next()
   }
   else {
