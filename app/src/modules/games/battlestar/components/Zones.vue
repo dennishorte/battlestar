@@ -31,8 +31,7 @@
           <DeckZone
             :name="name"
             :deck-name="`decks.${name}`"
-            background-image="concrete_seamless"
-            :overlay="name"
+            :variant="name"
           />
         </div>
 
@@ -125,7 +124,7 @@
           v-for="(loc, index) in zones.locations.galactica"
           :key="index"
           :expanded="true"
-          background-image="first_aid_kit"
+          variant="location"
           :name="loc.details.name"
           :deck-name="loc.name" />
 
@@ -138,7 +137,7 @@
           v-for="(loc, index) in zones.locations.colonialOne"
           :key="index"
           :expanded="true"
-          background-image="first_aid_kit"
+          variant="location"
           :name="loc.details.name"
           :deck-name="loc.name" />
 
@@ -150,7 +149,7 @@
           v-for="(loc, index) in zones.locations.cylonLocations"
           :key="index"
           :expanded="true"
-          background-image="first_aid_kit"
+          variant="location"
           :name="loc.details.name"
           :deck-name="loc.name" />
 
@@ -178,8 +177,7 @@
           <DeckZone
             name="Upper Left"
             deck-name="space.space1"
-            background-image="space"
-            font-color="white"
+            variant="space"
             :expanded="true"
           />
         </b-col>
@@ -187,8 +185,7 @@
           <DeckZone
             name="Upper Right"
             deck-name="space.space2"
-            background-image="space"
-            font-color="white"
+            variant="space"
             :expanded="true"
           />
         </b-col>
@@ -199,8 +196,7 @@
           <DeckZone
             name="Front"
             deck-name="space.space0"
-            background-image="space"
-            font-color="white"
+            variant="space"
             :expanded="true"
           />
         </b-col>
@@ -208,8 +204,7 @@
           <DeckZone
             name="Back"
             deck-name="space.space3"
-            background-image="space"
-            font-color="white"
+            variant="space"
             :expanded="true"
           />
         </b-col>
@@ -220,8 +215,7 @@
           <DeckZone
             name="Lower Left"
             deck-name="space.space5"
-            background-image="space"
-            font-color="white"
+            variant="space"
             :expanded="true"
           />
         </b-col>
@@ -229,8 +223,7 @@
           <DeckZone
             name="Lower Right"
             deck-name="space.space4"
-            background-image="space"
-            font-color="white"
+            variant="space"
             :expanded="true"
           />
         </b-col>

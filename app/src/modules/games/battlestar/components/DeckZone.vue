@@ -8,15 +8,15 @@
 
         <div
           class="deck-name"
-          :style="styles()"
           :class="classes"
+          :style="variantForeground(variant)"
         >
 
           {{ name }}
           {{ cards.length }}
 
         </div>
-        <div :style="overlayColor()"></div>
+        <div :style="variantBackground(variant)"></div>
       </div>
 
 
@@ -37,7 +37,7 @@
       <div
         v-for="(card, index) in cards"
         :key="card.id"
-        class="expanded-card"
+        class="expanded-card wrapper"
         :class="[
           index === grabbedIndex ? 'grabbed-card' : '',
           grabbed && index !== grabbedIndex ? 'ungrabbed-card' : '',
@@ -47,6 +47,7 @@
       >
         <div :class="displayClasses(card)">{{ displayName(card) }}</div>
         <div>{{ displayExtra(card) }}</div>
+        <div :style="variantCardBackground(card)"></div>
       </div>
     </div>
   </div>
@@ -54,6 +55,8 @@
 
 
 <script>
+import { skillList } from '../lib/util.js'
+
 export default {
   name: 'DeckZone',
 
@@ -66,17 +69,7 @@ export default {
       default: false,
     },
 
-    backgroundImage: {
-      type: String,
-      default: '',
-    },
-
-    fontColor: {
-      type: String,
-      default: '',  // Can be any valid CSS color definition
-    },
-
-    overlay: {
+    variant: {
       type: String,
       default: '',
     },
@@ -93,12 +86,6 @@ export default {
         piloting: '#f00e0250',
         engineering: '#042fbd50',
         treachery: '#e8b86f50',
-      },
-
-      images: {
-        concrete_seamless: require('../assets/images/concrete_seamless.png'),
-        first_aid_kit: require('../assets/images/first_aid_kit.png'),
-        space: require('../assets/images/space.jpg'),
       },
     }
   },
@@ -126,18 +113,60 @@ export default {
     grabbedIndex() {
       return this.grabbed ? this.$store.getters['bsg/grab'].index : -1
     },
+
+    locationNames() {
+      return this.$store.getters['bsg/dataLocations'].map(l => l.name)
+    },
   },
 
   methods: {
-    overlayColor() {
-      if (this.overlay) {
-        return {
-          backgroundColor: this.colors[this.overlay],
+    variantCardBackground(card) {
+      if (card.kind === 'skill') {
+        const skillType = card.deck.split('.').slice(-1)[0]
+        return this.variantBackground(skillType)
+      }
+    },
+
+    variantBackground(name) {
+      const backgroundImage = this.variantImage(name)
+      const overlayColor = this.colors[name] || ''
+
+      if (backgroundImage || overlayColor) {
+        const style ={
+          zIndex: -1,
           position: 'absolute',
           top: 0,
           right: 0,
           width: '100%',
           height: '100%',
+        }
+
+        if (backgroundImage) {
+          style.backgroundImage = `url(${backgroundImage})`
+        }
+        if (overlayColor) {
+          style.boxShadow = `inset 0 0 0 500px ${overlayColor}`
+        }
+
+        return style
+      }
+      else {
+        return {}
+      }
+    },
+
+    variantColor(name) {
+      if (name === 'space')
+        return 'white'
+      else
+        return ''
+    },
+
+    variantForeground(name) {
+      const color = this.variantColor(name)
+      if (color) {
+        return {
+          color: color || 'black',
         }
       }
       else {
@@ -145,19 +174,19 @@ export default {
       }
     },
 
-    styles() {
-      const style = {}
-
-      if (this.backgroundImage) {
-        style.backgroundImage = `url(${this.images[this.backgroundImage]})`
-        style.objectFit = 'cover'
+    variantImage(name) {
+      if (skillList.includes(name)) {
+        return require('../assets/images/concrete_seamless.png')
       }
-
-      if (this.fontColor) {
-        style.color = this.fontColor
+      else if (name === 'space') {
+        return require('../assets/images/space.jpg')
       }
-
-      return style
+      else if (name === 'location') {
+        return require('../assets/images/first_aid_kit.png')
+      }
+      else {
+        return ''
+      }
     },
 
     click() {
@@ -219,8 +248,6 @@ export default {
 }
 
 .deck-name {
-  background-color: white;
-
   align-items: center;
   border: 1px solid darkgray;
   border-radius: .25em;
