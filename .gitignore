@@ -1,2 +1,3 @@
 node_modules
 dist
+restart_prod.sh
