@@ -1,13 +1,21 @@
 <template>
   <div class="deck-zone">
     <div class="top-row">
-      <div
-        class="deck-name"
-        :class="classes"
-        @click="click">
-        {{ name }}
-        {{ cards.length }}
+      <div class="wrapper">
+        <div
+          class="deck-name"
+          :style="styles()"
+          :class="classes"
+          @click="click">
+
+          {{ name }}
+          {{ cards.length }}
+
+        </div>
+        <div :style="overlayColor()">
+        </div>
       </div>
+
 
       <b-dropdown right>
         <b-dropdown-item @click="details">
@@ -54,11 +62,36 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    backgroundImage: {
+      type: String,
+      default: '',
+    },
+
+    overlay: {
+      type: String,
+      default: '',
+    },
   },
 
   data() {
     return {
       expand: this.expanded,
+
+      colors: {
+        politics: '#fff90050',
+        leadership: '#19782150',
+        tactics: '#9a06c750',
+        piloting: '#f00e0250',
+        engineering: '#042fbd50',
+        treachery: '#e8b86f50',
+      },
+
+      images: {
+        concrete_seamless: require('../assets/images/concrete_seamless.png'),
+        first_aid_kit: require('../assets/images/first_aid_kit.png'),
+        whitey: require('../assets/images/whitey.png'),
+      },
     }
   },
 
@@ -88,6 +121,33 @@ export default {
   },
 
   methods: {
+    overlayColor() {
+      if (this.overlay) {
+        return {
+          backgroundColor: this.colors[this.overlay],
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          width: '100%',
+          height: '100%',
+        }
+      }
+      else {
+        return {}
+      }
+    },
+
+    styles() {
+      const style = {}
+
+      if (this.backgroundImage) {
+        style.backgroundImage = `url(${this.images[this.backgroundImage]})`
+        style.objectFit = 'cover'
+      }
+
+      return style
+    },
+
     click() {
       this.$store.dispatch('bsg/zoneClick', {
         source: this.deckName,
@@ -130,7 +190,16 @@ export default {
 
 
 <style scoped>
+.wrapper {
+  position: relative;
+  flex-grow: 1;
+  justify-content: stretch;
+  display: flex;
+}
+
 .deck-name {
+  background-color: white;
+
   align-items: center;
   border: 1px solid darkgray;
   border-radius: .25em;

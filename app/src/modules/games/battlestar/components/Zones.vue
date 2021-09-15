@@ -19,7 +19,7 @@
         </div>
 
       </b-col>
-      <b-col class="zone-col">
+      <b-col>
 
         <div class="heading">
           Skill Decks
@@ -28,7 +28,12 @@
           v-for="name in skillList"
           :key="name"
         >
-          <DeckZone :name="name" :deck-name="`decks.${name}`" />
+          <DeckZone
+            :name="name"
+            :deck-name="`decks.${name}`"
+            backgroundImage="concrete_seamless"
+            :overlay="name"
+          />
         </div>
 
       </b-col>
@@ -120,6 +125,7 @@
           v-for="(loc, index) in zones.locations.galactica"
           :key="index"
           :expanded="true"
+          backgroundImage="first_aid_kit"
           :name="loc.details.name"
           :deck-name="loc.name" />
 
@@ -132,6 +138,7 @@
           v-for="(loc, index) in zones.locations.colonialOne"
           :key="index"
           :expanded="true"
+          backgroundImage="first_aid_kit"
           :name="loc.details.name"
           :deck-name="loc.name" />
 
@@ -143,6 +150,7 @@
           v-for="(loc, index) in zones.locations.cylonLocations"
           :key="index"
           :expanded="true"
+          backgroundImage="first_aid_kit"
           :name="loc.details.name"
           :deck-name="loc.name" />
 
@@ -267,11 +275,5 @@ export default {
   padding-top: .25em;
   padding-right: 15px;
   padding-left: 15px;
-}
-
-.zone-col {
-  border: 1px solid gray;
-  border-radius: .25em;
-  background-color: lightgray;
 }
 </style>
