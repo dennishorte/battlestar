@@ -58,12 +58,13 @@ export default {
 
     templateSubstitute(template, args) {
       const tokens = this.templateTokenize(template)
+
       return tokens.map(({ substitute, token }) => {
         if (substitute) {
-          const { value, classes } = args[token]
+          const { value, kind, classes } = args[token]
           return {
             classes: classes.join(' '),
-            value,
+            value: token === 'card' ? kind : value
           }
         }
         else {
@@ -80,35 +81,33 @@ export default {
       let state = 'out'
       const tokens = []
 
+      const push = function(token, substitute) {
+        tokens.push({
+          substitute: substitute,
+          token: token,
+        })
+      }
+
       for (let i = 0; i < template.length; i++) {
         if (template[i] == '{') {
           if (state === 'in') throw 'Nested curly braces'
           state = 'in'
 
           if (prev == i) continue
-          tokens.push({
-            substitute: false,
-            token: template.substr(prev, i-prev),
-          })
+
+          push(template.substr(prev, i-prev), false)
           prev = i
         }
         else if (template[i] == '}') {
           if (state !== 'in') throw 'Unmatched closing curly brace'
-          tokens.push({
-            substitute: true,
-            token: template.substr(prev+1, i-prev-1),
-          })
+          push(template.substr(prev+1, i-prev-1), true)
           state = 'out'
           prev = i + 1
         }
       }
 
-      if (prev != template.length) {
-        tokens.push({
-          substitute: false,
-          token: template.substr(prev, template.length - prev),
-        })
-      }
+      // Catch the last token, if any
+      push(template.substr(prev, template.length - prev), false)
 
       return tokens
     },
