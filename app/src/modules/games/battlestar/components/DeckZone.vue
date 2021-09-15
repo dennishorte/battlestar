@@ -45,7 +45,7 @@
         "
         @click="clickCard(index)"
       >
-        <div>{{ displayName(card) }}</div>
+        <div :class="displayClasses(card)">{{ displayName(card) }}</div>
         <div>{{ displayExtra(card) }}</div>
       </div>
     </div>
@@ -170,6 +170,15 @@ export default {
       this.$bvModal.show('zone-modal')
     },
 
+    displayClasses(card) {
+      if (this.$store.getters['bsg/viewerCanSeeCard'](card)) {
+        return []
+      }
+      else {
+        return ['hidden']
+      }
+    },
+
     displayExtra(card) {
       if (!this.$store.getters['bsg/viewerCanSeeCard'](card)) {
         return ''
@@ -229,6 +238,11 @@ export default {
 
 .expanded-card:not(:first-of-type) {
   border-top: 1px solid darkgray;
+}
+
+.hidden {
+  color: #777;
+  font-style: italic;
 }
 
 .top-row {
