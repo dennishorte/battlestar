@@ -71,6 +71,11 @@ export default {
       default: '',
     },
 
+    fontColor: {
+      type: String,
+      default: '',  // Can be any valid CSS color definition
+    },
+
     overlay: {
       type: String,
       default: '',
@@ -93,9 +98,13 @@ export default {
       images: {
         concrete_seamless: require('../assets/images/concrete_seamless.png'),
         first_aid_kit: require('../assets/images/first_aid_kit.png'),
-        whitey: require('../assets/images/whitey.png'),
+        space: require('../assets/images/space.jpg'),
       },
     }
+  },
+
+  mounted() {
+    console.log(this.images)
   },
 
   computed: {
@@ -146,6 +155,10 @@ export default {
       if (this.backgroundImage) {
         style.backgroundImage = `url(${this.images[this.backgroundImage]})`
         style.objectFit = 'cover'
+      }
+
+      if (this.fontColor) {
+        style.color = this.fontColor
       }
 
       return style

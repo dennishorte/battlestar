@@ -31,7 +31,7 @@
           <DeckZone
             :name="name"
             :deck-name="`decks.${name}`"
-            backgroundImage="concrete_seamless"
+            background-image="concrete_seamless"
             :overlay="name"
           />
         </div>
@@ -125,7 +125,7 @@
           v-for="(loc, index) in zones.locations.galactica"
           :key="index"
           :expanded="true"
-          backgroundImage="first_aid_kit"
+          background-image="first_aid_kit"
           :name="loc.details.name"
           :deck-name="loc.name" />
 
@@ -138,7 +138,7 @@
           v-for="(loc, index) in zones.locations.colonialOne"
           :key="index"
           :expanded="true"
-          backgroundImage="first_aid_kit"
+          background-image="first_aid_kit"
           :name="loc.details.name"
           :deck-name="loc.name" />
 
@@ -150,7 +150,7 @@
           v-for="(loc, index) in zones.locations.cylonLocations"
           :key="index"
           :expanded="true"
-          backgroundImage="first_aid_kit"
+          background-image="first_aid_kit"
           :name="loc.details.name"
           :deck-name="loc.name" />
 
@@ -160,7 +160,7 @@
       <hr>
     </b-row>
 
-    <div class="space-zones">
+    <div>
       <b-row>
         <b-col>
           <div class="heading">
@@ -175,28 +175,64 @@
 
       <b-row>
         <b-col>
-          <DeckZone name="Upper Left" deck-name="space.space1" :expanded="true" />
+          <DeckZone
+            name="Upper Left"
+            deck-name="space.space1"
+            background-image="space"
+            font-color="white"
+            :expanded="true"
+          />
         </b-col>
         <b-col>
-          <DeckZone name="Upper Right" deck-name="space.space2" :expanded="true" />
+          <DeckZone
+            name="Upper Right"
+            deck-name="space.space2"
+            background-image="space"
+            font-color="white"
+            :expanded="true"
+          />
         </b-col>
       </b-row>
 
       <b-row>
         <b-col>
-          <DeckZone name="Front" deck-name="space.space0" :expanded="true" />
+          <DeckZone
+            name="Front"
+            deck-name="space.space0"
+            background-image="space"
+            font-color="white"
+            :expanded="true"
+          />
         </b-col>
         <b-col>
-          <DeckZone name="Back" deck-name="space.space3" :expanded="true" />
+          <DeckZone
+            name="Back"
+            deck-name="space.space3"
+            background-image="space"
+            font-color="white"
+            :expanded="true"
+          />
         </b-col>
       </b-row>
 
       <b-row>
         <b-col>
-          <DeckZone name="Lower Left" deck-name="space.space5" :expanded="true" />
+          <DeckZone
+            name="Lower Left"
+            deck-name="space.space5"
+            background-image="space"
+            font-color="white"
+            :expanded="true"
+          />
         </b-col>
         <b-col>
-          <DeckZone name="Lower Right" deck-name="space.space4" :expanded="true" />
+          <DeckZone
+            name="Lower Right"
+            deck-name="space.space4"
+            background-image="space"
+            font-color="white"
+            :expanded="true"
+          />
         </b-col>
       </b-row>
     </div>
@@ -266,14 +302,4 @@ export default {
 
 
 <style scoped>
-.space-zones {
-  border-radius: .5em;
-  color: #3b69ef;
-  background-color: #003b59;
-  margin-right: -15px;
-  margin-left: -15px;
-  padding-top: .25em;
-  padding-right: 15px;
-  padding-left: 15px;
-}
 </style>
