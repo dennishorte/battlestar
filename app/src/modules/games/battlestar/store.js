@@ -2,6 +2,7 @@ import axios from 'axios'
 import bsgutil from './lib/util.js'
 import decks from './lib/decks.js'
 import factory from './lib/factory.js'
+import locations from './res/location.js'
 import util from '@/util.js'
 
 
@@ -251,6 +252,7 @@ export default {
 
       data: {
         decks: {},  // All of the raw decks, for displaying information.
+        locations: [],  // Raw location data
       },
 
       ////////////////////////////////////////////////////////////
@@ -319,6 +321,7 @@ export default {
     ////////////////////////////////////////////////////////////
     // Data
 
+    dataLocations: (state) => state.data.locations,
     deckData: (state) => (key) => state.data.decks[key],
 
 
@@ -454,6 +457,7 @@ export default {
     async load({ dispatch, state }, data) {
       // Load the static deck data (used in info panels)
       state.data.decks = decks.factory(data.options.expansions)
+      state.data.locations = bsgutil.expansionFilter(locations, data.options.expansions)
       state.game = data
 
       if (!data.initialized) {

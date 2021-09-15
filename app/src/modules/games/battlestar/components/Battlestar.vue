@@ -59,11 +59,11 @@
               <b-dropdown-item @click="$bvModal.show('characters-modal')">
                 Characters
               </b-dropdown-item>
+              <b-dropdown-item @click="$bvModal.show('locations-modal')">
+                Locations
+              </b-dropdown-item>
               <b-dropdown-item @click="$bvModal.show('skill-cards-modal')">
                 Skill Cards
-              </b-dropdown-item>
-              <b-dropdown-item @click="$bvModal.show('zones-modal')">
-                Zones
               </b-dropdown-item>
             </b-dropdown>
 
@@ -110,6 +110,14 @@
     </b-modal>
 
     <b-modal
+      id="locations-modal"
+      title="Locations"
+      ok-only>
+
+      <Locations />
+    </b-modal>
+
+    <b-modal
       id="skill-cards-modal"
       title="Skill Cards"
       ok-only>
@@ -127,6 +135,7 @@ import CardInfoModal from './CardInfoModal'
 import Characters from './Characters'
 import GameLog from './GameLog'
 import GrabMessage from './GrabMessage'
+import Locations from './Locations'
 import PhasePanel from './PhasePanel'
 import Resources from './Resources'
 import SkillCards from './SkillCards'
@@ -142,6 +151,7 @@ export default {
     Characters,
     GameLog,
     GrabMessage,
+    Locations,
     PhasePanel,
     Resources,
     SkillCards,
