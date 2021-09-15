@@ -121,6 +121,10 @@ export default {
 
   methods: {
     variantCardBackground(card) {
+      if (!this.$store.getters['bsg/visible'](card)) {
+        return {}
+      }
+
       if (card.kind === 'skill') {
         const skillType = card.deck.split('.').slice(-1)[0]
         return this.variantBackground(skillType)
