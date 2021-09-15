@@ -29,16 +29,12 @@
     <div class="phase-description">
 
       <div v-if="phase === 'setup-receive-skills'">
-        <p>Each player, <strong>except</strong> the starting player, receives three skill cards of types they could normally receive during the receive skills step.</p>
-
-        <SkillDecks />
+        <p>Each player, <strong>except</strong> the starting player ({{ players[0].name }}), receives three skill cards of types they could normally receive during the receive skills step.</p>
       </div>
 
       <div v-if="phase === 'main-receive-skills'">
         <p>The active player draws all of the skill cards listed on his character sheet.</p>
         <p>If the character sheet shows skills with a star, the player draws a card for only one of the starred skills.</p>
-
-        <SkillDecks />
       </div>
 
       <div v-if="phase === 'main-movement'">
@@ -66,7 +62,6 @@ import MainCrisis from './MainCrisis'
 import SetupCharacterSelection from './SetupCharacterSelection'
 import SetupDistributeLoyaltyCards from './SetupDistributeLoyaltyCards'
 import SetupDistributeTitleCards from './SetupDistributeTitleCards'
-import SkillDecks from './SkillDecks'
 
 
 const options = [
@@ -181,7 +176,6 @@ export default {
     SetupCharacterSelection,
     SetupDistributeLoyaltyCards,
     SetupDistributeTitleCards,
-    SkillDecks,
   },
 
   data() {
@@ -191,16 +185,12 @@ export default {
   },
 
   computed: {
-    admiralDestinationCards() {
-      return this.$store.state.bsg.game.destination.admiralViewing
-    },
-
     phase() {
       return this.$store.state.bsg.game.phase
     },
 
-    setupLoyaltyComplete() {
-      return this.$store.getters['bsg/setupLoyaltyComplete']
+    players() {
+      return this.$store.getters['bsg/players']
     },
   },
 

@@ -1,19 +1,22 @@
 <template>
   <div class="deck-zone">
     <div class="top-row">
-      <div class="wrapper">
+      <div
+        class="wrapper"
+        @click="click"
+      >
+
         <div
           class="deck-name"
           :style="styles()"
           :class="classes"
-          @click="click">
+        >
 
           {{ name }}
           {{ cards.length }}
 
         </div>
-        <div :style="overlayColor()">
-        </div>
+        <div :style="overlayColor()"></div>
       </div>
 
 
