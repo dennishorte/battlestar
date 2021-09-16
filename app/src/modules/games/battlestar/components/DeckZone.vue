@@ -19,22 +19,31 @@
         <div :style="variantBackground(variant)"></div>
       </div>
 
+      <div v-if="discardable" class="discard" @click="clickDiscard">
+        <font-awesome-icon :icon="['fas', 'trash']" />
+      </div>
 
-      <b-dropdown right>
-        <b-dropdown-item @click="details">
-          details
-        </b-dropdown-item>
+      <div v-else>
+        <b-dropdown right>
+          <b-dropdown-item @click="details">
+            details
+          </b-dropdown-item>
 
-        <b-dropdown-item @click="toggleExpand">
-          <span v-if="expand">collapse</span>
-          <span v-else>expand</span>
-        </b-dropdown-item>
+          <b-dropdown-item @click="discardDetails">
+            discard
+          </b-dropdown-item>
 
-        <b-dropdown-item @click="shuffle">
-          shuffle
-        </b-dropdown-item>
+          <b-dropdown-item @click="toggleExpand">
+            <span v-if="expand">collapse</span>
+            <span v-else>expand</span>
+          </b-dropdown-item>
 
-      </b-dropdown>
+          <b-dropdown-item @click="shuffle">
+            shuffle
+          </b-dropdown-item>
+
+        </b-dropdown>
+      </div>
     </div>
 
     <div v-if="expand" class="bottom-row">
@@ -60,6 +69,11 @@
 
 <script>
 import { skillList } from '../lib/util.js'
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
+library.add(faTrash)
+
 
 export default {
   name: 'DeckZone',
@@ -107,6 +121,16 @@ export default {
     deck() {
       return this.$store.getters['bsg/zone'](this.deckName)
     },
+    discardName() {
+      return this.deckName.replace(/^decks./, 'discard.')
+    },
+    discard() {
+      return this.$store.getters['bsg/zone'](this.discardName)
+    },
+    discardable() {
+      const grabbed = this.$store.getters['bsg/grab']
+      return grabbed.source && !!this.discard
+    },
     droppable() {
       const grabbed = this.$store.getters['bsg/grab']
       return grabbed.source && grabbed.source !== this.deckName
@@ -138,8 +162,20 @@ export default {
       })
     },
 
+    clickDiscard() {
+      this.$store.dispatch('bsg/zoneClick', {
+        source: this.discardName,
+        index: 'top',
+      })
+    },
+
     details() {
       this.$store.dispatch('bsg/zoneViewer', this.deckName)
+      this.$bvModal.show('zone-modal')
+    },
+
+    discardDetails() {
+      this.$store.dispatch('bsg/zoneViewer', this.discardName)
       this.$bvModal.show('zone-modal')
     },
 
@@ -276,6 +312,17 @@ export default {
 
 .deck-zone {
   margin-bottom: .5em;
+}
+
+.discard {
+  min-height: 38px;
+  min-width: 35.59px;
+  background-color: #ccf;
+  color: white;
+  border-radius: .25em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .expanded-card {
