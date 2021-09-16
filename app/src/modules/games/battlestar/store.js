@@ -484,6 +484,12 @@ export default {
       }
     },
 
+    impersonate({ state }, name) {
+      const player = playerByName(state, name)
+      state.ui.player._id = player._id
+      state.ui.player.name = player.name
+    },
+
     async load({ dispatch, state }, data) {
       // Load the static deck data (used in info panels)
       state.data.decks = decks.factory(data.options.expansions)

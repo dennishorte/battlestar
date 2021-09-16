@@ -63,6 +63,12 @@
               <b-dropdown-item @click="$bvModal.show('skill-cards-modal')">
                 Skill Cards
               </b-dropdown-item>
+
+              <b-dropdown-divider />
+
+              <b-dropdown-item @click="$bvModal.show('hacks-modal')">
+                Hacks
+              </b-dropdown-item>
             </b-dropdown>
 
           </div>
@@ -98,6 +104,7 @@
     </b-container>
 
     <CardInfoModal />
+    <HacksModal />
     <ZoneViewerModal />
 
     <b-modal
@@ -141,6 +148,7 @@ import CardInfoModal from './CardInfoModal'
 import Characters from './Characters'
 import GameLog from './GameLog'
 import GrabMessage from './GrabMessage'
+import HacksModal from './HacksModal'
 import Locations from './Locations'
 import PhasePanel from './PhasePanel'
 import Resources from './Resources'
@@ -157,6 +165,7 @@ export default {
     Characters,
     GameLog,
     GrabMessage,
+    HacksModal,
     Locations,
     PhasePanel,
     Resources,
