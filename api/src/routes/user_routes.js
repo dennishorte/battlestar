@@ -67,4 +67,12 @@ User.games = async function(req, res) {
   })
 }
 
+User.update = async function(req, res) {
+  await db.user.update(req.body)
+  res.json({
+    status: 'success',
+    message: 'User updated',
+  })
+}
+
 module.exports = User

@@ -93,7 +93,16 @@ User.findByName = async function(name) {
 User.setTokenForUserById = async function(object_id) {
   const filter = { _id: object_id }
   const updater = { $set: { token: User.util.generateToken(object_id) } }
-  const result = await userCollection.updateOne(filter, updater)
+  return await userCollection.updateOne(filter, updater)
+}
+
+User.update = async function({ userId, name, slack }) {
+  const filter = { _id: userId }
+  const updater = { $set: {
+    name: name,
+    slack: slack,
+  }}
+  return await userCollection.updateOne(filter, updater)
 }
 
 
