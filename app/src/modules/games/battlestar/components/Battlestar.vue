@@ -71,6 +71,14 @@
         </b-col>
       </b-row>
 
+      <b-row v-if="unsaved" class="save-message">
+        <b-col class="save-message-col">
+          <div>
+            You have unsaved actions
+          </div>
+        </b-col>
+      </b-row>
+
       <b-row>
         <b-col>
           <PhasePanel />
@@ -166,6 +174,9 @@ export default {
   },
 
   computed: {
+    unsaved() {
+      return this.$store.getters['bsg/uiUnsaved']
+    },
     players() {
       return this.$store.state.bsg.game.players
     },
@@ -214,9 +225,13 @@ export default {
     this.unsubscribe = this.$store.subscribe(mutation => {
       const state = this.$store.state.bsg
 
-      if (!mutation.type.startsWith('bsg/') || state.ui.undoing) {
+      if (!mutation.type.startsWith('bsg/'))
         return
-      }
+
+      state.ui.unsavedActions = true
+
+      if (state.ui.undoing)
+        return
 
       // Strip the 'bsg/' from the front, since we'll be replaying them from local context.
       mutation.type = mutation.type.slice(4)
@@ -226,7 +241,6 @@ export default {
         state.ui.undone = []
       }
 
-      console.log(mutation)
       state.game.history.push(mutation)
     })
   },
@@ -237,46 +251,6 @@ export default {
 
 
 <style>
-.chief-galen-tyrol {
-  color: #e6194b;
-}
-
-.gaius-baltar {
-  color: #3cb44b;
-}
-
-.kara-starbuck-thrace {
-  color: #ffe119;
-}
-
-.karl-helo-agathon {
-  color: #4363d8;
-}
-
-.laura-roslin {
-  color: #f58231;
-}
-
-.lee-apollo-adama {
-  color: #911eb4;
-}
-
-.saul-tigh {
-  color: #46f0f0;
-}
-
-.sharon-boomer-valerii {
-  color: #f032e6;
-}
-
-.tom-zarek {
-  color: #bcf60c;
-}
-
-.william-adama {
-  color: #fabebe;
-}
-
 .skill-politics {
   color: #555;
   background-color: yellow;
@@ -320,7 +294,26 @@ export default {
   position: sticky;
   top: 0;
   background-color: white;
+  z-index: 3;
+  height: 2.5em;
+}
+
+.save-message {
+  position: sticky;
+  border-radius: .5em;
+  top: 2.2em;
+  height: 2em;
+  background-color: black;
+  color: red;
+  font-weight: bold;
   z-index: 2;
+  text-align: center;
+}
+
+.save-message-col {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .row {

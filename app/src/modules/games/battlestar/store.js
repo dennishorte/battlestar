@@ -282,6 +282,8 @@ export default {
 
         player: {},
 
+        unsavedActions: false,
+
         undone: [],
         undoing: false,
       },
@@ -331,6 +333,7 @@ export default {
     grab: (state) => state.ui.grab,
     uiModalCard: (state) => state.ui.modalCard,
     uiModalZone: (state) => state.ui.modalZone,
+    uiUnsaved: (state) => state.ui.unsavedActions,
   },
 
   mutations: {
