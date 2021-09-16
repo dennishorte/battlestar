@@ -16,6 +16,7 @@
   <div class="log-entries">
 
     <div v-for="entry in log" :key="entry.id" :class="classes(entry.classes)">
+      <span class="player">{{ entry.actor }}: </span>
       <span
         v-for="(token, index) in templateSubstitute(entry.template, entry.args)"
         :key="index"
