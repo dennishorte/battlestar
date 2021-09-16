@@ -124,7 +124,10 @@ function logEnrichArgClasses(msg) {
 
 function log(state, msgObject) {
   logEnrichArgClasses(msgObject)
-  msgObject.actor = state.ui.player.name
+
+  if (!msgObject.actor) {
+    msgObject.actor = state.ui.player.name
+  }
 
   const log = state.game.log
   msgObject.id = log.length
