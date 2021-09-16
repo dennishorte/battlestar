@@ -51,6 +51,12 @@ async function initialize(game) {
 
   // Zones
   const decks = Decks.factory(game.options.expansions)
+  decks.loyalty = {
+    name: 'decks.loyalty',
+    cards: [],
+    kind: 'bag',
+  }
+
   game.zones = {
     common: {
       name: 'common',
@@ -68,6 +74,7 @@ async function initialize(game) {
       cards: [],
       kind: 'bag',
     },
+    discard: makeDiscardZones(decks),
     exile: {
       name: 'exile',
       cards: [],
@@ -95,12 +102,6 @@ async function initialize(game) {
       colonialOne: makeLocations('Colonial One', game.options.expansions),
       cylonLocations: makeLocations('Cylon Locations', game.options.expansions),
     },
-  }
-
-  game.zones.decks.loyalty = {
-    name: 'loyalty',
-    cards: [],
-    kind: 'bag',
   }
 
   ////////////////////////////////////////////////////////////
@@ -173,6 +174,39 @@ async function initialize(game) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper Functions
+
+function makeDiscardZones(decks) {
+  const discards = {}
+  for (const [name, deck] of Object.entries(decks)) {
+    // Actual deck
+    if (deck.name) {
+
+      if (!deck.discard || deck.discard === 'none') {
+        continue
+      }
+      else if (deck.discard === 'open' || deck.discard === 'hidden') {
+        const name = deck.name.replace(/^decks/, 'discard')
+        const nameSuffix = name.split('.').slice(-1)[0]
+        const kind = deck.discard
+        discards[nameSuffix] = {
+          name,
+          kind,
+          cards: [],
+        }
+      }
+      else {
+        throw `Unknown value for deck.discard: ${deck.discard}`
+      }
+    }
+
+    // Nested decks (recurse)
+    else {
+      discards[name] = makeDiscardZones(deck)
+    }
+  }
+
+  return discards
+}
 
 async function makePlayers(userIds, factory) {
   const requestResponse = await axios.post('/api/user/fetch_many', {

@@ -61,12 +61,12 @@ function factory(expansions) {
     character: makeDeck(characterCards, {
       name: 'character',
       kind: 'open',
-      discard: 'visible',
+      discard: 'open',
     }),
     civilian: makeDeck(makeCivilians(), {
       name: 'civilian',
       kind: 'bag',
-      discard: 'exile',
+      discard: 'open',
     }),
     crisis: makeDeck(crisisCards, {
       name: 'crisis',
@@ -76,12 +76,11 @@ function factory(expansions) {
     damageBasestar: makeDeck(damageBasestar, {
       name: 'damageBasestar',
       kind: 'bag',
-      discard: 'reshuffle',
     }),
     damageGalactica: makeDeck(damageGalactica, {
       name: 'damageGalactica',
       kind: 'bag',
-      discard: 'variable',
+      discard: 'open',
     }),
     destination: makeDeck(destinationCards, {
       name: 'destination',
@@ -129,37 +128,37 @@ function factory(expansions) {
       name: 'politics',
       cardKind: 'skill',
       kind: 'deck',
-      discard: 'visible',
+      discard: 'open',
     }),
     leadership: makeSkillDeck(skillCards, {
       name: 'leadership',
       cardKind: 'skill',
       kind: 'deck',
-      discard: 'visible',
+      discard: 'open',
     }),
     tactics: makeSkillDeck(skillCards, {
       name: 'tactics',
       cardKind: 'skill',
       kind: 'deck',
-      discard: 'visible',
+      discard: 'open',
     }),
     piloting: makeSkillDeck(skillCards, {
       name: 'piloting',
       cardKind: 'skill',
       kind: 'deck',
-      discard: 'visible',
+      discard: 'open',
     }),
     engineering: makeSkillDeck(skillCards, {
       name: 'engineering',
       cardKind: 'skill',
       kind: 'deck',
-      discard: 'visible',
+      discard: 'open',
     }),
     treachery: makeSkillDeck(skillCards, {
       name: 'treachery',
       cardKind: 'skill',
       kind: 'deck',
-      discard: 'visible',
+      discard: 'open',
     }),
   }
 
