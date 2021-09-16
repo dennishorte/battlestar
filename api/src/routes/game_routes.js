@@ -1,4 +1,5 @@
 const db = require('../models/db.js')
+const slack = require('../util/slack.js')
 
 const Game = {}
 module.exports = Game
@@ -31,6 +32,21 @@ Game.fetch = async function(req, res) {
     status: 'success',
     game,
   })
+}
+
+Game.notify = async function(req, res) {
+  const userId = req.body.userId
+  const game = await db.game.findById(req.body.gameId)
+
+  const domain_host = process.env.DOMAIN_HOST
+  const link = `http://${domain_host}/game/${game._id}`
+  const message = `You're up! <${link}|${game.game}: ${game.name}>`
+
+  const sendResult = slack.sendMessage(userId, message)
+
+  res.json({
+    status: 'success',
+})
 }
 
 Game.save = async function(req, res) {

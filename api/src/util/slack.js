@@ -1,14 +1,14 @@
 const db = require('../models/db.js')
 
 
-const { WebClient } = require('@slack/web-api');
+const { WebClient } = require('@slack/web-api')
 
 // An access token (from your Slack app or custom integration - xoxp, xoxb)
-const token = process.env.SLACK_BOT_TOKEN;
-const web = new WebClient(token);
+const token = process.env.SLACK_BOT_TOKEN
+const web = new WebClient(token)
 
 // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
-const dennisUserId = 'U3SHZPJF5';
+const dennisUserId = 'U3SHZPJF5'
 
 module.exports = {
   sendMessage,

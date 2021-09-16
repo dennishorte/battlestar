@@ -5,6 +5,9 @@ import factory from './lib/factory.js'
 import locations from './res/location.js'
 import util from '@/util.js'
 
+function admiralName(state) {
+  return playerWithCard(state, 'Admiral').name
+}
 
 function cardAdjustVisibility(state, card, zoneName) {
   const zone = zoneGet(state, zoneName)
@@ -206,20 +209,40 @@ function playerById(state, playerId) {
   return state.game.players.find(p => p._id === playerId)
 }
 
+function playerByName(state, name) {
+  return state.game.players.find(p => p.name === name)
+}
+
+function playerFollowing(state, player) {
+  const players = state.game.players
+  for (let i = 0; i < players.length; i++) {
+    if (players[i].name === player.name) {
+      const nextIndex = (i + 1) % players.length
+      return players[nextIndex]
+    }
+  }
+
+  throw `Player not found: ${player.name}`
+}
+
+function playerWithCard(state, cardName) {
+  for (const player of state.game.players) {
+    const zone = zoneGet(state, `players.${player.name}`)
+    if (zone.cards.find(c => c.name === cardName)) {
+      return player
+    }
+  }
+  return {}
+}
+
+function presidentName(state) {
+  return playerWithCard(state, 'President').name
+}
+
 function pushUnique(array, value) {
   if (array.indexOf(value) === -1) {
     array.push(value)
   }
-}
-
-function presidentName(state) {
-  for (const player of state.game.players) {
-    const zone = zoneGet(state, `players.${player.name}`)
-    if (zone.cards.find(c => c.name === 'President')) {
-      return player.name
-    }
-  }
-  return ''
 }
 
 function viewerCanSeeCard(state, card) {
@@ -337,6 +360,7 @@ export default {
     uiModalCard: (state) => state.ui.modalCard,
     uiModalZone: (state) => state.ui.modalZone,
     uiUnsaved: (state) => state.ui.unsavedActions,
+    uiViewer: (state) => state.ui.player,
   },
 
   mutations: {
@@ -470,6 +494,37 @@ export default {
         await factory.initialize(data)
         await dispatch('save')
         await dispatch('snapshotCreate')
+      }
+    },
+
+    async pass({ dispatch, getters, state }, nameIn) {
+      let name = nameIn
+
+      if (name === 'president') {
+        name = presidentName(state)
+      }
+      else if (name === 'admiral') {
+        name = admiralName(state)
+      }
+      else if (name === 'next') {
+        name = playerFollowing(state, getters.uiViewer)
+      }
+
+      if (!name) {
+        throw `Unknown player. in: ${nameIn} final: ${name}`
+      }
+
+      const user = playerByName(state, name)
+      state.game.waitingFor = user.name
+
+      await dispatch('save')
+      const requestResult = await axios.post('/api/game/notify', {
+        gameId: state.game._id,
+        userId: user._id,
+      })
+
+      if (requestResult.data.status !== 'success') {
+        throw requestResult.data.message
       }
     },
 

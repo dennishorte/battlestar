@@ -22,19 +22,16 @@
             <b-button variant="info" @click="redo">redo</b-button>
 
             <b-dropdown variant="warning" text="pass to" left>
-              <b-dropdown-item>
+              <b-dropdown-item @click="pass('next')">
                 next
               </b-dropdown-item>
 
               <b-dropdown-divider />
 
-              <b-dropdown-item>
-                current player
-              </b-dropdown-item>
-              <b-dropdown-item>
+              <b-dropdown-item @click="pass('admiral')">
                 admiral
               </b-dropdown-item>
-              <b-dropdown-item>
+              <b-dropdown-item @click="pass('president')">
                 president
               </b-dropdown-item>
 
@@ -43,6 +40,7 @@
               <b-dropdown-item
                 v-for="player in players"
                 :key="player.name"
+                @click="pass(player.name)"
               >
                 {{ player.name }}
               </b-dropdown-item>
@@ -186,8 +184,8 @@ export default {
   },
 
   methods: {
-    passPriority() {
-      console.log('pass priority')
+    pass(name) {
+      this.$store.dispatch('bsg/pass', name)
     },
 
     resourceChanged({ name, amount }) {

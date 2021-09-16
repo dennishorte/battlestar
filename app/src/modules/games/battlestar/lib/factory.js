@@ -19,6 +19,7 @@ async function initialize(game) {
   game.initialized = true
   game.setupLoyaltyComplete = true
   game.phase = 'setup-character-creation'
+  game.waitingFor = ''
   game.log = []
 
   game.history = []
