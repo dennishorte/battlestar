@@ -475,6 +475,7 @@ export default {
       if (requestResult.data.status !== 'success') {
         throw requestResult.data.message
       }
+      state.ui.unsavedActions = false
     },
 
     async snapshotCreate({ state }) {
