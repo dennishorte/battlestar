@@ -30,6 +30,10 @@
           <span v-else>expand</span>
         </b-dropdown-item>
 
+        <b-dropdown-item @click="shuffle">
+          shuffle
+        </b-dropdown-item>
+
       </b-dropdown>
     </div>
 
@@ -120,6 +124,56 @@ export default {
   },
 
   methods: {
+    click() {
+      this.$store.dispatch('bsg/zoneClick', {
+        source: this.deckName,
+        index: 'top',
+      })
+    },
+
+    clickCard(index) {
+      this.$store.dispatch('bsg/zoneClick', {
+        source: this.deckName,
+        index: index,
+      })
+    },
+
+    details() {
+      this.$store.dispatch('bsg/zoneViewer', this.deckName)
+      this.$bvModal.show('zone-modal')
+    },
+
+    displayClasses(card) {
+      if (this.$store.getters['bsg/viewerCanSeeCard'](card)) {
+        return []
+      }
+      else {
+        return ['hidden']
+      }
+    },
+
+    displayExtra(card) {
+      if (!this.$store.getters['bsg/viewerCanSeeCard'](card)) {
+        return ''
+      }
+
+      if (card.kind === 'skill') {
+        return card.value
+      }
+    },
+
+    displayName(card) {
+      return this.$store.getters['bsg/viewerCanSeeCard'](card) ? card.name : card.kind
+    },
+
+    shuffle() {
+      this.$store.commit('bsg/zoneShuffle', this.deckName)
+    },
+
+    toggleExpand() {
+      this.expand = !this.expand
+    },
+
     variantCardBackground(card) {
       if (!this.$store.getters['bsg/visible'](card)) {
         return {}
@@ -193,51 +247,6 @@ export default {
       }
     },
 
-    click() {
-      this.$store.dispatch('bsg/zoneClick', {
-        source: this.deckName,
-        index: 'top',
-      })
-    },
-
-    clickCard(index) {
-      this.$store.dispatch('bsg/zoneClick', {
-        source: this.deckName,
-        index: index,
-      })
-    },
-
-    details() {
-      this.$store.dispatch('bsg/zoneViewer', this.deckName)
-      this.$bvModal.show('zone-modal')
-    },
-
-    displayClasses(card) {
-      if (this.$store.getters['bsg/viewerCanSeeCard'](card)) {
-        return []
-      }
-      else {
-        return ['hidden']
-      }
-    },
-
-    displayExtra(card) {
-      if (!this.$store.getters['bsg/viewerCanSeeCard'](card)) {
-        return ''
-      }
-
-      if (card.kind === 'skill') {
-        return card.value
-      }
-    },
-
-    displayName(card) {
-      return this.$store.getters['bsg/viewerCanSeeCard'](card) ? card.name : card.kind
-    },
-
-    toggleExpand() {
-      this.expand = !this.expand
-    },
   },
 }
 </script>

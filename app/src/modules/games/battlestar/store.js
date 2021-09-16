@@ -49,6 +49,14 @@ function deckGet(state, deckName) {
   return deck
 }
 
+function discardGet(state, deckName) {
+  const deck = state.game.zones.discard[deckName]
+  if (!deck) {
+    throw `Unknown deck name: ${deckName}`
+  }
+  return deck
+}
+
 function drawTop(state, path) {
   maybeReshuffleDiscard(state, path)
   const deck = deckGet(state, path).cards
@@ -331,6 +339,7 @@ export default {
 
     cardAt: (state) => (source, index) => zoneGet(state, source).cards[index],
     deck: (state) => (key) => deckGet(state, key),
+    discard: (state) => (key) => discardGet(state, key),
     hand: (state) => (playerName) => state.game.zones.players[playerName],
     players: (state) => state.game.players,
     visible: (state) => (card) => isVisible(state, card),
@@ -347,7 +356,7 @@ export default {
     // Data
 
     dataLocations: (state) => state.data.locations,
-    deckData: (state) => (key) => state.data.decks[key],
+    dataDeck: (state) => (key) => state.data.decks[key],
 
 
     ////////////////////////////////////////////////////////////

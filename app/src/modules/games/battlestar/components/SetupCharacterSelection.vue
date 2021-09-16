@@ -40,7 +40,7 @@ export default {
         Support: 0,
       }
 
-      const characterData = this.$store.getters['bsg/deckData']('character').cards
+      const characterData = this.$store.getters['bsg/dataDeck']('character').cards
       for (const char of characterData) {
         if (!playerCharacters.find(ch => ch.name === char.name)) {
           counts[char['role']] += 1

@@ -29,14 +29,14 @@ export default {
   computed: {
     admirals() {
       const los = (character) => character['admiral line of succession order']
-      const characters = this.$store.getters['bsg/deckData']('character')
+      const characters = this.$store.getters['bsg/dataDeck']('character')
       return ([...characters.cards])
         .sort((l, r) => los(l) - los(r))
         .map(c => c.name)
     },
     presidents() {
       const los = (character) => character['president line of succession order']
-      const characters = this.$store.getters['bsg/deckData']('character')
+      const characters = this.$store.getters['bsg/dataDeck']('character')
       return ([...characters.cards])
         .sort((l, r) => los(l) - los(r))
         .map(c => c.name)

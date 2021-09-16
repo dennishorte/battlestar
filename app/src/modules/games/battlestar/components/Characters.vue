@@ -91,7 +91,7 @@ export default {
 
   computed: {
     characters() {
-      const charactersRaw = this.$store.getters['bsg/deckData']('character').cards
+      const charactersRaw = this.$store.getters['bsg/dataDeck']('character').cards
       const characters = [...charactersRaw]
       characters.sort((l, r) => l.name.localeCompare(r.name))
       return characters

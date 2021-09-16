@@ -187,9 +187,6 @@ export default {
     players() {
       return this.$store.state.bsg.game.players
     },
-    politicsCards() {
-      return this.$store.getters['bsg/deck']('politics').cards
-    },
   },
 
   methods: {
