@@ -54,11 +54,6 @@
           Quorum
         </div>
         <DeckZone name="Quroum Deck" deck-name="decks.quorum" />
-        <DeckZone
-          name="Quroum Hand"
-          deck-name="quorum"
-          :expanded="viewerIsPresident"
-        />
 
       </b-col>
     </b-row>

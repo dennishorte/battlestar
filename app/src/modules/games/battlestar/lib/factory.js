@@ -80,12 +80,6 @@ async function initialize(game) {
       cards: [],
       kind: 'open',
     },
-    quorum: {
-      name: 'quorum',
-      cards: [],
-      kind: 'hand',
-      visibility: 'president',
-    },
     players: makePlayerZones(game.players),
     ships: {
       vipers: makeVipersZone(),
