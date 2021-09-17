@@ -367,6 +367,7 @@ export default {
     uiModalZone: (state) => state.ui.modalZone,
     uiUnsaved: (state) => state.ui.unsavedActions,
     uiViewer: (state) => state.ui.player,
+    uiWaitingFor: (state) => state.ui.waitingFor,
   },
 
   mutations: {
@@ -389,6 +390,17 @@ export default {
 
     move(state, data) {
       moveCard(state, data)
+    },
+
+    passTo(state, name) {
+      state.game.waitingFor = name
+      log(state, {
+        template: `Pass to {player}`,
+        classes: ['pass-priority'],
+        args: {
+          player: name,
+        },
+      })
     },
 
     phaseSet(state, phase) {
@@ -509,7 +521,7 @@ export default {
       }
     },
 
-    async pass({ dispatch, getters, state }, nameIn) {
+    async pass({ commit, dispatch, getters, state }, nameIn) {
       let name = nameIn
 
       if (name === 'president') {
@@ -527,7 +539,7 @@ export default {
       }
 
       const user = playerByName(state, name)
-      state.game.waitingFor = user.name
+      commit('passTo', name)
 
       await dispatch('save')
       const requestResult = await axios.post('/api/game/notify', {
