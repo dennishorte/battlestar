@@ -48,8 +48,6 @@ export default {
           style.boxShadow = `inset 0 0 0 500px ${overlayColor}`
         }
 
-        console.log(style)
-
         return style
       }
       else {
