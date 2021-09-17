@@ -68,7 +68,7 @@
 
 
 <script>
-import { skillList } from '../lib/util.js'
+import variants from '../lib/variants.js'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
@@ -96,15 +96,6 @@ export default {
   data() {
     return {
       expand: this.expanded,
-
-      colors: {
-        politics: '#fff90050',
-        leadership: '#19782150',
-        tactics: '#9a06c750',
-        piloting: '#f00e0250',
-        engineering: '#042fbd50',
-        treachery: '#e8b86f50',
-      },
     }
   },
 
@@ -231,8 +222,8 @@ export default {
     },
 
     variantBackground(name) {
-      const backgroundImage = this.variantImage(name)
-      const overlayColor = this.colors[name] || ''
+      const backgroundImage = variants.fetch(name).bgImage
+      const overlayColor = variants.fetch(name).bgColor
 
       if (backgroundImage || overlayColor) {
         const style ={
@@ -258,37 +249,14 @@ export default {
       }
     },
 
-    variantColor(name) {
-      if (name === 'space')
-        return 'white'
-      else
-        return ''
-    },
-
     variantForeground(name) {
-      const color = this.variantColor(name)
-      if (color) {
+      if (variants.fetch(name)) {
         return {
-          color: color || 'black',
+          color: variants.fetch(name).fgColor
         }
       }
       else {
         return {}
-      }
-    },
-
-    variantImage(name) {
-      if (skillList.includes(name)) {
-        return require('../assets/images/concrete_seamless.png')
-      }
-      else if (name === 'space') {
-        return require('../assets/images/space.jpg')
-      }
-      else if (name === 'location') {
-        return require('../assets/images/first_aid_kit.png')
-      }
-      else {
-        return ''
       }
     },
 
