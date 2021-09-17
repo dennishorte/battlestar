@@ -294,9 +294,9 @@ export default {
 .discard {
   min-height: 38px;
   min-width: 35.59px;
-  background-color: #ccf;
+  background-color: black;
   color: white;
-  border-radius: .25em;
+  border-radius: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
