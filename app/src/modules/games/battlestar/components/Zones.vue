@@ -53,7 +53,7 @@
         <div class="heading">
           Quorum
         </div>
-        <DeckZone name="Quroum Deck" deck-name="decks.quorum" />
+        <DeckZone name="Quorum Deck" deck-name="decks.quorum" />
 
       </b-col>
     </b-row>
@@ -118,10 +118,7 @@
         <DeckZone
           v-for="(loc, index) in zones.locations.galactica"
           :key="index"
-          :expanded="true"
-          variant="location"
-          :name="loc.details.name"
-          :deck-name="loc.name" />
+          v-bind="locationProps(loc)" />
 
       </b-col>
       <b-col>
@@ -131,11 +128,7 @@
         <DeckZone
           v-for="(loc, index) in zones.locations.colonialOne"
           :key="index"
-          :expanded="true"
-          variant="location"
-          :name="loc.details.name"
-          :deck-name="loc.name" />
-
+          v-bind="locationProps(loc)" />
 
         <div class="heading">
           Cylon
@@ -143,11 +136,7 @@
         <DeckZone
           v-for="(loc, index) in zones.locations.cylonLocations"
           :key="index"
-          :expanded="true"
-          variant="location"
-          :name="loc.details.name"
-          :deck-name="loc.name" />
-
+          v-bind="locationProps(loc)" />
 
       </b-col>
 
@@ -172,16 +161,14 @@
           <DeckZone
             name="Upper Left"
             deck-name="space.space1"
-            variant="space"
-            :expanded="true"
+            v-bind="spaceProps()"
           />
         </b-col>
         <b-col>
           <DeckZone
             name="Upper Right"
             deck-name="space.space2"
-            variant="space"
-            :expanded="true"
+            v-bind="spaceProps()"
           />
         </b-col>
       </b-row>
@@ -191,16 +178,14 @@
           <DeckZone
             name="Front"
             deck-name="space.space0"
-            variant="space"
-            :expanded="true"
+            v-bind="spaceProps()"
           />
         </b-col>
         <b-col>
           <DeckZone
             name="Back"
             deck-name="space.space3"
-            variant="space"
-            :expanded="true"
+            v-bind="spaceProps()"
           />
         </b-col>
       </b-row>
@@ -210,16 +195,14 @@
           <DeckZone
             name="Lower Left"
             deck-name="space.space5"
-            variant="space"
-            :expanded="true"
+            v-bind="spaceProps()"
           />
         </b-col>
         <b-col>
           <DeckZone
             name="Lower Right"
             deck-name="space.space4"
-            variant="space"
-            :expanded="true"
+            v-bind="spaceProps()"
           />
         </b-col>
       </b-row>
@@ -228,16 +211,42 @@
     <b-row>
       <b-col>
         <div class="heading">Ship Tokens</div>
-        <DeckZone name="Vipers" deck-name="ships.vipers" />
-        <DeckZone name="Damaged Vipers" deck-name="ships.damagedVipers" />
-        <DeckZone name="Civilians" deck-name="decks.civilian" />
-        <DeckZone name="Raiders" deck-name="ships.raiders" />
-        <DeckZone name="Heavy Raiders" deck-name="ships.heavyRaiders" />
+        <DeckZone
+          name="Vipers"
+          :hide-menu="true"
+          deck-name="ships.vipers" />
+
+        <DeckZone
+          name="Damaged Vipers"
+          :hide-menu="true"
+          deck-name="ships.damagedVipers" />
+
+        <DeckZone
+          name="Civilians"
+          :hide-menu="true"
+          deck-name="decks.civilian" />
+
+        <DeckZone
+          name="Raiders"
+          :hide-menu="true"
+          deck-name="ships.raiders" />
+
+        <DeckZone
+          name="Heavy Raiders"
+          :hide-menu="true"
+          deck-name="ships.heavyRaiders" />
       </b-col>
       <b-col>
         <div class="heading">Basestars</div>
-        <DeckZone name="Basestar A" deck-name="ships.basestarA" :expanded="true" />
-        <DeckZone name="Basestar B" deck-name="ships.basestarB" :expanded="true" />
+        <DeckZone
+          name="Basestar A"
+          :hide-menu="true"
+          deck-name="ships.basestarA" :expanded="true" />
+
+        <DeckZone
+          name="Basestar B"
+          :hide-menu="true"
+          deck-name="ships.basestarB" :expanded="true" />
 
         <div class="heading">
           Damage Tokens
@@ -284,6 +293,25 @@ export default {
   },
 
   methods: {
+    locationProps(loc) {
+      return {
+        count: 'none',
+        deckName: loc.name,
+        expanded: true,
+        hideMenu: true,
+        name: loc.details.name,
+        variant: 'location',
+      }
+    },
+
+    spaceProps() {
+      return {
+        count: 'none',
+        expanded: true,
+        hideMenu: true,
+        variant: 'space',
+      }
+    }
   },
 }
 </script>

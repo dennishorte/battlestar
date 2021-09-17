@@ -13,8 +13,9 @@
         >
 
           {{ name }}
-          {{ cards.length }}
-
+          <template v-if="count !== 'none'">
+            {{ cards.length }}
+          </template>
         </div>
         <div :style="variantBackground(variant)"></div>
       </div>
@@ -23,7 +24,7 @@
         <font-awesome-icon :icon="['fas', 'trash']" />
       </div>
 
-      <div v-else>
+      <div v-else-if="!hideMenu">
         <b-dropdown right>
           <b-dropdown-item @click="details">
             details
@@ -83,6 +84,16 @@ export default {
     deckName: String,
 
     expanded: {
+      type: Boolean,
+      default: false,
+    },
+
+    count: {
+      type: String,
+      default: 'deck',
+    },
+
+    hideMenu: {
       type: Boolean,
       default: false,
     },
@@ -285,6 +296,7 @@ export default {
   flex-grow: 1;
   justify-content: center;
   padding: .25em;
+  min-height: 38px;
 }
 
 .deck-zone {
