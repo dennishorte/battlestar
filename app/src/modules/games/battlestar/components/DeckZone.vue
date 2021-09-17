@@ -122,14 +122,24 @@ export default {
       return this.$store.getters['bsg/zone'](this.deckName)
     },
     discardName() {
-      return this.deckName.replace(/^decks./, 'discard.')
+      if (['open', 'hidden'].includes(this.deck.discard)) {
+        return this.deckName.replace(/^decks./, 'discard.')
+      }
+      else {
+        return ''
+      }
     },
     discard() {
-      return this.$store.getters['bsg/zone'](this.discardName)
+      if (this.discardName) {
+        return this.$store.getters['bsg/zone'](this.discardName)
+      }
+      else {
+        return null
+      }
     },
     discardable() {
       const grabbed = this.$store.getters['bsg/grab']
-      return grabbed.source && !!this.discard
+      return !!grabbed.source && !!this.discard
     },
     droppable() {
       const grabbed = this.$store.getters['bsg/grab']
@@ -141,10 +151,19 @@ export default {
     grabbedIndex() {
       return this.grabbed ? this.$store.getters['bsg/grab'].index : -1
     },
-
     locationNames() {
       return this.$store.getters['bsg/dataLocations'].map(l => l.name)
     },
+  },
+
+  mounted() {
+    if (this.name === 'dennis') {
+      console.log(this.deck)
+      console.log(this.name)
+      console.log(this.discardName)
+      console.log('discard', this.discard)
+      console.log(this.discardable)
+    }
   },
 
   methods: {
