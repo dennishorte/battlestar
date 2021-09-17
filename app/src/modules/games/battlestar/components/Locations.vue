@@ -23,6 +23,18 @@
         <div v-if="selected.hazardous" class="heading">
           Hazardous!
         </div>
+
+        <div v-if="!!selected['skill check value']" class="skill-check">
+          <hr />
+          <div class="heading">Skill Check</div>
+          <div>
+            <span class="heading">Value: </span>{{ selected['skill check value'] }}
+          </div>
+          <template v-for="skill in skillList">
+            <SkillLink v-if="selected[skill]" :skillName="skill" :key="skill" />
+          </template>
+        </div>
+
       </template>
     </b-col>
 
@@ -31,12 +43,21 @@
 
 
 <script>
+import { skillList } from '../lib/util.js'
+
+import SkillLink from './SkillLink'
+
 export default {
   name: 'Locations',
+
+  components: {
+    SkillLink,
+  },
 
   data() {
     return {
       selected: {},
+      skillList,
     }
   },
 
