@@ -25,6 +25,7 @@ function cardAdjustVisibility(state, card, zoneName) {
     }
   }
   else if (zoneVis === 'deck'
+           || zoneVis === 'hidden'
            || zoneVis === 'bag') {
     card.visibility = []
   }
