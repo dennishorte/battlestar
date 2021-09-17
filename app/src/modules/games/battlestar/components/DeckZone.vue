@@ -156,16 +156,6 @@ export default {
     },
   },
 
-  mounted() {
-    if (this.name === 'dennis') {
-      console.log(this.deck)
-      console.log(this.name)
-      console.log(this.discardName)
-      console.log('discard', this.discard)
-      console.log(this.discardable)
-    }
-  },
-
   methods: {
     click() {
       this.$store.dispatch('bsg/zoneClick', {
