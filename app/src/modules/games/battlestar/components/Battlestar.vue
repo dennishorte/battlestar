@@ -226,8 +226,8 @@ export default {
   },
 
   mounted() {
-    this.unsubscribe = this.$store.subscribe(mutation => {
-      const state = this.$store.state.bsg
+    this.unsubscribe = this.$store.subscribe((mutation, state) => {
+      state = state.bsg
 
       if (!mutation.type.startsWith('bsg/'))
         return
@@ -237,15 +237,20 @@ export default {
       if (state.ui.undoing)
         return
 
+      // If new logs were generated, store them on the mutation.
+      // Mutations don't have information about who performed them, so keeping the logs
+      // this way allows the original actor to be remembered.
+      mutation.logs = state.ui.newLogs
+      state.ui.newLogs = []
+
       // Strip the 'bsg/' from the front, since we'll be replaying them from local context.
       mutation.type = mutation.type.slice(4)
+      state.game.history.push(mutation)
 
       // A new action is performed. Clear the redo, since it probably doesn't make sense anymore.
       if (!state.ui.redoing) {
         state.ui.undone = []
       }
-
-      state.game.history.push(mutation)
     })
   },
 }

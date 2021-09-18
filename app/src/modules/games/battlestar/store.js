@@ -135,12 +135,20 @@ function logEnrichArgClasses(msg) {
 }
 
 function log(state, msgObject) {
+  if (state.ui.redoing) {
+    return
+  }
+
   logEnrichArgClasses(msgObject)
   msgObject.actor = state.ui.player.name
 
   const log = state.game.log
   msgObject.id = log.length
   log.push(msgObject)
+
+  if (!state.ui.undoing) {
+    state.ui.newLogs.push(msgObject)
+  }
 }
 
 function maybeReshuffleDiscard(state, path) {
@@ -304,6 +312,8 @@ export default {
           index: -1,
         },
 
+        newLogs: [],
+
         modalCard: {
           card: {},
         },
@@ -318,6 +328,7 @@ export default {
 
         undone: [],
         undoing: false,
+        redoing: false,
       },
 
       ////////////////////////////////////////////////////////////
@@ -629,8 +640,19 @@ export default {
         commit(mutation.type, mutation.payload)
       }
 
-      state.game.history = history
+      // Restore the log from the original history, because it will have the original actor
+      // for each of the actions taken.
+      const logs = []
+      for (const hist of history) {
+        if (hist.logs) {
+          for (const log of hist.logs) {
+            logs.push(log)
+          }
+        }
+      }
 
+      state.game.log = logs
+      state.game.history = history
       state.ui.undoing = false
     },
 
@@ -643,6 +665,12 @@ export default {
 
       const mutation = state.ui.undone.pop()
       commit(mutation.type, mutation.payload)
+
+      if (mutation.logs) {
+        for (const log of mutation.logs) {
+          state.game.log.push(log)
+        }
+      }
 
       state.ui.redoing = false
     },
