@@ -25,19 +25,23 @@
             details
           </b-dropdown-item>
 
+          <b-dropdown-item @click="shuffle">
+            shuffle
+          </b-dropdown-item>
+
           <b-dropdown-item
             v-if="discardViewable"
-            @click="discardDetails">
+            @click="discardDetails"
+          >
             view discard
           </b-dropdown-item>
 
-          <b-dropdown-item @click="toggleExpand">
+          <b-dropdown-item
+            v-if="expandable"
+            @click="toggleExpand"
+          >
             <span v-if="expand">collapse</span>
             <span v-else>expand</span>
-          </b-dropdown-item>
-
-          <b-dropdown-item @click="shuffle">
-            shuffle
           </b-dropdown-item>
 
         </b-dropdown>
@@ -157,6 +161,10 @@ export default {
     droppable() {
       const grabbed = this.$store.getters['bsg/grab']
       return grabbed.source && grabbed.source !== this.deckName
+    },
+    expandable() {
+      return this.deck.kind === 'open'
+          || this.deck.kind === 'hand'
     },
     grabbed() {
       return this.$store.getters['bsg/grab'].source === this.deckName
