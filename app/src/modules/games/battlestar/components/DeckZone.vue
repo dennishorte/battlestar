@@ -1,15 +1,11 @@
 <template>
   <div class="deck-zone">
     <div class="top-row">
-      <div
-        class="wrapper"
-        @click="click"
-      >
-
+      <Variant :name="variant">
         <div
           class="deck-name"
           :class="classes"
-          :style="variantForeground(variant)"
+          @click="click"
         >
 
           {{ name }}
@@ -17,8 +13,7 @@
             {{ cards.length }}
           </template>
         </div>
-        <div :style="variantBackground(variant)"></div>
-      </div>
+      </Variant>
 
       <div v-if="discardable" class="discard" @click="clickDiscard">
         <font-awesome-icon :icon="['fas', 'trash']" />
@@ -48,28 +43,35 @@
     </div>
 
     <div v-if="expand" class="bottom-row">
-      <div
-        v-for="(card, index) in cards"
-        :key="card.id"
-        class="expanded-card wrapper"
-        :class="[
-          index === grabbedIndex ? 'grabbed-card' : '',
-          grabbed && index !== grabbedIndex ? 'ungrabbed-card' : '',
-        ]
-        "
-        @click="clickCard(index)"
-      >
-        <div :class="displayClasses(card)">{{ displayName(card) }}</div>
-        <div>{{ displayExtra(card) }}</div>
-        <div :style="variantCardBackground(card)"></div>
-      </div>
+
+      <template v-for="(card, index) in cards">
+        <div class="expanded-card" :key="card.id">
+          <Variant :name="cardVariant(card)">
+
+          <div
+            class="expanded-card-inner"
+            :class="[
+              index === grabbedIndex ? 'grabbed-card' : '',
+              grabbed && index !== grabbedIndex ? 'ungrabbed-card' : '',
+            ]
+            "
+            @click="clickCard(index)"
+          >
+            <div :class="displayClasses(card)">{{ displayName(card) }}</div>
+            <div>{{ displayExtra(card) }}</div>
+          </div>
+        </Variant>
+        </div>
+      </template>
+
     </div>
+
   </div>
 </template>
 
 
 <script>
-import variants from '../lib/variants.js'
+import Variant from './Variant'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
@@ -78,6 +80,10 @@ library.add(faTrash)
 
 export default {
   name: 'DeckZone',
+
+  components: {
+    Variant,
+  },
 
   props: {
     name: String,
@@ -159,6 +165,16 @@ export default {
   },
 
   methods: {
+    cardVariant(card) {
+      if (!this.$store.getters['bsg/visible'](card)) {
+        return ''
+      }
+
+      if (card.kind === 'skill') {
+        return card.deck.split('.').slice(-1)[0]
+      }
+    },
+
     click() {
       this.$store.dispatch('bsg/zoneClick', {
         source: this.deckName,
@@ -221,56 +237,6 @@ export default {
       this.expand = !this.expand
     },
 
-    variantCardBackground(card) {
-      if (!this.$store.getters['bsg/visible'](card)) {
-        return {}
-      }
-
-      if (card.kind === 'skill') {
-        const skillType = card.deck.split('.').slice(-1)[0]
-        return this.variantBackground(skillType)
-      }
-    },
-
-    variantBackground(name) {
-      const backgroundImage = variants.fetch(name).bgImage
-      const overlayColor = variants.fetch(name).bgColor
-
-      if (backgroundImage || overlayColor) {
-        const style ={
-          zIndex: -1,
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          width: '100%',
-          height: '100%',
-        }
-
-        if (backgroundImage) {
-          style.backgroundImage = `url(${backgroundImage})`
-        }
-        if (overlayColor) {
-          style.boxShadow = `inset 0 0 0 500px ${overlayColor}`
-        }
-
-        return style
-      }
-      else {
-        return {}
-      }
-    },
-
-    variantForeground(name) {
-      if (variants.fetch(name)) {
-        return {
-          color: variants.fetch(name).fgColor
-        }
-      }
-      else {
-        return {}
-      }
-    },
-
   },
 }
 </script>
@@ -314,15 +280,15 @@ export default {
   align-items: center;
 }
 
-.expanded-card {
-  padding: .25em;
+.expanded-card:not(:first-of-type) {
+  border-top: 1px solid darkgray;
+}
+
+.expanded-card-inner {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-}
-
-.expanded-card:not(:first-of-type) {
-  border-top: 1px solid darkgray;
+  padding: .25em;
 }
 
 .hidden {

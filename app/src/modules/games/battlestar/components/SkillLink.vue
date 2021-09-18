@@ -1,21 +1,23 @@
 <template>
-  <span class="wrapper">
-    <span :style="variantBackground(skillName)"></span>
-    <span
-      :style="variantForeground(skillName)"
-      @click="openSkillInfo()"
-    >
-      {{ skillName }}
-    </span>
-  </span>
+  <div class="skill-link">
+    <Variant :name="skillName">
+      <span class="inner-span" @click="openSkillInfo()">
+        {{ skillName }}
+      </span>
+    </Variant>
+  </div>
 </template>
 
 
 <script>
-import variants from '../lib/variants.js'
+import Variant from './Variant'
 
 export default {
   name: 'SkillLink',
+
+  components: {
+    Variant,
+  },
 
   props: {
     skillName: String,
@@ -26,61 +28,23 @@ export default {
       this.$store.dispatch('bsg/skillCardInfoRequest', '')
       this.$bvModal.show('skill-cards-modal')
     },
-
-
-    variantBackground(name) {
-      const backgroundImage = variants.fetch(name).bgImage
-      const overlayColor = variants.fetch(name).bgColor
-
-      if (backgroundImage || overlayColor) {
-        const style ={
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          width: '100%',
-          height: '100%',
-        }
-
-        if (backgroundImage) {
-          style.backgroundImage = `url(${backgroundImage})`
-        }
-        if (overlayColor) {
-          style.boxShadow = `inset 0 0 0 500px ${overlayColor}`
-        }
-
-        return style
-      }
-      else {
-        return {}
-      }
-    },
-
-    variantForeground(name) {
-      if (variants.fetch(name)) {
-        return {
-          color: variants.fetch(name).fgColor,
-          position: 'relative',
-        }
-      }
-      else {
-        return {}
-      }
-    },
-
   },
+
 }
 </script>
 
 
 <style scoped>
-.wrapper {
-  position: relative;
-  font-size: .85em;
-  padding: .5em;
-  margin-right: .25em;
+.skill-link {
+  min-height: 1.7em;
+  display: flex;
+  align-items: stretch;
 }
 
-.wrapper > span {
-  border-radius: .5em;
+.inner-span {
+  padding: .25em;
+  padding-left: .5em;
+  display: flex;
+  align-items: center;
 }
 </style>

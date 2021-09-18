@@ -95,4 +95,8 @@ export default {
   font-size: .7em;
   line-height: 1.4rem;
 }
+
+.skill-link {
+  margin-bottom: .25em;
+}
 </style>
