@@ -72,7 +72,11 @@
         <DeckZone name="Super Crisis" deck-name="decks.superCrisis" />
       </b-col>
       <b-col>
-        <DeckZone name="Crisis Pool" deck-name="crisisPool" />
+        <DeckZone
+          name="Crisis Pool"
+          deck-name="crisisPool"
+          :menu-options="crisisPoolMenuOptions"
+        />
         <DeckZone name="Destiny" deck-name="destiny" />
       </b-col>
     </b-row>
@@ -267,6 +271,21 @@ import DeckZone from './DeckZone'
 import { skillList } from '../lib/util.js'
 
 
+const crisisPoolMenuOptions = [
+  {
+    name: 'shuffle',
+    enabled: false,
+  },
+  {
+    name: 'shuffle and reveal',
+    func() {
+      this.$store.commit('bsg/zoneShuffle', this.deckName)
+      this.$store.commit('bsg/zoneRevealAll', this.deckName)
+      this.expand = true
+    },
+  },
+]
+
 export default {
   name: 'Zones',
 
@@ -276,6 +295,7 @@ export default {
 
   data() {
     return {
+      crisisPoolMenuOptions,
       skillList,
     }
   },

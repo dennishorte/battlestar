@@ -1,6 +1,8 @@
 <template>
   <div class="deck-zone">
+
     <div class="top-row">
+
       <Variant :name="variant">
         <div
           class="deck-name"
@@ -21,31 +23,18 @@
 
       <div v-else-if="!hideMenu">
         <b-dropdown right>
-          <b-dropdown-item @click="details">
-            details
-          </b-dropdown-item>
-
-          <b-dropdown-item @click="shuffle">
-            shuffle
-          </b-dropdown-item>
 
           <b-dropdown-item
-            v-if="discardViewable"
-            @click="discardDetails"
+            v-for="opt in fullMenuOptions"
+            :key="opt.name"
+            @click="opt.func"
           >
-            view discard
-          </b-dropdown-item>
-
-          <b-dropdown-item
-            v-if="expandable"
-            @click="toggleExpand"
-          >
-            <span v-if="expand">collapse</span>
-            <span v-else>expand</span>
+            {{ opt.name }}
           </b-dropdown-item>
 
         </b-dropdown>
       </div>
+
     </div>
 
     <div v-if="expand" class="bottom-row">
@@ -108,6 +97,13 @@ export default {
     hideMenu: {
       type: Boolean,
       default: false,
+    },
+
+    menuOptions: {
+      type: Array,
+      default: function () {
+        return []
+      },
     },
 
     variant: {
@@ -174,6 +170,49 @@ export default {
     },
     locationNames() {
       return this.$store.getters['bsg/dataLocations'].map(l => l.name)
+    },
+
+    fullMenuOptions() {
+      const menu = [
+        {
+          name: 'details',
+          func: this.details,
+        },
+        {
+          name: 'shuffle',
+          func: this.shuffle,
+        },
+      ]
+
+      if (this.expandable) {
+        menu.push({
+          name: 'expand',
+          func: this.toggleExpand
+        })
+      }
+
+      if (this.discardable) {
+        menu.push({
+          name: 'view discard',
+          func: this.discardDetails,
+        })
+      }
+
+      for (const opt of this.menuOptions) {
+        if (opt.enabled === false) {
+          const index = menu.findIndex(m => m.name === opt.name)
+          if (index !== 0) {
+            menu.splice(index, 1)
+          }
+        }
+
+        else {
+          opt.func = opt.func.bind(this)
+          menu.push(opt)
+        }
+      }
+
+      return menu
     },
   },
 
