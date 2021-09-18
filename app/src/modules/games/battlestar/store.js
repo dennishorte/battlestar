@@ -58,6 +58,14 @@ function discardGet(state, deckName) {
   return deck
 }
 
+function getDiscardName(state, deckName) {
+  if (deckName.startsWith('decks.')) {
+    return deckName.replace('decks.', 'discard.')
+  }
+
+  throw `Unable to get discard for ${deckName}`
+}
+
 function grabCancel(state) {
   state.ui.grab.source = ''
   state.ui.grab.index = -1
@@ -192,7 +200,7 @@ function moveCard(state, data) {
   )
 
   // If the new zone is a 'bag', randomize it automatically
-  util.shuffleArray(target)
+  zoneShuffle(state, data.target)
 
   log(state, {
     template: "{card} moved from {source} to {target}",
@@ -271,6 +279,12 @@ function zoneGet(state, name) {
   }
 
   return zone
+}
+
+function zoneShuffle(state, zoneName) {
+  const cards = zoneGet(state, zoneName).cards
+  cards.forEach(c => c.visibility = [])
+  util.shuffleArray(cards)
 }
 
 
@@ -409,6 +423,25 @@ export default {
       state.ui.player = user
     },
 
+    zoneDiscardAll(state, zoneName) {
+      const zone = zoneGet(state, zoneName)
+      for (const card of zone.cards) {
+        const discardName = getDiscardName(state, card.deck)
+        const discard = zoneGet(state, discardName)
+        discard.cards.push(card)
+      }
+
+      zone.cards = []
+
+      log(state, {
+        template: `All cards from {zone} discarded`,
+        classes: [],
+        args: {
+          zone: zoneName,
+        },
+      })
+    },
+
     zoneRevealAll(state, zoneName) {
       const cards = zoneGet(state, zoneName).cards
       for (const card of cards) {
@@ -429,9 +462,7 @@ export default {
     },
 
     zoneShuffle(state, zoneName) {
-      const cards = zoneGet(state, zoneName).cards
-      cards.forEach(c => c.visibility = [])
-      util.shuffleArray(cards)
+      zoneShuffle(state, zoneName)
 
       log(state, {
         template: "{zone} shuffled",

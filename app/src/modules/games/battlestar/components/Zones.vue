@@ -288,6 +288,12 @@ const crisisPoolMenuOptions = [
       this.expand = true
     },
   },
+  {
+    name: 'discard all',
+    func() {
+      this.$store.commit('bsg/zoneDiscardAll', this.deckName)
+    },
+  },
 ]
 
 const destinyMenuOptions = [
