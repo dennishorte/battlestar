@@ -77,7 +77,11 @@
           deck-name="crisisPool"
           :menu-options="crisisPoolMenuOptions"
         />
-        <DeckZone name="Destiny" deck-name="destiny" />
+        <DeckZone
+          name="Destiny"
+          deck-name="destiny"
+          :menu-options="destinyMenuOptions"
+        />
       </b-col>
     </b-row>
 
@@ -286,6 +290,31 @@ const crisisPoolMenuOptions = [
   },
 ]
 
+const destinyMenuOptions = [
+  {
+    name: 'shuffle',
+    enabled: false,
+  },
+  {
+    name: 'refill',
+    func() {
+      for (const skill of skillList) {
+        for (let i = 0; i < 2; i++) {
+          if (skill === 'treachery')
+            continue
+
+          this.$store.commit('bsg/move', {
+            source: `decks.${skill}`,
+            sourceIndex: 0,
+            target: `destiny`,
+            reshuffle: true,
+          })
+        }
+      }
+    },
+  },
+]
+
 export default {
   name: 'Zones',
 
@@ -296,6 +325,7 @@ export default {
   data() {
     return {
       crisisPoolMenuOptions,
+      destinyMenuOptions,
       skillList,
     }
   },

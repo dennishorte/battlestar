@@ -58,21 +58,9 @@ function discardGet(state, deckName) {
   return deck
 }
 
-function drawTop(state, path) {
-  maybeReshuffleDiscard(state, path)
-  const deck = deckGet(state, path).cards
-  return deck.shift()
-}
-
 function grabCancel(state) {
   state.ui.grab.source = ''
   state.ui.grab.index = -1
-}
-
-function handGet(state, playerId) {
-  const player = playerById(state, playerId)
-  const hand = state.game.zones.players[player.name]
-  return hand
 }
 
 function isRevealed(state, card) {
@@ -151,37 +139,42 @@ function log(state, msgObject) {
   }
 }
 
-function maybeReshuffleDiscard(state, path) {
-  if (!path.endsWith('deck'))
+function maybeReshuffleDiscard(state, zone) {
+  if (zone.cards.length > 0)
     return
 
-  const discardPath = path.replace('deck', 'discard')
+  if (!zone.discard)
+    return
 
-  let deck = deckGet(state, path)
-  let discard = deckGet(state, discardPath)
+  const discardName = zone.name.replace('decks.', 'discard.')
+  const discard = zoneGet(state, discardName)
 
-  if (deck.length == 0 && discard.length > 0) {
-    deck = util.shuffleArray([...discard])
-    discard = []
+  zone.cards = util.shuffleArray([...discard.cards])
+  discard.cards = []
 
-    log(state, {
-      template: "Shuffled this discard pile back into {deck}",
-      classes: ['admin-action', 'skill-deck-shuffle'],
-      args: {
-        deck: path,
-      },
-    })
-  }
+  log(state, {
+    template: "Shuffled discard pile back into {zone}",
+    classes: ['skill-deck-shuffle'],
+    args: {
+      zone: zone.name
+    },
+  })
 }
 
 function moveCard(state, data) {
-  const source = zoneGet(state, data.source).cards
+  const sourceZone = zoneGet(state, data.source)
+
+  if (data.reshuffle) {
+    maybeReshuffleDiscard(state, sourceZone)
+  }
+
+  const source = sourceZone.cards
   const target = zoneGet(state, data.target).cards
 
   const sourceIdx = data.cardId
                   ? source.findIndex(x => x.id === data.cardId)
                   : data.sourceIndex
-  const targetIdx = data.targetIdx || target.length
+  const targetIdx = data.targetIndex || target.length
 
   if (sourceIdx === -1) {
     throw `Card not found in source. ${data.cardId}, ${data.source}`
@@ -197,6 +190,9 @@ function moveCard(state, data) {
     card,
     data.target,
   )
+
+  // If the new zone is a 'bag', randomize it automatically
+  util.shuffleArray(target)
 
   log(state, {
     template: "{card} moved from {source} to {target}",
@@ -217,10 +213,6 @@ function playerCanSeeCard(state, player, card) {
 
 function playerIsPresident(state, player) {
   return player.name === presidentName(state)
-}
-
-function playerById(state, playerId) {
-  return state.game.players.find(p => p._id === playerId)
 }
 
 function playerByName(state, name) {
@@ -383,22 +375,6 @@ export default {
   },
 
   mutations: {
-
-    draw(state, { playerId, deckName }) {
-      const card = drawTop(state, deckName)
-      handGet(state, playerId).cards.push(card)
-
-      const playerName = playerById(state, playerId).name
-
-      log(state, {
-        template: "{player} draw a card from {deck}",
-        classes: ['player-action', 'draw'],
-        args: {
-          player: playerName,
-          deck: deckName,
-        },
-      })
-    },
 
     move(state, data) {
       moveCard(state, data)
