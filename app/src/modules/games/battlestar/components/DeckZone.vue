@@ -11,7 +11,10 @@
         >
 
           {{ name }}
-          <template v-if="count !== 'none'">
+          <template v-if="count !== 'none' && !!discard">
+            {{ cards.length }} / {{ discard.cards.length }}
+          </template>
+          <template v-else-if="count !== 'none'">
             {{ cards.length }}
           </template>
         </div>

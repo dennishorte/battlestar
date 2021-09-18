@@ -61,7 +61,7 @@ function factory(expansions) {
     character: makeDeck(characterCards, {
       name: 'character',
       kind: 'open',
-      discard: 'open',
+      discard: 'none',
     }),
     civilian: makeDeck(makeCivilians(), {
       name: 'civilian',
