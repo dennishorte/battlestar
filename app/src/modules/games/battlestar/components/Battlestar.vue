@@ -255,36 +255,6 @@ export default {
 
 
 <style>
-.skill-politics {
-  color: #555;
-  background-color: yellow;
-}
-
-.skill-leadership {
-  color: lightgray;
-  background-color: green;
-}
-
-.skill-tactics {
-  color: lightgray;
-  background-color: purple;
-}
-
-.skill-piloting {
-  color: lightgray;
-  background-color: red;
-}
-
-.skill-engineering {
-  color: lightgray;
-  background-color: blue;
-}
-
-.skill-treachery {
-  color: #555;
-  background-color: beige;
-}
-
 .d-none {
   display: none;
 }
