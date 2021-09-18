@@ -25,8 +25,10 @@
             details
           </b-dropdown-item>
 
-          <b-dropdown-item @click="discardDetails">
-            discard
+          <b-dropdown-item
+            v-if="discardViewable"
+            @click="discardDetails">
+            view discard
           </b-dropdown-item>
 
           <b-dropdown-item @click="toggleExpand">
@@ -129,6 +131,14 @@ export default {
     deck() {
       return this.$store.getters['bsg/zone'](this.deckName)
     },
+    discard() {
+      if (this.discardName) {
+        return this.$store.getters['bsg/zone'](this.discardName)
+      }
+      else {
+        return null
+      }
+    },
     discardName() {
       if (['open', 'hidden'].includes(this.deck.discard)) {
         return this.deckName.replace(/^decks./, 'discard.')
@@ -137,13 +147,8 @@ export default {
         return ''
       }
     },
-    discard() {
-      if (this.discardName) {
-        return this.$store.getters['bsg/zone'](this.discardName)
-      }
-      else {
-        return null
-      }
+    discardViewable() {
+      return !!this.discard && this.discard.kind === 'open'
     },
     discardable() {
       const grabbed = this.$store.getters['bsg/grab']
