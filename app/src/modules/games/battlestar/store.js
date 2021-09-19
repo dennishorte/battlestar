@@ -171,13 +171,14 @@ function maybeReshuffleDiscard(state, zone) {
 
 function moveCard(state, data) {
   const sourceZone = zoneGet(state, data.source)
+  const targetZone = zoneGet(state, data.target)
 
   if (data.reshuffle) {
     maybeReshuffleDiscard(state, sourceZone)
   }
 
   const source = sourceZone.cards
-  const target = zoneGet(state, data.target).cards
+  const target = targetZone.cards
 
   const sourceIdx = data.cardId
                   ? source.findIndex(x => x.id === data.cardId)
@@ -200,7 +201,9 @@ function moveCard(state, data) {
   )
 
   // If the new zone is a 'bag', randomize it automatically
-  zoneShuffle(state, data.target)
+  if (targetZone.kind === 'bag') {
+    zoneShuffle(state, data.target)
+  }
 
   log(state, {
     template: "{card} moved from {source} to {target}",
