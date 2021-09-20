@@ -391,6 +391,8 @@ export default {
     viewerCanSeeCard: (state) => (card) => viewerCanSeeCard(state, card),
     viewerIsPresident: (state) => viewerIsPresident(state),
 
+    waitingFor: (state) => state.game.waitingFor,
+
 
     ////////////////////////////////////////////////////////////
     // Data
@@ -407,7 +409,6 @@ export default {
     uiModalZone: (state) => state.ui.modalZone,
     uiUnsaved: (state) => state.ui.unsavedActions,
     uiViewer: (state) => state.ui.player,
-    uiWaitingFor: (state) => state.ui.waitingFor,
   },
 
   mutations: {

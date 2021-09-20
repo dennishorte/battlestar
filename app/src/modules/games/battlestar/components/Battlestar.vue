@@ -86,6 +86,7 @@
 
         <b-row class="phase-panel">
           <b-col>
+            Waiting for: <span class="heading">{{ waitingFor }}</span>
             <PhasePanel />
           </b-col>
         </b-row>
@@ -188,7 +189,10 @@ export default {
       return this.$store.getters['bsg/uiUnsaved']
     },
     players() {
-      return this.$store.state.bsg.game.players
+      return this.$store.getters['bsg/players']
+    },
+    waitingFor() {
+      return this.$store.getters['bsg/waitingFor']
     },
   },
 
