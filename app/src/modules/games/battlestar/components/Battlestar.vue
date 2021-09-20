@@ -14,80 +14,83 @@
         </b-col>
       </b-row>
 
-      <b-row class="action-buttons-wrapper">
-        <b-col>
-          <div class="action-buttons">
-            <b-button variant="success" v-b-modal.game-log-modal>log</b-button>
-            <b-button variant="danger" @click="undo">undo</b-button>
-            <b-button variant="info" @click="redo">redo</b-button>
+      <div class="sticky-header">
+        <b-row class="action-buttons-wrapper">
+          <b-col>
+            <div class="action-buttons">
+              <b-button variant="success" v-b-modal.game-log-modal>log</b-button>
+              <b-button variant="danger" @click="undo">undo</b-button>
+              <b-button variant="info" @click="redo">redo</b-button>
 
-            <b-dropdown variant="warning" text="pass to" left>
-              <b-dropdown-item @click="pass('next')">
-                next
-              </b-dropdown-item>
+              <b-dropdown variant="warning" text="pass to" left>
+                <b-dropdown-item @click="pass('next')">
+                  next
+                </b-dropdown-item>
 
-              <b-dropdown-divider />
+                <b-dropdown-divider />
 
-              <b-dropdown-item @click="pass('admiral')">
-                admiral
-              </b-dropdown-item>
-              <b-dropdown-item @click="pass('president')">
-                president
-              </b-dropdown-item>
+                <b-dropdown-item @click="pass('admiral')">
+                  admiral
+                </b-dropdown-item>
+                <b-dropdown-item @click="pass('president')">
+                  president
+                </b-dropdown-item>
 
-              <b-dropdown-divider />
+                <b-dropdown-divider />
 
-              <b-dropdown-item
-                v-for="player in players"
-                :key="player.name"
-                @click="pass(player.name)"
-              >
-                {{ player.name }}
-              </b-dropdown-item>
+                <b-dropdown-item
+                  v-for="player in players"
+                  :key="player.name"
+                  @click="pass(player.name)"
+                >
+                  {{ player.name }}
+                </b-dropdown-item>
 
-              <b-dropdown-divider />
+                <b-dropdown-divider />
 
-              <b-dropdown-item @click="save">
-                save
-              </b-dropdown-item>
+                <b-dropdown-item @click="save">
+                  save
+                </b-dropdown-item>
 
-            </b-dropdown>
+              </b-dropdown>
 
-            <b-dropdown variant="primary" text="info" right>
-              <b-dropdown-item @click="$bvModal.show('characters-modal')">
-                Characters
-              </b-dropdown-item>
-              <b-dropdown-item @click="$bvModal.show('locations-modal')">
-                Locations
-              </b-dropdown-item>
-              <b-dropdown-item @click="$bvModal.show('skill-cards-modal')">
-                Skill Cards
-              </b-dropdown-item>
+              <b-dropdown variant="primary" text="info" right>
+                <b-dropdown-item @click="$bvModal.show('characters-modal')">
+                  Characters
+                </b-dropdown-item>
+                <b-dropdown-item @click="$bvModal.show('locations-modal')">
+                  Locations
+                </b-dropdown-item>
+                <b-dropdown-item @click="$bvModal.show('skill-cards-modal')">
+                  Skill Cards
+                </b-dropdown-item>
 
-              <b-dropdown-divider />
+                <b-dropdown-divider />
 
-              <b-dropdown-item @click="$bvModal.show('hacks-modal')">
-                Hacks
-              </b-dropdown-item>
-            </b-dropdown>
+                <b-dropdown-item @click="$bvModal.show('hacks-modal')">
+                  Hacks
+                </b-dropdown-item>
+              </b-dropdown>
 
-          </div>
-        </b-col>
-      </b-row>
+            </div>
+          </b-col>
+        </b-row>
 
-      <b-row v-if="unsaved" class="save-message">
-        <b-col class="save-message-col">
-          <div>
-            You have unsaved actions
-          </div>
-        </b-col>
-      </b-row>
+        <b-row v-if="unsaved" class="save-message">
+          <b-col class="save-message-col">
+            <div>
+              You have unsaved actions
+            </div>
+          </b-col>
+        </b-row>
 
-      <b-row>
-        <b-col>
-          <PhasePanel />
-        </b-col>
-      </b-row>
+        <b-row class="phase-panel">
+          <b-col>
+            <PhasePanel />
+          </b-col>
+        </b-row>
+
+      </div> <!-- Sticky header -->
 
       <b-row>
         <b-col>
@@ -270,22 +273,16 @@ export default {
 }
 
 .action-buttons-wrapper {
-  position: sticky;
-  top: 0;
   background-color: white;
-  z-index: 3;
   height: 2.5em;
 }
 
 .save-message {
-  position: sticky;
   border-radius: .5em;
-  top: 2.2em;
   height: 2em;
   background-color: black;
   color: red;
   font-weight: bold;
-  z-index: 2;
   text-align: center;
 }
 
@@ -295,12 +292,23 @@ export default {
   flex-direction: column;
 }
 
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background-color: white;
+}
+
 .row {
   margin-bottom: .25em;
 }
 
 .heading {
   font-weight: bold;
+}
+
+.phase-panel {
+  margin-bottom: .1em!important;
 }
 
 .reminder-text {

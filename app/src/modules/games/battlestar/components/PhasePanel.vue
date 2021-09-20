@@ -1,15 +1,18 @@
 <template>
   <div class="phase-panel">
-    <div class="heading">
-      Status
-    </div>
-
     <b-form-group
       id="phase-select-group"
-      label-cols="2"
-      label="Phase"
+      label-cols="3"
       labelFor="phase-selected"
     >
+      <template v-slot:label>
+        <span @click="toggleDetails">
+          Phase
+        </span>
+        <font-awesome-icon :icon="['fas', 'chevron-down']" />
+        <font-awesome-icon :icon="['fas', 'chevron-up']" />
+      </template>
+
       <b-form-select
         id="phase-select"
         :options="options"
@@ -19,39 +22,41 @@
       </b-form-select>
     </b-form-group>
 
-    <SetupCharacterSelection v-if="phase === 'setup-character-selection'" />
-    <SetupDistributeTitleCards v-if="phase === 'setup-distribute-title-cards'" />
-    <SetupDistributeLoyaltyCards v-if="phase === 'setup-distribute-loyalty-cards'" />
+    <div v-if="showDetails">
+      <SetupCharacterSelection v-if="phase === 'setup-character-selection'" />
+      <SetupDistributeTitleCards v-if="phase === 'setup-distribute-title-cards'" />
+      <SetupDistributeLoyaltyCards v-if="phase === 'setup-distribute-loyalty-cards'" />
 
-    <MainCrisis v-if="phase === 'main-crisis'" />
+      <MainCrisis v-if="phase === 'main-crisis'" />
 
 
-    <div class="phase-description">
+      <div class="phase-description">
 
-      <div v-if="phase === 'setup-receive-skills'">
-        <p>Each player, <strong>except</strong> the starting player ({{ players[0].name }}), receives three skill cards of types they could normally receive during the receive skills step.</p>
+        <div v-if="phase === 'setup-receive-skills'">
+          <p>Each player, <strong>except</strong> the starting player ({{ players[0].name }}), receives three skill cards of types they could normally receive during the receive skills step.</p>
+        </div>
+
+        <div v-if="phase === 'main-receive-skills'">
+          <p>The active player draws all of the skill cards listed on his character sheet.</p>
+          <p>If the character sheet shows skills with a star, the player draws a card for only one of the starred skills.</p>
+        </div>
+
+        <div v-if="phase === 'main-movement'">
+          <p>The active player can move his pawn to another location.</p>
+          <p>Changing ships or docking a fighter requires the player to discard one skill card.</p>
+          <p>You can move your pawn by clicking on it and then clicking on the location you want to move to.</p>
+        </div>
+
+        <div v-if="phase ==='main-action'">
+          <p>Take a single action.</p>
+          <p>Actions can be selected from the character's location, skill cards, quorum cards, or character abilities. All actions have the prefix "Action:"</p>
+        </div>
+
+        <div v-if="phase === 'jump-choose-destination'">
+          <p>The admiral looks at two destination cards and selects one of them to be the destination.</p>
+        </div>
+
       </div>
-
-      <div v-if="phase === 'main-receive-skills'">
-        <p>The active player draws all of the skill cards listed on his character sheet.</p>
-        <p>If the character sheet shows skills with a star, the player draws a card for only one of the starred skills.</p>
-      </div>
-
-      <div v-if="phase === 'main-movement'">
-        <p>The active player can move his pawn to another location.</p>
-        <p>Changing ships or docking a fighter requires the player to discard one skill card.</p>
-        <p>You can move your pawn by clicking on it and then clicking on the location you want to move to.</p>
-      </div>
-
-      <div v-if="phase ==='main-action'">
-        <p>Take a single action.</p>
-        <p>Actions can be selected from the character's location, skill cards, quorum cards, or character abilities. All actions have the prefix "Action:"</p>
-      </div>
-
-      <div v-if="phase === 'jump-choose-destination'">
-        <p>The admiral looks at two destination cards and selects one of them to be the destination.</p>
-      </div>
-
     </div>
   </div>
 </template>
@@ -62,6 +67,10 @@ import MainCrisis from './MainCrisis'
 import SetupCharacterSelection from './SetupCharacterSelection'
 import SetupDistributeLoyaltyCards from './SetupDistributeLoyaltyCards'
 import SetupDistributeTitleCards from './SetupDistributeTitleCards'
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
+library.add(faChevronDown, faChevronUp)
 
 
 const options = [
@@ -181,6 +190,7 @@ export default {
   data() {
     return {
       options,
+      showDetails: true,
     }
   },
 
@@ -198,6 +208,10 @@ export default {
     phaseChanged(value) {
       this.$store.commit('bsg/phaseSet', value)
     },
+
+    toggleDetails() {
+      this.showDetails = !this.showDetails
+    },
   },
 
 }
@@ -210,5 +224,10 @@ export default {
   font-size: .7em;
   margin-left: 1em;
   margin-right: 1em;
+}
+
+.phase-selector {
+  display: flex;
+  flex-direction: row;
 }
 </style>
