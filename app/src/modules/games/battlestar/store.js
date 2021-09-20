@@ -357,7 +357,9 @@ export default {
     countersFuel: (state) => state.game.counters.fuel,
     countersMorale: (state) => state.game.counters.morale,
     countersPopulation: (state) => state.game.counters.population,
+    countersRaptors: (state) => state.game.counters.raptors,
     countersNukes: (state) => state.game.counters.nukes,
+    countersDistance: (state) => state.game.counters.distance,
     countersJumpTrack: (state) => state.game.counters.jumpTrack,
 
     cardAt: (state) => (source, index) => zoneGet(state, source).cards[index],

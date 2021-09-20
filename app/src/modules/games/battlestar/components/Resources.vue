@@ -32,6 +32,12 @@
 
         <ResourceCounter
           @resource-changed="resourceChanged"
+          title="Raptors"
+          name="raptors"
+          :value="raptors" />
+
+        <ResourceCounter
+          @resource-changed="resourceChanged"
           title="Nukes"
           name="nukes"
           :value="nukes" />
@@ -42,6 +48,12 @@
       <div class="heading">Tracks</div>
 
       <div class="resources jump-track">
+        <ResourceCounter
+          @resource-changed="resourceChanged"
+          title="Distance Traveled"
+          name="distance"
+          :value="distance" />
+
         <ResourceCounter
           @resource-changed="resourceChanged"
           title="Jump Track"
@@ -85,7 +97,9 @@ export default {
     fuel() { return this.$store.getters['bsg/countersFuel'] },
     morale() { return this.$store.getters['bsg/countersMorale'] },
     population() { return this.$store.getters['bsg/countersPopulation'] },
+    raptors() { return this.$store.getters['bsg/countersRaptors'] },
     nukes() { return this.$store.getters['bsg/countersNukes'] },
+    distance() { return this.$store.getters['bsg/countersDistance'] },
     jumpTrack() { return this.$store.getters['bsg/countersJumpTrack'] },
   },
 

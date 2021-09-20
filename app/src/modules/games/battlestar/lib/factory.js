@@ -32,6 +32,9 @@ async function initialize(game) {
     nukes: 2,
 
     jumpTrack: 0,
+
+    distance: 0,
+    raptors: 4,
   }
 
   // Players
