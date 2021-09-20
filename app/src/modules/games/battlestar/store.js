@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 import axios from 'axios'
 import bsgutil from './lib/util.js'
 import decks from './lib/decks.js'
@@ -395,6 +397,25 @@ export default {
   },
 
   mutations: {
+    compatDamageDiscard(state) {
+      const damage = zoneGet(state, 'decks.damageGalactica')
+      const discard = zoneGet(state, 'discard.damageGalactica')
+
+
+      for (const card of discard.cards) {
+        damage.cards.push(card)
+      }
+
+      Vue.delete(damage, 'discard')
+      Vue.delete(state.game.zones.discard, 'damageGalactica')
+
+      log(state, {
+        template: 'ship damage hack',
+        classes: ['hacks'],
+        args: {},
+      })
+    },
+
     compatShipZoneUpdates(state) {
       for (const zone of Object.values(state.game.zones.ships)) {
         zone.kind = 'open'
