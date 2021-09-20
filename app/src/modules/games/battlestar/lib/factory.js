@@ -18,7 +18,7 @@ async function initialize(game) {
   // Top-level values
   game.initialized = true
   game.setupLoyaltyComplete = true
-  game.phase = 'setup-character-creation'
+  game.phase = 'setup-character-selection'
   game.history = []
   game.log = []
 

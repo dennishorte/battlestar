@@ -6,11 +6,13 @@
       labelFor="phase-selected"
     >
       <template v-slot:label>
-        <span @click="toggleDetails">
-          Phase
-        </span>
-        <font-awesome-icon :icon="['fas', 'chevron-down']" />
-        <font-awesome-icon :icon="['fas', 'chevron-up']" />
+        <div @click="toggleDetails">
+          <span>
+            Phase
+          </span>
+          <font-awesome-icon v-if="!showDetails" :icon="['fas', 'chevron-down']" />
+          <font-awesome-icon v-else :icon="['fas', 'chevron-up']" />
+        </div>
       </template>
 
       <b-form-select
@@ -28,7 +30,7 @@
       <SetupDistributeLoyaltyCards v-if="phase === 'setup-distribute-loyalty-cards'" />
 
       <MainCrisis v-if="phase === 'main-crisis'" />
-
+      <MainNextPlayer v-if="phase === 'main-next-player'" />
 
       <div class="phase-description">
 
@@ -64,6 +66,7 @@
 
 <script>
 import MainCrisis from './MainCrisis'
+import MainNextPlayer from './MainNextPlayer'
 import SetupCharacterSelection from './SetupCharacterSelection'
 import SetupDistributeLoyaltyCards from './SetupDistributeLoyaltyCards'
 import SetupDistributeTitleCards from './SetupDistributeTitleCards'
@@ -126,6 +129,10 @@ const options = [
         value: 'main-hand-limit',
         text: 'Hand Limit',
       },
+      {
+        value: 'main-next-player',
+        text: 'Next Player',
+      },
     ]
   },
   {
@@ -182,6 +189,7 @@ export default {
 
   components: {
     MainCrisis,
+    MainNextPlayer,
     SetupCharacterSelection,
     SetupDistributeLoyaltyCards,
     SetupDistributeTitleCards,
@@ -190,17 +198,26 @@ export default {
   data() {
     return {
       options,
-      showDetails: true,
+      showDetailsValue: true,
     }
   },
 
   computed: {
     phase() {
-      return this.$store.state.bsg.game.phase
+      return this.$store.getters['bsg/phase']
     },
 
     players() {
       return this.$store.getters['bsg/players']
+    },
+
+    showDetails() {
+      if (this.phase === 'main-next-player') {
+        return true
+      }
+      else {
+        return this.showDetailsValue
+      }
     },
   },
 
@@ -210,7 +227,7 @@ export default {
     },
 
     toggleDetails() {
-      this.showDetails = !this.showDetails
+      this.showDetailsValue = !this.showDetailsValue
     },
   },
 

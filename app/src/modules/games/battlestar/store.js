@@ -362,6 +362,7 @@ export default {
     deck: (state) => (key) => deckGet(state, key),
     discard: (state) => (key) => discardGet(state, key),
     hand: (state) => (playerName) => state.game.zones.players[playerName],
+    phase: (state) => state.game.phase,
     player: (state) => (name) => playerByName(state, name),
     playerActive: (state) => state.game.activePlayer,
     players: (state) => state.game.players,
