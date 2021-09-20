@@ -11,6 +11,9 @@
       </div>
     </div>
 
+    <div class="heading">Compatibility</div>
+    <b-button @click="$store.commit('bsg/compatShipZoneUpdates')">Ship Zones</b-button>
+
   </b-modal>
 </template>
 

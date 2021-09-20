@@ -395,6 +395,18 @@ export default {
   },
 
   mutations: {
+    compatShipZoneUpdates(state) {
+      for (const zone of Object.values(state.game.zones.ships)) {
+        zone.kind = 'open'
+        delete zone.visibility
+      }
+
+      log(state, {
+        template: 'ship zone visibility hack',
+        classes: ['hacks'],
+        args: {},
+      })
+    },
 
     playerNext(state) {
       const activePlayer = playerByName(state, state.game.activePlayer)

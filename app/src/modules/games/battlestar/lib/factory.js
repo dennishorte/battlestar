@@ -292,8 +292,7 @@ function makeShipsZone(zoneName, shipName, count) {
   const zone = {
     name: zoneName,
     cards: [],
-    kind: 'bag',
-    visibility: 'identical',
+    kind: 'open',
   }
   for (let i = 0; i < count; i++) {
     zone.cards.push({
