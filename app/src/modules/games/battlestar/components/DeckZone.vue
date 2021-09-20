@@ -3,7 +3,7 @@
 
     <div class="top-row">
 
-      <Variant :name="variant">
+      <Variant :name="variantName">
         <div
           class="deck-name"
           :class="classes"
@@ -113,6 +113,13 @@ export default {
       type: String,
       default: '',
     },
+
+    variantDynamic: {
+      type: Object,
+      default: () => ({
+        func: null,
+      }),
+    },
   },
 
   data() {
@@ -216,6 +223,18 @@ export default {
       }
 
       return menu
+    },
+
+    variantName() {
+      if (this.variant) {
+        return this.variant
+      }
+
+      if (this.variantDynamic.func) {
+        return this.variantDynamic.func.apply(this)
+      }
+
+      return ''
     },
   },
 

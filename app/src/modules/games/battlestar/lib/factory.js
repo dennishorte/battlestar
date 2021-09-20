@@ -19,10 +19,8 @@ async function initialize(game) {
   game.initialized = true
   game.setupLoyaltyComplete = true
   game.phase = 'setup-character-creation'
-  game.waitingFor = ''
-  game.log = []
-
   game.history = []
+  game.log = []
 
   // Counters
   game.counters = {
@@ -43,11 +41,11 @@ async function initialize(game) {
       index: 0,
       name: user.name,
       location: '',
-      active: false,
       oncePerGameActionUsed: false,
     }
   })
-  game.players[0].active = true
+  game.activePlayer = game.players[0].name
+  game.waitingFor = game.players[0].name
 
   // Zones
   const decks = Decks.factory(game.options.expansions)

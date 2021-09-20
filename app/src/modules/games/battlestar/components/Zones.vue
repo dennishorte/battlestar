@@ -15,6 +15,7 @@
             :name="name"
             :deck-name="`players.${name}`"
             :expanded="true"
+            :variant-dynamic="activePlayerVariantFunc(name)"
           />
         </div>
 
@@ -275,6 +276,14 @@ import DeckZone from './DeckZone'
 import { skillList } from '../lib/util.js'
 
 
+const activePlayerVariantFunc = function(name) {
+  return {
+    func() {
+      return this.$store.getters['bsg/playerActive'] === name ? 'activePlayer' : ''
+    },
+  }
+}
+
 const crisisPoolMenuOptions = [
   {
     name: 'shuffle',
@@ -330,6 +339,7 @@ export default {
 
   data() {
     return {
+      activePlayerVariantFunc,
       crisisPoolMenuOptions,
       destinyMenuOptions,
       skillList,

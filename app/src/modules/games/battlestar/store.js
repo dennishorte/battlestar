@@ -362,6 +362,8 @@ export default {
     deck: (state) => (key) => deckGet(state, key),
     discard: (state) => (key) => discardGet(state, key),
     hand: (state) => (playerName) => state.game.zones.players[playerName],
+    player: (state) => (name) => playerByName(state, name),
+    playerActive: (state) => state.game.activePlayer,
     players: (state) => state.game.players,
     visible: (state) => (card) => isVisible(state, card),
     zone: (state) => (key) => zoneGet(state, key),

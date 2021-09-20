@@ -34,6 +34,10 @@ const variants = {
     bgImage: imageConcrete,
   },
 
+  activePlayer: {
+    bgColor: '#FFE4C4',
+  },
+
   space: {
     fgColor: 'white',
     bgColor: '',
