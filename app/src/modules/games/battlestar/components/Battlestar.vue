@@ -273,8 +273,7 @@ export default {
 }
 
 .action-buttons-wrapper {
-  background-color: white;
-  height: 2.5em;
+  padding-top: 15px;
 }
 
 .save-message {
@@ -296,7 +295,14 @@ export default {
   position: sticky;
   top: 0;
   z-index: 3;
-  background-color: white;
+  background-color: #ddd;
+  margin-left: -15px;
+  margin-right: -15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border: 1px solid #bbb;
+  border-bottom-left-radius: .5em;
+  border-bottom-right-radius: .5em;
 }
 
 .row {
