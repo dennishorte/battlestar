@@ -469,7 +469,18 @@ export default {
     },
 
     resourceChange(state, { name, amount }) {
+      const before = state.game.counters[name]
       state.game.counters[name] += amount
+
+      log(state, {
+        template: "{counter} adjusted from {before} to {after}",
+        classes: ['counter-change'],
+        args: {
+          counter: name,
+          before: before,
+          after: before + amount
+        },
+      })
     },
 
     userSet(state, user) {
