@@ -8,7 +8,7 @@ import skillCards from '../res/skill.js'
 import superCrisisCards from '../res/super_crisis.js'
 import titleCards from '../res/title.js'
 
-import { shuffleArray } from '@/util.js'
+import util from '@/util.js'
 
 export default {
   factory,
@@ -250,7 +250,7 @@ function makeDeckWithFilter(filter) {
         return c
       })
 
-    shuffleArray(cards)
+    util.shuffleArray(cards)
 
     options.name = deckName
     return {

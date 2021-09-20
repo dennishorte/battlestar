@@ -29,6 +29,7 @@
     "boostrap": "^2.0.0",
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.15.2",
+    "seedrandom": "^3.0.5",
     "vue": "^2.6.14",
     "vue-router": "^3.5.2",
     "vuex": "^3.6.2"

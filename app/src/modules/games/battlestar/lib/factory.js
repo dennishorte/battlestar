@@ -22,6 +22,8 @@ async function initialize(game) {
   game.history = []
   game.log = []
 
+  game.seed = util.randomSeed()
+
   // Counters
   game.counters = {
     food: 8,

@@ -1,6 +1,8 @@
+import axios from 'axios'
+import seedrandom from 'seedrandom'
 import Vue from 'vue'
 
-import axios from 'axios'
+
 import bsgutil from './lib/util.js'
 import decks from './lib/decks.js'
 import factory from './lib/factory.js'
@@ -66,6 +68,12 @@ function getDiscardName(state, deckName) {
   }
 
   throw `Unable to get discard for ${deckName}`
+}
+
+function getRng(state) {
+  const rng = seedrandom(state.game.seed)
+  state.game.seed = 'battlestar-galactica' + rng()
+  return rng
 }
 
 function grabCancel(state) {
@@ -159,7 +167,7 @@ function maybeReshuffleDiscard(state, zone) {
   const discardName = zone.name.replace('decks.', 'discard.')
   const discard = zoneGet(state, discardName)
 
-  zone.cards = util.shuffleArray([...discard.cards])
+  zone.cards = shuffleArray(state, [...discard.cards])
   discard.cards = []
 
   log(state, {
@@ -264,6 +272,10 @@ function pushUnique(array, value) {
   }
 }
 
+function shuffleArray(state, array) {
+  return util.shuffleArray(array, getRng(state))
+}
+
 function viewerCanSeeCard(state, card) {
   return playerCanSeeCard(state, state.ui.player, card)
 }
@@ -289,7 +301,7 @@ function zoneGet(state, name) {
 function zoneShuffle(state, zoneName) {
   const cards = zoneGet(state, zoneName).cards
   cards.forEach(c => c.visibility = [])
-  util.shuffleArray(cards)
+  shuffleArray(state, cards)
 }
 
 

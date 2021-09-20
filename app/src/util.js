@@ -1,5 +1,8 @@
+import seedrandom from 'seedrandom'
+
+
 const Util = {}
-module.exports = Util
+export default Util
 
 Util.toCamelCase = function(str) {
   const downCased = str[0].toLowerCase() + str.slice(1)
@@ -10,7 +13,20 @@ Util.deepcopy = function(obj) {
   return JSON.parse(JSON.stringify(obj))
 }
 
-Util.shuffleArray = function(array) {
+Util.randomSeed = function(prefix) {
+  if (!prefix) {
+    prefix = "random-prefix"
+  }
+
+  const rng = seedrandom()
+  return prefix + rng()
+}
+
+Util.shuffleArray = function(array, randomizer) {
+  if (!randomizer) {
+    randomizer = Math.random
+  }
+
   let currentIndex = array.length
   let randomIndex
 
@@ -18,7 +34,7 @@ Util.shuffleArray = function(array) {
   while (currentIndex != 0) {
 
     // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex)
+    randomIndex = Math.floor(randomizer() * currentIndex)
     currentIndex--
 
     // And swap it with the current element.

@@ -198,7 +198,7 @@ export default {
   data() {
     return {
       options,
-      showDetailsValue: true,
+      showDetailsValue: false,
     }
   },
 
