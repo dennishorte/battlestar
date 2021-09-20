@@ -1,5 +1,3 @@
-import Vue from 'vue'
-
 import axios from 'axios'
 import bsgutil from './lib/util.js'
 import decks from './lib/decks.js'
@@ -397,12 +395,6 @@ export default {
   },
 
   mutations: {
-
-    compatActivePlayer(state) {
-      if (!state.game.activePlayer) {
-        Vue.set(state.game, 'activePlayer', state.game.players[0].name)
-      }
-    },
 
     playerNext(state) {
       const activePlayer = playerByName(state, state.game.activePlayer)

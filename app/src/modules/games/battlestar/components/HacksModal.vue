@@ -11,11 +11,6 @@
       </div>
     </div>
 
-    <hr>
-
-    <div class="heading">Compatibility Updates</div>
-    <b-button @click="$store.commit('bsg/compatActivePlayer')">Active Player</b-button>
-
   </b-modal>
 </template>
 
