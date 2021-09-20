@@ -80,7 +80,6 @@ function factory(expansions) {
     damageGalactica: makeDeck(damageGalactica, {
       name: 'damageGalactica',
       kind: 'bag',
-      discard: 'open',
     }),
     destination: makeDeck(destinationCards, {
       name: 'destination',
