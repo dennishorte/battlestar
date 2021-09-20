@@ -684,9 +684,7 @@ export default {
           return
         }
 
-        if (zone.cards.length === 0) {
-          return
-        }
+        maybeReshuffleDiscard(state, zone)
 
         state.ui.grab = data
       }
