@@ -1,6 +1,6 @@
 <template>
   <div class="main-next-player">
-    <b-button block variant="primary">Start Next Player's Turn</b-button>
+    <b-button block variant="primary" @click="playerNext">Start Next Player's Turn</b-button>
   </div>
 </template>
 
@@ -8,6 +8,12 @@
 <script>
 export default {
   name: 'MainNextPlayer',
+
+  methods: {
+    playerNext() {
+      this.$store.commit('bsg/playerNext')
+    },
+  },
 }
 </script>
 
