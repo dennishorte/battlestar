@@ -13,7 +13,7 @@
           <span class="heading">Skills:</span>
 
           <template v-for="skill in skillList">
-            <span :key="skill" v-if="card[skill]" style="margin-left: .25em;">
+            <span :key="skill" v-if="card[skill]">
               <SkillLink :skillName="skill" />
             </span>
           </template>
