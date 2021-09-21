@@ -240,6 +240,15 @@ function playerByName(state, name) {
   return state.game.players.find(p => p.name === name)
 }
 
+function playerCharacter(state, playerName) {
+  const hand = playerZone(state, playerName).cards
+  for (const card of hand) {
+    if (card.kind === 'character') {
+      return card
+    }
+  }
+}
+
 function playerFollowing(state, player) {
   const players = state.game.players
   for (let i = 0; i < players.length; i++) {
@@ -260,6 +269,10 @@ function playerWithCard(state, cardName) {
     }
   }
   return {}
+}
+
+function playerZone(state, playerName) {
+  return state.game.zones.players[playerName]
 }
 
 function presidentName(state) {
@@ -377,10 +390,11 @@ export default {
     cardAt: (state) => (source, index) => zoneGet(state, source).cards[index],
     deck: (state) => (key) => deckGet(state, key),
     discard: (state) => (key) => discardGet(state, key),
-    hand: (state) => (playerName) => state.game.zones.players[playerName],
+    hand: (state) => (playerName) => playerZone(state, playerName),
     phase: (state) => state.game.phase,
     player: (state) => (name) => playerByName(state, name),
     playerActive: (state) => state.game.activePlayer,
+    playerCharacter: (state) => (playerName) => playerCharacter(state, playerName),
     players: (state) => state.game.players,
     visible: (state) => (card) => isVisible(state, card),
     zone: (state) => (key) => zoneGet(state, key),
@@ -573,6 +587,18 @@ export default {
   actions: {
     characterInfoRequest({ state }, name) {
       state.ui.charactersModal.selected = name
+    },
+
+    drawSkills({ commit }, { playerName, kinds }) {
+      for (const kind of kinds) {
+        const deckName = `decks.${kind}`
+        const playerZone = `players.${playerName}`
+
+        commit('move', {
+          source: deckName,
+          target: playerZone,
+        })
+      }
     },
 
     grabCancel({ state }) {

@@ -10,7 +10,7 @@
           <span>
             Phase
           </span>
-          <font-awesome-icon v-if="!showDetails" :icon="['fas', 'chevron-down']" />
+          <font-awesome-icon v-if="showDetails" :icon="['fas', 'chevron-down']" />
           <font-awesome-icon v-else :icon="['fas', 'chevron-up']" />
         </div>
       </template>
@@ -31,16 +31,12 @@
 
       <MainCrisis v-if="phase === 'main-crisis'" />
       <MainNextPlayer v-if="phase === 'main-next-player'" />
+      <MainReceiveSkills v-if="phase === 'main-receive-skills'" />
 
       <div class="phase-description">
 
         <div v-if="phase === 'setup-receive-skills'">
           <p>Each player, <strong>except</strong> the starting player ({{ players[0].name }}), receives three skill cards of types they could normally receive during the receive skills step.</p>
-        </div>
-
-        <div v-if="phase === 'main-receive-skills'">
-          <p>The active player draws all of the skill cards listed on his character sheet.</p>
-          <p>If the character sheet shows skills with a star, the player draws a card for only one of the starred skills.</p>
         </div>
 
         <div v-if="phase === 'main-movement'">
@@ -67,6 +63,7 @@
 <script>
 import MainCrisis from './MainCrisis'
 import MainNextPlayer from './MainNextPlayer'
+import MainReceiveSkills from './MainReceiveSkills'
 import SetupCharacterSelection from './SetupCharacterSelection'
 import SetupDistributeLoyaltyCards from './SetupDistributeLoyaltyCards'
 import SetupDistributeTitleCards from './SetupDistributeTitleCards'
@@ -190,6 +187,7 @@ export default {
   components: {
     MainCrisis,
     MainNextPlayer,
+    MainReceiveSkills,
     SetupCharacterSelection,
     SetupDistributeLoyaltyCards,
     SetupDistributeTitleCards,
