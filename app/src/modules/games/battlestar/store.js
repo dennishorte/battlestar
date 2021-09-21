@@ -516,7 +516,7 @@ export default {
       state.game.phase = phase
 
       if (phase === 'main-crisis') {
-        state.players.forEach(p => p.crisisHelp = '')
+        state.game.players.forEach(p => p.crisisHelp = '')
       }
 
       log(state, {
