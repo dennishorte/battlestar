@@ -3,7 +3,7 @@
     <div class="description">
       <p>The active player turns over the top card of the crisis deck (by moving it to the common zone).</p>
 
-      <b-button-group v-if="isChoice" class="w-100">
+      <b-button-group v-if="isChoice" class="w-100 mb-2">
         <b-button @click="help('none')" variant="danger">none</b-button>
         <b-button @click="help('a little')" variant="warning">a little</b-button>
         <b-button @click="help('some')" variant="success">some</b-button>
@@ -57,7 +57,8 @@ export default {
     },
 
     isChoice() {
-      return true
+      return this.card
+          && (this.card.type === 'Skill Check' || this.card.type === 'Optional Skill Check')
     },
 
     playersOrdered() {
@@ -78,9 +79,9 @@ export default {
         playerName: this.$store.getters['bsg/uiViewer'].name,
         amount,
       })
-    },
-
   },
+
+},
 
 }
 </script>
