@@ -627,7 +627,7 @@ export default {
         name = admiralName(state)
       }
       else if (name === 'next') {
-        name = playerFollowing(state, getters.uiViewer)
+        name = playerFollowing(state, getters.uiViewer).name
       }
 
       if (!name) {
