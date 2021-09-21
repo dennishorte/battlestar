@@ -9,6 +9,21 @@ import factory from './lib/factory.js'
 import locations from './res/location.js'
 import util from '@/util.js'
 
+
+////////////////////////////////////////////////////////////////////////////////
+// Compatibility helpers.
+// Can be removed once backwards compatibility is established.
+
+function compatCrisisHelp(player) {
+  if (player.crisisHelp === undefined) {
+    Vue.set(player, 'crisisHelp', '')
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Private functions
+
 function admiralName(state) {
   return playerWithCard(state, 'Admiral').name
 }
@@ -458,6 +473,18 @@ export default {
       })
     },
 
+    crisisHelp(state, { playerName, amount }) {
+      const player = playerByName(state, playerName)
+      compatCrisisHelp(player)
+      player.crisisHelp = amount
+
+      log(state, {
+        template: `I can help {amount}`,
+        classes: ['crisis-help'],
+        args: { amount },
+      })
+    },
+
     playerNext(state) {
       const activePlayer = playerByName(state, state.game.activePlayer)
       state.game.activePlayer = playerFollowing(state, activePlayer).name
@@ -487,6 +514,10 @@ export default {
 
     phaseSet(state, phase) {
       state.game.phase = phase
+
+      if (phase === 'main-crisis') {
+        state.players.forEach(p => p.crisisHelp = '')
+      }
 
       log(state, {
         template: "Phase set to {phase}",
