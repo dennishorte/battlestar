@@ -25,50 +25,17 @@
         </ul>
         <p>Once built, deal one card to each player. (Gaius Baltar gets a second at this stage.)</p>
         <p>Finally, if you are playing with 4 or 6 players, add the "Sympathizer" card to the deck.</p>
-
-        <hr>
-
-        <p><em>You can draw a card from a deck by clicking on it, and then put it in another deck by tapping on the other deck.</em></p>
       </b-col>
     </b-row>
 
-    <b-row>
-      <b-col>
-        <DeckZone
-          name="Not a Cylon"
-          deckName="decks.human" />
-
-        <DeckZone
-          name="Cylon"
-          deckName="decks.cylon" />
-
-        <DeckZone
-          name="Sympathizer"
-          deckName="decks.sympathizer" />
-      </b-col>
-
-      <b-col>
-        <DeckZone
-          name="Loyalty Deck"
-          deckName="decks.loyalty" />
-      </b-col>
-    </b-row>
   </div>
 </template>
 
 
 <script>
-import DeckZone from './DeckZone'
 
 export default {
   name: 'LoyaltySetup',
-
-  components: {
-    DeckZone,
-  },
-
-  computed: {
-  },
 }
 </script>
 
