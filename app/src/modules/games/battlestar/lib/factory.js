@@ -122,45 +122,6 @@ async function initialize(game) {
     }
   }
 
-  game.space = {
-    ships: {
-      civilian: {
-        max: 12,
-        destroyed: 0,
-      },
-      viper: {
-        max: 6,
-        damaged: 0,
-        destroyed: 0,
-        piloted: 0,
-      },
-      galactica: {
-        damage: [],
-      },
-      basestarA: {
-        max: 1,
-        damage: [],
-        name: 'Basestar A',
-      },
-      basestarB: {
-        max: 1,
-        damage: [],
-        name: 'Basestar B',
-      },
-      raider: { max: 16 },
-      heavyRaider: { max: 2 },
-    },
-
-    deployed: [
-      [],
-      [],
-      [ 'civilian', 'civilian' ],
-      [ 'viper' ],
-      [ 'viper' ],
-      [ 'basestarA', 'raider', 'raider', 'raider' ],
-    ],
-  }
-
   game.titles = {
     admiral: '',
     president: '',
