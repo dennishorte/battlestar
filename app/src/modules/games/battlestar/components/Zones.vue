@@ -314,19 +314,7 @@ const destinyMenuOptions = [
   {
     name: 'refill',
     func() {
-      for (const skill of skillList) {
-        for (let i = 0; i < 2; i++) {
-          if (skill === 'treachery')
-            continue
-
-          this.$store.commit('bsg/move', {
-            source: `decks.${skill}`,
-            sourceIndex: 0,
-            target: `destiny`,
-            reshuffle: true,
-          })
-        }
-      }
+      this.$store.dispatch('bsg/refillDestiny')
     },
   },
 ]

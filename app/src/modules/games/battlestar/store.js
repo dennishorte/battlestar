@@ -518,22 +518,6 @@ export default {
       })
     },
 
-    phaseSet(state, phase) {
-      state.game.phase = phase
-
-      if (phase === 'main-crisis') {
-        if (zoneGet(state,'crisisPool').cards.length === 0) {
-          state.game.players.forEach(p => p.crisisHelp = '')
-        }
-      }
-
-      log(state, {
-        template: "Phase set to {phase}",
-        classes: ['phase-change'],
-        args: { phase },
-      })
-    },
-
     resourceChange(state, { name, amount }) {
       const before = state.game.counters[name]
       state.game.counters[name] += amount
@@ -719,6 +703,44 @@ export default {
 
       if (requestResult.data.status !== 'success') {
         throw requestResult.data.message
+      }
+    },
+
+    phaseSet({ state }, phase) {
+      log(state, {
+        template: "Phase set to {phase}",
+        classes: ['phase-change'],
+        args: { phase },
+      })
+
+      state.game.phase = phase
+
+      if (phase === 'main-crisis') {
+        if (zoneGet(state,'crisisPool').cards.length === 0) {
+          state.game.players.forEach(p => p.crisisHelp = '')
+        }
+      }
+    },
+
+    refillDestiny({ commit, state }) {
+      log(state, {
+        template: 'Refilling destiny deck',
+        classes: ['admin-action'],
+        args: {},
+      })
+
+      for (const skill of bsgutil.skillList) {
+        for (let i = 0; i < 2; i++) {
+          if (skill === 'treachery')
+            continue
+
+          commit('move', {
+            source: `decks.${skill}`,
+            sourceIndex: 0,
+            target: `destiny`,
+            reshuffle: true,
+          })
+        }
       }
     },
 
