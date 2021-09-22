@@ -84,9 +84,22 @@
           </b-col>
         </b-row>
 
+        <b-row>
+          <b-col>
+            <div class="turn-info">
+              <div>
+                Waiting for: <span class="heading">{{ waitingFor }}</span>
+              </div>
+
+              <div>
+                Current turn: <span class="heading">{{ playerActive }}</span>
+              </div>
+            </div>
+          </b-col>
+        </b-row>
+
         <b-row class="phase-panel">
           <b-col>
-            Waiting for: <span class="heading">{{ waitingFor }}</span>
             <PhasePanel />
           </b-col>
         </b-row>
@@ -190,6 +203,9 @@ export default {
     },
     players() {
       return this.$store.getters['bsg/players']
+    },
+    playerActive() {
+      return this.$store.getters['bsg/playerActive']
     },
     waitingFor() {
       return this.$store.getters['bsg/waitingFor']
@@ -307,6 +323,12 @@ export default {
   border: 1px solid #bbb;
   border-bottom-left-radius: .5em;
   border-bottom-right-radius: .5em;
+}
+
+.turn-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .row {

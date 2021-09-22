@@ -1,6 +1,11 @@
 <template>
   <div class="main-next-player">
-    <b-button :disabled="!commonCrisis" block variant="info" @click="cleanCrisis">Clean Up Crisis Card</b-button>
+    <b-button
+      block
+      :disabled="!commonCrisis"
+      :variant="!!commonCrisis ? 'info' : ''"
+      @click="cleanCrisis"
+    >Clean Up Crisis Card</b-button>
     <b-button block variant="primary" @click="playerNext">Start Next Player's Turn</b-button>
   </div>
 </template>
