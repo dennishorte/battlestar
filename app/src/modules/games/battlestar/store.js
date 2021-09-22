@@ -63,7 +63,7 @@ function cardView(state, card, player) {
 
 function commonCrisis(state) {
   const zone = zoneGet(state, 'common')
-  const crisis = zone.cards.find(c => c.kind === 'crisis' || c.kind === 'super_crisis')
+  const crisis = zone.cards.find(c => c.kind === 'crisis' || c.kind === 'superCrisis')
   return crisis
 }
 

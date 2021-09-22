@@ -327,7 +327,7 @@ const kindOrder = [
   'quorum',
   'skill',
   'crisis',
-  'super_crisis',
+  'superCrisis',
   'destination',
 ]
 
