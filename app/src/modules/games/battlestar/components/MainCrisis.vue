@@ -51,9 +51,7 @@ export default {
 
   computed: {
     card() {
-      const zone = this.$store.getters['bsg/zone']('common')
-      const crisis = zone.cards.find(c => c.kind === 'crisis' || c.kind === 'super_crisis')
-      return crisis || {}
+      return this.$store.getters['bsg/commonCrisis'] || {}
     },
 
     isChoice() {

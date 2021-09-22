@@ -61,6 +61,12 @@ function cardView(state, card, player) {
   pushUnique(card.visibility, player.name)
 }
 
+function commonCrisis(state) {
+  const zone = zoneGet(state, 'common')
+  const crisis = zone.cards.find(c => c.kind === 'crisis' || c.kind === 'super_crisis')
+  return crisis
+}
+
 function deckGet(state, deckName) {
   const deck = state.game.zones.decks[deckName]
   if (!deck) {
@@ -403,6 +409,7 @@ export default {
     countersJumpTrack: (state) => state.game.counters.jumpTrack,
 
     cardAt: (state) => (source, index) => zoneGet(state, source).cards[index],
+    commonCrisis: (state) => commonCrisis(state),
     deck: (state) => (key) => deckGet(state, key),
     discard: (state) => (key) => discardGet(state, key),
     hand: (state) => (playerName) => playerZone(state, playerName),
@@ -444,7 +451,6 @@ export default {
     compatDamageDiscard(state) {
       const damage = zoneGet(state, 'decks.damageGalactica')
       const discard = zoneGet(state, 'discard.damageGalactica')
-
 
       for (const card of discard.cards) {
         damage.cards.push(card)
@@ -618,6 +624,15 @@ export default {
   actions: {
     characterInfoRequest({ state }, name) {
       state.ui.charactersModal.selected = name
+    },
+
+    cleanCommonCrisis({ commit, getters }) {
+      const crisis = getters['commonCrisis']
+      commit('move', {
+        source: 'common',
+        cardId: crisis.id,
+        target: 'discard.crisis',
+      })
     },
 
     drawSkills({ commit }, { playerName, kinds }) {
