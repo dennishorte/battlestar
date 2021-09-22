@@ -29,6 +29,7 @@
       <SetupDistributeTitleCards v-if="phase === 'setup-distribute-title-cards'" />
       <SetupDistributeLoyaltyCards v-if="phase === 'setup-distribute-loyalty-cards'" />
 
+      <MainActivateCylonShips v-if="phase === 'main-activate-cylon-ships'" />
       <MainCrisis v-if="phase === 'main-crisis'" />
       <MainNextPlayer v-if="phase === 'main-next-player'" />
       <MainReceiveSkills v-if="phase === 'main-receive-skills'" />
@@ -61,6 +62,7 @@
 
 
 <script>
+import MainActivateCylonShips from './MainActivateCylonShips'
 import MainCrisis from './MainCrisis'
 import MainNextPlayer from './MainNextPlayer'
 import MainReceiveSkills from './MainReceiveSkills'
@@ -185,6 +187,7 @@ export default {
   name: 'PhasePanel',
 
   components: {
+    MainActivateCylonShips,
     MainCrisis,
     MainNextPlayer,
     MainReceiveSkills,
@@ -196,7 +199,7 @@ export default {
   data() {
     return {
       options,
-      showDetailsValue: process.env.NODE_ENV === 'development' ? false : true,
+      showDetailsValue: process.env.NODE_ENV === 'development' ? true : true,
     }
   },
 
