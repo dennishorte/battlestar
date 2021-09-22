@@ -326,6 +326,9 @@ const kindOrder = [
   'loyalty',
   'quorum',
   'skill',
+  'crisis',
+  'super_crisis',
+  'destination',
 ]
 
 const handSort = {
