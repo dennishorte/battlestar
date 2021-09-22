@@ -25,14 +25,7 @@
     </b-form-group>
 
     <div v-if="showDetails">
-      <SetupCharacterSelection v-if="phase === 'setup-character-selection'" />
-      <SetupDistributeTitleCards v-if="phase === 'setup-distribute-title-cards'" />
-      <SetupDistributeLoyaltyCards v-if="phase === 'setup-distribute-loyalty-cards'" />
-
-      <MainActivateCylonShips v-if="phase === 'main-activate-cylon-ships'" />
-      <MainCrisis v-if="phase === 'main-crisis'" />
-      <MainNextPlayer v-if="phase === 'main-next-player'" />
-      <MainReceiveSkills v-if="phase === 'main-receive-skills'" />
+      <Component :is="phaseComponent" />
 
       <div class="phase-description">
 
@@ -206,6 +199,31 @@ export default {
   computed: {
     phase() {
       return this.$store.getters['bsg/phase']
+    },
+
+    phaseComponent() {
+      if (this.phase === 'setup-character-selection')
+        return 'SetupCharacterSelection'
+
+      if (this.phase === 'setup-distribute-title-cards')
+        return 'SetupDistributeTitleCards'
+
+      if (this.phase === 'setup-distribute-loyalty-cards')
+        return 'SetupDistributeLoyaltyCards'
+
+      if (this.phase === 'main-activate-cylon-ships')
+        return 'MainActivateCylonShips'
+
+      if (this.phase === 'main-crisis')
+        return 'MainCrisis'
+
+      if (this.phase === 'main-next-player')
+        return 'MainNextPlayer'
+
+      if (this.phase === 'main-receive-skills')
+        return 'MainReceiveSkills'
+
+      return null
     },
 
     players() {
