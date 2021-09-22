@@ -199,7 +199,7 @@ export default {
   data() {
     return {
       options,
-      showDetailsValue: process.env.NODE_ENV === 'development' ? true : true,
+      showDetailsValue: process.env.NODE_ENV === 'development' ? false : true,
     }
   },
 

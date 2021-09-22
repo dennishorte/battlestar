@@ -306,6 +306,47 @@ function pushUnique(array, value) {
   }
 }
 
+function setupInitialShips(state) {
+  log(state, {
+    template: 'Setting up initial ships',
+    classes: ['admin-action'],
+    args: {},
+  })
+
+  // Raiders
+  for (let i = 0; i < 3; i++) {
+    moveCard(state, {
+      source: 'ships.raiders',
+      target: 'space.space0',
+    })
+  }
+
+  // Basestar
+  moveCard(state, {
+    source: 'ships.basestarA',
+    target: 'space.space0',
+  })
+
+  // Vipers
+  moveCard(state, {
+    source: 'ships.vipers',
+    target: 'space.space5',
+  })
+  moveCard(state, {
+    source: 'ships.vipers',
+    target: 'space.space4',
+  })
+
+  // Civilians
+  for (let i = 0; i < 2; i++) {
+    moveCard(state, {
+      source: 'decks.civilian',
+      target: 'space.space3',
+    })
+  }
+
+}
+
 function shuffleArray(state, array) {
   return util.shuffleArray(array, getRng(state))
 }
@@ -669,7 +710,14 @@ export default {
       state.game = data
 
       if (!data.initialized) {
+        log(state, {
+          template: 'Initializing game',
+          classes: ['admin-action'],
+          args: {},
+        })
+
         await factory.initialize(data)
+        setupInitialShips(state)
         await dispatch('save')
         await dispatch('snapshotCreate')
       }
