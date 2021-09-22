@@ -69,6 +69,23 @@ function fetch(variant) {
   return variants[variant] || {}
 }
 
+function cardVariant(card) {
+  if (card.kind === 'skill') {
+    return card.deck.split('.').slice(-1)[0]
+  }
+
+  if (card.name === 'You Are a Cylon') {
+    return 'youAreACylon'
+  }
+
+  if (card.name === 'You Are Not a Cylon') {
+    return 'youAreNotACylon'
+  }
+
+  return ''
+}
+
 export default {
   fetch,
+  cardVariant
 }

@@ -46,19 +46,19 @@
         <div class="expanded-card" :key="card.id">
           <Variant :name="cardVariant(card)">
 
-          <div
-            class="expanded-card-inner"
-            :class="[
-              index === grabbedIndex ? 'grabbed-card' : '',
-              grabbed && index !== grabbedIndex ? 'ungrabbed-card' : '',
-            ]
-            "
-            @click="clickCard(index)"
-          >
-            <div :class="displayClasses(card)">{{ displayName(card) }}</div>
-            <div>{{ displayExtra(card) }}</div>
-          </div>
-        </Variant>
+            <div
+              class="expanded-card-inner"
+              :class="[
+                index === grabbedIndex ? 'grabbed-card' : '',
+                grabbed && index !== grabbedIndex ? 'ungrabbed-card' : '',
+              ]
+              "
+              @click="clickCard(index)"
+            >
+              <div :class="displayClasses(card)">{{ displayName(card) }}</div>
+              <div>{{ displayExtra(card) }}</div>
+            </div>
+          </Variant>
         </div>
       </template>
 
@@ -70,6 +70,7 @@
 
 <script>
 import Variant from './Variant'
+import variants from '../lib/variants.js'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
@@ -255,17 +256,7 @@ export default {
         return ''
       }
 
-      if (card.kind === 'skill') {
-        return card.deck.split('.').slice(-1)[0]
-      }
-
-      if (card.name === 'You Are a Cylon') {
-        return 'youAreACylon'
-      }
-
-      if (card.name === 'You Are Not a Cylon') {
-        return 'youAreNotACylon'
-      }
+      return variants.cardVariant(card)
     },
 
     click() {
