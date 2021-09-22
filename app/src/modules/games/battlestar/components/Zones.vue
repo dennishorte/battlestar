@@ -319,23 +319,24 @@ const destinyMenuOptions = [
   },
 ]
 
-/* const kindOrder = [
- *   'player-token',
- *   'character',
- *   'title',
- *   'loyalty',
- *   'quorum',
- *   'skill',
- * ]
- *  */
+const kindOrder = [
+  'player-token',
+  'character',
+  'title',
+  'loyalty',
+  'quorum',
+  'skill',
+]
+
 const handSort = {
-  /* func(l, r) {
-   *   return 0
-   *   const lkind = kindOrder.indexOf(l.kind)
-   *   const rkind = kindOrder.indexOf(r.kind)
-   *   if (lkind !== rkind)
-   *     return lkind - rkind
-   * } */
+  func(l, r) {
+    const lkind = kindOrder.indexOf(l.kind)
+    const rkind = kindOrder.indexOf(r.kind)
+    if (lkind !== rkind)
+      return lkind - rkind
+
+    return l.name.localeCompare(r.name)
+  }
 }
 
 export default {
