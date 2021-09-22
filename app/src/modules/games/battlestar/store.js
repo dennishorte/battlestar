@@ -522,7 +522,9 @@ export default {
       state.game.phase = phase
 
       if (phase === 'main-crisis') {
-        state.game.players.forEach(p => p.crisisHelp = '')
+        if (zoneGet(state,'crisisPool').cards.length === 0) {
+          state.game.players.forEach(p => p.crisisHelp = '')
+        }
       }
 
       log(state, {
