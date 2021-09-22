@@ -21,6 +21,7 @@ export default {
   methods: {
     variantBackground(name) {
       const backgroundImage = variants.fetch(name).bgImage
+      const backgroundSize = variants.fetch(name).bgSize
       const overlayColor = variants.fetch(name).bgColor
 
       if (backgroundImage || overlayColor) {
@@ -35,6 +36,11 @@ export default {
         if (backgroundImage) {
           style.backgroundImage = `url(${backgroundImage})`
         }
+
+        if (backgroundSize) {
+          style.backgroundSize = backgroundSize
+        }
+
         if (overlayColor) {
           style.boxShadow = `inset 0 0 0 500px ${overlayColor}`
         }
@@ -69,9 +75,5 @@ export default {
   font-size: .85em;
   width: 100%;
   min-height: 100%;
-}
-
-.variant-wrapper > div {
-  border-radius: .25em;
 }
 </style>

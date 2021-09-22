@@ -258,6 +258,10 @@ export default {
       if (card.kind === 'skill') {
         return card.deck.split('.').slice(-1)[0]
       }
+
+      if (card.name === 'You Are a Cylon') {
+        return 'youAreACylon'
+      }
     },
 
     click() {
