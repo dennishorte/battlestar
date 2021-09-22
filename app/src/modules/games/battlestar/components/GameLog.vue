@@ -1,33 +1,33 @@
 <template>
-<div class="game-log">
+  <div class="game-log">
 
-  <div>
-    <div style="float: right;">
-      <b-form-checkbox v-model="doLogNavigation" size="sm" switch>
-        navigate
-      </b-form-checkbox>
+    <div>
+      <div style="float: right;">
+        <b-form-checkbox v-model="doLogNavigation" size="sm" switch>
+          navigate
+        </b-form-checkbox>
+      </div>
+
+      <span class="heading">
+        Log
+      </span>
     </div>
 
-    <span class="heading">
-      Log
-    </span>
-  </div>
+    <div class="log-entries">
 
-  <div class="log-entries">
-
-    <div v-for="entry in log" :key="entry.id" :class="classes(entry.classes)">
-      <span class="player">{{ entry.actor }}: </span>
-      <span
-        v-for="(token, index) in templateSubstitute(entry.template, entry.args)"
-        :key="index"
-        :class="token.classes">
-        {{ token.value }}
+      <div v-for="entry in log" :key="entry.id" :class="classes(entry.classes)">
+        <span class="player">{{ entry.actor }}: </span>
+        <span
+          v-for="(token, index) in templateSubstitute(entry.template, entry.args)"
+          :key="index"
+          :class="token.classes">
+          {{ token.value }}
         </span>
+      </div>
+
     </div>
 
   </div>
-
-</div>
 </template>
 
 
@@ -119,16 +119,35 @@ export default {
 
 <style scoped>
 .log-entry {
-    font-size: .7em;
+  font-size: .7em;
 }
 
+.pass-turn {
+  font-size: .9em;
+  margin-left: .5em;
+  font-weight: 600;
+  margin-bottom: .25em;
+}
+
+.phase-change > .player,
+.pass-turn > .player {
+  display: none;
+}
+
+.phase-change {
+  font-weight: 600;
+  font-size: .75em;
+  margin-bottom: .25em;
+}
+
+
 .round-start {
-    font-size: .85em;
-    font-weight: bold;
+  font-size: .85em;
+  font-weight: bold;
 }
 
 .name-player-1 {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 </style>
