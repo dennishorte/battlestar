@@ -262,6 +262,10 @@ export default {
       if (card.name === 'You Are a Cylon') {
         return 'youAreACylon'
       }
+
+      if (card.name === 'You Are Not a Cylon') {
+        return 'youAreNotACylon'
+      }
     },
 
     click() {

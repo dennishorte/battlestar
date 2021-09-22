@@ -2,6 +2,7 @@ const imageConcrete = require('../assets/images/concrete_seamless.png')
 const imageFirstAidKit = require('../assets/images/first_aid_kit.png')
 const imageSpace = require('../assets/images/space.jpg')
 const imageYouAreACylon = require('../assets/images/you-are-a-cylon.png')
+const imageYouAreNotACylon = require('../assets/images/you-are-not-a-cylon.png')
 
 const variants = {
   politics: {
@@ -54,6 +55,12 @@ const variants = {
   youAreACylon: {
     fgColor: 'white',
     bgImage: imageYouAreACylon,
+    bgSize: 'cover',
+  },
+
+  youAreNotACylon: {
+    fgColor: 'white',
+    bgImage: imageYouAreNotACylon,
     bgSize: 'cover',
   },
 }
