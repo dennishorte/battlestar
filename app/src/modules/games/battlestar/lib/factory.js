@@ -268,7 +268,7 @@ function makeShipsZone(zoneName, shipName, count) {
       kind: zoneName,
       kindId: i,
       id: `${zoneName}-${i}`,
-      visibility: 'always',
+      visibility: 'all',
     })
   }
   return zone
