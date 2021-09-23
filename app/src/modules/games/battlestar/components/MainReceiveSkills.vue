@@ -12,7 +12,7 @@
       </ul>
     </div>
 
-    <b-button @click="drawSkills" variant="primary" block>draw fixed skills</b-button>
+    <b-button @click="drawSkills" variant="primary" block>draw fixed skills for {{ playerName }}</b-button>
   </div>
 </template>
 
