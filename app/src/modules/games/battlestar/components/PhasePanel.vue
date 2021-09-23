@@ -48,6 +48,22 @@
           <p>The admiral looks at two destination cards and selects one of them to be the destination.</p>
         </div>
 
+        <div v-if="phase === 'jump-use-ftl-control'">
+          <p>
+            If the fleet marker has moved to one of the blue spaces of
+            the Jump Preparation track, players may force the fleet to
+            jump using the “FTL Control” location. If the fleet jumps due to
+            someone activating this location, there is a chance that the
+            fleet will lose some population.
+          </p>
+          <p>
+            The current player rolls the die, and if a “6” or lower is rolled,
+            then a number of population is lost equal to the number listed
+            on the current space of the Jump Preparation track. Players
+            then follow all steps for “Jumping the Fleet” on this page.
+          </p>
+        </div>
+
       </div>
     </div>
   </div>
@@ -152,6 +168,10 @@ const options = [
   {
     label: 'Jump',
     options: [
+      {
+        value: 'jump-use-ftl-control',
+        text: 'Use FTL Control',
+      },
       {
         value: 'jump-remove-ships',
         text: 'Remove Ships',
