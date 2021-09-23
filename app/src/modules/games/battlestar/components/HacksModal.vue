@@ -12,8 +12,6 @@
     </div>
 
     <div class="heading">Compatibility</div>
-    <b-button @click="$store.commit('bsg/compatShipZoneUpdates')">Ship Zones</b-button>
-    <b-button @click="$store.commit('bsg/compatDamageDiscard')">Damage Discard</b-button>
 
   </b-modal>
 </template>

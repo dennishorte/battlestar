@@ -495,37 +495,6 @@ export default {
   },
 
   mutations: {
-    compatDamageDiscard(state) {
-      const damage = zoneGet(state, 'decks.damageGalactica')
-      const discard = zoneGet(state, 'discard.damageGalactica')
-
-      for (const card of discard.cards) {
-        damage.cards.push(card)
-      }
-
-      Vue.delete(damage, 'discard')
-      Vue.delete(state.game.zones.discard, 'damageGalactica')
-
-      log(state, {
-        template: 'ship damage hack',
-        classes: ['hacks'],
-        args: {},
-      })
-    },
-
-    compatShipZoneUpdates(state) {
-      for (const zone of Object.values(state.game.zones.ships)) {
-        zone.kind = 'open'
-        delete zone.visibility
-      }
-
-      log(state, {
-        template: 'ship zone visibility hack',
-        classes: ['hacks'],
-        args: {},
-      })
-    },
-
     crisisHelp(state, { playerName, amount }) {
       const player = playerByName(state, playerName)
       compatCrisisHelp(player)
