@@ -102,31 +102,6 @@ async function initialize(game) {
     },
   }
 
-  ////////////////////////////////////////////////////////////
-
-
-  game.destination = {
-    admiralViewing: [],
-    chosen: [],
-    bonusDistance: 0,
-  }
-
-  game.loyaltyDeck = []
-
-  game.skillCheck = {
-    past: [],
-    active: {
-      card: {},
-      logIds: [],  // List of log ids that were created during resolution
-      skillCards: {},
-    }
-  }
-
-  game.titles = {
-    admiral: '',
-    president: '',
-  }
-
   return game
 }
 
