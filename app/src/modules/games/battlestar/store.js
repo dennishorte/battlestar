@@ -716,14 +716,14 @@ export default {
       state.game = data
 
       if (!data.initialized) {
-        log(state, {
-          template: 'Initializing game',
-          classes: ['admin-action'],
-          args: {},
-        })
 
         await factory.initialize(data)
         setupInitialShips(state)
+        log(state, {
+          template: 'Game Initialized',
+          classes: ['admin-action'],
+          args: {},
+        })
         await dispatch('save')
         await dispatch('snapshotCreate')
       }
