@@ -55,7 +55,11 @@
               "
               @click="clickCard(index)"
             >
-              <div :class="displayClasses(card)">{{ displayName(card) }}</div>
+              <Component
+                :is="cardComponent(card)"
+                :displayClasses="displayClasses(card)"
+                :displayName="displayName(card)"
+              />
               <div>{{ displayExtra(card) }}</div>
             </div>
           </Variant>
@@ -69,6 +73,8 @@
 
 
 <script>
+import CardBasic from './CardBasic'
+
 import Variant from './Variant'
 import variants from '../lib/variants.js'
 
@@ -251,6 +257,12 @@ export default {
   },
 
   methods: {
+    cardComponent(card) {
+      const variantName = this.cardVariant(card)
+      const variant = variants.fetch(variantName)
+      return variant.component || CardBasic
+    },
+
     cardVariant(card) {
       if (!this.$store.getters['bsg/visible'](card)) {
         return ''

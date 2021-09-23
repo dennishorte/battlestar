@@ -1,3 +1,5 @@
+import CardCharacter from '../components/CardCharacter'
+
 const imageConcrete = require('../assets/images/concrete_seamless.png')
 const imageFirstAidKit = require('../assets/images/first_aid_kit.png')
 const imageSpace = require('../assets/images/space.jpg')
@@ -63,6 +65,10 @@ const variants = {
     bgImage: imageYouAreNotACylon,
     bgSize: 'cover',
   },
+
+  character: {
+    component: CardCharacter,
+  },
 }
 
 function fetch(variant) {
@@ -72,6 +78,10 @@ function fetch(variant) {
 function cardVariant(card) {
   if (card.kind === 'skill') {
     return card.deck.split('.').slice(-1)[0]
+  }
+
+  if (card.kind === 'character') {
+    return 'character'
   }
 
   if (card.name === 'You Are a Cylon') {
