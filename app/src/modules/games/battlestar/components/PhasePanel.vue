@@ -55,6 +55,7 @@
 
 
 <script>
+import JumpRemoveShips from './JumpRemoveShips'
 import MainActivateCylonShips from './MainActivateCylonShips'
 import MainCrisis from './MainCrisis'
 import MainNextPlayer from './MainNextPlayer'
@@ -180,6 +181,7 @@ export default {
   name: 'PhasePanel',
 
   components: {
+    JumpRemoveShips,
     MainActivateCylonShips,
     MainCrisis,
     MainNextPlayer,
@@ -222,6 +224,9 @@ export default {
 
       if (this.phase === 'main-receive-skills')
         return 'MainReceiveSkills'
+
+      if (this.phase === 'jump-remove-ships')
+        return 'JumpRemoveShips'
 
       return null
     },
