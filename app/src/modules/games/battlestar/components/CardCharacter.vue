@@ -1,8 +1,9 @@
 <template>
   <div class="card-character" :class="displayClasses">
     <div class="skill-images">
-      <div class="image-slice" v-for="img in skillImages" :key="img">
-        <img :src="img" />
+      <div class="image-slice" v-for="(img, index) in skillImages" :key="index">
+        <img v-if="!!img" :src="img" />
+        <div v-else class="white"></div>
       </div>
     </div>
 
@@ -88,11 +89,20 @@ img {
 }
 
 .skill-images {
+  display: flex;
+  flex-direction: row;
+  align-items: top;
   float: right;
   margin-top: -3px;
   margin-bottom: -2px;
   margin-right: -2px;
   background: black;
   padding-right: 2px;
+}
+
+.white {
+  height: 19px;
+  width: 8px;
+  background-color: white;
 }
 </style>
