@@ -56,9 +56,18 @@ export default {
 
   data() {
     return {
-      selected: {},
+      selectedLocation: {},
       skillList,
     }
+  },
+
+  watch: {
+    infoRequest(oldName, newName) {
+      console.log('infoRequest watcher', oldName, newName)
+      if (newName) {
+        this.selectLocation(newName)
+      }
+    },
   },
 
   computed: {
@@ -69,8 +78,21 @@ export default {
       }
       return Object.keys(accumulator)
     },
+
+    infoRequest() {
+      return this.$store.getters['bsg/uiModalLocation'].name
+    },
+
     locations() {
       return this.$store.getters['bsg/dataLocations']
+    },
+
+    selected() {
+      const requestedName = this.$store.getters['bsg/uiModalLocation'].name
+      if (requestedName) {
+        this.selectLocation(requestedName)
+      }
+      return this.selectedLocation
     },
   },
 
@@ -82,7 +104,7 @@ export default {
     },
 
     selectLocation(name) {
-      this.selected = this.locations.find(l => l.name === name)
+      this.selectedLocation = this.locations.find(l => l.name === name)
     },
   },
 }

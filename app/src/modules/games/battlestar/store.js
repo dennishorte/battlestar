@@ -416,6 +416,10 @@ export default {
           card: {},
         },
 
+        modalLocation: {
+          name: '',
+        },
+
         modalZone: {
           name: '',
         },
@@ -484,6 +488,7 @@ export default {
 
     grab: (state) => state.ui.grab,
     uiModalCard: (state) => state.ui.modalCard,
+    uiModalLocation: (state) => state.ui.modalLocation,
     uiModalZone: (state) => state.ui.modalZone,
     uiUnsaved: (state) => state.ui.unsavedActions,
     uiViewer: (state) => state.ui.player,
@@ -724,6 +729,10 @@ export default {
       }
     },
 
+    locationInfoRequest({ state }, name) {
+      state.ui.modalLocation.name = name
+    },
+
     async pass({ commit, dispatch, getters, state }, nameIn) {
       let name = nameIn
 
@@ -855,6 +864,9 @@ export default {
       state.ui.skillCardsModal.selected = cardName
     },
 
+    /*
+       If some action was taken, return true. Otherwise, return false.
+    */
     zoneClick({ commit, state }, data) {
       const topDeck = data.index === 'top'
       data.index = topDeck ? 0 : data.index
@@ -870,16 +882,20 @@ export default {
         }
 
         grabCancel(state)
+
+        return true
       }
       else {
         const zone = zoneGet(state, data.source)
         if (topDeck && zone.noTopDeck) {
-          return
+          return false
         }
 
         maybeReshuffleDiscard(state, zone)
 
         state.ui.grab = data
+
+        return true
       }
     },
 

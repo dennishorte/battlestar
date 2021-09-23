@@ -342,6 +342,15 @@ const handSort = {
   }
 }
 
+const locationClickHandler = function(locationName) {
+  return {
+    func() {
+      this.$store.dispatch('bsg/locationInfoRequest', locationName)
+      this.$bvModal.show('locations-modal')
+    }
+  }
+}
+
 export default {
   name: 'Zones',
 
@@ -375,6 +384,7 @@ export default {
     locationProps(loc) {
       return {
         count: 'none',
+        clickHandlerPost: locationClickHandler(loc.details.name),
         deckName: loc.name,
         expanded: true,
         hideMenu: true,

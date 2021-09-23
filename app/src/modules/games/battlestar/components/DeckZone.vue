@@ -94,6 +94,11 @@ export default {
     name: String,
     deckName: String,
 
+    clickHandlerPost: {
+      type: Object,
+      default: () => ({ func: null }),
+    },
+
     expanded: {
       type: Boolean,
       default: false,
@@ -118,9 +123,7 @@ export default {
 
     sort: {
       type: Object,
-      default: () => ({
-        func: null,
-      }),
+      default: () => ({ func: null })
     },
 
     variant: {
@@ -130,9 +133,7 @@ export default {
 
     variantDynamic: {
       type: Object,
-      default: () => ({
-        func: null,
-      }),
+      default: () => ({ func: null })
     },
   },
 
@@ -271,11 +272,15 @@ export default {
       return variants.cardVariant(card)
     },
 
-    click() {
-      this.$store.dispatch('bsg/zoneClick', {
+    async click() {
+      const didAction = await this.$store.dispatch('bsg/zoneClick', {
         source: this.deckName,
         index: 'top',
       })
+
+      if (!didAction && this.clickHandlerPost.func) {
+        this.clickHandlerPost.func.apply(this)
+      }
     },
 
     clickCard(index) {
