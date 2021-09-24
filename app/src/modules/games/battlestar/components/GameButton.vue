@@ -62,7 +62,6 @@ export default {
     },
 
     clickIfValid() {
-      console.log('clickIfValid', this.actor)
       if (this.actor === 'all' || this.actor.name === this.$store.getters['bsg/uiViewer']) {
         this.bubble()
       }

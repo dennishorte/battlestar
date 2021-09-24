@@ -118,4 +118,11 @@ const mutations = {
   },
 }
 
-export default mutations
+const wrappedMutations = {}
+for (const [name, func] of Object.entries(mutations)) {
+  wrappedMutations[name] = function() {
+    return func(...arguments)
+  }
+}
+
+export default wrappedMutations
