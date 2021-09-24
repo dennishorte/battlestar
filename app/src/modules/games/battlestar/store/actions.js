@@ -134,6 +134,20 @@ export default {
     }
   },
 
+  playerAdvance({ dispatch, state }) {
+    const activePlayer = $.playerByName(state, state.game.activePlayer)
+    state.game.activePlayer = $.playerFollowing(state, activePlayer).name
+    $.log(state, {
+      template: `Start turn of {player}`,
+      classes: ['pass-turn'],
+      args: {
+        player: state.game.activePlayer,
+      },
+    })
+
+    dispatch('phaseSet', 'main-receive-skills')
+  },
+
   refillDestiny({ commit, state }) {
     $.log(state, {
       template: 'Refilling destiny deck',

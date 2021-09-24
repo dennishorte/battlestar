@@ -14,18 +14,6 @@ const mutations = {
     })
   },
 
-  playerNext(state) {
-    const activePlayer = $.playerByName(state, state.game.activePlayer)
-    state.game.activePlayer = $.playerFollowing(state, activePlayer).name
-    $.log(state, {
-      template: `Start turn of {player}`,
-      classes: ['pass-turn'],
-      args: {
-        player: state.game.activePlayer,
-      },
-    })
-  },
-
   move(state, data) {
     $.moveCard(state, data)
   },

@@ -264,6 +264,13 @@ export function playerCharacter(state, playerName) {
   }
 }
 
+export function playerNext(state) {
+  const currentName = state.game.activePlayer
+  const currentIndex = state.game.players.findIndex(p => p.name === currentName)
+  const nextIndex = (currentIndex + 1) % state.game.players.length
+  return state.game.players[nextIndex]
+}
+
 export function playerFollowing(state, player) {
   const players = state.game.players
   for (let i = 0; i < players.length; i++) {

@@ -86,6 +86,7 @@ export default {
     player: (state) => (name) => $.playerByName(state, name),
     playerActive: (state) => state.game.activePlayer,
     playerCharacter: (state) => (playerName) => $.playerCharacter(state, playerName),
+    playerNext: (state) => $.playerNext(state),
     players: (state) => state.game.players,
     visible: (state) => (card) => $.isVisible(state, card),
     zone: (state) => (key) => $.zoneGet(state, key),

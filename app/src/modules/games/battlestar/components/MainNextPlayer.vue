@@ -27,7 +27,7 @@ export default {
     },
 
     playerNext() {
-      this.$store.commit('bsg/playerNext')
+      this.$store.dispatch('bsg/playerAdvance')
     },
   },
 }

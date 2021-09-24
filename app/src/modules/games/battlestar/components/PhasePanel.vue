@@ -76,6 +76,7 @@ import MainActivateCylonShips from './MainActivateCylonShips'
 import MainCrisis from './MainCrisis'
 import MainNextPlayer from './MainNextPlayer'
 import MainReceiveSkills from './MainReceiveSkills'
+import MainStartTurn from './MainStartTurn'
 import SetupCharacterSelection from './SetupCharacterSelection'
 import SetupDistributeLoyaltyCards from './SetupDistributeLoyaltyCards'
 import SetupDistributeTitleCards from './SetupDistributeTitleCards'
@@ -110,6 +111,10 @@ const options = [
   {
     label: 'Main',
     options: [
+      {
+        value: 'main-start-turn',
+        text: 'Start Turn',
+      },
       {
         value: 'main-receive-skills',
         text: 'Receive Skills',
@@ -206,6 +211,7 @@ export default {
     MainCrisis,
     MainNextPlayer,
     MainReceiveSkills,
+    MainStartTurn,
     SetupCharacterSelection,
     SetupDistributeLoyaltyCards,
     SetupDistributeTitleCards,
@@ -244,6 +250,9 @@ export default {
 
       if (this.phase === 'main-receive-skills')
         return 'MainReceiveSkills'
+
+      if (this.phase === 'main-start-turn')
+        return 'MainStartTurn'
 
       if (this.phase === 'jump-remove-ships')
         return 'JumpRemoveShips'
