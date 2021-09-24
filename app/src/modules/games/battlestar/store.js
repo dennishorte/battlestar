@@ -84,7 +84,7 @@ export default {
     hand: (state) => (playerName) => $.playerZone(state, playerName),
     phase: (state) => state.game.phase,
     player: (state) => (name) => $.playerByName(state, name),
-    playerActive: (state) => state.game.activePlayer,
+    playerActive: (state) => $.playerByName(state, state.game.activePlayer),
     playerCharacter: (state) => (playerName) => $.playerCharacter(state, playerName),
     playerNext: (state) => $.playerNext(state),
     players: (state) => state.game.players,

@@ -205,7 +205,7 @@ export default {
       return this.$store.getters['bsg/players']
     },
     playerActive() {
-      return this.$store.getters['bsg/playerActive']
+      return this.$store.getters['bsg/playerActive'].name
     },
     waitingFor() {
       return this.$store.getters['bsg/waitingFor']

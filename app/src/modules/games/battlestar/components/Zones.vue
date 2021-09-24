@@ -280,7 +280,7 @@ import { skillList } from '../lib/util.js'
 const activePlayerVariantFunc = function(name) {
   return {
     func() {
-      return this.$store.getters['bsg/playerActive'] === name ? 'activePlayer' : ''
+      return this.$store.getters['bsg/playerActive'].name === name ? 'activePlayer' : ''
     },
   }
 }

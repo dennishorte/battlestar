@@ -12,17 +12,27 @@
       </ul>
     </div>
 
-    <b-button @click="drawSkills" variant="primary" block>draw fixed skills for {{ playerName }}</b-button>
+    <GameButton
+      owner="current-player"
+      @click="drawSkills">
+      draw fixed skills for {{ playerName }}
+    </GameButton>
   </div>
 </template>
 
 
 <script>
+import GameButton from './GameButton'
+
 import { skillList } from '../lib/util.js'
 
 
 export default {
   name: 'MainReceiveSkills',
+
+  components: {
+    GameButton,
+  },
 
   computed: {
     character() {
@@ -31,7 +41,7 @@ export default {
     },
 
     playerName() {
-      return this.$store.getters['bsg/playerActive']
+      return this.$store.getters['bsg/playerActive'].name
     },
 
     skills() {

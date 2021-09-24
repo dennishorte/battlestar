@@ -47,6 +47,9 @@ export default {
       if (this.owner === 'next-player') {
         return this.$store.getters['bsg/playerNext']
       }
+      else if (this.owner === 'current-player') {
+        return this.$store.getters['bsg/playerActive']
+      }
       else {
         return 'all'
       }
@@ -59,6 +62,7 @@ export default {
     },
 
     clickIfValid() {
+      console.log('clickIfValid', this.actor)
       if (this.actor === 'all' || this.actor.name === this.$store.getters['bsg/uiViewer']) {
         this.bubble()
       }
