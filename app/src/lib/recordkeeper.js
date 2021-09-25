@@ -4,20 +4,36 @@ export default function RecordKeeper(state) {
   this.undone = []
 }
 
+// Given a path, return the value at that path in this.state
+RecordKeeper.prototype.at = at
 
-RecordKeeper.prototype.undo = function() {
+// Give an object, return the path to it in this.state
+RecordKeeper.prototype.path = path
+
+RecordKeeper.prototype.patch = patch
+RecordKeeper.prototype.reverse = reverse
+
+RecordKeeper.prototype.put = put
+RecordKeeper.prototype.replace = replace
+RecordKeeper.prototype.splice = splice
+
+RecordKeeper.prototype.redo = redo
+RecordKeeper.prototype.undo = undo
+
+
+function undo() {
   const diff = this.diffs.pop()
   this.undone.push(diff)
   this.reverse(diff)
   this.diffs.pop() // Remove the reversed diff from the history
 }
 
-RecordKeeper.prototype.redo = function() {
+function redo() {
   const diff = this.undone.pop()
   this.patch(diff)
 }
 
-RecordKeeper.prototype.patch = function(diff) {
+function patch(diff) {
   this.diffs.push(diff)
 
   const target = this.at(diff.path)
@@ -48,17 +64,17 @@ RecordKeeper.prototype.patch = function(diff) {
   }
 }
 
-RecordKeeper.prototype.reverse = function(diff) {
+function reverse(diff) {
   const reversed = {...diff}
   reversed.old = diff.new
   reversed.new = diff.old
   this.patch(reversed)
 }
 
-RecordKeeper.prototype.put = function(object, key, value) {
+function put(object, key, value) {
   this.patch({
     kind: 'put',
-    path: this.find(object),
+    path: this.path(object),
     key: key,
     old: object[key],
     new: value,
@@ -66,8 +82,8 @@ RecordKeeper.prototype.put = function(object, key, value) {
 }
 
 // Similar to put, but instead of setting .path[key] = value, set .path-1[objectName] = value
-RecordKeeper.prototype.replace = function(object, value) {
-  const fullPath = this.find(object)
+function replace(object, value) {
+  const fullPath = this.path(object)
 
   let key
   let path
@@ -89,17 +105,17 @@ RecordKeeper.prototype.replace = function(object, value) {
   )
 }
 
-RecordKeeper.prototype.splice = function(array, index, count, ...items) {
+function splice(array, index, count, ...items) {
   this.patch({
     kind: 'splice',
-    path: this.find(array),
+    path: this.path(array),
     key: index,
     old: array.slice(index, index + count),
     new: items,
   })
 }
 
-RecordKeeper.prototype.at = function(path) {
+function at(path) {
   if (path.startsWith('.')) {
     path = path.slice(1)
   }
@@ -130,25 +146,25 @@ RecordKeeper.prototype.at = function(path) {
   return pos
 }
 
-RecordKeeper.prototype.find = function(target) {
+function path(target) {
   if (typeof target !== 'object' || target === null) {
-    throw `Invalid find target. Can only find objects and arrays. Got ${typeof target}: ${target}`
+    throw `Invalid path target. Can only path objects and arrays. Got ${typeof target}: ${target}`
   }
 
-  const result = _findRecursive(target, this.state, '')
+  const result = _pathRecursive(target, this.state, '')
   if (!result) {
     throw `Target not found: ${target}`
   }
   return result
 }
 
-function _findRecursive(target, root, pathAccumulator) {
+function _pathRecursive(target, root, pathAccumulator) {
   if (root === target) {
     return pathAccumulator || '.'
   }
   else if (Array.isArray(root)) {
     for (let i = 0; i < root.length; i++) {
-      const result = _findRecursive(target, root[i], pathAccumulator + `[${i}]`)
+      const result = _pathRecursive(target, root[i], pathAccumulator + `[${i}]`)
       if (result) {
         return result
       }
@@ -156,7 +172,7 @@ function _findRecursive(target, root, pathAccumulator) {
   }
   else if (typeof root === 'object') {
     for (const key of Object.keys(root)) {
-      const result = _findRecursive(target, root[key], pathAccumulator + '.' + key)
+      const result = _pathRecursive(target, root[key], pathAccumulator + '.' + key)
       if (result) {
         return result
       }
