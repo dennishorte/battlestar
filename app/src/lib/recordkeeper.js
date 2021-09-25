@@ -61,6 +61,30 @@ RecordKeeper.prototype.put = function(object, key, value) {
   })
 }
 
+// Similar to put, but instead of setting .path[key] = value, set .path-1[objectName] = value
+RecordKeeper.prototype.replace = function(object, value) {
+  const fullPath = this.find(object)
+
+  let key
+  let path
+  if (fullPath.endsWith(']')) {
+    const pathTokens = fullPath.split('[')
+    key = parseInt(pathTokens.pop())
+    path = pathTokens.join('[')
+  }
+  else {
+    const pathTokens = fullPath.split('.')
+    key = pathTokens.pop()
+    path = pathTokens.join('.')
+  }
+
+  this.put(
+    this.at(path),
+    key,
+    value,
+  )
+}
+
 RecordKeeper.prototype.splice = function(array, index, count, ...items) {
   this.patch({
     kind: 'splice',

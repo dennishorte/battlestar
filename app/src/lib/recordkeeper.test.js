@@ -205,6 +205,35 @@ test('put: root scalar', () => {
   expect(rk.diffs[0]).toStrictEqual(diff)
 })
 
+test('replace: object key', () => {
+  const rk = new RecordKeeper(stateFactory())
+  rk.replace(rk.state.object, 'hello')
+  const diff = {
+    kind: 'put',
+    path: '.',
+    key: 'object',
+    old: {
+      hello: 'world',
+      foo: 'bar',
+    },
+    new: 'hello'
+  }
+  expect(rk.diffs[0]).toStrictEqual(diff)
+})
+
+test('replace: array element', () => {
+  const rk = new RecordKeeper(stateFactory())
+  rk.replace(rk.state.nestedArrays[1], 'hello')
+  const diff = {
+    kind: 'put',
+    path: '.nestedArrays',
+    key: 1,
+    old: ['a', 'b', 'c'],
+    new: 'hello',
+  }
+  expect(rk.diffs[0]).toStrictEqual(diff)
+})
+
 test('splice', () => {
   const rk = new RecordKeeper(stateFactory())
   rk.splice(rk.state.array, 1, 2, 9, 10, 11)
