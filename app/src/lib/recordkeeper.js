@@ -1,6 +1,21 @@
 export default function RecordKeeper(state) {
   this.state = state
   this.diffs = []
+  this.undone = []
+}
+
+
+RecordKeeper.prototype.undo = function() {
+  const diff = this.diffs.pop()
+  this.undone.push(diff)
+  this.reverse(diff)
+  return diff
+}
+
+RecordKeeper.prototype.redo = function() {
+  const diff = this.undone.pop()
+  this.patch(diff)
+  return diff
 }
 
 RecordKeeper.prototype.patch = function(diff) {
