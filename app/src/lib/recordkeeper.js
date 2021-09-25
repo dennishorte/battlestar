@@ -1,7 +1,13 @@
+function deepcopy(obj) {
+  return JSON.parse(JSON.stringify(obj))
+}
+
+
 export default function RecordKeeper(state) {
   this.state = state
   this.diffs = []
   this.undone = []
+  this.record = 'session'
 }
 
 // Given a path, return the value at that path in this.state
@@ -10,31 +16,87 @@ RecordKeeper.prototype.at = at
 // Give an object, return the path to it in this.state
 RecordKeeper.prototype.path = path
 
-RecordKeeper.prototype.patch = patch
-RecordKeeper.prototype.reverse = reverse
-
-RecordKeeper.prototype.put = put
-RecordKeeper.prototype.replace = replace
-RecordKeeper.prototype.splice = splice
-
+RecordKeeper.prototype.session = session
 RecordKeeper.prototype.redo = redo
 RecordKeeper.prototype.undo = undo
 
+RecordKeeper.prototype.patch = patch
+RecordKeeper.prototype.reverse = reverse
+
+
+function RecordKeeperSession(rk) {
+  this.rk = rk
+  this.state = rk.state
+  this.diffs = []
+  this.record = 'diff'
+}
+
+RecordKeeperSession.prototype.at = at
+RecordKeeperSession.prototype.path = path
+
+RecordKeeperSession.prototype.cancel = cancel
+RecordKeeperSession.prototype.commit = commit
+RecordKeeperSession.prototype._close = _close
+
+RecordKeeperSession.prototype.patch = patch
+RecordKeeperSession.prototype.reverse = reverse
+
+RecordKeeperSession.prototype.put = put
+RecordKeeperSession.prototype.replace = replace
+RecordKeeperSession.prototype.splice = splice
+
+function cancel() {
+  while (this.diffs.length) {
+    this.reverse(this.diffs.pop())
+    this.diffs.pop() // Remove the just reversed diff from saved diffs
+  }
+  this._close()
+}
+
+function commit() {
+  this.rk.diffs.push(this.diffs)
+  this._close()
+}
+
+function _close() {
+  // Session is now closed
+  this.diffs = null
+  this.state = null
+  this.rk = null
+}
+
+function session(func) {
+  if (func) {
+    const session = new RecordKeeperSession(this)
+    func(session)
+    session.commit()
+  }
+  else {
+    return new RecordKeeperSession(this)
+  }
+}
 
 function undo() {
   const diff = this.diffs.pop()
   this.undone.push(diff)
-  this.reverse(diff)
-  this.diffs.pop() // Remove the reversed diff from the history
+  const reversed = [...diff].reverse()
+  for (const step of reversed) {
+    this.reverse(step)
+  }
 }
 
 function redo() {
   const diff = this.undone.pop()
-  this.patch(diff)
+  this.diffs.push(diff)
+  for (const step of diff) {
+    this.patch(step)
+  }
 }
 
 function patch(diff) {
-  this.diffs.push(diff)
+  if (this.record === 'diff') {
+    this.diffs.push(diff)
+  }
 
   const target = this.at(diff.path)
 
@@ -48,7 +110,7 @@ function patch(diff) {
       throw `Can't patch because old doesn't match: ${diff.path}.${diff.key} !== ${diff.old}`
     }
 
-    target[diff.key] = diff.new
+    target[diff.key] = deepcopy(diff.new)
   }
 
   else if (diff.kind === 'splice') {

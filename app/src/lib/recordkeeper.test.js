@@ -19,230 +19,354 @@ test('has expected member variables', () => {
   const rk = new RecordKeeper('state')
   expect(rk.state).toBe('state')
   expect(rk.diffs).toStrictEqual([])
+  expect(rk.undone).toStrictEqual([])
 })
 
-test('find: root state', () => {
-  const rk = new RecordKeeper(stateFactory())
-  const found = rk.find(rk.state)
-  expect(found).toBe('.')
-})
+describe('path', () => {
 
-test('find: root object', () => {
-  const rk = new RecordKeeper(stateFactory())
-  const found = rk.find(rk.state.object)
-  expect(found).toBe('.object')
-})
-
-test('find: root array', () => {
-  const rk = new RecordKeeper(stateFactory())
-  const found = rk.find(rk.state.array)
-  expect(found).toBe('.array')
-})
-
-test('find: object in array', () => {
-  const rk = new RecordKeeper(stateFactory())
-  const found = rk.find(rk.state.nested[1])
-  expect(found).toBe('.nested[1]')
-})
-
-test('find: nested array', () => {
-  const rk = new RecordKeeper(stateFactory())
-  const found = rk.find(rk.state.nestedArrays[0][2])
-  expect(found).toBe('.nestedArrays[0][2]')
-})
-
-test('at: root', () => {
-  const rk = new RecordKeeper(stateFactory())
-  const value = rk.at('.')
-  expect(value).toStrictEqual(rk.state)
-})
-
-test('at: scalar', () => {
-  const rk = new RecordKeeper(stateFactory())
-  const value = rk.at('.atRoot')
-  expect(value).toBe(1)
-})
-
-test('at: array element', () => {
-  const rk = new RecordKeeper(stateFactory())
-  const value = rk.at('.array[2]')
-  expect(value).toBe(2)
-})
-
-test('at: object key', () => {
-  const rk = new RecordKeeper(stateFactory())
-  const value = rk.at('.object.hello')
-  expect(value).toBe('world')
-})
-
-test('at: nested', () => {
-  const rk = new RecordKeeper(stateFactory())
-  const value = rk.at('.nested[2].arr[2].c.d')
-  expect(value).toBe('deep')
-})
-
-test('at: nestedArrays', () => {
-  const rk = new RecordKeeper(stateFactory())
-  const value = rk.at('.nestedArrays[0][2][1]')
-  expect(value).toBe('y')
-})
-
-test('patch.put: root scalar', () => {
-  const rk = new RecordKeeper(stateFactory())
-  rk.patch({
-    kind: 'put',
-    path: '.',
-    key: 'atRoot',
-    old: 1,
-    new: 2,
+  test('root state', () => {
+    const rk = new RecordKeeper(stateFactory())
+    const found = rk.path(rk.state)
+    expect(found).toBe('.')
   })
-  expect(rk.state.atRoot).toBe(2)
-})
 
-test('patch.put: root array', () => {
-  const rk = new RecordKeeper(stateFactory())
-  rk.patch({
-    kind: 'put',
-    path: '.',
-    key: 'array',
-    old: [0,1,2,3],
-    new: ['a', 'b'],
+  test('root object', () => {
+    const rk = new RecordKeeper(stateFactory())
+    const found = rk.path(rk.state.object)
+    expect(found).toBe('.object')
   })
-  expect(rk.state.array).toStrictEqual(['a', 'b'])
-})
 
-test('patch.put: root object', () => {
-  const rk = new RecordKeeper(stateFactory())
-  rk.patch({
-    kind: 'put',
-    path: '.',
-    key: 'object',
-    old: {
-      hello: 'world',
-      foo: 'bar',
-    },
-    new: ['a', 'b'],
+  test('root array', () => {
+    const rk = new RecordKeeper(stateFactory())
+    const found = rk.path(rk.state.array)
+    expect(found).toBe('.array')
   })
-  expect(rk.state.object).toStrictEqual(['a', 'b'])
-})
 
-test('patch.splice', () => {
-  const rk = new RecordKeeper(stateFactory())
-  rk.patch({
-    kind: 'splice',
-    path: '.array',
-    key: '1',
-    old: [],
-    new: [9],
+  test('object in array', () => {
+    const rk = new RecordKeeper(stateFactory())
+    const found = rk.path(rk.state.nested[1])
+    expect(found).toBe('.nested[1]')
   })
-  expect(rk.state.array).toStrictEqual([0,9,1,2,3])
-})
 
-test('reverse.put: root scalar', () => {
-  const rk = new RecordKeeper(stateFactory())
-  rk.reverse({
-    kind: 'put',
-    path: '.',
-    key: 'atRoot',
-    old: 2,
-    new: 1,
+  test('nested array', () => {
+    const rk = new RecordKeeper(stateFactory())
+    const found = rk.path(rk.state.nestedArrays[0][2])
+    expect(found).toBe('.nestedArrays[0][2]')
   })
-  expect(rk.state.atRoot).toBe(2)
 })
 
-test('reverse.put: root array', () => {
-  const rk = new RecordKeeper(stateFactory())
-  rk.reverse({
-    kind: 'put',
-    path: '.',
-    key: 'array',
-    old: ['a', 'b'],
-    new: [0,1,2,3],
+describe('at', () => {
+  test('root', () => {
+    const rk = new RecordKeeper(stateFactory())
+    const value = rk.at('.')
+    expect(value).toStrictEqual(rk.state)
   })
-  expect(rk.state.array).toStrictEqual(['a', 'b'])
-})
 
-test('reverse.put: root object', () => {
-  const rk = new RecordKeeper(stateFactory())
-  rk.reverse({
-    kind: 'put',
-    path: '.',
-    key: 'object',
-    old: ['a', 'b'],
-    new: {
-      hello: 'world',
-      foo: 'bar',
-    },
+  test('scalar', () => {
+    const rk = new RecordKeeper(stateFactory())
+    const value = rk.at('.atRoot')
+    expect(value).toBe(1)
   })
-  expect(rk.state.object).toStrictEqual(['a', 'b'])
-})
 
-test('reverse.splice', () => {
-  const rk = new RecordKeeper(stateFactory())
-  rk.reverse({
-    kind: 'splice',
-    path: '.array',
-    key: '1',
-    old: [9],
-    new: [],
+  test('array element', () => {
+    const rk = new RecordKeeper(stateFactory())
+    const value = rk.at('.array[2]')
+    expect(value).toBe(2)
   })
-  expect(rk.state.array).toStrictEqual([0,9,1,2,3])
+
+  test('object key', () => {
+    const rk = new RecordKeeper(stateFactory())
+    const value = rk.at('.object.hello')
+    expect(value).toBe('world')
+  })
+
+  test('nested', () => {
+    const rk = new RecordKeeper(stateFactory())
+    const value = rk.at('.nested[2].arr[2].c.d')
+    expect(value).toBe('deep')
+  })
+
+  test('nestedArrays', () => {
+    const rk = new RecordKeeper(stateFactory())
+    const value = rk.at('.nestedArrays[0][2][1]')
+    expect(value).toBe('y')
+  })
 })
 
-
-
-
-test('put: root scalar', () => {
-  const rk = new RecordKeeper(stateFactory())
-  rk.put(rk.state, 'atRoot', 2)
-  const diff = {
-    kind: 'put',
-    path: '.',
-    key: 'atRoot',
-    old: 1,
-    new: 2,
+describe('undo', () => {
+  function setup() {
+    const rk = new RecordKeeper(stateFactory())
+    rk.session(session => {
+      session.put(rk.state, 'atRoot', [0, 1, 2])
+      session.splice(rk.state.atRoot, 1, 2, 'a')
+    })
+    rk.session(session => {
+      session.put(rk.state, 'atRoot', 'hello')
+    })
+    return rk
   }
-  expect(rk.diffs[0]).toStrictEqual(diff)
+
+  test('undo one', () => {
+    const rk = setup()
+    rk.undo()
+    expect(rk.diffs.length).toBe(1)
+    expect(rk.undone.length).toBe(1)
+    expect(rk.state.atRoot).toStrictEqual([0, 'a'])
+  })
+
+  test('undo two', () => {
+    const rk = setup()
+    rk.undo()
+    rk.undo()
+    expect(rk.diffs.length).toBe(0)
+    expect(rk.undone.length).toBe(2)
+    expect(rk.state.atRoot).toBe(1)
+  })
+
+  test('undo/redo two', () => {
+    const rk = setup()
+    rk.undo()
+    rk.undo()
+    rk.redo()
+    rk.redo()
+    expect(rk.diffs.length).toBe(2)
+    expect(rk.undone.length).toBe(0)
+    expect(rk.state.atRoot).toBe('hello')
+  })
 })
 
-test('replace: object key', () => {
-  const rk = new RecordKeeper(stateFactory())
-  rk.replace(rk.state.object, 'hello')
-  const diff = {
-    kind: 'put',
-    path: '.',
-    key: 'object',
-    old: {
-      hello: 'world',
-      foo: 'bar',
-    },
-    new: 'hello'
-  }
-  expect(rk.diffs[0]).toStrictEqual(diff)
-})
+describe('session', () => {
 
-test('replace: array element', () => {
-  const rk = new RecordKeeper(stateFactory())
-  rk.replace(rk.state.nestedArrays[1], 'hello')
-  const diff = {
-    kind: 'put',
-    path: '.nestedArrays',
-    key: 1,
-    old: ['a', 'b', 'c'],
-    new: 'hello',
-  }
-  expect(rk.diffs[0]).toStrictEqual(diff)
-})
+  describe('patch', () => {
+    test('put: root scalar', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.session()
+      session.patch({
+        kind: 'put',
+        path: '.',
+        key: 'atRoot',
+        old: 1,
+        new: 2,
+      })
+      session.commit()
+      expect(rk.state.atRoot).toBe(2)
+    })
 
-test('splice', () => {
-  const rk = new RecordKeeper(stateFactory())
-  rk.splice(rk.state.array, 1, 2, 9, 10, 11)
-  const diff = {
-    kind: 'splice',
-    path: '.array',
-    key: 1,
-    old: [1, 2],
-    new: [9, 10, 11],
-  }
-  expect(rk.diffs[0]).toStrictEqual(diff)
+    test('put: root array', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.session()
+      session.patch({
+        kind: 'put',
+        path: '.',
+        key: 'array',
+        old: [0,1,2,3],
+        new: ['a', 'b'],
+      })
+      session.commit()
+      expect(rk.state.array).toStrictEqual(['a', 'b'])
+    })
+
+    test('put: root object', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.session()
+      session.patch({
+        kind: 'put',
+        path: '.',
+        key: 'object',
+        old: {
+          hello: 'world',
+          foo: 'bar',
+        },
+        new: ['a', 'b'],
+      })
+      session.commit()
+      expect(rk.state.object).toStrictEqual(['a', 'b'])
+    })
+
+    test('splice', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.session()
+      session.patch({
+        kind: 'splice',
+        path: '.array',
+        key: '1',
+        old: [],
+        new: [9],
+      })
+      expect(rk.state.array).toStrictEqual([0,9,1,2,3])
+    })
+
+  })
+
+  describe('reverse', () => {
+    test('put: root scalar', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.session()
+      session.reverse({
+        kind: 'put',
+        path: '.',
+        key: 'atRoot',
+        old: 2,
+        new: 1,
+      })
+      session.commit()
+      expect(rk.state.atRoot).toBe(2)
+    })
+
+    test('put: root array', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.session()
+      session.reverse({
+        kind: 'put',
+        path: '.',
+        key: 'array',
+        old: ['a', 'b'],
+        new: [0,1,2,3],
+      })
+      session.commit()
+      expect(rk.state.array).toStrictEqual(['a', 'b'])
+    })
+
+    test('put: root object', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.session()
+      session.reverse({
+        kind: 'put',
+        path: '.',
+        key: 'object',
+        old: ['a', 'b'],
+        new: {
+          hello: 'world',
+          foo: 'bar',
+        },
+      })
+      session.commit()
+      expect(rk.state.object).toStrictEqual(['a', 'b'])
+    })
+
+    test('splice', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.session()
+      session.reverse({
+        kind: 'splice',
+        path: '.array',
+        key: '1',
+        old: [9],
+        new: [],
+      })
+      session.commit()
+      expect(rk.state.array).toStrictEqual([0,9,1,2,3])
+    })
+
+  })
+
+
+  describe('single changes', () => {
+    test('put: root scalar', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.session()
+      session.put(rk.state, 'atRoot', 2)
+      session.commit()
+      const diff = {
+        kind: 'put',
+        path: '.',
+        key: 'atRoot',
+        old: 1,
+        new: 2,
+      }
+      expect(rk.diffs[0]).toStrictEqual([diff])
+    })
+
+    test('replace: object key', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.session()
+      session.replace(rk.state.object, 'hello')
+      session.commit()
+      const diff = {
+        kind: 'put',
+        path: '.',
+        key: 'object',
+        old: {
+          hello: 'world',
+          foo: 'bar',
+        },
+        new: 'hello'
+      }
+      expect(rk.diffs[0]).toStrictEqual([diff])
+    })
+
+    test('replace: array element', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.session()
+      session.replace(rk.state.nestedArrays[1], 'hello')
+      session.commit()
+      const diff = {
+        kind: 'put',
+        path: '.nestedArrays',
+        key: 1,
+        old: ['a', 'b', 'c'],
+        new: 'hello',
+      }
+      expect(rk.diffs[0]).toStrictEqual([diff])
+    })
+
+    test('splice', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.session()
+      session.splice(rk.state.array, 1, 2, 9, 10, 11)
+      session.commit()
+      const diff = {
+        kind: 'splice',
+        path: '.array',
+        key: 1,
+        old: [1, 2],
+        new: [9, 10, 11],
+      }
+      expect(rk.diffs[0]).toStrictEqual([diff])
+    })
+
+  })
+
+  describe('multiple changes', () => {
+
+    test('put, splice', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.session()
+      session.put(rk.state, 'atRoot', [0, 1, 2])
+      session.splice(rk.state.atRoot, 1, 2, 'a')
+      session.commit()
+      const diffs = [
+        {
+          kind: 'put',
+          path: '.',
+          key: 'atRoot',
+          old: 1,
+          new: [0,1,2],
+        },
+        {
+          kind: 'splice',
+          path: '.atRoot',
+          key: 1,
+          old: [1, 2],
+          new: ['a'],
+        },
+      ]
+      expect(rk.diffs).toStrictEqual([diffs])
+    })
+
+  })
+
+  describe('cancel', () => {
+    test('put, splice', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.session()
+      session.put(rk.state, 'atRoot', [0, 1, 2])
+      session.splice(rk.state.atRoot, 1, 2, 'a')
+      session.cancel()
+      expect(rk.diffs).toStrictEqual([])
+      expect(rk.state.atRoot).toBe(1)
+    })
+
+  })
+
 })
