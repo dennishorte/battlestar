@@ -1,27 +1,230 @@
 import RecordKeeper from '@/lib/recordkeeper.js'
+import { shuffleArray } from '@/util.js'
+
 import * as $ from './helpers.js'
+import bsgutil from '../lib/util.js'
+
+
+function _cardSetVisibilityByZone(card, zone) {
+  const zoneVis = zone.visibility || zone.kind
+
+  if (zoneVis === 'open') {
+    rk.replace(card.visibility, 'all')
+  }
+  else if (zoneVis === 'president') {
+    rk.replace(card.visibility, [$.presidentName(rk.state)])
+  }
+  else if (zoneVis === 'owner') {
+    rk.replace(card.visibility, [zone.owner])
+  }
+  else if (zoneVis === 'deck'
+           || zoneVis === 'hidden'
+           || zoneVis === 'bag') {
+    rk.replace(card.visibility, [])
+  }
+  else {
+    throw `Unknown zone visibility (${zoneVis}) for zone ${zone.name}`
+  }
+}
+
+function pushUnique() {}
+
+function _logEnrichArgClasses(msg) {
+  if (!msg.args)
+    return
+
+  for (const key of Object.keys(msg.args)) {
+    // Convert string args to a dict
+    if (typeof msg.args[key] !== 'object') {
+      msg.args[key] = {
+        value: msg.args[key],
+      }
+    }
+
+    // Ensure the dict has a classes entry
+    const classes = msg.args[key].classes || []
+    msg.args[key].classes = classes
+
+    if (key === 'player') {
+      pushUnique(classes, 'player-name')
+    }
+    else if (key === 'character') {
+      pushUnique(classes, 'character-name')
+      pushUnique(classes, bsgutil.characterNameToCssClass(msg.args[key].value))
+    }
+    else if (key === 'location') {
+      pushUnique(classes, 'location-name')
+    }
+    else if (key === 'phase') {
+      pushUnique(classes, 'phase-name')
+    }
+    else if (key === 'title') {
+      pushUnique(classes, 'title-name')
+    }
+    else if (key === 'card') {
+      const card = msg.args['card']
+      if (typeof card !== 'object') {
+        throw `Pass whole card object to log for better logging. Got: ${card}`
+      }
+      msg.args['card'] = {
+        value: card.name,
+        visibility: card.visibility,
+        kind: card.kind,
+        classes: [`card-${card.kind}`],
+      }
+    }
+  }
+}
+
+function _log(state, msgObject) {
+  if (state.ui.redoing) {
+    return
+  }
+
+  _logEnrichArgClasses(msgObject)
+  msgObject.actor = state.ui.player.name
+
+  const log = state.game.log
+  msgObject.id = log.length
+  log.push(msgObject)
+
+  if (!state.ui.undoing) {
+    state.ui.newLogs.push(msgObject)
+  }
+}
+
+function _maybeReshuffleDiscard(zone) {
+  if (zone.cards.length > 0)
+    return
+
+  if (!zone.discard)
+    return
+
+  const discardName = zone.name.replace('decks.', 'discard.')
+  const discard = $.zoneGet(rk.state, discardName)
+
+  rk.replace(zone.cards, discard.cards)
+  rk.replace(discard.cards, [])
+  _shuffle(zone.cards)
+
+  _log(rk.state, {
+    template: "Shuffled discard pile back into {zone}",
+    classes: ['skill-deck-shuffle'],
+    args: {
+      zone: zone.name
+    },
+  })
+}
+
+function _move(source, sourceIndex, target, targetIndex) {
+  const card = source[sourceIndex]
+  rk.splice(source, sourceIndex, 1)
+  rk.splice(target, targetIndex, 0, card)
+}
+
+function _shuffle(array) {
+  const copy = [...array]
+  shuffleArray(copy)
+  rk.replace(array, copy)
+
+  copy.forEach(c => rk.replace(c.visibility, []))
+
+  /* _log(state, {
+   *   template: "{zone} shuffled",
+   *   classes: [],
+   *   args: {
+   *     zone: zoneName,
+   *   },
+   * }) */
+}
 
 
 const mutations = {
   crisisHelp(state, { playerName, amount }) {
     const player = $.playerByName(state, playerName)
-    $.compatCrisisHelp(player)
-    player.crisisHelp = amount
 
-    $.log(state, {
+    rk.put(
+      player,
+      'crisisHelp',
+      amount,
+    )
+
+    _log(state, {
       template: `I can help {amount}`,
       classes: ['crisis-help'],
       args: { amount },
     })
   },
 
+  maybeReshuffleDiscard(state, zoneName) {
+    const zone = $.zoneGet(state, zoneName)
+    _maybeReshuffleDiscard(zone)
+  },
+
   move(state, data) {
-    $.moveCard(state, data)
+    const sourceZone = $.zoneGet(state, data.source)
+    const targetZone = $.zoneGet(state, data.target)
+
+    // Calculate the actual sourceIndex as positive integer (or zero)
+    let sourceIndex
+    if (data.cardId) {
+      sourceIndex = sourceZone.cards.findIndex(x => x.id === data.cardId)
+    }
+    else if (data.sourceIndex < 0) {
+      sourceIndex = sourceZone.cards.length + data.sourceIndex
+    }
+    else {
+      sourceIndex = data.sourceIndex
+    }
+
+    // Calculate the actual targetIndex as positive integer (or zero)
+    let targetIndex
+    if (data.targetIndex === undefined) {
+      targetIndex = 0
+    }
+    else if (data.targetIndex < 0) {
+      targetIndex = targetZone.cards.length + data.targetIndex
+    }
+    else {
+      targetIndex = data.targetIndex
+    }
+
+    _maybeReshuffleDiscard(sourceZone)
+    _move(
+      sourceZone.cards,
+      sourceIndex,
+      targetZone.cards,
+      targetIndex,
+    )
+
+    // Update the visibility of the card to its new zone
+    const card = targetZone.cards[targetIndex]
+    _cardSetVisibilityByZone(card, targetZone)
+
+    // If the new zone is a 'bag', randomize it automatically
+    if (targetZone.kind === 'bag') {
+      _shuffle(targetZone.cards)
+    }
+
+    _log(state, {
+      template: "{card} moved from {source} to {target}",
+      classes: ['card-move'],
+      args: {
+        card,
+        source: data.source,
+        target: data.target,
+      },
+    })
   },
 
   passTo(state, name) {
-    state.game.waitingFor = name
-    $.log(state, {
+    rk.put(
+      state.game,
+      'waitingFor',
+      name,
+    )
+
+    _log(state, {
       template: `Pass to {player}`,
       classes: ['pass-priority'],
       args: {
@@ -39,7 +242,7 @@ const mutations = {
       state.game.counters[name] + amount
     )
 
-    $.log(state, {
+    _log(state, {
       template: "{counter} adjusted from {before} to {after}",
       classes: ['counter-change'],
       args: {
@@ -50,21 +253,20 @@ const mutations = {
     })
   },
 
-  userSet(state, user) {
-    state.ui.player = user
-  },
-
   zoneDiscardAll(state, zoneName) {
     const zone = $.zoneGet(state, zoneName)
-    for (const card of zone.cards) {
+    for (let i = 0; i < zone.cards.length; i++) {
+      const card = zone.cards[0]
       const discardName = $.getDiscardName(state, card.deck)
       const discard = $.zoneGet(state, discardName)
-      discard.cards.push(card)
+      _move(
+        zone.cards, 0,
+        discard.cards, discard.cards.length
+      )
+
     }
 
-    zone.cards = []
-
-    $.log(state, {
+    _log(state, {
       template: `All cards from {zone} discarded`,
       classes: [],
       args: {
@@ -76,9 +278,7 @@ const mutations = {
   zoneRevealAll(state, zoneName) {
     const cards = $.zoneGet(state, zoneName).cards
     for (const card of cards) {
-      if (!$.isRevealed(state, card)) {
-        $.cardReveal(state, card)
-      }
+      rk.replace(card.visibility, 'all')
     }
   },
 
@@ -86,16 +286,17 @@ const mutations = {
     const cards = $.zoneGet(state, zoneName).cards
     for (const card of cards) {
       if (!$.isRevealed(state, card)) {
-        $.cardReveal(state, card)
+        rk.replace(card.visibility, 'all')
         break
       }
     }
   },
 
   zoneShuffle(state, zoneName) {
-    $.zoneShuffle(state, zoneName)
+    const zone = $.zoneGet(state, zoneName)
+    _shuffle(zone.cards)
 
-    $.log(state, {
+    _log(state, {
       template: "{zone} shuffled",
       classes: [],
       args: {
@@ -144,16 +345,14 @@ for (const [name, func] of Object.entries(mutations)) {
   wrappedMutations[name] = function() {
     const state = arguments[0]
     if (rk.state === 'waiting') {
-      rk.state = state
+      rk.state = state.game
     }
-    else if (rk.state !== state) {
+    else if (rk.state !== state.game) {
       throw "RecordKeeper state doesn't match mutation state."
     }
 
     const result = func(...arguments)
-
     console.log(rk)
-
     return result
   }
 }

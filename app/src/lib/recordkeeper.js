@@ -25,6 +25,10 @@ RecordKeeper.prototype.patch = function(diff) {
   // Ensure the current value matches the `old` valud from the diff
   if (diff.kind === 'put') {
     if (JSON.stringify(target[diff.key]) !== JSON.stringify(diff.old)) {
+      console.log({
+        target: target,
+        diff: JSON.parse(JSON.stringify(diff)),
+      })
       throw `Can't patch because old doesn't match: ${diff.path}.${diff.key} !== ${diff.old}`
     }
 

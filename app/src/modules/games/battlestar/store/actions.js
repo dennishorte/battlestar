@@ -63,7 +63,7 @@ export default {
     state.ui.player.name = player.name
   },
 
-  async load({ dispatch, state }, data) {
+  async load({ commit, dispatch, state }, data) {
     // Load the static deck data (used in info panels)
     state.data.decks = decks.factory(data.options.expansions)
     state.data.locations = bsgutil.expansionFilter(locations, data.options.expansions)
@@ -72,12 +72,51 @@ export default {
     if (!data.initialized) {
 
       await factory.initialize(data)
-      $.setupInitialShips(state)
+
       $.log(state, {
-        template: 'Game Initialized',
+        template: 'Initializing Game',
         classes: ['admin-action'],
         args: {},
       })
+
+      $.log(state, {
+        template: 'Setting up initial ships',
+        classes: ['admin-action'],
+        args: {},
+      })
+
+      // Raiders
+      for (let i = 0; i < 3; i++) {
+        commit('move', {
+          source: 'ships.raiders',
+          target: 'space.space0',
+        })
+      }
+
+      // Basestar
+      commit('move', {
+        source: 'ships.basestarA',
+        target: 'space.space0',
+      })
+
+      // Vipers
+      commit('move', {
+        source: 'ships.vipers',
+        target: 'space.space5',
+      })
+      commit('move', {
+        source: 'ships.vipers',
+        target: 'space.space4',
+      })
+
+      // Civilians
+      for (let i = 0; i < 2; i++) {
+        commit('move', {
+          source: 'decks.civilian',
+          target: 'space.space3',
+        })
+      }
+
       await dispatch('save')
       await dispatch('snapshotCreate')
     }
@@ -232,6 +271,10 @@ export default {
     state.ui.skillCardsModal.selected = cardName
   },
 
+  userSet({ state }, user) {
+    state.ui.player = user
+  },
+
   /*
      If some action was taken, return true. Otherwise, return false.
    */
@@ -255,11 +298,14 @@ export default {
     }
     else {
       const zone = $.zoneGet(state, data.source)
-      if (topDeck && zone.noTopDeck) {
-        return false
+      if (topDeck) {
+        if (zone.noTopDeck) {
+          return false
+        }
+        else {
+          commit('maybeReshuffleDiscard', zone.name)
+        }
       }
-
-      $.maybeReshuffleDiscard(state, zone)
 
       state.ui.grab = data
 

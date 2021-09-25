@@ -15,7 +15,6 @@
             :name="name"
             :deck-name="`players.${name}`"
             :expanded="true"
-            :sort="handSort"
             :variant-dynamic="activePlayerVariantFunc(name)"
           />
         </div>
@@ -319,29 +318,6 @@ const destinyMenuOptions = [
   },
 ]
 
-const kindOrder = [
-  'player-token',
-  'character',
-  'title',
-  'loyalty',
-  'quorum',
-  'skill',
-  'crisis',
-  'superCrisis',
-  'destination',
-]
-
-const handSort = {
-  func(l, r) {
-    const lkind = kindOrder.indexOf(l.kind)
-    const rkind = kindOrder.indexOf(r.kind)
-    if (lkind !== rkind)
-      return lkind - rkind
-
-    return l.name.localeCompare(r.name)
-  }
-}
-
 const locationClickHandler = function(locationName) {
   return {
     func() {
@@ -363,7 +339,6 @@ export default {
       activePlayerVariantFunc,
       crisisPoolMenuOptions,
       destinyMenuOptions,
-      handSort,
       skillList,
     }
   },

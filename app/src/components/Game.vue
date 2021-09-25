@@ -38,7 +38,7 @@
 
        // Make the active player visible to the game store.
        const user = this.$store.getters['auth/user']
-       this.$store.commit('bsg/userSet', user)
+       this.$store.dispatch('bsg/userSet', user)
      }
      else {
        alert('Error loading game data')
