@@ -9,16 +9,17 @@ RecordKeeper.prototype.undo = function() {
   const diff = this.diffs.pop()
   this.undone.push(diff)
   this.reverse(diff)
-  return diff
+  this.diffs.pop() // Remove the reversed diff from the history
 }
 
 RecordKeeper.prototype.redo = function() {
   const diff = this.undone.pop()
   this.patch(diff)
-  return diff
 }
 
 RecordKeeper.prototype.patch = function(diff) {
+  this.diffs.push(diff)
+
   const target = this.at(diff.path)
 
   // Ensure the current value matches the `old` valud from the diff
@@ -33,9 +34,6 @@ RecordKeeper.prototype.patch = function(diff) {
   else if (diff.kind === 'splice') {
     if (!Array.isArray(target)) {
       throw `${diff.path} is not an array`
-    }
-    if (target.length >= diff.key + diff.old.length) {
-      throw `${diff.path} does not have enough values\n${JSON.stringify(target)}\n${JSON.stringify(diff)}`
     }
 
     target.splice(diff.key, diff.old.length, ...diff.new)
@@ -54,24 +52,21 @@ RecordKeeper.prototype.reverse = function(diff) {
 }
 
 RecordKeeper.prototype.put = function(object, key, value) {
-  this.diffs.push({
+  this.patch({
     kind: 'put',
     path: this.find(object),
     key: key,
     old: object[key],
     new: value,
   })
-
-  object[key] = value
 }
 
 RecordKeeper.prototype.splice = function(array, index, count, ...items) {
-  const removed = array.splice(index, count, items)
-  this.diffs.push({
+  this.patch({
     kind: 'splice',
     path: this.find(array),
     key: index,
-    old: removed,
+    old: array.slice(index, index + count),
     new: items,
   })
 }

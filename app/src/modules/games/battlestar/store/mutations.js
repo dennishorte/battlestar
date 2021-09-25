@@ -1,3 +1,4 @@
+import RecordKeeper from '@/lib/recordkeeper.js'
 import * as $ from './helpers.js'
 
 
@@ -31,7 +32,12 @@ const mutations = {
 
   resourceChange(state, { name, amount }) {
     const before = state.game.counters[name]
-    state.game.counters[name] += amount
+
+    rk.put(
+      state.game.counters,
+      name,
+      state.game.counters[name] + amount
+    )
 
     $.log(state, {
       template: "{counter} adjusted from {before} to {after}",
@@ -116,12 +122,39 @@ const mutations = {
       }
     }
   },
+
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // undo/redo/etc.
+
+  redo() {
+    rk.redo()
+  },
+
+  undo() {
+    rk.undo()
+  },
 }
 
+
+const rk = new RecordKeeper('waiting')
 const wrappedMutations = {}
+
 for (const [name, func] of Object.entries(mutations)) {
   wrappedMutations[name] = function() {
-    return func(...arguments)
+    const state = arguments[0]
+    if (rk.state === 'waiting') {
+      rk.state = state
+    }
+    else if (rk.state !== state) {
+      throw "RecordKeeper state doesn't match mutation state."
+    }
+
+    const result = func(...arguments)
+
+    console.log(rk)
+
+    return result
   }
 }
 

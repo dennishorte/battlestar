@@ -234,11 +234,11 @@ export default {
     },
 
     redo() {
-      this.$store.dispatch('bsg/redo')
+      this.$store.commit('bsg/redo')
     },
 
     undo() {
-      this.$store.dispatch('bsg/undo')
+      this.$store.commit('bsg/undo')
     },
   },
 
