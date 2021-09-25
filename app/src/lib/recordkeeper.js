@@ -8,19 +8,19 @@ RecordKeeper.prototype.patch = function(diff) {
 
   // Ensure the current value matches the `old` valud from the diff
   if (diff.kind === 'put') {
-    if (target[diff.key] !== diff.old) {
-      throw `${diff.path}.${diff.key} !== ${diff.old}`
+    if (JSON.stringify(target[diff.key]) !== JSON.stringify(diff.old)) {
+      throw `Can't patch because old doesn't match: ${diff.path}.${diff.key} !== ${diff.old}`
     }
 
-    target[key] = diff.new
+    target[diff.key] = diff.new
   }
 
   else if (diff.kind === 'splice') {
     if (!Array.isArray(target)) {
       throw `${diff.path} is not an array`
     }
-    if (target.length !== diff.key + diff.old.length) {
-      throw `${diff.path} does not have enough values`
+    if (target.length >= diff.key + diff.old.length) {
+      throw `${diff.path} does not have enough values\n${JSON.stringify(target)}\n${JSON.stringify(diff)}`
     }
 
     target.splice(diff.key, diff.old.length, ...diff.new)
@@ -62,15 +62,27 @@ RecordKeeper.prototype.splice = function(array, index, count, ...items) {
 }
 
 RecordKeeper.prototype.at = function(path) {
+  if (path.startsWith('.')) {
+    path = path.slice(1)
+  }
+
+  if (path === '') {
+    return this.state
+  }
+
   const tokens = path.split('.')
 
   let pos = this.state
   for (const token of tokens) {
-    const arrayMatch = /\[([0-9]+)\]/.exec(token)
-    if (arrayMatch) {
-      const key = arrayMatch[1]
-      const index = arrayMatch[2]
-      pos = pos[key][index]
+    if (token.endsWith(']')) {
+      const pieces = token.split('[')
+      const key = pieces[0]
+      pos = pos[key]
+
+      for (let i = 1; i < pieces.length; i++) {
+        const index = pieces[i].substr(0, pieces[i].length - 1)
+        pos = pos[index]
+      }
     }
     else {
       pos = pos[token]
@@ -94,7 +106,7 @@ RecordKeeper.prototype.find = function(target) {
 
 function _findRecursive(target, root, pathAccumulator) {
   if (root === target) {
-    return pathAccumulator
+    return pathAccumulator || '.'
   }
   else if (Array.isArray(root)) {
     for (let i = 0; i < root.length; i++) {
@@ -115,6 +127,4 @@ function _findRecursive(target, root, pathAccumulator) {
   else {
     return false
   }
-
-  return path
 }
