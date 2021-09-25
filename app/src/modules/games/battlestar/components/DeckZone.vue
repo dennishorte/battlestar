@@ -146,9 +146,9 @@ export default {
   computed: {
     cards() {
       const cards = this.deck.cards
-      if (this.sort.func) {
-        cards.sort(this.sort.func)
-      }
+      /* if (this.sort.func) {
+       *   cards.sort(this.sort.func)
+       * } */
       return cards
     },
     classes() {
