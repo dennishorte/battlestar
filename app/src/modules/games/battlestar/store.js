@@ -34,8 +34,6 @@ export default {
           index: -1,
         },
 
-        newLogs: [],
-
         modalCard: {
           card: {},
         },
@@ -51,10 +49,6 @@ export default {
         player: {},
 
         unsavedActions: false,
-
-        undone: [],
-        undoing: false,
-        redoing: false,
       },
 
       ////////////////////////////////////////////////////////////

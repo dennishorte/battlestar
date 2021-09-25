@@ -87,10 +87,6 @@ function _log(state, msgObject) {
   const log = state.game.log
   msgObject.id = log.length
   log.push(msgObject)
-
-  if (!state.ui.undoing) {
-    state.ui.newLogs.push(msgObject)
-  }
 }
 
 function _maybeReshuffleDiscard(zone) {
