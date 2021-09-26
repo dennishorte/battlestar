@@ -83,10 +83,14 @@ function _log(state, msgObject) {
 
   _logEnrichArgClasses(msgObject)
   msgObject.actor = state.ui.player.name
+  msgObject.id = state.game.log.length
 
-  const log = state.game.log
-  msgObject.id = log.length
-  log.push(msgObject)
+  rk.session.splice(
+    state.game.log,
+    state.game.log.length,
+    0,
+    msgObject,
+  )
 }
 
 function _maybeReshuffleDiscard(zone) {
