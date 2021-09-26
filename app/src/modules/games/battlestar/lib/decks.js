@@ -246,7 +246,7 @@ function makeDeckWithFilter(filter) {
         c.id = `${deckSuffix}-${idx}`
         c.kind = kind
         c.deck = deckName
-        c.visibility = options.kind === 'open' ? 'all' : []
+        c.visibility = options.kind === 'open' ? ['all'] : []
         return c
       })
 

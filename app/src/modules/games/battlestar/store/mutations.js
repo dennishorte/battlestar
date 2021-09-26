@@ -9,7 +9,7 @@ function _cardSetVisibilityByZone(card, zone) {
   const zoneVis = zone.visibility || zone.kind
 
   if (zoneVis === 'open') {
-    rk.session.replace(card.visibility, 'all')
+    rk.session.replace(card.visibility, ['all'])
   }
   else if (zoneVis === 'president') {
     rk.session.replace(card.visibility, [$.presidentName(rk.state)])
@@ -278,7 +278,7 @@ const mutations = {
   zoneRevealAll(state, zoneName) {
     const cards = $.zoneGet(state, zoneName).cards
     for (const card of cards) {
-      rk.session.replace(card.visibility, 'all')
+      rk.session.replace(card.visibility, ['all'])
     }
   },
 
@@ -286,7 +286,7 @@ const mutations = {
     const cards = $.zoneGet(state, zoneName).cards
     for (const card of cards) {
       if (!$.isRevealed(state, card)) {
-        rk.session.replace(card.visibility, 'all')
+        rk.session.replace(card.visibility, ['all'])
         break
       }
     }

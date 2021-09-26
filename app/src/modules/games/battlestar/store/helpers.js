@@ -42,17 +42,15 @@ export function isRevealed(state, card) {
 }
 
 export function isVisible(state, card) {
-  return (
-    card.visibility === 'all'
-    || (card.visibility === 'president' && presidentName(state) === state.ui.player.name)
-    || card.visibility.includes(state.ui.player.name)
-  )
+  return playerCanSeeCard(state, state.ui.player, card)
 }
 
 export function playerCanSeeCard(state, player, card) {
-  return card.visibility === 'all'
-      || (card.visibility === 'president' && playerIsPresident(state, player))
-      || card.visibility.includes(player.name)
+  return (
+    (card.visibility.length > 0 && card.visibility[0] === 'all')
+    || (card.visibility === 'president' && playerIsPresident(state, player))
+    || card.visibility.includes(player.name)
+  )
 }
 
 export function playerIsPresident(state, player) {

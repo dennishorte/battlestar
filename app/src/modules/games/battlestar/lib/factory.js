@@ -205,7 +205,7 @@ function makePlayerZones(players) {
         id: `player-token-${idx}`,
         kind: 'player-token',
         expansion: 'base game',
-        visibility: 'all',
+        visibility: ['all'],
       }],
       kind: 'hand',
       visibility: 'owner',
@@ -245,7 +245,7 @@ function makeShipsZone(zoneName, shipName, count) {
       kind: zoneName,
       kindId: i,
       id: `${zoneName}-${i}`,
-      visibility: 'all',
+      visibility: ['all'],
     })
   }
   return zone
