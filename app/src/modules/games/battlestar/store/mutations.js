@@ -335,10 +335,18 @@ const mutations = {
   undo() {
     rk.undo()
   },
+
+  load(state, data) {
+    state.game = data
+    rk = new RecordKeeper('waiting')  // Ensures it is fully reset
+    rk.loadState(data)
+    localSession = false
+  },
 }
 
 
-const rk = new RecordKeeper('waiting')
+let rk = new RecordKeeper('waiting')
+let localSession = false
 const wrappedMutations = {}
 
 for (const [name, func] of Object.entries(mutations)) {
@@ -353,7 +361,6 @@ for (const [name, func] of Object.entries(mutations)) {
     }
 
     // Start a session if none is in progress
-    let localSession = false
     if (!rk.session) {
       localSession = true
       rk.sessionStart()

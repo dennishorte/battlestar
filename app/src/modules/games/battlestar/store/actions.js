@@ -69,12 +69,12 @@ export default {
     state.data.locations = bsgutil.expansionFilter(locations, data.options.expansions)
 
     if (data.initialized) {
-      state.game = data
+      commit('load', data)
     }
 
     else {
       await factory.initialize(data)
-      state.game = data
+      commit('load', data)
 
       commit('log', {
         template: 'Initializing Game',
