@@ -8,6 +8,7 @@ export default function RecordKeeper(state) {
   this.diffs = []
   this.undone = []
   this.record = 'session'
+  this.session = null
 }
 
 // Given a path, return the value at that path in this.state
@@ -16,7 +17,7 @@ RecordKeeper.prototype.at = at
 // Give an object, return the path to it in this.state
 RecordKeeper.prototype.path = path
 
-RecordKeeper.prototype.session = session
+RecordKeeper.prototype.sessionStart = sessionStart
 RecordKeeper.prototype.redo = redo
 RecordKeeper.prototype.undo = undo
 
@@ -54,25 +55,34 @@ function cancel() {
 }
 
 function commit() {
-  this.rk.diffs.push(this.diffs)
+  if (this.diffs.length) {
+    this.rk.diffs.push(this.diffs)
+  }
   this._close()
 }
 
 function _close() {
   // Session is now closed
+  this.rk.session = null
   this.diffs = null
   this.state = null
   this.rk = null
 }
 
-function session(func) {
-  if (func) {
-    const session = new RecordKeeperSession(this)
-    func(session)
-    session.commit()
+function sessionStart(func) {
+  if (this.session) {
+    throw "Session in progress. Can't start new session."
   }
+
+  else if (func) {
+    this.session = new RecordKeeperSession(this)
+    func(this.session)
+    this.session.commit()
+  }
+
   else {
-    return new RecordKeeperSession(this)
+    this.session = new RecordKeeperSession(this)
+    return this.session
   }
 }
 

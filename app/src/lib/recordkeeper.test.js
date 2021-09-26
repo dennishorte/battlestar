@@ -96,11 +96,11 @@ describe('at', () => {
 describe('undo', () => {
   function setup() {
     const rk = new RecordKeeper(stateFactory())
-    rk.session(session => {
+    rk.sessionStart(session => {
       session.put(rk.state, 'atRoot', [0, 1, 2])
       session.splice(rk.state.atRoot, 1, 2, 'a')
     })
-    rk.session(session => {
+    rk.sessionStart(session => {
       session.put(rk.state, 'atRoot', 'hello')
     })
     return rk
@@ -140,7 +140,7 @@ describe('session', () => {
   describe('patch', () => {
     test('put: root scalar', () => {
       const rk = new RecordKeeper(stateFactory())
-      const session = rk.session()
+      const session = rk.sessionStart()
       session.patch({
         kind: 'put',
         path: '.',
@@ -154,7 +154,7 @@ describe('session', () => {
 
     test('put: root array', () => {
       const rk = new RecordKeeper(stateFactory())
-      const session = rk.session()
+      const session = rk.sessionStart()
       session.patch({
         kind: 'put',
         path: '.',
@@ -168,7 +168,7 @@ describe('session', () => {
 
     test('put: root object', () => {
       const rk = new RecordKeeper(stateFactory())
-      const session = rk.session()
+      const session = rk.sessionStart()
       session.patch({
         kind: 'put',
         path: '.',
@@ -185,7 +185,7 @@ describe('session', () => {
 
     test('splice', () => {
       const rk = new RecordKeeper(stateFactory())
-      const session = rk.session()
+      const session = rk.sessionStart()
       session.patch({
         kind: 'splice',
         path: '.array',
@@ -201,7 +201,7 @@ describe('session', () => {
   describe('reverse', () => {
     test('put: root scalar', () => {
       const rk = new RecordKeeper(stateFactory())
-      const session = rk.session()
+      const session = rk.sessionStart()
       session.reverse({
         kind: 'put',
         path: '.',
@@ -215,7 +215,7 @@ describe('session', () => {
 
     test('put: root array', () => {
       const rk = new RecordKeeper(stateFactory())
-      const session = rk.session()
+      const session = rk.sessionStart()
       session.reverse({
         kind: 'put',
         path: '.',
@@ -229,7 +229,7 @@ describe('session', () => {
 
     test('put: root object', () => {
       const rk = new RecordKeeper(stateFactory())
-      const session = rk.session()
+      const session = rk.sessionStart()
       session.reverse({
         kind: 'put',
         path: '.',
@@ -246,7 +246,7 @@ describe('session', () => {
 
     test('splice', () => {
       const rk = new RecordKeeper(stateFactory())
-      const session = rk.session()
+      const session = rk.sessionStart()
       session.reverse({
         kind: 'splice',
         path: '.array',
@@ -264,7 +264,7 @@ describe('session', () => {
   describe('single changes', () => {
     test('put: root scalar', () => {
       const rk = new RecordKeeper(stateFactory())
-      const session = rk.session()
+      const session = rk.sessionStart()
       session.put(rk.state, 'atRoot', 2)
       session.commit()
       const diff = {
@@ -279,7 +279,7 @@ describe('session', () => {
 
     test('replace: object key', () => {
       const rk = new RecordKeeper(stateFactory())
-      const session = rk.session()
+      const session = rk.sessionStart()
       session.replace(rk.state.object, 'hello')
       session.commit()
       const diff = {
@@ -297,7 +297,7 @@ describe('session', () => {
 
     test('replace: array element', () => {
       const rk = new RecordKeeper(stateFactory())
-      const session = rk.session()
+      const session = rk.sessionStart()
       session.replace(rk.state.nestedArrays[1], 'hello')
       session.commit()
       const diff = {
@@ -312,7 +312,7 @@ describe('session', () => {
 
     test('splice', () => {
       const rk = new RecordKeeper(stateFactory())
-      const session = rk.session()
+      const session = rk.sessionStart()
       session.splice(rk.state.array, 1, 2, 9, 10, 11)
       session.commit()
       const diff = {
@@ -331,7 +331,7 @@ describe('session', () => {
 
     test('put, splice', () => {
       const rk = new RecordKeeper(stateFactory())
-      const session = rk.session()
+      const session = rk.sessionStart()
       session.put(rk.state, 'atRoot', [0, 1, 2])
       session.splice(rk.state.atRoot, 1, 2, 'a')
       session.commit()
@@ -359,7 +359,7 @@ describe('session', () => {
   describe('cancel', () => {
     test('put, splice', () => {
       const rk = new RecordKeeper(stateFactory())
-      const session = rk.session()
+      const session = rk.sessionStart()
       session.put(rk.state, 'atRoot', [0, 1, 2])
       session.splice(rk.state.atRoot, 1, 2, 'a')
       session.cancel()
