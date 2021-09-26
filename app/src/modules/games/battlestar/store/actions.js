@@ -159,8 +159,8 @@ export default {
     }
   },
 
-  phaseSet({ state }, phase) {
-    $.log(state, {
+  phaseSet({ commit, state }, phase) {
+    commit('log', {
       template: "Phase set to {phase}",
       classes: ['phase-change'],
       args: { phase },
@@ -175,10 +175,10 @@ export default {
     }
   },
 
-  playerAdvance({ dispatch, state }) {
+  playerAdvance({ commit, dispatch, state }) {
     const activePlayer = $.playerByName(state, state.game.activePlayer)
     state.game.activePlayer = $.playerFollowing(state, activePlayer).name
-    $.log(state, {
+    commit('log', {
       template: `Start turn of {player}`,
       classes: ['pass-turn'],
       args: {
@@ -189,8 +189,8 @@ export default {
     dispatch('phaseSet', 'main-receive-skills')
   },
 
-  refillDestiny({ commit, state }) {
-    $.log(state, {
+  refillDestiny({ commit }) {
+    commit('log', {
       template: 'Refilling destiny deck',
       classes: ['admin-action'],
       args: {},
@@ -212,7 +212,7 @@ export default {
   },
 
   removeShips({ commit, state }) {
-    $.log(state, {
+    commit('log', {
       template: 'Removing all ships',
       classes: ['admin-action'],
       args: {}
