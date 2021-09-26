@@ -180,7 +180,7 @@ const mutations = {
     // Calculate the actual targetIndex as positive integer (or zero)
     let targetIndex
     if (data.targetIndex === undefined) {
-      targetIndex = 0
+      targetIndex = targetZone.cards.length
     }
     else if (data.targetIndex < 0) {
       targetIndex = targetZone.cards.length + data.targetIndex
@@ -198,7 +198,6 @@ const mutations = {
     )
 
     // Update the visibility of the card to its new zone
-    console.log('move', {data, sourceZone, sourceIndex, targetZone, targetIndex})
     const card = targetZone.cards[targetIndex]
     _cardSetVisibilityByZone(card, targetZone)
 
@@ -344,6 +343,7 @@ const wrappedMutations = {}
 
 for (const [name, func] of Object.entries(mutations)) {
   wrappedMutations[name] = function() {
+    // Initialize record keeper or ensure its state is consistent
     const state = arguments[0]
     if (rk.state === 'waiting') {
       rk.loadState(state.game)
@@ -352,19 +352,20 @@ for (const [name, func] of Object.entries(mutations)) {
       throw "RecordKeeper state doesn't match mutation state."
     }
 
+    // Start a session if none is in progress
     let localSession = false
     if (!rk.session) {
       localSession = true
       rk.sessionStart()
     }
 
+    // Execute the mutation
     const result = func(...arguments)
 
+    // End the session, if it was started inside this function
     if (localSession) {
       rk.session.commit()
     }
-
-    console.log(rk)
 
     return result
   }

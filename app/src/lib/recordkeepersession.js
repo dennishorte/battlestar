@@ -46,7 +46,7 @@ function patch(diff) {
     if (JSON.stringify(target[diff.key]) !== JSON.stringify(diff.old)) {
       console.log({
         target: target,
-        diff: JSON.parse(JSON.stringify(diff)),
+        diff: _deepcopy(diff),
       })
       throw `Can't patch because old doesn't match: ${diff.path}.${diff.key} !== ${diff.old}`
     }
@@ -68,7 +68,7 @@ function patch(diff) {
 }
 
 function reverse(diff) {
-  const reversed = {...diff}
+  const reversed = _deepcopy(diff)
   reversed.old = diff.new
   reversed.new = diff.old
   this.patch(reversed)

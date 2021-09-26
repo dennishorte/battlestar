@@ -88,6 +88,12 @@ export default {
         args: {},
       })
 
+      // Basestar
+      commit('move', {
+        source: 'ships.basestarA',
+        target: 'space.space0',
+      })
+
       // Raiders
       for (let i = 0; i < 3; i++) {
         commit('move', {
@@ -95,12 +101,6 @@ export default {
           target: 'space.space0',
         })
       }
-
-      // Basestar
-      commit('move', {
-        source: 'ships.basestarA',
-        target: 'space.space0',
-      })
 
       // Vipers
       commit('move', {
