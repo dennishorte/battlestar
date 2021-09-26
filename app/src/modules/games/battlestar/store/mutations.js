@@ -9,18 +9,18 @@ function _cardSetVisibilityByZone(card, zone) {
   const zoneVis = zone.visibility || zone.kind
 
   if (zoneVis === 'open') {
-    rk.replace(card.visibility, 'all')
+    rk.session.replace(card.visibility, 'all')
   }
   else if (zoneVis === 'president') {
-    rk.replace(card.visibility, [$.presidentName(rk.state)])
+    rk.session.replace(card.visibility, [$.presidentName(rk.state)])
   }
   else if (zoneVis === 'owner') {
-    rk.replace(card.visibility, [zone.owner])
+    rk.session.replace(card.visibility, [zone.owner])
   }
   else if (zoneVis === 'deck'
            || zoneVis === 'hidden'
            || zoneVis === 'bag') {
-    rk.replace(card.visibility, [])
+    rk.session.replace(card.visibility, [])
   }
   else {
     throw `Unknown zone visibility (${zoneVis}) for zone ${zone.name}`
@@ -99,8 +99,8 @@ function _maybeReshuffleDiscard(zone) {
   const discardName = zone.name.replace('decks.', 'discard.')
   const discard = $.zoneGet(rk.state, discardName)
 
-  rk.replace(zone.cards, discard.cards)
-  rk.replace(discard.cards, [])
+  rk.session.replace(zone.cards, discard.cards)
+  rk.session.replace(discard.cards, [])
   _shuffle(zone.cards)
 
   _log(rk.state, {
@@ -114,16 +114,16 @@ function _maybeReshuffleDiscard(zone) {
 
 function _move(source, sourceIndex, target, targetIndex) {
   const card = source[sourceIndex]
-  rk.splice(source, sourceIndex, 1)
-  rk.splice(target, targetIndex, 0, card)
+  rk.session.splice(source, sourceIndex, 1)
+  rk.session.splice(target, targetIndex, 0, card)
 }
 
 function _shuffle(array) {
   const copy = [...array]
   shuffleArray(copy)
-  rk.replace(array, copy)
+  rk.session.replace(array, copy)
 
-  copy.forEach(c => rk.replace(c.visibility, []))
+  copy.forEach(c => rk.session.replace(c.visibility, []))
 
   /* _log(state, {
    *   template: "{zone} shuffled",
@@ -139,7 +139,7 @@ const mutations = {
   crisisHelp(state, { playerName, amount }) {
     const player = $.playerByName(state, playerName)
 
-    rk.put(
+    rk.session.put(
       player,
       'crisisHelp',
       amount,
@@ -214,7 +214,7 @@ const mutations = {
   },
 
   passTo(state, name) {
-    rk.put(
+    rk.session.put(
       state.game,
       'waitingFor',
       name,
@@ -232,7 +232,7 @@ const mutations = {
   resourceChange(state, { name, amount }) {
     const before = state.game.counters[name]
 
-    rk.put(
+    rk.session.put(
       state.game.counters,
       name,
       state.game.counters[name] + amount
@@ -274,7 +274,7 @@ const mutations = {
   zoneRevealAll(state, zoneName) {
     const cards = $.zoneGet(state, zoneName).cards
     for (const card of cards) {
-      rk.replace(card.visibility, 'all')
+      rk.session.replace(card.visibility, 'all')
     }
   },
 
@@ -282,7 +282,7 @@ const mutations = {
     const cards = $.zoneGet(state, zoneName).cards
     for (const card of cards) {
       if (!$.isRevealed(state, card)) {
-        rk.replace(card.visibility, 'all')
+        rk.session.replace(card.visibility, 'all')
         break
       }
     }
@@ -347,7 +347,18 @@ for (const [name, func] of Object.entries(mutations)) {
       throw "RecordKeeper state doesn't match mutation state."
     }
 
+    let localSession = false
+    if (!rk.session) {
+      localSession = true
+      rk.sessionStart()
+    }
+
     const result = func(...arguments)
+
+    if (localSession) {
+      rk.session.commit()
+    }
+
     console.log(rk)
     return result
   }
