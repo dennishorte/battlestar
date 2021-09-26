@@ -77,10 +77,6 @@ function _logEnrichArgClasses(msg) {
 }
 
 function _log(state, msgObject) {
-  if (state.ui.redoing) {
-    return
-  }
-
   _logEnrichArgClasses(msgObject)
   msgObject.actor = state.ui.player.name
   msgObject.id = state.game.log.length
@@ -156,6 +152,10 @@ const mutations = {
     })
   },
 
+  log(state, msg) {
+    _log(state, msg)
+  },
+
   maybeReshuffleDiscard(state, zoneName) {
     const zone = $.zoneGet(state, zoneName)
     _maybeReshuffleDiscard(zone)
@@ -174,7 +174,7 @@ const mutations = {
       sourceIndex = sourceZone.cards.length + data.sourceIndex
     }
     else {
-      sourceIndex = data.sourceIndex
+      sourceIndex = data.sourceIndex || 0
     }
 
     // Calculate the actual targetIndex as positive integer (or zero)
@@ -198,6 +198,7 @@ const mutations = {
     )
 
     // Update the visibility of the card to its new zone
+    console.log('move', {data, sourceZone, sourceIndex, targetZone, targetIndex})
     const card = targetZone.cards[targetIndex]
     _cardSetVisibilityByZone(card, targetZone)
 
@@ -345,7 +346,7 @@ for (const [name, func] of Object.entries(mutations)) {
   wrappedMutations[name] = function() {
     const state = arguments[0]
     if (rk.state === 'waiting') {
-      rk.state = state.game
+      rk.loadState(state.game)
     }
     else if (rk.state !== state.game) {
       throw "RecordKeeper state doesn't match mutation state."
@@ -364,6 +365,7 @@ for (const [name, func] of Object.entries(mutations)) {
     }
 
     console.log(rk)
+
     return result
   }
 }

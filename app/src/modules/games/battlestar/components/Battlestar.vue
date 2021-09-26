@@ -19,8 +19,8 @@
           <b-col>
             <div class="action-buttons">
               <b-button variant="success" v-b-modal.game-log-modal>log</b-button>
-              <b-button variant="danger" @click="undo">undo</b-button>
-              <b-button variant="info" @click="redo">redo</b-button>
+              <b-button variant="danger" @click="undo" :disabled="!canUndo">undo</b-button>
+              <b-button variant="info" @click="redo" :disabled="!canRedo">redo</b-button>
 
               <b-dropdown variant="warning" text="pass to" left>
                 <b-dropdown-item @click="pass('next')">
@@ -198,6 +198,12 @@ export default {
   },
 
   computed: {
+    canRedo() {
+      return this.$store.getters['bsg/uiCanRedo']
+    },
+    canUndo() {
+      return this.$store.getters['bsg/uiCanUndo']
+    },
     unsaved() {
       return this.$store.getters['bsg/uiUnsaved']
     },

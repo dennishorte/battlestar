@@ -19,8 +19,10 @@ async function initialize(game) {
   game.initialized = true
   game.setupLoyaltyComplete = true
   game.phase = 'setup-character-selection'
+
   game.history = []
   game.log = []
+  game.hasUndone = false
 
   game.seed = util.randomSeed()
 

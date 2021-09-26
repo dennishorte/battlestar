@@ -75,6 +75,11 @@ function reverse(diff) {
 }
 
 function put(object, key, value) {
+  // If object and value are identical, do nothing.
+  if (JSON.stringify(object[key]) === JSON.stringify(value)) {
+    return
+  }
+
   this.patch({
     kind: 'put',
     path: this.path(object),
@@ -86,6 +91,11 @@ function put(object, key, value) {
 
 // Similar to put, but instead of setting .path[key] = value, set .path-1[objectName] = value
 function replace(object, value) {
+  // If object and value are identical, do nothing.
+  if (JSON.stringify(object) === JSON.stringify(value)) {
+    return
+  }
+
   const fullPath = this.path(object)
 
   let key
@@ -109,11 +119,18 @@ function replace(object, value) {
 }
 
 function splice(array, index, count, ...items) {
+  const old = array.slice(index, index + count)
+
+  // If there is no actual change, do nothing.
+  if (JSON.stringify(old) === JSON.stringify(items)) {
+    return
+  }
+
   this.patch({
     kind: 'splice',
     path: this.path(array),
     key: index,
-    old: array.slice(index, index + count),
+    old: old,
     new: items,
   })
 }

@@ -3,11 +3,13 @@ import RecordKeeperSession from './recordkeepersession'
 
 export default function RecordKeeper(state) {
   this.state = state
-  this.diffs = []
+  this.diffs = state.history
   this.undone = []
   this.record = 'session'
   this.session = null
 }
+
+RecordKeeper.prototype.loadState = loadState
 
 RecordKeeper.prototype.sessionStart = sessionStart
 RecordKeeper.prototype.redo = redo
@@ -18,6 +20,10 @@ RecordKeeper.prototype.path = RecordKeeperSession.prototype.path
 RecordKeeper.prototype.patch = RecordKeeperSession.prototype.patch
 RecordKeeper.prototype.reverse = RecordKeeperSession.prototype.reverse
 
+function loadState(state) {
+  this.state = state
+  this.diffs = state.history
+}
 
 function sessionStart(func) {
   if (this.session) {
@@ -43,6 +49,8 @@ function undo() {
   for (const step of reversed) {
     this.reverse(step)
   }
+
+  this.state.hasUndone = !!this.undone.length
 }
 
 function redo() {
@@ -51,4 +59,6 @@ function redo() {
   for (const step of diff) {
     this.patch(step)
   }
+
+  this.state.hasUndone = !!this.undone.length
 }

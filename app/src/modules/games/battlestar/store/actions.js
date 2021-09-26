@@ -67,19 +67,22 @@ export default {
     // Load the static deck data (used in info panels)
     state.data.decks = decks.factory(data.options.expansions)
     state.data.locations = bsgutil.expansionFilter(locations, data.options.expansions)
-    state.game = data
 
-    if (!data.initialized) {
+    if (data.initialized) {
+      state.game = data
+    }
 
+    else {
       await factory.initialize(data)
+      state.game = data
 
-      $.log(state, {
+      commit('log', {
         template: 'Initializing Game',
         classes: ['admin-action'],
         args: {},
       })
 
-      $.log(state, {
+      commit('log', {
         template: 'Setting up initial ships',
         classes: ['admin-action'],
         args: {},
@@ -118,7 +121,6 @@ export default {
       }
 
       await dispatch('save')
-      await dispatch('snapshotCreate')
     }
   },
 
@@ -250,21 +252,6 @@ export default {
       throw requestResult.data.message
     }
     state.ui.unsavedActions = false
-  },
-
-  async snapshotCreate({ state }) {
-    const requestResult = await axios.post('/api/snapshot/create', { gameId: state.game._id })
-    if (requestResult.data.status !== 'success') {
-      throw requestResult.data.message
-    }
-  },
-
-  async snapshotFetch({ state }) {
-    const requestResult = await axios.post('/api/snapshot/fetch', { gameId: state.game._id })
-    if (requestResult.data.status !== 'success') {
-      throw requestResult.data.message
-    }
-    return requestResult.data.snapshots
   },
 
   skillCardInfoRequest({ state }, cardName) {

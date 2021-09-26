@@ -105,6 +105,9 @@ export default {
     ////////////////////////////////////////////////////////////
     // UI
 
+    uiCanRedo: (state) => state.game.hasUndone,
+    uiCanUndo: (state) => state.game.history.length > 0,
+
     grab: (state) => state.ui.grab,
     uiModalCard: (state) => state.ui.modalCard,
     uiModalLocation: (state) => state.ui.modalLocation,
