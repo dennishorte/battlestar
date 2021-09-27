@@ -1,4 +1,4 @@
-import RecordKeeper from '@/lib/recordkeeper.js'
+import RecordKeeper from '@/modules/games/common/lib/recordkeeper.js'
 import util from '@/util.js'
 
 import * as $ from './helpers.js'
@@ -27,7 +27,11 @@ function _cardSetVisibilityByZone(card, zone) {
   }
 }
 
-function pushUnique() {}
+function pushUnique(array, value) {
+  if (array.indexOf(value) === -1) {
+    array.push(value)
+  }
+}
 
 function _logEnrichArgClasses(msg) {
   if (!msg.args)
