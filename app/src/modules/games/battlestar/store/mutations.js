@@ -197,15 +197,46 @@ function _shuffle(array) {
   copy.forEach(c => rk.session.replace(c.visibility, []))
 }
 
+function _zoneDiscardAll(state, zoneName) {
+  const zone = $.zoneGet(state, zoneName)
+
+  _log(state, {
+    template: `Discarding all cards from {zone}`,
+    classes: [],
+    args: {
+      zone: zoneName,
+    },
+  })
+
+  const cardsLength = zone.cards.length
+  for (let i = 0; i < cardsLength; i++) {
+    const card = zone.cards[0]
+    const discardName = $.getDiscardName(state, card.deck)
+    const discard = $.zoneGet(state, discardName)
+    _move(
+      zone.cards, 0,
+      discard.cards, discard.cards.length
+    )
+
+  }
+}
+
 
 const mutations = {
-  cleanCommonCrisis(state) {
+  crisisCleanup(state) {
+    _log(state, {
+      template: 'Cleaning up crisis',
+      classes: ['admin-action']
+    })
+
     const crisis = $.commonCrisis(state)
     _moveCommit(state, {
       source: 'common',
       cardId: crisis.id,
       target: 'discard.crisis',
     })
+
+    _zoneDiscardAll(state, 'crisisPool')
   },
 
   clearSpace(state) {
@@ -375,25 +406,7 @@ const mutations = {
   },
 
   zoneDiscardAll(state, zoneName) {
-    const zone = $.zoneGet(state, zoneName)
-    for (let i = 0; i < zone.cards.length; i++) {
-      const card = zone.cards[0]
-      const discardName = $.getDiscardName(state, card.deck)
-      const discard = $.zoneGet(state, discardName)
-      _move(
-        zone.cards, 0,
-        discard.cards, discard.cards.length
-      )
-
-    }
-
-    _log(state, {
-      template: `All cards from {zone} discarded`,
-      classes: [],
-      args: {
-        zone: zoneName,
-      },
-    })
+    _zoneDiscardAll(state, zoneName)
   },
 
   zoneRevealAll(state, zoneName) {

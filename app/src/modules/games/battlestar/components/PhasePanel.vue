@@ -73,8 +73,8 @@
 <script>
 import JumpRemoveShips from './JumpRemoveShips'
 import MainActivateCylonShips from './MainActivateCylonShips'
+import MainCleanup from './MainCleanup'
 import MainCrisis from './MainCrisis'
-import MainNextPlayer from './MainNextPlayer'
 import MainReceiveSkills from './MainReceiveSkills'
 import MainStartTurn from './MainStartTurn'
 import SetupCharacterSelection from './SetupCharacterSelection'
@@ -144,8 +144,8 @@ const options = [
         text: 'Hand Limit',
       },
       {
-        value: 'main-next-player',
-        text: 'Next Player',
+        value: 'main-cleanup',
+        text: 'Cleanup',
       },
     ]
   },
@@ -209,7 +209,7 @@ export default {
     JumpRemoveShips,
     MainActivateCylonShips,
     MainCrisis,
-    MainNextPlayer,
+    MainCleanup,
     MainReceiveSkills,
     MainStartTurn,
     SetupCharacterSelection,
@@ -245,8 +245,8 @@ export default {
       if (this.phase === 'main-crisis')
         return 'MainCrisis'
 
-      if (this.phase === 'main-next-player')
-        return 'MainNextPlayer'
+      if (this.phase === 'main-cleanup')
+        return 'MainCleanup'
 
       if (this.phase === 'main-receive-skills')
         return 'MainReceiveSkills'

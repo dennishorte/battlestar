@@ -6,14 +6,13 @@
       :variant="!!commonCrisis ? 'info' : ''"
       @click="cleanCrisis"
     >Clean Up Crisis Card</b-button>
-    <b-button block variant="primary" @click="playerNext">Start Next Player's Turn</b-button>
   </div>
 </template>
 
 
 <script>
 export default {
-  name: 'MainNextPlayer',
+  name: 'MainCleanup',
 
   computed: {
     commonCrisis() {
@@ -23,11 +22,7 @@ export default {
 
   methods: {
     cleanCrisis() {
-      this.$store.commit('bsg/cleanCommonCrisis')
-    },
-
-    playerNext() {
-      this.$store.commit('bsg/playerAdvance')
+      this.$store.commit('bsg/crisisCleanup')
     },
   },
 }
