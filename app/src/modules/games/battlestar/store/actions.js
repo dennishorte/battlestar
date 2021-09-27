@@ -8,7 +8,7 @@ import locations from '../res/location.js'
 import * as $ from './helpers.js'
 
 
-const actions = {
+export default {
   characterInfoRequest({ state }, name) {
     state.ui.charactersModal.selected = name
   },
@@ -252,14 +252,3 @@ const actions = {
     state.ui.modalZone.name = zoneName
   },
 }
-
-const wrappedActions = {}
-
-for (const [name, func] of Object.entries(actions)) {
-  wrappedActions[name] = async function() {
-    const result = await func(...arguments)
-    return result
-  }
-}
-
-export default wrappedActions
