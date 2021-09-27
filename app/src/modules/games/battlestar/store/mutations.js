@@ -182,7 +182,7 @@ function _moveCommit(state, data) {
 }
 
 function _phaseSet(phaseName) {
-  rk.session.put(rk.state.game, 'phase', phaseName)
+  rk.session.put(rk.state, 'phase', phaseName)
 }
 
 function _shuffle(array) {
@@ -226,7 +226,7 @@ const mutations = {
 
   passTo(state, name) {
     rk.session.put(
-      state.game,
+      state,
       'waitingFor',
       name,
     )
