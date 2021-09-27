@@ -276,7 +276,7 @@ export default {
 
   methods: {
     phaseChanged(value) {
-      this.$store.dispatch('bsg/phaseSet', value)
+      this.$store.commit('bsg/phaseSet', value)
     },
 
     toggleDetails() {

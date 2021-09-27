@@ -159,22 +159,6 @@ const actions = {
     }
   },
 
-  phaseSet({ commit, state }, phase) {
-    commit('log', {
-      template: "Phase set to {phase}",
-      classes: ['phase-change'],
-      args: { phase },
-    })
-
-    state.game.phase = phase
-
-    if (phase === 'main-crisis') {
-      if ($.zoneGet(state,'crisisPool').cards.length === 0) {
-        state.game.players.forEach(p => p.crisisHelp = '')
-      }
-    }
-  },
-
   playerAdvance({ commit, dispatch, state }) {
     const activePlayer = $.playerByName(state, state.game.activePlayer)
     state.game.activePlayer = $.playerFollowing(state, activePlayer).name

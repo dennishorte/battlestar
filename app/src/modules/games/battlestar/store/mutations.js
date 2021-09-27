@@ -233,6 +233,24 @@ const mutations = {
     })
   },
 
+  phaseSet(state, phaseName) {
+    _log(state, {
+      template: "Phase set to {phase}",
+      classes: ['phase-change'],
+      args: { phase: phaseName },
+    })
+
+    rk.session.put(state.game, 'phase', phaseName)
+
+    if (phaseName === 'main-crisis') {
+      if ($.zoneGet(state,'crisisPool').cards.length === 0) {
+        for (const player in state.game.players) {
+          rk.session.put(player, 'crisisHelp', '')
+        }
+      }
+    }
+  },
+
   resourceChange(state, { name, amount }) {
     const before = state.game.counters[name]
 
