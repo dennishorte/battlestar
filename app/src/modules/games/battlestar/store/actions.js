@@ -22,18 +22,6 @@ export default {
     })
   },
 
-  drawSkills({ commit }, { playerName, kinds }) {
-    for (const kind of kinds) {
-      const deckName = `decks.${kind}`
-      const playerZone = `players.${playerName}`
-
-      commit('move', {
-        source: deckName,
-        target: playerZone,
-      })
-    }
-  },
-
   grabCancel({ state }) {
     $.grabCancel(state)
   },

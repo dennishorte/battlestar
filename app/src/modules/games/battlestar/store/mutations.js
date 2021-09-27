@@ -246,6 +246,18 @@ const mutations = {
     })
   },
 
+  drawSkills(state, { playerName, kinds }) {
+    for (const kind of kinds) {
+      const deckName = `decks.${kind}`
+      const playerZone = `players.${playerName}`
+
+      _moveCommit(state, {
+        source: deckName,
+        target: playerZone,
+      })
+    }
+  },
+
   log(state, msg) {
     _log(state, msg)
   },

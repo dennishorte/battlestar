@@ -81,7 +81,7 @@ export default {
         }
       }
 
-      this.$store.dispatch('bsg/drawSkills', {
+      this.$store.commit('bsg/drawSkills', {
         playerName: this.playerName,
         kinds,
       })
