@@ -314,7 +314,7 @@ const destinyMenuOptions = [
   {
     name: 'refill',
     func() {
-      this.$store.dispatch('bsg/refillDestiny')
+      this.$store.commit('bsg/refillDestiny')
     },
   },
 ]

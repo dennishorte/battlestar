@@ -159,42 +159,6 @@ const actions = {
     }
   },
 
-  playerAdvance({ commit, dispatch, state }) {
-    const activePlayer = $.playerByName(state, state.game.activePlayer)
-    state.game.activePlayer = $.playerFollowing(state, activePlayer).name
-    commit('log', {
-      template: `Start turn of {player}`,
-      classes: ['pass-turn'],
-      args: {
-        player: state.game.activePlayer,
-      },
-    })
-
-    dispatch('phaseSet', 'main-receive-skills')
-  },
-
-  refillDestiny({ commit }) {
-    commit('log', {
-      template: 'Refilling destiny deck',
-      classes: ['admin-action'],
-      args: {},
-    })
-
-    for (const skill of bsgutil.skillList) {
-      for (let i = 0; i < 2; i++) {
-        if (skill === 'treachery')
-          continue
-
-        commit('move', {
-          source: `decks.${skill}`,
-          sourceIndex: 0,
-          target: `destiny`,
-          reshuffle: true,
-        })
-      }
-    }
-  },
-
   removeShips({ commit, state }) {
     commit('log', {
       template: 'Removing all ships',

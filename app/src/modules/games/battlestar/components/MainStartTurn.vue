@@ -25,7 +25,7 @@ export default {
 
   methods: {
     advanceToNextPlayer() {
-      this.$store.dispatch('bsg/playerAdvance')
+      this.$store.commit('bsg/playerAdvance')
     },
   },
 }

@@ -1,5 +1,5 @@
 import RecordKeeper from '@/lib/recordkeeper.js'
-import { shuffleArray } from '@/util.js'
+import util from '@/util.js'
 
 import * as $ from './helpers.js'
 import bsgutil from '../lib/util.js'
@@ -118,20 +118,79 @@ function _move(source, sourceIndex, target, targetIndex) {
   rk.session.splice(target, targetIndex, 0, card)
 }
 
+function _moveCommit(state, data) {
+  const sourceZone = $.zoneGet(state, data.source)
+  const targetZone = $.zoneGet(state, data.target)
+
+  // Calculate the actual sourceIndex as positive integer (or zero)
+  let sourceIndex
+  if (data.cardId) {
+    sourceIndex = sourceZone.cards.findIndex(x => x.id === data.cardId)
+  }
+  else if (data.sourceIndex < 0) {
+    sourceIndex = sourceZone.cards.length + data.sourceIndex
+  }
+  else {
+    sourceIndex = data.sourceIndex || 0
+  }
+
+  // Calculate the actual targetIndex as positive integer (or zero)
+  let targetIndex
+  if (data.targetIndex === undefined) {
+    targetIndex = targetZone.cards.length
+  }
+  else if (data.targetIndex < 0) {
+    targetIndex = targetZone.cards.length + data.targetIndex
+  }
+  else {
+    targetIndex = data.targetIndex
+  }
+
+  /* console.log({
+   *   sourceZone,
+   *   sourceIndex,
+   *   targetZone,
+   *   targetIndex,
+   * }) */
+
+  _maybeReshuffleDiscard(sourceZone)
+  _move(
+    sourceZone.cards,
+    sourceIndex,
+    targetZone.cards,
+    targetIndex,
+  )
+
+  // Update the visibility of the card to its new zone
+  const card = targetZone.cards[targetIndex]
+  _cardSetVisibilityByZone(card, targetZone)
+
+  // If the new zone is a 'bag', randomize it automatically
+  if (targetZone.kind === 'bag') {
+    _shuffle(targetZone.cards)
+  }
+
+  _log(state, {
+    template: "{card} moved from {source} to {target}",
+    classes: ['card-move'],
+    args: {
+      card,
+      source: data.source,
+      target: data.target,
+    },
+  })
+}
+
+function _phaseSet(phaseName) {
+  rk.session.put(rk.state.game, 'phase', phaseName)
+}
+
 function _shuffle(array) {
   const copy = [...array]
-  shuffleArray(copy)
+  util.shuffleArray(copy)
   rk.session.replace(array, copy)
 
   copy.forEach(c => rk.session.replace(c.visibility, []))
-
-  /* _log(state, {
-   *   template: "{zone} shuffled",
-   *   classes: [],
-   *   args: {
-   *     zone: zoneName,
-   *   },
-   * }) */
 }
 
 
@@ -162,59 +221,7 @@ const mutations = {
   },
 
   move(state, data) {
-    const sourceZone = $.zoneGet(state, data.source)
-    const targetZone = $.zoneGet(state, data.target)
-
-    // Calculate the actual sourceIndex as positive integer (or zero)
-    let sourceIndex
-    if (data.cardId) {
-      sourceIndex = sourceZone.cards.findIndex(x => x.id === data.cardId)
-    }
-    else if (data.sourceIndex < 0) {
-      sourceIndex = sourceZone.cards.length + data.sourceIndex
-    }
-    else {
-      sourceIndex = data.sourceIndex || 0
-    }
-
-    // Calculate the actual targetIndex as positive integer (or zero)
-    let targetIndex
-    if (data.targetIndex === undefined) {
-      targetIndex = targetZone.cards.length
-    }
-    else if (data.targetIndex < 0) {
-      targetIndex = targetZone.cards.length + data.targetIndex
-    }
-    else {
-      targetIndex = data.targetIndex
-    }
-
-    _maybeReshuffleDiscard(sourceZone)
-    _move(
-      sourceZone.cards,
-      sourceIndex,
-      targetZone.cards,
-      targetIndex,
-    )
-
-    // Update the visibility of the card to its new zone
-    const card = targetZone.cards[targetIndex]
-    _cardSetVisibilityByZone(card, targetZone)
-
-    // If the new zone is a 'bag', randomize it automatically
-    if (targetZone.kind === 'bag') {
-      _shuffle(targetZone.cards)
-    }
-
-    _log(state, {
-      template: "{card} moved from {source} to {target}",
-      classes: ['card-move'],
-      args: {
-        card,
-        source: data.source,
-        target: data.target,
-      },
-    })
+    _moveCommit(state, data)
   },
 
   passTo(state, name) {
@@ -240,13 +247,49 @@ const mutations = {
       args: { phase: phaseName },
     })
 
-    rk.session.put(state.game, 'phase', phaseName)
+    _phaseSet(phaseName)
 
     if (phaseName === 'main-crisis') {
       if ($.zoneGet(state,'crisisPool').cards.length === 0) {
         for (const player in state.game.players) {
           rk.session.put(player, 'crisisHelp', '')
         }
+      }
+    }
+  },
+
+  playerAdvance(state) {
+    const activePlayer = $.playerByName(state, state.game.activePlayer)
+
+    rk.session.put(state.game, 'activePlayer', $.playerFollowing(state, activePlayer).name)
+
+    _log(state, {
+      template: `Start turn of {player}`,
+      classes: ['pass-turn'],
+      args: {
+        player: state.game.activePlayer,
+      },
+    })
+
+    _phaseSet('main-receive-skills')
+  },
+
+  refillDestiny(state) {
+    _log(state, {
+      template: 'Refilling destiny deck',
+      classes: ['admin-action'],
+    })
+
+    for (const skill of bsgutil.skillList) {
+      for (let i = 0; i < 2; i++) {
+        if (skill === 'treachery')
+          continue
+
+        _moveCommit(state, {
+          source: `decks.${skill}`,
+          sourceIndex: 0,
+          target: `destiny`,
+        })
       }
     }
   },
