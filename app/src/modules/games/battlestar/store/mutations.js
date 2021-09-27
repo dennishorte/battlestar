@@ -195,6 +195,15 @@ function _shuffle(array) {
 
 
 const mutations = {
+  cleanCommonCrisis(state) {
+    const crisis = $.commonCrisis(state)
+    _moveCommit(state, {
+      source: 'common',
+      cardId: crisis.id,
+      target: 'discard.crisis',
+    })
+  },
+
   clearSpace(state) {
     _log(state, {
       template: 'Removing all ships',

@@ -13,15 +13,6 @@ export default {
     state.ui.charactersModal.selected = name
   },
 
-  cleanCommonCrisis({ commit, getters }) {
-    const crisis = getters['commonCrisis']
-    commit('move', {
-      source: 'common',
-      cardId: crisis.id,
-      target: 'discard.crisis',
-    })
-  },
-
   grabCancel({ state }) {
     $.grabCancel(state)
   },

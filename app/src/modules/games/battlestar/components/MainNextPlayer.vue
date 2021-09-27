@@ -23,7 +23,7 @@ export default {
 
   methods: {
     cleanCrisis() {
-      this.$store.dispatch('bsg/cleanCommonCrisis')
+      this.$store.commit('bsg/cleanCommonCrisis')
     },
 
     playerNext() {
