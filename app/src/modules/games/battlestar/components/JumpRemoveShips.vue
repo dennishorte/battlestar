@@ -11,7 +11,7 @@ export default {
 
   methods: {
     removeShips() {
-      this.$store.dispatch('bsg/removeShips')
+      this.$store.commit('bsg/clearSpace')
     },
   },
 }

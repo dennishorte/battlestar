@@ -195,6 +195,41 @@ function _shuffle(array) {
 
 
 const mutations = {
+  clearSpace(state) {
+    _log(state, {
+      template: 'Removing all ships',
+      classes: ['admin-action'],
+      args: {}
+    })
+
+    for (const zone of Object.values(state.game.zones.space)) {
+      const cardsCopy = [...zone.cards]
+
+      for (const card of cardsCopy) {
+        let deck
+        if (card.kind.startsWith('ships.')) {
+          deck = card.kind
+        }
+        else if (card.kind === 'player-token') {
+          deck = 'locations.galactica.hangarDeck'
+        }
+        else if (card.kind === 'civilian') {
+          deck = 'decks.civilian'
+        }
+        else {
+          alert(`Unknown ship kind '${card.kind}'. Can't clean up. Do not save. Please reload.`)
+          return
+        }
+
+        _moveCommit(state, {
+          source: `space.${zone.name}`,
+          cardId: card.id,
+          target: deck,
+        })
+      }
+    }
+  },
+
   crisisHelp(state, { playerName, amount }) {
     const player = $.playerByName(state, playerName)
 
