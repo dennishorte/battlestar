@@ -1,3 +1,6 @@
+import util from '@/util.js'
+
+
 export function admiralName(state) {
   return playerWithCard(state, 'Admiral').name
 }
@@ -43,6 +46,13 @@ export function isRevealed(state, card) {
 
 export function isVisible(state, card) {
   return playerCanSeeCard(state, state.ui.player, card)
+}
+
+export function locationZoneName(state, locationName) {
+  const location = state.data.locations.find(l => l.name === locationName)
+  const locPath = util.toCamelCase(locationName)
+  const areaPath = util.toCamelCase(location.area)
+  return `locations.${areaPath}.${locPath}`
 }
 
 export function playerCanSeeCard(state, player, card) {

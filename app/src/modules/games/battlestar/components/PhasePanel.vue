@@ -36,7 +36,6 @@
         <div v-if="phase === 'main-movement'">
           <p>The active player can move his pawn to another location.</p>
           <p>Changing ships or docking a fighter requires the player to discard one skill card.</p>
-          <p>You can move your pawn by clicking on it and then clicking on the location you want to move to.</p>
         </div>
 
         <div v-if="phase ==='main-action'">

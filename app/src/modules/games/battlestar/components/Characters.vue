@@ -109,10 +109,9 @@ export default {
 
   methods: {
     assign(playerName) {
-      this.$store.commit('bsg/move', {
-        cardId: this.selectedData.id,
-        source: 'decks.character',
-        target: `players.${playerName}`,
+      this.$store.commit('bsg/characterAssign', {
+        characterName: this.selectedData.name,
+        playerName: playerName,
       })
     },
 

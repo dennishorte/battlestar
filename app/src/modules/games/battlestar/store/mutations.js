@@ -223,6 +223,40 @@ function _zoneDiscardAll(state, zoneName) {
 
 
 const mutations = {
+  characterAssign(state, { characterName, playerName }) {
+    _log(state, {
+      template: '{player} chooses {character}',
+      classes: ['player-action', 'character-assign'],
+      args: {
+        player: playerName,
+        character: characterName,
+      },
+    })
+
+    // Grab the character card
+    const characterZone = $.zoneGet(state, 'decks.character')
+    const characterCard = characterZone.cards.find(c => c.name === characterName)
+    const characterIndex = characterZone.cards.indexOf(characterCard)
+
+    // Move the character card to the player's hand
+    _moveCommit(state, {
+      source: 'decks.character',
+      sourceIndex: characterIndex,
+      target: `players.${playerName}`,
+      targetIndex: 0,  // Put it at the top of the player hand
+    })
+
+    // Find the player's pawn
+    const playerHand = $.zoneGet(state, `players.${playerName}`)
+    const pawnIndex = playerHand.cards.findIndex(c => c.kind === 'player-token')
+
+    _moveCommit(state, {
+      source: `players.${playerName}`,
+      sourceIndex: pawnIndex,
+      target: $.locationZoneName(state, characterCard.setup),
+    })
+  },
+
   crisisCleanup(state) {
     _log(state, {
       template: 'Cleaning up crisis',
