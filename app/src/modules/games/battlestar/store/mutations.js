@@ -317,7 +317,7 @@ const mutations = {
 
   passTo(state, name) {
     rk.session.put(
-      state,
+      rk.state,
       'waitingFor',
       name,
     )

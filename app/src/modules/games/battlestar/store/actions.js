@@ -107,6 +107,17 @@ export default {
     state.ui.modalLocation.name = name
   },
 
+  async notify({ state }, playerId) {
+    const requestResult = await axios.post('/api/game/notify', {
+      gameId: state.game._id,
+      userId: playerId,
+    })
+
+    if (requestResult.data.status !== 'success') {
+      throw requestResult.data.message
+    }
+  },
+
   async pass({ commit, dispatch, getters, state }, nameIn) {
     let name = nameIn
 
@@ -128,14 +139,7 @@ export default {
     commit('passTo', name)
 
     await dispatch('save')
-    const requestResult = await axios.post('/api/game/notify', {
-      gameId: state.game._id,
-      userId: user._id,
-    })
-
-    if (requestResult.data.status !== 'success') {
-      throw requestResult.data.message
-    }
+    await dispatch('notify', user._id)
   },
 
   async save({ state }) {

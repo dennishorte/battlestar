@@ -219,8 +219,8 @@ export default {
   },
 
   methods: {
-    pass(name) {
-      this.$store.dispatch('bsg/pass', name)
+    async pass(name) {
+      await this.$store.dispatch('bsg/pass', name)
     },
 
     resourceChanged({ name, amount }) {

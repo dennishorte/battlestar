@@ -140,10 +140,6 @@ const options = [
         text: 'Prepare for Jump',
       },
       {
-        value: 'main-hand-limit',
-        text: 'Hand Limit',
-      },
-      {
         value: 'main-cleanup',
         text: 'Cleanup',
       },
