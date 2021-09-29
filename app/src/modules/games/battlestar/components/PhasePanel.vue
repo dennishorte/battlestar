@@ -149,19 +149,19 @@ const options = [
     label: 'Skill Check',
     options: [
       {
-        value: 'crisis-read-card',
+        value: 'skill-check-read-card',
         text: 'Read Card',
       },
       {
-        value: 'crisis-destiny-deck',
+        value: 'skill-check-destiny-deck',
         text: 'Play from Destiny Deck',
       },
       {
-        value: 'crisis-play-skills',
+        value: 'skill-check-play-skills',
         text: 'Play Skills',
       },
       {
-        value: 'crisis-determine-result',
+        value: 'skill-check-determine-result',
         text: 'Determine Result',
       },
     ],

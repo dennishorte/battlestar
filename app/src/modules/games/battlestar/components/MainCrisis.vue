@@ -36,7 +36,7 @@
         </b-button>
       </b-button-group>
 
-      <b-button-group v-if="isChoice && crisisStep === 'discuss'" class="w-100 mb-2">
+      <b-button-group v-if="isSkillCheck && crisisStep === 'discuss'" class="w-100 mb-2">
         <b-button @click="help('none')" variant="danger">none</b-button>
         <b-button @click="help('a little')" variant="warning">a little</b-button>
         <b-button @click="help('a lot')" variant="primary">a lot</b-button>
@@ -47,7 +47,7 @@
           <CrisisCard v-if="card.name" :card="card" />
         </b-col>
 
-        <b-col v-if="isChoice">
+        <b-col v-if="isSkillCheck">
           <div
             v-for="player in playersOrdered"
             :key="player.name"
@@ -121,15 +121,15 @@ export default {
       return this.$store.getters['bsg/crisisStep']
     },
 
-    isChoice() {
+    isSkillCheck() {
       return this.card
           && (this.card.type === 'Skill Check' || this.card.type === 'Optional Skill Check')
     },
 
     playersOrdered() {
       const players = [...this.$store.getters['bsg/players']]
-      const viewer = this.$store.getters['bsg/uiViewer']
-      while (players[players.length - 1].name !== viewer.name) {
+      const activePlayer = this.$store.getters['bsg/playerActive']
+      while (players[players.length - 1].name !== activePlayer.name) {
         players.push(players.shift())
       }
 
