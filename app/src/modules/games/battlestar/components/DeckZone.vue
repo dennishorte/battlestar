@@ -287,7 +287,6 @@ export default {
     },
 
     async click(event, location) {
-      console.log('click', location)
       const didAction = await this.$store.dispatch('bsg/zoneClick', {
         source: this.deckName,
         index: location || 'top',
