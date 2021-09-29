@@ -6,7 +6,6 @@
       <b-button-group v-if="isChoice" class="w-100 mb-2">
         <b-button @click="help('none')" variant="danger">none</b-button>
         <b-button @click="help('a little')" variant="warning">a little</b-button>
-        <b-button @click="help('some')" variant="success">some</b-button>
         <b-button @click="help('a lot')" variant="primary">a lot</b-button>
       </b-button-group>
 
