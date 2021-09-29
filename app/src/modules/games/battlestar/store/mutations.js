@@ -186,13 +186,45 @@ function _moveCommit(state, data) {
     _shuffle(targetZone.cards)
   }
 
+  let sourceString
+  if (sourceZone.kind === 'deck') {
+    if (sourceIndex === 0) {
+      sourceString = `top of ${data.source}`
+    }
+    else if (sourceIndex === sourceZone.cards.length) {
+      sourceString = `bottom of ${data.source}`
+    }
+    else {
+      sourceString = `${sourceIndex + 1}th from top of ${data.source}`
+    }
+  }
+  else {
+    sourceString = data.source
+  }
+
+  let targetString
+  if (targetZone.kind === 'deck') {
+    if (targetIndex === 0) {
+      targetString = `top of ${data.target}`
+    }
+    else if (targetIndex === targetZone.cards.length - 1) {
+      targetString = `bottom of ${data.target}`
+    }
+    else {
+      targetString = `${targetIndex + 1}th from top of ${data.target}`
+    }
+  }
+  else {
+    targetString = data.target
+  }
+
   _log(state, {
     template: "{card} moved from {source} to {target}",
     classes: ['card-move'],
     args: {
       card,
-      source: data.source,
-      target: data.target,
+      source: sourceString,
+      target: targetString,
     },
   })
 }
