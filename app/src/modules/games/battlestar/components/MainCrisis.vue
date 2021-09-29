@@ -69,6 +69,11 @@
               </span>
             </div>
           </div>
+
+          <b-button variant="success" @click="doneAdding" v-if="!crisisDone">
+            Done Adding
+          </b-button>
+
         </b-col>
       </b-row>
     </div>
@@ -97,6 +102,11 @@ export default {
       return this.$store.getters['bsg/commonCrisis']
     },
 
+    crisisDone() {
+      const viewer = this.$store.getters['bsg/uiViewer']
+      return this.$store.getters['bsg/player'](viewer.name).crisisDone
+    },
+
     crisisStep() {
       return this.$store.getters['bsg/crisisStep']
     },
@@ -120,6 +130,10 @@ export default {
   methods: {
     drawCrisis() {
       this.$store.commit('bsg/drawCrisis')
+    },
+
+    doneAdding() {
+      this.$store.commit('bsg/crisisDoneAdding')
     },
 
     help(amount) {

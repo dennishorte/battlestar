@@ -258,6 +258,7 @@ function _phaseSet(state, phaseName) {
       for (const player of state.game.players) {
         rk.session.put(player, 'crisisHelp', '')
         rk.session.put(player, 'crisisCount', -1)
+        rk.session.put(player, 'crisisDone', false)
       }
     }
   }
@@ -413,6 +414,32 @@ const mutations = {
         })
       }
     }
+  },
+
+  crisisDoneAdding(state) {
+    const player = $.playerByName(state, state.ui.player.name)
+    rk.session.put(
+      player,
+      'crisisDone',
+      true,
+    )
+
+    if (player.crisisCount < 0) {
+      rk.session.put(
+        player,
+        'crisisCount',
+        0,
+      )
+    }
+
+    _log(state, {
+      template: '{player} added {amount} cards',
+      classes: [],
+      args: {
+        player: player.name,
+        amount: player.crisisCount,
+      }
+    })
   },
 
   crisisHelp(state, { playerName, amount }) {
