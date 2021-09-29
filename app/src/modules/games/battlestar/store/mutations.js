@@ -12,7 +12,7 @@ function _cardSetVisibilityByZone(card, zone) {
     rk.session.replace(card.visibility, ['all'])
   }
   else if (zoneVis === 'president') {
-    rk.session.replace(card.visibility, [$.presidentName(rk.state)])
+    rk.session.replace(card.visibility, [$.presidentName(rk.game)])
   }
   else if (zoneVis === 'owner') {
     rk.session.replace(card.visibility, [zone.owner])
@@ -101,13 +101,13 @@ function _maybeReshuffleDiscard(zone) {
     return
 
   const discardName = zone.name.replace('decks.', 'discard.')
-  const discard = $.zoneGet(rk.state, discardName)
+  const discard = $.zoneGet(rk.game, discardName)
 
   rk.session.replace(zone.cards, discard.cards)
   rk.session.replace(discard.cards, [])
   _shuffle(zone.cards)
 
-  _log(rk.state, {
+  _log(rk.game, {
     template: "Shuffled discard pile back into {zone}",
     classes: ['skill-deck-shuffle'],
     args: {
@@ -230,10 +230,10 @@ function _moveCommit(state, data) {
 }
 
 function _phaseSet(state, phaseName) {
-  rk.session.put(rk.state, 'phase', phaseName)
+  rk.session.put(rk.game, 'phase', phaseName)
 
   if (phaseName === 'main-crisis') {
-    rk.session.put(rk.state, 'crisisStep', 'discuss')
+    rk.session.put(rk.game, 'crisisStep', 'discuss')
 
     if ($.zoneGet(state, 'crisisPool').cards.length === 0) {
       for (const player of state.game.players) {
@@ -379,7 +379,7 @@ const mutations = {
   },
 
   crisisStep(state, name) {
-    rk.session.put(rk.state, 'crisisStep', name)
+    rk.session.put(rk.game, 'crisisStep', name)
     _log(state, {
       template: 'Crisis step set to {step}',
       classes: [],
@@ -416,7 +416,7 @@ const mutations = {
 
   passTo(state, name) {
     rk.session.put(
-      rk.state,
+      rk.game,
       'waitingFor',
       name,
     )
@@ -564,7 +564,7 @@ const mutations = {
   load(state, data) {
     state.game = data
     rk = new RecordKeeper('waiting')  // Ensures it is fully reset
-    rk.loadState(data)
+    rk.load(data)
     localSession = false
   },
 }
@@ -578,10 +578,10 @@ for (const [name, func] of Object.entries(mutations)) {
   wrappedMutations[name] = function() {
     // Initialize record keeper or ensure its state is consistent
     const state = arguments[0]
-    if (rk.state === 'waiting') {
-      rk.loadState(state.game)
+    if (rk.game === 'waiting') {
+      rk.load(state.game)
     }
-    else if (rk.state !== state.game) {
+    else if (rk.game !== state.game) {
       throw "RecordKeeper state doesn't match mutation state."
     }
 

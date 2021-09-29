@@ -9,6 +9,7 @@ function stateFactory() {
       hello: 'world',
       foo: 'bar',
     },
+    history: [],
     nestedArrays: [[1,2,['x', 'y', 'z']], ['a', 'b', 'c']],
     nested: [{}, { a: 'b' }, { arr: ['a', 'b', { c: { d: 'deep'} } ] }],
   }
@@ -16,8 +17,9 @@ function stateFactory() {
 
 
 test('has expected member variables', () => {
-  const rk = new RecordKeeper('state')
-  expect(rk.state).toBe('state')
+  const game = { history: [] }
+  const rk = new RecordKeeper(game)
+  expect(rk.game).toBe(game)
   expect(rk.diffs).toStrictEqual([])
   expect(rk.undone).toStrictEqual([])
 })
@@ -26,31 +28,31 @@ describe('path', () => {
 
   test('root state', () => {
     const rk = new RecordKeeper(stateFactory())
-    const found = rk.path(rk.state)
+    const found = rk.path(rk.game)
     expect(found).toBe('.')
   })
 
   test('root object', () => {
     const rk = new RecordKeeper(stateFactory())
-    const found = rk.path(rk.state.object)
+    const found = rk.path(rk.game.object)
     expect(found).toBe('.object')
   })
 
   test('root array', () => {
     const rk = new RecordKeeper(stateFactory())
-    const found = rk.path(rk.state.array)
+    const found = rk.path(rk.game.array)
     expect(found).toBe('.array')
   })
 
   test('object in array', () => {
     const rk = new RecordKeeper(stateFactory())
-    const found = rk.path(rk.state.nested[1])
+    const found = rk.path(rk.game.nested[1])
     expect(found).toBe('.nested[1]')
   })
 
   test('nested array', () => {
     const rk = new RecordKeeper(stateFactory())
-    const found = rk.path(rk.state.nestedArrays[0][2])
+    const found = rk.path(rk.game.nestedArrays[0][2])
     expect(found).toBe('.nestedArrays[0][2]')
   })
 })
@@ -59,7 +61,7 @@ describe('at', () => {
   test('root', () => {
     const rk = new RecordKeeper(stateFactory())
     const value = rk.at('.')
-    expect(value).toStrictEqual(rk.state)
+    expect(value).toStrictEqual(rk.game)
   })
 
   test('scalar', () => {
@@ -97,11 +99,11 @@ describe('undo', () => {
   function setup() {
     const rk = new RecordKeeper(stateFactory())
     rk.sessionStart(session => {
-      session.put(rk.state, 'atRoot', [0, 1, 2])
-      session.splice(rk.state.atRoot, 1, 2, 'a')
+      session.put(rk.game, 'atRoot', [0, 1, 2])
+      session.splice(rk.game.atRoot, 1, 2, 'a')
     })
     rk.sessionStart(session => {
-      session.put(rk.state, 'atRoot', 'hello')
+      session.put(rk.game, 'atRoot', 'hello')
     })
     return rk
   }
@@ -111,7 +113,7 @@ describe('undo', () => {
     rk.undo()
     expect(rk.diffs.length).toBe(1)
     expect(rk.undone.length).toBe(1)
-    expect(rk.state.atRoot).toStrictEqual([0, 'a'])
+    expect(rk.game.atRoot).toStrictEqual([0, 'a'])
   })
 
   test('undo two', () => {
@@ -120,7 +122,7 @@ describe('undo', () => {
     rk.undo()
     expect(rk.diffs.length).toBe(0)
     expect(rk.undone.length).toBe(2)
-    expect(rk.state.atRoot).toBe(1)
+    expect(rk.game.atRoot).toBe(1)
   })
 
   test('undo/redo two', () => {
@@ -131,7 +133,7 @@ describe('undo', () => {
     rk.redo()
     expect(rk.diffs.length).toBe(2)
     expect(rk.undone.length).toBe(0)
-    expect(rk.state.atRoot).toBe('hello')
+    expect(rk.game.atRoot).toBe('hello')
   })
 })
 
@@ -149,7 +151,7 @@ describe('session', () => {
         new: 2,
       })
       session.commit()
-      expect(rk.state.atRoot).toBe(2)
+      expect(rk.game.atRoot).toBe(2)
     })
 
     test('put: root array', () => {
@@ -163,7 +165,7 @@ describe('session', () => {
         new: ['a', 'b'],
       })
       session.commit()
-      expect(rk.state.array).toStrictEqual(['a', 'b'])
+      expect(rk.game.array).toStrictEqual(['a', 'b'])
     })
 
     test('put: root object', () => {
@@ -180,7 +182,7 @@ describe('session', () => {
         new: ['a', 'b'],
       })
       session.commit()
-      expect(rk.state.object).toStrictEqual(['a', 'b'])
+      expect(rk.game.object).toStrictEqual(['a', 'b'])
     })
 
     test('splice', () => {
@@ -193,7 +195,7 @@ describe('session', () => {
         old: [],
         new: [9],
       })
-      expect(rk.state.array).toStrictEqual([0,9,1,2,3])
+      expect(rk.game.array).toStrictEqual([0,9,1,2,3])
     })
 
   })
@@ -210,7 +212,7 @@ describe('session', () => {
         new: 1,
       })
       session.commit()
-      expect(rk.state.atRoot).toBe(2)
+      expect(rk.game.atRoot).toBe(2)
     })
 
     test('put: root array', () => {
@@ -224,7 +226,7 @@ describe('session', () => {
         new: [0,1,2,3],
       })
       session.commit()
-      expect(rk.state.array).toStrictEqual(['a', 'b'])
+      expect(rk.game.array).toStrictEqual(['a', 'b'])
     })
 
     test('put: root object', () => {
@@ -241,7 +243,7 @@ describe('session', () => {
         },
       })
       session.commit()
-      expect(rk.state.object).toStrictEqual(['a', 'b'])
+      expect(rk.game.object).toStrictEqual(['a', 'b'])
     })
 
     test('splice', () => {
@@ -255,7 +257,7 @@ describe('session', () => {
         new: [],
       })
       session.commit()
-      expect(rk.state.array).toStrictEqual([0,9,1,2,3])
+      expect(rk.game.array).toStrictEqual([0,9,1,2,3])
     })
 
   })
@@ -265,7 +267,7 @@ describe('session', () => {
     test('put: root scalar', () => {
       const rk = new RecordKeeper(stateFactory())
       const session = rk.sessionStart()
-      session.put(rk.state, 'atRoot', 2)
+      session.put(rk.game, 'atRoot', 2)
       session.commit()
       const diff = {
         kind: 'put',
@@ -280,7 +282,7 @@ describe('session', () => {
     test('replace: object key', () => {
       const rk = new RecordKeeper(stateFactory())
       const session = rk.sessionStart()
-      session.replace(rk.state.object, 'hello')
+      session.replace(rk.game.object, 'hello')
       session.commit()
       const diff = {
         kind: 'put',
@@ -298,7 +300,7 @@ describe('session', () => {
     test('replace: array element', () => {
       const rk = new RecordKeeper(stateFactory())
       const session = rk.sessionStart()
-      session.replace(rk.state.nestedArrays[1], 'hello')
+      session.replace(rk.game.nestedArrays[1], 'hello')
       session.commit()
       const diff = {
         kind: 'put',
@@ -313,7 +315,7 @@ describe('session', () => {
     test('splice', () => {
       const rk = new RecordKeeper(stateFactory())
       const session = rk.sessionStart()
-      session.splice(rk.state.array, 1, 2, 9, 10, 11)
+      session.splice(rk.game.array, 1, 2, 9, 10, 11)
       session.commit()
       const diff = {
         kind: 'splice',
@@ -332,8 +334,8 @@ describe('session', () => {
     test('put, splice', () => {
       const rk = new RecordKeeper(stateFactory())
       const session = rk.sessionStart()
-      session.put(rk.state, 'atRoot', [0, 1, 2])
-      session.splice(rk.state.atRoot, 1, 2, 'a')
+      session.put(rk.game, 'atRoot', [0, 1, 2])
+      session.splice(rk.game.atRoot, 1, 2, 'a')
       session.commit()
       const diffs = [
         {
@@ -360,11 +362,11 @@ describe('session', () => {
     test('put, splice', () => {
       const rk = new RecordKeeper(stateFactory())
       const session = rk.sessionStart()
-      session.put(rk.state, 'atRoot', [0, 1, 2])
-      session.splice(rk.state.atRoot, 1, 2, 'a')
+      session.put(rk.game, 'atRoot', [0, 1, 2])
+      session.splice(rk.game.atRoot, 1, 2, 'a')
       session.cancel()
       expect(rk.diffs).toStrictEqual([])
-      expect(rk.state.atRoot).toBe(1)
+      expect(rk.game.atRoot).toBe(1)
     })
 
   })

@@ -1,6 +1,6 @@
 export default function RecordKeeperSession(rk) {
   this.rk = rk
-  this.state = rk.state
+  this.game = rk.game
   this.diffs = []
   this.record = 'diff'
 }
@@ -141,12 +141,12 @@ function at(path) {
   }
 
   if (path === '') {
-    return this.state
+    return this.game
   }
 
   const tokens = path.split('.')
 
-  let pos = this.state
+  let pos = this.game
   for (const token of tokens) {
     if (token.endsWith(']')) {
       const pieces = token.split('[')
@@ -171,7 +171,7 @@ function path(target) {
     throw `Invalid path target. Can only path objects and arrays. Got ${typeof target}: ${target}`
   }
 
-  const result = _pathRecursive(target, this.state, '')
+  const result = _pathRecursive(target, this.game, '')
   if (!result) {
     throw `Target not found: ${target}`
   }
@@ -207,7 +207,7 @@ function _close(session) {
   // Session is now closed
   session.rk.session = null
   session.diffs = null
-  session.state = null
+  session.game = null
   session.rk = null
 }
 
