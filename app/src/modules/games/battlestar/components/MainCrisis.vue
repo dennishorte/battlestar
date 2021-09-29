@@ -3,7 +3,15 @@
     <div class="description">
       <p>The active player turns over the top card of the crisis deck (by moving it to the common zone).</p>
 
-      <b-button-group class="w-100 mb-2" style="background-color: white;">
+      <b-button
+        v-if="!commonCrisis"
+        @click="drawCrisis"
+        variant="primary"
+        block>
+        draw crisis card
+      </b-button>
+
+      <b-button-group v-else class="w-100 mb-2" style="background-color: white;">
         <b-button
           @click="setStep('discuss')"
           :variant="crisisStep === 'discuss' ? 'primary' : 'outline-primary'">
@@ -76,7 +84,11 @@ export default {
 
   computed: {
     card() {
-      return this.$store.getters['bsg/commonCrisis'] || {}
+      return this.commonCrisis || {}
+    },
+
+    commonCrisis() {
+      return this.$store.getters['bsg/commonCrisis']
     },
 
     crisisStep() {
@@ -100,6 +112,10 @@ export default {
   },
 
   methods: {
+    drawCrisis() {
+      this.$store.commit('bsg/drawCrisis')
+    },
+
     help(amount) {
       this.$store.commit('bsg/crisisHelp', {
         playerName: this.$store.getters['bsg/uiViewer'].name,

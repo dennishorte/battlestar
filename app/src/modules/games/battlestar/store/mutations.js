@@ -389,6 +389,13 @@ const mutations = {
     })
   },
 
+  drawCrisis(state) {
+    _moveCommit(state, {
+      source: 'decks.crisis',
+      target: 'common',
+    })
+  },
+
   drawSkills(state, { playerName, kinds }) {
     for (const kind of kinds) {
       const deckName = `decks.${kind}`
