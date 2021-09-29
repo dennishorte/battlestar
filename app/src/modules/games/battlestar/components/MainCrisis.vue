@@ -3,7 +3,33 @@
     <div class="description">
       <p>The active player turns over the top card of the crisis deck (by moving it to the common zone).</p>
 
-      <b-button-group v-if="isChoice" class="w-100 mb-2">
+      <b-button-group class="w-100 mb-2" style="background-color: white;">
+        <b-button
+          @click="setStep('discuss')"
+          :variant="crisisStep === 'discuss' ? 'primary' : 'outline-primary'">
+          discuss
+        </b-button>
+
+        <b-button
+          @click="setStep('decide')"
+          :variant="crisisStep === 'decide' ? 'primary' : 'outline-primary'">
+          decide
+        </b-button>
+
+        <b-button
+          @click="setStep('add cards')"
+          :variant="crisisStep === 'add cards' ? 'primary' : 'outline-primary'">
+          add cards
+        </b-button>
+
+        <b-button
+          @click="setStep('resolve')"
+          :variant="crisisStep === 'resolve' ? 'primary' : 'outline-primary'">
+          resolve
+        </b-button>
+      </b-button-group>
+
+      <b-button-group v-if="isChoice && crisisStep === 'discuss'" class="w-100 mb-2">
         <b-button @click="help('none')" variant="danger">none</b-button>
         <b-button @click="help('a little')" variant="warning">a little</b-button>
         <b-button @click="help('a lot')" variant="primary">a lot</b-button>
@@ -53,6 +79,10 @@ export default {
       return this.$store.getters['bsg/commonCrisis'] || {}
     },
 
+    crisisStep() {
+      return this.$store.getters['bsg/crisisStep']
+    },
+
     isChoice() {
       return this.card
           && (this.card.type === 'Skill Check' || this.card.type === 'Optional Skill Check')
@@ -70,15 +100,17 @@ export default {
   },
 
   methods: {
-
     help(amount) {
       this.$store.commit('bsg/crisisHelp', {
         playerName: this.$store.getters['bsg/uiViewer'].name,
         amount,
       })
-  },
+    },
 
-},
+    setStep(name) {
+      this.$store.commit('bsg/crisisStep', name)
+    },
+  },
 
 }
 </script>

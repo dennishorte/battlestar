@@ -362,9 +362,20 @@ const mutations = {
     )
 
     _log(state, {
-      template: `I can help {amount}`,
+      template: 'I can help {amount}',
       classes: ['crisis-help'],
       args: { amount },
+    })
+  },
+
+  crisisStep(state, name) {
+    state.game.crisisStep = name
+    _log(state, {
+      template: 'Crisis step set to {step}',
+      classes: [],
+      args: {
+        step: name,
+      }
     })
   },
 
@@ -570,6 +581,12 @@ for (const [name, func] of Object.entries(mutations)) {
     }
     else if (rk.state !== state.game) {
       throw "RecordKeeper state doesn't match mutation state."
+    }
+
+    // Mark that there are unsaved actions
+    if (name !== 'load') {
+      console.log('mutation: ', name)
+      state.ui.unsavedActions = true
     }
 
     // Start a session if none is in progress
