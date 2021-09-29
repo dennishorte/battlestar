@@ -259,6 +259,7 @@ function _phaseSet(state, phaseName) {
         rk.session.put(player, 'crisisHelp', '')
         rk.session.put(player, 'crisisCount', -1)
         rk.session.put(player, 'crisisDone', false)
+        rk.session.put(rk.game, 'crisisDestinyAdded', false)
       }
     }
   }
@@ -285,6 +286,26 @@ function _resourceChange(state, name, amount) {
       after: before + amount
     },
   })
+}
+
+function _refillDestiny(state) {
+  _log(state, {
+    template: 'Refilling destiny deck',
+    classes: ['admin-action'],
+  })
+
+  for (const skill of bsgutil.skillList) {
+    for (let i = 0; i < 2; i++) {
+      if (skill === 'treachery')
+        continue
+
+      _moveCommit(state, {
+        source: `decks.${skill}`,
+        sourceIndex: 0,
+        target: `destiny`,
+      })
+    }
+  }
 }
 
 
@@ -322,6 +343,28 @@ function _zoneDiscardAll(state, zoneName) {
 
 
 const mutations = {
+  addDestinyCards(state) {
+    _log(state, {
+      template: 'Adding cards from the destiny deck',
+      classes: ['admin-action'],
+    })
+
+    const destiny = $.zoneGet(state, 'destiny')
+
+    for (let i = 0; i < 2; i++) {
+      if (destiny.cards.length === 0) {
+        _refillDestiny(state)
+      }
+
+      _moveCommit(state, {
+        source: 'destiny',
+        target: 'crisisPool',
+      })
+    }
+
+    rk.session.put(rk.game, 'crisisDestinyAdded', true)
+  },
+
   advanceJumpTrack(state) {
     _resourceChange(state, 'jumpTrack', 1)
     rk.session.put(
@@ -544,23 +587,7 @@ const mutations = {
   },
 
   refillDestiny(state) {
-    _log(state, {
-      template: 'Refilling destiny deck',
-      classes: ['admin-action'],
-    })
-
-    for (const skill of bsgutil.skillList) {
-      for (let i = 0; i < 2; i++) {
-        if (skill === 'treachery')
-          continue
-
-        _moveCommit(state, {
-          source: `decks.${skill}`,
-          sourceIndex: 0,
-          target: `destiny`,
-        })
-      }
-    }
+    _refillDestiny(state)
   },
 
   resourceChange(state, { name, amount }) {

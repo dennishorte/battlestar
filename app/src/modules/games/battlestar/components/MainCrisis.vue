@@ -70,9 +70,15 @@
             </div>
           </div>
 
-          <b-button variant="success" @click="doneAdding" v-if="!crisisDone">
-            Done Adding
-          </b-button>
+          <div v-if="crisisStep === 'add cards'">
+            <b-button variant="warning" @click="addDestinyCards" :disabled="crisisDestinyAdded">
+              Add Destiny Cards
+            </b-button>
+
+            <b-button variant="success" @click="doneAdding" :disabled="crisisDone">
+              Done Adding My Cards
+            </b-button>
+          </div>
 
         </b-col>
       </b-row>
@@ -102,6 +108,10 @@ export default {
       return this.$store.getters['bsg/commonCrisis']
     },
 
+    crisisDestinyAdded() {
+      return this.$store.getters['bsg/crisisDestinyAdded']
+    },
+
     crisisDone() {
       const viewer = this.$store.getters['bsg/uiViewer']
       return this.$store.getters['bsg/player'](viewer.name).crisisDone
@@ -128,6 +138,10 @@ export default {
   },
 
   methods: {
+    addDestinyCards() {
+      this.$store.commit('bsg/addDestinyCards')
+    },
+
     drawCrisis() {
       this.$store.commit('bsg/drawCrisis')
     },

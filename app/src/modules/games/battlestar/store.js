@@ -73,6 +73,7 @@ export default {
 
     cardAt: (state) => (source, index) => $.zoneGet(state, source).cards[index],
     commonCrisis: (state) => $.commonCrisis(state),
+    crisisDestinyAdded: (state) => state.game.crisisDestinyAdded,
     crisisStep: (state) => state.game.crisisStep,
     deck: (state) => (key) => $.deckGet(state, key),
     discard: (state) => (key) => $.discardGet(state, key),

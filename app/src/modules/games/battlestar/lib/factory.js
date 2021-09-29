@@ -20,6 +20,7 @@ async function initialize(game) {
   game.setupLoyaltyComplete = true
   game.phase = 'setup-character-selection'
   game.crisisStep = ''
+  game.crisisDestinyAdded = false
 
   game.history = []
   game.log = []
