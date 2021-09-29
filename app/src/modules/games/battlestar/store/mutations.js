@@ -122,80 +122,59 @@ function _move(source, sourceIndex, target, targetIndex) {
   rk.session.splice(target, targetIndex, 0, card)
 }
 
-function _moveCommit(state, data) {
-  const sourceZone = $.zoneGet(state, data.source)
-  const targetZone = $.zoneGet(state, data.target)
-
+function _moveConvertSourceIndex(data, sourceZone) {
   // Calculate the actual sourceIndex as positive integer (or zero)
-  let sourceIndex
   if (data.cardId) {
-    sourceIndex = sourceZone.cards.findIndex(x => x.id === data.cardId)
+    data.sourceIndex = sourceZone.cards.findIndex(x => x.id === data.cardId)
   }
   else if (data.sourceIndex === 'top') {
-    sourceIndex = 0
+    data.sourceIndex = 0
   }
   else if (data.sourceIndex === 'bottom') {
-    sourceIndex = sourceZone.cards.length
+    data.sourceIndex = sourceZone.cards.length
   }
   else if (data.sourceIndex < 0) {
-    sourceIndex = sourceZone.cards.length + data.sourceIndex
+    data.sourceIndex = sourceZone.cards.length + data.sourceIndex
   }
   else {
-    sourceIndex = data.sourceIndex || 0
+    data.sourceIndex = data.sourceIndex || 0
   }
+}
 
+function _moveConvertTargetIndex(data, targetZone) {
   // Calculate the actual targetIndex as positive integer (or zero)
-  let targetIndex
   if (data.targetIndex === undefined) {
-    targetIndex = targetZone.cards.length
+    data.targetIndex = targetZone.cards.length
   }
   else if (data.targetIndex === 'top') {
-    targetIndex = 0
+    data.targetIndex = 0
   }
   else if (data.targetIndex === 'bottom') {
-    targetIndex = targetZone.cards.length
+    data.targetIndex = targetZone.cards.length
   }
   else if (data.targetIndex < 0) {
-    targetIndex = targetZone.cards.length + data.targetIndex
+    data.targetIndex = targetZone.cards.length + data.targetIndex
   }
   else {
-    targetIndex = data.targetIndex
+    /* data.targetIndex = data.targetIndex */
   }
+}
 
-  /* console.log({
-   *   sourceZone,
-   *   sourceIndex,
-   *   targetZone,
-   *   targetIndex,
-   * }) */
-
-  _maybeReshuffleDiscard(sourceZone)
-  _move(
-    sourceZone.cards,
-    sourceIndex,
-    targetZone.cards,
-    targetIndex,
-  )
-
-  // Update the visibility of the card to its new zone
-  const card = targetZone.cards[targetIndex]
-  _cardSetVisibilityByZone(card, targetZone)
-
-  // If the new zone is a 'bag', randomize it automatically
-  if (targetZone.kind === 'bag') {
-    _shuffle(targetZone.cards)
-  }
+function _moveCommitLog(state, data) {
+  const sourceZone = $.zoneGet(state, data.source)
+  const targetZone = $.zoneGet(state, data.target)
+  const card = targetZone.cards[data.targetIndex]
 
   let sourceString
   if (sourceZone.kind === 'deck') {
-    if (sourceIndex === 0) {
+    if (data.sourceIndex === 0) {
       sourceString = `top of ${data.source}`
     }
-    else if (sourceIndex === sourceZone.cards.length) {
+    else if (data.sourceIndex === sourceZone.cards.length) {
       sourceString = `bottom of ${data.source}`
     }
     else {
-      sourceString = `${sourceIndex + 1}th from top of ${data.source}`
+      sourceString = `${data.sourceIndex + 1}th from top of ${data.source}`
     }
   }
   else {
@@ -204,14 +183,14 @@ function _moveCommit(state, data) {
 
   let targetString
   if (targetZone.kind === 'deck') {
-    if (targetIndex === 0) {
+    if (data.targetIndex === 0) {
       targetString = `top of ${data.target}`
     }
-    else if (targetIndex === targetZone.cards.length - 1) {
+    else if (data.targetIndex === targetZone.cards.length - 1) {
       targetString = `bottom of ${data.target}`
     }
     else {
-      targetString = `${targetIndex + 1}th from top of ${data.target}`
+      targetString = `${data.targetIndex + 1}th from top of ${data.target}`
     }
   }
   else {
@@ -227,6 +206,32 @@ function _moveCommit(state, data) {
       target: targetString,
     },
   })
+}
+
+function _moveCommit(state, data) {
+  const sourceZone = $.zoneGet(state, data.source)
+  const targetZone = $.zoneGet(state, data.target)
+
+  _moveConvertSourceIndex(data, sourceZone)
+  _moveConvertTargetIndex(data, targetZone)
+
+  _maybeReshuffleDiscard(sourceZone)
+  _move(
+    sourceZone.cards,
+    data.sourceIndex,
+    targetZone.cards,
+    data.targetIndex,
+  )
+  _moveCommitLog(state, data)
+
+  // Update the visibility of the card to its new zone
+  const card = targetZone.cards[data.targetIndex]
+  _cardSetVisibilityByZone(card, targetZone)
+
+  // If the new zone is a 'bag', randomize it automatically
+  if (targetZone.kind === 'bag') {
+    _shuffle(targetZone.cards)
+  }
 }
 
 function _phaseSet(state, phaseName) {
