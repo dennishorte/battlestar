@@ -229,8 +229,18 @@ function _moveCommit(state, data) {
   })
 }
 
-function _phaseSet(phaseName) {
+function _phaseSet(state, phaseName) {
   rk.session.put(rk.state, 'phase', phaseName)
+
+  if (phaseName === 'main-crisis') {
+    rk.session.put(rk.state, 'crisisStep', 'discuss')
+
+    if ($.zoneGet(state, 'crisisPool').cards.length === 0) {
+      for (const player of state.game.players) {
+        rk.session.put(player, 'crisisHelp', '')
+      }
+    }
+  }
 }
 
 function _shuffle(array) {
@@ -369,7 +379,7 @@ const mutations = {
   },
 
   crisisStep(state, name) {
-    state.game.crisisStep = name
+    rk.session.put(rk.state, 'crisisStep', name)
     _log(state, {
       template: 'Crisis step set to {step}',
       classes: [],
@@ -427,15 +437,7 @@ const mutations = {
       args: { phase: phaseName },
     })
 
-    _phaseSet(phaseName)
-
-    if (phaseName === 'main-crisis') {
-      if ($.zoneGet(state,'crisisPool').cards.length === 0) {
-        for (const player in state.game.players) {
-          rk.session.put(player, 'crisisHelp', '')
-        }
-      }
-    }
+    _phaseSet(state, phaseName)
   },
 
   playerAdvance(state) {
@@ -451,7 +453,7 @@ const mutations = {
       },
     })
 
-    _phaseSet('main-receive-skills')
+    _phaseSet(state, 'main-receive-skills')
   },
 
   refillDestiny(state) {
