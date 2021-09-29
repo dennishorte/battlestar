@@ -41,7 +41,10 @@ export function grabCancel(state) {
 }
 
 export function isRevealed(state, card) {
-  return card.visibility.length === state.game.players.length
+  return (
+    card.visibility.length === state.game.players.length
+    || card.visibility[0] === 'all'
+  )
 }
 
 export function isVisible(state, card) {
@@ -57,8 +60,8 @@ export function locationZoneName(state, locationName) {
 
 export function playerCanSeeCard(state, player, card) {
   return (
-    (card.visibility.length > 0 && card.visibility[0] === 'all')
-    || (card.visibility === 'president' && playerIsPresident(state, player))
+    card.visibility.includes('all')
+    || (card.visibility.includes('president') && playerIsPresident(state, player))
     || card.visibility.includes(player.name)
   )
 }

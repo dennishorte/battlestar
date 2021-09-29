@@ -546,7 +546,7 @@ const mutations = {
     const cards = $.zoneGet(state, zoneName).cards
     for (const card of cards) {
       if (!$.isVisible(state, card)) {
-        $.cardView(state, card, state.ui.player)
+        rk.session.splice(card.visibility, 0, 0, state.ui.player.name)
       }
     }
   },
@@ -555,7 +555,7 @@ const mutations = {
     const cards = $.zoneGet(state, zoneName).cards
     for (const card of cards) {
       if (!$.isVisible(state, card)) {
-        $.cardView(state, card, state.ui.player)
+        rk.session.splice(card.visibility, 0, 0, state.ui.player.name)
         break
       }
     }
