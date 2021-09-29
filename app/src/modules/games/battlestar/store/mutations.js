@@ -131,6 +131,12 @@ function _moveCommit(state, data) {
   if (data.cardId) {
     sourceIndex = sourceZone.cards.findIndex(x => x.id === data.cardId)
   }
+  else if (data.sourceIndex === 'top') {
+    sourceIndex = 0
+  }
+  else if (data.sourceIndex === 'bottom') {
+    sourceIndex = sourceZone.cards.length
+  }
   else if (data.sourceIndex < 0) {
     sourceIndex = sourceZone.cards.length + data.sourceIndex
   }
@@ -141,6 +147,12 @@ function _moveCommit(state, data) {
   // Calculate the actual targetIndex as positive integer (or zero)
   let targetIndex
   if (data.targetIndex === undefined) {
+    targetIndex = targetZone.cards.length
+  }
+  else if (data.targetIndex === 'top') {
+    targetIndex = 0
+  }
+  else if (data.targetIndex === 'bottom') {
     targetIndex = targetZone.cards.length
   }
   else if (data.targetIndex < 0) {

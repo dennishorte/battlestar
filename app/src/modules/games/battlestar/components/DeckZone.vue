@@ -9,6 +9,16 @@
           :class="classes"
           @click="click"
         >
+          <div v-if="deck.kind === 'deck'" class="top-bottom-regions">
+            <div v-if="droppable" class="top-region" @click="clickTop">
+              top
+            </div>
+
+            <div v-if="droppableBottom" class="bottom-region" @click="clickBottom">
+              bottom
+            </div>
+          </div>
+
 
           {{ name }}
           <template v-if="count !== 'none' && !!discard">
@@ -187,6 +197,10 @@ export default {
       const grabbed = this.$store.getters['bsg/grab']
       return grabbed.source && grabbed.source !== this.deckName
     },
+    droppableBottom() {
+      const grabbed = this.$store.getters['bsg/grab']
+      return !!grabbed.source
+    },
     expandable() {
       return this.deck.kind === 'open'
           || this.deck.kind === 'hand'
@@ -272,15 +286,27 @@ export default {
       return variants.cardVariant(card)
     },
 
-    async click() {
+    async click(event, location) {
+      console.log('click', location)
       const didAction = await this.$store.dispatch('bsg/zoneClick', {
         source: this.deckName,
-        index: 'top',
+        index: location || 'top',
       })
 
       if (!didAction && this.clickHandlerPost.func) {
         this.clickHandlerPost.func.apply(this)
       }
+    },
+
+    async clickBottom(event) {
+      console.log('bottom')
+      await this.click(event, 'bottom')
+      event.stopPropagation()
+    },
+
+    async clickTop() {
+      await this.click(event, 'top')
+      event.stopPropagation()
     },
 
     clickCard(index) {
@@ -424,6 +450,38 @@ export default {
 
 .grabbed-card {
   box-shadow: inset 3px 3px 8px #444, inset -3px -3px 8px #444;
+}
+
+.top-bottom-regions {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  right: 0;
+  border-radius: inherit;
+}
+
+.bottom-region,
+.top-region {
+  text-align: center;
+  border-radius: 50%;
+  color: #00000077;
+  background-color: #eeeeeecc;
+  height: 100%;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transform: rotate(-30deg);
+  position: absolute;
+}
+
+.bottom-region {
+  right: 0;
+}
+
+.top-region {
+  left: 0;
 }
 
 .ungrabbed-card {
