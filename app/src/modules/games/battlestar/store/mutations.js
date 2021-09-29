@@ -89,7 +89,7 @@ function _log(state, msgObject) {
     state.game.log,
     state.game.log.length,
     0,
-    msgObject,
+    util.deepcopy(msgObject),
   )
 }
 

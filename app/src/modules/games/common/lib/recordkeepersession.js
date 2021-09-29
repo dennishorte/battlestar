@@ -36,7 +36,7 @@ function commit() {
 
 function patch(diff) {
   if (this.record === 'diff') {
-    this.diffs.push(diff)
+    this.diffs.push(_deepcopy(diff))
   }
 
   const target = this.at(diff.path)
