@@ -60,6 +60,13 @@
               <span v-else class="faint">
                 waiting
               </span>
+
+              <span v-if="player.crisisCount >= 0">
+                {{ player.crisisCount }}
+              </span>
+              <span v-else class="faint">
+                waiting
+              </span>
             </div>
           </div>
         </b-col>

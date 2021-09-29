@@ -51,6 +51,7 @@ async function initialize(game) {
       location: '',
       oncePerGameActionUsed: false,
       crisisHelp: '',
+      crisisCount: -1,
     }
   })
   game.activePlayer = game.players[0].name

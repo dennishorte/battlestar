@@ -232,6 +232,20 @@ function _moveCommit(state, data) {
   if (targetZone.kind === 'bag') {
     _shuffle(targetZone.cards)
   }
+
+  // If the new zone is the crisis pool, remember how many cards this player put in.
+  if (targetZone.name === 'crisisPool') {
+    if (sourceZone.name.startsWith('players')) {
+      const playerName = sourceZone.name.slice(8)
+      const player = $.playerByName(state, playerName)
+      if (player.crisisCount === -1) {
+        player.crisisCount = 1
+      }
+      else {
+        player.crisisCount += 1
+      }
+    }
+  }
 }
 
 function _phaseSet(state, phaseName) {
@@ -243,6 +257,7 @@ function _phaseSet(state, phaseName) {
     if ($.zoneGet(state, 'crisisPool').cards.length === 0) {
       for (const player of state.game.players) {
         rk.session.put(player, 'crisisHelp', '')
+        rk.session.put(player, 'crisisCount', -1)
       }
     }
   }
