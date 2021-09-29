@@ -1,7 +1,6 @@
 <template>
   <div class="main-crisis">
     <div class="description">
-      <p>The active player turns over the top card of the crisis deck (by moving it to the common zone).</p>
 
       <b-button
         v-if="!commonCrisis"
