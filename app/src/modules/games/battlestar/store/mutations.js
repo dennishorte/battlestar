@@ -261,7 +261,31 @@ function _phaseSet(state, phaseName) {
       }
     }
   }
+  else if (phaseName === 'main-prepare-for-jump') {
+    rk.session.put(rk.game, 'crisisStep', 'jump')
+  }
 }
+
+function _resourceChange(state, name, amount) {
+  const before = state.game.counters[name]
+
+  rk.session.put(
+    state.game.counters,
+    name,
+    before + amount
+  )
+
+  _log(state, {
+    template: "{counter} adjusted from {before} to {after}",
+    classes: ['counter-change'],
+    args: {
+      counter: name,
+      before: before,
+      after: before + amount
+    },
+  })
+}
+
 
 function _shuffle(array) {
   const copy = [...array]
@@ -297,6 +321,15 @@ function _zoneDiscardAll(state, zoneName) {
 
 
 const mutations = {
+  advanceJumpTrack(state) {
+    _resourceChange(state, 'jumpTrack', 1)
+    rk.session.put(
+      rk.game,
+      'crisisStep',
+      'done',
+    )
+  },
+
   characterAssign(state, { characterName, playerName }) {
     _log(state, {
       template: '{player} chooses {character}',
@@ -504,23 +537,7 @@ const mutations = {
   },
 
   resourceChange(state, { name, amount }) {
-    const before = state.game.counters[name]
-
-    rk.session.put(
-      state.game.counters,
-      name,
-      state.game.counters[name] + amount
-    )
-
-    _log(state, {
-      template: "{counter} adjusted from {before} to {after}",
-      classes: ['counter-change'],
-      args: {
-        counter: name,
-        before: before,
-        after: before + amount
-      },
-    })
+    _resourceChange(state, name, amount)
   },
 
   zoneDiscardAll(state, zoneName) {

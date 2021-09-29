@@ -74,6 +74,7 @@ import JumpRemoveShips from './JumpRemoveShips'
 import MainActivateCylonShips from './MainActivateCylonShips'
 import MainCleanup from './MainCleanup'
 import MainCrisis from './MainCrisis'
+import MainPrepareForJump from './MainPrepareForJump'
 import MainReceiveSkills from './MainReceiveSkills'
 import MainStartTurn from './MainStartTurn'
 import SetupCharacterSelection from './SetupCharacterSelection'
@@ -204,6 +205,7 @@ export default {
     JumpRemoveShips,
     MainActivateCylonShips,
     MainCrisis,
+    MainPrepareForJump,
     MainCleanup,
     MainReceiveSkills,
     MainStartTurn,
@@ -242,6 +244,9 @@ export default {
 
       if (this.phase === 'main-cleanup')
         return 'MainCleanup'
+
+      if (this.phase === 'main-prepare-for-jump')
+        return 'MainPrepareForJump'
 
       if (this.phase === 'main-receive-skills')
         return 'MainReceiveSkills'
