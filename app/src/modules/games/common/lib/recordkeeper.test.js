@@ -197,7 +197,6 @@ describe('session', () => {
       })
       expect(rk.game.array).toStrictEqual([0,9,1,2,3])
     })
-
   })
 
   describe('reverse', () => {
@@ -327,6 +326,12 @@ describe('session', () => {
       expect(rk.diffs[0]).toStrictEqual([diff])
     })
 
+    test('pop', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.sessionStart()
+      session.pop(rk.game.array)
+      expect(rk.game.array).toStrictEqual([0,1,2])
+    })
   })
 
   describe('multiple changes', () => {

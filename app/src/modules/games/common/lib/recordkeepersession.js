@@ -14,6 +14,7 @@ RecordKeeperSession.prototype.commit = commit
 RecordKeeperSession.prototype.patch = patch
 RecordKeeperSession.prototype.reverse = reverse
 
+RecordKeeperSession.prototype.pop = pop
 RecordKeeperSession.prototype.put = put
 RecordKeeperSession.prototype.replace = replace
 RecordKeeperSession.prototype.splice = splice
@@ -72,6 +73,10 @@ function reverse(diff) {
   reversed.old = diff.new
   reversed.new = diff.old
   this.patch(reversed)
+}
+
+function pop(array) {
+  this.splice(array, array.length - 1, 1)
 }
 
 function put(object, key, value) {
