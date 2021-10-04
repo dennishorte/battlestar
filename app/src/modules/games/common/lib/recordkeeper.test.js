@@ -332,6 +332,13 @@ describe('session', () => {
       session.pop(rk.game.array)
       expect(rk.game.array).toStrictEqual([0,1,2])
     })
+
+    test('push', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.sessionStart()
+      session.push(rk.game.array, 8)
+      expect(rk.game.array).toStrictEqual([0,1,2,3,8])
+    })
   })
 
   describe('multiple changes', () => {
