@@ -98,12 +98,23 @@ function _wait(payload) {
   this.waiting = payload
 }
 
+class InvalidTransitionError extends Error {
+  constructor(...params) {
+    // Pass arguments (including vendor specific ones) to parent constructor
+    super(...params)
+
+    // Maintains proper stack trace for where our error was thrown (only available on V8)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, CustomError)
+    }
+
+    this.name = 'InvalidTransitionError'
+  }
+}
+
 function _assertTransition(test, message) {
   if (!test) {
-    throw {
-      name: 'InvalidTransitionError',
-      message,
-    }
+    throw new InvalidTransitionError(message)
   }
 }
 
