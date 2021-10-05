@@ -1,18 +1,20 @@
+'use strict'
+
+
 function StateMachine(state, transitions) {
   _validateTransitions(transitions)
 
-  if (!state.stack) {
-    state.stack = []
-  }
-
-  if (!state.waiting) {
-    state.waiting = null
+  if (!state.sm) {
+    state.sm = {
+      stack: [],
+      waiting: null,
+    }
   }
 
   this.transitions = transitions
   this.state = state
-  this.stack = this.state.stack
-  this.waiting = this.state.waiting
+  this.stack = this.state.sm.stack
+  this.waiting = this.state.sm.waiting
 }
 
 export default StateMachine
@@ -68,13 +70,13 @@ function _done() {
   this.run()
 }
 
-function _push(eventName) {
+function _push(eventName, data) {
   // console.log('push', eventName)
   this.waiting = null
 
   const event = {
     name: eventName,
-    data: {}
+    data: data || {},
   }
 
   if (eventName === 'END') {

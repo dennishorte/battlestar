@@ -101,4 +101,60 @@ describe('run', () => {
     expect(stackNamesAfter).toStrictEqual(['root', 'END'])
     expect(sm.waiting).toBe(null)
   })
+
+  test('disconnected states', () => {
+    const transitions = {
+      root: {
+        steps: ['one', 'END']
+      },
+
+      'one': {
+        func: (context, state) => {
+          if (state.ready) context.done()
+          else context.push('wait')
+        }
+      },
+
+      'wait': {
+        func: (context, state) => {
+          if (state.ready) context.done()
+          else context.wait('waiting')
+        }
+      }
+    }
+    const sm = new StateMachine({ ready: false }, transitions)
+    sm.run()
+
+    const stackNamesBefore = sm.stack.map(event => event.name)
+    expect(stackNamesBefore).toStrictEqual(['root', 'one', 'wait'])
+    expect(sm.waiting).toBe('waiting')
+
+    sm.state.ready = true
+    sm.run()
+
+    const stackNamesAfter = sm.stack.map(event => event.name)
+    expect(stackNamesAfter).toStrictEqual(['root', 'END'])
+    expect(sm.waiting).toBe(null)
+  })
+
+  test('multiple steps', () => {
+    const transitions = {
+      root: {
+        steps: ['null0', 'null1', 'END']
+      },
+
+      'null0': {
+        func: (context) => context.done()
+      },
+
+      'null1': {
+        func: (context) => context.done()
+      },
+    }
+    const sm = new StateMachine({}, transitions)
+    sm.run()
+
+    const stackNames = sm.stack.map(event => event.name)
+    expect(stackNames).toStrictEqual(['root', 'END'])
+  })
 })
