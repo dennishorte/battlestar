@@ -21,6 +21,8 @@ export default {
       // UI State
 
       ui: {
+        errorMessage: '',
+
         charactersModal: {
           selected: '',
         },
@@ -111,6 +113,7 @@ export default {
     uiCanUndo: (state) => state.game.history.length > 0,
 
     grab: (state) => state.ui.grab,
+    uiErrorMessage: (state) => state.ui.errorMessage,
     uiModalCard: (state) => state.ui.modalCard,
     uiModalLocation: (state) => state.ui.modalLocation,
     uiModalZone: (state) => state.ui.modalZone,

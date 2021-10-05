@@ -121,6 +121,7 @@
     </b-container>
 
     <CardInfoModal />
+    <ErrorModal />
     <HacksModal />
     <ZoneViewerModal />
 
@@ -163,6 +164,7 @@
 <script>
 import CardInfoModal from './CardInfoModal'
 import Characters from './Characters'
+import ErrorModal from './ErrorModal'
 import GameLog from './GameLog'
 import GrabMessage from './GrabMessage'
 import HacksModal from './HacksModal'
@@ -180,6 +182,7 @@ export default {
   components: {
     CardInfoModal,
     Characters,
+    ErrorModal,
     GameLog,
     GrabMessage,
     HacksModal,

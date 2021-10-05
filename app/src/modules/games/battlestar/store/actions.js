@@ -145,9 +145,11 @@ export default {
   async save({ state }) {
     const requestResult = await axios.post('/api/game/save', state.game)
     if (requestResult.data.status !== 'success') {
-      throw requestResult.data.message
+      state.ui.errorMessage = requestResult.data.message
     }
-    state.ui.unsavedActions = false
+    else {
+      state.ui.unsavedActions = false
+    }
   },
 
   skillCardInfoRequest({ state }, cardName) {

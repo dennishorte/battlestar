@@ -50,8 +50,16 @@ Game.notify = async function(req, res) {
 }
 
 Game.save = async function(req, res) {
-  await db.game.save(req.body)
-  res.json({
-    status: 'success',
-  })
+  try {
+    await db.game.save(req.body)
+    res.json({
+      status: 'success',
+    })
+  }
+  catch (e) {
+    res.json({
+      status: 'error',
+      message: e.message,
+    })
+  }
 }
