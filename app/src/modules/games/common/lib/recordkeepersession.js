@@ -1,3 +1,6 @@
+const jsonpath = require('./jsonpath.js')
+
+
 export default function RecordKeeperSession(rk) {
   this.rk = rk
   this.game = rk.game
@@ -146,71 +149,11 @@ function splice(array, index, count, ...items) {
 }
 
 function at(path) {
-  if (path.startsWith('.')) {
-    path = path.slice(1)
-  }
-
-  if (path === '') {
-    return this.game
-  }
-
-  const tokens = path.split('.')
-
-  let pos = this.game
-  for (const token of tokens) {
-    if (token.endsWith(']')) {
-      const pieces = token.split('[')
-      const key = pieces[0]
-      pos = pos[key]
-
-      for (let i = 1; i < pieces.length; i++) {
-        const index = pieces[i].substr(0, pieces[i].length - 1)
-        pos = pos[index]
-      }
-    }
-    else {
-      pos = pos[token]
-    }
-  }
-
-  return pos
+  return jsonpath.at(this.game, path)
 }
 
 function path(target) {
-  if (typeof target !== 'object' || target === null) {
-    throw `Invalid path target. Can only path objects and arrays. Got ${typeof target}: ${target}`
-  }
-
-  const result = _pathRecursive(target, this.game, '')
-  if (!result) {
-    throw `Target not found: ${target}`
-  }
-  return result
-}
-
-function _pathRecursive(target, root, pathAccumulator) {
-  if (root === target) {
-    return pathAccumulator || '.'
-  }
-  else if (Array.isArray(root)) {
-    for (let i = 0; i < root.length; i++) {
-      const result = _pathRecursive(target, root[i], pathAccumulator + `[${i}]`)
-      if (result) {
-        return result
-      }
-    }
-  }
-  else if (typeof root === 'object') {
-    for (const key of Object.keys(root)) {
-      const result = _pathRecursive(target, root[key], pathAccumulator + '.' + key)
-      if (result) {
-        return result
-      }
-    }
-  }
-  else {
-    return false
-  }
+  return jsonpath.path(this.game, target)
 }
 
 function _close(session) {
