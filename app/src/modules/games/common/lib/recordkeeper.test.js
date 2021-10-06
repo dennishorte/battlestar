@@ -339,6 +339,20 @@ describe('session', () => {
       session.push(rk.game.array, 8)
       expect(rk.game.array).toStrictEqual([0,1,2,3,8])
     })
+
+    test('move', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.sessionStart()
+      session.move(rk.game.nested[2].arr[2], rk.game.array)
+      expect(rk.game.array).toStrictEqual([0,1,2,3,{ c: { d: 'deep' } }])
+    })
+
+    test('move with index', () => {
+      const rk = new RecordKeeper(stateFactory())
+      const session = rk.sessionStart()
+      session.move(rk.game.nested[2].arr[2], rk.game.array, 1)
+      expect(rk.game.array).toStrictEqual([0,{ c: { d: 'deep' } },1,2,3])
+    })
   })
 
   describe('multiple changes', () => {

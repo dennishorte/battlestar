@@ -9,6 +9,7 @@ export default function RecordKeeperSession(rk) {
 }
 
 RecordKeeperSession.prototype.at = at
+RecordKeeperSession.prototype.locate = locate
 RecordKeeperSession.prototype.path = path
 
 RecordKeeperSession.prototype.cancel = cancel
@@ -17,6 +18,7 @@ RecordKeeperSession.prototype.commit = commit
 RecordKeeperSession.prototype.patch = patch
 RecordKeeperSession.prototype.reverse = reverse
 
+RecordKeeperSession.prototype.move = move
 RecordKeeperSession.prototype.pop = pop
 RecordKeeperSession.prototype.push = push
 RecordKeeperSession.prototype.put = put
@@ -79,6 +81,18 @@ function reverse(diff) {
   this.patch(reversed)
 }
 
+function move(object, destArray, destIndex) {
+  if (!destIndex) {
+    destIndex = destArray.length
+  }
+
+  const { path, key } = this.locate(object)
+  const sourceArray = this.at(path)
+
+  this.splice(sourceArray, key, 1)
+  this.splice(destArray, destIndex, 0, object)
+}
+
 function pop(array) {
   this.splice(array, array.length - 1, 1)
 }
@@ -109,6 +123,16 @@ function replace(object, value) {
     return
   }
 
+  const { path, key } = this.locate(object)
+
+  this.put(
+    this.at(path),
+    key,
+    value,
+  )
+}
+
+function locate(object) {
   const fullPath = this.path(object)
 
   let key
@@ -124,11 +148,7 @@ function replace(object, value) {
     path = pathTokens.join('.')
   }
 
-  this.put(
-    this.at(path),
-    key,
-    value,
-  )
+  return {path, key}
 }
 
 function splice(array, index, count, ...items) {
