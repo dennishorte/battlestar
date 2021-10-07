@@ -32,7 +32,7 @@
 
 
 <script>
-import util from '@/util.js'
+import { util } from 'battlestar-common'
 
 export default {
   name: 'LobbySettings',

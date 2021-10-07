@@ -15,16 +15,16 @@ Lobby.factory = function() {
   return {
     name: haikunator.haikunate({tokenLength: 0}),
     createdTimestamp: Date.now(),
-    userIds: [],
+    users: [],
     game: null,
     options: {},
     gameLaunched: false,
   }
 }
 
-Lobby.addUsers = async function(lobbyId, userIds) {
+Lobby.addUsers = async function(lobbyId, userData) {
   const filter = { _id: lobbyId }
-  const updater = { $addToSet: { userIds: { $each: userIds } } }
+  const updater = { $addToSet: { users: { $each: userData } } }
   const updateResult = await lobbyCollection.updateOne(filter, updater)
   return updateResult
 }

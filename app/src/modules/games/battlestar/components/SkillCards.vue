@@ -36,22 +36,23 @@
 
 
 <script>
-import bsgutil from '../lib/util.js'
-import skillCardsList from '../res/skill.js'
-import util from '@/util.js'
+import { bsg, util } from 'battlestar-common'
 
 export default {
   name: 'SkillCards',
 
   data() {
     return {
-      skillCardsList,
-      skillList: bsgutil.skillList,
+      skillList: bsg.util.skillList,
     }
   },
 
   computed: {
+    skillCards() {
+      return this.$store.data
+    },
     cardsAll() {
+
       const expansions = this.$store.state.bsg.game.options.expansions
       return this.skillCardsList.filter(c => expansions.includes(c.expansion))
     },
@@ -95,7 +96,7 @@ export default {
 
     sortedNames() {
       const sorted = {}
-      bsgutil.skillList.forEach(skill => {
+      bsg.util.skillList.forEach(skill => {
         sorted[skill] = Object.values(this.cardsByName)
           .filter(c => c.skill === skill)
           .map(c => c.name)

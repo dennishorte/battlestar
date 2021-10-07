@@ -8,6 +8,10 @@
     "build": "webpack",
     "dev": "nodemon ./server.js"
   },
+  "nodemonConfig": {
+    "watch": ["*.*", "../common"],
+    "ext": "js, mjs, json"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bbachi/vuejs-nginx-docker.git"

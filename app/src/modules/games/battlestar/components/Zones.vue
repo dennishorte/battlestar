@@ -274,7 +274,7 @@
 <script>
 import DeckZone from './DeckZone'
 
-import { skillList } from '../lib/util.js'
+import { bsg } from 'battlestar-common'
 
 
 const activePlayerVariantFunc = function(name) {
@@ -364,7 +364,7 @@ export default {
       crisisPoolMenuOptions,
       destinyMenuOptions,
       handSort,
-      skillList,
+      skillList: bsg.util.skillList,
     }
   },
 

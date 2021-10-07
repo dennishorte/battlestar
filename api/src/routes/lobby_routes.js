@@ -22,7 +22,7 @@ Lobby.create = async function(req, res) {
     return
   }
 
-  const addResult = await db.lobby.addUsers(lobbyId, [req.user._id])
+  const addResult = await _addUsers(lobbyId, [req.user._id])
 
   if (!addResult) {
     res.json({
@@ -66,7 +66,7 @@ Lobby.nameUpdate = async function(req, res) {
 }
 
 Lobby.playerAdd = async function(req, res) {
-  const addResult = await db.lobby.addUsers(req.body.lobbyId, req.body.userIds)
+  await _addUsers(req.body.lobbyId, req.body.userIds)
   res.json({
     status: 'success',
     message: 'Users successfully added.',
@@ -94,3 +94,15 @@ Lobby.settingsUpdate = async function(req, res) {
 }
 
 module.exports = Lobby
+
+
+async function _addUsers(lobbyId, userIds) {
+  const usersCursor = await db.user.findByIds(userIds)
+  const users = await usersCursor.toArray()
+  const userData = users.map(user => ({
+    _id: user._id,
+    name: user.name,
+  }))
+
+  return await db.lobby.addUsers(lobbyId, userData)
+}

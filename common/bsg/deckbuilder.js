@@ -1,18 +1,7 @@
-import characterCards from '../res/character.js'
-import civilianDistribution from '../res/civilian_ships.js'
-import crisisCards from '../res/crisis.js'
-import destinationCards from '../res/destination.js'
-import loyaltyCards from '../res/loyalty.js'
-import quorumCards from '../res/quorum.js'
-import skillCards from '../res/skill.js'
-import superCrisisCards from '../res/super_crisis.js'
-import titleCards from '../res/title.js'
+const res = require('./resources.js')
+const util = require ('../lib/util.js')
 
-import util from '@/util.js'
-
-export default {
-  factory,
-}
+module.exports = deckBuilder
 
 /*
 Zone Structure
@@ -42,7 +31,7 @@ Card Structure
 */
 
 
-function factory(expansions) {
+function deckBuilder(expansions) {
   const expansionFilter = c => expansions.includes(c.expansion)
   const makeDeck = makeDeckWithFilter(expansionFilter)
   const makeLoyaltyDeck = function(cards, options) {
@@ -58,7 +47,7 @@ function factory(expansions) {
   }
 
   const decks = {
-    character: makeDeck(characterCards, {
+    character: makeDeck(res.characterCards, {
       name: 'character',
       kind: 'open',
       discard: 'none',
@@ -68,7 +57,7 @@ function factory(expansions) {
       kind: 'bag',
       discard: 'open',
     }),
-    crisis: makeDeck(crisisCards, {
+    crisis: makeDeck(res.crisisCards, {
       name: 'crisis',
       kind: 'deck',
       discard: 'hidden',
@@ -81,41 +70,41 @@ function factory(expansions) {
       name: 'damageGalactica',
       kind: 'bag',
     }),
-    destination: makeDeck(destinationCards, {
+    destination: makeDeck(res.destinationCards, {
       name: 'destination',
       kind: 'deck',
       discard: 'hidden',
     }),
-    quorum: makeDeck(quorumCards, {
+    quorum: makeDeck(res.quorumCards, {
       name: 'quorum',
       kind: 'deck',
       discard: 'hidden',
     }),
-    superCrisis: makeDeck(superCrisisCards, {
+    superCrisis: makeDeck(res.superCrisisCards, {
       name: 'superCrisis',
       kind: 'deck',
       discard: 'hidden',
     }),
-    title: makeDeck(titleCards, {
+    title: makeDeck(res.titleCards, {
       name: 'title',
       kind: 'open',
       discard: 'none',
     }),
 
     // Loyalty Decks
-    cylon: makeLoyaltyDeck(loyaltyCards, {
+    cylon: makeLoyaltyDeck(res.loyaltyCards, {
       name: 'cylon',
       cardKind: 'loyalty',
       kind: 'bag',
       discard: 'none',
     }),
-    human: makeLoyaltyDeck(loyaltyCards, {
+    human: makeLoyaltyDeck(res.loyaltyCards, {
       name: 'human',
       cardKind: 'loyalty',
       kind: 'bag',
       discard: 'none',
     }),
-    sympathizer: makeLoyaltyDeck(loyaltyCards, {
+    sympathizer: makeLoyaltyDeck(res.loyaltyCards, {
       name: 'sympathizer',
       cardKind: 'loyalty',
       kind: 'bag',
@@ -123,37 +112,37 @@ function factory(expansions) {
     }),
 
     // Skill Decks
-    politics: makeSkillDeck(skillCards, {
+    politics: makeSkillDeck(res.skillCards, {
       name: 'politics',
       cardKind: 'skill',
       kind: 'deck',
       discard: 'open',
     }),
-    leadership: makeSkillDeck(skillCards, {
+    leadership: makeSkillDeck(res.skillCards, {
       name: 'leadership',
       cardKind: 'skill',
       kind: 'deck',
       discard: 'open',
     }),
-    tactics: makeSkillDeck(skillCards, {
+    tactics: makeSkillDeck(res.skillCards, {
       name: 'tactics',
       cardKind: 'skill',
       kind: 'deck',
       discard: 'open',
     }),
-    piloting: makeSkillDeck(skillCards, {
+    piloting: makeSkillDeck(res.skillCards, {
       name: 'piloting',
       cardKind: 'skill',
       kind: 'deck',
       discard: 'open',
     }),
-    engineering: makeSkillDeck(skillCards, {
+    engineering: makeSkillDeck(res.skillCards, {
       name: 'engineering',
       cardKind: 'skill',
       kind: 'deck',
       discard: 'open',
     }),
-    treachery: makeSkillDeck(skillCards, {
+    treachery: makeSkillDeck(res.skillCards, {
       name: 'treachery',
       cardKind: 'skill',
       kind: 'deck',
@@ -187,8 +176,8 @@ const damageGalactica = makeCards([
 
 function makeCivilians() {
   const civilians = []
-  for (let j = 0; j < civilianDistribution.length; j++) {
-    const { effect, quantity } = civilianDistribution[j]
+  for (let j = 0; j < res.civilianDistribution.length; j++) {
+    const { effect, quantity } = res.civilianDistribution[j]
     for (let i = 0; i < quantity; i++) {
       const ship = {
         name: 'civilian',

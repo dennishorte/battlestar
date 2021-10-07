@@ -1,4 +1,4 @@
-import util from '@/util.js'
+import { bsg, util } from 'battlestar-common'
 
 
 export function admiralName(state) {
@@ -9,6 +9,15 @@ export function commonCrisis(state) {
   const zone = zoneGet(state, 'common')
   const crisis = zone.cards.find(c => c.kind === 'crisis' || c.kind === 'superCrisis')
   return crisis
+}
+
+export function dataSkillCards(state) {
+  const decks = state.data.zones.decks
+  let output = []
+  for (const skill of bsg.util.skillList) {
+    output = output.concat(decks[skill].cards)
+  }
+  return output
 }
 
 export function deckGet(state, deckName) {

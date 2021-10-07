@@ -1,8 +1,8 @@
-import seedrandom from 'seedrandom'
+const seedrandom = require('seedrandom')
 
 
 const Util = {}
-export default Util
+module.exports = Util
 
 Util.toCamelCase = function(str) {
   const downCased = str[0].toLowerCase() + str.slice(1)

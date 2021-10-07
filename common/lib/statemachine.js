@@ -1,13 +1,15 @@
 'use strict'
 
+const RecordKeeper = require('./recordkeeper.js')
 
-function StateMachine(state, transitions) {
+
+function StateMachine(transitions, state, recordkeeper) {
   _validateTransitions(transitions)
 
   if (!state.sm) {
     state.sm = {
       stack: [],
-      waiting: null,
+      waiting: {},
     }
   }
 
@@ -15,10 +17,8 @@ function StateMachine(state, transitions) {
   this.state = state
   this.stack = this.state.sm.stack
   this.waiting = this.state.sm.waiting
+  this.rk = recordkeeper
 }
-
-export default StateMachine
-
 
 StateMachine.prototype.run = run
 
@@ -105,7 +105,7 @@ class InvalidTransitionError extends Error {
 
     // Maintains proper stack trace for where our error was thrown (only available on V8)
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, CustomError)
+      Error.captureStackTrace(this, InvalidTransitionError)
     }
 
     this.name = 'InvalidTransitionError'
@@ -157,3 +157,5 @@ function _validateTransitions(transitions) {
     }
   }
 }
+
+module.exports = StateMachine

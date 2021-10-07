@@ -1,4 +1,9 @@
 module.exports = {
+  configureWebpack: {
+    resolve: {
+      symlinks: false
+    }
+  },
   devServer: {
     host: 'localhost',
     proxy: {

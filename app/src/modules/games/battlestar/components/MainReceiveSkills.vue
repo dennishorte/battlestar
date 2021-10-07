@@ -24,7 +24,7 @@
 <script>
 import GameButton from './GameButton'
 
-import { skillList } from '../lib/util.js'
+import { bsg } from 'battlestar-common'
 
 
 export default {
@@ -50,7 +50,7 @@ export default {
       }
 
       const output = []
-      for (let skill of skillList) {
+      for (let skill of bsg.util.skillList) {
         skill = skill.toLowerCase()
         const charSkill = this.character[skill]
         if (charSkill) {

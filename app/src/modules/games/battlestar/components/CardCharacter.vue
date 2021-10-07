@@ -15,7 +15,7 @@
 
 
 <script>
-import { skillList } from '../lib/util.js'
+import { bsg } from 'battlestar-common'
 
 const skillImages = {
   politics: require('../assets/images/politics-slice.png'),
@@ -41,7 +41,7 @@ export default {
 
     characterSkills() {
       const skills = {}
-      for (const skill of skillList) {
+      for (const skill of bsg.util.skillList) {
         if (skill === 'treachery')
           continue
 

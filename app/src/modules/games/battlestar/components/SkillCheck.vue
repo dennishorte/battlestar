@@ -55,7 +55,7 @@
 <script>
 import SkillLink from './SkillLink'
 
-import { skillList } from '../lib/util.js'
+import { bsg } from 'battlestar-common'
 
 export default {
   name: 'SkillCheck',
@@ -71,7 +71,7 @@ export default {
 
   data() {
     return {
-      skillList,
+      skillList: bsg.util.skillList,
     }
   },
 }

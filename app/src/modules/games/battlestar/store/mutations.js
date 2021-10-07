@@ -1,8 +1,6 @@
-import RecordKeeper from '@/modules/games/common/lib/recordkeeper.js'
-import util from '@/util.js'
-
+import { bsg, util, RecordKeeper } from 'battlestar-common'
 import * as $ from './helpers.js'
-import bsgutil from '../lib/util.js'
+
 
 
 function _cardSetVisibilityByZone(card, zone) {
@@ -54,7 +52,7 @@ function _logEnrichArgClasses(msg) {
     }
     else if (key === 'character') {
       pushUnique(classes, 'character-name')
-      pushUnique(classes, bsgutil.characterNameToCssClass(msg.args[key].value))
+      pushUnique(classes, bsg.util.characterNameToCssClass(msg.args[key].value))
     }
     else if (key === 'location') {
       pushUnique(classes, 'location-name')
@@ -294,7 +292,7 @@ function _refillDestiny(state) {
     classes: ['admin-action'],
   })
 
-  for (const skill of bsgutil.skillList) {
+  for (const skill of bsg.util.skillList) {
     for (let i = 0; i < 2; i++) {
       if (skill === 'treachery')
         continue

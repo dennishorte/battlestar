@@ -73,6 +73,10 @@ function playerMovement(context) {
   }
 }
 
+function initialize(context, state) {
+
+}
+
 function playerAction(context, state) {
   const actor = context.data.actor
   const action = context.data.actin
@@ -131,10 +135,15 @@ function each(func, paramName, paramPath) {
 const transitions = {
   root: {
     steps: [
+      'initialize',
       'setup',
       'main',
-      'end'
+      'END'
     ],
+  },
+
+  'initialize': {
+    func: initialize,
   },
 
   'setup': {
@@ -150,21 +159,21 @@ const transitions = {
     func: characterSelection,
   },
 
-  'setup.distribute-title-cards': {},
-  'setup.distribute-loyalty-cards': {},
+  'setup.distribute-title-cards': {
+    func: () => {}
+  },
+  'setup.distribute-loyalty-cards': {
+    func: () => {}
+  },
 
   'setup.receive-skills': {
+    func: () => {},
     actor: 'each',
     actorParams: '.players',
   },
 
   'main': {
-    steps: {
-      'player-turn': {
-        actor: 'cycle',
-        actorParams: '.players',
-      },
-    },
+    func: () => {},
   },
 
   'main.player-turn': {
@@ -179,13 +188,27 @@ const transitions = {
     ],
   },
 
-  'main.player-turn.receive-skills': {},
-  'main.player-turn.movement': {},
-  'main.player-turn.action': {},
-  'main.player-turn.crisis': {},
-  'main.player-turn.cylon-activation': {},
-  'main.player-turn.prepare-for-jump': {},
-  'main.player-turn.cleanup': {},
-
-  'end': {},
+  'main.player-turn.receive-skills': {
+    func: () => {}
+  },
+  'main.player-turn.movement': {
+    func: () => {}
+  },
+  'main.player-turn.action': {
+    func: () => {}
+  },
+  'main.player-turn.crisis': {
+    func: () => {}
+  },
+  'main.player-turn.cylon-activation': {
+    func: () => {}
+  },
+  'main.player-turn.prepare-for-jump': {
+    func: () => {}
+  },
+  'main.player-turn.cleanup': {
+    func: () => {}
+  },
 }
+
+module.exports = transitions

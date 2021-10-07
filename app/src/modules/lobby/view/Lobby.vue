@@ -84,18 +84,7 @@ export default {
       const data = this.processRequestResult(requestResult)
       if (data) {
         this.lobby = data.lobby
-        await this.getPlayerInfo()
-      }
-    },
-
-    async getPlayerInfo() {
-      const requestResult = await axios.post('/api/user/fetch_many', {
-        userIds: this.lobby.userIds
-      })
-
-      const data = this.processRequestResult(requestResult)
-      if (data) {
-        this.players = data.users
+        this.players = this.lobby.users
       }
     },
 

@@ -104,6 +104,7 @@ export default {
     dataCharacter: (state) => (name) => state.data.decks.character.cards.find(c => c.name === name ),
     dataLocations: (state) => state.data.locations,
     dataDeck: (state) => (key) => state.data.decks[key],
+    dataSkillCards: (state) => $.dataSkillCards(state),
 
 
     ////////////////////////////////////////////////////////////

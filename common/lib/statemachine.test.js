@@ -1,22 +1,32 @@
-const StateMachine = require('./statemachine.js').default
+const RecordKeeper = require('./recordkeeper.js')
+const StateMachine = require('./statemachine.js')
+
+
+function stateFactory(transitions, state) {
+  if (!state) {
+    state = { ready: false }
+  }
+  const rk = new RecordKeeper(state)
+  return new StateMachine(transitions, state, rk)
+}
 
 
 describe('constructor', () => {
   test('checks for valid transitions', () => {
-    expect(() => new StateMachine({}, null)).toThrow()
-    expect(() => new StateMachine({}, {})).toThrow()
-    expect(() => new StateMachine({}, { root: {} })).toThrow()
-    expect(() => new StateMachine({}, { root: { steps: [] } })).toThrow()
-    expect(() => new StateMachine({}, { root: { steps: ['a'] } })).not.toThrow()
-    expect(() => new StateMachine({}, { root: { func: 'a' } })).toThrow()
-    expect(() => new StateMachine({}, { root: { func: () => 'a' } })).not.toThrow()
+    expect(() => stateFactory(null)).toThrow()
+    expect(() => stateFactory({})).toThrow()
+    expect(() => stateFactory({ root: {} })).toThrow()
+    expect(() => stateFactory({ root: { steps: [] } })).toThrow()
+    expect(() => stateFactory({ root: { steps: ['a'] } })).not.toThrow()
+    expect(() => stateFactory({ root: { func: 'a' } })).toThrow()
+    expect(() => stateFactory({ root: { func: () => 'a' } })).not.toThrow()
   })
 
-  test('checks for valid state', () => {
+  test.skip('checks for valid state', () => {
 
   })
 
-  test('checks for valid stack', () => {
+  test.skip('checks for valid stack', () => {
 
   })
 })
@@ -29,7 +39,7 @@ describe('run', () => {
         steps: ['END']
       },
     }
-    const sm = new StateMachine({}, transitions)
+    const sm = stateFactory(transitions)
     sm.run()
 
     const stackNames = sm.stack.map(event => event.name)
@@ -46,7 +56,7 @@ describe('run', () => {
         func: (context) => context.done()
       }
     }
-    const sm = new StateMachine({}, transitions)
+    const sm = stateFactory(transitions)
     sm.run()
 
     const stackNames = sm.stack.map(event => event.name)
@@ -67,7 +77,7 @@ describe('run', () => {
         func: (context) => context.done()
       }
     }
-    const sm = new StateMachine({}, transitions)
+    const sm = stateFactory(transitions)
     sm.run()
 
     const stackNames = sm.stack.map(event => event.name)
@@ -87,7 +97,7 @@ describe('run', () => {
         }
       }
     }
-    const sm = new StateMachine({ ready: false }, transitions)
+    const sm = stateFactory(transitions)
     sm.run()
 
     const stackNamesBefore = sm.stack.map(event => event.name)
@@ -122,7 +132,7 @@ describe('run', () => {
         }
       }
     }
-    const sm = new StateMachine({ ready: false }, transitions)
+    const sm = stateFactory(transitions)
     sm.run()
 
     const stackNamesBefore = sm.stack.map(event => event.name)
@@ -151,7 +161,7 @@ describe('run', () => {
         func: (context) => context.done()
       },
     }
-    const sm = new StateMachine({}, transitions)
+    const sm = stateFactory(transitions)
     sm.run()
 
     const stackNames = sm.stack.map(event => event.name)

@@ -77,7 +77,7 @@
 
 
 <script>
-import { skillList } from '../lib/util.js'
+import { bsg } from 'battlestar-common'
 
 
 export default {
@@ -85,7 +85,7 @@ export default {
 
   data() {
     return {
-      skillList,
+      skillList: bsg.util.skillList,
     }
   },
 

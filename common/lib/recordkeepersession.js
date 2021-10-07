@@ -1,7 +1,7 @@
 const jsonpath = require('./jsonpath.js')
 
 
-export default function RecordKeeperSession(rk) {
+function RecordKeeperSession(rk) {
   this.rk = rk
   this.game = rk.game
   this.diffs = []
@@ -187,3 +187,5 @@ function _close(session) {
 function _deepcopy(obj) {
   return JSON.parse(JSON.stringify(obj))
 }
+
+module.exports = RecordKeeperSession

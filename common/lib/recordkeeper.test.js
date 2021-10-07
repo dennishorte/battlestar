@@ -1,4 +1,4 @@
-const RecordKeeper = require('./recordkeeper.js').default
+const RecordKeeper = require('./recordkeeper.js')
 
 
 function stateFactory() {

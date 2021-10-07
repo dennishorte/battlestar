@@ -1,4 +1,5 @@
 const { Mutex } = require('../util/mutex.js')
+const common = require('battlestar-common')
 
 // Database and collection
 const databaseClient = require('../util/mongo.js').client
@@ -12,15 +13,7 @@ module.exports = Game
 
 
 function _factory(lobby) {
-  return {
-    game: lobby.game,
-    name: lobby.name,
-    options: lobby.options,
-    userIds: lobby.userIds,
-    createdTimestamp: Date.now(),
-    saveKey: 0,
-    initialized: false,
-  }
+  return common.bsg.factory(lobby).state
 }
 
 Game.create = async function(lobby) {

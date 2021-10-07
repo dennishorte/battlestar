@@ -1,7 +1,7 @@
-import RecordKeeperSession from './recordkeepersession'
+const RecordKeeperSession = require('./recordkeepersession')
 
 
-export default function RecordKeeper(game) {
+function RecordKeeper(game) {
   this.game = game
   this.diffs = game.history
   this.undone = []
@@ -62,3 +62,5 @@ function redo() {
 
   this.game.hasUndone = !!this.undone.length
 }
+
+module.exports = RecordKeeper

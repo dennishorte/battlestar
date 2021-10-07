@@ -1,16 +1,12 @@
-import axios from 'axios'
-import util from '@/util.js'
-
-import Decks from '../lib/decks.js'
-import bsgutil from '../lib/util.js'
-import locations from '../res/location.js'
+const deckbuilder = require('./deckbuilder.js')
+const bsgutil = require('./util.js')
+const { locations } = require('./resources.js')
+const util = require('../lib/util.js')
 
 
-export default {
-  initialize,
-}
+module.exports = initialize
 
-async function initialize(game) {
+function initialize(game) {
   if (game.initialized) {
     throw "Game already initialized"
   }
@@ -44,7 +40,7 @@ async function initialize(game) {
   }
 
   // Players
-  game.players = await makePlayers(game.userIds, (user) => {
+  game.players = makePlayers(game.users, (user) => {
     return {
       _id: user._id,
       index: 0,
@@ -60,7 +56,7 @@ async function initialize(game) {
   game.waitingFor = game.players[0].name
 
   // Zones
-  const decks = Decks.factory(game.options.expansions)
+  const decks = deckbuilder(game.options.expansions)
   decks.loyalty = {
     name: 'decks.loyalty',
     cards: [],
@@ -108,6 +104,56 @@ async function initialize(game) {
     },
   }
 
+  /* else {
+   *   commit('load', data)
+
+   *   commit('log', {
+   *     template: 'Initializing Game',
+   *     classes: ['admin-action'],
+   *     args: {},
+   *   })
+
+   *   commit('log', {
+   *     template: 'Setting up initial ships',
+   *     classes: ['admin-action'],
+   *     args: {},
+   *   })
+
+   *   // Basestar
+   *   commit('move', {
+   *     source: 'ships.basestarA',
+   *     target: 'space.space0',
+   *   })
+
+   *   // Raiders
+   *   for (let i = 0; i < 3; i++) {
+   *     commit('move', {
+   *       source: 'ships.raiders',
+   *       target: 'space.space0',
+   *     })
+   *   }
+
+   *   // Vipers
+   *   commit('move', {
+   *     source: 'ships.vipers',
+   *     target: 'space.space5',
+   *   })
+   *   commit('move', {
+   *     source: 'ships.vipers',
+   *     target: 'space.space4',
+   *   })
+
+   *   // Civilians
+   *   for (let i = 0; i < 2; i++) {
+   *     commit('move', {
+   *       source: 'decks.civilian',
+   *       target: 'space.space3',
+   *     })
+   *   }
+
+   *   await dispatch('save')
+   * } */
+
   return game
 }
 
@@ -148,15 +194,10 @@ function makeDiscardZones(decks) {
   return discards
 }
 
-async function makePlayers(userIds, factory) {
-  const requestResponse = await axios.post('/api/user/fetch_many', {
-    userIds,
-  })
-  const users = requestResponse.data.users
+function makePlayers(users, factory) {
   const players = users.map(factory)
   return util.shuffleArray(players)
 }
-
 
 function locationCompare(l, r) {
   if (l.hazardous && !r.hazardous) {

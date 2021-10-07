@@ -1,4 +1,9 @@
-export function at(object, path) {
+module.exports = {
+  at,
+  path,
+}
+
+function at(object, path) {
   if (path.startsWith('.')) {
     path = path.slice(1)
   }
@@ -29,7 +34,7 @@ export function at(object, path) {
   return pos
 }
 
-export function path(root, target) {
+function path(root, target) {
   if (typeof target !== 'object' || target === null) {
     throw `Invalid path target. Can only path objects and arrays. Got ${typeof target}: ${target}`
   }

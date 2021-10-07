@@ -43,7 +43,7 @@
 
 
 <script>
-import { skillList } from '../lib/util.js'
+import { bsg } from 'battlestar-common'
 
 import SkillLink from './SkillLink'
 
@@ -57,7 +57,7 @@ export default {
   data() {
     return {
       selectedLocation: {},
-      skillList,
+      skillList: bsg.util.skillList,
     }
   },
 
