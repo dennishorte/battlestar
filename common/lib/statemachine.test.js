@@ -4,10 +4,17 @@ const StateMachine = require('./statemachine.js')
 
 function stateFactory(transitions, state) {
   if (!state) {
-    state = { ready: false }
+    state = {
+      ready: false,
+      history: [],
+      sm: {
+        stack: [],
+        waiting: [],
+      }
+    }
   }
   const rk = new RecordKeeper(state)
-  return new StateMachine(transitions, state, rk)
+  return new StateMachine(transitions, state, rk, state.sm.stack, state.sm.waiting)
 }
 
 
@@ -20,10 +27,6 @@ describe('constructor', () => {
     expect(() => stateFactory({ root: { steps: ['a'] } })).not.toThrow()
     expect(() => stateFactory({ root: { func: 'a' } })).toThrow()
     expect(() => stateFactory({ root: { func: () => 'a' } })).not.toThrow()
-  })
-
-  test.skip('checks for valid state', () => {
-
   })
 
   test.skip('checks for valid stack', () => {
@@ -91,8 +94,8 @@ describe('run', () => {
       },
 
       'wait': {
-        func: (context, state) => {
-          if (state.ready) context.done()
+        func: (context) => {
+          if (context.state.ready) context.done()
           else context.wait('waiting')
         }
       }
@@ -102,14 +105,14 @@ describe('run', () => {
 
     const stackNamesBefore = sm.stack.map(event => event.name)
     expect(stackNamesBefore).toStrictEqual(['root', 'wait'])
-    expect(sm.waiting).toBe('waiting')
+    expect(sm.waiting).toStrictEqual(['waiting'])
 
     sm.state.ready = true
     sm.run()
 
     const stackNamesAfter = sm.stack.map(event => event.name)
     expect(stackNamesAfter).toStrictEqual(['root', 'END'])
-    expect(sm.waiting).toBe(null)
+    expect(sm.waiting).toStrictEqual([])
   })
 
   test('disconnected states', () => {
@@ -119,15 +122,15 @@ describe('run', () => {
       },
 
       'one': {
-        func: (context, state) => {
-          if (state.ready) context.done()
+        func: (context) => {
+          if (context.state.ready) context.done()
           else context.push('wait')
         }
       },
 
       'wait': {
-        func: (context, state) => {
-          if (state.ready) context.done()
+        func: (context) => {
+          if (context.state.ready) context.done()
           else context.wait('waiting')
         }
       }
@@ -137,14 +140,14 @@ describe('run', () => {
 
     const stackNamesBefore = sm.stack.map(event => event.name)
     expect(stackNamesBefore).toStrictEqual(['root', 'one', 'wait'])
-    expect(sm.waiting).toBe('waiting')
+    expect(sm.waiting).toStrictEqual(['waiting'])
 
     sm.state.ready = true
     sm.run()
 
     const stackNamesAfter = sm.stack.map(event => event.name)
     expect(stackNamesAfter).toStrictEqual(['root', 'END'])
-    expect(sm.waiting).toBe(null)
+    expect(sm.waiting).toStrictEqual([])
   })
 
   test('multiple steps', () => {

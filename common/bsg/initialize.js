@@ -196,7 +196,7 @@ function makeDiscardZones(decks) {
 
 function makePlayers(users, factory) {
   const players = users.map(factory)
-  return util.shuffleArray(players)
+  return util.array.shuffle(players)
 }
 
 function locationCompare(l, r) {

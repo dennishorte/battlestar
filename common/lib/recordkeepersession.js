@@ -1,4 +1,5 @@
 const jsonpath = require('./jsonpath.js')
+const util = require('./util.js')
 
 
 function RecordKeeperSession(rk) {
@@ -43,7 +44,7 @@ function commit() {
 
 function patch(diff) {
   if (this.record === 'diff') {
-    this.diffs.push(_deepcopy(diff))
+    this.diffs.push(util.deepcopy(diff))
   }
 
   const target = this.at(diff.path)
@@ -53,12 +54,12 @@ function patch(diff) {
     if (JSON.stringify(target[diff.key]) !== JSON.stringify(diff.old)) {
       console.log({
         target: target,
-        diff: _deepcopy(diff),
+        diff: util.deepcopy(diff),
       })
       throw `Can't patch because old doesn't match: ${diff.path}.${diff.key} !== ${diff.old}`
     }
 
-    target[diff.key] = _deepcopy(diff.new)
+    target[diff.key] = util.deepcopy(diff.new)
   }
 
   else if (diff.kind === 'splice') {
@@ -75,13 +76,16 @@ function patch(diff) {
 }
 
 function reverse(diff) {
-  const reversed = _deepcopy(diff)
+  const reversed = util.deepcopy(diff)
   reversed.old = diff.new
   reversed.new = diff.old
   this.patch(reversed)
 }
 
 function move(object, destArray, destIndex) {
+  _assert(!!object, `Can only move non-null objects. Got ${object}.`)
+  _assert(Array.isArray(destArray), `Can only move objects into arrays. Got ${destArray}.`)
+
   if (!destIndex) {
     destIndex = destArray.length
   }
@@ -184,8 +188,10 @@ function _close(session) {
   session.rk = null
 }
 
-function _deepcopy(obj) {
-  return JSON.parse(JSON.stringify(obj))
+function _assert(truthyValue, message) {
+  if (!truthyValue) {
+    throw new Error(message)
+  }
 }
 
 module.exports = RecordKeeperSession

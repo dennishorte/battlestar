@@ -1,4 +1,4 @@
-function characterSelection(context, state) {
+function characterSelection(context) {
   if (!context.data.initialized) {
     context.data.initialized = true
     context.data.playerIndex = 0
@@ -7,7 +7,7 @@ function characterSelection(context, state) {
 
   else {
     context.data.playerIndex += 1
-    if (state.players.length < context.data.playerIndex) {
+    if (context.state.getPlayerAll().length < context.data.playerIndex) {
       context.push('character-selection-do', { playerIndex: context.data.playerIndex })
     }
     else {
@@ -16,10 +16,10 @@ function characterSelection(context, state) {
   }
 }
 
-function doCharacterSelection(context, state) {
-  const player = state.players[context.data.playerIndex]
+function characterSelectionDo(context) {
+  const player = context.state.getPlayerByIndex(context.data.playerIndex)
 
-  if (state.hasCharacter(player)) {
+  if (context.state.getPlayerHasCharacter(player)) {
     context.done()
   }
   else {
@@ -48,6 +48,10 @@ function distributeTitleCards(context, state) {
   context.done()
 }
 
+function initialize(context) {
+  context.done()
+}
+
 function playerMovement(context) {
   const actor = context.data.actor
 
@@ -71,10 +75,6 @@ function playerMovement(context) {
       ],
     })
   }
-}
-
-function initialize(context, state) {
-
 }
 
 function playerAction(context, state) {
@@ -155,8 +155,12 @@ const transitions = {
     ]
   },
 
-  'setup.character-selection': {
+  'character-selection': {
     func: characterSelection,
+  },
+
+  'character-selection-do': {
+    func: characterSelectionDo,
   },
 
   'setup.distribute-title-cards': {

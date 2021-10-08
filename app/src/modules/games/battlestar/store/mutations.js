@@ -309,7 +309,7 @@ function _refillDestiny(state) {
 
 function _shuffle(array) {
   const copy = [...array]
-  util.shuffleArray(copy)
+  util.array.shuffle(copy)
   rk.session.replace(array, copy)
 
   copy.forEach(c => rk.session.replace(c.visibility, []))

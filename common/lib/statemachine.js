@@ -3,7 +3,13 @@
 const RecordKeeper = require('./recordkeeper.js')
 
 
-function StateMachine(transitions, state, recordkeeper) {
+function StateMachine(
+  transitions,
+  state,             // Added to context for functions. Can really be anything.
+  recordkeeper,
+  stack,             // An array
+  waiting,           // An array
+) {
   _validateTransitions(transitions)
 
   if (!state.sm) {
@@ -15,8 +21,8 @@ function StateMachine(transitions, state, recordkeeper) {
 
   this.transitions = transitions
   this.state = state
-  this.stack = this.state.sm.stack
-  this.waiting = this.state.sm.waiting
+  this.stack = stack
+  this.waiting = waiting
   this.rk = recordkeeper
 }
 
@@ -42,13 +48,14 @@ function run() {
     push: _push.bind(this),
     wait: _wait.bind(this),
     data: event.data,
+    state: this.state,
   }
 
   const transition = this.transitions[event.name]
 
   // If there is an evaluation function, call it.
   if (transition.func) {
-    return transition.func(context, this.state)
+    return transition.func(context)
   }
 
   // Otherwise, advance through the steps of event.
@@ -64,38 +71,43 @@ function run() {
 }
 
 function _done() {
-  const event = this.stack.pop()
-  // console.log('done', event)
-  this.waiting = null
+  const event = this.stack[this.stack.length - 1]
+  this.rk.sessionStart(session => {
+    session.pop(this.stack)
+    session.splice(this.waiting, 0, this.waiting.length)
+  })
   this.run()
 }
 
 function _push(eventName, data) {
-  // console.log('push', eventName)
-  this.waiting = null
+  this.rk.sessionStart(session => {
+    session.splice(this.waiting, 0, this.waiting.length)
 
-  const event = {
-    name: eventName,
-    data: data || {},
-  }
+    const event = {
+      name: eventName,
+      data: data || {},
+    }
 
-  if (eventName === 'END') {
-    this.stack.push(event)
-    return
-  }
+    if (eventName === 'END') {
+      session.push(this.stack, event)
+      return
+    }
 
-  const transition = this.transitions[eventName]
-  if (transition.steps) {
-    event.data.steps = [...transition.steps]
-  }
+    const transition = this.transitions[eventName]
+    if (transition.steps) {
+      event.data.steps = [...transition.steps]
+    }
 
-  this.stack.push(event)
+    session.push(this.stack, event)
+  })
+
   this.run()
 }
 
 function _wait(payload) {
-  // console.log('wait', payload)
-  this.waiting = payload
+  this.rk.sessionStart(session =>
+    session.splice(this.waiting, 0, this.waiting.length, payload)
+  )
 }
 
 class InvalidTransitionError extends Error {

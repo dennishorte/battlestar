@@ -239,7 +239,7 @@ function makeDeckWithFilter(filter) {
         return c
       })
 
-    util.shuffleArray(cards)
+    util.array.shuffle(cards)
 
     options.name = deckName
     return {

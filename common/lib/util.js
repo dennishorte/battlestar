@@ -1,8 +1,38 @@
 const seedrandom = require('seedrandom')
 
 
-const Util = {}
+const Util = {
+  array: {},
+}
 module.exports = Util
+
+Util.array.pushUnique = function(array, value) {
+  if (array.indexOf(value) === -1) {
+    array.push(value)
+  }
+}
+
+Util.array.shuffle = function(array, rng) {
+  if (!rng) {
+    rng = Math.random
+  }
+
+  let currentIndex = array.length
+  let randomIndex
+
+  // While there remain elements to shuffle...
+  while (currentIndex != 0) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(rng() * currentIndex)
+    currentIndex--
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]]
+  }
+
+  return array
+}
 
 Util.toCamelCase = function(str) {
   const downCased = str[0].toLowerCase() + str.slice(1)
@@ -20,26 +50,4 @@ Util.randomSeed = function(prefix) {
 
   const rng = seedrandom()
   return prefix + rng()
-}
-
-Util.shuffleArray = function(array, randomizer) {
-  if (!randomizer) {
-    randomizer = Math.random
-  }
-
-  let currentIndex = array.length
-  let randomIndex
-
-  // While there remain elements to shuffle...
-  while (currentIndex != 0) {
-
-    // Pick a remaining element...
-    randomIndex = Math.floor(randomizer() * currentIndex)
-    currentIndex--
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]]
-  }
-
-  return array
 }
