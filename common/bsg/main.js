@@ -2,31 +2,24 @@ const RecordKeeper = require('../lib/recordkeeper.js')
 const StateMachine = require('../lib/statemachine.js')
 
 const initialize = require('./initialize.js')
-const transitions = require('./transitions.js')
 
 module.exports = {
   Game,
-  factory,
+  factory: stateFactory,
 
   deckbuilder: require('./deckbuilder.js'),
   res: require('./resources.js'),
   util: require('./util.js'),
 }
 
-function Game(state, actor) {
-  this.actor = actor
-  this.state = state
-  this.rk = new RecordKeeper(state)
-  this.sm = new StateMachine(
-    transitions,
-    this,
-    this.rk,
-    this.state.sm.stack,
-    this.state.sm.waiting,
-  )
+function Game(state) {
+  this.actor = null
+  this.state = null
+  this.rk = null
+  this.sm = null
 }
 
-function factory(lobby) {
+function stateFactory(lobby) {
   const state = {
     game: lobby.game,
     name: lobby.name,
@@ -42,10 +35,21 @@ function factory(lobby) {
   }
 
   initialize(state)
-
-  return new Game(state)
+  return state
 }
 
+Game.prototype.load = function(transitions, state, actor) {
+  this.actor = actor
+  this.state = state
+  this.rk = new RecordKeeper(state)
+  this.sm = new StateMachine(
+    transitions,
+    this,
+    this.rk,
+    this.state.sm.stack,
+    this.state.sm.waiting,
+  )
+}
 
 Game.prototype.run = function() {
   return this.sm.run()

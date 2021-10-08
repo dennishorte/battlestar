@@ -1,4 +1,5 @@
 const bsg = require('./main.js')
+const transitions = require('./transitions.js')
 
 
 function gameFixture() {
@@ -15,7 +16,12 @@ function gameFixture() {
     ],
   }
 
-  const game = bsg.factory(lobby)
+  // Create a new game
+  const state = bsg.factory(lobby)
+  const game = new bsg.Game()
+  game.load(transitions, state, lobby.users[0])
+
+  // Sort the players so they are consistent for testing
   game.state.players.sort((l, r) => l._id - r._id)
 
   return game

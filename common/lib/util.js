@@ -34,6 +34,12 @@ Util.array.shuffle = function(array, rng) {
   return array
 }
 
+Util.assert = function(test, message) {
+  if (!test) {
+    throw new Error(message)
+  }
+}
+
 Util.toCamelCase = function(str) {
   const downCased = str[0].toLowerCase() + str.slice(1)
   return downCased.replace(/\W/, '').replace(' ', '')
