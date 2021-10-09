@@ -31,7 +31,12 @@ export default {
     name: String,
     notes: String,
     title: String,
-    value: Number,
+  },
+
+  computed: {
+    value() {
+      return this.$game.getCounterByName(this.name)
+    },
   },
 
   methods: {
@@ -44,10 +49,7 @@ export default {
     },
 
     resourceChanged(amt) {
-      this.$emit('resource-changed', {
-        name: this.name,
-        amount: amt,
-      })
+      console.log('counter changed', this.name, amt)
     },
   },
 }

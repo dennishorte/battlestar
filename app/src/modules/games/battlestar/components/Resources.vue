@@ -7,40 +7,28 @@
 
       <div class="resources-counters">
         <ResourceCounter
-          @resource-changed="resourceChanged"
           title="Food"
-          name="food"
-          :value="food" />
+          name="food" />
 
         <ResourceCounter
-          @resource-changed="resourceChanged"
           title="Fuel"
-          name="fuel"
-          :value="fuel" />
+          name="fuel" />
 
         <ResourceCounter
-          @resource-changed="resourceChanged"
           title="Morale"
-          name="morale"
-          :value="morale" />
+          name="morale" />
 
         <ResourceCounter
-          @resource-changed="resourceChanged"
           title="Population"
-          name="population"
-          :value="population" />
+          name="population" />
 
         <ResourceCounter
-          @resource-changed="resourceChanged"
           title="Raptors"
-          name="raptors"
-          :value="raptors" />
+          name="raptors" />
 
         <ResourceCounter
-          @resource-changed="resourceChanged"
           title="Nukes"
-          name="nukes"
-          :value="nukes" />
+          name="nukes" />
       </div>
     </b-col>
 
@@ -49,33 +37,13 @@
 
       <div class="resources jump-track">
         <ResourceCounter
-          @resource-changed="resourceChanged"
           title="Distance Traveled"
-          name="distance"
-          :value="distance" />
+          name="distance" />
 
         <ResourceCounter
-          @resource-changed="resourceChanged"
           title="Jump Track"
           name="jumpTrack"
-          notes="0 = start, 3 = -3 pop, 4 = -1 pop, 5 = auto"
-          :value="jumpTrack" />
-      </div>
-
-      <div class="resources boarding-party">
-        <ResourceCounter
-          @resource-changed="resourceChanged"
-          title="Boarding Party A"
-          :value="0" />
-        <ResourceCounter
-          @resource-changed="resourceChanged"
-          title="Boarding Party B"
-          :value="0" />
-        <ResourceCounter
-          @resource-changed="resourceChanged"
-          title="Boarding Party C"
-          notes="1 = start, 5 = death"
-          :value="0" />
+          notes="0 = start, 3 = -3 pop, 4 = -1 pop, 5 = auto" />
       </div>
     </b-col>
   </b-row>
@@ -90,23 +58,6 @@ export default {
 
   components: {
     ResourceCounter,
-  },
-
-  computed: {
-    food() { return this.$store.getters['bsg/countersFood'] },
-    fuel() { return this.$store.getters['bsg/countersFuel'] },
-    morale() { return this.$store.getters['bsg/countersMorale'] },
-    population() { return this.$store.getters['bsg/countersPopulation'] },
-    raptors() { return this.$store.getters['bsg/countersRaptors'] },
-    nukes() { return this.$store.getters['bsg/countersNukes'] },
-    distance() { return this.$store.getters['bsg/countersDistance'] },
-    jumpTrack() { return this.$store.getters['bsg/countersJumpTrack'] },
-  },
-
-  methods: {
-    resourceChanged(data) {
-      this.$store.commit('bsg/resourceChange', data)
-    },
   },
 }
 </script>

@@ -43,7 +43,7 @@ export default {
 
   computed: {
     log() {
-      return [...this.$store.state.bsg.game.log].reverse()
+      return [...this.$game.getLog()].reverse()
     },
   },
 

@@ -168,11 +168,11 @@ export default {
       ]
     },
     deck() {
-      return this.$store.getters['bsg/zone'](this.deckName)
+      return this.$game.getZoneByName(this.deckName)
     },
     discard() {
       if (this.discardName) {
-        return this.$store.getters['bsg/zone'](this.discardName)
+        return this.$game.getZoneByName(this.discardName)
       }
       else {
         return null
@@ -279,7 +279,7 @@ export default {
     },
 
     cardVariant(card) {
-      if (!this.$store.getters['bsg/visible'](card)) {
+      if (!this.$game.checkCardIsVisible(card)) {
         return ''
       }
 
@@ -333,7 +333,7 @@ export default {
     },
 
     displayClasses(card) {
-      if (this.$store.getters['bsg/viewerCanSeeCard'](card)) {
+      if (this.$game.checkCardIsVisible(card)) {
         return []
       }
       else {
@@ -342,7 +342,7 @@ export default {
     },
 
     displayExtra(card) {
-      if (!this.$store.getters['bsg/viewerCanSeeCard'](card)) {
+      if (this.$game.checkCardIsVisible(card)) {
         return ''
       }
 
@@ -352,11 +352,11 @@ export default {
     },
 
     displayName(card) {
-      return this.$store.getters['bsg/viewerCanSeeCard'](card) ? card.name : card.kind
+      return this.$game.checkCardIsVisible(card) ? card.name : card.kind
     },
 
     shuffle() {
-      this.$store.commit('bsg/zoneShuffle', this.deckName)
+      console.log('shuffle')
     },
 
     toggleExpand() {

@@ -29,15 +29,15 @@ export default {
       if (this.hidden)
         return ''
 
-      const card = this.$store.getters['bsg/cardAt'](this.grab.source, this.grab.index)
-      const cardName = this.$store.getters['bsg/visible'](card) ? card.name : card.kind
+      const card = this.$game.getCardByLocation(this.grab.source, this.grab.index)
+      const cardName = this.$game.checkCardIsVisible(card) ? card.name : card.kind
       return `Holding ${cardName} from ${this.grab.source}`
     },
     visible() {
       if (this.hidden)
         return false
-      const card = this.$store.getters['bsg/cardAt'](this.grab.source, this.grab.index)
-      return this.$store.getters['bsg/visible'](card)
+      const card = this.$game.getCardByLocation(this.grab.source, this.grab.index)
+      return this.$game.checkIsVisible(card)
     },
   },
 

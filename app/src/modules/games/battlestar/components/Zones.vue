@@ -280,7 +280,7 @@ import { bsg } from 'battlestar-common'
 const activePlayerVariantFunc = function(name) {
   return {
     func() {
-      return this.$store.getters['bsg/playerActive'].name === name ? 'activePlayer' : ''
+      return this.$game.getPlayerActive().name === name ? 'activePlayer' : ''
     },
   }
 }
@@ -293,15 +293,17 @@ const crisisPoolMenuOptions = [
   {
     name: 'shuffle and reveal',
     func() {
-      this.$store.commit('bsg/zoneShuffle', this.deckName)
-      this.$store.commit('bsg/zoneRevealAll', this.deckName)
-      this.expand = true
+      console.log('shuffle and reveal')
+      /* this.$store.commit('bsg/zoneShuffle', this.deckName)
+       * this.$store.commit('bsg/zoneRevealAll', this.deckName)
+       * this.expand = true */
     },
   },
   {
     name: 'discard all',
     func() {
-      this.$store.commit('bsg/zoneDiscardAll', this.deckName)
+      console.log('discard all')
+      // this.$store.commit('bsg/zoneDiscardAll', this.deckName)
     },
   },
 ]
@@ -314,7 +316,8 @@ const destinyMenuOptions = [
   {
     name: 'refill',
     func() {
-      this.$store.commit('bsg/refillDestiny')
+      console.log('refill destiny')
+      /* this.$store.commit('bsg/refillDestiny') */
     },
   },
 ]
@@ -376,7 +379,7 @@ export default {
       return false
     },
     zones() {
-      return this.$store.getters['bsg/zones']
+      return this.$game.getZoneAll()
     },
   },
 

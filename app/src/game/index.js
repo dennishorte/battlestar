@@ -3,10 +3,11 @@ import { bsg, util } from 'battlestar-common'
 const assert = util.assert
 
 
-module.exports.install = function(Vue, options) {
-  Vue.$game = new GamePlugin(options)
+export default {
+  install: function(Vue) {
+    Vue.prototype.$game = game
+  }
 }
-
 
 function GamePlugin() {
   this.prep = {
@@ -47,3 +48,5 @@ GamePlugin.prototype.setState = function(state) {
 GamePlugin.prototype.setTransitions = function(transitions) {
   this.prep.transitions = transitions
 }
+
+const game = new GamePlugin()

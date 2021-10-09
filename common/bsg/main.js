@@ -9,6 +9,7 @@ module.exports = {
 
   deckbuilder: require('./deckbuilder.js'),
   res: require('./resources.js'),
+  transitions: require('./transitions.js'),
   util: require('./util.js'),
 }
 
@@ -55,12 +56,48 @@ Game.prototype.run = function() {
   return this.sm.run()
 }
 
+Game.prototype.checkPlayerHasCharacter = function(player) {
+  const playerZone = this.getZoneByPlayerName(player.name)
+  const characterCard = playerZone.cards.find(c => c.kind === 'character')
+  return !!characterCard
+}
+
+Game.prototype.checkCardIsVisible = function(card, player) {
+  if (!player) {
+    player = this.actor
+  }
+  player = this._adjustPlayerParam(player)
+
+  return (
+    card.visibility.includes('all')
+    || card.visibility.includes(player.name)
+    || (card.visibility.includes('president') && this.checkPlayerIsPresident(player))
+  )
+}
+
+Game.prototype.checkPlayerIsPresident = function(player) {
+  player = this._adjustPlayerParam(player)
+  return player.name === this.getPresidentName(state)
+}
+
 Game.prototype.getActor = function() {
   return this.actor
 }
 
+Game.prototype.getCardByLocation = function(sourceName, sourceIndex) {
+  return this.getZoneByName(sourceName).cards[sourceIndex]
+}
+
+Game.prototype.getCounterByName = function(name) {
+  return this.state.counters[name]
+}
+
 Game.prototype.getLog = function() {
   return this.state.log
+}
+
+Game.prototype.getPlayerActive = function() {
+  return this.getPlayerByName(this.state.activePlayer)
 }
 
 Game.prototype.getPlayerAll = function() {
@@ -71,14 +108,39 @@ Game.prototype.getPlayerByIndex = function(index) {
   return this.state.players[index]
 }
 
-Game.prototype.getPlayerHasCharacter = function(player) {
-  const playerZone = this.getZoneByPlayerName(player.name)
-  const characterCard = playerZone.cards.find(c => c.kind === 'character')
-  return !!characterCard
+Game.prototype.getPlayerByName = function(name) {
+  return this.getPlayerAll().find(p => p.name === name)
 }
 
-Game.prototype.getWaiting = function(player) {
-  return this.sm.waiting[0]
+Game.prototype.getPlayerWaitingFor = function() {
+  return this.getPlayerByName(this.state.waitingFor)
+}
+
+Game.prototype.getPlayerWithCard = function(cardName) {
+  for (const player of this.getPlayerAll()) {
+    const zone = this.getZoneByPlayer(player)
+    if (zone.cards.find(c => c.name === cardName)) {
+      return player
+    }
+  }
+  return {}
+}
+
+Game.prototype.getPresidentName = function() {
+  return playerWithCard(state, 'President').name
+}
+
+Game.prototype.getWaiting = function() {
+  if (this.sm.waiting[0]) {
+    return this.sm.waiting[0].actor
+  }
+  else {
+    return undefined
+  }
+}
+
+Game.prototype.getZoneAll = function() {
+  return this.state.zones
 }
 
 Game.prototype.getZoneByName = function(name) {
@@ -94,8 +156,14 @@ Game.prototype.getZoneByName = function(name) {
   return zone
 }
 
-Game.prototype.getZoneByPlayerName = function(name) {
-  return this.state.zones.players[name]
+Game.prototype.getZoneByPlayer = function(player) {
+  player = this._adjustPlayerParam(player)
+  return this.state.zones.players[player.name]
+}
+
+Game.prototype.hackImpersonate = function(player) {
+  player = this._adjustPlayerParam(player)
+  this.actor = player.name
 }
 
 Game.prototype.mLog = function(msg) {
@@ -113,17 +181,19 @@ Game.prototype.mLog = function(msg) {
   this.rk.session.push(this.state.log, util.deepcopy(msg))
 }
 
-Game.prototype.mPlayerAssignCharacter = function(playerName, characterName) {
+Game.prototype.mPlayerAssignCharacter = function(player, characterName) {
+  player = this._adjustPlayerParam(player)
+
   this.mutations.log({
     template: "{player} chooses {character}",
     args: {
-      player: playerName,
+      player: player.name,
       character: characterName,
     }
   })
 
   // Put the character card into the player's hand
-  const playerHand = this.getZonebyPlayerName(playerName)
+  const playerHand = this.getZonebyPlayer(player.name)
   const characterZone = this.getZonebyName('character')
   const characterCard = characterZone.cards.find(c => c.name === characterName)
   this.rk.session.move(characterCard, playerHand, 0)
@@ -132,6 +202,18 @@ Game.prototype.mPlayerAssignCharacter = function(playerName, characterName) {
   const pawn = playerHand.cards.find(c => c.kind === 'player-token')
   const startingLocation = this.getZonebyLocationName(characterCard.setup)
   this.rk.session.move(pawn, startingLocation)
+}
+
+Game.prototype._adjustPlayerParam = function(param) {
+  if (typeof param === 'string') {
+    return this.getPlayerByName(param)
+  }
+  else if (typeof param === 'object') {
+    return param
+  }
+  else {
+    throw new Error(`Unable to convert ${param} into a player`)
+  }
 }
 
 

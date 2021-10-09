@@ -23,17 +23,17 @@ export default {
 
   computed: {
     currentPlayer() {
-      return this.$store.getters['bsg/uiViewer']
+      return this.$game.getActor()
     },
 
     players() {
-      return this.$store.getters['bsg/players']
+      return this.$game.getPlayerAll()
     },
   },
 
   methods: {
     impersonate(name) {
-      this.$store.dispatch('bsg/impersonate', name)
+      this.$game.hackImpersonate(name)
     },
   },
 }

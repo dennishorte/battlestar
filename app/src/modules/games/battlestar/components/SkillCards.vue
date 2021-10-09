@@ -48,13 +48,8 @@ export default {
   },
 
   computed: {
-    skillCards() {
-      return this.$store.data
-    },
     cardsAll() {
-
-      const expansions = this.$store.state.bsg.game.options.expansions
-      return this.skillCardsList.filter(c => expansions.includes(c.expansion))
+      return this.$store.getters['bsg/dataSkillCards']
     },
 
     cardsByName() {

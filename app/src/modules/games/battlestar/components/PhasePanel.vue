@@ -223,7 +223,8 @@ export default {
 
   computed: {
     phase() {
-      return this.$store.getters['bsg/phase']
+      return ''
+      /* return this.$store.getters['bsg/phase'] */
     },
 
     phaseComponent() {
@@ -261,7 +262,7 @@ export default {
     },
 
     players() {
-      return this.$store.getters['bsg/players']
+      return this.$game.getPlayerAll()
     },
 
     showDetails() {
@@ -276,7 +277,7 @@ export default {
 
   methods: {
     phaseChanged(value) {
-      this.$store.commit('bsg/phaseSet', value)
+      console.log('set phase', value)
     },
 
     toggleDetails() {

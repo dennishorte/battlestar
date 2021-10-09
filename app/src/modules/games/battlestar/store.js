@@ -82,7 +82,7 @@ export default {
     hand: (state) => (playerName) => $.playerZone(state, playerName),
     phase: (state) => state.game.phase,
     player: (state) => (name) => $.playerByName(state, name),
-    playerActive: (state) => $.playerByName(state, state.game.activePlayer),
+    // playerActive: (state) => $.playerByName(state, state.game.activePlayer),
     playerCharacter: (state) => (playerName) => $.playerCharacter(state, playerName),
     playerNext: (state) => $.playerNext(state),
     players: (state) => state.game.players,
@@ -95,7 +95,7 @@ export default {
     viewerCanSeeCard: (state) => (card) => $.viewerCanSeeCard(state, card),
     viewerIsPresident: (state) => $.viewerIsPresident(state),
 
-    waitingFor: (state) => state.game.waitingFor,
+    // waitingFor: (state) => state.game.waitingFor,
 
 
     ////////////////////////////////////////////////////////////
@@ -116,6 +116,7 @@ export default {
     grab: (state) => state.ui.grab,
     uiErrorMessage: (state) => state.ui.errorMessage,
     uiModalCard: (state) => state.ui.modalCard,
+    uiModalCharacters: (state) => state.ui.charactersModal,
     uiModalLocation: (state) => state.ui.modalLocation,
     uiModalZone: (state) => state.ui.modalZone,
     uiUnsaved: (state) => state.ui.unsavedActions,

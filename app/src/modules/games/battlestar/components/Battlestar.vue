@@ -175,6 +175,8 @@ import SkillCards from './SkillCards'
 import Zones from './Zones'
 import ZoneViewerModal from './ZoneViewerModal'
 
+import { bsg } from 'battlestar-common'
+
 
 export default {
   name: 'Battlestar',
@@ -202,35 +204,31 @@ export default {
 
   computed: {
     canRedo() {
-      return this.$store.getters['bsg/uiCanRedo']
+      return false
+      // return this.$store.getters['bsg/uiCanRedo']
     },
     canUndo() {
-      return this.$store.getters['bsg/uiCanUndo']
+      return false
+      // return this.$store.getters['bsg/uiCanUndo']
     },
     unsaved() {
-      return this.$store.getters['bsg/uiUnsaved']
+      return false
+      // return this.$store.getters['bsg/uiUnsaved']
     },
     players() {
-      return this.$store.getters['bsg/players']
+      return this.$game.getPlayerAll()
     },
     playerActive() {
-      return this.$store.getters['bsg/playerActive'].name
+      return this.$game.getPlayerActive().name
     },
     waitingFor() {
-      return this.$store.getters['bsg/waitingFor']
+      return this.$game.getPlayerWaitingFor().name
     },
   },
 
   methods: {
     async pass(name) {
       await this.$store.dispatch('bsg/pass', name)
-    },
-
-    resourceChanged({ name, amount }) {
-      name = name.trim().toLowerCase().replace(' ', '_')
-      this.counters[name] += amount
-      this.counters[name] = Math.max(0, this.counters[name])
-      this.counters[name] = Math.min(15, this.counters[name])
     },
 
     async save() {
@@ -243,16 +241,16 @@ export default {
     },
 
     redo() {
-      this.$store.commit('bsg/redo')
+      console.log('redo not implemented')
     },
 
     undo() {
-      this.$store.commit('bsg/undo')
+      console.log('undo not implemented')
     },
   },
 
-  mounted() {
-    this.$game.setTransitions(transitions)
+  created() {
+    this.$game.setTransitions(bsg.transitions)
     this.$game.ready()
     this.state.push(this.$game.state)  // Makes the state reactive.
   },

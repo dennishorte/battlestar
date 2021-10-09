@@ -74,7 +74,7 @@ export default {
       }]
 
       for (const card of this.cards) {
-        if (this.$store.getters['bsg/visible'](card)) {
+        if (this.$game.checkCardIsVisible(card)) {
           items.push(card)
         }
         else if (items[items.length - 1].hidden) {
@@ -95,25 +95,25 @@ export default {
     },
 
     zone() {
-      return this.$store.getters['bsg/zone'](this.zoneName)
+      return this.$game.getZoneByName(this.zoneName)
     },
   },
 
   methods: {
     revealAll() {
-      this.$store.commit('bsg/zoneRevealAll', this.zoneName)
+      console.log('zone reveal all')
     },
     revealNext() {
-      this.$store.commit('bsg/zoneRevealNext', this.zoneName)
+      console.log('zone reveal next')
     },
     shuffle() {
-      this.$store.commit('bsg/zoneShuffle', this.zoneName)
+      console.log('zone shuffle')
     },
     viewAll() {
-      this.$store.commit('bsg/zoneViewAll', this.zoneName)
+      console.log('zone view all')
     },
     viewNext() {
-      this.$store.commit('bsg/zoneViewNext', this.zoneName)
+      console.log('zone view next')
     }
   },
 }

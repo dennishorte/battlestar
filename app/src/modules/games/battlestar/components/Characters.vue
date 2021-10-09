@@ -97,10 +97,10 @@ export default {
       return characters
     },
     players() {
-      return this.$store.state.bsg.game.players
+      return this.$game.getPlayerAll()
     },
     selected() {
-      return this.$store.state.bsg.ui.charactersModal.selected
+      return this.$store.getters['bsg/uiModalCharacters'].selected
     },
     selectedData() {
       return this.characters.find(ch => ch.name === this.selected)
@@ -109,7 +109,7 @@ export default {
 
   methods: {
     assign(playerName) {
-      this.$store.commit('bsg/characterAssign', {
+      console.log('assignCharacter', {
         characterName: this.selectedData.name,
         playerName: playerName,
       })
