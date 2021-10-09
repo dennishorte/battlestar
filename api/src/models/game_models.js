@@ -13,7 +13,7 @@ module.exports = Game
 
 
 function _factory(lobby) {
-  return common.bsg.factory(lobby).state
+  return common.bsg.factory(lobby)
 }
 
 Game.create = async function(lobby) {
