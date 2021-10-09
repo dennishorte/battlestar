@@ -20,7 +20,7 @@ export default {
 
   computed: {
     zoneName() {
-      return this.$store.getters['bsg/uiModalZone'].name
+      return this.$game.ui.modal.zoneInfo
     }
   },
 }

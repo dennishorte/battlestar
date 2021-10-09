@@ -80,7 +80,7 @@ export default {
     },
 
     infoRequest() {
-      return this.$store.getters['bsg/uiModalLocation'].name
+      return this.$game.ui.modal.locations
     },
 
     locations() {
@@ -88,7 +88,7 @@ export default {
     },
 
     selected() {
-      const requestedName = this.$store.getters['bsg/uiModalLocation'].name
+      const requestedName = this.$game.ui.modal.locations
       if (requestedName) {
         this.selectLocation(requestedName)
       }

@@ -16,7 +16,7 @@ export default {
 
   computed: {
     errorMessage() {
-      return this.$store.getters['bsg/uiErrorMessage']
+      return this.$game.ui.modal.error
     },
   },
 

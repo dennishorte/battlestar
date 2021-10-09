@@ -205,15 +205,12 @@ export default {
   computed: {
     canRedo() {
       return false
-      // return this.$store.getters['bsg/uiCanRedo']
     },
     canUndo() {
       return false
-      // return this.$store.getters['bsg/uiCanUndo']
     },
     unsaved() {
       return false
-      // return this.$store.getters['bsg/uiUnsaved']
     },
     players() {
       return this.$game.getPlayerAll()
@@ -228,11 +225,11 @@ export default {
 
   methods: {
     async pass(name) {
-      await this.$store.dispatch('bsg/pass', name)
+      console.log('pass to', name)
     },
 
     async save() {
-      await this.$store.dispatch('bsg/save')
+      console.log('save')
       this.$bvToast.toast('saved', {
         autoHideDelay: 300,
         noCloseButton: true,

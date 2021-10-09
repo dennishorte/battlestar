@@ -84,6 +84,10 @@ Game.prototype.getActor = function() {
   return this.actor
 }
 
+Game.prototype.getCardActiveCrisis = function() {
+  return {}
+}
+
 Game.prototype.getCardByLocation = function(sourceName, sourceIndex) {
   return this.getZoneByName(sourceName).cards[sourceIndex]
 }
@@ -98,6 +102,14 @@ Game.prototype.getLog = function() {
 
 Game.prototype.getPlayerActive = function() {
   return this.getPlayerByName(this.state.activePlayer)
+}
+
+Game.prototype.getPlayerNext = function() {
+  const players = this.getPlayerAll()
+  const current = this.getPlayerActive()
+  const currentIndex = players.findIndex(p => p.name === current.name)
+  const nextIndex = (currentIndex + 1) % players.length
+  return players[nextIndex]
 }
 
 Game.prototype.getPlayerAll = function() {

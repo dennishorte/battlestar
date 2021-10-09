@@ -45,10 +45,10 @@ export default {
   computed: {
     actor() {
       if (this.owner === 'next-player') {
-        return this.$store.getters['bsg/playerNext']
+        return this.$game.getPlayerNext()
       }
       else if (this.owner === 'current-player') {
-        return this.$store.getters['bsg/playerActive']
+        return this.$game.getPlayerActive()
       }
       else {
         return 'all'

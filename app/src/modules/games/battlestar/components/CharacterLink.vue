@@ -21,7 +21,7 @@ export default {
 
   methods: {
     openCharacterInfo() {
-      this.$store.dispatch('bsg/characterInfoRequest', this.name)
+      this.$game.ui.modal.characters = this.name
       this.$bvModal.show('characters-modal')
     }
   },

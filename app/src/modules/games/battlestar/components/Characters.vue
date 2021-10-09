@@ -100,7 +100,7 @@ export default {
       return this.$game.getPlayerAll()
     },
     selected() {
-      return this.$store.getters['bsg/uiModalCharacters'].selected
+      return this.$game.ui.modal.characters
     },
     selectedData() {
       return this.characters.find(ch => ch.name === this.selected)
@@ -116,7 +116,7 @@ export default {
     },
 
     characterCloseup(name) {
-      this.$store.dispatch('bsg/characterInfoRequest', name)
+      this.$game.ui.modal.characters = name
     },
 
     classes(name) {

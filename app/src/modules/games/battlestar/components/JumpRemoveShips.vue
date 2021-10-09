@@ -11,7 +11,7 @@ export default {
 
   methods: {
     removeShips() {
-      this.$store.commit('bsg/clearSpace')
+      console.log('remove all ships')
     },
   },
 }

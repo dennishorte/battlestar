@@ -20,7 +20,7 @@ export default {
 
   computed: {
     grab() {
-      return this.$store.getters['bsg/grab']
+      return this.$game.ui.grab
     },
     hidden() {
       return this.grab.source.length === 0
@@ -43,11 +43,11 @@ export default {
 
   methods: {
     cancel() {
-      this.$store.dispatch('bsg/grabCancel')
+      this.$game.actionCancelGrab()
     },
 
     async info() {
-      const modal = await this.$store.dispatch('bsg/grabInfo')
+      const modal = this.$game.actionShowInfoAboutGrabbedCard()
       this.$bvModal.show(modal)
     },
   },

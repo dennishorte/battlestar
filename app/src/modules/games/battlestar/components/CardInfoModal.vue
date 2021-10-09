@@ -37,10 +37,10 @@ export default {
 
   computed: {
     card() {
-      return this.$store.getters['bsg/uiModalCard'].card
+      return this.$game.ui.modal.cardInfo
     },
     cardName() {
-      return this.card ? this.card.name : 'No Card'
+      return this.card.name ? this.card.name : 'No Card'
     },
     cardProps() {
       if (!this.card)

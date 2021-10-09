@@ -3,7 +3,7 @@
     <div class="description">
 
       <b-button
-        v-if="!commonCrisis"
+        v-if="!activeCrisis"
         @click="drawCrisis"
         variant="primary"
         block>
@@ -92,6 +92,8 @@
 <script>
 import CrisisCard from './CrisisCard'
 
+import { util } from 'battlestar-common'
+
 export default {
   name: 'MainCrisis',
 
@@ -101,24 +103,23 @@ export default {
 
   computed: {
     card() {
-      return this.commonCrisis || {}
+      return this.activeCrisis || {}
     },
 
-    commonCrisis() {
-      return this.$store.getters['bsg/commonCrisis']
+    activeCrisis() {
+      return this.$game.getCardActiveCrisis()
     },
 
     crisisDestinyAdded() {
-      return this.$store.getters['bsg/crisisDestinyAdded']
+      return false
     },
 
     crisisDone() {
-      const viewer = this.$store.getters['bsg/uiViewer']
-      return this.$store.getters['bsg/player'](viewer.name).crisisDone
+      return false
     },
 
     crisisStep() {
-      return this.$store.getters['bsg/crisisStep']
+      return ''
     },
 
     isSkillCheck() {
@@ -127,8 +128,8 @@ export default {
     },
 
     playersOrdered() {
-      const players = [...this.$store.getters['bsg/players']]
-      const activePlayer = this.$store.getters['bsg/playerActive']
+      const players = util.deepcopy(this.$game.getPlayerAll())
+      const activePlayer = this.$game.getPlayerActive()
       while (players[players.length - 1].name !== activePlayer.name) {
         players.push(players.shift())
       }
@@ -139,26 +140,23 @@ export default {
 
   methods: {
     addDestinyCards() {
-      this.$store.commit('bsg/addDestinyCards')
+      console.log('add destiny cards')
     },
 
     drawCrisis() {
-      this.$store.commit('bsg/drawCrisis')
+      console.log('draw crisis card')
     },
 
     doneAdding() {
-      this.$store.commit('bsg/crisisDoneAdding')
+      console.log('done adding cards')
     },
 
     help(amount) {
-      this.$store.commit('bsg/crisisHelp', {
-        playerName: this.$store.getters['bsg/uiViewer'].name,
-        amount,
-      })
+      console.log('help: ', amount)
     },
 
     setStep(name) {
-      this.$store.commit('bsg/crisisStep', name)
+      console.log('set crisis step', name)
     },
   },
 

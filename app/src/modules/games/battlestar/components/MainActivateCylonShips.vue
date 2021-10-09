@@ -2,7 +2,7 @@
   <div class="main-activate-cylon-ships">
 
     <b-alert show variant="info">
-      Activation: <span class="heading">{{ commonCrisis['cylon activation'] }}</span>
+      Activation: <span class="heading">{{ activeCrisis['cylon activation'] }}</span>
     </b-alert>
 
 
@@ -124,8 +124,8 @@ export default {
   },
 
   computed: {
-    commonCrisis() {
-      return this.$store.getters['bsg/commonCrisis'] || {}
+    activeCrisis() {
+      return this.$game.getCardActiveCrisis()
     },
   },
 }

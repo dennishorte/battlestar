@@ -190,15 +190,15 @@ export default {
       return !!this.discard && this.discard.kind === 'open'
     },
     discardable() {
-      const grabbed = this.$store.getters['bsg/grab']
+      const grabbed = this.$game.ui.grab
       return !!grabbed.source && !!this.discard
     },
     droppable() {
-      const grabbed = this.$store.getters['bsg/grab']
+      const grabbed = this.$game.ui.grab
       return grabbed.source && grabbed.source !== this.deckName
     },
     droppableBottom() {
-      const grabbed = this.$store.getters['bsg/grab']
+      const grabbed = this.$game.ui.grab
       return !!grabbed.source
     },
     expandable() {
@@ -206,10 +206,10 @@ export default {
           || this.deck.kind === 'hand'
     },
     grabbed() {
-      return this.$store.getters['bsg/grab'].source === this.deckName
+      return this.$game.ui.grab.source === this.deckName
     },
     grabbedIndex() {
-      return this.grabbed ? this.$store.getters['bsg/grab'].index : -1
+      return this.grabbed ? this.$game.ui.grab.index : -1
     },
     locationNames() {
       return this.$store.getters['bsg/dataLocations'].map(l => l.name)
@@ -287,10 +287,7 @@ export default {
     },
 
     async click(event, location) {
-      const didAction = await this.$store.dispatch('bsg/zoneClick', {
-        source: this.deckName,
-        index: location || 'top',
-      })
+      const didAction = this.$game.actionClickZone(this.deckName, location || 'top')
 
       if (!didAction && this.clickHandlerPost.func) {
         this.clickHandlerPost.func.apply(this)
@@ -298,7 +295,6 @@ export default {
     },
 
     async clickBottom(event) {
-      console.log('bottom')
       await this.click(event, 'bottom')
       event.stopPropagation()
     },
@@ -309,26 +305,20 @@ export default {
     },
 
     clickCard(index) {
-      this.$store.dispatch('bsg/zoneClick', {
-        source: this.deckName,
-        index: index,
-      })
+      this.$game.actionClickZone(this.deckName, index)
     },
 
     clickDiscard() {
-      this.$store.dispatch('bsg/zoneClick', {
-        source: this.discardName,
-        index: 'top',
-      })
+      this.$game.actionClickZone(this.discardName, 'top')
     },
 
     details() {
-      this.$store.dispatch('bsg/zoneViewer', this.deckName)
+      this.$game.ui.modal.zoneInfo = this.deckName
       this.$bvModal.show('zone-modal')
     },
 
     discardDetails() {
-      this.$store.dispatch('bsg/zoneViewer', this.discardName)
+      this.$game.ui.modal.zoneInfo = this.discardName
       this.$bvModal.show('zone-modal')
     },
 

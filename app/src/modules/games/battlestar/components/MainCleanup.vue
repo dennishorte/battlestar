@@ -2,8 +2,8 @@
   <div class="main-next-player">
     <b-button
       block
-      :disabled="!commonCrisis"
-      :variant="!!commonCrisis ? 'info' : ''"
+      :disabled="!activeCrisis"
+      :variant="!!activeCrisis ? 'info' : ''"
       @click="cleanCrisis"
     >Clean Up Crisis Card</b-button>
 
@@ -29,14 +29,14 @@ export default {
   name: 'MainCleanup',
 
   computed: {
-    commonCrisis() {
-      return this.$store.getters['bsg/commonCrisis']
+    activeCrisis() {
+      return this.$game.getCardActiveCrisis()
     },
 
     playersToDiscard() {
       const output = []
-      for (const player of this.$store.getters['bsg/players']) {
-        const hand = this.$store.getters['bsg/zone'](`players.${player.name}`).cards
+      for (const player of this.$game.getPlayerAll()) {
+        const hand = this.$game.getZoneByPlayer(player).cards
         const skillCards = hand.filter(c => c.kind === 'skill')
         if (skillCards.length > 10) {
           output.push(player)
@@ -48,11 +48,11 @@ export default {
 
   methods: {
     cleanCrisis() {
-      this.$store.commit('bsg/crisisCleanup')
+      console.log('cleanup crisis')
     },
 
     async notify(player) {
-      await this.$store.dispatch('bsg/notify', player._id)
+      console.log('notify player', player)
     },
   },
 }
