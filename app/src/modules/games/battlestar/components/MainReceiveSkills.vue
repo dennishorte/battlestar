@@ -36,12 +36,12 @@ export default {
 
   computed: {
     character() {
-      const char = this.$store.getters['bsg/playerCharacter'](this.playerName)
+      const char = this.$game.getCardCharacterByPlayer(this.playerName)
       return char ? char : {}
     },
 
     playerName() {
-      return this.$store.getters['bsg/playerActive'].name
+      return this.$game.getPlayerActive().name
     },
 
     skills() {
@@ -71,20 +71,7 @@ export default {
 
   methods: {
     drawSkills() {
-      const kinds = []
-      for (const { name, value, optional } of this.skills) {
-        if (optional)
-          continue
-
-        for (let i = 0; i < value; i++) {
-          kinds.push(name)
-        }
-      }
-
-      this.$store.commit('bsg/drawSkills', {
-        playerName: this.playerName,
-        kinds,
-      })
+      console.log('draw skills')
     },
   },
 }

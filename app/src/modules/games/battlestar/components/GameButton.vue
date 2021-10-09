@@ -62,7 +62,7 @@ export default {
     },
 
     clickIfValid() {
-      if (this.actor === 'all' || this.actor.name === this.$store.getters['bsg/uiViewer'].name) {
+      if (this.actor === 'all' || this.actor.name === this.$game.getActor().name) {
         this.bubble()
       }
       else {

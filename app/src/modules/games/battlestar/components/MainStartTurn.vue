@@ -19,13 +19,13 @@ export default {
 
   computed: {
     actor() {
-      return this.$store.getters['bsg/playerNext']
+      return this.$game.getPlayerNext()
     },
   },
 
   methods: {
     advanceToNextPlayer() {
-      this.$store.commit('bsg/playerAdvance')
+      console.log('advance to next player')
     },
   },
 }

@@ -25,7 +25,7 @@ export default {
 
   methods: {
     openSkillInfo() {
-      this.$store.dispatch('bsg/skillCardInfoRequest', '')
+      this.$game.ui.modal.skillCards = ''
       this.$bvModal.show('skill-cards-modal')
     },
   },

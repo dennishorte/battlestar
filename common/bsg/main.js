@@ -57,9 +57,8 @@ Game.prototype.run = function() {
 }
 
 Game.prototype.checkPlayerHasCharacter = function(player) {
-  const playerZone = this.getZoneByPlayerName(player.name)
-  const characterCard = playerZone.cards.find(c => c.kind === 'character')
-  return !!characterCard
+  player = this._adjustPlayerParam(player)
+  return !!this.getCardCharacterByPlayer(player)
 }
 
 Game.prototype.checkCardIsVisible = function(card, player) {
@@ -92,8 +91,19 @@ Game.prototype.getCardByLocation = function(sourceName, sourceIndex) {
   return this.getZoneByName(sourceName).cards[sourceIndex]
 }
 
+Game.prototype.getCardsLoyaltyByPlayer = function(player) {
+  const cards = this.getZoneByPlayer(player).cards
+  return cards.filter(c.kind === 'loyalty')
+}
+
 Game.prototype.getCounterByName = function(name) {
   return this.state.counters[name]
+}
+
+Game.prototype.getCardCharacterByPlayer = function(player) {
+  player = this._adjustPlayerParam(player)
+  const playerZone = this.getZoneByPlayerName(player.name)
+  return playerZone.cards.find(c => c.kind === 'character')
 }
 
 Game.prototype.getLog = function() {

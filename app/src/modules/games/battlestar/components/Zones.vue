@@ -294,16 +294,12 @@ const crisisPoolMenuOptions = [
     name: 'shuffle and reveal',
     func() {
       console.log('shuffle and reveal')
-      /* this.$store.commit('bsg/zoneShuffle', this.deckName)
-       * this.$store.commit('bsg/zoneRevealAll', this.deckName)
-       * this.expand = true */
     },
   },
   {
     name: 'discard all',
     func() {
       console.log('discard all')
-      // this.$store.commit('bsg/zoneDiscardAll', this.deckName)
     },
   },
 ]
@@ -317,7 +313,6 @@ const destinyMenuOptions = [
     name: 'refill',
     func() {
       console.log('refill destiny')
-      /* this.$store.commit('bsg/refillDestiny') */
     },
   },
 ]
@@ -348,7 +343,7 @@ const handSort = {
 const locationClickHandler = function(locationName) {
   return {
     func() {
-      this.$store.dispatch('bsg/locationInfoRequest', locationName)
+      this.$game.ui.modal.location = locationName
       this.$bvModal.show('locations-modal')
     }
   }

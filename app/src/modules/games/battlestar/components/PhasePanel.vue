@@ -224,7 +224,6 @@ export default {
   computed: {
     phase() {
       return ''
-      /* return this.$store.getters['bsg/phase'] */
     },
 
     phaseComponent() {

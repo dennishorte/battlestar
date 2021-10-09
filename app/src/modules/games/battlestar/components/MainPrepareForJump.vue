@@ -1,7 +1,7 @@
 <template>
   <div class="main-prepare-for-jump description">
     <b-button
-      :disabled="!commonCrisis['jump track?'] || crisisStep !== 'jump'"
+      :disabled="!activeCrisis['jump track?'] || crisisStep !== 'jump'"
       @click="advanceJump"
       block
       variant="primary">
@@ -24,26 +24,26 @@ export default {
   name: 'MainPrepareForJump',
 
   computed: {
-    commonCrisis() {
-      return this.$store.getters['bsg/commonCrisis'] || {}
+    activeCrisis() {
+      return this.$game.getCardActiveCrisis()
     },
 
     crisisStep() {
-      return this.$store.getters['bsg/crisisStep']
+      return ''
     },
 
     jumpTrack() {
-      return this.$store.getters['bsg/countersJumpTrack']
+      return this.$game.getCounter('jumpTrack')
     },
   },
 
   methods: {
     advanceJump() {
-      this.$store.commit('bsg/advanceJumpTrack')
+      this.$game.mCounter('jumpTrack', 1)
     },
 
     autoJump() {
-      this.$store.commit('bsg/jump')
+      console.log('auto jump')
     },
   },
 }
