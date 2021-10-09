@@ -212,7 +212,7 @@ export default {
       return this.grabbed ? this.$game.ui.grab.index : -1
     },
     locationNames() {
-      return this.$store.getters['bsg/dataLocations'].map(l => l.name)
+      return this.$game.data.filtered.locations.map(l => l.name)
     },
 
     fullMenuOptions() {

@@ -49,7 +49,7 @@ export default {
 
   computed: {
     cardsAll() {
-      return this.$store.getters['bsg/dataSkillCards']
+      return this.$game.data.filtered.skillCards
     },
 
     cardsByName() {
@@ -86,7 +86,7 @@ export default {
     },
 
     selectedName() {
-      return this.$store.state.bsg.ui.skillCardsModal.selected
+      return this.$game.ui.modal.skillCards
     },
 
     sortedNames() {
@@ -103,7 +103,7 @@ export default {
 
   methods: {
     selectCard(event, name) {
-      this.$store.dispatch('bsg/skillCardInfoRequest', name)
+      this.$game.ui.modal.skillCards = name
     },
   },
 }

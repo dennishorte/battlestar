@@ -84,7 +84,7 @@ export default {
     },
 
     locations() {
-      return this.$store.getters['bsg/dataLocations']
+      return this.$game.data.filtered.locations
     },
 
     selected() {

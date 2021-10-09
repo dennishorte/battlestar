@@ -249,7 +249,10 @@ export default {
   created() {
     this.$game.setTransitions(bsg.transitions)
     this.$game.ready()
-    this.state.push(this.$game.state)  // Makes the state reactive.
+
+    // Make the game data and ui state reactive
+    this.state.push(this.$game.state)
+    this.state.push(this.$game.ui)
   },
 }
 </script>

@@ -15,6 +15,12 @@ function GamePlugin() {
     transitions: null,
     actor: null,
   }
+
+  this.data = {
+    raw: {},
+    filtered: {},
+  },
+
   this.ui = {
     grab: {
       source: '',
@@ -56,6 +62,13 @@ GamePlugin.prototype.ready = function() {
     this.prep.state,
     this.prep.actor,
   )
+
+  // Load the static deck data used in info panels
+  this.data.raw = bsg.res
+  this.data.filtered = {}
+  for (const [key, cards] of Object.entries(bsg.res)) {
+    this.data.filtered[key] = bsg.util.expansionFilter(cards, this.state.options.expansions)
+  }
 }
 
 GamePlugin.prototype.setActor = function(actor) {

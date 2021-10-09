@@ -23,21 +23,23 @@
 
 
 <script>
+import { util } from 'battlestar-common'
+
 export default {
   name: 'SetupDistributeTitleCards',
 
   computed: {
     admirals() {
       const los = (character) => character['admiral line of succession order']
-      const characters = this.$store.getters['bsg/dataDeck']('character')
-      return ([...characters.cards])
+      const characters = util.deepcopy(this.data.filtered.characterCards)
+      return characters
         .sort((l, r) => los(l) - los(r))
         .map(c => c.name)
     },
     presidents() {
       const los = (character) => character['president line of succession order']
-      const characters = this.$store.getters['bsg/dataDeck']('character')
-      return ([...characters.cards])
+      const characters = util.deepcopy(this.data.filtered.characterCards)
+      return characters
         .sort((l, r) => los(l) - los(r))
         .map(c => c.name)
     },

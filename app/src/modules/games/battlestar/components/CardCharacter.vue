@@ -36,7 +36,7 @@ export default {
 
   computed: {
     characterCard() {
-      return this.$store.getters['bsg/dataCharacter'](this.displayName)
+      return this.$game.data.filtered.characterCards.filter(c => c.name === this.displayName)
     },
 
     characterSkills() {

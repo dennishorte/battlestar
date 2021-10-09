@@ -77,7 +77,7 @@
 
 
 <script>
-import { bsg } from 'battlestar-common'
+import { bsg, util } from 'battlestar-common'
 
 
 export default {
@@ -91,8 +91,7 @@ export default {
 
   computed: {
     characters() {
-      const charactersRaw = this.$store.getters['bsg/dataDeck']('character').cards
-      const characters = [...charactersRaw]
+      const characters = util.deepcopy(this.$game.data.filtered.characterCards)
       characters.sort((l, r) => l.name.localeCompare(r.name))
       return characters
     },

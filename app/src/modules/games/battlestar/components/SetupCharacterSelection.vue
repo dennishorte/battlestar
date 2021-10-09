@@ -20,10 +20,10 @@ export default {
 
   computed: {
     characterTypeCounts() {
-      const players = this.$store.getters['bsg/players']
+      const players = this.$game.getPlayerAll()
       const playerCharacters = players
         .map(player => {
-          const hand = this.$store.getters['bsg/hand'](player.name).cards
+          const hand = this.$game.getZoneByPlayer(player).cards
           for (const card of hand) {
             if (card.kind === 'character') {
               return card
@@ -40,7 +40,7 @@ export default {
         Support: 0,
       }
 
-      const characterData = this.$store.getters['bsg/dataDeck']('character').cards
+      const characterData = this.game.data.filtered.characterCards
       for (const char of characterData) {
         if (!playerCharacters.find(ch => ch.name === char.name)) {
           counts[char['role']] += 1
@@ -56,7 +56,7 @@ export default {
     },
 
     firstPlayer() {
-      return this.$store.state.bsg.game.players[0].name
+      return this.$game.getPlayerAll()[0].name
     },
 
   },
