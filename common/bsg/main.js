@@ -2,6 +2,7 @@ const RecordKeeper = require('../lib/recordkeeper.js')
 const StateMachine = require('../lib/statemachine.js')
 
 const initialize = require('./initialize.js')
+const util = require('../lib/util.js')
 
 module.exports = {
   Game,
@@ -102,7 +103,7 @@ Game.prototype.getCounterByName = function(name) {
 
 Game.prototype.getCardCharacterByPlayer = function(player) {
   player = this._adjustPlayerParam(player)
-  const playerZone = this.getZoneByPlayerName(player.name)
+  const playerZone = this.getZoneByPlayer(player.name)
   return playerZone.cards.find(c => c.kind === 'character')
 }
 
@@ -197,10 +198,20 @@ Game.prototype.mLog = function(msg) {
   }
 
   enrichLogArgs(msg)
-  msg.actor = this.getactor().name
-  msg.id = this.getlog().length
+  if (!msg.actor) {
+    msg.actor = this.getActor().name
+  }
+  msg.id = this.getLog().length
 
   this.rk.session.push(this.state.log, util.deepcopy(msg))
+}
+
+Game.prototype.mMoveByIndices = function(sourceName, sourceIndex, targetName, targetIndex) {
+  const source = this.getZoneByName(sourceName).cards
+  const target = this.getZoneByName(targetName).cards
+  const card = source[sourceIndex]
+  this.rk.session.splice(source, sourceIndex, 1)
+  this.rk.session.splice(target, targetIndex, 0, card)
 }
 
 Game.prototype.mPlayerAssignCharacter = function(player, characterName) {

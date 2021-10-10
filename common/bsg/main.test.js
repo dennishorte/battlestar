@@ -29,6 +29,26 @@ function gameFixture() {
 
 
 describe('new game', () => {
+  test("first run initializes space zones", () => {
+    const game = gameFixture()
+    game.run()
+
+    const expected = {
+      'space.space0': ['Basestar A', 'raider', 'raider', 'raider'],
+      'space.space1': [],
+      'space.space2': [],
+      'space.space3': ['civilian', 'civilian'],
+      'space.space4': ['viper'],
+      'space.space5': ['viper'],
+    }
+
+    for (const [zoneName, expectedShips] of Object.entries(expected)) {
+      const zone = game.getZoneByName(zoneName)
+      const shipNames = zone.cards.map(c => c.name).sort()
+      expect(shipNames).toStrictEqual(expectedShips)
+    }
+  })
+
   test("waits at character selection", () => {
     const game = gameFixture()
     game.run()

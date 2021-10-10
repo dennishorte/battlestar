@@ -19,7 +19,7 @@ function characterSelection(context) {
 function characterSelectionDo(context) {
   const player = context.state.getPlayerByIndex(context.data.playerIndex)
 
-  if (context.state.getPlayerHasCharacter(player)) {
+  if (context.state.checkPlayerHasCharacter(player)) {
     context.done()
   }
   else {
@@ -49,6 +49,24 @@ function distributeTitleCards(context, state) {
 }
 
 function initialize(context) {
+  const game = context.state
+  game.rk.sessionStart(session => {
+    game.mLog({
+      template: "Placing initial ships",
+      actor: 'admin',
+    })
+
+    for (let i = 0; i < 3; i++) {
+      game.mMoveByIndices('ships.raiders', 0, 'space.space0', 0)
+    }
+    for (let i = 0; i < 2; i++) {
+      game.mMoveByIndices('decks.civilian', 0, 'space.space3', 0)
+    }
+    game.mMoveByIndices('ships.basestarA', 0, 'space.space0', 0)
+    game.mMoveByIndices('ships.vipers', 0, 'space.space4', 0)
+    game.mMoveByIndices('ships.vipers', 0, 'space.space5', 0)
+  })
+
   context.done()
 }
 

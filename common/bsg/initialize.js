@@ -104,56 +104,6 @@ function initialize(game) {
     },
   }
 
-  /* else {
-   *   commit('load', data)
-
-   *   commit('log', {
-   *     template: 'Initializing Game',
-   *     classes: ['admin-action'],
-   *     args: {},
-   *   })
-
-   *   commit('log', {
-   *     template: 'Setting up initial ships',
-   *     classes: ['admin-action'],
-   *     args: {},
-   *   })
-
-   *   // Basestar
-   *   commit('move', {
-   *     source: 'ships.basestarA',
-   *     target: 'space.space0',
-   *   })
-
-   *   // Raiders
-   *   for (let i = 0; i < 3; i++) {
-   *     commit('move', {
-   *       source: 'ships.raiders',
-   *       target: 'space.space0',
-   *     })
-   *   }
-
-   *   // Vipers
-   *   commit('move', {
-   *     source: 'ships.vipers',
-   *     target: 'space.space5',
-   *   })
-   *   commit('move', {
-   *     source: 'ships.vipers',
-   *     target: 'space.space4',
-   *   })
-
-   *   // Civilians
-   *   for (let i = 0; i < 2; i++) {
-   *     commit('move', {
-   *       source: 'decks.civilian',
-   *       target: 'space.space3',
-   *     })
-   *   }
-
-   *   await dispatch('save')
-   * } */
-
   return game
 }
 
