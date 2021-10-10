@@ -154,8 +154,8 @@ Game.prototype.getPresidentName = function() {
 }
 
 Game.prototype.getWaiting = function() {
-  if (this.sm.waiting[0]) {
-    return this.sm.waiting[0].actor
+  if (this.state.sm.waiting.length) {
+    return this.state.sm.waiting[0]
   }
   else {
     return undefined

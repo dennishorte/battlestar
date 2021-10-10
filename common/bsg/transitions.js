@@ -17,13 +17,15 @@ function characterSelection(context) {
 }
 
 function characterSelectionDo(context) {
-  const player = context.state.getPlayerByIndex(context.data.playerIndex)
+  const game = context.state
+  const player = game.getPlayerByIndex(context.data.playerIndex)
 
-  if (context.state.checkPlayerHasCharacter(player)) {
+  if (game.checkPlayerHasCharacter(player)) {
     context.done()
   }
   else {
-    const availableCharacters = ['Saul Tigh']
+    const characterDeck = game.getZoneByName('decks.character')
+    const availableCharacters = characterDeck.cards.map(c => c.name).sort()
 
     context.wait({
       name: player.name,
