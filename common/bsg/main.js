@@ -55,11 +55,14 @@ Game.prototype.load = function(transitions, state, actor) {
   )
 }
 
+// Available to overload
+Game.prototype.save = async function() {}
+
 Game.prototype.run = function() {
   return this.sm.run()
 }
 
-Game.prototype.submit = function({ actor, name, option }) {
+Game.prototype.submit = async function({ actor, name, option }) {
   this.rk.sessionStart()
 
   if (name === 'Select Character') {
@@ -70,8 +73,8 @@ Game.prototype.submit = function({ actor, name, option }) {
   }
 
   this.rk.session.commit()
-
-  return this.sm.run()
+  this.sm.run()
+  await this.save()
 }
 
 Game.prototype.checkPlayerHasCharacter = function(player) {
