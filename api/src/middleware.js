@@ -65,6 +65,14 @@ function _coerceIdsRecurse(obj) {
         obj[key] = _tryConvertToObjectId(key, value)
       }
     }
+
+    else if (Array.isArray(value)) {
+      for (const elem of value) {
+        if (typeof elem === 'object') {
+          _coerceIdsRecurse(elem)
+        }
+      }
+    }
   }
 }
 
