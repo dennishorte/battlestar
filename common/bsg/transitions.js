@@ -50,8 +50,91 @@ function characterSelectionDo(context) {
 }
 
 function distributeLoyaltyCards(context) {
-  context.wait({ name: 'dennis', actions: [{ name: 'test' }] })
-  return
+  const game = context.state
+  const numPlayers = game.getPlayerAll().length
+  const gaiusPlayer = game.getPlayerWithCard('Gaius Baltar')
+  const sharonPlayer = game.getPlayerWithCard('Sharon "Boomer" Valeri')
+
+  let humanCount
+  let cylonCount
+  let sympathizer = false
+
+  if (numPlayers == 3) {
+    humanCount = 5
+    cylonCount = 1
+  }
+  else if (numPlayers == 4) {
+    humanCount = 6
+    cylonCount = 1
+    sympathizer = true
+  }
+  else if (numPlayers == 5) {
+    humanCount = 8
+    cylonCount = 2
+  }
+  else if (numPlayers == 6) {
+    humanCount = 9
+    cylonCount = 2
+    sympathizer = true
+  }
+  else {
+    throw new Error(`Invalid number of players: ${numPlayers}`)
+  }
+
+  if (gaiusPlayer) {
+    humanCount += 1
+  }
+  if (sharonPlayer) {
+    humanCount += 1
+  }
+
+  game.rk.sessionStart(session => {
+    for (let i = 0; i < humanCount; i++) {
+      game.mMoveByIndices('decks.human', 0, 'decks.loyalty', 0)
+    }
+    for (let i = 0; i < cylonCount; i++) {
+      game.mMoveByIndices('decks.cylon', 0, 'decks.loyalty', 0)
+    }
+
+    game.mLog({
+      template: `Loyalty deck created with ${humanCount} humans and ${cylonCount} cylons`,
+      actor: 'admin',
+    })
+
+    game.mLog({
+      template: 'Each player receives one loyalty card.',
+      actor: 'admin',
+    })
+
+    for (const player of game.getPlayerAll()) {
+      const playerZone = game.getZoneByPlayer(player)
+      game.mMoveByIndices('decks.loyalty', 0, playerZone.name, playerZone.length)
+    }
+
+    if (gaiusPlayer) {
+      const playerZone = game.getZoneByPlayer(gaiusPlayer)
+      game.mMoveByIndices('decks.loyalty', 0, playerZone.name, playerZone.length)
+
+      game.mLog({
+        template: '{player} receives a second loyalty card due to {card}',
+        actor: 'admin',
+        args: {
+          player: gaiusPlayer.name,
+          card: game.getCardByName('Gaius Baltar'),
+        }
+      })
+    }
+
+    if (sympathizer) {
+      game.mMoveByIndices('decks.sympathizer', 0, 'decks.loyalty', 0)
+      game.mLog({
+        template: 'Sympathizer card added to the loyalty deck',
+        actor: 'admin',
+      })
+    }
+  })
+
+  context.done()
 }
 
 function _admiralSort(l, r) {
@@ -64,7 +147,6 @@ function _presidentSort(l, r) {
 
 function distributeTitleCards(context) {
   const game = context.state
-
   const playerCharacters = game.getPlayerAll().map(p => [p, game.getCardCharacterByPlayer(p)])
 
   game.rk.sessionStart(() => {
@@ -165,20 +247,9 @@ function playerAction(context, state) {
   }
 }
 
-function each(func, paramName, paramPath) {
-  return function(context, state) {
-    const params = jsonpath.at(state, paramPath)
-    context.data.paramIndex = 0
-
-    if (context.data.paramIndex < params.length) {
-      context.data[paramName] = params[context.data.paramIndex]
-      context.data.paramIndex += 1
-      func(context, state)
-    }
-    else {
-      context.done()
-    }
-  }
+// Temporary function to pause execution while evaluating each step
+function waitFunc(context) {
+  context.wait({ name: 'dennis', actions: [{ name: 'test' }] })
 }
 
 
@@ -201,7 +272,7 @@ const transitions = {
       'character-selection',
       'distribute-title-cards',
       'distribute-loyalty-cards',
-      'receive-skills',
+      'receive-skills-setup',
     ]
   },
 
@@ -221,10 +292,8 @@ const transitions = {
     func: distributeLoyaltyCards,
   },
 
-  'receive-skills': {
-    func: () => {},
-    actor: 'each',
-    actorParams: '.players',
+  'receive-skills-setup': {
+    func: waitFunc,
   },
 
   'main': {

@@ -132,7 +132,7 @@ Game.prototype.getCardByPredicate = function(predicate) {
 
 Game.prototype.getCardsLoyaltyByPlayer = function(player) {
   const cards = this.getZoneByPlayer(player).cards
-  return cards.filter(c.kind === 'loyalty')
+  return cards.filter(c => c.kind === 'loyalty')
 }
 
 Game.prototype.getCounterByName = function(name) {

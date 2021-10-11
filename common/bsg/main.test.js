@@ -12,6 +12,7 @@ function gameFixture() {
     users: [
       { _id: 0, name: 'dennis' },
       { _id: 1, name: 'micah' },
+      { _id: 2, name: 'tom' },
     ],
   }
 
@@ -23,6 +24,27 @@ function gameFixture() {
   // Sort the players so they are consistent for testing
   game.state.players.sort((l, r) => l._id - r._id)
 
+  return game
+}
+
+function gameFixturePostCharacterSelection() {
+  const game = gameFixture()
+  game.run()
+  game.submit({
+    actor: 'dennis',
+    name: 'Select Character',
+    option: 'Gaius Baltar',
+  })
+  game.submit({
+    actor: 'micah',
+    name: 'Select Character',
+    option: 'William Adama',
+  })
+  game.submit({
+    actor: 'tom',
+    name: 'Select Character',
+    option: 'Sharon "Boomer" Valerii',
+  })
   return game
 }
 
@@ -191,7 +213,7 @@ describe('character selection', () => {
 
     const playerHand = game.getZoneByPlayer(player).cards
     const playerHandNames = playerHand.map(c => c.name).sort()
-    expect(playerHandNames).toStrictEqual(['Admiral', 'William Adama'])
+    expect(playerHandNames).toStrictEqual(['William Adama'])
 
     const playerZone = game.getZoneByLocationName("Admiral's Quarters")
     const playerZoneCardNames = playerZone.cards.map(c => c.name)
@@ -203,21 +225,37 @@ describe('character selection', () => {
 describe('distribute title cards', () => {
 
   test("automatically executed after character selection", () => {
-    const game = gameFixture()
-    game.run()
-    game.submit({
-      actor: 'dennis',
-      name: 'Select Character',
-      option: 'Gaius Baltar',
-    })
-    game.submit({
-      actor: 'micah',
-      name: 'Select Character',
-      option: 'William Adama',
-    })
-
+    const game = gameFixturePostCharacterSelection()
     expect(game.getPlayerWithCard('President').name).toBe('dennis')
     expect(game.getPlayerWithCard('Admiral').name).toBe('micah')
+  })
+
+})
+
+describe('distribute loyalty cards', () => {
+
+  test("deals one card to each player", () => {
+    const game = gameFixturePostCharacterSelection()
+    for (const player of game.getPlayerAll()) {
+      const hand = game.getZoneByPlayer(player).cards
+      const loyaltyCards = game.getCardsLoyaltyByPlayer(player)
+
+      // Gaius gets an extra card
+      if (player.name === 'dennis') {
+        expect(loyaltyCards.length).toBe(2)
+      }
+      else {
+        expect(loyaltyCards.length).toBe(1)
+      }
+
+      // Number of cards remaining should be 4
+      const loyaltyDeck = game.getZoneByName('decks.loyalty')
+      expect(loyaltyDeck.cards.length).toBe(4)
+    }
+  })
+
+  test.skip("adds sympathizer card after dealing initial cards", () => {
+    const game = gameFixturePostCharacterSelection()
   })
 
 })
