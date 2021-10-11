@@ -1,4 +1,4 @@
-const bsg = require('./main.js')
+const bsg = require('./game.js')
 const transitions = require('./transitions.js')
 
 
