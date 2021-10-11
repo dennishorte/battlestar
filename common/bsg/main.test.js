@@ -121,6 +121,24 @@ describe('character selection', () => {
     const player = game.getPlayerAll()[0]
 
     expect(game.getCardCharacterByPlayer(player).name).toBe('Gaius Baltar')
+
+    const playerHand = game.getZoneByPlayer(player).cards
+    const playerHandNames = playerHand.map(c => c.name).sort()
+    expect(playerHandNames).toStrictEqual(['Gaius Baltar'])
+  })
+
+  test("when first player chooses, pawn is placed", () => {
+    const game = gameFixture()
+    game.run()
+    game.submit({
+      actor: 'dennis',
+      name: 'Select Character',
+      option: 'Gaius Baltar',
+    })
+
+    const researchLabZone = game.getZoneByLocationName('Research Lab')
+    const researchLabCardNames = researchLabZone.cards.map(c => c.name)
+    expect(researchLabCardNames).toStrictEqual(['dennis'])
   })
 
   test("when first player chooses, advances to next player", () => {
@@ -153,7 +171,7 @@ describe('character selection', () => {
     })
   })
 
-  test("after all players have chosen, advance to distribute-title-cards", () => {
+  test("second player choices are reflected", () => {
     const game = gameFixture()
     game.run()
     game.submit({
@@ -167,12 +185,39 @@ describe('character selection', () => {
       option: 'William Adama',
     })
 
-    const stackNames = game.sm.stack.map(x => x.name)
-    expect(stackNames).toStrictEqual([
-      'root',
-      'setup',
-      'distribute-title-cards',
-    ])
+    const player = game.getPlayerAll()[1]
+    const characterName = game.getCardCharacterByPlayer(player).name
+    expect(characterName).toBe('William Adama')
+
+    const playerHand = game.getZoneByPlayer(player).cards
+    const playerHandNames = playerHand.map(c => c.name).sort()
+    expect(playerHandNames).toStrictEqual(['Admiral', 'William Adama'])
+
+    const playerZone = game.getZoneByLocationName("Admiral's Quarters")
+    const playerZoneCardNames = playerZone.cards.map(c => c.name)
+    expect(playerZoneCardNames).toStrictEqual(['micah'])
+  })
+
+})
+
+describe('distribute title cards', () => {
+
+  test("automatically executed after character selection", () => {
+    const game = gameFixture()
+    game.run()
+    game.submit({
+      actor: 'dennis',
+      name: 'Select Character',
+      option: 'Gaius Baltar',
+    })
+    game.submit({
+      actor: 'micah',
+      name: 'Select Character',
+      option: 'William Adama',
+    })
+
+    expect(game.getPlayerWithCard('President').name).toBe('dennis')
+    expect(game.getPlayerWithCard('Admiral').name).toBe('micah')
   })
 
 })

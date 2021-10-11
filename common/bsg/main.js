@@ -3,6 +3,7 @@ const StateMachine = require('../lib/statemachine.js')
 
 const initialize = require('./initialize.js')
 const bsgutil = require('./util.js')
+const jsonpath = require('../lib/jsonpath.js')
 const util = require('../lib/util.js')
 
 module.exports = {
@@ -96,7 +97,8 @@ Game.prototype.checkCardIsVisible = function(card, player) {
 
 Game.prototype.checkPlayerIsPresident = function(player) {
   player = this._adjustPlayerParam(player)
-  return player.name === this.getPresidentName(state)
+  const president = this.getPlayerWithCard('President')
+  return player.name === president.name
 }
 
 Game.prototype.getActor = function() {
@@ -109,6 +111,23 @@ Game.prototype.getCardActiveCrisis = function() {
 
 Game.prototype.getCardByLocation = function(sourceName, sourceIndex) {
   return this.getZoneByName(sourceName).cards[sourceIndex]
+}
+
+Game.prototype.getCardByName = function(name) {
+  return this.getCardByPredicate(c => c.name === name).card
+}
+
+// Search all zones and return the path and the card object for the first
+// card matching the predicate.
+Game.prototype.getCardByPredicate = function(predicate) {
+  const path = jsonpath.path(this.state.zones, predicate)
+  const card = jsonpath.at(this.state.zones, path)
+  const zoneName = path.slice(1) // Remove leading .
+
+  return {
+    card,
+    zoneName,
+  }
 }
 
 Game.prototype.getCardsLoyaltyByPlayer = function(player) {
@@ -168,10 +187,6 @@ Game.prototype.getPlayerWithCard = function(cardName) {
   return {}
 }
 
-Game.prototype.getPresidentName = function() {
-  return playerWithCard(state, 'President').name
-}
-
 Game.prototype.getWaiting = function() {
   if (this.state.sm.waiting.length) {
     return this.state.sm.waiting[0]
@@ -211,6 +226,32 @@ Game.prototype.getZoneByPlayer = function(player) {
 Game.prototype.hackImpersonate = function(player) {
   player = this._adjustPlayerParam(player)
   this.actor = player.name
+}
+
+Game.prototype.mAssignAdmiral = function(player) {
+  player = this._adjustPlayerParam(player)
+  const card = this.getCardByName('Admiral')
+  const playerHand = this.getZoneByPlayer(player).cards
+  this.mLog({
+    template: '{player} becomes the Admiral',
+    args: {
+      player: player.name
+    }
+  })
+  this.rk.session.move(card, playerHand)
+}
+
+Game.prototype.mAssignPresident = function(player) {
+  player = this._adjustPlayerParam(player)
+  const card = this.getCardByName('President')
+  const playerHand = this.getZoneByPlayer(player.name).cards
+  this.mLog({
+    template: '{player} becomes the President',
+    args: {
+      player: player.name
+    }
+  })
+  this.rk.session.move(card, playerHand)
 }
 
 Game.prototype.mLog = function(msg) {

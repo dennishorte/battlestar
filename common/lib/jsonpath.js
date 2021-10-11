@@ -35,36 +35,51 @@ function at(object, path) {
 }
 
 function path(root, target) {
-  if (typeof target !== 'object' || target === null) {
+  let matcher
+
+  if (typeof target === 'function') {
+    matcher = target
+  }
+  else if (typeof target === 'object' && target !== null) {
+    matcher = (elem) => elem === target
+  }
+  else {
     throw `Invalid path target. Can only path objects and arrays. Got ${typeof target}: ${target}`
   }
 
-  const result = _pathRecursive(target, root, '')
+  const result = _pathRecursive(matcher, root, '')
   if (!result) {
-    throw `Target not found: ${target}`
+    if (typeof target === 'object') {
+      throw new Error(`Target not found: ${JSON.stringify(target)}`)
+    }
+    else {
+      throw new Error('No match for predicate')
+    }
   }
   return result
 }
 
-function _pathRecursive(target, root, pathAccumulator) {
-  if (root === target) {
+function _pathRecursive(matcher, root, pathAccumulator) {
+  if (matcher(root)) {
     return pathAccumulator || '.'
   }
   else if (Array.isArray(root)) {
     for (let i = 0; i < root.length; i++) {
-      const result = _pathRecursive(target, root[i], pathAccumulator + `[${i}]`)
+      const result = _pathRecursive(matcher, root[i], pathAccumulator + `[${i}]`)
       if (result) {
         return result
       }
     }
+    return false
   }
   else if (typeof root === 'object') {
     for (const key of Object.keys(root)) {
-      const result = _pathRecursive(target, root[key], pathAccumulator + '.' + key)
+      const result = _pathRecursive(matcher, root[key], pathAccumulator + '.' + key)
       if (result) {
         return result
       }
     }
+    return false
   }
   else {
     return false

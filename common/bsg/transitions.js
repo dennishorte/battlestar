@@ -49,16 +49,33 @@ function characterSelectionDo(context) {
   }
 }
 
-function distributeTitleCards(context, state) {
+function distributeLoyaltyCards(context) {
   context.wait({ name: 'dennis', actions: [{ name: 'test' }] })
   return
+}
 
-  const playerCharacters = state.players.map(p => [p, state.playerCharacter(p)])
-  playerCharacters.sort((l, r) => admiralSort(l, r))
-  state.assignAdmiral(playerCharacters[0][0])
+function _admiralSort(l, r) {
+  return l[1]['admiral line of succession order'] - r[1]['admiral line of succession order']
+}
 
-  playerCharacters.sort((l, r) => presidentSort(l, r))
-  state.assignPresident(playerCharacters[0][0])
+function _presidentSort(l, r) {
+  return l[1]['president line of succession order'] - r[1]['president line of succession order']
+}
+
+function distributeTitleCards(context) {
+  const game = context.state
+
+  const playerCharacters = game.getPlayerAll().map(p => [p, game.getCardCharacterByPlayer(p)])
+
+  game.rk.sessionStart(() => {
+    playerCharacters.sort(_admiralSort)
+    const admiral = playerCharacters[0][0]
+    game.mAssignAdmiral(admiral)
+
+    playerCharacters.sort(_presidentSort)
+    const president = playerCharacters[0][0]
+    game.mAssignPresident(president)
+  })
 
   context.done()
 }
@@ -201,7 +218,7 @@ const transitions = {
   },
 
   'distribute-loyalty-cards': {
-    func: () => {}
+    func: distributeLoyaltyCards,
   },
 
   'receive-skills': {
