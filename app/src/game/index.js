@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { bsg, util } from 'battlestar-common'
 
 const assert = util.assert
@@ -81,8 +82,26 @@ GamePlugin.prototype.setState = function(state) {
   this.prep.state = state
 }
 
+GamePlugin.prototype.setToaster = function(toaster) {
+  this.toaster = toaster
+}
+
 GamePlugin.prototype.setTransitions = function(transitions) {
   this.prep.transitions = transitions
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Special
+
+GamePlugin.prototype.save = async function() {
+  const requestResult = await axios.post('/api/game/save', this.state)
+  if (requestResult.data.status !== 'success') {
+    this.ui.modal.error = requestResult.data.message
+  }
+  else {
+    this.toaster('saved')
+  }
 }
 
 

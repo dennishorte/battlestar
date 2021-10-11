@@ -45,13 +45,6 @@
                 >
                   {{ player.name }}
                 </b-dropdown-item>
-
-                <b-dropdown-divider />
-
-                <b-dropdown-item @click="save">
-                  save
-                </b-dropdown-item>
-
               </b-dropdown>
 
               <b-dropdown variant="primary" text="info" right>
@@ -72,14 +65,6 @@
                 </b-dropdown-item>
               </b-dropdown>
 
-            </div>
-          </b-col>
-        </b-row>
-
-        <b-row v-if="unsaved" class="save-message">
-          <b-col class="save-message-col">
-            <div>
-              You have unsaved actions
             </div>
           </b-col>
         </b-row>
@@ -209,9 +194,6 @@ export default {
     canUndo() {
       return false
     },
-    unsaved() {
-      return false
-    },
     players() {
       return this.$game.getPlayerAll()
     },
@@ -228,15 +210,6 @@ export default {
       console.log('pass to', name)
     },
 
-    async save() {
-      console.log('save')
-      this.$bvToast.toast('saved', {
-        autoHideDelay: 300,
-        noCloseButton: true,
-        solid: true,
-      })
-    },
-
     redo() {
       console.log('redo not implemented')
     },
@@ -247,6 +220,14 @@ export default {
   },
 
   created() {
+    this.$game.setToaster(function(msg) {
+      this.$bvToast.toast(msg, {
+        autoHideDelay: 300,
+        noCloseButton: true,
+        solid: true,
+      })
+    }.bind(this))
+
     this.$game.setTransitions(bsg.transitions)
     this.$game.ready()
 
@@ -270,21 +251,6 @@ export default {
 
 .action-buttons-wrapper {
   padding-top: 15px;
-}
-
-.save-message {
-  border-radius: .5em;
-  height: 2em;
-  background-color: black;
-  color: red;
-  font-weight: bold;
-  text-align: center;
-}
-
-.save-message-col {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
 }
 
 .sticky-header {

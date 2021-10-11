@@ -61,17 +61,14 @@ Game.prototype.run = function() {
 
 Game.prototype.submit = function({ actor, name, option }) {
   this.rk.sessionStart()
-  let actualActor = this.getActor()
-  this.actor = actor
 
   if (name === 'Select Character') {
-    this.mPlayerAssignCharacter(this.getActor(), option)
+    this.mPlayerAssignCharacter(actor, option)
   }
   else {
     throw new Error(`Unsupported action: ${name}`)
   }
 
-  this.actor = actualActor
   this.rk.session.commit()
 
   return this.sm.run()
