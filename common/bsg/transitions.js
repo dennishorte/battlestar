@@ -1,3 +1,5 @@
+import util from '../lib/util.js'
+
 function characterSelection(context) {
   const game = context.state
 
@@ -247,6 +249,101 @@ function playerAction(context, state) {
   }
 }
 
+function receiveInitialSkills(context) {
+  const game = context.state
+
+  if (!context.data.initialized) {
+    game.rk.sessionStart(session => {
+      game.mLog({
+        template: 'Receive Initial Skill Cards',
+        classes: ['phase', 'setup-phase'],
+      })
+      session.put(context.data, 'initialized', true)
+      session.put(context.data, 'playerIndex', 1)
+    })
+    context.push('receive-initial-skills-do', { playerIndex: context.data.playerIndex })
+  }
+
+  else {
+    game.rk.sessionStart(session => {
+      session.put(context.data, 'playerIndex', context.data.playerIndex + 1)
+    })
+    if (context.data.playerIndex < game.getPlayerAll().length) {
+      context.push('receive-initial-skills-do', { playerIndex: context.data.playerIndex })
+    }
+    else {
+      context.done()
+    }
+  }
+}
+
+function _characterSkills(character) {
+  const output = []
+  for (let skill of bsgutil.skillList) {
+    skill = skill.toLowerCase()
+    const charSkill = character[skill]
+    if (charSkill) {
+      const optional = charSkill.slice(-1) === '*'
+      const value = parseInt(charSkill)
+
+      output.push({
+        name: skill,
+        value,
+        optional,
+      })
+    }
+  }
+
+  return output
+}
+
+function receiveInitialSkillsDo(context) {
+  const game = context.state
+  const player = game.getPlayerByIndex(context.data.playerIndex)
+
+  if (game.getCardsKindByPlayer('skill', player).length >= 3) {
+    context.done()
+  }
+  else {
+    const character = game.getCardCharacterByPlayer(player)
+    const skills = _characterSkills(character)
+    const optionalSkills = skills.filter(s => s.optional)
+    const requiredSkills = skills.filter(s => !s.optional)
+
+    util.assert(
+      optionalSkills.length === 0 || optionalSkills.length === 2,
+      `Unexpect number of optional skills: ${optionalSkills.length}`
+    )
+
+    const skillChoices = []
+    for (const skill of requiredSkills) {
+      for (let i = 0; i < skill.value; i++) {
+        skillChoices.push(skill.name)
+      }
+    }
+    if (optionalSkills.length) {
+      const optionalPairs = [optionalSkills[0].name, optionalSkills[1].name]
+      for (let i = 0; i < optionalSkills[0].value; i++) {
+        skillChoices.push({
+          operator: 'or',
+          values: optionalPairs
+        })
+      }
+    }
+
+    context.wait({
+      name: player.name,
+      actions: [
+        {
+          name: 'Select Starting Skills',
+          count: 3,
+          options: skillChoices,
+        },
+      ]
+    })
+  }
+}
+
 // Temporary function to pause execution while evaluating each step
 function waitFunc(context) {
   context.wait({ name: 'dennis', actions: [{ name: 'test' }] })
@@ -272,7 +369,7 @@ const transitions = {
       'character-selection',
       'distribute-title-cards',
       'distribute-loyalty-cards',
-      'receive-skills-setup',
+      'receive-initial-skills',
     ]
   },
 
@@ -292,12 +389,17 @@ const transitions = {
     func: distributeLoyaltyCards,
   },
 
-  'receive-skills-setup': {
+  'receive-initial-skills': {
     func: waitFunc,
+    // func: receiveInitialSkills,
+  },
+
+  'receive-initial-skills-do': {
+    func: receiveInitialSkillsDo,
   },
 
   'main': {
-    func: () => {},
+    func: waitFunc,
   },
 
   'main.player-turn': {
