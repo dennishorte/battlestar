@@ -174,7 +174,8 @@ Game.prototype.getPlayerByName = function(name) {
 }
 
 Game.prototype.getPlayerWaitingFor = function() {
-  return this.getPlayerByName(this.state.waitingFor)
+  const waiting = this.getWaiting()
+  return this.getPlayerByName(waiting.name)
 }
 
 Game.prototype.getPlayerWithCard = function(cardName) {

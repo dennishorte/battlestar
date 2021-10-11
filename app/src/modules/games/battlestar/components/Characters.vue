@@ -16,15 +16,7 @@
 
       <div v-if="!!selectedData">
         <div style="float: right;">
-          <b-dropdown text="assign" size="sm" variant="primary">
-            <b-dropdown-item
-              v-for="player in players"
-              :key="player._id"
-              @click="assign(player.name)"
-              >
-              {{ player.name }}
-            </b-dropdown-item>
-          </b-dropdown>
+          <CharacterAssignButton :name="selectedData.name" />
         </div>
 
         <div class="selected-role">
@@ -79,9 +71,15 @@
 <script>
 import { bsg, util } from 'battlestar-common'
 
+import CharacterAssignButton from './CharacterAssignButton'
+
 
 export default {
   name: 'Characters',
+
+  components: {
+    CharacterAssignButton,
+  },
 
   data() {
     return {
@@ -143,10 +141,6 @@ export default {
   min-height: 2rem;
 }
 
-/* .character-name:nth-of-type(odd) {
-   background: #e0e0e0;
-   }
- */
 .highlighted-character {
   border: 1px solid black;
   border-radius: .25em;

@@ -53,7 +53,6 @@ function initialize(game) {
     }
   })
   game.activePlayer = game.players[0].name
-  game.waitingFor = game.players[0].name
 
   // Zones
   const decks = deckbuilder(game.options.expansions)

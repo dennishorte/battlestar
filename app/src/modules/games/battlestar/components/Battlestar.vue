@@ -100,7 +100,7 @@
 
         <b-row class="phase-panel">
           <b-col>
-            <PhasePanel />
+            <WaitingPanel />
           </b-col>
         </b-row>
 
@@ -169,9 +169,9 @@ import GameLog from './GameLog'
 import GrabMessage from './GrabMessage'
 import HacksModal from './HacksModal'
 import Locations from './Locations'
-import PhasePanel from './PhasePanel'
 import Resources from './Resources'
 import SkillCards from './SkillCards'
+import WaitingPanel from './WaitingPanel'
 import Zones from './Zones'
 import ZoneViewerModal from './ZoneViewerModal'
 
@@ -189,9 +189,9 @@ export default {
     GrabMessage,
     HacksModal,
     Locations,
-    PhasePanel,
     Resources,
     SkillCards,
+    WaitingPanel,
     Zones,
     ZoneViewerModal,
   },
@@ -313,6 +313,11 @@ export default {
 
 .heading {
   font-weight: bold;
+}
+
+.description {
+  color: #444;
+  font-size: .7em;
 }
 
 .phase-panel {

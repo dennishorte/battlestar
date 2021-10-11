@@ -63,6 +63,8 @@ GamePlugin.prototype.ready = function() {
     this.prep.actor,
   )
 
+  this.run()
+
   // Load the static deck data used in info panels
   this.data.raw = bsg.res
   this.data.filtered = {}
