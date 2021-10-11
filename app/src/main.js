@@ -19,7 +19,7 @@ import { BootstrapVue } from 'bootstrap-vue'
 Vue.use(BootstrapVue)
 
 // Game Imports
-import GamePlugin from '@/game'
+import GamePlugin from '@/game/plugin.js'
 Vue.use(GamePlugin)
 
 import App from '@/App.vue'
