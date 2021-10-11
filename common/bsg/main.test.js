@@ -12,7 +12,6 @@ function gameFixture() {
     users: [
       { _id: 0, name: 'dennis' },
       { _id: 1, name: 'micah' },
-      { _id: 2, name: 'scott' },
     ],
   }
 
@@ -115,6 +114,7 @@ describe('character selection', () => {
     const game = gameFixture()
     game.run()
     game.submit({
+      actor: 'dennis',
       name: 'Select Character',
       option: 'Gaius Baltar',
     })
@@ -127,6 +127,7 @@ describe('character selection', () => {
     const game = gameFixture()
     game.run()
     game.submit({
+      actor: 'dennis',
       name: 'Select Character',
       option: 'Gaius Baltar',
     })
@@ -150,6 +151,28 @@ describe('character selection', () => {
         },
       ]
     })
+  })
+
+  test("after all players have chosen, advance to distribute-title-cards", () => {
+    const game = gameFixture()
+    game.run()
+    game.submit({
+      actor: 'dennis',
+      name: 'Select Character',
+      option: 'Gaius Baltar',
+    })
+    game.submit({
+      actor: 'micah',
+      name: 'Select Character',
+      option: 'William Adama',
+    })
+
+    const stackNames = game.sm.stack.map(x => x.name)
+    expect(stackNames).toStrictEqual([
+      'root',
+      'setup',
+      'distribute-title-cards',
+    ])
   })
 
 })

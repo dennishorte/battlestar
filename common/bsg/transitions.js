@@ -3,6 +3,10 @@ function characterSelection(context) {
 
   if (!context.data.initialized) {
     game.rk.sessionStart(session => {
+      game.mLog({
+        template: 'Character Selection',
+        classes: ['phase', 'setup-phase'],
+      })
       session.put(context.data, 'initialized', true)
       session.put(context.data, 'playerIndex', 0)
     })
@@ -46,6 +50,9 @@ function characterSelectionDo(context) {
 }
 
 function distributeTitleCards(context, state) {
+  context.wait({ name: 'dennis', actions: [{ name: 'test' }] })
+  return
+
   const playerCharacters = state.players.map(p => [p, state.playerCharacter(p)])
   playerCharacters.sort((l, r) => admiralSort(l, r))
   state.assignAdmiral(playerCharacters[0][0])
@@ -189,14 +196,15 @@ const transitions = {
     func: characterSelectionDo,
   },
 
-  'setup.distribute-title-cards': {
-    func: () => {}
+  'distribute-title-cards': {
+    func: distributeTitleCards,
   },
-  'setup.distribute-loyalty-cards': {
+
+  'distribute-loyalty-cards': {
     func: () => {}
   },
 
-  'setup.receive-skills': {
+  'receive-skills': {
     func: () => {},
     actor: 'each',
     actorParams: '.players',

@@ -73,6 +73,7 @@ function run() {
 
 function _done() {
   const event = this.stack[this.stack.length - 1]
+  // console.log('done', event)
   this.rk.sessionStart(session => {
     session.pop(this.stack)
     session.splice(this.waiting, 0, this.waiting.length)
@@ -81,6 +82,7 @@ function _done() {
 }
 
 function _push(eventName, data) {
+  // console.log('push', eventName, data)
   this.rk.sessionStart(session => {
     session.splice(this.waiting, 0, this.waiting.length)
 

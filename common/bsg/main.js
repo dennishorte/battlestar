@@ -58,8 +58,10 @@ Game.prototype.run = function() {
   return this.sm.run()
 }
 
-Game.prototype.submit = function({ name, option }) {
+Game.prototype.submit = function({ actor, name, option }) {
   this.rk.sessionStart()
+  let actualActor = this.getActor()
+  this.actor = actor
 
   if (name === 'Select Character') {
     this.mPlayerAssignCharacter(this.getActor(), option)
@@ -68,6 +70,7 @@ Game.prototype.submit = function({ name, option }) {
     throw new Error(`Unsupported action: ${name}`)
   }
 
+  this.actor = actualActor
   this.rk.session.commit()
 
   return this.sm.run()
