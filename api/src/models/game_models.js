@@ -28,7 +28,7 @@ Game.findById = async function(gameId) {
 }
 
 Game.findByUserId = async function(userId) {
-  return await gameCollection.find({ userIds: userId })
+  return await gameCollection.find({ 'users._id': userId })
 }
 
 Game.save = async function(record) {
