@@ -126,8 +126,8 @@
           Galactica
         </div>
         <DeckZone
-          v-for="(loc, index) in zones.locations.galactica"
-          :key="index"
+          v-for="loc in locationsGalactica"
+          :key="loc.name"
           v-bind="locationProps(loc)" />
 
       </b-col>
@@ -136,16 +136,16 @@
           Colonial One
         </div>
         <DeckZone
-          v-for="(loc, index) in zones.locations.colonialOne"
-          :key="index"
+          v-for="loc in locationsColonialOne"
+          :key="loc.name"
           v-bind="locationProps(loc)" />
 
         <div class="heading">
           Cylon
         </div>
         <DeckZone
-          v-for="(loc, index) in zones.locations.cylonLocations"
-          :key="index"
+          v-for="loc in locationsCylon"
+          :key="loc.name"
           v-bind="locationProps(loc)" />
 
       </b-col>
@@ -349,6 +349,7 @@ const locationClickHandler = function(locationName) {
   }
 }
 
+
 export default {
   name: 'Zones',
 
@@ -367,6 +368,18 @@ export default {
   },
 
   computed: {
+    locationsColonialOne() {
+      return this.locationFilter('Colonial One')
+    },
+
+    locationsCylon() {
+      return this.locationFilter('Cylon Locations')
+    },
+
+    locationsGalactica() {
+      return this.locationFilter('Galactica')
+    },
+
     playerNames() {
       return Object.keys(this.zones.players)
     },
@@ -379,6 +392,11 @@ export default {
   },
 
   methods: {
+    locationFilter(area) {
+      return Object.values(this.zones.locations).filter(zone => zone.details.area === area)
+    },
+
+
     locationProps(loc) {
       return {
         count: 'none',
