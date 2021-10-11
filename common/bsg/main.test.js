@@ -82,3 +82,74 @@ describe('new game', () => {
     })
   })
 })
+
+describe('character selection', () => {
+
+  test("first player can choose any character", () => {
+    const game = gameFixture()
+    game.run()
+
+    expect(game.getWaiting()).toStrictEqual({
+      name: 'dennis',
+      actions: [
+        {
+          name: 'Select Character',
+          options: [
+            '"Chief" Galen Tyrol',
+            'Gaius Baltar',
+            'Kara "Starbuck" Thrace',
+            'Karl "Helo" Agathon',
+            'Laura Roslin',
+            'Lee "Apollo" Adama',
+            'Saul Tigh',
+            'Sharon "Boomer" Valerii',
+            'Tom Zarek',
+            'William Adama',
+          ],
+        },
+      ]
+    })
+  })
+
+  test("when first player chooses, character card is moved", () => {
+    const game = gameFixture()
+    game.run()
+    game.submit({
+      name: 'Select Character',
+      option: 'Gaius Baltar',
+    })
+    const player = game.getPlayerAll()[0]
+
+    expect(game.getCardCharacterByPlayer(player).name).toBe('Gaius Baltar')
+  })
+
+  test("when first player chooses, advances to next player", () => {
+    const game = gameFixture()
+    game.run()
+    game.submit({
+      name: 'Select Character',
+      option: 'Gaius Baltar',
+    })
+
+    expect(game.getWaiting()).toStrictEqual({
+      name: 'micah',
+      actions: [
+        {
+          name: 'Select Character',
+          options: [
+            '"Chief" Galen Tyrol',
+            'Kara "Starbuck" Thrace',
+            'Karl "Helo" Agathon',
+            'Laura Roslin',
+            'Lee "Apollo" Adama',
+            'Saul Tigh',
+            'Sharon "Boomer" Valerii',
+            'Tom Zarek',
+            'William Adama',
+          ],
+        },
+      ]
+    })
+  })
+
+})

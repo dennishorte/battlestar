@@ -35,6 +35,7 @@ function run() {
     _push.call(this, 'root')
   }
 
+
   const event = this.stack[this.stack.length - 1]
 
   // This is the sentinel value to show that the state machine has reached a

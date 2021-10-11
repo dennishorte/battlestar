@@ -2,6 +2,7 @@ const RecordKeeper = require('../lib/recordkeeper.js')
 const StateMachine = require('../lib/statemachine.js')
 
 const initialize = require('./initialize.js')
+const bsgutil = require('./util.js')
 const util = require('../lib/util.js')
 
 module.exports = {
@@ -54,6 +55,21 @@ Game.prototype.load = function(transitions, state, actor) {
 }
 
 Game.prototype.run = function() {
+  return this.sm.run()
+}
+
+Game.prototype.submit = function({ name, option }) {
+  this.rk.sessionStart()
+
+  if (name === 'Select Character') {
+    this.mPlayerAssignCharacter(this.getActor(), option)
+  }
+  else {
+    throw new Error(`Unsupported action: ${name}`)
+  }
+
+  this.rk.session.commit()
+
   return this.sm.run()
 }
 
@@ -166,6 +182,11 @@ Game.prototype.getZoneAll = function() {
   return this.state.zones
 }
 
+Game.prototype.getZoneByLocationName = function(name) {
+  const zoneName = 'locations.' + util.toCamelCase(name)
+  return this.getZoneByName(zoneName)
+}
+
 Game.prototype.getZoneByName = function(name) {
   const tokens = name.split('.')
   let zone = this.state.zones
@@ -217,7 +238,7 @@ Game.prototype.mMoveByIndices = function(sourceName, sourceIndex, targetName, ta
 Game.prototype.mPlayerAssignCharacter = function(player, characterName) {
   player = this._adjustPlayerParam(player)
 
-  this.mutations.log({
+  this.mLog({
     template: "{player} chooses {character}",
     args: {
       player: player.name,
@@ -226,15 +247,15 @@ Game.prototype.mPlayerAssignCharacter = function(player, characterName) {
   })
 
   // Put the character card into the player's hand
-  const playerHand = this.getZonebyPlayer(player.name)
-  const characterZone = this.getZonebyName('character')
+  const playerHand = this.getZoneByPlayer(player.name).cards
+  const characterZone = this.getZoneByName('decks.character')
   const characterCard = characterZone.cards.find(c => c.name === characterName)
   this.rk.session.move(characterCard, playerHand, 0)
 
   // Put the player's pawn in the correct location
-  const pawn = playerHand.cards.find(c => c.kind === 'player-token')
-  const startingLocation = this.getZonebyLocationName(characterCard.setup)
-  this.rk.session.move(pawn, startingLocation)
+  const pawn = playerHand.find(c => c.kind === 'player-token')
+  const startingLocation = this.getZoneByLocationName(characterCard.setup)
+  this.rk.session.move(pawn, startingLocation.cards)
 }
 
 Game.prototype._adjustPlayerParam = function(param) {
@@ -268,7 +289,7 @@ function enrichLogArgs(msg) {
     }
     else if (key === 'character') {
       util.array.pushUnique(classes, 'character-name')
-      util.array.pushUnique(classes, bsg.util.characterNameToCssClass(msg.args[key].value))
+      util.array.pushUnique(classes, bsgutil.characterNameToCssClass(msg.args[key].value))
     }
     else if (key === 'location') {
       util.array.pushUnique(classes, 'location-name')

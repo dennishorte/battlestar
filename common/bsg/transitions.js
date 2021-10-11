@@ -1,13 +1,19 @@
 function characterSelection(context) {
+  const game = context.state
+
   if (!context.data.initialized) {
-    context.data.initialized = true
-    context.data.playerIndex = 0
+    game.rk.sessionStart(session => {
+      session.put(context.data, 'initialized', true)
+      session.put(context.data, 'playerIndex', 0)
+    })
     context.push('character-selection-do', { playerIndex: context.data.playerIndex })
   }
 
   else {
-    context.data.playerIndex += 1
-    if (context.state.getPlayerAll().length < context.data.playerIndex) {
+    game.rk.sessionStart(session => {
+      session.put(context.data, 'playerIndex', context.data.playerIndex + 1)
+    })
+    if (context.data.playerIndex < game.getPlayerAll().length) {
       context.push('character-selection-do', { playerIndex: context.data.playerIndex })
     }
     else {

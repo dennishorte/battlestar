@@ -3,7 +3,7 @@ module.exports = Util
 
 
 Util.characterNameToCssClass = function(name) {
-  return name.toLowerCase().replaceAll('"', '').replaceAll(' ', '-')
+  return name.toLowerCase().replace(/"/g, '').replace(/ /g, '-')
 }
 
 Util.expansionFilter = function(cards, expansions) {

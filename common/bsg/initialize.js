@@ -97,11 +97,7 @@ function initialize(game) {
     },
     space: makeSpaceZones(),
 
-    locations: {
-      galactica: makeLocations('Galactica', game.options.expansions),
-      colonialOne: makeLocations('Colonial One', game.options.expansions),
-      cylonLocations: makeLocations('Cylon Locations', game.options.expansions),
-    },
+    locations: makeLocationZones(game.options.expansions),
   }
 
   return game
@@ -161,17 +157,14 @@ function locationCompare(l, r) {
   }
 }
 
-function makeLocations(area, expansions) {
-  const areaPath = util.toCamelCase(area)
-
+function makeLocationZones(expansions) {
   const locs = bsgutil
     .expansionFilter(locations, expansions)
-    .filter(x => x.area === area)
     .sort(locationCompare)
     .map(loc => {
       const locPath = util.toCamelCase(loc.name)
       return {
-        name: `locations.${areaPath}.${locPath}`,
+        name: `locations.${locPath}`,
         cards: [],
         kind: 'open',
         details: loc,
@@ -181,9 +174,10 @@ function makeLocations(area, expansions) {
 
   const locMap = {}
   for (const loc of locs) {
-    const nameSuffix = loc.name.split('.').slice(-1)[0]
-    locMap[nameSuffix] = loc
+    const name = util.toCamelCase(loc.details.name)
+    locMap[name] = loc
   }
+
   return locMap
 }
 
