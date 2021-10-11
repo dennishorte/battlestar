@@ -1,4 +1,5 @@
-import util from '../lib/util.js'
+const util = require('../lib/util.js')
+
 
 function characterSelection(context) {
   const game = context.state
