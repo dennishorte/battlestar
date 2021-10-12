@@ -1,3 +1,4 @@
+const bsgutil = require('./util.js')
 const util = require('../lib/util.js')
 
 
@@ -32,9 +33,19 @@ function characterSelection(context) {
 function characterSelectionDo(context) {
   const game = context.state
   const player = game.getPlayerByIndex(context.data.playerIndex)
+  const character = game.getCardCharacterByPlayer(player)
 
-  if (game.checkPlayerHasCharacter(player)) {
-    context.done()
+  if (character) {
+    // Apollo still needs to launch in a viper
+    if (
+      character.name === 'Lee "Apollo" Adama'
+      && game.getCardsKindByPlayer('player-token', player).length > 0
+    ) {
+      context.push('launch-self-in-viper', { playerName: player.name })
+    }
+    else {
+      context.done()
+    }
   }
   else {
     const characterDeck = game.getZoneByName('decks.character')
@@ -187,6 +198,57 @@ function initialize(context) {
   context.done()
 }
 
+function launchSelfInViper(context) {
+  const game = context.state
+
+  // If character is already in space, they've done this action
+  if (game.checkPlayerIsInSpace(context.data.playerName)) {
+    context.done()
+  }
+
+
+  // If all the vipers are launched, the player can choose an existing viper to "relaunch"
+  else if (game.getZoneByName('ships.vipers').cards.length === 0) {
+    // Get the locations of all launched vipers.
+    const launched = []
+
+    // If all of the vipers are damaged or destroyed, this should not have been allowed.
+    if (launched.length === 0) {
+      throw new Error("All vipers are damaged or destroyed. Can't launch")
+    }
+
+    context.wait({
+      name: context.data.playerName,
+      actions: [
+        {
+          name: 'Relaunch Viper',
+          operator: 'and',  // Players choose one from each set
+          options: [
+            launched,
+            ['Lower Left', 'Lower Right'],
+          ]
+        }
+      ]
+    })
+  }
+
+  // Wait for the player to choose
+  else {
+    context.wait({
+      name: context.data.playerName,
+      actions: [
+        {
+          name: 'Launch Self in Viper',
+          options: [
+            'Lower Left',
+            'Lower Right',
+          ],
+        },
+      ]
+    })
+  }
+}
+
 function playerMovement(context) {
   const actor = context.data.actor
 
@@ -253,6 +315,7 @@ function playerAction(context, state) {
 function receiveInitialSkills(context) {
   const game = context.state
 
+  // initialize
   if (!context.data.initialized) {
     game.rk.sessionStart(session => {
       game.mLog({
@@ -326,8 +389,7 @@ function receiveInitialSkillsDo(context) {
       const optionalPairs = [optionalSkills[0].name, optionalSkills[1].name]
       for (let i = 0; i < optionalSkills[0].value; i++) {
         skillChoices.push({
-          operator: 'or',
-          values: optionalPairs
+          options: optionalPairs
         })
       }
     }
@@ -391,8 +453,7 @@ const transitions = {
   },
 
   'receive-initial-skills': {
-    func: waitFunc,
-    // func: receiveInitialSkills,
+    func: receiveInitialSkills,
   },
 
   'receive-initial-skills-do': {
@@ -403,7 +464,7 @@ const transitions = {
     func: waitFunc,
   },
 
-  'main.player-turn': {
+  'player-turn': {
     steps: [
       'receive-skills',
       'movement',
@@ -415,26 +476,30 @@ const transitions = {
     ],
   },
 
-  'main.player-turn.receive-skills': {
+  'player-turn-receive-skills': {
     func: () => {}
   },
-  'main.player-turn.movement': {
+  'player-turn-movement': {
     func: () => {}
   },
-  'main.player-turn.action': {
+  'player-turn-action': {
     func: () => {}
   },
-  'main.player-turn.crisis': {
+  'player-turn-crisis': {
     func: () => {}
   },
-  'main.player-turn.cylon-activation': {
+  'player-turn-cylon-activation': {
     func: () => {}
   },
-  'main.player-turn.prepare-for-jump': {
+  'player-turn-prepare-for-jump': {
     func: () => {}
   },
-  'main.player-turn.cleanup': {
+  'player-turn-cleanup': {
     func: () => {}
+  },
+
+  'launch-self-in-viper': {
+    func: launchSelfInViper,
   },
 }
 

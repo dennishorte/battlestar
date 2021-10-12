@@ -27,18 +27,25 @@ function gameFixture() {
   return game
 }
 
-function gameFixturePostCharacterSelection() {
+function gameFixturePostCharacterSelection(options) {
+  if (!options) {
+    options = {}
+  }
+
+  options.firstPlayerCharacter = options.firstPlayerCharacter || 'Gaius Baltar'
+  options.secondPlayerCharacter = options.secondPlayerCharacter || 'Kara "Starbuck" Thrace'
+
   const game = gameFixture()
   game.run()
   game.submit({
     actor: 'dennis',
     name: 'Select Character',
-    option: 'Gaius Baltar',
+    option: options.firstPlayerCharacter,
   })
   game.submit({
     actor: 'micah',
     name: 'Select Character',
-    option: 'William Adama',
+    option: options.secondPlayerCharacter,
   })
   game.submit({
     actor: 'tom',
@@ -204,20 +211,35 @@ describe('character selection', () => {
     game.submit({
       actor: 'micah',
       name: 'Select Character',
-      option: 'William Adama',
+      option: 'Kara "Starbuck" Thrace',
     })
 
     const player = game.getPlayerAll()[1]
     const characterName = game.getCardCharacterByPlayer(player).name
-    expect(characterName).toBe('William Adama')
+    expect(characterName).toBe('Kara "Starbuck" Thrace')
 
     const playerHand = game.getZoneByPlayer(player).cards
     const playerHandNames = playerHand.map(c => c.name).sort()
-    expect(playerHandNames).toStrictEqual(['William Adama'])
+    expect(playerHandNames).toStrictEqual(['Kara "Starbuck" Thrace'])
 
-    const playerZone = game.getZoneByLocationName("Admiral's Quarters")
+    const playerZone = game.getZoneByLocationName("Hangar Deck")
     const playerZoneCardNames = playerZone.cards.map(c => c.name)
     expect(playerZoneCardNames).toStrictEqual(['micah'])
+  })
+
+  test("Lee Adama can choose where to launch his viper", () => {
+    const game = gameFixture()
+    game.run()
+    game.submit({
+      actor: 'dennis',
+      name: 'Select Character',
+      option: 'Lee "Apollo" Adama',
+    })
+
+    expect(game.getWaiting().name).toBe('dennis')
+
+    const action = game.getWaiting().actions[0]
+    expect(action.name).toBe('Launch Self in Viper')
   })
 
 })
@@ -256,6 +278,45 @@ describe('distribute loyalty cards', () => {
 
   test.skip("adds sympathizer card after dealing initial cards", () => {
     const game = gameFixturePostCharacterSelection()
+  })
+
+})
+
+describe('receive initial skills', () => {
+
+  test('second player chooses first', () => {
+    const game = gameFixturePostCharacterSelection()
+    expect(game.getWaiting().name).toBe('micah')
+  })
+
+  test('william adama initial skill options (fixed)', () => {
+    const game = gameFixturePostCharacterSelection({
+      secondPlayerCharacter: 'William Adama',
+    })
+    const action = game.getWaiting().actions[0]
+    expect(action.options).toStrictEqual([
+      'leadership',
+      'leadership',
+      'leadership',
+      'tactics',
+      'tactics',
+    ])
+    expect(action.count).toBe(3)
+  })
+
+  test('lee adama initial skill options (choices)', () => {
+    const game = gameFixturePostCharacterSelection({
+      secondPlayerCharacter: 'Lee "Apollo" Adama',
+    })
+    const action = game.getWaiting().actions[0]
+    expect(action.options.sort()).toStrictEqual([
+      { choices: ['leadership', 'politics'] },
+      { choices: ['leadership', 'politics'] },
+      'tactics',
+      'piloting',
+      'piloting',
+    ].sort())
+    expect(action.count).toBe(3)
   })
 
 })

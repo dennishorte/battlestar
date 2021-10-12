@@ -95,6 +95,12 @@ Game.prototype.checkCardIsVisible = function(card, player) {
   )
 }
 
+Game.prototype.checkPlayerIsInSpace = function(player) {
+  player = this._adjustPlayerParam(player)
+  const zone = this.getZoneByPlayerLocation(player)
+  return zone.name.startsWith('space')
+}
+
 Game.prototype.checkPlayerIsPresident = function(player) {
   player = this._adjustPlayerParam(player)
   const president = this.getPlayerWithCard('President')
@@ -122,12 +128,22 @@ Game.prototype.getCardByName = function(name) {
 Game.prototype.getCardByPredicate = function(predicate) {
   const path = jsonpath.path(this.state.zones, predicate)
   const card = jsonpath.at(this.state.zones, path)
-  const zoneName = path.slice(1) // Remove leading .
+  const zoneName = path
+    .slice(1) // Remove leading '.'
+    .split('.')
+    .slice(0, -1)  // Remove trailing .cards[0]
+    .join('.')
 
   return {
     card,
     zoneName,
+    fullPath: path,
   }
+}
+
+Game.prototype.getCardsKindByPlayer = function(kind, player) {
+  const cards = this.getZoneByPlayer(player).cards
+  return cards.filter(c => c.kind === kind)
 }
 
 Game.prototype.getCardsLoyaltyByPlayer = function(player) {
@@ -224,6 +240,14 @@ Game.prototype.getZoneByPlayer = function(player) {
   return this.state.zones.players[player.name]
 }
 
+Game.prototype.getZoneByPlayerLocation = function(player) {
+  player = this._adjustPlayerParam(player)
+  const { card, zoneName } = this.getCardByPredicate(c => {
+    return c.kind === 'player-token' && c.name === player.name
+  })
+  return this.getZoneByName(zoneName)
+}
+
 Game.prototype.hackImpersonate = function(player) {
   player = this._adjustPlayerParam(player)
   this.actor = player.name
@@ -297,10 +321,18 @@ Game.prototype.mPlayerAssignCharacter = function(player, characterName) {
   const characterCard = characterZone.cards.find(c => c.name === characterName)
   this.rk.session.move(characterCard, playerHand, 0)
 
+  // Helo doesn't start on the game board. Leave his player token with the player for now.
+  if (characterName === 'Karl "Helo" Agathon') {}
+
+  // Apollo starts in a Viper. He needs to make a choice about where to launch.
+  else if (characterName === 'Lee "Apollo" Adama') {}
+
   // Put the player's pawn in the correct location
-  const pawn = playerHand.find(c => c.kind === 'player-token')
-  const startingLocation = this.getZoneByLocationName(characterCard.setup)
-  this.rk.session.move(pawn, startingLocation.cards)
+  else {
+    const pawn = playerHand.find(c => c.kind === 'player-token')
+    const startingLocation = this.getZoneByLocationName(characterCard.setup)
+    this.rk.session.move(pawn, startingLocation.cards)
+  }
 }
 
 Game.prototype._adjustPlayerParam = function(param) {
