@@ -263,6 +263,14 @@ function playerTurnMovement(context) {
   const game = context.state
   const player = game.getPlayerCurrentTurn()
 
+  // If the player is in the brig, they don't get to move
+
+  // Movement to locations on the same ship are free
+
+  // Movement to other ships costs one skill card
+
+  // If the player is in a Viper, they can move one step in space or land on a ship for one card
+
   context.wait({
     name: player.name,
     actions: [
@@ -277,6 +285,7 @@ function playerTurnMovement(context) {
 function playerTurnReceiveSkills(context) {
   const game = context.state
   const player = game.getPlayerCurrentTurn()
+  const playerInSickbay = game.getZoneByPlayerLocation(player).details.name === 'Sickbay'
 
   if (game.checkPlayerDrewSkillsThisTurn(player)) {
     context.done()
@@ -290,15 +299,55 @@ function playerTurnReceiveSkills(context) {
 
   // If the player already submitted their skill choices, go ahead and actualize them.
   if (player.turnFlags.optionalSkillChoices.length) {
-    player.turnFlags.optionalSkillChoices.forEach(skill => requiredSkills.push({
-      name: skill,
-      value: 1
-    }))
-    optionalSkills.length = 0
+    if (playerInSickbay) {
+        util.assert(
+          player.turnFlags.optionalSkillChoices.length === 1,
+          "Can only draw one card when in sickbay"
+        )
+      const skill = player.turnFlags.optionalSkillChoices[0]
+      game.rk.sessionStart(session => {
+        game.mDrawSkillCard(skill)
+        game.mLog({
+          template: '{player} draws only {skill} because they are in sickbay',
+          actor: player.name,
+          args: {
+            player: player.name,
+            skill,
+          }
+        })
+      })
+      context.done()
+      return
+    }
+
+    else {
+      player.turnFlags.optionalSkillChoices.forEach(skill => requiredSkills.push({
+        name: skill,
+        value: 1
+      }))
+      optionalSkills.length = 0
+    }
+  }
+
+  // Characters in sickbay can only draw one card.
+  // Give them a list of options
+  if (playerInSickbay) {
+    const options = skills.map(c => c.name)
+    context.wait({
+      name: player.name,
+      actions: [
+        {
+          name: 'Select Skills',
+          count: 1,
+          options,
+        },
+      ]
+    })
+    return
   }
 
   // Automatically draw skill cards if possible.
-  if (optionalSkills.length === 0) {
+  else if (optionalSkills.length === 0) {
     const skillsToDraw = []
     for (const { name, value } of requiredSkills) {
       for (let i = 0; i < value; i++) {
@@ -320,7 +369,7 @@ function playerTurnReceiveSkills(context) {
       actions: [
         {
           name: 'Select Skills',
-          count: 2,
+          operator: 'and',
           options: _optionalSkillOptions(optionalSkills),
         },
       ]

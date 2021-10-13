@@ -184,6 +184,13 @@ Game.prototype.getCardByPredicate = function(predicate) {
   }
 }
 
+Game.prototype.getCardPlayerToken = function(player) {
+  player = this._adjustPlayerParam(player)
+  return this.getCardByPredicate(c => {
+    return c.kind === 'player-token' && c.name === player.name
+  })
+}
+
 Game.prototype.getCardsKindByPlayer = function(kind, player) {
   const cards = this.getZoneByPlayer(player).cards
   return cards.filter(c => c.kind === kind)
@@ -407,6 +414,13 @@ Game.prototype.mMoveByIndices = function(sourceName, sourceIndex, targetName, ta
   this.rk.session.splice(target, targetIndex, 0, card)
 }
 
+Game.prototype.mMovePlayer = function(player, destination) {
+  player = this._adjustPlayerParam(player)
+  destination = this._adjustZoneParam(destination)
+  const { card } = this.getCardPlayerToken(player)
+  this.rk.session.move(card, destination.cards, destination.cards.length)
+}
+
 Game.prototype.mPlayerAssignCharacter = function(player, characterName) {
   player = this._adjustPlayerParam(player)
 
@@ -459,6 +473,18 @@ Game.prototype._adjustPlayerParam = function(param) {
   }
   else {
     throw new Error(`Unable to convert ${param} into a player`)
+  }
+}
+
+Game.prototype._adjustZoneParam = function(param) {
+  if (typeof param === 'string') {
+    return this.getZoneByName(param)
+  }
+  else if (typeof param === 'object') {
+    return param
+  }
+  else {
+    throw new Error(`Unable to convert ${param} into a zone`)
   }
 }
 
