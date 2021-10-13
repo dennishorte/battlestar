@@ -18,6 +18,8 @@ function initialize(game) {
   game.crisisStep = ''
   game.crisisDestinyAdded = false
 
+  game.currentTurnPlayerIndex = -1
+
   game.history = []
   game.log = []
   game.hasUndone = false
@@ -50,9 +52,12 @@ function initialize(game) {
       crisisHelp: '',
       crisisCount: -1,
       crisisDone: false,
+
+      turnFlags: {
+        drewCards: false,
+      },
     }
   })
-  game.activePlayer = game.players[0].name
 
   // Zones
   const decks = deckbuilder(game.options.expansions)
@@ -99,12 +104,32 @@ function initialize(game) {
     locations: makeLocationZones(game.options.expansions),
   }
 
+  ensureZoneNames(game.zones)
+
   return game
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper Functions
+
+function ensureZoneNames(root, pathAccumulator) {
+  // This is a zone object
+  if (Array.isArray(root.cards)) {
+    if (!root.name) {
+      console.log('No name at: ', pathAccumulator)
+    }
+    if (root.name !== pathAccumulator.join('.')) {
+      const path = pathAccumulator.join('.')
+      console.log(`Name mismatch: ${root.name} not equal to path ${path}`)
+    }
+  }
+  else {
+    for (const [key, value] of Object.entries(root)) {
+      ensureZoneNames(value, (pathAccumulator || [] ).concat([key]))
+    }
+  }
+}
 
 function makeDiscardZones(decks) {
   const discards = {}
@@ -211,7 +236,7 @@ function makeSpaceZones() {
   for (let i = 0; i < 6; i++) {
     const name = `space${i}`
     zones[name] = {
-      name,
+      name: `space.${name}`,
       cards: [],
       kind: 'open',
       noTopDeck: true,

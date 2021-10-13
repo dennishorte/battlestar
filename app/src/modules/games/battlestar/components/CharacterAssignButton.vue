@@ -59,11 +59,12 @@ export default {
   methods: {
     async choose() {
       if (this.isValidAction) {
-        await this.$game.submit({
+        this.$game.submit({
           actor: this.$game.getWaiting().name,
           name: this.waitingAction.name,
           option: this.name,
         })
+        await this.$game.save()
       }
     },
   },

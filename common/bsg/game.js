@@ -62,19 +62,50 @@ Game.prototype.run = function() {
   return this.sm.run()
 }
 
-Game.prototype.submit = async function({ actor, name, option }) {
+Game.prototype.submit = function({ actor, name, option }) {
+  const waiting = this.getWaiting()
+  const action = waiting.actions[0]
+  util.assert(waiting.name === actor, `Waiting for ${waiting.name} but got action from ${actor}`)
+  util.assert(action.name === name, `Waiting for action ${action.anem} but got ${name}`)
+
   this.rk.sessionStart()
 
   if (name === 'Select Character') {
     this.mPlayerAssignCharacter(actor, option)
   }
+
+  else if (name === 'Select Starting Skills') {
+    this.aDrawSkillCards(actor, option)
+  }
+
+  else if (name === 'Select Skills') {
+    this.aDrawSkillCards(actor, option)
+  }
+
   else {
     throw new Error(`Unsupported action: ${name}`)
   }
 
   this.rk.session.commit()
   this.sm.run()
-  await this.save()
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Actions have logs, whereas mutations do not.
+
+Game.prototype.aDrawSkillCards = function(player, skills) {
+  this.mLog({
+    template: `{player} draws {skills}`,
+    actor: player.name,
+    args: {
+      player: player.name,
+      skills: skills.join(', ')
+    }
+  })
+
+  for (const skill of skills) {
+    this.mDrawSkillCard(player, skill)
+  }
 }
 
 Game.prototype.checkPlayerHasCharacter = function(player) {
@@ -93,6 +124,11 @@ Game.prototype.checkCardIsVisible = function(card, player) {
     || card.visibility.includes(player.name)
     || (card.visibility.includes('president') && this.checkPlayerIsPresident(player))
   )
+}
+
+Game.prototype.checkPlayerDrewSkillsThisTurn = function(player) {
+  player = this._adjustPlayerParam(player)
+  return player.turnFlags.drewCards
 }
 
 Game.prototype.checkPlayerIsInSpace = function(player) {
@@ -165,13 +201,13 @@ Game.prototype.getLog = function() {
   return this.state.log
 }
 
-Game.prototype.getPlayerActive = function() {
-  return this.getPlayerByName(this.state.activePlayer)
+Game.prototype.getPlayerCurrentTurn = function() {
+  return this.getPlayerByIndex(this.state.currentTurnPlayerIndex)
 }
 
 Game.prototype.getPlayerNext = function() {
   const players = this.getPlayerAll()
-  const current = this.getPlayerActive()
+  const current = this.getPlayerCurrentTurn()
   const currentIndex = players.findIndex(p => p.name === current.name)
   const nextIndex = (currentIndex + 1) % players.length
   return players[nextIndex]
@@ -248,6 +284,11 @@ Game.prototype.getZoneByPlayerLocation = function(player) {
   return this.getZoneByName(zoneName)
 }
 
+Game.prototype.getZoneBySkill = function(skill) {
+  const name = `decks.${skill}`
+  return this.getZoneByName(name)
+}
+
 Game.prototype.hackImpersonate = function(player) {
   player = this._adjustPlayerParam(player)
   this.actor = player.name
@@ -279,6 +320,24 @@ Game.prototype.mAssignPresident = function(player) {
   this.rk.session.move(card, playerHand)
 }
 
+Game.prototype.mDrawSkillCard = function(player, skill) {
+  player = this._adjustPlayerParam(player)
+
+  const zone = this.getZoneBySkill(skill)
+  this.mMaybeReshuffleSkillDeck(zone)
+
+  if (zone.cards.length === 0) {
+    throw new Error(`No cards left in ${skill} deck, even after reshuffle`)
+  }
+
+  const playerHand = this.getZoneByPlayer(player)
+
+  this.mMoveByIndices(
+    zone.name, 0,
+    playerHand.name, playerHand.length
+  )
+}
+
 Game.prototype.mLog = function(msg) {
   if (!msg.classes) {
     msg.classes = []
@@ -294,6 +353,41 @@ Game.prototype.mLog = function(msg) {
   msg.id = this.getLog().length
 
   this.rk.session.push(this.state.log, util.deepcopy(msg))
+}
+
+Game.prototype.mMaybeReshuffleSkillDeck = function(zone) {
+  if (zone.cards.length > 0) {
+    return
+  }
+
+  const skillName = zone.name.split('.').slice(-1)[0]
+  const discardName = `discard.${skillName}`
+  const discardZone = this.getZoneByName(discardName)
+
+  if (discardZone.cards.length === 0) {
+    this.mLog({
+      template: '{skill} deck and discard both empty. Unable to reshuffle',
+      actor: 'admin',
+      args: {
+        skill: skillName
+      }
+    })
+  }
+  else {
+    mLog({
+      template: 'Shuffling discard pile of {skill} to make a new draw pile',
+      actor: 'admin',
+      args: {
+        skill: skillName
+      },
+    })
+
+    const cards = [...discardZone.cards]
+    util.array.shuffle(cards)
+
+    this.rk.session.replace(zone.cards, cards)
+    this.rk.session.replace(discardZone.cards, [])
+  }
 }
 
 Game.prototype.mMoveByIndices = function(sourceName, sourceIndex, targetName, targetIndex) {
@@ -333,6 +427,17 @@ Game.prototype.mPlayerAssignCharacter = function(player, characterName) {
     const startingLocation = this.getZoneByLocationName(characterCard.setup)
     this.rk.session.move(pawn, startingLocation.cards)
   }
+}
+
+Game.prototype.mStartNextTurn = function() {
+  const nextIndex = (this.state.currentTurnPlayerIndex + 1) % this.getPlayerAll().length
+  this.rk.session.put(this.state, 'currentTurnPlayerIndex', nextIndex)
+
+  // Reset the player turn flags
+  const player = this.getPlayerByIndex(nextIndex)
+  this.rk.session.replace(player.turnFlags, {
+    drewCards: false,
+  })
 }
 
 Game.prototype._adjustPlayerParam = function(param) {

@@ -222,7 +222,7 @@ function launchSelfInViper(context) {
       actions: [
         {
           name: 'Relaunch Viper',
-          operator: 'and',  // Players choose one from each set
+          count: 2,
           options: [
             launched,
             ['Lower Left', 'Lower Right'],
@@ -249,66 +249,74 @@ function launchSelfInViper(context) {
   }
 }
 
-function playerMovement(context) {
-  const actor = context.data.actor
+function mainPlayerLoop(context) {
+  const game = context.state
 
-  if (context.data.destination) {
-    state.movePlayer(actor, context.data.destination)
-    context.done()
-  }
-  else {
-    const moveOptions = ['Command', "President's Office"]
+  game.rk.sessionStart(() => {
+    game.mStartNextTurn()
+  })
 
-    context.wait({
-      name: actor,
-      actions: [
-        {
-          name: 'Move to',
-          options: moveOptions,
-        },
-        {
-          name: "Don't move"
-        },
-      ],
-    })
-  }
+  context.push('player-turn')
 }
 
-function playerAction(context, state) {
-  const actor = context.data.actor
-  const action = context.data.actin
+function playerTurnMovement(context) {
+  const game = context.state
+  const player = game.getPlayerCurrentTurn()
 
-  if (action) {
-    if (action.source === 'skill card') {
-      // Grab the card
-      // Show the card to everyone
-      // Execute the action on the card
-    }
-    else if (action.source === 'quorum card') {
-      // Grab the card
-      // Show the card to everyone
-      // Execute the action on the card
-    }
-    else if (action.source === 'location') {
-      //
-    }
-    else if (action.source === 'character') {
-      //
-    }
-    else {
-      console.log('Unknown action source: ', action)
-      throw `Unknown action source: ${action.source}`
-    }
+  context.wait({
+    name: player.name,
+    actions: [
+      {
+        name: 'Movement',
+        options: [],
+      },
+    ]
+  })
+}
+
+function playerTurnReceiveSkills(context) {
+  const game = context.state
+  const player = game.getPlayerCurrentTurn()
+
+  if (game.checkPlayerDrewSkillsThisTurn(player)) {
+    context.done()
+    return
   }
+
+  const character = game.getCardCharacterByPlayer(player)
+  const skills = _characterSkills(character)
+  const optionalSkills = skills.filter(s => s.optional)
+  const requiredSkills = skills.filter(s => !s.optional)
+
+  // Automatically draw skill cards if possible.
+  if (optionalSkills.length === 0) {
+    const skillsToDraw = []
+    for (const { name, value } of requiredSkills) {
+      for (let i = 0; i < value; i++) {
+        skillsToDraw.push(name)
+      }
+    }
+    game.rk.sessionStart(() => {
+      game.aDrawSkillCards(player, skillsToDraw)
+    })
+    context.done()
+    return
+  }
+
+  // Let the player choose which optional cards to draw.
+  // Don't draw any cards until they have made their decision.
   else {
     context.wait({
-      name: actor,
+      name: player.name,
       actions: [
         {
-          name: 'skip action',
+          name: 'Select Skills',
+          count: 2,
+          options: _optionalSkillOptions(optionalSkills),
         },
       ]
     })
+    return
   }
 }
 
@@ -361,6 +369,21 @@ function _characterSkills(character) {
   return output
 }
 
+function _optionalSkillOptions(optionalSkills) {
+  if (optionalSkills.length === 0) {
+    return []
+  }
+
+  const options = []
+  const optionalPairs = [optionalSkills[0].name, optionalSkills[1].name]
+  for (let i = 0; i < optionalSkills[0].value; i++) {
+    options.push({
+      options: optionalPairs
+    })
+  }
+  return options
+}
+
 function receiveInitialSkillsDo(context) {
   const game = context.state
   const player = game.getPlayerByIndex(context.data.playerIndex)
@@ -385,14 +408,7 @@ function receiveInitialSkillsDo(context) {
         skillChoices.push(skill.name)
       }
     }
-    if (optionalSkills.length) {
-      const optionalPairs = [optionalSkills[0].name, optionalSkills[1].name]
-      for (let i = 0; i < optionalSkills[0].value; i++) {
-        skillChoices.push({
-          options: optionalPairs
-        })
-      }
-    }
+    skillChoices.push(_optionalSkillOptions(optionalSkills))
 
     context.wait({
       name: player.name,
@@ -461,29 +477,29 @@ const transitions = {
   },
 
   'main': {
-    func: waitFunc,
+    func: mainPlayerLoop,
   },
 
   'player-turn': {
     steps: [
-      'receive-skills',
-      'movement',
-      'action',
-      'crisis',
-      'cylon-activation',
-      'prepare-for-jump',
-      'cleanup',
+      'player-turn-receive-skills',
+      'player-turn-movement',
+      'player-turn-action',
+      'player-turn-crisis',
+      'player-turn-cylon-activation',
+      'player-turn-prepare-for-jump',
+      'player-turn-cleanup',
     ],
   },
 
   'player-turn-receive-skills': {
-    func: () => {}
+    func: playerTurnReceiveSkills,
   },
   'player-turn-movement': {
-    func: () => {}
+    func: playerTurnMovement,
   },
   'player-turn-action': {
-    func: () => {}
+    func: waitFunc,
   },
   'player-turn-crisis': {
     func: () => {}

@@ -55,6 +55,22 @@ function gameFixturePostCharacterSelection(options) {
   return game
 }
 
+function gameFixturePostSetup(option) {
+  const game = gameFixturePostCharacterSelection()
+  game.submit({
+    actor: 'micah',
+    name: 'Select Starting Skills',
+    option: ['leadership', 'tactics', 'piloting'],
+  })
+  game.submit({
+    actor: 'tom',
+    name: 'Select Starting Skills',
+    option: ['tactics', 'piloting', 'engineering'],
+  })
+
+  return game
+}
+
 
 describe('new game', () => {
   test("first run initializes space zones", () => {
@@ -289,7 +305,7 @@ describe('receive initial skills', () => {
     expect(game.getWaiting().name).toBe('micah')
   })
 
-  test('william adama initial skill options (fixed)', () => {
+  test('William Adama initial skill options (fixed)', () => {
     const game = gameFixturePostCharacterSelection({
       secondPlayerCharacter: 'William Adama',
     })
@@ -304,19 +320,41 @@ describe('receive initial skills', () => {
     expect(action.count).toBe(3)
   })
 
-  test('lee adama initial skill options (choices)', () => {
+  test('Kara Thrace initial skill options (choices)', () => {
     const game = gameFixturePostCharacterSelection({
-      secondPlayerCharacter: 'Lee "Apollo" Adama',
+      secondPlayerCharacter: 'Kara "Starbuck" Thrace'
     })
     const action = game.getWaiting().actions[0]
     expect(action.options.sort()).toStrictEqual([
-      { choices: ['leadership', 'politics'] },
-      { choices: ['leadership', 'politics'] },
+      { options: ['leadership', 'engineering'] },
+      'tactics',
       'tactics',
       'piloting',
       'piloting',
     ].sort())
     expect(action.count).toBe(3)
+  })
+
+})
+
+describe('player turn', () => {
+
+  describe('receive skills', () => {
+
+    test.only('skills dealt automatically for fixed skills', () => {
+      const game = gameFixturePostSetup()
+      expect(game.getWaiting().name).toBe('dennis')
+
+      const skillKinds = game
+        .getCardsKindByPlayer('skill', 'dennis')
+        .map(c => c.deck.split('.')[1])
+        .sort()
+      expect(skillKinds).toStrictEqual(['engineering', 'leadership', 'politics', 'politics'])
+
+      const action = game.getWaiting().actions[0]
+      expect(action.name).toBe('Movement')
+    })
+
   })
 
 })
