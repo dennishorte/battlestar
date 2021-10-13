@@ -202,7 +202,9 @@ Game.prototype.getLog = function() {
 }
 
 Game.prototype.getPlayerCurrentTurn = function() {
-  return this.getPlayerByIndex(this.state.currentTurnPlayerIndex)
+  // This calculation lets the UI render games before they are finished initializing
+  const index = this.state.currentTurnPlayerIndex < 0 ? 0 : this.state.currentTurnPlayerIndex
+  return this.getPlayerByIndex(index)
 }
 
 Game.prototype.getPlayerNext = function() {

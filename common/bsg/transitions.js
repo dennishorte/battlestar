@@ -408,7 +408,9 @@ function receiveInitialSkillsDo(context) {
         skillChoices.push(skill.name)
       }
     }
-    skillChoices.push(_optionalSkillOptions(optionalSkills))
+    for (const choice of _optionalSkillOptions(optionalSkills)) {
+      skillChoices.push(choice)
+    }
 
     context.wait({
       name: player.name,

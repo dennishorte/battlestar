@@ -48,7 +48,7 @@ export default {
         return this.$game.getPlayerNext()
       }
       else if (this.owner === 'current-player') {
-        return this.$game.getPlayerActive()
+        return this.$game.getPlayerCurrentTurn()
       }
       else {
         return 'all'

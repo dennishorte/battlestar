@@ -41,7 +41,7 @@ export default {
     },
 
     playerName() {
-      return this.$game.getPlayerActive().name
+      return this.$game.getPlayerCurrentTurn().name
     },
 
     skills() {

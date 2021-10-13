@@ -341,7 +341,7 @@ describe('player turn', () => {
 
   describe('receive skills', () => {
 
-    test.only('skills dealt automatically for fixed skills', () => {
+    test('skills dealt automatically for fixed skills', () => {
       const game = gameFixturePostSetup()
       expect(game.getWaiting().name).toBe('dennis')
 

@@ -129,7 +129,7 @@ export default {
 
     playersOrdered() {
       const players = util.deepcopy(this.$game.getPlayerAll())
-      const activePlayer = this.$game.getPlayerActive()
+      const activePlayer = this.$game.getPlayerCurrentTurn()
       while (players[players.length - 1].name !== activePlayer.name) {
         players.push(players.shift())
       }

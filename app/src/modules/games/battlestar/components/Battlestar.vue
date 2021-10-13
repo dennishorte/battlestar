@@ -77,7 +77,7 @@
               </div>
 
               <div>
-                Current turn: <span class="heading">{{ playerActive }}</span>
+                Current turn: <span class="heading">{{ playerCurrentTurn }}</span>
               </div>
             </div>
           </b-col>
@@ -197,8 +197,9 @@ export default {
     players() {
       return this.$game.getPlayerAll()
     },
-    playerActive() {
-      return this.$game.getPlayerActive().name
+    playerCurrentTurn() {
+      console.log('hello', this.$game.getPlayerCurrentTurn().name)
+      return this.$game.getPlayerCurrentTurn().name
     },
     waitingFor() {
       return this.$game.getPlayerWaitingFor().name

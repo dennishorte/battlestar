@@ -280,7 +280,7 @@ import { bsg } from 'battlestar-common'
 const activePlayerVariantFunc = function(name) {
   return {
     func() {
-      return this.$game.getPlayerActive().name === name ? 'activePlayer' : ''
+      return this.$game.getPlayerCurrentTurn().name === name ? 'activePlayer' : ''
     },
   }
 }
