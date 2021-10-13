@@ -55,8 +55,8 @@ function gameFixturePostCharacterSelection(options) {
   return game
 }
 
-function gameFixturePostSetup(option) {
-  const game = gameFixturePostCharacterSelection()
+function gameFixturePostSetup(options) {
+  const game = gameFixturePostCharacterSelection(options)
   game.submit({
     actor: 'micah',
     name: 'Select Starting Skills',
@@ -343,7 +343,6 @@ describe('player turn', () => {
 
     test('skills dealt automatically for fixed skills', () => {
       const game = gameFixturePostSetup()
-      expect(game.getWaiting().name).toBe('dennis')
 
       const skillKinds = game
         .getCardsKindByPlayer('skill', 'dennis')
@@ -352,6 +351,42 @@ describe('player turn', () => {
       expect(skillKinds).toStrictEqual(['engineering', 'leadership', 'politics', 'politics'])
 
       const action = game.getWaiting().actions[0]
+      expect(game.getWaiting().name).toBe('dennis')
+      expect(action.name).toBe('Movement')
+    })
+
+    test('player given choice for optional skills', () => {
+      const game = gameFixturePostSetup({
+        firstPlayerCharacter: 'Kara "Starbuck" Thrace',
+        secondPlayerCharacter: 'Gaius Baltar',
+      })
+
+      const action = game.getWaiting().actions[0]
+      expect(game.getWaiting().name).toBe('dennis')
+      expect(action.name).toBe('Select Skills')
+      expect(action.options).toStrictEqual([
+        {
+          "options": [
+            "leadership",
+            "engineering",
+          ],
+        },
+      ])
+    })
+
+    test('player draws all cards after making optional choices', () => {
+      const game = gameFixturePostSetup({
+        firstPlayerCharacter: 'Kara "Starbuck" Thrace',
+        secondPlayerCharacter: 'Gaius Baltar',
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Select Skills',
+        option: 'engineering',
+      })
+
+      const action = game.getWaiting().actions[0]
+      expect(game.getWaiting().name).toBe('dennis')
       expect(action.name).toBe('Movement')
     })
 

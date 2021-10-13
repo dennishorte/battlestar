@@ -53,9 +53,7 @@ function initialize(game) {
       crisisCount: -1,
       crisisDone: false,
 
-      turnFlags: {
-        drewCards: false,
-      },
+      turnFlags: {}, // See game.mStartNextTurn for description
     }
   })
 

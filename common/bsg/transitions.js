@@ -288,6 +288,15 @@ function playerTurnReceiveSkills(context) {
   const optionalSkills = skills.filter(s => s.optional)
   const requiredSkills = skills.filter(s => !s.optional)
 
+  // If the player already submitted their skill choices, go ahead and actualize them.
+  if (player.turnFlags.optionalSkillChoices.length) {
+    player.turnFlags.optionalSkillChoices.forEach(skill => requiredSkills.push({
+      name: skill,
+      value: 1
+    }))
+    optionalSkills.length = 0
+  }
+
   // Automatically draw skill cards if possible.
   if (optionalSkills.length === 0) {
     const skillsToDraw = []

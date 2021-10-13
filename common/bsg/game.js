@@ -78,8 +78,15 @@ Game.prototype.submit = function({ actor, name, option }) {
     this.aDrawSkillCards(actor, option)
   }
 
+  // Players only submit this action if they have optional skill choices.
+  // Store the optional choices and re-evaluate the transition to get the rest of
+  // the skills needed by the player.
   else if (name === 'Select Skills') {
-    this.aDrawSkillCards(actor, option)
+    const player = this.getPlayerWaitingFor()
+    if (!Array.isArray(option)) {
+      option = [option]
+    }
+    this.rk.session.put(player.turnFlags, 'optionalSkillChoices', option)
   }
 
   else {
@@ -439,6 +446,7 @@ Game.prototype.mStartNextTurn = function() {
   const player = this.getPlayerByIndex(nextIndex)
   this.rk.session.replace(player.turnFlags, {
     drewCards: false,
+    optionalSkillChoices: [],
   })
 }
 
