@@ -1,98 +1,4 @@
-const bsg = require('./game.js')
-const transitions = require('./transitions.js')
-
-
-function GameFixtureFactory() {
-  this.phases = {
-    FIRST_RUN: 0,
-    POST_CHARACTER_SELECTION: 1,
-    POST_SETUP: 2,
-  }
-
-  this.lobby = {
-    game: 'BattleStar Galactica',
-    name: 'Test Lobby',
-    options: {
-      expansions: ['base game']
-    },
-    users: [
-      { _id: 0, name: 'dennis' },
-      { _id: 1, name: 'micah' },
-      { _id: 2, name: 'tom' },
-    ],
-  }
-
-  this.options = {
-    players: [
-      {
-        character: 'Gaius Baltar',
-      },
-      {
-        character: 'Kara "Starbuck" Thrace',
-        startingSkills: ['leadership', 'tactics', 'piloting'],
-      },
-      {
-        character: 'Sharon "Boomer" Valerii',
-        startingSkills: ['tactics', 'piloting', 'engineering'],
-      },
-    ],
-  }
-
-  this.phase = -1
-  this.game = new bsg.Game()
-}
-
-GameFixtureFactory.prototype.build = function() {
-  // Create a new game
-  const state = bsg.factory(this.lobby)
-  this.game.load(transitions, state, this.lobby.users[0])
-
-  // Sort the players so they are consistent for testing
-  this.game.state.players.sort((l, r) => l._id - r._id)
-
-  return this
-}
-
-GameFixtureFactory.prototype.advance = function(phase) {
-  if (!phase) {
-    phase = this.phases.FIRST_RUN
-  }
-
-  if (this.phase < this.phases.FIRST_RUN && phase >= this.phases.FIRST_RUN) {
-    this.phase = this.phases.FIRST_RUN
-    this.game.run()
-  }
-
-  if (this.phase < this.phases.POST_CHARACTER_SELECTION
-      && phase >= this.phases.POST_CHARACTER_SELECTION) {
-
-    this.phase = this.phases.POST_CHARACTER_SELECTION
-    for (let i = 0; i < this.game.getPlayerAll().length; i++) {
-      const player = this.game.getPlayerByIndex(i)
-      this.game.submit({
-        actor: player.name,
-        name: 'Select Character',
-        option: this.options.players[i].character
-      })
-    }
-  }
-
-  if (this.phase < this.phases.POST_SETUP
-      && phase >= this.phases.POST_SETUP) {
-
-    this.phase = this.phases.POST_SETUP
-    for (let i = 1; i < this.game.getPlayerAll().length; i++) {
-      const player = this.game.getPlayerByIndex(i)
-      this.game.submit({
-        actor: player.name,
-        name: 'Select Starting Skills',
-        option: this.options.players[i].startingSkills
-      })
-    }
-  }
-
-  return this
-}
+const GameFixtureFactory = require('./test/fixture.js')
 
 
 describe('new game', () => {
@@ -470,7 +376,7 @@ describe('player turn', () => {
     test('revealed cylons draw two cards', () => {
       const factory = new GameFixtureFactory()
       factory.build().advance(factory.phases.POST_CHARACTER_SELECTION)
-      jest.spyOn(factory.game, 'checkPlayerIsRevealedCylon').mockImplementation(() => true)
+      mockPlayerAsRevealedCylon(factory.game, 'dennis')
 
       const game = factory.advance(factory.phases.POST_SETUP).game
       const action = game.getWaiting().actions[0]
@@ -536,12 +442,12 @@ describe('player turn', () => {
       const game = factory.build().advance(factory.phases.POST_SETUP).game
 
       const action = game.getWaiting().actions[0]
-      const galacticaOptions = action.options.find(o => o.name === 'Colonial One').options
-      expect(galacticaOptions.length).toBe(3)
-      expect(galacticaOptions.includes('Administration')).toBe(true)
+      const options = action.options.find(o => o.name === 'Colonial One').options
+      expect(options.length).toBe(3)
+      expect(options.includes('Administration')).toBe(true)
     })
 
-    test("damaged locations excluded", () => {
+    test.skip("damaged locations excluded", () => {
     })
 
     test("destroyed Colonial One excluded", () => {
@@ -558,12 +464,24 @@ describe('player turn', () => {
       expect(galacticaOptions).not.toBeDefined()
     })
 
-    test.skip("revealed cylon player movement options", () => {
+    test("revealed cylon player movement options", () => {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().advance(factory.phases.POST_SETUP).game
 
+      const action = game.getWaiting().actions[0]
+      const options = action.options.find(o => o.name === 'Cylon Locations').options
+      expect(options.length).toBe(3)
+      expect(options.includes('Caprica')).toBe(false)
+      expect(options.includes('Cylon Fleet')).toBe(true)
     })
 
   })
 
+})
+
+test('new fixture', () => {
+  const factory = new GameFixtureFactory()
+  factory.build().advanceTo()
 })
 
 describe('misc functions', () => {

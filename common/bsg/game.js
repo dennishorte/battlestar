@@ -58,11 +58,18 @@ Game.prototype.load = function(transitions, state, actor) {
 // Available to overload
 Game.prototype.save = async function() {}
 
+Game.prototype.dumpLog = function() {
+  for (const entry of this.state.log) {
+    const template = entry.template
+  }
+}
+
 Game.prototype.run = function() {
   return this.sm.run()
 }
 
 Game.prototype.submit = function({ actor, name, option }) {
+  // console.log({ actor, name, option })
   const waiting = this.getWaiting()
   const action = waiting.actions[0]
   util.assert(waiting.name === actor, `Waiting for ${waiting.name} but got action from ${actor}`)

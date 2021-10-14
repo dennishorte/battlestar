@@ -18,7 +18,7 @@
       <div v-for="entry in log" :key="entry.id" :class="classes(entry.classes)">
         <span class="player">{{ entry.actor }}: </span>
         <span
-          v-for="(token, index) in templateSubstitute(entry.template, entry.args)"
+          v-for="(token, index) in templateSubstitute(entry)"
           :key="index"
           :class="token.classes">
           {{ token.value }}
@@ -32,6 +32,8 @@
 
 
 <script>
+import { log } from 'battlestar-common'
+
 export default {
   name: 'GameLog',
 
@@ -57,60 +59,8 @@ export default {
       }
     },
 
-    templateSubstitute(template, args) {
-      const tokens = this.templateTokenize(template)
-
-      return tokens.map(({ substitute, token }) => {
-        if (substitute) {
-          const { value, kind, classes } = args[token]
-          return {
-            classes: classes.join(' '),
-            value: token === 'card' ? kind : value
-          }
-        }
-        else {
-          return {
-            classes: '',
-            value: token,
-          }
-        }
-      })
-    },
-
-    templateTokenize(template) {
-      let prev = 0
-      let state = 'out'
-      const tokens = []
-
-      const push = function(token, substitute) {
-        tokens.push({
-          substitute: substitute,
-          token: token,
-        })
-      }
-
-      for (let i = 0; i < template.length; i++) {
-        if (template[i] == '{') {
-          if (state === 'in') throw 'Nested curly braces'
-          state = 'in'
-
-          if (prev == i) continue
-
-          push(template.substr(prev, i-prev), false)
-          prev = i
-        }
-        else if (template[i] == '}') {
-          if (state !== 'in') throw 'Unmatched closing curly brace'
-          push(template.substr(prev+1, i-prev-1), true)
-          state = 'out'
-          prev = i + 1
-        }
-      }
-
-      // Catch the last token, if any
-      push(template.substr(prev, template.length - prev), false)
-
-      return tokens
+    templateSubstitute(entry) {
+      return log.apply(entry)
     },
   },
 }

@@ -315,30 +315,46 @@ function playerTurnMovement(context) {
   }
 
   if (game.checkPlayerIsRevealedCylon(player)) {
-    throw new Error('Not implemented')
+    context.wait({
+      name: player.name,
+      actions: []
+    })
   }
 
   const options = []
   const playerZone = game.getZoneByPlayerLocation(player)
 
-  // Galactica Locations
-  options.push({
-    name: 'Galactica',
-    options: game.getLocationsByArea('Galactica')
-                 .filter(l => !l.details.hazardous)
-                 .filter(l => l.name !== playerZone.name)
-                 .filter(l => !game.checkLocationIsDamaged(l))
-                 .map(l => l.details.name)
-  })
-
-  // Colonial One locations
-  if (!game.checkColonialOneIsDestroyed()) {
+  // Locations for Revealed Cylons
+  if (game.checkPlayerIsRevealedCylon(player)) {
     options.push({
-      name: 'Colonial One',
-      options: game.getLocationsByArea('Colonial One')
+      name: 'Galactica',
+      options: game.getLocationsByArea('Cylon Locations')
                    .filter(l => l.name !== playerZone.name)
                    .map(l => l.details.name)
     })
+  }
+
+  // Locations for Humans
+  else {
+    // Galactica Locations
+    options.push({
+      name: 'Galactica',
+      options: game.getLocationsByArea('Galactica')
+                   .filter(l => !l.details.hazardous)
+                   .filter(l => l.name !== playerZone.name)
+                   .filter(l => !game.checkLocationIsDamaged(l))
+                   .map(l => l.details.name)
+    })
+
+    // Colonial One locations
+    if (!game.checkColonialOneIsDestroyed()) {
+      options.push({
+        name: 'Colonial One',
+        options: game.getLocationsByArea('Colonial One')
+                     .filter(l => l.name !== playerZone.name)
+                     .map(l => l.details.name)
+      })
+    }
   }
 
   context.wait({
@@ -367,13 +383,37 @@ function playerTurnReceiveSkills(context) {
   const optionalSkills = skills.filter(s => s.optional)
   const requiredSkills = skills.filter(s => !s.optional)
 
+  if (game.checkPlayerIsRevealedCylon(player)) {
+    if (player.turnFlags.optionalSkillChoices.length) {
+      const skills = player.turnFlags.optionalSkillChoice
+      util.assert(skills.length === 2, "Cylon players must draw two skill cards")
+
+      game.rk.sessionStart(() => {
+        game.aDrawSkillCards(player, skills)
+      })
+      context.done()
+      return
+    }
+
+    else {
+      context.wait({
+        name: player.name,
+        actions: [{
+          name: 'Select Skills',
+          count: 2,
+          options: [...bsgutil.skillList, ...bsgutil.skillList].sort(),
+        }]
+      })
+    }
+  }
+
   // If the player already submitted their skill choices, go ahead and actualize them.
   if (player.turnFlags.optionalSkillChoices.length) {
     if (playerInSickbay) {
-        util.assert(
-          player.turnFlags.optionalSkillChoices.length === 1,
-          "Can only draw one card when in sickbay"
-        )
+      util.assert(
+        player.turnFlags.optionalSkillChoices.length === 1,
+        "Can only draw one card when in sickbay"
+      )
       const skill = player.turnFlags.optionalSkillChoices[0]
       game.rk.sessionStart(session => {
         game.mDrawSkillCard(skill)
@@ -397,17 +437,6 @@ function playerTurnReceiveSkills(context) {
       }))
       optionalSkills.length = 0
     }
-  }
-
-  if (game.checkPlayerIsRevealedCylon(player)) {
-    context.wait({
-      name: player.name,
-      actions: [{
-        name: 'Select Skills',
-        count: 2,
-        options: [...bsgutil.skillList, ...bsgutil.skillList].sort(),
-      }]
-    })
   }
 
   // Characters in sickbay can only draw one card.
