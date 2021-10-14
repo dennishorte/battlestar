@@ -467,8 +467,28 @@ describe('player turn', () => {
       ])
     })
 
-    test.skip('revealed cylons draw two cards', () => {
+    test('revealed cylons draw two cards', () => {
+      const factory = new GameFixtureFactory()
+      factory.build().advance(factory.phases.POST_CHARACTER_SELECTION)
+      jest.spyOn(factory.game, 'checkPlayerIsRevealedCylon').mockImplementation(() => true)
 
+      const game = factory.advance(factory.phases.POST_SETUP).game
+      const action = game.getWaiting().actions[0]
+      expect(game.getWaiting().name).toBe('dennis')
+      expect(action.name).toBe('Select Skills')
+      expect(action.count).toBe(2)
+      expect(action.options).toStrictEqual([
+        "engineering",
+        "engineering",
+        "leadership",
+        "leadership",
+        "piloting",
+        "piloting",
+        "politics",
+        "politics",
+        "tactics",
+        "tactics",
+      ])
     })
 
   })

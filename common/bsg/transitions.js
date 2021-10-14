@@ -400,12 +400,19 @@ function playerTurnReceiveSkills(context) {
   }
 
   if (game.checkPlayerIsRevealedCylon(player)) {
-    throw new Error('Not implemented')
+    context.wait({
+      name: player.name,
+      actions: [{
+        name: 'Select Skills',
+        count: 2,
+        options: [...bsgutil.skillList, ...bsgutil.skillList].sort(),
+      }]
+    })
   }
 
   // Characters in sickbay can only draw one card.
   // Give them a list of options
-  if (playerInSickbay) {
+  else if (playerInSickbay) {
     const options = skills.map(c => c.name)
     context.wait({
       name: player.name,

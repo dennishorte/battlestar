@@ -16,7 +16,6 @@ Util.skillList = [
   'tactics',
   'piloting',
   'engineering',
-  'treachery',
 ]
 
 Util.skillType = function(card) {
