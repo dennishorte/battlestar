@@ -259,24 +259,94 @@ function mainPlayerLoop(context) {
   context.push('player-turn')
 }
 
+function playerTurnAction(context) {
+  const game = context.state
+  const player = game.getPlayerCurrentTurn()
+
+  context.wait({
+    name: player.name,
+    actions: [
+      {
+        name: 'Action',
+        options: [],
+      },
+    ]
+  })
+}
+
 function playerTurnMovement(context) {
   const game = context.state
   const player = game.getPlayerCurrentTurn()
 
   // If the player is in the brig, they don't get to move
-
-  // Movement to locations on the same ship are free
-
-  // Movement to other ships costs one skill card
+  if (game.checkPlayerIsAtLocation(player, 'Brig')) {
+    game.rk.sessionStart(() => {
+      game.mLog({
+        template: "{player} can't move because they are in the brig",
+        actor: 'admin',
+        args: {
+          player: player.name
+        }
+      })
+    })
+    context.done()
+    return
+  }
 
   // If the player is in a Viper, they can move one step in space or land on a ship for one card
+  if (game.checkPlayerIsInSpace(player)) {
+    context.wait({
+      name: player.name,
+      actions: [{
+        name: 'Movement',
+        options: [
+          {
+            name: 'Move Viper',
+            options: [],
+          },
+          {
+            name: 'Land Viper',
+            options: [],
+          }
+        ]
+      }]
+    })
+    return
+  }
+
+  if (game.checkPlayerIsRevealedCylon(player)) {
+    throw new Error('Not implemented')
+  }
+
+  const options = []
+  const playerZone = game.getZoneByPlayerLocation(player)
+
+  // Galactica Locations
+  options.push({
+    name: 'Galactica',
+    options: game.getLocationsByArea('Galactica')
+                 .filter(l => !l.details.hazardous)
+                 .filter(l => l.name !== playerZone.name)
+                 .filter(l => !game.checkLocationIsDamaged(l))
+                 .map(l => l.details.name)
+  })
+
+  // Colonial One locations
+  if (!game.checkColonialOneIsDestroyed()) {
+    options.push({
+      name: 'Colonial One',
+      options: game.getLocationsByArea('Colonial One')
+                   .filter(l => l.name !== playerZone.name)
+                   .map(l => l.details.name)
+    })
+  }
 
   context.wait({
     name: player.name,
     actions: [
       {
         name: 'Movement',
-        options: [],
+        options,
       },
     ]
   })
@@ -285,7 +355,7 @@ function playerTurnMovement(context) {
 function playerTurnReceiveSkills(context) {
   const game = context.state
   const player = game.getPlayerCurrentTurn()
-  const playerInSickbay = game.getZoneByPlayerLocation(player).details.name === 'Sickbay'
+  const playerInSickbay = game.checkPlayerIsAtLocation(player, 'Sickbay')
 
   if (game.checkPlayerDrewSkillsThisTurn(player)) {
     context.done()
@@ -327,6 +397,10 @@ function playerTurnReceiveSkills(context) {
       }))
       optionalSkills.length = 0
     }
+  }
+
+  if (game.checkPlayerIsRevealedCylon(player)) {
+    throw new Error('Not implemented')
   }
 
   // Characters in sickbay can only draw one card.
@@ -559,10 +633,10 @@ const transitions = {
     func: playerTurnMovement,
   },
   'player-turn-action': {
-    func: waitFunc,
+    func: playerTurnAction,
   },
   'player-turn-crisis': {
-    func: () => {}
+    func: waitFunc,
   },
   'player-turn-cylon-activation': {
     func: () => {}

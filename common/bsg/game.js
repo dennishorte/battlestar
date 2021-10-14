@@ -115,6 +115,36 @@ Game.prototype.aDrawSkillCards = function(player, skills) {
   }
 }
 
+Game.prototype.aDestroyColonialOne = function() {
+  this.mLog({
+    template: 'Colonial One destroyed',
+    actor: 'admin'
+  })
+
+  this.rk.session.put(this.state.flags, 'colonialOneDestroyed', true)
+
+  for (const location of this.getLocationsByArea('Colonial One')) {
+    for (const card of location.cards) {
+      if (card.kind === 'player-token') {
+        this.mLog({
+          template: '{player} sent to {location}',
+          actor: 'admin',
+          args: {
+            player: card.name,
+            location: 'Sickbay'
+          }
+        })
+
+        this.mMovePlayer(card.name, 'Sickbay')
+      }
+    }
+  }
+}
+
+Game.prototype.checkColonialOneIsDestroyed = function() {
+  return this.state.flags.colonialOneDestroyed
+}
+
 Game.prototype.checkPlayerHasCharacter = function(player) {
   player = this._adjustPlayerParam(player)
   return !!this.getCardCharacterByPlayer(player)
@@ -133,9 +163,25 @@ Game.prototype.checkCardIsVisible = function(card, player) {
   )
 }
 
+Game.prototype.checkLocationIsDamaged = function(location) {
+  location = this._adjustZoneParam(location)
+  return !!location.cards.find(c => c.kind === 'damageGalactica')
+}
+
 Game.prototype.checkPlayerDrewSkillsThisTurn = function(player) {
   player = this._adjustPlayerParam(player)
   return player.turnFlags.drewCards
+}
+
+Game.prototype.checkPlayerIsAtLocation = function(player, name) {
+  player = this._adjustPlayerParam(player)
+  const zone = this.getZoneByPlayerLocation(player)
+  return zone.details.name === name
+}
+
+Game.prototype.checkPlayerIsRevealedCylon = function(player) {
+  player = this._adjustPlayerParam(player)
+  return player.isRevealedCylon
 }
 
 Game.prototype.checkPlayerIsInSpace = function(player) {
@@ -209,6 +255,11 @@ Game.prototype.getCardCharacterByPlayer = function(player) {
   player = this._adjustPlayerParam(player)
   const playerZone = this.getZoneByPlayer(player.name)
   return playerZone.cards.find(c => c.kind === 'character')
+}
+
+Game.prototype.getLocationsByArea = function(area) {
+  return Object.values(this.getZoneAll().locations)
+               .filter(l => l.details.area === area)
 }
 
 Game.prototype.getLog = function() {

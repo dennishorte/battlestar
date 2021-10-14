@@ -24,6 +24,10 @@ function initialize(game) {
   game.log = []
   game.hasUndone = false
 
+  game.flags = {
+    colonialOneDestroyed: false,
+  },
+
   game.seed = util.randomSeed()
 
   // Counters
@@ -53,6 +57,7 @@ function initialize(game) {
       crisisCount: -1,
       crisisDone: false,
 
+      isRevealedCylon: false,
       turnFlags: {}, // See game.mStartNextTurn for description
     }
   })

@@ -467,6 +467,85 @@ describe('player turn', () => {
       ])
     })
 
+    test.skip('revealed cylons draw two cards', () => {
+
+    })
+
   })
 
+  describe("movement", () => {
+
+    test("player in brig can't move", () => {
+      const factory = new GameFixtureFactory()
+      factory.build().advance(factory.phases.POST_CHARACTER_SELECTION)
+      factory.game.rk.sessionStart(session => {
+        factory.game.mMovePlayer('dennis', 'locations.brig')
+      })
+
+      const game = factory.advance(factory.phases.POST_SETUP).game
+      const action = game.getWaiting().actions[0]
+      expect(game.getWaiting().name).toBe('dennis')
+      expect(action.name).toBe('Action')
+    })
+
+    test("player on Galactica asked to move", () => {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().advance(factory.phases.POST_SETUP).game
+
+      const action = game.getWaiting().actions[0]
+      expect(game.getWaiting().name).toBe('dennis')
+      expect(action.name).toBe('Movement')
+      expect(action.options.length).toBe(2)
+    })
+
+    test("player on Galactica current location excluded", () => {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().advance(factory.phases.POST_SETUP).game
+
+      const action = game.getWaiting().actions[0]
+      const galacticaOptions = action.options.find(o => o.name === 'Galactica').options
+      expect(galacticaOptions.length).toBe(7)
+      expect(galacticaOptions.includes('Research Lab')).toBe(false)
+
+      // Ensure a galactica location is actuall there
+      expect(galacticaOptions.includes('Hangar Deck')).toBe(true)
+    })
+
+    test("player on Galactica can see Colonial One locations", () => {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().advance(factory.phases.POST_SETUP).game
+
+      const action = game.getWaiting().actions[0]
+      const galacticaOptions = action.options.find(o => o.name === 'Colonial One').options
+      expect(galacticaOptions.length).toBe(3)
+      expect(galacticaOptions.includes('Administration')).toBe(true)
+    })
+
+    test("damaged locations excluded", () => {
+    })
+
+    test("destroyed Colonial One excluded", () => {
+      const factory = new GameFixtureFactory()
+      factory.build().advance(factory.phases.FIRST_RUN)
+      factory.game.rk.sessionStart(() => {
+        factory.game.aDestroyColonialOne()
+      })
+      factory.advance(factory.phases.POST_SETUP)
+
+      const game = factory.game
+      const action = game.getWaiting().actions[0]
+      const galacticaOptions = action.options.find(o => o.name === 'Colonial One')
+      expect(galacticaOptions).not.toBeDefined()
+    })
+
+    test.skip("revealed cylon player movement options", () => {
+
+    })
+
+  })
+
+})
+
+describe('misc functions', () => {
+  test('aDestroyColonialOne', () => {})
 })
