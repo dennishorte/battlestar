@@ -79,27 +79,8 @@ GameFixtureFactory.prototype.advanceTo = function(transition, matcher) {
     })
   }
 
-  // Statemachine history
+  // Dump log
   const output = []
-  let indent = ''
-  for (const session of this.game.state.history) {
-    for (const diff of session) {
-      if (diff.path === '.sm.stack') {
-        if (diff.new.length) {
-          output.push(indent + diff.new[0].name)
-          indent += '..'
-        }
-        else {
-          indent = indent.slice(0, -2)
-          // output.push(indent + diff.old[0].name + ' END')
-        }
-      }
-    }
-  }
-  console.log(output.join('\n'))
-
-  // Log history
-  output.length = 0
   for (const entry of this.game.state.log) {
     output.push(log.toString(entry))
   }

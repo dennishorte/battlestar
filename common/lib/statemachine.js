@@ -2,6 +2,9 @@
 
 const RecordKeeper = require('./recordkeeper.js')
 
+const defaultOptions = {
+  pushCallback: () => {}
+}
 
 function StateMachine(
   transitions,
@@ -9,6 +12,7 @@ function StateMachine(
   recordkeeper,
   stack,             // An array
   waiting,           // An array
+  options,
 ) {
   _validateTransitions(transitions)
 
@@ -24,6 +28,7 @@ function StateMachine(
   this.stack = stack
   this.waiting = waiting
   this.rk = recordkeeper
+  this.options = Object.assign({}, defaultOptions, options)
 }
 
 StateMachine.prototype.run = run
@@ -83,7 +88,11 @@ function _done() {
 
 function _push(eventName, data) {
   // console.log('push', eventName, data)
+
   this.rk.sessionStart(session => {
+    this.options.pushCallback(eventName, data)
+
+    // Clear the old waiting information
     session.splice(this.waiting, 0, this.waiting.length)
 
     const event = {

@@ -477,7 +477,7 @@ describe('player turn', () => {
 
 })
 
-test('new fixture', () => {
+test.only('new fixture', () => {
   const factory = new GameFixtureFactory()
   factory.build().advanceTo()
 })

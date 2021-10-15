@@ -9,7 +9,14 @@ function apply(entry) {
 
 function toString(entry) {
   const tokens = templateSubstitute(entry.template, entry.args)
-  return tokens.map(t => t.value).join(' ')
+  const message = tokens.map(t => t.value).join('')
+
+  let indent = ''
+  for (let i = 0; i < entry.indent; i++) {
+    indent += '..'
+  }
+
+  return `${indent}${message}`
 }
 
 function templateSubstitute(template, args) {
@@ -20,7 +27,7 @@ function templateSubstitute(template, args) {
       const { value, kind, classes } = args[token]
       return {
         classes: classes.join(' '),
-        value: token === 'card' ? kind : value
+        value: token === 'card' ? kind : value,
       }
     }
     else {
@@ -40,7 +47,7 @@ function templateTokenize(template) {
   const push = function(token, substitute) {
     tokens.push({
       substitute: substitute,
-      token: token.trim(),
+      token: token,
     })
   }
 

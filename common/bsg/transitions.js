@@ -7,14 +7,16 @@ function characterSelection(context) {
 
   if (!context.data.initialized) {
     game.rk.sessionStart(session => {
-      game.mLog({
-        template: 'Character Selection',
-        classes: ['phase', 'setup-phase'],
-      })
+      /* game.mLog({
+       *   template: 'Character Selection',
+       *   classes: ['phase', 'setup-phase'],
+       * }) */
       session.put(context.data, 'initialized', true)
       session.put(context.data, 'playerIndex', 0)
     })
-    context.push('character-selection-do', { playerIndex: context.data.playerIndex })
+
+    const playerName = game.getPlayerByIndex(context.data.playerIndex).name
+    context.push('character-selection-do', { playerName })
   }
 
   else {
@@ -22,7 +24,8 @@ function characterSelection(context) {
       session.put(context.data, 'playerIndex', context.data.playerIndex + 1)
     })
     if (context.data.playerIndex < game.getPlayerAll().length) {
-      context.push('character-selection-do', { playerIndex: context.data.playerIndex })
+      const playerName = game.getPlayerByIndex(context.data.playerIndex).name
+      context.push('character-selection-do', { playerName })
     }
     else {
       context.done()
@@ -32,7 +35,7 @@ function characterSelection(context) {
 
 function characterSelectionDo(context) {
   const game = context.state
-  const player = game.getPlayerByIndex(context.data.playerIndex)
+  const player = game.getPlayerByName(context.data.playerName)
   const character = game.getCardCharacterByPlayer(player)
 
   if (character) {
@@ -116,7 +119,7 @@ function distributeLoyaltyCards(context) {
     })
 
     game.mLog({
-      template: 'Each player receives one loyalty card.',
+      template: 'Each player receives one loyalty card',
       actor: 'admin',
     })
 
@@ -130,11 +133,10 @@ function distributeLoyaltyCards(context) {
       game.mMoveByIndices('decks.loyalty', 0, playerZone.name, playerZone.length)
 
       game.mLog({
-        template: '{player} receives a second loyalty card due to {card}',
+        template: '{player} receives a second loyalty as Gaius Baltar',
         actor: 'admin',
         args: {
           player: gaiusPlayer.name,
-          card: game.getCardByName('Gaius Baltar'),
         }
       })
     }
@@ -254,7 +256,7 @@ function mainPlayerLoop(context) {
     game.mStartNextTurn()
   })
 
-  context.push('player-turn')
+  context.push('player-turn', { playerName: game.getPlayerCurrentTurn().name })
 }
 
 function playerTurnAction(context) {
@@ -487,14 +489,15 @@ function receiveInitialSkills(context) {
   // initialize
   if (!context.data.initialized) {
     game.rk.sessionStart(session => {
-      game.mLog({
-        template: 'Receive Initial Skill Cards',
-        classes: ['phase', 'setup-phase'],
-      })
+      /* game.mLog({
+       *   template: 'Receive Initial Skill Cards',
+       *   classes: ['phase', 'setup-phase'],
+       * }) */
       session.put(context.data, 'initialized', true)
       session.put(context.data, 'playerIndex', 1)
     })
-    context.push('receive-initial-skills-do', { playerIndex: context.data.playerIndex })
+    const playerName = game.getPlayerByIndex(context.data.playerIndex).name
+    context.push('receive-initial-skills-do', { playerName })
   }
 
   else {
@@ -502,7 +505,8 @@ function receiveInitialSkills(context) {
       session.put(context.data, 'playerIndex', context.data.playerIndex + 1)
     })
     if (context.data.playerIndex < game.getPlayerAll().length) {
-      context.push('receive-initial-skills-do', { playerIndex: context.data.playerIndex })
+      const playerName = game.getPlayerByIndex(context.data.playerIndex).name
+      context.push('receive-initial-skills-do', { playerName })
     }
     else {
       context.done()
@@ -547,7 +551,7 @@ function _optionalSkillOptions(optionalSkills) {
 
 function receiveInitialSkillsDo(context) {
   const game = context.state
-  const player = game.getPlayerByIndex(context.data.playerIndex)
+  const player = game.getPlayerByName(context.data.playerName)
 
   if (game.getCardsKindByPlayer('skill', player).length >= 3) {
     context.done()

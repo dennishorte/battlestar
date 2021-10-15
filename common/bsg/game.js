@@ -43,6 +43,8 @@ function stateFactory(lobby) {
 }
 
 Game.prototype.load = function(transitions, state, actor) {
+  const self = this
+
   this.actor = actor
   this.state = state
   this.rk = new RecordKeeper(state)
@@ -52,6 +54,9 @@ Game.prototype.load = function(transitions, state, actor) {
     this.rk,
     this.state.sm.stack,
     this.state.sm.waiting,
+    {
+      pushCallback: stateLogger.bind(self),
+    },
   )
 }
 
@@ -239,6 +244,10 @@ Game.prototype.getLog = function() {
   return this.state.log
 }
 
+Game.prototype.getLogIndent = function() {
+  return this.sm.stack.length - 1
+}
+
 Game.prototype.getPlayerCurrentTurn = function() {
   // This calculation lets the UI render games before they are finished initializing
   const index = this.state.currentTurnPlayerIndex < 0 ? 0 : this.state.currentTurnPlayerIndex
@@ -362,6 +371,7 @@ Game.prototype.mLog = function(msg) {
 
   enrichLogArgs(msg)
   msg.id = this.getLog().length
+  msg.indent = this.getLogIndent()
 
   this.rk.session.push(this.state.log, util.deepcopy(msg))
 }
@@ -493,4 +503,25 @@ function enrichLogArgs(msg) {
       }
     }
   }
+}
+
+function stateLogger(name, data) {
+  if (!data) {
+    data = {}
+  }
+
+  const entry = {
+    template: '{transition}',
+    classes: ['game-transition'],
+    args: {
+      transition: name,
+    }
+  }
+
+  if (data.playerName) {
+    entry.template += ' ({player})'
+    entry.args.player = data.playerName
+  }
+
+  this.mLog(entry)
 }

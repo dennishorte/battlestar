@@ -31,21 +31,6 @@ Actions.aAssignPresident = function(player) {
   this.rk.session.move(card, playerHand)
 }
 
-Actions.aDrawSkillCards = function(player, skills) {
-  this.mLog({
-    template: `{player} draws {skills}`,
-    actor: player.name,
-    args: {
-      player: player.name,
-      skills: skills.join(', ')
-    }
-  })
-
-  for (const skill of skills) {
-    this.mDrawSkillCard(player, skill)
-  }
-}
-
 Actions.aDestroyColonialOne = function() {
   this.mLog({
     template: 'Colonial One destroyed',
@@ -69,6 +54,23 @@ Actions.aDestroyColonialOne = function() {
         this.mMovePlayer(card.name, 'Sickbay')
       }
     }
+  }
+}
+
+Actions.aDrawSkillCards = function(player, skills) {
+  player = this._adjustPlayerParam(player)
+
+  this.mLog({
+    template: `{player} draws {skills}`,
+    actor: player.name,
+    args: {
+      player: player.name,
+      skills: skills.join(', ')
+    }
+  })
+
+  for (const skill of skills) {
+    this.mDrawSkillCard(player, skill)
   }
 }
 
