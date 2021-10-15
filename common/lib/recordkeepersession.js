@@ -19,10 +19,12 @@ RecordKeeperSession.prototype.commit = commit
 RecordKeeperSession.prototype.patch = patch
 RecordKeeperSession.prototype.reverse = reverse
 
+RecordKeeperSession.prototype.addKey = addKey
 RecordKeeperSession.prototype.move = move
 RecordKeeperSession.prototype.pop = pop
 RecordKeeperSession.prototype.push = push
 RecordKeeperSession.prototype.put = put
+RecordKeeperSession.prototype.removeKey = removeKey
 RecordKeeperSession.prototype.replace = replace
 RecordKeeperSession.prototype.splice = splice
 
@@ -70,6 +72,14 @@ function patch(diff) {
     target.splice(diff.key, diff.old.length, ...diff.new)
   }
 
+  else if (diff.kind === 'addKey') {
+    target[diff.key] = util.deepcopy(diff.new)
+  }
+
+  else if (diff.kind === 'removeKey') {
+    delete target[diff.key]
+  }
+
   else {
     throw `Unknown diff kind: ${diff.kind}`
   }
@@ -77,8 +87,21 @@ function patch(diff) {
 
 function reverse(diff) {
   const reversed = util.deepcopy(diff)
-  reversed.old = diff.new
-  reversed.new = diff.old
+
+  if (diff.kind === 'addKey') {
+    reversed.kind = 'removeKey'
+    reversed.old = reversed.new
+    delete reversed.new
+  }
+  else if (diff.kind === 'removeKey') {
+    reversed.key = 'addKey'
+    reversed.new = reversed.old
+    delete reversed.old
+  }
+  else {
+    reversed.old = diff.new
+    reversed.new = diff.old
+  }
   this.patch(reversed)
 }
 
@@ -97,6 +120,24 @@ function move(object, destArray, destIndex) {
   this.splice(destArray, destIndex, 0, object)
 }
 
+function addKey(object, key, value) {
+  this.patch({
+    kind: 'addKey',
+    path: this.path(object),
+    key: key,
+    new: value,
+  })
+}
+
+function removeKey(object, key) {
+  this.patch({
+    kind: 'removeKey',
+    path: this.path(object),
+    key: key,
+    old: object[key],
+  })
+}
+
 function pop(array) {
   this.splice(array, array.length - 1, 1)
 }
@@ -106,6 +147,9 @@ function push(array, elem) {
 }
 
 function put(object, key, value) {
+  util.assert(value !== undefined, 'Not allowed to put undefined. Use removeKey instead.')
+  util.assert(object[key] !== undefined, 'Not allowed to put new keys. Use addKey instead.')
+
   // If object and value are identical, do nothing.
   if (JSON.stringify(object[key]) === JSON.stringify(value)) {
     return

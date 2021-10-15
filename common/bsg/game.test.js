@@ -479,7 +479,7 @@ describe('player turn', () => {
 
 test.only('new fixture', () => {
   const factory = new GameFixtureFactory()
-  factory.build().advanceTo()
+  factory.build().advanceTo('character-selection-do', 'dennis')
 })
 
 describe('misc functions', () => {

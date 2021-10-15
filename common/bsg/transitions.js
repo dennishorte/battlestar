@@ -7,12 +7,8 @@ function characterSelection(context) {
 
   if (!context.data.initialized) {
     game.rk.sessionStart(session => {
-      /* game.mLog({
-       *   template: 'Character Selection',
-       *   classes: ['phase', 'setup-phase'],
-       * }) */
-      session.put(context.data, 'initialized', true)
-      session.put(context.data, 'playerIndex', 0)
+      session.addKey(context.data, 'initialized', true)
+      session.addKey(context.data, 'playerIndex', 0)
     })
 
     const playerName = game.getPlayerByIndex(context.data.playerIndex).name
@@ -489,12 +485,8 @@ function receiveInitialSkills(context) {
   // initialize
   if (!context.data.initialized) {
     game.rk.sessionStart(session => {
-      /* game.mLog({
-       *   template: 'Receive Initial Skill Cards',
-       *   classes: ['phase', 'setup-phase'],
-       * }) */
-      session.put(context.data, 'initialized', true)
-      session.put(context.data, 'playerIndex', 1)
+      session.addKey(context.data, 'initialized', true)
+      session.addKey(context.data, 'playerIndex', 1)
     })
     const playerName = game.getPlayerByIndex(context.data.playerIndex).name
     context.push('receive-initial-skills-do', { playerName })

@@ -1,5 +1,5 @@
 const bsg = require('../game.js')
-const log = require('../../lib/log.js')
+const util = require('../../lib/util.js')
 const transitions = require('../transitions.js')
 
 
@@ -56,7 +56,7 @@ GameFixtureFactory.prototype.build = function() {
   return this
 }
 
-GameFixtureFactory.prototype.advanceTo = function(transition, matcher) {
+GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPlayerName) {
   this.game.run()
 
   // Do character-selection
@@ -79,12 +79,45 @@ GameFixtureFactory.prototype.advanceTo = function(transition, matcher) {
     })
   }
 
-  // Dump log
-  const output = []
-  for (const entry of this.game.state.log) {
-    output.push(log.toString(entry))
+  // this.game.dumpHistory()
+  this.game.dumpLog()
+
+  if (!targetTransitionName) {
+    return this
   }
-  console.log(output.join('\n'))
+
+  // Backup until there is a hit on the matcher
+  while (true) {
+    const recentHistory = this.game.state.history.slice(-1)[0]
+    const transitionPush = recentHistory.find(diff => {
+      return diff.path === '.sm.stack' && diff.old.length === 0
+    })
+
+    if (transitionPush) {
+      if (recentHistory.length !== 2) {
+        for (const diff of recentHistory) {
+          console.log(diff)
+        }
+        throw new Error("Transition change sessions should always contain a log and a stack update.")
+      }
+
+      const { name, data } = transitionPush.new[0]
+      if (name === targetTransitionName) {
+        if (targetPlayerName) {
+          if (data.playerName === targetPlayerName) {
+            break
+          }
+        }
+        else {
+          break
+        }
+      }
+    }
+
+    this.game.rk.undo()
+  }
+
+  this.game.dumpLog()
 
   return this
 }

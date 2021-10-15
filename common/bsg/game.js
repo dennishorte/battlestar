@@ -1,9 +1,10 @@
 const RecordKeeper = require('../lib/recordkeeper.js')
 const StateMachine = require('../lib/statemachine.js')
 
-const initialize = require('./initialize.js')
 const bsgutil = require('./util.js')
+const initialize = require('./initialize.js')
 const jsonpath = require('../lib/jsonpath.js')
+const log = require('../lib/log.js')
 const util = require('../lib/util.js')
 
 module.exports = {
@@ -63,10 +64,31 @@ Game.prototype.load = function(transitions, state, actor) {
 // Available to overload
 Game.prototype.save = async function() {}
 
-Game.prototype.dumpLog = function() {
-  for (const entry of this.state.log) {
-    const template = entry.template
+Game.prototype.dumpHistory = function() {
+  const output = []
+  /* for (const session of this.state.history) {
+   *   output.push(JSON.stringify(session))
+   * } */
+
+  for (const session of this.state.history) {
+    const transitionPush = session.find(diff => {
+      return diff.path === '.sm.stack' && diff.old.length === 0
+    })
+
+    if (transitionPush) {
+      output.push(session[0].new)
+    }
   }
+
+  console.log(output)
+}
+
+Game.prototype.dumpLog = function() {
+  const output = []
+  for (const entry of this.state.log) {
+    output.push(log.toString(entry))
+  }
+  console.log(output.join('\n'))
 }
 
 Game.prototype.run = function() {
