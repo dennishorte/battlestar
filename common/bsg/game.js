@@ -77,9 +77,7 @@ Game.prototype.submit = function({ actor, name, option }) {
 
 
   if (name === 'Select Character') {
-    this.rk.sessionStart()
-    this.mPlayerAssignCharacter(actor, option)
-    this.rk.session.commit()
+    this.aSelectCharacter(actor, option)
   }
 
   else if (name === 'Select Starting Skills') {
@@ -355,10 +353,6 @@ Game.prototype.mDrawSkillCard = function(player, skill) {
 }
 
 Game.prototype.mLog = function(msg) {
-  /* if (!msg.actor) {
-   *   console.log(msg)
-   *   throw new Error('Message does not have actor')
-   * } */
   if (!msg.classes) {
     msg.classes = []
   }
@@ -384,7 +378,6 @@ Game.prototype.mMaybeReshuffleSkillDeck = function(zone) {
   if (discardZone.cards.length === 0) {
     this.mLog({
       template: '{skill} deck and discard both empty. Unable to reshuffle',
-      actor: 'admin',
       args: {
         skill: skillName
       }
@@ -393,7 +386,6 @@ Game.prototype.mMaybeReshuffleSkillDeck = function(zone) {
   else {
     mLog({
       template: 'Shuffling discard pile of {skill} to make a new draw pile',
-      actor: 'admin',
       args: {
         skill: skillName
       },
@@ -420,37 +412,6 @@ Game.prototype.mMovePlayer = function(player, destination) {
   destination = this._adjustZoneParam(destination)
   const { card } = this.getCardPlayerToken(player)
   this.rk.session.move(card, destination.cards, destination.cards.length)
-}
-
-Game.prototype.mPlayerAssignCharacter = function(player, characterName) {
-  player = this._adjustPlayerParam(player)
-
-  this.mLog({
-    template: "{player} chooses {character}",
-    args: {
-      player: player.name,
-      character: characterName,
-    }
-  })
-
-  // Put the character card into the player's hand
-  const playerHand = this.getZoneByPlayer(player.name).cards
-  const characterZone = this.getZoneByName('decks.character')
-  const characterCard = characterZone.cards.find(c => c.name === characterName)
-  this.rk.session.move(characterCard, playerHand, 0)
-
-  // Helo doesn't start on the game board. Leave his player token with the player for now.
-  if (characterName === 'Karl "Helo" Agathon') {}
-
-  // Apollo starts in a Viper. He needs to make a choice about where to launch.
-  else if (characterName === 'Lee "Apollo" Adama') {}
-
-  // Put the player's pawn in the correct location
-  else {
-    const pawn = playerHand.find(c => c.kind === 'player-token')
-    const startingLocation = this.getZoneByLocationName(characterCard.setup)
-    this.rk.session.move(pawn, startingLocation.cards)
-  }
 }
 
 Game.prototype.mStartNextTurn = function() {
