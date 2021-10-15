@@ -453,9 +453,7 @@ describe('player turn', () => {
     test("destroyed Colonial One excluded", () => {
       const factory = new GameFixtureFactory()
       factory.build().advance(factory.phases.FIRST_RUN)
-      factory.game.rk.sessionStart(() => {
-        factory.game.aDestroyColonialOne()
-      })
+      factory.game.aDestroyColonialOne()
       factory.advance(factory.phases.POST_SETUP)
 
       const game = factory.game

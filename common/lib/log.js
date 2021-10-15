@@ -9,8 +9,7 @@ function apply(entry) {
 
 function toString(entry) {
   const tokens = templateSubstitute(entry.template, entry.args)
-  const message = tokens.map(t => t.value).join(' ')
-  return `${entry.actor}: ${message}`
+  return tokens.map(t => t.value).join(' ')
 }
 
 function templateSubstitute(template, args) {

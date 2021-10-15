@@ -163,15 +163,13 @@ function distributeTitleCards(context) {
   const game = context.state
   const playerCharacters = game.getPlayerAll().map(p => [p, game.getCardCharacterByPlayer(p)])
 
-  game.rk.sessionStart(() => {
-    playerCharacters.sort(_admiralSort)
-    const admiral = playerCharacters[0][0]
-    game.mAssignAdmiral(admiral)
+  playerCharacters.sort(_admiralSort)
+  const admiral = playerCharacters[0][0]
+  game.aAssignAdmiral(admiral)
 
-    playerCharacters.sort(_presidentSort)
-    const president = playerCharacters[0][0]
-    game.mAssignPresident(president)
-  })
+  playerCharacters.sort(_presidentSort)
+  const president = playerCharacters[0][0]
+  game.aAssignPresident(president)
 
   context.done()
 }
@@ -387,10 +385,7 @@ function playerTurnReceiveSkills(context) {
     if (player.turnFlags.optionalSkillChoices.length) {
       const skills = player.turnFlags.optionalSkillChoice
       util.assert(skills.length === 2, "Cylon players must draw two skill cards")
-
-      game.rk.sessionStart(() => {
-        game.aDrawSkillCards(player, skills)
-      })
+      game.aDrawSkillCards(player, skills)
       context.done()
       return
     }
@@ -464,9 +459,7 @@ function playerTurnReceiveSkills(context) {
         skillsToDraw.push(name)
       }
     }
-    game.rk.sessionStart(() => {
-      game.aDrawSkillCards(player, skillsToDraw)
-    })
+    game.aDrawSkillCards(player, skillsToDraw)
     context.done()
     return
   }

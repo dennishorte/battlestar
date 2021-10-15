@@ -75,10 +75,11 @@ Game.prototype.submit = function({ actor, name, option }) {
   util.assert(waiting.name === actor, `Waiting for ${waiting.name} but got action from ${actor}`)
   util.assert(action.name === name, `Waiting for action ${action.anem} but got ${name}`)
 
-  this.rk.sessionStart()
 
   if (name === 'Select Character') {
+    this.rk.sessionStart()
     this.mPlayerAssignCharacter(actor, option)
+    this.rk.session.commit()
   }
 
   else if (name === 'Select Starting Skills') {
@@ -93,60 +94,27 @@ Game.prototype.submit = function({ actor, name, option }) {
     if (!Array.isArray(option)) {
       option = [option]
     }
+    this.rk.sessionStart()
     this.rk.session.put(player.turnFlags, 'optionalSkillChoices', option)
+    this.rk.session.commit()
   }
 
   else {
     throw new Error(`Unsupported action: ${name}`)
   }
 
-  this.rk.session.commit()
   this.sm.run()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Actions have logs, whereas mutations do not.
+// Actions
 
-Game.prototype.aDrawSkillCards = function(player, skills) {
-  this.mLog({
-    template: `{player} draws {skills}`,
-    actor: player.name,
-    args: {
-      player: player.name,
-      skills: skills.join(', ')
-    }
-  })
-
-  for (const skill of skills) {
-    this.mDrawSkillCard(player, skill)
-  }
+const actions = require('./actions.js')
+for (const [name, func] of Object.entries(actions)) {
+  Game.prototype[name] = func
 }
 
-Game.prototype.aDestroyColonialOne = function() {
-  this.mLog({
-    template: 'Colonial One destroyed',
-    actor: 'admin'
-  })
 
-  this.rk.session.put(this.state.flags, 'colonialOneDestroyed', true)
-
-  for (const location of this.getLocationsByArea('Colonial One')) {
-    for (const card of location.cards) {
-      if (card.kind === 'player-token') {
-        this.mLog({
-          template: '{player} sent to {location}',
-          actor: 'admin',
-          args: {
-            player: card.name,
-            location: 'Sickbay'
-          }
-        })
-
-        this.mMovePlayer(card.name, 'Sickbay')
-      }
-    }
-  }
-}
 
 Game.prototype.checkColonialOneIsDestroyed = function() {
   return this.state.flags.colonialOneDestroyed
@@ -368,32 +336,6 @@ Game.prototype.hackImpersonate = function(player) {
   this.actor = player.name
 }
 
-Game.prototype.mAssignAdmiral = function(player) {
-  player = this._adjustPlayerParam(player)
-  const card = this.getCardByName('Admiral')
-  const playerHand = this.getZoneByPlayer(player).cards
-  this.mLog({
-    template: '{player} becomes the Admiral',
-    args: {
-      player: player.name
-    }
-  })
-  this.rk.session.move(card, playerHand)
-}
-
-Game.prototype.mAssignPresident = function(player) {
-  player = this._adjustPlayerParam(player)
-  const card = this.getCardByName('President')
-  const playerHand = this.getZoneByPlayer(player.name).cards
-  this.mLog({
-    template: '{player} becomes the President',
-    args: {
-      player: player.name
-    }
-  })
-  this.rk.session.move(card, playerHand)
-}
-
 Game.prototype.mDrawSkillCard = function(player, skill) {
   player = this._adjustPlayerParam(player)
 
@@ -413,6 +355,10 @@ Game.prototype.mDrawSkillCard = function(player, skill) {
 }
 
 Game.prototype.mLog = function(msg) {
+  /* if (!msg.actor) {
+   *   console.log(msg)
+   *   throw new Error('Message does not have actor')
+   * } */
   if (!msg.classes) {
     msg.classes = []
   }
@@ -421,9 +367,6 @@ Game.prototype.mLog = function(msg) {
   }
 
   enrichLogArgs(msg)
-  if (!msg.actor) {
-    msg.actor = this.getActor().name
-  }
   msg.id = this.getLog().length
 
   this.rk.session.push(this.state.log, util.deepcopy(msg))
