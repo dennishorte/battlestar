@@ -34,6 +34,12 @@ Util.array.shuffle = function(array, rng) {
   return array
 }
 
+Util.array.swap = function(array, i, j) {
+  const tmp = array[i]
+  array[i] = array[j]
+  array[j] = tmp
+}
+
 Util.assert = function(test, message) {
   if (!test) {
     throw new Error(message)

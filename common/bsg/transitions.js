@@ -12,7 +12,7 @@ function characterSelection(context) {
     })
 
     const playerName = game.getPlayerByIndex(context.data.playerIndex).name
-    context.push('character-selection-do', { playerName })
+    return context.push('character-selection-do', { playerName })
   }
 
   else {
@@ -21,10 +21,10 @@ function characterSelection(context) {
     })
     if (context.data.playerIndex < game.getPlayerAll().length) {
       const playerName = game.getPlayerByIndex(context.data.playerIndex).name
-      context.push('character-selection-do', { playerName })
+      return context.push('character-selection-do', { playerName })
     }
     else {
-      context.done()
+      return context.done()
     }
   }
 }
@@ -32,25 +32,28 @@ function characterSelection(context) {
 function characterSelectionDo(context) {
   const game = context.state
   const player = game.getPlayerByName(context.data.playerName)
-  const character = game.getCardCharacterByPlayer(player)
 
-  if (character) {
+  if (context.response) {
+    const characterName = context.response
+    game.aSelectCharacter(player, characterName)
+
     // Apollo still needs to launch in a viper
     if (
-      character.name === 'Lee "Apollo" Adama'
+      characterName === 'Lee "Apollo" Adama'
       && game.getCardsKindByPlayer('player-token', player).length > 0
     ) {
-      context.push('launch-self-in-viper', { playerName: player.name })
+      return context.push('launch-self-in-viper', { playerName: player.name })
     }
     else {
-      context.done()
+      return context.done()
     }
   }
+
   else {
     const characterDeck = game.getZoneByName('decks.character')
     const availableCharacters = characterDeck.cards.map(c => c.name).sort()
 
-    context.wait({
+    return context.wait({
       name: player.name,
       actions: [
         {
@@ -285,13 +288,12 @@ function playerTurnMovement(context) {
         }
       })
     })
-    context.done()
-    return
+    return context.done()
   }
 
   // If the player is in a Viper, they can move one step in space or land on a ship for one card
   if (game.checkPlayerIsInSpace(player)) {
-    context.wait({
+    return context.wait({
       name: player.name,
       actions: [{
         name: 'Movement',
@@ -307,14 +309,6 @@ function playerTurnMovement(context) {
         ]
       }]
     })
-    return
-  }
-
-  if (game.checkPlayerIsRevealedCylon(player)) {
-    context.wait({
-      name: player.name,
-      actions: []
-    })
   }
 
   const options = []
@@ -323,7 +317,7 @@ function playerTurnMovement(context) {
   // Locations for Revealed Cylons
   if (game.checkPlayerIsRevealedCylon(player)) {
     options.push({
-      name: 'Galactica',
+      name: 'Cylon Locations',
       options: game.getLocationsByArea('Cylon Locations')
                    .filter(l => l.name !== playerZone.name)
                    .map(l => l.details.name)
@@ -367,76 +361,63 @@ function playerTurnMovement(context) {
 function playerTurnReceiveSkills(context) {
   const game = context.state
   const player = game.getPlayerCurrentTurn()
+
   const playerInSickbay = game.checkPlayerIsAtLocation(player, 'Sickbay')
-
-  if (game.checkPlayerDrewSkillsThisTurn(player)) {
-    context.done()
-    return
-  }
-
+  const playerIsRevealedCylon = game.checkPlayerIsRevealedCylon(player)
   const character = game.getCardCharacterByPlayer(player)
   const skills = _characterSkills(character)
   const optionalSkills = skills.filter(s => s.optional)
   const requiredSkills = skills.filter(s => !s.optional)
+  const requiredSkillNames = []
 
-  if (game.checkPlayerIsRevealedCylon(player)) {
-    if (player.turnFlags.optionalSkillChoices.length) {
-      const skills = player.turnFlags.optionalSkillChoice
-      util.assert(skills.length === 2, "Cylon players must draw two skill cards")
-      game.aDrawSkillCards(player, skills)
-      context.done()
-      return
-    }
-
-    else {
-      context.wait({
-        name: player.name,
-        actions: [{
-          name: 'Select Skills',
-          count: 2,
-          options: [...bsgutil.skillList, ...bsgutil.skillList].sort(),
-        }]
-      })
+  // Cylons don't have required skills
+  // Players in sickbay only get a single skill card
+  if (!playerIsRevealedCylon && !playerInSickbay) {
+    for (const { name, value } of requiredSkills) {
+      for (let i = 0; i < value; i++) {
+        requiredSkillNames.push(name)
+      }
     }
   }
 
-  // If the player already submitted their skill choices, go ahead and actualize them.
-  if (player.turnFlags.optionalSkillChoices.length) {
-    if (playerInSickbay) {
-      util.assert(
-        player.turnFlags.optionalSkillChoices.length === 1,
-        "Can only draw one card when in sickbay"
-      )
-      const skill = player.turnFlags.optionalSkillChoices[0]
-      game.rk.sessionStart(session => {
-        game.mDrawSkillCard(skill)
-        game.mLog({
-          template: '{player} draws only {skill} because they are in sickbay',
-          actor: player.name,
-          args: {
-            player: player.name,
-            skill,
-          }
-        })
-      })
-      context.done()
-      return
+  // Player has chosen their optional skills. Draw all skill cards
+  if (context.response) {
+    // Sometimes, the player is only making a single choice and returns a string.
+    // Other times, they are making multiple choices, and return an array.
+    let chosen = context.response
+    if (typeof context.response === 'string') {
+      chosen = [chosen]
     }
+    const toDraw = requiredSkillNames.concat(chosen)
+    game.aDrawSkillCards(player, toDraw)
+    return context.done()
+  }
 
-    else {
-      player.turnFlags.optionalSkillChoices.forEach(skill => requiredSkills.push({
-        name: skill,
-        value: 1
-      }))
-      optionalSkills.length = 0
-    }
+  if (playerIsRevealedCylon) {
+    return context.wait({
+      name: player.name,
+      actions: [{
+        name: 'Select Skills',
+        count: 2,
+        options: [...bsgutil.skillList, ...bsgutil.skillList].sort(),
+      }]
+    })
   }
 
   // Characters in sickbay can only draw one card.
   // Give them a list of options
-  else if (playerInSickbay) {
+  if (playerInSickbay) {
+    game.rk.sessionStart(() => {
+      game.mLog({
+        template: '{player} is in sickbay and will only draw one card',
+        args: {
+          player: player.name,
+        }
+      })
+    })
+
     const options = skills.map(c => c.name)
-    context.wait({
+    return context.wait({
       name: player.name,
       actions: [
         {
@@ -446,37 +427,26 @@ function playerTurnReceiveSkills(context) {
         },
       ]
     })
-    return
   }
 
   // Automatically draw skill cards if possible.
-  else if (optionalSkills.length === 0) {
-    const skillsToDraw = []
-    for (const { name, value } of requiredSkills) {
-      for (let i = 0; i < value; i++) {
-        skillsToDraw.push(name)
-      }
-    }
-    game.aDrawSkillCards(player, skillsToDraw)
-    context.done()
-    return
+  if (optionalSkills.length === 0) {
+    game.aDrawSkillCards(player, requiredSkillNames)
+    return context.done()
   }
 
   // Let the player choose which optional cards to draw.
   // Don't draw any cards until they have made their decision.
-  else {
-    context.wait({
-      name: player.name,
-      actions: [
-        {
-          name: 'Select Skills',
-          operator: 'and',
-          options: _optionalSkillOptions(optionalSkills),
-        },
-      ]
-    })
-    return
-  }
+  return context.wait({
+    name: player.name,
+    actions: [
+      {
+        name: 'Select Skills',
+        operator: 'and',
+        options: _optionalSkillOptions(optionalSkills),
+      },
+    ]
+  })
 }
 
 function receiveInitialSkills(context) {
@@ -545,9 +515,11 @@ function receiveInitialSkillsDo(context) {
   const game = context.state
   const player = game.getPlayerByName(context.data.playerName)
 
-  if (game.getCardsKindByPlayer('skill', player).length >= 3) {
-    context.done()
+  if (context.response) {
+    game.aDrawSkillCards(player, context.response)
+    return context.done()
   }
+
   else {
     const character = game.getCardCharacterByPlayer(player)
     const skills = _characterSkills(character)

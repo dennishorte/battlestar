@@ -6,12 +6,6 @@ const transitions = require('../transitions.js')
 module.exports = GameFixtureFactory
 
 function GameFixtureFactory() {
-  this.phases = {
-    FIRST_RUN: 0,
-    POST_CHARACTER_SELECTION: 1,
-    POST_SETUP: 2,
-  }
-
   this.lobby = {
     game: 'BattleStar Galactica',
     name: 'Test Lobby',
@@ -29,6 +23,7 @@ function GameFixtureFactory() {
     players: [
       {
         character: 'Gaius Baltar',
+        startingSkills: ['leadership', 'politics', 'engineering'],
       },
       {
         character: 'Kara "Starbuck" Thrace',
@@ -67,6 +62,10 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
       name: 'Select Character',
       option: this.options.players[i].character
     })
+
+    if (this._checkForTarget(targetTransitionName, targetPlayerName)) {
+      return this
+    }
   }
 
   // Do skill-selection
@@ -77,88 +76,58 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
       name: 'Select Starting Skills',
       option: this.options.players[i].startingSkills
     })
+
+    if (this._checkForTarget(targetTransitionName, targetPlayerName)) {
+      return this
+    }
   }
 
-  // this.game.dumpHistory()
-  this.game.dumpLog()
+  return this
+}
 
+GameFixtureFactory.prototype._checkForTarget = function(targetTransitionName, targetPlayerName) {
   if (!targetTransitionName) {
-    return this
+    return false
   }
 
-  // Backup until there is a hit on the matcher
-  while (true) {
-    const recentHistory = this.game.state.history.slice(-1)[0]
-    const transitionPush = recentHistory.find(diff => {
-      return diff.path === '.sm.stack' && diff.old.length === 0
-    })
+  let targetSession = null
 
-    if (transitionPush) {
-      if (recentHistory.length !== 2) {
-        for (const diff of recentHistory) {
-          console.log(diff)
-        }
-        throw new Error("Transition change sessions should always contain a log and a stack update.")
-      }
+  // Check if the desired transition/player combo exists in the history
+  for (const session of this.game.state.history) {
+    for (const diff of session) {
+      if (diff.path === '.sm.stack'
+          && diff.new.length
+          && diff.new[0].name === targetTransitionName) {
 
-      const { name, data } = transitionPush.new[0]
-      if (name === targetTransitionName) {
         if (targetPlayerName) {
-          if (data.playerName === targetPlayerName) {
+          if (diff.new[0].data.playerName && diff.new[0].data.playerName === targetPlayerName) {
+            targetSession = session
             break
           }
         }
         else {
+          targetSession = session
           break
         }
       }
     }
 
+    if (targetSession) {
+      break
+    }
+  }
+
+  if (!targetSession) {
+    return false
+  }
+
+  // console.log(`Target session found for ${targetTransitionName}, ${targetPlayerName}`)
+  // console.log(targetSession)
+
+  while (this.game.state.history[this.game.state.history.length - 1] !== targetSession) {
     this.game.rk.undo()
   }
 
-  this.game.dumpLog()
-
-  return this
-}
-
-GameFixtureFactory.prototype.advance = function(phase) {
-  if (!phase) {
-    phase = this.phases.FIRST_RUN
-  }
-
-  if (this.phase < this.phases.FIRST_RUN && phase >= this.phases.FIRST_RUN) {
-    this.phase = this.phases.FIRST_RUN
-    this.game.run()
-  }
-
-  if (this.phase < this.phases.POST_CHARACTER_SELECTION
-      && phase >= this.phases.POST_CHARACTER_SELECTION) {
-
-    this.phase = this.phases.POST_CHARACTER_SELECTION
-    for (let i = 0; i < this.game.getPlayerAll().length; i++) {
-      const player = this.game.getPlayerByIndex(i)
-      this.game.submit({
-        actor: player.name,
-        name: 'Select Character',
-        option: this.options.players[i].character
-      })
-    }
-  }
-
-  if (this.phase < this.phases.POST_SETUP
-      && phase >= this.phases.POST_SETUP) {
-
-    this.phase = this.phases.POST_SETUP
-    for (let i = 1; i < this.game.getPlayerAll().length; i++) {
-      const player = this.game.getPlayerByIndex(i)
-      this.game.submit({
-        actor: player.name,
-        name: 'Select Starting Skills',
-        option: this.options.players[i].startingSkills
-      })
-    }
-  }
-
-  return this
+  // this.game.dumpLog()
+  return true
 }

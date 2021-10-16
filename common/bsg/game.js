@@ -100,33 +100,11 @@ Game.prototype.submit = function({ actor, name, option }) {
   const waiting = this.getWaiting()
   const action = waiting.actions[0]
   util.assert(waiting.name === actor, `Waiting for ${waiting.name} but got action from ${actor}`)
-  util.assert(action.name === name, `Waiting for action ${action.anem} but got ${name}`)
+  util.assert(action.name === name, `Waiting for action ${action.name} but got ${name}`)
 
-
-  if (name === 'Select Character') {
-    this.aSelectCharacter(actor, option)
-  }
-
-  else if (name === 'Select Starting Skills') {
-    this.aDrawSkillCards(actor, option)
-  }
-
-  // Players only submit this action if they have optional skill choices.
-  // Store the optional choices and re-evaluate the transition to get the rest of
-  // the skills needed by the player.
-  else if (name === 'Select Skills') {
-    const player = this.getPlayerWaitingFor()
-    if (!Array.isArray(option)) {
-      option = [option]
-    }
-    this.rk.sessionStart()
-    this.rk.session.put(player.turnFlags, 'optionalSkillChoices', option)
-    this.rk.session.commit()
-  }
-
-  else {
-    throw new Error(`Unsupported action: ${name}`)
-  }
+  this.rk.sessionStart(session => {
+    session.put(waiting, 'response', option)
+  })
 
   this.sm.run()
 }

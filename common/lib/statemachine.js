@@ -16,13 +16,6 @@ function StateMachine(
 ) {
   _validateTransitions(transitions)
 
-  if (!state.sm) {
-    state.sm = {
-      stack: [],
-      waiting: {},
-    }
-  }
-
   this.transitions = transitions
   this.state = state
   this.stack = stack
@@ -40,7 +33,6 @@ function run() {
     _push.call(this, 'root')
   }
 
-
   const event = this.stack[this.stack.length - 1]
 
   // This is the sentinel value to show that the state machine has reached a
@@ -55,9 +47,14 @@ function run() {
     wait: _wait.bind(this),
     data: event.data,
     state: this.state,
+    response: null,
   }
 
   const transition = this.transitions[event.name]
+  const waiting = this.waiting[0]
+  if (waiting) {
+    context.response = waiting.response
+  }
 
   // If there is an evaluation function, call it.
   if (transition.func) {
@@ -117,6 +114,7 @@ function _push(eventName, data) {
 }
 
 function _wait(payload) {
+  payload.response = ''
   this.rk.sessionStart(session =>
     session.splice(this.waiting, 0, this.waiting.length, payload)
   )

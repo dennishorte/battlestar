@@ -1,10 +1,10 @@
 const GameFixtureFactory = require('./test/fixture.js')
-
+const util = require('../lib/util.js')
 
 describe('new game', () => {
   test("first run initializes space zones", () => {
     const factory = new GameFixtureFactory()
-    const game = factory.build().advance().game
+    const game = factory.build().advanceTo('setup').game
 
     const expected = {
       'space.space0': ['Basestar A', 'raider', 'raider', 'raider'],
@@ -21,142 +21,88 @@ describe('new game', () => {
       expect(shipNames).toStrictEqual(expectedShips)
     }
   })
-
-  test("waits at character selection", () => {
-    const factory = new GameFixtureFactory()
-    const game = factory.build().advance().game
-
-    const stackNames = game.sm.stack.map(x => x.name)
-    expect(stackNames).toStrictEqual([
-      'root',
-      'setup',
-      'character-selection',
-      'character-selection-do',
-    ])
-    expect(game.getWaiting()).toStrictEqual({
-      name: 'dennis',
-      actions: [
-        {
-          name: 'Select Character',
-          options: [
-            '"Chief" Galen Tyrol',
-            'Gaius Baltar',
-            'Kara "Starbuck" Thrace',
-            'Karl "Helo" Agathon',
-            'Laura Roslin',
-            'Lee "Apollo" Adama',
-            'Saul Tigh',
-            'Sharon "Boomer" Valerii',
-            'Tom Zarek',
-            'William Adama',
-          ],
-        },
-      ]
-    })
-  })
 })
 
 describe('character selection', () => {
 
   test("first player can choose any character", () => {
     const factory = new GameFixtureFactory()
-    const game = factory.build().advance().game
+    const game = factory.build().advanceTo('character-selection-do', 'dennis').game
+    game.run()
 
-    expect(game.getWaiting()).toStrictEqual({
-      name: 'dennis',
-      actions: [
-        {
-          name: 'Select Character',
-          options: [
-            '"Chief" Galen Tyrol',
-            'Gaius Baltar',
-            'Kara "Starbuck" Thrace',
-            'Karl "Helo" Agathon',
-            'Laura Roslin',
-            'Lee "Apollo" Adama',
-            'Saul Tigh',
-            'Sharon "Boomer" Valerii',
-            'Tom Zarek',
-            'William Adama',
-          ],
-        },
-      ]
-    })
+    const waiting = game.getWaiting()
+    expect(waiting.name).toBe('dennis')
+    expect(waiting.actions).toStrictEqual([
+      {
+        name: 'Select Character',
+        options: [
+          '"Chief" Galen Tyrol',
+          'Gaius Baltar',
+          'Kara "Starbuck" Thrace',
+          'Karl "Helo" Agathon',
+          'Laura Roslin',
+          'Lee "Apollo" Adama',
+          'Saul Tigh',
+          'Sharon "Boomer" Valerii',
+          'Tom Zarek',
+          'William Adama',
+        ],
+      },
+    ])
   })
 
-  test("when first player chooses, character card is moved", () => {
+  function _chooseCharacter(name) {
     const factory = new GameFixtureFactory()
-    const game = factory.build().advance().game
-
+    const game = factory.build().advanceTo('character-selection-do', 'dennis').game
+    game.run()
     game.submit({
       actor: 'dennis',
       name: 'Select Character',
-      option: 'Gaius Baltar',
+      option: name,
     })
-    const player = game.getPlayerAll()[0]
+    return game
+  }
 
-    expect(game.getCardCharacterByPlayer(player).name).toBe('Gaius Baltar')
+  test("when first player chooses, character card is moved", () => {
+    const game = _chooseCharacter('Gaius Baltar')
+    expect(game.getCardCharacterByPlayer('dennis').name).toBe('Gaius Baltar')
 
-    const playerHand = game.getZoneByPlayer(player).cards
+    const playerHand = game.getZoneByPlayer('dennis').cards
     const playerHandNames = playerHand.map(c => c.name).sort()
     expect(playerHandNames).toStrictEqual(['Gaius Baltar'])
   })
 
   test("when first player chooses, pawn is placed", () => {
-    const factory = new GameFixtureFactory()
-    const game = factory.build().advance().game
-
-    game.submit({
-      actor: 'dennis',
-      name: 'Select Character',
-      option: 'Gaius Baltar',
-    })
-
+    const game = _chooseCharacter('Gaius Baltar')
     const researchLabZone = game.getZoneByLocationName('Research Lab')
     const researchLabCardNames = researchLabZone.cards.map(c => c.name)
     expect(researchLabCardNames).toStrictEqual(['dennis'])
   })
 
   test("when first player chooses, advances to next player", () => {
-    const factory = new GameFixtureFactory()
-    const game = factory.build().advance().game
-
-    game.submit({
-      actor: 'dennis',
-      name: 'Select Character',
-      option: 'Gaius Baltar',
-    })
-
-    expect(game.getWaiting()).toStrictEqual({
-      name: 'micah',
-      actions: [
-        {
-          name: 'Select Character',
-          options: [
-            '"Chief" Galen Tyrol',
-            'Kara "Starbuck" Thrace',
-            'Karl "Helo" Agathon',
-            'Laura Roslin',
-            'Lee "Apollo" Adama',
-            'Saul Tigh',
-            'Sharon "Boomer" Valerii',
-            'Tom Zarek',
-            'William Adama',
-          ],
-        },
-      ]
-    })
+    const game = _chooseCharacter('Gaius Baltar')
+    const waiting = game.getWaiting()
+    expect(waiting.name).toBe('micah')
+    expect(waiting.actions).toStrictEqual([
+      {
+        name: 'Select Character',
+        options: [
+          '"Chief" Galen Tyrol',
+          'Kara "Starbuck" Thrace',
+          'Karl "Helo" Agathon',
+          'Laura Roslin',
+          'Lee "Apollo" Adama',
+          'Saul Tigh',
+          'Sharon "Boomer" Valerii',
+          'Tom Zarek',
+          'William Adama',
+        ],
+      },
+    ])
   })
 
   test("second player choices are reflected", () => {
-    const factory = new GameFixtureFactory()
-    const game = factory.build().advance().game
-
-    game.submit({
-      actor: 'dennis',
-      name: 'Select Character',
-      option: 'Gaius Baltar',
-    })
+    const game = _chooseCharacter('Gaius Baltar')
     game.submit({
       actor: 'micah',
       name: 'Select Character',
@@ -177,15 +123,7 @@ describe('character selection', () => {
   })
 
   test("Lee Adama can choose where to launch his viper", () => {
-    const factory = new GameFixtureFactory()
-    const game = factory.build().advance().game
-
-    game.submit({
-      actor: 'dennis',
-      name: 'Select Character',
-      option: 'Lee "Apollo" Adama',
-    })
-
+    const game = _chooseCharacter('Lee "Apollo" Adama')
     expect(game.getWaiting().name).toBe('dennis')
 
     const action = game.getWaiting().actions[0]
@@ -198,9 +136,7 @@ describe('distribute title cards', () => {
 
   test("automatically executed after character selection", () => {
     const factory = new GameFixtureFactory()
-    const game = factory.build().advance(
-      factory.phases.POST_CHARACTER_SELECTION
-    ).game
+    const game = factory.build().advanceTo('player-turn').game
 
     expect(game.getPlayerWithCard('President').name).toBe('dennis')
     expect(game.getPlayerWithCard('Admiral').name).toBe('micah')
@@ -212,9 +148,7 @@ describe('distribute loyalty cards', () => {
 
   test("deals one card to each player", () => {
     const factory = new GameFixtureFactory()
-    const game = factory.build().advance(
-      factory.phases.POST_CHARACTER_SELECTION
-    ).game
+    const game = factory.build().advanceTo('player-turn').game
 
     for (const player of game.getPlayerAll()) {
       const hand = game.getZoneByPlayer(player).cards
@@ -244,9 +178,8 @@ describe('receive initial skills', () => {
 
   test('second player chooses first', () => {
     const factory = new GameFixtureFactory()
-    const game = factory.build().advance(
-      factory.phases.POST_CHARACTER_SELECTION
-    ).game
+    const game = factory.build().advanceTo('receive-initial-skills-do').game
+    game.run()
 
     expect(game.getWaiting().name).toBe('micah')
   })
@@ -254,9 +187,8 @@ describe('receive initial skills', () => {
   test('William Adama initial skill options (fixed)', () => {
     const factory = new GameFixtureFactory()
     factory.options.players[1].character = 'William Adama'
-    const game = factory.build().advance(
-      factory.phases.POST_CHARACTER_SELECTION
-    ).game
+    const game = factory.build().advanceTo('receive-initial-skills-do').game
+    game.run()
 
     const action = game.getWaiting().actions[0]
     expect(action.options).toStrictEqual([
@@ -272,9 +204,8 @@ describe('receive initial skills', () => {
   test('Kara Thrace initial skill options (choices)', () => {
     const factory = new GameFixtureFactory()
     factory.options.players[1].character = 'Kara "Starbuck" Thrace'
-    const game = factory.build().advance(
-      factory.phases.POST_CHARACTER_SELECTION
-    ).game
+    const game = factory.build().advanceTo('receive-initial-skills-do').game
+    game.run()
 
     const action = game.getWaiting().actions[0]
     expect(action.options.sort()).toStrictEqual([
@@ -295,9 +226,8 @@ describe('player turn', () => {
 
     test('skills dealt automatically for fixed skills', () => {
       const factory = new GameFixtureFactory()
-      const game = factory.build().advance(
-        factory.phases.POST_SETUP
-      ).game
+      const game = factory.build().advanceTo('player-turn-receive-skills', 'dennis').game
+      game.run()
 
       const skillKinds = game
         .getCardsKindByPlayer('skill', 'dennis')
@@ -312,11 +242,9 @@ describe('player turn', () => {
 
     test('player given choice for optional skills', () => {
       const factory = new GameFixtureFactory()
-      factory.options.players[0].character = 'Kara "Starbuck" Thrace'
-      factory.options.players[1].character = 'Gaius Baltar'
-      const game = factory.build().advance(
-        factory.phases.POST_SETUP
-      ).game
+      util.array.swap(factory.options.players, 0, 1)
+      const game = factory.build().advanceTo('player-turn-receive-skills', 'micah').game
+      game.run()
 
       const action = game.getWaiting().actions[0]
       expect(game.getWaiting().name).toBe('dennis')
@@ -333,12 +261,9 @@ describe('player turn', () => {
 
     test('player draws all cards after making optional choices', () => {
       const factory = new GameFixtureFactory()
-      factory.options.players[0].character = 'Kara "Starbuck" Thrace'
-      factory.options.players[1].character = 'Gaius Baltar'
-      const game = factory.build().advance(
-        factory.phases.POST_SETUP
-      ).game
-
+      util.array.swap(factory.options.players, 0, 1)
+      const game = factory.build().advanceTo('player-turn-receive-skills').game
+      game.run()
       game.submit({
         actor: 'dennis',
         name: 'Select Skills',
@@ -352,33 +277,32 @@ describe('player turn', () => {
 
     test('player in sickbay draws one card', () => {
       const factory = new GameFixtureFactory()
-      factory.options.players[0].character = 'Kara "Starbuck" Thrace'
-      factory.options.players[1].character = 'Gaius Baltar'
-      factory.build().advance(factory.phases.POST_CHARACTER_SELECTION)
-
-      // Move Kara to sickbay
-      factory.game.rk.sessionStart(session => {
-        factory.game.mMovePlayer('dennis', 'locations.sickbay')
+      const game = factory.build().advanceTo('player-turn-receive-skills').game
+      game.rk.sessionStart(session => {
+        game.mMovePlayer('dennis', 'locations.sickbay')
       })
+      game.run()
 
-      const game = factory.advance(factory.phases.POST_SETUP).game
       const action = game.getWaiting().actions[0]
       expect(game.getWaiting().name).toBe('dennis')
       expect(action.name).toBe('Select Skills')
       expect(action.options).toStrictEqual([
+        "politics",
         "leadership",
-        "tactics",
-        "piloting",
         "engineering",
       ])
     })
 
     test('revealed cylons draw two cards', () => {
       const factory = new GameFixtureFactory()
-      factory.build().advance(factory.phases.POST_CHARACTER_SELECTION)
-      mockPlayerAsRevealedCylon(factory.game, 'dennis')
+      factory.build().advanceTo('player-turn-receive-skills')
+      const game = factory.game
 
-      const game = factory.advance(factory.phases.POST_SETUP).game
+      jest.spyOn(game, 'checkPlayerIsRevealedCylon').mockImplementation(player => {
+        return player === 'dennis' || player.name === 'dennis'
+      })
+      game.run()
+
       const action = game.getWaiting().actions[0]
       expect(game.getWaiting().name).toBe('dennis')
       expect(action.name).toBe('Select Skills')
@@ -403,12 +327,12 @@ describe('player turn', () => {
 
     test("player in brig can't move", () => {
       const factory = new GameFixtureFactory()
-      factory.build().advance(factory.phases.POST_CHARACTER_SELECTION)
+      const game = factory.build().advanceTo('player-turn-movement').game
       factory.game.rk.sessionStart(session => {
         factory.game.mMovePlayer('dennis', 'locations.brig')
       })
+      game.run()
 
-      const game = factory.advance(factory.phases.POST_SETUP).game
       const action = game.getWaiting().actions[0]
       expect(game.getWaiting().name).toBe('dennis')
       expect(action.name).toBe('Action')
@@ -416,7 +340,8 @@ describe('player turn', () => {
 
     test("player on Galactica asked to move", () => {
       const factory = new GameFixtureFactory()
-      const game = factory.build().advance(factory.phases.POST_SETUP).game
+      const game = factory.build().advanceTo('player-turn-movement').game
+      game.run()
 
       const action = game.getWaiting().actions[0]
       expect(game.getWaiting().name).toBe('dennis')
@@ -426,7 +351,8 @@ describe('player turn', () => {
 
     test("player on Galactica current location excluded", () => {
       const factory = new GameFixtureFactory()
-      const game = factory.build().advance(factory.phases.POST_SETUP).game
+      const game = factory.build().advanceTo('player-turn-movement').game
+      game.run()
 
       const action = game.getWaiting().actions[0]
       const galacticaOptions = action.options.find(o => o.name === 'Galactica').options
@@ -439,7 +365,8 @@ describe('player turn', () => {
 
     test("player on Galactica can see Colonial One locations", () => {
       const factory = new GameFixtureFactory()
-      const game = factory.build().advance(factory.phases.POST_SETUP).game
+      const game = factory.build().advanceTo('player-turn-movement').game
+      game.run()
 
       const action = game.getWaiting().actions[0]
       const options = action.options.find(o => o.name === 'Colonial One').options
@@ -452,11 +379,10 @@ describe('player turn', () => {
 
     test("destroyed Colonial One excluded", () => {
       const factory = new GameFixtureFactory()
-      factory.build().advance(factory.phases.FIRST_RUN)
-      factory.game.aDestroyColonialOne()
-      factory.advance(factory.phases.POST_SETUP)
+      const game = factory.build().advanceTo('player-turn-movement').game
+      game.aDestroyColonialOne()
+      game.run()
 
-      const game = factory.game
       const action = game.getWaiting().actions[0]
       const galacticaOptions = action.options.find(o => o.name === 'Colonial One')
       expect(galacticaOptions).not.toBeDefined()
@@ -464,7 +390,15 @@ describe('player turn', () => {
 
     test("revealed cylon player movement options", () => {
       const factory = new GameFixtureFactory()
-      const game = factory.build().advance(factory.phases.POST_SETUP).game
+      const game = factory.build().advanceTo('player-turn-movement').game
+
+      jest.spyOn(game, 'checkPlayerIsRevealedCylon').mockImplementation(player => {
+        return player === 'dennis' || player.name === 'dennis'
+      })
+      game.rk.sessionStart(() => {
+        game.mMovePlayer('dennis', 'locations.caprica')
+      })
+      game.run()
 
       const action = game.getWaiting().actions[0]
       const options = action.options.find(o => o.name === 'Cylon Locations').options
@@ -475,11 +409,6 @@ describe('player turn', () => {
 
   })
 
-})
-
-test.only('new fixture', () => {
-  const factory = new GameFixtureFactory()
-  factory.build().advanceTo('character-selection-do', 'dennis')
 })
 
 describe('misc functions', () => {
