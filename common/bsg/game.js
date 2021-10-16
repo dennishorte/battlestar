@@ -182,6 +182,10 @@ Game.prototype.getCardActiveCrisis = function() {
   return {}
 }
 
+Game.prototype.getCardById = function(id) {
+  return this.getCardByPredicate(c => c.id === id).card
+}
+
 Game.prototype.getCardByLocation = function(sourceName, sourceIndex) {
   return this.getZoneByName(sourceName).cards[sourceIndex]
 }
@@ -300,6 +304,12 @@ Game.prototype.getWaiting = function() {
 
 Game.prototype.getZoneAll = function() {
   return this.state.zones
+}
+
+Game.prototype.getZoneDiscardByCard = function(card) {
+  card = this._adjustCardParam(card)
+  const discardName = card.deck.replace(/^decks/, 'discard')
+  return this.getZoneByName(discardName)
 }
 
 Game.prototype.getZoneByLocationName = function(name) {
@@ -434,6 +444,38 @@ Game.prototype.mStartNextTurn = function() {
     drewCards: false,
     optionalSkillChoices: [],
   })
+}
+
+Game.prototype._adjustCardParam = function(card) {
+  if (typeof card === 'object') {
+    return card
+  }
+
+  else if (typeof card === 'string') {
+    // If the string contains a dash, it could be a card id
+    if (card.includes('-')) {
+      const card = this.getCardById(card)
+      if (card) {
+        return card
+      }
+    }
+
+    // The string might be a card name.
+    // This isn't guaranteed to be unique. Many cards have duplicate names.
+    const card = this.getCardByName(card)
+    if (card) {
+      return card
+    }
+  }
+
+  throw new Error(`Unable to convert ${card} into a card`)
+}
+
+Game.prototype._adjustCardsParam = function(cards) {
+  for (let i = 0; i < cards.length; i++) {
+    cards[i] = this._adjustCardParam(cards[i])
+  }
+  return cards
 }
 
 Game.prototype._adjustPlayerParam = function(param) {

@@ -273,91 +273,6 @@ function playerTurnAction(context) {
   })
 }
 
-function playerTurnMovement(context) {
-  const game = context.state
-  const player = game.getPlayerCurrentTurn()
-
-  // If the player is in the brig, they don't get to move
-  if (game.checkPlayerIsAtLocation(player, 'Brig')) {
-    game.rk.sessionStart(() => {
-      game.mLog({
-        template: "{player} can't move because they are in the brig",
-        actor: 'admin',
-        args: {
-          player: player.name
-        }
-      })
-    })
-    return context.done()
-  }
-
-  // If the player is in a Viper, they can move one step in space or land on a ship for one card
-  if (game.checkPlayerIsInSpace(player)) {
-    return context.wait({
-      name: player.name,
-      actions: [{
-        name: 'Movement',
-        options: [
-          {
-            name: 'Move Viper',
-            options: [],
-          },
-          {
-            name: 'Land Viper',
-            options: [],
-          }
-        ]
-      }]
-    })
-  }
-
-  const options = []
-  const playerZone = game.getZoneByPlayerLocation(player)
-
-  // Locations for Revealed Cylons
-  if (game.checkPlayerIsRevealedCylon(player)) {
-    options.push({
-      name: 'Cylon Locations',
-      options: game.getLocationsByArea('Cylon Locations')
-                   .filter(l => l.name !== playerZone.name)
-                   .map(l => l.details.name)
-    })
-  }
-
-  // Locations for Humans
-  else {
-    // Galactica Locations
-    options.push({
-      name: 'Galactica',
-      options: game.getLocationsByArea('Galactica')
-                   .filter(l => !l.details.hazardous)
-                   .filter(l => l.name !== playerZone.name)
-                   .filter(l => !game.checkLocationIsDamaged(l))
-                   .map(l => l.details.name)
-    })
-
-    // Colonial One locations
-    if (!game.checkColonialOneIsDestroyed()) {
-      options.push({
-        name: 'Colonial One',
-        options: game.getLocationsByArea('Colonial One')
-                     .filter(l => l.name !== playerZone.name)
-                     .map(l => l.details.name)
-      })
-    }
-  }
-
-  context.wait({
-    name: player.name,
-    actions: [
-      {
-        name: 'Movement',
-        options,
-      },
-    ]
-  })
-}
-
 function playerTurnReceiveSkills(context) {
   const game = context.state
   const player = game.getPlayerCurrentTurn()
@@ -627,7 +542,7 @@ const transitions = {
     func: playerTurnReceiveSkills,
   },
   'player-turn-movement': {
-    func: playerTurnMovement,
+    func: require('./transitions/playerTurnMovement.js'),
   },
   'player-turn-action': {
     func: playerTurnAction,
@@ -645,6 +560,9 @@ const transitions = {
     func: () => {}
   },
 
+  'discard-skill-cards': {
+    func: require('./transitions/discardSkillCards.js'),
+  },
   'launch-self-in-viper': {
     func: launchSelfInViper,
   },

@@ -166,12 +166,12 @@ const damageBasestar = makeCards([
 const damageGalactica = makeCards([
   "-1 fuel",
   "-1 food",
-  "Hangar Deck",
-  "Armory",
-  "Command",
-  "Admiral's Quarters",
-  "FTL Control",
-  "Weapons Control",
+  "Damage Hangar Deck",
+  "Damage Armory",
+  "Damage Command",
+  "Damage Admiral's Quarters",
+  "Damage FTL Control",
+  "Damage Weapons Control",
 ])
 
 function makeCivilians() {

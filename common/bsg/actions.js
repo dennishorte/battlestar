@@ -2,6 +2,8 @@
    All actions are automatically wrapped in a session.
  */
 
+const util = require('../lib/util.js')
+
 
 const Actions = {}
 
@@ -31,6 +33,25 @@ Actions.aAssignPresident = function(player) {
   this.rk.session.move(card, playerHand)
 }
 
+Actions.aDamageLocationByName = function(locationName) {
+  // Get the damage token from the damage bag
+  const bag = this.getZoneByName('decks.damageGalactica').cards
+  const token = bag.find(c => c.name === `Damage ${locationName}`)
+
+  util.assert(!!token, `Unable to find damage token for ${locationName}`)
+
+  this.mLog({
+    template: '{location} damaged',
+    args: {
+      location: locationName
+    },
+  })
+
+  // Move it to the damaged location
+  const location = this.getZoneByLocationName(locationName)
+  this.rk.session.move(token, location.cards, location.cards.length)
+}
+
 Actions.aDestroyColonialOne = function() {
   this.mLog({
     template: 'Colonial One destroyed',
@@ -54,6 +75,24 @@ Actions.aDestroyColonialOne = function() {
         this.mMovePlayer(card.name, 'Sickbay')
       }
     }
+  }
+}
+
+Actions.aDiscardSkillCards = function(player, cards) {
+  player = this._adjustPlayerParam(player)
+  cards = this._adjustCardsParam(cards)
+
+  this.mLog({
+    template: '{player} discards {cards}',
+    args: {
+      player: player.name,
+      cards: cards.map(c => c.name).join(', ')
+    }
+  })
+
+  for (const card of cards) {
+    const discard = this.getZoneDiscardByCard(card).cards
+    this.rk.session.move(card, discard)
   }
 }
 

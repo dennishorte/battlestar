@@ -346,7 +346,7 @@ describe('player turn', () => {
       const action = game.getWaiting().actions[0]
       expect(game.getWaiting().name).toBe('dennis')
       expect(action.name).toBe('Movement')
-      expect(action.options.length).toBe(2)
+      expect(action.options.length).toBe(3)
     })
 
     test("player on Galactica current location excluded", () => {
@@ -359,7 +359,7 @@ describe('player turn', () => {
       expect(galacticaOptions.length).toBe(7)
       expect(galacticaOptions.includes('Research Lab')).toBe(false)
 
-      // Ensure a galactica location is actuall there
+      // Ensure a galactica location is actually there
       expect(galacticaOptions.includes('Hangar Deck')).toBe(true)
     })
 
@@ -372,9 +372,6 @@ describe('player turn', () => {
       const options = action.options.find(o => o.name === 'Colonial One').options
       expect(options.length).toBe(3)
       expect(options.includes('Administration')).toBe(true)
-    })
-
-    test.skip("damaged locations excluded", () => {
     })
 
     test("destroyed Colonial One excluded", () => {
@@ -405,6 +402,137 @@ describe('player turn', () => {
       expect(options.length).toBe(3)
       expect(options.includes('Caprica')).toBe(false)
       expect(options.includes('Cylon Fleet')).toBe(true)
+    })
+
+    test("damaged locations excluded", () => {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().advanceTo('player-turn-movement').game
+      game.aDamageLocationByName('Command')
+      game.run()
+
+      const action = game.getWaiting().actions[0]
+      const galacticaOptions = action.options.find(o => o.name === 'Galactica').options
+      expect(galacticaOptions.length).toBe(6)
+      expect(galacticaOptions.includes('Command')).toBe(false)
+      expect(galacticaOptions.includes('Research Lab')).toBe(false)
+    })
+
+    test("player with no cards can't change ships", () => {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().advanceTo('player-turn-movement').game
+      const playerCards = game.getZoneByPlayer('dennis').cards.filter(c => c.kind === 'skill')
+      game.aDiscardSkillCards('dennis', playerCards)
+      game.run()
+
+      const action = game.getWaiting().actions[0]
+      expect(action.options.length).toBe(2)
+      expect(action.options[0].name).toBe('Galactica')
+    })
+
+    test("player can choose not to move", () => {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().advanceTo('player-turn-movement').game
+      game.run()
+
+      const action = game.getWaiting().actions[0]
+      expect(action.options).toEqual(expect.arrayContaining(['Skip Movement']))
+    })
+
+    describe("submit movement", () => {
+
+      test("player token is relocated", () => {
+        const factory = new GameFixtureFactory()
+        const game = factory.build().advanceTo('player-turn-movement').game
+        game.run()
+        game.submit({
+          actor: 'dennis',
+          name: 'Movement',
+          option: {
+            name: 'Galactica',
+            option: 'Command',
+          }
+        })
+
+        expect(game.getZoneByPlayerLocation('dennis').name).toBe('locations.command')
+      })
+
+      test("for different ship, player is asked to discard a card", () => {
+        const factory = new GameFixtureFactory()
+        const game = factory.build().advanceTo('player-turn-movement').game
+        game.run()
+        game.submit({
+          actor: 'dennis',
+          name: 'Movement',
+          option: {
+            name: 'Colonial One',
+            option: 'Administration',
+          }
+        })
+
+        expect(game.getZoneByPlayerLocation('dennis').name).toBe('locations.administration')
+        expect(game.getWaiting().actions[0].name).toBe('Discard Skill Card')
+      })
+
+      test("if passing, token isn't moved", () => {
+        const factory = new GameFixtureFactory()
+        const game = factory.build().advanceTo('player-turn-movement').game
+        game.run()
+
+        // Pre-condition
+        expect(game.getZoneByPlayerLocation('dennis').details.name).toBe('Research Lab')
+
+        game.submit({
+          actor: 'dennis',
+          name: 'Movement',
+          option: 'Skip Movement'
+        })
+
+        // Post-condition
+        expect(game.getZoneByPlayerLocation('dennis').details.name).toBe('Research Lab')
+        expect(game.getWaiting().actions[0].name).toBe('Action')
+      })
+
+    })
+
+    describe("player piloting viper", () => {
+
+      function _playerInSpace() {
+        const factory = new GameFixtureFactory()
+        const game = factory.build().advanceTo('player-turn-movement').game
+        game.rk.sessionStart(() => {
+          game.mMovePlayer('dennis', 'space.space5')
+        })
+        game.run()
+        return game
+      }
+
+      test("can move to adjacent space zones", () => {
+        const game = _playerInSpace()
+      })
+
+      test("can move to any ship location, by discarding", () => {
+        const game = _playerInSpace()
+        const action = game.getWaiting().actions[0]
+
+        const galacticaOptions = action.options.find(o => o.name === 'Galactica').options
+        expect(galacticaOptions.length).toBe(8)
+
+        const colonialOneOptions = action.options.find(o => o.name === 'Colonial One').options
+        expect(colonialOneOptions.length).toBe(8)
+
+        game.submit({
+
+        })
+      })
+
+      test("can't land viper if no cards in hand", () => {
+        const game = _playerInSpace()
+      })
+
+      test("submitted space movement move player token and viper", () => {
+        const game = _playerInSpace()
+      })
+
     })
 
   })
