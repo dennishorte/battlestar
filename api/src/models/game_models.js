@@ -43,6 +43,8 @@ Game.save = async function(record) {
     }
 
     record.saveKey += 1
-    return await gameCollection.replaceOne({ _id: record._id}, record)
+    await gameCollection.replaceOne({ _id: record._id}, record)
+
+    return record.saveKey
   })
 }

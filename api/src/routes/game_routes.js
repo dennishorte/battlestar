@@ -51,9 +51,11 @@ Game.notify = async function(req, res) {
 
 Game.save = async function(req, res) {
   try {
-    await db.game.save(req.body)
+    const newSaveKey = await db.game.save(req.body)
+
     res.json({
       status: 'success',
+      saveKey: newSaveKey,
     })
   }
   catch (e) {

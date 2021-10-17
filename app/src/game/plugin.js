@@ -101,6 +101,7 @@ GamePlugin.prototype.save = async function() {
   }
   else {
     this.toaster('saved')
+    this.state.saveKey = requestResult.data.saveKey
   }
 }
 
