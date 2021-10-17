@@ -154,7 +154,7 @@ Game.prototype.checkPlayerDrewSkillsThisTurn = function(player) {
 Game.prototype.checkPlayerIsAtLocation = function(player, name) {
   player = this._adjustPlayerParam(player)
   const zone = this.getZoneByPlayerLocation(player)
-  return zone.details.name === name
+  return zone.details && zone.details.name === name
 }
 
 Game.prototype.checkPlayerIsRevealedCylon = function(player) {
@@ -302,14 +302,21 @@ Game.prototype.getWaiting = function() {
   }
 }
 
-Game.prototype.getZoneAll = function() {
-  return this.state.zones
+Game.prototype.getZoneAdjacentToSpaceZone = function(spaceZone) {
+  const zone = this._adjustZoneParam(spaceZone)
+  const index = parseInt(zone.name.slice(-1))
+
+  const clockwise = index == 5 ? 0 : index + 1
+  const counter = index == 0 ? 5 : index - 1
+
+  return [
+    this.getZoneByName('space.space' + clockwise),
+    this.getZoneByName('space.space' + counter)
+  ]
 }
 
-Game.prototype.getZoneDiscardByCard = function(card) {
-  card = this._adjustCardParam(card)
-  const discardName = card.deck.replace(/^decks/, 'discard')
-  return this.getZoneByName(discardName)
+Game.prototype.getZoneAll = function() {
+  return this.state.zones
 }
 
 Game.prototype.getZoneByLocationName = function(name) {
@@ -346,6 +353,12 @@ Game.prototype.getZoneByPlayerLocation = function(player) {
 Game.prototype.getZoneBySkill = function(skill) {
   const name = `decks.${skill}`
   return this.getZoneByName(name)
+}
+
+Game.prototype.getZoneDiscardByCard = function(card) {
+  card = this._adjustCardParam(card)
+  const discardName = card.deck.replace(/^decks/, 'discard')
+  return this.getZoneByName(discardName)
 }
 
 Game.prototype.hackImpersonate = function(player) {
@@ -432,6 +445,13 @@ Game.prototype.mMovePlayer = function(player, destination) {
   destination = this._adjustZoneParam(destination)
   const { card } = this.getCardPlayerToken(player)
   this.rk.session.move(card, destination.cards, destination.cards.length)
+}
+
+Game.prototype.mReturnViperFromSpaceZone = function(zoneNumber) {
+  const spaceZone = this.getZoneByName('space.space' + zoneNumber)
+  const viperZone = this.getZoneByName('ships.vipers')
+  const viper = spaceZone.cards.find(c => c.name === 'viper')
+  this.rk.session.move(viper, viperZone.cards)
 }
 
 Game.prototype.mStartNextTurn = function() {

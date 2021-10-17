@@ -51,13 +51,23 @@ function _handleResponse(context) {
 
     // Handle movement in space
     else if (context.response.name === 'Move Viper') {
-      throw new Error('Not implemented')
+      const zone = game.getZoneByPlayerLocation(player)
+      const viper = zone.cards.find(c => c.name === 'viper')
+      const token = zone.cards.find(c => c.name === player.name && c.kind === 'player-token')
+      const newZone = game.getZoneByName(context.response.option)
+
+      game.rk.sessionStart(session => {
+        session.move(token, newZone.cards, newZone.cards.length)
+        session.move(viper, newZone.cards, newZone.cards.length)
+      })
+
+      return context.done()
     }
 
     const playerZone = game.getZoneByPlayerLocation(player)
     const targetZone = game.getZoneByLocationName(context.response.option)
     const sameShip = (
-      !targetZone.name.startsWith('space')
+      !playerZone.name.startsWith('space')
       && playerZone.details.area === targetZone.details.area
     )
 
@@ -70,6 +80,13 @@ function _handleResponse(context) {
         }
       })
       game.mMovePlayer(player, targetZone)
+
+      if (playerZone.name.startsWith('space')) {
+        game.mLog({
+          template: 'Viper returned to supply',
+        })
+        game.mReturnViperFromSpaceZone(5)
+      }
     })
 
     if (!sameShip) {
@@ -120,7 +137,7 @@ function _generateOptions(context) {
     const canChangeShips = game.getCardsKindByPlayer('skill', player).length > 0
 
     // Galactica Locations
-    if (canChangeShips || playerZone.details.area === 'Galactica') {
+    if (canChangeShips || (playerZone.details && playerZone.details.area === 'Galactica')) {
       options.push({
         name: 'Galactica',
         options: game.getLocationsByArea('Galactica')
@@ -134,7 +151,7 @@ function _generateOptions(context) {
     // Colonial One locations
     if (
       !game.checkColonialOneIsDestroyed()
-      && (canChangeShips || playerZone.details.area === 'Colonial One')
+      && (canChangeShips || (playerZone.details && playerZone.details.area === 'Colonial One'))
     ) {
       options.push({
         name: 'Colonial One',
@@ -149,6 +166,9 @@ function _generateOptions(context) {
 
   // If the player is in a Viper, they can move one step in space or land on a ship for one card
   if (game.checkPlayerIsInSpace(player)) {
+    const spaceZone = game.getZoneByPlayerLocation(player)
+    const adjacentZones = game.getZoneAdjacentToSpaceZone(spaceZone)
+
     return context.wait({
       name: player.name,
       actions: [{
@@ -156,7 +176,7 @@ function _generateOptions(context) {
         options: [
           {
             name: 'Move Viper',
-            options: [],
+            options: adjacentZones.map(z => z.name),
           },
           ...options,
         ]

@@ -506,31 +506,78 @@ describe('player turn', () => {
         return game
       }
 
-      test("can move to adjacent space zones", () => {
-        const game = _playerInSpace()
-      })
-
       test("can move to any ship location, by discarding", () => {
         const game = _playerInSpace()
         const action = game.getWaiting().actions[0]
+
+        expect(game.getZoneByName('space.space5').cards.length).toBe(2)
 
         const galacticaOptions = action.options.find(o => o.name === 'Galactica').options
         expect(galacticaOptions.length).toBe(8)
 
         const colonialOneOptions = action.options.find(o => o.name === 'Colonial One').options
-        expect(colonialOneOptions.length).toBe(8)
+        expect(colonialOneOptions.length).toBe(3)
 
         game.submit({
-
+          actor: 'dennis',
+          name: 'Movement',
+          option: {
+            name: 'Colonial One',
+            option: 'Administration',
+          }
         })
+
+        expect(game.getZoneByName('space.space5').cards.length).toBe(0)
+        expect(game.getZoneByPlayerLocation('dennis').name).toBe('locations.administration')
+        expect(game.getWaiting().actions[0].name).toBe('Discard Skill Card')
       })
 
       test("can't land viper if no cards in hand", () => {
+        const factory = new GameFixtureFactory()
+        const game = factory.build().advanceTo('player-turn-movement').game
+        game.rk.sessionStart(() => {
+          game.mMovePlayer('dennis', 'space.space5')
+        })
+        const playerCards = game.getZoneByPlayer('dennis').cards.filter(c => c.kind === 'skill')
+        game.aDiscardSkillCards('dennis', playerCards)
+        game.run()
+
+        const action = game.getWaiting().actions[0]
+        expect(action.options.length).toBe(2)
+        expect(action.options).toEqual(expect.arrayContaining(['Skip Movement']))
+
+        const moveViperAction = action.options.find(o => o.name === 'Move Viper')
+        expect(moveViperAction.name).toBe('Move Viper')
+      })
+
+      test("can move to adjacent space zones", () => {
         const game = _playerInSpace()
+        const action = game.getWaiting().actions[0]
+        const viperMovement = action.options.find(o => o.name === 'Move Viper')
+
+        expect(viperMovement.options).toStrictEqual(['space.space0', 'space.space4'])
       })
 
       test("submitted space movement move player token and viper", () => {
         const game = _playerInSpace()
+        game.submit({
+          actor: 'dennis',
+          name: 'Movement',
+          option: {
+            name: 'Move Viper',
+            option: 'space.space0',
+          },
+        })
+
+        // player and viper moved to new location
+        expect(game.getZoneByPlayerLocation('dennis').name).toBe('space.space0')
+        expect(game.getZoneByName('space.space5').cards).toStrictEqual([])
+
+        const space0CardNames = game.getZoneByName('space.space0').cards.map(c => c.name)
+        expect(space0CardNames).toEqual(expect.arrayContaining(['dennis', 'viper']))
+
+        // Move phase complete; ready for Action phase
+        expect(game.getWaiting().actions[0].name).toBe('Action')
       })
 
     })
@@ -540,5 +587,19 @@ describe('player turn', () => {
 })
 
 describe('misc functions', () => {
-  test('aDestroyColonialOne', () => {})
+  describe.skip('aDestroyColonialOne', () => {
+
+    test("Check works correctly", () => {
+
+    })
+
+    test("Players on Colonial One moved to sickbay", () => {
+
+    })
+
+    test("Can't move there anymore", () => {
+
+    })
+
+  })
 })
