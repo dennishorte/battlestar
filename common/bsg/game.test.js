@@ -58,7 +58,7 @@ describe('character selection', () => {
     game.submit({
       actor: 'dennis',
       name: 'Select Character',
-      option: name,
+      option: [name],
     })
     return game
   }
@@ -106,7 +106,7 @@ describe('character selection', () => {
     game.submit({
       actor: 'micah',
       name: 'Select Character',
-      option: 'Kara "Starbuck" Thrace',
+      option: ['Kara "Starbuck" Thrace'],
     })
 
     const player = game.getPlayerAll()[1]
@@ -209,13 +209,40 @@ describe('receive initial skills', () => {
 
     const action = game.getWaiting().actions[0]
     expect(action.options.sort()).toStrictEqual([
-      { options: ['leadership', 'engineering'] },
+      {
+        name: 'Optional Skills',
+        options: ['leadership', 'engineering']
+      },
       'tactics',
       'tactics',
       'piloting',
       'piloting',
     ].sort())
     expect(action.count).toBe(3)
+  })
+
+  test('Submitting initial skill choices (with optionals)', () => {
+    const factory = new GameFixtureFactory()
+    factory.options.players[1].character = 'Kara "Starbuck" Thrace'
+    const game = factory.build().advanceTo('receive-initial-skills-do').game
+    game.run()
+    game.submit({
+      actor: 'micah',
+      name: 'Select Starting Skills',
+      option: [
+        'tactics',
+        'piloting',
+        {
+          name: 'Optional Skills',
+          option: ['engineering'],
+        }
+      ]
+    })
+
+    const playerSkillNames = game.getCardsKindByPlayer('skill', 'micah').map(c => {
+      return c.deck.replace('decks.', '')
+    })
+    expect(playerSkillNames.sort()).toStrictEqual(['engineering', 'piloting', 'tactics'])
   })
 
 })
@@ -251,7 +278,8 @@ describe('player turn', () => {
       expect(action.name).toBe('Select Skills')
       expect(action.options).toStrictEqual([
         {
-          "options": [
+          name: 'Optional Skills',
+          options: [
             "leadership",
             "engineering",
           ],
@@ -267,7 +295,7 @@ describe('player turn', () => {
       game.submit({
         actor: 'dennis',
         name: 'Select Skills',
-        option: 'engineering',
+        option: ['engineering'],
       })
 
       const action = game.getWaiting().actions[0]
@@ -447,10 +475,10 @@ describe('player turn', () => {
         game.submit({
           actor: 'dennis',
           name: 'Movement',
-          option: {
+          option: [{
             name: 'Galactica',
             option: 'Command',
-          }
+          }]
         })
 
         expect(game.getZoneByPlayerLocation('dennis').name).toBe('locations.command')
@@ -463,10 +491,10 @@ describe('player turn', () => {
         game.submit({
           actor: 'dennis',
           name: 'Movement',
-          option: {
+          option: [{
             name: 'Colonial One',
             option: 'Administration',
-          }
+          }]
         })
 
         expect(game.getZoneByPlayerLocation('dennis').name).toBe('locations.administration')
@@ -484,7 +512,7 @@ describe('player turn', () => {
         game.submit({
           actor: 'dennis',
           name: 'Movement',
-          option: 'Skip Movement'
+          option: ['Skip Movement']
         })
 
         // Post-condition
@@ -521,10 +549,10 @@ describe('player turn', () => {
         game.submit({
           actor: 'dennis',
           name: 'Movement',
-          option: {
+          option: [{
             name: 'Colonial One',
             option: 'Administration',
-          }
+          }]
         })
 
         expect(game.getZoneByName('space.space5').cards.length).toBe(0)
@@ -563,10 +591,10 @@ describe('player turn', () => {
         game.submit({
           actor: 'dennis',
           name: 'Movement',
-          option: {
+          option: [{
             name: 'Move Viper',
             option: 'space.space0',
-          },
+          }],
         })
 
         // player and viper moved to new location

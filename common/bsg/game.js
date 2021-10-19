@@ -66,9 +66,6 @@ Game.prototype.save = async function() {}
 
 Game.prototype.dumpHistory = function() {
   const output = []
-  /* for (const session of this.state.history) {
-   *   output.push(JSON.stringify(session))
-   * } */
 
   for (const session of this.state.history) {
     const transitionPush = session.find(diff => {
@@ -96,14 +93,17 @@ Game.prototype.run = function() {
 }
 
 Game.prototype.submit = function({ actor, name, option }) {
-  // console.log({ actor, name, option })
   const waiting = this.getWaiting()
   const action = waiting.actions[0]
   util.assert(waiting.name === actor, `Waiting for ${waiting.name} but got action from ${actor}`)
   util.assert(action.name === name, `Waiting for action ${action.name} but got ${name}`)
+  util.assert(Array.isArray(option), `Got non-array selection: ${option}`)
 
   this.rk.sessionStart(session => {
-    session.put(waiting, 'response', option)
+    session.put(waiting, 'response', {
+      name,
+      option
+    })
   })
 
   this.sm.run()

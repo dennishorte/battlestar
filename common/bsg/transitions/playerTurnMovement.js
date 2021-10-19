@@ -35,69 +35,68 @@ function _initialize(context) {
 function _handleResponse(context) {
   const game = context.state
   const player = game.getPlayerCurrentTurn()
+  const selection = context.response.option[0]
 
-  if (context.response) {
-    if (context.response === 'Skip Movement') {
-      game.rk.sessionStart(() => {
-        game.mLog({
-          template: "{player} decides not to move",
-          args: {
-            player: player.name
-          }
-        })
-      })
-      return context.done()
-    }
-
-    // Handle movement in space
-    else if (context.response.name === 'Move Viper') {
-      const zone = game.getZoneByPlayerLocation(player)
-      const viper = zone.cards.find(c => c.name === 'viper')
-      const token = zone.cards.find(c => c.name === player.name && c.kind === 'player-token')
-      const newZone = game.getZoneByName(context.response.option)
-
-      game.rk.sessionStart(session => {
-        session.move(token, newZone.cards, newZone.cards.length)
-        session.move(viper, newZone.cards, newZone.cards.length)
-      })
-
-      return context.done()
-    }
-
-    const playerZone = game.getZoneByPlayerLocation(player)
-    const targetZone = game.getZoneByLocationName(context.response.option)
-    const sameShip = (
-      !playerZone.name.startsWith('space')
-      && playerZone.details.area === targetZone.details.area
-    )
-
+  if (selection === 'Skip Movement') {
     game.rk.sessionStart(() => {
       game.mLog({
-        template: "{player} moves to {location}",
+        template: "{player} decides not to move",
         args: {
-          player: player.name,
-          location: targetZone.details.name,
+          player: player.name
         }
       })
-      game.mMovePlayer(player, targetZone)
+    })
+    return context.done()
+  }
 
-      if (playerZone.name.startsWith('space')) {
-        game.mLog({
-          template: 'Viper returned to supply',
-        })
-        game.mReturnViperFromSpaceZone(5)
-      }
+  // Handle movement in space
+  else if (selection.name === 'Move Viper') {
+    const zone = game.getZoneByPlayerLocation(player)
+    const viper = zone.cards.find(c => c.name === 'viper')
+    const token = zone.cards.find(c => c.name === player.name && c.kind === 'player-token')
+    const newZone = game.getZoneByName(selection.option)
+
+    game.rk.sessionStart(session => {
+      session.move(token, newZone.cards, newZone.cards.length)
+      session.move(viper, newZone.cards, newZone.cards.length)
     })
 
-    if (!sameShip) {
-      return context.push('discard-skill-cards', {
-        playerName: player.name,
-        count: 1
+    return context.done()
+  }
+
+  const playerZone = game.getZoneByPlayerLocation(player)
+  const targetZone = game.getZoneByLocationName(selection.option)
+  const sameShip = (
+    !playerZone.name.startsWith('space')
+    && playerZone.details.area === targetZone.details.area
+  )
+
+  game.rk.sessionStart(() => {
+    game.mLog({
+      template: "{player} moves to {location}",
+      args: {
+        player: player.name,
+        location: targetZone.details.name,
+      }
+    })
+    game.mMovePlayer(player, targetZone)
+
+    if (playerZone.name.startsWith('space')) {
+      game.mLog({
+        template: 'Viper returned to supply',
       })
+      game.mReturnViperFromSpaceZone(5)
     }
-    else {
-      return context.done()
-    }
+  })
+
+  if (!sameShip) {
+    return context.push('discard-skill-cards', {
+      playerName: player.name,
+      count: 1
+    })
+  }
+  else {
+    return context.done()
   }
 }
 

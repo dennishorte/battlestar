@@ -27,7 +27,10 @@ function GameFixtureFactory() {
       },
       {
         character: 'Kara "Starbuck" Thrace',
-        startingSkills: ['leadership', 'tactics', 'piloting'],
+        startingSkills: ['tactics', 'piloting', {
+          name: 'Option Skill',
+          option: ['leadership'],
+        }],
       },
       {
         character: 'Sharon "Boomer" Valerii',
@@ -60,7 +63,7 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
     this.game.submit({
       actor: player.name,
       name: 'Select Character',
-      option: this.options.players[i].character
+      option: [this.options.players[i].character]
     })
 
     if (this._checkForTarget(targetTransitionName, targetPlayerName)) {

@@ -34,7 +34,7 @@ function characterSelectionDo(context) {
   const player = game.getPlayerByName(context.data.playerName)
 
   if (context.response) {
-    const characterName = context.response
+    const characterName = context.response.option[0]
     game.aSelectCharacter(player, characterName)
 
     // Apollo still needs to launch in a viper
@@ -299,10 +299,7 @@ function playerTurnReceiveSkills(context) {
   if (context.response) {
     // Sometimes, the player is only making a single choice and returns a string.
     // Other times, they are making multiple choices, and return an array.
-    let chosen = context.response
-    if (typeof context.response === 'string') {
-      chosen = [chosen]
-    }
+    const chosen = _flattenSkillSelection(context.response)
     const toDraw = requiredSkillNames.concat(chosen)
     game.aDrawSkillCards(player, toDraw)
     return context.done()
@@ -420,10 +417,24 @@ function _optionalSkillOptions(optionalSkills) {
   const optionalPairs = [optionalSkills[0].name, optionalSkills[1].name]
   for (let i = 0; i < optionalSkills[0].value; i++) {
     options.push({
+      name: 'Optional Skills',
       options: optionalPairs
     })
   }
   return options
+}
+
+function _flattenSkillSelection(selection) {
+  let output = []
+  for (const s of selection.option) {
+    if (typeof s === 'string') {
+      output.push(s)
+    }
+    else {
+      output = output.concat(_flattenSkillSelection(s))
+    }
+  }
+  return output
 }
 
 function receiveInitialSkillsDo(context) {
@@ -431,7 +442,8 @@ function receiveInitialSkillsDo(context) {
   const player = game.getPlayerByName(context.data.playerName)
 
   if (context.response) {
-    game.aDrawSkillCards(player, context.response)
+    const skillNames = _flattenSkillSelection(context.response)
+    game.aDrawSkillCards(player, skillNames)
     return context.done()
   }
 
