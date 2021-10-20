@@ -620,6 +620,105 @@ describe('player turn', () => {
 
 })
 
+describe('adhoc transitions', () => {
+  describe('Launch Self on Viper', () => {
+    test('vipers on the hangar deck', () => {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().advanceTo('character-selection-do', 'dennis').game
+      game.run()
+      game.submit({
+        actor: 'dennis',
+        name: 'Select Character',
+        option: ['Lee "Apollo" Adama'],
+      })
+
+      expect(game.getWaiting().actions[0]).toStrictEqual({
+        name: 'Launch Self in Viper',
+        options: [
+          'Lower Left',
+          'Lower Right',
+        ],
+      })
+
+      const numVipersBeforeLaunch = game
+        .getZoneByName('space.space4')
+        .cards
+        .filter(c => c.kind === 'ships.vipers')
+        .length
+      expect(numVipersBeforeLaunch).toBe(1)
+
+      game.submit({
+        actor: 'dennis',
+        name: 'Launch Self in Viper',
+        option: ['Lower Right'],
+      })
+
+      const playerLocation = game.getZoneByPlayerLocation('dennis')
+      expect(playerLocation.name).toBe('space.space4')
+
+      const numVipersAtPlayerLocation = playerLocation
+        .cards
+        .filter(c => c.kind === 'ships.vipers')
+        .length
+      expect(numVipersAtPlayerLocation).toBe(2)
+    })
+
+    test('need to recall a viper', () => {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().advanceTo('character-selection-do', 'dennis').game
+      // Launch all of the vipers
+      game.rk.sessionStart(() => {
+        while (game.getVipersNumAvailable() > 0) {
+          game.mLaunchViper('Lower Left')
+        }
+      })
+
+      // Preconditions
+      expect(game.getZoneByName('ships.vipers').cards.length).toBe(0)
+
+      game.run()
+
+      game.submit({
+        actor: 'dennis',
+        name: 'Select Character',
+        option: ['Lee "Apollo" Adama'],
+      })
+
+      game.submit({
+        actor: 'dennis',
+        name: 'Relaunch Viper',
+        option: [
+          {
+            name: 'Recall from',
+            option: ['space.space5']
+          },
+          {
+            name: 'Launch to',
+            option: ['Lower Right']
+          },
+        ],
+      })
+
+      const playerLocation = game.getZoneByPlayerLocation('dennis')
+      expect(playerLocation.name).toBe('space.space4')
+
+      const numVipersAtPlayerLocation = playerLocation
+        .cards
+        .filter(c => c.kind === 'ships.vipers')
+        .length
+      expect(numVipersAtPlayerLocation).toBe(2)
+
+      const vipersAtSpace5 = game
+        .getZoneByName('space.space5')
+        .cards
+        .filter(c => c.kind === 'ships.vipers')
+        .length
+      expect(vipersAtSpace5).toBe(4)
+    })
+
+  })
+})
+
 describe('misc functions', () => {
   describe.skip('aDestroyColonialOne', () => {
 

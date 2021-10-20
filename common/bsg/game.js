@@ -296,6 +296,10 @@ Game.prototype.getPlayerWithCard = function(cardName) {
   return undefined
 }
 
+Game.prototype.getVipersNumAvailable = function() {
+  return this.getZoneByName('ships.vipers').cards.length
+}
+
 Game.prototype.getWaiting = function() {
   if (this.state.sm.waiting.length) {
     return this.state.sm.waiting[0]
@@ -385,6 +389,13 @@ Game.prototype.mDrawSkillCard = function(player, skill) {
     zone.name, 0,
     playerHand.name, playerHand.length
   )
+}
+
+Game.prototype.mLaunchViper = function(position) {
+  const spaceZoneName = position === 'Lower Left' ? 'space.space5' : 'space.space4'
+  const spaceZone = this.getZoneByName(spaceZoneName)
+  const viperZone = this.getZoneByName('ships.vipers')
+  this.mMoveByIndices(viperZone.name, 0, spaceZone.name, spaceZone.cards.length)
 }
 
 Game.prototype.mLog = function(msg) {

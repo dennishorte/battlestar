@@ -113,6 +113,27 @@ Actions.aDrawSkillCards = function(player, skills) {
   }
 }
 
+Actions.aLaunchSelfInViper = function(player, position) {
+  player = this._adjustPlayerParam(player)
+
+  util.assert(
+    position.startsWith('Lower '),
+    'Invalid launch position. Valid options are `Lower Left` and `Lower Right`'
+  )
+
+  this.mLog({
+    template: `{player} rides a Viper into space at {position}`,
+    args: {
+      player: player.name,
+      position,
+    }
+  })
+
+  const spaceZoneName = position === 'Lower Left' ? 'space.space5' : 'space.space4'
+  this.mMovePlayer(player, spaceZoneName)
+  this.mLaunchViper(position)
+}
+
 Actions.aSelectCharacter = function(player, characterName) {
   player = this._adjustPlayerParam(player)
 
@@ -150,9 +171,17 @@ Actions.aSelectCharacter = function(player, characterName) {
 
 function wrapper(func) {
   return function() {
-    this.rk.sessionStart(() => {
-      func.call(this, ...arguments)
-    })
+    const inSession = !!this.rk.session
+
+    if (!inSession) {
+      this.rk.sessionStart()
+    }
+
+    func.call(this, ...arguments)
+
+    if (!inSession) {
+      this.rk.session.commit()
+    }
   }
 }
 
