@@ -162,10 +162,16 @@ describe('distribute loyalty cards', () => {
         expect(loyaltyCards.length).toBe(1)
       }
 
-      // Number of cards remaining should be 4
+      // Number of cards remaining should be 4 (one extra due to Sharon)
       const loyaltyDeck = game.getZoneByName('decks.loyalty')
       expect(loyaltyDeck.cards.length).toBe(4)
     }
+  })
+
+  test("works when nobody choose Gaius", () => {
+    const factory = new GameFixtureFactory()
+    factory.options.players[0].character = 'William Adama'
+    const game = factory.build().advanceTo('player-turn').game
   })
 
   test.skip("adds sympathizer card after dealing initial cards", () => {

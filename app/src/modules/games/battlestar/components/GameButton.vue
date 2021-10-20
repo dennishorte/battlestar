@@ -3,6 +3,7 @@
     <b-button
       :variant="variant"
       @click="clickIfValid"
+      :disabled="disabled"
       block
     >
 
@@ -13,7 +14,7 @@
     <ConfirmationModal
       :callback="bubble">
 
-      This button is meant for {{actor.name}}.
+      This button is meant for <strong>{{actor}}</strong>.
     </ConfirmationModal>
 
   </div>
@@ -31,6 +32,11 @@ export default {
   },
 
   props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+
     owner: {
       type: String,
       default: 'all',
@@ -45,13 +51,13 @@ export default {
   computed: {
     actor() {
       if (this.owner === 'next-player') {
-        return this.$game.getPlayerNext()
+        return this.$game.getPlayerNext().name
       }
       else if (this.owner === 'current-player') {
-        return this.$game.getPlayerCurrentTurn()
+        return this.$game.getPlayerCurrentTurn().name
       }
       else {
-        return 'all'
+        return this.owner
       }
     },
   },
@@ -62,7 +68,7 @@ export default {
     },
 
     clickIfValid() {
-      if (this.actor === 'all' || this.actor.name === this.$game.getActor().name) {
+      if (this.actor === 'all' || this.actor === this.$game.getActor().name) {
         this.bubble()
       }
       else {

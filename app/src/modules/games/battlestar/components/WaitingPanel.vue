@@ -1,36 +1,27 @@
 <template>
   <div class="waiting-panel">
     <div v-for="action of waitingOptions" :key="action.name">
-      {{ action.name }}
+      <WaitingChoice :action="action" :actor="$game.getWaiting().name" />
     </div>
   </div>
 </template>
 
 
 <script>
+import WaitingChoice from './WaitingChoice'
+
 export default {
   name: 'WaitingPanel',
 
   components: {
-  },
-
-  data() {
-    return {
-    }
+    WaitingChoice,
   },
 
   computed: {
     waitingOptions() {
       return this.$game.getWaiting().actions
     },
-    waitingPlayer() {
-      return this.$game.getPlayerWaitingFor()
-    }
   },
-
-  methods: {
-  },
-
 }
 </script>
 

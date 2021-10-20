@@ -290,7 +290,7 @@ Game.prototype.getPlayerWithCard = function(cardName) {
       return player
     }
   }
-  return {}
+  return undefined
 }
 
 Game.prototype.getWaiting = function() {

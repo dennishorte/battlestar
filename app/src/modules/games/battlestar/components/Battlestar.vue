@@ -198,7 +198,6 @@ export default {
       return this.$game.getPlayerAll()
     },
     playerCurrentTurn() {
-      console.log('hello', this.$game.getPlayerCurrentTurn().name)
       return this.$game.getPlayerCurrentTurn().name
     },
     waitingFor() {

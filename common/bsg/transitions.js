@@ -69,7 +69,7 @@ function distributeLoyaltyCards(context) {
   const game = context.state
   const numPlayers = game.getPlayerAll().length
   const gaiusPlayer = game.getPlayerWithCard('Gaius Baltar')
-  const sharonPlayer = game.getPlayerWithCard('Sharon "Boomer" Valeri')
+  const sharonPlayer = game.getPlayerWithCard('Sharon "Boomer" Valerii')
 
   let humanCount
   let cylonCount
