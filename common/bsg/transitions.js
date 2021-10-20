@@ -54,7 +54,7 @@ function characterSelectionDo(context) {
     const availableCharacters = characterDeck.cards.map(c => c.name).sort()
 
     return context.wait({
-      name: player.name,
+      actor: player.name,
       actions: [
         {
           name: 'Select Character',
@@ -197,57 +197,6 @@ function initialize(context) {
   context.done()
 }
 
-function launchSelfInViper(context) {
-  const game = context.state
-
-  // If character is already in space, they've done this action
-  if (game.checkPlayerIsInSpace(context.data.playerName)) {
-    context.done()
-  }
-
-
-  // If all the vipers are launched, the player can choose an existing viper to "relaunch"
-  else if (game.getZoneByName('ships.vipers').cards.length === 0) {
-    // Get the locations of all launched vipers.
-    const launched = []
-
-    // If all of the vipers are damaged or destroyed, this should not have been allowed.
-    if (launched.length === 0) {
-      throw new Error("All vipers are damaged or destroyed. Can't launch")
-    }
-
-    context.wait({
-      name: context.data.playerName,
-      actions: [
-        {
-          name: 'Relaunch Viper',
-          count: 2,
-          options: [
-            launched,
-            ['Lower Left', 'Lower Right'],
-          ]
-        }
-      ]
-    })
-  }
-
-  // Wait for the player to choose
-  else {
-    context.wait({
-      name: context.data.playerName,
-      actions: [
-        {
-          name: 'Launch Self in Viper',
-          options: [
-            'Lower Left',
-            'Lower Right',
-          ],
-        },
-      ]
-    })
-  }
-}
-
 function mainPlayerLoop(context) {
   const game = context.state
 
@@ -263,7 +212,7 @@ function playerTurnAction(context) {
   const player = game.getPlayerCurrentTurn()
 
   context.wait({
-    name: player.name,
+    actor: player.name,
     actions: [
       {
         name: 'Action',
@@ -307,7 +256,7 @@ function playerTurnReceiveSkills(context) {
 
   if (playerIsRevealedCylon) {
     return context.wait({
-      name: player.name,
+      actor: player.name,
       actions: [{
         name: 'Select Skills',
         count: 2,
@@ -330,7 +279,7 @@ function playerTurnReceiveSkills(context) {
 
     const options = skills.map(c => c.name)
     return context.wait({
-      name: player.name,
+      actor: player.name,
       actions: [
         {
           name: 'Select Skills',
@@ -350,7 +299,7 @@ function playerTurnReceiveSkills(context) {
   // Let the player choose which optional cards to draw.
   // Don't draw any cards until they have made their decision.
   return context.wait({
-    name: player.name,
+    actor: player.name,
     actions: [
       {
         name: 'Select Skills',
@@ -469,7 +418,7 @@ function receiveInitialSkillsDo(context) {
     }
 
     context.wait({
-      name: player.name,
+      actor: player.name,
       actions: [
         {
           name: 'Select Starting Skills',
@@ -483,7 +432,7 @@ function receiveInitialSkillsDo(context) {
 
 // Temporary function to pause execution while evaluating each step
 function waitFunc(context) {
-  context.wait({ name: 'dennis', actions: [{ name: 'test' }] })
+  context.wait({ actor: 'dennis', actions: [{ name: 'test' }] })
 }
 
 
@@ -576,7 +525,7 @@ const transitions = {
     func: require('./transitions/discardSkillCards.js'),
   },
   'launch-self-in-viper': {
-    func: launchSelfInViper,
+    func: require('./transitions/launchSelfInViper.js'),
   },
 }
 

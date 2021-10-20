@@ -31,7 +31,7 @@ describe('character selection', () => {
     game.run()
 
     const waiting = game.getWaiting()
-    expect(waiting.name).toBe('dennis')
+    expect(waiting.actor).toBe('dennis')
     expect(waiting.actions).toStrictEqual([
       {
         name: 'Select Character',
@@ -82,7 +82,7 @@ describe('character selection', () => {
   test("when first player chooses, advances to next player", () => {
     const game = _chooseCharacter('Gaius Baltar')
     const waiting = game.getWaiting()
-    expect(waiting.name).toBe('micah')
+    expect(waiting.actor).toBe('micah')
     expect(waiting.actions).toStrictEqual([
       {
         name: 'Select Character',
@@ -124,7 +124,7 @@ describe('character selection', () => {
 
   test("Lee Adama can choose where to launch his viper", () => {
     const game = _chooseCharacter('Lee "Apollo" Adama')
-    expect(game.getWaiting().name).toBe('dennis')
+    expect(game.getWaiting().actor).toBe('dennis')
 
     const action = game.getWaiting().actions[0]
     expect(action.name).toBe('Launch Self in Viper')
@@ -187,7 +187,7 @@ describe('receive initial skills', () => {
     const game = factory.build().advanceTo('receive-initial-skills-do').game
     game.run()
 
-    expect(game.getWaiting().name).toBe('micah')
+    expect(game.getWaiting().actor).toBe('micah')
   })
 
   test('William Adama initial skill options (fixed)', () => {
@@ -269,7 +269,7 @@ describe('player turn', () => {
       expect(skillKinds).toStrictEqual(['engineering', 'leadership', 'politics', 'politics'])
 
       const action = game.getWaiting().actions[0]
-      expect(game.getWaiting().name).toBe('dennis')
+      expect(game.getWaiting().actor).toBe('dennis')
       expect(action.name).toBe('Movement')
     })
 
@@ -280,7 +280,7 @@ describe('player turn', () => {
       game.run()
 
       const action = game.getWaiting().actions[0]
-      expect(game.getWaiting().name).toBe('dennis')
+      expect(game.getWaiting().actor).toBe('dennis')
       expect(action.name).toBe('Select Skills')
       expect(action.options).toStrictEqual([
         {
@@ -305,7 +305,7 @@ describe('player turn', () => {
       })
 
       const action = game.getWaiting().actions[0]
-      expect(game.getWaiting().name).toBe('dennis')
+      expect(game.getWaiting().actor).toBe('dennis')
       expect(action.name).toBe('Movement')
     })
 
@@ -318,7 +318,7 @@ describe('player turn', () => {
       game.run()
 
       const action = game.getWaiting().actions[0]
-      expect(game.getWaiting().name).toBe('dennis')
+      expect(game.getWaiting().actor).toBe('dennis')
       expect(action.name).toBe('Select Skills')
       expect(action.options).toStrictEqual([
         "politics",
@@ -338,7 +338,7 @@ describe('player turn', () => {
       game.run()
 
       const action = game.getWaiting().actions[0]
-      expect(game.getWaiting().name).toBe('dennis')
+      expect(game.getWaiting().actor).toBe('dennis')
       expect(action.name).toBe('Select Skills')
       expect(action.count).toBe(2)
       expect(action.options).toStrictEqual([
@@ -368,7 +368,7 @@ describe('player turn', () => {
       game.run()
 
       const action = game.getWaiting().actions[0]
-      expect(game.getWaiting().name).toBe('dennis')
+      expect(game.getWaiting().actor).toBe('dennis')
       expect(action.name).toBe('Action')
     })
 
@@ -378,7 +378,7 @@ describe('player turn', () => {
       game.run()
 
       const action = game.getWaiting().actions[0]
-      expect(game.getWaiting().name).toBe('dennis')
+      expect(game.getWaiting().actor).toBe('dennis')
       expect(action.name).toBe('Movement')
       expect(action.options.length).toBe(3)
     })

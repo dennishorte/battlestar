@@ -60,7 +60,7 @@ export default {
     async choose() {
       if (this.isValidAction) {
         this.$game.submit({
-          actor: this.$game.getWaiting().name,
+          actor: this.$game.getWaiting().actor,
           name: this.waitingAction.name,
           option: this.name,
         })

@@ -95,7 +95,10 @@ Game.prototype.run = function() {
 Game.prototype.submit = function({ actor, name, option }) {
   const waiting = this.getWaiting()
   const action = waiting.actions[0]
-  util.assert(waiting.name === actor, `Waiting for ${waiting.name} but got action from ${actor}`)
+  util.assert(
+    waiting.actor === actor,
+    `Waiting for ${waiting.actor} but got action from ${actor}`
+  )
   util.assert(action.name === name, `Waiting for action ${action.name} but got ${name}`)
   util.assert(Array.isArray(option), `Got non-array selection: ${option}`)
 
@@ -280,7 +283,7 @@ Game.prototype.getPlayerByName = function(name) {
 
 Game.prototype.getPlayerWaitingFor = function() {
   const waiting = this.getWaiting()
-  return this.getPlayerByName(waiting.name)
+  return this.getPlayerByName(waiting.actor)
 }
 
 Game.prototype.getPlayerWithCard = function(cardName) {

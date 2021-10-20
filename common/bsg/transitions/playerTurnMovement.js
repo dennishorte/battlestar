@@ -169,7 +169,7 @@ function _generateOptions(context) {
     const adjacentZones = game.getZoneAdjacentToSpaceZone(spaceZone)
 
     return context.wait({
-      name: player.name,
+      actor: player.name,
       actions: [{
         name: 'Movement',
         options: [
@@ -184,7 +184,7 @@ function _generateOptions(context) {
   }
 
   return context.wait({
-    name: player.name,
+    actor: player.name,
     actions: [
       {
         name: 'Movement',

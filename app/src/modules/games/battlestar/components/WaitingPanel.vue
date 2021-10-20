@@ -1,7 +1,7 @@
 <template>
   <div class="waiting-panel">
     <div v-for="action of waitingOptions" :key="action.name">
-      <WaitingChoice :action="action" :actor="$game.getWaiting().name" />
+      <WaitingChoice :action="action" :actor="$game.getWaiting().actor" />
     </div>
   </div>
 </template>
