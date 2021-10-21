@@ -273,10 +273,10 @@ describe('player turn', () => {
       expect(action.name).toBe('Movement')
     })
 
-    test('player given choice for optional skills', () => {
+    test.only('player given choice for optional skills', () => {
       const factory = new GameFixtureFactory()
       util.array.swap(factory.options.players, 0, 1)
-      const game = factory.build().advanceTo('player-turn-receive-skills', 'micah').game
+      const game = factory.build().advanceTo('player-turn-receive-skills', 'dennis').game
       game.run()
 
       const action = game.getWaiting().actions[0]
@@ -620,6 +620,21 @@ describe('player turn', () => {
 
   describe('action', () => {
 
+    function _takeAction(kind, option) {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().advanceTo('player-turn-action').game
+      game.run()
+      game.submit({
+        actor: 'dennis',
+        name: 'Action',
+        option: [{
+          name: kind,
+          option: [option],
+        }]
+      })
+      return game
+    }
+
     test('skip action', () => {
       const factory = new GameFixtureFactory()
       const game = factory.build().advanceTo('player-turn-action').game
@@ -709,6 +724,14 @@ describe('player turn', () => {
       })
 
       describe("Research Lab", () => {
+
+        test('leads to draw cards', () => {
+          const game = _takeAction('Location Action', 'Research Lab')
+          const waiting = game.getWaiting()
+          const action = waiting.actions[0]
+          expect(waiting.actor).toBe('dennis')
+          expect(action.name).toBe('Draw Skill Cards')
+        })
 
       })
 

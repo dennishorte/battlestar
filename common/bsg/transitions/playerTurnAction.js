@@ -83,8 +83,32 @@ function _handleResponse(context) {
     })
     context.done()
   }
+
   else if (selection.name === 'Location Action') {
+    const locationName = selection.option[0]
+
+    game.rk.sessionStart(() => {
+      game.mLog({
+        template: '{player} uses {location}',
+        args: {
+          player: player.name,
+          location: locationName,
+        }
+      })
+    })
+
+    if (locationName === 'Research Lab') {
+      return context.push('draw-skill-cards', {
+        playerName: player.name,
+        reason: 'Research Lab'
+      })
+    }
+
+    else {
+      throw new Error `Unhandled location action: ${locationName}`
+    }
   }
+
   else {
     throw new Error(`Unhandled Action: ${selection.name}`)
   }

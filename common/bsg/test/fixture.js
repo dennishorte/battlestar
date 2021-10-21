@@ -71,7 +71,7 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
     }
   }
 
-  // Do skill-selection
+  // Do starting skill-selection
   for (let i = 1; i < this.game.getPlayerAll().length; i++) {
     const player = this.game.getPlayerByIndex(i)
     this.game.submit({
@@ -91,6 +91,9 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
     name: 'Movement',
     option: ['Skip Movement'],
   })
+  if (this._checkForTarget(targetTransitionName, targetPlayerName)) {
+    return this
+  }
 
   return this
 }
