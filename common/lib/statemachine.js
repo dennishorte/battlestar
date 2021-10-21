@@ -24,6 +24,7 @@ function StateMachine(
   this.options = Object.assign({}, defaultOptions, options)
 }
 
+StateMachine.prototype.clearWaiting = clearWaiting
 StateMachine.prototype.run = run
 
 
@@ -81,12 +82,25 @@ function run() {
   }
 }
 
+function clearWaiting() {
+  const inSession = !!this.rk.session
+  if (!inSession) {
+    this.rk.sessionStart()
+  }
+
+  this.rk.session.splice(this.waiting, 0, this.waiting.length)
+
+  if (!inSession) {
+    this.rk.session.commit()
+  }
+}
+
 function _done() {
   const event = this.stack[this.stack.length - 1]
   // console.log('done', event)
   this.rk.sessionStart(session => {
     session.pop(this.stack)
-    session.splice(this.waiting, 0, this.waiting.length)
+    this.clearWaiting()
   })
   this.run()
 }
@@ -96,9 +110,7 @@ function _push(eventName, data) {
 
   this.rk.sessionStart(session => {
     this.options.pushCallback(eventName, data)
-
-    // Clear the old waiting information
-    session.splice(this.waiting, 0, this.waiting.length)
+    this.clearWaiting()
 
     const event = {
       name: eventName,
@@ -123,9 +135,9 @@ function _push(eventName, data) {
 
 function _wait(payload) {
   payload.response = ''
-  this.rk.sessionStart(session =>
+  this.rk.sessionStart(session => {
     session.splice(this.waiting, 0, this.waiting.length, payload)
-  )
+  })
 }
 
 class InvalidTransitionError extends Error {

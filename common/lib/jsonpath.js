@@ -1,6 +1,13 @@
 module.exports = {
   at,
   path,
+  setVerbose,
+}
+
+let verbose = false
+
+function setVerbose(value) {
+  verbose = value
 }
 
 function at(object, path) {
@@ -60,6 +67,9 @@ function path(root, target) {
 }
 
 function _pathRecursive(matcher, root, pathAccumulator) {
+  if (verbose) {
+    console.log(pathAccumulator)
+  }
   if (matcher(root)) {
     return pathAccumulator || '.'
   }

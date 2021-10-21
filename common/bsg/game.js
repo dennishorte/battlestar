@@ -296,6 +296,15 @@ Game.prototype.getPlayerWithCard = function(cardName) {
   return undefined
 }
 
+Game.prototype.getSkillCheck = function() {
+  if (this.state.skillCheck.name) {
+    return this.state.skillCheck
+  }
+  else {
+    return undefined
+  }
+}
+
 Game.prototype.getVipersNumAvailable = function() {
   return this.getZoneByName('ships.vipers').cards.length
 }
@@ -371,6 +380,10 @@ Game.prototype.getZoneDiscardByCard = function(card) {
 Game.prototype.hackImpersonate = function(player) {
   player = this._adjustPlayerParam(player)
   this.actor = player.name
+}
+
+Game.prototype.mClearWaiting = function() {
+  this.sm.clearWaiting()
 }
 
 Game.prototype.mDrawSkillCard = function(player, skill) {

@@ -1,7 +1,14 @@
 module.exports = {
+  markDone,
   transitionFactory,
 }
 
+function markDone(context) {
+  const game = context.state
+  game.rk.sessionStart(session => {
+    session.put(context.data, 'done', true)
+  })
+}
 
 function transitionFactory(data, generator, responder) {
   return function (context) {

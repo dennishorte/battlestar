@@ -1,5 +1,5 @@
 import util from '../../lib/util.js'
-const { transitionFactory } = require('./factory.js')
+const { transitionFactory, markDone } = require('./factory.js')
 
 module.exports = transitionFactory(
   {},
@@ -73,9 +73,17 @@ function handleResponse(context) {
     })
 
     if (locationName === 'Research Lab') {
+      markDone(context)
       return context.push('draw-skill-cards', {
         playerName: player.name,
         reason: 'Research Lab'
+      })
+    }
+
+    else if (locationName === "Admiral's Quarters") {
+      markDone(context)
+      return context.push('activate-admirals-quarters', {
+        playerName: player.name,
       })
     }
 

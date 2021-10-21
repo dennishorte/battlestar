@@ -30,6 +30,17 @@ function initialize(game) {
 
   game.seed = util.randomSeed()
 
+  game.skillCheck = {
+    name: '',
+    skills: [],
+    pass: -1,
+    partial: -1,
+    passEffect: '',
+    partialEffect: '',
+    failEffect: '',
+    result: '',
+  }
+
   // Counters
   game.counters = {
     food: 8,

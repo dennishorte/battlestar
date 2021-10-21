@@ -701,6 +701,43 @@ describe('player turn', () => {
     describe('location actions', () => {
       describe("Admiral's Quarters", () => {
 
+        test('choose a player', () => {
+          const game = _takeAction('Location Action', "Admiral's Quarters")
+          const waiting = game.getWaiting()
+          const action = waiting.actions[0]
+          expect(waiting.actor).toBe('dennis')
+          expect(action.name).toBe('Choose a Player')
+          expect(action.options.sort()).toStrictEqual(['micah', 'tom'])
+        })
+
+        test('skill check launched', () => {
+          const game = _takeAction('Location Action', "Admiral's Quarters")
+          game.submit({
+            actor: 'dennis',
+            name: 'Choose a Player',
+            option: ['tom']
+          })
+
+          const waiting = game.getWaiting()
+          const action = waiting.actions[0]
+          expect(waiting.actor).toBe('micah')
+          expect(action.name).toBe('Skill Check - Discuss')
+        })
+
+        test('skill check failed means nothing happens', () => {
+          const game = _takeAction('Location Action', "Admiral's Quarters")
+          game.submit({
+            actor: 'dennis',
+            name: 'Choose a Player',
+            option: ['tom']
+          })
+
+        })
+
+        test('skill check passed moves chosen player to brig', () => {
+
+        })
+
       })
 
       describe("Armory", () => {

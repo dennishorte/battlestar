@@ -165,6 +165,21 @@ Actions.aSelectCharacter = function(player, characterName) {
   }
 }
 
+Actions.aSelectSkillCheckResult = function(result) {
+  const skillCheck = this.getSkillCheck()
+
+  util.assert(
+    result === 'pass' || result === 'fail',
+    `Unknown skill check result selected: ${result}`
+  )
+  util.assert(
+    !!skillcheck,
+    `No skill check in progress; can't set result`
+  )
+
+  game.rk.session.put(skillCheck, 'result', result)
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Exports

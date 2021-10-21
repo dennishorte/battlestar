@@ -506,6 +506,10 @@ const transitions = {
     func: () => {}
   },
 
+  'activate-admirals-quarters': {
+    func: require('./transitions/activateAdmiralsQuarters.js'),
+  },
+
   'discard-skill-cards': {
     func: require('./transitions/discardSkillCards.js'),
   },
@@ -514,6 +518,9 @@ const transitions = {
   },
   'launch-self-in-viper': {
     func: require('./transitions/launchSelfInViper.js'),
+  },
+  'skill-check': {
+    func: require('./transitions/skillCheck.js'),
   },
 }
 
