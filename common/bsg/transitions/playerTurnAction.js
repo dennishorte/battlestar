@@ -1,3 +1,6 @@
+import util from '../../lib/util.js'
+
+
 module.exports = playerTurnAction
 
 
@@ -56,7 +59,35 @@ function _generateOptions(context) {
 }
 
 function _handleResponse(context) {
-  throw new Error('not implmented')
+  util.assert(
+    context.response.name === 'Action',
+    `Got unexpected response name: ${context.response.name}`
+  )
+  util.assert(
+    context.response.option.length === 1,
+    `Got more than one selected option in response for Action`
+  )
+
+  const game = context.state
+  const player = game.getPlayerByName(context.data.playerName)
+  const selection = context.response.option[0]
+
+  if (selection === 'Skip Action') {
+    game.rk.sessionStart(() => {
+      game.mLog({
+        template: '{player} decides not to take an action',
+        args: {
+          player: player.name
+        }
+      })
+    })
+    context.done()
+  }
+  else if (selection.name === 'Location Action') {
+  }
+  else {
+    throw new Error(`Unhandled Action: ${selection.name}`)
+  }
 }
 
 const actionSkillCards = [

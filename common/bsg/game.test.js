@@ -620,6 +620,21 @@ describe('player turn', () => {
 
   describe('action', () => {
 
+    test('skip action', () => {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().advanceTo('player-turn-action').game
+      game.run()
+
+      game.submit({
+        actor: 'dennis',
+        name: 'Action',
+        option: ['Skip Action']
+      })
+
+      expect(game.getWaiting().actor).toBe('dennis')
+      expect(game.getWaiting().actions[0].name).toBe('test')
+    })
+
     describe.skip('once per game actions', () => {
       test("each player can only use one once per game action", () => {
 
