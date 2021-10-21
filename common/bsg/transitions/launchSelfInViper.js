@@ -1,42 +1,17 @@
-module.exports = launchSelfInViper
+const { transitionFactory } = require('./factory.js')
 
+module.exports = transitionFactory(
+  {},
+  generateOptions,
+  handleResponse,
+)
 
-
-
-function launchSelfInViper(context) {
+function generateOptions(context) {
   const game = context.state
   const player = game.getPlayerByName(context.data.playerName)
 
-  if (context.response) {
-    const selection = context.response
-    const validActionNames = ['Relaunch Viper', 'Launch Self in Viper']
-
-    if (!validActionNames.includes(selection.name)) {
-      throw new Error(`Unexpected action: ${selection.name}`)
-    }
-
-    // First, recall a viper if needed
-    if (selection.name === 'Relaunch Viper') {
-      const recallOption = selection.option.find(o => o.name === 'Recall from').option[0]
-      const launchOption = selection.option.find(o => o.name === 'Launch to').option[0]
-      const spaceIndex = parseInt(recallOption.slice(-1))
-
-      game.rk.sessionStart(() => {
-        game.mReturnViperFromSpaceZone(spaceIndex)
-        game.aLaunchSelfInViper(player, launchOption)
-      })
-
-      return context.done()
-    }
-
-    // Just launch the viper
-    else {
-      game.aLaunchSelfInViper(player, selection.option[0])
-    }
-  }
-
   // If all the vipers are launched, the player can choose an existing viper to "relaunch"
-  else if (game.getZoneByName('ships.vipers').cards.length === 0) {
+  if (game.getZoneByName('ships.vipers').cards.length === 0) {
     // Get the locations of all launched vipers.
     const launched = []
     for (let i = 0; i < 6; i++) {
@@ -87,5 +62,36 @@ function launchSelfInViper(context) {
         },
       ]
     })
+  }
+}
+
+
+function handleResponse(context) {
+  const game = context.state
+  const player = game.getPlayerByName(context.data.playerName)
+  const selection = context.response
+  const validActionNames = ['Relaunch Viper', 'Launch Self in Viper']
+
+  if (!validActionNames.includes(selection.name)) {
+    throw new Error(`Unexpected action: ${selection.name}`)
+  }
+
+  // First, recall a viper if needed
+  if (selection.name === 'Relaunch Viper') {
+    const recallOption = selection.option.find(o => o.name === 'Recall from').option[0]
+    const launchOption = selection.option.find(o => o.name === 'Launch to').option[0]
+    const spaceIndex = parseInt(recallOption.slice(-1))
+
+    game.rk.sessionStart(() => {
+      game.mReturnViperFromSpaceZone(spaceIndex)
+      game.aLaunchSelfInViper(player, launchOption)
+    })
+
+    return context.done()
+  }
+
+  // Just launch the viper
+  else {
+    game.aLaunchSelfInViper(player, selection.option[0])
   }
 }

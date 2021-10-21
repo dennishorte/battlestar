@@ -1,38 +1,12 @@
-module.exports = playerTurnMovement
+const { transitionFactory } = require('./factory.js')
 
+module.exports = transitionFactory(
+  {},
+  generateOptions,
+  handleResponse,
+)
 
-function playerTurnMovement(context) {
-  _initialize(context)
-
-  if (context.data.done) {
-    return context.done()
-  }
-
-  else if (context.response) {
-    return _handleResponse(context)
-  }
-
-  else {
-    return _generateOptions(context)
-  }
-}
-
-function _initialize(context) {
-  const game = context.state
-
-  if (context.data.initialized) {
-    return
-  }
-
-  game.rk.sessionStart(session => {
-    session.addKey(context.data, 'initialized', true)
-
-    // True when the user has moved, but still needs to discard a card.
-    session.addKey(context.data, 'done', false)
-  })
-}
-
-function _handleResponse(context) {
+function handleResponse(context) {
   const game = context.state
   const player = game.getPlayerCurrentTurn()
   const selection = context.response.option[0]
@@ -100,7 +74,7 @@ function _handleResponse(context) {
   }
 }
 
-function _generateOptions(context) {
+function generateOptions(context) {
   const game = context.state
   const player = game.getPlayerCurrentTurn()
 

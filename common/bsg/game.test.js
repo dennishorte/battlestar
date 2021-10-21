@@ -273,7 +273,7 @@ describe('player turn', () => {
       expect(action.name).toBe('Movement')
     })
 
-    test.only('player given choice for optional skills', () => {
+    test('player given choice for optional skills', () => {
       const factory = new GameFixtureFactory()
       util.array.swap(factory.options.players, 0, 1)
       const game = factory.build().advanceTo('player-turn-receive-skills', 'dennis').game

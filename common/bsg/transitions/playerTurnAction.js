@@ -1,38 +1,13 @@
 import util from '../../lib/util.js'
+const { transitionFactory } = require('./factory.js')
 
+module.exports = transitionFactory(
+  {},
+  generateOptions,
+  handleResponse,
+)
 
-module.exports = playerTurnAction
-
-
-function playerTurnAction(context) {
-  _initialize(context)
-
-  if (context.data.done) {
-    return context.done()
-  }
-
-  else if (context.response) {
-    return _handleResponse(context)
-  }
-
-  else {
-    return _generateOptions(context)
-  }
-}
-
-function _initialize(context) {
-  const game = context.state
-
-  if (context.data.initialized) {
-    return
-  }
-
-  game.rk.sessionStart(session => {
-    session.addKey(context.data, 'initialized', true)
-  })
-}
-
-function _generateOptions(context) {
+function generateOptions(context) {
   const game = context.state
   const options = []
 
@@ -58,7 +33,7 @@ function _generateOptions(context) {
   }
 }
 
-function _handleResponse(context) {
+function handleResponse(context) {
   util.assert(
     context.response.name === 'Action',
     `Got unexpected response name: ${context.response.name}`
