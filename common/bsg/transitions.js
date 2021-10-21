@@ -207,21 +207,6 @@ function mainPlayerLoop(context) {
   context.push('player-turn', { playerName: game.getPlayerCurrentTurn().name })
 }
 
-function playerTurnAction(context) {
-  const game = context.state
-  const player = game.getPlayerCurrentTurn()
-
-  context.wait({
-    actor: player.name,
-    actions: [
-      {
-        name: 'Action',
-        options: [],
-      },
-    ]
-  })
-}
-
 function playerTurnReceiveSkills(context) {
   const game = context.state
   const player = game.getPlayerCurrentTurn()
@@ -506,7 +491,7 @@ const transitions = {
     func: require('./transitions/playerTurnMovement.js'),
   },
   'player-turn-action': {
-    func: playerTurnAction,
+    func: require('./transitions/playerTurnAction.js'),
   },
   'player-turn-crisis': {
     func: waitFunc,

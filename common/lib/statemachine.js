@@ -63,9 +63,17 @@ function run() {
 
   // Otherwise, advance through the steps of event.
   else {
-    const nextStep = event.data.steps.shift()
+    const nextStep = event.data.steps[0]
     if (nextStep) {
-      return context.push(nextStep)
+      this.rk.sessionStart(session => {
+        session.splice(event.data.steps, 0, 1)
+      })
+      if (event.data.playerName) {
+        return context.push(nextStep, { playerName: event.data.playerName })
+      }
+      else {
+        return context.push(nextStep)
+      }
     }
     else {
       return context.done()

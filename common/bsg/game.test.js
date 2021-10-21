@@ -618,6 +618,187 @@ describe('player turn', () => {
 
   })
 
+  describe('action', () => {
+
+    describe.skip('once per game actions', () => {
+      test("each player can only use one once per game action", () => {
+
+      })
+
+      describe("Gaius Baltar", () => {
+
+      })
+
+      describe("Laura Roslin", () => {
+
+      })
+
+      describe('Lee "Apollo" Adama', () => {
+
+      })
+
+      describe("Saul Tigh", () => {
+
+      })
+
+      describe("Tom Zarek", () => {
+
+      })
+    })
+
+    describe('card actions', () => {
+      describe('Consolidate Power', () => {
+
+      })
+
+      describe('Executive Order', () => {
+
+      })
+
+      describe('Launch Scout', () => {
+
+      })
+
+      describe('Maximum Firepower', () => {
+
+      })
+
+      describe('Repair', () => {
+
+      })
+    })
+
+    describe('location actions', () => {
+      describe("Admiral's Quarters", () => {
+
+      })
+
+      describe("Armory", () => {
+
+      })
+
+      describe("Command", () => {
+
+      })
+
+      describe("Communications", () => {
+
+      })
+
+      describe("FTL Control", () => {
+
+      })
+
+      describe("Hangar Deck", () => {
+
+      })
+
+      describe("Research Lab", () => {
+
+      })
+
+      describe("Weapons Control", () => {
+
+      })
+
+      describe("Brig", () => {
+
+      })
+
+      describe("Administration", () => {
+
+      })
+
+      describe("President's Office", () => {
+
+      })
+
+      describe("Press Room", () => {
+
+      })
+
+      describe("Caprica", () => {
+
+      })
+
+      describe("Cylon Fleet", () => {
+
+      })
+
+      describe("Human Fleet", () => {
+
+      })
+
+      describe("Resurrection Ship", () => {
+
+      })
+    })
+
+    describe('quorum actions', () => {
+      describe("Accept Prophecy", () => {
+
+      })
+
+      describe("Arrest Order", () => {
+
+      })
+
+      describe("Assign Arbitrator", () => {
+
+      })
+
+      describe("Assign Mission Specialist", () => {
+
+      })
+
+      describe("Assign Vice President", () => {
+
+      })
+
+      describe("Authorization of Brutal Force", () => {
+
+      })
+
+      describe("Encourage Mutiny", () => {
+
+      })
+
+      describe("Food Rationing", () => {
+
+      })
+
+      describe("Inspirational Speech", () => {
+
+      })
+
+      describe("Presidential Pardon", () => {
+
+      })
+
+      describe("Release Cylon Mugshots", () => {
+
+      })
+    })
+
+    describe('loyalty actions', () => {
+      describe("CAN REDUCE MORALE BY 1", () => {
+
+      })
+
+      describe("CAN SEND A CHARACTER TO SICKBAY", () => {
+
+      })
+
+      describe("CAN SEND A CHARACTER TO THE BRIG", () => {
+
+      })
+
+      describe("CAN DAMAGE GALACTICA", () => {
+
+      })
+    })
+
+  })
 })
 
 describe('adhoc transitions', () => {

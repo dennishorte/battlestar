@@ -58,6 +58,7 @@ function initialize(game) {
       crisisDone: false,
 
       isRevealedCylon: false,
+      oncePerGameUsed: false,
       turnFlags: {}, // See game.mStartNextTurn for description
     }
   })
