@@ -840,6 +840,11 @@ describe('player turn', () => {
 })
 
 describe('adhoc transitions', () => {
+
+  describe('draw-skill-cards', () => {
+
+  })
+
   describe('Launch Self on Viper', () => {
     test('vipers on the hangar deck', () => {
       const factory = new GameFixtureFactory()
