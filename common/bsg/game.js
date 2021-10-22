@@ -481,6 +481,18 @@ Game.prototype.mReturnViperFromSpaceZone = function(zoneNumber) {
   this.rk.session.move(viper, viperZone.cards)
 }
 
+Game.prototype.mSetPlayerIsRevealedCylon = function(player) {
+  player = this._adjustPlayerParam(player)
+  this.rk.session.put(player, 'isRevealedCylon', true)
+}
+
+Game.prototype.mSetSkillCheck = function(check) {
+  util.assert(!this.skillCheck, "Skill check in progress. Can't set a new one.")
+  check = util.deepcopy(check)
+  check.result = ''
+  this.rk.session.put(this.state, 'skillCheck', check)
+}
+
 Game.prototype.mStartNextTurn = function() {
   const nextIndex = (this.state.currentTurnPlayerIndex + 1) % this.getPlayerAll().length
   this.rk.session.put(this.state, 'currentTurnPlayerIndex', nextIndex)

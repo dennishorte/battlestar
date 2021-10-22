@@ -620,9 +620,12 @@ describe('player turn', () => {
 
   describe('action', () => {
 
-    function _takeAction(kind, option) {
+    function _takeAction(kind, option, beforeAction) {
       const factory = new GameFixtureFactory()
       const game = factory.build().advanceTo('player-turn-action').game
+      if (beforeAction) {
+        beforeAction(game)
+      }
       game.run()
       game.submit({
         actor: 'dennis',
@@ -710,6 +713,32 @@ describe('player turn', () => {
           expect(action.options.sort()).toStrictEqual(['micah', 'tom'])
         })
 
+        test("can't choose Cylons", () => {
+          const game = _takeAction('Location Action', "Admiral's Quarters", (game) => {
+            game.rk.sessionStart(() => {
+              game.mSetPlayerIsRevealedCylon('tom')
+            })
+          })
+          const waiting = game.getWaiting()
+          const action = waiting.actions[0]
+          expect(waiting.actor).toBe('dennis')
+          expect(action.name).toBe('Choose a Player')
+          expect(action.options.sort()).toStrictEqual(['micah'])
+        })
+
+        test("can't choose players already in brig", () => {
+          const game = _takeAction('Location Action', "Admiral's Quarters", (game) => {
+            game.rk.sessionStart(() => {
+              game.mMovePlayer('tom', 'locations.brig')
+            })
+          })
+          const waiting = game.getWaiting()
+          const action = waiting.actions[0]
+          expect(waiting.actor).toBe('dennis')
+          expect(action.name).toBe('Choose a Player')
+          expect(action.options.sort()).toStrictEqual(['micah'])
+        })
+
         test('skill check launched', () => {
           const game = _takeAction('Location Action', "Admiral's Quarters")
           game.submit({
@@ -724,6 +753,19 @@ describe('player turn', () => {
           expect(action.name).toBe('Skill Check - Discuss')
         })
 
+        test('skill check passed moves chosen player to brig', () => {
+          const game = _takeAction('Location Action', "Admiral's Quarters")
+          game.submit({
+            actor: 'dennis',
+            name: 'Choose a Player',
+            option: ['tom']
+          })
+          game.aSelectSkillCheckResult('pass')
+
+          const playerLocation = game.getZoneByPlayerLocation('tom')
+          expect(playerLocation.name).toBe('locations.brig')
+        })
+
         test('skill check failed means nothing happens', () => {
           const game = _takeAction('Location Action', "Admiral's Quarters")
           game.submit({
@@ -731,11 +773,10 @@ describe('player turn', () => {
             name: 'Choose a Player',
             option: ['tom']
           })
+          game.aSelectSkillCheckResult('fail')
 
-        })
-
-        test('skill check passed moves chosen player to brig', () => {
-
+          const playerLocation = game.getZoneByPlayerLocation('tom')
+          expect(playerLocation.name).toBe('locations.armory')
         })
 
       })

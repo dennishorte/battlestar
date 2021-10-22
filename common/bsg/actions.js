@@ -173,11 +173,15 @@ Actions.aSelectSkillCheckResult = function(result) {
     `Unknown skill check result selected: ${result}`
   )
   util.assert(
-    !!skillcheck,
+    !!skillCheck,
     `No skill check in progress; can't set result`
   )
 
-  game.rk.session.put(skillCheck, 'result', result)
+  this.rk.session.put(skillCheck, 'result', result)
+
+  // End the existing session and rerun the current transition.
+  this.rk.session.commit()
+  this.run()
 }
 
 
@@ -194,7 +198,8 @@ function wrapper(func) {
 
     func.call(this, ...arguments)
 
-    if (!inSession) {
+    // Allow actions to close sessions and (possibly) open new ones if needed
+    if (!inSession && this.rk.session) {
       this.rk.session.commit()
     }
   }

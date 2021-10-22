@@ -16,10 +16,12 @@ function generateOptions(context) {
   if (context.data.step === 'choose') {
     const options = game
       .getPlayerAll()
+      .filter(p => p.name !== context.data.playerName)
+      .filter(p => game.getZoneByPlayerLocation(p).name !== 'locations.brig')
+      .filter(p => !game.checkPlayerIsRevealedCylon(p))
       .map(p => p.name)
-      .filter(name => name !== context.data.playerName)
 
-    return context.wait({
+        return context.wait({
       actor: context.data.playerName,
       actions: [{
         name: 'Choose a Player',
@@ -34,7 +36,7 @@ function generateOptions(context) {
     game.rk.sessionStart(() => {
       if (result === 'pass') {
         game.mLog({
-          template: "We knew that {player} was a Cylon all along.",
+          template: "We knew that {player} was a Cylon all along",
           args: {
             player: context.data.chosenPlayerName
           }
@@ -68,13 +70,15 @@ function handleResponse(context) {
     })
 
     context.push('skill-check', {
-      name: `Send ${chosenPlayer} to the brig`,
-      skills: ['leadership', 'tactics'],
-      'skill check value': 7,
-      // 'partial pass value': null,
-      'pass effect': `${chosenPlayerName} is sent to the brig`,
-      // 'partial pass effect': null,
-      // 'fail effect': null,
+      check: {
+        name: `Send ${chosenPlayerName} to the brig`,
+        skills: ['leadership', 'tactics'],
+        'skill check value': 7,
+        // 'partial pass value': null,
+        'pass effect': `${chosenPlayerName} is sent to the brig`,
+        // 'partial pass effect': null,
+        // 'fail effect': null,
+      },
     })
   }
 }
