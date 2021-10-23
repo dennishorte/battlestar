@@ -1,4 +1,4 @@
-import util from '../../lib/util.js'
+const util = require('../../lib/util.js')
 const { transitionFactory, markDone } = require('./factory.js')
 
 module.exports = transitionFactory(

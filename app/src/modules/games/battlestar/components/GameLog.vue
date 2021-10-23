@@ -1,33 +1,40 @@
 <template>
-  <div class="game-log">
+  <b-modal
+    id="game-log-modal"
+    title="game-log"
+    ok-only>
 
-    <div>
-      <div style="float: right;">
-        <b-form-checkbox v-model="doLogNavigation" size="sm" switch>
-          navigate
-        </b-form-checkbox>
-      </div>
+    <div class="game-log">
 
-      <span class="heading">
-        Log
-      </span>
-    </div>
+      <div>
+        <div style="float: right;">
+          <b-form-checkbox v-model="doLogNavigation" size="sm" switch>
+            navigate
+          </b-form-checkbox>
+        </div>
 
-    <div class="log-entries">
-
-      <div v-for="entry in log" :key="entry.id" :class="classes(entry.classes)">
-        <span class="player">{{ entry.actor }}: </span>
-        <span
-          v-for="(token, index) in templateSubstitute(entry)"
-          :key="index"
-          :class="token.classes">
-          {{ token.value }}
+        <span class="heading">
+          Log
         </span>
       </div>
 
-    </div>
+      <div id="log-entries" class="log-entries">
 
-  </div>
+        <div v-for="entry in log" :key="entry.id" :class="classes(entry)">
+          {{ indent(entry) }}
+          <span
+            v-for="(token, index) in templateSubstitute(entry)"
+            :key="index"
+            :class="token.classes">
+
+            {{ token.value }}
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+  </b-modal>
 </template>
 
 
@@ -45,59 +52,50 @@ export default {
 
   computed: {
     log() {
-      return [...this.$game.getLog()].reverse()
+      return this.$game.getLog()
     },
   },
 
   methods: {
-    classes(classArray) {
-      if (!classArray || classArray.length == 0) {
-        return 'log-entry'
+    classes(entry) {
+      const output = entry.classes ? [...entry.classes] : []
+      output.push('log-entry')
+      // output.push(`log-indent-${entry.indent}`)
+      return output
+    },
+
+    indent(entry) {
+      let output = ''
+      for (let i = 0; i < entry.indent; i++) {
+        output += '… ' // U+2026
       }
-      else {
-        return classArray.join(' ') + ' log-entry'
-      }
+      return output
     },
 
     templateSubstitute(entry) {
       return log.apply(entry)
     },
   },
+
+  mounted() {
+    this.$root.$on('bv::modal::shown', (bvEvent, modalId) => {
+      if (modalId === 'game-log-modal') {
+        const container = document.getElementById('log-entries')
+        container.scrollTop = container.scrollHeight
+      }
+    })
+  },
 }
 </script>
 
 
 <style scoped>
+.log-entries {
+  height: 67vh;
+  overflow-y: auto;
+}
+
 .log-entry {
   font-size: .7em;
 }
-
-.pass-turn {
-  font-size: .9em;
-  margin-left: .5em;
-  font-weight: 600;
-  margin-bottom: .25em;
-}
-
-.phase-change > .player,
-.pass-turn > .player {
-  display: none;
-}
-
-.phase-change {
-  font-weight: 600;
-  font-size: .75em;
-  margin-bottom: .25em;
-}
-
-
-.round-start {
-  font-size: .85em;
-  font-weight: bold;
-}
-
-.name-player-1 {
-  font-weight: bold;
-}
-
 </style>

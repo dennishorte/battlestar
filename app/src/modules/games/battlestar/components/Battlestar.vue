@@ -107,6 +107,7 @@
 
     <CardInfoModal />
     <ErrorModal />
+    <GameLog />
     <HacksModal />
     <ZoneViewerModal />
 
@@ -115,14 +116,6 @@
       title="Characters"
       ok-only>
       <Characters />
-    </b-modal>
-
-    <b-modal
-      id="game-log-modal"
-      title="game-log"
-      ok-only>
-
-      <GameLog />
     </b-modal>
 
     <b-modal
