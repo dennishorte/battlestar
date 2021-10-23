@@ -3,6 +3,7 @@ const { transitionFactory, markDone } = require('./factory.js')
 
 /* const steps = [
  *   'discuss',
+ *   'choose',
  *   'pre-check modifiers',
  *   'play cards',
  *   'reveal',
@@ -44,7 +45,12 @@ function generateOptions(context) {
       actor: 'micah',
       actions: [{
         name: 'Skill Check - Discuss',
-        options: [],
+        options: [
+          'none',
+          'a little',
+          'some',
+          'a lot',
+        ],
       }],
     })
   }

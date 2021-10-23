@@ -779,6 +779,13 @@ describe('player turn', () => {
           expect(playerLocation.name).toBe('locations.armory')
         })
 
+        test.skip("Saul Tigh can use his Cylon Hatred ability", () => {
+
+        })
+
+        test.skip('William Adama cannot use this action', () => {
+
+        })
       })
 
       describe("Armory", () => {
@@ -1016,6 +1023,134 @@ describe('adhoc transitions', () => {
         .filter(c => c.kind === 'ships.vipers')
         .length
       expect(vipersAtSpace5).toBe(4)
+    })
+
+  })
+
+  describe('skill-check', () => {
+    function _sendTomToBrig(beforeChoose) {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().advanceTo('player-turn-action').game
+      game.run()
+      game.submit({
+        actor: 'dennis',
+        name: 'Action',
+        option: [{
+          name: 'Location Action'
+          option: ['Brig'],
+        }]
+      })
+      if (beforeChoose) {
+        beforeChoose(game)
+      }
+      game.submit({
+        actor: 'dennis',
+        name: 'Choose a Player',
+        option: ['tom']
+      })
+
+      return game
+    }
+
+    test('check is available in game object', () => {
+
+    })
+
+    describe('discuss', () => {
+      test('first step is discuss', () => {
+        const game = _sendTomToBrig()
+        const waiting = game.getWaiting()
+        const action = waiting.actions[0]
+        expect(waiting.actor).toBe('micah')
+        expect(action.name).toBe('Skill Check - Discuss')
+        expect(action.options.sort()).toStrictEqual([
+          'a little',
+          'a lot',
+          'none',
+          'some',
+        ])
+      })
+
+      test.skip('discuss step allows contributions in any order', () => {
+
+      })
+
+      test.skip('skill check owner can start skill check', () => {
+
+      })
+    })
+
+    describe('choose', () => {
+      test('if there is a choice, it is made before any cards are commited', () => {
+
+      })
+
+      test('if the selected choice is not a skill check, the skill check ends', () => {
+
+      })
+    })
+
+    describe('pre-check modifiers', () => {
+      test('players get an opportunity to apply modifiers before anyone adds cards', () => {
+
+      })
+
+      test('modifiers are actually applied', () => {
+
+      })
+
+      test("modifiers can be added 'in advance' during the discuss step", () => {
+
+      })
+    })
+
+    describe('add cards', () => {
+      test('destiny cards are added', () => {
+
+      })
+
+      test('options are separated into positive and negative sections', () => {
+
+      })
+
+      test('investigative committee causes cards to be face up', () => {
+
+      })
+
+      test('scientific research causes blue cards to become positive', () => {
+
+      })
+
+      test('the player after the current turn player goes first', () => {
+
+      })
+
+      test('players in the brig can only add 1 card', () => {
+
+      })
+
+      test('players can pre-enqueue declare emergency', () => {
+
+      })
+    })
+
+    describe('pre-reveal', () => {
+      test('Chief "Galen" Tyrol can use his Blind Devotion ability', () => {
+
+      })
+    })
+
+    describe('reveal', () => {
+    })
+
+    describe('post-check modifiers', () => {
+      test('players can add use declare emergency', () => {
+
+      })
+    })
+
+    describe('skill check result', () => {
+
     })
 
   })
