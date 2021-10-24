@@ -40,10 +40,7 @@ function handleResponse(context) {
 
   const playerZone = game.getZoneByPlayerLocation(player)
   const targetZone = game.getZoneByLocationName(selection.option[0])
-  const sameShip = (
-    !playerZone.name.startsWith('space')
-    && playerZone.details.area === targetZone.details.area
-  )
+  const sameShip = playerZone.details && playerZone.details.area === targetZone.details.area
 
   game.rk.sessionStart(() => {
     game.mLog({

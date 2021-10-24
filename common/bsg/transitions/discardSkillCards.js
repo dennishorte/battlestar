@@ -10,10 +10,11 @@ function discardSkillCards(context) {
   const playerSkillCards = game.getCardsKindByPlayer('skill', player)
 
   if (context.response) {
-    util.assert(Array.isArray(context.response), "Discard choices should be in an array")
+    const selected = context.response.option
+    util.assert(Array.isArray(selected), "Discard choices should be in an array")
 
-    const cards = playerSkillCards.filter(c => context.response.includes(c.id))
-    util.assert(cards.length === context.response.length, "Couldn't find all the submitted cards")
+    const cards = playerSkillCards.filter(c => selected.includes(c.id))
+    util.assert(cards.length === selected.length, "Couldn't find all the submitted cards")
 
     game.aDiscardSkillCards(player, cards)
 
@@ -22,7 +23,7 @@ function discardSkillCards(context) {
 
   else {
     return context.wait({
-      name: player.name,
+      actor: player.name,
       actions: [{
         name: 'Discard Skill Card',
         count: context.data.count,
