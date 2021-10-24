@@ -1036,7 +1036,7 @@ describe('adhoc transitions', () => {
         actor: 'dennis',
         name: 'Action',
         option: [{
-          name: 'Location Action'
+          name: 'Location Action',
           option: ['Brig'],
         }]
       })

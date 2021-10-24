@@ -88,7 +88,7 @@ function handleResponse(context) {
     }
 
     else {
-      throw new Error `Unhandled location action: ${locationName}`
+      throw new Error(`Unhandled location action: ${locationName}`)
     }
   }
 

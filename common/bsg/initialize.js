@@ -19,6 +19,7 @@ function initialize(game) {
   game.crisisDestinyAdded = false
 
   game.currentTurnPlayerIndex = -1
+  game.round = 0
 
   game.history = []
   game.log = []
