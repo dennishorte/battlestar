@@ -296,6 +296,10 @@ Game.prototype.getPlayerWithCard = function(cardName) {
   return undefined
 }
 
+Game.prototype.getRound = function() {
+  return this.state.round
+}
+
 Game.prototype.getSkillCheck = function() {
   if (this.state.skillCheck.name) {
     return this.state.skillCheck

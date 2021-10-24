@@ -77,6 +77,19 @@ function handleResponse(context) {
 function generateOptions(context) {
   const game = context.state
   const player = game.getPlayerCurrentTurn()
+  const character = game.getCardCharacterByPlayer(player)
+
+  if (game.getRound() === 1 && character.name === 'Karl "Helo" Agathon') {
+    game.rk.sessionStart(() => {
+      game.mLog({
+        template: "{player} can't move on the first round because Helo is stranded",
+        args: {
+          player: player.name,
+        }
+      })
+    })
+    return context.done()
+  }
 
   // If the player is in the brig, they don't get to move
   if (game.checkPlayerIsAtLocation(player, 'Brig')) {

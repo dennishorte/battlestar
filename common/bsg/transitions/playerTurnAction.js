@@ -9,8 +9,22 @@ module.exports = transitionFactory(
 
 function generateOptions(context) {
   const game = context.state
-  const options = []
+  const player = game.getPlayerByName(context.data.playerName)
+  const character = game.getCardCharacterByPlayer(player)
 
+  if (game.getRound() === 1 && character.name === 'Karl "Helo" Agathon') {
+    game.rk.sessionStart(() => {
+      game.mLog({
+        template: "{player} can't take an action on the first round because Helo is stranded",
+        args: {
+          player: player.name,
+        }
+      })
+    })
+    return context.done()
+  }
+
+  const options = []
   _addLocationActions(context, options)
   _addSkillCardActions(context, options)
   _addQuorumActions(context, options)

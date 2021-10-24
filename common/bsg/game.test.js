@@ -472,6 +472,16 @@ describe('player turn', () => {
       expect(action.options).toEqual(expect.arrayContaining(['Skip Movement']))
     })
 
+    test("Helo can't move or act on the first round", () => {
+      const factory = new GameFixtureFactory()
+      factory.options.players[0].character = 'Karl "Helo" Agathon'
+      const game = factory.build().advanceTo('player-turn-movement').game
+      game.run()
+
+      const action = game.getWaiting().actions[0]
+      expect(action.name).toBe('test')
+    })
+
     describe("submit movement", () => {
 
       test("player token is relocated", () => {
