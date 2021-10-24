@@ -234,68 +234,19 @@ function receiveInitialSkills(context) {
   }
 }
 
-function _characterSkills(character) {
-  const output = []
-  for (let skill of bsgutil.skillList) {
-    skill = skill.toLowerCase()
-    const charSkill = character[skill]
-    if (charSkill) {
-      const optional = charSkill.slice(-1) === '*'
-      const value = parseInt(charSkill)
-
-      output.push({
-        name: skill,
-        value,
-        optional,
-      })
-    }
-  }
-
-  return output
-}
-
-function _optionalSkillOptions(optionalSkills) {
-  if (optionalSkills.length === 0) {
-    return []
-  }
-
-  const options = []
-  const optionalPairs = [optionalSkills[0].name, optionalSkills[1].name]
-  for (let i = 0; i < optionalSkills[0].value; i++) {
-    options.push({
-      name: 'Optional Skills',
-      options: optionalPairs
-    })
-  }
-  return options
-}
-
-function _flattenSkillSelection(selection) {
-  let output = []
-  for (const s of selection.option) {
-    if (typeof s === 'string') {
-      output.push(s)
-    }
-    else {
-      output = output.concat(_flattenSkillSelection(s))
-    }
-  }
-  return output
-}
-
 function receiveInitialSkillsDo(context) {
   const game = context.state
   const player = game.getPlayerByName(context.data.playerName)
 
   if (context.response) {
-    const skillNames = _flattenSkillSelection(context.response)
+    const skillNames = bsgutil.flattenSkillSelection(context.response)
     game.aDrawSkillCards(player, skillNames)
     return context.done()
   }
 
   else {
     const character = game.getCardCharacterByPlayer(player)
-    const skills = _characterSkills(character)
+    const skills = bsgutil.characterSkills(character)
     const optionalSkills = skills.filter(s => s.optional)
     const requiredSkills = skills.filter(s => !s.optional)
 
@@ -310,7 +261,7 @@ function receiveInitialSkillsDo(context) {
         skillChoices.push(skill.name)
       }
     }
-    for (const choice of _optionalSkillOptions(optionalSkills)) {
+    for (const choice of bsgutil.optionalSkillOptions(optionalSkills)) {
       skillChoices.push(choice)
     }
 
