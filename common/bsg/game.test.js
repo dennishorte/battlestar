@@ -493,7 +493,7 @@ describe('player turn', () => {
           name: 'Movement',
           option: [{
             name: 'Galactica',
-            option: 'Command',
+            option: ['Command'],
           }]
         })
 
@@ -509,12 +509,29 @@ describe('player turn', () => {
           name: 'Movement',
           option: [{
             name: 'Colonial One',
-            option: 'Administration',
+            option: ['Administration'],
           }]
         })
 
         expect(game.getZoneByPlayerLocation('dennis').name).toBe('locations.administration')
         expect(game.getWaiting().actions[0].name).toBe('Discard Skill Card')
+      })
+
+      // Added due to a crash caused by this problem
+      test("locations with multiple-word name", () => {
+        const factory = new GameFixtureFactory()
+        const game = factory.build().advanceTo('player-turn-movement').game
+        game.run()
+        game.submit({
+          actor: 'dennis',
+          name: 'Movement',
+          option: [{
+            name: 'Galactica',
+            option: ['Research Lab'],
+          }]
+        })
+
+        expect(game.getZoneByPlayerLocation('dennis').name).toBe('locations.researchLab')
       })
 
       test("if passing, token isn't moved", () => {
@@ -567,7 +584,7 @@ describe('player turn', () => {
           name: 'Movement',
           option: [{
             name: 'Colonial One',
-            option: 'Administration',
+            option: ['Administration'],
           }]
         })
 
@@ -609,7 +626,7 @@ describe('player turn', () => {
           name: 'Movement',
           option: [{
             name: 'Move Viper',
-            option: 'space.space0',
+            option: ['space.space0'],
           }],
         })
 

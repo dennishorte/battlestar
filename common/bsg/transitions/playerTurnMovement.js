@@ -28,7 +28,7 @@ function handleResponse(context) {
     const zone = game.getZoneByPlayerLocation(player)
     const viper = zone.cards.find(c => c.name === 'viper')
     const token = zone.cards.find(c => c.name === player.name && c.kind === 'player-token')
-    const newZone = game.getZoneByName(selection.option)
+    const newZone = game.getZoneByName(selection.option[0])
 
     game.rk.sessionStart(session => {
       session.move(token, newZone.cards, newZone.cards.length)
@@ -39,7 +39,7 @@ function handleResponse(context) {
   }
 
   const playerZone = game.getZoneByPlayerLocation(player)
-  const targetZone = game.getZoneByLocationName(selection.option)
+  const targetZone = game.getZoneByLocationName(selection.option[0])
   const sameShip = (
     !playerZone.name.startsWith('space')
     && playerZone.details.area === targetZone.details.area
