@@ -10,11 +10,12 @@ function stateFactory(transitions, state) {
       sm: {
         stack: [],
         waiting: [],
+        response: [],
       }
     }
   }
   const rk = new RecordKeeper(state)
-  return new StateMachine(transitions, state, rk, state.sm.stack, state.sm.waiting)
+  return new StateMachine(transitions, state, rk, state.sm.stack, state.sm.waiting, state.sm.response)
 }
 
 

@@ -12,7 +12,8 @@ function StateMachine(
   recordkeeper,
   stack,             // An array
   waiting,           // An array
-  options,
+  response,          // [{ actor, name, option }] || []
+  options,           // object
 ) {
   _validateTransitions(transitions)
 
@@ -20,6 +21,7 @@ function StateMachine(
   this.state = state
   this.stack = stack
   this.waiting = waiting
+  this.response = response
   this.rk = recordkeeper
   this.options = Object.assign({}, defaultOptions, options)
 }
@@ -46,16 +48,13 @@ function run() {
     done: _done.bind(this),
     push: _push.bind(this),
     wait: _wait.bind(this),
+    waitMany: _waitMany.bind(this),
     data: event.data,
     state: this.state,
-    response: null,
+    response: this.response[0],
   }
 
   const transition = this.transitions[event.name]
-  const waiting = this.waiting[0]
-  if (waiting) {
-    context.response = waiting.response
-  }
 
   // If there is an evaluation function, call it.
   if (transition.func) {
@@ -89,6 +88,7 @@ function clearWaiting() {
   }
 
   this.rk.session.splice(this.waiting, 0, this.waiting.length)
+  this.rk.session.splice(this.response, 0, this.response.length)
 
   if (!inSession) {
     this.rk.session.commit()
@@ -134,9 +134,14 @@ function _push(eventName, data) {
 }
 
 function _wait(payload) {
-  payload.response = ''
   this.rk.sessionStart(session => {
     session.splice(this.waiting, 0, this.waiting.length, payload)
+  })
+}
+
+function _waitMany(payload) {
+  this.rk.sessionStart(session => {
+    session.splice(this.waiting, 0, this.waiting.length, ...payload)
   })
 }
 

@@ -41,18 +41,22 @@ function generateOptions(context) {
   }
 
   if (step === 'discuss') {
-    return context.wait({
-      actor: 'micah',
-      actions: [{
-        name: 'Skill Check - Discuss',
-        options: [
-          'none',
-          'a little',
-          'some',
-          'a lot',
-        ],
-      }],
-    })
+    const waits = []
+    for (const player of game.getPlayerAll()) {
+      waits.push({
+        actor: player.name,
+        actions: [{
+          name: 'Skill Check - Discuss',
+          options: [
+            'none',
+            'a little',
+            'some',
+            'a lot',
+          ],
+        }],
+      })
+    }
+    return context.waitMany(waits)
   }
 
   else {

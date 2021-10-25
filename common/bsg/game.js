@@ -36,6 +36,7 @@ function stateFactory(lobby) {
     sm: {
       stack: [],
       waiting: [],
+      response: [],
     },
   }
 
@@ -55,6 +56,7 @@ Game.prototype.load = function(transitions, state, actor) {
     this.rk,
     this.state.sm.stack,
     this.state.sm.waiting,
+    this.state.sm.response,
     {
       pushCallback: stateLogger.bind(self),
     },
@@ -92,21 +94,17 @@ Game.prototype.run = function() {
   return this.sm.run()
 }
 
-Game.prototype.submit = function({ actor, name, option }) {
-  const waiting = this.getWaiting()
+Game.prototype.submit = function(response) {
+  const { actor, name, option } = response
+  const waiting = this.getWaiting(actor)
+  util.assert(!!waiting, `Got response from ${actor}, but not waiting for that player`)
+
   const action = waiting.actions[0]
-  util.assert(
-    waiting.actor === actor,
-    `Waiting for ${waiting.actor} but got action from ${actor}`
-  )
   util.assert(action.name === name, `Waiting for action ${action.name} but got ${name}`)
   util.assert(Array.isArray(option), `Got non-array selection: ${option}`)
 
   this.rk.sessionStart(session => {
-    session.put(waiting, 'response', {
-      name,
-      option
-    })
+    session.splice(this.state.sm.response, 0, this.state.sm.response.length, response)
   })
 
   this.sm.run()
@@ -313,9 +311,18 @@ Game.prototype.getVipersNumAvailable = function() {
   return this.getZoneByName('ships.vipers').cards.length
 }
 
-Game.prototype.getWaiting = function() {
+Game.prototype.getWaiting = function(player) {
+  if (player) {
+    player = this._adjustPlayerParam(player)
+  }
+
   if (this.state.sm.waiting.length) {
-    return this.state.sm.waiting[0]
+    if (player) {
+      return this.state.sm.waiting.find(w => w.actor === player.name)
+    }
+    else {
+      return this.state.sm.waiting
+    }
   }
   else {
     return undefined
