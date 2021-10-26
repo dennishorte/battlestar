@@ -106,10 +106,10 @@ function distributeLoyaltyCards(context) {
 
   game.rk.sessionStart(session => {
     for (let i = 0; i < humanCount; i++) {
-      game.mMoveByIndices('decks.human', 0, 'decks.loyalty', 0)
+      game.mMoveCard('decks.human', 'decks.loyalty')
     }
     for (let i = 0; i < cylonCount; i++) {
-      game.mMoveByIndices('decks.cylon', 0, 'decks.loyalty', 0)
+      game.mMoveCard('decks.cylon', 'decks.loyalty')
     }
 
     game.mLog({
@@ -124,12 +124,12 @@ function distributeLoyaltyCards(context) {
 
     for (const player of game.getPlayerAll()) {
       const playerZone = game.getZoneByPlayer(player)
-      game.mMoveByIndices('decks.loyalty', 0, playerZone.name, playerZone.length)
+      game.mMoveCard('decks.loyalty', playerZone)
     }
 
     if (gaiusPlayer) {
       const playerZone = game.getZoneByPlayer(gaiusPlayer)
-      game.mMoveByIndices('decks.loyalty', 0, playerZone.name, playerZone.length)
+      game.mMoveCard('decks.loyalty', playerZone.name)
 
       game.mLog({
         template: '{player} receives a second loyalty as Gaius Baltar',
@@ -141,7 +141,7 @@ function distributeLoyaltyCards(context) {
     }
 
     if (sympathizer) {
-      game.mMoveByIndices('decks.sympathizer', 0, 'decks.loyalty', 0)
+      game.mMoveCard('decks.sympathizer', 'decks.loyalty')
       game.mLog({
         template: 'Sympathizer card added to the loyalty deck',
         actor: 'admin',
@@ -184,14 +184,14 @@ function initialize(context) {
     })
 
     for (let i = 0; i < 3; i++) {
-      game.mMoveByIndices('ships.raiders', 0, 'space.space0', 0)
+      game.mMoveCard('ships.raiders', 'space.space0')
     }
     for (let i = 0; i < 2; i++) {
-      game.mMoveByIndices('decks.civilian', 0, 'space.space3', 0)
+      game.mMoveCard('decks.civilian', 'space.space3')
     }
-    game.mMoveByIndices('ships.basestarA', 0, 'space.space0', 0)
-    game.mMoveByIndices('ships.vipers', 0, 'space.space4', 0)
-    game.mMoveByIndices('ships.vipers', 0, 'space.space5', 0)
+    game.mMoveCard('ships.basestarA', 'space.space0')
+    game.mMoveCard('ships.vipers', 'space.space4')
+    game.mMoveCard('ships.vipers', 'space.space5')
   })
 
   context.done()

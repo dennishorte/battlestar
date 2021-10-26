@@ -7,6 +7,31 @@ const util = require('../lib/util.js')
 
 const Actions = {}
 
+Actions.aAddDestinyCards = function() {
+  const destiny = this.getZoneByName('destiny')
+  util.assert(destiny.cards.length % 2 === 0, 'Odd number of cards in destiny deck')
+
+  // refill the destiny zone if it is empty
+  if (destiny.cards.length === 0) {
+    this.mLog({ template: 'refilling destiny deck' })
+    for (const skill of bsgutil.skillList) {
+      if (skill === 'treachery') {
+        continue
+      }
+
+      const deck = game.getZoneByName(`decks.${skill}`)
+      for (let i = 0; i < 2; i++) {
+        game.mMoveCard(deck, destiny)
+      }
+    }
+  }
+
+  // Move two destiny cards into the crisis pool
+  for (let i = 0; i < 2; i++) {
+    game.mMoveCard('destiny', 'crisisPool')
+  }
+}
+
 Actions.aAssignAdmiral = function(player) {
   player = this._adjustPlayerParam(player)
   const card = this.getCardByName('Admiral')
@@ -182,6 +207,32 @@ Actions.aSelectSkillCheckResult = function(result) {
   // End the existing session and rerun the current transition.
   this.rk.session.commit()
   this.run()
+}
+
+// Uses the lowest value card of the provided name
+Actions.aUseSkillCardByName = function(player, name) {
+  player = this._adjustPlayerParam(player)
+
+  const cards = this
+    .getZoneByPlayer(player)
+    .cards
+    .filter(c => c.name === name)
+    .sort((l, r) => l.value - r.value)
+
+  util.assert(cards.length, `${player.name} doesn't have any cards named ${name}`)
+
+  const card = cards[0]
+  const discard = this.getZoneDiscardByCard(card).cards
+
+  this.rk.session.move(card, discard)
+  this.mLog({
+    template: '{player} uses {card} {value}',
+    args: {
+      player: player.name,
+      card: card,
+      value: card.value
+    }
+  })
 }
 
 

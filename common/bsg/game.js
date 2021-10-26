@@ -152,6 +152,12 @@ Game.prototype.checkPlayerDrewSkillsThisTurn = function(player) {
   return player.turnFlags.drewCards
 }
 
+Game.prototype.checkPlayerHasCardByName = function(player, name) {
+  player = this._adjustPlayerParam(player)
+  const hand = this.getZoneByPlayer(player).cards
+  return !!hand.find(c => c.name === name)
+}
+
 Game.prototype.checkPlayerIsAtLocation = function(player, name) {
   player = this._adjustPlayerParam(player)
   const zone = this.getZoneByPlayerLocation(player)
@@ -259,12 +265,16 @@ Game.prototype.getPlayerCurrentTurn = function() {
   return this.getPlayerByIndex(index)
 }
 
-Game.prototype.getPlayerNext = function() {
+Game.prototype.getPlayerFollowing = function(player) {
+  player = this._adjustPlayerParam(player)
   const players = this.getPlayerAll()
-  const current = this.getPlayerCurrentTurn()
-  const currentIndex = players.findIndex(p => p.name === current.name)
-  const nextIndex = (currentIndex + 1) % players.length
+  const playerIndex = players.findIndex(p => p.name === player.name)
+  const nextIndex = (playerIndex + 1) % players.length
   return players[nextIndex]
+}
+
+Game.prototype.getPlayerNext = function() {
+  return this.getPlayerFollowing(this.getPlayerCurrentTurn())
 }
 
 Game.prototype.getPlayerAll = function() {
@@ -393,6 +403,31 @@ Game.prototype.hackImpersonate = function(player) {
   this.actor = player.name
 }
 
+Game.prototype.mAdjustCardVisibilityToNewZone = function(zone, card) {
+  zone = this._adjustZoneParam(zone)
+  card = this._adjustCardParam(card)
+
+  const zoneVis = zone.visibility || zone.kind
+
+  if (zoneVis === 'open') {
+    this.rk.session.replace(card.visibility, this.getPlayerAll().map(p => p.name))
+  }
+  else if (zoneVis === 'president') {
+    this.rk.session.replace(card.visibility, [this.getPlayerWithCard('President').name])
+  }
+  else if (zoneVis === 'owner') {
+    this.rk.session.replace(card.visibility, [zone.owner])
+  }
+  else if (zoneVis === 'deck'
+           || zoneVis === 'hidden'
+           || zoneVis === 'bag') {
+    this.rk.session.replace(card.visibility, [])
+  }
+  else {
+    throw `Unknown zone visibility (${zoneVis}) for zone ${zone.name}`
+  }
+}
+
 Game.prototype.mClearWaiting = function() {
   this.sm.clearWaiting()
 }
@@ -401,25 +436,21 @@ Game.prototype.mDrawSkillCard = function(player, skill) {
   player = this._adjustPlayerParam(player)
 
   const zone = this.getZoneBySkill(skill)
-  this.mMaybeReshuffleSkillDeck(zone)
+  this.mMaybeReshuffleDeck(zone)
 
   if (zone.cards.length === 0) {
     throw new Error(`No cards left in ${skill} deck, even after reshuffle`)
   }
 
   const playerHand = this.getZoneByPlayer(player)
-
-  this.mMoveByIndices(
-    zone.name, 0,
-    playerHand.name, playerHand.length
-  )
+  this.mMoveCard(zone, playerHand)
 }
 
 Game.prototype.mLaunchViper = function(position) {
   const spaceZoneName = position === 'Lower Left' ? 'space.space5' : 'space.space4'
   const spaceZone = this.getZoneByName(spaceZoneName)
   const viperZone = this.getZoneByName('ships.vipers')
-  this.mMoveByIndices(viperZone.name, 0, spaceZone.name, spaceZone.cards.length)
+  this.mMoveCard(viperZone, spaceZone)
 }
 
 Game.prototype.mLog = function(msg) {
@@ -437,42 +468,59 @@ Game.prototype.mLog = function(msg) {
   this.rk.session.push(this.state.log, util.deepcopy(msg))
 }
 
-Game.prototype.mMaybeReshuffleSkillDeck = function(zone) {
+Game.prototype.mMaybeReshuffleDeck = function(zone) {
   if (zone.cards.length > 0) {
-    return
+    return false
   }
 
-  const skillName = zone.name.split('.').slice(-1)[0]
-  const discardName = `discard.${skillName}`
+  const discardName = zone.name.replace('decks.', 'discard.')
   const discardZone = this.getZoneByName(discardName)
 
   if (discardZone.cards.length === 0) {
     this.mLog({
-      template: '{skill} deck and discard both empty. Unable to reshuffle',
+      template: '{zone} deck and discard both empty. Unable to reshuffle',
       args: {
-        skill: skillName
+        zone: zone.name
       }
     })
   }
   else {
     mLog({
-      template: 'Shuffling discard pile of {skill} to make a new draw pile',
+      template: 'Shuffling discard pile of {zone} to make a new draw pile',
       args: {
-        skill: skillName
+        zone: zone.name
       },
     })
 
-    const cards = [...discardZone.cards]
-    util.array.shuffle(cards)
-
-    this.rk.session.replace(zone.cards, cards)
+    this.rk.session.replace(zone.cards, discardZone.cards)
     this.rk.session.replace(discardZone.cards, [])
+    this.mShuffleZone(zone)
   }
 }
 
+Game.prototype.mMaybeShuffleBag = function(zone) {
+  zone = this._adjustZoneParam(zone)
+  if (zone.kind === 'bag') {
+    this.mShuffleZone(zone)
+  }
+}
+
+// This function takes care of all the details of card movement, including
+// reshuffling discard piles, visibility, etc.
+Game.prototype.mMoveCard = function(source, target) {
+  source = this._adjustZoneParam(source)
+  target = this._adjustZoneParam(target)
+
+  this.mMaybeReshuffleDeck(source)
+  const card = source.cards[0]
+  this.mMoveByIndices(source, 0, target, target.cards.length)
+  this.mMaybeShuffleBag(target)
+  this.mAdjustCardVisibilityToNewZone(target, card)
+}
+
 Game.prototype.mMoveByIndices = function(sourceName, sourceIndex, targetName, targetIndex) {
-  const source = this.getZoneByName(sourceName).cards
-  const target = this.getZoneByName(targetName).cards
+  const source = this._adjustZoneParam(sourceName).cards
+  const target = this._adjustZoneParam(targetName).cards
   const card = source[sourceIndex]
   this.rk.session.splice(source, sourceIndex, 1)
   this.rk.session.splice(target, targetIndex, 0, card)
@@ -501,7 +549,24 @@ Game.prototype.mSetSkillCheck = function(check) {
   util.assert(!this.skillCheck, "Skill check in progress. Can't set a new one.")
   check = util.deepcopy(check)
   check.result = ''
+  check.scientificResearch = false
+  check.investigativeCommittee = false
+  check.discussion = {}
+  for (const player of this.getPlayerAll()) {
+    check.discussion[player.name] = {
+      support: '',
+      useScientificResearch: false,
+      useInvestigativeCommitee: false,
+    }
+  }
   this.rk.session.put(this.state, 'skillCheck', check)
+}
+
+Game.prototype.mShuffleZone = function(zone) {
+  zone = this._adjustZoneParam(zone)
+  const cards = [...zone.cards]
+  util.array.shuffle(cards)
+  this.rk.session.replace(zone.cards, cards)
 }
 
 Game.prototype.mStartNextTurn = function() {

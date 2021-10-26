@@ -1047,7 +1047,7 @@ describe('adhoc transitions', () => {
         name: 'Action',
         option: [{
           name: 'Location Action',
-          option: ['Brig'],
+          option: ["Admiral's Quarters"],
         }]
       })
       if (beforeChoose) {
@@ -1067,48 +1067,88 @@ describe('adhoc transitions', () => {
     })
 
     describe('discuss', () => {
-      test('first step is discuss', () => {
+      test('all players can act simultaneously', () => {
         const game = _sendTomToBrig()
-        const waiting = game.getWaiting('micah')
-        const action = waiting.actions[0]
-        expect(action.name).toBe('Skill Check - Discuss')
-        expect(action.options.sort()).toStrictEqual([
-          'a little',
-          'a lot',
-          'none',
-          'some',
-        ])
+        const waitingActors = game.getWaiting().map(w => w.actor).sort()
+        expect(waitingActors).toStrictEqual(['dennis', 'micah', 'tom'])
       })
 
-      test.skip('discuss step allows contributions in any order', () => {
+      test('players can submit in any order', () => {
+        const game = _sendTomToBrig()
+        game.submit({
+          actor: 'tom',
+          name: 'Skill Check - Discuss',
+          option: [{
+            name: 'How much can you help?',
+            option: ['a little'],
+          }]
+        })
 
+        // expect no errors
+
+        game.submit({
+          actor: 'micah',
+          name: 'Skill Check - Discuss',
+          option: [{
+            name: 'How much can you help?',
+            option: ['none'],
+          }]
+        })
+
+        // expect no errors
       })
 
-      test.skip('skill check owner can start skill check', () => {
+      test('players can cancel their initial selection', () => {
+        const game = _sendTomToBrig()
+        game.submit({
+          actor: 'tom',
+          name: 'Skill Check - Discuss',
+          option: [{
+            name: 'How much can you help?',
+            option: ['a little'],
+          }],
+        })
 
+        expect(game.getWaiting('tom').actions[0].name).toBe('Skill Check - Discuss')
+        expect(game.getWaiting('tom').actions[0].options).toStrictEqual([{
+          name: 'Change Answer',
+          options: ['yes'],
+        }])
+
+        game.submit({
+          actor: 'tom',
+          name: 'Skill Check - Discuss',
+          option: [{
+            name: 'Change Answer',
+            option: ['yes'],
+          }]
+        })
+
+        expect(game.getWaiting('tom').actions[0].name).toBe('Skill Check - Discuss')
+        expect(game.getSkillCheck().discussion['tom'].support).toBe('')
       })
-    })
 
-    describe('choose', () => {
-      test('if there is a choice, it is made before any cards are commited', () => {
+      test('current player can advance to next step', () => {
+        const game = _sendTomToBrig()
 
+        const optionNames1 = game.getWaiting('dennis').actions[0].options.map(o => o.name)
+        expect(optionNames1).toEqual(expect.arrayContaining(['Start Skill Check']))
+
+        // Can submit plans and still advance to the next step
+        game.submit({
+          actor: 'dennis',
+          name: 'Skill Check - Discuss',
+          option: [{
+            name: 'How much can you help?',
+            option: ['a little'],
+          }],
+        })
+
+        const optionNames2 = game.getWaiting('dennis').actions[0].options.map(o => o.name)
+        expect(optionNames2).toEqual(expect.arrayContaining(['Start Skill Check']))
       })
 
-      test('if the selected choice is not a skill check, the skill check ends', () => {
-
-      })
-    })
-
-    describe('pre-check modifiers', () => {
-      test('players get an opportunity to apply modifiers before anyone adds cards', () => {
-
-      })
-
-      test('modifiers are actually applied', () => {
-
-      })
-
-      test("modifiers can be added 'in advance' during the discuss step", () => {
+      test.skip('player can choose non-skill check choice if available', () => {
 
       })
     })
