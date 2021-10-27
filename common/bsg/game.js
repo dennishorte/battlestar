@@ -552,11 +552,17 @@ Game.prototype.mSetSkillCheck = function(check) {
   check.scientificResearch = false
   check.investigativeCommittee = false
   check.discussion = {}
+  check.addCards = {}
   for (const player of this.getPlayerAll()) {
     check.discussion[player.name] = {
       support: '',
       useScientificResearch: false,
       useInvestigativeCommitee: false,
+    }
+    check.addCards[player.name] = {
+      submitted: false,
+      numAdded: 0,
+      useDeclareEmergency: false,
     }
   }
   this.rk.session.put(this.state, 'skillCheck', check)

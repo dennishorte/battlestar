@@ -2,6 +2,7 @@
    All actions are automatically wrapped in a session.
  */
 
+const bsgutil = require('./util.js')
 const util = require('../lib/util.js')
 
 
@@ -19,16 +20,16 @@ Actions.aAddDestinyCards = function() {
         continue
       }
 
-      const deck = game.getZoneByName(`decks.${skill}`)
+      const deck = this.getZoneByName(`decks.${skill}`)
       for (let i = 0; i < 2; i++) {
-        game.mMoveCard(deck, destiny)
+        this.mMoveCard(deck, destiny)
       }
     }
   }
 
   // Move two destiny cards into the crisis pool
   for (let i = 0; i < 2; i++) {
-    game.mMoveCard('destiny', 'crisisPool')
+    this.mMoveCard('destiny', 'crisisPool')
   }
 }
 

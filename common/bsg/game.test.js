@@ -764,7 +764,7 @@ describe('player turn', () => {
           expect(action.name).toBe('Skill Check - Discuss')
         })
 
-        test('skill check passed moves chosen player to brig', () => {
+        test.skip('skill check passed moves chosen player to brig', () => {
           const game = _takeAction('Location Action', "Admiral's Quarters")
           game.submit({
             actor: 'dennis',
@@ -777,7 +777,7 @@ describe('player turn', () => {
           expect(playerLocation.name).toBe('locations.brig')
         })
 
-        test('skill check failed means nothing happens', () => {
+        test.skip('skill check failed means nothing happens', () => {
           const game = _takeAction('Location Action', "Admiral's Quarters")
           game.submit({
             actor: 'dennis',
@@ -1036,171 +1036,219 @@ describe('adhoc transitions', () => {
     })
 
   })
+})
 
-  describe('skill-check', () => {
-    function _sendTomToBrig(beforeChoose) {
-      const factory = new GameFixtureFactory()
-      const game = factory.build().advanceTo('player-turn-action').game
-      game.run()
+describe('skill checks', () => {
+
+  function _sendTomToBrig(beforeChoose) {
+    const factory = new GameFixtureFactory()
+    const game = factory.build().advanceTo('player-turn-action').game
+    game.run()
+    game.submit({
+      actor: 'dennis',
+      name: 'Action',
+      option: [{
+        name: 'Location Action',
+        option: ["Admiral's Quarters"],
+      }]
+    })
+    if (beforeChoose) {
+      beforeChoose(game)
+    }
+    game.submit({
+      actor: 'dennis',
+      name: 'Choose a Player',
+      option: ['tom']
+    })
+
+    return game
+  }
+
+  function _addCardsFixture(options) {
+    options = options || {}
+
+    const game = _sendTomToBrig()
+    game.submit({
+      actor: 'dennis',
+      name: 'Skill Check - Discuss',
+      option: [
+        {
+          name: 'How much can you help?',
+          option: ['a little'],
+        },
+        {
+          name: 'Start Skill Check',
+          option: ['yes'],
+        },
+      ],
+    })
+
+    game.rk.sessionStart(session => {
+      if (options.useScientificResearch) {
+        session.put(game.getSkillCheck(), 'scientificResearch', true)
+      }
+      if (options.useInvestigativeCommitee) {
+        session.put(game.getSkillCheck(), 'investigativeCommittee', true)
+      }
+    })
+
+    return game
+  }
+
+
+  describe('skill-check-discuss', () => {
+    test('all players can act simultaneously', () => {
+      const game = _sendTomToBrig()
+      const waitingActors = game.getWaiting().map(w => w.actor).sort()
+      expect(waitingActors).toStrictEqual(['dennis', 'micah', 'tom'])
+    })
+
+    test('players can submit in any order', () => {
+      const game = _sendTomToBrig()
       game.submit({
-        actor: 'dennis',
-        name: 'Action',
+        actor: 'tom',
+        name: 'Skill Check - Discuss',
         option: [{
-          name: 'Location Action',
-          option: ["Admiral's Quarters"],
+          name: 'How much can you help?',
+          option: ['a little'],
         }]
       })
-      if (beforeChoose) {
-        beforeChoose(game)
-      }
+
+      // expect no errors
+
+      game.submit({
+        actor: 'micah',
+        name: 'Skill Check - Discuss',
+        option: [{
+          name: 'How much can you help?',
+          option: ['none'],
+        }]
+      })
+
+      // expect no errors
+    })
+
+    test('players can cancel their initial selection', () => {
+      const game = _sendTomToBrig()
+      game.submit({
+        actor: 'tom',
+        name: 'Skill Check - Discuss',
+        option: [{
+          name: 'How much can you help?',
+          option: ['a little'],
+        }],
+      })
+
+      expect(game.getWaiting('tom').actions[0].name).toBe('Skill Check - Discuss')
+      expect(game.getWaiting('tom').actions[0].options).toStrictEqual([{
+        name: 'Change Answer',
+        options: ['yes'],
+      }])
+
+      game.submit({
+        actor: 'tom',
+        name: 'Skill Check - Discuss',
+        option: [{
+          name: 'Change Answer',
+          option: ['yes'],
+        }]
+      })
+
+      expect(game.getWaiting('tom').actions[0].name).toBe('Skill Check - Discuss')
+      expect(game.getSkillCheck().discussion['tom'].support).toBe('')
+    })
+
+    test('current player can advance to next step', () => {
+      const game = _sendTomToBrig()
+
+      const optionNames1 = game.getWaiting('dennis').actions[0].options.map(o => o.name)
+      expect(optionNames1).toEqual(expect.arrayContaining(['Start Skill Check']))
+
+      // Can submit plans and still advance to the next step
       game.submit({
         actor: 'dennis',
-        name: 'Choose a Player',
-        option: ['tom']
+        name: 'Skill Check - Discuss',
+        option: [{
+          name: 'How much can you help?',
+          option: ['a little'],
+        }],
       })
 
-      return game
-    }
+      const optionNames2 = game.getWaiting('dennis').actions[0].options.map(o => o.name)
+      expect(optionNames2).toEqual(expect.arrayContaining(['Start Skill Check']))
+    })
 
-    test('check is available in game object', () => {
+    test.skip('player can choose non-skill check choice if available', () => {
+
+    })
+  })
+
+  describe('skill-check-add-cards', () => {
+
+    test('destiny cards are added', () => {
+      const game = _addCardsFixture()
+      const crisisPool = game.getZoneByName('crisisPool')
+      const destiny = game.getZoneByName('destiny')
+      expect(destiny.cards.length).toBe(8)
+      expect(crisisPool.cards.length).toBe(2)
+    })
+
+    test('the player after the current turn player goes first', () => {
+      const game = _addCardsFixture()
+      const waiting = game.getWaiting()
+      expect(waiting.length).toBe(1)
+      expect(waiting[0].actor).toBe('micah')
+    })
+
+    test.skip('step ends after current player finished', () => {
+      const game = _addCardsFixture()
+      game.submit({
+        actor: 'micah',
+        name: 'Skill Check - Add Cards',
+        option: ['Do Nothing']
+      })
+      console.log(game.getWaiting())
+      game.submit({
+        actor: 'tom',
+        name: 'Skill Check - Add Cards',
+        option: ['Do Nothing']
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Skill Check - Add Cards',
+        option: ['Do Nothing']
+      })
+      const waiting = game.getWaiting()
+      expect(waiting[0].name).toBe('Skill Check - Post Reveal')
+    })
+
+    test('options are separated into positive and negative sections', () => {
 
     })
 
-    describe('discuss', () => {
-      test('all players can act simultaneously', () => {
-        const game = _sendTomToBrig()
-        const waitingActors = game.getWaiting().map(w => w.actor).sort()
-        expect(waitingActors).toStrictEqual(['dennis', 'micah', 'tom'])
-      })
-
-      test('players can submit in any order', () => {
-        const game = _sendTomToBrig()
-        game.submit({
-          actor: 'tom',
-          name: 'Skill Check - Discuss',
-          option: [{
-            name: 'How much can you help?',
-            option: ['a little'],
-          }]
-        })
-
-        // expect no errors
-
-        game.submit({
-          actor: 'micah',
-          name: 'Skill Check - Discuss',
-          option: [{
-            name: 'How much can you help?',
-            option: ['none'],
-          }]
-        })
-
-        // expect no errors
-      })
-
-      test('players can cancel their initial selection', () => {
-        const game = _sendTomToBrig()
-        game.submit({
-          actor: 'tom',
-          name: 'Skill Check - Discuss',
-          option: [{
-            name: 'How much can you help?',
-            option: ['a little'],
-          }],
-        })
-
-        expect(game.getWaiting('tom').actions[0].name).toBe('Skill Check - Discuss')
-        expect(game.getWaiting('tom').actions[0].options).toStrictEqual([{
-          name: 'Change Answer',
-          options: ['yes'],
-        }])
-
-        game.submit({
-          actor: 'tom',
-          name: 'Skill Check - Discuss',
-          option: [{
-            name: 'Change Answer',
-            option: ['yes'],
-          }]
-        })
-
-        expect(game.getWaiting('tom').actions[0].name).toBe('Skill Check - Discuss')
-        expect(game.getSkillCheck().discussion['tom'].support).toBe('')
-      })
-
-      test('current player can advance to next step', () => {
-        const game = _sendTomToBrig()
-
-        const optionNames1 = game.getWaiting('dennis').actions[0].options.map(o => o.name)
-        expect(optionNames1).toEqual(expect.arrayContaining(['Start Skill Check']))
-
-        // Can submit plans and still advance to the next step
-        game.submit({
-          actor: 'dennis',
-          name: 'Skill Check - Discuss',
-          option: [{
-            name: 'How much can you help?',
-            option: ['a little'],
-          }],
-        })
-
-        const optionNames2 = game.getWaiting('dennis').actions[0].options.map(o => o.name)
-        expect(optionNames2).toEqual(expect.arrayContaining(['Start Skill Check']))
-      })
-
-      test.skip('player can choose non-skill check choice if available', () => {
-
-      })
-    })
-
-    describe('add cards', () => {
-      test('destiny cards are added', () => {
-
-      })
-
-      test('options are separated into positive and negative sections', () => {
-
-      })
-
-      test('investigative committee causes cards to be face up', () => {
-
-      })
-
-      test('scientific research causes blue cards to become positive', () => {
-
-      })
-
-      test('the player after the current turn player goes first', () => {
-
-      })
-
-      test('players in the brig can only add 1 card', () => {
-
-      })
-
-      test('players can pre-enqueue declare emergency', () => {
-
-      })
-    })
-
-    describe('pre-reveal', () => {
-      test('Chief "Galen" Tyrol can use his Blind Devotion ability', () => {
-
-      })
-    })
-
-    describe('reveal', () => {
-    })
-
-    describe('post-check modifiers', () => {
-      test('players can add use declare emergency', () => {
-
-      })
-    })
-
-    describe('skill check result', () => {
+    test('investigative committee causes cards to be face up', () => {
 
     })
+
+    test('scientific research causes blue cards to become positive', () => {
+
+    })
+
+    test('players in the brig can only add 1 card', () => {
+
+    })
+
+    test('players can pre-enqueue declare emergency', () => {
+
+    })
+
+    test('Chief "Galen" Tyrol can pre-enqueue his Blind Devotion ability', () => {
+
+    })
+  })
+
+
+  describe('skill-check-post-reveal', () => {
 
   })
 })

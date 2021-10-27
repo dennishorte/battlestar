@@ -67,10 +67,8 @@ function handleResponse(context) {
       session.put(context.data, 'chosenPlayerName', chosenPlayerName)
       session.put(context.data, 'step', 'check')
       game.mClearWaiting()
-    })
 
-    context.push('skill-check', {
-      check: {
+      game.mSetSkillCheck({
         name: `Send ${chosenPlayerName} to the brig`,
         skills: ['leadership', 'tactics'],
         'skill check value': 7,
@@ -78,7 +76,8 @@ function handleResponse(context) {
         'pass effect': `${chosenPlayerName} is sent to the brig`,
         // 'partial pass effect': null,
         // 'fail effect': null,
-      },
+      })
     })
+    return context.push('skill-check')
   }
 }

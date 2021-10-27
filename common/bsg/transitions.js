@@ -382,8 +382,25 @@ const transitions = {
   'launch-self-in-viper': {
     func: require('./transitions/launchSelfInViper.js'),
   },
+
   'skill-check': {
-    func: require('./transitions/skillCheck.js'),
+    steps: [
+      'skill-check-discuss',
+      'skill-check-add-cards',
+      'skill-check-post-reveal',
+    ],
+  },
+
+  'skill-check-discuss': {
+    func: require('./transitions/skillCheckDiscuss.js')
+  },
+
+  'skill-check-add-cards': {
+    func: require('./transitions/skillCheckAddCards.js')
+  },
+
+  'skill-check-post-reveal': {
+    func: require('./transitions/skillCheckPostReveal.js')
   },
 }
 
