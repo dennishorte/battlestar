@@ -1,6 +1,7 @@
 module.exports = {
   at,
   path,
+  pathAll,
   setVerbose,
 }
 
@@ -54,8 +55,9 @@ function path(root, target) {
     throw `Invalid path target. Can only path objects and arrays. Got ${typeof target}: ${target}`
   }
 
-  const result = _pathRecursive(matcher, root, '')
-  if (!result) {
+  const matches = []
+  _pathRecursive(matcher, root, matches, '', { max: 1 })
+  if (!matches) {
     if (typeof target === 'object') {
       throw new Error(`Target not found: ${JSON.stringify(target)}`)
     }
@@ -63,35 +65,42 @@ function path(root, target) {
       throw new Error('No match for predicate')
     }
   }
-  return result
+  return matches[0]
 }
 
-function _pathRecursive(matcher, root, pathAccumulator) {
+function pathAll(root, predicate) {
+  const matches = []
+  _pathRecursive(predicate, root, matches, '', {})
+  return matches
+}
+
+function _pathRecursive(matcher, root, matches, pathAccumulator, options) {
   if (verbose) {
     console.log(pathAccumulator)
   }
   if (matcher(root)) {
-    return pathAccumulator || '.'
+    matches.push(pathAccumulator || '.')
+    return
   }
   else if (Array.isArray(root)) {
     for (let i = 0; i < root.length; i++) {
-      const result = _pathRecursive(matcher, root[i], pathAccumulator + `[${i}]`)
-      if (result) {
-        return result
+      _pathRecursive(matcher, root[i], matches, pathAccumulator + `[${i}]`, options)
+      if (options.max && matches.length >= options.max) {
+        return
       }
     }
-    return false
+    return
   }
   else if (typeof root === 'object') {
     for (const key of Object.keys(root)) {
-      const result = _pathRecursive(matcher, root[key], pathAccumulator + '.' + key)
-      if (result) {
-        return result
+      _pathRecursive(matcher, root[key], matches, pathAccumulator + '.' + key, options)
+      if (options.max && matches.length >= options.max) {
+        return
       }
     }
-    return false
+    return
   }
   else {
-    return false
+    return
   }
 }
