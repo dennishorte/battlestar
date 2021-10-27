@@ -1,6 +1,8 @@
 const bsgutil = require('./util.js')
 const util = require('../lib/util.js')
 
+const { stepFactory } = require('./transitions/factory.js')
+
 
 function characterSelection(context) {
   const game = context.state
@@ -217,7 +219,7 @@ function receiveInitialSkills(context) {
       session.addKey(context.data, 'playerIndex', 1)
     })
     const playerName = game.getPlayerByIndex(context.data.playerIndex).name
-    context.push('receive-initial-skills-do', { playerName })
+    return context.push('receive-initial-skills-do', { playerName })
   }
 
   else {
@@ -226,10 +228,10 @@ function receiveInitialSkills(context) {
     })
     if (context.data.playerIndex < game.getPlayerAll().length) {
       const playerName = game.getPlayerByIndex(context.data.playerIndex).name
-      context.push('receive-initial-skills-do', { playerName })
+      return context.push('receive-initial-skills-do', { playerName })
     }
     else {
-      context.done()
+      return context.done()
     }
   }
 }
@@ -286,12 +288,12 @@ function waitFunc(context) {
 
 const transitions = {
   root: {
-    steps: [
+    func: stepFactory([
       'initialize',
       'setup',
       'main',
       'END'
-    ],
+    ]),
   },
 
   'initialize': {
@@ -299,12 +301,12 @@ const transitions = {
   },
 
   'setup': {
-    steps: [
+    func: stepFactory([
       'character-selection',
       'distribute-title-cards',
       'distribute-loyalty-cards',
       'receive-initial-skills',
-    ]
+    ]),
   },
 
   'character-selection': {
@@ -336,15 +338,25 @@ const transitions = {
   },
 
   'player-turn': {
-    steps: [
-      'player-turn-receive-skills',
-      'player-turn-movement',
-      'player-turn-action',
-      'player-turn-crisis',
-      'player-turn-cylon-activation',
-      'player-turn-prepare-for-jump',
-      'player-turn-cleanup',
-    ],
+    func: stepFactory(
+      [
+        'player-turn-receive-skills',
+        'player-turn-movement',
+        'player-turn-action',
+        'player-turn-crisis',
+        'player-turn-cylon-activation',
+        'player-turn-prepare-for-jump',
+        'player-turn-cleanup',
+      ],
+      {
+        childData: (context) => {
+          const game = context.state
+          return {
+            playerName: game.getPlayerCurrentTurn().name,
+          }
+        },
+      }
+    ),
   },
 
   'player-turn-receive-skills': {
@@ -360,13 +372,13 @@ const transitions = {
     func: waitFunc,
   },
   'player-turn-cylon-activation': {
-    func: () => {}
+    func: waitFunc,
   },
   'player-turn-prepare-for-jump': {
-    func: () => {}
+    func: waitFunc,
   },
   'player-turn-cleanup': {
-    func: () => {}
+    func: waitFunc,
   },
 
   'activate-admirals-quarters': {
@@ -384,11 +396,11 @@ const transitions = {
   },
 
   'skill-check': {
-    steps: [
+    func: stepFactory([
       'skill-check-discuss',
       'skill-check-add-cards',
       'skill-check-post-reveal',
-    ],
+    ]),
   },
 
   'skill-check-discuss': {

@@ -38,7 +38,7 @@ function generateOptions(context) {
   else {
     options.push('Skip Action')
     return context.wait({
-      actor: context.data.playerName,
+      actor: player.name,
       actions: [{
         name: 'Action',
         options

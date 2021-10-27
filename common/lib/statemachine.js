@@ -55,30 +55,7 @@ function run() {
   }
 
   const transition = this.transitions[event.name]
-
-  // If there is an evaluation function, call it.
-  if (transition.func) {
-    return transition.func(context)
-  }
-
-  // Otherwise, advance through the steps of event.
-  else {
-    const nextStep = event.data.steps[0]
-    if (nextStep) {
-      this.rk.sessionStart(session => {
-        session.splice(event.data.steps, 0, 1)
-      })
-      if (event.data.playerName) {
-        return context.push(nextStep, { playerName: event.data.playerName })
-      }
-      else {
-        return context.push(nextStep)
-      }
-    }
-    else {
-      return context.done()
-    }
-  }
+  return transition.func(context)
 }
 
 function clearWaiting() {
@@ -123,10 +100,6 @@ function _push(eventName, data) {
     }
 
     const transition = this.transitions[eventName]
-    if (transition.steps) {
-      event.data.steps = [...transition.steps]
-    }
-
     session.push(this.stack, event)
   })
 
@@ -173,35 +146,9 @@ function _validateTransitions(transitions) {
 
   for (const [name, data] of Object.entries(transitions)) {
     _assertTransition(
-      data.func || data.steps,
-      `Transition ${name} has none of [func, steps]`
+      typeof data.func === 'function',
+      `${name}.func is not a function`
     )
-
-    if (data.steps) {
-      _assertTransition(
-        Array.isArray(data.steps),
-        `${name}.steps is not an array`,
-      )
-
-      _assertTransition(
-        data.steps.length > 0,
-        `${name}.steps is empty`
-      )
-
-      for (const step of data.steps) {
-        _assertTransition(
-          typeof step === 'string',
-          `${name}.steps contained a non-string step`,
-        )
-      }
-    }
-
-    if (data.func) {
-      _assertTransition(
-        typeof data.func === 'function',
-        `${name}.func is not a function`
-      )
-    }
   }
 }
 

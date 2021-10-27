@@ -8,7 +8,7 @@ module.exports = transitionFactory(
 
 function handleResponse(context) {
   const game = context.state
-  const player = game.getPlayerCurrentTurn()
+  const player = game.getPlayerByName(context.data.playerName)
   const selection = context.response.option[0]
 
   if (selection === 'Skip Movement') {
@@ -73,7 +73,7 @@ function handleResponse(context) {
 
 function generateOptions(context) {
   const game = context.state
-  const player = game.getPlayerCurrentTurn()
+  const player = game.getPlayerByName(context.data.playerName)
   const character = game.getCardCharacterByPlayer(player)
 
   if (game.getRound() === 1 && character.name === 'Karl "Helo" Agathon') {
