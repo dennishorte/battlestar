@@ -1,4 +1,5 @@
 const { transitionFactory } = require('./factory.js')
+const util = require('../../lib/util.js')
 
 module.exports = transitionFactory(
   {
@@ -13,7 +14,7 @@ function generateOptions(context) {
   const check = game.getSkillCheck()
 
   // Initialize
-  if (!context.data.playerName) {
+  if (!context.data.addCardsName) {
     _beginAddCardsPhase(context)
   }
 
@@ -49,9 +50,19 @@ function handleResponse(context) {
       }
 
       else if (opt.name === 'Help' || opt.name === 'Hinder') {
-        session.put(addCards, 'numAdded', numCards.numAdded + opt.option.length)
-        for (const card of opt.option) {
-          game.mAddCardToCrisisPool(card)
+        session.put(addCards, 'numAdded', addCards.numAdded + opt.option.length)
+        for (const cardOpt of opt.option) {
+          const tokens = cardOpt.split(',')
+          util.assert(tokens.length === 2, `Unknown card option: ${cardOpt}`)
+
+          const cardName = tokens[0]
+          const cardValue = parseInt(tokens[1])
+          const playerHand = game.getZoneByPlayer(player)
+          const card = playerHand.cards.find(c => c.name === cardName && c.value === cardValue)
+
+          util.assert(!!card, `Card not found in player hand: ${cardOpt}`)
+
+          game.mMoveCard(playerHand, 'crisisPool', card)
         }
       }
 
@@ -68,15 +79,15 @@ function handleResponse(context) {
       },
     })
 
-    if (player.name === game.getPlayerCurrentTurn().name) {
-      session.put(context.data, 'step', 'post reveal')
-    }
-    else {
-      session.put(context.data, 'addCardsName', game.getPlayerFollowing(player).name)
-    }
+    session.put(context.data, 'addCardsName', game.getPlayerFollowing(player).name)
   })
 
-  return generateOptions(context)
+  if (player.name === game.getPlayerCurrentTurn().name) {
+    return context.done()
+  }
+  else {
+    return generateOptions(context)
+  }
 }
 
 function _beginAddCardsPhase(context) {
@@ -122,6 +133,15 @@ function _addCardsOptionsForPlayer(game, check, player) {
   const positiveCards = []
   const negativeCards = []
 
+  for (const card of game.getCardsKindByPlayer('skill', player)) {
+    const optionName = `${card.name},${card.value}`
+    if (_cardHelps(check, card)) {
+      positiveCards.push(optionName)
+    }
+    else {
+      negativeCards.push(optionName)
+    }
+  }
 
   const options = [
     {
@@ -148,4 +168,11 @@ function _addCardsOptionsForPlayer(game, check, player) {
   })
 
   return options
+}
+
+function _cardHelps(check, card) {
+  return (
+    check.skills.includes(card.skill)
+    || (check.scientificResearch && card.skill === 'engineering')
+  )
 }

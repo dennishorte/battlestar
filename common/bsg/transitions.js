@@ -349,12 +349,7 @@ const transitions = {
         'player-turn-cleanup',
       ],
       {
-        childData: (context) => {
-          const game = context.state
-          return {
-            playerName: game.getPlayerCurrentTurn().name,
-          }
-        },
+        childData: (context) => ({ playerName: context.state.getPlayerCurrentTurn().name }),
       }
     ),
   },

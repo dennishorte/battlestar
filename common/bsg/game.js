@@ -90,6 +90,29 @@ Game.prototype.dumpLog = function() {
   console.log(output.join('\n'))
 }
 
+function _dumpZonesRecursive(root) {
+  const output = []
+
+  if (root.name) {
+    output.push(root.name)
+    for (const card of root.cards) {
+      output.push(`   ${card.id}, ${card.name}`)
+    }
+  }
+
+  else {
+    for (const zone of Object.values(root)) {
+      output.push(_dumpZonesRecursive(zone))
+    }
+  }
+
+  return output.join('\n')
+}
+
+Game.prototype.dumpZones = function(root) {
+  console.log(_dumpZonesRecursive(root || this.state.zones))
+}
+
 Game.prototype.run = function() {
   return this.sm.run()
 }
@@ -119,6 +142,8 @@ for (const [name, func] of Object.entries(actions)) {
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+// Checks
 
 Game.prototype.checkColonialOneIsDestroyed = function() {
   return this.state.flags.colonialOneDestroyed
@@ -422,6 +447,19 @@ Game.prototype.mAdjustCardVisibilityToNewZone = function(zone, card) {
            || zoneVis === 'hidden'
            || zoneVis === 'bag') {
     this.rk.session.replace(card.visibility, [])
+
+    /* try {
+     * }
+     * catch (e) {
+     *   // this.dumpZones(this.state.zones.crisisPool)
+     *   // console.log(card)
+     *   // const card2 = this.getCardById(card.id)
+     *   // console.log(card2)
+     *   // console.log(card === card2)
+     *   // console.log(jsonpath.pathAll(this.state, c => c.id === card.id))
+     *   // console.log(jsonpath.pathAll(this.state, c => c === card))
+     *   throw e
+     * } */
   }
   else {
     throw `Unknown zone visibility (${zoneVis}) for zone ${zone.name}`
@@ -465,6 +503,8 @@ Game.prototype.mLog = function(msg) {
   msg.id = this.getLog().length
   msg.indent = this.getLogIndent()
 
+  // Making a copy here makes sure that the log items are always distinct from
+  // wherever their original data came from.
   this.rk.session.push(this.state.log, util.deepcopy(msg))
 }
 
@@ -507,14 +547,28 @@ Game.prototype.mMaybeShuffleBag = function(zone) {
 
 // This function takes care of all the details of card movement, including
 // reshuffling discard piles, visibility, etc.
-Game.prototype.mMoveCard = function(source, target) {
+Game.prototype.mMoveCard = function(source, target, card) {
   source = this._adjustZoneParam(source)
   target = this._adjustZoneParam(target)
 
   this.mMaybeReshuffleDeck(source)
-  const card = source.cards[0]
-  this.mMoveByIndices(source, 0, target, target.cards.length)
+
+  let cardIndex = 0
+
+  if (card) {
+    card = this._adjustCardParam(card)
+    cardIndex = source.cards.findIndex(c => c.id === card.id)
+  }
+  else {
+    card = source.cards[0]
+  }
+
+  this.mMoveByIndices(source, cardIndex, target, target.cards.length)
   this.mMaybeShuffleBag(target)
+
+  // Refresh the card; it seems that its object "sometimes" gets changed by the shuffling
+  card = this.getCardById(card.id)
+
   this.mAdjustCardVisibilityToNewZone(target, card)
 }
 
@@ -547,6 +601,8 @@ Game.prototype.mSetPlayerIsRevealedCylon = function(player) {
 
 Game.prototype.mSetSkillCheck = function(check) {
   util.assert(!this.skillCheck, "Skill check in progress. Can't set a new one.")
+
+  // Make a deep copy so that any info copied from a card is no longer tied to that card
   check = util.deepcopy(check)
   check.result = ''
   check.scientificResearch = false
@@ -572,6 +628,10 @@ Game.prototype.mShuffleZone = function(zone) {
   zone = this._adjustZoneParam(zone)
   const cards = [...zone.cards]
   util.array.shuffle(cards)
+
+  // This operation somehow causes object references to change.
+  // I've walked through it several times and have no idea why.
+  // If you're getting weird errors, get your card anew with getCardById
   this.rk.session.replace(zone.cards, cards)
 }
 

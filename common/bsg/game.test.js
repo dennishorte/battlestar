@@ -1069,7 +1069,7 @@ describe('skill checks', () => {
   function _addCardsFixture(options) {
     options = options || {}
 
-    const game = _sendTomToBrig()
+    const game = _sendTomToBrig(options.beforeChoose)
     game.submit({
       actor: 'dennis',
       name: 'Skill Check - Discuss',
@@ -1202,14 +1202,13 @@ describe('skill checks', () => {
       expect(waiting[0].actor).toBe('micah')
     })
 
-    test.skip('step ends after current player finished', () => {
+    test('step ends after each player has submitted', () => {
       const game = _addCardsFixture()
       game.submit({
         actor: 'micah',
         name: 'Skill Check - Add Cards',
         option: ['Do Nothing']
       })
-      console.log(game.getWaiting())
       game.submit({
         actor: 'tom',
         name: 'Skill Check - Add Cards',
@@ -1221,7 +1220,25 @@ describe('skill checks', () => {
         option: ['Do Nothing']
       })
       const waiting = game.getWaiting()
-      expect(waiting[0].name).toBe('Skill Check - Post Reveal')
+      expect(waiting[0].actions[0].name).toBe('Skill Check - Post Reveal')
+    })
+
+    test('added cards are moved to the crisis pool', () => {
+      const game = _addCardsFixture()
+      const waiting = game.getWaiting('micah')
+      const helpCard = waiting.actions[0].options.find(o => o.name === 'Help').options[0]
+
+      game.submit({
+        actor: 'micah',
+        name: 'Skill Check - Add Cards',
+        option: [{
+          name: 'Help',
+          option: [helpCard],
+        }]
+      })
+
+      const crisisPool = game.getZoneByName('crisisPool')
+      expect(crisisPool.cards.length).toBe(3)
     })
 
     test('options are separated into positive and negative sections', () => {
