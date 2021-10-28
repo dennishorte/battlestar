@@ -1070,6 +1070,15 @@ describe('skill checks', () => {
     options = options || {}
 
     const game = _sendTomToBrig(options.beforeChoose)
+    game.rk.sessionStart(session => {
+      if (options.useScientificResearch) {
+        session.put(game.getSkillCheck(), 'scientificResearch', true)
+      }
+      if (options.useInvestigativeCommitee) {
+        session.put(game.getSkillCheck(), 'investigativeCommittee', true)
+      }
+    })
+
     game.submit({
       actor: 'dennis',
       name: 'Skill Check - Discuss',
@@ -1083,15 +1092,6 @@ describe('skill checks', () => {
           option: ['yes'],
         },
       ],
-    })
-
-    game.rk.sessionStart(session => {
-      if (options.useScientificResearch) {
-        session.put(game.getSkillCheck(), 'scientificResearch', true)
-      }
-      if (options.useInvestigativeCommitee) {
-        session.put(game.getSkillCheck(), 'investigativeCommittee', true)
-      }
     })
 
     return game
@@ -1180,6 +1180,26 @@ describe('skill checks', () => {
       expect(optionNames2).toEqual(expect.arrayContaining(['Start Skill Check']))
     })
 
+    test.skip('players can use Scientific Research', () => {
+
+    })
+
+    test.skip('players can use Investigative Committee', () => {
+
+    })
+
+    test.skip('no Scientific Research for skill checks that already have positive blue', () => {
+
+    })
+
+    test.skip('only the first player to use Scientific Research plays a card', () => {
+
+    })
+
+    test.skip('only the first player to use Investigative Committee plays a card', () => {
+
+    })
+
     test.skip('player can choose non-skill check choice if available', () => {
 
     })
@@ -1246,7 +1266,13 @@ describe('skill checks', () => {
     })
 
     test('investigative committee causes cards to be face up', () => {
+      const game = _addCardsFixture({
+        useInvestigativeCommitee: true,
+      })
 
+      const crisisPool = game.getZoneByName('crisisPool')
+      const visibilityLength = crisisPool.cards.map(c => c.visibility.length)
+      expect(visibilityLength).toStrictEqual([3, 3])
     })
 
     test('scientific research causes blue cards to become positive', () => {

@@ -434,7 +434,10 @@ Game.prototype.mAdjustCardVisibilityToNewZone = function(zone, card) {
 
   const zoneVis = zone.visibility || zone.kind
 
-  if (zoneVis === 'open') {
+  if (
+    zoneVis === 'open'
+    || (zone.name === 'crisisPool' && this.getSkillCheck().investigativeCommittee)
+  ) {
     this.rk.session.replace(card.visibility, this.getPlayerAll().map(p => p.name))
   }
   else if (zoneVis === 'president') {
@@ -447,19 +450,6 @@ Game.prototype.mAdjustCardVisibilityToNewZone = function(zone, card) {
            || zoneVis === 'hidden'
            || zoneVis === 'bag') {
     this.rk.session.replace(card.visibility, [])
-
-    /* try {
-     * }
-     * catch (e) {
-     *   // this.dumpZones(this.state.zones.crisisPool)
-     *   // console.log(card)
-     *   // const card2 = this.getCardById(card.id)
-     *   // console.log(card2)
-     *   // console.log(card === card2)
-     *   // console.log(jsonpath.pathAll(this.state, c => c.id === card.id))
-     *   // console.log(jsonpath.pathAll(this.state, c => c === card))
-     *   throw e
-     * } */
   }
   else {
     throw `Unknown zone visibility (${zoneVis}) for zone ${zone.name}`
