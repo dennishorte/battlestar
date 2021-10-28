@@ -183,6 +183,11 @@ function replace(object, value) {
 function locate(object) {
   const fullPath = this.path(object)
 
+  if (!fullPath) {
+    console.log(object)
+    throw new Error('Unable to find the specified object')
+  }
+
   let key
   let path
   if (fullPath.endsWith(']')) {
