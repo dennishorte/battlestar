@@ -1250,7 +1250,26 @@ describe('skill checks', () => {
     })
 
     test('scientific research causes blue cards to become positive', () => {
+      const game = _addCardsFixture({
+        useScientificResearch: true,
+      })
 
+      // Skip to Tom, who has blue cards in hand.
+      game.submit({
+        actor: 'micah',
+        name: 'Skill Check - Add Cards',
+        option: ['Do Nothing'],
+      })
+
+      const action = game
+        .getWaiting('tom')
+        .actions[0]
+        .options
+        .find(o => o.name === 'Help')
+        .options
+        .find(o => o.startsWith('Scientific') || o.startsWith('Repair'))
+
+      expect(action).toBeDefined()
     })
 
     test('players in the brig can only add 1 card', () => {
