@@ -1243,6 +1243,16 @@ describe('skill checks', () => {
       expect(waiting[0].actions[0].name).toBe('Skill Check - Post Reveal')
     })
 
+    test('options are separated into positive and negative sections', () => {
+      const game = _addCardsFixture()
+      const actionOptions = game.getWaiting('micah').actions[0].options
+      const helpOptions = actionOptions.find(o => o.name === 'Help').options
+      const hinderOptions = actionOptions.find(o => o.name === 'Hinder').options
+
+      expect(helpOptions.length).toBe(2)
+      expect(hinderOptions.length).toBe(1)
+    })
+
     test('added cards are moved to the crisis pool', () => {
       const game = _addCardsFixture()
       const waiting = game.getWaiting('micah')
@@ -1259,10 +1269,6 @@ describe('skill checks', () => {
 
       const crisisPool = game.getZoneByName('crisisPool')
       expect(crisisPool.cards.length).toBe(3)
-    })
-
-    test('options are separated into positive and negative sections', () => {
-
     })
 
     test('investigative committee causes cards to be face up', () => {
