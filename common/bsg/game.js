@@ -346,6 +346,31 @@ Game.prototype.getVipersNumAvailable = function() {
   return this.getZoneByName('ships.vipers').cards.length
 }
 
+/*
+    [
+      {
+        actor: '<PLAYER_NAME>',
+
+        // There is generally only a single action with multiple complex options.
+        // The most common case for multiple actions is when someone has a choice
+        // between two regular actions, such as in BSG when doing Executive Order.
+        actions: [{
+          name: '<ACTION_NAME>',
+          count: <NUMBER>,  // shorthand for min = k, max = k
+          min: <NUMBER>,  // default 0
+          max: <NUMBER>,  // default infinity
+          exclusive: <BOOLEAN>,  // If true, and choosing this, can't choose any other options
+          exclusiveKey: '<STRING>',  // Cannot choose more than one option with the same exclusiveKey
+          options: [
+            '<SIMPLE_OPTION>',
+            {
+              <ACTION_DEFINITION> // recursive
+            },
+          ],
+        }]
+      },
+    ]
+ */
 Game.prototype.getWaiting = function(player) {
   if (player) {
     player = this._adjustPlayerParam(player)
