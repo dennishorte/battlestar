@@ -158,6 +158,13 @@ function _addCardsOptionsForPlayer(game, check, player) {
     },
   ]
 
+  if (game.checkPlayerIsAtLocation(player, 'Brig')) {
+    for (const opt of options) {
+      opt.max = 1
+      opt.exclusiveKey = 'skill-cards'
+    }
+  }
+
   if (game.checkPlayerHasCardByName(player, 'Declare Emergency')) {
     options.push('Use Declare Emergency')
   }

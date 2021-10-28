@@ -1305,7 +1305,23 @@ describe('skill checks', () => {
     })
 
     test('players in the brig can only add 1 card', () => {
+      const game = _addCardsFixture()
 
+      // Skip to Tom, after putting him in the brig
+      game.rk.sessionStart(() => {
+        game.mMovePlayer('tom', 'locations.brig')
+      })
+      game.submit({
+        actor: 'micah',
+        name: 'Skill Check - Add Cards',
+        option: ['Do Nothing'],
+      })
+
+      const actionOptions = game.getWaiting('tom').actions[0].options
+      const help = actionOptions.find(o => o.name === 'Help')
+      const hinder = actionOptions.find(o => o.name === 'Hinder')
+      expect(help.exclusiveKey).toBeDefined()
+      expect(help.exclusiveKey).toBe(hinder.exclusiveKey)
     })
 
     test('players can pre-enqueue declare emergency', () => {
