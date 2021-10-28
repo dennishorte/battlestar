@@ -1097,6 +1097,26 @@ describe('skill checks', () => {
     return game
   }
 
+  function _postRevealFixture(options) {
+    const game = _addCardsFixture(options)
+    game.submit({
+      actor: 'micah',
+      name: 'Skill Check - Add Cards',
+      option: ['Do Nothing']
+    })
+    game.submit({
+      actor: 'tom',
+      name: 'Skill Check - Add Cards',
+      option: ['Do Nothing']
+    })
+    game.submit({
+      actor: 'dennis',
+      name: 'Skill Check - Add Cards',
+      option: ['Do Nothing']
+    })
+    return game
+  }
+
 
   describe('skill-check-discuss', () => {
     test('all players can act simultaneously', () => {
@@ -1201,6 +1221,10 @@ describe('skill checks', () => {
     })
 
     test.skip('player can choose non-skill check choice if available', () => {
+
+    })
+
+    test.skip('Sharon can use her Mysterious Intuition', () => {
 
     })
   })
@@ -1324,11 +1348,11 @@ describe('skill checks', () => {
       expect(help.exclusiveKey).toBe(hinder.exclusiveKey)
     })
 
-    test('players can pre-enqueue declare emergency', () => {
+    test.skip('players can pre-enqueue declare emergency', () => {
 
     })
 
-    test('Chief "Galen" Tyrol can pre-enqueue his Blind Devotion ability', () => {
+    test.skip('Chief "Galen" Tyrol can pre-enqueue his Blind Devotion ability', () => {
 
     })
   })
@@ -1336,7 +1360,74 @@ describe('skill checks', () => {
 
   describe('skill-check-post-reveal', () => {
 
+    test.skip('William Adama can choose to keep all the skill cards', () => {
+
+    })
+
   })
+
+})
+
+describe('crisis phase', () => {
+  function _crisisFixture() {
+
+  }
+
+  describe('choice cards', () => {
+
+  })
+
+  describe('cylon attack cards', () => {
+
+  })
+
+  describe('skill check cards', () => {
+
+  })
+})
+
+describe('crisis card effects', () => {
+  /* A Traitor Accused
+   * Admiral Grilled
+   * Analyze Enemy Fighter
+   * Bomb Threat
+   * Colonial Day
+   * Crippled Raider
+   * Cylon Screenings
+   * Forced Water Mining
+   * Fullfiller of Prophecy
+   * Informing the Public
+   * Keep Tabs on Visitor
+   * Network Computers
+   * Scouting for Fuel
+   * Scouting for Water
+   * Send Survey Team
+   * Water Sabotaged
+   * Crash Landing
+   * Cylon Accusation
+   * Cylon Tracking Device
+   * Cylon Virus
+   * Detector Sabotage
+   * Elections Loom
+   * Guilt by Collusion
+   * Hanger Accident
+   * Jump Computer Failure
+   * Legendary Discovery
+   * Loss of a Friend
+   * Low Supplies
+   * Mandatory Testing
+   * Missing G4 Explosives
+   * Prison Labor
+   * Prisoner Revolt
+   * Resistance
+   * Security Breach
+   * Terrorist Bomber
+   * Terrorist Investigations
+   * The Olympic Carrier
+   * Unexpected Reunion
+   * Unidentified Ship
+   * Weapon Malfunction
+   * Witch Hunt */
 })
 
 describe('misc functions', () => {
