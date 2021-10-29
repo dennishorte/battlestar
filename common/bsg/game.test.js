@@ -1369,8 +1369,8 @@ describe('skill checks', () => {
 
 })
 
-describe('crisis phase', () => {
-  function _crisisFixture(crisisName) {
+describe('player-turn-crisis', () => {
+  function _crisisFixture(crisisName, func) {
     const factory = new GameFixtureFactory()
     const game = factory.build().advanceTo('player-turn-crisis').game
 
@@ -1381,6 +1381,11 @@ describe('crisis phase', () => {
     game.rk.sessionStart(() => {
       game.mMoveByIndices(crisisDeck, crisisCardIndex, crisisDeck, 0)
     })
+
+    if (func) {
+      func(game)
+    }
+
     game.run()
 
     return game
@@ -1411,10 +1416,23 @@ describe('crisis phase', () => {
 
   describe('cylon attack cards', () => {
     test('deploy the expected units', () => {
+      const game = _crisisFixture('Ambush', (game) => game.aClearSpace())
 
+      expect(game.getZoneByName('space.space0').cards.map(c => c.name))
+        .toStrictEqual([ 'raider', 'raider', 'raider', 'raider' ])
+      expect(game.getZoneByName('space.space1').cards.map(c => c.name))
+        .toStrictEqual([])
+      expect(game.getZoneByName('space.space2').cards.map(c => c.name))
+        .toStrictEqual([ 'civilian' ])
+      expect(game.getZoneByName('space.space3').cards.map(c => c.name))
+        .toStrictEqual([ 'Basestar A', 'raider', 'raider', 'raider', 'raider' ])
+      expect(game.getZoneByName('space.space4').cards.map(c => c.name))
+        .toStrictEqual([ 'viper', 'viper', 'civilian' ])
+      expect(game.getZoneByName('space.space5').cards.map(c => c.name))
+        .toStrictEqual([ 'civilian' ])
     })
 
-    test('are moved to the keep zone if they have a lasting effect', () => {
+    test.skip('are moved to the keep zone if they have a lasting effect', () => {
 
     })
   })
@@ -1493,6 +1511,10 @@ describe('crisis card effects', () => {
 })
 
 describe('misc functions', () => {
+  describe.skip('aDeployShips', () => {
+
+  })
+
   describe.skip('aDestroyColonialOne', () => {
 
     test("Check works correctly", () => {

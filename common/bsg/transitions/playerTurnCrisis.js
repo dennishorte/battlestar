@@ -24,13 +24,7 @@ function generateOptions(context) {
   const crisis = game.getCrisis()
 
   if (crisis.type === 'Cylon Attack') {
-    return context.wait({
-      actor: 'dennis',
-      actions: [{
-        name: 'Crisis',
-        options: [],
-      }]
-    })
+    game.aDeployShips(crisis.deploy)
   }
 
   else if (crisis.type === 'Choice') {

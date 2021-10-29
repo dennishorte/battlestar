@@ -69,6 +69,19 @@ Actions.aBeginCrisis = function() {
   })
 }
 
+Actions.aClearSpace = function() {
+  this.mLog({
+    template: 'Clearing all ships from space'
+  })
+
+  for (let i = 0; i < 6; i++) {
+    const spaceZone = this.getZoneByName(`space.space${i}`)
+    while (spaceZone.cards.length) {
+      this.mDiscard(spaceZone.cards[0])
+    }
+  }
+}
+
 Actions.aDamageLocationByName = function(locationName) {
   // Get the damage token from the damage bag
   const bag = this.getZoneByName('decks.damageGalactica').cards
@@ -86,6 +99,66 @@ Actions.aDamageLocationByName = function(locationName) {
   // Move it to the damaged location
   const location = this.getZoneByLocationName(locationName)
   this.rk.session.move(token, location.cards, location.cards.length)
+}
+
+Actions.aDeployShips = function(deployData) {
+  this.mLog({ 'template': 'deploying ships' })
+
+  for (let i = 0; i < 6; i++) {
+    const spaceZone = this.getZoneByName(`space.space${i}`)
+    const shipNames = deployData[i]
+
+    for (const name of shipNames) {
+      if (name === 'basestar') {
+        let basestarZone = null
+        let basestarCard = null
+        for (const letter of ['A', 'B']) {
+          const tmpZone = this.getZoneByName(`ships.basestar${letter}`)
+          const tmpCard = tmpZone.cards.find(c => c.name === `Basestar ${letter}`)
+          if (tmpCard) {
+            basestarZone = tmpZone
+            basestarCard = tmpCard
+            break
+          }
+        }
+
+        if (basestarZone) {
+          this.mMoveCard(basestarZone, spaceZone, basestarCard)
+        }
+        else {
+          this.mLog({
+            template: 'Unable to deploy {ship}; supply is empty',
+            args: { ship: name }
+          })
+        }
+      }
+
+      else {
+        let shipZoneName
+        if (name === 'civilian') {
+          shipZoneName = 'decks.civilian'
+        }
+        else if (name === 'heavy raider') {
+          shipZoneName = 'ships.heavyRaiders'
+        }
+        else {
+          shipZoneName = `ships.${name}s`
+        }
+
+        const shipZone = this.getZoneByName(shipZoneName)
+
+        if (shipZone.cards.length === 0) {
+          this.mLog({
+            template: 'Unable to deploy {ship}; supply is empty',
+            args: { ship: name }
+          })
+        }
+        else {
+          this.mMoveCard(shipZone, spaceZone)
+        }
+      }
+    }
+  }
 }
 
 Actions.aDestroyColonialOne = function() {

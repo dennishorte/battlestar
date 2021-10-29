@@ -5,7 +5,7 @@ const transitions = require('../transitions.js')
 
 module.exports = GameFixtureFactory
 
-function GameFixtureFactory() {
+function GameFixtureFactory(options) {
   this.lobby = {
     game: 'BattleStar Galactica',
     name: 'Test Lobby',
@@ -19,7 +19,7 @@ function GameFixtureFactory() {
     ],
   }
 
-  this.options = {
+  this.options = Object.assign({
     players: [
       {
         character: 'Gaius Baltar',
@@ -37,7 +37,7 @@ function GameFixtureFactory() {
         startingSkills: ['tactics', 'piloting', 'engineering'],
       },
     ],
-  }
+  }, options)
 
   this.phase = -1
   this.game = new bsg.Game()

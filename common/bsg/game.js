@@ -490,6 +490,26 @@ Game.prototype.mClearWaiting = function() {
   this.sm.clearWaiting()
 }
 
+Game.prototype.mDiscard = function(cardId) {
+  if (typeof cardId !== 'string') {
+    cardId = cardId.id
+  }
+
+  const { card, zoneName } = this.getCardByPredicate(c => c.id === cardId)
+
+  if (card.kind.startsWith('ships.')) {
+    this.mMoveCard(zoneName, card.kind, card)
+  }
+
+  else if (card.kind === 'civilian') {
+    this.mMoveCard(zoneName, 'decks.civilian', card)
+  }
+
+  else {
+    throw new Error(`Unhandled discard: ${card.kind}`)
+  }
+}
+
 Game.prototype.mDrawSkillCard = function(player, skill) {
   player = this._adjustPlayerParam(player)
 
