@@ -364,7 +364,7 @@ const transitions = {
     func: require('./transitions/playerTurnAction.js'),
   },
   'player-turn-crisis': {
-    func: waitFunc,
+    func: require('./transitions/playerTurnCrisis.js'),
   },
   'player-turn-cylon-activation': {
     func: waitFunc,

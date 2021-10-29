@@ -261,6 +261,11 @@ Game.prototype.getCardsLoyaltyByPlayer = function(player) {
   return cards.filter(c => c.kind === 'loyalty')
 }
 
+Game.prototype.getCrisis = function() {
+  const zone = this.getZoneByName('common')
+  return zone.cards.find(c => c.kind === 'crisis' || c.kind === 'super_crisis')
+}
+
 Game.prototype.getCounterByName = function(name) {
   return this.state.counters[name]
 }

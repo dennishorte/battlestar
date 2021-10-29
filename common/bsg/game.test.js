@@ -470,7 +470,8 @@ describe('player turn', () => {
       game.run()
 
       const action = game.getWaiting('dennis').actions[0]
-      expect(action.name).toBe('test')
+      expect(action.name).not.toBe('Movement')
+      expect(action.name).not.toBe('Action')
     })
 
     describe("submit movement", () => {
@@ -667,7 +668,7 @@ describe('player turn', () => {
         option: ['Skip Action']
       })
 
-      expect(game.getWaiting('dennis').actions[0].name).toBe('test')
+      expect(game.getWaiting('dennis').actions[0].name).not.toBe('Action')
     })
 
     describe.skip('once per game actions', () => {
@@ -1369,20 +1370,75 @@ describe('skill checks', () => {
 })
 
 describe('crisis phase', () => {
-  function _crisisFixture() {
+  function _crisisFixture(crisisName) {
+    const factory = new GameFixtureFactory()
+    const game = factory.build().advanceTo('player-turn-crisis').game
 
+    const crisisDeck = game.getZoneByName('decks.crisis')
+    const crisisCardIndex = crisisDeck.cards.findIndex(c => c.name === crisisName)
+    util.assert(crisisCardIndex !== -1, `Unable to find crisis card: ${crisisName}`)
+
+    game.rk.sessionStart(() => {
+      game.mMoveByIndices(crisisDeck, crisisCardIndex, crisisDeck, 0)
+    })
+    game.run()
+
+    return game
   }
 
-  describe('choice cards', () => {
+  describe('cylon player', () => {
 
+  })
+
+  describe('choice cards', () => {
+    test('Admiral choice cards let admiral choose', () => {
+      const game = _crisisFixture('Build Cylon Detector')
+      expect(game.getWaiting().length).toBe(1)
+      expect(game.getWaiting('micah')).toBeDefined()
+    })
+
+    // This isn't a good test, since the president is the first player
+    test.skip('President choice cards let the president choose', () => {
+      const game = _crisisFixture('Food Shortage')
+      expect(game.getWaiting().length).toBe(1)
+      expect(game.getWaiting('dennis')).toBeDefined()
+    })
+
+    // Only optional skill checks give the current player a choice (at least in the base game)
+    test.skip('Current player choice cards let the current player choose', () => {
+    })
   })
 
   describe('cylon attack cards', () => {
+    test('deploy the expected units', () => {
 
+    })
+
+    test('are moved to the keep zone if they have a lasting effect', () => {
+
+    })
   })
 
   describe('skill check cards', () => {
+    test('skill check is launched', () => {
+      const game = _crisisFixture('Cylon Accusation')
+      const waiting = game.getWaiting()
+      expect(waiting.length).toBe(3)
+      expect(waiting[0].actions[0].name).toBe('Skill Check - Discuss')
+    })
+  })
 
+  describe('optional skill check cards', () => {
+    test('skill check is launched', () => {
+      const game = _crisisFixture('Water Sabotaged')
+      const waiting = game.getWaiting()
+      expect(waiting.length).toBe(3)
+      expect(waiting[0].actions[0].name).toBe('Skill Check - Discuss')
+    })
+
+    test.skip('current player has the choice', () => {
+
+    })
   })
 })
 
@@ -1428,6 +1484,12 @@ describe('crisis card effects', () => {
    * Unidentified Ship
    * Weapon Malfunction
    * Witch Hunt */
+
+  /* Massive Assault
+   * Bomb on Colonial One
+   * Cylon Intruders
+   * Fleet Mobilization
+   * Inbound Nukes */
 })
 
 describe('misc functions', () => {

@@ -106,6 +106,11 @@ function initialize(game) {
       cards: [],
       kind: 'open',
     },
+    keep: {  // Cards that need to stay in play
+      name: 'keep',
+      cards: [],
+      kind: 'open',
+    },
     players: makePlayerZones(game.players),
     ships: {
       vipers: makeVipersZone(),

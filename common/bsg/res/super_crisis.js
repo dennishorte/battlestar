@@ -16,7 +16,7 @@ module.exports =  [
     ]
   },
   {
-    name: 'Bomb on Colony 1',
+    name: 'Bomb on Colonial One',
     expansion: 'base game',
     type: 'Skill Check',
     cylonActivation: '',

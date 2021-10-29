@@ -59,6 +59,16 @@ Actions.aAssignPresident = function(player) {
   this.rk.session.move(card, playerHand)
 }
 
+Actions.aBeginCrisis = function() {
+  this.mMoveCard('decks.crisis', 'common')
+  const card = this.getZoneByName('common').cards.slice(-1)[0]
+
+  this.mLog({
+    template: '{card} crisis begins',
+    args: { card }
+  })
+}
+
 Actions.aDamageLocationByName = function(locationName) {
   // Get the damage token from the damage bag
   const bag = this.getZoneByName('decks.damageGalactica').cards

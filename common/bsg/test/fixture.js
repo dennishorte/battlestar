@@ -95,6 +95,16 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
     return this
   }
 
+  // Skip action
+  this.game.submit({
+    actor: 'dennis',
+    name: 'Action',
+    option: ['Skip Action'],
+  })
+  if (this._checkForTarget(targetTransitionName, targetPlayerName)) {
+    return this
+  }
+
   return this
 }
 
