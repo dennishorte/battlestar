@@ -230,7 +230,7 @@ module.exports =  [
     name: 'Boarding Parties',
     expansion: 'base game',
     type: 'Cylon Attack',
-    cylonActivation: 'Hvy Raider',
+    cylonActivation: 'Hvy Raiders',
     jumpTrack: false,
     effect: 'Surprise Assault: There are no vipers in this setup',
     deploy: [

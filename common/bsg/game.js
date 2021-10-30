@@ -149,6 +149,15 @@ Game.prototype.checkColonialOneIsDestroyed = function() {
   return this.state.flags.colonialOneDestroyed
 }
 
+Game.prototype.checkEffect = function(name) {
+  for (const card of this.getZoneByName('keep').cards) {
+    if (card.name === name) {
+      return true
+    }
+  }
+  return false
+}
+
 Game.prototype.checkPlayerHasCharacter = function(player) {
   player = this._adjustPlayerParam(player)
   return !!this.getCardCharacterByPlayer(player)
@@ -206,6 +215,11 @@ Game.prototype.checkPlayerIsPresident = function(player) {
   return player.name === president.name
 }
 
+Game.prototype.checkZoneContains = function(zone, predicate) {
+  zone = this._adjustZoneParam(zone)
+  return !!this.zone.cards.find(predicate)
+}
+
 Game.prototype.getActor = function() {
   return this.actor
 }
@@ -240,7 +254,7 @@ Game.prototype.getCardByPredicate = function(predicate) {
   return {
     card,
     zoneName,
-    fullPath: path,
+    path,
   }
 }
 
@@ -261,6 +275,24 @@ Game.prototype.getCardsLoyaltyByPlayer = function(player) {
   return cards.filter(c => c.kind === 'loyalty')
 }
 
+Game.prototype.getCardsByPredicate = function(predicate) {
+  const paths = jsonpath.pathAll(this.state.zones, predicate)
+  return paths.map(path => {
+    const card = jsonpath.at(this.state.zones, path)
+    const zoneName = path
+      .slice(1) // Remove leading '.'
+      .split('.')
+      .slice(0, -1)  // Remove trailing .cards[0]
+      .join('.')
+
+    return {
+      card,
+      zoneName,
+      path,
+    }
+  })
+}
+
 Game.prototype.getCrisis = function() {
   const zone = this.getZoneByName('common')
   return zone.cards.find(c => c.kind === 'crisis' || c.kind === 'super_crisis')
@@ -274,6 +306,10 @@ Game.prototype.getCardCharacterByPlayer = function(player) {
   player = this._adjustPlayerParam(player)
   const playerZone = this.getZoneByPlayer(player.name)
   return playerZone.cards.find(c => c.kind === 'character')
+}
+
+Game.prototype.getGameResult = function() {
+  return this.state.result
 }
 
 Game.prototype.getLocationsByArea = function(area) {
@@ -447,15 +483,41 @@ Game.prototype.getZoneBySkill = function(skill) {
   return this.getZoneByName(name)
 }
 
+Game.prototype.getZoneCenturionsByIndex = function(index) {
+  return this.getZoneByName(`centurions.centurions${index}`)
+}
+
 Game.prototype.getZoneDiscardByCard = function(card) {
   card = this._adjustCardParam(card)
   const discardName = card.deck.replace(/^decks/, 'discard')
   return this.getZoneByName(discardName)
 }
 
+Game.prototype.getZoneSpaceByIndex = function(index) {
+  return this.getZoneByName(`space.space${index}`)
+}
+
+Game.prototype.getZonesWithBasestars = function() {
+  const zones = []
+  for (let i = 0; i < 6; i++) {
+    const zone = this.getZoneSpaceByIndex(i)
+    for (const card of zone.cards) {
+      if (card.name.startsWith('Basestar')) {
+        zones.push(zone)
+        break
+      }
+    }
+  }
+  return zones
+}
+
 Game.prototype.hackImpersonate = function(player) {
   player = this._adjustPlayerParam(player)
   this.actor = player.name
+}
+
+Game.prototype.mAddCenturion = function() {
+  this.mMoveCard('tokens.centurions', 'centurions.centurions0')
 }
 
 Game.prototype.mAdjustCardVisibilityToNewZone = function(zone, card) {
@@ -488,6 +550,60 @@ Game.prototype.mAdjustCardVisibilityToNewZone = function(zone, card) {
 
 Game.prototype.mClearWaiting = function() {
   this.sm.clearWaiting()
+}
+
+const shipNamesToZoneNames = {
+  basestar: ['ships.basestarA', 'ships.basestarB'],
+  civilian: 'decks.civilian',
+  raider: 'ships.raiders',
+  viper: 'ships.vipers',
+
+  'heavy raider': 'ships.heavyRaiders',
+}
+Game.prototype.mDeploy = function(spaceZone, shipName, count) {
+  spaceZone = this._adjustZoneParam(spaceZone)
+  count = count || 1
+
+  for (let i = 0; i < count; i++) {
+    if (shipName === 'basestar') {
+      let basestarZone = null
+      let basestarCard = null
+      for (const zoneName of shipNamesToZoneNames.basestar) {
+        const tmpZone = this.getZoneByName(zoneName)
+        const tmpCard = tmpZone.cards.find(c => c.name.startsWith('Basestar'))
+        if (tmpCard) {
+          basestarZone = tmpZone
+          basestarCard = tmpCard
+          break
+        }
+      }
+
+      if (basestarZone) {
+        this.mMoveCard(basestarZone, spaceZone, basestarCard)
+      }
+      else {
+        this.mLog({
+          template: 'Unable to deploy {ship}; supply is empty',
+          args: { ship: shipName }
+        })
+      }
+    }
+
+    else {
+      const shipZoneName = shipNamesToZoneNames[shipName]
+      const shipZone = this.getZoneByName(shipZoneName)
+
+      if (shipZone.cards.length === 0) {
+        this.mLog({
+          template: 'Unable to deploy {ship}; supply is empty',
+          args: { ship: shipName }
+        })
+      }
+      else {
+        this.mMoveCard(shipZone, spaceZone)
+      }
+    }
+  }
 }
 
 Game.prototype.mDiscard = function(cardId) {
@@ -632,6 +748,10 @@ Game.prototype.mReturnViperFromSpaceZone = function(zoneNumber) {
   const viperZone = this.getZoneByName('ships.vipers')
   const viper = spaceZone.cards.find(c => c.name === 'viper')
   this.rk.session.move(viper, viperZone.cards)
+}
+
+Game.prototype.mSetGameResult = function(result) {
+  this.state.result = result
 }
 
 Game.prototype.mSetPlayerIsRevealedCylon = function(player) {

@@ -1503,6 +1503,18 @@ describe('crisis card effects', () => {
    * Weapon Malfunction
    * Witch Hunt */
 
+  // Cylon Attack Cards
+  /* Ambush
+   * Besieged
+   * Boarding Parties
+   * Cylon Swarm
+   * Heavy Assault
+   * Jammed Assault
+   * Raiding Party
+   * Surrounded
+   * Tactical Strike
+   * Thirty-Three */
+
   /* Massive Assault
    * Bomb on Colonial One
    * Cylon Intruders
@@ -1511,6 +1523,177 @@ describe('crisis card effects', () => {
 })
 
 describe('misc functions', () => {
+  describe('aActivateCylonShips', () => {
+
+    describe('heavy raiders', () => {
+
+      function _heavyFixture() {
+        const factory = new GameFixtureFactory()
+        const game = factory.build().game
+        game.run()
+        game.aClearSpace()
+        return game
+      }
+
+      test('centurions advance', () => {
+        const game = _heavyFixture()
+        game.rk.sessionStart(() => {
+          game.mAddCenturion()
+          game.mAddCenturion()
+        })
+
+        // They are moved forward
+        for (let i = 1; i < 4; i++) {
+          game.aActivateCylonShips('Hvy Raiders')
+          const prevZone = game.getZoneCenturionsByIndex(i - 1)
+          const zone = game.getZoneCenturionsByIndex(i)
+          expect(prevZone.cards.length).toBe(0)
+          expect(zone.cards.length).toBe(2)
+        }
+
+        // If they move onto the last space, the Cylons win
+        game.aActivateCylonShips('Hvy Raiders')
+        expect(game.getGameResult().winner).toBe('cylons')
+        expect(game.getGameResult().reason).toBe('centurions')
+      })
+
+      test('heavy raiders move toward closest landing bay 0', () => {
+        const game = _heavyFixture()
+        game.rk.sessionStart(() => {
+          game.mDeploy('space.space0', 'heavy raider')
+          game.aActivateCylonShips('Hvy Raiders')
+        })
+
+        expect(game.getZoneSpaceByIndex(0).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(2).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(3).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(4).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(5).cards.length).toBe(1)
+      })
+
+      test('heavy raiders move toward closest landing bay 1', () => {
+        const game = _heavyFixture()
+        game.rk.sessionStart(() => {
+          game.mDeploy('space.space1', 'heavy raider')
+          game.aActivateCylonShips('Hvy Raiders')
+        })
+
+        expect(game.getZoneSpaceByIndex(0).cards.length).toBe(1)
+        expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(2).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(3).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(4).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(5).cards.length).toBe(0)
+      })
+
+      test('heavy raiders move toward closest landing bay 2', () => {
+        const game = _heavyFixture()
+        game.rk.sessionStart(() => {
+          game.mDeploy('space.space2', 'heavy raider')
+          game.aActivateCylonShips('Hvy Raiders')
+        })
+
+        expect(game.getZoneSpaceByIndex(0).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(2).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(3).cards.length).toBe(1)
+        expect(game.getZoneSpaceByIndex(4).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(5).cards.length).toBe(0)
+      })
+
+      test('heavy raiders move toward closest landing bay 3', () => {
+        const game = _heavyFixture()
+        game.rk.sessionStart(() => {
+          game.mDeploy('space.space3', 'heavy raider')
+          game.aActivateCylonShips('Hvy Raiders')
+        })
+
+        expect(game.getZoneSpaceByIndex(0).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(2).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(3).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(4).cards.length).toBe(1)
+        expect(game.getZoneSpaceByIndex(5).cards.length).toBe(0)
+      })
+
+      test('heavy raiders drop centurions 4', () => {
+        const game = _heavyFixture()
+        game.rk.sessionStart(() => {
+          game.mDeploy('space.space4', 'heavy raider')
+          game.aActivateCylonShips('Hvy Raiders')
+        })
+
+        expect(game.getZoneSpaceByIndex(0).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(2).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(3).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(4).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(5).cards.length).toBe(0)
+        expect(game.getZoneCenturionsByIndex(0).cards.length).toBe(1)
+      })
+
+      test('heavy raiders drop centurions 5', () => {
+        const game = _heavyFixture()
+        game.rk.sessionStart(() => {
+          game.mDeploy('space.space5', 'heavy raider')
+          game.aActivateCylonShips('Hvy Raiders')
+        })
+
+        expect(game.getZoneSpaceByIndex(0).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(2).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(3).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(4).cards.length).toBe(0)
+        expect(game.getZoneSpaceByIndex(5).cards.length).toBe(0)
+        expect(game.getZoneCenturionsByIndex(0).cards.length).toBe(1)
+      })
+
+      test('heavy raiders are launched if no heavy raiders', () => {
+        const game = _heavyFixture()
+        game.rk.sessionStart(() => {
+          game.mDeploy('space.space3', 'basestar')
+          game.mDeploy('space.space3', 'basestar')
+          game.aActivateCylonShips('Hvy Raiders')
+        })
+
+        const zone = game.getZoneSpaceByIndex(3)
+        expect(zone.cards.length).toBe(4)
+        expect(zone.cards.filter(c => c.name === 'heavy raider').length).toBe(2)
+      })
+
+      test('extra heavy raiders are launched during Cylon Swarm', () => {
+        const game = _heavyFixture()
+        const swarm = game.getCardByName('Cylon Swarm')
+        game.rk.sessionStart(() => {
+          game.mMoveCard('decks.crisis', 'keep', swarm)
+          game.mDeploy('space.space0', 'basestar')
+          game.aActivateCylonShips('Hvy Raiders')
+        })
+
+        const zone = game.getZoneSpaceByIndex(0)
+        expect(zone.cards.length).toBe(3)
+        expect(zone.cards.filter(c => c.name === 'heavy raider').length).toBe(2)
+      })
+
+      test('no heavy raiders are launched if the supply is empty', () => {
+        const game = _heavyFixture()
+        const swarm = game.getCardByName('Cylon Swarm')
+        game.rk.sessionStart(() => {
+          game.mDeploy('space.space0', 'basestar')
+          game.mDeploy('space.space3', 'heavy raider')
+          game.mDeploy('space.space3', 'heavy raider')
+          game.aActivateCylonShips('Hvy Raiders')
+        })
+
+        const zone = game.getZoneSpaceByIndex(0)
+        expect(zone.cards.filter(c => c.name === 'heavy raider').length).toBe(0)
+      })
+
+    }) // heavy raiders
+
+  })
+
   describe.skip('aDeployShips', () => {
 
   })

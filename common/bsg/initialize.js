@@ -27,7 +27,12 @@ function initialize(game) {
 
   game.flags = {
     colonialOneDestroyed: false,
-  },
+  }
+
+  game.result = {
+    winner: '',
+    reason: '',
+  }
 
   game.seed = util.randomSeed()
 
@@ -84,6 +89,7 @@ function initialize(game) {
   }
 
   game.zones = {
+    centurions: makeCenturionZones(),
     common: {
       name: 'common',
       cards: [],
@@ -120,6 +126,9 @@ function initialize(game) {
       basestarA: makeBasestarZone('A'),
       basestarB: makeBasestarZone('B'),
     },
+    tokens: {
+      centurions: makeTokens('centurions', 8),
+    },
     space: makeSpaceZones(),
 
     locations: makeLocationZones(game.options.expansions),
@@ -152,6 +161,19 @@ function ensureZoneNames(root, pathAccumulator) {
   }
 }
 
+function makeCenturionZones() {
+  const zones = {}
+  for (let i = 0; i < 5; i++) {
+    const name = `centurions${i}`
+    zones[name] = {
+      name: 'centurions.' + name,
+      kind: 'open',
+      cards: [],
+    }
+  }
+  return zones
+}
+
 function makeDiscardZones(decks) {
   const discards = {}
   for (const [name, deck] of Object.entries(decks)) {
@@ -169,6 +191,7 @@ function makeDiscardZones(decks) {
           name,
           kind,
           cards: [],
+          visibility: 'open',
         }
       }
       else {
@@ -275,6 +298,26 @@ function makeShipsZone(zoneName, shipName, count) {
   for (let i = 0; i < count; i++) {
     zone.cards.push({
       name: shipName,
+      expansion: 'base game',
+      kind: zoneName,
+      kindId: i,
+      id: `${zoneName}-${i}`,
+      visibility: ['all'],
+    })
+  }
+  return zone
+}
+
+function makeTokens(name, count) {
+  const zoneName = `tokens.${name}`
+  const zone = {
+    name: zoneName,
+    cards: [],
+    kind: 'open',
+  }
+  for (let i = 0; i < count; i++) {
+    zone.cards.push({
+      name,
       expansion: 'base game',
       kind: zoneName,
       kindId: i,

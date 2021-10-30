@@ -8,6 +8,131 @@ const util = require('../lib/util.js')
 
 const Actions = {}
 
+Actions.aActivateCenturions = function() {
+  this.mLog({ template: 'Centurions advance' })
+
+  for (let i = 3; i >= 0; i--) {
+    const zone = this.getZoneCenturionsByIndex(i)
+    while (zone.cards.length) {
+      this.mMoveCard(zone, this.getZoneCenturionsByIndex(i + 1))
+    }
+  }
+
+  // A centurion has moved into the final space of the centurion track.
+  // The game is over, and the humans have lost.
+  if (this.getZoneCenturionsByIndex(3).cards.length > 0) {
+    this.mSetGameResult({
+      winner: 'cylons',
+      reason: 'centurions',
+    })
+  }
+}
+
+Actions.aActivateHeavyRaiders = function() {
+  const heavyRaidersInfo = this
+    .getCardsByPredicate(c => c.kind === 'ships.heavyRaiders')
+    .filter(info => info.zoneName.startsWith('space.'))
+
+  if (heavyRaidersInfo.length === 0) {
+    this.aBasestarsLaunch('heavy raider')
+  }
+  else {
+    for (const info of heavyRaidersInfo) {
+      const spaceIndex = parseInt(info.zoneName.slice(-1))
+      const spaceZone = this.getZoneByName(info.zoneName)
+
+      if (spaceIndex == 0 || spaceIndex == 1) {
+        // counter-clockwise
+        const newZone = this.getZoneAdjacentToSpaceZone(spaceZone)[1]
+        this.mMoveCard(spaceZone, newZone, info.card)
+      }
+      else if (spaceIndex == 2 || spaceIndex == 3) {
+        // clockwise
+        const newZone = this.getZoneAdjacentToSpaceZone(spaceZone)[0]
+        this.mMoveCard(spaceZone, newZone, info.card)
+      }
+      else {
+        // land centurion
+        this.mDiscard(info.card)
+        this.mAddCenturion()
+        this.mLog({ template: 'A centurion successfully boards Galactica' })
+      }
+    }
+  }
+}
+
+Actions.aActivateCylonShips = function(kind) {
+  this.mLog({
+    template: 'Activating Cylon ships: {kind}',
+    args: { kind }
+  })
+
+  if (kind === 'Hvy Raiders') {
+    this.aActivateCenturions()
+    this.aActivateHeavyRaiders()
+  }
+
+  let noHeavyRaiders = true
+  let noRaiders = true
+  for (let i = 0; i < 6; i++) {
+    const spaceZone = this.getZoneByName(`space.space${i}`)
+
+    // By iterating backwards, we ensure that even if we remove cards from the list
+    // by moving them, we still iterate over all of the elements.
+    for (let i = spaceZone.cards.length - 1; i >= 0; i--) {
+      const ship = spaceZone.cards[i]
+      if (kind === 'Raiders' && ship.name === 'raider') {
+        noRaiders = false
+        if (this.checkZoneContains(spaceZone, c => c.name === 'raider')) {
+
+        }
+        else if (this.checkZoneContains(spaceZone, c => c.name === 'civilian')) {
+
+        }
+        else if (this.getZonesContaining(c => c.name === 'civilian')) {
+
+        }
+        else {
+          this.aAttackGalactica(ship)
+        }
+      }
+
+      else if (kind === 'Basestar Attacks' && ship.name.startsWith('Basestar')) {
+        this.aAttackGalactica(ship)
+      }
+
+      else if (kind === 'Raiders Launch' && ship.name.startsWith('Basestar')) {
+        let count = 3
+        if (game.checkEffect('Cylon Swarm')) {
+          count += 1
+        }
+        this.mDeploy(spaceZone, 'raider', count)
+      }
+
+    }
+  }
+
+  if (kind === 'Raiders' && noRaiders) {
+    const basestarZones = this.getZonesWithBasestars()
+    if (basestarZones) {
+      this.mLog({ template: 'Basestars launch raiders' })
+    }
+
+    let count = 2
+    if (this.checkEffect('Cylon Swarm')) {
+      count += 1
+    }
+
+    for (const zone of basestarZones) {
+      for (const ship of zone.cards) {
+        if (ship.name.startsWith('Basestar')) {
+          this.mDeploy(zone, 'raider', count)
+        }
+      }
+    }
+  }
+}
+
 Actions.aAddDestinyCards = function() {
   const destiny = this.getZoneByName('destiny')
   util.assert(destiny.cards.length % 2 === 0, 'Odd number of cards in destiny deck')
@@ -57,6 +182,36 @@ Actions.aAssignPresident = function(player) {
     }
   })
   this.rk.session.move(card, playerHand)
+}
+
+Actions.aBasestarsLaunch = function(kind) {
+  // Are there any basestars to launch from?
+  const basestarZones = this.getZonesWithBasestars()
+  if (basestarZones) {
+    this.mLog({ template: `Basestars launch ${kind}` })
+  }
+  else {
+    return
+  }
+
+  // How many to launch
+  let count = 1
+  if (kind === 'raider') {
+    count += 1
+  }
+  if (this.checkEffect('Cylon Swarm')) {
+    count += 1
+  }
+
+  // Launch them
+  for (const zone of basestarZones) {
+    for (const ship of zone.cards) {
+      if (ship.name.startsWith('Basestar')) {
+        this.mDeploy(zone, kind, count)
+      }
+    }
+  }
+
 }
 
 Actions.aBeginCrisis = function() {
@@ -109,54 +264,7 @@ Actions.aDeployShips = function(deployData) {
     const shipNames = deployData[i]
 
     for (const name of shipNames) {
-      if (name === 'basestar') {
-        let basestarZone = null
-        let basestarCard = null
-        for (const letter of ['A', 'B']) {
-          const tmpZone = this.getZoneByName(`ships.basestar${letter}`)
-          const tmpCard = tmpZone.cards.find(c => c.name === `Basestar ${letter}`)
-          if (tmpCard) {
-            basestarZone = tmpZone
-            basestarCard = tmpCard
-            break
-          }
-        }
-
-        if (basestarZone) {
-          this.mMoveCard(basestarZone, spaceZone, basestarCard)
-        }
-        else {
-          this.mLog({
-            template: 'Unable to deploy {ship}; supply is empty',
-            args: { ship: name }
-          })
-        }
-      }
-
-      else {
-        let shipZoneName
-        if (name === 'civilian') {
-          shipZoneName = 'decks.civilian'
-        }
-        else if (name === 'heavy raider') {
-          shipZoneName = 'ships.heavyRaiders'
-        }
-        else {
-          shipZoneName = `ships.${name}s`
-        }
-
-        const shipZone = this.getZoneByName(shipZoneName)
-
-        if (shipZone.cards.length === 0) {
-          this.mLog({
-            template: 'Unable to deploy {ship}; supply is empty',
-            args: { ship: name }
-          })
-        }
-        else {
-          this.mMoveCard(shipZone, spaceZone)
-        }
-      }
+      this.mDeploy(spaceZone, name)
     }
   }
 }

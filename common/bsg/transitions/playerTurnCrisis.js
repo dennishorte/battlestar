@@ -24,7 +24,10 @@ function generateOptions(context) {
   const crisis = game.getCrisis()
 
   if (crisis.type === 'Cylon Attack') {
+    game.aActivateCylonShips()
     game.aDeployShips(crisis.deploy)
+    // TODO: move card to keep zone (if appropriate)
+    return context.done()
   }
 
   else if (crisis.type === 'Choice') {

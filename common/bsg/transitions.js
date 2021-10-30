@@ -344,8 +344,6 @@ const transitions = {
         'player-turn-movement',
         'player-turn-action',
         'player-turn-crisis',
-        'player-turn-cylon-activation',
-        'player-turn-prepare-for-jump',
         'player-turn-cleanup',
       ],
       {
@@ -365,12 +363,6 @@ const transitions = {
   },
   'player-turn-crisis': {
     func: require('./transitions/playerTurnCrisis.js'),
-  },
-  'player-turn-cylon-activation': {
-    func: waitFunc,
-  },
-  'player-turn-prepare-for-jump': {
-    func: waitFunc,
   },
   'player-turn-cleanup': {
     func: waitFunc,
