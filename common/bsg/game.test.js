@@ -1690,6 +1690,23 @@ describe('misc functions', () => {
         expect(zone.cards.filter(c => c.name === 'heavy raider').length).toBe(0)
       })
 
+      test("basestar with structural damage doesn't launch", () => {
+        const game = _heavyFixture()
+        const damage = game.getCardByName('disabled hangar')
+        game.rk.sessionStart(() => {
+          game.mDeploy('space.space2', 'basestar')
+          game.mDeploy('space.space3', 'basestar')
+          game.mMoveCard('decks.damageBasestar', 'ships.basestarB', damage)
+          game.aActivateCylonShips('Hvy Raiders')
+        })
+
+        const zone2 = game.getZoneSpaceByIndex(2)
+        expect(zone2.cards.filter(c => c.name === 'heavy raider').length).toBe(1)
+
+        const zone3 = game.getZoneSpaceByIndex(3)
+        expect(zone3.cards.filter(c => c.name === 'heavy raider').length).toBe(0)
+      })
+
     }) // heavy raiders
 
   })

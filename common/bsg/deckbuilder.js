@@ -157,10 +157,10 @@ function deckBuilder(expansions) {
 // Helper functions
 
 const damageBasestar = makeCards([
-  "critical hit (2 damage)",
-  "disabled hangar (can't launch)",
-  "disabled weapons (can't shoot)",
-  "structural damage (+2 to hit)",
+  "critical hit",  // 2 damage
+  "disabled hangar",  // can't launch
+  "disabled weapons",  // can't shoot
+  "structural damage",  // +2 to hit
 ])
 
 const damageGalactica = makeCards([

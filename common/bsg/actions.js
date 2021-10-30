@@ -8,6 +8,12 @@ const util = require('../lib/util.js')
 
 const Actions = {}
 
+Actions.aActivateBasestarAttacks = function() {
+  for (const letter of ['A', 'B']) {
+    const zone = game.getZoneBasestarByLetter(letter)
+  }
+}
+
 Actions.aActivateCenturions = function() {
   this.mLog({ template: 'Centurions advance' })
 
@@ -72,6 +78,10 @@ Actions.aActivateCylonShips = function(kind) {
     this.aActivateHeavyRaiders()
   }
 
+  else if (kind === 'Basestar Attacks') {
+    this.aActivateBasestarAttacks()
+  }
+
   let noHeavyRaiders = true
   let noRaiders = true
   for (let i = 0; i < 6; i++) {
@@ -95,10 +105,6 @@ Actions.aActivateCylonShips = function(kind) {
         else {
           this.aAttackGalactica(ship)
         }
-      }
-
-      else if (kind === 'Basestar Attacks' && ship.name.startsWith('Basestar')) {
-        this.aAttackGalactica(ship)
       }
 
       else if (kind === 'Raiders Launch' && ship.name.startsWith('Basestar')) {
@@ -187,10 +193,7 @@ Actions.aAssignPresident = function(player) {
 Actions.aBasestarsLaunch = function(kind) {
   // Are there any basestars to launch from?
   const basestarZones = this.getZonesWithBasestars()
-  if (basestarZones) {
-    this.mLog({ template: `Basestars launch ${kind}` })
-  }
-  else {
+  if (basestarZones.length === 0) {
     return
   }
 
@@ -207,7 +210,15 @@ Actions.aBasestarsLaunch = function(kind) {
   for (const zone of basestarZones) {
     for (const ship of zone.cards) {
       if (ship.name.startsWith('Basestar')) {
-        this.mDeploy(zone, kind, count)
+        if (this.checkBasestarEffect(ship, 'disabled hangar')) {
+          this.mLog({
+            template: `${ship.name} can't launch due to disabled hangar`
+          })
+        }
+        else {
+          this.mLog({ template: `Basestars launch ${kind}` })
+          this.mDeploy(zone, kind, count)
+        }
       }
     }
   }

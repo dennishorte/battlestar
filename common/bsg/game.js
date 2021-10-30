@@ -145,6 +145,16 @@ for (const [name, func] of Object.entries(actions)) {
 ////////////////////////////////////////////////////////////////////////////////
 // Checks
 
+Game.prototype.checkBasestarEffect = function(ship, effectName) {
+  const zone = this.getZoneByCard(ship)
+  for (const card of zone.cards) {
+    if (card.name === effectName) {
+      return true
+    }
+  }
+  return false
+}
+
 Game.prototype.checkColonialOneIsDestroyed = function() {
   return this.state.flags.colonialOneDestroyed
 }
@@ -156,11 +166,6 @@ Game.prototype.checkEffect = function(name) {
     }
   }
   return false
-}
-
-Game.prototype.checkPlayerHasCharacter = function(player) {
-  player = this._adjustPlayerParam(player)
-  return !!this.getCardCharacterByPlayer(player)
 }
 
 Game.prototype.checkCardIsVisible = function(card, player) {
@@ -192,6 +197,11 @@ Game.prototype.checkPlayerHasCardByName = function(player, name) {
   return !!hand.find(c => c.name === name)
 }
 
+Game.prototype.checkPlayerHasCharacter = function(player) {
+  player = this._adjustPlayerParam(player)
+  return !!this.getCardCharacterByPlayer(player)
+}
+
 Game.prototype.checkPlayerIsAtLocation = function(player, name) {
   player = this._adjustPlayerParam(player)
   const zone = this.getZoneByPlayerLocation(player)
@@ -219,6 +229,10 @@ Game.prototype.checkZoneContains = function(zone, predicate) {
   zone = this._adjustZoneParam(zone)
   return !!this.zone.cards.find(predicate)
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Getters
 
 Game.prototype.getActor = function() {
   return this.actor
@@ -445,6 +459,16 @@ Game.prototype.getZoneAdjacentToSpaceZone = function(spaceZone) {
 
 Game.prototype.getZoneAll = function() {
   return this.state.zones
+}
+
+Game.prototype.getZoneBasestarByLetter = function(letter) {
+  return this.getZoneByName('ships.basestar' + letter)
+}
+
+// Get the zone that the card originally came from
+Game.prototype.getZoneByCard = function(card) {
+  card = this._adjustCardParam(card)
+  return this.getZoneByName(card.kind)
 }
 
 Game.prototype.getZoneByLocationName = function(name) {
