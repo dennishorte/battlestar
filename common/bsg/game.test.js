@@ -1,6 +1,7 @@
 Error.stackTraceLimit = 100
 
 const GameFixtureFactory = require('./test/fixture.js')
+const bsgutil = require('./util.js')
 const util = require('../lib/util.js')
 
 describe('new game', () => {
@@ -1525,18 +1526,76 @@ describe('crisis card effects', () => {
 describe('misc functions', () => {
   describe('aActivateCylonShips', () => {
 
+    function _spaceFixture() {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().game
+      game.run()
+      game.aClearSpace()
+      return game
+    }
+
+    describe('basestar attacks', () => {
+
+      test('each basestar attacks once', () => {
+        const game = _spaceFixture()
+        game.rk.sessionStart(() => {
+          game.mDeploy('space.space3', 'basestar')
+          game.mDeploy('space.space3', 'basestar')
+        })
+        jest.spyOn(game, 'aAttackGalactica')
+        game.aActivateCylonShips('Basestar Attacks')
+
+        expect(game.aAttackGalactica.mock.calls.length).toBe(2)
+      })
+
+      test('disabled weapons do not attack', () => {
+        const game = _spaceFixture()
+        const damage = game.getCardByName('disabled weapons')
+        game.rk.sessionStart(() => {
+          game.mDeploy('space.space3', 'basestar')
+          game.mDeploy('space.space3', 'basestar')
+          game.mMoveCard('decks.damageBasestar', 'ships.basestarB', damage)
+        })
+        jest.spyOn(game, 'aAttackGalactica')
+        game.aActivateCylonShips('Basestar Attacks')
+
+        expect(game.aAttackGalactica.mock.calls.length).toBe(1)
+      })
+
+      test('damage is assigned to Galactica', () => {
+        const game = _spaceFixture()
+        game.rk.sessionStart(() => {
+          game.mDeploy('space.space3', 'basestar')
+        })
+        jest.spyOn(game, 'getTokenDamageGalactica').mockImplementation(() => {
+          const damageZone = game.getZoneByName('decks.damageGalactica')
+          return damageZone.cards.find(c => c.name === 'Damage Armory')
+        })
+        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 4)
+        game.aActivateBasestarAttacks()
+        expect(game.checkLocationIsDamaged('Armory')).toBe(true)
+      })
+
+      test('special galactica damage tokens are applied and exiled', () => {
+        const game = _spaceFixture()
+        game.rk.sessionStart(() => {
+          game.mDeploy('space.space3', 'basestar')
+        })
+        jest.spyOn(game, 'getTokenDamageGalactica').mockImplementation(() => {
+          const damageZone = game.getZoneByName('decks.damageGalactica')
+          return damageZone.cards.find(c => c.name === '-1 fuel')
+        })
+        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 8)
+        game.aActivateBasestarAttacks()
+        expect(game.getCounterByName('fuel')).toBe(7)
+      })
+
+    })
+
     describe('heavy raiders', () => {
 
-      function _heavyFixture() {
-        const factory = new GameFixtureFactory()
-        const game = factory.build().game
-        game.run()
-        game.aClearSpace()
-        return game
-      }
-
       test('centurions advance', () => {
-        const game = _heavyFixture()
+        const game = _spaceFixture()
         game.rk.sessionStart(() => {
           game.mAddCenturion()
           game.mAddCenturion()
@@ -1558,7 +1617,7 @@ describe('misc functions', () => {
       })
 
       test('heavy raiders move toward closest landing bay 0', () => {
-        const game = _heavyFixture()
+        const game = _spaceFixture()
         game.rk.sessionStart(() => {
           game.mDeploy('space.space0', 'heavy raider')
           game.aActivateCylonShips('Hvy Raiders')
@@ -1573,7 +1632,7 @@ describe('misc functions', () => {
       })
 
       test('heavy raiders move toward closest landing bay 1', () => {
-        const game = _heavyFixture()
+        const game = _spaceFixture()
         game.rk.sessionStart(() => {
           game.mDeploy('space.space1', 'heavy raider')
           game.aActivateCylonShips('Hvy Raiders')
@@ -1588,7 +1647,7 @@ describe('misc functions', () => {
       })
 
       test('heavy raiders move toward closest landing bay 2', () => {
-        const game = _heavyFixture()
+        const game = _spaceFixture()
         game.rk.sessionStart(() => {
           game.mDeploy('space.space2', 'heavy raider')
           game.aActivateCylonShips('Hvy Raiders')
@@ -1603,7 +1662,7 @@ describe('misc functions', () => {
       })
 
       test('heavy raiders move toward closest landing bay 3', () => {
-        const game = _heavyFixture()
+        const game = _spaceFixture()
         game.rk.sessionStart(() => {
           game.mDeploy('space.space3', 'heavy raider')
           game.aActivateCylonShips('Hvy Raiders')
@@ -1618,7 +1677,7 @@ describe('misc functions', () => {
       })
 
       test('heavy raiders drop centurions 4', () => {
-        const game = _heavyFixture()
+        const game = _spaceFixture()
         game.rk.sessionStart(() => {
           game.mDeploy('space.space4', 'heavy raider')
           game.aActivateCylonShips('Hvy Raiders')
@@ -1634,7 +1693,7 @@ describe('misc functions', () => {
       })
 
       test('heavy raiders drop centurions 5', () => {
-        const game = _heavyFixture()
+        const game = _spaceFixture()
         game.rk.sessionStart(() => {
           game.mDeploy('space.space5', 'heavy raider')
           game.aActivateCylonShips('Hvy Raiders')
@@ -1650,7 +1709,7 @@ describe('misc functions', () => {
       })
 
       test('heavy raiders are launched if no heavy raiders', () => {
-        const game = _heavyFixture()
+        const game = _spaceFixture()
         game.rk.sessionStart(() => {
           game.mDeploy('space.space3', 'basestar')
           game.mDeploy('space.space3', 'basestar')
@@ -1663,7 +1722,7 @@ describe('misc functions', () => {
       })
 
       test('extra heavy raiders are launched during Cylon Swarm', () => {
-        const game = _heavyFixture()
+        const game = _spaceFixture()
         const swarm = game.getCardByName('Cylon Swarm')
         game.rk.sessionStart(() => {
           game.mMoveCard('decks.crisis', 'keep', swarm)
@@ -1677,7 +1736,7 @@ describe('misc functions', () => {
       })
 
       test('no heavy raiders are launched if the supply is empty', () => {
-        const game = _heavyFixture()
+        const game = _spaceFixture()
         const swarm = game.getCardByName('Cylon Swarm')
         game.rk.sessionStart(() => {
           game.mDeploy('space.space0', 'basestar')
@@ -1691,7 +1750,7 @@ describe('misc functions', () => {
       })
 
       test("basestar with structural damage doesn't launch", () => {
-        const game = _heavyFixture()
+        const game = _spaceFixture()
         const damage = game.getCardByName('disabled hangar')
         game.rk.sessionStart(() => {
           game.mDeploy('space.space2', 'basestar')

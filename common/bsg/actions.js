@@ -10,7 +10,22 @@ const Actions = {}
 
 Actions.aActivateBasestarAttacks = function() {
   for (const letter of ['A', 'B']) {
-    const zone = game.getZoneBasestarByLetter(letter)
+    const zone = this.getZoneBasestarByLetter(letter)
+    const { card, zoneName } = this.getCardByPredicate(c => c.name === `Basestar ${letter}`)
+    const damagedWeapons = this.checkBasestarEffect(card, 'disabled weapons')
+
+    // If the ship is not in space, then it isn't deployed and shouldn't attack
+    if (!zoneName.startsWith('space')) {
+      continue
+    }
+
+    // If the ship has damaged weapons, it can't shoot
+    if (damagedWeapons) {
+      this.mLog({ template: `Basestar ${letter} has damaged weapons and can't attack` })
+      continue
+    }
+
+    this.aAttackGalactica(card)
   }
 }
 
@@ -190,6 +205,33 @@ Actions.aAssignPresident = function(player) {
   this.rk.session.move(card, playerHand)
 }
 
+Actions.aAttackGalactica = function(ship) {
+  const dieRoll = bsgutil.rollDie()
+  let hit = false
+
+  if (ship.name.startsWith('Basestar')) {
+    if (dieRoll >= 4) {
+      hit = true
+    }
+  }
+  else if (ship.name === 'raider') {
+    if (dieRoll === 8) {
+      hit = true
+    }
+  }
+  else {
+    throw new Error(`Unknown ship attacking Galactica: ${ship.name}`)
+  }
+
+  if (hit) {
+    this.mLog({ template: `${ship.name} damages Galactica` })
+    this.aDamageGalactica()
+  }
+  else {
+    this.mLog({ template: `${ship.name} misses Galactica` })
+  }
+}
+
 Actions.aBasestarsLaunch = function(kind) {
   // Are there any basestars to launch from?
   const basestarZones = this.getZonesWithBasestars()
@@ -248,10 +290,27 @@ Actions.aClearSpace = function() {
   }
 }
 
+Actions.aDamageGalactica = function() {
+  const token = this.getTokenDamageGalactica()
+
+  // One time resource loss tokens
+  if (token.name.startsWith('-1')) {
+    const lost = token.name.slice(3)
+    this.mAdjustCounterByName(lost, -1)
+    this.mMoveCard('decks.damageGalactica', 'exile', token)
+  }
+
+  // Galactica area damage tokens
+  else {
+    const locationName = token.name.slice(7)
+    this.aDamageLocationByName(locationName)
+  }
+}
+
 Actions.aDamageLocationByName = function(locationName) {
   // Get the damage token from the damage bag
-  const bag = this.getZoneByName('decks.damageGalactica').cards
-  const token = bag.find(c => c.name === `Damage ${locationName}`)
+  const bag = this.getZoneByName('decks.damageGalactica')
+  const token = bag.cards.find(c => c.name === `Damage ${locationName}`)
 
   util.assert(!!token, `Unable to find damage token for ${locationName}`)
 
@@ -263,8 +322,7 @@ Actions.aDamageLocationByName = function(locationName) {
   })
 
   // Move it to the damaged location
-  const location = this.getZoneByLocationName(locationName)
-  this.rk.session.move(token, location.cards, location.cards.length)
+  this.mMoveCard(bag, this.getZoneByLocationName(locationName), token)
 }
 
 Actions.aDeployShips = function(deployData) {

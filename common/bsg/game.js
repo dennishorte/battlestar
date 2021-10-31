@@ -182,7 +182,12 @@ Game.prototype.checkCardIsVisible = function(card, player) {
 }
 
 Game.prototype.checkLocationIsDamaged = function(location) {
-  location = this._adjustZoneParam(location)
+  if (typeof location === 'string' && !location.includes('.')) {
+    location = this.getZoneByLocationName(location)
+  }
+  else {
+    location = this._adjustZoneParam(location)
+  }
   return !!location.cards.find(c => c.kind === 'damageGalactica')
 }
 
@@ -320,6 +325,11 @@ Game.prototype.getCardCharacterByPlayer = function(player) {
   player = this._adjustPlayerParam(player)
   const playerZone = this.getZoneByPlayer(player.name)
   return playerZone.cards.find(c => c.kind === 'character')
+}
+
+Game.prototype.getTokenDamageGalactica = function() {
+  const damageZone = this.getZoneByName('decks.damageGalactica')
+  return damageZone.cards[0]
 }
 
 Game.prototype.getGameResult = function() {
@@ -570,6 +580,19 @@ Game.prototype.mAdjustCardVisibilityToNewZone = function(zone, card) {
   else {
     throw `Unknown zone visibility (${zoneVis}) for zone ${zone.name}`
   }
+}
+
+Game.prototype.mAdjustCounterByName = function(name, amount) {
+  const direction = amount > 0 ? 'increased' : 'reduced'
+  this.mLog({
+    template: `{resource} ${direction} by {amount}`,
+    args: {
+      resource: name,
+      amount: Math.abs(amount)
+    }
+  })
+
+  this.state.counters[name] += amount
 }
 
 Game.prototype.mClearWaiting = function() {
