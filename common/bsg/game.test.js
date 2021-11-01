@@ -1444,8 +1444,15 @@ describe('player-turn-crisis', () => {
         .toStrictEqual([ 'civilian' ])
     })
 
-    test('are moved to the keep zone if they have a lasting effect', () => {
+    test('card effects stay in play', () => {
+      const game = _crisisFixture('Ambush')
+      expect(game.checkEffect('Ambush')).toBe(true)
+    })
 
+    test('card is in the keep zone, for players to see', () => {
+      const game = _crisisFixture('Ambush')
+      const zone = game.getZoneByCard('Ambush')
+      expect(zone.name).toBe('keep')
     })
   })
 
@@ -1909,7 +1916,7 @@ describe('misc functions', () => {
 
     }) // raiders
 
-})
+  })
 
   describe.skip('aDeployShips', () => {
 
@@ -1928,6 +1935,10 @@ describe('misc functions', () => {
     test("Can't move there anymore", () => {
 
     })
+
+  })
+
+  describe.skip('keep cards are cleared appropriately', () => {
 
   })
 })

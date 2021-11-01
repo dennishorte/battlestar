@@ -496,6 +496,7 @@ Game.prototype.getZoneBasestarByLetter = function(letter) {
 }
 
 Game.prototype.getZoneByCard = function(card) {
+  card = this._adjustCardParam(card)
   const { zoneName } = this.getCardByPredicate(c => c.id === card.id)
   return this.getZoneByName(zoneName)
 }
