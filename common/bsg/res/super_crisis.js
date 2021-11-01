@@ -13,7 +13,10 @@ module.exports =  [
       [],
       [ 'viper', 'civilian', 'civilian' ],
       [ 'viper', 'civilian', 'civilian' ]
-    ]
+    ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Bomb on Colonial One',
@@ -26,7 +29,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-2 morale, and all characters on Colonial One are sent to "Sickbay". Keep this card in play. Characters may not move to Colonial One for the rest of the game',
-    skills: [ 'tactics', 'piloting', 'engineering' ]
+    skills: [ 'tactics', 'piloting', 'engineering' ],
+    script: {
+      keepUntil: 'forever',
+    },
   },
   {
     name: 'Cylon Intruders',
@@ -39,7 +45,10 @@ module.exports =  [
     partialValue: 14,
     partialEffect: 'Place 1 centurion marker at the star of the Boarding Party track',
     failEffect: 'Damage Galactica and place 2 centurion markers at the start of the Boarding Party track',
-    skills: [ 'leadership', 'tactics' ]
+    skills: [ 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Fleet Mobilization',
@@ -52,7 +61,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 morale and activate: Basestar Attacks, Raiders, Hvy Raiders, Raiders Launch',
-    skills: [ 'leadership', 'tactics', 'piloting', 'engineering' ]
+    skills: [ 'leadership', 'tactics', 'piloting', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Inbound Nukes',
@@ -65,7 +77,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 fuel, -1 food, and -1 population',
-    skills: [ 'leadership', 'tactics' ]
+    skills: [ 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Fighting Blind',
@@ -75,7 +90,10 @@ module.exports =  [
     jumpTrack: false,
     option1: 'Place 2 centurions at the start of the Boarding Party track',
     option2: 'The CAG is executed',
-    actor: 'CAG'
+    actor: 'CAG',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Fire All Missiles',
@@ -88,7 +106,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: 'Draw 2 civilian ships to destroy',
-    skills: [ 'tactics', 'piloting' ]
+    skills: [ 'tactics', 'piloting' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Human Prisoner',
@@ -101,7 +122,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: `The Cylon player who played this card chooses one human player and takes allof his Skill Cards. That human player's character is then sent to "Sickbay"`,
-    skills: [ 'leadership', 'tactics' ]
+    skills: [ 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: '"Demand Peace" Manifesto',
@@ -111,7 +135,10 @@ module.exports =  [
     jumpTrack: false,
     option1: '-1 morale and damage Galactica twice',
     option2: 'The president and the Admiral each discard their hand of Skill Cards',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Psychological Warfare',
@@ -121,7 +148,10 @@ module.exports =  [
     jumpTrack: false,
     option1: '-1 morale, each player discards 2 Skill Cards and draws 2 Treachery Cards',
     option2: 'Each revealed Cylon player draws 2 Treachery Cards. Then, discard the entire Destiny deck and build a new one consisting of only 6 Treachery Cards',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Lured into a Trap',
@@ -137,7 +167,10 @@ module.exports =  [
       [ 'heavy raider' ],
       [ 'viper', 'civilian' ],
       [ 'viper', 'civilian' ]
-    ]
+    ],
+    script: {
+      keepUntil: 'jump',
+    },
   },
   {
     name: 'Footage Transmitted',
@@ -150,7 +183,10 @@ module.exports =  [
     partialValue: 12,
     partialEffect: 'Each revealed Cylon player draws 2 Treachery Cards',
     failEffect: 'Each revealed Cylon player draws 2 Treachery Cards and 1 Super Crisis Card',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'The Farm',
@@ -163,6 +199,9 @@ module.exports =  [
     partialValue: 8,
     partialEffect: '-1 food',
     failEffect: '-1 food, -1 population. Keep this card in play. Human players may not use their once-per-game abilities',
-    skills: [ 'tactics', 'engineering' ]
-  }
+    skills: [ 'tactics', 'engineering' ],
+    script: {
+      keepUntil: 'forever',
+    },
+  },
 ]

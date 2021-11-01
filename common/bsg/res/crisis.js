@@ -7,7 +7,10 @@ module.exports =  [
     jumpTrack: false,
     option1: 'Discard 1 nuke token. If you do not have any nuke tokens, you may not choose this option.',
     option2: '-1 morale, and the Admiral discards 2 skill cards',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Declare Martial Law',
@@ -17,7 +20,10 @@ module.exports =  [
     jumpTrack: false,
     option1: '-1 morale, and the Admiral recieves the President title',
     option2: '-1 population, and the Admiral discards 2 skill cards',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Food Shortage',
@@ -27,7 +33,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-2 food',
     option2: '-1 food. The President discards 2 Skill Cards; then the current player discards 3 Skill Cards',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Food Shortage',
@@ -37,7 +46,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-2 food',
     option2: '-1 food. The President discards 2 Skill Cards; then the current player discards 3 Skill Cards',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Food Shortage',
@@ -47,7 +59,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-2 food',
     option2: '-1 food. The President discards 2 Skill Cards; then the current player discards 3 Skill Cards',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Food Shortage',
@@ -57,7 +72,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-2 food',
     option2: '-1 food. The President discards 2 Skill Cards; then the current player discards 3 Skill Cards',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Requested Resignation',
@@ -67,7 +85,10 @@ module.exports =  [
     jumpTrack: false,
     option1: 'The President and Admiral both discard 2 Skill Cards',
     option2: 'The President may choose to give the President title to the Admiral, or move to the "Brig" location',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Rescue Caprica Survivors',
@@ -77,7 +98,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-1 fuel, -1 food, +1 population',
     option2: '-1 morale',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Rescue Mission',
@@ -87,7 +111,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-1 morale, and the current player is sent to "Sickbay"',
     option2: '-1 fuel and destroy 1 raptor',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Rescue Mission',
@@ -97,7 +124,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-1 morale, and the current player is sent to "Sickbay"',
     option2: '-1 fuel and destroy 1 raptor',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Rescue the Fleet',
@@ -107,7 +137,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-2 population',
     option2: '-1 morale. Place 1 basestar and 3 raiders in front of Galactica and 3 civilian ships behind it',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Riots',
@@ -117,7 +150,10 @@ module.exports =  [
     jumpTrack: false,
     option1: '-1 food, -1 morale',
     option2: '-1 population, -1 fuel',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Riots',
@@ -127,7 +163,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-1 food, -1 morale',
     option2: '-1 population, -1 fuel',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Sleep Deprivation',
@@ -137,7 +176,10 @@ module.exports =  [
     jumpTrack: true,
     option1: 'Return all undamaged vipers on the game board to the "Reserves." Then send the current player to "Sickbay" ',
     option2: '-1 morale',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Water Shortage',
@@ -147,7 +189,10 @@ module.exports =  [
     jumpTrack: false,
     option1: '-1 food',
     option2: 'The President discards 2 Skill Cards; then the current player discards 3 Skill Cards',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Water Shortage',
@@ -157,7 +202,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-1 food',
     option2: 'The President discards 2 Skill Cards; then the current player discards 3 Skill Cards',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Water Shortage',
@@ -167,7 +215,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-1 food',
     option2: 'The President discards 2 Skill Cards; then the current player discards 3 Skill Cards',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Water Shortage',
@@ -177,7 +228,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-1 food',
     option2: 'The President discards 2 Skill Cards; then the current player discards 3 Skill Cards',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Water Shortage',
@@ -187,7 +241,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-1 food',
     option2: 'The President discards 2 Skill Cards; then the current player discards 3 Skill Cards',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Ambush',
@@ -203,7 +260,10 @@ module.exports =  [
       [ 'basestar', 'raider', 'raider', 'raider', 'raider' ],
       [ 'viper', 'viper', 'civilian' ],
       [ 'civilian' ]
-    ]
+    ],
+    script: {
+      keepUntil: 'jump',
+    },
   },
   {
     name: 'Besieged',
@@ -224,7 +284,10 @@ module.exports =  [
         'viper',    'viper',
         'civilian'
       ]
-    ]
+    ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Boarding Parties',
@@ -240,7 +303,10 @@ module.exports =  [
       [ 'civilian' ],
       [ 'civilian', 'civilian' ],
       []
-    ]
+    ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Cylon Swarm',
@@ -256,7 +322,10 @@ module.exports =  [
       [ 'civilian' ],
       [ 'viper', 'civilian' ],
       [ 'viper', 'civilian' ]
-    ]
+    ],
+    script: {
+      keepUntil: 'jump',
+    },
   },
   {
     name: 'Heavy Assault',
@@ -272,7 +341,10 @@ module.exports =  [
       [ 'civilian' ],
       [ 'civilian' ],
       [ 'viper', 'civilian' ]
-    ]
+    ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Jammed Assault',
@@ -288,7 +360,10 @@ module.exports =  [
       [ 'civilian' ],
       [ 'viper', 'civilian' ],
       [ 'viper', 'civilian' ]
-    ]
+    ],
+    script: {
+      keepUntil: 'jump',
+    },
   },
   {
     name: 'Raiding Party',
@@ -304,7 +379,10 @@ module.exports =  [
       [ 'heavy raider', 'heavy raider', 'raider', 'raider' ],
       [ 'civilian' ],
       [ 'viper', 'viper', 'civilian', 'civilian' ]
-    ]
+    ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Surrounded',
@@ -320,7 +398,10 @@ module.exports =  [
       [ 'civilian' ],
       [ 'viper', 'civilian' ],
       [ 'viper', 'civilian' ]
-    ]
+    ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Tactical Strike',
@@ -336,7 +417,10 @@ module.exports =  [
       [ 'civilian' ],
       [ 'viper', 'viper', 'civilian' ],
       [ 'basestar', 'raider', 'raider', 'raider', 'raider', 'raider' ]
-    ]
+    ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Thirty-Three',
@@ -352,7 +436,10 @@ module.exports =  [
       [ 'civilian' ],
       [ 'viper', 'civilian' ],
       [ 'viper', 'civilian' ]
-    ]
+    ],
+    script: {
+      keepUntil: 'jump',
+    },
   },
   {
     name: 'A Traitor Accused',
@@ -365,7 +452,10 @@ module.exports =  [
     failEffect: 'The current player chooses a character to send to the "Brig"',
     option2: 'The current player discards 5 skill cards',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Admiral Grilled',
@@ -378,7 +468,10 @@ module.exports =  [
     failEffect: '-1 morale, and the Admiral discards 2 Skill Cards',
     option2: '-1 morale',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Analyze Enemy Fighter',
@@ -391,7 +484,10 @@ module.exports =  [
     failEffect: '-1 population',
     option2: 'Roll a die. If 4 or lower, -1 population and the current player discards 2 Skill Cards',
     actor: 'Current player',
-    skills: [ 'tactics', 'engineering' ]
+    skills: [ 'tactics', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Bomb Threat',
@@ -404,7 +500,10 @@ module.exports =  [
     failEffect: '-1 morale and draw civilian ship and destroy it',
     option2: 'Roll a die. If 4 or lower, trigger the "Fail" effect of this card',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Colonial Day',
@@ -417,7 +516,10 @@ module.exports =  [
     failEffect: '-2 morale',
     option2: '-1 morale',
     actor: 'Current player',
-    skills: [ 'politics', 'tactics' ]
+    skills: [ 'politics', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Crippled Raider',
@@ -430,7 +532,10 @@ module.exports =  [
     failEffect: '-1 population',
     option2: 'Roll a die. If 4 or lower, place 3 raiders in front of Galactica and 1 civilian ship behind it',
     actor: 'Current player',
-    skills: [ 'tactics', 'engineering' ]
+    skills: [ 'tactics', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Cylon Screenings',
@@ -443,7 +548,10 @@ module.exports =  [
     failEffect: '-1 morale, and the current player looks at 1 random Loyalty Card belonging to the President or Admiral',
     option2: 'Each player discards 2 Skill Cards',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Forced Water Mining',
@@ -456,7 +564,10 @@ module.exports =  [
     failEffect: '-1 population, -1 morale',
     option2: '+1 food, -1 morale, and each player discards 1 random Skill Card',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership', 'tactics', 'engineering' ]
+    skills: [ 'politics', 'leadership', 'tactics', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Fullfiller of Prophecy',
@@ -469,7 +580,10 @@ module.exports =  [
     failEffect: '-1 population',
     option2: 'Current player discards 1 Skill Card. After the Activate Cylon Ships step, return to the Resolve Crisis step (Draw a new Crisis Card and resolve it.)',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Informing the Public',
@@ -482,7 +596,10 @@ module.exports =  [
     failEffect: '-2 morale',
     option2: 'Roll a die. On a 4 or lower, -1 morale and -1 population',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Keep Tabs on Visitor',
@@ -495,7 +612,10 @@ module.exports =  [
     failEffect: 'Roll a die. If 4 or lower, -2 population',
     option2: 'The current player discards 4 random Skill Cards',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Network Computers',
@@ -508,7 +628,10 @@ module.exports =  [
     failEffect: '-1 population and place 1 centurion marker at the star of the Boarding Party track',
     option2: '-1 population and decrease the Jump Prep track by 1',
     actor: 'Current player',
-    skills: [ 'politics', 'tactics', 'engineering' ]
+    skills: [ 'politics', 'tactics', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Scouting for Fuel',
@@ -521,7 +644,10 @@ module.exports =  [
     failEffect: '-1 fuel and destroy 1 raptor',
     option2: 'Roll a die. If 4 or lower, -1 fuel',
     actor: 'Current player',
-    skills: [ 'tactics', 'piloting' ]
+    skills: [ 'tactics', 'piloting' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Scouting for Water',
@@ -534,7 +660,10 @@ module.exports =  [
     failEffect: '-1 fuel and destroy 1 raptor',
     option2: '-1 food',
     actor: 'Current player',
-    skills: [ 'tactics', 'piloting' ]
+    skills: [ 'tactics', 'piloting' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Send Survey Team',
@@ -547,7 +676,10 @@ module.exports =  [
     failEffect: 'The current player is sent to "Sickbay" and destroy 1 raptor',
     option2: 'Roll a die. If 5 or less, -1 fuel',
     actor: 'Current player',
-    skills: [ 'tactics', 'piloting', 'engineering' ]
+    skills: [ 'tactics', 'piloting', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Water Sabotaged',
@@ -560,7 +692,10 @@ module.exports =  [
     failEffect: '-2 food',
     option2: '-1 food',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Crash Landing',
@@ -573,7 +708,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: 'The Admiral may spend 1 fuel. If he does not, -1 morale, and the current player is sent to "Sickbay"',
-    skills: [ 'tactics', 'piloting' ]
+    skills: [ 'tactics', 'piloting' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Cylon Accusation',
@@ -586,7 +724,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: 'The current player is placed in the "Brig" location',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Cylon Tracking Device',
@@ -599,7 +740,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: 'Destroy 1 raptor and place a basestar in front of Galactica and 2 civilian ships behind it',
-    skills: [ 'tactics', 'piloting', 'engineering' ]
+    skills: [ 'tactics', 'piloting', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Cylon Virus',
@@ -612,7 +756,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: 'All characters in the "FTL Control" location are sent to "Sickbay." Then place 1 centurion marker at the start of the Boarding Party track',
-    skills: [ 'tactics', 'engineering' ]
+    skills: [ 'tactics', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Detector Sabotage',
@@ -625,7 +772,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: `All characters in the "Research Lab" location are sent to "Sickbay." Keep this card in play. Players may not look at other players' Loyalty Cards`,
-    skills: [ 'leadership', 'tactics' ]
+    skills: [ 'leadership', 'tactics' ],
+    script: {
+      keepUntil: 'forever',
+    },
   },
   {
     name: 'Elections Loom',
@@ -638,7 +788,10 @@ module.exports =  [
     partialValue: 5,
     partialEffect: '-1 morale',
     failEffect: '-1 morale, and the President discards 4 Skill Cards',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Guilt by Collusion',
@@ -651,7 +804,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 morale',
-    skills: [ 'leadership', 'tactics' ]
+    skills: [ 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Hanger Accident',
@@ -664,7 +820,10 @@ module.exports =  [
     partialValue: 7,
     partialEffect: '-1 population',
     failEffect: '-1 population and damage 2 vipers in the "Reserves"',
-    skills: [ 'tactics', 'piloting', 'engineering' ]
+    skills: [ 'tactics', 'piloting', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Jump Computer Failure',
@@ -677,7 +836,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 population and move the fleet token 1 space towards the start of the Jump Prep track',
-    skills: [ 'tactics', 'engineering' ]
+    skills: [ 'tactics', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Legendary Discovery',
@@ -690,7 +852,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 food and destroy 1 raptor',
-    skills: [ 'tactics', 'piloting' ]
+    skills: [ 'tactics', 'piloting' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Loss of a Friend',
@@ -703,7 +868,10 @@ module.exports =  [
     partialValue: 7,
     partialEffect: 'The current player discards 2 Skill Cards',
     failEffect: '-1 morale, and the current player discards 2 Skill Cards',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Low Supplies',
@@ -716,7 +884,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 morale. If food is less than 6, -1 additional morale',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Mandatory Testing',
@@ -729,7 +900,10 @@ module.exports =  [
     partialValue: 9,
     partialEffect: 'No Effect',
     failEffect: '-1 morale',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Missing G4 Explosives',
@@ -742,7 +916,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 food, and all characters in the "Armory" location are sent to the "Brig"',
-    skills: [ 'leadership', 'tactics' ]
+    skills: [ 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Prison Labor',
@@ -755,7 +932,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 morale, -1 food',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Prisoner Revolt',
@@ -768,7 +948,10 @@ module.exports =  [
     partialValue: 6,
     partialEffect: '-1 population',
     failEffect: '-1 population, and the President chooses another player to receive the President title',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Resistance',
@@ -781,7 +964,10 @@ module.exports =  [
     partialValue: 9,
     partialEffect: '-1 food',
     failEffect: '-1 food, -1 fuel',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Security Breach',
@@ -794,7 +980,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 morale, and all characters in the "Command" location are sent to "Sickbay"',
-    skills: [ 'leadership', 'tactics' ]
+    skills: [ 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Terrorist Bomber',
@@ -807,7 +996,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 morale, and the current player is sent to "Sickbay"',
-    skills: [ 'leadership', 'tactics' ]
+    skills: [ 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Terrorist Investigations',
@@ -820,7 +1012,10 @@ module.exports =  [
     partialValue: 6,
     partialEffect: 'No effect',
     failEffect: '-1 morale',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'The Olympic Carrier',
@@ -833,7 +1028,10 @@ module.exports =  [
     partialValue: 8,
     partialEffect: '-1 population',
     failEffect: '-1 morale, -1 population',
-    skills: [ 'politics', 'leadership', 'piloting' ]
+    skills: [ 'politics', 'leadership', 'piloting' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Unexpected Reunion',
@@ -846,7 +1044,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 morale, and the current player discards his hand of Skill Cards',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Unidentified Ship',
@@ -859,7 +1060,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 Population',
-    skills: [ 'tactics', 'piloting' ]
+    skills: [ 'tactics', 'piloting' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Weapon Malfunction',
@@ -872,7 +1076,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: `Damage 2 vipers in space areas. All characters in the "Weapon's Control" location are sent to "Sickbay"`,
-    skills: [ 'tactics', 'piloting', 'engineering' ]
+    skills: [ 'tactics', 'piloting', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Witch Hunt',
@@ -885,7 +1092,10 @@ module.exports =  [
     partialValue: 6,
     partialEffect: '-1 morale',
     failEffect: '-1 morale. Current player chooses a character and moves him to "Sickbay"',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Détente',
@@ -895,7 +1105,10 @@ module.exports =  [
     jumpTrack: false,
     option1: 'All vipers in space areas are returned to the "Reserves". All characters who were piloting vipers are placed in the "Hangar Deck". Increase the Pursuit track by 1.',
     option2: 'Basestar Attacks, Activate Raiders, Activate Hvy Raiders',
-    actor: 'CAG'
+    actor: 'CAG',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Raiders Inbound',
@@ -905,7 +1118,10 @@ module.exports =  [
     jumpTrack: false,
     option1: '-1 population and damage Galactica once.',
     option2: 'The CAG and the Admiral must each discard 3 Skill Cards.',
-    actor: 'CAG'
+    actor: 'CAG',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Return to Duty',
@@ -915,7 +1131,10 @@ module.exports =  [
     jumpTrack: false,
     option1: 'Any character on Galactica with piloting in his skill set may immediately launch himself in a viper then Raiders Launch.',
     option2: 'Basestar Attacks.',
-    actor: 'CAG'
+    actor: 'CAG',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Review Camera Footage',
@@ -925,7 +1144,10 @@ module.exports =  [
     jumpTrack: false,
     option1: 'Damage 2 vipers in the "Reserves" (if able) and increase the Pursuit track by 1. The CAG may then activate 1 unmanned viper.',
     option2: 'The CAG discards 2 Skill Cards, then the current player discards 3 Skill Cards.',
-    actor: 'CAG'
+    actor: 'CAG',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Tracked by Radiation',
@@ -935,7 +1157,10 @@ module.exports =  [
     jumpTrack: false,
     option1: 'Place a basestar and 3 raiders in front of Galactica and 2 civilian ships behind Galactica.',
     option2: '-1 fuel.',
-    actor: 'CAG'
+    actor: 'CAG',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Training a Rookie',
@@ -945,7 +1170,10 @@ module.exports =  [
     jumpTrack: false,
     option1: 'Activate one unmanned viper. Then: Activate raiders',
     option2: 'The CAG chooses 2 vipers that are not currently damaged or destroyed and moves them to the "Damaged Viper" box.',
-    actor: 'CAG'
+    actor: 'CAG',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Abandon Galactica',
@@ -955,7 +1183,10 @@ module.exports =  [
     jumpTrack: true,
     option1: 'Discard 1 nuke token. If you do not have any nuke tokens, you may not choose this option.',
     option2: '-1 food, and the Admiral draws 2 Treachery Cards.',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'An Ambitious Operation',
@@ -965,7 +1196,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-1 fuel. The Admiral chooses another player to gain 1 miracle token.',
     option2: 'Roll a die. On a 4 or less, -1 fuel.',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Dangerous Plots',
@@ -975,7 +1209,10 @@ module.exports =  [
     jumpTrack: true,
     option1: 'The Admiral and the President both draw 1 Mutiny Card.',
     option2: '-1 morale, and the current player discads 3 Skill Cards.',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Dishonest Tactics',
@@ -985,7 +1222,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-1 morale, and the President may choose 1 player to move from the "Brig" to "Command.',
     option2: '-1 fuel, and the President draws 2 Quorum Cards.',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Question Procedure',
@@ -995,7 +1235,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-1 morale.',
     option2: 'Damage Galactica, and the President discards 3 Skill Cards.',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Requisition for Demetrius',
@@ -1005,7 +1248,10 @@ module.exports =  [
     jumpTrack: false,
     option1: '-1 food, then roll a die. On a 6 or lower, shuffle 2 Treachery Cards into the Destiny deck.',
     option2: 'The Admiral draws 1 Mutiny Card and 2 Treachery Cards.',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Starvation in Dogsville',
@@ -1015,7 +1261,10 @@ module.exports =  [
     jumpTrack: true,
     option1: 'Roll a die. On a 4 or less,-1 population and -1 food.',
     option2: 'Roll a die. On a 4 or less, -2 food.',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Bundsided',
@@ -1031,7 +1280,10 @@ module.exports =  [
       [ 'basestar', 'heavy raider' ],
       [ 'civilian' ],
       [ 'viper', 'civilian', 'civilian' ]
-    ]
+    ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Event Horizon',
@@ -1047,7 +1299,10 @@ module.exports =  [
       [ 'basestar', 'raider', 'raider' ],
       [ 'viper' ],
       [ 'viper' ]
-    ]
+    ],
+    script: {
+      keepUntil: 'jump',
+    },
   },
   {
     name: "Hornet's Nest",
@@ -1063,7 +1318,10 @@ module.exports =  [
       [ 'raider', 'raider', 'raider' ],
       [ 'viper' ],
       [ 'civilian', 'civilian' ]
-    ]
+    ],
+    script: {
+      keepUntil: 'jump,basestarDestroyed',
+    },
   },
   {
     name: 'Lockdown',
@@ -1079,7 +1337,10 @@ module.exports =  [
       [ 'viper', 'civilian' ],
       [ 'civilian' ],
       []
-    ]
+    ],
+    script: {
+      keepUntil: 'jump,basestarDestroyed',
+    },
   },
   {
     name: 'Reprisal',
@@ -1095,7 +1356,10 @@ module.exports =  [
       [ 'heavy raider', 'raider', 'raider', 'raider' ],
       [ 'civilian' ],
       [ 'basestar' ]
-    ]
+    ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Trial by Fire',
@@ -1111,7 +1375,10 @@ module.exports =  [
       [ 'basestar' ],
       [],
       [ 'civilian' ]
-    ]
+    ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'A Desperate Pact',
@@ -1124,7 +1391,10 @@ module.exports =  [
     failEffect: '-1 morale, and give the President title to the player (aside from the current President) highest on the Presidential line of succession',
     option2: 'The President discards 3 Skill Cards, then the current player draws 1 Mutiny Card',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership', 'piloting' ]
+    skills: [ 'politics', 'leadership', 'piloting' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Earth in Ruins',
@@ -1137,7 +1407,10 @@ module.exports =  [
     failEffect: '-2 morale',
     option2: '-1 food, and the current player draws 1 Mutiny Card',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Enemy of my Enemy',
@@ -1150,7 +1423,10 @@ module.exports =  [
     failEffect: '-2 morale, and damage Galactica',
     option2: 'Damage Galactica twice',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership', 'piloting' ]
+    skills: [ 'politics', 'leadership', 'piloting' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Galactica Falling Apart',
@@ -1163,7 +1439,10 @@ module.exports =  [
     failEffect: '-1 morale, and damage Galactica',
     option2: 'Roll a die. On a 6 or lower, -1 food',
     actor: 'Current player',
-    skills: [ 'leadership', 'piloting', 'engineering' ]
+    skills: [ 'leadership', 'piloting', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'One Last Cocktail',
@@ -1176,7 +1455,10 @@ module.exports =  [
     failEffect: '-1 food, -1 morale',
     option2: 'Roll a die. On a 6 or lower, -1 morale and the President is sent to "Sickbay"',
     actor: 'Current player',
-    skills: [ 'tactics', 'engineering' ]
+    skills: [ 'tactics', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Religious Turmoil',
@@ -1189,7 +1471,10 @@ module.exports =  [
     failEffect: '-1 morale, and each player discards 1 Skill Card',
     option2: 'Roll a die. On a 4 or lower, -1 food and -1 population',
     actor: 'Current player',
-    skills: [ 'politics', 'tactics' ]
+    skills: [ 'politics', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Secret Meetings',
@@ -1202,7 +1487,10 @@ module.exports =  [
     failEffect: '-1 morale',
     option2: 'The current player draws 1 Mutiny Card. Then, he chooses a player to draw 1 Mutiny Card.',
     actor: 'Current player',
-    skills: [ 'politics', 'tactics', 'engineering' ]
+    skills: [ 'politics', 'tactics', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Consult the Hybrid',
@@ -1215,7 +1503,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 food, and shuffle 2 Treachery Cards into the Destiny deck',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Domestic Dispute',
@@ -1228,7 +1519,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 morale, and the current player is sent to "Sickbay"',
-    skills: [ 'politics', 'tactics' ]
+    skills: [ 'politics', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Give in to Despair',
@@ -1241,7 +1535,10 @@ module.exports =  [
     partialValue: 9,
     partialEffect: '-1 food and the current player draws 3 Treachery Cards',
     failEffect: '-2 morale',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Hybrid in Panic',
@@ -1254,7 +1551,10 @@ module.exports =  [
     partialValue: 8,
     partialEffect: 'The current player discards 2 Skill Cards',
     failEffect: '-1 fuel',
-    skills: [ 'tactics', 'engineering' ]
+    skills: [ 'tactics', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Incitenement to Mutiny',
@@ -1267,7 +1567,10 @@ module.exports =  [
     partialValue: 7,
     partialEffect: 'Shuffle 2 Treachery Cards into the Destiny Deck',
     failEffect: 'Shuffle 4 Treachery Cards into the Destiny deck',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Insubordinate Crew',
@@ -1280,7 +1583,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 morale, and each player that does not have a Mutiny Card draws 1 Mutiny Card',
-    skills: [ 'leadership', 'tactics' ]
+    skills: [ 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Quorum in Uproar',
@@ -1293,7 +1599,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: 'The President discards 2 random Quorum Cards and 2 random Skill Cards',
-    skills: [ 'politics', 'tactics' ]
+    skills: [ 'politics', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Rallying Support',
@@ -1306,7 +1615,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 population, and the current player draws 1 Mutiny Card and 1 Treachery Card',
-    skills: [ 'politics', 'tactics' ]
+    skills: [ 'politics', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Reactor Critical',
@@ -1319,7 +1631,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 fuel',
-    skills: [ 'tactics', 'piloting', 'engineering' ]
+    skills: [ 'tactics', 'piloting', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Rebuild Trust',
@@ -1332,7 +1647,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-2 morale',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Ambushed by the Press',
@@ -1342,7 +1660,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-1 morale.',
     option2: 'The President must discard all of his Skill Cards.',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Appoint Head of Security',
@@ -1352,7 +1673,10 @@ module.exports =  [
     jumpTrack: false,
     option1: 'Return all undamaged vipers on the game board to the "Reserves." Then the Admiral must discard 2 random Skill Cards.',
     option2: '-1 morale and damage Galactica once.',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Controversial Manuscript',
@@ -1362,7 +1686,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-1 morale',
     option2: '+1 morale and damage Galactica twice.',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Hidden Explosives',
@@ -1372,7 +1699,10 @@ module.exports =  [
     jumpTrack: true,
     option1: 'Destroy 1 raptor and then the current player is sent to "Sickbay".',
     option2: '-1 morale.',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Interrogation',
@@ -1382,7 +1712,10 @@ module.exports =  [
     jumpTrack: false,
     option1: `The Admiral chooses another player to send to "Sickbay". The Admiral may then look at 1 of that character's Loyalty Cards at random.`,
     option2: 'The Admiral discards 2 Skill Cards; then the current player discards 3 Skill Cards.',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Labor Dispute',
@@ -1392,7 +1725,10 @@ module.exports =  [
     jumpTrack: false,
     option1: '-2 morale.',
     option2: '-1 fuel and decrease Jump Preparation track by 1.',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Medal of Distinction',
@@ -1402,7 +1738,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '+1 morale, place 2 civilian ships on the game board and then: Activate Raiders.',
     option2: '-1 morale.',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'The Circle',
@@ -1412,7 +1751,10 @@ module.exports =  [
     jumpTrack: true,
     option1: 'You must choose another player to receive the President title or the current player is executed',
     option2: 'The President discards 2 Skill Cards; then the current player discards 3 Skill Cards',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Truth and Reconciliation',
@@ -1422,7 +1764,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-1 morale and the President must choose a character to send to the "Brig".',
     option2: 'The President discards 2 Skill Cards; then the current player discards 3 Skill Cards',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Unwelcome Faces',
@@ -1432,7 +1777,10 @@ module.exports =  [
     jumpTrack: true,
     option1: 'The Admiral must discard all of his skill cards and then choose a character to send to the "Brig".',
     option2: '-1 morale and damage Galactica once.',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Widespread Starvation',
@@ -1442,7 +1790,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-2 food',
     option2: '-1 food, -1 population.',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Consult the Prisoner',
@@ -1455,7 +1806,10 @@ module.exports =  [
     failEffect: 'Each player discards 1 Skill Card and the current player is sent to the "Brig"',
     option2: 'The Admiral discards 2 Skill Cards and the current player discards 3 Skill Cards',
     actor: 'Current player',
-    skills: [ 'politics', 'tactics', 'engineering' ]
+    skills: [ 'politics', 'tactics', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Cylon Genocide',
@@ -1468,7 +1822,10 @@ module.exports =  [
     failEffect: '-1 morale, then: Basestar Attacks, Raiders Launch, Hvy Raider Activation',
     option2: 'Roll a die. If 4 or lower, the current player is sent to the "Brig"',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership', 'tactics', 'engineering' ]
+    skills: [ 'politics', 'leadership', 'tactics', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Familiar Face',
@@ -1481,7 +1838,10 @@ module.exports =  [
     failEffect: '-1 morale and the Admiral must discard all his Skill Cards',
     option2: '-1 morale',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Hera Rescued',
@@ -1494,7 +1854,10 @@ module.exports =  [
     failEffect: '-2 morale and destroy 1 raptor',
     option2: '-1 morale',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Mysterious Guide',
@@ -1507,7 +1870,10 @@ module.exports =  [
     failEffect: '-1 fuel and the current player discards all of his Skill Cards',
     option2: '-1 morale',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Mysterious Message',
@@ -1520,7 +1886,10 @@ module.exports =  [
     failEffect: 'Raiders Launch, Basestar Attacks',
     option2: 'Basestar Attacks',
     actor: 'Current player',
-    skills: [ 'politics', 'engineering' ]
+    skills: [ 'politics', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Raptor Malfunction',
@@ -1533,7 +1902,10 @@ module.exports =  [
     failEffect: 'Damage Galactica once and destroy 1 raptor',
     option2: 'The current player is sent to "Sickbay"',
     actor: 'Current player',
-    skills: [ 'tactics', 'piloting', 'engineering' ]
+    skills: [ 'tactics', 'piloting', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Set a Trap',
@@ -1546,7 +1918,10 @@ module.exports =  [
     failEffect: 'Place a centurion at the start of the Boarding Party track. The current player is sent to the "Sickbay"',
     option2: 'Roll a die: If 4 or lower, place a centurion at the start of the Boarding Party track',
     actor: 'Current player',
-    skills: [ 'leadership', 'tactics' ]
+    skills: [ 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'The Passage',
@@ -1559,7 +1934,10 @@ module.exports =  [
     failEffect: 'Destroy 2 civilian ships',
     option2: 'Roll a die. If 6 or lower, the current player is sent to "Sickbay"',
     actor: 'Current player',
-    skills: [ 'tactics', 'piloting', 'engineering' ]
+    skills: [ 'tactics', 'piloting', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Airlock Leak',
@@ -1572,7 +1950,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: 'Damage Galactica and the current player is sent to "Sickbay"',
-    skills: [ 'tactics', 'engineering' ]
+    skills: [ 'tactics', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Centurion Assault',
@@ -1585,7 +1966,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: 'Destroy 1 raptor and the current player is sent to "Sickbay"',
-    skills: [ 'tactics', 'piloting' ]
+    skills: [ 'tactics', 'piloting' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Divisive Behavior',
@@ -1598,7 +1982,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 morale',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Guilty Conscience',
@@ -1611,7 +1998,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: 'The current player discards 3 random Skill Cards',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Haunted by the Past',
@@ -1624,7 +2014,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: 'Each player must discard 1 random Skill Card',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Hidden Identity',
@@ -1637,7 +2030,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 morale. Current player is sent to the "Brig"',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'In the Ring',
@@ -1650,7 +2046,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 morale and the current player is sent to "Sickbay"',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: "Joe's Bar",
@@ -1663,7 +2062,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 morale and the current player is sent to "Brig"',
-    skills: [ 'politics', 'leadership', 'engineering' ]
+    skills: [ 'politics', 'leadership', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Power Failure',
@@ -1676,7 +2078,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: 'Reduce the Jump Preparation track by 1',
-    skills: [ 'leadership', 'tactics', 'engineering' ]
+    skills: [ 'leadership', 'tactics', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Strange Beacon',
@@ -1689,7 +2094,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: 'Decrease the Jump Preparation track by 1',
-    skills: [ 'tactics', 'piloting', 'engineering' ]
+    skills: [ 'tactics', 'piloting', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Temple of the Five',
@@ -1702,7 +2110,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: 'Decrease the Jump Preparation track by 1',
-    skills: [ 'tactics', 'engineering' ]
+    skills: [ 'tactics', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Threat of Super Nova',
@@ -1715,7 +2126,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 population and damage Galactica',
-    skills: [ 'leadership', 'piloting', 'engineering' ]
+    skills: [ 'leadership', 'piloting', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Unexplained Deaths',
@@ -1728,7 +2142,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 morale, -1 population',
-    skills: [ 'leadership', 'tactics' ]
+    skills: [ 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Unfair Bias',
@@ -1741,7 +2158,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: 'Damage Galactica and the current player discards his hand of Skill Cards',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'A Verdict of Guilty',
@@ -1751,7 +2171,10 @@ module.exports =  [
     jumpTrack: true,
     option1: 'The current player is executed and the Admiral discards 3 Skill Cards.',
     option2: 'Damage Galactica twice.',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Assassination Plot',
@@ -1761,7 +2184,10 @@ module.exports =  [
     jumpTrack: true,
     option1: 'The Admiral and the current player must both discards 3 Skill Cards and draw 3 Treatchery Cards.',
     option2: 'The Admiral is executed.',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Civilian Ship Nuked',
@@ -1771,7 +2197,10 @@ module.exports =  [
     jumpTrack: true,
     option1: 'Draw 1 civilian ship and destroy it. Then each player discards 1 Skill Card and draws 1 Treatchery Card.',
     option2: 'Draw 2 civilian ships and destroy them.',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Food Hoarding in the Fleet',
@@ -1781,7 +2210,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '-1 morale and roll a die. If 3 or less, draw 1 civilizan ship and destroy it.',
     option2: '-2 food',
-    actor: 'President'
+    actor: 'President',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Pressure the Supply Ships',
@@ -1791,7 +2223,10 @@ module.exports =  [
     jumpTrack: true,
     option1: '+1 food and -1 morale. The Admiral discards 2 Skill Cards and draws 2 Treatchery Cards',
     option2: '-2 food',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Suspicious Election Results',
@@ -1801,7 +2236,10 @@ module.exports =  [
     jumpTrack: false,
     option1: 'Give the President title to the character (aside from the current President) highest in the line of succession.',
     option2: 'The Admiral discards 1 random Skill Card and draws 1 Treatchery Card.',
-    actor: 'Admiral'
+    actor: 'Admiral',
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Dogfight',
@@ -1817,7 +2255,10 @@ module.exports =  [
       [ 'raider', 'raider' ],
       [ 'viper' ],
       [ 'viper', 'civilian' ]
-    ]
+    ],
+    script: {
+      keepUntil: 'jump,noRaiders',
+    },
   },
   {
     name: 'Scar',
@@ -1833,7 +2274,10 @@ module.exports =  [
       [ 'civilian', 'civilian' ],
       [ 'viper' ],
       [ 'viper' ]
-    ]
+    ],
+    script: {
+      keepUntil: 'jump,scarDestroyed',
+    },
   },
   {
     name: 'The Guardians',
@@ -1849,7 +2293,10 @@ module.exports =  [
       [ 'civilian' ],
       [ 'viper' ],
       [ 'raider', 'raider', 'viper' ]
-    ]
+    ],
+    script: {
+      keepUntil: 'jump',
+    },
   },
   {
     name: 'Code Blue',
@@ -1862,7 +2309,10 @@ module.exports =  [
     failEffect: '-1 morale an the current player is sent to the "Brig"',
     option2: 'Each player discards 2 Skill Cards and draws 2 Treachery Cards',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Reunite the Fleet',
@@ -1875,7 +2325,10 @@ module.exports =  [
     failEffect: '-1 morale and each player discards 1 Skill Card and draws 1 Treachery Card',
     option2: 'The current player discards 2 random Skill Cards and draws 2 Treachery Cards',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'The Black Market',
@@ -1888,7 +2341,10 @@ module.exports =  [
     failEffect: '-2 food, -1 morale',
     option2: '-1 food and each player discards 1 Skill card and draws 1 Treachery Card',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Unsettling Stories',
@@ -1901,7 +2357,10 @@ module.exports =  [
     failEffect: '-1 morale, and each player discards 1 Skill Card and draws 1 Treachery Card',
     option2: '-1 morale',
     actor: 'Current player',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'An Offer of Peace',
@@ -1914,7 +2373,10 @@ module.exports =  [
     partialValue: 6,
     partialEffect: 'Shuffle 2 Treachery Cards into the Destiny deck',
     failEffect: '-1 morale and shuffle 2 Treachery Cards into the Destiny deck',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Defending a Prisoner',
@@ -1927,7 +2389,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 morale and roll a die. If 4 or lower, the current player is executed',
-    skills: [ 'politics', 'leadership' ]
+    skills: [ 'politics', 'leadership' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Medical Breakthrough',
@@ -1940,7 +2405,10 @@ module.exports =  [
     partialValue: 6,
     partialEffect: 'No Effect',
     failEffect: '-1 morale and each player discards 1 Skill Card and draws 1 Treachery Card',
-    skills: [ 'politics', 'leadership', 'engineering' ]
+    skills: [ 'politics', 'leadership', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: "Review Galactica's Log",
@@ -1953,7 +2421,10 @@ module.exports =  [
     partialValue: 6,
     partialEffect: 'The Admiral must discard 3 Skill Cards',
     failEffect: '-1 morale and the Admiral must discard 5 Skill Cards',
-    skills: [ 'politics', 'leadership', 'tactics' ]
+    skills: [ 'politics', 'leadership', 'tactics' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Sabotage Investigated',
@@ -1966,7 +2437,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 morale, -1 fuel, -1 food',
-    skills: [ 'tactics', 'engineering' ]
+    skills: [ 'tactics', 'engineering' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Standoff with Pegasus',
@@ -1979,7 +2453,10 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: '-1 population, -1 morale, and damage 1 viper in a space area (if able)',
-    skills: [ 'politics', 'leadership', 'tactics', 'piloting' ]
+    skills: [ 'politics', 'leadership', 'tactics', 'piloting' ],
+    script: {
+      keepUntil: '',
+    },
   },
   {
     name: 'Training Snafu',
@@ -1992,6 +2469,9 @@ module.exports =  [
     partialValue: 0,
     partialEffect: '',
     failEffect: 'Damage 3 vipers in space areas or in the "Reserves"',
-    skills: [ 'leadership', 'piloting' ]
-  }
+    skills: [ 'leadership', 'piloting' ],
+    script: {
+      keepUntil: '',
+    },
+  },
 ]
