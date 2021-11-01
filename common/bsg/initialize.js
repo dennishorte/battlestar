@@ -13,17 +13,18 @@ function initialize(game) {
 
   // Top-level values
   game.initialized = true
-  game.setupLoyaltyComplete = true
-  game.phase = 'setup-character-selection'
-  game.crisisStep = ''
-  game.crisisDestinyAdded = false
-
+  /* game.setupLoyaltyComplete = true
+   * game.phase = 'setup-character-selection'
+   * game.crisisStep = ''
+   * game.crisisDestinyAdded = false
+   */
   game.currentTurnPlayerIndex = -1
   game.round = 1
 
   game.history = []
   game.log = []
   game.hasUndone = false
+  game.activeCrisisId = ''
 
   game.flags = {
     colonialOneDestroyed: false,

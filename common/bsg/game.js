@@ -313,8 +313,12 @@ Game.prototype.getCardsByPredicate = function(predicate) {
 }
 
 Game.prototype.getCrisis = function() {
-  const zone = this.getZoneByName('common')
-  return zone.cards.find(c => c.kind === 'crisis' || c.kind === 'super_crisis')
+  if (this.state.activeCrisisId) {
+    return this.getCardById(this.state.activeCrisisId)
+  }
+  else {
+    return undefined
+  }
 }
 
 Game.prototype.getCounterByName = function(name) {
@@ -878,6 +882,12 @@ Game.prototype.mReturnViperFromSpaceZone = function(zoneNumber) {
   const viperZone = this.getZoneByName('ships.vipers')
   const viper = spaceZone.cards.find(c => c.name === 'viper')
   this.rk.session.move(viper, viperZone.cards)
+}
+
+Game.prototype.mSetCrisisActive = function(card) {
+  util.assert(!this.state.activeCrisisId, 'Crisis already active!')
+  card = this._adjustCardParam(card)
+  this.rk.session.put(this.state, 'activeCrisisId', card.id)
 }
 
 Game.prototype.mSetGameResult = function(result) {

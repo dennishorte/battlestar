@@ -1416,6 +1416,17 @@ describe('player-turn-crisis', () => {
   })
 
   describe('cylon attack cards', () => {
+    test('activate cylons first', () => {
+      const game = _crisisFixture('Ambush', (game) => {
+        game.aClearSpace()
+        jest.spyOn(game, 'aActivateCylonShips')
+        jest.spyOn(game, 'aAttackGalactica')
+      })
+
+      expect(game.aActivateCylonShips.mock.calls.length).toBe(1)
+      expect(game.aAttackGalactica.mock.calls.length).toBe(0)
+    })
+
     test('deploy the expected units', () => {
       const game = _crisisFixture('Ambush', (game) => game.aClearSpace())
 
@@ -1433,7 +1444,7 @@ describe('player-turn-crisis', () => {
         .toStrictEqual([ 'civilian' ])
     })
 
-    test.skip('are moved to the keep zone if they have a lasting effect', () => {
+    test('are moved to the keep zone if they have a lasting effect', () => {
 
     })
   })
@@ -1832,7 +1843,7 @@ describe('misc functions', () => {
         expect(game.aAttackGalactica.mock.calls.length).toBe(1)
       })
 
-      describe.only('move toward civilan', () => {
+      describe('move toward civilan', () => {
         test('clockwise 1', () => {
           const game = _spaceFixture()
           game.rk.sessionStart(() => {

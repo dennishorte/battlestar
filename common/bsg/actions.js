@@ -270,8 +270,9 @@ Actions.aBasestarsLaunch = function(kind, count) {
 }
 
 Actions.aBeginCrisis = function() {
-  this.mMoveCard('decks.crisis', 'common')
-  const card = this.getZoneByName('common').cards.slice(-1)[0]
+  this.mMoveCard('decks.crisis', 'keep')
+  const card = this.getZoneByName('keep').cards.slice(-1)[0]
+  this.mSetCrisisActive(card)
 
   this.mLog({
     template: '{card} crisis begins',
