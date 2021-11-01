@@ -55,7 +55,7 @@ Actions.aActivateHeavyRaiders = function() {
     .filter(info => info.zoneName.startsWith('space.'))
 
   if (heavyRaidersInfo.length === 0) {
-    this.aBasestarsLaunch('heavy raider')
+    this.aBasestarsLaunch('heavy raider', 1)
   }
   else {
     for (const info of heavyRaidersInfo) {
@@ -82,6 +82,60 @@ Actions.aActivateHeavyRaiders = function() {
   }
 }
 
+Actions.aActivateRaiders = function() {
+  const raidersInfo = this
+    .getCardsByPredicate(c => c.kind === 'ships.raiders')
+    .filter(info => info.zoneName.startsWith('space.'))
+
+  if (raidersInfo.length === 0) {
+    this.aBasestarsLaunch('raider', 2)
+  }
+  else {
+    const spaceZonesWithCivilians = this.getZonesSpaceContaining(c => c.kind === 'civilian')
+
+    for (const info of raidersInfo) {
+      const spaceZone = this.getZoneByName(info.zoneName)
+
+      if (this.checkZoneContains(spaceZone, c => c.kind === 'ships.vipers')) {
+        const roll = bsgutil.rollDie()
+        if (roll === 8) {
+          this.mDamageViperAt(spaceZone, true)
+        }
+        else if (roll >= 5) {
+          this.mDamageViperAt(spaceZone)
+        }
+        else {
+          this.mLog({
+            template: 'Raider in {location} misses',
+            args: {
+              location: spaceZone.name,
+            }
+          })
+        }
+      }
+      else if (this.checkZoneContains(spaceZone, c => c.kind === 'civilian')) {
+        const civvie = spaceZone.cards.find(c => c.kind === 'civilian')
+        this.aDestroyCivilian(civvie)
+      }
+      else if (spaceZonesWithCivilians.length > 0) {
+        const clockwiseDistance = this.getDistanceToCivilian(spaceZone, 'clockwise')
+        const counterDistance = this.getDistanceToCivilian(spaceZone, 'counter')
+
+        if (clockwiseDistance <= counterDistance) {
+          this.mMoveAroundSpace(info.card, 'clockwise')
+        }
+        else {
+          this.mMoveAroundSpace(info.card, 'counter-clockwise')
+        }
+      }
+      else {
+        this.aAttackGalactica(info.card)
+      }
+
+    }
+  }
+}
+
 Actions.aActivateCylonShips = function(kind) {
   this.mLog({
     template: 'Activating Cylon ships: {kind}',
@@ -92,65 +146,17 @@ Actions.aActivateCylonShips = function(kind) {
     this.aActivateCenturions()
     this.aActivateHeavyRaiders()
   }
-
   else if (kind === 'Basestar Attacks') {
     this.aActivateBasestarAttacks()
   }
-
-  let noHeavyRaiders = true
-  let noRaiders = true
-  for (let i = 0; i < 6; i++) {
-    const spaceZone = this.getZoneByName(`space.space${i}`)
-
-    // By iterating backwards, we ensure that even if we remove cards from the list
-    // by moving them, we still iterate over all of the elements.
-    for (let i = spaceZone.cards.length - 1; i >= 0; i--) {
-      const ship = spaceZone.cards[i]
-      if (kind === 'Raiders' && ship.name === 'raider') {
-        noRaiders = false
-        if (this.checkZoneContains(spaceZone, c => c.name === 'raider')) {
-
-        }
-        else if (this.checkZoneContains(spaceZone, c => c.name === 'civilian')) {
-
-        }
-        else if (this.getZonesContaining(c => c.name === 'civilian')) {
-
-        }
-        else {
-          this.aAttackGalactica(ship)
-        }
-      }
-
-      else if (kind === 'Raiders Launch' && ship.name.startsWith('Basestar')) {
-        let count = 3
-        if (game.checkEffect('Cylon Swarm')) {
-          count += 1
-        }
-        this.mDeploy(spaceZone, 'raider', count)
-      }
-
-    }
+  else if (kind === 'Raiders Launch') {
+    this.aBasestarsLaunch('raiders', 3)
   }
-
-  if (kind === 'Raiders' && noRaiders) {
-    const basestarZones = this.getZonesWithBasestars()
-    if (basestarZones) {
-      this.mLog({ template: 'Basestars launch raiders' })
-    }
-
-    let count = 2
-    if (this.checkEffect('Cylon Swarm')) {
-      count += 1
-    }
-
-    for (const zone of basestarZones) {
-      for (const ship of zone.cards) {
-        if (ship.name.startsWith('Basestar')) {
-          this.mDeploy(zone, 'raider', count)
-        }
-      }
-    }
+  else if (kind === 'Raiders') {
+    this.aActivateRaiders()
+  }
+  else {
+    throw new Error(`Unknown cylon activation: ${kind}`)
   }
 }
 
@@ -232,7 +238,7 @@ Actions.aAttackGalactica = function(ship) {
   }
 }
 
-Actions.aBasestarsLaunch = function(kind) {
+Actions.aBasestarsLaunch = function(kind, count) {
   // Are there any basestars to launch from?
   const basestarZones = this.getZonesWithBasestars()
   if (basestarZones.length === 0) {
@@ -240,10 +246,6 @@ Actions.aBasestarsLaunch = function(kind) {
   }
 
   // How many to launch
-  let count = 1
-  if (kind === 'raider') {
-    count += 1
-  }
   if (this.checkEffect('Cylon Swarm')) {
     count += 1
   }
@@ -336,6 +338,25 @@ Actions.aDeployShips = function(deployData) {
       this.mDeploy(spaceZone, name)
     }
   }
+}
+
+Actions.aDestroyCivilian = function(civvie) {
+  civvie = this._adjustCardsParam(civvie)
+
+  if (civvie.effect === 'Nothing') {
+    this.mLog({ template: 'Raider destroys a civilian; no significant losses' })
+  }
+  else {
+    this.mLog({ template: `Raider destroys a civilian; effect: ${civvie.effect}` })
+    const costs = civvie.effect.split(', ')
+    for (const cost of costs) {
+      const name = cost.slice(3)
+      const amount = parseInt(costs.slice(0, 2))
+      this.mAdjustCounterByName(name, amount)
+    }
+  }
+
+  this.mExile(civvie)
 }
 
 Actions.aDestroyColonialOne = function() {

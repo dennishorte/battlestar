@@ -146,7 +146,7 @@ for (const [name, func] of Object.entries(actions)) {
 // Checks
 
 Game.prototype.checkBasestarEffect = function(ship, effectName) {
-  const zone = this.getZoneByCard(ship)
+  const zone = this.getZoneByCardOrigin(ship)
   for (const card of zone.cards) {
     if (card.name === effectName) {
       return true
@@ -232,7 +232,7 @@ Game.prototype.checkPlayerIsPresident = function(player) {
 
 Game.prototype.checkZoneContains = function(zone, predicate) {
   zone = this._adjustZoneParam(zone)
-  return !!this.zone.cards.find(predicate)
+  return !!zone.cards.find(predicate)
 }
 
 
@@ -325,6 +325,22 @@ Game.prototype.getCardCharacterByPlayer = function(player) {
   player = this._adjustPlayerParam(player)
   const playerZone = this.getZoneByPlayer(player.name)
   return playerZone.cards.find(c => c.kind === 'character')
+}
+
+Game.prototype.getDistanceToCivilian = function(startZone, direction) {
+  const increment = direction === 'clockwise' ? 1 : -1
+  let position = parseInt(startZone.name.slice(-1))
+  for (let i = 0; i < 6; i++) {
+    const zone = this.getZoneSpaceByIndex(position)
+    for (const card of zone.cards) {
+      if (card.kind === 'civilian') {
+        return i
+      }
+    }
+    position = (position + increment + 6) % 6
+  }
+
+  throw new Error('no civilians found')
 }
 
 Game.prototype.getTokenDamageGalactica = function() {
@@ -475,10 +491,15 @@ Game.prototype.getZoneBasestarByLetter = function(letter) {
   return this.getZoneByName('ships.basestar' + letter)
 }
 
-// Get the zone that the card originally came from
 Game.prototype.getZoneByCard = function(card) {
+  const { zoneName } = this.getCardByPredicate(c => c.id === card.id)
+  return this.getZoneByName(zoneName)
+}
+
+// Get the zone that the card originally came from
+Game.prototype.getZoneByCardOrigin = function(card) {
   card = this._adjustCardParam(card)
-  return this.getZoneByName(card.kind)
+  return this.getZoneByName(card.deck || card.kind)
 }
 
 Game.prototype.getZoneByLocationName = function(name) {
@@ -493,7 +514,7 @@ Game.prototype.getZoneByName = function(name) {
     const next = tokens.shift()
     zone = zone[next]
     if (!zone) {
-      throw `Error loading ${next} of zone ${name}.`
+      throw new Error(`Error loading ${next} of zone ${name}.`)
     }
   }
   return zone
@@ -529,6 +550,20 @@ Game.prototype.getZoneDiscardByCard = function(card) {
 
 Game.prototype.getZoneSpaceByIndex = function(index) {
   return this.getZoneByName(`space.space${index}`)
+}
+
+Game.prototype.getZonesSpaceContaining = function(predicate) {
+  const zones = []
+  for (let i = 0; i < 6; i++) {
+    const zone = this.getZoneSpaceByIndex(i)
+    for (const card of zone.cards) {
+      if (predicate(card)) {
+        zones.push(zone)
+        break
+      }
+    }
+  }
+  return zones
 }
 
 Game.prototype.getZonesWithBasestars = function() {
@@ -578,7 +613,7 @@ Game.prototype.mAdjustCardVisibilityToNewZone = function(zone, card) {
     this.rk.session.replace(card.visibility, [])
   }
   else {
-    throw `Unknown zone visibility (${zoneVis}) for zone ${zone.name}`
+    throw new Error(`Unknown zone visibility (${zoneVis}) for zone ${zone.name}`)
   }
 }
 
@@ -597,6 +632,38 @@ Game.prototype.mAdjustCounterByName = function(name, amount) {
 
 Game.prototype.mClearWaiting = function() {
   this.sm.clearWaiting()
+}
+
+Game.prototype.mDamageViperAt = function(spaceZone, destroy) {
+  destroy = destroy || false
+  spaceZone = this._adjustZoneParam(spaceZone)
+  const vipers = spaceZone.cards.filter(c => c.kind === 'ships.vipers')
+  const characters = spaceZone.cards.filter(c => c.kind === 'player-token')
+
+  const viperDestination = destroy ? 'exile' : 'ships.damagedVipers'
+  const viperMessage = destroy ? 'destroyed' : 'damaged'
+
+  if (vipers.length > characters.length) {
+    this.mMoveCard(spaceZone, viperDestination, vipers[0])
+    this.mLog({
+      template: `Viper at {location} ${viperMessage}`,
+      args: {
+        location: spaceZone.name
+      }
+    })
+  }
+
+  else {
+    this.mMoveCard(spaceZone, viperDestination, vipers[0])
+    this.mMoveCard(spaceZone, 'locations.sickbay', characters[0])
+    this.mLog({
+      template: `Viper at {location} ${viperMessage}; {player} sent to sickbay`,
+      args: {
+        player: characters.name,
+        location: spaceZone.name,
+      }
+    })
+  }
 }
 
 const shipNamesToZoneNames = {
@@ -685,6 +752,11 @@ Game.prototype.mDrawSkillCard = function(player, skill) {
 
   const playerHand = this.getZoneByPlayer(player)
   this.mMoveCard(zone, playerHand)
+}
+
+Game.prototype.mExile = function(card) {
+  card = this._adjustCardParam(card)
+  this.mMoveCard(this.getZoneByCard(card), 'exile', card)
 }
 
 Game.prototype.mLaunchViper = function(position) {
@@ -783,6 +855,17 @@ Game.prototype.mMoveByIndices = function(sourceName, sourceIndex, targetName, ta
   this.rk.session.splice(target, targetIndex, 0, card)
 }
 
+Game.prototype.mMoveAroundSpace = function(ship, direction) {
+  ship = this._adjustCardParam(ship)
+  const increment = direction === 'clockwise' ? 1 : -1
+  const zone = this.getZoneByCard(ship)
+  util.assert(zone.name.startsWith('space.space'), "Can't move clockwise; ship is not in space")
+  const zoneIndex = parseInt(zone.name.slice(-1))
+  const nextIndex = (zoneIndex + increment + 6) % 6
+  const nextZone = this.getZoneSpaceByIndex(nextIndex)
+  this.mMoveCard(zone, nextZone, ship)
+}
+
 Game.prototype.mMovePlayer = function(player, destination) {
   player = this._adjustPlayerParam(player)
   destination = this._adjustZoneParam(destination)
@@ -862,7 +945,7 @@ Game.prototype._adjustCardParam = function(card) {
   else if (typeof card === 'string') {
     // If the string contains a dash, it could be a card id
     if (card.includes('-')) {
-      const card = this.getCardById(card)
+      card = this.getCardById(card)
       if (card) {
         return card
       }
@@ -870,7 +953,7 @@ Game.prototype._adjustCardParam = function(card) {
 
     // The string might be a card name.
     // This isn't guaranteed to be unique. Many cards have duplicate names.
-    const card = this.getCardByName(card)
+    card = this.getCardByName(card)
     if (card) {
       return card
     }
@@ -943,7 +1026,7 @@ function enrichLogArgs(msg) {
     else if (key === 'card') {
       const card = msg.args['card']
       if (typeof card !== 'object') {
-        throw `Pass whole card object to log for better logging. Got: ${card}`
+        throw new Error(`Pass whole card object to log for better logging. Got: ${card}`)
       }
       msg.args['card'] = {
         value: card.name,

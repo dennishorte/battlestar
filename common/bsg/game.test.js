@@ -1768,7 +1768,137 @@ describe('misc functions', () => {
 
     }) // heavy raiders
 
-  })
+    describe('raiders', () => {
+
+      test('primary target: viper', () => {
+        const game = _spaceFixture()
+        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 8)
+        game.rk.sessionStart(() => {
+          game.mDeploy('space.space2', 'raider')
+          game.mDeploy('space.space2', 'viper')
+          game.mDeploy('space.space2', 'civilian')
+          game.aActivateCylonShips('Raiders')
+        })
+
+        const spaceZone = game.getZoneSpaceByIndex(2)
+        expect(spaceZone.cards.find(c => c.kind === 'ships.vipers')).not.toBeDefined()
+        expect(spaceZone.cards.find(c => c.kind === 'civilian')).toBeDefined()
+        expect(spaceZone.cards.find(c => c.kind === 'ships.raiders')).toBeDefined()
+        expect(game.getZoneByName('exile').cards.find(c => c.kind === 'ships.vipers')).toBeDefined()
+      })
+
+      test('primary target: viper with pilot', () => {
+        const game = _spaceFixture()
+        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 8)
+        game.rk.sessionStart(() => {
+          game.mMoveCard('players.micah', 'space.space2', 'micah')
+          game.mDeploy('space.space2', 'raider')
+          game.mDeploy('space.space2', 'viper')
+          game.mDeploy('space.space2', 'civilian')
+          game.aActivateCylonShips('Raiders')
+        })
+
+        const spaceZone = game.getZoneSpaceByIndex(2)
+        expect(spaceZone.cards.find(c => c.kind === 'ships.vipers')).not.toBeDefined()
+        expect(spaceZone.cards.find(c => c.kind === 'civilian')).toBeDefined()
+        expect(spaceZone.cards.find(c => c.kind === 'ships.raiders')).toBeDefined()
+        expect(game.getZoneByName('exile').cards.find(c => c.kind === 'ships.vipers')).toBeDefined()
+        expect(game.getZoneByPlayerLocation('micah').details.name).toBe('Sickbay')
+      })
+
+      test('secondary target: civilian', () => {
+        const game = _spaceFixture()
+        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 8)
+        game.rk.sessionStart(() => {
+          game.mDeploy('space.space2', 'raider')
+          game.mDeploy('space.space2', 'civilian')
+          game.aActivateCylonShips('Raiders')
+        })
+
+        const spaceZone = game.getZoneSpaceByIndex(2)
+        expect(spaceZone.cards.find(c => c.kind === 'civilian')).not.toBeDefined()
+        expect(spaceZone.cards.find(c => c.kind === 'ships.raiders')).toBeDefined()
+        expect(game.getZoneByName('exile').cards.find(c => c.kind === 'civilian')).toBeDefined()
+      })
+
+      test('attack galactica', () => {
+        const game = _spaceFixture()
+        jest.spyOn(game, 'aAttackGalactica')
+        game.rk.sessionStart(() => {
+          game.mDeploy('space.space2', 'raider')
+          game.aActivateCylonShips('Raiders')
+        })
+
+        expect(game.aAttackGalactica.mock.calls.length).toBe(1)
+      })
+
+      describe.only('move toward civilan', () => {
+        test('clockwise 1', () => {
+          const game = _spaceFixture()
+          game.rk.sessionStart(() => {
+            game.mDeploy('space.space1', 'raider')
+            game.mDeploy('space.space2', 'civilian')
+            game.aActivateCylonShips('Raiders')
+          })
+          expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
+          expect(game.getZoneSpaceByIndex(2).cards.length).toBe(2)
+        })
+
+        test('clockwise 2', () => {
+          const game = _spaceFixture()
+          game.rk.sessionStart(() => {
+            game.mDeploy('space.space1', 'raider')
+            game.mDeploy('space.space3', 'civilian')
+            game.mDeploy('space.space4', 'civilian')
+            game.aActivateCylonShips('Raiders')
+          })
+          expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
+          expect(game.getZoneSpaceByIndex(2).cards.length).toBe(1)
+          expect(game.getZoneSpaceByIndex(3).cards.length).toBe(1)
+        })
+
+        test('counter-clockwise 1', () => {
+          const game = _spaceFixture()
+          game.rk.sessionStart(() => {
+            game.mDeploy('space.space1', 'raider')
+            game.mDeploy('space.space0', 'civilian')
+            game.aActivateCylonShips('Raiders')
+          })
+          expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
+          expect(game.getZoneSpaceByIndex(0).cards.length).toBe(2)
+        })
+
+        test('tied adjacent', () => {
+          const game = _spaceFixture()
+          game.rk.sessionStart(() => {
+            game.mDeploy('space.space1', 'raider')
+            game.mDeploy('space.space0', 'civilian')
+            game.mDeploy('space.space2', 'civilian')
+            game.aActivateCylonShips('Raiders')
+          })
+          expect(game.getZoneSpaceByIndex(0).cards.length).toBe(1)
+          expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
+          expect(game.getZoneSpaceByIndex(2).cards.length).toBe(2)
+        })
+
+        test('tied across', () => {
+          const game = _spaceFixture()
+          game.rk.sessionStart(() => {
+            game.mDeploy('space.space1', 'raider')
+            game.mDeploy('space.space4', 'civilian')
+            game.aActivateCylonShips('Raiders')
+          })
+          expect(game.getZoneSpaceByIndex(0).cards.length).toBe(0)
+          expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
+          expect(game.getZoneSpaceByIndex(2).cards.length).toBe(1)
+          expect(game.getZoneSpaceByIndex(4).cards.length).toBe(1)
+        })
+
+      })
+
+    }) // raiders
+
+})
 
   describe.skip('aDeployShips', () => {
 
