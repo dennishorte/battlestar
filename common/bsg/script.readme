@@ -1,0 +1,57 @@
+Format of the card effect scripting language.
+
+Scripts are a javascript object with the following possible keys:
+  string values
+  - keepUntil // Available on any card that has a "keep this card in play" effect of some kind
+
+  effect values
+  - option1   // Available in Choice crises
+  - option2   // Available in Choice and Optional Skill Check crises
+  - effect    // Available on Cylon Attack crises
+  - pass      // Available on skill checks
+  - partial   // Available on skills checks with a partial pass effect
+  - fail      // Available on skill checks
+
+Effect values are Arrays of objects with the following keys.
+  - kind   // String used to determine how to parse the rest of the effect
+
+  choice
+  - actor    // player who makes the choice
+  - options  // object with 'name' and options array
+
+  civilianDestroyed
+  - count
+
+  counter
+  - counter  // name of counter to modify
+  - amount   // integer value used to adjust the counter
+
+  deploy
+  - ships    // Array of six arrays of ship names (same as Cylon Attack cards)
+
+  discardSkills
+  - actor    // descriptor for player who will discard (admiral, president, currentPlayer)
+  - count    // number of cards to discard
+
+  move
+  - actor     // Who will be moved
+  - location  // New location to move to
+
+  title
+  - title     // name of title to give away
+  - assignTo  // descriptor for the player who gains the title
+
+  // special effects with no options
+  aTraitorAccused
+  beseiged
+  cylonScreenings
+  returnAllVipers
+  tacticalStrike
+  thirtyThree
+
+
+In some cases, effects required additional parameters. In this case, use an object with the
+following keys in place of the array described above.
+  - effects   // Array (as described above
+  - requires  // (optional) a string value describing requirements to choose this effect
+  - dieRoll   // (optional) a die roll result string that tells if this effect happens
