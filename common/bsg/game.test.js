@@ -813,6 +813,10 @@ describe('player turn', () => {
 
       describe("Communications", () => {
 
+        test.skip('blocked by Jammed Assault crisis effect', () => {
+
+        })
+
       })
 
       describe("FTL Control", () => {
@@ -1480,60 +1484,109 @@ describe('player-turn-crisis', () => {
 })
 
 describe('crisis card effects', () => {
+
+  function _crisisFixture(crisisName, func) {
+    const factory = new GameFixtureFactory()
+    const game = factory.build().advanceTo('player-turn-crisis').game
+    const crisisDeck = game.getZoneByName('decks.crisis')
+    const crisisCardIndex = crisisDeck.cards.findIndex(c => c.name === crisisName)
+    util.assert(crisisCardIndex !== -1, `Unable to find crisis card: ${crisisName}`)
+
+    game.rk.sessionStart(() => {
+      game.mMoveByIndices(crisisDeck, crisisCardIndex, crisisDeck, 0)
+    })
+
+    if (func) {
+      func(game)
+    }
+
+    game.run()
+
+    return game
+  }
+
+  describe('Declare Martial Law', () => {
+    test.only('option1', () => {
+      const game = _crisisFixture('Declare Martial Law')
+
+      // Pre-conditions
+      expect(game.getCounterByName('morale')).toBe(10)
+      expect(game.getPlayerPresident().name).toBe('dennis')
+
+      game.aEvaluateCardEffects(game.getCrisis(), 'option1')
+
+      // Post-conditions
+      expect(game.getCounterByName('morale')).toBe(9)
+      expect(game.getPlayerPresident().name).toBe('micah')
+    })
+
+    test.skip('option2', () => {
+
+    })
+  })
+
   /* A Traitor Accused
    * Admiral Grilled
+   * Ambush
    * Analyze Enemy Fighter
+   * Besieged
+   * Boarding Parties
    * Bomb Threat
+   * Build Cylon Detector
    * Colonial Day
-   * Crippled Raider
-   * Cylon Screenings
-   * Forced Water Mining
-   * Fullfiller of Prophecy
-   * Informing the Public
-   * Keep Tabs on Visitor
-   * Network Computers
-   * Scouting for Fuel
-   * Scouting for Water
-   * Send Survey Team
-   * Water Sabotaged
    * Crash Landing
+   * Crippled Raider
    * Cylon Accusation
+   * Cylon Screenings
+   * Cylon Swarm
    * Cylon Tracking Device
    * Cylon Virus
    * Detector Sabotage
    * Elections Loom
+   * Food Shortage
+   * Forced Water Mining
+   * Fullfiller of Prophecy
    * Guilt by Collusion
    * Hanger Accident
+   * Heavy Assault
+   * Informing the Public
+   * Jammed Assault
    * Jump Computer Failure
+   * Keep Tabs on Visitor
    * Legendary Discovery
    * Loss of a Friend
    * Low Supplies
    * Mandatory Testing
    * Missing G4 Explosives
+   * Network Computers
    * Prison Labor
    * Prisoner Revolt
+   * Raiding Party
+   * Requested Resignation
+   * Rescue Caprica Survivors
+   * Rescue Mission
+   * Rescue the Fleet
    * Resistance
+   * Riots
+   * Scouting for Fuel
+   * Scouting for Water
    * Security Breach
+   * Send Survey Team
+   * Sleep Deprivation
+   * Surrounded
+   * Tactical Strike
    * Terrorist Bomber
    * Terrorist Investigations
    * The Olympic Carrier
+   * Thirty-Three
    * Unexpected Reunion
    * Unidentified Ship
+   * Water Sabotaged
+   * Water Shortage
    * Weapon Malfunction
    * Witch Hunt */
 
-  // Cylon Attack Cards
-  /* Ambush
-   * Besieged
-   * Boarding Parties
-   * Cylon Swarm
-   * Heavy Assault
-   * Jammed Assault
-   * Raiding Party
-   * Surrounded
-   * Tactical Strike
-   * Thirty-Three */
-
+  // Super Crises
   /* Massive Assault
    * Bomb on Colonial One
    * Cylon Intruders

@@ -225,9 +225,7 @@ Game.prototype.checkPlayerIsInSpace = function(player) {
 }
 
 Game.prototype.checkPlayerIsPresident = function(player) {
-  player = this._adjustPlayerParam(player)
-  const president = this.getPlayerWithCard('President')
-  return player.name === president.name
+  return player.name === this.getPlayerPresident().name
 }
 
 Game.prototype.checkZoneContains = function(zone, predicate) {
@@ -249,6 +247,10 @@ Game.prototype.getCardActiveCrisis = function() {
 
 Game.prototype.getCardById = function(id) {
   return this.getCardByPredicate(c => c.id === id).card
+}
+
+Game.prototype.getCardByKindAndName = function(kind, name) {
+  return this.getCardByPredicate(c => c.kind === kind && c.name === name).card
 }
 
 Game.prototype.getCardByLocation = function(sourceName, sourceIndex) {
@@ -369,6 +371,10 @@ Game.prototype.getLogIndent = function() {
   return this.sm.stack.length - 1
 }
 
+Game.prototype.getPlayerAdmiral = function() {
+  return this.getPlayerWithCard('Admiral')
+}
+
 Game.prototype.getPlayerCurrentTurn = function() {
   // This calculation lets the UI render games before they are finished initializing
   const index = this.state.currentTurnPlayerIndex < 0 ? 0 : this.state.currentTurnPlayerIndex
@@ -391,12 +397,31 @@ Game.prototype.getPlayerAll = function() {
   return this.state.players
 }
 
+Game.prototype.getPlayerByDescriptor = function(descriptor) {
+  if (descriptor === 'president') {
+    return this.getPlayerPresident()
+  }
+  else if (descriptor === 'admiral') {
+    return this.getPlayerAdmiral()
+  }
+  else if (descriptor === 'currentPlayer') {
+    return this.getPlayerCurrentTurn()
+  }
+  else {
+    throw new Error(`Unknown player descriptor: ${descriptor}`)
+  }
+}
+
 Game.prototype.getPlayerByIndex = function(index) {
   return this.state.players[index]
 }
 
 Game.prototype.getPlayerByName = function(name) {
   return this.getPlayerAll().find(p => p.name === name)
+}
+
+Game.prototype.getPlayerPresident = function() {
+  return this.getPlayerWithCard('President')
 }
 
 Game.prototype.getPlayerWaitingFor = function() {

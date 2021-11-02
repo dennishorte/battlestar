@@ -26,7 +26,6 @@ function generateOptions(context) {
   if (crisis.type === 'Cylon Attack') {
     game.aActivateCylonShips(crisis.cylonActivation)
     game.aDeployShips(crisis.deploy)
-    // TODO: move card to keep zone (if appropriate)
     return context.done()
   }
 
@@ -72,5 +71,15 @@ function generateOptions(context) {
 }
 
 function handleResponse(context) {
+  const game = context.state
+  const crisis = game.getCrisis()
+  const action = context.response.name
+  const option = context.response.option
 
+  // Player Choice crisis response
+  if (action === 'Choose') {
+    const optionNumber = parseInt(option[0].slice(-1))
+    game.aEvaluateCardEffects(crisis, `option${optionNumber}`)
+    return context.done()
+  }
 }

@@ -109,7 +109,7 @@ function move(object, destArray, destIndex) {
   _assert(!!object, `Can only move non-null objects. Got ${object}.`)
   _assert(Array.isArray(destArray), `Can only move objects into arrays. Got ${destArray}.`)
 
-  if (!destIndex) {
+  if (destIndex === undefined) {
     destIndex = destArray.length
   }
 

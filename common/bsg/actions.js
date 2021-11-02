@@ -187,7 +187,7 @@ Actions.aAddDestinyCards = function() {
 
 Actions.aAssignAdmiral = function(player) {
   player = this._adjustPlayerParam(player)
-  const card = this.getCardByName('Admiral')
+  const card = this.getCardByKindAndName('title', 'Admiral')
   const playerHand = this.getZoneByPlayer(player).cards
   this.mLog({
     template: '{player} becomes the Admiral',
@@ -200,7 +200,7 @@ Actions.aAssignAdmiral = function(player) {
 
 Actions.aAssignPresident = function(player) {
   player = this._adjustPlayerParam(player)
-  const card = this.getCardByName('President')
+  const card = this.getCardByKindAndName('title', 'President')
   const playerHand = this.getZoneByPlayer(player.name).cards
   this.mLog({
     template: '{player} becomes the President',
@@ -342,7 +342,7 @@ Actions.aDeployShips = function(deployData) {
 }
 
 Actions.aDestroyCivilian = function(civvie) {
-  civvie = this._adjustCardsParam(civvie)
+  civvie = this._adjustCardParam(civvie)
 
   if (civvie.effect === 'Nothing') {
     this.mLog({ template: 'Raider destroys a civilian; no significant losses' })
@@ -388,7 +388,7 @@ Actions.aDestroyColonialOne = function() {
 
 Actions.aDiscardSkillCards = function(player, cards) {
   player = this._adjustPlayerParam(player)
-  cards = this._adjustCardsParam(cards)
+  cards = this._adjustCardParam(cards)
 
   this.mLog({
     template: '{player} discards {cards}',
@@ -418,6 +418,76 @@ Actions.aDrawSkillCards = function(player, skills) {
 
   for (const skill of skills) {
     this.mDrawSkillCard(player, skill)
+  }
+}
+
+Actions.aEvaluateCardEffects = function(card, effectKey) {
+  card = this._adjustCardParam(card)
+  const details = card.script[effectKey]
+  const effects = Array.isArray(details) ? details : details.effect
+
+  this.mLog({
+    template: 'Evaluating {key} clause of {card}',
+    args: {
+      card: card,
+      key: effectKey,
+    }
+  })
+
+  for (const effect of effects) {
+    const kind = (typeof effect === 'string') ? effect : effect.kind
+
+    if (kind === 'choice') {
+      throw new Error('not implemented')
+    }
+
+    else if (kind === 'civilianDestroyed') {
+      const civilianBag = this.getZoneByName('decks.civilian')
+      for (let i = 0; i < effect.count; i++) {
+        if (civilianBag.cards.length > 0) {
+          const civilian = civilianBag.cards[0]
+          this.aDestroyCivilian(civilian)
+        }
+      }
+    }
+
+    else if (kind === 'counter') {
+      const { counter, amount } = effect
+      this.mAdjustCounterByName(counter, amount)
+    }
+
+    else if (kind === 'deploy') {
+      this.aDeployShips(effect.ships)
+    }
+
+    else if (kind === 'discardSkills') {
+      throw new Error('not implemented')
+    }
+
+    else if (kind === 'move') {
+      const { actor, location } = effect
+      const player = this.getPlayerByDescriptor(actor)
+      const locationZone = this.getZoneByLocationName(location)
+      this.mMovePlayer(player, locationZone)
+    }
+
+    else if (kind === 'title') {
+      const { title, assignTo } = effect
+      const player = this.getPlayerByDescriptor(assignTo)
+      if (title === 'Admiral') {
+        this.aAssignAdmiral(player)
+      }
+      else if (title === 'President') {
+        this.aAssignPresident(player)
+      }
+      else {
+        throw new Error(`Unknown title: ${name}`)
+      }
+    }
+
+    else {
+      throw new Error(`Unhandled script kind: ${kind}`)
+    }
   }
 }
 
