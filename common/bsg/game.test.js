@@ -1506,22 +1506,36 @@ describe('crisis card effects', () => {
   }
 
   describe('Declare Martial Law', () => {
-    test.only('option1', () => {
+    test('option1', () => {
       const game = _crisisFixture('Declare Martial Law')
 
       // Pre-conditions
       expect(game.getCounterByName('morale')).toBe(10)
       expect(game.getPlayerPresident().name).toBe('dennis')
 
-      game.aEvaluateCardEffects(game.getCrisis(), 'option1')
+      game.submit({
+        actor: 'micah',
+        name: 'Choose',
+        option: ['Option 1']
+      })
 
       // Post-conditions
       expect(game.getCounterByName('morale')).toBe(9)
       expect(game.getPlayerPresident().name).toBe('micah')
     })
 
-    test.skip('option2', () => {
+    test('option2', () => {
+      const game = _crisisFixture('Declare Martial Law')
 
+      // Pre-conditions
+      expect(game.getCounterByName('population')).toBe(12)
+
+      game.aEvaluateCardEffects(game.getCrisis(), 'option2')
+
+      // Post-conditions
+      expect(game.getCounterByName('population')).toBe(11)
+      expect(game.getWaiting('micah')).toBeDefined()
+      expect(game.getWaiting('micah').actions[0].name).toBe('Discard Skill Cards')
     })
   })
 

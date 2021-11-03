@@ -20,6 +20,7 @@ RecordKeeperSession.prototype.patch = patch
 RecordKeeperSession.prototype.reverse = reverse
 
 RecordKeeperSession.prototype.addKey = addKey
+RecordKeeperSession.prototype.increment = increment
 RecordKeeperSession.prototype.move = move
 RecordKeeperSession.prototype.pop = pop
 RecordKeeperSession.prototype.push = push
@@ -144,6 +145,11 @@ function pop(array) {
 
 function push(array, elem) {
   this.splice(array, array.length, 0, elem)
+}
+
+function increment(object, key) {
+  const value = object[key]
+  this.put(object, key, value + 1)
 }
 
 function put(object, key, value) {

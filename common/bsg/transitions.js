@@ -378,6 +378,9 @@ const transitions = {
   'draw-skill-cards': {
     func: require('./transitions/drawSkillCards.js'),
   },
+  'evaluate-card-effects': {
+    func: require('./transitions/evaluateCardEffects.js'),
+  },
   'launch-self-in-viper': {
     func: require('./transitions/launchSelfInViper.js'),
   },

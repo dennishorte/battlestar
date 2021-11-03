@@ -25,7 +25,7 @@ function discardSkillCards(context) {
     return context.wait({
       actor: player.name,
       actions: [{
-        name: 'Discard Skill Card',
+        name: 'Discard Skill Cards',
         count: context.data.count,
         options: playerSkillCards.map(c => c.id),
       }],

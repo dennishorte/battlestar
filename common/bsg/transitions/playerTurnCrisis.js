@@ -1,4 +1,4 @@
-const { transitionFactory } = require('./factory.js')
+const { transitionFactory, markDone } = require('./factory.js')
 
 module.exports = transitionFactory(
   {},
@@ -79,7 +79,10 @@ function handleResponse(context) {
   // Player Choice crisis response
   if (action === 'Choose') {
     const optionNumber = parseInt(option[0].slice(-1))
-    game.aEvaluateCardEffects(crisis, `option${optionNumber}`)
-    return context.done()
+    markDone(context)
+    return context.push('evaluate-card-effects', {
+      cardId: crisis.id,
+      effectKey: `option${optionNumber}`,
+    })
   }
 }
