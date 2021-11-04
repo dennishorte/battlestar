@@ -247,6 +247,7 @@ module.exports =  [
           options: [
             {
               name: 'resign',
+              description: 'Give the President title to the Admiral',
               effects: [{
                 kind: 'title',
                 title: 'President',
@@ -255,6 +256,7 @@ module.exports =  [
             },
             {
               name: 'resist',
+              description: 'Move to the Brig',
               effects: [{
                 kind: 'move',
                 actor: 'president',

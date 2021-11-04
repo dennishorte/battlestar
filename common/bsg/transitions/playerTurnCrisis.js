@@ -80,9 +80,9 @@ function handleResponse(context) {
   if (action === 'Choose') {
     const optionNumber = parseInt(option[0].slice(-1))
     markDone(context)
-    return context.push('evaluate-card-effects', {
-      cardId: crisis.id,
-      effectKey: `option${optionNumber}`,
+    return context.push('evaluate-effects', {
+      name: `${crisis.name} option ${optionNumber}`,
+      effects: crisis.script[`option${optionNumber}`],
     })
   }
 }

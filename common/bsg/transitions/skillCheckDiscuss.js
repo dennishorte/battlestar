@@ -72,9 +72,9 @@ function handleResponse(context) {
   }
   else if (nextStep === 'option2') {
     markDone(context)
-    return context.push('evaluate-card-effects', {
-      cardId: check.id,
-      effectKey: 'option2'
+    return context.push('evaluate-effects', {
+      name: `${check.name} option 2`,
+      effects: check.script.option2,
     })
   }
   else {

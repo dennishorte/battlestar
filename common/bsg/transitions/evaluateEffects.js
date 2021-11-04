@@ -11,21 +11,15 @@ module.exports = transitionFactory(
 
 function generateOptions(context) {
   const game = context.state
-  const card = game.getCardById(context.data.cardId)
-  const effectKey = context.data.effectKey
-  const details = card.script[effectKey]
-  const effects = Array.isArray(details) ? details : details.effect
+  const details = context.data.effects
+  const effects = details.effect || details
   const effectIndex = context.data.effectIndex
 
   // Our first time visiting this function
   if (effectIndex === 0) {
     game.rk.sessionStart(session => {
       game.mLog({
-        template: 'Evaluating {key} clause of {card}',
-        args: {
-          card: card,
-          key: effectKey,
-        }
+        template: `Evaluating effects of ${context.data.name}`,
       })
     })
 
@@ -64,7 +58,15 @@ function _evaluateEffect(game, effect) {
   const kind = (typeof effect === 'string') ? effect : effect.kind
 
   if (kind === 'choice') {
-    throw new Error('not implemented')
+    return {
+      push: {
+        transition: 'make-choice',
+        payload: {
+          playerName: game.getPlayerPresident().name,
+          options: effect.options,
+        }
+      }
+    }
   }
 
   else if (kind === 'civilianDestroyed') {
@@ -106,7 +108,9 @@ function _evaluateEffect(game, effect) {
     const { actor, location } = effect
     const player = game.getPlayerByDescriptor(actor)
     const locationZone = game.getZoneByLocationName(location)
-    game.mMovePlayer(player, locationZone)
+    game.rk.sessionStart(() => {
+      game.mMovePlayer(player, locationZone)
+    })
   }
 
   else if (kind === 'title') {

@@ -1623,6 +1623,68 @@ describe('crisis card effects', () => {
     })
   })
 
+  describe('Requested Resignation', () => {
+    test('option 1a: president discards', () => {
+      const game = _crisisFixture('Requested Resignation')
+      game.submit({
+        actor: 'micah',
+        name: 'Choose',
+        option: ['Option 1']
+      })
+
+      // Post-conditions
+      expect(game.getWaiting('dennis')).toBeDefined()
+      expect(game.getWaiting('dennis').actions[0].name).toBe('Discard Skill Cards')
+      expect(game.getWaiting('dennis').actions[0].count).toBe(2)
+    })
+
+    test.skip('option 1b: admiral discards', () => {
+
+    })
+
+    test('option2', () => {
+      const game = _crisisFixture('Requested Resignation')
+      game.submit({
+        actor: 'micah',
+        name: 'Choose',
+        option: ['Option 2']
+      })
+
+      expect(game.getWaiting('dennis')).toBeDefined()
+      expect(game.getWaiting('dennis').actions[0].name).toBe('Choose')
+    })
+
+    test('option2a, give away President', () => {
+      const game = _crisisFixture('Requested Resignation')
+      game.submit({
+        actor: 'micah',
+        name: 'Choose',
+        option: ['Option 2']
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Choose',
+        option: ['resign'],
+      })
+      expect(game.getPlayerPresident().name).toBe('micah')
+    })
+
+    test('option2b, go to brig', () => {
+      const game = _crisisFixture('Requested Resignation')
+      game.submit({
+        actor: 'micah',
+        name: 'Choose',
+        option: ['Option 2']
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Choose',
+        option: ['resist'],
+      })
+      expect(game.getZoneByPlayerLocation('dennis').details.name).toBe('Brig')
+    })
+  })
+
   /* A Traitor Accused
    * Admiral Grilled
    * Ambush
@@ -1658,7 +1720,6 @@ describe('crisis card effects', () => {
    * Prison Labor
    * Prisoner Revolt
    * Raiding Party
-   * Requested Resignation
    * Rescue Caprica Survivors
    * Rescue Mission
    * Rescue the Fleet
