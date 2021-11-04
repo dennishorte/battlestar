@@ -1503,11 +1503,11 @@ describe('crisis card effects', () => {
   }
 
   describe('Bomb Threat', () => {
-    test('pass', () => {
+    test.skip('pass', () => {
 
     })
 
-    test('fail', () => {
+    test.skip('fail', () => {
 
     })
 
@@ -1549,6 +1549,38 @@ describe('crisis card effects', () => {
       // Post-conditions
       expect(game.getCounterByName('morale')).toBe(10)
       expect(game.getZoneByName('decks.civilian').cards.length).toBe(10)
+    })
+  })
+
+  describe('Crippled Raider', () => {
+    test.skip('pass', () => {
+
+    })
+
+    test.skip('fail', () => {
+
+    })
+
+    test('option2', () => {
+      const game = _crisisFixture('Crippled Raider', (game) => game.aClearSpace())
+      jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 4)
+
+      // Pre-conditions
+      expect(game.getZoneSpaceByIndex(0).cards.length).toBe(0)
+      expect(game.getZoneSpaceByIndex(3).cards.length).toBe(0)
+
+      game.submit({
+        actor: 'micah',
+        name: 'Skill Check - Discuss',
+        option: ['Choose Option 2']
+      })
+
+      // Post-conditions
+      const front = game.getZoneSpaceByIndex(0).cards.map(c => c.name)
+      expect(front).toStrictEqual(['raider', 'raider', 'raider'])
+
+      const back = game.getZoneSpaceByIndex(3).cards.map(c => c.name)
+      expect(back).toStrictEqual(['civilian'])
     })
   })
 
@@ -1600,7 +1632,6 @@ describe('crisis card effects', () => {
    * Build Cylon Detector
    * Colonial Day
    * Crash Landing
-   * Crippled Raider
    * Cylon Accusation
    * Cylon Screenings
    * Cylon Swarm
