@@ -398,6 +398,8 @@ Game.prototype.getPlayerAll = function() {
 }
 
 Game.prototype.getPlayerByDescriptor = function(descriptor) {
+  descriptor = util.toCamelCase(descriptor)
+
   if (descriptor === 'president') {
     return this.getPlayerPresident()
   }

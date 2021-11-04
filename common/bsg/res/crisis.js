@@ -906,7 +906,7 @@ module.exports =  [
     passEffect: 'No Effect',
     failEffect: 'The current player chooses a character to send to the "Brig"',
     option2: 'The current player discards 5 skill cards',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',
@@ -929,7 +929,7 @@ module.exports =  [
     passEffect: 'No Effect',
     failEffect: '-1 morale, and the Admiral discards 2 Skill Cards',
     option2: '-1 morale',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',
@@ -965,7 +965,7 @@ module.exports =  [
     passEffect: 'Repair 1 destroyed raptor',
     failEffect: '-1 population',
     option2: 'Roll a die. If 4 or lower, -1 population and the current player discards 2 Skill Cards',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'tactics', 'engineering' ],
     script: {
       keepUntil: '',
@@ -1006,7 +1006,7 @@ module.exports =  [
     passEffect: 'No Effect',
     failEffect: '-1 morale and draw civilian ship and destroy it',
     option2: 'Roll a die. If 4 or lower, trigger the "Fail" effect of this card',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
@@ -1048,7 +1048,7 @@ module.exports =  [
     passEffect: '+1 morale',
     failEffect: '-2 morale',
     option2: '-1 morale',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'tactics' ],
     script: {
       keepUntil: '',
@@ -1079,7 +1079,7 @@ module.exports =  [
     passEffect: 'Increase the Jump Prep track by 1',
     failEffect: '-1 population',
     option2: 'Roll a die. If 4 or lower, place 3 raiders in front of Galactica and 1 civilian ship behind it',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'tactics', 'engineering' ],
     script: {
       keepUntil: '',
@@ -1115,7 +1115,7 @@ module.exports =  [
     passEffect: 'No Effect',
     failEffect: '-1 morale, and the current player looks at 1 random Loyalty Card belonging to the President or Admiral',
     option2: 'Each player discards 2 Skill Cards',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',
@@ -1147,7 +1147,7 @@ module.exports =  [
     passEffect: '+1 food',
     failEffect: '-1 population, -1 morale',
     option2: '+1 food, -1 morale, and each player discards 1 random Skill Card',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership', 'tactics', 'engineering' ],
     script: {
       keepUntil: '',
@@ -1197,7 +1197,7 @@ module.exports =  [
     passEffect: 'The current player draws 1 politics Skill Card',
     failEffect: '-1 population',
     option2: 'Current player discards 1 Skill Card. After the Activate Cylon Ships step, return to the Resolve Crisis step (Draw a new Crisis Card and resolve it.)',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',
@@ -1213,7 +1213,7 @@ module.exports =  [
     passEffect: 'Current player looks at 1 random Loyalty Card belonging to any player',
     failEffect: '-2 morale',
     option2: 'Roll a die. On a 4 or lower, -1 morale and -1 population',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',
@@ -1229,7 +1229,7 @@ module.exports =  [
     passEffect: 'No Effect',
     failEffect: 'Roll a die. If 4 or lower, -2 population',
     option2: 'The current player discards 4 random Skill Cards',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
@@ -1245,7 +1245,7 @@ module.exports =  [
     passEffect: 'Increase the Jump Prep track by 1',
     failEffect: '-1 population and place 1 centurion marker at the star of the Boarding Party track',
     option2: '-1 population and decrease the Jump Prep track by 1',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'tactics', 'engineering' ],
     script: {
       keepUntil: '',
@@ -1261,7 +1261,7 @@ module.exports =  [
     passEffect: '+1 fuel',
     failEffect: '-1 fuel and destroy 1 raptor',
     option2: 'Roll a die. If 4 or lower, -1 fuel',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'tactics', 'piloting' ],
     script: {
       keepUntil: '',
@@ -1277,7 +1277,7 @@ module.exports =  [
     passEffect: '+1 food',
     failEffect: '-1 fuel and destroy 1 raptor',
     option2: '-1 food',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'tactics', 'piloting' ],
     script: {
       keepUntil: '',
@@ -1293,7 +1293,7 @@ module.exports =  [
     passEffect: 'No Effect',
     failEffect: 'The current player is sent to "Sickbay" and destroy 1 raptor',
     option2: 'Roll a die. If 5 or less, -1 fuel',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'tactics', 'piloting', 'engineering' ],
     script: {
       keepUntil: '',
@@ -1309,7 +1309,7 @@ module.exports =  [
     passEffect: 'No Effect',
     failEffect: '-2 food',
     option2: '-1 food',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
@@ -2008,7 +2008,7 @@ module.exports =  [
     passEffect: 'No Effect',
     failEffect: '-1 morale, and give the President title to the player (aside from the current President) highest on the Presidential line of succession',
     option2: 'The President discards 3 Skill Cards, then the current player draws 1 Mutiny Card',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership', 'piloting' ],
     script: {
       keepUntil: '',
@@ -2024,7 +2024,7 @@ module.exports =  [
     passEffect: '-1 morale',
     failEffect: '-2 morale',
     option2: '-1 food, and the current player draws 1 Mutiny Card',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
@@ -2040,7 +2040,7 @@ module.exports =  [
     passEffect: '-1 morale',
     failEffect: '-2 morale, and damage Galactica',
     option2: 'Damage Galactica twice',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership', 'piloting' ],
     script: {
       keepUntil: '',
@@ -2056,7 +2056,7 @@ module.exports =  [
     passEffect: 'No Effect',
     failEffect: '-1 morale, and damage Galactica',
     option2: 'Roll a die. On a 6 or lower, -1 food',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'leadership', 'piloting', 'engineering' ],
     script: {
       keepUntil: '',
@@ -2072,7 +2072,7 @@ module.exports =  [
     passEffect: 'No Effect',
     failEffect: '-1 food, -1 morale',
     option2: 'Roll a die. On a 6 or lower, -1 morale and the President is sent to "Sickbay"',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'tactics', 'engineering' ],
     script: {
       keepUntil: '',
@@ -2088,7 +2088,7 @@ module.exports =  [
     passEffect: 'No Effect',
     failEffect: '-1 morale, and each player discards 1 Skill Card',
     option2: 'Roll a die. On a 4 or lower, -1 food and -1 population',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'tactics' ],
     script: {
       keepUntil: '',
@@ -2104,7 +2104,7 @@ module.exports =  [
     passEffect: 'No Effect',
     failEffect: '-1 morale',
     option2: 'The current player draws 1 Mutiny Card. Then, he chooses a player to draw 1 Mutiny Card.',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'tactics', 'engineering' ],
     script: {
       keepUntil: '',
@@ -2423,7 +2423,7 @@ module.exports =  [
     passEffect: 'Increase the Jump Preparation track by 1',
     failEffect: 'Each player discards 1 Skill Card and the current player is sent to the "Brig"',
     option2: 'The Admiral discards 2 Skill Cards and the current player discards 3 Skill Cards',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'tactics', 'engineering' ],
     script: {
       keepUntil: '',
@@ -2439,7 +2439,7 @@ module.exports =  [
     passEffect: 'Destroy all Cylon ships currently on the main game board',
     failEffect: '-1 morale, then: Basestar Attacks, Raiders Launch, Hvy Raider Activation',
     option2: 'Roll a die. If 4 or lower, the current player is sent to the "Brig"',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership', 'tactics', 'engineering' ],
     script: {
       keepUntil: '',
@@ -2455,7 +2455,7 @@ module.exports =  [
     passEffect: 'The Admiral may choose a character to send to the "Brig"',
     failEffect: '-1 morale and the Admiral must discard all his Skill Cards',
     option2: '-1 morale',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
@@ -2471,7 +2471,7 @@ module.exports =  [
     passEffect: 'No Effect',
     failEffect: '-2 morale and destroy 1 raptor',
     option2: '-1 morale',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',
@@ -2487,7 +2487,7 @@ module.exports =  [
     passEffect: 'Increase the Jump Preparation track by 1',
     failEffect: '-1 fuel and the current player discards all of his Skill Cards',
     option2: '-1 morale',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',
@@ -2503,7 +2503,7 @@ module.exports =  [
     passEffect: 'The current player may search the Destiny deck and choose 2 cards to discard. He then reshuffles the Destiny deck',
     failEffect: 'Raiders Launch, Basestar Attacks',
     option2: 'Basestar Attacks',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'engineering' ],
     script: {
       keepUntil: '',
@@ -2519,7 +2519,7 @@ module.exports =  [
     passEffect: 'No Effect',
     failEffect: 'Damage Galactica once and destroy 1 raptor',
     option2: 'The current player is sent to "Sickbay"',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'tactics', 'piloting', 'engineering' ],
     script: {
       keepUntil: '',
@@ -2535,7 +2535,7 @@ module.exports =  [
     passEffect: 'Destroy a centurion on the Boarding Party track',
     failEffect: 'Place a centurion at the start of the Boarding Party track. The current player is sent to the "Sickbay"',
     option2: 'Roll a die: If 4 or lower, place a centurion at the start of the Boarding Party track',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
@@ -2551,7 +2551,7 @@ module.exports =  [
     passEffect: 'Increase the Jump Preparation track by 1',
     failEffect: 'Destroy 2 civilian ships',
     option2: 'Roll a die. If 6 or lower, the current player is sent to "Sickbay"',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'tactics', 'piloting', 'engineering' ],
     script: {
       keepUntil: '',
@@ -2926,7 +2926,7 @@ module.exports =  [
     passEffect: 'The current player looks at 1 random Loyalty Card of any player',
     failEffect: '-1 morale an the current player is sent to the "Brig"',
     option2: 'Each player discards 2 Skill Cards and draws 2 Treachery Cards',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
@@ -2942,7 +2942,7 @@ module.exports =  [
     passEffect: '+1 population',
     failEffect: '-1 morale and each player discards 1 Skill Card and draws 1 Treachery Card',
     option2: 'The current player discards 2 random Skill Cards and draws 2 Treachery Cards',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',
@@ -2958,7 +2958,7 @@ module.exports =  [
     passEffect: '+1 food',
     failEffect: '-2 food, -1 morale',
     option2: '-1 food and each player discards 1 Skill card and draws 1 Treachery Card',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
@@ -2974,7 +2974,7 @@ module.exports =  [
     passEffect: 'No Effect',
     failEffect: '-1 morale, and each player discards 1 Skill Card and draws 1 Treachery Card',
     option2: '-1 morale',
-    actor: 'Current player',
+    actor: 'currentPlayer',
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',

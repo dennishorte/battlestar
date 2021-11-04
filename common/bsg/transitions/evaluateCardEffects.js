@@ -1,4 +1,5 @@
 const { transitionFactory } = require('./factory.js')
+const bsgutil = require('../util.js')
 
 module.exports = transitionFactory(
   {
@@ -27,6 +28,13 @@ function generateOptions(context) {
         }
       })
     })
+
+    if (details.dieRoll && !bsgutil.rollDieResult(details.dieRoll)) {
+      game.rk.sessionStart(() => {
+        game.mLog({ template: "Die roll didn't match; no effect" })
+      })
+      return context.done()
+    }
   }
 
   // All effects have been evaluated
@@ -82,11 +90,12 @@ function _evaluateEffect(game, effect) {
 
   else if (kind === 'discardSkills') {
     const { actor, count } = effect
+    const player = game.getPlayerByDescriptor(actor)
     return {
       push: {
         transition: 'discard-skill-cards',
         payload: {
-          playerName: actor,
+          playerName: player.name,
           count: count,
         }
       }

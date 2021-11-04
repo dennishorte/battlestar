@@ -507,7 +507,7 @@ describe('player turn', () => {
         })
 
         expect(game.getZoneByPlayerLocation('dennis').name).toBe('locations.administration')
-        expect(game.getWaiting('dennis').actions[0].name).toBe('Discard Skill Card')
+        expect(game.getWaiting('dennis').actions[0].name).toBe('Discard Skill Cards')
       })
 
       // Added due to a crash caused by this problem
@@ -583,7 +583,7 @@ describe('player turn', () => {
 
         expect(game.getZoneByName('space.space5').cards.length).toBe(0)
         expect(game.getZoneByPlayerLocation('dennis').name).toBe('locations.administration')
-        expect(game.getWaiting('dennis').actions[0].name).toBe('Discard Skill Card')
+        expect(game.getWaiting('dennis').actions[0].name).toBe('Discard Skill Cards')
       })
 
       test("can't land viper if no cards in hand", () => {
@@ -1168,10 +1168,7 @@ describe('skill checks', () => {
       })
 
       expect(game.getWaiting('tom').actions[0].name).toBe('Skill Check - Discuss')
-      expect(game.getWaiting('tom').actions[0].options).toStrictEqual([{
-        name: 'Change Answer',
-        options: ['yes'],
-      }])
+      expect(game.getWaiting('tom').actions[0].options).toStrictEqual(['Change Answer'])
 
       game.submit({
         actor: 'tom',
@@ -1189,7 +1186,7 @@ describe('skill checks', () => {
     test('current player can advance to next step', () => {
       const game = _sendTomToBrig()
 
-      const optionNames1 = game.getWaiting('dennis').actions[0].options.map(o => o.name)
+      const optionNames1 = game.getWaiting('dennis').actions[0].options.map(o => o.name || o)
       expect(optionNames1).toEqual(expect.arrayContaining(['Start Skill Check']))
 
       // Can submit plans and still advance to the next step
@@ -1202,7 +1199,7 @@ describe('skill checks', () => {
         }],
       })
 
-      const optionNames2 = game.getWaiting('dennis').actions[0].options.map(o => o.name)
+      const optionNames2 = game.getWaiting('dennis').actions[0].options.map(o => o.name || o)
       expect(optionNames2).toEqual(expect.arrayContaining(['Start Skill Check']))
     })
 
@@ -1505,6 +1502,56 @@ describe('crisis card effects', () => {
     return game
   }
 
+  describe('Bomb Threat', () => {
+    test('pass', () => {
+
+    })
+
+    test('fail', () => {
+
+    })
+
+    test('option2 die roll 4-', () => {
+      const game = _crisisFixture('Bomb Threat')
+
+      // Pre-conditions
+      expect(game.getCounterByName('morale')).toBe(10)
+      expect(game.getZoneByName('decks.civilian').cards.length).toBe(10)
+
+      jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 4)
+
+      game.submit({
+        actor: 'micah',
+        name: 'Skill Check - Discuss',
+        option: ['Choose Option 2']
+      })
+
+      // Post-conditions
+      expect(game.getCounterByName('morale')).toBe(9)
+      expect(game.getZoneByName('decks.civilian').cards.length).toBe(9)
+    })
+
+    test('option2 die roll 5+', () => {
+      const game = _crisisFixture('Bomb Threat')
+
+      // Pre-conditions
+      expect(game.getCounterByName('morale')).toBe(10)
+      expect(game.getZoneByName('decks.civilian').cards.length).toBe(10)
+
+      jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 5)
+
+      game.submit({
+        actor: 'micah',
+        name: 'Skill Check - Discuss',
+        option: ['Choose Option 2']
+      })
+
+      // Post-conditions
+      expect(game.getCounterByName('morale')).toBe(10)
+      expect(game.getZoneByName('decks.civilian').cards.length).toBe(10)
+    })
+  })
+
   describe('Declare Martial Law', () => {
     test('option1', () => {
       const game = _crisisFixture('Declare Martial Law')
@@ -1530,12 +1577,17 @@ describe('crisis card effects', () => {
       // Pre-conditions
       expect(game.getCounterByName('population')).toBe(12)
 
-      game.aEvaluateCardEffects(game.getCrisis(), 'option2')
+      game.submit({
+        actor: 'micah',
+        name: 'Choose',
+        option: ['Option 2']
+      })
 
       // Post-conditions
       expect(game.getCounterByName('population')).toBe(11)
       expect(game.getWaiting('micah')).toBeDefined()
       expect(game.getWaiting('micah').actions[0].name).toBe('Discard Skill Cards')
+      expect(game.getWaiting('micah').actions[0].count).toBe(2)
     })
   })
 
@@ -1545,7 +1597,6 @@ describe('crisis card effects', () => {
    * Analyze Enemy Fighter
    * Besieged
    * Boarding Parties
-   * Bomb Threat
    * Build Cylon Detector
    * Colonial Day
    * Crash Landing

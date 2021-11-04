@@ -1,4 +1,4 @@
-const { transitionFactory } = require('./factory.js')
+const { transitionFactory, markDone } = require('./factory.js')
 const util = require('../../lib/util.js')
 
 module.exports = transitionFactory(
@@ -32,11 +32,13 @@ function handleResponse(context) {
 
   util.assert(action === 'Skill Check - Discuss', `Unexpected action: ${action}`)
 
-  let nextStep = false
+  let nextStep = ''
 
   game.rk.sessionStart(session => {
     for (const opt of option) {
-      if (opt.name === 'Change Answer') {
+      const name = (typeof opt === 'string') ? opt : opt.name
+
+      if (name === 'Change Answer') {
         session.put(check.discussion, player.name, {
           support: '',
           useScientificResearch: false,
@@ -44,19 +46,20 @@ function handleResponse(context) {
         })
         break
       }
-      else if (opt.name === 'How much can you help?') {
+      else if (name === 'How much can you help?') {
         session.put(check.discussion[player.name], 'support', opt.option[0])
       }
-      else if (opt.name === 'Use Scientific Research?') {
-        const use = opt.option[0] === 'yes'
-        session.put(check.discussion[player.name], 'useScientificResearch', use)
+      else if (name === 'Use Scientific Research?') {
+        session.put(check.discussion[player.name], 'useScientificResearch', true)
       }
-      else if (opt.name === 'Use Investigative Committee?') {
-        const use = opt.option[0] === 'yes'
-        session.put(check.discussion[player.name], 'useInvestigativeCommitee', use)
+      else if (name === 'Use Investigative Committee?') {
+        session.put(check.discussion[player.name], 'useInvestigativeCommitee', true)
       }
-      else if (opt.name === 'Start Skill Check') {
-        nextStep = (opt.option[0] === 'yes')
+      else if (name === 'Start Skill Check') {
+        nextStep = 'done'
+      }
+      else if (name === 'Choose Option 2') {
+        nextStep = 'option2'
       }
       else {
         throw new Error(`Unknown option ${opt.name}`)
@@ -64,8 +67,15 @@ function handleResponse(context) {
     }
   })
 
-  if (nextStep) {
+  if (nextStep === 'done') {
     return context.done()
+  }
+  else if (nextStep === 'option2') {
+    markDone(context)
+    return context.push('evaluate-card-effects', {
+      cardId: check.id,
+      effectKey: 'option2'
+    })
   }
   else {
     return generateOptions(context)
@@ -89,36 +99,29 @@ function _discussOptionsForPlayer(game, check, player) {
     })
 
     if (playerHasScientificResearch) {
-      options.push({
-        name: 'Use Scientific Research?',
-        options: ['yes', 'no'],
-        default: 'no',
-      })
+      options.push('Use Scientific Research?')
     }
 
     if (playerHasInvestigativeCommittee) {
-      options.push({
-        name: 'Use Investigative Committee',
-        options: ['yes', 'no'],
-        default: 'no',
-      })
+      options.push('Use Investigative Committee')
     }
   }
 
   // Player already responded; allow them to undo
   else {
+    options.push('Change Answer')
+  }
+
+  if (check.option2 && player.name === game.getPlayerByDescriptor(check.actor)) {
+    options.push('Start Skill Check')
     options.push({
-      name: 'Change Answer',
-      options: ['yes']
+      name: 'Choose Option 2',
+      exclusive: true,
     })
   }
 
-  if (player.name === game.getPlayerCurrentTurn().name) {
-    options.push({
-      name: 'Start Skill Check',
-      option: ['yes', 'no'],
-      default: 'no',
-    })
+  else if (player.name === game.getPlayerCurrentTurn().name) {
+    options.push('Start Skill Check')
   }
 
   return options
