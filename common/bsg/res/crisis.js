@@ -1093,7 +1093,7 @@ module.exports =  [
       fail: [{
         kind: 'counter',
         counter: 'population',
-        amount: +1,
+        amount: -1,
       }],
       option2: {
         dieRoll: '4-',
