@@ -659,7 +659,7 @@ Game.prototype.mAdjustCounterByName = function(name, amount) {
     }
   })
 
-  this.state.counters[name] += amount
+  this.rk.session.put(this.state.counters, name, this.state.counters[name] + amount)
 }
 
 Game.prototype.mClearWaiting = function() {

@@ -13,11 +13,6 @@ function initialize(game) {
 
   // Top-level values
   game.initialized = true
-  /* game.setupLoyaltyComplete = true
-   * game.phase = 'setup-character-selection'
-   * game.crisisStep = ''
-   * game.crisisDestinyAdded = false
-   */
   game.currentTurnPlayerIndex = -1
   game.round = 1
 

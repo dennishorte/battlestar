@@ -10,6 +10,12 @@ module.exports = transitionFactory(
 function generateOptions(context) {
   const game = context.state
   const check = game.getSkillCheck()
+
+  // Mostly a result of testing
+  if (check.result) {
+    return context.done()
+  }
+
   const waits = game.getPlayerAll().map(player => {
     return {
       actor: player.name,
@@ -29,6 +35,11 @@ function handleResponse(context) {
   const player = game.getPlayerByName(context.response.actor)
   const action = context.response.name
   const option = context.response.option
+
+  // Mostly a result of testing
+  if (check.result) {
+    return context.done()
+  }
 
   util.assert(action === 'Skill Check - Discuss', `Unexpected action: ${action}`)
 

@@ -1553,12 +1553,26 @@ describe('crisis card effects', () => {
   })
 
   describe('Crippled Raider', () => {
-    test.skip('pass', () => {
+    test('pass', () => {
+      const game = _crisisFixture('Crippled Raider')
 
+      expect(game.getCounterByName('jumpTrack')).toBe(0)
+
+      game.aSelectSkillCheckResult('pass')
+      game.run()
+
+      expect(game.getCounterByName('jumpTrack')).toBe(1)
     })
 
-    test.skip('fail', () => {
+    test('fail', () => {
+      const game = _crisisFixture('Crippled Raider')
 
+      expect(game.getCounterByName('population')).toBe(12)
+
+      game.aSelectSkillCheckResult('fail')
+      game.run()
+
+      expect(game.getCounterByName('population')).toBe(11)
     })
 
     test('option2', () => {

@@ -828,7 +828,7 @@ module.exports =  [
       effect: [
         {
           kind: 'counter',
-          counter: 'jump',
+          counter: 'jumpTrack',
           amount: -1,
         },
       ],
@@ -1087,7 +1087,7 @@ module.exports =  [
       keepUntil: '',
       pass: [{
         kind: 'counter',
-        counter: 'jump',
+        counter: 'jumpTrack',
         amount: +1,
       }],
       fail: [{

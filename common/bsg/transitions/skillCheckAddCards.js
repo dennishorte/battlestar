@@ -13,6 +13,11 @@ function generateOptions(context) {
   const game = context.state
   const check = game.getSkillCheck()
 
+  // Mostly a result of testing
+  if (check.result) {
+    return context.done()
+  }
+
   // Initialize
   if (!context.data.addCardsName) {
     _beginAddCardsPhase(context)

@@ -1,4 +1,6 @@
 const { transitionFactory, markDone } = require('./factory.js')
+const util = require('../../lib/util.js')
+
 
 module.exports = transitionFactory(
   {},
@@ -58,11 +60,34 @@ function generateOptions(context) {
   }
 
   else if (crisis.type === 'Skill Check' || crisis.type === 'Optional Skill Check') {
-    game.rk.sessionStart(() => {
-      game.mSetSkillCheck(crisis)
-    })
+    const check = game.getSkillCheck()
 
-    return context.push('skill-check')
+    if (check) {
+      util.assert(!!check.result, 'Skill check should have result')
+
+      game.rk.sessionStart(() => {
+        game.mLog({
+          template: 'Skill check final result: {checkResult}',
+          args: {
+            checkResult: check.result
+          }
+        })
+      })
+
+      markDone(context)
+      context.push('evaluate-effects', {
+        name: `${check.name}: ${check.result}`,
+        effects: check.script[check.result],
+      })
+    }
+
+    else {
+      game.rk.sessionStart(() => {
+        game.mSetSkillCheck(crisis)
+      })
+
+      return context.push('skill-check')
+    }
   }
 
   else {
