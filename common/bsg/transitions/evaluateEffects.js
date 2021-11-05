@@ -127,6 +127,33 @@ function _evaluateEffect(game, effect) {
     }
   }
 
+  ////////////////////////////////////////////////////////////
+  // Special cases
+
+  else if (kind === 'aTraitorAccused') {
+    throw new Error('not implemented')
+  }
+
+  else if (kind === 'beseiged') {
+    throw new Error('not implemented')
+  }
+
+  else if (kind === 'cylonScreenings') {
+    throw new Error('not implemented')
+  }
+
+  else if (kind === 'returnAllVipers') {
+    game.aReturnAllVipersToSupply()
+  }
+
+  else if (kind === 'tacticalStrike') {
+    throw new Error('not implemented')
+  }
+
+  else if (kind === 'thirtyThree') {
+    throw new Error('not implemented')
+  }
+
   else {
     throw new Error(`Unhandled script kind: ${kind}`)
   }

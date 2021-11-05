@@ -1699,6 +1699,43 @@ describe('crisis card effects', () => {
     })
   })
 
+  describe('Sleep Deprivation', () => {
+    test('option1', () => {
+      const game = _crisisFixture('Sleep Deprivation')
+
+      // Pre-conditions
+      expect(game.getZoneByName('ships.vipers').cards.length).toBe(4)
+      expect(game.getZoneByPlayerLocation('dennis').details.name).toBe('Research Lab')
+
+      game.submit({
+        actor: 'micah',
+        name: 'Choose',
+        option: ['Option 1']
+      })
+
+      // Post-conditions
+      expect(game.getZoneByName('ships.vipers').cards.length).toBe(6)
+      expect(game.getZoneByPlayerLocation('dennis').details.name).toBe('Sickbay')
+    })
+
+    test('option2', () => {
+      const game = _crisisFixture('Sleep Deprivation')
+
+      // Pre-conditions
+      expect(game.getCounterByName('morale')).toBe(10)
+
+      game.submit({
+        actor: 'micah',
+        name: 'Choose',
+        option: ['Option 2']
+      })
+
+      // Post-conditions
+      expect(game.getCounterByName('morale')).toBe(9)
+    })
+
+  })
+
   /* A Traitor Accused
    * Admiral Grilled
    * Ambush
@@ -1743,7 +1780,6 @@ describe('crisis card effects', () => {
    * Scouting for Water
    * Security Breach
    * Send Survey Team
-   * Sleep Deprivation
    * Surrounded
    * Tactical Strike
    * Terrorist Bomber

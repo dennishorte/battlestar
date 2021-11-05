@@ -78,7 +78,10 @@ function _pathRecursive(matcher, root, matches, pathAccumulator, options) {
   if (verbose) {
     console.log(pathAccumulator)
   }
-  if (matcher(root)) {
+  if (root === undefined) {
+    throw new Error(`Found undefined in path at ${pathAccumulator}`)
+  }
+  else if (matcher(root)) {
     matches.push(pathAccumulator || '.')
     return
   }

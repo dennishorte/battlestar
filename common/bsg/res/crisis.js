@@ -504,10 +504,10 @@ module.exports =  [
       keepUntil: '',
       option1: [
         {
-          name: 'returnAllVipers',
+          kind: 'returnAllVipers',
         },
         {
-          name: 'move',
+          kind: 'move',
           actor: 'currentPlayer',
           location: 'Sickbay',
         },

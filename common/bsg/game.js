@@ -666,33 +666,50 @@ Game.prototype.mClearWaiting = function() {
   this.sm.clearWaiting()
 }
 
-Game.prototype.mDamageViperAt = function(spaceZone, destroy) {
-  destroy = destroy || false
+Game.prototype.mRemoveViperAt = function(spaceZone, action) {
   spaceZone = this._adjustZoneParam(spaceZone)
   const vipers = spaceZone.cards.filter(c => c.kind === 'ships.vipers')
   const characters = spaceZone.cards.filter(c => c.kind === 'player-token')
+  const viperIsPiloted = characters.length >= vipers.length
 
-  const viperDestination = destroy ? 'exile' : 'ships.damagedVipers'
-  const viperMessage = destroy ? 'destroyed' : 'damaged'
-
-  if (vipers.length > characters.length) {
-    this.mMoveCard(spaceZone, viperDestination, vipers[0])
-    this.mLog({
-      template: `Viper at {location} ${viperMessage}`,
-      args: {
-        location: spaceZone.name
-      }
-    })
+  let playerDestination
+  let viperDestination
+  let viperMessage
+  if (action === 'land') {
+    playerDestination = 'Hangar Deck'
+    viperDestination = 'ships.vipers'
+    viperMessage = 'landed'
+  }
+  else if (action === 'damage') {
+    playerDestination = 'Sickbay'
+    viperDestination = 'ships.damagedVipers'
+    viperMessage = 'damaged'
+  }
+  else if (action === 'destroy') {
+    playerDestination = 'Sickbay'
+    viperDestination = 'exile'
+    viperMessage = 'destroyed'
+  }
+  else {
+    throw new Error(`Unknown viper action: ${action}`)
   }
 
-  else {
-    this.mMoveCard(spaceZone, viperDestination, vipers[0])
-    this.mMoveCard(spaceZone, 'locations.sickbay', characters[0])
+  this.mMoveCard(spaceZone, viperDestination, vipers[0])
+  this.mLog({
+    template: `Viper at {location} ${viperMessage}`,
+    args: {
+      location: spaceZone.name
+    }
+  })
+
+  if (viperIsPiloted) {
+    const playerDestinationZone = this.getZoneByLocationName(playerDestination)
+    this.mMoveCard(spaceZone, playerDestinationZone, characters.pop())
     this.mLog({
-      template: `Viper at {location} ${viperMessage}; {player} sent to sickbay`,
+      template: `{player} moved to {location}`,
       args: {
         player: characters.name,
-        location: spaceZone.name,
+        location: playerDestination,
       }
     })
   }
@@ -868,6 +885,14 @@ Game.prototype.mMoveCard = function(source, target, card) {
   }
   else {
     card = source.cards[0]
+  }
+
+  if (source.cards[cardIndex] === undefined) {
+    console.log(source)
+    console.log(target)
+    console.log(cardIndex)
+    console.log(card)
+    throw new Error('Trying to move undefined card')
   }
 
   this.mMoveByIndices(source, cardIndex, target, target.cards.length)

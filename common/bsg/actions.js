@@ -99,10 +99,10 @@ Actions.aActivateRaiders = function() {
       if (this.checkZoneContains(spaceZone, c => c.kind === 'ships.vipers')) {
         const roll = bsgutil.rollDie()
         if (roll === 8) {
-          this.mDamageViperAt(spaceZone, true)
+          this.mRemoveViperAt(spaceZone, 'destroy')
         }
         else if (roll >= 5) {
-          this.mDamageViperAt(spaceZone)
+          this.mRemoveViperAt(spaceZone, 'damage')
         }
         else {
           this.mLog({
@@ -440,6 +440,15 @@ Actions.aLaunchSelfInViper = function(player, position) {
   const spaceZoneName = position === 'Lower Left' ? 'space.space5' : 'space.space4'
   this.mMovePlayer(player, spaceZoneName)
   this.mLaunchViper(position)
+}
+
+Actions.aReturnAllVipersToSupply = function() {
+  for (let i = 0; i < 6; i++) {
+    const zone = this.getZoneSpaceByIndex(i)
+    while (this.checkZoneContains(zone, c => c.kind === 'ships.vipers')) {
+      this.mRemoveViperAt(zone, 'land')
+    }
+  }
 }
 
 Actions.aSelectCharacter = function(player, characterName) {
