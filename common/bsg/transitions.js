@@ -371,7 +371,9 @@ const transitions = {
   'activate-admirals-quarters': {
     func: require('./transitions/activateAdmiralsQuarters.js'),
   },
-
+  'choose-player-to-send-to-brig': {
+    func: require('./transitions/choosePlayerToSendToBrig.js'),
+  },
   'discard-skill-cards': {
     func: require('./transitions/discardSkillCards.js'),
   },

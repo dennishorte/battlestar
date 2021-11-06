@@ -153,7 +153,14 @@ function _evaluateEffect(game, effect) {
   // Special cases
 
   else if (kind === 'aTraitorAccused') {
-    throw new Error('not implemented')
+    return {
+      push: {
+        transition: 'choose-player-to-send-to-brig',
+        payload: {
+          playerName: game.getPlayerCurrentTurn().name,
+        },
+      }
+    }
   }
 
   else if (kind === 'besieged') {

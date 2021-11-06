@@ -1506,6 +1506,40 @@ describe('crisis card effects', () => {
     return game
   }
 
+  describe('A Traitor Accused', () => {
+    describe('fail', () => {
+      test.skip('Everyone is already in the brig', () => {
+
+      })
+
+      test.skip('Only one player can be chosen', () => {
+
+      })
+
+      test('Must choose someone', () => {
+        const game = _crisisFixture('A Traitor Accused')
+        game.aSelectSkillCheckResult('fail')
+
+        const action = game.getWaiting('dennis').actions[0]
+        expect(action.name).toBe('Choose Player')
+        expect(action.options.sort()).toStrictEqual(['dennis', 'micah', 'tom'])
+      })
+
+      test("Cylons can't be chosen", () => {
+        const game = _crisisFixture('A Traitor Accused', (game) => {
+          jest.spyOn(game, 'checkPlayerIsRevealedCylon').mockImplementation(player => {
+            return player === 'dennis' || player.name === 'dennis'
+          })
+        })
+        game.aSelectSkillCheckResult('fail')
+
+        const action = game.getWaiting('dennis').actions[0]
+        expect(action.name).toBe('Choose Player')
+        expect(action.options.sort()).toStrictEqual(['micah', 'tom'])
+      })
+    })
+  })
+
   describe('Besieged', () => {
     test('Heavy Casualties (no other raiders)', () => {
       const game = _crisisFixture('Besieged', (game) => {
@@ -1816,7 +1850,7 @@ describe('crisis card effects', () => {
     })
   })
 
-  /* A Traitor Accused
+  /*
    * Admiral Grilled
    * Ambush
    * Analyze Enemy Fighter
