@@ -17,7 +17,7 @@ Effect values are Arrays of objects with the following keys.
 
   choice
   - actor    // player who makes the choice
-  - options  // object with 'name' and options array
+  - options  // array of object with 'name' and effects array
 
   civilianDestroyed
   - count
@@ -41,10 +41,14 @@ Effect values are Arrays of objects with the following keys.
   - title     // name of title to give away
   - assignTo  // descriptor for the player who gains the title
 
+  viewLoyalty
+  - target    // whose loyalty card does the actor view
+  - viewer    // who does the viewing
+  - count     // number of randomly selected cards to view
+
   // special effects with no options
   aTraitorAccused
   beseiged
-  cylonScreenings
   returnAllVipers
   tacticalStrike
   thirtyThree

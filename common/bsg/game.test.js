@@ -948,6 +948,10 @@ describe('adhoc transitions', () => {
 
   })
 
+  describe('discard-skill-cards-in-parallel', () => {
+
+  })
+
   describe('Launch Self on Viper', () => {
     test('vipers on the hangar deck', () => {
       const factory = new GameFixtureFactory()
@@ -1598,6 +1602,53 @@ describe('crisis card effects', () => {
     })
   })
 
+  describe('Cylon Screenings', () => {
+
+    test('pass', () => {
+      const game = _crisisFixture('Cylon Screenings')
+      expect(game.getCounterByName('morale')).toBe(10)
+      game.aSelectSkillCheckResult('pass')
+      game.run()
+      // no effects
+    })
+
+    test('fail', () => {
+      const game = _crisisFixture('Cylon Screenings')
+
+      expect(game.getCounterByName('morale')).toBe(10)
+
+      game.aSelectSkillCheckResult('fail')
+      game.run()
+
+      expect(game.getCounterByName('morale')).toBe(9)
+      expect(game.getWaiting('dennis').actions[0].name).toBe('Choose')
+
+      game.submit({
+        actor: 'dennis',
+        name: 'Choose',
+        option: ['Admiral'],
+      })
+
+      const admiralLoyaltyCards = game.getCardsLoyaltyByPlayer('micah')
+      expect(admiralLoyaltyCards.length).toBe(1)
+      expect(admiralLoyaltyCards[0].visibility.sort()).toStrictEqual(['dennis', 'micah'])
+    })
+
+    test.only('option2', () => {
+      const game = _crisisFixture('Cylon Screenings')
+
+      game.submit({
+        actor: 'dennis',
+        name: 'Skill Check - Discuss',
+        option: ['Choose Option 2']
+      })
+
+      expect(game.getWaiting().map(w => w.actor).sort()).toStrictEqual(['dennis', 'micah', 'tom'])
+      expect(game.getWaiting('dennis').actions[0].name).toBe('Discard Skill Cards')
+    })
+
+  })
+
   describe('Declare Martial Law', () => {
     test('option1', () => {
       const game = _crisisFixture('Declare Martial Law')
@@ -1746,7 +1797,6 @@ describe('crisis card effects', () => {
    * Colonial Day
    * Crash Landing
    * Cylon Accusation
-   * Cylon Screenings
    * Cylon Swarm
    * Cylon Tracking Device
    * Cylon Virus

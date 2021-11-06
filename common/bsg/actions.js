@@ -451,6 +451,29 @@ Actions.aReturnAllVipersToSupply = function() {
   }
 }
 
+// If count is less than the number of loyalty cards held by target player,
+// the viewed cards are selected at random.
+Actions.aRevealLoyaltyCards = function(target, viewer, count) {
+  target = this._adjustPlayerParam(target)
+  viewer = this._adjustPlayerParam(viewer)
+
+  const cards = this.getCardsLoyaltyByPlayer(target)
+  const cardIdsToView = util.array.shuffle(cards.map(c => c.id)).slice(0, count)
+  const cardsToView = cards.filter(c => cardIdsToView.includes(c.id))
+
+  for (const card of cardsToView) {
+    util.array.pushUnique(card.visibility, viewer.name)
+    this.mLog({
+      template: '{player1} looks at {card} belonging to {player2}',
+      args: {
+        player1: viewer.name,
+        player2: target.name,
+        card: card,
+      }
+    })
+  }
+}
+
 Actions.aSelectCharacter = function(player, characterName) {
   player = this._adjustPlayerParam(player)
 

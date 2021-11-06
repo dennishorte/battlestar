@@ -92,13 +92,28 @@ function _evaluateEffect(game, effect) {
 
   else if (kind === 'discardSkills') {
     const { actor, count } = effect
-    const player = game.getPlayerByDescriptor(actor)
-    return {
-      push: {
-        transition: 'discard-skill-cards',
-        payload: {
-          playerName: player.name,
-          count: count,
+
+    if (actor === 'each') {
+      const playerNames = game.getPlayerAll().map(p => p.name)
+      return {
+        push: {
+          transition: 'discard-skill-cards-in-parallel',
+          payload: {
+            playerNames,
+            count,
+          }
+        }
+      }
+    }
+
+    else {
+      return {
+        push: {
+          transition: 'discard-skill-cards',
+          payload: {
+            playerName: actor,
+            count: count,
+          }
         }
       }
     }
@@ -127,6 +142,13 @@ function _evaluateEffect(game, effect) {
     }
   }
 
+  else if (kind === 'viewLoyalty') {
+    const { viewer, target, count } = effect
+    const viewerPlayer = game.getPlayerByDescriptor(viewer)
+    const targetPlayer = game.getPlayerByDescriptor(target)
+    game.aRevealLoyaltyCards(targetPlayer, viewerPlayer, count)
+  }
+
   ////////////////////////////////////////////////////////////
   // Special cases
 
@@ -135,10 +157,6 @@ function _evaluateEffect(game, effect) {
   }
 
   else if (kind === 'beseiged') {
-    throw new Error('not implemented')
-  }
-
-  else if (kind === 'cylonScreenings') {
     throw new Error('not implemented')
   }
 

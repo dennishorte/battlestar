@@ -1129,7 +1129,30 @@ module.exports =  [
           amount: -1,
         },
         {
-          kind: 'cylonScreenings',
+          kind: 'choice',
+          actor: 'currentPlayer',
+          options: [
+            {
+              name: 'Admiral',
+              description: 'Look at one random loyalty card of the Admiral',
+              effects: [{
+                kind: 'viewLoyalty',
+                target: 'admiral',
+                viewer: 'currentPlayer',
+                count: 1,
+              }],
+            },
+            {
+              name: 'President',
+              description: 'Look at one random loyalty card of the President',
+              effects: [{
+                kind: 'viewLoyalty',
+                target: 'president',
+                viewer: 'currentPlayer',
+                count: 1,
+              }],
+            },
+          ]
         },
       ],
       option2: [{
