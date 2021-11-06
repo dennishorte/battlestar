@@ -26,6 +26,9 @@ Effect values are Arrays of objects with the following keys.
   - counter  // name of counter to modify
   - amount   // integer value used to adjust the counter
 
+  cylonActivation
+  - activationKind  // string matching Cylon activation crisis cards
+
   deploy
   - ships    // Array of six arrays of ship names (same as Cylon Attack cards)
 

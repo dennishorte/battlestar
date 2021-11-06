@@ -783,8 +783,8 @@ module.exports =  [
     script: {
       keepUntil: '',
       effect: [{
-        name: 'cylonActivation',
-        kind: 'Basestar attacks',
+        kind: 'cylonActivation',
+        activationKind: 'Basestar Attacks',
       }],
     },
   },
@@ -895,7 +895,6 @@ module.exports =  [
     ],
     script: {
       keepUntil: 'jump, basestarDestroyed',
-      effect: ['thirtyThree']
     },
   },
   {

@@ -1744,6 +1744,17 @@ describe('crisis card effects', () => {
     })
   })
 
+  describe('Heavy Assault', () => {
+    test('effect', () => {
+      const game = _crisisFixture('Heavy Assault', (game) => {
+        jest.spyOn(game, 'aAttackGalactica')
+      })
+
+      // One ship from initial deployment and one (because of max 2) from this crisis
+      expect(game.aAttackGalactica.mock.calls.length).toBe(2)
+    })
+  })
+
   describe('Requested Resignation', () => {
     test('option 1a: president discards', () => {
       const game = _crisisFixture('Requested Resignation')
@@ -1869,7 +1880,6 @@ describe('crisis card effects', () => {
    * Fullfiller of Prophecy
    * Guilt by Collusion
    * Hanger Accident
-   * Heavy Assault
    * Informing the Public
    * Jammed Assault
    * Jump Computer Failure

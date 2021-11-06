@@ -86,6 +86,11 @@ function _evaluateEffect(game, effect) {
     })
   }
 
+  else if (kind === 'cylonActivation') {
+    const { activationKind } = effect
+    game.aActivateCylonShips(activationKind)
+  }
+
   else if (kind === 'deploy') {
     game.aDeployShips(effect.ships)
   }
@@ -111,7 +116,7 @@ function _evaluateEffect(game, effect) {
         push: {
           transition: 'discard-skill-cards',
           payload: {
-            playerName: actor,
+            playerName: game.getPlayerByDescriptor(actor).name,
             count: count,
           }
         }
@@ -184,11 +189,8 @@ function _evaluateEffect(game, effect) {
     }
   }
 
-  else if (kind === 'thirtyThree') {
-    throw new Error('not implemented')
-  }
-
   else {
+    console.log(game.getCrisis())
     throw new Error(`Unhandled script kind: ${kind}`)
   }
 }
