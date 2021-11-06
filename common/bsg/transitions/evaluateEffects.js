@@ -172,7 +172,9 @@ function _evaluateEffect(game, effect) {
   }
 
   else if (kind === 'tacticalStrike') {
-    throw new Error('not implemented')
+    for (let i = 0; i < 2; i++) {
+      game.aDamageViperInReserve()
+    }
   }
 
   else if (kind === 'thirtyThree') {

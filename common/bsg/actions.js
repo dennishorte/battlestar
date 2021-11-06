@@ -330,8 +330,16 @@ Actions.aDamageLocationByName = function(locationName) {
   this.mMoveCard(bag, this.getZoneByLocationName(locationName), token)
 }
 
+Actions.aDamageViperInReserve = function() {
+  const vipers = this.getZoneByName('ships.vipers').cards
+  if (vipers.length > 0) {
+    this.mMoveCard('ships.vipers', 'ships.damagedVipers', vipers[0])
+    this.mLog({ template: 'Viper in reserve damaged' })
+  }
+}
+
 Actions.aDeployShips = function(deployData) {
-  this.mLog({ 'template': 'deploying ships' })
+  this.mLog({ template: 'deploying ships' })
 
   for (let i = 0; i < 6; i++) {
     const spaceZone = this.getZoneByName(`space.space${i}`)

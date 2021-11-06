@@ -1809,6 +1809,13 @@ describe('crisis card effects', () => {
 
   })
 
+  describe('Tactical Strike', () => {
+    test('Hangar Assault', () => {
+      const game = _crisisFixture('Tactical Strike')
+      expect(game.getZoneByName('ships.damagedVipers').cards.length).toBe(2)
+    })
+  })
+
   /* A Traitor Accused
    * Admiral Grilled
    * Ambush
@@ -1852,7 +1859,6 @@ describe('crisis card effects', () => {
    * Security Breach
    * Send Survey Team
    * Surrounded
-   * Tactical Strike
    * Terrorist Bomber
    * Terrorist Investigations
    * The Olympic Carrier
