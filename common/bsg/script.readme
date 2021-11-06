@@ -48,7 +48,7 @@ Effect values are Arrays of objects with the following keys.
 
   // special effects with no options
   aTraitorAccused
-  beseiged
+  besieged
   returnAllVipers
   tacticalStrike
   thirtyThree

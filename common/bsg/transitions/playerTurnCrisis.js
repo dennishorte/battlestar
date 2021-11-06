@@ -28,7 +28,16 @@ function generateOptions(context) {
   if (crisis.type === 'Cylon Attack') {
     game.aActivateCylonShips(crisis.cylonActivation)
     game.aDeployShips(crisis.deploy)
-    return context.done()
+    if (crisis.script.effect) {
+      markDone(context)
+      return context.push('evaluate-effects', {
+        name: 'Attack Effect: Heavy Casualties',
+        effects: crisis.script.effect,
+      })
+    }
+    else {
+      return context.done()
+    }
   }
 
   else if (crisis.type === 'Choice') {

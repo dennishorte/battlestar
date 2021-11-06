@@ -687,7 +687,7 @@ module.exports =  [
     type: 'Cylon Attack',
     cylonActivation: 'Basestar Attacks',
     jumpTrack: false,
-    effect: 'Training new Pilots: Keep this card in play until the flet juimps. Each unmanned viper suffers a -2 penalty to its attack rolls',
+    effect: 'Training new Pilots: Keep this card in play until the fleet jumps. Each unmanned viper suffers a -2 penalty to its attack rolls',
     deploy: [
       [ 'raider', 'raider', 'raider', 'raider' ],
       [],
@@ -722,7 +722,7 @@ module.exports =  [
     ],
     script: {
       keepUntil: '',
-      effect: ['beseiged'],
+      effect: ['besieged'],
     },
   },
   {

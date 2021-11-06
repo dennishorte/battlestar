@@ -31,8 +31,8 @@ function generateOptions(context) {
     }
   }
 
-  // All effects have been evaluated
-  else if (effectIndex >= effects.length) {
+  // All effects have been evaluated (or, there were no effects)
+  if (effectIndex >= effects.length) {
     return context.done()
   }
 
@@ -156,8 +156,15 @@ function _evaluateEffect(game, effect) {
     throw new Error('not implemented')
   }
 
-  else if (kind === 'beseiged') {
-    throw new Error('not implemented')
+  else if (kind === 'besieged') {
+    const spaceZone = game.getZoneSpaceByIndex(5)
+    const raiders = spaceZone.cards.filter(c => c.kind === 'ships.raiders')
+    for (let i = 0; i < 4; i++) {
+      game.aActivateRaider({
+        card: raiders[i],
+        zoneName: spaceZone.name,
+      })
+    }
   }
 
   else if (kind === 'returnAllVipers') {

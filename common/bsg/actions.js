@@ -82,6 +82,47 @@ Actions.aActivateHeavyRaiders = function() {
   }
 }
 
+Actions.aActivateRaider = function(raiderInfo) {
+  const spaceZone = this.getZoneByName(raiderInfo.zoneName)
+  const spaceZonesWithCivilians = this.getZonesSpaceContaining(c => c.kind === 'civilian')
+
+  if (this.checkZoneContains(spaceZone, c => c.kind === 'ships.vipers')) {
+    const roll = bsgutil.rollDie()
+    if (roll === 8) {
+      this.mRemoveViperAt(spaceZone, 'destroy')
+    }
+    else if (roll >= 5) {
+      this.mRemoveViperAt(spaceZone, 'damage')
+    }
+    else {
+      this.mLog({
+        template: 'Raider in {location} misses',
+        args: {
+          location: spaceZone.name,
+        }
+      })
+    }
+  }
+  else if (this.checkZoneContains(spaceZone, c => c.kind === 'civilian')) {
+    const civvie = spaceZone.cards.find(c => c.kind === 'civilian')
+    this.aDestroyCivilian(civvie)
+  }
+  else if (spaceZonesWithCivilians.length > 0) {
+    const clockwiseDistance = this.getDistanceToCivilian(spaceZone, 'clockwise')
+    const counterDistance = this.getDistanceToCivilian(spaceZone, 'counter')
+
+    if (clockwiseDistance <= counterDistance) {
+      this.mMoveAroundSpace(raiderInfo.card, 'clockwise')
+    }
+    else {
+      this.mMoveAroundSpace(raiderInfo.card, 'counter-clockwise')
+    }
+  }
+  else {
+    this.aAttackGalactica(raiderInfo.card)
+  }
+}
+
 Actions.aActivateRaiders = function() {
   const raidersInfo = this
     .getCardsByPredicate(c => c.kind === 'ships.raiders')
@@ -91,47 +132,8 @@ Actions.aActivateRaiders = function() {
     this.aBasestarsLaunch('raider', 2)
   }
   else {
-    const spaceZonesWithCivilians = this.getZonesSpaceContaining(c => c.kind === 'civilian')
-
     for (const info of raidersInfo) {
-      const spaceZone = this.getZoneByName(info.zoneName)
-
-      if (this.checkZoneContains(spaceZone, c => c.kind === 'ships.vipers')) {
-        const roll = bsgutil.rollDie()
-        if (roll === 8) {
-          this.mRemoveViperAt(spaceZone, 'destroy')
-        }
-        else if (roll >= 5) {
-          this.mRemoveViperAt(spaceZone, 'damage')
-        }
-        else {
-          this.mLog({
-            template: 'Raider in {location} misses',
-            args: {
-              location: spaceZone.name,
-            }
-          })
-        }
-      }
-      else if (this.checkZoneContains(spaceZone, c => c.kind === 'civilian')) {
-        const civvie = spaceZone.cards.find(c => c.kind === 'civilian')
-        this.aDestroyCivilian(civvie)
-      }
-      else if (spaceZonesWithCivilians.length > 0) {
-        const clockwiseDistance = this.getDistanceToCivilian(spaceZone, 'clockwise')
-        const counterDistance = this.getDistanceToCivilian(spaceZone, 'counter')
-
-        if (clockwiseDistance <= counterDistance) {
-          this.mMoveAroundSpace(info.card, 'clockwise')
-        }
-        else {
-          this.mMoveAroundSpace(info.card, 'counter-clockwise')
-        }
-      }
-      else {
-        this.aAttackGalactica(info.card)
-      }
-
+      this.aActivateRaider(info)
     }
   }
 }

@@ -1506,6 +1506,27 @@ describe('crisis card effects', () => {
     return game
   }
 
+  describe('Besieged', () => {
+    test('Heavy Casualties (no other raiders)', () => {
+      const game = _crisisFixture('Besieged', (game) => {
+        game.aClearSpace()
+        jest.spyOn(game, 'aActivateRaider')
+      })
+
+      expect(game.aActivateRaider.mock.calls.length).toBe(4)
+    })
+
+    test('Heavy Casualties (other raiders)', () => {
+      const game = _crisisFixture('Besieged', (game) => {
+        jest.spyOn(game, 'aActivateRaider')
+      })
+
+      // Four activations for the new raiders
+      // Three activations for the existing raiders
+      expect(game.aActivateRaider.mock.calls.length).toBe(7)
+    })
+  })
+
   describe('Bomb Threat', () => {
     test.skip('pass', () => {
 
@@ -1634,8 +1655,9 @@ describe('crisis card effects', () => {
       expect(admiralLoyaltyCards[0].visibility.sort()).toStrictEqual(['dennis', 'micah'])
     })
 
-    test.only('option2', () => {
+    test('option2', () => {
       const game = _crisisFixture('Cylon Screenings')
+      expect(game.getCrisis().name).toBe('Cylon Screenings')
 
       game.submit({
         actor: 'dennis',
@@ -1791,7 +1813,6 @@ describe('crisis card effects', () => {
    * Admiral Grilled
    * Ambush
    * Analyze Enemy Fighter
-   * Besieged
    * Boarding Parties
    * Build Cylon Detector
    * Colonial Day
