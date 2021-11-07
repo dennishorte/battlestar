@@ -1,4 +1,8 @@
-export function evaluateEffect(game, effect) {
+module.exports = {
+  evaluateEffect,
+}
+
+function evaluateEffect(game, effect) {
   const kind = (typeof effect === 'string') ? effect : effect.kind
 
   if (kind === 'choice') {
@@ -30,19 +34,39 @@ export function evaluateEffect(game, effect) {
     })
   }
 
+  else if (kind === 'cylonActivation') {
+    const { activationKind } = effect
+    game.aActivateCylonShips(activationKind)
+  }
+
   else if (kind === 'deploy') {
     game.aDeployShips(effect.ships)
   }
 
   else if (kind === 'discardSkills') {
     const { actor, count } = effect
-    const player = game.getPlayerByDescriptor(actor)
-    return {
-      push: {
-        transition: 'discard-skill-cards',
-        payload: {
-          playerName: player.name,
-          count: count,
+
+    if (actor === 'each') {
+      const playerNames = game.getPlayerAll().map(p => p.name)
+      return {
+        push: {
+          transition: 'discard-skill-cards-in-parallel',
+          payload: {
+            playerNames,
+            count,
+          }
+        }
+      }
+    }
+
+    else {
+      return {
+        push: {
+          transition: 'discard-skill-cards',
+          payload: {
+            playerName: game.getPlayerByDescriptor(actor).name,
+            count: count,
+          }
         }
       }
     }
@@ -52,7 +76,9 @@ export function evaluateEffect(game, effect) {
     const { actor, location } = effect
     const player = game.getPlayerByDescriptor(actor)
     const locationZone = game.getZoneByLocationName(location)
-    game.mMovePlayer(player, locationZone)
+    game.rk.sessionStart(() => {
+      game.mMovePlayer(player, locationZone)
+    })
   }
 
   else if (kind === 'title') {
@@ -69,7 +95,50 @@ export function evaluateEffect(game, effect) {
     }
   }
 
+  else if (kind === 'viewLoyalty') {
+    const { viewer, target, count } = effect
+    const viewerPlayer = game.getPlayerByDescriptor(viewer)
+    const targetPlayer = game.getPlayerByDescriptor(target)
+    game.aRevealLoyaltyCards(targetPlayer, viewerPlayer, count)
+  }
+
+  ////////////////////////////////////////////////////////////
+  // Special cases
+
+  else if (kind === 'aTraitorAccused') {
+    return {
+      push: {
+        transition: 'choose-player-to-send-to-brig',
+        payload: {
+          playerName: game.getPlayerCurrentTurn().name,
+        },
+      }
+    }
+  }
+
+  else if (kind === 'besieged') {
+    const spaceZone = game.getZoneSpaceByIndex(5)
+    const raiders = spaceZone.cards.filter(c => c.kind === 'ships.raiders')
+    for (let i = 0; i < 4; i++) {
+      game.aActivateRaider({
+        card: raiders[i],
+        zoneName: spaceZone.name,
+      })
+    }
+  }
+
+  else if (kind === 'returnAllVipers') {
+    game.aReturnAllVipersToSupply()
+  }
+
+  else if (kind === 'tacticalStrike') {
+    for (let i = 0; i < 2; i++) {
+      game.aDamageViperInReserve()
+    }
+  }
+
   else {
+    console.log(game.getCrisis())
     throw new Error(`Unhandled script kind: ${kind}`)
   }
 }
