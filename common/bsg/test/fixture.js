@@ -24,17 +24,20 @@ function GameFixtureFactory(options) {
       {
         character: 'Gaius Baltar',
         startingSkills: ['leadership', 'politics', 'engineering'],
+        movement: 'Skip Movement',
       },
       {
         character: 'Kara "Starbuck" Thrace',
         startingSkills: ['tactics', 'piloting', {
-          name: 'Option Skill',
+          name: 'Optional Skills',
           option: ['leadership'],
         }],
+        movement: 'Skip Movement',
       },
       {
         character: 'Sharon "Boomer" Valerii',
         startingSkills: ['tactics', 'piloting', 'engineering'],
+        movement: 'Skip Movement',
       },
     ],
   }, options)
@@ -89,7 +92,7 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
   this.game.submit({
     actor: 'dennis',
     name: 'Movement',
-    option: ['Skip Movement'],
+    option: [this.options.players[0].movement],
   })
   if (this._checkForTarget(targetTransitionName, targetPlayerName)) {
     return this

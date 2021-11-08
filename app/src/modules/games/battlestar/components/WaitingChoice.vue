@@ -14,6 +14,7 @@
 <script>
 import GameButton from './GameButton'
 import OptionSelector from './OptionSelector'
+import { selector } from 'battlestar-common'
 
 export default {
   name: 'WaitingChoice',
@@ -59,49 +60,9 @@ export default {
 
     updateSelection(selection) {
       this.selection = _cleanResponse(selection)
-      this.isValid = _checkValidRecursively(selection)
+      this.isValid = selector.validate(this.action, this.selection)
     },
   },
-}
-
-
-function _checkValidRecursively(selection) {
-  // The extra flag means that the player can always choose to use it,
-  // and it doesn't count towards the overall selection count.
-  if (selection.extra) {
-    return true
-  }
-
-  // This selection has sub-choices, and will depend on them
-  else if (selection.options) {
-    let exclusiveChecked = false
-    for (let i = 0; i < selection.options.length; i++) {
-      const option = selection.options[i]
-      if (option.exclusive && selection.selected.includes(i)) {
-        exclusiveChecked = true
-        break
-      }
-    }
-    if (exclusiveChecked && selection.selected.length > 1) {
-      return false
-    }
-
-    // It was already evaluated as invalid (probably by simple counting of selections)
-    else if (!selection.isValid) {
-      return false
-    }
-
-    // Since a correct number of subselections have been chosen, make sure each of them
-    // is valid.
-    else {
-      return selection.options.every(s => _checkValidRecursively(s))
-    }
-  }
-
-  // Options with no sub-choices are always valid on their own.
-  else {
-    return true
-  }
 }
 
 function _cleanResponse(response) {

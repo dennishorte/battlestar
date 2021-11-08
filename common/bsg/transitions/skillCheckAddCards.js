@@ -54,20 +54,23 @@ function handleResponse(context) {
         session.put(addCards, 'useDeclareEmergency', true)
       }
 
-      else if (opt.name === 'Help' || opt.name === 'Hinder') {
-        session.put(addCards, 'numAdded', addCards.numAdded + opt.option.length)
-        for (const cardOpt of opt.option) {
-          const tokens = cardOpt.split(',')
-          util.assert(tokens.length === 2, `Unknown card option: ${cardOpt}`)
+      else if (opt.name === 'Add Cards to Check') {
+        // could have both "Help" and "Hinder"
+        for (const subOpt of opt.option) {
+          session.put(addCards, 'numAdded', addCards.numAdded + subOpt.option.length)
+          for (const cardOpt of subOpt.option) {
+            const tokens = cardOpt.split(',')
+            util.assert(tokens.length === 2, `Unknown card option: ${cardOpt}`)
 
-          const cardName = tokens[0]
-          const cardValue = parseInt(tokens[1])
-          const playerHand = game.getZoneByPlayer(player)
-          const card = playerHand.cards.find(c => c.name === cardName && c.value === cardValue)
+            const cardName = tokens[0]
+            const cardValue = parseInt(tokens[1])
+            const playerHand = game.getZoneByPlayer(player)
+            const card = playerHand.cards.find(c => c.name === cardName && c.value === cardValue)
 
-          util.assert(!!card, `Card not found in player hand: ${cardOpt}`)
+            util.assert(!!card, `Card not found in player hand: ${cardOpt}`)
 
-          game.mMoveCard(playerHand, 'crisisPool', card)
+            game.mMoveCard(playerHand, 'crisisPool', card)
+          }
         }
       }
 

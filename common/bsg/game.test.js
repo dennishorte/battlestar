@@ -298,7 +298,10 @@ describe('player turn', () => {
       game.submit({
         actor: 'dennis',
         name: 'Select Skills',
-        option: ['engineering'],
+        option: [{
+          name: 'Optional Skills',
+          option: ['engineering'],
+        }]
       })
 
       const action = game.getWaiting('dennis').actions[0]
@@ -520,11 +523,11 @@ describe('player turn', () => {
           name: 'Movement',
           option: [{
             name: 'Galactica',
-            option: ['Research Lab'],
+            option: ['Hangar Deck'],
           }]
         })
 
-        expect(game.getZoneByPlayerLocation('dennis').name).toBe('locations.researchLab')
+        expect(game.getZoneByPlayerLocation('dennis').name).toBe('locations.hangarDeck')
       })
 
       test("if passing, token isn't moved", () => {
@@ -640,6 +643,30 @@ describe('player turn', () => {
 
   describe('action', () => {
 
+    function _takeActionWithMove(kind, option, beforeAction) {
+      const factory = new GameFixtureFactory()
+      if (kind === 'Location Action') {
+        factory.options.players[0].movement = {
+          name: 'Galactica',
+          option: [option]
+        }
+      }
+      const game = factory.build().advanceTo('player-turn-action').game
+      if (beforeAction) {
+        beforeAction(game)
+      }
+      game.run()
+      game.submit({
+        actor: 'dennis',
+        name: 'Action',
+        option: [{
+          name: kind,
+          option: [option],
+        }]
+      })
+      return game
+    }
+
     function _takeAction(kind, option, beforeAction) {
       const factory = new GameFixtureFactory()
       const game = factory.build().advanceTo('player-turn-action').game
@@ -724,7 +751,7 @@ describe('player turn', () => {
       describe("Admiral's Quarters", () => {
 
         test('choose a player', () => {
-          const game = _takeAction('Location Action', "Admiral's Quarters")
+          const game = _takeActionWithMove('Location Action', "Admiral's Quarters")
           const waiting = game.getWaiting('dennis')
           const action = waiting.actions[0]
           expect(action.name).toBe('Choose a Player')
@@ -732,7 +759,7 @@ describe('player turn', () => {
         })
 
         test("can't choose Cylons", () => {
-          const game = _takeAction('Location Action', "Admiral's Quarters", (game) => {
+          const game = _takeActionWithMove('Location Action', "Admiral's Quarters", (game) => {
             game.rk.sessionStart(() => {
               game.mSetPlayerIsRevealedCylon('tom')
             })
@@ -744,7 +771,7 @@ describe('player turn', () => {
         })
 
         test("can't choose players already in brig", () => {
-          const game = _takeAction('Location Action', "Admiral's Quarters", (game) => {
+          const game = _takeActionWithMove('Location Action', "Admiral's Quarters", (game) => {
             game.rk.sessionStart(() => {
               game.mMovePlayer('tom', 'locations.brig')
             })
@@ -756,7 +783,7 @@ describe('player turn', () => {
         })
 
         test('skill check launched', () => {
-          const game = _takeAction('Location Action', "Admiral's Quarters")
+          const game = _takeActionWithMove('Location Action', "Admiral's Quarters")
           game.submit({
             actor: 'dennis',
             name: 'Choose a Player',
@@ -769,7 +796,7 @@ describe('player turn', () => {
         })
 
         test.skip('skill check passed moves chosen player to brig', () => {
-          const game = _takeAction('Location Action', "Admiral's Quarters")
+          const game = _takeActionWithMove('Location Action', "Admiral's Quarters")
           game.submit({
             actor: 'dennis',
             name: 'Choose a Player',
@@ -782,7 +809,7 @@ describe('player turn', () => {
         })
 
         test.skip('skill check failed means nothing happens', () => {
-          const game = _takeAction('Location Action', "Admiral's Quarters")
+          const game = _takeActionWithMove('Location Action', "Admiral's Quarters")
           game.submit({
             actor: 'dennis',
             name: 'Choose a Player',
@@ -1054,6 +1081,10 @@ describe('skill checks', () => {
 
   function _sendTomToBrig(beforeChoose) {
     const factory = new GameFixtureFactory()
+    factory.options.players[0].movement = {
+      name: 'Galactica',
+      option: ["Admiral's Quarters"]
+    }
     const game = factory.build().advanceTo('player-turn-action').game
     game.run()
     game.submit({
@@ -1276,7 +1307,7 @@ describe('skill checks', () => {
 
     test('options are separated into positive and negative sections', () => {
       const game = _addCardsFixture()
-      const actionOptions = game.getWaiting('micah').actions[0].options
+      const actionOptions = game.getWaiting('micah').actions[0].options[0].options
       const helpOptions = actionOptions.find(o => o.name === 'Help').options
       const hinderOptions = actionOptions.find(o => o.name === 'Hinder').options
 
@@ -1287,14 +1318,17 @@ describe('skill checks', () => {
     test('added cards are moved to the crisis pool', () => {
       const game = _addCardsFixture()
       const waiting = game.getWaiting('micah')
-      const helpCard = waiting.actions[0].options.find(o => o.name === 'Help').options[0]
+      const helpCard = waiting.actions[0].options[0].options.find(o => o.name === 'Help').options[0]
 
       game.submit({
         actor: 'micah',
         name: 'Skill Check - Add Cards',
         option: [{
-          name: 'Help',
-          option: [helpCard],
+          name: 'Add Cards to Check',
+          option: [{
+            name: 'Help',
+            option: [helpCard],
+          }]
         }]
       })
 
@@ -1327,6 +1361,7 @@ describe('skill checks', () => {
       const action = game
         .getWaiting('tom')
         .actions[0]
+        .options[0]
         .options
         .find(o => o.name === 'Help')
         .options
@@ -1349,10 +1384,10 @@ describe('skill checks', () => {
       })
 
       const actionOptions = game.getWaiting('tom').actions[0].options
-      const help = actionOptions.find(o => o.name === 'Help')
-      const hinder = actionOptions.find(o => o.name === 'Hinder')
-      expect(help.exclusiveKey).toBeDefined()
-      expect(help.exclusiveKey).toBe(hinder.exclusiveKey)
+      expect(actionOptions[0].name).toBe('Add Cards to Check')
+      expect(actionOptions[0].max).toBe(1)
+      expect(actionOptions[0].options[0].max).toBe(1)
+      expect(actionOptions[0].options[1].max).toBe(1)
     })
 
     test.skip('players can pre-enqueue declare emergency', () => {
@@ -1580,7 +1615,7 @@ describe('crisis card effects', () => {
       jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 4)
 
       game.submit({
-        actor: 'micah',
+        actor: 'dennis',
         name: 'Skill Check - Discuss',
         option: ['Choose Option 2']
       })
@@ -1600,7 +1635,7 @@ describe('crisis card effects', () => {
       jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 5)
 
       game.submit({
-        actor: 'micah',
+        actor: 'dennis',
         name: 'Skill Check - Discuss',
         option: ['Choose Option 2']
       })
@@ -1643,7 +1678,7 @@ describe('crisis card effects', () => {
       expect(game.getZoneSpaceByIndex(3).cards.length).toBe(0)
 
       game.submit({
-        actor: 'micah',
+        actor: 'dennis',
         name: 'Skill Check - Discuss',
         option: ['Choose Option 2']
       })

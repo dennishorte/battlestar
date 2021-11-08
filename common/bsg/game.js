@@ -5,6 +5,7 @@ const bsgutil = require('./util.js')
 const initialize = require('./initialize.js')
 const jsonpath = require('../lib/jsonpath.js')
 const log = require('../lib/log.js')
+const selector = require('../lib/selector.js')
 const util = require('../lib/util.js')
 
 module.exports = {
@@ -122,9 +123,17 @@ Game.prototype.submit = function(response) {
   const waiting = this.getWaiting(actor)
   util.assert(!!waiting, `Got response from ${actor}, but not waiting for that player`)
 
-  const action = waiting.actions[0]
-  util.assert(action.name === name, `Waiting for action ${action.name} but got ${name}`)
-  util.assert(Array.isArray(option), `Got non-array selection: ${option}`)
+  const validationResult = selector.validate(waiting.actions[0], response)
+  if (!validationResult.valid) {
+    console.log({
+      action: waiting.actions[0],
+      actionOptions: waiting.actions[0].options[0],
+      response: response,
+      responseOption: response.option[0],
+      validationResult
+    })
+    throw new Error('Invalid response')
+  }
 
   this.rk.sessionStart(session => {
     session.splice(this.state.sm.response, 0, this.state.sm.response.length, response)

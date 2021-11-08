@@ -143,7 +143,7 @@ function _discussOptionsForPlayer(game, check, player) {
     })
   }
 
-  if (check.option2 && player.name === game.getPlayerByDescriptor(check.actor)) {
+  if (check.option2 && player.name === game.getPlayerByDescriptor(check.actor).name) {
     options.push({
       name: 'Choose Option 2',
       exclusive: true,
