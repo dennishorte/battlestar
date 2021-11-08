@@ -7,10 +7,16 @@ module.exports = {
 }
 
 
-function validate(selector, selection) {
+function validate(selector, selection, annotate) {
+  if (!annotate) {
+    selector = util.deepcopy(selector)
+    selection = util.deepcopy(selection)
+  }
+
   return _validate(
-    _normalize(util.deepcopy(selector)),
-    _normalize(util.deepcopy(selection))
+    _normalize(selector),
+    _normalize(selection),
+    annotate
   )
 }
 
@@ -33,8 +39,19 @@ function _normalize(selector) {
   return selector
 }
 
-function _validate(selector, selection) {
+function _validate(selector, selection, annotate) {
+  if (annotate) {
+    selection.annotation = {
+      isValid: null,
+      mismatch: '',
+    }
+  }
+
   if (selector.name !== selection.name) {
+    if (annotate) {
+      selection.annotation.isValid = false
+      selection.annotation.mismatch = 'name'
+    }
     return {
       valid: false,
       mismatch: `${selector.name} !== ${selection.name}`
@@ -45,6 +62,7 @@ function _validate(selector, selection) {
 
   const unused = [...selector.options]
   const matched = []
+  const unmatched = []
   let exclusive = false
   let count = 0
   for (const sel of selection.option) {
@@ -58,7 +76,7 @@ function _validate(selector, selection) {
             match = false
           }
           else {
-            match = _validate(opt, sel).valid
+            match = _validate(opt, sel, annotate)
           }
         }
 
@@ -73,20 +91,34 @@ function _validate(selector, selection) {
           }
           break
         }
+        else {
+          unmatched.push(sel)
+        }
       }
     }
   }
 
   if (exclusive && matched.length > 1) {
+    if (annotate) {
+      selection.annotation.isValid = false
+      selection.annotation.mismatch = 'exclusive'
+    }
     return {
       valid: false,
       mismatch: `Exclusive option mixed with other options`
     }
   }
   else if (min <= count && count <= max) {
+    if (annotate) {
+      selection.annotation.isValid = true
+    }
     return { valid: true }
   }
   else {
+    if (annotate) {
+      selection.annotation.isValid = false
+      selection.annotation.mismatch = `failed test: ${min} <= ${count} <= ${max}`
+    }
     return {
       valid: false,
       mismatch: `Some selections didn't match with any options in the selector`,
