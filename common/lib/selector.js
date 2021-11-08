@@ -41,10 +41,7 @@ function _normalize(selector) {
 
 function _validate(selector, selection, annotate) {
   if (annotate) {
-    selection.annotation = {
-      isValid: null,
-      mismatch: '',
-    }
+    selection.annotation = {}
   }
 
   if (selector.name !== selection.name) {
@@ -76,7 +73,7 @@ function _validate(selector, selection, annotate) {
             match = false
           }
           else {
-            match = _validate(opt, sel, annotate)
+            match = _validate(opt, sel, annotate).valid
           }
         }
 

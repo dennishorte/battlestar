@@ -113,6 +113,34 @@ describe('nested options', () => {
     }).valid).toBe(false)
   })
 
+  test('nested invalids make top level invalid', () => {
+    const selector = {
+      name: "Movement",
+      options: [
+        {
+          name: "Galactica",
+          options: [
+            "Admiral's Quarters",
+            "Armory",
+            "Command",
+            "Communications",
+            "FTL Control",
+            "Hangar Deck",
+            "Research Lab",
+            "Weapons Control"
+          ]
+        },
+      ]
+    }
+    const selection = {
+      name: 'Movement',
+      option: [{
+        name: 'Galactica',
+        option: ['Armory', 'Command'],
+      }]
+    }
+    expect(validate(selector, selection).valid).toBe(false)
+  })
 })
 
 describe('count', () => {
