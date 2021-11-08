@@ -150,28 +150,39 @@ function _addCardsOptionsForPlayer(game, check, player) {
 
   const options = [
     {
-      name: 'Help',
-      min: 0,
-      max: positiveCards.length,
-      options: positiveCards,
-    },
-    {
-      name: 'Hinder',
-      min: 0,
-      max: negativeCards.length,
-      options: negativeCards,
-    },
+      name: 'Add Cards to Check',
+      options: [
+        {
+          name: 'Help',
+          min: 0,
+          max: positiveCards.length,
+          options: positiveCards,
+        },
+        {
+          name: 'Hinder',
+          min: 0,
+          max: negativeCards.length,
+          options: negativeCards,
+        },
+      ]
+    }
   ]
 
-  if (game.checkPlayerIsAtLocation(player, 'Brig')) {
-    for (const opt of options) {
+  if (
+    game.checkPlayerIsAtLocation(player, 'Brig')
+    || game.checkPlayerIsRevealedCylon(player)
+  ) {
+    options[0].max = 1
+    for (const opt of options[0].options) {
       opt.max = 1
-      opt.exclusiveKey = 'skill-cards'
     }
   }
 
   if (game.checkPlayerHasCardByName(player, 'Declare Emergency')) {
-    options.push('Use Declare Emergency')
+    options.push({
+      name: 'Use Declare Emergency',
+      description: 'Will only be used if it will cause the check to pass'
+    })
   }
 
   options.push({

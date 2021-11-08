@@ -15,10 +15,6 @@
     <div class="col">
 
       <div v-if="!!selectedData">
-        <div style="float: right;">
-          <CharacterAssignButton :name="selectedData.name" />
-        </div>
-
         <div class="selected-role">
           <span class="selected-heading">Role: </span>{{ selectedData.role }}
         </div>
@@ -71,15 +67,9 @@
 <script>
 import { bsg, util } from 'battlestar-common'
 
-import CharacterAssignButton from './CharacterAssignButton'
-
 
 export default {
   name: 'Characters',
-
-  components: {
-    CharacterAssignButton,
-  },
 
   data() {
     return {

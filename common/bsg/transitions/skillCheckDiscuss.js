@@ -60,10 +60,10 @@ function handleResponse(context) {
       else if (name === 'How much can you help?') {
         session.put(check.discussion[player.name], 'support', opt.option[0])
       }
-      else if (name === 'Use Scientific Research?') {
+      else if (name === 'Use Scientific Research') {
         session.put(check.discussion[player.name], 'useScientificResearch', true)
       }
-      else if (name === 'Use Investigative Committee?') {
+      else if (name === 'Use Investigative Committee') {
         session.put(check.discussion[player.name], 'useInvestigativeCommitee', true)
       }
       else if (name === 'Start Skill Check') {
@@ -109,12 +109,24 @@ function _discussOptionsForPlayer(game, check, player) {
       options: ['none', 'a little', 'some', 'a lot'],
     })
 
-    if (playerHasScientificResearch) {
-      options.push('Use Scientific Research?')
+    if (playerHasInvestigativeCommittee) {
+      options.push({
+        name: 'Use Investigative Committee',
+        description: 'All cards will be played face up during this skill check',
+        extra: true,
+      })
     }
 
-    if (playerHasInvestigativeCommittee) {
-      options.push('Use Investigative Committee')
+    if (
+      playerHasScientificResearch
+      // Scientific Research is pointless if engineering is already a skill in the check
+      && !check.skills.includes('engineering')
+    ) {
+      options.push({
+        name: 'Use Scientific Research',
+        description: 'All engineering (blue) cards will be positive for this check',
+        extra: true,
+      })
     }
   }
 
@@ -123,16 +135,19 @@ function _discussOptionsForPlayer(game, check, player) {
     options.push('Change Answer')
   }
 
+  if (player.name === game.getPlayerCurrentTurn().name) {
+    options.push({
+      name: 'Start Skill Check',
+      description: 'Begin the skill check even though not everyone has answered yet',
+      extra: true,
+    })
+  }
+
   if (check.option2 && player.name === game.getPlayerByDescriptor(check.actor)) {
-    options.push('Start Skill Check')
     options.push({
       name: 'Choose Option 2',
       exclusive: true,
     })
-  }
-
-  else if (player.name === game.getPlayerCurrentTurn().name) {
-    options.push('Start Skill Check')
   }
 
   return options

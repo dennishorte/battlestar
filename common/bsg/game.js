@@ -426,11 +426,6 @@ Game.prototype.getPlayerPresident = function() {
   return this.getPlayerWithCard('President')
 }
 
-Game.prototype.getPlayerWaitingFor = function() {
-  const waiting = this.getWaiting()
-  return this.getPlayerByName(waiting.actor)
-}
-
 Game.prototype.getPlayerWithCard = function(cardName) {
   for (const player of this.getPlayerAll()) {
     const zone = this.getZoneByPlayer(player)

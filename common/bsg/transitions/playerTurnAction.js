@@ -233,7 +233,7 @@ function _addLoyaltyActions(context, options) {
     }
   }
 
-  if (cardOptions) {
+  if (cardOptions.length > 0) {
     options.push({
       name: 'Reveal as Cylon',
       options: cardOptions,

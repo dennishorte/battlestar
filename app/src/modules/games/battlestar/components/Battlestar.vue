@@ -71,15 +71,7 @@
 
         <b-row>
           <b-col>
-            <div class="turn-info">
-              <div>
-                Waiting for: <span class="heading">{{ waitingFor }}</span>
-              </div>
-
-              <div>
-                Current turn: <span class="heading">{{ playerCurrentTurn }}</span>
-              </div>
-            </div>
+            Current turn: <span class="heading">{{ playerCurrentTurn }}</span>
           </b-col>
         </b-row>
 
@@ -193,9 +185,6 @@ export default {
     playerCurrentTurn() {
       return this.$game.getPlayerCurrentTurn().name
     },
-    waitingFor() {
-      return this.$game.getPlayerWaitingFor().name
-    },
   },
 
   methods: {
@@ -258,12 +247,6 @@ export default {
   border: 1px solid #bbb;
   border-bottom-left-radius: .5em;
   border-bottom-right-radius: .5em;
-}
-
-.turn-info {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
 }
 
 .row {

@@ -1,8 +1,16 @@
 <template>
   <div class="waiting-panel">
-    <div v-for="action of waitingOptions" :key="action.name">
-      <WaitingChoice :action="action" :actor="$game.getWaiting().actor" />
-    </div>
+
+    <b-tabs content-class="mt-3">
+      <b-tab
+        v-for="player in $game.getPlayerAll()"
+        :key="player.name"
+        :title="player.name"
+        :disabled="!$game.getWaiting(player.name)"
+      >
+        <WaitingChoice v-if="!!$game.getWaiting(player.name)" :actor="player.name" />
+      </b-tab>
+    </b-tabs>
   </div>
 </template>
 
@@ -18,9 +26,6 @@ export default {
   },
 
   computed: {
-    waitingOptions() {
-      return this.$game.getWaiting().actions
-    },
   },
 }
 </script>

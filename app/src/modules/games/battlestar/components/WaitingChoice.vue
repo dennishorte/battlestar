@@ -25,7 +25,6 @@ export default {
 
   props: {
     actor: String,
-    action: Object,
   },
 
   data() {
@@ -33,6 +32,13 @@ export default {
       isValid: false,
       selection: {},
     }
+  },
+
+  computed: {
+    action() {
+      console.log(this.$game.getWaiting(this.actor).actions[0])
+      return this.$game.getWaiting(this.actor).actions[0]
+    },
   },
 
   methods: {
@@ -60,14 +66,41 @@ export default {
 
 
 function _checkValidRecursively(selection) {
-  if (typeof selection === 'string') {
+  // The extra flag means that the player can always choose to use it,
+  // and it doesn't count towards the overall selection count.
+  if (selection.extra) {
     return true
   }
-  else if (!selection.isValid) {
-    return false
+
+  // This selection has sub-choices, and will depend on them
+  else if (selection.options) {
+    let exclusiveChecked = false
+    for (let i = 0; i < selection.options.length; i++) {
+      const option = selection.options[i]
+      if (option.exclusive && selection.selected.includes(i)) {
+        exclusiveChecked = true
+        break
+      }
+    }
+    if (exclusiveChecked && selection.selected.length > 1) {
+      return false
+    }
+
+    // It was already evaluated as invalid (probably by simple counting of selections)
+    else if (!selection.isValid) {
+      return false
+    }
+
+    // Since a correct number of subselections have been chosen, make sure each of them
+    // is valid.
+    else {
+      return selection.options.every(s => _checkValidRecursively(s))
+    }
   }
+
+  // Options with no sub-choices are always valid on their own.
   else {
-    return selection.options.every(s => _checkValidRecursively(s))
+    return true
   }
 }
 
@@ -78,11 +111,15 @@ function _cleanResponse(response) {
   for (let i = 0; i < response.options.length; i++) {
     if (response.selected.includes(i)) {
       const selection = response.options[i]
-      if (typeof selection === 'string') {
-        output.option.push(selection)
-      }
-      else {
+
+      // If this selection is for a choice with sub-options, recursively clean
+      if (selection.options) {
         output.option.push(_cleanResponse(selection))
+      }
+
+      // Otherwise, the selection is either for a string option or for an object with a name
+      else {
+        output.option.push(selection.name || selection)
       }
     }
   }

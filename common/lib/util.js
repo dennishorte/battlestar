@@ -12,6 +12,12 @@ Util.array.pushUnique = function(array, value) {
   }
 }
 
+Util.array.remove = function(array, elem) {
+  const index = array.indexOf(elem)
+  Util.assert(index != -1, "Can't remove element from array; not found")
+  array.splice(index, 1)
+}
+
 Util.array.shuffle = function(array, rng) {
   if (!rng) {
     rng = Math.random

@@ -11,9 +11,9 @@
 
     <div class="option-checkboxes">
       <div v-for="(option, index) in selector.options" :key="index">
-        <div v-if="typeof option === 'string'">
+        <div v-if="typeof option === 'string' || !option.options">
           <input type="checkbox" :value="index" v-model="selected" @change="updateParent" />
-          {{ option }}
+          {{ optionName(option) }}
         </div>
 
 
@@ -88,6 +88,15 @@ export default {
       this.selected = []
 
       this.$emit('selection-changed', this.response)
+    },
+
+    optionName(option) {
+      if (typeof option === 'string') {
+        return option
+      }
+      else {
+        return option.name
+      }
     },
 
     updateParent() {
