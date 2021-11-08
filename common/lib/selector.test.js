@@ -172,6 +172,34 @@ describe('count', () => {
   test('order does not matter', () => {
     expect(validate(selector, { name: 'test', option: ['three', 'two'] }).valid).toBe(true)
   })
+
+  test('count with nested options', () => {
+    const selector = {
+      name: 'test',
+      options: [
+        {
+          name: 'one',
+          max: 1,
+          options: ['a', 'b']
+        },
+        {
+          name: 'two',
+          max: 1,
+          options: ['x', 'y']
+        }
+      ]
+    }
+
+    const selection = {
+      name: 'test',
+      option: [{
+        name: 'one',
+        option: ['a']
+      }]
+    }
+
+    expect(validate(selector, selection).valid).toBe(true)
+  })
 })
 
 describe('min and max', () => {
