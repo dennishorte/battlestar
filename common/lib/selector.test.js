@@ -45,6 +45,73 @@ describe('non-nested object options', () => {
 })
 
 describe('nested options', () => {
+  const selector = {
+    name: 'test',
+    options: [
+      {
+        name: 'one',
+        options: ['a', 'b'],
+      },
+      {
+        name: 'two',
+        options: ['x', 'y'],
+      }
+    ]
+  }
+
+  test('basic matches', () => {
+    expect(validate(selector, {
+      name: 'test',
+      option: [{
+        name: 'one',
+        option: ['a']
+      }]
+    }).valid).toBe(true)
+
+    expect(validate(selector, {
+      name: 'test',
+      option: [{
+        name: 'two',
+        option: ['x']
+      }]
+    }).valid).toBe(true)
+  })
+
+  test('basic mismatches', () => {
+    expect(validate(selector, {
+      name: 'test',
+      option: ['one']
+    }).valid).toBe(false)
+
+    expect(validate(selector, {
+      name: 'test',
+      option: [{
+        name: 'one',
+        option: ['x']
+      }]
+    }).valid).toBe(false)
+
+    expect(validate(selector, {
+      name: 'test',
+      option: [{ name: 'one' }]
+    }).valid).toBe(false)
+  })
+
+  test('can only pick from one', () => {
+    expect(validate(selector, {
+      name: 'test',
+      option: [
+        {
+          name: 'one',
+          option: ['b'],
+        },
+        {
+          name: 'two',
+          option: ['x']
+        }
+      ]
+    }).valid).toBe(false)
+  })
 
 })
 
@@ -183,35 +250,3 @@ describe('exclusive', () => {
     expect(validate(selector, { name: 'test', option: ['one', 'exclusive'] }).valid).toBe(false)
   })
 })
-
-
-/*
- * {
- *   "name": "Skill Check - Discuss",
- *   "options": [
- *     {
- *       "name": "How much can you help?",
- *       "options": [
- *         "none",
- *         "a little",
- *         "some",
- *         "a lot"
- *       ]
- *     },
- *     {
- *       "name": "Use Investigative Committee",
- *       "description": "All cards will be played face up during this skill check",
- *       "extra": true
- *     },
- *     {
- *       "name": "Use Scientific Research",
- *       "description": "All engineering (blue) cards will be positive for this check",
- *       "extra": true
- *     },
- *     {
- *       "name": "Start Skill Check",
- *       "description": "Begin the skill check even though not everyone has answered yet",
- *       "extra": true
- *     }
- *   ]
- * } */

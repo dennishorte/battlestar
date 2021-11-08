@@ -2,6 +2,7 @@ const util = require('./util.js')
 
 
 module.exports = {
+  minMax,
   validate,
 }
 
@@ -40,7 +41,7 @@ function _validate(selector, selection) {
     }
   }
 
-  const { min, max } = _selectorMinMax(selector)
+  const { min, max } = minMax(selector)
 
   const unused = [...selector.options]
   const matched = []
@@ -49,15 +50,29 @@ function _validate(selector, selection) {
   for (const sel of selection.option) {
     for (const opt of unused) {
       if (sel.name === opt.name) {
-        util.array.remove(unused, opt)
-        matched.push(sel)
-        if (!opt.extra) {
-          count += 1
+        let match = true
+
+        // If the selector option had sub-options, this must also validate against those.
+        if (opt.options) {
+          if (!sel.option) {
+            match = false
+          }
+          else {
+            match = _validate(opt, sel).valid
+          }
         }
-        if (opt.exclusive) {
-          exclusive = true
+
+        if (match) {
+          util.array.remove(unused, opt)
+          matched.push(sel)
+          if (!opt.extra) {
+            count += 1
+          }
+          if (opt.exclusive) {
+            exclusive = true
+          }
+          break
         }
-        break
       }
     }
   }
@@ -79,7 +94,7 @@ function _validate(selector, selection) {
   }
 }
 
-function _selectorMinMax(selector) {
+function minMax(selector) {
   let min
   let max
 
