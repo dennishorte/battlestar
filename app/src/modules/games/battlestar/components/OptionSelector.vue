@@ -6,7 +6,7 @@
         'option-name',
         isValid ? '' : 'invalid-selection'
       ]">
-      {{ displayName }}
+      {{ displayName }} {{ rangeString }}
     </div>
 
     <div class="option-checkboxes">
@@ -64,6 +64,16 @@ export default {
 
     isValid() {
       return selector.validate(this.selector, this.selection).valid
+    },
+
+    rangeString() {
+      const { min, max } = selector.minMax(this.selector)
+      if (min === max) {
+        return `[${min}]`
+      }
+      else {
+        return `[${min}..${max}]`
+      }
     },
 
     selection() {

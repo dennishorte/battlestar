@@ -1,3 +1,4 @@
+const bsgutil = require('../util.js')
 const util = require('../../lib/util.js')
 const { transitionFactory, markDone } = require('./factory.js')
 
@@ -60,8 +61,9 @@ function handleResponse(context) {
   const game = context.state
   const player = game.getPlayerByName(context.data.playerName)
   const selection = context.response.option[0]
+  const selectionName = bsgutil.optionName(selection)
 
-  if (selection === 'Skip Action') {
+  if (selectionName === 'Skip Action') {
     game.rk.sessionStart(() => {
       game.mLog({
         template: '{player} decides not to take an action',
@@ -73,7 +75,7 @@ function handleResponse(context) {
     context.done()
   }
 
-  else if (selection.name === 'Location Action') {
+  else if (selectionName === 'Location Action') {
     const locationName = selection.option[0]
 
     game.rk.sessionStart(() => {
@@ -135,6 +137,7 @@ function _addSkillCardActions(context, options) {
   if (cardOptions) {
     options.push({
       name: 'Play Skill Card',
+      max: 1,
       options: cardOptions,
     })
   }
@@ -151,6 +154,7 @@ function _addLocationActions(context, options) {
   ) {
     options.push({
       name: 'Location Action',
+      max: 1,
       options: [location.details.name],
     })
   }
@@ -166,6 +170,7 @@ function _addQuorumActions(context, options) {
   if (cardNames.length) {
     options.push({
       name: 'Quorum Card',
+      max: 1,
       options: [...new Set(cardNames)].sort()
     })
   }
@@ -200,6 +205,7 @@ function _addOncePerGameActions(context, options) {
   if (name) {
     options.push({
       name: 'Once Per Game Action',
+      max: 1,
       options: [name],
     })
   }
@@ -236,6 +242,7 @@ function _addLoyaltyActions(context, options) {
   if (cardOptions.length > 0) {
     options.push({
       name: 'Reveal as Cylon',
+      max: 1,
       options: cardOptions,
     })
   }

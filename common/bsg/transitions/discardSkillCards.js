@@ -1,3 +1,4 @@
+const bsgutil = require('../util.js')
 const util = require('../../lib/util.js')
 
 
@@ -11,9 +12,8 @@ function discardSkillCards(context) {
 
   if (context.response) {
     const selected = context.response.option
-    util.assert(Array.isArray(selected), "Discard choices should be in an array")
-
-    const cards = playerSkillCards.filter(c => selected.includes(c.id))
+    const selectedIds = selected.map(o => bsgutil.optionName(o))
+    const cards = playerSkillCards.filter(c => selectedIds.includes(c.id))
     util.assert(cards.length === selected.length, "Couldn't find all the submitted cards")
 
     game.aDiscardSkillCards(player, cards)
