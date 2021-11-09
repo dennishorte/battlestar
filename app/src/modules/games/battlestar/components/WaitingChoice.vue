@@ -1,7 +1,7 @@
 <template>
   <div class="waiting-choice">
 
-    <OptionSelector :selector="action" :required="true" @selection-changed="updateSelection" />
+    <OptionSelector :selector="action" :required="true" @selection-changed="childChanged" />
 
     <GameButton :owner="actor" @click="submit" :disabled="!isValid">
       choose
@@ -30,61 +30,49 @@ export default {
 
   data() {
     return {
-      isValid: false,
-      selection: {},
+      selection: {
+        name: '',
+        option: []
+      },
     }
   },
 
   computed: {
     action() {
-      console.log(this.$game.getWaiting(this.actor).actions[0])
       return this.$game.getWaiting(this.actor).actions[0]
+    },
+
+    isValid() {
+      selector.validate(this.action, this.selection, true)
+      return selector.validate(this.action, this.selection).valid
+    },
+  },
+
+  watch: {
+    action() {
+      this.selection.name = this.action.name
+      this.selection.option = []
     },
   },
 
   methods: {
-    makeCheckboxOptions(stringOptions) {
-      return stringOptions.map((o, index) => ({ text: o, value: index }))
-    },
-
     async submit() {
       this.$game.submit({
         actor: this.actor,
         name: this.action.name,
         option: this.selection.option,
       })
-      this.selection = {}
-      this.isValid = false
       await this.$game.save()
     },
 
-    updateSelection(selection) {
-      this.selection = _cleanResponse(selection)
-      this.isValid = selector.validate(this.action, this.selection)
+    childChanged(event) {
+      this.selection = event
     },
   },
-}
 
-function _cleanResponse(response) {
-  const output = {}
-  output.name = response.name
-  output.option = []
-  for (let i = 0; i < response.options.length; i++) {
-    if (response.selected.includes(i)) {
-      const selection = response.options[i]
-
-      // If this selection is for a choice with sub-options, recursively clean
-      if (selection.options) {
-        output.option.push(_cleanResponse(selection))
-      }
-
-      // Otherwise, the selection is either for a string option or for an object with a name
-      else {
-        output.option.push(selection.name || selection)
-      }
-    }
-  }
-  return output
+  beforeMount() {
+    this.selection.name = this.action.name
+  },
 }
 </script>
 

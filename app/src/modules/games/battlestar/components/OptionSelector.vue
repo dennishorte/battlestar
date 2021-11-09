@@ -11,8 +11,8 @@
 
     <div class="option-checkboxes">
       <div v-for="(option, index) in selector.options" :key="index">
-        <div v-if="typeof option === 'string' || !option.options">
-          <input type="checkbox" :value="index" v-model="selected" @change="updateParent" />
+        <div v-if="!optionHasChildren(option)">
+          <input type="checkbox" :value="index" v-model="selected" />
           {{ optionName(option) }}
         </div>
 
@@ -21,7 +21,7 @@
           <input type="checkbox" :value="index" v-model="selected" disabled />
           <OptionSelector
             :selector="option"
-            @selection-changed="updateSelection($event, index)"
+            @selection-changed="childChanged"
           />
         </div>
       </div>
@@ -34,6 +34,7 @@
 
 <script>
 import Vue from 'vue'
+import { selector } from 'battlestar-common'
 import { util } from 'battlestar-common'
 
 export default {
@@ -49,83 +50,78 @@ export default {
 
   data() {
     return {
-      response: {},
+      childInfo: {},
+
+      // The physically selected checkboxes in this option selector (by index)
       selected: [],
     }
   },
 
   computed: {
-    count() {
-      return this.selector.count ? this.selector.count : 1
-    },
-
-    name() {
-      return this.selector.name ? this.selector.name : 'choose'
-    },
-
     displayName() {
-      return `${this.name} (${this.selected.length}/${this.count})`
+      return `${this.selector.name}`
     },
 
     isValid() {
-      const numChecked = this.selected.length
-      return (!this.required && numChecked === 0) || numChecked === this.count
+      return selector.validate(this.selector, this.selection).valid
     },
+
+    selection() {
+      const selectedOptions = []
+      for (let i = 0; i < this.selector.options.length; i++) {
+        const opt = this.selector.options[i]
+        const name = this.optionName(opt)
+        const isSelected = this.selected.includes(i)
+        if (isSelected) {
+          if (this.optionHasChildren(opt)) {
+            selectedOptions.push(this.childInfo[name])
+          }
+          else {
+            selectedOptions.push(name)
+          }
+        }
+      }
+      return {
+        name: this.selector.name,
+        option: selectedOptions
+      }
+    }
   },
 
   watch: {
-    selector() {
-      this.initialize()
+    selection() {
+      this.notifyParent()
     }
   },
 
   methods: {
-    initialize() {
-      this.response = util.deepcopy(this.selector)
-      Vue.set(this.response, 'isChecked', false)
-      Vue.set(this.response, 'isValid', this.isValid)
-      Vue.set(this.response, 'selected', util.deepcopy(this.selected))
-      this.selected = []
-
-      this.$emit('selection-changed', this.response)
+    optionHasChildren(option) {
+      return Array.isArray(option.options)
     },
 
     optionName(option) {
-      if (typeof option === 'string') {
-        return option
-      }
-      else {
-        return option.name
-      }
+      return option.name || option
     },
 
-    updateParent() {
-      const numChecked = this.selected.length
-      this.response.isChecked = numChecked > 0
-      this.response.isValid = this.isValid
-      this.response.selected = this.selected
-      this.$emit('selection-changed', util.deepcopy(this.response))
-    },
+    childChanged(event) {
+      const childIndex = this.selector.options.findIndex(o => this.optionName(o) === event.name)
 
-    updateSelection(event, index) {
-      // Update the display array based on child value
       if (event.isChecked) {
-        util.array.pushUnique(this.selected, index)
+        Vue.set(this.childInfo, event.name, event)
+        util.array.pushUnique(this.selected, childIndex)
       }
       else {
-        this.selected = this.selected.filter(x => x !== index)
+        Vue.delete(this.childInfo, event.name)
+        util.array.remove(this.selected, childIndex)
       }
-
-      Vue.set(this.response.options, index, event)
-      this.response.selected = this.selected
-      this.response.isValid = this.isValid
-
-      this.$emit('selection-changed', util.deepcopy(this.response))
     },
-  },
 
-  beforeMount() {
-    this.initialize()
+    // Need to share our selected info upwards
+    notifyParent() {
+      const copy = util.deepcopy(this.selection)
+      copy.isChecked = this.selected.length > 0
+      this.$emit('selection-changed', copy)
+    },
   },
 }
 </script>

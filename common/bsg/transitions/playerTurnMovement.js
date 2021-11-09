@@ -1,4 +1,5 @@
 const { transitionFactory } = require('./factory.js')
+const bsgutil = require('../util.js')
 
 module.exports = transitionFactory(
   {},
@@ -10,8 +11,9 @@ function handleResponse(context) {
   const game = context.state
   const player = game.getPlayerByName(context.data.playerName)
   const selection = context.response.option[0]
+  const selectionName = bsgutil.optionName(selection)
 
-  if (selection === 'Skip Movement') {
+  if (selectionName === 'Skip Movement') {
     game.rk.sessionStart(() => {
       game.mLog({
         template: "{player} decides not to move",
@@ -24,7 +26,7 @@ function handleResponse(context) {
   }
 
   // Handle movement in space
-  else if (selection.name === 'Move Viper') {
+  else if (selectionName === 'Move Viper') {
     const zone = game.getZoneByPlayerLocation(player)
     const viper = zone.cards.find(c => c.name === 'viper')
     const token = zone.cards.find(c => c.name === player.name && c.kind === 'player-token')
@@ -39,7 +41,8 @@ function handleResponse(context) {
   }
 
   const playerZone = game.getZoneByPlayerLocation(player)
-  const targetZone = game.getZoneByLocationName(selection.option[0])
+  const targetName = bsgutil.optionName(selection.option[0])
+  const targetZone = game.getZoneByLocationName(targetName)
   const sameShip = playerZone.details && playerZone.details.area === targetZone.details.area
 
   game.rk.sessionStart(() => {
@@ -109,6 +112,7 @@ function generateOptions(context) {
   if (game.checkPlayerIsRevealedCylon(player)) {
     options.push({
       name: 'Cylon Locations',
+      max: 1,
       options: game.getLocationsByArea('Cylon Locations')
                    .filter(l => l.name !== playerZone.name)
                    .map(l => l.details.name)
@@ -123,6 +127,7 @@ function generateOptions(context) {
     if (canChangeShips || (playerZone.details && playerZone.details.area === 'Galactica')) {
       options.push({
         name: 'Galactica',
+        max: 1,
         options: game.getLocationsByArea('Galactica')
                      .filter(l => !l.details.hazardous)
                      .filter(l => l.name !== playerZone.name)
@@ -138,6 +143,7 @@ function generateOptions(context) {
     ) {
       options.push({
         name: 'Colonial One',
+        max: 1,
         options: game.getLocationsByArea('Colonial One')
                      .filter(l => l.name !== playerZone.name)
                      .map(l => l.details.name)
@@ -159,6 +165,7 @@ function generateOptions(context) {
         options: [
           {
             name: 'Move Viper',
+            max: 1,
             options: adjacentZones.map(z => z.name),
           },
           ...options,

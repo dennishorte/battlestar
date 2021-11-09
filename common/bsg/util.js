@@ -30,6 +30,10 @@ Util.rollDieResult = function(targetString) {
   }
 }
 
+Util.optionName = function(option) {
+  return option.name || option
+}
+
 Util.skillList = [
   'politics',
   'leadership',
