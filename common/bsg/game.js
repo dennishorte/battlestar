@@ -788,6 +788,10 @@ Game.prototype.mDiscard = function(cardId) {
     this.mMoveCard(zoneName, 'decks.civilian', card)
   }
 
+  else if (card.kind === 'crisis') {
+    this.mMoveCard(zoneName, 'discard.crisis', card)
+  }
+
   else {
     throw new Error(`Unhandled discard: ${card.kind}`)
   }

@@ -364,6 +364,10 @@ const transitions = {
   'player-turn-crisis': {
     func: require('./transitions/playerTurnCrisis.js'),
   },
+  'player-turn-crisis-laura-roslin': {
+    func: require('./transitions/playerTurnCrisisLauraRoslin.js'),
+  },
+
   'player-turn-cleanup': {
     func: waitFunc,
   },

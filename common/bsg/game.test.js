@@ -1075,6 +1075,68 @@ describe('adhoc transitions', () => {
     })
 
   })
+
+  describe('player-turn-crisis-laura-roslin', () => {
+    function _fixtureBeforeChoose() {
+      const factory = new GameFixtureFactory()
+      factory.options.players[0] = {
+        character: 'Laura Roslin',
+        movement: 'Skip Movement',
+      }
+      const game = factory.build().advanceTo('player-turn-action').game
+      game.run()
+      game.submit({
+        actor: 'dennis',
+        name: 'Action',
+        option: [{
+          name: 'Skip Action',
+        }]
+      })
+      return game
+    }
+
+    function _fixtureAfterChoose() {
+      const game = _fixtureBeforeChoose()
+      const chooseId = bsgutil.optionName(game.getWaiting('dennis').actions[0].options[0])
+      const otherId = bsgutil.optionName(game.getWaiting('dennis').actions[0].options[1])
+      game.submit({
+        actor: 'dennis',
+        name: 'Religious Visions',
+        option: [chooseId]
+      })
+
+      return { game, chooseId, otherId }
+    }
+
+    test('Gives player a choice between two crisis cards', () => {
+      const game = _fixtureBeforeChoose()
+
+      const waiting = game.getWaiting('dennis')
+      expect(waiting).toBeDefined()
+
+      const action = waiting.actions[0]
+      expect(action.name).toBe('Religious Visions')
+      expect(action.options.length).toBe(2)
+    })
+
+    test('after choosing, begins crisis phase with chosen crisis', () => {
+      const { game, chooseId } = _fixtureAfterChoose()
+      expect(game.getCrisis()).toBeDefined()
+      expect(game.getCrisis().id).toBe(chooseId)
+    })
+
+    test('crisis chosen is moved to keep zone', () => {
+      const { game, chooseId } = _fixtureAfterChoose()
+      const { zoneName } = game.getCardByPredicate(c => c.id === chooseId)
+      expect(zoneName).toBe('keep')
+    })
+
+    test('crisis not chosen is discarded', () => {
+      const { game, otherId } = _fixtureAfterChoose()
+      const { zoneName } = game.getCardByPredicate(c => c.id === otherId)
+      expect(zoneName).toBe('discard.crisis')
+    })
+  })
 })
 
 describe('skill checks', () => {

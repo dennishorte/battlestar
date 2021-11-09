@@ -15,7 +15,7 @@ function generateOptions(context) {
   // Initialization
   if (!game.getCrisis()) {
     if (game.getCardCharacterByPlayer(player).name === "Laura Roslin") {
-      return context.push('playerTurnCrisisLauraRoslin')
+      return context.push('player-turn-crisis-laura-roslin')
     }
 
     else {
