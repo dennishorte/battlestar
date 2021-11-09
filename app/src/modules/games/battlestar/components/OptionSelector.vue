@@ -13,7 +13,7 @@
       <div v-for="(option, index) in selector.options" :key="index">
         <div v-if="!optionHasChildren(option)">
           <input type="checkbox" :value="index" v-model="selected" />
-          {{ optionName(option) }}
+          {{ optionDisplayName(option) }}
         </div>
 
 
@@ -95,6 +95,23 @@ export default {
   },
 
   methods: {
+    optionDisplayName(option) {
+      const name = this.optionName(option)
+      try {
+        const card = this.$game.getCardById(name)
+
+        if (card.kind === 'skill') {
+          return `(${card.value}) ${card.name}`
+        }
+        else {
+          return card.name
+        }
+      }
+      catch {
+        return name
+      }
+    },
+
     optionHasChildren(option) {
       return Array.isArray(option.options)
     },
