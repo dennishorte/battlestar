@@ -121,12 +121,14 @@ function generateOptions(context) {
 
   // Locations for Humans
   else {
+    const playerOnColonialOne = playerZone.details && playerZone.details.area === 'Colonial One'
+    const playerOnGalactica = playerZone.details && playerZone.details.area === 'Galactica'
     const canChangeShips = game.getCardsKindByPlayer('skill', player).length > 0
 
     // Galactica Locations
-    if (canChangeShips || (playerZone.details && playerZone.details.area === 'Galactica')) {
+    if (canChangeShips || playerOnGalactica) {
       let description
-      if (playerZone.details.area === 'Galactica') {
+      if (playerOnGalactica) {
         description = "no cost"
       }
       else {
@@ -148,10 +150,10 @@ function generateOptions(context) {
     // Colonial One locations
     if (
       !game.checkColonialOneIsDestroyed()
-      && (canChangeShips || (playerZone.details && playerZone.details.area === 'Colonial One'))
+      && (canChangeShips || playerOnColonialOne)
     ) {
       let description
-      if (playerZone.details.area === 'Colonial One') {
+      if (playerOnColonialOne) {
         description = "no cost"
       }
       else {
