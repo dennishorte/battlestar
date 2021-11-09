@@ -125,8 +125,17 @@ function generateOptions(context) {
 
     // Galactica Locations
     if (canChangeShips || (playerZone.details && playerZone.details.area === 'Galactica')) {
+      let description
+      if (playerZone.details.area === 'Galactica') {
+        description = "no cost"
+      }
+      else {
+        description = "must discard one skill card to change ships"
+      }
+
       options.push({
         name: 'Galactica',
+        description,
         max: 1,
         options: game.getLocationsByArea('Galactica')
                      .filter(l => !l.details.hazardous)
@@ -141,6 +150,14 @@ function generateOptions(context) {
       !game.checkColonialOneIsDestroyed()
       && (canChangeShips || (playerZone.details && playerZone.details.area === 'Colonial One'))
     ) {
+      let description
+      if (playerZone.details.area === 'Colonial One') {
+        description = "no cost"
+      }
+      else {
+        description = "must discard one skill card to change ships"
+      }
+
       options.push({
         name: 'Colonial One',
         max: 1,
