@@ -11,14 +11,15 @@
 
     <div class="option-checkboxes">
       <div v-for="(option, index) in selector.options" :key="index">
-        <div v-if="!optionHasChildren(option)">
+        <div v-if="!optionHasChildren(option)" class="input-row">
           <input type="checkbox" :value="index" v-model="selected" />
 
-          <CardLink v-if="!!cardForOption(option)" :card="cardForOption(option)" />
-          <span v-else>
-            {{ optionDisplayName(option) }}
+          <span class="input-label">
+            <CardLink v-if="!!cardForOption(option)" :card="cardForOption(option)" />
+            <span v-else>
+              {{ optionDisplayName(option) }}
+            </span>
           </span>
-
         </div>
 
 
@@ -158,6 +159,15 @@ export default {
 
 
 <style scoped>
+input[type='checkbox'] {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.input-label {
+  vertical-align: top;
+}
+
 .invalid-selection {
   color: red;
 }
@@ -178,5 +188,9 @@ export default {
 .option-checkboxes {
   display: flex;
   flex-direction: column;
+}
+
+.option-name {
+  margin-top: .45rem;
 }
 </style>
