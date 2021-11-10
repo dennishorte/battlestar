@@ -13,7 +13,12 @@
       <div v-for="(option, index) in selector.options" :key="index">
         <div v-if="!optionHasChildren(option)">
           <input type="checkbox" :value="index" v-model="selected" />
-          {{ optionDisplayName(option) }}
+
+          <CardLink v-if="!!cardForOption(option)" :card="cardForOption(option)" />
+          <span v-else>
+            {{ optionDisplayName(option) }}
+          </span>
+
         </div>
 
 
@@ -34,11 +39,16 @@
 
 <script>
 import Vue from 'vue'
-import { selector } from 'battlestar-common'
-import { util } from 'battlestar-common'
+import CardLink from './CardLink'
+
+import { bsg, selector, util } from 'battlestar-common'
 
 export default {
   name: 'OptionSelector',
+
+  components: {
+    CardLink,
+  },
 
   props: {
     required: {
@@ -80,7 +90,7 @@ export default {
       const selectedOptions = []
       for (let i = 0; i < this.selector.options.length; i++) {
         const opt = this.selector.options[i]
-        const name = this.optionName(opt)
+        const name = bsg.util.optionName(opt)
         const isSelected = this.selected.includes(i)
         if (isSelected) {
           if (this.optionHasChildren(opt)) {
@@ -105,33 +115,26 @@ export default {
   },
 
   methods: {
-    optionDisplayName(option) {
-      const name = this.optionName(option)
+    cardForOption(option) {
       try {
-        const card = this.$game.getCardById(name)
-
-        if (card.kind === 'skill') {
-          return `(${card.value}) ${card.name}`
-        }
-        else {
-          return card.name
-        }
+        const name = bsg.util.optionName(option)
+        return this.$game.getCardById(name)
       }
       catch {
-        return name
+        return undefined
       }
+    },
+
+    optionDisplayName(option) {
+      return bsg.util.optionName(option)
     },
 
     optionHasChildren(option) {
       return Array.isArray(option.options)
     },
 
-    optionName(option) {
-      return option.name || option
-    },
-
     childChanged(event) {
-      const childIndex = this.selector.options.findIndex(o => this.optionName(o) === event.name)
+      const childIndex = this.selector.options.findIndex(o => bsg.util.optionName(o) === event.name)
 
       if (event.isChecked) {
         Vue.set(this.childInfo, event.name, event)
