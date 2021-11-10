@@ -2,8 +2,9 @@
   <div class="waiting-panel">
 
     <b-tabs
-      content-class="mt-3"
       v-model="tabIndex"
+      active-nav-item-class="active-nav-item"
+      active-tab-class="active-tab"
       @activate-tab="activateTabHandler">
       <b-tab
         v-for="player in playersOrdered"
@@ -103,4 +104,16 @@ export default {
 
 
 <style scoped>
+.waiting-panel >>> .active-nav-item {
+  background-color: #eee;
+  border-color: #ccc;
+  border-bottom-color: #eee;
+}
+
+.active-tab {
+  padding: .05rem .75rem;
+  background-color: #eee;
+  margin-left: -15px;
+  margin-right: -15px;
+}
 </style>
