@@ -30,6 +30,7 @@ function GamePlugin() {
     modal: {
       cardInfo: {},
       characters: '',
+      crisisCards: '',
       error: '',
       locations: '',
       skillCards: '',

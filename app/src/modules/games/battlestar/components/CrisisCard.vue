@@ -1,25 +1,25 @@
 <template>
   <div class="crisis-card">
     <div class="heading" style="border-bottom: 1px solid darkgray;">
-      {{ card.name }}
+      {{ card.name }} {{ superCrisisMemo }}
     </div>
 
     <div v-if="!cylonAttack">
       <div v-if="choice">
-        {{ card['who chooses?'] }} chooses
+        {{ card.actor }} chooses
       </div>
 
       <b-list-group>
         <b-list-group-item v-if="card.type === 'Choice'">
-          {{ card['fail effect / choose option 1 / cac effect'] }}
+          {{ card.option1 }}
         </b-list-group-item>
 
-        <b-list-group-item v-else-if="!!card['pass effect']">
+        <b-list-group-item v-else-if="!!card.passEffect">
           <SkillCheck :card="card" :showTitle="false" />
         </b-list-group-item>
 
         <b-list-group-item v-if="optionTwo" class="option">
-          {{ card['choose option 2'] }}
+          {{ card.option2 }}
         </b-list-group-item>
       </b-list-group>
 
@@ -29,12 +29,12 @@
       </div>
     </div>
 
-    <div>
-      <span class="heading">Cylon Activation:</span> {{ card['cylon activation'] }}
+    <div v-if="!isSuperCrisis">
+      <span class="heading">Cylon Activation:</span> {{ card.cylonActivation }}
     </div>
 
-    <div>
-      <span class="heading">Advance Jump:</span> {{ card['jump track?'] }}
+    <div v-if="!cylonAttack && !isSuperCrisis">
+      <span class="heading">Advance Jump:</span> {{ card.jumpTrack }}
     </div>
 
     <div v-if="cylonAttack" class="cylon-attack">
@@ -79,7 +79,7 @@
       </b-row>
 
       <div>
-        {{ card['fail effect / choose option 1 / cac effect'] }}
+        {{ card.effect }}
       </div>
     </div>
 
@@ -108,12 +108,23 @@ export default {
     cylonAttack() {
       return this.card.type === "Cylon Attack"
     },
+    isSuperCrisis() {
+      return this.card.cylonActivation === ''
+    },
     optionOne() {
       return this.choice || this.card.type === "Skill Check"
     },
     optionTwo() {
       return this.choice
-    }
+    },
+    superCrisisMemo() {
+      if (this.isSuperCrisis) {
+        return '(super crisis)'
+      }
+      else {
+        return ''
+      }
+    },
   },
 
   methods: {

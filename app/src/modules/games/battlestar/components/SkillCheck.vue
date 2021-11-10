@@ -12,27 +12,25 @@
         <div>
           <span class="heading">Skills:</span>
 
-          <template v-for="skill in skillList">
-            <span :key="skill" v-if="card[skill]">
-              <SkillLink :skillName="skill" />
-            </span>
-          </template>
+          <span v-for="skill in card.skills" :key="skill">
+            <SkillLink :skillName="skill" />
+          </span>
         </div>
       </div>
 
       <div class="outcomes">
         <div class="outcome-group">
-          <div class="heading">{{ card['skill check value'] }}+</div>
+          <div class="heading">{{ card.passValue }}+</div>
           <div class="outcome">
-            {{ card['pass effect'] }}
+            {{ card.passEffect }}
           </div>
         </div>
 
-        <template v-if="card['partial pass value']">
+        <template v-if="card.partialValue">
           <div class="outcome-group">
-            <div class="heading">{{ card['partial pass value'] }}+</div>
+            <div class="heading">{{ card.partialValue }}+</div>
             <div class="outcome">
-              {{ card['partial pass effect'] }}
+              {{ card.partialEffect }}
             </div>
           </div>
         </template>
@@ -40,7 +38,7 @@
         <div class="outcome-group">
           <div class="heading">fail</div>
           <div class="outcome">
-            {{ card['fail effect / choose option 1 / cac effect'] }}
+            {{ card.failEffect }}
           </div>
         </div>
       </div>

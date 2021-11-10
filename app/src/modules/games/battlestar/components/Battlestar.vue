@@ -51,6 +51,9 @@
                 <b-dropdown-item @click="$bvModal.show('characters-modal')">
                   Characters
                 </b-dropdown-item>
+                <b-dropdown-item @click="$bvModal.show('crisis-cards-modal')">
+                  Crisis Cards
+                </b-dropdown-item>
                 <b-dropdown-item @click="$bvModal.show('locations-modal')">
                   Locations
                 </b-dropdown-item>
@@ -111,6 +114,13 @@
     </b-modal>
 
     <b-modal
+      id="crisis-cards-modal"
+      title="Crisis Cards"
+      ok-only>
+      <CrisisCards />
+    </b-modal>
+
+    <b-modal
       id="locations-modal"
       title="Locations"
       ok-only>
@@ -134,6 +144,7 @@
 <script>
 import CardInfoModal from './CardInfoModal'
 import Characters from './Characters'
+import CrisisCards from './CrisisCards'
 import ErrorModal from './ErrorModal'
 import GameLog from './GameLog'
 import GrabMessage from './GrabMessage'
@@ -154,6 +165,7 @@ export default {
   components: {
     CardInfoModal,
     Characters,
+    CrisisCards,
     ErrorModal,
     GameLog,
     GrabMessage,
