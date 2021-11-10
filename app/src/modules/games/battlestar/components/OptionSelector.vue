@@ -95,6 +95,12 @@ export default {
         const isSelected = this.selected.includes(i)
         if (isSelected) {
           if (this.optionHasChildren(opt)) {
+            // This case comes up when selectors change.
+            // Since the whole OptionSelector isn't reloaded from scratch, there is
+            // leftover state whose order of recalculation can cause problems.
+            if (this.childInfo[name] === undefined) {
+              continue
+            }
             selectedOptions.push(this.childInfo[name])
           }
           else {
@@ -112,7 +118,12 @@ export default {
   watch: {
     selection() {
       this.notifyParent()
-    }
+    },
+
+    selector() {
+      this.childInfo = {}
+      this.selected = []
+    },
   },
 
   methods: {

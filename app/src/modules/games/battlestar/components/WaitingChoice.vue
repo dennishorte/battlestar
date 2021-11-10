@@ -43,7 +43,6 @@ export default {
     },
 
     isValid() {
-      selector.validate(this.action, this.selection, true)
       return selector.validate(this.action, this.selection).valid
     },
   },
