@@ -73,37 +73,36 @@
         </b-row>
 
         <b-row>
-          <b-col :cols="7">
+          <b-col>
             Current turn: <span class="heading">{{ playerCurrentTurn }}</span>
           </b-col>
-          <b-col v-if="this.$game.getSkillCheck().name">
-            <b-button @click="toggleStickyView">
-              toggle view
-            </b-button>
-          </b-col>
         </b-row>
 
-        <b-row class="phase-panel">
-          <b-col>
-            <WaitingPanel v-if="$game.ui.stickyViewIndex === 0" />
-            <CrisisPanel v-else-if="$game.ui.stickyViewIndex === 2" />
-            <div v-else>
-              Unknown toggle index: {{ $game.ui.stickyViewIndex }}
-            </div>
+        <b-row>
+          <b-col class="view-buttons">
+            <b-button @click="selectedView = 'actions'">Actions</b-button>
+            <b-button @click="selectedView = 'board'">Board</b-button>
+            <b-button @click="selectedView = 'crisis'">Crisis</b-button>
           </b-col>
         </b-row>
-
       </div> <!-- Sticky header -->
 
-      <b-row>
-        <b-col>
-          <Resources />
-        </b-col>
-      </b-row>
 
       <b-row>
-        <b-col>
-          <Zones />
+        <b-col class="mt-2">
+          <div v-if="selectedView === 'actions'">
+            <WaitingPanel />
+          </div>
+
+          <div v-if="selectedView === 'board'">
+            <Resources />
+            <Zones />
+          </div>
+
+          <div v-if="selectedView === 'crisis'">
+            <CrisisPanel />
+          </div>
+
         </b-col>
       </b-row>
 
@@ -191,6 +190,7 @@ export default {
 
   data() {
     return {
+      selectedView: 'actions',
       state: [],  // Serves as a place to put the state to make it reactive
     }
   },
@@ -289,10 +289,6 @@ export default {
   font-size: .7em;
 }
 
-.phase-panel {
-  margin-bottom: .1em!important;
-}
-
 .reminder-text {
   color: #444;
   font-size: .7em;
@@ -302,5 +298,9 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+.view-buttons button {
+  margin-right: .5rem;
 }
 </style>
