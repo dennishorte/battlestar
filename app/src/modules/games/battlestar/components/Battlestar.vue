@@ -73,14 +73,23 @@
         </b-row>
 
         <b-row>
-          <b-col>
+          <b-col :cols="7">
             Current turn: <span class="heading">{{ playerCurrentTurn }}</span>
+          </b-col>
+          <b-col v-if="this.$game.getSkillCheck().name">
+            <b-button @click="toggleStickyView">
+              toggle view
+            </b-button>
           </b-col>
         </b-row>
 
         <b-row class="phase-panel">
           <b-col>
-            <WaitingPanel />
+            <WaitingPanel v-if="$game.ui.stickyViewIndex === 0" />
+            <CrisisPanel v-else-if="$game.ui.stickyViewIndex === 2" />
+            <div v-else>
+              Unknown toggle index: {{ $game.ui.stickyViewIndex }}
+            </div>
           </b-col>
         </b-row>
 
@@ -145,6 +154,7 @@
 import CardInfoModal from './CardInfoModal'
 import Characters from './Characters'
 import CrisisCards from './CrisisCards'
+import CrisisPanel from './CrisisPanel'
 import ErrorModal from './ErrorModal'
 import GameLog from './GameLog'
 import GrabMessage from './GrabMessage'
@@ -166,6 +176,7 @@ export default {
     CardInfoModal,
     Characters,
     CrisisCards,
+    CrisisPanel,
     ErrorModal,
     GameLog,
     GrabMessage,
@@ -202,6 +213,10 @@ export default {
   methods: {
     async pass(name) {
       console.log('pass to', name)
+    },
+
+    toggleStickyView() {
+      this.$game.toggleStickyView()
     },
 
     redo() {

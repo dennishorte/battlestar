@@ -36,6 +36,7 @@ function GamePlugin() {
       skillCards: '',
       zoneInfo: '',
     },
+    stickyViewIndex: 0,
   }
   bsg.Game.call(this)
 }
@@ -135,6 +136,35 @@ GamePlugin.prototype.actionShowInfoAboutGrabbedCard = function() {
   else {
     this.ui.modal.cardInfo = card
     return 'card-modal'
+  }
+}
+
+const stickyViewOrdering = [
+  'waiting',
+  'skill-check',
+  'crisis',
+]
+
+GamePlugin.prototype.toggleStickyView = function() {
+  const self = this
+  function _accept(index) {
+    self.ui.stickyViewIndex = index
+  }
+
+  for (let i = 0; i < stickyViewOrdering.length; i++) {
+    const candidateIndex = (this.ui.stickyViewIndex + i + 1) % stickyViewOrdering.length
+    const candidate = stickyViewOrdering[candidateIndex]
+
+    if (candidate === 'waiting') {
+      return _accept(candidateIndex)
+    }
+    else if (candidate === 'skill-check' && !!this.getSkillCheck().name) {
+      console.log(this.getSkillCheck())
+      return _accept(candidateIndex)
+    }
+    else if (candidate === 'crisis' && !!this.getCrisis().name) {
+      return _accept(candidateIndex)
+    }
   }
 }
 
