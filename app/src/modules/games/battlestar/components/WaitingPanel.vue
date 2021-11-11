@@ -77,7 +77,12 @@ export default {
     },
 
     hasActionWaiting(player) {
-      return !!this.$game.getWaiting(player)
+      return (
+        !!this.$game.getWaiting(player)
+
+        // Special case for skill checks where players can choose to change their answer
+        && !this.$game.getSkillCheck().discussion[player.name].support
+      )
     },
 
     playerIsViewer(player) {
