@@ -135,11 +135,17 @@ Game.prototype.submit = function(response) {
     throw new Error('Invalid response')
   }
 
+  // Store the response for the statemachine
   this.rk.sessionStart(session => {
     session.splice(this.state.sm.response, 0, this.state.sm.response.length, response)
   })
 
   this.sm.run()
+
+  // Clean up the response
+  this.rk.sessionStart(session => {
+    session.splice(this.state.sm.response, 0, this.state.sm.response.length)
+  })
 }
 
 ////////////////////////////////////////////////////////////////////////////////
