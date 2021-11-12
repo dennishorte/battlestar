@@ -78,15 +78,20 @@ function handleResponse(context) {
     }
   })
 
-  if (nextStep === 'done') {
-    return context.done()
-  }
-  else if (nextStep === 'option2') {
+  const allPlayersHaveSubmitted = game
+    .getPlayerAll()
+    .map(p => !!check.discussion[p.name].support) // true if they have submitted their support
+    .reduce((l, r) => l && r)
+
+  if (nextStep === 'option2') {
     markDone(context)
     return context.push('evaluate-effects', {
       name: `${check.name} option 2`,
       effects: check.script.option2,
     })
+  }
+  else if (nextStep === 'done' || allPlayersHaveSubmitted) {
+    return context.done()
   }
   else {
     return generateOptions(context)

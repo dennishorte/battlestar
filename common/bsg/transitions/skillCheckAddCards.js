@@ -28,7 +28,6 @@ function generateOptions(context) {
     actor: player.name,
     actions: [{
       name: 'Skill Check - Add Cards',
-      min: 1,
       options: _addCardsOptionsForPlayer(game, check, player),
     }]
   })
@@ -154,6 +153,7 @@ function _addCardsOptionsForPlayer(game, check, player) {
   const options = [
     {
       name: 'Add Cards to Check',
+      max: positiveCards.length + negativeCards.length,
       options: [
         {
           name: 'Help',
