@@ -77,11 +77,15 @@ export default {
     },
 
     hasActionWaiting(player) {
+      const skillCheckDiscussSpecialCase = (
+        this.$game.getWaiting(player)
+        && this.$game.getWaiting(player).actions[0].name === 'Skill Check - Discuss'
+        && this.$game.getSkillCheck().discussion[player.name].support
+      )
+
       return (
         !!this.$game.getWaiting(player)
-
-        // Special case for skill checks where players can choose to change their answer
-        && !this.$game.getSkillCheck().discussion[player.name].support
+        && !skillCheckDiscussSpecialCase
       )
     },
 
