@@ -12,6 +12,7 @@
     </b-button>
 
     <ConfirmationModal
+      :modalId="modalId"
       :callback="bubble">
 
       This button is meant for <strong>{{actor}}</strong>.
@@ -60,6 +61,10 @@ export default {
         return this.owner
       }
     },
+
+    modalId() {
+      return `confirmation-modal-${this.owner}`
+    },
   },
 
   methods: {
@@ -72,7 +77,7 @@ export default {
         this.bubble()
       }
       else {
-        this.$bvModal.show('confirmation-modal')
+        this.$bvModal.show(this.modalId)
       }
     },
   },

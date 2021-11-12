@@ -1,6 +1,6 @@
 <template>
   <b-modal
-    id="confirmation-modal"
+    :id="modalId"
     :title="title"
     ok-title="Do it Anyway"
     @ok="callback"
@@ -20,10 +20,15 @@ export default {
       default: () => {},
     },
 
+    modalId: {
+      type: String,
+      required: true,
+    },
+
     title: {
       type: String,
       default: 'Are you sure?',
     },
-  }
+  },
 }
 </script>
