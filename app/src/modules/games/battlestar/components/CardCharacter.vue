@@ -36,7 +36,7 @@ export default {
 
   computed: {
     characterCard() {
-      return this.$game.data.filtered.characterCards.filter(c => c.name === this.displayName)
+      return this.$game.data.filtered.characterCards.find(c => c.name === this.displayName)
     },
 
     characterSkills() {
