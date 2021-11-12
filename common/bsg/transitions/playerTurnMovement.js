@@ -1,4 +1,4 @@
-const { transitionFactory } = require('./factory.js')
+const { transitionFactory, markDone } = require('./factory.js')
 const bsgutil = require('../util.js')
 
 module.exports = transitionFactory(
@@ -64,6 +64,7 @@ function handleResponse(context) {
   })
 
   if (!sameShip) {
+    markDone(context)
     return context.push('discard-skill-cards', {
       playerName: player.name,
       count: 1
