@@ -83,13 +83,14 @@ function playerTurnReceiveSkills(context) {
 
   // Let the player choose which optional cards to draw.
   // Don't draw any cards until they have made their decision.
+  const optionChoices = bsgutil.optionalSkillOptions(optionalSkills)
   return context.wait({
     actor: player.name,
     actions: [
       {
         name: 'Select Skills',
-        operator: 'and',
-        options: bsgutil.optionalSkillOptions(optionalSkills),
+        count: optionChoices.length,
+        options: optionChoices,
       },
     ]
   })

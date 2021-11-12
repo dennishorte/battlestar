@@ -29,7 +29,7 @@ function GameFixtureFactory(options) {
       {
         character: 'Kara "Starbuck" Thrace',
         startingSkills: ['tactics', 'piloting', {
-          name: 'Optional Skills',
+          name: 'Optional Skills 1',
           option: ['leadership'],
         }],
         movement: 'Skip Movement',

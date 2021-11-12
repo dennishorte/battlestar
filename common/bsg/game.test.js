@@ -215,7 +215,7 @@ describe('receive initial skills', () => {
     const action = game.getWaiting('micah').actions[0]
     expect(action.options.sort()).toStrictEqual([
       {
-        name: 'Optional Skills',
+        name: 'Optional Skills 1',
         options: ['leadership', 'engineering']
       },
       'tactics',
@@ -238,7 +238,7 @@ describe('receive initial skills', () => {
         'tactics',
         'piloting',
         {
-          name: 'Optional Skills',
+          name: 'Optional Skills 1',
           option: ['engineering'],
         }
       ]
@@ -281,7 +281,7 @@ describe('player turn', () => {
       expect(action.name).toBe('Select Skills')
       expect(action.options).toStrictEqual([
         {
-          name: 'Optional Skills',
+          name: 'Optional Skills 1',
           options: [
             "leadership",
             "engineering",
@@ -299,7 +299,7 @@ describe('player turn', () => {
         actor: 'dennis',
         name: 'Select Skills',
         option: [{
-          name: 'Optional Skills',
+          name: 'Optional Skills 1',
           option: ['engineering'],
         }]
       })

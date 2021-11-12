@@ -82,7 +82,7 @@ Util.optionalSkillOptions = function(optionalSkills) {
   const optionalPairs = [optionalSkills[0].name, optionalSkills[1].name]
   for (let i = 0; i < optionalSkills[0].value; i++) {
     options.push({
-      name: 'Optional Skills',
+      name: `Optional Skills ${i+1}`,
       options: optionalPairs
     })
   }
