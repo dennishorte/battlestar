@@ -31,42 +31,6 @@ function characterSelection(context) {
   }
 }
 
-function characterSelectionDo(context) {
-  const game = context.state
-  const player = game.getPlayerByName(context.data.playerName)
-
-  if (context.response) {
-    const characterName = context.response.option[0]
-    game.aSelectCharacter(player, characterName)
-
-    // Apollo still needs to launch in a viper
-    if (
-      characterName === 'Lee "Apollo" Adama'
-      && game.getCardsKindByPlayer('player-token', player).length > 0
-    ) {
-      return context.push('launch-self-in-viper', { playerName: player.name })
-    }
-    else {
-      return context.done()
-    }
-  }
-
-  else {
-    const characterDeck = game.getZoneByName('decks.character')
-    const availableCharacters = characterDeck.cards.map(c => c.name).sort()
-
-    return context.wait({
-      actor: player.name,
-      actions: [
-        {
-          name: 'Select Character',
-          options: availableCharacters,
-        },
-      ]
-    })
-  }
-}
-
 function distributeLoyaltyCards(context) {
   const game = context.state
   const numPlayers = game.getPlayerAll().length
@@ -314,7 +278,7 @@ const transitions = {
   },
 
   'character-selection-do': {
-    func: characterSelectionDo,
+    func: require('./transitions/characterSelectionDo.js'),
   },
 
   'distribute-title-cards': {

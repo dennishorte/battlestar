@@ -93,5 +93,6 @@ function handleResponse(context) {
   // Just launch the viper
   else {
     game.aLaunchSelfInViper(player, selection.option[0])
+    return context.done()
   }
 }
