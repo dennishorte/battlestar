@@ -66,14 +66,14 @@ GamePlugin.prototype.ready = function() {
     this.prep.actor,
   )
 
-  this.run()
-
   // Load the static deck data used in info panels
   this.data.raw = bsg.res
   this.data.filtered = {}
   for (const [key, cards] of Object.entries(bsg.res)) {
     this.data.filtered[key] = bsg.util.expansionFilter(cards, this.state.options.expansions)
   }
+
+  this.run()
 }
 
 GamePlugin.prototype.setActor = function(actor) {
