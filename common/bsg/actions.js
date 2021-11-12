@@ -181,10 +181,9 @@ Actions.aAddDestinyCards = function() {
     }
   }
 
-  // Move two destiny cards into the crisis pool
-  for (let i = 0; i < 2; i++) {
-    this.mMoveCard('destiny', 'crisisPool')
-  }
+  this.mLog({ template: 'adding destiny cards to skill check' })
+  this.mMoveCard('destiny', 'crisisPool')
+  this.mMoveCard('destiny', 'crisisPool')
 }
 
 Actions.aAssignAdmiral = function(player) {
