@@ -74,7 +74,22 @@
 
         <b-row>
           <b-col>
-            Current turn: <span class="heading">{{ playerCurrentTurn }}</span>
+            <div class="current-turn-row">
+              <div>
+                Current turn: <span class="heading">{{ playerCurrentTurn }}</span>
+              </div>
+              <div class="mr-4 text-secondary">
+                <span v-if="showStack" @click="showStack = false">hide stack</span>
+                <span v-else @click="showStack = true">show stack</span>
+              </div>
+            </div>
+
+            <div class="game-stack" v-if="showStack">
+              <div v-for="(line, index) in stackLines" :key="`stackLine${index}`">
+                {{ line }}
+              </div>
+            </div>
+
           </b-col>
         </b-row>
 
@@ -198,6 +213,7 @@ export default {
   data() {
     return {
       selectedView: 'actions',
+      showStack: true,
       state: [],  // Serves as a place to put the state to make it reactive
     }
   },
@@ -214,6 +230,16 @@ export default {
     },
     playerCurrentTurn() {
       return this.$game.getPlayerCurrentTurn().name
+    },
+    stackLines() {
+      return this.$game.state.sm.stack.map((t, idx) => {
+        const output = []
+        for (let i = 0; i < idx; i++) {
+          output.push('…')  // U+2026
+        }
+        output.push(t.name)
+        return output.join(' ')
+      })
     },
   },
 
@@ -267,6 +293,17 @@ export default {
 
 .battlestar {
   background-color: white;
+}
+
+.current-turn-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.game-stack {
+  font-size: .7rem;
+  color: #999;
 }
 
 .sticky-header {
