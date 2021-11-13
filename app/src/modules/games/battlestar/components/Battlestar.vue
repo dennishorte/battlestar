@@ -247,7 +247,7 @@ export default {
       return this.$game.state.sm.stack.map((t, idx) => {
         const output = []
         for (let i = 0; i < idx; i++) {
-          output.push('…')  // U+2026
+          output.push('.')
         }
         output.push(t.name)
         return output.join(' ')
