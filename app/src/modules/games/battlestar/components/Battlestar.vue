@@ -95,10 +95,22 @@
 
         <b-row>
           <b-col class="view-buttons">
-            <b-button @click="selectedView = 'actions'">Actions</b-button>
-            <b-button @click="selectedView = 'board'">Board</b-button>
-            <b-button @click="selectedView = 'crisis'">Crisis</b-button>
-            <b-button @click="selectedView = 'skill-check'">Skill Check</b-button>
+            <b-button @click="selectedView = 'actions'">
+              Actions
+            </b-button>
+            <b-button @click="selectedView = 'board'">
+              Board
+            </b-button>
+            <b-button
+              @click="selectedView = 'crisis'"
+              :disabled="!$game.getCrisis()">
+              Crisis
+            </b-button>
+            <b-button
+              @click="selectedView = 'skill-check'"
+              :disabled="!$game.getSkillCheck()">
+              Skill Check
+            </b-button>
           </b-col>
         </b-row>
       </div> <!-- Sticky header -->
