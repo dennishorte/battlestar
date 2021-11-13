@@ -753,6 +753,7 @@ describe('player turn', () => {
         test('choose a player', () => {
           const game = _takeActionWithMove('Location Action', "Admiral's Quarters")
           const waiting = game.getWaiting('dennis')
+          console.log(game.getWaiting())
           const action = waiting.actions[0]
           expect(action.name).toBe('Choose a Player')
           expect(action.options.sort()).toStrictEqual(['micah', 'tom'])
@@ -796,37 +797,18 @@ describe('player turn', () => {
         })
 
         test.skip('skill check passed moves chosen player to brig', () => {
-          const game = _takeActionWithMove('Location Action', "Admiral's Quarters")
-          game.submit({
-            actor: 'dennis',
-            name: 'Choose a Player',
-            option: ['tom']
-          })
-          game.aSelectSkillCheckResult('pass')
-
-          const playerLocation = game.getZoneByPlayerLocation('tom')
-          expect(playerLocation.name).toBe('locations.brig')
         })
 
         test.skip('skill check failed means nothing happens', () => {
-          const game = _takeActionWithMove('Location Action', "Admiral's Quarters")
-          game.submit({
-            actor: 'dennis',
-            name: 'Choose a Player',
-            option: ['tom']
-          })
-          game.aSelectSkillCheckResult('fail')
-
-          const playerLocation = game.getZoneByPlayerLocation('tom')
-          expect(playerLocation.name).toBe('locations.armory')
         })
 
         test.skip("Saul Tigh can use his Cylon Hatred ability", () => {
+        })
 
+        test.skip("Kara Thrace causes the passValue to drop", () => {
         })
 
         test.skip('William Adama cannot use this action', () => {
-
         })
       })
 

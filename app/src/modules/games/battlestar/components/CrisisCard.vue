@@ -15,7 +15,7 @@
         </b-list-group-item>
 
         <b-list-group-item v-else-if="!!card.passEffect">
-          <SkillCheck :card="card" :showTitle="false" />
+          <SkillCheck :data="card" :showTitle="false" />
         </b-list-group-item>
 
         <b-list-group-item v-if="optionTwo" class="option">

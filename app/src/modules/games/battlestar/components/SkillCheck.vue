@@ -5,14 +5,14 @@
     <b-col class="title-col">
 
       <div v-show="showTitle" class="heading">
-        {{ card.name }}
+        {{ data.name }}
       </div>
 
       <div class="skill">
         <div>
           <span class="heading">Skills:</span>
 
-          <span v-for="skill in card.skills" :key="skill">
+          <span v-for="skill in data.skills" :key="skill">
             <SkillLink :skillName="skill" />
           </span>
         </div>
@@ -20,17 +20,17 @@
 
       <div class="outcomes">
         <div class="outcome-group">
-          <div class="heading">{{ card.passValue }}+</div>
+          <div class="heading">{{ data.passValue }}+</div>
           <div class="outcome">
-            {{ card.passEffect }}
+            {{ data.passEffect }}
           </div>
         </div>
 
-        <template v-if="card.partialValue">
+        <template v-if="data.partialValue">
           <div class="outcome-group">
-            <div class="heading">{{ card.partialValue }}+</div>
+            <div class="heading">{{ data.partialValue }}+</div>
             <div class="outcome">
-              {{ card.partialEffect }}
+              {{ data.partialEffect }}
             </div>
           </div>
         </template>
@@ -38,7 +38,7 @@
         <div class="outcome-group">
           <div class="heading">fail</div>
           <div class="outcome">
-            {{ card.failEffect }}
+            {{ data.failEffect }}
           </div>
         </div>
       </div>
@@ -63,7 +63,7 @@ export default {
   },
 
   props: {
-    card: Object,
+    data: Object,
     showTitle: Boolean,
   },
 

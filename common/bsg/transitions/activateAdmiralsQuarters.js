@@ -21,7 +21,7 @@ function generateOptions(context) {
       .filter(p => !game.checkPlayerIsRevealedCylon(p))
       .map(p => p.name)
 
-        return context.wait({
+    return context.wait({
       actor: context.data.playerName,
       actions: [{
         name: 'Choose a Player',
@@ -71,11 +71,18 @@ function handleResponse(context) {
       game.mSetSkillCheck({
         name: `Send ${chosenPlayerName} to the brig`,
         skills: ['leadership', 'tactics'],
-        'skill check value': 7,
-        // 'partial pass value': null,
-        'pass effect': `${chosenPlayerName} is sent to the brig`,
-        // 'partial pass effect': null,
-        // 'fail effect': null,
+        passValue: 7,
+        partialValue: 0,
+        passEffect: `${chosenPlayerName} is sent to the brig`,
+        partialEffect: '',
+        failEffect: '',
+        script: {
+          pass: [{
+            kind: 'move',
+            actor: chosenPlayerName,
+            location: 'Brig',
+          }],
+        }
       })
     })
     return context.push('skill-check')

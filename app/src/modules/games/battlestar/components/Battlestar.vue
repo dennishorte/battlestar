@@ -2,19 +2,19 @@
   <div class="battlestar">
 
     <b-container fluid>
-      <b-row>
-        <b-col class="title-bar">
-          <div>
-            Battlestar Galactica
-          </div>
-
-          <div>
-            <router-link to="/">home</router-link>
-          </div>
-        </b-col>
-      </b-row>
-
       <div class="sticky-header">
+        <b-row>
+          <b-col class="title-bar">
+            <div>
+              Battlestar Galactica | {{ $game.state.name }}
+            </div>
+
+            <div>
+              <router-link to="/">home</router-link>
+            </div>
+          </b-col>
+        </b-row>
+
         <b-row class="action-buttons-wrapper">
           <b-col>
             <div class="action-buttons">
@@ -83,6 +83,7 @@
             <b-button @click="selectedView = 'actions'">Actions</b-button>
             <b-button @click="selectedView = 'board'">Board</b-button>
             <b-button @click="selectedView = 'crisis'">Crisis</b-button>
+            <b-button @click="selectedView = 'skill-check'">Skill Check</b-button>
           </b-col>
         </b-row>
       </div> <!-- Sticky header -->
@@ -101,6 +102,10 @@
 
           <div v-if="selectedView === 'crisis'">
             <CrisisPanel />
+          </div>
+
+          <div v-if="selectedView === 'skill-check'">
+            <SkillCheckPanel />
           </div>
 
         </b-col>
@@ -161,6 +166,7 @@ import HacksModal from './HacksModal'
 import Locations from './Locations'
 import Resources from './Resources'
 import SkillCards from './SkillCards'
+import SkillCheckPanel from './SkillCheckPanel'
 import WaitingPanel from './WaitingPanel'
 import Zones from './Zones'
 import ZoneViewerModal from './ZoneViewerModal'
@@ -183,6 +189,7 @@ export default {
     Locations,
     Resources,
     SkillCards,
+    SkillCheckPanel,
     WaitingPanel,
     Zones,
     ZoneViewerModal,
@@ -258,8 +265,8 @@ export default {
   justify-content: space-between;
 }
 
-.action-buttons-wrapper {
-  padding-top: 15px;
+.battlestar {
+  background-color: white;
 }
 
 .sticky-header {
@@ -300,7 +307,9 @@ export default {
   justify-content: space-between;
 }
 
-.view-buttons button {
-  margin-right: .5rem;
+.view-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 </style>
