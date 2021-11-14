@@ -5,7 +5,11 @@ module.exports = {
 function evaluateEffect(game, effect) {
   const kind = (typeof effect === 'string') ? effect : effect.kind
 
-  if (kind === 'choice') {
+  if (kind === 'assignTitle') {
+    throw new Error('not implemented')
+  }
+
+  else if (kind === 'choice') {
     return {
       push: {
         transition: 'make-choice',
@@ -27,6 +31,10 @@ function evaluateEffect(game, effect) {
     }
   }
 
+  else if (kind === 'conditional') {
+    throw new Error('not implemented')
+  }
+
   else if (kind === 'counter') {
     const { counter, amount } = effect
     game.rk.sessionStart(() => {
@@ -37,6 +45,14 @@ function evaluateEffect(game, effect) {
   else if (kind === 'cylonActivation') {
     const { activationKind } = effect
     game.aActivateCylonShips(activationKind)
+  }
+
+  else if (kind === 'damageReserveVipers') {
+    throw new Error('not implemented')
+  }
+
+  else if (kind === 'damageSpaceVipers') {
+    throw new Error('not implemented')
   }
 
   else if (kind === 'deploy') {
@@ -72,6 +88,10 @@ function evaluateEffect(game, effect) {
     }
   }
 
+  else if (kind === 'drawSkills') {
+    throw new Error('not implemented')
+  }
+
   else if (kind === 'move') {
     const { actor, location } = effect
     const player = game.getPlayerByDescriptor(actor)
@@ -79,6 +99,10 @@ function evaluateEffect(game, effect) {
     game.rk.sessionStart(() => {
       game.mMovePlayer(player, locationZone)
     })
+  }
+
+  else if (kind === 'sendPlayerToBrig') {
+    throw new Error('not implemented')
   }
 
   else if (kind === 'title') {
@@ -125,6 +149,10 @@ function evaluateEffect(game, effect) {
         zoneName: spaceZone.name,
       })
     }
+  }
+
+  else if (kind === 'fulfillerOfProphecy') {
+    throw new Error('not implemented')
   }
 
   else if (kind === 'returnAllVipers') {

@@ -12,7 +12,7 @@ module.exports =  [
       keepUntil: '',
       option1: {
         requires: 'hasNuke',
-        effects: [{
+        effect: [{
           kind: 'counter',
           counter: 'nukes',
           amount: -1
@@ -248,7 +248,7 @@ module.exports =  [
             {
               name: 'resign',
               description: 'Give the President title to the Admiral',
-              effects: [{
+              effect: [{
                 kind: 'title',
                 title: 'President',
                 assignTo: 'admiral',
@@ -257,7 +257,7 @@ module.exports =  [
             {
               name: 'resist',
               description: 'Move to the Brig',
-              effects: [{
+              effect: [{
                 kind: 'move',
                 actor: 'president',
                 location: 'Brig',
@@ -982,7 +982,7 @@ module.exports =  [
       }],
       option2: {
         dieRoll: '4-',
-        effects: [
+        effect: [
           {
             kind: 'counter',
             counter: 'population',
@@ -1134,7 +1134,7 @@ module.exports =  [
             {
               name: 'Admiral',
               description: 'Look at one random loyalty card of the Admiral',
-              effects: [{
+              effect: [{
                 kind: 'viewLoyalty',
                 target: 'admiral',
                 viewer: 'currentPlayer',
@@ -1144,7 +1144,7 @@ module.exports =  [
             {
               name: 'President',
               description: 'Look at one random loyalty card of the President',
-              effects: [{
+              effect: [{
                 kind: 'viewLoyalty',
                 target: 'president',
                 viewer: 'currentPlayer',
@@ -1212,7 +1212,7 @@ module.exports =  [
     },
   },
   {
-    name: 'Fullfiller of Prophecy',
+    name: 'Fulfiller of Prophecy',
     expansion: 'base game',
     type: 'Optional Skill Check',
     cylonActivation: 'Basestar Attacks',
@@ -1225,6 +1225,28 @@ module.exports =  [
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',
+      option2: [
+        {
+          kind: 'drawSkills',
+          actor: 'currentPlayer',
+          kinds: ['politics', 'leadership', 'tactics', 'piloting', 'engineering'],
+          count: 1,
+        },
+        {
+          kind: 'fulfillerOfProphecy',
+        }
+      ],
+      pass: [{
+        kind: 'drawSkills',
+        actor: 'currentPlayer',
+        kinds: ['politics', 'leadership', 'tactics', 'piloting', 'engineering'],
+        count: 1,
+      }],
+      fail: [{
+        kind: 'counter',
+        counter: 'population',
+        amount: -1,
+      }],
     },
   },
   {
@@ -1241,6 +1263,32 @@ module.exports =  [
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',
+      pass: [{
+        kind: 'viewLoyalty',
+        target: 'choice',
+        viewer: 'currentPlayer',
+        count: 1
+      }],
+      fail: [{
+        kind: 'counter',
+        counter: 'morale',
+        amount: -2,
+      }],
+      option2: {
+        dieRoll: '4-',
+        effect: [
+          {
+            kind: 'counter',
+            counter: 'morale',
+            amount: -1,
+          },
+          {
+            kind: 'counter',
+            counter: 'population',
+            amount: -1,
+          },
+        ],
+      },
     },
   },
   {
@@ -1257,6 +1305,20 @@ module.exports =  [
     skills: [ 'politics', 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: {
+        dieRoll: '4-',
+        effect: [{
+          kind: 'counter',
+          counter: 'population',
+          amount: -2,
+        }]
+      },
+      option2: [{
+        kind: 'discardSkills',
+        actor: 'currentPlayer',
+        count: 4,
+      }],
     },
   },
   {
@@ -1273,6 +1335,33 @@ module.exports =  [
     skills: [ 'politics', 'tactics', 'engineering' ],
     script: {
       keepUntil: '',
+      pass: [{
+        kind: 'counter',
+        counter: 'jumpTrack',
+        amount: +1,
+      }],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'population',
+          amount: -1,
+        },
+        {
+          kind: 'addCenturion',
+        },
+      ],
+      option2: [
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'population',
+          amount: -1,
+        }
+      ],
     },
   },
   {
@@ -1289,6 +1378,33 @@ module.exports =  [
     skills: [ 'tactics', 'piloting' ],
     script: {
       keepUntil: '',
+      pass: [{
+        kind: 'counter',
+        counter: 'fuel',
+        amount: +1,
+      }],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'raptors',
+          amount: -1,
+        }
+      ],
+      option2: {
+        dieRoll: '4-',
+        effect: [
+          {
+            kind: 'counter',
+            counter: 'fuel',
+            amount: -1,
+          }
+        ],
+      },
     },
   },
   {
@@ -1305,6 +1421,28 @@ module.exports =  [
     skills: [ 'tactics', 'piloting' ],
     script: {
       keepUntil: '',
+      pass: [{
+        kind: 'counter',
+        counter: 'food',
+        amount: +1,
+      }],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'raptors',
+          amount: -1,
+        }
+      ],
+      option2: [{
+        kind: 'counter',
+        counter: 'food',
+        amount: -1,
+      }]
     },
   },
   {
@@ -1321,6 +1459,29 @@ module.exports =  [
     skills: [ 'tactics', 'piloting', 'engineering' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: [
+        {
+          kind: 'move',
+          actor: 'currentPlayer',
+          location: 'Sickbay',
+        },
+        {
+          kind: 'counter',
+          counter: 'raptors',
+          amount: -1
+        }
+      ],
+      option2: {
+        dieRoll: '5-',
+        effect: [
+          {
+            kind: 'counter',
+            counter: 'fuel',
+            amount: -1,
+          }
+        ],
+      }
     },
   },
   {
@@ -1337,6 +1498,17 @@ module.exports =  [
     skills: [ 'politics', 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: [{
+        kind: 'counter',
+        counter: 'food',
+        amount: -2,
+      }],
+      option2: [{
+        kind: 'counter',
+        counter: 'food',
+        amount: -1,
+      }],
     },
   },
   {
@@ -1353,6 +1525,38 @@ module.exports =  [
     skills: [ 'tactics', 'piloting' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: [{
+        kind: 'choice',
+        actor: 'admiral',
+        options: [
+          {
+            name: 'Recover crashed pilot',
+            description: '-1 fuel',
+            effect: [{
+              kind: 'counter',
+              counter: 'fuel',
+              amount: -1
+            }],
+          },
+          {
+            name: 'Abandon crashed pilot',
+            description: '-1 morale and current player goes to Sickbay',
+            effect: [
+              {
+                kind: 'counter',
+                counter: 'morale',
+                amount: -1
+              },
+              {
+                kind: 'move',
+                actor: 'currentPlayer',
+                location: 'Sickbay',
+              }
+            ],
+          }
+        ]
+      }]
     },
   },
   {
@@ -1369,6 +1573,12 @@ module.exports =  [
     skills: [ 'politics', 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: [{
+        kind: 'move',
+        actor: 'currentPlayer',
+        location: 'Brig',
+      }]
     },
   },
   {
@@ -1385,6 +1595,21 @@ module.exports =  [
     skills: [ 'tactics', 'piloting', 'engineering' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'raptors',
+          amount: -1,
+        },
+        {
+          kind: 'deploy',
+          ships: [
+            ['basestar'], [], [],
+            ['civilian', 'civilian'], [], []
+          ]
+        }
+      ],
     },
   },
   {
@@ -1401,6 +1626,17 @@ module.exports =  [
     skills: [ 'tactics', 'engineering' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: [
+        {
+          kind: 'moveAll',
+          from: 'FTL Control',
+          dest: 'Sickbay',
+        },
+        {
+          kind: 'addCenturion',
+        }
+      ]
     },
   },
   {
@@ -1417,6 +1653,12 @@ module.exports =  [
     skills: [ 'leadership', 'tactics' ],
     script: {
       keepUntil: 'forever',
+      pass: [],
+      fail: [{
+        kind: 'moveAll',
+        from: 'Research Lab',
+        dest: 'Sickbay',
+      }]
     },
   },
   {
@@ -1433,6 +1675,24 @@ module.exports =  [
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',
+      pass: [],
+      partial: [{
+        kind: 'counter',
+        counter: 'morale',
+        amount: -1,
+      }],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'morale',
+          amount: -1,
+        },
+        {
+          kind: 'discardSkills',
+          actor: 'president',
+          count: 4
+        }
+      ]
     },
   },
   {
@@ -1449,6 +1709,16 @@ module.exports =  [
     skills: [ 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
+      pass: [{
+        kind: 'sendPlayerTo',
+        location: 'Brig',
+        actor: 'currentPlayer'
+      }],
+      fail: [{
+        kind: 'counter',
+        counter: 'morale',
+        amount: -1
+      }]
     },
   },
   {
@@ -1465,6 +1735,23 @@ module.exports =  [
     skills: [ 'tactics', 'piloting', 'engineering' ],
     script: {
       keepUntil: '',
+      pass: [],
+      partial: [{
+        kind: 'counter',
+        counter: 'population',
+        amount: -1,
+      }],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'population',
+          amount: -1,
+        },
+        {
+          kind: 'damageReserveVipers',
+          count: 2,
+        },
+      ]
     },
   },
   {
@@ -1481,6 +1768,19 @@ module.exports =  [
     skills: [ 'tactics', 'engineering' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'population',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: -1,
+        },
+      ],
     },
   },
   {
@@ -1496,7 +1796,24 @@ module.exports =  [
     failEffect: '-1 food and destroy 1 raptor',
     skills: [ 'tactics', 'piloting' ],
     script: {
-      keepUntil: '',
+      keepUntil: 'forever',
+      pass: [{
+        kind: 'counter',
+        counter: 'distance',
+        amount: +1,
+      }],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'food',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'raptors',
+          amount: -1,
+        },
+      ]
     },
   },
   {
@@ -1513,6 +1830,24 @@ module.exports =  [
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',
+      pass: [],
+      partial: [{
+        kind: 'discardSkills',
+        actor: 'currentPlayer',
+        count: 2,
+      }],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'morale',
+          amount: -1,
+        },
+        {
+          kind: 'discardSkills',
+          actor: 'currentPlayer',
+          count: 2,
+        }
+      ]
     },
   },
   {
@@ -1529,6 +1864,23 @@ module.exports =  [
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'morale',
+          amount: -1,
+        },
+        {
+          kind: 'conditional',
+          check: 'food < 6',
+          effect: [{
+            kind: 'counter',
+            counter: 'morale',
+            amount: -1,
+          }]
+        }
+      ],
     },
   },
   {
@@ -1545,6 +1897,18 @@ module.exports =  [
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',
+      pass: [{
+        kind: 'viewLoyalty',
+        viewer: 'president',
+        target: 'currentPlayer',
+        count: 1
+      }],
+      partial: [],
+      fail: [{
+        kind: 'counter',
+        counter: 'morale',
+        amount: -1
+      }]
     },
   },
   {
@@ -1561,6 +1925,19 @@ module.exports =  [
     skills: [ 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'food',
+          amount: -1
+        },
+        {
+          kind: 'moveAll',
+          from: 'Armory',
+          dest: 'Brig',
+        },
+      ],
     },
   },
   {
@@ -1577,6 +1954,19 @@ module.exports =  [
     skills: [ 'politics', 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'morale',
+          amount: -1
+        },
+        {
+          kind: 'counter',
+          counter: 'food',
+          amount: -1
+        },
+      ],
     },
   },
   {
@@ -1593,6 +1983,25 @@ module.exports =  [
     skills: [ 'politics', 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
+      pass: [],
+      partial: [{
+        kind: 'counter',
+        counter: 'population',
+        amount: -1
+      }],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'population',
+          amount: -1
+        },
+        {
+          kind: 'assignTitle',
+          title: 'president',
+          actor: 'president',
+          target: 'other',
+        }
+      ]
     },
   },
   {
@@ -1609,6 +2018,24 @@ module.exports =  [
     skills: [ 'politics', 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
+      pass: [],
+      partial: [{
+        kind: 'counter',
+        counter: 'food',
+        amount: -1
+      }],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'food',
+          amount: -1
+        },
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1
+        }
+      ],
     },
   },
   {
@@ -1625,6 +2052,19 @@ module.exports =  [
     skills: [ 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'morale',
+          amount: -1
+        },
+        {
+          kind: 'moveAll',
+          from: 'Command',
+          dest: 'Sickbay',
+        },
+      ],
     },
   },
   {
@@ -1641,6 +2081,19 @@ module.exports =  [
     skills: [ 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'morale',
+          amount: -1
+        },
+        {
+          kind: 'move',
+          location: 'Sickbay',
+          actor: 'currentPlayer',
+        },
+      ],
     },
   },
   {
@@ -1657,6 +2110,18 @@ module.exports =  [
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',
+      pass: [{
+        kind: 'viewLoyalty',
+        viewer: 'currentPlayer',
+        target: 'any',
+        count: 1
+      }],
+      partial: [],
+      fail: [{
+        kind: 'counter',
+        counter: 'morale',
+        amount: -1
+      }]
     },
   },
   {
@@ -1673,6 +2138,24 @@ module.exports =  [
     skills: [ 'politics', 'leadership', 'piloting' ],
     script: {
       keepUntil: '',
+      pass: [],
+      partial: [{
+        kind: 'counter',
+        counter: 'population',
+        amount: -1
+      }],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'morale',
+          amount: -1
+        },
+        {
+          kind: 'counter',
+          counter: 'population',
+          amount: -1
+        },
+      ]
     },
   },
   {
@@ -1689,6 +2172,19 @@ module.exports =  [
     skills: [ 'politics', 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'morale',
+          amount: -1
+        },
+        {
+          kind: 'discardSkills',
+          actor: 'currentPlayer',
+          count: 999
+        }
+      ]
     },
   },
   {
@@ -1705,6 +2201,12 @@ module.exports =  [
     skills: [ 'tactics', 'piloting' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: [{
+        kind: 'counter',
+        counter: 'population',
+        amount: -1
+      }]
     },
   },
   {
@@ -1717,10 +2219,23 @@ module.exports =  [
     passEffect: 'No Effect',
     partialValue: 0,
     partialEffect: '',
-    failEffect: `Damage 2 vipers in space areas. All characters in the "Weapon's Control" location are sent to "Sickbay"`,
+    failEffect: `Damage 2 vipers in space areas. All characters in the "Weapons Control" location are sent to "Sickbay"`,
     skills: [ 'tactics', 'piloting', 'engineering' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: [
+        {
+          kind: 'damageSpaceVipers',
+          actor: 'currentPlayer',
+          count: 2,
+        },
+        {
+          kind: 'moveAll',
+          from: "Weapons Control",
+          dest: 'Sickbay',
+        },
+      ]
     },
   },
   {
@@ -1737,6 +2252,24 @@ module.exports =  [
     skills: [ 'politics', 'leadership' ],
     script: {
       keepUntil: '',
+      pass: [],
+      partial: [{
+        kind: 'counter',
+        counter: 'morale',
+        amount: -1
+      }],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'morale',
+          amount: -1
+        },
+        {
+          kind: 'sendPlayerTo',
+          actor: 'currentPlayer',
+          location: 'Sickbay'
+        },
+      ]
     },
   },
   {

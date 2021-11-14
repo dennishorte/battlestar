@@ -15,6 +15,14 @@ Scripts are a javascript object with the following possible keys:
 Effect values are Arrays of objects with the following keys.
   - kind   // String used to determine how to parse the rest of the effect
 
+  addCenturion
+  - ...no options
+
+  assignTitle
+  - title    // which title
+  - actor
+  - target   // restrictions on who can receive the title
+
   choice
   - actor    // player who makes the choice
   - options  // array of object with 'name' and effects array
@@ -29,6 +37,13 @@ Effect values are Arrays of objects with the following keys.
   cylonActivation
   - activationKind  // string matching Cylon activation crisis cards
 
+  damageReserveVipers
+  - count    // number of vipers to damage
+
+  damageSpaceVipers
+  - actor    // player who will choose which vipers
+  - count
+
   deploy
   - ships    // Array of six arrays of ship names (same as Cylon Attack cards)
 
@@ -36,9 +51,22 @@ Effect values are Arrays of objects with the following keys.
   - actor    // descriptor for player who will discard (admiral, president, currentPlayer)
   - count    // number of cards to discard
 
+  drawSkills
+  - actor    // descriptor for player who will discard (admiral, president, currentPlayer)
+  - kinds    // list of the skill types that can be chosen
+  - count    // number of cards to discard
+
   move
   - actor     // Who will be moved
   - location  // New location to move to
+
+  moveAll
+  - from      // Location to move from
+  - dest      // Location to move to
+
+  sendPlayerTo
+  - location  // Location to send to
+  - actor     // Player who chooses a player to send to brig
 
   title
   - title     // name of title to give away
@@ -49,9 +77,10 @@ Effect values are Arrays of objects with the following keys.
   - viewer    // who does the viewing
   - count     // number of randomly selected cards to view
 
-  // special effects with no options
+  // special effects (typically something that only applies to a single card)
   aTraitorAccused
   besieged
+  fulfillerOfProphecy
   returnAllVipers
   tacticalStrike
   thirtyThree
@@ -59,6 +88,6 @@ Effect values are Arrays of objects with the following keys.
 
 In some cases, effects required additional parameters. In this case, use an object with the
 following keys in place of the array described above.
-  - effects   // Array (as described above
+  - effect    // Array (as described above)
   - requires  // (optional) a string value describing requirements to choose this effect
   - dieRoll   // (optional) a die roll result string that tells if this effect happens
