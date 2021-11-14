@@ -753,7 +753,6 @@ describe('player turn', () => {
         test('choose a player', () => {
           const game = _takeActionWithMove('Location Action', "Admiral's Quarters")
           const waiting = game.getWaiting('dennis')
-          console.log(game.getWaiting())
           const action = waiting.actions[0]
           expect(action.name).toBe('Choose a Player')
           expect(action.options.sort()).toStrictEqual(['micah', 'tom'])
@@ -1119,6 +1118,12 @@ describe('adhoc transitions', () => {
       expect(zoneName).toBe('discard.crisis')
     })
   })
+
+  describe("Gaius Baltar's delusional intuition", () => {
+    test.skip('can draw a card before starting the crisis', () => {
+
+    })
+  })
 })
 
 describe('skill checks', () => {
@@ -1181,27 +1186,6 @@ describe('skill checks', () => {
 
     return game
   }
-
-  function _postRevealFixture(options) {
-    const game = _addCardsFixture(options)
-    game.submit({
-      actor: 'micah',
-      name: 'Skill Check - Add Cards',
-      option: ['Do Nothing']
-    })
-    game.submit({
-      actor: 'tom',
-      name: 'Skill Check - Add Cards',
-      option: ['Do Nothing']
-    })
-    game.submit({
-      actor: 'dennis',
-      name: 'Skill Check - Add Cards',
-      option: ['Do Nothing']
-    })
-    return game
-  }
-
 
   describe('skill-check-discuss', () => {
     test('all players can act simultaneously', () => {
@@ -1445,9 +1429,38 @@ describe('skill checks', () => {
 
 
   describe('skill-check-post-reveal', () => {
+    function _postRevealFixture(options) {
+      const game = _addCardsFixture(options)
+      game.submit({
+        actor: 'micah',
+        name: 'Skill Check - Add Cards',
+        option: ['Do Nothing']
+      })
+      game.submit({
+        actor: 'tom',
+        name: 'Skill Check - Add Cards',
+        option: ['Do Nothing']
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Skill Check - Add Cards',
+        option: ['Do Nothing']
+      })
+      return game
+    }
+
+    test('Players can see what cards were added to the skill check', () => {
+
+    })
 
     test.skip('William Adama can choose to keep all the skill cards', () => {
+      const factory = new GameFixtureFactory()
+      factory.options.players[0].character = 'William Adama'
+      factory.options.crisis = "Guilt by Collusion"
+      const game = factory.build().advanceTo('skill-check-post-reveal').game
+      game.run()
 
+      console.log(game.getWaiting('dennis').actions[0])
     })
 
   })
@@ -2400,5 +2413,93 @@ describe('misc functions', () => {
 
   describe.skip('keep cards are cleared appropriately', () => {
 
+  })
+
+  describe('calculateCheckValue', () => {
+    function _card(skill, value) {
+      return { skill, value }
+    }
+
+    function _checkFixture(options) {
+      return Object.assign({
+        declareEmergency: false,
+        inspirationalLeader: false,
+        scientificResearch: false,
+        skills: ['leadership', 'tactics'],
+      }, options)
+    }
+
+    test('basic counting', () => {
+      expect(bsgutil.calculateCheckValue(
+        [
+          _card('piloting', 1)
+        ],
+        _checkFixture()
+      )).toBe(-1)
+
+      expect(bsgutil.calculateCheckValue(
+        [
+          _card('piloting', 5),
+          _card('politics', 3),
+        ],
+        _checkFixture()
+      )).toBe(-8)
+
+      expect(bsgutil.calculateCheckValue(
+        [
+          _card('leadership', 1)
+        ],
+        _checkFixture()
+      )).toBe(1)
+
+      expect(bsgutil.calculateCheckValue(
+        [
+          _card('tactics', 1),
+          _card('piloting', 4),
+        ],
+        _checkFixture()
+      )).toBe(-3)
+
+      expect(bsgutil.calculateCheckValue(
+        [
+          _card('leadership', 5),
+          _card('leadership', 5),
+          _card('leadership', 5),
+        ],
+        _checkFixture()
+      )).toBe(15)
+    })
+
+    test('declare emergency', () => {
+      expect(bsgutil.calculateCheckValue(
+        [
+          _card('leadership', 5),
+          _card('leadership', 2),
+        ],
+        _checkFixture({ declareEmergency: true })
+      )).toBe(9)
+    })
+
+    test('scientific research', () => {
+      expect(bsgutil.calculateCheckValue(
+        [
+          _card('leadership', 5),
+          _card('engineering', 2),
+          _card('piloting', 1),
+        ],
+        _checkFixture({ scientificResearch: true })
+      )).toBe(6)
+    })
+
+    test('William Adama, Inspirational Leader', () => {
+      expect(bsgutil.calculateCheckValue(
+        [
+          _card('leadership', 5),
+          _card('engineering', 2),
+          _card('piloting', 1),
+        ],
+        _checkFixture({ inspirationalLeader: true })
+      )).toBe(4)
+    })
   })
 })

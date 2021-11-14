@@ -1,6 +1,31 @@
 const Util = {}
 module.exports = Util
 
+Util.calculateCheckValue = function(cards, options) {
+  const {
+    skills,
+    declareEmergency,
+    inspirationalLeader,
+    scientificResearch,
+  } = options
+
+  let total = declareEmergency ? 2 : 0
+
+  for (const card of cards) {
+    if (
+      skills.includes(card.skill)
+      || (card.skill === 'engineering' && scientificResearch)
+      || (card.value === 1 && inspirationalLeader)
+    ) {
+      total += card.value
+    }
+    else {
+      total -= card.value
+    }
+  }
+
+  return total
+}
 
 Util.characterNameToCssClass = function(name) {
   return name.toLowerCase().replace(/"/g, '').replace(/ /g, '-')
