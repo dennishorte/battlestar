@@ -466,6 +466,13 @@ Actions.aRevealLoyaltyCards = function(target, viewer, count) {
   target = this._adjustPlayerParam(target)
   viewer = this._adjustPlayerParam(viewer)
 
+  if (this.checkEffect('Detector Sabotage')) {
+    this.mLog({
+      template: 'Cannot view loyalty cards due to detector sabotage'
+    })
+    return
+  }
+
   const cards = this.getCardsLoyaltyByPlayer(target)
   const cardIdsToView = util.array.shuffle(cards.map(c => c.id)).slice(0, count)
   const cardsToView = cards.filter(c => cardIdsToView.includes(c.id))
