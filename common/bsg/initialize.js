@@ -65,7 +65,6 @@ function initialize(game) {
       index: 0,
       name: user.name,
       location: '',
-      oncePerGameActionUsed: false,
       crisisHelp: '',
       crisisCount: -1,
       crisisDone: false,
