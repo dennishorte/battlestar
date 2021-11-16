@@ -80,6 +80,7 @@ function _done() {
     this.clearWaiting()
   })
   this.run()
+  return true
 }
 
 function _push(eventName, data) {
@@ -104,18 +105,21 @@ function _push(eventName, data) {
   })
 
   this.run()
+  return true
 }
 
 function _wait(payload) {
   this.rk.sessionStart(session => {
     session.splice(this.waiting, 0, this.waiting.length, payload)
   })
+  return true
 }
 
 function _waitMany(payload) {
   this.rk.sessionStart(session => {
     session.splice(this.waiting, 0, this.waiting.length, ...payload)
   })
+  return true
 }
 
 class InvalidTransitionError extends Error {
