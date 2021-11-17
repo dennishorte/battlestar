@@ -1243,7 +1243,7 @@ describe('skill checks', () => {
       })
 
       expect(game.getWaiting('tom').actions[0].name).toBe('Skill Check - Discuss')
-      expect(game.getSkillCheck().discussion['tom'].support).toBe('')
+      expect(game.getSkillCheck().flags['tom'].support).toBe('')
     })
 
     test('current player can advance to next step', () => {
@@ -1330,7 +1330,7 @@ describe('skill checks', () => {
         option: ['Do Nothing']
       })
       const waiting = game.getWaiting()
-      expect(waiting[0].actions[0].name).toBe('Skill Check - Post Reveal')
+      expect(game.getTransition().name).toBe('player-turn-cleanup')
     })
 
     test('options are separated into positive and negative sections', () => {
@@ -1427,40 +1427,171 @@ describe('skill checks', () => {
     })
   })
 
+  function _postRevealFixture(dennisWillAddManually) {
+    const factory = new GameFixtureFactory()
+    factory.options.crisis = 'The Olympic Carrier'
+    factory.options.players[0].character = 'Tom Zarek'
+    factory.options.players[0].hand = [
+      { kind: 'skill', skill: 'leadership', name: 'Declare Emergency', value: 4 },
+      { kind: 'skill', skill: 'leadership', name: 'Declare Emergency', value: 3 },
+      { kind: 'skill', skill: 'politics', name: 'Investigative Committee', value: 5 },
+      { kind: 'skill', skill: 'politics', name: 'Consolidate Power', value: 2 },
+      { kind: 'skill', skill: 'tactics', name: 'Launch Scount', value: 1 },
+    ]
+    factory.options.players[1].hand = [
+      { kind: 'skill', skill: 'leadership', name: 'Declare Emergency', value: 3 },
+    ]
+    factory.options.players[2].character = 'William Adama'
+    factory.options.players[2].startingSkills = ['leadership', 'leadership', 'tactics']
+    factory.options.players[2].hand = []
 
-  describe('skill-check-post-reveal', () => {
-    function _postRevealFixture(options) {
-      const game = _addCardsFixture(options)
-      game.submit({
-        actor: 'micah',
-        name: 'Skill Check - Add Cards',
-        option: ['Do Nothing']
-      })
-      game.submit({
-        actor: 'tom',
-        name: 'Skill Check - Add Cards',
-        option: ['Do Nothing']
-      })
+    // Neutral outcome from destiny deck (net zero)
+    factory.options.destiny = [
+      { kind: 'skill', skill: 'leadership', name: 'Executive Order', value: 1 },
+      { kind: 'skill', skill: 'engineering', name: 'Repair', value: 1 },
+    ]
+
+    const game = factory.build().advanceTo('skill-check-add-cards').game
+    game.run()
+
+    game.submit({
+      actor: 'micah',
+      name: 'Skill Check - Add Cards',
+      option: ['Do Nothing']
+    })
+    game.submit({
+      actor: 'tom',
+      name: 'Skill Check - Add Cards',
+      option: ['Do Nothing']
+    })
+
+    if (!dennisWillAddManually) {
       game.submit({
         actor: 'dennis',
         name: 'Skill Check - Add Cards',
         option: ['Do Nothing']
       })
-      return game
     }
 
-    test('Players can see what cards were added to the skill check', () => {
+    return game
+  }
+
+  describe('skill-check-post-reveal', () => {
+
+    describe('declare emergency is appropriately applied', () => {
+
+      test('declare emergency cannot help', () => {
+        const game = _postRevealFixture(false)
+        expect(game.getTransition().name).toBe('player-turn-cleanup')
+        expect(game.getTransition().data.playerName).toBe('dennis')
+      })
+
+      test('declare emergency can give pass', () => {
+        const game = _postRevealFixture(true)
+        game.submit({
+          actor: 'dennis',
+          name: 'Skill Check - Add Cards',
+          option: [{
+            name: 'Add Cards to Check',
+            option: [{
+              name: 'Help',
+              option: ['Investigative Committee,5', 'Declare Emergency,4']
+            }]
+          }]
+        })
+        expect(game.getTransition().name).toBe('skill-check-declare-emergency')
+        expect(game.getWaiting('dennis').actions[0].options).toStrictEqual([
+          'Use Declare Emergency', 'Do Nothing'
+        ])
+        expect(game.getWaiting('micah').actions[0].options).toStrictEqual([
+          'Use Declare Emergency', 'Do Nothing'
+        ])
+        expect(game.getWaiting('tom')).not.toBeDefined()
+      })
+
+      test('declare emergency can give partial pass', () => {
+        const game = _postRevealFixture(true)
+        game.submit({
+          actor: 'dennis',
+          name: 'Skill Check - Add Cards',
+          option: [{
+            name: 'Add Cards to Check',
+            option: [{
+              name: 'Help',
+              option: ['Investigative Committee,5', 'Consolidate Power,2']
+            }]
+          }]
+        })
+        expect(game.getTransition().name).toBe('skill-check-declare-emergency')
+        expect(game.getWaiting('dennis').actions[0].name).toBe('Use Declare Emergency')
+        expect(game.getWaiting('dennis').actions[0].options).toStrictEqual([
+          'Use Declare Emergency', 'Do Nothing'
+        ])
+        expect(game.getWaiting('micah').actions[0].options).toStrictEqual([
+          'Use Declare Emergency', 'Do Nothing'
+        ])
+        expect(game.getWaiting('tom')).not.toBeDefined()
+      })
+
+      test.skip('declare emergency was pre-declared', () => {
+
+      })
+
+      test('first player in add-card order puts their card in', () => {
+        const game = _postRevealFixture(true)
+        game.submit({
+          actor: 'dennis',
+          name: 'Skill Check - Add Cards',
+          option: [{
+            name: 'Add Cards to Check',
+            option: [{
+              name: 'Help',
+              option: ['Investigative Committee,5', 'Declare Emergency,4']
+            }]
+          }]
+        })
+        game.submit({
+          actor: 'dennis',
+          name: 'Use Declare Emergency',
+          option: ['Use Declare Emergency']
+        })
+        game.submit({
+          actor: 'micah',
+          name: 'Use Declare Emergency',
+          option: ['Use Declare Emergency']
+        })
+
+        expect(game.getCardsKindByPlayer('skill', 'micah').length).toBe(0)
+        expect(game.getCardsKindByPlayer('skill', 'dennis').length).toBe(3)
+        expect(game.getSkillCheck().result).toBe('pass')
+      })
 
     })
 
-    test.skip('William Adama can choose to keep all the skill cards', () => {
-      const factory = new GameFixtureFactory()
-      factory.options.players[0].character = 'William Adama'
-      factory.options.crisis = "Guilt by Collusion"
-      const game = factory.build().advanceTo('skill-check-post-reveal').game
-      game.run()
+    test.skip('players can see what cards were added to the skill check', () => {
 
-      console.log(game.getWaiting('dennis').actions[0])
+    })
+
+  })
+
+  describe('skill-check-cleanup', () => {
+
+    test('William Adama can choose to keep all the skill cards', () => {
+      const game = _postRevealFixture(false)
+      expect(game.getTransition().name).toBe('skill-check-command-authority')
+      expect(game.getWaiting('tom')).toBeDefined()
+      expect(game.getWaiting('tom').actions[0].name).toBe('Use Command Authority')
+    })
+
+    test.only('Command Authority actually moves all cards to player hand', () => {
+      const game = _postRevealFixture(false)
+      game.submit({
+        actor: 'tom',
+        name: 'Use Command Authority',
+        option: ['Yes']
+      })
+      expect(game.getCardsKindByPlayer('skill', 'tom').length).toBe(2)
+      expect(game.getZoneByName('crisisPool').cards.length).toBe(0)
     })
 
   })
@@ -2409,6 +2540,11 @@ describe('misc functions', () => {
 
     })
 
+  })
+
+  describe.skip('aRevealLoyaltyCards', () => {
+    test('detector sabotage prevents this action', () => {
+    })
   })
 
   describe.skip('keep cards are cleared appropriately', () => {

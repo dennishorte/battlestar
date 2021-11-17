@@ -367,6 +367,7 @@ const transitions = {
       'skill-check-discuss',
       'skill-check-add-cards',
       'skill-check-post-reveal',
+      'skill-check-cleanup',
     ]),
   },
 
@@ -380,6 +381,18 @@ const transitions = {
 
   'skill-check-post-reveal': {
     func: require('./transitions/skillCheckPostReveal.js')
+  },
+
+  'skill-check-declare-emergency': {
+    func: require('./transitions/skillCheckDeclareEmergency.js')
+  },
+
+  'skill-check-cleanup': {
+    func: require('./transitions/skillCheckCleanup.js')
+  },
+
+  'skill-check-command-authority': {
+    func: require('./transitions/skillCheckCommandAuthority.js')
   },
 }
 

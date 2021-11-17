@@ -20,11 +20,15 @@ function GameFixtureFactory(options) {
   }
 
   this.options = Object.assign({
+    crisis: 'Ambush',
+    destiny: null,  // If an array, sets the destiny deck to the listed cards
     players: [
       {
         character: 'Gaius Baltar',
         startingSkills: ['leadership', 'politics', 'engineering'],
+        hand: null,
         movement: 'Skip Movement',
+        action: 'Skip Action',
       },
       {
         character: 'Kara "Starbuck" Thrace',
@@ -32,12 +36,16 @@ function GameFixtureFactory(options) {
           name: 'Optional Skills 1',
           option: ['leadership'],
         }],
+        hand: null,
         movement: 'Skip Movement',
+        action: 'Skip Action',
       },
       {
         character: 'Sharon "Boomer" Valerii',
         startingSkills: ['tactics', 'piloting', 'engineering'],
+        hand: null,
         movement: 'Skip Movement',
+        action: 'Skip Action',
       },
     ],
   }, options)
@@ -57,8 +65,67 @@ GameFixtureFactory.prototype.build = function() {
   return this
 }
 
+GameFixtureFactory.prototype._setDestinyDeck = function(cardInfo) {
+  const game = this.game
+  const destinyZone = game.getZoneByName('destiny')
+  this._setSkillCardsInZone(destinyZone, cardInfo)
+}
+
+GameFixtureFactory.prototype._setPlayerHand = function(player, hand) {
+  const game = this.game
+  const handZone = game.getZoneByPlayer(player)
+  this._setSkillCardsInZone(handZone, hand)
+}
+
+
+GameFixtureFactory.prototype._setSkillCardsInZone = function(zone, cardInfo) {
+  const game = this.game
+
+  game.rk.sessionStart(() => {
+
+    // Return the existing cards in the specified zone
+    for (let i = zone.cards.length - 1; i >= 0; i--) {
+      const card = zone.cards[i]
+      if (card.kind !== 'skill') continue
+      const skillZone = game.getZoneBySkill(card.skill)
+      game.mMoveCard(zone, skillZone, card)
+    }
+
+    // Move the desired cards into the zone
+    for (const desc of cardInfo) {
+      if (desc.kind === 'skill') {
+        const cardZone = game.getZoneBySkill(desc.skill)
+        const card = cardZone.cards.find(c => c.name === desc.name && c.value === desc.value)
+        game.mMoveCard(cardZone, zone, card)
+      }
+      else {
+        throw new Error(`Unhandled card kind: ${desc.kind}`)
+      }
+    }
+
+  })
+}
+
 GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPlayerName) {
   this.game.run()
+
+  ////////////////////
+  // Deck Setup
+
+  // Crisis Deck
+  const crisisCardIndex = this.game.state.zones.decks.crisis.cards.findIndex(c => c.name === this.options.crisis)
+  this.game.rk.sessionStart(() => {
+    this.game.mMoveByIndices('decks.crisis', crisisCardIndex, 'decks.crisis', 0)
+  })
+
+  // Destiny Deck
+  if (Array.isArray(this.options.destiny)) {
+    this._setDestinyDeck(this.options.destiny)
+  }
+
+
+  ////////////////////
+  // Players Submit
 
   // Do character-selection
   for (let i = 0; i < this.game.getPlayerAll().length; i++) {
@@ -88,6 +155,15 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
     }
   }
 
+  // If there are specific cards in hand specified, load them here
+  for (let i in this.options.players) {
+    const playerOptions = this.options.players[i]
+    const player = this.game.getPlayerByIndex(i)
+    if (Array.isArray(playerOptions.hand)) {
+      this._setPlayerHand(player, playerOptions.hand)
+    }
+  }
+
   // Skip movement
   this.game.submit({
     actor: 'dennis',
@@ -102,10 +178,57 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
   this.game.submit({
     actor: 'dennis',
     name: 'Action',
-    option: ['Skip Action'],
+    option: [this.options.players[0].action],
   })
   if (this._checkForTarget(targetTransitionName, targetPlayerName)) {
     return this
+  }
+
+  const crisis = this.game.getCrisis()
+  if (crisis.type.includes('Skill Check')) {
+
+    // Skill Check - Discuss
+    this.game.submit({
+      actor: 'dennis',
+      name: 'Skill Check - Discuss',
+      option: [
+        {
+          name: 'How much can you help?',
+          option: ['a little'],
+        },
+        {
+          name: 'Start Skill Check',
+          option: ['yes'],
+        },
+      ]
+    })
+    if (this._checkForTarget(targetTransitionName, targetPlayerName)) {
+      return this
+    }
+
+    // Skill Check - Add Cards
+    for (const name of ['micah', 'tom', 'dennis']) {
+      this.game.submit({
+        actor: name,
+        name: 'Skill Check - Add Cards',
+        option: ['Do Nothing']
+      })
+      if (this._checkForTarget(targetTransitionName, targetPlayerName)) {
+        return this
+      }
+    }
+  }
+
+  else if (crisis.type === 'Choice') {
+    throw new Error('not implemented')
+  }
+
+  else if (crisis.type === 'Cylon Attack') {
+    throw new Error('not implemented')
+  }
+
+  else {
+    throw new Error(`Unhandled crisis type: ${crisis.type}`)
   }
 
   return this

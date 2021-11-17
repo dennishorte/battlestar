@@ -364,11 +364,6 @@ Game.prototype.getDistanceToCivilian = function(startZone, direction) {
   throw new Error('no civilians found')
 }
 
-Game.prototype.getTokenDamageGalactica = function() {
-  const damageZone = this.getZoneByName('decks.damageGalactica')
-  return damageZone.cards[0]
-}
-
 Game.prototype.getGameResult = function() {
   return this.state.result
 }
@@ -410,6 +405,15 @@ Game.prototype.getPlayerNext = function() {
 
 Game.prototype.getPlayerAll = function() {
   return this.state.players
+}
+
+Game.prototype.getPlayerAllFrom = function(first) {
+  first = this._adjustPlayerParam(first)
+  const players = [...this.state.players]
+  while (players[0].name !== first.name) {
+    players.push(players.shift())
+  }
+  return players
 }
 
 Game.prototype.getPlayerByDescriptor = function(descriptor) {
@@ -462,6 +466,15 @@ Game.prototype.getSkillCheck = function() {
   else {
     return undefined
   }
+}
+
+Game.prototype.getTokenDamageGalactica = function() {
+  const damageZone = this.getZoneByName('decks.damageGalactica')
+  return damageZone.cards[0]
+}
+
+Game.prototype.getTransition = function() {
+  return this.sm.stack[this.sm.stack.length - 1]
 }
 
 Game.prototype.getVipersNumAvailable = function() {
@@ -972,20 +985,27 @@ Game.prototype.mSetSkillCheck = function(check) {
   // Make a deep copy so that any info copied from a card is no longer tied to that card
   check = util.deepcopy(check)
   check.result = ''
-  check.scientificResearch = false
+  check.cardsAdded = []
+  check.total = 'not ready'
+
+  check.declareEmergency = false
+  check.inspirationalLeader = false
   check.investigativeCommittee = false
-  check.discussion = {}
-  check.addCards = {}
+  check.scientificResearch = false
+
+  check.flags = {}
   for (const player of this.getPlayerAll()) {
-    check.discussion[player.name] = {
+    check.flags[player.name] = {
+      submitted: {
+        discussion: false,
+        addCards: false,
+        declareEmergency: false,
+      },
+      numAdded: 0,
       support: '',
+      useDeclareEmergency: false,
       useScientificResearch: false,
       useInvestigativeCommitee: false,
-    }
-    check.addCards[player.name] = {
-      submitted: false,
-      numAdded: 0,
-      useDeclareEmergency: false,
     }
   }
   this.rk.session.put(this.state, 'skillCheck', check)

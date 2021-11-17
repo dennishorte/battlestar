@@ -45,13 +45,18 @@ function generateOptions(context) {
       }
       else {
         game.mLog({
-          template: "Nobody really believes that {player} is a Cylon",
+          template: "nobody really believes that {player} is a cylon",
           args: {
             player: context.data.chosenPlayerName
           }
         })
       }
     })
+    return context.done()
+  }
+
+  else {
+    throw new Error(`Unknown step: ${context.data.step}`)
   }
 }
 

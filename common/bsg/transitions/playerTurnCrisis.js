@@ -31,7 +31,7 @@ function generateOptions(context) {
     if (crisis.script.effect) {
       markDone(context)
       return context.push('evaluate-effects', {
-        name: 'Attack Effect: Heavy Casualties',
+        name: `${crisis.name}: special effects`,
         effects: crisis.script.effect,
       })
     }
@@ -71,32 +71,12 @@ function generateOptions(context) {
   else if (crisis.type === 'Skill Check' || crisis.type === 'Optional Skill Check') {
     const check = game.getSkillCheck()
 
-    if (check) {
-      util.assert(!!check.result, 'Skill check should have result')
+    game.rk.sessionStart(() => {
+      game.mSetSkillCheck(crisis)
+    })
 
-      game.rk.sessionStart(() => {
-        game.mLog({
-          template: 'Skill check final result: {checkResult}',
-          args: {
-            checkResult: check.result
-          }
-        })
-      })
-
-      markDone(context)
-      context.push('evaluate-effects', {
-        name: `${check.name}: ${check.result}`,
-        effects: check.script[check.result],
-      })
-    }
-
-    else {
-      game.rk.sessionStart(() => {
-        game.mSetSkillCheck(crisis)
-      })
-
-      return context.push('skill-check')
-    }
+    markDone(context)
+    return context.push('skill-check')
   }
 
   else {

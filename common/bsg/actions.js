@@ -540,6 +540,8 @@ Actions.aSelectSkillCheckResult = function(result) {
   this.run()
 }
 
+// Doesn't actually cause the effects of the card to take place; just
+// logs the use and discards the card.
 // Uses the lowest value card of the provided name
 Actions.aUseSkillCardByName = function(player, name) {
   player = this._adjustPlayerParam(player)

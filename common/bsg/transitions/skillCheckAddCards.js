@@ -37,11 +37,11 @@ function handleResponse(context) {
   const game = context.state
   const check = game.getSkillCheck()
   const player = game.getPlayerByName(context.response.actor)
-  const addCards = check.addCards[player.name]
+  const flags = check.flags[player.name]
   const option = context.response.option
 
   game.rk.sessionStart(session => {
-    session.put(addCards, 'submitted', true)
+    session.put(flags.submitted, 'addCards', true)
 
     for (const opt of option) {
 
@@ -50,13 +50,13 @@ function handleResponse(context) {
       }
 
       else if (opt === 'Use Declare Emergency') {
-        session.put(addCards, 'useDeclareEmergency', true)
+        session.put(flags, 'useDeclareEmergency', true)
       }
 
       else if (opt.name === 'Add Cards to Check') {
         // could have both "Help" and "Hinder"
         for (const subOpt of opt.option) {
-          session.put(addCards, 'numAdded', addCards.numAdded + subOpt.option.length)
+          session.put(flags, 'numAdded', flags.numAdded + subOpt.option.length)
           for (const cardOpt of subOpt.option) {
             const tokens = cardOpt.split(',')
             util.assert(tokens.length === 2, `Unknown card option: ${cardOpt}`)
@@ -82,7 +82,7 @@ function handleResponse(context) {
       template: '{player} added {count} cards',
       args: {
         player: player.name,
-        count: addCards.numAdded,
+        count: flags.numAdded,
       },
     })
 
@@ -110,10 +110,11 @@ function _beginAddCardsPhase(context) {
     let investigativeCommitteePlayed = false
     while (count < players.length) {
       player = game.getPlayerFollowing(player)
+      const flags = check.flags[player.name]
       count += 1
 
       if (
-        check.discussion[player.name].useScientificResearch
+        flags.useScientificResearch
         && !check.scientificResearch
       ){
         session.put(check, 'scientificResearch', true)
@@ -121,7 +122,7 @@ function _beginAddCardsPhase(context) {
       }
 
       if (
-        check.discussion[player.name].useInvestigativeCommitee
+        flags.useInvestigativeCommitee
         && !check.investigativeCommittee
       ){
         session.put(check, 'investigativeCommittee', true)

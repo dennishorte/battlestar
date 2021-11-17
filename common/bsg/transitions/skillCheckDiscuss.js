@@ -35,6 +35,7 @@ function handleResponse(context) {
   const player = game.getPlayerByName(context.response.actor)
   const action = context.response.name
   const option = context.response.option
+  const flags = check.flags[player.name]
 
   // Mostly a result of testing
   if (check.result) {
@@ -50,38 +51,40 @@ function handleResponse(context) {
       const name = (typeof opt === 'string') ? opt : opt.name
 
       if (name === 'Change Answer') {
-        session.put(check.discussion, player.name, {
-          support: '',
-          useScientificResearch: false,
-          useInvestigativeCommitee: false,
-        })
+        session.put(flags.submitted, 'discussion', false)
+        session.put(flags, 'useScientificResearch', false)
+        session.put(flags, 'useInvestigativeCommitee', false)
+        session.put(flags, 'support', '')
         break
       }
-      else if (name === 'How much can you help?') {
-        session.put(check.discussion[player.name], 'support', opt.option[0])
-      }
-      else if (name === 'Use Scientific Research') {
-        session.put(check.discussion[player.name], 'useScientificResearch', true)
-      }
-      else if (name === 'Use Investigative Committee') {
-        session.put(check.discussion[player.name], 'useInvestigativeCommitee', true)
-      }
-      else if (name === 'Start Skill Check') {
-        nextStep = 'done'
-      }
-      else if (name === 'Choose Option 2') {
-        nextStep = 'option2'
-      }
       else {
-        throw new Error(`Unknown option ${opt.name}`)
+        session.put(flags.submitted, 'discussion', true)
+
+        if (name === 'How much can you help?') {
+          session.put(flags, 'support', opt.option[0])
+        }
+        else if (name === 'Use Scientific Research') {
+          session.put(flags, 'useScientificResearch', true)
+        }
+        else if (name === 'Use Investigative Committee') {
+          session.put(flags, 'useInvestigativeCommitee', true)
+        }
+        else if (name === 'Start Skill Check') {
+          nextStep = 'done'
+        }
+        else if (name === 'Choose Option 2') {
+          nextStep = 'option2'
+        }
+        else {
+          throw new Error(`Unknown option ${opt.name}`)
+        }
       }
     }
   })
 
   const allPlayersHaveSubmitted = game
     .getPlayerAll()
-    .map(p => !!check.discussion[p.name].support) // true if they have submitted their support
-    .reduce((l, r) => l && r)
+    .every(p => check.flags[p.name].submitted.discuss)
 
   if (nextStep === 'option2') {
     markDone(context)
@@ -99,10 +102,11 @@ function handleResponse(context) {
 }
 
 function _discussOptionsForPlayer(game, check, player) {
+  const flags = check.flags[player.name]
   const options = []
 
   // Player hasn't responded yet
-  if (!check.discussion[player.name].support) {
+  if (!flags.submitted.discussion) {
     const playerHasScientificResearch =
       game.checkPlayerHasCardByName(player, 'Scientific Research')
 
