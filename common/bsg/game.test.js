@@ -1532,8 +1532,23 @@ describe('skill checks', () => {
         expect(game.getWaiting('tom')).not.toBeDefined()
       })
 
-      test.skip('declare emergency was pre-declared', () => {
-
+      test('declare emergency was pre-declared', () => {
+        const game = _postRevealFixture(true)
+        game.submit({
+          actor: 'dennis',
+          name: 'Skill Check - Add Cards',
+          option: [
+            {
+              name: 'Add Cards to Check',
+              option: [{
+                name: 'Help',
+                option: ['Investigative Committee,5', 'Declare Emergency,4']
+              }],
+            },
+            { name: 'Use Declare Emergency' },
+          ],
+        })
+        expect(game.getSkillCheck().result).toBe('pass')
       })
 
       test('first player in add-card order puts their card in', () => {

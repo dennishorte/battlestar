@@ -125,13 +125,11 @@ Game.prototype.submit = function(response) {
 
   const validationResult = selector.validate(waiting.actions[0], response)
   if (!validationResult.valid) {
-    console.log({
+    console.log(JSON.stringify({
       action: waiting.actions[0],
-      actionOptions: waiting.actions[0].options[0],
       response: response,
-      responseOption: response.option[0],
       validationResult
-    })
+    }, null, 2))
     throw new Error('Invalid response')
   }
 

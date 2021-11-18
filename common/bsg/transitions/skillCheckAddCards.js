@@ -43,16 +43,17 @@ function handleResponse(context) {
     session.put(flags.submitted, 'addCards', true)
 
     for (const opt of option) {
+      const optName = opt.name || opt
 
-      if (opt === 'Do Nothing') {
+      if (optName === 'Do Nothing') {
         // do nothing
       }
 
-      else if (opt === 'Use Declare Emergency') {
+      else if (optName === 'Use Declare Emergency') {
         session.put(flags, 'useDeclareEmergency', true)
       }
 
-      else if (opt.name === 'Add Cards to Check') {
+      else if (optName === 'Add Cards to Check') {
         // could have both "Help" and "Hinder"
         for (const subOpt of opt.option) {
           session.put(flags, 'numAdded', flags.numAdded + subOpt.option.length)
@@ -73,7 +74,7 @@ function handleResponse(context) {
       }
 
       else {
-        throw new Error(`Unhandled option in Skill Check - Add Cards: ${option}`)
+        throw new Error(`Unhandled option in Skill Check - Add Cards: ${optName}`)
       }
     }
 
@@ -184,7 +185,8 @@ function _addCardsOptionsForPlayer(game, check, player) {
   if (game.checkPlayerHasCardByName(player, 'Declare Emergency')) {
     options.push({
       name: 'Use Declare Emergency',
-      description: 'Will only be used if it will cause the check to pass'
+      description: 'Will only be used if it will cause the check to pass',
+      extra: true,
     })
   }
 

@@ -18,6 +18,17 @@ function generateOptions(context) {
     return context.done()
   }
 
+  // If someone pre-committed to using declare emergency, just go for it.
+  const someonePrecommitted = Object
+    .values(check.flags)
+    .filter(f => f.useDeclareEmergency)
+    .length > 0
+  if (someonePrecommitted) {
+    _applyDeclareEmergency(context)
+    return context.done()
+  }
+
+  // No pre-commits. Give people a last chance to try.
   const helpOptions = game
     .getPlayerAll()
     .filter(p => !game.checkPlayerIsRevealedCylon(p))
