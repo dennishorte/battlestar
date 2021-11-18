@@ -18,15 +18,15 @@
           >
             <div class="heading">{{ player.name }}</div>
             <div class="indented">
-              <span v-if="!!discussion[player.name].support">
-                {{ discussion[player.name].support }}
+              <span v-if="!!check.flags[player.name].support">
+                {{ check.flags[player.name].support }}
               </span>
               <span v-else class="faint">
                 waiting
               </span>
 
-              <span v-if="cardsAdded[player.name].submitted">
-                {{ cardsAdded[player.name].numAdded }}
+              <span v-if="check.flags[player.name].submitted.addCards">
+                {{ check.flags[player.name].numAdded }}
               </span>
               <span v-else class="faint">
                 waiting
@@ -57,14 +57,6 @@ export default {
   computed: {
     check() {
       return this.$game.getSkillCheck()
-    },
-
-    cardsAdded() {
-      return this.check.addCards
-    },
-
-    discussion() {
-      return this.check.discussion
     },
 
     playersOrdered() {

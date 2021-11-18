@@ -80,7 +80,7 @@ export default {
       const skillCheckDiscussSpecialCase = (
         this.$game.getWaiting(player)
         && this.$game.getWaiting(player).actions[0].name === 'Skill Check - Discuss'
-        && this.$game.getSkillCheck().discussion[player.name].support
+        && this.$game.getSkillCheck().flags[player.name].submitted.discussion
       )
 
       return (
