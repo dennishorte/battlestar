@@ -31,27 +31,6 @@ function generateOptions(context) {
   }
 
   else if (context.data.step === 'check') {
-    const result = game.getSkillCheck().result
-
-    game.rk.sessionStart(() => {
-      if (result === 'pass') {
-        game.mLog({
-          template: "We knew that {player} was a Cylon all along",
-          args: {
-            player: context.data.chosenPlayerName
-          }
-        })
-        game.mMovePlayer(context.data.chosenPlayerName, 'locations.brig')
-      }
-      else {
-        game.mLog({
-          template: "nobody really believes that {player} is a cylon",
-          args: {
-            player: context.data.chosenPlayerName
-          }
-        })
-      }
-    })
     return context.done()
   }
 
@@ -87,6 +66,7 @@ function handleResponse(context) {
             actor: chosenPlayerName,
             location: 'Brig',
           }],
+          fail: [],
         }
       })
     })

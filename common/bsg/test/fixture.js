@@ -21,6 +21,7 @@ function GameFixtureFactory(options) {
 
   this.options = Object.assign({
     crisis: 'Ambush',
+    crisisResult: 'fail',
     destiny: null,  // If an array, sets the destiny deck to the listed cards
     players: [
       {

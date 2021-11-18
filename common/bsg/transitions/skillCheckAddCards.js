@@ -13,8 +13,7 @@ function generateOptions(context) {
   const game = context.state
   const check = game.getSkillCheck()
 
-  // Mostly a result of testing
-  if (check.result) {
+  if (check.shortCut) {
     return context.done()
   }
 

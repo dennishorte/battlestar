@@ -32,16 +32,8 @@ function initialize(game) {
 
   game.seed = util.randomSeed()
 
-  game.skillCheck = {
-    name: '',
-    skills: [],
-    pass: -1,
-    partial: -1,
-    passEffect: '',
-    partialEffect: '',
-    failEffect: '',
-    result: '',
-  }
+  game.skillCheck = {}
+  game.pastSkillChecks = []
 
   // Counters
   game.counters = {

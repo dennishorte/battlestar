@@ -30,7 +30,7 @@ function handleResponse(context) {
       markDone(context)
       return context.push('evaluate-effects', {
         name: opt.name,
-        effects: opt.effects
+        effects: opt.effect
       })
     }
   }

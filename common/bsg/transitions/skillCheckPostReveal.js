@@ -4,8 +4,6 @@ const bsgutil = require('../util.js')
 module.exports = transitionFactory(
   {
     consideredDeclareEmergency: false,
-    evaluatedSkillCheckEffects: false,
-    consideredCommandAuthority: false,
   },
   generateOptions,
   () => { throw new Error('No responses to handle in skill-check-post-reveal') }
@@ -26,16 +24,6 @@ function generateOptions(context) {
   }
 
   _finalizeSkillCheck(game, check)
-
-  if (!context.data.evaluatedSkillCheckEffects) {
-    game.rk.sessionStart(session => {
-      session.put(context.data, 'evaluatedSkillCheckEffects', true)
-    })
-    return context.push('evaluate-effects', {
-      name: `${check.name}: ${check.result}`,
-      effects: check.script[check.result],
-    })
-  }
 
   return context.done()
 }

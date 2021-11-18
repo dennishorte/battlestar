@@ -1482,8 +1482,7 @@ describe('skill checks', () => {
 
       test('declare emergency cannot help', () => {
         const game = _postRevealFixture(false)
-        expect(game.getTransition().name).toBe('player-turn-cleanup')
-        expect(game.getTransition().data.playerName).toBe('dennis')
+        expect(game.getTransition().name).toBe('skill-check-command-authority')
       })
 
       test('declare emergency can give pass', () => {
@@ -1583,7 +1582,7 @@ describe('skill checks', () => {
       expect(game.getWaiting('tom').actions[0].name).toBe('Use Command Authority')
     })
 
-    test.only('Command Authority actually moves all cards to player hand', () => {
+    test('Command Authority actually moves all cards to player hand', () => {
       const game = _postRevealFixture(false)
       game.submit({
         actor: 'tom',
@@ -1592,6 +1591,26 @@ describe('skill checks', () => {
       })
       expect(game.getCardsKindByPlayer('skill', 'tom').length).toBe(2)
       expect(game.getZoneByName('crisisPool').cards.length).toBe(0)
+    })
+
+    test('Command Authority marks once per game ability on player', () => {
+      const game = _postRevealFixture(false)
+      game.submit({
+        actor: 'tom',
+        name: 'Use Command Authority',
+        option: ['Yes']
+      })
+      expect(game.checkPlayerHasUsedOncePerGame('tom')).toBe(true)
+    })
+
+    test('no more active skill check', () => {
+      const game = _postRevealFixture(false)
+      game.submit({
+        actor: 'tom',
+        name: 'Use Command Authority',
+        option: ['No']
+      })
+      expect(game.getSkillCheck()).not.toBeDefined()
     })
 
   })
@@ -1711,14 +1730,8 @@ describe('crisis card effects', () => {
 
   function _crisisFixture(crisisName, func) {
     const factory = new GameFixtureFactory()
+    factory.options.crisis = crisisName
     const game = factory.build().advanceTo('player-turn-crisis').game
-    const crisisDeck = game.getZoneByName('decks.crisis')
-    const crisisCardIndex = crisisDeck.cards.findIndex(c => c.name === crisisName)
-    util.assert(crisisCardIndex !== -1, `Unable to find crisis card: ${crisisName}`)
-
-    game.rk.sessionStart(() => {
-      game.mMoveByIndices(crisisDeck, crisisCardIndex, crisisDeck, 0)
-    })
 
     if (func) {
       func(game)

@@ -11,8 +11,7 @@ function generateOptions(context) {
   const game = context.state
   const check = game.getSkillCheck()
 
-  // Mostly a result of testing
-  if (check.result) {
+  if (check.shortCut) {
     return context.done()
   }
 
@@ -36,11 +35,6 @@ function handleResponse(context) {
   const action = context.response.name
   const option = context.response.option
   const flags = check.flags[player.name]
-
-  // Mostly a result of testing
-  if (check.result) {
-    return context.done()
-  }
 
   util.assert(action === 'Skill Check - Discuss', `Unexpected action: ${action}`)
 

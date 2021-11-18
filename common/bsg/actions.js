@@ -525,7 +525,7 @@ Actions.aSelectSkillCheckResult = function(result) {
   const skillCheck = this.getSkillCheck()
 
   util.assert(
-    result === 'pass' || result === 'fail',
+    result === 'pass' || result === 'partial' || result === 'fail',
     `Unknown skill check result selected: ${result}`
   )
   util.assert(
@@ -533,7 +533,7 @@ Actions.aSelectSkillCheckResult = function(result) {
     `No skill check in progress; can't set result`
   )
 
-  this.rk.session.put(skillCheck, 'result', result)
+  this.rk.session.put(skillCheck, 'shortCut', result)
 
   // End the existing session and rerun the current transition.
   this.rk.session.commit()

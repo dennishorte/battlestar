@@ -36,7 +36,14 @@ function generateOptions(context) {
 }
 
 function _cleanUpSkillCheck(game) {
-  // Clear crisis pool cards
-  // Store skill check
-  // Clear skill check
+  const crisisPool = game.getZoneByName('crisisPool')
+
+  game.rk.sessionStart(session => {
+    while (crisisPool.cards.length) {
+      game.mDiscard(crisisPool.cards[0])
+    }
+
+    session.push(game.state.pastSkillChecks, game.getSkillCheck())
+    session.put(game.state, 'skillCheck', {})
+  })
 }

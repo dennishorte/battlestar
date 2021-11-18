@@ -363,12 +363,7 @@ const transitions = {
   },
 
   'skill-check': {
-    func: stepFactory([
-      'skill-check-discuss',
-      'skill-check-add-cards',
-      'skill-check-post-reveal',
-      'skill-check-cleanup',
-    ]),
+    func: require('./transitions/skillCheck.js'),
   },
 
   'skill-check-discuss': {
@@ -385,6 +380,10 @@ const transitions = {
 
   'skill-check-declare-emergency': {
     func: require('./transitions/skillCheckDeclareEmergency.js')
+  },
+
+  'skill-check-resolve': {
+    func: require('./transitions/skillCheckResolve.js')
   },
 
   'skill-check-cleanup': {

@@ -222,6 +222,11 @@ Game.prototype.checkPlayerHasCharacter = function(player) {
   return !!this.getCardCharacterByPlayer(player)
 }
 
+Game.prototype.checkPlayerHasUsedOncePerGame = function(player) {
+  player = this._adjustPlayerParam(player)
+  return player.oncePerGameUsed
+}
+
 Game.prototype.checkPlayerIsAtLocation = function(player, name) {
   player = this._adjustPlayerParam(player)
   const zone = this.getZoneByPlayerLocation(player)
@@ -811,6 +816,11 @@ Game.prototype.mDiscard = function(cardId) {
     this.mMoveCard(zoneName, 'discard.crisis', card)
   }
 
+  else if (card.kind === 'skill') {
+    const discard = this.getZoneByName(`decks.${card.skill}`)
+    this.mMoveCard(zoneName, discard, card)
+  }
+
   else {
     throw new Error(`Unhandled discard: ${card.kind}`)
   }
@@ -987,6 +997,8 @@ Game.prototype.mSetSkillCheck = function(check) {
   check.result = ''
   check.cardsAdded = []
   check.total = 'not ready'
+  check.shortCut = ''   // Used when some ability causes the result to be chosen out of order
+  check.resolved = false
 
   check.declareEmergency = false
   check.inspirationalLeader = false
