@@ -36,9 +36,14 @@
 
         </b-col>
       </b-row>
+
+      <b-row v-if="cardsAdded.length > 0">
+        <b-col>
+          hello
+        </b-col>
+      </b-row>
+
     </div>
-
-
   </div>
 </template>
 
@@ -55,6 +60,18 @@ export default {
   },
 
   computed: {
+    cardsAdded() {
+      if (this.check.cardsAdded.length > 0) {
+        return this.check.cardsAdded.map(c => this.$game.getCardById(c))
+      }
+      else if (this.check.useInvestigativeCommitee) {
+        return this.$game.getZoneByName('crisisPool').cards
+      }
+      else {
+        return []
+      }
+    },
+
     check() {
       return this.$game.getSkillCheck()
     },

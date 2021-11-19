@@ -40,11 +40,7 @@ function _initializeSkillCheckResult(game, check) {
         || l.name.localeCompare(r.name)
         || l.value - r.value
       ))
-      .map(c => ({  // Use alternate key names to prevent collisions in jsonpath
-        _name: c.name,
-        _skill: c.skill,
-        _value: c.value,
-      }))
+      .map(c => c.id)
 
     game.rk.sessionStart(session => {
       session.put(check, 'cardsAdded', data)

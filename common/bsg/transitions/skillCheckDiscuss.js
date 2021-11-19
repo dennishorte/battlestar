@@ -78,7 +78,7 @@ function handleResponse(context) {
 
   const allPlayersHaveSubmitted = game
     .getPlayerAll()
-    .every(p => check.flags[p.name].submitted.discuss)
+    .every(p => check.flags[p.name].submitted.discussion)
 
   if (nextStep === 'option2') {
     markDone(context)
