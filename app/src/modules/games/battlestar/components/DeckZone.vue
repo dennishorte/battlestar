@@ -51,31 +51,7 @@
     </div>
 
     <div v-if="expand" class="bottom-row">
-
-      <template v-for="(card, index) in cards">
-        <div class="expanded-card" :key="card.id">
-          <Variant :name="cardVariant(card)">
-
-            <div
-              class="expanded-card-inner"
-              :class="[
-                index === grabbedIndex ? 'grabbed-card' : '',
-                grabbed && index !== grabbedIndex ? 'ungrabbed-card' : '',
-              ]
-              "
-              @click="clickCard(index)"
-            >
-              <Component
-                :is="cardComponent(card)"
-                :displayClasses="displayClasses(card)"
-                :displayName="displayName(card)"
-              />
-              <div>{{ displayExtra(card) }}</div>
-            </div>
-          </Variant>
-        </div>
-      </template>
-
+      <CardDecider v-for="card in cards" :key="card.id" :card="card" />
     </div>
 
   </div>
@@ -83,10 +59,8 @@
 
 
 <script>
-import CardBasic from './CardBasic'
-
+import CardDecider from './CardDecider'
 import Variant from './Variant'
-import variants from '../lib/variants.js'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
@@ -97,6 +71,7 @@ export default {
   name: 'DeckZone',
 
   components: {
+    CardDecider,
     Variant,
   },
 
@@ -272,20 +247,6 @@ export default {
   },
 
   methods: {
-    cardComponent(card) {
-      const variantName = this.cardVariant(card)
-      const variant = variants.fetch(variantName)
-      return variant.component || CardBasic
-    },
-
-    cardVariant(card) {
-      if (!this.$game.checkCardIsVisible(card)) {
-        return ''
-      }
-
-      return variants.cardVariant(card)
-    },
-
     async click(event, location) {
       const didAction = this.$game.actionClickZone(this.deckName, location || 'top')
 
@@ -304,10 +265,6 @@ export default {
       event.stopPropagation()
     },
 
-    clickCard(index) {
-      this.$game.actionClickZone(this.deckName, index)
-    },
-
     clickDiscard() {
       this.$game.actionClickZone(this.discardName, 'top')
     },
@@ -320,29 +277,6 @@ export default {
     discardDetails() {
       this.$game.ui.modal.zoneInfo = this.discardName
       this.$bvModal.show('zone-modal')
-    },
-
-    displayClasses(card) {
-      if (this.$game.checkCardIsVisible(card)) {
-        return []
-      }
-      else {
-        return ['hidden']
-      }
-    },
-
-    displayExtra(card) {
-      if (this.$game.checkCardIsVisible(card)) {
-        return ''
-      }
-
-      if (card.kind === 'skill') {
-        return card.value
-      }
-    },
-
-    displayName(card) {
-      return this.$game.checkCardIsVisible(card) ? card.name : card.kind
     },
 
     shuffle() {
@@ -396,22 +330,6 @@ export default {
   align-items: center;
 }
 
-.expanded-card:not(:first-of-type) {
-  border-top: 1px solid darkgray;
-}
-
-.expanded-card-inner {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: .25em;
-}
-
-.hidden {
-  color: #777;
-  font-style: italic;
-}
-
 .top-row {
   align-items: stretch;
   display: flex;
@@ -435,10 +353,6 @@ export default {
 
 .grabbed {
   box-shadow: inset 5px 5px 10px #444, inset -5px -5px 10px #444;
-}
-
-.grabbed-card {
-  box-shadow: inset 3px 3px 8px #444, inset -3px -3px 8px #444;
 }
 
 .top-bottom-regions {
@@ -471,9 +385,5 @@ export default {
 
 .top-region {
   left: 0;
-}
-
-.ungrabbed-card {
-  background-color: #444;
 }
 </style>

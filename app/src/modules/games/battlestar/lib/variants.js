@@ -1,5 +1,3 @@
-import CardCharacter from '../components/CardCharacter'
-
 const imageConcrete = require('../assets/images/concrete_seamless.png')
 const imageFirstAidKit = require('../assets/images/first_aid_kit.png')
 const imageSpace = require('../assets/images/space.jpg')
@@ -67,7 +65,7 @@ const variants = {
   },
 
   character: {
-    component: CardCharacter,
+    component: 'character',
   },
 }
 

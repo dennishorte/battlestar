@@ -1,14 +1,14 @@
 <template>
-  <div class="card-character" :class="displayClasses">
+  <div class="card-character expanded-card-inner" :class="displayClasses">
+    <div class="character-name">
+      {{ displayName }}
+    </div>
+
     <div class="skill-images">
       <div class="image-slice" v-for="(img, index) in skillImages" :key="index">
         <img v-if="!!img" :src="img" />
         <div v-else class="white"></div>
       </div>
-    </div>
-
-    <div class="character-name">
-      {{ displayName }}
     </div>
   </div>
 </template>
@@ -30,24 +30,31 @@ export default {
   name: 'CardCharacter',
 
   props: {
-    displayClasses: Array,
-    displayName: String,
+    card: Object,
   },
 
   computed: {
-    characterCard() {
-      return this.$game.data.filtered.characterCards.find(c => c.name === this.displayName)
-    },
-
     characterSkills() {
       const skills = {}
       for (const skill of bsg.util.skillList) {
         if (skill === 'treachery')
           continue
 
-        skills[skill] = !!this.characterCard[skill]
+        skills[skill] = !!this.card[skill]
       }
       return skills
+    },
+
+    displayClasses() {
+      return this.isVisible ? [] : ['hidden']
+    },
+
+    displayName() {
+      return this.isVisible ? this.card.name : this.card.kind
+    },
+
+    isVisible() {
+      return this.$game.checkCardIsVisible(this.card)
     },
 
     skillImages() {
@@ -92,9 +99,8 @@ img {
   display: flex;
   flex-direction: row;
   align-items: top;
-  float: right;
-  margin-top: -3px;
-  margin-bottom: -2px;
+  margin-top: -2px;
+  margin-bottom: -3px;
   margin-right: -2px;
   background: black;
   padding-right: 2px;
