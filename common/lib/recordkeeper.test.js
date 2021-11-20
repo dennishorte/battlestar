@@ -98,303 +98,256 @@ describe('at', () => {
 describe('undo', () => {
   function setup() {
     const rk = new RecordKeeper(stateFactory())
-    rk.sessionStart(session => {
-      session.put(rk.game, 'atRoot', [0, 1, 2])
-      session.splice(rk.game.atRoot, 1, 2, 'a')
-    })
-    rk.sessionStart(session => {
-      session.put(rk.game, 'atRoot', 'hello')
-    })
+    rk.put(rk.game, 'atRoot', [0, 1, 2])
+    rk.splice(rk.game.atRoot, 1, 2, 'a')
+    rk.put(rk.game, 'atRoot', 'hello')
     return rk
   }
 
   test('undo one', () => {
     const rk = setup()
     rk.undo()
-    expect(rk.diffs.length).toBe(1)
+    expect(rk.diffs.length).toBe(2)
     expect(rk.undone.length).toBe(1)
     expect(rk.game.atRoot).toStrictEqual([0, 'a'])
   })
 
-  test('undo two', () => {
+  test('undo three', () => {
     const rk = setup()
+    rk.undo()
     rk.undo()
     rk.undo()
     expect(rk.diffs.length).toBe(0)
-    expect(rk.undone.length).toBe(2)
+    expect(rk.undone.length).toBe(3)
     expect(rk.game.atRoot).toBe(1)
   })
 
-  test('undo/redo two', () => {
+  test('undo/redo three', () => {
     const rk = setup()
     rk.undo()
     rk.undo()
+    rk.undo()
     rk.redo()
     rk.redo()
-    expect(rk.diffs.length).toBe(2)
+    rk.redo()
+    expect(rk.diffs.length).toBe(3)
     expect(rk.undone.length).toBe(0)
     expect(rk.game.atRoot).toBe('hello')
   })
 })
 
-describe('session', () => {
+describe('patch', () => {
+  test('put: root scalar', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.patch({
+      kind: 'put',
+      path: '.',
+      key: 'atRoot',
+      old: 1,
+      new: 2,
+    })
+    expect(rk.game.atRoot).toBe(2)
+  })
 
-  describe('patch', () => {
-    test('put: root scalar', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.patch({
+  test('put: root array', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.patch({
+      kind: 'put',
+      path: '.',
+      key: 'array',
+      old: [0,1,2,3],
+      new: ['a', 'b'],
+    })
+    expect(rk.game.array).toStrictEqual(['a', 'b'])
+  })
+
+  test('put: root object', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.patch({
+      kind: 'put',
+      path: '.',
+      key: 'object',
+      old: {
+        hello: 'world',
+        foo: 'bar',
+      },
+      new: ['a', 'b'],
+    })
+    expect(rk.game.object).toStrictEqual(['a', 'b'])
+  })
+
+  test('splice', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.patch({
+      kind: 'splice',
+      path: '.array',
+      key: '1',
+      old: [],
+      new: [9],
+    })
+    expect(rk.game.array).toStrictEqual([0,9,1,2,3])
+  })
+})
+
+describe('reverse', () => {
+  test('put: root scalar', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.reverse({
+      kind: 'put',
+      path: '.',
+      key: 'atRoot',
+      old: 2,
+      new: 1,
+    })
+    expect(rk.game.atRoot).toBe(2)
+  })
+
+  test('put: root array', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.reverse({
+      kind: 'put',
+      path: '.',
+      key: 'array',
+      old: ['a', 'b'],
+      new: [0,1,2,3],
+    })
+    expect(rk.game.array).toStrictEqual(['a', 'b'])
+  })
+
+  test('put: root object', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.reverse({
+      kind: 'put',
+      path: '.',
+      key: 'object',
+      old: ['a', 'b'],
+      new: {
+        hello: 'world',
+        foo: 'bar',
+      },
+    })
+    expect(rk.game.object).toStrictEqual(['a', 'b'])
+  })
+
+  test('splice', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.reverse({
+      kind: 'splice',
+      path: '.array',
+      key: '1',
+      old: [9],
+      new: [],
+    })
+    expect(rk.game.array).toStrictEqual([0,9,1,2,3])
+  })
+
+})
+
+
+describe('single changes', () => {
+  test('put: root scalar', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.put(rk.game, 'atRoot', 2)
+    const diff = {
+      kind: 'put',
+      path: '.',
+      key: 'atRoot',
+      old: 1,
+      new: 2,
+    }
+    expect(rk.diffs[0]).toStrictEqual(diff)
+  })
+
+  test('replace: object key', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.replace(rk.game.object, 'hello')
+    const diff = {
+      kind: 'put',
+      path: '.',
+      key: 'object',
+      old: {
+        hello: 'world',
+        foo: 'bar',
+      },
+      new: 'hello'
+    }
+    expect(rk.diffs[0]).toStrictEqual(diff)
+  })
+
+  test('replace: array element', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.replace(rk.game.nestedArrays[1], 'hello')
+    const diff = {
+      kind: 'put',
+      path: '.nestedArrays',
+      key: 1,
+      old: ['a', 'b', 'c'],
+      new: 'hello',
+    }
+    expect(rk.diffs[0]).toStrictEqual(diff)
+  })
+
+  test('splice', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.splice(rk.game.array, 1, 2, 9, 10, 11)
+    const diff = {
+      kind: 'splice',
+      path: '.array',
+      key: 1,
+      old: [1, 2],
+      new: [9, 10, 11],
+    }
+    expect(rk.diffs[0]).toStrictEqual(diff)
+  })
+
+  test('pop', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.pop(rk.game.array)
+    expect(rk.game.array).toStrictEqual([0,1,2])
+  })
+
+  test('push', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.push(rk.game.array, 8)
+    expect(rk.game.array).toStrictEqual([0,1,2,3,8])
+  })
+
+  test('move', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.move(rk.game.nested[2].arr[2], rk.game.array)
+    expect(rk.game.array).toStrictEqual([0,1,2,3,{ c: { d: 'deep' } }])
+  })
+
+  test('move with index', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.move(rk.game.nested[2].arr[2], rk.game.array, 1)
+    expect(rk.game.array).toStrictEqual([0,{ c: { d: 'deep' } },1,2,3])
+  })
+})
+
+describe('multiple changes', () => {
+
+  test('put, splice', () => {
+    const rk = new RecordKeeper(stateFactory())
+    rk.put(rk.game, 'atRoot', [0, 1, 2])
+    rk.splice(rk.game.atRoot, 1, 2, 'a')
+    const diffs = [
+      {
         kind: 'put',
         path: '.',
         key: 'atRoot',
         old: 1,
-        new: 2,
-      })
-      session.commit()
-      expect(rk.game.atRoot).toBe(2)
-    })
-
-    test('put: root array', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.patch({
-        kind: 'put',
-        path: '.',
-        key: 'array',
-        old: [0,1,2,3],
-        new: ['a', 'b'],
-      })
-      session.commit()
-      expect(rk.game.array).toStrictEqual(['a', 'b'])
-    })
-
-    test('put: root object', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.patch({
-        kind: 'put',
-        path: '.',
-        key: 'object',
-        old: {
-          hello: 'world',
-          foo: 'bar',
-        },
-        new: ['a', 'b'],
-      })
-      session.commit()
-      expect(rk.game.object).toStrictEqual(['a', 'b'])
-    })
-
-    test('splice', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.patch({
+        new: [0,1,2],
+      },
+      {
         kind: 'splice',
-        path: '.array',
-        key: '1',
-        old: [],
-        new: [9],
-      })
-      expect(rk.game.array).toStrictEqual([0,9,1,2,3])
-    })
-  })
-
-  describe('reverse', () => {
-    test('put: root scalar', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.reverse({
-        kind: 'put',
-        path: '.',
-        key: 'atRoot',
-        old: 2,
-        new: 1,
-      })
-      session.commit()
-      expect(rk.game.atRoot).toBe(2)
-    })
-
-    test('put: root array', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.reverse({
-        kind: 'put',
-        path: '.',
-        key: 'array',
-        old: ['a', 'b'],
-        new: [0,1,2,3],
-      })
-      session.commit()
-      expect(rk.game.array).toStrictEqual(['a', 'b'])
-    })
-
-    test('put: root object', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.reverse({
-        kind: 'put',
-        path: '.',
-        key: 'object',
-        old: ['a', 'b'],
-        new: {
-          hello: 'world',
-          foo: 'bar',
-        },
-      })
-      session.commit()
-      expect(rk.game.object).toStrictEqual(['a', 'b'])
-    })
-
-    test('splice', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.reverse({
-        kind: 'splice',
-        path: '.array',
-        key: '1',
-        old: [9],
-        new: [],
-      })
-      session.commit()
-      expect(rk.game.array).toStrictEqual([0,9,1,2,3])
-    })
-
-  })
-
-
-  describe('single changes', () => {
-    test('put: root scalar', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.put(rk.game, 'atRoot', 2)
-      session.commit()
-      const diff = {
-        kind: 'put',
-        path: '.',
-        key: 'atRoot',
-        old: 1,
-        new: 2,
-      }
-      expect(rk.diffs[0]).toStrictEqual([diff])
-    })
-
-    test('replace: object key', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.replace(rk.game.object, 'hello')
-      session.commit()
-      const diff = {
-        kind: 'put',
-        path: '.',
-        key: 'object',
-        old: {
-          hello: 'world',
-          foo: 'bar',
-        },
-        new: 'hello'
-      }
-      expect(rk.diffs[0]).toStrictEqual([diff])
-    })
-
-    test('replace: array element', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.replace(rk.game.nestedArrays[1], 'hello')
-      session.commit()
-      const diff = {
-        kind: 'put',
-        path: '.nestedArrays',
-        key: 1,
-        old: ['a', 'b', 'c'],
-        new: 'hello',
-      }
-      expect(rk.diffs[0]).toStrictEqual([diff])
-    })
-
-    test('splice', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.splice(rk.game.array, 1, 2, 9, 10, 11)
-      session.commit()
-      const diff = {
-        kind: 'splice',
-        path: '.array',
+        path: '.atRoot',
         key: 1,
         old: [1, 2],
-        new: [9, 10, 11],
-      }
-      expect(rk.diffs[0]).toStrictEqual([diff])
-    })
-
-    test('pop', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.pop(rk.game.array)
-      expect(rk.game.array).toStrictEqual([0,1,2])
-    })
-
-    test('push', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.push(rk.game.array, 8)
-      expect(rk.game.array).toStrictEqual([0,1,2,3,8])
-    })
-
-    test('move', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.move(rk.game.nested[2].arr[2], rk.game.array)
-      expect(rk.game.array).toStrictEqual([0,1,2,3,{ c: { d: 'deep' } }])
-    })
-
-    test('move with index', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.move(rk.game.nested[2].arr[2], rk.game.array, 1)
-      expect(rk.game.array).toStrictEqual([0,{ c: { d: 'deep' } },1,2,3])
-    })
-  })
-
-  describe('multiple changes', () => {
-
-    test('put, splice', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.put(rk.game, 'atRoot', [0, 1, 2])
-      session.splice(rk.game.atRoot, 1, 2, 'a')
-      session.commit()
-      const diffs = [
-        {
-          kind: 'put',
-          path: '.',
-          key: 'atRoot',
-          old: 1,
-          new: [0,1,2],
-        },
-        {
-          kind: 'splice',
-          path: '.atRoot',
-          key: 1,
-          old: [1, 2],
-          new: ['a'],
-        },
-      ]
-      expect(rk.diffs).toStrictEqual([diffs])
-    })
-
-  })
-
-  describe('cancel', () => {
-    test('put, splice', () => {
-      const rk = new RecordKeeper(stateFactory())
-      const session = rk.sessionStart()
-      session.put(rk.game, 'atRoot', [0, 1, 2])
-      session.splice(rk.game.atRoot, 1, 2, 'a')
-      session.cancel()
-      expect(rk.diffs).toStrictEqual([])
-      expect(rk.game.atRoot).toBe(1)
-    })
-
+        new: ['a'],
+      },
+    ]
+    expect(rk.diffs).toStrictEqual(diffs)
   })
 
 })
