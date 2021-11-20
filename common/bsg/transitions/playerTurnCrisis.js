@@ -1,9 +1,12 @@
-const { transitionFactory, markDone } = require('./factory.js')
+const { transitionFactory } = require('./factory.js')
 const util = require('../../lib/util.js')
 
 
 module.exports = transitionFactory(
-  {},
+  {
+    goToCylonActivation: false,
+    goToPrepareForJump: false,
+  },
   generateOptions,
   handleResponse,
 )
@@ -11,6 +14,13 @@ module.exports = transitionFactory(
 function generateOptions(context) {
   const game = context.state
   const player = game.getPlayerByName(context.data.playerName)
+
+  if (game.checkPlayerIsRevealedCylon(player)) {
+    game.rk.sessionStart(() => {
+      game.mLog({ template: 'Crisis phase skipped for Cylon players' })
+    })
+    return context.done()
+  }
 
   // Initialization
   if (!game.getCrisis()) {
@@ -26,21 +36,32 @@ function generateOptions(context) {
   const crisis = game.getCrisis()
 
   if (crisis.type === 'Cylon Attack') {
-    game.aActivateCylonShips(crisis.cylonActivation)
-    game.aDeployShips(crisis.deploy)
-    if (crisis.script.effect) {
-      markDone(context)
-      return context.push('evaluate-effects', {
-        name: `${crisis.name}: special effects`,
-        effects: crisis.script.effect,
-      })
+    if (!context.data.goToPrepareForJump) {
+      game.aActivateCylonShips(crisis.cylonActivation)
+      game.aDeployShips(crisis.deploy)
+      if (crisis.script.effect) {
+        return context.push('evaluate-effects', {
+          name: `${crisis.name}: special effects`,
+          effects: crisis.script.effect,
+        })
+      }
     }
-    else {
-      return context.done()
-    }
+
+    game.aPrepareForJump(crisis.jumpTrack)
+    return context.done()
   }
 
   else if (crisis.type === 'Choice') {
+    if (context.data.goToCylonActivation) {
+      game.aActivateCylonShips(crisis.cylonActivation)
+      game.aPrepareForJump(crisis.jumpTrack)
+      return context.done()
+    }
+
+    game.rk.sessionStart(session => {
+      session.put(context.data, 'goToCylonActivation', true)
+    })
+
     let actor
     if (crisis.actor === 'Current player') {
       actor = game.getPlayerCurrentTurn()
@@ -69,13 +90,17 @@ function generateOptions(context) {
   }
 
   else if (crisis.type === 'Skill Check' || crisis.type === 'Optional Skill Check') {
-    const check = game.getSkillCheck()
+    if (context.data.goToCylonActivation) {
+      game.aActivateCylonShips(crisis.cylonActivation)
+      game.aPrepareForJump(crisis.jumpTrack)
+      return context.done()
+    }
 
-    game.rk.sessionStart(() => {
+    game.rk.sessionStart(session => {
+      session.put(context.data, 'goToCylonActivation', true)
       game.mSetSkillCheck(crisis)
     })
 
-    markDone(context)
     return context.push('skill-check')
   }
 
@@ -93,7 +118,6 @@ function handleResponse(context) {
   // Player Choice crisis response
   if (action === 'Choose') {
     const optionNumber = parseInt(option[0].slice(-1))
-    markDone(context)
     return context.push('evaluate-effects', {
       name: `${crisis.name} option ${optionNumber}`,
       effects: crisis.script[`option${optionNumber}`],

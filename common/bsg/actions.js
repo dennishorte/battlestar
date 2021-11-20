@@ -451,6 +451,16 @@ Actions.aLaunchSelfInViper = function(player, position) {
   this.mLaunchViper(position)
 }
 
+Actions.aPrepareForJump = function(advance) {
+  if (advance) {
+    this.mLog({ template: 'Preparing for jump' })
+    this.mAdjustCounterByName('jumpTrack', 1)
+  }
+  else {
+    this.mLog({ template: 'Unable to make jump preparations' })
+  }
+}
+
 Actions.aReturnAllVipersToSupply = function() {
   for (let i = 0; i < 6; i++) {
     const zone = this.getZoneSpaceByIndex(i)

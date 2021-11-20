@@ -331,9 +331,8 @@ const transitions = {
   'player-turn-crisis-laura-roslin': {
     func: require('./transitions/playerTurnCrisisLauraRoslin.js'),
   },
-
   'player-turn-cleanup': {
-    func: waitFunc,
+    func: require('./transitions/playerTurnCleanup.js'),
   },
 
   'activate-admirals-quarters': {

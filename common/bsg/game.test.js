@@ -4,6 +4,63 @@ const GameFixtureFactory = require('./test/fixture.js')
 const bsgutil = require('./util.js')
 const util = require('../lib/util.js')
 
+function _deepLog(obj) {
+  console.log(JSON.stringify(obj, null, 2))
+}
+
+function _postRevealFixture(dennisWillAddManually, setupFunc) {
+  const factory = new GameFixtureFactory()
+  factory.options.crisis = 'The Olympic Carrier'
+  factory.options.players[0].character = 'Tom Zarek'
+  factory.options.players[0].hand = [
+    { kind: 'skill', skill: 'leadership', name: 'Declare Emergency', value: 4 },
+    { kind: 'skill', skill: 'leadership', name: 'Declare Emergency', value: 3 },
+    { kind: 'skill', skill: 'politics', name: 'Investigative Committee', value: 5 },
+    { kind: 'skill', skill: 'politics', name: 'Consolidate Power', value: 2 },
+    { kind: 'skill', skill: 'tactics', name: 'Launch Scount', value: 1 },
+  ]
+  factory.options.players[1].hand = [
+    { kind: 'skill', skill: 'leadership', name: 'Declare Emergency', value: 3 },
+  ]
+  factory.options.players[2].character = 'William Adama'
+  factory.options.players[2].startingSkills = ['leadership', 'leadership', 'tactics']
+  factory.options.players[2].hand = []
+
+  // Neutral outcome from destiny deck (net zero)
+  factory.options.destiny = [
+    { kind: 'skill', skill: 'leadership', name: 'Executive Order', value: 1 },
+    { kind: 'skill', skill: 'engineering', name: 'Repair', value: 1 },
+  ]
+
+  if (setupFunc) {
+    setupFunc(factory.game)
+  }
+
+  const game = factory.build().advanceTo('skill-check-add-cards').game
+  game.run()
+
+  game.submit({
+    actor: 'micah',
+    name: 'Skill Check - Add Cards',
+    option: ['Do Nothing']
+  })
+  game.submit({
+    actor: 'tom',
+    name: 'Skill Check - Add Cards',
+    option: ['Do Nothing']
+  })
+
+  if (!dennisWillAddManually) {
+    game.submit({
+      actor: 'dennis',
+      name: 'Skill Check - Add Cards',
+      option: ['Do Nothing']
+    })
+  }
+
+  return game
+}
+
 describe('new game', () => {
   test("first run initializes space zones", () => {
     const factory = new GameFixtureFactory()
@@ -1427,55 +1484,6 @@ describe('skill checks', () => {
     })
   })
 
-  function _postRevealFixture(dennisWillAddManually) {
-    const factory = new GameFixtureFactory()
-    factory.options.crisis = 'The Olympic Carrier'
-    factory.options.players[0].character = 'Tom Zarek'
-    factory.options.players[0].hand = [
-      { kind: 'skill', skill: 'leadership', name: 'Declare Emergency', value: 4 },
-      { kind: 'skill', skill: 'leadership', name: 'Declare Emergency', value: 3 },
-      { kind: 'skill', skill: 'politics', name: 'Investigative Committee', value: 5 },
-      { kind: 'skill', skill: 'politics', name: 'Consolidate Power', value: 2 },
-      { kind: 'skill', skill: 'tactics', name: 'Launch Scount', value: 1 },
-    ]
-    factory.options.players[1].hand = [
-      { kind: 'skill', skill: 'leadership', name: 'Declare Emergency', value: 3 },
-    ]
-    factory.options.players[2].character = 'William Adama'
-    factory.options.players[2].startingSkills = ['leadership', 'leadership', 'tactics']
-    factory.options.players[2].hand = []
-
-    // Neutral outcome from destiny deck (net zero)
-    factory.options.destiny = [
-      { kind: 'skill', skill: 'leadership', name: 'Executive Order', value: 1 },
-      { kind: 'skill', skill: 'engineering', name: 'Repair', value: 1 },
-    ]
-
-    const game = factory.build().advanceTo('skill-check-add-cards').game
-    game.run()
-
-    game.submit({
-      actor: 'micah',
-      name: 'Skill Check - Add Cards',
-      option: ['Do Nothing']
-    })
-    game.submit({
-      actor: 'tom',
-      name: 'Skill Check - Add Cards',
-      option: ['Do Nothing']
-    })
-
-    if (!dennisWillAddManually) {
-      game.submit({
-        actor: 'dennis',
-        name: 'Skill Check - Add Cards',
-        option: ['Do Nothing']
-      })
-    }
-
-    return game
-  }
-
   describe('skill-check-post-reveal', () => {
 
     describe('declare emergency is appropriately applied', () => {
@@ -1655,7 +1663,22 @@ describe('player-turn-crisis', () => {
   }
 
   describe('cylon player', () => {
+    test('cylon players do not have a crisis phase', () => {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().advanceTo('player-turn-action').game
+      jest.spyOn(game, 'checkPlayerIsRevealedCylon').mockImplementation(player => {
+        return player === 'dennis' || player.name === 'dennis'
+      })
+      game.run()
 
+      game.submit({
+        actor: 'dennis',
+        name: 'Action',
+        option: ['Skip Action']
+      })
+
+      expect(game.getTransition().name).toBe('player-turn-cleanup')
+    })
   })
 
   describe('choice cards', () => {
@@ -1672,8 +1695,21 @@ describe('player-turn-crisis', () => {
       expect(game.getWaiting('dennis')).toBeDefined()
     })
 
-    // Only optional skill checks give the current player a choice (at least in the base game)
-    test.skip('Current player choice cards let the current player choose', () => {
+    test('cylon activation and jump prep take place after choice', () => {
+      const game = _crisisFixture('Food Shortage', (game) => {
+        game.aClearSpace()
+        jest.spyOn(game, 'aActivateCylonShips')
+        jest.spyOn(game, 'aPrepareForJump')
+      })
+
+      game.submit({
+        actor: 'dennis',
+        name: 'Choose',
+        option: ['Option 1'],
+      })
+
+      expect(game.aActivateCylonShips.mock.calls.length).toBe(1)
+      expect(game.aPrepareForJump.mock.calls.length).toBe(1)
     })
   })
 
@@ -1716,6 +1752,15 @@ describe('player-turn-crisis', () => {
       const zone = game.getZoneByCard('Ambush')
       expect(zone.name).toBe('keep')
     })
+
+    test('prepare for jump is called', () => {
+      const game = _crisisFixture('Ambush', (game) => {
+        game.aClearSpace()
+        jest.spyOn(game, 'aPrepareForJump')
+      })
+
+      expect(game.aPrepareForJump.mock.calls.length).toBe(1)
+    })
   })
 
   describe('skill check cards', () => {
@@ -1724,6 +1769,23 @@ describe('player-turn-crisis', () => {
       const waiting = game.getWaiting()
       expect(waiting.length).toBe(3)
       expect(waiting[0].actions[0].name).toBe('Skill Check - Discuss')
+    })
+
+    test('cylon activation and jump prep take place after skill check', () => {
+      const game = _postRevealFixture(false, (game) => {
+        jest.spyOn(game, 'aActivateCylonShips')
+        jest.spyOn(game, 'aPrepareForJump')
+      })
+
+      // Skip past command authority
+      game.submit({
+        actor: 'tom',
+        name: 'Use Command Authority',
+        option: ['No']
+      })
+
+      expect(game.aActivateCylonShips.mock.calls.length).toBe(1)
+      expect(game.aPrepareForJump.mock.calls.length).toBe(1)
     })
   })
 
@@ -1737,6 +1799,40 @@ describe('player-turn-crisis', () => {
 
     test.skip('current player has the choice', () => {
 
+    })
+
+    test.skip('cylon activation and jump prep take place after skill check', () => {
+      const game = _postRevealFixture(false, (game) => {
+        jest.spyOn(game, 'aActivateCylonShips')
+        jest.spyOn(game, 'aPrepareForJump')
+      })
+
+      // Skip past command authority
+      game.submit({
+        actor: 'tom',
+        name: 'Use Command Authority',
+        option: ['No']
+      })
+
+      expect(game.aActivateCylonShips.mock.calls.length).toBe(1)
+      expect(game.aPrepareForJump.mock.calls.length).toBe(1)
+    })
+
+    test.skip('cylon activation and jump prep take place after choosing option 2', () => {
+      const game = _postRevealFixture(false, (game) => {
+        jest.spyOn(game, 'aActivateCylonShips')
+        jest.spyOn(game, 'aPrepareForJump')
+      })
+
+      // Skip past command authority
+      game.submit({
+        actor: 'tom',
+        name: 'Use Command Authority',
+        option: ['No']
+      })
+
+      expect(game.aActivateCylonShips.mock.calls.length).toBe(1)
+      expect(game.aPrepareForJump.mock.calls.length).toBe(1)
     })
   })
 })
