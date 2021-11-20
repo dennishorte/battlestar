@@ -15,22 +15,18 @@ function generateOptions(context) {
     .map(p => p.name)
 
   if (playersNotInBrig.length === 0) {
-    game.rk.sessionStart(() => {
-      game.mLog({ template: 'All humans are already in the brig' })
-    })
+    game.mLog({ template: 'All humans are already in the brig' })
     return context.done()
   }
 
   else if (playersNotInBrig.length === 1) {
-    game.rk.sessionStart(() => {
-      game.mLog({
-        template: '{player} is the only choice',
-        args: {
-          player: playersNotInBrig[0],
-        }
-      })
-      game.mMovePlayer(playersNotInBrig[0], 'locations.brig')
+    game.mLog({
+      template: '{player} is the only choice',
+      args: {
+        player: playersNotInBrig[0],
+      }
     })
+    game.mMovePlayer(playersNotInBrig[0], 'locations.brig')
     return context.done()
   }
   else {
@@ -47,15 +43,13 @@ function generateOptions(context) {
 
 function handleResponse(context) {
   const game = context.state
-  game.rk.sessionStart(() => {
-    game.mLog({
-      template: '{player1} sends {player2} to the brig',
-      args: {
-        player1: context.response.actor,
-        player2: context.response.option[0],
-      }
-    })
-    game.mMovePlayer(context.response.option[0], 'locations.brig')
+  game.mLog({
+    template: '{player1} sends {player2} to the brig',
+    args: {
+      player1: context.response.actor,
+      player2: context.response.option[0],
+    }
   })
+  game.mMovePlayer(context.response.option[0], 'locations.brig')
   return context.done()
 }

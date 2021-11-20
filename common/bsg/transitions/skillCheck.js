@@ -25,16 +25,12 @@ function generateOptions(context) {
 
   // Skill check was short-cut by something
   if (check && check.shortCut && context.data.stepIndex < 3) {
-    game.rk.sessionStart(session => {
-      session.put(context.data, 'stepIndex', 3)
-      session.put(check, 'result', check.shortCut)
-    })
+    game.rk.put(context.data, 'stepIndex', 3)
+    game.rk.put(check, 'result', check.shortCut)
   }
 
   const step = context.data.steps[context.data.stepIndex]
-  game.rk.sessionStart(session => {
-    session.put(context.data, 'stepIndex', context.data.stepIndex + 1)
-  })
+  game.rk.put(context.data, 'stepIndex', context.data.stepIndex + 1)
 
   return context.push(step)
 }

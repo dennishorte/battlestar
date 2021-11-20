@@ -11,9 +11,7 @@ function generateOptions(context) {
   const check = game.getSkillCheck()
 
   if (!check.resolved) {
-    game.rk.sessionStart(session => {
-      session.put(check, 'resolved', true)
-    })
+    game.rk.put(check, 'resolved', true)
 
     return context.push('evaluate-effects', {
       name: `${check.name}: ${check.result}`,

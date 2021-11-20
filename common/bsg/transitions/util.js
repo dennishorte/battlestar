@@ -37,9 +37,7 @@ function evaluateEffect(game, effect) {
 
   else if (kind === 'counter') {
     const { counter, amount } = effect
-    game.rk.sessionStart(() => {
-      game.mAdjustCounterByName(counter, amount)
-    })
+    game.mAdjustCounterByName(counter, amount)
   }
 
   else if (kind === 'cylonActivation') {
@@ -96,9 +94,7 @@ function evaluateEffect(game, effect) {
     const { actor, location } = effect
     const player = game.getPlayerByDescriptor(actor)
     const locationZone = game.getZoneByLocationName(location)
-    game.rk.sessionStart(() => {
-      game.mMovePlayer(player, locationZone)
-    })
+    game.mMovePlayer(player, locationZone)
   }
 
   else if (kind === 'sendPlayerToBrig') {

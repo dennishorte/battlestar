@@ -16,9 +16,7 @@ function generateOptions(context) {
   const player = game.getPlayerByName(context.data.playerName)
 
   if (game.checkPlayerIsRevealedCylon(player)) {
-    game.rk.sessionStart(() => {
-      game.mLog({ template: 'Crisis phase skipped for Cylon players' })
-    })
+    game.mLog({ template: 'Crisis phase skipped for Cylon players' })
     return context.done()
   }
 
@@ -37,6 +35,7 @@ function generateOptions(context) {
 
   if (crisis.type === 'Cylon Attack') {
     if (!context.data.goToPrepareForJump) {
+      game.rk.put(context.data, 'goToPrepareForJump', true)
       game.aActivateCylonShips(crisis.cylonActivation)
       game.aDeployShips(crisis.deploy)
       if (crisis.script.effect) {
@@ -58,9 +57,7 @@ function generateOptions(context) {
       return context.done()
     }
 
-    game.rk.sessionStart(session => {
-      session.put(context.data, 'goToCylonActivation', true)
-    })
+    game.rk.put(context.data, 'goToCylonActivation', true)
 
     let actor
     if (crisis.actor === 'Current player') {
@@ -96,10 +93,8 @@ function generateOptions(context) {
       return context.done()
     }
 
-    game.rk.sessionStart(session => {
-      session.put(context.data, 'goToCylonActivation', true)
-      game.mSetSkillCheck(crisis)
-    })
+    game.rk.put(context.data, 'goToCylonActivation', true)
+    game.mSetSkillCheck(crisis)
 
     return context.push('skill-check')
   }

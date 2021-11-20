@@ -2,7 +2,9 @@ const { transitionFactory } = require('./factory.js')
 const util = require('../../lib/util.js')
 
 module.exports = transitionFactory(
-  {},
+  {
+    checkedPrecommit: false,
+  },
   generateOptions,
   handleResponse,
 )
@@ -19,13 +21,16 @@ function generateOptions(context) {
   }
 
   // If someone pre-committed to using declare emergency, just go for it.
-  const someonePrecommitted = Object
-    .values(check.flags)
-    .filter(f => f.useDeclareEmergency)
-    .length > 0
-  if (someonePrecommitted) {
-    _applyDeclareEmergency(context)
-    return context.done()
+  if (!context.data.checkedPrecommit) {
+    game.rk.put(context.data, 'checkedPrecommit', true)
+    const someonePrecommitted = Object
+      .values(check.flags)
+      .filter(f => f.useDeclareEmergency)
+      .length > 0
+    if (someonePrecommitted) {
+      _applyDeclareEmergency(context)
+      return context.done()
+    }
   }
 
   // No pre-commits. Give people a last chance to try.
@@ -71,13 +76,11 @@ function handleResponse(context) {
 
   util.assert(!flags.submitted.declareEmergency, `${player.name} already submitted`)
 
-  game.rk.sessionStart(session => {
-    session.put(flags.submitted, 'declareEmergency', true)
+  game.rk.put(flags.submitted, 'declareEmergency', true)
 
-    if (option === 'Use Declare Emergency') {
-      session.put(flags, 'useDeclareEmergency', true)
-    }
-  })
+  if (option === 'Use Declare Emergency') {
+    game.rk.put(flags, 'useDeclareEmergency', true)
+  }
 
   return generateOptions(context)
 }
@@ -95,11 +98,9 @@ function _applyDeclareEmergency(context) {
         .filter(c => c.name === 'Declare Emergency')
         .sort((l, r) => l.value - r.value)
 
-      game.rk.sessionStart(session => {
-        game.aUseSkillCardByName(player, 'Declare Emergency')
-        session.put(check, 'declareEmergency', true)
-        session.put(check, 'total', check.total + 2)
-      })
+      game.aUseSkillCardByName(player, 'Declare Emergency')
+      game.rk.put(check, 'declareEmergency', true)
+      game.rk.put(check, 'total', check.total + 2)
       break
     }
   }

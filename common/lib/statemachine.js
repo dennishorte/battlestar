@@ -59,26 +59,15 @@ function run() {
 }
 
 function clearWaiting() {
-  const inSession = !!this.rk.session
-  if (!inSession) {
-    this.rk.sessionStart()
-  }
-
-  this.rk.session.splice(this.waiting, 0, this.waiting.length)
-  this.rk.session.splice(this.response, 0, this.response.length)
-
-  if (!inSession) {
-    this.rk.session.commit()
-  }
+  this.rk.splice(this.waiting, 0, this.waiting.length)
+  this.rk.splice(this.response, 0, this.response.length)
 }
 
 function _done() {
   const event = this.stack[this.stack.length - 1]
   // console.log('done', event)
-  this.rk.sessionStart(session => {
-    session.pop(this.stack)
-    this.clearWaiting()
-  })
+  this.rk.pop(this.stack)
+  this.clearWaiting()
   this.run()
   return true
 }
@@ -86,39 +75,33 @@ function _done() {
 function _push(eventName, data) {
   // console.log('push', eventName, data)
 
-  this.rk.sessionStart(session => {
-    this.options.pushCallback(eventName, data)
-    this.clearWaiting()
+  this.options.pushCallback(eventName, data)
+  this.clearWaiting()
 
-    const event = {
-      name: eventName,
-      data: data || {},
-    }
+  const event = {
+    name: eventName,
+    data: data || {},
+  }
 
-    if (eventName === 'END') {
-      session.push(this.stack, event)
-      return
-    }
+  if (eventName === 'END') {
+    this.rk.push(this.stack, event)
+    return
+  }
 
-    const transition = this.transitions[eventName]
-    session.push(this.stack, event)
-  })
+  const transition = this.transitions[eventName]
+  this.rk.push(this.stack, event)
 
   this.run()
   return true
 }
 
 function _wait(payload) {
-  this.rk.sessionStart(session => {
-    session.splice(this.waiting, 0, this.waiting.length, payload)
-  })
+  this.rk.splice(this.waiting, 0, this.waiting.length, payload)
   return true
 }
 
 function _waitMany(payload) {
-  this.rk.sessionStart(session => {
-    session.splice(this.waiting, 0, this.waiting.length, ...payload)
-  })
+  this.rk.splice(this.waiting, 0, this.waiting.length, ...payload)
   return true
 }
 

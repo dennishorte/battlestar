@@ -39,55 +39,53 @@ function handleResponse(context) {
   const flags = check.flags[player.name]
   const option = context.response.option
 
-  game.rk.sessionStart(session => {
-    session.put(flags.submitted, 'addCards', true)
+  game.rk.put(flags.submitted, 'addCards', true)
 
-    for (const opt of option) {
-      const optName = opt.name || opt
+  for (const opt of option) {
+    const optName = opt.name || opt
 
-      if (optName === 'Do Nothing') {
-        // do nothing
-      }
+    if (optName === 'Do Nothing') {
+      // do nothing
+    }
 
-      else if (optName === 'Use Declare Emergency') {
-        session.put(flags, 'useDeclareEmergency', true)
-      }
+    else if (optName === 'Use Declare Emergency') {
+      game.rk.put(flags, 'useDeclareEmergency', true)
+    }
 
-      else if (optName === 'Add Cards to Check') {
-        // could have both "Help" and "Hinder"
-        for (const subOpt of opt.option) {
-          session.put(flags, 'numAdded', flags.numAdded + subOpt.option.length)
-          for (const cardOpt of subOpt.option) {
-            const tokens = cardOpt.split(',')
-            util.assert(tokens.length === 2, `Unknown card option: ${cardOpt}`)
+    else if (optName === 'Add Cards to Check') {
+      // could have both "Help" and "Hinder"
+      for (const subOpt of opt.option) {
+        game.rk.put(flags, 'numAdded', flags.numAdded + subOpt.option.length)
+        for (const cardOpt of subOpt.option) {
+          const tokens = cardOpt.split(',')
+          util.assert(tokens.length === 2, `Unknown card option: ${cardOpt}`)
 
-            const cardName = tokens[0]
-            const cardValue = parseInt(tokens[1])
-            const playerHand = game.getZoneByPlayer(player)
-            const card = playerHand.cards.find(c => c.name === cardName && c.value === cardValue)
+          const cardName = tokens[0]
+          const cardValue = parseInt(tokens[1])
+          const playerHand = game.getZoneByPlayer(player)
+          const card = playerHand.cards.find(c => c.name === cardName && c.value === cardValue)
 
-            util.assert(!!card, `Card not found in player hand: ${cardOpt}`)
+          util.assert(!!card, `Card not found in player hand: ${cardOpt}`)
 
-            game.mMoveCard(playerHand, 'crisisPool', card)
-          }
+          game.mMoveCard(playerHand, 'crisisPool', card)
         }
-      }
-
-      else {
-        throw new Error(`Unhandled option in Skill Check - Add Cards: ${optName}`)
       }
     }
 
-    game.mLog({
-      template: '{player} added {count} cards',
-      args: {
-        player: player.name,
-        count: flags.numAdded,
-      },
-    })
+    else {
+      throw new Error(`Unhandled option in Skill Check - Add Cards: ${optName}`)
+    }
+  }
 
-    session.put(context.data, 'addCardsName', game.getPlayerFollowing(player).name)
+  game.mLog({
+    template: '{player} added {count} cards',
+    args: {
+      player: player.name,
+      count: flags.numAdded,
+    },
   })
+
+  game.rk.put(context.data, 'addCardsName', game.getPlayerFollowing(player).name)
 
   if (player.name === game.getPlayerCurrentTurn().name) {
     return context.done()
@@ -101,40 +99,38 @@ function _beginAddCardsPhase(context) {
   const game = context.state
   const check = game.getSkillCheck()
 
-  game.rk.sessionStart(session => {
-    // Play queued cards
-    const players = game.getPlayerAll()
-    let count = 0
-    let player = game.getPlayerCurrentTurn()
-    let scientificResearchPlayed = false
-    let investigativeCommitteePlayed = false
-    while (count < players.length) {
-      player = game.getPlayerFollowing(player)
-      const flags = check.flags[player.name]
-      count += 1
+  // Play queued cards
+  const players = game.getPlayerAll()
+  let count = 0
+  let player = game.getPlayerCurrentTurn()
+  let scientificResearchPlayed = false
+  let investigativeCommitteePlayed = false
+  while (count < players.length) {
+    player = game.getPlayerFollowing(player)
+    const flags = check.flags[player.name]
+    count += 1
 
-      if (
-        flags.useScientificResearch
-        && !check.scientificResearch
-      ){
-        session.put(check, 'scientificResearch', true)
-        game.aUseSkillCardByName(player, 'Scientific Research')
-      }
-
-      if (
-        flags.useInvestigativeCommitee
-        && !check.investigativeCommittee
-      ){
-        session.put(check, 'investigativeCommittee', true)
-        game.aUseSkillCardByName(player, 'Invetigative Committee')
-      }
+    if (
+      flags.useScientificResearch
+      && !check.scientificResearch
+    ){
+      game.rk.put(check, 'scientificResearch', true)
+      game.aUseSkillCardByName(player, 'Scientific Research')
     }
 
-    game.aAddDestinyCards()
+    if (
+      flags.useInvestigativeCommitee
+      && !check.investigativeCommittee
+    ){
+      game.rk.put(check, 'investigativeCommittee', true)
+      game.aUseSkillCardByName(player, 'Invetigative Committee')
+    }
+  }
 
-    // Set the first player to play cards
-    session.put(context.data, 'addCardsName', game.getPlayerNext().name)
-  })
+  game.aAddDestinyCards()
+
+  // Set the first player to play cards
+  game.rk.put(context.data, 'addCardsName', game.getPlayerNext().name)
 }
 
 function _addCardsOptionsForPlayer(game, check, player) {

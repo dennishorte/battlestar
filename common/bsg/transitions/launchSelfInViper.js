@@ -82,10 +82,8 @@ function handleResponse(context) {
     const launchOption = selection.option.find(o => o.name === 'Launch to').option[0]
     const spaceIndex = parseInt(recallOption.slice(-1))
 
-    game.rk.sessionStart(() => {
-      game.mReturnViperFromSpaceZone(spaceIndex)
-      game.aLaunchSelfInViper(player, launchOption)
-    })
+    game.mReturnViperFromSpaceZone(spaceIndex)
+    game.aLaunchSelfInViper(player, launchOption)
 
     return context.done()
   }

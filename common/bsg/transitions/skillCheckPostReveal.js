@@ -17,9 +17,7 @@ function generateOptions(context) {
 
   // Declare Emergency
   if (!context.data.consideredDeclareEmergency) {
-    game.rk.sessionStart(session => {
-      session.put(context.data, 'consideredDeclareEmergency', true)
-    })
+    game.rk.put(context.data, 'consideredDeclareEmergency', true)
     return context.push('skill-check-declare-emergency')
   }
 
@@ -42,15 +40,13 @@ function _initializeSkillCheckResult(game, check) {
       ))
       .map(c => c.id)
 
-    game.rk.sessionStart(session => {
-      session.put(check, 'cardsAdded', data)
-      session.put(check, 'total', bsgutil.calculateCheckValue(poolCards, check))
+    game.rk.put(check, 'cardsAdded', data)
+    game.rk.put(check, 'total', bsgutil.calculateCheckValue(poolCards, check))
 
-      // Reveal the cards in the crisis pool
-      for (const card of game.getZoneByName('crisisPool').cards) {
-        session.put(card, 'visibility', game.getPlayerAll().map(p => p.name))
-      }
-    })
+    // Reveal the cards in the crisis pool
+    for (const card of game.getZoneByName('crisisPool').cards) {
+      game.rk.put(card, 'visibility', game.getPlayerAll().map(p => p.name))
+    }
   }
 }
 
@@ -63,14 +59,12 @@ function _finalizeSkillCheck(game, check) {
                       ? 'partial'
                       : 'fail')
 
-  game.rk.sessionStart(session => {
-    session.put(check, 'total', finalValue)
-    session.put(check, 'result', resultString)
-    game.mLog({
-      template: 'Skill check result is: {skillCheckResult}',
-      args: {
-        skillCheckResult: resultString
-      }
-    })
+  game.rk.put(check, 'total', finalValue)
+  game.rk.put(check, 'result', resultString)
+  game.mLog({
+    template: 'Skill check result is: {skillCheckResult}',
+    args: {
+      skillCheckResult: resultString
+    }
   })
 }

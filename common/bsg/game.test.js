@@ -368,9 +368,7 @@ describe('player turn', () => {
     test('player in sickbay draws one card', () => {
       const factory = new GameFixtureFactory()
       const game = factory.build().advanceTo('player-turn-receive-skills').game
-      game.rk.sessionStart(session => {
-        game.mMovePlayer('dennis', 'locations.sickbay')
-      })
+      game.mMovePlayer('dennis', 'locations.sickbay')
       game.run()
 
       const action = game.getWaiting('dennis').actions[0]
@@ -416,9 +414,7 @@ describe('player turn', () => {
     test("player in brig can't move", () => {
       const factory = new GameFixtureFactory()
       const game = factory.build().advanceTo('player-turn-movement').game
-      factory.game.rk.sessionStart(session => {
-        factory.game.mMovePlayer('dennis', 'locations.brig')
-      })
+      factory.game.mMovePlayer('dennis', 'locations.brig')
       game.run()
 
       const action = game.getWaiting('dennis').actions[0]
@@ -478,9 +474,7 @@ describe('player turn', () => {
       jest.spyOn(game, 'checkPlayerIsRevealedCylon').mockImplementation(player => {
         return player === 'dennis' || player.name === 'dennis'
       })
-      game.rk.sessionStart(() => {
-        game.mMovePlayer('dennis', 'locations.caprica')
-      })
+      game.mMovePlayer('dennis', 'locations.caprica')
       game.run()
 
       const action = game.getWaiting('dennis').actions[0]
@@ -529,10 +523,7 @@ describe('player turn', () => {
       factory.options.players[0].character = 'Karl "Helo" Agathon'
       const game = factory.build().advanceTo('player-turn-movement').game
       game.run()
-
-      const action = game.getWaiting('dennis').actions[0]
-      expect(action.name).not.toBe('Movement')
-      expect(action.name).not.toBe('Action')
+      expect(game.getWaiting('dennis')).not.toBeDefined()
     })
 
     describe("submit movement", () => {
@@ -613,9 +604,7 @@ describe('player turn', () => {
       function _playerInSpace() {
         const factory = new GameFixtureFactory()
         const game = factory.build().advanceTo('player-turn-movement').game
-        game.rk.sessionStart(() => {
-          game.mMovePlayer('dennis', 'space.space5')
-        })
+        game.mMovePlayer('dennis', 'space.space5')
         game.run()
         return game
       }
@@ -649,9 +638,7 @@ describe('player turn', () => {
       test("can't land viper if no cards in hand", () => {
         const factory = new GameFixtureFactory()
         const game = factory.build().advanceTo('player-turn-movement').game
-        game.rk.sessionStart(() => {
-          game.mMovePlayer('dennis', 'space.space5')
-        })
+        game.mMovePlayer('dennis', 'space.space5')
         const playerCards = game.getZoneByPlayer('dennis').cards.filter(c => c.kind === 'skill')
         game.aDiscardSkillCards('dennis', playerCards)
         game.run()
@@ -753,7 +740,7 @@ describe('player turn', () => {
         option: ['Skip Action']
       })
 
-      expect(game.getWaiting('dennis').actions[0].name).not.toBe('Action')
+      expect(game.getWaiting('dennis')).not.toBeDefined()
     })
 
     describe.skip('once per game actions', () => {
@@ -817,9 +804,7 @@ describe('player turn', () => {
 
         test("can't choose Cylons", () => {
           const game = _takeActionWithMove('Location Action', "Admiral's Quarters", (game) => {
-            game.rk.sessionStart(() => {
-              game.mSetPlayerIsRevealedCylon('tom')
-            })
+            game.mSetPlayerIsRevealedCylon('tom')
           })
           const waiting = game.getWaiting('dennis')
           const action = waiting.actions[0]
@@ -829,9 +814,7 @@ describe('player turn', () => {
 
         test("can't choose players already in brig", () => {
           const game = _takeActionWithMove('Location Action', "Admiral's Quarters", (game) => {
-            game.rk.sessionStart(() => {
-              game.mMovePlayer('tom', 'locations.brig')
-            })
+            game.mMovePlayer('tom', 'locations.brig')
           })
           const waiting = game.getWaiting('dennis')
           const action = waiting.actions[0]
@@ -1063,11 +1046,9 @@ describe('adhoc transitions', () => {
       const factory = new GameFixtureFactory()
       const game = factory.build().advanceTo('character-selection-do', 'dennis').game
       // Launch all of the vipers
-      game.rk.sessionStart(() => {
-        while (game.getVipersNumAvailable() > 0) {
-          game.mLaunchViper('Lower Left')
-        }
-      })
+      while (game.getVipersNumAvailable() > 0) {
+        game.mLaunchViper('Lower Left')
+      }
 
       // Preconditions
       expect(game.getZoneByName('ships.vipers').cards.length).toBe(0)
@@ -1217,14 +1198,12 @@ describe('skill checks', () => {
     options = options || {}
 
     const game = _sendTomToBrig(options.beforeChoose)
-    game.rk.sessionStart(session => {
-      if (options.useScientificResearch) {
-        session.put(game.getSkillCheck(), 'scientificResearch', true)
-      }
-      if (options.useInvestigativeCommitee) {
-        session.put(game.getSkillCheck(), 'investigativeCommittee', true)
-      }
-    })
+    if (options.useScientificResearch) {
+      game.rk.put(game.getSkillCheck(), 'scientificResearch', true)
+    }
+    if (options.useInvestigativeCommitee) {
+      game.rk.put(game.getSkillCheck(), 'investigativeCommittee', true)
+    }
 
     game.submit({
       actor: 'dennis',
@@ -1459,9 +1438,7 @@ describe('skill checks', () => {
       const game = _addCardsFixture()
 
       // Skip to Tom, after putting him in the brig
-      game.rk.sessionStart(() => {
-        game.mMovePlayer('tom', 'locations.brig')
-      })
+      game.mMovePlayer('tom', 'locations.brig')
       game.submit({
         actor: 'micah',
         name: 'Skill Check - Add Cards',
@@ -1649,9 +1626,7 @@ describe('player-turn-crisis', () => {
     const crisisCardIndex = crisisDeck.cards.findIndex(c => c.name === crisisName)
     util.assert(crisisCardIndex !== -1, `Unable to find crisis card: ${crisisName}`)
 
-    game.rk.sessionStart(() => {
-      game.mMoveByIndices(crisisDeck, crisisCardIndex, crisisDeck, 0)
-    })
+    game.mMoveByIndices(crisisDeck, crisisCardIndex, crisisDeck, 0)
 
     if (func) {
       func(game)
@@ -1875,14 +1850,14 @@ describe('crisis card effects', () => {
       test("Cylons can't be chosen", () => {
         const game = _crisisFixture('A Traitor Accused', (game) => {
           jest.spyOn(game, 'checkPlayerIsRevealedCylon').mockImplementation(player => {
-            return player === 'dennis' || player.name === 'dennis'
+            return player === 'micah' || player.name === 'micah'
           })
         })
         game.aSelectSkillCheckResult('fail')
 
         const action = game.getWaiting('dennis').actions[0]
         expect(action.name).toBe('Choose Player')
-        expect(action.options.sort()).toStrictEqual(['micah', 'tom'])
+        expect(action.options.sort()).toStrictEqual(['dennis', 'tom'])
       })
     })
   })
@@ -1967,7 +1942,8 @@ describe('crisis card effects', () => {
       game.aSelectSkillCheckResult('pass')
       game.run()
 
-      expect(game.getCounterByName('jumpTrack')).toBe(1)
+      // It goes up once for passing, and again during the prepare for jump phase
+      expect(game.getCounterByName('jumpTrack')).toBe(2)
     })
 
     test('fail', () => {
@@ -2284,10 +2260,8 @@ describe('misc functions', () => {
 
       test('each basestar attacks once', () => {
         const game = _spaceFixture()
-        game.rk.sessionStart(() => {
-          game.mDeploy('space.space3', 'basestar')
-          game.mDeploy('space.space3', 'basestar')
-        })
+        game.mDeploy('space.space3', 'basestar')
+        game.mDeploy('space.space3', 'basestar')
         jest.spyOn(game, 'aAttackGalactica')
         game.aActivateCylonShips('Basestar Attacks')
 
@@ -2297,11 +2271,9 @@ describe('misc functions', () => {
       test('disabled weapons do not attack', () => {
         const game = _spaceFixture()
         const damage = game.getCardByName('disabled weapons')
-        game.rk.sessionStart(() => {
-          game.mDeploy('space.space3', 'basestar')
-          game.mDeploy('space.space3', 'basestar')
-          game.mMoveCard('decks.damageBasestar', 'ships.basestarB', damage)
-        })
+        game.mDeploy('space.space3', 'basestar')
+        game.mDeploy('space.space3', 'basestar')
+        game.mMoveCard('decks.damageBasestar', 'ships.basestarB', damage)
         jest.spyOn(game, 'aAttackGalactica')
         game.aActivateCylonShips('Basestar Attacks')
 
@@ -2310,9 +2282,7 @@ describe('misc functions', () => {
 
       test('damage is assigned to Galactica', () => {
         const game = _spaceFixture()
-        game.rk.sessionStart(() => {
-          game.mDeploy('space.space3', 'basestar')
-        })
+        game.mDeploy('space.space3', 'basestar')
         jest.spyOn(game, 'getTokenDamageGalactica').mockImplementation(() => {
           const damageZone = game.getZoneByName('decks.damageGalactica')
           return damageZone.cards.find(c => c.name === 'Damage Armory')
@@ -2324,9 +2294,7 @@ describe('misc functions', () => {
 
       test('special galactica damage tokens are applied and exiled', () => {
         const game = _spaceFixture()
-        game.rk.sessionStart(() => {
-          game.mDeploy('space.space3', 'basestar')
-        })
+        game.mDeploy('space.space3', 'basestar')
         jest.spyOn(game, 'getTokenDamageGalactica').mockImplementation(() => {
           const damageZone = game.getZoneByName('decks.damageGalactica')
           return damageZone.cards.find(c => c.name === '-1 fuel')
@@ -2342,10 +2310,8 @@ describe('misc functions', () => {
 
       test('centurions advance', () => {
         const game = _spaceFixture()
-        game.rk.sessionStart(() => {
-          game.mAddCenturion()
-          game.mAddCenturion()
-        })
+        game.mAddCenturion()
+        game.mAddCenturion()
 
         // They are moved forward
         for (let i = 1; i < 4; i++) {
@@ -2364,10 +2330,8 @@ describe('misc functions', () => {
 
       test('heavy raiders move toward closest landing bay 0', () => {
         const game = _spaceFixture()
-        game.rk.sessionStart(() => {
-          game.mDeploy('space.space0', 'heavy raider')
-          game.aActivateCylonShips('Hvy Raiders')
-        })
+        game.mDeploy('space.space0', 'heavy raider')
+        game.aActivateCylonShips('Hvy Raiders')
 
         expect(game.getZoneSpaceByIndex(0).cards.length).toBe(0)
         expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
@@ -2379,10 +2343,8 @@ describe('misc functions', () => {
 
       test('heavy raiders move toward closest landing bay 1', () => {
         const game = _spaceFixture()
-        game.rk.sessionStart(() => {
-          game.mDeploy('space.space1', 'heavy raider')
-          game.aActivateCylonShips('Hvy Raiders')
-        })
+        game.mDeploy('space.space1', 'heavy raider')
+        game.aActivateCylonShips('Hvy Raiders')
 
         expect(game.getZoneSpaceByIndex(0).cards.length).toBe(1)
         expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
@@ -2394,10 +2356,8 @@ describe('misc functions', () => {
 
       test('heavy raiders move toward closest landing bay 2', () => {
         const game = _spaceFixture()
-        game.rk.sessionStart(() => {
-          game.mDeploy('space.space2', 'heavy raider')
-          game.aActivateCylonShips('Hvy Raiders')
-        })
+        game.mDeploy('space.space2', 'heavy raider')
+        game.aActivateCylonShips('Hvy Raiders')
 
         expect(game.getZoneSpaceByIndex(0).cards.length).toBe(0)
         expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
@@ -2409,10 +2369,8 @@ describe('misc functions', () => {
 
       test('heavy raiders move toward closest landing bay 3', () => {
         const game = _spaceFixture()
-        game.rk.sessionStart(() => {
-          game.mDeploy('space.space3', 'heavy raider')
-          game.aActivateCylonShips('Hvy Raiders')
-        })
+        game.mDeploy('space.space3', 'heavy raider')
+        game.aActivateCylonShips('Hvy Raiders')
 
         expect(game.getZoneSpaceByIndex(0).cards.length).toBe(0)
         expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
@@ -2424,10 +2382,8 @@ describe('misc functions', () => {
 
       test('heavy raiders drop centurions 4', () => {
         const game = _spaceFixture()
-        game.rk.sessionStart(() => {
-          game.mDeploy('space.space4', 'heavy raider')
-          game.aActivateCylonShips('Hvy Raiders')
-        })
+        game.mDeploy('space.space4', 'heavy raider')
+        game.aActivateCylonShips('Hvy Raiders')
 
         expect(game.getZoneSpaceByIndex(0).cards.length).toBe(0)
         expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
@@ -2440,10 +2396,8 @@ describe('misc functions', () => {
 
       test('heavy raiders drop centurions 5', () => {
         const game = _spaceFixture()
-        game.rk.sessionStart(() => {
-          game.mDeploy('space.space5', 'heavy raider')
-          game.aActivateCylonShips('Hvy Raiders')
-        })
+        game.mDeploy('space.space5', 'heavy raider')
+        game.aActivateCylonShips('Hvy Raiders')
 
         expect(game.getZoneSpaceByIndex(0).cards.length).toBe(0)
         expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
@@ -2456,11 +2410,9 @@ describe('misc functions', () => {
 
       test('heavy raiders are launched if no heavy raiders', () => {
         const game = _spaceFixture()
-        game.rk.sessionStart(() => {
-          game.mDeploy('space.space3', 'basestar')
-          game.mDeploy('space.space3', 'basestar')
-          game.aActivateCylonShips('Hvy Raiders')
-        })
+        game.mDeploy('space.space3', 'basestar')
+        game.mDeploy('space.space3', 'basestar')
+        game.aActivateCylonShips('Hvy Raiders')
 
         const zone = game.getZoneSpaceByIndex(3)
         expect(zone.cards.length).toBe(4)
@@ -2470,11 +2422,9 @@ describe('misc functions', () => {
       test('extra heavy raiders are launched during Cylon Swarm', () => {
         const game = _spaceFixture()
         const swarm = game.getCardByName('Cylon Swarm')
-        game.rk.sessionStart(() => {
-          game.mMoveCard('decks.crisis', 'keep', swarm)
-          game.mDeploy('space.space0', 'basestar')
-          game.aActivateCylonShips('Hvy Raiders')
-        })
+        game.mMoveCard('decks.crisis', 'keep', swarm)
+        game.mDeploy('space.space0', 'basestar')
+        game.aActivateCylonShips('Hvy Raiders')
 
         const zone = game.getZoneSpaceByIndex(0)
         expect(zone.cards.length).toBe(3)
@@ -2484,12 +2434,10 @@ describe('misc functions', () => {
       test('no heavy raiders are launched if the supply is empty', () => {
         const game = _spaceFixture()
         const swarm = game.getCardByName('Cylon Swarm')
-        game.rk.sessionStart(() => {
-          game.mDeploy('space.space0', 'basestar')
-          game.mDeploy('space.space3', 'heavy raider')
-          game.mDeploy('space.space3', 'heavy raider')
-          game.aActivateCylonShips('Hvy Raiders')
-        })
+        game.mDeploy('space.space0', 'basestar')
+        game.mDeploy('space.space3', 'heavy raider')
+        game.mDeploy('space.space3', 'heavy raider')
+        game.aActivateCylonShips('Hvy Raiders')
 
         const zone = game.getZoneSpaceByIndex(0)
         expect(zone.cards.filter(c => c.name === 'heavy raider').length).toBe(0)
@@ -2498,12 +2446,10 @@ describe('misc functions', () => {
       test("basestar with structural damage doesn't launch", () => {
         const game = _spaceFixture()
         const damage = game.getCardByName('disabled hangar')
-        game.rk.sessionStart(() => {
-          game.mDeploy('space.space2', 'basestar')
-          game.mDeploy('space.space3', 'basestar')
-          game.mMoveCard('decks.damageBasestar', 'ships.basestarB', damage)
-          game.aActivateCylonShips('Hvy Raiders')
-        })
+        game.mDeploy('space.space2', 'basestar')
+        game.mDeploy('space.space3', 'basestar')
+        game.mMoveCard('decks.damageBasestar', 'ships.basestarB', damage)
+        game.aActivateCylonShips('Hvy Raiders')
 
         const zone2 = game.getZoneSpaceByIndex(2)
         expect(zone2.cards.filter(c => c.name === 'heavy raider').length).toBe(1)
@@ -2519,12 +2465,10 @@ describe('misc functions', () => {
       test('primary target: viper', () => {
         const game = _spaceFixture()
         jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 8)
-        game.rk.sessionStart(() => {
-          game.mDeploy('space.space2', 'raider')
-          game.mDeploy('space.space2', 'viper')
-          game.mDeploy('space.space2', 'civilian')
-          game.aActivateCylonShips('Raiders')
-        })
+        game.mDeploy('space.space2', 'raider')
+        game.mDeploy('space.space2', 'viper')
+        game.mDeploy('space.space2', 'civilian')
+        game.aActivateCylonShips('Raiders')
 
         const spaceZone = game.getZoneSpaceByIndex(2)
         expect(spaceZone.cards.find(c => c.kind === 'ships.vipers')).not.toBeDefined()
@@ -2536,13 +2480,11 @@ describe('misc functions', () => {
       test('primary target: viper with pilot', () => {
         const game = _spaceFixture()
         jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 8)
-        game.rk.sessionStart(() => {
-          game.mMoveCard('players.micah', 'space.space2', 'micah')
-          game.mDeploy('space.space2', 'raider')
-          game.mDeploy('space.space2', 'viper')
-          game.mDeploy('space.space2', 'civilian')
-          game.aActivateCylonShips('Raiders')
-        })
+        game.mMoveCard('players.micah', 'space.space2', 'micah')
+        game.mDeploy('space.space2', 'raider')
+        game.mDeploy('space.space2', 'viper')
+        game.mDeploy('space.space2', 'civilian')
+        game.aActivateCylonShips('Raiders')
 
         const spaceZone = game.getZoneSpaceByIndex(2)
         expect(spaceZone.cards.find(c => c.kind === 'ships.vipers')).not.toBeDefined()
@@ -2555,11 +2497,9 @@ describe('misc functions', () => {
       test('secondary target: civilian', () => {
         const game = _spaceFixture()
         jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 8)
-        game.rk.sessionStart(() => {
-          game.mDeploy('space.space2', 'raider')
-          game.mDeploy('space.space2', 'civilian')
-          game.aActivateCylonShips('Raiders')
-        })
+        game.mDeploy('space.space2', 'raider')
+        game.mDeploy('space.space2', 'civilian')
+        game.aActivateCylonShips('Raiders')
 
         const spaceZone = game.getZoneSpaceByIndex(2)
         expect(spaceZone.cards.find(c => c.kind === 'civilian')).not.toBeDefined()
@@ -2570,10 +2510,8 @@ describe('misc functions', () => {
       test('attack galactica', () => {
         const game = _spaceFixture()
         jest.spyOn(game, 'aAttackGalactica')
-        game.rk.sessionStart(() => {
-          game.mDeploy('space.space2', 'raider')
-          game.aActivateCylonShips('Raiders')
-        })
+        game.mDeploy('space.space2', 'raider')
+        game.aActivateCylonShips('Raiders')
 
         expect(game.aAttackGalactica.mock.calls.length).toBe(1)
       })
@@ -2581,23 +2519,19 @@ describe('misc functions', () => {
       describe('move toward civilan', () => {
         test('clockwise 1', () => {
           const game = _spaceFixture()
-          game.rk.sessionStart(() => {
-            game.mDeploy('space.space1', 'raider')
-            game.mDeploy('space.space2', 'civilian')
-            game.aActivateCylonShips('Raiders')
-          })
+          game.mDeploy('space.space1', 'raider')
+          game.mDeploy('space.space2', 'civilian')
+          game.aActivateCylonShips('Raiders')
           expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
           expect(game.getZoneSpaceByIndex(2).cards.length).toBe(2)
         })
 
         test('clockwise 2', () => {
           const game = _spaceFixture()
-          game.rk.sessionStart(() => {
-            game.mDeploy('space.space1', 'raider')
-            game.mDeploy('space.space3', 'civilian')
-            game.mDeploy('space.space4', 'civilian')
-            game.aActivateCylonShips('Raiders')
-          })
+          game.mDeploy('space.space1', 'raider')
+          game.mDeploy('space.space3', 'civilian')
+          game.mDeploy('space.space4', 'civilian')
+          game.aActivateCylonShips('Raiders')
           expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
           expect(game.getZoneSpaceByIndex(2).cards.length).toBe(1)
           expect(game.getZoneSpaceByIndex(3).cards.length).toBe(1)
@@ -2605,23 +2539,19 @@ describe('misc functions', () => {
 
         test('counter-clockwise 1', () => {
           const game = _spaceFixture()
-          game.rk.sessionStart(() => {
-            game.mDeploy('space.space1', 'raider')
-            game.mDeploy('space.space0', 'civilian')
-            game.aActivateCylonShips('Raiders')
-          })
+          game.mDeploy('space.space1', 'raider')
+          game.mDeploy('space.space0', 'civilian')
+          game.aActivateCylonShips('Raiders')
           expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
           expect(game.getZoneSpaceByIndex(0).cards.length).toBe(2)
         })
 
         test('tied adjacent', () => {
           const game = _spaceFixture()
-          game.rk.sessionStart(() => {
-            game.mDeploy('space.space1', 'raider')
-            game.mDeploy('space.space0', 'civilian')
-            game.mDeploy('space.space2', 'civilian')
-            game.aActivateCylonShips('Raiders')
-          })
+          game.mDeploy('space.space1', 'raider')
+          game.mDeploy('space.space0', 'civilian')
+          game.mDeploy('space.space2', 'civilian')
+          game.aActivateCylonShips('Raiders')
           expect(game.getZoneSpaceByIndex(0).cards.length).toBe(1)
           expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
           expect(game.getZoneSpaceByIndex(2).cards.length).toBe(2)
@@ -2629,11 +2559,9 @@ describe('misc functions', () => {
 
         test('tied across', () => {
           const game = _spaceFixture()
-          game.rk.sessionStart(() => {
-            game.mDeploy('space.space1', 'raider')
-            game.mDeploy('space.space4', 'civilian')
-            game.aActivateCylonShips('Raiders')
-          })
+          game.mDeploy('space.space1', 'raider')
+          game.mDeploy('space.space4', 'civilian')
+          game.aActivateCylonShips('Raiders')
           expect(game.getZoneSpaceByIndex(0).cards.length).toBe(0)
           expect(game.getZoneSpaceByIndex(1).cards.length).toBe(0)
           expect(game.getZoneSpaceByIndex(2).cards.length).toBe(1)
@@ -2644,7 +2572,7 @@ describe('misc functions', () => {
 
     }) // raiders
 
-  })
+})
 
   describe.skip('aDeployShips', () => {
 

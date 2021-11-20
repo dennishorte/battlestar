@@ -14,13 +14,11 @@ function handleResponse(context) {
   const selectionName = bsgutil.optionName(selection)
 
   if (selectionName === 'Skip Movement') {
-    game.rk.sessionStart(() => {
-      game.mLog({
-        template: "{player} decides not to move",
-        args: {
-          player: player.name
-        }
-      })
+    game.mLog({
+      template: "{player} decides not to move",
+      args: {
+        player: player.name
+      }
     })
     return context.done()
   }
@@ -32,10 +30,8 @@ function handleResponse(context) {
     const token = zone.cards.find(c => c.name === player.name && c.kind === 'player-token')
     const newZone = game.getZoneByName(selection.option[0])
 
-    game.rk.sessionStart(session => {
-      session.move(token, newZone.cards, newZone.cards.length)
-      session.move(viper, newZone.cards, newZone.cards.length)
-    })
+    game.rk.move(token, newZone.cards, newZone.cards.length)
+    game.rk.move(viper, newZone.cards, newZone.cards.length)
 
     return context.done()
   }
@@ -45,23 +41,21 @@ function handleResponse(context) {
   const targetZone = game.getZoneByLocationName(targetName)
   const sameShip = playerZone.details && playerZone.details.area === targetZone.details.area
 
-  game.rk.sessionStart(() => {
-    game.mLog({
-      template: "{player} moves to {location}",
-      args: {
-        player: player.name,
-        location: targetZone.details.name,
-      }
-    })
-    game.mMovePlayer(player, targetZone)
-
-    if (playerZone.name.startsWith('space')) {
-      game.mLog({
-        template: 'Viper returned to supply',
-      })
-      game.mReturnViperFromSpaceZone(5)
+  game.mLog({
+    template: "{player} moves to {location}",
+    args: {
+      player: player.name,
+      location: targetZone.details.name,
     }
   })
+  game.mMovePlayer(player, targetZone)
+
+  if (playerZone.name.startsWith('space')) {
+    game.mLog({
+      template: 'Viper returned to supply',
+    })
+    game.mReturnViperFromSpaceZone(5)
+  }
 
   if (!sameShip) {
     markDone(context)
@@ -81,27 +75,23 @@ function generateOptions(context) {
   const character = game.getCardCharacterByPlayer(player)
 
   if (game.getRound() === 1 && character.name === 'Karl "Helo" Agathon') {
-    game.rk.sessionStart(() => {
-      game.mLog({
-        template: "{player} can't move on the first round because Helo is stranded",
-        args: {
-          player: player.name,
-        }
-      })
+    game.mLog({
+      template: "{player} can't move on the first round because Helo is stranded",
+      args: {
+        player: player.name,
+      }
     })
     return context.done()
   }
 
   // If the player is in the brig, they don't get to move
   if (game.checkPlayerIsAtLocation(player, 'Brig')) {
-    game.rk.sessionStart(() => {
-      game.mLog({
-        template: "{player} can't move because they are in the brig",
-        actor: 'admin',
-        args: {
-          player: player.name
-        }
-      })
+    game.mLog({
+      template: "{player} can't move because they are in the brig",
+      actor: 'admin',
+      args: {
+        player: player.name
+      }
     })
     return context.done()
   }

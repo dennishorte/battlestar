@@ -17,11 +17,9 @@ function generateOptions(context) {
 
   // Draw the two cards to choose from
   if (!context.data.cardsDrawn) {
-    game.rk.sessionStart(session => {
-      game.mMoveCard('decks.crisis', game.getZoneByPlayer(player))
-      game.mMoveCard('decks.crisis', game.getZoneByPlayer(player))
-      session.put(context.data, 'cardsDrawn', true)
-    })
+    game.mMoveCard('decks.crisis', game.getZoneByPlayer(player))
+    game.mMoveCard('decks.crisis', game.getZoneByPlayer(player))
+    game.rk.put(context.data, 'cardsDrawn', true)
   }
 
   const cardChoices = game.getCardsKindByPlayer('crisis', player)
@@ -49,11 +47,9 @@ function handleResponse(context) {
   const chosenCard = cardChoices.find(c => c.id === chosenCardId)
   const otherCard = cardChoices.find(c => c.id !== chosenCardId)
 
-  game.rk.sessionStart(session => {
-    game.mDiscard(otherCard)
-    game.mMoveCard(playerZone, 'keep', chosenCard)
-    game.mSetCrisisActive(chosenCard)
-  })
+  game.mDiscard(otherCard)
+  game.mMoveCard(playerZone, 'keep', chosenCard)
+  game.mSetCrisisActive(chosenCard)
 
   return context.done()
 }

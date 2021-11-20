@@ -1,7 +1,3 @@
-/*
-   All actions are automatically wrapped in a session.
- */
-
 const bsgutil = require('./util.js')
 const util = require('../lib/util.js')
 
@@ -196,7 +192,7 @@ Actions.aAssignAdmiral = function(player) {
       player: player.name
     }
   })
-  this.rk.session.move(card, playerHand)
+  this.rk.move(card, playerHand)
 }
 
 Actions.aAssignPresident = function(player) {
@@ -209,7 +205,7 @@ Actions.aAssignPresident = function(player) {
       player: player.name
     }
   })
-  this.rk.session.move(card, playerHand)
+  this.rk.move(card, playerHand)
 }
 
 Actions.aAttackGalactica = function(ship) {
@@ -375,7 +371,7 @@ Actions.aDestroyColonialOne = function() {
     actor: 'admin'
   })
 
-  this.rk.session.put(this.state.flags, 'colonialOneDestroyed', true)
+  this.rk.put(this.state.flags, 'colonialOneDestroyed', true)
 
   for (const location of this.getLocationsByArea('Colonial One')) {
     for (const card of location.cards) {
@@ -409,7 +405,7 @@ Actions.aDiscardSkillCards = function(player, cards) {
 
   for (const card of cards) {
     const discard = this.getZoneDiscardByCard(card).cards
-    this.rk.session.move(card, discard)
+    this.rk.move(card, discard)
   }
 }
 
@@ -515,7 +511,7 @@ Actions.aSelectCharacter = function(player, characterName) {
   const playerHand = this.getZoneByPlayer(player.name).cards
   const characterZone = this.getZoneByName('decks.character')
   const characterCard = characterZone.cards.find(c => c.name === characterName)
-  this.rk.session.move(characterCard, playerHand, 0)
+  this.rk.move(characterCard, playerHand, 0)
 
   // Helo doesn't start on the game board. Leave his player token with the player for now.
   if (characterName === 'Karl "Helo" Agathon') {}
@@ -527,7 +523,7 @@ Actions.aSelectCharacter = function(player, characterName) {
   else {
     const pawn = playerHand.find(c => c.kind === 'player-token')
     const startingLocation = this.getZoneByLocationName(characterCard.setup)
-    this.rk.session.move(pawn, startingLocation.cards)
+    this.rk.move(pawn, startingLocation.cards)
   }
 }
 
@@ -543,10 +539,7 @@ Actions.aSelectSkillCheckResult = function(result) {
     `No skill check in progress; can't set result`
   )
 
-  this.rk.session.put(skillCheck, 'shortCut', result)
-
-  // End the existing session and rerun the current transition.
-  this.rk.session.commit()
+  this.rk.put(skillCheck, 'shortCut', result)
   this.run()
 }
 
@@ -567,7 +560,7 @@ Actions.aUseSkillCardByName = function(player, name) {
   const card = cards[0]
   const discard = this.getZoneDiscardByCard(card).cards
 
-  this.rk.session.move(card, discard)
+  this.rk.move(card, discard)
   this.mLog({
     template: '{player} uses {card} {value}',
     args: {
@@ -582,28 +575,4 @@ Actions.aUseSkillCardByName = function(player, name) {
 ////////////////////////////////////////////////////////////////////////////////
 // Exports
 
-function wrapper(func) {
-  return function() {
-    const inSession = !!this.rk.session
-
-    if (!inSession) {
-      this.rk.sessionStart()
-    }
-
-    func.call(this, ...arguments)
-
-    // Allow actions to close sessions and (possibly) open new ones if needed
-    if (!inSession && this.rk.session) {
-      this.rk.session.commit()
-    }
-  }
-}
-
-
-const wrappedActions = {}
-
-for (const [name, func] of Object.entries(Actions)) {
-  wrappedActions[name] = wrapper(func)
-}
-
-module.exports = wrappedActions
+module.exports = Actions

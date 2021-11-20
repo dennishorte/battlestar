@@ -14,13 +14,11 @@ function generateOptions(context) {
   const character = game.getCardCharacterByPlayer(player)
 
   if (game.getRound() === 1 && character.name === 'Karl "Helo" Agathon') {
-    game.rk.sessionStart(() => {
-      game.mLog({
-        template: "{player} can't take an action on the first round because Helo is stranded",
-        args: {
-          player: player.name,
-        }
-      })
+    game.mLog({
+      template: "{player} can't take an action on the first round because Helo is stranded",
+      args: {
+        player: player.name,
+      }
     })
     return context.done()
   }
@@ -64,13 +62,11 @@ function handleResponse(context) {
   const selectionName = bsgutil.optionName(selection)
 
   if (selectionName === 'Skip Action') {
-    game.rk.sessionStart(() => {
-      game.mLog({
-        template: '{player} decides not to take an action',
-        args: {
-          player: player.name
-        }
-      })
+    game.mLog({
+      template: '{player} decides not to take an action',
+      args: {
+        player: player.name
+      }
     })
     context.done()
   }
@@ -78,14 +74,12 @@ function handleResponse(context) {
   else if (selectionName === 'Location Action') {
     const locationName = selection.option[0]
 
-    game.rk.sessionStart(() => {
-      game.mLog({
-        template: '{player} uses {location}',
-        args: {
-          player: player.name,
-          location: locationName,
-        }
-      })
+    game.mLog({
+      template: '{player} uses {location}',
+      args: {
+        player: player.name,
+        location: locationName,
+      }
     })
 
     if (locationName === 'Research Lab') {

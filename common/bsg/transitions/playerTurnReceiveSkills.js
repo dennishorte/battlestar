@@ -53,13 +53,11 @@ function playerTurnReceiveSkills(context) {
   // Characters in sickbay can only draw one card.
   // Give them a list of options
   if (playerInSickbay) {
-    game.rk.sessionStart(() => {
-      game.mLog({
-        template: '{player} is in sickbay and will only draw one card',
-        args: {
-          player: player.name,
-        }
-      })
+    game.mLog({
+      template: '{player} is in sickbay and will only draw one card',
+      args: {
+        player: player.name,
+      }
     })
 
     const options = skills.map(c => c.name)

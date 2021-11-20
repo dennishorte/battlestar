@@ -47,28 +47,26 @@ function handleResponse(context) {
     const chosenPlayer = game.getPlayerByName(chosenPlayerName)
     util.assert(!!chosenPlayer, `Invalid player chosen: ${chosenPlayerName}`)
 
-    game.rk.sessionStart(session => {
-      session.put(context.data, 'chosenPlayerName', chosenPlayerName)
-      session.put(context.data, 'step', 'check')
-      game.mClearWaiting()
+    game.rk.put(context.data, 'chosenPlayerName', chosenPlayerName)
+    game.rk.put(context.data, 'step', 'check')
+    game.mClearWaiting()
 
-      game.mSetSkillCheck({
-        name: `Send ${chosenPlayerName} to the brig`,
-        skills: ['leadership', 'tactics'],
-        passValue: 7,
-        partialValue: 0,
-        passEffect: `${chosenPlayerName} is sent to the brig`,
-        partialEffect: '',
-        failEffect: '',
-        script: {
-          pass: [{
-            kind: 'move',
-            actor: chosenPlayerName,
-            location: 'Brig',
-          }],
-          fail: [],
-        }
-      })
+    game.mSetSkillCheck({
+      name: `Send ${chosenPlayerName} to the brig`,
+      skills: ['leadership', 'tactics'],
+      passValue: 7,
+      partialValue: 0,
+      passEffect: `${chosenPlayerName} is sent to the brig`,
+      partialEffect: '',
+      failEffect: '',
+      script: {
+        pass: [{
+          kind: 'move',
+          actor: chosenPlayerName,
+          location: 'Brig',
+        }],
+        fail: [],
+      }
     })
     return context.push('skill-check')
   }

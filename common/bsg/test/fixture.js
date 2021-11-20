@@ -82,29 +82,25 @@ GameFixtureFactory.prototype._setPlayerHand = function(player, hand) {
 GameFixtureFactory.prototype._setSkillCardsInZone = function(zone, cardInfo) {
   const game = this.game
 
-  game.rk.sessionStart(() => {
+  // Return the existing cards in the specified zone
+  for (let i = zone.cards.length - 1; i >= 0; i--) {
+    const card = zone.cards[i]
+    if (card.kind !== 'skill') continue
+    const skillZone = game.getZoneBySkill(card.skill)
+    game.mMoveCard(zone, skillZone, card)
+  }
 
-    // Return the existing cards in the specified zone
-    for (let i = zone.cards.length - 1; i >= 0; i--) {
-      const card = zone.cards[i]
-      if (card.kind !== 'skill') continue
-      const skillZone = game.getZoneBySkill(card.skill)
-      game.mMoveCard(zone, skillZone, card)
+  // Move the desired cards into the zone
+  for (const desc of cardInfo) {
+    if (desc.kind === 'skill') {
+      const cardZone = game.getZoneBySkill(desc.skill)
+      const card = cardZone.cards.find(c => c.name === desc.name && c.value === desc.value)
+      game.mMoveCard(cardZone, zone, card)
     }
-
-    // Move the desired cards into the zone
-    for (const desc of cardInfo) {
-      if (desc.kind === 'skill') {
-        const cardZone = game.getZoneBySkill(desc.skill)
-        const card = cardZone.cards.find(c => c.name === desc.name && c.value === desc.value)
-        game.mMoveCard(cardZone, zone, card)
-      }
-      else {
-        throw new Error(`Unhandled card kind: ${desc.kind}`)
-      }
+    else {
+      throw new Error(`Unhandled card kind: ${desc.kind}`)
     }
-
-  })
+  }
 }
 
 GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPlayerName) {
@@ -115,9 +111,7 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
 
   // Crisis Deck
   const crisisCardIndex = this.game.state.zones.decks.crisis.cards.findIndex(c => c.name === this.options.crisis)
-  this.game.rk.sessionStart(() => {
-    this.game.mMoveByIndices('decks.crisis', crisisCardIndex, 'decks.crisis', 0)
-  })
+  this.game.mMoveByIndices('decks.crisis', crisisCardIndex, 'decks.crisis', 0)
 
   // Destiny Deck
   if (Array.isArray(this.options.destiny)) {
@@ -240,41 +234,39 @@ GameFixtureFactory.prototype._checkForTarget = function(targetTransitionName, ta
     return false
   }
 
-  let targetSession = null
+  let targetDiff = null
 
   // Check if the desired transition/player combo exists in the history
-  for (const session of this.game.state.history) {
-    for (const diff of session) {
-      if (diff.path === '.sm.stack'
-          && diff.new.length
-          && diff.new[0].name === targetTransitionName) {
+  for (const diff of this.game.state.history) {
+    if (diff.path === '.sm.stack'
+        && diff.new.length
+        && diff.new[0].name === targetTransitionName) {
 
-        if (targetPlayerName) {
-          if (diff.new[0].data.playerName && diff.new[0].data.playerName === targetPlayerName) {
-            targetSession = session
-            break
-          }
-        }
-        else {
-          targetSession = session
+      if (targetPlayerName) {
+        if (diff.new[0].data.playerName && diff.new[0].data.playerName === targetPlayerName) {
+          targetDiff = diff
           break
         }
       }
+      else {
+        targetDiff = diff
+        break
+      }
     }
 
-    if (targetSession) {
+    if (targetDiff) {
       break
     }
   }
 
-  if (!targetSession) {
+  if (!targetDiff) {
     return false
   }
 
-  // console.log(`Target session found for ${targetTransitionName}, ${targetPlayerName}`)
-  // console.log(targetSession)
+  // console.log(`Target diff found for ${targetTransitionName}, ${targetPlayerName}`)
+  // console.log(targetDiff)
 
-  while (this.game.state.history[this.game.state.history.length - 1] !== targetSession) {
+  while (this.game.state.history[this.game.state.history.length - 1] !== targetDiff) {
     this.game.rk.undo()
   }
 

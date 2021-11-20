@@ -67,22 +67,6 @@ Game.prototype.load = function(transitions, state, actor) {
 // Available to overload
 Game.prototype.save = async function() {}
 
-Game.prototype.dumpHistory = function() {
-  const output = []
-
-  for (const session of this.state.history) {
-    const transitionPush = session.find(diff => {
-      return diff.path === '.sm.stack' && diff.old.length === 0
-    })
-
-    if (transitionPush) {
-      output.push(session[0].new)
-    }
-  }
-
-  console.log(output)
-}
-
 Game.prototype.dumpLog = function() {
   const output = []
   for (const entry of this.state.log) {
@@ -134,16 +118,12 @@ Game.prototype.submit = function(response) {
   }
 
   // Store the response for the statemachine
-  this.rk.sessionStart(session => {
-    session.splice(this.state.sm.response, 0, this.state.sm.response.length, response)
-  })
+  this.rk.splice(this.state.sm.response, 0, this.state.sm.response.length, response)
 
   this.sm.run()
 
   // Clean up the response
-  this.rk.sessionStart(session => {
-    session.splice(this.state.sm.response, 0, this.state.sm.response.length)
-  })
+  this.rk.splice(this.state.sm.response, 0, this.state.sm.response.length)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -657,18 +637,18 @@ Game.prototype.mAdjustCardVisibilityToNewZone = function(zone, card) {
     zoneVis === 'open'
     || (zone.name === 'crisisPool' && this.getSkillCheck().investigativeCommittee)
   ) {
-    this.rk.session.replace(card.visibility, this.getPlayerAll().map(p => p.name))
+    this.rk.replace(card.visibility, this.getPlayerAll().map(p => p.name))
   }
   else if (zoneVis === 'president') {
-    this.rk.session.replace(card.visibility, [this.getPlayerWithCard('President').name])
+    this.rk.replace(card.visibility, [this.getPlayerWithCard('President').name])
   }
   else if (zoneVis === 'owner') {
-    this.rk.session.replace(card.visibility, [zone.owner])
+    this.rk.replace(card.visibility, [zone.owner])
   }
   else if (zoneVis === 'deck'
            || zoneVis === 'hidden'
            || zoneVis === 'bag') {
-    this.rk.session.replace(card.visibility, [])
+    this.rk.replace(card.visibility, [])
   }
   else {
     throw new Error(`Unknown zone visibility (${zoneVis}) for zone ${zone.name}`)
@@ -685,7 +665,7 @@ Game.prototype.mAdjustCounterByName = function(name, amount) {
     }
   })
 
-  this.rk.session.put(this.state.counters, name, this.state.counters[name] + amount)
+  this.rk.put(this.state.counters, name, this.state.counters[name] + amount)
 }
 
 Game.prototype.mClearWaiting = function() {
@@ -864,7 +844,7 @@ Game.prototype.mLog = function(msg) {
 
   // Making a copy here makes sure that the log items are always distinct from
   // wherever their original data came from.
-  this.rk.session.push(this.state.log, util.deepcopy(msg))
+  this.rk.push(this.state.log, util.deepcopy(msg))
 }
 
 Game.prototype.mMaybeReshuffleDeck = function(zone) {
@@ -891,8 +871,8 @@ Game.prototype.mMaybeReshuffleDeck = function(zone) {
       },
     })
 
-    this.rk.session.replace(zone.cards, discardZone.cards)
-    this.rk.session.replace(discardZone.cards, [])
+    this.rk.replace(zone.cards, discardZone.cards)
+    this.rk.replace(discardZone.cards, [])
     this.mShuffleZone(zone)
   }
 }
@@ -943,8 +923,8 @@ Game.prototype.mMoveByIndices = function(sourceName, sourceIndex, targetName, ta
   const source = this._adjustZoneParam(sourceName).cards
   const target = this._adjustZoneParam(targetName).cards
   const card = source[sourceIndex]
-  this.rk.session.splice(source, sourceIndex, 1)
-  this.rk.session.splice(target, targetIndex, 0, card)
+  this.rk.splice(source, sourceIndex, 1)
+  this.rk.splice(target, targetIndex, 0, card)
 }
 
 Game.prototype.mMoveAroundSpace = function(ship, direction) {
@@ -962,20 +942,20 @@ Game.prototype.mMovePlayer = function(player, destination) {
   player = this._adjustPlayerParam(player)
   destination = this._adjustZoneParam(destination)
   const { card } = this.getCardPlayerToken(player)
-  this.rk.session.move(card, destination.cards, destination.cards.length)
+  this.rk.move(card, destination.cards, destination.cards.length)
 }
 
 Game.prototype.mReturnViperFromSpaceZone = function(zoneNumber) {
   const spaceZone = this.getZoneByName('space.space' + zoneNumber)
   const viperZone = this.getZoneByName('ships.vipers')
   const viper = spaceZone.cards.find(c => c.name === 'viper')
-  this.rk.session.move(viper, viperZone.cards)
+  this.rk.move(viper, viperZone.cards)
 }
 
 Game.prototype.mSetCrisisActive = function(card) {
   util.assert(!this.state.activeCrisisId, 'Crisis already active!')
   card = this._adjustCardParam(card)
-  this.rk.session.put(this.state, 'activeCrisisId', card.id)
+  this.rk.put(this.state, 'activeCrisisId', card.id)
 }
 
 Game.prototype.mSetGameResult = function(result) {
@@ -984,7 +964,7 @@ Game.prototype.mSetGameResult = function(result) {
 
 Game.prototype.mSetPlayerIsRevealedCylon = function(player) {
   player = this._adjustPlayerParam(player)
-  this.rk.session.put(player, 'isRevealedCylon', true)
+  this.rk.put(player, 'isRevealedCylon', true)
 }
 
 Game.prototype.mSetSkillCheck = function(check) {
@@ -1018,7 +998,7 @@ Game.prototype.mSetSkillCheck = function(check) {
       useInvestigativeCommitee: false,
     }
   }
-  this.rk.session.put(this.state, 'skillCheck', check)
+  this.rk.put(this.state, 'skillCheck', check)
 }
 
 Game.prototype.mShuffleZone = function(zone) {
@@ -1029,16 +1009,16 @@ Game.prototype.mShuffleZone = function(zone) {
   // This operation somehow causes object references to change.
   // I've walked through it several times and have no idea why.
   // If you're getting weird errors, get your card anew with getCardById
-  this.rk.session.replace(zone.cards, cards)
+  this.rk.replace(zone.cards, cards)
 }
 
 Game.prototype.mStartNextTurn = function() {
   const nextIndex = (this.state.currentTurnPlayerIndex + 1) % this.getPlayerAll().length
-  this.rk.session.put(this.state, 'currentTurnPlayerIndex', nextIndex)
+  this.rk.put(this.state, 'currentTurnPlayerIndex', nextIndex)
 
   // Reset the player turn flags
   const player = this.getPlayerByIndex(nextIndex)
-  this.rk.session.replace(player.turnFlags, {
+  this.rk.replace(player.turnFlags, {
     drewCards: false,
     optionalSkillChoices: [],
   })

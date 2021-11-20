@@ -8,19 +8,15 @@ function characterSelection(context) {
   const game = context.state
 
   if (!context.data.initialized) {
-    game.rk.sessionStart(session => {
-      session.addKey(context.data, 'initialized', true)
-      session.addKey(context.data, 'playerIndex', 0)
-    })
+    game.rk.addKey(context.data, 'initialized', true)
+    game.rk.addKey(context.data, 'playerIndex', 0)
 
     const playerName = game.getPlayerByIndex(context.data.playerIndex).name
     return context.push('character-selection-do', { playerName })
   }
 
   else {
-    game.rk.sessionStart(session => {
-      session.put(context.data, 'playerIndex', context.data.playerIndex + 1)
-    })
+    game.rk.put(context.data, 'playerIndex', context.data.playerIndex + 1)
     if (context.data.playerIndex < game.getPlayerAll().length) {
       const playerName = game.getPlayerByIndex(context.data.playerIndex).name
       return context.push('character-selection-do', { playerName })
@@ -70,50 +66,48 @@ function distributeLoyaltyCards(context) {
     humanCount += 1
   }
 
-  game.rk.sessionStart(session => {
-    for (let i = 0; i < humanCount; i++) {
-      game.mMoveCard('decks.human', 'decks.loyalty')
-    }
-    for (let i = 0; i < cylonCount; i++) {
-      game.mMoveCard('decks.cylon', 'decks.loyalty')
-    }
+  for (let i = 0; i < humanCount; i++) {
+    game.mMoveCard('decks.human', 'decks.loyalty')
+  }
+  for (let i = 0; i < cylonCount; i++) {
+    game.mMoveCard('decks.cylon', 'decks.loyalty')
+  }
 
-    game.mLog({
-      template: `Loyalty deck created with ${humanCount} humans and ${cylonCount} cylons`,
-      actor: 'admin',
-    })
-
-    game.mLog({
-      template: 'Each player receives one loyalty card',
-      actor: 'admin',
-    })
-
-    for (const player of game.getPlayerAll()) {
-      const playerZone = game.getZoneByPlayer(player)
-      game.mMoveCard('decks.loyalty', playerZone)
-    }
-
-    if (gaiusPlayer) {
-      const playerZone = game.getZoneByPlayer(gaiusPlayer)
-      game.mMoveCard('decks.loyalty', playerZone.name)
-
-      game.mLog({
-        template: '{player} receives a second loyalty as Gaius Baltar',
-        actor: 'admin',
-        args: {
-          player: gaiusPlayer.name,
-        }
-      })
-    }
-
-    if (sympathizer) {
-      game.mMoveCard('decks.sympathizer', 'decks.loyalty')
-      game.mLog({
-        template: 'Sympathizer card added to the loyalty deck',
-        actor: 'admin',
-      })
-    }
+  game.mLog({
+    template: `Loyalty deck created with ${humanCount} humans and ${cylonCount} cylons`,
+    actor: 'admin',
   })
+
+  game.mLog({
+    template: 'Each player receives one loyalty card',
+    actor: 'admin',
+  })
+
+  for (const player of game.getPlayerAll()) {
+    const playerZone = game.getZoneByPlayer(player)
+    game.mMoveCard('decks.loyalty', playerZone)
+  }
+
+  if (gaiusPlayer) {
+    const playerZone = game.getZoneByPlayer(gaiusPlayer)
+    game.mMoveCard('decks.loyalty', playerZone.name)
+
+    game.mLog({
+      template: '{player} receives a second loyalty as Gaius Baltar',
+      actor: 'admin',
+      args: {
+        player: gaiusPlayer.name,
+      }
+    })
+  }
+
+  if (sympathizer) {
+    game.mMoveCard('decks.sympathizer', 'decks.loyalty')
+    game.mLog({
+      template: 'Sympathizer card added to the loyalty deck',
+      actor: 'admin',
+    })
+  }
 
   context.done()
 }
@@ -143,22 +137,20 @@ function distributeTitleCards(context) {
 
 function initialize(context) {
   const game = context.state
-  game.rk.sessionStart(session => {
-    game.mLog({
-      template: "Placing initial ships",
-      actor: 'admin',
-    })
-
-    for (let i = 0; i < 3; i++) {
-      game.mMoveCard('ships.raiders', 'space.space0')
-    }
-    for (let i = 0; i < 2; i++) {
-      game.mMoveCard('decks.civilian', 'space.space3')
-    }
-    game.mMoveCard('ships.basestarA', 'space.space0')
-    game.mMoveCard('ships.vipers', 'space.space4')
-    game.mMoveCard('ships.vipers', 'space.space5')
+  game.mLog({
+    template: "Placing initial ships",
+    actor: 'admin',
   })
+
+  for (let i = 0; i < 3; i++) {
+    game.mMoveCard('ships.raiders', 'space.space0')
+  }
+  for (let i = 0; i < 2; i++) {
+    game.mMoveCard('decks.civilian', 'space.space3')
+  }
+  game.mMoveCard('ships.basestarA', 'space.space0')
+  game.mMoveCard('ships.vipers', 'space.space4')
+  game.mMoveCard('ships.vipers', 'space.space5')
 
   context.done()
 }
@@ -166,9 +158,7 @@ function initialize(context) {
 function mainPlayerLoop(context) {
   const game = context.state
 
-  game.rk.sessionStart(() => {
-    game.mStartNextTurn()
-  })
+  game.mStartNextTurn()
 
   context.push('player-turn', { playerName: game.getPlayerCurrentTurn().name })
 }
@@ -178,18 +168,14 @@ function receiveInitialSkills(context) {
 
   // initialize
   if (!context.data.initialized) {
-    game.rk.sessionStart(session => {
-      session.addKey(context.data, 'initialized', true)
-      session.addKey(context.data, 'playerIndex', 1)
-    })
+    game.rk.addKey(context.data, 'initialized', true)
+    game.rk.addKey(context.data, 'playerIndex', 1)
     const playerName = game.getPlayerByIndex(context.data.playerIndex).name
     return context.push('receive-initial-skills-do', { playerName })
   }
 
   else {
-    game.rk.sessionStart(session => {
-      session.put(context.data, 'playerIndex', context.data.playerIndex + 1)
-    })
+    game.rk.put(context.data, 'playerIndex', context.data.playerIndex + 1)
     if (context.data.playerIndex < game.getPlayerAll().length) {
       const playerName = game.getPlayerByIndex(context.data.playerIndex).name
       return context.push('receive-initial-skills-do', { playerName })

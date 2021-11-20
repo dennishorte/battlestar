@@ -18,16 +18,12 @@ function generateOptions(context) {
 
   // Our first time visiting this function
   if (effectIndex === 0) {
-    game.rk.sessionStart(session => {
-      game.mLog({
-        template: `Evaluating effects of ${context.data.name}`,
-      })
+    game.mLog({
+      template: `Evaluating effects of ${context.data.name}`,
     })
 
     if (details.dieRoll && !bsgutil.rollDieResult(details.dieRoll)) {
-      game.rk.sessionStart(() => {
-        game.mLog({ template: "Die roll didn't match; no effect" })
-      })
+      game.mLog({ template: "Die roll didn't match; no effect" })
       return context.done()
     }
   }
@@ -38,9 +34,7 @@ function generateOptions(context) {
   }
 
   // Mark that next time we visit this function, we should do the next index
-  game.rk.sessionStart(session => {
-    session.increment(context.data, 'effectIndex')
-  })
+  game.rk.increment(context.data, 'effectIndex')
 
   const result = evaluateEffect(game, effects[effectIndex])
 

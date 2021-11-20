@@ -40,41 +40,39 @@ function handleResponse(context) {
 
   let nextStep = ''
 
-  game.rk.sessionStart(session => {
-    for (const opt of option) {
-      const name = (typeof opt === 'string') ? opt : opt.name
+  for (const opt of option) {
+    const name = (typeof opt === 'string') ? opt : opt.name
 
-      if (name === 'Change Answer') {
-        session.put(flags.submitted, 'discussion', false)
-        session.put(flags, 'useScientificResearch', false)
-        session.put(flags, 'useInvestigativeCommitee', false)
-        session.put(flags, 'support', '')
-        break
+    if (name === 'Change Answer') {
+      game.rk.put(flags.submitted, 'discussion', false)
+      game.rk.put(flags, 'useScientificResearch', false)
+      game.rk.put(flags, 'useInvestigativeCommitee', false)
+      game.rk.put(flags, 'support', '')
+      break
+    }
+    else {
+      game.rk.put(flags.submitted, 'discussion', true)
+
+      if (name === 'How much can you help?') {
+        game.rk.put(flags, 'support', opt.option[0])
+      }
+      else if (name === 'Use Scientific Research') {
+        game.rk.put(flags, 'useScientificResearch', true)
+      }
+      else if (name === 'Use Investigative Committee') {
+        game.rk.put(flags, 'useInvestigativeCommitee', true)
+      }
+      else if (name === 'Start Skill Check') {
+        nextStep = 'done'
+      }
+      else if (name === 'Choose Option 2') {
+        nextStep = 'option2'
       }
       else {
-        session.put(flags.submitted, 'discussion', true)
-
-        if (name === 'How much can you help?') {
-          session.put(flags, 'support', opt.option[0])
-        }
-        else if (name === 'Use Scientific Research') {
-          session.put(flags, 'useScientificResearch', true)
-        }
-        else if (name === 'Use Investigative Committee') {
-          session.put(flags, 'useInvestigativeCommitee', true)
-        }
-        else if (name === 'Start Skill Check') {
-          nextStep = 'done'
-        }
-        else if (name === 'Choose Option 2') {
-          nextStep = 'option2'
-        }
-        else {
-          throw new Error(`Unknown option ${opt.name}`)
-        }
+        throw new Error(`Unknown option ${opt.name}`)
       }
     }
-  })
+  }
 
   const allPlayersHaveSubmitted = game
     .getPlayerAll()

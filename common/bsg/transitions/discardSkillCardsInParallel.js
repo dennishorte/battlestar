@@ -35,9 +35,7 @@ function handleResponse(context) {
   util.assert(cards.length === selected.length, "Couldn't find all the submitted cards")
 
   game.aDiscardSkillCards(player, cards)
-  game.rk.sessionStart(session => {
-    session.push(responded, player.name)
-  })
+  game.rk.push(responded, player.name)
 
   const allPlayersHaveDiscarded = responded.length === playerNames.length
   if (allPlayersHaveDiscarded) {

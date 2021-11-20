@@ -33,18 +33,14 @@ function handleResponse(context) {
     const crisisPool = game.getZoneByName('crisisPool')
     const playerHand = game.getZoneByPlayer(player)
 
-    game.rk.sessionStart(session => {
-      game.mLog({ template: 'William Adama uses Command Authority' })
-      session.put(player, 'oncePerGameUsed', true)
-      while (crisisPool.cards.length > 0) {
-        game.mMoveCard(crisisPool, playerHand)
-      }
-    })
+    game.mLog({ template: 'William Adama uses Command Authority' })
+    game.rk.put(player, 'oncePerGameUsed', true)
+    while (crisisPool.cards.length > 0) {
+      game.mMoveCard(crisisPool, playerHand)
+    }
   }
   else {
-    game.rk.sessionStart(() => {
-      game.mLog({ template: 'William Adama chooses not to use Command Authority' })
-    })
+    game.mLog({ template: 'William Adama chooses not to use Command Authority' })
   }
 
   return context.done()
