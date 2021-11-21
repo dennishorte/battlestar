@@ -1818,6 +1818,14 @@ describe('player-turn-cleanup', () => {
   test.skip('"Chief" Galen Tyrol hand limit is 8', () => {
 
   })
+
+  test('next player begins turn', () => {
+    const factory = new GameFixtureFactory()
+    const game = factory.build().advanceTo('player-turn-cleanup').game
+    game.run()
+    expect(game.getWaiting('micah')).toBeDefined()
+    expect(game.getWaiting('micah').actions[0].name).toBe('Select Skills')
+  })
 })
 
 describe('crisis card effects', () => {
