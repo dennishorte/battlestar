@@ -208,6 +208,36 @@ Actions.aAssignPresident = function(player) {
   this.rk.move(card, playerHand)
 }
 
+Action.aAttackCenturion = function() {
+  // Confirm if there are any centurions to attack
+  let targetCenturion
+  for (let i = 3; i >= 1; i--) {
+    const zone = this.getZoneCenturionsByIndex(i)
+    if (zone.cards.length > 0) {
+      targetCenturion = zone.cards[0]
+      break
+    }
+  }
+
+  if (!targetCenturion) {
+    this.mLog({ template: 'There are no centurions to attack' })
+    return
+  }
+
+  const dieRoll = bsgutil.rollDie()
+  if (dieRoll < 7) {
+    this.mLog({
+      template: `Attack on centurion misses (rolled ${dieRoll})`
+    })
+  }
+  else {
+    this.mLog({
+      template: `Centurion destroyed (rolled ${dieRoll})`
+    })
+    this.mDiscard(targetCenturion)
+  }
+}
+
 Actions.aAttackGalactica = function(ship) {
   const dieRoll = bsgutil.rollDie()
   let hit = false

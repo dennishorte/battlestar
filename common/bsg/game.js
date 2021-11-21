@@ -676,7 +676,13 @@ Game.prototype.mAdjustCounterByName = function(name, amount) {
     }
   })
 
-  this.rk.put(this.state.counters, name, this.state.counters[name] + amount)
+  let newValue = this.state.counters[name] + amount
+  newValue = max(newValue, 0)
+  if (name === 'jumpTrack') {
+    newValue = min(newValue, 4)
+  }
+
+  this.rk.put(this.state.counters, name, newValue)
 }
 
 Game.prototype.mClearWaiting = function() {

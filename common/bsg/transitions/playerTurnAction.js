@@ -82,18 +82,23 @@ function handleResponse(context) {
       }
     })
 
-    if (locationName === 'Research Lab') {
+    if (locationName === "Admiral's Quarters") {
+      markDone(context)
+      return context.push('activate-admirals-quarters', {
+        playerName: player.name,
+      })
+    }
+
+    else if (locationName === 'Armory') {
+      game.aAttackCenturion()
+      return context.done()
+    }
+
+    else if (locationName === 'Research Lab') {
       markDone(context)
       return context.push('draw-skill-cards', {
         playerName: player.name,
         reason: 'Research Lab'
-      })
-    }
-
-    else if (locationName === "Admiral's Quarters") {
-      markDone(context)
-      return context.push('activate-admirals-quarters', {
-        playerName: player.name,
       })
     }
 

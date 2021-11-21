@@ -45,6 +45,10 @@ function evaluateEffect(game, effect) {
     game.aActivateCylonShips(activationKind)
   }
 
+  else if (kind === 'damageGalactica') {
+    game.aDamageGalactica()
+  }
+
   else if (kind === 'damageReserveVipers') {
     throw new Error('not implemented')
   }
@@ -142,6 +146,10 @@ function evaluateEffect(game, effect) {
         zoneName: spaceZone.name,
       })
     }
+  }
+
+  else if (kind === 'destroyColonialOne') {
+    game.aDestroyColonialOne()
   }
 
   else if (kind === 'fulfillerOfProphecy') {

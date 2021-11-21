@@ -16,6 +16,11 @@ module.exports =  [
     ],
     script: {
       keepUntil: '',
+      effect: [{
+        kind: 'counter',
+        counter: 'jumpTrack',
+        amount: -2
+      }]
     },
   },
   {
@@ -32,6 +37,17 @@ module.exports =  [
     skills: [ 'tactics', 'piloting', 'engineering' ],
     script: {
       keepUntil: 'forever',
+      pass: [],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'morale',
+          amount: -2
+        },
+        {
+          kind: 'destroyColonialOne',
+        },
+      ],
     },
   },
   {
@@ -48,6 +64,21 @@ module.exports =  [
     skills: [ 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
+      pass: [],
+      partial: [{
+        kind: 'addCenturion',
+      }],
+      fail: [
+        {
+          kind: 'addCenturion',
+        },
+        {
+          kind: 'addCenturion',
+        },
+        {
+          kind: 'damageGalactica',
+        },
+      ],
     },
   },
   {
@@ -64,6 +95,39 @@ module.exports =  [
     skills: [ 'leadership', 'tactics', 'piloting', 'engineering' ],
     script: {
       keepUntil: '',
+      pass: [
+        {
+          kind: 'cylonActivation',
+          activationKind: 'Basestar Attacks',
+        },
+        {
+          kind: 'cylonActivation',
+          activationKind: 'Raiders Launch',
+        },
+      ],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'morale',
+          amount: -1
+        },
+        {
+          kind: 'cylonActivation',
+          activationKind: 'Basestar Attacks',
+        },
+        {
+          kind: 'cylonActivation',
+          activationKind: 'Raiders',
+        },
+        {
+          kind: 'cylonActivation',
+          activationKind: 'Hvy Raiders',
+        },
+        {
+          kind: 'cylonActivation',
+          activationKind: 'Raiders Launch',
+        },
+      ]
     },
   },
   {
@@ -80,6 +144,24 @@ module.exports =  [
     skills: [ 'leadership', 'tactics' ],
     script: {
       keepUntil: '',
+      pass: [],
+      fail: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1
+        },
+        {
+          kind: 'counter',
+          counter: 'food',
+          amount: -1
+        },
+        {
+          kind: 'counter',
+          counter: 'population',
+          amount: -1
+        },
+      ]
     },
   },
   {

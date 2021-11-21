@@ -37,6 +37,8 @@ Effect values are Arrays of objects with the following keys.
   cylonActivation
   - activationKind  // string matching Cylon activation crisis cards
 
+  damageGalactica
+
   damageReserveVipers
   - count    // number of vipers to damage
 
@@ -80,6 +82,7 @@ Effect values are Arrays of objects with the following keys.
   // special effects (typically something that only applies to a single card)
   aTraitorAccused
   besieged
+  destroyColonialOne
   fulfillerOfProphecy
   returnAllVipers
   tacticalStrike
