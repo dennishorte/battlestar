@@ -46,8 +46,17 @@ Effect values are Arrays of objects with the following keys.
   - actor    // player who will choose which vipers
   - count
 
+  damageVipers
+  - count
+
   deploy
   - ships    // Array of six arrays of ship names (same as Cylon Attack cards)
+
+  dieRoll
+  - outcomes // Dict with dieRoll outcome strings as keys and values of the form {
+      roll: '3+',
+      effects: []
+    }
 
   discardSkills
   - actor    // descriptor for player who will discard (admiral, president, currentPlayer)
@@ -65,6 +74,9 @@ Effect values are Arrays of objects with the following keys.
   moveAll
   - from      // Location to move from
   - dest      // Location to move to
+
+  repairViper
+  - count
 
   sendPlayerTo
   - location  // Location to send to

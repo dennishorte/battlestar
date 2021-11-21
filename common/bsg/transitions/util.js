@@ -57,8 +57,16 @@ function evaluateEffect(game, effect) {
     throw new Error('not implemented')
   }
 
+  else if (kind === 'damageVipers') {
+    throw new Error('not implemented')
+  }
+
   else if (kind === 'deploy') {
     game.aDeployShips(effect.ships)
+  }
+
+  else if (kind === 'dieRoll') {
+    throw new Error('not implemented')
   }
 
   else if (kind === 'discardSkills') {
@@ -96,6 +104,10 @@ function evaluateEffect(game, effect) {
     const player = game.getPlayerByDescriptor(actor)
     const locationZone = game.getZoneByLocationName(location)
     game.mMovePlayer(player, locationZone)
+  }
+
+  else if (kind === 'repairViper') {
+    throw new Error('not implemented')
   }
 
   else if (kind === 'sendPlayerToBrig') {

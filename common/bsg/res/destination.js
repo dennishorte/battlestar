@@ -3,133 +3,757 @@ module.exports =  [
     name: 'Asteroid Field',
     expansion: 'base game',
     distance: 3,
-    text: 'Lose 2 fuel. Then draw 1 civilian ship and destroy it (lose the resources on the back)'
+    text: 'Lose 2 fuel. Then draw 1 civilian ship and destroy it (lose the resources on the back)',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -2,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 3
+        },
+        {
+          kind: 'civilianDestroyed',
+          count: 1
+        },
+      ],
+    }
   },
   {
     name: 'Asteroid Field',
     expansion: 'base game',
     distance: 3,
-    text: 'Lose 2 fuel. Then draw 1 civilian ship and destroy it (lose the resources on the back)'
+    text: 'Lose 2 fuel. Then draw 1 civilian ship and destroy it (lose the resources on the back)',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -2,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 3
+        },
+        {
+          kind: 'civilianDestroyed',
+          count: 1
+        },
+      ],
+    }
   },
   {
     name: 'Barren Planet',
     expansion: 'base game',
     distance: 2,
-    text: 'Lose 2 fuel'
+    text: 'Lose 2 fuel',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -2,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 2
+        },
+      ],
+    }
   },
   {
     name: 'Barren Planet',
     expansion: 'base game',
     distance: 2,
-    text: 'Lose 2 fuel'
+    text: 'Lose 2 fuel',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -2,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 2
+        },
+      ],
+    }
   },
   {
     name: 'Barren Planet',
     expansion: 'base game',
     distance: 2,
-    text: 'Lose 2 fuel'
+    text: 'Lose 2 fuel',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -2,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 2
+        },
+      ],
+    }
   },
   {
     name: 'Barren Planet',
     expansion: 'base game',
     distance: 2,
-    text: 'Lose 2 fuel'
+    text: 'Lose 2 fuel',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -2,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 2
+        },
+      ],
+    }
   },
   {
     name: 'Cylon Ambush',
     expansion: 'base game',
     distance: 3,
-    text: 'Lose 1 fuel. Then place 1 basestar and 3 raiders in front of Galactica and 3 civilian ships behind Galactica'
+    text: 'Lose 1 fuel. Then place 1 basestar and 3 raiders in front of Galactica and 3 civilian ships behind Galactica',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 3
+        },
+        {
+          kind: 'deploy',
+          ships: [
+            ['basestar', 'raider', 'raider', 'raider'], [], [],
+            ['civilian', 'civilian', 'civilian'], [], []
+          ]
+        }
+      ],
+    }
   },
   {
     name: 'Cylon Refinery',
     expansion: 'base game',
     distance: 2,
-    text: 'Lose 1 fuel. The Admiral may risk 2 vipers to roll a die. If 6 or higher, gain 2 fuel. Otherwise, damage 2 vipers'
+    text: 'Lose 1 fuel. The Admiral may risk 2 vipers to roll a die. If 6 or higher, gain 2 fuel. Otherwise, damage 2 vipers',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 2
+        },
+        {
+          kind: 'choice',
+          actor: 'admiral',
+          options: [
+            {
+              name: 'Risk 2 Vipers',
+              effects: [{
+                kind: 'dieRoll',
+                outcomes: [
+                  {
+                    roll: '5-',
+                    effects: [{
+                      kind: 'damageVipers',
+                      count: 2
+                    }]
+                  },
+                  {
+                    roll: '6+',
+                    effects: [{
+                      kind: 'counter',
+                      counter: 'fuel',
+                      amount: 2
+                    }]
+                  }
+                ]
+              }]
+            },
+            {
+              name: 'Do Nothing',
+              effects: []
+            }
+          ]
+        }
+      ],
+    }
   },
   {
     name: 'Deep Space',
     expansion: 'base game',
     distance: 2,
-    text: 'Lose 1 fuel and 1 morale'
+    text: 'Lose 1 fuel and 1 morale',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'morale',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 2
+        },
+      ],
+    }
   },
   {
     name: 'Deep Space',
     expansion: 'base game',
     distance: 2,
-    text: 'Lose 1 fuel and 1 morale'
+    text: 'Lose 1 fuel and 1 morale',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'morale',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 2
+        },
+      ],
+    }
   },
   {
     name: 'Deep Space',
     expansion: 'base game',
     distance: 2,
-    text: 'Lose 1 fuel and 1 morale'
+    text: 'Lose 1 fuel and 1 morale',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'morale',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 2
+        },
+      ],
+    }
   },
   {
     name: 'Desolate Moon',
     expansion: 'base game',
     distance: 3,
-    text: 'Lose 3 fuel'
+    text: 'Lose 3 fuel',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -3,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 3
+        },
+      ],
+    }
   },
   {
     name: 'Icy Moon',
     expansion: 'base game',
     distance: 1,
-    text: 'Lose 1 fuel. The Admiral may risk 1 raptor to roll a die. If 3 or higher, gain 1 food. Otherwise, destroy 1 raptor'
+    text: 'Lose 1 fuel. The Admiral may risk 1 raptor to roll a die. If 3 or higher, gain 1 food. Otherwise, destroy 1 raptor',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 1
+        },
+        {
+          kind: 'choice',
+          actor: 'admiral',
+          options: [
+            {
+              name: 'Risk a Raptor',
+              effects: [{
+                kind: 'dieRoll',
+                outcomes: [
+                  {
+                    roll: '2-',
+                    effects: [{
+                      kind: 'counter',
+                      counter: 'raptors',
+                      amount: -1
+                    }]
+                  }
+                  {
+                    roll: '3+',
+                    effects: [{
+                      kind: 'counter',
+                      counter: 'food',
+                      amount: 1
+                    }]
+                  },
+                ]
+              }]
+            },
+            {
+              name: 'Do Nothing',
+              effects: []
+            }
+          ]
+        },
+      ],
+    }
   },
   {
     name: 'Icy Moon',
     expansion: 'base game',
     distance: 1,
-    text: 'Lose 1 fuel. The Admiral may risk 1 raptor to roll a die. If 3 or higher, gain 1 food. Otherwise, destroy 1 raptor'
+    text: 'Lose 1 fuel. The Admiral may risk 1 raptor to roll a die. If 3 or higher, gain 1 food. Otherwise, destroy 1 raptor',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 1
+        },
+        {
+          kind: 'choice',
+          actor: 'admiral',
+          options: [
+            {
+              name: 'Risk a Raptor',
+              effects: [{
+                kind: 'dieRoll',
+                outcomes: [
+                  {
+                    roll: '2-',
+                    effects: [{
+                      kind: 'counter',
+                      counter: 'raptors',
+                      amount: -1
+                    }]
+                  }
+                  {
+                    roll: '3+',
+                    effects: [{
+                      kind: 'counter',
+                      counter: 'food',
+                      amount: 1
+                    }]
+                  },
+                ]
+              }]
+            },
+            {
+              name: 'Do Nothing',
+              effects: []
+            }
+          ]
+        },
+      ],
+    }
   },
   {
     name: 'Ragnar Anchorage',
     expansion: 'base game',
     distance: 1,
-    text: 'The Admiral may repair up to 3 vipers and 1 raptor. These ships may be damaged or even destroyed'
+    text: 'The Admiral may repair up to 3 vipers and 1 raptor. These ships may be damaged or even destroyed',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 1
+        },
+        {
+          kind: 'choice',
+          actor: 'Admiral'
+          options: [
+            {
+              name: 'Order Repairs',
+              effects: [
+                {
+                  kind: 'counter',
+                  counter: 'raptors',
+                  amount: +1,
+                },
+                {
+                  kind: 'repairViper',
+                  count: 3
+                }
+              ]
+            },
+            {
+              name: 'Do Nothing',
+              effects: []
+            }
+          ]
+        },
+      ],
+    }
   },
   {
     name: 'Remote Planet',
     expansion: 'base game',
     distance: 2,
-    text: 'Lose 1 fuel and destroy 1 raptor'
+    text: 'Lose 1 fuel and destroy 1 raptor',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -2,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: +2
+        },
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1
+        },
+        {
+          kind: 'counter',
+          counter: 'raptors',
+          amount: -1
+        },
+      ],
+    }
   },
   {
     name: 'Remote Planet',
     expansion: 'base game',
     distance: 2,
-    text: 'Lose 1 fuel and destroy 1 raptor'
+    text: 'Lose 1 fuel and destroy 1 raptor',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -2,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: +2
+        },
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1
+        },
+        {
+          kind: 'counter',
+          counter: 'raptors',
+          amount: -1
+        },
+      ],
+    }
   },
   {
     name: 'Remote Planet',
     expansion: 'base game',
     distance: 2,
-    text: 'Lose 1 fuel and destroy 1 raptor'
+    text: 'Lose 1 fuel and destroy 1 raptor',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -2,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: +2
+        },
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1
+        },
+        {
+          kind: 'counter',
+          counter: 'raptors',
+          amount: -1
+        },
+      ],
+    }
   },
   {
     name: 'Tylium Planet',
     expansion: 'base game',
     distance: 1,
-    text: 'Lose 1 fuel. The Admiral may risk 1 raptor to roll a die. If 3 or higher, gain 2 fuel. Otherwise, destroy 1 raptor'
+    text: 'Lose 1 fuel. The Admiral may risk 1 raptor to roll a die. If 3 or higher, gain 2 fuel. Otherwise, destroy 1 raptor',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 1
+        },
+        {
+          kind: 'choice',
+          actor: 'admiral',
+          options: [
+            {
+              name: 'Risk a Raptor',
+              effects: [{
+                kind: 'dieRoll',
+                outcomes: [
+                  {
+                    roll: '2-',
+                    effects: [{
+                      kind: 'counter',
+                      counter: 'raptors',
+                      amount: -1
+                    }]
+                  }
+                  {
+                    roll: '3+',
+                    effects: [{
+                      kind: 'counter',
+                      counter: 'fuel',
+                      amount: +2
+                    }]
+                  },
+                ]
+              }]
+            },
+            {
+              name: 'Do Nothing',
+              effects: []
+            }
+          ]
+        },
+      ],
+    }
   },
   {
     name: 'Tylium Planet',
     expansion: 'base game',
     distance: 1,
-    text: 'Lose 1 fuel. The Admiral may risk 1 raptor to roll a die. If 3 or higher, gain 2 fuel. Otherwise, destroy 1 raptor'
+    text: 'Lose 1 fuel. The Admiral may risk 1 raptor to roll a die. If 3 or higher, gain 2 fuel. Otherwise, destroy 1 raptor',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 1
+        },
+        {
+          kind: 'choice',
+          actor: 'admiral',
+          options: [
+            {
+              name: 'Risk a Raptor',
+              effects: [{
+                kind: 'dieRoll',
+                outcomes: [
+                  {
+                    roll: '2-',
+                    effects: [{
+                      kind: 'counter',
+                      counter: 'raptors',
+                      amount: -1
+                    }]
+                  }
+                  {
+                    roll: '3+',
+                    effects: [{
+                      kind: 'counter',
+                      counter: 'fuel',
+                      amount: +2
+                    }]
+                  },
+                ]
+              }]
+            },
+            {
+              name: 'Do Nothing',
+              effects: []
+            }
+          ]
+        },
+      ],
+    }
   },
   {
     name: 'Tylium Planet',
     expansion: 'base game',
     distance: 1,
-    text: 'Lose 1 fuel. The Admiral may risk 1 raptor to roll a die. If 3 or higher, gain 2 fuel. Otherwise, destroy 1 raptor'
+    text: 'Lose 1 fuel. The Admiral may risk 1 raptor to roll a die. If 3 or higher, gain 2 fuel. Otherwise, destroy 1 raptor',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 1
+        },
+        {
+          kind: 'choice',
+          actor: 'admiral',
+          options: [
+            {
+              name: 'Risk a Raptor',
+              effects: [{
+                kind: 'dieRoll',
+                outcomes: [
+                  {
+                    roll: '2-',
+                    effects: [{
+                      kind: 'counter',
+                      counter: 'raptors',
+                      amount: -1
+                    }]
+                  }
+                  {
+                    roll: '3+',
+                    effects: [{
+                      kind: 'counter',
+                      counter: 'fuel',
+                      amount: +2
+                    }]
+                  },
+                ]
+              }]
+            },
+            {
+              name: 'Do Nothing',
+              effects: []
+            }
+          ]
+        },
+      ]
+    }
   },
   {
     name: 'Tylium Planet',
     expansion: 'base game',
     distance: 1,
-    text: 'Lose 1 fuel. The Admiral may risk 1 raptor to roll a die. If 3 or higher, gain 2 fuel. Otherwise, destroy 1 raptor'
+    text: 'Lose 1 fuel. The Admiral may risk 1 raptor to roll a die. If 3 or higher, gain 2 fuel. Otherwise, destroy 1 raptor',
+    script: {
+      effects: [
+        {
+          kind: 'counter',
+          counter: 'fuel',
+          amount: -1,
+        },
+        {
+          kind: 'counter',
+          counter: 'jumpTrack',
+          amount: 1
+        },
+        {
+          kind: 'choice',
+          actor: 'admiral',
+          options: [
+            {
+              name: 'Risk a Raptor',
+              effects: [{
+                kind: 'dieRoll',
+                outcomes: [
+                  {
+                    roll: '2-',
+                    effects: [{
+                      kind: 'counter',
+                      counter: 'raptors',
+                      amount: -1
+                    }]
+                  }
+                  {
+                    roll: '3+',
+                    effects: [{
+                      kind: 'counter',
+                      counter: 'fuel',
+                      amount: +2
+                    }]
+                  },
+                ]
+              }]
+            },
+            {
+              name: 'Do Nothing',
+              effects: []
+            }
+          ]
+        },
+      ]
+    }
   },
   {
     name: 'Algae Planet',

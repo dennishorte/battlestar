@@ -208,7 +208,7 @@ Actions.aAssignPresident = function(player) {
   this.rk.move(card, playerHand)
 }
 
-Action.aAttackCenturion = function() {
+Actions.aAttackCenturion = function() {
   // Confirm if there are any centurions to attack
   let targetCenturion
   for (let i = 3; i >= 1; i--) {
