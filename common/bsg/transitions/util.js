@@ -60,27 +60,24 @@ function evaluateEffect(game, effect) {
   else if (kind === 'discardSkills') {
     const { actor, count } = effect
 
+    let players = []
     if (actor === 'each') {
-      const playerNames = game.getPlayerAll().map(p => p.name)
-      return {
-        push: {
-          transition: 'discard-skill-cards-in-parallel',
-          payload: {
-            playerNames,
-            count,
-          }
-        }
-      }
+      players = game.getPlayerAll().map(p => ({
+        player: p.name,
+        count,
+      }))
     }
-
     else {
-      return {
-        push: {
-          transition: 'discard-skill-cards',
-          payload: {
-            playerName: game.getPlayerByDescriptor(actor).name,
-            count: count,
-          }
+      players.push({
+        player: game.getPlayerByDescriptor(actor).name,
+        count: count
+      })
+    }
+    return {
+      push: {
+        transition: 'discard-skill-cards',
+        payload: {
+          countsByPlayer: players
         }
       }
     }

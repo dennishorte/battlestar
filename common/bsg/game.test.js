@@ -996,10 +996,6 @@ describe('adhoc transitions', () => {
 
   })
 
-  describe('discard-skill-cards-in-parallel', () => {
-
-  })
-
   describe('Launch Self on Viper', () => {
     test('vipers on the hangar deck', () => {
       const factory = new GameFixtureFactory()
@@ -1365,8 +1361,9 @@ describe('skill checks', () => {
         name: 'Skill Check - Add Cards',
         option: ['Do Nothing']
       })
-      const waiting = game.getWaiting()
-      expect(game.getTransition().name).toBe('player-turn-cleanup')
+
+      expect(game.getTransition().name).toBe('player-turn-receive-skills')
+      expect(game.getWaiting('dennis')).not.toBeDefined()
     })
 
     test('options are separated into positive and negative sections', () => {
@@ -1652,7 +1649,8 @@ describe('player-turn-crisis', () => {
         option: ['Skip Action']
       })
 
-      expect(game.getTransition().name).toBe('player-turn-cleanup')
+      expect(game.getTransition().name).toBe('player-turn-receive-skills')
+      expect(game.getWaiting('dennis')).not.toBeDefined()
     })
   })
 
@@ -1812,6 +1810,16 @@ describe('player-turn-crisis', () => {
   })
 })
 
+describe('player-turn-cleanup', () => {
+  test.skip('hand limit is 10', () => {
+
+  })
+
+  test.skip('"Chief" Galen Tyrol hand limit is 8', () => {
+
+  })
+})
+
 describe('crisis card effects', () => {
 
   function _crisisFixture(crisisName, func) {
@@ -1900,6 +1908,7 @@ describe('crisis card effects', () => {
       expect(game.getZoneByName('decks.civilian').cards.length).toBe(10)
 
       jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 4)
+      jest.spyOn(game, 'aDestroyCivilian').mockImplementation(() => {})
 
       game.submit({
         actor: 'dennis',
@@ -1909,7 +1918,7 @@ describe('crisis card effects', () => {
 
       // Post-conditions
       expect(game.getCounterByName('morale')).toBe(9)
-      expect(game.getZoneByName('decks.civilian').cards.length).toBe(9)
+      expect(game.aDestroyCivilian.mock.calls.length).toBe(1)
     })
 
     test('option2 die roll 5+', () => {

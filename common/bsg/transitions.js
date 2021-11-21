@@ -330,9 +330,6 @@ const transitions = {
   'discard-skill-cards': {
     func: require('./transitions/discardSkillCards.js'),
   },
-  'discard-skill-cards-in-parallel': {
-    func: require('./transitions/discardSkillCardsInParallel.js'),
-  },
   'draw-skill-cards': {
     func: require('./transitions/drawSkillCards.js'),
   },

@@ -60,8 +60,10 @@ function handleResponse(context) {
   if (!sameShip) {
     markDone(context)
     return context.push('discard-skill-cards', {
-      playerName: player.name,
-      count: 1
+      countsByPlayer: [{
+        playerName: player.name,
+        count: 1
+      }]
     })
   }
   else {

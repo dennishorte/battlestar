@@ -351,6 +351,17 @@ Game.prototype.getGameResult = function() {
   return this.state.result
 }
 
+Game.prototype.getHandLimit = function(player) {
+  player = this._adjustPlayerParam(player)
+  const character = this.getCardCharacterByPlayer(player)
+  if (character.name === '"Chief" Galen Tyrol') {
+    return 8
+  }
+  else {
+    return 10
+  }
+}
+
 Game.prototype.getLocationsByArea = function(area) {
   return Object.values(this.getZoneAll().locations)
                .filter(l => l.details.area === area)
