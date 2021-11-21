@@ -99,7 +99,17 @@ Game.prototype.dumpZones = function(root) {
 }
 
 Game.prototype.run = function() {
-  return this.sm.run()
+  try {
+    this.sm.run()
+  }
+  catch (e) {
+    if (e instanceof bsgutil.GameOverTrigger) {
+      this.mGameOver(e)
+    }
+    else {
+      throw e
+    }
+  }
 }
 
 Game.prototype.submit = function(response) {
@@ -120,17 +130,7 @@ Game.prototype.submit = function(response) {
   // Store the response for the statemachine
   this.rk.splice(this.state.sm.response, 0, this.state.sm.response.length, response)
 
-  try {
-    this.sm.run()
-  }
-  catch (e) {
-    if (e instanceof bsgutil.GameOverTrigger) {
-      this.mGameOver(e)
-    }
-    else {
-      throw e
-    }
-  }
+  this.run()
 
   // Clean up the response
   this.rk.splice(this.state.sm.response, 0, this.state.sm.response.length)

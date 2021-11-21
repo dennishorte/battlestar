@@ -1816,8 +1816,36 @@ describe('player-turn-cleanup', () => {
 
   })
 
-  test.skip('check for Cylon victory', () => {
+  test('check for Cylon victory by food', () => {
+    const factory = new GameFixtureFactory()
+    const game = factory.build().advanceTo('player-turn-cleanup').game
+    game.mAdjustCounterByName('food', -8)
+    game.run()
+    expect(game.getWinners()).toBe('cylons')
+  })
 
+  test('check for Cylon victory by fuel', () => {
+    const factory = new GameFixtureFactory()
+    const game = factory.build().advanceTo('player-turn-cleanup').game
+    game.mAdjustCounterByName('fuel', -8)
+    game.run()
+    expect(game.getWinners()).toBe('cylons')
+  })
+
+  test('check for Cylon victory by morale', () => {
+    const factory = new GameFixtureFactory()
+    const game = factory.build().advanceTo('player-turn-cleanup').game
+    game.mAdjustCounterByName('morale', -10)
+    game.run()
+    expect(game.getWinners()).toBe('cylons')
+  })
+
+  test('check for Cylon victory by population', () => {
+    const factory = new GameFixtureFactory()
+    const game = factory.build().advanceTo('player-turn-cleanup').game
+    game.mAdjustCounterByName('population', -12)
+    game.run()
+    expect(game.getWinners()).toBe('cylons')
   })
 
   test('next player begins turn', () => {
