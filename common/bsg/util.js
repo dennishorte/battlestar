@@ -126,3 +126,17 @@ Util.flattenSkillSelection = function(selection) {
   }
   return output
 }
+
+function GameOverTrigger(message, winner) {
+  this.message = message
+  this.winner = winner
+  // Use V8's native method if available, otherwise fallback
+  if ("captureStackTrace" in Error)
+    Error.captureStackTrace(this, GameOverTrigger)
+  else
+    this.stack = (new Error()).stack
+}
+GameOverTrigger.prototype = Object.create(Error.prototype)
+GameOverTrigger.prototype.name = "GameOverTrigger"
+GameOverTrigger.prototype.constructor = GameOverTrigger
+Util.GameOverTrigger = GameOverTrigger

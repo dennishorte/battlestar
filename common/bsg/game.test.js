@@ -868,7 +868,13 @@ describe('player turn', () => {
       })
 
       describe("FTL Control", () => {
+        test.skip('is not available if jump prep track is too low', () => {
 
+        })
+
+        test.skip('puts jump-the-fleet on the stack', () => {
+
+        })
       })
 
       describe("Hangar Deck", () => {
@@ -1725,15 +1731,6 @@ describe('player-turn-crisis', () => {
       const zone = game.getZoneByCard('Ambush')
       expect(zone.name).toBe('keep')
     })
-
-    test('prepare for jump is called', () => {
-      const game = _crisisFixture('Ambush', (game) => {
-        game.aClearSpace()
-        jest.spyOn(game, 'aPrepareForJump')
-      })
-
-      expect(game.aPrepareForJump.mock.calls.length).toBe(1)
-    })
   })
 
   describe('skill check cards', () => {
@@ -1819,12 +1816,83 @@ describe('player-turn-cleanup', () => {
 
   })
 
+  test.skip('check for Cylon victory', () => {
+
+  })
+
   test('next player begins turn', () => {
     const factory = new GameFixtureFactory()
     const game = factory.build().advanceTo('player-turn-cleanup').game
     game.run()
     expect(game.getWaiting('micah')).toBeDefined()
     expect(game.getWaiting('micah').actions[0].name).toBe('Select Skills')
+  })
+})
+
+describe('jump-the-fleet', () => {
+  function _jumpFixture(jumpTrack, func) {
+    const factory = new GameFixtureFactory()
+    factory.options.players[0].movement = {
+      name: 'Galactica',
+      option: ['FTL Control']
+    }
+    const game = factory.build().advanceTo('player-turn-action').game
+    if (func) {
+      func(game)
+    }
+    game.mAdjustCounterByName('jumpTrack', jumpTrack)
+    game.run()
+    game.submit({
+      actor: 'dennis',
+      name: 'Action',
+      option: [{
+        name: 'Location Action',
+        option: [{ name: 'FTL Control' }]
+      }]
+    })
+    return game
+  }
+
+  test('nothing happens if the fleet is not ready to jump', () => {
+    const game = _jumpFixture(1)
+    expect(game.getPlayerCurrentTurn().name).toBe('micah')
+  })
+
+  test('population loss if jump track is too low', () => {
+    const game = _jumpFixture(2, (game) => {
+      jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 6)
+    })
+    expect(game.getCounterByName('population')).toBe(9)
+  })
+
+  test('clears all ships in space', () => {
+    const game = _jumpFixture(4, (game) => {
+      jest.spyOn(game, 'aClearSpace')
+    })
+    expect(game.aClearSpace.mock.calls.length).toBe(1)
+  })
+
+  test('jump-choose-destination is put on stack', () => {
+    const game = _jumpFixture(4)
+    expect(game.getTransition().name).toBe('jump-choose-destination')
+  })
+
+  test('human victory', () => {
+    const game = _jumpFixture(4, (game) => {
+      game.mAdjustCounterByName('distance', 8)
+    })
+    expect(game.checkGameIsFinished()).toBe(true)
+    expect(game.getWinners()).toBe('humans')
+  })
+})
+
+describe('jump-choose-destination', () => {
+  test('admiral chooses between two destination cards', () => {
+
+  })
+
+  test('mission specialist overrides admiral choice', () => {
+
   })
 })
 

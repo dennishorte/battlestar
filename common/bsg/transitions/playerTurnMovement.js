@@ -61,7 +61,7 @@ function handleResponse(context) {
     markDone(context)
     return context.push('discard-skill-cards', {
       countsByPlayer: [{
-        playerName: player.name,
+        player: player.name,
         count: 1
       }]
     })

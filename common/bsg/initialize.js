@@ -20,6 +20,7 @@ function initialize(game) {
   game.log = []
   game.hasUndone = false
   game.activeCrisisId = ''
+  game.endTrigger = ''
 
   game.flags = {
     colonialOneDestroyed: false,
@@ -61,6 +62,7 @@ function initialize(game) {
       crisisCount: -1,
       crisisDone: false,
 
+      isMissionSpecialist: false,
       isRevealedCylon: false,
       oncePerGameUsed: false,
       turnFlags: {}, // See game.mStartNextTurn for description

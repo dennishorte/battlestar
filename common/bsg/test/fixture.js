@@ -159,7 +159,7 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
     }
   }
 
-  // Skip movement
+  // Do specified move
   this.game.submit({
     actor: 'dennis',
     name: 'Movement',

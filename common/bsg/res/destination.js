@@ -335,7 +335,7 @@ module.exports =  [
                       counter: 'raptors',
                       amount: -1
                     }]
-                  }
+                  },
                   {
                     roll: '3+',
                     effects: [{
@@ -389,7 +389,7 @@ module.exports =  [
                       counter: 'raptors',
                       amount: -1
                     }]
-                  }
+                  },
                   {
                     roll: '3+',
                     effects: [{
@@ -424,7 +424,7 @@ module.exports =  [
         },
         {
           kind: 'choice',
-          actor: 'Admiral'
+          actor: 'Admiral',
           options: [
             {
               name: 'Order Repairs',
@@ -572,7 +572,7 @@ module.exports =  [
                       counter: 'raptors',
                       amount: -1
                     }]
-                  }
+                  },
                   {
                     roll: '3+',
                     effects: [{
@@ -626,7 +626,7 @@ module.exports =  [
                       counter: 'raptors',
                       amount: -1
                     }]
-                  }
+                  },
                   {
                     roll: '3+',
                     effects: [{
@@ -680,7 +680,7 @@ module.exports =  [
                       counter: 'raptors',
                       amount: -1
                     }]
-                  }
+                  },
                   {
                     roll: '3+',
                     effects: [{
@@ -734,7 +734,7 @@ module.exports =  [
                       counter: 'raptors',
                       amount: -1
                     }]
-                  }
+                  },
                   {
                     roll: '3+',
                     effects: [{

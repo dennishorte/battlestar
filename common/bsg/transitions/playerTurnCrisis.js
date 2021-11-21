@@ -1,4 +1,4 @@
-const { transitionFactory } = require('./factory.js')
+const { transitionFactory, markDone } = require('./factory.js')
 const util = require('../../lib/util.js')
 
 
@@ -45,16 +45,12 @@ function generateOptions(context) {
         })
       }
     }
-
-    game.aPrepareForJump(crisis.jumpTrack)
     return context.done()
   }
 
   else if (crisis.type === 'Choice') {
     if (context.data.goToCylonActivation) {
-      game.aActivateCylonShips(crisis.cylonActivation)
-      game.aPrepareForJump(crisis.jumpTrack)
-      return context.done()
+      return _cylonActivation(context)
     }
 
     game.rk.put(context.data, 'goToCylonActivation', true)
@@ -88,9 +84,7 @@ function generateOptions(context) {
 
   else if (crisis.type === 'Skill Check' || crisis.type === 'Optional Skill Check') {
     if (context.data.goToCylonActivation) {
-      game.aActivateCylonShips(crisis.cylonActivation)
-      game.aPrepareForJump(crisis.jumpTrack)
-      return context.done()
+      return _cylonActivation(context)
     }
 
     game.rk.put(context.data, 'goToCylonActivation', true)
@@ -117,5 +111,20 @@ function handleResponse(context) {
       name: `${crisis.name} option ${optionNumber}`,
       effects: crisis.script[`option${optionNumber}`],
     })
+  }
+}
+
+function _cylonActivation(context) {
+  const game = context.state
+  const crisis = game.getCrisis()
+  game.aActivateCylonShips(crisis.cylonActivation)
+  game.aPrepareForJump(crisis.jumpTrack)
+  if (game.getCounterByName('jumpTrack') >= 4) {
+    markDone(context)
+    game.mLog({ template: 'auto-jumping the fleet' })
+    return context.push('jump-the-fleet')
+  }
+  else {
+    return context.done()
   }
 }

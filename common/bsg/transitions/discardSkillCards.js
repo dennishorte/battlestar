@@ -17,9 +17,8 @@ function generateOptions(context) {
     .countsByPlayer
     .filter(c => !context.data.responded.includes(c.player))
 
-  return context.waitMany(
-    countsByPlayer.map(info => _generateOptionsForPlayer(game, info))
-  )
+  const waits = countsByPlayer.map(info => _generateOptionsForPlayer(game, info))
+  return context.waitMany(waits)
 }
 
 function handleResponse(context) {

@@ -120,7 +120,17 @@ Game.prototype.submit = function(response) {
   // Store the response for the statemachine
   this.rk.splice(this.state.sm.response, 0, this.state.sm.response.length, response)
 
-  this.sm.run()
+  try {
+    this.sm.run()
+  }
+  catch (e) {
+    if (e instanceof bsgutil.GameOverTrigger) {
+      this.mGameOver(e)
+    }
+    else {
+      throw e
+    }
+  }
 
   // Clean up the response
   this.rk.splice(this.state.sm.response, 0, this.state.sm.response.length)
@@ -172,6 +182,10 @@ Game.prototype.checkCardIsVisible = function(card, player) {
     || card.visibility.includes(player.name)
     || (card.visibility.includes('president') && this.checkPlayerIsPresident(player))
   )
+}
+
+Game.prototype.checkGameIsFinished = function() {
+  return !!this.state.endTrigger.winner
 }
 
 Game.prototype.checkLocationIsDamaged = function(location) {
@@ -518,6 +532,10 @@ Game.prototype.getWaiting = function(player) {
   }
 }
 
+Game.prototype.getWinners = function() {
+  return this.state.endTrigger.winner
+}
+
 Game.prototype.getZoneAdjacentToSpaceZone = function(spaceZone) {
   const zone = this._adjustZoneParam(spaceZone)
   const index = parseInt(zone.name.slice(-1))
@@ -677,9 +695,9 @@ Game.prototype.mAdjustCounterByName = function(name, amount) {
   })
 
   let newValue = this.state.counters[name] + amount
-  newValue = max(newValue, 0)
-  if (name === 'jumpTrack') {
-    newValue = min(newValue, 4)
+  newValue = Math.max(newValue, 0)
+  if (name === 'jumpTrack' || name === 'raptors') {
+    newValue = Math.min(newValue, 4)
   }
 
   this.rk.put(this.state.counters, name, newValue)
@@ -835,9 +853,39 @@ Game.prototype.mDrawSkillCard = function(player, skill) {
   this.mMoveCard(zone, playerHand)
 }
 
+Game.prototype.mDrawDestinationCard = function(player) {
+  player = this._adjustPlayerParam(player)
+
+  const zone = this.getZoneByName('decks.destination')
+  this.mMaybeReshuffleDeck(zone)
+
+  if (zone.cards.length === 0) {
+    throw new Error(`No cards left in destination deck, even after reshuffle`)
+  }
+
+  const playerHand = this.getZoneByPlayer(player)
+  this.mMoveCard(zone, playerHand)
+}
+
 Game.prototype.mExile = function(card) {
   card = this._adjustCardParam(card)
   this.mMoveCard(this.getZoneByCard(card), 'exile', card)
+}
+
+Game.prototype.mGameOver = function(trigger) {
+  // Set the game status
+  this.rk.put(this.state, 'endTrigger', {
+    winner: trigger.winner,
+    message: trigger.message,
+  })
+
+  // Empty the stack
+  while (this.sm.stack.length > 1) {
+    this.rk.pop(this.sm.stack)
+  }
+
+  // Put the END transition on the stack
+  this.rk.push(this.sm.stack, { name: 'END' })
 }
 
 Game.prototype.mLaunchViper = function(position) {

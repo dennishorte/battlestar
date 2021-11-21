@@ -72,7 +72,7 @@ function handleResponse(context) {
   }
 
   else if (selectionName === 'Location Action') {
-    const locationName = selection.option[0]
+    const locationName = bsgutil.optionName(selection.option[0])
 
     game.mLog({
       template: '{player} uses {location}',
@@ -92,6 +92,11 @@ function handleResponse(context) {
     else if (locationName === 'Armory') {
       game.aAttackCenturion()
       return context.done()
+    }
+
+    else if (locationName === 'FTL Control') {
+      markDone(context)
+      return context.push('jump-the-fleet')
     }
 
     else if (locationName === 'Research Lab') {

@@ -375,6 +375,14 @@ const transitions = {
   'skill-check-command-authority': {
     func: require('./transitions/skillCheckCommandAuthority.js')
   },
+
+  'jump-the-fleet': {
+    func: require('./transitions/jumpTheFleet.js')
+  },
+
+  'jump-choose-destination': {
+    func: require('./transitions/jumpChooseDestination.js')
+  },
 }
 
 module.exports = transitions
