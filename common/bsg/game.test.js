@@ -986,7 +986,13 @@ describe('player turn', () => {
       })
 
       describe("Press Room", () => {
-
+        test('player draws two politics cards', () => {
+          const game = _takeActionWithMove('Location Action', "Press Room")
+          // Started with 4 as Gaius.
+          // Spent one to move to Colonial One
+          // Drew two more
+          expect(game.getCardsKindByPlayer('skill', 'dennis').length).toBe(5)
+        })
       })
 
       describe("Caprica", () => {

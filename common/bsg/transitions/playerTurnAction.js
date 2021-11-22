@@ -127,6 +127,11 @@ function handleResponse(context) {
       })
     }
 
+    else if (locationName === 'Press Room') {
+      game.aDrawSkillCards(player, ['politics', 'politics'])
+      return context.done()
+    }
+
     else {
       throw new Error(`Unhandled location action: ${locationName}`)
     }
