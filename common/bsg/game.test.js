@@ -2687,6 +2687,41 @@ describe('misc functions', () => {
 
 })
 
+  describe('aDamageGalactica', () => {
+
+    test('the sixth damage destroys Galactica', () => {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().advanceTo('player-turn-movement').game
+
+      // Remove the non-damage tokens from the bag
+      const damageTokens = game.getZoneByName('decks.damageGalactica').cards
+      for (let i = damageTokens.length - 1; i >= 0; i--) {
+        const token = damageTokens[i]
+        if (token.name.startsWith('-')) {
+          game.mDiscard(token)
+        }
+      }
+
+      game.aDamageGalactica()
+      game.aDamageGalactica()
+      game.aDamageGalactica()
+      game.aDamageGalactica()
+      game.aDamageGalactica()
+
+      expect(game.getLocationsDamaged().length).toBe(5)
+      expect(game.checkGameIsFinished()).toBe(false)
+      expect(game.aDamageGalactica.bind(game)).toThrow(bsgutil.GameOverTrigger)
+    })
+
+    test.skip('token is placed on the appropriate location', () => {
+
+    })
+
+    test.skip('damaged locations cannot be used', () => {
+
+    })
+  })
+
   describe.skip('aDeployShips', () => {
 
   })

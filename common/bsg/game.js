@@ -381,6 +381,12 @@ Game.prototype.getLocationsByArea = function(area) {
                .filter(l => l.details.area === area)
 }
 
+Game.prototype.getLocationsDamaged = function() {
+  return this
+    .getLocationsByArea('Galactica')
+    .filter(l => !!l.cards.find(c => c.kind === 'damageGalactica'))
+}
+
 Game.prototype.getLog = function() {
   return this.state.log
 }
@@ -832,6 +838,15 @@ Game.prototype.mDiscard = function(cardId) {
   else if (card.kind === 'skill') {
     const discard = this.getZoneByName(`decks.${card.skill}`)
     this.mMoveCard(zoneName, discard, card)
+  }
+
+  else if (card.kind === 'damageGalactica') {
+    if (card.name.startsWith('-')) {
+      this.mMoveCard(zoneName, 'exile', card)
+    }
+    else {
+      this.mMoveCard(zoneName, 'decks.damageGalactica', card)
+    }
   }
 
   else {

@@ -353,6 +353,15 @@ Actions.aDamageLocationByName = function(locationName) {
 
   // Move it to the damaged location
   this.mMoveCard(bag, this.getZoneByLocationName(locationName), token)
+
+  // If six or more locations are damaged, Galactica is destroyed
+  const numDamaged = this.getLocationsDamaged().length
+  if (numDamaged >= 6) {
+    throw new bsgutil.GameOverTrigger(
+      'Through the trials and tribulations of protecting the human fleet, Galactica has been destroyed. Unprotected, the remaining human ships are hunted down and destroyed.',
+      'cylons'
+    )
+  }
 }
 
 Actions.aDamageViperInReserve = function() {
