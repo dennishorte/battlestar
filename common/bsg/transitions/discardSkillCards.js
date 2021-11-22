@@ -25,7 +25,7 @@ function handleResponse(context) {
   const game = context.state
   const player = game.getPlayerByName(context.response.actor)
   const playerSkillCards = game.getCardsKindByPlayer('skill', player)
-  const { playerNames, responded } = context.data
+  const { countsByPlayer, responded } = context.data
 
   const selected = context.response.option
   util.assert(Array.isArray(selected), "Discard choices should be in an array")
@@ -36,7 +36,7 @@ function handleResponse(context) {
   game.aDiscardSkillCards(player, cards)
   game.rk.push(responded, player.name)
 
-  const allPlayersHaveDiscarded = responded.length === playerNames.length
+  const allPlayersHaveDiscarded = responded.length === countsByPlayer.length
   if (allPlayersHaveDiscarded) {
     return context.done()
   }

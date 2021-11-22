@@ -711,6 +711,30 @@ describe('player turn', () => {
       return game
     }
 
+    function _takeActionWithMoveToColonialOne(kind, option, beforeAction) {
+      const factory = new GameFixtureFactory()
+      if (kind === 'Location Action') {
+        factory.options.players[0].movement = {
+          name: 'Colonial One',
+          option: [option]
+        }
+      }
+      const game = factory.build().advanceTo('player-turn-action').game
+      if (beforeAction) {
+        beforeAction(game)
+      }
+      game.run()
+      game.submit({
+        actor: 'dennis',
+        name: 'Action',
+        option: [{
+          name: kind,
+          option: [option],
+        }]
+      })
+      return game
+    }
+
     function _takeAction(kind, option, beforeAction) {
       const factory = new GameFixtureFactory()
       const game = factory.build().advanceTo('player-turn-action').game
@@ -852,7 +876,12 @@ describe('player turn', () => {
       })
 
       describe("Armory", () => {
+        test.skip('not available if no centurions', () => {
+        })
 
+        test.skip('attacks a centurion', () => {
+          // ensure aAttackCenturion is called
+        })
       })
 
       describe("Command", () => {
@@ -873,7 +902,7 @@ describe('player turn', () => {
         })
 
         test.skip('puts jump-the-fleet on the stack', () => {
-
+          // check that we end up in the choose destination phase
         })
       })
 
@@ -901,6 +930,44 @@ describe('player turn', () => {
       })
 
       describe("Administration", () => {
+
+        test('choose a player', () => {
+          const game = _takeActionWithMove('Location Action', "Administration")
+          const waiting = game.getWaiting('dennis')
+          const action = waiting.actions[0]
+          expect(action.name).toBe('Choose a Player')
+          expect(action.options.sort()).toStrictEqual(['micah', 'tom'])
+        })
+
+        test("can't choose Cylons", () => {
+          const game = _takeActionWithMove('Location Action', "Administration", (game) => {
+            game.mSetPlayerIsRevealedCylon('tom')
+          })
+          const waiting = game.getWaiting('dennis')
+          const action = waiting.actions[0]
+          expect(action.name).toBe('Choose a Player')
+          expect(action.options.sort()).toStrictEqual(['micah'])
+        })
+
+        test('skill check launched', () => {
+          const game = _takeActionWithMove('Location Action', "Administration")
+          game.submit({
+            actor: 'dennis',
+            name: 'Choose a Player',
+            option: ['tom']
+          })
+          const waiting = game.getWaiting()[0]
+          const action = waiting.actions[0]
+          expect(action.name).toBe('Skill Check - Discuss')
+        })
+
+        test.skip('pass', () => {
+
+        })
+
+        test.skip('fail', () => {
+
+        })
 
       })
 

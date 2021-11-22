@@ -324,6 +324,10 @@ const transitions = {
   'activate-admirals-quarters': {
     func: require('./transitions/activateAdmiralsQuarters.js'),
   },
+  'activate-administration': {
+    func: require('./transitions/activateAdministration.js'),
+  },
+
   'choose-player-to-send-to-brig': {
     func: require('./transitions/choosePlayerToSendToBrig.js'),
   },

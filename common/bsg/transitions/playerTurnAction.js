@@ -82,6 +82,9 @@ function handleResponse(context) {
       }
     })
 
+    ////////////////////
+    // Galactica
+
     if (locationName === "Admiral's Quarters") {
       markDone(context)
       return context.push('activate-admirals-quarters', {
@@ -104,6 +107,16 @@ function handleResponse(context) {
       return context.push('draw-skill-cards', {
         playerName: player.name,
         reason: 'Research Lab'
+      })
+    }
+
+    ////////////////////
+    // Colonial One
+
+    else if (locationName === 'Administration') {
+      markDone(context)
+      return context.push('activate-administration', {
+        playerName: player.name
       })
     }
 
@@ -155,6 +168,8 @@ function _addLocationActions(context, options) {
   if (
     location.name.startsWith('location')
     && !game.checkPlayerIsAtLocation(player, 'Brig')
+    && !game.checkPlayerIsAtLocation(player, 'Sickbay')
+    && !game.checkLocationIsDamaged(location)
   ) {
     options.push({
       name: 'Location Action',
