@@ -448,6 +448,13 @@ Actions.aDiscardSkillCards = function(player, cards) {
   }
 }
 
+Actions.aDrawQuorumCard = function() {
+  const player = this.getPlayerPresident()
+  const playerHand = this.getZoneByPlayer(player)
+  this.mMoveCard('decks.quorum', playerHand)
+  this.mLog({ template: 'The President draws a quorum card' })
+}
+
 Actions.aDrawSkillCards = function(player, skills) {
   player = this._adjustPlayerParam(player)
 

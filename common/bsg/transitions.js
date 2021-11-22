@@ -131,6 +131,7 @@ function distributeTitleCards(context) {
   playerCharacters.sort(_presidentSort)
   const president = playerCharacters[0][0]
   game.aAssignPresident(president)
+  game.aDrawQuorumCard()
 
   context.done()
 }
@@ -326,6 +327,9 @@ const transitions = {
   },
   'activate-administration': {
     func: require('./transitions/activateAdministration.js'),
+  },
+  'activate-presidents-office': {
+    func: require('./transitions/activatePresidentsOffice.js'),
   },
 
   'choose-player-to-send-to-brig': {

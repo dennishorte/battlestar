@@ -198,6 +198,13 @@ describe('distribute title cards', () => {
     expect(game.getPlayerWithCard('Admiral').name).toBe('micah')
   })
 
+  test('President is given a quorum card', () => {
+    const factory = new GameFixtureFactory()
+    const game = factory.build().advanceTo('player-turn').game
+
+    expect(game.getCardsKindByPlayer('quorum', 'dennis').length).toBe(1)
+  })
+
 })
 
 describe('distribute loyalty cards', () => {
@@ -711,30 +718,6 @@ describe('player turn', () => {
       return game
     }
 
-    function _takeActionWithMoveToColonialOne(kind, option, beforeAction) {
-      const factory = new GameFixtureFactory()
-      if (kind === 'Location Action') {
-        factory.options.players[0].movement = {
-          name: 'Colonial One',
-          option: [option]
-        }
-      }
-      const game = factory.build().advanceTo('player-turn-action').game
-      if (beforeAction) {
-        beforeAction(game)
-      }
-      game.run()
-      game.submit({
-        actor: 'dennis',
-        name: 'Action',
-        option: [{
-          name: kind,
-          option: [option],
-        }]
-      })
-      return game
-    }
-
     function _takeAction(kind, option, beforeAction) {
       const factory = new GameFixtureFactory()
       const game = factory.build().advanceTo('player-turn-action').game
@@ -972,7 +955,34 @@ describe('player turn', () => {
       })
 
       describe("President's Office", () => {
+        test.skip('only the president can activate', () => {
 
+        })
+
+        test('President first draws one card', () => {
+          const game = _takeActionWithMove('Location Action', "President's Office")
+          // One at start of game when becoming president, one for taking action
+          expect(game.getCardsKindByPlayer('quorum', 'dennis').length).toBe(2)
+        })
+
+        test('can choose to play a quorum card or draw another quorum card', () => {
+          const game = _takeActionWithMove('Location Action', "President's Office")
+          const action = game.getWaiting('dennis').actions[0]
+          expect(action.name).toBe('Play or Draw')
+        })
+
+        test('draw gets you a quorum card', () => {
+          const game = _takeActionWithMove('Location Action', "President's Office")
+          game.submit({
+            actor: 'dennis',
+            name: 'Play or Draw',
+            option: [{ name: 'Draw a Quorum Card' }]
+          })
+          expect(game.getCardsKindByPlayer('quorum', 'dennis').length).toBe(3)
+        })
+
+        test.skip('play actually plays the card', () => {
+        })
       })
 
       describe("Press Room", () => {

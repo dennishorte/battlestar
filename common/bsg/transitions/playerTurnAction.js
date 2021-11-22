@@ -120,6 +120,13 @@ function handleResponse(context) {
       })
     }
 
+    else if (locationName === "President's Office") {
+      markDone(context)
+      return context.push('activate-presidents-office', {
+        playerName: player.name
+      })
+    }
+
     else {
       throw new Error(`Unhandled location action: ${locationName}`)
     }
