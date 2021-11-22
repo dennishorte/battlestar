@@ -31,7 +31,6 @@ function handleResponse(context) {
   const chosenPlayerName = context.response.option[0]
   const chosenPlayer = game.getPlayerByName(chosenPlayerName)
 
-  game.mClearWaiting()
   game.mSetSkillCheck({
     name: `Nominate ${chosenPlayerName} for the Presidency`,
     skills: ['leadership', 'tactics'],

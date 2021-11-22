@@ -709,10 +709,6 @@ Game.prototype.mAdjustCounterByName = function(name, amount) {
   this.rk.put(this.state.counters, name, newValue)
 }
 
-Game.prototype.mClearWaiting = function() {
-  this.sm.clearWaiting()
-}
-
 Game.prototype.mRemoveViperAt = function(spaceZone, action) {
   spaceZone = this._adjustZoneParam(spaceZone)
   const vipers = spaceZone.cards.filter(c => c.kind === 'ships.vipers')
