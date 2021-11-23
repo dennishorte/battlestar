@@ -217,13 +217,7 @@ describe('distribute loyalty cards', () => {
       const hand = game.getZoneByPlayer(player).cards
       const loyaltyCards = game.getCardsLoyaltyByPlayer(player)
 
-      // Gaius gets an extra card
-      if (player.name === 'dennis') {
-        expect(loyaltyCards.length).toBe(2)
-      }
-      else {
-        expect(loyaltyCards.length).toBe(1)
-      }
+      expect(loyaltyCards.length).toBe(1)
 
       // Number of cards remaining should be 4 (one extra due to Sharon)
       const loyaltyDeck = game.getZoneByName('decks.loyalty')
@@ -329,7 +323,7 @@ describe('player turn', () => {
         .getCardsKindByPlayer('skill', 'dennis')
         .map(c => c.deck.split('.')[1])
         .sort()
-      expect(skillKinds).toStrictEqual(['engineering', 'leadership', 'politics', 'politics'])
+      expect(skillKinds).toStrictEqual(['leadership', 'leadership', 'politics', 'politics', 'tactics'])
 
       const action = game.getWaiting('dennis').actions[0]
       expect(action.name).toBe('Movement')
@@ -383,7 +377,7 @@ describe('player turn', () => {
       expect(action.options).toStrictEqual([
         "politics",
         "leadership",
-        "engineering",
+        "tactics",
       ])
     })
 
@@ -438,29 +432,27 @@ describe('player turn', () => {
       expect(action.options.length).toBe(3)
     })
 
-    test("player on Galactica current location excluded", () => {
+    test("player on Colonial One current location excluded", () => {
       const factory = new GameFixtureFactory()
       const game = factory.build().advanceTo('player-turn-movement').game
       game.run()
 
       const action = game.getWaiting('dennis').actions[0]
-      const galacticaOptions = action.options.find(o => o.name === 'Galactica').options
-      expect(galacticaOptions.length).toBe(7)
-      expect(galacticaOptions.includes('Research Lab')).toBe(false)
+      const colonialOneOptions = action.options.find(o => o.name === 'Colonial One').options
+      expect(colonialOneOptions.length).toBe(2)
 
-      // Ensure a galactica location is actually there
-      expect(galacticaOptions.includes('Hangar Deck')).toBe(true)
+      // Ensure a colonialOne location is actually there
+      expect(colonialOneOptions.includes('Press Room')).toBe(true)
     })
 
-    test("player on Galactica can see Colonial One locations", () => {
+    test("player on Colonial One can see Galactica locations", () => {
       const factory = new GameFixtureFactory()
       const game = factory.build().advanceTo('player-turn-movement').game
       game.run()
 
       const action = game.getWaiting('dennis').actions[0]
-      const options = action.options.find(o => o.name === 'Colonial One').options
-      expect(options.length).toBe(3)
-      expect(options.includes('Administration')).toBe(true)
+      const options = action.options.find(o => o.name === 'Galactica').options
+      expect(options.length).toBe(8)
     })
 
     test("destroyed Colonial One excluded", () => {
@@ -499,9 +491,8 @@ describe('player turn', () => {
 
       const action = game.getWaiting('dennis').actions[0]
       const galacticaOptions = action.options.find(o => o.name === 'Galactica').options
-      expect(galacticaOptions.length).toBe(6)
+      expect(galacticaOptions.length).toBe(7)
       expect(galacticaOptions.includes('Command')).toBe(false)
-      expect(galacticaOptions.includes('Research Lab')).toBe(false)
     })
 
     test("player with no cards can't change ships", () => {
@@ -513,7 +504,7 @@ describe('player turn', () => {
 
       const action = game.getWaiting('dennis').actions[0]
       expect(action.options.length).toBe(2)
-      expect(action.options[0].name).toBe('Galactica')
+      expect(action.options[0].name).toBe('Colonial One')
     })
 
     test("player can choose not to move", () => {
@@ -559,12 +550,12 @@ describe('player turn', () => {
           actor: 'dennis',
           name: 'Movement',
           option: [{
-            name: 'Colonial One',
-            option: ['Administration'],
+            name: 'Galactica',
+            option: ['Armory'],
           }]
         })
 
-        expect(game.getZoneByPlayerLocation('dennis').name).toBe('locations.administration')
+        expect(game.getZoneByPlayerLocation('dennis').name).toBe('locations.armory')
         expect(game.getWaiting('dennis').actions[0].name).toBe('Discard Skill Cards')
       })
 
@@ -591,7 +582,7 @@ describe('player turn', () => {
         game.run()
 
         // Pre-condition
-        expect(game.getZoneByPlayerLocation('dennis').details.name).toBe('Research Lab')
+        expect(game.getZoneByPlayerLocation('dennis').details.name).toBe('Administration')
 
         game.submit({
           actor: 'dennis',
@@ -600,7 +591,7 @@ describe('player turn', () => {
         })
 
         // Post-condition
-        expect(game.getZoneByPlayerLocation('dennis').details.name).toBe('Research Lab')
+        expect(game.getZoneByPlayerLocation('dennis').details.name).toBe('Administration')
         expect(game.getWaiting('dennis').actions[0].name).toBe('Action')
       })
 
@@ -988,10 +979,9 @@ describe('player turn', () => {
       describe("Press Room", () => {
         test('player draws two politics cards', () => {
           const game = _takeActionWithMove('Location Action', "Press Room")
-          // Started with 4 as Gaius.
-          // Spent one to move to Colonial One
+          // Started with 5 as Tom Zarek
           // Drew two more
-          expect(game.getCardsKindByPlayer('skill', 'dennis').length).toBe(5)
+          expect(game.getCardsKindByPlayer('skill', 'dennis').length).toBe(7)
         })
       })
 
@@ -2342,7 +2332,7 @@ describe('crisis card effects', () => {
 
       // Pre-conditions
       expect(game.getZoneByName('ships.vipers').cards.length).toBe(4)
-      expect(game.getZoneByPlayerLocation('dennis').details.name).toBe('Research Lab')
+      expect(game.getZoneByPlayerLocation('dennis').details.name).toBe('Administration')
 
       game.submit({
         actor: 'micah',

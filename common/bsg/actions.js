@@ -424,7 +424,7 @@ Actions.aDestroyColonialOne = function() {
           }
         })
 
-        this.mMovePlayer(card.name, 'Sickbay')
+        this.mMovePlayer(card.name, 'locations.sickbay')
       }
     }
   }
