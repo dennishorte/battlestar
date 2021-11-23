@@ -1,17 +1,33 @@
-const { transitionFactory, markDone } = require('./factory.js')
+const { transitionFactory2 } = require('./factory.js')
 const util = require('../../lib/util.js')
 
+module.exports = transitionFactory2({
+  responseHandler: _handleResponse,
+  steps: [
+    {
+      name: 'select-crisis',
+      func: _selectCrisis
+    },
+    {
+      name: 'gaius-draw-skill-card',
+      func: _gaiusDrawSkillCard,
+    },
+    {
+      name: 'before-crisis',
+      func: _beforeCrisis
+    },
+    {
+      name: 'crisis',
+      func: _crisis
+    },
+    {
+      name: 'after-crisis',
+      func: _afterCrisis
+    },
+  ],
+})
 
-module.exports = transitionFactory(
-  {
-    goToCylonActivation: false,
-    goToPrepareForJump: false,
-  },
-  generateOptions,
-  handleResponse,
-)
-
-function generateOptions(context) {
+function _selectCrisis(context) {
   const game = context.state
   const player = game.getPlayerByName(context.data.playerName)
 
@@ -30,31 +46,44 @@ function generateOptions(context) {
       game.aBeginCrisis()
     }
   }
+}
 
+function _gaiusDrawSkillCard(context) {
+  const game = context.state
+  const player = game.getPlayerByName(context.data.playerName)
+  const character = game.getCardCharacterByPlayer(player)
+  if (character.name === 'Gaius Baltar') {
+    return context.push('draw-skill-cards', {
+      playerName: player.name,
+      reason: 'Delusional Intuition',
+    })
+  }
+}
+
+function _beforeCrisis(context) {
+  const game = context.state
   const crisis = game.getCrisis()
 
   if (crisis.type === 'Cylon Attack') {
-    if (!context.data.goToPrepareForJump) {
-      game.rk.put(context.data, 'goToPrepareForJump', true)
-      game.aActivateCylonShips(crisis.cylonActivation)
-      game.aDeployShips(crisis.deploy)
-      if (crisis.script.effect) {
-        return context.push('evaluate-effects', {
-          name: `${crisis.name}: special effects`,
-          effects: crisis.script.effect,
-        })
-      }
+    game.aActivateCylonShips(crisis.cylonActivation)
+    game.aDeployShips(crisis.deploy)
+  }
+}
+
+function _crisis(context) {
+  const game = context.state
+  const crisis = game.getCrisis()
+
+  if (crisis.type === 'Cylon Attack') {
+    if (crisis.script.effect) {
+      return context.push('evaluate-effects', {
+        name: `${crisis.name}: special effects`,
+        effects: crisis.script.effect,
+      })
     }
-    return context.done()
   }
 
   else if (crisis.type === 'Choice') {
-    if (context.data.goToCylonActivation) {
-      return _cylonActivation(context)
-    }
-
-    game.rk.put(context.data, 'goToCylonActivation', true)
-
     let actor
     if (crisis.actor === 'Current player') {
       actor = game.getPlayerCurrentTurn()
@@ -82,23 +111,31 @@ function generateOptions(context) {
     })
   }
 
-  else if (crisis.type === 'Skill Check' || crisis.type === 'Optional Skill Check') {
-    if (context.data.goToCylonActivation) {
-      return _cylonActivation(context)
-    }
-
-    game.rk.put(context.data, 'goToCylonActivation', true)
-    game.mSetSkillCheck(crisis)
-
-    return context.push('skill-check')
-  }
-
   else {
-    throw new Error(`Unknown crisis type: ${crisis.type}`)
+    game.mSetSkillCheck(crisis)
+    return context.push('skill-check')
   }
 }
 
-function handleResponse(context) {
+function _afterCrisis(context) {
+  const game = context.state
+  const crisis = game.getCrisis()
+
+  if (crisis.type !== 'Cylon Attack') {
+    game.aActivateCylonShips(crisis.cylonActivation)
+    game.aPrepareForJump(crisis.jumpTrack)
+    if (game.getCounterByName('jumpTrack') >= 4) {
+      markDone(context)
+      game.mLog({ template: 'auto-jumping the fleet' })
+      return context.push('jump-the-fleet')
+    }
+    else {
+      return context.done()
+    }
+  }
+}
+
+function _handleResponse(context) {
   const game = context.state
   const crisis = game.getCrisis()
   const action = context.response.name
@@ -111,20 +148,5 @@ function handleResponse(context) {
       name: `${crisis.name} option ${optionNumber}`,
       effects: crisis.script[`option${optionNumber}`],
     })
-  }
-}
-
-function _cylonActivation(context) {
-  const game = context.state
-  const crisis = game.getCrisis()
-  game.aActivateCylonShips(crisis.cylonActivation)
-  game.aPrepareForJump(crisis.jumpTrack)
-  if (game.getCounterByName('jumpTrack') >= 4) {
-    markDone(context)
-    game.mLog({ template: 'auto-jumping the fleet' })
-    return context.push('jump-the-fleet')
-  }
-  else {
-    return context.done()
   }
 }

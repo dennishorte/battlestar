@@ -166,9 +166,12 @@ function put(object, key, value) {
     return
   }
 
+  const path = this.path(object)
+  util.assert(!!path, `Unable to find object`)
+
   this.patch({
     kind: 'put',
-    path: this.path(object),
+    path: path,
     key: key,
     old: object[key],
     new: value,

@@ -2,6 +2,7 @@ module.exports = {
   markDone,
   stepFactory,
   transitionFactory,
+  transitionFactory2,
 }
 
 function markDone(context) {
@@ -53,12 +54,11 @@ function transitionFactory(data, generator, responder) {
 }
 
 function _initialize(context, data) {
-  const game = context.state
-
   if (context.data.initialized) {
     return
   }
 
+  const game = context.state
   game.rk.addKey(context.data, 'initialized', true)
 
   // Often used by transition to show they have no more work, and are just waiting for
@@ -67,5 +67,60 @@ function _initialize(context, data) {
 
   for (const [key, value] of Object.entries(data)) {
     game.rk.addKey(context.data, key, value)
+  }
+}
+
+function transitionFactory2(options) {
+  return function(context) {
+    _initialize2(context, options)
+
+    const game = context.state
+
+    if (context.data.done) {
+      return context.done()
+    }
+
+    if (context.response) {
+      const result = options.responseHandler(context)
+      if (result) {
+        return result
+      }
+    }
+
+    for (const step of options.steps) {
+      if (context.data.completedSteps.includes(step.name)) {
+        continue
+      }
+      else {
+        game.rk.push(context.data.completedSteps, step.name)
+        const result = step.func(context)
+        if (result) {
+          return result
+        }
+        else {
+          continue
+        }
+      }
+    }
+
+    return context.done()
+  }
+}
+
+function _initialize2(context, options) {
+  if (context.data.initialized) {
+    return
+  }
+
+  const game = context.state
+
+  game.rk.addKey(context.data, 'initialized', true)
+  game.rk.addKey(context.data, 'done', false)
+  game.rk.addKey(context.data, 'completedSteps', [])
+
+  if (options.data) {
+    for (const [key, value] of options.data) {
+      game.rk.addKey(context.data, key, value)
+    }
   }
 }

@@ -25,8 +25,8 @@ function GameFixtureFactory(options) {
     destiny: null,  // If an array, sets the destiny deck to the listed cards
     players: [
       {
-        character: 'Gaius Baltar',
-        startingSkills: ['leadership', 'politics', 'engineering'],
+        character: 'Tom Zarek',
+        startingSkills: ['leadership', 'politics', 'tactics'],
         hand: null,
         movement: 'Skip Movement',
         action: 'Skip Action',

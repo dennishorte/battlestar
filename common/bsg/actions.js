@@ -302,7 +302,7 @@ Actions.aBeginCrisis = function() {
   this.mSetCrisisActive(card)
 
   this.mLog({
-    template: '{card} crisis begins',
+    template: '"{card}" crisis begins',
     args: { card }
   })
 }

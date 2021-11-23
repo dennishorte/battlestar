@@ -22,6 +22,22 @@ function generateOptions(context) {
     })
   }
 
+  else if (reason === 'Delusional Intuition') {
+    return context.wait({
+      actor: player.name,
+      actions: [{
+        name: 'Delusional Intuition',
+        options: [
+          'politics',
+          'leadership',
+          'tactics',
+          'piloting',
+          'engineering',
+        ]
+      }]
+    })
+  }
+
   else {
     throw new Error(`Invalid reason for card drawing provided: ${reason}`)
   }
