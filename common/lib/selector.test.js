@@ -253,6 +253,32 @@ describe('min and max', () => {
     expect(validate(selector, { name: 'test', option: ['one', 'two', 'three'] }).valid).toBe(true)
   })
 
+  test('max1 with fake option', () => {
+    const selector = {
+      name: 'test',
+      options: [
+        {
+          name: 'nested',
+          max: 1,
+          options: ['one']
+        },
+        'unnested'
+      ]
+    }
+
+    const selection = {
+      name: 'test',
+      option: [
+        {
+          name: 'nested',
+          option: ['fake']
+        }
+      ]
+    }
+
+    expect(validate(selector, selection).valid).toBe(false)
+  })
+
 })
 
 describe('extra', () => {

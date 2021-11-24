@@ -44,6 +44,7 @@ function _validate(selector, selection, annotate) {
     selection.annotation = {}
   }
 
+  // If names don't match, doesn't matter how the options line up.
   if (selector.name !== selection.name) {
     if (annotate) {
       selection.annotation.isValid = false
@@ -57,6 +58,7 @@ function _validate(selector, selection, annotate) {
 
   const { min, max } = minMax(selector)
 
+  // Test each option in selection to see if it matches a valid choice in selector
   const unused = [...selector.options]
   const matched = []
   const unmatched = []
@@ -88,14 +90,21 @@ function _validate(selector, selection, annotate) {
           }
           break
         }
-        else {
-          unmatched.push(sel)
-        }
       }
+    }
+    if (!matched.includes(sel)) {
+      unmatched.push(sel)
     }
   }
 
-  if (exclusive && matched.length > 1) {
+  if (unmatched.length > 0) {
+    const name = unmatched[0].name
+    return {
+      valid: false,
+      mismatch: `Selection ${name} didn't exist in the options`
+    }
+  }
+  else if (exclusive && matched.length > 1) {
     if (annotate) {
       selection.annotation.isValid = false
       selection.annotation.mismatch = 'exclusive'
