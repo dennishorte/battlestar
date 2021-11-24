@@ -332,6 +332,10 @@ const transitions = {
     func: require('./transitions/activatePresidentsOffice.js'),
   },
 
+  'skill-card-executive-order': {
+    func: require('./transitions/skillCardExecutiveOrder.js'),
+  },
+
   'choose-player-to-send-to-brig': {
     func: require('./transitions/choosePlayerToSendToBrig.js'),
   },

@@ -693,6 +693,14 @@ describe('player turn', () => {
           option: [option]
         }
       }
+      else if (kind === 'Play Skill Card') {
+        factory.options.players[0].hand = [{
+          skill: 'leadership',
+          name: 'Executive Order',
+          value: 1
+        }]
+      }
+
       const game = factory.build().advanceTo('player-turn-action').game
       if (beforeAction) {
         beforeAction(game)
@@ -774,6 +782,44 @@ describe('player turn', () => {
 
       describe('Executive Order', () => {
 
+        test('current player chooses another player', () => {
+          const game = _takeAction('Play Skill Card', 'Executive Order')
+          expect(game.getWaiting('dennis')).toBeDefined()
+          expect(game.getWaiting('dennis').actions[0].name).toBe('Choose a Player')
+        })
+
+        test('first choice is movement or action', () => {
+          const game = _takeAction('Play Skill Card', 'Executive Order')
+          game.submit({
+            actor: 'dennis',
+            name: 'Choose a Player',
+            option: ['tom']
+          })
+
+          expect(game.getWaiting('tom')).toBeDefined()
+          expect(game.getWaiting('tom').actions[0].name).toBe('First Choice')
+        })
+
+        test('second choice is only actions', () => {
+          const game = _takeAction('Play Skill Card', 'Executive Order')
+          game.submit({
+            actor: 'dennis',
+            name: 'Choose a Player',
+            option: ['tom']
+          })
+          game.submit({
+            actor: 'tom',
+            name: 'First Choice',
+            option: ['Movement'],
+          })
+          game.submit({
+            actor: 'tom',
+            name: 'Movement',
+            option: ['Skip Movement']
+          })
+          expect(game.getWaiting('tom')).toBeDefined()
+          expect(game.getWaiting('tom').actions[0].name).toBe('Action')
+        })
       })
 
       describe('Launch Scout', () => {

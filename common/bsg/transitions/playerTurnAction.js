@@ -71,6 +71,20 @@ function handleResponse(context) {
     context.done()
   }
 
+  else if (selectionName === 'Play Skill Card') {
+    const cardName = bsgutil.optionName(selection.option[0])
+
+    if (cardName === 'Executive Order') {
+      return context.push('skill-card-executive-order', {
+        playerName: player.name
+      })
+    }
+
+    else {
+      throw new Error(`Unhanlded skill action: ${cardname}`)
+    }
+  }
+
   else if (selectionName === 'Location Action') {
     const locationName = bsgutil.optionName(selection.option[0])
 

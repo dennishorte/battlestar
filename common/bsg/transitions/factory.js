@@ -76,17 +76,37 @@ function transitionFactory2(options) {
 
     const game = context.state
 
+    // If a transition sometimes wants to short-circuit itself and finish before going
+    // through all of its steps, it can set this flag on the context to exit early.
     if (context.data.done) {
       return context.done()
     }
 
     if (context.response) {
-      const result = options.responseHandler(context)
+      let result
+
+      // If there is a step specific response handler, use that
+      const lastStep = context.data.completedSteps.slice(-1)[0]
+      if (lastStep && options.steps.find(s => s.name === lastStep).resp) {
+        result = options.steps.find(s => s.name === lastStep).resp(context)
+      }
+
+      // Otherwise, fallback to a global response handler
+      else {
+        result = options.responseHandler(context)
+      }
+
+      // If a result was returned, that means that the response handler set up the next
+      // transition in the statemachine, and we should break here. Otherwise, continue on to
+      // the next step in this transition.
       if (result) {
         return result
       }
     }
 
+    // Go through all the steps until the first step that hasn't been completed, and
+    // execute that step. If that step returns a value, that means it has set up the
+    // next transition. Otherwise, continue going through the steps of this transition.
     for (const step of options.steps) {
       if (context.data.completedSteps.includes(step.name)) {
         continue
@@ -103,6 +123,7 @@ function transitionFactory2(options) {
       }
     }
 
+    // Once all steps have been completed, this transition is finished.
     return context.done()
   }
 }

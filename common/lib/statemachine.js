@@ -28,7 +28,16 @@ function StateMachine(
 
 StateMachine.prototype.clearWaiting = clearWaiting
 StateMachine.prototype.run = run
+StateMachine.prototype.dumpStack = dumpStack
 
+
+function dumpStack() {
+  const output = []
+  for (const event of this.stack) {
+    output.push(JSON.stringify(event))
+  }
+  console.log(output.join('\n'))
+}
 
 function run() {
   // Initialize, if needed
@@ -65,7 +74,6 @@ function clearWaiting() {
 
 function _done() {
   const event = this.stack[this.stack.length - 1]
-  // console.log('done', event)
   this.rk.pop(this.stack)
   this.clearWaiting()
   this.run()
