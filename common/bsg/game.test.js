@@ -778,6 +778,16 @@ describe('player turn', () => {
     describe('card actions', () => {
       describe('Consolidate Power', () => {
 
+        test('player can draw two skill cards', () => {
+          const game = _takeAction('Play Skill Card', 'Consolidate Power')
+          expect(game.getWaiting('dennis')).toBeDefined()
+
+          const action = game.getWaiting('dennis').actions[0]
+          expect(action.name).toBe('Consolidate Power')
+          expect(action.count).toBe(2)
+          expect(action.options.length).toBe(10)
+        })
+
       })
 
       describe('Executive Order', () => {

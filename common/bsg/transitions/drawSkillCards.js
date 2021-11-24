@@ -38,6 +38,28 @@ function generateOptions(context) {
     })
   }
 
+  else if (reason === 'Consolidate Power') {
+    return context.wait({
+      actor: player.name,
+      actions: [{
+        name: 'Consolidate Power',
+        count: 2,
+        options: [
+          'politics',
+          'politics',
+          'leadership',
+          'leadership',
+          'tactics',
+          'tactics',
+          'piloting',
+          'piloting',
+          'engineering',
+          'engineering',
+        ]
+      }]
+    })
+  }
+
   else {
     throw new Error(`Invalid reason for card drawing provided: ${reason}`)
   }

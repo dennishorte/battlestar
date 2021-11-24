@@ -74,7 +74,14 @@ function handleResponse(context) {
   else if (selectionName === 'Play Skill Card') {
     const cardName = bsgutil.optionName(selection.option[0])
 
-    if (cardName === 'Executive Order') {
+    if (cardName === 'Consolidate Power') {
+      return context.push('draw-skill-cards', {
+        playerName: player.name,
+        reason: 'Consolidate Power',
+      })
+    }
+
+    else if (cardName === 'Executive Order') {
       return context.push('skill-card-executive-order', {
         playerName: player.name
       })
