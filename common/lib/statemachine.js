@@ -64,6 +64,11 @@ function run() {
   }
 
   const transition = this.transitions[event.name]
+
+  if (!transition) {
+    throw new Error(`Transition ${event.name} is not defined`)
+  }
+
   return transition.func(context)
 }
 

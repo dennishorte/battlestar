@@ -693,13 +693,6 @@ describe('player turn', () => {
           option: [option]
         }
       }
-      else if (kind === 'Play Skill Card') {
-        factory.options.players[0].hand = [{
-          skill: 'leadership',
-          name: 'Executive Order',
-          value: 1
-        }]
-      }
 
       const game = factory.build().advanceTo('player-turn-action').game
       if (beforeAction) {
@@ -719,6 +712,9 @@ describe('player turn', () => {
 
     function _takeAction(kind, option, beforeAction) {
       const factory = new GameFixtureFactory()
+      if (kind === 'Play Skill Card') {
+        factory.options.players[0].hand = [option]
+      }
       const game = factory.build().advanceTo('player-turn-action').game
       if (beforeAction) {
         beforeAction(game)
@@ -729,7 +725,7 @@ describe('player turn', () => {
         name: 'Action',
         option: [{
           name: kind,
-          option: [option],
+          option: [option.name || option],
         }]
       })
       return game
@@ -834,6 +830,82 @@ describe('player turn', () => {
 
       describe('Launch Scout', () => {
 
+        test('can only be used if Galactica has raptors remaining', () => {
+          const factory = new GameFixtureFactory()
+          factory.options.players[0].hand = [
+            {
+              kind: 'skill',
+              skill: 'tactics',
+              name: 'Launch Scout',
+              value: 1
+            },
+            {
+              kind: 'skill',
+              skill: 'leadership',
+              name: 'Executive Order',
+              value: 1
+            },
+          ]
+          const game = factory.build().advanceTo('player-turn-action').game
+          game.mAdjustCounterByName('raptors', -4)
+          game.run()
+
+          expect(game.getWaiting('dennis')).toBeDefined()
+
+          const skillOption = game
+            .getWaiting('dennis')
+            .actions[0]
+            .options
+            .find(o => o.name === "Play Skill Card")
+          expect(skillOption).toBeDefined()
+          expect(skillOption.options).toStrictEqual(['Executive Order'])
+        })
+
+        test('player can choose between crisis and destination deck', () => {
+          const cardOption = {
+            kind: 'skill',
+            skill: 'tactics',
+            name: 'Launch Scout',
+            value: 1
+          }
+          const game = _takeAction('Play Skill Card', cardOption, () => {
+            jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 3)
+          })
+          expect(game.getWaiting('dennis')).toBeDefined()
+          expect(game.getWaiting('dennis').actions[0].name).toBe('Select Deck')
+        })
+
+        test('player can choose between top and bottom', () => {
+          const cardOption = {
+            kind: 'skill',
+            skill: 'tactics',
+            name: 'Launch Scout',
+            value: 1
+          }
+          const game = _takeAction('Play Skill Card', cardOption, () => {
+            jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 3)
+          })
+          game.submit({
+            actor: 'dennis',
+            name: 'Select Deck',
+            option: ['destination']
+          })
+          expect(game.getWaiting('dennis')).toBeDefined()
+          expect(game.getWaiting('dennis').actions[0].name).toBe('Top or Bottom')
+        })
+
+        test('failed roll causes raptor to be destroyed', () => {
+          const cardOption = {
+            kind: 'skill',
+            skill: 'tactics',
+            name: 'Launch Scout',
+            value: 1
+          }
+          const game = _takeAction('Play Skill Card', cardOption, () => {
+            jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 2)
+          })
+          expect(game.getCounterByName('raptors')).toBe(3)
+        })
       })
 
       describe('Maximum Firepower', () => {

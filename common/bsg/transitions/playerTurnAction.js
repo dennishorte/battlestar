@@ -87,6 +87,12 @@ function handleResponse(context) {
       })
     }
 
+    else if (cardName === 'Launch Scout') {
+      return context.push('skill-card-launch-scout', {
+        playerName: player.name
+      })
+    }
+
     else {
       throw new Error(`Unhanlded skill action: ${cardname}`)
     }
@@ -163,13 +169,15 @@ function handleResponse(context) {
   }
 }
 
-const actionSkillCards = [
-  'Consolidate Power',
-  'Executive Order',
-  'Launch Scout',
-  'Maximum Firepower',
-  'Repair',
-]
+const actionSkillCards = {
+  'Consolidate Power': () => true,
+  'Executive Order': () => true,
+  'Launch Scout': (game) => game.getCounterByName('raptors') > 0,
+  'Maximum Firepower': (game, player) => game.checkPlayerIsInSpace(player),
+  'Repair': (game, player) => game.checkLocationIsDamaged(
+    game.getZoneByPlayerLocation(player)
+  )
+}
 
 function _addSkillCardActions(context, options) {
   const game = context.state
@@ -178,8 +186,8 @@ function _addSkillCardActions(context, options) {
 
   const cardOptions = []
 
-  for (const name of actionSkillCards) {
-    if (cardNames.includes(name)) {
+  for (const [name, canPlay] of Object.entries(actionSkillCards)) {
+    if (cardNames.includes(name) && canPlay(game, player)) {
       cardOptions.push(name)
     }
   }

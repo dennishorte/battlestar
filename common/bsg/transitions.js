@@ -335,6 +335,9 @@ const transitions = {
   'skill-card-executive-order': {
     func: require('./transitions/skillCardExecutiveOrder.js'),
   },
+  'skill-card-launch-scout': {
+    func: require('./transitions/skillCardLaunchScout.js'),
+  },
 
   'choose-player-to-send-to-brig': {
     func: require('./transitions/choosePlayerToSendToBrig.js'),

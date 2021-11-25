@@ -962,7 +962,7 @@ Game.prototype.mMaybeShuffleBag = function(zone) {
 
 // This function takes care of all the details of card movement, including
 // reshuffling discard piles, visibility, etc.
-Game.prototype.mMoveCard = function(source, target, card) {
+Game.prototype.mMoveCard = function(source, target, card, options = {}) {
   source = this._adjustZoneParam(source)
   target = this._adjustZoneParam(target)
 
@@ -986,13 +986,17 @@ Game.prototype.mMoveCard = function(source, target, card) {
     throw new Error('Trying to move undefined card')
   }
 
-  this.mMoveByIndices(source, cardIndex, target, target.cards.length)
+  const targetIndex = options.top ? 0 : target.cards.length
+
+  this.mMoveByIndices(source, cardIndex, target, targetIndex)
   this.mMaybeShuffleBag(target)
 
   // Refresh the card; it seems that its object "sometimes" gets changed by the shuffling
   card = this.getCardById(card.id)
 
   this.mAdjustCardVisibilityToNewZone(target, card)
+
+  return card
 }
 
 Game.prototype.mMoveByIndices = function(sourceName, sourceIndex, targetName, targetIndex) {
@@ -1019,6 +1023,20 @@ Game.prototype.mMovePlayer = function(player, destination) {
   destination = this._adjustZoneParam(destination)
   const { card } = this.getCardPlayerToken(player)
   this.rk.move(card, destination.cards, destination.cards.length)
+}
+
+Game.prototype.mReturnCardToTop = function(card) {
+  card = this._adjustCardParam(card)
+  const fromZone = this.getCardByPredicate(c => c.id === card.id).zoneName
+  const destZone = this.getZoneByCardOrigin(card)
+  this.mMoveCard(fromZone, destZone, card, { top: true })
+}
+
+Game.prototype.mReturnCardToBottom = function(card) {
+  card = this._adjustCardParam(card)
+  const fromZone = this.getCardByPredicate(c => c.id === card.id).zoneName
+  const destZone = this.getZoneByCardOrigin(card)
+  this.mMoveCard(fromZone, destZone, card)
 }
 
 Game.prototype.mReturnViperFromSpaceZone = function(zoneNumber) {
