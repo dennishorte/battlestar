@@ -685,13 +685,10 @@ describe('player turn', () => {
 
   describe('action', () => {
 
-    function _takeActionWithMove(kind, option, beforeAction) {
+    function _takeActionWithMove(kind, locationInfo, beforeAction) {
       const factory = new GameFixtureFactory()
       if (kind === 'Location Action') {
-        factory.options.players[0].movement = {
-          name: 'Galactica',
-          option: [option]
-        }
+        factory.options.players[0].movement = locationInfo
       }
 
       const game = factory.build().advanceTo('player-turn-action').game
@@ -704,7 +701,7 @@ describe('player turn', () => {
         name: 'Action',
         option: [{
           name: kind,
-          option: [option],
+          option: [locationInfo.option[0]],
         }]
       })
       return game
@@ -774,8 +771,21 @@ describe('player turn', () => {
     describe('card actions', () => {
       describe('Consolidate Power', () => {
 
+        function _consolidatePowerFixture(setupFunc) {
+          return _takeAction(
+            'Play Skill Card',
+            {
+              kind: 'skill',
+              skill: 'politics',
+              name: 'Consolidate Power',
+              value: 1
+            },
+            setupFunc
+          )
+        }
+
         test('player can draw two skill cards', () => {
-          const game = _takeAction('Play Skill Card', 'Consolidate Power')
+          const game = _consolidatePowerFixture()
           expect(game.getWaiting('dennis')).toBeDefined()
 
           const action = game.getWaiting('dennis').actions[0]
@@ -788,14 +798,27 @@ describe('player turn', () => {
 
       describe('Executive Order', () => {
 
+        function _executiveOrderFixture(setupFunc) {
+          return _takeAction(
+            'Play Skill Card',
+            {
+              kind: 'skill',
+              skill: 'leadership',
+              name: 'Executive Order',
+              value: 1
+            },
+            setupFunc
+          )
+        }
+
         test('current player chooses another player', () => {
-          const game = _takeAction('Play Skill Card', 'Executive Order')
+          const game = _executiveOrderFixture()
           expect(game.getWaiting('dennis')).toBeDefined()
           expect(game.getWaiting('dennis').actions[0].name).toBe('Choose a Player')
         })
 
         test('first choice is movement or action', () => {
-          const game = _takeAction('Play Skill Card', 'Executive Order')
+          const game = _executiveOrderFixture()
           game.submit({
             actor: 'dennis',
             name: 'Choose a Player',
@@ -807,7 +830,7 @@ describe('player turn', () => {
         })
 
         test('second choice is only actions', () => {
-          const game = _takeAction('Play Skill Card', 'Executive Order')
+          const game = _executiveOrderFixture()
           game.submit({
             actor: 'dennis',
             name: 'Choose a Player',
@@ -914,14 +937,200 @@ describe('player turn', () => {
 
       describe('Repair', () => {
 
+        describe('repair vipers', () => {
+          function _repairFixture(options) {
+            options = Object.assign({
+              damageVipersCount: 2,
+              damageHangarBay: false,
+              moveLocation: 'Hangar Deck',
+            }, options)
+
+            const factory = new GameFixtureFactory()
+            factory.options.players[0].movement = {
+              name: 'Galactica',
+              option: [options.moveLocation]
+            }
+            factory.options.players[0].hand = [
+              { // This card will be discarded to move
+                kind: 'skill',
+                skill: 'leadership',
+                name: 'Executive Order',
+                value: 1
+              },
+              {
+                kind: 'skill',
+                skill: 'engineering',
+                name: 'Repair',
+                value: 1
+              },
+              { // This card will make sure there is a "Play Skill Card" option
+                kind: 'skill',
+                skill: 'leadership',
+                name: 'Executive Order',
+                value: 1
+              },
+            ]
+            const game = factory.build().advanceTo('player-turn-action').game
+            if (options.damageVipersCount) {
+              for (let i = 0; i < options.damageVipersCount; i++) {
+                game.aDamageViperInReserve()
+              }
+            }
+            if (options.damageHangarDeck) {
+              const damage = game.getCardByName('Damage Hangar Deck')
+              game.mMoveCard('decks.damageGalactica', 'locations.hangarDeck', damage)
+            }
+            game.run()
+            return game
+          }
+
+          test('can only be done at the hangar deck', () => {
+            const game = _repairFixture({ moveLocation: 'Armory' })
+            expect(game.getWaiting('dennis')).toBeDefined()
+            const skillCardOptions = game
+              .getWaiting('dennis')
+              .actions[0]
+              .options
+              .find(o => o.name === 'Play Skill Card')
+              .options
+            expect(skillCardOptions.find(o => o === 'Repair')).not.toBeDefined()
+          })
+
+          test('can only be done if vipers are damaged', () => {
+            const game = _repairFixture({ damageVipersCount: 0 })
+            expect(game.getWaiting('dennis')).toBeDefined()
+            const skillCardOptions = game
+              .getWaiting('dennis')
+              .actions[0]
+              .options
+              .find(o => o.name === 'Play Skill Card')
+              .options
+            expect(skillCardOptions.find(o => o === 'Repair')).not.toBeDefined()
+          })
+
+          test('can only be done if hangar deck is not damaged', () => {
+            const game = _repairFixture({ damageHangarDeck: true })
+            game.submit({
+              actor: 'dennis',
+              name: 'Action',
+              option: [{
+                name: 'Play Skill Card',
+                option: ['Repair']
+              }]
+            })
+            expect(game.getDamagedVipersCount()).toBe(2)
+            expect(game.checkLocationIsDamaged('Hangar Deck')).toBe(false)
+          })
+
+          test('repairs up to two vipers', () => {
+            const game = _repairFixture({ damageVipersCount: 3 })
+            game.submit({
+              actor: 'dennis',
+              name: 'Action',
+              option: [{
+                name: 'Play Skill Card',
+                option: ['Repair']
+              }]
+            })
+            expect(game.getDamagedVipersCount()).toBe(1)
+          })
+        })
+
+        describe('repair locations', () => {
+          function _repairFixture(damageLocation) {
+            const factory = new GameFixtureFactory()
+            factory.options.players[0].movement = {
+              name: 'Galactica',
+              option: ['Armory']
+            }
+            factory.options.players[0].hand = [
+              { // This card will be discarded to move
+                kind: 'skill',
+                skill: 'leadership',
+                name: 'Executive Order',
+                value: 1
+              },
+              {
+                kind: 'skill',
+                skill: 'engineering',
+                name: 'Repair',
+                value: 1
+              },
+              { // This card will make sure there is a "Play Skill Card" option
+                kind: 'skill',
+                skill: 'leadership',
+                name: 'Executive Order',
+                value: 1
+              },
+            ]
+            const game = factory.build().advanceTo('player-turn-action').game
+            if (damageLocation) {
+              const armoryDamage = game.getCardByName('Damage Armory')
+              game.mMoveCard('decks.damageGalactica', 'locations.armory', armoryDamage)
+            }
+            game.run()
+            return game
+          }
+
+          test('cannot use at undamaged locations', () => {
+            const game = _repairFixture(false)
+            expect(game.getWaiting('dennis')).toBeDefined()
+
+            const skillOption = game
+              .getWaiting('dennis')
+              .actions[0]
+              .options
+              .find(o => o.name === "Play Skill Card")
+            expect(skillOption).toBeDefined()
+            expect(skillOption.options).toStrictEqual(['Executive Order'])
+          })
+
+          test('can use at damaged locations', () => {
+            const game = _repairFixture(true)
+            expect(game.getWaiting('dennis')).toBeDefined()
+
+            const skillOption = game
+              .getWaiting('dennis')
+              .actions[0]
+              .options
+              .find(o => o.name === "Play Skill Card")
+            expect(skillOption).toBeDefined()
+            expect(skillOption.options).toStrictEqual(['Executive Order', 'Repair'])
+          })
+
+          test('repairs current location', () => {
+            const game = _repairFixture(true)
+            game.submit({
+              actor: 'dennis',
+              name: 'Action',
+              option: [{
+                name: 'Play Skill Card',
+                option: ['Repair']
+              }]
+            })
+            expect(game.checkLocationIsDamaged('locations.armory')).toBe(false)
+          })
+        })
+
       })
     })
 
     describe('location actions', () => {
       describe("Admiral's Quarters", () => {
 
+        function _admiralsQuartersFixture(beforeFunc) {
+          return _takeActionWithMove(
+            'Location Action',
+            {
+              name: 'Galactica',
+              option: ["Admiral's Quarters"]
+            },
+            beforeFunc
+          )
+        }
+
         test('choose a player', () => {
-          const game = _takeActionWithMove('Location Action', "Admiral's Quarters")
+          const game = _admiralsQuartersFixture()
           const waiting = game.getWaiting('dennis')
           const action = waiting.actions[0]
           expect(action.name).toBe('Choose a Player')
@@ -929,7 +1138,7 @@ describe('player turn', () => {
         })
 
         test("can't choose Cylons", () => {
-          const game = _takeActionWithMove('Location Action', "Admiral's Quarters", (game) => {
+          const game = _admiralsQuartersFixture((game) => {
             game.mSetPlayerIsRevealedCylon('tom')
           })
           const waiting = game.getWaiting('dennis')
@@ -939,7 +1148,7 @@ describe('player turn', () => {
         })
 
         test("can't choose players already in brig", () => {
-          const game = _takeActionWithMove('Location Action', "Admiral's Quarters", (game) => {
+          const game = _admiralsQuartersFixture((game) => {
             game.mMovePlayer('tom', 'locations.brig')
           })
           const waiting = game.getWaiting('dennis')
@@ -949,7 +1158,7 @@ describe('player turn', () => {
         })
 
         test('skill check launched', () => {
-          const game = _takeActionWithMove('Location Action', "Admiral's Quarters")
+          const game = _admiralsQuartersFixture()
           game.submit({
             actor: 'dennis',
             name: 'Choose a Player',
@@ -1015,7 +1224,10 @@ describe('player turn', () => {
       describe("Research Lab", () => {
 
         test('leads to draw cards', () => {
-          const game = _takeAction('Location Action', 'Research Lab')
+          const game = _takeActionWithMove('Location Action', {
+            name: 'Galactica',
+            option: ['Research Lab']
+          })
           const waiting = game.getWaiting('dennis')
           const action = waiting.actions[0]
           expect(action.name).toBe('Draw Skill Cards')
@@ -1034,7 +1246,7 @@ describe('player turn', () => {
       describe("Administration", () => {
 
         test('choose a player', () => {
-          const game = _takeActionWithMove('Location Action', "Administration")
+          const game = _takeAction('Location Action', "Administration")
           const waiting = game.getWaiting('dennis')
           const action = waiting.actions[0]
           expect(action.name).toBe('Choose a Player')
@@ -1042,7 +1254,7 @@ describe('player turn', () => {
         })
 
         test("can't choose Cylons", () => {
-          const game = _takeActionWithMove('Location Action', "Administration", (game) => {
+          const game = _takeAction('Location Action', "Administration", (game) => {
             game.mSetPlayerIsRevealedCylon('tom')
           })
           const waiting = game.getWaiting('dennis')
@@ -1052,7 +1264,7 @@ describe('player turn', () => {
         })
 
         test('skill check launched', () => {
-          const game = _takeActionWithMove('Location Action', "Administration")
+          const game = _takeAction('Location Action', "Administration")
           game.submit({
             actor: 'dennis',
             name: 'Choose a Player',
@@ -1079,19 +1291,28 @@ describe('player turn', () => {
         })
 
         test('President first draws one card', () => {
-          const game = _takeActionWithMove('Location Action', "President's Office")
+          const game = _takeActionWithMove('Location Action', {
+            name: 'Colonial One',
+            option: ["President's Office"]
+          })
           // One at start of game when becoming president, one for taking action
           expect(game.getCardsKindByPlayer('quorum', 'dennis').length).toBe(2)
         })
 
         test('can choose to play a quorum card or draw another quorum card', () => {
-          const game = _takeActionWithMove('Location Action', "President's Office")
+          const game = _takeActionWithMove('Location Action', {
+            name: 'Colonial One',
+            option: ["President's Office"]
+          })
           const action = game.getWaiting('dennis').actions[0]
           expect(action.name).toBe('Play or Draw')
         })
 
         test('draw gets you a quorum card', () => {
-          const game = _takeActionWithMove('Location Action', "President's Office")
+          const game = _takeActionWithMove('Location Action', {
+            name: 'Colonial One',
+            option: ["President's Office"]
+          })
           game.submit({
             actor: 'dennis',
             name: 'Play or Draw',
@@ -1106,7 +1327,10 @@ describe('player turn', () => {
 
       describe("Press Room", () => {
         test('player draws two politics cards', () => {
-          const game = _takeActionWithMove('Location Action', "Press Room")
+          const game = _takeActionWithMove('Location Action', {
+            name: 'Colonial One',
+            option: ["Press Room"]
+          })
           // Started with 5 as Tom Zarek
           // Drew two more
           expect(game.getCardsKindByPlayer('skill', 'dennis').length).toBe(7)

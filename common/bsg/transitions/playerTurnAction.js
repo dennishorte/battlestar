@@ -73,6 +73,7 @@ function handleResponse(context) {
 
   else if (selectionName === 'Play Skill Card') {
     const cardName = bsgutil.optionName(selection.option[0])
+    game.aUseSkillCardByName(player, cardName)
 
     if (cardName === 'Consolidate Power') {
       return context.push('draw-skill-cards', {
@@ -91,6 +92,26 @@ function handleResponse(context) {
       return context.push('skill-card-launch-scout', {
         playerName: player.name
       })
+    }
+
+    else if (cardName === 'Repair') {
+      const playerZone = game.getZoneByPlayerLocation(player)
+      if (game.checkLocationIsDamaged(playerZone)) {
+        game.aRepairPlayerLocation(player)
+      }
+      else if (playerZone.details.name === 'Hangar Deck') {
+        const numRepaired = Math.min(game.getDamagedVipersCount(), 2)
+
+        game.mLog({
+          template: '{player} repairs {count} vipers',
+          args: {
+            player: player.name,
+            count: numRepaired,
+          }
+        })
+        game.aRepairViper()
+        game.aRepairViper()
+      }
     }
 
     else {
@@ -174,9 +195,15 @@ const actionSkillCards = {
   'Executive Order': () => true,
   'Launch Scout': (game) => game.getCounterByName('raptors') > 0,
   'Maximum Firepower': (game, player) => game.checkPlayerIsInSpace(player),
-  'Repair': (game, player) => game.checkLocationIsDamaged(
-    game.getZoneByPlayerLocation(player)
-  )
+  'Repair': (game, player) => {
+    const playerZone = game.getZoneByPlayerLocation(player)
+    const locationIsDamaged = game.checkLocationIsDamaged(playerZone)
+    const canRepairVipers = (
+      playerZone.details.name === 'Hangar Deck'
+      && game.getDamagedVipersCount() > 0
+    )
+    return locationIsDamaged || canRepairVipers
+  }
 }
 
 function _addSkillCardActions(context, options) {

@@ -345,6 +345,10 @@ Game.prototype.getCardCharacterByPlayer = function(player) {
   return playerZone.cards.find(c => c.kind === 'character')
 }
 
+Game.prototype.getDamagedVipersCount = function() {
+  return this.getZoneByName('ships.damagedVipers').cards.length
+}
+
 Game.prototype.getDistanceToCivilian = function(startZone, direction) {
   const increment = direction === 'clockwise' ? 1 : -1
   let position = parseInt(startZone.name.slice(-1))

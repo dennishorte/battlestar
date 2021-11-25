@@ -503,6 +503,26 @@ Actions.aPrepareForJump = function(advance) {
   }
 }
 
+Actions.aRepairPlayerLocation = function(player) {
+  player = this._adjustPlayerParam(player)
+  const location = this.getZoneByPlayerLocation(player)
+  const damage = location.cards.find(c => c.kind === 'damageGalactica')
+  this.mLog({
+    template: '{player} repairs {location}',
+    args: {
+      player: player.name,
+      location: location.details.name
+    }
+  })
+  this.mDiscard(damage)
+}
+
+Actions.aRepairViper = function() {
+  if (this.getDamagedVipersCount() > 0) {
+    this.mMoveCard('ships.damagedVipers', 'ships.vipers')
+  }
+}
+
 Actions.aReturnAllVipersToSupply = function() {
   for (let i = 0; i < 6; i++) {
     const zone = this.getZoneSpaceByIndex(i)
