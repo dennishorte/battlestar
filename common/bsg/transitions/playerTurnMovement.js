@@ -1,5 +1,6 @@
 const { transitionFactory, markDone } = require('./factory.js')
 const bsgutil = require('../util.js')
+const { viperMovementOptions } = require('./util.js')
 
 module.exports = transitionFactory(
   {},
@@ -25,14 +26,8 @@ function handleResponse(context) {
 
   // Handle movement in space
   else if (selectionName === 'Move Viper') {
-    const zone = game.getZoneByPlayerLocation(player)
-    const viper = zone.cards.find(c => c.name === 'viper')
-    const token = zone.cards.find(c => c.name === player.name && c.kind === 'player-token')
-    const newZone = game.getZoneByName(selection.option[0])
-
-    game.rk.move(token, newZone.cards, newZone.cards.length)
-    game.rk.move(viper, newZone.cards, newZone.cards.length)
-
+    const direction = selection.option[0]
+    game.aMoveViper(player, direction)
     return context.done()
   }
 
@@ -167,19 +162,12 @@ function generateOptions(context) {
 
   // If the player is in a Viper, they can move one step in space or land on a ship for one card
   if (game.checkPlayerIsInSpace(player)) {
-    const spaceZone = game.getZoneByPlayerLocation(player)
-    const adjacentZones = game.getZoneAdjacentToSpaceZone(spaceZone)
-
     return context.wait({
       actor: player.name,
       actions: [{
         name: 'Movement',
         options: [
-          {
-            name: 'Move Viper',
-            max: 1,
-            options: adjacentZones.map(z => z.name),
-          },
+          viperMovementOptions(game, player),
           ...options,
         ]
       }]

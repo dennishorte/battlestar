@@ -1,6 +1,7 @@
 const bsgutil = require('../util.js')
 const util = require('../../lib/util.js')
 const { transitionFactory, markDone } = require('./factory.js')
+const { viperAttackOptions, viperMovementOptions } = require('./util.js')
 
 module.exports = transitionFactory(
   {},
@@ -24,6 +25,7 @@ function generateOptions(context) {
   }
 
   const options = []
+  _addPilotingActions(context, options)
   _addLocationActions(context, options)
   _addSkillCardActions(context, options)
   _addQuorumActions(context, options)
@@ -71,6 +73,18 @@ function handleResponse(context) {
     context.done()
   }
 
+  else if (selectionName === 'Attack with Viper') {
+    const shipKind = bsgutil.optionName(selection.option[0])
+    game.aAttackCylonWithViperByKind(player, shipKind)
+    return context.done()
+  }
+
+  else if (selectionName === 'Move Viper') {
+    const direction = bsgutil.optionName(selection.option[0])
+    game.aMoveViper(player, direction)
+    return context.done()
+  }
+
   else if (selectionName === 'Play Skill Card') {
     const cardName = bsgutil.optionName(selection.option[0])
     game.aUseSkillCardByName(player, cardName)
@@ -90,6 +104,12 @@ function handleResponse(context) {
 
     else if (cardName === 'Launch Scout') {
       return context.push('skill-card-launch-scout', {
+        playerName: player.name
+      })
+    }
+
+    else if (cardName === 'Maximum Firepower') {
+      return context.push('skill-card-maximum-firepower', {
         playerName: player.name
       })
     }
@@ -194,7 +214,12 @@ const actionSkillCards = {
   'Consolidate Power': () => true,
   'Executive Order': () => true,
   'Launch Scout': (game) => game.getCounterByName('raptors') > 0,
-  'Maximum Firepower': (game, player) => game.checkPlayerIsInSpace(player),
+  'Maximum Firepower': (game, player) => {
+    if (!game.checkPlayerIsInSpace(player)) {
+      return false
+    }
+    return game.getSpaceTargets(game.getZoneByPlayerLocation(player)).length > 0
+  },
   'Repair': (game, player) => {
     const playerZone = game.getZoneByPlayerLocation(player)
     const locationIsDamaged = game.checkLocationIsDamaged(playerZone)
@@ -332,5 +357,19 @@ function _addLoyaltyActions(context, options) {
       max: 1,
       options: cardOptions,
     })
+  }
+}
+
+function _addPilotingActions(context, options) {
+  const game = context.state
+  const player = game.getPlayerByName(context.data.playerName)
+
+  if (game.checkPlayerIsInSpace(player)) {
+    options.push(viperMovementOptions(game, player))
+
+    const attackOptions = viperAttackOptions(game, player)
+    if (attackOptions) {
+      options.push(attackOptions)
+    }
   }
 }

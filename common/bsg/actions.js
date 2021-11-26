@@ -238,6 +238,36 @@ Actions.aAttackCenturion = function() {
   }
 }
 
+Actions.aAttackCylonWithViperByKind = function(player, kind) {
+  const location = this.getZoneByPlayerLocation(player)
+  const dieRoll = bsgutil.rollDie()
+
+  this.mLog({
+    template: '{player} rolls {dieRoll} attacking {kind}',
+    args: {
+      player: player.name,
+      dieRoll,
+      kind
+    }
+  })
+
+  if (kind === 'raider' &&dieRoll >= 3) {
+    this.aDestroyRaiderAtLocation(location)
+  }
+
+  else if (kind === 'heavy raider' && dieRoll >= 7) {
+    this.aDestroyHeavyRaiderAtLocation(location)
+  }
+
+  else if (kind.startsWith('Basestar') && dieRoll >= 8) {
+    this.aDamageBasestar(kind)
+  }
+
+  else {
+    this.mLog({ template: 'missed' })
+  }
+}
+
 Actions.aAttackGalactica = function(ship) {
   const dieRoll = bsgutil.rollDie()
   let hit = false
@@ -320,6 +350,32 @@ Actions.aClearSpace = function() {
   }
 }
 
+Actions.aDamageBasestar = function(name) {
+  if (typeof name === 'Object') {
+    name = card.name
+  }
+
+  const zone = game.getZoneBasestarByName(name)
+  const damageCard = this.mMoveCard('decks.damageBasestar', zone)
+
+  this.mLog({
+    template: '{basestar} receives {damage}',
+    args: {
+      basestar: name,
+      damage: damageCard.name
+    }
+  })
+
+  // Check for basestar destruction
+  const damageTokens = zone.cards.filter(c => c.kind === 'damageBasestar')
+  const criticalHit = !!damageTokens.find(c => c.name === 'critical hit') ? 1 : 0
+  const damage = damageTokens.length + criticalHit
+
+  if (damage >= 3) {
+    Actions.aDestroyBasestar(name)
+  }
+}
+
 Actions.aDamageGalactica = function() {
   const token = this.getTokenDamageGalactica()
 
@@ -383,6 +439,52 @@ Actions.aDeployShips = function(deployData) {
       this.mDeploy(spaceZone, name)
     }
   }
+}
+
+Actions.aDestroyBasestar = function(name) {
+  if (typeof name === 'Object') {
+    name = card.name
+  }
+  const zone = game.getZoneBasestarByName(name)
+
+  for (let i = zone.cards.length - 1; i >= 0; i--) {
+    const card = zone.cards[i]
+    if (card.kind === 'damageBasestar') {
+      this.mDiscard(card)
+    }
+  }
+
+  this.mDiscard(name)
+  this.mLog({
+    template: '{basestar} destroyed',
+    args: {
+      basestar: name
+    }
+  })
+}
+
+Actions.aDestroyHeavyRaiderAtLocation = function(location) {
+  location = this._adjustZoneParam(location)
+  const card = location.cards.find(c => c.name === 'heavy raider')
+  this.mDiscard(card)
+  this.mLog({
+    template: 'Heavy Raider at {location} destroyed',
+    args: {
+      location: location.name
+    }
+  })
+}
+
+Actions.aDestroyRaiderAtLocation = function(location) {
+  location = this._adjustZoneParam(location)
+  const card = location.cards.find(c => c.name === 'raider')
+  this.mDiscard(card)
+  this.mLog({
+    template: 'Raider at {location} destroyed',
+    args: {
+      location: location.name
+    }
+  })
 }
 
 Actions.aDestroyCivilian = function(civvie) {
@@ -491,6 +593,28 @@ Actions.aLaunchSelfInViper = function(player, position) {
   const spaceZoneName = position === 'Lower Left' ? 'space.space5' : 'space.space4'
   this.mMovePlayer(player, spaceZoneName)
   this.mLaunchViper(position)
+}
+
+Actions.aMoveViper = function(player, direction) {
+  const zone = this.getZoneByPlayerLocation(player)
+  util.assert(zone.name.startsWith('space.'), 'Player is not is space')
+
+  const viper = zone.cards.find(c => c.name === 'viper')
+  const token = zone.cards.find(c => c.name === player.name && c.kind === 'player-token')
+
+  const adjacentOption = direction === 'clockwise' ? 0 : 1
+  const newZone = this.getZoneAdjacentToSpaceZone(zone)[adjacentOption]
+
+  this.rk.move(token, newZone.cards, newZone.cards.length)
+  this.rk.move(viper, newZone.cards, newZone.cards.length)
+
+  this.mLog({
+    template: '{player} moves pilots viper {direction}',
+    args: {
+      player: player.name,
+      direction,
+    }
+  })
 }
 
 Actions.aPrepareForJump = function(advance) {

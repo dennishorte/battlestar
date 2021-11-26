@@ -1,5 +1,30 @@
 module.exports = {
   evaluateEffect,
+  viperAttackOptions,
+  viperMovementOptions,
+}
+
+function viperAttackOptions(game, player) {
+  const playerZone = game.getZoneByPlayerLocation(player)
+  const targets = game.getSpaceTargets(playerZone)
+
+  if (targets.length > 0) {
+    return {
+      name: 'Attack with Viper',
+      max: 1,
+      options: targets
+    }
+  }
+}
+
+function viperMovementOptions(game, player) {
+  if (game.checkPlayerIsInSpace(player)) {
+    return {
+      name: 'Move Viper',
+      max: 1,
+      options: ['clockwise', 'counter-clockwise']
+    }
+  }
 }
 
 function evaluateEffect(game, effect) {

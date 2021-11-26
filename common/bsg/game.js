@@ -486,6 +486,17 @@ Game.prototype.getSkillCheck = function() {
   }
 }
 
+Game.prototype.getSpaceTargets = function(spaceZone) {
+  spaceZone = this._adjustZoneParam(spaceZone)
+  const enemyTypes = []
+  for (const kind of ['raider', 'heavy raider', 'Basestar A', 'Basestar B']) {
+    if (spaceZone.cards.find(c => c.name === kind)) {
+      enemyTypes.push(kind)
+    }
+  }
+  return enemyTypes
+}
+
 Game.prototype.getTokenDamageGalactica = function() {
   const damageZone = this.getZoneByName('decks.damageGalactica')
   return damageZone.cards[0]
@@ -565,6 +576,10 @@ Game.prototype.getZoneAll = function() {
 
 Game.prototype.getZoneBasestarByLetter = function(letter) {
   return this.getZoneByName('ships.basestar' + letter)
+}
+
+Game.prototype.getZoneBasestarByName = function(name) {
+  return this.getZoneBasestarByLetter(name.slice(-1))
 }
 
 Game.prototype.getZoneByCard = function(card) {
@@ -838,6 +853,10 @@ Game.prototype.mDiscard = function(cardId) {
   else if (card.kind === 'skill') {
     const discard = this.getZoneByName(`decks.${card.skill}`)
     this.mMoveCard(zoneName, discard, card)
+  }
+
+  else if (card.kind === 'damageBasestar') {
+    this.mMoveCard(zoneName, 'decks.damageBasestar', card)
   }
 
   else if (card.kind === 'damageGalactica') {
