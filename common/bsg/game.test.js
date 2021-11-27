@@ -931,19 +931,75 @@ describe('player turn', () => {
         })
       })
 
-      describe.skip('Maximum Firepower', () => {
+      describe('Maximum Firepower', () => {
+        function _maximumFirepowerFixture(setupFunc) {
+          const cardOption = {
+            kind: 'skill',
+            skill: 'piloting',
+            name: 'Maximum Firepower',
+            value: 3
+          }
+          return _takeAction('Play Skill Card', cardOption, setupFunc)
+        }
 
         // This will automatically cover having the player be in a viper
         test('can only be played if there is a valid target to attack', () => {
+          const factory = new GameFixtureFactory()
+          factory.options.players[0].hand = [
+            {
+              kind: 'skill',
+              skill: 'tactics',
+              name: 'Launch Scout',
+              value: 1
+            },
+            {
+              kind: 'skill',
+              skill: 'piloting',
+              name: 'Maximum Firepower',
+              value: 3
+            },
+          ]
+          const game = factory.build().advanceTo('player-turn-action').game
+          game.mMovePlayer('dennis', 'space.space5')
+          game.run()
 
+          expect(game.getWaiting('dennis')).toBeDefined()
+
+          const skillOption = game
+            .getWaiting('dennis')
+            .actions[0]
+            .options
+            .find(o => o.name === "Play Skill Card")
+          expect(skillOption).toBeDefined()
+          expect(skillOption.options).toStrictEqual(['Launch Scout'])
         })
 
         test('automatically attacks if only one kind of target', () => {
-
+          const game = _maximumFirepowerFixture((game) => {
+            game.mMovePlayer('dennis', 'space.space5')
+            game.aDeployShips([
+              [], [], [],
+              [], [], ['raider', 'raider', 'raider', 'raider', 'raider',]
+            ])
+            jest.spyOn(game, 'aAttackCylonWithViperByKind')
+          })
+          expect(game.aAttackCylonWithViperByKind.mock.calls.length).toBe(4)
         })
 
         test('asks which to attack if multiple possible targets', () => {
+          const game = _maximumFirepowerFixture((game) => {
+            game.mMovePlayer('dennis', 'space.space5')
+            game.aDeployShips([
+              [], [], [],
+              [], [], ['raider', 'heavy raider']
+            ])
+            jest.spyOn(game, 'aAttackCylonWithViperByKind')
+          })
+          expect(game.aAttackCylonWithViperByKind.mock.calls.length).toBe(0)
+          expect(game.getWaiting('dennis')).toBeDefined()
 
+          const choices = game.getWaiting('dennis').actions[0].options
+          expect(choices.sort()).toStrictEqual(['heavy raider', 'raider'])
         })
       })
 

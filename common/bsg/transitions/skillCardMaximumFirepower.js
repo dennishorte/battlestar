@@ -1,4 +1,5 @@
 const { transitionFactory2 } = require('./factory.js')
+const { viperAttackOptions } = require('./util.js')
 const bsgutil = require('../util.js')
 const util = require('../../lib/util.js')
 
@@ -37,8 +38,15 @@ function _attack(context) {
     return context.done()
   }
 
-  else if (options.length === 1) {
-    game.aAttackCylonByKind(playerZone, options.options[0])
+  const numTargets = options.options.length
+
+  if (numTargets === 0) {
+    game.mLog({ template: 'All enemies have been destroyed' })
+    return context.done()
+  }
+
+  else if (numTargets === 1) {
+    game.aAttackCylonWithViperByKind(player, options.options[0])
   }
 
   else {

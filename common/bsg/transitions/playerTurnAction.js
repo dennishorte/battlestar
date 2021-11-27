@@ -90,6 +90,7 @@ function handleResponse(context) {
     game.aUseSkillCardByName(player, cardName)
 
     if (cardName === 'Consolidate Power') {
+      markDone(context)
       return context.push('draw-skill-cards', {
         playerName: player.name,
         reason: 'Consolidate Power',
@@ -97,18 +98,21 @@ function handleResponse(context) {
     }
 
     else if (cardName === 'Executive Order') {
+      markDone(context)
       return context.push('skill-card-executive-order', {
         playerName: player.name
       })
     }
 
     else if (cardName === 'Launch Scout') {
+      markDone(context)
       return context.push('skill-card-launch-scout', {
         playerName: player.name
       })
     }
 
     else if (cardName === 'Maximum Firepower') {
+      markDone(context)
       return context.push('skill-card-maximum-firepower', {
         playerName: player.name
       })
@@ -244,7 +248,7 @@ function _addSkillCardActions(context, options) {
     }
   }
 
-  if (cardOptions) {
+  if (cardOptions.length > 0) {
     options.push({
       name: 'Play Skill Card',
       max: 1,
