@@ -1263,7 +1263,7 @@ describe('player turn', () => {
         })
       })
 
-      describe("Command", () => {
+      describe.skip("Command", () => {
 
       })
 
@@ -1285,7 +1285,7 @@ describe('player turn', () => {
         })
       })
 
-      describe("Hangar Deck", () => {
+      describe.skip("Hangar Deck", () => {
 
       })
 
@@ -1303,11 +1303,11 @@ describe('player turn', () => {
 
       })
 
-      describe("Weapons Control", () => {
+      describe.skip("Weapons Control", () => {
 
       })
 
-      describe("Brig", () => {
+      describe.skip("Brig", () => {
 
       })
 
@@ -1405,83 +1405,83 @@ describe('player turn', () => {
         })
       })
 
-      describe("Caprica", () => {
+      describe.skip("Caprica", () => {
 
       })
 
-      describe("Cylon Fleet", () => {
+      describe.skip("Cylon Fleet", () => {
 
       })
 
-      describe("Human Fleet", () => {
+      describe.skip("Human Fleet", () => {
 
       })
 
-      describe("Resurrection Ship", () => {
+      describe.skip("Resurrection Ship", () => {
 
       })
     })
 
     describe('quorum actions', () => {
-      describe("Accept Prophecy", () => {
+      describe.skip("Accept Prophecy", () => {
 
       })
 
-      describe("Arrest Order", () => {
+      describe.skip("Arrest Order", () => {
 
       })
 
-      describe("Assign Arbitrator", () => {
+      describe.skip("Assign Arbitrator", () => {
 
       })
 
-      describe("Assign Mission Specialist", () => {
+      describe.skip("Assign Mission Specialist", () => {
 
       })
 
-      describe("Assign Vice President", () => {
+      describe.skip("Assign Vice President", () => {
 
       })
 
-      describe("Authorization of Brutal Force", () => {
+      describe.skip("Authorization of Brutal Force", () => {
 
       })
 
-      describe("Encourage Mutiny", () => {
+      describe.skip("Encourage Mutiny", () => {
 
       })
 
-      describe("Food Rationing", () => {
+      describe.skip("Food Rationing", () => {
 
       })
 
-      describe("Inspirational Speech", () => {
+      describe.skip("Inspirational Speech", () => {
 
       })
 
-      describe("Presidential Pardon", () => {
+      describe.skip("Presidential Pardon", () => {
 
       })
 
-      describe("Release Cylon Mugshots", () => {
+      describe.skip("Release Cylon Mugshots", () => {
 
       })
     })
 
     describe('loyalty actions', () => {
-      describe("CAN REDUCE MORALE BY 1", () => {
+      describe.skip("CAN REDUCE MORALE BY 1", () => {
 
       })
 
-      describe("CAN SEND A CHARACTER TO SICKBAY", () => {
+      describe.skip("CAN SEND A CHARACTER TO SICKBAY", () => {
 
       })
 
-      describe("CAN SEND A CHARACTER TO THE BRIG", () => {
+      describe.skip("CAN SEND A CHARACTER TO THE BRIG", () => {
 
       })
 
-      describe("CAN DAMAGE GALACTICA", () => {
+      describe.skip("CAN DAMAGE GALACTICA", () => {
 
       })
     })
@@ -1633,7 +1633,7 @@ describe('player turn', () => {
 
 describe('adhoc transitions', () => {
 
-  describe('draw-skill-cards', () => {
+  describe.skip('draw-skill-cards', () => {
 
   })
 
@@ -2549,7 +2549,7 @@ describe('jump-the-fleet', () => {
   })
 })
 
-describe('jump-choose-destination', () => {
+describe.skip('jump-choose-destination', () => {
   test('admiral chooses between two destination cards', () => {
 
   })
@@ -3322,7 +3322,7 @@ describe('misc functions', () => {
 
 })
 
-  describe('aAttackCylonWithViperByKind', () => {
+  describe.skip('aAttackCylonWithViperByKind', () => {
     describe('raider', () => {
 
     })
