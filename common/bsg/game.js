@@ -506,6 +506,24 @@ Game.prototype.getTransition = function() {
   return this.sm.stack[this.sm.stack.length - 1]
 }
 
+// Return a list of integers. Each integer corresponds to a single unmanned viper in
+// the corresponding space zone. eg. [2, 2] means two vipers in space zone space.space2
+Game.prototype.getUnmannedVipers = function() {
+  const output = []
+
+  for (let i = 0; i < 6; i++) {
+    const zone = this.getZoneSpaceByIndex(i)
+    const vipers = zone.cards.filter(c => c.name === 'viper')
+    const players = zone.cards.filter(c => c.kind === 'player-token')
+    const unmannedCount = vipers.length - players.length
+    for (let j = 0; j < unmannedCount; j++) {
+      output.push(i)
+    }
+  }
+
+  return output
+}
+
 Game.prototype.getVipersNumAvailable = function() {
   return this.getZoneByName('ships.vipers').cards.length
 }
@@ -923,8 +941,10 @@ Game.prototype.mGameOver = function(trigger) {
 }
 
 Game.prototype.mLaunchViper = function(position) {
-  const spaceZoneName = position === 'Lower Left' ? 'space.space5' : 'space.space4'
-  const spaceZone = this.getZoneByName(spaceZoneName)
+  if (position.startsWith('Lower')) {
+    position = (position === 'Lower Left') ? 'space.space5' : 'space.space4'
+  }
+  const spaceZone = this.getZoneByName(position)
   const viperZone = this.getZoneByName('ships.vipers')
   this.mMoveCard(viperZone, spaceZone)
 }

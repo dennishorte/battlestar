@@ -1263,8 +1263,139 @@ describe('player turn', () => {
         })
       })
 
-      describe.skip("Command", () => {
+      describe("Command", () => {
 
+        function _commandFixture(setupFunc) {
+          return _takeActionWithMove(
+            'Location Action',
+            {
+              name: 'Galactica',
+              option: ['Command'],
+            },
+            setupFunc
+          )
+        }
+
+        describe('launch viper', () => {
+          test('no launch viper if no vipers available', () => {
+            const game = _commandFixture(game => {
+              const vipers = game.getZoneByName('ships.vipers').cards
+              while (vipers.length > 0) {
+                game.mMoveCard('ships.vipers', 'ships.damagedVipers')
+              }
+            })
+
+            expect(game.getWaiting('dennis')).toBeDefined()
+            expect(game.getWaiting('dennis').actions[0].name).toBe('command action')
+
+            const optionNames = game
+              .getWaiting('dennis')
+              .actions[0]
+              .options
+              .map(o => o.name)
+              .sort()
+            expect(optionNames).toStrictEqual(['select a viper to activate'])
+          })
+
+          test('can choose to launch a viper', () => {
+            const game = _commandFixture()
+            const optionNames = game
+              .getWaiting('dennis')
+              .actions[0]
+              .options
+              .map(o => o.name)
+              .sort()
+            expect(optionNames).toStrictEqual(['launch a viper', 'select a viper to activate'])
+          })
+        })
+
+        describe('activate viper', () => {
+          test('can choose a viper from any zone', () => {
+            const game = _commandFixture()
+            const activate = game
+              .getWaiting('dennis')
+              .actions[0]
+              .options
+              .find(o => o.name === 'select a viper to activate')
+              .options
+            expect(activate).toStrictEqual(['space.space4', 'space.space5'])
+          })
+
+          test('can move chosen viper', () => {
+            const game = _commandFixture()
+            game.submit({
+              actor: 'dennis',
+              name: 'command action',
+              option: [{
+                name: 'select a viper to activate',
+                option: ['space.space4'],
+              }]
+            })
+            game.submit({
+              actor: 'dennis',
+              name: 'Activate Viper',
+              option: [{
+                name: 'Move Viper',
+                option: ['clockwise']
+              }]
+            })
+            const vipers = game.getZoneSpaceByIndex(5).cards.filter(c => c.name === 'viper')
+            expect(vipers.length).toBe(2)
+          })
+
+          test('can attack with chosen viper', () => {
+            const game = _commandFixture(game => {
+              game.aDeployShips([
+                [], [], [],
+                [], [], ['raider']
+              ])
+              jest.spyOn(game, 'aAttackCylonWithViperByKind')
+            })
+            game.submit({
+              actor: 'dennis',
+              name: 'command action',
+              option: [{
+                name: 'select a viper to activate',
+                option: ['space.space5'],
+              }]
+            })
+            game.submit({
+              actor: 'dennis',
+              name: 'Activate Viper',
+              option: [{
+                name: 'Attack with Viper',
+                option: ['raider']
+              }]
+            })
+            expect(game.aAttackCylonWithViperByKind.mock.calls.length).toBe(1)
+          })
+
+          test('can choose whom to attack', () => {
+            const game = _commandFixture(game => {
+              game.aDeployShips([
+                [], [], [],
+                [], [], ['raider', 'basestar']
+              ])
+              jest.spyOn(game, 'aAttackCylonWithViperByKind')
+            })
+            game.submit({
+              actor: 'dennis',
+              name: 'command action',
+              option: [{
+                name: 'select a viper to activate',
+                option: ['space.space5'],
+              }]
+            })
+            const attackOptions = game
+              .getWaiting('dennis')
+              .actions[0]
+              .options
+              .find(o => o.name === 'Attack with Viper')
+              .options
+              .sort()
+            expect(attackOptions).toStrictEqual(['Basestar B', 'raider'])
+          })
+        })
       })
 
       describe("Communications", () => {
@@ -1575,7 +1706,7 @@ describe('player turn', () => {
 
           expect(game.aAttackCylonWithViperByKind.mock.calls.length).toBe(1)
           expect(game.aAttackCylonWithViperByKind.mock.calls[0][0].name).toBe('dennis')
-          expect(game.aAttackCylonWithViperByKind.mock.calls[0][1]).toBe('raider')
+          expect(game.aAttackCylonWithViperByKind.mock.calls[0][2]).toBe('raider')
         })
 
         test('attack heavy raider', () => {
@@ -1599,7 +1730,7 @@ describe('player turn', () => {
 
           expect(game.aAttackCylonWithViperByKind.mock.calls.length).toBe(1)
           expect(game.aAttackCylonWithViperByKind.mock.calls[0][0].name).toBe('dennis')
-          expect(game.aAttackCylonWithViperByKind.mock.calls[0][1]).toBe('heavy raider')
+          expect(game.aAttackCylonWithViperByKind.mock.calls[0][2]).toBe('heavy raider')
         })
 
         test('attack basestar', () => {
@@ -1623,7 +1754,7 @@ describe('player turn', () => {
 
           expect(game.aAttackCylonWithViperByKind.mock.calls.length).toBe(1)
           expect(game.aAttackCylonWithViperByKind.mock.calls[0][0].name).toBe('dennis')
-          expect(game.aAttackCylonWithViperByKind.mock.calls[0][1]).toBe('Basestar B')
+          expect(game.aAttackCylonWithViperByKind.mock.calls[0][2]).toBe('Basestar B')
         })
       })
     })

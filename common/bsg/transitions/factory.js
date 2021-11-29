@@ -140,7 +140,7 @@ function _initialize2(context, options) {
   game.rk.addKey(context.data, 'completedSteps', [])
 
   if (options.data) {
-    for (const [key, value] of options.data) {
+    for (const [key, value] of Object.entries(options.data)) {
       game.rk.addKey(context.data, key, value)
     }
   }

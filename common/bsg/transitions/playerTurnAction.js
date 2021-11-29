@@ -75,7 +75,11 @@ function handleResponse(context) {
 
   else if (selectionName === 'Attack with Viper') {
     const shipKind = bsgutil.optionName(selection.option[0])
-    game.aAttackCylonWithViperByKind(player, shipKind)
+    game.aAttackCylonWithViperByKind(
+      player,
+      game.getZoneByPlayerLocation(player),
+      shipKind
+    )
     return context.done()
   }
 
@@ -167,6 +171,13 @@ function handleResponse(context) {
     else if (locationName === 'Armory') {
       game.aAttackCenturion()
       return context.done()
+    }
+
+    else if (locationName === 'Command') {
+      markDone(context)
+      return context.push('activate-command', {
+        playerName: player.name
+      })
     }
 
     else if (locationName === 'FTL Control') {

@@ -238,8 +238,8 @@ Actions.aAttackCenturion = function() {
   }
 }
 
-Actions.aAttackCylonWithViperByKind = function(player, kind) {
-  const location = this.getZoneByPlayerLocation(player)
+Actions.aAttackCylonWithViperByKind = function(player, location, kind) {
+  location = this._adjustZoneParam(location)
   const dieRoll = bsgutil.rollDie()
 
   this.mLog({
@@ -609,7 +609,25 @@ Actions.aMoveViper = function(player, direction) {
   this.rk.move(viper, newZone.cards, newZone.cards.length)
 
   this.mLog({
-    template: '{player} moves pilots viper {direction}',
+    template: '{player} pilots viper {direction}',
+    args: {
+      player: player.name,
+      direction,
+    }
+  })
+}
+
+Actions.aMoveViperUnmanned = function(player, zone, direction) {
+  player = this._adjustPlayerParam(player)
+  zone = this._adjustZoneParam(zone)
+  const viper = zone.cards.find(c => c.name === 'viper')
+  const adjacentOption = direction === 'clockwise' ? 0 : 1
+  const newZone = this.getZoneAdjacentToSpaceZone(zone)[adjacentOption]
+
+  this.rk.move(viper, newZone.cards, newZone.cards.length)
+
+  this.mLog({
+    template: '{player} moves viper {direction}',
     args: {
       player: player.name,
       direction,

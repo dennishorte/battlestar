@@ -1,12 +1,18 @@
 module.exports = {
   evaluateEffect,
   viperAttackOptions,
+  viperAttackOptionsForUnmanned,
   viperMovementOptions,
+  viperMovementOptionsForUnmanned,
 }
 
 function viperAttackOptions(game, player) {
   const playerZone = game.getZoneByPlayerLocation(player)
-  const targets = game.getSpaceTargets(playerZone)
+  return viperAttackOptionsForUnmanned(game, playerZone)
+}
+
+function viperAttackOptionsForUnmanned(game, spaceZone) {
+  const targets = game.getSpaceTargets(spaceZone)
 
   if (targets.length > 0) {
     return {
@@ -19,11 +25,15 @@ function viperAttackOptions(game, player) {
 
 function viperMovementOptions(game, player) {
   if (game.checkPlayerIsInSpace(player)) {
-    return {
-      name: 'Move Viper',
-      max: 1,
-      options: ['clockwise', 'counter-clockwise']
-    }
+    return viperMovementOptionsForUnmanned()
+  }
+}
+
+function viperMovementOptionsForUnmanned() {
+  return {
+    name: 'Move Viper',
+    max: 1,
+    options: ['clockwise', 'counter-clockwise']
   }
 }
 

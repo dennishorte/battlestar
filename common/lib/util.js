@@ -6,6 +6,10 @@ const Util = {
 }
 module.exports = Util
 
+Util.array.distinct = function(array) {
+  return [...new Set(array)]
+}
+
 Util.array.pushUnique = function(array, value) {
   if (array.indexOf(value) === -1) {
     array.push(value)

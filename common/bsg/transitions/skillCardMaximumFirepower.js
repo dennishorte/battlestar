@@ -46,7 +46,11 @@ function _attack(context) {
   }
 
   else if (numTargets === 1) {
-    game.aAttackCylonWithViperByKind(player, options.options[0])
+    game.aAttackCylonWithViperByKind(
+      player,
+      game.getZoneByPlayerLocation(player),
+      options.options[0]
+    )
   }
 
   else {
@@ -59,5 +63,10 @@ function _attack(context) {
 
 function _handleAttack(context) {
   const game = context.state
-  game.attackCylonWithViperByKind(context.data.playerName, bsgutil.optionName(context.response.option[0]))
+  const playerName = context.data.playerName
+  game.attackCylonWithViperByKind(
+    playerName,
+    game.getZoneByPlayerLocation(playerName),
+    bsgutil.optionName(context.response.option[0])
+  )
 }
