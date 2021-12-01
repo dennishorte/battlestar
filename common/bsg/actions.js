@@ -595,6 +595,24 @@ Actions.aLaunchSelfInViper = function(player, position) {
   this.mLaunchViper(position)
 }
 
+Actions.aMoveCivilian = function(player, civilian, direction) {
+  player = this._adjustPlayerParam(player)
+  civilian = this._adjustCardParam(civilian)
+  const adjacentOption = direction === 'clockwise' ? 0 : 1
+  const zone = this.getZoneByCard(civilian)
+  const newZone = this.getZoneAdjacentToSpaceZone(zone)[adjacentOption]
+
+  this.rk.move(civilian, newZone.cards, newZone.cards.length)
+
+  this.mLog({
+    template: '{player} moves civilian {direction}',
+    args: {
+      player: player.name,
+      direction,
+    }
+  })
+}
+
 Actions.aMoveViper = function(player, direction) {
   const zone = this.getZoneByPlayerLocation(player)
   util.assert(zone.name.startsWith('space.'), 'Player is not is space')
@@ -692,7 +710,7 @@ Actions.aRevealLoyaltyCards = function(target, viewer, count) {
   const cardsToView = cards.filter(c => cardIdsToView.includes(c.id))
 
   for (const card of cardsToView) {
-    util.array.pushUnique(card.visibility, viewer.name)
+    this.game.rk.pushUnique(card.visibility, viewer.name)
     this.mLog({
       template: '{player1} looks at {card} belonging to {player2}',
       args: {

@@ -25,6 +25,7 @@ RecordKeeper.prototype.increment = increment
 RecordKeeper.prototype.move = move
 RecordKeeper.prototype.pop = pop
 RecordKeeper.prototype.push = push
+RecordKeeper.prototype.pushUnique = pushUnique
 RecordKeeper.prototype.put = put
 RecordKeeper.prototype.removeKey = removeKey
 RecordKeeper.prototype.replace = replace
@@ -150,6 +151,12 @@ function pop(array) {
 
 function push(array, elem) {
   this.splice(array, array.length, 0, elem)
+}
+
+function pushUnique(array, elem) {
+  if (array.indexOf(elem) !== -1) {
+    this.push(array, elem)
+  }
 }
 
 function increment(object, key) {

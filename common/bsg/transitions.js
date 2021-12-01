@@ -331,6 +331,9 @@ const transitions = {
   'activate-command': {
     func: require('./transitions/activateCommand.js'),
   },
+  'activate-communications': {
+    func: require('./transitions/activateCommunications.js'),
+  },
   'activate-presidents-office': {
     func: require('./transitions/activatePresidentsOffice.js'),
   },

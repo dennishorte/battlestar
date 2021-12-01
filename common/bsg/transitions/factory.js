@@ -1,5 +1,6 @@
 module.exports = {
   markDone,
+  repeatSteps,
   stepFactory,
   transitionFactory,
   transitionFactory2,
@@ -8,6 +9,18 @@ module.exports = {
 function markDone(context) {
   const game = context.state
   game.rk.put(context.data, 'done', true)
+}
+
+function repeatSteps(count, steps) {
+  const output = []
+  for (let i = 0; i < count; i++) {
+    for (const step of steps) {
+      const copy = Object.assign({}, step)
+      copy.name += i
+      output.push(copy)
+    }
+  }
+  return output
 }
 
 function stepFactory(steps, options) {

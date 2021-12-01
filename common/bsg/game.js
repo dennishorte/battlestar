@@ -198,6 +198,25 @@ Game.prototype.checkLocationIsDamaged = function(location) {
   return !!location.cards.find(c => c.kind === 'damageGalactica')
 }
 
+Game.prototype.checkLocationIsWorking = function(location) {
+  if (typeof location === 'string' && !location.includes('.')) {
+    location = this.getZoneByLocationName(location)
+  }
+  else {
+    location = this._adjustZoneParam(location)
+  }
+
+  if (location.details.name === 'Communications') {
+    return (
+      !this.checkEffect('Jammed Assault')
+      && this.getDeployedCivilians().length > 0
+    )
+  }
+  else {
+    return true
+  }
+}
+
 Game.prototype.checkPlayerDrewSkillsThisTurn = function(player) {
   player = this._adjustPlayerParam(player)
   return player.turnFlags.drewCards
@@ -347,6 +366,18 @@ Game.prototype.getCardCharacterByPlayer = function(player) {
 
 Game.prototype.getDamagedVipersCount = function() {
   return this.getZoneByName('ships.damagedVipers').cards.length
+}
+
+Game.prototype.getDeployedCivilians = function() {
+  const civilians = []
+  for (const zone of this.getZonesSpace()) {
+    for (const card of zone.cards) {
+      if (card.kind === 'civilian') {
+        civilians.push([zone.name, card])
+      }
+    }
+  }
+  return civilians
 }
 
 Game.prototype.getDistanceToCivilian = function(startZone, direction) {
@@ -660,6 +691,10 @@ Game.prototype.getZoneDiscardByCard = function(card) {
 
 Game.prototype.getZoneSpaceByIndex = function(index) {
   return this.getZoneByName(`space.space${index}`)
+}
+
+Game.prototype.getZonesSpace = function() {
+  return Object.values(this.state.zones.space)
 }
 
 Game.prototype.getZonesSpaceContaining = function(predicate) {

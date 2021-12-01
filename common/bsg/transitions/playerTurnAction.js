@@ -180,6 +180,13 @@ function handleResponse(context) {
       })
     }
 
+    else if (locationName === 'Communications') {
+      markDone(context)
+      return context.push('activate-communications', {
+        playerName: player.name
+      })
+    }
+
     else if (locationName === 'FTL Control') {
       markDone(context)
       return context.push('jump-the-fleet')
@@ -278,6 +285,7 @@ function _addLocationActions(context, options) {
     && !game.checkPlayerIsAtLocation(player, 'Brig')
     && !game.checkPlayerIsAtLocation(player, 'Sickbay')
     && !game.checkLocationIsDamaged(location)
+    && game.checkLocationIsWorking(location)
   ) {
     options.push({
       name: 'Location Action',

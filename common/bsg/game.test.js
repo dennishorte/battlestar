@@ -1400,10 +1400,76 @@ describe('player turn', () => {
 
       describe("Communications", () => {
 
-        test.skip('blocked by Jammed Assault crisis effect', () => {
+        function _communicationsFixture(beforeFunc) {
+          return _takeActionWithMove(
+            'Location Action',
+            {
+              name: 'Galactica',
+              option: ["Communications"]
+            },
+            beforeFunc
+          )
+        }
 
+        test('blocked by Jammed Assault crisis effect', () => {
+          const factory = new GameFixtureFactory()
+          factory.options.players[0].movement = {
+            name: 'Galactica',
+            option: ["Communications"]
+          }
+          const game = factory.build().advanceTo('player-turn-action').game
+          jest.spyOn(game, 'checkEffect').mockImplementation(name => {
+            return name === 'Jammed Assault'
+          })
+          game.run()
+
+          expect(game.getWaiting('dennis')).toBeDefined()
+
+          const locationActions = game
+            .getWaiting('dennis')
+            .actions[0]
+            .options
+            .find(o => o.name === 'Location Action')
+          expect(locationActions).not.toBeDefined()
         })
 
+        test('can choose which civilian to look at', () => {
+          const game = _communicationsFixture()
+          const action = game.getWaiting('dennis').actions[0]
+          expect(action.name).toBe('View Civilian')
+          expect(action.options.length).toBe(2)
+        })
+
+        test('can choose to move the viewed civilian', () => {
+          const game = _communicationsFixture()
+          const option0 = game.getWaiting('dennis').actions[0].options[0].name
+          game.submit({
+            actor: 'dennis',
+            name: 'View Civilian',
+            option: [option0]
+          })
+          const action = game.getWaiting('dennis').actions[0]
+          expect(action.name).toBe('Move Civilian')
+          expect(action.options).toStrictEqual(['clockwise', 'counter-clockwise', 'do nothing'])
+        })
+
+        test('can choose and move the same civilian twice', () => {
+          const game = _communicationsFixture()
+          const option0 = game.getWaiting('dennis').actions[0].options[0].name
+          game.submit({
+            actor: 'dennis',
+            name: 'View Civilian',
+            option: [option0]
+          })
+          game.submit({
+            actor: 'dennis',
+            name: 'Move Civilian',
+            option: ['clockwise']
+          })
+          const action = game.getWaiting('dennis').actions[0]
+          expect(action.name).toBe('View Civilian')
+          expect(action.options.find(o => o.name === option0)).toBeDefined()
+        })
       })
 
       describe("FTL Control", () => {
