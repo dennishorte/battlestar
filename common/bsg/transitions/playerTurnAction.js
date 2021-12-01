@@ -192,6 +192,13 @@ function handleResponse(context) {
       return context.push('jump-the-fleet')
     }
 
+    else if (locationName === 'Hangar Deck') {
+      markDone(context)
+      return context.push('activate-hangar-deck', {
+        playerName: player.name
+      })
+    }
+
     else if (locationName === 'Research Lab') {
       markDone(context)
       return context.push('draw-skill-cards', {
@@ -246,7 +253,8 @@ const actionSkillCards = {
     const playerZone = game.getZoneByPlayerLocation(player)
     const locationIsDamaged = game.checkLocationIsDamaged(playerZone)
     const canRepairVipers = (
-      playerZone.details.name === 'Hangar Deck'
+      playerZone.details
+      && playerZone.details.name === 'Hangar Deck'
       && game.getDamagedVipersCount() > 0
     )
     return locationIsDamaged || canRepairVipers
@@ -285,7 +293,7 @@ function _addLocationActions(context, options) {
     && !game.checkPlayerIsAtLocation(player, 'Brig')
     && !game.checkPlayerIsAtLocation(player, 'Sickbay')
     && !game.checkLocationIsDamaged(location)
-    && game.checkLocationIsWorking(location)
+    && game.checkLocationIsWorking(location, player)
   ) {
     options.push({
       name: 'Location Action',

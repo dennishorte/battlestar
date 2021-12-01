@@ -334,6 +334,9 @@ const transitions = {
   'activate-communications': {
     func: require('./transitions/activateCommunications.js'),
   },
+  'activate-hangar-deck': {
+    func: require('./transitions/activateHangarDeck.js'),
+  },
   'activate-presidents-office': {
     func: require('./transitions/activatePresidentsOffice.js'),
   },

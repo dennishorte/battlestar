@@ -685,18 +685,15 @@ describe('player turn', () => {
 
   describe('action', () => {
 
-    function _prepareActionWithMove(kind, locationInfo, beforeAction) {
+    function _prepareActionWithMove(kind, locationInfo, setupFunc) {
       const factory = new GameFixtureFactory()
+      if (setupFunc) {
+        setupFunc(factory)
+      }
       if (kind === 'Location Action') {
         factory.options.players[0].movement = locationInfo
       }
-
-      const game = factory.build().advanceTo('player-turn-action').game
-      if (beforeAction) {
-        beforeAction(game)
-      }
-      game.run()
-      return game
+      return factory.build().advanceTo('player-turn-action').game
     }
 
     function _takeActionWithMove(kind, locationInfo, beforeAction) {
@@ -1504,6 +1501,7 @@ describe('player turn', () => {
             name: 'Galactica',
             option: ['FTL Control']
           })
+          game.run()
           expect(game.getWaiting('dennis')).toBeDefined()
 
           const locationActions = game
@@ -1522,8 +1520,106 @@ describe('player turn', () => {
         })
       })
 
-      describe.skip("Hangar Deck", () => {
+      describe("Hangar Deck", () => {
 
+        function _hangarDeckFixture(beforeFunc) {
+          const factory = new GameFixtureFactory()
+
+          // Make sure player 0 has the piloting skill
+          const players = factory.options.players
+          const tmp = players[0]
+          players[0] = players[2]
+          players[2] = tmp
+
+          // Move player 0 to the hangar deck
+          factory.options.players[0].movement = {
+            name: 'Galactica',
+            option: ['Hangar Deck']
+          }
+
+          const game = factory.build().advanceTo('player-turn-action').game
+
+          game.run()
+          game.submit({
+            actor: 'dennis',
+            name: 'Action',
+            option: [{
+              name: 'Location Action',
+              option: ['Hangar Deck']
+            }]
+          })
+
+          return game
+        }
+
+        test('cannot use without piloting skill', () => {
+          const game = _prepareActionWithMove(
+            'Location Action',
+            {
+              name: 'Galactica',
+              option: ['Hangar Deck']
+            },
+          )
+          game.run()
+          expect(game.getWaiting('dennis')).toBeDefined()
+          const locationActions = game
+            .getWaiting('dennis')
+            .actions[0]
+            .options
+            .find(o => o.name === 'Location Action')
+          expect(locationActions).not.toBeDefined()
+        })
+
+        test("Can't use if all vipers are destroyed", () => {
+          const factory = new GameFixtureFactory()
+
+          // Make sure player 0 has the piloting skill
+          const players = factory.options.players
+          const tmp = players[0]
+          players[0] = players[2]
+          players[2] = tmp
+
+          // Move player 0 to the hangar deck
+          factory.options.players[0].movement = {
+            name: 'Galactica',
+            option: ['Hangar Deck']
+          }
+
+          const game = factory.build().advanceTo('player-turn-action').game
+
+          // Destroy all the vipers
+          const allVipers = game.getCardsByPredicate(c => c.name === 'viper')
+          for (const viper of allVipers) {
+            game.mExile(viper.card)
+          }
+
+          game.run()
+
+          expect(game.getWaiting('dennis')).toBeDefined()
+          const locationActions = game
+            .getWaiting('dennis')
+            .actions[0]
+            .options
+            .find(o => o.name === 'Location Action')
+          expect(locationActions).not.toBeDefined()
+        })
+
+        test('launch-self-in-viper transition is kicked off', () => {
+          const game = _hangarDeckFixture()
+          expect(game.getWaiting('dennis')).toBeDefined()
+          expect(game.getTransition().name).toBe('launch-self-in-viper')
+        })
+
+        test('can then take another action', () => {
+          const game = _hangarDeckFixture()
+          game.submit({
+            actor: 'dennis',
+            name: 'Launch Self in Viper',
+            option: ['Lower Right']
+          })
+          expect(game.getWaiting('dennis')).toBeDefined()
+          expect(game.getTransition().name).toBe('player-turn-action')
+        })
       })
 
       describe("Research Lab", () => {

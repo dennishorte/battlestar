@@ -198,7 +198,8 @@ Game.prototype.checkLocationIsDamaged = function(location) {
   return !!location.cards.find(c => c.kind === 'damageGalactica')
 }
 
-Game.prototype.checkLocationIsWorking = function(location) {
+Game.prototype.checkLocationIsWorking = function(location, player) {
+  player = this._adjustPlayerParam(player)
   if (typeof location === 'string' && !location.includes('.')) {
     location = this.getZoneByLocationName(location)
   }
@@ -212,9 +213,22 @@ Game.prototype.checkLocationIsWorking = function(location) {
       && this.getDeployedCivilians().length > 0
     )
   }
+
   else if (location.details.name === 'FTL Control') {
     return this.getCounterByName('jumpTrack') >= 2
   }
+
+  else if (location.details.name === 'Hangar Deck') {
+    const character = this.getCardCharacterByPlayer(player)
+    return (
+      !!character.piloting
+      && (
+        this.getZoneByName('ships.vipers').cards.length > 0
+        || this.getUnmannedVipers().length > 0
+      )
+    )
+  }
+
   else {
     return true
   }
