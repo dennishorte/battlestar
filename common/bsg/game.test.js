@@ -685,6 +685,20 @@ describe('player turn', () => {
 
   describe('action', () => {
 
+    function _prepareActionWithMove(kind, locationInfo, beforeAction) {
+      const factory = new GameFixtureFactory()
+      if (kind === 'Location Action') {
+        factory.options.players[0].movement = locationInfo
+      }
+
+      const game = factory.build().advanceTo('player-turn-action').game
+      if (beforeAction) {
+        beforeAction(game)
+      }
+      game.run()
+      return game
+    }
+
     function _takeActionWithMove(kind, locationInfo, beforeAction) {
       const factory = new GameFixtureFactory()
       if (kind === 'Location Action') {
@@ -1473,12 +1487,38 @@ describe('player turn', () => {
       })
 
       describe("FTL Control", () => {
-        test.skip('is not available if jump prep track is too low', () => {
 
+        function _ftlFixture(beforeFunc) {
+          return _takeActionWithMove(
+            'Location Action',
+            {
+              name: 'Galactica',
+              option: ['FTL Control']
+            },
+            beforeFunc
+          )
+        }
+
+        test('is not available if jump prep track is too low', () => {
+          const game = _prepareActionWithMove('Location Action', {
+            name: 'Galactica',
+            option: ['FTL Control']
+          })
+          expect(game.getWaiting('dennis')).toBeDefined()
+
+          const locationActions = game
+            .getWaiting('dennis')
+            .actions[0]
+            .options
+            .find(o => o.name === 'Location Action')
+          expect(locationActions).not.toBeDefined()
         })
 
-        test.skip('puts jump-the-fleet on the stack', () => {
-          // check that we end up in the choose destination phase
+        test('puts jump-the-fleet on the stack', () => {
+          const game = _ftlFixture(game => {
+            game.mAdjustCounterByName('jumpTrack', 2)
+          })
+          expect(game.getTransition().name).toBe('jump-choose-destination')
         })
       })
 

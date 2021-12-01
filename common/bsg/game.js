@@ -212,6 +212,9 @@ Game.prototype.checkLocationIsWorking = function(location) {
       && this.getDeployedCivilians().length > 0
     )
   }
+  else if (location.details.name === 'FTL Control') {
+    return this.getCounterByName('jumpTrack') >= 2
+  }
   else {
     return true
   }
