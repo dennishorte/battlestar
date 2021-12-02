@@ -229,6 +229,10 @@ Game.prototype.checkLocationIsWorking = function(location, player) {
     )
   }
 
+  else if (location.details.name === "President's Office") {
+    return this.checkPlayerIsPresident(player)
+  }
+
   else if (location.details.name === 'Weapons Control') {
     return this.getCardsEnemyShips().length > 0
   }

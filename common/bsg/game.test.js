@@ -1737,8 +1737,31 @@ describe('player turn', () => {
       })
 
       describe("President's Office", () => {
-        test.skip('only the president can activate', () => {
+        test('only the president can activate', () => {
+          const factory = new GameFixtureFactory()
 
+          // Make sure player 0 is not the president
+          const players = factory.options.players
+          const tmp = players[0]
+          players[0] = players[2]
+          players[2] = tmp
+
+          // Move player 0 to the President's Office
+          factory.options.players[0].movement = {
+            name: 'Colonial One',
+            option: ["President's Office"]
+          }
+
+          const game = factory.build().advanceTo('player-turn-action').game
+          game.run()
+
+          expect(game.getWaiting('dennis')).toBeDefined()
+          const locationActions = game
+            .getWaiting('dennis')
+            .actions[0]
+            .options
+            .find(o => o.name === 'Location Action')
+          expect(locationActions).not.toBeDefined()
         })
 
         test('President first draws one card', () => {
