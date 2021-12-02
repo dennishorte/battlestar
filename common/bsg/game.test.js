@@ -1712,12 +1712,26 @@ describe('player turn', () => {
           expect(action.name).toBe('Skill Check - Discuss')
         })
 
-        test.skip('pass', () => {
-
+        test('pass', () => {
+          const game = _takeAction('Location Action', "Administration")
+          game.submit({
+            actor: 'dennis',
+            name: 'Choose a Player',
+            option: ['tom']
+          })
+          game.aSelectSkillCheckResult('pass')
+          expect(game.getPlayerPresident().name).toBe('tom')
         })
 
-        test.skip('fail', () => {
-
+        test('fail', () => {
+          const game = _takeAction('Location Action', "Administration")
+          game.submit({
+            actor: 'dennis',
+            name: 'Choose a Player',
+            option: ['tom']
+          })
+          game.aSelectSkillCheckResult('fail')
+          expect(game.getPlayerPresident().name).toBe('dennis')
         })
 
       })
