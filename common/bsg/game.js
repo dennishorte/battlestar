@@ -229,6 +229,10 @@ Game.prototype.checkLocationIsWorking = function(location, player) {
     )
   }
 
+  else if (location.details.name === 'Weapons Control') {
+    return this.getCardsEnemyShips().length > 0
+  }
+
   else {
     return true
   }
@@ -360,6 +364,15 @@ Game.prototype.getCardsByPredicate = function(predicate) {
       path,
     }
   })
+}
+
+Game.prototype.getCardsEnemyShips = function() {
+  return this
+    .getCardsByPredicate(c => {
+      return c.name
+          && (c.name === 'raider' || c.name === 'heavy raider' || c.name.startsWith('Basestar'))
+    })
+    .filter(info => info.zoneName.startsWith('space.'))
 }
 
 Game.prototype.getCrisis = function() {

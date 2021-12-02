@@ -238,12 +238,12 @@ Actions.aAttackCenturion = function() {
   }
 }
 
-Actions.aAttackCylonWithViperByKind = function(player, location, kind) {
+Actions.aAttackCylonByKind = function(player, location, kind, source) {
   location = this._adjustZoneParam(location)
   const dieRoll = bsgutil.rollDie()
 
   this.mLog({
-    template: '{player} rolls {dieRoll} attacking {kind}',
+    template: `{player} rolls {dieRoll} attacking {kind} with ${source}`,
     args: {
       player: player.name,
       dieRoll,
@@ -259,13 +259,25 @@ Actions.aAttackCylonWithViperByKind = function(player, location, kind) {
     this.aDestroyHeavyRaiderAtLocation(location)
   }
 
-  else if (kind.startsWith('Basestar') && dieRoll >= 8) {
+  else if (
+    kind.startsWith('Basestar')
+    && ((source === 'Galactica' && dieRoll >= 5)
+     || (source === 'viper' && dieRoll >= 8))
+  ) {
     this.aDamageBasestar(kind)
   }
 
   else {
     this.mLog({ template: 'missed' })
   }
+}
+
+Actions.aAttackCylonWithGalacticaByKind = function(player, location, kind) {
+  this.aAttackCylonByKind(player, location, kind, 'Galactica')
+}
+
+Actions.aAttackCylonWithViperByKind = function(player, location, kind) {
+  this.aAttackCylonByKind(player, location, kind, 'viper')
 }
 
 Actions.aAttackGalactica = function(ship) {

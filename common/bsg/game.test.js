@@ -685,13 +685,11 @@ describe('player turn', () => {
 
   describe('action', () => {
 
-    function _prepareActionWithMove(kind, locationInfo, setupFunc) {
+    function _prepareActionWithMove(ship, locationName) {
       const factory = new GameFixtureFactory()
-      if (setupFunc) {
-        setupFunc(factory)
-      }
-      if (kind === 'Location Action') {
-        factory.options.players[0].movement = locationInfo
+      factory.options.players[0].movement = {
+        name: ship,
+        option: [locationName]
       }
       return factory.build().advanceTo('player-turn-action').game
     }
@@ -1497,10 +1495,7 @@ describe('player turn', () => {
         }
 
         test('is not available if jump prep track is too low', () => {
-          const game = _prepareActionWithMove('Location Action', {
-            name: 'Galactica',
-            option: ['FTL Control']
-          })
+          const game = _prepareActionWithMove('Galactica', 'FTL Control')
           game.run()
           expect(game.getWaiting('dennis')).toBeDefined()
 
@@ -1553,13 +1548,7 @@ describe('player turn', () => {
         }
 
         test('cannot use without piloting skill', () => {
-          const game = _prepareActionWithMove(
-            'Location Action',
-            {
-              name: 'Galactica',
-              option: ['Hangar Deck']
-            },
-          )
+          const game = _prepareActionWithMove('Galactica', 'Hangar Deck')
           game.run()
           expect(game.getWaiting('dennis')).toBeDefined()
           const locationActions = game
@@ -1636,8 +1625,31 @@ describe('player turn', () => {
 
       })
 
-      describe.skip("Weapons Control", () => {
+      describe("Weapons Control", () => {
+        test('not available if there are no enemy ships in space', () => {
+          const game = _prepareActionWithMove('Galactica', 'Weapons Control')
+          game.aClearSpace()
+          game.run()
 
+          expect(game.getWaiting('dennis')).toBeDefined()
+          const locationActions = game
+            .getWaiting('dennis')
+            .actions[0]
+            .options
+            .find(o => o.name === 'Location Action')
+          expect(locationActions).not.toBeDefined()
+        })
+
+        test('can choose target', () => {
+          const game = _takeActionWithMove('Location Action', {
+            name: 'Galactica',
+            option: ['Weapons Control']
+          })
+          expect(game.getWaiting('dennis')).toBeDefined()
+          const action = game.getWaiting('dennis').actions[0]
+          expect(action.name).toBe('Weapons Control: Select Target')
+          expect(action.options.length).toBe(4)
+        })
       })
 
       describe.skip("Brig", () => {

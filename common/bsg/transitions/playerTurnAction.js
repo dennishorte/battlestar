@@ -207,6 +207,13 @@ function handleResponse(context) {
       })
     }
 
+    else if (locationName === 'Weapons Control') {
+      markDone(context)
+      return context.push('activate-weapons-control', {
+        playerName: player.name
+      })
+    }
+
     ////////////////////
     // Colonial One
 
