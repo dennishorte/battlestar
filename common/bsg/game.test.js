@@ -483,18 +483,6 @@ describe('player turn', () => {
       expect(options.includes('Cylon Fleet')).toBe(true)
     })
 
-    test("damaged locations excluded", () => {
-      const factory = new GameFixtureFactory()
-      const game = factory.build().advanceTo('player-turn-movement').game
-      game.aDamageLocationByName('Command')
-      game.run()
-
-      const action = game.getWaiting('dennis').actions[0]
-      const galacticaOptions = action.options.find(o => o.name === 'Galactica').options
-      expect(galacticaOptions.length).toBe(7)
-      expect(galacticaOptions.includes('Command')).toBe(false)
-    })
-
     test("player with no cards can't change ships", () => {
       const factory = new GameFixtureFactory()
       const game = factory.build().advanceTo('player-turn-movement').game
@@ -1652,8 +1640,44 @@ describe('player turn', () => {
         })
       })
 
-      describe.skip("Brig", () => {
+      describe("Brig", () => {
+        function _brigFixture() {
+          const factory = new GameFixtureFactory()
+          const game = factory.build().advanceTo('player-turn-action').game
+          game.mMovePlayer('dennis', game.getZoneByLocationName('Brig'))
+          game.run()
+          game.submit({
+            actor: 'dennis',
+            name: 'Action',
+            option: [{
+              name: 'Location Action',
+              option: ['Brig']
+            }]
+          })
+          return game
+        }
 
+        test('starts skill check', () => {
+          const game = _brigFixture()
+          expect(game.getTransition().name).toBe('skill-check-discuss')
+          expect(game.getSkillCheck().name).toBe('Release dennis from the brig')
+        })
+
+        test('fail causes no change', () => {
+          const game = _brigFixture()
+          game.aSelectSkillCheckResult('fail')
+          game.run()
+          expect(game.getTransition().name).toBe('player-turn-receive-skills')
+          expect(game.getTransition().data.playerName).toBe('micah')
+          expect(game.getZoneByPlayerLocation('dennis').details.name).toBe('Brig')
+        })
+
+        test('pass allows player to move to any Galactica location', () => {
+          const game = _brigFixture()
+          game.aSelectSkillCheckResult('pass')
+          game.run()
+          expect(game.getTransition().name).toBe('leave-brig')
+        })
       })
 
       describe("Administration", () => {
@@ -2860,11 +2884,6 @@ describe('jump-the-fleet', () => {
     })
     return game
   }
-
-  test('nothing happens if the fleet is not ready to jump', () => {
-    const game = _jumpFixture(1)
-    expect(game.getPlayerCurrentTurn().name).toBe('micah')
-  })
 
   test('population loss if jump track is too low', () => {
     const game = _jumpFixture(2, (game) => {

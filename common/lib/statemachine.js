@@ -82,12 +82,10 @@ function _done() {
   this.rk.pop(this.stack)
   this.clearWaiting()
   this.run()
-  return true
+  return 'done'
 }
 
 function _push(eventName, data) {
-  // console.log('push', eventName, data)
-
   this.options.pushCallback(eventName, data)
   this.clearWaiting()
 
@@ -105,17 +103,17 @@ function _push(eventName, data) {
   this.rk.push(this.stack, event)
 
   this.run()
-  return true
+  return 'push'
 }
 
 function _wait(payload) {
   this.rk.splice(this.waiting, 0, this.waiting.length, payload)
-  return true
+  return 'wait'
 }
 
 function _waitMany(payload) {
   this.rk.splice(this.waiting, 0, this.waiting.length, ...payload)
-  return true
+  return 'wait'
 }
 
 class InvalidTransitionError extends Error {

@@ -173,6 +173,25 @@ function handleResponse(context) {
       return context.done()
     }
 
+    else if (locationName === 'Brig') {
+      markDone(context)
+      game.mSetSkillCheck({
+        name: `Release ${player.name} from the brig`,
+        passValue: 7,
+        passEffect: `${player.name} may move to any Galactica location`,
+        failEffect: 'No Effect',
+        skills: ['politics', 'tactics'],
+        script: {
+          pass: [{
+            kind: 'leaveBrig',
+            actor: player.name
+          }],
+          fail: []
+        }
+      })
+      return context.push('skill-check')
+    }
+
     else if (locationName === 'Command') {
       markDone(context)
       return context.push('activate-command', {
@@ -297,7 +316,6 @@ function _addLocationActions(context, options) {
 
   if (
     location.name.startsWith('location')
-    && !game.checkPlayerIsAtLocation(player, 'Brig')
     && !game.checkPlayerIsAtLocation(player, 'Sickbay')
     && !game.checkLocationIsDamaged(location)
     && game.checkLocationIsWorking(location, player)

@@ -413,6 +413,10 @@ const transitions = {
   'jump-choose-destination': {
     func: require('./transitions/jumpChooseDestination.js')
   },
+
+  'leave-brig': {
+    func: require('./transitions/leaveBrig.js')
+  },
 }
 
 module.exports = transitions

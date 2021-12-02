@@ -67,6 +67,9 @@ Effect values are Arrays of objects with the following keys.
   - kinds    // list of the skill types that can be chosen
   - count    // number of cards to discard
 
+  leaveBrig
+  - actor
+
   move
   - actor     // Who will be moved
   - location  // New location to move to

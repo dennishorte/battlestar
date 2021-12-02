@@ -154,7 +154,7 @@ function push(array, elem) {
 }
 
 function pushUnique(array, elem) {
-  if (array.indexOf(elem) !== -1) {
+  if (array.indexOf(elem) === -1) {
     this.push(array, elem)
   }
 }

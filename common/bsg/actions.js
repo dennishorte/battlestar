@@ -367,7 +367,7 @@ Actions.aDamageBasestar = function(name) {
     name = card.name
   }
 
-  const zone = game.getZoneBasestarByName(name)
+  const zone = this.getZoneBasestarByName(name)
   const damageCard = this.mMoveCard('decks.damageBasestar', zone)
 
   this.mLog({
@@ -457,7 +457,7 @@ Actions.aDestroyBasestar = function(name) {
   if (typeof name === 'Object') {
     name = card.name
   }
-  const zone = game.getZoneBasestarByName(name)
+  const zone = this.getZoneBasestarByName(name)
 
   for (let i = zone.cards.length - 1; i >= 0; i--) {
     const card = zone.cards[i]
@@ -722,16 +722,17 @@ Actions.aRevealLoyaltyCards = function(target, viewer, count) {
   const cardsToView = cards.filter(c => cardIdsToView.includes(c.id))
 
   for (const card of cardsToView) {
-    this.game.rk.pushUnique(card.visibility, viewer.name)
-    this.mLog({
-      template: '{player1} looks at {card} belonging to {player2}',
-      args: {
-        player1: viewer.name,
-        player2: target.name,
-        card: card,
-      }
-    })
+    this.rk.pushUnique(card.visibility, viewer.name)
   }
+
+  this.mLog({
+    template: '{player1} looks at {count} loyalty card(s) belonging to {player2}',
+    args: {
+      player1: viewer.name,
+      player2: target.name,
+      count,
+    }
+  })
 }
 
 Actions.aSelectCharacter = function(player, characterName) {

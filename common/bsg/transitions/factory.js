@@ -96,18 +96,11 @@ function transitionFactory2(options) {
     }
 
     if (context.response) {
-      let result
+      const step = _nextStep(context, options)
 
-      // If there is a step specific response handler, use that
-      const lastStep = context.data.completedSteps.slice(-1)[0]
-      if (lastStep && options.steps.find(s => s.name === lastStep).resp) {
-        result = options.steps.find(s => s.name === lastStep).resp(context)
-      }
+      game.rk.push(context.data.completedSteps, step.name)
 
-      // Otherwise, fallback to a global response handler
-      else {
-        result = options.responseHandler(context)
-      }
+      const result = options.steps.find(s => s.name === step.name).resp(context)
 
       // If a result was returned, that means that the response handler set up the next
       // transition in the statemachine, and we should break here. Otherwise, continue on to
@@ -126,7 +119,14 @@ function transitionFactory2(options) {
       }
       else {
         game.rk.push(context.data.completedSteps, step.name)
+
         const result = step.func(context)
+        if (result === 'wait') {
+          // Make sure that if we call this again before getting a response,
+          // we don't just skip over the wait.
+          game.rk.pop(context.data.completedSteps)
+        }
+
         if (result) {
           return result
         }
@@ -138,6 +138,14 @@ function transitionFactory2(options) {
 
     // Once all steps have been completed, this transition is finished.
     return context.done()
+  }
+}
+
+function _nextStep(context, options) {
+  for (const step of options.steps) {
+    if (!context.data.completedSteps.includes(step.name)) {
+      return step
+    }
   }
 }
 

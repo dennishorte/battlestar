@@ -2,11 +2,10 @@ const { transitionFactory2 } = require('./factory.js')
 const util = require('../../lib/util.js')
 
 module.exports = transitionFactory2({
-  responseHandler: _handleResponse,
   steps: [
     {
       name: 'select-crisis',
-      func: _selectCrisis
+      func: _selectCrisis,
     },
     {
       name: 'gaius-draw-skill-card',
@@ -14,15 +13,16 @@ module.exports = transitionFactory2({
     },
     {
       name: 'before-crisis',
-      func: _beforeCrisis
+      func: _beforeCrisis,
     },
     {
       name: 'crisis',
-      func: _crisis
+      func: _crisis,
+      resp: _handleResponse,
     },
     {
       name: 'after-crisis',
-      func: _afterCrisis
+      func: _afterCrisis,
     },
   ],
 })
@@ -125,7 +125,6 @@ function _afterCrisis(context) {
     game.aActivateCylonShips(crisis.cylonActivation)
     game.aPrepareForJump(crisis.jumpTrack)
     if (game.getCounterByName('jumpTrack') >= 4) {
-      markDone(context)
       game.mLog({ template: 'auto-jumping the fleet' })
       return context.push('jump-the-fleet')
     }

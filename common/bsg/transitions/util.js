@@ -134,6 +134,18 @@ function evaluateEffect(game, effect) {
     throw new Error('not implemented')
   }
 
+  else if (kind === 'leaveBrig') {
+    const { actor } = effect
+    return {
+      push: {
+        transition: 'leave-brig',
+        payload: {
+          playerName: actor
+        }
+      }
+    }
+  }
+
   else if (kind === 'move') {
     const { actor, location } = effect
     const player = game.getPlayerByDescriptor(actor)
