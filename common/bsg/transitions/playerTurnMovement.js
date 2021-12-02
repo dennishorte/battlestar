@@ -130,7 +130,6 @@ function generateOptions(context) {
         options: game.getLocationsByArea('Galactica')
                      .filter(l => !l.details.hazardous)
                      .filter(l => l.name !== playerZone.name)
-                     .filter(l => !game.checkLocationIsDamaged(l))
                      .map(l => l.details.name)
       })
     }
