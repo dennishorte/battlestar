@@ -33,10 +33,21 @@ function handleResponse(context) {
   const chosenPlayer = game.getPlayerByName(chosenPlayerName)
   util.assert(!!chosenPlayer, `Invalid player chosen: ${chosenPlayerName}`)
 
+  let passValue = 7
+
+  if (
+    game.checkPlayerIsPresident(chosenPlayer)
+    && game.checkEffect('Accept Prophecy')
+  ) {
+    passValue += 2
+    const card = game.getCardByName('Accept Prophecy')
+    game.mDiscard(card)
+  }
+
   game.mSetSkillCheck({
     name: `Send ${chosenPlayerName} to the brig`,
     skills: ['leadership', 'tactics'],
-    passValue: 7,
+    passValue: passValue,
     partialValue: 0,
     passEffect: `${chosenPlayerName} is sent to the brig`,
     partialEffect: '',

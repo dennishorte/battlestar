@@ -1235,6 +1235,28 @@ describe('player turn', () => {
           expect(action.name).toBe('Skill Check - Discuss')
         })
 
+        test('Accept Prophecy raises the difficulty against President', () => {
+          const game = _admiralsQuartersFixture()
+          jest.spyOn(game, 'checkEffect').mockImplementation(name => {
+            return name === 'Accept Prophecy'
+          })
+          jest.spyOn(game, 'checkPlayerIsPresident').mockImplementation(player => {
+            return player === 'tom' || player.name === 'tom'
+          })
+          jest.spyOn(game, 'mDiscard')
+          game.submit({
+            actor: 'dennis',
+            name: 'Choose a Player',
+            option: ['tom']
+          })
+
+          expect(game.getSkillCheck().passValue).toBe(9)
+
+          // Ensure Accept Prophecy isn't kept after being used
+          expect(game.mDiscard.mock.calls.length).toBe(1)
+          expect(game.mDiscard.mock.calls[0][0].name).toBe('Accept Prophecy')
+        })
+
         test.skip('skill check passed moves chosen player to brig', () => {
         })
 
@@ -1734,6 +1756,27 @@ describe('player turn', () => {
           expect(game.getPlayerPresident().name).toBe('dennis')
         })
 
+        test('Accept Prophecy raises the difficulty', () => {
+          const game = _takeAction('Location Action', "Administration")
+          jest.spyOn(game, 'checkEffect').mockImplementation(name => {
+            return name === 'Accept Prophecy'
+          })
+          jest.spyOn(game, 'checkPlayerIsPresident').mockImplementation(player => {
+            return player === 'tom' || player.name === 'tom'
+          })
+          jest.spyOn(game, 'mDiscard')
+          game.submit({
+            actor: 'dennis',
+            name: 'Choose a Player',
+            option: ['tom']
+          })
+          expect(game.getSkillCheck().passValue).toBe(9)
+
+          // Card is not kept afterwards
+          expect(game.mDiscard.mock.calls.length).toBe(1)
+          expect(game.mDiscard.mock.calls[0][0].name).toBe('Accept Prophecy')
+        })
+
       })
 
       describe("President's Office", () => {
@@ -1824,52 +1867,6 @@ describe('player turn', () => {
       })
 
       describe.skip("Resurrection Ship", () => {
-
-      })
-    })
-
-    describe('quorum actions', () => {
-      describe.skip("Accept Prophecy", () => {
-
-      })
-
-      describe.skip("Arrest Order", () => {
-
-      })
-
-      describe.skip("Assign Arbitrator", () => {
-
-      })
-
-      describe.skip("Assign Mission Specialist", () => {
-
-      })
-
-      describe.skip("Assign Vice President", () => {
-
-      })
-
-      describe.skip("Authorization of Brutal Force", () => {
-
-      })
-
-      describe.skip("Encourage Mutiny", () => {
-
-      })
-
-      describe.skip("Food Rationing", () => {
-
-      })
-
-      describe.skip("Inspirational Speech", () => {
-
-      })
-
-      describe.skip("Presidential Pardon", () => {
-
-      })
-
-      describe.skip("Release Cylon Mugshots", () => {
 
       })
     })

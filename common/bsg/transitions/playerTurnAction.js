@@ -73,6 +73,14 @@ function handleResponse(context) {
     context.done()
   }
 
+  else if (selectionName === 'Quorum Card') {
+    markDone(context)
+    context.push('play-quorum-card', {
+      playerName: player.name,
+      cardId: bsgutil.optionName(selection.option[0])
+    })
+  }
+
   else if (selectionName === 'Attack with Viper') {
     const shipKind = bsgutil.optionName(selection.option[0])
     game.aAttackCylonWithViperByKind(
@@ -331,15 +339,16 @@ function _addLocationActions(context, options) {
 function _addQuorumActions(context, options) {
   const game = context.state
   const player = game.getPlayerByName(context.data.playerName)
-  const cardNames = game
+  const cardIds = game
     .getCardsKindByPlayer('quorum', player)
-    .map(c => c.name)
+    .sort((l, r) => l.name.localeCompare(r.name))
+    .map(c => c.id)
 
-  if (cardNames.length) {
+  if (cardIds.length) {
     options.push({
       name: 'Quorum Card',
       max: 1,
-      options: [...new Set(cardNames)].sort()
+      options: cardIds
     })
   }
 }

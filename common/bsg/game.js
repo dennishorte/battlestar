@@ -961,6 +961,10 @@ Game.prototype.mDiscard = function(cardId) {
     }
   }
 
+  else if (card.kind === 'quorum') {
+    this.mMoveCard(zoneName, 'discard.quorum', card)
+  }
+
   else {
     throw new Error(`Unhandled discard: ${card.kind}`)
   }
@@ -1013,6 +1017,11 @@ Game.prototype.mGameOver = function(trigger) {
 
   // Put the END transition on the stack
   this.rk.push(this.sm.stack, { name: 'END' })
+}
+
+Game.prototype.mKeep = function(card) {
+  card = this._adjustCardParam(card)
+  this.mMoveCard(this.getZoneByCard(card), 'keep', card)
 }
 
 Game.prototype.mLaunchViper = function(position) {

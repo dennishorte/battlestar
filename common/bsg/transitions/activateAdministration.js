@@ -31,10 +31,18 @@ function handleResponse(context) {
   const chosenPlayerName = context.response.option[0]
   const chosenPlayer = game.getPlayerByName(chosenPlayerName)
 
+  let passValue = 7
+
+  if (game.checkEffect('Accept Prophecy')) {
+    passValue += 2
+    const acceptProphecyCard = game.getCardByName('Accept Prophecy')
+    game.mDiscard(acceptProphecyCard)
+  }
+
   game.mSetSkillCheck({
     name: `Nominate ${chosenPlayerName} for the Presidency`,
     skills: ['leadership', 'tactics'],
-    passValue: 7,
+    passValue,
     partialValue: 0,
     passEffect: `${chosenPlayerName} becomes the President`,
     partialEffect: '',

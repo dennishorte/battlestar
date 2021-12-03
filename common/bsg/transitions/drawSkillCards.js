@@ -12,57 +12,43 @@ function generateOptions(context) {
   const player = game.getPlayerByName(context.data.playerName)
   const reason = context.data.reason
 
-  if (reason === 'Research Lab') {
-    return context.wait({
-      actor: player.name,
-      actions: [{
-        name: 'Draw Skill Cards',
-        options: ['engineering', 'tactics'],
-      }]
-    })
-  }
+  let count = 1
+  let options = [
+    'politics',
+    'leadership',
+    'tactics',
+    'piloting',
+    'engineering',
+  ]
 
-  else if (reason === 'Delusional Intuition') {
-    return context.wait({
-      actor: player.name,
-      actions: [{
-        name: 'Delusional Intuition',
-        options: [
-          'politics',
-          'leadership',
-          'tactics',
-          'piloting',
-          'engineering',
-        ]
-      }]
-    })
+  if (reason === 'Research Lab') {
+    options = ['engineering', 'tactics']
   }
 
   else if (reason === 'Consolidate Power') {
-    return context.wait({
-      actor: player.name,
-      actions: [{
-        name: 'Consolidate Power',
-        count: 2,
-        options: [
-          'politics',
-          'politics',
-          'leadership',
-          'leadership',
-          'tactics',
-          'tactics',
-          'piloting',
-          'piloting',
-          'engineering',
-          'engineering',
-        ]
-      }]
-    })
+    count = 2
+    options = [
+      'politics',
+      'politics',
+      'leadership',
+      'leadership',
+      'tactics',
+      'tactics',
+      'piloting',
+      'piloting',
+      'engineering',
+      'engineering',
+    ]
   }
 
-  else {
-    throw new Error(`Invalid reason for card drawing provided: ${reason}`)
-  }
+  return context.wait({
+    actor: context.data.playerName,
+    actions: [{
+      name: reason,
+      count,
+      options,
+    }]
+  })
 }
 
 function handleResponse(context) {
