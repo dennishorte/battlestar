@@ -55,8 +55,22 @@ describe('quorum actions', () => {
     })
   })
 
-  describe.skip("Arrest Order", () => {
+  describe("Arrest Order", () => {
+    test('president chooses a player to move to brig', () => {
+      const game = _quorumFixture('Arrest Order')
+      game.submit({
+        actor: 'dennis',
+        name: 'Arrest Order',
+        option: ['tom']
+      })
+      expect(game.getZoneByPlayerLocation('tom').details.name).toBe('Brig')
+    })
 
+    test('president cannot choose self', () => {
+      const game = _quorumFixture('Arrest Order')
+      const action = game.getWaiting('dennis').actions[0]
+      expect(action.options.includes('dennis')).toBe(false)
+    })
   })
 
   describe.skip("Assign Arbitrator", () => {

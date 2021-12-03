@@ -17,11 +17,29 @@ function _playCard(context) {
   const player = game.getPlayerByName(context.data.playerName)
   const card = game.getCardById(context.data.cardId)
 
+  game.mRevealCard(card)
+  game.mLog({
+    template: '{player} plays quorum card {card}',
+    args: {
+      player: player.name,
+      card,
+    }
+  })
+
   if (card.name === 'Accept Prophecy') {
     game.mKeep(card)
     return context.push('draw-skill-cards', {
       playerName: player.name,
       reason: 'Accept Prophecy'
+    })
+  }
+
+  else if (card.name === 'Arrest Order') {
+    game.mDiscard(card)
+    return context.push('send-player-to', {
+      playerName: player.name,
+      location: 'Brig',
+      reason: 'Arrest Order',
     })
   }
 

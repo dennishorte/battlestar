@@ -157,8 +157,17 @@ function evaluateEffect(game, effect) {
     throw new Error('not implemented')
   }
 
-  else if (kind === 'sendPlayerToBrig') {
-    throw new Error('not implemented')
+  else if (kind === 'sendPlayerTo') {
+    const { actor, location } = effect
+    return {
+      push: {
+        transition: 'send-player-to',
+        payload: {
+          location: 'Brig',
+          playerName: actor
+        }
+      }
+    }
   }
 
   else if (kind === 'title') {

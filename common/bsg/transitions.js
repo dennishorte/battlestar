@@ -372,6 +372,9 @@ const transitions = {
   'play-quorum-card': {
     func: require('./transitions/playQuorumCard.js'),
   },
+  'send-player-to': {
+    func: require('./transitions/sendPlayerTo.js'),
+  },
 
   'make-choice': {
     func: require('./transitions/makeChoice.js'),

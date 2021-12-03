@@ -1148,6 +1148,14 @@ Game.prototype.mMoveAroundSpace = function(ship, direction) {
 Game.prototype.mMovePlayer = function(player, destination) {
   player = this._adjustPlayerParam(player)
   destination = this._adjustZoneParam(destination)
+
+  if (this.getZoneByPlayerLocation(player).name.startsWith('space.')) {
+    throw new Error(`Moving players from space zones is not handled by mMovePlayer`)
+  }
+  if (destination.name.startsWith('space.')) {
+    throw new Error(`Moving players to space zones is not handled by mMovePlayer`)
+  }
+
   const { card } = this.getCardPlayerToken(player)
   this.rk.move(card, destination.cards, destination.cards.length)
 }
@@ -1171,6 +1179,10 @@ Game.prototype.mReturnViperFromSpaceZone = function(zoneNumber) {
   const viperZone = this.getZoneByName('ships.vipers')
   const viper = spaceZone.cards.find(c => c.name === 'viper')
   this.rk.move(viper, viperZone.cards)
+}
+
+Game.prototype.mRevealCard = function(card) {
+  this.rk.put(card, 'visibility', this.getPlayerAll().map(p => p.name))
 }
 
 Game.prototype.mSetCrisisActive = function(card) {
