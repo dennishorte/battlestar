@@ -72,7 +72,8 @@ function _autoAdjustDifficulty(context) {
   }
 
   // Kara Thrace
-  if (game.chosenPlayerName === "Kara 'Starbuck' Thrace") {
+  const chosenPlayerCharacter = game.getCardCharacterByPlayer(chosenPlayer)
+  if (chosenPlayerCharacter.name === 'Kara "Starbuck" Thrace') {
     game.rk.put(context.data, 'passValue', context.data.passValue - 3)
   }
 }

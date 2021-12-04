@@ -1357,7 +1357,14 @@ describe('player turn', () => {
         test.skip("Saul Tigh can use his Cylon Hatred ability", () => {
         })
 
-        test.skip("Kara Thrace causes the passValue to drop", () => {
+        test("Kara Thrace causes the passValue to drop", () => {
+          const game = _admiralsQuartersFixture()
+          game.submit({
+            actor: 'dennis',
+            name: 'Choose a Player',
+            option: ['micah']
+          })
+          expect(game.getSkillCheck().passValue).toBe(4)
         })
 
         test('William Adama cannot use this action', () => {
