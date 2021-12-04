@@ -1360,7 +1360,19 @@ describe('player turn', () => {
         test.skip("Kara Thrace causes the passValue to drop", () => {
         })
 
-        test.skip('William Adama cannot use this action', () => {
+        test('William Adama cannot use this action', () => {
+          const factory = new GameFixtureFactory()
+          factory.options.players[0].character = 'William Adama'
+          const game = factory.build().advanceTo('player-turn-action').game
+          game.run()
+          expect(game.getWaiting('dennis')).toBeDefined()
+
+          const locationActions = game
+            .getWaiting('dennis')
+            .actions[0]
+            .options
+            .find(o => o.name === 'Location Action')
+          expect(locationActions).not.toBeDefined()
         })
       })
 

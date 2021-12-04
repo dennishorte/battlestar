@@ -214,6 +214,10 @@ Game.prototype.checkLocationIsWorking = function(location, player) {
     )
   }
 
+  else if (location.details.name === "Admiral's Quarters") {
+    return this.getCardCharacterByPlayer(player).name !== 'William Adama'
+  }
+
   else if (location.details.name === 'FTL Control') {
     return this.getCounterByName('jumpTrack') >= 2
   }
