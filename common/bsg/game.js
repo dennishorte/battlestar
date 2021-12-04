@@ -263,6 +263,11 @@ Game.prototype.checkPlayerHasUsedOncePerGame = function(player) {
   return player.oncePerGameUsed
 }
 
+Game.prototype.checkPlayerIsArbitrator = function(player) {
+  player = this._adjustPlayerParam(player)
+  return player.isArbitrator
+}
+
 Game.prototype.checkPlayerIsAtLocation = function(player, name) {
   player = this._adjustPlayerParam(player)
   const zone = this.getZoneByPlayerLocation(player)
@@ -1149,13 +1154,6 @@ Game.prototype.mMovePlayer = function(player, destination) {
   player = this._adjustPlayerParam(player)
   destination = this._adjustZoneParam(destination)
 
-  if (this.getZoneByPlayerLocation(player).name.startsWith('space.')) {
-    throw new Error(`Moving players from space zones is not handled by mMovePlayer`)
-  }
-  if (destination.name.startsWith('space.')) {
-    throw new Error(`Moving players to space zones is not handled by mMovePlayer`)
-  }
-
   const { card } = this.getCardPlayerToken(player)
   this.rk.move(card, destination.cards, destination.cards.length)
 }
@@ -1195,9 +1193,13 @@ Game.prototype.mSetGameResult = function(result) {
   this.state.result = result
 }
 
-Game.prototype.mSetPlayerIsRevealedCylon = function(player) {
+Game.prototype.mSetPlayerFlag = function(player, flag, value) {
   player = this._adjustPlayerParam(player)
-  this.rk.put(player, 'isRevealedCylon', true)
+  this.rk.put(player, flag, value)
+}
+
+Game.prototype.mSetPlayerIsRevealedCylon = function(player) {
+  this.mSetPlayerFlag(player, 'isRevealedCylon', true)
 }
 
 Game.prototype.mSetSkillCheck = function(check) {

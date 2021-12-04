@@ -354,6 +354,9 @@ const transitions = {
     func: require('./transitions/skillCardLaunchScout.js'),
   },
 
+  'assign-arbitrator': {
+    func: require('./transitions/assignArbitrator.js'),
+  },
   'choose-player-to-send-to-brig': {
     func: require('./transitions/choosePlayerToSendToBrig.js'),
   },

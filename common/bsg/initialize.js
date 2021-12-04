@@ -62,6 +62,7 @@ function initialize(game) {
       crisisCount: -1,
       crisisDone: false,
 
+      isArbitrator: false,
       isMissionSpecialist: false,
       isRevealedCylon: false,
       oncePerGameUsed: false,

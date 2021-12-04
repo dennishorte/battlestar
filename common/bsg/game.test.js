@@ -1257,6 +1257,97 @@ describe('player turn', () => {
           expect(game.mDiscard.mock.calls[0][0].name).toBe('Accept Prophecy')
         })
 
+        describe('Assign Arbitrator effect', () => {
+          function _arbitrationFixture() {
+            const game = _admiralsQuartersFixture()
+            jest.spyOn(game, 'checkPlayerIsArbitrator').mockImplementation(player => {
+              return player === 'tom' || player.name === 'tom'
+            })
+            game.submit({
+              actor: 'dennis',
+              name: 'Choose a Player',
+              option: ['tom']
+            })
+            return game
+          }
+
+          test('arbitrator can adjust the difficulty', () => {
+            const game = _arbitrationFixture()
+
+            expect(game.getWaiting('tom')).toBeDefined()
+            const action = game.getWaiting('tom').actions[0]
+            expect(action.name).toBe('Adjust Difficulty')
+
+            const arbitrate = action.options.find(o => o.name === 'Arbitrate')
+            expect(arbitrate).toBeDefined()
+            expect(arbitrate.options.map(o => o.name || o).sort()).toStrictEqual([
+              'against accused',
+              'in favor of accused',
+            ])
+          })
+
+          test('arbitrator effect is lost after use', () => {
+            const game = _arbitrationFixture()
+            jest.spyOn(game, 'mSetPlayerFlag')
+            game.submit({
+              actor: 'tom',
+              name: 'Adjust Difficulty',
+              option: [{
+                name: 'Arbitrate',
+                option: ['against accused']
+              }]
+            })
+
+            expect(game.mSetPlayerFlag.mock.calls.length).toBe(1)
+            expect(game.mSetPlayerFlag.mock.calls[0][0].name).toBe('tom')
+            expect(game.mSetPlayerFlag.mock.calls[0][1]).toBe('isArbitrator')
+            expect(game.mSetPlayerFlag.mock.calls[0][2]).toBe(false)
+          })
+
+          test('arbitrator card is moved from exile to discard after use', () => {
+            const game = _arbitrationFixture()
+            game.submit({
+              actor: 'tom',
+              name: 'Adjust Difficulty',
+              option: [{
+                name: 'Arbitrate',
+                option: ['against accused']
+              }]
+            })
+
+            const { zoneName } = game.getCardByPredicate(c => c.name === 'Assign Arbitrator')
+            expect(zoneName).toBe('discard.quorum')
+          })
+
+          test('in favor raises difficulty 3', () => {
+            const game = _arbitrationFixture()
+            game.submit({
+              actor: 'tom',
+              name: 'Adjust Difficulty',
+              option: [{
+                name: 'Arbitrate',
+                option: ['in favor of accused']
+              }]
+            })
+
+            expect(game.getSkillCheck().passValue).toBe(10)
+          })
+
+          test('against lowers difficulty 3', () => {
+            const game = _arbitrationFixture()
+            game.submit({
+              actor: 'tom',
+              name: 'Adjust Difficulty',
+              option: [{
+                name: 'Arbitrate',
+                option: ['against accused']
+              }]
+            })
+
+            expect(game.getSkillCheck().passValue).toBe(4)
+          })
+        })
+
         test.skip('skill check passed moves chosen player to brig', () => {
         })
 
@@ -1630,7 +1721,7 @@ describe('player turn', () => {
           })
           const waiting = game.getWaiting('dennis')
           const action = waiting.actions[0]
-          expect(action.name).toBe('Draw Skill Cards')
+          expect(action.name).toBe('Research Lab')
         })
 
       })

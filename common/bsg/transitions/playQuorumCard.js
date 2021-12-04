@@ -43,6 +43,13 @@ function _playCard(context) {
     })
   }
 
+  else if (card.name === 'Assign Arbitrator') {
+    game.aDrawSkillCards(player, ['politics', 'politics'])
+    return context.push('assign-arbitrator', {
+      playerName: player.name
+    })
+  }
+
   else {
     throw new Error(`Unsupported quorum card: ${card.name}`)
   }

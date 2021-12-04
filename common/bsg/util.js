@@ -1,6 +1,8 @@
 const Util = {}
 module.exports = Util
 
+Util.MAX_PLAYERS = 6
+
 Util.calculateCheckValue = function(cards, options) {
   const {
     skills,

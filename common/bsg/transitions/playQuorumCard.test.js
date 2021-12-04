@@ -73,8 +73,31 @@ describe('quorum actions', () => {
     })
   })
 
-  describe.skip("Assign Arbitrator", () => {
+  describe("Assign Arbitrator", () => {
+    test('president draws two politics cards', () => {
+      const game = _quorumFixture('Assign Arbitrator')
+      const skillCards = game.getCardsKindByPlayer('skill', 'dennis')
+      const politicsCards = skillCards.filter(c => c.skill === 'politics')
+      expect(politicsCards.length).toBe(4)
+    })
 
+    test('president chooses arbitrator', () => {
+      const game = _quorumFixture('Assign Arbitrator')
+      game.submit({
+        actor: 'dennis',
+        name: 'Assign Arbitrator',
+        option: ['micah'],
+      })
+      expect(game.checkPlayerIsArbitrator('micah')).toBe(true)
+    })
+
+    test('arbitrator can affect pass value of admirals quarters', () => {
+      // tested in Admiral's Quarters action
+    })
+
+    test('arbitrator effect only works one time', () => {
+      // tested in Admiral's Quarters action
+    })
   })
 
   describe.skip("Assign Mission Specialist", () => {
