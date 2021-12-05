@@ -1354,7 +1354,51 @@ describe('player turn', () => {
         test.skip('skill check failed means nothing happens', () => {
         })
 
-        test.skip("Saul Tigh can use his Cylon Hatred ability", () => {
+        describe('Saul Tigh Cylon Hatred', () => {
+          function _cylonHatredFixture() {
+            const factory = new GameFixtureFactory()
+            factory.options.players[0].character = 'Saul Tigh'
+            factory.options.players[0].movement = {
+              name: 'Galactica',
+              option: ["Admiral's Quarters"]
+            }
+            const game = factory.build().advanceTo('player-turn-action').game
+            game.run()
+            game.submit({
+              actor: 'dennis',
+              name: 'Action',
+              option: [{
+                name: 'Location Action',
+                option: ["Admiral's Quarters"],
+              }]
+            })
+            game.submit({
+              actor: 'dennis',
+              name: 'Choose a Player',
+              option: ['tom']
+            })
+            return game
+          }
+
+          test("Saul Tigh can use his Cylon Hatred ability", () => {
+            const game = _cylonHatredFixture()
+            expect(game.getWaiting('dennis')).toBeDefined()
+
+            const action = game.getWaiting('dennis').actions[0]
+            expect(action.name).toBe('Adjust Difficulty')
+            expect(action.options[0].name).toBe('Cylon Hatred')
+          })
+
+          test('Using Cylon Hatred reduces difficulty by 3', () => {
+            const game = _cylonHatredFixture()
+            game.submit({
+              actor: 'dennis',
+              name: 'Adjust Difficulty',
+              option: ['Cylon Hatred']
+            })
+
+            expect(game.getSkillCheck().passValue).toBe(4)
+          })
         })
 
         test("Kara Thrace causes the passValue to drop", () => {
