@@ -1444,11 +1444,44 @@ describe('player turn', () => {
       })
 
       describe("Armory", () => {
-        test.skip('not available if no centurions', () => {
+        function _armoryFixture(beforeFunc) {
+          return _takeActionWithMove(
+            'Location Action',
+            {
+              name: 'Galactica',
+              option: ['Armory']
+            },
+            beforeFunc
+          )
+        }
+
+        test('not available if no centurions', () => {
+          const factory = new GameFixtureFactory()
+          factory.options.players[0].movement = {
+            name: 'Galactica',
+            option: ['Armory']
+          }
+          const game = factory.build().advanceTo('player-turn-action').game
+          game.run()
+
+          expect(game.getWaiting('dennis')).toBeDefined()
+          expect(game.getZoneByPlayerLocation('dennis').details.name).toBe('Armory')
+
+          const locationActions = game
+            .getWaiting('dennis')
+            .actions[0]
+            .options
+            .find(o => o.name === 'Location Action')
+          expect(locationActions).not.toBeDefined()
         })
 
-        test.skip('attacks a centurion', () => {
-          // ensure aAttackCenturion is called
+        test('attacks a centurion', () => {
+          const game = _armoryFixture(game => {
+            jest.spyOn(game, 'aAttackCenturion')
+            game.mAddCenturion()
+          })
+
+          expect(game.aAttackCenturion.mock.calls.length).toBe(1)
         })
       })
 

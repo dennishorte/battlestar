@@ -218,6 +218,10 @@ Game.prototype.checkLocationIsWorking = function(location, player) {
     return this.getCardCharacterByPlayer(player).name !== 'William Adama'
   }
 
+  else if (location.details.name === 'Armory') {
+    return !!this.getCenturionNext()
+  }
+
   else if (location.details.name === 'FTL Control') {
     return this.getCounterByName('jumpTrack') >= 2
   }
@@ -386,6 +390,17 @@ Game.prototype.getCardsEnemyShips = function() {
           && (c.name === 'raider' || c.name === 'heavy raider' || c.name.startsWith('Basestar'))
     })
     .filter(info => info.zoneName.startsWith('space.'))
+}
+
+Game.prototype.getCenturionNext = function() {
+  for (let i = 3; i >= 0; i--) {
+    const zone = this.getZoneCenturionsByIndex(i)
+    if (zone.cards.length > 0) {
+      return zone.cards[0]
+    }
+  }
+
+  return undefined
 }
 
 Game.prototype.getCrisis = function() {

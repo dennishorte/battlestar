@@ -209,15 +209,7 @@ Actions.aAssignPresident = function(player) {
 }
 
 Actions.aAttackCenturion = function() {
-  // Confirm if there are any centurions to attack
-  let targetCenturion
-  for (let i = 3; i >= 1; i--) {
-    const zone = this.getZoneCenturionsByIndex(i)
-    if (zone.cards.length > 0) {
-      targetCenturion = zone.cards[0]
-      break
-    }
-  }
+  const targetCenturion = this.getCenturionNext()
 
   if (!targetCenturion) {
     this.mLog({ template: 'There are no centurions to attack' })
