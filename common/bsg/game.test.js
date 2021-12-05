@@ -1235,6 +1235,28 @@ describe('player turn', () => {
           expect(action.name).toBe('Skill Check - Discuss')
         })
 
+        test('skill check passed moves chosen player to brig', () => {
+          const game = _admiralsQuartersFixture()
+          game.submit({
+            actor: 'dennis',
+            name: 'Choose a Player',
+            option: ['tom']
+          })
+          game.aSelectSkillCheckResult('pass')
+          expect(game.getZoneByPlayerLocation('tom').details.name).toBe('Brig')
+        })
+
+        test('skill check failed means nothing happens', () => {
+          const game = _admiralsQuartersFixture()
+          game.submit({
+            actor: 'dennis',
+            name: 'Choose a Player',
+            option: ['tom']
+          })
+          game.aSelectSkillCheckResult('fail')
+          expect(game.getZoneByPlayerLocation('tom').details.name).toBe('Armory')
+        })
+
         test('Accept Prophecy raises the difficulty against President', () => {
           const game = _admiralsQuartersFixture()
           jest.spyOn(game, 'checkEffect').mockImplementation(name => {
@@ -1346,12 +1368,6 @@ describe('player turn', () => {
 
             expect(game.getSkillCheck().passValue).toBe(4)
           })
-        })
-
-        test.skip('skill check passed moves chosen player to brig', () => {
-        })
-
-        test.skip('skill check failed means nothing happens', () => {
         })
 
         describe('Saul Tigh Cylon Hatred', () => {
