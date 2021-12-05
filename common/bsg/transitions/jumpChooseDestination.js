@@ -1,4 +1,5 @@
 const { transitionFactory, markDone } = require('./factory.js')
+const bsgutil = require('../util.js')
 const util = require('../../lib/util.js')
 
 module.exports = transitionFactory(
@@ -10,10 +11,13 @@ module.exports = transitionFactory(
 function generateOptions(context) {
   const game = context.state
   const missionSpecialist = _getMissionSpecialist(game)
-  const actor = missionSpecialist ? missionSpecialist : game.getPlayerAdmiral()
-  const count = missionSpecialist ? 3 : 2
+
+  let actor = game.getPlayerAdmiral()
+  let count = 2
 
   if (missionSpecialist) {
+    actor = missionSpecialist
+    count = 3
     game.mLog({
       template: 'Mission Specialist {player} will choose a destination',
       args: {
@@ -44,13 +48,21 @@ function generateOptions(context) {
 
 function handleResponse(context) {
   const game = context.state
-  const destinationId = context.response.option[0]
+  const destinationId =  bsgutil.optionName(context.response.option[0])
   const destination = game.getCardById(destinationId)
 
+  // Mission Specialist's work is done after picking a destination
+  const missionSpecialist = _getMissionSpecialist(game)
+  if (missionSpecialist) {
+    game.mSetPlayerFlag(missionSpecialist, 'isMissionSpecialist', false)
+  }
+
   markDone(context)
-  return context.push('evaluate-effects', destination.script.effects)
+  return context.push('evaluate-effects', {
+    effects: destination.script.effects
+  })
 }
 
 function _getMissionSpecialist(game) {
-  return game.getPlayerAll().filter(p => p.isMissionSpecialist)[0]
+  return game.getPlayerAll().filter(p => game.checkPlayerIsMissionSpecialist(p))[0]
 }

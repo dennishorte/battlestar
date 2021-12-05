@@ -357,6 +357,9 @@ const transitions = {
   'assign-arbitrator': {
     func: require('./transitions/assignArbitrator.js'),
   },
+  'assign-mission-specialist': {
+    func: require('./transitions/assignMissionSpecialist.js'),
+  },
   'choose-player-to-send-to-brig': {
     func: require('./transitions/choosePlayerToSendToBrig.js'),
   },

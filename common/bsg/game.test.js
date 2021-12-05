@@ -3098,7 +3098,8 @@ describe('player-turn-cleanup', () => {
   })
 })
 
-describe('jump-the-fleet', () => {
+describe('Jumping the Fleet', () => {
+
   function _jumpFixture(jumpTrack, func) {
     const factory = new GameFixtureFactory()
     factory.options.players[0].movement = {
@@ -3122,43 +3123,89 @@ describe('jump-the-fleet', () => {
     return game
   }
 
-  test('population loss if jump track is too low', () => {
-    const game = _jumpFixture(2, (game) => {
-      jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 6)
+  function _chooseDestinationFixture(setupFunc) {
+    return _jumpFixture(4, setupFunc)
+  }
+
+  function _missionSpecialistFixture() {
+    return _chooseDestinationFixture(game => {
+      jest.spyOn(game, 'checkPlayerIsMissionSpecialist').mockImplementation(player => {
+        return player === 'tom' || player.name === 'tom'
+      })
     })
-    expect(game.getCounterByName('population')).toBe(9)
-  })
+  }
 
-  test('clears all ships in space', () => {
-    const game = _jumpFixture(4, (game) => {
-      jest.spyOn(game, 'aClearSpace')
+  describe('jump-the-fleet', () => {
+    test('population loss if jump track is too low', () => {
+      const game = _jumpFixture(2, (game) => {
+        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 6)
+      })
+      expect(game.getCounterByName('population')).toBe(9)
     })
-    expect(game.aClearSpace.mock.calls.length).toBe(1)
-  })
 
-  test('jump-choose-destination is put on stack', () => {
-    const game = _jumpFixture(4)
-    expect(game.getTransition().name).toBe('jump-choose-destination')
-  })
-
-  test('human victory', () => {
-    const game = _jumpFixture(4, (game) => {
-      game.mAdjustCounterByName('distance', 8)
+    test('clears all ships in space', () => {
+      const game = _jumpFixture(4, (game) => {
+        jest.spyOn(game, 'aClearSpace')
+      })
+      expect(game.aClearSpace.mock.calls.length).toBe(1)
     })
-    expect(game.checkGameIsFinished()).toBe(true)
-    expect(game.getWinners()).toBe('humans')
+
+    test('jump-choose-destination is put on stack', () => {
+      const game = _jumpFixture(4)
+      expect(game.getTransition().name).toBe('jump-choose-destination')
+    })
+
+    test('human victory', () => {
+      const game = _jumpFixture(4, (game) => {
+        game.mAdjustCounterByName('distance', 8)
+      })
+      expect(game.checkGameIsFinished()).toBe(true)
+      expect(game.getWinners()).toBe('humans')
+    })
+
+    test.skip('Kobol distance 4 achieved', () => {
+
+    })
   })
-})
 
-describe.skip('jump-choose-destination', () => {
-  test('admiral chooses between two destination cards', () => {
+  describe('jump-choose-destination', () => {
+    test('admiral chooses between two destination cards', () => {
+      const game = _chooseDestinationFixture()
+      expect(game.getWaiting('micah')).toBeDefined()
 
+      const action = game.getWaiting('micah').actions[0]
+      expect(action.name).toBe('Choose Destination')
+      expect(action.options.length).toBe(2)
+    })
+
+    describe('mission specialist', () => {
+      test('mission specialist overrides admiral choice', () => {
+        const game = _missionSpecialistFixture()
+        expect(game.getWaiting('tom')).toBeDefined()
+
+        const action = game.getWaiting('tom').actions[0]
+        expect(action.name).toBe('Choose Destination')
+        expect(action.options.length).toBe(3)
+      })
+
+      test('mission specialist is cleared after use', () => {
+        const game = _missionSpecialistFixture()
+        jest.spyOn(game, 'mSetPlayerFlag')
+        game.submit({
+          actor: 'tom',
+          name: 'Choose Destination',
+          option: [{ name : game.getWaiting('tom').actions[0].options[0].name }]
+        })
+
+        expect(game.mSetPlayerFlag.mock.calls.length).toBe(1)
+        expect(game.mSetPlayerFlag.mock.calls[0][0].name).toBe('tom')
+        expect(game.mSetPlayerFlag.mock.calls[0][1]).toBe('isMissionSpecialist')
+        expect(game.mSetPlayerFlag.mock.calls[0][2]).toBe(false)
+      })
+    })
   })
 
-  test('mission specialist overrides admiral choice', () => {
-
-  })
-})
+}) // Jumping the Fleet
 
 describe('crisis card effects', () => {
 

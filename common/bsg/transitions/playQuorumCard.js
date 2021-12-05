@@ -50,6 +50,13 @@ function _playCard(context) {
     })
   }
 
+  else if (card.name === 'Assign Mission Specialist') {
+    game.aDrawSkillCards(player, ['politics', 'politics'])
+    return context.push('assign-mission-specialist', {
+      playerName: player.name
+    })
+  }
+
   else {
     throw new Error(`Unsupported quorum card: ${card.name}`)
   }

@@ -282,6 +282,11 @@ Game.prototype.checkPlayerIsAtLocation = function(player, name) {
   return zone.details && zone.details.name === name
 }
 
+Game.prototype.checkPlayerIsMissionSpecialist = function(player) {
+  player = this._adjustPlayerParam(player)
+  return player.isMissionSpecialist
+}
+
 Game.prototype.checkPlayerIsRevealedCylon = function(player) {
   player = this._adjustPlayerParam(player)
   return player.isRevealedCylon

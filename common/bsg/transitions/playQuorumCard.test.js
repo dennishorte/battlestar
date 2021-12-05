@@ -100,8 +100,31 @@ describe('quorum actions', () => {
     })
   })
 
-  describe.skip("Assign Mission Specialist", () => {
+  describe("Assign Mission Specialist", () => {
+    test('president draws two politics cards', () => {
+      const game = _quorumFixture('Assign Mission Specialist')
+      const skillCards = game.getCardsKindByPlayer('skill', 'dennis')
+      const politicsCards = skillCards.filter(c => c.skill === 'politics')
+      expect(politicsCards.length).toBe(4)
+    })
 
+    test('president chooses mission specialist', () => {
+      const game = _quorumFixture('Assign Mission Specialist')
+      game.submit({
+        actor: 'dennis',
+        name: 'Assign Mission Specialist',
+        option: ['micah'],
+      })
+      expect(game.checkPlayerIsMissionSpecialist('micah')).toBe(true)
+    })
+
+    test('mission specialist chooses the destination on the next jump', () => {
+      // Tested in jump-choose-destination
+    })
+
+    test('mission specialist effect works only one time', () => {
+      // Tested in jump-choose-destination
+    })
   })
 
   describe.skip("Assign Vice President", () => {
