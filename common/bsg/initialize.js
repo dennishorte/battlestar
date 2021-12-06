@@ -65,6 +65,7 @@ function initialize(game) {
       isArbitrator: false,
       isMissionSpecialist: false,
       isRevealedCylon: false,
+      isVicePresident: false,
       oncePerGameUsed: false,
       turnFlags: {}, // See game.mStartNextTurn for description
     }

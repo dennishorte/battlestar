@@ -302,6 +302,11 @@ Game.prototype.checkPlayerIsPresident = function(player) {
   return player.name === this.getPlayerPresident().name
 }
 
+Game.prototype.checkPlayerIsVicePresident = function(player) {
+  player = this._adjustPlayerParam(player)
+  return player.isVicePresident
+}
+
 Game.prototype.checkZoneContains = function(zone, predicate) {
   zone = this._adjustZoneParam(zone)
   return !!zone.cards.find(predicate)
@@ -622,6 +627,10 @@ Game.prototype.getUnmannedVipers = function() {
   }
 
   return output
+}
+
+Game.prototype.getVicePresident = function() {
+  return this.getPlayerAll().filter(p => this.checkPlayerIsVicePresident(p))[0]
 }
 
 Game.prototype.getVipersNumAvailable = function() {

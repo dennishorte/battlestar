@@ -1915,6 +1915,18 @@ describe('player turn', () => {
           expect(action.options.sort()).toStrictEqual(['micah', 'tom'])
         })
 
+        test('Vice President limits choices', () => {
+          const game = _takeAction('Location Action', "Administration", game => {
+            jest.spyOn(game, 'checkPlayerIsVicePresident').mockImplementation(player => {
+              return player === 'micah' || player.name === 'micah'
+            })
+          })
+          const waiting = game.getWaiting('dennis')
+          const action = waiting.actions[0]
+          expect(action.name).toBe('Choose a Player')
+          expect(action.options.sort()).toStrictEqual(['micah'])
+        })
+
         test("can't choose Cylons", () => {
           const game = _takeAction('Location Action', "Administration", (game) => {
             game.mSetPlayerIsRevealedCylon('tom')

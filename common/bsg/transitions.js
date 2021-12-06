@@ -360,6 +360,9 @@ const transitions = {
   'assign-mission-specialist': {
     func: require('./transitions/assignMissionSpecialist.js'),
   },
+  'assign-vice-president': {
+    func: require('./transitions/assignVicePresident.js'),
+  },
   'choose-player-to-send-to-brig': {
     func: require('./transitions/choosePlayerToSendToBrig.js'),
   },

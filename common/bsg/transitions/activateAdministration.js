@@ -7,15 +7,7 @@ module.exports = transitionFactory(
 )
 
 function generateOptions(context) {
-  const game = context.state
-
-  const options = game
-    .getPlayerAll()
-    .filter(p => p.name !== context.data.playerName)
-    .filter(p => p.name !== game.getPlayerPresident().name)
-    .filter(p => !game.checkPlayerIsRevealedCylon(p))
-    .map(p => p.name)
-
+  const options = _getPresidentialCandidates(context)
   return context.wait({
     actor: context.data.playerName,
     actions: [{
@@ -23,6 +15,24 @@ function generateOptions(context) {
       options,
     }]
   })
+}
+
+function _getPresidentialCandidates(context) {
+  const game = context.state
+  const vicePresident = game.getVicePresident()
+
+  if (vicePresident && !game.checkPlayerIsPresident(vicePresident)) {
+    return [vicePresident.name]
+  }
+
+  else {
+    return game
+      .getPlayerAll()
+      .filter(p => p.name !== context.data.playerName)
+      .filter(p => p.name !== game.getPlayerPresident().name)
+      .filter(p => !game.checkPlayerIsRevealedCylon(p))
+      .map(p => p.name)
+  }
 }
 
 function handleResponse(context) {

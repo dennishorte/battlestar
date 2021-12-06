@@ -127,8 +127,27 @@ describe('quorum actions', () => {
     })
   })
 
-  describe.skip("Assign Vice President", () => {
+  describe("Assign Vice President", () => {
+    test('president draws two politics cards', () => {
+      const game = _quorumFixture('Assign Vice President')
+      const skillCards = game.getCardsKindByPlayer('skill', 'dennis')
+      const politicsCards = skillCards.filter(c => c.skill === 'politics')
+      expect(politicsCards.length).toBe(4)
+    })
 
+    test('president chooses Vice President', () => {
+      const game = _quorumFixture('Assign Vice President')
+      game.submit({
+        actor: 'dennis',
+        name: 'Assign Vice President',
+        option: ['micah'],
+      })
+      expect(game.checkPlayerIsVicePresident('micah')).toBe(true)
+    })
+
+    test('alters who can be chosen with the Administration location', () => {
+      // tested in Administration tests
+    })
   })
 
   describe.skip("Authorization of Brutal Force", () => {
