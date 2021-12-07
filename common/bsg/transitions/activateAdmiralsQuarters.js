@@ -43,10 +43,8 @@ function _choosePlayer(context) {
 
   return context.wait({
     actor: context.data.playerName,
-    actions: [{
-      name: 'Choose a Player',
-      options,
-    }]
+    name: 'Choose a Player',
+    options,
   })
 }
 
@@ -125,11 +123,9 @@ function _adjustDifficulty(context) {
 
     return context.wait({
       actor: player.name,
-      actions: [{
-        name: 'Adjust Difficulty',
-        max,
-        options,
-      }]
+      name: 'Adjust Difficulty',
+      max,
+      options,
     })
   }
   else {

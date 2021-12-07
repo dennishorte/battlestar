@@ -56,7 +56,7 @@ function _attack(context) {
   else {
     return context.wait({
       actor: player.name,
-      actions: [options]
+      ...options
     })
   }
 }

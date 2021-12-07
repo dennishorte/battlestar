@@ -10,10 +10,8 @@ function generateOptions(context) {
   const options = _getPresidentialCandidates(context)
   return context.wait({
     actor: context.data.playerName,
-    actions: [{
-      name: 'Choose a Player',
-      options,
-    }]
+    name: 'Choose a Player',
+    options,
   })
 }
 

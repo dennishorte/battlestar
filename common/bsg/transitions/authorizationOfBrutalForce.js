@@ -48,10 +48,8 @@ function _chooseType(context) {
   else {
     return context.wait({
       actor: context.data.playerName,
-      actions: [{
-        name: 'Select Target of Brutal Force',
-        options: targets,
-      }]
+      name: 'Select Target of Brutal Force',
+      options: targets,
     })
   }
 }
@@ -98,10 +96,8 @@ function _chooseTarget(context) {
 
   return context.wait({
     actor: context.data.playerName,
-    actions: [{
-      name: 'Select Ships for Brutal Force',
-      options: targetIds
-    }]
+    name: 'Select Ships for Brutal Force',
+    options: targetIds
   })
 }
 

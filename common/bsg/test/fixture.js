@@ -170,8 +170,8 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
   }
 
   // Discard a card to move, if needed
-  if (this.game.getWaiting('dennis').actions[0].name === 'Discard Skill Cards') {
-    const option = this.game.getWaiting('dennis').actions[0].options[0]
+  if (this.game.getWaiting('dennis').name === 'Discard Skill Cards') {
+    const option = this.game.getWaiting('dennis').options[0]
     this.game.submit({
       actor: 'dennis',
       name: 'Discard Skill Cards',

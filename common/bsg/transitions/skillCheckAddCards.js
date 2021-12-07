@@ -25,10 +25,8 @@ function generateOptions(context) {
   const player = game.getPlayerByName(context.data.addCardsName)
   return context.wait({
     actor: player.name,
-    actions: [{
-      name: 'Skill Check - Add Cards',
-      options: _addCardsOptionsForPlayer(game, check, player),
-    }]
+    name: 'Skill Check - Add Cards',
+    options: _addCardsOptionsForPlayer(game, check, player),
   })
 }
 

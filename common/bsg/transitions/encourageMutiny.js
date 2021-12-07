@@ -22,10 +22,8 @@ function _chooseCandidate(context) {
 
   return context.wait({
     actor: context.data.playerName,
-    actions: [{
-      name: 'Choose Replacement Admiral',
-      options: candidates,
-    }]
+    name: 'Choose Replacement Admiral',
+    options: candidates,
   })
 }
 

@@ -22,11 +22,9 @@ function _selectVicePresident(context) {
 
   return context.wait({
     actor: context.data.playerName,
-    actions: [{
-      name: 'Assign Vice President',
-      description: 'While the chosen player is not President, other players may not be chosen with the "Administration" location',
-      options: players
-    }]
+    name: 'Assign Vice President',
+    description: 'While the chosen player is not President, other players may not be chosen with the "Administration" location',
+    options: players
   })
 }
 

@@ -91,22 +91,18 @@ describe('character selection', () => {
     game.run()
 
     const waiting = game.getWaiting('dennis')
-    expect(waiting.actions).toStrictEqual([
-      {
-        name: 'Select Character',
-        options: [
-          '"Chief" Galen Tyrol',
-          'Gaius Baltar',
-          'Kara "Starbuck" Thrace',
-          'Karl "Helo" Agathon',
-          'Laura Roslin',
-          'Lee "Apollo" Adama',
-          'Saul Tigh',
-          'Sharon "Boomer" Valerii',
-          'Tom Zarek',
-          'William Adama',
-        ],
-      },
+    expect(waiting.name).toBe('Select Character')
+    expect(waiting.options).toStrictEqual([
+      '"Chief" Galen Tyrol',
+      'Gaius Baltar',
+      'Kara "Starbuck" Thrace',
+      'Karl "Helo" Agathon',
+      'Laura Roslin',
+      'Lee "Apollo" Adama',
+      'Saul Tigh',
+      'Sharon "Boomer" Valerii',
+      'Tom Zarek',
+      'William Adama',
     ])
   })
 
@@ -141,21 +137,17 @@ describe('character selection', () => {
   test("when first player chooses, advances to next player", () => {
     const game = _chooseCharacter('Gaius Baltar')
     const waiting = game.getWaiting('micah')
-    expect(waiting.actions).toStrictEqual([
-      {
-        name: 'Select Character',
-        options: [
-          '"Chief" Galen Tyrol',
-          'Kara "Starbuck" Thrace',
-          'Karl "Helo" Agathon',
-          'Laura Roslin',
-          'Lee "Apollo" Adama',
-          'Saul Tigh',
-          'Sharon "Boomer" Valerii',
-          'Tom Zarek',
-          'William Adama',
-        ],
-      },
+    expect(waiting.name).toBe('Select Character')
+    expect(waiting.options).toStrictEqual([
+      '"Chief" Galen Tyrol',
+      'Kara "Starbuck" Thrace',
+      'Karl "Helo" Agathon',
+      'Laura Roslin',
+      'Lee "Apollo" Adama',
+      'Saul Tigh',
+      'Sharon "Boomer" Valerii',
+      'Tom Zarek',
+      'William Adama',
     ])
   })
 
@@ -182,7 +174,7 @@ describe('character selection', () => {
 
   test("Lee Adama can choose where to launch his viper", () => {
     const game = _chooseCharacter('Lee "Apollo" Adama')
-    const action = game.getWaiting('dennis').actions[0]
+    const action = game.getWaiting('dennis')
     expect(action.name).toBe('Launch Self in Viper')
   })
 
@@ -253,7 +245,7 @@ describe('receive initial skills', () => {
     const game = factory.build().advanceTo('receive-initial-skills-do').game
     game.run()
 
-    const action = game.getWaiting('micah').actions[0]
+    const action = game.getWaiting('micah')
     expect(action.options).toStrictEqual([
       'leadership',
       'leadership',
@@ -270,7 +262,7 @@ describe('receive initial skills', () => {
     const game = factory.build().advanceTo('receive-initial-skills-do').game
     game.run()
 
-    const action = game.getWaiting('micah').actions[0]
+    const action = game.getWaiting('micah')
     expect(action.options.sort()).toStrictEqual([
       {
         name: 'Optional Skills 1',
@@ -325,7 +317,7 @@ describe('player turn', () => {
         .sort()
       expect(skillKinds).toStrictEqual(['leadership', 'leadership', 'politics', 'politics', 'tactics'])
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       expect(action.name).toBe('Movement')
     })
 
@@ -335,7 +327,7 @@ describe('player turn', () => {
       const game = factory.build().advanceTo('player-turn-receive-skills', 'dennis').game
       game.run()
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       expect(action.name).toBe('Select Skills')
       expect(action.options).toStrictEqual([
         {
@@ -362,7 +354,7 @@ describe('player turn', () => {
         }]
       })
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       expect(action.name).toBe('Movement')
     })
 
@@ -372,7 +364,7 @@ describe('player turn', () => {
       game.mMovePlayer('dennis', 'locations.sickbay')
       game.run()
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       expect(action.name).toBe('Select Skills')
       expect(action.options).toStrictEqual([
         "politics",
@@ -391,7 +383,7 @@ describe('player turn', () => {
       })
       game.run()
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       expect(action.name).toBe('Select Skills')
       expect(action.count).toBe(2)
       expect(action.options).toStrictEqual([
@@ -418,7 +410,7 @@ describe('player turn', () => {
       factory.game.mMovePlayer('dennis', 'locations.brig')
       game.run()
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       expect(action.name).toBe('Action')
     })
 
@@ -427,7 +419,7 @@ describe('player turn', () => {
       const game = factory.build().advanceTo('player-turn-movement').game
       game.run()
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       expect(action.name).toBe('Movement')
       expect(action.options.length).toBe(3)
     })
@@ -437,7 +429,7 @@ describe('player turn', () => {
       const game = factory.build().advanceTo('player-turn-movement').game
       game.run()
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       const colonialOneOptions = action.options.find(o => o.name === 'Colonial One').options
       expect(colonialOneOptions.length).toBe(2)
 
@@ -450,7 +442,7 @@ describe('player turn', () => {
       const game = factory.build().advanceTo('player-turn-movement').game
       game.run()
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       const options = action.options.find(o => o.name === 'Galactica').options
       expect(options.length).toBe(8)
     })
@@ -461,7 +453,7 @@ describe('player turn', () => {
       game.aDestroyColonialOne()
       game.run()
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       const galacticaOptions = action.options.find(o => o.name === 'Colonial One')
       expect(galacticaOptions).not.toBeDefined()
     })
@@ -476,7 +468,7 @@ describe('player turn', () => {
       game.mMovePlayer('dennis', 'locations.caprica')
       game.run()
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       const options = action.options.find(o => o.name === 'Cylon Locations').options
       expect(options.length).toBe(3)
       expect(options.includes('Caprica')).toBe(false)
@@ -490,7 +482,7 @@ describe('player turn', () => {
       game.aDiscardSkillCards('dennis', playerCards)
       game.run()
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       expect(action.options.length).toBe(2)
       expect(action.options[0].name).toBe('Colonial One')
     })
@@ -500,7 +492,7 @@ describe('player turn', () => {
       const game = factory.build().advanceTo('player-turn-movement').game
       game.run()
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       expect(action.options).toEqual(expect.arrayContaining(['Skip Movement']))
     })
 
@@ -544,7 +536,7 @@ describe('player turn', () => {
         })
 
         expect(game.getZoneByPlayerLocation('dennis').name).toBe('locations.armory')
-        expect(game.getWaiting('dennis').actions[0].name).toBe('Discard Skill Cards')
+        expect(game.getWaiting('dennis').name).toBe('Discard Skill Cards')
       })
 
       // Added due to a crash caused by this problem
@@ -580,7 +572,7 @@ describe('player turn', () => {
 
         // Post-condition
         expect(game.getZoneByPlayerLocation('dennis').details.name).toBe('Administration')
-        expect(game.getWaiting('dennis').actions[0].name).toBe('Action')
+        expect(game.getWaiting('dennis').name).toBe('Action')
       })
 
     })
@@ -597,7 +589,7 @@ describe('player turn', () => {
 
       test("can move to any ship location, by discarding", () => {
         const game = _playerInSpace()
-        const action = game.getWaiting('dennis').actions[0]
+        const action = game.getWaiting('dennis')
 
         expect(game.getZoneByName('space.space5').cards.length).toBe(2)
 
@@ -618,7 +610,7 @@ describe('player turn', () => {
 
         expect(game.getZoneByName('space.space5').cards.length).toBe(0)
         expect(game.getZoneByPlayerLocation('dennis').name).toBe('locations.administration')
-        expect(game.getWaiting('dennis').actions[0].name).toBe('Discard Skill Cards')
+        expect(game.getWaiting('dennis').name).toBe('Discard Skill Cards')
       })
 
       test("can't land viper if no cards in hand", () => {
@@ -629,7 +621,7 @@ describe('player turn', () => {
         game.aDiscardSkillCards('dennis', playerCards)
         game.run()
 
-        const action = game.getWaiting('dennis').actions[0]
+        const action = game.getWaiting('dennis')
         expect(action.options.length).toBe(2)
         expect(action.options).toEqual(expect.arrayContaining(['Skip Movement']))
 
@@ -639,7 +631,7 @@ describe('player turn', () => {
 
       test("can move to adjacent space zones", () => {
         const game = _playerInSpace()
-        const action = game.getWaiting('dennis').actions[0]
+        const action = game.getWaiting('dennis')
         const viperMovement = action.options.find(o => o.name === 'Move Viper')
 
         expect(viperMovement.options).toStrictEqual(['clockwise', 'counter-clockwise'])
@@ -664,7 +656,7 @@ describe('player turn', () => {
         expect(space0CardNames).toEqual(expect.arrayContaining(['dennis', 'viper']))
 
         // Move phase complete; ready for Action phase
-        expect(game.getWaiting('dennis').actions[0].name).toBe('Action')
+        expect(game.getWaiting('dennis').name).toBe('Action')
       })
 
     })
@@ -785,7 +777,7 @@ describe('player turn', () => {
           const game = _consolidatePowerFixture()
           expect(game.getWaiting('dennis')).toBeDefined()
 
-          const action = game.getWaiting('dennis').actions[0]
+          const action = game.getWaiting('dennis')
           expect(action.name).toBe('Consolidate Power')
           expect(action.count).toBe(2)
           expect(action.options.length).toBe(10)
@@ -811,7 +803,7 @@ describe('player turn', () => {
         test('current player chooses another player', () => {
           const game = _executiveOrderFixture()
           expect(game.getWaiting('dennis')).toBeDefined()
-          expect(game.getWaiting('dennis').actions[0].name).toBe('Choose a Player')
+          expect(game.getWaiting('dennis').name).toBe('Choose a Player')
         })
 
         test('first choice is movement or action', () => {
@@ -823,7 +815,7 @@ describe('player turn', () => {
           })
 
           expect(game.getWaiting('tom')).toBeDefined()
-          expect(game.getWaiting('tom').actions[0].name).toBe('First Choice')
+          expect(game.getWaiting('tom').name).toBe('First Choice')
         })
 
         test('second choice is only actions', () => {
@@ -844,7 +836,7 @@ describe('player turn', () => {
             option: ['Skip Movement']
           })
           expect(game.getWaiting('tom')).toBeDefined()
-          expect(game.getWaiting('tom').actions[0].name).toBe('Action')
+          expect(game.getWaiting('tom').name).toBe('Action')
         })
       })
 
@@ -874,7 +866,7 @@ describe('player turn', () => {
 
           const skillOption = game
             .getWaiting('dennis')
-            .actions[0]
+
             .options
             .find(o => o.name === "Play Skill Card")
           expect(skillOption).toBeDefined()
@@ -892,7 +884,7 @@ describe('player turn', () => {
             jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 3)
           })
           expect(game.getWaiting('dennis')).toBeDefined()
-          expect(game.getWaiting('dennis').actions[0].name).toBe('Select Deck')
+          expect(game.getWaiting('dennis').name).toBe('Select Deck')
         })
 
         test('player can choose between top and bottom', () => {
@@ -911,7 +903,7 @@ describe('player turn', () => {
             option: ['destination']
           })
           expect(game.getWaiting('dennis')).toBeDefined()
-          expect(game.getWaiting('dennis').actions[0].name).toBe('Top or Bottom')
+          expect(game.getWaiting('dennis').name).toBe('Top or Bottom')
         })
 
         test('failed roll causes raptor to be destroyed', () => {
@@ -964,7 +956,7 @@ describe('player turn', () => {
 
           const skillOption = game
             .getWaiting('dennis')
-            .actions[0]
+
             .options
             .find(o => o.name === "Play Skill Card")
           expect(skillOption).toBeDefined()
@@ -995,7 +987,7 @@ describe('player turn', () => {
           expect(game.aAttackCylonWithViperByKind.mock.calls.length).toBe(0)
           expect(game.getWaiting('dennis')).toBeDefined()
 
-          const choices = game.getWaiting('dennis').actions[0].options
+          const choices = game.getWaiting('dennis').options
           expect(choices.sort()).toStrictEqual(['heavy raider', 'raider'])
         })
       })
@@ -1054,7 +1046,7 @@ describe('player turn', () => {
             expect(game.getWaiting('dennis')).toBeDefined()
             const skillCardOptions = game
               .getWaiting('dennis')
-              .actions[0]
+
               .options
               .find(o => o.name === 'Play Skill Card')
               .options
@@ -1066,7 +1058,7 @@ describe('player turn', () => {
             expect(game.getWaiting('dennis')).toBeDefined()
             const skillCardOptions = game
               .getWaiting('dennis')
-              .actions[0]
+
               .options
               .find(o => o.name === 'Play Skill Card')
               .options
@@ -1143,7 +1135,7 @@ describe('player turn', () => {
 
             const skillOption = game
               .getWaiting('dennis')
-              .actions[0]
+
               .options
               .find(o => o.name === "Play Skill Card")
             expect(skillOption).toBeDefined()
@@ -1156,7 +1148,7 @@ describe('player turn', () => {
 
             const skillOption = game
               .getWaiting('dennis')
-              .actions[0]
+
               .options
               .find(o => o.name === "Play Skill Card")
             expect(skillOption).toBeDefined()
@@ -1197,7 +1189,7 @@ describe('player turn', () => {
         test('choose a player', () => {
           const game = _admiralsQuartersFixture()
           const waiting = game.getWaiting('dennis')
-          const action = waiting.actions[0]
+          const action = waiting
           expect(action.name).toBe('Choose a Player')
           expect(action.options.sort()).toStrictEqual(['micah', 'tom'])
         })
@@ -1207,7 +1199,7 @@ describe('player turn', () => {
             game.mSetPlayerIsRevealedCylon('tom')
           })
           const waiting = game.getWaiting('dennis')
-          const action = waiting.actions[0]
+          const action = waiting
           expect(action.name).toBe('Choose a Player')
           expect(action.options.sort()).toStrictEqual(['micah'])
         })
@@ -1217,7 +1209,7 @@ describe('player turn', () => {
             game.mMovePlayer('tom', 'locations.brig')
           })
           const waiting = game.getWaiting('dennis')
-          const action = waiting.actions[0]
+          const action = waiting
           expect(action.name).toBe('Choose a Player')
           expect(action.options.sort()).toStrictEqual(['micah'])
         })
@@ -1231,7 +1223,7 @@ describe('player turn', () => {
           })
 
           const waiting = game.getWaiting()[0]
-          const action = waiting.actions[0]
+          const action = waiting
           expect(action.name).toBe('Skill Check - Discuss')
         })
 
@@ -1297,7 +1289,7 @@ describe('player turn', () => {
             const game = _arbitrationFixture()
 
             expect(game.getWaiting('tom')).toBeDefined()
-            const action = game.getWaiting('tom').actions[0]
+            const action = game.getWaiting('tom')
             expect(action.name).toBe('Adjust Difficulty')
 
             const arbitrate = action.options.find(o => o.name === 'Arbitrate')
@@ -1400,7 +1392,7 @@ describe('player turn', () => {
             const game = _cylonHatredFixture()
             expect(game.getWaiting('dennis')).toBeDefined()
 
-            const action = game.getWaiting('dennis').actions[0]
+            const action = game.getWaiting('dennis')
             expect(action.name).toBe('Adjust Difficulty')
             expect(action.options[0].name).toBe('Cylon Hatred')
           })
@@ -1436,7 +1428,7 @@ describe('player turn', () => {
 
           const locationActions = game
             .getWaiting('dennis')
-            .actions[0]
+
             .options
             .find(o => o.name === 'Location Action')
           expect(locationActions).not.toBeDefined()
@@ -1469,7 +1461,7 @@ describe('player turn', () => {
 
           const locationActions = game
             .getWaiting('dennis')
-            .actions[0]
+
             .options
             .find(o => o.name === 'Location Action')
           expect(locationActions).not.toBeDefined()
@@ -1508,11 +1500,11 @@ describe('player turn', () => {
             })
 
             expect(game.getWaiting('dennis')).toBeDefined()
-            expect(game.getWaiting('dennis').actions[0].name).toBe('command action')
+            expect(game.getWaiting('dennis').name).toBe('command action')
 
             const optionNames = game
               .getWaiting('dennis')
-              .actions[0]
+
               .options
               .map(o => o.name)
               .sort()
@@ -1523,7 +1515,7 @@ describe('player turn', () => {
             const game = _commandFixture()
             const optionNames = game
               .getWaiting('dennis')
-              .actions[0]
+
               .options
               .map(o => o.name)
               .sort()
@@ -1536,7 +1528,7 @@ describe('player turn', () => {
             const game = _commandFixture()
             const activate = game
               .getWaiting('dennis')
-              .actions[0]
+
               .options
               .find(o => o.name === 'select a viper to activate')
               .options
@@ -1610,7 +1602,7 @@ describe('player turn', () => {
             })
             const attackOptions = game
               .getWaiting('dennis')
-              .actions[0]
+
               .options
               .find(o => o.name === 'Attack with Viper')
               .options
@@ -1649,7 +1641,7 @@ describe('player turn', () => {
 
           const locationActions = game
             .getWaiting('dennis')
-            .actions[0]
+
             .options
             .find(o => o.name === 'Location Action')
           expect(locationActions).not.toBeDefined()
@@ -1657,27 +1649,27 @@ describe('player turn', () => {
 
         test('can choose which civilian to look at', () => {
           const game = _communicationsFixture()
-          const action = game.getWaiting('dennis').actions[0]
+          const action = game.getWaiting('dennis')
           expect(action.name).toBe('View Civilian')
           expect(action.options.length).toBe(2)
         })
 
         test('can choose to move the viewed civilian', () => {
           const game = _communicationsFixture()
-          const option0 = game.getWaiting('dennis').actions[0].options[0].name
+          const option0 = game.getWaiting('dennis').options[0].name
           game.submit({
             actor: 'dennis',
             name: 'View Civilian',
             option: [option0]
           })
-          const action = game.getWaiting('dennis').actions[0]
+          const action = game.getWaiting('dennis')
           expect(action.name).toBe('Move Civilian')
           expect(action.options).toStrictEqual(['clockwise', 'counter-clockwise', 'do nothing'])
         })
 
         test('can choose and move the same civilian twice', () => {
           const game = _communicationsFixture()
-          const option0 = game.getWaiting('dennis').actions[0].options[0].name
+          const option0 = game.getWaiting('dennis').options[0].name
           game.submit({
             actor: 'dennis',
             name: 'View Civilian',
@@ -1688,7 +1680,7 @@ describe('player turn', () => {
             name: 'Move Civilian',
             option: ['clockwise']
           })
-          const action = game.getWaiting('dennis').actions[0]
+          const action = game.getWaiting('dennis')
           expect(action.name).toBe('View Civilian')
           expect(action.options.find(o => o.name === option0)).toBeDefined()
         })
@@ -1714,7 +1706,7 @@ describe('player turn', () => {
 
           const locationActions = game
             .getWaiting('dennis')
-            .actions[0]
+
             .options
             .find(o => o.name === 'Location Action')
           expect(locationActions).not.toBeDefined()
@@ -1766,7 +1758,7 @@ describe('player turn', () => {
           expect(game.getWaiting('dennis')).toBeDefined()
           const locationActions = game
             .getWaiting('dennis')
-            .actions[0]
+
             .options
             .find(o => o.name === 'Location Action')
           expect(locationActions).not.toBeDefined()
@@ -1800,7 +1792,7 @@ describe('player turn', () => {
           expect(game.getWaiting('dennis')).toBeDefined()
           const locationActions = game
             .getWaiting('dennis')
-            .actions[0]
+
             .options
             .find(o => o.name === 'Location Action')
           expect(locationActions).not.toBeDefined()
@@ -1832,7 +1824,7 @@ describe('player turn', () => {
             option: ['Research Lab']
           })
           const waiting = game.getWaiting('dennis')
-          const action = waiting.actions[0]
+          const action = waiting
           expect(action.name).toBe('Research Lab')
         })
 
@@ -1847,7 +1839,7 @@ describe('player turn', () => {
           expect(game.getWaiting('dennis')).toBeDefined()
           const locationActions = game
             .getWaiting('dennis')
-            .actions[0]
+
             .options
             .find(o => o.name === 'Location Action')
           expect(locationActions).not.toBeDefined()
@@ -1859,7 +1851,7 @@ describe('player turn', () => {
             option: ['Weapons Control']
           })
           expect(game.getWaiting('dennis')).toBeDefined()
-          const action = game.getWaiting('dennis').actions[0]
+          const action = game.getWaiting('dennis')
           expect(action.name).toBe('Weapons Control: Select Target')
           expect(action.options.length).toBe(4)
         })
@@ -1910,7 +1902,7 @@ describe('player turn', () => {
         test('choose a player', () => {
           const game = _takeAction('Location Action', "Administration")
           const waiting = game.getWaiting('dennis')
-          const action = waiting.actions[0]
+          const action = waiting
           expect(action.name).toBe('Choose a Player')
           expect(action.options.sort()).toStrictEqual(['micah', 'tom'])
         })
@@ -1922,7 +1914,7 @@ describe('player turn', () => {
             })
           })
           const waiting = game.getWaiting('dennis')
-          const action = waiting.actions[0]
+          const action = waiting
           expect(action.name).toBe('Choose a Player')
           expect(action.options.sort()).toStrictEqual(['micah'])
         })
@@ -1932,7 +1924,7 @@ describe('player turn', () => {
             game.mSetPlayerIsRevealedCylon('tom')
           })
           const waiting = game.getWaiting('dennis')
-          const action = waiting.actions[0]
+          const action = waiting
           expect(action.name).toBe('Choose a Player')
           expect(action.options.sort()).toStrictEqual(['micah'])
         })
@@ -1945,7 +1937,7 @@ describe('player turn', () => {
             option: ['tom']
           })
           const waiting = game.getWaiting()[0]
-          const action = waiting.actions[0]
+          const action = waiting
           expect(action.name).toBe('Skill Check - Discuss')
         })
 
@@ -2016,7 +2008,6 @@ describe('player turn', () => {
           expect(game.getWaiting('dennis')).toBeDefined()
           const locationActions = game
             .getWaiting('dennis')
-            .actions[0]
             .options
             .find(o => o.name === 'Location Action')
           expect(locationActions).not.toBeDefined()
@@ -2036,7 +2027,7 @@ describe('player turn', () => {
             name: 'Colonial One',
             option: ["President's Office"]
           })
-          const action = game.getWaiting('dennis').actions[0]
+          const action = game.getWaiting('dennis')
           expect(action.name).toBe('Play or Draw')
         })
 
@@ -2121,7 +2112,7 @@ describe('player turn', () => {
           const game = _viperActionFixture()
           expect(game.getWaiting('dennis')).toBeDefined()
 
-          const moveOptions = game.getWaiting('dennis').actions[0].options
+          const moveOptions = game.getWaiting('dennis').options
           const viperOptions = moveOptions.find(o => o.name === 'Move Viper')
           expect(viperOptions).toBeDefined()
           expect(viperOptions.options.length).toBe(2)
@@ -2166,7 +2157,7 @@ describe('player turn', () => {
           })
           expect(game.getWaiting('dennis')).toBeDefined()
 
-          const attackOptions = game.getWaiting('dennis').actions[0].options
+          const attackOptions = game.getWaiting('dennis').options
           const viperOptions = attackOptions.find(o => o.name === 'Attack with Viper')
           expect(viperOptions).toBeDefined()
           expect(viperOptions.options.length).toBe(3)
@@ -2266,7 +2257,8 @@ describe('adhoc transitions', () => {
         option: ['Lee "Apollo" Adama'],
       })
 
-      expect(game.getWaiting('dennis').actions[0]).toStrictEqual({
+      expect(game.getWaiting('dennis')).toStrictEqual({
+        actor: 'dennis',
         name: 'Launch Self in Viper',
         options: [
           'Lower Left',
@@ -2371,8 +2363,8 @@ describe('adhoc transitions', () => {
 
     function _fixtureAfterChoose() {
       const game = _fixtureBeforeChoose()
-      const chooseId = bsgutil.optionName(game.getWaiting('dennis').actions[0].options[0])
-      const otherId = bsgutil.optionName(game.getWaiting('dennis').actions[0].options[1])
+      const chooseId = bsgutil.optionName(game.getWaiting('dennis').options[0])
+      const otherId = bsgutil.optionName(game.getWaiting('dennis').options[1])
       game.submit({
         actor: 'dennis',
         name: 'Religious Visions',
@@ -2388,7 +2380,7 @@ describe('adhoc transitions', () => {
       const waiting = game.getWaiting('dennis')
       expect(waiting).toBeDefined()
 
-      const action = waiting.actions[0]
+      const action = waiting
       expect(action.name).toBe('Religious Visions')
       expect(action.options.length).toBe(2)
     })
@@ -2521,8 +2513,8 @@ describe('skill checks', () => {
         }],
       })
 
-      expect(game.getWaiting('tom').actions[0].name).toBe('Skill Check - Discuss')
-      expect(game.getWaiting('tom').actions[0].options).toStrictEqual(['Change Answer'])
+      expect(game.getWaiting('tom').name).toBe('Skill Check - Discuss')
+      expect(game.getWaiting('tom').options).toStrictEqual(['Change Answer'])
 
       game.submit({
         actor: 'tom',
@@ -2533,14 +2525,14 @@ describe('skill checks', () => {
         }]
       })
 
-      expect(game.getWaiting('tom').actions[0].name).toBe('Skill Check - Discuss')
+      expect(game.getWaiting('tom').name).toBe('Skill Check - Discuss')
       expect(game.getSkillCheck().flags['tom'].support).toBe('')
     })
 
     test('current player can advance to next step', () => {
       const game = _sendTomToBrig()
 
-      const optionNames1 = game.getWaiting('dennis').actions[0].options.map(o => o.name || o)
+      const optionNames1 = game.getWaiting('dennis').options.map(o => o.name || o)
       expect(optionNames1).toEqual(expect.arrayContaining(['Start Skill Check']))
 
       // Can submit plans and still advance to the next step
@@ -2553,7 +2545,7 @@ describe('skill checks', () => {
         }],
       })
 
-      const optionNames2 = game.getWaiting('dennis').actions[0].options.map(o => o.name || o)
+      const optionNames2 = game.getWaiting('dennis').options.map(o => o.name || o)
       expect(optionNames2).toEqual(expect.arrayContaining(['Start Skill Check']))
     })
 
@@ -2627,7 +2619,7 @@ describe('skill checks', () => {
 
     test('options are separated into positive and negative sections', () => {
       const game = _addCardsFixture()
-      const actionOptions = game.getWaiting('micah').actions[0].options[0].options
+      const actionOptions = game.getWaiting('micah').options[0].options
       const helpOptions = actionOptions.find(o => o.name === 'Help').options
       const hinderOptions = actionOptions.find(o => o.name === 'Hinder').options
 
@@ -2638,7 +2630,7 @@ describe('skill checks', () => {
     test('added cards are moved to the crisis pool', () => {
       const game = _addCardsFixture()
       const waiting = game.getWaiting('micah')
-      const helpCard = waiting.actions[0].options[0].options.find(o => o.name === 'Help').options[0]
+      const helpCard = waiting.options[0].options.find(o => o.name === 'Help').options[0]
 
       game.submit({
         actor: 'micah',
@@ -2680,7 +2672,7 @@ describe('skill checks', () => {
 
       const action = game
         .getWaiting('tom')
-        .actions[0]
+
         .options[0]
         .options
         .find(o => o.name === 'Help')
@@ -2701,7 +2693,7 @@ describe('skill checks', () => {
         option: ['Do Nothing'],
       })
 
-      const actionOptions = game.getWaiting('tom').actions[0].options
+      const actionOptions = game.getWaiting('tom').options
       expect(actionOptions[0].name).toBe('Add Cards to Check')
       expect(actionOptions[0].max).toBe(1)
       expect(actionOptions[0].options[0].max).toBe(1)
@@ -2740,10 +2732,10 @@ describe('skill checks', () => {
           }]
         })
         expect(game.getTransition().name).toBe('skill-check-declare-emergency')
-        expect(game.getWaiting('dennis').actions[0].options).toStrictEqual([
+        expect(game.getWaiting('dennis').options).toStrictEqual([
           'Use Declare Emergency', 'Do Nothing'
         ])
-        expect(game.getWaiting('micah').actions[0].options).toStrictEqual([
+        expect(game.getWaiting('micah').options).toStrictEqual([
           'Use Declare Emergency', 'Do Nothing'
         ])
         expect(game.getWaiting('tom')).not.toBeDefined()
@@ -2763,11 +2755,11 @@ describe('skill checks', () => {
           }]
         })
         expect(game.getTransition().name).toBe('skill-check-declare-emergency')
-        expect(game.getWaiting('dennis').actions[0].name).toBe('Use Declare Emergency')
-        expect(game.getWaiting('dennis').actions[0].options).toStrictEqual([
+        expect(game.getWaiting('dennis').name).toBe('Use Declare Emergency')
+        expect(game.getWaiting('dennis').options).toStrictEqual([
           'Use Declare Emergency', 'Do Nothing'
         ])
-        expect(game.getWaiting('micah').actions[0].options).toStrictEqual([
+        expect(game.getWaiting('micah').options).toStrictEqual([
           'Use Declare Emergency', 'Do Nothing'
         ])
         expect(game.getWaiting('tom')).not.toBeDefined()
@@ -2835,7 +2827,7 @@ describe('skill checks', () => {
       const game = _postRevealFixture(false)
       expect(game.getTransition().name).toBe('skill-check-command-authority')
       expect(game.getWaiting('tom')).toBeDefined()
-      expect(game.getWaiting('tom').actions[0].name).toBe('Use Command Authority')
+      expect(game.getWaiting('tom').name).toBe('Use Command Authority')
     })
 
     test('Command Authority actually moves all cards to player hand', () => {
@@ -2991,7 +2983,7 @@ describe('player-turn-crisis', () => {
       const game = _crisisFixture('Cylon Accusation')
       const waiting = game.getWaiting()
       expect(waiting.length).toBe(3)
-      expect(waiting[0].actions[0].name).toBe('Skill Check - Discuss')
+      expect(waiting[0].name).toBe('Skill Check - Discuss')
     })
 
     test('cylon activation and jump prep take place after skill check', () => {
@@ -3017,7 +3009,7 @@ describe('player-turn-crisis', () => {
       const game = _crisisFixture('Water Sabotaged')
       const waiting = game.getWaiting()
       expect(waiting.length).toBe(3)
-      expect(waiting[0].actions[0].name).toBe('Skill Check - Discuss')
+      expect(waiting[0].name).toBe('Skill Check - Discuss')
     })
 
     test.skip('current player has the choice', () => {
@@ -3106,7 +3098,7 @@ describe('player-turn-cleanup', () => {
     const game = factory.build().advanceTo('player-turn-cleanup').game
     game.run()
     expect(game.getWaiting('micah')).toBeDefined()
-    expect(game.getWaiting('micah').actions[0].name).toBe('Select Skills')
+    expect(game.getWaiting('micah').name).toBe('Select Skills')
   })
 })
 
@@ -3185,7 +3177,7 @@ describe('Jumping the Fleet', () => {
       const game = _chooseDestinationFixture()
       expect(game.getWaiting('micah')).toBeDefined()
 
-      const action = game.getWaiting('micah').actions[0]
+      const action = game.getWaiting('micah')
       expect(action.name).toBe('Choose Destination')
       expect(action.options.length).toBe(2)
     })
@@ -3195,7 +3187,7 @@ describe('Jumping the Fleet', () => {
         const game = _missionSpecialistFixture()
         expect(game.getWaiting('tom')).toBeDefined()
 
-        const action = game.getWaiting('tom').actions[0]
+        const action = game.getWaiting('tom')
         expect(action.name).toBe('Choose Destination')
         expect(action.options.length).toBe(3)
       })
@@ -3206,7 +3198,7 @@ describe('Jumping the Fleet', () => {
         game.submit({
           actor: 'tom',
           name: 'Choose Destination',
-          option: [{ name : game.getWaiting('tom').actions[0].options[0].name }]
+          option: [{ name : game.getWaiting('tom').options[0].name }]
         })
 
         expect(game.mSetPlayerFlag.mock.calls.length).toBe(1)
@@ -3249,7 +3241,7 @@ describe('crisis card effects', () => {
         const game = _crisisFixture('A Traitor Accused')
         game.aSelectSkillCheckResult('fail')
 
-        const action = game.getWaiting('dennis').actions[0]
+        const action = game.getWaiting('dennis')
         expect(action.name).toBe('Choose Player')
         expect(action.options.sort()).toStrictEqual(['dennis', 'micah', 'tom'])
       })
@@ -3262,7 +3254,7 @@ describe('crisis card effects', () => {
         })
         game.aSelectSkillCheckResult('fail')
 
-        const action = game.getWaiting('dennis').actions[0]
+        const action = game.getWaiting('dennis')
         expect(action.name).toBe('Choose Player')
         expect(action.options.sort()).toStrictEqual(['dennis', 'tom'])
       })
@@ -3407,7 +3399,7 @@ describe('crisis card effects', () => {
       game.run()
 
       expect(game.getCounterByName('morale')).toBe(9)
-      expect(game.getWaiting('dennis').actions[0].name).toBe('Choose')
+      expect(game.getWaiting('dennis').name).toBe('Choose')
 
       game.submit({
         actor: 'dennis',
@@ -3431,7 +3423,7 @@ describe('crisis card effects', () => {
       })
 
       expect(game.getWaiting().map(w => w.actor).sort()).toStrictEqual(['dennis', 'micah', 'tom'])
-      expect(game.getWaiting('dennis').actions[0].name).toBe('Discard Skill Cards')
+      expect(game.getWaiting('dennis').name).toBe('Discard Skill Cards')
     })
 
   })
@@ -3470,8 +3462,8 @@ describe('crisis card effects', () => {
       // Post-conditions
       expect(game.getCounterByName('population')).toBe(11)
       expect(game.getWaiting('micah')).toBeDefined()
-      expect(game.getWaiting('micah').actions[0].name).toBe('Discard Skill Cards')
-      expect(game.getWaiting('micah').actions[0].count).toBe(2)
+      expect(game.getWaiting('micah').name).toBe('Discard Skill Cards')
+      expect(game.getWaiting('micah').count).toBe(2)
     })
   })
 
@@ -3497,8 +3489,8 @@ describe('crisis card effects', () => {
 
       // Post-conditions
       expect(game.getWaiting('dennis')).toBeDefined()
-      expect(game.getWaiting('dennis').actions[0].name).toBe('Discard Skill Cards')
-      expect(game.getWaiting('dennis').actions[0].count).toBe(2)
+      expect(game.getWaiting('dennis').name).toBe('Discard Skill Cards')
+      expect(game.getWaiting('dennis').count).toBe(2)
     })
 
     test.skip('option 1b: admiral discards', () => {
@@ -3514,7 +3506,7 @@ describe('crisis card effects', () => {
       })
 
       expect(game.getWaiting('dennis')).toBeDefined()
-      expect(game.getWaiting('dennis').actions[0].name).toBe('Choose')
+      expect(game.getWaiting('dennis').name).toBe('Choose')
     })
 
     test('option2a, give away President', () => {

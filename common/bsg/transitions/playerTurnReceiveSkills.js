@@ -42,11 +42,9 @@ function playerTurnReceiveSkills(context) {
   if (playerIsRevealedCylon) {
     return context.wait({
       actor: player.name,
-      actions: [{
-        name: 'Select Skills',
-        count: 2,
-        options: [...bsgutil.skillList, ...bsgutil.skillList].sort(),
-      }]
+      name: 'Select Skills',
+      count: 2,
+      options: [...bsgutil.skillList, ...bsgutil.skillList].sort(),
     })
   }
 
@@ -63,13 +61,9 @@ function playerTurnReceiveSkills(context) {
     const options = skills.map(c => c.name)
     return context.wait({
       actor: player.name,
-      actions: [
-        {
-          name: 'Select Skills',
-          count: 1,
-          options,
-        },
-      ]
+      name: 'Select Skills',
+      count: 1,
+      options,
     })
   }
 
@@ -84,12 +78,8 @@ function playerTurnReceiveSkills(context) {
   const optionChoices = bsgutil.optionalSkillOptions(optionalSkills)
   return context.wait({
     actor: player.name,
-    actions: [
-      {
-        name: 'Select Skills',
-        count: optionChoices.length,
-        options: optionChoices,
-      },
-    ]
+    name: 'Select Skills',
+    count: optionChoices.length,
+    options: optionChoices,
   })
 }

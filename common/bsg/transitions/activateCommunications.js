@@ -36,10 +36,8 @@ function _selectShip(context) {
 
   return context.wait({
     actor: context.data.playerName,
-    actions: [{
-      name: 'View Civilian',
-      options,
-    }]
+    name: 'View Civilian',
+    options,
   })
 }
 
@@ -62,17 +60,15 @@ function _selectShipDo(context) {
 function _maybeMove(context) {
   return context.wait({
     actor: context.data.playerName,
-    actions: [{
-      name: 'Move Civilian',
-      meta: {
-        cardId: context.data.selectedCardId
-      },
-      options: [
-        'clockwise',
-        'counter-clockwise',
-        'do nothing',
-      ]
-    }]
+    name: 'Move Civilian',
+    meta: {
+      cardId: context.data.selectedCardId
+    },
+    options: [
+      'clockwise',
+      'counter-clockwise',
+      'do nothing',
+    ]
   })
 }
 

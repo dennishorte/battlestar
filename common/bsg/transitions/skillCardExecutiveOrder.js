@@ -42,10 +42,8 @@ function _selectPlayer(context) {
   else {
     return context.wait({
       actor: player.name,
-      actions: [{
-        name: 'Choose a Player',
-        options: choices
-      }]
+      name: 'Choose a Player',
+      options: choices
     })
   }
 }
@@ -60,10 +58,8 @@ function _firstChoice(context) {
 
   return context.wait({
     actor: player.name,
-    actions: [{
-      name: 'First Choice',
-      options: ['Movement', 'Action']
-    }]
+    name: 'First Choice',
+    options: ['Movement', 'Action']
   })
 }
 

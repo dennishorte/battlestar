@@ -29,21 +29,17 @@ function generateOptions(context) {
 
     context.wait({
       actor: player.name,
-      actions: [
+      name: 'Relaunch Viper',
+      count: 2,
+      options: [
         {
-          name: 'Relaunch Viper',
-          count: 2,
-          options: [
-            {
-              name: 'Recall from',
-              options: launched,
-            },
-            {
-              name: 'Launch to',
-              options: ['Lower Left', 'Lower Right'],
-            },
-          ]
-        }
+          name: 'Recall from',
+          options: launched,
+        },
+        {
+          name: 'Launch to',
+          options: ['Lower Left', 'Lower Right'],
+        },
       ]
     })
   }
@@ -52,15 +48,11 @@ function generateOptions(context) {
   else {
     context.wait({
       actor: player.name,
-      actions: [
-        {
-          name: 'Launch Self in Viper',
-          options: [
-            'Lower Left',
-            'Lower Right',
-          ],
-        },
-      ]
+      name: 'Launch Self in Viper',
+      options: [
+        'Lower Left',
+        'Lower Right',
+      ],
     })
   }
 }

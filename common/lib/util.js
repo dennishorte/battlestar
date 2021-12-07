@@ -59,11 +59,11 @@ Util.assert = function(test, message) {
 
 Util.toCamelCase = function(str) {
   const downCased = str[0].toLowerCase() + str.slice(1)
-  return downCased.replace(/\W/, '').replace(' ', '')
+  return downCased.replace(/\W/g, '')
 }
 
 Util.toKebabCase = function(str) {
-  return str.toLowerCase().replace(/\W/, '-').replace(' ', '-')
+  return str.toLowerCase().replace(/\W/g, '-')
 }
 
 Util.deepcopy = function(obj) {

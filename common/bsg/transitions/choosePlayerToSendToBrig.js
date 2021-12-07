@@ -32,11 +32,9 @@ function generateOptions(context) {
   else {
     return context.wait({
       actor: context.data.playerName,
-      actions: [{
-        name: 'Choose Player',
-        description: 'Chosen player will be moved to the brig',
-        options: playersNotInBrig
-      }]
+      name: 'Choose Player',
+      description: 'Chosen player will be moved to the brig',
+      options: playersNotInBrig
     })
   }
 }

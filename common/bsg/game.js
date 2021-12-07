@@ -117,10 +117,10 @@ Game.prototype.submit = function(response) {
   const waiting = this.getWaiting(actor)
   util.assert(!!waiting, `Got response from ${actor}, but not waiting for that player`)
 
-  const validationResult = selector.validate(waiting.actions[0], response)
+  const validationResult = selector.validate(waiting, response)
   if (!validationResult.valid) {
     console.log(JSON.stringify({
-      action: waiting.actions[0],
+      action: waiting,
       response: response,
       validationResult
     }, null, 2))

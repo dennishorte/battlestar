@@ -43,10 +43,8 @@ function _rollDie(context) {
 function _selectDeck(context) {
   return context.wait({
     actor: context.data.playerName,
-    actions: [{
-      name: 'Select Deck',
-      options: ['crisis', 'destination']
-    }],
+    name: 'Select Deck',
+    options: ['crisis', 'destination']
   })
 }
 
@@ -63,10 +61,8 @@ function _selectDeckHandleResponse(context) {
 function _selectTopOrBottom(context) {
   return context.wait({
     actor: context.data.playerName,
-    actions: [{
-      name: 'Top or Bottom',
-      options: ['back on top', 'move to bottom']
-    }]
+    name: 'Top or Bottom',
+    options: ['back on top', 'move to bottom']
   })
 }
 

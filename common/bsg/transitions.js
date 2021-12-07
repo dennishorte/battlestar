@@ -220,20 +220,16 @@ function receiveInitialSkillsDo(context) {
 
     context.wait({
       actor: player.name,
-      actions: [
-        {
-          name: 'Select Starting Skills',
-          count: 3,
-          options: skillChoices,
-        },
-      ]
+      name: 'Select Starting Skills',
+      count: 3,
+      options: skillChoices,
     })
   }
 }
 
 // Temporary function to pause execution while evaluating each step
 function waitFunc(context) {
-  context.wait({ actor: 'dennis', actions: [{ name: 'test' }] })
+  context.wait({ actor: 'dennis', name: 'test' })
 }
 
 

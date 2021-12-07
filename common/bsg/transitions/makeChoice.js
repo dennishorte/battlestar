@@ -12,11 +12,9 @@ function generateOptions(context) {
 
   return context.wait({
     actor: context.data.playerName,
-    actions: [{
-      name: 'Choose',
-      count: 1,
-      options: context.data.options,
-    }]
+    name: 'Choose',
+    count: 1,
+    options: context.data.options,
   })
 }
 

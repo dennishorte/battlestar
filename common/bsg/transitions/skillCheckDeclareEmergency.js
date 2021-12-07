@@ -50,11 +50,9 @@ function generateOptions(context) {
 
       return {
         actor: p.name,
-        actions: [{
-          name: 'Use Declare Emergency',
-          description: `Using this will change the result to ${helpLevel}`,
-          options
-        }]
+        name: 'Use Declare Emergency',
+        description: `Using this will change the result to ${helpLevel}`,
+        options
       }
     })
 

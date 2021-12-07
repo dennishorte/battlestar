@@ -49,10 +49,8 @@ function _generateOptionsForPlayer(game, info) {
   const playerSkillCards = game.getCardsKindByPlayer('skill', info.player)
   return {
     actor: info.player,
-    actions: [{
-      name: 'Discard Skill Cards',
-      count: info.count,
-      options: playerSkillCards.map(c => c.id)
-    }]
+    name: 'Discard Skill Cards',
+    count: info.count,
+    options: playerSkillCards.map(c => c.id)
   }
 }

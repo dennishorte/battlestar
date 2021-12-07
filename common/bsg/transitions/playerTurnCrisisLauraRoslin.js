@@ -26,11 +26,9 @@ function generateOptions(context) {
   const playerOptions = cardChoices.map(card => card.id)
   return context.wait({
     actor: player.name,
-    actions: [{
-      name: 'Religious Visions',
-      description: 'Choose a crisis card to evaluate',
-      options: playerOptions,
-    }]
+    name: 'Religious Visions',
+    description: 'Choose a crisis card to evaluate',
+    options: playerOptions,
   })
 }
 

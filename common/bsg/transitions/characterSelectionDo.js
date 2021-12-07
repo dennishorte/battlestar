@@ -15,12 +15,8 @@ function generateOptions(context) {
 
   return context.wait({
     actor: player.name,
-    actions: [
-      {
-        name: 'Select Character',
-        options: availableCharacters,
-      },
-    ]
+    name: 'Select Character',
+    options: availableCharacters,
   })
 }
 

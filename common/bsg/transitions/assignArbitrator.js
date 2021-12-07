@@ -22,11 +22,9 @@ function _selectArbitrator(context) {
 
   return context.wait({
     actor: context.data.playerName,
-    actions: [{
-      name: 'Assign Arbitrator',
-      description: `The selected player will be able to reduce or increase the difficulty of an Admiral's Quarters action by 3`,
-      options: players
-    }]
+    name: 'Assign Arbitrator',
+    description: `The selected player will be able to reduce or increase the difficulty of an Admiral's Quarters action by 3`,
+    options: players
   })
 }
 

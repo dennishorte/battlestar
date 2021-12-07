@@ -71,7 +71,7 @@ describe('quorum actions', () => {
 
     test('president cannot choose self', () => {
       const game = _quorumFixture('Arrest Order')
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       expect(action.options.includes('dennis')).toBe(false)
     })
   })
@@ -159,7 +159,7 @@ describe('quorum actions', () => {
 
       expect(game.getWaiting('dennis')).toBeDefined()
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       expect(action.name).toBe('Select Ships for Brutal Force')
     })
 
@@ -171,7 +171,7 @@ describe('quorum actions', () => {
 
       expect(game.getWaiting('dennis')).toBeDefined()
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       expect(action.name).toBe('Select Target of Brutal Force')
       expect(action.options.sort()).toStrictEqual(['centurion', 'heavy raider', 'raiders'])
     })
@@ -181,7 +181,7 @@ describe('quorum actions', () => {
 
       expect(game.getWaiting('dennis')).toBeDefined()
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       expect(action.name).toBe('Select Ships for Brutal Force')
     })
 
@@ -209,7 +209,7 @@ describe('quorum actions', () => {
       const game = _quorumFixture('Encourage Mutiny')
       expect(game.getWaiting('dennis')).toBeDefined()
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       expect(action.name).toBe('Choose Replacement Admiral')
       expect(action.options).toStrictEqual(['dennis', 'tom'])
     })
@@ -218,7 +218,7 @@ describe('quorum actions', () => {
       const game = _quorumFixture('Encourage Mutiny')
       expect(game.getWaiting('dennis')).toBeDefined()
 
-      const action = game.getWaiting('dennis').actions[0]
+      const action = game.getWaiting('dennis')
       expect(action.name).toBe('Choose Replacement Admiral')
 
       // Note that the admiral, micah, is excluded

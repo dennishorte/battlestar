@@ -18,10 +18,8 @@ function generateOptions(context) {
   const waits = game.getPlayerAll().map(player => {
     return {
       actor: player.name,
-      actions: [{
-        name: 'Skill Check - Discuss',
-        options: _discussOptionsForPlayer(game, check, player),
-      }],
+      name: 'Skill Check - Discuss',
+      options: _discussOptionsForPlayer(game, check, player),
     }
   })
 

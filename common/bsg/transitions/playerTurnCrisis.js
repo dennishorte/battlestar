@@ -94,20 +94,18 @@ function _crisis(context) {
 
     return context.wait({
       actor: actor.name,
-      actions: [{
-        name: 'Choose',
-        count: 1,
-        options: [
-          {
-            name: 'Option 1',
-            description: crisis.option1
-          },
-          {
-            name: 'Option 2',
-            description: crisis.option2
-          },
-        ],
-      }]
+      name: 'Choose',
+      count: 1,
+      options: [
+        {
+          name: 'Option 1',
+          description: crisis.option1
+        },
+        {
+          name: 'Option 2',
+          description: crisis.option2
+        },
+      ],
     })
   }
 

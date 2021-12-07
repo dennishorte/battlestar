@@ -74,10 +74,8 @@ function _selectViper(context) {
   else {
     return context.wait({
       actor: context.data.playerName,
-      actions: [{
-        name: 'command action',
-        options,
-      }]
+      name: 'command action',
+      options,
     })
   }
 }
@@ -131,13 +129,11 @@ function _selectAction(context) {
 
   return context.wait({
     actor: context.data.playerName,
-    actions: [{
-      name: 'Activate Viper',
-      data: {
-        selectedViper: spaceZoneName
-      },
-      options,
-    }]
+    name: 'Activate Viper',
+    data: {
+      selectedViper: spaceZoneName
+    },
+    options,
   })
 }
 

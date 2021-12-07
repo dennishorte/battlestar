@@ -21,10 +21,8 @@ function _makeChoices(context) {
 
   return context.wait({
     actor: context.data.playerName,
-    actions: [{
-      name: 'Leave Brig: Choose Location',
-      options,
-    }]
+    name: 'Leave Brig: Choose Location',
+    options,
   })
 }
 

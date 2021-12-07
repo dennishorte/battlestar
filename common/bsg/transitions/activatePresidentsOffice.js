@@ -27,16 +27,14 @@ function generateOptions(context) {
 
   return context.wait({
     actor: player.name,
-    actions: [{
-      name: 'Play or Draw',
-      options: [
-        'Draw a Quorum Card',
-        {
-          name: 'Play a Quorum Card',
-          options: game.getCardsKindByPlayer('quorum', player).map(c => c.id)
-        }
-      ]
-    }]
+    name: 'Play or Draw',
+    options: [
+      'Draw a Quorum Card',
+      {
+        name: 'Play a Quorum Card',
+        options: game.getCardsKindByPlayer('quorum', player).map(c => c.id)
+      }
+    ]
   })
 }
 

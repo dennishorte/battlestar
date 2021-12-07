@@ -23,11 +23,9 @@ function _choosePlayer(context) {
 
   return context.wait({
     actor: context.data.playerName,
-    actions: [{
-      name: reason,
-      description: `The selected player will be moved to ${context.data.location}`,
-      options: players
-    }]
+    name: reason,
+    description: `The selected player will be moved to ${context.data.location}`,
+    options: players
   })
 }
 

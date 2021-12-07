@@ -163,23 +163,17 @@ function generateOptions(context) {
   if (game.checkPlayerIsInSpace(player)) {
     return context.wait({
       actor: player.name,
-      actions: [{
-        name: 'Movement',
-        options: [
-          viperMovementOptions(game, player),
-          ...options,
-        ]
-      }]
+      name: 'Movement',
+      options: [
+        viperMovementOptions(game, player),
+        ...options,
+      ]
     })
   }
 
   return context.wait({
     actor: player.name,
-    actions: [
-      {
-        name: 'Movement',
-        options,
-      },
-    ]
+    name: 'Movement',
+    options,
   })
 }

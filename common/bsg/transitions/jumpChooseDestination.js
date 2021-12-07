@@ -36,13 +36,11 @@ function generateOptions(context) {
 
   return context.wait({
     actor: actor.name,
-    actions: [{
-      name: 'Choose Destination',
-      options: destinationOptions.map(o => ({
-        name: o.id,
-        description: o.text
-      }))
-    }]
+    name: 'Choose Destination',
+    options: destinationOptions.map(o => ({
+      name: o.id,
+      description: o.text
+    }))
   })
 }
 

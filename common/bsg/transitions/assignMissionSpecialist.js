@@ -22,11 +22,9 @@ function _selectMissionSpecialist(context) {
 
   return context.wait({
     actor: context.data.playerName,
-    actions: [{
-      name: 'Assign Mission Specialist',
-      description: 'The next time the fleet jumps, the selected player (not the admiral) will choose the destination from among 3 destination cards.',
-      options: players
-    }]
+    name: 'Assign Mission Specialist',
+    description: 'The next time the fleet jumps, the selected player (not the admiral) will choose the destination from among 3 destination cards.',
+    options: players
   })
 }
 

@@ -16,11 +16,9 @@ function generateOptions(context) {
 
   return context.wait({
     actor: player.name,
-    actions: [{
-      name: 'Use Command Authority',
-      description: 'Take all cards from the crisis pool into your hand?',
-      options: ['Yes', 'No']
-    }]
+    name: 'Use Command Authority',
+    description: 'Take all cards from the crisis pool into your hand?',
+    options: ['Yes', 'No']
   })
 }
 

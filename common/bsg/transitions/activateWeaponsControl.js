@@ -25,10 +25,8 @@ function _chooseTarget(context) {
 
   return context.wait({
     actor: context.data.playerName,
-    actions: [{
-      name: 'Weapons Control: Select Target',
-      options,
-    }]
+    name: 'Weapons Control: Select Target',
+    options,
   })
 }
 
