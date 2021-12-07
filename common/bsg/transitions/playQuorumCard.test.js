@@ -278,8 +278,22 @@ describe('quorum actions', () => {
     })
   })
 
-  describe.skip("Inspirational Speech", () => {
+  describe("Inspirational Speech", () => {
+    test('6+ gain a food and exile card', () => {
+      const game = _quorumFixture('Inspirational Speech', game => {
+        jest.spyOn(game, 'mRollDie').mockImplementation(() => 6)
+      })
+      expect(game.getCounterByName('morale')).toBe(11)
+      expect(game.getZoneByName('exile').cards[0].name).toBe('Inspirational Speech')
+    })
 
+    test('5- no food and discard card', () => {
+      const game = _quorumFixture('Inspirational Speech', game => {
+        jest.spyOn(game, 'mRollDie').mockImplementation(() => 5)
+      })
+      expect(game.getCounterByName('morale')).toBe(10)
+      expect(game.getZoneByName('discard.quorum').cards[0].name).toBe('Inspirational Speech')
+    })
   })
 
   describe.skip("Presidential Pardon", () => {

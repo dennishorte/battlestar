@@ -369,6 +369,9 @@ const transitions = {
   'food-rationing': {
     func: require('./transitions/foodRationing.js'),
   },
+  'inspirational-speech': {
+    func: require('./transitions/inspirationalSpeech.js'),
+  },
 
   // Misc
   'choose-player-to-send-to-brig': {
