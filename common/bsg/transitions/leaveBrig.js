@@ -37,5 +37,5 @@ function _move(context) {
       location: locationName,
     }
   })
-  game.mMovePlayer(player, location)
+  game.mMovePlayer(context.data.playerName, location)
 }

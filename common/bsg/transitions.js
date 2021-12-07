@@ -372,6 +372,9 @@ const transitions = {
   'inspirational-speech': {
     func: require('./transitions/inspirationalSpeech.js'),
   },
+  'presidential-pardon': {
+    func: require('./transitions/presidentialPardon.js'),
+  },
 
   // Misc
   'choose-player-to-send-to-brig': {

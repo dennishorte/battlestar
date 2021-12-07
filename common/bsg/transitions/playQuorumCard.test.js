@@ -294,13 +294,72 @@ describe('quorum actions', () => {
       expect(game.getCounterByName('morale')).toBe(10)
       expect(game.getZoneByName('discard.quorum').cards[0].name).toBe('Inspirational Speech')
     })
-  })
-
-  describe.skip("Presidential Pardon", () => {
 
   })
 
-  describe.skip("Release Cylon Mugshots", () => {
+  describe("Presidential Pardon", () => {
+    test('can choose any other player in brig', () => {
+      const game = _quorumFixture('Presidential Pardon', game => {
+        game.getPlayerAll().forEach(p => game.mMovePlayer(p, 'locations.brig'))
+      })
+
+      const action = game.getWaiting('dennis')
+      expect(action).toBeDefined()
+      expect(action.name).toBe('Pardon Player')
+      expect(action.options).toStrictEqual(['micah', 'tom'])
+    })
+
+    test('can choose where on Galactica to move pardoned player', () => {
+      const game = _quorumFixture('Presidential Pardon', game => {
+        game.getPlayerAll().forEach(p => game.mMovePlayer(p, 'locations.brig'))
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Pardon Player',
+        option: ['micah']
+      })
+      const action = game.getWaiting('dennis')
+      expect(action).toBeDefined()
+      expect(action.name).toBe('Move Pardoned Player')
+    })
+
+    test('pardoned player is moved', () => {
+      const game = _quorumFixture('Presidential Pardon', game => {
+        game.getPlayerAll().forEach(p => game.mMovePlayer(p, 'locations.brig'))
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Pardon Player',
+        option: ['micah']
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Move Pardoned Player',
+        option: ['Armory']
+      })
+
+      expect(game.getZoneByPlayerLocation('micah').name).toBe('locations.armory')
+    })
+
+    test.only('card is discarded', () => {
+      const game = _quorumFixture('Presidential Pardon', game => {
+        game.getPlayerAll().forEach(p => game.mMovePlayer(p, 'locations.brig'))
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Pardon Player',
+        option: ['micah']
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Move Pardoned Player',
+        option: ['Armory']
+      })
+      expect(game.getZoneByCard('Presidential Pardon').name).toBe('discard.quorum')
+    })
+  })
+
+  describe.only("Release Cylon Mugshots", () => {
 
   })
 })

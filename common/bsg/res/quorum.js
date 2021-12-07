@@ -77,7 +77,7 @@ module.exports =  [
   {
     name: 'Presidential Pardon',
     expansion: 'base game',
-    text: 'Action: Move any other character from the "Brig" to any other location on Galactica'
+    text: 'Action: Move any other character from the "Brig" to any other location on Galactica. Then, discard this card'
   },
   {
     name: 'Release Cylon Mugshots',
