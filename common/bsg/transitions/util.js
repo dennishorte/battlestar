@@ -163,7 +163,7 @@ function evaluateEffect(game, effect) {
       push: {
         transition: 'send-player-to',
         payload: {
-          location: 'Brig',
+          location,
           playerName: actor
         }
       }
