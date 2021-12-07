@@ -64,6 +64,12 @@ function _playCard(context) {
     })
   }
 
+  else if (card.name === 'Authorization of Brutal Force') {
+    return context.push('authorization-of-brutal-force', {
+      playerName: player.name
+    })
+  }
+
   else {
     throw new Error(`Unsupported quorum card: ${card.name}`)
   }

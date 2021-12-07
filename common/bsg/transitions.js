@@ -363,6 +363,9 @@ const transitions = {
   'assign-vice-president': {
     func: require('./transitions/assignVicePresident.js'),
   },
+  'authorization-of-brutal-force': {
+    func: require('./transitions/authorizationOfBrutalForce.js'),
+  },
   'choose-player-to-send-to-brig': {
     func: require('./transitions/choosePlayerToSendToBrig.js'),
   },

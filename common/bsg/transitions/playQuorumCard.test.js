@@ -9,9 +9,12 @@ function _deepLog(obj) {
 }
 
 
-function _quorumFixture(cardName) {
+function _quorumFixture(cardName, setupFunc) {
   const factory = new GameFixtureFactory()
   const game = factory.build().advanceTo('player-turn-action').game
+  if (setupFunc) {
+    setupFunc(game)
+  }
   const player = game.getPlayerCurrentTurn()
   util.assert(
     game.checkPlayerIsPresident(player),
@@ -150,8 +153,55 @@ describe('quorum actions', () => {
     })
   })
 
-  describe.skip("Authorization of Brutal Force", () => {
+  describe("Authorization of Brutal Force", () => {
+    test('auto-targets if only one type available', () => {
+      const game = _quorumFixture('Authorization of Brutal Force')
 
+      expect(game.getWaiting('dennis')).toBeDefined()
+
+      const action = game.getWaiting('dennis').actions[0]
+      expect(action.name).toBe('Select Ships for Brutal Force')
+    })
+
+    test('player chooses a type to destroy', () => {
+      const game = _quorumFixture('Authorization of Brutal Force', game => {
+        game.mAddCenturion()
+        game.mDeploy('space.space1', 'heavy raider', 1)
+      })
+
+      expect(game.getWaiting('dennis')).toBeDefined()
+
+      const action = game.getWaiting('dennis').actions[0]
+      expect(action.name).toBe('Select Target of Brutal Force')
+      expect(action.options.sort()).toStrictEqual(['centurion', 'heavy raider', 'raiders'])
+    })
+
+    test('player chooses which target of that type to destroy', () => {
+      const game = _quorumFixture('Authorization of Brutal Force')
+
+      expect(game.getWaiting('dennis')).toBeDefined()
+
+      const action = game.getWaiting('dennis').actions[0]
+      expect(action.name).toBe('Select Ships for Brutal Force')
+    })
+
+    test('a population check happens', () => {
+      const game = _quorumFixture('Authorization of Brutal Force', game => {
+        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 2)
+        game.aClearSpace()
+        game.mAddCenturion()
+      })
+
+      expect(game.getCounterByName('population')).toBe(11)
+    })
+
+    test('the card is discarded', () => {
+      const game = _quorumFixture('Authorization of Brutal Force', game => {
+        game.aClearSpace()
+        game.mAddCenturion()
+      })
+      expect(game.getZoneByCard('Authorization of Brutal Force').name).toBe('discard.quorum')
+    })
   })
 
   describe.skip("Encourage Mutiny", () => {

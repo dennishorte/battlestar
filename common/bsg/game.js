@@ -402,6 +402,20 @@ Game.prototype.getCardsEnemyShips = function() {
     .filter(info => info.zoneName.startsWith('space.'))
 }
 
+Game.prototype.getCardsHeavyRaiders = function() {
+  return this
+    .getCardsByPredicate(c => c.name && c.name === 'heavy raider')
+    .filter(info => info.zoneName.startsWith('space.'))
+    .map(info => info.card)
+}
+
+Game.prototype.getCardsRaiders = function() {
+  return this
+    .getCardsByPredicate(c => c.name && c.name === 'raider')
+    .filter(info => info.zoneName.startsWith('space.'))
+    .map(info => info.card)
+}
+
 Game.prototype.getCenturionNext = function() {
   for (let i = 3; i >= 0; i--) {
     const zone = this.getZoneCenturionsByIndex(i)
@@ -969,7 +983,10 @@ Game.prototype.mDiscard = function(cardId) {
 
   const { card, zoneName } = this.getCardByPredicate(c => c.id === cardId)
 
-  if (card.kind.startsWith('ships.')) {
+  if (
+    card.kind.startsWith('ships.')
+    || card.kind.startsWith('tokens.')
+  ) {
     this.mMoveCard(zoneName, card.kind, card)
   }
 
@@ -1388,6 +1405,16 @@ function enrichLogArgs(msg) {
         visibility: card.visibility,
         kind: card.kind,
         classes: [`card-${card.kind}`],
+      }
+    }
+    else if (key === 'zone') {
+      const zone = msg.args['zone']
+      if (typeof zone !== 'object') {
+        throw new Error(`Pass whole zone object to log for better logging. Got: ${zone}`)
+      }
+      msg.args['zone'] = {
+        value: zone.name,
+        classes: ['zone-name']
       }
     }
   }
