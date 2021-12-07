@@ -350,6 +350,7 @@ const transitions = {
     func: require('./transitions/skillCardLaunchScout.js'),
   },
 
+  // Quorum Cards
   'assign-arbitrator': {
     func: require('./transitions/assignArbitrator.js'),
   },
@@ -365,7 +366,11 @@ const transitions = {
   'encourage-mutiny': {
     func: require('./transitions/encourageMutiny.js'),
   },
+  'food-rationing': {
+    func: require('./transitions/foodRationing.js'),
+  },
 
+  // Misc
   'choose-player-to-send-to-brig': {
     func: require('./transitions/choosePlayerToSendToBrig.js'),
   },

@@ -1245,6 +1245,32 @@ Game.prototype.mSetCrisisActive = function(card) {
   this.rk.put(this.state, 'activeCrisisId', card.id)
 }
 
+Game.prototype.mRollDie = function(player) {
+  if (player) {
+    player = this._adjustPlayerParam(player)
+  }
+
+  const dieRoll = Math.floor(Math.random() * 8) + 1
+
+  if (player) {
+    this.mLog({
+      template: '{player} rolls {dieRoll}',
+      args: {
+        player: player.name,
+        dieRoll
+      }
+    })
+  }
+  else {
+    this.mLog({
+      template: 'die roll: {dieRoll}',
+      args: { dieRoll }
+    })
+  }
+
+  return dieRoll
+}
+
 Game.prototype.mSetGameResult = function(result) {
   this.state.result = result
 }

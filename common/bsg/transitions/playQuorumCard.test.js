@@ -260,8 +260,22 @@ describe('quorum actions', () => {
     })
   })
 
-  describe.skip("Food Rationing", () => {
+  describe("Food Rationing", () => {
+    test('6+ gain a food and exile card', () => {
+      const game = _quorumFixture('Food Rationing', game => {
+        jest.spyOn(game, 'mRollDie').mockImplementation(() => 6)
+      })
+      expect(game.getCounterByName('food')).toBe(9)
+      expect(game.getZoneByName('exile').cards[0].name).toBe('Food Rationing')
+    })
 
+    test('5- no food and discard card', () => {
+      const game = _quorumFixture('Food Rationing', game => {
+        jest.spyOn(game, 'mRollDie').mockImplementation(() => 5)
+      })
+      expect(game.getCounterByName('food')).toBe(8)
+      expect(game.getZoneByName('discard.quorum').cards[0].name).toBe('Food Rationing')
+    })
   })
 
   describe.skip("Inspirational Speech", () => {
