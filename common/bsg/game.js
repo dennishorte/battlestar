@@ -271,6 +271,11 @@ Game.prototype.checkPlayerHasUsedOncePerGame = function(player) {
   return player.oncePerGameUsed
 }
 
+Game.prototype.checkPlayerIsAdmiral = function(player) {
+  player = this._adjustPlayerParam(player)
+  return player.name === this.getPlayerAdmiral().name
+}
+
 Game.prototype.checkPlayerIsArbitrator = function(player) {
   player = this._adjustPlayerParam(player)
   return player.isArbitrator
@@ -299,6 +304,7 @@ Game.prototype.checkPlayerIsInSpace = function(player) {
 }
 
 Game.prototype.checkPlayerIsPresident = function(player) {
+  player = this._adjustPlayerParam(player)
   return player.name === this.getPlayerPresident().name
 }
 

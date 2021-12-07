@@ -62,6 +62,10 @@ Util.toCamelCase = function(str) {
   return downCased.replace(/\W/, '').replace(' ', '')
 }
 
+Util.toKebabCase = function(str) {
+  return str.toLowerCase().replace(/\W/, '-').replace(' ', '-')
+}
+
 Util.deepcopy = function(obj) {
   return JSON.parse(JSON.stringify(obj))
 }

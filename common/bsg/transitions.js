@@ -366,6 +366,10 @@ const transitions = {
   'authorization-of-brutal-force': {
     func: require('./transitions/authorizationOfBrutalForce.js'),
   },
+  'encourage-mutiny': {
+    func: require('./transitions/encourageMutiny.js'),
+  },
+
   'choose-player-to-send-to-brig': {
     func: require('./transitions/choosePlayerToSendToBrig.js'),
   },

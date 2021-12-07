@@ -204,8 +204,60 @@ describe('quorum actions', () => {
     })
   })
 
-  describe.skip("Encourage Mutiny", () => {
+  describe("Encourage Mutiny", () => {
+    test('player chooses a target', () => {
+      const game = _quorumFixture('Encourage Mutiny')
+      expect(game.getWaiting('dennis')).toBeDefined()
 
+      const action = game.getWaiting('dennis').actions[0]
+      expect(action.name).toBe('Choose Replacement Admiral')
+      expect(action.options).toStrictEqual(['dennis', 'tom'])
+    })
+
+    test('player cannot choose current admiral', () => {
+      const game = _quorumFixture('Encourage Mutiny')
+      expect(game.getWaiting('dennis')).toBeDefined()
+
+      const action = game.getWaiting('dennis').actions[0]
+      expect(action.name).toBe('Choose Replacement Admiral')
+
+      // Note that the admiral, micah, is excluded
+      expect(action.options).toStrictEqual(['dennis', 'tom'])
+    })
+
+    test('die roll 3+ is success', () => {
+      const game = _quorumFixture('Encourage Mutiny', () => {
+        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 3)
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Choose Replacement Admiral',
+        option: ['tom']
+      })
+      expect(game.getPlayerAdmiral().name).toBe('tom')
+    })
+
+    test('die roll 2- is failure', () => {
+      const game = _quorumFixture('Encourage Mutiny', () => {
+        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 2)
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Choose Replacement Admiral',
+        option: ['tom']
+      })
+      expect(game.getPlayerAdmiral().name).toBe('micah')
+    })
+
+    test('card is discarded', () => {
+      const game = _quorumFixture('Encourage Mutiny')
+      game.submit({
+        actor: 'dennis',
+        name: 'Choose Replacement Admiral',
+        option: ['tom']
+      })
+      expect(game.getZoneByCard('Encourage Mutiny').name).toBe('discard.quorum')
+    })
   })
 
   describe.skip("Food Rationing", () => {
