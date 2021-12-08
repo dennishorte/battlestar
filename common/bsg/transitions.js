@@ -375,6 +375,10 @@ const transitions = {
   'presidential-pardon': {
     func: require('./transitions/presidentialPardon.js'),
   },
+  'release-cylon-mugshots': {
+    func: require('./transitions/releaseCylonMugshots.js'),
+  },
+
 
   // Misc
   'choose-player-to-send-to-brig': {

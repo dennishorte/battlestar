@@ -341,7 +341,7 @@ describe('quorum actions', () => {
       expect(game.getZoneByPlayerLocation('micah').name).toBe('locations.armory')
     })
 
-    test.only('card is discarded', () => {
+    test('card is discarded', () => {
       const game = _quorumFixture('Presidential Pardon', game => {
         game.getPlayerAll().forEach(p => game.mMovePlayer(p, 'locations.brig'))
       })
@@ -359,7 +359,59 @@ describe('quorum actions', () => {
     })
   })
 
-  describe.only("Release Cylon Mugshots", () => {
+  describe("Release Cylon Mugshots", () => {
+    test('choose player whose loyalty card to look at', () => {
+      const game = _quorumFixture('Release Cylon Mugshots')
+      const action = game.getWaiting('dennis')
+      expect(action).toBeDefined()
+      expect(action.name).toBe('Choose Player')
+    })
 
+    test('loyalty card is chosen at random', () => {
+      const game = _quorumFixture('Release Cylon Mugshots', game => {
+        jest.spyOn(game, 'aRevealLoyaltyCards')
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Choose Player',
+        option: ['micah']
+      })
+      // Reveal loyalty cards is expected to manage the random selection
+      expect(game.aRevealLoyaltyCards.mock.calls.length).toBe(1)
+    })
+
+    test('3-, lose 1 morale', () => {
+      const game = _quorumFixture('Release Cylon Mugshots', game => {
+        jest.spyOn(game, 'mRollDie').mockImplementation(() => 3)
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Choose Player',
+        option: ['micah']
+      })
+      expect(game.getCounterByName('morale')).toBe(9)
+    })
+
+    test('4+, no lost morale', () => {
+      const game = _quorumFixture('Release Cylon Mugshots', game => {
+        jest.spyOn(game, 'mRollDie').mockImplementation(() => 4)
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Choose Player',
+        option: ['micah']
+      })
+      expect(game.getCounterByName('morale')).toBe(10)
+    })
+
+    test('card is discarded', () => {
+      const game = _quorumFixture('Release Cylon Mugshots')
+      game.submit({
+        actor: 'dennis',
+        name: 'Choose Player',
+        option: ['micah']
+      })
+      expect(game.getZoneByCard('Release Cylon Mugshots').name).toBe('discard.quorum')
+    })
   })
 })
