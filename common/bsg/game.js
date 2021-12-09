@@ -266,11 +266,6 @@ Game.prototype.checkPlayerHasCharacter = function(player) {
   return !!this.getCardCharacterByPlayer(player)
 }
 
-Game.prototype.checkPlayerHasUsedOncePerGame = function(player) {
-  player = this._adjustPlayerParam(player)
-  return player.oncePerGameUsed
-}
-
 Game.prototype.checkPlayerIsAdmiral = function(player) {
   player = this._adjustPlayerParam(player)
   return player.name === this.getPlayerAdmiral().name
@@ -311,6 +306,11 @@ Game.prototype.checkPlayerIsPresident = function(player) {
 Game.prototype.checkPlayerIsVicePresident = function(player) {
   player = this._adjustPlayerParam(player)
   return player.isVicePresident
+}
+
+Game.prototype.checkPlayerOncePerGameUsed = function(player) {
+  player = this._adjustPlayerParam(player)
+  return player.oncePerGameUsed
 }
 
 Game.prototype.checkZoneContains = function(zone, predicate) {
@@ -523,7 +523,7 @@ Game.prototype.getPlayerAdmiral = function() {
 }
 
 function _admiralSort(l, r) {
-  return l[1]['admiral line of succession order'] - r[1]['admiral line of succession order']
+  return l[1].admiralSuccession - r[1].admiralSuccession
 }
 
 Game.prototype.getPlayerAdmiralNext = function() {
@@ -602,7 +602,7 @@ Game.prototype.getPlayerPresident = function() {
 }
 
 function _presidentSort(l, r) {
-  return l[1]['president line of succession order'] - r[1]['president line of succession order']
+  return l[1].presidentSuccession - r[1].presidentSuccession
 }
 
 Game.prototype.getPlayerPresidentNext = function() {
@@ -1268,6 +1268,11 @@ Game.prototype.mSetCrisisActive = function(card) {
   util.assert(!this.state.activeCrisisId, 'Crisis already active!')
   card = this._adjustCardParam(card)
   this.rk.put(this.state, 'activeCrisisId', card.id)
+}
+
+Game.prototype.mSetOncePerGameAbilityUsed = function(player) {
+  player = this._adjustPlayerParam(player)
+  this.rk.put(player, 'oncePerGameUsed', true)
 }
 
 Game.prototype.mRollDie = function(player) {

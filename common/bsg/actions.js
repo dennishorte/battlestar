@@ -735,6 +735,7 @@ Actions.aRevealLoyaltyCards = function(target, viewer, count) {
   const cards = this.getCardsLoyaltyByPlayer(target)
   const cardIdsToView = util.array.shuffle(cards.map(c => c.id)).slice(0, count)
   const cardsToView = cards.filter(c => cardIdsToView.includes(c.id))
+  count = Math.min(count, cardIdsToView.length)
 
   for (const card of cardsToView) {
     this.rk.pushUnique(card.visibility, viewer.name)

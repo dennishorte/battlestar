@@ -32,7 +32,7 @@ function handleResponse(context) {
     const playerHand = game.getZoneByPlayer(player)
 
     game.mLog({ template: 'William Adama uses Command Authority' })
-    game.rk.put(player, 'oncePerGameUsed', true)
+    game.mSetOncePerGameAbilityUsed(player)
     while (crisisPool.cards.length > 0) {
       game.mMoveCard(crisisPool, playerHand)
     }

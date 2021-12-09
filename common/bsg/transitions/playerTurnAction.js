@@ -71,6 +71,13 @@ function handleResponse(context) {
     context.done()
   }
 
+  else if (selectionName === 'Once Per Game Action') {
+    markDone(context)
+    context.push('once-per-game-action', {
+      playerName: player.name
+    })
+  }
+
   else if (selectionName === 'Quorum Card') {
     markDone(context)
     context.push('play-quorum-card', {
@@ -366,7 +373,7 @@ function _addOncePerGameActions(context, options) {
 
   let name = ''
 
-  if (player.oncePerGameUsed) {
+  if (game.checkPlayerOncePerGameUsed(player)) {
     return
   }
   else if (character.name === 'Gaius Baltar') {

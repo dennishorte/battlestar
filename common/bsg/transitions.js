@@ -385,6 +385,9 @@ const transitions = {
   'launch-self-in-viper': {
     func: require('./transitions/launchSelfInViper.js'),
   },
+  'once-per-game-action': {
+    func: require('./transitions/oncePerGameAction.js'),
+  },
   'play-quorum-card': {
     func: require('./transitions/playQuorumCard.js'),
   },

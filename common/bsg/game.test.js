@@ -731,32 +731,6 @@ describe('player turn', () => {
       expect(game.getWaiting('dennis')).not.toBeDefined()
     })
 
-    describe.skip('once per game actions', () => {
-      test("each player can only use one once per game action", () => {
-
-      })
-
-      describe("Gaius Baltar", () => {
-
-      })
-
-      describe("Laura Roslin", () => {
-
-      })
-
-      describe('Lee "Apollo" Adama', () => {
-
-      })
-
-      describe("Saul Tigh", () => {
-
-      })
-
-      describe("Tom Zarek", () => {
-
-      })
-    })
-
     describe('card actions', () => {
       describe('Consolidate Power', () => {
 
@@ -2981,7 +2955,7 @@ describe('skill checks', () => {
         name: 'Use Command Authority',
         option: ['Yes']
       })
-      expect(game.checkPlayerHasUsedOncePerGame('tom')).toBe(true)
+      expect(game.checkPlayerOncePerGameUsed('tom')).toBe(true)
     })
 
     test('no more active skill check', () => {

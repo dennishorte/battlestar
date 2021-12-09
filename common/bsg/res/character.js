@@ -11,11 +11,11 @@ module.exports =  [
     treachery: '',
     setup: 'Hangar Deck',
     ability: 'Maintenance Engineer - During your turn, after you use a "Repair" Skill Card, you may take another action (once per turn)',
-    'once per game ability': 'Blind Devotion - Once per game, after cards have been added to a Skill Check (but before revealing them), you may choose a skill type. All cards of the chosen type are considered strength 0',
+    oncePerGameAbility: 'Blind Devotion - Once per game, after cards have been added to a Skill Check (but before revealing them), you may choose a skill type. All cards of the chosen type are considered strength 0',
     weakness: 'Reckless - Your hand limit is 8 (instead of 10)',
-    'admiral line of succession order': 16,
-    'president line of succession order': 13,
-    'cag line of succession order': 17
+    admiralSuccession: 16,
+    presidentSuccession: 13,
+    cagSuccession: 17
   },
   {
     name: 'Aaron Doral',
@@ -29,11 +29,11 @@ module.exports =  [
     treachery: '1',
     setup: 'Caprica',
     ability: 'Industrious - While Infiltrating, draw 2 extra Skill Cards on your turn instead of 1. Disregard this ability while you are in "Sickbay"',
-    'once per game ability': 'Meticulous - Once per game, when you use an action to end your Infiltration, you may move to any Cylon location and take another action instead of moving to the Resurrection Ship',
+    oncePerGameAbility: 'Meticulous - Once per game, when you use an action to end your Infiltration, you may move to any Cylon location and take another action instead of moving to the Resurrection Ship',
     weakness: "Vanity - You cannot contribute to skill checks during another player's Action Step",
-    'admiral line of succession order': 0,
-    'president line of succession order': 0,
-    'cag line of succession order': 0
+    admiralSuccession: 0,
+    presidentSuccession: 0,
+    cagSuccession: 0
   },
   {
     name: 'Anastasia "Dee" Dualla',
@@ -47,11 +47,11 @@ module.exports =  [
     treachery: '',
     setup: 'Communications',
     ability: 'Efficient - When you activate the "Communications" location, you may look at every civilian ship on the game board and may move any number of them',
-    'once per game ability': 'Fast Learner - Once per game, before making a Skill check, look at the top 3 cards of any Skill deck (even outside your Skill set), and add all of them to either the Skill check or your hand',
+    oncePerGameAbility: 'Fast Learner - Once per game, before making a Skill check, look at the top 3 cards of any Skill deck (even outside your Skill set), and add all of them to either the Skill check or your hand',
     weakness: 'Emotionally Fragile - When morale is reduced to 2 or less, you are executed. If you are human, do not lose 1 morale',
-    'admiral line of succession order': 9,
-    'president line of succession order': 18,
-    'cag line of succession order': 14
+    admiralSuccession: 9,
+    presidentSuccession: 18,
+    cagSuccession: 14
   },
   {
     name: 'Brendan "Hot Dog" Costanza',
@@ -65,11 +65,11 @@ module.exports =  [
     treachery: '',
     setup: 'Hangar Deck',
     ability: 'Memento - Once per turn, immediately after population is reduced, you may draw the top 3 cards from the Piloting deck, discard 1 of them, and keep the other 2 cards',
-    'once per game ability': 'Escort - Once per game, before flipping over a civilian ship in a space area and destroying it, you may destroy an undamaged viper instead. Shuffle the civilian ship back into the pile of unused civilian ships',
+    oncePerGameAbility: 'Escort - Once per game, before flipping over a civilian ship in a space area and destroying it, you may destroy an undamaged viper instead. Shuffle the civilian ship back into the pile of unused civilian ships',
     weakness: 'Forced to Eject - Any time a viper you are piloting is damaged, destroy it instead',
-    'admiral line of succession order': 14,
-    'president line of succession order': 23,
-    'cag line of succession order': 6
+    admiralSuccession: 14,
+    presidentSuccession: 23,
+    cagSuccession: 6
   },
   {
     name: 'Callandra "Cally" Tyrol',
@@ -83,11 +83,11 @@ module.exports =  [
     treachery: '',
     setup: 'Hangar Deck',
     ability: 'Quick Fix - On your turn, once all Skill Cards played into a skill check have been revealed, you may choose 1 card to discard before resolving skill check abilities and totalling strength',
-    'once per game ability': 'Discharge of a Firearm - Action: Once per game, you may execute another character who is in your current location',
+    oncePerGameAbility: 'Discharge of a Firearm - Action: Once per game, you may execute another character who is in your current location',
     weakness: 'Impulsive - You cannot contribute only 1 Skill Card into a skill check. You must either contribute no Skill Cards or contribute 2 or more Skill Cards. (Disregard this while you are in the "Brig")',
-    'admiral line of succession order': 17,
-    'president line of succession order': 15,
-    'cag line of succession order': 18
+    admiralSuccession: 17,
+    presidentSuccession: 15,
+    cagSuccession: 18
   },
   {
     name: 'Caprica Six',
@@ -101,11 +101,11 @@ module.exports =  [
     treachery: '1*',
     setup: 'Caprica',
     ability: "Intimate - Movement: Draw 1 Skill Card at random from a player's hand. Then, that player draws 1 card from the Skill deck of your choice (it may be from outside his Skill set)",
-    'once per game ability': 'Human Delusion - Once per game, after all Skill Cards played into a Skill check have been revealed, you may play any number of Skill Cards from your hand into the check',
+    oncePerGameAbility: 'Human Delusion - Once per game, after all Skill Cards played into a Skill check have been revealed, you may play any number of Skill Cards from your hand into the check',
     weakness: 'Conflicted Loyalties - You must discard 1 Skill Card to activate the "Cylon Fleet" location',
-    'admiral line of succession order': 0,
-    'president line of succession order': 0,
-    'cag line of succession order': 0
+    admiralSuccession: 0,
+    presidentSuccession: 0,
+    cagSuccession: 0
   },
   {
     name: 'Cavil',
@@ -119,11 +119,11 @@ module.exports =  [
     treachery: '1*',
     setup: 'Cylon Fleet',
     ability: 'Primacy - Action: Place 1 basestar in front of Galactica, or if all basestar are in play, you may remove 1 from the game board. You may then place 3 raiders in front of Galactica and 1 civilian ship behind Galactica',
-    'once per game ability': 'Aggressive Tactics - Movement: Once per game you may take 2 Actions',
+    oncePerGameAbility: 'Aggressive Tactics - Movement: Once per game you may take 2 Actions',
     weakness: 'Lies and Secrets - When a player reveals a "You Are a Cylon" Loyalty Card, you must discard all Skill Cards in your hand',
-    'admiral line of succession order': 0,
-    'president line of succession order': 0,
-    'cag line of succession order': 0
+    admiralSuccession: 0,
+    presidentSuccession: 0,
+    cagSuccession: 0
   },
   {
     name: "D'Anna Biers",
@@ -137,11 +137,11 @@ module.exports =  [
     treachery: '1*',
     setup: 'Human Fleet',
     ability: 'Visions - Action: If you are infiltrating, choose a human player and look at 1 of his Loyalty Cards at random. Then, end your Infiltration and move to the "Resurrection Ship"',
-    'once per game ability': "Don't Trust Anyone - Action: Once per game, draw 2 Super Crisis Cards",
+    oncePerGameAbility: "Don't Trust Anyone - Action: Once per game, draw 2 Super Crisis Cards",
     weakness: 'Heretic - If you are on the "Resurrection Ship" location (but not the "Hub Destroyed" location), you must discard a Super Crisis Card to move to a different location',
-    'admiral line of succession order': 0,
-    'president line of succession order': 0,
-    'cag line of succession order': 0
+    admiralSuccession: 0,
+    presidentSuccession: 0,
+    cagSuccession: 0
   },
   {
     name: 'Ellen Tigh',
@@ -155,11 +155,11 @@ module.exports =  [
     treachery: '1',
     setup: "Admiral's Quarters",
     ability: 'Politically Adroit - When you end your Movement step in the same location as another human player, you may give that player 1 Skill Card from your hand to draw 2 Skill Cards',
-    'once per game ability': 'Manipulative - Once per game, you may take the Admiral or President title at the start of your turn. Return that title to its previous owner at the end of your turn',
+    oncePerGameAbility: 'Manipulative - Once per game, you may take the Admiral or President title at the start of your turn. Return that title to its previous owner at the end of your turn',
     weakness: "Nothing But Trouble - Your Skill set includes Treachery. (Human players can't use text abilities of Treachery Cards)",
-    'admiral line of succession order': 21,
-    'president line of succession order': 7,
-    'cag line of succession order': 21
+    admiralSuccession: 21,
+    presidentSuccession: 7,
+    cagSuccession: 21
   },
   {
     name: 'Felix Gaeta',
@@ -173,11 +173,11 @@ module.exports =  [
     treachery: '',
     setup: 'FTL Control',
     ability: 'FTL Operator - Anytime "FTL Control" is activated, you may reroll the die. You must use the new result',
-    'once per game ability': 'Coup - Action: Once per game, you may take the Admiral title. If you are in the "Brig" when you take this action, move immediately to "Command" before taking the title',
+    oncePerGameAbility: 'Coup - Action: Once per game, you may take the Admiral title. If you are in the "Brig" when you take this action, move immediately to "Command" before taking the title',
     weakness: 'Misguided - You may not play more than 3 cards into any skill check',
-    'admiral line of succession order': 5,
-    'president line of succession order': 10,
-    'cag line of succession order': 13
+    admiralSuccession: 5,
+    presidentSuccession: 10,
+    cagSuccession: 13
   },
   {
     name: 'Gaius Baltar (Alternative)',
@@ -191,11 +191,11 @@ module.exports =  [
     treachery: '',
     setup: "Admiral's Quarters",
     ability: 'Cult Leader - Action: Choose a player in the same location as you and either give him one of your miracle tokens or take his miracle token. You can have up to 3 miracle tokens',
-    'once per game ability': 'Broadcast - Action: Discard 3 miracle tokens to raise any resource by 2',
+    oncePerGameAbility: 'Broadcast - Action: Discard 3 miracle tokens to raise any resource by 2',
     weakness: 'Spiritual Crisis - You cannot use an action printed on a "You Are a Cylon" Loyalty Card unless you are in the "Brig"',
-    'admiral line of succession order': 22,
-    'president line of succession order': 14,
-    'cag line of succession order': 22
+    admiralSuccession: 22,
+    presidentSuccession: 14,
+    cagSuccession: 22
   },
   {
     name: 'Gaius Baltar',
@@ -209,11 +209,11 @@ module.exports =  [
     treachery: '',
     setup: 'Research Lab',
     ability: 'Delusional Intuition - After you draw a Crisis Card, draw 1 Skill Card of your choice (it may be from outside your skill set)',
-    'once per game ability': 'Cylon Detector - Action: Once per game, you may look at all Loyalty Cards belongin to another player',
+    oncePerGameAbility: 'Cylon Detector - Action: Once per game, you may look at all Loyalty Cards belonging to another player',
     weakness: 'Coward - You start the game with 2 Loyalty Cards (instead of 1)',
-    'admiral line of succession order': 23,
-    'president line of succession order': 2,
-    'cag line of succession order': 23
+    admiralSuccession: 23,
+    presidentSuccession: 2,
+    cagSuccession: 23
   },
   {
     name: 'Helena Cain',
@@ -227,11 +227,11 @@ module.exports =  [
     treachery: '',
     setup: 'Pegasus CIC or Command',
     ability: `Intolerant - When an "Admiral's Quarters" Skill check is passed with a 10 or more, you may choose to execute that character instead of sendind him to the "Brig"`,
-    'once per game ability': 'Blind Jump - Action: Once per game, if at 6 or less distance, draw 2 civilian ships and destroy them to immediately jump the fleet (even if the fleet marker is on a red space). The Admiral only draws 1 Destination Card',
+    oncePerGameAbility: 'Blind Jump - Action: Once per game, if at 6 or less distance, draw 2 civilian ships and destroy them to immediately jump the fleet (even if the fleet marker is on a red space). The Admiral only draws 1 Destination Card',
     weakness: 'Bent on Revenge - You may not activate the "FTL Control" or "Engine Room" locations',
-    'admiral line of succession order': 1,
-    'president line of succession order': 17,
-    'cag line of succession order': 11
+    admiralSuccession: 1,
+    presidentSuccession: 17,
+    cagSuccession: 11
   },
   {
     name: 'Kara "Starbuck" Thrace',
@@ -245,11 +245,11 @@ module.exports =  [
     treachery: '',
     setup: 'Hangar Deck',
     ability: 'Expert Pilot - When you start your turn piloting a viper, you may take 2 actions during your Action Step (instead of 1)',
-    'once per game ability': 'Secret Destiny - Once per game, immediately after a Crisis Card is revealed, discard it and draw a new one',
+    oncePerGameAbility: 'Secret Destiny - Once per game, immediately after a Crisis Card is revealed, discard it and draw a new one',
     weakness: `Insubordinate - When a player chooses you with the "Admiral's Quarters" location, reduce the difficulty by 3`,
-    'admiral line of succession order': 11,
-    'president line of succession order': 25,
-    'cag line of succession order': 2
+    admiralSuccession: 11,
+    presidentSuccession: 25,
+    cagSuccession: 2
   },
   {
     name: 'Karl "Helo" Agathon (Alternative)',
@@ -263,11 +263,11 @@ module.exports =  [
     treachery: '',
     setup: "Admiral's Quarters",
     ability: 'Raptor Pilot - When you look at the top card of a deck as a result of a "Launch Scout" card, look at the top 2 cards instead and, in the order of your choosing, place each card on the top or the bottom of the deck',
-    'once per game ability': 'No One Gets Left Behind - Once per game, during the Remove Ships step of Jumping the Fleet, lose 1 fuel to gain 2 population',
+    oncePerGameAbility: 'No One Gets Left Behind - Once per game, during the Remove Ships step of Jumping the Fleet, lose 1 fuel to gain 2 population',
     weakness: 'Family Commitments - If you are not on Galactica, draw 1 fewer Skill Card during your Receive Skills step',
-    'admiral line of succession order': 10,
-    'president line of succession order': 20,
-    'cag line of succession order': 4
+    admiralSuccession: 10,
+    presidentSuccession: 20,
+    cagSuccession: 4
   },
   {
     name: 'Karl "Helo" Agathon',
@@ -281,11 +281,11 @@ module.exports =  [
     treachery: '',
     setup: 'Stranded in Caprica',
     ability: 'ECO Officer - During your turn, you may reroll a die that was just rolled (once per turn). You must use the new result',
-    'once per game ability': 'Moral Compass - Once per game, after a player makes a choice on a Crisis Card, you may change it',
+    oncePerGameAbility: 'Moral Compass - Once per game, after a player makes a choice on a Crisis Card, you may change it',
     weakness: 'Stranded - Your character is not place on the game board at the start of the game. While not on the game board, you may not move , be moved, or take actions. At the star of your 2nd turn, place your character on the "Hangar Deck" location',
-    'admiral line of succession order': 4,
-    'president line of succession order': 12,
-    'cag line of succession order': 9
+    admiralSuccession: 4,
+    presidentSuccession: 12,
+    cagSuccession: 9
   },
   {
     name: 'Laura Roslin',
@@ -299,11 +299,11 @@ module.exports =  [
     treachery: '',
     setup: "President's Office",
     ability: 'Religious Visions - When you draw Crisis Cards, draw 2 and choose 1 to resolve. Place the other on the bottom of the deck',
-    'once per game ability': 'Skilled Politician - Action: Once per game, draw 4 Quorum Cards. Choose 1 to resolve and place the rest on the bottom of the deck. You do not need to be President to use this ability',
+    oncePerGameAbility: 'Skilled Politician - Action: Once per game, draw 4 Quorum Cards. Choose 1 to resolve and place the rest on the bottom of the deck. You do not need to be President to use this ability',
     weakness: 'Terminal Illness - In order to activate a location, you must first discard 2 Skill Cards',
-    'admiral line of succession order': 26,
-    'president line of succession order': 1,
-    'cag line of succession order': 26
+    admiralSuccession: 26,
+    presidentSuccession: 1,
+    cagSuccession: 26
   },
   {
     name: 'Lee "Apollo" Adama',
@@ -317,11 +317,11 @@ module.exports =  [
     treachery: '',
     setup: 'Launch and pilot a viper',
     ability: 'Alert Viper Pilot - When a viper is placed in a space area from the "Reserves", you may choose to pilot it and take 1 action. You may only do this when you are on a Galactica location, excluding the "Brig" ',
-    'once per game ability': 'CAG - Action: Once per game, you may activate up to 6 unmanned vipers',
+    oncePerGameAbility: 'CAG - Action: Once per game, you may activate up to 6 unmanned vipers',
     weakness: 'Headstrong - When you are forced to discard Skill Cards, you must discard randomly',
-    'admiral line of succession order': 8,
-    'president line of succession order': 8,
-    'cag line of succession order': 1
+    admiralSuccession: 8,
+    presidentSuccession: 8,
+    cagSuccession: 1
   },
   {
     name: 'Lee Adama (Alternative)',
@@ -335,11 +335,11 @@ module.exports =  [
     treachery: '',
     setup: "Admiral's Quarters",
     ability: 'Forward Thinker - After you use an "Executive Order" Skill Card and the chosen player has finished moving and taking actions, you may activate your current location',
-    'once per game ability': 'Choose a Different Path - Once per game, when you must make a choice on a Crisis Card, you may choose to have the result be: "The current player discards 5 Skill Cards"',
+    oncePerGameAbility: 'Choose a Different Path - Once per game, when you must make a choice on a Crisis Card, you may choose to have the result be: "The current player discards 5 Skill Cards"',
     weakness: 'Moral Dilemma - When you draw a Mutiny Card, you must discard 2 Skill Cards',
-    'admiral line of succession order': 19,
-    'president line of succession order': 3,
-    'cag line of succession order': 8
+    admiralSuccession: 19,
+    presidentSuccession: 3,
+    cagSuccession: 8
   },
   {
     name: 'Leoben Conoy',
@@ -353,11 +353,11 @@ module.exports =  [
     treachery: '1*',
     setup: 'Human Fleet',
     ability: 'Glimpse the Face of God - Movement: Draw 2 cards from the top of the Destiny deck, then place 2 cards from your hand on the top of the Destiny deck',
-    'once per game ability': "Cryptic Message - Action: Once per game, exchange your hand of Skill Cards with another player's hand of Skill Cards",
+    oncePerGameAbility: "Cryptic Message - Action: Once per game, exchange your hand of Skill Cards with another player's hand of Skill Cards",
     weakness: 'Clouded - You may not voluntarily move to a location that contains another character',
-    'admiral line of succession order': 0,
-    'president line of succession order': 0,
-    'cag line of succession order': 0
+    admiralSuccession: 0,
+    presidentSuccession: 0,
+    cagSuccession: 0
   },
   {
     name: 'Louanne "Kat" Katraine',
@@ -371,11 +371,11 @@ module.exports =  [
     treachery: '',
     setup: 'Hangar Deck',
     ability: "Hotshot - When you would roll a die during your Action step, you may instead discard a Skill Card. Use the card's strength +2 instead of the die roll",
-    'once per game ability': 'Sacrifice - Action: Once per game while piloting a viper, send yourself to "Sickbay" to destroy 5 raiders, 2 heavy raiders, 1 basestar, or 1 civilian ship in your space area',
+    oncePerGameAbility: 'Sacrifice - Action: Once per game while piloting a viper, send yourself to "Sickbay" to destroy 5 raiders, 2 heavy raiders, 1 basestar, or 1 civilian ship in your space area',
     weakness: 'Stim Junkie - At the end of your Action step, if you are in the same location or space area that you were in at the start of your turn, you are moved to "Sickbay"',
-    'admiral line of succession order': 12,
-    'president line of succession order': 26,
-    'cag line of succession order': 3
+    admiralSuccession: 12,
+    presidentSuccession: 26,
+    cagSuccession: 3
   },
   {
     name: 'Louis Hoshi',
@@ -389,11 +389,11 @@ module.exports =  [
     treachery: '',
     setup: 'Communications',
     ability: 'Dutiful - Once during your turn, if you activate "Command", "Communications", or "Weapons Control", you may discard 1 Skill Card to immediately activate that location again',
-    'once per game ability': 'Organized - Action: Once per game, if you are not in the "Brig", activate any 3 undamaged locations, regardless of where you are. You cannot activate the same locations more than once nor any Cylon locations',
+    oncePerGameAbility: 'Organized - Action: Once per game, if you are not in the "Brig", activate any 3 undamaged locations, regardless of where you are. You cannot activate the same locations more than once nor any Cylon locations',
     weakness: 'Reluctant - You must discard 1 Skill Card to use a Skill Card action',
-    'admiral line of succession order': 6,
-    'president line of succession order': 19,
-    'cag line of succession order': 15
+    admiralSuccession: 6,
+    presidentSuccession: 19,
+    cagSuccession: 15
   },
   {
     name: 'Romo Lampkin',
@@ -407,11 +407,11 @@ module.exports =  [
     treachery: '',
     setup: 'Administration',
     ability: 'Deceitful - When a Crisis Card requires you to discard Skill Cards, reduce the number of cards you discard by 1 (once per Crisis Card)',
-    'once per game ability': `Attorney - Action: Once per game, move a character in the "Brig" to any non-hazardous location on Galactica. If he belongs to another player, take all of that player's Skill Cards`,
+    oncePerGameAbility: `Attorney - Action: Once per game, move a character in the "Brig" to any non-hazardous location on Galactica. If he belongs to another player, take all of that player's Skill Cards`,
     weakness: 'Kleptomania - If you end your Movement Step in a location with another player, you must discard 2 Skill Cards. If you cannot, you are sent to the "Brig" at the end of your turn',
-    'admiral line of succession order': 24,
-    'president line of succession order': 5,
-    'cag line of succession order': 25
+    admiralSuccession: 24,
+    presidentSuccession: 5,
+    cagSuccession: 25
   },
   {
     name: 'Samuel T. Anders',
@@ -425,11 +425,11 @@ module.exports =  [
     treachery: '',
     setup: 'Armory',
     ability: 'Star Player - Action: Discard any number of Skill Cards. Then draw that number of Skill Cards from any one type within your skill set',
-    'once per game ability': 'Longshot - Once per game, you may choose the result of a die roll on your turn instead of rolling it. This result cannot be modified or rerolled',
+    oncePerGameAbility: 'Longshot - Once per game, you may choose the result of a die roll on your turn instead of rolling it. This result cannot be modified or rerolled',
     weakness: 'Starts on the Bench - Skip the Receive Skill Step of your first turn',
-    'admiral line of succession order': 15,
-    'president line of succession order': 24,
-    'cag line of succession order': 7
+    admiralSuccession: 15,
+    presidentSuccession: 24,
+    cagSuccession: 7
   },
   {
     name: 'Saul Tigh',
@@ -443,11 +443,11 @@ module.exports =  [
     treachery: '',
     setup: 'Command',
     ability: `Cylon Hatred - When a player activates the "Admiral's Quarters" location, you may choose to reduce the difficulty by 3`,
-    'once per game ability': 'Declare Martial Law - Action: Once per game, give the President title to the Admiral',
+    oncePerGameAbility: 'Declare Martial Law - Action: Once per game, give the President title to the Admiral',
     weakness: "Alcoholic - At the start of any player's turn, if you have exactly 1 Skill Card in your hand, you must discard it",
-    'admiral line of succession order': 3,
-    'president line of succession order': 22,
-    'cag line of succession order': 12
+    admiralSuccession: 3,
+    presidentSuccession: 22,
+    cagSuccession: 12
   },
   {
     name: 'Sharon "Athena" Agathon',
@@ -461,11 +461,11 @@ module.exports =  [
     treachery: '',
     setup: 'Hangar Deck (Infiltrating)',
     ability: 'For Love - Once per turn, when another player must discard 1 or more Skill Cards (except when discarding down to his hand limit), you may draw 1 Treachery Card to reduce the number of cards he discards by 1',
-    'once per game ability': 'Resolute - Action: Once per game, activate any undamaged location',
+    oncePerGameAbility: 'Resolute - Action: Once per game, activate any undamaged location',
     weakness: 'Grieving - When you are in a hazardous location, you cannot draw Skill Cards during your "Receive Skills" or "Draw Skills" step',
-    'admiral line of succession order': 0,
-    'president line of succession order': 0,
-    'cag line of succession order': 0
+    admiralSuccession: 0,
+    presidentSuccession: 0,
+    cagSuccession: 0
   },
   {
     name: 'Sharon "Boomer" Valerii',
@@ -479,11 +479,11 @@ module.exports =  [
     treachery: '',
     setup: 'Armory',
     ability: 'Recon - At the end of your turn, you may look at the top card of the Crisis Deck, and place it on the top or bottom',
-    'once per game ability': 'Mysterious Intuition - Once per game, before resolving a skill check on a Crisis Card, choose the result (Pass or Fail), instead of resolving it normally',
+    oncePerGameAbility: 'Mysterious Intuition - Once per game, before resolving a skill check on a Crisis Card, choose the result (Pass or Fail), instead of resolving it normally',
     weakness: 'Sleeper Agent - During the Sleeper Agent Phase, you are dealt 2 Loyalty Cards (instead of 1) and then moved to the "Brig" location',
-    'admiral line of succession order': 13,
-    'president line of succession order': 21,
-    'cag line of succession order': 5
+    admiralSuccession: 13,
+    presidentSuccession: 21,
+    cagSuccession: 5
   },
   {
     name: 'Sherman "Doc" Cottle',
@@ -497,11 +497,11 @@ module.exports =  [
     treachery: '',
     setup: 'Research Lab',
     ability: 'Treatment - Action: Choose a human player and draw 2 Skill Cards from his skill set. Then give him 2 Skill Cards from your hand',
-    'once per game ability': 'Quarantine - Action: Once per game, look at each civilian ship on the board. Choose 1 and draw a new civilian ship to replace it if possible. Shuffle the chosen ship back into the pile of unused civilian ships',
+    oncePerGameAbility: 'Quarantine - Action: Once per game, look at each civilian ship on the board. Choose 1 and draw a new civilian ship to replace it if possible. Shuffle the chosen ship back into the pile of unused civilian ships',
     weakness: 'Specialized - You cannot use actions printed on Engineering Cards',
-    'admiral line of succession order': 18,
-    'president line of succession order': 16,
-    'cag line of succession order': 19
+    admiralSuccession: 18,
+    presidentSuccession: 16,
+    cagSuccession: 19
   },
   {
     name: "Simon O'Neill",
@@ -515,11 +515,11 @@ module.exports =  [
     treachery: '1*',
     setup: 'Cylon Fleet',
     ability: 'Calculating - You may contribute 2 Skill Cards to skill checks, or 3 Skill Cards when Infiltrating. Disregard this ability while you are in the "Brig"',
-    'once per game ability': `Modifications - Once per game, at the start of a player's "Activate Cylon Ships" step, either choose a Cylon ship type to activate or launch raiders. Ignore any Activate Cylon Ships icons on the bottom of the Crisis Card`,
+    oncePerGameAbility: `Modifications - Once per game, at the start of a player's "Activate Cylon Ships" step, either choose a Cylon ship type to activate or launch raiders. Ignore any Activate Cylon Ships icons on the bottom of the Crisis Card`,
     weakness: 'Logic-Bound - When you play any Skill Cads into a skill check, you must play 1 face up',
-    'admiral line of succession order': 0,
-    'president line of succession order': 0,
-    'cag line of succession order': 0
+    admiralSuccession: 0,
+    presidentSuccession: 0,
+    cagSuccession: 0
   },
   {
     name: 'Tom Zarek (Alternative)',
@@ -533,11 +533,11 @@ module.exports =  [
     treachery: '',
     setup: 'Weapons Control',
     ability: 'Necessary Steps - Each time a player draws a Mutiny Card, you instead look at the top 2 cards of the Mutiny deck, give 1 to that player, and place the other on the bottom of the deck',
-    'once per game ability': 'Abuse Power - Action: Once per game, draw 4 Mutiny Cards. Choose 1 of them to play and place the other 3 Mutiny Cards on the bottom of the deck. Ignore your "Necessary Steps" ability and do not move to the "Brig"',
+    oncePerGameAbility: 'Abuse Power - Action: Once per game, draw 4 Mutiny Cards. Choose 1 of them to play and place the other 3 Mutiny Cards on the bottom of the deck. Ignore your "Necessary Steps" ability and do not move to the "Brig"',
     weakness: 'Disreputable - You start the game with 1 Mutiny Card',
-    'admiral line of succession order': 7,
-    'president line of succession order': 9,
-    'cag line of succession order': 16
+    admiralSuccession: 7,
+    presidentSuccession: 9,
+    cagSuccession: 16
   },
   {
     name: 'Tom Zarek',
@@ -551,11 +551,11 @@ module.exports =  [
     treachery: '',
     setup: 'Administration',
     ability: 'Friends in Low Places - When a player activates the "Administration" or the "Brig" location, you may choose to reduce or increase the difficulty by 2',
-    'once per game ability': 'Unconventional Tactics - Action: Once per game, lose 1 population to gain 1 of any other resource type',
+    oncePerGameAbility: 'Unconventional Tactics - Action: Once per game, lose 1 population to gain 1 of any other resource type',
     weakness: 'Convicted Criminal - You may not activate locations occupied by other characters (except the "Brig")',
-    'admiral line of succession order': 20,
-    'president line of succession order': 4,
-    'cag line of succession order': 20
+    admiralSuccession: 20,
+    presidentSuccession: 4,
+    cagSuccession: 20
   },
   {
     name: 'Tory Foster',
@@ -569,11 +569,11 @@ module.exports =  [
     treachery: '',
     setup: 'Press Room',
     ability: 'Adaptable - After any player uses the action on a Quorum Card, you may draw 2 Skill Cards of your choice (they may be from outside your skill set)',
-    'once per game ability': 'Influential - Action: Once per game, you may examine the top 5 cards of the Quorum deck, and return them to the top of the deck in any order you choose (even if you are not currently the President)',
+    oncePerGameAbility: 'Influential - Action: Once per game, you may examine the top 5 cards of the Quorum deck, and return them to the top of the deck in any order you choose (even if you are not currently the President)',
     weakness: 'Amoral - When you are the current player, you must choose the first option listed on any Crisis Cards that say "Current Player Chooses"',
-    'admiral line of succession order': 25,
-    'president line of succession order': 6,
-    'cag line of succession order': 24
+    admiralSuccession: 25,
+    presidentSuccession: 6,
+    cagSuccession: 24
   },
   {
     name: 'William Adama',
@@ -587,10 +587,10 @@ module.exports =  [
     treachery: '',
     setup: "Admiral's Quarters",
     ability: 'Inspirational Leader - When you draw a Crisis Card, all 1 strength Skill Cards count positive for the skill check',
-    'once per game ability': 'Command Authority - Once per game, after resolving a skill check, instead of discarding the used Skill Cards, draw them into your hand',
+    oncePerGameAbility: 'Command Authority - Once per game, after resolving a skill check, instead of discarding the used Skill Cards, draw them into your hand',
     weakness: `Emotionally Attached - You may not activate the "Admiral's Quarters" location`,
-    'admiral line of succession order': 2,
-    'president line of succession order': 11,
-    'cag line of succession order': 10
+    admiralSuccession: 2,
+    presidentSuccession: 11,
+    cagSuccession: 10
   }
 ]
