@@ -69,25 +69,29 @@ module.exports =  [
     name: 'You Are a Cylon',
     expansion: 'base game',
     team: 'cylon',
-    text: 'CAN REDUCE MORALE BY 1. Action: Reveal this card. If you are not in the "Brig", you may reduce morale by 1.'
+    text: 'CAN REDUCE MORALE BY 1. Action: Reveal this card. If you are not in the "Brig", you may reduce morale by 1.',
+    effect: 'cylon-morale'
   },
   {
     name: 'You Are a Cylon',
     expansion: 'base game',
     team: 'cylon',
-    text: 'CAN SEND A CHARACTER TO SICKBAY. Action: Reveal this card. If you are not in the "Brig", you may choose a character on Galactica. That character must discard 5 Skill Cards and is moved to "Sickbay"'
+    text: 'CAN SEND A CHARACTER TO SICKBAY. Action: Reveal this card. If you are not in the "Brig", you may choose a character on Galactica. That character must discard 5 Skill Cards and is moved to "Sickbay"',
+    effect: 'cylon-sickbay'
   },
   {
     name: 'You Are a Cylon',
     expansion: 'base game',
     team: 'cylon',
-    text: 'CAN SEND A CHARACTER TO THE BRIG. Action: Reveal this card. If you are not in the "Brig", you may choose a character on Galactica. Move that character to the "Brig"'
+    text: 'CAN SEND A CHARACTER TO THE BRIG. Action: Reveal this card. If you are not in the "Brig", you may choose a character on Galactica. Move that character to the "Brig"',
+    effect: 'cylon-brig',
   },
   {
     name: 'You Are a Cylon',
     expansion: 'base game',
     team: 'cylon',
-    text: 'CAN DAMAGE GALACTICA. Action: Reveal this card. If you are not in the "Brig", you may draw up to 5 Galactica damage tokens. Choose 2 of them to resolve and discard the others.'
+    text: 'CAN DAMAGE GALACTICA. Action: Reveal this card. If you are not in the "Brig", you may draw up to 5 Galactica damage tokens. Choose 2 of them to resolve and discard the others.',
+    effect: 'cylon-damage',
   },
   {
     name: 'You Are a Sympathizer',

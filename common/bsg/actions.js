@@ -197,15 +197,36 @@ Actions.aAssignAdmiral = function(player) {
 
 Actions.aAssignPresident = function(player) {
   player = this._adjustPlayerParam(player)
+  const oldPresident = this.getPlayerPresident()
   const card = this.getCardByKindAndName('title', 'President')
-  const playerHand = this.getZoneByPlayer(player.name).cards
+  const playerHand = this.getZoneByPlayer(player.name)
   this.mLog({
     template: '{player} becomes the President',
     args: {
       player: player.name
     }
   })
-  this.rk.move(card, playerHand)
+
+  if (oldPresident) {
+    const oldHand = this.getZoneByPlayer(oldPresident)
+
+    this.mMoveCard(oldHand, playerHand, card)
+
+    // Move the quorum cards to the new President's hand
+    const quorumCards = this.getCardsKindByPlayer('quorum', oldPresident)
+    for (const card of quorumCards) {
+      this.mMoveCard(oldHand, playerHand, card)
+    }
+    this.mLog({
+      template: 'The new President inherits {count} Quorum cards',
+      args: {
+        count: quorumCards.length
+      }
+    })
+  }
+  else {
+    this.rk.move(card, playerHand.cards)
+  }
 }
 
 Actions.aAttackCenturion = function() {
@@ -380,8 +401,10 @@ Actions.aDamageBasestar = function(name) {
   }
 }
 
-Actions.aDamageGalactica = function() {
-  const token = this.getTokenDamageGalactica()
+Actions.aDamageGalactica = function(token) {
+  if (!token) {
+    token = this.getTokenDamageGalactica()
+  }
 
   // One time resource loss tokens
   if (token.name.startsWith('-1')) {

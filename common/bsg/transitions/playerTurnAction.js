@@ -79,6 +79,14 @@ function handleResponse(context) {
     })
   }
 
+  else if (selectionName === 'Reveal as Cylon') {
+    markDone(context)
+    context.push('reveal-as-cylon', {
+      playerName: player.name,
+      cardId: bsgutil.optionName(selection.option[0])
+    })
+  }
+
   else if (selectionName === 'Attack with Viper') {
     const shipKind = bsgutil.optionName(selection.option[0])
     game.aAttackCylonWithViperByKind(
@@ -389,36 +397,36 @@ function _addOncePerGameActions(context, options) {
 function _addLoyaltyActions(context, options) {
   const game = context.state
   const player = game.getPlayerByName(context.data.playerName)
-  const cardTexts = game
+  const cardIds = game
     .getCardsKindByPlayer('loyalty', player)
-    .filter(c => c.name === "You Are a Cylon")
-    .map(c => c.text)
+    .filter(c => c.team === 'cylon')
+    .map(c => c.id)
 
-  const cardOptions = []
+  /* const cardOptions = []
 
-  for (const text of cardTexts) {
-    if (text.includes('SICKBAY')) {
-      cardOptions.push('send player to sickbay')
-    }
-    else if (text.includes('THE BRIG')) {
-      cardOptions.push('send player to brig')
-    }
-    else if (text.includes('MORALE')) {
-      cardOptions.push('reduce morale by 1')
-    }
-    else if (text.includes('DAMAGE')) {
-      cardOptions.push('damage galactica')
-    }
-    else {
-      throw new Error(`Unknown Cylon card: ${text}`)
-    }
-  }
-
-  if (cardOptions.length > 0) {
+   * for (const text of cardTexts) {
+   *   if (text.includes('SICKBAY')) {
+   *     cardOptions.push('send player to sickbay')
+   *   }
+   *   else if (text.includes('THE BRIG')) {
+   *     cardOptions.push('send player to brig')
+   *   }
+   *   else if (text.includes('MORALE')) {
+   *     cardOptions.push('reduce morale by 1')
+   *   }
+   *   else if (text.includes('DAMAGE')) {
+   *     cardOptions.push('damage galactica')
+   *   }
+   *   else {
+   *     throw new Error(`Unknown Cylon card: ${text}`)
+   *   }
+   * }
+   */
+  if (cardIds.length > 0) {
     options.push({
       name: 'Reveal as Cylon',
       max: 1,
-      options: cardOptions,
+      options: cardIds,
     })
   }
 }

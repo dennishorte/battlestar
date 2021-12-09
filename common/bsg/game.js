@@ -522,6 +522,19 @@ Game.prototype.getPlayerAdmiral = function() {
   return this.getPlayerWithCard('Admiral')
 }
 
+function _admiralSort(l, r) {
+  return l[1]['admiral line of succession order'] - r[1]['admiral line of succession order']
+}
+
+Game.prototype.getPlayerAdmiralNext = function() {
+  return this
+    .getPlayerAll()
+    .filter(p => !this.checkPlayerIsRevealedCylon(p))
+    .filter(p => this.getZoneByPlayerLocation(p).name !== 'locations.brig')
+    .map(p => [p, this.getCardCharacterByPlayer(p)])
+    .sort(_admiralSort)[0][0]
+}
+
 Game.prototype.getPlayerCurrentTurn = function() {
   // This calculation lets the UI render games before they are finished initializing
   const index = this.state.currentTurnPlayerIndex < 0 ? 0 : this.state.currentTurnPlayerIndex
@@ -586,6 +599,18 @@ Game.prototype.getPlayerByName = function(name) {
 
 Game.prototype.getPlayerPresident = function() {
   return this.getPlayerWithCard('President')
+}
+
+function _presidentSort(l, r) {
+  return l[1]['president line of succession order'] - r[1]['president line of succession order']
+}
+
+Game.prototype.getPlayerPresidentNext = function() {
+  return this
+    .getPlayerAll()
+    .filter(p => !this.checkPlayerIsRevealedCylon(p))
+    .map(p => [p, this.getCardCharacterByPlayer(p)])
+    .sort(_presidentSort)[0][0]
 }
 
 Game.prototype.getPlayerWithCard = function(cardName) {

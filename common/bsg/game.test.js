@@ -2078,20 +2078,153 @@ describe('player turn', () => {
     })
 
     describe('loyalty actions', () => {
-      describe.skip("CAN REDUCE MORALE BY 1", () => {
+      function _revealFixture(effect, setupFunc) {
+        const factory = new GameFixtureFactory()
+        const game = factory.build().advanceTo('player-turn-action').game
+        if (setupFunc) {
+          setupFunc(game)
+        }
 
+        // Discard existing loyalty card
+        // This ensures that 'dennis' has exactly one loyalty card, instead of usually having
+        // two but possibly having only one in the case that he is already holding the
+        // requested card.
+        const loyaltyCard = game.getCardsKindByPlayer('loyalty', 'dennis')[0]
+        game.mExile(loyaltyCard)
+
+        // Move requested loyalty card into dennis's hand
+        const { card, zoneName } = game.getCardByPredicate(c => {
+          return c.kind === 'loyalty' && c.effect === effect
+        })
+        game.mMoveCard(zoneName, game.getZoneByPlayer('dennis'), card)
+
+        game.run()
+        game.submit({
+          actor: 'dennis',
+          name: 'Action',
+          option: [{
+            name: 'Reveal as Cylon',
+            option: [card.id]
+          }]
+        })
+        return game
+      }
+
+      describe('reveal flow', () => {
+        test('player becomes a revealed cylon', () => {
+          const game = _revealFixture('cylon-morale')
+          expect(game.checkPlayerIsRevealedCylon('dennis')).toBe(true)
+        })
+
+        test('player must discard down to 3 skill cards', () => {
+          const game = _revealFixture('cylon-morale')
+          const action = game.getWaiting('dennis')
+          expect(action).toBeDefined()
+          expect(action.name).toBe('Discard Skill Cards')
+          expect(action.count).toBe(2)
+        })
+
+        test('player loses admiral title', () => {
+          const game = _revealFixture('cylon-morale', game => {
+            game.aAssignAdmiral('dennis')
+          })
+          expect(game.getPlayerAdmiral().name).toBe('micah')
+        })
+
+        test('player loses president title', () => {
+          const game = _revealFixture('cylon-morale')
+          expect(game.getPlayerPresident().name).toBe('tom')
+        })
+
+        test('player is moved to the Resurrection Ship location', () => {
+          const game = _revealFixture('cylon-morale')
+          expect(game.getZoneByPlayerLocation('dennis').name).toBe('locations.resurrectionShip')
+        })
+
+        test('player draws a super crisis card', () => {
+          const game = _revealFixture('cylon-morale')
+          const cards = game.getCardsKindByPlayer('superCrisis', 'dennis')
+          expect(cards.length).toBe(1)
+        })
+
+        test('loyalty card is not discarded', () => {
+          const game = _revealFixture('cylon-morale')
+          const cards = game.getCardsKindByPlayer('loyalty', 'dennis')
+          expect(cards.length).toBe(1)
+        })
       })
 
-      describe.skip("CAN SEND A CHARACTER TO SICKBAY", () => {
-
+      describe("cylon-morale", () => {
+        test('morale is reduced by 1', () => {
+          const game = _revealFixture('cylon-morale')
+          expect(game.getCounterByName('morale')).toBe(9)
+        })
       })
 
-      describe.skip("CAN SEND A CHARACTER TO THE BRIG", () => {
+      describe("cylon-sickbay", () => {
+        test('can choose which player to send', () => {
+          const game = _revealFixture('cylon-sickbay')
+          const action = game.getWaiting('dennis')
+          expect(action).toBeDefined()
+          expect(action.name).toBe('Attack Player')
+          expect(action.options.sort()).toStrictEqual(['micah', 'tom'])
+        })
 
+        test('chosen player is moved to sickbay', () => {
+          const game = _revealFixture('cylon-sickbay')
+          game.submit({
+            actor: 'dennis',
+            name: 'Attack Player',
+            option: ['micah']
+          })
+          expect(game.getZoneByPlayerLocation('micah').name).toBe('locations.sickbay')
+        })
+
+        test('chosen player must discard 5 skill cards', () => {
+          const game = _revealFixture('cylon-sickbay')
+          game.submit({
+            actor: 'dennis',
+            name: 'Attack Player',
+            option: ['micah']
+          })
+          const action = game.getWaiting('micah')
+          expect(action).toBeDefined()
+          expect(action.name).toBe('Discard Skill Cards')
+
+          // Micah has only 3 cards in hand
+          expect(action.count).toBe(3)
+        })
       })
 
-      describe.skip("CAN DAMAGE GALACTICA", () => {
+      describe("cylon-brig", () => {
+        test('can choose which player to send', () => {
+          const game = _revealFixture('cylon-brig')
+          const action = game.getWaiting('dennis')
+          expect(action).toBeDefined()
+          expect(action.name).toBe('Frame Player')
+          expect(action.options.sort()).toStrictEqual(['micah', 'tom'])
+        })
 
+        test('chosen player is moved to brig', () => {
+          const game = _revealFixture('cylon-brig')
+          game.submit({
+            actor: 'dennis',
+            name: 'Frame Player',
+            option: ['micah']
+          })
+          expect(game.getZoneByPlayerLocation('micah').name).toBe('locations.brig')
+        })
+      })
+
+      describe("cylon-damage", () => {
+        test('player has five choices', () => {
+          const game = _revealFixture('cylon-damage')
+          const action = game.getWaiting('dennis')
+          expect(action).toBeDefined()
+          expect(action.name).toBe('Sabotage Galactica')
+          expect(action.options.length).toBe(5)
+          expect(action.count).toBe(2)
+        })
       })
     })
 
@@ -3972,7 +4105,24 @@ describe('misc functions', () => {
 
     }) // raiders
 
-})
+  })  // aActivateCylonShips
+
+  describe('aAssignPresident', () => {
+    test('president title and quorum cards are moved to new player', () => {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().advanceTo('player-turn-movement').game
+
+      // Precondition
+      expect(game.getPlayerPresident().name).toBe('dennis')
+      expect(game.getCardsKindByPlayer('quorum', 'dennis').length).toBe(1)
+
+      game.aAssignPresident('tom')
+
+      expect(game.getPlayerPresident().name).toBe('tom')
+      expect(game.getCardsKindByPlayer('quorum', 'tom').length).toBe(1)
+      expect(game.getCardsKindByPlayer('quorum', 'dennis').length).toBe(0)
+    })
+  })
 
   describe.skip('aAttackCylonWithViperByKind', () => {
     describe('raider', () => {

@@ -50,7 +50,7 @@ function _generateOptionsForPlayer(game, info) {
   return {
     actor: info.player,
     name: 'Discard Skill Cards',
-    count: info.count,
+    count: Math.min(info.count, playerSkillCards.length),
     options: playerSkillCards.map(c => c.id)
   }
 }

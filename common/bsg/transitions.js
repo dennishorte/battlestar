@@ -112,24 +112,13 @@ function distributeLoyaltyCards(context) {
   context.done()
 }
 
-function _admiralSort(l, r) {
-  return l[1]['admiral line of succession order'] - r[1]['admiral line of succession order']
-}
-
-function _presidentSort(l, r) {
-  return l[1]['president line of succession order'] - r[1]['president line of succession order']
-}
-
 function distributeTitleCards(context) {
   const game = context.state
-  const playerCharacters = game.getPlayerAll().map(p => [p, game.getCardCharacterByPlayer(p)])
 
-  playerCharacters.sort(_admiralSort)
-  const admiral = playerCharacters[0][0]
+  const admiral = game.getPlayerAdmiralNext()
   game.aAssignAdmiral(admiral)
 
-  playerCharacters.sort(_presidentSort)
-  const president = playerCharacters[0][0]
+  const president = game.getPlayerPresidentNext()
   game.aAssignPresident(president)
   game.aDrawQuorumCard()
 
@@ -398,6 +387,9 @@ const transitions = {
   },
   'play-quorum-card': {
     func: require('./transitions/playQuorumCard.js'),
+  },
+  'reveal-as-cylon': {
+    func: require('./transitions/revealAsCylon.js'),
   },
   'send-player-to': {
     func: require('./transitions/sendPlayerTo.js'),
