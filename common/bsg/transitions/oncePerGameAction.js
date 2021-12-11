@@ -58,6 +58,16 @@ function _execute(context) {
     })
   }
 
+  else if (character.name === 'Saul Tigh') {
+    game.mLog({
+      template: '{player} declares martial law',
+      args: {
+        player: player.name
+      }
+    })
+    game.aAssignPresident(game.getPlayerAdmiral())
+  }
+
   else if (character.name === 'Tom Zarek') {
     return context.wait({
       actor: player.name,

@@ -119,7 +119,16 @@ describe('once per game actions', () => {
   })
 
   describe("Saul Tigh", () => {
+    test('moves the president title to the admiral', () => {
+      const game = _oncePerGameFixture('Saul Tigh')
+      expect(game.getPlayerAdmiral().name).toBe('dennis')
+      expect(game.getPlayerPresident().name).toBe('dennis')
+    })
 
+    test('once per game marked as used', () => {
+      const game = _oncePerGameFixture('Saul Tigh')
+      expect(game.checkPlayerOncePerGameUsed('dennis')).toBe(true)
+    })
   })
 
   describe("Tom Zarek", () => {
