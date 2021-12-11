@@ -40,6 +40,23 @@ function _execute(context) {
       options: otherPlayers
     })
   }
+
+  else if (character.name === 'Laura Roslin') {
+    const playerHand = game.getZoneByPlayer(player)
+    const quorumZone = game.getZoneByName('decks.quorum')
+    const cards = quorumZone.cards.slice(0, 4)
+    const cardIds = cards.map(c => c.id)
+    for (const card of cards) {
+      game.mMoveCard(quorumZone, playerHand, card)
+    }
+    game.rk.addKey(context.data, 'cardIds', cardIds)
+
+    return context.wait({
+      actor: 'dennis',
+      name: 'Skilled Politician',
+      options: cardIds
+    })
+  }
 }
 
 function _executeDo(context) {
@@ -58,5 +75,26 @@ function _executeDo(context) {
       }
     })
     game.aRevealLoyaltyCards(target, player, 999)
+  }
+
+  else if (character.name === 'Laura Roslin') {
+    const playerHand = game.getZoneByPlayer(player)
+    const quorumZone = game.getZoneByName('decks.quorum')
+
+    const selectedCardId = bsgutil.optionName(context.response.option[0])
+    const selectedCard = game.getCardById(selectedCardId)
+
+    // Put the unused cards on the bottom of the deck
+    for (const cardId of context.data.cardIds) {
+      if (cardId !== selectedCardId) {
+        const card = game.getCardById(cardId)
+        game.mMoveCard(playerHand, quorumZone, card)
+      }
+    }
+
+    return context.push('play-quorum-card', {
+      playerName: player.name,
+      cardId: selectedCardId,
+    })
   }
 }

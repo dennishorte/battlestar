@@ -30,10 +30,6 @@ function _oncePerGameFixture(characterName, setupFunc) {
 }
 
 describe('once per game actions', () => {
-  test("each player can only use one once per game action", () => {
-
-  })
-
   describe("Gaius Baltar", () => {
     test('choose player', () => {
       const game = _oncePerGameFixture('Gaius Baltar')
@@ -63,7 +59,59 @@ describe('once per game actions', () => {
   })
 
   describe("Laura Roslin", () => {
+    test('draws four quorum cards', () => {
+      const game = _oncePerGameFixture('Laura Roslin')
+      const quorumCards = game.getCardsKindByPlayer('quorum', 'dennis')
+      // One starting card, plus 4
+      expect(quorumCards.length).toBe(5)
+    })
 
+    test('can only choose from among drawn cards', () => {
+      const game = _oncePerGameFixture('Laura Roslin')
+      const quorumCards = game.getCardsKindByPlayer('quorum', 'dennis')
+      quorumCards.shift()
+      const quorumOptions = quorumCards.map(c => c.id).sort()
+      const action = game.getWaiting('dennis')
+      expect(action.name).toBe('Skilled Politician')
+      expect(action.options.sort()).toStrictEqual(quorumOptions)
+    })
+
+    test('unused cards are put on the bottom of the deck', () => {
+      const game = _oncePerGameFixture('Laura Roslin')
+      const quorumCards = game.getCardsKindByPlayer('quorum', 'dennis')
+      quorumCards.shift()
+      const quorumOptions = quorumCards.map(c => c.id).sort()
+      game.submit({
+        actor: 'dennis',
+        name: 'Skilled Politician',
+        option: [quorumOptions[2]]
+      })
+
+      const quorumZone = game.getZoneByName('decks.quorum')
+      for (const i of [0, 1, 3]) {
+        const cardId = quorumOptions[i]
+        // 17 card deck. Two in hand. Indices should be 12, 13, 14
+        expect(quorumZone.cards.findIndex(c => c.id === cardId)).toBeGreaterThan(11)
+      }
+    })
+
+    test.skip('selected card is executed', () => {
+      const game = _oncePerGameFixture('Laura Roslin')
+      const quorumCards = game.getCardsKindByPlayer('quorum', 'dennis')
+      quorumCards.shift()
+      const quorumOptions = quorumCards.map(c => c.id).sort()
+      game.submit({
+        actor: 'dennis',
+        name: 'Skilled Politician',
+        option: [quorumOptions[2]]
+      })
+      // Not sure how to test this
+    })
+
+    test('once per game marked as used', () => {
+      const game = _oncePerGameFixture('Laura Roslin')
+      expect(game.checkPlayerOncePerGameUsed('dennis')).toBe(true)
+    })
   })
 
   describe('Lee "Apollo" Adama', () => {
