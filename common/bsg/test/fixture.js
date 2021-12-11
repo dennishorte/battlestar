@@ -131,6 +131,15 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
       option: [this.options.players[i].character]
     })
 
+    // For Lee Adama, launch him into space
+    if (this.options.players[i].character.name === 'Lee "Apollo" Adama') {
+      this.game.submit({
+        actor: player.name,
+        name: 'Launch Self in Viper',
+        option: ['Lower Right']
+      })
+    }
+
     if (this._checkForTarget(targetTransitionName, targetPlayerName)) {
       return this
     }
