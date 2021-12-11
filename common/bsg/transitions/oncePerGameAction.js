@@ -58,6 +58,12 @@ function _execute(context) {
     })
   }
 
+  else if (character.name === 'Lee "Apollo" Adama') {
+    return context.push('lee-apollo-cag', {
+      playerName: player.name
+    })
+  }
+
   else if (character.name === 'Saul Tigh') {
     game.mLog({
       template: '{player} declares martial law',

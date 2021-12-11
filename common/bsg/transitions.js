@@ -370,6 +370,9 @@ const transitions = {
 
 
   // Misc
+  'lee-apollo-cag': {
+    func: require('./transitions/leeApolloCag.js'),
+  },
   'choose-player-to-send-to-brig': {
     func: require('./transitions/choosePlayerToSendToBrig.js'),
   },

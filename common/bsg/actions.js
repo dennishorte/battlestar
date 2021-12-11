@@ -370,7 +370,13 @@ Actions.aClearSpace = function() {
   for (let i = 0; i < 6; i++) {
     const spaceZone = this.getZoneByName(`space.space${i}`)
     while (spaceZone.cards.length) {
-      this.mDiscard(spaceZone.cards[0])
+      const card = spaceZone.cards[0]
+      if (card.kind === 'player-token') {
+        this.mMoveCard(spaceZone, 'locations.hangarDeck', card)
+      }
+      else {
+        this.mDiscard(card)
+      }
     }
   }
 }

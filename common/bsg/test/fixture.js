@@ -132,7 +132,7 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
     })
 
     // For Lee Adama, launch him into space
-    if (this.options.players[i].character.name === 'Lee "Apollo" Adama') {
+    if (this.options.players[i].character === 'Lee "Apollo" Adama') {
       this.game.submit({
         actor: player.name,
         name: 'Launch Self in Viper',
@@ -157,6 +157,22 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
     if (this._checkForTarget(targetTransitionName, targetPlayerName)) {
       return this
     }
+  }
+
+  // If the first player has optional skill choices, just pick some
+  if (this.game.getWaiting('dennis').name === 'Select Skills') {
+    const selections = []
+    for (const opt of this.game.getWaiting('dennis').options) {
+      selections.push({
+        name: opt.name,
+        option: opt.options.slice(0, 1)
+      })
+    }
+    this.game.submit({
+      actor: 'dennis',
+      name: 'Select Skills',
+      option: selections
+    })
   }
 
   // If there are specific cards in hand specified, load them here

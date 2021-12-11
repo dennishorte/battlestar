@@ -115,7 +115,91 @@ describe('once per game actions', () => {
   })
 
   describe('Lee "Apollo" Adama', () => {
+    test('executes lee-apollo-cag transition', () => {
+      const game = _oncePerGameFixture('Lee "Apollo" Adama')
+      expect(game.getTransition().name).toBe('lee-apollo-cag')
+    })
 
+    test('can choose a viper to activate', () => {
+      const game = _oncePerGameFixture('Lee "Apollo" Adama')
+      const action = game.getWaiting('dennis')
+      expect(action.name).toBe('Select Viper to Activate')
+      expect(action.options.length).toBe(2)
+    })
+
+    test('if all vipers in same zone, auto-selects', () => {
+      const game = _oncePerGameFixture('Lee "Apollo" Adama', game => {
+        game.aClearSpace()
+        game.aDeployShips([
+          [], [], [],
+          [], [], ['viper', 'viper', 'raider']
+        ])
+      })
+      const action = game.getWaiting('dennis')
+      expect(action.name).toBe('Activate Selected Viper')
+    })
+
+    test('can choose what to do with that viper', () => {
+      const game = _oncePerGameFixture('Lee "Apollo" Adama', game => {
+        game.aClearSpace()
+        game.aDeployShips([
+          [], [], [],
+          [], [], ['viper', 'viper', 'raider']
+        ])
+      })
+      const action = game.getWaiting('dennis')
+      expect(action.name).toBe('Activate Selected Viper')
+      expect(action.options.map(o => o.name).sort())
+        .toStrictEqual(['Attack with Viper', 'Move Viper'])
+    })
+
+    test('move action executes', () => {
+      const game = _oncePerGameFixture('Lee "Apollo" Adama', game => {
+        game.aClearSpace()
+        game.aDeployShips([
+          [], [], [],
+          [], [], ['viper', 'raider']
+        ])
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Activate Selected Viper',
+        option: [{
+          name: 'Move Viper',
+          option: ['clockwise']
+        }]
+      })
+      expect(game.getZoneSpaceByIndex(0).cards.length).toBe(1)
+      expect(game.getZoneSpaceByIndex(0).cards[0].name).toBe('viper')
+      expect(game.getZoneSpaceByIndex(5).cards.length).toBe(1)
+      expect(game.getZoneSpaceByIndex(5).cards[0].name).toBe('raider')
+    })
+
+    test('attack action executes', () => {
+      const game = _oncePerGameFixture('Lee "Apollo" Adama', game => {
+        game.aClearSpace()
+        game.aDeployShips([
+          [], [], [],
+          [], [], ['viper', 'raider']
+        ])
+        jest.spyOn(game, 'aAttackCylonWithViperByKind')
+      })
+      game.submit({
+        actor: 'dennis',
+        name: 'Activate Selected Viper',
+        option: [{
+          name: 'Attack with Viper',
+          option: ['raider']
+        }]
+      })
+      expect(game.aAttackCylonWithViperByKind.mock.calls.length).toBe(1)
+      expect(game.aAttackCylonWithViperByKind.mock.calls[0][2]).toBe('raider')
+    })
+
+    test('once per game marked as used', () => {
+      const game = _oncePerGameFixture('Lee "Apollo" Adama')
+      expect(game.checkPlayerOncePerGameUsed('dennis')).toBe(true)
+    })
   })
 
   describe("Saul Tigh", () => {
