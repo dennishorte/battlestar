@@ -52,10 +52,27 @@ function _execute(context) {
     game.rk.addKey(context.data, 'cardIds', cardIds)
 
     return context.wait({
-      actor: 'dennis',
+      actor: player.name,
       name: 'Skilled Politician',
       options: cardIds
     })
+  }
+
+  else if (character.name === 'Tom Zarek') {
+    return context.wait({
+      actor: player.name,
+      name: 'Unconventional Tactics',
+      description: 'The selected resource will go up by one',
+      options: [
+        'food',
+        'fuel',
+        'morale',
+      ],
+    })
+  }
+
+  else {
+    throw new Error(`Unhandled once per game action for ${character.name}`)
   }
 }
 
@@ -96,5 +113,22 @@ function _executeDo(context) {
       playerName: player.name,
       cardId: selectedCardId,
     })
+  }
+
+  else if (character.name === 'Tom Zarek') {
+    const resource = bsgutil.optionName(context.response.option[0])
+    game.mLog({
+      template: '{player} uses Unconvential Tactics to increase {resource}',
+      args: {
+        player: player.name,
+        resource
+      }
+    })
+    game.mAdjustCounterByName('population', -1)
+    game.mAdjustCounterByName(resource, +1)
+  }
+
+  else {
+    throw new Error(`Unhandled once per game character action for ${character.name}`)
   }
 }

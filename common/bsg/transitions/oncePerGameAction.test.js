@@ -123,6 +123,36 @@ describe('once per game actions', () => {
   })
 
   describe("Tom Zarek", () => {
+    test('can choose which resource to increase', () => {
+      const game = _oncePerGameFixture('Tom Zarek')
+      const action = game.getWaiting('dennis')
+      expect(action.name).toBe('Unconventional Tactics')
+      expect(action.options.sort()).toStrictEqual(['food', 'fuel', 'morale'])
+    })
 
+    test('population goes down', () => {
+      const game = _oncePerGameFixture('Tom Zarek')
+      game.submit({
+        actor: 'dennis',
+        name: 'Unconventional Tactics',
+        option: ['food']
+      })
+      expect(game.getCounterByName('population')).toBe(11)
+    })
+
+    test('chosen resource is increased', () => {
+      const game = _oncePerGameFixture('Tom Zarek')
+      game.submit({
+        actor: 'dennis',
+        name: 'Unconventional Tactics',
+        option: ['food']
+      })
+      expect(game.getCounterByName('food')).toBe(9)
+    })
+
+    test('once per game marked as used', () => {
+      const game = _oncePerGameFixture('Tom Zarek')
+      expect(game.checkPlayerOncePerGameUsed('dennis')).toBe(true)
+    })
   })
 })
