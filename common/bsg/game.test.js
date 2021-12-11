@@ -2018,7 +2018,26 @@ describe('player turn', () => {
           expect(game.getCardsKindByPlayer('quorum', 'dennis').length).toBe(3)
         })
 
-        test.skip('play actually plays the card', () => {
+        test('play actually plays the card', () => {
+          const game = _takeActionWithMove('Location Action', {
+            name: 'Colonial One',
+            option: ["President's Office"]
+          })
+
+          const transition = require('./transitions.js')['play-quorum-card']
+          jest.spyOn(transition, 'func')
+
+          const action = game.getWaiting('dennis')
+          game.submit({
+            actor: 'dennis',
+            name: 'Play or Draw',
+            option: [{
+              name: 'Play a Quorum Card',
+              option: [action.options[1].options[0]]
+            }]
+          })
+
+          expect(transition.func.mock.calls.length).toBeGreaterThanOrEqual(1)
         })
       })
 

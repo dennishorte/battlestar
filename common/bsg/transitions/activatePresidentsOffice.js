@@ -45,11 +45,10 @@ function handleResponse(context) {
 
   if (optionName === 'Play a Quorum Card') {
     const cardId = context.response.option[0].option[0]
-    const card = game.getCardById(cardId)
     markDone(context)
-    return context.push('evaluate-effects', {
-      name: `Quorum Card: ${card.name}`,
-      effects: card.script.effect
+    return context.push('play-quorum-card', {
+      playerName: player.name,
+      cardId,
     })
   }
 
