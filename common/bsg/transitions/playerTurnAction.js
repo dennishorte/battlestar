@@ -276,8 +276,15 @@ function handleResponse(context) {
       return context.done()
     }
 
+    ////////////////////
+    // Cylon Locations
+
     else {
-      throw new Error(`Unhandled location action: ${locationName}`)
+      markDone(context)
+      const transitionName = 'activate-' + util.toKebabCase(locationName)
+      return context.push(transitionName, {
+        playerName: player.name,
+      })
     }
   }
 

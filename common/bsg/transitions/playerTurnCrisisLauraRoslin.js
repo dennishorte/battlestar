@@ -42,12 +42,13 @@ function handleResponse(context) {
   util.assert(cardChoices.length === 2, "Player should have exactly two cards to choose from")
 
   const chosenCardId = bsgutil.optionName(context.response.option[0])
-  const chosenCard = cardChoices.find(c => c.id === chosenCardId)
+  const chosenCard = game.getCardById(chosenCardId)
   const otherCard = cardChoices.find(c => c.id !== chosenCardId)
 
-  game.mDiscard(otherCard)
-  game.mMoveCard(playerZone, 'keep', chosenCard)
   game.mSetCrisisActive(chosenCard)
+  game.mDiscard(otherCard)
 
-  return context.done()
+  return context.push('evaluate-crisis', {
+    playerName: player.name
+  })
 }

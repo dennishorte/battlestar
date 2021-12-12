@@ -2053,20 +2053,115 @@ describe('player turn', () => {
         })
       })
 
-      describe.skip("Caprica", () => {
+      describe('Cylon Locations', () => {
+        function _cylonLocationFixture(locationName, setupFunc) {
+          const factory = new GameFixtureFactory()
+          const game = factory.build().advanceTo('player-turn-action').game
+          jest.spyOn(game, 'checkPlayerIsRevealedCylon').mockImplementation(player => {
+            return player === 'dennis' || player.name === 'dennis'
+          })
+          jest.spyOn(game, 'getZoneByPlayerLocation').mockImplementation(() => {
+            return game.getZoneByLocationName('Caprica')
+          })
+          if (setupFunc) {
+            setupFunc(game)
+          }
 
-      })
+          // Get a consistent crisis card to make testing easier
+          const { card, zoneName } = game.getCardByPredicate(c => c.name === 'Build Cylon Detector')
+          game.mMoveCard(zoneName, 'decks.crisis', card, { top: true })
 
-      describe.skip("Cylon Fleet", () => {
+          game.run()
+          game.submit({
+            actor: 'dennis',
+            name: 'Action',
+            option: [{
+              name: 'Location Action',
+              option: ['Caprica']
+            }]
+          })
+          return game
 
-      })
+        }
 
-      describe.skip("Human Fleet", () => {
+        describe('Caprica', () => {
+          test('player chooses which type of card', () => {
+            const game = _cylonLocationFixture('Caprica', game => {
+              // Make sure player has a super crisis to choose from
+              game.mMoveCard('decks.superCrisis', 'players.dennis')
+            })
+            const action = game.getWaiting('dennis')
+            expect(action.name).toBe('Choose Crisis Type')
+          })
 
-      })
+          test('if no super crisis, goes directly to choosing crisis', () => {
+            const game = _cylonLocationFixture('Caprica')
+            const action = game.getWaiting('dennis')
+            expect(action.name).toBe('Select Crisis')
+          })
 
-      describe.skip("Resurrection Ship", () => {
+          describe('super crisis', () => {
+            test('chosen super crisis is executed', () => {
+              const game = _cylonLocationFixture('Caprica', game => {
+                const superCrisis = game.getCardByName('Bomb on Colonial One')
+                game.mMoveCard('decks.superCrisis', 'players.dennis', superCrisis)
+              })
+              const action = game.getWaiting('dennis')
+              game.submit({
+                actor: 'dennis',
+                name: 'Choose Crisis Type',
+                option: [action.options[1]]
+              })
+              expect(game.getTransition().name).toBe('skill-check-discuss')
+            })
+          })
 
+          describe('regular crisis', () => {
+            test('choose one of two crisis cards', () => {
+              const game = _cylonLocationFixture('Caprica')
+              const action = game.getWaiting('dennis')
+              expect(action.name).toBe('Select Crisis')
+              expect(action.options.length).toBe(2)
+            })
+
+            test('chosen regular crisis is executed', () => {
+              const game = _cylonLocationFixture('Caprica')
+              const action = game.getWaiting('dennis')
+              game.submit({
+                actor: 'dennis',
+                name: 'Select Crisis',
+                option: [action.options[0]]
+              })
+              expect(game.getTransition().name).toBe('evaluate-crisis')
+            })
+
+            test('not chosen regular crisis is discarded', () => {
+              const game = _cylonLocationFixture('Caprica')
+              const action = game.getWaiting('dennis')
+              const otherCard = action.options[1]
+              game.submit({
+                actor: 'dennis',
+                name: 'Select Crisis',
+                option: [action.options[0]]
+              })
+
+              const { zoneName } = game.getCardByPredicate(c => c.id === otherCard)
+              expect(zoneName).toBe('discard.crisis')
+            })
+          })
+        })
+
+        describe.skip('Cylon Fleet', () => {
+
+        })
+
+        describe.skip('Human Fleet', () => {
+
+        })
+
+        describe.skip('Resurrection Ship', () => {
+
+        })
       })
     })
 

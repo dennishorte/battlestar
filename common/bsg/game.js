@@ -1268,6 +1268,11 @@ Game.prototype.mSetCrisisActive = function(card) {
   util.assert(!this.state.activeCrisisId, 'Crisis already active!')
   card = this._adjustCardParam(card)
   this.rk.put(this.state, 'activeCrisisId', card.id)
+  this.mMoveCard(this.getZoneByCard(card), 'keep', card)
+  this.mLog({
+    template: '"{card}" crisis begins',
+    args: { card }
+  })
 }
 
 Game.prototype.mSetOncePerGameAbilityUsed = function(player) {

@@ -307,6 +307,7 @@ const transitions = {
     func: require('./transitions/playerTurnCleanup.js'),
   },
 
+  // Human Location Actions
   'activate-admirals-quarters': {
     func: require('./transitions/activateAdmiralsQuarters.js'),
   },
@@ -329,6 +330,21 @@ const transitions = {
     func: require('./transitions/activatePresidentsOffice.js'),
   },
 
+  // Cylon Location Actions
+  'activate-caprica': {
+    func: require('./transitions/activateCaprica.js'),
+  },
+  /* 'activate-cylon-fleet': {
+   *   func: require('./transitions/activateCylonFleet.js'),
+   * }, */
+  /* 'activate-human-fleet': {
+   *   func: require('./transitions/activateHumanFleet.js'),
+   * }, */
+  /* 'activate-resurrection-ship': {
+   *   func: require('./transitions/activateResurrectionShip.js'),
+   * }, */
+
+  // Skill card actions
   'skill-card-executive-order': {
     func: require('./transitions/skillCardExecutiveOrder.js'),
   },
@@ -381,6 +397,9 @@ const transitions = {
   },
   'draw-skill-cards': {
     func: require('./transitions/drawSkillCards.js'),
+  },
+  'evaluate-crisis': {
+    func: require('./transitions/evaluateCrisis.js'),
   },
   'evaluate-effects': {
     func: require('./transitions/evaluateEffects.js'),
