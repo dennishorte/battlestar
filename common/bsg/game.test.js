@@ -2061,7 +2061,7 @@ describe('player turn', () => {
             return player === 'dennis' || player.name === 'dennis'
           })
           jest.spyOn(game, 'getZoneByPlayerLocation').mockImplementation(() => {
-            return game.getZoneByLocationName('Caprica')
+            return game.getZoneByLocationName(locationName)
           })
           if (setupFunc) {
             setupFunc(game)
@@ -2077,7 +2077,7 @@ describe('player turn', () => {
             name: 'Action',
             option: [{
               name: 'Location Action',
-              option: ['Caprica']
+              option: [locationName]
             }]
           })
           return game
@@ -2151,8 +2151,106 @@ describe('player turn', () => {
           })
         })
 
-        describe.skip('Cylon Fleet', () => {
+        describe('Cylon Fleet', () => {
+          function _fleetFixture(ships, setupFunc) {
+            return _cylonLocationFixture('Cylon Fleet', game => {
+              if (setupFunc) {
+                setupFunc(game)
+              }
+              game.aClearSpace()
+              game.aDeployShips(ships)
+            })
+          }
 
+          test('can attack with basestars', () => {
+            const game = _fleetFixture([
+              ['basestar'], [], [], [], [], []
+            ])
+            const action = game.getWaiting('dennis')
+            expect(action.options.length).toBe(2)
+            expect(action.options.find(o => o === 'basestar')).toBeDefined()
+
+            jest.spyOn(game, 'aActivateCylonShips')
+            game.submit({
+              actor: 'dennis',
+              name: 'Choose Cylon Ships to Activate',
+              option: ['basestar']
+            })
+            expect(game.aActivateCylonShips.mock.calls[0][0]).toBe('Basestar Attacks')
+          })
+
+          test('can activate raiders', () => {
+            const game = _fleetFixture([
+              ['raider'], [], [], [], [], []
+            ])
+            const action = game.getWaiting('dennis')
+            expect(action.options.length).toBe(1)
+            expect(action.options.find(o => o === 'raider')).toBeDefined()
+
+            jest.spyOn(game, 'aActivateCylonShips')
+            game.submit({
+              actor: 'dennis',
+              name: 'Choose Cylon Ships to Activate',
+              option: ['raider']
+            })
+            expect(game.aActivateCylonShips.mock.calls[0][0]).toBe('Raiders')
+          })
+
+          test('can activate heavy raiders', () => {
+            const game = _fleetFixture([
+              ['heavy raider'], [], [], [], [], []
+            ])
+            const action = game.getWaiting('dennis')
+            expect(action.options.length).toBe(1)
+            expect(action.options.find(o => o === 'heavy raider')).toBeDefined()
+
+            jest.spyOn(game, 'aActivateCylonShips')
+            game.submit({
+              actor: 'dennis',
+              name: 'Choose Cylon Ships to Activate',
+              option: ['heavy raider']
+            })
+            expect(game.aActivateCylonShips.mock.calls[0][0]).toBe('Hvy Raiders')
+
+          })
+
+          test('heavy raiders activate centurions (even if no heavy raiders)', () => {
+            const game = _fleetFixture([[], [], [], [], [], []], game => {
+              game.mAddCenturion()
+            })
+            const action = game.getWaiting('dennis')
+            expect(action.options.length).toBe(1)
+            expect(action.options.find(o => o === 'heavy raider')).toBeDefined()
+
+            jest.spyOn(game, 'aActivateCylonShips')
+            game.submit({
+              actor: 'dennis',
+              name: 'Choose Cylon Ships to Activate',
+              option: ['heavy raider']
+            })
+            expect(game.aActivateCylonShips.mock.calls[0][0]).toBe('Hvy Raiders')
+          })
+
+          test('can launch ships', () => {
+            const game = _fleetFixture([
+              ['basestar'], [], [], [], [], []
+            ])
+            const action = game.getWaiting('dennis')
+            expect(action.options.length).toBe(2)
+            expect(action.options.find(o => o === 'basestar')).toBeDefined()
+
+            jest.spyOn(game, 'aActivateCylonShips')
+            jest.spyOn(game, 'aBasestarsLaunch')
+            game.submit({
+              actor: 'dennis',
+              name: 'Choose Cylon Ships to Activate',
+              option: ['Launch']
+            })
+            expect(game.aActivateCylonShips.mock.calls.length).toBe(0)
+            expect(game.aBasestarsLaunch.mock.calls.length).toBe(2)
+            expect(game.aBasestarsLaunch).toBeCalledWith('raider', 2)
+            expect(game.aBasestarsLaunch).toBeCalledWith('heavy raider', 1)
+          })
         })
 
         describe.skip('Human Fleet', () => {

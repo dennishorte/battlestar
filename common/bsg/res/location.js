@@ -215,7 +215,7 @@ module.exports =  [
     area: 'Cylon Locations',
     team: 'cylon',
     hazardous: false,
-    text: 'Action: Activate all Cylon shups of one type, or launch 2 raiders and 1 heavy raider from each basestar',
+    text: 'Action: Activate all Cylon ships of one type, or launch 2 raiders and 1 heavy raider from each basestar',
     'skill check value': '',
     politics: false,
     leadership: false,

@@ -334,9 +334,9 @@ const transitions = {
   'activate-caprica': {
     func: require('./transitions/activateCaprica.js'),
   },
-  /* 'activate-cylon-fleet': {
-   *   func: require('./transitions/activateCylonFleet.js'),
-   * }, */
+  'activate-cylon-fleet': {
+    func: require('./transitions/activateCylonFleet.js'),
+  },
   /* 'activate-human-fleet': {
    *   func: require('./transitions/activateHumanFleet.js'),
    * }, */
