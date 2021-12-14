@@ -2253,8 +2253,68 @@ describe('player turn', () => {
           })
         })
 
-        describe.skip('Human Fleet', () => {
+        describe('Human Fleet', () => {
+          test('can choose player to spy on', () => {
+            const game = _cylonLocationFixture('Human Fleet')
+            const action = game.getWaiting('dennis')
+            expect(action.name).toBe('Choose a Player to Spy On')
+            expect(action.options.sort()).toStrictEqual(['micah', 'tom'])
+          })
 
+          test('can view all cards in player hand', () => {
+            const game = _cylonLocationFixture('Human Fleet')
+            game.submit({
+              actor: 'dennis',
+              name: 'Choose a Player to Spy On',
+              option: ['micah']
+            })
+
+            const action = game.getWaiting('dennis')
+            expect(action.name).toBe('Select a Card to Steal')
+            expect(action.options.length).toBe(3)
+          })
+
+          test('die roll 5+ damages Galactica', () => {
+            const game = _cylonLocationFixture('Human Fleet')
+            game.submit({
+              actor: 'dennis',
+              name: 'Choose a Player to Spy On',
+              option: ['micah']
+            })
+
+            jest.spyOn(game, 'mRollDie').mockImplementation(() => 5)
+            jest.spyOn(game, 'aDamageGalactica')
+
+            const action = game.getWaiting('dennis')
+            game.submit({
+              actor: 'dennis',
+              name: action.name,
+              option: action.options.slice(0, 1)
+            })
+
+            expect(game.aDamageGalactica).toBeCalled()
+          })
+
+          test('die roll 4- does not damage Galactica', () => {
+            const game = _cylonLocationFixture('Human Fleet')
+            game.submit({
+              actor: 'dennis',
+              name: 'Choose a Player to Spy On',
+              option: ['micah']
+            })
+
+            jest.spyOn(game, 'mRollDie').mockImplementation(() => 4)
+            jest.spyOn(game, 'aDamageGalactica')
+
+            const action = game.getWaiting('dennis')
+            game.submit({
+              actor: 'dennis',
+              name: action.name,
+              option: action.options.slice(0, 1)
+            })
+
+            expect(game.aDamageGalactica).not.toBeCalled()
+          })
         })
 
         describe.skip('Resurrection Ship', () => {
