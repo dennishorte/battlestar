@@ -2317,8 +2317,92 @@ describe('player turn', () => {
           })
         })
 
-        describe.skip('Resurrection Ship', () => {
+        describe('Resurrection Ship', () => {
+          test('if player has super crisis, can swap it', () => {
+            const game = _cylonLocationFixture('Resurrection Ship', game => {
+              game.mMoveCard('decks.superCrisis', 'players.dennis')
+            })
+            const action = game.getWaiting('dennis')
+            expect(action.name).toBe('Swap Super Crisis?')
+            expect(action.options).toStrictEqual(['Yes', 'No'])
+          })
 
+          test('yes to swap works', () => {
+            const game = _cylonLocationFixture('Resurrection Ship', game => {
+              game.mMoveCard('decks.superCrisis', 'players.dennis')
+            })
+            const startingCrisis = game.getCardsKindByPlayer('superCrisis', 'dennis')
+            game.submit({
+              actor: 'dennis',
+              name: 'Swap Super Crisis?',
+              option: ['Yes']
+            })
+
+            const finalCrisis = game.getCardsKindByPlayer('superCrisis', 'dennis')
+            expect(finalCrisis.length).toBe(1)
+            expect(finalCrisis[0].id).not.toBe(startingCrisis[0].id)
+
+            const { zoneName } = game.getCardByPredicate(c => c.id === startingCrisis[0].id)
+            expect(zoneName).toBe('discard.superCrisis')
+          })
+
+          test('no to swap does nothing', () => {
+            const game = _cylonLocationFixture('Resurrection Ship', game => {
+              game.mMoveCard('decks.superCrisis', 'players.dennis')
+            })
+            const startingCrisis = game.getCardsKindByPlayer('superCrisis', 'dennis')
+            game.submit({
+              actor: 'dennis',
+              name: 'Swap Super Crisis?',
+              option: ['No']
+            })
+
+            const finalCrisis = game.getCardsKindByPlayer('superCrisis', 'dennis')
+            expect(finalCrisis.length).toBe(1)
+            expect(finalCrisis[0].id).toBe(startingCrisis[0].id)
+          })
+
+          test('if no super crisis, that part is skipped', () => {
+            const game = _cylonLocationFixture('Resurrection Ship')
+            const action = game.getWaiting('dennis')
+            expect(action.name).not.toBe('Swap Super Crisis?')
+          })
+
+          test('if unrevealed loyalty card(s), can give away', () => {
+            const game = _cylonLocationFixture('Resurrection Ship', game => {
+              game.mMoveCard('decks.loyalty', 'players.dennis')
+            })
+
+            const action = game.getWaiting('dennis')
+            expect(action.name).toBe('Give Away Loyalty Cards')
+            expect(action.options.sort()).toStrictEqual(['Skip', 'micah', 'tom'])
+
+            game.submit({
+              actor: 'dennis',
+              name: 'Give Away Loyalty Cards',
+              option: ['micah']
+            })
+
+            expect(game.getCardsKindByPlayer('loyalty', 'dennis').length).toBe(0)
+            expect(game.getCardsKindByPlayer('loyalty', 'micah').length).toBe(3)
+          })
+
+          test('if no unrevealed loyalty cards, that part is skipped', () => {
+            const game = _cylonLocationFixture('Resurrection Ship', game => {
+              const loyaltyCards = game.getCardsKindByPlayer('loyalty', 'dennis')
+              game.rk.replace(loyaltyCards[0].visibility, ['dennis', 'micah', 'tom'])
+            })
+            expect(game.getTransition().name).toBe('player-turn-receive-skills')
+          })
+
+          test('if distance is 8 or greater, skip loyalty card part', () => {
+            const game = _cylonLocationFixture('Resurrection Ship', game => {
+              game.mAdjustCounterByName('distance', +8)
+            })
+
+            const action = game.getWaiting('dennis')
+            expect(game.getTransition().name).toBe('player-turn-receive-skills')
+          })
         })
       })
     })

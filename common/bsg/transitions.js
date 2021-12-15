@@ -340,9 +340,9 @@ const transitions = {
   'activate-human-fleet': {
     func: require('./transitions/activateHumanFleet.js'),
   },
-  /* 'activate-resurrection-ship': {
-   *   func: require('./transitions/activateResurrectionShip.js'),
-   * }, */
+  'activate-resurrection-ship': {
+    func: require('./transitions/activateResurrectionShip.js'),
+  },
 
   // Skill card actions
   'skill-card-executive-order': {

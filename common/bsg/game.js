@@ -1029,6 +1029,10 @@ Game.prototype.mDiscard = function(cardId) {
     this.mMoveCard(zoneName, 'discard.crisis', card)
   }
 
+  else if (card.kind === 'superCrisis') {
+    this.mMoveCard(zoneName, 'discard.superCrisis', card)
+  }
+
   else if (card.kind === 'skill') {
     const discard = this.getZoneByName(`decks.${card.skill}`)
     this.mMoveCard(zoneName, discard, card)
