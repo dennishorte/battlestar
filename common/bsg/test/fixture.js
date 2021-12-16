@@ -260,6 +260,7 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
     throw new Error(`Unhandled crisis type: ${crisis.type}`)
   }
 
+  this._checkForTarget(targetTransitionName, targetPlayerName)
   return this
 }
 

@@ -3707,12 +3707,39 @@ describe('player-turn-crisis', () => {
 })
 
 describe('player-turn-cleanup', () => {
-  test.skip('hand limit is 10', () => {
+  describe('hand limit', () => {
+    test('hand limit is 10', () => {
+      const factory = new GameFixtureFactory()
+      const game = factory.build().advanceTo('player-turn-cleanup').game
+      game.aDrawSkillCards('dennis', [
+        'leadership', 'leadership',
+        'tactics', 'tactics',
+        'engineering', 'engineering',
+        'piloting', 'piloting',
+        'politics', 'politics'
+      ])
+      game.run()
 
-  })
+      expect(game.getWaiting('dennis').name).toBe('Discard Skill Cards')
+      expect(game.getWaiting('dennis').count).toBe(5)
+    })
 
-  test.skip('"Chief" Galen Tyrol hand limit is 8', () => {
+    test('"Chief" Galen Tyrol hand limit is 8', () => {
+      const factory = new GameFixtureFactory()
+      factory.options.players[0].character = '"Chief" Galen Tyrol'
+      const game = factory.build().advanceTo('player-turn-cleanup').game
+      game.aDrawSkillCards('dennis', [
+        'leadership', 'leadership',
+        'tactics', 'tactics',
+        'engineering', 'engineering',
+        'piloting', 'piloting',
+        'politics', 'politics'
+      ])
+      game.run()
 
+      expect(game.getWaiting('dennis').name).toBe('Discard Skill Cards')
+      expect(game.getWaiting('dennis').count).toBe(7)
+    })
   })
 
   test('check for Cylon victory by food', () => {
