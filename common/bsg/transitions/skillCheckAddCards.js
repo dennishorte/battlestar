@@ -121,7 +121,7 @@ function _beginAddCardsPhase(context) {
       && !check.investigativeCommittee
     ){
       game.rk.put(check, 'investigativeCommittee', true)
-      game.aUseSkillCardByName(player, 'Invetigative Committee')
+      game.aUseSkillCardByName(player, 'Investigative Committee')
     }
   }
 

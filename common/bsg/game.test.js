@@ -1,6 +1,7 @@
 Error.stackTraceLimit = 100
 
-const GameFixtureFactory = require('./test/fixture.js')
+const fx = require('./test/fixture.js')
+const GameFixtureFactory = fx.GameFixtureFactory
 const bsgutil = require('./util.js')
 const util = require('../lib/util.js')
 
@@ -3190,16 +3191,64 @@ describe('skill checks', () => {
       })
     })
 
-    test.skip('players can use Investigative Committee', () => {
+    describe('Investigative Committee', () => {
+      test('players can use Investigative Committee', () => {
+        const game = _sendTomToBrig(game => {
+          fx.ensureCard(game, 'dennis', 'Investigative Committee')
+        })
+        fx.ensureOption(game, 'dennis', 'Use Investigative Committee')
+      })
 
+      test('only the first player to use Investigative Committee plays a card', () => {
+        const game = _sendTomToBrig(game => {
+          fx.returnAllSkillCards(game, 'dennis')
+          fx.returnAllSkillCards(game, 'micah')
+
+          fx.ensureCard(game, 'dennis', 'Investigative Committee')
+          fx.ensureCard(game, 'micah', 'Investigative Committee')
+        })
+
+        fx.expectOption(game, 'dennis', 'Use Investigative Committee')
+
+        game.submit({
+          actor: 'micah',
+          name: 'Skill Check - Discuss',
+          option: [
+            {
+              name: 'How much can you help?',
+              option: ['a little'],
+            },
+            'Use Investigative Committee',
+          ],
+        })
+
+        game.submit({
+          actor: 'dennis',
+          name: 'Skill Check - Discuss',
+          option: [
+            {
+              name: 'How much can you help?',
+              option: ['a little'],
+            },
+            'Use Investigative Committee',
+            {
+              name: 'Start Skill Check',
+              option: ['yes'],
+            },
+          ],
+        })
+
+        // Investigative Committee flag of skill check is marked true
+        expect(game.getSkillCheck().investigativeCommittee).toBe(true)
+
+        // Only the first player uses their card, starting from the left of the current player
+        fx.expectNotHasCard(game, 'micah', 'Investigative Committee')
+        fx.expectHasCard(game, 'dennis', 'Investigative Committee')
+      })
     })
 
-    test.skip('only the first player to use Investigative Committee plays a card', () => {
-
-    })
-
-    test.skip('player can choose non-skill check choice if available', () => {
-
+    test('player can choose non-skill check choice if available', () => {
+      // Tested a bunch in the 'crisis card effects' tests
     })
 
     test.skip('Sharon can use her Mysterious Intuition', () => {

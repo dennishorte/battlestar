@@ -2,8 +2,7 @@ const bsg = require('../game.js')
 const util = require('../../lib/util.js')
 const transitions = require('../transitions.js')
 
-
-module.exports = GameFixtureFactory
+const Fixture = {}
 
 function GameFixtureFactory(options) {
   this.lobby = {
@@ -308,3 +307,60 @@ GameFixtureFactory.prototype._checkForTarget = function(targetTransitionName, ta
   // this.game.dumpLog()
   return true
 }
+
+Fixture.GameFixtureFactory = GameFixtureFactory
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Helper functions
+
+Fixture.ensureCard = function(game, player, cardName, value) {
+  const cards = game
+    .getCardsByPredicate(c => {
+      if (value === undefined) {
+        return c.name === cardName
+      }
+      else {
+        return c.name === cardName && c.value === value
+      }
+    })
+    .filter(info => info.zoneName.startsWith('decks.'))
+
+  game.mMoveCard(cards[0].zoneName, game.getZoneByPlayer(player), cards[0].card)
+}
+
+Fixture.expectHasCard = function(game, player, cardName) {
+  const card = game
+    .getZoneByPlayer(player)
+    .cards
+    .filter(c => c.name === cardName)[0]
+
+  expect(card).toBeDefined()
+}
+
+Fixture.expectNotHasCard = function(game, player, cardName) {
+  const card = game
+    .getZoneByPlayer(player)
+    .cards
+    .filter(c => c.name === cardName)[0]
+
+  expect(card).not.toBeDefined()
+}
+
+Fixture.expectOption = function(game, player, optionName) {
+  const waiting = game.getWaiting(player)
+  expect(waiting).toBeDefined()
+
+  const option = waiting.options.find(o => o === optionName || o.name === optionName)
+  expect(option).toBeDefined()
+}
+
+Fixture.returnAllSkillCards = function(game, player) {
+  const cards = game.getCardsKindByPlayer('skill', player)
+  const playerZone = game.getZoneByPlayer(player)
+  for (const card of cards) {
+    game.mMoveCard(playerZone, `decks.${card.skill}`, card)
+  }
+}
+
+module.exports = Fixture

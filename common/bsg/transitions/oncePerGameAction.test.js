@@ -1,6 +1,6 @@
 Error.stackTraceLimit = 100
 
-const GameFixtureFactory = require('../test/fixture.js')
+const { GameFixtureFactory } = require('../test/fixture.js')
 const bsgutil = require('../util.js')
 const util = require('../../lib/util.js')
 
