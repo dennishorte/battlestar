@@ -3012,19 +3012,185 @@ describe('skill checks', () => {
       expect(optionNames2).toEqual(expect.arrayContaining(['Start Skill Check']))
     })
 
-    test.skip('players can use Scientific Research', () => {
+    describe('Scientific Research', () => {
 
+      test('players can use Scientific Research', () => {
+        const game = _sendTomToBrig(game => {
+          const card = game
+            .getZoneByName('decks.engineering')
+            .cards
+            .find(c => c.name === 'Scientific Research')
+          game.mMoveCard('decks.engineering', 'players.dennis', card)
+        })
+
+        const action = game.getWaiting('dennis')
+        const scientificOption = action.options.find(o => o.name === 'Use Scientific Research')
+        expect(scientificOption).toBeDefined()
+        expect(game.getZoneByPlayer('dennis').cards.find(c => c.name === 'Scientific Research')).toBeDefined()
+
+        game.submit({
+          actor: 'dennis',
+          name: 'Skill Check - Discuss',
+          option: [
+            {
+              name: 'How much can you help?',
+              option: ['a little'],
+            },
+            'Use Scientific Research',
+            {
+              name: 'Start Skill Check',
+              option: ['yes'],
+            },
+          ],
+        })
+
+        // Scientific Research flag of skill check is marked true
+        expect(game.getSkillCheck().scientificResearch).toBe(true)
+
+        // Card is dicarded after discuss phase
+        expect(game.getZoneByPlayer('dennis').cards.find(c => c.name === 'Scientific Research')).not.toBeDefined()
+      })
+
+      test('Change Answer clears Scientific Research flag', () => {
+        const game = _sendTomToBrig(game => {
+          const card = game
+            .getZoneByName('decks.engineering')
+            .cards
+            .find(c => c.name === 'Scientific Research')
+          game.mMoveCard('decks.engineering', 'players.dennis', card)
+        })
+
+        const action = game.getWaiting('dennis')
+        const scientificOption = action.options.find(o => o.name === 'Use Scientific Research')
+        expect(scientificOption).toBeDefined()
+        expect(game.getZoneByPlayer('dennis').cards.find(c => c.name === 'Scientific Research')).toBeDefined()
+
+        game.submit({
+          actor: 'dennis',
+          name: 'Skill Check - Discuss',
+          option: [
+            {
+              name: 'How much can you help?',
+              option: ['a little'],
+            },
+            'Use Scientific Research',
+          ],
+        })
+        game.submit({
+          actor: 'dennis',
+          name: 'Skill Check - Discuss',
+          option: ['Change Answer',]
+        })
+        game.submit({
+          actor: 'dennis',
+          name: 'Skill Check - Discuss',
+          option: [
+            {
+              name: 'How much can you help?',
+              option: ['a little'],
+            },
+            {
+              name: 'Start Skill Check',
+              option: ['yes'],
+            },
+          ],
+        })
+
+        // Scientific Research flag of skill check is marked true
+        expect(game.getSkillCheck().scientificResearch).toBe(false)
+
+        // Card is not discarded, since it wasn't used
+        expect(game.getZoneByPlayer('dennis').cards.find(c => c.name === 'Scientific Research')).toBeDefined()
+      })
+
+      test('cannot use if the skill check already uses Engineering cards', () => {
+        const game = _sendTomToBrig(game => {
+          const card = game
+            .getZoneByName('decks.engineering')
+            .cards
+            .find(c => c.name === 'Scientific Research')
+          game.mMoveCard('decks.engineering', 'players.dennis', card)
+
+          // Ensure that the skill check believes it needs engineering cards
+          jest.spyOn(game, 'getSkillCheck').mockImplementation(() => {
+            const skillCheck = game.state.skillCheck
+            if (skillCheck) {
+              util.array.pushUnique(skillCheck.skills, 'engineering')
+              return skillCheck
+            }
+            else {
+              return undefined
+            }
+          })
+        })
+
+        const action = game.getWaiting('dennis')
+        const scientificOption = action.options.find(o => o.name === 'Use Scientific Research')
+        expect(scientificOption).not.toBeDefined()
+      })
+
+      test('engineering cards are counted as positive in the check', () => {
+        // Tested in calculateCheckValue tests
+      })
+
+      test('only the first player (in submit order) uses their card', () => {
+        const game = _sendTomToBrig(game => {
+          const card = game
+            .getZoneByName('decks.engineering')
+            .cards
+            .find(c => c.name === 'Scientific Research')
+          game.mMoveCard('decks.engineering', 'players.dennis', card)
+
+          const card2 = game
+            .getZoneByName('decks.engineering')
+            .cards
+            .find(c => c.name === 'Scientific Research')
+          game.mMoveCard('decks.engineering', 'players.micah', card2)
+        })
+
+        const action = game.getWaiting('dennis')
+        const scientificOption = action.options.find(o => o.name === 'Use Scientific Research')
+        expect(scientificOption).toBeDefined()
+        expect(game.getZoneByPlayer('dennis').cards.find(c => c.name === 'Scientific Research')).toBeDefined()
+
+        game.submit({
+          actor: 'micah',
+          name: 'Skill Check - Discuss',
+          option: [
+            {
+              name: 'How much can you help?',
+              option: ['a little'],
+            },
+            'Use Scientific Research',
+          ],
+        })
+
+        game.submit({
+          actor: 'dennis',
+          name: 'Skill Check - Discuss',
+          option: [
+            {
+              name: 'How much can you help?',
+              option: ['a little'],
+            },
+            'Use Scientific Research',
+            {
+              name: 'Start Skill Check',
+              option: ['yes'],
+            },
+          ],
+        })
+
+        // Scientific Research flag of skill check is marked true
+        expect(game.getSkillCheck().scientificResearch).toBe(true)
+
+        // Only the first player uses their card, starting from the left of the current player
+        expect(game.getZoneByPlayer('micah').cards.find(c => c.name === 'Scientific Research')).not.toBeDefined()
+        expect(game.getZoneByPlayer('dennis').cards.find(c => c.name === 'Scientific Research')).toBeDefined()
+      })
     })
 
     test.skip('players can use Investigative Committee', () => {
-
-    })
-
-    test.skip('no Scientific Research for skill checks that already have positive blue', () => {
-
-    })
-
-    test.skip('only the first player to use Scientific Research plays a card', () => {
 
     })
 
