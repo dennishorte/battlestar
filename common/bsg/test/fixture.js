@@ -315,6 +315,17 @@ Fixture.GameFixtureFactory = GameFixtureFactory
 ////////////////////////////////////////////////////////////////////////////////
 // Helper functions
 
+Fixture.chooseFirst = function(game) {
+  util.assert(game.getWaiting().length === 1)
+
+  const waiting = game.getWaiting()[0]
+  game.submit({
+    actor: waiting.actor,
+    name: waiting.name,
+    option: [waiting.options[0]]
+  })
+}
+
 Fixture.ensureCard = function(game, player, cardName, value) {
   const cards = game
     .getCardsByPredicate(c => {
@@ -328,6 +339,12 @@ Fixture.ensureCard = function(game, player, cardName, value) {
     .filter(info => info.zoneName.startsWith('decks.'))
 
   game.mMoveCard(cards[0].zoneName, game.getZoneByPlayer(player), cards[0].card)
+}
+
+Fixture.ensureTopCard = function(game, deckName, cardName) {
+  const deck = game.getZoneByName(deckName)
+  const index = deck.cards.findIndex(c => c.name === cardName)
+  game.mMoveByIndices(deck, index, deck, 0)
 }
 
 Fixture.expectHasCard = function(game, player, cardName) {

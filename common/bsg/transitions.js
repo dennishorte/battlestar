@@ -460,10 +460,6 @@ const transitions = {
     func: require('./transitions/jumpTheFleet.js')
   },
 
-  'jump-choose-destination': {
-    func: require('./transitions/jumpChooseDestination.js')
-  },
-
   'leave-brig': {
     func: require('./transitions/leaveBrig.js')
   },

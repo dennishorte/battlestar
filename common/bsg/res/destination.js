@@ -13,7 +13,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 3
         },
         {
@@ -37,7 +37,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 3
         },
         {
@@ -61,7 +61,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 2
         },
       ],
@@ -81,7 +81,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 2
         },
       ],
@@ -101,7 +101,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 2
         },
       ],
@@ -121,7 +121,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 2
         },
       ],
@@ -141,7 +141,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 3
         },
         {
@@ -168,7 +168,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 2
         },
         {
@@ -226,7 +226,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 2
         },
       ],
@@ -251,7 +251,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 2
         },
       ],
@@ -276,7 +276,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 2
         },
       ],
@@ -296,7 +296,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 3
         },
       ],
@@ -316,7 +316,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 1
         },
         {
@@ -370,7 +370,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 1
         },
         {
@@ -419,7 +419,7 @@ module.exports =  [
       effects: [
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 1
         },
         {
@@ -463,7 +463,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: +2
         },
         {
@@ -493,7 +493,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: +2
         },
         {
@@ -523,7 +523,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: +2
         },
         {
@@ -553,7 +553,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 1
         },
         {
@@ -607,7 +607,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 1
         },
         {
@@ -661,7 +661,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 1
         },
         {
@@ -715,7 +715,7 @@ module.exports =  [
         },
         {
           kind: 'counter',
-          counter: 'jumpTrack',
+          counter: 'distance',
           amount: 1
         },
         {

@@ -689,7 +689,7 @@ Actions.aMoveViperUnmanned = function(player, zone, direction) {
 Actions.aPrepareForJump = function(advance) {
   if (advance) {
     this.mLog({ template: 'Preparing for jump' })
-    this.mAdjustCounterByName('jumpTrack', 1)
+    this.mAdjustCounterByName('jumpTrack', advance)
   }
   else {
     this.mLog({ template: 'Unable to make jump preparations' })
@@ -802,6 +802,20 @@ Actions.aSelectSkillCheckResult = function(result) {
 
   this.rk.put(skillCheck, 'shortCut', result)
   this.run()
+}
+
+Actions.aSleeperAgents = function() {
+  this.mLog({ template: 'Sleeper Agents Phase' })
+  for (const player of this.getPlayerAll()) {
+    const playerZone = this.getZoneByPlayer(player)
+    this.mMoveCard('decks.loyalty', playerZone)
+
+    const character = this.getCardCharacterByPlayer(player)
+    if (character.name === 'Sharon "Boomer" Valerii') {
+      this.mLog({ template: 'Sharon receives a second loyalty card during this phase' })
+      this.mMoveCard('decks.loyalty', playerZone)
+    }
+  }
 }
 
 // Doesn't actually cause the effects of the card to take place; just
