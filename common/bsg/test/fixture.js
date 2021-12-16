@@ -347,6 +347,14 @@ Fixture.expectNotHasCard = function(game, player, cardName) {
   expect(card).not.toBeDefined()
 }
 
+Fixture.expectNotOption = function(game, player, optionName) {
+  const waiting = game.getWaiting(player)
+  expect(waiting).toBeDefined()
+
+  const option = waiting.options.find(o => o === optionName || o.name === optionName)
+  expect(option).not.toBeDefined()
+}
+
 Fixture.expectOption = function(game, player, optionName) {
   const waiting = game.getWaiting(player)
   expect(waiting).toBeDefined()

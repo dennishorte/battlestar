@@ -794,7 +794,10 @@ describe('player turn', () => {
         })
 
         test('second choice is only actions', () => {
-          const game = _executiveOrderFixture()
+          const game = _executiveOrderFixture(game => {
+            // This ensures there is an Action that tom can take.
+            fx.ensureCard(game, 'tom', 'Launch Scout')
+          })
           game.submit({
             actor: 'dennis',
             name: 'Choose a Player',
@@ -2996,8 +2999,7 @@ describe('skill checks', () => {
     test('current player can advance to next step', () => {
       const game = _sendTomToBrig()
 
-      const optionNames1 = game.getWaiting('dennis').options.map(o => o.name || o)
-      expect(optionNames1).toEqual(expect.arrayContaining(['Start Skill Check']))
+      fx.expectOption(game, 'dennis', 'Start Skill Check')
 
       // Can submit plans and still advance to the next step
       game.submit({
@@ -3009,25 +3011,17 @@ describe('skill checks', () => {
         }],
       })
 
-      const optionNames2 = game.getWaiting('dennis').options.map(o => o.name || o)
-      expect(optionNames2).toEqual(expect.arrayContaining(['Start Skill Check']))
+      fx.expectOption(game, 'dennis', 'Start Skill Check')
     })
 
     describe('Scientific Research', () => {
 
       test('players can use Scientific Research', () => {
         const game = _sendTomToBrig(game => {
-          const card = game
-            .getZoneByName('decks.engineering')
-            .cards
-            .find(c => c.name === 'Scientific Research')
-          game.mMoveCard('decks.engineering', 'players.dennis', card)
+          fx.ensureCard(game, 'dennis', 'Scientific Research')
         })
 
-        const action = game.getWaiting('dennis')
-        const scientificOption = action.options.find(o => o.name === 'Use Scientific Research')
-        expect(scientificOption).toBeDefined()
-        expect(game.getZoneByPlayer('dennis').cards.find(c => c.name === 'Scientific Research')).toBeDefined()
+        fx.expectOption(game, 'dennis', 'Use Scientific Research')
 
         game.submit({
           actor: 'dennis',
@@ -3049,22 +3043,13 @@ describe('skill checks', () => {
         expect(game.getSkillCheck().scientificResearch).toBe(true)
 
         // Card is dicarded after discuss phase
-        expect(game.getZoneByPlayer('dennis').cards.find(c => c.name === 'Scientific Research')).not.toBeDefined()
+        fx.expectNotHasCard(game, 'dennis', 'Scientific Research')
       })
 
       test('Change Answer clears Scientific Research flag', () => {
         const game = _sendTomToBrig(game => {
-          const card = game
-            .getZoneByName('decks.engineering')
-            .cards
-            .find(c => c.name === 'Scientific Research')
-          game.mMoveCard('decks.engineering', 'players.dennis', card)
+          fx.ensureCard(game, 'dennis', 'Scientific Research')
         })
-
-        const action = game.getWaiting('dennis')
-        const scientificOption = action.options.find(o => o.name === 'Use Scientific Research')
-        expect(scientificOption).toBeDefined()
-        expect(game.getZoneByPlayer('dennis').cards.find(c => c.name === 'Scientific Research')).toBeDefined()
 
         game.submit({
           actor: 'dennis',
@@ -3101,16 +3086,12 @@ describe('skill checks', () => {
         expect(game.getSkillCheck().scientificResearch).toBe(false)
 
         // Card is not discarded, since it wasn't used
-        expect(game.getZoneByPlayer('dennis').cards.find(c => c.name === 'Scientific Research')).toBeDefined()
+        fx.expectHasCard(game, 'dennis', 'Scientific Research')
       })
 
       test('cannot use if the skill check already uses Engineering cards', () => {
         const game = _sendTomToBrig(game => {
-          const card = game
-            .getZoneByName('decks.engineering')
-            .cards
-            .find(c => c.name === 'Scientific Research')
-          game.mMoveCard('decks.engineering', 'players.dennis', card)
+          fx.ensureCard(game, 'dennis', 'Scientific Research')
 
           // Ensure that the skill check believes it needs engineering cards
           jest.spyOn(game, 'getSkillCheck').mockImplementation(() => {
@@ -3125,9 +3106,7 @@ describe('skill checks', () => {
           })
         })
 
-        const action = game.getWaiting('dennis')
-        const scientificOption = action.options.find(o => o.name === 'Use Scientific Research')
-        expect(scientificOption).not.toBeDefined()
+        fx.expectNotOption(game, 'dennis', 'Use Scientific Research')
       })
 
       test('engineering cards are counted as positive in the check', () => {
@@ -3136,23 +3115,9 @@ describe('skill checks', () => {
 
       test('only the first player (in submit order) uses their card', () => {
         const game = _sendTomToBrig(game => {
-          const card = game
-            .getZoneByName('decks.engineering')
-            .cards
-            .find(c => c.name === 'Scientific Research')
-          game.mMoveCard('decks.engineering', 'players.dennis', card)
-
-          const card2 = game
-            .getZoneByName('decks.engineering')
-            .cards
-            .find(c => c.name === 'Scientific Research')
-          game.mMoveCard('decks.engineering', 'players.micah', card2)
+          fx.ensureCard(game, 'dennis', 'Scientific Research')
+          fx.ensureCard(game, 'micah', 'Scientific Research')
         })
-
-        const action = game.getWaiting('dennis')
-        const scientificOption = action.options.find(o => o.name === 'Use Scientific Research')
-        expect(scientificOption).toBeDefined()
-        expect(game.getZoneByPlayer('dennis').cards.find(c => c.name === 'Scientific Research')).toBeDefined()
 
         game.submit({
           actor: 'micah',
@@ -3186,8 +3151,8 @@ describe('skill checks', () => {
         expect(game.getSkillCheck().scientificResearch).toBe(true)
 
         // Only the first player uses their card, starting from the left of the current player
-        expect(game.getZoneByPlayer('micah').cards.find(c => c.name === 'Scientific Research')).not.toBeDefined()
-        expect(game.getZoneByPlayer('dennis').cards.find(c => c.name === 'Scientific Research')).toBeDefined()
+        fx.expectNotHasCard(game, 'micah', 'Scientific Research')
+        fx.expectHasCard(game, 'dennis', 'Scientific Research')
       })
     })
 
@@ -3196,7 +3161,7 @@ describe('skill checks', () => {
         const game = _sendTomToBrig(game => {
           fx.ensureCard(game, 'dennis', 'Investigative Committee')
         })
-        fx.ensureOption(game, 'dennis', 'Use Investigative Committee')
+        fx.expectOption(game, 'dennis', 'Use Investigative Committee')
       })
 
       test('only the first player to use Investigative Committee plays a card', () => {
