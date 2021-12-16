@@ -2709,8 +2709,8 @@ describe('player turn', () => {
 
 describe('adhoc transitions', () => {
 
-  describe.skip('draw-skill-cards', () => {
-
+  describe('draw-skill-cards', () => {
+    // Tested separately for each different use case
   })
 
   describe('Launch Self on Viper', () => {
@@ -2868,12 +2868,6 @@ describe('adhoc transitions', () => {
       const { game, otherId } = _fixtureAfterChoose()
       const { zoneName } = game.getCardByPredicate(c => c.id === otherId)
       expect(zoneName).toBe('discard.crisis')
-    })
-  })
-
-  describe("Gaius Baltar's delusional intuition", () => {
-    test.skip('can draw a card before starting the crisis', () => {
-
     })
   })
 })
@@ -3691,6 +3685,23 @@ describe('player-turn-crisis', () => {
 
       expect(game.aActivateCylonShips.mock.calls.length).toBe(1)
       expect(game.aPrepareForJump.mock.calls.length).toBe(1)
+    })
+  })
+
+  describe("Gaius Baltar's delusional intuition", () => {
+    test('can draw a card before starting the crisis', () => {
+      const factory = new GameFixtureFactory()
+      factory.options.players[0].character = 'Gaius Baltar'
+      const game = factory.build().advanceTo('player-turn-crisis').game
+      game.run()
+
+      // Draw card option exists
+      expect(game.getWaiting('dennis').name).toBe('Delusional Intuition')
+
+      // Can choose any kind of card
+      expect(game.getWaiting('dennis').options.sort()).toStrictEqual([
+        'engineering', 'leadership', 'piloting', 'politics', 'tactics'
+      ])
     })
   })
 })
