@@ -17,6 +17,8 @@ export default {
 
   methods: {
     cardClicked() {
+      console.log(this.card)
+
       if (this.card.kind === 'crisis' || this.card.kind === 'superCrisis') {
         this.$game.ui.modal.crisisCards = this.card.name
         this.$bvModal.show('crisis-cards-modal')

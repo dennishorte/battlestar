@@ -303,20 +303,20 @@ export default {
 .deck-name {
   align-items: center;
   border: 1px solid darkgray;
-  border-radius: .25em;
+  border-radius: .25rem;
 
-  font-size: .7em;
+  font-size: .7rem;
 
   display: flex;
   flex-direction: column;
   flex-grow: 1;
   justify-content: center;
-  padding: .25em;
+  padding: .25rem;
   min-height: 38px;
 }
 
 .deck-zone {
-  margin-bottom: .5em;
+  margin-bottom: .5rem;
 }
 
 .discard {
@@ -335,16 +335,16 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  font-size: 1rem;
+  font-size: 1rrem;
 }
 
 .bottom-row {
   border-bottom: 1px solid darkgray;
   border-left: 1px solid darkgray;
   border-right: 1px solid darkgray;
-  border-radius: .25em;
-  font-size: .7em;
-  min-height: .5em;
+  border-radius: .25rem;
+  font-size: .7rem;
+  min-height: .5rem;
 }
 
 .droppable {
