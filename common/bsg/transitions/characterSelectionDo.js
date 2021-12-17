@@ -11,7 +11,7 @@ function generateOptions(context) {
   const game = context.state
   const player = game.getPlayerByName(context.data.playerName)
   const characterDeck = game.getZoneByName('decks.character')
-  const availableCharacters = characterDeck.cards.map(c => c.name).sort()
+  const availableCharacters = characterDeck.cards.map(c => c.id).sort()
 
   return context.wait({
     actor: player.name,
@@ -23,12 +23,13 @@ function generateOptions(context) {
 function handleResponse(context) {
   const game = context.state
   const player = game.getPlayerByName(context.data.playerName)
-  const characterName = context.response.option[0]
-  game.aSelectCharacter(player, characterName)
+  const characterId = context.response.option[0]
+  const characterCard = game.getCardById(characterId)
+  game.aSelectCharacter(player, characterCard.name)
 
   // Apollo still needs to launch in a viper
   if (
-    characterName === 'Lee "Apollo" Adama'
+    characterCard.name === 'Lee "Apollo" Adama'
     && game.getCardsKindByPlayer('player-token', player).length > 0
   ) {
     markDone(context)

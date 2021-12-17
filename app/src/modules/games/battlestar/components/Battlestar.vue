@@ -57,6 +57,9 @@
                 <b-dropdown-item @click="$bvModal.show('locations-modal')">
                   Locations
                 </b-dropdown-item>
+                <b-dropdown-item @click="$bvModal.show('quorum-cards-modal')">
+                  Quorum Cards
+                </b-dropdown-item>
                 <b-dropdown-item @click="$bvModal.show('skill-cards-modal')">
                   Skill Cards
                 </b-dropdown-item>
@@ -144,6 +147,7 @@
     <ErrorModal />
     <GameLog />
     <HacksModal />
+    <QuorumCardsModal />
     <ZoneViewerModal />
 
     <b-modal
@@ -191,6 +195,7 @@ import GameLog from './GameLog'
 import GrabMessage from './GrabMessage'
 import HacksModal from './HacksModal'
 import Locations from './Locations'
+import QuorumCardsModal from './QuorumCardsModal'
 import Resources from './Resources'
 import SkillCards from './SkillCards'
 import SkillCheckPanel from './SkillCheckPanel'
@@ -214,6 +219,7 @@ export default {
     GrabMessage,
     HacksModal,
     Locations,
+    QuorumCardsModal,
     Resources,
     SkillCards,
     SkillCheckPanel,
@@ -270,8 +276,8 @@ export default {
 
     undo() {
       console.log('undo not implemented')
-    },
-  },
+},
+},
 
   created() {
     this.$game.setToaster(function(msg) {

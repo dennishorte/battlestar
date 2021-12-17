@@ -21,6 +21,21 @@ export default {
         this.$game.ui.modal.crisisCards = this.card.name
         this.$bvModal.show('crisis-cards-modal')
       }
+
+      else if (this.card.kind === 'character') {
+        this.$game.ui.modal.characters = this.card.name
+        this.$bvModal.show('characters-modal')
+      }
+
+      else if (this.card.kind === 'quorum') {
+        this.$game.ui.modal.quorumCard = this.card.name
+        this.$bvModal.show('quorum-cards-modal')
+      }
+
+      else if (this.card.kind === 'skill') {
+        this.$game.ui.modal.skillCards = this.card.name
+        this.$bvModal.show('skill-cards-modal')
+      }
     },
   },
 }

@@ -33,6 +33,7 @@ function GamePlugin() {
       crisisCards: '',
       error: '',
       locations: '',
+      quorumCard: '',
       skillCards: '',
       zoneInfo: '',
     },

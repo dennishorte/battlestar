@@ -39,7 +39,7 @@ export default {
 
   computed: {
     action() {
-      return this.$game.getWaiting(this.actor).actions[0]
+      return this.$game.getWaiting(this.actor)
     },
 
     isValid() {
@@ -56,11 +56,12 @@ export default {
 
   methods: {
     async submit() {
-      this.$game.submit({
+      const payload = {
         actor: this.actor,
         name: this.action.name,
         option: this.selection.option,
-      })
+      }
+      this.$game.submit(payload)
       await this.$game.save()
     },
 
