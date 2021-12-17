@@ -77,16 +77,7 @@ export default {
     },
 
     hasActionWaiting(player) {
-      const skillCheckDiscussSpecialCase = (
-        this.$game.getWaiting(player)
-        && this.$game.getWaiting(player).name === 'Skill Check - Discuss'
-        && this.$game.getSkillCheck().flags[player.name].submitted.discussion
-      )
-
-      return (
-        !!this.$game.getWaiting(player)
-        && !skillCheckDiscussSpecialCase
-      )
+      return this.$game.checkPlayerHasActionWaiting(player)
     },
 
     playerIsViewer(player) {

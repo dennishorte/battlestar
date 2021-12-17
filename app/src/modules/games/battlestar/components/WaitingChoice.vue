@@ -12,6 +12,7 @@
 
 
 <script>
+import axios from 'axios'
 import GameButton from './GameButton'
 import OptionSelector from './OptionSelector'
 import { selector } from 'battlestar-common'
@@ -55,6 +56,20 @@ export default {
   },
 
   methods: {
+    async maybeNotifyPlayers() {
+      if (process.env.NODE_ENV === 'development') {
+        return
+      }
+      for (const player of this.$game.getPlayerAll()) {
+        if (this.$game.checkPlayerHasActionWaiting(player)) {
+          await axios.post('/api/game/notify', {
+            gameId: this.$game.state._id,
+            userId: this.$game.getPlayerByName('dennis')._id,
+          })
+        }
+      }
+    },
+
     async submit() {
       const payload = {
         actor: this.actor,
@@ -63,6 +78,7 @@ export default {
       }
       this.$game.submit(payload)
       await this.$game.save()
+      await this.maybeNotifyPlayers()
     },
 
     childChanged(event) {

@@ -110,6 +110,22 @@ GamePlugin.prototype.save = async function() {
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// Game functions used only on the UI side
+
+GamePlugin.prototype.checkPlayerHasActionWaiting = function(player) {
+  player = this._adjustPlayerParam(player)
+
+  const skillCheckDiscussSpecialCase = (
+    this.getWaiting(player)
+    && this.getWaiting(player).name === 'Skill Check - Discuss'
+    && this.getSkillCheck().flags[player.name].submitted.discussion
+  )
+
+  return !!this.getWaiting(player) && !skillCheckDiscussSpecialCase
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 // UI interactions
 
 GamePlugin.prototype.actionCancelGrab = function() {
