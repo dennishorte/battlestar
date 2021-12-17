@@ -22,6 +22,11 @@ function generateOptions(context) {
       template: `Evaluating effects of ${context.data.name}`,
     })
 
+    if (!effects || effects.length === 0) {
+      game.mLog({ template: 'no effect' })
+      return context.done()
+    }
+
     if (details.dieRoll && !bsgutil.rollDieResult(details.dieRoll)) {
       game.mLog({ template: "Die roll didn't match; no effect" })
       return context.done()

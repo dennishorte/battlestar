@@ -124,10 +124,12 @@ GameFixtureFactory.prototype.advanceTo = function(targetTransitionName, targetPl
   // Do character-selection
   for (let i = 0; i < this.game.getPlayerAll().length; i++) {
     const player = this.game.getPlayerByIndex(i)
+    const characterCard = this.game.getCardByName(this.options.players[i].character)
+
     this.game.submit({
       actor: player.name,
       name: 'Select Character',
-      option: [this.options.players[i].character]
+      option: [characterCard.id]
     })
 
     // For Lee Adama, launch him into space

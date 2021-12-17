@@ -148,7 +148,7 @@ Actions.aActivateCylonShips = function(kind) {
     this.aActivateBasestarAttacks()
   }
   else if (kind === 'Raiders Launch') {
-    this.aBasestarsLaunch('raiders', 3)
+    this.aBasestarsLaunch('raider', 3)
   }
   else if (kind === 'Raiders') {
     this.aActivateRaiders()

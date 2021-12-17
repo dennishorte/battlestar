@@ -104,7 +104,7 @@ function _validate(selector, selection, annotate) {
       mismatch: `Selection ${name} didn't exist in the options`
     }
   }
-  else if (exclusive && matched.length > 1) {
+  else if (exclusive && count > 1) {
     if (annotate) {
       selection.annotation.isValid = false
       selection.annotation.mismatch = 'exclusive'

@@ -2902,7 +2902,7 @@ describe('skill checks', () => {
     return game
   }
 
-  function _addCardsFixture(options) {
+  function _addCardsFixture(options, setupFunc) {
     options = options || {}
 
     const game = _sendTomToBrig(options.beforeChoose)
@@ -2911,6 +2911,10 @@ describe('skill checks', () => {
     }
     if (options.useInvestigativeCommitee) {
       game.rk.put(game.getSkillCheck(), 'investigativeCommittee', true)
+    }
+
+    if (setupFunc) {
+      setupFunc(game)
     }
 
     game.submit({
@@ -3337,8 +3341,18 @@ describe('skill checks', () => {
       expect(actionOptions[0].options[1].max).toBe(1)
     })
 
-    test.skip('players can pre-enqueue declare emergency', () => {
-
+    test.only('players can pre-enqueue declare emergency', () => {
+      const game = _addCardsFixture({}, game => {
+        fx.ensureCard(game, 'micah', 'Declare Emergency')
+      })
+      game.submit({
+        actor: 'micah',
+        name: 'Skill Check - Add Cards',
+        option: [
+          'Use Declare Emergency',
+          'Do Nothing',
+        ]
+      })
     })
 
     test.skip('Chief "Galen" Tyrol can pre-enqueue his Blind Devotion ability', () => {
@@ -4649,6 +4663,15 @@ describe('misc functions', () => {
       })
 
     }) // raiders
+
+    describe('Raiders Launch', () => {
+      test.only('each basestar launches 3 raiders', () => {
+        const game = _spaceFixture()
+        game.mDeploy('space.space1', 'basestar')
+        game.aActivateCylonShips('Raiders Launch')
+        expect(game.getZoneSpaceByIndex(1).cards.length).toBe(4)
+      })
+    })
 
   })  // aActivateCylonShips
 
