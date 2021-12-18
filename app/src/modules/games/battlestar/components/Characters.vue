@@ -26,7 +26,7 @@
 
         <div class="selected-once-per-game">
           <div class="selected-heading">Once Per Game</div>
-          {{ selectedData['once per game ability'] }}
+          {{ selectedData.oncePerGameAbility }}
         </div>
 
         <div class="selected-weakness">
@@ -45,8 +45,8 @@
 
         <div class="selected-succession">
           <div class="selected-heading">Succession</div>
-          <div>Admiral: {{ selectedData["admiral line of succession order"] }}</div>
-          <div>President: {{ selectedData["president line of succession order"] }}</div>
+          <div>Admiral: {{ selectedData.admiralSuccession }}</div>
+          <div>President: {{ selectedData.presidentSuccession }}</div>
         </div>
 
         <div>
