@@ -64,7 +64,7 @@ export default {
         if (this.$game.checkPlayerHasActionWaiting(player)) {
           await axios.post('/api/game/notify', {
             gameId: this.$game.state._id,
-            userId: this.$game.getPlayerByName('dennis')._id,
+            userId: player._id,
           })
         }
       }
