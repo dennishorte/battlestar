@@ -27,11 +27,13 @@ User.checkPassword = async function(name, password) {
   const user = await User.findByName(name)
 
   if (!user) {
-    throw `User not found (${name})`
+    console.log(`User not found: ${user}`)
+    return null
   }
 
   const passwordMatches = await bcrypt.compare(password, user.passwordHash)
   if (!passwordMatches) {
+    console.log(`Passwords do not match`)
     return null
   }
 
