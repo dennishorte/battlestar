@@ -62,6 +62,10 @@ Util.toCamelCase = function(str) {
   return downCased.replace(/\W/g, '')
 }
 
+Util.toCapsCase = function(str) {
+  return str.replace(/\W/g, '')
+}
+
 Util.toKebabCase = function(str) {
   return str.toLowerCase().replace(/\W/g, '-')
 }
