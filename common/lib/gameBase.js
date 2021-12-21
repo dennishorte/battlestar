@@ -8,6 +8,7 @@ const util = require('../lib/util.js')
 
 module.exports = {
   GameBase,
+  GameOverTrigger,
   stateFactory,
 }
 
@@ -24,8 +25,18 @@ function stateFactory(lobby) {
     options: lobby.options,
     users: lobby.users,
     createdTimestamp: Date.now(),
+
+    // User facing log
+    log: [],
+
+    // By incrementing this each time the game is saved, we can check if a save request would
+    // overwrite another save and prevent that from happening.
     saveKey: 0,
-    initialized: false,
+
+    // RecordKeeper persistent state
+    history: [],
+
+    // StateMachine persistent state
     sm: {
       stack: [],
       waiting: [],
@@ -34,6 +45,10 @@ function stateFactory(lobby) {
   }
 
   return state
+}
+
+function GameOverTrigger() {
+
 }
 
 GameBase.prototype.load = function(transitions, state) {
@@ -93,8 +108,8 @@ GameBase.prototype.run = function() {
     this.sm.run()
   }
   catch (e) {
-    if (e instanceof bsgutil.GameBaseOverTrigger) {
-      this.mGameBaseOver(e)
+    if (e instanceof GameOverTrigger) {
+      this.mGameOver(e)
     }
     else {
       throw e
@@ -380,6 +395,10 @@ GameBase.prototype.mAdjustCounterByName = function(name, amount) {
   }
 
   this.rk.put(this.state.counters, name, newValue)
+}
+
+GameBase.prototype.mGameOver = function(trigger) {
+  throw new Error('not implemented')
 }
 
 GameBase.prototype.mLog = function(msg) {

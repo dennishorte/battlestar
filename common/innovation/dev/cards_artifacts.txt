@@ -1,0 +1,641 @@
+Holmegaard Bows
+red
+1
+klhl
+l: I compel you to transfer the highest top card with a {k} from your board to my hand!
+l: Draw a {2}
+
+Papyrus of Ani
+red
+1
+lllh
+l: Return a purple card from your hand. If you do, draw and reveal a card of any type of value two higher. If the drawn card is purple, meld is and execute each of its non-demand dogma effects. Do not share them.
+
+Pavlonian Tusk
+red
+1
+hckc
+c: Draw three cards of value equal to your top green card. Return one of the drawn cards. Score one of the drawn cards.
+
+Dancing Girl
+yellow
+1
+hsss
+s: I compel you to transfer Dancing Girl to your board!
+s: If Dancing Girl has been on every board during this action, and it started on your board, you win.
+
+Lurgan Canoe
+yellow
+1
+hccc
+c: Meld a card from your hand. Score all other cards of the same color from your board. If you scored at least one card, repeat this effect.
+
+Xianrendong Shards
+yellow
+1
+hlll
+l: Reveal three cards from your hand. Score two, then tuck the other. If the scored cards were the same color, draw three {1}s.
+
+Priest-King
+green
+1
+khkk
+k: Score a card from your hand. If you have a top card matching its color, execute each of the top card's non-demand dogma effects. Do not share them.
+k: Claim an achievement, if eligible.
+
+Electrum Stater of Efesos
+green
+1
+chkc
+c: Draw and reveal a {3}. If you do not have a top card of the drawn card's color, meld it and repeat this dogma effect.
+
+Jiskairumoko Necklace
+green
+1
+hckk
+k: I compel you to return a card from your score pile! if you do, transfer an achievement of the same value from your achievements to mine!
+
+Treaty of Kadesh
+blue
+1
+ckhk
+k: I compel you to return all top cards from your board with a demand effect!
+k: Score a top, non-blue card from your board with a demand effect.
+
+Sibidu Needle
+blue
+1
+kkkh
+k: Draw and reveal a {1}. If you have a top card of matching color and value to the drawn card, score the drawn card and repeat this effect.
+
+Basur Hoyuk Tokens
+blue
+1
+chll
+l: Draw and reveal a {4}. If you have a top card of the drawn card's color that comes before it in the alphabet, return the drawn card and all cards from your score pile.
+
+Mask of Warka
+purple
+1
+kkhk
+k: Choose a color. Each player reveals all cards of that color from their hand. If you are the only player to reveal cards, return them and claim all achievements of value matching those cards, ignoring eligibility.
+
+Ark of the Covenant
+purple
+1
+hkkk
+k: Return a card from your hand. Transfer all cards of the same color from the boards of all players with no top Artifacts to your score pile. If Ark of the Covenant is a top card on any board, transfer it to your hand.
+
+Tale of the Shipwrecked Sailor
+purple
+1
+hkss
+s: Choose a color. Draw a {1}. Meld a card of the chosen color from your hand. If you do, splay that color left.
+
+Chronicle of Zuo
+red
+2
+chss
+s: If you have the least {k}, draw a {2}. If you have the least {c}, draw a {3}. If you have the least {s}, draw a {4}.
+
+Babylonian Chronicles
+red
+2
+hkkk
+k: I compel you to transfer a top non-red card with a {k} from your board to my board!
+k: Draw and score a {3}
+
+Holy Grail
+yellow
+2
+lhcl
+l: Return a card from your hand. Claim an achievement of matching value ignoring eligibility.
+
+Terracotta Army
+yellow
+2
+ccch
+c: I compel you to return a top card with no {k}!
+c: Score a card from your hand with no {k}.
+
+Holy Lance
+purple
+2
+klhk
+k: I compel you to transfer a top Artifact from your board to my board!
+k: If Holy Grail is a top card on your board, you win.
+
+Baghdad Battery
+green
+2
+cshc
+c: Meld two cards from your hand. If you melded two of the same color and they are of different type, draw and score five {2}s.
+
+Seikilos Epitaph
+blue
+2
+lllh
+l: Draw and meld a {3}. Meld your bottom card of the drawn card's color. Execute its non-demand dogma effects. Do not share them.
+
+Rosetta Stone
+blue
+2
+kkkh
+k: Choose a card type. Draw two {2} of that type. Meld on and transfer the other to an opponent's board.
+
+Dead Sea Scrolls
+purple
+2
+hksk
+k: Draw an Artifact of value equal to the value of your highest top card.
+
+Cyrus Cylinder
+purple
+2
+hssk
+s: Choose any other rtop purple card on any plyaer's board. Execute its non-demand dogma effects. Do not share them. Splay left a color on any player's board.
+
+Excalibur
+red
+3
+chkk
+k: I compel your to transfer a top card of higher value than my top card of the same color from your board to my board!
+
+Mjolnir Amulet
+red
+3
+hkks
+k: I compel you to choose a top card on your board! Transfer all cards of the card's color from your board to my score pile!
+
+Moylough Belt Shrine
+yellow
+3
+klhk
+k: I compel your to reveal all cards in your hand and transfer the card of my choice to my board.
+
+Along the River during the Qingming Festival
+yellow
+3
+ccch
+c: Draw and reveal a {4}. If it is yellow, tuck it. If it is purple, score it. Otherwise, repeat this effect.
+
+Philosopher's Stone
+green
+3
+ccch
+c: Return a card from your hand. Score a number of cards from your hand equal to the value of the card returned.
+
+Beauvais Cathedral Clock
+green
+3
+cchc
+c: Draw and reveal a {4}. Splay right the color matching the drawn card.
+
+Dunhuang Star Chart
+blue
+3
+sshs
+s: Return all cards from your hand. Draw a card of value equal to the number of cards returned.
+
+Charter of Liberties
+blue
+3
+ssck
+s: Tuck a card from your hand. If you do, splay left its color, then choose a splayed color on any player's board. Execute all of that color's top card's non-demand dogma effects, without sharing.
+
+Necronomicon
+purple
+3
+hlll
+l: Draw and reveal a {3}. If it is yello, return all cards in your hand. If it is green, unsplay all your stacks. If it is red, return all cards in your score pile. If it is blue, draw a {9}.
+
+Shroud of Turin
+purple
+3
+lhll
+l: Return a card from your hand. If you do, return a top card from your board and a card from your score pile of the returned card's color. If you did all three, claim an achievement ignoring eligibility.
+
+East India Company Charter
+red
+4
+cffh
+f: Choose a value other than {5}. Return all cards of that value from all score piles. For each player that returned cards, draw and score a {5}.
+
+Tortugas Galleon
+red
+4
+ffch
+f: I compel you to transfer all the highest cards from your score pile to my score pile! If you transfered any, transfer a top card on your board of that value to my board.
+
+Moses
+yellow
+4
+llhl
+l: I compel you to transfer all top cards with a {c} from your board to my score pile!
+l: Score a top card with a {c}.
+
+Mona Lisa
+yellow
+4
+hcll
+l: Choose a number and a color. Draw five {4}, then reveal your hand. If you have exactly that many cards of that color, score them, and splay right your cards of that color. Otherwise, return all cards from your hand.
+
+Molasses Reef Caravel
+green
+4
+sssh
+s: Return all cards from your hand. Draw three {4}. Meld a blue card from your hand. Score a card from your hand. Return a card from your score pile.
+
+Hunt-Lennox Globe
+green
+4
+sshs
+s: If you ahve fewer than four cards in your hand, retuan all non-green top cards from your board. Draw a {5} for card returned. Meld a card from your hand.
+
+Petition of Right
+blue
+4
+shcs
+s: I compel you to transfer a card from your score pile to my score pile for each top card with a {k} on your board.
+
+Delft Pocket Telescope
+blue
+4
+fhss
+s: Return a card from yoru score pile. If you do, draw a {5} and a {6}, then reveal one of the drawn cards that has a symbol in common with the returned card. If you cannot, return hte drawn cards and repeat the effect.
+
+Cross of Coronado
+purple
+4
+cchc
+c: Reveal your hand. If you have exactly five cards and five colors in your hand, you win.
+
+Abell Gallery Harpsichord
+purple
+4
+lhcl
+l: For each value of top card on your board appearing exactly once, draw and score a card of that value in ascending order.
+
+Bill of Rights
+red
+5
+hlss
+s: I compel you to choose a color where you have more visible cards than I do! Transfer all cards of that color from your board to my board, from the bottom up.
+
+Ship of the Line Sussex
+red
+5
+ffhf
+f: If you have no cards in your score pile, choose a color and score all cards of that color from your board. Otherwise, return all cards from your score pile.
+
+Gujin Tushu Jinsheng
+yellow
+5
+schs
+s: If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board. Execute the effects on the chosen card as if they were on this card. Do not share them.
+
+The Daily Courant
+yellow
+5
+ffch
+f: Draw a card of any value, then place it on top of the draw pile of its age. Execute the effects of one of your other top cards as if they were on this card. Do not share them.
+
+Baroque-Longue la Belle
+green
+5
+fhfc
+f: Draw and meld a {5}. If the drawn card is not green, repeat this effect.
+
+Hudson's Bay Company Archives
+green
+5
+chfc
+c: Score the bottom card of every color on your board. Meld a card from your score pile. Splay right the color of the melded card.
+
+Boerhavve Silver Microscope
+blue
+5
+sfsh
+s: Return the lowest card in your hand and the lowest top card on your board. Draw and score a card of value equal to the sum of the values of the cards returned.
+
+Principa
+blue
+5
+sshs
+s: Return all non-blue top cards from yoru board. For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order.
+
+Sandham Room Cricket Bat
+purple
+5
+llfh
+l: Draw and reveal a {6}. If it is red, claim an achievement, ignoring eligibility.
+
+Almira, Queen of the Castle
+purle
+5
+chcc
+c: Meld a card from your hand. Claim an achievement of matching value, ignoring eligiblilty.
+
+Frigate Constitution
+red
+6
+hfff
+f: I compel you to reveal a card in your hand! If you do, and its value is equal to the value of any of my top cards, return it and all cards of its color from your board.
+
+U.S. Delcaration of Independence
+red
+6
+ccsh
+c: I compel you to transfer the highest card in your hand to my hand, the highest card in your score pile to my score pile, and the highest top card with a {f} from yor board to my board!
+
+Stamp Act
+yellow
+6
+hcss
+s: I compel you to transfer a card of value equal to the top yellow card on your board from your score pile to mine! if you do, return a card from your score pile of value equal to the top green card on your board!
+
+Pride and Prejudice
+yellow
+6
+hsls
+s: Draw and meld a {6}. If the drawn card's color is the color with the fewest (or tied) number of cards on your board, score the melded card, and repeat this effect.
+
+The Weath of Nations
+green
+6
+cfhc
+c: Draw and score a {1}. Add up the values of all the cards in your score pile, divide by five, and round up. Draw and score a card of value equal to the result.
+
+Buttonwood Agreement
+green
+6
+fcfh
+f: Choose three colors. Draw and reveal a {8}. If the rawn card is one of the chosen colors, score it and splay up that color. Otherwise, return all cards of the drawn card's color from your score pile, and unsplay that color.
+
+Kilogram of the Archives
+blue
+6
+fhfs
+f: Return a card from your hand. Return a top card from your board. If you returned two cards and their values sum to ten, draw and score a {0}.
+
+Puffing Billy
+blue
+6
+fhff
+f: Return a card from your hand. Draw a card of value equal to the highest number of symbols of the same type visible in that color on your board. Splay right that color.
+
+Moonlight Sonata
+purple
+6
+sshs
+s: Choose a color on your board having the highest top card. meld the bottom card on your board of that color. Claim an achievement, ignoring eligibility.
+
+Marcha Real
+purple
+6
+llhc
+l: Reveal and return two cards from your hand. If they have the same value, draw a card of value one higher. If they have the same color, claim and achievement, ignoring elibility.
+
+Submarine H. L. Hunley
+red
+7
+fffh
+f: I compel you to draw and meld a {7}! Reveal the bottom card on your board of the melded card's color! If the revealed card is a {1}, return all cards of its color from your board!
+
+Jedlik's Electromagnetic Self-Rotor
+red
+7
+hiss
+s: Draw and score an {8}. Draw and meld an {8}. Claim an achievement of value 8 if it is available, ignoring eligibility.
+
+Colt Paterson Revolver
+yellow
+7
+fhfc
+f: I compel you to reveal your hand! Draw a {7}! If the color of the drawn card matches the color of any other card in your hand, return all cards in your hand and all cards in your score pile!
+
+Single Model 27
+yellow
+7
+hfii
+i: Tuck a card from your hand. If you do, splay up its color, and then tuck all cards from your score pile of that color.
+
+International Prototype Metre Bar
+green
+7
+chcf
+c: Choose a value. Draw and meld a card of that value. Splay up the color of the melded card. If the number of cards of that color visible on your board is exactly equal to the card's value, you win. Otherwise, return the melded card.
+
+Hansen Writing Ball
+green
+7
+ilih
+i: I compel you to draw four {7}! Meld a blue card, then transfer all cards in your hand to my hand!
+i: Draw and reveal a {7}. If it has no {i}, truck it and repeat this effect.
+
+Periodic Table
+blue
+7
+shss
+s: Choose two top cards on your board of the same value. If you do, draw a card of value one higher and meld it. If it melded over one of the chosen cards, repeat this effect.
+
+Corvette Challenger
+blue
+7
+lshl
+s: Draw and tuck an {8}. Splay up the color of the tucked card. Draw and score a card of value equal to the number of cards of that color visible on your board.
+
+Roundhay Garden Scene
+purple
+7
+lllh
+l: Meld the highest card from your score pile. Draw and score two cards of value equal to the melded card. Execute the effects of the melded card as if they were on this card. Do not share them.
+
+The Communist Manifesto
+purple
+7
+cchl
+c: For each player in the game, draw and reveal a {7}. Transfer one of the drawn cards to each player's board. Execute the non-demand dogma effects of your card. Do not share them.
+
+Battleship Bismark
+red
+8
+hfff
+f: I compel you to draw and reveal an {8}! Return all cards of the drawn card's color from your board!
+
+Battleship Yamato
+red
+8
+_h__
+static: While this is a top card on your board, it counts as an 11.
+
+Plush Beweglich Rod Bear
+yellow
+8
+lllh
+l: Choose a value. Splay up each color with a top card of the chosen value. Return all cards of the chosen value from all score piles.
+
+Time
+yellow
+8
+hiis
+i: I compel you to transfer a non-yellow card with a {i} from your board to my board! If you do, repeat this effect!
+
+Ocean Liner Titanic
+green
+8
+cfch
+c: Score all bottom cards from your board.
+
+Meji-Mura Stamp Vending Machine
+green
+8
+lchc
+c: Return a card from your hand. Draw and score three cards of the returned card's value.
+
+Parnell Pitch Drop
+blue
+8
+sssh
+s: Draw and meld a card of value one higher than the highest top card on your board. If the melded card has three {i}, you win.
+
+Earhart's Lockheed Electra 10E
+blue
+8
+ihii
+i: For each value below nine, return a top card of that value from your board, in descending order. If you return eight cards, you win. Otherwise, claim an achievement, ignoring eligibility.
+
+Garland's Ruby Slippers
+purple
+8
+hiii
+i: Meld an {8} from your hand. If the melded card has no effects, you win. Otherwise, execute the effects of the melded card as if they were on this card. Do not share them.
+
+'30 World Cup Final Ball
+purple
+8
+llih
+l: I compel you to return one of your achievements!
+l: Draw and reveal an {8}. The single player with the highest top card of the drawn card's color achieves it, ignoring eligibility. If that happens, repeat this effect.
+
+United Nations Charter
+red
+9
+hlil
+l: I compel you to transfer all top cards on your board with a demand effect to my score pile!
+l: If you have a top card on your board with a demand effect, draw a {0}.
+
+Velcro Shoes
+red
+9
+ffih
+f: I compel you to transfer a {9} from your hand to my hand! If you do not, transfer a {9} from your score pile to my score pile! If you do neither, I win!
+
+Rock Around the Clock
+yellow
+lihi
+i: For each top card on your board with a {i}, draw and score a {9}.
+
+Magnavox Odyssey
+yellow
+9
+slhs
+s: Draw and meld two {0}. If they are the same color, you win.
+
+Philips Compact Cassette
+green
+9
+hlll
+l: I compel you to unsplay all colors on your board!
+l: Splay up two colors on your board.
+
+Syncom 3
+green
+9
+hiii
+i: Return all cards from your hand. Draw and reveal five {9}. If you revealed all five colors, you win.
+
+Yeager's Bell X-1A
+blue
+9
+iifh
+i: Draw and meld a {9}. Execute the effects of the melded card as if they were on this card, without sharing. If that card has a {i}, repeat this effect.
+
+Luna 3
+blue
+9
+fhff
+f: Return all cards from your score pile. Draw and score a card of value equal to the numer of cards returned.
+
+The Big Bang
+purple
+9
+shss
+s: Execute the non-demand effects of your top blue card, without sharing. If this caused any change to occur, draw and remove a {0} from the game, then repeat this effect.
+
+Marilyn Diptych
+purple
+9
+ccch
+c: You may score a card from your hand. You may transfer any card from your score pile to your hand. If you have exactly 25 points, you win.
+
+Exxon Valdex
+red
+10
+fhff
+f: I compel you to remove all cards from your hand, score pile, board, and achievements from the game. You lose! If there is only one player remaining in the game, that player wins!
+
+Maldives
+red
+10
+ihii
+i: I compel you to return all cards in your hand but two! Return all cards in your score pile but two!
+i: Return all cards in your score pile but four.
+
+Dolly the Sheep
+yellow
+10
+hili
+i: You may score your bottom yellow card. You may draw and tuck a {1}. If your bottom yellow card is Domestication, you win. Otherwise, meld the higest card in your hand, then draw a {0}.
+
+Where's Waldo
+yellow
+10
+lihl
+l: You win.
+
+Maastrict Treaty
+green
+10
+cchc
+c: If you have the most cards in your score pile, you win.
+
+Seikan Tunnel
+green
+10
+iiih
+i: If you have the most cards of a color showing on your board out of all colors on all boards, you win.
+
+Rover Curiosity
+blue
+10
+hsss
+s: Draw and meld an Artifact {0}. Execute each of the effects of the melded card as if they were on this card. Do not share them.
+
+Higgs Boson
+blue
+10
+sssh
+s: Transfer all cards on your board to your score pile.
+
+DeLorean DMC-12
+purple
+10
+hiii
+i: If DeLorean DMC-12 is a top card on any board, remove all top cards on all boards and all cards in all hands from the game.
+
+Twister
+purple
+10
+hffi
+f: I compel you to reveal your score pile! For each color, meld a card of that color from your score pile.
