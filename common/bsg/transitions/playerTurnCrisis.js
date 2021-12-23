@@ -23,6 +23,10 @@ module.exports = transitionFactory2({
       name: 'prepareForJump',
       func: _prepareForJump,
     },
+    {
+      name: 'cleanup',
+      func: _cleanup,
+    },
   ],
 })
 
@@ -87,4 +91,9 @@ function _prepareForJump(context) {
       return context.push('jump-the-fleet')
     }
   }
+}
+
+function _cleanup(context) {
+  const game = context.state
+  game.mCleanupCrisis()
 }

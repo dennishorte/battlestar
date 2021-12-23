@@ -327,7 +327,7 @@ Game.prototype.getActor = function() {
 }
 
 Game.prototype.getCardActiveCrisis = function() {
-  return {}
+  throw new Error('not implemented')
 }
 
 Game.prototype.getCardById = function(id) {
@@ -1268,11 +1268,25 @@ Game.prototype.mRevealCard = function(card) {
   this.rk.put(card, 'visibility', this.getPlayerAll().map(p => p.name))
 }
 
+Game.prototype.mCleanupCrisis = function() {
+  util.assert(this.state.activeCrisisId, 'No crisis to clean up')
+  const card = this.getCrisis()
+  const cardZone = this.getZoneByCard(card)
+  if (cardZone.name === 'common') {
+    this.mDiscard(card)
+  }
+  this.rk.put(this.state, 'activeCrisisId', '')
+  this.mLog({
+    template: '"{card}" crisis complete',
+    args: { card }
+  })
+}
+
 Game.prototype.mSetCrisisActive = function(card) {
   util.assert(!this.state.activeCrisisId, 'Crisis already active!')
   card = this._adjustCardParam(card)
   this.rk.put(this.state, 'activeCrisisId', card.id)
-  this.mMoveCard(this.getZoneByCard(card), 'keep', card)
+  this.mMoveCard(this.getZoneByCard(card), 'common', card)
   this.mLog({
     template: '"{card}" crisis begins',
     args: { card }

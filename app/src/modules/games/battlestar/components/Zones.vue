@@ -46,6 +46,7 @@
         <div class="heading">
           Open
         </div>
+        <DeckZone name="Keep" deck-name="keep" :expanded="true" />
         <DeckZone name="Common" deck-name="common" :expanded="true" />
         <DeckZone name="Exile" deck-name="exile" />
 
@@ -151,6 +152,39 @@
       </b-col>
 
       <hr>
+    </b-row>
+
+    <b-row>
+      <b-col>
+        <div class="heading">Centurion Track</div>
+        <div class="centurion-steps">
+          <DeckZone
+            name="C1"
+            :hide-menu="true"
+            deck-name="centurions.centurions0" />
+
+          <DeckZone
+            name="C2"
+            :hide-menu="true"
+            deck-name="centurions.centurions1" />
+
+          <DeckZone
+            name="C3"
+            :hide-menu="true"
+            deck-name="centurions.centurions2" />
+
+          <DeckZone
+            name="C4"
+            :hide-menu="true"
+            deck-name="centurions.centurions3" />
+
+          <DeckZone
+            name="C5"
+            :hide-menu="true"
+            deck-name="centurions.centurions4" />
+
+        </div>
+      </b-col>
     </b-row>
 
     <div>
@@ -423,4 +457,12 @@ export default {
 
 
 <style scoped>
+.centurion-steps {
+  display: flex;
+  flex-direction: row;
+}
+
+.centurion-steps div {
+  width: 20%;
+}
 </style>

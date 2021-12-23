@@ -325,7 +325,7 @@ module.exports =  [
         {
           kind: 'move',
           actor: 'currentPlayer',
-          location: 'Brig',
+          location: 'Sickbay',
         },
       ],
       option2: [
@@ -362,7 +362,7 @@ module.exports =  [
         {
           kind: 'move',
           actor: 'currentPlayer',
-          location: 'Brig',
+          location: 'Sickbay',
         },
       ],
       option2: [

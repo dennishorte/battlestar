@@ -18,6 +18,10 @@ module.exports = transitionFactory2({
       func: _chooseCrisisCard,
       resp: _chooseCrisisCardResp,
     },
+    {
+      name: 'cleanup',
+      func: _cleanup,
+    },
   ],
 })
 
@@ -112,4 +116,8 @@ function _chooseCrisisCardResp(context) {
   return context.push('evaluate-crisis', {
     playerName: context.data.playerName,
   })
+}
+
+function _cleanup(context) {
+  game.mCleanupCrisis()
 }

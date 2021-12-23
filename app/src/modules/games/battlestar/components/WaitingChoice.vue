@@ -76,7 +76,13 @@ export default {
         name: this.action.name,
         option: this.selection.option,
       }
-      this.$game.submit(payload)
+      try {
+        this.$game.submit(payload)
+      }
+      catch (e) {
+        alert('Error!\nCheck console for details.')
+        throw e
+      }
       await this.$game.save()
       await this.maybeNotifyPlayers()
     },
