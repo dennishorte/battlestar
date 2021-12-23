@@ -37,14 +37,9 @@ Util.expansionFilter = function(cards, expansions) {
   return cards.filter(c => expansions.includes(c.expansion))
 }
 
-Util.rollDie = function() {
-  return Math.floor(Math.random() * 8) + 1
-}
-
-Util.rollDieResult = function(targetString) {
+Util.rollDieResult = function(roll, targetString) {
   const targetValue = parseInt(targetString.slice(0, 1))
   const direction = targetString.slice(-1)
-  const roll = Util.rollDie()
 
   if (direction === '+' && roll >= targetValue) {
     return true

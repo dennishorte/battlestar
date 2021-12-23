@@ -83,7 +83,7 @@ Actions.aActivateRaider = function(raiderInfo) {
   const spaceZonesWithCivilians = this.getZonesSpaceContaining(c => c.kind === 'civilian')
 
   if (this.checkZoneContains(spaceZone, c => c.kind === 'ships.vipers')) {
-    const roll = bsgutil.rollDie()
+    const roll = this.mRollDie()
     if (roll === 8) {
       this.mRemoveViperAt(spaceZone, 'destroy')
     }
@@ -237,7 +237,7 @@ Actions.aAttackCenturion = function() {
     return
   }
 
-  const dieRoll = bsgutil.rollDie()
+  const dieRoll = this.mRollDie()
   if (dieRoll < 7) {
     this.mLog({
       template: `Attack on centurion misses (rolled ${dieRoll})`
@@ -253,7 +253,7 @@ Actions.aAttackCenturion = function() {
 
 Actions.aAttackCylonByKind = function(player, location, kind, source) {
   location = this._adjustZoneParam(location)
-  const dieRoll = bsgutil.rollDie()
+  const dieRoll = this.mRollDie()
 
   this.mLog({
     template: `{player} rolls {dieRoll} attacking {kind} with ${source}`,
@@ -294,7 +294,7 @@ Actions.aAttackCylonWithViperByKind = function(player, location, kind) {
 }
 
 Actions.aAttackGalactica = function(ship) {
-  const dieRoll = bsgutil.rollDie()
+  const dieRoll = this.mRollDie()
   let hit = false
 
   if (ship.name.startsWith('Basestar')) {

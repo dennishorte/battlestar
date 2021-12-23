@@ -32,7 +32,7 @@ function _testCandidate(context) {
   const candidateName = bsgutil.optionName(context.response.option[0])
 
   // Possibly reduce population
-  const dieRoll = bsgutil.rollDie()
+  const dieRoll = game.mRollDie()
   if (dieRoll <= 2) {
     game.mLog({
       template: "{player}'s attempted mutiny failed",

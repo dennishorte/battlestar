@@ -187,7 +187,7 @@ describe('quorum actions', () => {
 
     test('a population check happens', () => {
       const game = _quorumFixture('Authorization of Brutal Force', game => {
-        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 2)
+        jest.spyOn(game, 'mRollDie').mockImplementation(() => 2)
         game.aClearSpace()
         game.mAddCenturion()
       })
@@ -226,8 +226,8 @@ describe('quorum actions', () => {
     })
 
     test('die roll 3+ is success', () => {
-      const game = _quorumFixture('Encourage Mutiny', () => {
-        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 3)
+      const game = _quorumFixture('Encourage Mutiny', game => {
+        jest.spyOn(game, 'mRollDie').mockImplementation(() => 3)
       })
       game.submit({
         actor: 'dennis',
@@ -238,8 +238,8 @@ describe('quorum actions', () => {
     })
 
     test('die roll 2- is failure', () => {
-      const game = _quorumFixture('Encourage Mutiny', () => {
-        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 2)
+      const game = _quorumFixture('Encourage Mutiny', game => {
+        jest.spyOn(game, 'mRollDie').mockImplementation(() => 2)
       })
       game.submit({
         actor: 'dennis',

@@ -23,15 +23,7 @@ module.exports = transitionFactory2({
 
 function _rollDie(context) {
   const game = context.state
-  const dieRoll = bsgutil.rollDie()
-
-  game.mLog({
-    template: '{player} rolled a {dieRoll}',
-    args: {
-      player: context.data.playerName,
-      dieRoll,
-    }
-  })
+  const dieRoll = game.mRollDie()
 
   if (dieRoll <= 2) {
     game.mLog({ template: 'Scouting failed; raptor lost' })

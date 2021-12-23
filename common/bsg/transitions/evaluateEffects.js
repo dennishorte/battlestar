@@ -27,9 +27,12 @@ function generateOptions(context) {
       return context.done()
     }
 
-    if (details.dieRoll && !bsgutil.rollDieResult(details.dieRoll)) {
-      game.mLog({ template: "Die roll didn't match; no effect" })
-      return context.done()
+    if (details.dieRoll) {
+      const dieRoll = game.mRollDie()
+      if (!bsgutil.rollDieResult(dieRoll, details.dieRoll)) {
+        game.mLog({ template: "Die roll didn't match; no effect" })
+        return context.done()
+      }
     }
   }
 

@@ -859,7 +859,7 @@ describe('player turn', () => {
             value: 1
           }
           const game = _takeAction('Play Skill Card', cardOption, () => {
-            jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 3)
+            jest.spyOn(game, 'mRollDie').mockImplementation(() => 3)
           })
           expect(game.getWaiting('dennis')).toBeDefined()
           expect(game.getWaiting('dennis').name).toBe('Select Deck')
@@ -873,7 +873,7 @@ describe('player turn', () => {
             value: 1
           }
           const game = _takeAction('Play Skill Card', cardOption, () => {
-            jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 3)
+            jest.spyOn(game, 'mRollDie').mockImplementation(() => 3)
           })
           game.submit({
             actor: 'dennis',
@@ -892,7 +892,7 @@ describe('player turn', () => {
             value: 1
           }
           const game = _takeAction('Play Skill Card', cardOption, () => {
-            jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 2)
+            jest.spyOn(game, 'mRollDie').mockImplementation(() => 2)
           })
           expect(game.getCounterByName('raptors')).toBe(3)
         })
@@ -3836,7 +3836,7 @@ describe('jump-the-fleet', () => {
 
   test('population loss if jump track is too low', () => {
     const game = _jumpFixture(2, (game) => {
-      jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 6)
+      jest.spyOn(game, 'mRollDie').mockImplementation(() => 6)
     })
     expect(game.getCounterByName('population')).toBe(9)
   })
@@ -3990,7 +3990,7 @@ describe('crisis card effects', () => {
       expect(game.getCounterByName('morale')).toBe(10)
       expect(game.getZoneByName('decks.civilian').cards.length).toBe(10)
 
-      jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 4)
+      jest.spyOn(game, 'mRollDie').mockImplementation(() => 4)
       jest.spyOn(game, 'aDestroyCivilian').mockImplementation(() => {})
 
       game.submit({
@@ -4011,7 +4011,7 @@ describe('crisis card effects', () => {
       expect(game.getCounterByName('morale')).toBe(10)
       expect(game.getZoneByName('decks.civilian').cards.length).toBe(10)
 
-      jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 5)
+      jest.spyOn(game, 'mRollDie').mockImplementation(() => 5)
 
       game.submit({
         actor: 'dennis',
@@ -4051,7 +4051,7 @@ describe('crisis card effects', () => {
 
     test('option2', () => {
       const game = _crisisFixture('Crippled Raider', (game) => game.aClearSpace())
-      jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 4)
+      jest.spyOn(game, 'mRollDie').mockImplementation(() => 4)
 
       // Pre-conditions
       expect(game.getZoneSpaceByIndex(0).cards.length).toBe(0)
@@ -4379,7 +4379,7 @@ describe('misc functions', () => {
           const damageZone = game.getZoneByName('decks.damageGalactica')
           return damageZone.cards.find(c => c.name === 'Damage Armory')
         })
-        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 4)
+        jest.spyOn(game, 'mRollDie').mockImplementation(() => 4)
         game.aActivateBasestarAttacks()
         expect(game.checkLocationIsDamaged('Armory')).toBe(true)
       })
@@ -4391,7 +4391,7 @@ describe('misc functions', () => {
           const damageZone = game.getZoneByName('decks.damageGalactica')
           return damageZone.cards.find(c => c.name === '-1 fuel')
         })
-        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 8)
+        jest.spyOn(game, 'mRollDie').mockImplementation(() => 8)
         game.aActivateBasestarAttacks()
         expect(game.getCounterByName('fuel')).toBe(7)
       })
@@ -4556,7 +4556,7 @@ describe('misc functions', () => {
 
       test('primary target: viper', () => {
         const game = _spaceFixture()
-        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 8)
+        jest.spyOn(game, 'mRollDie').mockImplementation(() => 8)
         game.mDeploy('space.space2', 'raider')
         game.mDeploy('space.space2', 'viper')
         game.mDeploy('space.space2', 'civilian')
@@ -4571,7 +4571,7 @@ describe('misc functions', () => {
 
       test('primary target: viper with pilot', () => {
         const game = _spaceFixture()
-        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 8)
+        jest.spyOn(game, 'mRollDie').mockImplementation(() => 8)
         game.mMoveCard('players.micah', 'space.space2', 'micah')
         game.mDeploy('space.space2', 'raider')
         game.mDeploy('space.space2', 'viper')
@@ -4588,7 +4588,7 @@ describe('misc functions', () => {
 
       test('secondary target: civilian', () => {
         const game = _spaceFixture()
-        jest.spyOn(bsgutil, 'rollDie').mockImplementation(() => 8)
+        jest.spyOn(game, 'mRollDie').mockImplementation(() => 8)
         game.mDeploy('space.space2', 'raider')
         game.mDeploy('space.space2', 'civilian')
         game.aActivateCylonShips('Raiders')

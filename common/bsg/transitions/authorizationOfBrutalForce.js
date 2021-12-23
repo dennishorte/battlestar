@@ -122,7 +122,7 @@ function _cleanup(context) {
   const game = context.state
 
   // Possibly reduce population
-  const dieRoll = bsgutil.rollDie()
+  const dieRoll = game.mRollDie()
   if (dieRoll <= 2) {
     game.mLog({ template: 'The use of brutal force led to some unexpected casualties' })
     game.mAdjustCounterByName('population', -1)

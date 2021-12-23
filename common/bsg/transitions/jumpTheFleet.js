@@ -54,7 +54,7 @@ function _populationLoss(context) {
 
   // Check if any population is lost
   if (jumpTrack === 2 || jumpTrack === 3) {
-    const dieRoll = bsgutil.rollDie()
+    const dieRoll = game.mRollDie()
     if (dieRoll <= 6) {
       const amount = jumpTrack === 2 ? 3 : 1
       game.mLog({
