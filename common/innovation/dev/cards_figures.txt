@@ -40,7 +40,7 @@ purple
 1
 h*kk
 * Score a top card from your board.
-- If a player would successfully demand something of your, first transfer the highest card from that player's score pile to your score pile.
+- If a player would successfully demand something of you, first transfer the highest card from that player's score pile to your score pile.
 
 Shennong
 yellow
@@ -84,7 +84,7 @@ yellow
 1
 h1*k
 * Tuck a card from your hand.
-- If you would tuck a yellow card, instead execute all of its non-demand Dogma effects on it for yourself only, then return it to your hand.
+- If you would tuck a yellow card, instead execute all of the non-demand Dogma effects on it for yourself only, then return it to your hand.
 
 Sneferu
 yellow
@@ -303,7 +303,7 @@ red
 f*fh
 * Score all bottom purple cards.
 - When you meld this card, score all opponents' top figures of value 4.
-- Each top card withe a {k} on your board counts as an available achievement for you.
+- Each top card with a {k} on your board counts as an available achievement for you.
 
 Michaelangelo
 yellow
@@ -347,7 +347,7 @@ purple
 5
 5h*c
 * Draw and score a {3}.
-- If you would claim a standard achievement, first claim an achievement of vlue one higher, regardless of eligibility.
+- If you would claim a standard achievement, first claim an achievement of value one higher, regardless of eligibility.
 
 Christiaan Huygens
 blue
@@ -604,7 +604,7 @@ blue
 8
 f&hf
 & Draw a {9}.
-- Each different value present in your score pile above 6 counters as an achievement.
+- Each different value present in your score pile above 6 counts as an achievement.
 
 Nikola Tesla
 yellow

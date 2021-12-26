@@ -3,6 +3,7 @@
 const RecordKeeper = require('./recordkeeper.js')
 
 const defaultOptions = {
+  enrichContext: (context) => {},
   pushCallback: () => {}
 }
 
@@ -63,13 +64,20 @@ function run() {
     response: this.response[0],
   }
 
+  this.options.enrichContext(context)
+
   const transition = this.transitions[event.name]
 
   if (!transition) {
     throw new Error(`Transition ${event.name} is not defined`)
   }
 
-  return transition.func(context)
+  if (typeof transition === 'function') {
+    return transition(context)
+  }
+  else {
+    return transition.func(context)
+  }
 }
 
 function clearWaiting() {

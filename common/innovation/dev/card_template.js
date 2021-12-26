@@ -4,14 +4,29 @@ function Card() {
   this.name = '{name}'
   this.color = '{color}'
   this.age = {age}
-  this.icons = '{icons}'
-  this.dogmaIcon = '{dogmaIcon}'
+  this.biscuits = '{biscuits}'
+  this.dogmaBiscuit = '{dogmaBiscuit}'
+  this.inspire = '{inspire}'
+  this.echo = '{echo}'
+  this.triggers = [
+    {triggers}
+  ]
   this.dogma = [
     {dogma}
   ]
-  this.implementation = [
-    function(context) {
-      throw new Error('not implemented')
+  this.dogmaImpl = [
+    {
+      dogma: '',
+      demand: false,
+      compel: false,
+      steps: [
+        {
+          description: '',
+          func(context) {
+            throw new Error('not implemented')
+          },
+        }
+      ],
     },
   ]
 }

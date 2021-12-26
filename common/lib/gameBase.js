@@ -51,8 +51,13 @@ function GameOverTrigger() {
 
 }
 
-GameBase.prototype.load = function(transitions, state) {
+GameBase.prototype.load = function(transitions, state, enrichContext) {
   const self = this
+
+  const options = {
+    enrichContext: enrichContext || () => {},
+    pushCallback: stateLogger.bind(self),
+  }
 
   this.state = state
   this.rk = new RecordKeeper(state)
@@ -63,9 +68,7 @@ GameBase.prototype.load = function(transitions, state) {
     this.state.sm.stack,
     this.state.sm.waiting,
     this.state.sm.response,
-    {
-      pushCallback: stateLogger.bind(self),
-    },
+    options,
   )
 }
 

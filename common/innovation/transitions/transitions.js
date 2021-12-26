@@ -5,22 +5,23 @@ const transitions = {
     func: stepFactory([
       'initialize',
       'first-picks',
-      'main',
+      'main-loop',
       'END'
     ]),
   },
 
-  'initialize': {
-    func: require('./initialize.js')
-  },
+  'initialize': require('./initialize.js'),
+  'first-picks': require('./firstPicks.js'),
+  'main-loop': require('./main.js'),
+  'player-turn': require('./playerTurn.js'),
 
-  'first-picks': {
-    func: require('./firstPicks.js')
-  },
-
-  'main': {
-    func: require('./main.js')
-  },
+  'action-achieve': require('./actionAchieve.js'),
+  'action-decree': require('./actionDecree.js'),
+  'action-dogma': require('./actionDogma.js'),
+  'action-draw': require('./actionDraw.js'),
+  'action-endorse': require('./actionEndorse.js'),
+  'action-inspire': require('./actionInspire.js'),
+  'action-meld': require('./actionMeld.js'),
 }
 
 module.exports = transitions

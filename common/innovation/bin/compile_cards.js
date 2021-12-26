@@ -31,9 +31,12 @@ function newCard() {
     name: '',
     color: '',
     age: '',
-    icons: '',
-    dogmaIcon: '',
+    biscuits: '',
+    dogmaBiscuit: '',
+    echo: '',
+    inspire: '',
     dogma: [],
+    triggers: [],
   }
 }
 
@@ -59,21 +62,46 @@ function processFile(filename) {
     else if (!card.age) {
       card.age = parseInt(line)
     }
-    else if (!card.icons) {
-      card.icons = line
+    else if (!card.biscuits) {
+      card.biscuits = line
+    }
+    else if (line.startsWith('&')) {
+      card.echo = line.slice(2)
+    }
+    else if (line.startsWith('*')) {
+      card.inspire = line.slice(2)
+    }
+    else if (line.startsWith('-')) {
+      card.triggers.push(line.slice(2))
     }
     else {
-      card.dogmaIcon = line[0]
+      card.dogmaBiscuit = line[0]
       card.dogma.push(line.slice(3))
     }
-
   }
 
   if (card.name) {
     cards.push(card)
   }
 
+  ensureDogmaBiscuits(cards)
+
   return cards
+}
+
+// For cards that don't have dogma effects, they won't have an established dogma biscuit.
+// Those cards always have only a single biscuit type, so just find that and set the type.
+function ensureDogmaBiscuits(cards) {
+  for (const card of cards) {
+    if (!card.dogmaBiscuit) {
+      for (const biscuit of ['l', 's', 'i', 'k', 'c', 'f']) {
+        if (card.biscuits.includes(biscuit)) {
+          card.dogmaBiscuit = biscuit
+          break
+        }
+      }
+    }
+  }
 }
 
 function generateCardFiles(cards, pathPrefix) {
@@ -86,6 +114,7 @@ function generateCardFiles(cards, pathPrefix) {
 function generateCardFile(card) {
   const template = cardTemplate()
   card.dogma = card.dogma.map(d => `"${d}"`).join(',\n    ')
+  card.triggers = card.triggers.map(d => `"${d}"`).join(',\n    ')
   return format(template, card)
 }
 
