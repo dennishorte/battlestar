@@ -1,23 +1,26 @@
-const CardBase = require('../CardBase.js')
+const CardBase = require(`../CardBase.js`)
 
 function Card() {
-  this.name = 'Quantum Theory'
-  this.color = 'blue'
+  this.name = `Quantum Theory`
+  this.color = `blue`
   this.age = 8
-  this.icons = 'iiih'
-  this.dogmaIcon = 'i'
+  this.biscuits = `iiih`
+  this.dogmaBiscuit = `i`
+  this.inspire = ``
+  this.echo = ``
+  this.triggers = []
   this.dogma = [
-    "You may return up to two cards from your hand. If you return two, draw a {0} and then draw and score a {0}."
+    `You may return up to two cards from your hand. If you return two, draw a {0} and then draw and score a {0}.`
   ]
-  this.implementation = [
-    function(context) {
-      throw new Error('not implemented')
-    },
-  ]
+
+  this.dogmaImpl = []
+  this.echoImpl = []
+  this.inspireImpl = []
+  this.triggerImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, 'constructor', {
+Object.defineProperty(Card.prototype, `constructor`, {
   value: Card,
   enumerable: false,
   writable: true

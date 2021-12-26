@@ -1,23 +1,26 @@
-const CardBase = require('../CardBase.js')
+const CardBase = require(`../CardBase.js`)
 
 function Card() {
-  this.name = 'Masonry'
-  this.color = 'yellow'
+  this.name = `Masonry`
+  this.color = `yellow`
   this.age = 1
-  this.icons = 'khkk'
-  this.dogmaIcon = 'k'
+  this.biscuits = `khkk`
+  this.dogmaBiscuit = `k`
+  this.inspire = ``
+  this.echo = ``
+  this.triggers = []
   this.dogma = [
-    "You may meld any number of cards from your hand, each with a {k}. If you melded four or more cards in this way, claim the Monument achievement."
+    `You may meld any number of cards from your hand, each with a {k}. If you melded four or more cards in this way, claim the Monument achievement.`
   ]
-  this.implementation = [
-    function(context) {
-      throw new Error('not implemented')
-    },
-  ]
+
+  this.dogmaImpl = []
+  this.echoImpl = []
+  this.inspireImpl = []
+  this.triggerImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, 'constructor', {
+Object.defineProperty(Card.prototype, `constructor`, {
   value: Card,
   enumerable: false,
   writable: true

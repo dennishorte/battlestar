@@ -533,6 +533,7 @@ f: I compel you to transfer a {9} from your hand to my hand! If you do not, tran
 
 Rock Around the Clock
 yellow
+9
 lihi
 i: For each top card on your board with a {i}, draw and score a {9}.
 

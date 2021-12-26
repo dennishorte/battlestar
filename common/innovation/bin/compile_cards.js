@@ -46,10 +46,17 @@ function processFile(filename) {
 
   const lineReader = new readlines(filename)
   let line;
+  let linenum = 0
 
   while (line = lineReader.next()) {
     line = line.toString('utf-8').trim()
     if (line.length === 0) {
+      if (!card.name) {
+        throw new Error(`Card without name in ${filename} at line ${linenum}`)
+      }
+      if (!card.age) {
+        throw new Error(`Card without age in ${filename} at line ${linenum}`)
+      }
       cards.push(card)
       card = newCard()
     }
@@ -78,6 +85,8 @@ function processFile(filename) {
       card.dogmaBiscuit = line[0]
       card.dogma.push(line.slice(3))
     }
+
+    linenum += 1
   }
 
   if (card.name) {
@@ -94,10 +103,18 @@ function processFile(filename) {
 function ensureDogmaBiscuits(cards) {
   for (const card of cards) {
     if (!card.dogmaBiscuit) {
-      for (const biscuit of ['l', 's', 'i', 'k', 'c', 'f']) {
-        if (card.biscuits.includes(biscuit)) {
-          card.dogmaBiscuit = biscuit
-          break
+      // City cards always use the top right biscuit.
+      if (card.biscuits.length === 6) {
+        card.dogmaBiscuit = card.biscuits[0]
+      }
+
+      // Figures cards always have a single kind of biscuit.
+      else {
+        for (const biscuit of ['l', 's', 'i', 'k', 'c', 'f']) {
+          if (card.biscuits.includes(biscuit)) {
+            card.dogmaBiscuit = biscuit
+            break
+          }
         }
       }
     }
@@ -113,9 +130,19 @@ function generateCardFiles(cards, pathPrefix) {
 
 function generateCardFile(card) {
   const template = cardTemplate()
-  card.dogma = card.dogma.map(d => `"${d}"`).join(',\n    ')
-  card.triggers = card.triggers.map(d => `"${d}"`).join(',\n    ')
+  card.dogma = formatArray(card.dogma)
+  card.triggers = formatArray(card.triggers)
   return format(template, card)
+}
+
+function formatArray(arr) {
+  if (arr.length === 0) {
+    return ''
+  }
+  else {
+    const lines = arr.map(d => '`' + d + '`').join(',\n    ')
+    return '\n    ' + lines + '\n  '
+  }
 }
 
 function generateSetFile(cards, pathPrefix) {

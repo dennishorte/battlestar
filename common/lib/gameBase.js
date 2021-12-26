@@ -55,7 +55,7 @@ GameBase.prototype.load = function(transitions, state, enrichContext) {
   const self = this
 
   const options = {
-    enrichContext: enrichContext || () => {},
+    enrichContext: enrichContext || (() => {}),
     pushCallback: stateLogger.bind(self),
   }
 

@@ -1,0 +1,30 @@
+const CardBase = require(`../CardBase.js`)
+
+function Card() {
+  this.name = `Catherine the Great`
+  this.color = `purple`
+  this.age = 6
+  this.biscuits = `*ssh`
+  this.dogmaBiscuit = `s`
+  this.inspire = `Draw and meld a {6}.`
+  this.echo = ``
+  this.triggers = [
+    `Each {s} on your board provides two additional {s}.`,
+    `If you would meld a purple card, first transfer your top purple card into your hand.`
+  ]
+  this.dogma = []
+
+  this.dogmaImpl = []
+  this.echoImpl = []
+  this.inspireImpl = []
+  this.triggerImpl = []
+}
+
+Card.prototype = Object.create(CardBase.prototype)
+Object.defineProperty(Card.prototype, `constructor`, {
+  value: Card,
+  enumerable: false,
+  writable: true
+})
+
+module.exports = Card

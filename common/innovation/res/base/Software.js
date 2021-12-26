@@ -1,24 +1,27 @@
-const CardBase = require('../CardBase.js')
+const CardBase = require(`../CardBase.js`)
 
 function Card() {
-  this.name = 'Software'
-  this.color = 'blue'
+  this.name = `Software`
+  this.color = `blue`
   this.age = 10
-  this.icons = 'iiih'
-  this.dogmaIcon = 'i'
+  this.biscuits = `iiih`
+  this.dogmaBiscuit = `i`
+  this.inspire = ``
+  this.echo = ``
+  this.triggers = []
   this.dogma = [
-    "Draw and score a {0}.",
-    "Draw and meld two {0}, then execute each of the second card's non-demand dogma effects. Do not share them."
+    `Draw and score a {0}.`,
+    `Draw and meld two {0}, then execute each of the second card's non-demand dogma effects. Do not share them.`
   ]
-  this.implementation = [
-    function(context) {
-      throw new Error('not implemented')
-    },
-  ]
+
+  this.dogmaImpl = []
+  this.echoImpl = []
+  this.inspireImpl = []
+  this.triggerImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, 'constructor', {
+Object.defineProperty(Card.prototype, `constructor`, {
   value: Card,
   enumerable: false,
   writable: true
