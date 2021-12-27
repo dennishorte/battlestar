@@ -26,6 +26,11 @@ function stateFactory(lobby) {
     users: lobby.users,
     createdTimestamp: Date.now(),
 
+    // Standard data containers
+    counters: {},
+    flags: {},
+    zones: {},
+
     // User facing log
     log: [],
 

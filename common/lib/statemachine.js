@@ -152,7 +152,7 @@ function _validateTransitions(transitions) {
 
   for (const [name, data] of Object.entries(transitions)) {
     _assertTransition(
-      typeof data.func === 'function',
+      typeof data === 'function' || typeof data.func === 'function',
       `${name}.func is not a function`
     )
   }

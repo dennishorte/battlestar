@@ -12,14 +12,25 @@ function Game() {}
 
 function factory(lobby) {
   const state = base.stateFactory(lobby)
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Custom state
+
+  // Monument Achievement tuck and score counts
+  state.counters.cardsTucked = 0
+  state.counters.cardsScored = 0
+
   const game = new Game()
   game.load(transitions, state, contextEnricher)
   return game
 }
 
 function contextEnricher(context) {
-  context.game = context.state
-  context.actor = context.game.getPlayerByName(context.data.playerName)
+  const game = context.state
+  if (game.state.initialized) {
+    context.game = game
+    context.actor = game.getPlayerByName(context.data.playerName)
+  }
 }
 
 

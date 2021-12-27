@@ -81,4 +81,7 @@ describe('triggers', () => {
   describe.skip('transfer-instead', () => {})
   describe.skip('tuck-first', () => {})
   describe.skip('tuck-instead', () => {})
+
+  describe.skip('achievement-check', () => {})
+  describe.skip('turn-start', () => {})  // Used by Monument
 })
