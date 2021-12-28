@@ -12,7 +12,7 @@ describe('new game', () => {
       game: 'Innovation',
       name: 'Test Lobby',
       options: {
-        expansions: ['base game']
+        expansions: ['base']
       },
       users: [
         { _id: 0, name: 'dennis' },

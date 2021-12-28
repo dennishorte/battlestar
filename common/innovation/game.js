@@ -1,4 +1,5 @@
 const base = require('../lib/gameBase.js')
+const util = require('../lib/util.js')
 
 const transitions = require('./transitions/transitions.js')
 
@@ -70,11 +71,11 @@ Game.prototype.getBiscuits = function(player) {
 }
 
 Game.prototype.getDeck = function(exp, age) {
-  return this.getZoneByName(`${exp}-${age}`)
+  return this.getZoneByName(`decks.${exp}.${age}`)
 }
 
 Game.prototype.getHand = function(player) {
-  return this.getZoneByPlayer(player)
+  return this.getZoneByName(`players.${player.name}.hand`)
 }
 
 Game.prototype.getTriggers = function(player, name) {
@@ -83,9 +84,9 @@ Game.prototype.getTriggers = function(player, name) {
 
 Game.prototype.mDraw = function(player, exp, age) {
   player = this._adjustPlayerParam(player)
-  const base = game.getDeck('base', age)
-  const deck = game.getDeck(exp, age)
-  const hand = game.getHand(player)
+  const base = this.getDeck('base', age)
+  const deck = this.getDeck(exp, age)
+  const hand = this.getHand(player)
 
   util.assert(
     this.getExpansionList().includes(exp),

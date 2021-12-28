@@ -13,14 +13,6 @@ module.exports = transitionFactory2({
       func: _initializeZones,
     },
     {
-      name: 'shuffleDecks',
-      func: _shuffleDecks,
-    },
-    {
-      name: 'selectAchievements',
-      func: _selectAchievements,
-    },
-    {
       name: 'dealStartingCards',
       func: _dealStartingCards
     },
@@ -49,12 +41,6 @@ function _initializeZones(context) {
   _addDeckZones(zones)
   _addAchievementZones(game, zones)
   _addPlayerZones(state.players, zones)
-
-  return context.wait({
-    actor: 'dennis',
-    name: 'wait',
-    options: []
-  })
 }
 
 function _addDeckZones(zones) {
@@ -69,9 +55,11 @@ function _addDeckZones(zones) {
       else if (!Array.isArray(cards)) {
         throw new Error(`Cards for ${exp}-${age} is of type ${typeof cards}`)
       }
+      const deckCards = cards.map(c => c.name)
+      util.array.shuffle(deckCards)
       zones.decks[exp][age] = {
         name: `decks-${exp}-${age}`,
-        cards: cards.map(c => c.name),
+        cards: deckCards,
         kind: 'deck',
       }
     }
@@ -91,17 +79,17 @@ function _addAchievementZones(game, zones) {
   }
 
   // Special achievements
-  for (const [exp, cardData] of res) {
-    if (game.getExpansionList().includes(exp)) {
-      for (const card of cardData.specialAchievements) {
-        zones.achievements.cards.push(card.name)
-      }
-    }
-  }
+  /* for (const [exp, cardData] of Object.entries(res)) {
+   *   if (game.getExpansionList().includes(exp)) {
+   *     for (const card of cardData.specialAchievements) {
+   *       zones.achievements.cards.push(card.name)
+   *     }
+   *   }
+   * } */
 }
 
-      function _addPlayerZones(players, zones) {
-        zones.players = {}
+function _addPlayerZones(players, zones) {
+  zones.players = {}
   for (const player of players) {
     const root = {}
     _addPlayerZone(player, 'hand', 'private', root)
@@ -126,27 +114,11 @@ function _addPlayerZone(player, name, kind, root) {
   }
 }
 
-function _shuffleDecks(context) {
-  const game = context.state
-  for (const age of [1,2,3,4,5,6,7,8,9,10]) {
-    for (const exp of game.getExpansionList()) {
-      util.array.shuffle(game.getZoneByAge(exp, age).cards)
-    }
-  }
-}
-
-function _selectAchievements(context) {
-  const game = context.state
-  for (const age of [1,2,3,4,5,6,7,8,9]) {
-    game.mMoveCard(game.getDeckByAge('base', age), 'achievements')
-  }
-}
-
 function _dealStartingCards(context) {
   const game = context.state
   for (const player of game.getPlayerAll()) {
-    game.mDraw(player, 1)
-    game.mDraw(player, 1)
+    game.mDraw(player, 'base', 1)
+    game.mDraw(player, 'base', 1)
   }
 }
 

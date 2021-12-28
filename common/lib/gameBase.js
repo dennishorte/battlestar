@@ -94,7 +94,12 @@ function _dumpZonesRecursive(root) {
   if (root.name) {
     output.push(root.name)
     for (const card of root.cards) {
-      output.push(`   ${card.id}, ${card.name}`)
+      if (typeof card === 'string') {
+        output.push(`   ${card}`)
+      }
+      else {
+        output.push(`   ${card.id}, ${card.name}`)
+      }
     }
   }
 
