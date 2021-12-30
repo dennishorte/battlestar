@@ -70,7 +70,7 @@ function _addAchievementZones(game, zones) {
   zones.achievements = {
     name: 'achievements',
     cards: [],
-    kind: 'open',
+    kind: 'public',
   }
 
   // Standard achievements
@@ -112,17 +112,28 @@ function _addPlayerZone(player, name, kind, root) {
     cards: [],
     kind,
   }
+
+  if (kind === 'private') {
+    root[name].owner = player.name
+  }
 }
 
 function _dealStartingCards(context) {
   const game = context.state
   for (const player of game.getPlayerAll()) {
     game.mDraw(player, 'base', 1)
-    game.mDraw(player, 'base', 1)
+
+    if (game.getExpansionList().includes('echo')) {
+      game.mDraw(player, 'echo', 1)
+    }
+    else {
+      game.mDraw(player, 'base', 1)
+    }
   }
 }
 
 function _initializationComplete(context) {
   const game = context.state
   game.state.initialized = true
+  game.rk.checkpoint('Initialization Complete')
 }

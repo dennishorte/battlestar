@@ -14,20 +14,21 @@ function cardFileName(card) {
   return util.toCapsCase(card.name) + '.js'
 }
 
-function outputPrefix() {
+function expansionCode() {
   return process.argv[3]
 }
 
 function cardTemplate() {
-  return fs.readFileSync('dev/card_template.js', 'utf8')
+  return fs.readFileSync('card_template.js', 'utf8')
 }
 
 function setTemplate() {
-  return fs.readFileSync('dev/set_template.js', 'utf8')
+  return fs.readFileSync('set_template.js', 'utf8')
 }
 
 function newCard() {
   return {
+    expansion: expansionCode(),
     name: '',
     color: '',
     age: '',
@@ -158,5 +159,5 @@ function generateSetFile(cards, pathPrefix) {
 }
 
 const cards = processFile(inputfile())
-generateCardFiles(cards, outputPrefix())
-generateSetFile(cards, outputPrefix())
+generateCardFiles(cards, expansionCode())
+generateSetFile(cards, expansionCode())

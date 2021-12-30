@@ -52,7 +52,7 @@ function path(root, target) {
     matcher = (elem) => elem === target
   }
   else {
-    throw `Invalid path target. Can only path objects and arrays. Got ${typeof target}: ${target}`
+    throw new Error(`Invalid path target. Can only path objects and arrays. Got ${typeof target}: ${target}`)
   }
 
   const matches = []

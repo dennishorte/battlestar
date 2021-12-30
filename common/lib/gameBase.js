@@ -26,6 +26,12 @@ function stateFactory(lobby) {
     users: lobby.users,
     createdTimestamp: Date.now(),
 
+    // Current turn information
+    turn: {
+      count: 0,
+      playerIndex: -1,
+    },
+
     // Standard data containers
     counters: {},
     flags: {},
@@ -242,7 +248,7 @@ GameBase.prototype.getLogIndent = function() {
 
 GameBase.prototype.getPlayerCurrentTurn = function() {
   // This calculation lets the UI render games before they are finished initializing
-  const index = this.state.currentTurnPlayerIndex < 0 ? 0 : this.state.currentTurnPlayerIndex
+  const index = this.state.turn.playerIndex < 0 ? 0 : this.state.turn.playerIndex
   return this.getPlayerByIndex(index)
 }
 
@@ -484,12 +490,10 @@ GameBase.prototype._adjustCardParam = function(card) {
   }
 
   else if (typeof card === 'string') {
-    // If the string contains a dash, it could be a card id
-    if (card.includes('-')) {
-      card = this.getCardById(card)
-      if (card) {
-        return card
-      }
+    // First, test if the string is a card id.
+    card = this.getCardById(card)
+    if (card) {
+      return card
     }
 
     // The string might be a card name.

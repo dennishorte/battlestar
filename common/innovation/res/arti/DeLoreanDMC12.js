@@ -1,9 +1,11 @@
 const CardBase = require(`../CardBase.js`)
 
 function Card() {
+  this.id = `DeLorean DMC-12`  // Card names are unique in Innovation
   this.name = `DeLorean DMC-12`
   this.color = `purple`
   this.age = 10
+  this.expansion = `arti`
   this.biscuits = `hiii`
   this.dogmaBiscuit = `i`
   this.inspire = ``

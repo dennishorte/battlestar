@@ -8,8 +8,12 @@ function RecordKeeper(game) {
   this.undone = []
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Public Interface
+
 RecordKeeper.prototype.load = load
 
+RecordKeeper.prototype.checkpoint = checkpoint
 RecordKeeper.prototype.redo = redo
 RecordKeeper.prototype.undo = undo
 
@@ -31,6 +35,10 @@ RecordKeeper.prototype.removeKey = removeKey
 RecordKeeper.prototype.replace = replace
 RecordKeeper.prototype.splice = splice
 
+////////////////////////////////////////////////////////////////////////////////
+// Private Interface
+
+RecordKeeper.prototype._undoOne = _undoOne
 
 
 function load(game) {
@@ -38,7 +46,24 @@ function load(game) {
   this.diffs = game.history
 }
 
-function undo() {
+function undo(checkpoint) {
+  if (checkpoint) {
+    while (true) {
+      const last = this.diffs[this.diffs.length - 1]
+      if (last.kind === 'checkpoint' && last.name === checkpoint) {
+        return
+      }
+      else {
+        this._undoOne()
+      }
+    }
+  }
+  else {
+    this._undoOne()
+  }
+}
+
+function _undoOne() {
   const diff = this.diffs.pop()
   this.undone.push(diff)
   this.reverse(diff)
@@ -51,9 +76,22 @@ function redo() {
   this.game.hasUndone = this.undone.length > 0
 }
 
+function checkpoint(name) {
+  this.patch({
+    kind: 'checkpoint',
+    name,
+  })
+}
+
 function patch(diff, skipRecord) {
   if (!skipRecord) {
     this.diffs.push(util.deepcopy(diff))
+  }
+
+  // Checkpoints are used to make it easy to undo in a game run by a driver.
+  // You can pass a checkpoint name to the driver, and it will undo to that point.
+  if (diff.kind === 'checkpoint') {
+    return
   }
 
   const target = this.at(diff.path)
