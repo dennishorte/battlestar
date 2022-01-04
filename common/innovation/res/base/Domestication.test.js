@@ -14,7 +14,7 @@ describe('Domestication', () => {
     expect(game.aDraw).toHaveBeenCalledWith(expect.anything(), expect.anything(), 1)
   })
 
-  test('no card to meld still draws a card', () => {
+  test('even if no card to meld still draws a card', () => {
     const game = t.fixtureDogma('Domestication')
     t.setHand(game, 'micah', [])
     game.run()

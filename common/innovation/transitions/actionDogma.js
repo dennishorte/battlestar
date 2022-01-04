@@ -37,15 +37,6 @@ function nextStep(context) {
       dogma.demand
       && !demanding.includes(effect.player)
     ) {
-      // Only show the stands strong messages once.
-      if (effect.stepIndex === 0) {
-        game.mLog({
-          template: '{player} stands strong in the face of demands',
-          args: {
-            player: actor
-          }
-        })
-      }
       return nextStep(context)
     }
 
@@ -55,16 +46,6 @@ function nextStep(context) {
       && !dogma.demand
       && !sharing.includes(effect.player)
     ) {
-      // Only show the doesn't share message once.
-      if (effect.stepIndex === 0) {
-        game.mLog({
-          template: `{player} isn't ready for {card} yet`,
-          args: {
-            player: effect.player,
-            card: effect.card
-          },
-        })
-      }
       return nextStep(context)
     }
 
@@ -83,19 +64,61 @@ function nextStep(context) {
 }
 
 function initialize(context) {
-  const { game, actor } = context
-  const card = game.getCardData(context.data.card)
+  _logDogmaActivation(context)
+  _determineEffects(context)
+  _determineBiscuits(context)
+  _determineDemands(context)
+  _determineShares(context)
 
-  // Prep biscuits
+  // Initialization complete
+  const { game } = context
+  game.rk.addKey(context.data, 'initialized', true)
+}
+
+function _determineBiscuits(context) {
+  const { game } = context
   const biscuits = util.array.toDict(
     game.getPlayerAll(),
     p => ({ [p.name]: game.getBiscuits(p) })
   )
   game.rk.addKey(context.data, 'biscuits', biscuits)
+  return biscuits
+}
 
-  // Prep card effects (echo and dogma)
+function _determineDemands(context) {
+  const { game, actor } = context
+  const { biscuits } = context.data
+
+  const card = game.getCardData(context.data.card)
+  const targetBiscuits = biscuits[actor.name].final[card.dogmaBiscuit]
   const firstToPlay = game.getPlayerFollowing(actor)
   const players = game.getPlayerAllFrom(firstToPlay)
+
+  const demanding = game
+    .getPlayerAll()
+    .filter(p => p.name !== actor.name)
+    .filter(p => biscuits[p.name].final[card.dogmaBiscuit] < targetBiscuits)
+    .map(p => p.name)
+  game.rk.addKey(context.data, 'demanding', demanding)
+
+  const hasDemands = card.dogmaImpl.some(impl => impl.steps.some(s => s.demand))
+  if (demanding.length > 0 && hasDemands) {
+    game.mLog({
+      template: 'will demand from {players}',
+      args: {
+        players: demanding.join(', ')
+      }
+    })
+  }
+}
+
+function _determineEffects(context) {
+  const { game, actor } = context
+
+  const card = game.getCardData(context.data.card)
+  const firstToPlay = game.getPlayerFollowing(actor)
+  const players = game.getPlayerAllFrom(firstToPlay)
+
   const effects = game
     .aListCardsForDogmaByColor(actor, card.color)
     .flatMap(card => expandByKinds(game, card))       // { card, kind }
@@ -104,24 +127,26 @@ function initialize(context) {
     .flatMap(effect => expandBySteps(game, effect))   // { stepIndex }
     .map(effect => Object.assign(effect, { leader: actor.name }))
 
-  // Store effect info on context
   game.rk.addKey(context.data, 'effects', effects)
   game.rk.addKey(context.data, 'effectIndex', -1)
   game.rk.addKey(context.data, 'featuredBiscuit', card.dogmaBiscuit)
 
-  game.mLog({
-    template: '{player} activates the dogma effect of {card}',
-    args: {
-      player: actor,
-      card: card
-    }
-  })
+  return effects
+}
 
-  // Determine sharing
+function _determineShares(context) {
+  const { game, actor } = context
+  const { biscuits, effects } = context.data
+
+  const card = game.getCardData(context.data.card)
+  const targetBiscuits = biscuits[actor.name].final[card.dogmaBiscuit]
+  const firstToPlay = game.getPlayerFollowing(actor)
+  const players = game.getPlayerAllFrom(firstToPlay)
+
   const sharing = game
     .getPlayerAll()
     .filter(p => p.name !== actor.name)
-    .filter(p => biscuits[p.name][card.dogmaBiscuit] >= biscuits[actor.name][card.dogmaBiscuit])
+    .filter(p => biscuits[p.name].final[card.dogmaBiscuit] >= targetBiscuits)
     .map(p => p.name)
   game.rk.addKey(context.data, 'sharing', sharing)
 
@@ -131,33 +156,26 @@ function initialize(context) {
     || hasEchoEffects
   if (sharing.length > 0 && hasSharableEffects) {
     game.mLog({
-      template: 'sharing with {players}',
+      template: 'will share with {players}',
       args: {
         players: sharing.join(', ')
       }
     })
   }
+}
 
-  // Determine demanding, if appropriate
-  const demanding = game
-    .getPlayerAll()
-    .filter(p => p.name !== actor.name)
-    .filter(p => biscuits[p.name][card.dogmaBiscuit] < biscuits[actor.name][card.dogmaBiscuit])
-    .map(p => p.name)
-  game.rk.addKey(context.data, 'demanding', demanding)
+function _logDogmaActivation(context) {
+  const { game, actor } = context
+  const card = game.getCardData(context.data.card)
 
-  const hasDemands = card.dogmaImpl.some(impl => impl.steps.some(s => s.demand))
-  if (demanding.length > 0 && hasDemands) {
-    game.mLog({
-      template: 'demanding from {players}',
-      args: {
-        players: demanding.join(', ')
-      }
-    })
-  }
-
-  // Initialization complete
-  game.rk.addKey(context.data, 'initialized', true)
+  const logId = game.mLog({
+    template: '{player} activates the dogma effect of {card}',
+    args: {
+      player: actor,
+      card: card
+    },
+  })
+  game.rk.put(context.data, 'parentLogId', logId)
 }
 
 function expandByKinds(game, card) {

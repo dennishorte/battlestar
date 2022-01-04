@@ -1,13 +1,23 @@
-const { transitionFactory, markDone } = require('../../lib/transitionFactory.js')
 const util = require('../../lib/util.js')
 
-module.exports = transitionFactory(
-  {
-    firstPicks: {},
-  },
-  generateOptions,
-  handleResponse,
-)
+module.exports = function(context) {
+  if (!context.data.initialized) {
+    const { game } = context
+    game.rk.addKey(context.data, 'initialized', true)
+    game.rk.addKey(context.data, 'firstPicks', {})
+    const logId = game.mLog({
+      template: 'Choose Starting Cards'
+    })
+    game.rk.addKey(context.data, 'parentLogId', logId)
+  }
+
+  if (context.response) {
+    handleResponse(context)
+  }
+  else {
+    generateOptions(context)
+  }
+}
 
 function generateOptions(context) {
   const { game } = context
@@ -60,6 +70,15 @@ function _playFirstPicks(context) {
       game.getZoneColorByPlayer(playerName, data.color),
       card,
     )
+
+    game.mLog({
+      template: '{player} melds {card}',
+      args: {
+        player: playerName,
+        card
+      },
+      parent: context.data.parentLogId,
+    })
   }
 
   // Set first player
@@ -70,6 +89,7 @@ function _playFirstPicks(context) {
     args: {
       player: picks[0][0],
       card: picks[0][1],
-    }
+    },
+    parent: context.data.parentLogId,
   })
 }

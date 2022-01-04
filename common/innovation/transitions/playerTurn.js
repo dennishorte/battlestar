@@ -29,7 +29,15 @@ module.exports = transitionFactory2({
 })
 
 function checkpoint(context) {
-  const { game } = context
+  const { game, actor } = context
+  const logId = game.mLog({
+    template: '{player} turn {count}',
+    args: {
+      player: actor.name,
+      count: game.getTurnRound(),
+    }
+  })
+  game.rk.addKey(context.data, 'parentLogId', logId)
   game.rk.checkpoint('Player Turn')
 }
 
@@ -38,6 +46,9 @@ function artifact(context) {
   const artifact = game.getArtifact(actor)
 
   if (artifact) {
+    game.mLog({
+      template: 'Free artifact action',
+    })
     return context.wait({
       actor: actor.name,
       name: 'Artifact on Display',
@@ -103,6 +114,12 @@ function turnComplete(context) {
 }
 
 function _choose(context, count) {
+  const { game } = context
+  game.mLog({
+    template: 'action 1',
+    classes: ['action-header', 'action-1'],
+  })
+
   const options = []
 
   // _addAchieve(context, options)

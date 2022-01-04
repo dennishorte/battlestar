@@ -279,7 +279,14 @@ Game.prototype.mDraw = function(player, exp, age) {
     deck.cards.length > 0,
     `Can't draw from ${deck.name} because it is empty`)
 
-  this.mMoveCard(deck, hand)
+  const card = this.mMoveCard(deck, hand)
+  this.mLog({
+    template: '{player} draws {card}',
+    args: {
+      player,
+      card
+    }
+  })
 }
 
 Game.prototype.mMeld = function(player, card) {
@@ -308,11 +315,14 @@ Game.prototype.mMoveCard = function(source, target, card) {
     card = source.cards[0]
     cardIndex = 0
   }
+  card = this._adjustCardParam(card)
 
-  util.assert(cardIndex !== -1, `${card} not found in ${source.name}`)
+  util.assert(cardIndex !== -1, `${card.name} not found in ${source.name}`)
 
   this.mMoveByIndices(source, cardIndex, target, target.cards.length)
   this.mSetVisibilityForZone(target, card)
+
+  return card
 }
 
 Game.prototype.mNextTurn = function() {

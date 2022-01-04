@@ -207,8 +207,22 @@ GameBase.prototype.getLog = function() {
   return this.state.log
 }
 
-GameBase.prototype.getLogIndent = function() {
-  return this.sm.stack.length - 1
+GameBase.prototype.getLogIndent = function(msg) {
+  const log = this.getLog()
+
+  const parentLogIndent = this.getTransition().data.parentLogIndent
+  if (parentLogIndent !== undefined) {
+    return parentLogIndent + 1
+  }
+
+  const parentLogId = this.getTransition().data.parentLogId
+  if (!parentLogId) {
+    return 0
+  }
+  else {
+    const msg = log.find(msg => msg.id === parentLogId)
+    return msg.indent + 1
+  }
 }
 
 GameBase.prototype.getPlayerCurrentTurn = function() {
@@ -393,7 +407,7 @@ GameBase.prototype.mGameOver = function(trigger) {
   throw new Error('not implemented')
 }
 
-GameBase.prototype.mLog = function(msg) {
+GameBase.prototype.mLog = function(msg, increaseIndent) {
   if (!msg.template) {
     console.log(msg)
     throw new Error(`Invalid log entry; no template`)
@@ -408,11 +422,13 @@ GameBase.prototype.mLog = function(msg) {
 
   this.utilEnrichLogArgs(msg)
   msg.id = this.getLog().length
-  msg.indent = this.getLogIndent()
+  msg.indent = this.getLogIndent(msg)
 
   // Making a copy here makes sure that the log items are always distinct from
   // wherever their original data came from.
   this.rk.push(this.state.log, util.deepcopy(msg))
+
+  return msg.id
 }
 
 GameBase.prototype.mMoveByIndices = function(sourceName, sourceIndex, targetName, targetIndex) {
@@ -528,23 +544,24 @@ GameBase.prototype.utilEnrichLogArgs = function(msg) {
   }
 }
 
+// To be overridden if automatic transition logging is desired.
 function stateLogger(name, data) {
-  if (!data) {
-    data = {}
-  }
+  /* if (!data) {
+   *   data = {}
+   * }
 
-  const entry = {
-    template: '{transition}',
-    classes: ['game-transition'],
-    args: {
-      transition: name,
-    }
-  }
+   * const entry = {
+   *   template: '{transition}',
+   *   classes: ['game-transition'],
+   *   args: {
+   *     transition: name,
+   *   }
+   * }
 
-  if (data.playerName) {
-    entry.template += ' ({player})'
-    entry.args.player = data.playerName
-  }
+   * if (data.playerName) {
+   *   entry.template += ' ({player})'
+   *   entry.args.player = data.playerName
+   * }
 
-  this.mLog(entry)
+   * this.mLog(entry) */
 }

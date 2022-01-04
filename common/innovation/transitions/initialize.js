@@ -5,6 +5,10 @@ const res = require('../resources.js')
 module.exports = transitionFactory2({
   steps: [
     {
+      name: 'first',
+      func: _first,
+    },
+    {
       name: 'initializePlayers',
       func: _initializePlayers,
     },
@@ -22,6 +26,14 @@ module.exports = transitionFactory2({
     },
   ]
 })
+
+function _first(context) {
+  const game = context.state
+  const logId = game.mLog({
+    template: 'Initializing'
+  })
+  game.rk.addKey(context.data, 'parentLogIndent', 0)
+}
 
 function _initializePlayers(context) {
   const game = context.state
@@ -135,5 +147,6 @@ function _dealStartingCards(context) {
 function _initializationComplete(context) {
   const game = context.state
   game.state.initialized = true
+  game.mLog({ template: 'Initialization Complete' })
   game.rk.checkpoint('Initialization Complete')
 }
