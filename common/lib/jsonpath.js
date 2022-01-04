@@ -57,6 +57,7 @@ function path(root, target) {
 
   const matches = []
   _pathRecursive(matcher, root, matches, '', { max: 1 })
+
   if (!matches) {
     if (typeof target === 'object') {
       throw new Error(`Target not found: ${JSON.stringify(target)}`)
@@ -80,6 +81,9 @@ function _pathRecursive(matcher, root, matches, pathAccumulator, options) {
   }
   if (root === undefined) {
     throw new Error(`Found undefined in path at ${pathAccumulator}`)
+  }
+  else if (root === null) {
+    throw new Error(`Found null in path at ${pathAccumulator}`)
   }
   else if (matcher(root)) {
     matches.push(pathAccumulator || '.')

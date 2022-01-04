@@ -1,3 +1,5 @@
+const util = require('./util.js')
+
 module.exports = {
   apply,
   toString,
@@ -24,10 +26,18 @@ function templateSubstitute(template, args) {
 
   return tokens.map(({ substitute, token }) => {
     if (substitute) {
-      const { value, kind, classes } = args[token]
-      return {
-        classes: classes.join(' '),
-        value: token === 'card' ? kind : value,
+      if (Object.keys(args).includes(token)) {
+        const { value, kind, classes } = args[token]
+        return {
+          classes: classes.join(' '),
+          value: value,
+        }
+      }
+      else {
+        return {
+          classes: '',
+          value: '{' + token + '}'
+        }
       }
     }
     else {
@@ -70,7 +80,9 @@ function templateTokenize(template) {
   }
 
   // Catch the last token, if any
-  push(template.substr(prev, template.length - prev), false)
+  if (prev != template.length) {
+    push(template.substr(prev, template.length - prev), false)
+  }
 
   return tokens
 }

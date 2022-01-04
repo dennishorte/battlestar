@@ -38,7 +38,7 @@ function contextEnricher(context) {
       context.actor = game.getPlayerByName(context.data.playerName)
     }
     if (context.response) {
-      context.options = context.response.option.map(o => o.name || o)
+      context.options = context.response.option.map(o => game.utilOptionName(o))
     }
   }
 }
@@ -58,9 +58,62 @@ Object.defineProperty(Game.prototype, 'constructor', {
 ////////////////////////////////////////////////////////////////////////////////
 // Custom functions
 
+Game.prototype.aChooseCards = function(context, options) {
+  options.cards = options.cards.map(c => c.id || c)
+  return context.push('choose-cards', options)
+}
+
+Game.prototype.aDogma = function(context, player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+  return context.push('action-dogma', {
+    playerName: player.name,
+    card: card.id,
+  })
+}
+
+Game.prototype.aDraw = function(context, player, age) {
+  player = this._adjustPlayerParam(player)
+  return context.push('raw-draw', {
+    playerName: player.name,
+    age,
+  })
+}
+
+Game.prototype.aListCardsForDogmaByColor = function(player, color) {
+  player = this._adjustPlayerParam(player)
+  const cards = this.getZoneColorByPlayer(player, color).cards
+  const extraCards = this
+    .getTriggers('list-echo')
+    .flatMap(t => t(player, color, cards, this))
+    .map(c => c.id || c)
+  return util.array.distinct(cards.concat(extraCards))
+}
+
+Game.prototype.aMeld = function(context, player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+  return context.push('raw-meld', {
+    playerName: player.name,
+    card: card.id,
+  })
+}
+
+Game.prototype.checkCardIsTop = function(card) {
+  card = this._adjustCardParam(card)
+  const zone = this.getZoneByCard(card)
+  util.assert(this.checkZoneIsColorStack(zone), `Card ${card.name} isn't even on a color stack`)
+  return this.checkCardsEqual(card, zone.cards[zone.cards.length - 1])
+}
+
 Game.prototype.checkCardsEqual = function(c1, c2) {
-  c1 = this._adjustCardParam(c1)
-  c2 = this._adjustCardParam(c2)
+  try {
+    c1 = this._adjustCardParam(c1)
+    c2 = this._adjustCardParam(c2)
+  }
+  catch {
+    return false
+  }
 
   if (c1.id && c2.id) {
     return c1.id === c2.id
@@ -76,9 +129,61 @@ Game.prototype.checkCardsEqual = function(c1, c2) {
   }
 }
 
-Game.prototype.getCardData = function(card) {
+Game.prototype.checkEchoIsVisibile = function(card) {
   card = this._adjustCardParam(card)
-  return res.all.byName[card]
+
+  if (this.checkCardIsTop(card)) {
+    return card.checkHasEcho()
+  }
+
+  const { zoneName } = this.getZoneByCard(card)
+  const zone = this.getZoneByName(zoneName)
+
+  util.assert(this.checkZoneIsColorStack(zone), 'Card ${card.name} is not in a color stack')
+
+  return card.echoIsVisible(zone.splay)
+}
+
+Game.prototype.checkZoneIsColorStack = function(zone) {
+  zone = this._adjustZoneParam(zone)
+  return (
+    zone.name.endsWith('red')
+    || zone.name.endsWith('yellow')
+    || zone.name.endsWith('green')
+    || zone.name.endsWith('blue')
+    || zone.name.endsWith('purple')
+  )
+}
+
+Game.prototype.getCardData = function(card) {
+  if (!card) {
+    return undefined
+  }
+  else if (card.id) {
+    return card
+  }
+  else {
+    const data = res.all.byName[card]
+    util.assert(!!data, `Unknown card name: ${card}`)
+    return data
+  }
+}
+
+Game.prototype.getArtifact = function(player) {
+  player = this._adjustPlayerParam(player)
+  const zone = this.getZoneByName(`players.${player.name}.artifact`)
+  if (zone.cards.length > 0) {
+    return this.getCardData(zone.cards[0])
+  }
+  else {
+    return undefined
+  }
+}
+
+Game.prototype.getCardTop = function(player, color) {
+  player = this._adjustPlayerParam(player)
+  const zone = this.getZoneColorByPlayer(player, color)
+  return this.getCardData(zone.cards[zone.cards.length - 1])
 }
 
 Game.prototype.getExpansionList = function() {
@@ -86,9 +191,20 @@ Game.prototype.getExpansionList = function() {
 }
 
 Game.prototype.getBiscuits = function(player) {
-  throw new Error('not implemented')
+  let board = this.utilEmptyBiscuits()
 
-  const board = this.utilEmptyBiscuits()
+  for (const color of this.utilColors()) {
+    const zone = this.getZoneColorByPlayer(player, color)
+    for (const cardName of zone.cards) {
+      const card = this.getCardData(cardName)
+      const cardBiscuits =
+        this.checkCardIsTop(card)
+        ? card.getBiscuits('top')
+        : card.getBiscuits(zone.splay)
+      board = this.utilCombineBiscuits(board, this.utilParseBiscuits(cardBiscuits))
+    }
+  }
+
   const final = this.utilCombineBiscuits(this.utilEmptyBiscuits(), board)
 
   for (const trigger of this.getTriggers(player, 'biscuit')) {
@@ -119,7 +235,12 @@ Game.prototype.getHand = function(player) {
 }
 
 Game.prototype.getTriggers = function(player, name) {
-  throw new Error('not implemented')
+  return []
+}
+
+Game.prototype.getZoneArtifact = function(player) {
+  player = this._adjustPlayerParam(player)
+  return this.getZoneByName(`players.${player.name}.artifact`)
 }
 
 Game.prototype.getZoneColorByPlayer = function(player, color) {
@@ -161,10 +282,22 @@ Game.prototype.mDraw = function(player, exp, age) {
   this.mMoveCard(deck, hand)
 }
 
+Game.prototype.mMeld = function(player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+
+  const source = this.getZoneByCard(card)
+  const target = this.getZoneColorByPlayer(player, card.color)
+  this.mMoveCard(source, target, card)
+  this.mLog({
+    template: '{player} melds {card}',
+    args: { player, card }
+  })
+}
+
 Game.prototype.mMoveCard = function(source, target, card) {
   source = this._adjustZoneParam(source)
   target = this._adjustZoneParam(target)
-  card = this._adjustCardParam(card)
 
   let cardIndex
 
@@ -182,11 +315,22 @@ Game.prototype.mMoveCard = function(source, target, card) {
   this.mSetVisibilityForZone(target, card)
 }
 
+Game.prototype.mNextTurn = function() {
+  const nextIndex = (this.state.turn.playerIndex + 1) % this.getPlayerAll().length
+  this.rk.put(this.state.turn, 'playerIndex', nextIndex)
+}
+
+Game.prototype.mReturnAll = function(zone) {
+  zone = this._adjustZoneParam(zone)
+  for (let i = zone.cards.length - 1; i >= 0; i--) {
+    this.mReturnCard(zone.cards[i])
+  }
+}
+
 Game.prototype.mReturnCard = function(card) {
   card = this._adjustCardParam(card)
   const zone = this.getZoneByCard(card)
-  const data = this.getCardData(card)
-  const homeDeck = this.getDeck(data.expansion, data.age)
+  const homeDeck = this.getDeck(card.expansion, card.age)
   this.mMoveCard(zone, homeDeck, card)
 }
 
@@ -196,8 +340,41 @@ Game.prototype.mSetStartingPlayer = function(player) {
   this.rk.put(this.state.turn, 'playerIndex', index)
 }
 
-Game.prototype.mShuffleDeck = function(deck) {
-  deck = this._adjustZoneParam(deck)
+Game.prototype.oDogma = function(card) {
+  card = this._adjustCardParam(card)
+  return {
+    name: `${card.name}`,
+    kind: 'dogma',
+    card: card.id,
+  }
+}
+
+Game.prototype.oMeld = function(card) {
+  card = this._adjustCardParam(card)
+  return {
+    name: `${card.name}`,
+    kind: 'meld',
+    card: card.id,
+  }
+}
+
+Game.prototype.utilColors = function() {
+  return [
+    'red',
+    'yellow',
+    'green',
+    'blue',
+    'purple',
+  ]
+}
+
+Game.prototype.utilCombineBiscuits = function(left, right) {
+  const combined = this.utilEmptyBiscuits()
+  for (const biscuit of Object.keys(combined)) {
+    combined[biscuit] += left[biscuit]
+    combined[biscuit] += right[biscuit]
+  }
+  return combined
 }
 
 Game.prototype.utilEmptyBiscuits = function() {
@@ -211,6 +388,55 @@ Game.prototype.utilEmptyBiscuits = function() {
   }
 }
 
+Game.prototype.utilEnrichLogArgs = function(msg) {
+  for (const key of Object.keys(msg.args)) {
+    if (key === 'player') {
+      const player = this._adjustPlayerParam(msg.args[key])
+      msg.args[key] = {
+        value: player.name,
+        classes: ['player-name']
+      }
+    }
+    else if (key === 'card') {
+      const card = this._adjustCardParam(msg.args[key])
+      msg.args[key] = {
+        value: card.name,
+        classes: [`card`],
+      }
+    }
+    else if (key === 'zone') {
+      const zone = this._adjustZoneParam(msg.args[key])
+      msg.args[key] = {
+        value: zone.name,
+        classes: ['zone-name']
+      }
+    }
+    // Convert string args to a dict
+    else if (typeof msg.args[key] !== 'object') {
+      msg.args[key] = {
+        value: msg.args[key],
+      }
+    }
+
+    // Ensure the classes key is set for all entries.
+    msg.args[key].classes = msg.args[key].classes || []
+  }
+}
+
+Game.prototype.utilParseBiscuits = function(biscuitString) {
+  const counts = this.utilEmptyBiscuits()
+  for (const ch of biscuitString) {
+    if (counts.hasOwnProperty(ch)) {
+      counts[ch] += 1
+    }
+  }
+  return counts
+}
+
+Game.prototype.utilOptionName = function(option) {
+  return option.name || option
+}
+
 Game.prototype._adjustCardParam = function(card) {
-  return card
+  return this.getCardData(card)
 }

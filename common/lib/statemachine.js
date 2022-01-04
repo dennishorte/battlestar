@@ -58,6 +58,7 @@ function run() {
     done: _done.bind(this),
     push: _push.bind(this),
     wait: _wait.bind(this),
+    return: _return.bind(this),
     waitMany: _waitMany.bind(this),
     data: event.data,
     state: this.state,
@@ -112,6 +113,14 @@ function _push(eventName, data) {
 
   this.run()
   return 'push'
+}
+
+function _return(value) {
+  if (value !== undefined) {
+    const prevEvent = this.stack[this.stack.length - 2]
+    this.rk.addKey(prevEvent.data, 'returned', value)
+  }
+  return _done.call(this)
 }
 
 function _wait(payload) {

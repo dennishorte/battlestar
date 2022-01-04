@@ -23,6 +23,14 @@ Util.array.remove = function(array, elem) {
   }
 }
 
+Util.array.reverseIter = function*(array) {
+  let i = array.length
+  while (i > 0) {
+    i -= 1
+    yield array[i]
+  }
+}
+
 Util.array.shuffle = function(array, rng) {
   if (!rng) {
     rng = Math.random
@@ -49,6 +57,10 @@ Util.array.swap = function(array, i, j) {
   const tmp = array[i]
   array[i] = array[j]
   array[j] = tmp
+}
+
+Util.array.toDict = function(array, f) {
+  return Object.assign({}, ...array.map(x => f(x)))
 }
 
 Util.assert = function(test, message) {

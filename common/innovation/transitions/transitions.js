@@ -17,11 +17,20 @@ const transitions = {
 
   'action-achieve': require('./actionAchieve.js'),
   'action-decree': require('./actionDecree.js'),
+
   'action-dogma': require('./actionDogma.js'),
+  'action-dogma-one-effect': require('./actionDogmaOneEffect.js'),
+
   'action-draw': require('./actionDraw.js'),
+  'raw-draw': require('./rawDraw.js'),
+
   'action-endorse': require('./actionEndorse.js'),
   'action-inspire': require('./actionInspire.js'),
+
   'action-meld': require('./actionMeld.js'),
+  'raw-meld': require('./rawMeld.js'),
+
+  'choose-cards': require('./chooseCards.js'),
 }
 
 module.exports = transitions

@@ -28,6 +28,7 @@ function stateFactory(lobby) {
 
     // Current turn information
     turn: {
+      round: 0,
       count: 0,
       playerIndex: -1,
     },
@@ -85,42 +86,6 @@ GameBase.prototype.load = function(transitions, state, enrichContext) {
 
 // Available to overload
 GameBase.prototype.save = async function() {}
-
-GameBase.prototype.dumpLog = function() {
-  const output = []
-  for (const entry of this.state.log) {
-    output.push(log.toString(entry))
-  }
-  console.log(output.join('\n'))
-}
-
-function _dumpZonesRecursive(root) {
-  const output = []
-
-  if (root.name) {
-    output.push(root.name)
-    for (const card of root.cards) {
-      if (typeof card === 'string') {
-        output.push(`   ${card}`)
-      }
-      else {
-        output.push(`   ${card.id}, ${card.name}`)
-      }
-    }
-  }
-
-  else {
-    for (const zone of Object.values(root)) {
-      output.push(_dumpZonesRecursive(zone))
-    }
-  }
-
-  return output.join('\n')
-}
-
-GameBase.prototype.dumpZones = function(root) {
-  console.log(_dumpZonesRecursive(root || this.state.zones))
-}
 
 GameBase.prototype.run = function() {
   try {
@@ -293,6 +258,14 @@ GameBase.prototype.getTransition = function() {
   return this.sm.stack[this.sm.stack.length - 1]
 }
 
+GameBase.prototype.getTurnCount = function() {
+  return this.state.turn.count
+}
+
+GameBase.prototype.getTurnRound = function() {
+  return this.state.turn.round
+}
+
 /*
     [
       {
@@ -421,6 +394,11 @@ GameBase.prototype.mGameOver = function(trigger) {
 }
 
 GameBase.prototype.mLog = function(msg) {
+  if (!msg.template) {
+    console.log(msg)
+    throw new Error(`Invalid log entry; no template`)
+  }
+
   if (!msg.classes) {
     msg.classes = []
   }
@@ -428,7 +406,7 @@ GameBase.prototype.mLog = function(msg) {
     msg.args = {}
   }
 
-  enrichLogArgs(msg)
+  this.utilEnrichLogArgs(msg)
   msg.id = this.getLog().length
   msg.indent = this.getLogIndent()
 
@@ -538,56 +516,13 @@ GameBase.prototype._adjustZoneParam = function(param) {
   }
 }
 
-
-function enrichLogArgs(msg) {
+// To be overridden in subclasses for superior logging
+GameBase.prototype.utilEnrichLogArgs = function(msg) {
   for (const key of Object.keys(msg.args)) {
     // Convert string args to a dict
     if (typeof msg.args[key] !== 'object') {
       msg.args[key] = {
         value: msg.args[key],
-      }
-    }
-
-    // Ensure the dict has a classes entry
-    const classes = msg.args[key].classes || []
-    msg.args[key].classes = classes
-
-    if (key === 'player') {
-      util.array.pushUnique(classes, 'player-name')
-    }
-    else if (key === 'character') {
-      util.array.pushUnique(classes, 'character-name')
-      util.array.pushUnique(classes, bsgutil.characterNameToCssClass(msg.args[key].value))
-    }
-    else if (key === 'location') {
-      util.array.pushUnique(classes, 'location-name')
-    }
-    else if (key === 'phase') {
-      util.array.pushUnique(classes, 'phase-name')
-    }
-    else if (key === 'title') {
-      util.array.pushUnique(classes, 'title-name')
-    }
-    else if (key === 'card') {
-      const card = msg.args['card']
-      if (typeof card !== 'object') {
-        throw new Error(`Pass whole card object to log for better logging. Got: ${card}`)
-      }
-      msg.args['card'] = {
-        value: card.name,
-        visibility: card.visibility,
-        kind: card.kind,
-        classes: [`card-${card.kind}`],
-      }
-    }
-    else if (key === 'zone') {
-      const zone = msg.args['zone']
-      if (typeof zone !== 'object') {
-        throw new Error(`Pass whole zone object to log for better logging. Got: ${zone}`)
-      }
-      msg.args['zone'] = {
-        value: zone.name,
-        classes: ['zone-name']
       }
     }
   }
