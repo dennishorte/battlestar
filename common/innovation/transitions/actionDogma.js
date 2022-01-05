@@ -10,53 +10,18 @@ module.exports = function(context) {
 
 function nextStep(context) {
   const { game } = context
-  const { sharing, demanding, returned } = context.data
+  const { sharing, demanding } = context.data
   game.rk.increment(context.data, 'effectIndex')
-
-  // Clear this each time so that it doesn't get transmitted incorrectly forward.
-  if (returned) {
-    game.rk.removeKey(context.data, 'returned')
-  }
 
   if (context.data.effectIndex < context.data.effects.length) {
     const effect = context.data.effects[context.data.effectIndex]
-    const dogma = game
-      .getCardData(effect.card)
-      .getImpl(effect.kind)[effect.implIndex]
 
-    // Don't demand from self.
-    if (
-      dogma.demand
-      && effect.leader === effect.player
-    ) {
-      return nextStep(context)
-    }
-
-    // Can't demand from this player.
-    else if (
-      dogma.demand
-      && !demanding.includes(effect.player)
-    ) {
-      return nextStep(context)
-    }
-
-    // Sharing doesn't apply to this player.
-    else if (
-      effect.leader != effect.player
-      && !dogma.demand
-      && !sharing.includes(effect.player)
-    ) {
-      return nextStep(context)
-    }
-
-    // Effect will target this player.
-    else {
-      return context.push('action-dogma-one-effect', {
-        effect,
-        playerName: effect.player,
-        returned,
-      })
-    }
+    return context.push('action-dogma-one-effect', {
+      effect,
+      sharing: context.data.sharing,
+      demanding: context.data.demanding,
+      biscuits: context.data.biscuits,
+    })
   }
   else {
     return context.done()
@@ -123,8 +88,8 @@ function _determineEffects(context) {
     .aListCardsForDogmaByColor(actor, card.color)
     .flatMap(card => expandByKinds(game, card))       // { card, kind }
     .flatMap(effect => expandByImpl(game, effect))    // { implIndex }
-    .flatMap(effect => expandByPlayers(game, effect, players)) // { player }
-    .flatMap(effect => expandBySteps(game, effect))   // { stepIndex }
+    // .flatMap(effect => expandByPlayers(game, effect, players)) // { player }
+    // .flatMap(effect => expandBySteps(game, effect))   // { stepIndex }
     .map(effect => Object.assign(effect, { leader: actor.name }))
 
   game.rk.addKey(context.data, 'effects', effects)

@@ -144,6 +144,12 @@ Game.prototype.checkEchoIsVisibile = function(card) {
   return card.echoIsVisible(zone.splay)
 }
 
+Game.prototype.checkPlayersAreTeammates = function(p1, p2) {
+  p1 = this._adjustPlayerParam(p1)
+  p2 = this._adjustPlayerParam(p2)
+  return p1.name === p2.name
+}
+
 Game.prototype.checkZoneIsColorStack = function(zone) {
   zone = this._adjustZoneParam(zone)
   return (

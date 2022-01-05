@@ -126,7 +126,7 @@ function _push(eventName, data) {
 }
 
 function _return(value) {
-  if (value !== undefined) {
+  if (value !== undefined && value !== null) {
     const prevEvent = this.stack[this.stack.length - 2]
     this.rk.addKey(prevEvent.data, 'returned', value)
   }

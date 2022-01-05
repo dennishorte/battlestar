@@ -9,7 +9,7 @@ module.exports = function(context) {
   }
 
   // Start the next player's turn.
-  context.push('player-turn', {
+  return context.push('player-turn', {
     playerName: game.getPlayerCurrentTurn().name,
   })
 }

@@ -20,6 +20,7 @@ const transitions = {
 
   'action-dogma': require('./actionDogma.js'),
   'action-dogma-one-effect': require('./actionDogmaOneEffect.js'),
+  'action-dogma-one-step': require('./actionDogmaOneStep.js'),
 
   'action-draw': require('./actionDraw.js'),
   'raw-draw': require('./rawDraw.js'),

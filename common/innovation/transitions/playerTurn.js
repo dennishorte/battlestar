@@ -116,8 +116,8 @@ function turnComplete(context) {
 function _choose(context, count) {
   const { game } = context
   game.mLog({
-    template: 'action 1',
-    classes: ['action-header', 'action-1'],
+    template: `action ${count}`,
+    classes: ['action-header', `action-${count}`],
   })
 
   const options = []

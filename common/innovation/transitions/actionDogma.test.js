@@ -4,7 +4,7 @@ const t = require('../testutil.js')
 
 describe('action-dogma', () => {
 
-  test('effects share', () => {
+  test.only('effects share', () => {
     const game = t.fixtureDogma('Domestication')
     t.setColor(game, 'dennis', 'green', ['The Wheel'])
     game.run()
@@ -12,7 +12,6 @@ describe('action-dogma', () => {
     jest.spyOn(game, 'aDraw')
     t.dogma(game, 'Domestication')
 
-    t.dumpLog(game)
     expect(game.aMeld).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({ name: 'micah' }),
@@ -22,6 +21,27 @@ describe('action-dogma', () => {
       expect.anything(),
       expect.objectContaining({ name: 'dennis' }),
       'Archery'
+    )
+    expect(game.aMeld).not.toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ name: 'tom' }),
+      expect.anything(),
+    )
+
+    expect(game.aDraw).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ name: 'micah' }),
+      1
+    )
+    expect(game.aDraw).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ name: 'dennis' }),
+      1
+    )
+    expect(game.aDraw).not.toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ name: 'tom' }),
+      expect.anything(),
     )
   })
 

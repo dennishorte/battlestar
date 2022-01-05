@@ -166,6 +166,9 @@ function move(object, destArray, destIndex) {
 }
 
 function addKey(object, key, value) {
+  util.assert(value !== undefined, 'Cannot add undefined values')
+  util.assert(value !== null, 'Cannot add null values')
+
   this.patch({
     kind: 'addKey',
     path: this.path(object),
@@ -203,6 +206,7 @@ function increment(object, key) {
 }
 
 function put(object, key, value) {
+  util.assert(value !== null, 'Not allowed to put null.')
   util.assert(value !== undefined, 'Not allowed to put undefined. Use removeKey instead.')
   util.assert(object[key] !== undefined, 'Not allowed to put new keys. Use addKey instead.')
 
@@ -285,7 +289,11 @@ function at(path) {
 }
 
 function path(target) {
-  return jsonpath.path(this.game, target)
+  const path = jsonpath.path(this.game, target)
+  if (!path) {
+    throw new Error(`Unable to find path for ${JSON.stringify(target)}`)
+  }
+  return path
 }
 
 function _assert(truthyValue, message) {
