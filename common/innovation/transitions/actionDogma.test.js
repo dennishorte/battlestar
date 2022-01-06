@@ -4,7 +4,7 @@ const t = require('../testutil.js')
 
 describe('action-dogma', () => {
 
-  test.only('effects share', () => {
+  test('effects share', () => {
     const game = t.fixtureDogma('Domestication')
     t.setColor(game, 'dennis', 'green', ['The Wheel'])
     game.run()
@@ -45,8 +45,16 @@ describe('action-dogma', () => {
     )
   })
 
-  test('share bonus gained', () => {
-
+  test.only('share bonus gained', () => {
+    const game = t.fixtureDogma('Domestication')
+    t.setColor(game, 'dennis', 'green', ['The Wheel'])
+    game.run()
+    jest.spyOn(game, 'aDrawShareBonus')
+    t.dogma(game, 'Domestication')
+    expect(game.aDrawShareBonus).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ name: 'micah' })
+    )
   })
 
   test('no share bonus if only teammate shares', () => {

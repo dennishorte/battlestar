@@ -9,34 +9,70 @@ module.exports = function(context) {
 }
 
 function nextStep(context) {
-  const { game } = context
-  const { sharing, demanding } = context.data
+  const { game, actor } = context
+  const { sharing, demanding, phase } = context.data
   game.rk.increment(context.data, 'effectIndex')
 
-  if (context.data.effectIndex < context.data.effects.length) {
-    const effect = context.data.effects[context.data.effectIndex]
+  if (phase === 'dogma') {
+    if (context.data.effectIndex < context.data.effects.length) {
+      const effect = context.data.effects[context.data.effectIndex]
 
-    return context.push('action-dogma-one-effect', {
-      effect,
-      sharing: context.data.sharing,
-      demanding: context.data.demanding,
-      biscuits: context.data.biscuits,
-    })
+      return context.push('action-dogma-one-effect', {
+        effect,
+        sharing: context.data.sharing,
+        demanding: context.data.demanding,
+        biscuits: context.data.biscuits,
+      })
+    }
+    else {
+      game.rk.put(context.data, 'phase', 'share')
+      return nextStep(context)
+    }
   }
-  else {
+
+  else if (phase === 'share') {
+    return maybeDrawShareBonus(context)
+  }
+
+  else if (phase === 'cleanup') {
+    game.mResetDogmaInfo()
     return context.done()
+  }
+
+  else {
+    throw new Error(`Unknown phase in actionDogma.js: ${phase}`)
   }
 }
 
+function maybeDrawShareBonus(context) {
+  const { game, actor } = context
+  const { sharing } = context.data
+
+  game.rk.put(context.data, 'phase', 'cleanup')
+
+  const dogmaInfo = game.getDogmaInfo()
+  for (const playerName of sharing) {
+    if (dogmaInfo[playerName].acted && !game.checkPlayersAreTeammates(actor, playerName)) {
+      return game.aDrawShareBonus(context, actor)
+    }
+  }
+
+  return nextStep(context)
+}
+
 function initialize(context) {
+  const { game } = context
+
+  game.mResetDogmaInfo()
   _logDogmaActivation(context)
   _determineEffects(context)
   _determineBiscuits(context)
   _determineDemands(context)
   _determineShares(context)
 
+  game.rk.addKey(context.data, 'phase', 'dogma')
+
   // Initialization complete
-  const { game } = context
   game.rk.addKey(context.data, 'initialized', true)
 }
 
@@ -88,8 +124,6 @@ function _determineEffects(context) {
     .aListCardsForDogmaByColor(actor, card.color)
     .flatMap(card => expandByKinds(game, card))       // { card, kind }
     .flatMap(effect => expandByImpl(game, effect))    // { implIndex }
-    // .flatMap(effect => expandByPlayers(game, effect, players)) // { player }
-    // .flatMap(effect => expandBySteps(game, effect))   // { stepIndex }
     .map(effect => Object.assign(effect, { leader: actor.name }))
 
   game.rk.addKey(context.data, 'effects', effects)
@@ -167,16 +201,4 @@ function expandByImpl(game, effect) {
   const impl = card[`${effect.kind}Impl`]
   util.assert(impl.length > 0, `Expected ${effect} impl to exist`)
   return impl.map((i, implIndex) => Object.assign({...effect}, { implIndex }))
-}
-
-function expandByPlayers(game, effect, players) {
-  return players.map(p => Object.assign({...effect}, { player: p.name }))
-}
-
-function expandBySteps(game, effect) {
-  const steps = game
-    .getCardData(effect.card)
-    .getImpl(effect.kind)[effect.implIndex]
-    .steps
-  return steps.map((s, stepIndex) => Object.assign({...effect}, { stepIndex }))
 }

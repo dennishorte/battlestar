@@ -43,16 +43,16 @@ function _initializePlayers(context) {
   }))
   util.array.shuffle(game.state.players)
   game.state.players.forEach((player, index) => player.index = index)
+  game.mResetDogmaInfo()
 }
 
 function _initializeZones(context) {
   const game = context.state
-  const state = game.state
-  const zones = state.zones || {}
+  const zones = game.state.zones
 
   _addDeckZones(zones)
   _addAchievementZones(game, zones)
-  _addPlayerZones(state.players, zones)
+  _addPlayerZones(game.state.players, zones)
 }
 
 function _addDeckZones(zones) {

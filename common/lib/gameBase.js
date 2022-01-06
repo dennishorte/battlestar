@@ -59,8 +59,8 @@ function stateFactory(lobby) {
   return state
 }
 
-function GameOverTrigger() {
-
+function GameOverTrigger(reason) {
+  this.reason = reason
 }
 
 GameBase.prototype.load = function(transitions, state, enrichContext) {

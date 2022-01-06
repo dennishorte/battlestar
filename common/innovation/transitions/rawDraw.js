@@ -1,12 +1,22 @@
 module.exports = function(context) {
   const { game, actor } = context
-  const { age } = context.data
+  const { isShareBonus } = context.data
 
+  // Determine which expansion to draw from.
   let exp = 'base'
-  if (game.getExpansionList().includes('echo')) {
+  if (game.getExpansionList().includes('figs')) {
+    exp = 'figs'
+  }
+  else if (game.getExpansionList().includes('echo')) {
     throw new Error('Drawing cards not supported in Echoes of the Past yet.')
   }
 
-  game.mDraw(actor, exp, age)
+  // If age is not specified, draw based on player's current highest top card.
+  const baseAge = context.data.age || game.getHighestTopCard(actor).age || 1
+
+  // Adjust age based on empty decks.
+  const { adjustedAge, adjustedExp } = game.getAdjustedDeck(baseAge, exp)
+
+  game.mDraw(actor, adjustedExp, adjustedAge)
   return context.done()
 }

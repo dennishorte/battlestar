@@ -134,7 +134,7 @@ TestUtil.setArtifact = function(game, player, card) {
   }
 
   // Get rid of existing artifact
-  game.mReturnAll(zone)
+  game.mReturnAll(player, zone)
 
   // Fetch the desired artifact.
   const cardZone = game.getZoneByCard(card)
@@ -154,7 +154,7 @@ TestUtil.setHand = function(game, player, cards) {
   }
 
   for (let i = hand.cards.length - 1; i >= 0; i--) {
-    game.mReturnCard(hand.cards[i])
+    game.mReturnCard(player, hand.cards[i])
   }
 
   for (const card of cards) {
@@ -165,7 +165,7 @@ TestUtil.setHand = function(game, player, cards) {
 
 TestUtil.setColor = function(game, player, color, cards) {
   const zone = game.getZoneColorByPlayer(player, color)
-  game.mReturnAll(zone)
+  game.mReturnAll(player, zone)
   for (const card of cards) {
     const source = game.getZoneByCard(card)
     game.mMoveCard(source, zone, card)

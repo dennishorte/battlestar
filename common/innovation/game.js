@@ -22,8 +22,12 @@ function factory(lobby) {
   state.counters.cardsTucked = 0
   state.counters.cardsScored = 0
 
-  // Current turn information
-  state.turn.action = 1
+  // Information about the current dogma action
+  // This includes whether anything was done by an opponent to trigger a share bonus,
+  // as well as information that needs to propagate across effects in a single card,
+  // such as Charitable Trust, whose dogma allows you to meld the card drawn due to its
+  // echo effect.
+  state.dogma = {}
 
   const game = new Game()
   game.load(transitions, state, contextEnricher)
@@ -77,6 +81,14 @@ Game.prototype.aDraw = function(context, player, age) {
   return context.push('raw-draw', {
     playerName: player.name,
     age,
+  })
+}
+
+Game.prototype.aDrawShareBonus = function(context, player) {
+  player = this._adjustPlayerParam(player)
+  return context.push('raw-draw', {
+    playerName: player.name,
+    isShareBonus: true,
   })
 }
 
@@ -161,41 +173,6 @@ Game.prototype.checkZoneIsColorStack = function(zone) {
   )
 }
 
-Game.prototype.getCardData = function(card) {
-  if (!card) {
-    return undefined
-  }
-  else if (card.id) {
-    return card
-  }
-  else {
-    const data = res.all.byName[card]
-    util.assert(!!data, `Unknown card name: ${card}`)
-    return data
-  }
-}
-
-Game.prototype.getArtifact = function(player) {
-  player = this._adjustPlayerParam(player)
-  const zone = this.getZoneByName(`players.${player.name}.artifact`)
-  if (zone.cards.length > 0) {
-    return this.getCardData(zone.cards[0])
-  }
-  else {
-    return undefined
-  }
-}
-
-Game.prototype.getCardTop = function(player, color) {
-  player = this._adjustPlayerParam(player)
-  const zone = this.getZoneColorByPlayer(player, color)
-  return this.getCardData(zone.cards[zone.cards.length - 1])
-}
-
-Game.prototype.getExpansionList = function() {
-  return this.state.options.expansions
-}
-
 Game.prototype.getBiscuits = function(player) {
   let board = this.utilEmptyBiscuits()
 
@@ -223,12 +200,70 @@ Game.prototype.getBiscuits = function(player) {
   }
 }
 
-// Overload GameBase because that assumes cards are objects instead of just strings
-Game.prototype.getZoneByCard = function(card) {
-  card = this._adjustCardParam(card)
-  const { zoneName } = this.getCardByPredicate(c => this.checkCardsEqual(c, card))
-  util.assert(!!zoneName, `No zone found for card`)
-  return this.getZoneByName(zoneName)
+Game.prototype.getCardData = function(card) {
+  if (!card) {
+    return undefined
+  }
+  else if (card.id) {
+    return card
+  }
+  else {
+    const data = res.all.byName[card]
+    util.assert(!!data, `Unknown card name: ${card}`)
+    return data
+  }
+}
+
+Game.prototype.getArtifact = function(player) {
+  player = this._adjustPlayerParam(player)
+  const zone = this.getZoneByName(`players.${player.name}.artifact`)
+  if (zone.cards.length > 0) {
+    return this.getCardData(zone.cards[0])
+  }
+  else {
+    return undefined
+  }
+}
+
+Game.prototype.getAdjustedDeck = function(age, exp) {
+  let baseDeck = this.getDeck('base', age)
+  while (baseDeck.cards.length === 0) {
+    age = age + 1
+    if (age === 11) {
+      throw new base.GameOverTrigger('draw an 11')
+    }
+    else {
+      baseDeck = this.getDeck('base', age)
+    }
+  }
+
+  const targetDeck = this.getDeck(exp, age)
+  if (targetDeck.cards.length === 0) {
+    return {
+      adjustedAge: age,
+      adjustedExp: 'base',
+    }
+  }
+  else {
+    return {
+      adjustedAge: age,
+      adjustedExp: exp
+    }
+  }
+}
+
+Game.prototype.getCardTop = function(player, color) {
+  player = this._adjustPlayerParam(player)
+  const zone = this.getZoneColorByPlayer(player, color)
+  return this.getCardData(zone.cards[zone.cards.length - 1])
+}
+
+Game.prototype.getDogmaInfo = function() {
+  return this.state.dogma
+}
+
+Game.prototype.getExpansionList = function() {
+  return this.state.options.expansions
 }
 
 Game.prototype.getDeck = function(exp, age) {
@@ -240,6 +275,22 @@ Game.prototype.getHand = function(player) {
   return this.getZoneByName(`players.${player.name}.hand`)
 }
 
+Game.prototype.getHighestTopCard = function(player) {
+  player = this._adjustPlayerParam(player)
+  const topCards = this
+    .utilColors()
+    .map(color => this.getCardTop(player, color))
+    .filter(card => card !== undefined)
+    .sort((l, r) => r.age - l.age)
+
+  if (topCards.length === 0) {
+    return 1
+  }
+  else {
+    return topCards[0].age
+  }
+}
+
 Game.prototype.getTriggers = function(player, name) {
   return []
 }
@@ -247,6 +298,14 @@ Game.prototype.getTriggers = function(player, name) {
 Game.prototype.getZoneArtifact = function(player) {
   player = this._adjustPlayerParam(player)
   return this.getZoneByName(`players.${player.name}.artifact`)
+}
+
+// Overload GameBase because that assumes cards are objects instead of just strings
+Game.prototype.getZoneByCard = function(card) {
+  card = this._adjustCardParam(card)
+  const { zoneName } = this.getCardByPredicate(c => this.checkCardsEqual(c, card))
+  util.assert(!!zoneName, `No zone found for card`)
+  return this.getZoneByName(zoneName)
 }
 
 Game.prototype.getZoneColorByPlayer = function(player, color) {
@@ -275,6 +334,9 @@ Game.prototype.mDraw = function(player, exp, age) {
   const deck = this.getDeck(exp, age)
   const hand = this.getHand(player)
 
+  // Used for calculating share bonuses
+  this.rk.put(this.getDogmaInfo()[player.name], 'acted', true)
+
   util.assert(
     this.getExpansionList().includes(exp),
     `Can't draw from ${deck.name} because ${exp} is not being used.`)
@@ -298,6 +360,9 @@ Game.prototype.mDraw = function(player, exp, age) {
 Game.prototype.mMeld = function(player, card) {
   player = this._adjustPlayerParam(player)
   card = this._adjustCardParam(card)
+
+  // Used for calculating share bonuses
+  this.rk.put(this.getDogmaInfo()[player.name], 'acted', true)
 
   const source = this.getZoneByCard(card)
   const target = this.getZoneColorByPlayer(player, card.color)
@@ -336,15 +401,25 @@ Game.prototype.mNextTurn = function() {
   this.rk.put(this.state.turn, 'playerIndex', nextIndex)
 }
 
-Game.prototype.mReturnAll = function(zone) {
+Game.prototype.mResetDogmaInfo = function() {
+  this.rk.put(this.state, 'dogma', this.utilEmptyDogmaInfo())
+}
+
+Game.prototype.mReturnAll = function(player, zone) {
+  player = this._adjustPlayerParam(player)
   zone = this._adjustZoneParam(zone)
   for (let i = zone.cards.length - 1; i >= 0; i--) {
-    this.mReturnCard(zone.cards[i])
+    this.mReturnCard(player, zone.cards[i])
   }
 }
 
-Game.prototype.mReturnCard = function(card) {
+Game.prototype.mReturnCard = function(player, card) {
+  player = this._adjustPlayerParam(player)
   card = this._adjustCardParam(card)
+
+  // Used for calculating share bonuses
+  this.rk.put(this.getDogmaInfo()[player.name], 'acted', true)
+
   const zone = this.getZoneByCard(card)
   const homeDeck = this.getDeck(card.expansion, card.age)
   this.mMoveCard(zone, homeDeck, card)
@@ -391,6 +466,12 @@ Game.prototype.utilCombineBiscuits = function(left, right) {
     combined[biscuit] += right[biscuit]
   }
   return combined
+}
+
+Game.prototype.utilEmptyDogmaInfo = function() {
+  return util.array.toDict(this.getPlayerAll(), p => ({ [p.name]: {
+    acted: false
+  }}))
 }
 
 Game.prototype.utilEmptyBiscuits = function() {
