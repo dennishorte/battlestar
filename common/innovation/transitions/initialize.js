@@ -13,6 +13,10 @@ module.exports = transitionFactory2({
       func: _initializePlayers,
     },
     {
+      name: 'initializeTeams',
+      func: _initializeTeams,
+    },
+    {
       name: 'initializeZones',
       func: _initializeZones,
     },
@@ -40,10 +44,28 @@ function _initializePlayers(context) {
   game.state.players = game.state.users.map(user => ({
     _id: user._id,
     name: user.name,
+    team: user.name,
   }))
   util.array.shuffle(game.state.players)
   game.state.players.forEach((player, index) => player.index = index)
   game.mResetDogmaInfo()
+}
+
+function _initializeTeams(context) {
+  const game = context.state
+  const teams = game.state.options.teams
+  const players = game.getPlayerAll()
+
+  let teamMod = players.length
+  if (teams) {
+    util.assert(game.getPlayerAll().length === 4, 'Teams only supported with 4 players')
+    teamMod = 2
+  }
+
+  for (let i = 0; i < 4; i++) {
+    const teamNumber = i % teamMod
+    game.rk.put(players[i], 'team', `team${teamNumber}`)
+  }
 }
 
 function _initializeZones(context) {

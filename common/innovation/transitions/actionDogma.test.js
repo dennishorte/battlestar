@@ -51,7 +51,6 @@ describe('action-dogma', () => {
     game.run()
     jest.spyOn(game, 'aDrawShareBonus')
     t.dogma(game, 'Domestication')
-    t.dumpLog(game)
     expect(game.aDrawShareBonus).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({ name: 'micah' })
@@ -59,7 +58,33 @@ describe('action-dogma', () => {
   })
 
   test('no share bonus if only teammate shares', () => {
+    const game = t.fixtureDogma('Domestication', { numPlayers: 4, teams: true })
+    game.run()
 
+    // Ensure we should share with exactly eliya (micah's teammate)
+    const micahBiscuits = game.getBiscuits('micah').final.k
+    expect(game.getBiscuits('eliya').final.k).toBeGreaterThanOrEqual(micahBiscuits)
+    expect(game.getBiscuits('dennis').final.k).toBeLessThan(micahBiscuits)
+    expect(game.getBiscuits('tom').final.k).toBeLessThan(micahBiscuits)
+
+    jest.spyOn(game, 'aDraw')
+    jest.spyOn(game, 'aDrawShareBonus')
+    t.dogma(game, 'Domestication')
+
+    // Ensure it was shared with Eliya
+    expect(game.aDraw).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ name: 'micah' }),
+      1
+    )
+    expect(game.aDraw).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ name: 'eliya' }),
+      1
+    )
+
+    // Ensure no share bonus was drawn
+    expect(game.aDrawShareBonus).not.toHaveBeenCalled()
   })
 
   test('demands work', () => {

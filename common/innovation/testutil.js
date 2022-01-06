@@ -12,6 +12,7 @@ TestUtil.fixture = function(options) {
   options = Object.assign({
     expansions: ['base'],
     numPlayers: 3,
+    teams: false,
   }, options)
 
   const lobby = {
@@ -19,6 +20,7 @@ TestUtil.fixture = function(options) {
     name: 'Test Lobby',
     options: {
       expansions: options.expansions,
+      teams: options.teams,
     },
     users: [
       { _id: 0, name: 'dennis' },

@@ -159,7 +159,10 @@ Game.prototype.checkEchoIsVisibile = function(card) {
 Game.prototype.checkPlayersAreTeammates = function(p1, p2) {
   p1 = this._adjustPlayerParam(p1)
   p2 = this._adjustPlayerParam(p2)
-  return p1.name === p2.name
+  const team1 = this.getTeam(p1)
+  const team2 = this.getTeam(p2)
+
+  return team1 === team2
 }
 
 Game.prototype.checkZoneIsColorStack = function(zone) {
@@ -289,6 +292,11 @@ Game.prototype.getHighestTopCard = function(player) {
   else {
     return topCards[0].age
   }
+}
+
+Game.prototype.getTeam = function(player) {
+  player = this._adjustPlayerParam(player)
+  return player.team
 }
 
 Game.prototype.getTriggers = function(player, name) {
