@@ -45,12 +45,13 @@ describe('action-dogma', () => {
     )
   })
 
-  test.only('share bonus gained', () => {
+  test('share bonus gained', () => {
     const game = t.fixtureDogma('Domestication')
     t.setColor(game, 'dennis', 'green', ['The Wheel'])
     game.run()
     jest.spyOn(game, 'aDrawShareBonus')
     t.dogma(game, 'Domestication')
+    t.dumpLog(game)
     expect(game.aDrawShareBonus).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({ name: 'micah' })

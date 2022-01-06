@@ -1,5 +1,7 @@
 module.exports = {
   markDone,
+  nextPhase,
+  phaseFactory,
   repeatSteps,
   stepFactory,
   transitionFactory,
@@ -165,4 +167,47 @@ function _initialize2(context, options) {
       game.rk.addKey(context.data, key, value)
     }
   }
+}
+
+/*
+   Phase factory is composed of a series of steps. Unlike transitionFactory2, those steps
+   each repeat until they explicitly call nextPhase.
+ */
+function phaseFactory(options) {
+  return function(context) {
+    const { rk } = context.state
+
+    // Initialize internal state the first time this is called.
+    if (!context.data.factory) {
+      rk.addKey(context.data, 'factory', {
+        stepsRemaining: options.steps.map(s => s.name)
+      })
+    }
+
+    while (context.data.factory.stepsRemaining.length > 0) {
+      const nextStepName = context.data.factory.stepsRemaining[0]
+      const func = options.steps.find(s => s.name === nextStepName).func
+      const result = func(context)
+      if (result) {
+        return result
+      }
+      else {
+        continue
+      }
+    }
+
+    return context.done()
+  }
+}
+
+function nextPhase(context) {
+  if (!context.data.factory) {
+    throw new Error('This transition is not set up for using nextPhase')
+  }
+  if (!context.data.factory.stepsRemaining) {
+    throw new Error('This transition is missing the next steps data')
+  }
+
+  const { rk } = context.state
+  rk.splice(context.data.factory.stepsRemaining, 0, 1)
 }

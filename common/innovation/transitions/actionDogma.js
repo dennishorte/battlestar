@@ -1,50 +1,51 @@
+const { phaseFactory, nextPhase } = require('../../lib/transitionFactory.js')
 const util = require('../../lib/util.js')
 
-module.exports = function(context) {
-  if (!context.data.initialized) {
-    initialize(context)
-  }
+module.exports = phaseFactory({
+  steps: [
+    {
+      name: 'initialize',
+      func: initialize,
+    },
+    {
+      name: 'dogma',
+      func: dogma,
+    },
+    {
+      name: 'shareBonus',
+      func: shareBonus,
+    },
+    {
+      name: 'cleanup',
+      func: cleanup,
+    },
+  ]
+})
 
-  return nextStep(context)
-}
-
-function nextStep(context) {
+function dogma(context) {
   const { game, actor } = context
-  const { sharing, demanding, phase } = context.data
+  const { sharing, demanding } = context.data
   game.rk.increment(context.data, 'effectIndex')
 
-  if (phase === 'dogma') {
-    if (context.data.effectIndex < context.data.effects.length) {
-      const effect = context.data.effects[context.data.effectIndex]
+  if (context.data.effectIndex < context.data.effects.length) {
+    const effect = context.data.effects[context.data.effectIndex]
 
-      return context.push('action-dogma-one-effect', {
-        effect,
-        sharing: context.data.sharing,
-        demanding: context.data.demanding,
-        biscuits: context.data.biscuits,
-      })
-    }
-    else {
-      game.rk.put(context.data, 'phase', 'share')
-      return nextStep(context)
-    }
+    return context.push('action-dogma-one-effect', {
+      effect,
+      sharing: context.data.sharing,
+      demanding: context.data.demanding,
+      biscuits: context.data.biscuits,
+    })
   }
-
-  else if (phase === 'share') {
-    return maybeDrawShareBonus(context)
-  }
-
-  else if (phase === 'cleanup') {
-    game.mResetDogmaInfo()
-    return context.done()
-  }
-
   else {
-    throw new Error(`Unknown phase in actionDogma.js: ${phase}`)
+    nextPhase(context)
   }
 }
 
-function maybeDrawShareBonus(context) {
+function shareBonus(context) {
+  // Do this phase exactly once.
+  nextPhase(context)
+
   const { game, actor } = context
   const { sharing } = context.data
 
@@ -56,11 +57,18 @@ function maybeDrawShareBonus(context) {
       return game.aDrawShareBonus(context, actor)
     }
   }
+}
 
-  return nextStep(context)
+function cleanup(context) {
+  const { game } = context
+  game.mResetDogmaInfo()
+  nextPhase(context)
 }
 
 function initialize(context) {
+  // Do this phase exactly once.
+  nextPhase(context)
+
   const { game } = context
 
   game.mResetDogmaInfo()
@@ -71,9 +79,6 @@ function initialize(context) {
   _determineShares(context)
 
   game.rk.addKey(context.data, 'phase', 'dogma')
-
-  // Initialization complete
-  game.rk.addKey(context.data, 'initialized', true)
 }
 
 function _determineBiscuits(context) {
