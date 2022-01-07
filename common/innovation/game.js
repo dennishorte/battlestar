@@ -67,6 +67,17 @@ Game.prototype.aChooseCards = function(context, options) {
   return context.push('choose-cards', options)
 }
 
+Game.prototype.aClaimAchievement = function(context, player, achievement) {
+  player = this._adjustPlayerParam(player)
+  achievement = this._adjustCardParam(achievement)
+  if (this.checkAchievementAvailable(achievement)) {
+    return context.push('claim-achievement', {
+      playerName: player.name,
+      achievement: achievement.name,
+    })
+  }
+}
+
 Game.prototype.aDogma = function(context, player, card) {
   player = this._adjustPlayerParam(player)
   card = this._adjustCardParam(card)
@@ -109,6 +120,23 @@ Game.prototype.aMeld = function(context, player, card) {
     playerName: player.name,
     card: card.id,
   })
+}
+
+Game.prototype.aTransferCards = function(context, player, cards, dest) {
+  player = this._adjustPlayerParam(player)
+  cards = this._serializeCardList(cards)
+  dest = this._adjustZoneParam(dest)
+  return context.push('transfer-cards', {
+    playerName: player.name,
+    cards,
+    dest: dest.name
+  })
+}
+
+Game.prototype.checkAchievementAvailable = function(achievement) {
+  achievement = this._adjustCardParam(achievement)
+  const zone = this.getZoneByName('achievements')
+  return zone.cards.find(c => c === achievement.name) !== undefined
 }
 
 Game.prototype.checkCardIsTop = function(card) {
@@ -176,6 +204,49 @@ Game.prototype.checkZoneIsColorStack = function(zone) {
   )
 }
 
+Game.prototype.getAchievements = function(player) {
+  player = this._adjustPlayerParam(player)
+  return this.getZoneByName(`players.${player.name}.achievements`)
+}
+
+Game.prototype.getArtifact = function(player) {
+  player = this._adjustPlayerParam(player)
+  const zone = this.getZoneByName(`players.${player.name}.artifact`)
+  if (zone.cards.length > 0) {
+    return this.getCardData(zone.cards[0])
+  }
+  else {
+    return undefined
+  }
+}
+
+Game.prototype.getAdjustedDeck = function(age, exp) {
+  let baseDeck = this.getDeck('base', age)
+  while (baseDeck.cards.length === 0) {
+    age = age + 1
+    if (age === 11) {
+      throw new base.GameOverTrigger('draw an 11')
+    }
+    else {
+      baseDeck = this.getDeck('base', age)
+    }
+  }
+
+  const targetDeck = this.getDeck(exp, age)
+  if (targetDeck.cards.length === 0) {
+    return {
+      adjustedAge: age,
+      adjustedExp: 'base',
+    }
+  }
+  else {
+    return {
+      adjustedAge: age,
+      adjustedExp: exp
+    }
+  }
+}
+
 Game.prototype.getBiscuits = function(player) {
   let board = this.utilEmptyBiscuits()
 
@@ -214,44 +285,6 @@ Game.prototype.getCardData = function(card) {
     const data = res.all.byName[card]
     util.assert(!!data, `Unknown card name: ${card}`)
     return data
-  }
-}
-
-Game.prototype.getArtifact = function(player) {
-  player = this._adjustPlayerParam(player)
-  const zone = this.getZoneByName(`players.${player.name}.artifact`)
-  if (zone.cards.length > 0) {
-    return this.getCardData(zone.cards[0])
-  }
-  else {
-    return undefined
-  }
-}
-
-Game.prototype.getAdjustedDeck = function(age, exp) {
-  let baseDeck = this.getDeck('base', age)
-  while (baseDeck.cards.length === 0) {
-    age = age + 1
-    if (age === 11) {
-      throw new base.GameOverTrigger('draw an 11')
-    }
-    else {
-      baseDeck = this.getDeck('base', age)
-    }
-  }
-
-  const targetDeck = this.getDeck(exp, age)
-  if (targetDeck.cards.length === 0) {
-    return {
-      adjustedAge: age,
-      adjustedExp: 'base',
-    }
-  }
-  else {
-    return {
-      adjustedAge: age,
-      adjustedExp: exp
-    }
   }
 }
 
@@ -495,7 +528,7 @@ Game.prototype.utilEmptyBiscuits = function() {
 
 Game.prototype.utilEnrichLogArgs = function(msg) {
   for (const key of Object.keys(msg.args)) {
-    if (key === 'player') {
+    if (key.startsWith('player')) {
       const player = this._adjustPlayerParam(msg.args[key])
       msg.args[key] = {
         value: player.name,
@@ -509,7 +542,7 @@ Game.prototype.utilEnrichLogArgs = function(msg) {
         classes: [`card`],
       }
     }
-    else if (key === 'zone') {
+    else if (key.startsWith('zone')) {
       const zone = this._adjustZoneParam(msg.args[key])
       msg.args[key] = {
         value: zone.name,
@@ -544,4 +577,8 @@ Game.prototype.utilOptionName = function(option) {
 
 Game.prototype._adjustCardParam = function(card) {
   return this.getCardData(card)
+}
+
+Game.prototype._serializeCardList = function(cards) {
+  return cards.map(c => c.id || c)
 }

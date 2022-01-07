@@ -62,9 +62,9 @@ function _initializeTeams(context) {
     teamMod = 2
   }
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < players.length; i++) {
     const teamNumber = i % teamMod
-    game.rk.put(players[i], 'team', `team${teamNumber}`)
+    game.rk.addKey(players[i], 'team', `team${teamNumber}`)
   }
 }
 
@@ -92,7 +92,7 @@ function _addDeckZones(zones) {
       const deckCards = cards.map(c => c.name)
       util.array.shuffle(deckCards)
       zones.decks[exp][age] = {
-        name: `decks-${exp}-${age}`,
+        name: `decks.${exp}.${age}`,
         cards: deckCards,
         kind: 'deck',
       }
@@ -113,13 +113,13 @@ function _addAchievementZones(game, zones) {
   }
 
   // Special achievements
-  /* for (const [exp, cardData] of Object.entries(res)) {
-   *   if (game.getExpansionList().includes(exp)) {
-   *     for (const card of cardData.specialAchievements) {
-   *       zones.achievements.cards.push(card.name)
-   *     }
-   *   }
-   * } */
+  for (const exp of ['base', 'echo', 'figs', 'city', 'arti']) {
+    if (game.getExpansionList().includes(exp)) {
+      for (const ach of res[exp].achievements) {
+        zones.achievements.cards.push(ach.id)
+      }
+    }
+  }
 }
 
 function _addPlayerZones(players, zones) {
@@ -142,7 +142,7 @@ function _addPlayerZones(players, zones) {
 
 function _addPlayerZone(player, name, kind, root) {
   root[name] = {
-    name: `${player.name}-${name}`,
+    name: `players.${player.name}.${name}`,
     cards: [],
     kind,
   }

@@ -87,8 +87,16 @@ describe('action-dogma', () => {
     expect(game.aDrawShareBonus).not.toHaveBeenCalled()
   })
 
+  test('no share bonus from demands', () => {
+
+  })
+
   test('demands work', () => {
     // See Archery.test.js for an example of a successful demand
+  })
+
+  test('demands are not made of teammates', () => {
+
   })
 
 })

@@ -106,8 +106,14 @@ const cards = [
   require('./SergeyBrin.js')
 ].map(f => new f())
 
+const achievements = [
+].map(f => new f())
+
 const byName = {}
 for (const card of cards) {
+  byName[card.name] = card
+}
+for (const card of achievements) {
   byName[card.name] = card
 }
 
@@ -120,6 +126,7 @@ for (const card of cards) {
 }
 
 module.exports = {
+  achievements,
   cards,
   byName,
   byAge,

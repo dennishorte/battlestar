@@ -32,6 +32,8 @@ const transitions = {
   'raw-meld': require('./rawMeld.js'),
 
   'choose-cards': require('./chooseCards.js'),
+  'claim-achievement': require('./claimAchievement.js'),
+  'transfer-cards': require('./transferCards.js'),
 }
 
 module.exports = transitions

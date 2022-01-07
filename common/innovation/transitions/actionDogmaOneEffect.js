@@ -91,7 +91,7 @@ function initializeOnce(context) {
   const card = game.getCardData(effect.card)
   const impl = getEffectImpl(context)
 
-  game.mLog({
+  const logId = game.mLog({
     template: '{card} {kind}: {text}',
     args: {
       card,
@@ -99,6 +99,7 @@ function initializeOnce(context) {
       text: impl.dogma,
     }
   })
+  game.rk.put(context.data, 'parentLogId', logId)
 }
 
 function getEffectImpl(context) {

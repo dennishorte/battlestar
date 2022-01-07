@@ -106,8 +106,19 @@ const cards = [
   require('./Bioengineering.js')
 ].map(f => new f())
 
+const achievements = [
+  require('./achievements/Empire.js'),
+  require('./achievements/Monument.js'),
+  require('./achievements/World.js'),
+  require('./achievements/Wonder.js'),
+  require('./achievements/Universe.js'),
+].map(f => new f())
+
 const byName = {}
 for (const card of cards) {
+  byName[card.name] = card
+}
+for (const card of achievements) {
   byName[card.name] = card
 }
 
@@ -120,6 +131,7 @@ for (const card of cards) {
 }
 
 module.exports = {
+  achievements,
   cards,
   byName,
   byAge,
