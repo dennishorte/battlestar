@@ -15,7 +15,19 @@ function Card() {
     `You may score all cards from your hand. If you score one, you must score them all.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    {
+      dogma: `You may score all cards from your hand. If you score one, you must score them all.`,
+      steps: [
+        {
+          description: 'You may score all cards from your hand.',
+          func(context, player) {
+            return context.done()
+          }
+        },
+      ]
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.triggerImpl = []

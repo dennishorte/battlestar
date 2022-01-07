@@ -16,7 +16,48 @@ function Card() {
     `Draw and meld two {0}, then execute each of the second card's non-demand dogma effects. Do not share them.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    {
+      dogma: `Draw and score a {0}.`,
+      steps: [
+        {
+          description: `Draw and score a {0}.`,
+          func(context, player) {
+            const { game } = context
+            return game.aDrawAndScore(context, player, 10)
+          }
+        }
+      ]
+    },
+    {
+      dogma: `Draw and meld two {0}, then execute each of the second card's non-demand dogma effects. Do not share them.`,
+      steps: [
+        {
+          description: 'Draw and meld first {0}',
+          func(context, player) {
+            const { game } = context
+            return game.aDrawAndMeld(context, player, 10)
+          }
+        },
+        {
+          description: 'Draw and meld second {0}',
+          func(context, player) {
+            const { game } = context
+            return game.aDrawAndMeld(context, player, 10)
+          }
+        },
+        {
+          description: `Execute each of the second card's non-demand dogma effects. Do not share them.`,
+          func(context, player) {
+            const { game } = context
+            const { returned } = context.data
+            const cardToExecute = game.getCardData(returned)
+            return game.aExecute(context, player, cardToExecute)
+          }
+        },
+      ]
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.triggerImpl = []

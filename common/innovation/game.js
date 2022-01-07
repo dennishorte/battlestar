@@ -95,11 +95,38 @@ Game.prototype.aDraw = function(context, player, age) {
   })
 }
 
+Game.prototype.aDrawAndMeld = function(context, player, age) {
+  player = this._adjustPlayerParam(player)
+  return context.push('draw-and-meld', {
+    playerName: player.name,
+    age,
+  })
+}
+
+Game.prototype.aDrawAndScore = function(context, player, age) {
+  player = this._adjustPlayerParam(player)
+  return context.push('draw-and-score', {
+    playerName: player.name,
+    age,
+  })
+}
+
 Game.prototype.aDrawShareBonus = function(context, player) {
   player = this._adjustPlayerParam(player)
   return context.push('raw-draw', {
     playerName: player.name,
     isShareBonus: true,
+  })
+}
+
+Game.prototype.aExecute = function(context, player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+  return context.push('action-dogma', {
+    playerName: player.name,
+    card: card.id,
+    noDemand: true,
+    noShare: true,
   })
 }
 
@@ -130,6 +157,15 @@ Game.prototype.aTransferCards = function(context, player, cards, dest) {
     playerName: player.name,
     cards,
     dest: dest.name
+  })
+}
+
+Game.prototype.aScore = function(context, player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+  return context.push('score', {
+    playerName: player.name,
+    card: card.id,
   })
 }
 
@@ -169,16 +205,14 @@ Game.prototype.checkCardsEqual = function(c1, c2) {
   }
 }
 
-Game.prototype.checkEchoIsVisibile = function(card) {
+Game.prototype.checkEchoIsVisible = function(card) {
   card = this._adjustCardParam(card)
 
   if (this.checkCardIsTop(card)) {
     return card.checkHasEcho()
   }
 
-  const { zoneName } = this.getZoneByCard(card)
-  const zone = this.getZoneByName(zoneName)
-
+  const zone = this.getZoneByCard(card)
   util.assert(this.checkZoneIsColorStack(zone), 'Card ${card.name} is not in a color stack')
 
   return card.echoIsVisible(zone.splay)
@@ -354,6 +388,11 @@ Game.prototype.getZoneColorByPlayer = function(player, color) {
   return this.getZoneByName(`players.${player.name}.${color}`)
 }
 
+Game.prototype.getZoneScore = function(player) {
+  player = this._adjustPlayerParam(player)
+  return this.getZoneByName(`players.${player.name}.score`)
+}
+
 Game.prototype.mSetVisibilityForZone = function(zone, card) {
   /* if (zone.kind === 'private') {
    *   this.rk.replace(card.visibility, [zone.owner])
@@ -396,6 +435,8 @@ Game.prototype.mDraw = function(player, exp, age) {
       card
     }
   })
+
+  return card
 }
 
 Game.prototype.mMeld = function(player, card) {
@@ -464,6 +505,14 @@ Game.prototype.mReturnCard = function(player, card) {
   const zone = this.getZoneByCard(card)
   const homeDeck = this.getDeck(card.expansion, card.age)
   this.mMoveCard(zone, homeDeck, card)
+}
+
+Game.prototype.mScore = function(player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+  const cardZone = this.getZoneByCard(card)
+  const scoreZone = this.getZoneScore(player)
+  this.mMoveCard(cardZone, scoreZone, card)
 }
 
 Game.prototype.mSetStartingPlayer = function(player) {

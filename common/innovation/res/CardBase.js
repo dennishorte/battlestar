@@ -61,7 +61,7 @@ CardBase.prototype.getImpl = function(kind) {
 }
 
 CardBase.prototype.echoIsVisible = function(splay) {
-  const echoIndex = this.icons.indexOf('&')
+  const echoIndex = this.biscuits.indexOf('&')
   switch (splay) {
     case 'left': return echoIndex === 3
     case 'right': return echoIndex === 0 || echoIndex === 1

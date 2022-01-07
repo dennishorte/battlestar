@@ -21,6 +21,6 @@ module.exports = function(context) {
   // Adjust age based on empty decks.
   const { adjustedAge, adjustedExp } = game.getAdjustedDeck(baseAge, exp)
 
-  game.mDraw(actor, adjustedExp, adjustedAge)
-  return context.done()
+  const card = game.mDraw(actor, adjustedExp, adjustedAge)
+  return context.return([card.id])
 }

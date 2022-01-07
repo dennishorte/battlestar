@@ -137,6 +137,10 @@ function _addPlayerZones(players, zones) {
     _addPlayerZone(player, 'purple', 'public', root)
     _addPlayerZone(player, 'artifact', 'public', root)
     zones.players[player.name] = root
+
+    for (const color of ['red', 'yellow', 'green', 'blue', 'purple']) {
+      root[color].splay = 'none'
+    }
   }
 }
 

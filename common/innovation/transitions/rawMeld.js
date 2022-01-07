@@ -2,5 +2,5 @@ module.exports = function(context) {
   const { game, actor } = context
   const { card } = context.data
   game.mMeld(actor, card)
-  return context.done()
+  return context.return(card)
 }

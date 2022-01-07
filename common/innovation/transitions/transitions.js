@@ -33,7 +33,10 @@ const transitions = {
 
   'choose-cards': require('./chooseCards.js'),
   'claim-achievement': require('./claimAchievement.js'),
+  'draw-and-meld': require('./drawAndMeld.js'),
+  'draw-and-score': require('./drawAndScore.js'),
   'transfer-cards': require('./transferCards.js'),
+  'score': require('./score.js'),
 }
 
 module.exports = transitions

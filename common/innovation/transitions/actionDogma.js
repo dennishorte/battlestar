@@ -49,8 +49,6 @@ function shareBonus(context) {
   const { game, actor } = context
   const { sharing } = context.data
 
-  game.rk.put(context.data, 'phase', 'cleanup')
-
   const dogmaInfo = game.getDogmaInfo()
   for (const playerName of sharing) {
     if (dogmaInfo[playerName].acted && !game.checkPlayersAreTeammates(actor, playerName)) {
@@ -66,10 +64,15 @@ function cleanup(context) {
 }
 
 function initialize(context) {
+  console.log('dogma initialize', context.data.card)
+
   // Do this phase exactly once.
   nextPhase(context)
 
   const { game } = context
+
+  game.rk.addKey(context.data, 'demanding', [])
+  game.rk.addKey(context.data, 'sharing', [])
 
   game.mResetDogmaInfo()
   _logDogmaActivation(context)
@@ -77,8 +80,6 @@ function initialize(context) {
   _determineBiscuits(context)
   _determineDemands(context)
   _determineShares(context)
-
-  game.rk.addKey(context.data, 'phase', 'dogma')
 }
 
 function _determineBiscuits(context) {
@@ -93,7 +94,11 @@ function _determineBiscuits(context) {
 
 function _determineDemands(context) {
   const { game, actor } = context
-  const { biscuits } = context.data
+  const { biscuits, noDemand } = context.data
+
+  if (noDemand) {
+    return
+  }
 
   const card = game.getCardData(context.data.card)
   const targetBiscuits = biscuits[actor.name].final[card.dogmaBiscuit]
@@ -105,7 +110,7 @@ function _determineDemands(context) {
     .filter(p => p.name !== actor.name)
     .filter(p => biscuits[p.name].final[card.dogmaBiscuit] < targetBiscuits)
     .map(p => p.name)
-  game.rk.addKey(context.data, 'demanding', demanding)
+  game.rk.put(context.data, 'demanding', demanding)
 
   const hasDemands = card.dogmaImpl.some(impl => impl.steps.some(s => s.demand))
   if (demanding.length > 0 && hasDemands) {
@@ -140,7 +145,11 @@ function _determineEffects(context) {
 
 function _determineShares(context) {
   const { game, actor } = context
-  const { biscuits, effects } = context.data
+  const { biscuits, effects, noShare } = context.data
+
+  if (noShare) {
+    return
+  }
 
   const card = game.getCardData(context.data.card)
   const targetBiscuits = biscuits[actor.name].final[card.dogmaBiscuit]
@@ -152,7 +161,7 @@ function _determineShares(context) {
     .filter(p => p.name !== actor.name)
     .filter(p => biscuits[p.name].final[card.dogmaBiscuit] >= targetBiscuits)
     .map(p => p.name)
-  game.rk.addKey(context.data, 'sharing', sharing)
+  game.rk.put(context.data, 'sharing', sharing)
 
   const hasEchoEffects = effects.length > 1
   const hasSharableEffects =
@@ -185,7 +194,7 @@ function _logDogmaActivation(context) {
 function expandByKinds(game, card) {
   const output = []
 
-  if (game.checkEchoIsVisibile(card)) {
+  if (game.checkEchoIsVisible(card)) {
     output.push({
       card,
       kind: 'echo'
