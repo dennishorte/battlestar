@@ -19,8 +19,7 @@ function factory(lobby) {
   // Custom state
 
   // Monument Achievement tuck and score counts
-  state.counters.cardsTucked = 0
-  state.counters.cardsScored = 0
+  state.monument = {}
 
   // Information about the current dogma action
   // This includes whether anything was done by an opponent to trigger a share bonus,
@@ -28,6 +27,9 @@ function factory(lobby) {
   // such as Charitable Trust, whose dogma allows you to meld the card drawn due to its
   // echo effect.
   state.dogma = {}
+
+  // Registry for triggered effects, keyed by player and trigger kind
+  state.triggers = {}
 
   const game = new Game()
   game.load(transitions, state, contextEnricher)
@@ -61,6 +63,16 @@ Object.defineProperty(Game.prototype, 'constructor', {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Custom functions
+
+Game.prototype.aAchievementCheck = function(context) {
+  context.push('achievement-check')
+}
+
+Game.prototype.aCheckTriggers = function(context, kind) {
+  const data = util.deepcopy(context.data)
+  data.trigger = kind
+  return context.push('check-triggers', data)
+}
 
 Game.prototype.aChooseCards = function(context, options) {
   options.cards = options.cards.map(c => c.id || c)
@@ -133,11 +145,12 @@ Game.prototype.aExecute = function(context, player, card) {
 Game.prototype.aListCardsForDogmaByColor = function(player, color) {
   player = this._adjustPlayerParam(player)
   const cards = this.getZoneColorByPlayer(player, color).cards
-  const extraCards = this
-    .getTriggers('list-echo')
-    .flatMap(t => t(player, color, cards, this))
-    .map(c => c.id || c)
-  return util.array.distinct(cards.concat(extraCards))
+  return cards
+  /* const extraCards = this
+   *   .getTriggers('list-echo')
+   *   .flatMap(t => t(player, color, cards, this))
+   *   .map(c => c.id || c)
+   * return util.array.distinct(cards.concat(extraCards)) */
 }
 
 Game.prototype.aMeld = function(context, player, card) {
@@ -286,14 +299,7 @@ Game.prototype.getBiscuits = function(player) {
 
   for (const color of this.utilColors()) {
     const zone = this.getZoneColorByPlayer(player, color)
-    for (const cardName of zone.cards) {
-      const card = this.getCardData(cardName)
-      const cardBiscuits =
-        this.checkCardIsTop(card)
-        ? card.getBiscuits('top')
-        : card.getBiscuits(zone.splay)
-      board = this.utilCombineBiscuits(board, this.utilParseBiscuits(cardBiscuits))
-    }
+    board = this.utilCombineBiscuits(board, this.getBiscuitsInZone(zone))
   }
 
   const final = this.utilCombineBiscuits(this.utilEmptyBiscuits(), board)
@@ -306,6 +312,25 @@ Game.prototype.getBiscuits = function(player) {
     board,
     final
   }
+}
+
+Game.prototype.getBiscuitsInZone = function(zone) {
+  zone = this._adjustZoneParam(zone)
+
+  let count = this.utilEmptyBiscuits()
+
+  for (const cardName of zone.cards) {
+    const cardBiscuits = this.getBiscuitsRaw(cardName, zone.splay)
+    count = this.utilCombineBiscuits(count, this.utilParseBiscuits(cardBiscuits))
+  }
+  return count
+}
+
+Game.prototype.getBiscuitsRaw = function(card, splay) {
+  card = this._adjustCardParam(card)
+  return this.checkCardIsTop(card)
+       ? card.getBiscuits('top')
+       : card.getBiscuits(splay)
 }
 
 Game.prototype.getCardData = function(card) {
@@ -366,8 +391,9 @@ Game.prototype.getTeam = function(player) {
   return player.team
 }
 
-Game.prototype.getTriggers = function(player, name) {
-  return []
+Game.prototype.getTriggers = function(player, kind) {
+  player = this._adjustPlayerParam(player)
+  return this.state.triggers[player.name][kind] || []
 }
 
 Game.prototype.getZoneArtifact = function(player) {
@@ -406,6 +432,30 @@ Game.prototype.mSetVisibilityForZone = function(zone, card) {
    * else {
    *   throw new Error(`Unhandled visibility type for zone: ${zone.kind}`)
    * } */
+}
+
+Game.prototype.mAddTrigger = function(player, kind, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+  const triggers = this.state.triggers[player.name]
+  if (triggers[kind]) {
+    this.rk.pushUnique(triggers[kind], card.id)
+  }
+  else {
+    this.rk.addKey(triggers, kind, [card.id])
+  }
+}
+
+Game.prototype.mRemoveTrigger = function(player, kind, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+  const triggers = this.state.triggers[player.name].kind
+  if (triggers) {
+    const index = triggers.indexOf(card.id)
+    if (index !== -1) {
+      this.rk.splice(triggers, index, 1)
+    }
+  }
 }
 
 Game.prototype.mDraw = function(player, exp, age) {
@@ -448,16 +498,20 @@ Game.prototype.mMeld = function(player, card) {
 
   const source = this.getZoneByCard(card)
   const target = this.getZoneColorByPlayer(player, card.color)
-  this.mMoveCard(source, target, card)
+  this.mMoveCard(source, target, card, { top: true })
   this.mLog({
     template: '{player} melds {card}',
     args: { player, card }
   })
+  return card
 }
 
-Game.prototype.mMoveCard = function(source, target, card) {
+Game.prototype.mMoveCard = function(source, target, card, options) {
   source = this._adjustZoneParam(source)
   target = this._adjustZoneParam(target)
+  options = Object.assign({
+    top: false,
+  }, options)
 
   let cardIndex
 
@@ -472,7 +526,9 @@ Game.prototype.mMoveCard = function(source, target, card) {
 
   util.assert(cardIndex !== -1, `${card.name} not found in ${source.name}`)
 
-  this.mMoveByIndices(source, cardIndex, target, target.cards.length)
+  const destIndex = options.top ? 0 : target.cards.length
+
+  this.mMoveByIndices(source, cardIndex, target, destIndex)
   this.mSetVisibilityForZone(target, card)
 
   return card
@@ -481,10 +537,18 @@ Game.prototype.mMoveCard = function(source, target, card) {
 Game.prototype.mNextTurn = function() {
   const nextIndex = (this.state.turn.playerIndex + 1) % this.getPlayerAll().length
   this.rk.put(this.state.turn, 'playerIndex', nextIndex)
+  this.mResetMonumentCounts()
 }
 
 Game.prototype.mResetDogmaInfo = function() {
   this.rk.put(this.state, 'dogma', this.utilEmptyDogmaInfo())
+}
+
+Game.prototype.mResetMonumentCounts = function() {
+  const counts = util.array.toDict(this.getPlayerAll(), p => {
+    return { [p.name]: { tuck: 0, score: 0 } }
+  })
+  this.rk.put(this.state, 'monument', counts)
 }
 
 Game.prototype.mReturnAll = function(player, zone) {
@@ -513,12 +577,32 @@ Game.prototype.mScore = function(player, card) {
   const cardZone = this.getZoneByCard(card)
   const scoreZone = this.getZoneScore(player)
   this.mMoveCard(cardZone, scoreZone, card)
+
+  // Special case for Monument achievement
+  game.rk.increment(this.state.monument[player.name], 'score')
 }
 
 Game.prototype.mSetStartingPlayer = function(player) {
   player = this._adjustPlayerParam(player)
   const index = this.getPlayerAll().findIndex(p => p.name === player.name)
   this.rk.put(this.state.turn, 'playerIndex', index)
+}
+
+Game.prototype.mSplay = function(player, color, direction) {
+  player = this._adjustPlayerParam(player)
+  const zone = this.getZoneColorByPlayer(player, color)
+  this.rk.put(zone, 'splay', direction)
+}
+
+Game.prototype.mTuck = function(player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+  const cardZone = this.getZoneByCard(card)
+  const tuckZone = this.getZoneColorByPlayer(player, card.color)
+  this.mMoveCard(cardZone, tuckZone, card)
+
+  // Special case for Monument achievement
+  game.rk.increment(this.state.monument[player.name], 'score')
 }
 
 Game.prototype.oDogma = function(card) {

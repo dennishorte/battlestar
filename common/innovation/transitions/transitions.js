@@ -31,6 +31,8 @@ const transitions = {
   'action-meld': require('./actionMeld.js'),
   'raw-meld': require('./rawMeld.js'),
 
+  'achievement-check': require('./achievementCheck.js'),
+  'check-triggers': require('./checkTriggers.js'),
   'choose-cards': require('./chooseCards.js'),
   'claim-achievement': require('./claimAchievement.js'),
   'draw-and-meld': require('./drawAndMeld.js'),

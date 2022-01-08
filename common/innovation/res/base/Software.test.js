@@ -7,6 +7,11 @@ describe('Software', () => {
     const game = t.fixtureDogma('Software')
     game.run()
     jest.spyOn(game, 'aDrawAndScore')
+
+    // First card will be scored.
+    // Next two will be for draw and meld
+    t.topDeck(game, 'base', 10, ['The Internet', 'Globalization', 'Stem Cells'])
+
     t.dogma(game, 'Software')
 
     expect(game.aDrawAndScore).toHaveBeenCalledWith(

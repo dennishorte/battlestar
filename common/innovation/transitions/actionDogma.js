@@ -64,8 +64,6 @@ function cleanup(context) {
 }
 
 function initialize(context) {
-  console.log('dogma initialize', context.data.card)
-
   // Do this phase exactly once.
   nextPhase(context)
 

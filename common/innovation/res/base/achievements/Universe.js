@@ -4,13 +4,10 @@ module.exports = function() {
   this.exp = 'base'
   this.text = 'Have five top cards of value 8+.'
   this.alt = 'Astronmy'
-  this.triggerImpl = [
-    {
-      listen: ['board-changed'],
-      func(game, event) {
-      }
-    },
-  ],
   this.checkPlayerIsEligible = function(game, player) {
+    return game
+      .utilColors()
+      .map(color => (game.getCardTop(player, color) || {}).age)
+      .every(age => age >= 8)
   }
 }

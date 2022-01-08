@@ -4,13 +4,10 @@ module.exports = function() {
   this.exp = 'base'
   this.text = 'Have five colors splayed either up or right.'
   this.alt = 'Invention'
-  this.triggerImpl = [
-    {
-      listen: ['board-changed'],
-      func(game, event) {
-      }
-    },
-  ],
   this.checkPlayerIsEligible = function(game, player) {
+    return game
+      .utilColors()
+      .map(c => game.getZoneColorByPlayer(player, c).splay)
+      .every(splay => splay === 'right' || splay === 'up')
   }
 }

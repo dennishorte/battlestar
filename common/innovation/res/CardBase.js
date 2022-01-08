@@ -43,7 +43,7 @@ CardBase.prototype.getBiscuits = function(splay) {
       return this.biscuits[0] + this.biscuits[1]
     }
   }
-  else if (splay === 'top') {
+  else if (splay === 'up') {
     if (this.biscuits.length === 6) {
       return this.biscuits.slice(3)
     }
