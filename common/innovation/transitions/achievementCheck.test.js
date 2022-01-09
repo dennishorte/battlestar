@@ -45,7 +45,25 @@ describe('achievement-check', () => {
   })
 
   test('called after splay', () => {
+    const game = t.fixtureDogma('Philosophy')
+    t.setColor(game, 'micah', 'red', ['Construction', 'Industrialization'])
+    jest.spyOn(game, 'aSplay')
+    jest.spyOn(game, 'aAchievementCheck')
+    game.run()
+    t.dogma(game, 'Philosophy')
+    game.submit({
+      actor: 'micah',
+      name: 'Choose Colors',
+      option: ['red'],
+    })
+    game.submit({
+      actor: 'micah',
+      name: 'Choose Cards',
+      option: []
+    })
 
+    expect(game.aSplay.mock.calls.length).toBe(1)
+    expect(game.aAchievementCheck.mock.calls.length).toBe(1)
   })
 
   test('called after transfer', () => {
