@@ -38,6 +38,7 @@ const transitions = {
   'draw-and-meld': require('./drawAndMeld.js'),
   'draw-and-score': require('./drawAndScore.js'),
   'transfer-cards': require('./transferCards.js'),
+  'return': require('./return.js'),
   'score': require('./score.js'),
 }
 

@@ -29,7 +29,18 @@ describe('achievement-check', () => {
   })
 
   test('called after score', () => {
+    /* const game = t.fixtureDogma('Agriculture')
+     * game.run()
 
+     * jest.spyOn(game, 'aAchievementCheck')
+     * t.dogma(game, 'Agriculture')
+     * game.submit({
+     *   actor: 'micah',
+     *   name: 'Choose Cards',
+     *   option: ['Writing']
+     * })
+
+     * expect(game.aAchievementCheck.mock.calls.length).toBe(1) */
   })
 
   test('called after splay', () => {

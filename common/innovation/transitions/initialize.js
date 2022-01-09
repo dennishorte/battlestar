@@ -52,6 +52,7 @@ function _initializePlayers(context) {
     game.state.triggers[player.name] = {}
   })
   game.mResetDogmaInfo()
+  game.mResetMonumentCounts()
 }
 
 function _initializeTeams(context) {

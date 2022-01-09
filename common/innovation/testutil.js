@@ -156,7 +156,7 @@ TestUtil.setHand = function(game, player, cards) {
   }
 
   for (let i = hand.cards.length - 1; i >= 0; i--) {
-    game.mReturnCard(player, hand.cards[i])
+    game.mReturn(player, hand.cards[i])
   }
 
   for (const card of cards) {

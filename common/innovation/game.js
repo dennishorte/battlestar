@@ -162,6 +162,15 @@ Game.prototype.aMeld = function(context, player, card) {
   })
 }
 
+Game.prototype.aReturn = function(context, player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+  return context.push('return', {
+    playerName: player.name,
+    card: card.id
+  })
+}
+
 Game.prototype.aTransferCards = function(context, player, cards, dest) {
   player = this._adjustPlayerParam(player)
   cards = this._serializeCardList(cards)
@@ -333,6 +342,12 @@ Game.prototype.getBiscuitsRaw = function(card, splay) {
        : card.getBiscuits(splay)
 }
 
+Game.prototype.getBonuses = function(player) {
+  const bonuses = []
+  bonuses.sort((l, r) => r - l)
+  return bonuses
+}
+
 Game.prototype.getCardData = function(card) {
   if (!card) {
     return undefined
@@ -384,6 +399,28 @@ Game.prototype.getHighestTopCard = function(player) {
   else {
     return topCards[0].age
   }
+}
+
+Game.prototype.getScore = function(player) {
+  player = this._adjustPlayerParam(player)
+
+  let total = 0
+
+  // Cards in score
+  for (const cardName of this.getZoneScore(player).cards) {
+    total += this.getCardData(cardName).age
+  }
+
+  // Bonuses
+  const bonuses = this.getBonuses(player)
+  if (bonuses.length > 0) {
+    // Highest bonus counts for full points
+    total += bonuses[0]
+    // Other bonuses count for one point each
+    total += bonuses.length - 1
+  }
+
+  return total
 }
 
 Game.prototype.getTeam = function(player) {
@@ -555,11 +592,11 @@ Game.prototype.mReturnAll = function(player, zone) {
   player = this._adjustPlayerParam(player)
   zone = this._adjustZoneParam(zone)
   for (let i = zone.cards.length - 1; i >= 0; i--) {
-    this.mReturnCard(player, zone.cards[i])
+    this.mReturn(player, zone.cards[i])
   }
 }
 
-Game.prototype.mReturnCard = function(player, card) {
+Game.prototype.mReturn = function(player, card) {
   player = this._adjustPlayerParam(player)
   card = this._adjustCardParam(card)
 
@@ -568,7 +605,7 @@ Game.prototype.mReturnCard = function(player, card) {
 
   const zone = this.getZoneByCard(card)
   const homeDeck = this.getDeck(card.expansion, card.age)
-  this.mMoveCard(zone, homeDeck, card)
+  return this.mMoveCard(zone, homeDeck, card)
 }
 
 Game.prototype.mScore = function(player, card) {
@@ -579,7 +616,7 @@ Game.prototype.mScore = function(player, card) {
   this.mMoveCard(cardZone, scoreZone, card)
 
   // Special case for Monument achievement
-  game.rk.increment(this.state.monument[player.name], 'score')
+  this.rk.increment(this.state.monument[player.name], 'score')
 }
 
 Game.prototype.mSetStartingPlayer = function(player) {

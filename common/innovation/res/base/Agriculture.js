@@ -12,10 +12,60 @@ function Card() {
   this.echo = ``
   this.triggers = []
   this.dogma = [
-    `You may return a card from your hand. If you do, draw and score a ard ofo value one higher than the card you returned.`
+    `You may return a card from your hand. If you do, draw and score a card of value one higher than the card you returned.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    {
+      dogma: `You may return a card from your hand. If you do, draw and score a card of value one higher than the card you returned.`,
+      steps: [
+        {
+          description: 'You may choose a card to return from your hand.',
+          func(context, player) {
+            const { game } = context
+            return game.aChooseCards(context, {
+              playerName: player.name,
+              cards: game.getHand(player).cards,
+              max: 1,
+              min: 0,
+            })
+          }
+        },
+        {
+          description: 'If you chose a card, return it.',
+          func(context, player) {
+            const { game } = context
+            const { returned } = context.data
+
+            if (returned.length === 0) {
+              game.mLog({
+                template: '{player} did not return a card',
+                args: { player }
+              })
+              return context.done()
+            }
+            else {
+              return game.aReturn(context, player, returned[0])
+            }
+          }
+        },
+        {
+          description: 'If you returned a card, score a card of value one higher.',
+          func(context, player) {
+            const { game } = context
+            const card = game.getCardData(context.data.returned)
+            if (card) {
+              return game.aDrawAndScore(context, player, card.age + 1)
+            }
+            else {
+              return context.done()
+            }
+          }
+        }
+      ],
+    }
+
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.triggerImpl = []
