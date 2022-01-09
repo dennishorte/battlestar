@@ -29,18 +29,19 @@ describe('achievement-check', () => {
   })
 
   test('called after score', () => {
-    /* const game = t.fixtureDogma('Agriculture')
-     * game.run()
+    const game = t.fixtureDogma('Philosophy')
+    jest.spyOn(game, 'aScore')
+    jest.spyOn(game, 'aAchievementCheck')
+    game.run()
+    t.dogma(game, 'Philosophy')
+    game.submit({
+      actor: 'micah',
+      name: 'Choose Cards',
+      option: ['Writing']
+    })
 
-     * jest.spyOn(game, 'aAchievementCheck')
-     * t.dogma(game, 'Agriculture')
-     * game.submit({
-     *   actor: 'micah',
-     *   name: 'Choose Cards',
-     *   option: ['Writing']
-     * })
-
-     * expect(game.aAchievementCheck.mock.calls.length).toBe(1) */
+    expect(game.aScore.mock.calls.length).toBe(1)
+    expect(game.aAchievementCheck.mock.calls.length).toBe(1)
   })
 
   test('called after splay', () => {

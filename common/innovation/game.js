@@ -65,7 +65,7 @@ Object.defineProperty(Game.prototype, 'constructor', {
 // Custom functions
 
 Game.prototype.aAchievementCheck = function(context) {
-  context.push('achievement-check')
+  return context.push('achievement-check')
 }
 
 Game.prototype.aCheckTriggers = function(context, kind) {
@@ -88,6 +88,11 @@ Game.prototype.aClaimAchievement = function(context, player, achievement) {
       achievement: achievement.name,
     })
   }
+}
+
+Game.prototype.aChooseColors = function(context, options) {
+  options.colors = options.colors.map(c => c.id || c)
+  return context.push('choose-colors', options)
 }
 
 Game.prototype.aDogma = function(context, player, card) {
@@ -168,6 +173,15 @@ Game.prototype.aReturn = function(context, player, card) {
   return context.push('return', {
     playerName: player.name,
     card: card.id
+  })
+}
+
+Game.prototype.aSplay = function(context, player, color, direction) {
+  player = this._adjustPlayerParam(player)
+  return context.push('splay', {
+    playerName: player.name,
+    color,
+    direction,
   })
 }
 
@@ -368,6 +382,15 @@ Game.prototype.getCardTop = function(player, color) {
   return this.getCardData(zone.cards[zone.cards.length - 1])
 }
 
+Game.prototype.getColorsForSplaying = function(player, direction) {
+  player = this._adjustPlayerParam(player)
+  return this
+    .utilColors()
+    .map(color => [color, this.getZoneColorByPlayer(player, color)])
+    .filter(([color, zone]) => zone.cards.length > 1 && zone.splay !== direction)
+    .map(([color, zone]) => color)
+}
+
 Game.prototype.getDogmaInfo = function() {
   return this.state.dogma
 }
@@ -421,6 +444,13 @@ Game.prototype.getScore = function(player) {
   }
 
   return total
+}
+
+Game.prototype.getStacks = function(player) {
+  player = this._adjustPlayerParam(player)
+  return this
+    .utilColors()
+    .map(color => this.getZoneColorByPlayer(player,color))
 }
 
 Game.prototype.getTeam = function(player) {
@@ -613,10 +643,11 @@ Game.prototype.mScore = function(player, card) {
   card = this._adjustCardParam(card)
   const cardZone = this.getZoneByCard(card)
   const scoreZone = this.getZoneScore(player)
-  this.mMoveCard(cardZone, scoreZone, card)
 
   // Special case for Monument achievement
   this.rk.increment(this.state.monument[player.name], 'score')
+
+  return this.mMoveCard(cardZone, scoreZone, card)
 }
 
 Game.prototype.mSetStartingPlayer = function(player) {
@@ -636,10 +667,11 @@ Game.prototype.mTuck = function(player, card) {
   card = this._adjustCardParam(card)
   const cardZone = this.getZoneByCard(card)
   const tuckZone = this.getZoneColorByPlayer(player, card.color)
-  this.mMoveCard(cardZone, tuckZone, card)
 
   // Special case for Monument achievement
   game.rk.increment(this.state.monument[player.name], 'score')
+
+  return this.mMoveCard(cardZone, tuckZone, card)
 }
 
 Game.prototype.oDogma = function(card) {

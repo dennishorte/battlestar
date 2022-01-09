@@ -2,7 +2,7 @@ const util = require('../../lib/util.js')
 
 module.exports = function(context) {
   initializeOnce(context)
-  nextStep(context)
+  return nextStep(context)
 }
 
 function nextStep(context) {

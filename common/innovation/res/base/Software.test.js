@@ -33,7 +33,6 @@ describe('Software', () => {
     t.topDeck(game, 'base', 10, ['The Internet', 'Globalization', 'Stem Cells'])
 
     t.dogma(game, 'Software')
-    t.dumpLog(game)
 
     expect(game.aDrawAndMeld.mock.calls.length).toBe(2)
     expect(game.aDrawAndMeld.mock.calls[0]).toEqual([

@@ -34,12 +34,14 @@ const transitions = {
   'achievement-check': require('./achievementCheck.js'),
   'check-triggers': require('./checkTriggers.js'),
   'choose-cards': require('./chooseCards.js'),
+  'choose-colors': require('./chooseColors.js'),
   'claim-achievement': require('./claimAchievement.js'),
   'draw-and-meld': require('./drawAndMeld.js'),
   'draw-and-score': require('./drawAndScore.js'),
   'transfer-cards': require('./transferCards.js'),
   'return': require('./return.js'),
   'score': require('./score.js'),
+  'splay': require('./splay.js'),
 }
 
 module.exports = transitions

@@ -67,6 +67,9 @@ describe('action-dogma', () => {
     expect(game.getBiscuits('dennis').final.k).toBeLessThan(micahBiscuits)
     expect(game.getBiscuits('tom').final.k).toBeLessThan(micahBiscuits)
 
+    // Ensure micah and eliya are on the same team.
+    expect(game.getPlayerByName('micah').team).toBe(game.getPlayerByName('eliya').team)
+
     jest.spyOn(game, 'aDraw')
     jest.spyOn(game, 'aDrawShareBonus')
     t.dogma(game, 'Domestication')

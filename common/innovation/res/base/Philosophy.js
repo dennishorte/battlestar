@@ -16,7 +16,76 @@ function Card() {
     `You may score a card from your hand.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    {
+      dogma: `You may splay left any one color of your cards.`,
+      steps: [
+        {
+          description: 'Choose up to one color to splay left',
+          func(context, player) {
+            const { game } = context
+            return game.aChooseColors(context, {
+              playerName: player.name,
+              colors: game.getColorsForSplaying(player, 'left'),
+              min: 0,
+              max: 1
+            })
+          }
+        },
+        {
+          description: 'Splay the chosen color, if any, left.',
+          func(context, player) {
+            const { game } = context
+            const { returned } = context.data
+            if (returned.length === 0) {
+              game.mLog({
+                template: '{player} splays nothing',
+                args: { player }
+              })
+              return context.done()
+            }
+            else {
+              return game.aSplay(context, player, returned[0], 'left')
+            }
+          }
+        },
+      ]
+    },
+    {
+      dogma: `You may score a card from your hand.`,
+      steps: [
+        {
+          description: 'Choose up to one card from your hand to score.',
+          func(context, player) {
+            const { game } = context
+            return game.aChooseCards(context, {
+              playerName: player.name,
+              cards: game.getHand(player).cards,
+              min: 0,
+              max: 1
+            })
+          }
+        },
+        {
+          description: 'Score the chosen card, if any.',
+          func(context, player) {
+            const { game } = context
+            const { returned } = context.data
+            if (returned.length === 0) {
+              game.mLog({
+                template: '{player} scores nothing',
+                args: { player }
+              })
+              return context.done()
+            }
+            else {
+              return game.aScore(context, player, returned[0])
+            }
+          }
+        },
+      ]
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.triggerImpl = []

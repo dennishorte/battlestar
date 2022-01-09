@@ -54,10 +54,18 @@ TestUtil.fixtureFirstPicks = function(options) {
   game.run()
   game.rk.undo('Initialization Complete')
 
+  // Save the team ordering
+  const teams = game.getPlayerAll().map(player => player.team)
+
   // Put the players into the expected seating order.
   const sortedPlayers = [...game.state.players]
   sortedPlayers.sort((l, r) => l._id - r._id)
   game.rk.replace(game.state.players, sortedPlayers)
+
+  // Readjust teams
+  for (let i = 0; i < sortedPlayers.length; i++) {
+    game.rk.put(game.getPlayerByIndex(i), 'team', teams[i])
+  }
 
   TestUtil.setHand(game, 'dennis', ['Archery', 'Tools'])
   TestUtil.setHand(game, 'micah', ['Domestication', 'Writing'])

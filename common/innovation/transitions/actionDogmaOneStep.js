@@ -11,6 +11,6 @@ module.exports = function(context) {
   game.rk.addKey(context.data, 'initialized', true)
 
   const card = game.getCardData(effect.card)
-  const stepImpl = card.getImpl(effect.kind)[effect.implIndex].steps[stepIndex].func
-  return stepImpl(context, actor)
+  const stepImpl = card.getImpl(effect.kind)[effect.implIndex].steps[stepIndex]
+  return stepImpl.func(context, actor)
 }
