@@ -74,3 +74,69 @@ test('action 2', () => {
 test('game advances to next player after all actions complete', () => {
 
 })
+
+describe('decree actions', () => {
+  describe('decrees from cards in hand', () => {
+    test('three figures: no decree if same age', () => {
+      const game = t.fixtureFirstPicks({ expansions: ['base', 'figs'] })
+      t.setHand(game, 'micah', ['Homer', 'Sinuhe', 'Ptolemy'])
+      game.run()
+      expect(game.getWaiting('micah').options).toEqual(expect.not.arrayContaining([
+        expect.objectContaining({
+          name: 'Decree',
+        })
+      ]))
+    })
+
+    test('three figures: different ages', () => {
+      const game = t.fixtureFirstPicks({ expansions: ['base', 'figs'] })
+      t.setHand(game, 'micah', ['Homer', 'Ptolemy', 'Al-Kindi'])
+      game.run()
+      expect(game.getWaiting('micah').options).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          name: 'Decree',
+          options: ['Rivalry', 'Trade']
+        })
+      ]))
+    })
+
+    test('decrees from five leaders', () => {
+      const game = t.fixtureFirstPicks({ expansions: ['base', 'figs'] })
+      t.setHand(game, 'micah', ['Homer', 'Ptolemy', 'Yi Sun-Sin', 'Daedalus', 'Shennong'])
+      game.run()
+      expect(game.getWaiting('micah').options).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          name: 'Decree',
+          options: ['Advancement', 'Expansion', 'Rivalry', 'Trade', 'War']
+        })
+      ]))
+    })
+  })
+
+  describe('decrees from karma', () => {
+    test('player has two figures in hand', () => {
+      const game = t.fixtureFirstPicks({ expansions: ['base', 'figs'] })
+      t.setColor(game, 'micah', 'purple', ['Sinuhe'])
+      t.setHand(game, 'micah', ['Homer', 'Fu Xi'])
+      game.run()
+      expect(game.getWaiting('micah').options).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          name: 'Decree',
+          options: ['Rivalry']
+        })
+      ]))
+    })
+
+    test('player does not have two figures in hand', () => {
+      const game = t.fixtureFirstPicks({ expansions: ['base', 'figs'] })
+      t.setColor(game, 'micah', 'purple', ['Sinuhe'])
+      t.setHand(game, 'micah', ['Homer', 'Mathematics'])
+      game.run()
+      expect(game.getWaiting('micah').options).toEqual(expect.not.arrayContaining([
+        expect.objectContaining({
+          name: 'Decree',
+        })
+      ]))
+    })
+  })
+})

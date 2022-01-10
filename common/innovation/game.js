@@ -732,6 +732,18 @@ Game.prototype.utilColors = function() {
   ]
 }
 
+Game.prototype.utilColorToDecree = function(color) {
+  switch (color) {
+    case 'red': return 'War';
+    case 'yellow': return 'Expansion';
+    case 'green': return 'Trade';
+    case 'blue': return 'Advancement';
+    case 'purple': return 'Rivalry';
+    default:
+      throw new Error(`Unknown color ${color}`)
+  }
+}
+
 Game.prototype.utilCombineBiscuits = function(left, right) {
   const combined = this.utilEmptyBiscuits()
   for (const biscuit of Object.keys(combined)) {
@@ -807,8 +819,26 @@ Game.prototype.utilOptionName = function(option) {
   return option.name || option
 }
 
+Game.prototype.utilSeparateByAge = function(cards) {
+  cards = this._adjustCardsParam(cards)
+  const byAge = {}
+  for (const card of cards) {
+    if (byAge.hasOwnProperty(card.age)) {
+      byAge[card.age].push(card)
+    }
+    else {
+      byAge[card.age] = [card]
+    }
+  }
+  return byAge
+}
+
 Game.prototype._adjustCardParam = function(card) {
   return this.getCardData(card)
+}
+
+Game.prototype._adjustCardsParam = function(cards) {
+  return cards.map(c => this.getCardData(c))
 }
 
 Game.prototype._serializeCardList = function(cards) {

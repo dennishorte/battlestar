@@ -1,5 +1,7 @@
 const { transitionFactory2 } = require('../../lib/transitionFactory.js')
 
+const util = require('../../lib/util.js')
+
 module.exports = transitionFactory2({
   steps: [
     {
@@ -123,7 +125,7 @@ function _choose(context, count) {
   const options = []
 
   // _addAchieve(context, options)
-  // _addDecree(context, options)
+  _addDecree(context, options)
   _addDogma(context, options)
   // _addDraw(context, options)
   // _addEndorse(context, options)
@@ -143,6 +145,40 @@ function _numberOfActions(context) {
   const { game } = context
   const numPlayersWithOneAction = Math.floor(game.getPlayerAll().length / 2)
   return game.getTurnCount() <= numPlayersWithOneAction ? 1 : 2
+}
+
+function _addDecree(context, options) {
+  const { game, actor } = context
+  const figs = game
+    .getHand(actor)
+    .cards
+    .filter(card => game.getCardData(card).expansion === 'figs')
+
+  const decreeOptions = []
+
+  const figAges = game.utilSeparateByAge(figs)
+  if (Object.keys(figAges).length >= 3) {
+    figs
+      .map(game.getCardData)
+      .map(card => card.color)
+      .map(game.utilColorToDecree)
+      .forEach(decree => util.array.pushUnique(decreeOptions, decree))
+  }
+
+  if (figs.length >= 2) {
+    const decreeTriggers = game
+      .getTriggers(actor, 'decree-for-two')
+      .map(card => card.triggerImpl.find(impl => impl.kind === 'decree-for-two').decree)
+      .forEach(decree => util.array.pushUnique(decreeOptions, decree))
+  }
+
+  if (decreeOptions.length > 0) {
+    decreeOptions.sort()
+    options.push({
+      name: 'Decree',
+      options: decreeOptions
+    })
+  }
 }
 
 function _addDogma(context, options) {
