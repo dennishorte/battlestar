@@ -34,6 +34,7 @@ const transitions = {
   'achievement-check': require('./achievementCheck.js'),
   'check-triggers': require('./checkTriggers.js'),
   'choose': require('./choose.js'),
+  'choose-and-splay': require('./chooseAndSplay.js'),
   'claim-achievement': require('./claimAchievement.js'),
   'draw-and-forecast': require('./drawAndForecast.js'),
   'draw-and-meld': require('./drawAndMeld.js'),

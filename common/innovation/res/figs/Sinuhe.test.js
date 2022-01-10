@@ -23,8 +23,17 @@ describe('Sinuhe', () => {
   })
 
   describe('karma', () => {
-    test.skip('Rivalry decree', () => {
-
+    test('Rivalry decree', () => {
+      const game = t.fixtureFirstPicks({ expansions: ['base', 'figs'] })
+      t.setColor(game, 'micah', 'purple', ['Sinuhe'])
+      t.setHand(game, 'micah', ['Homer', 'Fu Xi'])
+      game.run()
+      expect(game.getWaiting('micah').options).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          name: 'Decree',
+          options: ['Rivalry']
+        })
+      ]))
     })
 
     test(`Each {k} on your board provides one additional point towards your score.`, () => {

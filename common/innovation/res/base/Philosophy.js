@@ -24,30 +24,10 @@ function Card() {
           description: 'Choose up to one color to splay left',
           func(context, player) {
             const { game } = context
-            return game.aChoose(context, {
+            return game.aChooseAndSplay(context, {
               playerName: player.name,
-              kind: 'Colors',
-              choices: game.getColorsForSplaying(player, 'left'),
-              min: 0,
-              max: 1
+              direction: 'left',
             })
-          }
-        },
-        {
-          description: 'Splay the chosen color, if any, left.',
-          func(context, player) {
-            const { game } = context
-            const { returned } = context.data
-            if (returned.length === 0) {
-              game.mLog({
-                template: '{player} splays nothing',
-                args: { player }
-              })
-              return context.done()
-            }
-            else {
-              return game.aSplay(context, player, returned[0], 'left')
-            }
           }
         },
       ]

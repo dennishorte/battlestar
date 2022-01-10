@@ -12,7 +12,7 @@ describe('Philosophy', () => {
       t.dogma(game, 'Philosophy')
       game.submit({
         actor: 'micah',
-        name: 'Choose Colors',
+        name: 'Choose Color',
         option: ['red']
       })
 
@@ -26,7 +26,7 @@ describe('Philosophy', () => {
       t.dogma(game, 'Philosophy')
       game.submit({
         actor: 'micah',
-        name: 'Choose Colors',
+        name: 'Choose Color',
         option: []
       })
 

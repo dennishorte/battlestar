@@ -76,6 +76,10 @@ Game.prototype.aChoose = function(context, options) {
   return context.push('choose', options)
 }
 
+Game.prototype.aChooseAndSplay = function(context, options) {
+  return context.push('choose-and-splay', options)
+}
+
 Game.prototype.aClaimAchievement = function(context, player, achievement) {
   player = this._adjustPlayerParam(player)
   achievement = this._adjustCardParam(achievement)
@@ -85,6 +89,15 @@ Game.prototype.aClaimAchievement = function(context, player, achievement) {
       achievement: achievement.name,
     })
   }
+}
+
+Game.prototype.aDecree = function(context, player, decree) {
+  player = this._adjustPlayerParam(player)
+  decree = this._adjustCardParam(decree)
+  return context.push('action-decree', {
+    playerName: player.name,
+    decree: decree.id,
+  })
 }
 
 Game.prototype.aDogma = function(context, player, card) {

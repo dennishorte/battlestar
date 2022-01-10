@@ -95,7 +95,12 @@ function chooseResp(context) {
   const { game, actor, options } = context
   const option = options[0]
 
-  if (option === 'Dogma') {
+  if (option === 'Decree') {
+    const decree = game.utilOptionName(context.response.option[0].option[0])
+    return game.aDecree(context, actor, decree)
+  }
+
+  else if (option === 'Dogma') {
     const card = game.utilOptionName(context.response.option[0].option[0])
     return game.aDogma(context, actor, card)
   }
