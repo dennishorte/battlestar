@@ -7,21 +7,23 @@ describe('Construction', () => {
     test('choose two cards', () => {
       const game = t.fixtureDogma('Construction')
       game.run()
-      jest.spyOn(game, 'aChooseCards')
+      jest.spyOn(game, 'aChoose')
       t.dogma(game, 'Construction')
 
-      expect(game.aChooseCards).toHaveBeenCalledWith(
+      expect(game.aChoose).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
           playerName: 'tom',
-          count: 2
+          count: 2,
+          kind: 'Cards',
         })
       )
-      expect(game.aChooseCards).toHaveBeenCalledWith(
+      expect(game.aChoose).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
           playerName: 'dennis',
-          count: 2
+          count: 2,
+          kind: 'Cards',
         })
       )
     })

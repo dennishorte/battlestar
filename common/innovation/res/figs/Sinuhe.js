@@ -17,9 +17,46 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = [
+    {
+      dogma: `Draw and foreshadow a {2} or {3}.`,
+      steps: [
+        {
+          description: 'Choose an age to draw and forecast.',
+          func(context, player) {
+            const { game } = context
+            return game.aChoose(context, {
+              playerName: player.name,
+              kind: 'Age',
+              choices: [2, 3]
+            })
+          }
+        },
+        {
+          description: 'Draw and forecast a card of the chosen age.',
+          func(context, player) {
+            const { game } = context
+            const age = context.data.returned[0]
+            return game.aDrawAndForecast(context, player, age)
+          }
+        },
+      ]
+    }
+  ]
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.triggerImpl = [
+    {
+      kind: 'decree-for-two',
+      decree: 'Rivalry',
+    },
+    {
+      kind: 'calculate-score',
+      func(game, player) {
+        const biscuits = game.getBiscuits(player)
+        return biscuits.k
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

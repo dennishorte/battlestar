@@ -34,9 +34,10 @@ function Card() {
               .filter(d => d.age === lowest)
               .map(c => c.id)
 
-            return game.aChooseCards(context, {
+            return game.aChoose(context, {
               playerName: player.name,
-              cards: lowestCards,
+              kind: 'Cards',
+              choices: lowestCards,
               reason: 'Domestication: Meld the lowest card in your hand.',
             })
           }

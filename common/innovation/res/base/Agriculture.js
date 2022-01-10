@@ -23,9 +23,10 @@ function Card() {
           description: 'You may choose a card to return from your hand.',
           func(context, player) {
             const { game } = context
-            return game.aChooseCards(context, {
+            return game.aChoose(context, {
               playerName: player.name,
-              cards: game.getHand(player).cards,
+              choices: game.getHand(player).cards,
+              kind: 'Cards',
               max: 1,
               min: 0,
             })

@@ -29,9 +29,10 @@ function Card() {
               .getHand(player)
               .cards
 
-            return game.aChooseCards(context, {
+            return game.aChoose(context, {
               playerName: player.name,
-              cards: hand,
+              choices: hand,
+              kind: 'Cards',
               count: 2,
               reason: 'Construction: I demand you transfer two cards from your hand to my hand!',
             })

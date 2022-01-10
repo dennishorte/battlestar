@@ -24,9 +24,10 @@ function Card() {
           description: 'Choose up to one color to splay left',
           func(context, player) {
             const { game } = context
-            return game.aChooseColors(context, {
+            return game.aChoose(context, {
               playerName: player.name,
-              colors: game.getColorsForSplaying(player, 'left'),
+              kind: 'Colors',
+              choices: game.getColorsForSplaying(player, 'left'),
               min: 0,
               max: 1
             })
@@ -58,9 +59,10 @@ function Card() {
           description: 'Choose up to one card from your hand to score.',
           func(context, player) {
             const { game } = context
-            return game.aChooseCards(context, {
+            return game.aChoose(context, {
               playerName: player.name,
-              cards: game.getHand(player).cards,
+              kind: 'Cards',
+              choices: game.getHand(player).cards,
               min: 0,
               max: 1
             })

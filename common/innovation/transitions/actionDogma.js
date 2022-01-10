@@ -190,18 +190,19 @@ function _logDogmaActivation(context) {
 }
 
 function expandByKinds(game, card) {
+  card = game.getCardData(card)
   const output = []
 
   if (game.checkEchoIsVisible(card)) {
     output.push({
-      card,
+      card: card.id,
       kind: 'echo'
     })
   }
 
-  if (game.checkCardIsTop(card)) {
+  if (game.checkCardIsTop(card) && card.dogma.length > 0) {
     output.push({
-      card,
+      card: card.id,
       kind: 'dogma'
     })
   }

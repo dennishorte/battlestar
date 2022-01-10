@@ -74,9 +74,9 @@ Game.prototype.aCheckTriggers = function(context, kind) {
   return context.push('check-triggers', data)
 }
 
-Game.prototype.aChooseCards = function(context, options) {
-  options.cards = options.cards.map(c => c.id || c)
-  return context.push('choose-cards', options)
+Game.prototype.aChoose = function(context, options) {
+  options.cards = options.choices.map(c => c.id || c)
+  return context.push('choose', options)
 }
 
 Game.prototype.aClaimAchievement = function(context, player, achievement) {
@@ -88,11 +88,6 @@ Game.prototype.aClaimAchievement = function(context, player, achievement) {
       achievement: achievement.name,
     })
   }
-}
-
-Game.prototype.aChooseColors = function(context, options) {
-  options.colors = options.colors.map(c => c.id || c)
-  return context.push('choose-colors', options)
 }
 
 Game.prototype.aDogma = function(context, player, card) {
@@ -107,6 +102,14 @@ Game.prototype.aDogma = function(context, player, card) {
 Game.prototype.aDraw = function(context, player, age) {
   player = this._adjustPlayerParam(player)
   return context.push('raw-draw', {
+    playerName: player.name,
+    age,
+  })
+}
+
+Game.prototype.aDrawAndForecast = function(context, player, age) {
+  player = this._adjustPlayerParam(player)
+  return context.push('draw-and-forecast', {
     playerName: player.name,
     age,
   })
@@ -144,6 +147,15 @@ Game.prototype.aExecute = function(context, player, card) {
     card: card.id,
     noDemand: true,
     noShare: true,
+  })
+}
+
+Game.prototype.aForecast = function(context, player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+  return context.push('forecast', {
+    playerName: player.name,
+    card: card.id,
   })
 }
 
@@ -403,6 +415,11 @@ Game.prototype.getDeck = function(exp, age) {
   return this.getZoneByName(`decks.${exp}.${age}`)
 }
 
+Game.prototype.getForecast = function(player) {
+  player = this._adjustPlayerParam(player)
+  return this.getZoneByName(`players.${player.name}.forecast`)
+}
+
 Game.prototype.getHand = function(player) {
   player = this._adjustPlayerParam(player)
   return this.getZoneByName(`players.${player.name}.hand`)
@@ -531,8 +548,7 @@ Game.prototype.mDraw = function(player, exp, age) {
   const deck = this.getDeck(exp, age)
   const hand = this.getHand(player)
 
-  // Used for calculating share bonuses
-  this.rk.put(this.getDogmaInfo()[player.name], 'acted', true)
+  this.mPlayerActed(player)
 
   util.assert(
     this.getExpansionList().includes(exp),
@@ -556,12 +572,26 @@ Game.prototype.mDraw = function(player, exp, age) {
   return card
 }
 
+Game.prototype.mForecast = function(player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+
+  this.mPlayerActed(player)
+
+  const source = this.getZoneByCard(card)
+  const target = this.getForecast(player)
+  this.mLog({
+    template: '{player} forecasts {card}',
+    args: { player, card }
+  })
+  return this.mMoveCard(source, target, card)
+}
+
 Game.prototype.mMeld = function(player, card) {
   player = this._adjustPlayerParam(player)
   card = this._adjustCardParam(card)
 
-  // Used for calculating share bonuses
-  this.rk.put(this.getDogmaInfo()[player.name], 'acted', true)
+  this.mPlayerActed(player)
 
   const source = this.getZoneByCard(card)
   const target = this.getZoneColorByPlayer(player, card.color)
@@ -607,6 +637,12 @@ Game.prototype.mNextTurn = function() {
   this.mResetMonumentCounts()
 }
 
+Game.prototype.mPlayerActed = function(player) {
+  player = this._adjustPlayerParam(player)
+  // Used for calculating share bonuses
+  this.rk.put(this.getDogmaInfo()[player.name], 'acted', true)
+}
+
 Game.prototype.mResetDogmaInfo = function() {
   this.rk.put(this.state, 'dogma', this.utilEmptyDogmaInfo())
 }
@@ -630,8 +666,7 @@ Game.prototype.mReturn = function(player, card) {
   player = this._adjustPlayerParam(player)
   card = this._adjustCardParam(card)
 
-  // Used for calculating share bonuses
-  this.rk.put(this.getDogmaInfo()[player.name], 'acted', true)
+  this.mPlayerActed(player)
 
   const zone = this.getZoneByCard(card)
   const homeDeck = this.getDeck(card.expansion, card.age)
@@ -643,6 +678,8 @@ Game.prototype.mScore = function(player, card) {
   card = this._adjustCardParam(card)
   const cardZone = this.getZoneByCard(card)
   const scoreZone = this.getZoneScore(player)
+
+  this.mPlayerActed(player)
 
   // Special case for Monument achievement
   this.rk.increment(this.state.monument[player.name], 'score')
@@ -660,6 +697,7 @@ Game.prototype.mSplay = function(player, color, direction) {
   player = this._adjustPlayerParam(player)
   const zone = this.getZoneColorByPlayer(player, color)
   this.rk.put(zone, 'splay', direction)
+  this.mPlayerActed(player)
 }
 
 Game.prototype.mTuck = function(player, card) {
@@ -667,6 +705,8 @@ Game.prototype.mTuck = function(player, card) {
   card = this._adjustCardParam(card)
   const cardZone = this.getZoneByCard(card)
   const tuckZone = this.getZoneColorByPlayer(player, card.color)
+
+  this.mPlayerActed(player)
 
   // Special case for Monument achievement
   game.rk.increment(this.state.monument[player.name], 'score')

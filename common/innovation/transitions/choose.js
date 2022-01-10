@@ -7,19 +7,19 @@ module.exports = function(context) {
 
   else {
     const { game, actor } = context
-    const { colors, reason } = context.data
+    const { kind, choices, reason } = context.data
     const { min, max } = selector.minMax(context.data)
 
     // Auto-pick if the choice is limited
-    if (colors.length <= min) {
-      return context.return(colors)
+    if (choices.length <= min) {
+      return context.return(choices)
     }
 
     else {
       return context.wait({
         actor: actor.name,
-        name: 'Choose Colors',
-        options: colors,
+        name: `Choose ${kind}`,
+        options: choices,
         min,
         max,
       })

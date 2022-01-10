@@ -24,6 +24,10 @@ describe('achievement-check', () => {
     expect(game.aAchievementCheck.mock.calls.length).toBe(1)
   })
 
+  test('called after remove', () => {
+
+  })
+
   test('called after return', () => {
 
   })
