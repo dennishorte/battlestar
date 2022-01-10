@@ -28,9 +28,6 @@ function factory(lobby) {
   // echo effect.
   state.dogma = {}
 
-  // Registry for triggered effects, keyed by player and trigger kind
-  state.triggers = {}
-
   const game = new Game()
   game.load(transitions, state, contextEnricher)
   return game
@@ -460,6 +457,11 @@ Game.prototype.getScore = function(player) {
     total += bonuses.length - 1
   }
 
+  this
+    .getTriggers(player, 'calculate-score')
+    .map(card => this.utilApplyTrigger(card, 'calculate-score', this, player))
+    .forEach(points => total += points )
+
   return total
 }
 
@@ -477,7 +479,11 @@ Game.prototype.getTeam = function(player) {
 
 Game.prototype.getTriggers = function(player, kind) {
   player = this._adjustPlayerParam(player)
-  return this.state.triggers[player.name][kind] || []
+  return this
+    .utilColors()
+    .map(color => this.getCardTop(player, color))
+    .filter(card => card !== undefined)
+    .filter(card => card.triggerImpl.some(t => t.kind === kind))
 }
 
 Game.prototype.getZoneArtifact = function(player) {
@@ -516,30 +522,6 @@ Game.prototype.mSetVisibilityForZone = function(zone, card) {
    * else {
    *   throw new Error(`Unhandled visibility type for zone: ${zone.kind}`)
    * } */
-}
-
-Game.prototype.mAddTrigger = function(player, kind, card) {
-  player = this._adjustPlayerParam(player)
-  card = this._adjustCardParam(card)
-  const triggers = this.state.triggers[player.name]
-  if (triggers[kind]) {
-    this.rk.pushUnique(triggers[kind], card.id)
-  }
-  else {
-    this.rk.addKey(triggers, kind, [card.id])
-  }
-}
-
-Game.prototype.mRemoveTrigger = function(player, kind, card) {
-  player = this._adjustPlayerParam(player)
-  card = this._adjustCardParam(card)
-  const triggers = this.state.triggers[player.name].kind
-  if (triggers) {
-    const index = triggers.indexOf(card.id)
-    if (index !== -1) {
-      this.rk.splice(triggers, index, 1)
-    }
-  }
 }
 
 Game.prototype.mDraw = function(player, exp, age) {
@@ -730,6 +712,14 @@ Game.prototype.oMeld = function(card) {
     kind: 'meld',
     card: card.id,
   }
+}
+
+Game.prototype.utilApplyTrigger = function(card, kind, ...args) {
+  card = this._adjustCardParam(card)
+  const impl = card
+    .triggerImpl
+    .find(impl => impl.kind === kind)
+  return impl.func(...args)
 }
 
 Game.prototype.utilColors = function() {

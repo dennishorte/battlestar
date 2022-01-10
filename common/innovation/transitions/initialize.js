@@ -49,7 +49,6 @@ function _initializePlayers(context) {
   util.array.shuffle(game.state.players)
   game.state.players.forEach((player, index) => {
     player.index = index
-    game.state.triggers[player.name] = {}
   })
   game.mResetDogmaInfo()
   game.mResetMonumentCounts()

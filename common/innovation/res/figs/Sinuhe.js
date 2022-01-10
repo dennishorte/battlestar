@@ -53,7 +53,7 @@ function Card() {
       kind: 'calculate-score',
       func(game, player) {
         const biscuits = game.getBiscuits(player)
-        return biscuits.k
+        return biscuits.board.k
       }
     }
   ]
