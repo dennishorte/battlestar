@@ -39,6 +39,14 @@ TestUtil.fixture = function(options) {
   return game
 }
 
+TestUtil.fixtureDecrees = function(options) {
+  const game = TestUtil.fixtureFirstPicks(options)
+  const player = game.getWaiting()[0].actor
+  game.rk.undo('Player Turn')
+  TestUtil.setHand(game, player, ['Homer', 'Ptolemy', 'Yi Sun-Sin', 'Daedalus', 'Shennong'])
+  return game
+}
+
 TestUtil.fixtureDogma = function(card, options) {
   const game = TestUtil.fixtureFirstPicks(options)
   const player = game.getWaiting()[0].actor
@@ -105,6 +113,18 @@ TestUtil.fixtureFirstPicks = function(options) {
 TestUtil.getOptionKind = function(game, optionKind) {
   const waiting = game.getWaiting()[0]
   return waiting.options.find(o => o.kind === optionKind)
+}
+
+TestUtil.decree = function(game, decree) {
+  const waiting = game.getWaiting()[0]
+  game.submit({
+    actor: waiting.actor,
+    name: waiting.name,
+    option: [{
+      name: 'Decree',
+      option: [decree]
+    }]
+  })
 }
 
 TestUtil.dogma = function(game, cardName) {

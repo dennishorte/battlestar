@@ -203,6 +203,7 @@ function pushUnique(array, elem) {
 function increment(object, key) {
   const value = object[key]
   this.put(object, key, value + 1)
+  return value + 1
 }
 
 function put(object, key, value) {

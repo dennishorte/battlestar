@@ -76,6 +76,7 @@ function _initializeZones(context) {
   const zones = game.state.zones
 
   _addDeckZones(zones)
+  _addExileZone(zones)
   _addAchievementZones(game, zones)
   _addPlayerZones(game.state.players, zones)
 }
@@ -100,6 +101,14 @@ function _addDeckZones(zones) {
         kind: 'deck',
       }
     }
+  }
+}
+
+function _addExileZone(zones) {
+  zones.exile = {
+    name: 'exile',
+    cards: [],
+    kind: 'public',
   }
 }
 

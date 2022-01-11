@@ -111,6 +111,7 @@ Game.prototype.aDogma = function(context, player, card) {
 
 Game.prototype.aDraw = function(context, player, age) {
   player = this._adjustPlayerParam(player)
+  util.assert(!!age, `Invalid age parameter: ${age}`)
   return context.push('raw-draw', {
     playerName: player.name,
     age,
@@ -186,6 +187,24 @@ Game.prototype.aMeld = function(context, player, card) {
   return context.push('raw-meld', {
     playerName: player.name,
     card: card.id,
+  })
+}
+
+Game.prototype.aRemove = function(context, player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+  return context.push('remove', {
+    playerName: player.name,
+    card: card.id,
+  })
+}
+
+Game.prototype.aRemoveMany = function(context, player, cards) {
+  player = this._adjustPlayerParam(player)
+  cards = this._serializeCardList(cards)
+  return context.push('remove-many', {
+    playerName: player.name,
+    cards,
   })
 }
 
@@ -636,6 +655,14 @@ Game.prototype.mPlayerActed = function(player) {
   player = this._adjustPlayerParam(player)
   // Used for calculating share bonuses
   this.rk.put(this.getDogmaInfo()[player.name], 'acted', true)
+}
+
+Game.prototype.mRemove = function(player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+
+  const zone = this.getZoneByCard(card)
+  return this.mMoveCard(zone, 'exile', card)
 }
 
 Game.prototype.mResetDogmaInfo = function() {

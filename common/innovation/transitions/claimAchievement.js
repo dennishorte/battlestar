@@ -13,4 +13,5 @@ module.exports = function(context) {
       achievement: achievement,
     }
   })
+  return context.done()
 }

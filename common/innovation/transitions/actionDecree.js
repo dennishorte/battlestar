@@ -1,10 +1,15 @@
 const { transitionFactory2 } = require('../../lib/transitionFactory.js')
+const util = require('../../lib/util.js')
 
 module.exports = transitionFactory2({
   steps: [
     {
       name: 'initialize',
       func: initialize,
+    },
+    {
+      name: 'removeCards',
+      func: removeCards,
     },
     {
       name: 'returnAchievement',
@@ -50,25 +55,55 @@ function initialize(context) {
   game.rk.addKey(context.data, 'returnAchievement', returnAchievement)
   game.rk.addKey(context.data, 'claimAchievement', claimAchievement)
   game.rk.addKey(context.data, 'gainEffect', gainEffect)
+
+  const logId = game.mLog({
+    template: '{player} issues a {decree} decree',
+    args: {
+      player: actor,
+      decree: decree,
+    }
+  })
+  game.rk.put(context.data, 'parentLogId', logId)
+}
+
+function removeCards(context) {
+  const { game, actor } = context
+  return game.aRemoveMany(context, actor, game.getHand(actor).cards)
 }
 
 function returnAchievement(context) {
   const { game, actor } = context
-  const { decree } = context.data
+  const { decree, returnAchievement } = context.data
 
-  return game.aReturnAchievement(context, actor, decree)
+  if (returnAchievement) {
+    return game.aReturnAchievement(context, actor, decree)
+  }
 }
 
 function claimAchievement(context) {
   const { game, actor } = context
-  const { decree } = context.data
+  const { decree, claimAchievement } = context.data
 
-  return game.aClaimAchievement(context, actor, decree)
+  if (claimAchievement) {
+    return game.aClaimAchievement(context, actor, decree)
+  }
 }
 
 function gainEffect(context) {
   const { game, actor } = context
-  const { decree } = context.data
+  const { decree, gainEffect } = context.data
 
-
+  if (gainEffect) {
+    return context.push('action-dogma-one-effect', {
+      effect: {
+        card: decree,
+        kind: 'decree',
+        implIndex: 0,
+        leader: actor.name,
+      },
+      sharing: [],
+      demanding: [],
+      biscuits: {},
+    })
+  }
 }

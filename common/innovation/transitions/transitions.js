@@ -41,6 +41,8 @@ const transitions = {
   'draw-and-score': require('./drawAndScore.js'),
   'forecast': require('./forecast.js'),
   'transfer-cards': require('./transferCards.js'),
+  'remove': require('./remove.js'),
+  'remove-many': require('./removeMany.js'),
   'return': require('./return.js'),
   'score': require('./score.js'),
   'splay': require('./splay.js'),
