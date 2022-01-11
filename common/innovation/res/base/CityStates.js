@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `c`
   this.inspire = ``
   this.echo = ``
-  this.triggers = []
+  this.karma = []
   this.dogma = [
     `I demand you transfer a top card with a {k} from your board to my board if you have at least four {k} on your board! If you do, draw a {1}.`
   ]
@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `c`
   this.inspire = ``
   this.echo = ``
-  this.triggers = []
+  this.karma = []
   this.dogma = [
     `Execute each of the non-demand dogma effects of any other top card on your board. Do not share them.`,
     `If you have more achievements than each opponent, you win.`
@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

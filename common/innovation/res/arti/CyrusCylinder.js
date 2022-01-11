@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `s`
   this.inspire = ``
   this.echo = ``
-  this.triggers = []
+  this.karma = []
   this.dogma = [
     `Choose any other rtop purple card on any plyaer's board. Execute its non-demand dogma effects. Do not share them. Splay left a color on any player's board.`
   ]
@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

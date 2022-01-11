@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `k`
   this.inspire = ``
   this.echo = ``
-  this.triggers = []
+  this.karma = []
   this.dogma = [
     `I demand you transfer two cards from your hand to my hand! Draw a {2}!`,
     `If you are the only player with five top cards, claim the Empire achievement.`
@@ -99,7 +99,7 @@ function Card() {
   ]
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `c`
   this.inspire = ``
   this.echo = ``
-  this.triggers = []
+  this.karma = []
   this.dogma = [
     `If your red cards are splayed up, you may splay any one color of your cards up.`,
     `You may splay your red cards up.`
@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

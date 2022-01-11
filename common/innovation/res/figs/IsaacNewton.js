@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `s`
   this.inspire = ``
   this.echo = `Splay one color of your cards right.`
-  this.triggers = [
+  this.karma = [
     `If you would take a Draw or Inspire action, first draw a {1} and transfer it to any player's board.`
   ]
   this.dogma = []
@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

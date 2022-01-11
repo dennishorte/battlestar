@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `i`
   this.inspire = ``
   this.echo = ``
-  this.triggers = []
+  this.karma = []
   this.dogma = [
     `I demand you drawa a {0}! If it is red, remove all hands, boards, and score piles from the game! If this occurs, the dogma action is complete.`,
     `Return a top card other than Fission from any player's board. Draw a {0}.`
@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

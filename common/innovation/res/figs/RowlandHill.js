@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `c`
   this.inspire = `Draw a {7}.`
   this.echo = ``
-  this.triggers = [
+  this.karma = [
     `If you would claim an achievement, first return three cards from your hand. If you do, claim all other cards in your hand as achievements, ignoring eligibility.`
   ]
   this.dogma = []
@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

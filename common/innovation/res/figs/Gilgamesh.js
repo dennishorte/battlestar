@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `k`
   this.inspire = `Score a card from your hand.`
   this.echo = ``
-  this.triggers = [
+  this.karma = [
     `Each bonus on your board provides one additional {k} for every top card on your board.`
   ]
   this.dogma = []
@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

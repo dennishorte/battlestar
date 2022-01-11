@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `f`
   this.inspire = `Tuck a card from your hand.`
   this.echo = ``
-  this.triggers = [
+  this.karma = [
     `If you would tuck a red card, instead choose a top red card on an opponent's board. Either transfer it to your score pile, or execute its non-demand Dogma effects for yourself only.`
   ]
   this.dogma = []
@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

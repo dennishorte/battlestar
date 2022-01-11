@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `c`
   this.inspire = `Draw and tuck three {9}.`
   this.echo = ``
-  this.triggers = [
+  this.karma = [
     `You may issue a Rivalry Decree with any two figures.`,
     `If you would tuck a yellow card after tucking a green card in the same turn, instead you win.`
   ]
@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

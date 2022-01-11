@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `s`
   this.inspire = `Draw and tuck a {0}.`
   this.echo = ``
-  this.triggers = [
+  this.karma = [
     `Each HEX on your board also counts as an echo effet reading "Score the bottom card of this color".`
   ]
   this.dogma = []
@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

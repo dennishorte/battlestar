@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `s`
   this.inspire = ``
   this.echo = `Transfer a figure from any score pile to yours.`
-  this.triggers = [
+  this.karma = [
     `You may issue a Rivalry Decree with any two figures.`,
     `If you would claim a standard achievement, first make an achievement available from any lower non-empty age.`
   ]
@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `l`
   this.inspire = `Draw and meld a {9}.`
   this.echo = ``
-  this.triggers = [
+  this.karma = [
     `If you are required to fade a figure, instead do nothing.`,
     `Each two inspire effects visibile on your board counts as an achievement.`
   ]
@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `l`
   this.inspire = `Draw a {1}.`
   this.echo = ``
-  this.triggers = [
+  this.karma = [
     `You may issue a War Decree with any two figures.`,
     `Each card in your hand provides one additional point toward your score.`
   ]
@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

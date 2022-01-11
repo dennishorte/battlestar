@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `s`
   this.inspire = `Draw and meld an {8} figure.`
   this.echo = ``
-  this.triggers = [
+  this.karma = [
     `If you are required to fade a figure, instead do nothing.`,
     `If you would meld a figure and have four top figures already, instead achieve it regardless of eligibility.`
   ]
@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

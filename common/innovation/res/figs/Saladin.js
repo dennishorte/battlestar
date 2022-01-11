@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `k`
   this.inspire = ``
   this.echo = `Score any other top card with a {k} from anywhere.`
-  this.triggers = [
+  this.karma = [
     `You may issue a War Decree with any two figures.`,
     `If you would score a non-figure card, instead meld the card, then you may splsy left the color of that card.`
   ]
@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

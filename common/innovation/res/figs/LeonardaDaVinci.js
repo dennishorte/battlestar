@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `l`
   this.inspire = ``
   this.echo = `Score a top figure with a bonus from anywhere.`
-  this.triggers = [
+  this.karma = [
     `If you would meld a yellow card, first meld every non-yellow, non-purple card in your hand.`,
     `If you would meld a purple card, first draw three {4}.`
   ]
@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

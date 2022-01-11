@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `c`
   this.inspire = `Score a card from your hand.`
   this.echo = ``
-  this.triggers = [
+  this.karma = [
     `Each icon type on your board counts as an achievement, if you have at least twice as many of that icon as every other player.`
   ]
   this.dogma = []
@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `s`
   this.inspire = `Draw an {8}.`
   this.echo = ``
-  this.triggers = [
+  this.karma = [
     `You may issue an Expansion Decree with any two figures.`,
     `If you would meld a card with a {s} or {i}, first score an opponent's top card with neither {s} nor {i}.`
   ]
@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

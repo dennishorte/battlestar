@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `s`
   this.inspire = `Execute any echo or inspire effect.`
   this.echo = ``
-  this.triggers = [
+  this.karma = [
     `If another player would not draw a share bonus after a Dogma action, first transfer the card they activated to your score pile.`
   ]
   this.dogma = []
@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

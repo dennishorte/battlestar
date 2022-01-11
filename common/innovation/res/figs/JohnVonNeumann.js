@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `i`
   this.inspire = ``
   this.echo = `Draw and reveal two {9}. If either is purple, return them.`
-  this.triggers = [
+  this.karma = [
     `When you meld this card, return all opponents' top figures.`,
     `Each card in your hand provides two additional {i}.`
   ]
@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

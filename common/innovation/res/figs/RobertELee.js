@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `l`
   this.inspire = ``
   this.echo = `Transfer a top card with a {l} from anywhere to any player's board.`
-  this.triggers = [
+  this.karma = [
     `You may issue a War Decree with any two figures.`,
     `Each seven {l} on your board counts as an achievement.`
   ]
@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

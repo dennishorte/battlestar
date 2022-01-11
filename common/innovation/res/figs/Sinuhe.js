@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `l`
   this.inspire = ``
   this.echo = `Draw and foreshadow a {2} or {3}.`
-  this.triggers = [
+  this.karma = [
     `You may issue a Rivaly Decree with any two figures.`,
     `Each {k} on your board provides one additional point towards your score.`
   ]
@@ -44,7 +44,7 @@ function Card() {
     }
   ]
   this.inspireImpl = []
-  this.triggerImpl = [
+  this.karmaImpl = [
     {
       kind: 'decree-for-two',
       decree: 'Rivalry',

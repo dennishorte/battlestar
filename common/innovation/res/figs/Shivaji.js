@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `f`
   this.inspire = ``
   this.echo = `Transfer one of your top cards to the available achievements.`
-  this.triggers = [
+  this.karma = [
     `You may issue a War Decree with any two figures.`,
     `If an opponent would claim an achievement, first you claim it if eligible.`
   ]
@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

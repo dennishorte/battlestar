@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `f`
   this.inspire = `Tuck a card from your hand.`
   this.echo = ``
-  this.triggers = [
+  this.karma = [
     `When you meld this card, return all opponents' top figures.`,
     `If you would tuck a card with a {f}, first achieve your bottom green card, if elibible. Otherwise, score it.`
   ]
@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

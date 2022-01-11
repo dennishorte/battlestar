@@ -10,15 +10,58 @@ function Card() {
   this.dogmaBiscuit = `k`
   this.inspire = ``
   this.echo = `Draw and meld a {2}.`
-  this.triggers = [
+  this.karma = [
     `If you would meld a card over an unsplayed color with more than one card, instead splay that color left and return the card.`
   ]
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = [
+    {
+      dogma: `Draw and meld a {2}.`,
+      steps: [
+        {
+          description: `Draw and meld a {2}.`,
+          func(context, player) {
+            const { game } = context
+            return game.aDrawAndMeld(context, player, 2)
+          }
+        }
+      ]
+    }
+  ]
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = [
+    {
+      kind: 'meld',
+      checkApplies(game, player, card) {
+        const zone = game.getZoneColorByPlayer(player, card.color)
+        return zone.splay === 'none' && zone.cards.length > 1
+      },
+    }
+  ]
+  this.karmameldImpl = [
+    {
+      dogma: `If you would meld a card over an unsplayed color with more than one card, instead splay that color left and return the card.`,
+      karmaKind: 'would-instead',
+      steps: [
+        {
+          description: 'Splay that color left',
+          func(context, player, card) {
+            const { game } = context
+            return game.aSplay(context, player, card.color)
+          },
+        },
+        {
+          description: 'Return the card.',
+          func(context, player, card) {
+            const { game } = context
+            return game.aReturn(context, player, card)
+          },
+        },
+      ]
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

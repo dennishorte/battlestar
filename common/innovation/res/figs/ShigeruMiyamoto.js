@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `i`
   this.inspire = ``
   this.echo = `Draw a {0}. If it does not have a {i}, score it.`
-  this.triggers = [
+  this.karma = [
     `If you would take a Dogma action and activate a card using {i} as the featured icon, first if you have exactly one, three, or six {i} on your board, you win.`
   ]
   this.dogma = []
@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

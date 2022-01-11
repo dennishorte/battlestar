@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `k`
   this.inspire = ``
   this.echo = `Draw and foreshadow a {4}.`
-  this.triggers = [
+  this.karma = [
     `Each card in your forecast adds one to the value of your highest top card for the purpose of claiming achievements. Each achievement adds its value to your score.`
   ]
   this.dogma = []
@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

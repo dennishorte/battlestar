@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `i`
   this.inspire = `Draw and foreshadow an {8} or {9}.`
   this.echo = ``
-  this.triggers = [
+  this.karma = [
     `If you would meld a card of value 10 and you have top cards of values 9 and 8 on your board, instead you win.`,
     `Each card in your forecast counts as being in your hand.`
   ]
@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

@@ -10,7 +10,7 @@ function Card() {
   this.dogmaBiscuit = `c`
   this.inspire = `Score a top card with a {c} from anywhere.`
   this.echo = ``
-  this.triggers = [
+  this.karma = [
     `If you would score a card, first claim an achievement matching that card's value, ignoring the age requirement.`
   ]
   this.dogma = []
@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)
