@@ -161,10 +161,7 @@ function _addPlayerZone(player, name, kind, root) {
     name: `players.${player.name}.${name}`,
     cards: [],
     kind,
-  }
-
-  if (kind === 'private') {
-    root[name].owner = player.name
+    owner: player.name,
   }
 }
 

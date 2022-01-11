@@ -44,6 +44,7 @@ const transitions = {
   'remove': require('./remove.js'),
   'remove-many': require('./removeMany.js'),
   'return': require('./return.js'),
+  'return-achievement': require('./returnAchievement.js'),
   'score': require('./score.js'),
   'splay': require('./splay.js'),
 }

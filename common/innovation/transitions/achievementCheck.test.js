@@ -57,7 +57,7 @@ describe('achievement-check', () => {
     t.dogma(game, 'Philosophy')
     game.submit({
       actor: 'micah',
-      name: 'Choose Colors',
+      name: 'Choose Color',
       option: ['red'],
     })
     game.submit({

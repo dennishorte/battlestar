@@ -7,7 +7,6 @@ test('Advancement', () => {
   game.run()
   jest.spyOn(game, 'aDraw')
   t.decree(game, 'Advancement')
-  t.dumpLog(game)
 
   expect(game.aDraw).toHaveBeenCalledWith(
     expect.anything(),

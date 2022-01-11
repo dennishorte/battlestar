@@ -217,6 +217,15 @@ Game.prototype.aReturn = function(context, player, card) {
   })
 }
 
+Game.prototype.aReturnAchievement = function(context, player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+  return context.push('return-achievement', {
+    playerName: player.name,
+    card: card.id
+  })
+}
+
 Game.prototype.aSplay = function(context, player, color, direction) {
   player = this._adjustPlayerParam(player)
   return context.push('splay', {
@@ -693,6 +702,16 @@ Game.prototype.mReturn = function(player, card) {
   const zone = this.getZoneByCard(card)
   const homeDeck = this.getDeck(card.expansion, card.age)
   return this.mMoveCard(zone, homeDeck, card)
+}
+
+Game.prototype.mReturnAchievement = function(player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+
+  this.mPlayerActed(player)
+
+  const zone = this.getZoneByCard(card)
+  return this.mMoveCard(zone, 'achievements', card)
 }
 
 Game.prototype.mScore = function(player, card) {

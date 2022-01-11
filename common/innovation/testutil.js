@@ -115,6 +115,12 @@ TestUtil.getOptionKind = function(game, optionKind) {
   return waiting.options.find(o => o.kind === optionKind)
 }
 
+TestUtil.getAchievement = function(game, actor, achievement) {
+  const sourceZone = game.getZoneByCard(achievement)
+  const targetZone = game.getAchievements(actor)
+  game.mMoveCard(sourceZone, targetZone, achievement)
+}
+
 TestUtil.decree = function(game, decree) {
   const waiting = game.getWaiting()[0]
   game.submit({
