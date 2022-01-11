@@ -23,7 +23,7 @@ module.exports = transitionFactory2({
 
 function karma(context) {
   const { game } = context
-  // return game.aCheckTriggers(context, 'before-meld')
+  // return game.aCheckKarma(context, 'meld')
 }
 
 function meld(context) {

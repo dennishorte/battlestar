@@ -33,17 +33,13 @@ function Card() {
   this.inspireImpl = []
   this.karmaImpl = [
     {
-      kind: 'meld',
+      dogma: `If you would meld a card over an unsplayed color with more than one card, instead splay that color left and return the card.`,
+      trigger: 'meld',
+      kind: 'would-instead',
       checkApplies(game, player, card) {
         const zone = game.getZoneColorByPlayer(player, card.color)
         return zone.splay === 'none' && zone.cards.length > 1
       },
-    }
-  ]
-  this.karmameldImpl = [
-    {
-      dogma: `If you would meld a card over an unsplayed color with more than one card, instead splay that color left and return the card.`,
-      karmaKind: 'would-instead',
       steps: [
         {
           description: 'Splay that color left',

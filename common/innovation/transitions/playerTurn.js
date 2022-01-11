@@ -171,9 +171,9 @@ function _addDecree(context, options) {
   }
 
   if (figs.length >= 2) {
-    const decreeTriggers = game
-      .getTriggers(actor, 'decree-for-two')
-      .map(card => card.triggerImpl.find(impl => impl.kind === 'decree-for-two').decree)
+    game
+      .getKarma(actor, 'decree-for-two')
+      .map(card => card.karmaImpl.find(impl => impl.kind === 'decree-for-two').decree)
       .forEach(decree => util.array.pushUnique(decreeOptions, decree))
   }
 

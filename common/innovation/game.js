@@ -65,10 +65,10 @@ Game.prototype.aAchievementCheck = function(context) {
   return context.push('achievement-check')
 }
 
-Game.prototype.aCheckTriggers = function(context, kind) {
+Game.prototype.aCheckKarma = function(context, kind) {
   const data = util.deepcopy(context.data)
   data.trigger = kind
-  return context.push('check-triggers', data)
+  return context.push('check-karma', data)
 }
 
 Game.prototype.aChoose = function(context, options) {
@@ -174,11 +174,6 @@ Game.prototype.aListCardsForDogmaByColor = function(player, color) {
   player = this._adjustPlayerParam(player)
   const cards = this.getZoneColorByPlayer(player, color).cards
   return cards
-  /* const extraCards = this
-   *   .getTriggers('list-echo')
-   *   .flatMap(t => t(player, color, cards, this))
-   *   .map(c => c.id || c)
-   * return util.array.distinct(cards.concat(extraCards)) */
 }
 
 Game.prototype.aMeld = function(context, player, card) {
@@ -377,10 +372,10 @@ Game.prototype.getBiscuits = function(player) {
 
   const final = this.utilCombineBiscuits(this.utilEmptyBiscuits(), board)
 
-  for (const trigger of this.getTriggers(player, 'biscuit')) {
-    this.utilAddBiscuits(final, trigger(board, this))
-  }
-
+  /* for (const karma of this.getKarma(player, 'biscuit')) {
+   *   this.utilAddBiscuits(final, karma(board, this))
+   * }
+   */
   return {
     board,
     final
@@ -458,6 +453,15 @@ Game.prototype.getForecast = function(player) {
   return this.getZoneByName(`players.${player.name}.forecast`)
 }
 
+Game.prototype.getKarma = function(player, kind) {
+  player = this._adjustPlayerParam(player)
+  return this
+    .utilColors()
+    .map(color => this.getCardTop(player, color))
+    .filter(card => card !== undefined)
+    .filter(card => card.karmaImpl.some(t => t.kind === kind))
+}
+
 Game.prototype.getHand = function(player) {
   player = this._adjustPlayerParam(player)
   return this.getZoneByName(`players.${player.name}.hand`)
@@ -499,8 +503,8 @@ Game.prototype.getScore = function(player) {
   }
 
   this
-    .getTriggers(player, 'calculate-score')
-    .map(card => this.utilApplyTrigger(card, 'calculate-score', this, player))
+    .getKarma(player, 'calculate-score')
+    .map(card => this.utilApplyKarma(card, 'calculate-score', this, player))
     .forEach(points => total += points )
 
   return total
@@ -516,15 +520,6 @@ Game.prototype.getStacks = function(player) {
 Game.prototype.getTeam = function(player) {
   player = this._adjustPlayerParam(player)
   return player.team
-}
-
-Game.prototype.getTriggers = function(player, kind) {
-  player = this._adjustPlayerParam(player)
-  return this
-    .utilColors()
-    .map(color => this.getCardTop(player, color))
-    .filter(card => card !== undefined)
-    .filter(card => card.triggerImpl.some(t => t.kind === kind))
 }
 
 Game.prototype.getZoneArtifact = function(player) {
@@ -773,10 +768,10 @@ Game.prototype.oMeld = function(card) {
   }
 }
 
-Game.prototype.utilApplyTrigger = function(card, kind, ...args) {
+Game.prototype.utilApplyKarma = function(card, kind, ...args) {
   card = this._adjustCardParam(card)
   const impl = card
-    .triggerImpl
+    .karmaImpl
     .find(impl => impl.kind === kind)
   return impl.func(...args)
 }

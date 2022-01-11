@@ -37,7 +37,7 @@ function newCard() {
     echo: '',
     inspire: '',
     dogma: [],
-    triggers: [],
+    karma: [],
   }
 }
 
@@ -80,7 +80,7 @@ function processFile(filename) {
       card.inspire = line.slice(2)
     }
     else if (line.startsWith('-')) {
-      card.triggers.push(line.slice(2))
+      card.karma.push(line.slice(2))
     }
     else {
       card.dogmaBiscuit = line[0]
@@ -132,7 +132,7 @@ function generateCardFiles(cards, pathPrefix) {
 function generateCardFile(card) {
   const template = cardTemplate()
   card.dogma = formatArray(card.dogma)
-  card.triggers = formatArray(card.triggers)
+  card.karma = formatArray(card.karma)
   return format(template, card)
 }
 

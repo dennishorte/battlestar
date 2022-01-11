@@ -11,7 +11,7 @@ describe('new game', () => {
   })
 })
 
-describe('triggers', () => {
+describe('karma triggers', () => {
 
   // Possibly tricky cards
   // - Alhazen
@@ -50,7 +50,11 @@ describe('triggers', () => {
   describe.skip('inspire-first', () => {})
   describe.skip('inspire-instead', () => {})
   describe.skip('meld-first', () => {})
-  describe.skip('meld-instead', () => {})
+
+  describe('meld-instead', () => {
+    // See res/figs/Imhotep.test.js
+  })
+
   describe.skip('not-share-first', () => {})
   describe.skip('not-share-instead', () => {})
   describe.skip('remove-first', () => {})

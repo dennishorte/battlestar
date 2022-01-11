@@ -10,13 +10,13 @@ function Card() {
   this.dogmaBiscuit = `{dogmaBiscuit}`
   this.inspire = `{inspire}`
   this.echo = `{echo}`
-  this.triggers = [{triggers}]
+  this.karma = [{karma}]
   this.dogma = [{dogma}]
 
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.triggerImpl = []
+  this.karmaImpl = []
 }
 
 Card.prototype = Object.create(CardBase.prototype)

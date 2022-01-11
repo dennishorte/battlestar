@@ -8,12 +8,12 @@ function CardBase() {
   this.dogmaBiscuit
   this.inspire
   this.echo
-  this.triggers
+  this.karma
   this.dogma
 
   this.dogmaImpl
   this.inspireImpl
-  this.triggerImpl
+  this.karmaImpl
 }
 
 CardBase.prototype.checkHasEcho = function() {
