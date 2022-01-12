@@ -39,7 +39,9 @@
 
       <b-row v-if="cardsAdded.length > 0">
         <b-col>
-          hello
+          <hr />
+          <div class="heading">Added Cards</div>
+          <CardDecider v-for="card in cardsAdded" :key="card.id" :card="card" />
         </b-col>
       </b-row>
 
@@ -49,6 +51,7 @@
 
 
 <script>
+import CardDecider from './CardDecider'
 import SkillCheck from './SkillCheck'
 import { util } from 'battlestar-common'
 
@@ -56,13 +59,26 @@ export default {
   name: 'SkillCheckPanel',
 
   components: {
+    CardDecider,
     SkillCheck,
   },
 
   computed: {
     cardsAdded() {
       if (this.check.cardsAdded.length > 0) {
-        return this.check.cardsAdded.map(c => this.$game.getCardById(c))
+        console.log(this.check.cardsAdded.map(c => this.$game.getCardById(c)))
+        return this
+          .check
+          .cardsAdded
+          .map(c => this.$game.getCardById(c))
+          .sort((l, r) => {
+            if (l.skill !== r.skill) {
+              return l.skill.localeCompare(r.skill)
+            }
+            else {
+              return r.value - l.value
+            }
+          })
       }
       else if (this.check.useInvestigativeCommitee) {
         return this.$game.getZoneByName('crisisPool').cards
