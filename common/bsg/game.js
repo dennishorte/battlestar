@@ -593,6 +593,14 @@ Game.prototype.getPlayerByIndex = function(index) {
   return this.state.players[index]
 }
 
+Game.prototype.getPlayersByZone = function(zone) {
+  zone = this._adjustZoneParam(zone)
+  return zone
+    .cards
+    .filter(c => c.kind === 'player-token')
+    .map(token => this.getPlayerByName(token.name))
+}
+
 Game.prototype.getPlayerByName = function(name) {
   return this.getPlayerAll().find(p => p.name === name)
 }
@@ -854,6 +862,9 @@ Game.prototype.hackImpersonate = function(player) {
 }
 
 Game.prototype.mAddCenturion = function() {
+  this.mLog({
+    template: 'A centurion has boarded Galactica!'
+  })
   this.mMoveCard('tokens.centurions', 'centurions.centurions0')
 }
 

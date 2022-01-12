@@ -37,11 +37,21 @@
         </b-col>
       </b-row>
 
+      <hr />
+
       <b-row v-if="cardsAdded.length > 0">
         <b-col>
-          <hr />
           <div class="heading">Added Cards</div>
           <CardDecider v-for="card in cardsAdded" :key="card.id" :card="card" />
+        </b-col>
+
+        <b-col>
+          <div class="heading">total:
+            <span> {{ currentTotal }} </span>
+          </div>
+          <div class="heading">result:
+            <span> {{ check.result }} </span>
+          </div>
         </b-col>
       </b-row>
 
@@ -53,7 +63,7 @@
 <script>
 import CardDecider from './CardDecider'
 import SkillCheck from './SkillCheck'
-import { util } from 'battlestar-common'
+import { bsg, util } from 'battlestar-common'
 
 export default {
   name: 'SkillCheckPanel',
@@ -90,6 +100,11 @@ export default {
 
     check() {
       return this.$game.getSkillCheck()
+    },
+
+    currentTotal() {
+      const cards = this.cardsAdded
+      return bsg.util.calculateCheckValue(cards, this.check)
     },
 
     playersOrdered() {

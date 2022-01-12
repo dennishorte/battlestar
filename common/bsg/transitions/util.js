@@ -40,7 +40,11 @@ function viperMovementOptionsForUnmanned() {
 function evaluateEffect(game, effect) {
   const kind = (typeof effect === 'string') ? effect : effect.kind
 
-  if (kind === 'assignTitle') {
+  if (kind === 'addCenturion') {
+    game.mAddCenturion()
+  }
+
+  else if (kind === 'assignTitle') {
     throw new Error('not implemented')
   }
 
@@ -151,6 +155,15 @@ function evaluateEffect(game, effect) {
     const player = game.getPlayerByDescriptor(actor)
     const locationZone = game.getZoneByLocationName(location)
     game.mMovePlayer(player, locationZone)
+  }
+
+  else if (kind === 'moveAll') {
+    const source = game.getZoneByLocationName(effect.from)
+    const target = game.getZoneByLocationName(effect.dest)
+    const players = game.getPlayersByZone(source)
+    for (const player of players) {
+      game.mMovePlayer(player, target)
+    }
   }
 
   else if (kind === 'repairViper') {
