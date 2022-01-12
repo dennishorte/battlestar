@@ -327,7 +327,8 @@ const crisisPoolMenuOptions = [
   {
     name: 'shuffle and reveal',
     func() {
-      console.log('shuffle and reveal')
+      this.shuffle()
+      this.expand = true
     },
   },
   {
