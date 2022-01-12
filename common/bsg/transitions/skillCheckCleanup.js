@@ -1,39 +1,45 @@
-const { transitionFactory, markDone } = require('./factory.js')
+const { transitionFactory2, markDone } = require('./factory.js')
 
-module.exports = transitionFactory(
-  {
-    consideredCommandAuthority: false,
-  },
-  generateOptions,
-  () => { throw new Error('No responses to handle in skill-check-post-reveal') }
-)
+module.exports = transitionFactory2({
+  steps: [
+    {
+      name: 'showResults',
+      func: showResults,
+      resp: () => {}  // no-op
+    },
+    {
+      name: 'commandAuthority',
+      func: commandAuthority,
+    },
+    {
+      name: 'finish',
+      func: finish
+    },
+  ]
+})
 
-function generateOptions(context) {
+function showResults(context) {
   const game = context.state
 
-  // Command Authority
-  if (!context.data.consideredCommandAuthority) {
-    const williamAdamaPlayer = game.getPlayerWithCard('William Adama')
-
-    game.rk.put(context.data, 'consideredCommandAuthority', true)
-
-    if (williamAdamaPlayer && williamAdamaPlayer.oncePerGameUsed) {
-      game.mLog({
-        template: 'William Adama has already used his Command Authority ability this game'
-      })
-    }
-
-    if (williamAdamaPlayer && !williamAdamaPlayer.oncePerGameUsed) {
-      return context.push('skill-check-command-authority')
-    }
-  }
-
-  _cleanUpSkillCheck(game)
-
-  return context.done()
+  return context.wait({
+    actor: game.getPlayerCurrentTurn().name,
+    name: 'Acknowledge Results',
+    options: ['acknowledged']
+  })
 }
 
-function _cleanUpSkillCheck(game) {
+function commandAuthority(context) {
+  const game = context.state
+  const williamAdamaPlayer = game.getPlayerWithCard('William Adama')
+
+  if (williamAdamaPlayer && !williamAdamaPlayer.oncePerGameUsed) {
+    return context.push('skill-check-command-authority')
+  }
+}
+
+function finish(context) {
+  const game = context.state
+
   const crisisPool = game.getZoneByName('crisisPool')
 
   while (crisisPool.cards.length) {
