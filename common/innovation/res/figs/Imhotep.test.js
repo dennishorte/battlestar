@@ -23,11 +23,28 @@ describe('Imhotep', () => {
 
     describe('not applies', () => {
       test('does not apply if color is splayed', () => {
+        const game = t.fixtureDogma('Imhotep', { expansions: ['base', 'figs'] })
+        t.setColor(game, 'micah', 'red', ['Archery', 'Construction'])
+        t.setSplay(game, 'micah', 'red', 'up')
+        t.setHand(game, 'micah', ['Oars'])
+        game.run()
+        t.meld(game, 'Oars')
 
+        const red = game.getZoneColorByPlayer('micah', 'red')
+        expect(red.splay).toBe('up')
       })
 
       test('does not apply if color has only one card', () => {
+        const game = t.fixtureDogma('Imhotep', { expansions: ['base', 'figs'] })
+        t.setColor(game, 'micah', 'red', ['Archery'])
+        t.setSplay(game, 'micah', 'red', 'up')
+        t.setHand(game, 'micah', ['Oars'])
+        game.run()
+        t.meld(game, 'Oars')
 
+        const red = game.getZoneColorByPlayer('micah', 'red')
+        expect(red.splay).toBe('up')
+        expect(red.cards.length).toBe(2)
       })
     })
 

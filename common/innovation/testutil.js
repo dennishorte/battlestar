@@ -220,6 +220,10 @@ TestUtil.setColor = function(game, player, color, cards) {
   }
 }
 
+TestUtil.setSplay = function(game, player, color, direction) {
+  game.mSplay(player, color, direction)
+}
+
 TestUtil.topDeck = function(game, exp, age, cards) {
   cards = [...cards].reverse()
   const deck = game.getDeck(exp, age)
