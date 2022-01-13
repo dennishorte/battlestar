@@ -105,6 +105,11 @@ function chooseResp(context) {
     return game.aDogma(context, actor, card)
   }
 
+  else if (option === 'Inspire') {
+    const color = game.utilOptionName(context.response.option[0].option[0])
+    return game.aInspire(context, actor, color)
+  }
+
   else if (option === 'Meld') {
     const card = game.utilOptionName(context.response.option[0].option[0])
     return game.aMeld(context, actor, card)
@@ -134,7 +139,7 @@ function _choose(context, count) {
   _addDogma(context, options)
   // _addDraw(context, options)
   // _addEndorse(context, options)
-  // _addInspire(context, options)
+  _addInspire(context, options)
   _addMeld(context, options)
 
   const totalActions = _numberOfActions(context)
@@ -172,8 +177,8 @@ function _addDecree(context, options) {
 
   if (figs.length >= 2) {
     game
-      .getKarma(actor, 'decree-for-two')
-      .map(card => card.karmaImpl.find(impl => impl.kind === 'decree-for-two').decree)
+      .getCardsByKarmaTrigger(actor, 'decree-for-two')
+      .map(card => card.karmaImpl.find(impl => impl.trigger === 'decree-for-two').decree)
       .forEach(decree => util.array.pushUnique(decreeOptions, decree))
   }
 
@@ -198,10 +203,36 @@ function _addDogma(context, options) {
     }
   }
 
-  options.push({
-    name: 'Dogma',
-    options: dogmaOptions
-  })
+  if (dogmaOptions.length > 0) {
+    options.push({
+      name: 'Dogma',
+      options: dogmaOptions
+    })
+  }
+}
+
+function _addInspire(context, options) {
+  const { game, actor } = context
+
+  const inspireOptions = []
+
+  for (const color of game.utilColors()) {
+    const zone = game.getZoneColorByPlayer(actor, color)
+    for (const cardName of zone.cards) {
+      const card = game.getCardData(cardName)
+      if (card.karma.length > 0 && game.getBiscuitsRaw(card, zone.splay).includes('*')) {
+        inspireOptions.push(color)
+        break
+      }
+    }
+  }
+
+  if (inspireOptions.length > 0) {
+    options.push({
+      name: 'Inspire',
+      options: inspireOptions
+    })
+  }
 }
 
 function _addMeld(context, options) {

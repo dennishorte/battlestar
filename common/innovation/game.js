@@ -65,9 +65,17 @@ Game.prototype.aAchievementCheck = function(context) {
   return context.push('achievement-check')
 }
 
-Game.prototype.aCheckKarma = function(context, kind) {
-  const data = util.deepcopy(context.data)
-  data.trigger = kind
+Game.prototype.aCheckKarma = function(context, trigger) {
+  // Copy select parameters from context
+  const data = {
+    playerName: context.data.playerName,
+    age: context.data.age || '',
+    color: context.data.color || '',
+    card: context.data.card || '',
+    direction: context.data.direction || '',
+    trigger,
+  }
+
   return context.push('check-karma', data)
 }
 
@@ -111,10 +119,18 @@ Game.prototype.aDogma = function(context, player, card) {
 
 Game.prototype.aDraw = function(context, player, age) {
   player = this._adjustPlayerParam(player)
-  util.assert(!!age, `Invalid age parameter: ${age}`)
   return context.push('raw-draw', {
     playerName: player.name,
     age,
+  })
+}
+
+Game.prototype.aDrawMany = function(context, player, age, count) {
+  player = this._adjustPlayerParam(player)
+  return context.push('draw-many', {
+    playerName: player.name,
+    age: age || '',
+    count,
   })
 }
 
@@ -170,6 +186,14 @@ Game.prototype.aForecast = function(context, player, card) {
   })
 }
 
+Game.prototype.aInspire = function(context, player, color) {
+  player = this._adjustPlayerParam(player)
+  return context.push('action-inspire', {
+    playerName: player.name,
+    color,
+  })
+}
+
 Game.prototype.aListCardsForDogmaByColor = function(player, color) {
   player = this._adjustPlayerParam(player)
   const cards = this.getZoneColorByPlayer(player, color).cards
@@ -218,6 +242,15 @@ Game.prototype.aReturnAchievement = function(context, player, card) {
   return context.push('return-achievement', {
     playerName: player.name,
     card: card.id
+  })
+}
+
+Game.prototype.aReturnMany = function(context, player, cards) {
+  player = this._adjustPlayerParam(player)
+  cards = this._serializeCardList(cards)
+  return context.push('return-many', {
+    playerName: player.name,
+    cards,
   })
 }
 
@@ -427,6 +460,18 @@ Game.prototype.getCardTop = function(player, color) {
   return this.getCardData(zone.cards[zone.cards.length - 1])
 }
 
+Game.prototype.getCardsByKarmaTrigger = function(player, trigger, ...args) {
+  player = this._adjustPlayerParam(player)
+  return this
+    .utilColors()
+    .map(color => this.getCardTop(player, color))
+    .filter(card => card !== undefined)
+    .filter(card => {
+      const impl = card.karmaImpl.find(t => t.trigger === trigger)
+      return impl && impl.checkApplies(this, player, ...args)
+    })
+}
+
 Game.prototype.getColorsForSplaying = function(player, direction) {
   player = this._adjustPlayerParam(player)
   return this
@@ -451,15 +496,6 @@ Game.prototype.getDeck = function(exp, age) {
 Game.prototype.getForecast = function(player) {
   player = this._adjustPlayerParam(player)
   return this.getZoneByName(`players.${player.name}.forecast`)
-}
-
-Game.prototype.getKarma = function(player, kind) {
-  player = this._adjustPlayerParam(player)
-  return this
-    .utilColors()
-    .map(color => this.getCardTop(player, color))
-    .filter(card => card !== undefined)
-    .filter(card => card.karmaImpl.some(t => t.kind === kind))
 }
 
 Game.prototype.getHand = function(player) {
@@ -503,7 +539,7 @@ Game.prototype.getScore = function(player) {
   }
 
   this
-    .getKarma(player, 'calculate-score')
+    .getCardsByKarmaTrigger(player, 'calculate-score')
     .map(card => this.utilApplyKarma(card, 'calculate-score', this, player))
     .forEach(points => total += points )
 
@@ -768,11 +804,9 @@ Game.prototype.oMeld = function(card) {
   }
 }
 
-Game.prototype.utilApplyKarma = function(card, kind, ...args) {
+Game.prototype.utilApplyKarma = function(card, trigger, ...args) {
   card = this._adjustCardParam(card)
-  const impl = card
-    .karmaImpl
-    .find(impl => impl.kind === kind)
+  const impl = card.getImpl(`karma-${trigger}`)[0]
   return impl.func(...args)
 }
 

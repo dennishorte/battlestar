@@ -15,7 +15,20 @@ function Card() {
     `Draw a {2}.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    {
+      karma: 'Draw a {2}.',
+      steps: [
+        {
+          description: 'Draw a {2}.',
+          func(context, player) {
+            const { game } = context
+            return game.aDraw(context, player, 2)
+          }
+        }
+      ]
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

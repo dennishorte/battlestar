@@ -7,6 +7,10 @@ module.exports = transitionFactory2({
       func: karma,
     },
     {
+      name: 'karmaInstead',
+      func: karmaInstead,
+    },
+    {
       name: 'meld',
       func: meld
     },
@@ -22,8 +26,18 @@ module.exports = transitionFactory2({
 })
 
 function karma(context) {
+  const { game, actor } = context
+  const { card } = context.data
+  return game.aCheckKarma(context, 'meld')
+}
+
+function karmaInstead(context) {
   const { game } = context
-  // return game.aCheckKarma(context, 'meld')
+  const { returned } = context.data
+
+  if (returned === 'would-instead') {
+    return context.done()
+  }
 }
 
 function meld(context) {

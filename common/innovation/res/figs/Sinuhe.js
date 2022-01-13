@@ -46,11 +46,13 @@ function Card() {
   this.inspireImpl = []
   this.karmaImpl = [
     {
-      kind: 'decree-for-two',
+      trigger: 'decree-for-two',
       decree: 'Rivalry',
+      checkApplies: () => true,
     },
     {
-      kind: 'calculate-score',
+      trigger: 'calculate-score',
+      checkApplies: () => true,
       func(game, player) {
         const biscuits = game.getBiscuits(player)
         return biscuits.board.k

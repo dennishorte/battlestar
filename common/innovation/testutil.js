@@ -145,6 +145,18 @@ TestUtil.dogma = function(game, cardName) {
   })
 }
 
+TestUtil.inspire = function(game, color) {
+  const waiting = game.getWaiting()[0]
+  game.submit({
+    actor: waiting.actor,
+    name: waiting.name,
+    option: [{
+      name: 'Inspire',
+      option: [color]
+    }]
+  })
+}
+
 TestUtil.meld = function(game, cardName) {
   const waiting = game.getWaiting()[0]
   game.submit({

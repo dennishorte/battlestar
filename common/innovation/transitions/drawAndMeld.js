@@ -27,7 +27,7 @@ function meld(context) {
   const { game, actor } = context
   const { returned } = context.data
 
-  const cardToMeld = returned[0]
+  const cardToMeld = returned
   const playerHand = game.getHand(actor)
   const cardIsInHand = playerHand.cards.find(c => game.checkCardsEqual(c, cardToMeld))
 

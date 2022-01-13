@@ -23,7 +23,7 @@ function score(context) {
   const { game, actor } = context
   const { returned } = context.data
 
-  const cardToScore = returned[0]
+  const cardToScore = returned
   const playerHand = game.getHand(actor)
   const cardIsInHand = playerHand.cards.find(c => game.checkCardsEqual(c, cardToScore))
 

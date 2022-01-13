@@ -57,7 +57,23 @@ CardBase.prototype.getBiscuits = function(splay) {
 }
 
 CardBase.prototype.getImpl = function(kind) {
-  return this[`${kind}Impl`]
+  if (kind.startsWith('karma')) {
+    kind = kind.substr(6)
+    const impl = this.karmaImpl.find(impl => impl.trigger === kind)
+
+    // Other implementation types return the entire array. Since karma impls
+    // are a non-homogenous array, they they need to grab the correct element
+    // and re-wrap it in an array to match the format used by other impl kinds.
+    if (impl) {
+      return [impl]
+    }
+    else {
+      return []
+    }
+  }
+  else {
+    return this[`${kind}Impl`]
+  }
 }
 
 CardBase.prototype.echoIsVisible = function(splay) {

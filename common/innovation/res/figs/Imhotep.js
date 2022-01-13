@@ -45,7 +45,7 @@ function Card() {
           description: 'Splay that color left',
           func(context, player, card) {
             const { game } = context
-            return game.aSplay(context, player, card.color)
+            return game.aSplay(context, player, card.color, 'left')
           },
         },
         {

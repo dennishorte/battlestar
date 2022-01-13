@@ -27,7 +27,7 @@ function forecast(context) {
   const { game, actor } = context
   const { returned } = context.data
 
-  const cardToForecast = returned[0]
+  const cardToForecast = returned
   const playerHand = game.getHand(actor)
   const cardIsInHand = playerHand.cards.find(c => game.checkCardsEqual(c, cardToForecast))
 

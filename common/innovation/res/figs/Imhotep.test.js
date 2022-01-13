@@ -32,7 +32,7 @@ describe('Imhotep', () => {
     })
 
     describe('applies', () => {
-      test.only('color is splayed', () => {
+      test('color is splayed', () => {
         const game = t.fixtureDogma('Imhotep', { expansions: ['base', 'figs'] })
         t.setColor(game, 'micah', 'red', ['Archery', 'Construction'])
         t.setHand(game, 'micah', ['Oars'])
@@ -53,11 +53,7 @@ describe('Imhotep', () => {
 
         const red = game.getZoneColorByPlayer('micah', 'red')
         expect(red.cards.length).toBe(2)
-        expect(game.aReturn).toHaveBeenCalledWith(
-          expect.anything(),
-          expect.objectContaining('micah'),
-          'Oars'
-        )
+        expect(game.getZoneByCard('Oars').name).toBe('decks.base.1')
       })
     })
 
