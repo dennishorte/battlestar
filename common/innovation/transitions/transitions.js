@@ -1,4 +1,5 @@
 const { simpleFactory, stepFactory } = require('../../lib/transitionFactory.js')
+const CardMoveFactory = require('./CardMoveFactory.js')
 
 const transitions = {
   root: {
@@ -29,26 +30,27 @@ const transitions = {
   'action-inspire': require('./actionInspire.js'),
 
   'action-meld': require('./actionMeld.js'),
-  'raw-meld': require('./rawMeld.js'),
 
   'achievement-check': require('./achievementCheck.js'),
   'check-karma': require('./checkKarma.js'),
   'choose': require('./choose.js'),
   'choose-and-splay': require('./chooseAndSplay.js'),
-  'claim-achievement': require('./claimAchievement.js'),
   'draw-and-forecast': require('./drawAndForecast.js'),
   'draw-and-meld': require('./drawAndMeld.js'),
   'draw-and-score': require('./drawAndScore.js'),
   'draw-many': require('./drawMany.js'),
-  'forecast': require('./forecast.js'),
   'transfer-cards': require('./transferCards.js'),
-  'remove': require('./remove.js'),
   'remove-many': require('./removeMany.js'),
-  'return': require('./return.js'),
-  'return-achievement': require('./returnAchievement.js'),
   'return-many': require('./returnMany.js'),
-  'score': require('./score.js'),
   'splay': require('./splay.js'),
+
+  'claim-achievement': CardMoveFactory('claim-achievement', 'mClaimAchievement'),
+  'forecast': CardMoveFactory('forecast', 'mForecast'),
+  'meld': CardMoveFactory('meld', 'mMeld'),
+  'remove': CardMoveFactory('remove', 'mRemove'),
+  'return': CardMoveFactory('return', 'mReturn'),
+  'return-achievement': CardMoveFactory('return', 'mReturnAchievement'),
+  'score': CardMoveFactory('score', 'mScore'),
 }
 
 module.exports = transitions

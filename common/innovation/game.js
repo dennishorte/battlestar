@@ -94,7 +94,7 @@ Game.prototype.aClaimAchievement = function(context, player, achievement) {
   if (this.checkAchievementAvailable(achievement)) {
     return context.push('claim-achievement', {
       playerName: player.name,
-      achievement: achievement.name,
+      card: achievement.name,
     })
   }
 }
@@ -203,7 +203,7 @@ Game.prototype.aListCardsForDogmaByColor = function(player, color) {
 Game.prototype.aMeld = function(context, player, card) {
   player = this._adjustPlayerParam(player)
   card = this._adjustCardParam(card)
-  return context.push('raw-meld', {
+  return context.push('meld', {
     playerName: player.name,
     card: card.id,
   })
@@ -594,6 +594,15 @@ Game.prototype.mSetVisibilityForZone = function(zone, card) {
    * else {
    *   throw new Error(`Unhandled visibility type for zone: ${zone.kind}`)
    * } */
+}
+
+Game.prototype.mClaimAchievement = function(player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+
+  const sourceZone = this.getZoneByCard(card)
+  const targetZone = this.getAchievements(player)
+  return this.mMoveCard(sourceZone, targetZone, card)
 }
 
 Game.prototype.mDraw = function(player, exp, age) {
