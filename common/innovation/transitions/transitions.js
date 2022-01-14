@@ -33,6 +33,7 @@ const transitions = {
 
   'achievement-check': require('./achievementCheck.js'),
   'check-karma': require('./checkKarma.js'),
+  'claim-achievement-standard': require('./claimAchievementStandard.js'),
   'choose': require('./choose.js'),
   'choose-and-splay': require('./chooseAndSplay.js'),
   'draw-and-forecast': require('./drawAndForecast.js'),

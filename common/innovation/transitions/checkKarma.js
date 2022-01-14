@@ -30,8 +30,13 @@ function initialize(context) {
   const { game, actor } = context
   const { trigger } = context.data
 
+  // This gets the standard arguments for the trigger type.
   const args = _getArgs(game, context.data, trigger)
-  const cards = game.getCardsByKarmaTrigger(actor, trigger, ...args)
+
+  // Sometimes, there can be special arguments, which are provided in the opts argument.
+  const opts = context.data.opts || {}
+
+  const cards = game.getCardsByKarmaTrigger(actor, trigger, ...args, opts)
   const cardNames = game._serializeCardList(cards)
   game.rk.addKey(context.data, 'cardNames', cardNames)
 }
@@ -111,6 +116,6 @@ function _getArgs(game, data, trigger) {
     return [data.color, data.direction]
   }
   else {
-    return [game.getCardData(data.card)]
+    return game._serializeCardList([data.card])
   }
 }

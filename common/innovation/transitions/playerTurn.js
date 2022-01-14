@@ -93,30 +93,31 @@ function choose2(context) {
 
 function chooseResp(context) {
   const { game, actor, options } = context
-  const option = options[0]
+  const action = options[0]
+  const item = game.utilOptionName(context.response.option[0].option[0])
 
-  if (option === 'Decree') {
-    const decree = game.utilOptionName(context.response.option[0].option[0])
-    return game.aDecree(context, actor, decree)
+  if (action === 'Standard Achievements') {
+    return game.aClaimAchievementStandard(context, actor, item)
   }
 
-  else if (option === 'Dogma') {
-    const card = game.utilOptionName(context.response.option[0].option[0])
-    return game.aDogma(context, actor, card)
+  else if (action === 'Decree') {
+    return game.aDecree(context, actor, item)
   }
 
-  else if (option === 'Inspire') {
-    const color = game.utilOptionName(context.response.option[0].option[0])
-    return game.aInspire(context, actor, color)
+  else if (action === 'Dogma') {
+    return game.aDogma(context, actor, item)
   }
 
-  else if (option === 'Meld') {
-    const card = game.utilOptionName(context.response.option[0].option[0])
-    return game.aMeld(context, actor, card)
+  else if (action === 'Inspire') {
+    return game.aInspire(context, actor, item)
+  }
+
+  else if (action === 'Meld') {
+    return game.aMeld(context, actor, item)
   }
 
   else {
-    throw new Error(`Unhandled action type: ${option}`)
+    throw new Error(`Unhandled action type: ${action}`)
   }
 }
 
@@ -134,7 +135,7 @@ function _choose(context, count) {
 
   const options = []
 
-  // _addAchieve(context, options)
+  _addAchieve(context, options)
   _addDecree(context, options)
   _addDogma(context, options)
   // _addDraw(context, options)
@@ -155,6 +156,42 @@ function _numberOfActions(context) {
   const { game } = context
   const numPlayersWithOneAction = Math.floor(game.getPlayerAll().length / 2)
   return game.getTurnCount() <= numPlayersWithOneAction ? 1 : 2
+}
+
+function _addAchieve(context, options) {
+  const { game, actor } = context
+  const score = game.getScore(actor)
+  const currentAchievements = game.getAchievements(actor).cards
+  const highestCardValue = game.getHighestTopCard(actor)
+
+  function _canClaim(achs) {
+    return achs
+      .filter(card => card.age <= highestCardValue)
+      .filter(card => {
+        const baseCost = card.age * 5
+        const multiplier = 1 + currentAchievements.filter(c => c.age === card.age).length
+        return (baseCost * multiplier) <= score
+      })
+  }
+
+  const available = game.getAvailableAchievements(actor)
+  const standard = _canClaim(available.standard)
+
+  if (standard.length > 0) {
+    options.push({
+      name: 'Standard Achievements',
+      options: util.array.distinct(standard.map(c => c.age).sort())
+    })
+  }
+
+  const karmas = _canClaim(available.karmas)
+
+  if (karmas.length > 0) {
+    options.push({
+      name: 'Karma Achievements',
+      options: util.array.distinct(game._serializeCardList(karmas).sort())
+    })
+  }
 }
 
 function _addDecree(context, options) {

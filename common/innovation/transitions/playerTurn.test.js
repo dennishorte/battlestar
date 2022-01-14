@@ -75,6 +75,28 @@ test('game advances to next player after all actions complete', () => {
 
 })
 
+describe('achieve action', () => {
+  test.skip('score requirement', () => {
+
+  })
+
+  test.skip('age requirement', () => {
+
+  })
+
+  test.skip('second achievement of same age', () => {
+
+  })
+
+  test.skip('third achievement of same age', () => {
+
+  })
+
+  test('achievements made available by karma', () => {
+    // See res/figs/CaiLun.test.js
+  })
+})
+
 describe('decree actions', () => {
   describe('decrees from cards in hand', () => {
     test('three figures: no decree if same age', () => {

@@ -61,11 +61,18 @@ Object.defineProperty(Game.prototype, 'constructor', {
 ////////////////////////////////////////////////////////////////////////////////
 // Custom functions
 
+Game.prototype.aAchieve = function(context, player, achievement) {
+  return context.push('action-achieve', {
+    playerName: player.name,
+    achievement,
+  })
+}
+
 Game.prototype.aAchievementCheck = function(context) {
   return context.push('achievement-check')
 }
 
-Game.prototype.aCheckKarma = function(context, trigger) {
+Game.prototype.aCheckKarma = function(context, trigger, opts) {
   // Copy select parameters from context
   const data = {
     playerName: context.data.playerName,
@@ -74,6 +81,7 @@ Game.prototype.aCheckKarma = function(context, trigger) {
     card: context.data.card || '',
     direction: context.data.direction || '',
     trigger,
+    opts: opts || {},
   }
 
   return context.push('check-karma', data)
@@ -88,15 +96,23 @@ Game.prototype.aChooseAndSplay = function(context, options) {
   return context.push('choose-and-splay', options)
 }
 
-Game.prototype.aClaimAchievement = function(context, player, achievement) {
+Game.prototype.aClaimAchievement = function(context, player, achievement, opts) {
   player = this._adjustPlayerParam(player)
   achievement = this._adjustCardParam(achievement)
-  if (this.checkAchievementAvailable(achievement)) {
-    return context.push('claim-achievement', {
-      playerName: player.name,
-      card: achievement.name,
-    })
-  }
+  return context.push('claim-achievement', {
+    playerName: player.name,
+    card: achievement.name,
+    opts: opts || {},
+  })
+}
+
+Game.prototype.aClaimAchievementStandard = function(context, player, age, isAction) {
+  player = this._adjustPlayerParam(player)
+  return context.push('claim-achievement-standard', {
+    playerName: player.name,
+    age,
+    isAction: isAction || false
+  })
 }
 
 Game.prototype.aDecree = function(context, player, decree) {
@@ -392,6 +408,28 @@ Game.prototype.getAdjustedDeck = function(age, exp) {
       adjustedAge: age,
       adjustedExp: exp
     }
+  }
+}
+
+Game.prototype.getAvailableAchievements = function(player) {
+  const highestCard = this.getHighestTopCard(player)
+  const playerScore = this.getScore(player)
+
+  const standard = this
+    .getZoneByName('achievements')
+    .cards
+    .map(this.getCardData)
+    .filter(c => c.age)  // Cards without ages are special achievements
+
+  // Achievements due to karma
+  const karmas = this
+    .getCardsByKarmaTrigger(player, 'list-achievements')
+    .flatMap(card => this.utilApplyKarma(card, 'list-achievements', this, player))
+    .map(this.getCardData)
+
+  return {
+    standard,
+    karmas
   }
 }
 

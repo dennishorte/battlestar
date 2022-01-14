@@ -121,6 +121,26 @@ TestUtil.getAchievement = function(game, actor, achievement) {
   game.mMoveCard(sourceZone, targetZone, achievement)
 }
 
+TestUtil.getZoneAges = function(game, zone) {
+  return zone
+    .cards
+    .map(game.getCardData)
+    .map(c => c.age)
+    .sort()
+}
+
+TestUtil.achieveStandard = function(game, age) {
+  const waiting = game.getWaiting()[0]
+  game.submit({
+    actor: waiting.actor,
+    name: waiting.name,
+    option: [{
+      name: 'Standard Achievements',
+      option: [age]
+    }]
+  })
+}
+
 TestUtil.decree = function(game, decree) {
   const waiting = game.getWaiting()[0]
   game.submit({
@@ -189,6 +209,41 @@ TestUtil.setArtifact = function(game, player, card) {
   game.mMoveCard(cardZone, zone, card)
 }
 
+TestUtil.setAchievements = function(game, cards) {
+  const achievements = game.getZoneByName('achievements')
+
+  for (let i = achievements.cards.length - 1; i >= 0; i--) {
+    game.mReturnAchievement(game.getPlayerByIndex(0), achievements.cards[i])
+  }
+
+  for (const card of cards) {
+    const zone = game.getZoneByCard(card)
+    game.mMoveCard(zone, achievements, card)
+  }
+}
+
+TestUtil.setForecast = function(game, player, cards) {
+  // This lets fixtures call this for all players regardless of the number of players in
+  // the game, so that they don't have to be constantly checking the number of players
+  // during setup. Players that don't exist just won't do anything.
+  let forecast
+  try {
+    forecast = game.getForecast(player)
+  }
+  catch {
+    return
+  }
+
+  for (let i = forecast.cards.length - 1; i >= 0; i--) {
+    game.mReturn(player, forecast.cards[i])
+  }
+
+  for (const card of cards) {
+    const zone = game.getZoneByCard(card)
+    game.mMoveCard(zone, forecast, card)
+  }
+}
+
 TestUtil.setHand = function(game, player, cards) {
   // This lets fixtures call this for all players regardless of the number of players in
   // the game, so that they don't have to be constantly checking the number of players
@@ -217,6 +272,28 @@ TestUtil.setColor = function(game, player, color, cards) {
   for (const card of cards) {
     const source = game.getZoneByCard(card)
     game.mMoveCard(source, zone, card)
+  }
+}
+
+TestUtil.setScore = function(game, player, cards) {
+  // This lets fixtures call this for all players regardless of the number of players in
+  // the game, so that they don't have to be constantly checking the number of players
+  // during setup. Players that don't exist just won't do anything.
+  let score
+  try {
+    score = game.getZoneScore(player)
+  }
+  catch {
+    return
+  }
+
+  for (let i = score.cards.length - 1; i >= 0; i--) {
+    game.mReturn(player, score.cards[i])
+  }
+
+  for (const card of cards) {
+    const zone = game.getZoneByCard(card)
+    game.mMoveCard(zone, score, card)
   }
 }
 

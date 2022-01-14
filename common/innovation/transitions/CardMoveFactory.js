@@ -29,8 +29,8 @@ module.exports = function(actionName, gameFuncName) {
 
   function karma(context) {
     const { game, actor } = context
-    const { card } = context.data
-    return game.aCheckKarma(context, actionName)
+    const { card, opts } = context.data
+    return game.aCheckKarma(context, actionName, opts)
   }
 
   function karmaInstead(context) {
@@ -44,9 +44,9 @@ module.exports = function(actionName, gameFuncName) {
 
   function main(context) {
     const { game, actor } = context
-    const { card } = context.data
+    const { card, opts } = context.data
     try {
-      const cardId = game[gameFuncName](actor, card).id
+      const cardId = game[gameFuncName](actor, card, opts).id
       game.rk.addKey(context.data, 'cardId', cardId)
     }
     catch (e) {
