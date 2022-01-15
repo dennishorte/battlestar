@@ -13,22 +13,11 @@ const cards = [
   require('./Comb.js'),
   require('./Noodles.js'),
   require('./Bell.js'),
-  require('./Dice.js'),
-].map(f => new f())
-
-const achievements = [
-  require('./achievements/Destiny'),
-  require('./achievements/Heritage'),
-  require('./achievements/History'),
-  require('./achievements/Supremacy'),
-  require('./achievements/Wealth'),
+  require('./Dice.js')
 ].map(f => new f())
 
 const byName = {}
 for (const card of cards) {
-  byName[card.name] = card
-}
-for (const card of achievements) {
   byName[card.name] = card
 }
 
@@ -41,7 +30,6 @@ for (const card of cards) {
 }
 
 module.exports = {
-  achievements,
   cards,
   byName,
   byAge,

@@ -4,3 +4,97 @@ red
 &2hk
 & Score a bottom card from your board.
 k: No effect.
+
+Ruler
+blue
+1
+shs&
+& Draw a {2}.
+s: No effect.
+
+Umbrella
+green
+1
+llh&
+& You may meld a card from your hand.
+l: Return any numer of cards from your hand. Score two cards from your hand for every card you returned.
+
+Bangle
+red
+1
+hk&1
+& Tuck a red card from your hand.
+k: Draw and foreshadow a {2}.
+
+Chopsticks
+yellow
+1
+hll&
+& Draw a {1}.
+l: If the {1} deck has at least one card, you may transfer its bottom card to the available achievements.
+
+Perfume
+blue
+1
+&k1h
+& Draw and tuck a {1}.
+k: I demand you transfer a top card of different value from any top card on my board fro your board to mine! If you do, draw and meld a card of equal value!
+
+Flute
+purple
+1
+1hc&
+& You may splay one color of your cards left.
+c: I demand you return a card with a bonus from your hand!
+c: Draw and reveal a {1}. If it has a bonus, draw a {1}.
+
+Ice Skates
+green
+1
+kchc
+c: Return up to three cards from your hand. For each card returned, either draw and meld a {2}, or draw and foreshadow a {3}. Return your highest top card.
+
+Puppet
+purple
+1
+hk3k
+k: No effect.
+
+Soap
+yellow
+1
+l2hl
+l: Choose a color. You may tuck any number of cards of that color from your hand. If you tucked at least three, you may achieve (if eligible) a card from your hand.
+
+Candles
+red
+1
+&1hs
+& If every other player has a higher score than you, draw a {3}.
+s: I demand you transfer a card with a {k} from your hand to my hand! If you do, draw a {1}!
+
+Comb
+green
+1
+kklh
+k: Choose a color, then draw and reveal five {1}s. Keep all cards that match the color chosen, Return the rest of the drawn cards.
+
+Noodles
+yellow
+1
+khk1
+k: If you have more {1} in your hand than every other player, draw and score a {2}.
+k: Draw and reveal a {1}. If it is yellow, score all {1}s from your hand.
+
+Bell
+purple
+1
+khk&
+& You may score a card from your hand.
+k: Draw and foreshadow a {2}.
+
+Dice
+blue
+1
+h1cc
+c: Draw and reveal a {1}. If the card has a bonus, draw and meld a card of value equal to its bonus.

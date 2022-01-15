@@ -7,7 +7,7 @@ module.exports = function() {
   this.checkPlayerIsEligible = function(game, player) {
     const colorCounts = game.utilEmptyBiscuits()
     for (const color of game.utilColors()) {
-      const zone = this.getZoneColorByPlayer(player, color)
+      const zone = game.getZoneColorByPlayer(player, color)
       const biscuits = game.getBiscuitsInZone(zone)
       for (const biscuit of Object.keys(colorCounts)) {
         if (biscuits[biscuit] >= 3) {
