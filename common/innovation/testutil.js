@@ -213,7 +213,7 @@ TestUtil.setAchievements = function(game, cards) {
   const achievements = game.getZoneByName('achievements')
 
   for (let i = achievements.cards.length - 1; i >= 0; i--) {
-    game.mReturnAchievement(game.getPlayerByIndex(0), achievements.cards[i])
+    game.mRemove(game.getPlayerByIndex(0), achievements.cards[i])
   }
 
   for (const card of cards) {

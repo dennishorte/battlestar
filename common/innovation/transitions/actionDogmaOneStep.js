@@ -13,5 +13,11 @@ module.exports = function(context) {
   const card = game.getCardData(effect.card)
   const stepImpl = card.getImpl(effect.kind)[effect.implIndex].steps[stepIndex]
   const args = effect.args || []
-  return stepImpl.func(context, actor, ...args)
+  const result = stepImpl.func(context, actor, ...args)
+  if (result) {
+    return result
+  }
+  else {
+    return context.done()
+  }
 }

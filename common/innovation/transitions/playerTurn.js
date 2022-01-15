@@ -97,7 +97,11 @@ function chooseResp(context) {
   const item = game.utilOptionName(context.response.option[0].option[0])
 
   if (action === 'Standard Achievements') {
-    return game.aClaimAchievementStandard(context, actor, item)
+    return game.aClaimAchievementStandard(context, actor, item, true)
+  }
+
+  else if (action === 'Karma Achievements') {
+    return game.aClaimAchievement(context, actor, item)
   }
 
   else if (action === 'Decree') {
@@ -160,22 +164,11 @@ function _numberOfActions(context) {
 
 function _addAchieve(context, options) {
   const { game, actor } = context
-  const score = game.getScore(actor)
-  const currentAchievements = game.getAchievements(actor).cards
-  const highestCardValue = game.getHighestTopCard(actor)
-
-  function _canClaim(achs) {
-    return achs
-      .filter(card => card.age <= highestCardValue)
-      .filter(card => {
-        const baseCost = card.age * 5
-        const multiplier = 1 + currentAchievements.filter(c => c.age === card.age).length
-        return (baseCost * multiplier) <= score
-      })
-  }
 
   const available = game.getAvailableAchievements(actor)
-  const standard = _canClaim(available.standard)
+  const standard = available
+    .standard
+    .filter(c => game.checkCanClaimAchievement(actor, c))
 
   if (standard.length > 0) {
     options.push({
@@ -184,7 +177,9 @@ function _addAchieve(context, options) {
     })
   }
 
-  const karmas = _canClaim(available.karmas)
+  const karmas = available
+    .karmas
+    .filter(c => game.checkCanClaimAchievement(actor, c))
 
   if (karmas.length > 0) {
     options.push({

@@ -1,4 +1,5 @@
 const { transitionFactory2 } = require('../../lib/transitionFactory.js')
+const util = require('../../lib/util.js')
 
 module.exports = transitionFactory2({
   name: 'checkKarma',
@@ -31,12 +32,9 @@ function initialize(context) {
   const { trigger } = context.data
 
   // This gets the standard arguments for the trigger type.
-  const args = _getArgs(game, context.data, trigger)
+  const args = _getArgs(context, trigger)
 
-  // Sometimes, there can be special arguments, which are provided in the opts argument.
-  const opts = context.data.opts || {}
-
-  const cards = game.getCardsByKarmaTrigger(actor, trigger, ...args, opts)
+  const cards = game.getCardsByKarmaTrigger(actor, trigger, ...args)
   const cardNames = game._serializeCardList(cards)
   game.rk.addKey(context.data, 'cardNames', cardNames)
 }
@@ -92,7 +90,7 @@ function karma(context) {
       kind: `karma-${trigger}`,
       implIndex: 0,
       leader: actor.name,
-      args: _getArgs(game, context.data, trigger),
+      args: _getArgs(context, trigger),
     },
     sharing: [],
     demanding: [],
@@ -108,14 +106,24 @@ function returnz(context) {
   return context.return(impl.kind)
 }
 
-function _getArgs(game, data, trigger) {
+function _getArgs(context, trigger) {
+  const { data } = context
+  const args = []
+
   if (trigger === 'draw') {
-    return [data.age]
+    args.push(data.age)
   }
   else if (trigger === 'splay') {
-    return [data.color, data.direction]
+    args.push(data.color)
+    args.push(data.direction)
   }
   else {
-    return game._serializeCardList([data.card])
+    util.assert(data.card.id === undefined, 'Got a card object instead of ID')
+    args.push(data.card)
   }
+
+  // Sometimes, there can be special arguments, which are provided in the opts argument.
+  args.push(context.data.opts || {})
+
+  return args
 }

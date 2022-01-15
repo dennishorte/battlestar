@@ -18,8 +18,80 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = [
+    {
+      dogma: `Draw a {3}`,
+      steps: [
+        {
+          description: `Draw a {3}`,
+          func(context, player) {
+            const { game } = context
+            return game.aDraw(context, player, 3)
+          }
+        }
+      ]
+    }
+  ]
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'Rivalry',
+      checkApplies: () => true,
+    },
+    {
+      karma: `If you would claim a standard achievement, instead achieve a card of equal value from your score pile. Then claim the achievement, if you are still eligible.`,
+      trigger: 'claim-achievement',
+      kind: 'would-instead',
+      checkApplies(game, player, card, opts) {
+        return opts && opts.isAction
+      },
+      steps: [
+        {
+          description: 'Choose a card of equal value from your score pile to achieve.',
+          func(context, player, card) {
+            const { game } = context
+            card = game.getCardData(card)
+            const cards = game
+              .getZoneScore(player)
+              .cards
+              .map(game.getCardData)
+              .filter(c => c.age === card.age)
+              .map(c => c.id)
+
+            if (cards.length > 0) {
+              return game.aChoose(context, {
+                playerName: player.name,
+                kind: 'Card',
+                choices: cards,
+                count: 1,
+                reason: 'Murasaki Shikibu: Achieve a card of equal value from your score pile.',
+              })
+            }
+          }
+        },
+        {
+          description: 'Achieve the card you chose.',
+          func(context, player) {
+            const { game } = context
+            if (context.data.returned) {
+              const card = context.data.returned[0]
+              return game.aClaimAchievement(context, player, card)
+            }
+          }
+        },
+        {
+          description: 'Then claim the achievement, if you are still eligible.',
+          func(context, player, card) {
+            const { game } = context
+            card = game.getCardData(card)
+            if (game.checkCanClaimAchievement(player, card)) {
+              return game.aClaimAchievement(context, player, card)
+            }
+          }
+        },
+      ]
+    },
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

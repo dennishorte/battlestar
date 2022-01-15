@@ -37,6 +37,7 @@ function Card() {
       trigger: 'meld',
       kind: 'would-instead',
       checkApplies(game, player, card) {
+        card = game.getCardData(card)
         const zone = game.getZoneColorByPlayer(player, card.color)
         return zone.splay === 'none' && zone.cards.length > 1
       },
@@ -45,6 +46,7 @@ function Card() {
           description: 'Splay that color left',
           func(context, player, card) {
             const { game } = context
+            card = game.getCardData(card)
             return game.aSplay(context, player, card.color, 'left')
           },
         },

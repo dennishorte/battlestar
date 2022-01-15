@@ -22,5 +22,5 @@ function parse(context) {
 
   util.assert(card !== undefined, `No card matching age: ${age}`)
 
-  return game.aClaimAchievement(context, actor, card)
+  return game.aClaimAchievement(context, actor, card, { isAction })
 }

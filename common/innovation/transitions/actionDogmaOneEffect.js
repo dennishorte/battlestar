@@ -73,7 +73,13 @@ function nextStep(context) {
     payload.returned = returned
   }
 
-  return context.push('action-dogma-one-step', payload)
+  const result = context.push('action-dogma-one-step', payload)
+  if (result) {
+    return result
+  }
+  else {
+    return nextStep(context)
+  }
 }
 
 function initializeOnce(context) {

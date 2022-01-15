@@ -16,7 +16,6 @@ const transitions = {
   'main-loop': require('./main.js'),
   'player-turn': require('./playerTurn.js'),
 
-  'action-achieve': require('./actionAchieve.js'),
   'action-decree': require('./actionDecree.js'),
 
   'action-dogma': require('./actionDogma.js'),

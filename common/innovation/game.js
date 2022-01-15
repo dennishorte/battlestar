@@ -305,6 +305,24 @@ Game.prototype.checkAchievementAvailable = function(achievement) {
   return zone.cards.find(c => c === achievement.name) !== undefined
 }
 
+Game.prototype.checkCanClaimAchievement = function(player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+
+  const score = this.getScore(player)
+  const currentAchievements = this.getAchievements(player).cards.map(this.getCardData)
+  const baseCost = card.age * 5
+  const multiplier = 1 + currentAchievements.filter(c => c.age === card.age).length
+  const totalCost = baseCost * multiplier
+
+  const highestCardValue = this.getHighestTopCard(player)
+
+  const ageRequirement = card.age <= highestCardValue
+  const scoreRequirement = totalCost <= score
+
+  return ageRequirement && scoreRequirement
+}
+
 Game.prototype.checkCardIsTop = function(card) {
   card = this._adjustCardParam(card)
   const zone = this.getZoneByCard(card)
