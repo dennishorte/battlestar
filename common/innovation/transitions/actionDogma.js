@@ -212,6 +212,6 @@ function expandByKinds(game, card) {
 function expandByImpl(game, effect) {
   const card = game.getCardData(effect.card)
   const impl = card[`${effect.kind}Impl`]
-  util.assert(impl.length > 0, `Expected ${effect} impl to exist`)
+  util.assert(impl.length > 0, `Expected ${effect.card} impl to exist`)
   return impl.map((i, implIndex) => Object.assign({...effect}, { implIndex }))
 }

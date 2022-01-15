@@ -513,7 +513,7 @@ Game.prototype.getCardData = function(card) {
 Game.prototype.getCardTop = function(player, color) {
   player = this._adjustPlayerParam(player)
   const zone = this.getZoneColorByPlayer(player, color)
-  return this.getCardData(zone.cards[zone.cards.length - 1])
+  return this.getCardData(zone.cards[0])
 }
 
 Game.prototype.getCardsByKarmaTrigger = function(player, trigger, ...args) {

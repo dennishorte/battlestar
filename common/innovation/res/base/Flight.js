@@ -16,7 +16,42 @@ function Card() {
     `You may splay your red cards up.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    {
+      dogma: `If your red cards are splayed up, you may splay any one color of your cards up.`,
+      steps: [
+        {
+          description: `You may splay your red cards up.`,
+          func(context, player) {
+            const { game } = context
+            const red = game.getZoneColorByPlayer(player, 'red')
+            if (red.splay === 'up') {
+              return game.aChooseAndSplay(context, {
+                playerName: player.name,
+                direction: 'up'
+              })
+            }
+          }
+        }
+      ]
+    },
+    {
+      dogma: `You may splay your red cards up.`,
+      steps: [
+        {
+          description: `You may splay your red cards up.`,
+          func(context, player) {
+            const { game } = context
+            return game.aChooseAndSplay(context, {
+              playerName: player.name,
+              choices: ['red'],
+              direction: 'up'
+            })
+          }
+        }
+      ]
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

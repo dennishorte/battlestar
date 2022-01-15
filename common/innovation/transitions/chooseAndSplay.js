@@ -17,7 +17,7 @@ function choose(context) {
   const { game, actor } = context
   const { direction } = context.data
 
-  const choices = game.getColorsForSplaying(actor, direction)
+  const choices = context.data.choices || game.getColorsForSplaying(actor, direction)
 
   return game.aChoose(context, {
     playerName: actor.name,

@@ -141,6 +141,15 @@ TestUtil.achieveStandard = function(game, age) {
   })
 }
 
+TestUtil.choose = function(game, ...options) {
+  const waiting = game.getWaiting()[0]
+  game.submit({
+    actor: waiting.actor,
+    name: waiting.name,
+    option: options,
+  })
+}
+
 TestUtil.decree = function(game, decree) {
   const waiting = game.getWaiting()[0]
   game.submit({
@@ -222,6 +231,15 @@ TestUtil.setAchievements = function(game, cards) {
   }
 }
 
+TestUtil.setColor = function(game, player, color, cards) {
+  const zone = game.getZoneColorByPlayer(player, color)
+  game.mReturnAll(player, zone)
+  for (const card of cards) {
+    const source = game.getZoneByCard(card)
+    game.mMoveCard(source, zone, card)
+  }
+}
+
 TestUtil.setForecast = function(game, player, cards) {
   // This lets fixtures call this for all players regardless of the number of players in
   // the game, so that they don't have to be constantly checking the number of players
@@ -263,15 +281,6 @@ TestUtil.setHand = function(game, player, cards) {
   for (const card of cards) {
     const zone = game.getZoneByCard(card)
     game.mMoveCard(zone, hand, card)
-  }
-}
-
-TestUtil.setColor = function(game, player, color, cards) {
-  const zone = game.getZoneColorByPlayer(player, color)
-  game.mReturnAll(player, zone)
-  for (const card of cards) {
-    const source = game.getZoneByCard(card)
-    game.mMoveCard(source, zone, card)
   }
 }
 
