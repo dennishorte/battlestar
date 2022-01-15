@@ -63,16 +63,22 @@ describe('Murasaki Shikibu', () => {
         expect(game.getAchievements('micah').cards).toStrictEqual(['Imhotep'])
       })
 
-      test.skip('non-standard', () => {
-        const game = t.fixtureDogma('Murasaki Shikibu', { expansions: ['base', 'figs'] })
+      test('non-standard', () => {
+        const game = t.fixtureDogma('Murasaki Shikibu', { expansions: ['base', 'echo', 'figs'] })
         t.setScore(game, 'micah', ['Sinuhe', 'Coal', 'Computers'])
-        // Set a specific achievement in the 1 slot
-        t.setAchievements(game, ['Imhotep'])
+
+        // Setup to be able to claim Supremacy
+        t.setColor(game, 'micah', 'green', ['The Wheel'])
+        t.setColor(game, 'micah', 'yellow', ['Masonry'])
+        t.setColor(game, 'micah', 'red', ['Metalworking'])
+        t.setColor(game, 'micah', 'blue', ['Writing', 'Tools'])
+        t.setSplay(game, 'micah', 'blue', 'up')
+        t.setHand(game, 'micah', ['Alchemy'])
+
         game.run()
+        t.meld(game, 'Alchemy')
 
-
-        const achievementAges = t.getZoneAges(game, game.getAchievements('micah'))
-        expect(achievementAges).toStrictEqual([])
+        expect(game.getAchievements('micah').cards).toStrictEqual(['Supremacy'])
       })
 
     })

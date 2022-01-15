@@ -327,7 +327,7 @@ Game.prototype.checkCardIsTop = function(card) {
   card = this._adjustCardParam(card)
   const zone = this.getZoneByCard(card)
   util.assert(this.checkZoneIsColorStack(zone), `Card ${card.name} isn't even on a color stack`)
-  return this.checkCardsEqual(card, zone.cards[zone.cards.length - 1])
+  return this.checkCardsEqual(card, zone.cards[0])
 }
 
 Game.prototype.checkCardsEqual = function(c1, c2) {
