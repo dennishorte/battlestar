@@ -17,7 +17,14 @@ function choose(context) {
   const { game, actor } = context
   const { direction } = context.data
 
-  const choices = context.data.choices || game.getColorsForSplaying(actor, direction)
+  let choices = context.data.choices
+  if (choices) {
+    choices = choices
+      .filter(color => game.getZoneColorByPlayer(actor, color).splay !== direction)
+  }
+  else {
+    choices = game.getColorsForSplaying(actor, direction)
+  }
 
   return game.aChoose(context, {
     playerName: actor.name,
