@@ -18,19 +18,25 @@ function initialize(context) {
   const { count } = context.data
 
   game.rk.addKey(context.data, 'cardIndex', -1)
+  game.rk.addKey(context.data, 'drawnCards', [])
   nextPhase(context)
 }
 
 function drawLoop(context) {
   const { game, actor } = context
-  const { count, age } = context.data
+  const { count, age, reveal } = context.data
+
+  if (context.data.returned) {
+    game.rk.push(context.data.drawnCards, context.data.returned)
+  }
 
   const cardIndex = game.rk.increment(context.data, 'cardIndex')
 
   if (cardIndex < count) {
-    return game.aDraw(context, actor, age)
+    return game.aDraw(context, actor, age, reveal)
   }
   else {
-    return nextPhase(context)
+    nextPhase(context)
+    return context.return(context.data.drawnCards)
   }
 }

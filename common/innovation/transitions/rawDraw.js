@@ -15,6 +15,10 @@ module.exports = transitionFactory2({
       func: draw
     },
     {
+      name: 'maybeReveal',
+      func: maybeReveal,
+    },
+    {
       name: 'achievementCheck',
       func: achievementCheck,
     },
@@ -65,6 +69,22 @@ function draw(context) {
 
   const drawnCardId = game.mDraw(actor, adjustedExp, adjustedAge).id
   game.rk.addKey(context.data, 'drawnCard', drawnCardId)
+}
+
+function maybeReveal(context) {
+  const { game, actor } = context
+  const { drawnCardId, reveal } = context.data
+
+  if (reveal) {
+    const card = game.getCardData(drawnCardId)
+    game.mLog({
+      template: '{player} reveals {card}',
+      args: {
+        player: actor,
+        card
+      }
+    })
+  }
 }
 
 function achievementCheck(context) {

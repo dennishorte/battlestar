@@ -133,7 +133,7 @@ Game.prototype.aDogma = function(context, player, card) {
   })
 }
 
-Game.prototype.aDraw = function(context, player, age) {
+Game.prototype.aDraw = function(context, player, age, reveal = false) {
   player = this._adjustPlayerParam(player)
   return context.push('raw-draw', {
     playerName: player.name,
@@ -141,7 +141,7 @@ Game.prototype.aDraw = function(context, player, age) {
   })
 }
 
-Game.prototype.aDrawMany = function(context, player, age, count) {
+Game.prototype.aDrawMany = function(context, player, age, count, reveal = false) {
   player = this._adjustPlayerParam(player)
   return context.push('draw-many', {
     playerName: player.name,
@@ -459,12 +459,13 @@ Game.prototype.getBiscuits = function(player) {
     board = this.utilCombineBiscuits(board, this.getBiscuitsInZone(zone))
   }
 
-  const final = this.utilCombineBiscuits(this.utilEmptyBiscuits(), board)
+  let final = this.utilCombineBiscuits(this.utilEmptyBiscuits(), board)
 
-  /* for (const karma of this.getKarma(player, 'biscuit')) {
-   *   this.utilAddBiscuits(final, karma(board, this))
-   * }
-   */
+  this
+    .getCardsByKarmaTrigger(player, 'calculate-biscuits')
+    .map(card => this.utilApplyKarma(card, 'calculate-biscuits', this, player, board))
+    .forEach(biscuits => final = this.utilCombineBiscuits(final, biscuits))
+
   return {
     board,
     final

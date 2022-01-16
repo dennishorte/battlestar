@@ -86,7 +86,7 @@ function karma(context) {
 
   return context.push('action-dogma-one-effect', {
     effect: {
-      card: card.name,
+      card: card.id,
       kind: `karma-${trigger}`,
       implIndex: 0,
       leader: actor.name,

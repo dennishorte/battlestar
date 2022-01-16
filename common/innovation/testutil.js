@@ -314,12 +314,8 @@ TestUtil.topDeck = function(game, exp, age, cards) {
   cards = [...cards].reverse()
   const deck = game.getDeck(exp, age)
   for (const card of cards) {
-    game.mMoveByIndices(
-      deck,
-      deck.cards.indexOf(card),
-      deck,
-      0
-    )
+    const zone = game.getZoneByCard(card)
+    game.mMoveCard(zone, deck, card, { top: true })
   }
 }
 

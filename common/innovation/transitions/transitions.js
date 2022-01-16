@@ -39,6 +39,7 @@ const transitions = {
   'draw-and-meld': require('./drawAndMeld.js'),
   'draw-and-score': require('./drawAndScore.js'),
   'draw-many': require('./drawMany.js'),
+  'meld': require('./meld.js'),
   'transfer-cards': require('./transferCards.js'),
   'remove-many': require('./removeMany.js'),
   'return-many': require('./returnMany.js'),
@@ -46,7 +47,6 @@ const transitions = {
 
   'claim-achievement': CardMoveFactory('claim-achievement', 'mClaimAchievement'),
   'forecast': CardMoveFactory('forecast', 'mForecast'),
-  'meld': CardMoveFactory('meld', 'mMeld'),
   'remove': CardMoveFactory('remove', 'mRemove'),
   'return': CardMoveFactory('return', 'mReturn'),
   'return-achievement': CardMoveFactory('return', 'mReturnAchievement'),
