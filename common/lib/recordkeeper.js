@@ -276,6 +276,8 @@ function splice(array, index, count, ...items) {
     return
   }
 
+  _ensureNoUndefinedOrNull(items)
+
   this.patch({
     kind: 'splice',
     path: this.path(array),
@@ -300,6 +302,24 @@ function path(target) {
 function _assert(truthyValue, message) {
   if (!truthyValue) {
     throw new Error(message)
+  }
+}
+
+function _ensureNoUndefinedOrNull(obj) {
+  if (Array.isArray(obj)) {
+    return obj.every(_ensureNoUndefinedOrNull)
+  }
+  else if (typeof obj === 'object') {
+    return Object.values(obj).every(_ensureNoUndefinedOrNull)
+  }
+  else if (obj === undefined) {
+    throw new Error('Found undefined')
+  }
+  else if (obj === null) {
+    throw new Error('Found null')
+  }
+  else {
+    return true
   }
 }
 

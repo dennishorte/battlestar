@@ -174,6 +174,18 @@ TestUtil.dogma = function(game, cardName) {
   })
 }
 
+TestUtil.draw = function(game, cardName) {
+  const waiting = game.getWaiting()[0]
+  game.submit({
+    actor: waiting.actor,
+    name: waiting.name,
+    option: [{
+      name: 'Draw',
+      option: ['draw a card']
+    }]
+  })
+}
+
 TestUtil.inspire = function(game, color) {
   const waiting = game.getWaiting()[0]
   game.submit({

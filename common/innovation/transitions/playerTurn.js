@@ -112,6 +112,10 @@ function chooseResp(context) {
     return game.aDogma(context, actor, item)
   }
 
+  else if (action === 'Draw') {
+    return game.aDraw(context, actor)
+  }
+
   else if (action === 'Inspire') {
     return game.aInspire(context, actor, item)
   }
@@ -142,7 +146,7 @@ function _choose(context, count) {
   _addAchieve(context, options)
   _addDecree(context, options)
   _addDogma(context, options)
-  // _addDraw(context, options)
+  _addDraw(context, options)
   // _addEndorse(context, options)
   _addInspire(context, options)
   _addMeld(context, options)
@@ -241,6 +245,13 @@ function _addDogma(context, options) {
       options: dogmaOptions
     })
   }
+}
+
+function _addDraw(context, options) {
+  options.push({
+    name: 'Draw',
+    options: ['draw a card'],
+  })
 }
 
 function _addInspire(context, options) {

@@ -103,7 +103,8 @@ function _push(eventName, data) {
     data: data || {},
   }
 
-  // Temporary code. This should be generalized somehow rather than hard-coded.
+  // Temporary code for log indent.
+  // This should be generalized somehow rather than hard-coded.
   if (this.stack.length > 0) {
     if (!event.data.parentLogId) {
       const prev = this.stack[this.stack.length - 1]

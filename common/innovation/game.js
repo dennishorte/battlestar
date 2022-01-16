@@ -137,7 +137,8 @@ Game.prototype.aDraw = function(context, player, age, reveal = false) {
   player = this._adjustPlayerParam(player)
   return context.push('raw-draw', {
     playerName: player.name,
-    age,
+    age: age || '',
+    reveal,
   })
 }
 
