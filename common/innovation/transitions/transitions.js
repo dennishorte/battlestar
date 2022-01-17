@@ -28,8 +28,6 @@ const transitions = {
   'action-endorse': require('./actionEndorse.js'),
   'action-inspire': require('./actionInspire.js'),
 
-  'action-meld': require('./actionMeld.js'),
-
   'achievement-check': require('./achievementCheck.js'),
   'check-karma': require('./checkKarma.js'),
   'claim-achievement-standard': require('./claimAchievementStandard.js'),
