@@ -98,3 +98,285 @@ blue
 1
 h1cc
 c: Draw and reveal a {1}. If the card has a bonus, draw and meld a card of value equal to its bonus.
+
+Crossbow
+red
+2
+3hkk
+k: I demand you transfer a card with a bonus from your hand to my score pile!
+k: Transfer a card from your hand to any other player's board.
+
+Watermill
+yellow
+2
+lllh
+l: Tuck a card with a bonus from your hand. If you do, draw a card of value equal to that card's bonus. If the drawn card also has a bonus, you may return a card from your hand to repeat this dogma effect.
+
+Toothbrush
+yellow
+2
+2&hl
+& Tuck all cards of one present value from your hand.
+l: You may splay any one color of your cards left.
+l: If the {2} deck has at least one card, you may transfer its bottom card to the available achievements.
+
+Linguistics
+blue
+2
+ss&h
+& Draw a {3} OR Draw and foreshadow a {4}.
+s: Draw a card of value equal to a bonus on your board, if you have any.
+
+Chaturanga
+purple
+2
+c3ch
+c: Meld a card with a bonus from your hand. If you do, draw two cards of value equal to that card's bonus. Otherwise, draw and foreshadow a card of value equal to the number of top cards on your board.
+
+Scissors
+green
+2
+&h2k
+& Take a bottom card from your board into your hand.
+k: You may choose up to two cards from your hand. For each card chosen, either meld it or score it.
+k: If Paper is a top card on any player's board, transfer it to your score pile.
+
+Lever
+blue
+2
+sh&s
+& Draw two {2}.
+s: You may return any number of cards from your hand. For every two cards of matching value returned, draw a card of value one higher.
+
+Horseshoes
+red
+2
+h2&k
+& Draw and foreshadow a {2}.
+k: I demand you transfer a top card without a {k} or {f} from your board to my board! If you do, draw and meld a {2}.
+
+Pagoda
+purple
+2
+k2hk
+k: Draw and reveal a {3}. If you have a card of matching color in your hand, tuck the card from your hand and meld the drawn card. Otherwise, foreshadow the drawn card.
+
+Glassblowing
+green
+2
+hcc&
+& Score a card with a bonus from your hand.
+c: Draw and foreshadow a card of value three higher than the lowest non-green top card on your board.
+
+Novel
+purple
+3
+h3c&
+& Draw a {3}.
+c: Draw a {3}. You may splay your purple cards left.
+c: If all your non-purple top cards share a common icon other than {c}, claim the Supremacy achievement.
+
+Sunglasses
+purple
+3
+h3&k
+& Score a card from your hand of a color you have splayed.
+k: You may either splay your purple cards in the direction one of your other colors is splayed, or you may splay one of your other colors in the direction that your purple cars are splayed.
+
+Charitable Trust
+green
+3
+&hc3
+& Draw a {3} or {4}.
+c: You may meld the card you drew due to Charitable Trust's echo effect. If you do, either return or achieve (if eligible) your top green card.
+
+Homing Pigeons
+green
+3
+3lhl
+l: I demand you return two cards from your score pile whose values each match at least one card in my hand!
+l: You may splay your red or green cards left.
+
+Liquid Fire
+red
+3
+hsss
+s: I demand you draw and reveal a card of value equal to the highest bonus on your board! Transfer it to my forecast! If it is red, transfer all cards from your hand to my score pile.
+
+Deodorant
+yellow
+3
+c&ch
+& Draw and meld a {3}.
+c: If you have a top card with a {k}, draw and meld a {3}. Otherwise, draw a {4}.
+
+Almanac
+blue
+3
+hl4&
+& Draw and foreshadow a {4}.
+l: You may return a card from your forecast with a bonus. If you do, draw and score a card of value on higher than that bonus.
+
+Katana
+red
+3
+kkhk
+k: I demand you transfer two top cards with a {k} from your board to my score pile! If you transferred any, draw a card of value qual to the total number of {k} on those cards and transfer it to my forecast!
+
+Magnifying Glass
+blue
+3
+sh3&
+& Draw a {4}, then return a card from your hand.
+s: You may return three cards of equal value from your hand. If you do, draw a card of value two higher than the cards you returned.
+s: You may splay your yellow or blue cards left.
+
+Sandpaper
+yellow
+3
+cchl
+c: You may return any number of cards from your hand. Draw that many {3}, and then meld a card from your hand.
+
+Chintz
+green
+4
+chc4
+c: Draw a {4}.
+c: If you have exactly one card in your hand, draw a {4}, then draw and score a {4}.
+
+Globe
+green
+4
+f4fh
+f: You may return up to three cards from your hand of the same color. If you return one, splay any color left; two, right; three, up. If you returned at least one card, draw and foreshadow a {6}.
+
+Clock
+purple
+4
+&5hs
+& You may splay your color with the most cards right.
+s: I demand you draw and reveal three {0}, total the number of {i} on them, and then return them! Transfer all cards of that value from your hand and score pile to my score pile!
+
+Shuriken
+red
+4
+cchc
+c: I demand you transfer a top non-red card with a {k} or {s} from your board to my board! If you do, draw a {4}.
+c: You may splay your purple cards right.
+
+Barometer
+yellow
+4
+l&lh
+& Transfer a {5} from your forecast to your hand.
+l: Draw and foreshadow a card of value two higher than a bonus on any board.
+l: You may return all the cards in your forecast. If any were blue, claim the Destiny achievement.
+
+Toilet
+purple
+4
+&lhl
+& Draw and tuck a {4}.
+l: I demand you return all cards from your score pile of value matching the highest bonus on my board!
+l: You may return a card in your hand and draw a card of the same value.
+
+Telescope
+blue
+4
+h4s&
+& Draw and foreshadow a {5}.
+s: You may place a card from your forecast on top of its deck. If you do, achieve a card from your forecast if you meet the requirements to do so.
+
+Slide Rule
+blue
+4
+sssh
+s: You may splay your yellow cards right.
+s: Draw a card of value equal to the value of your lowest top card plus the number of colors you have splayed.
+
+Pencil
+yellow
+4
+h&s4
+& Draw a {5}.
+s: You may return up to three cards from your hand. If you do, draw that many cards of value one higher than the highest card you returned. Foreshadow one of them, and return the rest of the drawn cards.
+
+Kobukson
+red
+4
+5fh&
+& Splay left one color on any player's board.
+f: I demand you return all your top cards with a {k}! Draw and tuck a {4}!
+f: For every two cards returned as a result of the demand, draw and tuck a {4}.
+
+Thermometer
+blue
+5
+h&5s
+& Meld your bottom green card. Maintain its splay.
+s: Draw and meld a card of value one higher than the value of your top yellow card. If the melded card is yellow, repeat this dogma effect.
+
+Coke
+red
+5
+&ffh
+& Draw and tuck a {4}.
+f: Draw and reveal a {6}. If it has a {f}, meld it and repeat this dogma effect. Otherwise, foreshadow it.
+
+Palampore
+green
+5
+fhf5
+f: Draw and score a card of value equal to a bonus that occurs more than once on your board, if you have such a bonus.
+f: You may splay your purple cards right.
+f: If you have six or more bonuses on your board, claim the Wealth achievement.
+
+Stove
+yellow
+5
+h6f&
+& Score a top card from your board without a {f}.
+f: Draw and tuck a {4}. If your top card of the tucked card's color has value less than {4}, draw and score a {4}.
+f: You may splay your green cards right.
+
+Lightning Rod
+blue
+5
+&fh6
+& Draw and tuck a {5}.
+f: I demand you draw and tuck a {5}! Return your top card of the tucked card's color.
+f: Draw and tuck a {5}. You may return a top card from your board.
+
+Tuning Fork
+purple
+5
+&ssh
+& Look at the top card of any deck, then place it back on top.
+s: Return a card from your hand. If you do, draw and reveal a card of the same value, and meld it if it is of higher value than the top card of the same color on your board. Otherwise, return it. You may repeat this dogma effect.
+
+Pressure Cooker
+yellow
+5
+5hss
+s: Return all cards from your hand. For each top card on your board with a bonus, draw a card of value equal to that bonus.
+
+Piano
+purple
+5
+5&hs
+& Draw a card of a value present in any player's hand.
+s: If you have five top cards, each with a different value, return five cards from your score pile and then draw and score a card of each of your top cards' values in ascending order.
+
+Octant
+red
+5
+cchc
+c: I demand you transfer a top non-red card with a {l} or {f} from your board to my board! If you do, draw and foreshadow a {6}!
+c: Draw and foreshadow a {6}.
+
+Seed Drill
+green
+5
+sllh
+l: I demand you return a top card from your board of value less than {3}!
+l: Choose the {3}, {4}, or {5} deck. If there is at least one card in that deck, you may transfer its bottom card to the available achievements.
