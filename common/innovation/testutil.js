@@ -343,6 +343,10 @@ TestUtil.dumpStack = function(game) {
   TestUtil.deepLog(game.state.sm.stack)
 }
 
+TestUtil.dumpWaiting = function(game) {
+  TestUtil.deepLog(game.getWaiting())
+}
+
 function _dumpZonesRecursive(root) {
   const output = []
 

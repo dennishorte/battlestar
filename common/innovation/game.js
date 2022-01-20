@@ -96,6 +96,10 @@ Game.prototype.aChooseAndSplay = function(context, options) {
   return context.push('choose-and-splay', options)
 }
 
+Game.prototype.aChooseAndTuck = function(context, options) {
+  return context.push('choose-and-tuck', options)
+}
+
 Game.prototype.aClaimAchievement = function(context, player, achievement, opts) {
   player = this._adjustPlayerParam(player)
   achievement = this._adjustCardParam(achievement)
@@ -295,6 +299,15 @@ Game.prototype.aScore = function(context, player, card) {
   player = this._adjustPlayerParam(player)
   card = this._adjustCardParam(card)
   return context.push('score', {
+    playerName: player.name,
+    card: card.id,
+  })
+}
+
+Game.prototype.aTuck = function(context, player, card) {
+  player = this._adjustPlayerParam(player)
+  card = this._adjustCardParam(card)
+  return context.push('tuck', {
     playerName: player.name,
     card: card.id,
   })
@@ -848,7 +861,12 @@ Game.prototype.mTuck = function(player, card) {
   this.mPlayerActed(player)
 
   // Special case for Monument achievement
-  game.rk.increment(this.state.monument[player.name], 'score')
+  this.rk.increment(this.state.monument[player.name], 'score')
+
+  this.mLog({
+    template: '{player} tucks {card}',
+    args: { player, card }
+  })
 
   return this.mMoveCard(cardZone, tuckZone, card)
 }

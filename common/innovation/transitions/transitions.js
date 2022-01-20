@@ -33,6 +33,7 @@ const transitions = {
   'claim-achievement-standard': require('./claimAchievementStandard.js'),
   'choose': require('./choose.js'),
   'choose-and-splay': require('./chooseAndSplay.js'),
+  'choose-and-tuck': require('./chooseAndTuck.js'),
   'draw-and-forecast': require('./drawAndForecast.js'),
   'draw-and-meld': require('./drawAndMeld.js'),
   'draw-and-score': require('./drawAndScore.js'),
@@ -49,6 +50,7 @@ const transitions = {
   'return': CardMoveFactory('return', 'mReturn'),
   'return-achievement': CardMoveFactory('return', 'mReturnAchievement'),
   'score': CardMoveFactory('score', 'mScore'),
+  'tuck': CardMoveFactory('tuck', 'mTuck'),
 }
 
 module.exports = transitions

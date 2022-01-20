@@ -34,7 +34,7 @@ function initialize(context) {
   // This gets the standard arguments for the trigger type.
   const args = _getArgs(context, trigger)
 
-  const cards = game.getCardsByKarmaTrigger(actor, trigger, ...args)
+  const cards = game.getCardsByKarmaTrigger(actor, trigger, args)
   const cardNames = game._serializeCardList(cards)
   game.rk.addKey(context.data, 'cardNames', cardNames)
 }
@@ -90,7 +90,7 @@ function karma(context) {
       kind: `karma-${trigger}`,
       implIndex: 0,
       leader: actor.name,
-      args: _getArgs(context, trigger),
+      data: _getArgs(context, trigger),
     },
     sharing: [],
     demanding: [],
@@ -108,22 +108,21 @@ function returnz(context) {
 
 function _getArgs(context, trigger) {
   const { data } = context
-  const args = []
+  const args = {}
 
   if (trigger === 'draw') {
-    args.push(data.age)
+    args.age = data.age
   }
   else if (trigger === 'splay') {
-    args.push(data.color)
-    args.push(data.direction)
+    args.color = data.color
+    args.direction = data.direction
   }
   else {
     util.assert(data.card.id === undefined, 'Got a card object instead of ID')
-    args.push(data.card)
+    args.card = data.card
   }
 
-  // Sometimes, there can be special arguments, which are provided in the opts argument.
-  args.push(context.data.opts || {})
+  args.opts = context.data.opts || {}
 
   return args
 }

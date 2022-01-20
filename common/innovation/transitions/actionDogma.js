@@ -132,7 +132,10 @@ function _determineEffects(context) {
     .aListCardsForDogmaByColor(actor, card.color)
     .flatMap(card => expandByKinds(game, card))       // { card, kind }
     .flatMap(effect => expandByImpl(game, effect))    // { implIndex }
-    .map(effect => Object.assign(effect, { leader: actor.name }))
+    .map(effect => Object.assign(effect, {
+      leader: actor.name,
+      data: {},
+    }))
 
   game.rk.addKey(context.data, 'effects', effects)
   game.rk.addKey(context.data, 'effectIndex', -1)

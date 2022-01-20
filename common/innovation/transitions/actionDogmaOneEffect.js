@@ -6,7 +6,7 @@ module.exports = function(context) {
 }
 
 function nextStep(context) {
-  const { game, actor } = context
+  const { game, actor, sentBack } = context
   const {
     sharing,
     demanding,
@@ -21,10 +21,16 @@ function nextStep(context) {
   // Clear this each time so that it doesn't get transmitted incorrectly forward.
   if (returned) {
     game.rk.removeKey(context.data, 'returned')
+    game.rk.removeKey(context.data, 'sentBack')
   }
 
   // Advance to the next unfinished step in this dogma/echo effect.
-  game.rk.increment(context.data, 'stepIndex')
+  if (sentBack.repeatStep) {
+    game.rk.removeKey(sentBack, 'repeatStep')
+  }
+  else {
+    game.rk.increment(context.data, 'stepIndex')
+  }
 
   // If all steps are completed, advance to the next player who should do this effect.
   if (context.data.stepIndex >= impl.steps.length) {
@@ -68,6 +74,7 @@ function nextStep(context) {
     effect,
     playerName: player.name,
     stepIndex: context.data.stepIndex,
+    biscuits: context.data.biscuits,
   }
   if (returned !== undefined) {
     payload.returned = returned
@@ -90,6 +97,7 @@ function initializeOnce(context) {
   const { game } = context
   const { effect } = context.data
 
+  // Effect context is shared across steps of an effect.
   game.rk.addKey(context.data, 'playerIndex', -1)
   game.rk.addKey(context.data, 'stepIndex', 99)
   game.rk.addKey(context.data, 'initialized', true)

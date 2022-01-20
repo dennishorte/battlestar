@@ -48,7 +48,7 @@ function Card() {
       steps: [
         {
           description: 'Choose a card of equal value from your score pile to achieve.',
-          func(context, player, card) {
+          func(context, player, { card }) {
             const { game } = context
             card = game.getCardData(card)
             const cards = game
@@ -81,7 +81,7 @@ function Card() {
         },
         {
           description: 'Then claim the achievement, if you are still eligible.',
-          func(context, player, card) {
+          func(context, player, { card }) {
             const { game } = context
             card = game.getCardData(card)
             if (game.checkCanClaimAchievement(player, card)) {

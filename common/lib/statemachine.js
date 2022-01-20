@@ -1,6 +1,7 @@
 'use strict'
 
 const RecordKeeper = require('./recordkeeper.js')
+const util = require('./util.js')
 
 const defaultOptions = {
   enrichContext: (context) => {},
@@ -59,8 +60,10 @@ function run() {
     push: _push.bind(this),
     wait: _wait.bind(this),
     return: _return.bind(this),
+    sendBack: _sendBack.bind(this),
     waitMany: _waitMany.bind(this),
     data: event.data,
+    sentBack: event.sentBack,
     state: this.state,
     response: this.response[0],
   }
@@ -101,6 +104,7 @@ function _push(eventName, data) {
   const event = {
     name: eventName,
     data: data || {},
+    sentBack: {},
   }
 
   // Temporary code for log indent.
@@ -132,6 +136,18 @@ function _return(value) {
     this.rk.addKey(prevEvent.data, 'returned', value)
   }
   return _done.call(this)
+}
+
+function _sendBack(dict) {
+  util.assert(dict !== undefined && dict !== null && typeof dict === 'object', 'Can only sendBack objects')
+
+  const prevEvent = this.stack[this.stack.length - 2]
+
+  for (const [key, value] of Object.entries(dict)) {
+    util.assert(value !== undefined && value !== null, `Attempt to sendBack undefined or null for key ${key}`)
+    util.assert(prevEvent.sentBack[key] === undefined, `Attempt to overwrite sendBack key ${key}`)
+    this.rk.addKey(prevEvent.sentBack, key, value)
+  }
 }
 
 function _wait(payload) {

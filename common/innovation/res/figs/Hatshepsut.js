@@ -36,7 +36,7 @@ function Card() {
       dogma: `If you would draw a card of value higher than 1 and you have a {1} in your hand, first return all cards from your hand and draw two cards of that value.`,
       trigger: 'draw',
       kind: 'would-first',
-      checkApplies(game, player, age) {
+      checkApplies(game, player, { age }) {
         const hasOneInHand = game
           .getHand(player)
           .cards
@@ -49,14 +49,14 @@ function Card() {
       steps: [
         {
           description: 'Return all cards from your hand.',
-          func(context, player, age) {
+          func(context, player) {
             const { game } = context
             return game.aReturnMany(context, player, game.getHand(player).cards)
           },
         },
         {
           description: 'Draw two cards of that value.',
-          func(context, player, age) {
+          func(context, player, { age }) {
             const { game } = context
             return game.aDrawMany(context, player, age, 2)
           },

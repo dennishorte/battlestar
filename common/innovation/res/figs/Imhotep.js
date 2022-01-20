@@ -36,7 +36,7 @@ function Card() {
       dogma: `If you would meld a card over an unsplayed color with more than one card, instead splay that color left and return the card.`,
       trigger: 'meld',
       kind: 'would-instead',
-      checkApplies(game, player, card) {
+      checkApplies(game, player, { card }) {
         card = game.getCardData(card)
         const zone = game.getZoneColorByPlayer(player, card.color)
         return zone.splay === 'none' && zone.cards.length > 1
@@ -44,7 +44,7 @@ function Card() {
       steps: [
         {
           description: 'Splay that color left',
-          func(context, player, card) {
+          func(context, player, { card }) {
             const { game } = context
             card = game.getCardData(card)
             return game.aSplay(context, player, card.color, 'left')
@@ -52,7 +52,7 @@ function Card() {
         },
         {
           description: 'Return the card.',
-          func(context, player, card) {
+          func(context, player, { card }) {
             const { game } = context
             return game.aReturn(context, player, card)
           },
