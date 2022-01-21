@@ -47,7 +47,17 @@ function draw(context) {
   // Determine which expansion to draw from.
   let exp = 'base'
   if (game.getExpansionList().includes('echo')) {
-    throw new Error('Drawing cards not supported in Echoes of the Past yet.')
+    const hand = game
+      .getHand(actor)
+      .cards
+      .map(game.getCardData)
+
+    const echoesCards = hand
+      .filter(c => c.expansion === 'echo')
+
+    if (hand.length > 0 && echoesCards.length === 0) {
+      exp = 'echo'
+    }
   }
   if (
     game.getExpansionList().includes('figs')

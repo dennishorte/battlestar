@@ -17,13 +17,24 @@ function choose(context) {
   const { game, actor } = context
   const { choices } = context.data
 
-  return game.aChoose(context, {
+  const payload = {
     playerName: actor.name,
     kind: 'Card',
     choices,
-    min: 0,
-    max: 1,
-  })
+  }
+  if (context.data.count) {
+    payload.count = context.data.count
+  }
+  else {
+    if (context.data.min) {
+      payload.min = context.data.min
+    }
+    if (context.data.max) {
+      payload.max = context.data.max
+    }
+  }
+
+  return game.aChoose(context, payload)
 }
 
 function tuck(context) {
