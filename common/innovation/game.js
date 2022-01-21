@@ -861,7 +861,7 @@ Game.prototype.mTuck = function(player, card) {
   this.mPlayerActed(player)
 
   // Special case for Monument achievement
-  this.rk.increment(this.state.monument[player.name], 'score')
+  this.rk.increment(this.state.monument[player.name], 'tuck')
 
   this.mLog({
     template: '{player} tucks {card}',
