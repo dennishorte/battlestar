@@ -37,9 +37,8 @@ function choose(context) {
 
 function splay(context) {
   const { game, actor } = context
-  const { direction, returned } = context.data
-
-  const colorToSplay = returned[0]
+  const { direction } = context.data
+  const colorToSplay = context.sentBack.chosen[0]
 
   if (colorToSplay) {
     return game.aSplay(context, actor, colorToSplay, direction)

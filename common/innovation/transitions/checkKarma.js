@@ -72,9 +72,9 @@ function choose(context) {
 
 // If the player had to choose a karma to execute, store the chosen karma.
 function chosen(context) {
-  if (context.data.returned) {
+  if (context.sentBack.card) {
     const { game } = context
-    game.rk.addKey(context.data, 'cardName', context.data.returned[0])
+    game.rk.addKey(context.data, 'cardName', context.sentBack.card)
   }
 }
 
@@ -103,7 +103,8 @@ function returnz(context) {
   const { cardName, trigger } = context.data
   const card = game.getCardData(cardName)
   const impl = card.getImpl(`karma-${trigger}`)[0]
-  return context.return(impl.kind)
+  context.sendBack({ karmaKind: impl.kind })
+  return context.done()
 }
 
 function _getArgs(context, trigger) {

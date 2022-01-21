@@ -35,7 +35,7 @@ function Card() {
           description: "Take into your hand the top card of the revealed card's color (if any) from all opponents' boards.",
           func(context, player) {
             const { game } = context
-            const card = game.getCardData(context.data.returned[0])
+            const card = game.getCardData(context.sentBack.chosen[0])
             if (card) {
               const targets = game
                 .getPlayerAll()

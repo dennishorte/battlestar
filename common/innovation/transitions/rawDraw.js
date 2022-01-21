@@ -35,10 +35,7 @@ function karma(context) {
 }
 
 function karmaInstead(context) {
-  const { game } = context
-  const { returned } = context.data
-
-  if (returned === 'would-instead') {
+  if (context.sentBack.karmaKind === 'would-instead') {
     return context.done()
   }
 }
@@ -93,9 +90,7 @@ function achievementCheck(context) {
 
 function returnz(context) {
   if (context.data.drawnCard) {
-    return context.return(context.data.drawnCard)
+    return context.sendBack({ card: context.data.drawnCard })
   }
-  else {
-    return context.done()
-  }
+  return context.done()
 }

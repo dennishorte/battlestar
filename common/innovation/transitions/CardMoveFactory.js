@@ -34,10 +34,7 @@ module.exports = function(actionName, gameFuncName) {
   }
 
   function karmaInstead(context) {
-    const { game } = context
-    const { returned } = context.data
-
-    if (returned === 'would-instead') {
+    if (context.sentBack.karmaKind === 'would-instead') {
       return context.done()
     }
   }
@@ -50,7 +47,7 @@ module.exports = function(actionName, gameFuncName) {
       game.rk.addKey(context.data, 'cardId', cardId)
     }
     catch (e) {
-      console.log(`No id returned for game func: ${gameFuncName}`)
+      console.log(`No id sent back for game func: ${gameFuncName}`)
       throw e
     }
   }
@@ -61,7 +58,8 @@ module.exports = function(actionName, gameFuncName) {
 
   function returnz(context) {
     if (context.data.cardId) {
-      return context.return(context.data.cardId)
+      context.sendBack({ card: context.data.cardId })
+      return context.done()
     }
     else {
       return context.done()

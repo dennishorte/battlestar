@@ -2,7 +2,8 @@ const selector = require('../../lib/selector.js')
 
 module.exports = function(context) {
   if (context.response) {
-    context.return(context.options)
+    context.sendBack({ chosen: context.options })
+    return context.done()
   }
 
   else {
@@ -12,7 +13,8 @@ module.exports = function(context) {
 
     // Auto-pick if the choice is limited
     if (choices.length <= min) {
-      return context.return(choices)
+      context.sendBack({ chosen: choices })
+      return context.done()
     }
 
     else {

@@ -49,7 +49,7 @@ describe('Software', () => {
     expect(game.aExecute).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({ name: 'micah' }),
-      expect.objectContaining({ id: 'Stem Cells' }),
+      'Stem Cells',
     )
   })
 })

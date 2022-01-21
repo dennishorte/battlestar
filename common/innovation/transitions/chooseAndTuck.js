@@ -28,9 +28,9 @@ function choose(context) {
 
 function tuck(context) {
   const { game, actor } = context
-  const { direction, returned } = context.data
+  const { direction } = context.data
 
-  const cardToTuck = returned[0]
+  const cardToTuck = context.sentBack.chosen[0]
 
   if (cardToTuck) {
     return game.aTuck(context, actor, cardToTuck)

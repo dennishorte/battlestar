@@ -42,8 +42,8 @@ function Card() {
       karma: `If you would claim a standard achievement, instead achieve a card of equal value from your score pile. Then claim the achievement, if you are still eligible.`,
       trigger: 'claim-achievement',
       kind: 'would-instead',
-      checkApplies(game, player, card, opts) {
-        return opts && opts.isAction
+      checkApplies(game, player, data) {
+        return data.opts && data.opts.isAction
       },
       steps: [
         {
@@ -73,9 +73,11 @@ function Card() {
           description: 'Achieve the card you chose.',
           func(context, player) {
             const { game } = context
-            if (context.data.returned) {
-              const card = context.data.returned[0]
-              return game.aClaimAchievement(context, player, card)
+            if (context.sentBack.chosen) {
+              const card = context.sentBack.chosen[0]
+              if (card) {
+                return game.aClaimAchievement(context, player, card)
+              }
             }
           }
         },

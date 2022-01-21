@@ -52,16 +52,16 @@ function Card() {
           description: 'Score the chosen card, if any.',
           func(context, player) {
             const { game } = context
-            const { returned } = context.data
-            if (returned.length === 0) {
+            const card = context.sentBack.chosen[0]
+            if (card) {
+              return game.aScore(context, player, card)
+            }
+            else {
               game.mLog({
                 template: '{player} scores nothing',
                 args: { player }
               })
               return context.done()
-            }
-            else {
-              return game.aScore(context, player, returned[0])
             }
           }
         },

@@ -43,7 +43,7 @@ function Card() {
           func(context, player) {
             const { game } = context
             const { effect } = context.data
-            const cards = context.data.returned
+            const cards = context.sentBack.chosen
             return game.aTransferCards(context, player, cards, game.getHand(effect.leader))
           },
         },

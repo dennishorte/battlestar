@@ -50,8 +50,7 @@ function Card() {
           description: `Execute each of the second card's non-demand dogma effects. Do not share them.`,
           func(context, player) {
             const { game } = context
-            const { returned } = context.data
-            const cardToExecute = game.getCardData(returned)
+            const cardToExecute = context.sentBack.card
             return game.aExecute(context, player, cardToExecute)
           }
         },

@@ -32,7 +32,7 @@ function Card() {
           description: 'If either of the drawn cards is purple, return them.',
           func(context, player) {
             const { game } = context
-            const drawnCards = context.data.returned.map(game.getCardData)
+            const drawnCards = context.sentBack.cards.map(game.getCardData)
             const drewPurple = drawnCards.some(c => c.color === 'purple')
 
             if (drewPurple) {

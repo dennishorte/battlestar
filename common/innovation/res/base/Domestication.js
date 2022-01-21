@@ -44,10 +44,11 @@ function Card() {
         },
         {
           description: 'Meld the card you chose.',
-          func(context, player) {
+          func(context, player, data) {
             const { game } = context
-            if (context.data.returned.length > 0) {
-              game.aMeld(context, player, context.data.returned[0])
+            const card = context.sentBack.chosen[0]
+            if (card) {
+              game.aMeld(context, player, card)
             }
             else {
               game.mLog({

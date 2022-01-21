@@ -21,9 +21,8 @@ function draw(context) {
 
 function score(context) {
   const { game, actor } = context
-  const { returned } = context.data
 
-  const cardToScore = returned
+  const cardToScore = context.sentBack.card
   const playerHand = game.getHand(actor)
   const cardIsInHand = playerHand.cards.find(c => game.checkCardsEqual(c, cardToScore))
 

@@ -36,17 +36,17 @@ function Card() {
           description: 'If you chose a card, return it.',
           func(context, player) {
             const { game } = context
-            const { returned } = context.data
+            const card = context.sentBack.chosen[0]
 
-            if (returned.length === 0) {
+            if (card) {
+              return game.aReturn(context, player, card)
+            }
+            else {
               game.mLog({
                 template: '{player} did not return a card',
                 args: { player }
               })
               return context.done()
-            }
-            else {
-              return game.aReturn(context, player, returned[0])
             }
           }
         },
@@ -54,7 +54,7 @@ function Card() {
           description: 'If you returned a card, score a card of value one higher.',
           func(context, player) {
             const { game } = context
-            const card = game.getCardData(context.data.returned)
+            const card = game.getCardData(context.sentBack.card)
             if (card) {
               return game.aDrawAndScore(context, player, card.age + 1)
             }

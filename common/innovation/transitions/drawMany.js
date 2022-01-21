@@ -26,8 +26,8 @@ function drawLoop(context) {
   const { game, actor } = context
   const { count, age, reveal } = context.data
 
-  if (context.data.returned) {
-    game.rk.push(context.data.drawnCards, context.data.returned)
+  if (context.sentBack.card) {
+    game.rk.push(context.data.drawnCards, context.sentBack.card)
   }
 
   const cardIndex = game.rk.increment(context.data, 'cardIndex')
@@ -37,6 +37,7 @@ function drawLoop(context) {
   }
   else {
     nextPhase(context)
-    return context.return(context.data.drawnCards)
+    context.sendBack({ cards: context.data.drawnCards })
+    return context.done()
   }
 }

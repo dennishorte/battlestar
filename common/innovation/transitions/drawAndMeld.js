@@ -25,9 +25,8 @@ function draw(context) {
 
 function meld(context) {
   const { game, actor } = context
-  const { returned } = context.data
 
-  const cardToMeld = returned
+  const cardToMeld = context.sentBack.card
   const playerHand = game.getHand(actor)
   const cardIsInHand = playerHand.cards.find(c => game.checkCardsEqual(c, cardToMeld))
 
@@ -47,12 +46,6 @@ function meld(context) {
 }
 
 function returnz(context) {
-  const { game } = context
-  const { returned } = context.data
-  if (returned) {
-    return context.return(returned)
-  }
-  else {
-    return context.done()
-  }
+  context.sendBack(context.sentBack)
+  return context.done()
 }

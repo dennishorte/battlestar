@@ -36,7 +36,7 @@ function Card() {
           description: 'Draw and forecast a card of the chosen age.',
           func(context, player) {
             const { game } = context
-            const age = context.data.returned[0]
+            const age = context.sentBack.chosen[0]
             return game.aDrawAndForecast(context, player, age)
           }
         },

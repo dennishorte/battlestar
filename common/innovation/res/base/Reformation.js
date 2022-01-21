@@ -44,14 +44,13 @@ function Card() {
         {
           description: 'Tuck cards, if desired.',
           func(context, player, data) {
-            const { game } = context
-            const { returned } = context.data
+            const { game, sentBack } = context
             const numTucked = game.rk.increment(data, 'numTucked')
 
             if (!data.initializedTucking) {
               game.rk.addKey(data, 'initializedTucking', true)
 
-              if (returned[0] === 'Skip this effect') {
+              if (sentBack.chosen[0] === 'Skip this effect') {
                 game.mLog({
                   template: '{player} skips this effect',
                   args: { player }

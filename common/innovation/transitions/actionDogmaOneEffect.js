@@ -11,18 +11,11 @@ function nextStep(context) {
     sharing,
     demanding,
     effect,
-    returned,
   } = context.data
 
   const card = game.getCardData(effect.card)
   const players = getPlayersOrdered(context)
   const impl = getEffectImpl(context)
-
-  // Clear this each time so that it doesn't get transmitted incorrectly forward.
-  if (returned) {
-    game.rk.removeKey(context.data, 'returned')
-    game.rk.removeKey(context.data, 'sentBack')
-  }
 
   // Advance to the next unfinished step in this dogma/echo effect.
   if (sentBack.repeatStep) {
@@ -76,9 +69,7 @@ function nextStep(context) {
     stepIndex: context.data.stepIndex,
     biscuits: context.data.biscuits,
   }
-  if (returned !== undefined) {
-    payload.returned = returned
-  }
+  payload.sentBack = sentBack
 
   const result = context.push('action-dogma-one-step', payload)
   if (result) {
