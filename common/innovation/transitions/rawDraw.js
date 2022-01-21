@@ -44,7 +44,6 @@ function draw(context) {
   const { game, actor } = context
   const { isShareBonus } = context.data
 
-
   // Determine which expansion to draw from.
   let exp = 'base'
   if (game.getExpansionList().includes('echo')) {
@@ -65,7 +64,7 @@ function draw(context) {
   const { adjustedAge, adjustedExp } = game.getAdjustedDeck(baseAge, exp)
 
   const drawnCardId = game.mDraw(actor, adjustedExp, adjustedAge).id
-  game.rk.addKey(context.data, 'drawnCard', drawnCardId)
+  game.rk.addKey(context.data, 'drawnCardId', drawnCardId)
 }
 
 function maybeReveal(context) {
@@ -89,8 +88,8 @@ function achievementCheck(context) {
 }
 
 function returnz(context) {
-  if (context.data.drawnCard) {
-    return context.sendBack({ card: context.data.drawnCard })
+  if (context.data.drawnCardId) {
+    return context.sendBack({ card: context.data.drawnCardId })
   }
   return context.done()
 }

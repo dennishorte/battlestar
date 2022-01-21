@@ -17,18 +17,27 @@ function nextStep(context) {
   const players = getPlayersOrdered(context)
   const impl = getEffectImpl(context)
 
-  // Advance to the next unfinished step in this dogma/echo effect.
   if (sentBack.repeatStep) {
     game.rk.removeKey(sentBack, 'repeatStep')
   }
   else {
+    // Advance to the next unfinished step in this dogma/echo effect.
     game.rk.increment(context.data, 'stepIndex')
   }
 
   // If all steps are completed, advance to the next player who should do this effect.
   if (context.data.stepIndex >= impl.steps.length) {
     game.rk.put(context.data, 'stepIndex', 0)
-    game.rk.increment(context.data, 'playerIndex')
+
+    if (sentBack.repeatEffect) {
+      game.mLog({
+        template: 'Effect repeats',
+      })
+    }
+
+    else {
+      game.rk.increment(context.data, 'playerIndex')
+    }
   }
 
   // If all players are finished, this dogma/echo effect is completed.
