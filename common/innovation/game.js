@@ -850,6 +850,14 @@ Game.prototype.mSplay = function(player, color, direction) {
   const zone = this.getZoneColorByPlayer(player, color)
   this.rk.put(zone, 'splay', direction)
   this.mPlayerActed(player)
+  this.mLog({
+    template: '{player} splays {color} {direction}',
+    args: {
+      player,
+      color,
+      direction,
+    }
+  })
 }
 
 Game.prototype.mTuck = function(player, card) {

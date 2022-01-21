@@ -11,6 +11,15 @@ module.exports = function(context) {
     const { kind, choices, reason } = context.data
     const { min, max } = selector.minMax(context.data)
 
+    if (min > 0 && choices.length === 0) {
+      game.mLog({
+        template: '{player} cannot make a choice',
+        args: {
+          player: actor
+        }
+      })
+    }
+
     // Auto-pick if the choice is limited
     if (choices.length <= min) {
       context.sendBack({ chosen: choices })
