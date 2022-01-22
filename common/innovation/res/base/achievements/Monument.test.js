@@ -20,7 +20,8 @@ describe('Monument achievement', () => {
       'Self Service',
       'Databases',
       'Globalization',
-      'Stem Cells'
+      'Stem Cells',
+      'Mathematics',
     ])
 
     game.run()
@@ -75,6 +76,7 @@ describe('Monument achievement', () => {
       'Bioengineering',
       'Software',
       'Self Service',
+      'Mathematics',
     ])
 
     game.run()
