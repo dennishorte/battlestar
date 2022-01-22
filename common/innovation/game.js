@@ -667,18 +667,6 @@ Game.prototype.getZoneScore = function(player) {
 }
 
 Game.prototype.mSetVisibilityForZone = function(zone, card) {
-  /* if (zone.kind === 'private') {
-   *   this.rk.replace(card.visibility, [zone.owner])
-   * }
-   * else if (zone.kind === 'public') {
-   *   this.rk.replace(card.visibility, this.getPlayerAll().map(p => p.name))
-   * }
-   * else if (zone.kind === 'deck') {
-   *   this.rk.replace(card.visibility, [])
-   * }
-   * else {
-   *   throw new Error(`Unhandled visibility type for zone: ${zone.kind}`)
-   * } */
 }
 
 Game.prototype.mClaimAchievement = function(player, card) {
