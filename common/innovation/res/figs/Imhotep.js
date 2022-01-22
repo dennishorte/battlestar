@@ -54,7 +54,6 @@ function Card() {
           description: 'Return the card.',
           func(context, player, { card }) {
             const { game } = context
-            console.log(card)
             return game.aReturn(context, player, card)
           },
         },
