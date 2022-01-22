@@ -506,7 +506,21 @@ Game.prototype.getBiscuitsRaw = function(card, splay) {
 }
 
 Game.prototype.getBonuses = function(player) {
-  const bonuses = []
+  const rx = /([ab1-9])/g
+  const bonuses = this
+    .utilColors()
+    .map(c => this.getZoneColorByPlayer(player, c))
+    .flatMap(zone => zone.cards.map(card => this.getBiscuitsRaw(card, zone.splay)))
+    .flatMap(biscuits => biscuits.match(rx))
+    .filter(bonus => bonus !== null)
+    .map(bonus => {
+      switch (bonus) {
+        case 'a': return 10;
+        case 'b': return 11;
+        default: return parseInt(bonus)
+      }
+    })
+
   bonuses.sort((l, r) => r - l)
   return bonuses
 }
