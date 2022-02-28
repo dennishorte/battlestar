@@ -384,7 +384,7 @@ Canning
 yellow
 6
 hflf
-f: You may draw and tuck a {6}. If you do, score all your top cards without a {6}.
+f: You may draw and tuck a {6}. If you do, score all your top cards without a {f}.
 f: You may splay your yellow cards right.
 
 Vaccination
@@ -605,7 +605,7 @@ Genetics
 blue
 9
 sssh
-s: Draw and meld a {10}. Score all cards beneath it.
+s: Draw and meld a {0}. Score all cards beneath it.
 
 Computers
 blue

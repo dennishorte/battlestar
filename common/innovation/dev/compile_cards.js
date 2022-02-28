@@ -104,9 +104,11 @@ function processFile(filename) {
 function ensureDogmaBiscuits(cards) {
   for (const card of cards) {
     if (!card.dogmaBiscuit) {
-      // City cards always use the top right biscuit.
+      // City cards require actual counting
       if (card.biscuits.length === 6) {
-        card.dogmaBiscuit = card.biscuits[0]
+        card.dogmaBiscuit = ['l', 's', 'i', 'k', 'c', 'f']
+          .map(biscuit => ({ biscuit, count: card.biscuits.split(biscuit).length - 1 }))
+          .sort((l, r) => r.count - l.count)[0].biscuit
       }
 
       // Figures cards always have a single kind of biscuit.
