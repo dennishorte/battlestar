@@ -1,3 +1,5 @@
+const util = require('../util.js')
+
 function CardBase() {
   this.id
   this.name
@@ -16,8 +18,37 @@ function CardBase() {
   this.karmaImpl
 }
 
+CardBase.prototype.checkBiscuitIsVisible = function(biscuit, splay) {
+  const biscuitIndex = this.biscuits.indexOf(biscuit)
+  switch (splay) {
+    case 'left': return biscuitIndex === 3
+    case 'right': return biscuitIndex === 0 || biscuitIndex === 1
+    case 'up': return biscuitIndex === 1 || biscuitIndex === 2 || biscuitIndex === 3
+    case 'top': return biscuitIndex !== -1
+    default: return false
+  }
+}
+
+CardBase.prototype.checkEchoIsVisible = function(splay) {
+  return this.checkBiscuitIsVisible('&', splay)
+}
+
+CardBase.prototype.checkInspireIsVisible = function(splay) {
+  return this.checkBiscuitIsVisible('*', splay)
+}
+
 CardBase.prototype.checkHasEcho = function() {
   return this.echo.length > 0
+}
+
+CardBase.prototype.checkHasBiscuit = function(biscuit) {
+  return this.biscuits.includes(biscuit)
+}
+
+CardBase.prototype.checkHasBonus = function() {
+  const re = /[0-9ab]/gi
+  const match = this.biscuits.match(re)
+  return match !== null
 }
 
 CardBase.prototype.getBiscuits = function(splay) {
@@ -56,6 +87,23 @@ CardBase.prototype.getBiscuits = function(splay) {
   }
 }
 
+CardBase.prototype.getKarmaInfo = function(trigger) {
+  const matches = []
+  for (let i = 0; i < this.karma.length; i++) {
+    const impl = this.karmaImpl[i]
+    const triggers = util.getAsArray(impl, 'trigger')
+    if (triggers.includes(trigger)) {
+      matches.push({
+        card: this,
+        index: i,
+        text: this.karma[i],
+        impl: this.karmaImpl[i],
+      })
+    }
+  }
+  return matches
+}
+
 CardBase.prototype.getImpl = function(kind) {
   if (kind.startsWith('karma')) {
     kind = kind.substr(6)
@@ -73,16 +121,6 @@ CardBase.prototype.getImpl = function(kind) {
   }
   else {
     return this[`${kind}Impl`]
-  }
-}
-
-CardBase.prototype.echoIsVisible = function(splay) {
-  const echoIndex = this.biscuits.indexOf('&')
-  switch (splay) {
-    case 'left': return echoIndex === 3
-    case 'right': return echoIndex === 0 || echoIndex === 1
-    case 'up': return echoIndex === 1 || echoIndex === 2 || echoIndex === 3
-    default: return false
   }
 }
 

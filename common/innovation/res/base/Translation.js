@@ -16,7 +16,31 @@ function Card() {
     `If each top card on your board has a {c}, claim the World achievement.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.getCardsByZone(player, 'score')
+      if (cards.length === 0) {
+        game.mLogNoEffect()
+      }
+      else {
+        const doIt = game.aYesNo(player, 'Meld all cards in your score pile?')
+        if (doIt) {
+          game.aMeldMany(player, game.getCardsByZone(player, 'score'))
+        }
+        else {
+          game.mLogDoNothing(player)
+        }
+      }
+    },
+
+    (game, player) => {
+      const topCards = game.getTopCards(player)
+      const topCoins = topCards.filter(card => card.checkHasBiscuit('c'))
+      if (topCards.length === topCoins.length) {
+        game.aClaimAchievement(player, { name: 'World' })
+      }
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

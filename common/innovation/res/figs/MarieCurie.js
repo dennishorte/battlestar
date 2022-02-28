@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../util.js')
 
 function Card() {
   this.id = `Marie Curie`  // Card names are unique in Innovation
@@ -16,9 +17,22 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    game.aDraw(player, { age: game.getEffectAge(this, 9) })
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'extra-achievements',
+      func: (game, player) => {
+        const ages = game
+          .getCardsByZone(player, 'score')
+          .filter(card => card.age > 6)
+          .map(card => card.age)
+        return util.array.distinct(ages).length
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

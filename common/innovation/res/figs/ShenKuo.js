@@ -17,8 +17,20 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aChooseAndSplay(player, null, 'left')
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'calculate-score',
+      func: (game, player) => {
+        return game
+          .utilColors()
+          .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
+          .length * 3
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

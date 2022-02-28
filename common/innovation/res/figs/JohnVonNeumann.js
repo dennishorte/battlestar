@@ -17,68 +17,38 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = [
-    {
-      dogma: `Draw and reveal two {9}. If either is purple, return them.`,
-      steps: [
-        {
-          description: 'Draw and reveal two {9}.',
-          func(context, player) {
-            const { game } = context
-            return game.aDrawMany(context, player, 9, 2, true)
-          }
-        },
-        {
-          description: 'If either of the drawn cards is purple, return them.',
-          func(context, player) {
-            const { game } = context
-            const drawnCards = context.sentBack.cards.map(game.getCardData)
-            const drewPurple = drawnCards.some(c => c.color === 'purple')
+  this.echoImpl = (game, player) => {
+    const card1 = game.aDraw(player, { age: game.getEffectAge(this, 9) })
+    const card2 = game.aDraw(player, { age: game.getEffectAge(this, 9) })
 
-            if (drewPurple) {
-              return game.aReturnMany(context, player, drawnCards)
-            }
-          }
-        },
-      ]
+    if (card1.color === 'purple' || card2.color === 'purple') {
+      game.mLog({
+        template: '{player} drew a purple card',
+        args: { player }
+      })
+      game.aReturnMany(player, [card1, card2])
     }
-  ]
+  }
   this.inspireImpl = []
   this.karmaImpl = [
     {
-      dogma: `When you meld this card, return all opponents' top figures.`,
-      trigger: 'meld-after',
-      kind: 'when',
-      steps: [
-        {
-          description: `When you meld this card, return all opponents' top figures.`,
-          func(context, player) {
-            const { game } = context
-            const topFigures = game
-              .getPlayerAll()
-              .filter(p => p.name !== player.name)
-              .flatMap(p => {
-                const colors = game.utilColors()
-                return colors.map(c => game.getCardTop(p, c))
-              })
-              .filter(c => c !== undefined)
-              .filter(c => c.expansion === 'figs')
-
-            return game.aReturnMany(context, player, topFigures)
-          }
-        },
-      ]
-    },
-    {
-      dogma: `Each card in your hand provides two additional {i}.`,
-      checkApplies: () => true,
-      trigger: 'calculate-biscuits',
-      func(game, player, boardBiscuits) {
-        const biscuits = game.utilEmptyBiscuits()
-        biscuits.i = game.getHand(player).cards.length * 2
-        return biscuits
+      trigger: 'when-meld',
+      func: (game, player) => {
+        const figures = game
+          .getPlayerOpponents(player)
+          .flatMap(player => game.getTopCards(player))
+          .filter(card => card.expansion === 'figs')
+        game.aReturnMany(player, figures)
       }
     },
+    {
+      trigger: 'calculate-biscuits',
+      func: (game, player) => {
+        const output = game.utilEmptyBiscuits()
+        output.i = game.getCardsByZone(player, 'hand').length * 2
+        return output
+      }
+    }
   ]
 }
 

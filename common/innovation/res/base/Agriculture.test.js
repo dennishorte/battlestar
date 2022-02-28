@@ -4,28 +4,28 @@ const t = require('../../testutil.js')
 
 describe('Agriculture', () => {
   test('return a card', () => {
-    const game = t.fixtureDogma('Agriculture')
-    game.run()
-    t.dogma(game, 'Agriculture')
-    game.submit({
-      actor: 'micah',
-      name: 'Choose Cards',
-      option: ['Writing']
+    const game = t.fixtureTopCard('Agriculture')
+    game.testSetBreakpoint('before-first-player', (game) => {
+      t.setHand(game, 'dennis', ['Domestication'])
     })
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Agriculture')
+    t.choose(game, request2, 'Domestication')
 
-    expect(game.getScore('micah')).toBe(2)
+    const dennis = game.getPlayerByName('dennis')
+    expect(game.getScore(dennis)).toBe(2)
   })
 
   test('do not return a card', () => {
-    const game = t.fixtureDogma('Agriculture')
-    game.run()
-    t.dogma(game, 'Agriculture')
-    game.submit({
-      actor: 'micah',
-      name: 'Choose Cards',
-      option: []
+    const game = t.fixtureTopCard('Agriculture')
+    game.testSetBreakpoint('before-first-player', (game) => {
+      t.setHand(game, 'dennis', ['Domestication'])
     })
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Agriculture')
+    t.choose(game, request2)
 
-    expect(game.getScore('micah')).toBe(0)
+    const dennis = game.getPlayerByName('dennis')
+    expect(game.getScore(dennis)).toBe(0)
   })
 })

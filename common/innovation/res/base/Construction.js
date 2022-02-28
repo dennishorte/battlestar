@@ -17,84 +17,56 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    {
-      dogma: `I demand you transfer two cards from your hand to my hand! Draw a {2}!`,
-      demand: true,
-      steps: [
-        {
-          description: 'I demand you select two cards in your hand.',
-          func(context, player) {
-            const { game } = context
-            const hand = game
-              .getHand(player)
-              .cards
+    (game, player) => {
+      // Choose two cards
+      const playerHand = game
+        .getZoneByPlayer(player, 'hand')
+        .cards()
+        .map(c => c.name)
+      const cards = game
+        .requestInputSingle({
+          actor: player.name,
+          title: 'Choose Two Cards',
+          choices: playerHand,
+          count: 2
+        })
+        .map(card => game.getCardByName(card))
 
-            return game.aChoose(context, {
-              playerName: player.name,
-              choices: hand,
-              kind: 'Cards',
-              count: 2,
-              reason: 'Construction: I demand you transfer two cards from your hand to my hand!',
-            })
-          }
-        },
-        {
-          description: 'I demand you transfer the cards you selected to my hand.',
-          func(context, player) {
-            const { game } = context
-            const { effect } = context.data
-            const cards = context.sentBack.chosen
-            return game.aTransferCards(context, player, cards, game.getHand(effect.leader))
-          },
-        },
-        {
-          description: 'I demand you draw a {2}.',
-          func(context, player) {
-            const { game } = context
-            return game.aDraw(context, player, 2)
-          }
-        },
-      ],
-    },
-
-    {
-      dogma: `If you are the only player with five top cards, claim the Empire achievement.`,
-      steps: [
-        {
-          description: `If you are the only player with five top cards, claim the Empire achievement.`,
-          func(context, player) {
-            const { game } = context
-            const topCards = Object.assign({}, ...game
-              .getPlayerAll()
-              .map(p => {
-                const numTopCards = game
-                  .utilColors()
-                  .map(c => game.getCardTop(p, c))
-                  .filter(card => card !== undefined)
-                  .length
-                return { [p.name]: numTopCards }
-              }))
-
-            const achievementIsAvailable = game.checkAchievementAvailable('Empire')
-            const playerHasFive = topCards[player.name] === 5
-            const otherPlayersHaveFive = Object
-              .entries(topCards)
-              .filter(([name, count]) => name !== player.name)
-              .filter(([name, count]) => count === 5)
-              .length > 0
-
-            if (achievementIsAvailable && playerHasFive && !otherPlayersHaveFive) {
-              return game.aClaimAchievement(context, player, 'Empire')
-            }
-            else {
-              game.mLog({
-                template: '{player}: no effect',
-                args: { player }
-              })
-            }
-          }
+      // Transfer them to leader's hand
+      if (cards.length === 0) {
+        game.mLog({
+          template: '{player} transfers nothing',
+          args: { player }
+        })
+      }
+      else {
+        for (const card of cards) {
+          const target = game.getZoneByPlayer(game.getPlayerCurrent(), 'hand')
+          game.aTransfer(player, card, target)
         }
-      ],
+      }
+
+      // Draw a 2
+      game.aDraw(player, { age: game.getEffectAge(this, 2) })
+    },
+    (game, player) => {
+      const achievementAvailable = game.checkAchievementAvailable('Empire')
+      const playerHasFive = game
+        .getTopCards(player)
+        .length === 5
+      const othersHaveFive = game
+        .getPlayerAll()
+        .filter(p => p !== player)
+        .map(p => game.getTopCards(p).length)
+        .filter(count => count === 5)
+        .length > 0
+
+      if (achievementAvailable && playerHasFive && !othersHaveFive) {
+        return game.aClaimAchievement(player, { name: 'Empire' })
+      }
+      else {
+        game.mLog({ template: 'no effect' })
+      }
     },
   ]
   this.echoImpl = []

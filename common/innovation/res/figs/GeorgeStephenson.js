@@ -16,9 +16,30 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    const rightColors = game
+      .utilColors()
+      .filter(color => game.getZoneByPlayer(player, color).splay === 'right')
+    game.aChooseAndSplay(player, rightColors, 'up')
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'achieve',
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player) => {
+        for (let i = 1; i < 10; i++) {
+          const deck = game.getZoneByDeck('base', i)
+          const cards = deck.cards()
+          if (cards.length > 0) {
+            const card = cards[cards.length - 1]
+            game.mTransfer(player, card, game.getZoneById('achievements'))
+          }
+        }
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

@@ -16,9 +16,26 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    const card = game.aDrawAndTuck(player, game.getEffectAge(this, 3))
+    if (card) {
+      const zone = game.getZoneByPlayer(player, card.color)
+      while (zone.cards()[0] !== undefined && zone.cards()[0] !== card) {
+        game.aScore(player, zone.cards()[0])
+      }
+    }
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'list-bonuses',
+      func: (game, player) => {
+        return game
+          .getCardsByZone(player, 'score')
+          .map(card => card.age)
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

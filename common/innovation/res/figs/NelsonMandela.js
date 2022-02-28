@@ -18,8 +18,25 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aDrawAndMeld(player, game.getEffectAge(this, 9))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'no-fade'
+    },
+    {
+      trigger: 'extra-achievements',
+      func: (game, player) => {
+        const visibleInspires = game
+          .utilColors()
+          .flatMap(color => game.getCardsByZone(player, color))
+          .filter(card => game.checkInspireIsVisible(card))
+          .length
+        return Math.floor(visibleInspires / 2)
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

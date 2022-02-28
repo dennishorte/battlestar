@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../util.js')
 
 function Card() {
   this.id = `Carl Friedrich Gauss`  // Card names are unique in Innovation
@@ -11,14 +12,42 @@ function Card() {
   this.inspire = ``
   this.echo = `Draw a {7}.`
   this.karma = [
-    `If you would meld a card, first choose a value and meld all cards of that value from your hand and score pile.`
+    `If you would meld a card, first choose a value and meld all other cards of that value from your hand and score pile.`
   ]
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    game.aDraw(player, { age: game.getEffectAge(this, 7) })
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'meld',
+      kind: 'would-first',
+      matches: () => true,
+      func(game, player, { card }) {
+        const age = game.aChooseAge(player)
+        const hand = game
+          .getCardsByZone(player, 'hand')
+          .filter(card => card.age === age)
+          .filter(other => other !== card)
+        const score = game
+          .getCardsByZone(player, 'score')
+          .filter(card => card.age === age)
+
+        // Use distinct in case some Karma causes overlap in these two zones.
+        const cards = util.array.distinct([...hand, ...score])
+
+        if (cards.length === 0) {
+          game.mLogNoEffect()
+        }
+        else {
+          game.aMeldMany(player, cards)
+        }
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

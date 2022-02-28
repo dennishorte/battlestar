@@ -17,55 +17,16 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    {
-      dogma: `You may splay left any one color of your cards.`,
-      steps: [
-        {
-          description: 'Choose up to one color to splay left',
-          func(context, player) {
-            const { game } = context
-            return game.aChooseAndSplay(context, {
-              playerName: player.name,
-              direction: 'left',
-            })
-          }
-        },
-      ]
+    (game, player) => {
+      game.aChooseAndSplay(player, null, 'left')
     },
-    {
-      dogma: `You may score a card from your hand.`,
-      steps: [
-        {
-          description: 'Choose up to one card from your hand to score.',
-          func(context, player) {
-            const { game } = context
-            return game.aChoose(context, {
-              playerName: player.name,
-              kind: 'Cards',
-              choices: game.getHand(player).cards,
-              min: 0,
-              max: 1
-            })
-          }
-        },
-        {
-          description: 'Score the chosen card, if any.',
-          func(context, player) {
-            const { game } = context
-            const card = context.sentBack.chosen[0]
-            if (card) {
-              return game.aScore(context, player, card)
-            }
-            else {
-              game.mLog({
-                template: '{player} scores nothing',
-                args: { player }
-              })
-              return context.done()
-            }
-          }
-        },
-      ]
+    (game, player) => {
+      const choices = game
+        .getZoneByPlayer(player, 'hand')
+        .cards()
+        .map(c => c.name)
+
+      game.aChooseAndScore(player, choices, { min: 0, max: 1 })
     }
   ]
   this.echoImpl = []

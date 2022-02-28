@@ -16,7 +16,23 @@ function Card() {
     `Draw a {4} for every color you have splayed left.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aChooseAndSplay(player, ['green', 'blue'], 'left')
+    },
+
+    (game, player) => {
+      const splayedLeftCount = game
+        .utilColors()
+        .map(color => game.getZoneByPlayer(player, color))
+        .filter(zone => zone.splay === 'left')
+        .length
+
+      for (let i = 0; i < splayedLeftCount; i++) {
+        game.aDraw(player, { age: game.getEffectAge(this, 4) })
+      }
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

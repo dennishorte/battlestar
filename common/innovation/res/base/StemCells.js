@@ -16,17 +16,22 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    {
-      dogma: `You may score all cards from your hand. If you score one, you must score them all.`,
-      steps: [
-        {
-          description: 'You may score all cards from your hand.',
-          func(context, player) {
-            return context.done()
-          }
-        },
-      ]
-    }
+    (game, player) => {
+      const hand = game.getZoneByPlayer(player, 'hand')
+      if (hand.cards().length === 0) {
+        game.mLogNoEffect()
+        return
+      }
+
+      const scoreAll = game.aYesNo(player, 'Score all cards from your hand?')
+
+      if (scoreAll) {
+        game.aScoreMany(player, hand.cards())
+      }
+      else {
+        game.mLogDoNothing(player)
+      }
+    },
   ]
   this.echoImpl = []
   this.inspireImpl = []

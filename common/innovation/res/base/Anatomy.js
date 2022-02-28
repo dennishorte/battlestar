@@ -15,7 +15,18 @@ function Card() {
     `I demand you return a card from your score pile! If you do, return a top card of equal value from your board!`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aChooseAndReturn(player, game.getZoneByPlayer(player, 'score').cards())
+      if (cards.length > 0) {
+        const returned = cards[0]
+        const matchingTopCards = game
+          .getTopCards(player)
+          .filter(card => card.age === returned.age)
+        game.aChooseAndReturn(player, matchingTopCards)
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

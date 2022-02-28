@@ -17,51 +17,27 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = [
-    {
-      dogma: `Draw a {1}`,
-      steps: [
-        {
-          description: `Draw a {1}`,
-          func(context, player) {
-            const { game } = context
-            return game.aDraw(context, player, 1)
-          }
-        }
-      ]
-    }
-  ]
+  this.inspireImpl = (game, player) => {
+    game.aDraw(player, { age: game.getEffectAge(this, 1) })
+  }
   this.karmaImpl = [
     {
-      dogma: `If you would draw a card of value higher than 1 and you have a {1} in your hand, first return all cards from your hand and draw two cards of that value.`,
       trigger: 'draw',
       kind: 'would-first',
-      checkApplies(game, player, { age }) {
-        const hasOneInHand = game
-          .getHand(player)
-          .cards
-          .map(game.getCardData)
-          .filter(c => c.age === 1)
+      matches: (game, player, { age }) => {
+        const ageCondition = age > 1
+        const handCondition = game
+          .getCardsByZone(player, 'hand')
+          .filter(c => c.age === game.getEffectAge(this, 1))
           .length > 0
 
-        return age > 1 && hasOneInHand
+        return ageCondition && handCondition
       },
-      steps: [
-        {
-          description: 'Return all cards from your hand.',
-          func(context, player) {
-            const { game } = context
-            return game.aReturnMany(context, player, game.getHand(player).cards)
-          },
-        },
-        {
-          description: 'Draw two cards of that value.',
-          func(context, player, { age }) {
-            const { game } = context
-            return game.aDrawMany(context, player, age, 2)
-          },
-        },
-      ]
+      func: (game, player, { age }) => {
+        game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+        game.aDraw(player, { age })
+        game.aDraw(player, { age })
+      }
     }
   ]
 }

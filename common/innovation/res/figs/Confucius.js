@@ -16,9 +16,37 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    const choices = game
+      .getPlayerOpponents(player)
+      .flatMap(opp => game.getTopCards(opp))
+      .filter(card => card.expansion === 'figs')
+      .filter(card => card.age === 1)
+    game.aChooseAndScore(player, choices)
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'featured-biscuit',
+      matches: (game, player, { biscuit }) => biscuit === 'k',
+      func: (game, player) => {
+        const biscuits = game.getBiscuitsByPlayer(player)
+        const choices = Object
+          .entries(biscuits)
+          .filter(([biscuit, count]) => count > 0)
+          .map(([biscuit, count]) => biscuit)
+          .filter(biscuit => biscuit !== 'k')
+
+        const biscuit = game.requestInputSingle({
+          actor: player.name,
+          title: 'Choose a Biscuit',
+          choices,
+        })[0]
+
+        return biscuit
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

@@ -16,7 +16,16 @@ function Card() {
     `You may score a card from your hand.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.getCardsByZone(player, 'hand')
+      const count = Math.floor(cards.length / 2)
+      game.aChooseAndReturn(player, cards, { count })
+    },
+    (game, player) => {
+      game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../util.js')
 
 function Card() {
   this.id = `Education`  // Card names are unique in Innovation
@@ -15,7 +16,34 @@ function Card() {
     `You may return the highest card from your score pile. If you do, draw a card of value two higher than the highest card remaining in your score pile.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const returnCard = game.aYesNo(player, 'Return the highest card from your score pile?')
+      if (returnCard) {
+        const sortedCards = game
+          .getCardsByZone(player, 'score')
+          .sort((l, r) => r.age - l.age)
+        const highestCards = util.array.takeWhile(sortedCards, card => card.age === sortedCards[0].age)
+        const cards = game.aChooseAndReturn(player, highestCards)
+
+        if (cards.length > 0) {
+          const sortedAgain = game
+            .getCardsByZone(player, 'score')
+            .sort((l, r) => r.age - l.age)
+
+          if (cards.length === 0) {
+            game.mLogNoEffect()
+          }
+          else {
+            game.aDraw(player, { age: sortedAgain[0].age + 2 })
+          }
+        }
+      }
+      else {
+        game.mLogDoNothing(player)
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

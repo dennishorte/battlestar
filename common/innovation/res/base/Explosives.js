@@ -15,7 +15,21 @@ function Card() {
     `I demand you transfer the three highest cards from your hand to my hand! If you transferred any, and then have no cards in hand, draw a {7}.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const target = game.getZoneByPlayer(leader, 'hand')
+      const cards = game.getCardsByZone(player, 'hand')
+
+      const toTransfer = game.aChooseHighest(player, cards, 3)
+      const transferred = game.aTransferMany(player, toTransfer, target)
+
+      const transferredCondition = transferred.length > 0
+      const emptyHandCondition = game.getCardsByZone(player, 'hand').length === 0
+      if (transferredCondition && emptyHandCondition) {
+        game.aDraw(player, { age: game.getEffectAge(this, 7) })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

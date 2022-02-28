@@ -15,7 +15,9 @@ function Card() {
     `Draw and meld a 5.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => game.aDrawAndMeld(player, game.getEffectAge(this, 5)),
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

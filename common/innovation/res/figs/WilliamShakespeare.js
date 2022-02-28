@@ -18,8 +18,32 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'Rivalry',
+    },
+    {
+      trigger: 'calculate-score',
+      func: (game, player) => {
+        let count = 0
+        for (const color of game.utilColors()) {
+          const zone = game.getZoneByPlayer(player, color)
+          const cards = zone.cards()
+          for (const card of cards) {
+            const splay = cards[0] === card ? 'top' : zone.splay
+            if (card.checkBiscuitIsVisible('h', splay)) {
+              count += 1
+            }
+          }
+        }
+        return count
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

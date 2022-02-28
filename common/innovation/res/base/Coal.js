@@ -17,7 +17,30 @@ function Card() {
     `You may score any one of your top cards. If you do, also score the card beneath it.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aDrawAndTuck(player, game.getEffectAge(this, 5))
+    },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['red'], 'right')
+    },
+
+    (game, player) => {
+      const card = game.aChooseCard(player, game.getTopCards(player))
+      if (card) {
+        for (let i = 0; i < 2; i++) {
+          const toScore = game.getZoneByPlayer(player, card.color).cards()[0]
+          if (toScore) {
+            game.aScore(player, toScore)
+          }
+        }
+      }
+      else {
+        game.mLogDoNothing(player)
+      }
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

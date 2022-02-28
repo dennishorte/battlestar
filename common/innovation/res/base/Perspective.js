@@ -15,7 +15,20 @@ function Card() {
     `You may return a card from your hand. If you do, score a card from your hand for every two {s} on your board.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aChooseAndReturn(
+        player,
+        game.getCardsByZone(player, 'hand'),
+        { min: 0, max: 1 }
+      )
+
+      if (cards && cards.length > 0) {
+        const count = Math.floor(game.getBiscuitsByPlayer(player).s / 2)
+        game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'), { count })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

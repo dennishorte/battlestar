@@ -15,7 +15,15 @@ function Card() {
     `I demand you exchange the two highest cards in your hand with the lowest card in my hand!`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const highest = game.aChooseHighest(player, game.getCardsByZone(player, 'hand'), 2)
+      const lowest = game.aChooseLowest(leader, game.getCardsByZone(leader, 'hand'), 1)
+
+      game.mMoveCardsTo(player, highest, game.getZoneByPlayer(leader, 'hand'))
+      game.mMoveCardsTo(player, lowest, game.getZoneByPlayer(player, 'hand'))
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

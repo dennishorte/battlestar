@@ -16,7 +16,38 @@ function Card() {
     `If all non-purple top cards on your board are value {6} or higher, claim the Universe achievement.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      while (true) {
+        const card = game.aDrawAndReveal(player, game.getEffectAge(this, 6))
+        if (card) {
+          if (card.color === 'green' || card.color === 'blue') {
+            game.aMeld(player, card)
+            game.mLog({ template: 'dogma effect repeats' })
+          }
+          else {
+            break
+          }
+        }
+      }
+    },
+
+    (game, player) => {
+      const conditionMet = game
+        .utilColors()
+        .filter(color => color !== 'purple')
+        .map(color => game.getTopCard(player, color))
+        .filter(card => card !== undefined)
+        .every(card => card.age >= 6)
+
+      if (conditionMet) {
+        game.aClaimAchievement(player, { name: 'Universe' })
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

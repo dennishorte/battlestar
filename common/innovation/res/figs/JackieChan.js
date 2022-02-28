@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../game.js')
 
 function Card() {
   this.id = `Jackie Chan`  // Card names are unique in Innovation
@@ -17,8 +18,43 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'would-win',
+      triggerAll: true,
+      matches: () => true,
+      func: (game, player, { owner }) => {
+        player = owner
+        const topFigures = game
+          .getPlayerAll()
+          .flatMap(player => game.getTopCards(player))
+          .filter(card => card.expansion === 'figs')
+          .filter(card => card !== this)
+        game.aScoreMany(player, topFigures)
+
+        const score = game.getScore(player)
+        const others = game
+          .getPlayerOpponents(player)
+          .map(other => game.getScore(other))
+        const mostPointsCondition = others.every(otherScore => otherScore < score)
+        if (mostPointsCondition) {
+          throw new GameOverEvent({
+            player,
+            reason: this.name
+          })
+        }
+        else {
+          game.mLog({
+            template: '{player} still does not have the most points',
+            args: { player }
+          })
+        }
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

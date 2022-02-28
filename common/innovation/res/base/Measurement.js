@@ -12,10 +12,23 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `You may reveal and return a card from your hand. If you do, splay that color of your cards right, and raw a card of value qual to the number of cards of that color on your board.`
+    `You may reveal and return a card from your hand. If you do, splay that color of your cards right, and draw a card of value equal to the number of cards of that color on your board.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
+      if (card) {
+        game.mReveal(player, card)
+        game.aReturn(player, card)
+        game.aSplay(player, card.color, 'right')
+        game.aDraw(player, { age: game.getCardsByZone(player, card.color).length })
+      }
+      else {
+        game.mLogDoNothing(player)
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

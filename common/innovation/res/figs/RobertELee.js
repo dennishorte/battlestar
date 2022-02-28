@@ -17,9 +17,31 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    const cardChoices = game
+      .getTopCardsAll()
+      .filter(card => card.checkHasBiscuit('l'))
+    const card = game.aChooseCard(player, cardChoices)
+
+    const targetPlayer = game.aChoosePlayer(player, game.getPlayerAll())
+    const target = game.getZoneByPlayer(targetPlayer, card.color)
+
+    game.aTransfer(player, card, target)
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'War',
+    },
+    {
+      trigger: 'extra-achievements',
+      func: (game, player) => {
+        const leafBiscuits = game.getBiscuitsByPlayer(player).l
+        return Math.floor(leafBiscuits / 7)
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

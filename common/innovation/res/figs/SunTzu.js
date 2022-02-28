@@ -12,14 +12,32 @@ function Card() {
   this.echo = ``
   this.karma = [
     `You may issue a War Decree with any two figures.`,
-    `If you would draw for a share bonus, first meld any number of cards from your hand matching the Dogma action's featured icon.`
+    `If you would draw for a share bonus, first meld any number of cards from your hand matching the Dogma action's featured biscuit.`
   ]
   this.dogma = []
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aDraw(player, { age: game.getEffectAge(this, 2) })
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'War',
+    },
+    {
+      trigger: 'draw',
+      kind: 'would-first',
+      matches: (game, player, { share }) => share,
+      func: (game, player, { featuredBiscuit }) => {
+        const choices = game
+          .getCardsByZone(player, 'hand')
+          .filter(card => card.dogmaBiscuit === featuredBiscuit)
+        game.aChooseAndMeld(player, choices, { min: 0, max: choices.length })
+      }
+    },
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

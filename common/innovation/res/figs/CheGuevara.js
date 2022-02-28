@@ -17,9 +17,35 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    game.aDrawAndScore(player, game.getEffectAge(this, 9))
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'when-meld',
+      func: (game, player) => {
+        const cards = game
+          .getPlayerOpponents(player)
+          .flatMap(opp => game.getTopCards(opp))
+          .filter(card => card.expansion === 'figs')
+        game.aScoreMany(player, cards)
+      }
+    },
+
+    {
+      trigger: 'score',
+      kind: 'would-instead',
+      matches: (game, player, { card }) => card.color === 'green',
+      func: (game, player, { card }) => {
+        const cards = game
+          .getPlayerAll()
+          .flatMap(player => game.getCardsByZone(player, 'score'))
+        cards.push(card)
+        game.aRemoveMany(player, cards)
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

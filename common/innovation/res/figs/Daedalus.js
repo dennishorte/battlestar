@@ -11,14 +11,34 @@ function Card() {
   this.inspire = ``
   this.echo = `Draw and foreshadow a {4}.`
   this.karma = [
-    `Each card in your forecast adds one to the value of your highest top card for the purpose of claiming achievements. Each achievement adds its value to your score.`
+    `Each card in your forecast adds one to the value of your highest top card for the purpose of claiming achievements.`,
+    `Each achievement adds its value to your score.`
   ]
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    game.aDrawAndForeshadow(player, game.getEffectAge(this, 4))
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'calculate-eligibility',
+      reason: 'achieve',
+      func(game, player) {
+        return game.getCardsByZone(player, 'forecast').length
+      },
+    },
+    {
+      trigger: 'calculate-score',
+      func(game, player) {
+        return game
+          .getCardsByZone(player, 'achievements')
+          .filter(card => card.age !== undefined)
+          .reduce((l, r) => l + r.age, 0)
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

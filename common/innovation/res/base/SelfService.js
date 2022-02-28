@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../game.js')
 
 function Card() {
   this.id = `Self Service`  // Card names are unique in Innovation
@@ -16,7 +17,31 @@ function Card() {
     `If you have more achievements than each opponent, you win.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const choices = game
+        .getTopCards(player)
+        .filter(card => card !== this)
+      const card = game.aChooseCard(player, choices)
+      if (card) {
+        game.aCardEffects(player, player, card, 'dogma', game.getBiscuits())
+      }
+    },
+
+    (game, player) => {
+      const mine = game.getCardsByZone(player, 'achievements').length
+      const others = game
+        .getPlayerOpponents(player)
+        .map(player => game.getCardsByZone(player, 'achievements').length)
+
+      if (others.every(count => count < mine)) {
+        throw new GameOverEvent({
+          player,
+          reason: this.name
+        })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

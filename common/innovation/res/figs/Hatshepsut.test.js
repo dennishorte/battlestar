@@ -4,39 +4,84 @@ const t = require('../../testutil.js')
 
 describe('Hatshepsut', () => {
 
-  describe('inspire', () => {
-    test('draw a 1', () => {
-      const game = t.fixtureDogma('Hatshepsut', { expansions: ['base', 'figs'] })
-      game.run()
-      t.inspire(game, 'green')
+  test('inspire', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        green: ['Hatshepsut'],
+      },
+      decks: {
+        base: {
+          1: ['The Wheel', 'Mysticism']
+        }
+      }
+    })
 
-      expect(game.getHand('micah').cards.length).toBe(3)
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Inspire.green')
+
+    t.testBoard(game, {
+      dennis: {
+        green: ['Hatshepsut'],
+        hand: ['The Wheel', 'Mysticism']
+      },
     })
   })
 
-  describe('karma', () => {
-    test('if you would draw', () => {
-      const game = t.fixtureDogma('Hatshepsut', { expansions: ['base', 'figs'] })
-      t.setColor(game, 'dennis', 'blue', []) // Prevents sharing
-      t.setColor(game, 'micah', 'blue', ['Writing'])
-      t.setHand(game, 'micah', ['Imhotep'])
+  test('karma (one in hand)', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        green: ['Hatshepsut'],
+        blue: ['Writing'],
+        hand: ['The Wheel', 'Enterprise']
+      },
+      decks: {
+        base: {
+          2: ['Calendar', 'Fermenting', 'Construction']
+        }
+      }
+    })
 
-      jest.spyOn(game, 'aReturnMany')
-      jest.spyOn(game, 'aDrawMany')
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Writing')
+    const request3 = t.choose(game, request2, 'auto')
 
-      game.run()
-      t.dogma(game, 'Writing')
-
-      expect(game.aReturnMany).toHaveBeenCalled()
-      expect(game.aDrawMany).toHaveBeenCalled()
-
-      const handAges = game
-        .getHand('micah')
-        .cards
-        .map(game.getCardData)
-        .map(c => c.age)
-      expect(handAges).toStrictEqual([2, 2, 2])
+    t.testIsSecondPlayer(request3)
+    t.testBoard(game, {
+      dennis: {
+        green: ['Hatshepsut'],
+        blue: ['Writing'],
+        hand: ['Calendar', 'Fermenting', 'Construction']
+      },
     })
   })
 
+  test('karma (no one in hand)', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        green: ['Hatshepsut'],
+        blue: ['Writing'],
+        hand: ['Enterprise']
+      },
+      decks: {
+        base: {
+          2: ['Calendar']
+        }
+      }
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Writing')
+
+    t.testIsSecondPlayer(request2)
+    t.testBoard(game, {
+      dennis: {
+        green: ['Hatshepsut'],
+        blue: ['Writing'],
+        hand: ['Calendar', 'Enterprise']
+      },
+    })
+  })
 })

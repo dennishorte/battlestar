@@ -17,8 +17,25 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aDrawAndForeshadow(player, game.getEffectAge(this, 2))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'foreshadow',
+      kind: 'would-first',
+      matches: (game, player, { card }) => {
+        const forecast = game.getCardsByZone(player, 'forecast')
+        return forecast.find(other => other.age === card.age)
+      },
+      func(game, player, { card }) {
+        const toScore = game
+          .getCardsByZone(player, 'forecast')
+          .filter(other => other.age === card.age)
+        game.aScoreMany(player, toScore)
+      },
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

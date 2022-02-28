@@ -17,8 +17,19 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aChooseAndSplay(player, null, 'up')
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'list-effects',
+      func: (game, player) => {
+        return game
+          .getPlayerAll()
+          .flatMap(player => game.getDogmaTargets(player))
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

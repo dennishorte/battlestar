@@ -16,7 +16,24 @@ function Card() {
     `Return your bottom red card.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { biscuits, leader }) => {
+      const count = Math.floor(biscuits[leader.name].c / 4)
+      const choices = game.getZoneByPlayer(player, 'score').cards()
+      const target = game.getZoneByPlayer(leader, 'score')
+      game.aChooseAndTransfer(player, choices, target, { count })
+    },
+
+    (game, player) => {
+      const red = game.getZoneByPlayer(player, 'red').cards()
+      if (red.length === 0) {
+        game.mLogNoEffect()
+      }
+      else {
+        game.aReturn(player, red[red.length - 1])
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

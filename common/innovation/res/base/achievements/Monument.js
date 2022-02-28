@@ -4,8 +4,10 @@ module.exports = function() {
   this.exp = 'base'
   this.text = 'Tuck or score six cards in one turn.'
   this.alt = 'Masonry'
-  this.checkPlayerIsEligible = function(game, player) {
+  this.isSpecialAchievement = true
+  this.checkPlayerIsEligible = function(game, player, reduceCost) {
     const counts = game.state.monument[player.name] || {}
-    return counts.score >= 6 || counts.tuck >= 6
+    const targetCount = reduceCost ? 5 : 6
+    return counts.score >= targetCount || counts.tuck >= targetCount
   }
 }

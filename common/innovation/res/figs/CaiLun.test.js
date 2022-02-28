@@ -4,65 +4,88 @@ const t = require('../../testutil.js')
 
 describe('Cai Lun', () => {
 
-  describe('echo', () => {
-    describe('You may splay one color of your cards left.', () => {
-      test('choose a color', () => {
-        const game = t.fixtureDogma('Cai Lun')
-        t.setColor(game, 'micah', 'red', ['Construction', 'Industrialization'])
-        game.run()
-        t.dogma(game, 'Cai Lun')
-        game.submit({
-          actor: 'micah',
-          name: 'Choose Color',
-          option: ['red']
-        })
+  test('echo', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        green: ['Navigation', 'Sailing',],
+        yellow: ['Cai Lun', 'Fermenting'],
+      },
+    })
 
-        expect(game.getZoneColorByPlayer('micah', 'red').splay).toBe('left')
-      })
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Cai Lun')
 
-      test('do not choose a color', () => {
-        const game = t.fixtureDogma('Cai Lun')
-        t.setColor(game, 'micah', 'red', ['Construction', 'Industrialization'])
-        game.run()
-        t.dogma(game, 'Cai Lun')
-        game.submit({
-          actor: 'micah',
-          name: 'Choose Color',
-          option: []
-        })
+    t.testChoices(request2, ['green', 'yellow'])
 
-        expect(game.getZoneColorByPlayer('micah', 'red').splay).toBe('none')
-      })
+    const request3 = t.choose(game, request2, 'green')
 
+    t.testBoard(game, {
+      dennis: {
+        green: {
+          cards: ['Navigation', 'Sailing'],
+          splay: 'left'
+        },
+        yellow: ['Cai Lun', 'Fermenting'],
+      },
     })
   })
 
-  describe('karma', () => {
-    test('If you would claim an achievement, first draw and foreshadow a {3}.', () => {
-      const game = t.fixtureDogma('Cai Lun', { expansions: ['base', 'figs'] })
-      t.setScore(game, 'micah', ['Coal'])
-      t.setAchievements(game, ['Imhotep'])
-      game.run()
-      t.achieveStandard(game, 1)
-
-      const forecastAges = t.getZoneAges(game, game.getForecast('micah'))
-      expect(forecastAges).toStrictEqual([3])
+  test('karma: achievement', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Cai Lun', 'Fermenting'],
+        score: ['Machine Tools'],
+      },
+      achievements: ['Domestication'],
+      decks: {
+        base: {
+          3: ['Machinery']
+        },
+        figs: {
+          1: ['Homer']
+        }
+      }
     })
 
-    test('Each card in your forecast counts as an available achievement for you.', () => {
-      const game = t.fixtureDogma('Cai Lun', { expansions: ['base', 'figs'] })
-      t.setForecast(game, 'micah', ['Clothing'])
-      t.setScore(game, 'micah', ['Coal'])
-      game.run()
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Achieve.age 1')
 
-      expect(game.getWaiting('micah').options).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            name: 'Karma Achievements',
-            options: expect.arrayContaining(['Clothing'])
-          })
-        ])
-      )
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Cai Lun', 'Fermenting'],
+        score: ['Machine Tools'],
+        forecast: ['Machinery'],
+        achievements: ['Domestication'],
+      },
+      micah: {
+        hand: ['Homer']
+      }
     })
+  })
+
+  test('karma: forecast achievements', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Cai Lun'],
+        score: ['Machine Tools'],
+        forecast: ['The Wheel'],
+      },
+      achievements: ['Domestication'],
+      decks: {
+        base: {
+          3: ['Machinery']
+        },
+        figs: {
+          1: ['Homer']
+        }
+      }
+    })
+
+    const request1 = game.run()
+
+    t.testActionChoices(request1, 'Achieve', ['age 1', 'The Wheel'])
   })
 })

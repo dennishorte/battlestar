@@ -16,7 +16,31 @@ function Card() {
     `If any cards were transferred due to the demand, score the lowest top card with a {c} from your board.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const choices = game.getCardsByZone(player, 'score')
+      const target = game.getZoneByPlayer(leader, 'score')
+      const transferred = game.aChooseAndTransfer(player, choices, target, { count: 2 })
+      if (transferred && transferred.length > 0) {
+        game.state.dogmaInfo.piratesLooted = true
+      }
+    },
+
+    (game, player) => {
+      if (game.state.dogmaInfo.piratesLooted) {
+        const choices = game
+          .getTopCards(player)
+          .filter(card => card.checkHasBiscuit('c'))
+        const cards = game.aChooseLowest(player, choices, 1)
+        if (cards && cards.length > 0) {
+          game.aScore(player, cards[0])
+        }
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

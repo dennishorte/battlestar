@@ -16,9 +16,21 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    game.aDraw(player, { age: 6 })
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'achievement-cost-discount',
+      func(game, player, { card }) {
+        return game
+          .getCardsByZone(player, 'hand')
+          .filter(other => other.age === card.age)
+          .length * 10
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

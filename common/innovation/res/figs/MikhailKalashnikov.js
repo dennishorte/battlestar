@@ -17,8 +17,39 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'tuck',
+      kind: 'would-instead',
+      matches: (game, player, { card }) => card.color === 'red',
+      func: (game, player) => {
+        const choices = game
+          .getPlayerOpponents(player)
+          .map(opp => game.getTopCard(opp, 'red'))
+          .filter(card => card !== undefined)
+        const selected = game.aChooseCard(player, choices)
+        game.mLog({
+          template: '{player} chooses {card}',
+          args: {
+            player,
+            card: selected
+          }
+        })
+
+        const action = game.aChoose(player, ['transfer it', 'execute it'])[0]
+
+        if (action === 'transfer it') {
+          game.aTransfer(player, selected, game.getZoneByPlayer(player, 'score'))
+        }
+        else {
+          game.aCardEffects(player, player, selected, 'dogma', game.getBiscuits(player))
+        }
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

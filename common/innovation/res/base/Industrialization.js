@@ -16,7 +16,18 @@ function Card() {
     `You may splay your red or purple cards right.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const factoryBiscuits = game.getBiscuitsByPlayer(player).f
+      const numTucks = Math.floor(factoryBiscuits / 2)
+      for (let i = 0; i < numTucks; i++) {
+        game.aDrawAndTuck(player, game.getEffectAge(this, 6))
+      }
+    },
+    (game, player) => {
+      game.aChooseAndSplay(player, ['red', 'purple'], 'right')
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

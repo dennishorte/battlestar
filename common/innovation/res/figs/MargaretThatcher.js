@@ -16,9 +16,28 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    const choices = game
+      .getPlayerAll()
+      .flatMap(player => game.getTopCards(player))
+      .filter(card => card.biscuits.includes('f') || card.biscuits.includes('c'))
+    game.aChooseAndScore(player, choices)
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'dogma',
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player) => {
+        const choices = game
+          .getPlayerAll()
+          .flatMap(player => game.getTopCards(player))
+          .filter(card => card.biscuits.includes('f') || card.biscuits.includes('c'))
+        game.aChooseAndScore(player, choices)
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

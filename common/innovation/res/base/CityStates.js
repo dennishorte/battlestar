@@ -15,7 +15,26 @@ function Card() {
     `I demand you transfer a top card with a {k} from your board to my board if you have at least four {k} on your board! If you do, draw a {1}.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { biscuits, leader }) => {
+      if (biscuits[player.name].k >= 4) {
+        const choices = game
+          .getTopCards(player)
+          .filter(card => card.biscuits.includes('k'))
+
+        const card = game.aChooseCard(player, choices)
+        if (card) {
+          const transferred = game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+          if (transferred) {
+            game.aDraw(player, { age: game.getEffectAge(this, 1) })
+          }
+          else {
+            game.mLog({ template: 'no card was transferred' })
+          }
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

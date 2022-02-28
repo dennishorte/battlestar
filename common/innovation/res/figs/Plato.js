@@ -18,8 +18,33 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aChooseAndSplay(player, null, 'left')
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'Rivalry',
+    },
+    {
+      trigger: 'calculate-biscuits',
+      func(game, player) {
+        const numSplayed = game
+          .utilColors()
+          .map(color => game.getZoneByPlayer(player, color))
+          .filter(zone => zone.splay !== 'none')
+          .length
+
+        const biscuits = game.utilEmptyBiscuits()
+        biscuits.k = numSplayed
+        biscuits.s = numSplayed
+        biscuits.l = numSplayed
+        biscuits.c = numSplayed
+
+        return biscuits
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

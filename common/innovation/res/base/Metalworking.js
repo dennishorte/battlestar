@@ -16,28 +16,16 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    {
-      dogma: `Draw and reveal a {1}. If it has a {k}, score it and repeat this dogma effect. Otherwise, keep it.`,
-      steps: [
-        {
-          description: 'Draw and reveal a {1}.',
-          func(context, player) {
-            const { game } = context
-            return game.aDraw(context, player, 1, true)
-          }
-        },
-        {
-          description: 'If it has a {k}, score it and repeat this dogma effect. Otherwise, keep it.',
-          func(context, player, data) {
-            const { game } = context
-            const card = game.getCardData(context.sentBack.card)
-            if (card.biscuits.includes('k')) {
-              context.sendBack({ repeatEffect: true })
-              return game.aScore(context, player, card)
-            }
-          }
+    (game, player) => {
+      while (true) {
+        const card = game.aDraw(player, { age: game.getEffectAge(this, 1), reveal: true })
+        if (card.checkHasBiscuit('k')) {
+          game.aScore(player, card)
         }
-      ]
+        else {
+          break
+        }
+      }
     }
   ]
   this.echoImpl = []

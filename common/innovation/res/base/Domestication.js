@@ -16,58 +16,35 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    {
-      dogma: `Meld the lowest card in your hand. Draw a {1}.`,
-      steps: [
-        {
-          description: 'Select the lowest card in your hand. You will meld it.',
-          func(context, player) {
-            const { game } = context
-            const hand = game
-              .getHand(player)
-              .cards
-              .map(game.getCardData)
-              .sort((l, r) => l.age - r.age)
+    (game, player) => {
+      const sortedCards = game
+        .getZoneByPlayer(player, 'hand')
+        .cards()
+        .sort((l, r) => l.age = r.age)
 
-            const lowest = hand.length > 0 ? hand[0].age : undefined
-            const lowestCards = hand
-              .filter(d => d.age === lowest)
-              .map(c => c.id)
+      if (sortedCards.length === 0) {
+        game.mLog({
+          template: '{player} melds nothing',
+          args: { player }
+        })
+      }
+      else {
+        const lowestCards = sortedCards
+          .filter(c => c.age === sortedCards[0].age)
+          .map(c => c.name)
 
-            return game.aChoose(context, {
-              playerName: player.name,
-              kind: 'Cards',
-              choices: lowestCards,
-              reason: 'Domestication: Meld the lowest card in your hand.',
-            })
-          }
-        },
-        {
-          description: 'Meld the card you chose.',
-          func(context, player, data) {
-            const { game } = context
-            const card = context.sentBack.chosen[0]
-            if (card) {
-              game.aMeld(context, player, card)
-            }
-            else {
-              game.mLog({
-                template: '{player} has no card to meld',
-                args: { player },
-              })
-              return context.done()
-            }
-          },
-        },
-        {
-          description: 'Draw a {1}.',
-          func(context, player) {
-            const { game } = context
-            game.aDraw(context, player, 1)
-          },
-        },
-      ]
-    },
+        const cards = game
+          .requestInputSingle({
+            actor: player.name,
+            title: "Choose a Lowest Card",
+            choices: lowestCards
+          })
+          .map(c => game.getCardByName(c))
+        game.aMeld(player, cards[0])
+      }
+
+      game.aDraw(player, { age: game.getEffectAge(this, 1) })
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

@@ -12,11 +12,31 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `You may draw and tuck a {6}. If you do, score all your top cards without a {6}.`,
+    `You may draw and tuck a {6}. If you do, score all your top cards without a {f}.`,
     `You may splay your yellow cards right.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const decision = game.aYesNo(player, 'Draw and tuck a {6}?')
+      if (decision) {
+        game.aDrawAndTuck(player, game.getEffectAge(this, 6))
+
+        const toReturn = game
+          .getTopCards(player)
+          .filter(card => !card.biscuits.includes('f'))
+
+        game.aScoreMany(player, toReturn)
+      }
+      else {
+        game.mLogDoNothing(player)
+      }
+    },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['yellow'], 'right')
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

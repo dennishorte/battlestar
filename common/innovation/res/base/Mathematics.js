@@ -15,7 +15,15 @@ function Card() {
     `You may return a card from your hand. If you do, draw and meld a card of value one higher than the card you returned.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
+      if (cards && cards.length > 0) {
+        const card = cards[0]
+        game.aDrawAndMeld(player, card.age + 1)
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

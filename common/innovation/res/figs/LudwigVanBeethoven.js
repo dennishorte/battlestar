@@ -18,8 +18,29 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'Rivalry'
+    },
+    {
+      trigger: 'score',
+      kind: 'would-instead',
+      matches: (game, player, { card }) => card.biscuits.includes('s'),
+      func: (game, player, { card }) => {
+        const toReturn = game.getCardsByZone(player, 'score')
+        toReturn.push(card)
+        game.aReturnMany(player, toReturn)
+        game.aDrawAndScore(player, game.getEffectAge(this, 5))
+        game.aDrawAndScore(player, game.getEffectAge(this, 5))
+        game.aDrawAndScore(player, game.getEffectAge(this, 5))
+        game.aDrawAndScore(player, game.getEffectAge(this, 5))
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

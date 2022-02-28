@@ -4,35 +4,41 @@ const t = require('../../../testutil.js')
 
 describe('History', () => {
   test('four effects in one color', () => {
-    const game = t.fixtureFirstPicks({ expansions: ['base', 'echo'] })
-    t.setColor(game, 'micah', 'yellow', ['Chopsticks', 'Toothbrush', 'Deodorant'])
-    t.setSplay(game, 'micah', 'yellow', 'up')
-    t.setHand(game, 'micah', ['Barometer'])
-    game.run()
-    t.meld(game, 'Barometer')
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    game.testSetBreakpoint('before-first-player', (game) => {
+      t.setColor(game, 'dennis', 'yellow', ['Chopsticks', 'Toothbrush', 'Deodorant'])
+      t.setSplay(game, 'dennis', 'yellow', 'up')
+      t.setHand(game, 'dennis', ['Barometer'])
+    })
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Meld.Barometer')
 
-    expect(game.getAchievements('micah').cards).toStrictEqual(['History'])
+    expect(t.cards(game, 'achievements')).toStrictEqual(['History'])
   })
 
   test('three effects in one color', () => {
-    const game = t.fixtureFirstPicks({ expansions: ['base', 'echo'] })
-    t.setColor(game, 'micah', 'yellow', ['Chopsticks', 'Toothbrush'])
-    t.setSplay(game, 'micah', 'yellow', 'up')
-    t.setHand(game, 'micah', ['Barometer'])
-    game.run()
-    t.meld(game, 'Barometer')
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    game.testSetBreakpoint('before-first-player', (game) => {
+      t.setColor(game, 'dennis', 'yellow', ['Chopsticks', 'Toothbrush'])
+      t.setSplay(game, 'dennis', 'yellow', 'up')
+      t.setHand(game, 'dennis', ['Barometer'])
+    })
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Meld.Barometer')
 
-    expect(game.getAchievements('micah').cards).toStrictEqual([])
+    expect(t.cards(game, 'achievements')).toStrictEqual([])
   })
 
   test('four effects spread across two colors', () => {
-    const game = t.fixtureFirstPicks({ expansions: ['base', 'echo'] })
-    t.setColor(game, 'micah', 'yellow', ['Chopsticks', 'Toothbrush', 'Deodorant'])
-    t.setSplay(game, 'micah', 'yellow', 'up')
-    t.setHand(game, 'micah', ['Toilet'])
-    game.run()
-    t.meld(game, 'Toilet')
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    game.testSetBreakpoint('before-first-player', (game) => {
+      t.setColor(game, 'dennis', 'yellow', ['Chopsticks', 'Toothbrush', 'Deodorant'])
+      t.setSplay(game, 'dennis', 'yellow', 'up')
+      t.setHand(game, 'dennis', ['Toilet'])
+    })
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Meld.Toilet')
 
-    expect(game.getAchievements('micah').cards).toStrictEqual([])
+    expect(t.cards(game, 'achievements')).toStrictEqual([])
   })
 })

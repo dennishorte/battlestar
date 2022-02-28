@@ -18,8 +18,32 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    while (true) {
+      const card = game.aDrawAndMeld(player, game.getEffectAge(this, 3))
+      if (!card.checkHasBiscuit('l')) {
+        break
+      }
+    }
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'Trade',
+    },
+    {
+      trigger: 'draw',
+      kind: 'would-first',
+      matches: (game, player, { age }) => age === 3,
+      func: (game, player) => {
+        game.aChooseAndTransfer(
+          player,
+          game.getCardsByZone(player, 'score'),
+          game.getZoneByPlayer(player, 'forecast')
+        )
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

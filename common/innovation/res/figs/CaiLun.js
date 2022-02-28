@@ -18,50 +18,26 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = [
-    {
-      karma: `You may splay one color of your cards left.`,
-      steps: [
-        {
-          description: 'Choose up to one color to splay left',
-          func(context, player) {
-            const { game } = context
-            return game.aChooseAndSplay(context, {
-              playerName: player.name,
-              direction: 'left',
-            })
-          }
-        },
-      ],
+    (game, player) => {
+      game.aChooseAndSplay(player, null, 'left')
     }
   ]
   this.inspireImpl = []
   this.karmaImpl = [
     {
-      karma: `If you would claim an achievement, first draw and foreshadow a {3}.`,
-      trigger: 'claim-achievement',
+      trigger: 'achieve',
       kind: 'would-first',
-      checkApplies: () => true,
-      steps: [
-        {
-          description: `If you would claim an achievement, first draw and foreshadow a {3}.`,
-          func(context, player) {
-            const { game } = context
-            return game.aDrawAndForecast(context, player, 3)
-          }
-        }
-      ]
-    },
-    {
-      karma: `Each card in your forecast counts as an available achievement for you.`,
-      trigger: 'list-achievements',
-      kind: 'each',
-      checkApplies: () => true,
-      func(game, player) {
-        return game
-          .getForecast(player)
-          .cards
+      matches: () => true,
+      func: (game, player) => {
+        game.aDrawAndForeshadow(player, game.getEffectAge(this, 3))
       }
     },
+    {
+      trigger: 'list-achievements',
+      func(game, player) {
+        return game.getCardsByZone(player, 'forecast')
+      }
+    }
   ]
 }
 

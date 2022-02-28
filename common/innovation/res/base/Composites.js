@@ -15,7 +15,18 @@ function Card() {
     `I demand you transfer all but one card from your hand to my hand! Also, transfer the highest card from your score pile to my score pile!`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const cards = game.getCardsByZone(player, 'hand')
+      const count = cards.length - 1
+      game.aChooseAndTransfer(player, cards, game.getZoneByPlayer(leader, 'hand'), { count })
+
+      const highestScore = game.utilHighestCards(
+        game.getCardsByZone(player, 'score')
+      )
+      game.aChooseAndTransfer(player, highestScore, game.getZoneByPlayer(leader, 'score'))
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

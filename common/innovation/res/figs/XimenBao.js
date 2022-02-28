@@ -18,8 +18,31 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'Expansion',
+    },
+    {
+      trigger: ['list-echo-effects', 'list-inspire-effects'],
+      func(game, player, { color, kind }) {
+        if (color !== 'yellow') {
+          return game.getVisibleEffectsByColor(player, color, kind)
+        }
+        else {
+          return game
+            .getVisibleEffectsByColor(player, 'red', kind)
+            .concat(game.getVisibleEffectsByColor(player, 'blue', kind))
+            .concat(game.getVisibleEffectsByColor(player, 'green', kind))
+            .concat(game.getVisibleEffectsByColor(player, 'purple', kind))
+            .concat(game.getVisibleEffectsByColor(player, 'yellow', kind))
+        }
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

@@ -17,9 +17,32 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    const choices = game
+      .getPlayerAll()
+      .filter(other => other !== player)
+      .flatMap(player => game.getCardsByZone(player, 'score'))
+    game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'score'), { hidden: true })
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'War',
+    },
+    {
+      trigger: 'score',
+      kind: 'would-instead',
+      matches: () => true,
+      func: (game, player, { card }) => {
+        const cards = game
+          .getPlayerAll()
+          .flatMap(player => game.getTopCards(player))
+          .filter(other => other.color === card.color)
+        game.aScoreMany(player, cards)
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

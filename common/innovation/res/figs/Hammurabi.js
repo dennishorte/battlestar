@@ -17,8 +17,22 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'demand-success',
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player, { effectInfo, leader }) => {
+        game.aCardEffect(leader, effectInfo, {
+          biscuits: game.getBiscuits(),
+          leader: player
+        })
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

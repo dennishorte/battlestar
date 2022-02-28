@@ -16,7 +16,38 @@ function Card() {
     `You may return a {3} from your hand. If you do, draw and meld three {1}.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.getCardsByZone(player, 'hand')
+      if (cards.length >= 3) {
+        const doIt = game.aYesNo(player, 'Return three cards to draw and meld a {3}?')
+        if (doIt) {
+          const returned = game.aChooseAndReturn(player, cards, { count: 3 })
+          if (returned.length === 3) {
+            game.aDrawAndMeld(player, game.getEffectAge(this, 3))
+          }
+        }
+        else {
+          game.mLogDoNothing(player)
+        }
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    },
+
+    (game, player) => {
+      const choices = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => card.age === 3)
+      const returned = game.aChooseAndReturn(player, choices, { min: 0, max: 1 })
+      if (returned && returned.length > 0) {
+        game.aDrawAndMeld(player, game.getEffectAge(this, 1))
+        game.aDrawAndMeld(player, game.getEffectAge(this, 1))
+        game.aDrawAndMeld(player, game.getEffectAge(this, 1))
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

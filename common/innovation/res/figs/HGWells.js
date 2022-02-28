@@ -17,8 +17,36 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aDrawAndForeshadow(player, game.getEffectAge(this, 10))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'foreshadow',
+      kind: 'would-instead',
+      matches: () => true,
+      func: (game, player, { card }) => {
+        game.aMeld(player, card)
+        game.aCardEffects(
+          player,
+          player,
+          card,
+          'dogma',
+          game.getBiscuitsByPlayer(player),
+        )
+        const topCard = game.getTopCard(player, card.color)
+        if (topCard === card) {
+          game.aRemove(player, card)
+        }
+        else {
+          game.mLog({
+            template: "{card} is no longer a top card on {player}'s board",
+            args: { card, player }
+          })
+        }
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

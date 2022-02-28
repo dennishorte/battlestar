@@ -15,7 +15,19 @@ function Card() {
     `Draw and tuck a {3}. If it has a {c}, repeat this dogma effect.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      while (true) {
+        const card = game.aDrawAndTuck(player, game.getEffectAge(this, 3))
+        if (card.biscuits.includes('c')) {
+          game.mLog({ template: 'effect repeats' })
+        }
+        else {
+          break
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

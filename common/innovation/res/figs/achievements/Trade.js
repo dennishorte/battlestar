@@ -4,21 +4,15 @@ function Card() {
   this.id = 'Trade'
   this.name = 'Trade'
   this.exp = 'figs'
-  this.text = ''
+  this.text = 'Draw and foreshadow three cards of value one higher than your highest top card.'
   this.alt = ''
-  this.decreeImpl = [{
-    dogma: '',
-    steps: [
-      {
-        description: 'Draw a card of value two higher than your highest top card.',
-        func(context, player) {
-          const { game } = context
-          return game.aChooseAndSplay(context, {
-          })
-        }
-      },
-    ]
-  }]
+  this.isSpecialAchievement = true
+  this.decreeImpl = (game, player) => {
+    const age = game.getHighestTopAge(player) + 1
+    game.aDrawAndForeshadow(player, age)
+    game.aDrawAndForeshadow(player, age)
+    game.aDrawAndForeshadow(player, age)
+  }
 }
 
 Card.prototype = Object.create(CardBase.prototype)

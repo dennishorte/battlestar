@@ -15,7 +15,19 @@ function Card() {
     `Return all your top cards without a {f}, and then draw an {8} for each card you returned.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const toReturn = game
+        .getTopCards(player)
+        .filter(card => !card.checkHasBiscuit('f'))
+      const returned = game.aReturnMany(player, toReturn)
+      if (returned) {
+        for (let i = 0; i < returned.length; i++) {
+          game.aDraw(player, { age: game.getEffectAge(this, 8) })
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

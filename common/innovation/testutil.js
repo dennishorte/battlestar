@@ -1,380 +1,522 @@
-const log = require('../lib/log.js')
+const { GameOverEvent } = require('./game.js')
+const { InnovationFactory } = require('./innovation.js')
+const log = require('./log.js')
 
-const { factory } = require('./game.js')
 
 const TestUtil = {}
+
+TestUtil.fixture = function(options) {
+  options = Object.assign({
+    name: 'test_game',
+    seed: 'test_seed',
+    expansions: ['base'],
+    numPlayers: 2,
+    players: [
+      {
+        _id: 'dennis_id',
+        name: 'dennis',
+      },
+      {
+        _id: 'micah_id',
+        name: 'micah',
+      },
+      {
+        _id: 'scott_id',
+        name: 'scott',
+      },
+      {
+        _id: 'eliya_id',
+        name: 'eliya',
+      },
+    ]
+  }, options)
+
+  options.players = options.players.slice(0, options.numPlayers)
+
+  const game = InnovationFactory(options, 'dennis')
+
+  game.testSetBreakpoint('initialization-complete', (game) => {
+    // Set turn order
+    game.state.players = ['dennis', 'micah', 'scott', 'eliya']
+      .slice(0, game.settings.numPlayers)
+      .map(name => game.getPlayerByName(name))
+      .filter(p => p !== undefined)
+
+    // Set initial cards in hand
+    TestUtil.clearHands(game)
+    TestUtil.setHand(game, 'dennis', ['Archery', 'Domestication'])
+    TestUtil.setHand(game, 'micah', ['Mysticism', 'Code of Laws'])
+    if (options.numPlayers >= 3) {
+      TestUtil.setHand(game, 'scott', ['Sailing', 'The Wheel'])
+    }
+    if (options.numPlayers >= 4) {
+      TestUtil.setHand(game, 'eliya', ['Oars', 'Writing'])
+    }
+  })
+
+  return game
+}
+
+TestUtil.fixtureDecrees = function(options={}) {
+  options.expansions = options.expansions || ['base', 'figs']
+  const game = TestUtil.fixtureFirstPlayer(options)
+  game.testSetBreakpoint('before-first-player', (game) => {
+    TestUtil.setHand(game, 'dennis', ['Homer', 'Ptolemy', 'Yi Sun-Sin', 'Daedalus', 'Ximen Bao'])
+  })
+  return game
+}
+
+TestUtil.fixtureFirstPlayer = function(options) {
+  const game = TestUtil.fixture(options)
+  const request1 = game.run()
+  game.respondToInputRequest({
+    actor: 'dennis',
+    title: 'Choose First Card',
+    selection: ['Archery'],
+    key: request1.key
+  })
+  game.respondToInputRequest({
+    actor: 'micah',
+    title: 'Choose First Card',
+    selection: ['Code of Laws'],
+    key: request1.key
+  })
+  if (game.settings.numPlayers >= 3) {
+    game.respondToInputRequest({
+      actor: 'scott',
+      title: 'Choose First Card',
+      selection: ['Sailing'],
+      key: request1.key
+    })
+  }
+  if (game.settings.numPlayers >= 4) {
+    game.respondToInputRequest({
+      actor: 'eliya',
+      title: 'Choose First Card',
+      selection: ['Writing'],
+      key: request1.key
+    })
+  }
+
+  game.testSetBreakpoint('before-first-player', (game) => {
+    TestUtil.clearBoards(game)
+    TestUtil.clearHands(game)
+  })
+
+  return game
+}
+
+TestUtil.fixtureTopCard = function(cardName, options) {
+  const game = TestUtil.fixtureFirstPlayer(options)
+  game.testSetBreakpoint('before-first-player', (game) => {
+    game
+      .getPlayerAll()
+      .forEach(player => TestUtil.clearBoard(game, player.name))
+
+    const card = game.getCardByName(cardName)
+    TestUtil.setColor(game, game.getPlayerCurrent().name, card.color, [cardName])
+  })
+  return game
+}
+
+TestUtil.testActionChoices = function(request, action, expected) {
+  const actionChoices = request.selectors[0].choices.find(c => c.name === action).choices
+  expect(actionChoices.sort()).toStrictEqual(expected.sort())
+}
+
+TestUtil.testChoices = function(request, expected, expectedMin, expectedMax) {
+  const choices = request.selectors[0].choices.filter(c => c !== 'auto').sort()
+  expect(choices).toStrictEqual(expected.sort())
+
+  if (expectedMax) {
+    const { min, max } = request.selectors[0]
+    expect(min).toBe(expectedMin)
+    expect(max).toBe(expectedMax)
+  }
+
+  // This is actually just count
+  else if (expectedMin) {
+    expect(request.selectors[0].count).toBe(expectedMin)
+  }
+}
+
+TestUtil.testIsSecondPlayer = function(request) {
+  const selector = request.selectors[0]
+  expect(selector.actor).toBe('micah')
+  expect(selector.title).toBe('Choose First Action')
+}
+
+TestUtil.testDecreeForTwo = function(figureName, decreeName) {
+  const game = TestUtil.fixtureTopCard(figureName, { expansions: ['base', 'figs'] })
+  game.testSetBreakpoint('before-first-player', (game) => {
+    TestUtil.setHand(game, 'dennis', ['Homer', 'Ptahotep'])
+  })
+  const request1 = game.run()
+  expect(TestUtil.getChoices(request1, 'Decree')).toStrictEqual([decreeName])
+}
+
+TestUtil.testNoFade = function(cardName) {
+  const game = TestUtil.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+  game.testSetBreakpoint('before-first-player', (game) => {
+    TestUtil.setColor(game, 'dennis', 'blue', ['Albert Einstein'])
+    TestUtil.setColor(game, 'dennis', 'purple', ['Al-Kindi'])
+    TestUtil.setColor(game, 'dennis', 'green', ['Adam Smith'])
+
+    const targetCard = game.getCardByName(cardName)
+    TestUtil.setColor(game, 'dennis', targetCard.color, [targetCard.id])
+  })
+
+  const request1 = game.run()
+  const request2 = TestUtil.choose(game, request1, 'Draw.draw a card')
+
+  TestUtil.testIsSecondPlayer(request2)
+}
+
+TestUtil.testZone = function(game, zoneName, expectedCards, opts={}) {
+  const zoneCards = TestUtil.cards(game, zoneName, opts.player)
+  if (opts.sort || !game.utilColors().includes(zoneName)) {
+    zoneCards.sort()
+    expectedCards.sort()
+  }
+  expect(zoneCards).toStrictEqual(expectedCards)
+}
+
+TestUtil.setBoard = function(game, state) {
+  game.testSetBreakpoint('before-first-player', (game) => {
+    if (state.achievements) {
+      TestUtil.setAvailableAchievements(game, state.achievements)
+    }
+
+    for (const name of ['dennis', 'micah', 'scott', 'eliya']) {
+      const playerBoard = state[name]
+      if (playerBoard) {
+        for (const color of game.utilColors()) {
+          if (playerBoard[color]) {
+            const cards = playerBoard[color].cards || playerBoard[color]
+            TestUtil.setColor(game, name, color, cards)
+
+            if (playerBoard[color].splay) {
+              TestUtil.setSplay(game, name, color, playerBoard[color].splay)
+            }
+          }
+        }
+
+        if (playerBoard.score) {
+          TestUtil.setScore(game, name, playerBoard.score)
+        }
+
+        if (playerBoard.achievements) {
+          TestUtil.setAchievements(game, name, playerBoard.achievements)
+        }
+
+        if (playerBoard.forecast) {
+          TestUtil.setForecast(game, name, playerBoard.forecast)
+        }
+
+        if (playerBoard.hand) {
+          TestUtil.setHand(game, name, playerBoard.hand)
+        }
+      }
+    }
+
+    const decks = state.decks || {}
+    for (const exp of Object.keys(decks)) {
+      for (const [age, cards] of Object.entries(decks[exp])) {
+        TestUtil.setDeckTop(game, exp, parseInt(age), cards)
+      }
+    }
+  })
+}
+
+function _blankTableau() {
+  return {
+    hand: [],
+    achievements: [],
+    score: [],
+    forecast: [],
+    red: [],
+    yellow: [],
+    green: [],
+    blue: [],
+    purple: [],
+  }
+}
+
+function _buildPlayerBoard(game, opts) {
+  const playerBoard = Object.assign(_blankTableau(), opts)
+
+  for (const color of game.utilColors()) {
+    if (Array.isArray(playerBoard[color])) {
+      playerBoard[color] = {
+        cards: playerBoard[color],
+        splay: 'none'
+      }
+    }
+  }
+
+  for (const zone of ['hand', 'score', 'forecast', 'achievements']) {
+    playerBoard[zone].sort()
+  }
+
+  return playerBoard
+}
+
+TestUtil.testBoard = function(game, state) {
+  const expected = {}
+  const real = {}
+
+  for (const player of game.getPlayerAll()) {
+    const expectedBoard = _buildPlayerBoard(game, state[player.name])
+    const realBoard = _blankTableau()
+
+    for (const color of game.utilColors()) {
+      const zone = game.getZoneByPlayer(player, color)
+      const cards = zone.cards().map(card => card.name)
+      realBoard[color] = {
+        cards,
+        splay: zone.splay
+      }
+    }
+
+    for (const zone of ['hand', 'score', 'forecast', 'achievements']) {
+      realBoard[zone] = game.getCardsByZone(player, zone).map(c => c.name).sort()
+    }
+
+    expected[player.name] = expectedBoard
+    real[player.name] = realBoard
+  }
+
+  expect(real).toStrictEqual(expected)
+}
+
+TestUtil.testGameOver = function(request, playerName, reason) {
+  expect(request).toEqual(expect.any(GameOverEvent))
+  expect(request.data.player.name).toBe(playerName)
+  expect(request.data.reason).toBe(reason)
+}
+
+TestUtil.testNotGameOver = function(request) {
+  expect(request).not.toEqual(expect.any(GameOverEvent))
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Data Shortcuts
+
+TestUtil.dennis = function(game) {
+  return game.getPlayerByName('dennis')
+}
+
+TestUtil.cards = function(game, zoneName, playerName='dennis') {
+  return TestUtil.zone(game, zoneName, playerName).cards().map(c => c.name)
+}
+
+TestUtil.zone = function(game, zoneName, playerName='dennis') {
+  return game.getZoneByPlayer(game.getPlayerByName(playerName), zoneName)
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Handy functions
+
+TestUtil.choose = function(game, request, ...selections) {
+  const selector = request.selectors[0]
+  selections = selections.map(string => {
+    const tokens = typeof string === 'string' ? string.split('.') : [string]
+    if (tokens.length === 1) {
+      return tokens[0]
+    }
+    else if (tokens.length === 2) {
+      return {
+        name: tokens[0],
+        selection: tokens[1] === '*' ? [] : [tokens[1]]
+      }
+    }
+    else {
+      throw new Error(`Selection is too deep: ${string}`)
+    }
+  })
+
+  return game.respondToInputRequest({
+    actor: selector.actor,
+    title: selector.title,
+    selection: selections,
+    key: request.key,
+  })
+}
+
+TestUtil.clearZone = function(game, playerName, zoneName) {
+  const player = game.getPlayerByName(playerName)
+  const zone = game.getZoneByPlayer(player, zoneName)
+  for (const card of zone.cards()) {
+    game.mReturn(player, card, { silent: true })
+  }
+}
+
+TestUtil.clearBoard = function(game, playerName) {
+  const player = game.getPlayerByName(playerName)
+  for (const color of game.utilColors()) {
+    const zone = game.getZoneByPlayer(player, color)
+    for (const card of zone.cards()) {
+      game.mReturn(player, card, { silent: true })
+    }
+  }
+}
+
+TestUtil.clearBoards = function(game) {
+  for (const player of game.getPlayerAll()) {
+    TestUtil.clearBoard(game, player.name)
+  }
+}
+
+TestUtil.clearHand = function(game, playerName) {
+  const player = game.getPlayerByName(playerName)
+  const cards = game.getZoneByPlayer(player, 'hand').cards()
+  for (const card of cards) {
+    game.mMoveCardTo(card, game.getZoneById(card.home))
+  }
+}
+
+TestUtil.clearHands = function(game) {
+  for (const player of game.getPlayerAll()) {
+    TestUtil.clearHand(game, player.name)
+  }
+}
+
+TestUtil.getChoices = function(request, kind) {
+  return request
+    .selectors[0]
+    .choices
+    .find(c => c.name === kind)
+    .choices
+}
+
+TestUtil.setAchievements = function(game, playerName, cardNames) {
+  const player = game.getPlayerByName(playerName)
+  const zone = game.getZoneByPlayer(player, 'achievements')
+  const cards = cardNames.map(name => game.getCardByName(name))
+  for (const card of zone.cards()) {
+    game.mReturn(player, card, { silent: true })
+  }
+  for (const card of cards) {
+    game.mMoveCardTo(card, zone)
+  }
+}
+
+TestUtil.setAvailableAchievements = function(game, cardNames) {
+  const cards = cardNames.map(name => game.getCardByName(name))
+  const zone = game.getZoneById('achievements')
+
+  for (const card of zone.cards()) {
+    if (!card.isSpecialAchievement) {
+      game.mMoveCardTo(card, game.getZoneById(card.home))
+    }
+  }
+
+  for (const card of cards) {
+    game.mMoveCardTo(card, zone)
+  }
+}
+
+TestUtil.setColor = function(game, playerName, colorName, cardNames) {
+  const player = game.getPlayerByName(playerName)
+  const zone = game.getZoneByPlayer(player, colorName)
+  const cards = cardNames.map(name => game.getCardByName(name))
+  for (const card of zone.cards()) {
+    game.mReturn(player, card, { silent: true })
+  }
+  for (const card of cards) {
+    game.mMoveCardTo(card, zone)
+  }
+}
+
+TestUtil.setDeckTop = function(game, exp, age, cardNames) {
+  const deck = game.getZoneByDeck(exp, age)
+  const cards = cardNames
+    .map(c => game.getCardByName(c))
+    .reverse()
+  for (const card of cards) {
+    game.mMoveCardToTop(card, deck)
+  }
+}
+
+TestUtil.setForecast = function(game, playerName, cardNames) {
+  TestUtil.clearHand(game, playerName)
+  const player = game.getPlayerByName(playerName)
+  const forecast = game.getZoneByPlayer(player, 'forecast')
+  for (const name of cardNames) {
+    const card = game.getCardByName(name)
+    game.mMoveCardTo(card, forecast)
+  }
+}
+
+TestUtil.setHand = function(game, playerName, cardNames) {
+  TestUtil.clearHand(game, playerName)
+  const player = game.getPlayerByName(playerName)
+  const hand = game.getZoneByPlayer(player, 'hand')
+  for (const name of cardNames) {
+    const card = game.getCardByName(name)
+    game.mMoveCardTo(card, hand)
+  }
+}
+
+TestUtil.setScore = function(game, playerName, cardNames) {
+  TestUtil.clearZone(game, playerName, 'score')
+  const player = game.getPlayerByName(playerName)
+  const score = game.getZoneByPlayer(player, 'score')
+  for (const name of cardNames) {
+    const card = game.getCardByName(name)
+    game.mMoveCardTo(card, score)
+  }
+}
+
+TestUtil.setSplay = function(game, playerName, color, direction) {
+  const player = game.getPlayerByName(playerName)
+  const zone = game.getZoneByPlayer(player, color)
+  zone.splay = direction
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// State Inspectors
 
 TestUtil.deepLog = function(obj) {
   console.log(JSON.stringify(obj, null, 2))
 }
 
-TestUtil.fixture = function(options) {
-  options = Object.assign({
-    expansions: ['base'],
-    numPlayers: 3,
-    teams: false,
-  }, options)
-
-  const lobby = {
-    game: 'Innovation',
-    name: 'Test Lobby',
-    options: {
-      expansions: options.expansions,
-      teams: options.teams,
-    },
-    users: [
-      { _id: 0, name: 'dennis' },
-      { _id: 1, name: 'micah' },
-      { _id: 2, name: 'tom' },
-      { _id: 3, name: 'eliya' },
-    ],
-  }
-
-  // Cut off unwanted players
-  lobby.users = lobby.users.slice(0, options.numPlayers)
-
-  const game = factory(lobby)
-  game.testOptions = options
-
-  return game
-}
-
-TestUtil.fixtureDecrees = function(options) {
-  const game = TestUtil.fixtureFirstPicks(options)
-  const player = game.getWaiting()[0].actor
-  game.rk.undo('Player Turn')
-  TestUtil.setHand(game, player, ['Homer', 'Ptolemy', 'Yi Sun-Sin', 'Daedalus', 'Shennong'])
-  return game
-}
-
-TestUtil.fixtureDogma = function(card, options) {
-  const game = TestUtil.fixtureFirstPicks(options)
-  const player = game.getWaiting()[0].actor
-  card = game._adjustCardParam(card)
-  game.rk.undo('Player Turn')
-
-  TestUtil.setColor(game, player, card.color, [card])
-  return game
-}
-
-TestUtil.fixtureFirstPicks = function(options) {
-  const game = TestUtil.fixture(options)
-  game.run()
-  game.rk.undo('Initialization Complete')
-
-  // Save the team ordering
-  const teams = game.getPlayerAll().map(player => player.team)
-
-  // Put the players into the expected seating order.
-  const sortedPlayers = [...game.state.players]
-  sortedPlayers.sort((l, r) => l._id - r._id)
-  game.rk.replace(game.state.players, sortedPlayers)
-
-  // Readjust teams
-  for (let i = 0; i < sortedPlayers.length; i++) {
-    game.rk.put(game.getPlayerByIndex(i), 'team', teams[i])
-  }
-
-  TestUtil.setHand(game, 'dennis', ['Archery', 'Tools'])
-  TestUtil.setHand(game, 'micah', ['Domestication', 'Writing'])
-  TestUtil.setHand(game, 'tom', ['Sailing', 'Code of Laws'])
-  TestUtil.setHand(game, 'eliya', ['Masonry', 'City States'])
-  game.run()
-
-  game.submit({
-    actor: 'dennis',
-    name: 'Choose Initial Card',
-    option: ['Tools'],
-  })
-  game.submit({
-    actor: 'micah',
-    name: 'Choose Initial Card',
-    option: ['Domestication'],
-  })
-
-  if (game.testOptions.numPlayers >= 3) {
-    game.submit({
-      actor: 'tom',
-      name: 'Choose Initial Card',
-      option: ['Sailing'],
-    })
-  }
-  if (game.testOptions.numPlayers >= 4) {
-    game.submit({
-      actor: 'eliya',
-      name: 'Choose Initial Card',
-      option: ['Masonry'],
-    })
-  }
-
-  return game
-}
-
-TestUtil.getOptionKind = function(game, optionKind) {
-  const waiting = game.getWaiting()[0]
-  return waiting.options.find(o => o.kind === optionKind)
-}
-
-TestUtil.getAchievement = function(game, actor, achievement) {
-  const sourceZone = game.getZoneByCard(achievement)
-  const targetZone = game.getAchievements(actor)
-  game.mMoveCard(sourceZone, targetZone, achievement)
-}
-
-TestUtil.getZoneAges = function(game, zone) {
-  return zone
-    .cards
-    .map(game.getCardData)
-    .map(c => c.age)
-    .sort()
-}
-
-TestUtil.achieveStandard = function(game, age) {
-  const waiting = game.getWaiting()[0]
-  game.submit({
-    actor: waiting.actor,
-    name: waiting.name,
-    option: [{
-      name: 'Standard Achievements',
-      option: [age]
-    }]
-  })
-}
-
-TestUtil.choose = function(game, ...options) {
-  const waiting = game.getWaiting()[0]
-  game.submit({
-    actor: waiting.actor,
-    name: waiting.name,
-    option: options,
-  })
-}
-
-TestUtil.decree = function(game, decree) {
-  const waiting = game.getWaiting()[0]
-  game.submit({
-    actor: waiting.actor,
-    name: waiting.name,
-    option: [{
-      name: 'Decree',
-      option: [decree]
-    }]
-  })
-}
-
-TestUtil.dogma = function(game, cardName) {
-  const waiting = game.getWaiting()[0]
-  game.submit({
-    actor: waiting.actor,
-    name: waiting.name,
-    option: [{
-      name: 'Dogma',
-      option: [cardName]
-    }]
-  })
-}
-
-TestUtil.draw = function(game, cardName) {
-  const waiting = game.getWaiting()[0]
-  game.submit({
-    actor: waiting.actor,
-    name: waiting.name,
-    option: [{
-      name: 'Draw',
-      option: ['draw a card']
-    }]
-  })
-}
-
-TestUtil.inspire = function(game, color) {
-  const waiting = game.getWaiting()[0]
-  game.submit({
-    actor: waiting.actor,
-    name: waiting.name,
-    option: [{
-      name: 'Inspire',
-      option: [color]
-    }]
-  })
-}
-
-TestUtil.meld = function(game, cardName) {
-  const waiting = game.getWaiting()[0]
-  game.submit({
-    actor: waiting.actor,
-    name: waiting.name,
-    option: [{
-      name: 'Meld',
-      option: [cardName]
-    }]
-  })
-}
-
-TestUtil.setArtifact = function(game, player, card) {
-  // This lets fixtures call this for all players regardless of the number of players in
-  // the game, so that they don't have to be constantly checking the number of players
-  // during setup. Players that don't exist just won't do anything.
-  let zone
-  try {
-    zone = game.getZoneArtifact(player)
-  }
-  catch (e) {
-    return
-  }
-
-  // Get rid of existing artifact
-  game.mReturnAll(player, zone)
-
-  // Fetch the desired artifact.
-  const cardZone = game.getZoneByCard(card)
-  game.mMoveCard(cardZone, zone, card)
-}
-
-TestUtil.setAchievements = function(game, cards) {
-  const achievements = game.getZoneByName('achievements')
-
-  for (let i = achievements.cards.length - 1; i >= 0; i--) {
-    game.mRemove(game.getPlayerByIndex(0), achievements.cards[i])
-  }
-
-  for (const card of cards) {
-    const zone = game.getZoneByCard(card)
-    game.mMoveCard(zone, achievements, card)
-  }
-}
-
-TestUtil.setColor = function(game, player, color, cards) {
-  const zone = game.getZoneColorByPlayer(player, color)
-  game.mReturnAll(player, zone)
-  for (const card of cards) {
-    const source = game.getZoneByCard(card)
-    game.mMoveCard(source, zone, card)
-  }
-}
-
-TestUtil.setForecast = function(game, player, cards) {
-  // This lets fixtures call this for all players regardless of the number of players in
-  // the game, so that they don't have to be constantly checking the number of players
-  // during setup. Players that don't exist just won't do anything.
-  let forecast
-  try {
-    forecast = game.getForecast(player)
-  }
-  catch {
-    return
-  }
-
-  for (let i = forecast.cards.length - 1; i >= 0; i--) {
-    game.mReturn(player, forecast.cards[i])
-  }
-
-  for (const card of cards) {
-    const zone = game.getZoneByCard(card)
-    game.mMoveCard(zone, forecast, card)
-  }
-}
-
-TestUtil.setHand = function(game, player, cards) {
-  // This lets fixtures call this for all players regardless of the number of players in
-  // the game, so that they don't have to be constantly checking the number of players
-  // during setup. Players that don't exist just won't do anything.
-  let hand
-  try {
-    hand = game.getHand(player)
-  }
-  catch {
-    return
-  }
-
-  for (let i = hand.cards.length - 1; i >= 0; i--) {
-    game.mReturn(player, hand.cards[i])
-  }
-
-  for (const card of cards) {
-    const zone = game.getZoneByCard(card)
-    game.mMoveCard(zone, hand, card)
-  }
-}
-
-TestUtil.setScore = function(game, player, cards) {
-  // This lets fixtures call this for all players regardless of the number of players in
-  // the game, so that they don't have to be constantly checking the number of players
-  // during setup. Players that don't exist just won't do anything.
-  let score
-  try {
-    score = game.getZoneScore(player)
-  }
-  catch {
-    return
-  }
-
-  for (let i = score.cards.length - 1; i >= 0; i--) {
-    game.mReturn(player, score.cards[i])
-  }
-
-  for (const card of cards) {
-    const zone = game.getZoneByCard(card)
-    game.mMoveCard(zone, score, card)
-  }
-}
-
-TestUtil.setSplay = function(game, player, color, direction) {
-  game.mSplay(player, color, direction)
-}
-
-TestUtil.topDeck = function(game, exp, age, cards) {
-  cards = [...cards].reverse()
-  const deck = game.getDeck(exp, age)
-  for (const card of cards) {
-    const zone = game.getZoneByCard(card)
-    game.mMoveCard(zone, deck, card, { top: true })
-  }
-}
-
 TestUtil.dumpLog = function(game) {
   const output = []
-  for (const entry of game.state.log) {
+  for (const entry of game.getLog()) {
+    if (entry === '__INDENT__' || entry === '__OUTDENT__') {
+      continue
+    }
     output.push(log.toString(entry))
   }
   console.log(output.join('\n'))
 }
 
-TestUtil.dumpStack = function(game) {
-  TestUtil.deepLog(game.state.sm.stack)
-}
-
-TestUtil.dumpWaiting = function(game) {
-  TestUtil.deepLog(game.getWaiting())
-}
-
-function _dumpZonesRecursive(root) {
+function _dumpZonesRecursive(root, indent=0) {
   const output = []
 
-  if (root.name) {
-    output.push(root.name)
-    for (const card of root.cards) {
-      if (typeof card === 'string') {
-        output.push(`   ${card}`)
-      }
-      else {
-        output.push(`   ${card.id}, ${card.name}`)
-      }
+  if (root.id) {
+    output.push(root.id)
+    for (const card of root.cards()) {
+      output.push(`   ${card.id}`)
     }
   }
 
   else {
     for (const zone of Object.values(root)) {
-      output.push(_dumpZonesRecursive(zone))
+      output.push(_dumpZonesRecursive(zone, indent+1))
     }
   }
 
   return output.join('\n')
 }
 
-TestUtil.dumpZones = function(game, root) {
-  console.log(_dumpZonesRecursive(root || game.state.zones))
+TestUtil.dumpZones = function(root) {
+  console.log(_dumpZonesRecursive(root))
 }
-
 
 
 module.exports = TestUtil

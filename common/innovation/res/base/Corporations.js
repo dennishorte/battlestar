@@ -16,7 +16,21 @@ function Card() {
     `Draw and meld and {8}`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const targets = game
+        .getTopCards(player)
+        .filter(card => card.biscuits.includes('f'))
+        .filter(card => card.color !== 'green')
+      const cards = game.aChooseAndTransfer(player, targets, game.getZoneByPlayer(leader, 'score'))
+      if (cards && cards.length > 0) {
+        game.aDrawAndMeld(player, game.getEffectAge(this, 8))
+      }
+    },
+    (game, player) => {
+      game.aDrawAndMeld(player, game.getEffectAge(this, 8))
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

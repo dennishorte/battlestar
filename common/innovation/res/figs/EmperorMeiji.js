@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../game.js')
 
 function Card() {
   this.id = `Emperor Meiji`  // Card names are unique in Innovation
@@ -18,8 +19,47 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    const age = game.aChooseAge(player, [
+      game.getEffectAge(this, 8),
+      game.getEffectAge(this, 9)
+    ])
+    game.aDrawAndForeshadow(player, age)
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'meld',
+      kind: 'would-instead',
+      matches: (game, player, { card }) => {
+        const cardCondition = card.age === 10
+        const nineCondition = game
+          .getTopCards(player)
+          .filter(card => card.age === 9)
+          .length > 0
+        const eightCondition = game
+          .getTopCards(player)
+          .filter(card => card.age === 8)
+          .length > 0
+        return cardCondition && nineCondition && eightCondition
+      },
+      func: (game, player) => {
+        throw new GameOverEvent({
+          player,
+          reason: 'Emperor Meiji'
+        })
+      }
+    },
+
+    {
+      trigger: 'list-hand',
+      func: (game, player) => {
+        return [
+          ...game.getZoneByPlayer(player, 'hand')._cards,
+          ...game.getZoneByPlayer(player, 'forecast')._cards,
+        ]
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

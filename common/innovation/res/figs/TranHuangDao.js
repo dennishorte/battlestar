@@ -16,9 +16,29 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    const choices = game
+      .getTopCardsAll()
+      .filter(card => card.age < 4)
+      .filter(card => card.color === 'red')
+    game.aChooseAndScore(player, choices)
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'calculate-biscuits',
+      func: (game, player, { biscuits }) => {
+        const bonus = Math.floor(biscuits.k / 2)
+        const output = game.utilEmptyBiscuits()
+        for (const b of Object.keys(biscuits)) {
+          if (b !== 'k' && biscuits[b] > 0) {
+            output[b] = bonus
+          }
+        }
+        return output
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

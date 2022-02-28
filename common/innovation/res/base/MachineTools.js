@@ -15,7 +15,14 @@ function Card() {
     `Draw and score a card of value equal to the highest card in your score pile.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const age = game
+        .getCardsByZone(player, 'score')
+        .reduce((l, r) => Math.max(l, r.age), 0)
+      game.aDrawAndScore(player, age)
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

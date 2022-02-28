@@ -17,8 +17,22 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aDrawAndMeld(player, game.getEffectAge(this, 1))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'meld',
+      kind: 'would-instead',
+      matches: (game, player, { card }) => {
+        const cards = game.getCardsByZone(player, card.color)
+        return cards.length > 0 && cards[0].age === card.age
+      },
+      func: (game, player, { card }) => {
+        game.aTuck(player, card)
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

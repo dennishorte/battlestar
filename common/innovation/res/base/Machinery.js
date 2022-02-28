@@ -13,10 +13,33 @@ function Card() {
   this.karma = []
   this.dogma = [
     `I demand you exchange all the cards in your hand with all the highest cards in my hand!`,
-    `Score a card from your hand with a {k}. You may splay your red cards left.`
+    `Score a card from your hand with a {k}.`,
+    `You may splay your red cards left.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const yours = game.getCardsByZone(player, 'hand')
+      const mine = game.utilHighestCards(game.getCardsByZone(leader, 'hand'))
+      for (const card of yours) {
+        game.mMoveCardTo(card, game.getZoneByPlayer(leader, 'hand'))
+      }
+      for (const card of mine) {
+        game.mMoveCardTo(card, game.getZoneByPlayer(player, 'hand'))
+      }
+    },
+
+    (game, player) => {
+      const choices = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => card.checkHasBiscuit('k'))
+      game.aChooseAndScore(player, choices)
+    },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['red'], 'left')
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

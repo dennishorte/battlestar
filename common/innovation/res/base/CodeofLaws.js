@@ -15,7 +15,24 @@ function Card() {
     `You may tuck a card from your hand of the same color as any card on your board. If you do, you may splay that color of your cards left.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const boardColors = game
+        .getTopCards(player)
+        .map(card => card.color)
+
+      const choices = game
+        .getZoneByPlayer(player, 'hand')
+        .cards()
+        .filter(card => boardColors.includes(card.color))
+
+      const cards = game.aChooseAndTuck(player, choices, { min: 0, max: 1 })
+
+      if (cards && cards.length > 0) {
+        game.aChooseAndSplay(player, [cards[0].color], 'left')
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

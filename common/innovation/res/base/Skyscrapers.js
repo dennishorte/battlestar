@@ -15,7 +15,21 @@ function Card() {
     `I demand you transfer a top non-yellow card with a {i} from your board to my board! If you do, score the card beneath it, and return all other cards from that pile!`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const choices = game
+        .getTopCards(player)
+        .filter(card => card.checkHasBiscuit('i'))
+      const cards = game.aChooseAndTransfer(player, choices, { toBoard: true, player: leader })
+      if (cards && cards.length > 0) {
+        const remaining = game.getCardsByZone(player, cards[0].color)
+        if (remaining.length > 0) {
+          game.aScore(player, remaining[0])
+        }
+        game.aReturnMany(player, remaining.slice(1), { ordered: true })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

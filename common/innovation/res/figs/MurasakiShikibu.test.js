@@ -3,84 +3,126 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 
 describe('Murasaki Shikibu', () => {
-  describe('inspire', () => {
-    test('Draw a {3}', () => {
-      const game = t.fixtureDogma('Murasaki Shikibu', { expansions: ['base', 'figs'] })
-      game.run()
-      t.inspire(game, 'purple')
 
-      const handAges = t.getZoneAges(game, game.getHand('micah'))
-      expect(handAges).toStrictEqual([1, 3, 3])
+  test('inspire', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Murasaki Shikibu'],
+      },
+      decks: {
+        base: {
+          3: ['Machinery', 'Engineering']
+        }
+      }
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Inspire.purple')
+
+    t.testIsSecondPlayer(request2)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Murasaki Shikibu'],
+        hand: ['Machinery', 'Engineering'],
+      },
     })
   })
 
-  describe('karma', () => {
-    test('Rivalry decree', () => {
-      const game = t.fixtureFirstPicks({ expansions: ['base', 'figs'] })
-      t.setColor(game, 'micah', 'purple', ['Murasaki Shikibu'])
-      t.setHand(game, 'micah', ['Homer', 'Fu Xi'])
-      game.run()
-      expect(game.getWaiting('micah').options).toEqual(expect.arrayContaining([
-        expect.objectContaining({
-          name: 'Decree',
-          options: ['Rivalry']
-        })
-      ]))
+  test('karma: decree', () => {
+    t.testDecreeForTwo('Murasaki Shikibu', 'Rivalry')
+  })
+
+  test('karma: achieve (no target in score pile)', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Murasaki Shikibu'],
+        score: ['Coal']
+      },
+      achievements: ['The Wheel']
     })
 
-    describe('If you would claim a standard achievement', () => {
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Achieve.age 1')
 
-      test('standard, available in score pile', () => {
-        const game = t.fixtureDogma('Murasaki Shikibu', { expansions: ['base', 'figs'] })
-        t.setScore(game, 'micah', ['Sinuhe', 'Coal'])
-        // Set a specific achievement in the 1 slot
-        t.setAchievements(game, ['Imhotep'])
-        game.run()
-        t.achieveStandard(game, 1)
+    t.testIsSecondPlayer(request2)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Murasaki Shikibu'],
+        score: ['Coal'],
+        achievements: ['The Wheel']
+      },
+    })
+  })
 
-        expect(game.getAchievements('micah').cards).toStrictEqual(['Sinuhe'])
-      })
+  test('karma: achieve (valid target in score pile)', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Murasaki Shikibu'],
+        score: ['Coal', 'Domestication']
+      },
+      achievements: ['The Wheel']
+    })
 
-      test('standard, available in score pile and can claim second one', () => {
-        const game = t.fixtureDogma('Murasaki Shikibu', { expansions: ['base', 'figs'] })
-        t.setScore(game, 'micah', ['Sinuhe', 'Coal', 'Computers'])
-        // Set a specific achievement in the 1 slot
-        t.setAchievements(game, ['Imhotep'])
-        game.run()
-        t.achieveStandard(game, 1)
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Achieve.age 1')
 
-        expect(game.getAchievements('micah').cards).toStrictEqual(['Sinuhe', 'Imhotep'])
-      })
+    t.testIsSecondPlayer(request2)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Murasaki Shikibu'],
+        score: ['Coal'],
+        achievements: ['Domestication']
+      },
+    })
+  })
 
-      test('standard, not available in score pile', () => {
-        const game = t.fixtureDogma('Murasaki Shikibu', { expansions: ['base', 'figs'] })
-        t.setScore(game, 'micah', ['Coal'])
-        // Set a specific achievement in the 1 slot
-        t.setAchievements(game, ['Imhotep'])
-        game.run()
-        t.achieveStandard(game, 1)
+  test('karma: achieve (can get both)', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Murasaki Shikibu'],
+        score: ['Software', 'Domestication']
+      },
+      achievements: ['The Wheel']
+    })
 
-        expect(game.getAchievements('micah').cards).toStrictEqual(['Imhotep'])
-      })
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Achieve.age 1')
 
-      test('non-standard', () => {
-        const game = t.fixtureDogma('Murasaki Shikibu', { expansions: ['base', 'echo', 'figs'] })
-        t.setScore(game, 'micah', ['Sinuhe', 'Coal', 'Computers'])
+    t.testIsSecondPlayer(request2)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Murasaki Shikibu'],
+        score: ['Software'],
+        achievements: ['Domestication', 'The Wheel']
+      },
+    })
+  })
 
-        // Setup to be able to claim Supremacy
-        t.setColor(game, 'micah', 'green', ['The Wheel'])
-        t.setColor(game, 'micah', 'yellow', ['Masonry'])
-        t.setColor(game, 'micah', 'red', ['Metalworking'])
-        t.setColor(game, 'micah', 'blue', ['Writing', 'Tools'])
-        t.setSplay(game, 'micah', 'blue', 'up')
-        t.setHand(game, 'micah', ['Alchemy'])
+  test('karma: achieve (non-standard)', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Murasaki Shikibu'],
+        score: ['Software', 'Domestication'],
+        hand: ['Homer', 'Fu Xi'],
+      },
+    })
 
-        game.run()
-        t.meld(game, 'Alchemy')
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Decree.Rivalry')
+    const request3 = t.choose(game, request2, 'auto')
 
-        expect(game.getAchievements('micah').cards).toStrictEqual(['Supremacy'])
-      })
-
+    t.testIsSecondPlayer(request3)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Murasaki Shikibu'],
+        score: ['Software', 'Domestication'],
+        achievements: ['Rivalry']
+      },
     })
   })
 })

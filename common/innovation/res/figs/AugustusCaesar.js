@@ -17,8 +17,35 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aDrawAndForeshadow(player, game.getEffectAge(this, 3))
+  }
+  this.karmaImpl = [
+    {
+      trigger: ['meld', 'foreshadow'],
+      triggerAll: true,
+      kind: 'variable',
+      matches(game, player, { card }) {
+        return card.age < 4
+      },
+      func(game, player, { card, owner }) {
+        game.mReveal(player, card)
+
+        const biscuitRequirement = card.biscuits.includes('k')
+        const colorRequirement = card.color === 'green' || card.color === 'red'
+        if (biscuitRequirement && colorRequirement) {
+          const target = game.getZoneByPlayer(owner, card.color)
+          game.mTransfer(owner, card, target)
+          game.aTuckMany(owner, game.getCardsByZone(owner, 'forecast'))
+          return 'would-instead'
+        }
+        else {
+          game.mLog({ template: 'no additional effect' })
+          return 'would-first'
+        }
+      },
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

@@ -16,7 +16,24 @@ function Card() {
     `Draw and tuck a {1}.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const leaderColors = game
+        .getTopCards(leader)
+        .map(card => card.color)
+      const choices = game
+        .getTopCards(player)
+        .filter(card => !leaderColors.includes(card.color))
+      const transferred = game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(leader, 'score'))
+      if (transferred) {
+        game.aDrawAndTuck(player, game.getEffectAge(this, 1))
+      }
+    },
+
+    (game, player) => {
+      game.aDrawAndTuck(player, game.getEffectAge(this, 1))
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

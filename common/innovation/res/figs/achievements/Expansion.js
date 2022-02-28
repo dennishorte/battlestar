@@ -6,21 +6,10 @@ function Card() {
   this.exp = 'figs'
   this.text = 'Splay any one of your colors up.'
   this.alt = ''
-  this.decreeImpl = [{
-    dogma: '',
-    steps: [
-      {
-        description: 'Draw a card of value two higher than your highest top card.',
-        func(context, player) {
-          const { game } = context
-          return game.aChooseAndSplay(context, {
-            playerName: player.name,
-            direction: 'up',
-          })
-        }
-      },
-    ]
-  }]
+  this.isSpecialAchievement = true
+  this.decreeImpl = (game, player) => {
+    game.aChooseAndSplay(player, null, 'up', { count: 1 })
+  }
 }
 
 

@@ -18,8 +18,24 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aDrawAndMeld(player, game.getEffectAge(this, 2))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'Trade',
+    },
+    {
+      trigger: 'list-effects',
+      func(game, player) {
+        return game
+          .getPlayerAll()
+          .map(player => game.getTopCard(player, 'blue'))
+          .filter(card => card !== undefined)
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

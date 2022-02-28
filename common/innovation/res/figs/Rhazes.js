@@ -16,9 +16,28 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    const age = game.aChooseAge(player, [
+      game.getEffectAge(this, 3),
+      game.getEffectAge(this, 4),
+      game.getEffectAge(this, 5),
+    ])
+    game.aDrawAndForeshadow(player, age)
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'draw',
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player, { age }) => {
+        const choices = game
+          .getCardsByZone(player, 'hand')
+          .filter(other => other.age === age)
+        game.aChooseAndTuck(player, choices)
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

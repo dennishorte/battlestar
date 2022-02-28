@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../util.js')
 
 function Card() {
   this.id = `Socialism`  // Card names are unique in Innovation
@@ -15,7 +16,38 @@ function Card() {
     `You may tuck all cards from your hand. If you tuck one, you must tuck them all. If you tucked at least one purple card, take all the lowest cards in each opponent's hand into your hand.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.getCardsByZone(player, 'hand')
+      if (cards.length === 0) {
+        game.mLogNoEffect()
+      }
+      else {
+        const tuckThem = game.aYesNo(player, 'Tuck all cards from your hand?')
+        if (tuckThem) {
+          const tucked = game.aTuckMany(player, cards)
+
+          // If you tucked a purple card...
+          if (tucked.find(card => card.color === 'purple')) {
+            const accumulator = []
+            for (const opp of game.getPlayerOpponents(player)) {
+              const hand = game
+                .getCardsByZone(opp, 'hand')
+                .sort((l, r) => l.age - r.age)
+              util
+                .array
+                .takeWhile(hand, card => card.age === hand[0].age)
+                .forEach(card => accumulator.push(card))
+            }
+            game.aTransferMany(player, accumulator, game.getZoneByPlayer(player, 'hand'))
+          }
+        }
+        else {
+          game.mLogDoNothing(player)
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

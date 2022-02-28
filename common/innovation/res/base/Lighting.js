@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../util.js')
 
 function Card() {
   this.id = `Lighting`  // Card names are unique in Innovation
@@ -15,7 +16,21 @@ function Card() {
     `You may tuck up to three cards from your hand. If you do, draw and score a {7} for every different value of card you tucked.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aChooseAndTuck(
+        player,
+        game.getCardsByZone(player, 'hand'),
+        { min: 0, max: 3},
+      )
+      if (cards) {
+        const ages = util.array.distinct(cards.map(card => card.age))
+        for (let i = 0; i < ages.length; i++) {
+          game.aDrawAndScore(player, game.getEffectAge(this, 7))
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

@@ -5,38 +5,37 @@ const t = require('../../testutil.js')
 describe('Specialization', () => {
   describe('Reveal and take', () => {
     test('take opponent top cards of matching color', () => {
-      const game = t.fixtureDogma('Specialization')
-      t.setColor(game, 'micah', 'red', ['Flight'])
-      t.setColor(game, 'tom', 'red', ['Archery'])
-      t.setColor(game, 'dennis', 'red', ['Coal', 'Gunpowder'])
-      t.setHand(game, 'micah', ['Oars'])
-      game.run()
+      const game = t.fixtureTopCard('Specialization', { numPlayers: 3 })
+      game.testSetBreakpoint('before-first-player', (game) => {
+        t.setColor(game, 'dennis', 'red', ['Flight'])
+        t.setColor(game, 'scott', 'red', ['Archery'])
+        t.setColor(game, 'micah', 'red', ['Metalworking', 'Optics'])
+        t.setHand(game, 'dennis', ['Oars'])
+      })
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Dogma.Specialization')
+      const request3 = t.choose(game, request2, 'auto')
 
-      t.dogma(game, 'Specialization')
-
-      expect(game.getHand('micah').cards.sort()).toStrictEqual([
-        'Oars',
+      expect(t.cards(game, 'hand').sort()).toStrictEqual([
         'Archery',
-        'Coal',
+        'Metalworking',
+        'Oars',
       ].sort())
     })
   })
 
   describe('splay', () => {
     test('can splay', () => {
-      const game = t.fixtureDogma('Specialization')
-      jest.spyOn(game, 'aChooseAndSplay')
-      game.run()
-      t.dogma(game, 'Specialization')
+      const game = t.fixtureTopCard('Specialization', { numPlayers: 3 })
+      game.testSetBreakpoint('before-first-player', (game) => {
+        t.setColor(game, 'dennis', 'blue', ['Mathematics', 'Experimentation'])
+        t.setHand(game, 'dennis', [])
+      })
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Dogma.Specialization')
+      const request3 = t.choose(game, request2, 'blue')
 
-      expect(game.aChooseAndSplay).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          playerName: 'micah',
-          choices: ['blue', 'yellow'],
-          direction: 'up',
-        })
-      )
+      expect(t.zone(game, 'blue').splay).toBe('up')
     })
   })
 })

@@ -4,13 +4,19 @@ const t = require('../../testutil.js')
 
 describe('Metalworking', () => {
   test('dogma', () => {
-    const game = t.fixtureDogma('Metalworking')
-    t.topDeck(game, 'base', 1, ['Mysticism', 'Masonry', 'Clothing'])
-    t.setHand(game, 'micah', [])
-    game.run()
-    t.dogma(game, 'Metalworking')
+    const game = t.fixtureTopCard('Metalworking')
+    game.testSetBreakpoint('before-first-player', (game) => {
+      t.setDeckTop(game, 'base', 1, ['Mysticism', 'Masonry', 'Clothing'])
+      t.setHand(game, 'dennis', [])
+    })
 
-    expect(game.getZoneScore('micah').cards).toStrictEqual(['Mysticism', 'Masonry'])
-    expect(game.getHand('micah').cards).toStrictEqual(['Clothing'])
+    const request1 = game.run()
+    t.choose(game, request1, 'Dogma.Metalworking')
+
+    const dennis = game.getPlayerByName('dennis')
+    const score = game.getZoneByPlayer(dennis, 'score').cards().map(c => c.name).sort()
+    const hand = game.getZoneByPlayer(dennis, 'hand').cards().map(c => c.name).sort()
+    expect(score).toStrictEqual(['Masonry', 'Mysticism'])
+    expect(hand).toStrictEqual(['Clothing'])
   })
 })

@@ -17,8 +17,23 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'meld',
+      kind: 'would-first',
+      matches(game, player, { card }) {
+        const zone = game.getZoneByPlayer(player, card.color)
+        return zone.splay !== 'none' && zone.cards().length === 4
+      },
+      func(game, player) {
+        const choices = game.getEligibleAchievements(player, { ignoreScore: true })
+        game.aChooseAndAchieve(player, choices)
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

@@ -17,9 +17,29 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = [
+    (game, player) => {
+      const cards = game
+        .getZoneByPlayer(player, 'hand')
+        .cards()
+        .filter(card => card.biscuits.includes('s') || card.biscuits.includes('i'))
+
+      game.aMeldMany(player, cards)
+    }
+  ]
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'Advancement'
+    },
+    {
+      trigger: 'effect-age',
+      func(game, player, card, age) {
+        return 10
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

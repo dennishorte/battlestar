@@ -12,10 +12,19 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Score your top green card. Draw and meld a {0}, then execute each of its non-demand dogma effects. Do not share them.`
+    `Score your top green card.`,
+    `Draw and meld a {0}, then execute each of its non-demand dogma effects. Do not share them.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aScore(player, game.getTopCard(player, 'green'))
+    },
+    (game, player) => {
+      const card = game.aDrawAndMeld(player, game.getEffectAge(this, 10))
+      game.aCardEffects(player, player, card, 'dogma', game.getBiscuits())
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

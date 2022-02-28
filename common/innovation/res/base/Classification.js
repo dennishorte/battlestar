@@ -15,7 +15,30 @@ function Card() {
     `Reveal the color of a card from your hand. Take into your hand all cards of that color from all opponent's hands. Then, meld all cards of that color from your hand.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const revealed = game.aChooseCard(player, game.getZoneByPlayer(player, 'hand').cards())
+      if (revealed) {
+        game
+          .mReveal(player, revealed)
+
+        // Take cards into hand
+        game
+          .getPlayerOpponents(player)
+          .flatMap(opp => game.getZoneByPlayer(opp, 'hand').cards())
+          .filter(card => card.color === revealed.color)
+          .forEach(card => game.mTake(player, card))
+
+        // Meld cards
+        const cardsToMeld = game
+          .getZoneByPlayer(player, 'hand')
+          .cards()
+          .filter(card => card.color === revealed.color)
+
+        game.aMeldMany(player, cardsToMeld)
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

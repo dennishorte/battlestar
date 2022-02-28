@@ -16,9 +16,27 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    game.aDrawAndMeld(player, game.getEffectAge(this, 10))
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'meld',
+      kind: 'would-instead',
+      matches: (game, player, { card }) => card.expansion === 'figs',
+      func: (game, player, { card }) => {
+        game.aTuck(player, card)
+        const choices = game
+          .getZoneById('achievements')
+          .cards()
+          .filter(card => !card.isSpecialAchievement)
+        const formatted = game.formatAchievements(choices)
+        const selected = game.aChoose(player, formatted)
+        game.aAchieveAction(player, selected[0], { nonAction: true })
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

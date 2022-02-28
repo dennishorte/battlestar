@@ -17,9 +17,44 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    const choices = game
+      .getPlayerAll()
+      .filter(other => other !== player)
+      .flatMap(player => game.getCardsByZone(player, 'score'))
+      .filter(card => card.expansion === 'figs')
+    game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'score'))
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'Rivalry',
+    },
+    {
+      trigger: 'achieve',
+      kind: 'would-first',
+      matches: (game, player, { isStandard }) => isStandard,
+      func: (game, player, { card }) => {
+        const ages = game
+          .getNonEmptyAges()
+          .filter(age => age < card.age)
+        const age = game.aChooseAge(player, ages)
+        if (age) {
+          const deckCards = game.getZoneByDeck('base', age).cards()
+          const card = deckCards[deckCards.length - 1]
+          game.mMoveCardTo(card, game.getZoneById('achievements'))
+          game.mLog({
+            template: '{player} moves {card} to the available achievements',
+            args: { player, card }
+          })
+        }
+        else {
+          game.mLogNoEffect()
+        }
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

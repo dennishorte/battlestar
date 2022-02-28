@@ -16,7 +16,20 @@ function Card() {
     `You may splay your green cards right.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      if (game.getZoneByPlayer(player, 'green').splay === 'right') {
+        game.aChooseAndSplay(player, null, 'right')
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['green'], 'right')
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

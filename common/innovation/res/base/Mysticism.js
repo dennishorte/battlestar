@@ -15,7 +15,19 @@ function Card() {
     `Draw and reveal a {1}. If it is the same color as any card on your board, meld it and draw a {1}.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
+      const boardColors = game
+        .getTopCards(player)
+        .map(card => card.color)
+
+      if (boardColors.includes(card.color)) {
+        game.aMeld(player, card)
+        game.aDraw(player, game.getEffectAge(this, 1))
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

@@ -17,8 +17,26 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aDrawAndScore(player, game.getEffectAge(this, 3))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'achieve',
+      kind: 'would-first',
+      matches: (game, player, { isStandard }) => isStandard,
+      func: (game, player, { age }) => {
+        const choices = game
+          .getAvailableAchievementsRaw(player)
+          .filter(card => card.age === age + 1)
+        const formatted = game.formatAchievements(choices)
+        const selected = game.aChoose(player, formatted, { title: 'Choose Achievement' })
+        if (selected && selected.length > 0) {
+          game.aAchieveAction(player, selected[0], { nonAction: true })
+        }
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

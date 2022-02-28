@@ -4,14 +4,16 @@ const t = require('../../../testutil.js')
 
 describe('Supremacy Achievement', () => {
   test('achieved', () => {
-    const game = t.fixtureFirstPicks({ expansions: ['base', 'echo'] })
-    t.setColor(game, 'micah', 'green', ['The Wheel'])
-    t.setColor(game, 'micah', 'yellow', ['Masonry'])
-    t.setColor(game, 'micah', 'red', ['Metalworking'])
-    t.setHand(game, 'micah', ['Mysticism'])
-    game.run()
-    t.meld(game, 'Mysticism')
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    game.testSetBreakpoint('before-first-player', (game) => {
+      t.setColor(game, 'dennis', 'green', ['The Wheel'])
+      t.setColor(game, 'dennis', 'yellow', ['Masonry'])
+      t.setColor(game, 'dennis', 'red', ['Metalworking'])
+      t.setHand(game, 'dennis', ['Mysticism'])
+    })
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Meld.Mysticism')
 
-    expect(game.getAchievements('micah').cards).toStrictEqual(['Supremacy'])
+    expect(t.cards(game, 'achievements')).toStrictEqual(['Supremacy'])
   })
 })

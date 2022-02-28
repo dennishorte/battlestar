@@ -15,7 +15,19 @@ function Card() {
     `Draw a {2} for every color on your board with one or more {l}.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const count = game
+        .utilColors()
+        .map(color => game.getZoneByPlayer(player, color))
+        .filter(zone => game.getBiscuitsByZone(zone).l > 0)
+        .length
+
+      for (let i = 0; i < count; i++) {
+        game.aDraw(player, { age: game.getEffectAge(this, 2) })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

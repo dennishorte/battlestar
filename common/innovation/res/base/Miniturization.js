@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../util.js')
 
 function Card() {
   this.id = `Miniturization`  // Card names are unique in Innovation
@@ -15,7 +16,20 @@ function Card() {
     `You may return a card from your hand. If you returned a {0}, draw a {0} for every different value of card in your score pile.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1})
+      if (cards && cards.length > 0 && cards[0].age === 10) {
+        const allAges = game
+          .getCardsByZone(player, 'score')
+          .map(card => card.age)
+        const distinctAges = util.array.distinct(allAges)
+        for (let i = 0; i < distinctAges.length; i++) {
+          game.aDraw(player, { age: game.getEffectAge(this, 10) })
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

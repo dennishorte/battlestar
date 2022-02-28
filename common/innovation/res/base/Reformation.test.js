@@ -5,54 +5,48 @@ const t = require('../../testutil.js')
 describe('Reformation', () => {
   describe('Tuck cards', () => {
     test('choose not to tuck', () => {
-      const game = t.fixtureDogma('Reformation')
-      t.setColor(game, 'micah', 'green', ['Clothing'])
-      t.setHand(game, 'micah', ['Mapmaking', 'Currency', 'Philosophy'])
-      game.run()
-      jest.spyOn(game, 'aTuck')
-      t.dogma(game, 'Reformation')
-      t.choose(game, 'Skip this effect')
+      const game = t.fixtureTopCard('Reformation')
+      game.testSetBreakpoint('before-first-player', (game) => {
+        t.setColor(game, 'dennis', 'green', ['Clothing'])
+        t.setHand(game, 'dennis', ['Mapmaking', 'Currency', 'Philosophy'])
+      })
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Dogma.Reformation')
+      const request3 = t.choose(game, request2, 'no')
 
-      expect(game.aTuck.mock.calls.length).toBe(0)
-      expect(game.getZoneColorByPlayer('micah', 'green').cards).toStrictEqual(['Clothing'])
-      expect(game.getWaiting('micah').name).toBe('Choose Color')
+      expect(t.cards(game, 'green')).toStrictEqual(['Clothing'])
     })
 
     test('number of leaf biscuits on board', () => {
-      const game = t.fixtureDogma('Reformation')
-      t.setColor(game, 'micah', 'green', ['Clothing'])
-      t.setHand(game, 'micah', ['Mapmaking', 'Currency', 'Philosophy'])
-      game.run()
-      t.dogma(game, 'Reformation')
+      const game = t.fixtureTopCard('Reformation')
+      game.testSetBreakpoint('before-first-player', (game) => {
+        t.setColor(game, 'dennis', 'green', ['Clothing'])
+        t.setHand(game, 'dennis', ['Mapmaking', 'Currency', 'Philosophy'])
+      })
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Dogma.Reformation')
+      const request3 = t.choose(game, request2, 'yes')
+      const request4 = t.choose(game, request3, 'Mapmaking', 'Currency')
+      const request5 = t.choose(game, request4, 'auto')
 
-      jest.spyOn(game, 'aTuck')
-      t.choose(game, 'Tuck 2 cards from hand')
-      t.choose(game, 'Mapmaking')
-      t.choose(game, 'Currency')
-
-      expect(game.aTuck.mock.calls.length).toBe(2)
-      expect(game.getZoneColorByPlayer('micah', 'green').cards).toStrictEqual([
-        'Clothing', 'Mapmaking', 'Currency'
-      ])
+      expect(t.cards(game, 'green')).toStrictEqual(['Clothing', 'Mapmaking', 'Currency'])
     })
   })
 
   describe('splay', () => {
     test('can splay', () => {
-      const game = t.fixtureDogma('Reformation')
-      jest.spyOn(game, 'aChooseAndSplay')
-      game.run()
-      t.dogma(game, 'Reformation')
-      t.choose(game, 'Skip this effect')
+      const game = t.fixtureTopCard('Reformation')
+      game.testSetBreakpoint('before-first-player', (game) => {
+        t.setColor(game, 'dennis', 'green', ['Clothing'])
+        t.setColor(game, 'dennis', 'yellow', ['Statistics', 'Masonry'])
+        t.setHand(game, 'dennis', ['Mapmaking', 'Currency', 'Philosophy'])
+      })
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Dogma.Reformation')
+      const request3 = t.choose(game, request2, 'no')
+      const request4 = t.choose(game, request3, 'yellow')
 
-      expect(game.aChooseAndSplay).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          playerName: 'micah',
-          choices: ['yellow', 'purple'],
-          direction: 'right',
-        })
-      )
+      expect(t.zone(game, 'yellow').splay).toBe('right')
     })
   })
 })

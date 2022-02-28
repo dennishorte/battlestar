@@ -4,43 +4,31 @@ const t = require('../../testutil.js')
 
 describe('Flight', () => {
   test('red is not splayed up', () => {
-    const game = t.fixtureFirstPicks()
-    t.setColor(game, 'micah', 'red', ['Flight', 'Archery'])
-    t.setColor(game, 'micah', 'blue', ['Experimentation', 'Writing'])
-    game.run()
+    const game = t.fixtureTopCard('Flight')
+    game.testSetBreakpoint('before-first-player', (game) => {
+      t.setColor(game, 'dennis', 'red', ['Flight', 'Archery'])
+      t.setColor(game, 'dennis', 'blue', ['Experimentation', 'Writing'])
+    })
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Flight')
+    t.choose(game, request2, 'red')
 
-    jest.spyOn(game, 'aChooseAndSplay')
-    t.dogma(game, 'Flight')
-
-    expect(game.aChooseAndSplay).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({
-        playerName: 'micah',
-        direction: 'up',
-        choices: ['red']
-      })
-    )
+    const red = game.getZoneByPlayer(t.dennis(game), 'red')
+    expect(red.splay).toBe('up')
   })
 
   test('red is splayed up', () => {
-    const game = t.fixtureFirstPicks()
-    t.setColor(game, 'micah', 'red', ['Flight', 'Archery'])
-    t.setColor(game, 'micah', 'blue', ['Experimentation', 'Writing'])
+    const game = t.fixtureTopCard('Flight')
+    game.testSetBreakpoint('before-first-player', (game) => {
+      t.setColor(game, 'dennis', 'red', ['Flight', 'Archery'])
+      t.setColor(game, 'dennis', 'blue', ['Experimentation', 'Writing'])
+      t.setSplay(game, 'dennis', 'red', 'up')
+    })
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Flight')
+    t.choose(game, request2, 'blue')
 
-    t.setSplay(game, 'micah', 'red', 'up')
-
-    game.run()
-
-    jest.spyOn(game, 'aChooseAndSplay')
-    t.dogma(game, 'Flight')
-
-    expect(game.aChooseAndSplay).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({
-        playerName: 'micah',
-        direction: 'up',
-      })
-    )
-
+    const blue = game.getZoneByPlayer(t.dennis(game), 'blue')
+    expect(blue.splay).toBe('up')
   })
 })

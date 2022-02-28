@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../game.js')
 
 function Card() {
   this.id = `Shigeru Miyamoto`  // Card names are unique in Innovation
@@ -9,16 +10,45 @@ function Card() {
   this.biscuits = `hai&`
   this.dogmaBiscuit = `i`
   this.inspire = ``
-  this.echo = `Draw a {0}. If it does not have a {i}, score it.`
+  this.echo = `Draw and reveal a {0}. If it does not have a {i}, score it.`
   this.karma = [
-    `If you would take a Dogma action and activate a card using {i} as the featured icon, first if you have exactly one, three, or six {i} on your board, you win.`
+    `If you would take a Dogma action and activate a card whose featured biscuit is {i}, first if you have exactly one, three, or six {i} on your board, you win.`
   ]
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    const card = game.aDrawAndReveal(player, game.getEffectAge(this, 10))
+    if (!card.checkHasBiscuit('i')) {
+      game.aScore(player, card)
+    }
+    else {
+      game.mLog({
+        template: '{card} has a clock biscuit; do not score',
+        args: { card }
+      })
+    }
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'dogma',
+      kind: 'would-first',
+      matches: (game, player, { card }) => card.checkHasBiscuit('i'),
+      func: (game, player) => {
+        const clocks = game.getBiscuitsByPlayer(player).i
+        if (clocks === 1 || clocks === 3 || clocks === 6) {
+          throw new GameOverEvent({
+            player,
+            reason: this.name
+          })
+        }
+        else {
+          game.mLogNoEffect()
+        }
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

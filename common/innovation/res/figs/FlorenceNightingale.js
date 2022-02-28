@@ -11,15 +11,38 @@ function Card() {
   this.inspire = `Tuck a card from your hand.`
   this.echo = ``
   this.karma = [
-    `You may issue an expansion decree with any two figures.`,
+    `You may issue an Expansion decree with any two figures.`,
     `If an opponent's effect would transfer, return, or remove a card from your score pile, instead leave it there.`
   ]
   this.dogma = []
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'Expansion'
+    },
+    {
+      trigger: ['transfer', 'return', 'remove'],
+      triggerAll: true,
+      kind: 'would-instead',
+      matches: (game, player, { card, leader }) => {
+        const leaderCondition = leader !== player
+        const zoneCondition = game.getZoneByCard(card) === game.getZoneByPlayer(player, 'score')
+        return leaderCondition && zoneCondition
+      },
+      func: (game, player, { card }) => {
+        game.mLog({
+          template: '{card} is not moved',
+          args: { card }
+        })
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

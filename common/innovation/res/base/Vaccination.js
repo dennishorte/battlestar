@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../util.js')
 
 function Card() {
   this.id = `Vaccination`  // Card names are unique in Innovation
@@ -16,7 +17,28 @@ function Card() {
     `If any card was returned as a result of the demand, draw and meld a {7}.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game
+        .getCardsByZone(player, 'score')
+        .sort((l, r) => l.age - r.age)
+      const lowest = util.array.takeWhile(cards, card => card.age === cards[0].age)
+      const returned = game.aReturnMany(player, lowest)
+
+      if (returned.length > 0) {
+        game.aDrawAndMeld(player, game.getEffectAge(this, 6))
+        game.state.dogmaInfo.vaccinationCardWasReturned = true
+      }
+    },
+    (game, player) => {
+      if (game.state.dogmaInfo.vaccinationCardWasReturned) {
+        game.aDrawAndMeld(player, game.getEffectAge(this, 7))
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

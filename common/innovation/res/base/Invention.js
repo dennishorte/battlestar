@@ -16,7 +16,31 @@ function Card() {
     `If you have five colors splayed, each in any direction, claim the Wonder achievement.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const splayedLeft = game
+        .utilColors()
+        .filter(color => game.getZoneByPlayer(player, color).splay === 'left')
+      const color = game.aChooseAndSplay(player, splayedLeft, 'right')
+      if (color) {
+        game.aDrawAndScore(player, game.getEffectAge(this, 4))
+      }
+    },
+
+    (game, player) => {
+      const splayCount = game
+        .utilColors()
+        .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
+        .length
+
+      if (splayCount === 5) {
+        game.aClaimAchievement(player, { name: 'Wonder' })
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

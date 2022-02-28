@@ -4,13 +4,15 @@ const t = require('../../testutil.js')
 
 describe('Bangle', () => {
   test('echo and dogma', () => {
-    const game = t.fixtureDogma('Bangle', { expansions: ['base', 'echo'] })
-    t.setHand(game, 'micah', ['Archery', 'Philosophy'])
-    t.topDeck(game, 'echo', 2, ['Toothbrush'])
-    game.run()
-    t.dogma(game, 'Bangle')
+    const game = t.fixtureTopCard('Bangle', { expansions: ['base', 'echo'] })
+    game.testSetBreakpoint('before-first-player', (game) => {
+      t.setHand(game, 'dennis', ['Archery', 'Philosophy'])
+      t.setDeckTop(game, 'echo', 2, ['Toothbrush'])
+    })
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Bangle')
 
-    expect(game.getForecast('micah').cards).toStrictEqual(['Toothbrush'])
-    expect(game.getZoneColorByPlayer('micah', 'red').cards).toStrictEqual(['Bangle', 'Archery'])
+    expect(t.cards(game, 'red')).toStrictEqual(['Bangle', 'Archery'])
+    expect(t.cards(game, 'forecast')).toStrictEqual(['Toothbrush'])
   })
 })

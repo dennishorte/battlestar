@@ -15,7 +15,17 @@ function Card() {
     `You may tuck any number of cards from your hand. Draw and score a {1} for each card you tucked.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.getCardsByZone(player, 'hand')
+      const tucked = game.aChooseAndTuck(player, cards, { min: 0, max: cards.length })
+      if (tucked) {
+        for (let i = 0; i < tucked.length; i++) {
+          game.aDrawAndScore(player, game.getEffectAge(this, 1))
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

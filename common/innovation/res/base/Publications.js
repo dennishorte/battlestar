@@ -17,30 +17,50 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    {
-      dogma: `You may rearrange the order of one color of cards on your board.`,
-      steps: [
-        {
+    (game, player) => {
+      const colors = game
+        .utilColors()
+        .filter(color => game.getCardsByZone(player, color).length > 0)
 
+      const color = game.aChoose(player, colors, 'Choose a Color')[0]
+      game.mLog({
+        template: '{player} choose {color}',
+        args: { player, color }
+      })
+
+      const zone = game.getZoneByPlayer(player, color)
+      let remaining = zone.cards()
+      let position = 0
+      while (true) {
+        const card = game.aChooseCard(player, remaining.concat(['auto']))
+
+        if (card === 'auto') {
+          game.mLog({
+            template: '{player} leaves the rest in their current order',
+            args: { player }
+          })
+          break
         }
-      ]
+
+        game.mMoveByIndices(
+          zone, zone.cards().indexOf(card),
+          zone, position
+        )
+
+        const posString = position === 0 ? 'top' : 'top + ' + position
+        game.mLog({
+          template: `{player} moves {card} to ${posString}`,
+          args: { player, card }
+        })
+
+        position += 1
+        remaining = remaining.filter(other => other != card)
+      }
     },
-    {
-      dogma: `You may splay your yellow or blue cards up.`,
-      steps: [
-        {
-          description: `You may splay your yellow or blue cards up.`,
-          func(context, player) {
-            const { game } = context
-            return game.aChooseAndSplay(context, {
-              playerName: player.name,
-              direction: 'up',
-              choices: ['blue', 'yellow']
-            })
-          }
-        }
-      ]
-    },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['yellow', 'blue'], 'up')
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

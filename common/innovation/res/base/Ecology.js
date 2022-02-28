@@ -15,7 +15,21 @@ function Card() {
     `You may return a card from your hand. If you do, score a card from your hand and draw two {0}.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aChooseAndReturn(
+        player,
+        game.getCardsByZone(player, 'hand'),
+        { min: 0, max: 1 }
+      )
+
+      if (cards && cards.length > 0) {
+        game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'))
+        game.aDraw(player, { age: game.getEffectAge(this, 10) })
+        game.aDraw(player, { age: game.getEffectAge(this, 10) })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

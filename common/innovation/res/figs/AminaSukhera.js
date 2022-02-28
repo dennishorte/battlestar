@@ -18,8 +18,35 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    const cards = game
+      .getPlayerAll()
+      .map(p => game.getZoneByPlayer(p, 'purple').cards().slice(-1)[0])
+      .filter(card => card !== undefined)
+    game.aScoreMany(player, cards)
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'when-meld',
+      func(game, player) {
+        for (const opp of game.getPlayerOpponents(player)) {
+          const topFigures = game
+            .getTopCards(opp)
+            .filter(card => card.expansion === 'figs')
+            .filter(card => card.age === 4)
+          game.aScoreMany(player, topFigures)
+        }
+      }
+    },
+    {
+      trigger: 'list-achievements',
+      func(game, player) {
+        return game
+          .getTopCards(player)
+          .filter(card => card.biscuits.includes('k'))
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

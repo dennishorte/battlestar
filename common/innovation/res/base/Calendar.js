@@ -15,7 +15,26 @@ function Card() {
     `If you have more cards in your score pile than in your hand, draw two {3}.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const scoreCount = game
+        .getZoneByPlayer(player, 'score')
+        .cards()
+        .length
+      const handCount = game
+        .getZoneByPlayer(player, 'hand')
+        .cards()
+        .length
+
+      if (scoreCount > handCount) {
+        game.aDraw(player, { age: game.getEffectAge(this, 3) })
+        game.aDraw(player, { age: game.getEffectAge(this, 3) })
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

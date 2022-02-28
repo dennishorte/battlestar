@@ -16,7 +16,42 @@ function Card() {
     `Draw and score a {1} for each color present on your board not present on any opponent's board.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const usedColors = game
+        .getTopCards(player)
+        .map(card => card.color)
+
+      const choices = game
+        .getZoneByPlayer(player, 'hand')
+        .cards()
+        .filter(card => !usedColors.includes(card.color))
+
+      game.aChooseAndMeld(player, choices)
+    },
+
+    (game, player) => {
+      const opponentColors = game
+        .getPlayerOpponents(player)
+        .flatMap(opp => game.getTopCards(opp))
+        .map(card => card.color)
+
+      const playerOnlyColors = game
+        .getTopCards(player)
+        .map(card => card.color)
+        .filter(color => !opponentColors.includes(color))
+        .length
+
+      if (playerOnlyColors === 0) {
+        game.mLogNoEffect()
+      }
+      else {
+        for (let i = 0; i < playerOnlyColors; i++) {
+          game.aDrawAndScore(player, game.getEffectAge(this, 1))
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

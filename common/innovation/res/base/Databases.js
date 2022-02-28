@@ -15,7 +15,13 @@ function Card() {
     `I demand you return half (rounded up) of the cards in your score pile.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.getCardsByZone(player, 'score')
+      const count = Math.ceil(cards.length / 2)
+      game.aChooseAndReturn(player, cards, { count })
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

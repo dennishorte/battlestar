@@ -16,7 +16,15 @@ function Card() {
     `You may splay your yellow cards right.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const highest = game.utilHighestCards(game.getCardsByZone(player, 'score'))
+      game.aTransferMany(player, highest, game.getZoneByPlayer(player, 'hand'))
+    },
+    (game, player) => {
+      game.aChooseAndSplay(player, ['yellow'], 'right')
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

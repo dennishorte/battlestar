@@ -16,56 +16,24 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    {
-      dogma: `You may return a card from your hand. If you do, draw and score a card of value one higher than the card you returned.`,
-      steps: [
-        {
-          description: 'You may choose a card to return from your hand.',
-          func(context, player) {
-            const { game } = context
-            return game.aChoose(context, {
-              playerName: player.name,
-              choices: game.getHand(player).cards,
-              kind: 'Cards',
-              max: 1,
-              min: 0,
-            })
-          }
-        },
-        {
-          description: 'If you chose a card, return it.',
-          func(context, player) {
-            const { game } = context
-            const card = context.sentBack.chosen[0]
+    (game, player) => {
+      const cardsInHand = game.getZoneByPlayer(player, 'hand').cards().map(c => c.name)
+      const returned = game.requestInputSingle({
+        actor: player.name,
+        title: 'Choose a Card',
+        choices: cardsInHand,
+        min: 0,
+        max: 1,
+      })
 
-            if (card) {
-              return game.aReturn(context, player, card)
-            }
-            else {
-              game.mLog({
-                template: '{player} did not return a card',
-                args: { player }
-              })
-              return context.done()
-            }
-          }
-        },
-        {
-          description: 'If you returned a card, score a card of value one higher.',
-          func(context, player) {
-            const { game } = context
-            const card = game.getCardData(context.sentBack.card)
-            if (card) {
-              return game.aDrawAndScore(context, player, card.age + 1)
-            }
-            else {
-              return context.done()
-            }
-          }
+      if (returned.length > 0) {
+        const card = game.getCardByName(returned[0])
+        const returnedCard = game.aReturn(player, card)
+        if (returnedCard) {
+          game.aDrawAndScore(player, card.age + 1)
         }
-      ],
-    }
-
+      }
+    },
   ]
   this.echoImpl = []
   this.inspireImpl = []

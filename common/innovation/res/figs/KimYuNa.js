@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../game.js')
 
 function Card() {
   this.id = `Kim Yu-Na`  // Card names are unique in Innovation
@@ -16,9 +17,23 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    game.aChooseAndScore(player, game.getTopCards(player))
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'score',
+      kind: 'would-instead',
+      matches: (game, func, { card }) => card.biscuits.includes('k'),
+      func: (game, player) => {
+        throw new GameOverEvent({
+          player,
+          reason: this.name
+        })
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

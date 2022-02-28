@@ -4,9 +4,12 @@ module.exports = function() {
   this.exp = 'base'
   this.text = 'Have three biscuits of each of the six biscuit types.'
   this.alt = 'Construction'
-  this.checkPlayerIsEligible = function(game, player) {
-    player = game._adjustPlayerParam(player)
-    const biscuits = game.getBiscuits(player)
-    return Object.values(biscuits.final).every(count => count >= 3)
+  this.isSpecialAchievement = true
+  this.checkPlayerIsEligible = function(game, player, reduceCost) {
+    const biscuits = game.getBiscuitsByPlayer(player)
+    const targetCount = reduceCost ? 2 : 3
+    const targetBiscuitCount = reduceCost ? 5 : 6
+    const numMatches = Object.values(biscuits).filter(count => count >= targetCount).length
+    return numMatches >= targetBiscuitCount
   }
 }

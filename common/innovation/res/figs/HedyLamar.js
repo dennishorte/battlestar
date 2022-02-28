@@ -17,9 +17,19 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    game.aChooseAndSplay(player, null, 'up')
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'Trade',
+    },
+    {
+      trigger: 'reduce-special-achievement-requirements',
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

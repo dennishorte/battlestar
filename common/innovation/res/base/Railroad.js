@@ -16,7 +16,21 @@ function Card() {
     `You may splay up any one color of your cards current splayed right.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+      game.aDraw(player, { age: game.getEffectAge(this, 6) })
+      game.aDraw(player, { age: game.getEffectAge(this, 6) })
+      game.aDraw(player, { age: game.getEffectAge(this, 6) })
+    },
+
+    (game, player) => {
+      const choices = game
+        .utilColors()
+        .filter(color => game.getZoneByPlayer(player, color).splay === 'right')
+      game.aChooseAndSplay(player, choices, 'up')
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

@@ -18,8 +18,40 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'when-meld',
+      func: (game, player) => {
+        const figs = game
+          .getPlayerOpponents(player)
+          .flatMap(player => game.getTopCards(player))
+          .filter(card => card.expansion === 'figs')
+        game.aReturnMany(player, figs)
+      }
+    },
+    {
+      trigger: 'tuck',
+      kind: 'would-first',
+      matches: (game, player, { card }) => card.checkHasBiscuit('f'),
+      func: (game, player) => {
+        const card = game.getCardsByZone(player, 'green').slice(-1)[0]
+        if (card) {
+          if (game.checkAchievementEligibility(player, card)) {
+            game.aClaimAchievement(player, card)
+          }
+          else {
+            game.aScore(player, card)
+          }
+        }
+        else {
+          game.mLogNoEffect()
+        }
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

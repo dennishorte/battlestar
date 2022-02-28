@@ -17,8 +17,24 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = [
+    (game, player) => {
+      game.aDrawAndTuck(player, game.getEffectAge(this, 2))
+    }
+  ]
+  this.karmaImpl = [
+    {
+      trigger: ['remove', 'return'],
+      kind: 'would-instead',
+      matches(game, player, { card }) {
+        const regex = /players[.].+[.]hand/
+        return card.expansion === 'figs' && card.zone.match(regex)
+      },
+      func(game, player, { card }) {
+        return game.aTuck(player, card)
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

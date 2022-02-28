@@ -4,21 +4,35 @@ function Card() {
   this.id = 'War'
   this.name = 'War'
   this.exp = 'figs'
-  this.text = ''
+  this.text = "Choose a value. Return all top cards of that value from all other players' boards."
   this.alt = ''
-  this.decreeImpl = [{
-    dogma: '',
-    steps: [
-      {
-        description: 'Draw a card of value two higher than your highest top card.',
-        func(context, player) {
-          const { game } = context
-          return game.aChooseAndSplay(context, {
-          })
+  this.isSpecialAchievement = true
+  this.decreeImpl = (game, player) => {
+    const value = game.requestInputSingle({
+      actor: player.name,
+      title: 'Choose an Age',
+      choices: [1,2,3,4,5,6,7,8,9,10]
+    })[0]
+
+    game.mLog({
+      template: '{player} chooses {age}',
+      args: {
+        player,
+        age: value
+      }
+    })
+
+    const cardsToReturn = []
+    for (const opponent of game.getPlayerOpponents(player)) {
+      for (const card of game.getTopCards(opponent)) {
+        if (card.age === value) {
+          cardsToReturn.push(card)
         }
-      },
-    ]
-  }]
+      }
+    }
+
+    game.aReturnMany(player, cardsToReturn)
+  }
 }
 
 Card.prototype = Object.create(CardBase.prototype)

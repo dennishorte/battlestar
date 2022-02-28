@@ -17,9 +17,25 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    game.aDrawAndMeld(player, game.getEffectAge(this, 4))
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'Advancement',
+    },
+    {
+      trigger: 'meld',
+      kind: 'would-instead',
+      matches: (game, player, { card }) => card.color === 'blue' && card.age > 3,
+      func: (game, player, { card }) => {
+        game.aReturn(player, card)
+        game.aDrawAndMeld(player, card.age + 1)
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

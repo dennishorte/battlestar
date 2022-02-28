@@ -17,7 +17,22 @@ function Card() {
     `Draw and meld a {0} for every two {i} on your board.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aChooseAndSplay(player, ['green'], 'up')
+    },
+
+    (game, player) => {
+      game.aDrawAndScore(player, game.getEffectAge(this, 10))
+    },
+
+    (game, player) => {
+      const count = Math.floor(game.getBiscuitsByPlayer(player,).i / 2)
+      for (let i = 0; i < count; i++) {
+        game.aDrawAndMeld(player, game.getEffectAge(this, 10))
+      }
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

@@ -16,7 +16,23 @@ function Card() {
     `Draw a {1}.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aChooseAndReturn(
+        player,
+        game.getCardsByZone(player, 'hand'),
+        { min: 0, max: 3 }
+      )
+
+      if (cards && cards.length > 0) {
+        game.aDrawAndScore(player, cards.length)
+      }
+    },
+
+    (game, player) => {
+      game.aDraw(player, { age: game.getEffectAge(this, 1) })
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

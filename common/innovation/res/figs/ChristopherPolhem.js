@@ -18,8 +18,21 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aDrawAndTuck(player, game.getEffectAge(this, 4))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'Expansion',
+    },
+    {
+      trigger: 'calculate-score',
+      func: (game, player) => {
+        return game.getBiscuitsByPlayer(player).f * 2
+      }
+    },
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

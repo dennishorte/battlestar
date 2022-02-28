@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../game.js')
 
 function Card() {
   this.id = `Collaboration`  // Card names are unique in Innovation
@@ -16,7 +17,35 @@ function Card() {
     `If you have ten or more green cards on your board, you win.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const card1 = game.aDraw(player, { age: game.getEffectAge(this, 9), reveal: true })
+      const card2 = game.aDraw(player, { age: game.getEffectAge(this, 9), reveal: true })
+
+      const chosen = game.aChooseCard(leader, [card1, card2])
+      const other = chosen === card1 ? card2 : card1
+
+      game.aTransfer(player, chosen, game.getZoneByPlayer(leader, chosen.color))
+      game.aMeld(player, other)
+    },
+
+    (game, player) => {
+      const greenCount = game
+        .getZoneByPlayer(player, 'green')
+        .cards()
+        .length
+
+      if (greenCount >= 10) {
+        throw new GameOverEvent({
+          player,
+          reason: 'Collaboration'
+        })
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

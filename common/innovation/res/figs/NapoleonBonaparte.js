@@ -17,9 +17,33 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    const choices = game
+      .getTopCardsAll()
+      .filter(card => card.expansion === 'figs')
+      .filter(card => card.age === 5 || card.age === 6)
+    game.aChooseAndScore(player, choices)
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'War'
+    },
+    {
+      trigger: ['score', 'return'],
+      kind: 'would-instead',
+      matches: (game, player, { card }) => card.checkHasBiscuit('f'),
+      func: (game, player, { card }) => {
+        game.aTuck(player, card)
+
+        const choices = game
+          .getTopCardsAll()
+          .filter(card => card.age === 6)
+        game.aChooseAndScore(player, choices)
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

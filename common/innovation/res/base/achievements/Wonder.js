@@ -4,10 +4,17 @@ module.exports = function() {
   this.exp = 'base'
   this.text = 'Have five colors splayed either up or right.'
   this.alt = 'Invention'
-  this.checkPlayerIsEligible = function(game, player) {
-    return game
+  this.isSpecialAchievement = true
+  this.checkPlayerIsEligible = function(game, player, reduceCost) {
+    const numColors = reduceCost ? 4 : 5
+    const splays = game
       .utilColors()
-      .map(c => game.getZoneColorByPlayer(player, c).splay)
-      .every(splay => splay === 'right' || splay === 'up')
+      .map(c => game.getZoneByPlayer(player, c).splay)
+
+    const directionMatch = splays
+      .filter(splay => splay === 'right' || splay === 'up')
+      .length
+
+    return directionMatch >= numColors
   }
 }

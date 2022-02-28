@@ -17,8 +17,20 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aDrawAndForeshadow(player, game.getEffectAge(this, 10))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'list-score',
+      func(game, player) {
+        return [
+          ...game.getZoneByPlayer(player, 'score')._cards,
+          ...game.getZoneByPlayer(player, 'forecast')._cards,
+        ]
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

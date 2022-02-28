@@ -16,7 +16,29 @@ function Card() {
     `You may splay your purple cards up.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
+      if (cards && cards.length > 0) {
+        const age = game.aChooseAge(player)
+        game.mLog({
+          template: '{player} chooses age {age}',
+          args: { player, age }
+        })
+        game.mLogIndent()
+        const toReturn = game
+          .getPlayerAll()
+          .flatMap(player => game.getCardsByZone(player, 'score'))
+          .filter(card => card.age === age)
+        game.aReturnMany(player, toReturn)
+        game.mLogOutdent()
+      }
+    },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['purple'], 'up')
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

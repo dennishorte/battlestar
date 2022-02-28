@@ -11,14 +11,36 @@ function Card() {
   this.inspire = ``
   this.echo = `Draw a {5}.`
   this.karma = [
-    `If you would take a Dogma actions, first reveal all cards of the chosen card's color from your hand. Increase each {} value in any effect during this action by the number of cards you revealed.`
+    `If you would take a Dogma action, first reveal all cards of the chosen card's color from your hand. Increase each {} value in any effect during this action by the number of cards you revealed.`
   ]
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = []
+  this.echoImpl = (game, player) => {
+    game.aDraw(player, { age: game.getEffectAge(this, 5) })
+  }
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {
+      trigger: 'dogma',
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player, { card }) => {
+        const matchingCards = game
+          .getCardsByZone(player, 'hand')
+          .filter(other => other.color === card.color)
+
+        matchingCards.forEach(card => game.mReveal(player, card))
+        game.state.dogmaInfo.globalAgeIncrease = matchingCards.length
+        game.mLog({
+          template: 'All {} values increased by {value} during this dogma action',
+          args: {
+            value: matchingCards.length
+          }
+        })
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

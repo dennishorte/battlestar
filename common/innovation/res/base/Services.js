@@ -15,7 +15,18 @@ function Card() {
     `I demand you transfer all the highest cards from your score pile to my hand! If you transferred any cards, then transfer a top card from my board without a {l} to your hand.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const highest = game.utilHighestCards(game.getCardsByZone(player, 'score'))
+      const transferred = game.aTransferMany(player, highest, game.getZoneByPlayer(leader, 'hand'))
+      if (transferred && transferred.length > 0) {
+        const choices = game
+          .getTopCards(leader)
+          .filter(card => !card.checkHasBiscuit('l'))
+        game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'hand'))
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

@@ -15,7 +15,24 @@ function Card() {
     `Draw and meld a {10}. Score all cards beneath it.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const card = game.aDrawAndMeld(player, game.getEffectAge(this, 10))
+      if (card) {
+        const cards = game.getCardsByZone(player, card.color)
+        const cardIndex = cards.indexOf(card)
+        if (cardIndex === -1) {
+          game.mLog({
+            template: '{card} is not in its stack',
+            args: { card }
+          })
+        }
+        else {
+          game.aScoreMany(player, cards.slice(cardIndex + 1))
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

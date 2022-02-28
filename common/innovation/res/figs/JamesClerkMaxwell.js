@@ -17,8 +17,24 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aDraw(player, { age: game.getEffectAge(this, 8) })
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'calculate-biscuits',
+      func: (game, player, { biscuits }) => {
+        const bonus = game.getCardsByZone(player, 'hand').length
+        const output = game.utilEmptyBiscuits()
+        for (const biscuit of Object.keys(biscuits)) {
+          if (biscuits[biscuit] > 0) {
+            output[biscuit] = bonus
+          }
+        }
+        return output
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

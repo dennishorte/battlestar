@@ -15,7 +15,16 @@ function Card() {
     `Draw and tuck two {4}, then score your bottom yellow card.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aDrawAndTuck(player, game.getEffectAge(this, 4))
+      game.aDrawAndTuck(player, game.getEffectAge(this, 4))
+
+      const cards = game.getCardsByZone(player, 'yellow')
+      const card = cards[cards.length - 1]
+      game.aScore(player, card)
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

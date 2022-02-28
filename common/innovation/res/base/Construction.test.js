@@ -5,91 +5,91 @@ const t = require('../../testutil.js')
 describe('Construction', () => {
   describe(`I demand you transfer two cards from your hand to my hand! Draw a {2}!`, () => {
     test('choose two cards', () => {
-      const game = t.fixtureDogma('Construction')
-      game.run()
-      jest.spyOn(game, 'aChoose')
-      t.dogma(game, 'Construction')
+      const game = t.fixtureTopCard('Construction')
+      const handNames = ['Experimentation', 'Gunpowder', 'Statistics']
+      game.testSetBreakpoint('before-first-player', (game) => {
+        t.setHand(game, 'micah', handNames)
+      })
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Dogma.Construction')
 
-      expect(game.aChoose).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          playerName: 'tom',
-          count: 2,
-          kind: 'Cards',
-        })
-      )
-      expect(game.aChoose).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          playerName: 'dennis',
-          count: 2,
-          kind: 'Cards',
-        })
-      )
+      const selector = request2.selectors[0]
+      expect(selector.actor).toBe('micah')
+      expect(selector.count).toBe(2)
+      expect(selector.choices.sort()).toStrictEqual(handNames)
     })
 
     test('draw a 2', () => {
-      const game = t.fixtureDogma('Construction')
-      game.run()
-      jest.spyOn(game, 'aDraw')
-      t.dogma(game, 'Construction')
+      const game = t.fixtureTopCard('Construction')
+      const handNames = ['Experimentation', 'Gunpowder', 'Statistics']
+      game.testSetBreakpoint('before-first-player', (game) => {
+        t.setHand(game, 'micah', handNames)
+      })
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Dogma.Construction')
+      t.choose(game, request2, 'Experimentation', 'Statistics')
 
-      expect(game.aDraw).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({ name: 'tom' }),
-        2
-      )
-      expect(game.aDraw).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({ name: 'dennis' }),
-        2
-      )
+      const micah = game.getPlayerByName('micah')
+      const micahHandAges = game.getZoneByPlayer(micah, 'hand').cards().map(c => c.age).sort()
+      expect(micahHandAges).toStrictEqual([2, 4])
     })
   })
 
   describe(`If you are the only player with five top cards, claim the Empire achievement.`, () => {
     test('claim empire achievement', () => {
-      const game = t.fixtureDogma('Construction')
-      t.setColor(game, 'micah', 'green', ['Mapmaking'])
-      t.setColor(game, 'micah', 'yellow', ['Fermenting'])
-      t.setColor(game, 'micah', 'blue', ['Mathematics'])
-      t.setColor(game, 'micah', 'purple', ['Monotheism'])
-      game.run()
-      jest.spyOn(game, 'aClaimAchievement')
-      t.dogma(game, 'Construction')
+      const game = t.fixtureTopCard('Construction')
+      game.testSetBreakpoint('before-first-player', (game) => {
+        t.setColor(game, 'dennis', 'green', ['Mapmaking'])
+        t.setColor(game, 'dennis', 'yellow', ['Fermenting'])
+        t.setColor(game, 'dennis', 'blue', ['Mathematics'])
+        t.setColor(game, 'dennis', 'purple', ['Monotheism'])
+      })
+      const request1 = game.run()
+      t.choose(game, request1, 'Dogma.Construction')
 
-      expect(game.getAchievements('micah').cards.includes('Empire')).toBe(true)
+      const dennis = game.getPlayerByName('dennis')
+      const dennisAchievements = game.getZoneByPlayer(dennis, 'achievements').cards().map(c => c.name)
+      expect(dennisAchievements).toStrictEqual(['Empire'])
     })
 
     test('someone else has 5 top cards', () => {
-      const game = t.fixtureDogma('Construction')
-      t.setColor(game, 'micah', 'yellow', ['Fermenting'])
-      t.setColor(game, 'micah', 'green', ['Mapmaking'])
-      t.setColor(game, 'micah', 'blue', ['Mathematics'])
-      t.setColor(game, 'micah', 'purple', ['Monotheism'])
+      const game = t.fixtureTopCard('Construction')
+      game.testSetBreakpoint('before-first-player', (game) => {
+        t.setColor(game, 'dennis', 'yellow', ['Fermenting'])
+        t.setColor(game, 'dennis', 'green', ['Mapmaking'])
+        t.setColor(game, 'dennis', 'blue', ['Mathematics'])
+        t.setColor(game, 'dennis', 'purple', ['Monotheism'])
 
-      // Choosing cards from age 4 ensures no castles, so no sharing.
-      t.setColor(game, 'dennis', 'red', ['Gunpowder'])
-      t.setColor(game, 'dennis', 'yellow', ['Anatomy'])
-      t.setColor(game, 'dennis', 'green', ['Navigation'])
-      t.setColor(game, 'dennis', 'blue', ['Experimentation'])
-      t.setColor(game, 'dennis', 'purple', ['Reformation'])
+        // Choosing cards from age 4 ensures no castles, so no sharing.
+        t.setColor(game, 'micah', 'red', ['Gunpowder'])
+        t.setColor(game, 'micah', 'yellow', ['Anatomy'])
+        t.setColor(game, 'micah', 'green', ['Navigation'])
+        t.setColor(game, 'micah', 'blue', ['Experimentation'])
+        t.setColor(game, 'micah', 'purple', ['Reformation'])
+      })
 
+      const request1 = game.run()
+      t.choose(game, request1, 'Dogma.Construction')
 
-      game.run()
-      jest.spyOn(game, 'aClaimAchievement')
-      t.dogma(game, 'Construction')
-
-      expect(game.getAchievements('micah').cards.includes('Empire')).toBe(false)
+      const dennis = game.getPlayerByName('dennis')
+      const dennisAchievements = game.getZoneByPlayer(dennis, 'achievements').cards().map(c => c.name)
+      expect(dennisAchievements).toStrictEqual([])
     })
 
     test('do not have 5 top cards', () => {
-      const game = t.fixtureDogma('Construction')
-      game.run()
-      jest.spyOn(game, 'aClaimAchievement')
-      t.dogma(game, 'Construction')
+      const game = t.fixtureTopCard('Construction')
+      game.testSetBreakpoint('before-first-player', (game) => {
+        t.setColor(game, 'dennis', 'green', ['Mapmaking'])
+        t.setColor(game, 'dennis', 'yellow', ['Fermenting'])
+        t.setColor(game, 'dennis', 'blue', ['Mathematics'])
+        // t.setColor(game, 'dennis', 'purple', ['Monotheism'])
+      })
+      const request1 = game.run()
+      t.choose(game, request1, 'Dogma.Construction')
 
-      expect(game.getAchievements('micah').cards.includes('Empire')).toBe(false)
+      const dennis = game.getPlayerByName('dennis')
+      const dennisAchievements = game.getZoneByPlayer(dennis, 'achievements').cards().map(c => c.name)
+      expect(dennisAchievements).toStrictEqual([])
     })
   })
 })

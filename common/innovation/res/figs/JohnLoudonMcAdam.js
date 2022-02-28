@@ -18,8 +18,23 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'decree-for-two',
+      decree: 'Expansion',
+    },
+    {
+      trigger: 'list-achievements',
+      func: (game, player) => {
+        return game
+          .getTopCards(player)
+          .filter(card => card.biscuits.includes('f'))
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

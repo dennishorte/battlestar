@@ -3,64 +3,102 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 
 describe('John Von Neumann', () => {
-  describe('echo', () => {
-    test('first is purple', () => {
-      const game = t.fixtureDogma('John Von Neumann', { expansions: [ 'base', 'figs' ] })
-      t.setHand(game, 'micah', ['Oars'])
-      t.topDeck(game, 'base', 9, ['Services', 'Fission'])
-      game.run()
 
-      t.dogma(game, 'John Von Neumann')
-
-      expect(game.getHand('micah').cards).toStrictEqual(['Oars'])
+  test('echo (with purple)', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        red: ['John Von Neumann'],
+      },
+      decks: {
+        base: {
+          9: ['Services', 'Satellites']
+        }
+      }
     })
 
-    test('second is purple', () => {
-      const game = t.fixtureDogma('John Von Neumann', { expansions: [ 'base', 'figs' ] })
-      t.setHand(game, 'micah', ['Oars'])
-      t.topDeck(game, 'base', 9, ['Fission', 'Services'])
-      game.run()
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.John Von Neumann')
+    const request3 = t.choose(game, request2, 'auto')
 
-      t.dogma(game, 'John Von Neumann')
-
-      expect(game.getHand('micah').cards).toStrictEqual(['Oars'])
-    })
-
-    test('no purple', () => {
-      const game = t.fixtureDogma('John Von Neumann', { expansions: [ 'base', 'figs' ] })
-      t.setHand(game, 'micah', ['Oars'])
-      t.topDeck(game, 'base', 9, ['Computers', 'Fission'])
-      game.run()
-
-      t.dogma(game, 'John Von Neumann')
-
-      expect(game.getHand('micah').cards.sort()).toStrictEqual(['Computers', 'Fission', 'Oars'])
+    t.testIsSecondPlayer(request3)
+    t.testBoard(game, {
+      dennis: {
+        red: ['John Von Neumann'],
+      },
     })
   })
 
-  describe('karma', () => {
-    test('When you meld', () => {
-      const game = t.fixtureFirstPicks({ expansions: ['base', 'figs'] })
-      t.setHand(game, 'micah', ['John Von Neumann'])
-      t.setColor(game, 'micah', 'green', ['Fu Xi'])
-      t.setColor(game, 'tom', 'purple', ['Sinuhe', 'Homer'])
-      game.run()
-
-      t.meld(game, 'John Von Neumann')
-
-      expect(game.getZoneColorByPlayer('tom', 'purple').cards).toStrictEqual(['Homer'])
-      expect(game.getZoneColorByPlayer('micah', 'green').cards).toStrictEqual(['Fu Xi'])
+  test('echo (without purple)', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        red: ['John Von Neumann'],
+      },
+      decks: {
+        base: {
+          9: ['Suburbia', 'Satellites']
+        }
+      }
     })
 
-    test('Each card in hand', () => {
-      const game = t.fixtureDogma('John Von Neumann', { expansions: [ 'base', 'figs' ] })
-      t.setHand(game, 'micah', ['Oars', 'Writing'])
-      t.setColor(game, 'micah', 'green', ['Databases'])
-      game.run()
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.John Von Neumann')
 
-      const biscuits = game.getBiscuits('micah')
-      expect(biscuits.board.i).toBe(5)
-      expect(biscuits.final.i).toBe(9)
+    t.testIsSecondPlayer(request2)
+    t.testBoard(game, {
+      dennis: {
+        red: ['John Von Neumann'],
+        hand: ['Suburbia', 'Satellites']
+      },
+    })
+  })
+
+  test('karma: when-meld', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs', 'city'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Homer'],
+        hand: ['John Von Neumann'],
+      },
+      micah: {
+        yellow: ['Alex Trebek'],
+        green: ['Fu Xi']
+      }
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Meld.John Von Neumann')
+    const request3 = t.choose(game, request2, 'auto')
+    const request4 = t.choose(game, request3, 'Homer') // fade
+
+    t.testIsSecondPlayer(request4)
+    t.testBoard(game, {
+      dennis: {
+        score: ['Homer'],
+        red: ['John Von Neumann'],
+      },
+    })
+  })
+
+  test('karma: biscuits', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        red: ['John Von Neumann'],
+        hand: ['Tools', 'Calendar']
+      },
+    })
+
+    const request1 = game.run()
+
+    expect(game.getBiscuitsByPlayer(t.dennis(game))).toEqual({
+      k: 0,
+      s: 0,
+      l: 0,
+      c: 0,
+      f: 0,
+      i: 2 + 4,
     })
   })
 })

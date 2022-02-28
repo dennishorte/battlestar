@@ -18,8 +18,30 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
-  this.karmaImpl = []
+  this.inspireImpl = (game, player) => {
+    const card = game.aDraw(player, { exp: 'figs', age: game.getEffectAge(this, 8) })
+    game.aMeld(player, card)
+  }
+  this.karmaImpl = [
+    {
+      trigger: 'no-fade',
+    },
+    {
+      trigger: 'meld',
+      kind: 'would-instead',
+      matches: (game, player, { card }) => {
+        const cardCondition = card.expansion === 'figs'
+        const topCondition = game
+          .getTopCards(player)
+          .filter(card => card.expansion === 'figs')
+          .length >= 4
+        return cardCondition && topCondition
+      },
+      func: (game, player, { card }) => {
+        game.aClaimAchievement(player, { card })
+      }
+    }
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

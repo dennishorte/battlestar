@@ -17,7 +17,23 @@ function Card() {
     `Meld a card from your hand and then execute each of its non-demand dogma effects. Do not share them.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+      game.aDraw(player, { age: game.getEffectAge(this, 8) })
+      game.aDraw(player, { age: game.getEffectAge(this, 8) })
+      game.aDraw(player, { age: game.getEffectAge(this, 8) })
+    },
+    (game, player) => {
+      game.aChooseAndSplay(player, ['purple'], 'up')
+    },
+    (game, player) => {
+      const cards = game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
+      if (cards && cards.length > 0) {
+        game.aCardEffects(player, player, cards[0], 'dogma', game.getBiscuits())
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

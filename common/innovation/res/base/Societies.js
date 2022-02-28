@@ -15,7 +15,25 @@ function Card() {
     `I demand you transfer a card with a {s} higher than my top card of the same color from your board to my board! If you do, draw a {5}!`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const choices = game
+        .getTopCards(player)
+        .filter(card => {
+          const leaderCard = game.getTopCard(leader, card.color)
+          if (!leaderCard) {
+            return true
+          }
+          else {
+            return leaderCard.age < card.age
+          }
+        })
+      const card = game.aChooseAndTransfer(player, choices, { toBoard: true, player: leader })
+      if (card) {
+        game.aDraw(player, { age: game.getEffectAge(this, 5) })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

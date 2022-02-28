@@ -17,44 +17,17 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    {
-      dogma: `Draw and score a {0}.`,
-      steps: [
-        {
-          description: `Draw and score a {0}.`,
-          func(context, player) {
-            const { game } = context
-            return game.aDrawAndScore(context, player, 10)
-          }
-        }
-      ]
+    (game, player) => {
+      game.aDrawAndScore(player, game.getEffectAge(this, 10))
     },
-    {
-      dogma: `Draw and meld two {0}, then execute each of the second card's non-demand dogma effects. Do not share them.`,
-      steps: [
-        {
-          description: 'Draw and meld first {0}',
-          func(context, player) {
-            const { game } = context
-            return game.aDrawAndMeld(context, player, 10)
-          }
-        },
-        {
-          description: 'Draw and meld second {0}',
-          func(context, player) {
-            const { game } = context
-            return game.aDrawAndMeld(context, player, 10)
-          }
-        },
-        {
-          description: `Execute each of the second card's non-demand dogma effects. Do not share them.`,
-          func(context, player) {
-            const { game } = context
-            const cardToExecute = context.sentBack.card
-            return game.aExecute(context, player, cardToExecute)
-          }
-        },
-      ]
+    (game, player) => {
+      game.aDrawAndMeld(player, game.getEffectAge(this, 10))
+      const card = game.aDrawAndMeld(player, game.getEffectAge(this, 10))
+      game.mLog({
+        template: '{player} will execute {card}',
+        args: { player, card }
+      })
+      game.aCardEffects(player, player, card, 'dogma', game.getBiscuits())
     },
   ]
   this.echoImpl = []

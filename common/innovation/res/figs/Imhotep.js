@@ -16,48 +16,22 @@ function Card() {
   this.dogma = []
 
   this.dogmaImpl = []
-  this.echoImpl = [
-    {
-      dogma: `Draw and meld a {2}.`,
-      steps: [
-        {
-          description: `Draw and meld a {2}.`,
-          func(context, player) {
-            const { game } = context
-            return game.aDrawAndMeld(context, player, 2)
-          }
-        }
-      ]
-    }
-  ]
+  this.echoImpl = (game, player) => {
+    game.aDrawAndMeld(player, game.getEffectAge(this, 2))
+  }
   this.inspireImpl = []
   this.karmaImpl = [
     {
-      dogma: `If you would meld a card over an unsplayed color with more than one card, instead splay that color left and return the card.`,
       trigger: 'meld',
       kind: 'would-instead',
-      checkApplies(game, player, { card }) {
-        card = game.getCardData(card)
-        const zone = game.getZoneColorByPlayer(player, card.color)
-        return zone.splay === 'none' && zone.cards.length > 1
+      matches: (game, player, { card }) => {
+        const zone = game.getZoneByPlayer(player, card.color)
+        return zone.cards().length > 1 && zone.splay === 'none'
       },
-      steps: [
-        {
-          description: 'Splay that color left',
-          func(context, player, { card }) {
-            const { game } = context
-            card = game.getCardData(card)
-            return game.aSplay(context, player, card.color, 'left')
-          },
-        },
-        {
-          description: 'Return the card.',
-          func(context, player, { card }) {
-            const { game } = context
-            return game.aReturn(context, player, card)
-          },
-        },
-      ]
+      func: (game, player, { card }) => {
+        game.aSplay(player, card.color, 'left')
+        game.aReturn(player, card)
+      }
     }
   ]
 }

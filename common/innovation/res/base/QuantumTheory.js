@@ -15,7 +15,20 @@ function Card() {
     `You may return up to two cards from your hand. If you return two, draw a {0} and then draw and score a {0}.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const returned = game.aChooseAndReturn(
+        player,
+        game.getCardsByZone(player, 'hand'),
+        { min: 0, max: 2 }
+      )
+
+      if (returned && returned.length == 2) {
+        game.aDraw(player, { age: game.getEffectAge(this, 10) })
+        game.aDrawAndScore(player, game.getEffectAge(this, 10))
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

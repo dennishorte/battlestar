@@ -4,39 +4,41 @@ const t = require('../../../testutil.js')
 
 describe('Wealth', () => {
   test('eight visible bonuses', () => {
-    const game = t.fixtureFirstPicks({ expansions: ['base', 'echo'] })
-    t.setColor(game, 'micah', 'red', ['Plumbing'])
-    t.setColor(game, 'micah', 'green', ['Scissors'])
-    t.setColor(game, 'micah', 'blue', ['Perfume'])
-    t.setColor(game, 'micah', 'purple', ['Flute', 'Puppet'])
-    t.setSplay(game, 'micah', 'purple', 'up')
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    game.testSetBreakpoint('before-first-player', (game) => {
+      t.setColor(game, 'dennis', 'red', ['Plumbing'])
+      t.setColor(game, 'dennis', 'green', ['Scissors'])
+      t.setColor(game, 'dennis', 'blue', ['Perfume'])
+      t.setColor(game, 'dennis', 'purple', ['Flute', 'Puppet'])
+      t.setSplay(game, 'dennis', 'purple', 'up')
 
-    t.setColor(game, 'micah', 'yellow', ['Soap', 'Stove'])
-    t.setSplay(game, 'micah', 'yellow', 'up')
+      t.setColor(game, 'dennis', 'yellow', ['Soap', 'Stove'])
+      t.setSplay(game, 'dennis', 'yellow', 'up')
 
-    t.setHand(game, 'micah', ['Pencil'])
+      t.setHand(game, 'dennis', ['Pencil'])
+    })
+    const result1 = game.run()
+    const result2 = t.choose(game, result1, 'Meld.Pencil')
 
-    game.run()
-    t.meld(game, 'Pencil')
-
-    expect(game.getAchievements('micah').cards).toStrictEqual(['Wealth'])
+    expect(t.cards(game, 'achievements')).toStrictEqual(['Wealth'])
   })
 
   test('seven visible bonuses', () => {
-    const game = t.fixtureFirstPicks({ expansions: ['base', 'echo'] })
-    t.setColor(game, 'micah', 'red', ['Plumbing'])
-    t.setColor(game, 'micah', 'green', ['Scissors'])
-    t.setColor(game, 'micah', 'blue', ['Perfume'])
-    t.setColor(game, 'micah', 'purple', ['Flute'])
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    game.testSetBreakpoint('before-first-player', (game) => {
+      t.setColor(game, 'dennis', 'red', ['Plumbing'])
+      t.setColor(game, 'dennis', 'green', ['Scissors'])
+      t.setColor(game, 'dennis', 'purple', ['Flute', 'Puppet'])
+      t.setSplay(game, 'dennis', 'purple', 'up')
 
-    t.setColor(game, 'micah', 'yellow', ['Soap', 'Stove'])
-    t.setSplay(game, 'micah', 'yellow', 'up')
+      t.setColor(game, 'dennis', 'yellow', ['Soap', 'Stove'])
+      t.setSplay(game, 'dennis', 'yellow', 'up')
 
-    t.setHand(game, 'micah', ['Pencil'])
+      t.setHand(game, 'dennis', ['Pencil'])
+    })
+    const result1 = game.run()
+    const result2 = t.choose(game, result1, 'Meld.Pencil')
 
-    game.run()
-    t.meld(game, 'Pencil')
-
-    expect(game.getAchievements('micah').cards).toStrictEqual([])
+    expect(t.cards(game, 'achievements')).toStrictEqual([])
   })
 })

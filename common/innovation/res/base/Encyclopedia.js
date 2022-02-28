@@ -15,7 +15,16 @@ function Card() {
     `You may meld all the highest cards in your score pile. If you meld one of the highest, you must meld all of the highest.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const highest = game.utilHighestCards(game.getCardsByZone(player, 'score'))
+      const doIt = game.aYesNo(player, 'Meld all the highest cards in your score pile?')
+
+      if (doIt) {
+        game.aMeldMany(player, highest)
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

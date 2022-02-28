@@ -15,7 +15,23 @@ function Card() {
     `I demand you draw a {1}, then transfer the highest card in your hand to my hand!`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      game.aDraw(player, { age: game.getEffectAge(this, 1) })
+
+      const sortedHand = game
+        .getZoneByPlayer(player, 'hand')
+        .cards()
+        .sort((l, r) => r.age - l.age)
+      const highest = sortedHand[0].age
+      const choices = sortedHand
+        .filter(c => c.age === highest)
+
+      const leaderHand = game.getZoneByPlayer(leader, 'hand')
+
+      game.aChooseAndTransfer(player, choices, leaderHand)
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
