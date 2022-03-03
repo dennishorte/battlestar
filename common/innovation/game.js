@@ -1,6 +1,6 @@
 const seedrandom = require('seedrandom')
-const selector = require('./selector.js')
-const util = require('./util.js')
+const selector = require('../lib/selector.js')
+const util = require('../lib/util.js')
 
 module.exports = {
   Game,
@@ -21,6 +21,9 @@ function Game(serialized_data) {
   // This should never be reset.
   this.responses = serialized_data.responses
 
+  // This holds a reference to the latest input request
+  this.waiting = null
+
   // Places where extra code can be inserted for testing.
   this.breakpoints = {}
 
@@ -30,14 +33,19 @@ function Game(serialized_data) {
 
 function GameFactory(settings) {
   settings = Object.assign({
+    game: 'Innovation',
     name: '',
     players: [],
     seed: '',
   }, settings)
 
+  if (!settings.seed) {
+    settings.seed = settings.name
+  }
+
   util.assert(settings.players.length > 0)
   util.assert(settings.name.length > 0)
-  util.assert(settings.seed !== '')
+  util.assert(!!settings.seed)
 
   const data = {
     responses: [],
@@ -93,7 +101,26 @@ Game.prototype._validateResponse = function(requests, response) {
   }
 }
 
+Game.prototype.checkPlayerHasActionWaiting = function(player) {
+  return !!this.getWaiting(player)
+}
+
+Game.prototype.getWaiting = function(player) {
+  if (!this.waiting) {
+    return undefined
+  }
+  else {
+    return this.waiting.selectors.find(s => s.actor === player.name)
+  }
+}
+
+Game.prototype.getWaitingKey = function() {
+  return this.waiting ? this.waiting.key : undefined
+}
+
 Game.prototype.requestInputMany = function(array) {
+  this.key = this._setInputRequestKey()
+
   if (!Array.isArray(array)) {
     array = [array]
   }
@@ -154,7 +181,8 @@ Game.prototype.run = function() {
   }
   catch (e) {
     if (e instanceof InputRequestEvent) {
-      e.key = this._setInputRequestKey()
+      e.key = this.key
+      this.waiting = e
       return e
     }
     else if (e instanceof GameOverEvent) {

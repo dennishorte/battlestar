@@ -119,7 +119,10 @@ export default {
 
     async startGame() {
       const savedSuccessfully = await this.settingsSave()
-      if (!savedSuccessfully) return
+      if (!savedSuccessfully) {
+        alert('Error saving game')
+        return
+      }
 
       const requestResult = await axios.post('/api/game/create', {
         lobbyId: this.lobby._id,

@@ -20,6 +20,18 @@
         @change="settingsUpdated"
         v-model="options.bsg.expansions"
         :options="other.bsg.expansions"
+        stacked
+      >
+
+      </b-form-checkbox-group>
+    </div>
+
+    <div v-if="game === 'Innovation'">
+      <b-form-checkbox-group
+        @change="settingsUpdated"
+        v-model="options.inn.expansions"
+        :options="other.inn.expansions"
+        stacked
       >
 
       </b-form-checkbox-group>
@@ -45,7 +57,10 @@ export default {
 
   data() {
     return {
-      gameNames: ['Battlestar Galactica'],
+      gameNames: [
+        'Battlestar Galactica',
+        'Innovation',
+      ],
       game: this.gameIn,
 
       other: {
@@ -73,11 +88,44 @@ export default {
             },
           ],
         },
+
+        inn: {
+          expansions: [
+            {
+              text: 'Base Game',
+              value: 'base',
+              disabled: true,
+            },
+            {
+              text: 'Echoes of the Past',
+              value: 'echo',
+              disabled: true,
+            },
+            {
+              text: 'Figures in the Sand',
+              value: 'figs',
+              disabled: false,
+            },
+            {
+              text: 'Cities of Destiny',
+              value: 'city',
+              disabled: true,
+            },
+            {
+              text: 'Artifacts of History',
+              value: 'arti',
+              disabled: true,
+            }
+          ],
+        }
       },
 
       options: {
         bsg: {
           expansions: ['base game'],
+        },
+        inn: {
+          expansions: ['base'],
         },
       },
     }
@@ -93,6 +141,9 @@ export default {
         if (this.game === 'Battlestar Galactica') {
           this.options.bsg = util.deepcopy(this.optionsIn)
         }
+        else if (this.game === 'Innovation') {
+          this.options.inn = util.deepcopy(this.optionsIn)
+        }
       },
       deep: true,
     },
@@ -104,9 +155,10 @@ export default {
      * },
      */
     settingsUpdated() {
+      const options = this.game === 'Innovation' ? this.options.inn : this.options.bsg
       this.$emit('settings-updated', {
         game: this.game,
-        options: this.options.bsg,
+        options,
       })
     },
   },

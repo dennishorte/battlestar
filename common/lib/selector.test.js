@@ -1,113 +1,113 @@
 const { validate } = require('./selector.js')
 
-test('names must match', () => {
+test('titles must match', () => {
   const selector = {
-    name: 'test',
-    options: ['one', 'two']
+    title: 'test',
+    choices: ['one', 'two']
   }
-  expect(validate(selector, { name: 'test', option: ['one'] }).valid).toBe(true)
-  expect(validate(selector, { name: 'foo', option: ['one'] }).valid).toBe(false)
+  expect(validate(selector, { title: 'test', selection: ['one'] }).valid).toBe(true)
+  expect(validate(selector, { title: 'foo', selection: ['one'] }).valid).toBe(false)
 })
 
-test('string options', () => {
+test('string choices', () => {
   const selector = {
-    name: 'test',
-    options: ['one', 'two']
+    title: 'test',
+    choices: ['one', 'two']
   }
-  expect(validate(selector, { name: 'test', option: ['one'] }).valid).toBe(true)
-  expect(validate(selector, { name: 'test', option: ['two'] }).valid).toBe(true)
-  expect(validate(selector, { name: 'test', option: [] }).valid).toBe(false)
-  expect(validate(selector, { name: 'test', option: ['foo'] }).valid).toBe(false)
-  expect(validate(selector, { name: 'test', option: ['one', 'two'] }).valid).toBe(false)
+  expect(validate(selector, { title: 'test', selection: ['one'] }).valid).toBe(true)
+  expect(validate(selector, { title: 'test', selection: ['two'] }).valid).toBe(true)
+  expect(validate(selector, { title: 'test', selection: [] }).valid).toBe(false)
+  expect(validate(selector, { title: 'test', selection: ['foo'] }).valid).toBe(false)
+  expect(validate(selector, { title: 'test', selection: ['one', 'two'] }).valid).toBe(false)
 })
 
-describe('non-nested object options', () => {
+describe('non-nested object choices', () => {
   const selector = {
-    name: 'test',
-    options: [
-      { name: 'one' },
-      { name: 'two' },
+    title: 'test',
+    choices: [
+      { title: 'one' },
+      { title: 'two' },
     ]
   }
 
   test('string selections', () => {
-    expect(validate(selector, { name: 'test', option: ['one'] }).valid).toBe(true)
-    expect(validate(selector, { name: 'test', option: ['two'] }).valid).toBe(true)
-    expect(validate(selector, { name: 'test', option: [] }).valid).toBe(false)
-    expect(validate(selector, { name: 'test', option: ['foo'] }).valid).toBe(false)
-    expect(validate(selector, { name: 'test', option: ['one', 'two'] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: ['one'] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: ['two'] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: [] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: ['foo'] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: ['one', 'two'] }).valid).toBe(false)
   })
 
   test('object selections', () => {
-    expect(validate(selector, { name: 'test', option: [{ name: 'one' }] }).valid).toBe(true)
-    expect(validate(selector, { name: 'test', option: [{ name: 'two' }] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: [{ title: 'one' }] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: [{ title: 'two' }] }).valid).toBe(true)
   })
 })
 
-describe('nested options', () => {
+describe('nested choices', () => {
   const selector = {
-    name: 'test',
-    options: [
+    title: 'test',
+    choices: [
       {
-        name: 'one',
-        options: ['a', 'b'],
+        title: 'one',
+        choices: ['a', 'b'],
       },
       {
-        name: 'two',
-        options: ['x', 'y'],
+        title: 'two',
+        choices: ['x', 'y'],
       }
     ]
   }
 
   test('basic matches', () => {
     expect(validate(selector, {
-      name: 'test',
-      option: [{
-        name: 'one',
-        option: ['a']
+      title: 'test',
+      selection: [{
+        title: 'one',
+        selection: ['a']
       }]
     }).valid).toBe(true)
 
     expect(validate(selector, {
-      name: 'test',
-      option: [{
-        name: 'two',
-        option: ['x']
+      title: 'test',
+      selection: [{
+        title: 'two',
+        selection: ['x']
       }]
     }).valid).toBe(true)
   })
 
   test('basic mismatches', () => {
     expect(validate(selector, {
-      name: 'test',
-      option: ['one']
+      title: 'test',
+      selection: ['one']
     }).valid).toBe(false)
 
     expect(validate(selector, {
-      name: 'test',
-      option: [{
-        name: 'one',
-        option: ['x']
+      title: 'test',
+      selection: [{
+        title: 'one',
+        selection: ['x']
       }]
     }).valid).toBe(false)
 
     expect(validate(selector, {
-      name: 'test',
-      option: [{ name: 'one' }]
+      title: 'test',
+      selection: [{ title: 'one' }]
     }).valid).toBe(false)
   })
 
   test('can only pick from one', () => {
     expect(validate(selector, {
-      name: 'test',
-      option: [
+      title: 'test',
+      selection: [
         {
-          name: 'one',
-          option: ['b'],
+          title: 'one',
+          selection: ['b'],
         },
         {
-          name: 'two',
-          option: ['x']
+          title: 'two',
+          selection: ['x']
         }
       ]
     }).valid).toBe(false)
@@ -115,11 +115,11 @@ describe('nested options', () => {
 
   test('nested invalids make top level invalid', () => {
     const selector = {
-      name: "Movement",
-      options: [
+      title: "Movement",
+      choices: [
         {
-          name: "Galactica",
-          options: [
+          title: "Galactica",
+          choices: [
             "Admiral's Quarters",
             "Armory",
             "Command",
@@ -133,10 +133,10 @@ describe('nested options', () => {
       ]
     }
     const selection = {
-      name: 'Movement',
-      option: [{
-        name: 'Galactica',
-        option: ['Armory', 'Command'],
+      title: 'Movement',
+      selection: [{
+        title: 'Galactica',
+        selection: ['Armory', 'Command'],
       }]
     }
     expect(validate(selector, selection).valid).toBe(false)
@@ -145,56 +145,56 @@ describe('nested options', () => {
 
 describe('count', () => {
   const selector = {
-    name: 'test',
+    title: 'test',
     count: 2,
-    options: ['one', 'two', 'three']
+    choices: ['one', 'two', 'three']
   }
 
   test('not enough selections', () => {
-    expect(validate(selector, { name: 'test', option: ['one'] }).valid).toBe(false)
-    expect(validate(selector, { name: 'test', option: [] }).valid).toBe(false)
-    expect(validate(selector, { name: 'test', option: ['foo'] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: ['one'] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: [] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: ['foo'] }).valid).toBe(false)
   })
 
   test('too many selections', () => {
-    expect(validate(selector, { name: 'test', option: ['one', 'two', 'three'] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: ['one', 'two', 'three'] }).valid).toBe(false)
 
   })
 
   test('correct number', () => {
-    expect(validate(selector, { name: 'test', option: ['one', 'two'] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: ['one', 'two'] }).valid).toBe(true)
   })
 
   test('correct number, but duplicates', () => {
-    expect(validate(selector, { name: 'test', option: ['one', 'one'] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: ['one', 'one'] }).valid).toBe(false)
   })
 
   test('order does not matter', () => {
-    expect(validate(selector, { name: 'test', option: ['three', 'two'] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: ['three', 'two'] }).valid).toBe(true)
   })
 
-  test('count with nested options', () => {
+  test('count with nested choices', () => {
     const selector = {
-      name: 'test',
-      options: [
+      title: 'test',
+      choices: [
         {
-          name: 'one',
+          title: 'one',
           max: 1,
-          options: ['a', 'b']
+          choices: ['a', 'b']
         },
         {
-          name: 'two',
+          title: 'two',
           max: 1,
-          options: ['x', 'y']
+          choices: ['x', 'y']
         }
       ]
     }
 
     const selection = {
-      name: 'test',
-      option: [{
-        name: 'one',
-        option: ['a']
+      title: 'test',
+      selection: [{
+        title: 'one',
+        selection: ['a']
       }]
     }
 
@@ -206,72 +206,72 @@ describe('min and max', () => {
 
   test('neither', () => {
     const selector = {
-      name: 'test',
-      options: ['one', 'two', 'three']
+      title: 'test',
+      choices: ['one', 'two', 'three']
     }
 
-    expect(validate(selector, { name: 'test', option: [] }).valid).toBe(false)
-    expect(validate(selector, { name: 'test', option: ['one'] }).valid).toBe(true)
-    expect(validate(selector, { name: 'test', option: ['one', 'two'] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: [] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: ['one'] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: ['one', 'two'] }).valid).toBe(false)
   })
 
   test('min0, max1', () => {
     const selector = {
-      name: 'test',
+      title: 'test',
       min: 0,
       max: 1,
-      options: ['one', 'two', 'three']
+      choices: ['one', 'two', 'three']
     }
 
-    expect(validate(selector, { name: 'test', option: [] }).valid).toBe(true)
-    expect(validate(selector, { name: 'test', option: ['one'] }).valid).toBe(true)
-    expect(validate(selector, { name: 'test', option: ['one', 'two'] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: [] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: ['one'] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: ['one', 'two'] }).valid).toBe(false)
   })
 
   test('max1', () => {
     const selector = {
-      name: 'test',
+      title: 'test',
       max: 1,
-      options: ['one', 'two', 'three']
+      choices: ['one', 'two', 'three']
     }
 
-    expect(validate(selector, { name: 'test', option: [] }).valid).toBe(true)
-    expect(validate(selector, { name: 'test', option: ['one'] }).valid).toBe(true)
-    expect(validate(selector, { name: 'test', option: ['one', 'two'] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: [] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: ['one'] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: ['one', 'two'] }).valid).toBe(false)
   })
 
   test('min1', () => {
     const selector = {
-      name: 'test',
+      title: 'test',
       min: 1,
-      options: ['one', 'two', 'three']
+      choices: ['one', 'two', 'three']
     }
 
-    expect(validate(selector, { name: 'test', option: [] }).valid).toBe(false)
-    expect(validate(selector, { name: 'test', option: ['one'] }).valid).toBe(true)
-    expect(validate(selector, { name: 'test', option: ['one', 'two'] }).valid).toBe(true)
-    expect(validate(selector, { name: 'test', option: ['one', 'two', 'three'] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: [] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: ['one'] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: ['one', 'two'] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: ['one', 'two', 'three'] }).valid).toBe(true)
   })
 
-  test('max1 with fake option', () => {
+  test('max1 with fake selection', () => {
     const selector = {
-      name: 'test',
-      options: [
+      title: 'test',
+      choices: [
         {
-          name: 'nested',
+          title: 'nested',
           max: 1,
-          options: ['one']
+          choices: ['one']
         },
         'unnested'
       ]
     }
 
     const selection = {
-      name: 'test',
-      option: [
+      title: 'test',
+      selection: [
         {
-          name: 'nested',
-          option: ['fake']
+          title: 'nested',
+          selection: ['fake']
         }
       ]
     }
@@ -283,52 +283,52 @@ describe('min and max', () => {
 
 describe('extra', () => {
   const selector = {
-    name: 'test',
-    options: [
+    title: 'test',
+    choices: [
       'one',
       'two',
       {
-        name: 'extra',
+        title: 'extra',
         extra: true
       },
     ],
   }
 
   test('no extra selected', () => {
-    expect(validate(selector, { name: 'test', option: [] }).valid).toBe(false)
-    expect(validate(selector, { name: 'test', option: ['one'] }).valid).toBe(true)
-    expect(validate(selector, { name: 'test', option: ['one', 'two'] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: [] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: ['one'] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: ['one', 'two'] }).valid).toBe(false)
   })
 
   test('extra does not count toward required count', () => {
-    expect(validate(selector, { name: 'test', option: ['extra'] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: ['extra'] }).valid).toBe(false)
   })
 
   test('extra does not count against required count', () => {
-    expect(validate(selector, { name: 'test', option: ['one', 'extra'] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: ['one', 'extra'] }).valid).toBe(true)
   })
 })
 
 describe('exclusive', () => {
   const selector = {
-    name: 'test',
+    title: 'test',
     max: 2,
-    options: [
+    choices: [
       'one',
       'two',
       {
-        name: 'exclusive',
+        title: 'exclusive',
         exclusive: true
       },
     ],
   }
 
-  test('Cannot mix with other options', () => {
-    expect(validate(selector, { name: 'test', option: [] }).valid).toBe(true)
-    expect(validate(selector, { name: 'test', option: ['one'] }).valid).toBe(true)
-    expect(validate(selector, { name: 'test', option: ['one', 'two'] }).valid).toBe(true)
+  test('Cannot mix with other selections', () => {
+    expect(validate(selector, { title: 'test', selection: [] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: ['one'] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: ['one', 'two'] }).valid).toBe(true)
 
-    expect(validate(selector, { name: 'test', option: ['exclusive'] }).valid).toBe(true)
-    expect(validate(selector, { name: 'test', option: ['one', 'exclusive'] }).valid).toBe(false)
+    expect(validate(selector, { title: 'test', selection: ['exclusive'] }).valid).toBe(true)
+    expect(validate(selector, { title: 'test', selection: ['one', 'exclusive'] }).valid).toBe(false)
   })
 })

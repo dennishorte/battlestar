@@ -1,6 +1,6 @@
 const { GameOverEvent } = require('./game.js')
 const { InnovationFactory } = require('./innovation.js')
-const log = require('./log.js')
+const log = require('../lib/log.js')
 
 
 const TestUtil = {}
@@ -120,7 +120,7 @@ TestUtil.fixtureTopCard = function(cardName, options) {
 }
 
 TestUtil.testActionChoices = function(request, action, expected) {
-  const actionChoices = request.selectors[0].choices.find(c => c.name === action).choices
+  const actionChoices = request.selectors[0].choices.find(c => c.title === action).choices
   expect(actionChoices.sort()).toStrictEqual(expected.sort())
 }
 
@@ -328,7 +328,7 @@ TestUtil.choose = function(game, request, ...selections) {
     }
     else if (tokens.length === 2) {
       return {
-        name: tokens[0],
+        title: tokens[0],
         selection: tokens[1] === '*' ? [] : [tokens[1]]
       }
     }
@@ -387,7 +387,7 @@ TestUtil.getChoices = function(request, kind) {
   return request
     .selectors[0]
     .choices
-    .find(c => c.name === kind)
+    .find(c => c.title === kind)
     .choices
 }
 

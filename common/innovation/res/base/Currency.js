@@ -1,5 +1,5 @@
 const CardBase = require(`../CardBase.js`)
-const util = require('../../util.js')
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `Currency`  // Card names are unique in Innovation

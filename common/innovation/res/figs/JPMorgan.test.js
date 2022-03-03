@@ -21,7 +21,7 @@ describe('J.P. Morgan', () => {
       actor: 'dennis',
       title: 'Choose First Action',
       selection: [{
-        name: 'Dogma',
+        title: 'Dogma',
         selection: ['J.P. Morgan']
       }],
       key: request1.key,

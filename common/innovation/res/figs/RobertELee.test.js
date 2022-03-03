@@ -26,7 +26,7 @@ describe('Robert E. Lee', () => {
       actor: 'dennis',
       title: request1.selectors[0].title,
       selection: [{
-        name: 'Dogma',
+        title: 'Dogma',
         selection: ['Robert E. Lee']
       }],
       key: request1.key

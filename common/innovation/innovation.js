@@ -5,13 +5,14 @@ const {
   InputRequestEvent,
 } = require('./game.js')
 const res = require('./resources.js')
-const util = require('./util.js')
+const util = require('../lib/util.js')
 const { Zone } = require('./zone.js')
 
 
 module.exports = {
   Innovation,
   InnovationFactory,
+  factory: factoryFromLobby,
 }
 
 
@@ -25,6 +26,15 @@ util.inherit(Game, Innovation)
 function InnovationFactory(settings, viewerName) {
   const data = GameFactory(settings)
   return new Innovation(data, viewerName)
+}
+
+function factoryFromLobby(lobby) {
+  return GameFactory({
+    name: lobby.name,
+    expansions: lobby.options.expansions,
+    players: lobby.users,
+    seed: lobby.seed,
+  })
 }
 
 Innovation.prototype._mainProgram = function() {
@@ -95,7 +105,7 @@ Innovation.prototype.initializePlayers = function() {
     name: p.name,
     team: p.name,
   }))
-  util.array.shuffle(this.state.players)
+  util.array.shuffle(this.state.players, this.random)
   this.state.players.forEach((player, index) => {
     player.index = index
   })
@@ -154,7 +164,7 @@ Innovation.prototype.initializeZonesDecks = function() {
         throw new Error(`Cards for ${exp}-${age} is of type ${typeof cards}`)
       }
       const cardsCopy = [...cards]
-      util.array.shuffle(cardsCopy)
+      util.array.shuffle(cardsCopy, this.random)
       zones.decks[exp][age] = new Zone(this, `decks.${exp}.${age}`, 'deck')
       zones.decks[exp][age].setCards(cardsCopy)
     }
@@ -346,7 +356,7 @@ Innovation.prototype.action = function(count) {
     choices: this._generateActionChoices(),
   })[0]
 
-  const name = chosenAction.name
+  const name = chosenAction.title
   const arg = chosenAction.selection[0]
 
   if (name === 'Achieve') {
@@ -417,7 +427,7 @@ Innovation.prototype.endTurn = function() {
   const players = this.getPlayerAll()
 
   // Set next player
-  const playerIndex = players.findIndex(p => this.getPlayerCurrent())
+  const playerIndex = players.findIndex(p => p === this.getPlayerCurrent())
   const nextIndex = (playerIndex + 1) % players.length
   this.state.currentPlayer = players[nextIndex]
 
@@ -1663,6 +1673,13 @@ Innovation.prototype.getPlayerCurrent = function() {
   return this.state.currentPlayer
 }
 
+Innovation.prototype.getPlayerNext = function() {
+  const current = this.getPlayerCurrent()
+  const currentIndex = this.getPlayerAll().indexOf(current)
+  const nextIndex = (currentIndex + 1) % this.getPlayerAll().length
+  return this.getPlayerAll()[nextIndex]
+}
+
 Innovation.prototype.getPlayerByName = function(name) {
   const player = this.getPlayerAll().find(p => p.name === name)
   util.assert(!!player, `Player with name '${name}' not found.`)
@@ -1688,23 +1705,23 @@ Innovation.prototype.getPlayerOpponents = function(player) {
     .filter(p => !this.checkSameTeam(p, player))
 }
 
-// Return an array of all players, starting with the current player.
-Innovation.prototype.getPlayersStartingCurrent = function() {
+Innovation.prototype.getPlayersStarting = function(player) {
   const players = [...this.getPlayerAll()]
-  while (players[0] !== this.getPlayerCurrent()) {
+  while (players[0] !== player) {
     players.push(players.shift())
   }
   return players
 }
 
+// Return an array of all players, starting with the current player.
+Innovation.prototype.getPlayersStartingCurrent = function() {
+  return this.getPlayersStarting(this.getPlayerCurrent())
+}
+
 // Return an array of all players, starting with the player who will follow the current player.
 // Commonly used when evaluating effects
 Innovation.prototype.getPlayersStartingNext = function() {
-  const players = [...this.getPlayerAll()]
-  while (players[players.length - 1] !== this.getPlayerCurrent()) {
-    players.push(players.shift())
-  }
-  return players
+  return this.getPlayersStarting(this.getPlayerNext())
 }
 
 Innovation.prototype.getResources = function() {
@@ -1765,6 +1782,10 @@ Innovation.prototype.getTopCardsAll = function() {
   return this
     .getPlayerAll()
     .flatMap(player => this.getTopCards(player))
+}
+
+Innovation.prototype.getViewerName = function() {
+  return this.viewerName
 }
 
 Innovation.prototype.getVisibleEffects = function(card, kind) {
@@ -2512,8 +2533,9 @@ Innovation.prototype._generateActionChoicesAchieve = function() {
   const player = this.getPlayerCurrent()
 
   return {
-    name: 'Achieve',
-    choices: this.getEligibleAchievements(player)
+    title: 'Achieve',
+    choices: this.getEligibleAchievements(player),
+    min: 0,
   }
 }
 
@@ -2544,8 +2566,9 @@ Innovation.prototype._generateActionChoicesDecree = function() {
   }
 
   return {
-    name: 'Decree',
-    choices: availableDecrees.sort()
+    title: 'Decree',
+    choices: availableDecrees.sort(),
+    min: 0,
   }
 }
 
@@ -2572,15 +2595,17 @@ Innovation.prototype._generateActionChoicesDogma = function() {
     .map(card => card.name)
 
   return {
-    name: 'Dogma',
-    choices: allTargets
+    title: 'Dogma',
+    choices: allTargets,
+    min: 0,
   }
 }
 
 Innovation.prototype._generateActionChoicesDraw = function() {
   return {
-    name: 'Draw',
-    choices: ['draw a card']
+    title: 'Draw',
+    choices: ['draw a card'],
+    min: 0,
   }
 }
 
@@ -2615,8 +2640,9 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
   }
 
   return {
-    name: 'Endorse',
-    choices: colors
+    title: 'Endorse',
+    choices: colors,
+    min: 0,
   }
 }
 
@@ -2632,8 +2658,9 @@ Innovation.prototype._generateActionChoicesInspire = function() {
   }
 
   return {
-    name: 'Inspire',
+    title: 'Inspire',
     choices: inspireColors,
+    min: 0,
   }
 }
 
@@ -2644,8 +2671,10 @@ Innovation.prototype._generateActionChoicesMeld = function() {
     .cards()
     .map(c => c.id)
   return {
-    name: 'Meld',
-    choices: cards
+    title: 'Meld',
+    choices: cards,
+    min: 0,
+    max: 1,
   }
 }
 

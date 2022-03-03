@@ -21,19 +21,19 @@ function validate(selector, selection, annotate) {
 }
 
 function _normalize(selector) {
-  const options = selector.options || selector.option
-  if (!options) {
+  const choices = selector.choices || selector.selection
+  if (!choices) {
     return selector
   }
 
-  for (let i = 0; i < options.length; i++) {
-    const opt = options[i]
+  for (let i = 0; i < choices.length; i++) {
+    const opt = choices[i]
 
     if (typeof opt === 'string') {
-      options[i] = { name: opt }
+      choices[i] = { title: opt }
     }
     else {
-      options[i] = _normalize(opt)
+      choices[i] = _normalize(opt)
     }
   }
   return selector
@@ -44,34 +44,34 @@ function _validate(selector, selection, annotate) {
     selection.annotation = {}
   }
 
-  // If names don't match, doesn't matter how the options line up.
-  if (selector.name !== selection.name) {
+  // If titles don't match, doesn't matter how the choices line up.
+  if (selector.title !== selection.title) {
     if (annotate) {
       selection.annotation.isValid = false
-      selection.annotation.mismatch = 'name'
+      selection.annotation.mismatch = 'title'
     }
     return {
       valid: false,
-      mismatch: `${selector.name} !== ${selection.name}`
+      mismatch: `${selector.title} !== ${selection.title}`
     }
   }
 
   const { min, max } = minMax(selector)
 
-  // Test each option in selection to see if it matches a valid choice in selector
-  const unused = [...selector.options]
+  // Test each selection in selection to see if it matches a valid choice in selector
+  const unused = [...selector.choices]
   const matched = []
   const unmatched = []
   let exclusive = false
   let count = 0
-  for (const sel of selection.option) {
+  for (const sel of selection.selection) {
     for (const opt of unused) {
-      if (sel.name === opt.name) {
+      if (sel.title === opt.title) {
         let match = true
 
-        // If the selector option had sub-options, this must also validate against those.
-        if (opt.options) {
-          if (!sel.option) {
+        // If the selector selection had sub-choices, this must also validate against those.
+        if (opt.choices) {
+          if (!sel.selection) {
             match = false
           }
           else {
@@ -98,10 +98,10 @@ function _validate(selector, selection, annotate) {
   }
 
   if (unmatched.length > 0) {
-    const name = unmatched[0].name
+    const title = unmatched[0].title
     return {
       valid: false,
-      mismatch: `Selection ${name} didn't exist in the options`
+      mismatch: `Selection ${title} didn't exist in the choices`
     }
   }
   else if (exclusive && count > 1) {
@@ -111,7 +111,7 @@ function _validate(selector, selection, annotate) {
     }
     return {
       valid: false,
-      mismatch: `Exclusive option mixed with other options`
+      mismatch: `Exclusive choice mixed with other choices`
     }
   }
   else if (min <= count && count <= max) {
@@ -127,7 +127,7 @@ function _validate(selector, selection, annotate) {
     }
     return {
       valid: false,
-      mismatch: `Some selections didn't match with any options in the selector`,
+      mismatch: `Some selections didn't match with any choices in the selector`,
     }
   }
 }
@@ -146,7 +146,7 @@ function minMax(selector) {
   }
   else if (selector.min !== undefined && selector.max === undefined) {
     min = selector.min
-    max = selector.options.length
+    max = selector.choices.length
   }
   else if (selector.min === undefined && selector.max !== undefined) {
     min = 0
@@ -157,6 +157,9 @@ function minMax(selector) {
     max = selector.max
   }
   util.assert(min <= max, `min (${min}) must be <= max (${max})`)
+
+  min = Math.min(min, selector.choices.length)
+  max = Math.min(max, selector.choices.length)
 
   return { min, max }
 }

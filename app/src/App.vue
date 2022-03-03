@@ -19,8 +19,8 @@ export default {
 <style lang="css">
 #app {
   font-family: Verdana, sans-serif;
-  max-width: 400px;
-  margin: auto;
+  /* max-width: 400px;
+     margin: auto; */
 }
 
 .section-heading {

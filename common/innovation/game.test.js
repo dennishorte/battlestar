@@ -5,7 +5,7 @@ const {
   InputRequestEvent,
   DuplicateResponseError,
 } = require('./game.js')
-const util = require('./util.js')
+const util = require('../lib/util.js')
 
 
 ////////////////////////////////////////////////////////////////////////////////
