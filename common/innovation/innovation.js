@@ -10,6 +10,7 @@ const { Zone } = require('./zone.js')
 
 
 module.exports = {
+  GameOverEvent,
   Innovation,
   InnovationFactory,
   factory: factoryFromLobby,

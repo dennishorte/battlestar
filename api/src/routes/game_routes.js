@@ -1,6 +1,8 @@
 const db = require('../models/db.js')
 const slack = require('../util/slack.js')
 
+const { inn } = require('battlestar-common')
+
 const Game = {}
 module.exports = Game
 
@@ -63,5 +65,52 @@ Game.save = async function(req, res) {
       status: 'error',
       message: e.message,
     })
+  }
+}
+
+Game.saveResponse = async function(req, res) {
+  const game = await _loadGameFromReq(req)
+
+  // Test that the response is valid.
+  let valid = false
+  let message = ''
+  try {
+    game.run()
+    game.respondToInputRequest(req.body.response)
+    valid = true
+  }
+  catch (e) {
+    if (e instanceof inn.GameOverEvent) {
+      valid = true
+    }
+    else {
+      message = e.message
+    }
+  }
+
+  if (valid) {
+    await db.game.saveResponse(game._id, req.body.response)
+    res.json({
+      status: 'success',
+      message: 'Saved',
+    })
+  }
+  else {
+    res.json({
+      status: 'error',
+      message,
+    })
+  }
+
+}
+
+async function _loadGameFromReq(req) {
+  const gameData = await db.game.findById(req.body.gameId)
+
+  if (gameData.settings.game === 'Innovation') {
+    return new inn.Innovation(gameData)
+  }
+  else {
+    throw new Error(`Unhandled game type: ${gameData.settings.game}`)
   }
 }

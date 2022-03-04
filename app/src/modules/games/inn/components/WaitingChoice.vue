@@ -95,7 +95,7 @@ export default {
         alert('Error!\nCheck console for details.')
         throw e
       }
-      // await this.game.save()
+      await this.game.saveLatest()
       // await this.maybeNotifyPlayers()
     },
 

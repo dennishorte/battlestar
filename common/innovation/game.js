@@ -11,6 +11,8 @@ module.exports = {
 
 
 function Game(serialized_data) {
+  this._id = serialized_data._id
+
   // State will be reset each time the game is run
   this.state = this._blankState()
 
@@ -109,8 +111,11 @@ Game.prototype.getWaiting = function(player) {
   if (!this.waiting) {
     return undefined
   }
-  else {
+  else if (player) {
     return this.waiting.selectors.find(s => s.actor === player.name)
+  }
+  else {
+    return this.waiting
   }
 }
 

@@ -24,6 +24,8 @@
 
 
 <script>
+import axios from 'axios'
+
 import { inn } from 'battlestar-common'
 
 import History from './History'
@@ -56,6 +58,37 @@ export default {
 
   created() {
     this.game.testMode = true
+
+    this.game.saveLatest = async function() {
+      const game = this.game
+      const payload = {
+        gameId: game._id,
+        response: game.responses[game.responses.length - 1],
+      }
+
+      const requestResult = await axios.post('/api/game/saveResponse', payload)
+      console.log(requestResult)
+    }.bind(this)
+
+    /* this.game.save = async function() {
+     *   const requestResult = await axios.post('/api/game/save', this.game.serialized())
+     *   if (requestResult.data.status !== 'success') {
+     *     this.ui.modal.error = requestResult.data.message
+     *   }
+     *   else {
+     *     this.toaster('saved')
+     *     this.state.saveKey = requestResult.data.saveKey
+     *   }
+     * }.bind(this.game)
+
+     * this.game.toaster = function(msg) {
+     *   this.$bvToast.toast(msg, {
+     *     autoHideDelay: 300,
+     *     noCloseButton: true,
+     *     solid: true,
+     *   })
+     * }.bind(this)
+     */
     this.game.run()
   }
 }

@@ -60,3 +60,12 @@ Game.save = async function(record) {
     return record.saveKey
   })
 }
+
+Game.saveResponse = async function(gameId, response) {
+  return await writeMutex.dispatch(async () => {
+    await gameCollection.updateOne(
+      { _id: gameId },
+      { $push: { responses: response } },
+    )
+  })
+}
