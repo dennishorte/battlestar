@@ -3,7 +3,8 @@ const CardBase = require(`../../CardBase.js`)
 function Card() {
   this.id = 'War'
   this.name = 'War'
-  this.exp = 'figs'
+  this.shortName = 'war'
+  this.expansion = 'figs'
   this.text = "Choose a value. Return all top cards of that value from all other players' boards."
   this.alt = ''
   this.isSpecialAchievement = true

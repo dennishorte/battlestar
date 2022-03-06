@@ -3,7 +3,8 @@ const CardBase = require(`../../CardBase.js`)
 function Card() {
   this.id = 'Rivalry'
   this.name = 'Rivalry'
-  this.exp = 'figs'
+  this.shortName = 'rivl'
+  this.expansion = 'figs'
   this.text = 'Choose another player. Return three cards from their score pile, and all their top figures.'
   this.alt = ''
   this.isSpecialAchievement = true

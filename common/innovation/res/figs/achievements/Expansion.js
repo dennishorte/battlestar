@@ -3,7 +3,8 @@ const CardBase = require(`../../CardBase.js`)
 function Card() {
   this.id = 'Expansion'
   this.name = 'Expansion'
-  this.exp = 'figs'
+  this.shortName = 'expn'
+  this.expansion = 'figs'
   this.text = 'Splay any one of your colors up.'
   this.alt = ''
   this.isSpecialAchievement = true

@@ -3,7 +3,8 @@ const CardBase = require(`../../CardBase.js`)
 function Card() {
   this.id = 'Advancement'
   this.name = 'Advancement'
-  this.exp = 'figs'
+  this.shortName = 'advn'
+  this.expansion = 'figs'
   this.text = 'Draw a card of value two higher than your highest top card.'
   this.alt = ''
   this.isSpecialAchievement = true

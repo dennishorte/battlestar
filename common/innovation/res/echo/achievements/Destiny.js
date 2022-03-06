@@ -1,7 +1,10 @@
-module.exports = function() {
+const CardBase = require(`../../CardBase.js`)
+
+function Card() {
   this.id = 'Destiny'
   this.name = 'Destiny'
-  this.exp = 'echo'
+  this.shortName = 'dest'
+  this.expansion = 'echo'
   this.text = 'Have seven cards forecasted'
   this.alt = 'Barometer'
   this.isSpecialAchievement = true
@@ -10,3 +13,12 @@ module.exports = function() {
     return game.getZoneByPlayer(player, 'forecast').cards().length >= targetCount
   }
 }
+
+Card.prototype = Object.create(CardBase.prototype)
+Object.defineProperty(Card.prototype, `constructor`, {
+  value: Card,
+  enumerable: false,
+  writable: true
+})
+
+module.exports = Card

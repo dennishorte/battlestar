@@ -1,7 +1,10 @@
-module.exports = function() {
+const CardBase = require(`../../CardBase.js`)
+
+function Card() {
   this.id = 'Supremacy'
   this.name = 'Supremacy'
-  this.exp = 'echo'
+  this.shortName = 'supr'
+  this.expansion = 'echo'
   this.text = 'Have three or more of one biscuit in four colors.'
   this.alt = 'Novel'
   this.isSpecialAchievement = true
@@ -22,3 +25,12 @@ module.exports = function() {
     return Object.values(colorCounts).some(count => count >= targetColorsCount)
   }
 }
+
+Card.prototype = Object.create(CardBase.prototype)
+Object.defineProperty(Card.prototype, `constructor`, {
+  value: Card,
+  enumerable: false,
+  writable: true
+})
+
+module.exports = Card
