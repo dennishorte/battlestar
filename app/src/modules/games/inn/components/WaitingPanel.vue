@@ -107,6 +107,10 @@ export default {
 
 
 <style scoped>
+.waiting-panel {
+  background-color: white;
+}
+
 .waiting-panel >>> .active-nav-item {
   background-color: #eee;
   border-color: #ccc;

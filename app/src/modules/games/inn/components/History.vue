@@ -1,7 +1,5 @@
 <template>
   <div class="history">
-    Log
-
     <div v-for="(line, index) in lines" :key="index">
       {{ line }}
     </div>
@@ -34,3 +32,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.history {
+  font-size: .8rem;
+}
+</style>
