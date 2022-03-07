@@ -33,6 +33,7 @@
             v-for="zoneName in ['achievements', 'score', 'forecast', 'hand']"
             :key="zoneName"
             :zone="game.getZoneByPlayer(player, zoneName)"
+            :expanded="zoneName === 'hand' && player.name === actor.name"
           />
         </b-col>
 
