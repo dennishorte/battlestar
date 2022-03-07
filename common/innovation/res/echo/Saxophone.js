@@ -6,14 +6,14 @@ function Card() {
   this.color = `purple`
   this.age = 7
   this.expansion = `echo`
-  this.biscuits = `7ch7`
+  this.biscuits = `7cm7`
   this.dogmaBiscuit = `c`
   this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = [
     `You may splay your purple cards up.`,
-    `If the MUSIC_HEX for Bell, Flute, Piano, and Saxophone are visible anywhere, you win. Otherwise, draw a {7} for each MUSIC_HEX that is visible.`
+    `If the {m} for Bell, Flute, Piano, and Saxophone are visible anywhere, you win. Otherwise, draw a {7} for each {m} that is visible.`
   ]
 
   this.dogmaImpl = []

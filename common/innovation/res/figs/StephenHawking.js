@@ -11,7 +11,7 @@ function Card() {
   this.inspire = `Draw and tuck a {0}.`
   this.echo = ``
   this.karma = [
-    `Each HEX on your board also counts as an echo effect reading "Score the bottom card of this color".`
+    `Each {h} on your board also counts as an echo effect reading "Score the bottom card of this color".`
   ]
   this.dogma = []
 

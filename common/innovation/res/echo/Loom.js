@@ -13,7 +13,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `You may return two cards of different value from your score pile. If you do, draw and tuck three {6}.`,
-    `If you have five or more HEX visible on your board in one color, claim the Heritage achievement.`
+    `If you have five or more {h} visible on your board in one color, claim the Heritage achievement.`
   ]
 
   this.dogmaImpl = []

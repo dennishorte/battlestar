@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = [
     `You may issue a Rivaly Decree with any two figures.`,
-    `Each HEX on your board provides one additional point toward your score.`
+    `Each {h} on your board provides one additional point toward your score.`
   ]
   this.dogma = []
 

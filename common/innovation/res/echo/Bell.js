@@ -6,7 +6,7 @@ function Card() {
   this.color = `purple`
   this.age = 1
   this.expansion = `echo`
-  this.biscuits = `khk&`
+  this.biscuits = `khm&`
   this.dogmaBiscuit = `k`
   this.inspire = ``
   this.echo = `You may score a card from your hand.`

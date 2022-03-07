@@ -19,6 +19,14 @@ function CardBase() {
 }
 
 CardBase.prototype.checkBiscuitIsVisible = function(biscuit, splay) {
+  if (biscuit === 'h') {
+    // m also counts as an h
+    const mIsVisible = this.checkBiscuitIsVisible('m', splay)
+    if (mIsVisible) {
+      return true
+    }
+  }
+
   const biscuitIndex = this.biscuits.indexOf(biscuit)
   switch (splay) {
     case 'left': return biscuitIndex === 3
