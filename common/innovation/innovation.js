@@ -267,9 +267,6 @@ Innovation.prototype.firstPicks = function() {
   this.state.currentPlayer = picks[0][0]
 
   this.mLogOutdent()
-  this.mLog({
-    template: 'Round 1',
-  })
 
   this.state.firstPicksComplete = true
 
@@ -279,20 +276,18 @@ Innovation.prototype.firstPicks = function() {
 Innovation.prototype.mainLoop = function() {
   while (true) {
     this.mLog({
-      template: "{player}'s turn",
+      template: "{player}'s turn {count}",
+      classes: ['player-turn-start'],
       args: {
-        player: this.getPlayerCurrent()
+        player: this.getPlayerCurrent(),
+        count: this.state.round,
       }
     })
-
-    this.mLogIndent()
 
     this.artifact()
     this.action(1)
     this.action(2)
     this.endTurn()
-
-    this.mLogOutdent()
   }
 }
 
@@ -321,6 +316,7 @@ Innovation.prototype.artifact = function() {
       case 'skip':
         this.mLog({
           template: '{player} skips the free artifact action',
+          classes: ['action-header'],
           args: { player },
         })
         break
@@ -348,7 +344,10 @@ Innovation.prototype.action = function(count) {
   }
 
   const countTerm = count === 1 ? 'First' : 'Second'
-  this.mLog({ template: `${countTerm} action` })
+  this.mLog({
+    template: `${countTerm} action`,
+    classes: ['action-header'],
+  })
   this.mLogIndent()
 
   const chosenAction = this.requestInputSingle({

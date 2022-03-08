@@ -48,6 +48,11 @@ export default {
   props: {
     biscuit: String,
 
+    classes: {
+      type: Array,
+      default: () => [],
+    },
+
     inline: {
       type: Boolean,
       default: false,
@@ -55,13 +60,14 @@ export default {
   },
 
   computed: {
-    classes() {
+    classesComputed() {
+      const base = this.classes
+
       if (this.kind === 'image' && this.inline) {
-        return 'inline-image'
+        base.push('inline-image')
       }
-      else {
-        return ''
-      }
+
+      return base
     },
 
     kind() {
@@ -96,15 +102,15 @@ export default {
 
 <style scoped>
 .card-biscuit {
-  height: 12px;
-  width: 12px;
+  height: 1.2em;
+  width: 1.2em;
   margin-right: 2px;
   margin-bottom: 2px;
 }
 
 .card-biscuit-image {
-  height: 12px;
-  width: 12px;
+  height: 1.2em;
+  width: 1.2em;
   object-fit: fill;
 }
 
@@ -113,7 +119,7 @@ export default {
 }
 
 .age-biscuit {
-  width: 12px;
+  width: 1.2em;
   background-color: black;
   color: white;
   display: inline-block;

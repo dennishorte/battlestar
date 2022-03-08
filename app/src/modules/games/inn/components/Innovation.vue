@@ -2,24 +2,18 @@
   <div class="innovation">
     <b-container>
       <b-row>
-        <b-col class="game-log">
-
-          <div class="selector">
-            <WaitingPanel />
-          </div>
-
-          <div>
-            <History />
-          </div>
+        <b-col class="game-column">
+          <History />
         </b-col>
 
-        <b-col>
+        <b-col class="game-column">
           <Biscuits />
           <Decks />
           <Achievements />
+          <WaitingPanel />
         </b-col>
 
-        <b-col v-for="player in players" :key="player._id">
+        <b-col v-for="player in players" :key="player._id"  class="game-column">
           {{ player.name }}
 
           <ColorStack
@@ -147,14 +141,9 @@ export default {
   font-size: .8rem;
 }
 
-.game-log {
+.game-column {
   height: 100vh;
   overflow: scroll;
-}
-
-.selector {
-  position: sticky;
-  top: 0;
 }
 
 .text-base {

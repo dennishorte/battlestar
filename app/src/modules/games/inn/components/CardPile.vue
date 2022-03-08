@@ -1,6 +1,8 @@
 <template>
   <div class="card-pile">
-    {{ zone.name.split('.').slice(-1)[0] }}
+    <div class="card-pile-header">
+      {{ headerComputed }}
+    </div>
 
     <div v-if="expanded">
       <CardFull
@@ -24,6 +26,8 @@
 import CardFull from './CardFull'
 import CardSquare from './CardSquare'
 
+const orderedExpansions = ['base', 'echo', 'figs', 'city', 'arti']
+
 export default {
   name: 'CardPile',
 
@@ -38,6 +42,11 @@ export default {
       default: false,
     },
 
+    header: {
+      type: [Function, String],
+      default: null,
+    },
+
     zone: Object,
   },
 
@@ -49,7 +58,23 @@ export default {
 
   computed: {
     cards() {
-      return this.zone.cards()
+      return this.zone.cards().sort((l, r) => {
+        if (l.age === r.age) {
+          return orderedExpansions.indexOf(l.expansion) - orderedExpansions.indexOf(r.expansion)
+        }
+        else {
+          return l.age - r.age
+        }
+      })
+    },
+
+    headerComputed() {
+      if (this.header) {
+        return '*computed*'
+      }
+      else {
+        return this.zone.name.split('.').slice(-1)[0]
+      }
     },
   },
 }
@@ -60,5 +85,18 @@ export default {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  margin-top: 1px;
+}
+
+
+.card-pile-header {
+  margin-left: .5rem;
+  margin-right: .5rem;
+  margin-top: .25rem;
+  padding-left: .25rem;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+  border-left: 1px solid black;
+  background-color: #bba37a;
 }
 </style>

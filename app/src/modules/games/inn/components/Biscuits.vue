@@ -7,7 +7,7 @@
         v-for="biscuit in ['k', 'c', 's', 'l', 'f', 'i']"
         :key="biscuit"
         class="biscuits-box">
-        {{ biscuit }}
+        <CardBiscuit :biscuit="biscuit" />
       </div>
     </div>
 
@@ -25,10 +25,14 @@
 </template>
 
 <script>
-
+import CardBiscuit from './CardBiscuit'
 
 export default {
   name: 'Biscuits',
+
+  components: {
+    CardBiscuit,
+  },
 
   inject: ['game'],
 
