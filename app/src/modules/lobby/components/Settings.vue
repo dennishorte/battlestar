@@ -58,7 +58,7 @@ export default {
   data() {
     return {
       gameNames: [
-        'Battlestar Galactica',
+        // 'Battlestar Galactica',
         'Innovation',
       ],
       game: this.gameIn,
