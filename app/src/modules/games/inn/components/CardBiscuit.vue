@@ -1,23 +1,45 @@
 <template>
   <span class="card-biscuit">
-    <img v-if="!!imagePath" class="card-biscuit-image" :src="imagePath" />
+    <img v-if="kind === 'image'" class="card-biscuit-image" :class="classes" :src="imagePath" />
+    <span v-else-if="kind === 'inline-age'" class="age-biscuit">{{ biscuit }}</span>
+    <div v-else-if="kind === 'inline-ohter'">*{{ biscuit }}*</div>
   </span>
 </template>
 
 
 <script>
 const imageMap = {
-  'k': require('@/assets/img/biscuit-castle.png'),
-  'i': require('@/assets/img/biscuit-clock.png'),
+  '1': require('@/assets/img/biscuit-bonus-1.png'),
+  '2': require('@/assets/img/biscuit-bonus-2.png'),
+  '3': require('@/assets/img/biscuit-bonus-3.png'),
+  '4': require('@/assets/img/biscuit-bonus-4.png'),
+  '5': require('@/assets/img/biscuit-bonus-5.png'),
+  '6': require('@/assets/img/biscuit-bonus-6.png'),
+  '7': require('@/assets/img/biscuit-bonus-7.png'),
+  '8': require('@/assets/img/biscuit-bonus-8.png'),
+  '9': require('@/assets/img/biscuit-bonus-9.png'),
+  'a': require('@/assets/img/biscuit-bonus-10.png'),
+  'b': require('@/assets/img/biscuit-bonus-11.png'),
+
+  ':': require('@/assets/img/biscuit-blackflag.png'),
+  ';': require('@/assets/img/biscuit-whiteflag.png'),
+  '+': require('@/assets/img/biscuit-plus.png'),
+  '<': require('@/assets/img/biscuit-left.png'),
+  '>': require('@/assets/img/biscuit-right.png'),
+  '^': require('@/assets/img/biscuit-up.png'),
+
+  '&': require('@/assets/img/biscuit-echo.png'),
+  '*': require('@/assets/img/biscuit-inspire.png'),
+
+  'h': require('@/assets/img/biscuit-hex.png'),
+  'm': require('@/assets/img/biscuit-hexnote.png'),
+
   'c': require('@/assets/img/biscuit-crown.png'),
   'f': require('@/assets/img/biscuit-factory.png'),
-  'h': require('@/assets/img/biscuit-hex.png'),
+  'i': require('@/assets/img/biscuit-clock.png'),
+  'k': require('@/assets/img/biscuit-castle.png'),
   'l': require('@/assets/img/biscuit-leaf.png'),
-  '<': require('@/assets/img/biscuit-left.png'),
   's': require('@/assets/img/biscuit-lightbulb.png'),
-  '+': require('@/assets/img/biscuit-plus.png'),
-  '>': require('@/assets/img/biscuit-right.png'),
-  ';': require('@/assets/img/biscuit-whiteflag.png'),
 }
 
 export default {
@@ -25,11 +47,47 @@ export default {
 
   props: {
     biscuit: String,
+
+    inline: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   computed: {
+    classes() {
+      if (this.kind === 'image' && this.inline) {
+        return 'inline-image'
+      }
+      else {
+        return ''
+      }
+    },
+
+    kind() {
+      if (this.imagePath) {
+        return 'image'
+      }
+      else if (this.inline) {
+        if (isNaN(this.biscuit)) {
+          return 'inline-other'
+        }
+        else {
+          return 'inline-age'
+        }
+      }
+      else {
+        return ''
+      }
+    },
+
     imagePath() {
-      return imageMap[this.biscuit]
+      if (this.inline && !isNaN(this.biscuit)) {
+        return null
+      }
+      else {
+        return imageMap[this.biscuit]
+      }
     },
   },
 }
@@ -38,15 +96,27 @@ export default {
 
 <style scoped>
 .card-biscuit {
-  height: 15px;
-  width: 15px;
-  margin-right: 1px;
-  margin-bottom: 1px;
+  height: 12px;
+  width: 12px;
+  margin-right: 2px;
+  margin-bottom: 2px;
 }
 
 .card-biscuit-image {
-  height: 15px;
-  width: 15px;
+  height: 12px;
+  width: 12px;
   object-fit: fill;
+}
+
+.inline-image {
+  vertical-align: text-top;
+}
+
+.age-biscuit {
+  width: 12px;
+  background-color: black;
+  color: white;
+  display: inline-block;
+  text-align: center;
 }
 </style>

@@ -27,7 +27,7 @@
     </div>
 
     <div v-for="(effect, index) in effects" class="card-effect" :key="index">
-      {{ effect }}
+      <CardText :text="effect" />
     </div>
   </div>
 </template>
@@ -35,6 +35,7 @@
 
 <script>
 import CardBiscuit from './CardBiscuit'
+import CardText from './CardText'
 
 import { util } from 'battlestar-common'
 
@@ -43,6 +44,7 @@ export default {
 
   components: {
     CardBiscuit,
+    CardText,
   },
 
   props: {
