@@ -3,6 +3,7 @@
     <div v-for="(line, index) in lines" :key="index" :class="line.classes">
       <CardText :text="line.text" />
     </div>
+    <div class="bottom-space" ref="bottom"></div>
   </div>
 </template>
 
@@ -38,12 +39,35 @@ export default {
       return output
     }
   },
+
+  watch: {
+    lines: {
+      handler() { this.scrollToBottom() },
+      flush: 'post',
+    },
+  },
+
+  methods: {
+    scrollToBottom() {
+      this.$nextTick(() => {
+        this.$refs.bottom.scrollIntoView({ behavior: 'smooth' })
+      })
+    }
+  },
+
+  mounted() {
+    this.scrollToBottom()
+  },
 }
 </script>
 
 <style scoped>
 .history {
   font-size: .8rem;
+}
+
+.bottom-space {
+  height: 1em;
 }
 
 .player-turn-start {
