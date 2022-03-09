@@ -1,7 +1,8 @@
 <template>
   <div class="innovation">
     <b-container>
-      <b-row>
+      <b-row class="main-row">
+
         <b-col class="game-column">
           <History />
         </b-col>
@@ -13,22 +14,8 @@
           <WaitingPanel />
         </b-col>
 
-        <b-col v-for="player in players" :key="player._id"  class="game-column">
-          {{ player.name }}
-
-          <ColorStack
-            v-for="color in game.utilColors()"
-            :key="color"
-            :player="player"
-            :color="color"
-          />
-
-          <CardPile
-            v-for="zoneName in ['achievements', 'score', 'forecast', 'hand']"
-            :key="zoneName"
-            :zone="game.getZoneByPlayer(player, zoneName)"
-            :expanded="zoneName === 'hand' && player.name === actor.name"
-          />
+        <b-col v-for="player in players" :key="player._id" class="game-column">
+          <PlayerTableau :player="player" />
         </b-col>
 
       </b-row>
@@ -44,10 +31,9 @@ import { inn } from 'battlestar-common'
 
 import Achievements from './Achievements'
 import Biscuits from './Biscuits'
-import CardPile from './CardPile'
-import ColorStack from './ColorStack'
 import Decks from './Decks'
 import History from './History'
+import PlayerTableau from './PlayerTableau'
 import WaitingPanel from './WaitingPanel'
 
 export default {
@@ -56,16 +42,15 @@ export default {
   components: {
     Achievements,
     Biscuits,
-    CardPile,
-    ColorStack,
     Decks,
     History,
+    PlayerTableau,
     WaitingPanel,
   },
 
   props: {
     data: Object,
-    actor: Object
+    actor: Object,
   },
 
   data() {
@@ -85,6 +70,7 @@ export default {
 
   provide() {
     return {
+      actor: this.actor,
       game: this.game,
     }
   },
@@ -151,14 +137,21 @@ export default {
 
 <style>
 .innovation {
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   font-size: .8rem;
+  overflow: scroll;
 }
 
 .game-column {
   height: 100vh;
+  min-width: 220px;
+  max-width: 400px;
   overflow: scroll;
+}
+
+.main-row {
+  flex-wrap: nowrap;
 }
 
 .text-base {
