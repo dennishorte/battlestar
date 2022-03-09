@@ -39,16 +39,18 @@ Game.fetch = async function(req, res) {
 Game.notify = async function(req, res) {
   const userId = req.body.userId
   const game = await db.game.findById(req.body.gameId)
+  const gameKind = game.settings ? game.settings.game : game.game
+  const gameName = game.settings ? game.settings.name : game.name
 
   const domain_host = process.env.DOMAIN_HOST
   const link = `http://${domain_host}/game/${game._id}`
-  const message = `You're up! <${link}|${game.game}: ${game.name}>`
+  const message = `You're up! <${link}|${gameKind}: ${gameName}>`
 
   const sendResult = slack.sendMessage(userId, message)
 
   res.json({
     status: 'success',
-})
+  })
 }
 
 Game.save = async function(req, res) {
