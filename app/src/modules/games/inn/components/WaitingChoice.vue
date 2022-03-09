@@ -67,20 +67,6 @@ export default {
   },
 
   methods: {
-    async maybeNotifyPlayers() {
-      if (process.env.NODE_ENV === 'development') {
-        return
-      }
-      /* for (const player of this.game.getPlayerAll()) {
-       *   if (this.game.checkPlayerHasActionWaiting(player)) {
-       *     await axios.post('/api/game/notify', {
-       *       gameId: this.$game.state._id,
-       *       userId: player._id,
-       *     })
-       *   }
-       * } */
-    },
-
     async submit() {
       const payload = {
         actor: this.actor.name,
@@ -96,7 +82,6 @@ export default {
         throw e
       }
       await this.game.saveLatest()
-      // await this.maybeNotifyPlayers()
     },
 
     childChanged(event) {

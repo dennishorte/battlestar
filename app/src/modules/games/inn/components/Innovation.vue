@@ -123,6 +123,24 @@ export default {
 
         const requestResult = await axios.post('/api/game/saveResponse', payload)
         console.log(requestResult)
+
+        if (requestResult.data.status === 'success') {
+          this.$bvToast.toast('saved', {
+            autoHideDelay: 300,
+            noCloseButton: true,
+            solid: true,
+            variant: 'success',
+          })
+          this.maybeNotifyPlayers()
+        }
+        else {
+          this.$bvToast.toast('error: see console', {
+            autoHideDelay: 0,
+            noCloseButton: false,
+            solid: true,
+            variant: 'danger',
+          })
+        }
       }
     }.bind(this)
 

@@ -23,7 +23,7 @@ export default {
 
   computed: {
     displayName() {
-      return this.card.isSpecialAchievement ? this.card.shortName : this.card.age
+      return this.card.isSpecialAchievement ? this.card.shortName : this.card.age.toString()
     },
 
     sizeClass() {
