@@ -70,6 +70,16 @@ Innovation.prototype._gameOver = function(event) {
   return event
 }
 
+Innovation.prototype._responseReceived = function(response) {
+  if (response.isUserResponse) {
+
+    this.state.log.push({
+      type: 'response-received',
+      data: response,
+    })
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
 

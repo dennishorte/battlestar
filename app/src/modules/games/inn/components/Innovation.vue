@@ -102,9 +102,10 @@ export default {
         console.log('fake saved')
       }
       else {
+        const lastResponse = game.responses.slice().reverse().find(r => r.isUserResponse)
         const payload = {
           gameId: game._id,
-          response: game.responses[game.responses.length - 1],
+          response: lastResponse,
         }
 
         const requestResult = await axios.post('/api/game/saveResponse', payload)

@@ -131,6 +131,11 @@ Game.prototype.requestInputMany = function(array) {
   }
 
   const responses = []
+  const __prepareInput = (input) => {
+    responses.push(input)
+    this._responseReceived(input)
+  }
+
   while (responses.length < array.length) {
     const resp = this._getResponse()
     if (responseIsDuplicate(responses, resp)) {
@@ -138,7 +143,7 @@ Game.prototype.requestInputMany = function(array) {
     }
     else if (resp) {
       this._validateResponse(array, resp)
-      responses.push(resp)
+      __prepareInput(resp)
     }
     else {
       const unanswered = array.filter(request => !responses.find(r => r.actor === request.actor))
@@ -146,7 +151,7 @@ Game.prototype.requestInputMany = function(array) {
       if (answer) {
         this._validateResponse(array, answer)
         this.responses.push(answer)
-        responses.push(answer)
+        __prepareInput(answer)
       }
       else {
 	throw new InputRequestEvent(unanswered)
@@ -163,9 +168,9 @@ Game.prototype.requestInputSingle = function(selector) {
 }
 
 Game.prototype.respondToInputRequest = function(response) {
-  const t = require('./testutil.js')
-
   util.assert(response.key === this.key, `Invalid response. State has updated. this: ${this.key} resp: ${response.key}`)
+
+  response.isUserResponse = true  // As opposed to an automated response.
   this.responses.push(response)
 
   try {
@@ -245,6 +250,10 @@ Game.prototype._blankState = function(more = {}) {
     log: [],
     responseIndex: -1,
   }, more)
+}
+
+Game.prototype._responseReceived = function(response) {
+  // To be overridden by child classes.
 }
 
 ////////////////////////////////////////////////////////////////////////////////

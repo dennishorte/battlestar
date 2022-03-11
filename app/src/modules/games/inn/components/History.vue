@@ -28,7 +28,11 @@ export default {
     lines() {
       const output = []
       for (const entry of this.game.getLog()) {
-        if (entry === '__INDENT__' || entry === '__OUTDENT__') {
+        if (
+          entry.type === 'response-received'
+          || entry === '__INDENT__'
+          || entry === '__OUTDENT__'
+        ) {
           continue
         }
         output.push({
