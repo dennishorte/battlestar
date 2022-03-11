@@ -36,6 +36,7 @@ export default {
   padding-left: 3px;
   padding-right: 3px;
   display: inline-block;
+  border: 1px solid #7d6c50;
 }
 
 .square {

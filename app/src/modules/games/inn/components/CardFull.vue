@@ -22,7 +22,12 @@
       </div>
 
       <div class="card-title">
-        {{ card.name }} <CardBiscuit :biscuit="card.dogmaBiscuit" />
+        {{ card.name }}
+      </div>
+
+      <div class="card-age">
+        <CardSquare :card="card" class="small-card-square card-age-square" />
+        <CardBiscuit :biscuit="card.dogmaBiscuit" class="card-age-square" />
       </div>
     </div>
 
@@ -35,6 +40,7 @@
 
 <script>
 import CardBiscuit from './CardBiscuit'
+import CardSquare from './CardSquare'
 import CardText from './CardText'
 
 import { util } from 'battlestar-common'
@@ -44,6 +50,7 @@ export default {
 
   components: {
     CardBiscuit,
+    CardSquare,
     CardText,
   },
 
@@ -98,6 +105,11 @@ export default {
   margin-bottom: 1px;
 }
 
+.card-age {
+  display: flex;
+  flex-direction: column;
+}
+
 .card-biscuits {
   margin-top: -5px;
   margin-bottom: 3px;
@@ -117,10 +129,24 @@ export default {
 .card-title {
   margin-bottom: 0;
   font-size: .9rem;
+  flex-grow: 1;
+  text-align: right;
+  margin-right: .3em;
 }
 
 .card-effect {
   font-size: .8em;
   line-height: 1.2em;
+}
+
+.small-card-square {
+  height: 1.2em;
+  width: 1.2em;
+  line-height: 1.15em;
+  margin-bottom: 0;
+}
+
+.card-age-square {
+  margin-top: -2px;
 }
 </style>
