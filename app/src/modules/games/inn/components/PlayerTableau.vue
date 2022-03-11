@@ -30,10 +30,10 @@ export default {
     ColorStack,
   },
 
+  inject: ['actor', 'game'],
+
   props: {
     player: Object,
   },
-
-  inject: ['actor', 'game'],
 }
 </script>

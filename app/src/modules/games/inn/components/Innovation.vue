@@ -20,12 +20,15 @@
 
       </b-row>
     </b-container>
+
+    <CardsViewerModal />
   </div>
 </template>
 
 
 <script>
 import axios from 'axios'
+import Vue from 'vue'
 
 import { inn } from 'battlestar-common'
 
@@ -35,6 +38,9 @@ import Decks from './Decks'
 import History from './History'
 import PlayerTableau from './PlayerTableau'
 import WaitingPanel from './WaitingPanel'
+
+// Modals
+import CardsViewerModal from './CardsViewerModal'
 
 export default {
   name: 'Innovation',
@@ -46,6 +52,9 @@ export default {
     History,
     PlayerTableau,
     WaitingPanel,
+
+    // Modals
+    CardsViewerModal,
   },
 
   props: {
@@ -93,6 +102,14 @@ export default {
 
   created() {
     this.game.testMode = true
+
+    Vue.set(this.game, 'ui', {
+      modals: {
+        cardsViewer: {
+          cards: [],
+        },
+      },
+    })
 
     this.game.saveLatest = async function() {
       const game = this.game

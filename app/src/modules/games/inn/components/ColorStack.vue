@@ -1,5 +1,8 @@
 <template>
-  <div class="color-stack">
+  <div
+    class="color-stack"
+    @click="openCardsViewerModal"
+  >
     <div class="color-stack-header" :class="[color]">
       {{ zone.cards().length }} {{ zone.splay }}
     </div>
@@ -31,6 +34,15 @@ export default {
       return this.game.getZoneByPlayer(this.player, this.color)
     },
   },
+
+  methods: {
+    openCardsViewerModal() {
+      console.log('hello')
+      const cards = this.game.getCardsByZone(this.player, this.color)
+      this.game.ui.modals.cardsViewer.cards = cards
+      this.$bvModal.show('cards-viewer-modal')
+    },
+  }
 }
 </script>
 

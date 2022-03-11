@@ -103,6 +103,7 @@ export default {
   border: 1px solid black;
   padding: .2rem;
   margin-bottom: 1px;
+  max-width: 300px;
 }
 
 .card-age {
