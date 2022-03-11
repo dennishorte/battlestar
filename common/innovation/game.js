@@ -165,7 +165,7 @@ Game.prototype.requestInputSingle = function(selector) {
 Game.prototype.respondToInputRequest = function(response) {
   const t = require('./testutil.js')
 
-  util.assert(response.key === this.key, "Invalid response. State has updated.")
+  util.assert(response.key === this.key, `Invalid response. State has updated. this: ${this.key} resp: ${response.key}`)
   this.responses.push(response)
 
   try {
