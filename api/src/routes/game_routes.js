@@ -91,7 +91,7 @@ Game.saveResponse = async function(req, res) {
   }
 
   if (valid) {
-    await db.game.saveResponse(game._id, req.body.response)
+    await db.game.saveResponses(game._id, game.responses)
     res.json({
       status: 'success',
       message: 'Saved',
