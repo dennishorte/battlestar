@@ -8,7 +8,7 @@
     </div>
 
     <template v-for="card in cards">
-      <CardFull :card="card" :key="card.id" v-if="hasVisibleEffect(card)" />
+      <CardStacked :card="card" :key="card.id" />
     </template>
 
   </div>
@@ -16,13 +16,13 @@
 
 
 <script>
-import CardFull from './CardFull'
+import CardStacked from './CardStacked'
 
 export default {
   name: 'ColorStack',
 
   components: {
-    CardFull,
+    CardStacked,
   },
 
   inject: ['game'],
@@ -48,14 +48,6 @@ export default {
       this.game.ui.modals.cardsViewer.cards = cards
       this.$bvModal.show('cards-viewer-modal')
     },
-
-    hasVisibleEffect(card) {
-      return (
-        this.game.checkCardIsTop(card)
-        || this.game.checkEffectIsVisible(card)
-        || this.game.checkInspireIsVisible(card)
-      )
-    },
   }
 }
 </script>
@@ -66,8 +58,8 @@ export default {
   margin-right: .5rem;
   margin-top: .25rem;
   padding-left: .25rem;
-  border-top: 1px solid black;
-  border-right: 1px solid black;
-  border-left: 1px solid black;
+  border-top: 1px solid #7d6c50;
+  border-right: 1px solid #7d6c50;
+  border-left: 1px solid #7d6c50;
 }
 </style>

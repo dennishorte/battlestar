@@ -213,22 +213,27 @@ export default {
 }
 
 .red {
-  background-color: #eb4545;
+  background-color: #f5a2a2;
+  border-color: #eb4545;
 }
 
 .yellow {
-  background-color: #f3ff73;
+  background-color: #f9ffb9;
+  border-color: #f3ff73;
 }
 
 .green {
-  background-color: #75d448;
+  background-color: #baeaa4;
+  border-color: #75d448;
 }
 
 .blue {
-  background-color: #7eb8ee;
+  background-color: #c8e4ff;
+  border-color: #7eb8ee;
 }
 
 .purple {
-  background-color: #bd94f5;
+  background-color: #decafa;
+  border-color: #bd94f5;
 }
 </style>

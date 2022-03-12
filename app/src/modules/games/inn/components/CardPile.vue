@@ -94,9 +94,9 @@ export default {
   margin-right: .5rem;
   margin-top: .25rem;
   padding-left: .25rem;
-  border-top: 1px solid black;
-  border-right: 1px solid black;
-  border-left: 1px solid black;
+  border-top: 1px solid #7d6c50;
+  border-right: 1px solid #7d6c50;
+  border-left: 1px solid #7d6c50;
   background-color: #bba37a;
 }
 </style>

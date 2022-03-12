@@ -100,7 +100,7 @@ export default {
 
 <style scoped>
 .card-full {
-  border: 1px solid black;
+  border: 1px solid #7d6c50;
   padding: .2rem;
   margin-bottom: 1px;
   max-width: 300px;
