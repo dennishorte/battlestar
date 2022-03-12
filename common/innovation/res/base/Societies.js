@@ -28,8 +28,8 @@ function Card() {
             return leaderCard.age < card.age
           }
         })
-      const card = game.aChooseAndTransfer(player, choices, { toBoard: true, player: leader })
-      if (card) {
+      const cards = game.aChooseAndTransfer(player, choices, { toBoard: true, player: leader })
+      if (cards && cards.length > 0) {
         game.aDraw(player, { age: game.getEffectAge(this, 5) })
       }
     }
