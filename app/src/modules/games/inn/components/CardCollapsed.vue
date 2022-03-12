@@ -1,20 +1,28 @@
 <template>
   <div class="card-collapsed" :class="[card.color]">
 
-    <CardText v-for="(effect, index) in visibleEchoEffects" :key="index" :text="effect" />
-    <CardText v-for="(effect, index) in visibleInspireEffects" :key="index" :text="effect" />
+    <div v-for="(effect, index) in visibleEchoEffects" :key="index" class="card-effect">
+      <CardBiscuit :biscuit="'&'" />
+      <CardText :text="effect" />
+    </div>
+    <div v-for="(effect, index) in visibleInspireEffects" :key="index" class="card-effect">
+      <CardBiscuit :biscuit="'*'" />
+      <CardText :text="effect" />
+    </div>
 
   </div>
 </template>
 
 
 <script>
+import CardBiscuit from './CardBiscuit'
 import CardText from './CardText'
 
 export default {
   name: 'CardStacked',
 
   components: {
+    CardBiscuit,
     CardText,
   },
 
@@ -61,5 +69,10 @@ export default {
   max-width: 300px;
   min-height: .5em;
   font-size: .8em;
+}
+
+.card-effect {
+  display: flex;
+  flex-direction: row;
 }
 </style>
