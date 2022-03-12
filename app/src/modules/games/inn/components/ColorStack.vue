@@ -7,7 +7,10 @@
       {{ zone.cards().length }} {{ zone.splay }}
     </div>
 
-    <CardFull v-if="zone.cards().length > 0" :card="zone.cards()[0]" />
+    <template v-for="card in cards">
+      <CardFull :card="card" :key="card.id" v-if="hasVisibleEffect(card)" />
+    </template>
+
   </div>
 </template>
 
@@ -30,6 +33,10 @@ export default {
   },
 
   computed: {
+    cards() {
+      return this.zone.cards()
+    },
+
     zone() {
       return this.game.getZoneByPlayer(this.player, this.color)
     },
@@ -37,10 +44,17 @@ export default {
 
   methods: {
     openCardsViewerModal() {
-      console.log('hello')
       const cards = this.game.getCardsByZone(this.player, this.color)
       this.game.ui.modals.cardsViewer.cards = cards
       this.$bvModal.show('cards-viewer-modal')
+    },
+
+    hasVisibleEffect(card) {
+      return (
+        this.game.checkCardIsTop(card)
+        || this.game.checkEffectIsVisible(card)
+        || this.game.checkInspireIsVisible(card)
+      )
     },
   }
 }

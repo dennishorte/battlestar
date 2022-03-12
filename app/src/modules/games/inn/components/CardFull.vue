@@ -32,7 +32,7 @@
     </div>
 
     <div v-for="(effect, index) in effects" class="card-effect" :key="index">
-      <CardText :text="effect" />
+      <CardText :text="effect" class="card-text" />
     </div>
   </div>
 </template>
@@ -119,6 +119,10 @@ export default {
 .card-biscuits-row {
   display: flex;
   flex-direction: row;
+}
+
+.card-text {
+  margin-top: 3px;
 }
 
 .card-top {
