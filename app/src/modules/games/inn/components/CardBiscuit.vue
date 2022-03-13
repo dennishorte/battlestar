@@ -7,7 +7,7 @@
       :src="imagePath"
     />
     <span v-else-if="kind === 'inline-age'" class="age-biscuit">{{ biscuit }}</span>
-    <div v-else-if="kind === 'inline-ohter'">*{{ biscuit }}*</div>
+    <div v-else-if="kind === 'inline-other'">*{{ biscuit }}*</div>
   </span>
 </template>
 

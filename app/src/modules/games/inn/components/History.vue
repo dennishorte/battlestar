@@ -9,7 +9,6 @@
 
 <script>
 import CardText from './CardText'
-// import { log } from 'battlestar-common'
 
 export default {
   name: 'History',
@@ -36,7 +35,6 @@ export default {
           continue
         }
         output.push({
-          // text: log.toString(entry),
           text: this.convertLogMessage(entry),
           classes: entry.classes,
         })
@@ -58,7 +56,7 @@ export default {
       for (const [arg, value] of Object.entries(entry.args)) {
         let replacement = value.value
 
-        if (arg === 'card') {
+        if (arg === 'card' && !value.value.startsWith('*')) {
           replacement = `card(${value.value})`
         }
 

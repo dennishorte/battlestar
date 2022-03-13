@@ -25,11 +25,11 @@ export default {
         .replaceAll(biscuitMatcher, (match, biscuit) => {
           return `<CardBiscuit biscuit="${biscuit}" :inline="true" />`
         })
-        .replaceAll(cardMatcher, (match, expansion, age) => {
-          return `<CardSquareDetails name="${age}" expansion="${expansion}" />`
-        })
         .replaceAll(cardNameMatcher, (match, name) => {
           return `<CardNameFull name="${name}" />`
+        })
+        .replaceAll(cardMatcher, (match, expansion, age) => {
+          return `<CardSquareDetails name="${age}" expansion="${expansion}" />`
         })
     },
 
