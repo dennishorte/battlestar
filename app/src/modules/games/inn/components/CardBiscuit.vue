@@ -1,6 +1,11 @@
 <template>
   <span class="card-biscuit">
-    <img v-if="kind === 'image'" class="card-biscuit-image" :class="classes" :src="imagePath" />
+    <img
+      v-if="kind === 'image'"
+      class="card-biscuit-image"
+      :class="classesComputed"
+      :src="imagePath"
+    />
     <span v-else-if="kind === 'inline-age'" class="age-biscuit">{{ biscuit }}</span>
     <div v-else-if="kind === 'inline-ohter'">*{{ biscuit }}*</div>
   </span>
@@ -67,6 +72,10 @@ export default {
         base.push('inline-image')
       }
 
+      if (this.biscuit === '*') {
+        base.push('inspire-biscuit')
+      }
+
       return base
     },
 
@@ -124,5 +133,10 @@ export default {
   color: white;
   display: inline-block;
   text-align: center;
+}
+
+.inspire-biscuit {
+  border: 1px solid darkgray;
+  border-radius: 50%;
 }
 </style>
