@@ -4,10 +4,12 @@
 
 <script>
 import CardBiscuit from './CardBiscuit'
+import CardNameFull from './CardNameFull'
 import CardSquareDetails from './CardSquareDetails'
 
 const biscuitMatcher = /[{](.)[}]/g
 const cardMatcher = /[*]([^-]+)-([0-9]+)[*]/g
+const cardNameMatcher = /card[(](.+)[)]/g
 
 export default {
   name: 'CardText',
@@ -26,6 +28,9 @@ export default {
         .replaceAll(cardMatcher, (match, expansion, age) => {
           return `<CardSquareDetails name="${age}" expansion="${expansion}" />`
         })
+        .replaceAll(cardNameMatcher, (match, name) => {
+          return `<CardNameFull name="${name}" />`
+        })
     },
 
     processedText() {
@@ -33,6 +38,7 @@ export default {
         template: '<div style="display:inline-block;">' + this.html + '</div>',
         components: {
           CardBiscuit,
+          CardNameFull,
           CardSquareDetails,
         },
       }

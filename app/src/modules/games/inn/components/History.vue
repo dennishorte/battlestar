@@ -9,7 +9,7 @@
 
 <script>
 import CardText from './CardText'
-import { log } from 'battlestar-common'
+// import { log } from 'battlestar-common'
 
 export default {
   name: 'History',
@@ -36,7 +36,8 @@ export default {
           continue
         }
         output.push({
-          text: log.toString(entry),
+          // text: log.toString(entry),
+          text: this.convertLogMessage(entry),
           classes: entry.classes,
         })
       }
@@ -52,11 +53,25 @@ export default {
   },
 
   methods: {
+    convertLogMessage(entry) {
+      let msg = entry.template
+      for (const [arg, value] of Object.entries(entry.args)) {
+        let replacement = value.value
+
+        if (arg === 'card') {
+          replacement = `card(${value.value})`
+        }
+
+        msg = msg.replace(`{${arg}}`, replacement)
+      }
+      return msg
+    },
+
     scrollToBottom() {
       this.$nextTick(() => {
         this.$refs.bottom.scrollIntoView({ behavior: 'smooth' })
       })
-    }
+    },
   },
 
   mounted() {
