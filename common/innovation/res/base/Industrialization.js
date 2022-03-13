@@ -18,9 +18,13 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const factoryBiscuits = game.getBiscuitsByPlayer(player).f
-      const numTucks = Math.floor(factoryBiscuits / 2)
-      for (let i = 0; i < numTucks; i++) {
+      const count = game
+        .utilColors()
+        .map(color => game.getZoneByPlayer(player, color))
+        .filter(zone => game.getBiscuitsByZone(zone).f > 0)
+        .length
+
+      for (let i = 0; i < count; i++) {
         game.aDrawAndTuck(player, game.getEffectAge(this, 6))
       }
     },

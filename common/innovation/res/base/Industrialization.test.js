@@ -2,14 +2,20 @@ Error.stackTraceLimit = 100
 
 const t = require('../../testutil.js')
 
-describe('Mikhail Kalashnikov', () => {
+describe('Industrialization', () => {
 
   test('dogma', () => {
     const game = t.fixtureFirstPlayer()
     t.setBoard(game, {
       dennis: {
-        red: ['Industrialization'],
-        yellow: ['Canning'],
+        red: {
+          cards: ['Industrialization', 'Coal', 'Gunpowder'],
+          splay: 'up',
+        },
+        yellow: {
+          cards: ['Agriculture', 'Canning'],
+          splay: 'up',
+        },
       },
       decks: {
         base: {
@@ -26,10 +32,13 @@ describe('Mikhail Kalashnikov', () => {
     t.testBoard(game, {
       dennis: {
         red: {
-          cards: ['Industrialization', 'Machine Tools'],
+          cards: ['Industrialization', 'Coal', 'Gunpowder', 'Machine Tools'],
           splay: 'right'
         },
-        yellow: ['Canning'],
+        yellow: {
+          cards: ['Agriculture', 'Canning'],
+          splay: 'up',
+        },
         blue: ['Atomic Theory']
       },
     })
