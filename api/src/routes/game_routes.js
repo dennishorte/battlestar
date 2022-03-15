@@ -16,7 +16,7 @@ Game.create = async function(req, res) {
     db.lobby.gameLaunched(lobby.id, gameId)
 
     // Notify players of the new game
-    const game = await db.game.findById(req.body.gameId)
+    const game = await db.game.findById(gameId)
     for (const user of lobby.users) {
       _notify(game, user, 'A new game has started!')
     }
@@ -55,10 +55,6 @@ function _notify(game, user, msg) {
   const message = `${msg} <${link}|${gameKind}: ${gameName}>`
 
   const sendResult = slack.sendMessage(user._id, message)
-
-  res.json({
-    status: 'success',
-  })
 }
 
 Game.saveResponse = async function(req, res) {
