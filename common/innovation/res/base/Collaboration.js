@@ -19,8 +19,8 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      const card1 = game.aDraw(player, { age: game.getEffectAge(this, 9), reveal: true })
-      const card2 = game.aDraw(player, { age: game.getEffectAge(this, 9), reveal: true })
+      const card1 = game.aDrawAndReveal(player, game.getEffectAge(this, 9) )
+      const card2 = game.aDrawAndReveal(player, game.getEffectAge(this, 9) )
 
       const chosen = game.aChooseCard(leader, [card1, card2])
       const other = chosen === card1 ? card2 : card1

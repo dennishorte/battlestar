@@ -41,8 +41,6 @@ app.post('/api/lobby/settings_update', routes.lobby.settingsUpdate)
 // Game Routes
 app.post('/api/game/create', routes.game.create)
 app.post('/api/game/fetch', routes.game.fetch)
-app.post('/api/game/notify', routes.game.notify)
-app.post('/api/game/save', routes.game.save)
 app.post('/api/game/saveResponse', routes.game.saveResponse)
 
 // Snapshot Routes

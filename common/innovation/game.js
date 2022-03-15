@@ -29,6 +29,7 @@ function Game(serialized_data) {
   // Places where extra code can be inserted for testing.
   this.breakpoints = {}
 
+  this.gameOver = false
   this.random = 'uninitialized'
   this.key = 'uninitialized'
 }
@@ -101,6 +102,10 @@ Game.prototype._validateResponse = function(requests, response) {
      * }, null, 2)) */
     throw new Error('Invalid response')
   }
+}
+
+Game.prototype.checkGameIsOver = function() {
+  return this.ameOver
 }
 
 Game.prototype.checkPlayerHasActionWaiting = function(player) {
@@ -196,6 +201,7 @@ Game.prototype.run = function() {
       return e
     }
     else if (e instanceof GameOverEvent) {
+      this.gameOver = true
       return this._gameOver(e)
     }
     else {

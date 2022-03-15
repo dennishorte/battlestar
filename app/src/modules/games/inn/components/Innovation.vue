@@ -84,22 +84,6 @@ export default {
     }
   },
 
-  methods: {
-    async maybeNotifyPlayers() {
-      if (process.env.NODE_ENV === 'development') {
-        return
-      }
-      for (const player of this.game.getPlayerAll()) {
-        if (this.game.checkPlayerHasActionWaiting(player)) {
-          await axios.post('/api/game/notify', {
-            gameId: this.game._id,
-            userId: player._id,
-          })
-        }
-      }
-    },
-  },
-
   created() {
     this.game.testMode = true
 
@@ -135,7 +119,6 @@ export default {
             solid: true,
             variant: 'success',
           })
-          this.maybeNotifyPlayers()
         }
         else {
           this.$bvToast.toast('error: see console', {

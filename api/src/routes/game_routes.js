@@ -15,6 +15,12 @@ Game.create = async function(req, res) {
     // Save the game id in the lobby
     db.lobby.gameLaunched(lobby.id, gameId)
 
+    // Notify players of the new game
+    const game = await db.game.findById(req.body.gameId)
+    for (const user of lobby.users) {
+      _notify(game, user, 'A new game has started!')
+    }
+
     res.json({
       status: 'success',
       gameId,
@@ -36,38 +42,23 @@ Game.fetch = async function(req, res) {
   })
 }
 
-Game.notify = async function(req, res) {
-  const userId = req.body.userId
-  const game = await db.game.findById(req.body.gameId)
+function _notify(game, user, msg) {
+  if (process.env.NODE_ENV === 'development') {
+    return
+  }
+
   const gameKind = game.settings ? game.settings.game : game.game
   const gameName = game.settings ? game.settings.name : game.name
 
   const domain_host = process.env.DOMAIN_HOST
   const link = `http://${domain_host}/game/${game._id}`
-  const message = `You're up! <${link}|${gameKind}: ${gameName}>`
+  const message = `${msg} <${link}|${gameKind}: ${gameName}>`
 
-  const sendResult = slack.sendMessage(userId, message)
+  const sendResult = slack.sendMessage(user._id, message)
 
   res.json({
     status: 'success',
   })
-}
-
-Game.save = async function(req, res) {
-  try {
-    const newSaveKey = await db.game.save(req.body)
-
-    res.json({
-      status: 'success',
-      saveKey: newSaveKey,
-    })
-  }
-  catch (e) {
-    res.json({
-      status: 'error',
-      message: e.message,
-    })
-  }
 }
 
 Game.saveResponse = async function(req, res) {
@@ -92,6 +83,17 @@ Game.saveResponse = async function(req, res) {
 
   if (valid) {
     await db.game.saveResponses(game._id, game.responses)
+
+    for (const player of game.getPlayerAll()) {
+      if (game.checkGameIsFinished()) {
+        _notify(game, player._id, 'Game Over!')
+      }
+
+      else if (this.game.checkPlayerHasActionWaiting(player)) {
+        _notify(game, player._id, "You're up!")
+      }
+    }
+
     res.json({
       status: 'success',
       message: 'Saved',

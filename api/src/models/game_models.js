@@ -43,24 +43,6 @@ Game.findByUserId = async function(userId) {
   ]})
 }
 
-Game.save = async function(record) {
-  return await writeMutex.dispatch(async () => {
-    const old = await Game.findById(record._id)
-
-    if (!old.saveKey) {
-      record.saveKey = 0
-    }
-    else if (old.saveKey !== record.saveKey) {
-      throw new Error("Save key mismatch. Unable to save.")
-    }
-
-    record.saveKey += 1
-    await gameCollection.replaceOne({ _id: record._id}, record)
-
-    return record.saveKey
-  })
-}
-
 Game.saveResponses = async function(gameId, responses) {
   return await writeMutex.dispatch(async () => {
     await gameCollection.updateOne(

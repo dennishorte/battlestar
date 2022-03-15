@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       while (true) {
-        const card = game.aDraw(player, { age: game.getEffectAge(this, 1), reveal: true })
+        const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
         if (card.checkHasBiscuit('k')) {
           game.aScore(player, card)
         }
