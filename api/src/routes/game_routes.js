@@ -81,7 +81,7 @@ Game.saveResponse = async function(req, res) {
     await db.game.saveResponses(game._id, game.responses)
 
     for (const player of game.getPlayerAll()) {
-      if (game.checkGameIsFinished()) {
+      if (game.checkGameIsOver()) {
         _notify(game, player._id, 'Game Over!')
       }
 

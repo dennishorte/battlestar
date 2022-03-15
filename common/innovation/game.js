@@ -105,7 +105,7 @@ Game.prototype._validateResponse = function(requests, response) {
 }
 
 Game.prototype.checkGameIsOver = function() {
-  return this.ameOver
+  return this.gameOver
 }
 
 Game.prototype.checkPlayerHasActionWaiting = function(player) {
