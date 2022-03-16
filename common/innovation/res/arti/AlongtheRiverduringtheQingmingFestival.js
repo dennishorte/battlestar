@@ -15,7 +15,27 @@ function Card() {
     `Draw and reveal a {4}. If it is yellow, tuck it. If it is purple, score it. Otherwise, repeat this effect.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      while (true) {
+        const card = game.aDrawAndReveal(player, game.getEffectAge(this, 4))
+        if (card.color === 'yellow') {
+          game.aTuck(player, card)
+          break
+        }
+        else if (card.color === 'purple') {
+          game.aScore(player, card)
+          break
+        }
+        else {
+          game.mLog({
+            template: 'Card is neither yellow nor purple. Repeating effect.'
+          })
+          continue
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
