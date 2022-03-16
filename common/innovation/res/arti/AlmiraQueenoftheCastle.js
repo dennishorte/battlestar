@@ -3,7 +3,7 @@ const CardBase = require(`../CardBase.js`)
 function Card() {
   this.id = `Almira, Queen of the Castle`  // Card names are unique in Innovation
   this.name = `Almira, Queen of the Castle`
-  this.color = `purle`
+  this.color = `purple`
   this.age = 5
   this.expansion = `arti`
   this.biscuits = `chcc`
@@ -15,7 +15,17 @@ function Card() {
     `Meld a card from your hand. Claim an achievement of matching value, ignoring eligiblilty.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
+      if (cards && cards.length > 0) {
+        const achievements = game
+          .getAvailableAchievementsRaw(player)
+          .filter(card => card.age === cards[0].age)
+        game.aChooseAndAchieve(player, achievements)
+      }
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
