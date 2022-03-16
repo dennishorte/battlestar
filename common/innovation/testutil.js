@@ -140,6 +140,12 @@ TestUtil.testChoices = function(request, expected, expectedMin, expectedMax) {
   }
 }
 
+TestUtil.testIsFirstAction = function(request) {
+  const selector = request.selectors[0]
+  expect(selector.actor).toBe('dennis')
+  expect(selector.title).toBe('Choose First Action')
+}
+
 TestUtil.testIsSecondPlayer = function(request) {
   const selector = request.selectors[0]
   expect(selector.actor).toBe('micah')
@@ -201,6 +207,10 @@ TestUtil.setBoard = function(game, state) {
           }
         }
 
+        if (playerBoard.artifact) {
+          TestUtil.setArtifact(game, name, playerBoard.artifact)
+        }
+
         if (playerBoard.score) {
           TestUtil.setScore(game, name, playerBoard.score)
         }
@@ -234,6 +244,7 @@ function _blankTableau() {
     achievements: [],
     score: [],
     forecast: [],
+    artifact: [],
     red: [],
     yellow: [],
     green: [],
@@ -278,7 +289,7 @@ TestUtil.testBoard = function(game, state) {
       }
     }
 
-    for (const zone of ['hand', 'score', 'forecast', 'achievements']) {
+    for (const zone of ['artifact', 'hand', 'score', 'forecast', 'achievements']) {
       realBoard[zone] = game.getCardsByZone(player, zone).map(c => c.name).sort()
     }
 
@@ -470,6 +481,14 @@ TestUtil.setScore = function(game, playerName, cardNames) {
   }
 }
 
+TestUtil.setArtifact = function(game, playerName, cardName) {
+  TestUtil.clearZone(game, playerName, 'artifact')
+  const player = game.getPlayerByName(playerName)
+  const score = game.getZoneByPlayer(player, 'artifact')
+  const card = game.getCardByName(cardName)
+  game.mMoveCardTo(card, score)
+}
+
 TestUtil.setSplay = function(game, playerName, color, direction) {
   const player = game.getPlayerByName(playerName)
   const zone = game.getZoneByPlayer(player, color)
@@ -487,7 +506,7 @@ TestUtil.deepLog = function(obj) {
 TestUtil.dumpLog = function(game) {
   const output = []
   for (const entry of game.getLog()) {
-    if (entry === '__INDENT__' || entry === '__OUTDENT__') {
+    if (entry === '__INDENT__' || entry === '__OUTDENT__' || entry.type === 'response-received') {
       continue
     }
     output.push(log.toString(entry))

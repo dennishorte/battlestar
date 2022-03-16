@@ -16,7 +16,33 @@ function Card() {
     `Draw and reveal an {8}. The single player with the highest top card of the drawn card's color achieves it, ignoring eligibility. If that happens, repeat this effect.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aChooseAndReturn(player, game.getCardsByZone(player, 'achievements'))
+    },
+
+    (game, player) => {
+      while (true) {
+        const card = game.aDrawAndReveal(player, game.getEffectAge(this, 8))
+        const orderedPlayers = game
+          .getPlayerAll()
+          .map(player => ({ player, card: game.getTopCard(player, card.color) }))
+          .filter(x => x.card !== undefined)
+          .sort((l, r) => r.card.age - l.card.age)
+
+        if (orderedPlayers.length > 0 && orderedPlayers[0].card.age > orderedPlayers[1].card.age) {
+          game.aClaimAchievement(orderedPlayers[0].player, card)
+
+        }
+        else {
+          game.mLog({
+            template: 'No single player has the highest top card.'
+          })
+          break
+        }
+      }
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

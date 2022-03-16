@@ -314,14 +314,15 @@ Innovation.prototype.artifact = function() {
       actor: player.name,
       title: 'Free Artifact Action',
       choices: ['dogma', 'return', 'skip']
-    })
+    })[0]
 
     switch (action) {
       case 'dogma':
-        this.aDogma(player, card, { artifact: true })
+        this.aDogma(player, artifact, { artifact: true })
+        this.aReturn(player, artifact)
         break
       case 'return':
-        this.aReturn(player, card)
+        this.aReturn(player, artifact)
         break
       case 'skip':
         this.mLog({
@@ -330,6 +331,8 @@ Innovation.prototype.artifact = function() {
           args: { player },
         })
         break
+      default:
+        throw new Error(`Unknown artifact action: ${action}`)
     }
 
     this.mLogOutdent()
@@ -500,6 +503,7 @@ Innovation.prototype.aCardEffects = function(
       const effectText = texts[i]
       const effectImpl = impls[i]
       const isDemand = effectText.startsWith('I demand')
+      const isCompel = effectText.startsWith('I compel')
 
       if (!isDemand) {
         this.state.couldShare = true
@@ -507,9 +511,10 @@ Innovation.prototype.aCardEffects = function(
 
       const demand = isDemand && demanding.includes(player)
       const share = !isDemand && sharing.includes(player) && z === 0
-      const owner = !isDemand && player === leader
+      const compel = isCompel && sharing.includes(player) && player !== leader
+      const owner = !isDemand && !isCompel && player === leader
 
-      if (demand || share || owner) {
+      if (compel || demand || share || owner) {
         this.mLog({
           template: `{player}, {card}: ${effectText}`,
           args: { player, card }
@@ -880,6 +885,9 @@ Innovation.prototype.aDogmaHelper = function(player, card, opts) {
   // Store the biscuits now because changes caused by the dogma action should
   // not affect the number of biscuits used for evaluting the effect.
   const biscuits = this.getBiscuits()
+  const artifactBiscuits = opts.artifact ? this.getBiscuitsByCard(card, 'top') : this.utilEmptyBiscuits()
+  biscuits[player.name] = this.utilCombineBiscuits(biscuits[player.name], artifactBiscuits)
+
   const featuredBiscuit = card.dogmaBiscuit
   const biscuitComparator = this._getBiscuitComparator(player, featuredBiscuit, biscuits)
 
@@ -1492,8 +1500,8 @@ Innovation.prototype.getBiscuitsByPlayer = function(player) {
     .reduce((l, r) => this.utilCombineBiscuits(l, r), boardBiscuits)
 }
 
-Innovation.prototype.getBiscuitsByCard = function(card) {
-  return this.utilParseBiscuits(card.getBiscuits())
+Innovation.prototype.getBiscuitsByCard = function(card, splay) {
+  return this.utilParseBiscuits(card.getBiscuits(splay))
 }
 
 Innovation.prototype.getBiscuitsByZone = function(zone) {
