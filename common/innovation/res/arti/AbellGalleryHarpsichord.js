@@ -15,7 +15,20 @@ function Card() {
     `For each value of top card on your board appearing exactly once, draw and score a card of that value in ascending order.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const sortedTopCards = game
+        .getTopCards(player)
+        .sort((l, r) => l.age - r.age)
+
+      for (let i = 1; i <= 10; i++) {
+        const matching = sortedTopCards.filter(card => card.age === i).length
+        if (matching === 1) {
+          game.aDrawAndScore(player, i)
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
