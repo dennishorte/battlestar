@@ -15,7 +15,32 @@ function Card() {
     `Return a card from your hand. Transfer all cards of the same color from the boards of all players with no top Artifacts to your score pile. If Ark of the Covenant is a top card on any board, transfer it to your hand.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'))
+      if (cards && cards.length > 0) {
+        const color = cards[0].color
+
+        const toTransfer = game
+          .getPlayerAll()
+          .filter(player => game.getTopCards(player).every(card => card.expansion !== 'arti'))
+          .map(player => game.getTopCard(player, color))
+
+        game.aTransferMany(player, toTransfer, game.getZoneByPlayer(player, 'score'))
+      }
+
+      const ark = game.getCardByName('Ark of the Covenant')
+      if (game.checkCardIsTop(ark)) {
+        game.aTransfer(player, ark, game.getZoneByPlayer(player, 'hand'))
+      }
+      else {
+        game.mLog({
+          template: 'Ark of the Covenant is not a top card',
+        })
+      }
+
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
