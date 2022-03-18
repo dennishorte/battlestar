@@ -33,4 +33,26 @@ describe('Masonry (with 4)', () => {
       },
     })
   })
+
+  test('dogma: meld none', () => {
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Masonry'],
+        hand: ['Tools', 'The Wheel', 'Fermenting', 'Engineering', 'Sailing'],
+      },
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Masonry')
+    const request3 = t.choose(game, request2)
+
+    t.testIsSecondPlayer(request3)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Masonry'],
+        hand: ['Tools', 'The Wheel', 'Fermenting', 'Engineering', 'Sailing'],
+      },
+    })
+  })
 })

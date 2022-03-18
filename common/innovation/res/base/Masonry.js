@@ -22,10 +22,12 @@ function Card() {
         .getCardsByZone(player, 'hand')
         .filter(card => card.checkHasBiscuit('k'))
       const cards = game.aChooseCards(player, choices, { min: 0, max: choices.length })
-      const melded = game.aMeldMany(player, cards)
+      if (cards) {
+        const melded = game.aMeldMany(player, cards)
 
-      if (melded.length >= 4 && !game.state.dogmaInfo.masonryMonumentPlayer) {
-        game.state.dogmaInfo.masonryMonumentPlayer = player
+        if (melded.length >= 4 && !game.state.dogmaInfo.masonryMonumentPlayer) {
+          game.state.dogmaInfo.masonryMonumentPlayer = player
+        }
       }
     },
 
