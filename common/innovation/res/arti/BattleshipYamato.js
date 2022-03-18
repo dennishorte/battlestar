@@ -5,15 +5,14 @@ function Card() {
   this.name = `Battleship Yamato`
   this.color = `red`
   this.age = 8
+  this.visibleAge = 11
   this.expansion = `arti`
   this.biscuits = `_h__`
   this.dogmaBiscuit = `s`
   this.inspire = ``
   this.echo = ``
   this.karma = []
-  this.dogma = [
-    `tic: While this is a top card on your board, it counts as an 11.`
-  ]
+  this.dogma = []
 
   this.dogmaImpl = []
   this.echoImpl = []

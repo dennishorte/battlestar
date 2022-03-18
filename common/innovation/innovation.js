@@ -989,17 +989,19 @@ Innovation.prototype._getAgeForDrawAction = function(player) {
       }
 
       const karmaMatches = (
-        karmaInfos.length === 1
+        !this.checkInKarma()
+        && karmaInfos.length === 1
         && karmaInfos[0].impl.matches(this, player, { action: 'draw', color })
       )
-      if (karmaMatches && !this.checkInKarma()) {
+      if (karmaMatches) {
         this._karmaIn()
         const result = karmaInfos[0].impl.func(this, player, { color })
         this._karmaOut()
         return result
       }
       else {
-        return zone.cards()[0].age
+        const card = zone.cards()[0]
+        return card.visibleAge || card.age  // For Battleship Yamato
       }
     })
 
@@ -1023,7 +1025,8 @@ Innovation.prototype._getAgeForInspireAction = function(player, color) {
     return 1
   }
   else {
-    return cards[0].age
+    const card = cards[0]
+    return card.visibleAge || card.age  // For Battleship Yamato
   }
 }
 
@@ -2459,6 +2462,10 @@ Innovation.prototype._getHiddenName = function(card) {
 }
 
 Innovation.prototype._adjustedDrawDeck = function(age, exp) {
+  if (age > 10) {
+    return [11, 'base']
+  }
+
   const baseDeck = this.getZoneByDeck('base', age)
   if (baseDeck.cards().length === 0) {
     return this._adjustedDrawDeck(age + 1, exp)
