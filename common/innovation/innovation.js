@@ -539,6 +539,10 @@ Innovation.prototype.aCardEffects = function(
           }
         }
 
+        if (compel) {
+          this.state.dogmaInfo.demanding = true
+        }
+
         const result = this.aCardEffect(player, effectInfo, {
           biscuits,
           leader,

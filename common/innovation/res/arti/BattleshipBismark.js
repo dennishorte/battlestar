@@ -15,7 +15,15 @@ function Card() {
     `I compel you to draw and reveal an {8}! Return all cards of the drawn card's color from your board!`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 8))
+      if (card) {
+        const toReturn = game.getCardsByZone(player, card.color)
+        game.aReturnMany(player, toReturn, { ordered: true })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
