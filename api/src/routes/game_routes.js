@@ -42,7 +42,7 @@ Game.fetch = async function(req, res) {
   })
 }
 
-function _notify(game, user, msg) {
+async function _notify(game, userId, msg) {
   if (process.env.NODE_ENV === 'development') {
     return
   }
@@ -54,7 +54,7 @@ function _notify(game, user, msg) {
   const link = `http://${domain_host}/game/${game._id}`
   const message = `${msg} <${link}|${gameKind}: ${gameName}>`
 
-  const sendResult = slack.sendMessage(user._id, message)
+  const sendResult = slack.sendMessage(userId, message)
 }
 
 Game.saveResponse = async function(req, res) {
