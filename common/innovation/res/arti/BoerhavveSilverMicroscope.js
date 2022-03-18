@@ -15,7 +15,22 @@ function Card() {
     `Return the lowest card in your hand and the lowest top card on your board. Draw and score a card of value equal to the sum of the values of the cards returned.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const lowestHandCards = game.utilLowestCards(game.getCardsByZone(player, 'hand'))
+      const lowestBoardCards = game.utilLowestCards(game.getTopCards(player))
+
+      const cards1 = game.aChooseAndReturn(player, lowestHandCards) || []
+      const cards2 = game.aChooseAndReturn(player, lowestBoardCards) || []
+
+      const returnedSum = []
+        .concat(cards1, cards2)
+        .map(card => card.age)
+        .reduce((agg, next) => agg + next, 0)
+
+      game.aDrawAndScore(player, returnedSum)
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
