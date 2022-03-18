@@ -1,6 +1,6 @@
 <template>
   <div class="innovation">
-    <b-container>
+    <b-container fluid>
       <b-row class="main-row">
 
         <b-col class="game-column history-column">
