@@ -27,6 +27,7 @@
     <CardPile
       :zone="game.getZoneByPlayer(player, 'hand')"
       :header="countHeader(player, 'hand')"
+      :expanded="actor.name === player.name"
     />
   </div>
 </template>
