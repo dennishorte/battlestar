@@ -1308,6 +1308,14 @@ Innovation.prototype.aScore = function(player, card, opts={}) {
 Innovation.prototype.aSplay = function(player, color, direction, opts={}) {
   util.assert(direction, 'No direction specified for splay')
 
+  const zone = this.getZoneByPlayer(player, color)
+  if (zone.cards().length < 2 || zone.splay === direction) {
+    this.mLog({
+      template: `Cannot splay ${color} ${direction}`
+    })
+    return
+  }
+
   const karmaKind = this.aKarma(player, 'splay', { ...opts, color, direction })
   if (karmaKind === 'would-instead') {
     return

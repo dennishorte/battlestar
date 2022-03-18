@@ -15,7 +15,14 @@ function Card() {
     `Draw and reveal a {4}. Splay right the color matching the drawn card.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 4))
+      if (card) {
+        game.aSplay(player, card.color, 'right')
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
