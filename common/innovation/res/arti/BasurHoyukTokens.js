@@ -15,7 +15,19 @@ function Card() {
     `Draw and reveal a {4}. If you have a top card of the drawn card's color that comes before it in the alphabet, return the drawn card and all cards from your score pile.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 4))
+      if (card) {
+        const matchingTopCard = game.getTopCard(player, card.color)
+        if (matchingTopCard && matchingTopCard.name < card.name) {
+          const toReturn = game.getCardsByZone(player, 'score')
+          toReturn.push(card)
+          game.aReturnMany(player, toReturn)
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
