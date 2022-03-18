@@ -85,7 +85,7 @@ Game.saveResponse = async function(req, res) {
         _notify(game, player._id, 'Game Over!')
       }
 
-      else if (this.game.checkPlayerHasActionWaiting(player)) {
+      else if (game.checkPlayerHasActionWaiting(player)) {
         _notify(game, player._id, "You're up!")
       }
     }
