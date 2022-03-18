@@ -15,7 +15,16 @@ function Card() {
     `Draw and meld a {5}. If the drawn card is not green, repeat this effect.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      while (true) {
+        const card = game.aDrawAndMeld(player, game.getEffectAge(this, 5))
+        if (card.color === 'green') {
+          break
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
