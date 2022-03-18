@@ -43,7 +43,7 @@ export default {
     },
 
     header: {
-      type: [Function, String],
+      type: Function,
       default: null,
     },
 
@@ -70,7 +70,7 @@ export default {
 
     headerComputed() {
       if (this.header) {
-        return '*computed*'
+        return this.header()
       }
       else {
         return this.zone.name.split('.').slice(-1)[0]

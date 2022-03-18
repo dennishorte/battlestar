@@ -10,10 +10,23 @@
     />
 
     <CardPile
-      v-for="zoneName in ['achievements', 'score', 'forecast', 'hand']"
-      :key="zoneName"
-      :zone="game.getZoneByPlayer(player, zoneName)"
-      :expanded="zoneName === 'hand' && player.name === actor.name"
+      :zone="game.getZoneByPlayer(player, 'achievements')"
+      :header="countHeader(player, 'achievements')"
+    />
+
+    <CardPile
+      :zone="game.getZoneByPlayer(player, 'score')"
+      :header="scoreHeader(player)"
+    />
+
+    <CardPile
+      :zone="game.getZoneByPlayer(player, 'forecast')"
+      :header="countHeader(player, 'forecast')"
+    />
+
+    <CardPile
+      :zone="game.getZoneByPlayer(player, 'hand')"
+      :header="countHeader(player, 'hand')"
     />
   </div>
 </template>
@@ -34,6 +47,23 @@ export default {
 
   props: {
     player: Object,
+  },
+
+  methods: {
+    countHeader(player, zoneName) {
+      return () => {
+        const count = this.game.getZoneByPlayer(player, zoneName).cards().length
+        return `${zoneName} ${count}`
+      }
+    },
+
+    scoreHeader(player) {
+      return () => {
+        const count = this.game.getZoneByPlayer(player, 'score').cards().length
+        const total = this.game.getScore(player)
+        return `score ${count} [${total}]`
+      }
+    }
   },
 }
 </script>
