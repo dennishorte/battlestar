@@ -28,7 +28,7 @@ function Card() {
       kind: 'would-first',
       matches: () => true,
       func: (game, player) => {
-        const card = game.aDraw(player, game.getEffectAge(this, 10))
+        const card = game.aDraw(player, { age: game.getEffectAge(this, 10) })
         if (card && card.color === 'blue') {
           throw new GameOverEvent({
             player,
