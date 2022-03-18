@@ -98,5 +98,6 @@ export default {
   border-right: 1px solid #7d6c50;
   border-left: 1px solid #7d6c50;
   background-color: #bba37a;
+  max-width: 284px;
 }
 </style>

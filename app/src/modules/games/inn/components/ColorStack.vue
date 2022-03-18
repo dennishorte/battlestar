@@ -61,5 +61,6 @@ export default {
   border-top: 1px solid #7d6c50;
   border-right: 1px solid #7d6c50;
   border-left: 1px solid #7d6c50;
+  max-width: 284px;
 }
 </style>
