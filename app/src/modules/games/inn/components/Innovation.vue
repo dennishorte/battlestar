@@ -3,7 +3,7 @@
     <b-container>
       <b-row class="main-row">
 
-        <b-col class="game-column">
+        <b-col class="game-column history-column">
           <History />
         </b-col>
 
@@ -149,6 +149,10 @@ export default {
   min-width: 220px;
   max-width: 400px;
   overflow: scroll;
+}
+
+.history-column {
+  min-width: 400px;
 }
 
 .main-row {

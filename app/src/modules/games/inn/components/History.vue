@@ -1,6 +1,7 @@
 <template>
   <div class="history">
-    <div v-for="(line, index) in lines" :key="index" :class="line.classes">
+    <div v-for="(line, index) in lines" :key="index" :class="line.classes" class="log-line">
+      <div v-for="n in line.indent" :key="n" class="indent-spacer" />
       <CardText :text="line.text" />
     </div>
     <div class="bottom-space" ref="bottom"></div>
@@ -26,17 +27,24 @@ export default {
   computed: {
     lines() {
       const output = []
+      let indent = 0
       for (const entry of this.game.getLog()) {
-        if (
-          entry.type === 'response-received'
-          || entry === '__INDENT__'
-          || entry === '__OUTDENT__'
-        ) {
+        if (entry.type === 'response-received') {
           continue
         }
+        if (entry === '__INDENT__') {
+          indent += 1
+          continue
+        }
+        if (entry === '__OUTDENT__') {
+          indent -= 1
+          continue
+        }
+
         output.push({
           text: this.convertLogMessage(entry),
           classes: entry.classes,
+          indent: Math.max(0, indent - 1),
         })
       }
       return output
@@ -84,13 +92,21 @@ export default {
 }
 
 .bottom-space {
-  height: 1em;
+  height: 2em;
+}
+
+.log-line {
+  display: flex;
+  flex-direction: row;
+}
+
+.indent-spacer::before {
+  content: "…\00A0";
 }
 
 .player-turn-start {
   font-weight: bold;
-  margin-top: .7em;
-  text-align: center;
+  margin-top: 1em;
 }
 .player-turn-start::before {
   content: "—";
@@ -101,5 +117,6 @@ export default {
 
 .action-header {
   font-weight: bold;
+  margin-top: .5em;
 }
 </style>

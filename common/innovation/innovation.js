@@ -954,6 +954,7 @@ Innovation.prototype.aDogmaHelper = function(player, card, opts) {
 Innovation.prototype.aDogma = function(player, card, opts={}) {
   this.mLog({
     template: '{player} activates the dogma effects of {card}',
+    classes: ['player-action'],
     args: { player, card }
   })
 
