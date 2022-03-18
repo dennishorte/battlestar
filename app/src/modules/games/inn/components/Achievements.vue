@@ -1,6 +1,9 @@
 <template>
   <div class="achievements">
-    <CardPile :zone="zone" />
+    <CardPile
+      :zone="zone"
+      :header="header()"
+    />
   </div>
 </template>
 
@@ -20,6 +23,15 @@ export default {
     zone() {
       return this.game.getZoneById('achievements')
     },
+  },
+
+  methods: {
+    header() {
+      return () => {
+        const count = this.game.getNumAchievementsToWin()
+        return `achievements [${count} to win]`
+      }
+    }
   },
 }
 </script>
