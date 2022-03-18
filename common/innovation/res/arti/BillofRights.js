@@ -12,10 +12,26 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I compel you to choose a color where you have more visible cards than I do! Transfer all cards of that color from your board to my board, from the bottom up.`
+    `I compel you to choose a color where you have more visible cards than I do! Transfer all cards of that color from your board to my board, from the bottom up!`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const choices = game
+        .utilColors()
+        .filter(color => {
+          const yours = game.getZoneByPlayer(player, color)
+          const mine = game.getZoneByPlayer(leader, color)
+          return yours.cards().length > mine.cards().length
+        })
+      const colors = game.aChoose(player, choices, { title: 'Choose a Color' })
+      if (colors && colors.length > 0) {
+        const toTransfer = game.getCardsByZone(player, colors[0]).reverse()
+        const dest = game.getZoneByPlayer(leader, colors[0])
+        game.aTransferMany(player, toTransfer, dest, { ordered: true })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
