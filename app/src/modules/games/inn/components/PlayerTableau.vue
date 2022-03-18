@@ -17,6 +17,7 @@
     <CardPile
       :zone="game.getZoneByPlayer(player, 'score')"
       :header="scoreHeader(player)"
+      :extras="scoreExtras(player)"
     />
 
     <CardPile
@@ -55,6 +56,15 @@ export default {
       return () => {
         const count = this.game.getZoneByPlayer(player, zoneName).cards().length
         return `${zoneName} ${count}`
+      }
+    },
+
+    scoreExtras(player) {
+      return () => {
+        return this
+          .game
+          .getBonuses(player)
+          .map(bonus => bonus.toString())
       }
     },
 
