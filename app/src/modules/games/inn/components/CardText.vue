@@ -9,7 +9,7 @@ import CardSquareDetails from './CardSquareDetails'
 
 const biscuitMatcher = /[{](.)[}]/g
 const cardMatcher = /[*]([^-]+)-([0-9]+)[*]/g
-const cardNameMatcher = /card[(](.+)[)]/g
+const cardNameMatcher = /card[(]([^()]+)[)]/g
 
 export default {
   name: 'CardText',
