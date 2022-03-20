@@ -107,6 +107,8 @@ Innovation.prototype.initializeTransientState = function() {
   this.state.round = 1
   this.state.karmaDepth = 0
   this.state.wouldWinKarma = false
+  this.state.didInspire = false
+  this.state.didEndorse = false
 }
 
 Innovation.prototype.initializePlayers = function() {
@@ -1093,6 +1095,8 @@ Innovation.prototype.aEndorse = function(player, color, opts={}) {
   })
   this.mLogIndent()
 
+  this.state.didEndorse = true
+
   // Tuck a card
   const featuredBiscuit = this
     .getZoneByPlayer(player, color)
@@ -1131,6 +1135,8 @@ Innovation.prototype.aInspire = function(player, color, opts={}) {
     args: { player, color }
   })
   this.mLogIndent()
+
+  this.state.didInspire = true
 
   const zone = this.getZoneByPlayer(player, color)
   const biscuits = this.getBiscuits()
@@ -2669,11 +2675,13 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
 
   const colors = []
 
-  for (const zone of stacksWithEndorsableEffects) {
-    const dogmaBiscuit = zone.cards()[0].dogmaBiscuit
-    const canEndorse = cities.some(city => city.biscuits.includes(dogmaBiscuit))
-    if (canEndorse) {
-      colors.push(zone.color)
+  if (!this.state.didEndorse) {
+    for (const zone of stacksWithEndorsableEffects) {
+      const dogmaBiscuit = zone.cards()[0].dogmaBiscuit
+      const canEndorse = cities.some(city => city.biscuits.includes(dogmaBiscuit))
+      if (canEndorse) {
+        colors.push(zone.color)
+      }
     }
   }
 
@@ -2688,10 +2696,12 @@ Innovation.prototype._generateActionChoicesInspire = function() {
   const player = this.getPlayerCurrent()
   const inspireColors = []
 
-  for (const color of this.utilColors()) {
-    const effects = this.getVisibleEffectsByColor(player, color, 'inspire')
-    if (effects.length > 0) {
-      inspireColors.push(color)
+  if (!this.state.didInspire) {
+    for (const color of this.utilColors()) {
+      const effects = this.getVisibleEffectsByColor(player, color, 'inspire')
+      if (effects.length > 0) {
+        inspireColors.push(color)
+      }
     }
   }
 
