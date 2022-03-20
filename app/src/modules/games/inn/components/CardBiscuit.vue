@@ -6,7 +6,7 @@
       :class="classesComputed"
       :src="imagePath"
     />
-    <span v-else-if="kind === 'inline-age'" class="age-biscuit">{{ biscuit }}</span>
+    <span v-else-if="kind === 'inline-age'" class="age-biscuit">{{ ageBiscuit }}</span>
     <div v-else-if="kind === 'inline-other'">*{{ biscuit }}*</div>
   </span>
 </template>
@@ -65,6 +65,10 @@ export default {
   },
 
   computed: {
+    ageBiscuit() {
+      return this.biscuit === '0' ? '10' : this.biscuit
+    },
+
     classesComputed() {
       const base = this.classes
 
