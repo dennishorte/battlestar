@@ -2045,10 +2045,14 @@ Innovation.prototype.mAdjustCardVisibility = function(card) {
 
 Innovation.prototype.mDraw = function(player, exp, age, opts={}) {
   if (age > 10) {
+    const scores = this
+      .getPlayerAll()
+      .map(player => ({ player, score: game.getScore(player) }))
+      .sort((l, r) => r.score - l.score)
+
     throw new GameOverEvent({
       reason: 'high draw',
-      player,
-      age,
+      player: scores[0].player,
     })
   }
 
