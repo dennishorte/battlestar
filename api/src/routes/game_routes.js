@@ -18,7 +18,7 @@ Game.create = async function(req, res) {
     // Notify players of the new game
     const game = await db.game.findById(gameId)
     for (const user of lobby.users) {
-      _notify(game, user, 'A new game has started!')
+      _notify(game, user._id, 'A new game has started!')
     }
 
     res.json({
