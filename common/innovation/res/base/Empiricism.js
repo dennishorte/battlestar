@@ -20,6 +20,15 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const colors = game.aChoose(player, game.utilColors(), { count: 2, title: 'Choose Two Colors' })
+      game.mLog({
+        template: '{player} chooses {color1} and {color2}',
+        args: {
+          player,
+          color1: colors[0],
+          color2: colors[1],
+        }
+      })
+
       const card = game.aDrawAndReveal(player, game.getEffectAge(this, 9))
       if (colors.includes(card.color)) {
         game.aChooseAndSplay(player, [card.color], 'up')
