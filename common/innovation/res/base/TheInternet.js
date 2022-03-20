@@ -13,8 +13,8 @@ function Card() {
   this.karma = []
   this.dogma = [
     `You may splay your green cards up.`,
-    `Draw and score a {0}.`,
-    `Draw and meld a {0} for every two {i} on your board.`
+    `Draw and score a {a}.`,
+    `Draw and meld a {a} for every two {i} on your board.`
   ]
 
   this.dogmaImpl = [

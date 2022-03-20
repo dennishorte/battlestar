@@ -10,7 +10,7 @@ function Card() {
   this.biscuits = `&iih`
   this.dogmaBiscuit = `i`
   this.inspire = ``
-  this.echo = `Draw and foreshadow a {0}.`
+  this.echo = `Draw and foreshadow a {a}.`
   this.karma = []
   this.dogma = [
     `Draw and foreshadow a {9}.`,

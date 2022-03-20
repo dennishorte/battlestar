@@ -13,7 +13,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `I demand you return all cards from your forecast!`,
-    `Draw and foreshadow three {0}.`,
+    `Draw and foreshadow three {a}.`,
     `You may splay your yellow cards up.`
   ]
 

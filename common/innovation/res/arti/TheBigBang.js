@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Execute the non-demand effects of your top blue card, without sharing. If this caused any change to occur, draw and remove a {0} from the game, then repeat this effect.`
+    `Execute the non-demand effects of your top blue card, without sharing. If this caused any change to occur, draw and remove a {a} from the game, then repeat this effect.`
   ]
 
   this.dogmaImpl = []

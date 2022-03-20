@@ -13,7 +13,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `I compel you to transfer all top cards on your board with a demand effect to my score pile!`,
-    `If you have a top card on your board with a demand effect, draw a {0}.`
+    `If you have a top card on your board with a demand effect, draw a {a}.`
   ]
 
   this.dogmaImpl = []

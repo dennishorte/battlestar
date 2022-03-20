@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw a {0} for every two {i} on your board.`,
+    `Draw a {a} for every two {i} on your board.`,
     `You may splay your green cards up.`,
     `You may tuck any number of cards with a {i} from your hand, splaying up each color you tucked into.`
   ]

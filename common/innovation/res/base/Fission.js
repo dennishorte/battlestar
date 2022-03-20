@@ -12,8 +12,8 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you draw and reveal a {0}! If it is red, remove all hands, boards, and score piles from the game! If this occurs, the dogma action is complete.`,
-    `Return a top card other than Fission from any player's board. Draw a {0}.`
+    `I demand you draw and reveal a {a}! If it is red, remove all hands, boards, and score piles from the game! If this occurs, the dogma action is complete.`,
+    `Return a top card other than Fission from any player's board. Draw a {a}.`
   ]
 
   this.dogmaImpl = [

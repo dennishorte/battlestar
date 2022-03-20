@@ -9,7 +9,7 @@ function Card() {
   this.biscuits = `hl9&`
   this.dogmaBiscuit = `l`
   this.inspire = ``
-  this.echo = `Draw and meld a card of value less than {0}.`
+  this.echo = `Draw and meld a card of value less than {a}.`
   this.karma = []
   this.dogma = [
     `Execute all of the non-demand dogma effects of the card you melded due to Karaoke's echo effect. Do not share them.`,

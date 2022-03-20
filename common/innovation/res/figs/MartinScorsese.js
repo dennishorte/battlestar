@@ -9,7 +9,7 @@ function Card() {
   this.biscuits = `fha&`
   this.dogmaBiscuit = `f`
   this.inspire = ``
-  this.echo = `Draw and meld a {0}.`
+  this.echo = `Draw and meld a {a}.`
   this.karma = [
     `If you would meld a figure, instead tuck the figure and claim a standard achievement, regardless of eligibility.`
   ]

@@ -12,7 +12,7 @@ function Card() {
   this.inspire = `Tuck two cards from your hand.`
   this.echo = ``
   this.karma = [
-    `If another player would not draw a card for sharing after a Dogma action, first draw and reveal a {0}. If it is blue, you win.`
+    `If another player would not draw a card for sharing after a Dogma action, first draw and reveal a {a}. If it is blue, you win.`
   ]
   this.dogma = []
 

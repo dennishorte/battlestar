@@ -13,7 +13,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `You may score the bottom card or bottom two cards of one color from your board. If all the colors on your board contain the same number of visible cards (unsplayed = 1), you win.`,
-    `Draw and meld a {0}.`
+    `Draw and meld a {a}.`
   ]
 
   this.dogmaImpl = []

@@ -9,7 +9,7 @@ function Card() {
   this.biscuits = `&ssh`
   this.dogmaBiscuit = `s`
   this.inspire = ``
-  this.echo = `Draw and foreshadow a {7}, {8}, {9}, or {0}.`
+  this.echo = `Draw and foreshadow a {7}, {8}, {9}, or {a}.`
   this.karma = [
     `If you would foreshadow a card, instead meld it if it both has a {i} and its value is no more than two higher than your highest top card. Otherwise, foreshadow it.`
   ]

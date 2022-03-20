@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `You may return a card from your hand. If you do, score a card from your hand and draw two {0}.`
+    `You may return a card from your hand. If you do, score a card from your hand and draw two {a}.`
   ]
 
   this.dogmaImpl = [

@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and meld a {10}. Score all cards beneath it.`
+    `Draw and meld a {a}. Score all cards beneath it.`
   ]
 
   this.dogmaImpl = [

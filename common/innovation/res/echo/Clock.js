@@ -12,7 +12,7 @@ function Card() {
   this.echo = `You may splay your color with the most cards right.`
   this.karma = []
   this.dogma = [
-    `I demand you draw and reveal three {0}, total the number of {i} on them, and then return them! Transfer all cards of that value from your hand and score pile to my score pile!`
+    `I demand you draw and reveal three {a}, total the number of {i} on them, and then return them! Transfer all cards of that value from your hand and score pile to my score pile!`
   ]
 
   this.dogmaImpl = []
