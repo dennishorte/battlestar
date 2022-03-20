@@ -12,7 +12,7 @@ function Card() {
   this.echo = `Meld all cards from your hand with a {s} or {i}.`
   this.karma = [
     `You may issue an Advancement Decree with any two figures.`,
-    `Each {} value in any of your effects counts as a {a}.`
+    `Each {} value in any of your effects counts as a {0}.`
   ]
   this.dogma = []
 

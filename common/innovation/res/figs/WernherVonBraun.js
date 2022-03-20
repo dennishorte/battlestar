@@ -8,7 +8,7 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `*ssh`
   this.dogmaBiscuit = `s`
-  this.inspire = `Draw and foreshadow a {a}.`
+  this.inspire = `Draw and foreshadow a {0}.`
   this.echo = ``
   this.karma = [
     `Each card in your forecast counts as being in your score pile.`

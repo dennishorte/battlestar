@@ -28,9 +28,9 @@ describe('Susan Blackmore', () => {
     const request2 = t.choose(game, request1, 'Inspire.blue')
 
     t.testChoices(request2, [
-      "Email: Draw and foreshadow a {a}.",
+      "Email: Draw and foreshadow a {0}.",
       "Stephen Hawking: Score the bottom card of this color.",
-      "Stephen Hawking: Draw and tuck a {a}.",
+      "Stephen Hawking: Draw and tuck a {0}.",
       "Daedalus: Draw and foreshadow a {4}.",
       "Daedalus: Score the bottom card of this color."
     ])

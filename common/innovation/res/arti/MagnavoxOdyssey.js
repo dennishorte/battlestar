@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and meld two {a}. If they are the same color, you win.`
+    `Draw and meld two {0}. If they are the same color, you win.`
   ]
 
   this.dogmaImpl = []

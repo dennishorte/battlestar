@@ -13,7 +13,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `You may splay your red or green cards up.`,
-    `Draw and meld a {a}, then execute each of its non-demand dogma effects. Do not share them.`
+    `Draw and meld a {0}, then execute each of its non-demand dogma effects. Do not share them.`
   ]
 
   this.dogmaImpl = [

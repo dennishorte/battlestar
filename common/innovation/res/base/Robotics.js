@@ -13,7 +13,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `Score your top green card.`,
-    `Draw and meld a {a}, then execute each of its non-demand dogma effects. Do not share them.`
+    `Draw and meld a {0}, then execute each of its non-demand dogma effects. Do not share them.`
   ]
 
   this.dogmaImpl = [

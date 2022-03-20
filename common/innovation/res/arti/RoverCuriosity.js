@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and meld an Artifact {a}. Execute each of the effects of the melded card as if they were on this card. Do not share them.`
+    `Draw and meld an Artifact {0}. Execute each of the effects of the melded card as if they were on this card. Do not share them.`
   ]
 
   this.dogmaImpl = []

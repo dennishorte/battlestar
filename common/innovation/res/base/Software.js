@@ -12,8 +12,8 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and score a {a}.`,
-    `Draw and meld two {a}, then execute each of the second card's non-demand dogma effects. Do not share them.`
+    `Draw and score a {0}.`,
+    `Draw and meld two {0}, then execute each of the second card's non-demand dogma effects. Do not share them.`
   ]
 
   this.dogmaImpl = [

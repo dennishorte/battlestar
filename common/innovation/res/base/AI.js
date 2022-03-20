@@ -13,7 +13,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and score a {a}.`,
+    `Draw and score a {0}.`,
     `If Robotics and Software are top cards on any board, the single player with the lowest score wins.`
   ]
 

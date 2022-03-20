@@ -8,7 +8,7 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `l*hl`
   this.dogmaBiscuit = `l`
-  this.inspire = `Draw and foreshadow a {a}.`
+  this.inspire = `Draw and foreshadow a {0}.`
   this.echo = ``
   this.karma = [
     `If you would foreshadow a card, instead meld it, execute its non-demand Dogma effects for yourself only, and remove it from the game if it is still a top card on your board.`
