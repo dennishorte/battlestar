@@ -15,7 +15,14 @@ function Card() {
     `Draw and tuck an {8}. Splay up the color of the tucked card. Draw and score a card of value equal to the number of cards of that color visible on your board.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const card = game.aDrawAndTuck(player, game.getEffectAge(this, 8))
+      game.aSplay(player, card.color, 'up')
+      const numCards = game.getCardsByZone(player, card.color).length
+      game.aDrawAndScore(player, numCards)
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
