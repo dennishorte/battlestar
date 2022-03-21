@@ -1311,7 +1311,9 @@ Innovation.prototype.aScore = function(player, card, opts={}) {
 Innovation.prototype.aSplay = function(player, color, direction, opts={}) {
   util.assert(direction, 'No direction specified for splay')
 
-  const zone = this.getZoneByPlayer(player, color)
+  const owner = opts.owner || player
+
+  const zone = this.getZoneByPlayer(owner, color)
   if (zone.cards().length < 2 || zone.splay === direction) {
     this.mLog({
       template: `Cannot splay ${color} ${direction}`
@@ -1319,9 +1321,12 @@ Innovation.prototype.aSplay = function(player, color, direction, opts={}) {
     return
   }
 
-  const karmaKind = this.aKarma(player, 'splay', { ...opts, color, direction })
-  if (karmaKind === 'would-instead') {
-    return
+  // Karmas don't trigger if someone else is splaying your cards.
+  if (owner === player) {
+    const karmaKind = this.aKarma(player, 'splay', { ...opts, color, direction })
+    if (karmaKind === 'would-instead') {
+      return
+    }
   }
 
   return this.mSplay(player, color, direction, opts)
@@ -2257,16 +2262,29 @@ Innovation.prototype.mScore = function(player, card) {
   return card
 }
 
-Innovation.prototype.mSplay = function(player, color, direction) {
+Innovation.prototype.mSplay = function(player, color, direction, opts) {
   util.assert(direction, 'No direction specified for splay')
 
-  const target = this.getZoneByPlayer(player, color)
+  const owner = opts.owner || player
+
+  const target = this.getZoneByPlayer(owner, color)
   if (target.splay !== direction) {
     target.splay = direction
-    this.mLog({
-      template: '{player} splays {color} {direction}',
-      args: { player, color, direction }
-    })
+
+    if (player === owner) {
+      this.mLog({
+        template: '{player} splays {color} {direction}',
+        args: { player, color, direction }
+      })
+    }
+
+    else {
+      this.mLog({
+        template: "{player} splays {player2}'s {color} {direction}",
+        args: { player, player2: owner, color, direction }
+      })
+    }
+
     this.mActed(player)
     return color
   }

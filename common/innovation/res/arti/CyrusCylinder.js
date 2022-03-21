@@ -12,10 +12,40 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Choose any other rtop purple card on any plyaer's board. Execute its non-demand dogma effects. Do not share them. Splay left a color on any player's board.`
+    `Choose any other top purple card on any player's board. Execute its non-demand dogma effects. Do not share them.`,
+    `Splay left a color on any player's board.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const choices = game
+        .getPlayerAll()
+        .map(player => game.getTopCard(player, 'purple'))
+        .filter(card => card !== undefined)
+        .filter(card => card.name !== this.name)
+
+      const card = game.aChooseCard(player, choices)
+      if (card) {
+        game.aCardEffects(player, player, card, 'dogma', game.getBiscuits())
+      }
+    },
+
+    (game, player) => {
+      const splayChoices = game
+        .getPlayerAll()
+        .flatMap(player => game.utilColors().map(color => ({ player, color })))
+        .filter(x => game.getZoneByPlayer(x.player, x.color).cards().length > 1)
+        .filter(x => game.getZoneByPlayer(x.player, x.color).splay !== 'left')
+        .map(x => `${x.player.name}-${x.color}`)
+
+      const selections = game.aChoose(player, splayChoices)
+      if (selections && selections.length > 0) {
+        const [playerName, color] = selections[0].split('-')
+        const other = game.getPlayerByName(playerName)
+        game.aSplay(player, color, 'left', { owner: other })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
