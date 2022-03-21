@@ -449,9 +449,6 @@ Innovation.prototype.endTurn = function() {
   // Track number of turns
   this.state.turn += 1
   this.state.round = Math.floor((this.state.turn + players.length - 1) / players.length)
-  if (this.state.round % players.length === 0) {
-    this.mLog({ template: `Round ${this.state.round}` })
-  }
 
   // Reset various turn-centric state
   this.state.didEnsorse = false
