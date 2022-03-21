@@ -15,7 +15,27 @@ function Card() {
     `Tuck a card from your hand. If you do, splay left its color, then choose a splayed color on any player's board. Execute all of that color's top card's non-demand dogma effects, without sharing.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'))
+
+      if (cards && cards.length > 0) {
+        const card = cards[0]
+        game.aSplay(player, card.color, 'left')
+
+        const choices = game
+          .getPlayerAll()
+          .flatMap(player => game
+            .getTopCards(player)
+            .filter(card => game.getZoneByPlayer(player, card.color).splay !== 'none')
+          )
+        const choice = game.aChooseCard(player, choices)
+        if (choice) {
+          game.aCardEffects(player, player, choice, 'dogma', game.getBiscuits())
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
