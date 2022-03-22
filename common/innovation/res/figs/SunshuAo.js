@@ -27,7 +27,7 @@ function Card() {
       matches: (game, player, { card }) => card.color === 'yellow',
       func: (game, player, { card }) => {
         game.aMeld(player, card)
-        game.aCardEffects(player, player, card, 'dogma', game.getBiscuits())
+        game.aCardEffects(player, card, 'dogma')
 
         if (game.checkCardIsTop(card)) {
           game.mLog({

@@ -480,81 +480,96 @@ Innovation.prototype.aCardEffect = function(player, info, opts) {
 }
 
 Innovation.prototype.aCardEffects = function(
-  leader,
   player,
   card,
   kind,
-  biscuits,
-  sharing=[],
-  demanding=[],
-  endorsed=false
+  opts,
 ) {
+  // Null player means do it for everyone.
+  player = player || opts.leader
+
+  // Default opts
+  opts = Object.assign({
+    sharing: [],
+    demanding: [],
+    leader: player,
+    endorsed: false,
+  }, opts)
+
   const effects = this.getVisibleEffects(card, kind)
   if (!effects) {
     return
   }
 
   const { texts, impls } = effects
-  const repeatCount = endorsed ? 2 : 1
+  const repeatCount = opts.endorsed ? 2 : 1
+
+  const actors = [player]
+    .concat(opts.sharing)
+    .concat(opts.demanding)
 
   for (let i = 0; i < texts.length; i++) {
-    for (let z = 0; z < repeatCount; z++) {
-      const effectText = texts[i]
-      const effectImpl = impls[i]
-      const isDemand = effectText.startsWith('I demand')
-      const isCompel = effectText.startsWith('I compel')
-
-      if (!isDemand) {
-        this.state.couldShare = true
+    for (const actor of this.getPlayersStartingNext()) {
+      if (!actors.includes(actor)) {
+        continue
       }
 
-      const demand = isDemand && demanding.includes(player)
-      const share = !isDemand && sharing.includes(player) && z === 0
-      const compel = isCompel && sharing.includes(player) && player !== leader
-      const owner = !isDemand && !isCompel && player === leader
+      for (let z = 0; z < repeatCount; z++) {
 
-      if (compel || demand || share || owner) {
-        this.mLog({
-          template: `{player}, {card}: ${effectText}`,
-          args: { player, card }
-        })
-        this.mLogIndent()
+        const effectText = texts[i]
+        const effectImpl = impls[i]
+        const isDemand = effectText.startsWith('I demand')
+        const isCompel = effectText.startsWith('I compel')
 
-        const effectInfo = {
-          card,
-          text: effectText,
-          impl: effectImpl,
-          index: i,
+        if (!isDemand && !isCompel) {
+          this.state.couldShare = true
         }
 
-        if (demand) {
-          this.state.dogmaInfo.demanding = true
+        const demand = isDemand && opts.demanding.includes(actor)
+        const compel = isCompel && opts.sharing.includes(actor) && actor !== opts.leader
+        const share = !isDemand && !isCompel && opts.sharing.includes(actor) && z === 0
+        const owner = !isDemand && !isCompel && actor === opts.leader
 
-          const karmaKind = this.aKarma(player, 'demand-success', { card, effectInfo, leader })
-          if (karmaKind === 'would-instead') {
-            this.state.dogmaInfo.demanding = false
-            this.mLogOutdent()
-            return
-          }
-        }
-
-        if (compel) {
-          this.state.dogmaInfo.demanding = true
-        }
-
-        const result = this.aCardEffect(player, effectInfo, {
-          biscuits,
-          leader,
-        })
-
-        this.state.dogmaInfo.demanding = false
-        this.mLogOutdent()
-
-        if (result === '__STOP__') {
+        if (compel || demand || share || owner) {
           this.mLog({
-            template: 'Dogma action is complete'
+            template: `{player}, {card}: ${effectText}`,
+            args: { player: actor, card }
           })
-          return result
+          this.mLogIndent()
+
+          const effectInfo = {
+            card,
+            text: effectText,
+            impl: effectImpl,
+            index: i,
+          }
+
+          if (demand || compel) {
+            this.state.dogmaInfo.demanding = true
+
+            const karmaKind = this.aKarma(actor, 'demand-success', {
+              card,
+              effectInfo,
+              leader: opts.leader
+            })
+            if (karmaKind === 'would-instead') {
+              this.state.dogmaInfo.demanding = false
+              this.mLogOutdent()
+              return
+            }
+          }
+
+          const result = this.aCardEffect(actor, effectInfo, { leader: opts.leader })
+
+          this.state.dogmaInfo.demanding = false
+          this.mLogOutdent()
+
+          if (result === '__STOP__') {
+            this.mLog({
+              template: 'Dogma action is complete'
+            })
+            return result
+          }
         }
       }
     }
@@ -916,20 +931,21 @@ Innovation.prototype.aDogmaHelper = function(player, card, opts) {
   effectCards.push(card)
 
   const finalEffects = util.array.distinct(effectCards)
-
-  const endorsed = opts.endorsed
-  const leader = this.getPlayerCurrent()
+  const effectOpts = {
+    sharing,
+    demanding,
+    leader: this.getPlayerCurrent(),
+    endorsed: opts.endorsed,
+  }
   for (const ecard of finalEffects) {
-    for (const player of this.getPlayersStartingNext()) {
-      this.aCardEffects(leader, player, ecard, 'echo', biscuits, sharing, demanding, endorsed)
+    this.aCardEffects(null, ecard, 'echo', effectOpts)
 
-      // Only the top card (or the artifact card for free artifact dogma actions)
-      // get to do their dogma effects.
-      if (ecard === card) {
-        const result = this.aCardEffects(leader, player, ecard, 'dogma', biscuits, sharing, demanding, endorsed)
-        if (result === '__STOP__') {
-          return result
-        }
+    // Only the top card (or the artifact card for free artifact dogma actions)
+    // get to do their dogma effects.
+    if (ecard === card) {
+      const result = this.aCardEffects(null, ecard, 'dogma', effectOpts)
+      if (result === '__STOP__') {
+        return result
       }
     }
   }
@@ -1152,10 +1168,8 @@ Innovation.prototype.aInspire = function(player, color, opts={}) {
   for (const card of effectCards) {
     this.aCardEffects(
       player,
-      player,
       card,
       'inspire',
-      biscuits
     )
   }
 
@@ -2049,7 +2063,7 @@ Innovation.prototype.mDraw = function(player, exp, age, opts={}) {
   if (age > 10) {
     const scores = this
       .getPlayerAll()
-      .map(player => ({ player, score: game.getScore(player) }))
+      .map(player => ({ player, score: this.getScore(player) }))
       .sort((l, r) => r.score - l.score)
 
     throw new GameOverEvent({

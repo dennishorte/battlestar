@@ -24,7 +24,7 @@ function Card() {
         .filter(card => card !== this)
       const card = game.aChooseCard(player, choices)
       if (card) {
-        game.aCardEffects(player, player, card, 'dogma', game.getBiscuits())
+        game.aCardEffects(player, card, 'dogma')
       }
     },
 

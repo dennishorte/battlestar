@@ -29,7 +29,7 @@ function Card() {
       const lowest = util.array.takeWhile(sortedCards, card => card.age === sortedCards[0].age)
       const card = game.aChooseCard(player, lowest)
       if (card) {
-        game.aCardEffects(player, player, card, 'dogma', game.getBiscuits(player))
+        game.aCardEffects(player, card, 'dogma')
       }
       else {
         game.mLogNoEffect()

@@ -31,7 +31,7 @@ function Card() {
           )
         const choice = game.aChooseCard(player, choices)
         if (choice) {
-          game.aCardEffects(player, player, choice, 'dogma', game.getBiscuits())
+          game.aCardEffects(player, choice, 'dogma')
         }
       }
     }

@@ -27,7 +27,7 @@ function Card() {
         template: '{player} will execute {card}',
         args: { player, card }
       })
-      game.aCardEffects(player, player, card, 'dogma', game.getBiscuits())
+      game.aCardEffects(player, card, 'dogma')
     },
   ]
   this.echoImpl = []

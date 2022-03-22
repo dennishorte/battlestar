@@ -27,13 +27,7 @@ function Card() {
       matches: () => true,
       func: (game, player, { card }) => {
         game.aMeld(player, card)
-        game.aCardEffects(
-          player,
-          player,
-          card,
-          'dogma',
-          game.getBiscuitsByPlayer(player),
-        )
+        game.aCardEffects(player, card, 'dogma')
         const topCard = game.getTopCard(player, card.color)
         if (topCard === card) {
           game.aRemove(player, card)

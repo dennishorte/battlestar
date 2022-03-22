@@ -17,7 +17,8 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player, { biscuits, leader }) => {
+    (game, player, { leader }) => {
+      const biscuits = game.getBiscuits()
       const count = Math.floor(biscuits[leader.name].c / 4)
       const choices = game.getZoneByPlayer(player, 'score').cards()
       const target = game.getZoneByPlayer(leader, 'score')

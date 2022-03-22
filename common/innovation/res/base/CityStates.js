@@ -16,7 +16,8 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player, { biscuits, leader }) => {
+    (game, player, { leader }) => {
+      const biscuits = game.getBiscuits()
       if (biscuits[player.name].k >= 4) {
         const choices = game
           .getTopCards(player)

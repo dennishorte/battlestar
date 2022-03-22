@@ -17,7 +17,8 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player, { biscuits }) => {
+    (game, player) => {
+      const biscuits = game.getBiscuits()
       const count = Math.floor(biscuits[player.name].l / 2)
       const proceed = game.requestInputSingle({
         actor: player.name,

@@ -30,7 +30,7 @@ function Card() {
     (game, player) => {
       const cards = game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
       if (cards && cards.length > 0) {
-        game.aCardEffects(player, player, cards[0], 'dogma', game.getBiscuits())
+        game.aCardEffects(player, cards[0], 'dogma')
       }
     }
   ]

@@ -20,7 +20,7 @@ function Card() {
     (game, player) => game.aChooseAndSplay(player, ['red', 'green'], 'up'),
     (game, player) => {
       const card = game.aDrawAndMeld(player, game.getEffectAge(this, 10))
-      game.aCardEffects(player, player, card, 'dogma', game.getBiscuits())
+      game.aCardEffects(player, card, 'dogma')
     }
   ]
   this.echoImpl = []

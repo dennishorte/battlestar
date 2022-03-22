@@ -17,7 +17,8 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player, { biscuits }) => {
+    (game, player) => {
+      const biscuits = game.getBiscuits()
       const count = Math.floor(biscuits[player.name].k / 3)
       let red = false
 

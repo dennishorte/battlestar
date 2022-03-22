@@ -45,7 +45,7 @@ function Card() {
           game.aTransfer(player, selected, game.getZoneByPlayer(player, 'score'))
         }
         else {
-          game.aCardEffects(player, player, selected, 'dogma', game.getBiscuits(player))
+          game.aCardEffects(player, selected, 'dogma')
         }
       }
     }
