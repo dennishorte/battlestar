@@ -35,6 +35,7 @@ describe('Dancing Girl', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'dogma')
 
+    t.testIsFirstAction(request2)
     t.testBoard(game, {
       micah: {
         yellow: ['Dancing Girl'],

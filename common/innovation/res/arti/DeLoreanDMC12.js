@@ -15,7 +15,23 @@ function Card() {
     `If DeLorean DMC-12 is a top card on any board, remove all top cards on all boards and all cards in all hands from the game.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      if (game.checkCardIsTop(this) && !this.zone.endsWith('.artifact')) {
+        const topCards = game
+          .getPlayerAll()
+          .flatMap(player => game.getTopCards(player))
+        const hands = game
+          .getPlayerAll()
+          .flatMap(player => game.getCardsByZone(player, 'hand'))
+        game.aRemoveMany(player, hands, { ordered: true })
+        game.aRemoveMany(player, topCards)
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
