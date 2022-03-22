@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../game.js')
 
 function Card() {
   this.id = `Dancing Girl`  // Card names are unique in Innovation
@@ -16,7 +17,39 @@ function Card() {
     `If Dancing Girl has been on every board during this action, and it started on your board, you win.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      if (!game.state.dogmaInfo.dancingGirl) {
+        game.state.dogmaInfo.dancingGirl = {}
+        game.state.dogmaInfo.dancingGirl.zones = []
+        game.state.dogmaInfo.dancingGirl.startingZone = this.zone
+      }
+
+      game.aTransfer(player, this, game.getZoneByPlayer(player, this.color))
+      game.state.dogmaInfo.dancingGirl.zones.push(this.zone) // Zone after transfer
+    },
+
+    (game, player, { leader }) => {
+      if (player !== leader) {
+        game.mLogNoEffect()
+        return
+      }
+
+      const info = game.state.dogmaInfo.dancingGirl
+      const startingCondition = info.startingZone === `players.${player.name}.yellow`
+      const travelCondition = info.zones.length === game.getPlayerAll().length - 1
+
+      if (startingCondition && travelCondition) {
+        throw new GameOverEvent({
+          player,
+          reason: this.name
+        })
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

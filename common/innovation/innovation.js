@@ -320,8 +320,11 @@ Innovation.prototype.artifact = function() {
 
     switch (action) {
       case 'dogma':
+        const startingZone = artifact.zone
         this.aDogma(player, artifact, { artifact: true })
-        this.aReturn(player, artifact)
+        if (startingZone === artifact.zone) {
+          this.aReturn(player, artifact)
+        }
         break
       case 'return':
         this.aReturn(player, artifact)
