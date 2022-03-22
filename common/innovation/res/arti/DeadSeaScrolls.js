@@ -15,7 +15,14 @@ function Card() {
     `Draw an Artifact of value equal to the value of your highest top card.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const highestTopCard = game.getHighestTopCard(player)
+      const value = highestTopCard.visibleAge || highestTopCard.age
+
+      game.aDraw(player, { age: value, exp: 'arti' })
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
