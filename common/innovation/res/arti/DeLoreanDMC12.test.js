@@ -22,12 +22,9 @@ describe('DeLorean DMC-12', () => {
     const request2 = t.choose(game, request1, 'Dogma.DeLorean DMC-12')
     const request3 = t.choose(game, request2, 'auto')
 
-    t.dumpLog(game)
-
-    t.testIsFirstAction(request3)
+    t.testIsSecondPlayer(request3)
     t.testBoard(game, {
       dennis: {
-        artifact: ['DeLorean DMC-12'],
         blue: ['Calendar'],
       },
       micah: {
