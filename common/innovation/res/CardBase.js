@@ -5,6 +5,7 @@ function CardBase() {
   this.name
   this.color
   this.age
+  this.visibleAge
   this.expansion
   this.biscuits
   this.dogmaBiscuit

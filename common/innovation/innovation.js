@@ -1662,7 +1662,7 @@ Innovation.prototype.getExpansionList = function() {
 
 Innovation.prototype.getHighestTopAge = function(player, opts={}) {
   const card = this.getHighestTopCard(player)
-  const baseAge = card ? card.age : 0
+  const baseAge = card ? (card.visibleAge || card.age) : 0
 
   const karmaAdjustment = this
     .getInfoByKarmaTrigger(player, 'calculate-eligibility')
@@ -1674,13 +1674,7 @@ Innovation.prototype.getHighestTopAge = function(player, opts={}) {
 }
 
 Innovation.prototype.getHighestTopCard = function(player) {
-  const topCards = this
-    .utilColors()
-    .map(color => this.getZoneByPlayer(player, color).cards()[0])
-    .filter(card => card !== undefined)
-    .sort((l, r) => r.age - l.age)
-
-  return topCards[0]
+  return this.utilHighestCards(this.getTopCards(player), { visible: true })[0]
 }
 
 Innovation.prototype.getLog = function() {
@@ -2412,7 +2406,7 @@ Innovation.prototype._cardLogData = function(card) {
 
   const classes = ['card']
   if (card.age) {
-    classes.push(`card-age-${card.age}`)
+    classes.push(`card-age-${card.visibleAge || card.age}`)
   }
   if (card.expansion) {
     classes.push(`card-exp-${card.expansion}`)
@@ -2459,14 +2453,16 @@ Innovation.prototype.utilEnrichLogArgs = function(msg) {
   }
 }
 
-Innovation.prototype.utilHighestCards = function(cards) {
-  const sorted = [...cards].sort((l, r) => r.age - l.age)
-  return util.array.takeWhile(sorted, card => card.age === sorted[0].age)
+Innovation.prototype.utilHighestCards = function(cards, opts) {
+  const age = (card) => (opts.visible && card.visibleAge) ? card.visibleAge : card.age
+  const sorted = [...cards].sort((l, r) => age(r) - age(l))
+  return util.array.takeWhile(sorted, card => age(card) === age(sorted[0]))
 }
 
 Innovation.prototype.utilLowestCards = function(cards) {
-  const sorted = [...cards].sort((l, r) => l.age - r.age)
-  return util.array.takeWhile(sorted, card => card.age === sorted[0].age)
+  const age = (card) => (opts.visible && card.visibleAge) ? card.visibleAge : card.age
+  const sorted = [...cards].sort((l, r) => age(l) - age(r))
+ return util.array.takeWhile(sorted, card => age(card) === age(sorted[0]))
 }
 
 Innovation.prototype.utilParseBiscuits = function(biscuitString) {
