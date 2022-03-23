@@ -7,6 +7,10 @@ Util.array.distinct = function(array) {
   return [...new Set(array)]
 }
 
+Util.array.intersection = function(array1, array2) {
+  return array1.filter(x => array2.includes(x))
+}
+
 Util.array.pushUnique = function(array, value) {
   if (array.indexOf(value) === -1) {
     array.push(value)
