@@ -2453,13 +2453,13 @@ Innovation.prototype.utilEnrichLogArgs = function(msg) {
   }
 }
 
-Innovation.prototype.utilHighestCards = function(cards, opts) {
+Innovation.prototype.utilHighestCards = function(cards, opts={}) {
   const age = (card) => (opts.visible && card.visibleAge) ? card.visibleAge : card.age
   const sorted = [...cards].sort((l, r) => age(r) - age(l))
   return util.array.takeWhile(sorted, card => age(card) === age(sorted[0]))
 }
 
-Innovation.prototype.utilLowestCards = function(cards) {
+Innovation.prototype.utilLowestCards = function(cards, opts={}) {
   const age = (card) => (opts.visible && card.visibleAge) ? card.visibleAge : card.age
   const sorted = [...cards].sort((l, r) => age(l) - age(r))
  return util.array.takeWhile(sorted, card => age(card) === age(sorted[0]))
