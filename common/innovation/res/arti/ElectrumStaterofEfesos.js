@@ -15,7 +15,26 @@ function Card() {
     `Draw and reveal a {3}. If you do not have a top card of the drawn card's color, meld it and repeat this dogma effect.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      while (true) {
+        const card = game.aDrawAndReveal(player, game.getEffectAge(this, 3))
+        if (game.getTopCard(player, card.color)) {
+          game.mLog({
+            template: '{player} already has a top card of matching color',
+            args: { player }
+          })
+          break
+        }
+        else {
+          game.mLog({
+            template: '{player} has no top cards of matching color',
+          })
+          game.aMeld(player, card)
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
