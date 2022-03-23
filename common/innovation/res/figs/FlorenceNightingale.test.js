@@ -4,7 +4,7 @@ const t = require('../../testutil.js')
 
 describe('Florence Nightingale', () => {
 
-  test('echo (and forecast in hand karma)', () => {
+  test('inspire', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {

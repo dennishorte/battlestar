@@ -30,10 +30,12 @@ function Card() {
       trigger: ['transfer', 'return', 'remove'],
       triggerAll: true,
       kind: 'would-instead',
-      matches: (game, player, { card, leader }) => {
-        const leaderCondition = leader !== player
-        const zoneCondition = game.getZoneByCard(card) === game.getZoneByPlayer(player, 'score')
-        return leaderCondition && zoneCondition
+      matches: (game, player, { card, owner }) => {
+        const cardOwner = game.getPlayerByCard(card)
+        const ownerCondition = player !== cardOwner
+        const zoneCondition =
+          game.getZoneByCard(card) === game.getZoneByPlayer(cardOwner, 'score')
+        return ownerCondition && zoneCondition
       },
       func: (game, player, { card }) => {
         game.mLog({
