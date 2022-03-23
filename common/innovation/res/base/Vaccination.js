@@ -19,10 +19,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const cards = game
-        .getCardsByZone(player, 'score')
-        .sort((l, r) => l.age - r.age)
-      const lowest = util.array.takeWhile(cards, card => card.age === cards[0].age)
+      const lowest = game.utilLowestCards(game.getCardsByZone(player, 'score'))
       const returned = game.aReturnMany(player, lowest)
 
       if (returned.length > 0) {

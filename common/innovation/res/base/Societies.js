@@ -25,7 +25,7 @@ function Card() {
             return true
           }
           else {
-            return leaderCard.age < card.age
+            return leaderCard.getAge() < card.getAge()
           }
         })
       const cards = game.aChooseAndTransfer(player, choices, { toBoard: true, player: leader })

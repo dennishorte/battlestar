@@ -30,7 +30,7 @@ function Card() {
         const card = game.getCardByName(returned[0])
         const returnedCard = game.aReturn(player, card)
         if (returnedCard) {
-          game.aDrawAndScore(player, card.age + 1)
+          game.aDrawAndScore(player, card.getAge() + 1)
         }
       }
     },

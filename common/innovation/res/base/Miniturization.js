@@ -19,10 +19,10 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const cards = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1})
-      if (cards && cards.length > 0 && cards[0].age === 10) {
+      if (cards && cards.length > 0 && cards[0].getAge() === 10) {
         const allAges = game
           .getCardsByZone(player, 'score')
-          .map(card => card.age)
+          .map(card => card.getAge())
         const distinctAges = util.array.distinct(allAges)
         for (let i = 0; i < distinctAges.length; i++) {
           game.aDraw(player, { age: game.getEffectAge(this, 10) })

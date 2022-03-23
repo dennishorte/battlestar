@@ -21,7 +21,7 @@ function Card() {
     const choices = game
       .getTopCardsAll()
       .filter(card => card.expansion === 'figs')
-      .filter(card => card.age === 5 || card.age === 6)
+      .filter(card => card.getAge() === 5 || card.getAge() === 6)
     game.aChooseAndScore(player, choices)
   }
   this.inspireImpl = []
@@ -39,7 +39,7 @@ function Card() {
 
         const choices = game
           .getTopCardsAll()
-          .filter(card => card.age === 6)
+          .filter(card => card.getAge() === 6)
         game.aChooseAndScore(player, choices)
       }
     }

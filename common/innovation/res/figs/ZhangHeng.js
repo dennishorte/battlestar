@@ -32,7 +32,7 @@ function Card() {
       func: (game, player) => {
         return game
           .getCardsByZone(player, 'score')
-          .map(card => card.age)
+          .map(card => card.getAge())
       }
     }
   ]

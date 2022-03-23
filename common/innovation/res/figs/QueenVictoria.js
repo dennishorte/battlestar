@@ -38,7 +38,7 @@ function Card() {
       func: (game, player, { card }) => {
         const ages = game
           .getNonEmptyAges()
-          .filter(age => age < card.age)
+          .filter(age => age < card.getAge())
         const age = game.aChooseAge(player, ages)
         if (age) {
           const deckCards = game.getZoneByDeck('base', age).cards()

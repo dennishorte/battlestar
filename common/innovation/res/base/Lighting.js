@@ -24,7 +24,7 @@ function Card() {
         { min: 0, max: 3},
       )
       if (cards) {
-        const ages = util.array.distinct(cards.map(card => card.age))
+        const ages = util.array.distinct(cards.map(card => card.getAge()))
         for (let i = 0; i < ages.length; i++) {
           game.aDrawAndScore(player, game.getEffectAge(this, 7))
         }

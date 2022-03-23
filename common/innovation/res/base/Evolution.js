@@ -30,7 +30,7 @@ function Card() {
       else {
         const highest = game.utilHighestCards(game.getCardsByZone(player, 'score'))
         if (highest.length > 0) {
-          game.aDraw(player, { age: highest[0].age + 1 })
+          game.aDraw(player, { age: highest[0].getAge() + 1 })
         }
         else {
           game.aDraw(player, { age: 1 })

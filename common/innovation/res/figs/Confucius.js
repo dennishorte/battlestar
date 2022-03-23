@@ -21,7 +21,7 @@ function Card() {
       .getPlayerOpponents(player)
       .flatMap(opp => game.getTopCards(opp))
       .filter(card => card.expansion === 'figs')
-      .filter(card => card.age === 1)
+      .filter(card => card.getAge() === 1)
     game.aChooseAndScore(player, choices)
   }
   this.inspireImpl = []

@@ -11,9 +11,10 @@ function Card() {
   this.checkPlayerIsEligible = function(game, player, reduceCost) {
     const targetAge = reduceCost ? 7 : 8
     const targetCount = reduceCost ? 4 : 5
+
     const matchCount = game
-      .utilColors()
-      .map(color => (game.getTopCard(player, color) || {}).age)
+      .getTopCards(player)
+      .map(card => card.getAge())
       .filter(age => age >= targetAge)
       .length
 

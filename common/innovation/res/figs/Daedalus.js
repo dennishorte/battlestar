@@ -34,8 +34,8 @@ function Card() {
       func(game, player) {
         return game
           .getCardsByZone(player, 'achievements')
-          .filter(card => card.age !== undefined)
-          .reduce((l, r) => l + r.age, 0)
+          .filter(card => card.getAge() !== undefined)
+          .reduce((l, r) => l + r.getAge(), 0)
       }
     }
   ]

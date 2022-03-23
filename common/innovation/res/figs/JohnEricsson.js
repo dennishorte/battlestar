@@ -29,7 +29,7 @@ function Card() {
           .getPlayerOpponents(player)
           .flatMap(opp => game.getTopCards(opp))
           .filter(card => card.expansion === 'figs')
-          .filter(card => card.age < 7)
+          .filter(card => card.getAge() < 7)
         game.aScoreMany(player, figs)
       }
     },

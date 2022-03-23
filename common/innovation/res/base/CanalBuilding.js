@@ -25,8 +25,8 @@ function Card() {
         })
         const hand = game.getZoneByPlayer(player, 'hand')
         const score = game.getZoneByPlayer(player, 'score')
-        const handHighest = highest(hand.cards())
-        const scoreHighest = highest(score.cards())
+        const handHighest = game.utilHighestCards(hand.cards())
+        const scoreHighest = game.utilHighestCards(score.cards())
 
         handHighest.forEach(card => game.mMoveCardTo(card, score))
         scoreHighest.forEach(card => game.mMoveCardTo(card, hand))
@@ -47,14 +47,5 @@ Object.defineProperty(Card.prototype, `constructor`, {
   enumerable: false,
   writable: true
 })
-
-function highest(cards) {
-  if (cards.length === 0) {
-    return cards
-  }
-  const sorted = cards.sort((l, r) => r.age - l.age)
-  const highest = sorted[0].age
-  return sorted.filter(card => card.age === highest)
-}
 
 module.exports = Card

@@ -44,7 +44,7 @@ function Card() {
       kind: 'would-first',
       matches: () => true,
       func(game, player, { card }) {
-        game.aDrawAndMeld(player, card.age + 1)
+        game.aDrawAndMeld(player, card.getAge() + 1)
       }
     }
   ]

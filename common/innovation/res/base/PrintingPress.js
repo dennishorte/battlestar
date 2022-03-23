@@ -30,7 +30,7 @@ function Card() {
         const topPurple = game
           .getZoneByPlayer(player, 'purple')
           .cards()[0]
-        const drawAge = topPurple ? topPurple.age + 2 : 2
+        const drawAge = topPurple ? topPurple.getAge() + 2 : 2
         game.aDraw(player, { age: drawAge })
       }
     },

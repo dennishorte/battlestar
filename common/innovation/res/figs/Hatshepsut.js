@@ -28,7 +28,7 @@ function Card() {
         const ageCondition = age > 1
         const handCondition = game
           .getCardsByZone(player, 'hand')
-          .filter(c => c.age === game.getEffectAge(this, 1))
+          .filter(c => c.getAge() === game.getEffectAge(this, 1))
           .length > 0
 
         return ageCondition && handCondition

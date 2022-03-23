@@ -39,7 +39,7 @@ function Card() {
     (game, player) => {
       const choices = game
         .getCardsByZone(player, 'hand')
-        .filter(card => card.age === 3)
+        .filter(card => card.getAge() === 3)
       const returned = game.aChooseAndReturn(player, choices, { min: 0, max: 1 })
       if (returned && returned.length > 0) {
         game.aDrawAndMeld(player, game.getEffectAge(this, 1))

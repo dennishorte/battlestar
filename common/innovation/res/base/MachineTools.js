@@ -19,7 +19,7 @@ function Card() {
     (game, player) => {
       const age = game
         .getCardsByZone(player, 'score')
-        .reduce((l, r) => Math.max(l, r.age), 0)
+        .reduce((l, r) => Math.max(l, r.getAge()), 0)
       game.aDrawAndScore(player, age)
     }
   ]

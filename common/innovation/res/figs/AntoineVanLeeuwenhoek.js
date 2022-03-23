@@ -26,7 +26,7 @@ function Card() {
       func(game, player, { card }) {
         return game
           .getCardsByZone(player, 'hand')
-          .filter(other => other.age === card.age)
+          .filter(other => other.getAge() === card.getAge())
           .length * 10
       }
     }

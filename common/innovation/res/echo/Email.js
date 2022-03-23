@@ -22,12 +22,10 @@ function Card() {
       game.aDrawAndForeshadow(player, game.getEffectAge(this, 9))
     },
     (game, player) => {
-      const sortedCards = game
-        .getTopCards(player)
+      const choices = game
+        .utilLowestCards(game.getTopCards(player))
         .filter(card => card.color !== 'green')
-        .sort((l, r) => l.age - r.age)
-      const lowest = util.array.takeWhile(sortedCards, card => card.age === sortedCards[0].age)
-      const card = game.aChooseCard(player, lowest)
+      const card = game.aChooseCard(player, choices)
       if (card) {
         game.aCardEffects(player, card, 'dogma')
       }

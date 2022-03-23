@@ -22,7 +22,7 @@ function Card() {
       const cards = game.aChooseAndReturn(player, hand, { min: 0, max: 3 })
 
       if (cards) {
-        const numValues = util.array.distinct(cards.map(c => c.age)).length
+        const numValues = util.array.distinct(cards.map(c => c.getAge())).length
         for (let i = 0; i < numValues; i++) {
           game.aDraw(player, { age: game.getEffectAge(this, 8) })
           game.aDraw(player, { age: game.getEffectAge(this, 8) })

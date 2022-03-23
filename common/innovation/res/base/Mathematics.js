@@ -20,7 +20,7 @@ function Card() {
       const cards = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
       if (cards && cards.length > 0) {
         const card = cards[0]
-        game.aDrawAndMeld(player, card.age + 1)
+        game.aDrawAndMeld(player, card.getAge() + 1)
       }
     }
   ]

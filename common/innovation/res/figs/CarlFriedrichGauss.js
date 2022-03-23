@@ -30,11 +30,11 @@ function Card() {
         const age = game.aChooseAge(player)
         const hand = game
           .getCardsByZone(player, 'hand')
-          .filter(card => card.age === age)
+          .filter(card => card.getAge() === age)
           .filter(other => other !== card)
         const score = game
           .getCardsByZone(player, 'score')
-          .filter(card => card.age === age)
+          .filter(card => card.getAge() === age)
 
         // Use distinct in case some Karma causes overlap in these two zones.
         const cards = util.array.distinct([...hand, ...score])

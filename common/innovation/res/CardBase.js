@@ -60,6 +60,13 @@ CardBase.prototype.checkHasBonus = function() {
   return match !== null
 }
 
+// Battleship Yamato has age 8 everywhere except when on a player's board, when it is 11.
+CardBase.prototype.getAge = function() {
+  const re = /^players.[^.]*.(yellow|red|green|blue|purple)$/i
+  const isOnPlayerBoard = this.zone.match(re) !== null
+  return isOnPlayerBoard ? (this.visibleAge || this.age) : this.age
+}
+
 CardBase.prototype.getBiscuits = function(splay) {
   if (splay === 'top') {
     return this.biscuits

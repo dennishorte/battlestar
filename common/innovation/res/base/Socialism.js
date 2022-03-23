@@ -31,15 +31,10 @@ function Card() {
           if (tucked.find(card => card.color === 'purple')) {
             const accumulator = []
             for (const opp of game.getPlayerOpponents(player)) {
-              const hand = game
-                .getCardsByZone(opp, 'hand')
-                .sort((l, r) => l.age - r.age)
-              util
-                .array
-                .takeWhile(hand, card => card.age === hand[0].age)
-                .forEach(card => accumulator.push(card))
+              const lowest = game.utilLowestCards(game.getCardsByZone(opp, 'hand'))
+              accumulator.push(lowest)
             }
-            game.aTransferMany(player, accumulator, game.getZoneByPlayer(player, 'hand'))
+            game.aTransferMany(player, accumulator.flat(), game.getZoneByPlayer(player, 'hand'))
           }
         }
         else {

@@ -27,8 +27,8 @@ function Card() {
       func: (game, player) => {
         const ages = game
           .getCardsByZone(player, 'score')
-          .filter(card => card.age > 6)
-          .map(card => card.age)
+          .filter(card => card.getAge() > 6)
+          .map(card => card.getAge())
         return util.array.distinct(ages).length
       }
     }

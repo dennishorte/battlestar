@@ -19,7 +19,7 @@ function Card() {
   this.echoImpl = (game, player) => {
     const choices = game
       .getTopCardsAll()
-      .filter(card => card.age < 4)
+      .filter(card => card.getAge() < 4)
       .filter(card => card.color === 'red')
     game.aChooseAndScore(player, choices)
   }

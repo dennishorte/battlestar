@@ -29,7 +29,7 @@ function Card() {
         const toReturn = game
           .getPlayerAll()
           .flatMap(player => game.getCardsByZone(player, 'score'))
-          .filter(card => card.age === age)
+          .filter(card => card.getAge() === age)
         game.aReturnMany(player, toReturn)
         game.mLogOutdent()
       }

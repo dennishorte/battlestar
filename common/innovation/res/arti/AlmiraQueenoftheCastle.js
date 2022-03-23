@@ -21,7 +21,7 @@ function Card() {
       if (cards && cards.length > 0) {
         const achievements = game
           .getAvailableAchievementsRaw(player)
-          .filter(card => card.age === cards[0].age)
+          .filter(card => card.getAge() === cards[0].getAge())
         game.aChooseAndAchieve(player, achievements)
       }
     },

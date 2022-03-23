@@ -30,7 +30,7 @@ function Card() {
         const cardsOfSameAge = game
           .getZoneByPlayer(player, 'hand')
           .cards()
-          .filter(card => card.age === age)
+          .filter(card => card.getAge() === age)
 
         return cardsOfSameAge.length === 0
       },

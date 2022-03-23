@@ -21,7 +21,7 @@ function Card() {
       const choices = game
         .getZoneByPlayer(player, 'score')
         .cards()
-        .filter(card => card.age === game.getEffectAge(this, 1))
+        .filter(card => card.getAge() === game.getEffectAge(this, 1))
         .map(card => card.id)
       const target = game.getZoneByPlayer(leader, 'score')
       const transferredCards = game.aChooseAndTransfer(player, choices, target)

@@ -19,7 +19,7 @@ function Card() {
     (game, player, { leader }) => {
       const choices = game
         .getCardsByZone(player, 'score')
-        .filter(card => card.age === 2 || card.age === 3)
+        .filter(card => card.getAge() === 2 || card.getAge() === 3)
       game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(leader, 'score'))
     }
   ]

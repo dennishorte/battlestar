@@ -20,23 +20,13 @@ function Card() {
     (game, player) => {
       const returnCard = game.aYesNo(player, 'Return the highest card from your score pile?')
       if (returnCard) {
-        const sortedCards = game
-          .getCardsByZone(player, 'score')
-          .sort((l, r) => r.age - l.age)
-        const highestCards = util.array.takeWhile(sortedCards, card => card.age === sortedCards[0].age)
+        const highestCards = game.utilHighestCards(game.getCardsByZone(player, 'score'))
         const cards = game.aChooseAndReturn(player, highestCards)
 
         if (cards.length > 0) {
-          const sortedAgain = game
-            .getCardsByZone(player, 'score')
-            .sort((l, r) => r.age - l.age)
-
-          if (cards.length === 0) {
-            game.mLogNoEffect()
-          }
-          else {
-            game.aDraw(player, { age: sortedAgain[0].age + 2 })
-          }
+          const newHighest = game.utilHighestCards(game.getCardsByZone(player, 'score'))
+          const age = newHighest.length > 0 ? newHighest[0].getAge() + 2 : 2
+          game.aDraw(player, { age })
         }
       }
       else {

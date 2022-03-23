@@ -18,9 +18,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const highestTopCard = game.getHighestTopCard(player)
-      const value = highestTopCard.visibleAge || highestTopCard.age
-
-      game.aDraw(player, { age: value, exp: 'arti' })
+      game.aDraw(player, { age: highestTopCard.getAge(), exp: 'arti' })
     }
   ]
   this.echoImpl = []

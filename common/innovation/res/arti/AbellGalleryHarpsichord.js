@@ -17,12 +17,10 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const sortedTopCards = game
-        .getTopCards(player)
-        .sort((l, r) => l.age - r.age)
+      const topCards = game.getTopCards(player)
 
       for (let i = 1; i <= 10; i++) {
-        const matching = sortedTopCards.filter(card => card.age === i).length
+        const matching = topCards.filter(card => card.getAge() === i).length
         if (matching === 1) {
           game.aDrawAndScore(player, i)
         }

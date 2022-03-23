@@ -38,7 +38,7 @@ function Card() {
         .filter(color => color !== 'purple')
         .map(color => game.getTopCard(player, color))
         .filter(card => card !== undefined)
-        .every(card => card.age >= 6)
+        .every(card => card.getAge() >= 6)
 
       if (conditionMet) {
         game.aClaimAchievement(player, { name: 'Universe' })

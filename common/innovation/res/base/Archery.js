@@ -18,18 +18,9 @@ function Card() {
   this.dogmaImpl = [
     (game, player, { leader }) => {
       game.aDraw(player, { age: game.getEffectAge(this, 1) })
-
-      const sortedHand = game
-        .getZoneByPlayer(player, 'hand')
-        .cards()
-        .sort((l, r) => r.age - l.age)
-      const highest = sortedHand[0].age
-      const choices = sortedHand
-        .filter(c => c.age === highest)
-
+      const cards = game.aChooseHighest(player, game.getCardsByZone(player, 'hand'), 1)
       const leaderHand = game.getZoneByPlayer(leader, 'hand')
-
-      game.aChooseAndTransfer(player, choices, leaderHand)
+      game.aTransfer(player, cards[0], leaderHand)
     }
   ]
   this.echoImpl = []

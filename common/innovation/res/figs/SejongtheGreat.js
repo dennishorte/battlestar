@@ -29,10 +29,10 @@ function Card() {
     {
       trigger: 'meld',
       kind: 'would-instead',
-      matches: (game, player, { card }) => card.color === 'blue' && card.age > 3,
+      matches: (game, player, { card }) => card.color === 'blue' && card.getAge() > 3,
       func: (game, player, { card }) => {
         game.aReturn(player, card)
-        game.aDrawAndMeld(player, card.age + 1)
+        game.aDrawAndMeld(player, card.getAge() + 1)
       }
     }
   ]

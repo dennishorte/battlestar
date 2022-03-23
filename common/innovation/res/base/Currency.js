@@ -21,7 +21,7 @@ function Card() {
       const hand = game.getCardsByZone(player, 'hand')
       const cards = game.aChooseAndReturn(player, hand, { min: 0, max: hand.length })
 
-      const toScore = util.array.distinct(cards.map(card => card.age)).length
+      const toScore = util.array.distinct(cards.map(card => card.getAge())).length
       for (let i = 0; i < toScore; i++) {
         game.aDrawAndScore(player, game.getEffectAge(this, 2))
       }

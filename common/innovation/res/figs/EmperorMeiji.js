@@ -31,14 +31,14 @@ function Card() {
       trigger: 'meld',
       kind: 'would-instead',
       matches: (game, player, { card }) => {
-        const cardCondition = card.age === 10
+        const cardCondition = card.getAge() === 10
         const nineCondition = game
           .getTopCards(player)
-          .filter(card => card.age === 9)
+          .filter(card => card.getAge() === 9)
           .length > 0
         const eightCondition = game
           .getTopCards(player)
-          .filter(card => card.age === 8)
+          .filter(card => card.getAge() === 8)
           .length > 0
         return cardCondition && nineCondition && eightCondition
       },

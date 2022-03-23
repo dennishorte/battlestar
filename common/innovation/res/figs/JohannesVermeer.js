@@ -28,7 +28,7 @@ function Card() {
       func: (game, player, { age }) => {
         const choices = game
           .getAvailableAchievementsRaw(player)
-          .filter(card => card.age === age + 1)
+          .filter(card => card.getAge() === age + 1)
         const formatted = game.formatAchievements(choices)
         const selected = game.aChoose(player, formatted, { title: 'Choose Achievement' })
         if (selected && selected.length > 0) {

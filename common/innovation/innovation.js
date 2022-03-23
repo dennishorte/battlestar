@@ -832,7 +832,7 @@ Innovation.prototype.aClaimAchievement = function(player, opts={}) {
     card = this.getCardByName(opts.name)
   }
   else if (opts.age) {
-    card = this.getZoneById('achievements').cards().find(c => c.age === opts.age)
+    card = this.getZoneById('achievements').cards().find(c => c.getAge() === opts.age)
   }
 
   if (!card) {
@@ -1018,8 +1018,7 @@ Innovation.prototype._getAgeForDrawAction = function(player) {
         return result
       }
       else {
-        const card = zone.cards()[0]
-        return card.visibleAge || card.age  // For Battleship Yamato
+        return zone.cards()[0].getAge()
       }
     })
 
@@ -1043,8 +1042,7 @@ Innovation.prototype._getAgeForInspireAction = function(player, color) {
     return 1
   }
   else {
-    const card = cards[0]
-    return card.visibleAge || card.age  // For Battleship Yamato
+    return cards[0].getAge()
   }
 }
 
@@ -1125,7 +1123,7 @@ Innovation.prototype.aEndorse = function(player, color, opts={}) {
   const tuckChoices = this
     .getZoneByPlayer(player, 'hand')
     .cards()
-    .filter(card => cities.some(city => card.age <= city.age))
+    .filter(card => cities.some(city => card.getAge() <= city.getAge()))
     .map(card => card.id)
 
   this.aChooseAndTuck(player, tuckChoices)
@@ -1450,13 +1448,16 @@ Innovation.prototype.checkAchievementEligibility = function(player, card, opts={
   const playerScore = this.getScore(player)
   const topCardAge = this.getHighestTopAge(player, { reason: 'achieve' })
 
-  const ageRequirement = opts.ignoreAge || card.age <= topCardAge
+  const ageRequirement = opts.ignoreAge || card.getAge() <= topCardAge
   const scoreRequirement = opts.ignoreScore || this.checkScoreRequirement(player, card)
   return ageRequirement && scoreRequirement
 }
 
 Innovation.prototype.checkCardIsTop = function(card) {
-  return this.getZoneByCard(card).cards()[0] === card
+  const re = /^players.[^.]*.(yellow|red|green|blue|purple)$/i
+  const isOnBoard = card.zone.match(re) !== null
+  const isTop = this.getZoneByCard(card).cards()[0] === card
+  return isOnBoard && isTop
 }
 
 Innovation.prototype.checkEffectIsVisible = function(card) {
@@ -1662,7 +1663,7 @@ Innovation.prototype.getExpansionList = function() {
 
 Innovation.prototype.getHighestTopAge = function(player, opts={}) {
   const card = this.getHighestTopCard(player)
-  const baseAge = card ? (card.visibleAge || card.age) : 0
+  const baseAge = card ? card.getAge() : 0
 
   const karmaAdjustment = this
     .getInfoByKarmaTrigger(player, 'calculate-eligibility')
@@ -1797,7 +1798,7 @@ Innovation.prototype.getScoreDetails = function(player) {
     total: 0
   }
 
-  details.score = this.getCardsByZone(player, 'score').map(card => card.age).sort()
+  details.score = this.getCardsByZone(player, 'score').map(card => card.getAge()).sort()
   details.bonuses = this.getBonuses(player)
   details.karma = this
     .getInfoByKarmaTrigger(player, 'calculate-score')
@@ -1843,7 +1844,7 @@ Innovation.prototype.getViewerName = function() {
 
 Innovation.prototype.getVisibleEffects = function(card, kind) {
   const player = this.getPlayerByCard(card)
-  const isTop = this.checkCardIsTop(card)
+  const isTop = this.checkCardIsTop(card) || card.zone.endsWith('.artifact')
   const splay = this.getSplayByCard(card)
 
   if (kind === 'dogma') {
@@ -2405,8 +2406,8 @@ Innovation.prototype._cardLogData = function(card) {
   }
 
   const classes = ['card']
-  if (card.age) {
-    classes.push(`card-age-${card.visibleAge || card.age}`)
+  if (card.getAge()) {
+    classes.push(`card-age-${card.visibleAge || card.getAge()}`)
   }
   if (card.expansion) {
     classes.push(`card-exp-${card.expansion}`)
@@ -2454,15 +2455,13 @@ Innovation.prototype.utilEnrichLogArgs = function(msg) {
 }
 
 Innovation.prototype.utilHighestCards = function(cards, opts={}) {
-  const age = (card) => (opts.visible && card.visibleAge) ? card.visibleAge : card.age
-  const sorted = [...cards].sort((l, r) => age(r) - age(l))
-  return util.array.takeWhile(sorted, card => age(card) === age(sorted[0]))
+  const sorted = [...cards].sort((l, r) => r.getAge() - l.getAge())
+  return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
 }
 
 Innovation.prototype.utilLowestCards = function(cards, opts={}) {
-  const age = (card) => (opts.visible && card.visibleAge) ? card.visibleAge : card.age
-  const sorted = [...cards].sort((l, r) => age(l) - age(r))
- return util.array.takeWhile(sorted, card => age(card) === age(sorted[0]))
+  const sorted = [...cards].sort((l, r) => l.getAge() - r.getAge())
+ return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
 }
 
 Innovation.prototype.utilParseBiscuits = function(biscuitString) {
@@ -2557,14 +2556,14 @@ Innovation.prototype.getScoreCost = function(player, card) {
   const sameAge = this
     .getZoneByPlayer(player, 'achievements')
     .cards()
-    .filter(c => c.age === card.age)
+    .filter(c => c.getAge() === card.getAge())
 
   const karmaAdjustment = this
     .getInfoByKarmaTrigger(player, 'achievement-cost-discount')
     .map(info => info.impl.func(this, player, { card }))
     .reduce((l, r) => l + r, 0)
 
-  return card.age * 5 * (sameAge.length + 1) - karmaAdjustment
+  return card.getAge() * 5 * (sameAge.length + 1) - karmaAdjustment
 }
 
 Innovation.prototype.getAvailableAchievementsRaw = function(player) {
@@ -2590,7 +2589,7 @@ Innovation.prototype.formatAchievements = function(array) {
   return array
     .map(ach => {
       if (ach.zone === 'achievements') {
-        return `age ${ach.age}`
+        return `age ${ach.getAge()}`
       }
       else {
         return ach.id
@@ -2692,13 +2691,13 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
   const lowestHandAge = this
     .getZoneByPlayer(player, 'hand')
     .cards()
-    .map(card => card.age)
+    .map(card => card.getAge())
     .sort((l, r) => l - r)[0] || 99
 
   const cities = this
     .getTopCards(player)
     .filter(card => card.expansion === 'city')
-    .filter(city => city.age >= lowestHandAge)
+    .filter(city => city.getAge() >= lowestHandAge)
 
   const stacksWithEndorsableEffects = this
     .utilColors()

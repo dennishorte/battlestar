@@ -26,12 +26,12 @@ function Card() {
       kind: 'would-first',
       matches: (game, player, { card }) => {
         const forecast = game.getCardsByZone(player, 'forecast')
-        return forecast.find(other => other.age === card.age)
+        return forecast.find(other => other.getAge() === card.getAge())
       },
       func(game, player, { card }) {
         const toScore = game
           .getCardsByZone(player, 'forecast')
-          .filter(other => other.age === card.age)
+          .filter(other => other.getAge() === card.getAge())
         game.aScoreMany(player, toScore)
       },
     }

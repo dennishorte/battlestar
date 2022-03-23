@@ -25,7 +25,7 @@ function Card() {
 
       const returnedSum = []
         .concat(cards1, cards2)
-        .map(card => card.age)
+        .map(card => card.getAge())
         .reduce((agg, next) => agg + next, 0)
 
       game.aDrawAndScore(player, returnedSum)

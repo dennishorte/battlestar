@@ -20,7 +20,7 @@ function Card() {
   this.inspireImpl = (game, player) => {
     const fives = game
       .getCardsByZone(player, 'hand')
-      .filter(card => card.age === game.getEffectAge(this, 5))
+      .filter(card => card.getAge() === game.getEffectAge(this, 5))
     game.aChooseAndReturn(player, fives)
     game.aDraw(player, { age: game.getEffectAge(this, 6) })
   }
@@ -32,7 +32,7 @@ function Card() {
       func: (game, player, { age }) => {
         const choices = game
           .getAvailableAchievementsRaw(player)
-          .filter(ach => ach.age <= age)
+          .filter(ach => ach.getAge() <= age)
         game.aChooseAndAchieve(player, choices, { nonAction: true })
       }
     }

@@ -33,7 +33,7 @@ function Card() {
       matches: () => true,
       func: (game, player, { card }) => {
         const biscuitCondition = card.biscuits.includes('i')
-        const ageCondition = card.age <= game.getHighestTopAge(player) + 2
+        const ageCondition = card.getAge() <= game.getHighestTopAge(player) + 2
 
         if (biscuitCondition && ageCondition) {
           game.aMeld(player, card)

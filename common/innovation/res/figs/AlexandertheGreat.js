@@ -32,7 +32,7 @@ function Card() {
           .getPlayerOpponents(player)
           .flatMap(opp => game.getTopCards(opp))
           .filter(card => card.expansion === 'figs')
-          .filter(card => card.age === 1 || card.age === 2)
+          .filter(card => card.getAge() === 1 || card.getAge() === 2)
 
         game.aScoreMany(player, topFigures)
       }

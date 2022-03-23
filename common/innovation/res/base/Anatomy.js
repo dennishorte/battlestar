@@ -22,7 +22,7 @@ function Card() {
         const returned = cards[0]
         const matchingTopCards = game
           .getTopCards(player)
-          .filter(card => card.age === returned.age)
+          .filter(card => card.getAge() === returned.getAge())
         game.aChooseAndReturn(player, matchingTopCards)
       }
     }

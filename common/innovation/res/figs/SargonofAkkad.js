@@ -26,7 +26,7 @@ function Card() {
       kind: 'would-instead',
       matches: (game, player, { card }) => {
         const cards = game.getCardsByZone(player, card.color)
-        return cards.length > 0 && cards[0].age === card.age
+        return cards.length > 0 && cards[0].getAge() === card.getAge()
       },
       func: (game, player, { card }) => {
         game.aTuck(player, card)

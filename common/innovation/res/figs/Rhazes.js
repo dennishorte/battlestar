@@ -33,7 +33,7 @@ function Card() {
       func: (game, player, { age }) => {
         const choices = game
           .getCardsByZone(player, 'hand')
-          .filter(other => other.age === age)
+          .filter(other => other.getAge() === age)
         game.aChooseAndTuck(player, choices)
       }
     }
