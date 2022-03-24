@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../game.js')
 
 function Card() {
   this.id = `Garland's Ruby Slippers`  // Card names are unique in Innovation
@@ -15,7 +16,47 @@ function Card() {
     `Meld an {8} from your hand. If the melded card has no effects, you win. Otherwise, execute the effects of the melded card as if they were on this card. Do not share them.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const choices = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => card.getAge() === game.getEffectAge(this, 8))
+      const cards = game.aChooseAndMeld(player, choices)
+
+      if (cards && cards.length > 0) {
+        const card = cards[0]
+        if (
+          card.dogma.length === 0
+          && card.echo.length === 0
+
+          // Do these count as effects for the purpose of this card?
+          // && card.inspire.length === 0
+          // && card.karma.length === 0
+        ) {
+          throw new GameOverEvent({
+            player,
+            reason: this.name
+          })
+        }
+
+        else {
+          const { featuredBiscuit, biscuits } = game.state.dogmaInfo
+          const { sharing, demanding } =
+            game.getSharingAndDemanding(player, featuredBiscuit, biscuits)
+
+          const effectOptions = {
+            sharing,
+            demanding,
+            leader: player,
+            noShare: true,
+          }
+
+          game.aCardEffects(null, card, 'echo', effectOptions)
+          game.aCardEffects(null, card, 'dogma', effectOptions)
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

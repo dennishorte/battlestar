@@ -509,12 +509,12 @@ Innovation.prototype.aCardEffects = function(
     .concat(opts.sharing)
     .concat(opts.demanding)
 
-  for (let i = 0; i < texts.length; i++) {
-    for (const actor of this.getPlayersStartingNext()) {
-      if (!actors.includes(actor)) {
-        continue
-      }
+  const actorsOrdered = this
+    .getPlayersEnding(opts.leader)
+    .filter(player => actors.includes(player))
 
+  for (let i = 0; i < texts.length; i++) {
+    for (const actor of actorsOrdered) {
       for (let z = 0; z < repeatCount; z++) {
 
         const effectText = texts[i]
@@ -528,7 +528,7 @@ Innovation.prototype.aCardEffects = function(
 
         const demand = isDemand && opts.demanding.includes(actor)
         const compel = isCompel && opts.sharing.includes(actor) && actor !== opts.leader
-        const share = !isDemand && !isCompel && opts.sharing.includes(actor) && z === 0
+        const share = !isDemand && !isCompel && !opts.noShare && opts.sharing.includes(actor) && z === 0
         const owner = !isDemand && !isCompel && actor === opts.leader
 
         if (compel || demand || share || owner) {
@@ -908,17 +908,11 @@ Innovation.prototype.aDogmaHelper = function(player, card, opts) {
   biscuits[player.name] = this.utilCombineBiscuits(biscuits[player.name], artifactBiscuits)
 
   const featuredBiscuit = card.dogmaBiscuit
-  const biscuitComparator = this._getBiscuitComparator(player, featuredBiscuit, biscuits)
+  const { sharing, demanding } = this.getSharingAndDemanding(player, featuredBiscuit, biscuits)
 
-  const sharing = this
-    .getPlayerAll()
-    .filter(p => p !== player)
-    .filter(p => biscuitComparator(p))
-
-  const demanding = this
-    .getPlayerAll()
-    .filter(p => p !== player)
-    .filter(p => !biscuitComparator(p))
+  // These are used by effects that say "as if they were on this card".
+  this.state.dogmaInfo.biscuits = biscuits
+  this.state.dogmaInfo.featuredBiscuit = featuredBiscuit
 
   // Store the planned effects now, because changes caused by the dogma action
   // should not affect which effects are executed.
@@ -1763,6 +1757,14 @@ Innovation.prototype.getPlayerOpponents = function(player) {
   return this
     .getPlayerAll()
     .filter(p => !this.checkSameTeam(p, player))
+}
+
+Innovation.prototype.getPlayersEnding = function(player) {
+  const players = [...this.getPlayerAll()]
+  while (players[players.length - 1] !== player) {
+    players.push(players.shift())
+  }
+  return players
 }
 
 Innovation.prototype.getPlayersStarting = function(player) {
@@ -2761,6 +2763,22 @@ Innovation.prototype._generateActionChoicesMeld = function() {
     min: 0,
     max: 1,
   }
+}
+
+Innovation.prototype.getSharingAndDemanding = function(player, featuredBiscuit, biscuits) {
+  const biscuitComparator = this._getBiscuitComparator(player, featuredBiscuit, biscuits)
+
+  const sharing = this
+    .getPlayerAll()
+    .filter(p => p !== player)
+    .filter(p => biscuitComparator(p))
+
+  const demanding = this
+    .getPlayerAll()
+    .filter(p => p !== player)
+    .filter(p => !biscuitComparator(p))
+
+  return { sharing, demanding }
 }
 
 Innovation.prototype._getBiscuitComparator = function(player, featuredBiscuit, biscuits) {
