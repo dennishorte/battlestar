@@ -15,7 +15,18 @@ function Card() {
     `Return a card from your hand. Claim an achievement of matching value ignoring eligibility.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'))
+      if (cards && cards.length > 0) {
+        const card = cards[0]
+        const choices = game
+          .getAvailableAchievementsRaw(player)
+          .filter(ach => ach.getAge() === card.age)
+        game.aChooseAndAchieve(player, choices)
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
