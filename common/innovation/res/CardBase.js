@@ -46,6 +46,12 @@ CardBase.prototype.checkInspireIsVisible = function(splay) {
   return this.checkBiscuitIsVisible('*', splay)
 }
 
+CardBase.prototype.checkIsOnPlayerBoard = function(player) {
+  const re = /^players.([^.]+).(yellow|red|green|blue|purple)$/i
+  const match = this.zone.match(re)
+  return match && match[1] === player.name
+}
+
 CardBase.prototype.checkHasEcho = function() {
   return this.echo.length > 0
 }

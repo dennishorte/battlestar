@@ -480,6 +480,22 @@ Innovation.prototype.aCardEffect = function(player, info, opts) {
   return fn(this, player, opts)
 }
 
+Innovation.prototype.aExecuteAsIf = function(player, card) {
+  const { featuredBiscuit, biscuits } = this.state.dogmaInfo
+  const { sharing, demanding } =
+    this.getSharingAndDemanding(player, featuredBiscuit, biscuits)
+
+  const effectOptions = {
+    sharing,
+    demanding,
+    leader: player,
+    noShare: true,
+  }
+
+  this.aCardEffects(null, card, 'echo', effectOptions)
+  this.aCardEffects(null, card, 'dogma', effectOptions)
+}
+
 Innovation.prototype.aCardEffects = function(
   player,
   card,
@@ -1729,8 +1745,7 @@ Innovation.prototype.getPlayerCurrent = function() {
 
 Innovation.prototype.getPlayerNext = function() {
   return this
-    .getPlayersStartingCurrent()
-    .filter(player => player === this.getPlayerCurrent())
+    .getPlayersEnding(this.getPlayerCurrent())
     .filter(player => !player.dead)[0]
 }
 

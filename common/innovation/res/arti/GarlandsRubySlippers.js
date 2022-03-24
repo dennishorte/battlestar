@@ -40,19 +40,7 @@ function Card() {
         }
 
         else {
-          const { featuredBiscuit, biscuits } = game.state.dogmaInfo
-          const { sharing, demanding } =
-            game.getSharingAndDemanding(player, featuredBiscuit, biscuits)
-
-          const effectOptions = {
-            sharing,
-            demanding,
-            leader: player,
-            noShare: true,
-          }
-
-          game.aCardEffects(null, card, 'echo', effectOptions)
-          game.aCardEffects(null, card, 'dogma', effectOptions)
+          game.aExecuteAsIf(player, card)
         }
       }
     }
