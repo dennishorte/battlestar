@@ -16,7 +16,19 @@ function Card() {
     `Draw a {2}`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const topCastles = game
+        .getTopCards(player)
+        .filter(card => card.checkHasBiscuit('k'))
+      const highest = game.utilHighestCards(topCastles)
+      game.aChooseAndTransfer(player, highest, game.getZoneByPlayer(leader, 'hand'))
+    },
+
+    (game, player) => {
+      game.aDraw(player, { age: game.getEffectAge(this, 2) })
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
