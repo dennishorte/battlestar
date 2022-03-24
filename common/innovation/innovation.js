@@ -445,9 +445,7 @@ Innovation.prototype.endTurn = function() {
   const players = this.getPlayerAll()
 
   // Set next player
-  const playerIndex = players.findIndex(p => p === this.getPlayerCurrent())
-  const nextIndex = (playerIndex + 1) % players.length
-  this.state.currentPlayer = players[nextIndex]
+  this.state.currentPlayer = this.getPlayerNext()
 
   // Track number of turns
   this.state.turn += 1
@@ -1394,6 +1392,14 @@ Innovation.prototype.aYesNo = function(player, title) {
   return result === 'yes'
 }
 
+Innovation.prototype.aYouLose = function(player) {
+  this.mLog({
+    template: '{player} loses the game',
+    args: { player },
+  })
+  player.dead = true
+}
+
 function ManyFactory(baseFuncName, extraArgCount=0) {
   return function(...args) { //player, cards, opts={}) {
     const player = args[0]
@@ -1709,7 +1715,7 @@ Innovation.prototype.getNumAchievementsToWin = function() {
 }
 
 Innovation.prototype.getPlayerAll = function() {
-  return this.state.players
+  return this.state.players.filter(player => !player.dead)
 }
 
 Innovation.prototype.getPlayerOther = function(player) {
@@ -1728,10 +1734,10 @@ Innovation.prototype.getPlayerCurrent = function() {
 }
 
 Innovation.prototype.getPlayerNext = function() {
-  const current = this.getPlayerCurrent()
-  const currentIndex = this.getPlayerAll().indexOf(current)
-  const nextIndex = (currentIndex + 1) % this.getPlayerAll().length
-  return this.getPlayerAll()[nextIndex]
+  return this
+    .getPlayersStartingCurrent()
+    .filter(player => player === this.getPlayerCurrent())
+    .filter(player => !player.dead)[0]
 }
 
 Innovation.prototype.getPlayerByName = function(name) {
