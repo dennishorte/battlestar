@@ -88,6 +88,10 @@ export default {
       this.selection = event
     },
   },
+
+  beforeMount() {
+    this.selection.title = this.request.title
+  },
 }
 </script>
 
