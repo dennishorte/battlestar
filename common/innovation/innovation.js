@@ -2185,6 +2185,39 @@ Innovation.prototype.mMoveTopCard = function(source, target) {
   return this.mMoveByIndices(source, 0, target, target.cards().length)
 }
 
+Innovation.prototype._attemptToCombineWithPreviousEntry = function(msg) {
+  if (this.getLog().length === 0) {
+    return false
+  }
+
+  const prev = this.getLog().slice(-1)[0]
+
+  if (!prev.args) {
+    return
+  }
+
+  const combinable = ['foreshadows', 'melds', 'returns', 'tucks', 'reveals', 'scores']
+  const msgAction = msg.template.split(' ')[1]
+
+  const msgIsCombinable = combinable.includes(msgAction)
+  const prevWasDraw = prev.template === '{player} draws {card}'
+
+  if (msgIsCombinable && prevWasDraw) {
+    const argsMatch = (
+      prev.args.player.value === msg.args.player.value
+      && prev.args.card.card === msg.args.card.card
+    )
+
+    if (argsMatch) {
+      prev.template = `{player} draws and ${msgAction} {card}`
+      prev.args.card = msg.args.card
+      return true
+    }
+  }
+
+  return false
+}
+
 Innovation.prototype.mLog = function(msg) {
   if (!msg.template) {
     console.log(msg)
@@ -2199,6 +2232,11 @@ Innovation.prototype.mLog = function(msg) {
   }
 
   this.utilEnrichLogArgs(msg)
+
+  if (this._attemptToCombineWithPreviousEntry(msg)) {
+    return
+  }
+
   msg.id = this.getLog().length
   msg.indent = this.getLogIndent(msg)
 
@@ -2442,6 +2480,7 @@ Innovation.prototype._cardLogData = function(card) {
   return {
     value: name,
     classes,
+    card,
   }
 }
 
