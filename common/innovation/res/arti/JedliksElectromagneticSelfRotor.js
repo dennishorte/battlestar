@@ -15,7 +15,18 @@ function Card() {
     `Draw and score an {8}. Draw and meld an {8}. Claim an achievement of value 8 if it is available, ignoring eligibility.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aDrawAndScore(player, game.getEffectAge(this, 8))
+      game.aDrawAndMeld(player, game.getEffectAge(this, 8))
+
+      const choices = game
+        .getAvailableAchievementsRaw(player)
+        .filter(ach => ach.age === 8)
+
+      game.aChooseAndAchieve(player, choices)
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
