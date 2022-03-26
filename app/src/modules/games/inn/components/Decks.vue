@@ -1,8 +1,8 @@
 <template>
   <div class="decks">
 
-    <b-row v-if="doubleColumn">
-      <b-col lg="auto">
+    <div v-if="doubleColumn" class="double-column">
+      <div class="column-one-of-two">
         <div v-for="age in [10,9,8,7,6]" :key="age" class="decks-row">
           <div class="decks-box">
             <div class="age-box">{{ age }}</div>
@@ -15,9 +15,9 @@
             {{ game.getZoneByDeck(exp, age).cards().length }}
           </div>
         </div>
-      </b-col>
+      </div>
 
-      <b-col lg="auto">
+      <div>
         <div v-for="age in [5,4,3,2,1]" :key="age" class="decks-row">
           <div class="decks-box">
             <div class="age-box">{{ age }}</div>
@@ -30,8 +30,8 @@
             {{ game.getZoneByDeck(exp, age).cards().length }}
           </div>
         </div>
-      </b-col>
-    </b-row>
+      </div>
+    </div>
 
     <div v-else>
       <div v-for="age in [10,9,8,7,6,5,4,3,2,1]" :key="age" class="decks-row">
@@ -89,5 +89,14 @@ export default {
   color: white;
   background-color: #bba37a;
   text-align: center;
+}
+
+.double-column {
+  display: flex;
+  flex-direction: row;
+}
+
+.column-one-of-two {
+  margin-right: 1em;
 }
 </style>
