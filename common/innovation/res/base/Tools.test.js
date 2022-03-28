@@ -30,9 +30,7 @@ describe('Tools', () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Translation', 'Tools'],
-        yellow: ['Domestication'],
-        green: ['The Wheel'],
-        purple: ['Mysticism'],
+        hand: ['Domestication', 'The Wheel', 'Mysticism'],
       },
     })
   })

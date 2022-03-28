@@ -13,7 +13,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `You may return three cards from your hand. If you do, draw and meld a {3}.`,
-    `You may return a {3} from your hand. If you do, draw and meld three {1}.`
+    `You may return a {3} from your hand. If you do, draw three {1}.`
   ]
 
   this.dogmaImpl = [
@@ -42,9 +42,9 @@ function Card() {
         .filter(card => card.getAge() === 3)
       const returned = game.aChooseAndReturn(player, choices, { min: 0, max: 1 })
       if (returned && returned.length > 0) {
-        game.aDrawAndMeld(player, game.getEffectAge(this, 1))
-        game.aDrawAndMeld(player, game.getEffectAge(this, 1))
-        game.aDrawAndMeld(player, game.getEffectAge(this, 1))
+        game.aDraw(player, { age: game.getEffectAge(this, 1) })
+        game.aDraw(player, { age: game.getEffectAge(this, 1) })
+        game.aDraw(player, { age: game.getEffectAge(this, 1) })
       }
     }
   ]
