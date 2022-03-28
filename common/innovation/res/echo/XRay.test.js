@@ -2,7 +2,7 @@ Error.stackTraceLimit = 100
 
 const t = require('../../testutil.js')
 
-describe("Garland's Ruby Slippers", () => {
+describe("X-Ray", () => {
 
   test('dogma', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
@@ -28,7 +28,7 @@ describe("Garland's Ruby Slippers", () => {
     const request4 = t.choose(game, request3, 9)
     const request5 = t.choose(game, request4, 'yellow')
 
-    t.testIsFirstAction(request5)
+    t.testIsSecondPlayer(request5)
     t.testBoard(game, {
       dennis: {
         blue: ['X-Ray'],
