@@ -656,6 +656,10 @@ Innovation.prototype.aChooseCards = function(player, cards, opts={}) {
     return undefined
   }
 
+  if (opts.count === 0 || opts.max === 0) {
+    return []
+  }
+
   const choiceMap = cards.map(card => {
     if (!card.id) {
       card = this.getCardByName(card)

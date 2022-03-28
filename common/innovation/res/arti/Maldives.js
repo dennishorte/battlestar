@@ -16,7 +16,23 @@ function Card() {
     `Return all cards in your score pile but four.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const hand = game.getCardsByZone(player, 'hand')
+      const handCount = Math.max(0, hand.length - 2)
+      game.aChooseAndReturn(player, hand, { count: handCount })
+
+      const score = game.getCardsByZone(player, 'score')
+      const scoreCount = Math.max(0, score.length - 2)
+      game.aChooseAndReturn(player, score, { count: scoreCount })
+    },
+
+    (game, player) => {
+      const score = game.getCardsByZone(player, 'score')
+      const scoreCount = Math.max(0, score.length - 4)
+      game.aChooseAndReturn(player, score, { count: scoreCount })
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
