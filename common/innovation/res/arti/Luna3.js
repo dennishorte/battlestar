@@ -15,7 +15,12 @@ function Card() {
     `Return all cards from your score pile. Draw and score a card of value equal to the numer of cards returned.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aReturnMany(player, game.getCardsByZone(player, 'score')) || []
+      game.aDrawAndScore(player, cards.length)
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
