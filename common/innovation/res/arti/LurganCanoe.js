@@ -15,7 +15,32 @@ function Card() {
     `Meld a card from your hand. Score all other cards of the same color from your board. If you scored at least one card, repeat this effect.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      while (true) {
+        const melded = game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
+        if (melded && melded.length > 0) {
+          const card = melded[0]
+          const toScore = game
+            .getCardsByZone(player, card.color)
+            .filter(other => other !== card)
+          const scored = game.aScoreMany(player, toScore)
+          if (scored && scored.length > 0) {
+            game.mLog({ template: 'Repeat this effect.' })
+            continue
+          }
+          else {
+            game.mLog({ template: 'No cards were scored.' })
+            break
+          }
+        }
+        else {
+          game.mLog({ template: 'No cards were scored.' })
+          break
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
