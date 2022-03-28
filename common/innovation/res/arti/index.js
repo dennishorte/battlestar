@@ -98,7 +98,7 @@ const cards = [
   require('./Maldives.js'),
   require('./DollytheSheep.js'),
   require('./WheresWaldo.js'),
-  require('./MaastrictTreaty.js'),
+  require('./MaastrichtTreaty.js'),
   require('./SeikanTunnel.js'),
   require('./RoverCuriosity.js'),
   require('./HiggsBoson.js'),
