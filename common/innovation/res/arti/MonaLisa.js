@@ -15,7 +15,53 @@ function Card() {
     `Choose a number and a color. Draw five {4}, then reveal your hand. If you have exactly that many cards of that color, score them, and splay right your cards of that color. Otherwise, return all cards from your hand.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const number = game.aChoose(player, [0,1,2,3,4,5,6,7,8,9], { title: 'Choose a number' })[0]
+      const color = game.aChoose(player, game.utilColors(), { title: 'Choose a color' })[0]
+
+      game.mLog({
+        template: '{player} guesses {number} {color}',
+        args: { player, number, color }
+      })
+
+      game.aDraw(player, { age: game.getEffectAge(this, 4) })
+      game.aDraw(player, { age: game.getEffectAge(this, 4) })
+      game.aDraw(player, { age: game.getEffectAge(this, 4) })
+      game.aDraw(player, { age: game.getEffectAge(this, 4) })
+      game.aDraw(player, { age: game.getEffectAge(this, 4) })
+
+      const hand = game.getCardsByZone(player, 'hand')
+
+      for (const card of hand) {
+        game.mReveal(player, card)
+      }
+
+      const matches = hand.filter(card => card.color === color)
+      const matchCount = matches.length === number
+
+      game.mLog({
+        template: '{player} has {count} {color}',
+        args: { player, count: matches.length, color }
+      })
+
+      if (matchCount) {
+        game.mLog({
+          template: '{player} guessed correctly',
+          args: { player }
+        })
+        game.aScoreMany(player, matches)
+        game.aSplay(player, color, 'right')
+      }
+      else {
+        game.mLog({
+          template: '{player} did not guess correctly',
+          args: { player }
+        })
+        game.aReturnMany(player, hand)
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
