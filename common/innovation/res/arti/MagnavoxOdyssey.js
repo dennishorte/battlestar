@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../game.js')
 
 function Card() {
   this.id = `Magnavox Odyssey`  // Card names are unique in Innovation
@@ -15,7 +16,22 @@ function Card() {
     `Draw and meld two {0}. If they are the same color, you win.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const card1 = game.aDrawAndMeld(player, game.getEffectAge(this, 10))
+      const card2 = game.aDrawAndMeld(player, game.getEffectAge(this, 10))
+
+      if (card1.color === card2.color) {
+        throw new GameOverEvent({
+          player,
+          reason: this.name
+        })
+      }
+      else {
+        game.mLog({ template: 'Colors do not match' })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
