@@ -15,7 +15,25 @@ function Card() {
     `I compel you to choose a top card on your board! Transfer all cards of the card's color from your board to my score pile!`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const card = game.aChooseCard(player, game.getTopCards(player))
+      if (card) {
+        game.aTransferMany(
+          player,
+          game.getCardsByZone(player, card.color),
+          game.getZoneByPlayer(leader, 'score'),
+          { ordered: true },
+        )
+      }
+      else {
+        game.mLog({
+          template: '{player} chooses nothing',
+          args: { player }
+        })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
