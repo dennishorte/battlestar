@@ -30,9 +30,9 @@ function Card() {
       trigger: ['transfer', 'return', 'remove'],
       triggerAll: true,
       kind: 'would-instead',
-      matches: (game, player, { card, owner }) => {
+      matches: (game, player, { card }) => {
         const cardOwner = game.getPlayerByCard(card)
-        const ownerCondition = player !== cardOwner
+        const ownerCondition = player !== game.state.dogmaInfo.effectLeader
         const zoneCondition =
           game.getZoneByCard(card) === game.getZoneByPlayer(cardOwner, 'score')
         return ownerCondition && zoneCondition

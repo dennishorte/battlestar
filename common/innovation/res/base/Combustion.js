@@ -20,6 +20,16 @@ function Card() {
     (game, player, { leader }) => {
       const biscuits = game.getBiscuits()
       const count = Math.floor(biscuits[leader.name].c / 4)
+
+      game.mLog({
+        template: '{player} has {biscuits} {c} biscuits; transfer {count} cards',
+        args: {
+          player: leader,
+          biscuits: biscuits[leader.name].c,
+          count
+        }
+      })
+
       const choices = game.getZoneByPlayer(player, 'score').cards()
       const target = game.getZoneByPlayer(leader, 'score')
       game.aChooseAndTransfer(player, choices, target, { count })

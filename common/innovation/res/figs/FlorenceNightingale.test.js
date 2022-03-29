@@ -23,6 +23,7 @@ describe('Florence Nightingale', () => {
     const request2 = t.choose(game, request1, 'Inspire.yellow')
     const request3 = t.choose(game, request2, 'Engineering')
 
+    t.testIsSecondPlayer(request3)
     t.testBoard(game, {
       dennis: {
         red: ['Archery', 'Engineering'],
@@ -52,7 +53,6 @@ describe('Florence Nightingale', () => {
     const request2 = t.choose(game, request1, 'Dogma.Vaccination')
 
     t.testIsSecondPlayer(request2)
-
     t.setBoard(game, {
       dennis: {
         yellow: ['Vaccination']
@@ -78,6 +78,7 @@ describe('Florence Nightingale', () => {
     const request2 = t.choose(game, request1, 'Dogma.Education')
     const request3 = t.choose(game, request2, 'yes')
 
+    t.testIsSecondPlayer(request3)
     t.setBoard(game, {
       dennis: {
         yellow: ['Florence Nightingale'],
@@ -86,4 +87,36 @@ describe('Florence Nightingale', () => {
     })
   })
 
+  test('karma: vs Combustion', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        red: ['Combustion'],
+        green: ['Navigation'],
+        purple: ['Enterprise'],
+        score: ['Mathematics'],
+      },
+      micah: {
+        yellow: ['Florence Nightingale'],
+        score: ['Printing Press', 'Carl Friedrich Gauss', 'Canning'],
+      }
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Combustion')
+    const request3 = t.choose(game, request2, 'Printing Press', 'Carl Friedrich Gauss')
+    const request4 = t.choose(game, request3, 'auto')
+
+    t.testIsSecondPlayer(request4)
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Enterprise'],
+        score: ['Mathematics'],
+      },
+      micah: {
+        yellow: ['Florence Nightingale'],
+        score: ['Printing Press', 'Carl Friedrich Gauss', 'Canning'],
+      }
+    })
+  })
 })

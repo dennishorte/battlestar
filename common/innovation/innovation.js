@@ -476,8 +476,19 @@ Innovation.prototype.aAchieveAction = function(player, arg, opts={}) {
 }
 
 Innovation.prototype.aCardEffect = function(player, info, opts) {
+  const prevLeader = this.state.dogmaInfo.effectLeader
+  if (opts.leader) {
+    this.state.dogmaInfo.effectLeader = opts.leader
+  }
+
   const fn = typeof info.impl === 'function' ? info.impl : info.impl.func
-  return fn(this, player, opts)
+  const result = fn(this, player, opts)
+
+  if (opts.leader) {
+    this.state.dogmaInfo.effectLeader = prevLeader
+  }
+
+  return result
 }
 
 Innovation.prototype.aExecuteAsIf = function(player, card) {
