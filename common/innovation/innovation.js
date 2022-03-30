@@ -475,7 +475,7 @@ Innovation.prototype.aAchieveAction = function(player, arg, opts={}) {
   }
 }
 
-Innovation.prototype.aCardEffect = function(player, info, opts) {
+Innovation.prototype.aCardEffect = function(player, info, opts={}) {
   const prevLeader = this.state.dogmaInfo.effectLeader
   if (opts.leader) {
     this.state.dogmaInfo.effectLeader = opts.leader
@@ -607,7 +607,7 @@ Innovation.prototype.aCardEffects = function(
 Innovation.prototype.aChoose = function(player, choices, opts={}) {
   if (choices.length === 0) {
     this.mLogNoEffect()
-    return undefined
+    return []
   }
 
   const selected = this.requestInputSingle({
@@ -618,9 +618,14 @@ Innovation.prototype.aChoose = function(player, choices, opts={}) {
   })
   if (selected.length === 0) {
     this.mLogDoNothing(player)
-    return undefined
+    return []
   }
   else {
+    const choice = selected.join(', ')
+    this.mLog({
+      template: '{player} chooses {choice}',
+      args: { player, choice }
+    })
     return selected
   }
 
@@ -643,12 +648,12 @@ Innovation.prototype.aChooseCard = function(player, cards, opts) {
     return undefined
   }
 
-  const cardNames = this.requestInputSingle({
-    actor: player.name,
-    title: 'Choose a Card',
-    choices: cards.map(c => c.id || c),
-    ...opts
-  })
+  const cardNames = this.aChoose(
+    player,
+    cards.map(c => c.id || c),
+    { ...opts, title: 'Choose a Card' }
+  )
+
   if (cardNames.length === 0) {
     this.mLogDoNothing(player)
     return undefined
@@ -685,13 +690,11 @@ Innovation.prototype.aChooseCards = function(player, cards, opts={}) {
   })
 
   const choices = choiceMap.map(x => x.name)
-
-  const cardNames = this.requestInputSingle({
-    actor: player.name,
-    title: 'Choose a Card',
+  const cardNames = this.aChoose(
+    player,
     choices,
-    ...opts
-  })
+    { ...opts, title: 'Choose Card(s)' }
+  )
 
   if (cardNames.length === 0) {
     this.mLogDoNothing(player)
@@ -723,12 +726,11 @@ Innovation.prototype.aChoosePlayer = function(player, choices, opts={}) {
     choices = choices.map(player => player.name)
   }
 
-  const playerNames = this.requestInputSingle({
-    actor: player.name,
-    title: opts.title || 'Choose a Player',
+  const playerNames = this.aChoose(
+    player,
     choices,
-    ...opts,
-  })
+    { ...opts, title: 'Choose Player' }
+  )
   if (playerNames.length === 0) {
     this.mLogDoNothing(player)
     return undefined
@@ -747,11 +749,11 @@ Innovation.prototype.aChooseAndAchieve = function(player, choices, opts={}) {
     choices = this.formatAchievements(choices)
   }
 
-  const selected = this.requestInputSingle({
-    actor: player.name,
-    title: 'Choose Achievement',
+  const selected = this.aChoose(
+    player,
     choices,
-  })
+    { ...opts, title: 'Choose Achievement' }
+  )
 
   if (selected.length === 0) {
     this.mLogDoNothing(player)
@@ -837,13 +839,11 @@ Innovation.prototype.aChooseAndSplay = function(player, choices, direction, opts
     opts.max = 1
   }
 
-  const colors = this.requestInputSingle({
-    actor: player.name,
-    title: 'Choose a Color',
+  const colors = this.aChoose(
+    player,
     choices,
-    direction,
-    ...opts
-  })
+    { ...opts, title: `Choose a color to splay ${direction}` }
+  )
   if (colors.length === 0) {
     this.mLogDoNothing(player)
   }
