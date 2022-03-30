@@ -31,11 +31,15 @@ function Card() {
       triggerAll: true,
       kind: 'would-instead',
       matches: (game, player, { card }) => {
+        const florenceOwner = game.getPlayerByCard(this)
         const cardOwner = game.getPlayerByCard(card)
-        const ownerCondition = player !== game.state.dogmaInfo.effectLeader
-        const zoneCondition =
+
+        const thisIsMyCardCondition = florenceOwner === cardOwner
+        const thisIsNotMyEffectCondition = florenceOwner !== game.state.dogmaInfo.effectLeader
+        const cardIsInMyScoreCondition =
           game.getZoneByCard(card) === game.getZoneByPlayer(cardOwner, 'score')
-        return ownerCondition && zoneCondition
+
+        return thisIsMyCardCondition && thisIsNotMyEffectCondition && cardIsInMyScoreCondition
       },
       func: (game, player, { card }) => {
         game.mLog({

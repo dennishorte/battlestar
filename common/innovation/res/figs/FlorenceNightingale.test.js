@@ -119,4 +119,40 @@ describe('Florence Nightingale', () => {
       }
     })
   })
+
+  test('dogma: interaction with East India Company Charter', () => {
+
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs', 'arti'] })
+    t.setBoard(game,  {
+      dennis: {
+        artifact: ['East India Company Charter'],
+        score: ['Construction', 'Tools', 'Gunpowder'],
+      },
+      micah: {
+        yellow: ['Florence Nightingale'],
+        score: ['Calendar', 'Fermenting', 'Engineering'],
+      },
+      decks: {
+        base: {
+          5: ['Astronomy'],
+        }
+      },
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'dogma')
+    const request3 = t.choose(game, request2, 2)
+    const request4 = t.choose(game, request3, 'auto')
+
+    t.testIsFirstAction(request4)
+    t.testBoard(game, {
+      dennis: {
+        score: ['Tools', 'Gunpowder', 'Astronomy'],
+      },
+      micah: {
+        yellow: ['Florence Nightingale'],
+        score: ['Calendar', 'Fermenting', 'Engineering'],
+      },
+    })
+  })
 })
