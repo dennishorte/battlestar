@@ -40,6 +40,9 @@ function Card() {
           reason: this.name
         })
       }
+      else {
+        game.mLogNoEffect()
+      }
     }
   ]
   this.echoImpl = []
