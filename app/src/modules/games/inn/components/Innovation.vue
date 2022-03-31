@@ -23,6 +23,7 @@
     </b-container>
 
     <CardsViewerModal />
+    <AchievementModal />
   </div>
 </template>
 
@@ -42,6 +43,7 @@ import PlayerTableau from './PlayerTableau'
 import WaitingPanel from './WaitingPanel'
 
 // Modals
+import AchievementModal from './AchievementModal'
 import CardsViewerModal from './CardsViewerModal'
 
 export default {
@@ -57,6 +59,7 @@ export default {
     WaitingPanel,
 
     // Modals
+    AchievementModal,
     CardsViewerModal,
   },
 
@@ -138,6 +141,9 @@ export default {
 
     Vue.set(this.game, 'ui', {
       modals: {
+        achievement: {
+          card: '',
+        },
         cardsViewer: {
           cards: [],
         },

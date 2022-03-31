@@ -1,9 +1,11 @@
 <template>
-  <CardSquareDetails
-    :name="displayName"
-    :expansion="card.expansion"
-    :sizeClass="sizeClass"
-  />
+  <div @click="closeup">
+    <CardSquareDetails
+      :name="displayName"
+      :expansion="card.expansion"
+      :sizeClass="sizeClass"
+    />
+  </div>
 </template>
 
 
@@ -16,6 +18,8 @@ export default {
   components: {
     CardSquareDetails,
   },
+
+  inject: ['game'],
 
   props: {
     card: Object,
@@ -30,5 +34,14 @@ export default {
       return this.card.isSpecialAchievement ? 'card-rect' : 'card-square'
     },
   },
+
+  methods: {
+    closeup() {
+      if (this.card.isSpecialAchievement) {
+        this.game.ui.modals.achievement.card = this.card
+        this.$bvModal.show('achievement-modal')
+      }
+    }
+  }
 }
 </script>
