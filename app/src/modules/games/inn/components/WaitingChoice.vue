@@ -81,7 +81,7 @@ export default {
         alert('Error!\nCheck console for details.')
         throw e
       }
-      await this.game.saveLatest()
+      await this.game.save()
     },
 
     childChanged(event) {

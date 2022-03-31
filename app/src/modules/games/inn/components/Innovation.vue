@@ -4,6 +4,7 @@
       <b-row class="main-row">
 
         <b-col class="game-column history-column">
+          <GameMenu />
           <History />
         </b-col>
 
@@ -35,6 +36,7 @@ import { inn } from 'battlestar-common'
 import Achievements from './Achievements'
 import Biscuits from './Biscuits'
 import Decks from './Decks'
+import GameMenu from './GameMenu'
 import History from './History'
 import PlayerTableau from './PlayerTableau'
 import WaitingPanel from './WaitingPanel'
@@ -49,6 +51,7 @@ export default {
     Achievements,
     Biscuits,
     Decks,
+    GameMenu,
     History,
     PlayerTableau,
     WaitingPanel,
@@ -84,6 +87,52 @@ export default {
     }
   },
 
+  methods: {
+    handleSaveResult(result) {
+      console.log(result)
+
+      if (result.data.status === 'success') {
+        this.game.usedUndo = false
+
+        this.$bvToast.toast('saved', {
+          autoHideDelay: 300,
+          noCloseButton: true,
+          solid: true,
+          variant: 'success',
+        })
+      }
+      else {
+        this.$bvToast.toast('error: see console', {
+          autoHideDelay: 0,
+          noCloseButton: false,
+          solid: true,
+          variant: 'danger',
+        })
+      }
+    },
+
+    saveFull: async function() {
+      const game = this.game
+      const payload = {
+        gameId: game._id,
+        responses: game.responses,
+      }
+      const requestResult = await axios.post('/api/game/saveFull', payload)
+      this.handleSaveResult(requestResult)
+    },
+
+    saveLatest: async function() {
+      const game = this.game
+      const lastResponse = game.responses.slice().reverse().find(r => r.isUserResponse)
+      const payload = {
+        gameId: game._id,
+        response: lastResponse,
+      }
+      const requestResult = await axios.post('/api/game/saveResponse', payload)
+      this.handleSaveResult(requestResult)
+    },
+  },
+
   created() {
     this.game.testMode = true
 
@@ -95,41 +144,21 @@ export default {
       },
     })
 
-    this.game.saveLatest = async function() {
-      const game = this.game
+    this.game.save = async function() {
       const fakeSave = false
-
       if (fakeSave) {
         console.log('fake saved')
+        return
+      }
+
+      const game = this.game
+      if (game.usedUndo) {
+        await this.saveFull()
       }
       else {
-        const lastResponse = game.responses.slice().reverse().find(r => r.isUserResponse)
-        const payload = {
-          gameId: game._id,
-          response: lastResponse,
-        }
-
-        const requestResult = await axios.post('/api/game/saveResponse', payload)
-        console.log(requestResult)
-
-        if (requestResult.data.status === 'success') {
-          this.$bvToast.toast('saved', {
-            autoHideDelay: 300,
-            noCloseButton: true,
-            solid: true,
-            variant: 'success',
-          })
-        }
-        else {
-          this.$bvToast.toast('error: see console', {
-            autoHideDelay: 0,
-            noCloseButton: false,
-            solid: true,
-            variant: 'danger',
-          })
-        }
+        await this.saveLatest()
       }
-    }.bind(this)
+    }.bind(this),
 
     this.game.run()
   }

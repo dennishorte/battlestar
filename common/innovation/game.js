@@ -22,6 +22,7 @@ function Game(serialized_data) {
   // Responses are the history of choices made by users.
   // This should never be reset.
   this.responses = serialized_data.responses
+  this.usedUndo = false
 
   // This holds a reference to the latest input request
   this.waiting = null
@@ -211,14 +212,18 @@ Game.prototype.run = function() {
 }
 
 Game.prototype.undo = function() {
+  this.usedUndo = true
+
   // First, see if there is response from this user to the current request key.
   if (this._undoMostRecent(this.key)) {
     return
   }
 
+  const lastKey = this.responses[this.responses.length - 1].key
+
   // Second, see if there is a response from this user to the most recent response's key.
   // Sometimes this is the same as above, but usually it is different.
-  if (this._undoMostRecent(this.responses[this.responses.length - 1].key)) {
+  if (this._undoMostRecent(lastKey)) {
     return
   }
 
@@ -231,7 +236,7 @@ Game.prototype.undo = function() {
 
 Game.prototype._undoMostRecent = function(key) {
   const recentResponses = util.array.takeRightWhile(this.responses, resp => resp.key === key)
-  const recentMatch = currentResponses.find(resp => resp.actor === this.viewerName)
+  const recentMatch = recentResponses.find(resp => resp.actor === this.viewerName)
   if (recentMatch) {
     const index = this.responses.findIndex(resp => resp === recentMatch)
     this.responses.splice(index, 1)

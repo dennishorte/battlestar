@@ -57,6 +57,13 @@ async function _notify(game, userId, msg) {
   const sendResult = slack.sendMessage(userId, message)
 }
 
+Game.saveFull = async function(req, res) {
+  await db.game.saveResponses(req.body.gameId, req.body.responses)
+  const game = await _loadGameFromReq(req)
+  game.run()
+  await _sendNotifications(res, game)
+}
+
 Game.saveResponse = async function(req, res) {
   const game = await _loadGameFromReq(req)
 
@@ -79,21 +86,7 @@ Game.saveResponse = async function(req, res) {
 
   if (valid) {
     await db.game.saveResponses(game._id, game.responses)
-
-    for (const player of game.getPlayerAll()) {
-      if (game.checkGameIsOver()) {
-        _notify(game, player._id, 'Game Over!')
-      }
-
-      else if (game.checkPlayerHasActionWaiting(player)) {
-        _notify(game, player._id, "You're up!")
-      }
-    }
-
-    res.json({
-      status: 'success',
-      message: 'Saved',
-    })
+    await _sendNotifications(res, game)
   }
   else {
     res.json({
@@ -113,4 +106,21 @@ async function _loadGameFromReq(req) {
   else {
     throw new Error(`Unhandled game type: ${gameData.settings.game}`)
   }
+}
+
+async function _sendNotifications(res, game) {
+  for (const player of game.getPlayerAll()) {
+    if (game.checkGameIsOver()) {
+      _notify(game, player._id, 'Game Over!')
+    }
+
+    else if (game.checkPlayerHasActionWaiting(player)) {
+      _notify(game, player._id, "You're up!")
+    }
+  }
+
+  res.json({
+    status: 'success',
+    message: 'Saved',
+  })
 }
