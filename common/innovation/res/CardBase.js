@@ -66,6 +66,22 @@ CardBase.prototype.checkHasBonus = function() {
   return match !== null
 }
 
+CardBase.prototype.checkHasDiscoverBiscuit = function() {
+  if (this.biscuits.length < 6) {
+    return false
+  }
+
+  const biscuit = this.biscuits[4]
+  return (
+    biscuit === 'l'
+    || biscuit === 'c'
+    || biscuit === 'i'
+    || biscuit === 's'
+    || biscuit === 'k'
+    || biscuit === 'f'
+  )
+}
+
 // Battleship Yamato has age 8 everywhere except when on a player's board, when it is 11.
 CardBase.prototype.getAge = function() {
   const re = /^players.[^.]*.(yellow|red|green|blue|purple)$/i
@@ -81,28 +97,13 @@ CardBase.prototype.getBiscuits = function(splay) {
     return ''
   }
   else if (splay === 'left') {
-    if (this.biscuits.length == 6) {
-      return this.biscuits[6]
-    }
-    else {
-      return this.biscuits[3]
-    }
+    return this.biscuits[3]
   }
   else if (splay === 'right') {
-    if (this.biscuits.length === 6) {
-      return this.biscuits[0] + this.biscuits[3]
-    }
-    else {
-      return this.biscuits[0] + this.biscuits[1]
-    }
+    return this.biscuits.slice(0, 2)
   }
   else if (splay === 'up') {
-    if (this.biscuits.length === 6) {
-      return this.biscuits.slice(3)
-    }
-    else {
-      return this.biscuits.slice(1)
-    }
+    return this.biscuits.slice(1, 4)
   }
   else {
     throw new Error(`Unknown splay type: ${splay}`)

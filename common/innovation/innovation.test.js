@@ -177,36 +177,289 @@ describe('Innovation', () => {
     })
   })
 
-  describe('cities', () => {
-    test.skip('plus icon', () => {
+  describe('cities biscuits', () => {
+    test('plus icon', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          red: ['Archery'],
+          hand: ['Athens'],
+        },
+        decks: {
+          base: {
+            2: ['Calendar'],
+          }
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Meld.Athens')
+
+      t.testIsSecondPlayer(request2)
+      t.testBoard(game, {
+        dennis: {
+          red: ['Athens', 'Archery'],
+          hand: ['Calendar'],
+        }
+      })
+    })
+
+    test('flag but not most', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Tokyo'],
+        },
+        micah: {
+          purple: ['Enterprise'],
+        },
+      })
+
+      const request1 = game.run()
+
+      const achievements = game.getAchievementsByPlayer(t.dennis(game))
+      expect(achievements.total).toBe(0)
+    })
+
+    test('flag and most', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          purple: {
+            cards: ['Tokyo', 'Code of Laws'],
+            splay: 'left'
+          },
+        },
+        micah: {
+          purple: ['Enterprise'],
+        },
+      })
+
+      const request1 = game.run()
+
+      const achievements = game.getAchievementsByPlayer(t.dennis(game))
+      expect(achievements.total).toBe(1)
+    })
+
+    test('flag and most, but not splayed, so not visible', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Tokyo', 'Code of Laws'],
+        },
+        micah: {
+          purple: ['Enterprise'],
+        },
+      })
+
+      const request1 = game.run()
+
+      const achievements = game.getAchievementsByPlayer(t.dennis(game))
+      expect(achievements.total).toBe(0)
+    })
+
+    test('fountain', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          red: ['Brussels'],
+        },
+      })
+
+      const request1 = game.run()
+
+      const achievements = game.getAchievementsByPlayer(t.dennis(game))
+      expect(achievements.total).toBe(2)
+    })
+
+    test('fountain: not top, but visible', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          red: {
+            cards: ['Archery', 'Brussels'],
+            splay: 'up'
+          }
+        },
+      })
+
+      const request1 = game.run()
+
+      const achievements = game.getAchievementsByPlayer(t.dennis(game))
+      expect(achievements.total).toBe(1)
+    })
+
+    test('fountain: hidden', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          red: ['Archery', 'Brussels'],
+        },
+      })
+
+      const request1 = game.run()
+
+      const achievements = game.getAchievementsByPlayer(t.dennis(game))
+      expect(achievements.total).toBe(0)
 
     })
 
-    test.skip('flag but not most', () => {
+    test('splay left', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          red: ['Archery'],
+          hand: ['Delhi'],
+        },
+      })
 
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Meld.Delhi')
+
+      t.testIsSecondPlayer(request2)
+      t.testBoard(game, {
+        dennis: {
+          red: {
+            cards: ['Delhi', 'Archery'],
+            splay: 'left'
+          }
+        }
+      })
     })
 
-    test.skip('flag and most', () => {
+    test('splay right', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          red: ['Archery'],
+          hand: ['Tehran'],
+        },
+      })
 
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Meld.Tehran')
+
+      t.testIsSecondPlayer(request2)
+      t.testBoard(game, {
+        dennis: {
+          red: {
+            cards: ['Tehran', 'Archery'],
+            splay: 'right'
+          }
+        }
+      })
     })
 
-    test.skip('fountain', () => {
+    test('splay up', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          red: ['Archery'],
+          hand: ['Seoul'],
+        },
+      })
 
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Meld.Seoul')
+
+      t.testIsSecondPlayer(request2)
+      t.testBoard(game, {
+        dennis: {
+          red: {
+            cards: ['Seoul', 'Archery'],
+            splay: 'up'
+          }
+        }
+      })
     })
 
-    test.skip('splay left', () => {
+    test('discover biscuit: simple', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Code of Laws'],
+          hand: ['Mecca'],
+        },
+        decks: {
+          base: {
+            3: ['Medicine', 'Education', 'Compass']
+          }
+        }
+      })
 
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Meld.Mecca')
+
+      t.testIsSecondPlayer(request2)
+      t.testBoard(game, {
+        dennis: {
+          purple: ['Mecca', 'Code of Laws'],
+          hand: ['Medicine', 'Compass'],
+        }
+      })
     })
 
-    test.skip('splay right', () => {
+    test('discover biscuit: not enough cards of age', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Code of Laws'],
+          hand: ['Mecca'],
+        },
+        decks: {
+          base: {
+            3: ['Medicine', 'Education'],
+            4: ['Reformation'],
+          }
+        }
+      })
 
+      // Leave only two cards in the 3 deck.
+      game.testSetBreakpoint('before-first-player', (game) => {
+        const toExile = game.getZoneByDeck('base', 3).cards().slice(2)
+        for (const card of toExile) {
+          game.mRemove(t.dennis(game), card)
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Meld.Mecca')
+
+      t.testIsSecondPlayer(request2)
+      t.testBoard(game, {
+        dennis: {
+          purple: ['Mecca', 'Code of Laws'],
+          hand: ['Medicine'],
+        }
+      })
     })
 
-    test.skip('splay up', () => {
+    test('discover biscuit: effects do not trigger', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Code of Laws'],
+          yellow: ['Rhazes'],
+          hand: ['Mecca', 'Machinery'],
+        },
+        decks: {
+          base: {
+            3: ['Medicine', 'Education', 'Compass']
+          }
+        }
+      })
 
-    })
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Meld.Mecca')
 
-    test.skip('draw for biscuit', () => {
+      t.testIsSecondPlayer(request2)
+      t.testBoard(game, {
+        dennis: {
+          purple: ['Mecca', 'Code of Laws'],
+          yellow: ['Rhazes'],
+          hand: ['Medicine', 'Compass', 'Machinery'],
+        }
+      })
 
     })
   })
@@ -762,29 +1015,55 @@ describe('Innovation', () => {
 
     })
 
-    describe.skip('cities', () => {
+    describe('cities', () => {
       test('draw a city for first card of color', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            blue: ['Experimentation'],
+            hand: ['Athens'],
+          },
+          decks: {
+            base: {
+              2: ['Calendar'],
+            },
+            city: {
+              4: ['Florence'],
+            }
+          }
+        })
 
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Athens')
+
+        t.testIsSecondPlayer(request2)
+        t.testBoard(game, {
+          dennis: {
+            blue: ['Experimentation'],
+            red: ['Athens'],
+            hand: ['Calendar', 'Florence'],
+          }
+        })
       })
 
       test('plus icon', () => {
-
+        // Tested in 'cities biscuits'
       })
 
       test('splay left icon', () => {
-
+        // Tested in 'cities biscuits'
       })
 
       test('splay right icon', () => {
-
+        // Tested in 'cities biscuits'
       })
 
       test('splay up icon', () => {
-
+        // Tested in 'cities biscuits'
       })
 
-      test('biscuit', () => {
-
+      test('discover biscuit', () => {
+        // Tested in 'cities biscuits'
       })
     })
 

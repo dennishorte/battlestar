@@ -398,7 +398,7 @@ Innovation.prototype.action = function(count) {
   }
   else if (name === 'Meld') {
     const card = this.getCardByName(arg)
-    this.aMeld(player, card)
+    this.aMeld(player, card, { asAction: true })
   }
   else {
     throw new Error(`Unhandled action type ${name}`)
@@ -928,6 +928,21 @@ Innovation.prototype.aDecree = function(player, name) {
   this.mLogOutdent()
 }
 
+Innovation.prototype.aDiscoverBiscuit = function(player, card) {
+  const age = card.getAge()
+  const biscuit = card.biscuits[4]
+  const maxDraw = this.getZoneByDeck('base', age).cards().length
+  const numDraw = Math.min(maxDraw, age)
+
+  for (let i = 0; i < numDraw; i++) {
+    const card = this.mDraw(player, 'base', age)
+    this.mReveal(player, card)
+    if (!card.checkHasBiscuit(biscuit)) {
+      this.mReturn(player, card)
+    }
+  }
+}
+
 Innovation.prototype.aDogmaHelper = function(player, card, opts) {
   this.state.shared = false
   this.state.couldShare = false
@@ -1310,8 +1325,44 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
     return
   }
 
+  const isFirstCard = this.getCardsByZone(player, card.color).length === 0
+
   this.mMeld(player, card, opts)
-  this.aKarmaWhenMeld(player, card, opts)
+
+  if (opts.asAction) {
+    // City biscuits
+    const biscuits = card.getBiscuits('top')
+    const plusses = biscuits.split('+').length - 1
+    for (let i = 0; i < plusses; i++) {
+      this.aDraw(player, { age: card.age + 1 })
+    }
+    if (biscuits.includes('<')) {
+      this.aSplay(player, card.color, 'left')
+    }
+    if (biscuits.includes('>')) {
+      this.aSplay(player, card.color, 'right')
+    }
+    if (biscuits.includes('^')) {
+      this.aSplay(player, card.color, 'up')
+    }
+
+    // Discover biscuit
+    if (card.expansion === 'city' && card.checkHasDiscoverBiscuit()) {
+      this.aDiscoverBiscuit(player, card)
+    }
+
+    // Draw a city
+    if (isFirstCard && this.settings.expansions.includes('city')) {
+      this.aDraw(player, { exp: 'city' })
+    }
+
+    // Dig an artifact
+
+    // Promote a foreshadowed card
+
+    // When-meld karmas
+    this.aKarmaWhenMeld(player, card, opts)
+  }
 
   return card
 }
@@ -1547,6 +1598,51 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
       ach.other.push(info.card)
     }
   }
+
+  const flags = this
+    .utilColors()
+    .flatMap(color => this.getCardsByZone(player, color))
+    .map(card => {
+      const splay = this.getSplayByCard(card)
+      const biscuits = card.getBiscuits(splay)
+      return {
+        card,
+        count: biscuits.split(';').length - 1
+      }
+    })
+    .filter(x => x.count > 0)
+    .filter(x => {
+      const myCount = this.getVisibleCardsByZone(player, x.card.color)
+      const otherCounts = this
+        .getPlayerAll()
+        .filter(other => other !== player)
+        .map(other => this.getVisibleCardsByZone(other, x.card.color))
+      return otherCounts.every(count => count < myCount)
+    })
+    .forEach(x => {
+      for (let i = 0; i < x.count; i++) {
+        ach.other.push(x.card)
+      }
+    })
+
+  // Fountains
+  this
+    .utilColors()
+    .flatMap(color => this.getCardsByZone(player, color))
+    .map(card => {
+      const splay = this.getSplayByCard(card)
+      const biscuits = card.getBiscuits(splay)
+      return {
+        card,
+        count: biscuits.split(':').length - 1
+      }
+    })
+    .filter(x => x.count > 0)
+    .forEach(x => {
+      for (let i = 0; i < x.count; i++) {
+        ach.other.push(x.card)
+      }
+    })
 
   ach.total = ach.standard.length + ach.special.length + ach.other.length
 
@@ -1878,6 +1974,17 @@ Innovation.prototype.getTopCardsAll = function() {
 
 Innovation.prototype.getViewerName = function() {
   return this.viewerName
+}
+
+Innovation.prototype.getVisibleCardsByZone = function(player, zoneName) {
+  const zone = this.getZoneByPlayer(player, zoneName)
+  const cards = zone.cards()
+  if (zone.splay === 'none') {
+    return cards.length > 0 ? 1 : 0
+  }
+  else {
+    return cards.length
+  }
 }
 
 Innovation.prototype.getVisibleEffects = function(card, kind) {
