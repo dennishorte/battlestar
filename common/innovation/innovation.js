@@ -905,7 +905,7 @@ Innovation.prototype.aDecree = function(player, name) {
     doImpl = true
   }
   else {
-    this.mMoveCardTo(card, this.getZoneByName('achievements'))
+    this.mMoveCardTo(card, this.getZoneById('achievements'))
     this.mLog({
       template: '{player} returns {card} to the achievements',
       args: { player, card }

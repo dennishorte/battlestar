@@ -448,7 +448,7 @@ describe('Innovation', () => {
       })
 
       test('first claim', () => {
-
+        // See the test files for the individual decrees.
       })
 
       test('already have', () => {
@@ -456,7 +456,27 @@ describe('Innovation', () => {
       })
 
       test('opponent has', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+        t.setBoard(game, {
+          dennis: {
+            green: ['Navigation', 'The Wheel'],
+            hand: ['Sinuhe', 'Ximen Bao', 'Murasaki Shikibu'],
+          },
+          micah: {
+            achievements: ['Expansion'],
+          }
+        })
 
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Decree.Expansion')
+        const request3 = t.choose(game, request2, 'auto')
+
+        t.testIsSecondPlayer(request3)
+        t.testBoard(game, {
+          dennis: {
+            green: ['Navigation', 'The Wheel'],
+          },
+        })
       })
     })
 
