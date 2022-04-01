@@ -9,6 +9,15 @@ module.exports = Game
 
 Game.create = async function(req, res) {
   const lobby = await db.lobby.findById(req.body.lobbyId)
+
+  if (lobby.gameLaunched) {
+    res.json({
+      status: 'error',
+      message: 'Game already created'
+    })
+    return
+  }
+
   const gameId = await db.game.create(lobby)
 
   if (gameId) {
