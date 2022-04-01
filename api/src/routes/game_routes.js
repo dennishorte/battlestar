@@ -13,7 +13,7 @@ Game.create = async function(req, res) {
 
   if (gameId) {
     // Save the game id in the lobby
-    db.lobby.gameLaunched(lobby.id, gameId)
+    await db.lobby.gameLaunched(lobby._id, gameId)
 
     // Notify players of the new game
     const game = await db.game.findById(gameId)

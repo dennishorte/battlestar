@@ -43,7 +43,10 @@ Lobby.findById = async function(lobbyId) {
 }
 
 Lobby.findByUserId = async function(userId) {
-  return await lobbyCollection.find({ 'users._id': userId })
+  return await lobbyCollection.find({
+    'users._id': userId,
+    gameLaunched: false,
+  })
 }
 
 Lobby.gameLaunched = async function(lobbyId, gameId) {

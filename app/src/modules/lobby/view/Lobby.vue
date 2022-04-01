@@ -42,8 +42,8 @@
 <script>
 import axios from 'axios'
 
-import EditableText from '../../../../src/components/EditableText'
-import Header from '../../../../src/components/Header'
+import EditableText from '@/components/EditableText'
+import Header from '@/components/Header'
 import LobbyPlayerList from '../components/PlayerList'
 import LobbySettings from '../components/Settings'
 
