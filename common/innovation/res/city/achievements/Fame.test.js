@@ -37,6 +37,11 @@ describe('Fame achievement', () => {
         yellow: ['Canning', 'Masonry'],
         hand: ['Copenhagen'],
       },
+      decks: {
+        city: {
+          10: ['Bangkok'],
+        }
+      },
     })
 
     const request1 = game.run()
@@ -49,6 +54,7 @@ describe('Fame achievement', () => {
           cards: ['Copenhagen', 'Canning', 'Masonry'],
           splay: 'up'
         },
+        hand: ['Bangkok'],
       }
     })
   })

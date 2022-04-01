@@ -37,6 +37,11 @@ describe('Legend achievement', () => {
         yellow: ['Canning', 'Masonry'],
         hand: ['Beijing'],
       },
+      decks: {
+        city: {
+          4: ['Seville'],
+        }
+      }
     })
 
     const request1 = game.run()
@@ -49,6 +54,7 @@ describe('Legend achievement', () => {
           cards: ['Beijing', 'Canning', 'Masonry'],
           splay: 'left'
         },
+        hand: ['Seville'],
       }
     })
   })

@@ -1345,6 +1345,18 @@ Innovation.prototype._checkCityMeldAchievements = function(player, card) {
   }
 }
 
+Innovation.prototype._maybeDrawCity = function(player) {
+  if (!this.getExpansionList().includes('city')) {
+    return
+  }
+
+  if (this.getCardsByZone(player, 'hand').some(card => card.expansion === 'city')) {
+    return
+  }
+
+  this.aDraw(player, { exp: 'city' })
+}
+
 Innovation.prototype.aMeld = function(player, card, opts={}) {
   const karmaKind = this.aKarma(player, 'meld', { ...opts, card })
   if (karmaKind === 'would-instead') {
@@ -1379,8 +1391,8 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
     }
 
     // Draw a city
-    if (isFirstCard && this.settings.expansions.includes('city')) {
-      this.aDraw(player, { exp: 'city' })
+    if (isFirstCard) {
+      this._maybeDrawCity(player)
     }
 
     // Dig an artifact
@@ -1445,7 +1457,13 @@ Innovation.prototype.aSplay = function(player, color, direction, opts={}) {
     }
   }
 
-  return this.mSplay(player, color, direction, opts)
+  const result = this.mSplay(player, color, direction, opts)
+
+  if (this.getExpansionList().includes('city')) {
+    this._maybeDrawCity(player)
+  }
+
+  return result
 }
 
 Innovation.prototype.aTransfer = function(player, card, target, opts={}) {

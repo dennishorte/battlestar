@@ -311,6 +311,11 @@ describe('Innovation', () => {
           red: ['Archery'],
           hand: ['Delhi'],
         },
+        decks: {
+          city: {
+            3: ['Venice'],
+          }
+        },
       })
 
       const request1 = game.run()
@@ -322,7 +327,8 @@ describe('Innovation', () => {
           red: {
             cards: ['Delhi', 'Archery'],
             splay: 'left'
-          }
+          },
+          hand: ['Venice'],
         }
       })
     })
@@ -333,6 +339,11 @@ describe('Innovation', () => {
         dennis: {
           red: ['Archery'],
           hand: ['Tehran'],
+        },
+        decks: {
+          city: {
+            6: ['Vienna'],
+          }
         },
       })
 
@@ -345,7 +356,8 @@ describe('Innovation', () => {
           red: {
             cards: ['Tehran', 'Archery'],
             splay: 'right'
-          }
+          },
+          hand: ['Vienna'],
         }
       })
     })
@@ -356,6 +368,11 @@ describe('Innovation', () => {
         dennis: {
           red: ['Archery'],
           hand: ['Seoul'],
+        },
+        decks: {
+          city: {
+            10: ['Bangkok'],
+          }
         },
       })
 
@@ -368,7 +385,8 @@ describe('Innovation', () => {
           red: {
             cards: ['Seoul', 'Archery'],
             splay: 'up'
-          }
+          },
+          hand: ['Bangkok'],
         }
       })
     })
@@ -1042,6 +1060,63 @@ describe('Innovation', () => {
             blue: ['Experimentation'],
             red: ['Athens'],
             hand: ['Calendar', 'Florence'],
+          }
+        })
+      })
+
+      test('draw a card when splaying', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            purple: ['Enterprise'],
+            hand: ['Vienna'],
+          },
+          decks: {
+            city: {
+              6: ['Tehran'],
+            }
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Vienna')
+
+        t.testIsSecondPlayer(request2)
+        t.testBoard(game, {
+          dennis: {
+            purple: {
+              cards: ['Vienna', 'Enterprise'],
+              splay: 'right'
+            },
+            hand: ['Tehran'],
+          }
+        })
+
+      })
+
+      test('do not draw if you already have a city', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            blue: ['Experimentation'],
+            hand: ['Athens', 'Thebes'],
+          },
+          decks: {
+            base: {
+              2: ['Calendar'],
+            },
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Athens')
+
+        t.testIsSecondPlayer(request2)
+        t.testBoard(game, {
+          dennis: {
+            blue: ['Experimentation'],
+            red: ['Athens'],
+            hand: ['Calendar', 'Thebes'],
           }
         })
       })

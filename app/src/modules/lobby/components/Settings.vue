@@ -109,7 +109,7 @@ export default {
             {
               text: 'Cities of Destiny',
               value: 'city',
-              disabled: true,
+              disabled: false,
             },
             {
               text: 'Artifacts of History',

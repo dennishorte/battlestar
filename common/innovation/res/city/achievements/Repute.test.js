@@ -37,6 +37,11 @@ describe('Repute achievement', () => {
         purple: ['Enterprise', 'Code of Laws'],
         hand: ['Washington'],
       },
+      decks: {
+        city: {
+          7: ['London']
+        }
+      }
     })
 
     const request1 = game.run()
@@ -49,6 +54,7 @@ describe('Repute achievement', () => {
           cards: ['Washington', 'Enterprise', 'Code of Laws'],
           splay: 'right'
         },
+        hand: ['London'],
       }
     })
   })
