@@ -1319,6 +1319,32 @@ Innovation.prototype.aKarmaWhenMeld = function(player, card, opts={}) {
   return this._aKarmaHelper(player, infos, opts)
 }
 
+Innovation.prototype._checkCityMeldAchievements = function(player, card) {
+  if (
+    card.checkHasBiscuit('<')
+    && this.getZoneByPlayer(player, card.color).splay === 'left'
+    && this.getCardByName('Legend').zone === 'achievements'
+  ) {
+    this.aClaimAchievement(player, { name: 'Legend' })
+  }
+
+  if (
+    card.checkHasBiscuit('>')
+    && this.getZoneByPlayer(player, card.color).splay === 'right'
+    && this.getCardByName('Repute').zone === 'achievements'
+  ) {
+    this.aClaimAchievement(player, { name: 'Repute' })
+  }
+
+  if (
+    card.checkHasBiscuit('^')
+    && this.getZoneByPlayer(player, card.color).splay === 'up'
+    && this.getCardByName('Fame').zone === 'achievements'
+  ) {
+    this.aClaimAchievement(player, { name: 'Fame' })
+  }
+}
+
 Innovation.prototype.aMeld = function(player, card, opts={}) {
   const karmaKind = this.aKarma(player, 'meld', { ...opts, card })
   if (karmaKind === 'would-instead') {
@@ -1328,6 +1354,7 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
   const isFirstCard = this.getCardsByZone(player, card.color).length === 0
 
   this.mMeld(player, card, opts)
+  this._checkCityMeldAchievements(player, card)
 
   if (opts.asAction) {
     // City biscuits
@@ -1433,13 +1460,31 @@ Innovation.prototype.aTransfer = function(player, card, target, opts={}) {
   return this.mTransfer(player, card, target, opts)
 }
 
+Innovation.prototype._checkCityTuckAchievements = function(player, card) {
+  if (
+    card.checkHasBiscuit(';')
+    && this.getCardByName('Glory').zone === 'achievements'
+  ) {
+    this.aClaimAchievement(player, { name: 'Glory' })
+  }
+
+  if (
+    card.checkHasBiscuit(':')
+    && this.getCardByName('Victory').zone === 'achievements'
+  ) {
+    this.aClaimAchievement(player, { name: 'Victory' })
+  }
+}
+
 Innovation.prototype.aTuck = function(player, card, opts={}) {
   const karmaKind = this.aKarma(player, 'tuck', { ...opts, card })
   if (karmaKind === 'would-instead') {
     return
   }
 
-  return this.mTuck(player, card, opts)
+  const tucked = this.mTuck(player, card, opts)
+  this._checkCityTuckAchievements(player, card)
+  return tucked
 }
 
 Innovation.prototype.aUnsplay = function(player, zone, opts={}) {

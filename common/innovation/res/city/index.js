@@ -107,11 +107,11 @@ const cards = [
 ].map(f => new f())
 
 const achievements = [
-  /* require('./achievements/Empire.js'),
-   * require('./achievements/Monument.js'),
-   * require('./achievements/World.js'),
-   * require('./achievements/Wonder.js'),
-   * require('./achievements/Universe.js'), */
+  require('./achievements/Fame.js'),
+  require('./achievements/Glory.js'),
+  require('./achievements/Legend.js'),
+  require('./achievements/Repute.js'),
+  require('./achievements/Victory.js'),
 ].map(f => new f())
 
 const byName = {}

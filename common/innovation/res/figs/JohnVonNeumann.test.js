@@ -55,7 +55,7 @@ describe('John Von Neumann', () => {
   })
 
   test('karma: when-meld', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs', 'city'] })
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
         purple: ['Homer'],
