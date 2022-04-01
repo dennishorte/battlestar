@@ -1,5 +1,7 @@
 <template>
   <b-dropdown :text="game.settings.name" class="game-menu" block>
+    <b-dropdown-item @click="home">home</b-dropdown-item>
+    <b-dropdown-divider />
     <b-dropdown-item @click="undo">undo</b-dropdown-item>
   </b-dropdown>
 </template>
@@ -12,6 +14,10 @@ export default {
   inject: ['game'],
 
   methods: {
+    home() {
+      this.$router.push('/')
+    },
+
     undo() {
       this.game.undo()
       this.game.run()
