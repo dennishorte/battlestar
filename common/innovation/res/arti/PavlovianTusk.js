@@ -1,8 +1,8 @@
 const CardBase = require(`../CardBase.js`)
 
 function Card() {
-  this.id = `Pavlonian Tusk`  // Card names are unique in Innovation
-  this.name = `Pavlonian Tusk`
+  this.id = `Pavlovian Tusk`  // Card names are unique in Innovation
+  this.name = `Pavlovian Tusk`
   this.color = `red`
   this.age = 1
   this.expansion = `arti`
@@ -15,7 +15,21 @@ function Card() {
     `Draw three cards of value equal to your top green card. Return one of the drawn cards. Score one of the drawn cards.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const topGreen = game.getTopCard(player, 'green')
+      const age = topGreen ? topGreen.age : 1
+      const cards = [
+        game.aDraw(player, { age }),
+        game.aDraw(player, { age }),
+        game.aDraw(player, { age }),
+      ]
+
+      const returned = game.aChooseAndReturn(player, cards) || []
+      const remainining = cards.filter(card => !returned.includes(card))
+      game.aChooseAndScore(player, remainining)
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

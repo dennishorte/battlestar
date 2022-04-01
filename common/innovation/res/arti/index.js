@@ -1,7 +1,7 @@
 const cards = [
   require('./HolmegaardBows.js'),
   require('./PapyrusofAni.js'),
-  require('./PavlonianTusk.js'),
+  require('./PavlovianTusk.js'),
   require('./DancingGirl.js'),
   require('./LurganCanoe.js'),
   require('./XianrendongShards.js'),
