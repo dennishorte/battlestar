@@ -15,7 +15,26 @@ function Card() {
     `I compel your to reveal all cards in your hand and transfer the card of my choice to my board.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const cards = game.getCardsByZone(player, 'hand')
+
+      if (cards.length === 0) {
+        game.mLog({
+          template: '{player} has no cards in hand',
+          args: { player }
+        })
+        return
+      }
+
+      for (const card of cards) {
+        game.mReveal(player, card)
+      }
+
+      const card = game.aChooseCard(leader, cards)
+      game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
