@@ -452,7 +452,7 @@ Innovation.prototype.endTurn = function() {
   this.state.round = Math.floor((this.state.turn + players.length - 1) / players.length)
 
   // Reset various turn-centric state
-  this.state.didEnsorse = false
+  this.state.didEndorse = false
   this.state.didInspire = false
   this.mResetDogmaInfo()
   this.mResetMonumentCounts()
