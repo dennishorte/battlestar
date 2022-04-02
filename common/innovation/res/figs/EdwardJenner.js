@@ -25,7 +25,9 @@ function Card() {
       trigger: 'demand-success',
       triggerAll: true,
       kind: 'would-instead',
-      matches: () => true,
+      matches: (game, player) => {
+        return player === game.getPlayerByCard(this)
+      },
       func: (game, player) => {
         game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'))
       }

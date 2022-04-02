@@ -26,7 +26,9 @@ function Card() {
       trigger: 'no-share',
       triggerAll: true,
       kind: 'would-first',
-      matches: () => true,
+      matches: (game, player) => {
+        return player === game.getPlayerByCard(this)
+      },
       func: (game, player) => {
         const card = game.aDraw(player, { age: game.getEffectAge(this, 10) })
         if (card && card.color === 'blue') {

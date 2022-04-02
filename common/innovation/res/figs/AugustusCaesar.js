@@ -25,7 +25,7 @@ function Card() {
       trigger: ['meld', 'foreshadow'],
       triggerAll: true,
       kind: 'variable',
-      matches(game, player, { card }) {
+      matches: (game, player, { card }) => {
         return card.age < 4
       },
       func(game, player, { card, owner }) {

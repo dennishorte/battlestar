@@ -583,7 +583,7 @@ Innovation.prototype.aCardEffects = function(
             if (karmaKind === 'would-instead') {
               this.state.dogmaInfo.demanding = false
               this.mLogOutdent()
-              return
+              continue
             }
           }
 
@@ -848,9 +848,11 @@ Innovation.prototype.aChooseAndSplay = function(player, choices, direction, opts
     this.mLogDoNothing(player)
   }
   else {
+    const splayed = []
     for (const color of colors) {
-      this.aSplay(player, color, direction)
+      splayed.push(this.aSplay(player, color, direction))
     }
+    return splayed
   }
 }
 

@@ -23,7 +23,9 @@ describe('Augustus Caesar', () => {
     })
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Inspire.green')
+    const request3 = t.choose(game, request2, 'auto')
 
+    t.testIsSecondPlayer(request3)
     t.testZone(game, 'red', ['Engineering', 'Archery', 'Construction'])
     t.testZone(game, 'blue', ['Tools'])
     t.testZone(game, 'forecast', [])
@@ -57,7 +59,7 @@ describe('Augustus Caesar', () => {
     t.testZone(game, 'forecast', ['Optics', 'Tools'], { sort: true })
   })
 
-  test.only('karma (other player, using meld)', () => {
+  test('karma (other player, using meld)', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setColor(game, 'micah', 'red', ['Archery'])
@@ -73,5 +75,33 @@ describe('Augustus Caesar', () => {
     t.testZone(game, 'blue', ['Tools'], { player: 'micah' })
     t.testZone(game, 'green', ['The Wheel', 'Augustus Caesar'], { player: 'micah' })
     t.testZone(game, 'forecast', [], { player: 'micah' })
+  })
+
+  test('karma: 3 players', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'], numPlayers: 3 })
+    t.setBoard(game, {
+      dennis: {
+        hand: ['The Wheel'],
+      },
+      micah: {
+        red: ['Archery'],
+      },
+      scott: {
+        green: ['Augustus Caesar'],
+      },
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Meld.The Wheel')
+
+    t.testIsSecondPlayer(request2)
+    t.testBoard(game, {
+      micah: {
+        red: ['Archery'],
+      },
+      scott: {
+        green: ['The Wheel', 'Augustus Caesar'],
+      },
+    })
   })
 })

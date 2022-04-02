@@ -21,8 +21,8 @@ function Card() {
       const splayedLeft = game
         .utilColors()
         .filter(color => game.getZoneByPlayer(player, color).splay === 'left')
-      const color = game.aChooseAndSplay(player, splayedLeft, 'right')
-      if (color) {
+      const colors = game.aChooseAndSplay(player, splayedLeft, 'right')
+      if (colors && colors.length > 0) {
         game.aDrawAndScore(player, game.getEffectAge(this, 4))
       }
     },

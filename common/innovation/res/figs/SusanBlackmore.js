@@ -86,7 +86,9 @@ function Card() {
       trigger: 'no-share',
       triggerAll: true,
       kind: 'would-first',
-      matches: () => true,
+      matches: (game, player) => {
+        return player === game.getPlayerByCard(this)
+      },
       func: (game, player, { card }) => {
         game.aTransfer(player, card, game.getZoneByPlayer(player, 'score'))
       }

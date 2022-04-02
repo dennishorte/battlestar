@@ -114,4 +114,28 @@ describe('Muhammad Yunus', () => {
 
     t.testChoices(request3, ['The Wheel']) // Micah's choice for Code of Laws
   })
+
+  test('karma: three players', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'], numPlayers: 3 })
+    t.setBoard(game, {
+      dennis: {
+        green: ['Navigation'],
+        purple: ['Code of Laws'],
+        hand: ['Domestication', 'Invention']
+      },
+      micah: {
+        hand: ['Sailing'],
+      },
+      scott: {
+        green: ['Muhammad Yunus'],
+        hand: ['The Wheel', 'Canning']
+      },
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Code of Laws')
+    const request3 = t.choose(game, request2, 'Canning')
+
+    t.testChoices(request3, ['The Wheel']) // Micah's choice for Code of Laws
+  })
 })

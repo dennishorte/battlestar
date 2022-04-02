@@ -30,8 +30,11 @@ function Card() {
       trigger: 'achieve',
       triggerAll: true,
       kind: 'would-instead',
-      matches: (game, player, { card, owner }) => {
-        return game.checkAchievementEligibility(owner, card)
+      matches: (game, player) => {
+        return (
+          player === game.getPlayerByCard(this)
+          && game.checkAchievementEligibility(player, card)
+        )
       },
       func: (game, player, { card, owner }) => {
         game.aClaimAchievement(owner, card)
