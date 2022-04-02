@@ -1,8 +1,8 @@
 const CardBase = require(`../CardBase.js`)
 
 function Card() {
-  this.id = `Petition of Right`  // Card names are unique in Innovation
-  this.name = `Petition of Right`
+  this.id = `Petition of Rights`  // Card names are unique in Innovation
+  this.name = `Petition of Rights`
   this.color = `blue`
   this.age = 4
   this.expansion = `arti`
@@ -15,7 +15,20 @@ function Card() {
     `I compel you to transfer a card from your score pile to my score pile for each top card with a {k} on your board.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const count = game
+        .getTopCards(player)
+        .filter(card => card.checkHasBiscuit('k'))
+        .length
+      game.aChooseAndTransfer(
+        player,
+        game.getCardsByZone(player, 'score'),
+        game.getZoneByPlayer(leader, 'score'),
+        { count },
+      )
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
