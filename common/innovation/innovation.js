@@ -848,7 +848,9 @@ Innovation.prototype.aChooseAndSplay = function(player, choices, direction, opts
     this.mLogDoNothing(player)
   }
   else {
-    return this.aSplay(player, colors[0], direction)
+    for (const color of colors) {
+      this.aSplay(player, color, direction)
+    }
   }
 }
 

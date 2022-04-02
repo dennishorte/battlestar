@@ -16,7 +16,20 @@ function Card() {
     `Splay up two colors on your board.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      for (const color of game.utilColors()) {
+        const zone = game.getZoneByPlayer(player, color)
+        if (zone.splay !== 'none') {
+          game.aUnsplay(player, zone)
+        }
+      }
+    },
+
+    (game, player) => {
+      const colors = game.aChooseAndSplay(player, null, 'up', { count: 2 })
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
