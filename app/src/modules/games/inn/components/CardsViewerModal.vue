@@ -1,5 +1,11 @@
 <template>
-  <b-modal id="cards-viewer-modal" class="cards-viewer-modal" size="xl" scrollable>
+  <b-modal
+    id="cards-viewer-modal"
+    class="cards-viewer-modal"
+    size="xl"
+    :title="title"
+    scrollable
+  >
     <div class="card-viewer-list">
       <CardFull
         v-for="card in cards"
@@ -27,6 +33,10 @@ export default {
   computed: {
     cards() {
       return this.game.ui.modals.cardsViewer.cards
+    },
+
+    title() {
+      return this.game.ui.modals.cardsViewer.title
     },
   },
 }

@@ -146,6 +146,7 @@ export default {
         },
         cardsViewer: {
           cards: [],
+          title: '',
         },
       },
     })

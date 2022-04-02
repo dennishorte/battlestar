@@ -1,5 +1,5 @@
 <template>
-  <div class="card-pile">
+  <div class="card-pile" @click="openCardsViewerModal">
     <div class="card-pile-header">
       {{ headerComputed }}
     </div>
@@ -40,6 +40,8 @@ export default {
     CardBiscuit,
   },
 
+  inject: ['game', 'actor'],
+
   props: {
     expanded: {
       type: Boolean,
@@ -66,6 +68,11 @@ export default {
   },
 
   computed: {
+    canView() {
+      const owner = this.game.getPlayerByZone(this.zone)
+      return this.zone.public || owner.name === this.actor.name
+    },
+
     cards() {
       return this.zone.cards().sort((l, r) => {
         if (l.age === r.age) {
@@ -83,6 +90,16 @@ export default {
       }
       else {
         return this.zone.name.split('.').slice(-1)[0]
+      }
+    },
+  },
+
+  methods: {
+    openCardsViewerModal() {
+      if (this.canView) {
+        this.game.ui.modals.cardsViewer.title = this.zone.name
+        this.game.ui.modals.cardsViewer.cards = this.zone.cards()
+        this.$bvModal.show('cards-viewer-modal')
       }
     },
   },
