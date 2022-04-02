@@ -19,7 +19,8 @@
         :card="card"
       />
 
-      <CardBiscuit v-for="(extra, index) in extras()" :key="index" :biscuit="extra" />
+      <slot></slot>
+
     </div>
   </div>
 </template>
@@ -27,7 +28,6 @@
 <script>
 import CardFull from './CardFull'
 import CardSquare from './CardSquare'
-import CardBiscuit from './CardBiscuit'
 
 const orderedExpansions = ['base', 'echo', 'figs', 'city', 'arti']
 
@@ -37,7 +37,6 @@ export default {
   components: {
     CardFull,
     CardSquare,
-    CardBiscuit,
   },
 
   inject: ['game', 'actor'],
@@ -51,11 +50,6 @@ export default {
     header: {
       type: Function,
       default: null,
-    },
-
-    extras: {
-      type: Function,
-      default: () => [],
     },
 
     zone: Object,

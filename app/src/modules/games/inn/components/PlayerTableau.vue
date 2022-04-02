@@ -11,14 +11,18 @@
 
     <CardPile
       :zone="game.getZoneByPlayer(player, 'achievements')"
-      :header="countHeader(player, 'achievements')"
-    />
+      :header="achievementsHeader(player)"
+      :key="game.responses.length"
+    >
+      <AchievementExtras :player="player" />
+    </CardPile>
 
     <CardPile
       :zone="game.getZoneByPlayer(player, 'score')"
       :header="scoreHeader(player)"
-      :extras="scoreExtras(player)"
-    />
+    >
+      <ScoreExtras :player="player" />
+    </CardPile>
 
     <CardPile
       :zone="game.getZoneByPlayer(player, 'forecast')"
@@ -34,15 +38,19 @@
 </template>
 
 <script>
+import AchievementExtras from './AchievementExtras'
 import CardPile from './CardPile'
 import ColorStack from './ColorStack'
+import ScoreExtras from './ScoreExtras'
 
 export default {
   name: 'PlayerTableau',
 
   components: {
+    AchievementExtras,
     CardPile,
     ColorStack,
+    ScoreExtras,
   },
 
   inject: ['actor', 'game'],
@@ -59,12 +67,11 @@ export default {
       }
     },
 
-    scoreExtras(player) {
+    achievementsHeader(player) {
       return () => {
-        return this
-          .game
-          .getBonuses(player)
-          .map(bonus => bonus.toString())
+        const achievements = this.game.getAchievementsByPlayer(player)
+        const count = achievements.total
+        return `achievements ${count}`
       }
     },
 
