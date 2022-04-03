@@ -15,7 +15,15 @@ function Card() {
     `Return a card from your hand. Score a number of cards from your hand equal to the value of the card returned.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'))
+      if (cards && cards.length > 0) {
+        const card = cards[0]
+        game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'), { count: card.getAge() })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
