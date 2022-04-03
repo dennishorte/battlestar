@@ -15,7 +15,24 @@ function Card() {
     `Choose a value. Splay up each color with a top card of the chosen value. Return all cards of the chosen value from all score piles.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const age = game.aChooseAge(player)
+
+      game
+        .utilColors()
+        .map(color => game.getZoneByPlayer(player, color))
+        .filter(zone => zone.cards().length >= 2 && zone.cards()[0].getAge() === age)
+        .forEach(zone => game.aSplay(player, zone.color, 'up'))
+
+      const toReturn = game
+        .getPlayerAll()
+        .flatMap(player => game.getCardsByZone(player, 'score'))
+        .filter(card => card.getAge() === age)
+
+      game.aReturnMany(player, toReturn)
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
