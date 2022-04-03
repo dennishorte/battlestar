@@ -15,7 +15,35 @@ function Card() {
     `Draw and meld a {6}. If the drawn card's color is the color with the fewest (or tied) number of cards on your board, score the melded card, and repeat this effect.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      while (true) {
+        const card = game.aDrawAndMeld(player, game.getEffectAge(this, 6))
+
+        if (card) {
+          const numCards = game
+            .getCardsByZone(player, card.color)
+            .length
+
+          const hasFewestCards = game
+            .utilColors()
+            .map(color => game.getCardsByZone(player, color).length)
+            .every(count => count >= numCards)
+
+          if (hasFewestCards) {
+            game.aScore(player, card)
+            continue
+          }
+          else {
+            break
+          }
+        }
+        else {
+          break
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
