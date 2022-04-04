@@ -12,10 +12,24 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Return all non-blue top cards from yoru board. For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order.`
+    `Return all non-blue top cards from your board. For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const toReturn = game
+        .getTopCards(player)
+        .filter(card => card.color !== 'blue')
+
+      const returned = game
+        .aReturnMany(player, toReturn)
+        .sort((l, r) => l.getAge() - r.getAge())
+
+      for (const card of returned) {
+        game.aDrawAndMeld(player, card.getAge() + 1)
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
