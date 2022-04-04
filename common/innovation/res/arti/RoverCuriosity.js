@@ -15,7 +15,14 @@ function Card() {
     `Draw and meld an Artifact {0}. Execute each of the effects of the melded card as if they were on this card. Do not share them.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const card = game.aDrawAndMeld(player, game.getEffectAge(this, 10), { exp: 'arti' })
+      if (card) {
+        game.aExecuteAsIf(player, card)
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
