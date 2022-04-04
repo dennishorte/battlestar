@@ -15,7 +15,21 @@ function Card() {
     `Return a card from your hand. Draw a card of value equal to the highest number of symbols of the same type visible in that color on your board. Splay right that color.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'))
+      if (cards && cards.length > 0) {
+        const returned = cards[0]
+        const biscuits = game.getBiscuitsByZone(game.getZoneByPlayer(player, returned.color))
+        const sorted = Object
+          .entries(biscuits)
+          .sort((l, r) => r[1] - l[1])
+        const count = sorted[0][1]
+        game.aDraw(player, { age: count })
+        game.aSplay(player, returned.color, 'right')
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
