@@ -15,7 +15,18 @@ function Card() {
     `For each top card on your board with a {i}, draw and score a {9}.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const matchingCards = game
+        .getTopCards(player)
+        .filter(card => card.checkHasBiscuit('i'))
+        .length
+
+      for (let i = 0; i < matchingCards; i++) {
+        game.aDrawAndScore(player, game.getEffectAge(this, 9))
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
