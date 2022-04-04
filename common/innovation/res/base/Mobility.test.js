@@ -15,7 +15,7 @@ describe('Mobility', () => {
       micah: {
         red: ['Robotics'],
         purple: ['Specialization', 'Railroad'],
-        green: ['Metric System'],
+        green: ['Navigation'],
         yellow: ['Stem Cells'],
       },
       decks: {
@@ -34,12 +34,11 @@ describe('Mobility', () => {
         red: ['Mobility'],
         yellow: ['Canning'],
         green: ['Electricity'],
-        score: ['Specialization', 'Railroad'],
+        score: ['Navigation', 'Stem Cells'],
       },
       micah: {
         red: ['Robotics'],
-        green: ['Metric System'],
-        yellow: ['Stem Cells'],
+        purple: ['Specialization', 'Railroad'],
         hand: ['Skyscrapers'],
       },
     })

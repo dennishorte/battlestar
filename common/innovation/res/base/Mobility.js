@@ -22,7 +22,7 @@ function Card() {
         const choices = game
           .getTopCards(player)
           .filter(card => card.color !== 'red')
-          .filter(card => card.checkHasBiscuit('f'))
+          .filter(card => !card.checkHasBiscuit('f'))
 
         const highest = game.utilHighestCards(choices, { visible: true })
         const cards = game.aChooseAndTransfer(player, highest, game.getZoneByPlayer(leader, 'score'))
