@@ -1029,7 +1029,7 @@ describe('Innovation', () => {
 
     })
 
-    test.only('promote from forecast', () => {
+    test('promote from forecast', () => {
       const game = t.fixtureFirstPlayer()
       t.setBoard(game, {
         dennis: {
