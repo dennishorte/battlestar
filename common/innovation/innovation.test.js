@@ -1029,8 +1029,33 @@ describe('Innovation', () => {
 
     })
 
-    test('forecast', () => {
+    test.only('promote from forecast', () => {
+      const game = t.fixtureFirstPlayer()
+      t.setBoard(game, {
+        dennis: {
+          hand: ['Reformation'],
+          forecast: ['Sailing'],
+        },
+        decks: {
+          base: {
+            1: ['Tools'],
+          }
+        },
+      })
 
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Meld.Reformation')
+      const request3 = t.choose(game, request2, 'Sailing')
+      const request4 = t.choose(game, request3, 'yes')
+
+      t.testIsSecondPlayer(request4)
+      t.testBoard(game, {
+        dennis: {
+          purple: ['Reformation'],
+          green: ['Sailing'],
+          blue: ['Tools'],
+        }
+      })
     })
 
     describe('cities', () => {

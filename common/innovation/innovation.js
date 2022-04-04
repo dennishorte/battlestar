@@ -1402,6 +1402,23 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
     // Dig an artifact
 
     // Promote a foreshadowed card
+    const choices = this
+      .getCardsByZone(player, 'forecast')
+      .filter(other => other.getAge() <= card.getAge())
+    if (choices) {
+      this.mLog({
+        template: '{player} may promote a card from forecast',
+        args: { player },
+      })
+      const cards = this.aChooseAndMeld(player, choices, { min: 0, max: 1 })
+      if (cards && cards.length > 0) {
+        const melded = cards[0]
+        const doDogma = this.aYesNo(player, `Activate ${melded.name}?`)
+        if (doDogma) {
+          this.aDogma(player, melded)
+        }
+      }
+    }
 
     // When-meld karmas
     this.aKarmaWhenMeld(player, card, opts)
