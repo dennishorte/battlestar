@@ -18,15 +18,30 @@ function Card() {
   this.dogmaImpl = [
     (game, player, { leader }) => {
       let transferred = false
-      for (let i = 0; i < 2; i++) {
-        const choices = game
-          .getTopCards(player)
-          .filter(card => card.color !== 'red')
-          .filter(card => !card.checkHasBiscuit('f'))
+      const destination = game.getZoneByPlayer(leader, 'score')
+      const choices = game
+        .getTopCards(player)
+        .filter(card => card.color !== 'red')
+        .filter(card => !card.checkHasBiscuit('f'))
+      const highest = game.utilHighestCards(choices)
 
-        const highest = game.utilHighestCards(choices, { visible: true })
-        const cards = game.aChooseAndTransfer(player, highest, game.getZoneByPlayer(leader, 'score'))
+      if (highest.length >= 2) {
+        const cards = game.aChooseAndTransfer(player, highest, destination)
         if (cards && cards.length > 0) {
+          transferred = true
+        }
+      }
+      else if (highest.length === 1) {
+        const card = game.aTransfer(player, highest[0], destination)
+        if (card) {
+          transferred = true
+        }
+
+        const remaining = choices
+          .filter(other => !highest.includes(other))
+        const highestRemaining = game.utilHighestCards(remaining)
+        const seconds = game.aChooseAndTransfer(player, highestRemaining, destination)
+        if (seconds && seconds.length > 0) {
           transferred = true
         }
       }
