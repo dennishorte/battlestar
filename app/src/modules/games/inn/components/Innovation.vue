@@ -178,7 +178,7 @@ export default {
 <style>
 .innovation {
   width: 100vw;
-  height: 100vh;
+  height: 100%;
   font-size: .8rem;
   overflow: scroll;
 }
