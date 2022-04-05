@@ -3,6 +3,8 @@
     <b-dropdown-item @click="home">home</b-dropdown-item>
     <b-dropdown-divider />
     <b-dropdown-item @click="undo">undo</b-dropdown-item>
+    <b-dropdown-divider />
+    <b-dropdown-item @click="debug">debug</b-dropdown-item>
   </b-dropdown>
 </template>
 
@@ -14,6 +16,10 @@ export default {
   inject: ['game'],
 
   methods: {
+    debug() {
+      this.$bvModal.show('debug-modal')
+    },
+
     home() {
       this.$router.push('/')
     },

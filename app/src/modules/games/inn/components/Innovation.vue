@@ -22,8 +22,9 @@
       </b-row>
     </b-container>
 
-    <CardsViewerModal />
     <AchievementModal />
+    <CardsViewerModal />
+    <DebugModal />
   </div>
 </template>
 
@@ -45,6 +46,7 @@ import WaitingPanel from './WaitingPanel'
 // Modals
 import AchievementModal from './AchievementModal'
 import CardsViewerModal from './CardsViewerModal'
+import DebugModal from './DebugModal'
 
 export default {
   name: 'Innovation',
@@ -61,6 +63,7 @@ export default {
     // Modals
     AchievementModal,
     CardsViewerModal,
+    DebugModal,
   },
 
   props: {
