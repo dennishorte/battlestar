@@ -2,7 +2,6 @@
   <b-modal
     id="cards-viewer-modal"
     class="cards-viewer-modal"
-    size="xl"
     :title="title"
     scrollable
   >
@@ -50,7 +49,8 @@ export default {
 
 .card-viewer-list {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: center;
 }
 
 .viewer-card {
