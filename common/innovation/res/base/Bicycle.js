@@ -27,8 +27,11 @@ function Card() {
         const hand = game.getZoneByPlayer(player, 'hand')
         const score = game.getZoneByPlayer(player, 'score')
 
-        hand.cards().forEach(card => game.mMoveCard(card, score))
-        score.cards().forEach(card => game.mMoveCard(card, hand))
+        const handCards = hand.cards()
+        const scoreCards = score.cards()
+
+        handCards.forEach(card => game.mMoveCardTo(card, score))
+        scoreCards.forEach(card => game.mMoveCardTo(card, hand))
       }
       else {
         game.mLogDoNothing(player)
