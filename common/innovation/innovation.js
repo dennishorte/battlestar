@@ -1370,6 +1370,8 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
   const isFirstCard = this.getCardsByZone(player, card.color).length === 0
 
   this.mMeld(player, card, opts)
+  this.mLogIndent()
+
   this._checkCityMeldAchievements(player, card)
 
   if (opts.asAction) {
@@ -1424,6 +1426,7 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
     this.aKarmaWhenMeld(player, card, opts)
   }
 
+  this.mLogOutdent()
   return card
 }
 
