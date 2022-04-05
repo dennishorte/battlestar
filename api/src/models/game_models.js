@@ -38,9 +38,28 @@ Game.findById = async function(gameId) {
 
 Game.findByUserId = async function(userId) {
   return await gameCollection.find({ $or: [
-    { 'users._id': userId },  // bsg
-    { 'settings.players._id': userId },  // innovation
+    {
+      'users._id': userId,
+      gameOver: false
+    },  // bsg
+    {
+      'settings.players._id': userId,
+      gameOver: false
+    },  // innovation
   ]})
+}
+
+Game.findWaitingByUserId = async function(userId) {
+  return await gameCollection.find({ waiting: userId })
+}
+
+Game.gameOver = async function(gameId) {
+  return await writeMutex.dispatch(async () => {
+    await gameCollection.updateOne(
+      { _id: gameId },
+      { $set: { gameOver: true } },
+    )
+  })
 }
 
 Game.saveResponses = async function(gameId, responses) {

@@ -120,6 +120,7 @@ async function _loadGameFromReq(req) {
 async function _sendNotifications(res, game) {
   for (const player of game.getPlayerAll()) {
     if (game.checkGameIsOver()) {
+      await db.game.gameOver(game._id)
       _notify(game, player._id, 'Game Over!')
     }
 
