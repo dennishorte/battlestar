@@ -1405,7 +1405,7 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
     const choices = this
       .getCardsByZone(player, 'forecast')
       .filter(other => other.getAge() <= card.getAge())
-    if (choices) {
+    if (choices.length > 0) {
       this.mLog({
         template: '{player} may promote a card from forecast',
         args: { player },
