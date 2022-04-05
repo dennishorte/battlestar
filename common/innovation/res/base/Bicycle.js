@@ -23,11 +23,12 @@ function Card() {
           template: '{player} swaps all cards in hand and score pile',
           args: { player }
         })
+
         const hand = game.getZoneByPlayer(player, 'hand')
         const score = game.getZoneByPlayer(player, 'score')
-        const tmp = hand.cards()
-        hand._cards = score.cards()
-        score._cards = tmp
+
+        hand.cards().forEach(card => game.mMoveCard(card, score))
+        score.cards().forEach(card => game.mMoveCard(card, hand))
       }
       else {
         game.mLogDoNothing(player)
