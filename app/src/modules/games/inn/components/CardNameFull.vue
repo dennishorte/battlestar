@@ -1,6 +1,6 @@
 <template>
   <div class="card-name-full">
-    <div class="card-name-full-inner">
+    <div class="card-name-full-inner" @click="closeup">
       <div class="card-name" :class="card.color">{{ name }}</div>
       <CardSquare :card="card" />
     </div>
@@ -27,6 +27,14 @@ export default {
   computed: {
     card() {
       return this.game.getCardByName(this.name)
+    },
+  },
+
+  methods: {
+    closeup() {
+      this.game.ui.modals.cardsViewer.title = ''
+      this.game.ui.modals.cardsViewer.cards = [this.game.getCardByName(this.name)]
+      this.$bvModal.show('cards-viewer-modal')
     },
   },
 }
