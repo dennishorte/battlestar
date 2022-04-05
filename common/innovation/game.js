@@ -214,34 +214,11 @@ Game.prototype.run = function() {
 Game.prototype.undo = function() {
   this.usedUndo = true
 
-  // First, see if there is response from this user to the current request key.
-  if (this._undoMostRecent(this.key)) {
-    return
-  }
-
-  const lastKey = this.responses[this.responses.length - 1].key
-
-  // Second, see if there is a response from this user to the most recent response's key.
-  // Sometimes this is the same as above, but usually it is different.
-  if (this._undoMostRecent(lastKey)) {
-    return
-  }
-
   // Undo all responses to the last submitted key.
-  const latest = util.array.takeRightWhile(this.responses, resp => resp.key === lastKey)
-  for (let i = 0; i < latest.length; i++) {
+  while (!this.responses[this.responses.length - 1].isUserResponse) {
     this.responses.pop()
   }
-}
-
-Game.prototype._undoMostRecent = function(key) {
-  const recentResponses = util.array.takeRightWhile(this.responses, resp => resp.key === key)
-  const recentMatch = recentResponses.find(resp => resp.actor === this.viewerName)
-  if (recentMatch) {
-    const index = this.responses.findIndex(resp => resp === recentMatch)
-    this.responses.splice(index, 1)
-    return true
-  }
+  this.responses.pop()
 }
 
 
