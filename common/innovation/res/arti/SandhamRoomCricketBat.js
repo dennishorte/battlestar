@@ -15,7 +15,19 @@ function Card() {
     `Draw and reveal a {6}. If it is red, claim an achievement, ignoring eligibility.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 6))
+      if (card.color === 'red') {
+        game.mLog({ template: 'Card is red' })
+        const choices = game.getAvailableAchievementsRaw(player)
+        game.aChooseAndAchieve(player, choices)
+      }
+      else {
+        game.mLog({ template: 'Card is not red' })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
