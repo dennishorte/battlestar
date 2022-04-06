@@ -32,7 +32,7 @@ function Card() {
     },
 
     (game, player) => {
-      if (game.state.dogmaInfo.masonryMonumentPlayer) {
+      if (game.state.dogmaInfo.masonryMonumentPlayer === player) {
         game.aClaimAchievement(game.state.dogmaInfo.masonryMonumentPlayer, { name: 'Monument' })
       }
       else {
