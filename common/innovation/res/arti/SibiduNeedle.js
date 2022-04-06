@@ -15,7 +15,22 @@ function Card() {
     `Draw and reveal a {1}. If you have a top card of matching color and value to the drawn card, score the drawn card and repeat this effect.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      while (true) {
+        const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
+        if (card) {
+          const top = game.getTopCard(player, card.color)
+          if (top && top.getAge() === card.getAge()) {
+            game.aScore(player, card)
+          }
+          else {
+            break
+          }
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
