@@ -15,7 +15,19 @@ function Card() {
     `Draw and meld a {3}. Meld your bottom card of the drawn card's color. Execute its non-demand dogma effects. Do not share them.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const card = game.aDrawAndMeld(player, game.getEffectAge(this, 3))
+      if (card) {
+        const cards = game.getCardsByZone(player, card.color)
+        const toMeld = cards[cards.length - 1]
+        const melded = game.aMeld(player, toMeld)
+        if (melded) {
+          game.aCardEffects(player, melded, 'dogma')
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
