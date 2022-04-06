@@ -15,7 +15,20 @@ function Card() {
     `Tuck a card from your hand. If you do, splay up its color, and then tuck all cards from your score pile of that color.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const tucked = game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'))
+      if (tucked && tucked.length > 0) {
+        const color = tucked[0].color
+        game.aSplay(player, color, 'up')
+
+        const toTuck = game
+          .getCardsByZone(player, 'score')
+          .filter(card => card.color === color)
+        game.aTuckMany(player, toTuck)
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
