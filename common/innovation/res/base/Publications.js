@@ -32,7 +32,12 @@ function Card() {
       let remaining = zone.cards()
       let position = 0
       while (true) {
-        const card = game.aChooseCard(player, remaining.concat(['auto']))
+        const posString = position === 0 ? 'top' : 'top + ' + position
+        const card = game.aChooseCard(
+          player,
+          remaining.concat(['auto']),
+          { title: `Choose card you want at ${posString}` },
+        )
 
         if (card === 'auto') {
           game.mLog({
@@ -47,7 +52,6 @@ function Card() {
           zone, position
         )
 
-        const posString = position === 0 ? 'top' : 'top + ' + position
         game.mLog({
           template: `{player} moves {card} to ${posString}`,
           args: { player, card }
