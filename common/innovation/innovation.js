@@ -2040,6 +2040,12 @@ Innovation.prototype.getSplayByCard = function(card) {
   return card === cards[0] ? 'top' : zone.splay
 }
 
+Innovation.prototype.getBottomCard = function(player, color) {
+  return this
+    .getCardsByZone(player, color)
+    .slice(-1)[0]
+}
+
 Innovation.prototype.getTopCard = function(player, color) {
   return this
     .getZoneByPlayer(player, color)
