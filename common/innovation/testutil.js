@@ -297,6 +297,11 @@ TestUtil.testBoard = function(game, state) {
     real[player.name] = realBoard
   }
 
+  if (state.exile) {
+    expected.exile = state.exile.sort()
+    real.exile = game.getZoneById('exile').cards().map(c => c.name).sort()
+  }
+
   expect(real).toStrictEqual(expected)
 }
 

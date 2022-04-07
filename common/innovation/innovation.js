@@ -2258,6 +2258,9 @@ Innovation.prototype.mActed = function(player) {
     this.state.shared = true
   }
 
+  // Special handling for "The Big Bang"
+  this.state.dogmaInfo.theBigBangChange = true
+
   this.mSplayCheck()
 
   // Any time someone acts, there is the possibility that they should claim
