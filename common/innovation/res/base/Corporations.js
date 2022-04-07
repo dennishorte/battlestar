@@ -13,7 +13,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `I demand you transfer a top non-green card with a {f} from your board to my score pile! If you do, draw and meld an {8}!`,
-    `Draw and meld and {8}`
+    `Draw and meld an {8}`
   ]
 
   this.dogmaImpl = [
