@@ -16,7 +16,20 @@ function Card() {
     `Score a card from your hand with no {k}.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const choices = game
+        .getTopCards(player)
+        .filter(card => !card.checkHasBiscuit('k'))
+      game.aChooseAndReturn(player, choices)
+    },
+    (game, player) => {
+      const choices = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => !card.checkHasBiscuit('k'))
+      game.aChooseAndScore(player, choices)
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
