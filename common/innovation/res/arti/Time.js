@@ -15,7 +15,24 @@ function Card() {
     `I compel you to transfer a non-yellow card with a {i} from your board to my board! If you do, repeat this effect!`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      while (true) {
+        const choices = game
+          .getTopCards(player)
+          .filter(card => card.color !== 'yellow' && card.checkHasBiscuit('i'))
+        const card = game.aChooseCard(player, choices)
+        if (card) {
+          game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+          continue
+        }
+        else {
+          game.mLog({ template: 'No card was transferred' })
+          break
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
