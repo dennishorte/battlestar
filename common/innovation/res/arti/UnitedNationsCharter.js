@@ -16,7 +16,28 @@ function Card() {
     `If you have a top card on your board with a demand effect, draw a {0}.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const toTransfer = game
+        .getTopCards(player)
+        .filter(card => card.checkHasDemand())
+      game.aTransferMany(player, toTransfer, game.getZoneByPlayer(leader, 'score'))
+    },
+
+    (game, player) => {
+      const matches = game
+        .getTopCards(player)
+        .filter(card => card.checkHasDemand())
+        .length > 0
+
+      if (matches) {
+        game.aDraw(player, { age: game.getEffectAge(this, 10) })
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
