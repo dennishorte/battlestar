@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../game.js')
 
 function Card() {
   this.id = `Where's Waldo`  // Card names are unique in Innovation
@@ -15,7 +16,14 @@ function Card() {
     `You win.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      throw new GameOverEvent({
+        player,
+        reason: this.name
+      })
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
