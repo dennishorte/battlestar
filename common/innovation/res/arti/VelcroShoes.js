@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../game.js')
 
 function Card() {
   this.id = `Velcro Shoes`  // Card names are unique in Innovation
@@ -15,7 +16,33 @@ function Card() {
     `I compel you to transfer a {9} from your hand to my hand! If you do not, transfer a {9} from your score pile to my score pile! If you do neither, I win!`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const hand = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => card.getAge() === 9)
+      const transferred = game.aChooseAndTransfer(player, hand, game.getZoneByPlayer(leader, 'hand'))
+
+      if (transferred && transferred.length > 0) {
+        game.mLog({ template: 'A card was transferred' })
+        return
+      }
+
+      const score = game
+        .getCardsByZone(player, 'score')
+        .filter(card => card.getAge() === 9)
+      const st = game.aChooseAndTransfer(player, score, game.getZoneByPlayer(leader, 'score'))
+      if (st && st.length > 0) {
+        game.mLog({ template: 'A card was transferred' })
+        return
+      }
+
+      throw new GameOverEvent({
+        player: leader,
+        reason: this.name
+      })
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
