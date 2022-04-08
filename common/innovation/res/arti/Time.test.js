@@ -13,7 +13,6 @@ describe("Time", () => {
       micah: {
         green: ['Databases', 'Self Service'],
         purple: ['Lighting'],
-
       },
     })
 

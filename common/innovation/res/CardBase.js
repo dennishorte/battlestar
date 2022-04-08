@@ -42,6 +42,12 @@ CardBase.prototype.checkEchoIsVisible = function(splay) {
   return this.checkBiscuitIsVisible('&', splay)
 }
 
+CardBase.prototype.checkHasDemand = function() {
+  return this
+    .dogma
+    .some(text => text.startsWith('I demand') || text.startsWith('I compel'))
+}
+
 CardBase.prototype.checkInspireIsVisible = function(splay) {
   return this.checkBiscuitIsVisible('*', splay)
 }

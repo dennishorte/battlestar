@@ -16,7 +16,22 @@ function Card() {
     `Score a top, non-blue card from your board with a demand effect.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const toReturn = game
+        .getTopCards(player)
+        .filter(card => card.checkHasDemand())
+      game.aReturnMany(player, toReturn)
+    },
+
+    (game, player) => {
+      const choices = game
+        .getTopCards(player)
+        .filter(card => card.checkHasDemand())
+        .filter(card => card.color !== 'blue')
+      game.aChooseAndScore(player, choices)
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
