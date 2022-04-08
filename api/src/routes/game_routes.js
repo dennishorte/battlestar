@@ -66,22 +66,12 @@ async function _notify(game, userId, msg) {
   const sendResult = slack.sendMessage(userId, message)
 }
 
-Game.saveFull = async function(req, res) {
-  await db.game.saveResponses(req.body.gameId, req.body.responses)
-  const game = await _loadGameFromReq(req)
-  game.run()
-  await _sendNotifications(res, game)
-}
-
-Game.saveResponse = async function(req, res) {
-  const game = await _loadGameFromReq(req)
-
+async function _testAndSave(game, res, evalFunc) {
   // Test that the response is valid.
   let valid = false
   let message = ''
   try {
-    game.run()
-    game.respondToInputRequest(req.body.response)
+    evalFunc(game)
     valid = true
   }
   catch (e) {
@@ -94,7 +84,8 @@ Game.saveResponse = async function(req, res) {
   }
 
   if (valid) {
-    await db.game.saveResponses(game._id, game.responses)
+    // await db.game.saveResponses(game._id, game.responses, game.waiting)
+    await db.game.save(game)
     await _sendNotifications(res, game)
   }
   else {
@@ -103,7 +94,23 @@ Game.saveResponse = async function(req, res) {
       message,
     })
   }
+}
 
+Game.saveFull = async function(req, res) {
+  // await db.game.saveResponses(req.body.gameId, req.body.responses)
+  const game = await _loadGameFromReq(req)
+  game.responses = req.body.responses
+  return _testAndSave(game, res, (game) => {
+    game.run()
+  })
+}
+
+Game.saveResponse = async function(req, res) {
+  const game = await _loadGameFromReq(req)
+  return _testAndSave(game, res, (game) => {
+    game.run()
+    game.respondToInputRequest(req.body.response)
+  })
 }
 
 async function _loadGameFromReq(req) {

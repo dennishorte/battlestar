@@ -113,6 +113,15 @@ Game.prototype.checkPlayerHasActionWaiting = function(player) {
   return !!this.getWaiting(player)
 }
 
+Game.prototype.getPlayerNamesWaiting = function() {
+  if (!this.waiting) {
+    return []
+  }
+  else {
+    return this.waiting.selectors.map(s => s.actor)
+  }
+}
+
 Game.prototype.getWaiting = function(player) {
   if (!this.waiting) {
     return undefined
