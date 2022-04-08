@@ -75,7 +75,7 @@ export default {
     },
 
     waitingForViewer(data) {
-      return data.waiting.includes(this.$store.state.auth.user.name)
+      return (data.waiting || []).includes(this.$store.state.auth.user.name)
     },
   },
 
