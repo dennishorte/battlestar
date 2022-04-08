@@ -24,6 +24,10 @@
         {{ gameAge(row.item) }}
       </template>
 
+      <template #cell(waiting)="row">
+        {{ waitingForViewer(row.item) ? '\u231B' : '' }}
+      </template>
+
     </b-table>
 
   </div>
@@ -36,7 +40,7 @@ export default {
   name: 'MyLobbies',
   data() {
     return {
-      fields: ['game', 'name', 'age'],
+      fields: ['game', 'name', 'age', 'waiting'],
       games: [],
     }
   },
@@ -68,6 +72,10 @@ export default {
 
     gameName(data) {
       return data.settings ? data.settings.name : data.name
+    },
+
+    waitingForViewer(data) {
+      return data.waiting.includes(this.$store.state.auth.user.name)
     },
   },
 
