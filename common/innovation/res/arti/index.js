@@ -55,7 +55,7 @@ const cards = [
   require('./SandhamRoomCricketBat.js'),
   require('./AlmiraQueenoftheCastle.js'),
   require('./FrigateConstitution.js'),
-  require('./USDelcarationofIndependence.js'),
+  require('./USDeclarationofIndependence.js'),
   require('./StampAct.js'),
   require('./PrideandPrejudice.js'),
   require('./TheWealthofNations.js'),
