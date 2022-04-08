@@ -58,7 +58,7 @@ const cards = [
   require('./USDelcarationofIndependence.js'),
   require('./StampAct.js'),
   require('./PrideandPrejudice.js'),
-  require('./TheWeathofNations.js'),
+  require('./TheWealthofNations.js'),
   require('./ButtonwoodAgreement.js'),
   require('./KilogramoftheArchives.js'),
   require('./PuffingBilly.js'),
