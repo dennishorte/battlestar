@@ -19,6 +19,7 @@ function Card() {
     (game, player, { leader }) => {
       const choices = game
         .getTopCards(player)
+        .filter(card => card.checkHasBiscuit('s'))
         .filter(card => {
           const leaderCard = game.getTopCard(leader, card.color)
           if (!leaderCard) {
