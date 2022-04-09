@@ -10,6 +10,11 @@
     />
 
     <CardPile
+      :zone="game.getZoneByPlayer(player, 'artifact')"
+      :expanded="true"
+    />
+
+    <CardPile
       :zone="game.getZoneByPlayer(player, 'achievements')"
       :header="achievementsHeader(player)"
       :key="game.responses.length"
