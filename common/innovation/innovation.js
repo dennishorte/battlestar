@@ -643,7 +643,7 @@ Innovation.prototype.aChooseAge = function(player, ages, opts={}) {
   }
 }
 
-Innovation.prototype.aChooseCard = function(player, cards, opts) {
+Innovation.prototype.aChooseCard = function(player, cards, opts={}) {
   if (cards.length === 0) {
     this.mLogNoEffect()
     return undefined
