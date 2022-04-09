@@ -32,11 +32,11 @@ function Card() {
       let remaining = zone.cards()
       let position = 0
       while (true) {
-        const posString = position === 0 ? 'top' : 'top + ' + position
+        const posString = position === 0 ? 'top' : 'top+' + position
         const card = game.aChooseCard(
           player,
           remaining.concat(['auto']),
-          { title: `Choose card you want at ${posString}` },
+          { title: `Choose the card you want at ${posString} at the end of this action.` },
         )
 
         if (card === 'auto') {

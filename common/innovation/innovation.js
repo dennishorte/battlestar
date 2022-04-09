@@ -649,10 +649,14 @@ Innovation.prototype.aChooseCard = function(player, cards, opts) {
     return undefined
   }
 
+  if (!opts.title) {
+    opts.title = 'Choose a Card'
+  }
+
   const cardNames = this.aChoose(
     player,
     cards.map(c => c.id || c),
-    { ...opts, title: 'Choose a Card' }
+    opts
   )
 
   if (cardNames.length === 0) {
