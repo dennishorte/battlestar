@@ -815,6 +815,7 @@ function ChooseAndFactory(manyFuncName, numArgs) {
 
 Innovation.prototype.aChooseAndMeld = ChooseAndFactory('aMeldMany', 2)
 Innovation.prototype.aChooseAndReturn = ChooseAndFactory('aReturnMany', 2)
+Innovation.prototype.aChooseAndReveal = ChooseAndFactory('aRevealMany', 2)
 Innovation.prototype.aChooseAndScore = ChooseAndFactory('aScoreMany', 2)
 Innovation.prototype.aChooseAndTransfer = ChooseAndFactory('aTransferMany', 3)
 Innovation.prototype.aChooseAndTuck = ChooseAndFactory('aTuckMany', 2)
@@ -1602,6 +1603,7 @@ function ManyFactory(baseFuncName, extraArgCount=0) {
 Innovation.prototype.aMeldMany = ManyFactory('aMeld')
 Innovation.prototype.aRemoveMany = ManyFactory('aRemove')
 Innovation.prototype.aReturnMany = ManyFactory('aReturn')
+Innovation.prototype.aRevealMany = ManyFactory('mReveal')
 Innovation.prototype.aScoreMany = ManyFactory('aScore')
 Innovation.prototype.aTransferMany = ManyFactory('aTransfer', 1)
 Innovation.prototype.aTuckMany = ManyFactory('aTuck')

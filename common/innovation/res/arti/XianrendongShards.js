@@ -15,7 +15,29 @@ function Card() {
     `Reveal three cards from your hand. Score two, then tuck the other. If the scored cards were the same color, draw three {1}s.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aChooseAndReveal(
+        player,
+        game.getCardsByZone(player, 'hand'),
+        { count: 3 }
+      )
+
+      if (cards) {
+        const scored = game.aChooseAndScore(player, cards, { count: 2 })
+        const remaining = cards.filter(card => !scored.includes(card))
+        if (remaining.length > 0) {
+          game.aTuck(player, remaining[0])
+        }
+
+        if (scored.length == 2 && scored[0].color === scored[1].color) {
+          game.aDraw(player, { age: game.getEffectAge(this, 1) })
+          game.aDraw(player, { age: game.getEffectAge(this, 1) })
+          game.aDraw(player, { age: game.getEffectAge(this, 1) })
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
