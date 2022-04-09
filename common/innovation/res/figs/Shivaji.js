@@ -30,7 +30,7 @@ function Card() {
       trigger: 'achieve',
       triggerAll: true,
       kind: 'would-instead',
-      matches: (game, player) => {
+      matches: (game, player, { card }) => {
         return (
           player === game.getPlayerByCard(this)
           && game.checkAchievementEligibility(player, card)
