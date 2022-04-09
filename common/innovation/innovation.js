@@ -1351,6 +1351,50 @@ Innovation.prototype._checkCityMeldAchievements = function(player, card) {
   }
 }
 
+Innovation.prototype.aDigArtifact = function(player, age) {
+  if (this.getZoneByDeck('arti', age).cards().length === 0) {
+    this.mLog({
+      template: `Artifacts deck for age ${age} is empty.`
+    })
+    return
+  }
+
+  const card = this.aDraw(player, { age, exp: 'arti' })
+  if (card) {
+    this.mMoveCardTo(card, this.getZoneByPlayer(player, 'artifact'), { player })
+  }
+}
+
+Innovation.prototype._maybeDigArtifact = function(player, card) {
+  if (!this.getExpansionList().includes('arti')) {
+    return
+  }
+
+  // Can only have one artifact on display at a time.
+  if (this.getCardsByZone(player, 'artifact').length > 0) {
+    return
+  }
+
+  const next = this.getCardsByZone(player, card.color)[1]
+
+  // No card underneath, so no artifact dig possible.
+  if (!next) {
+    return
+  }
+
+  // Dig up an artifact if player melded a card of lesser or equal age of the previous top card.
+  if (next.getAge() >= card.getAge()) {
+    this.aDigArtifact(player, next.getAge())
+    return
+  }
+
+  // Dig up an artifact if the melded card has its hex icon in the same position.
+  if (next.biscuits.indexOf('h') === card.biscuits.indexOf('h')) {
+    this.aDigArtifact(player, next.getAge())
+    return
+  }
+}
+
 Innovation.prototype._maybeDrawCity = function(player) {
   if (!this.getExpansionList().includes('city')) {
     return
@@ -1404,6 +1448,7 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
     }
 
     // Dig an artifact
+    this._maybeDigArtifact(player, card)
 
     // Promote a foreshadowed card
     const choices = this

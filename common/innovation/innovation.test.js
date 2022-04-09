@@ -1167,21 +1167,100 @@ describe('Innovation', () => {
       })
     })
 
-    describe.skip('artifacts', () => {
+    describe('artifacts', () => {
       test('hex position matching', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+        t.setBoard(game, {
+          dennis: {
+            red: ['Archery'],
+            hand: ['Road Building'],
+          },
+          decks: {
+            arti: {
+              1: ['Holmegaard Bows']
+            }
+          }
+        })
 
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Road Building')
+
+        t.testBoard(game, {
+          dennis: {
+            artifact: ['Holmegaard Bows'],
+            red: ['Road Building', 'Archery'],
+          },
+        })
       })
 
       test('same age', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+        t.setBoard(game, {
+          dennis: {
+            green: ['Clothing'],
+            hand: ['Sailing'],
+          },
+          decks: {
+            arti: {
+              1: ['Holmegaard Bows']
+            }
+          }
+        })
 
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Sailing')
+
+        t.testBoard(game, {
+          dennis: {
+            artifact: ['Holmegaard Bows'],
+            green: ['Sailing', 'Clothing'],
+          },
+        })
       })
 
       test('lower age', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+        t.setBoard(game, {
+          dennis: {
+            green: ['Mapmaking'],
+            hand: ['Sailing'],
+          },
+          decks: {
+            arti: {
+              2: ['Holy Grail'],
+            }
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Sailing')
+
+        t.testBoard(game, {
+          dennis: {
+            artifact: ['Holy Grail'],
+            green: ['Sailing', 'Mapmaking'],
+          },
+        })
 
       })
 
       test('higher age (no trigger)', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+        t.setBoard(game, {
+          dennis: {
+            green: ['Clothing'],
+            hand: ['Currency'],
+          },
+        })
 
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Currency')
+
+        t.testBoard(game, {
+          dennis: {
+            green: ['Currency', 'Clothing'],
+          },
+        })
       })
     })
   })
