@@ -764,7 +764,7 @@ Innovation.prototype.aChooseAndAchieve = function(player, choices, opts={}) {
     this.mLogDoNothing(player)
   }
   else {
-    this.aAchieveAction(player, selected[0], opts)
+    this.aAchieveAction(player, selected[0], { ...opts, nonAction: true })
   }
 }
 
