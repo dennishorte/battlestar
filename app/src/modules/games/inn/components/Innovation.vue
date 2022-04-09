@@ -171,7 +171,11 @@ export default {
     }.bind(this),
 
     this.game.run()
-  }
+  },
+
+  mounted() {
+    document.title = this.game.settings.name || 'Game Center'
+  },
 }
 </script>
 
