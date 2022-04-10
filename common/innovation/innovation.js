@@ -886,7 +886,11 @@ Innovation.prototype.aClaimAchievement = function(player, opts={}) {
   this.mAchieve(player, card)
 
   if (opts.isStandard && this.getExpansionList().includes('figs')) {
-    for (const opp of this.getPlayerOpponents(player)) {
+    const others = this
+      .getPlayersStarting(player)
+      .filter(other => !this.checkSameTeam(player, other))
+
+    for (const opp of others) {
       this.aDraw(opp, { exp: 'figs' })
     }
   }
