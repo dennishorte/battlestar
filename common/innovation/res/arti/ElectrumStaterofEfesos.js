@@ -29,6 +29,7 @@ function Card() {
         else {
           game.mLog({
             template: '{player} has no top cards of matching color',
+            args: { player }
           })
           game.aMeld(player, card)
         }
