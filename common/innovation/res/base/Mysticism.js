@@ -24,7 +24,7 @@ function Card() {
 
       if (boardColors.includes(card.color)) {
         game.aMeld(player, card)
-        game.aDraw(player, game.getEffectAge(this, 1))
+        game.aDraw(player, { age: game.getEffectAge(this, 1) })
       }
     }
   ]
