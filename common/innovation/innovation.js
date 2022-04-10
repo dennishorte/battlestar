@@ -3081,6 +3081,11 @@ Innovation.prototype._generateActionChoicesMeld = function() {
     .getZoneByPlayer(player, 'hand')
     .cards()
     .map(c => c.id)
+
+  this
+    .getCardsByZone(player, 'artifact')
+    .forEach(card => cards.push(card.id))
+
   return {
     title: 'Meld',
     choices: cards,

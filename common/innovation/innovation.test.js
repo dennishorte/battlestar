@@ -1262,6 +1262,25 @@ describe('Innovation', () => {
           },
         })
       })
+
+      test('can meld artifact on display', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+        t.setBoard(game, {
+          dennis: {
+            artifact: ['Holmegaard Bows'],
+          },
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'skip')
+        const request3 = t.choose(game, request2, 'Meld.Holmegaard Bows')
+
+        t.testBoard(game, {
+          dennis: {
+            red: ['Holmegaard Bows'],
+          },
+        })
+      })
     })
   })
 
