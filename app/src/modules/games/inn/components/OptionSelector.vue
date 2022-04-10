@@ -75,9 +75,16 @@ export default {
       return selector.validate(this.selector, this.selection).valid
     },
 
+    max() {
+      selector.minMax(this.selector).max
+    },
+
+    min() {
+      selector.minMax(this.selector).min
+    },
+
     rangeString() {
-      const { min, max } = selector.minMax(this.selector)
-      if (min === max) {
+      if (this.min === this.max) {
         return `[${min}]`
       }
       else {
