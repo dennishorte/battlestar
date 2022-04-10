@@ -76,19 +76,19 @@ export default {
     },
 
     max() {
-      selector.minMax(this.selector).max
+      return selector.minMax(this.selector).max
     },
 
     min() {
-      selector.minMax(this.selector).min
+      return selector.minMax(this.selector).min
     },
 
     rangeString() {
       if (this.min === this.max) {
-        return `[${min}]`
+        return `[${this.min}]`
       }
       else {
-        return `[${min}..${max}]`
+        return `[${this.min}..${this.max}]`
       }
     },
 
