@@ -107,6 +107,11 @@ const cards = [
 ].map(f => new f())
 
 const achievements = [
+  require('./achievements/Timbuktu.js'),
+  require('./achievements/ComplexNumbers.js'),
+  require('./achievements/NewtonWickinsTelescope.js'),
+  require('./achievements/ChingShih.js'),
+  require('./achievements/SafetyPin.js'),
 ].map(f => new f())
 
 const byName = {}
