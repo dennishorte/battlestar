@@ -6,10 +6,12 @@
 import CardBiscuit from './CardBiscuit'
 import CardNameFull from './CardNameFull'
 import CardSquareDetails from './CardSquareDetails'
+import PlayerName from './PlayerName'
 
 const biscuitMatcher = /[{](.)[}]/g
 const cardMatcher = /[*]([^-]+)-([0-9]+)[*]/g
 const cardNameMatcher = /card[(]([^()]+)[)]/g
+const playerMatcher = /player[(]([^()]+)[)]/g
 
 export default {
   name: 'CardText',
@@ -31,6 +33,9 @@ export default {
         .replaceAll(cardMatcher, (match, expansion, age) => {
           return `<CardSquareDetails name="${age}" expansion="${expansion}" />`
         })
+        .replaceAll(playerMatcher, (match, name) => {
+          return `<PlayerName name="${name}" />`
+        })
     },
 
     processedText() {
@@ -40,6 +45,7 @@ export default {
           CardBiscuit,
           CardNameFull,
           CardSquareDetails,
+          PlayerName,
         },
       }
     },

@@ -41,9 +41,20 @@ export default {
           continue
         }
 
+        const text = this.convertLogMessage(entry)
+        const classes = entry.classes || []
+
+        if (
+          text.includes(' chooses ')
+          || text.startsWith('Demands will be made of')
+          || text.startsWith('Effects will share with')
+        ) {
+          classes.push('faded-text')
+        }
+
         output.push({
-          text: this.convertLogMessage(entry),
-          classes: entry.classes,
+          text,
+          classes,
           indent: Math.max(0, indent - 1),
         })
       }
@@ -66,6 +77,10 @@ export default {
 
         if (arg === 'card' && !value.value.startsWith('*')) {
           replacement = `card(${value.value})`
+        }
+
+        else if (arg === 'player') {
+          replacement = `player(${value.value})`
         }
 
         msg = msg.replace(`{${arg}}`, replacement)
@@ -118,5 +133,15 @@ export default {
 .action-header {
   font-weight: bold;
   margin-top: .5em;
+}
+
+.faded-text {
+  font-weight: 200;
+  color: lightgray;
+}
+
+.card-effect {
+  background-color: lightgray;
+  border-radius: .5em;
 }
 </style>

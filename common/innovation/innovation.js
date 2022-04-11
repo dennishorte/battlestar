@@ -562,6 +562,7 @@ Innovation.prototype.aCardEffects = function(
         if (compel || demand || share || owner) {
           this.mLog({
             template: `{player}, {card}: ${effectText}`,
+            classes: ['card-effect'],
             args: { player: actor, card }
           })
           this.mLogIndent()
@@ -992,6 +993,21 @@ Innovation.prototype.aDogmaHelper = function(player, card, opts) {
     leader: this.getPlayerCurrent(),
     endorsed: opts.endorsed,
   }
+
+  if (sharing.length > 0) {
+    this.mLog({
+      template: 'Effects will share with {players}.',
+      args: { players: sharing },
+    })
+  }
+
+  if (demanding.length > 0) {
+    this.mLog({
+      template: 'Demands will be made of {players}.',
+      args: { players: demanding },
+    })
+  }
+
   for (const ecard of finalEffects) {
     this.aCardEffects(null, ecard, 'echo', effectOpts)
 
@@ -2760,7 +2776,14 @@ Innovation.prototype._cardLogData = function(card) {
 
 Innovation.prototype.utilEnrichLogArgs = function(msg) {
   for (const key of Object.keys(msg.args)) {
-    if (key.startsWith('player')) {
+    if (key === 'players') {
+      const players = msg.args[key]
+      msg.args[key] = {
+        value: players.map(p => p.name).join(', '),
+        classes: ['player-names'],
+      }
+    }
+    else if (key.startsWith('player')) {
       const player = msg.args[key]
       msg.args[key] = {
         value: player.name,
