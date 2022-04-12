@@ -31,7 +31,10 @@ function Card() {
           .map(({ player, card }) => ({ player, age: card.getAge() }))
           .sort((l, r) => r.age - l.age)
 
-        if (orderedPlayers.length > 0 && orderedPlayers[0].age > orderedPlayers[1].age) {
+        if (
+          orderedPlayers.length === 1
+          || (orderedPlayers.length > 1 && orderedPlayers[0].age > orderedPlayers[1].age)
+        ) {
           game.aClaimAchievement(orderedPlayers[0].player, card)
 
         }
