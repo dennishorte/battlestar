@@ -12,12 +12,15 @@ describe('The Pirate Code', () => {
         green: ['Navigation'],
       },
       micah: {
-        score: ['The Wheel', 'Calendar', 'Engineering'],
+        score: ['The Wheel', 'Calendar', 'Engineering', 'Physics'],
       }
     })
 
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.The Pirate Code')
+
+    t.testChoices(request2, ['The Wheel', 'Calendar', 'Engineering'])
+
     const request3 = t.choose(game, request2, 'The Wheel', 'Calendar')
     const request4 = t.choose(game, request3, 'auto')
 
@@ -28,7 +31,7 @@ describe('The Pirate Code', () => {
         score: ['The Wheel', 'Calendar', 'Navigation'],
       },
       micah: {
-        score: ['Engineering'],
+        score: ['Engineering', 'Physics'],
       },
     })
   })

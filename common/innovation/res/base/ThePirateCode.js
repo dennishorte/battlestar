@@ -18,7 +18,9 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      const choices = game.getCardsByZone(player, 'score')
+      const choices = game
+        .getCardsByZone(player, 'score')
+        .filter(card => card.getAge() <= 4)
       const target = game.getZoneByPlayer(leader, 'score')
       const transferred = game.aChooseAndTransfer(player, choices, target, { count: 2 })
       if (transferred && transferred.length > 0) {
