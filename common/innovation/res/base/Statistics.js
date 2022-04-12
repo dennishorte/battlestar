@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you transferr all the highest cards in your score pile to your hand.`,
+    `I demand you transfer all the highest cards in your score pile to your hand.`,
     `You may splay your yellow cards right.`
   ]
 
