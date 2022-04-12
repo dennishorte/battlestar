@@ -121,7 +121,10 @@ export default {
 
 .player-turn-start {
   font-weight: bold;
+  font-size: 1.2em;
   margin-top: 1em;
+  background-color: lightgreen;
+  border-radius: .2em;
 }
 .player-turn-start::before {
   content: "—";
