@@ -27,7 +27,7 @@ function Card() {
         const toRemove = game
           .getPlayerAll()
           .flatMap(player => zones.flatMap(name => game.getCardsByZone(player, name)))
-        game.aRemoveMany(player, toRemove)
+        game.aRemoveMany(player, toRemove, { ordered: true })
         game.mLogOutdent()
 
         return '__STOP__'

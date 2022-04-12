@@ -28,9 +28,8 @@ describe('Fission', () => {
 
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Fission')
-    const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(request2)
     t.testBoard(game, {
       dennis: {
         achievements: ['The Wheel'],
