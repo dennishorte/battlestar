@@ -31,11 +31,6 @@ describe('Bartolomeo Cristofori', () => {
         score: ['Astronomy']
       },
       achievements: ['The Wheel', 'Enterprise', 'The Pirate Code', 'Vaccination', 'Lighting'],
-      decks: {
-        figs: {
-          1: ['Homer']
-        }
-      }
     })
 
     const request1 = game.run()
@@ -53,9 +48,6 @@ describe('Bartolomeo Cristofori', () => {
         score: ['Astronomy'],
         achievements: ['The Pirate Code'],
       },
-      micah: {
-        hand: ['Homer']
-      }
     })
   })
 
