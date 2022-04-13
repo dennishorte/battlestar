@@ -15,8 +15,20 @@ function Card() {
     `I demand you return all cards from your score pile of value matching any of your top cards!`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const topValues = game
+        .getTopCards(player)
+        .map(card => card.getAge())
+      const toReturn = game
+        .getCardsByZone(player, 'score')
+        .filter(card => topValues.includes(card.getAge()))
+      game.aReturnMany(player, toReturn)
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
