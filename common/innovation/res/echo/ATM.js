@@ -16,8 +16,26 @@ function Card() {
     `You may splay your purple cards up.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const choices = game
+        .getTopCards(player)
+        .filter(card => card.color !== 'yellow')
+        .filter(card => !card.checkHasBiscuit('c'))
+      const card = game.aChooseCard(player, choices)
+      if (card) {
+        game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+      }
+    },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['purple'], 'up')
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    const age = game.aChooseAge(player)
+    game.aDrawAndScore(player, age)
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
