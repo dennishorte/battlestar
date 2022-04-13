@@ -937,7 +937,7 @@ describe('Innovation', () => {
       expect(t.getChoices(result1, 'Endorse')).toStrictEqual([])
     })
 
-    test.only('triggers dogma karmas', () => {
+    test('triggers dogma karmas', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs', 'city'] })
       t.setBoard(game, {
         dennis: {
