@@ -3,6 +3,7 @@ const CardBase = require(`../../CardBase.js`)
 function Card() {
   this.id = `Newton-Wickins Telescope`  // Card names are unique in Innovation
   this.name = `Newton-Wickins Telescope`
+  this.shortName = 'tele'
   this.color = `purple`
   this.age = 5
   this.expansion = `arti`

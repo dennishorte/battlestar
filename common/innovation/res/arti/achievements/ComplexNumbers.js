@@ -3,6 +3,7 @@ const CardBase = require(`../../CardBase.js`)
 function Card() {
   this.id = `Complex Numbers`  // Card names are unique in Innovation
   this.name = `Complex Numbers`
+  this.shortName = 'cplx'
   this.color = `blue`
   this.age = 4
   this.expansion = `arti`
