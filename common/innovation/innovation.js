@@ -624,11 +624,11 @@ Innovation.prototype.aChoose = function(player, choices, opts={}) {
     return []
   }
   else {
-    const choice = selected.join(', ')
-    this.mLog({
-      template: '{player} chooses {choice}',
-      args: { player, choice }
-    })
+    /* const choice = selected.join(', ')
+     * this.mLog({
+     *   template: '{player} chooses {choice}',
+     *   args: { player, choice }
+     * }) */
     return selected
   }
 
