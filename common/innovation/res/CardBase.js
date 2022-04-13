@@ -116,6 +116,28 @@ CardBase.prototype.getBiscuits = function(splay) {
   }
 }
 
+CardBase.prototype.getBonuses = function() {
+  const rx = /([ab1-9])/g
+  const matches = this
+    .biscuits
+    .match(rx)
+
+  if (!matches) {
+    return []
+  }
+
+  else {
+    return matches
+      .map(bonus => {
+        switch (bonus) {
+          case 'a': return 10;
+          case 'b': return 11;
+          default: return parseInt(bonus)
+        }
+      })
+  }
+}
+
 CardBase.prototype.getKarmaInfo = function(trigger) {
   const matches = []
   for (let i = 0; i < this.karma.length; i++) {

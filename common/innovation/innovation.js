@@ -1884,20 +1884,10 @@ Innovation.prototype.getBiscuitsRaw = function(card, splay) {
 }
 
 Innovation.prototype.getBonuses = function(player) {
-  const rx = /([ab1-9])/g
   const bonuses = this
     .utilColors()
-    .map(color => this.getZoneByPlayer(player, color))
-    .flatMap(zone => zone.cards().map(card => this.getBiscuitsRaw(card, zone.splay)))
-    .flatMap(biscuits => biscuits.match(rx))
-    .filter(bonus => bonus !== null)
-    .map(bonus => {
-      switch (bonus) {
-        case 'a': return 10;
-        case 'b': return 11;
-        default: return parseInt(bonus)
-      }
-    })
+    .flatMap(color => this.getCardsByZone(player, color))
+    .flatMap(card => card.getBonuses())
 
   const karmaBonuses = this
     .getInfoByKarmaTrigger(player, 'list-bonuses')

@@ -654,6 +654,19 @@ describe('Innovation', () => {
 
         t.testZone(game, 'achievements', ['The Wheel'])
       })
+
+      test('score includes bonuses', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+        t.setBoard(game, {
+          dennis: {
+            red: ['Plumbing'],
+          }
+        })
+
+        const request1 = game.run()
+
+        expect(game.getScore(t.dennis(game))).toBe(2)
+      })
     })
 
     describe('decree action', () => {
