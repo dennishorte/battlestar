@@ -302,6 +302,11 @@ TestUtil.testBoard = function(game, state) {
     real.exile = game.getZoneById('exile').cards().map(c => c.name).sort()
   }
 
+  if (state.achievements) {
+    expected.achievements = state.achievements.sort()
+    real.achievements = game.getZoneById('achievements').cards().map(c => c.name).sort()
+  }
+
   expect(real).toStrictEqual(expected)
 }
 

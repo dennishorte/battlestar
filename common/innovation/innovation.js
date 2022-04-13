@@ -202,6 +202,7 @@ Innovation.prototype.initializeZonesAchievements = function() {
     if (this.getExpansionList().includes(exp)) {
       for (const ach of res[exp].achievements) {
         zones.achievements._cards.push(ach)
+        ach.home = 'achievements'
       }
     }
   }
@@ -1386,6 +1387,39 @@ Innovation.prototype.aDigArtifact = function(player, age) {
   const card = this.aDraw(player, { age, exp: 'arti' })
   if (card) {
     this.mMoveCardTo(card, this.getZoneByPlayer(player, 'artifact'), { player })
+
+    for (const ach of res['arti'].achievements) {
+      if (ach.getAge() !== card.getAge()) {
+        continue
+      }
+
+      if (this._checkCanSeizeRelic(ach)) {
+        this.aSeizeRelic(player, ach)
+      }
+    }
+  }
+}
+
+Innovation.prototype._checkCanSeizeRelic = function(card) {
+  // A relic can be seized from the achievements pile or from another player's achievements.
+  return card.zone.includes('achievement')
+}
+
+Innovation.prototype.aSeizeRelic = function(player, card) {
+  const choice = this.aChoose(player, [
+    'to my achievements',
+    'to my hand',
+    'do not seize',
+  ], { title: `How would you like to seize ${card.name}` })[0]
+
+  if (choice === 'to my achievements') {
+    this.mMoveCardTo(card, this.getZoneByPlayer(player, 'achievements'), { player })
+  }
+  else if (choice === 'to my hand') {
+    this.mMoveCardTo(card, this.getZoneByPlayer(player, 'hand'), { player })
+  }
+  else {
+    this.mLogDoNothing(player)
   }
 }
 

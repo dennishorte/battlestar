@@ -9,6 +9,7 @@ function Card() {
   this.biscuits = `fhss`
   this.dogmaBiscuit = `s`
   this.isSpecialAchievement = true
+  this.isRelic = true
   this.inspire = ``
   this.echo = ``
   this.karma = []
