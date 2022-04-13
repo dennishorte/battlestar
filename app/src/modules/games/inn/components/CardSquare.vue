@@ -27,17 +27,38 @@ export default {
 
   computed: {
     displayName() {
-      return this.card.isSpecialAchievement ? this.card.shortName : this.card.age.toString()
+      if (this.card.isRelic) {
+        return this.card.getAge().toString() + "'"
+      }
+      else if (this.card.isSpecialAchievement) {
+        return this.card.shortName
+      }
+      else {
+        return this.card.getAge().toString()
+      }
     },
 
     sizeClass() {
-      return this.card.isSpecialAchievement ? 'card-rect' : 'card-square'
+      if (this.card.isRelic) {
+        return 'card-square'
+      }
+      else if (this.card.isSpecialAchievement) {
+        return 'card-rect'
+      }
+      else {
+        return 'card-square'
+      }
     },
   },
 
   methods: {
     closeup() {
-      if (this.card.isSpecialAchievement) {
+      if (this.card.isRelic) {
+        this.game.ui.modals.cardsViewer.title = ''
+        this.game.ui.modals.cardsViewer.cards = [this.card]
+        this.$bvModal.show('cards-viewer-modal')
+      }
+      else if (this.card.isSpecialAchievement) {
         this.game.ui.modals.achievement.card = this.card
         this.$bvModal.show('achievement-modal')
       }
