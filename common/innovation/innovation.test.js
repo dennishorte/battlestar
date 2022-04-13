@@ -936,6 +936,45 @@ describe('Innovation', () => {
       const result1 = game.run()
       expect(t.getChoices(result1, 'Endorse')).toStrictEqual([])
     })
+
+    test.only('triggers dogma karmas', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          yellow: ['Vaccination'],
+          red: ['Athens'],
+          blue: ['Johannes Kepler'],
+          hand: ['Masonry', 'Sailing'],
+        },
+        micah: {
+          score: ['The Wheel'],
+        },
+        decks: {
+          base: {
+            7: ['Lighting'],
+            8: ['Flight', 'Rocketry'],
+          }
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Endorse.yellow')
+      const request3 = t.choose(game, request2, 'Sailing')
+
+      t.testBoard(game, {
+        dennis: {
+          yellow: ['Vaccination'],
+          blue: ['Rocketry', 'Johannes Kepler'],
+          red: ['Flight', 'Athens'],
+          green: ['Sailing'],
+          hand: ['Masonry'],
+        },
+        micah: {
+          purple: ['Lighting'],
+        },
+      })
+
+    })
   })
 
   describe('inspire action', () => {

@@ -964,6 +964,11 @@ Innovation.prototype.aDiscoverBiscuit = function(player, card) {
 }
 
 Innovation.prototype.aDogmaHelper = function(player, card, opts) {
+  const karmaKind = this.aKarma(player, 'dogma', { ...opts, card })
+  if (karmaKind === 'would-instead') {
+    return
+  }
+
   this.state.shared = false
   this.state.couldShare = false
 
@@ -1054,12 +1059,6 @@ Innovation.prototype.aDogma = function(player, card, opts={}) {
   })
 
   this.mLogIndent()
-
-  const karmaKind = this.aKarma(player, 'dogma', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    return
-  }
-
   this.aDogmaHelper(player, card, opts)
   this.mLogOutdent()
 }
