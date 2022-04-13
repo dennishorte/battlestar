@@ -873,7 +873,11 @@ Innovation.prototype.aClaimAchievement = function(player, opts={}) {
     card = this.getCardByName(opts.name)
   }
   else if (opts.age) {
-    card = this.getZoneById('achievements').cards().find(c => c.getAge() === opts.age)
+    card = this
+      .getZoneById('achievements')
+      .cards()
+      .filter(card => !card.isSpecialAchievement)
+      .find(c => c.getAge() === opts.age)
   }
 
   if (!card) {
