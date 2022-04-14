@@ -1723,7 +1723,7 @@ Innovation.prototype.checkAchievementAvailable = function(name) {
 }
 
 Innovation.prototype.checkAchievementEligibility = function(player, card, opts={}) {
-  const playerScore = this.getScore(player)
+  const playerScore = this.getScore(player) * (opts.doubleScore ? 2 : 1)
   const topCardAge = this.getHighestTopAge(player, { reason: 'achieve' })
 
   const ageRequirement = opts.ignoreAge || card.getAge() <= topCardAge

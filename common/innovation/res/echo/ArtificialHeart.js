@@ -12,10 +12,18 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Claim on standard achievement, if eligible. Your current score is doubled for the purpose of checking eligibility.`
+    `Claim a standard achievement, if eligible. Your current score is doubled for the purpose of checking eligibility.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const choices = game
+        .getEligibleAchievementsRaw(player, { doubleScore: true })
+        .filter(card => card.zone === 'achievements')
+
+      game.aChooseAndAchieve(player, choices)
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
