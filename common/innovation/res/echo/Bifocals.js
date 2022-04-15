@@ -16,8 +16,23 @@ function Card() {
     `You may splay your green cards right.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'forecast'), { min: 0, max: 1 })
+
+      if (returned && returned.length > 0) {
+        game.aDrawAndForeshadow(player, returned[0].getAge())
+      }
+    },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['green'], 'right')
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    const age = game.aChooseAge(player)
+    game.aDrawAndForeshadow(player, age)
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
