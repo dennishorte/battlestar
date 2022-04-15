@@ -15,8 +15,29 @@ function Card() {
     `I demand you transfer a card with a {k} from your hand to my hand! If you do, draw a {1}!`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const transferred = game.aChooseAndTransfer(
+        player,
+        game.getCardsByZone(player, 'hand').filter(card => card.checkHasBiscuit('k')),
+        game.getZoneByPlayer(leader, 'hand')
+      )
+      if (transferred && transferred.length > 0) {
+        game.aDraw(player, { age: game.getEffectAge(this, 1) })
+      }
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    const playerScore = game.getScore(player)
+    const otherScores = game
+      .getPlayerAll()
+      .filter(other => other !== player)
+      .map(other => game.getScore(other))
+    const isLowest = otherScores.every(score => score > playerScore)
+    if (isLowest) {
+      game.aDraw(player, { age: game.getEffectAge(this, 3) })
+    }
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
