@@ -16,7 +16,45 @@ function Card() {
     `You may splay your blue cards up.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      let repeated = false
+
+      while (true) {
+        const choices = game
+          .utilColors()
+          .map(color => game.getBottomCard(player, color))
+          .filter(card => card !== undefined)
+          .filter(card => card.color !== 'blue')
+        const scored = game.aChooseAndScore(player, choices, { count: 2 })
+        if (scored && scored.length >= 2) {
+          const total = scored[0].getAge() + scored[1].getAge()
+          if (total >= 11) {
+            game.mLog({ template: 'Total age was not less than 11' })
+            break
+          }
+          else {
+            game.aDraw(player, { age: total })
+            if (repeated) {
+              break
+            }
+            else {
+              repeated = true
+              continue
+            }
+          }
+        }
+        else {
+          game.mLog({ template: 'Did not return two cards' })
+          break
+        }
+      }
+    },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['blue'], 'up')
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
