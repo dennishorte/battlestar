@@ -15,8 +15,14 @@ function Card() {
     `Draw and foreshadow a {2}.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aDrawAndForeshadow(player, game.getEffectAge(this, 2))
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
