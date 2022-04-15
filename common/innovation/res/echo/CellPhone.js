@@ -17,7 +17,33 @@ function Card() {
     `You may tuck any number of cards with a {i} from your hand, splaying up each color you tucked into.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const count = Math.floor(game.getBiscuitsByPlayer(player).i / 2)
+      for (let i = 0; i < count; i++) {
+        game.aDraw(player, { age: game.getEffectAge(this, 10) })
+      }
+    },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['green'], 'up')
+    },
+
+    (game, player) => {
+      const choices = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => card.checkHasBiscuit('i'))
+      const tucked = game.aChooseAndTuck(player, choices, { min: 0, max: choices.length, title: 'Choose any number of cards to tuck.' })
+
+      if (tucked) {
+        for (const card of tucked) {
+          if (game.getZoneByPlayer(player, card.color).splay !== 'up') {
+            game.aSplay(player, card.color, 'up')
+          }
+        }
+      }
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
