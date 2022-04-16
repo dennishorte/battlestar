@@ -15,7 +15,27 @@ function Card() {
     `Meld a card with a bonus from your hand. If you do, draw two cards of value equal to that card's bonus. Otherwise, draw and foreshadow a card of value equal to the number of top cards on your board.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const choices = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => card.checkHasBonus())
+      const cards = game.aChooseAndMeld(player, choices)
+
+      if (cards && cards.length > 0) {
+        const bonus = cards[0].getBonuses()[0]
+        game.aDraw(player, { age: bonus })
+        game.aDraw(player, { age: bonus })
+      }
+
+      else {
+        const numTopCards = game
+          .getTopCards(player)
+          .length
+        game.aDrawAndForeshadow(player, numTopCards)
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
