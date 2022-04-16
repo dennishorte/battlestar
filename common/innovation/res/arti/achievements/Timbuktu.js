@@ -11,6 +11,7 @@ function Card() {
   this.dogmaBiscuit = `c`
   this.isSpecialAchievement = true
   this.isRelic = true
+  this.isCity = true
   this.inspire = ``
   this.echo = ``
   this.karma = []

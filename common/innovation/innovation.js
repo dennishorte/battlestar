@@ -3082,7 +3082,7 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
 
   const cities = this
     .getTopCards(player)
-    .filter(card => card.expansion === 'city')
+    .filter(card => card.expansion === 'city' || card.isCity)
     .filter(city => city.getAge() >= lowestHandAge)
 
   const stacksWithEndorsableEffects = this
