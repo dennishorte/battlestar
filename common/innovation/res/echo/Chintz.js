@@ -16,7 +16,18 @@ function Card() {
     `If you have exactly one card in your hand, draw a {4}, then draw and score a {4}.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aDraw(player, { age: game.getEffectAge(this, 4) })
+    },
+
+    (game, player) => {
+      if (game.getCardsByZone(player, 'hand').length === 1) {
+        game.aDraw(player, { age: game.getEffectAge(this, 4) })
+        game.aDrawAndScore(player, game.getEffectAge(this, 4))
+      }
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
