@@ -1190,7 +1190,7 @@ Innovation.prototype.aEndorse = function(player, color, opts={}) {
     .dogmaBiscuit
   const cities = this
     .getTopCards(player)
-    .filter(card => card.expansion === 'city')
+    .filter(card => card.expansion === 'city' || card.isCity)
     .filter(card => card.biscuits.includes(featuredBiscuit))
   const tuckChoices = this
     .getZoneByPlayer(player, 'hand')
@@ -1499,7 +1499,7 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
     }
 
     // Discover biscuit
-    if (card.expansion === 'city' && card.checkHasDiscoverBiscuit()) {
+    if (card.checkHasDiscoverBiscuit()) {
       this.aDiscoverBiscuit(player, card)
     }
 
