@@ -26,10 +26,9 @@ describe('Empiricism', () => {
     t.testBoard(game, {
       dennis: {
         purple: {
-          cards: ['Empiricism', 'Code of Laws'],
+          cards: ['Services', 'Empiricism', 'Code of Laws'],
           splay: 'up',
         },
-        hand: ['Services'],
       },
     })
   })

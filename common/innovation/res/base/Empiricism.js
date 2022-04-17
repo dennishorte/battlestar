@@ -31,6 +31,7 @@ function Card() {
 
       const card = game.aDrawAndReveal(player, game.getEffectAge(this, 9))
       if (colors.includes(card.color)) {
+        game.aMeld(player, card)
         game.aChooseAndSplay(player, [card.color], 'up')
       }
     },
