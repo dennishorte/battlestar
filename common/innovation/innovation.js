@@ -1898,9 +1898,18 @@ Innovation.prototype.getBonuses = function(player) {
     .sort((l, r) => r - l)
 }
 
-Innovation.prototype.getCardByName = function(name) {
-  util.assert(res.all.byName.hasOwnProperty(name), `Unknown card: ${name}`)
-  return res.all.byName[name]
+Innovation.prototype.getCardByName = function(name, def) {
+  if (!res.all.byName.hasOwnProperty(name)) {
+    if (def !== undefined) {
+      return def
+    }
+    else {
+      throw new Error(`Unknown card: ${name}`)
+    }
+  }
+  else {
+    return res.all.byName[name]
+  }
 }
 
 Innovation.prototype.getCardsByZone = function(player, zoneName) {

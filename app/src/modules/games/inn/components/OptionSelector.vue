@@ -15,9 +15,7 @@
           <input type="checkbox" :value="index" v-model="selected" />
 
           <span class="input-label">
-            <span>
-              {{ optionDisplayName(option) }}
-            </span>
+            <OptionName :option="option" />
           </span>
         </div>
 
@@ -42,8 +40,16 @@ import Vue from 'vue'
 
 import { selector, util } from 'battlestar-common'
 
+import OptionName from './OptionName'
+
 export default {
   name: 'OptionSelector',
+
+  components: {
+    OptionName,
+  },
+
+  inject: ['game'],
 
   props: {
     required: {
@@ -128,7 +134,7 @@ export default {
 
   methods: {
     optionDisplayName(option) {
-      return option.title || option
+      return option.title ? option.title : option
     },
 
     optionHasChildren(option) {
