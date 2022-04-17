@@ -15,8 +15,25 @@ function Card() {
     `If the {1} deck has at least one card, you may transfer its bottom card to the available achievements.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const age = game.getEffectAge(this, 1)
+      const deck = game.getZoneByDeck('base', age).cards()
+      if (deck.length > 0) {
+        const addAchievement = game.aYesNo(player, `Transfer the bottom card of the {${age}} deck to the available achievements?`)
+        if (addAchievement) {
+          const card = deck[deck.length - 1]
+          game.aTransfer(player, card, game.getZoneById('achievements'))
+        }
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    game.aDraw(player, { age: game.getEffectAge(this, 1) })
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
