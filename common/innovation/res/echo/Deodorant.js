@@ -15,8 +15,22 @@ function Card() {
     `If you have a top card with a {k}, draw and meld a {3}. Otherwise, draw a {4}.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const hasTopWithCastle = game
+        .getTopCards(player)
+        .some(card => card.checkHasBiscuit('k'))
+      if (hasTopWithCastle) {
+        game.aDrawAndMeld(player, game.getEffectAge(this, 3))
+      }
+      else {
+        game.aDraw(player, { age: game.getEffectAge(this, 4) })
+      }
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    game.aDrawAndMeld(player, game.getEffectAge(this, 3))
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
