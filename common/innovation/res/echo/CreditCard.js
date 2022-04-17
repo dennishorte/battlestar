@@ -16,8 +16,30 @@ function Card() {
     `You may splay your green cards up.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const choices = game
+        .getTopCards(player)
+        .filter(card => card.color !== 'green')
+      const card = game.aChooseCard(player, choices, {
+        min: 0,
+        max: 1,
+        title: 'You may take a card into your hand.'
+      })
+
+      if (card) {
+        game.aTransfer(player, card, game.getZoneByPlayer(player, 'hand'))
+        game.aDrawAndScore(player, card.getAge())
+      }
+    },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['green'], 'up')
+    },
+  ]
+  this.echoImpl = (game, player) => {
+    game.aDrawAndForeshadow(player, game.getEffectAge(this, 9))
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
