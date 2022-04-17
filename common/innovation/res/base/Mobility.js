@@ -26,7 +26,7 @@ function Card() {
       const highest = game.utilHighestCards(choices)
 
       if (highest.length >= 2) {
-        const cards = game.aChooseAndTransfer(player, highest, destination)
+        const cards = game.aChooseAndTransfer(player, highest, destination, { count: 2 })
         if (cards && cards.length > 0) {
           transferred = true
         }
