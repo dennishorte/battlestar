@@ -12,10 +12,33 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Choose a color, then draw and reveal five {1}s. Keep all cards that match the color chosen, Return the rest of the drawn cards.`
+    `Choose a color, then draw and reveal five {1}s. Keep all cards that match the color chosen. Return the rest of the drawn cards.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const color = game.aChoose(player, game.utilColors(), { title: 'Choose a Color' })[0]
+      const cards = [
+        game.aDrawAndReveal(player, game.getEffectAge(this, 1)),
+        game.aDrawAndReveal(player, game.getEffectAge(this, 1)),
+        game.aDrawAndReveal(player, game.getEffectAge(this, 1)),
+        game.aDrawAndReveal(player, game.getEffectAge(this, 1)),
+        game.aDrawAndReveal(player, game.getEffectAge(this, 1)),
+      ].filter(card => card !== undefined)
+
+      const matching = cards
+        .filter(card => card.color === color)
+        .forEach(card => game.mLog({
+          template: '{player} keeps {card}',
+          args: { player, card }
+        }))
+
+      const others = cards
+        .filter(card => card.color !== color)
+
+      game.aReturnMany(player, others)
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
