@@ -15,7 +15,19 @@ function Card() {
     `For each visible bonus on your board, draw a card of that value.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const remaining = game.getBonuses(player)
+
+      while (remaining.length > 0) {
+        const next = game.aChoose(player, remaining, { title: 'Draw next...' })[0]
+        const index = remaining.indexOf(next)
+        remaining.splice(index, 1)
+
+        game.aDraw(player, { age: next })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
