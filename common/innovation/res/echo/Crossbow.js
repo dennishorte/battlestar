@@ -16,7 +16,25 @@ function Card() {
     `Transfer a card from your hand to any other player's board.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const choices = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => card.checkHasBonus())
+      game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(leader, 'score'))
+    },
+
+    (game, player) => {
+      const otherChoices = game
+        .getPlayerAll()
+        .filter(other => other !== player)
+      const other = game.aChoosePlayer(player, otherChoices)
+      const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'))
+      if (card) {
+        game.aTransfer(player, card, game.getZoneByPlayer(other, card.color))
+      }
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
