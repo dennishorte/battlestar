@@ -1672,6 +1672,8 @@ Innovation.prototype.aYouLose = function(player) {
 }
 
 function ManyFactory(baseFuncName, extraArgCount=0) {
+  const verb = baseFuncName.slice(1).toLowerCase()
+
   return function(...args) { //player, cards, opts={}) {
     const player = args[0]
     const cards = args[1]
@@ -1686,7 +1688,11 @@ function ManyFactory(baseFuncName, extraArgCount=0) {
         next = remaining[0]
       }
       else {
-        next = this.aChooseCard(player, remaining.concat(['auto']))
+        next = this.aChooseCard(
+          player,
+          remaining.concat(['auto']),
+          { title: `Choose a card to ${verb} next.` },
+        )
       }
 
       if (next === 'auto') {
