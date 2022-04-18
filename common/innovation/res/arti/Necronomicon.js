@@ -22,10 +22,18 @@ function Card() {
         game.mLog({ template: `Card is ${card.color}` })
 
         if (card.color === 'yellow') {
+          game.mLog({
+            template: '{player} will return all cards from hand',
+            args: { player }
+          })
           game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
         }
 
         else if (card.color === 'green') {
+          game.mLog({
+            template: '{player} will unsplay all stacks',
+            args: { player }
+          })
           for (const color of game.utilColors()) {
             const zone = game.getZoneByPlayer(player, color)
             if (zone.splay !== 'none') {
@@ -35,11 +43,23 @@ function Card() {
         }
 
         else if (card.color === 'red') {
+          game.mLog({
+            template: '{player} will return all cards from score',
+            args: { player }
+          })
           game.aReturnMany(player, game.getCardsByZone(player, 'score'))
         }
 
         else if (card.color === 'blue') {
+          game.mLog({
+            template: '{player} will draw a {9}',
+            args: { player }
+          })
           game.aDraw(player, { age: game.getEffectAge(this, 9) })
+        }
+
+        else {
+          game.mLogNoEffect()
         }
       }
     }
