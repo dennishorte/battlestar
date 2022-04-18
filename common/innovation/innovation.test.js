@@ -1110,6 +1110,79 @@ describe('Innovation', () => {
       })
     })
 
+    describe('echoes', () => {
+      test('draw rule: draw a base card if hand is empty', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+        t.setBoard(game, {
+          dennis: {
+          },
+          decks: {
+            base: {
+              1: ['Tools'],
+            },
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Draw.draw a card')
+
+        t.testIsSecondPlayer(request2)
+        t.testBoard(game, {
+          dennis: {
+            hand: ['Tools'],
+          }
+        })
+      })
+
+      test('draw rule: draw an echoes card if hand is non-empty with no echoes', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+        t.setBoard(game, {
+          dennis: {
+            hand: ['Tools'],
+          },
+          decks: {
+            echo: {
+              1: ['Plumbing'],
+            },
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Draw.draw a card')
+
+        t.testIsSecondPlayer(request2)
+        t.testBoard(game, {
+          dennis: {
+            hand: ['Tools', 'Plumbing'],
+          }
+        })
+      })
+
+      test('draw rule: draw a base card if hand already has an echoes card', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+        t.setBoard(game, {
+          dennis: {
+            hand: ['Tools', 'Plumbing'],
+          },
+          decks: {
+            base: {
+              1: ['Sailing'],
+            },
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Draw.draw a card')
+
+        t.testIsSecondPlayer(request2)
+        t.testBoard(game, {
+          dennis: {
+            hand: ['Tools', 'Plumbing', 'Sailing'],
+          }
+        })
+      })
+    })
+
     describe('cities', () => {
       test('draw a city for first card of color', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
