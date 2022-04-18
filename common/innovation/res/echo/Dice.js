@@ -15,7 +15,15 @@ function Card() {
     `Draw and reveal a {1}. If the card has a bonus, draw and meld a card of value equal to its bonus.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
+      if (card.checkHasBonus()) {
+        const bonus = card.getBonuses()[0]
+        game.aDrawAndMeld(player, bonus)
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
