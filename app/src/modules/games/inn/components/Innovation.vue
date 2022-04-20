@@ -101,7 +101,7 @@ export default {
         this.game.usedUndo = false
 
         this.$bvToast.toast('saved', {
-          autoHideDelay: 300,
+          autoHideDelay: 1000,
           noCloseButton: true,
           solid: true,
           variant: 'success',
@@ -109,7 +109,7 @@ export default {
       }
       else {
         this.$bvToast.toast('error: see console', {
-          autoHideDelay: 0,
+          autoHideDelay: 999999,
           noCloseButton: false,
           solid: true,
           variant: 'danger',
