@@ -16,7 +16,18 @@ function Card() {
     `Return a card from your score pile. If you do, you may splay any one color of your cards up.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'), { count: 4 })
+    },
+
+    (game, player) => {
+      const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'))
+      if (returned && returned.length > 0) {
+        game.aChooseAndSplay(player, null, 'up')
+      }
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
