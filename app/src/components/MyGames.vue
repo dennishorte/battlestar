@@ -28,6 +28,12 @@
         {{ waitingForViewer(row.item) ? '\u231B' : '' }}
       </template>
 
+      <template #cell(menu)="row">
+        <b-dropdown>
+          <b-dropdown-item @click="kill(row.item._id)">kill</b-dropdown-item>
+        </b-dropdown>
+      </template>
+
     </b-table>
 
   </div>
@@ -40,7 +46,7 @@ export default {
   name: 'MyLobbies',
   data() {
     return {
-      fields: ['game', 'name', 'age', 'waiting'],
+      fields: ['game', 'name', 'age', 'waiting', 'menu'],
       games: [],
     }
   },
@@ -72,6 +78,11 @@ export default {
 
     gameName(data) {
       return data.settings ? data.settings.name : data.name
+    },
+
+    async kill(gameId) {
+      await axios.post('/api/game/kill', { gameId })
+      this.$router.go()
     },
 
     waitingForViewer(data) {

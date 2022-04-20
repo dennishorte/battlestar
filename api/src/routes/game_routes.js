@@ -51,6 +51,13 @@ Game.fetch = async function(req, res) {
   })
 }
 
+Game.kill = async function(req, res) {
+  await db.game.gameOver(req.body.gameId)
+  res.json({
+    status: 'success',
+  })
+}
+
 async function _notify(game, userId, msg) {
   if (process.env.NODE_ENV === 'development') {
     return
