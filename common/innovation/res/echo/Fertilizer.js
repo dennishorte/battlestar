@@ -16,7 +16,26 @@ function Card() {
     `Draw and foreshadow a card of any value.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const cards = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1} )
+      if (cards && cards.length > 0) {
+        const age = cards[0].getAge()
+        const toTransfer = game
+          .getPlayerAll()
+          .flatMap(player => game
+            .getCardsByZone(player, 'score')
+            .filter(card => card.getAge() === age)
+          )
+        game.aTransferMany(player, toTransfer, game.getZoneByPlayer(player, 'hand'))
+      }
+    },
+
+    (game, player) => {
+      const age = game.aChooseAge(player)
+      game.aDrawAndForeshadow(player, age)
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
