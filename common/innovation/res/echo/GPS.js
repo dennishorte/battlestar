@@ -17,7 +17,21 @@ function Card() {
     `You may splay your yellow cards up.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aReturnMany(player, game.getCardsByZone(player, 'forecast'))
+    },
+
+    (game, player) => {
+      game.aDrawAndForeshadow(player, game.getEffectAge(this, 10))
+      game.aDrawAndForeshadow(player, game.getEffectAge(this, 10))
+      game.aDrawAndForeshadow(player, game.getEffectAge(this, 10))
+    },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['yellow'], 'up')
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
