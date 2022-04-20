@@ -16,8 +16,24 @@ function Card() {
     `Draw and reveal a {1}. If it has a bonus, draw a {1}.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const choices = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => card.checkHasBonus())
+      game.aChooseAndReturn(player, choices)
+    },
+
+    (game, player) => {
+      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
+      if (card && card.checkHasBonus()) {
+        game.aDraw(player, { age: game.getEffectAge(this, 1) })
+      }
+    },
+  ]
+  this.echoImpl = (game, player) => {
+    game.aChooseAndSplay(player, null, 'left')
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
