@@ -16,7 +16,21 @@ function Card() {
     `You may splay your red or green cards left.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const ages = game
+        .getCardsByZone(leader, 'hand')
+        .map(card => card.getAge())
+      const choices = game
+        .getCardsByZone(player, 'score')
+        .filter(card => ages.includes(card.getAge()))
+      game.aChooseAndReturn(player, choices, { count: 2 })
+    },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['green'], 'left')
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
