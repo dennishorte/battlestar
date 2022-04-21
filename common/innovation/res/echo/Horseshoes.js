@@ -12,11 +12,27 @@ function Card() {
   this.echo = `Draw and foreshadow a {2}.`
   this.karma = []
   this.dogma = [
-    `I demand you transfer a top card without a {k} or {f} from your board to my board! If you do, draw and meld a {2}.`
+    `I demand you transfer a top card that has no {k} and no {f} from your board to my board! If you do, draw and meld a {2}.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const choices = game
+        .getTopCards(player)
+        .filter(card => !card.checkHasBiscuit('k') && !card.checkHasBiscuit('f'))
+      const card = game.aChooseCard(player, choices)
+
+      if (card) {
+        const transferred = game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+        if (transferred) {
+          game.aDrawAndMeld(player, game.getEffectAge(this, 2))
+        }
+      }
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    game.aDrawAndForeshadow(player, game.getEffectAge(this, 2))
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
