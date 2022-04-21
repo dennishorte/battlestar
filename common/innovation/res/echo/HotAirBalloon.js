@@ -15,8 +15,39 @@ function Card() {
     `You may achieve (if eligible) a top card from any other player's board if they have an achievement of matching value. If you do, transfer your top green card to that player's board. Otherwise, draw and meld a {7}.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const candidates = []
+      for (const other of game.getPlayerAll()) {
+        if (other === player) {
+          continue
+        }
+
+        const ages = game
+          .getCardsByZone(other, 'achievements')
+          .filter(card => !!card.age)
+          .map(card => card.getAge())
+
+        game
+          .getTopCards(other)
+          .filter(card => ages.includes(card.getAge()))
+          .forEach(card => candidates.push(card))
+      }
+
+      const card = game.aChooseCard(player, candidates, { min: 0, max: 1 })
+      if (card) {
+        const owner = game.getPlayerByCard(card)
+        game.aClaimAchievement(player, { card })
+        game.aTransfer(player, game.getTopCard(player, 'green'), game.getZoneByPlayer(owner, 'green'))
+      }
+      else {
+        game.aDrawAndMeld(player, game.getEffectAge(this, 7))
+      }
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    game.aDrawAndScore(player, game.getEffectAge(this, 7))
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
