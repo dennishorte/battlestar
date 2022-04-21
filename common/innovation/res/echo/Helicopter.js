@@ -15,7 +15,34 @@ function Card() {
     `Transfer a top card other than Helicopter from any player's board to its owner's score pile. You may return a card from your hand which shares an icon with the trasnferred card. If you do, repeat this dogma effect.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      while (true) {
+        const choices = game
+          .getPlayerAll()
+          .flatMap(player => game.getTopCards(player))
+          .filter(card => card !== this)
+        const card = game.aChooseCard(player, choices)
+
+        if (card) {
+          const owner = game.getPlayerByCard(card)
+          game.aTransfer(player, card, game.getZoneByPlayer(owner, 'score'))
+
+          const returnChoices = game
+            .getCardsByZone(player, 'hand')
+            .filter(c => card.checkSharesBiscuit(c))
+
+          const toReturn = game.aChooseCard(player, returnChoices, { min: 0, max: 1 })
+          if (toReturn) {
+            game.aReturn(player, toReturn)
+            continue
+          }
+        }
+
+        break
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
