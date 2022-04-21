@@ -70,7 +70,7 @@ function Card() {
     {
       trigger: 'score',
       kind: 'would-instead',
-      matches: (game, player, { card }) => card.expansion !== 'figs',
+      matches: (game, player, { card }) => card.expansion !== 'figs' && card !== this,
       func: (game, player, { card }) => {
         const choices = game
           .getPlayerOpponents(player)
