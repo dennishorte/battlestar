@@ -16,8 +16,31 @@ function Card() {
     `Choose the {6}, {7}, {8}, or {9} deck. If there is at least one card in that deck, you may transfer its bottom card to the available achievements.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aDrawAndMeld(player, game.getEffectAge(this, 1))
+    },
+
+    (game, player) => {
+      const addAchievement = game.aYesNo(player, 'Transfer a card to the available achievements?')
+
+      if (addAchievement) {
+        const age = game.aChooseAge(player, [6,7,8,9])
+        const cards = game.getZoneByDeck('base', age).cards()
+        if (cards.length > 0) {
+          const toTransfer = cards[cards.length - 1]
+          game.aTransfer(player, toTransfer, game.getZoneById('achievements'))
+        }
+      }
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    const choices = game
+      .getTopCards(player)
+      .filter(card => card.color !== 'purple')
+      .filter(card => !card.checkHasBonus())
+    game.aChooseAndScore(player, choices)
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
