@@ -15,6 +15,7 @@ describe('Compass', () => {
       micah: {
         blue: ['Tools'],
         green: ['Clothing'],
+        yellow: ['Agriculture'],
       },
     })
 
@@ -24,11 +25,13 @@ describe('Compass', () => {
     t.testIsSecondPlayer(request2)
     t.testBoard(game, {
       dennis: {
-        green: ['Clothing', 'Compass'],
+        green: ['Compass'],
         purple: ['Code of Laws'],
+        yellow: ['Agriculture'],
       },
       micah: {
         blue: ['Tools'],
+        green: ['Clothing'],
         red: ['Archery'],
       },
     })
