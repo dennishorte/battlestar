@@ -683,6 +683,10 @@ Innovation.prototype.aChooseCards = function(player, cards, opts={}) {
     return []
   }
 
+  if (opts.lowest) {
+    cards = this.utilLowestCards(cards)
+  }
+
   const choiceMap = cards.map(card => {
     if (!card.id) {
       card = this.getCardByName(card)
@@ -696,11 +700,12 @@ Innovation.prototype.aChooseCards = function(player, cards, opts={}) {
     }
   })
 
+  opts.title = opts.title || 'Choose Cards(s)'
   const choices = choiceMap.map(x => x.name)
   const cardNames = this.aChoose(
     player,
     choices,
-    { ...opts, title: 'Choose Card(s)' }
+    opts
   )
 
   if (cardNames.length === 0) {
@@ -806,6 +811,9 @@ function ChooseAndFactory(manyFuncName, numArgs) {
     const player = args[0]
     const choices = args[1]
     const opts = args[numArgs] || {}
+
+    const titleVerb = manyFuncName.slice(1, -4).toLowerCase()
+    opts.title = opts.title || `Choose card(s) to ${titleVerb}`
 
     const cards = this.aChooseCards(player, choices, opts)
     if (cards) {

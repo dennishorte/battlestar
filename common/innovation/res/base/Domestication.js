@@ -17,10 +17,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const choices = game.aChooseLowest(player, game.getCardsByZone(player, 'hand'), 1)
-      if (choices && choices.length > 0) {
-        game.aMeld(player, choices[0])
-      }
+      game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'), { lowest: true })
       game.aDraw(player, { age: game.getEffectAge(this, 1) })
     }
   ]
