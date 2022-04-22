@@ -11,6 +11,19 @@ Util.array.intersection = function(array1, array2) {
   return array1.filter(x => array2.includes(x))
 }
 
+Util.array.groupBy = function(array, fn) {
+  const groups = {}
+  for (let i = 0; i < array.length; i++) {
+    const key = fn(array[i], i, array)
+    if (!groups.hasOwnProperty(key)) {
+      groups[key] = []
+    }
+
+    groups[key].push(array[i])
+  }
+  return groups
+}
+
 Util.array.pairs = function(array) {
   return array.flatMap(
     (v, i) => array.slice(i+1).map(w => [v, w])
