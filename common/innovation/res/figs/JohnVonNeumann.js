@@ -37,7 +37,7 @@ function Card() {
         const figures = game
           .getPlayerOpponents(player)
           .flatMap(player => game.getTopCards(player))
-          .filter(card => card.expansion === 'figs')
+          .filter(card => card.checkIsFigure())
         game.aReturnMany(player, figures)
       }
     },

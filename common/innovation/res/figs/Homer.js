@@ -28,7 +28,7 @@ function Card() {
       kind: 'would-instead',
       matches(game, player, { card }) {
         const regex = /players[.].+[.]hand/
-        return card.expansion === 'figs' && card.zone.match(regex)
+        return card.checkIsFigure() && card.zone.match(regex)
       },
       func(game, player, { card }) {
         return game.aTuck(player, card)

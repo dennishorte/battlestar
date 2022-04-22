@@ -24,7 +24,7 @@ function Card() {
     {
       trigger: 'meld',
       kind: 'would-instead',
-      matches: (game, player, { card }) => card.expansion === 'figs',
+      matches: (game, player, { card }) => card.checkIsFigure(),
       func: (game, player, { card }) => {
         game.aTuck(player, card)
         const choices = game

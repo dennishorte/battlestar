@@ -28,7 +28,7 @@ function Card() {
         const cards = game
           .getPlayerOpponents(player)
           .flatMap(opp => game.getTopCards(opp))
-          .filter(card => card.expansion === 'figs')
+          .filter(card => card.checkIsFigure())
         game.aScoreMany(player, cards)
       }
     },

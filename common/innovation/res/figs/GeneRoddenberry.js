@@ -44,7 +44,7 @@ function Card() {
           const topFigures = game
             .getPlayerAll()
             .flatMap(player => game.getTopCards(player))
-            .filter(card => card.expansion === 'figs')
+            .filter(card => card.checkIsFigure())
           game.aChooseAndReturn(player, topFigures)
         }
       }

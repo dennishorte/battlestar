@@ -22,7 +22,7 @@ function Card() {
       .getPlayerAll()
       .filter(other => other !== player)
       .flatMap(player => game.getCardsByZone(player, 'score'))
-      .filter(card => card.expansion === 'figs')
+      .filter(card => card.checkIsFigure())
     game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'score'))
   }
   this.inspireImpl = []

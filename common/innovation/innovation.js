@@ -415,7 +415,7 @@ Innovation.prototype.fadeFiguresCheck = function() {
   for (const player of this.getPlayerAll()) {
     const topFiguresFn = () => this
       .getTopCards(player)
-      .filter(card => card.expansion === 'figs')
+      .filter(card => card.checkIsFigure())
 
     if (topFiguresFn().length > 1) {
       this.mLog({
@@ -3021,7 +3021,7 @@ Innovation.prototype._generateActionChoicesDecree = function() {
   const figuresInHand = this
     .getZoneByPlayer(player, 'hand')
     .cards()
-    .filter(c => c.expansion === 'figs')
+    .filter(c => c.checkIsFigure())
 
   const figuresByAge = this.utilSeparateByAge(figuresInHand)
 

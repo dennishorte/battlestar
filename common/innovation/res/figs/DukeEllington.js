@@ -30,10 +30,10 @@ function Card() {
       trigger: 'meld',
       kind: 'would-instead',
       matches: (game, player, { card }) => {
-        const cardCondition = card.expansion === 'figs'
+        const cardCondition = card.checkIsFigure()
         const topCondition = game
           .getTopCards(player)
-          .filter(card => card.expansion === 'figs')
+          .filter(card => card.checkIsFigure())
           .length >= 4
         return cardCondition && topCondition
       },

@@ -33,7 +33,7 @@ function Card() {
         const topFigures = game
           .getPlayerAll()
           .flatMap(player => game.getTopCards(player))
-          .filter(card => card.expansion === 'figs')
+          .filter(card => card.checkIsFigure())
           .filter(card => card !== this)
         game.aScoreMany(player, topFigures)
 

@@ -20,7 +20,7 @@ function Card() {
   this.echoImpl = (game, player) => {
     const choices = game
       .getTopCardsAll()
-      .filter(card => card.expansion === 'figs')
+      .filter(card => card.checkIsFigure())
       .filter(card => card.getAge() === 5 || card.getAge() === 6)
     game.aChooseAndScore(player, choices)
   }

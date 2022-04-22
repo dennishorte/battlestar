@@ -32,7 +32,7 @@ function Card() {
         for (const opp of game.getPlayerOpponents(player)) {
           const topFigures = game
             .getTopCards(opp)
-            .filter(card => card.expansion === 'figs')
+            .filter(card => card.checkIsFigure())
             .filter(card => card.getAge() === 4)
           game.aScoreMany(player, topFigures)
         }

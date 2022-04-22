@@ -21,7 +21,7 @@ function Card() {
     const choices = game
       .getPlayerAll()
       .flatMap(p => game.getTopCards(p))
-      .filter(card => card.expansion === 'figs')
+      .filter(card => card.checkIsFigure())
 
     const card = game.aChooseCard(player, choices)
     if (card) {

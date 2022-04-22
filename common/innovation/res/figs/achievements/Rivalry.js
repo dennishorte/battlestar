@@ -35,7 +35,7 @@ function Card() {
     // Return top figures
     const topFigures = game
       .getTopCards(other)
-      .filter(c => c.expansion === 'figs')
+      .filter(c => c.checkIsFigure())
     game.aReturnMany(player, topFigures)
   }
 }

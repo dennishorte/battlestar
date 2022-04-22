@@ -20,7 +20,7 @@ function Card() {
     const choices = game
       .getPlayerOpponents(player)
       .flatMap(opp => game.getTopCards(opp))
-      .filter(card => card.expansion === 'figs')
+      .filter(card => card.checkIsFigure())
       .filter(card => card.getAge() === 1)
     game.aChooseAndScore(player, choices)
   }

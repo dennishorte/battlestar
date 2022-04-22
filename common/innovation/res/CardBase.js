@@ -52,6 +52,10 @@ CardBase.prototype.checkInspireIsVisible = function(splay) {
   return this.checkBiscuitIsVisible('*', splay)
 }
 
+CardBase.prototype.checkIsFigure = function() {
+  return this.expansion === 'figs' || this.name === 'Ching Shih'
+}
+
 CardBase.prototype.checkIsOnPlayerBoard = function(player) {
   const re = /^players.([^.]+).(yellow|red|green|blue|purple)$/i
   const match = this.zone.match(re)
