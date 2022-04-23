@@ -15,7 +15,14 @@ function Card() {
     `Draw and meld a {7}. You may splay your cards of that color right.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const card = game.aDrawAndMeld(player, game.getEffectAge(this, 7))
+      if (card) {
+        game.aChooseAndSplay(player, [card.color], 'right')
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
