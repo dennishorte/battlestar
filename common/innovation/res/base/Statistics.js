@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const highest = game.utilHighestCards(game.getCardsByZone(player, 'score'))
-      game.aTransferMany(player, highest, game.getZoneByPlayer(player, 'hand'))
+      game.aTransferMany(player, highest, game.getZoneByPlayer(player, 'hand'), { ordered: true })
     },
     (game, player) => {
       game.aChooseAndSplay(player, ['yellow'], 'right')
