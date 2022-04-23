@@ -6,17 +6,17 @@ describe('Bartholomew Roberts', () => {
   test('inspire', () => {
     const game = t.fixtureTopCard('Bartholomew Roberts', { expansions: ['base', 'figs'] })
     game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'red', ['Construction'])
-      t.setColor(game, 'micah', 'green', ['The Wheel'])
+      t.setColor(game, 'dennis', 'red', ['Oars'])
+      t.setColor(game, 'micah', 'green', ['Sailing'])
     })
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Inspire.green')
 
-    t.testChoices(request2, ['Construction', 'The Wheel'])
+    t.testChoices(request2, ['Oars', 'Sailing', 'Bartholomew Roberts'])
 
-    const request3 = t.choose(game, request2, 'The Wheel')
+    const request3 = t.choose(game, request2, 'Sailing')
 
-    t.testZone(game, 'score', ['The Wheel'])
+    t.testZone(game, 'score', ['Sailing'])
   })
 
   test('karma (success)', () => {

@@ -21,7 +21,7 @@ function Card() {
     const choices = game
       .getPlayerAll()
       .flatMap(p => game.getTopCards(p))
-      .filter(card => card.biscuits.includes('k'))
+      .filter(card => card.biscuits.includes('c'))
     game.aChooseAndScore(player, choices)
   }
   this.karmaImpl = [
