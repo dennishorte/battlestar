@@ -2168,9 +2168,7 @@ Innovation.prototype.getBottomCard = function(player, color) {
 }
 
 Innovation.prototype.getTopCard = function(player, color) {
-  return this
-    .getZoneByPlayer(player, color)
-    .cards()[0]
+  return this.getCardsByZone(player, color)[0]
 }
 
 Innovation.prototype.getTopCards = function(player) {
