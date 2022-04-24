@@ -390,7 +390,7 @@ Innovation.prototype.action = function(count) {
     this.aDogma(player, card)
   }
   else if (name === 'Draw') {
-    this.aDraw(player)
+    this.aDraw(player, { isAction: true })
   }
   else if (name === 'Endorse') {
     this.aEndorse(player, arg)
@@ -1127,7 +1127,14 @@ Innovation.prototype._getAgeForInspireAction = function(player, color) {
 }
 
 Innovation.prototype.aDraw = function(player, opts={}) {
-  const { age, share } = opts
+  const { age, share, isAction } = opts
+
+  if (isAction) {
+    const karmaKind = this.aKarma(player, 'draw-action', opts)
+    if (karmaKind === 'would-instead') {
+      return
+    }
+  }
 
   // Expansion the user should draw from, before looking at empty decks.
   const baseExp = opts.exp || this._determineBaseDrawExpansion(player, share)
@@ -1300,6 +1307,14 @@ Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
     else if (opts.trigger === 'draw') {
       this.mLog({
         template: '{player} would draw a card, triggering...',
+        args: {
+          player,
+        }
+      })
+    }
+    else if (opts.trigger === 'draw-action') {
+      this.mLog({
+        template: '{player} would take a draw action, triggering...',
         args: {
           player,
         }

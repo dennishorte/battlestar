@@ -11,7 +11,7 @@ function Card() {
   this.inspire = ``
   this.echo = `Splay one color of your cards right.`
   this.karma = [
-    `If you would take a Draw or Inspire action, first draw a {1} and transfer it to any player's board.`
+    `If you would take a Draw or Inspire action, first draw and reveal a {1} and transfer it to any player's board.`
   ]
   this.dogma = []
 
@@ -22,11 +22,11 @@ function Card() {
   this.inspireImpl = []
   this.karmaImpl = [
     {
-      trigger: ['draw', 'inspire'],
+      trigger: ['draw-action', 'inspire'],
       kind: 'would-first',
       matches: () => true,
       func: (game, player) => {
-        const card = game.aDraw(player, { age: game.getEffectAge(this, 1) })
+        const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
         const targetPlayer = game.aChoosePlayer(player, game.getPlayerAll().map(p => p.name))
         const target = game.getZoneByPlayer(targetPlayer, card.color)
         game.aTransfer(player, card, target)

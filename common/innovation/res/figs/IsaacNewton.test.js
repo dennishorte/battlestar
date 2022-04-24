@@ -66,4 +66,30 @@ describe('Isaac Newton', () => {
     })
   })
 
+  test('karma: does not trigger on non-action draw', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Isaac Newton'],
+        green: ['The Wheel'],
+      },
+      decks: {
+        base: {
+          1: ['Domestication', 'Sailing'],
+        }
+      }
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.The Wheel')
+
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Isaac Newton'],
+        green: ['The Wheel'],
+        hand: ['Domestication', 'Sailing'],
+      },
+    })
+  })
+
 })
