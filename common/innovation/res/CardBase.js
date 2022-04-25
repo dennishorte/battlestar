@@ -52,6 +52,10 @@ CardBase.prototype.checkInspireIsVisible = function(splay) {
   return this.checkBiscuitIsVisible('*', splay)
 }
 
+CardBase.prototype.checkIsCity = function() {
+  return this.expansion === 'city' || this.isCity
+}
+
 CardBase.prototype.checkIsFigure = function() {
   return this.expansion === 'figs' || this.name === 'Ching Shih'
 }

@@ -1205,7 +1205,7 @@ Innovation.prototype.aEndorse = function(player, color, opts={}) {
     .dogmaBiscuit
   const cities = this
     .getTopCards(player)
-    .filter(card => card.expansion === 'city' || card.isCity)
+    .filter(card => card.checkIsCity())
     .filter(card => card.biscuits.includes(featuredBiscuit))
   const tuckChoices = this
     .getZoneByPlayer(player, 'hand')
@@ -1484,7 +1484,7 @@ Innovation.prototype._maybeDrawCity = function(player) {
     return
   }
 
-  if (this.getCardsByZone(player, 'hand').some(card => card.expansion === 'city')) {
+  if (this.getCardsByZone(player, 'hand').some(card => card.checkIsCity())) {
     return
   }
 
@@ -3118,7 +3118,7 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
 
   const cities = this
     .getTopCards(player)
-    .filter(card => card.expansion === 'city' || card.isCity)
+    .filter(card => card.checkIsCity())
     .filter(city => city.getAge() >= lowestHandAge)
 
   const stacksWithEndorsableEffects = this
