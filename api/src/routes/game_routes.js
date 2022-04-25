@@ -138,7 +138,10 @@ async function _sendNotifications(res, game) {
       _notify(game, player._id, 'Game Over!')
     }
 
-    else if (game.checkPlayerHasActionWaiting(player)) {
+    else if (
+      game.checkPlayerHasActionWaiting(player)
+      && !game.checkLastActorWas(player)
+    ) {
       _notify(game, player._id, "You're up!")
     }
   }

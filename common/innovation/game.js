@@ -113,6 +113,14 @@ Game.prototype.checkPlayerHasActionWaiting = function(player) {
   return !!this.getWaiting(player)
 }
 
+Game.prototype.getLastUserAction = function(player) {
+  const copy = [...this.responses]
+  while (copy.length > 0 && !copy[copy.length - 1].isUserResponse) {
+    copy.pop()
+  }
+  return copy[copy.length - 1]
+}
+
 Game.prototype.getPlayerNamesWaiting = function() {
   if (!this.waiting) {
     return []
