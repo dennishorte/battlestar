@@ -16,8 +16,34 @@ function Card() {
     `You may take a bottom card from your board into your hand.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const card = game.state.dogmaInfo.karaoke[player.name]
+      if (card) {
+        game.aCardEffects(player, card, 'dogma')
+      }
+    },
+
+    (game, player) => {
+      const cards = game
+        .utilColors()
+        .map(color => game.getBottomCard(player, color))
+        .filter(card => card !== undefined)
+
+      game.aChooseAndTransfer(player, cards, game.getZoneByPlayer(player, 'hand'), { min: 0, max: 1 })
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    if (!game.state.dogmaInfo.karaoke) {
+      game.state.dogmaInfo.karaoke = {}
+    }
+
+    const age = game.aChooseAge(player, [1,2,3,4,5,6,7,8,9])
+    const card = game.aDrawAndMeld(player, age)
+    if (card) {
+      game.state.dogmaInfo.karaoke[player.name] = card
+    }
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
