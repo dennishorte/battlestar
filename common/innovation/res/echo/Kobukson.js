@@ -16,8 +16,49 @@ function Card() {
     `For every two cards returned as a result of the demand, draw and tuck a {4}.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      if (!game.state.dogmaInfo.kobukson) {
+        game.state.dogmaInfo.kobukson = 0
+      }
+
+      const toReturn = game
+        .getTopCards(player)
+        .filter(card => card.checkHasBiscuit('k'))
+      const returned = game.aReturnMany(player, toReturn)
+
+      if (returned && returned.length > 0) {
+        game.state.dogmaInfo.kobukson += returned.length
+      }
+
+      game.aDrawAndTuck(player, game.getEffectAge(this, 4))
+    },
+
+    (game, player) => {
+      const count = Math.floor(game.state.dogmaInfo.kobukson / 2)
+      game.mLog({
+        template: `${game.state.dogmaInfo.kobukson} cards were returned due to the demand`
+      })
+
+      for (let i = 0; i < count; i++) {
+        game.aDrawAndTuck(player, game.getEffectAge(this, 4))
+      }
+    },
+  ]
+  this.echoImpl = (game, player) => {
+    const choices = game
+      .getPlayerAll()
+      .flatMap(player => game.utilColors().map(color => ({ player, color })))
+      .filter(x => game.getZoneByPlayer(x.player, x.color).splay !== 'left')
+      .map(x => `${x.player.name} ${x.color}`)
+
+    const toSplayLeft = game.aChoose(player, choices, { title: 'Choose a stack to splay left' })
+    if (toSplayLeft && toSplayLeft.length > 0) {
+      const [playerName, color] = toSplayLeft[0].split(' ')
+      const target = game.getPlayerByName(playerName)
+      game.aSplay(player, color, 'left', { owner: target })
+    }
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
