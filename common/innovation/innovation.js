@@ -1781,7 +1781,7 @@ Innovation.prototype.checkInKarma = function() {
 }
 
 Innovation.prototype.checkLastActorWas = function(player) {
-  const lastAction = game.getLastUserAction()
+  const lastAction = this.getLastUserAction()
   if (!lastAction) {
     return false
   }
