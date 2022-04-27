@@ -16,8 +16,22 @@ function Card() {
     `Draw and tuck a {5}. You may return a top card from your board.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const card = game.aDrawAndTuck(player, game.getEffectAge(this, 5))
+      if (card) {
+        game.aReturn(player, game.getTopCard(player, card.color))
+      }
+    },
+
+    (game, player) => {
+      game.aDrawAndTuck(player, game.getEffectAge(this, 5))
+      game.aChooseAndReturn(player, game.getTopCards(player), { min: 0, max: 1 })
+    },
+  ]
+  this.echoImpl = (game, player) => {
+    game.aDrawAndTuck(player, game.getEffectAge(this, 5))
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
