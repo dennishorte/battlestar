@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `MP3`  // Card names are unique in Innovation
@@ -16,7 +17,33 @@ function Card() {
     `Draw and score a card of value equal to a bonus on your board.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 999 })
+
+      if (returned) {
+        const toAchieve = returned.length * 2
+        for (let i = 0; i < toAchieve; i++) {
+          const choices = game.getEligibleAchievementsRaw(player)
+          if (choices) {
+            game.aChooseAndAchieve(player, choices)
+          }
+          else {
+            game.mLog({ template: 'No eligible achievements' })
+            break
+          }
+        }
+      }
+    },
+
+    (game, player) => {
+      const choices = util.array.distinct(game.getBonuses(player)).sort()
+      const age = game.aChooseAge(player, choices, { title: 'Choose an age to draw and score' })
+      if (age) {
+        game.aDrawAndScore(player, age)
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
