@@ -1440,9 +1440,11 @@ Innovation.prototype.aSeizeRelic = function(player, card) {
 
   if (choice === 'to my achievements') {
     this.mMoveCardTo(card, this.getZoneByPlayer(player, 'achievements'), { player })
+    this.mActed(player)
   }
   else if (choice === 'to my hand') {
     this.mMoveCardTo(card, this.getZoneByPlayer(player, 'hand'), { player })
+    this.mActed(player)
   }
   else {
     this.mLogDoNothing(player)
