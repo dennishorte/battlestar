@@ -56,6 +56,10 @@ CardBase.prototype.checkIsCity = function() {
   return this.expansion === 'city' || this.isCity
 }
 
+CardBase.prototype.checkIsEchoes = function() {
+  return this.expansion === 'echo' || this.name === 'Safety Pin'
+}
+
 CardBase.prototype.checkIsFigure = function() {
   return this.expansion === 'figs' || this.name === 'Ching Shih'
 }

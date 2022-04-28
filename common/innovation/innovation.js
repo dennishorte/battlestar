@@ -2965,7 +2965,7 @@ Innovation.prototype._adjustedDrawDeck = function(age, exp) {
 Innovation.prototype._determineBaseDrawExpansion = function(player) {
   if (this.getExpansionList().includes('echo')) {
     const hand = this.getZoneByPlayer(player, 'hand')
-    const echoesCards = hand.cards().filter(c => c.expansion === 'echo')
+    const echoesCards = hand.cards().filter(c => c.checkIsEchoes())
     if (hand.cards().length > 0 && echoesCards.length === 0) {
       return 'echo'
     }
