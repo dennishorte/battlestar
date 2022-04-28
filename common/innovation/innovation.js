@@ -922,7 +922,7 @@ Innovation.prototype.aDecree = function(player, name) {
   })
   this.mLogIndent()
 
-  this.aRemoveMany(player, hand.cards())
+  this.aRemoveMany(player, hand.cards(), { ordered: true })
 
   let doImpl = false
   if (card.zone === 'achievements') {
