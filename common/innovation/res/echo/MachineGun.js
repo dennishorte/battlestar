@@ -16,8 +16,34 @@ function Card() {
     `Return all your non-red top cards.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const toTransfer = game
+        .getTopCards(player)
+        .filter(card => card.checkHasBonus())
+      const transferred = game.aTransferMany(player, toTransfer, game.getZoneByPlayer(leader, 'score'))
+
+      if (transferred && transferred.length > 0) {
+        game.aDraw(player, { age: game.getEffectAge(this, 7) })
+      }
+    },
+
+    (game, player) => {
+      const toReturn = game
+        .getTopCards(player)
+        .filter(card => card.color !== 'red')
+      game.aReturnMany(player, toReturn)
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    const topCards = game.getTopCards(player)
+    if (topCards.length === 5) {
+      game.aDrawAndScore(player, game.getEffectAge(this, 7))
+    }
+    else {
+      game.mLogNoEffect()
+    }
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
