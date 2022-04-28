@@ -16,7 +16,39 @@ function Card() {
     `Draw and reveal a {1}. If it is yellow, score all {1}s from your hand.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const mine = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => card.getAge() === game.getEffectAge(this, 1))
+        .length
+      const theirs = game
+        .getPlayerAll()
+        .filter(other => other !== player)
+        .map(player => game
+          .getCardsByZone(player, 'hand')
+          .filter(card => card.getAge() === game.getEffectAge(this, 1))
+          .length
+        )
+
+      if (theirs.every(count => count < mine)) {
+        game.aDrawAndScore(player, game.getEffectAge(this, 2))
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    },
+
+    (game, player) => {
+      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
+      if (card && card.color === 'yellow') {
+        const toScore = game
+          .getCardsByZone(player, 'hand')
+          .filter(card => card.getAge() === 1)
+        game.aScoreMany(player, toScore, { ordered: true })
+      }
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
