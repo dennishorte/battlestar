@@ -16,7 +16,35 @@ function Card() {
     `You may splay your red cards up.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      while (true) {
+        const count = Math.floor(game.getBiscuitsByPlayer(player).f / 3)
+        const tucked = []
+        for (let i = 0; i < count; i++) {
+          const card = game.aDrawAndTuck(player, game.getEffectAge(this, 8))
+          if (card) {
+            tucked.push(card)
+          }
+        }
+
+        if (tucked.some(card => card.color === 'green')) {
+          game.mLog({
+            template: '{player} tucked at least one green card; repeating.',
+            args: { player }
+          })
+          continue
+        }
+        else {
+          break
+        }
+      }
+    },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['red'], 'up')
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
