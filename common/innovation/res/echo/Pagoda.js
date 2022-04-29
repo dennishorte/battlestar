@@ -15,7 +15,23 @@ function Card() {
     `Draw and reveal a {3}. If you have a card of matching color in your hand, tuck the card from your hand and meld the drawn card. Otherwise, foreshadow the drawn card.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const hand = game.getCardsByZone(player, 'hand')
+      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 3))
+
+      if (card) {
+        const matching = hand.filter(other => other.color === card.color)
+        if (matching.length > 0) {
+          game.aChooseAndTuck(player, matching)
+          game.aMeld(player, card)
+        }
+        else {
+          game.aForeshadow(player, card)
+        }
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
