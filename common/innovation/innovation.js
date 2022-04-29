@@ -2513,13 +2513,16 @@ Innovation.prototype.mMoveByIndices = function(source, sourceIndex, target, targ
 }
 
 Innovation.prototype.mMoveCardTo = function(card, target, opts={}) {
-  if (card.zone === target.id) {
+  const source = this.getZoneByCard(card)
+  const sourceIndex = source.cards().findIndex(c => c === card)
+  const targetIndex = target.cards().length
+
+  if (source === target && sourceIndex === targetIndex) {
     // Card is already in the target zone.
     return
   }
-  const source = this.getZoneByCard(card)
-  const sourceIndex = source.cards().findIndex(c => c === card)
-  this.mMoveByIndices(source, sourceIndex, target, target.cards().length)
+
+  this.mMoveByIndices(source, sourceIndex, target, targetIndex)
 
   if (opts.player) {
     this.mLog({
