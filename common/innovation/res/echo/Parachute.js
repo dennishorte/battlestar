@@ -15,7 +15,15 @@ function Card() {
     `I demand you transfer all cards with a {i} from your hand to my hand!`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const toTransfer = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => card.checkHasBiscuit('i'))
+
+      game.aTransferMany(player, toTransfer, game.getZoneByPlayer(leader, 'hand'))
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
