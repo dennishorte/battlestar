@@ -753,9 +753,8 @@ describe('Innovation', () => {
 
         const request1 = game.run()
         const request2 = t.choose(game, request1, 'Decree.Expansion')
-        const request3 = t.choose(game, request2, 'auto')
 
-        t.testIsSecondPlayer(request3)
+        t.testIsSecondPlayer(request2)
         t.testBoard(game, {
           dennis: {
             green: ['Navigation', 'The Wheel'],

@@ -19,15 +19,17 @@ function Card() {
     (game, player) => {
       while (true) {
         const card = game.aDrawAndMeld(player, game.getEffectAge(this, 9))
-        game.aExecuteAsIf(player, card)
+        if (card) {
+          game.aExecuteAsIf(player, card)
 
-        if (card.checkHasBiscuit('i')) {
-          game.mLog({ template: 'Card had an {i}.' })
-          continue
-        }
-        else {
-          game.mLog({ template: 'Card did not have an {i}.' })
-          break
+          if (card.checkHasBiscuit('i')) {
+            game.mLog({ template: 'Card had an {i}.' })
+            continue
+          }
+          else {
+            game.mLog({ template: 'Card did not have an {i}.' })
+            break
+          }
         }
       }
     }

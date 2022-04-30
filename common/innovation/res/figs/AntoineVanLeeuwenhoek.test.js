@@ -2,7 +2,7 @@ Error.stackTraceLimit = 100
 
 const t = require('../../testutil.js')
 
-describe('Avicenna', () => {
+describe('Antoine Van Leeuwenhoek', () => {
   test('echo', () => {
     const game = t.fixtureTopCard('Antoine Van Leeuwenhoek', { expansions: ['base', 'figs'] })
     game.testSetBreakpoint('before-first-player', (game) => {

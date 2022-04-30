@@ -41,12 +41,6 @@ describe("Yeager's Bell X-1A", () => {
         score: ['Sailing'],
         hand: ['Canning'],
       },
-      decks: {
-        base: {
-          9: ['Computers', 'Fission'],
-          10: ['Databases', 'Globalization', 'Robotics'],
-        }
-      }
     })
   })
 })

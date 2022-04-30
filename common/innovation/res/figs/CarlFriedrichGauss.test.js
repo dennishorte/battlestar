@@ -8,7 +8,7 @@ describe('Carl Friedrich Gauss', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
-        yellow: ['Carl Friedrich Gauss'],
+        blue: ['Carl Friedrich Gauss'],
       },
       decks: {
         base: {
@@ -22,7 +22,7 @@ describe('Carl Friedrich Gauss', () => {
 
     t.testBoard(game, {
       dennis: {
-        yellow: ['Carl Friedrich Gauss'],
+        blue: ['Carl Friedrich Gauss'],
         hand: ['Lighting']
       },
     })
@@ -32,7 +32,7 @@ describe('Carl Friedrich Gauss', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
-        yellow: ['Carl Friedrich Gauss'],
+        blue: ['Carl Friedrich Gauss'],
         score: ['The Wheel', 'Construction'],
         hand: ['Quantum Theory', 'Sailing', 'Enterprise'],
       },
@@ -46,8 +46,7 @@ describe('Carl Friedrich Gauss', () => {
     t.testBoard(game, {
       dennis: {
         green: ['The Wheel', 'Sailing'],
-        blue: ['Quantum Theory'],
-        yellow: ['Carl Friedrich Gauss'],
+        blue: ['Quantum Theory', 'Carl Friedrich Gauss'],
         score: ['Construction'],
         hand: ['Enterprise'],
       },
@@ -58,7 +57,7 @@ describe('Carl Friedrich Gauss', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
-        yellow: ['Carl Friedrich Gauss'],
+        blue: ['Carl Friedrich Gauss'],
         score: ['The Wheel', 'Construction'],
         hand: ['Quantum Theory', 'Sailing', 'Enterprise'],
       },
@@ -70,8 +69,7 @@ describe('Carl Friedrich Gauss', () => {
 
     t.testBoard(game, {
       dennis: {
-        blue: ['Quantum Theory'],
-        yellow: ['Carl Friedrich Gauss'],
+        blue: ['Quantum Theory', 'Carl Friedrich Gauss'],
         score: ['The Wheel', 'Construction'],
         hand: ['Sailing', 'Enterprise'],
       },

@@ -16,8 +16,42 @@ function Card() {
     `If you have at least three echo effects visible in one color, claim the History achievement.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const choices = game.utilHighestCards(game.getTopCards(player))
+      game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'hand'))
+    },
+
+    (game, player) => {
+      if (!game.checkAchievementAvailable('History')) {
+        game.mLogNoEffect()
+      }
+
+      const targetCount = 3
+      const matches = game
+        // Grab each stack
+        .utilColors()
+        .map(color => game.getZoneByPlayer(player, color))
+
+        // Convert each stack to a count of echo effects
+        .map(zone => zone
+          .cards()
+          .map(c => (game.getBiscuitsRaw(c, zone.splay).match(/&/g) || []).length )
+          .reduce((prev, curr) => prev + curr, 0)
+        )
+        .some(count => count >= targetCount)
+
+      if (matches) {
+        game.aClaimAchievement(player, { name: 'History' })
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    },
+  ]
+  this.echoImpl = (game, player) => {
+    game.aChooseAndMeld(player, game.getCardsByZone(player, 'forecast'))
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }

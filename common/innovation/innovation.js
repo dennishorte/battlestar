@@ -501,23 +501,22 @@ Innovation.prototype.aExecuteAsIf = function(player, card) {
   const effectOptions = {
     sharing,
     demanding,
-    leader: player,
     noShare: true,
   }
 
-  this.aCardEffects(null, card, 'echo', effectOptions)
-  this.aCardEffects(null, card, 'dogma', effectOptions)
+  this.mLogIndent()
+  this.aCardEffects(player, card, 'echo', effectOptions)
+  this.aCardEffects(player, card, 'dogma', effectOptions)
+  this.mLogOutdent()
 }
 
-Innovation.prototype.aCardEffects = function(
+Innovation.prototype.aOneEffect = function(
   player,
   card,
-  kind,
-  opts,
+  text,
+  impl,
+  opts={},
 ) {
-  // Null player means do it for everyone.
-  player = player || opts.leader
-
   // Default opts
   opts = Object.assign({
     sharing: [],
@@ -526,12 +525,6 @@ Innovation.prototype.aCardEffects = function(
     endorsed: false,
   }, opts)
 
-  const effects = this.getVisibleEffects(card, kind)
-  if (!effects) {
-    return
-  }
-
-  const { texts, impls } = effects
   const repeatCount = opts.endorsed ? 2 : 1
 
   const actors = [player]
@@ -539,70 +532,86 @@ Innovation.prototype.aCardEffects = function(
     .concat(opts.demanding)
 
   const actorsOrdered = this
-    .getPlayersEnding(opts.leader)
+    .getPlayersEnding(player)
     .filter(player => actors.includes(player))
 
-  for (let i = 0; i < texts.length; i++) {
-    for (const actor of actorsOrdered) {
-      for (let z = 0; z < repeatCount; z++) {
+  for (const actor of actorsOrdered) {
+    for (let z = 0; z < repeatCount; z++) {
 
-        const effectText = texts[i]
-        const effectImpl = impls[i]
-        const isDemand = effectText.startsWith('I demand')
-        const isCompel = effectText.startsWith('I compel')
+      const isDemand = text.startsWith('I demand')
+      const isCompel = text.startsWith('I compel')
 
-        if (!isDemand && !isCompel) {
-          this.state.couldShare = true
+      if (!isDemand && !isCompel) {
+        this.state.couldShare = true
+      }
+
+      const demand = isDemand && opts.demanding.includes(actor)
+      const compel = isCompel && opts.sharing.includes(actor) && actor !== player
+      const share = !isDemand && !isCompel && !opts.noShare && opts.sharing.includes(actor) && z === 0
+      const owner = !isDemand && !isCompel && actor === player
+
+      if (compel || demand || share || owner) {
+        this.mLog({
+          template: `{player}, {card}: ${text}`,
+          classes: ['card-effect'],
+          args: { player: actor, card }
+        })
+        this.mLogIndent()
+
+        const effectInfo = {
+          card,
+          text,
+          impl,
         }
 
-        const demand = isDemand && opts.demanding.includes(actor)
-        const compel = isCompel && opts.sharing.includes(actor) && actor !== opts.leader
-        const share = !isDemand && !isCompel && !opts.noShare && opts.sharing.includes(actor) && z === 0
-        const owner = !isDemand && !isCompel && actor === opts.leader
+        if (demand || compel) {
+          this.state.dogmaInfo.demanding = true
 
-        if (compel || demand || share || owner) {
-          this.mLog({
-            template: `{player}, {card}: ${effectText}`,
-            classes: ['card-effect'],
-            args: { player: actor, card }
-          })
-          this.mLogIndent()
-
-          const effectInfo = {
+          const karmaKind = this.aKarma(actor, 'demand-success', {
             card,
-            text: effectText,
-            impl: effectImpl,
-            index: i,
+            effectInfo,
+            leader: opts.leader
+          })
+          if (karmaKind === 'would-instead') {
+            this.state.dogmaInfo.demanding = false
+            this.mLogOutdent()
+            continue
           }
+        }
 
-          if (demand || compel) {
-            this.state.dogmaInfo.demanding = true
+        const result = this.aCardEffect(actor, effectInfo, { leader: opts.leader })
 
-            const karmaKind = this.aKarma(actor, 'demand-success', {
-              card,
-              effectInfo,
-              leader: opts.leader
-            })
-            if (karmaKind === 'would-instead') {
-              this.state.dogmaInfo.demanding = false
-              this.mLogOutdent()
-              continue
-            }
-          }
+        this.state.dogmaInfo.demanding = false
+        this.mLogOutdent()
 
-          const result = this.aCardEffect(actor, effectInfo, { leader: opts.leader })
-
-          this.state.dogmaInfo.demanding = false
-          this.mLogOutdent()
-
-          if (result === '__STOP__') {
-            this.mLog({
-              template: 'Dogma action is complete'
-            })
-            return result
-          }
+        if (result === '__STOP__') {
+          this.mLog({
+            template: 'Dogma action is complete'
+          })
+          return result
         }
       }
+    }
+  }
+}
+
+Innovation.prototype.aCardEffects = function(
+  player,
+  card,
+  kind,
+  opts={}
+) {
+  const effects = this.getVisibleEffects(card, kind)
+  if (!effects) {
+    return
+  }
+
+  const { texts, impls } = effects
+
+  for (let i = 0; i < texts.length; i++) {
+    const result = this.aOneEffect(player, card, texts[i], impls[i], opts)
+    if (result === '__STOP__') {
+      return
     }
   }
 }
@@ -993,22 +1002,15 @@ Innovation.prototype.aDogmaHelper = function(player, card, opts) {
   this.state.dogmaInfo.biscuits = biscuits
   this.state.dogmaInfo.featuredBiscuit = featuredBiscuit
 
-  // Store the planned effects now, because changes caused by the dogma action
-  // should not affect which effects are executed.
-  const echoCards = this.getVisibleEffectsByColor(player, card.color, 'echo')
-  const dogmaCards = this.getVisibleEffectsByColor(player, card.color, 'dogma')
+  // Store planned effects now, as changes to the stacks shouldn't affect them.
+  const effects = [
+    ...this.getVisibleEffectsByColor(player, card.color, 'echo'),
+    this.getVisibleEffects(card, 'dogma')
+  ].filter(e => e !== undefined)
 
-  const effectCards = [...echoCards, ...dogmaCards]
-    .map(effect => effect.card)
-
-  // Regardless of normal dogma or artifact dogma, the selected card is executed last.
-  effectCards.push(card)
-
-  const finalEffects = util.array.distinct(effectCards)
   const effectOpts = {
     sharing,
     demanding,
-    leader: this.getPlayerCurrent(),
     endorsed: opts.endorsed,
   }
 
@@ -1026,15 +1028,11 @@ Innovation.prototype.aDogmaHelper = function(player, card, opts) {
     })
   }
 
-  for (const ecard of finalEffects) {
-    this.aCardEffects(null, ecard, 'echo', effectOpts)
-
-    // Only the top card (or the artifact card for free artifact dogma actions)
-    // get to do their dogma effects.
-    if (ecard === card) {
-      const result = this.aCardEffects(null, ecard, 'dogma', effectOpts)
+  for (const e of effects) {
+    for (let i = 0; i < e.texts.length; i++) {
+      const result = this.aOneEffect(player, e.card, e.texts[i], e.impls[i], effectOpts)
       if (result === '__STOP__') {
-        return result
+        return
       }
     }
   }

@@ -17,10 +17,9 @@ describe('Statistics', () => {
 
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Statistics')
-    const request3 = t.choose(game, request2, 'auto')
-    const request4 = t.choose(game, request3, 'yellow')
+    const request3 = t.choose(game, request2, 'yellow')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(request3)
     t.testBoard(game, {
       dennis: {
         yellow: {

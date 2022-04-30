@@ -11,9 +11,8 @@ test('War', () => {
   })
   const request1 = game.run()
   const request2 = t.choose(game, request1, 'Decree.War')
-  const request3 = t.choose(game, request2, 'auto')
-  const request4 = t.choose(game, request3, 3)
-  const request5 = t.choose(game, request4, 'auto')
+  const request3 = t.choose(game, request2, 3)
+  const request4 = t.choose(game, request3, 'auto')
 
   expect(t.cards(game, 'purple', 'dennis')).toStrictEqual(['Education'])
   expect(t.cards(game, 'yellow', 'micah')).toStrictEqual(['Medicine'])
