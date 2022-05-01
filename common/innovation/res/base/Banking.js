@@ -21,6 +21,7 @@ function Card() {
       const choices = game
         .getTopCards(player)
         .filter(card => card !== undefined)
+        .filter(card => card.color !== 'green')
         .filter(card => card.biscuits.includes('f'))
 
       const card = game.aChooseCard(player, choices)
