@@ -26,7 +26,13 @@ export default {
       return this
         .game
         .getBonuses(this.player)
-        .map(bonus => bonus.toString())
+        .map(bonus => {
+          switch (bonus) {
+            case 10: return 'a'
+            case 11: return 'b'
+            default: return bonus.toString()
+          }
+        })
     },
   },
 }
