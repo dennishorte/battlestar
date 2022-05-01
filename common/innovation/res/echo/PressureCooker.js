@@ -15,7 +15,23 @@ function Card() {
     `Return all cards from your hand. For each top card on your board with a bonus, draw a card of value equal to that bonus.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+
+      const toDraw = game
+        .getTopCards(player)
+        .filter(card => card.checkHasBonus())
+        .map(card => card.getBonuses()[0])
+        .sort()
+
+      while (toDraw.length > 0) {
+        const age = game.aChooseAge(player, toDraw)
+        game.aDraw(player, { age })
+        toDraw.splice(toDraw.indexOf(age), 1)
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
