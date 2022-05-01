@@ -15,8 +15,16 @@ function Card() {
     `No effect.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {}
+  ]
+  this.echoImpl = (game, player) => {
+    const choices = game
+      .utilColors()
+      .map(color => game.getBottomCard(player, color))
+      .filter(card => card !== undefined)
+    game.aChooseAndScore(player, choices)
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
