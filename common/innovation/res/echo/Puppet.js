@@ -15,7 +15,9 @@ function Card() {
     `No effect.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {}
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
