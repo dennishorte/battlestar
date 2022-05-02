@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../game.js')
 
 function Card() {
   this.id = `Radio Telescope`  // Card names are unique in Innovation
@@ -15,7 +16,30 @@ function Card() {
     `For every two {s} on your board, draw a {9}. Meld one of the cards drawn and return the rest. If you meld AI due to this dogma effect, you win.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const count = Math.floor(game.getBiscuitsByPlayer(player).s / 2)
+      const drawn = []
+      for (let i = 0; i < count; i++) {
+        const card = game.aDraw(player, { age: game.getEffectAge(this, 9) })
+        if (card) {
+          drawn.push(card)
+        }
+      }
+
+      const melded = game.aChooseAndMeld(player, drawn)
+
+      if (melded.length > 0 && melded[0].name === 'A.I.') {
+        throw new GameOverEvent({
+          player,
+          reason: this.name
+        })
+      }
+
+      const toReturn = drawn.filter(card => card !== melded[0])
+      game.aReturnMany(player, toReturn)
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
