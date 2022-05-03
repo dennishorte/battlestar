@@ -15,7 +15,20 @@ function Card() {
     `You may return any number of cards from your hand. Draw that many {3}, and then meld a card from your hand.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), {
+        min: 0,
+        max: 999
+      })
+
+      for (let i = 0; i < returned.length; i++) {
+        game.aDraw(player, { age: game.getEffectAge(this, 3) })
+      }
+
+      game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
