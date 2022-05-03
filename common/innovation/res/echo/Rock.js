@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../game.js')
 
 function Card() {
   this.id = `Rock`  // Card names are unique in Innovation
@@ -16,7 +17,34 @@ function Card() {
     `You may score a top card from your board. If Paper is your top green card, you win.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const card = game.getTopCard(player, 'green')
+      if (card) {
+        game.aTransfer(player, card, game.getZoneByPlayer(leader, 'hand'))
+
+        const next = game.getTopCard(player, 'green')
+        if (next && next.name === 'Scissors') {
+          throw new GameOverEvent({
+            player: leader,
+            reason: this.name
+          })
+        }
+      }
+    },
+
+    (game, player) => {
+      game.aChooseAndScore(player, game.getTopCards(player), { min: 0, max: 1 })
+
+      const card = game.getTopCard(player, 'green')
+      if (card && card.name === 'Paper') {
+        throw new GameOverEvent({
+          player,
+          reason: this.name
+        })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
