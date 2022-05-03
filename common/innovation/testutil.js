@@ -343,7 +343,7 @@ TestUtil.zone = function(game, zoneName, playerName='dennis') {
 TestUtil.choose = function(game, request, ...selections) {
   const selector = request.selectors[0]
   selections = selections.map(string => {
-    if (string.startsWith('*')) {
+    if (typeof string === 'string' && string.startsWith('*')) {
       return string.slice(1)
     }
 
