@@ -16,7 +16,23 @@ function Card() {
     `Draw a card of value equal to the value of your lowest top card plus the number of colors you have splayed.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aChooseAndSplay(player, ['yellow'], 'right')
+    },
+
+    (game, player) => {
+      const splayedCount = game
+        .utilColors()
+        .map(color => game.getZoneByPlayer(player, color).splay)
+        .filter(splay => splay !== 'none')
+        .length
+      const lowestCard = game.utilLowestCards(game.getTopCards(player))[0]
+      const lowestAge = lowestCard ? lowestCard.getAge() : 0
+      const drawAge = lowestAge + splayedCount
+      game.aDraw(player, { age: drawAge })
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
