@@ -16,8 +16,22 @@ function Card() {
     `You may splay your red cards up.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const choices = game
+        .getTopCards(player)
+        .filter(card => !card.checkHasBonus())
+      game.aChooseAndScore(player, choices)
+    },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['red'], 'up')
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    game.aDrawAndTuck(player, game.getEffectAge(this, 7))
+    game.aDrawAndTuck(player, game.getEffectAge(this, 7))
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
