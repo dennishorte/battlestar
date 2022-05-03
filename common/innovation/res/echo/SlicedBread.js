@@ -15,8 +15,20 @@ function Card() {
     `Return a card from your score pile. Draw and score two cards of value one less than the value of the card returned.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'))[0]
+      if (returned) {
+        game.aDrawAndScore(player, returned.getAge() - 1)
+        game.aDrawAndScore(player, returned.getAge() - 1)
+      }
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+    game.aDraw(player, { age: game.getEffectAge(this, 8) })
+    game.aDraw(player, { age: game.getEffectAge(this, 8) })
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
