@@ -15,8 +15,12 @@ function Card() {
     `No effect.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {}
+  ]
+  this.echoImpl = (game, player) => {
+    game.aDraw(player, { age: game.getEffectAge(this, 2) })
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
