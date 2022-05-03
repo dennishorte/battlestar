@@ -16,8 +16,56 @@ function Card() {
     `If Paper is a top card on any player's board, transfer it to your score pile.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      for (let i = 0; i < 2; i++) {
+        const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'), {
+          title: `Choose a card to score or meld (${i} of 2)`,
+          min: 0,
+          max: 1
+        })
+
+        if (card) {
+          const meldOrScore = game.aChoose(player, ['meld', 'score'], {
+            title: `Meld or score ${card.name}`
+          })[0]
+          if (meldOrScore === 'meld') {
+            game.aMeld(player, card)
+          }
+          else {
+            game.aScore(player, card)
+          }
+        }
+        else {
+          game.mLogDoNothing(player)
+          break
+        }
+      }
+    },
+
+    (game, player) => {
+      const paper = game
+        .getPlayerAll()
+        .flatMap(player => game.getTopCards(player))
+        .filter(card => card.name === 'Paper')
+
+      if (paper.length > 0) {
+        game.aTransfer(player, paper[0], game.getZoneByPlayer(player, 'score'))
+      }
+    },
+  ]
+  this.echoImpl = (game, player) => {
+    const choices = game
+      .utilColors()
+      .map(color => game.getBottomCard(player, color))
+      .filter(card => card !== undefined)
+
+    const card = game.aChooseCard(player, choices)
+
+    if (card) {
+      game.mMoveCardTo(card, game.getZoneByPlayer(player, 'hand'), { player })
+    }
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
