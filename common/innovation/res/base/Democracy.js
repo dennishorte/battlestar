@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `You may return any number of cards from your hand. If you have teturned more cards than any opponent due to Democracy so far during this dogma action, draw and score an {8}.`
+    `You may return any number of cards from your hand. If you have returned more cards than any opponent due to Democracy so far during this dogma action, draw and score an {8}.`
   ]
 
   this.dogmaImpl = [
