@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../game.js')
 
 function Card() {
   this.id = `Social Network`  // Card names are unique in Innovation
@@ -16,7 +17,37 @@ function Card() {
     `If you have fewer {f}, fewer {c}, and fewer {k} than each other player, you win.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const biscuit = game.aChoose(player, ['{k}', '{c}', '{s}', '{l}', '{f}', '{i}'], {
+        title: 'Choose a biscuit',
+      })[0][1]
+      const toTransfer = game
+        .getTopCards(player)
+        .filter(card => !card.checkHasBiscuit(biscuit))
+      game.aTransferMany(player, toTransfer, game.getZoneByPlayer(leader, 'score'))
+    },
+
+    (game, player) => {
+      const mine = game.getBiscuitsByPlayer(player)
+      const theirs = game
+        .getPlayerAll()
+        .filter(other => other !== player)
+        .map(other => game.getBiscuitsByPlayer(other))
+
+      for (const biscuits of theirs) {
+        if (mine.f >= biscuits.f || mine.c >= biscuits.c || mine.k >= biscuits.k) {
+          game.mLogNoEffect()
+          return
+        }
+      }
+
+      throw new GameOverEvent({
+        player,
+        reason: this.name
+      })
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
