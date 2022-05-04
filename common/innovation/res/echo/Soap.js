@@ -15,7 +15,21 @@ function Card() {
     `Choose a color. You may tuck any number of cards of that color from your hand. If you tucked at least three, you may achieve (if eligible) a card from your hand.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const color = game.aChoose(player, game.utilColors())[0]
+      const choices = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => card.color === color)
+      const tucked = game.aChooseAndTuck(player, choices, { min: 0, max: 999 })
+      if (tucked.length >= 3) {
+        const eligible = game
+          .getCardsByZone(player, 'hand')
+          .filter(card => game.checkAchievementEligibility(player, this))
+        game.aChooseAndAchieve(player, eligible, { min: 0, max: 1 })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
