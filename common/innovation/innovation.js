@@ -2542,9 +2542,20 @@ Innovation.prototype.mMoveCardsTo = function(player, cards, target) {
   }
 }
 
-Innovation.prototype.mMoveCardToTop = function(card, target) {
+Innovation.prototype.mMoveCardToTop = function(card, target, opts={}) {
   const source = this.getZoneByCard(card)
   const sourceIndex = source.cards().findIndex(c => c === card)
+
+  if (opts.player) {
+    this.mLog({
+      template: '{player} moves {card} to the top of its deck',
+      args: {
+        player: opts.player,
+        card,
+      }
+    })
+  }
+
   return this.mMoveByIndices(source, sourceIndex, target, 0)
 }
 
