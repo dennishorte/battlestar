@@ -16,8 +16,31 @@ function Card() {
     `You may splay your yellow cards right.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aDraw(player, { age: game.getEffectAge(this, 7) })
+
+      const melded = game.state.dogmaInfo.stethoscope[player.name]
+      if (melded && melded.color === 'blue') {
+        game.aDraw(player, { age: game.getEffectAge(this, 8) })
+      }
+    },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['yellow'], 'right')
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    const choices = game
+      .getCardsByZone(player, 'hand')
+      .filter(card => card.color === 'yellow' || card.color === 'blue')
+    const melded = game.aChooseAndMeld(player, choices)
+
+    if (!game.state.dogmaInfo.stethoscope) {
+      game.state.dogmaInfo.stethoscope = {}
+    }
+    game.state.dogmaInfo.stethoscope[player.name] = melded[0]
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
