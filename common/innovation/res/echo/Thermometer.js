@@ -15,8 +15,32 @@ function Card() {
     `Draw and meld a card of value one higher than the value of your top yellow card. If the melded card is yellow, repeat this dogma effect.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      while (true) {
+        const yellow = game.getTopCard(player, 'yellow')
+        const age = yellow ? yellow.getAge() + 1 : 1
+        const melded = game.aDrawAndMeld(player, age)
+        if (melded && melded.color === 'yellow') {
+          game.mLog({
+            template: 'Melded card was yellow. Repeating'
+          })
+          continue
+        }
+        else {
+          break
+        }
+      }
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    const splay = game.getZoneByPlayer(player, 'green').splay
+    const toMeld = game.getBottomCard(player, 'green')
+    if (toMeld) {
+      game.aMeld(player, toMeld)
+      game.getZoneByPlayer(player, 'green').splay = splay
+    }
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
