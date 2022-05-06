@@ -1,0 +1,174 @@
+# Example
+# 1322  1 = area, 3 = number of spaces, 2 = number of starting neutrals, 2 = # points
+# - 0, The Wornwrithings
+# - 1, Jhachalkhyn
+
+Gauntlgrim
+1322
+control 1,11
+0 The Wormwrithings
+1 Jhachalkhyn
+
+The Wormwrithings
+1303
+0 Gauntlgrim
+1 Mantol-Derith
+
+Jhachalkhyn
+1404
+start
+1 Gauntlgrim
+1 Gracklstugh
+1 Buirandyn
+
+Buirandyn
+1313
+1 Jhachalkhyn
+1 The Labyrinth
+1 Stoneshaft Clanhold
+
+Stoneshaft Clanhold
+1224
+1 Buirandyn
+2 Skullport
+1 Ch'chitl
+
+Ch'chitl
+1322
+control 1,11
+1 Stoneshaft Clanhold
+1 Kamaglym
+
+Blingdenstone
+2224
+* Mantol-Derith
+
+Mantol-Derith
+2524
+start
+* Blingdenstone
+1 The Wormwrithings
+1 Gracklstugh
+3 Menzoberranzan
+
+Gracklstugh
+2423
+1 Mantol-Derith
+1 Jhachalkhyn
+2 Chasmleap Bridge
+1 The Labyrinth
+
+The Labyrinth
+2313
+1 Gracklstugh
+1 Buirandyn
+2 Skullport
+1* Araumycos
+
+Skullport
+2524
+start
+2 The Labyrinth
+2 Stoneshaft Clanhold
+1 Kamaglym
+
+Kamaglym
+2303
+1 Ch'chitl
+1 Skullport
+2 Eryndlyn
+2 Tsenviilyq
+
+Menzoberranzan
+2635
+control 1,12
+3 Mantol-Derith
+2 Chasmleap Bridge
+2 Everfire
+
+Chasmleap Bridge
+2101
+2 Menzoberranzan
+2 Gracklstugh
+* Araumycos
+1 Everfire
+
+Araumycos
+2443
+control 1,13
+* Chasmleap Bridge
+*1 The Labyrinth
+* Ched Nasad
+* Eryndlyn
+
+Eryndlyn
+2303
+start
+* Araumycos
+2 Kamaglym
+1 Llacerellyn
+
+Tsenviilyq
+2334
+control 1,12
+2 Kamaglym
+2 Llacerellyn
+
+Everfire
+2303
+2 Menzoberranzan
+1 Chasmleap Bridge
+1 Chaulssin
+1 Halls of the Scoured Legion
+
+Halls of the Scoured Legion
+2213
+1 Everfire
+2 Ched Nasad
+1 Yathchol
+
+Ched Nasad
+2403
+start
+* Araumycos
+2 Llacerellyn
+1 Yathchol
+1 Ruins of Dekanter
+
+Llacerellyn
+2202
+2 Ched Nasad
+1 Eryndlyn
+1 Tsenviilyq
+2 Ss'zuraass'nee
+
+Chaulssin
+3504
+start
+1 Everfire
+1 The Phaerlin
+
+The Phaerlin
+3322
+control 1,12
+1 Chaulssin
+1 Yathchol
+2 Ruins of Dekanter
+
+Yathchol
+3224
+1 The Phaerlin
+1 Halls of the Scoured Legion
+1 Ched Nasad
+
+Ruins of Dekanter
+3625
+2 The Phaerlin
+1 Ched Nasad
+1 Ss'zuraass'nee
+
+Ss'zuraass'nee
+3322
+control 1,12
+1 Ruins of Dekanter
+2 Llacerellyn
