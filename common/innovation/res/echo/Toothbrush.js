@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `Toothbrush`  // Card names are unique in Innovation
@@ -16,8 +17,35 @@ function Card() {
     `If the {2} deck has at least one card, you may transfer its bottom card to the available achievements.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      game.aChooseAndSplay(player, null, 'left')
+    },
+
+    (game, player) => {
+      const deck = game.getZoneByDeck('base', 2).cards()
+      if (deck.length > 0) {
+        const doTransfer = game.aYesNo(player, "Transfer the bottom {2} to the available achievements?")
+        if (doTransfer) {
+          game.aTransfer(player, deck[0], game.getZoneById('achievements'))
+        }
+      }
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    const ages = game
+      .getCardsByZone(player, 'hand')
+      .map(card => card.getAge())
+      .sort()
+    const choices = util.array.distinct(ages)
+    const age = game.aChooseAge(player, choices)
+    if (age) {
+      const toTuck = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => card.getAge() === age)
+      game.aTuckMany(player, toTuck)
+    }
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
