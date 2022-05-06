@@ -99,7 +99,7 @@ export default {
             {
               text: 'Echoes of the Past',
               value: 'echo',
-              disabled: true,
+              disabled: false,
             },
             {
               text: 'Figures in the Sand',
