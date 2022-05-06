@@ -597,7 +597,7 @@ s: For every two {s} on your board, draw a {9}. Meld one of the cards drawn and 
 
 Jet
 red
-8
+9
 h&ia
 & Meld a card from your hand.
 i: I demand you return your top card of the color I melded due to Jet's echo effect.

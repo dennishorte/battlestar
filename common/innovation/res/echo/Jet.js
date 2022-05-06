@@ -4,7 +4,7 @@ function Card() {
   this.id = `Jet`  // Card names are unique in Innovation
   this.name = `Jet`
   this.color = `red`
-  this.age = 8
+  this.age = 9
   this.expansion = `echo`
   this.biscuits = `h&ia`
   this.dogmaBiscuit = `i`
