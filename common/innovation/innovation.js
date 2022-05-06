@@ -2081,8 +2081,13 @@ Innovation.prototype.getPlayerOther = function(player) {
 }
 
 Innovation.prototype.getPlayerByCard = function(card) {
-  const zone = this.getZoneById(card.zone)
-  return this.getPlayerByZone(zone)
+  try {
+    const zone = this.getZoneById(card.zone)
+    return this.getPlayerByZone(zone)
+  }
+  catch (e) {
+    return undefined
+  }
 }
 
 Innovation.prototype.getPlayerCurrent = function() {
@@ -2950,7 +2955,13 @@ Innovation.prototype.utilSerializeObject = function(obj) {
 ////////////////////////////////////////////////////////////////////////////////
 // Private functions
 Innovation.prototype._getHiddenName = function(card) {
-  return `*${card.expansion}-${card.age}*`
+  const owner = this.getPlayerByCard(card)
+  if (owner) {
+    return `*${card.expansion}-${card.age}* (${owner.name})`
+  }
+  else {
+    return `*${card.expansion}-${card.age}*`
+  }
 }
 
 Innovation.prototype._adjustedDrawDeck = function(age, exp) {
