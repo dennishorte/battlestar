@@ -15,7 +15,31 @@ function Card() {
     `Tuck a card with a bonus from your hand. If you do, draw a card of value equal to that card's bonus. If the drawn card also has a bonus, you may return a card from your hand to repeat this dogma effect.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      while (true) {
+        const choices = game
+          .getCardsByZone(player, 'hand')
+          .filter(card => card.checkHasBonus())
+        const tucked = game.aChooseAndTuck(player, choices)[0]
+        if (tucked) {
+          const drawn = game.aDraw(player, { age: tucked.getBonuses()[0] })
+          if (drawn && drawn.checkHasBonus()) {
+            const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), {
+              title: 'Return a card from hand to repeat this dogma effect?',
+              min: 0,
+              max: 1
+})[0]
+            if (returned) {
+              continue
+            }
+          }
+        }
+
+        break
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
