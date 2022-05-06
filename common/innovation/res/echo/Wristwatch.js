@@ -15,8 +15,20 @@ function Card() {
     `For each visible bonus on your board, draw and tuck a card of that value, in ascending order.`
   ]
 
-  this.dogmaImpl = []
-  this.echoImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const bonuses = game.getBonuses(player).sort()
+      for (const bonus of bonuses) {
+        game.aDrawAndTuck(player, bonus)
+      }
+    }
+  ]
+  this.echoImpl = (game, player) => {
+    const choices = game
+      .getTopCards(player)
+      .filter(card => card.color !== 'yellow')
+    game.aChooseAndTuck(player, choices)
+  }
   this.inspireImpl = []
   this.karmaImpl = []
 }
