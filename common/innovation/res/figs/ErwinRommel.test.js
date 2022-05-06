@@ -17,7 +17,7 @@ describe('Erwin Rommel', () => {
 
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Erwin Rommel')
-    const request3 = t.choose(game, request2, '*base-4*')
+    const request3 = t.choose(game, request2, '**base-4*')
 
     t.testBoard(game, {
       dennis: {
