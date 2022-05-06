@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `Typewriter`  // Card names are unique in Innovation
@@ -15,7 +16,17 @@ function Card() {
     `Return all cards from your hand. Draw a {6}. For each color of card returned, draw a card of the next higher value.`
   ]
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+      const returned = game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+      const firstAge = game.getEffectAge(this, 6)
+      game.aDraw(player, { age: firstAge })
+      const colors = util.array.distinct(returned.map(card => card.color))
+      for (let i = 0; i < colors.length; i++) {
+        game.aDraw(player, { age: firstAge + 1 + i })
+      }
+    }
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
