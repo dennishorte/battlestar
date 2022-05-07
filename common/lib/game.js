@@ -37,7 +37,7 @@ function Game(serialized_data) {
 
 function GameFactory(settings) {
   settings = Object.assign({
-    game: 'Innovation',
+    game: '',
     name: '',
     players: [],
     seed: '',
@@ -246,6 +246,64 @@ Game.prototype.undo = function() {
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// Logging
+
+Game.prototype.getLog = function() {
+  return this.state.log
+}
+
+Game.prototype.getLogIndent = function(msg) {
+  let indent = 0
+  for (const msg of this.getLog()) {
+    if (msg === '__INDENT__') {
+      indent += 1
+    }
+    else if (msg === '__OUTDENT__') {
+      indent -= 1
+    }
+  }
+  return indent
+}
+
+Game.prototype.mLog = function(msg) {
+  if (!msg.template) {
+    console.log(msg)
+    throw new Error(`Invalid log entry; no template`)
+  }
+
+  if (!msg.classes) {
+    msg.classes = []
+  }
+  if (!msg.args) {
+    msg.args = {}
+  }
+
+  this._enrichLogArgs(msg)
+
+  if (this._postEnrichArgs(msg)) {
+    return
+  }
+
+  msg.id = this.getLog().length
+  msg.indent = this.getLogIndent(msg)
+
+  // Making a copy here makes sure that the log items are always distinct from
+  // wherever their original data came from.
+  this.state.log.push(msg)
+
+  return msg.id
+}
+
+Game.prototype.mLogIndent = function() {
+  this.state.log.push('__INDENT__')
+}
+
+Game.prototype.mLogOutdent = function() {
+  this.state.log.push('__OUTDENT__')
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 // Protected Methods
 
 Game.prototype._gameOver = function(e) {
@@ -264,6 +322,14 @@ Game.prototype._blankState = function(more = {}) {
 }
 
 Game.prototype._responseReceived = function(response) {
+  // To be overridden by child classes.
+}
+
+Game.prototype._enrichLogArgs = function(msg) {
+  // To be overridden by child classes.
+}
+
+Game.prototype._postEnrichArgs = function(msg) {
   // To be overridden by child classes.
 }
 

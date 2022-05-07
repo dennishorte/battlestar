@@ -31,6 +31,7 @@ function InnovationFactory(settings, viewerName) {
 
 function factoryFromLobby(lobby) {
   return GameFactory({
+    game: 'Innovation',
     name: lobby.name,
     expansions: lobby.options.expansions,
     players: lobby.users,
@@ -2030,23 +2031,6 @@ Innovation.prototype.getHighestTopCard = function(player) {
   return this.utilHighestCards(this.getTopCards(player), { visible: true })[0]
 }
 
-Innovation.prototype.getLog = function() {
-  return this.state.log
-}
-
-Innovation.prototype.getLogIndent = function(msg) {
-  let indent = 0
-  for (const msg of this.getLog()) {
-    if (msg === '__INDENT__') {
-      indent += 1
-    }
-    else if (msg === '__OUTDENT__') {
-      indent -= 1
-    }
-  }
-  return indent
-}
-
 Innovation.prototype.getNonEmptyAges = function() {
   return [1,2,3,4,5,6,7,8,9,10]
     .filter(age => this.getZoneByDeck('base', age).cards().length > 0)
@@ -2573,7 +2557,10 @@ Innovation.prototype._attemptToCombineWithPreviousEntry = function(msg) {
   const msgAction = msg.template.split(' ')[1]
 
   const msgIsCombinable = combinable.includes(msgAction)
-  const prevWasDraw = prev.template === '{player} draws {card}'
+  const prevWasDraw = (
+    prev.template === '{player} draws {card}'
+    || prev.template === '{player} draws and reveals {card}'
+  )
 
   if (msgIsCombinable && prevWasDraw) {
     const argsMatch = (
@@ -2582,42 +2569,13 @@ Innovation.prototype._attemptToCombineWithPreviousEntry = function(msg) {
     )
 
     if (argsMatch) {
-      prev.template = `{player} draws and ${msgAction} {card}`
+      prev.template = prev.template.slice(0, -6) + 'and ' + msgAction + ' {card}'
       prev.args.card = msg.args.card
       return true
     }
   }
 
   return false
-}
-
-Innovation.prototype.mLog = function(msg) {
-  if (!msg.template) {
-    console.log(msg)
-    throw new Error(`Invalid log entry; no template`)
-  }
-
-  if (!msg.classes) {
-    msg.classes = []
-  }
-  if (!msg.args) {
-    msg.args = {}
-  }
-
-  this.utilEnrichLogArgs(msg)
-
-  if (this._attemptToCombineWithPreviousEntry(msg)) {
-    return
-  }
-
-  msg.id = this.getLog().length
-  msg.indent = this.getLogIndent(msg)
-
-  // Making a copy here makes sure that the log items are always distinct from
-  // wherever their original data came from.
-  this.state.log.push(msg)
-
-  return msg.id
 }
 
 Innovation.prototype.mLogDoNothing = function(player) {
@@ -2629,14 +2587,6 @@ Innovation.prototype.mLogDoNothing = function(player) {
 
 Innovation.prototype.mLogNoEffect = function() {
   this.mLog({ template: 'no effect' })
-}
-
-Innovation.prototype.mLogIndent = function() {
-  this.state.log.push('__INDENT__')
-}
-
-Innovation.prototype.mLogOutdent = function() {
-  this.state.log.push('__OUTDENT__')
 }
 
 Innovation.prototype.mRemove = function(player, card) {
@@ -2857,7 +2807,11 @@ Innovation.prototype._cardLogData = function(card) {
   }
 }
 
-Innovation.prototype.utilEnrichLogArgs = function(msg) {
+Innovation.prototype._postEnrichArgs = function(msg) {
+  return this._attemptToCombineWithPreviousEntry(msg)
+}
+
+Innovation.prototype._enrichLogArgs = function(msg) {
   for (const key of Object.keys(msg.args)) {
     if (key === 'players') {
       const players = msg.args[key]
@@ -2890,9 +2844,6 @@ Innovation.prototype.utilEnrichLogArgs = function(msg) {
         value: msg.args[key],
       }
     }
-
-    // Ensure the classes key is set for all entries.
-    msg.args[key].classes = msg.args[key].classes || []
   }
 }
 
