@@ -54,21 +54,17 @@ Tyrants.prototype._gameOver = function(event) {
   return event
 }
 
-Tyrants.prototype._responseReceived = function(response) {
-  if (response.isUserResponse) {
-
-    this.state.log.push({
-      type: 'response-received',
-      data: response,
-    })
-  }
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
 
 Tyrants.prototype.initialize = function() {
+  this.initializeZones()
+}
 
+Tyrants.prototype.initializeZones = function() {
+  this.initializeMapZones()
+  this.initializeMarketZones()
+  this.initializePlayerZones()
 }
 
 
@@ -76,5 +72,10 @@ Tyrants.prototype.initialize = function() {
 // Main Loop
 
 Tyrants.prototype.mainLoop = function() {
-
+  while (true) {
+    this.doActions()
+    this.endOfTurn()
+    this.cleanup()
+    this.drawHand()
+  }
 }

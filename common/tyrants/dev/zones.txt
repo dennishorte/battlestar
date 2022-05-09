@@ -3,172 +3,257 @@
 # - 0, The Wornwrithings
 # - 1, Jhachalkhyn
 
+# Routes
+araum-chasm*
+araum-ched*
+araum-erynd*
+araum-labyr a*
+araum-labyr b
+bling-mant*
+buir-jhach
+buir-labyr
+buir-stone
+ch'chi-kama
+ch'chi-stone
+chasm-ever
+chasm-grack a
+chasm-grack b
+chasm-menzo a
+chasm-menzo b
+chaul-ever
+chaul-phaer
+ched-halls a
+ched-halls b
+ched-llace a
+ched-llace b
+ched-ruins
+ched-yath
+erynd-kama a
+erynd-kama b
+erynd-llace
+ever-halls
+ever-menzo a
+ever-menzo b
+gaunt-jhach
+grack-jhach
+grack-labyr
+grack-mant
+halls-yath
+kama-skull
+kama-tsen a
+kama-tsen b
+labyr-skull a
+labyr-skull b
+llace-ss'zur a
+llace-ss'zur b
+llace-tsen
+mant-menzo a
+mant-menzo b
+mant-menzo c
+mant-worm
+phaer-ruins a
+phaer-ruins b
+phaer-yath
+ruins-ss'zur
+skull-stone a
+skull-stone b
+
+
+
+# Locations
 Gauntlgrim
+gaunt
 1322
 control 1,11
-0 The Wormwrithings
-1 Jhachalkhyn
+The Wormwrithings
+gaunt-jhach
 
 The Wormwrithings
+worm
 1303
-0 Gauntlgrim
-1 Mantol-Derith
+Gauntlgrim
+mant-worm
 
 Jhachalkhyn
+jhach
 1404
 start
-1 Gauntlgrim
-1 Gracklstugh
-1 Buirandyn
+gaunt-jhach
+grack-jhach
+buir-jhach
 
 Buirandyn
+buir
 1313
-1 Jhachalkhyn
-1 The Labyrinth
-1 Stoneshaft Clanhold
+buir-jhach
+buir-labyr
+buir-stone
 
 Stoneshaft Clanhold
+stone
 1224
-1 Buirandyn
-2 Skullport
-1 Ch'chitl
+buir-stone
+skull-stone a
+ch'chi-stone
 
 Ch'chitl
+ch'chi
 1322
 control 1,11
-1 Stoneshaft Clanhold
-1 Kamaglym
+ch'chi-stone
+ch'chi-kama
 
 Blingdenstone
+bling
 2224
-* Mantol-Derith
+*bling-mant
 
 Mantol-Derith
+mant
 2524
 start
-* Blingdenstone
-1 The Wormwrithings
-1 Gracklstugh
-3 Menzoberranzan
+*bling-mant
+mant-worm
+grack-mant
+mant-menzo a
 
 Gracklstugh
+grack
 2423
-1 Mantol-Derith
-1 Jhachalkhyn
-2 Chasmleap Bridge
-1 The Labyrinth
+grack-mant
+grack-jhach
+chasm-grack b
+grack-labyr
 
 The Labyrinth
+labyr
 2313
-1 Gracklstugh
-1 Buirandyn
-2 Skullport
-1* Araumycos
+grack-labyr
+buir-labyr
+labyr-skull a
+araum-labyr b
 
 Skullport
+skull
 2524
 start
-2 The Labyrinth
-2 Stoneshaft Clanhold
-1 Kamaglym
+labyr-skull b
+skull-stone a
+kama-skull
 
 Kamaglym
+kama
 2303
-1 Ch'chitl
-1 Skullport
-2 Eryndlyn
-2 Tsenviilyq
+ch'chi-kama
+kama-skull
+erynd-kama b
+kama-tsen a
 
 Menzoberranzan
+menzo
 2635
 control 1,12
-3 Mantol-Derith
-2 Chasmleap Bridge
-2 Everfire
+mant-menzo c
+chasm-menzo b
+ever-menzo b
 
 Chasmleap Bridge
+chasm
 2101
-2 Menzoberranzan
-2 Gracklstugh
-* Araumycos
-1 Everfire
+chasm-menzo a
+chasm-grack a
+araum-chasm*
+chasm-ever
 
 Araumycos
+araum
 2443
 control 1,13
-* Chasmleap Bridge
-*1 The Labyrinth
-* Ched Nasad
-* Eryndlyn
+araum-chasm*
+araum-labyr a*
+araum-ched*
+araum-erynd*
 
 Eryndlyn
+erynd
 2303
 start
-* Araumycos
-2 Kamaglym
-1 Llacerellyn
+araum-erynd*
+erynd-kama a
+erynd-llace
 
 Tsenviilyq
+tsen
 2334
 control 1,12
-2 Kamaglym
-2 Llacerellyn
+kama-tsen b
+llace-tsen
 
 Everfire
+ever
 2303
-2 Menzoberranzan
-1 Chasmleap Bridge
-1 Chaulssin
-1 Halls of the Scoured Legion
+ever-menzo a
+chasm-ever
+chaul-ever
+ever-halls
 
 Halls of the Scoured Legion
+halls
 2213
-1 Everfire
-2 Ched Nasad
-1 Yathchol
+ever-halls
+ched-halls b
+halls-yath
 
 Ched Nasad
+ched
 2403
 start
-* Araumycos
-2 Llacerellyn
-1 Yathchol
-1 Ruins of Dekanter
+araum-ched*
+ched-halls a
+ched-llace a
+ched-yath
+ched-ruins
 
 Llacerellyn
+llace
 2202
-2 Ched Nasad
-1 Eryndlyn
-1 Tsenviilyq
-2 Ss'zuraass'nee
+ched-llace b
+erynd-llace
+llace-tsen
+llace-ss'zur a
 
 Chaulssin
+chaul
 3504
 start
-1 Everfire
-1 The Phaerlin
+chaul-ever
+chaul-phaer
 
 The Phaerlin
+phaer
 3322
 control 1,12
-1 Chaulssin
-1 Yathchol
-2 Ruins of Dekanter
+chaul-phaer
+phaer-yath
+phaer-ruins a
 
 Yathchol
+yath
 3224
-1 The Phaerlin
-1 Halls of the Scoured Legion
-1 Ched Nasad
+phaer-yath
+halls-yath
+ched-yath
 
 Ruins of Dekanter
+ruins
 3625
-2 The Phaerlin
-1 Ched Nasad
-1 Ss'zuraass'nee
+phaer-ruins b
+ched-ruins
+ruins-ss'zur
 
 Ss'zuraass'nee
+ss'zur
 3322
 control 1,12
-1 Ruins of Dekanter
-2 Llacerellyn
+ruins-ss'zur
+llace-ss'zur b
