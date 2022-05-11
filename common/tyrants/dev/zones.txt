@@ -10,9 +10,9 @@ araum-erynd*
 araum-labyr a*
 araum-labyr b
 bling-mant*
-buir-jhach
-buir-labyr
-buir-stone
+buiyr-jhach
+buiyr-labyr
+buiyr-stone
 ch'chi-kama
 ch'chi-stone
 chasm-ever
@@ -80,19 +80,19 @@ jhach
 start
 gaunt-jhach
 grack-jhach
-buir-jhach
+buiyr-jhach
 
-Buirandyn
-buir
+Buiyrandyn
+buiyr
 1313
-buir-jhach
-buir-labyr
-buir-stone
+buiyr-jhach
+buiyr-labyr
+buiyr-stone
 
 Stoneshaft Clanhold
 stone
 1224
-buir-stone
+buiyr-stone
 skull-stone a
 ch'chi-stone
 
@@ -129,7 +129,7 @@ The Labyrinth
 labyr
 2313
 grack-labyr
-buir-labyr
+buiyr-labyr
 labyr-skull a
 araum-labyr b
 
