@@ -1917,8 +1917,8 @@ Innovation.prototype.getBiscuitsRaw = function(card, splay) {
 Innovation.prototype.getBonuses = function(player) {
   const bonuses = this
     .utilColors()
-    .flatMap(color => this.getCardsByZone(player, color))
-    .flatMap(card => card.getBonuses())
+    .flatMap(color => this.getZoneByPlayer(player, color))
+    .flatMap(zone => zone.cards().flatMap(card => card.getBonuses(this.getSplayByCard(card))))
 
   const karmaBonuses = this
     .getInfoByKarmaTrigger(player, 'list-bonuses')

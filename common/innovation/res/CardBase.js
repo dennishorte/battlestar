@@ -138,10 +138,14 @@ CardBase.prototype.getBiscuits = function(splay) {
   }
 }
 
-CardBase.prototype.getBonuses = function() {
+CardBase.prototype.getBonuses = function(splay) {
+  if (!splay) {
+    splay = 'top'
+  }
+
   const rx = /([ab1-9])/g
   const matches = this
-    .biscuits
+    .getBiscuits(splay)
     .match(rx)
 
   if (!matches) {
