@@ -3,7 +3,7 @@ const {
   GameFactory,
   GameOverEvent,
   InputRequestEvent,
-} = require('./game.js')
+} = require('./../lib/game.js')
 const res = require('./resources.js')
 const util = require('../lib/util.js')
 

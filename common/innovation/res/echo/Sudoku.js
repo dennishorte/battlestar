@@ -1,6 +1,6 @@
 const CardBase = require(`../CardBase.js`)
 const util = require('../../../lib/util.js')
-const { GameOverEvent } = require('../../game.js')
+const { GameOverEvent } = require('../../../lib/game.js')
 
 function Card() {
   this.id = `Sudoku`  // Card names are unique in Innovation

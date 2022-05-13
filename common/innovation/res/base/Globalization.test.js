@@ -2,7 +2,7 @@ const t = require('../../testutil.js')
 const {
   GameOverEvent,
   InputRequestEvent,
-} = require('../../game.js')
+} = require('../../../lib/game.js')
 
 
 describe('Globalization', () => {

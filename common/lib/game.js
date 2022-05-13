@@ -1,6 +1,6 @@
 const seedrandom = require('seedrandom')
-const selector = require('../lib/selector.js')
-const util = require('../lib/util.js')
+const selector = require('./selector.js')
+const util = require('./util.js')
 
 module.exports = {
   Game,

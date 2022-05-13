@@ -1,7 +1,7 @@
 Error.stackTraceLimit = 100
 
 const t = require('../../testutil.js')
-const { GameOverEvent, InputRequestEvent } = require('../../game.js')
+const { GameOverEvent, InputRequestEvent } = require('../../../lib/game.js')
 
 describe('Bioengineering', () => {
   test('transfer a card', () => {

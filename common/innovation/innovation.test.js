@@ -3,7 +3,7 @@ Error.stackTraceLimit = 100
 const {
   GameOverEvent,
   InputRequestEvent,
-} = require('./game.js')
+} = require('../lib/game.js')
 
 const t = require('./testutil.js')
 
