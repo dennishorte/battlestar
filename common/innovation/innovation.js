@@ -638,6 +638,9 @@ Innovation.prototype.aChooseAge = function(player, ages, opts={}) {
   if (!ages) {
     ages = [1,2,3,4,5,6,7,8,9,10]
   }
+  else {
+    ages = [...ages]
+  }
 
   const selected = this.aChoose(player, ages, { ...opts, title: 'Choose Age' })
   if (selected) {
