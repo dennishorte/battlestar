@@ -1,0 +1,364 @@
+# Set=Core
+
+Priestess of Lolth
+obedience
+drow
+212
+15
++2 influence
+
+House Guard
+obedience
+drow
+313
+15
++2 power
+
+Insane Outcast
+-
+drow
+-z-
+30
+Discard a card from your hand > Return Insane Outcast to the supply.
+If Insane Outcast would be devoured or promoted, return it to the supply instead.
+
+# Set=Starter
+
+Noble
+obedience
+drow
+-01
+28
++1 influence
+
+Soldier
+obedience
+drow
+-01
+12
++1 power
+
+# Set=Drow
+
+Blackguard
+malice
+drow
+313
+4
+Choose one:
+- +2 power
+- Assassinate a troop.
+
+Bounty Hunter
+malice
+drow
+424
+2
++3 power
+
+Doppelganger
+malice
+doppelganger
+535
+2
+Supplant a troop.
+
+Deathblade
+malice
+drow
+636
+1
+Assassinate 2 troops.
+
+Inquisitor
+malice
+drow
+324
+1
+Choose one:
+- +2 influence
+- Assassinate a troop.
+
+Advance Scout
+conquest
+drow
+313
+3
+Supplant a white troop.
+
+Mercenary Squad
+conquest
+drow
+314
+2
+Deploy 3 troops.
+
+Underdark Ranger
+conquest
+drow
+424
+2
+Assassinate 2 white troops.
+
+Master of Melee-Magthere
+conquest
+drow
+525
+2
+Choose one:
+- Deploy 4 troops.
+- Supplant a white troop anywhere on the board.
+
+Weaponmaster
+conquest
+drow
+636
+1
+Choose three times:
+- Deploy a troop.
+- Assassinate a white troop.
+
+Spellspinner
+guile
+drow
+313
+3
+Choose one:
+- Place a spy.
+- Return one of your spies > Supplant a troop at that spy's site.
+
+Spy Master
+guile
+drow
+212
+2
+Place a spy.
+
+Infiltrator
+guile
+drow
+312
+2
+Place a spy. If another player's troop is at that site, gain 1 power.
+
+Information Broker
+guile
+drow
+525
+2
+Choose one:
+- Place a spy.
+- Return one of your spies > Draw 3 cards.
+
+Masters of Sorcere
+guile
+drow
+525
+1
+Choose one:
+- Place 2 spies.
+- Return one of your spies > +4 power.
+
+Advocate
+abmition
+drow
+212
+4
+Choose one:
+- +2 influence.
+- At end of turn, promote another card played this turn.
+
+Chosen of Lloth
+ambition
+drow
+424
+2
+Return another player's troop or spy.
+At end of turn, promote another card played this turn.
+
+Drow Negotiator
+ambition
+drow
+312
+2
+If there are 4 or more cards in your inner circle, gain +3 influence.
+At end of turn, promote another card played this turn.
+
+Council Member
+ambition
+drow
+636
+1
+Move up to 2 enemy troops.
+At end of turn, promote another card played this turn.
+
+Matron Mother
+ambition
+drow
+636
+1
+Put your deck into your discard pile. Then promote a card from your discard pile.
+
+# Set=Dragons
+
+Dragon Cultist
+malice
+human
+314
+4
+Choose one:
+- +2 power
+- +2 influence
+
+Red Wyrmling
+malice
+dragon
+535
+2
++2 power
++2 influence
+
+Dragonclaw
+malice
+human
+413
+2
+Assassinate a troop. Then, if you have 5 or more player troops in your trophy hall, gain +2 power.
+
+Severin Silrajin
+malice
+human
+748
+1
++5 power
+
+Red Dragon
+malice
+dragon
+848
+1
+Supplant a troop.
+Return an enemy spy.
+Gain 1 VP for each site under your total control.
+
+Kobold
+conquest
+kobold
+112
+3
+Choose one:
+- Deploy a troop.
+- Assassinate a white troop.
+
+White Wyrmling
+conquest
+dragon
+213
+3
+Deploy 2 troops.
+You may devour a card in the market.
+
+Black Wyrmling
+conquest
+dragon
+314
+2
++1 influence
+Assassinate a white troop.
+
+White Dragon
+conquest
+dragon
+625
+1
+Deploy 3 troops.
+Gain 1 VP for every 2 sites you control.
+
+Black Dragon
+conquest
+dragon
+737
+1
+Supplant a white troop anywhere on the board.
+Gain 1 VP for every 3 white troops in your trophy hall.
+
+Watcher of Thay
+guile
+human
+323
+3
+Choose one:
+- Place a spy.
+- Return one of your spies > +3 influence
+
+Enchanter of Thay
+guile
+human
+413
+3
+Choose one:
+- Place a spy.
+- Return one of your spies > +4 power
+
+Green Wyrmling
+guile
+dragon
+424
+2
+Place a spy. If another player's troop is at that site, gain +2 influence.
+
+Rath Modar
+guile
+human
+625
+1
+Draw 2 cards.
+Place a spy.
+
+Green Dragon
+guile
+dragon
+737
+1
+Choose one:
+- Place a spy, then supplant a troop at that spy's site.
+- Return one of your spies > Supplant a troop at that spy's site, then gain 1 VP for each site control market you have.
+
+Cult Fanatic
+ambition
+half-dragon
+314
+2
++2 influence
+You may devour a card in the market.
+
+Cleric of Loagzed
+ambition
+troglodyte
+424
+2
+Move an enemy troop.
+At end of turn, promote another card played this turn.
+
+Wyrmspeaker
+ambition
+dwarf
+313
+3
++1 influence
+At end of turn, promote another card played this turn.
+
+Blue Wyrmling
+ambition
+dragon
+524
+2
++3 influence
+Return another player's troop or spy.
+
+Blue Dragon
+ambition
+dragon
+848
+1
+At end of turn, promote up to 2 other cards played this turn, then gain 1 VP for every 3 cards in your inner circle.
