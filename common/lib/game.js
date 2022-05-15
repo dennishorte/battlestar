@@ -367,7 +367,7 @@ Game.prototype._tryToAutomaticallyRespond = function(selectors) {
       const response = {
         actor: sel.actor,
         title: sel.title,
-        selection: sel.choices,
+        selection: [...sel.choices],
       }
       return response
     }
