@@ -1609,7 +1609,7 @@ Innovation.prototype.aSplay = function(player, color, direction, opts={}) {
   const result = this.mSplay(player, color, direction, opts)
 
   if (this.getExpansionList().includes('city')) {
-    this._maybeDrawCity(player)
+    this._maybeDrawCity(owner)
   }
 
   return result
