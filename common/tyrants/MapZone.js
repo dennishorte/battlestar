@@ -20,6 +20,8 @@ function MapZone(data) {
   this.control = data.control
   this.totalControl = data.totalControl
   this.neighborNames = data.neighbors
+
+  this.presence = []
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -29,6 +31,14 @@ util.inherit(Zone, MapZone)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Public interface
+
+MapZone.prototype.addPresence = function(player) {
+  util.array.pushUnique(this.presence, player)
+}
+
+MapZone.prototype.checkHasPresence = function(player) {
+  return this.presence.includes(player)
+}
 
 MapZone.prototype.getController = function() {
 

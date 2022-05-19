@@ -5,6 +5,7 @@ const {
   InputRequestEvent,
 } = require('./../lib/game.js')
 const Player = require('./Player.js')
+const Token = require('./Token.js')
 const Zone = require('./Zone.js')
 const res = require('./resources.js')
 const util = require('../lib/util.js')
@@ -68,6 +69,8 @@ Tyrants.prototype.initialize = function() {
   this.initializeCards()
   this.initializeTokens()
   this.initializeStartingHands()
+  this.initializeStartingPlayer()
+  this.initializeTransientState()
 
   this.mLogOutdent()
 
@@ -108,7 +111,7 @@ Tyrants.prototype.initializeMarketZones = function() {
 }
 
 Tyrants.prototype.initializeTokenZones = function() {
-  this.state.zones.neutral = new Zone(this, 'neutral', 'tokens')
+  this.state.zones.neutrals = new Zone(this, 'neutrals', 'tokens')
 }
 
 Tyrants.prototype.initializePlayerZones = function() {
@@ -136,7 +139,7 @@ Tyrants.prototype.initializePlayerZones = function() {
 
 Tyrants.prototype.initializeCards = function() {
   this.state.zones.priestess = new Zone(this, 'priestess', 'open')
-  this.state.zones.priestess.setCards(res.cards.byName['Priestess of Lloth'])
+  this.state.zones.priestess.setCards(res.cards.byName['Priestess of Lolth'])
 
   this.state.zones.guard = new Zone(this, 'guard', 'open')
   this.state.zones.guard.setCards(res.cards.byName['House Guard'])
@@ -157,26 +160,64 @@ Tyrants.prototype.initializeCards = function() {
   let x = 0
   let y = 0
   for (const player of this.getPlayerAll()) {
-    const hand = this.getZoneByPlayer(player, 'hand')
+    const deck = this.getZoneByPlayer(player, 'deck')
     for (let i = 0; i < 8; i++) {
-      hand.addCard(res.cards.byName['Noble'][x])
+      const card = res.cards.byName['Noble'][x]
+      card.zone = deck.id
+      deck.addCard(card)
       x += 1
     }
 
     for (let i = 0; i < 2; i++) {
-      hand.addCard(res.cards.byName['Soldier'][y])
+      const card = res.cards.byName['Soldier'][y]
+      card.zone = deck.id
+      deck.addCard(card)
       y += 1
     }
 
-    this.mShuffle(hand)
+    this.mShuffle(deck)
   }
 }
 
 Tyrants.prototype.initializeTokens = function() {
-  // Player troops
-  // Player spies
+  for (const player of this.getPlayerAll()) {
+    const troopZone = this.getZoneByPlayer(player, 'troops')
+    for (let i = 0; i < 40; i++) {
+      const name = `troop-${player.name}`
+      const token = new Token(name + '-' + i, name)
+      token.isTroop = true
+      token.zone = troopZone.id
+      token.owner = player
+      troopZone.addCard(token)
+    }
+
+    const spyZone = this.getZoneByPlayer(player, 'spies')
+    for (let i = 0; i < 5; i++) {
+      const name = `spy-${player.name}`
+      const token = new Token(name + '-' + i, name)
+      token.isSpy = true
+      token.zone = spyZone.id
+      token.owner = player
+      spyZone.addCard(token)
+    }
+  }
+
   // Neutrals
+  const neutralZone = this.getZoneById('neutrals')
+  for (let i = 0; i < 40; i++) {
+    const name = 'neutral'
+    const token = new Token(name + '-' + i, name)
+    token.isTroop = true
+    token.zone = neutralZone.id
+    neutralZone.addCard(token)
+  }
+
   // Place neutrals on map
+  for (const loc of this.getLocationAll()) {
+    for (let i = 0; i < loc.neutrals; i++) {
+      this.mMoveByIndices(neutralZone, 0, loc, loc.cards().length)
+    }
+  }
 }
 
 Tyrants.prototype.initializeStartingHands = function() {
@@ -185,17 +226,156 @@ Tyrants.prototype.initializeStartingHands = function() {
   }
 }
 
+Tyrants.prototype.initializeStartingPlayer = function() {
+  this.state.currentPlayer = this.getPlayerAll()[0]
+}
+
+Tyrants.prototype.initializeTransientState = function() {
+  this.state.turn = 0
+  this.state.endOfTurnActions = []
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Main Loop
 
 Tyrants.prototype.mainLoop = function() {
-  /* while (true) {
-   *   this.doActions()
-   *   this.endOfTurn()
-   *   this.cleanup()
-   *   this.drawHand()
-   * } */
+  while (true) {
+    this.mLog({
+      template: '{player} turn {count}',
+      args: {
+        player: this.getPlayerCurrent(),
+        count: this.getRound(),
+      }
+    })
+
+    this.preActions()
+    this.doActions()
+    this.endOfTurn()
+    this.cleanup()
+
+    this.drawHand()
+    this.nextPlayer()
+  }
+}
+
+Tyrants.prototype.preActions = function() {
+  // Gain influence from site control tokens.
+}
+
+Tyrants.prototype.doActions = function() {
+  const options = []
+  options.push(this._generateCardActions())
+  options.push(this._generateBuyActions())
+  options.push(this._generatePowerActions())
+  options.push(this._generatePassAction())
+  return options.filter(action => action !== undefined)
+}
+
+Tyrants.prototype._generateCardActions = function() {
+  const choices = []
+  for (const card of this.getCardsByZone(this.getPlayerCurrent(), 'hand')) {
+    choices.push(card)
+  }
+
+  if (choices) {
+    return {
+      title: 'Play Card',
+      choices,
+      min: 0,
+    }
+  }
+  else {
+    return undefined
+  }
+}
+
+Tyrants.prototype._generateBuyActions = function() {
+  const influence = this.getPlayerCurrent().influence
+  const choices = []
+
+  for (const card of this.getZoneById('market').cards()) {
+    if (card.cost <= influence) {
+      choices.push(card)
+    }
+  }
+
+  const priestess = this.getZoneById('priestess').cards()[0]
+  if (priestess && priestess.cost <= influence) {
+    choices.push(priestess)
+  }
+
+  const guard = this.getZoneById('guard').cards()[0]
+  if (guard && guard.cost <= influence) {
+    choices.push(guard)
+  }
+
+  if (choices.length > 0) {
+    return {
+      title: 'Recruit',
+      choices,
+      min: 0,
+    }
+  }
+  else {
+    return undefined
+  }
+}
+
+Tyrants.prototype._generatePowerActions = function() {
+  const player = this.getPlayerCurrent()
+  const choices = []
+
+  const power = player.power
+  if (power >= 1 && this.getCardsByZone(player, 'troops').length > 0) {
+    choices.push('Place a Troop')
+  }
+  if (power >= 3) {
+    choices.push('Assassinate a Troop')
+    choices.push('Return an Enemy Spy')
+  }
+}
+
+Tyrants.prototype._generatePassAction = function() {
+  return 'Pass'
+}
+
+Tyrants.prototype.endOfTurn = function() {
+  // Promote troops.
+  // Receive VPs from site control tokens.
+}
+
+Tyrants.prototype.cleanup = function() {
+  const player = this.getPlayerCurrent()
+
+  this.mLog({
+    template: '{player} moves played cards to discard pile.',
+    args: { player }
+  })
+
+  for (const card of this.getCardsByZone(player, 'played')) {
+    this.mMoveCardTo(card, this.getZoneByPlayer(player, 'discard'))
+  }
+
+  const hand = this.getCardsByZone(player, 'hand')
+  if (hand.length > 0) {
+    this.mLog({
+      template: '{player} discards {count} remaining cards',
+      args: { player, count: hand.length }
+    })
+    for (const card of hand) {
+      this.mMoveCardTo(card, this.getZoneByPlayer(player, 'discard'))
+    }
+  }
+}
+
+Tyrants.prototype.drawHand = function() {
+  this.mRefillHand(this.getPlayerCurrent())
+}
+
+Tyrants.prototype.nextPlayer = function() {
+  this.currentPlayer = this.getPlayerNext()
+  this.state.turn += 1
 }
 
 
@@ -225,6 +405,7 @@ Tyrants.prototype.aDraw = function(player) {
   if (deck.cards().length === 0) {
     // See if we can reshuffle.
     // If not, do nothing.
+    throw new Error('Unable to draw from empty deck')
   }
 
   this.mLog({
@@ -262,8 +443,22 @@ Tyrants.prototype.aSupplant = function(player, loc, color) {
 
 }
 
+Tyrants.prototype.getCardsByZone = function(player, name) {
+  return this.getZoneByPlayer(player, name).cards()
+}
+
 Tyrants.prototype.getExpansionList = function() {
   return this.settings.expansions
+}
+
+Tyrants.prototype.getLocationAll = function() {
+  return Object.values(this.state.zones.map)
+}
+
+Tyrants.prototype.getLocationsByPresence = function(player) {
+  return this
+    .getLocationAll()
+    .filter(loc => loc.chechHasPresence(player))
 }
 
 Tyrants.prototype.getPlayerAll = function() {
@@ -272,6 +467,25 @@ Tyrants.prototype.getPlayerAll = function() {
 
 Tyrants.prototype.getPlayerByName = function(name) {
   return this.getPlayerAll().find(player => player.name === name)
+}
+
+Tyrants.prototype.getPlayerCurrent = function() {
+  util.assert(this.state.currentPlayer, 'No current player')
+  return this.state.currentPlayer
+}
+
+Tyrants.prototype.getPlayerNext = function() {
+  const currIndex = this.getPlayerAll().indexOf(this.getPlayerCurrent())
+  const nextIndex = (currIndex + 1) % this.getPlayerAll().length
+  return this.getPlayerAll()[nextIndex]
+}
+
+Tyrants.prototype.getRound = function() {
+  return Math.floor(this.state.turn / this.getPlayerAll().length) + 1
+}
+
+Tyrants.prototype.getZoneByCard = function(card) {
+  return this.getZoneById(card.zone)
 }
 
 Tyrants.prototype.getZoneById = function(id) {
@@ -313,6 +527,35 @@ Tyrants.prototype.mAdjustCardVisibility = function(card) {
   }
 }
 
+Tyrants.prototype.mAdjustPresence = function(source, target, card) {
+  if (card.isSpy || card.isToken) {
+    const toUpdate = [
+      source,
+      ...this.getNeighbors(source),
+      target,
+      ...this.getNeighbors(target),
+    ]
+
+    toUpdate
+      .filter(loc => loc !== undefined)
+      .filter(loc => loc.kind === 'location')
+      .forEach(loc => this.mCalculatePresence(loc))
+  }
+}
+
+Tyrants.prototype.mCalculatePresence = function(location) {
+  const relevant = [
+    location,
+    ...this.getNeighbors(location)
+  ]
+
+  const players = relevant
+    .flatMap(loc => loc.cards())
+    .map(card => this.getPlayerByCard(card))
+
+  location.presence = util.array.distinct(players)
+}
+
 Tyrants.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
   util.assert(sourceIndex >= 0 && sourceIndex <= source.cards().length - 1, `Invalid source index ${sourceIndex}`)
   const sourceCards = source._cards
@@ -322,7 +565,14 @@ Tyrants.prototype.mMoveByIndices = function(source, sourceIndex, target, targetI
   targetCards.splice(targetIndex, 0, card)
   card.zone = target.id
   this.mAdjustCardVisibility(card)
+  this.mAdjustPresence(source, target, card)
   return card
+}
+
+Tyrants.prototype.mMoveCardTo = function(card, zone) {
+  const source = this.getZoneByCard(card)
+  const index = source.cards().indexOf(card)
+  this.mMoveByIndices(source, index, zone, zone.cards().length)
 }
 
 Tyrants.prototype.mShuffle = function(zone) {

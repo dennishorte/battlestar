@@ -1,3 +1,5 @@
+const util = require('../lib/util.js')
+
 module.exports = Zone
 
 
@@ -23,5 +25,6 @@ Zone.prototype.addCard = function(card) {
 }
 
 Zone.prototype.setCards = function(cards) {
+  util.assert(Array.isArray(cards), `Cards parameter must be an array. Got ${typeof cards}.`)
   this._cards = cards
 }

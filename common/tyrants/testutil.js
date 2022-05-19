@@ -10,6 +10,7 @@ TestUtil.fixture = function(options) {
     name: 'test_game',
     seed: 'test_seed',
     expansions: ['drow', 'dragons'],
+    map: undefined,
     numPlayers: 2,
     players: [
       {
@@ -32,6 +33,9 @@ TestUtil.fixture = function(options) {
   }, options)
 
   options.players = options.players.slice(0, options.numPlayers)
+  options.map = options.map || (
+    options.numPlayers === 3 ? 'base-3a' : `base-${options.numPlayers}`
+  )
 
   const game = TyrantsFactory(options, 'dennis')
 
