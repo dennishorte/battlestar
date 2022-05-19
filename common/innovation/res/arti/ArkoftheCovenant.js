@@ -25,6 +25,7 @@ function Card() {
           .getPlayerAll()
           .filter(player => game.getTopCards(player).every(card => card.expansion !== 'arti'))
           .map(player => game.getTopCard(player, color))
+          .filter(card => card !== undefined)
 
         game.aTransferMany(player, toTransfer, game.getZoneByPlayer(player, 'score'))
       }
