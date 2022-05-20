@@ -145,8 +145,8 @@ const baseData = [
       "Assassinate 2 troops."
     ],
     impl: (game, player) => {
-      game.aChooseAndAssassinate(player),
-      game.aChooseAndAssassinate(player),
+      game.aChooseAndAssassinate(player)
+      game.aChooseAndAssassinate(player)
     }
   },
   {
@@ -203,9 +203,9 @@ const baseData = [
       "Deploy 3 troops."
     ],
     impl: (game, player) => {
-      game.aChooseAndDeploy(player),
-      game.aChooseAndDeploy(player),
-      game.aChooseAndDeploy(player),
+      game.aChooseAndDeploy(player)
+      game.aChooseAndDeploy(player)
+      game.aChooseAndDeploy(player)
     }
   },
   {
@@ -221,8 +221,8 @@ const baseData = [
       "Assassinate 2 white troops."
     ],
     impl: (game, player) => {
-      game.aChooseAndAssassinate(player, { whiteOnly: true }),
-      game.aChooseAndAssassinate(player, { whiteOnly: true }),
+      game.aChooseAndAssassinate(player, { whiteOnly: true })
+      game.aChooseAndAssassinate(player, { whiteOnly: true })
     }
   },
   {
@@ -244,10 +244,10 @@ const baseData = [
         {
           title: 'Deploy 4 troops',
           impl: (game, player) => {
-            game.aChooseAndDeploy(player),
-            game.aChooseAndDeploy(player),
-            game.aChooseAndDeploy(player),
-            game.aChooseAndDeploy(player),
+            game.aChooseAndDeploy(player)
+            game.aChooseAndDeploy(player)
+            game.aChooseAndDeploy(player)
+            game.aChooseAndDeploy(player)
           }
         },
         {
@@ -366,7 +366,7 @@ const baseData = [
       "Choose one:",
       "- Place a spy.",
       "- Return one of your spies > Draw 3 cards."
-    ]],
+    ],
     impl: (game, player) => {
       game.aChooseOne(player, [
         {
@@ -403,8 +403,8 @@ const baseData = [
         {
           title: 'Place 2 spies',
           impl: (game, player) => {
-            game.aChooseAndPlaceSpy(player),
-            game.aChooseAndPlaceSpy(player),
+            game.aChooseAndPlaceSpy(player)
+            game.aChooseAndPlaceSpy(player)
           }
         },
         {
