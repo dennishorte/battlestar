@@ -44,7 +44,7 @@ MapZone.prototype.getController = function() {
 
 }
 
-MapZone.prototype.getTotaller = function() {
+MapZone.prototype.getTotalController = function() {
 
 }
 

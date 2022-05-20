@@ -127,6 +127,7 @@ Tyrants.prototype.initializePlayerZones = function() {
     _addPlayerZone(player, 'deck', 'deck', root)
     _addPlayerZone(player, 'played', 'public', root)
     _addPlayerZone(player, 'discard', 'public', root)
+    _addPlayerZone(player, 'trophyHall', 'public', root)
     _addPlayerZone(player, 'hand', 'private', root)
     _addPlayerZone(player, 'innerCircle', 'private', root)
 
@@ -264,12 +265,48 @@ Tyrants.prototype.preActions = function() {
 }
 
 Tyrants.prototype.doActions = function() {
-  const options = []
-  options.push(this._generateCardActions())
-  options.push(this._generateBuyActions())
-  options.push(this._generatePowerActions())
-  options.push(this._generatePassAction())
-  return options.filter(action => action !== undefined)
+  const player = this.getPlayerCurrent()
+
+  while (true) {
+    const chosenAction = this.requestInputSingle({
+      actor: player.name,
+      title: `Choose Action`,
+      choices: this._generateActionChoices(),
+    })
+
+    if (chosenAction === 'Pass') {
+      this.mLog({
+        template: '{player} passes',
+        args: { player }
+      })
+      break
+    }
+
+    const name = chosenAction.title
+    const arg = chosenAction.selection[0]
+
+    if (name === 'Play Card') {
+
+    }
+    else if (name === 'Recruit') {
+
+    }
+    else if (name === 'Use Power') {
+
+    }
+    else {
+      throw new Error(`Unknown action: ${name}`)
+    }
+  }
+}
+
+Tyrants.prototype._generateActionChoices = function() {
+  const choices = []
+  choices.push(this._generateCardActions())
+  choices.push(this._generateBuyActions())
+  choices.push(this._generatePowerActions())
+  choices.push(this._generatePassAction())
+  return choices.filter(action => action !== undefined)
 }
 
 Tyrants.prototype._generateCardActions = function() {
@@ -334,6 +371,12 @@ Tyrants.prototype._generatePowerActions = function() {
     choices.push('Assassinate a Troop')
     choices.push('Return an Enemy Spy')
   }
+
+  return {
+    title: 'Use Power',
+    choices,
+    min: 0,
+  }
 }
 
 Tyrants.prototype._generatePassAction = function() {
@@ -382,8 +425,51 @@ Tyrants.prototype.nextPlayer = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Core Functionality
 
-Tyrants.prototype.aPlayCard = function(player, card) {
+Tyrants.prototype.aChooseAndAssassinate = function(player) {
 
+}
+
+Tyrants.prototype.aChooseAndDevourMarket = function(player) {
+
+}
+
+Tyrants.prototype.aChooseAndSupplant = function(player) {
+
+}
+
+Tyrants.prototype.aChooseAndDeploy = function(player) {
+
+}
+
+Tyrants.prototype.aChooseAndDiscard = function(player) {
+
+}
+
+Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
+
+}
+
+Tyrants.prototype.aChooseAndPromote = function(player, choices) {
+
+}
+
+Tyrants.prototype.aChooseAndReturn = function(player) {
+
+}
+
+Tyrants.prototype.aChooseOne = function(player, choices) {
+
+}
+
+Tyrants.prototype.aDeferPromotion = function(player, source) {
+
+}
+
+Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
+
+  return {
+    loc: 'tbd'
+  }
 }
 
 Tyrants.prototype.aAssassinate = function(player, loc) {
@@ -398,7 +484,7 @@ Tyrants.prototype.aDevour = function(player, card) {
 
 }
 
-Tyrants.prototype.aDraw = function(player) {
+Tyrants.prototype.aDraw = function(player, opts={}) {
   const deck = this.getZoneByPlayer(player, 'deck')
   const hand = this.getZoneByPlayer(player, 'hand')
 
@@ -408,10 +494,12 @@ Tyrants.prototype.aDraw = function(player) {
     throw new Error('Unable to draw from empty deck')
   }
 
-  this.mLog({
-    template: '{player} draws a card',
-    args: { player }
-  })
+  if (!opts.silent) {
+    this.mLog({
+      template: '{player} draws a card',
+      args: { player }
+    })
+  }
   this.mMoveByIndices(deck, 0, hand, hand.cards().length)
 }
 
@@ -420,6 +508,10 @@ Tyrants.prototype.aMove = function(player, start, end) {
 }
 
 Tyrants.prototype.aPlaceSpy = function(player, loc) {
+
+}
+
+Tyrants.prototype.aPlayCard = function(player, card) {
 
 }
 
@@ -582,8 +674,12 @@ Tyrants.prototype.mShuffle = function(zone) {
 Tyrants.prototype.mRefillHand = function(player) {
   const zone = this.getZoneByPlayer(player, 'hand')
   while (zone.cards().length < 5) {
-    this.aDraw(player)
+    this.aDraw(player, { silent: true })
   }
+  this.mLog({
+    template: '{player} refills their hand',
+    args: { player }
+  })
 }
 
 Tyrants.prototype.mRefillMarket = function() {
@@ -592,5 +688,41 @@ Tyrants.prototype.mRefillMarket = function() {
   const count = 6 - market.cards().length
   for (let i = 0; i < count; i++) {
     this.mMoveByIndices(deck, 0, market, market.cards().length)
+  }
+}
+
+Tyrants.prototype._enrichLogArgs = function(msg) {
+  for (const key of Object.keys(msg.args)) {
+    if (key === 'players') {
+      const players = msg.args[key]
+      msg.args[key] = {
+        value: players.map(p => p.name).join(', '),
+        classes: ['player-names'],
+      }
+    }
+    else if (key.startsWith('player')) {
+      const player = msg.args[key]
+      msg.args[key] = {
+        value: player.name,
+        classes: ['player-name']
+      }
+    }
+    else if (key.startsWith('card')) {
+      const card = msg.args[key]
+      msg.args[key] = card.name
+    }
+    else if (key.startsWith('zone')) {
+      const zone = msg.args[key]
+      msg.args[key] = {
+        value: zone.name,
+        classes: ['zone-name']
+      }
+    }
+    // Convert string args to a dict
+    else if (typeof msg.args[key] !== 'object') {
+      msg.args[key] = {
+        value: msg.args[key],
+      }
+    }
   }
 }

@@ -29,7 +29,7 @@ function templateSubstitute(template, args) {
       if (Object.keys(args).includes(token)) {
         const { value, kind, classes } = args[token]
         return {
-          classes: classes.join(' '),
+          classes: (classes || []).join(' '),
           value: value,
         }
       }

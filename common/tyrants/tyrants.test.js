@@ -12,7 +12,10 @@ describe('Tyrants', () => {
 
   test('game initializes', () => {
     const game = t.fixture()
-    game.run()
+    const request1 = game.run()
+
+    t.dumpLog(game)
+    t.deepLog(request1)
   })
 
 })
