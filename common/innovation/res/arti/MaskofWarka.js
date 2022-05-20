@@ -24,7 +24,7 @@ function Card() {
         const toReveal = game
           .getCardsByZone(plyr, 'hand')
           .filter(card => card.color === color)
-        const revealed = game.aRevealMany(player, toReveal, { ordered: true })
+        const revealed = game.aRevealMany(plyr, toReveal, { ordered: true })
         if (revealed && revealed.length > 0) {
           revealedBy.push(plyr)
         }
