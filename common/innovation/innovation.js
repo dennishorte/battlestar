@@ -1467,7 +1467,7 @@ Innovation.prototype._maybeDigArtifact = function(player, card) {
   }
 
   // Dig up an artifact if the melded card has its hex icon in the same position.
-  if (next.biscuits.indexOf('h') === card.biscuits.indexOf('h')) {
+  if (next.getHexIndex() === card.getHexIndex()) {
     this.aDigArtifact(player, next.getAge())
     return
   }

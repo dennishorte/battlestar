@@ -164,6 +164,15 @@ CardBase.prototype.getBonuses = function(splay) {
   }
 }
 
+CardBase.prototype.getHexIndex = function() {
+  if (this.biscuits.includes('m')) {
+    return this.biscuits.indexOf('m')
+  }
+  else {
+    return this.biscuits.indexOf('h')
+  }
+}
+
 CardBase.prototype.getKarmaInfo = function(trigger) {
   const matches = []
   for (let i = 0; i < this.karma.length; i++) {
