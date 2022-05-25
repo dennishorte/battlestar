@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Tuck a card from your hand. If you do, splay left its color, then choose a splayed color on any player's board. Execute all of that color's top card's non-demand dogma effects, without sharing.`
+    `Tuck a card from your hand. If you do, splay left its color, then choose a (different) splayed color on any player's board. Execute all of that color's top card's non-demand dogma effects, without sharing.`
   ]
 
   this.dogmaImpl = [
@@ -29,6 +29,7 @@ function Card() {
             .getTopCards(player)
             .filter(card => game.getZoneByPlayer(player, card.color).splay !== 'none')
           )
+          .filter(card => card !== this)
         const choice = game.aChooseCard(player, choices)
         if (choice) {
           game.aCardEffects(player, choice, 'dogma')
