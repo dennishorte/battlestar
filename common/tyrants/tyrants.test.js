@@ -22,7 +22,7 @@ describe('Tyrants', () => {
       }
     })
     const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Use Power.Place a Troop')
+    const request2 = t.choose(game, request1, 'Use Power.Deploy a Troop')
     const request3 = t.choose(game, request2, 'ched-llace a')
 
     t.testTroops(game, 'ched-llace a', ['dennis'])

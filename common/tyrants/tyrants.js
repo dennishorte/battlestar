@@ -313,7 +313,7 @@ Tyrants.prototype.doActions = function() {
 
     }
     else if (name === 'Use Power') {
-      if (arg === 'Place a Troop') {
+      if (arg === 'Deploy a Troop') {
         this.aChooseAndDeploy(player)
       }
       else {
@@ -393,7 +393,7 @@ Tyrants.prototype._generatePowerActions = function() {
 
   const power = player.power
   if (power >= 1 && this.getCardsByZone(player, 'troops').length > 0) {
-    choices.push('Place a Troop')
+    choices.push('Deploy a Troop')
   }
   if (power >= 3) {
     choices.push('Assassinate a Troop')
