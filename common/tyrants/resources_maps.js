@@ -1,5 +1,3 @@
-const MapZone = require('./MapZone.js')
-
 const mapData = [
   {
     "name": "araum-chasm",
@@ -1405,7 +1403,7 @@ const mapData = [
     },
     "neighbors": [
       "chasm-grack a",
-      "araum-chasm*",
+      "araum-chasm",
       "chasm-ever"
     ]
   },
@@ -1426,9 +1424,9 @@ const mapData = [
       "points": 0
     },
     "neighbors": [
-      "araum-labyr a*",
-      "araum-ched*",
-      "araum-erynd*"
+      "araum-labyr a",
+      "araum-ched",
+      "araum-erynd"
     ]
   },
   {
@@ -1663,7 +1661,7 @@ const mapData = [
       "llace-ss'zur b"
     ]
   }
-].map(data => new MapZone(data))
+]
 
 module.exports = {
   'base-2': mapData.filter(zone => zone.region === 2),

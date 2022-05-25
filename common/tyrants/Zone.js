@@ -21,10 +21,12 @@ Zone.prototype.getOwner = function() {
 }
 
 Zone.prototype.addCard = function(card) {
+  card.zone = this.id
   this._cards.push(card)
 }
 
 Zone.prototype.setCards = function(cards) {
   util.assert(Array.isArray(cards), `Cards parameter must be an array. Got ${typeof cards}.`)
+  cards.forEach(c => c.zone = this.id)
   this._cards = cards
 }

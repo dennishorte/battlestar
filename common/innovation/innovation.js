@@ -2581,17 +2581,6 @@ Innovation.prototype._attemptToCombineWithPreviousEntry = function(msg) {
   return false
 }
 
-Innovation.prototype.mLogDoNothing = function(player) {
-  this.mLog({
-    template: '{player} does nothing',
-    args: { player }
-  })
-}
-
-Innovation.prototype.mLogNoEffect = function() {
-  this.mLog({ template: 'no effect' })
-}
-
 Innovation.prototype.mRemove = function(player, card) {
   this.mMoveCardTo(card, this.getZoneById('exile'))
   this.mLog({

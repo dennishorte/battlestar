@@ -4,6 +4,7 @@ const {
   GameOverEvent,
   InputRequestEvent,
 } = require('./../lib/game.js')
+const MapZone = require('./MapZone.js')
 const Player = require('./Player.js')
 const Token = require('./Token.js')
 const Zone = require('./Zone.js')
@@ -33,6 +34,7 @@ function TyrantsFactory(settings, viewerName) {
 
 function factoryFromLobby(lobby) {
   return GameFactory({
+    game: 'Tyrants of the Underdark',
     name: lobby.name,
     expansions: lobby.options.expansions,
     players: lobby.users,
@@ -42,6 +44,7 @@ function factoryFromLobby(lobby) {
 
 Tyrants.prototype._mainProgram = function() {
   this.initialize()
+  this.chooseInitialLocations()
   this.mainLoop()
 }
 
@@ -100,7 +103,11 @@ Tyrants.prototype.initializePlayers = function() {
 }
 
 Tyrants.prototype.initializeMapZones = function() {
-  this.state.zones.map = res.maps[this.settings.map]
+  this.state.zones.map = util.array.toDict(
+    res
+      .maps[this.settings.map]
+      .map(data => [data.name, new MapZone(data)])
+  )
 }
 
 Tyrants.prototype.initializeMarketZones = function() {
@@ -147,11 +154,10 @@ Tyrants.prototype.initializeCards = function() {
 
   // Market deck
   this.state.zones.marketDeck = new Zone(this, 'marketDeck', 'deck')
-  this.state.zones.marketDeck.setCards(
-    this
-      .getExpansionList()
-      .flatMap(exp => res.cards.byExpansion[exp])
-  )
+  const marketCards = this
+    .getExpansionList()
+    .flatMap(exp => res.cards.byExpansion[exp])
+  this.state.zones.marketDeck.setCards(marketCards)
   this.mShuffle(this.getZoneById('marketDeck'))
 
   // Market cards
@@ -164,14 +170,12 @@ Tyrants.prototype.initializeCards = function() {
     const deck = this.getZoneByPlayer(player, 'deck')
     for (let i = 0; i < 8; i++) {
       const card = res.cards.byName['Noble'][x]
-      card.zone = deck.id
       deck.addCard(card)
       x += 1
     }
 
     for (let i = 0; i < 2; i++) {
       const card = res.cards.byName['Soldier'][y]
-      card.zone = deck.id
       deck.addCard(card)
       y += 1
     }
@@ -236,6 +240,18 @@ Tyrants.prototype.initializeTransientState = function() {
   this.state.endOfTurnActions = []
 }
 
+Tyrants.prototype.chooseInitialLocations = function() {
+  const choices = this
+    .getLocationAll()
+    .filter(loc => loc.start)
+    .filter(loc => loc.getTroops().filter(t => t.name !== 'neutral').length === 0)
+
+  for (const player of this.getPlayerAll()) {
+    const loc = this.aChooseLocation(player, choices, { title: 'Choose starting location' })
+    this.aDeploy(player, loc)
+  }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Main Loop
@@ -267,12 +283,14 @@ Tyrants.prototype.preActions = function() {
 Tyrants.prototype.doActions = function() {
   const player = this.getPlayerCurrent()
 
+  this.mLogIndent()
+
   while (true) {
     const chosenAction = this.requestInputSingle({
       actor: player.name,
       title: `Choose Action`,
       choices: this._generateActionChoices(),
-    })
+    })[0]
 
     if (chosenAction === 'Pass') {
       this.mLog({
@@ -286,18 +304,28 @@ Tyrants.prototype.doActions = function() {
     const arg = chosenAction.selection[0]
 
     if (name === 'Play Card') {
-
+      const card = this
+        .getCardsByZone(player, 'hand')
+        .find(c => c.name === arg)
+      this.aPlayCard(player, card)
     }
     else if (name === 'Recruit') {
 
     }
     else if (name === 'Use Power') {
-
+      if (arg === 'Place a Troop') {
+        this.aChooseAndDeploy(player)
+      }
+      else {
+        throw new Error(`Unknown power action: ${arg}`)
+      }
     }
     else {
       throw new Error(`Unknown action: ${name}`)
     }
   }
+
+  this.mLogOutdent()
 }
 
 Tyrants.prototype._generateActionChoices = function() {
@@ -312,7 +340,7 @@ Tyrants.prototype._generateActionChoices = function() {
 Tyrants.prototype._generateCardActions = function() {
   const choices = []
   for (const card of this.getCardsByZone(this.getPlayerCurrent(), 'hand')) {
-    choices.push(card)
+    choices.push(card.name)
   }
 
   if (choices) {
@@ -372,10 +400,15 @@ Tyrants.prototype._generatePowerActions = function() {
     choices.push('Return an Enemy Spy')
   }
 
-  return {
-    title: 'Use Power',
-    choices,
-    min: 0,
+  if (choices.length > 0) {
+    return {
+      title: 'Use Power',
+      choices,
+      min: 0,
+    }
+  }
+  else {
+    return undefined
   }
 }
 
@@ -425,6 +458,33 @@ Tyrants.prototype.nextPlayer = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Core Functionality
 
+Tyrants.prototype.aChoose = function(player, choices, opts={}) {
+  if (choices.length === 0) {
+    this.mLogNoEffect()
+    return []
+  }
+
+  const selected = this.requestInputSingle({
+    actor: player.name,
+    title: opts.title || 'Choose',
+    choices: choices,
+    ...opts
+  })
+  if (selected.length === 0) {
+    this.mLogDoNothing(player)
+    return []
+  }
+  else {
+    /* const choice = selected.join(', ')
+     * this.mLog({
+     *   template: '{player} chooses {choice}',
+     *   args: { player, choice }
+     * }) */
+    return selected
+  }
+
+}
+
 Tyrants.prototype.aChooseAndAssassinate = function(player) {
 
 }
@@ -438,7 +498,23 @@ Tyrants.prototype.aChooseAndSupplant = function(player) {
 }
 
 Tyrants.prototype.aChooseAndDeploy = function(player) {
+  const troops = this.getCardsByZone(player, 'troops')
+  if (troops.length === 0) {
+    this.mLog({
+      template: '{player} has no more troops',
+      args: { player }
+    })
+    return
+  }
 
+  const choices = this
+    .getPresence(player)
+    .filter(loc => loc.getTroops().length <= loc.size)
+
+  const loc = this.aChooseLocation(player, choices, { title: 'Choose a location to deploy' })
+  if (loc) {
+    this.aDeploy(player, loc)
+  }
 }
 
 Tyrants.prototype.aChooseAndDiscard = function(player) {
@@ -455,6 +531,14 @@ Tyrants.prototype.aChooseAndPromote = function(player, choices) {
 
 Tyrants.prototype.aChooseAndReturn = function(player) {
 
+}
+
+Tyrants.prototype.aChooseLocation = function(player, choices, opts={}) {
+  const ids = choices.map(loc => loc.name)
+  const selection = this.aChoose(player, ids, opts)
+  if (selection.length > 0) {
+    return this.getLocationByName(selection[0])
+  }
 }
 
 Tyrants.prototype.aChooseOne = function(player, choices) {
@@ -477,7 +561,12 @@ Tyrants.prototype.aAssassinate = function(player, loc) {
 }
 
 Tyrants.prototype.aDeploy = function(player, loc) {
-
+  const troops = this.getCardsByZone(player, 'troops')
+  this.mMoveCardTo(troops[0], loc)
+  this.mLog({
+    template: '{player} deploys a troop to {loc}',
+    args: { player, loc }
+  })
 }
 
 Tyrants.prototype.aDevour = function(player, card) {
@@ -512,7 +601,18 @@ Tyrants.prototype.aPlaceSpy = function(player, loc) {
 }
 
 Tyrants.prototype.aPlayCard = function(player, card) {
+  util.assert(card.zone.includes(player.name), 'Card is not owned by player')
+  util.assert(card.zone.endsWith('hand'), 'Card is not in player hand')
 
+  this.mMoveCardTo(card, this.getZoneByPlayer(player, 'played'))
+  this.mLog({
+    template: '{player} plays {card}',
+    args: { player, card }
+  })
+
+  this.mLogIndent()
+  card.impl(this, player, { card })
+  this.mLogOutdent()
 }
 
 Tyrants.prototype.aPromote = function(player, card) {
@@ -547,6 +647,17 @@ Tyrants.prototype.getLocationAll = function() {
   return Object.values(this.state.zones.map)
 }
 
+Tyrants.prototype.getLocationNeighbors = function(loc) {
+  return loc
+    .neighborNames
+    .map(name => this.getLocationByName(name))
+    .filter(neighbor => neighbor !== undefined)
+}
+
+Tyrants.prototype.getLocationByName = function(name) {
+  return this.state.zones.map[name]
+}
+
 Tyrants.prototype.getLocationsByPresence = function(player) {
   return this
     .getLocationAll()
@@ -555,6 +666,10 @@ Tyrants.prototype.getLocationsByPresence = function(player) {
 
 Tyrants.prototype.getPlayerAll = function() {
   return this.state.players
+}
+
+Tyrants.prototype.getPlayerByCard = function(card) {
+  return card.owner
 }
 
 Tyrants.prototype.getPlayerByName = function(name) {
@@ -570,6 +685,12 @@ Tyrants.prototype.getPlayerNext = function() {
   const currIndex = this.getPlayerAll().indexOf(this.getPlayerCurrent())
   const nextIndex = (currIndex + 1) % this.getPlayerAll().length
   return this.getPlayerAll()[nextIndex]
+}
+
+Tyrants.prototype.getPresence = function(player) {
+  return this
+    .getLocationAll()
+    .filter(loc => loc.presence.includes(player))
 }
 
 Tyrants.prototype.getRound = function() {
@@ -606,7 +727,7 @@ Tyrants.prototype.mAdjustCardVisibility = function(card) {
     card.visibility = []
   }
 
-  else if (zone.kind === 'public' || zone.kind === 'tokens') {
+  else if (zone.kind === 'public' || zone.kind === 'tokens' || zone.kind === 'location') {
     card.visibility = this.getPlayerAll().map(p => p.name)
   }
 
@@ -620,30 +741,33 @@ Tyrants.prototype.mAdjustCardVisibility = function(card) {
 }
 
 Tyrants.prototype.mAdjustPresence = function(source, target, card) {
-  if (card.isSpy || card.isToken) {
-    const toUpdate = [
-      source,
-      ...this.getNeighbors(source),
-      target,
-      ...this.getNeighbors(target),
-    ]
+  if (card.isSpy || card.isTroop) {
+    const toUpdate = []
+
+    for (const zone of [source, target]) {
+      if (zone.kind === 'location') {
+        toUpdate.push(zone)
+        this.getLocationNeighbors(zone).forEach(loc => util.array.pushUnique(toUpdate, loc))
+      }
+    }
 
     toUpdate
-      .filter(loc => loc !== undefined)
-      .filter(loc => loc.kind === 'location')
       .forEach(loc => this.mCalculatePresence(loc))
   }
 }
 
 Tyrants.prototype.mCalculatePresence = function(location) {
+  util.assert(location.kind === 'location')
+
   const relevant = [
     location,
-    ...this.getNeighbors(location)
+    ...this.getLocationNeighbors(location)
   ]
 
   const players = relevant
     .flatMap(loc => loc.cards())
     .map(card => this.getPlayerByCard(card))
+    .filter(player => player !== undefined)
 
   location.presence = util.array.distinct(players)
 }
@@ -661,7 +785,7 @@ Tyrants.prototype.mMoveByIndices = function(source, sourceIndex, target, targetI
   return card
 }
 
-Tyrants.prototype.mMoveCardTo = function(card, zone) {
+Tyrants.prototype.mMoveCardTo = function(card, zone, opts={}) {
   const source = this.getZoneByCard(card)
   const index = source.cards().indexOf(card)
   this.mMoveByIndices(source, index, zone, zone.cards().length)
@@ -709,13 +833,23 @@ Tyrants.prototype._enrichLogArgs = function(msg) {
     }
     else if (key.startsWith('card')) {
       const card = msg.args[key]
-      msg.args[key] = card.name
+      msg.args[key] = {
+        value: card.id,
+        classes: ['card-id'],
+      }
     }
     else if (key.startsWith('zone')) {
       const zone = msg.args[key]
       msg.args[key] = {
         value: zone.name,
         classes: ['zone-name']
+      }
+    }
+    else if (key.startsWith('loc')) {
+      const loc = msg.args[key]
+      msg.args[key] = {
+        value: loc.name,
+        classes: ['location-name']
       }
     }
     // Convert string args to a dict

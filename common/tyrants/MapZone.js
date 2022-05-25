@@ -5,7 +5,7 @@ module.exports = MapZone
 
 
 function MapZone(data) {
-  this.id = data.name
+  this.id = `map.${data.name}`
   this.name = data.name
   this.kind = 'location'
   this.owner = undefined
@@ -49,21 +49,21 @@ MapZone.prototype.getTotalController = function() {
 }
 
 MapZone.prototype.getTroops = function(player) {
-  return this._filteredTokens('troop', player)
+  return this._filteredTokens(x => x.isTroop, player)
 }
 
 MapZone.prototype.getSpies = function(player) {
-  return this._filteredTokens('spy', player)
+  return this._filteredTokens(x => x.isSpy, player)
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private functions
 
-MapZone.prototype._filteredTokens = function(kind, player) {
+MapZone.prototype._filteredTokens = function(fn, player) {
   const troops = this
     ._cards
-    .filter(token => token.kind === kind)
+    .filter(token => fn(token))
 
   if (player) {
     return troops.filter(token => token.owner === player)

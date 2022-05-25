@@ -13,9 +13,18 @@ describe('Tyrants', () => {
   test('game initializes', () => {
     const game = t.fixture()
     const request1 = game.run()
-
-    t.dumpLog(game)
-    t.deepLog(request1)
   })
 
+  test('deploy a troop', () => {
+    const game = t.gameFixture({
+      dennis: {
+        power: 1,
+      }
+    })
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Use Power.Place a Troop')
+    const request3 = t.choose(game, request2, 'ched-llace a')
+
+    t.testTroops(game, 'ched-llace a', ['dennis'])
+  })
 })

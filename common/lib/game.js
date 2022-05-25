@@ -302,6 +302,17 @@ Game.prototype.mLogOutdent = function() {
   this.state.log.push('__OUTDENT__')
 }
 
+Game.prototype.mLogDoNothing = function(player) {
+  this.mLog({
+    template: '{player} does nothing',
+    args: { player }
+  })
+}
+
+Game.prototype.mLogNoEffect = function() {
+  this.mLog({ template: 'no effect' })
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Protected Methods

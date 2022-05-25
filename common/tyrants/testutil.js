@@ -1,6 +1,7 @@
 const { GameOverEvent } = require('../lib/game.js')
 const { TyrantsFactory } = require('./tyrants.js')
 const log = require('../lib/log.js')
+const util = require('../lib/util.js')
 
 
 const TestUtil = {}
@@ -46,6 +47,101 @@ TestUtil.fixture = function(options) {
       .map(name => game.getPlayerByName(name))
       .filter(p => p !== undefined)
 
+    for (const player of game.getPlayerAll()) {
+      const deck = game.getZoneByPlayer(player, 'deck')
+      const hand = game.getZoneByPlayer(player, 'hand')
+
+      // Fill player hands with Nobles
+      for (const card of hand.cards()) {
+        game.mMoveCardTo(card, deck, { silent: true })
+      }
+      while (deck.cards().length < 5) {
+        const card = deck.cards().find(card => card.name === 'Noble')
+        game.mMoveCardTo(card, hand, { silent: true })
+      }
+
+      // Put cards with multiple copies into the market. This makes sure that when we put cards
+      // in player hands, we aren't grabbing them from the market.
+      const marketDeck = game.getZoneById('marketDeck')
+      const market = game.getZoneById('market')
+      for (const card of market.cards()) {
+        game.mMoveCardTo(card, marketDeck, { silent: true })
+      }
+      const cardNames = [
+        'Advocate',
+        'Blackguard',
+        'Bounty Hunter',
+        'Doppelganger',
+        'Infiltrator',
+        'Spellspinner',
+      ]
+      for (const name of cardNames) {
+        const card = game.getZoneById('marketDeck').cards().find(c => c.name === name)
+        game.mMoveCardTo(card, market, { silent: true })
+      }
+    }
+
+  })
+
+  return game
+}
+
+TestUtil.gameFixture = function(options) {
+  const game = this.fixture(options)
+
+  game.testSetBreakpoint('initialization-complete', (game) => {
+    for (const player of game.getPlayerAll()) {
+      const playerSetup = options[player.name]
+      if (playerSetup) {
+        if (playerSetup.hand) {
+          const deck = game.getZoneByPlayer(player, 'deck')
+          const hand = game.getZoneByPlayer(player, 'hand')
+          for (const card of hand.cards()) {
+            game.mMoveCardTo(card, deck, { silent: true })
+          }
+
+          for (const name of playerSetup.hand) {
+            if (name === 'Priestess of Lolth') {
+              game.mMoveCardTo(game.getZoneById('priestess').cards()[0], hand)
+            }
+            else if (name === 'House Guard') {
+              game.mMoveCardTo(game.getZoneById('guard').cards()[0], hand)
+            }
+            else {
+              const card = game.getZoneById('marketDeck').cards().find(card => card.name === name)
+              util.assert(card, `Card not found: ${name}`)
+              game.mMoveCardto(card, hand)
+            }
+          }
+        }
+
+        if (playerSetup.power) {
+          player.power = playerSetup.power
+        }
+        if (playerSetup.influence) {
+          player.influence = playerSetup.influence
+        }
+        if (playerSetup.points) {
+          player.points = playerSetup.points
+        }
+      }
+    }
+  })
+
+  const request1 = game.run()
+
+  const request2 = game.respondToInputRequest({
+    actor: 'dennis',
+    title: 'Choose starting location',
+    selection: ['Ched Nasad'],
+    key: request1.key
+  })
+
+  game.respondToInputRequest({
+    actor: 'micah',
+    title: 'Choose starting location',
+    selection: ['Eryndlyn'],
+    key: request2.key
   })
 
   return game
@@ -90,6 +186,14 @@ TestUtil.testGameOver = function(request, playerName, reason) {
 
 TestUtil.testNotGameOver = function(request) {
   expect(request).not.toEqual(expect.any(GameOverEvent))
+}
+
+TestUtil.testTroops = function(game, locationName, expected) {
+  const location = game.getLocationByName(locationName)
+  const troops = location.getTroops().map(t => t.owner.name).sort()
+  expected = expected.sort()
+
+  expect(troops).toStrictEqual(expected)
 }
 
 
