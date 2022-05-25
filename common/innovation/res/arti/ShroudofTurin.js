@@ -27,7 +27,10 @@ function Card() {
           totalReturned += 1
         }
 
-        const score = game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'))
+        const fromScore = game
+          .getCardsByZone(player, 'score')
+          .filter(c => c.color === card.color)
+        const score = game.aChooseAndReturn(player, fromScore)
         if (score && score.length > 0) {
           totalReturned += 1
         }
