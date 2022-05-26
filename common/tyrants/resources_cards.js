@@ -35,16 +35,20 @@ const baseData = [
     race: "drow",
     expansion: "core",
     cost: -1,
-    points: null,
-    innerPoints: -1,
+    points: 0,
+    innerPoints: 0,
     count: 30,
     text: [
       "Discard a card from your hand > Return Insane Outcast to the supply.",
       "If Insane Outcast would be devoured or promoted, return it to the supply instead."
     ],
-    impl: (game, player) => {
-      const card = game.aChooseAndDiscard(player)
-      if (card) {
+    impl: (game, player, { card }) => {
+      const discarded = game.aChooseAndDiscard(player, {
+        title: 'Choose a card to discard',
+        min: 0,
+        max: 1,
+      })
+      if (discarded) {
         game.mMoveCardTo(card, game.getZoneById('outcast'))
       }
     }

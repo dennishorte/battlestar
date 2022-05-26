@@ -36,5 +36,34 @@ describe('Tyrants Cards', () => {
       expect(t.dennis(game).influence).toBe(2)
     })
 
+    describe('Insane Outcast', () => {
+      test('play', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['House Guard', 'Insane Outcast'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Insane Outcast')
+        const request3 = t.choose(game, request2, 'House Guard')
+
+        t.testBoard(game, {
+          dennis: {
+            played: [],
+            discard: ['House Guard'],
+          }
+        })
+      })
+
+      test.skip('devour', () => {
+
+      })
+
+      test.skip('promote', () => {
+
+      })
+    })
+
   })
 })

@@ -107,6 +107,9 @@ TestUtil.gameFixture = function(options) {
             else if (name === 'House Guard') {
               game.mMoveCardTo(game.getZoneById('guard').cards()[0], hand)
             }
+            else if (name === 'Insane Outcast') {
+              game.mMoveCardTo(game.getZoneById('outcast').cards()[0], hand)
+            }
             else {
               const card = game.getZoneById('marketDeck').cards().find(card => card.name === name)
               util.assert(card, `Card not found: ${name}`)
@@ -194,6 +197,48 @@ TestUtil.testTroops = function(game, locationName, expected) {
   expected = expected.sort()
 
   expect(troops).toStrictEqual(expected)
+}
+
+TestUtil.testBoard = function(game, expected) {
+  for (const [key, value] of Object.entries(expected)) {
+    const player = game.getPlayerByName(key)
+    if (player) {
+      this.testTableau(game, player, value)
+      continue
+    }
+
+    const location = game.getLocationByName(key)
+    if (location) {
+      this.testLocation(game, location, value)
+      continue
+    }
+
+    throw new Error(`Unhandled test key: ${key}`)
+  }
+}
+
+const tableauZones = [
+  'played',
+  'discard',
+  'trophyHall',
+  'hand',
+  'innerCircle',
+]
+
+TestUtil.testTableau = function(game, player, testState) {
+  const actual = {}
+  const expected = {}
+
+  for (const zoneName of tableauZones) {
+    actual[zoneName] = game.getCardsByZone(player, zoneName).map(c => c.name).sort()
+    expected[zoneName] = (testState[zoneName] || []).sort()
+  }
+
+  expect(actual).toStrictEqual(expected)
+}
+
+TestUtil.testLocation = function(game, location, expected) {
+  throw new Error('Not implemented')
 }
 
 

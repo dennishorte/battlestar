@@ -146,11 +146,9 @@ Tyrants.prototype.initializePlayerZones = function() {
 }
 
 Tyrants.prototype.initializeCards = function() {
-  this.state.zones.priestess = new Zone(this, 'priestess', 'open')
   this.state.zones.priestess.setCards(res.cards.byName['Priestess of Lolth'])
-
-  this.state.zones.guard = new Zone(this, 'guard', 'open')
   this.state.zones.guard.setCards(res.cards.byName['House Guard'])
+  this.state.zones.outcast.setCards(res.cards.byName['Insane Outcast'])
 
   // Market deck
   this.state.zones.marketDeck = new Zone(this, 'marketDeck', 'deck')
@@ -482,7 +480,17 @@ Tyrants.prototype.aChoose = function(player, choices, opts={}) {
      * }) */
     return selected
   }
+}
 
+Tyrants.prototype.aChooseCard = function(player, choices, opts={}) {
+  const choiceNames = util.array.distinct(choices.map(c => c.name)).sort()
+  const selection = this.aChoose(player, choiceNames, opts)
+  if (selection.length > 0) {
+    return choices.find(c => c.name === selection[0])
+  }
+  else {
+    return undefined
+  }
 }
 
 Tyrants.prototype.aChooseAndAssassinate = function(player) {
@@ -491,6 +499,20 @@ Tyrants.prototype.aChooseAndAssassinate = function(player) {
 
 Tyrants.prototype.aChooseAndDevourMarket = function(player) {
 
+}
+
+Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
+  const chosen = this.aChooseCard(player, this.getCardsByZone(player, 'hand'), opts)
+  if (chosen) {
+    this.aDiscard(player, chosen)
+    return chosen
+  }
+  else {
+    this.mLog({
+      template: '{player} chooses not to discard',
+      args: { player }
+    })
+  }
 }
 
 Tyrants.prototype.aChooseAndSupplant = function(player) {
@@ -515,10 +537,6 @@ Tyrants.prototype.aChooseAndDeploy = function(player) {
   if (loc) {
     this.aDeploy(player, loc)
   }
-}
-
-Tyrants.prototype.aChooseAndDiscard = function(player) {
-
 }
 
 Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
@@ -571,6 +589,14 @@ Tyrants.prototype.aDeploy = function(player, loc) {
 
 Tyrants.prototype.aDevour = function(player, card) {
 
+}
+
+Tyrants.prototype.aDiscard = function(player, card) {
+  this.mMoveCardTo(card, this.getZoneByPlayer(player, 'discard'))
+  this.mLog({
+    template: '{player} discards {card}',
+    args: { player, card }
+  })
 }
 
 Tyrants.prototype.aDraw = function(player, opts={}) {
