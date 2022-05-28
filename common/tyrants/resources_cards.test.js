@@ -109,5 +109,20 @@ describe('Tyrants Cards', () => {
       })
     })
 
+    describe('Bounty Hunter', () => {
+      test('power', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Bounty Hunter'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Bounty Hunter')
+
+        expect(t.dennis(game).power).toBe(3)
+      })
+    })
+
   })
 })
