@@ -11,4 +11,8 @@ function Token(id, name) {
   this.visibility = []
 }
 
+Token.prototype.getOwnerName = function() {
+  return this.owner === undefined ? 'neutral' : this.owner.name
+}
+
 module.exports = Token

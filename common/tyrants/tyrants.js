@@ -494,7 +494,21 @@ Tyrants.prototype.aChooseCard = function(player, choices, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndAssassinate = function(player) {
+  const presence = this.getPresence(player)
+  const troops = this
+    .getPresence(player)
+    .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
+    .filter(([_, troop]) => troop.owner !== player)
+    .map(([loc, troop]) => `${loc.name}, ${troop.getOwnerName()}`)
+  const choices = util.array.distinct(troops).sort()
 
+  const selection = this.aChoose(player, choices)
+  if (selection.length > 0) {
+    const [locName, ownerName] = selection[0].split(', ')
+    const loc = this.getLocationByName(locName)
+    const owner = ownerName === 'neutral' ? 'neutral' : this.getPlayerByName(ownerName)
+    this.aAssassinate(player, loc, owner)
+  }
 }
 
 Tyrants.prototype.aChooseAndDevourMarket = function(player) {
@@ -560,7 +574,14 @@ Tyrants.prototype.aChooseLocation = function(player, choices, opts={}) {
 }
 
 Tyrants.prototype.aChooseOne = function(player, choices) {
+  const selection = this.aChoose(player, choices.map(c => c.title))[0]
+  const impl = choices.find(c => c.title === selection).impl
 
+  this.mLog({
+    template: '{player} chooses {selection}',
+    args: { player, selection }
+  })
+  impl(this, player)
 }
 
 Tyrants.prototype.aDeferPromotion = function(player, source) {
@@ -574,8 +595,20 @@ Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
   }
 }
 
-Tyrants.prototype.aAssassinate = function(player, loc) {
+Tyrants.prototype.aAssassinate = function(player, loc, owner) {
+  const target = loc.getTroops(owner)[0]
 
+  util.assert(!!target, 'No valid target for owner at location')
+
+  this.mMoveCardTo(target, this.getZoneByPlayer(player, 'trophyHall'))
+  this.mLog({
+    template: '{player1} assassinates {player2} troop at {loc}',
+    args: {
+      player1: player,
+      player2: owner,
+      loc
+    }
+  })
 }
 
 Tyrants.prototype.aDeploy = function(player, loc) {
@@ -846,14 +879,14 @@ Tyrants.prototype._enrichLogArgs = function(msg) {
     if (key === 'players') {
       const players = msg.args[key]
       msg.args[key] = {
-        value: players.map(p => p.name).join(', '),
+        value: players.map(p => p.name || p).join(', '),
         classes: ['player-names'],
       }
     }
     else if (key.startsWith('player')) {
       const player = msg.args[key]
       msg.args[key] = {
-        value: player.name,
+        value: player.name || player,
         classes: ['player-name']
       }
     }

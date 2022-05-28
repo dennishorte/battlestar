@@ -48,6 +48,18 @@ MapZone.prototype.getTotalController = function() {
 
 }
 
+MapZone.prototype.getTokens = function(kind, player) {
+  if (kind === 'troops') {
+    return this.getTroops(player)
+  }
+  else if (kind === 'spies') {
+    return this.getSpies(player)
+  }
+  else {
+    return this.getCards(player)
+  }
+}
+
 MapZone.prototype.getTroops = function(player) {
   return this._filteredTokens(x => x.isTroop, player)
 }
@@ -65,7 +77,11 @@ MapZone.prototype._filteredTokens = function(fn, player) {
     ._cards
     .filter(token => fn(token))
 
-  if (player) {
+  if (player === 'neutral') {
+    return troops.filter(token => token.owner === undefined)
+  }
+
+  else if (player) {
     return troops.filter(token => token.owner === player)
   }
 

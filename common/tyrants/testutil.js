@@ -112,8 +112,8 @@ TestUtil.gameFixture = function(options) {
             }
             else {
               const card = game.getZoneById('marketDeck').cards().find(card => card.name === name)
-              util.assert(card, `Card not found: ${name}`)
-              game.mMoveCardto(card, hand)
+              util.assert(!!card, `Card not found: ${name}`)
+              game.mMoveCardTo(card, hand)
             }
           }
         }
@@ -148,6 +148,28 @@ TestUtil.gameFixture = function(options) {
   })
 
   return game
+}
+
+TestUtil.setTroops = function(game, locName, playerNames) {
+  game.testSetBreakpoint('initialization-complete', (game) => {
+    const loc = game.getLocationByName(locName)
+    while (loc.getTroops().length > 0) {
+      const troop = loc.getTroops()[0]
+      game.mMoveCardTo(troop, troop.home)
+    }
+
+    for (const playerName of playerNames) {
+      if (playerName === 'neutral') {
+        const tokens = game.getZoneById('neutrals').cards()
+        game.mMoveCardTo(tokens[0], loc)
+      }
+      else {
+        const player = game.getPlayerByName(playerName)
+        const tokens = game.getCardsByZone(player, 'troops')
+        game.mMoveCardTo(tokens[0], loc)
+      }
+    }
+  })
 }
 
 
@@ -237,8 +259,14 @@ TestUtil.testTableau = function(game, player, testState) {
   expect(actual).toStrictEqual(expected)
 }
 
-TestUtil.testLocation = function(game, location, expected) {
-  throw new Error('Not implemented')
+TestUtil.testLocation = function(game, location, testState) {
+  const actual = {}
+  const expected = {}
+
+  for (const key of ['troops', 'spies']) {
+    actual[key] = location.getTokens(key).map(t => t.owner.name).sort()
+    expected[key] = (testState[key] || []).sort()
+  }
 }
 
 
