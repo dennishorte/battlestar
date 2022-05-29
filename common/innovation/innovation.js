@@ -2338,7 +2338,7 @@ Innovation.prototype.mAchievementCheck = function() {
     const reduceCost = this.getInfoByKarmaTrigger(
       player,
       'reduce-special-achievement-requirements'
-    ).length > 1
+    ).length > 0
     for (const card of available) {
       if (card.checkPlayerIsEligible && card.checkPlayerIsEligible(this, player, reduceCost)) {
         // It is safe to return here. Claiming an achievement will retrigger this

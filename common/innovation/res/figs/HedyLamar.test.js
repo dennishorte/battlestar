@@ -43,7 +43,50 @@ describe('Hedy Lamar', () => {
     t.testDecreeForTwo('Hedy Lamar', 'Trade')
   })
 
-  test.skip('karma: achievements', () => {
-    // Implemented, but not tested.
+  describe('karma: achievements', () => {
+
+    test('Empire', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          red: {
+            cards: ['Mobility', 'Road Building', 'Coal'],
+            splay: 'left'
+          },  // ffikk
+          yellow: {
+            cards: ['Skyscrapers', 'Agriculture'],
+            splay: 'right'
+          }, // ccfl
+          blue: ['Experimentation'], // sss
+          purple: ['Code of Laws'], // ccl
+          hand: ['Hedy Lamar'], // ii
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Meld.Hedy Lamar')
+
+      t.testBoard(game, {
+        dennis: {
+          red: {
+            cards: ['Mobility', 'Road Building', 'Coal'],
+            splay: 'left'
+          },  // ffikk
+          yellow: {
+            cards: ['Skyscrapers', 'Agriculture'],
+            splay: 'right'
+          }, // ccfl
+          green: ['Hedy Lamar'], // ii
+          blue: ['Experimentation'], // sss
+          purple: ['Code of Laws'], // ccl
+          achievements: ['Empire'],
+        },
+      })
+    })
+
+    test.skip('other achievements', () => {
+
+    })
+
   })
 })
