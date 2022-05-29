@@ -530,7 +530,21 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndSupplant = function(player) {
+  const presence = this.getPresence(player)
+  const troops = this
+    .getPresence(player)
+    .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
+    .filter(([_, troop]) => troop.owner !== player)
+    .map(([loc, troop]) => `${loc.name}, ${troop.getOwnerName()}`)
+  const choices = util.array.distinct(troops).sort()
 
+  const selection = this.aChoose(player, choices)
+  if (selection.length > 0) {
+    const [locName, ownerName] = selection[0].split(', ')
+    const loc = this.getLocationByName(locName)
+    const owner = ownerName === 'neutral' ? 'neutral' : this.getPlayerByName(ownerName)
+    this.aSupplant(player, loc, owner)
+  }
 }
 
 Tyrants.prototype.aChooseAndDeploy = function(player) {
@@ -596,11 +610,7 @@ Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
 }
 
 Tyrants.prototype.aAssassinate = function(player, loc, owner) {
-  const target = loc.getTroops(owner)[0]
-
-  util.assert(!!target, 'No valid target for owner at location')
-
-  this.mMoveCardTo(target, this.getZoneByPlayer(player, 'trophyHall'))
+  this.mAssassinate(player, loc, owner)
   this.mLog({
     template: '{player1} assassinates {player2} troop at {loc}',
     args: {
@@ -612,8 +622,7 @@ Tyrants.prototype.aAssassinate = function(player, loc, owner) {
 }
 
 Tyrants.prototype.aDeploy = function(player, loc) {
-  const troops = this.getCardsByZone(player, 'troops')
-  this.mMoveCardTo(troops[0], loc)
+  this.mDeploy(player, loc)
   this.mLog({
     template: '{player} deploys a troop to {loc}',
     args: { player, loc }
@@ -682,16 +691,25 @@ Tyrants.prototype.aRecruit = function(player, card) {
 
 }
 
-Tyrants.prototype.aReturnSpy = function(player, loc, color) {
+Tyrants.prototype.aReturnSpy = function(player, loc, owner) {
 
 }
 
-Tyrants.prototype.aReturnTroop = function(player, loc, color) {
+Tyrants.prototype.aReturnTroop = function(player, loc, owner) {
 
 }
 
-Tyrants.prototype.aSupplant = function(player, loc, color) {
-
+Tyrants.prototype.aSupplant = function(player, loc, owner) {
+  this.mAssassinate(player, loc, owner)
+  this.mDeploy(player, loc)
+  this.mLog({
+    template: '{player1} supplants {player2} troop at {loc}',
+    args: {
+      player1: player,
+      player2: owner,
+      loc
+    }
+  })
 }
 
 Tyrants.prototype.getCardsByZone = function(player, name) {
@@ -815,6 +833,14 @@ Tyrants.prototype.mAdjustPresence = function(source, target, card) {
   }
 }
 
+Tyrants.prototype.mAssassinate = function(player, loc, owner) {
+  const target = loc.getTroops(owner)[0]
+
+  util.assert(!!target, 'No valid target for owner at location')
+
+  this.mMoveCardTo(target, this.getZoneByPlayer(player, 'trophyHall'))
+}
+
 Tyrants.prototype.mCalculatePresence = function(location) {
   util.assert(location.kind === 'location')
 
@@ -829,6 +855,11 @@ Tyrants.prototype.mCalculatePresence = function(location) {
     .filter(player => player !== undefined)
 
   location.presence = util.array.distinct(players)
+}
+
+Tyrants.prototype.mDeploy = function(player, loc) {
+  const troops = this.getCardsByZone(player, 'troops')
+  this.mMoveCardTo(troops[0], loc)
 }
 
 Tyrants.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {

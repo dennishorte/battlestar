@@ -124,5 +124,30 @@ describe('Tyrants Cards', () => {
       })
     })
 
+    describe('Doppelganger', () => {
+      test('supplant', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Doppelganger'],
+          }
+        })
+
+        t.setTroops(game, 'ched-halls a', ['dennis', 'micah'])
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Doppelganger')
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Doppelganger'],
+            trophyHall: ['troop-micah'],
+          },
+          'ched-halls a': {
+            troops: ['dennis', 'dennis']
+          },
+        })
+      })
+    })
+
   })
 })
