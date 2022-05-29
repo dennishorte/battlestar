@@ -215,5 +215,30 @@ describe('Tyrants Cards', () => {
       })
     })
 
+    describe('Advance Scout', () => {
+      test('supplant', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Advance Scout'],
+          }
+        })
+
+        t.setTroops(game, 'ched-halls a', ['neutral', 'micah'])
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Advance Scout')
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Advance Scout'],
+            trophyHall: ['neutral'],
+          },
+          'ched-halls a': {
+            troops: ['dennis', 'micah']
+          },
+        })
+      })
+    })
+
   })
 })
