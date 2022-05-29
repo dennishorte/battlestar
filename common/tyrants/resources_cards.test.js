@@ -175,5 +175,45 @@ describe('Tyrants Cards', () => {
       })
     })
 
+    describe('Inquisitor', () => {
+      test('power', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Inquisitor'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Inquisitor')
+        const request3 = t.choose(game, request2, '+2 influence')
+
+        expect(t.dennis(game).influence).toBe(2)
+      })
+
+      test('assassinate', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Inquisitor'],
+          }
+        })
+
+        t.setTroops(game, 'ched-halls a', ['neutral'])
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Inquisitor')
+        const request3 = t.choose(game, request2, 'Assassinate a troop')
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Inquisitor'],
+            trophyHall: ['neutral'],
+          },
+          'ched-halls a': {
+            troops: [],
+          },
+        })
+      })
+    })
+
   })
 })
