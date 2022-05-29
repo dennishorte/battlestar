@@ -149,5 +149,31 @@ describe('Tyrants Cards', () => {
       })
     })
 
+    describe('Deathblade', () => {
+      test('assassinate two', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Deathblade'],
+          }
+        })
+
+        t.setTroops(game, 'ched-halls a', ['neutral', 'micah'])
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Deathblade')
+        const request3 = t.choose(game, request2, 'ched-halls a, micah')
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Deathblade'],
+            trophyHall: ['troop-micah', 'neutral'],
+          },
+          'ched-halls a': {
+            troops: []
+          },
+        })
+      })
+    })
+
   })
 })
