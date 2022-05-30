@@ -310,6 +310,36 @@ TestUtil.testBoard = function(game, state) {
   expect(real).toStrictEqual(expected)
 }
 
+// Print out a representation of the current board state that can be used
+// in TestUtil.setBoard.
+TestUtil.dumpBoard = function(game) {
+  const real = {}
+
+  for (const player of game.getPlayerAll()) {
+    const realBoard = _blankTableau()
+
+    for (const color of game.utilColors()) {
+      const zone = game.getZoneByPlayer(player, color)
+      const cards = zone.cards().map(card => card.name)
+      realBoard[color] = {
+        cards,
+        splay: zone.splay
+      }
+    }
+
+    for (const zone of ['artifact', 'hand', 'score', 'forecast', 'achievements']) {
+      realBoard[zone] = game.getCardsByZone(player, zone).map(c => c.name).sort()
+    }
+
+    real[player.name] = realBoard
+  }
+
+  real.exile = game.getZoneById('exile').cards().map(c => c.name).sort()
+  real.achievements = game.getZoneById('achievements').cards().map(c => c.name).sort()
+
+  return real
+}
+
 TestUtil.testGameOver = function(request, playerName, reason) {
   expect(request).toEqual(expect.any(GameOverEvent))
   expect(request.data.player.name).toBe(playerName)
