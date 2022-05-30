@@ -25,7 +25,7 @@ function Card() {
       if (tucked.length >= 3) {
         const eligible = game
           .getCardsByZone(player, 'hand')
-          .filter(card => game.checkAchievementEligibility(player, this))
+          .filter(card => game.checkAchievementEligibility(player, card))
         game.aChooseAndAchieve(player, eligible, { min: 0, max: 1 })
       }
     }
