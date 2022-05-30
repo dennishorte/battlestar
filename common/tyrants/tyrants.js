@@ -493,12 +493,13 @@ Tyrants.prototype.aChooseCard = function(player, choices, opts={}) {
   }
 }
 
-Tyrants.prototype.aChooseAndAssassinate = function(player) {
+Tyrants.prototype.aChooseAndAssassinate = function(player, opts={}) {
   const presence = this.getPresence(player)
   const troops = this
     .getPresence(player)
     .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
     .filter(([_, troop]) => troop.owner !== player)
+    .filter(([_, troop]) => opts.whiteOnly ? troop.owner === undefined : true)
     .map(([loc, troop]) => `${loc.name}, ${troop.getOwnerName()}`)
   const choices = util.array.distinct(troops).sort()
 
