@@ -30,7 +30,7 @@ function Card() {
       trigger: 'calculate-biscuits',
       func: (game, player, { biscuits }) => {
         const output = game.utilEmptyBiscuits()
-        output.s = biscuits.l
+        output.l = biscuits.s
         return output
       }
     }
