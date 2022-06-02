@@ -240,5 +240,62 @@ describe('Tyrants Cards', () => {
       })
     })
 
+    describe('Underdark Ranger', () => {
+      test('assassinate two white', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Underdark Ranger'],
+          }
+        })
+
+        t.setTroops(game, 'ched-halls a', ['neutral', 'micah'])
+        t.setTroops(game, 'ched-llace a', ['neutral', 'dennis'])
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Underdark Ranger')
+        const request3 = t.choose(game, request2, 'ched-halls a, neutral')
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Underdark Ranger'],
+            trophyHall: ['neutral', 'neutral'],
+          },
+          'ched-halls a': {
+            troops: ['micah']
+          },
+          'ched-llace a': {
+            troops: ['dennis']
+          },
+        })
+      })
+
+      test('only one valid target', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Underdark Ranger'],
+          }
+        })
+
+        t.setTroops(game, 'ched-halls a', ['neutral', 'micah'])
+        t.setTroops(game, 'ched-llace a', ['dennis'])
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Underdark Ranger')
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Underdark Ranger'],
+            trophyHall: ['neutral'],
+          },
+          'ched-halls a': {
+            troops: ['micah']
+          },
+          'ched-llace a': {
+            troops: ['dennis']
+          },
+        })
+      })
+    })
+
   })
 })
