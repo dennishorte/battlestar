@@ -9,7 +9,7 @@ function Card() {
   this.biscuits = `hl&8`
   this.dogmaBiscuit = `l`
   this.inspire = ``
-  this.echo = `Draw and tuck and {8}.`
+  this.echo = `Draw and tuck an {8}.`
   this.karma = []
   this.dogma = [
     `For every three {l} on your board, draw and foreshadow a card of any value.`,
