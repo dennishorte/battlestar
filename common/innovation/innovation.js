@@ -318,6 +318,7 @@ Innovation.prototype.artifact = function() {
         if (startingZone === artifact.zone) {
           this.aReturn(player, artifact)
         }
+        this.fadeFiguresCheck()
         break
       case 'return':
         this.aReturn(player, artifact)
