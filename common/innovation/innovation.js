@@ -528,6 +528,8 @@ Innovation.prototype.aOneEffect = function(
     .filter(player => actors.includes(player))
 
   for (const actor of actorsOrdered) {
+    this.state.dogmaInfo.acting = actor
+
     for (let z = 0; z < repeatCount; z++) {
 
       const isDemand = text.startsWith('I demand')
@@ -580,10 +582,12 @@ Innovation.prototype.aOneEffect = function(
           this.mLog({
             template: 'Dogma action is complete'
           })
+          this.state.dogmaInfo.acting = undefined
           return result
         }
       }
     }
+    this.state.dogmaInfo.acting = undefined
   }
 }
 
@@ -2382,7 +2386,11 @@ Innovation.prototype.mActed = function(player) {
     return
   }
 
-  if (!this.state.dogmaInfo.demanding && !this.checkSameTeam(player, this.getPlayerCurrent())) {
+  if (
+    !this.state.dogmaInfo.demanding
+    && this.state.dogmaInfo.acting === player
+    && !this.checkSameTeam(player, this.getPlayerCurrent())
+  ) {
     this.state.shared = true
   }
 

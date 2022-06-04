@@ -44,7 +44,6 @@ describe('30 World Cup Final Ball', () => {
       },
       decks: {
         base: {
-          3: ['Paper'],
           8: ['Quantum Theory', 'Socialism'],
         },
       },
@@ -57,7 +56,7 @@ describe('30 World Cup Final Ball', () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Alchemy'],
-        hand: ['Socialism', 'Paper'],
+        hand: ['Socialism'],
       },
       micah: {
         blue: ['Experimentation'],
