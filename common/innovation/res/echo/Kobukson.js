@@ -49,7 +49,6 @@ function Card() {
     const choices = game
       .getPlayerAll()
       .flatMap(player => game.utilColors().map(color => ({ player, color })))
-      .filter(x => game.getZoneByPlayer(x.player, x.color).splay !== 'left')
       .map(x => `${x.player.name} ${x.color}`)
 
     const toSplayLeft = game.aChoose(player, choices, { title: 'Choose a stack to splay left' })

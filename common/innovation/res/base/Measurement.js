@@ -17,7 +17,10 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
+      const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'), {
+        min: 0,
+        max: 1,
+      })
       if (card) {
         game.mReveal(player, card)
         game.aReturn(player, card)

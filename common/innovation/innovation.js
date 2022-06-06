@@ -1596,12 +1596,14 @@ Innovation.prototype.aSplay = function(player, color, direction, opts={}) {
   const owner = opts.owner || player
 
   const zone = this.getZoneByPlayer(owner, color)
-  if (zone.cards().length < 2 || zone.splay === direction) {
+  if (zone.cards().length < 2) {
     this.mLog({
       template: `Cannot splay ${color} ${direction}`
     })
     return
   }
+
+  const newDirection = zone.splay !== direction
 
   // Karmas don't trigger if someone else is splaying your cards.
   if (owner === player) {
@@ -1613,7 +1615,7 @@ Innovation.prototype.aSplay = function(player, color, direction, opts={}) {
 
   const result = this.mSplay(player, color, direction, opts)
 
-  if (this.getExpansionList().includes('city')) {
+  if (this.getExpansionList().includes('city') && newDirection) {
     this._maybeDrawCity(owner)
   }
 
