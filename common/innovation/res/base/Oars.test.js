@@ -15,7 +15,7 @@ describe('Oars', () => {
       },
       decks: {
         base: {
-          1: ['Clothing', 'Pottery', 'The Wheel']
+          1: ['Clothing', 'The Wheel']
         }
       }
     })
@@ -23,16 +23,15 @@ describe('Oars', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Oars')
     const request3 = t.choose(game, request2, 'Sailing')
-    const request4 = t.choose(game, request3, 'Writing')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(request3)
     t.testBoard(game, {
       dennis: {
         red: ['Oars'],
-        score: ['Sailing', 'Writing', 'Clothing'],
+        score: ['Sailing', 'Clothing'],
       },
       micah: {
-        hand: ['Metalworking', 'Pottery', 'The Wheel'],
+        hand: ['Writing', 'Metalworking', 'The Wheel'],
       },
     })
   })
