@@ -2,7 +2,6 @@
   <div class="innovation">
     <b-container fluid>
       <b-row class="main-row">
-
         <b-col class="game-column history-column">
           <GameMenu />
           <History />
@@ -13,6 +12,7 @@
           <Decks />
           <Achievements />
           <WaitingPanel />
+          <ChatInput />
         </b-col>
 
         <b-col v-for="player in players" :key="player._id" class="game-column">
@@ -37,6 +37,7 @@ import { inn } from 'battlestar-common'
 
 import Achievements from './Achievements'
 import Biscuits from './Biscuits'
+import ChatInput from './ChatInput'
 import Decks from './Decks'
 import GameMenu from './GameMenu'
 import History from './History'
@@ -54,6 +55,7 @@ export default {
   components: {
     Achievements,
     Biscuits,
+    ChatInput,
     Decks,
     GameMenu,
     History,
@@ -74,6 +76,8 @@ export default {
   data() {
     return {
       game: new inn.Innovation(this.data, this.actor.name),
+
+      fakeSave: false,
     }
   },
 
@@ -117,26 +121,43 @@ export default {
       }
     },
 
+    save: async function() {
+      if (this.fakeSave) {
+        console.log('fake saved (game)')
+        return
+      }
+
+      await this.saveFull()
+
+      /* if (this.game.usedUndo) {
+       *   await this.saveFull()
+       * }
+       * else {
+       *   await this.saveLatest()
+       * } */
+    },
+
     saveFull: async function() {
       const game = this.game
       const payload = {
         gameId: game._id,
         responses: game.responses,
+        chat: game.getChat(),
       }
       const requestResult = await axios.post('/api/game/saveFull', payload)
       this.handleSaveResult(requestResult)
     },
 
-    saveLatest: async function() {
-      const game = this.game
-      const lastResponse = game.responses.slice().reverse().find(r => r.isUserResponse)
-      const payload = {
-        gameId: game._id,
-        response: lastResponse,
-      }
-      const requestResult = await axios.post('/api/game/saveResponse', payload)
-      this.handleSaveResult(requestResult)
-    },
+    /* saveLatest: async function() {
+     *   const game = this.game
+     *   const lastResponse = game.responses.slice().reverse().find(r => r.isUserResponse)
+     *   const payload = {
+     *     gameId: game._id,
+     *     response: lastResponse,
+     *   }
+     *   const requestResult = await axios.post('/api/game/saveResponse', payload)
+     *   this.handleSaveResult(requestResult)
+     * }, */
   },
 
   created() {
@@ -154,21 +175,15 @@ export default {
       },
     })
 
-    this.game.save = async function() {
-      const fakeSave = false
-      if (fakeSave) {
-        console.log('fake saved')
-        return
-      }
+    const mChatOrigFunc = this.game.mChat
+    this.game.mChat = async function(...args) {
+      mChatOrigFunc.apply(this.game, args)
+      await this.save()
+    }.bind(this)
 
-      const game = this.game
-      if (game.usedUndo) {
-        await this.saveFull()
-      }
-      else {
-        await this.saveLatest()
-      }
-    }.bind(this),
+    this.game.save = async function() {
+      await this.save()
+    }.bind(this)
 
     this.game.run()
   },

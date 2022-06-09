@@ -68,6 +68,7 @@ Game.save = async function(game) {
       { _id: game._id },
       { $set: {
         responses: game.responses,
+        chat: game.chat,
         waiting: game.getPlayerNamesWaiting(),
       } },
     )

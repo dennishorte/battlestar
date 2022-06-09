@@ -15,6 +15,7 @@ function Game(serialized_data) {
 
   // State will be reset each time the game is run
   this.state = this._blankState()
+  this.chat = serialized_data.chat || []
 
   // Settings are immutable data
   this.settings = serialized_data.settings
@@ -52,6 +53,7 @@ function GameFactory(settings) {
   util.assert(!!settings.seed)
 
   const data = {
+    chat: [],
     responses: [],
     settings,
   }
@@ -157,7 +159,7 @@ Game.prototype.requestInputMany = function(array) {
   const __prepareInput = (input) => {
     responses.push(input)
     if (input.isUserResponse) {
-      this.state.log.push({
+      this.getLog().push({
         type: 'response-received',
         data: input,
       })
@@ -242,11 +244,23 @@ Game.prototype.undo = function() {
     this.responses.pop()
   }
   this.responses.pop()
+
+  this.run()
+
+  for (const chat of this.getChat()) {
+    if (chat.position > this.getLog().length) {
+      chat.position = this.getLog().length
+    }
+  }
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Logging
+
+Game.prototype.getChat = function() {
+  return this.chat
+}
 
 Game.prototype.getLog = function() {
   return this.state.log
@@ -263,6 +277,19 @@ Game.prototype.getLogIndent = function(msg) {
     }
   }
   return indent
+}
+
+Game.prototype.mChat = function(player, text) {
+  player = player.name ? player.name : player
+  util.assert(typeof player === 'string', "Player param is not a string")
+
+  this.getChat().push({
+    player,
+    text,
+
+    // The position is used to interleave chat with the log messages, if desired.
+    position: this.getLog().length
+  })
 }
 
 Game.prototype.mLog = function(msg) {
@@ -289,17 +316,17 @@ Game.prototype.mLog = function(msg) {
 
   // Making a copy here makes sure that the log items are always distinct from
   // wherever their original data came from.
-  this.state.log.push(msg)
+  this.getLog().push(msg)
 
   return msg.id
 }
 
 Game.prototype.mLogIndent = function() {
-  this.state.log.push('__INDENT__')
+  this.getLog().push('__INDENT__')
 }
 
 Game.prototype.mLogOutdent = function() {
-  this.state.log.push('__OUTDENT__')
+  this.getLog().push('__OUTDENT__')
 }
 
 Game.prototype.mLogDoNothing = function(player) {

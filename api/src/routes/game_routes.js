@@ -107,6 +107,7 @@ Game.saveFull = async function(req, res) {
   // await db.game.saveResponses(req.body.gameId, req.body.responses)
   const game = await _loadGameFromReq(req)
   game.responses = req.body.responses
+  game.chat = req.body.chat
   return _testAndSave(game, res, (game) => {
     game.run()
   })

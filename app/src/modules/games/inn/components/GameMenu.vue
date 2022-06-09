@@ -26,7 +26,6 @@ export default {
 
     undo() {
       this.game.undo()
-      this.game.run()
     }
   },
 }

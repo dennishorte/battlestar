@@ -1,8 +1,20 @@
 <template>
   <div class="history">
     <div v-for="(line, index) in lines" :key="index" :class="line.classes" class="log-line">
-      <div v-for="n in line.indent" :key="n" class="indent-spacer" />
-      <CardText :text="line.text" />
+
+      <template v-if="line.isChat">
+        <div class="chat-container">
+          <div class="chat-message">
+            <span class="chat-author">{{ line.author.name }}:</span>
+            {{ line.text }}
+          </div>
+        </div>
+      </template>
+
+      <template v-else>
+        <div v-for="n in line.indent" :key="n" class="indent-spacer" />
+        <CardText :text="line.text" />
+      </template>
     </div>
     <div class="bottom-space" ref="bottom"></div>
   </div>
@@ -28,35 +40,53 @@ export default {
     lines() {
       const output = []
       let indent = 0
-      for (const entry of this.game.getLog()) {
+
+      console.log(this.game.getLog().length, this.game.getChat())
+
+      const entries = this.game.getLog()
+      for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i]
+
         if (entry.type === 'response-received') {
-          continue
+          // do nothing
         }
-        if (entry === '__INDENT__') {
+        else if (entry === '__INDENT__') {
           indent += 1
-          continue
         }
-        if (entry === '__OUTDENT__') {
+        else if (entry === '__OUTDENT__') {
           indent -= 1
-          continue
+        }
+        else {
+          const text = this.convertLogMessage(entry)
+          const classes = entry.classes || []
+
+          if (
+            text.includes(' chooses ')
+            || text.startsWith('Demands will be made of')
+            || text.startsWith('Effects will share with')
+          ) {
+            classes.push('faded-text')
+          }
+
+          output.push({
+            text,
+            classes,
+            indent: Math.max(0, indent - 1),
+          })
         }
 
-        const text = this.convertLogMessage(entry)
-        const classes = entry.classes || []
-
-        if (
-          text.includes(' chooses ')
-          || text.startsWith('Demands will be made of')
-          || text.startsWith('Effects will share with')
-        ) {
-          classes.push('faded-text')
-        }
-
-        output.push({
-          text,
-          classes,
-          indent: Math.max(0, indent - 1),
-        })
+        // Insert any chats that go after this entry.
+        this
+          .game
+          .getChat()
+          .filter(x => x.position === i + 1)
+          .forEach(chat => {
+            output.push({
+              text: chat.text,
+              author: this.game.getPlayerByName(chat.player),
+              isChat: true,
+            })
+          })
       }
       return output
     }
@@ -64,7 +94,10 @@ export default {
 
   watch: {
     lines: {
-      handler() { this.scrollToBottom() },
+      handler() {
+        this.scrollToBottom()
+        window.scrollTo(0,0)
+      },
       flush: 'post',
     },
   },
@@ -108,6 +141,29 @@ export default {
 
 .bottom-space {
   height: 2em;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-bottom: .25em;
+  width: 100%;
+}
+
+.chat-message {
+  color: #eee;
+  background-color: blue;
+  padding: .25em .5em;
+  border-radius: .25em;
+  margin-left: 1em;
+  text-align: right;
+}
+
+.chat-author {
+  font-size: .8em;
+  line-height: .5em;
+  margin-top: -.5em;;
 }
 
 .log-line {
