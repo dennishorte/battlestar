@@ -52,7 +52,7 @@ function Card() {
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['blue'], 'up')
+      game.aChooseAndSplay(player, ['blue'], 'right')
     }
   ]
   this.echoImpl = (game, player) => {

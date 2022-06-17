@@ -29,7 +29,7 @@ describe("Dentures", () => {
         red: ['Industrialization'],
         blue: {
           cards: ['Tools', 'Calendar'],
-          splay: 'up'
+          splay: 'right'
         },
         score: ['Dentures'],
       },
