@@ -1,6 +1,8 @@
 <template>
   <div class="player-tableau">
-    {{ player.name }}
+    <div class="player-name">
+      {{ player.name }}
+    </div>
 
     <ColorStack
       v-for="color in game.utilColors()"
@@ -90,3 +92,26 @@ export default {
   },
 }
 </script>
+
+
+<style scoped>
+.player-name {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+
+  position: sticky;
+  top: 0;
+  height: 2em;
+  padding: 0, .25em;
+  text-align: center;
+
+  background-color: gray;
+  color: white;
+  font-size: 1.2em;
+
+  max-width: 300px;
+  border-radius: 0 0 .25em .25em;
+}
+</style>
