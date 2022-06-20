@@ -23,14 +23,17 @@ function Card() {
           continue
         }
 
+        // The ages of all achievements owned by `other`.
         const ages = game
           .getCardsByZone(other, 'achievements')
-          .filter(card => !!card.age)
+          .filter(card => !!card.getAge())
           .map(card => card.getAge())
 
+        // Top cards owned by `other` that match an age in that player's achievements pile.
         game
           .getTopCards(other)
           .filter(card => ages.includes(card.getAge()))
+          .filter(card => game.checkAchievementEligibility(player, card))
           .forEach(card => candidates.push(card))
       }
 

@@ -84,4 +84,41 @@ describe("Hot Air Balloon", () => {
       },
     })
   })
+
+  test('dogma: not eligible', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        green: ['Hot Air Balloon'],
+        purple: ['Philosophy'],
+      },
+      micah: {
+        blue: ['Mathematics'],
+        green: ['Compass'],
+        achievements: ['The Wheel', 'Engineering']
+      },
+      decks: {
+        base: {
+          7: ['Lighting', 'Railroad'],
+        },
+      }
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Hot Air Balloon')
+
+    t.testIsSecondPlayer(request2)
+    t.testBoard(game, {
+      dennis: {
+        green: ['Hot Air Balloon'],
+        purple: ['Railroad', 'Philosophy'],
+        score: ['Lighting'],
+      },
+      micah: {
+        blue: ['Mathematics'],
+        green: ['Compass'],
+        achievements: ['The Wheel', 'Engineering']
+      },
+    })
+  })
 })
