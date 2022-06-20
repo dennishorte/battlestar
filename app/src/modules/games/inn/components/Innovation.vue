@@ -217,44 +217,46 @@ export default {
   flex-wrap: nowrap;
 }
 
-.text-base {
-  color: #bba37a;
+.text-base { color: #bba37a; }
+.text-echo { color: #6889ec; }
+.text-figs { color: #519432; }
+.text-city { color: #cc0000; }
+.text-arti { color: #9532a8; }
+
+.bg-base { background-color: #bba37a; }
+.bg-echo { background-color: #6889ec; }
+.bg-figs { background-color: #519432; }
+.bg-city { background-color: #cc0000; }
+.bg-arti { background-color: #9532a8; }
+
+.color-biscuit-castle {
+  /* color: #b6bcc6;  */
+  background-color: #494e51;
 }
 
-.text-echo {
-  color: #6889ec;
+.color-biscuit-coin {
+  /* color: #f1df83; */
+  background-color: #a47b37;
 }
 
-.text-figs {
-  color: #519432;
+.color-biscuit-lightbulb {
+  /* color: #eee; */
+  background-color: #6a214b;
 }
 
-.text-city {
-  color: #cc0000;
+.color-biscuit-leaf {
+  /* color: #9fcdbf; */
+  background-color: #295d46;
 }
 
-.text-arti {
-  color: #9532a8;
+.color-biscuit-factory {
+  /* color: #d04e48; */
+  background-color: #6e1b14;
 }
 
-.bg-base {
-  background-color: #bba37a;
-}
-
-.bg-echo {
-  background-color: #6889ec;
-}
-
-.bg-figs {
-  background-color: #519432;
-}
-
-.bg-city {
-  background-color: #cc0000;
-}
-
-.bg-arti {
-  background-color: #9532a8;
+.color-biscuit-clock {
+  /* color: #317ead; */
+  background-color: #055386;
 }
 
 .red {
