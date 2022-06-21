@@ -91,8 +91,6 @@ describe('Tyrants Cards', () => {
           }
         })
 
-        t.setTroops(game, 'ched-halls a', ['neutral'])
-
         const request1 = game.run()
         const request2 = t.choose(game, request1, 'Play Card.Blackguard')
         const request3 = t.choose(game, request2, 'Assassinate a troop')
@@ -102,7 +100,7 @@ describe('Tyrants Cards', () => {
             played: ['Blackguard'],
             trophyHall: ['neutral'],
           },
-          'ched-halls a': {
+          'araum-ched': {
             troops: [],
           },
         })
@@ -136,6 +134,7 @@ describe('Tyrants Cards', () => {
 
         const request1 = game.run()
         const request2 = t.choose(game, request1, 'Play Card.Doppelganger')
+        const request3 = t.choose(game, request2, 'ched-halls a, micah')
 
         t.testBoard(game, {
           dennis: {
@@ -162,6 +161,7 @@ describe('Tyrants Cards', () => {
         const request1 = game.run()
         const request2 = t.choose(game, request1, 'Play Card.Deathblade')
         const request3 = t.choose(game, request2, 'ched-halls a, micah')
+        const request4 = t.choose(game, request3, 'ched-halls a, neutral')
 
         t.testBoard(game, {
           dennis: {
@@ -197,8 +197,6 @@ describe('Tyrants Cards', () => {
           }
         })
 
-        t.setTroops(game, 'ched-halls a', ['neutral'])
-
         const request1 = game.run()
         const request2 = t.choose(game, request1, 'Play Card.Inquisitor')
         const request3 = t.choose(game, request2, 'Assassinate a troop')
@@ -208,7 +206,7 @@ describe('Tyrants Cards', () => {
             played: ['Inquisitor'],
             trophyHall: ['neutral'],
           },
-          'ched-halls a': {
+          'araum-ched': {
             troops: [],
           },
         })
@@ -223,8 +221,6 @@ describe('Tyrants Cards', () => {
           }
         })
 
-        t.setTroops(game, 'ched-halls a', ['neutral', 'micah'])
-
         const request1 = game.run()
         const request2 = t.choose(game, request1, 'Play Card.Advance Scout')
 
@@ -233,8 +229,8 @@ describe('Tyrants Cards', () => {
             played: ['Advance Scout'],
             trophyHall: ['neutral'],
           },
-          'ched-halls a': {
-            troops: ['dennis', 'micah']
+          'araum-ched': {
+            troops: ['dennis']
           },
         })
       })
@@ -254,6 +250,7 @@ describe('Tyrants Cards', () => {
         const request1 = game.run()
         const request2 = t.choose(game, request1, 'Play Card.Underdark Ranger')
         const request3 = t.choose(game, request2, 'ched-halls a, neutral')
+        const request4 = t.choose(game, request3, 'ched-llace a, neutral')
 
         t.testBoard(game, {
           dennis: {
@@ -276,7 +273,6 @@ describe('Tyrants Cards', () => {
           }
         })
 
-        t.setTroops(game, 'ched-halls a', ['neutral', 'micah'])
         t.setTroops(game, 'ched-llace a', ['dennis'])
 
         const request1 = game.run()
@@ -287,8 +283,8 @@ describe('Tyrants Cards', () => {
             played: ['Underdark Ranger'],
             trophyHall: ['neutral'],
           },
-          'ched-halls a': {
-            troops: ['micah']
+          'araum-ched': {
+            troops: []
           },
           'ched-llace a': {
             troops: ['dennis']
@@ -347,6 +343,38 @@ describe('Tyrants Cards', () => {
             troops: ['neutral', 'dennis'],
           },
         })
+      })
+    })
+
+    describe('Weaponmaster', () => {
+      test('three choices', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Weaponmaster'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Weaponmaster')
+        const request3 = t.choose(game, request2, 'Deploy a troop')
+        const request4 = t.choose(game, request3, 'ched-halls a')
+        const request5 = t.choose(game, request4, 'Assassinate a white troop')
+        const request6 = t.choose(game, request5, 'Deploy a troop')
+        const request7 = t.choose(game, request6, 'araum-ched')
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Weaponmaster'],
+            trophyHall: ['neutral'],
+          },
+          'araum-ched': {
+            troops: ['dennis'],
+          },
+          'ched-halls a': {
+            troops: ['dennis'],
+          },
+        })
+
       })
     })
 

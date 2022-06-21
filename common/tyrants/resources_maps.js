@@ -1530,6 +1530,7 @@ const mapData = [
       "points": 0
     },
     "neighbors": [
+      "araum-ched",
       "ched-halls a",
       "ched-llace a",
       "ched-yath",
