@@ -260,13 +260,15 @@ TestUtil.testTableau = function(game, player, testState) {
 }
 
 TestUtil.testLocation = function(game, location, testState) {
-  const actual = {}
-  const expected = {}
+  const actual = { name: location.name }
+  const expected = { name: location.name }
 
   for (const key of ['troops', 'spies']) {
-    actual[key] = location.getTokens(key).map(t => t.owner.name).sort()
+    actual[key] = location.getTokens(key).map(t => t.getOwnerName()).sort()
     expected[key] = (testState[key] || []).sort()
   }
+
+  expect(actual).toStrictEqual(expected)
 }
 
 

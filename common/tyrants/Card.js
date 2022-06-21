@@ -25,3 +25,8 @@ function Card(id, data) {
 }
 
 module.exports = Card
+
+
+Card.prototype.getOwnerName = function() {
+  return this.owner === undefined ? 'neutral' : this.owner.name
+}

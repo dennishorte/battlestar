@@ -297,5 +297,58 @@ describe('Tyrants Cards', () => {
       })
     })
 
+    describe('Master of Melee-Magthere', () => {
+      test('deploy', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Master of Melee-Magthere'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Master of Melee-Magthere')
+        const request3 = t.choose(game, request2, 'Deploy 4 troops')
+        const request4 = t.choose(game, request3, 'ched-llace a')
+        const request5 = t.choose(game, request4, 'ched-llace b')
+        const request6 = t.choose(game, request5, 'Llacerellyn')
+        const request7 = t.choose(game, request6, 'erynd-llace')
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Master of Melee-Magthere'],
+          },
+          'ched-llace a': {
+            troops: ['dennis'],
+          },
+          'ched-llace b': {
+            troops: ['dennis'],
+          },
+        })
+      })
+
+      test('supplant', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Master of Melee-Magthere'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Master of Melee-Magthere')
+        const request3 = t.choose(game, request2, 'Supplant a white troop anywhere on the board')
+        const request4 = t.choose(game, request3, 'Gracklstugh, neutral')
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Master of Melee-Magthere'],
+            trophyHall: ['neutral'],
+          },
+          'Gracklstugh': {
+            troops: ['neutral', 'dennis'],
+          },
+        })
+      })
+    })
+
   })
 })

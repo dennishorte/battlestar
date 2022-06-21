@@ -458,7 +458,7 @@ const mapData = [
     },
     "neighbors": [
       "Llacerellyn",
-      "ched-llace b"
+      "ched-llace a"
     ]
   },
   {
@@ -1553,6 +1553,7 @@ const mapData = [
       "points": 0
     },
     "neighbors": [
+      "ched-llace b",
       "erynd-llace",
       "llace-tsen",
       "llace-ss'zur a"

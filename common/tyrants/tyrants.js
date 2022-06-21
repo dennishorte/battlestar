@@ -531,9 +531,8 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndSupplant = function(player, opts={}) {
-  const presence = this.getPresence(player)
-  const troops = this
-    .getPresence(player)
+  const baseLocations = opts.anywhere ? this.getLocationAll() : this.getPresence(player)
+  const troops = baseLocations
     .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
     .filter(([_, troop]) => troop.owner !== player)
     .filter(([_, troop]) => opts.whiteOnly ? troop.owner === undefined : true)
