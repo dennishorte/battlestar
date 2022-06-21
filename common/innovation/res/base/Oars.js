@@ -13,7 +13,6 @@ function Card() {
   this.karma = []
   this.dogma = [
     `I demand you transfer a card with a {c} from your hand to my score pile! if you do, draw a {1}, and repeat this dogma effect!`,
-    //`I demand you transfer a card with a {c} from your hand to my score pile! If you do, draw a {1}, and repeat this dogma effect on that card only!`,
     `If no cards were transferred due to this demand, draw a {1}.`
   ]
 
@@ -27,16 +26,15 @@ function Card() {
       }
 
       const target = game.getZoneByPlayer(leader, 'score')
-      let stealable = game
-        .getCardsByZone(player, 'hand')
-        .filter(card => card.checkHasBiscuit('c'))
       while (true) {
-        if (stealable.length > 0) {
-          const transferred = game.aChooseAndTransfer(player, stealable, target)
+        const choices = game
+          .getCardsByZone(player, 'hand')
+          .filter(card => card.checkHasBiscuit('c'))
+        if (choices.length > 0) {
+          const transferred = game.aChooseAndTransfer(player, choices, target)
           if (transferred && transferred.length > 0) {
             game.state.dogmaInfo.oarsCardTransferred = true
-            const drawn = game.aDraw(player, { age: game.getEffectAge(this, 1) })
-            stealable = drawn.checkHasBiscuit('c') ? [drawn] : []
+            game.aDraw(player, { age: game.getEffectAge(this, 1) })
             continue
           }
         }
