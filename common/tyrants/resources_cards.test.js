@@ -452,5 +452,55 @@ describe('Tyrants Cards', () => {
       })
     })
 
+    describe('Infiltrator', () => {
+      test('place a spy', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Infiltrator'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Infiltrator')
+        const request3 = t.choose(game, request2, 'Menzoberranzan')
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Infiltrator'],
+            power: 0,
+          },
+          'Menzoberranzan': {
+            troops: ['neutral', 'neutral', 'neutral'],
+            spies: ['dennis'],
+          },
+        })
+      })
+
+      test('place a spy, gain power', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Infiltrator'],
+          }
+        })
+
+        t.setTroops(game, 'Menzoberranzan', ['neutral', 'neutral', 'micah'])
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Infiltrator')
+        const request3 = t.choose(game, request2, 'Menzoberranzan')
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Infiltrator'],
+            power: 1,
+          },
+          'Menzoberranzan': {
+            troops: ['neutral', 'neutral', 'micah'],
+            spies: ['dennis'],
+          },
+        })
+      })
+    })
+
   })
 })

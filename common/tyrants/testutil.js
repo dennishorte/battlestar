@@ -155,7 +155,8 @@ TestUtil.setTroops = function(game, locName, playerNames) {
     const loc = game.getLocationByName(locName)
     while (loc.getTroops().length > 0) {
       const troop = loc.getTroops()[0]
-      game.mMoveCardTo(troop, troop.home)
+      const home = troop.owner ? game.getZoneByPlayer(troop.owner, 'troops') : game.getZoneById('neutrals')
+      game.mMoveCardTo(troop, home)
     }
 
     for (const playerName of playerNames) {

@@ -596,6 +596,7 @@ Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
   const loc = this.aChooseLocation(player, choices, { title: 'Choose a location for a spy' })
   if (loc) {
     this.aPlaceSpy(player, loc)
+    return loc
   }
 }
 
