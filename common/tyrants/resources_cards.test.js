@@ -464,10 +464,10 @@ describe('Tyrants Cards', () => {
         const request2 = t.choose(game, request1, 'Play Card.Infiltrator')
         const request3 = t.choose(game, request2, 'Menzoberranzan')
 
+        expect(t.dennis(game).power).toBe(0)
         t.testBoard(game, {
           dennis: {
             played: ['Infiltrator'],
-            power: 0,
           },
           'Menzoberranzan': {
             troops: ['neutral', 'neutral', 'neutral'],
@@ -489,10 +489,10 @@ describe('Tyrants Cards', () => {
         const request2 = t.choose(game, request1, 'Play Card.Infiltrator')
         const request3 = t.choose(game, request2, 'Menzoberranzan')
 
+        expect(t.dennis(game).power).toBe(1)
         t.testBoard(game, {
           dennis: {
             played: ['Infiltrator'],
-            power: 1,
           },
           'Menzoberranzan': {
             troops: ['neutral', 'neutral', 'micah'],
@@ -548,6 +548,57 @@ describe('Tyrants Cards', () => {
             troops: ['neutral', 'neutral', 'neutral'],
           },
         })
+
+      })
+    })
+
+    describe('Masters of Sorcere', () => {
+      test('place a spy', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Masters of Sorcere'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Masters of Sorcere')
+        const request3 = t.choose(game, request2, 'Place 2 spies')
+        const request4 = t.choose(game, request3, 'Menzoberranzan')
+        const request5 = t.choose(game, request4, 'Kamaglym')
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Masters of Sorcere'],
+          },
+          'Menzoberranzan': {
+            troops: ['neutral', 'neutral', 'neutral'],
+            spies: ['dennis'],
+          },
+          'Kamaglym': {
+            spies: ['dennis'],
+          },
+        })
+      })
+
+      test('return a spy', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Masters of Sorcere'],
+          }
+        })
+
+        t.setSpies(game, 'Menzoberranzan', ['dennis'])
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Masters of Sorcere')
+        const request3 = t.choose(game, request2, "Return one of your spies > +4 power")
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Masters of Sorcere'],
+          },
+        })
+        expect(t.dennis(game).power).toBe(4)
 
       })
     })

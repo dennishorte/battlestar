@@ -349,8 +349,9 @@ const baseData = [
     impl: (game, player) => {
       const loc = game.aChooseAndPlaceSpy(player)
       const players = loc
-        .getSpies()
-        .map(spy => game.getPlayerByCard(spy))
+        .getTroops()
+        .map(troop => game.getPlayerByCard(troop))
+        .filter(other => other !== undefined)
         .filter(other => other !== player)
       if (players.length > 0) {
         player.incrementPower(1)
