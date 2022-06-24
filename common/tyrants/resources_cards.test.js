@@ -502,5 +502,55 @@ describe('Tyrants Cards', () => {
       })
     })
 
+    describe('Information Broker', () => {
+      test('place a spy', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Information Broker'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Information Broker')
+        const request3 = t.choose(game, request2, 'Place a spy')
+        const request4 = t.choose(game, request3, 'Menzoberranzan')
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Information Broker'],
+          },
+          'Menzoberranzan': {
+            troops: ['neutral', 'neutral', 'neutral'],
+            spies: ['dennis'],
+          },
+        })
+      })
+
+      test('return a spy', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Information Broker'],
+          }
+        })
+
+        t.setSpies(game, 'Menzoberranzan', ['dennis'])
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Information Broker')
+        const request3 = t.choose(game, request2, "Return one of your spies > Draw 3 cards")
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Information Broker'],
+            hand: ['Noble', 'Noble', 'Soldier'],
+          },
+          'Menzoberranzan': {
+            troops: ['neutral', 'neutral', 'neutral'],
+          },
+        })
+
+      })
+    })
+
   })
 })

@@ -374,7 +374,7 @@ const baseData = [
     impl: (game, player) => {
       game.aChooseOne(player, [
         {
-          title: 'Place a Spy',
+          title: 'Place a spy',
           impl: (game, player) => game.aChooseAndPlaceSpy(player),
         },
         {
