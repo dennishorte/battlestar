@@ -428,5 +428,29 @@ describe('Tyrants Cards', () => {
       })
     })
 
+    describe('Spy Master', () => {
+      test('place a spy', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Spy Master'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Spy Master')
+        const request3 = t.choose(game, request2, 'Menzoberranzan')
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Spy Master'],
+          },
+          'Menzoberranzan': {
+            troops: ['neutral', 'neutral', 'neutral'],
+            spies: ['dennis'],
+          },
+        })
+      })
+    })
+
   })
 })
