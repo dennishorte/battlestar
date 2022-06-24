@@ -531,7 +531,17 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndSupplant = function(player, opts={}) {
-  const baseLocations = opts.anywhere ? this.getLocationAll() : this.getPresence(player)
+  let baseLocations
+  if (opts.loc) {
+    baseLocations = [opts.loc]
+  }
+  else if (opts.anywhere) {
+    baseLocations = this.getLocationAll()
+  }
+  else {
+    baseLocations = this.getPresence(player)
+  }
+
   const troops = baseLocations
     .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
     .filter(([_, troop]) => troop.owner !== player)
@@ -569,7 +579,24 @@ Tyrants.prototype.aChooseAndDeploy = function(player) {
 }
 
 Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
+  // Check that the player has spies remaining to place.
+  if (this.getCardsByZone(player, 'spies').length === 0) {
+    this.mLog({
+      template: '{player} has deployed all their spies',
+      args: { player }
+    })
+    return
+  }
 
+  // Player can choose to place a spy on area site that does not have a spy of theirs on it already.
+  const choices = this
+    .getLocationAll()
+    .filter(l => l.getSpies(player).length === 0)
+
+  const loc = this.aChooseLocation(player, choices, { title: 'Choose a location for a spy' })
+  if (loc) {
+    this.aPlaceSpy(player, loc)
+  }
 }
 
 Tyrants.prototype.aChooseAndPromote = function(player, choices) {
@@ -601,13 +628,6 @@ Tyrants.prototype.aChooseOne = function(player, choices) {
 
 Tyrants.prototype.aDeferPromotion = function(player, source) {
 
-}
-
-Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
-
-  return {
-    loc: 'tbd'
-  }
 }
 
 Tyrants.prototype.aAssassinate = function(player, loc, owner) {
@@ -666,7 +686,12 @@ Tyrants.prototype.aMove = function(player, start, end) {
 }
 
 Tyrants.prototype.aPlaceSpy = function(player, loc) {
-
+  const spy = this.getCardsByZone(player, 'spies')[0]
+  this.mPlaceSpy(player, loc)
+  this.mLog({
+    template: '{player} places a spy at {loc}',
+    args: { player, loc }
+  })
 }
 
 Tyrants.prototype.aPlayCard = function(player, card) {
@@ -694,6 +719,33 @@ Tyrants.prototype.aRecruit = function(player, card) {
 
 Tyrants.prototype.aReturnSpy = function(player, loc, owner) {
 
+}
+
+Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
+  // Choose a spy to return
+  const locations = this
+    .getLocationAll()
+    .filter(loc => loc.getSpies(player).length > 0)
+  const loc = this.aChooseLocation(player, locations)
+
+  // If a spy was returned, execute fn
+  if (loc) {
+    this.mLog({
+      template: '{player} returns a spy from {loc}',
+      args: { player, loc }
+    })
+
+    const spy = loc.getSpies(player)[0]
+    this.mMoveCardTo(spy, this.getZoneByPlayer(spy.owner, 'spies'))
+
+    fn(this, player, { loc })
+  }
+  else {
+    this.mLog({
+      template: '{player} has no spies to return',
+      args: { player }
+    })
+  }
 }
 
 Tyrants.prototype.aReturnTroop = function(player, loc, owner) {
@@ -880,6 +932,11 @@ Tyrants.prototype.mMoveCardTo = function(card, zone, opts={}) {
   const source = this.getZoneByCard(card)
   const index = source.cards().indexOf(card)
   this.mMoveByIndices(source, index, zone, zone.cards().length)
+}
+
+Tyrants.prototype.mPlaceSpy = function(player, loc) {
+  const spy = this.getCardsByZone(player, 'spies')[0]
+  this.mMoveCardTo(spy, loc)
 }
 
 Tyrants.prototype.mShuffle = function(zone) {

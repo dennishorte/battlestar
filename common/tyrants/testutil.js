@@ -172,6 +172,23 @@ TestUtil.setTroops = function(game, locName, playerNames) {
   })
 }
 
+TestUtil.setSpies = function(game, locName, playerNames) {
+  game.testSetBreakpoint('initialization-complete', (game) => {
+    const loc = game.getLocationByName(locName)
+
+    while (loc.getSpies().length > 0) {
+      const spy = loc.getSpies()[0]
+      game.mMoveCardTo(spy, spy.home)
+    }
+
+    for (const playerName of util.array.distinct(playerNames)) {
+      const player = game.getPlayerByName(playerName)
+      const tokens = game.getCardsByZone(player, 'spies')
+      game.mMoveCardTo(tokens[0], loc)
+    }
+  })
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Tests

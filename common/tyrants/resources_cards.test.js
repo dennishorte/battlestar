@@ -378,5 +378,55 @@ describe('Tyrants Cards', () => {
       })
     })
 
+    describe('Spellspinner', () => {
+      test('place a spy', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Spellspinner'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Spellspinner')
+        const request3 = t.choose(game, request2, 'Place a spy')
+        const request4 = t.choose(game, request3, 'Menzoberranzan')
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Spellspinner'],
+          },
+          'Menzoberranzan': {
+            troops: ['neutral', 'neutral', 'neutral'],
+            spies: ['dennis'],
+          },
+        })
+      })
+
+      test('return a spy', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Spellspinner'],
+          }
+        })
+
+        t.setSpies(game, 'Menzoberranzan', ['dennis'])
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Spellspinner')
+        const request3 = t.choose(game, request2, "Return one of your spies > Supplant a troop at that spy's site")
+
+        t.testBoard(game, {
+          dennis: {
+            played: ['Spellspinner'],
+            trophyHall: ['neutral'],
+          },
+          'Menzoberranzan': {
+            troops: ['neutral', 'neutral', 'dennis'],
+          },
+        })
+
+      })
+    })
+
   })
 })
