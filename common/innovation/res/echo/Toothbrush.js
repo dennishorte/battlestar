@@ -23,9 +23,10 @@ function Card() {
     },
 
     (game, player) => {
-      const deck = game.getZoneByDeck('base', 2).cards()
+      const deckAge = game.getEffectAge(this, 2)
+      const deck = game.getZoneByDeck('base', deckAge).cards()
       if (deck.length > 0) {
-        const doTransfer = game.aYesNo(player, "Transfer the bottom {2} to the available achievements?")
+        const doTransfer = game.aYesNo(player, `Transfer the bottom {${deckAge}} to the available achievements?`)
         if (doTransfer) {
           game.aTransfer(player, deck[0], game.getZoneById('achievements'))
         }
