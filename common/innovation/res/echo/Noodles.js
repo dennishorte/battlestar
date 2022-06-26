@@ -44,7 +44,7 @@ function Card() {
       if (card && card.color === 'yellow') {
         const toScore = game
           .getCardsByZone(player, 'hand')
-          .filter(card => card.getAge() === 1)
+          .filter(card => card.getAge() === game.getEffectAge(this, 1))
         game.aScoreMany(player, toScore, { ordered: true })
       }
     },
