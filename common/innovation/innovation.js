@@ -1961,15 +1961,17 @@ Innovation.prototype.getEffectAge = function(card, age) {
   const cardZone = this.getZoneByCard(card)
   const player = this.getPlayerByZone(cardZone)
 
-  const karmaInfos = this.getInfoByKarmaTrigger(player, 'effect-age')
-  if (karmaInfos.length === 0) {
-    age = age
-  }
-  else if (karmaInfos.length > 1) {
-    throw new Error('Multiple effect-age karmas not supported')
-  }
-  else {
-    age = karmaInfos[0].impl.func(this, player, card, age)
+  if (player) {
+    const karmaInfos = this.getInfoByKarmaTrigger(player, 'effect-age')
+    if (karmaInfos.length === 0) {
+      age = age
+    }
+    else if (karmaInfos.length > 1) {
+      throw new Error('Multiple effect-age karmas not supported')
+    }
+    else {
+      age = karmaInfos[0].impl.func(this, player, card, age)
+    }
   }
 
   if (this.state.dogmaInfo.globalAgeIncrease) {
@@ -2093,8 +2095,13 @@ Innovation.prototype.getPlayerByName = function(name) {
 Innovation.prototype.getPlayerByZone = function(zone) {
   const regex = /players[.]([^.]+)[.]/
   const match = zone.id.match(regex)
-  util.assert(match, `Couldn't get player name from zone id: ${zone.id}`)
-  return this.getPlayerByName(match[1])
+
+  if (match) {
+    return this.getPlayerByName(match[1])
+  }
+  else {
+    return undefined
+  }
 }
 
 Innovation.prototype.getPlayerTeam = function(player) {
