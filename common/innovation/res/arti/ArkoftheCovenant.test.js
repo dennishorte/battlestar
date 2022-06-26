@@ -20,9 +20,8 @@ describe('Ark of the Covenant', () => {
 
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsFirstAction(request3)
+    t.testIsFirstAction(request2)
     t.testBoard(game, {
       dennis: {
         blue: ['Mathematics'],
