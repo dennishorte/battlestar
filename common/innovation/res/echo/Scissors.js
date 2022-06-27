@@ -24,7 +24,7 @@ function Card() {
         }
 
         const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'), {
-          title: `Choose a card to score or meld (${i} of 2)`,
+          title: `Choose a card to score or meld (${i + 1} of 2)`,
           min: 0,
           max: 1
         })
