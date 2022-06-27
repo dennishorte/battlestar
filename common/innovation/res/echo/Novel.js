@@ -39,6 +39,10 @@ function Card() {
       }
 
       for (const biscuit of Object.keys(game.utilEmptyBiscuits())) {
+        if (biscuit === 'c') {
+          continue
+        }
+
         if (biscuits.every(b => b.includes(biscuit))) {
           game.aClaimAchievement(player, { name: 'Supremacy' })
           return
