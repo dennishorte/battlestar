@@ -28,8 +28,8 @@ describe("Charitable Trust", () => {
     const request2 = t.choose(game, request1, 'Dogma.Charitable Trust')
     const request3 = t.choose(game, request2, 3)  // micah
     const request4 = t.choose(game, request3, 4)  // dennis
-    const request5 = t.choose(game, request4, 'yes')  // micah
-    const request6 = t.choose(game, request5, 'no') // dennis
+    const request5 = t.choose(game, request4, 'Homing Pigeons')  // micah
+    const request6 = t.choose(game, request5) // dennis
 
     t.testIsSecondPlayer(request6)
     t.testBoard(game, {
@@ -61,7 +61,7 @@ describe("Charitable Trust", () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Charitable Trust')
     const request3 = t.choose(game, request2, 4)
-    const request4 = t.choose(game, request3, 'yes')
+    const request4 = t.choose(game, request3, 'Enterprise')
 
     t.testIsSecondPlayer(request4)
     t.testBoard(game, {

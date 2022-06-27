@@ -12,25 +12,23 @@ function Card() {
   this.echo = `Draw a {3} or {4}.`
   this.karma = []
   this.dogma = [
-    `You may meld the card you drew due to Charitable Trust's echo effect. If you do, either return or achieve (if eligible) your top green card.`
+    `You may meld a card from your hand that you drew due to Charitable Trust's echo effect. If you do, either return or achieve (if eligible) your top green card.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const card = game.state.dogmaInfo.charitableTrust[player.name]
-      if (card) {
-        const meldIt = game.aYesNo(player, `Meld ${card.name}?`)
-        if (meldIt) {
-          game.aMeld(player, card)
+      const cards = game.state.dogmaInfo.charitableTrust[player.name]
+                        .filter(card => card.zone.includes('hand'))
+      const melded = game.aChooseAndMeld(player, cards, { min: 0, max: 1 })[0]
 
-          const greenCard = game.getTopCard(player, 'green')
-          if (greenCard) {
-            if (game.checkAchievementEligibility(player, greenCard)) {
-              game.aClaimAchievement(player, { card: greenCard })
-            }
-            else {
-              game.aReturn(player, greenCard)
-            }
+      if (melded) {
+        const greenCard = game.getTopCard(player, 'green')
+        if (greenCard) {
+          if (game.checkAchievementEligibility(player, greenCard)) {
+            game.aClaimAchievement(player, { card: greenCard })
+          }
+          else {
+            game.aReturn(player, greenCard)
           }
         }
       }
@@ -42,9 +40,10 @@ function Card() {
 
     if (!game.state.dogmaInfo.charitableTrust) {
       game.state.dogmaInfo.charitableTrust = {}
+      game.getPlayerAll().forEach(p => game.state.dogmaInfo.charitableTrust[p.name] = [])
     }
 
-    game.state.dogmaInfo.charitableTrust[player.name] = card
+    game.state.dogmaInfo.charitableTrust[player.name].push(card)
   }
   this.inspireImpl = []
   this.karmaImpl = []
