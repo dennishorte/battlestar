@@ -25,6 +25,7 @@ describe('Alexander the Great', () => {
     })
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Meld.Alexander the Great')
+    const request3 = t.choose(game, request2, 'auto')
 
     t.testZone(game, 'score', ['Hatshepsut', 'Cai Lun'], { sort: true })
   })
@@ -46,7 +47,7 @@ describe('Alexander the Great', () => {
     t.testZone(game, 'green', [], { player: 'micah' })
   })
 
-  test.only('karma: featured-biscuit (test 2)', () => {
+  test('karma: featured-biscuit (test 2)', () => {
     const game = t.fixtureTopCard('Alexander the Great', { expansions: ['base', 'figs'] })
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setColor(game, 'dennis', 'blue', ['Atomic Theory'])

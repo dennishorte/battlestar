@@ -19,6 +19,10 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       for (let i = 0; i < 2; i++) {
+        if (game.getCardsByZone(player, 'hand').length === 0) {
+          break
+        }
+
         const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'), {
           title: `Choose a card to score or meld (${i} of 2)`,
           min: 0,

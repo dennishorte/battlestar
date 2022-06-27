@@ -1551,10 +1551,10 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
         }
       }
     }
-
-    // When-meld karmas
-    this.aKarmaWhenMeld(player, card, opts)
   }
+
+  // When-meld karmas
+  this.aKarmaWhenMeld(player, card, opts)
 
   this.mLogOutdent()
   return card
