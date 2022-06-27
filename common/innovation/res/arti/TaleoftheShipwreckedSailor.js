@@ -17,17 +17,18 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const colors = game.aChoose(player, game.utilColors(), { title: 'Choose a Color ' })
+      const color = game.aChoose(player, game.utilColors(), { title: 'Choose a Color ' })[0]
+      game.mLog({
+        template: '{player} chooses {color}',
+        args: { player, color }
+      })
       game.aDraw(player, { age: game.getEffectAge(this, 1) })
-      if (colors && colors.length > 0) {
-        const color = colors[0]
-        const choices = game
-          .getCardsByZone(player, 'hand')
-          .filter(card => card.color === color)
-        const melded = game.aChooseAndMeld(player, choices)
-        if (melded && melded.length > 0) {
-          game.aSplay(player, color, 'left')
-        }
+      const choices = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => card.color === color)
+      const melded = game.aChooseAndMeld(player, choices)
+      if (melded && melded.length > 0) {
+        game.aSplay(player, color, 'left')
       }
     }
   ]
