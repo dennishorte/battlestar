@@ -68,28 +68,25 @@ User.games = async function(req, res) {
 }
 
 User.next = async function(req, res) {
+  const user = await db.user.findById(req.body.userId)
+  const userName = user.name
   const gameCursor = await db.game.findByUserId(req.body.userId)
   const gameArray = await gameCursor.toArray()
-  const gameIds = gameArray.map(game => game._id)
 
-  let nextId
-
-  if (gameIds.length === 0) {
-    nextId = undefined
-  }
-  else if (req.body.gameId) {
-    const index = gameIds.indexOf(req.body.gameId)
-    if (index >= 0) {
-      const nextIndex = (index + 1) % gameIds.length
-      nextId = gameIds[nextIndex]
+  for (let i = 0; i < gameArray.length; i++) {
+    if (!gameArray[gameArray.length - 1]._id.equals(req.body.gameId)) {
+      gameArray.push(gameArray.shift())
     }
     else {
-      nextId = gameIds[0]
+      break
     }
   }
-  else {
-    nextId = gameIds[0]
-  }
+
+  const gameIds = gameArray
+    .filter(game => game.waiting.includes(userName))
+    .map(game => game._id)
+
+  const nextId = gameIds.length > 0 ? gameIds[0] : undefined
 
   res.json({
     status: 'success',

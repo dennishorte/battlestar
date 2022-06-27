@@ -33,8 +33,6 @@ export default {
         gameId: this.game._id,
       })
 
-      console.log(result)
-
       if (result.data.status === 'success') {
         const gameId = result.data.gameId
         if (gameId) {
