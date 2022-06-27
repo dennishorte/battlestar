@@ -19,13 +19,20 @@ function Card() {
     (game, player) => {
       if (!game.state.dogmaInfo.democracyMaxReturned) {
         game.state.dogmaInfo.democracyMaxReturned = 0
+        game.state.dogmaInfo.democracyLastPlayer = ''
       }
       const hand = game.getCardsByZone(player, 'hand')
       const cards = game.aChooseAndReturn(player, hand, { min: 0, max: hand.length })
 
-      if (cards.length > game.state.dogmaInfo.democracyMaxReturned) {
+      if (
+        game.state.dogmaInfo.democracyLastPlayer === player.name
+        || cards.length > game.state.dogmaInfo.democracyMaxReturned
+      ) {
         game.aDrawAndScore(player, game.getEffectAge(this, 8))
-        game.state.dogmaInfo.democracyMaxReturned = cards.length
+        if (cards.length > game.state.dogmaInfo.democracyMaxReturned) {
+          game.state.dogmaInfo.democracyMaxReturned = cards.length
+          game.state.dogmaInfo.democracyLastPlayer = player.name
+        }
       }
     }
   ]
