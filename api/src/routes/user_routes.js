@@ -67,6 +67,36 @@ User.games = async function(req, res) {
   })
 }
 
+User.next = async function(req, res) {
+  const gameCursor = await db.game.findByUserId(req.body.userId)
+  const gameArray = await gameCursor.toArray()
+  const gameIds = gameArray.map(game => game._id)
+
+  let nextId
+
+  if (gameIds.length === 0) {
+    nextId = undefined
+  }
+  else if (req.body.gameId) {
+    const index = gameIds.indexOf(req.body.gameId)
+    if (index >= 0) {
+      const nextIndex = (index + 1) % gameIds.length
+      nextId = gameIds[nextIndex]
+    }
+    else {
+      nextId = gameIds[0]
+    }
+  }
+  else {
+    nextId = gameIds[0]
+  }
+
+  res.json({
+    status: 'success',
+    gameId: nextId
+  })
+}
+
 User.update = async function(req, res) {
   await db.user.update(req.body)
   res.json({

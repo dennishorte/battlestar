@@ -28,10 +28,12 @@ import Innovation from '@/modules/games/inn/components/Innovation'
 
 export default {
   name: 'Game',
+
   components: {
     Battlestar,
     Innovation,
   },
+
   data() {
     return {
       id: this.$route.params.id,
@@ -41,26 +43,45 @@ export default {
     }
   },
 
-  async mounted() {
-    const requestResult = await axios.post('/api/game/fetch', {
-      gameId: this.id,
-    })
-    if (requestResult.data.status === 'success') {
-      const data = requestResult.data.game
-      this.game = data.settings ? data.settings.game : data.game
+  methods: {
+    async loadGame() {
+      this.game = ''
 
-      if (this.game === 'Battlestar Galactica') {
-        this.$game.setState(requestResult.data.game)
-        this.$game.setActor(this.$store.getters['auth/user'])
+      const requestResult = await axios.post('/api/game/fetch', {
+        gameId: this.id,
+      })
+
+      if (requestResult.data.status === 'success') {
+        const data = requestResult.data.game
+        this.game = data.settings ? data.settings.game : data.game
+
+        if (this.game === 'Battlestar Galactica') {
+          this.$game.setState(requestResult.data.game)
+          this.$game.setActor(this.$store.getters['auth/user'])
+        }
+        else if (this.game === 'Innovation') {
+          this.gameData = requestResult.data.game
+          this.actor = this.$store.getters['auth/user']
+        }
+        else {
+          throw new Error(`Unknown game: ${this.game}`)
+        }
       }
-      else if (this.game === 'Innovation') {
-        this.gameData = requestResult.data.game
-        this.actor = this.$store.getters['auth/user']
+      else {
+        alert('Error loading game data')
       }
     }
-    else {
-      alert('Error loading game data')
-    }
+  },
+
+  watch: {
+    async $route() {
+      this.id = this.$route.params.id
+      await this.loadGame()
+    },
+  },
+
+  async mounted() {
+    await this.loadGame()
   },
 }
 </script>

@@ -1,6 +1,7 @@
 <template>
   <b-dropdown :text="game.settings.name" class="game-menu" block>
     <b-dropdown-item @click="home">home</b-dropdown-item>
+    <b-dropdown-item @click="next">next</b-dropdown-item>
     <b-dropdown-divider />
     <b-dropdown-item @click="undo">undo</b-dropdown-item>
     <b-dropdown-divider />
@@ -10,10 +11,12 @@
 
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'GameMenu',
 
-  inject: ['game'],
+  inject: ['game', 'actor'],
 
   methods: {
     debug() {
@@ -22,6 +25,35 @@ export default {
 
     home() {
       this.$router.push('/')
+    },
+
+    async next() {
+      const result = await axios.post('/api/user/next', {
+        userId: this.actor._id,
+        gameId: this.game._id,
+      })
+
+      console.log(result)
+
+      if (result.data.status === 'success') {
+        const gameId = result.data.gameId
+        if (gameId) {
+          this.$router.push(`/game/${gameId}`)
+        }
+        else {
+          this.$router.push('/')
+        }
+      }
+
+      else {
+        console.log(result)
+        this.$bvToast.toast('error: see console', {
+          autoHideDelay: 999999,
+          noCloseButton: false,
+          solid: true,
+          variant: 'danger',
+        })
+      }
     },
 
     undo() {

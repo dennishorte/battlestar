@@ -56,6 +56,7 @@ app.post('/api/user/deactivate', routes.user.deactivate)
 app.post('/api/user/fetch_many', routes.user.fetchMany)
 app.post('/api/user/games', routes.user.games)
 app.post('/api/user/lobbies', routes.user.lobbies)
+app.post('/api/user/next', routes.user.next)
 app.post('/api/user/update', routes.user.update)
 
 

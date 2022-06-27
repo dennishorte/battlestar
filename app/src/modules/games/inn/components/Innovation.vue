@@ -76,7 +76,6 @@ export default {
   data() {
     return {
       game: new inn.Innovation(this.data, this.actor.name),
-
       fakeSave: false,
     }
   },
