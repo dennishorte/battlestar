@@ -196,13 +196,13 @@ export default {
 <style>
 .innovation {
   width: 100vw;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 60px);
   font-size: .8rem;
   overflow: scroll;
 }
 
 .game-column {
-  height: calc(100vh - 50px);
+  height: calc(100vh - 60px);
   min-width: 220px;
   max-width: 400px;
   overflow: scroll;
