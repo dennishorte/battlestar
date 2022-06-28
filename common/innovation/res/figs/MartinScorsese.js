@@ -32,8 +32,13 @@ function Card() {
           .cards()
           .filter(card => !card.isSpecialAchievement)
         const formatted = game.formatAchievements(choices)
-        const selected = game.aChoose(player, formatted)
-        game.aAchieveAction(player, selected[0], { nonAction: true })
+        const selected = game.aChoose(player, formatted)[0]
+        if (selected) {
+          game.aAchieveAction(player, selected, { nonAction: true })
+        }
+        else {
+          game.mLog({ template: 'There are no available standard achievements', })
+        }
       }
     }
   ]
