@@ -20,6 +20,11 @@ function Card() {
       const number = game.aChoose(player, [0,1,2,3,4,5,6,7,8,9], { title: 'Choose a number' })[0]
       const color = game.aChoose(player, game.utilColors(), { title: 'Choose a color' })[0]
 
+      game.mLog({
+        template: '{player} chooses {number} {color}',
+        args: { player, number, color }
+      })
+
       game.aDraw(player, { age: game.getEffectAge(this, 4) })
       game.aDraw(player, { age: game.getEffectAge(this, 4) })
       game.aDraw(player, { age: game.getEffectAge(this, 4) })
