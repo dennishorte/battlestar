@@ -9,7 +9,6 @@ describe("Artificial Heart", () => {
     t.setBoard(game,  {
       dennis: {
         blue: ['Artificial Heart'],
-        score: ['Software', 'Experimentation'],
       },
       achievements: ['Machinery', 'Enterprise'],
     })
@@ -25,7 +24,6 @@ describe("Artificial Heart", () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Artificial Heart'],
-        score: ['Software', 'Experimentation'],
         achievements: ['Enterprise'],
       },
     })

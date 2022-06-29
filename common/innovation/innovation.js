@@ -1753,11 +1753,10 @@ Innovation.prototype.checkAchievementAvailable = function(name) {
 }
 
 Innovation.prototype.checkAchievementEligibility = function(player, card, opts={}) {
-  const playerScore = this.getScore(player) * (opts.doubleScore ? 2 : 1)
   const topCardAge = this.getHighestTopAge(player, { reason: 'achieve' })
 
   const ageRequirement = opts.ignoreAge || card.getAge() <= topCardAge
-  const scoreRequirement = opts.ignoreScore || this.checkScoreRequirement(player, card)
+  const scoreRequirement = opts.ignoreScore || this.checkScoreRequirement(player, card, opts)
   return ageRequirement && scoreRequirement
 }
 
@@ -1796,8 +1795,8 @@ Innovation.prototype.checkSameTeam = function(p1, p2) {
   return p1.team === p2.team
 }
 
-Innovation.prototype.checkScoreRequirement = function(player, card) {
-  return this.getScoreCost(player, card) <= this.getScore(player)
+Innovation.prototype.checkScoreRequirement = function(player, card, opts={}) {
+  return this.getScoreCost(player, card) <= this.getScore(player, opts)
 }
 
 Innovation.prototype.checkZoneHasVisibleDogmaOrEcho = function(player, zone) {
@@ -2147,8 +2146,8 @@ Innovation.prototype.getResources = function() {
   return res
 }
 
-Innovation.prototype.getScore = function(player) {
-  return this.getScoreDetails(player).total
+Innovation.prototype.getScore = function(player, opts={}) {
+  return this.getScoreDetails(player).total * (opts.doubleScore ? 2 : 1)
 }
 
 Innovation.prototype.getScoreDetails = function(player) {
