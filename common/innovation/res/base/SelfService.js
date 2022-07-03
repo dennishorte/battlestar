@@ -29,10 +29,10 @@ function Card() {
     },
 
     (game, player) => {
-      const mine = game.getCardsByZone(player, 'achievements').length
+      const mine = game.getAchievementsByPlayer(player).total
       const others = game
         .getPlayerOpponents(player)
-        .map(player => game.getCardsByZone(player, 'achievements').length)
+        .map(player => game.getAchievementsByPlayer(player).total)
 
       if (others.every(count => count < mine)) {
         throw new GameOverEvent({
