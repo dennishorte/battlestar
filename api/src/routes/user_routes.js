@@ -83,6 +83,7 @@ User.next = async function(req, res) {
   }
 
   const gameIds = gameArray
+    .filter(game => !!game.waiting)
     .filter(game => game.waiting.includes(userName))
     .map(game => game._id)
 
