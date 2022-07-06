@@ -25,7 +25,7 @@ function Card() {
         .getTopCards(player)
         .filter(card => !leaderColors.includes(card.color))
       const transferred = game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(leader, 'score'))
-      if (transferred) {
+      if (transferred.length > 0) {
         game.aDrawAndTuck(player, game.getEffectAge(this, 1))
       }
     },
