@@ -2056,7 +2056,7 @@ Innovation.prototype.getNumAchievementsToWin = function() {
 }
 
 Innovation.prototype.getPlayerAll = function() {
-  return this.state.players.filter(player => !player.dead)
+  return this.state.players
 }
 
 Innovation.prototype.getPlayerOther = function(player) {

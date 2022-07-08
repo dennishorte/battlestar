@@ -30,11 +30,19 @@ function Card() {
       ].flat()
 
       game.aRemoveMany(player, toRemove)
+
+      game.mLog({
+        template: '{player} exiles all of their cards',
+        args: { player }
+      })
+
       game.aYouLose(player)
 
-      if (game.getPlayerAll().length === 1) {
+      const livingPlayers = game.getPlayerAll().filter(player => !player.dead)
+
+      if (livingPlayers.length === 1) {
         throw new GameOverEvent({
-          player: game.getPlayerAll()[0],
+          player: livingPlayers[0],
           reason: this.name,
         })
       }
