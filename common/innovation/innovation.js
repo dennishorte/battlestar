@@ -1002,8 +1002,9 @@ Innovation.prototype.aDogmaHelper = function(player, card, opts) {
   this.state.dogmaInfo.featuredBiscuit = featuredBiscuit
 
   // Store planned effects now, as changes to the stacks shouldn't affect them.
+  const cardOwner = this.getPlayerByCard(card)
   const effects = [
-    ...this.getVisibleEffectsByColor(player, card.color, 'echo'),
+    ...this.getVisibleEffectsByColor(cardOwner, card.color, 'echo'),
     this.getVisibleEffects(card, 'dogma')
   ].filter(e => e !== undefined)
 
