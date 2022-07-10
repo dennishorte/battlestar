@@ -33,7 +33,9 @@ function Card() {
         .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
         .length
 
-      if (splayCount === 5) {
+      const achievementAvailable = game.checkAchievementAvailable('Wonder')
+
+      if (achievementAvailable && splayCount === 5) {
         game.aClaimAchievement(player, { name: 'Wonder' })
       }
       else {
