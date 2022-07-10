@@ -29,7 +29,7 @@ function Card() {
         if (matchingAges.length === 0) {
           game.mLog({
             template: "Card age does not match any of {player}'s top cards",
-            args: { player }
+            args: { player: leader }
           })
         }
         else {
