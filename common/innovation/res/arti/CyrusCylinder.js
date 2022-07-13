@@ -34,8 +34,6 @@ function Card() {
       const splayChoices = game
         .getPlayerAll()
         .flatMap(player => game.utilColors().map(color => ({ player, color })))
-        .filter(x => game.getZoneByPlayer(x.player, x.color).cards().length > 1)
-        .filter(x => game.getZoneByPlayer(x.player, x.color).splay !== 'left')
         .map(x => `${x.player.name}-${x.color}`)
 
       const selections = game.aChoose(player, splayChoices)
