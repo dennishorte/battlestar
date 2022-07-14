@@ -2354,7 +2354,11 @@ Innovation.prototype.mAchievementCheck = function() {
       'reduce-special-achievement-requirements'
     ).length > 0
     for (const card of available) {
-      if (card.checkPlayerIsEligible && card.checkPlayerIsEligible(this, player, reduceCost)) {
+      if (
+        this.getZoneByCard(card).name === 'achievements'
+        && card.checkPlayerIsEligible
+        && card.checkPlayerIsEligible(this, player, reduceCost)
+      ) {
         this.aClaimAchievement(player, { card })
       }
     }
