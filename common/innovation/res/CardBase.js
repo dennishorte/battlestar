@@ -52,6 +52,17 @@ CardBase.prototype.checkInspireIsVisible = function(splay) {
   return this.checkBiscuitIsVisible('*', splay)
 }
 
+CardBase.prototype.checkIsArtifact = function() {
+  return (
+    this.expansion === 'arti'
+    && this.name !== 'Timbuktu'
+    && this.name !== 'Complex Numbers'
+    && this.name !== 'Newton-Wickins Telescope'
+    && this.name !== 'Ching Shih'
+    && this.name !== 'Safety Pin'
+  )
+}
+
 CardBase.prototype.checkIsCity = function() {
   return this.expansion === 'city' || this.isCity
 }

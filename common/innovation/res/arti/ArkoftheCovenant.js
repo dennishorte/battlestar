@@ -23,7 +23,7 @@ function Card() {
 
         const toTransfer = game
           .getPlayerAll()
-          .filter(player => game.getTopCards(player).every(card => card.expansion !== 'arti'))
+          .filter(player => game.getTopCards(player).every(card => !card.checkIsArtifact()))
           .flatMap(player => game.getCardsByZone(player, color))
 
         game.aTransferMany(player, toTransfer, game.getZoneByPlayer(player, 'score'), { ordered: true })
