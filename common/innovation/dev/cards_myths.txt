@@ -1,0 +1,99 @@
+The Earth-Diver
+blue
+1
+shsl
+l: Meld a figure from your hand. If you do, draw and meld a figure of the same age.
+- If you would fade a figure, instead do nothing.
+
+The World Turtle
+blue
+1
+sckl
+- When you meld The World Turtle, transfer a top city to your board if you have no visible city. Repeat for artifacts.
+
+Raven the Trickster
+blue
+1
+ssh*
+* Reveal the top card of any deck. If it has a {s}, meld it, and each player with the lowest score draws and scores a {1}.
+
+The Eagle, The Serpent, The Cactus, and the Lake
+green
+1
+kk3h
+k: Draw and meld a city. Score any figure of value less than the number of cities you have visible.
+- If you would meld this card and have a top city, instead return it.
+
+Coyote
+green
+1
+1kkh
+- When you meld Coyote draw a {3} of any type.
+- You may not play Coyote if you have a visible figure.
+- If a player would play a Figure, first return Coyote.
+
+Anansi the Spider
+green
+1
+hckl
+c: Draw and reveal a story. If it is green, meld it. If it is red, transfer it to another player's board. If it is blue, score it.
+
+Jack and the Beanstalk
+purple
+1
+hkck
+k: I demand you draw a two and transfer it to my board or forecast. If you transfered it to my forecast, also return a card from your hand.
+
+The Mandate of Heaven
+purple
+1
+&ckk
+k: Meld a figure from your hand.
+& Draw a figure if you don't already have one in hand.
+
+The Three Sovereigns and Five Emperors
+purple
+1
+*3k&
+& Choose a figure that's a top card on any player's board. Draw a card one age higher than that figure.
+* For the rest of this action, whenever you would draw a card, instead choose a card type and draw a card of that type.
+
+The Great Flood
+red
+1
+hk&l
+- When you meld The Great Flood, all opponents return a top city.
+&- When any city is melded, it does nothing.
+
+The Barbarian Other
+red
+1
+kkhk
+k: I demand you draw and reveal a card. If it is red, transfer it and one of your top cards to my score. Repeat if I control a top artifact, city, or figure. Repeat twice if I control 2 of those. Repeat 3 times if I control all 3.
+
+Kali, Goddess of Death
+red
+1
+khcs
+k: I demand you return a top card and draw a {1}.
+- If you would meld a figure or artifact onto Kali, you may return Kali to score any top non-red card.
+
+The Garden
+yellow
+1
+llll
+l: Draw a {1}.
+- When you meld a card over the garden, draw a city.
+
+Elder Worship
+yellow
+1
+c1h&
+- When you meld Elder Worship, draw a figure if you don't have one in hand or in play.
+&- When you meld a Figure, if you have a top figure of an older age, draw and score a figure.
+
+Venus von Schelklingen
+yellow
+1
+lhc1
+c: Return any top artifact. The owner of that artifact draws and foreshadows an artifact of value one higher than the returned artifact.
