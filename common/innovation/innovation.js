@@ -14,6 +14,7 @@ module.exports = {
   Innovation,
   InnovationFactory,
   factory: factoryFromLobby,
+  res,
 }
 
 

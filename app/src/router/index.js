@@ -6,6 +6,7 @@ import Game from '@/components/Game'
 
 import adminRoutes from '@/modules/admin/router.js'
 import authRoutes from '@/modules/auth/router.js'
+import dataRoutes from '@/modules/data/router.js'
 import lobbyRoutes from '@/modules/lobby/router.js'
 import authUtil from '@/modules/auth/util.js'
 
@@ -27,6 +28,7 @@ const router = new Router({
     },
     ...adminRoutes,
     ...authRoutes,
+    ...dataRoutes,
     ...lobbyRoutes,
   ]
 })

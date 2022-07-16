@@ -12,6 +12,10 @@
             <router-link to="/lobby/create">new lobby</router-link>
           </b-dropdown-item>
 
+          <b-dropdown-item>
+            <router-link to="/data">data</router-link>
+          </b-dropdown-item>
+
           <b-dropdown-divider></b-dropdown-divider>
 
           <b-dropdown-item>

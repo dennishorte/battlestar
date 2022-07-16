@@ -19,7 +19,12 @@ export default {
     CardSquareDetails,
   },
 
-  inject: ['game'],
+  inject: {
+    game: {
+      from: 'game',
+      default: null
+    },
+  },
 
   props: {
     card: Object,
@@ -53,6 +58,10 @@ export default {
 
   methods: {
     closeup() {
+      if (!this.game) {
+        return
+      }
+
       if (this.card.isRelic) {
         this.game.ui.modals.cardsViewer.title = ''
         this.game.ui.modals.cardsViewer.cards = [this.card]

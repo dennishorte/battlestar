@@ -76,6 +76,10 @@ CardBase.prototype.checkIsFigure = function() {
 }
 
 CardBase.prototype.checkIsOnPlayerBoard = function(player) {
+  if (!this.zone) {
+    return false
+  }
+
   const re = /^players.([^.]+).(yellow|red|green|blue|purple)$/i
   const match = this.zone.match(re)
   return match && match[1] === player.name
@@ -123,9 +127,7 @@ CardBase.prototype.checkSharesBiscuit = function(other) {
 
 // Battleship Yamato has age 8 everywhere except when on a player's board, when it is 11.
 CardBase.prototype.getAge = function() {
-  const re = /^players.[^.]*.(yellow|red|green|blue|purple)$/i
-  const isOnPlayerBoard = this.zone.match(re) !== null
-  return isOnPlayerBoard ? (this.visibleAge || this.age) : this.age
+  return this.checkIsOnPlayerBoard() ? (this.visibleAge || this.age) : this.age
 }
 
 CardBase.prototype.getBiscuits = function(splay) {
