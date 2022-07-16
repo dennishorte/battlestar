@@ -41,8 +41,6 @@ export default {
       const output = []
       let indent = 0
 
-      console.log(this.game.getLog().length, this.game.getChat())
-
       const entries = this.game.getLog()
       for (let i = 0; i < entries.length; i++) {
         const entry = entries[i]

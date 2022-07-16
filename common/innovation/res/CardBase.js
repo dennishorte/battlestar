@@ -82,7 +82,8 @@ CardBase.prototype.checkIsOnPlayerBoard = function(player) {
 
   const re = /^players.([^.]+).(yellow|red|green|blue|purple)$/i
   const match = this.zone.match(re)
-  return match && match[1] === player.name
+
+  return match && (!player || match[1] === player.name)
 }
 
 CardBase.prototype.checkHasEcho = function() {
