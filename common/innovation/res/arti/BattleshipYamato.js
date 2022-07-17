@@ -12,7 +12,9 @@ function Card() {
   this.inspire = ``
   this.echo = ``
   this.karma = []
-  this.dogma = []
+  this.dogma = [
+    'This card counts as an age 11 card when on your board.'
+  ]
 
   this.dogmaImpl = []
   this.echoImpl = []
