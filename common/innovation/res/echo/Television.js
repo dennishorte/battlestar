@@ -23,13 +23,13 @@ function Card() {
       const choices = game
         .getCardsByZone(opponent, 'score')
         .filter(card => card.getAge() === age)
-      const card = game.aChooseCard(player, choices)
-      if (card) {
-        game.aTransfer(player, card, game.getZoneByPlayer(opponent, card.color))
+      const transferred = game.aChooseCard(player, choices)
+      if (transferred) {
+        game.aTransfer(player, transferred, game.getZoneByPlayer(opponent, transferred.color))
 
         const matchingAchievements = game
           .getCardsByZone(opponent, 'achievements')
-          .filter(card => card.getAge() === card.age)
+          .filter(card => card.getAge() === transferred.getAge())
 
         if (matchingAchievements.length > 0) {
           const achieveChoices = game
