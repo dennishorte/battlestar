@@ -10,7 +10,7 @@
         <CardBiscuit :biscuit="biscuit" />
       </div>
       <div class="biscuits-box"><CardBiscuit biscuit="1" /></div>
-      <div class="biscuits-box">A</div>
+      <div class="biscuits-box"><CardBiscuit biscuit=":" /></div>
     </div>
 
     <div v-for="player in players" :key="player.name" class="biscuits-row">
