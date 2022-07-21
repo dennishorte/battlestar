@@ -18,6 +18,9 @@
         <router-link :to="gameLink(row.item._id)">
           {{ gameName(row.item) }}
         </router-link>
+        <div class="opponent-names">
+          vs. {{ opponentNames(row.item) }}
+        </div>
       </template>
 
       <template #cell(age)="row">
@@ -85,6 +88,21 @@ export default {
       this.$router.go()
     },
 
+    opponentNames(data) {
+      if (!data.settings) {
+        return ''
+      }
+      else {
+        return data
+          .settings
+          .players
+          .filter(user => user.name !== this.$store.state.auth.user.name)
+          .map(user => user.name)
+          .sort()
+          .join(', ')
+      }
+    },
+
     waitingForViewer(data) {
       return (data.waiting || []).includes(this.$store.state.auth.user.name)
     },
@@ -96,6 +114,17 @@ export default {
     })
 
     this.games = fetchResult.data.games
+    console.log(this.games)
   }
 }
 </script>
+
+<style scoped>
+.opponent-names {
+  color: gray;
+  font-size: .7em;
+  font-weight: 200;
+  margin-left: 1em;
+  line-height: .7em;
+}
+</style>
