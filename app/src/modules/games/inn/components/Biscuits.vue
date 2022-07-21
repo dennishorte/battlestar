@@ -9,6 +9,8 @@
         class="biscuits-box">
         <CardBiscuit :biscuit="biscuit" />
       </div>
+      <div class="biscuits-box">S</div>
+      <div class="biscuits-box">A</div>
     </div>
 
     <div v-for="player in players" :key="player.name" class="biscuits-row">
@@ -19,6 +21,8 @@
         class="biscuits-box">
         {{ biscuits[player.name][biscuit] }}
       </div>
+      <div class="biscuits-box">{{ scores[player.name] }}</div>
+      <div class="biscuits-box">{{ achievements[player.name] }}</div>
     </div>
 
   </div>
@@ -37,8 +41,20 @@ export default {
   inject: ['game'],
 
   computed: {
+    achievements() {
+      const achievements = {}
+      this.players.forEach(p => achievements[p.name] = this.game.getAchievementsByPlayer(p).total)
+      return achievements
+    },
+
     biscuits() {
       return this.game.getBiscuits()
+    },
+
+    scores() {
+      const scores = {}
+      this.players.forEach(p => scores[p.name] = this.game.getScore(p))
+      return scores
     },
 
     players() {
