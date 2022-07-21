@@ -9,7 +9,7 @@
         class="biscuits-box">
         <CardBiscuit :biscuit="biscuit" />
       </div>
-      <div class="biscuits-box">S</div>
+      <div class="biscuits-box"><CardBiscuit biscuit="1" /></div>
       <div class="biscuits-box">A</div>
     </div>
 
