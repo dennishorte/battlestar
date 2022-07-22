@@ -21,7 +21,13 @@ describe('Tyrants Cards', () => {
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.House Guard')
 
-      expect(t.dennis(game).power).toBe(2)
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['House Guard'],
+          power: 2,
+        }
+      })
     })
 
     test('Priestess of Lolth', () => {
@@ -33,7 +39,13 @@ describe('Tyrants Cards', () => {
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Priestess of Lolth')
 
-      expect(t.dennis(game).influence).toBe(2)
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['Priestess of Lolth'],
+          influence: 2,
+        }
+      })
     })
 
     describe('Insane Outcast', () => {
@@ -81,7 +93,13 @@ describe('Tyrants Cards', () => {
         const request2 = t.choose(game, request1, 'Play Card.Blackguard')
         const request3 = t.choose(game, request2, '+2 power')
 
-        expect(t.dennis(game).power).toBe(2)
+        t.testBoard(game, {
+          dennis: {
+            hand: [],
+            played: ['Blackguard'],
+            power: 2,
+          }
+        })
       })
 
       test('assassinate', () => {
@@ -97,7 +115,7 @@ describe('Tyrants Cards', () => {
 
         t.testBoard(game, {
           dennis: {
-            played: ['Blackguard'],
+            discard: ['Blackguard'],
             trophyHall: ['neutral'],
           },
           'araum-ched': {
@@ -118,7 +136,13 @@ describe('Tyrants Cards', () => {
         const request1 = game.run()
         const request2 = t.choose(game, request1, 'Play Card.Bounty Hunter')
 
-        expect(t.dennis(game).power).toBe(3)
+        t.testBoard(game, {
+          dennis: {
+            hand: [],
+            played: ['Bounty Hunter'],
+            power: 3,
+          }
+        })
       })
     })
 
@@ -138,7 +162,7 @@ describe('Tyrants Cards', () => {
 
         t.testBoard(game, {
           dennis: {
-            played: ['Doppelganger'],
+            discard: ['Doppelganger'],
             trophyHall: ['troop-micah'],
           },
           'ched-halls a': {
@@ -165,7 +189,7 @@ describe('Tyrants Cards', () => {
 
         t.testBoard(game, {
           dennis: {
-            played: ['Deathblade'],
+            discard: ['Deathblade'],
             trophyHall: ['troop-micah', 'neutral'],
           },
           'ched-halls a': {
@@ -187,7 +211,13 @@ describe('Tyrants Cards', () => {
         const request2 = t.choose(game, request1, 'Play Card.Inquisitor')
         const request3 = t.choose(game, request2, '+2 influence')
 
-        expect(t.dennis(game).influence).toBe(2)
+        t.testBoard(game, {
+          dennis: {
+            hand: [],
+            played: ['Inquisitor'],
+            influence: 2,
+          }
+        })
       })
 
       test('assassinate', () => {
@@ -203,7 +233,7 @@ describe('Tyrants Cards', () => {
 
         t.testBoard(game, {
           dennis: {
-            played: ['Inquisitor'],
+            discard: ['Inquisitor'],
             trophyHall: ['neutral'],
           },
           'araum-ched': {
@@ -226,7 +256,7 @@ describe('Tyrants Cards', () => {
 
         t.testBoard(game, {
           dennis: {
-            played: ['Advance Scout'],
+            discard: ['Advance Scout'],
             trophyHall: ['neutral'],
           },
           'araum-ched': {
@@ -254,7 +284,7 @@ describe('Tyrants Cards', () => {
 
         t.testBoard(game, {
           dennis: {
-            played: ['Underdark Ranger'],
+            discard: ['Underdark Ranger'],
             trophyHall: ['neutral', 'neutral'],
           },
           'ched-halls a': {
@@ -280,7 +310,7 @@ describe('Tyrants Cards', () => {
 
         t.testBoard(game, {
           dennis: {
-            played: ['Underdark Ranger'],
+            discard: ['Underdark Ranger'],
             trophyHall: ['neutral'],
           },
           'araum-ched': {
@@ -311,7 +341,7 @@ describe('Tyrants Cards', () => {
 
         t.testBoard(game, {
           dennis: {
-            played: ['Master of Melee-Magthere'],
+            discard: ['Master of Melee-Magthere'],
           },
           'ched-llace a': {
             troops: ['dennis'],
@@ -336,7 +366,7 @@ describe('Tyrants Cards', () => {
 
         t.testBoard(game, {
           dennis: {
-            played: ['Master of Melee-Magthere'],
+            discard: ['Master of Melee-Magthere'],
             trophyHall: ['neutral'],
           },
           'Gracklstugh': {
@@ -364,7 +394,7 @@ describe('Tyrants Cards', () => {
 
         t.testBoard(game, {
           dennis: {
-            played: ['Weaponmaster'],
+            discard: ['Weaponmaster'],
             trophyHall: ['neutral'],
           },
           'araum-ched': {
@@ -393,7 +423,7 @@ describe('Tyrants Cards', () => {
 
         t.testBoard(game, {
           dennis: {
-            played: ['Spellspinner'],
+            discard: ['Spellspinner'],
           },
           'Menzoberranzan': {
             troops: ['neutral', 'neutral', 'neutral'],
@@ -417,7 +447,7 @@ describe('Tyrants Cards', () => {
 
         t.testBoard(game, {
           dennis: {
-            played: ['Spellspinner'],
+            discard: ['Spellspinner'],
             trophyHall: ['neutral'],
           },
           'Menzoberranzan': {
@@ -442,7 +472,7 @@ describe('Tyrants Cards', () => {
 
         t.testBoard(game, {
           dennis: {
-            played: ['Spy Master'],
+            discard: ['Spy Master'],
           },
           'Menzoberranzan': {
             troops: ['neutral', 'neutral', 'neutral'],
@@ -464,10 +494,10 @@ describe('Tyrants Cards', () => {
         const request2 = t.choose(game, request1, 'Play Card.Infiltrator')
         const request3 = t.choose(game, request2, 'Menzoberranzan')
 
-        expect(t.dennis(game).power).toBe(0)
         t.testBoard(game, {
           dennis: {
-            played: ['Infiltrator'],
+            discard: ['Infiltrator'],
+            power: 0,
           },
           'Menzoberranzan': {
             troops: ['neutral', 'neutral', 'neutral'],
@@ -489,10 +519,11 @@ describe('Tyrants Cards', () => {
         const request2 = t.choose(game, request1, 'Play Card.Infiltrator')
         const request3 = t.choose(game, request2, 'Menzoberranzan')
 
-        expect(t.dennis(game).power).toBe(1)
         t.testBoard(game, {
           dennis: {
+            hand: [],
             played: ['Infiltrator'],
+            power: 1,
           },
           'Menzoberranzan': {
             troops: ['neutral', 'neutral', 'micah'],
@@ -517,7 +548,7 @@ describe('Tyrants Cards', () => {
 
         t.testBoard(game, {
           dennis: {
-            played: ['Information Broker'],
+            discard: ['Information Broker'],
           },
           'Menzoberranzan': {
             troops: ['neutral', 'neutral', 'neutral'],
@@ -568,7 +599,7 @@ describe('Tyrants Cards', () => {
 
         t.testBoard(game, {
           dennis: {
-            played: ['Masters of Sorcere'],
+            discard: ['Masters of Sorcere'],
           },
           'Menzoberranzan': {
             troops: ['neutral', 'neutral', 'neutral'],
@@ -595,10 +626,54 @@ describe('Tyrants Cards', () => {
 
         t.testBoard(game, {
           dennis: {
+            hand: [],
             played: ['Masters of Sorcere'],
+            power: 4,
           },
         })
-        expect(t.dennis(game).power).toBe(4)
+      })
+    })
+
+    describe('Advocate', () => {
+      test('influence', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Advocate'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Advocate')
+        const request3 = t.choose(game, request2, '+2 influence')
+
+        t.testBoard(game, {
+          dennis: {
+            hand: [],
+            played: ['Advocate'],
+            influence: 2,
+          }
+        })
+      })
+
+      test('promote', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Advocate', 'House Guard'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.House Guard')
+        const request3 = t.choose(game, request2, 'Play Card.Advocate')
+        const request4 = t.choose(game, request3, "At end of turn, promote another card played this turn")
+        const request5 = t.choose(game, request4, 'Pass')
+
+        t.testBoard(game, {
+          dennis: {
+            discard: ['Advocate'],
+            innerCircle: ['House Guard'],
+          },
+        })
 
       })
     })

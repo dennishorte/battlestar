@@ -94,9 +94,9 @@ TestUtil.gameFixture = function(options) {
       const playerSetup = options[player.name]
       if (playerSetup) {
         if (playerSetup.hand) {
-          const deck = game.getZoneByPlayer(player, 'deck')
           const hand = game.getZoneByPlayer(player, 'hand')
           for (const card of hand.cards()) {
+            const deck = game.getZoneByHome(card)
             game.mMoveCardTo(card, deck, { silent: true })
           }
 
@@ -242,18 +242,27 @@ TestUtil.testTroops = function(game, locationName, expected) {
 TestUtil.testBoard = function(game, expected) {
   for (const [key, value] of Object.entries(expected)) {
     const player = game.getPlayerByName(key)
+    const location = game.getLocationByName(key)
+
     if (player) {
       this.testTableau(game, player, value)
-      continue
     }
 
-    const location = game.getLocationByName(key)
-    if (location) {
+    else if (location) {
       this.testLocation(game, location, value)
-      continue
     }
 
-    throw new Error(`Unhandled test key: ${key}`)
+    else if (key === 'influence') {
+      expect(player.influence).toBe(value)
+    }
+
+    else if (key === 'power') {
+      expect(player.power).toBe(value)
+    }
+
+    else {
+      throw new Error(`Unhandled test key: ${key}`)
+    }
   }
 }
 
@@ -271,7 +280,18 @@ TestUtil.testTableau = function(game, player, testState) {
 
   for (const zoneName of tableauZones) {
     actual[zoneName] = game.getCardsByZone(player, zoneName).map(c => c.name).sort()
-    expected[zoneName] = (testState[zoneName] || []).sort()
+
+    if (!testState[zoneName] || testState[zoneName] === 'default') {
+      if (zoneName === 'hand') {
+        expected[zoneName] = ['Noble', 'Noble', 'Noble', 'Noble', 'Soldier'].sort()
+      }
+      else {
+        expected[zoneName] = []
+      }
+    }
+    else {
+      expected[zoneName] = (testState[zoneName] || []).sort()
+    }
   }
 
   expect(actual).toStrictEqual(expected)

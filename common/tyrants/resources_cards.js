@@ -435,17 +435,17 @@ const baseData = [
       "- +2 influence.",
       "- At end of turn, promote another card played this turn."
     ],
-    impl: (game, player) => {
+    impl: (game, player, opts) => {
       game.aChooseOne(player, [
         {
           title: '+2 influence',
           impl: (game, player) => player.incrementInfluence(2),
         },
         {
-          title: "At end of turn, promote another card played this turn.",
+          title: "At end of turn, promote another card played this turn",
           impl: (game, player, { card }) => game.aDeferPromotion(player, card),
         },
-      ])
+      ], opts)
     }
   },
   {

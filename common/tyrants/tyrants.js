@@ -190,6 +190,7 @@ Tyrants.prototype.initializeTokens = function() {
       const token = new Token(name + '-' + i, name)
       token.isTroop = true
       token.zone = troopZone.id
+      token.home = troopZone.id
       token.owner = player
       troopZone.addCard(token)
     }
@@ -200,6 +201,7 @@ Tyrants.prototype.initializeTokens = function() {
       const token = new Token(name + '-' + i, name)
       token.isSpy = true
       token.zone = spyZone.id
+      token.home = spyZone.id
       token.owner = player
       spyZone.addCard(token)
     }
@@ -212,6 +214,7 @@ Tyrants.prototype.initializeTokens = function() {
     const token = new Token(name + '-' + i, name)
     token.isTroop = true
     token.zone = neutralZone.id
+    token.home = neutralZone.id
     neutralZone.addCard(token)
   }
 
@@ -341,7 +344,7 @@ Tyrants.prototype._generateCardActions = function() {
     choices.push(card.name)
   }
 
-  if (choices) {
+  if (choices.length > 0) {
     return {
       title: 'Play Card',
       choices,
@@ -414,8 +417,25 @@ Tyrants.prototype._generatePassAction = function() {
   return 'Pass'
 }
 
+Tyrants.prototype._processEndOfTurnActions = function() {
+  for (const action of this.state.endOfTurnActions) {
+    if (action.action === 'promote-other') {
+      const choices = this
+        .getCardsByZone(action.player, 'played')
+        .filter(card => card !== action.source)
+      this.aChooseAndPromote(action.player, choices)
+    }
+    else {
+      throw new Error(`Unknown end of turn action: ${action.action}`)
+    }
+  }
+
+  this.state.endOfTurnActions = []
+}
+
 Tyrants.prototype.endOfTurn = function() {
-  // Promote troops.
+  this._processEndOfTurnActions()
+
   // Receive VPs from site control tokens.
 }
 
@@ -601,7 +621,10 @@ Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
 }
 
 Tyrants.prototype.aChooseAndPromote = function(player, choices) {
-
+  const card = this.aChooseCard(player, choices)
+  if (card) {
+    this.aPromote(player, card)
+  }
 }
 
 Tyrants.prototype.aChooseAndReturn = function(player) {
@@ -616,7 +639,7 @@ Tyrants.prototype.aChooseLocation = function(player, choices, opts={}) {
   }
 }
 
-Tyrants.prototype.aChooseOne = function(player, choices) {
+Tyrants.prototype.aChooseOne = function(player, choices, opts={}) {
   const selection = this.aChoose(player, choices.map(c => c.title))[0]
   const impl = choices.find(c => c.title === selection).impl
 
@@ -624,11 +647,15 @@ Tyrants.prototype.aChooseOne = function(player, choices) {
     template: '{player} chooses {selection}',
     args: { player, selection }
   })
-  impl(this, player)
+  impl(this, player, opts)
 }
 
 Tyrants.prototype.aDeferPromotion = function(player, source) {
-
+  this.state.endOfTurnActions.push({
+    player,
+    source,
+    action: 'promote-other',
+  })
 }
 
 Tyrants.prototype.aAssassinate = function(player, loc, owner) {
@@ -711,7 +738,11 @@ Tyrants.prototype.aPlayCard = function(player, card) {
 }
 
 Tyrants.prototype.aPromote = function(player, card) {
-
+  this.mMoveCardTo(card, this.getZoneByPlayer(player, 'innerCircle'))
+  this.mLog({
+    template: '{player} promotes {card}',
+    args: { player, card }
+  })
 }
 
 Tyrants.prototype.aRecruit = function(player, card) {
@@ -840,6 +871,10 @@ Tyrants.prototype.getZoneById = function(id) {
     curr = curr[token]
   }
   return curr
+}
+
+Tyrants.prototype.getZoneByHome = function(card) {
+  return this.getCardByZone(card.hame)
 }
 
 Tyrants.prototype.getZoneByPlayer = function(player, name) {
