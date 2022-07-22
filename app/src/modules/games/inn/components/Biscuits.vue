@@ -9,8 +9,8 @@
         class="biscuits-box">
         <CardBiscuit :biscuit="biscuit" />
       </div>
-      <div class="biscuits-box"><CardBiscuit biscuit="1" /></div>
-      <div class="biscuits-box"><CardBiscuit biscuit=":" /></div>
+      <div class="biscuits-box extra-space"><CardBiscuit biscuit="1" /></div>
+      <div class="biscuits-box extra-space"><CardBiscuit biscuit=":" /></div>
     </div>
 
     <div v-for="player in players" :key="player.name" class="biscuits-row">
@@ -21,8 +21,8 @@
         class="biscuits-box">
         {{ biscuits[player.name][biscuit] }}
       </div>
-      <div class="biscuits-box">{{ scores[player.name] }}</div>
-      <div class="biscuits-box">{{ achievements[player.name] }}</div>
+      <div class="biscuits-box extra-space">{{ scores[player.name] }}</div>
+      <div class="biscuits-box extra-space">{{ achievements[player.name] }}</div>
     </div>
 
   </div>
@@ -76,6 +76,10 @@ export default {
   height: 1.2em;
   width: 1.5em;
   text-align: center;
+}
+
+.extra-space {
+  margin-left: .5em;
 }
 
 .biscuits-box-name {
