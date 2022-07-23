@@ -551,24 +551,7 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndSupplant = function(player, opts={}) {
-  let baseLocations
-  if (opts.loc) {
-    baseLocations = [opts.loc]
-  }
-  else if (opts.anywhere) {
-    baseLocations = this.getLocationAll()
-  }
-  else {
-    baseLocations = this.getPresence(player)
-  }
-
-  const troops = baseLocations
-    .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
-    .filter(([_, troop]) => troop.owner !== player)
-    .filter(([_, troop]) => opts.whiteOnly ? troop.owner === undefined : true)
-    .map(([loc, troop]) => `${loc.name}, ${troop.getOwnerName()}`)
-  const choices = util.array.distinct(troops).sort()
-
+  const choices = this._collectTargets(player, opts).troops
   const selection = this.aChoose(player, choices)
   if (selection.length > 0) {
     const [locName, ownerName] = selection[0].split(', ')
@@ -627,8 +610,72 @@ Tyrants.prototype.aChooseAndPromote = function(player, choices) {
   }
 }
 
-Tyrants.prototype.aChooseAndReturn = function(player) {
+Tyrants.prototype._collectTargets = function(player, opts={}) {
+  let baseLocations
+  if (opts.loc) {
+    baseLocations = [opts.loc]
+  }
+  else if (opts.anywhere) {
+    baseLocations = this.getLocationAll()
+  }
+  else {
+    baseLocations = this.getPresence(player)
+  }
 
+  const troops = baseLocations
+    .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
+    .filter(([_, troop]) => troop.owner !== player)
+    .filter(([_, troop]) => opts.whiteOnly ? troop.owner === undefined : true)
+    .filter(([_, troop]) => opts.noWhite ? troop.owner !== undefined : true)
+    .map(([loc, troop]) => `${loc.name}, ${troop.getOwnerName()}`)
+
+  const spies = baseLocations
+    .flatMap(loc => loc.getSpies().map(spy => [loc, spy]))
+    .filter(([_, spy]) => spy.owner !== player)
+    .map(([loc, spy]) => `${loc.name}, ${spy.getOwnerName()}`)
+
+  return {
+    troops: util.array.distinct(troops).sort(),
+    spies: util.array.distinct(spies).sort(),
+  }
+}
+
+Tyrants.prototype.aChooseAndReturn = function(player, opts={}) {
+  const targets = this._collectTargets(player, opts)
+
+  const choices = []
+  if (targets.troops.length > 0) {
+    choices.push({
+      title: 'troop',
+      choices: targets.troops,
+      min: 0,
+    })
+  }
+  if (targets.spies.length > 0) {
+    choices.push({
+      title: 'spy',
+      choices: targets.spies,
+      min: 0,
+    })
+  }
+
+  const selection = this.aChoose(player, choices, { title: 'Choose a token to return' })
+  if (selection.length > 0) {
+    const kind = selection[0].title
+    const [locName, ownerName] = selection[0].selection[0].split(', ')
+    const loc = this.getLocationByName(locName)
+    const owner = ownerName === 'neutral' ? 'neutral' : this.getPlayerByName(ownerName)
+
+    if (kind === 'spy') {
+      this.aReturnSpy(player, loc, owner)
+    }
+    else if (kind === 'troop') {
+      this.aReturnTroop(player, loc, owner)
+    }
+    else {
+      throw new Error(`Unknown return type: ${kind}`)
+    }
+  }
 }
 
 Tyrants.prototype.aChooseLocation = function(player, choices, opts={}) {
@@ -750,7 +797,17 @@ Tyrants.prototype.aRecruit = function(player, card) {
 }
 
 Tyrants.prototype.aReturnSpy = function(player, loc, owner) {
-
+  const spy = loc.getSpies(owner, loc)[0]
+  util.assert(!!spy, `No spy belonging to ${owner.name} at ${loc.name}`)
+  this.mReturn(spy)
+  this.mLog({
+    template: `{player} returns {player2}'s spy from {zone}`,
+    args: {
+      player,
+      player2: owner,
+      zone: loc,
+    },
+  })
 }
 
 Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
@@ -768,7 +825,7 @@ Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
     })
 
     const spy = loc.getSpies(player)[0]
-    this.mMoveCardTo(spy, this.getZoneByPlayer(spy.owner, 'spies'))
+    this.mReturn(spy)
 
     fn(this, player, { loc })
   }
@@ -781,7 +838,17 @@ Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
 }
 
 Tyrants.prototype.aReturnTroop = function(player, loc, owner) {
-
+  const troop = loc.getTroops(owner, loc)[0]
+  util.assert(!!troop, `No troop belonging to ${owner.name} at ${loc.name}`)
+  this.mReturn(troop)
+  this.mLog({
+    template: `{player} returns {player2}'s troop from {zone}`,
+    args: {
+      player,
+      player2: owner,
+      zone: loc,
+    },
+  })
 }
 
 Tyrants.prototype.aSupplant = function(player, loc, owner) {
@@ -874,7 +941,7 @@ Tyrants.prototype.getZoneById = function(id) {
 }
 
 Tyrants.prototype.getZoneByHome = function(card) {
-  return this.getCardByZone(card.hame)
+  return this.getZoneById(card.home)
 }
 
 Tyrants.prototype.getZoneByPlayer = function(player, name) {
@@ -973,6 +1040,10 @@ Tyrants.prototype.mMoveCardTo = function(card, zone, opts={}) {
 Tyrants.prototype.mPlaceSpy = function(player, loc) {
   const spy = this.getCardsByZone(player, 'spies')[0]
   this.mMoveCardTo(spy, loc)
+}
+
+Tyrants.prototype.mReturn = function(item) {
+  this.mMoveCardTo(item, this.getZoneByHome(item))
 }
 
 Tyrants.prototype.mShuffle = function(zone) {

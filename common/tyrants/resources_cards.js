@@ -449,7 +449,7 @@ const baseData = [
     }
   },
   {
-    name: "Chosen of Lloth",
+    name: "Chosen of Lolth",
     aspect: "ambition",
     race: "drow",
     expansion: "drow",
@@ -462,7 +462,7 @@ const baseData = [
       "At end of turn, promote another card played this turn."
     ],
     impl: (game, player, { card }) => {
-      game.aChooseAndReturn(player)
+      game.aChooseAndReturn(player, { noWhite: true })
       game.aDeferPromotion(player, card)
     }
   },

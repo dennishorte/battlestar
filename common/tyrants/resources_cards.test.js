@@ -678,5 +678,85 @@ describe('Tyrants Cards', () => {
       })
     })
 
+    describe('Chosen of Lolth', () => {
+      test('return a troop', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Chosen of Lolth', 'House Guard'],
+          }
+        })
+
+        t.setSpies(game, 'Ched Nasad', ['micah'])
+        t.setTroops(game, 'ched-llace a', ['micah'])
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Chosen of Lolth')
+        const request3 = t.choose(game, request2, 'troop.ched-llace a, micah')
+
+        t.testBoard(game, {
+          dennis: {
+            hand: ['House Guard'],
+            played: ['Chosen of Lolth'],
+          },
+          'Ched Nasad': {
+            troops: ['dennis'],
+            spies: ['micah'],
+          },
+          'ched-llace a': {
+            troops: [],
+          },
+        })
+      })
+
+      test('return a spy', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Chosen of Lolth', 'House Guard'],
+          }
+        })
+
+        t.setSpies(game, 'Ched Nasad', ['micah'])
+        t.setTroops(game, 'ched-llace a', ['micah'])
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Chosen of Lolth')
+        const request3 = t.choose(game, request2, 'spy.Ched Nasad, micah')
+
+        t.testBoard(game, {
+          dennis: {
+            hand: ['House Guard'],
+            played: ['Chosen of Lolth'],
+          },
+          'Ched Nasad': {
+            troops: ['dennis'],
+            spies: [],
+          },
+          'ched-llace a': {
+            troops: ['micah'],
+          },
+        })
+      })
+
+      test('promote', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Chosen of Lolth', 'House Guard'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Chosen of Lolth')
+        const request3 = t.choose(game, request2, 'Play Card.House Guard')
+        const request4 = t.choose(game, request3, 'Pass')
+
+        t.testBoard(game, {
+          dennis: {
+            innerCircle: ['House Guard'],
+            discard: ['Chosen of Lolth'],
+          },
+        })
+      })
+    })
+
   })
 })
