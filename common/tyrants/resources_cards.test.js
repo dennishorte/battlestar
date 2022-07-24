@@ -758,5 +758,70 @@ describe('Tyrants Cards', () => {
       })
     })
 
+    describe('Drow Negotiator', () => {
+      test('three in inner circle', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Drow Negotiator', 'House Guard'],
+            innerCircle: ['House Guard', 'House Guard', 'House Guard'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Drow Negotiator')
+
+        t.testBoard(game, {
+          dennis: {
+            hand: ['House Guard'],
+            played: ['Drow Negotiator'],
+            innerCircle: ['House Guard', 'House Guard', 'House Guard'],
+            influence: 0,
+          },
+        })
+      })
+
+      test('four in inner circle', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Drow Negotiator', 'House Guard'],
+            innerCircle: ['House Guard', 'House Guard', 'House Guard', 'House Guard'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Drow Negotiator')
+
+        t.testBoard(game, {
+          dennis: {
+            hand: ['House Guard'],
+            played: ['Drow Negotiator'],
+            innerCircle: ['House Guard', 'House Guard', 'House Guard', 'House Guard'],
+            influence: 3,
+          },
+        })
+      })
+
+      test('promote', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Drow Negotiator', 'House Guard'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Drow Negotiator')
+        const request3 = t.choose(game, request2, 'Play Card.House Guard')
+        const request4 = t.choose(game, request3, 'Pass')
+
+        t.testBoard(game, {
+          dennis: {
+            innerCircle: ['House Guard'],
+            discard: ['Drow Negotiator'],
+          },
+        })
+      })
+    })
+
   })
+
 })

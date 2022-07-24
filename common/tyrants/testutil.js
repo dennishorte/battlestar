@@ -93,27 +93,31 @@ TestUtil.gameFixture = function(options) {
     for (const player of game.getPlayerAll()) {
       const playerSetup = options[player.name]
       if (playerSetup) {
-        if (playerSetup.hand) {
-          const hand = game.getZoneByPlayer(player, 'hand')
-          for (const card of hand.cards()) {
-            const deck = game.getZoneByHome(card)
-            game.mMoveCardTo(card, deck, { silent: true })
-          }
 
-          for (const name of playerSetup.hand) {
-            if (name === 'Priestess of Lolth') {
-              game.mMoveCardTo(game.getZoneById('priestess').cards()[0], hand)
+        for (const key of ['hand', 'innerCircle']) {
+
+          if (playerSetup[key]) {
+            const zone = game.getZoneByPlayer(player, key)
+            for (const card of zone.cards()) {
+              const deck = game.getZoneByHome(card)
+              game.mMoveCardTo(card, deck, { silent: true })
             }
-            else if (name === 'House Guard') {
-              game.mMoveCardTo(game.getZoneById('guard').cards()[0], hand)
-            }
-            else if (name === 'Insane Outcast') {
-              game.mMoveCardTo(game.getZoneById('outcast').cards()[0], hand)
-            }
-            else {
-              const card = game.getZoneById('marketDeck').cards().find(card => card.name === name)
-              util.assert(!!card, `Card not found: ${name}`)
-              game.mMoveCardTo(card, hand)
+
+            for (const name of playerSetup[key]) {
+              if (name === 'Priestess of Lolth') {
+                game.mMoveCardTo(game.getZoneById('priestess').cards()[0], zone)
+              }
+              else if (name === 'House Guard') {
+                game.mMoveCardTo(game.getZoneById('guard').cards()[0], zone)
+              }
+              else if (name === 'Insane Outcast') {
+                game.mMoveCardTo(game.getZoneById('outcast').cards()[0], zone)
+              }
+              else {
+                const card = game.getZoneById('marketDeck').cards().find(card => card.name === name)
+                util.assert(!!card, `Card not found: ${name}`)
+                game.mMoveCardTo(card, zone)
+              }
             }
           }
         }
