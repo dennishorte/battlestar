@@ -1070,8 +1070,8 @@ Innovation.prototype.aDogma = function(player, card, opts={}) {
   this.mLogOutdent()
 }
 
-Innovation.prototype._getAgeForDrawAction = function(player) {
-  const karmaInfos = this.getInfoByKarmaTrigger(player, 'top-card-value')
+Innovation.prototype._getAgeForDrawAction = function(player, isAction) {
+  const karmaInfos = this.getInfoByKarmaTrigger(player, 'top-card-value', { isAction })
 
   if (karmaInfos.length > 1) {
     throw new Error('Too many karma infos for top-card-value. I do not know what to do.')
@@ -1085,10 +1085,11 @@ Innovation.prototype._getAgeForDrawAction = function(player) {
         return 1
       }
 
+      const actionType = isAction ? 'draw' : 'other'
       const karmaMatches = (
         !this.checkInKarma()
         && karmaInfos.length === 1
-        && karmaInfos[0].impl.matches(this, player, { action: 'draw', color })
+        && karmaInfos[0].impl.matches(this, player, { action: actionType, color, isAction })
       )
       if (karmaMatches) {
         this._karmaIn()
@@ -1139,7 +1140,7 @@ Innovation.prototype.aDraw = function(player, opts={}) {
   const baseExp = opts.exp || this._determineBaseDrawExpansion(player, share)
 
   // If age is not specified, draw based on player's current highest top card.
-  const highestTopAge = this._getAgeForDrawAction(player)
+  const highestTopAge = this._getAgeForDrawAction(player, isAction)
   const baseAge = age !== undefined ? (age || 1) : (highestTopAge || 1)
 
   // Adjust age based on empty decks.
