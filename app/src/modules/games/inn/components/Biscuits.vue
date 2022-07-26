@@ -83,6 +83,7 @@ export default {
 }
 
 .biscuits-box-name {
-  width: 3.5rem;
+  width: 3.5em;
+  overflow: hidden;
 }
 </style>
