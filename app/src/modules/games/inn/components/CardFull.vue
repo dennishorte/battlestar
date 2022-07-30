@@ -3,36 +3,38 @@
     class="card-full"
     :class="[card.color]"
   >
-    <div class="card-top">
-      <div class="card-biscuits">
-        <div class="card-biscuits-row">
-          <CardBiscuit
-            v-for="(biscuit, index) in biscuitsTopRow"
-            :key="index"
-            :biscuit="biscuit"
-          />
+    <div class="card-underlay" :class="underlayClasses">
+      <div class="card-top">
+        <div class="card-biscuits">
+          <div class="card-biscuits-row">
+            <CardBiscuit
+              v-for="(biscuit, index) in biscuitsTopRow"
+              :key="index"
+              :biscuit="biscuit"
+            />
+          </div>
+          <div class="card-biscuits-row">
+            <CardBiscuit
+              v-for="(biscuit, index) in biscuitsBottomRow"
+              :key="index"
+              :biscuit="biscuit"
+            />
+          </div>
         </div>
-        <div class="card-biscuits-row">
-          <CardBiscuit
-            v-for="(biscuit, index) in biscuitsBottomRow"
-            :key="index"
-            :biscuit="biscuit"
-          />
+
+        <div class="card-title">
+          {{ card.name }}
+        </div>
+
+        <div class="card-age">
+          <CardSquare :card="card" class="small-card-square card-age-square" />
+          <CardBiscuit :biscuit="card.dogmaBiscuit" class="card-age-square" />
         </div>
       </div>
 
-      <div class="card-title">
-        {{ card.name }}
+      <div v-for="(effect, index) in effects" class="card-effect" :key="index">
+        <CardText :text="effect" class="card-text" />
       </div>
-
-      <div class="card-age">
-        <CardSquare :card="card" class="small-card-square card-age-square" />
-        <CardBiscuit :biscuit="card.dogmaBiscuit" class="card-age-square" />
-      </div>
-    </div>
-
-    <div v-for="(effect, index) in effects" class="card-effect" :key="index">
-      <CardText :text="effect" class="card-text" />
     </div>
   </div>
 </template>
@@ -70,6 +72,12 @@ export default {
 
     biscuitsBottomRow() {
       return [this.card.biscuits[1], this.card.biscuits[2], this.card.biscuits[3]]
+    },
+
+    underlayClasses() {
+      return [
+        this.card.checkHasDemand() ? 'demand' : '',
+      ]
     },
 
     effects() {
@@ -153,5 +161,15 @@ export default {
 
 .card-age-square {
   margin-top: -2px;
+}
+
+.demand {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0) 10px,
+    rgba(255, 0, 0, .1) 10px,
+    rgba(255, 0, 0, .1) 20px
+  );
 }
 </style>
