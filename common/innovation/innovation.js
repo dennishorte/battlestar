@@ -73,6 +73,12 @@ Innovation.prototype._gameOver = function(event) {
   return event
 }
 
+Innovation.prototype._undoCalled = function() {
+  if (this.gameOver) {
+    this.gameOver = false
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
 

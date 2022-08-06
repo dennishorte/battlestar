@@ -245,6 +245,8 @@ Game.prototype.undo = function() {
   }
   this.responses.pop()
 
+  this._undoCalled()
+
   this.run()
 
   for (const chat of this.getChat()) {
@@ -368,6 +370,10 @@ Game.prototype._enrichLogArgs = function(msg) {
 }
 
 Game.prototype._postEnrichArgs = function(msg) {
+  // To be overridden by child classes.
+}
+
+Game.prototype._undoCalled = function() {
   // To be overridden by child classes.
 }
 
