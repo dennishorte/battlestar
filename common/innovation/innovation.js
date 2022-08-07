@@ -672,7 +672,7 @@ Innovation.prototype.aChooseCard = function(player, cards, opts={}) {
 
   const cardNames = this.aChoose(
     player,
-    cards.map(c => c.id || c),
+    cards.map(c => c.id || c).sort(),
     opts
   )
 
