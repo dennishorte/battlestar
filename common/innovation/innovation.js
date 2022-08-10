@@ -1994,7 +1994,9 @@ Innovation.prototype.getInfoByKarmaTrigger = function(player, trigger) {
   util.assert(typeof trigger === 'string', 'Second parameter must be string.')
 
   // Karmas can't trigger while executing another karma.
-  if (this.checkInKarma()) {
+  const isTriggeredKarma = !trigger.startsWith('list-') || trigger.endsWith('-effects')
+
+  if (isTriggeredKarma && this.checkInKarma()) {
     return []
   }
 
