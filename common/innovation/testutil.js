@@ -1,4 +1,4 @@
-const { GameOverEvent } = require('./game.js')
+const { GameOverEvent } = require('../lib/game.js')
 const { InnovationFactory } = require('./innovation.js')
 const log = require('../lib/log.js')
 
