@@ -30,7 +30,8 @@ export default {
 
   methods: {
     cards(age) {
-      return inn.res[this.expansion].byAge[age].sort((l, r) => {
+      const res = inn.res.generate()
+      return res[this.expansion].byAge[age].sort((l, r) => {
         if (l.age !== r.age) {
           return l.age - r.age
         }

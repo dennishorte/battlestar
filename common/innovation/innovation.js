@@ -86,6 +86,8 @@ Innovation.prototype.initialize = function() {
   this.mLog({ template: 'Initializing' })
   this.mLogIndent()
 
+  this.cardData = res.generate()
+
   this.initializePlayers()
   this.initializeTeams()
   this.initializeZones()
@@ -167,18 +169,17 @@ Innovation.prototype.initializeZonesDecks = function() {
   zones.decks = {}
   for (const exp of ['base', 'echo', 'figs', 'city', 'arti']) {
     zones.decks[exp] = {}
-    const data = res[exp]
-    for (const [age, cards] of Object.entries(res[exp].byAge)) {
+    const data = this.cardData[exp]
+    for (const [age, cards] of Object.entries(this.cardData[exp].byAge)) {
       if (!cards) {
         throw new Error(`Missing cards for ${exp}-${age}`)
       }
       else if (!Array.isArray(cards)) {
         throw new Error(`Cards for ${exp}-${age} is of type ${typeof cards}`)
       }
-      const cardsCopy = [...cards]
-      util.array.shuffle(cardsCopy, this.random)
+      util.array.shuffle(cards, this.random)
       zones.decks[exp][age] = new Zone(this, `decks.${exp}.${age}`, 'deck')
-      zones.decks[exp][age].setCards(cardsCopy)
+      zones.decks[exp][age].setCards(cards)
     }
   }
 }
@@ -198,7 +199,7 @@ Innovation.prototype.initializeZonesAchievements = function() {
   // Special achievements
   for (const exp of ['base', 'echo', 'figs', 'city', 'arti']) {
     if (this.getExpansionList().includes(exp)) {
-      for (const ach of res[exp].achievements) {
+      for (const ach of this.cardData[exp].achievements) {
         zones.achievements._cards.push(ach)
         ach.home = 'achievements'
       }
@@ -1420,7 +1421,7 @@ Innovation.prototype.aDigArtifact = function(player, age) {
   if (card) {
     this.mMoveCardTo(card, this.getZoneByPlayer(player, 'artifact'), { player })
 
-    for (const ach of res['arti'].achievements) {
+    for (const ach of this.cardData['arti'].achievements) {
       if (ach.getAge() !== card.getAge()) {
         continue
       }
@@ -1948,7 +1949,7 @@ Innovation.prototype.getBonuses = function(player) {
 }
 
 Innovation.prototype.getCardByName = function(name, def) {
-  if (!res.all.byName.hasOwnProperty(name)) {
+  if (!this.cardData.all.byName.hasOwnProperty(name)) {
     if (def !== undefined) {
       return def
     }
@@ -1957,7 +1958,7 @@ Innovation.prototype.getCardByName = function(name, def) {
     }
   }
   else {
-    return res.all.byName[name]
+    return this.cardData.all.byName[name]
   }
 }
 
@@ -2154,7 +2155,7 @@ Innovation.prototype.getPlayersStartingNext = function() {
 }
 
 Innovation.prototype.getResources = function() {
-  return res
+  return this.cardData
 }
 
 Innovation.prototype.getScore = function(player, opts={}) {

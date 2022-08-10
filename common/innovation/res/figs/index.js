@@ -1,4 +1,4 @@
-const cards = [
+const cardData = [
   require('./Sinuhe.js'),
   require('./Homer.js'),
   require('./FuXi.js'),
@@ -104,35 +104,46 @@ const cards = [
   require('./ShigeruMiyamoto.js'),
   require('./MuhammadYunus.js'),
   require('./SergeyBrin.js')
-].map(f => new f())
+]
 
-const achievements = [
+const achievementData = [
   require('./achievements/Advancement.js'),
   require('./achievements/Expansion.js'),
   require('./achievements/Rivalry.js'),
   require('./achievements/Trade.js'),
   require('./achievements/War.js'),
-].map(f => new f())
+]
 
-const byName = {}
-for (const card of cards) {
-  byName[card.name] = card
-}
-for (const card of achievements) {
-  byName[card.name] = card
-}
+function generateCardInstances() {
+  const cards = cardData.map(f => new f())
+  const achievements = achievementData.map(f => new f())
 
-const byAge = {}
-for (const i of [1,2,3,4,5,6,7,8,9,10]) {
-  byAge[i] = []
-}
-for (const card of cards) {
-  byAge[card.age].push(card)
+  const byName = {}
+  for (const card of cards) {
+    byName[card.name] = card
+  }
+  for (const card of achievements) {
+    byName[card.name] = card
+  }
+
+  const byAge = {}
+  for (const i of [1,2,3,4,5,6,7,8,9,10]) {
+    byAge[i] = []
+  }
+  for (const card of cards) {
+    byAge[card.age].push(card)
+  }
+
+  return {
+    achievements,
+    cards,
+    byName,
+    byAge,
+  }
 }
 
 module.exports = {
-  achievements,
-  cards,
-  byName,
-  byAge,
+  cardData,
+  achievementData,
+  generateCardInstances
 }
