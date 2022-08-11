@@ -1714,9 +1714,17 @@ function ManyFactory(baseFuncName, extraArgCount=0) {
     const opts = args[2 + extraArgCount] || {}
 
     const results = []
-    let remaining = [...cards]
     let auto = opts.ordered || false
+    let remaining = [...cards]
+    const startZones = util.array.toDict(remaining.map(c => [c.id, c.zone]))
+
     while (remaining.length > 0) {
+      // Check if any cards in 'remaining' have been acted on by some other force (karma effect).
+      remaining = remaining.filter(c => c.zone === startZones[c.id])
+      if (remaining.length === 0) {
+        break
+      }
+
       let next
       if (auto || remaining.length === 1) {
         next = remaining[0]
