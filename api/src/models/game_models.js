@@ -23,6 +23,10 @@ function _factory(lobby) {
   }
 }
 
+Game.all = async function() {
+  return await gameCollection.find({})
+}
+
 Game.create = async function(lobby) {
   return await writeMutex.dispatch(async () => {
     const data = _factory(lobby)
@@ -80,6 +84,15 @@ Game.saveResponses = async function(gameId, responses) {
     await gameCollection.updateOne(
       { _id: gameId },
       { $set: { responses: responses } },
+    )
+  })
+}
+
+Game.saveStats = async function(gameData) {
+  return await writeMutex.dispatch(async () => {
+    await gameCollection.updateOne(
+      { _id: gameData._id },
+      { $set: { stats: gameData.stats } },
     )
   })
 }

@@ -1,20 +1,34 @@
 <template>
   <div class="innovation-data">
-    <div class="card-column" v-for="exp in expansions" :key="exp">
-      <InnovationCardSet :expansion="exp" />
-    </div>
+    <b-tabs lazy>
+
+      <b-tab title="cards" active>
+        <div class="cards-data">
+          <div class="card-column" v-for="exp in expansions" :key="exp">
+            <InnovationCardSet :expansion="exp" />
+          </div>
+        </div>
+      </b-tab>
+
+      <b-tab title="wins">
+        <InnovationWinData />
+      </b-tab>
+
+    </b-tabs>
   </div>
 </template>
 
 
 <script>
 import InnovationCardSet from './InnovationCardSet'
+import InnovationWinData from './InnovationWinData'
 
 export default {
   name: 'InnovationData',
 
   components: {
-    InnovationCardSet
+    InnovationCardSet,
+    InnovationWinData,
   },
 
   data() {
@@ -27,7 +41,7 @@ export default {
 
 
 <style scoped>
-.innovation-data {
+.cards-data {
   display: flex;
   flex-direction: row;
 }

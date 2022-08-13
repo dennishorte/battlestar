@@ -1,0 +1,119 @@
+<template>
+  <div class="innovation-win-data">
+    <div v-for="(result, index) in winConditions" :key="index">
+      {{ result[1] }} {{ result[0] }}
+    </div>
+  </div>
+</template>
+
+
+<script>
+import axios from 'axios'
+
+import { util } from 'battlestar-common'
+
+
+export default {
+  name: 'InnovationWinData',
+
+  data() {
+    return {
+      gameDataRaw: []
+    }
+  },
+
+  computed: {
+    stats() {
+      const winConditions = {}
+      const winners = {}
+
+      for (const datum of this.gameDataRaw) {
+        if (datum.stats.error || !datum.stats.gameOver) continue
+
+        const winner = datum.stats.result.player.name
+        const reason = datum.stats.result.reason
+
+        // Tabulate win conditions
+        util.ensure(winConditions, reason, 0)
+        winConditions[reason] += 1
+
+        // Tabulate player win/loss records
+        for (const player of datum.settings.players) {
+          const win = player.name === winner
+
+          util.ensure(winners, player.name, {
+            vs: {},
+            conditions: {}
+          })
+          const { vs, conditions } = winners[player.name]
+
+          // Tabulate this player's win conditions
+          if (win) {
+            util.ensure(conditions, reason, 0)
+            conditions[reason] += 1
+          }
+
+          // Tabulate this player's win/loss record against others.
+          if (datum.settings.players.length === 1) {
+            continue
+          }
+          else if (datum.settings.players.length > 2) {
+            const key = `${datum.settings.players.length}-player`
+            util.ensure(vs, key, {
+              wins: 0,
+              losses: 0,
+            })
+            if (win) {
+              vs[key].wins += 1
+            }
+            else {
+              vs[key].loss += 1
+            }
+          }
+          else {
+            for (const other of datum.settings.players) {
+              if (other === player) continue
+
+              util.ensure(vs, other.name, {
+                wins: 0,
+                loss: 0,
+              })
+
+              if (win) {
+                vs[other.name].wins += 1
+              }
+              else {
+                vs[other.name].loss += 1
+              }
+            }
+          }
+        }
+      }
+
+      return {
+        conditions: winConditions,
+        players: winners,
+      }
+    },
+
+    playerData() {
+      return this.stats.players
+    },
+
+    winConditions() {
+      return Object
+        .entries(this.stats.conditions)
+        .sort((l, r) => r[1] - l[1])
+    },
+  },
+
+  async created() {
+    const requestResult = await axios.post('/api/game/fetchAll')
+    this.gameDataRaw = requestResult.data.games
+  },
+}
+</script>
+
+
+<style scoped>
+</style>

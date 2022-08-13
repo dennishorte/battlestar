@@ -1,10 +1,12 @@
 const db = require('../models/db.js')
 const slack = require('../util/slack.js')
 
-const { inn } = require('battlestar-common')
+const { GameOverEvent, inn } = require('battlestar-common')
 
 const Game = {}
 module.exports = Game
+
+const statsVersion = 2
 
 
 Game.create = async function(req, res) {
@@ -48,6 +50,15 @@ Game.fetch = async function(req, res) {
   res.json({
     status: 'success',
     game,
+  })
+}
+
+Game.fetchAll = async function(req, res) {
+  const cursor = await db.game.all()
+  const games = await cursor.toArray()
+  res.json({
+    status: 'success',
+    games
   })
 }
 
@@ -118,6 +129,50 @@ Game.saveResponse = async function(req, res) {
   return _testAndSave(game, res, (game) => {
     game.run()
     game.respondToInputRequest(req.body.response)
+  })
+}
+
+Game.updateStats = async function(req, res) {
+  const cursor = await db.game.all()
+  const games = await cursor.toArray()
+  let numUpdated = 0
+
+  for (const data of games) {
+    if (!data.stats || data.stats.version !== statsVersion) {
+      numUpdated += 1
+
+      data.stats = {
+        version: statsVersion,
+        error: false,
+      }
+
+      const game = new inn.Innovation(data)
+      let result
+      try {
+        result = game.run()
+      }
+      catch {
+        data.stats.error = true
+        await db.game.saveStats(data)
+        continue
+      }
+
+      if (result instanceof GameOverEvent) {
+        data.stats.gameOver = true
+        data.stats.result = result.data
+      }
+      else {
+        data.stats.gameOver = false
+      }
+
+      await db.game.saveStats(data)
+    }
+  }
+
+  res.json({
+    status: 'success',
+    count: numUpdated,
+    message: `Updated stats for ${numUpdated} games`,
   })
 }
 

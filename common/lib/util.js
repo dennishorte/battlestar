@@ -119,9 +119,20 @@ Util.assert = function(test, message) {
   }
 }
 
+Util.ensure = function(obj, prop, defaultValue) {
+  if (!Util.hasOwn(obj, prop)) {
+    obj[prop] = defaultValue
+  }
+  return obj
+}
+
 Util.getAsArray = function(object, key) {
   const value = object[key]
   return Array.isArray(value) ? value : [value]
+}
+
+Util.hasOwn = function(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop)
 }
 
 Util.inherit = function(parent, child) {

@@ -14,6 +14,10 @@
       <div class="col-4">
         <CreateUser v-on:user-created="getAllUsers" />
       </div>
+
+      <div class="col">
+        <AdminActions />
+      </div>
     </div>
 
     <div class="row">
@@ -38,15 +42,17 @@ import axios from 'axios'
 
 import Header from '../../../../src/components/Header'
 
-import CreateUser from '../../admin/components/CreateUser'
-import LobbyList from '../../admin/components/LobbyList'
-import UserList from '../../admin/components/UserList'
+import AdminActions from './AdminActions'
+import CreateUser from './CreateUser'
+import LobbyList from './LobbyList'
+import UserList from './UserList'
 
 export default {
   name: 'Admin',
   components: {
     Header,
 
+    AdminActions,
     CreateUser,
     LobbyList,
     UserList,

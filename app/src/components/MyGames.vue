@@ -114,7 +114,6 @@ export default {
     })
 
     this.games = fetchResult.data.games
-    console.log(this.games)
   }
 }
 </script>

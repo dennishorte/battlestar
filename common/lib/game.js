@@ -98,11 +98,11 @@ Game.prototype._validateResponse = function(requests, response) {
 
   const result = selector.validate(request, response)
   if (!result.valid) {
-    console.log(JSON.stringify({
-      request,
-      response,
-      result,
-    }, null, 2))
+    /* console.log(JSON.stringify({
+     *   request,
+     *   response,
+     *   result,
+     * }, null, 2)) */
     throw new Error('Invalid response')
   }
 }

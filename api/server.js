@@ -41,9 +41,11 @@ app.post('/api/lobby/settings_update', routes.lobby.settingsUpdate)
 // Game Routes
 app.post('/api/game/create', routes.game.create)
 app.post('/api/game/fetch', routes.game.fetch)
+app.post('/api/game/fetchAll', routes.game.fetchAll)
 app.post('/api/game/kill', routes.game.kill)
 app.post('/api/game/saveFull', routes.game.saveFull)
 app.post('/api/game/saveResponse', routes.game.saveResponse)
+app.post('/api/game/updateStats', routes.game.updateStats)
 
 // Snapshot Routes
 app.post('/api/snapshot/create', routes.snapshot.create)
