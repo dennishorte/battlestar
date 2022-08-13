@@ -1,5 +1,7 @@
 <template>
   <div class="data">
+    <Header />
+
     <b-container>
       <b-row>
         <b-col>
@@ -12,12 +14,14 @@
 
 
 <script>
+import Header from '../../../components/Header'
 import InnovationData from './InnovationData'
 
 export default {
   name: 'Data',
 
   components: {
+    Header,
     InnovationData,
   },
 }

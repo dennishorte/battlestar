@@ -1,9 +1,34 @@
 <template>
-  <div class="innovation-win-data">
-    <div v-for="(result, index) in winConditions" :key="index">
-      {{ result[1] }} {{ result[0] }}
-    </div>
-  </div>
+  <b-row class="innovation-win-data">
+    <b-col>
+      <h4>Win Conditions</h4>
+      <div v-for="(result, index) in winConditions" :key="index">
+        {{ result[1] }} {{ result[0] }}
+      </div>
+    </b-col>
+
+    <b-col>
+      <h4>Player Stats</h4>
+
+      <div class="player-stats" v-for="[player, stats] in playerData" :key="player">
+        <b-button v-b-toggle="`stats-${player}`">{{ player }}</b-button>
+        <b-collapse :id="`stats-${player}`">
+          <b-card>
+            <h5>Win Conditions</h5>
+            <div v-for="[cond, count] in Object.entries(stats.conditions)" :key="cond">
+              {{ count }} {{ cond }}
+            </div>
+
+            <h5>Win Ratios</h5>
+            <div v-for="[opp, { wins, loss }] in Object.entries(stats.vs)" :key="opp">
+              {{ wins }}/{{ wins + loss }} {{ opp }}
+            </div>
+          </b-card>
+        </b-collapse>
+      </div>
+
+    </b-col>
+  </b-row>
 </template>
 
 
@@ -11,7 +36,6 @@
 import axios from 'axios'
 
 import { util } from 'battlestar-common'
-
 
 export default {
   name: 'InnovationWinData',
@@ -61,7 +85,7 @@ export default {
             const key = `${datum.settings.players.length}-player`
             util.ensure(vs, key, {
               wins: 0,
-              losses: 0,
+              loss: 0,
             })
             if (win) {
               vs[key].wins += 1
@@ -97,13 +121,22 @@ export default {
     },
 
     playerData() {
-      return this.stats.players
+      return Object
+        .entries(this.stats.players)
+        .sort((l, r) => l[0].localeCompare(r[0]))
     },
 
     winConditions() {
       return Object
         .entries(this.stats.conditions)
-        .sort((l, r) => r[1] - l[1])
+        .sort((l, r) => {
+          if (r[1] === l[1]) {
+            return l[0].localeCompare(r[0])
+          }
+          else {
+            return r[1] - l[1]
+          }
+        })
     },
   },
 
