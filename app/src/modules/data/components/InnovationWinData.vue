@@ -52,7 +52,11 @@ export default {
       const winners = {}
 
       for (const datum of this.gameDataRaw) {
-        if (datum.stats.error || !datum.stats.gameOver) continue
+        if (
+          !datum.stats
+          || datum.stats.error
+          || !datum.stats.gameOver
+        ) continue
 
         const winner = datum.stats.result.player.name
         const reason = datum.stats.result.reason
