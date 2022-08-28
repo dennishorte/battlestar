@@ -31,6 +31,10 @@ Game.create = async function(lobby) {
   return await writeMutex.dispatch(async () => {
     const data = _factory(lobby)
     data.settings.createdTimestamp = Date.now()
+
+    // Added in order to support showing games that have recently ended on user home screens.
+    data.lastUpdated = data.settings.createdTimestamp
+
     const insertResult = await gameCollection.insertOne(data)
     return insertResult.insertedId
   })
@@ -70,11 +74,14 @@ Game.save = async function(game) {
   return await writeMutex.dispatch(async () => {
     await gameCollection.updateOne(
       { _id: game._id },
-      { $set: {
+      {
+        $set: {
         responses: game.responses,
         chat: game.chat,
         waiting: game.getPlayerNamesWaiting(),
-      } },
+        lastUpdated: Date.now(),
+        }
+      },
     )
   })
 }
