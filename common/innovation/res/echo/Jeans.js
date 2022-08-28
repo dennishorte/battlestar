@@ -29,8 +29,8 @@ function Card() {
       ]
 
       const melded = game.aChooseAndMeld(player, cards)
-      if (melded) {
-        cards.splice(cards.indexOf(melded[0], 1))
+      if (melded && melded.length > 0) {
+        cards.splice(cards.indexOf(melded[0]), 1)
       }
 
       if (cards.length > 0) {
