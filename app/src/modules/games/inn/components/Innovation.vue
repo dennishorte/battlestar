@@ -127,13 +127,6 @@ export default {
       }
 
       await this.saveFull()
-
-      /* if (this.game.usedUndo) {
-       *   await this.saveFull()
-       * }
-       * else {
-       *   await this.saveLatest()
-       * } */
     },
 
     saveFull: async function() {
@@ -146,17 +139,6 @@ export default {
       const requestResult = await axios.post('/api/game/saveFull', payload)
       this.handleSaveResult(requestResult)
     },
-
-    /* saveLatest: async function() {
-     *   const game = this.game
-     *   const lastResponse = game.responses.slice().reverse().find(r => r.isUserResponse)
-     *   const payload = {
-     *     gameId: game._id,
-     *     response: lastResponse,
-     *   }
-     *   const requestResult = await axios.post('/api/game/saveResponse', payload)
-     *   this.handleSaveResult(requestResult)
-     * }, */
   },
 
   created() {

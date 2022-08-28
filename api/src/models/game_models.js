@@ -79,15 +79,6 @@ Game.save = async function(game) {
   })
 }
 
-Game.saveResponses = async function(gameId, responses) {
-  return await writeMutex.dispatch(async () => {
-    await gameCollection.updateOne(
-      { _id: gameId },
-      { $set: { responses: responses } },
-    )
-  })
-}
-
 Game.saveStats = async function(gameData) {
   return await writeMutex.dispatch(async () => {
     await gameCollection.updateOne(

@@ -44,7 +44,6 @@ app.post('/api/game/fetch', routes.game.fetch)
 app.post('/api/game/fetchAll', routes.game.fetchAll)
 app.post('/api/game/kill', routes.game.kill)
 app.post('/api/game/saveFull', routes.game.saveFull)
-app.post('/api/game/saveResponse', routes.game.saveResponse)
 app.post('/api/game/updateStats', routes.game.updateStats)
 
 // Snapshot Routes

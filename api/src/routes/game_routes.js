@@ -102,7 +102,6 @@ async function _testAndSave(game, res, evalFunc) {
   }
 
   if (valid) {
-    // await db.game.saveResponses(game._id, game.responses, game.waiting)
     await db.game.save(game)
     await _sendNotifications(res, game)
   }
@@ -115,20 +114,11 @@ async function _testAndSave(game, res, evalFunc) {
 }
 
 Game.saveFull = async function(req, res) {
-  // await db.game.saveResponses(req.body.gameId, req.body.responses)
   const game = await _loadGameFromReq(req)
   game.responses = req.body.responses
   game.chat = req.body.chat
   return _testAndSave(game, res, (game) => {
     game.run()
-  })
-}
-
-Game.saveResponse = async function(req, res) {
-  const game = await _loadGameFromReq(req)
-  return _testAndSave(game, res, (game) => {
-    game.run()
-    game.respondToInputRequest(req.body.response)
   })
 }
 
