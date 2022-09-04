@@ -67,6 +67,16 @@ User.games = async function(req, res) {
   })
 }
 
+User.gamesRecentlyFinished = async function(req, res) {
+  const gameCursor = await db.game.findRecentlyFinishedByUserId(req.body.userId)
+  const gameArray = await gameCursor.toArray()
+
+  res.json({
+    status: 'success',
+    games: gameArray,
+  })
+}
+
 User.next = async function(req, res) {
   const user = await db.user.findById(req.body.userId)
   const userName = user.name

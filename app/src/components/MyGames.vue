@@ -4,6 +4,9 @@
       My Games
     </div>
 
+    <div class="sub-heading">
+      In Progress
+    </div>
     <b-table
       :items="games"
       :fields="fields"
@@ -39,6 +42,36 @@
 
     </b-table>
 
+    <template v-if="this.finished.length > 0">
+      <div class="sub-heading">
+        Recently Finished
+      </div>
+      <b-table
+        :items="finished"
+        :fields="finishedFields"
+        :small="true"
+        head-variant="light">
+
+        <template #cell(game)="row">
+          {{ gameKind(row.item) }}
+        </template>
+
+        <template #cell(name)="row">
+          <router-link :to="gameLink(row.item._id)">
+            {{ gameName(row.item) }}
+          </router-link>
+          <div class="opponent-names">
+            vs. {{ opponentNames(row.item) }}
+          </div>
+        </template>
+
+        <template #cell(winner)="row">
+          {{ row.item.stats.result.player.name }}
+        </template>
+
+      </b-table>
+    </template>
+
   </div>
 </template>
 
@@ -51,6 +84,9 @@ export default {
     return {
       fields: ['game', 'name', 'age', 'waiting', 'menu'],
       games: [],
+
+      finishedFields: ['game', 'name', 'winner'],
+      finished: [],
     }
   },
 
@@ -106,15 +142,29 @@ export default {
     waitingForViewer(data) {
       return (data.waiting || []).includes(this.$store.state.auth.user.name)
     },
+
+    async fetchActiveGames() {
+      const fetchResult = await axios.post('/api/user/games', {
+        userId: this.$store.state.auth.user._id,
+      })
+
+      this.games = fetchResult.data.games
+    },
+
+    async fetchRecentlyFinishedGames() {
+      const fetchResult = await axios.post('/api/user/games_recently_finished', {
+        userId: this.$store.state.auth.user._id,
+      })
+
+      console.log(fetchResult.data.games)
+      this.finished = fetchResult.data.games
+    },
   },
 
-  async mounted() {
-    const fetchResult = await axios.post('/api/user/games', {
-      userId: this.$store.state.auth.user._id,
-    })
-
-    this.games = fetchResult.data.games
-  }
+  mounted() {
+    this.fetchActiveGames()
+    this.fetchRecentlyFinishedGames()
+  },
 }
 </script>
 

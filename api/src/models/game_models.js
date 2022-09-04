@@ -45,16 +45,20 @@ Game.findById = async function(gameId) {
 }
 
 Game.findByUserId = async function(userId) {
-  return await gameCollection.find({ $or: [
-    {
-      'users._id': userId,
-      gameOver: false
-    },  // bsg
-    {
-      'settings.players._id': userId,
-      gameOver: false
-    },  // innovation
-  ]})
+  return await gameCollection.find({
+    'settings.players._id': userId,
+    gameOver: false
+  })
+}
+
+Game.findRecentlyFinishedByUserId = async function(userId) {
+  const threeDaysAgo = Date.now() - 3 * 24 * 60 * 60 * 1000
+
+  return await gameCollection.find({
+    'settings.players._id': userId,
+    gameOver: true,
+    lastUpdated: { $gt: threeDaysAgo }
+  })
 }
 
 Game.findWaitingByUserId = async function(userId) {

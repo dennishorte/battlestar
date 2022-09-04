@@ -28,6 +28,11 @@ export default {
   font-weight: 450;
 }
 
+.sub-heading {
+  font-size: 1.2em;
+  font-weight: 300;
+}
+
 .link-unstyled, .link-unstyled:link, .link-unstyled:hover {
   color: inherit;
   text-decoration: inherit;

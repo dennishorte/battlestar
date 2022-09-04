@@ -128,7 +128,11 @@ Game.updateStats = async function(req, res) {
   let numUpdated = 0
 
   for (const data of games) {
-    if (!data.stats || data.stats.version !== statsVersion) {
+    if (
+      !data.stats
+      || data.stats.version !== statsVersion
+      || (data.gameOver === true && data.stats.gameOver === false)
+    ) {
       numUpdated += 1
 
       data.stats = {
