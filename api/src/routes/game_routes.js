@@ -103,6 +103,7 @@ async function _testAndSave(game, res, evalFunc) {
 
   if (valid) {
     await db.game.save(game)
+    await updateStatsOne(game)
     await _sendNotifications(res, game)
   }
   else {
@@ -110,6 +111,46 @@ async function _testAndSave(game, res, evalFunc) {
       status: 'error',
       message,
     })
+  }
+}
+
+async function updateStatsOne(data) {
+  if (
+    !data.stats
+    || data.stats.version !== statsVersion
+    || (data.gameOver === true && data.stats.gameOver === false)
+  ) {
+
+    data.stats = {
+      version: statsVersion,
+      error: false,
+    }
+
+    const game = new inn.Innovation(data)
+    let result
+    try {
+      result = game.run()
+    }
+    catch {
+      data.stats.error = true
+      await db.game.saveStats(data)
+      return true
+    }
+
+    if (result instanceof GameOverEvent) {
+      data.stats.gameOver = true
+      data.stats.result = result.data
+    }
+    else {
+      data.stats.gameOver = false
+    }
+
+    await db.game.saveStats(data)
+    return true
+  }
+
+  else {
+    return false
   }
 }
 
@@ -128,38 +169,8 @@ Game.updateStats = async function(req, res) {
   let numUpdated = 0
 
   for (const data of games) {
-    if (
-      !data.stats
-      || data.stats.version !== statsVersion
-      || (data.gameOver === true && data.stats.gameOver === false)
-    ) {
+    if (updateStatsOne(data)) {
       numUpdated += 1
-
-      data.stats = {
-        version: statsVersion,
-        error: false,
-      }
-
-      const game = new inn.Innovation(data)
-      let result
-      try {
-        result = game.run()
-      }
-      catch {
-        data.stats.error = true
-        await db.game.saveStats(data)
-        continue
-      }
-
-      if (result instanceof GameOverEvent) {
-        data.stats.gameOver = true
-        data.stats.result = result.data
-      }
-      else {
-        data.stats.gameOver = false
-      }
-
-      await db.game.saveStats(data)
     }
   }
 
