@@ -36,7 +36,12 @@ export default {
       if (result.data.status === 'success') {
         const gameId = result.data.gameId
         if (gameId) {
-          this.$router.push(`/game/${gameId}`)
+          if (this.$route.path === `/game/${gameId}`) {
+            this.$router.go()
+          }
+          else {
+            this.$router.push(`/game/${gameId}`)
+          }
         }
         else {
           this.$router.push('/')
