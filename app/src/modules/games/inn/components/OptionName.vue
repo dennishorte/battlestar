@@ -46,7 +46,7 @@ export default {
 
 
 <style scoped>
-.option-card-name {
+.option-name {
   font-size: 1.1em;
   margin-left: .2em;
 }

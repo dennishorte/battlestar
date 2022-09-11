@@ -194,10 +194,11 @@ input[type='checkbox'] {
 .input-row {
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
 .input-row, .nested-options {
-  margin-bottom: 1px;
+  margin-bottom: 2px;
 }
 
 .invalid-selection {
