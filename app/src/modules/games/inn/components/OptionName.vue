@@ -31,7 +31,10 @@ export default {
 
   computed: {
     isCard() {
-      return !!this.game.getCardByName(this.option, '')
+      return (
+        Boolean(this.game.getCardByName(this.option, ''))
+        || Boolean(this.game.getCardByName(this.option.title, ''))
+      )
     },
 
     displayName() {

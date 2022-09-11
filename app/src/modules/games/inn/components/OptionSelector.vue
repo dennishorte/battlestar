@@ -11,12 +11,20 @@
 
     <div class="option-checkboxes">
       <div v-for="(option, index) in selector.choices" :key="index">
+
         <div v-if="!optionHasChildren(option)" class="input-row">
           <input type="checkbox" :value="index" v-model="selected" />
 
-          <span class="input-label">
-            <OptionName :option="option" />
-          </span>
+          <div>
+            <div class="input-label">
+              <OptionName :option="option" />
+            </div>
+
+            <div class="subtitle" v-for="(subtitle, index) in option.subtitles" :key="index">
+              {{ subtitle }}
+            </div>
+          </div>
+
         </div>
 
 
@@ -123,6 +131,11 @@ export default {
         title: this.selectorTitle,
         selection: selectedOptions
       }
+    },
+
+    subtitles() {
+      console.log(this.selector.subtitles)
+      return this.selector.subtitles || []
     }
   },
 
@@ -178,6 +191,11 @@ input[type='checkbox'] {
   vertical-align: top;
 }
 
+.input-row {
+  display: flex;
+  flex-direction: row;
+}
+
 .invalid-selection {
   color: red;
 }
@@ -202,5 +220,12 @@ input[type='checkbox'] {
 
 .option-name {
   margin-top: .45rem;
+}
+
+.subtitle {
+  font-size: .8em;
+  color: gray;
+  margin-left: 8px;
+  margin-top: -4px;
 }
 </style>

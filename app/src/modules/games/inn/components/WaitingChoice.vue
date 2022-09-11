@@ -51,7 +51,9 @@ export default {
     },
 
     request() {
-      return this.game.getWaiting(this.actor)
+      const waiting = this.game.getWaiting(this.actor)
+      this.insertSubtitles(waiting)
+      return waiting
     },
 
     isValid() {
@@ -86,6 +88,56 @@ export default {
 
     childChanged(event) {
       this.selection = event
+    },
+
+    insertDogmaShareSubtitles(selector) {
+      const player = this.game.getPlayerByName(this.actor.name)
+      const updated = []
+      for (const option of selector.choices) {
+        const cardName = option.title || option
+        const card = this.game.getCardByName(cardName)
+        const shareInfo = this.game.getDogmaShareInfo(player, card)
+
+        const subtitles = []
+
+        if (shareInfo.hasShare && shareInfo.sharing.length > 0) {
+          const shareNames = shareInfo.sharing.map(p => p.name).join(', ')
+          subtitles.push(`share with ${shareNames}`)
+        }
+
+        if (shareInfo.hasCompel && shareInfo.sharing.length > 0) {
+          const compelNames = shareInfo.sharing.map(p => p.name).join(', ')
+          subtitles.push(`compel ${compelNames}`)
+        }
+
+        if (shareInfo.hasDemand && shareInfo.demanding.length > 0) {
+          const demandNames = shareInfo.demanding.map(p => p.name).join(', ')
+          subtitles.push(`demand ${demandNames}`)
+        }
+
+        updated.push({
+          title: cardName,
+          subtitles,
+        })
+      }
+
+      selector.choices = updated
+    },
+
+    insertSubtitles(selector) {
+      if (selector.title === 'Dogma') {
+        this.insertDogmaShareSubtitles(selector)
+      }
+
+      for (const option of selector.choices) {
+        if (this.optionHasChildren(option)) {
+          this.insertSubtitles(option)
+        }
+      }
+    },
+
+    optionHasChildren(selector) {
+      return Array.isArray(selector.choices)
     },
   },
 

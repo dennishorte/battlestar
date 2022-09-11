@@ -49,6 +49,8 @@ export default {
 .card-name-full-inner {
   display: flex;
   flex-direction: row;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .card-name {
