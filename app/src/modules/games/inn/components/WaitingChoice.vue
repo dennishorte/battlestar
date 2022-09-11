@@ -96,7 +96,7 @@ export default {
       for (const option of selector.choices) {
         const cardName = option.title || option
         const card = this.game.getCardByName(cardName)
-        const shareInfo = this.game.getDogmaShareInfo(player, card)
+        const shareInfo = this.game.getDogmaShareInfo(player, card, { noBiscuitKarma: true })
 
         const subtitles = []
 

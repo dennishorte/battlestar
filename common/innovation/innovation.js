@@ -1001,7 +1001,7 @@ Innovation.prototype.getDogmaShareInfo = function(player, card, opts={}) {
   const biscuits = opts.biscuits || this.getDogmaBiscuits(player, card, opts)
   const featuredBiscuit = opts.featuredBiscuit || card.dogmaBiscuit
 
-  const { sharing, demanding } = this.getSharingAndDemanding(player, featuredBiscuit, biscuits)
+  const { sharing, demanding } = this.getSharingAndDemanding(player, featuredBiscuit, biscuits, opts)
 
   return {
     biscuits,
@@ -3234,8 +3234,8 @@ Innovation.prototype._generateActionChoicesMeld = function() {
   }
 }
 
-Innovation.prototype.getSharingAndDemanding = function(player, featuredBiscuit, biscuits) {
-  const biscuitComparator = this._getBiscuitComparator(player, featuredBiscuit, biscuits)
+Innovation.prototype.getSharingAndDemanding = function(player, featuredBiscuit, biscuits, opts={}) {
+  const biscuitComparator = this._getBiscuitComparator(player, featuredBiscuit, biscuits, opts)
 
   const sharing = this
     .getPlayerAll()
@@ -3250,7 +3250,8 @@ Innovation.prototype.getSharingAndDemanding = function(player, featuredBiscuit, 
   return { sharing, demanding }
 }
 
-Innovation.prototype._getBiscuitComparator = function(player, featuredBiscuit, biscuits) {
+Innovation.prototype._getBiscuitComparator = function(player, featuredBiscuit, biscuits, opts) {
+
   // Some karmas affect how sharing is calculated by adjusting the featured biscuit.
   const featuredBiscuitKarmas = this
     .getInfoByKarmaTrigger(player, 'featured-biscuit')
@@ -3258,7 +3259,7 @@ Innovation.prototype._getBiscuitComparator = function(player, featuredBiscuit, b
 
   let adjustedBiscuit
 
-  if (featuredBiscuitKarmas.length === 0) {
+  if (opts.noBiscuitKarma || featuredBiscuitKarmas.length === 0) {
     adjustedBiscuit = featuredBiscuit
   }
   else if (featuredBiscuitKarmas.length === 1) {
