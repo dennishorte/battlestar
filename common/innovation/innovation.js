@@ -586,12 +586,12 @@ Innovation.prototype.aOneEffect = function(
         this.state.dogmaInfo.demanding = false
         this.mLogOutdent()
 
-        if (result === '__STOP__') {
+        if (this.state.dogmaInfo.earlyTerminate) {
           this.mLog({
             template: 'Dogma action is complete'
           })
           this.state.dogmaInfo.acting = undefined
-          return result
+          return
         }
       }
     }
@@ -614,7 +614,7 @@ Innovation.prototype.aCardEffects = function(
 
   for (let i = 0; i < texts.length; i++) {
     const result = this.aOneEffect(player, card, texts[i], impls[i], opts)
-    if (result === '__STOP__') {
+    if (this.state.dogmaInfo.earlyTerminate) {
       return
     }
   }
@@ -987,28 +987,50 @@ Innovation.prototype.aDiscoverBiscuit = function(player, card) {
   }
 }
 
-Innovation.prototype.aDogmaHelper = function(player, card, opts) {
-  const karmaKind = this.aKarma(player, 'dogma', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    return
-  }
-
-  this.state.shared = false
-  this.state.couldShare = false
-
+Innovation.prototype.getDogmaBiscuits = function(player, card, opts) {
   // Store the biscuits now because changes caused by the dogma action should
   // not affect the number of biscuits used for evaluting the effect.
   const biscuits = this.getBiscuits()
   const artifactBiscuits = opts.artifact ? this.getBiscuitsByCard(card, 'top') : this.utilEmptyBiscuits()
   biscuits[player.name] = this.utilCombineBiscuits(biscuits[player.name], artifactBiscuits)
 
-  const featuredBiscuit = card.dogmaBiscuit
+  return biscuits
+}
+
+Innovation.prototype.getDogmaShareInfo = function(player, card, opts={}) {
+  const biscuits = opts.biscuits || this.getDogmaBiscuits(player, card, opts)
+  const featuredBiscuit = opts.featuredBiscuit || card.dogmaBiscuit
+
   const { sharing, demanding } = this.getSharingAndDemanding(player, featuredBiscuit, biscuits)
 
-  // These are used by effects that say "as if they were on this card".
-  this.state.dogmaInfo.biscuits = biscuits
-  this.state.dogmaInfo.featuredBiscuit = featuredBiscuit
+  return {
+    biscuits,
+    featuredBiscuit,
+    hasShare: card.checkHasShare(),
+    hasDemand: card.checkHasDemandExplicit(),
+    hasCompel: card.checkHasCompelExplicit(),
+    sharing,
+    demanding,
+  }
+}
 
+Innovation.prototype._aDogmaHelper_logSharing = function(shareData) {
+  if (shareData.sharing.length > 0) {
+    this.mLog({
+      template: 'Effects will share with {players}.',
+      args: { players: shareData.sharing },
+    })
+  }
+
+  if (shareData.demanding.length > 0) {
+    this.mLog({
+      template: 'Demands will be made of {players}.',
+      args: { players: shareData.demanding },
+    })
+  }
+}
+
+Innovation.prototype._aDogmaHelper_executeEffects = function(player, card, shareData, opts) {
   // Store planned effects now, as changes to the stacks shouldn't affect them.
   const cardOwner = this.getPlayerByCard(card)
   const effects = [
@@ -1017,34 +1039,31 @@ Innovation.prototype.aDogmaHelper = function(player, card, opts) {
   ].filter(e => e !== undefined)
 
   const effectOpts = {
-    sharing,
-    demanding,
+    sharing: shareData.sharing,
+    demanding: shareData.demanding,
     endorsed: opts.endorsed,
-  }
-
-  if (sharing.length > 0) {
-    this.mLog({
-      template: 'Effects will share with {players}.',
-      args: { players: sharing },
-    })
-  }
-
-  if (demanding.length > 0) {
-    this.mLog({
-      template: 'Demands will be made of {players}.',
-      args: { players: demanding },
-    })
   }
 
   for (const e of effects) {
     for (let i = 0; i < e.texts.length; i++) {
       const result = this.aOneEffect(player, e.card, e.texts[i], e.impls[i], effectOpts)
-      if (result === '__STOP__') {
+      if (this.state.dogmaInfo.earlyTerminate) {
         return
       }
     }
   }
+}
 
+Innovation.prototype._aDogmaHelper_initializeGlobalContext = function(biscuits, featuredBiscuit) {
+  this.state.shared = false
+  this.state.couldShare = false
+
+  this.state.dogmaInfo.biscuits = biscuits
+  this.state.dogmaInfo.featuredBiscuit = featuredBiscuit
+  this.state.dogmaInfo.earlyTerminate = false
+}
+
+Innovation.prototype._aDogmaHelper_shareBonus = function(player, card) {
   // Share bonus
   if (this.state.shared) {
     this.mLog({
@@ -1053,7 +1072,11 @@ Innovation.prototype.aDogmaHelper = function(player, card, opts) {
     })
     this.mLogIndent()
     const expansion = this.getExpansionList().includes('figs') ? 'figs' : ''
-    this.aDraw(player, { exp: expansion, share: true, featuredBiscuit })
+    this.aDraw(player, {
+      exp: expansion,
+      share: true,
+      featuredBiscuit: this.state.dogmaInfo.featuredBiscuit
+    })
     this.mLogOutdent()
   }
 
@@ -1063,6 +1086,25 @@ Innovation.prototype.aDogmaHelper = function(player, card, opts) {
       this.aKarma(other, 'no-share', { card, leader: player })
     }
   }
+}
+
+Innovation.prototype.aDogmaHelper = function(player, card, opts) {
+  const karmaKind = this.aKarma(player, 'dogma', { ...opts, card })
+  if (karmaKind === 'would-instead') {
+    return
+  }
+
+  const shareData = this.getDogmaShareInfo(player, card, opts)
+
+  this._aDogmaHelper_initializeGlobalContext(shareData.biscuits, shareData.featuredBiscuit)
+  this._aDogmaHelper_logSharing(shareData)
+  this._aDogmaHelper_executeEffects(player, card, shareData, opts)
+
+  if (this.state.dogmaInfo.earlyTerminate) {
+    return
+  }
+
+  this._aDogmaHelper_shareBonus(player, card)
 }
 
 Innovation.prototype.aDogma = function(player, card, opts={}) {

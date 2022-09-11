@@ -11,15 +11,15 @@ function Card() {
   this.dogmaBiscuit = `s`
   this.inspire = ``
   this.echo = ``
-  this.karma = []
-  this.dogma = [
-    'This card counts as an age 11 card when on your board.'
-  ]
+  this.karma = ['This card counts as an age 11 card when on your board.']
+  this.dogma = []
 
   this.dogmaImpl = []
   this.echoImpl = []
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [
+    {}  // empty karma for the reminder text in the karma field
+  ]
 }
 
 Card.prototype = Object.create(CardBase.prototype)

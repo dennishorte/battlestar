@@ -30,7 +30,8 @@ function Card() {
         game.aRemoveMany(player, toRemove, { ordered: true })
         game.mLogOutdent()
 
-        return '__STOP__'
+        game.state.dogmaInfo.earlyTerminate = true
+        return
       }
       else {
         game.mLog({ template: 'The card was not red.' })

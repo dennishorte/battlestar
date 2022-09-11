@@ -65,7 +65,6 @@ describe("Jeans", () => {
     const request6 = t.choose(game, request5, 'Canning')
 
     t.testIsSecondPlayer(request6)
-    t.dumpLog(game)
     t.testBoard(game, {
       dennis: {
         green: ['Jeans'],

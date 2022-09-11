@@ -42,10 +42,32 @@ CardBase.prototype.checkEchoIsVisible = function(splay) {
   return this.checkBiscuitIsVisible('&', splay)
 }
 
+CardBase.prototype.checkHasDemandExplicit = function() {
+  return this
+    .dogma
+    .some(text => text.startsWith('I demand'))
+}
+
+CardBase.prototype.checkHasCompelExplicit = function() {
+  return this
+    .dogma
+    .some(text => text.startsWith('I compel'))
+}
+
 CardBase.prototype.checkHasDemand = function() {
   return this
     .dogma
     .some(text => text.startsWith('I demand') || text.startsWith('I compel'))
+}
+
+CardBase.prototype.checkHasShare = function() {
+  const shareDogmaEffect = this
+    .dogma
+    .some(text => !text.startsWith('I demand') && !text.startsWith('I compel'))
+
+  const shareEchoEffect = !!this.echo
+
+  return shareDogmaEffect || shareEchoEffect
 }
 
 CardBase.prototype.checkInspireIsVisible = function(splay) {
