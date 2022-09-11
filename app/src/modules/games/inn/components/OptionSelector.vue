@@ -194,6 +194,7 @@ input[type='checkbox'] {
 .input-row {
   display: flex;
   flex-direction: row;
+  margin-bottom: 1px;
 }
 
 .invalid-selection {
