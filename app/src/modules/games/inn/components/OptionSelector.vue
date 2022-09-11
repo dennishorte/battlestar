@@ -194,6 +194,9 @@ input[type='checkbox'] {
 .input-row {
   display: flex;
   flex-direction: row;
+}
+
+.input-row, .nested-options {
   margin-bottom: 1px;
 }
 
