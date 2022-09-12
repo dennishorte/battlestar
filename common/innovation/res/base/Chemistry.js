@@ -22,15 +22,9 @@ function Card() {
     },
 
     (game, player) => {
-      const decision = game.aYesNo(player, 'Draw and score?')
-      if (decision) {
-        const age = game.getHighestTopAge(player) + 1
-        game.aDrawAndScore(player, age)
-        game.aChooseAndReturn(player, game.getZoneByPlayer(player, 'score').cards())
-      }
-      else {
-        game.mLogDoNothing(player)
-      }
+      const age = game.getHighestTopAge(player) + 1
+      game.aDrawAndScore(player, age)
+      game.aChooseAndReturn(player, game.getZoneByPlayer(player, 'score').cards())
     }
   ]
   this.echoImpl = []
