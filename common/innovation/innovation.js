@@ -576,6 +576,7 @@ Innovation.prototype.aOneEffect = function(
           })
           if (karmaKind === 'would-instead') {
             this.state.dogmaInfo.demanding = false
+            this.mActed(player)
             this.mLogOutdent()
             continue
           }
@@ -910,6 +911,7 @@ Innovation.prototype.aClaimAchievement = function(player, opts={}) {
 
   const karmaKind = this.aKarma(player, 'achieve', { ...opts, card })
   if (karmaKind === 'would-instead') {
+    this.mActed(player)
     return
   }
 
@@ -1091,6 +1093,7 @@ Innovation.prototype._aDogmaHelper_shareBonus = function(player, card) {
 Innovation.prototype.aDogmaHelper = function(player, card, opts) {
   const karmaKind = this.aKarma(player, 'dogma', { ...opts, card })
   if (karmaKind === 'would-instead') {
+    this.mActed(player)
     return
   }
 
@@ -1181,6 +1184,7 @@ Innovation.prototype.aDraw = function(player, opts={}) {
   if (isAction) {
     const karmaKind = this.aKarma(player, 'draw-action', opts)
     if (karmaKind === 'would-instead') {
+      this.mActed(player)
       return
     }
   }
@@ -1197,6 +1201,7 @@ Innovation.prototype.aDraw = function(player, opts={}) {
 
   const karmaKind = this.aKarma(player, 'draw', { ...opts, age: adjustedAge })
   if (karmaKind === 'would-instead') {
+    this.mActed(player)
     return
   }
 
@@ -1273,6 +1278,7 @@ Innovation.prototype.aEndorse = function(player, color, opts={}) {
 Innovation.prototype.aForeshadow = function(player, card, opts={}) {
   const karmaKind = this.aKarma(player, 'foreshadow', { ...opts, card })
   if (karmaKind === 'would-instead') {
+    this.mActed(player)
     return
   }
 
@@ -1293,6 +1299,7 @@ Innovation.prototype.aInspire = function(player, color, opts={}) {
 
   const karmaKind = this.aKarma(player, 'inspire', { ...opts, color })
   if (karmaKind === 'would-instead') {
+    this.mActed(player)
     return
   }
 
@@ -1557,6 +1564,7 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
 
   const karmaKind = this.aKarma(player, 'meld', { ...opts, card })
   if (karmaKind === 'would-instead') {
+    this.mActed(player)
     return
   }
 
@@ -1627,6 +1635,7 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
 Innovation.prototype.aRemove = function(player, card, opts={}) {
   const karmaKind = this.aKarma(player, 'remove', { ...opts, card })
   if (karmaKind === 'would-instead') {
+    this.mActed(player)
     return
   }
 
@@ -1636,6 +1645,7 @@ Innovation.prototype.aRemove = function(player, card, opts={}) {
 Innovation.prototype.aReturn = function(player, card, opts={}) {
   const karmaKind = this.aKarma(player, 'return', { ...opts, card })
   if (karmaKind === 'would-instead') {
+    this.mActed(player)
     return
   }
 
@@ -1648,6 +1658,7 @@ Innovation.prototype.aScore = function(player, card, opts={}) {
   }
   const karmaKind = this.aKarma(player, 'score', { ...opts, card })
   if (karmaKind === 'would-instead') {
+    this.mActed(player)
     return
   }
 
@@ -1673,6 +1684,7 @@ Innovation.prototype.aSplay = function(player, color, direction, opts={}) {
   if (owner === player) {
     const karmaKind = this.aKarma(player, 'splay', { ...opts, color, direction })
     if (karmaKind === 'would-instead') {
+      this.mActed(player)
       return
     }
   }
@@ -1693,6 +1705,7 @@ Innovation.prototype.aTransfer = function(player, card, target, opts={}) {
 
   const karmaKind = this.aKarma(player, 'transfer', { ...opts, card, target })
   if (karmaKind === 'would-instead') {
+    this.mActed(player)
     return
   }
   return this.mTransfer(player, card, target, opts)
@@ -1717,6 +1730,7 @@ Innovation.prototype._checkCityTuckAchievements = function(player, card) {
 Innovation.prototype.aTuck = function(player, card, opts={}) {
   const karmaKind = this.aKarma(player, 'tuck', { ...opts, card })
   if (karmaKind === 'would-instead') {
+    this.mActed(player)
     return
   }
 
