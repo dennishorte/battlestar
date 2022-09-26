@@ -23,10 +23,12 @@ function Card() {
       .filter(card => card.checkHasBiscuit('l'))
     const card = game.aChooseCard(player, cardChoices)
 
-    const targetPlayer = game.aChoosePlayer(player, game.getPlayerAll())
-    const target = game.getZoneByPlayer(targetPlayer, card.color)
+    if (card) {
+      const targetPlayer = game.aChoosePlayer(player, game.getPlayerAll())
+      const target = game.getZoneByPlayer(targetPlayer, card.color)
 
-    game.aTransfer(player, card, target)
+      game.aTransfer(player, card, target)
+    }
   }
   this.inspireImpl = []
   this.karmaImpl = [
