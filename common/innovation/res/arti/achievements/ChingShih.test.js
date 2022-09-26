@@ -64,6 +64,34 @@ describe("Ching Shih", () => {
     })
   })
 
+  test('karma: when-meld from non-hand zone', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+    t.setBoard(game,  {
+      dennis: {
+        score: ["Ching Shih"],
+        blue: ['Encyclopedia'],
+      },
+      micah: {
+        achievements: ['The Wheel', 'Calendar', 'Monument'],
+      },
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Encyclopedia')
+    const request3 = t.choose(game, request2, 'yes')
+
+    t.testIsSecondPlayer(request3)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Ching Shih'],
+        blue: ['Encyclopedia'],
+      },
+      micah: {
+        achievements: ['The Wheel', 'Calendar', 'Monument'],
+      },
+    })
+  })
+
   test('karma: score', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {

@@ -1421,7 +1421,16 @@ Innovation.prototype.aKarma = function(player, kind, opts={}) {
 }
 
 Innovation.prototype.aKarmaWhenMeld = function(player, card, opts={}) {
-  const infos = card.getKarmaInfo('when-meld')
+  const infos = card
+    .getKarmaInfo('when-meld')
+    .filter(info => {
+      if (info.impl.matches) {
+        return info.impl.matches(this, player, opts)
+      }
+      else {
+        return true
+      }
+    })
   return this._aKarmaHelper(player, infos, opts)
 }
 
@@ -1543,6 +1552,9 @@ Innovation.prototype._maybeDrawCity = function(player) {
 }
 
 Innovation.prototype.aMeld = function(player, card, opts={}) {
+  // Used for Ching Shih to make sure she is melded from the hand.
+  opts.fromZone = card.zone
+
   const karmaKind = this.aKarma(player, 'meld', { ...opts, card })
   if (karmaKind === 'would-instead') {
     return

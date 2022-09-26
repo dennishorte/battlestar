@@ -14,7 +14,8 @@ function Card() {
   this.inspire = ``
   this.echo = ``
   this.karma = [
-    `When you meld this card, transfer an achievement from an opponent's achievements to yours.`,
+    // `When you meld this card, transfer an achievement from an opponent's achievements to yours.`,
+    `When you meld this card from your hand, transfer an achievement from an opponent's achievements to yours.`,
     `If you would score a non-figure, instead transfer a card of the same value from an opponent's score pile to yours.`,
   ]
   this.dogma = []
@@ -25,6 +26,9 @@ function Card() {
   this.karmaImpl = [
     {
       trigger: 'when-meld',
+      matches: (game, player, { fromZone }) => {
+        return fromZone === game.getZoneByPlayer(player, 'hand').id
+      },
       func(game, player) {
         const choices = game
           .getPlayerOpponents(player)

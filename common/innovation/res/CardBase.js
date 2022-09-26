@@ -1,6 +1,8 @@
 const util = require('../../lib/util.js')
 
 function CardBase() {
+  this.version
+
   this.id
   this.name
   this.color
