@@ -20,9 +20,11 @@ function Card() {
     const card = game.aDrawAndTuck(player, game.getEffectAge(this, 3))
     if (card) {
       const zone = game.getZoneByPlayer(player, card.color)
-      while (zone.cards()[0] !== undefined && zone.cards()[0] !== card) {
-        game.aScore(player, zone.cards()[0])
-      }
+      const toScore = zone
+        .cards()
+        .filter(c => c !== card)
+
+      game.aScoreMany(player, toScore, { ordered: true })
     }
   }
   this.inspireImpl = []
