@@ -500,8 +500,8 @@ const baseData = [
       "At end of turn, promote another card played this turn."
     ],
     impl: (game, player, { card }) => {
-      game.aChooseAndMove(player, { min: 0 })
-      game.aChooseAndMove(player, { min: 0 })
+      game.aChooseAndMoveTroop(player, { min: 0 })
+      game.aChooseAndMoveTroop(player, { min: 0 })
       game.aDeferPromotion(player, card)
     }
   },
@@ -904,7 +904,7 @@ const baseData = [
       "At end of turn, promote another card played this turn."
     ],
     impl: (game, player, { card }) => {
-      game.aChooseAndMove(player, { enemyOnly: true })
+      game.aChooseAndMoveTroop(player, { troopOnly: true })
       game.aDeferPromotion(player, card)
     }
   },

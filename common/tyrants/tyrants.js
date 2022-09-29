@@ -581,6 +581,39 @@ Tyrants.prototype.aChooseAndDeploy = function(player) {
   }
 }
 
+// Only supports moving troops.
+Tyrants.prototype.aChooseAndMoveTroop = function(player, opts={}) {
+  const choices = this._collectTargets(player, opts).troops
+  const toMove = this.aChoose(player, choices)[0]
+  if (toMove) {
+    const [locName, ownerName] = toMove.split(', ')
+    const source = this.getLocationByName(locName)
+    const owner = ownerName === 'neutral' ? 'neutral' : this.getPlayerByName(ownerName)
+    const troop = source.getTroops(owner)[0]
+
+    const destChoices = this
+      .getLocationAll()
+      .filter(loc => loc.checkHasOpenTroopSpace())
+      .filter(loc => loc !== source)
+      .map(loc => loc.id)
+    const destId = this.aChoose(player, destChoices)[0]
+    const dest = this.getZoneById(destId)
+
+    util.assert(!!troop, `Invalid selection for moving a troop: ${toMove}`)
+
+    this.mMoveCardTo(troop, dest)
+    this.mLog({
+      template: '{player} moves a {player2} troop from {zone1} to {zone2}',
+      args: {
+        player,
+        player2: owner,
+        zone1: source,
+        zone2: dest,
+      }
+    })
+  }
+}
+
 Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
   // Check that the player has spies remaining to place.
   if (this.getCardsByZone(player, 'spies').length === 0) {

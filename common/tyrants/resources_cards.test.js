@@ -822,6 +822,56 @@ describe('Tyrants Cards', () => {
       })
     })
 
+    describe('Council Member', () => {
+      test('move up to 2 enemy troops', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Council Member'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Council Member')
+        const request3 = t.choose(game, request2, '*map.Gracklstugh')
+
+        t.testBoard(game, {
+          dennis: {
+            discard: ['Council Member'],
+          },
+          'araum-ched': {
+            troops: [],
+            spies: [],
+          },
+          Gracklstugh: {
+            troops: ['neutral', 'neutral', 'neutral'],
+            spies: [],
+          }
+        })
+      })
+
+      test('At end of turn, promote another card played this turn', () => {
+        const game = t.gameFixture({
+          dennis: {
+            hand: ['Council Member', 'House Guard'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Council Member')
+        const request3 = t.choose(game, request2, '*map.Gracklstugh')
+        const request4 = t.choose(game, request3, 'Play Card.House Guard')
+        const request5 = t.choose(game, request4, 'Pass')
+
+        t.testBoard(game, {
+          dennis: {
+            innerCircle: ['House Guard'],
+            discard: ['Council Member'],
+          },
+        })
+
+      })
+    })
+
   })
 
 })

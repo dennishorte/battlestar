@@ -36,6 +36,10 @@ MapZone.prototype.addPresence = function(player) {
   util.array.pushUnique(this.presence, player)
 }
 
+MapZone.prototype.checkHasOpenTroopSpace = function() {
+  return this.cards().filter(card => card.isTroop).length < this.size
+}
+
 MapZone.prototype.checkHasPresence = function(player) {
   return this.presence.includes(player)
 }
@@ -74,7 +78,7 @@ MapZone.prototype.getSpies = function(player) {
 
 MapZone.prototype._filteredTokens = function(fn, player) {
   const troops = this
-    ._cards
+    .cards()
     .filter(token => fn(token))
 
   if (player === 'neutral') {
