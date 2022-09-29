@@ -561,6 +561,7 @@ describe('Tyrants Cards', () => {
         const game = t.gameFixture({
           dennis: {
             hand: ['Information Broker'],
+            deck: ['House Guard', 'House Guard', 'House Guard'],
           }
         })
 
@@ -573,7 +574,7 @@ describe('Tyrants Cards', () => {
         t.testBoard(game, {
           dennis: {
             played: ['Information Broker'],
-            hand: ['Noble', 'Noble', 'Soldier'],
+            hand: ['House Guard', 'House Guard', 'House Guard'],
           },
           'Menzoberranzan': {
             troops: ['neutral', 'neutral', 'neutral'],
@@ -869,6 +870,27 @@ describe('Tyrants Cards', () => {
           },
         })
 
+      })
+    })
+
+    describe('Matron Mother', () => {
+      test('Put your deck into your discard pile. Then promote a card from your discard pile.', () => {
+        const game = t.gameFixture({
+          dennis: {
+            deck: ['House Guard'],
+            hand: ['Matron Mother'],
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Play Card.Matron Mother')
+
+        t.testBoard(game, {
+          dennis: {
+            innerCircle: ['House Guard'],
+            hand: ['Matron Mother'],
+          },
+        })
       })
     })
 

@@ -53,11 +53,11 @@ TestUtil.fixture = function(options) {
 
       // Fill player hands with Nobles
       for (const card of hand.cards()) {
-        game.mMoveCardTo(card, deck, { silent: true })
+        game.mMoveCardTo(card, deck)
       }
-      while (deck.cards().length < 5) {
+      while (hand.cards().length < 5) {
         const card = deck.cards().find(card => card.name === 'Noble')
-        game.mMoveCardTo(card, hand, { silent: true })
+        game.mMoveCardTo(card, hand)
       }
 
       // Put cards with multiple copies into the market. This makes sure that when we put cards
@@ -90,20 +90,41 @@ TestUtil.gameFixture = function(options) {
   const game = this.fixture(options)
 
   game.testSetBreakpoint('initialization-complete', (game) => {
+    game.mLog({ template: 'SETUP' })
+    game.mLogIndent()
+
     for (const player of game.getPlayerAll()) {
+      game.mLog({
+        template: '{player} setup',
+        args: { player }
+      })
+      game.mLogIndent()
+
       const playerSetup = options[player.name]
       if (playerSetup) {
 
-        for (const key of ['hand', 'innerCircle']) {
+        for (const key of ['hand', 'innerCircle', 'deck']) {
 
           if (playerSetup[key]) {
+            game.mLog({
+              template: '{key}',
+              args: { key },
+            })
+            game.mLogIndent()
+
             const zone = game.getZoneByPlayer(player, key)
+
             for (const card of zone.cards()) {
-              const deck = game.getZoneByHome(card)
-              game.mMoveCardTo(card, deck, { silent: true })
+              const deck = key === 'deck' ? game.getZoneById('devoured') : game.getZoneByHome(card)
+              game.mMoveCardTo(card, deck)
             }
 
             for (const name of playerSetup[key]) {
+              game.mLog({
+                template: '{name}',
+                args: { name },
+              })
+
               if (name === 'Priestess of Lolth') {
                 game.mMoveCardTo(game.getZoneById('priestess').cards()[0], zone)
               }
@@ -119,6 +140,8 @@ TestUtil.gameFixture = function(options) {
                 game.mMoveCardTo(card, zone)
               }
             }
+
+            game.mLogOutdent()
           }
         }
 
@@ -132,7 +155,15 @@ TestUtil.gameFixture = function(options) {
           player.points = playerSetup.points
         }
       }
+
+      else {
+        game.mLog({ template: 'no setup info' })
+      }
+
+      game.mLogOutdent()
     }
+
+    game.mLogOutdent()
   })
 
   const request1 = game.run()
@@ -287,7 +318,7 @@ TestUtil.testTableau = function(game, player, testState) {
 
     if (!testState[zoneName] || testState[zoneName] === 'default') {
       if (zoneName === 'hand') {
-        expected[zoneName] = ['Noble', 'Noble', 'Noble', 'Noble', 'Soldier'].sort()
+        expected[zoneName] = ['Noble', 'Noble', 'Noble', 'Soldier', 'Soldier'].sort()
       }
       else {
         expected[zoneName] = []

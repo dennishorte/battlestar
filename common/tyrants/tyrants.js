@@ -87,6 +87,7 @@ Tyrants.prototype.initializeZones = function() {
   this.initializeMarketZones()
   this.initializePlayerZones()
   this.initializeTokenZones()
+  this.state.zones.devoured = new Zone(this, 'devoured', 'public')
 }
 
 Tyrants.prototype.initializePlayers = function() {
@@ -267,6 +268,8 @@ Tyrants.prototype.mainLoop = function() {
       }
     })
 
+    this.mLogIndent()
+
     this.preActions()
     this.doActions()
     this.endOfTurn()
@@ -274,6 +277,8 @@ Tyrants.prototype.mainLoop = function() {
 
     this.drawHand()
     this.nextPlayer()
+
+    this.mLogOutdent()
   }
 }
 
@@ -283,8 +288,6 @@ Tyrants.prototype.preActions = function() {
 
 Tyrants.prototype.doActions = function() {
   const player = this.getPlayerCurrent()
-
-  this.mLogIndent()
 
   while (true) {
     const chosenAction = this.requestInputSingle({
@@ -325,8 +328,6 @@ Tyrants.prototype.doActions = function() {
       throw new Error(`Unknown action: ${name}`)
     }
   }
-
-  this.mLogOutdent()
 }
 
 Tyrants.prototype._generateActionChoices = function() {
@@ -441,13 +442,17 @@ Tyrants.prototype.endOfTurn = function() {
 
 Tyrants.prototype.cleanup = function() {
   const player = this.getPlayerCurrent()
+  const playedCards = this.getCardsByZone(player, 'played')
 
   this.mLog({
-    template: '{player} moves played cards to discard pile.',
-    args: { player }
+    template: '{player} moves {count} played cards to discard pile.',
+    args: {
+      player,
+      count: playedCards.length
+    }
   })
 
-  for (const card of this.getCardsByZone(player, 'played')) {
+  for (const card of playedCards) {
     this.mMoveCardTo(card, this.getZoneByPlayer(player, 'discard'))
   }
 
@@ -468,7 +473,7 @@ Tyrants.prototype.drawHand = function() {
 }
 
 Tyrants.prototype.nextPlayer = function() {
-  this.currentPlayer = this.getPlayerNext()
+  this.state.currentPlayer = this.getPlayerNext()
   this.state.turn += 1
 }
 
@@ -776,8 +781,15 @@ Tyrants.prototype.aDraw = function(player, opts={}) {
 
   if (deck.cards().length === 0) {
     // See if we can reshuffle.
+    const discard = this.getZoneByPlayer(player, 'discard')
+    if (discard.cards().length > 0) {
+      this.mReshuffleDiscard(player)
+    }
+
     // If not, do nothing.
-    throw new Error('Unable to draw from empty deck')
+    else {
+      return 'no-more-cards'
+    }
   }
 
   if (!opts.silent) {
@@ -1065,6 +1077,13 @@ Tyrants.prototype.mMoveByIndices = function(source, sourceIndex, target, targetI
 }
 
 Tyrants.prototype.mMoveCardTo = function(card, zone, opts={}) {
+  if (opts.verbose) {
+    this.mLog({
+      template: 'Moving {card} to {zone}',
+      args: { card, zone }
+    })
+  }
+
   const source = this.getZoneByCard(card)
   const index = source.cards().indexOf(card)
   this.mMoveByIndices(source, index, zone, zone.cards().length)
@@ -1073,6 +1092,33 @@ Tyrants.prototype.mMoveCardTo = function(card, zone, opts={}) {
 Tyrants.prototype.mPlaceSpy = function(player, loc) {
   const spy = this.getCardsByZone(player, 'spies')[0]
   this.mMoveCardTo(spy, loc)
+}
+
+Tyrants.prototype.mReshuffleDiscard = function(player) {
+  const discard = this.getZoneByPlayer(player, 'discard')
+  const deck = this.getZoneByPlayer(player, 'deck')
+
+  util.assert(discard.cards().length > 0, 'Cannot reshuffle empty discard.')
+  util.assert(deck.cards().length === 0, 'Cannot reshuffle discard when deck is not empty.')
+
+  this.mLog({
+    template: '{player} shuffles their discard into their deck',
+    args: { player }
+  })
+  this.mLogIndent()
+  this.mLog({
+    template: '{count} cards reshuffled',
+    args: {
+      count: discard.cards().length
+    }
+  })
+  this.mLogOutdent()
+
+  for (const card of discard.cards()) {
+    this.mMoveCardTo(card, deck)
+  }
+
+  this.mShuffle(deck)
 }
 
 Tyrants.prototype.mReturn = function(item) {
@@ -1084,14 +1130,48 @@ Tyrants.prototype.mShuffle = function(zone) {
 }
 
 Tyrants.prototype.mRefillHand = function(player) {
-  const zone = this.getZoneByPlayer(player, 'hand')
-  while (zone.cards().length < 5) {
-    this.aDraw(player, { silent: true })
-  }
+  const deck = this.getZoneByPlayer(player, 'deck')
+  const hand = this.getZoneByPlayer(player, 'hand')
+
   this.mLog({
     template: '{player} refills their hand',
     args: { player }
   })
+  this.mLogIndent()
+
+  const drawnAfterShuffle = Math.min(
+    Math.max(0, 5 - deck.cards().length),  // Number of cards left to draw after reshuffling
+    this.getCardsByZone(player, 'discard').length  // Number of cards in discard pile
+  )
+
+  if (deck.cards().length < 5) {
+    this.mLog({
+      template: '{player} draws the remaining {count} cards from deck',
+      args: {
+        player,
+        count: deck.cards().length
+      }
+    })
+  }
+
+  while (hand.cards().length < 5) {
+    const drawResult = this.aDraw(player, { silent: true })
+    if (drawResult === 'no-more-cards') {
+      break
+    }
+  }
+
+  if (drawnAfterShuffle) {
+    this.mLog({
+      template: '{player} draws an additional {count} cards',
+      args: {
+        player,
+        count: drawnAfterShuffle
+      }
+    })
+  }
+
+  this.mLogOutdent()
 }
 
 Tyrants.prototype.mRefillMarket = function() {
