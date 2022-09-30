@@ -145,6 +145,10 @@ TestUtil.gameFixture = function(options) {
           }
         }
 
+        if (playerSetup.trophyHall) {
+          TestUtil.setTroops(game, game.getZoneByPlayer(player, 'trophyHall'), playerSetup.trophyHall)
+        }
+
         if (playerSetup.power) {
           player.power = playerSetup.power
         }
@@ -185,24 +189,31 @@ TestUtil.gameFixture = function(options) {
   return game
 }
 
+/*
+   locName: Either a string matching the name of a location, or a Zone.
+ */
 TestUtil.setTroops = function(game, locName, playerNames) {
   game.testSetBreakpoint('initialization-complete', (game) => {
-    const loc = game.getLocationByName(locName)
-    while (loc.getTroops().length > 0) {
-      const troop = loc.getTroops()[0]
-      const home = troop.owner ? game.getZoneByPlayer(troop.owner, 'troops') : game.getZoneById('neutrals')
-      game.mMoveCardTo(troop, home)
+
+    const zone = locName.name ? locName : game.getLocationByName(locName)
+
+    for (const card in zone.cards()) {
+      if (card.isTroop) {
+
+        const home = card.owner ? game.getZoneByPlayer(card.owner, 'troops') : game.getZoneById('neutrals')
+        game.mMoveCardTo(card, home)
+      }
     }
 
     for (const playerName of playerNames) {
       if (playerName === 'neutral') {
         const tokens = game.getZoneById('neutrals').cards()
-        game.mMoveCardTo(tokens[0], loc)
+        game.mMoveCardTo(tokens[0], zone)
       }
       else {
         const player = game.getPlayerByName(playerName)
         const tokens = game.getCardsByZone(player, 'troops')
-        game.mMoveCardTo(tokens[0], loc)
+        game.mMoveCardTo(tokens[0], zone)
       }
     }
   })
