@@ -52,4 +52,26 @@ describe('Dragons Expansion Cards', () => {
     })
   })
 
+  describe('Red Wyrmling', () => {
+    test('Choose power', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Red Wyrmling'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Red Wyrmling')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['Red Wyrmling'],
+          power: 2,
+          influence: 2,
+        }
+      })
+    })
+  })
+
 })
