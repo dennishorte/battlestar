@@ -243,6 +243,9 @@ Tyrants.prototype.initializeTransientState = function() {
 }
 
 Tyrants.prototype.chooseInitialLocations = function() {
+  this.mLog({ template: 'Choosing starting locations' })
+  this.mLogIndent()
+
   const choices = this
     .getLocationAll()
     .filter(loc => loc.start)
@@ -252,6 +255,8 @@ Tyrants.prototype.chooseInitialLocations = function() {
     const loc = this.aChooseLocation(player, choices, { title: 'Choose starting location' })
     this.aDeploy(player, loc)
   }
+
+  this.mLogOutdent()
 }
 
 
