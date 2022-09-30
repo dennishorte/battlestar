@@ -143,4 +143,25 @@ describe('Dragons Expansion Cards', () => {
     })
   })
 
+  describe('Severin Silrajin', () => {
+    test('power and influence', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Severin Silrajin'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Severin Silrajin')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['Severin Silrajin'],
+          power: 5,
+        }
+      })
+    })
+  })
+
 })
