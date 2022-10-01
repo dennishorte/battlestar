@@ -369,4 +369,36 @@ describe('Dragons Expansion Cards', () => {
     })
   })
 
+  describe('Black Wyrmling', () => {
+    test('+1 influence; assassinate a white troop', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Black Wyrmling'],
+        },
+
+        // Put a non-white troop into play that would be valid if this command weren't white-only
+        'ched-llace a': {
+          troops: ['micah'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Black Wyrmling')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Black Wyrmling'],
+          trophyHall: ['neutral'],
+          influence: 1,
+        },
+        'araum-ched': {
+          troops: [],
+        },
+        'ched-llace a': {
+          troops: ['micah'],
+        }
+      })
+    })
+  })
+
 })
