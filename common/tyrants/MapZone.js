@@ -49,7 +49,37 @@ MapZone.prototype.getController = function() {
 }
 
 MapZone.prototype.getTotalController = function() {
+  // Passageways cannot have total controllers
+  if (this.points === 0) {
+    return null
+  }
 
+  const troops = this.getTroops()
+
+  // All troop spaces must be full.
+  if (troops.length !== this.size) {
+    return null
+  }
+
+  // All troops must belong to the same player.
+  if (troops.length !== util.array.distinct(troops).length) {
+    return null
+  }
+
+  const candidate = troops[0].owner
+
+  // Player is defined (not neutral)
+  if (candidate === undefined) {
+    return null
+  }
+
+  // No enemy spies.
+  if (this.getSpies().every(spy => spy.owner === candidate)) {
+    return candidate
+  }
+  else {
+    return null
+  }
 }
 
 MapZone.prototype.getTokens = function(kind, player) {

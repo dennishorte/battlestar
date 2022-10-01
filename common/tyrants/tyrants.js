@@ -678,8 +678,8 @@ Tyrants.prototype._collectTargets = function(player, opts={}) {
     .map(([loc, spy]) => `${loc.name}, ${spy.getOwnerName()}`)
 
   return {
-    troops: util.array.distinct(troops).sort(),
-    spies: util.array.distinct(spies).sort(),
+    troops: opts.noTroops ? [] : util.array.distinct(troops).sort(),
+    spies: opts.noSpies ? [] : util.array.distinct(spies).sort(),
   }
 }
 
@@ -1063,6 +1063,16 @@ Tyrants.prototype.mCalculatePresence = function(location) {
   location.presence = util.array.distinct(players)
 }
 
+Tyrants.prototype.mCheckZoneLimits = function(zone) {
+  if (zone.kind === 'location') {
+    util.assert(zone.getTroops().length <= zone.size, `Too many troops in ${zone.id}`)
+
+    const spies = zone.getSpies()
+    const uniqueSpies = util.array.distinct(spies.map(spy => spy.owner.name))
+    util.assert(spies.length === uniqueSpies.length, `More than one spy per player at ${zone.id}`)
+  }
+}
+
 Tyrants.prototype.mDeploy = function(player, loc) {
   const troops = this.getCardsByZone(player, 'troops')
   this.mMoveCardTo(troops[0], loc)
@@ -1076,6 +1086,7 @@ Tyrants.prototype.mMoveByIndices = function(source, sourceIndex, target, targetI
   sourceCards.splice(sourceIndex, 1)
   targetCards.splice(targetIndex, 0, card)
   card.zone = target.id
+  this.mCheckZoneLimits(target)
   this.mAdjustCardVisibility(card)
   this.mAdjustPresence(source, target, card)
   return card

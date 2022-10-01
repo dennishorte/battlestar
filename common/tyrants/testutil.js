@@ -146,7 +146,7 @@ TestUtil.gameFixture = function(options) {
         }
 
         if (playerSetup.trophyHall) {
-          TestUtil.setTroops(game, game.getZoneByPlayer(player, 'trophyHall'), playerSetup.trophyHall)
+          TestUtil.setTroops(game, game.getZoneByPlayer(player, 'trophyHall').id, playerSetup.trophyHall)
         }
 
         if (playerSetup.power) {
@@ -165,6 +165,38 @@ TestUtil.gameFixture = function(options) {
       }
 
       game.mLogOutdent()
+    }
+
+    for (const loc of game.getLocationAll()) {
+      if (options[loc.name]) {
+        game.mLog({ template: loc.name })
+        game.mLogIndent()
+
+        const data = options[loc.name]
+        if (data.troops) {
+          game.mLog({
+            template: 'Setting troops at {name} to [{troops}]',
+            args: {
+              name: loc.name,
+              troops: data.troops.join(', ')
+            }
+          })
+          TestUtil.setTroops(game, loc.id, data.troops)
+        }
+
+        if (data.spies) {
+          game.mLog({
+            template: 'Setting troops at {name} to [{spies}]',
+            args: {
+              name: loc.name,
+              spies: data.spies.join(', ')
+            }
+          })
+          TestUtil.setSpies(game, loc.id, data.spies)
+        }
+
+        game.mLogOutdent()
+      }
     }
 
     game.mLogOutdent()
@@ -192,15 +224,14 @@ TestUtil.gameFixture = function(options) {
 /*
    locName: Either a string matching the name of a location, or a Zone.
  */
-TestUtil.setTroops = function(game, locName, playerNames) {
+TestUtil.setTroops = function(game, locId, playerNames) {
   game.testSetBreakpoint('initialization-complete', (game) => {
 
-    const zone = locName.name ? locName : game.getLocationByName(locName)
+    const zone = game.getZoneById(locId)
 
-    for (const card in zone.cards()) {
+    for (const card of zone.cards()) {
       if (card.isTroop) {
-
-        const home = card.owner ? game.getZoneByPlayer(card.owner, 'troops') : game.getZoneById('neutrals')
+        const home = game.getZoneByHome(card)
         game.mMoveCardTo(card, home)
       }
     }
@@ -219,19 +250,27 @@ TestUtil.setTroops = function(game, locName, playerNames) {
   })
 }
 
-TestUtil.setSpies = function(game, locName, playerNames) {
+TestUtil.setSpies = function(game, locId, playerNames) {
   game.testSetBreakpoint('initialization-complete', (game) => {
-    const loc = game.getLocationByName(locName)
 
-    while (loc.getSpies().length > 0) {
-      const spy = loc.getSpies()[0]
-      game.mMoveCardTo(spy, spy.home)
+    const zone = game.getZoneById(locId)
+
+    for (const card of zone.cards()) {
+      if (card.isSpy) {
+        const home = game.getZoneByHome(card)
+        game.mMoveCardTo(card, home)
+      }
+    }
+
+    while (zone.getSpies().length > 0) {
+      const spy = zone.getSpies()[0]
+      game.mMoveCardTo(spy, game.getZoneByHome(spy))
     }
 
     for (const playerName of util.array.distinct(playerNames)) {
       const player = game.getPlayerByName(playerName)
       const tokens = game.getCardsByZone(player, 'spies')
-      game.mMoveCardTo(tokens[0], loc)
+      game.mMoveCardTo(tokens[0], zone)
     }
   })
 }
@@ -298,14 +337,6 @@ TestUtil.testBoard = function(game, expected) {
       this.testLocation(game, location, value)
     }
 
-    else if (key === 'influence') {
-      expect(player.influence).toBe(value)
-    }
-
-    else if (key === 'power') {
-      expect(player.power).toBe(value)
-    }
-
     else {
       throw new Error(`Unhandled test key: ${key}`)
     }
@@ -318,6 +349,12 @@ const tableauZones = [
   'trophyHall',
   'hand',
   'innerCircle',
+]
+
+const numericValues = [
+  'influence',
+  'points',
+  'power',
 ]
 
 TestUtil.testTableau = function(game, player, testState) {
@@ -338,6 +375,11 @@ TestUtil.testTableau = function(game, player, testState) {
     else {
       expected[zoneName] = (testState[zoneName] || []).sort()
     }
+  }
+
+  for (const key of numericValues) {
+    actual[key] = player[key]
+    expected[key] = testState[key] || 0
   }
 
   expect(actual).toStrictEqual(expected)

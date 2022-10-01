@@ -29,6 +29,18 @@ Player.prototype.incrementInfluence = function(count) {
 
 Player.prototype.incrementPoints = function(count) {
   this.points += count
+
+  const sign = count >= 0 ? '+' : '-'
+  this.game.mLog({
+    template: '{player} adjusts points {initial} {sign} {increment} = {final}',
+    args: {
+      player: this,
+      initial: this.points - count,
+      sign,
+      increment: Math.abs(count),
+      final: this.power
+    }
+  })
 }
 
 Player.prototype.incrementPower = function(count) {

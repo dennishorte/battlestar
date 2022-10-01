@@ -144,7 +144,7 @@ describe('Dragons Expansion Cards', () => {
   })
 
   describe('Severin Silrajin', () => {
-    test('power and influence', () => {
+    test('power', () => {
       const game = t.gameFixture({
         dennis: {
           hand: ['Severin Silrajin'],
@@ -160,6 +160,102 @@ describe('Dragons Expansion Cards', () => {
           played: ['Severin Silrajin'],
           power: 5,
         }
+      })
+    })
+  })
+
+  describe('Red Dragon', () => {
+    test('supplant a troop', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Red Dragon'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Red Dragon')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Red Dragon'],
+          trophyHall: ['neutral'],
+        },
+        'araum-ched': {
+          troops: ['dennis'],
+          spies: []
+        }
+      })
+    })
+
+    test('return an enemy spy', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Red Dragon'],
+        },
+        'Araumycos': {
+          spies: ['micah']
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Red Dragon')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Red Dragon'],
+          trophyHall: ['neutral'],
+        },
+        'araum-ched': {
+          troops: ['dennis'],
+          spies: []
+        },
+        'Araumycos': {
+          troops: ['neutral', 'neutral', 'neutral', 'neutral'],
+          spies: []
+        },
+      })
+    })
+
+    test('gain a VP for each site under your total control', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Red Dragon'],
+        },
+        'Araumycos': {
+          spies: ['micah', 'micah']
+        },
+        'Llacerellyn': {
+          troops: ['dennis', 'dennis'],
+        },
+        'Chasmleap Bridge': {
+          troops: ['dennis'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Red Dragon')
+      const request3 = t.choose(game, request2, 'araum-ched, neutral')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Red Dragon'],
+          trophyHall: ['neutral'],
+          points: 2,
+        },
+        'araum-ched': {
+          troops: ['dennis'],
+          spies: []
+        },
+        'Araumycos': {
+          troops: ['neutral', 'neutral', 'neutral', 'neutral'],
+          spies: []
+        },
+        'Chasmleap Bridge': {
+          troops: ['dennis'],
+        },
+        'Llacerellyn': {
+          troops: ['dennis', 'dennis'],
+        },
       })
     })
   })

@@ -413,6 +413,15 @@ Game.prototype._tryToAutomaticallyRespond = function(selectors) {
         title: sel.title,
         selection: [...sel.choices],
       }
+
+      // Rename choices to selection down to one lower level.
+      for (const x of response.selection) {
+        if (x.choices) {
+          x.selection = x.choices
+          delete x.choices
+        }
+      }
+
       return response
     }
   }
