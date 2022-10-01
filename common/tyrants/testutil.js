@@ -337,6 +337,18 @@ TestUtil.testBoard = function(game, expected) {
       this.testLocation(game, location, value)
     }
 
+    else if (key === 'devoured') {
+      const actual = game.getZoneById('devoured').cards().map(c => c.name).sort()
+      const expected = value.sort()
+      expect(actual).toStrictEqual(expected)
+    }
+
+    else if (key === 'market') {
+      const actual = game.getZoneById('devoured').cards().map(c => c.name).sort()
+      const expected = value.sort()
+      expect(actual).toStrictEqual(expected)
+    }
+
     else {
       throw new Error(`Unhandled test key: ${key}`)
     }

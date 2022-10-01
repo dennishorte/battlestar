@@ -542,8 +542,18 @@ Tyrants.prototype.aChooseAndAssassinate = function(player, opts={}) {
   }
 }
 
-Tyrants.prototype.aChooseAndDevourMarket = function(player) {
-
+Tyrants.prototype.aChooseAndDevourMarket = function(player, opts={}) {
+  const chosen = this.aChooseCard(player, this.getZoneById('market').cards(), { min: 0 })
+  if (chosen) {
+    this.mDevour(player, chosen)
+    this.mRefillMarket()
+  }
+  else {
+    this.mLog({
+      template: '{player} choose not to devour a card in the market',
+      args: { player },
+    })
+  }
 }
 
 Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
@@ -769,7 +779,7 @@ Tyrants.prototype.aDeploy = function(player, loc) {
 }
 
 Tyrants.prototype.aDevour = function(player, card) {
-
+  throw new Error('not implemented')
 }
 
 Tyrants.prototype.aDiscard = function(player, card) {
@@ -1078,6 +1088,10 @@ Tyrants.prototype.mDeploy = function(player, loc) {
   this.mMoveCardTo(troops[0], loc)
 }
 
+Tyrants.prototype.mDevour = function(player, card) {
+  this.mMoveCardTo(card, this.getZoneById('devoured'))
+}
+
 Tyrants.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
   util.assert(sourceIndex >= 0 && sourceIndex <= source.cards().length - 1, `Invalid source index ${sourceIndex}`)
   const sourceCards = source._cards
@@ -1194,8 +1208,20 @@ Tyrants.prototype.mRefillMarket = function() {
   const deck = this.getZoneById('marketDeck')
   const market = this.getZoneById('market')
   const count = 6 - market.cards().length
+
   for (let i = 0; i < count; i++) {
-    this.mMoveByIndices(deck, 0, market, market.cards().length)
+    const card = deck.cards()[0]
+
+    if (!card) {
+      throw new Error('No cards in market')
+    }
+
+    this.mLog({
+      template: '{card} added to the market',
+      args: { card }
+    })
+
+    this.mMoveCardTo(card, market)
   }
 }
 
