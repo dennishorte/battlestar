@@ -260,4 +260,58 @@ describe('Dragons Expansion Cards', () => {
     })
   })
 
+  describe('Kobold', () => {
+    test('deploy a troop', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Kobold'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Kobold')
+      const request3 = t.choose(game, request2, 'Deploy a troop')
+      const request4 = t.choose(game, request3, 'ched-llace a')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Kobold'],
+        },
+        'ched-llace a': {
+          troops: ['dennis'],
+        },
+      })
+    })
+
+    test('assassinate a white troop', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Kobold'],
+        },
+
+        // Put a non-white troop into play that would be valid if this command weren't white-only
+        'ched-llace a': {
+          troops: ['micah'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Kobold')
+      const request3 = t.choose(game, request2, 'Assassinate a white troop')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Kobold'],
+          trophyHall: ['neutral'],
+        },
+        'araum-ched': {
+          troops: [],
+        },
+        'ched-llace a': {
+          troops: ['micah'],
+        }
+      })
+    })
+  })
+
 })
