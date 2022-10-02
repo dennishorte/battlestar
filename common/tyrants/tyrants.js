@@ -928,6 +928,20 @@ Tyrants.prototype.getCardsByZone = function(player, name) {
   return this.getZoneByPlayer(player, name).cards()
 }
 
+Tyrants.prototype.getControlMarkers = function(player) {
+  const markers = this
+    .getLocationAll()
+    .map(loc => loc.getControlMarker())
+    .filter(marker => marker !== undefined)
+
+  if (player) {
+    return markers.filter(marker => marker.ownerName === player.name)
+  }
+  else {
+    return markers
+  }
+}
+
 Tyrants.prototype.getExpansionList = function() {
   return this.settings.expansions
 }

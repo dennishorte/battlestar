@@ -44,6 +44,38 @@ MapZone.prototype.checkHasPresence = function(player) {
   return this.presence.includes(player)
 }
 
+MapZone.prototype.getControlMarker = function() {
+  if (this.control.influence === 0) {
+    return undefined
+  }
+
+  const marker = {
+    locName: this.name,
+    influence: 0,
+    points: 0,
+    total: false,
+    ownerName: '',
+  }
+
+  const controller = this.getController()
+  const totaller = this.getTotalController()
+
+  if (totaller) {
+    marker.influence = this.totalControl.influence
+    marker.points = this.totalControl.points
+    marker.total = true
+    marker.ownerName = totaller.name
+  }
+
+  else if (controller) {
+    marker.influence = this.control.influence
+    marker.points = this.control.points
+    marker.ownerName = controller.name
+  }
+
+  return marker
+}
+
 MapZone.prototype.getController = function() {
   // Passageways cannot have total controllers
   if (this.points === 0) {

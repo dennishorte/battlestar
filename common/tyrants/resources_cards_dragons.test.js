@@ -483,10 +483,7 @@ describe('Dragons Expansion Cards', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Black Dragon')
-
-      t.deepLog(request2)
       const request3 = t.choose(game, request2, 'Tsenviilyq, neutral')
-
 
       t.testBoard(game, {
         dennis: {
@@ -704,7 +701,67 @@ describe('Dragons Expansion Cards', () => {
           spies: ['dennis'],
         },
       })
-
     })
   })
+
+  describe('Green Dragon', () => {
+    test("Place a spy, then supplant a troop at that spy's site", () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Green Dragon'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Green Dragon')
+      const request3 = t.choose(game, request2, "Place a spy, then supplant a troop at that spy's site")
+      const request4 = t.choose(game, request3, 'Menzoberranzan')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Green Dragon'],
+          trophyHall: ['neutral'],
+        },
+        'Menzoberranzan': {
+          troops: ['neutral', 'neutral', 'dennis'],
+          spies: ['dennis'],
+        },
+      })
+    })
+
+    test("Return one of your spies > Supplant a troop at that spy's site, then gain 1 VP for each site control marker you have", () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Green Dragon'],
+        },
+        Menzoberranzan: {
+          troops: ['neutral', 'neutral', 'dennis'],
+          spies: ['dennis'],
+        },
+        Tsenviilyq: {
+          troops: ['dennis', 'dennis', 'dennis'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Green Dragon')
+      const request3 = t.choose(game, request2, "Return one of your spies > Supplant a troop at that spy's site, then gain 1 VP for each site control marker you have")
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Green Dragon'],
+          trophyHall: ['neutral'],
+          points: 2,
+        },
+        'Menzoberranzan': {
+          troops: ['neutral', 'dennis', 'dennis'],
+          spies: [],
+        },
+        Tsenviilyq: {
+          troops: ['dennis', 'dennis', 'dennis'],
+        },
+      })
+    })
+  })
+
 })
