@@ -83,7 +83,7 @@ describe('Drow Expansion', () => {
         }
       })
 
-      t.setTroops(game, 'ched-halls a', ['dennis', 'micah'])
+      t.setTroops(game, 'ched-halls a', ['micah'])
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Doppelganger')
@@ -95,7 +95,7 @@ describe('Drow Expansion', () => {
           trophyHall: ['troop-micah'],
         },
         'ched-halls a': {
-          troops: ['dennis', 'dennis']
+          troops: ['dennis']
         },
       })
     })
@@ -109,12 +109,13 @@ describe('Drow Expansion', () => {
         }
       })
 
-      t.setTroops(game, 'ched-halls a', ['neutral', 'micah'])
+      t.setTroops(game, 'ched-halls a', ['micah'])
+      t.setTroops(game, 'ched-llace a', ['micah'])
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Deathblade')
       const request3 = t.choose(game, request2, 'ched-halls a, micah')
-      const request4 = t.choose(game, request3, 'ched-halls a, neutral')
+      const request4 = t.choose(game, request3, 'araum-ched, neutral')
 
       t.testBoard(game, {
         dennis: {
@@ -203,8 +204,8 @@ describe('Drow Expansion', () => {
         }
       })
 
-      t.setTroops(game, 'ched-halls a', ['neutral', 'micah'])
-      t.setTroops(game, 'ched-llace a', ['neutral', 'dennis'])
+      t.setTroops(game, 'ched-halls a', ['neutral'])
+      t.setTroops(game, 'ched-llace a', ['neutral'])
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Underdark Ranger')
@@ -217,10 +218,10 @@ describe('Drow Expansion', () => {
           trophyHall: ['neutral', 'neutral'],
         },
         'ched-halls a': {
-          troops: ['micah']
+          troops: []
         },
         'ched-llace a': {
-          troops: ['dennis']
+          troops: []
         },
       })
     })

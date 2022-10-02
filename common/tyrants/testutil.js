@@ -227,6 +227,10 @@ TestUtil.gameFixture = function(options) {
 TestUtil.setTroops = function(game, locId, playerNames) {
   game.testSetBreakpoint('initialization-complete', (game) => {
 
+    if (!locId.startsWith('map.')) {
+      locId = 'map.' + locId
+    }
+
     const zone = game.getZoneById(locId)
 
     for (const card of zone.cards()) {
@@ -252,6 +256,10 @@ TestUtil.setTroops = function(game, locId, playerNames) {
 
 TestUtil.setSpies = function(game, locId, playerNames) {
   game.testSetBreakpoint('initialization-complete', (game) => {
+
+    if (!locId.startsWith('map.')) {
+      locId = 'map.' + locId
+    }
 
     const zone = game.getZoneById(locId)
 
