@@ -113,6 +113,25 @@ Util.array.toDict = function(array) {
   return dict
 }
 
+Util.array.uniqueMaxBy = function(array, pred) {
+  if (array.length === 0) {
+    return undefined
+  }
+
+  if (array.length === 1) {
+    return array[0]
+  }
+
+  const arrayCopy = [...array].sort((l, r) => pred(r) - pred(l))
+
+  if (pred(array[0]) > pred(array[1])) {
+    return array[0]
+  }
+  else {
+    return undefined
+  }
+}
+
 Util.assert = function(test, message) {
   if (!test) {
     throw new Error(message)

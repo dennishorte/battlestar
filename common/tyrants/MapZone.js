@@ -45,7 +45,29 @@ MapZone.prototype.checkHasPresence = function(player) {
 }
 
 MapZone.prototype.getController = function() {
+  // Passageways cannot have total controllers
+  if (this.points === 0) {
+    return null
+  }
 
+  const troops = this.getTroops()
+
+  // Player with the most troops at the site.
+  const playerMap = {}  // name: PlayerObject
+  const counts = {}  // name: count
+  for (const troop of this.getTroops()) {
+    const owner = troop.owner ? troop.owner.name : 'neutral'
+    playerMap[owner] = troop.owner
+    counts[owner] = (counts[owner] || 0) + 1
+  }
+
+  const mostEntry = util.array.uniqueMaxBy(Object.entries(counts), (entry) => entry[1])
+  if (mostEntry && mostEntry[0] !== 'neutral') {
+    return playerMap[mostEntry[0]]
+  }
+  else {
+    return null
+  }
 }
 
 MapZone.prototype.getTotalController = function() {

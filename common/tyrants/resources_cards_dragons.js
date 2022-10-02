@@ -186,7 +186,14 @@ const cardData = [
         .getLocationAll()
         .filter(loc => loc.getController() === player)
         .length
-      player.incrementPoints(controlledSites)
+      game.mLog({
+        template: '{player} controls {count} sites',
+        args: {
+          player,
+          count: controlledSites
+        }
+      })
+      player.incrementPoints(Math.floor(controlledSites / 2))
     }
   },
   {

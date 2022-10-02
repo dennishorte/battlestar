@@ -401,4 +401,76 @@ describe('Dragons Expansion Cards', () => {
     })
   })
 
+  describe('White Dragon', () => {
+    test('deploy 3 troops; gain influence', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['White Dragon'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.White Dragon')
+      const request3 = t.choose(game, request2, 'ched-llace a')
+      const request4 = t.choose(game, request3, 'Ched Nasad')
+      const request5 = t.choose(game, request4, 'ched-llace b')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['White Dragon'],
+        },
+        'ched-llace a': {
+          troops: ['dennis'],
+        },
+        'ched-llace b': {
+          troops: ['dennis'],
+        },
+        'Ched Nasad': {
+          troops: ['dennis', 'dennis']
+        },
+      })
+    })
+
+    test('gain points', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['White Dragon'],
+        },
+
+        // Sites player controls
+        'Chasmleap Bridge': {
+          troops: ['dennis'],
+        },
+        'Everfire': {
+          troops: ['dennis'],
+        },
+        'Kamaglym': {
+          troops: ['dennis'],
+        },
+        'Llacerellyn': {
+          troops: ['dennis', 'dennis'],
+        },
+
+        // Don't have control, but have some dudes there.
+        'Halls of the Scourged Legion': {
+          troops: ['neutral', 'dennis'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.White Dragon')
+      const request3 = t.choose(game, request2, 'ched-llace a')
+      const request4 = t.choose(game, request3, 'Ched Nasad')
+      const request5 = t.choose(game, request4, 'ched-llace b')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['White Dragon'],
+          points: 2,
+        },
+      })
+    })
+
+  })
+
 })
