@@ -370,7 +370,31 @@ describe('Dragons Expansion Cards', () => {
   })
 
   describe('Black Wyrmling', () => {
-    test('+1 influence; assassinate a white troop', () => {
+    test('+1 influence', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Black Wyrmling'],
+        },
+
+        // Put out another white troop so the influence can be tested
+        'ched-halls a': {
+          troops: ['neutral'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Black Wyrmling')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['Black Wyrmling'],
+          influence: 1,
+        },
+      })
+    })
+
+    test('assassinate a white troop', () => {
       const game = t.gameFixture({
         dennis: {
           hand: ['Black Wyrmling'],
@@ -389,7 +413,6 @@ describe('Dragons Expansion Cards', () => {
         dennis: {
           discard: ['Black Wyrmling'],
           trophyHall: ['neutral'],
-          influence: 1,
         },
         'araum-ched': {
           troops: [],
@@ -783,6 +806,53 @@ describe('Dragons Expansion Cards', () => {
           influence: 2
         },
         devoured: ['Advocate'],
+      })
+    })
+  })
+
+  describe('Cleric of Loagzed', () => {
+    test('Move an enemy troop', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Cleric of Loagzed'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Cleric of Loagzed')
+      const request3 = t.choose(game, request2, '*map.Gracklstugh')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Cleric of Loagzed'],
+        },
+        Gracklstugh: {
+          troops: ['neutral', 'neutral', 'neutral'],
+        },
+        'araum-ched': {
+          troops: []
+        },
+      })
+    })
+
+    test('At end of turn, promote another card played this turn', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Cleric of Loagzed', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Cleric of Loagzed')
+      const request3 = t.choose(game, request2, '*map.Gracklstugh')
+      const request4 = t.choose(game, request3, 'Play Card.House Guard')
+      const request5 = t.choose(game, request4, 'Pass')
+
+      t.testBoard(game, {
+        dennis: {
+          innerCircle: ['House Guard'],
+          discard: ['Cleric of Loagzed'],
+        },
       })
     })
   })

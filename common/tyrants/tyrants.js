@@ -441,8 +441,6 @@ Tyrants.prototype._processEndOfTurnActions = function() {
 
 Tyrants.prototype.endOfTurn = function() {
   this._processEndOfTurnActions()
-
-  // Receive VPs from site control tokens.
 }
 
 Tyrants.prototype.cleanup = function() {
@@ -471,6 +469,10 @@ Tyrants.prototype.cleanup = function() {
       this.mMoveCardTo(card, this.getZoneByPlayer(player, 'discard'))
     }
   }
+
+  // Clear remaining influence and power
+  player.power = 0
+  player.influence = 0
 }
 
 Tyrants.prototype.drawHand = function() {
