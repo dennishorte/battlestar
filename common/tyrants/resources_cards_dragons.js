@@ -419,7 +419,7 @@ const cardData = [
     ],
     impl: (game, player) => {
       player.incrementInfluence(3)
-      game.aChooseAndReturn(player)
+      game.aChooseAndReturn(player, { noWhite: true })
     }
   },
   {

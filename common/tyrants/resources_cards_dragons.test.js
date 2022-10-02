@@ -897,4 +897,50 @@ describe('Dragons Expansion Cards', () => {
       })
     })
   })
+
+  describe('Blue Wyrmling', () => {
+    test('+3 influence', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Blue Wyrmling', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Blue Wyrmling')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Blue Wyrmling'],
+          influence: 3,
+        },
+      })
+    })
+
+    test("Return another player's troop or spy", () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Blue Wyrmling', 'House Guard'],
+        },
+        'ched-llace a': {
+          troops: ['micah'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Blue Wyrmling')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Blue Wyrmling'],
+          influence: 3,
+        },
+        'ched-llace a': {
+          troops: [],
+        },
+      })
+    })
+  })
 })
