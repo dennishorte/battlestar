@@ -473,4 +473,58 @@ describe('Dragons Expansion Cards', () => {
 
   })
 
+  describe('Black Dragon', () => {
+    test('supplant a white troop anywhere on the board', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Black Dragon'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Black Dragon')
+
+      t.deepLog(request2)
+      const request3 = t.choose(game, request2, 'Tsenviilyq, neutral')
+
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Black Dragon'],
+          trophyHall: ['neutral'],
+        },
+        'Tsenviilyq': {
+          troops: ['dennis', 'neutral', 'neutral'],
+          spies: []
+        }
+      })
+    })
+
+    test('Gain 1 VP for every 3 white troops in your trophy hall', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Black Dragon'],
+          trophyHall: ['neutral', 'neutral', 'neutral', 'neutral', 'micah', 'micah', 'micah']
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Black Dragon')
+      const request3 = t.choose(game, request2, 'Tsenviilyq, neutral')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Black Dragon'],
+          trophyHall: ['neutral', 'neutral', 'neutral', 'neutral', 'neutral', 'troop-micah', 'troop-micah', 'troop-micah'],
+          points: 1,
+        },
+        'Tsenviilyq': {
+          troops: ['dennis', 'neutral', 'neutral'],
+          spies: []
+        }
+      })
+    })
+
+  })
+
 })
