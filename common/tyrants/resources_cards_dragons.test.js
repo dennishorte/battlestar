@@ -679,6 +679,32 @@ describe('Dragons Expansion Cards', () => {
         },
       })
     })
+  })
 
+  describe('Rath Modar', () => {
+    test('draw 2 cards; place a spy', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Rath Modar'],
+          deck: ['Black Dragon', 'Red Dragon'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Rath Modar')
+      const request3 = t.choose(game, request2, 'Menzoberranzan')
+
+      t.testBoard(game, {
+        dennis: {
+          played: ['Rath Modar'],
+          hand: ['Black Dragon', 'Red Dragon'],
+        },
+        'Menzoberranzan': {
+          troops: ['neutral', 'neutral', 'neutral'],
+          spies: ['dennis'],
+        },
+      })
+
+    })
   })
 })
