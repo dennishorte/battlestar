@@ -764,4 +764,26 @@ describe('Dragons Expansion Cards', () => {
     })
   })
 
+  describe('Cult Fanatic', () => {
+    test('+2 influence; devour a card in the market', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Cult Fanatic'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Cult Fanatic')
+      const request3 = t.choose(game, request2, 'Advocate')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['Cult Fanatic'],
+          influence: 2
+        },
+        devoured: ['Advocate'],
+      })
+    })
+  })
 })
