@@ -227,7 +227,7 @@ TestUtil.gameFixture = function(options) {
 TestUtil.setTroops = function(game, locId, playerNames) {
   game.testSetBreakpoint('initialization-complete', (game) => {
 
-    if (!locId.startsWith('map.')) {
+    if (!locId.includes('.')) {
       locId = 'map.' + locId
     }
 
@@ -257,7 +257,7 @@ TestUtil.setTroops = function(game, locId, playerNames) {
 TestUtil.setSpies = function(game, locId, playerNames) {
   game.testSetBreakpoint('initialization-complete', (game) => {
 
-    if (!locId.startsWith('map.')) {
+    if (!locId.includes('.')) {
       locId = 'map.' + locId
     }
 
