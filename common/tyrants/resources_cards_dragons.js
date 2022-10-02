@@ -290,6 +290,7 @@ const cardData = [
 
       const anotherPlayer = loc
         .getTroops()
+        .filter(troop => troop.owner !== undefined)
         .filter(troop => game.getPlayerByCard(troop) !== player)
         .length > 0
       if (anotherPlayer) {

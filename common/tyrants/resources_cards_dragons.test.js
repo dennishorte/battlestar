@@ -628,6 +628,57 @@ describe('Dragons Expansion Cards', () => {
         },
       })
     })
+  })
+
+  describe('Green Wyrmling', () => {
+    test('place a spy; no influence', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Green Wyrmling'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Green Wyrmling')
+      const request3 = t.choose(game, request2, 'Menzoberranzan')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Green Wyrmling'],
+        },
+        'Menzoberranzan': {
+          troops: ['neutral', 'neutral', 'neutral'],
+          spies: ['dennis'],
+        },
+      })
+    })
+
+    test('place a spy; gain influence', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Green Wyrmling'],
+        },
+        Menzoberranzan: {
+          troops: ['neutral', 'neutral', 'neutral', 'micah'],
+        },
+      })
+
+            const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Green Wyrmling')
+      const request3 = t.choose(game, request2, 'Menzoberranzan')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['Green Wyrmling'],
+          influence: 2,
+        },
+        'Menzoberranzan': {
+          troops: ['neutral', 'neutral', 'neutral', 'micah'],
+          spies: ['dennis'],
+        },
+      })
+    })
 
   })
 })
