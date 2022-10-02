@@ -856,4 +856,45 @@ describe('Dragons Expansion Cards', () => {
       })
     })
   })
+
+  describe('Wyrmspeaker', () => {
+    test('+1 influence', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Wyrmspeaker', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Wyrmspeaker')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Wyrmspeaker'],
+          influence: 1,
+        },
+      })
+    })
+
+    test('At end of turn, promote another card played this turn', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Wyrmspeaker', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Wyrmspeaker')
+      const request3 = t.choose(game, request2, 'Play Card.House Guard')
+      const request4 = t.choose(game, request3, 'Pass')
+
+      t.testBoard(game, {
+        dennis: {
+          innerCircle: ['House Guard'],
+          discard: ['Wyrmspeaker'],
+        },
+      })
+    })
+  })
 })
