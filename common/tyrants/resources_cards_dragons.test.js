@@ -578,4 +578,56 @@ describe('Dragons Expansion Cards', () => {
     })
   })
 
+  describe('Enchanter of Thay', () => {
+    test('place a spy', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Enchanter of Thay'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Enchanter of Thay')
+      const request3 = t.choose(game, request2, 'Place a spy')
+      const request4 = t.choose(game, request3, 'Menzoberranzan')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Enchanter of Thay'],
+        },
+        'Menzoberranzan': {
+          troops: ['neutral', 'neutral', 'neutral'],
+          spies: ['dennis'],
+        },
+      })
+    })
+
+    test('return one of your spies > +4 power', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Enchanter of Thay'],
+        },
+        Menzoberranzan: {
+          spies: ['dennis'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Enchanter of Thay')
+      const request3 = t.choose(game, request2, "Return one of your spies > +4 power")
+
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['Enchanter of Thay'],
+          power: 4,
+        },
+        'Menzoberranzan': {
+          troops: ['neutral', 'neutral', 'neutral'],
+          spies: [],
+        },
+      })
+    })
+
+  })
 })
