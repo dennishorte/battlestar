@@ -943,4 +943,28 @@ describe('Dragons Expansion Cards', () => {
       })
     })
   })
+
+  describe('Blue Dragon', () => {
+    test('promote and points', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Blue Dragon', 'House Guard', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Blue Dragon')
+      const request3 = t.choose(game, request2, 'Play Card.House Guard')
+      const request4 = t.choose(game, request3, 'Play Card.House Guard')
+      const request5 = t.choose(game, request4, 'Pass')
+
+      t.testBoard(game, {
+        dennis: {
+          innerCircle: ['House Guard', 'House Guard'],
+          discard: ['Blue Dragon'],
+        },
+      })
+
+    })
+  })
 })
