@@ -1121,12 +1121,12 @@ const mapData = [
     "points": 2,
     "start": false,
     "control": {
-      "influence": 0,
+      "influence": 1,
       "points": 0
     },
     "totalControl": {
-      "influence": 0,
-      "points": 0
+      "influence": 1,
+      "points": 1
     },
     "neighbors": [
       "gaunt-jhach"
@@ -1224,12 +1224,12 @@ const mapData = [
     "points": 2,
     "start": false,
     "control": {
-      "influence": 0,
+      "influence": 1,
       "points": 0
     },
     "totalControl": {
-      "influence": 0,
-      "points": 0
+      "influence": 1,
+      "points": 1
     },
     "neighbors": [
       "ch'chi-kama"
@@ -1373,12 +1373,12 @@ const mapData = [
     "points": 5,
     "start": false,
     "control": {
-      "influence": 0,
+      "influence": 1,
       "points": 0
     },
     "totalControl": {
-      "influence": 0,
-      "points": 0
+      "influence": 1,
+      "points": 2
     },
     "neighbors": [
       "chasm-menzo b",
@@ -1416,12 +1416,12 @@ const mapData = [
     "points": 3,
     "start": false,
     "control": {
-      "influence": 0,
+      "influence": 1,
       "points": 0
     },
     "totalControl": {
-      "influence": 0,
-      "points": 0
+      "influence": 1,
+      "points": 3
     },
     "neighbors": [
       "araum-labyr a",
@@ -1459,12 +1459,12 @@ const mapData = [
     "points": 4,
     "start": false,
     "control": {
-      "influence": 0,
+      "influence": 1,
       "points": 0
     },
     "totalControl": {
-      "influence": 0,
-      "points": 0
+      "influence": 1,
+      "points": 1
     },
     "neighbors": [
       "llace-tsen"
@@ -1589,12 +1589,12 @@ const mapData = [
     "points": 2,
     "start": false,
     "control": {
-      "influence": 0,
+      "influence": 1,
       "points": 0
     },
     "totalControl": {
-      "influence": 0,
-      "points": 0
+      "influence": 1,
+      "points": 1
     },
     "neighbors": [
       "phaer-yath",
@@ -1652,12 +1652,12 @@ const mapData = [
     "points": 2,
     "start": false,
     "control": {
-      "influence": 0,
+      "influence": 1,
       "points": 0
     },
     "totalControl": {
-      "influence": 0,
-      "points": 0
+      "influence": 1,
+      "points": 1
     },
     "neighbors": [
       "llace-ss'zur b"
