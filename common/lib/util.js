@@ -124,8 +124,8 @@ Util.array.uniqueMaxBy = function(array, pred) {
 
   const arrayCopy = [...array].sort((l, r) => pred(r) - pred(l))
 
-  if (pred(array[0]) > pred(array[1])) {
-    return array[0]
+  if (pred(arrayCopy[0]) > pred(arrayCopy[1])) {
+    return arrayCopy[0]
   }
   else {
     return undefined
