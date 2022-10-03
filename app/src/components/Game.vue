@@ -1,14 +1,8 @@
 <template>
   <div class="game">
 
-    <Battlestar
-      v-if="game === 'Battlestar Galactica'"
-      :data="gameData"
-      :actor="actor"
-    />
-
     <Innovation
-      v-else-if="game === 'Innovation'"
+      v-if="game === 'Innovation'"
       :data="gameData"
       :actor="actor"
     />
@@ -23,14 +17,12 @@
 
 <script>
 import axios from 'axios'
-import Battlestar from '@/modules/games/battlestar/components/Battlestar'
 import Innovation from '@/modules/games/inn/components/Innovation'
 
 export default {
   name: 'Game',
 
   components: {
-    Battlestar,
     Innovation,
   },
 
@@ -55,11 +47,7 @@ export default {
         const data = requestResult.data.game
         this.game = data.settings ? data.settings.game : data.game
 
-        if (this.game === 'Battlestar Galactica') {
-          this.$game.setState(requestResult.data.game)
-          this.$game.setActor(this.$store.getters['auth/user'])
-        }
-        else if (this.game === 'Innovation') {
+        if (this.game === 'Innovation') {
           this.gameData = requestResult.data.game
           this.actor = this.$store.getters['auth/user']
         }
