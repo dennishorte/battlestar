@@ -31,7 +31,7 @@
     <b-row>
       <b-col>
         <b-button v-if="lobby.gameLaunched" block variant="primary" @click="goToGame">Go to Game</b-button>
-        <b-button v-else block variant="success" @click="startGame">Start!</b-button>
+        <b-button v-else block variant="success" @click="startGame" :disabled="!ready">Start!</b-button>
       </b-col>
     </b-row>
   </b-container>
@@ -55,6 +55,7 @@ export default {
     LobbyPlayerList,
     LobbySettings,
   },
+
   data() {
     return {
       id: this.$route.params.id,
@@ -64,6 +65,24 @@ export default {
       players: [],
     }
   },
+
+  computed: {
+    ready() {
+      if (this.lobby.game === 'Tyrants of the Underdark') {
+        if (this.lobby.options.expansions.length === 2) {
+          return true
+        }
+        else {
+          return false
+        }
+      }
+
+      else {
+        return true
+      }
+    },
+  },
+
   methods: {
     processRequestResult(res) {
       if (res.data.status === 'error') {

@@ -15,22 +15,22 @@
 
   <div class="game-options mt-2">
 
-    <div v-if="game === 'Battlestar Galactica'">
+    <div v-if="game === 'Innovation'">
       <b-form-checkbox-group
         @change="settingsUpdated"
-        v-model="options.bsg.expansions"
-        :options="other.bsg.expansions"
+        v-model="options.inn.expansions"
+        :options="other.inn.expansions"
         stacked
       >
 
       </b-form-checkbox-group>
     </div>
 
-    <div v-if="game === 'Innovation'">
+    <div v-if="game === 'Tyrants of the Underdark'">
       <b-form-checkbox-group
         @change="settingsUpdated"
-        v-model="options.inn.expansions"
-        :options="other.inn.expansions"
+        v-model="options.tyr.expansions"
+        :options="other.tyr.expansions"
         stacked
       >
 
@@ -58,37 +58,12 @@ export default {
   data() {
     return {
       gameNames: [
-        // 'Battlestar Galactica',
         'Innovation',
+        'Tyrants of the Underdark',
       ],
       game: this.gameIn,
 
       other: {
-        bsg: {
-          expansions: [
-            {
-              text: 'Base Game',
-              value: 'base game',
-              disabled: true,
-            },
-            {
-              text: 'Pegasus',
-              value: 'pegasus',
-              disabled: true,
-            },
-            {
-              text: 'Exodus',
-              value: 'exodus',
-              disabled: true,
-            },
-            {
-              text: 'Daybreak',
-              value: 'daybreak',
-              disabled: true,
-            },
-          ],
-        },
-
         inn: {
           expansions: [
             {
@@ -117,15 +92,30 @@ export default {
               disabled: false,
             }
           ],
-        }
+        },
+
+        tyr: {
+          expansions: [
+            {
+              text: 'Dragons',
+              value: 'dragons',
+              disabled: false
+            },
+            {
+              text: 'Drow',
+              value: 'drow',
+              disabled: false
+            },
+          ],
+        },
       },
 
       options: {
-        bsg: {
-          expansions: ['base game'],
-        },
         inn: {
           expansions: ['base'],
+        },
+        tyr: {
+          expansions: []
         },
       },
     }
@@ -138,11 +128,11 @@ export default {
 
     optionsIn: {
       handler: function() {
-        if (this.game === 'Battlestar Galactica') {
-          this.options.bsg = util.deepcopy(this.optionsIn)
-        }
-        else if (this.game === 'Innovation') {
+        if (this.game === 'Innovation') {
           this.options.inn = util.deepcopy(this.optionsIn)
+        }
+        else if (this.game === 'Tyrants of the Underdark') {
+          this.options.tyr = util.deepcopy(this.optionsIn)
         }
       },
       deep: true,
@@ -150,12 +140,8 @@ export default {
   },
 
   methods: {
-    /* save() {
-     *   this.$emit('settings-save')
-     * },
-     */
     settingsUpdated() {
-      const options = this.game === 'Innovation' ? this.options.inn : this.options.bsg
+      const options = this.game === 'Innovation' ? this.options.inn : this.options.tyr
       this.$emit('settings-updated', {
         game: this.game,
         options,
