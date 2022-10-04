@@ -149,12 +149,60 @@ describe('Innovation', () => {
     })
   })
 
-  describe('achievement victory', () => {
+  describe.skip('achievement victory', () => {
     test('check after each step of each action', () => {
 
     })
 
     test('list of player achievements includes special ones', () => {
+
+    })
+  })
+
+  describe('high draw victory', () => {
+    test('most points wins', () => {
+      const game = t.fixtureFirstPlayer()
+      t.setBoard(game,  {
+        dennis: {
+          blue: ['Mathematics'],
+          hand: ['Software'],
+          score: ['Navigation'],
+        },
+        micah: {
+          score: ['Sailing'],
+          achievements: ['Agriculture'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Dogma.Mathematics')
+      const request3 = t.choose(game, request2, 'Software')
+
+      t.testGameOver(request3, 'dennis', 'high draw')
+    })
+
+    test('number of achievements is tie breaker', () => {
+      const game = t.fixtureFirstPlayer()
+      t.setBoard(game,  {
+        dennis: {
+          blue: ['Mathematics'],
+          hand: ['Software'],
+          score: ['Metalworking'],
+        },
+        micah: {
+          score: ['Sailing'],
+          achievements: ['Agriculture'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Dogma.Mathematics')
+      const request3 = t.choose(game, request2, 'Software')
+
+      t.testGameOver(request3, 'micah', 'high draw - tie breaker')
+    })
+
+    test.skip('draws are handled smoothly', () => {
 
     })
   })
@@ -875,6 +923,18 @@ describe('Innovation', () => {
 
       test('draw an 11 ends the game', () => {
         const game = t.fixtureFirstPlayer()
+        t.setBoard(game,  {
+          dennis: {
+            blue: ['Mathematics'],
+            hand: ['Software'],
+            score: ['Navigation'],
+          },
+          micah: {
+            score: ['Sailing'],
+            achievements: ['Agriculture'],
+          },
+        })
+
         game.run()
         const trigger = () => {
           game.mDraw(game.getPlayerByName('dennis'), 'base', 11)

@@ -2537,11 +2537,29 @@ Innovation.prototype.mDraw = function(player, exp, age, opts={}) {
   if (age > 10) {
     const scores = this
       .getPlayerAll()
-      .map(player => ({ player, score: this.getScore(player) }))
-      .sort((l, r) => r.score - l.score)
+      .map(player => ({
+        player,
+        score: this.getScore(player),
+        achs: this.getAchievementsByPlayer(player).total,
+      }))
+      .sort((l, r) => {
+        if (r.score !== l.score) {
+          r.reason = 'high draw'
+          l.reason = 'high draw'
+          return r.score - l.score
+        }
+        else if (r.achs !== l.achs) {
+          r.reason = 'high draw - tie breaker'
+          l.reason = 'high draw - tie breaker'
+          return r.achs - l.achs
+        }
+        else {
+          throw new Error('Draws are not handled yet')
+        }
+      })
 
     throw new GameOverEvent({
-      reason: 'high draw',
+      reason: scores[0].reason,
       player: scores[0].player,
     })
   }
