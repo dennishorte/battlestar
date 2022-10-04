@@ -17,6 +17,7 @@ module.exports = {
   Tyrants,
   TyrantsFactory,
   factory: factoryFromLobby,
+  res,
 }
 
 
@@ -37,6 +38,7 @@ function factoryFromLobby(lobby) {
     game: 'Tyrants of the Underdark',
     name: lobby.name,
     expansions: lobby.options.expansions,
+    map: lobby.options.map,
     players: lobby.users,
     seed: lobby.seed,
   })

@@ -7,6 +7,12 @@
       :actor="actor"
     />
 
+    <Tyrants
+      v-else-if="game === 'Tyrants of the Underdark'"
+      :data="gameData"
+      :actor="actor"
+    />
+
     <div v-else>
       Loading...
       ...or maybe unknown game '{{ this.game }}'
@@ -18,12 +24,14 @@
 <script>
 import axios from 'axios'
 import Innovation from '@/modules/games/inn/components/Innovation'
+import Tyrants from '@/modules/games/tyrants/components/Tyrants'
 
 export default {
   name: 'Game',
 
   components: {
     Innovation,
+    Tyrants,
   },
 
   data() {
@@ -46,14 +54,8 @@ export default {
       if (requestResult.data.status === 'success') {
         const data = requestResult.data.game
         this.game = data.settings ? data.settings.game : data.game
-
-        if (this.game === 'Innovation') {
-          this.gameData = requestResult.data.game
-          this.actor = this.$store.getters['auth/user']
-        }
-        else {
-          throw new Error(`Unknown game: ${this.game}`)
-        }
+        this.gameData = requestResult.data.game
+        this.actor = this.$store.getters['auth/user']
       }
       else {
         alert('Error loading game data')

@@ -27,14 +27,23 @@
     </div>
 
     <div v-if="game === 'Tyrants of the Underdark'">
+      Expansions (choose 2)
       <b-form-checkbox-group
         @change="settingsUpdated"
         v-model="options.tyr.expansions"
         :options="other.tyr.expansions"
         stacked
       >
-
       </b-form-checkbox-group>
+
+      Map
+      <b-form-radio-group
+        @change="settingsUpdated"
+        v-model="options.tyr.map"
+        :options="other.tyr.maps"
+        stacked
+      >
+      </b-form-radio-group>
     </div>
 
   </div>
@@ -107,6 +116,37 @@ export default {
               disabled: false
             },
           ],
+
+          maps: [
+            {
+              text: 'base-2',
+              value: 'base-2',
+              disabled: false,
+              minPlayers: 2,
+              maxPlayers: 2,
+            },
+            {
+              text: 'base-3a',
+              value: 'base-3a',
+              disabled: false,
+              minPlayers: 3,
+              maxPlayers: 3,
+            },
+            {
+              text: 'base-3b',
+              value: 'base-3b',
+              disabled: false,
+              minPlayers: 3,
+              maxPlayers: 3,
+            },
+            {
+              text: 'base-4',
+              value: 'base-4',
+              disabled: false,
+              minPlayers: 4,
+              maxPlayers: 4,
+            },
+          ]
         },
       },
 
@@ -115,7 +155,8 @@ export default {
           expansions: ['base'],
         },
         tyr: {
-          expansions: []
+          expansions: [],
+          map: ''
         },
       },
     }

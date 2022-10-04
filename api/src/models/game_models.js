@@ -14,10 +14,10 @@ module.exports = Game
 
 function _factory(lobby) {
   switch (lobby.game) {
-    case 'Battlestar Galactica':
-      return common.bsg.factory(lobby)
     case 'Innovation':
       return common.inn.factory(lobby)
+    case 'Tyrants of the Underdark':
+      return common.tyr.factory(lobby)
     default:
       throw new Error(`Unknown game: ${lobby.game}`)
   }

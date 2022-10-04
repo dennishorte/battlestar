@@ -69,12 +69,10 @@ export default {
   computed: {
     ready() {
       if (this.lobby.game === 'Tyrants of the Underdark') {
-        if (this.lobby.options.expansions.length === 2) {
-          return true
-        }
-        else {
-          return false
-        }
+        const correctNumberOfExpansions = this.lobby.options.expansions.length === 2
+        const correctNumberOfPlayers = this.lobby.options.map.includes(this.players.length)
+
+        return correctNumberOfExpansions && correctNumberOfPlayers
       }
 
       else {

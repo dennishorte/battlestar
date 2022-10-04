@@ -1,0 +1,113 @@
+<template>
+  <div class="tyrants">
+    <b-container fluid>
+      <b-row class="main-row">
+        <b-col class="game-column history-column">
+          <GameMenu />
+        </b-col>
+
+        <b-col class="game-column">
+        </b-col>
+
+      </b-row>
+    </b-container>
+
+    <DebugModal />
+  </div>
+</template>
+
+
+<script>
+import Vue from 'vue'
+
+import { tyr } from 'battlestar-common'
+
+// Primary Components
+import GameMenu from '@/modules/games/common/components/GameMenu'
+
+
+// Modals
+import DebugModal from '@/modules/games/common/components/DebugModal'
+
+export default {
+  name: 'Tyrants',
+
+  components: {
+    GameMenu,
+    DebugModal,
+  },
+
+  props: {
+    data: Object,
+    actor: Object,
+  },
+
+  data() {
+    return {
+      game: new tyr.Tyrants(this.data, this.actor.name),
+      fakeSave: false,
+    }
+  },
+
+  provide() {
+    return {
+      actor: this.actor,
+      game: this.game,
+    }
+  },
+
+  created() {
+    this.game.testMode = true
+
+    Vue.set(this.game, 'ui', {
+      modals: {
+        achievement: {
+          card: '',
+        },
+        cardsViewer: {
+          cards: [],
+          title: '',
+        },
+      },
+    })
+
+    const mChatOrigFunc = this.game.mChat
+    this.game.mChat = async function(...args) {
+      mChatOrigFunc.apply(this.game, args)
+      await this.save()
+    }.bind(this)
+
+    this.game.save = async function() {
+      await this.save()
+    }.bind(this)
+
+    this.game.run()
+  },
+
+  mounted() {
+    document.title = this.game.settings.name || 'Game Center'
+    console.log(this.game)
+  },
+}
+</script>
+
+
+<style scoped>
+.tyrants {
+  width: 100vw;
+  height: calc(100vh - 60px);
+  font-size: .8rem;
+  overflow: scroll;
+}
+
+.game-column {
+  height: calc(100vh - 60px);
+  min-width: 220px;
+  max-width: 400px;
+  overflow: scroll;
+}
+
+.history-column {
+  min-width: 400px;
+}
+</style>

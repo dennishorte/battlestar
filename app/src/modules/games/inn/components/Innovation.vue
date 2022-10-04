@@ -35,11 +35,12 @@ import Vue from 'vue'
 
 import { inn } from 'battlestar-common'
 
+import GameMenu from '@/modules/games/common/components/GameMenu'
+
 import Achievements from './Achievements'
 import Biscuits from './Biscuits'
 import ChatInput from './ChatInput'
 import Decks from './Decks'
-import GameMenu from './GameMenu'
 import History from './History'
 import PlayerTableau from './PlayerTableau'
 import WaitingPanel from './WaitingPanel'
@@ -47,7 +48,7 @@ import WaitingPanel from './WaitingPanel'
 // Modals
 import AchievementModal from './AchievementModal'
 import CardsViewerModal from './CardsViewerModal'
-import DebugModal from './DebugModal'
+import DebugModal from '@/modules/games/common/components/DebugModal'
 
 export default {
   name: 'Innovation',
