@@ -21,6 +21,8 @@ function MapZone(data) {
   this.totalControl = data.totalControl
   this.neighborNames = data.neighbors
 
+  this.ui = data.ui
+
   this.presence = []
 }
 
@@ -42,6 +44,10 @@ MapZone.prototype.checkHasOpenTroopSpace = function() {
 
 MapZone.prototype.checkHasPresence = function(player) {
   return this.presence.includes(player)
+}
+
+MapZone.prototype.checkIsSite = function() {
+  return this.points > 0
 }
 
 MapZone.prototype.getControlMarker = function() {

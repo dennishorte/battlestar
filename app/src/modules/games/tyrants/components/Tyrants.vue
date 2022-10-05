@@ -6,7 +6,8 @@
           <GameMenu />
         </b-col>
 
-        <b-col class="game-column">
+        <b-col class="map-column">
+          <GameMap />
         </b-col>
 
       </b-row>
@@ -23,6 +24,7 @@ import Vue from 'vue'
 import { tyr } from 'battlestar-common'
 
 // Primary Components
+import GameMap from './GameMap'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 
 
@@ -33,6 +35,7 @@ export default {
   name: 'Tyrants',
 
   components: {
+    GameMap,
     GameMenu,
     DebugModal,
   },
@@ -86,7 +89,6 @@ export default {
 
   mounted() {
     document.title = this.game.settings.name || 'Game Center'
-    console.log(this.game)
   },
 }
 </script>
@@ -104,6 +106,13 @@ export default {
   height: calc(100vh - 60px);
   min-width: 220px;
   max-width: 400px;
+  overflow: scroll;
+}
+
+.map-column {
+  height: calc(100vh - 60px);
+  min-width: 220px;
+  max-width: 600px;
   overflow: scroll;
 }
 

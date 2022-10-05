@@ -18,7 +18,11 @@ const mapData = [
     "neighbors": [
       "Araumycos",
       "Chasmleap Bridge"
-    ]
+    ],
+    "ui": {
+      x: 2,
+      y: 3.5,
+    },
   },
   {
     "name": "araum-ched",
@@ -39,7 +43,11 @@ const mapData = [
     "neighbors": [
       "Araumycos",
       "Ched Nasad"
-    ]
+    ],
+    "ui": {
+      x: 2.5,
+      y: 4.25,
+    },
   },
   {
     "name": "araum-erynd",
@@ -60,7 +68,11 @@ const mapData = [
     "neighbors": [
       "Araumycos",
       "Eryndlyn"
-    ]
+    ],
+    "ui": {
+      x: 2,
+      y: 4.5,
+    },
   },
   {
     "name": "araum-labyr a",
@@ -81,7 +93,11 @@ const mapData = [
     "neighbors": [
       "Araumycos",
       "araum-labyr b"
-    ]
+    ],
+    "ui": {
+      x: 1.67,
+      y: 4,
+    },
   },
   {
     "name": "araum-labyr b",
@@ -101,8 +117,12 @@ const mapData = [
     },
     "neighbors": [
       "The Labyrinth",
-      "araum-labyr b"
-    ]
+      "araum-labyr a"
+    ],
+    "ui": {
+      x: 1.33,
+      y: 4,
+    },
   },
   {
     "name": "bling-mant",
@@ -123,7 +143,11 @@ const mapData = [
     "neighbors": [
       "Blingdenstone",
       "Mantol-Derith"
-    ]
+    ],
+    "ui": {
+      x: 1,
+      y: 1.5,
+    },
   },
   {
     "name": "buiyr-jhach",
@@ -249,7 +273,11 @@ const mapData = [
     "neighbors": [
       "Chasmleap Bridge",
       "Everfire"
-    ]
+    ],
+    "ui": {
+      x: 2.5,
+      y: 2.5,
+    },
   },
   {
     "name": "chasm-grack a",
@@ -270,7 +298,11 @@ const mapData = [
     "neighbors": [
       "Chasmleap Bridge",
       "chasm-grack b"
-    ]
+    ],
+    "ui": {
+      x: 1.67,
+      y: 3,
+    },
   },
   {
     "name": "chasm-grack b",
@@ -290,8 +322,12 @@ const mapData = [
     },
     "neighbors": [
       "Gracklstugh",
-      "chasm-grack b"
-    ]
+      "chasm-grack a"
+    ],
+    "ui": {
+      x: 1.33,
+      y: 3,
+    },
   },
   {
     "name": "chasm-menzo a",
@@ -312,7 +348,11 @@ const mapData = [
     "neighbors": [
       "Chasmleap Bridge",
       "chasm-menzo b"
-    ]
+    ],
+    "ui": {
+      x: 2,
+      y: 2.33,
+    },
   },
   {
     "name": "chasm-menzo b",
@@ -332,8 +372,12 @@ const mapData = [
     },
     "neighbors": [
       "Menzoberranzan",
-      "chasm-menzo b"
-    ]
+      "chasm-menzo a"
+    ],
+    "ui": {
+      x: 2,
+      y: 1.67,
+    },
   },
   {
     "name": "chaul-ever",
@@ -396,7 +440,11 @@ const mapData = [
     "neighbors": [
       "Ched Nasad",
       "ched-halls b"
-    ]
+    ],
+    "ui": {
+      x: 3,
+      y: 4,
+    },
   },
   {
     "name": "ched-halls b",
@@ -416,8 +464,12 @@ const mapData = [
     },
     "neighbors": [
       "Halls of the Scoured Legion",
-      "ched-halls b"
-    ]
+      "ched-halls a"
+    ],
+    "ui": {
+      x: 3,
+      y: 3.5,
+    },
   },
   {
     "name": "ched-llace a",
@@ -438,7 +490,11 @@ const mapData = [
     "neighbors": [
       "Ched Nasad",
       "ched-llace b"
-    ]
+    ],
+    "ui": {
+      x: 3,
+      y: 5,
+    },
   },
   {
     "name": "ched-llace b",
@@ -459,7 +515,11 @@ const mapData = [
     "neighbors": [
       "Llacerellyn",
       "ched-llace a"
-    ]
+    ],
+    "ui": {
+      x: 3,
+      y: 5.5,
+    },
   },
   {
     "name": "ched-ruins",
@@ -522,7 +582,11 @@ const mapData = [
     "neighbors": [
       "Eryndlyn",
       "erynd-kama b"
-    ]
+    ],
+    "ui": {
+      x: 1.67,
+      y: 5.33,
+    },
   },
   {
     "name": "erynd-kama b",
@@ -542,8 +606,12 @@ const mapData = [
     },
     "neighbors": [
       "Kamaglym",
-      "erynd-kama b"
-    ]
+      "erynd-kama a"
+    ],
+    "ui": {
+      x: 1.33,
+      y: 5.67,
+    },
   },
   {
     "name": "erynd-llace",
@@ -564,7 +632,11 @@ const mapData = [
     "neighbors": [
       "Eryndlyn",
       "Llacerellyn"
-    ]
+    ],
+    "ui": {
+      x: 2.5,
+      y: 5.5,
+    },
   },
   {
     "name": "ever-halls",
@@ -585,7 +657,11 @@ const mapData = [
     "neighbors": [
       "Everfire",
       "Halls of the Scoured Legion"
-    ]
+    ],
+    "ui": {
+      x: 3,
+      y: 2.5,
+    },
   },
   {
     "name": "ever-menzo a",
@@ -606,7 +682,11 @@ const mapData = [
     "neighbors": [
       "Everfire",
       "ever-menzo b"
-    ]
+    ],
+    "ui": {
+      x: 2.67,
+      y: 1.67,
+    },
   },
   {
     "name": "ever-menzo b",
@@ -626,8 +706,12 @@ const mapData = [
     },
     "neighbors": [
       "Menzoberranzan",
-      "ever-menzo b"
-    ]
+      "ever-menzo a"
+    ],
+    "ui": {
+      x: 2.33,
+      y: 1.33,
+    },
   },
   {
     "name": "gaunt-jhach",
@@ -690,7 +774,11 @@ const mapData = [
     "neighbors": [
       "Gracklstugh",
       "The Labyrinth"
-    ]
+    ],
+    "ui": {
+      x: 1,
+      y: 3.5,
+    },
   },
   {
     "name": "grack-mant",
@@ -711,7 +799,11 @@ const mapData = [
     "neighbors": [
       "Gracklstugh",
       "Mantol-Derith"
-    ]
+    ],
+    "ui": {
+      x: 1,
+      y: 2.5,
+    },
   },
   {
     "name": "halls-yath",
@@ -753,7 +845,11 @@ const mapData = [
     "neighbors": [
       "Kamaglym",
       "Skullport"
-    ]
+    ],
+    "ui": {
+      x: 1,
+      y: 5.5,
+    },
   },
   {
     "name": "kama-tsen a",
@@ -774,7 +870,11 @@ const mapData = [
     "neighbors": [
       "Kamaglym",
       "kama-tsen b"
-    ]
+    ],
+    "ui": {
+      x: 1.33,
+      y: 6,
+    },
   },
   {
     "name": "kama-tsen b",
@@ -794,8 +894,12 @@ const mapData = [
     },
     "neighbors": [
       "Tsenviilyq",
-      "kama-tsen b"
-    ]
+      "kama-tsen a"
+    ],
+    "ui": {
+      x: 1.67,
+      y: 6,
+    },
   },
   {
     "name": "labyr-skull a",
@@ -816,7 +920,11 @@ const mapData = [
     "neighbors": [
       "The Labyrinth",
       "labyr-skull b"
-    ]
+    ],
+    "ui": {
+      x: 1,
+      y: 4.33,
+    },
   },
   {
     "name": "labyr-skull b",
@@ -836,8 +944,12 @@ const mapData = [
     },
     "neighbors": [
       "Skullport",
-      "labyr-skull b"
-    ]
+      "labyr-skull a"
+    ],
+    "ui": {
+      x: 1,
+      y: 4.67,
+    },
   },
   {
     "name": "llace-ss'zur a",
@@ -900,7 +1012,11 @@ const mapData = [
     "neighbors": [
       "Llacerellyn",
       "Tsenviilyq"
-    ]
+    ],
+    "ui": {
+      x: 2.5,
+      y: 6,
+    },
   },
   {
     "name": "mant-menzo a",
@@ -921,7 +1037,11 @@ const mapData = [
     "neighbors": [
       "Mantol-Derith",
       "mant-menzo b"
-    ]
+    ],
+    "ui": {
+      x: 1.25,
+      y: 1.75,
+    },
   },
   {
     "name": "mant-menzo b",
@@ -942,7 +1062,11 @@ const mapData = [
     "neighbors": [
       "mant-menzo a",
       "mant-menzo c"
-    ]
+    ],
+    "ui": {
+      x: 1.5,
+      y: 1.5,
+    },
   },
   {
     "name": "mant-menzo c",
@@ -963,7 +1087,11 @@ const mapData = [
     "neighbors": [
       "Menzoberranzan",
       "mant-menzo b"
-    ]
+    ],
+    "ui": {
+      x: 1.75,
+      y: 1.25,
+    },
   },
   {
     "name": "mant-worm",
@@ -1252,8 +1380,12 @@ const mapData = [
       "points": 0
     },
     "neighbors": [
-      null
-    ]
+      'bling-mant',
+    ],
+    "ui": {
+      x: 1,
+      y: 1,
+    },
   },
   {
     "name": "Mantol-Derith",
@@ -1275,7 +1407,11 @@ const mapData = [
       "mant-worm",
       "grack-mant",
       "mant-menzo a"
-    ]
+    ],
+    "ui": {
+      x: 1,
+      y: 2,
+    },
   },
   {
     "name": "Gracklstugh",
@@ -1297,7 +1433,11 @@ const mapData = [
       "grack-jhach",
       "chasm-grack b",
       "grack-labyr"
-    ]
+    ],
+    "ui": {
+      x: 1,
+      y: 3,
+    },
   },
   {
     "name": "The Labyrinth",
@@ -1319,7 +1459,11 @@ const mapData = [
       "buiyr-labyr",
       "labyr-skull a",
       "araum-labyr b"
-    ]
+    ],
+    "ui": {
+      x: 1,
+      y: 4,
+    },
   },
   {
     "name": "Skullport",
@@ -1340,7 +1484,11 @@ const mapData = [
     "neighbors": [
       "skull-stone a",
       "kama-skull"
-    ]
+    ],
+    "ui": {
+      x: 1,
+      y: 5,
+    },
   },
   {
     "name": "Kamaglym",
@@ -1362,7 +1510,11 @@ const mapData = [
       "kama-skull",
       "erynd-kama b",
       "kama-tsen a"
-    ]
+    ],
+    "ui": {
+      x: 1,
+      y: 6,
+    },
   },
   {
     "name": "Menzoberranzan",
@@ -1383,7 +1535,11 @@ const mapData = [
     "neighbors": [
       "chasm-menzo b",
       "ever-menzo b"
-    ]
+    ],
+    "ui": {
+      x: 2,
+      y: 1,
+    },
   },
   {
     "name": "Chasmleap Bridge",
@@ -1405,7 +1561,11 @@ const mapData = [
       "chasm-grack a",
       "araum-chasm",
       "chasm-ever"
-    ]
+    ],
+    "ui": {
+      x: 2,
+      y: 3,
+    },
   },
   {
     "name": "Araumycos",
@@ -1427,7 +1587,11 @@ const mapData = [
       "araum-labyr a",
       "araum-ched",
       "araum-erynd"
-    ]
+    ],
+    "ui": {
+      x: 2,
+      y: 4,
+    },
   },
   {
     "name": "Eryndlyn",
@@ -1448,7 +1612,11 @@ const mapData = [
     "neighbors": [
       "erynd-kama a",
       "erynd-llace"
-    ]
+    ],
+    "ui": {
+      x: 2,
+      y: 5,
+    },
   },
   {
     "name": "Tsenviilyq",
@@ -1468,7 +1636,11 @@ const mapData = [
     },
     "neighbors": [
       "llace-tsen"
-    ]
+    ],
+    "ui": {
+      x: 2,
+      y: 6,
+    },
   },
   {
     "name": "Everfire",
@@ -1490,7 +1662,11 @@ const mapData = [
       "chasm-ever",
       "chaul-ever",
       "ever-halls"
-    ]
+    ],
+    "ui": {
+      x: 3,
+      y: 2,
+    },
   },
   {
     "name": "Halls of the Scoured Legion",
@@ -1511,7 +1687,11 @@ const mapData = [
     "neighbors": [
       "ched-halls b",
       "halls-yath"
-    ]
+    ],
+    "ui": {
+      x: 3,
+      y: 3,
+    },
   },
   {
     "name": "Ched Nasad",
@@ -1535,7 +1715,11 @@ const mapData = [
       "ched-llace a",
       "ched-yath",
       "ched-ruins"
-    ]
+    ],
+    "ui": {
+      x: 3,
+      y: 4.5,
+    },
   },
   {
     "name": "Llacerellyn",
@@ -1558,7 +1742,11 @@ const mapData = [
       "erynd-llace",
       "llace-tsen",
       "llace-ss'zur a"
-    ]
+    ],
+    "ui": {
+      x: 3,
+      y: 6,
+    },
   },
   {
     "name": "Chaulssin",

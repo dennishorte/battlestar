@@ -7,6 +7,13 @@ Util.array.distinct = function(array) {
   return [...new Set(array)]
 }
 
+Util.array.elementsEqual = function(a, b) {
+  return (
+    a.length === b.length
+    && a.every((elem, index) => elem === b[index])
+  )
+}
+
 Util.array.intersection = function(array1, array2) {
   return array1.filter(x => array2.includes(x))
 }
