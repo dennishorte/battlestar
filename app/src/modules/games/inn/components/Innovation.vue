@@ -36,14 +36,15 @@ import Vue from 'vue'
 import { inn } from 'battlestar-common'
 
 import GameMenu from '@/modules/games/common/components/GameMenu'
+import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
 import Achievements from './Achievements'
 import Biscuits from './Biscuits'
+import CardNameFull from './CardNameFull'
 import ChatInput from './ChatInput'
 import Decks from './Decks'
 import History from './History'
 import PlayerTableau from './PlayerTableau'
-import WaitingPanel from './WaitingPanel'
 
 // Modals
 import AchievementModal from './AchievementModal'
@@ -94,6 +95,7 @@ export default {
     return {
       actor: this.actor,
       game: this.game,
+      ui: this.uiFactory(),
     }
   },
 
@@ -140,6 +142,26 @@ export default {
       const requestResult = await axios.post('/api/game/saveFull', payload)
       this.handleSaveResult(requestResult)
     },
+
+    uiFactory() {
+      const self = this
+
+      return {
+        selectorOptionComponent: function(option) {
+          const name = option.title ? option.title : option
+
+          if (self.game.getCardByName(name, '')) {
+            return {
+              component: CardNameFull,
+              props: { name },
+            }
+          }
+          else {
+            return undefined
+          }
+        },
+      }
+    }
   },
 
   created() {
