@@ -10,7 +10,7 @@ module.exports = {
 }
 
 
-function Game(serialized_data) {
+function Game(serialized_data, viewerName) {
   this._id = serialized_data._id
 
   // State will be reset each time the game is run
@@ -34,9 +34,11 @@ function Game(serialized_data) {
   this.gameOver = false
   this.random = 'uninitialized'
   this.key = 'uninitialized'
+
+  this.viewerName = viewerName
 }
 
-function GameFactory(settings) {
+function GameFactory(settings, viewerName=undefined) {
   settings = Object.assign({
     game: '',
     name: '',
@@ -58,7 +60,7 @@ function GameFactory(settings) {
     settings,
   }
 
-  return new Game(data)
+  return new Game(data, viewerName)
 }
 
 function GameOverEvent(data) {
@@ -279,6 +281,10 @@ Game.prototype.getLogIndent = function(msg) {
     }
   }
   return indent
+}
+
+Game.prototype.getViewerName = function() {
+  return this.viewerName
 }
 
 Game.prototype.mChat = function(player, text) {

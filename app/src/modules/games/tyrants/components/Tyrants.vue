@@ -6,6 +6,10 @@
           <GameMenu />
         </b-col>
 
+        <b-col class="game-column">
+          <WaitingPanel />
+        </b-col>
+
         <b-col class="map-column">
           <GameMap />
         </b-col>
@@ -26,6 +30,7 @@ import { tyr } from 'battlestar-common'
 // Primary Components
 import GameMap from './GameMap'
 import GameMenu from '@/modules/games/common/components/GameMenu'
+import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
 
 // Modals
@@ -37,6 +42,8 @@ export default {
   components: {
     GameMap,
     GameMenu,
+    WaitingPanel,
+
     DebugModal,
   },
 
@@ -56,7 +63,34 @@ export default {
     return {
       actor: this.actor,
       game: this.game,
+      ui: {},
     }
+  },
+
+  methods: {
+    save: async function() {
+      /* if (this.fakeSave) {
+       *   console.log('fake saved (game)')
+       *   return
+       * }
+
+       * await this.saveFull() */
+      console.log('saved')
+    },
+
+    _injectChatMethod() {
+      const mChatOrigFunc = this.game.mChat
+      this.game.mChat = async function(...args) {
+        mChatOrigFunc.apply(this.game, args)
+        await this.save()
+      }.bind(this)
+    },
+
+    _injectSaveMethod() {
+      this.game.save = async function() {
+        await this.save()
+      }.bind(this)
+    },
   },
 
   created() {
@@ -74,16 +108,8 @@ export default {
       },
     })
 
-    const mChatOrigFunc = this.game.mChat
-    this.game.mChat = async function(...args) {
-      mChatOrigFunc.apply(this.game, args)
-      await this.save()
-    }.bind(this)
-
-    this.game.save = async function() {
-      await this.save()
-    }.bind(this)
-
+    this._injectChatMethod()
+    this._injectSaveMethod()
     this.game.run()
   },
 

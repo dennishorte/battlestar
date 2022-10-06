@@ -22,8 +22,7 @@ module.exports = {
 
 
 function Tyrants(serialized_data, viewerName) {
-  Game.call(this, serialized_data)
-  this.viewerName = viewerName
+  Game.call(this, serialized_data, viewerName)
 }
 
 util.inherit(Game, Tyrants)
@@ -248,12 +247,12 @@ Tyrants.prototype.chooseInitialLocations = function() {
   this.mLog({ template: 'Choosing starting locations' })
   this.mLogIndent()
 
-  const choices = this
-    .getLocationAll()
-    .filter(loc => loc.start)
-    .filter(loc => loc.getTroops().filter(t => t.name !== 'neutral').length === 0)
-
   for (const player of this.getPlayerAll()) {
+    const choices = this
+      .getLocationAll()
+      .filter(loc => loc.start)
+      .filter(loc => loc.getTroops().filter(t => t.name !== 'neutral').length === 0)
+
     const loc = this.aChooseLocation(player, choices, { title: 'Choose starting location' })
     this.aDeploy(player, loc)
   }
@@ -992,6 +991,14 @@ Tyrants.prototype.getPlayerNext = function() {
   const currIndex = this.getPlayerAll().indexOf(this.getPlayerCurrent())
   const nextIndex = (currIndex + 1) % this.getPlayerAll().length
   return this.getPlayerAll()[nextIndex]
+}
+
+Tyrants.prototype.getPlayersStarting = function(player) {
+  const players = [...this.getPlayerAll()]
+  while (players[0] !== player) {
+    players.push(players.shift())
+  }
+  return players
 }
 
 Tyrants.prototype.getPresence = function(player) {

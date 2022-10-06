@@ -19,8 +19,7 @@ module.exports = {
 
 
 function Innovation(serialized_data, viewerName) {
-  Game.call(this, serialized_data)
-  this.viewerName = viewerName
+  Game.call(this, serialized_data, viewerName)
 }
 
 util.inherit(Game, Innovation)
@@ -2292,10 +2291,6 @@ Innovation.prototype.getTopCardsAll = function() {
   return this
     .getPlayerAll()
     .flatMap(player => this.getTopCards(player))
-}
-
-Innovation.prototype.getViewerName = function() {
-  return this.viewerName
 }
 
 Innovation.prototype.getVisibleCardsByZone = function(player, zoneName) {
