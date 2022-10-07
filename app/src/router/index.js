@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 import Home from '@/components/Home'
 import Game from '@/components/Game'
+import MapMaker from '@/components/MapMaker'
 
 import adminRoutes from '@/modules/admin/router.js'
 import authRoutes from '@/modules/auth/router.js'
@@ -25,6 +26,11 @@ const router = new Router({
       path: '/game/:id',
       name: 'game',
       component: Game,
+    },
+    {
+      path: '/map',
+      name: 'map',
+      component: MapMaker,
     },
     ...adminRoutes,
     ...authRoutes,
