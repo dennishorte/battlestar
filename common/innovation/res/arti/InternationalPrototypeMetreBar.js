@@ -13,7 +13,8 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Choose a value. Draw and meld a card of that value. Splay up the color of the melded card. If the number of cards of that color visible on your board is exactly equal to the card's value, you win. Otherwise, return the melded card.`
+//    `Choose a value. Draw and meld a card of that value. Splay up the color of the melded card. If the number of cards of that color visible on your board is exactly equal to the card's value, you win. Otherwise, return the melded card.`
+    `Choose a value. Draw and meld a card of that value. Splay up the color of the melded card. If the number of cards of that color visible on your board is exactly equal to the card's value, draw and score a {0}. Otherwise, return the melded card.`
   ]
 
   this.dogmaImpl = [
@@ -23,10 +24,11 @@ function Card() {
       game.aSplay(player, card.color, 'up')
 
       if (game.getCardsByZone(player, card.color).length === card.getAge()) {
-        throw new GameOverEvent({
-          player,
-          reason: this.name
-        })
+        game.aDrawAndScore(player, game.getEffectAge(this, 10))
+        /* throw new GameOverEvent({
+         *   player,
+         *   reason: this.name
+         * }) */
       }
       else {
         game.aReturn(player, card)

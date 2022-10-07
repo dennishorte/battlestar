@@ -42,7 +42,8 @@ describe('International Prototype Metre Bar', () => {
       },
       decks: {
         base: {
-          3: ['Engineering']
+          3: ['Engineering'],
+          10: ['Software'],
         }
       }
     })
@@ -51,6 +52,15 @@ describe('International Prototype Metre Bar', () => {
     const request2 = t.choose(game, request1, 'dogma')
     const request3 = t.choose(game, request2, 3)
 
-    t.testGameOver(request3, 'dennis', 'International Prototype Metre Bar')
+    t.testBoard(game,  {
+      dennis: {
+        red: {
+          cards: ['Engineering', 'Construction', 'Archery'],
+          splay: 'up',
+        },
+        score: ['Software'],
+      },
+    })
+
   })
 })
