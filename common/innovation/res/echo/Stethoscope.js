@@ -21,7 +21,7 @@ function Card() {
       game.aDraw(player, { age: game.getEffectAge(this, 7) })
 
       const melded = game.state.dogmaInfo.stethoscope[player.name]
-      if (melded && melded.color === 'blue') {
+      if (melded && melded.some(card => card.color === 'blue')) {
         game.aDraw(player, { age: game.getEffectAge(this, 8) })
       }
     },
@@ -39,7 +39,11 @@ function Card() {
     if (!game.state.dogmaInfo.stethoscope) {
       game.state.dogmaInfo.stethoscope = {}
     }
-    game.state.dogmaInfo.stethoscope[player.name] = melded[0]
+    if (!game.state.dogmaInfo.stethoscope[player.name]) {
+      game.state.dogmaInfo.stethoscope[player.name] = []
+    }
+
+    game.state.dogmaInfo.stethoscope[player.name].push(melded[0])
   }
   this.inspireImpl = []
   this.karmaImpl = []
