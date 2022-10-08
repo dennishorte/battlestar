@@ -3,13 +3,15 @@ import Router from 'vue-router'
 
 import Home from '@/components/Home'
 import Game from '@/components/Game'
-import MapMaker from '@/components/MapMaker'
 
 import adminRoutes from '@/modules/admin/router.js'
 import authRoutes from '@/modules/auth/router.js'
 import dataRoutes from '@/modules/data/router.js'
 import lobbyRoutes from '@/modules/lobby/router.js'
+import mapmakerRoutes from '@/modules/mapmaker/router.js'
+
 import authUtil from '@/modules/auth/util.js'
+
 
 Vue.use(Router)
 
@@ -27,11 +29,7 @@ const router = new Router({
       name: 'game',
       component: Game,
     },
-    {
-      path: '/map',
-      name: 'map',
-      component: MapMaker,
-    },
+    ...mapmakerRoutes,
     ...adminRoutes,
     ...authRoutes,
     ...dataRoutes,

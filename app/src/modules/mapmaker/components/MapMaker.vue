@@ -176,13 +176,24 @@ export default {
   },
 
   methods: {
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Save and Load
+
+    exportData() {
+      console.log('export')
+    },
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Editors
+
     cssHighlight(code) {
       return highlight(code, languages.json)
     },
     htmlHighlight(code) {
       return highlight(code, languages.json)
     },
-
 
     updateStyleDisplay() {
       this.cssCode = JSON.stringify(this.styles, null, 2)
@@ -192,16 +203,33 @@ export default {
     },
 
 
-    divStyle(div) {
-      const baseStyle = this.styles['.element']
-      const classStyles = div
-        .classes
-        .map(cls => this.styles[cls])
-        .filter(style => style !== undefined)
+    ////////////////////////////////////////////////////////////////////////////////
+    // Other
 
-
-      return Object.assign({}, baseStyle, ...classStyles, div.style)
+    click(event) {
+      if (this.connecting.active) {
+        console.log('click: connecting')
+        this.connect(event)
+      }
+      else {
+        console.log('click: drag')
+        this.startDrag(event)
+      }
     },
+
+    htmlChanged() {
+      try {
+        this.divs = JSON.parse(this.htmlCode)
+        this.htmlError = false
+      }
+      catch (e) {
+        this.htmlError = true
+      }
+    },
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Div rendering
 
 
     add() {
@@ -223,30 +251,17 @@ export default {
       this.updateEditorFromDivs()
     },
 
-    click(event) {
-      if (this.connecting.active) {
-        console.log('click: connecting')
-        this.connect(event)
-      }
-      else {
-        console.log('click: drag')
-        this.startDrag(event)
-      }
+    divStyle(div) {
+      const baseStyle = this.styles['.element']
+      const classStyles = div
+        .classes
+        .map(cls => this.styles[cls])
+        .filter(style => style !== undefined)
+
+
+      return Object.assign({}, baseStyle, ...classStyles, div.style)
     },
 
-    exportData() {
-      console.log('export')
-    },
-
-    htmlChanged() {
-      try {
-        this.divs = JSON.parse(this.htmlCode)
-        this.htmlError = false
-      }
-      catch (e) {
-        this.htmlError = true
-      }
-    },
 
     ////////////////////////////////////////////////////////////////////////////////
     // Connect
@@ -278,12 +293,16 @@ export default {
     connectionD(conn) {
       // M 400 400 C 450 400 400 450 450 450
 
-      const source = document.getElementById(conn.source)
-      const target = document.getElementById(conn.target)
+      /* const source = document.getElementById(conn.source)
+       * const target = document.getElementById(conn.target)
 
-      if (!source) {
-        return
-      }
+       * if (!source) {
+       *   return
+       * }
+       */
+
+      const source = this.divs.find(div => div.id === conn.source)
+      const target = this.divs.find(div => div.id === conn.target)
 
       const s = this.divCenter(source)
       const t = this.divCenter(target)
@@ -292,10 +311,14 @@ export default {
     },
 
     divCenter(div) {
-      const x = div.offsetLeft + Math.floor(div.offsetWidth / 2)
-      const y = div.offsetTop + Math.floor(div.offsetHeight / 2)
+      const x = this.parsePx(div.style.left) + Math.floor(this.parsePx(div.style.width) / 2)
+      const y = this.parsePx(div.style.top) + Math.floor(this.parsePx(div.style.height) / 2)
 
       return { x, y }
+    },
+
+    parsePx(px) {
+      return parseInt(px.substr(0, px.length - 2))
     },
 
 
@@ -382,5 +405,13 @@ export default {
   left: 0;
   height: 100%;
   width: 100%;
+}
+
+svg {
+  pointer-events: none;
+}
+
+svg * {
+  pointer-events: auto;
 }
 </style>
