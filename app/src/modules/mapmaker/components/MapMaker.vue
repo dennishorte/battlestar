@@ -38,6 +38,14 @@
           class="map"
           :style="mapStyle"
         >
+          <svg class="curves" height="800" width="600">
+            <CubicBezier
+              v-for="(curve, index) in elems.curves"
+              :key="index"
+              v-model="elems.curves[index]"
+            />
+          </svg>
+
           <div
             v-for="(div, index) in elems.divs"
             :key="index"
@@ -47,14 +55,6 @@
             @mousemove="drag"
           >
           </div>
-
-          <svg class="curves" height="800" width="600">
-            <CubicBezier
-              v-for="(curve, index) in elems.curves"
-              :key="index"
-              v-model="elems.curves[index]"
-            />
-          </svg>
 
         </div>
 
