@@ -49,6 +49,8 @@ export default {
     }
   },
 
+  inject: ['bus'],
+
   computed: {
     coords() {
       const s = this.value.points.source
@@ -74,6 +76,11 @@ export default {
   methods: {
     clickHandler() {
       this.showHandles = true
+    },
+
+    clearSelection() {
+      this.stopDrag()
+      this.showHandles = false
     },
 
     drag(event) {
@@ -104,6 +111,10 @@ export default {
       this.dragData.target = null
       this.dragData.lastPoint = null
     },
+  },
+
+  created() {
+    this.bus.$on('clear-selection', this.clearSelection)
   },
 }
 </script>

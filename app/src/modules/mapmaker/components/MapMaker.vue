@@ -67,6 +67,8 @@
 
 <script>
 
+import Vue from 'vue'
+
 // import Prism Editor
 import { PrismEditor } from 'vue-prism-editor'
 import 'vue-prism-editor/dist/prismeditor.min.css'
@@ -137,6 +139,8 @@ export default {
 
   data() {
     return {
+      bus: new Vue(),
+
       code: {
         css: '{}',
         html: '[]',
@@ -173,6 +177,12 @@ export default {
       },
 
       nextId: 100,
+    }
+  },
+
+  provide() {
+    return {
+      bus: this.bus,
     }
   },
 
@@ -456,6 +466,17 @@ export default {
       }
     },
 
+  },
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Lifecycle
+
+  created() {
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        this.bus.$emit('clear-selection')
+      }
+    })
   },
 
   mounted() {
