@@ -1,7 +1,13 @@
 const Util = {
   array: {},
+  event: {},
+  point: {},
 }
 module.exports = Util
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Array functions
 
 Util.array.distinct = function(array) {
   return [...new Set(array)]
@@ -138,6 +144,39 @@ Util.array.uniqueMaxBy = function(array, pred) {
     return undefined
   }
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Event Functions
+
+Util.event.offsetPoint = function(event) {
+  return {
+    x: event.offsetX,
+    y: event.offsetY,
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Point Functions
+
+Util.point.add = function(a, b) {
+  return {
+    x: a.x + b.x,
+    y: a.y + b.y
+  }
+}
+
+Util.point.sub = function(a, b) {
+  return {
+    x: a.x - b.x,
+    y: a.y - b.y
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Miscellaneous
 
 Util.assert = function(test, message) {
   if (!test) {

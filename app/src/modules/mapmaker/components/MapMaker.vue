@@ -14,14 +14,19 @@
         <div class="editor-div">
           <PrismEditor
             class="editor"
-            v-model="htmlCode"
+            v-model="code.html"
             :highlight="htmlHighlight"
             @input="htmlChanged"
           />
         </div>
 
         <div class="editor-div">
-          <PrismEditor class="editor" v-model="cssCode" :highlight="cssHighlight" />
+          <PrismEditor
+            class="editor"
+            v-model="code.css"
+            :highlight="cssHighlight"
+            @input="cssChanged"
+          />
         </div>
       </b-col>
 
@@ -34,7 +39,7 @@
           :style="mapStyle"
         >
           <div
-            v-for="(div, index) in divs"
+            v-for="(div, index) in elems.divs"
             :key="index"
             :style="divStyle(div)"
             :id="div.id"
@@ -44,24 +49,11 @@
           </div>
 
           <svg class="curves" height="800" width="600">
-            <path
-              v-for="(conn, index) in connections"
+            <CubicBezier
+              v-for="(curve, index) in elems.curves"
               :key="index"
-              stroke="black"
-              stroke-width="3"
-              fill="none"
-              :d="connectionD(conn)"
+              v-model="elems.curves[index]"
             />
-
-            <path d="M 400 400 C 450 400 400 450 450 450" stroke="blue" stroke-width="3" fill="none" />
-
-            <g stroke="black" stroke-width="3" fill="black">
-              <circle id="pointA" cx="400" cy="400" r="3" />
-              <circle id="pointB" cx="400" cy="450" r="3" />
-              <circle id="pointC" cx="450" cy="400" r="3" />
-              <circle id="pointD" cx="450" cy="450" r="3" />
-            </g>
-
           </svg>
 
         </div>
@@ -76,14 +68,15 @@
 <script>
 
 // import Prism Editor
-import { PrismEditor } from 'vue-prism-editor';
-import 'vue-prism-editor/dist/prismeditor.min.css'; // import the styles somewhere
+import { PrismEditor } from 'vue-prism-editor'
+import 'vue-prism-editor/dist/prismeditor.min.css'
 
 // import highlighting library (you can use any library you want just return html string)
-import { highlight, languages } from 'prismjs/components/prism-core';
-//import 'prismjs/components/prism-css';
-import 'prismjs/components/prism-json';
-import 'prismjs/themes/prism-tomorrow.css'; // import syntax highlighting styles
+import { highlight, languages } from 'prismjs/components/prism-core'
+import 'prismjs/components/prism-json'
+import 'prismjs/themes/prism-tomorrow.css'
+
+import CubicBezier from './CubicBezier'
 
 
 const testNodes = [
@@ -138,21 +131,33 @@ export default {
   name: 'MapMaker',
 
   components: {
+    CubicBezier,
     PrismEditor,
   },
 
   data() {
     return {
-      cssCode: '',
-      htmlCode: '[]',
+      code: {
+        css: '{}',
+        html: '[]',
+      },
 
-      connections: testConnections,
-      divs: testNodes,
-      styles: baseStyle,
+      // Elements
+      elems: {
+        divs: testNodes,
+        curves: [],
+      },
 
-      nextId: 100,
+      // Element relations and styles
+      elemMeta: {
+        curveLinks: testConnections,
+        styles: baseStyle,
+      },
 
-      htmlError: false,
+      errors: {
+        css: false,
+        html: false,
+      },
 
       connecting: {
         active: false,
@@ -166,12 +171,14 @@ export default {
         top: null,
         left: null,
       },
+
+      nextId: 100,
     }
   },
 
   computed: {
     mapStyle() {
-      return this.styles['.map']
+      return this.elemMeta.styles['.map'] || {}
     },
   },
 
@@ -195,35 +202,51 @@ export default {
       return highlight(code, languages.json)
     },
 
-    updateStyleDisplay() {
-      this.cssCode = JSON.stringify(this.styles, null, 2)
+    updateCssEditorFromData() {
+      this.code.css = JSON.stringify(this.elemMeta.styles, null, 2)
     },
-    updateEditorFromDivs() {
-      this.htmlCode = JSON.stringify(this.divs, null, 2)
+    updateDivEditorFromData() {
+      this.code.html = JSON.stringify(this.elems.divs, null, 2)
+    },
+
+    cssChanged() {
+      try {
+        console.log('CSS Changed')
+        this.errors.css = false
+      }
+      catch (e) {
+        this.errors.css = true
+      }
+    },
+
+    htmlChanged() {
+      try {
+        this.elems.divs = JSON.parse(this.code.html)
+        this.elems.curves = this.updateCurves()
+        this.errors.html = false
+      }
+      catch (e) {
+        this.errors.html = true
+      }
     },
 
 
     ////////////////////////////////////////////////////////////////////////////////
     // Other
 
-    click(event) {
-      if (this.connecting.active) {
-        console.log('click: connecting')
-        this.connect(event)
-      }
-      else {
-        console.log('click: drag')
-        this.startDrag(event)
+    addPoints(a, b) {
+      return {
+        x: a.x + b.x,
+        y: a.y + b.y,
       }
     },
 
-    htmlChanged() {
-      try {
-        this.divs = JSON.parse(this.htmlCode)
-        this.htmlError = false
+    click(event) {
+      if (this.connecting.active) {
+        this.connect(event)
       }
-      catch (e) {
-        this.htmlError = true
+      else {
+        this.startDrag(event)
       }
     },
 
@@ -236,7 +259,7 @@ export default {
       const id = 'node' + this.nextId
       this.nextId += 1
 
-      this.divs.push({
+      this.elems.divs.push({
         id,
         classes: ['element'],
         style: {
@@ -248,18 +271,23 @@ export default {
         }
       })
 
-      this.updateEditorFromDivs()
+      this.updateDivEditorFromData()
     },
 
     divStyle(div) {
-      const baseStyle = this.styles['.element']
+      const baseStyle = this.elemMeta.styles['.element'] || {}
       const classStyles = div
         .classes
-        .map(cls => this.styles[cls])
+        .map(cls => this.elemMeta.styles[cls])
         .filter(style => style !== undefined)
 
 
       return Object.assign({}, baseStyle, ...classStyles, div.style)
+    },
+
+    updateDivFromElem(div, elem) {
+      div.style.top = elem.offsetTop + 'px'
+      div.style.left = elem.offsetLeft + 'px'
     },
 
 
@@ -268,12 +296,16 @@ export default {
 
     connect(event) {
       if (this.connecting.first) {
-        this.connections.push({
+        const link = {
           source: this.connecting.first.id(),
           target: event.target.id(),
-        })
+        }
+        this.elemMeta.curveLinks.push(link)
+
         this.connecting.active = false
         this.connecting.first = null
+
+        this.updateCurves()
       }
       else {
         this.connecting.first = event.target
@@ -290,24 +322,85 @@ export default {
       }
     },
 
-    connectionD(conn) {
-      // M 400 400 C 450 400 400 450 450 450
+    newCurve(link) {
+      return {
+        ids: {
+          source: link.source,
+          target: link.target,
+        },
+        points: {
+          source: { x: 0, y: 0 },
+          target: { x: 100, y: 100 },
+          sourceHandle: { x: 100, y: 0 },
+          targetHandle: { x: 0, y: 100 },
+        },
+      }
+    },
 
-      /* const source = document.getElementById(conn.source)
-       * const target = document.getElementById(conn.target)
+    updateCurves() {
+      for (const link of this.elemMeta.curveLinks) {
+        let curve = this.elems.curves.find(c => (
+          c.ids.source === link.source
+          && c.ids.target === link.target
+        ))
+        if (!curve) {
+          curve = this.newCurve(link)
+          this.elems.curves.push(curve)
+        }
 
-       * if (!source) {
-       *   return
-       * }
-       */
+        const sourceHandleOffset = {
+          x: curve.points.sourceHandle.x - curve.points.source.x,
+          y: curve.points.sourceHandle.y - curve.points.source.y,
+        }
+        const targetHandleOffset = {
+          x: curve.points.targetHandle.x - curve.points.target.x,
+          y: curve.points.targetHandle.y - curve.points.target.y,
+        }
 
-      const source = this.divs.find(div => div.id === conn.source)
-      const target = this.divs.find(div => div.id === conn.target)
+        const newSourcePoint = this.sourceCoords(link)
+        const newTargetPoint = this.targetCoords(link)
 
-      const s = this.divCenter(source)
-      const t = this.divCenter(target)
+        curve.points.source = newSourcePoint
+        curve.points.target = newTargetPoint
+        curve.points.sourceHandle = this.addPoints(curve.points.source, sourceHandleOffset)
+        curve.points.targetHandle = this.addPoints(curve.points.target, targetHandleOffset)
 
-      return `M ${s.x} ${s.y} C ${s.x + 100} ${s.y} ${t.x} ${t.y - 100} ${t.x} ${t.y}`
+        curve.points.sourceHandle.moveable = true
+        curve.points.targetHandle.moveable = true
+      }
+    },
+
+    connectionPoints(link) {
+      return {
+        sourceId: link.souce,
+        targetId: link.target,
+        source: this.sourceCoords(link),
+        target: this.targetCoords(link),
+        sourceHandle: this.sourceHandleCoords(link),
+        targetHandle: this.targetHandleCoords(link),
+      }
+    },
+
+    sourceCoords(link) {
+      const source = this.elems.divs.find(div => div.id === link.source)
+      return this.divCenter(source)
+    },
+
+    targetCoords(link) {
+      const target = this.elems.divs.find(div => div.id === link.target)
+      return this.divCenter(target)
+    },
+
+    sourceHandleCoords(link) {
+      const coords = this.sourceCoords(link)
+      coords.x += 100
+      return coords
+    },
+
+    targetHandleCoords(link) {
+      const coords = this.targetCoords(link)
+      coords.x -= 100
+      return coords
     },
 
     divCenter(div) {
@@ -336,11 +429,10 @@ export default {
         this.dragging.elem.style.top = newTop
         this.dragging.elem.style.left = newLeft
 
-        const div = this.divs.find(div => div.id === this.dragging.elem.id)
-        div.style.top = newTop
-        div.style.left = newLeft
-
-        this.updateEditorFromDivs()
+        const div = this.elems.divs.find(div => div.id === this.dragging.elem.id)
+        this.updateDivFromElem(div, this.dragging.elem)
+        this.updateDivEditorFromData()
+        this.updateCurves()
       }
     },
 
@@ -367,8 +459,9 @@ export default {
   },
 
   mounted() {
-    this.updateEditorFromDivs()
-    this.updateStyleDisplay()
+    this.updateDivEditorFromData()
+    this.updateCssEditorFromData()
+    this.updateCurves()
   },
 }
 </script>
