@@ -47,9 +47,9 @@
           </svg>
 
           <div
-            v-for="(div, index) in elems.divs"
+            v-for="(div, index) in styledDivs"
             :key="index"
-            :style="divStyle(div)"
+            :style="div.renderStyle"
             :id="div.id"
             @mousedown="click"
             @mousemove="drag"
@@ -68,6 +68,8 @@
 <script>
 
 import Vue from 'vue'
+
+import { util } from 'battlestar-common'
 
 // import Prism Editor
 import { PrismEditor } from 'vue-prism-editor'
@@ -190,6 +192,27 @@ export default {
     mapStyle() {
       return this.elemMeta.styles['.map'] || {}
     },
+
+    styledDivs() {
+      const output = this
+        .elems
+        .divs
+        .map(div => {
+          const copy = util.deepcopy(div)
+
+          const baseStyle = this.elemMeta.styles['.element'] || {}
+          const classStyles = div
+            .classes
+            .map(cls => this.elemMeta.styles[cls])
+            .filter(style => style !== undefined)
+
+          copy.renderStyle = Object.assign({}, baseStyle, ...classStyles, div.style)
+
+          return copy
+        })
+
+      return output
+    },
   },
 
   methods: {
@@ -221,7 +244,7 @@ export default {
 
     cssChanged() {
       try {
-        console.log('CSS Changed')
+        this.elemMeta.styles = JSON.parse(this.code.css)
         this.errors.css = false
       }
       catch (e) {
@@ -282,17 +305,6 @@ export default {
       })
 
       this.updateDivEditorFromData()
-    },
-
-    divStyle(div) {
-      const baseStyle = this.elemMeta.styles['.element'] || {}
-      const classStyles = div
-        .classes
-        .map(cls => this.elemMeta.styles[cls])
-        .filter(style => style !== undefined)
-
-
-      return Object.assign({}, baseStyle, ...classStyles, div.style)
     },
 
     updateDivFromElem(div, elem) {
