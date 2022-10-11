@@ -70,6 +70,7 @@
 import Vue from 'vue'
 
 import { util } from 'battlestar-common'
+import { saveAs } from 'file-saver'
 
 // import Prism Editor
 import { PrismEditor } from 'vue-prism-editor'
@@ -221,7 +222,14 @@ export default {
     // Save and Load
 
     exportData() {
-      console.log('export')
+      const data = JSON.stringify({
+        elems: this.elems,
+        elemMeta: this.elemMeta
+      }, null, 2)
+
+      const blob = new Blob([data], { type: "text/plain;charset=utf-8" })
+
+      saveAs(blob, 'map.json')
     },
 
 
