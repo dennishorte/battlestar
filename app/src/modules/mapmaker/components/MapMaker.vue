@@ -89,45 +89,46 @@ import CubicBezier from './CubicBezier'
 import UploadModal from './UploadModal'
 
 
-const testNodes = [
-  {
-    "id": "node100",
-    "classes": [
-      "element"
-    ],
-    "style": {
-      "background-color": "red",
-      "left": "233px",
-      "top": "29px",
-      "height": "50px",
-      "width": "50px"
-    }
-  },
-  {
-    "id": "node101",
-    "classes": [
-      "element"
-    ],
-    "style": {
-      "background-color": "blue",
-      "left": "150px",
-      "top": "150px",
-      "height": "50px",
-      "width": "50px"
-    }
-  }
-]
+/* const testNodes = [
+ *   {
+ *     "id": "node100",
+ *     "classes": [
+ *       "element"
+ *     ],
+ *     "style": {
+ *       "background-color": "red",
+ *       "left": "233px",
+ *       "top": "29px",
+ *       "height": "50px",
+ *       "width": "50px"
+ *     }
+ *   },
+ *   {
+ *     "id": "node101",
+ *     "classes": [
+ *       "element"
+ *     ],
+ *     "style": {
+ *       "background-color": "blue",
+ *       "left": "150px",
+ *       "top": "150px",
+ *       "height": "50px",
+ *       "width": "50px"
+ *     }
+ *   }
+ * ] */
 
-const testConnections = [
-  {
-    source: 'node100',
-    target: 'node101',
-  }
-]
+/* const testConnections = [
+ *   {
+ *     source: 'node100',
+ *     target: 'node101',
+ *   }
+ * ] */
 
 const baseStyle = {
   '.element': {
     position: 'absolute',
+    'background-color': 'red',
   },
   '.map': {
     position: 'relative',
@@ -157,13 +158,13 @@ export default {
 
       // Elements
       elems: {
-        divs: testNodes,
+        divs: [],
         curves: [],
       },
 
       // Element relations and styles
       elemMeta: {
-        curveLinks: testConnections,
+        curveLinks: [],
         styles: baseStyle,
       },
 
@@ -210,7 +211,7 @@ export default {
           const baseStyle = this.elemMeta.styles['.element'] || {}
           const classStyles = div
             .classes
-            .map(cls => this.elemMeta.styles[cls])
+            .map(cls => this.elemMeta.styles['.' + cls])
             .filter(style => style !== undefined)
 
           copy.renderStyle = Object.assign({}, baseStyle, ...classStyles, div.style)
@@ -336,7 +337,6 @@ export default {
         id,
         classes: ['element'],
         style: {
-          'background-color': 'red',
           left: '20px',
           top: '100px',
           height: '50px',
