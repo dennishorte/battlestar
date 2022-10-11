@@ -8,7 +8,19 @@
             <b-dropdown-divider />
             <b-dropdown-item @click="exportData">export</b-dropdown-item>
           </b-dropdown>
-          <b-button @click="add">add</b-button>
+
+          <b-dropdown text="add" class="menu">
+            <b-dropdown-item @click="add">base</b-dropdown-item>
+
+            <b-dropdown-item
+              v-for="(kind, index) in nodeKinds"
+              :key="index"
+              @click="addKind(kind)"
+            >
+              {{ kind }}
+            </b-dropdown-item>
+          </b-dropdown>
+
           <b-button @click="toggleConnect">connect</b-button>
         </div>
 
@@ -128,6 +140,8 @@ import UploadModal from './UploadModal'
 const baseStyle = {
   '.element': {
     position: 'absolute',
+    height: '50px',
+    width: '50px',
     'background-color': 'red',
   },
   '.map': {
@@ -199,6 +213,20 @@ export default {
   computed: {
     mapStyle() {
       return this.elemMeta.styles['.map'] || {}
+    },
+
+    nodeKinds() {
+      const stylesToId = {}
+      for (const div of this.elems.divs) {
+        const classes = [...div.classes].sort().join(',')
+        if (Object.prototype.hasOwnProperty.call(stylesToId, classes)) {
+          continue
+        }
+        else {
+          stylesToId[classes] = div.id
+        }
+      }
+      return Object.values(stylesToId)
     },
 
     styledDivs() {
@@ -331,20 +359,28 @@ export default {
 
 
     add() {
-      const id = this.makeId()
+      this.makeDiv()
+      this.updateDivEditorFromData()
+    },
 
-      this.elems.divs.push({
-        id,
+    addKind(kind) {
+      const original = this.elems.divs.find(div => div.id === kind)
+      const newDiv = this.makeDiv()
+      newDiv.classes = [...original.classes]
+      this.updateDivEditorFromData()
+    },
+
+    makeDiv() {
+      const div = {
+        id: this.makeId(),
         classes: ['element'],
         style: {
           left: '20px',
           top: '100px',
-          height: '50px',
-          width: '50px',
         }
-      })
-
-      this.updateDivEditorFromData()
+      }
+      this.elems.divs.push(div)
+      return div
     },
 
     updateDivFromElem(div, elem) {
