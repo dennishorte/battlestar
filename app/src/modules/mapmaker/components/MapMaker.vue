@@ -127,7 +127,7 @@ const baseStyle = {
     position: 'relative',
     height: '800px',
     width: '600px',
-    backgroundColor: '#ddd',
+    'background-color': '#ddd',
   },
 }
 
