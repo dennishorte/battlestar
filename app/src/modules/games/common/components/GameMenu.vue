@@ -6,6 +6,8 @@
     <b-dropdown-item @click="undo">undo</b-dropdown-item>
     <b-dropdown-divider />
     <b-dropdown-item @click="debug">debug</b-dropdown-item>
+
+    <slot></slot>
   </b-dropdown>
 </template>
 

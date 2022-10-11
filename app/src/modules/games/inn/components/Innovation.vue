@@ -3,7 +3,11 @@
     <b-container fluid>
       <b-row class="main-row">
         <b-col class="game-column history-column">
-          <GameMenu />
+
+          <GameMenu>
+            <b-dropdown-item @click="openRules">rules</b-dropdown-item>
+          </GameMenu>
+
           <History />
         </b-col>
 
@@ -121,6 +125,10 @@ export default {
           variant: 'danger',
         })
       }
+    },
+
+    openRules() {
+      window.open("https://asmadigames.com/rules/Rulebook_Deluxe_spreads.pdf")
     },
 
     save: async function() {

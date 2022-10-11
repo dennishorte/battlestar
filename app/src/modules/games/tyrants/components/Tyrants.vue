@@ -3,7 +3,9 @@
     <b-container fluid>
       <b-row class="main-row">
         <b-col class="game-column history-column">
-          <GameMenu />
+          <GameMenu>
+            <b-dropdown-item @click="openRules">rules</b-dropdown-item>
+          </GameMenu>
         </b-col>
 
         <b-col class="game-column">
@@ -68,6 +70,10 @@ export default {
   },
 
   methods: {
+    openRules() {
+      window.open("https://media.dnd.wizards.com/TyrantsOfTheUnderdark-Rulebook.pdf")
+    },
+
     save: async function() {
       /* if (this.fakeSave) {
        *   console.log('fake saved (game)')
