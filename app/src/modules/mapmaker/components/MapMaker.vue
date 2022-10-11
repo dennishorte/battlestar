@@ -309,14 +309,28 @@ export default {
       }
     },
 
+    makeId() {
+      while (true) { // eslint-disable-line no-constant-condition
+        const newId = 'node' + this.nextId
+        this.nextId += 1
+
+        const existingIdUser = this.elems.divs.find(div => div.id === newId)
+        if (existingIdUser) {
+          continue
+        }
+        else {
+          return newId
+        }
+      }
+    },
+
 
     ////////////////////////////////////////////////////////////////////////////////
     // Div rendering
 
 
     add() {
-      const id = 'node' + this.nextId
-      this.nextId += 1
+      const id = this.makeId()
 
       this.elems.divs.push({
         id,
