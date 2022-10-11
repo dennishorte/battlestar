@@ -4,6 +4,7 @@
       <b-col class="editors-col">
         <div class="menu">
           <b-dropdown text="menu" class="menu">
+            <b-dropdown-item @click="showLoadModal">load</b-dropdown-item>
             <b-dropdown-divider />
             <b-dropdown-item @click="exportData">export</b-dropdown-item>
           </b-dropdown>
@@ -61,7 +62,10 @@
 
       </b-col>
     </b-row>
+
+    <UploadModal @file-ready="loadData" />
   </b-container>
+
 </template>
 
 
@@ -82,6 +86,7 @@ import 'prismjs/components/prism-json'
 import 'prismjs/themes/prism-tomorrow.css'
 
 import CubicBezier from './CubicBezier'
+import UploadModal from './UploadModal'
 
 
 const testNodes = [
@@ -138,6 +143,7 @@ export default {
   components: {
     CubicBezier,
     PrismEditor,
+    UploadModal,
   },
 
   data() {
@@ -230,6 +236,18 @@ export default {
       const blob = new Blob([data], { type: "text/plain;charset=utf-8" })
 
       saveAs(blob, 'map.json')
+    },
+
+    loadData(text) {
+      const data = JSON.parse(text)
+      this.elems = data.elems
+      this.elemMeta = data.elemMeta
+      this.updateDivEditorFromData()
+      this.updateCssEditorFromData()
+    },
+
+    showLoadModal() {
+      this.$bvModal.show('upload-modal')
     },
 
 
