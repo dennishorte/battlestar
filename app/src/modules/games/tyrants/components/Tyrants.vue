@@ -9,6 +9,7 @@
         </b-col>
 
         <b-col class="game-column">
+          <Market />
           <WaitingPanel />
         </b-col>
 
@@ -30,9 +31,11 @@ import Vue from 'vue'
 import { tyr } from 'battlestar-common'
 
 // Primary Components
-import GameMap from './GameMap'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
+
+import GameMap from './GameMap'
+import Market from './Market'
 
 
 // Modals
@@ -44,6 +47,7 @@ export default {
   components: {
     GameMap,
     GameMenu,
+    Market,
     WaitingPanel,
 
     DebugModal,
