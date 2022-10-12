@@ -6,7 +6,7 @@
 
     <div class="body">
       <div>
-        <div>deck/discard: {{ deckCount }} / {{ discardCount }}</div>
+        <div>de/di: {{ deckCount }} / {{ discardCount }}</div>
         <div>score: {{ score }}</div>
       </div>
 

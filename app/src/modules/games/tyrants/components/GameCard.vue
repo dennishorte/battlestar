@@ -59,7 +59,7 @@ export default {
   padding: 4px;
 
   color: #ddd;
-  background-color: #551873;
+  background-color: #78498c;
 
   border-radius: 3px;
 }
@@ -73,7 +73,7 @@ export default {
 .cost {
   height: 1.7em;
   width: 1.7em;
-  border: 2px solid white;
+  border: 2px solid #ddd;
   border-radius: 50%;
   font-size: .9em;
 }
