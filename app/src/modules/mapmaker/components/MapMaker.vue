@@ -178,7 +178,6 @@ export default {
 
       // Element relations and styles
       elemMeta: {
-        curveLinks: [],
         styles: baseStyle,
       },
 
@@ -394,11 +393,10 @@ export default {
 
     connect(event) {
       if (this.connecting.first) {
-        const link = {
-          source: this.connecting.first.id(),
-          target: event.target.id(),
-        }
-        this.elemMeta.curveLinks.push(link)
+        const sourceId = this.connecting.first.id
+        const targetId = event.target.id
+        const curve = this.newCurve(sourceId, targetId)
+        this.elems.curves.push(curve)
 
         this.connecting.active = false
         this.connecting.first = null
@@ -420,11 +418,11 @@ export default {
       }
     },
 
-    newCurve(link) {
+    newCurve(sourceId, targetId) {
       return {
         ids: {
-          source: link.source,
-          target: link.target,
+          source: sourceId,
+          target: targetId,
         },
         points: {
           source: { x: 0, y: 0 },
@@ -436,16 +434,7 @@ export default {
     },
 
     updateCurves() {
-      for (const link of this.elemMeta.curveLinks) {
-        let curve = this.elems.curves.find(c => (
-          c.ids.source === link.source
-          && c.ids.target === link.target
-        ))
-        if (!curve) {
-          curve = this.newCurve(link)
-          this.elems.curves.push(curve)
-        }
-
+      for (const curve of this.elems.curves) {
         const sourceHandleOffset = {
           x: curve.points.sourceHandle.x - curve.points.source.x,
           y: curve.points.sourceHandle.y - curve.points.source.y,
@@ -455,8 +444,8 @@ export default {
           y: curve.points.targetHandle.y - curve.points.target.y,
         }
 
-        const newSourcePoint = this.sourceCoords(link)
-        const newTargetPoint = this.targetCoords(link)
+        const newSourcePoint = this.curveEndpoint(curve, 'source')
+        const newTargetPoint = this.curveEndpoint(curve, 'target')
 
         curve.points.source = newSourcePoint
         curve.points.target = newTargetPoint
@@ -468,42 +457,17 @@ export default {
       }
     },
 
-    connectionPoints(link) {
-      return {
-        sourceId: link.souce,
-        targetId: link.target,
-        source: this.sourceCoords(link),
-        target: this.targetCoords(link),
-        sourceHandle: this.sourceHandleCoords(link),
-        targetHandle: this.targetHandleCoords(link),
-      }
-    },
-
-    sourceCoords(link) {
-      const source = this.elems.divs.find(div => div.id === link.source)
-      return this.divCenter(source)
-    },
-
-    targetCoords(link) {
-      const target = this.elems.divs.find(div => div.id === link.target)
-      return this.divCenter(target)
-    },
-
-    sourceHandleCoords(link) {
-      const coords = this.sourceCoords(link)
-      coords.x += 100
-      return coords
-    },
-
-    targetHandleCoords(link) {
-      const coords = this.targetCoords(link)
-      coords.x -= 100
-      return coords
+    curveEndpoint(curve, kind) {
+      const div = this.styledDivs.find(div => div.id === curve.ids[kind])
+      return this.divCenter(div)
     },
 
     divCenter(div) {
-      const x = this.parsePx(div.style.left) + Math.floor(this.parsePx(div.style.width) / 2)
-      const y = this.parsePx(div.style.top) + Math.floor(this.parsePx(div.style.height) / 2)
+      const x = this.parsePx(div.renderStyle.left)
+              + Math.floor(this.parsePx(div.renderStyle.width) / 2)
+
+      const y = this.parsePx(div.renderStyle.top)
+              + Math.floor(this.parsePx(div.renderStyle.height) / 2)
 
       return { x, y }
     },
