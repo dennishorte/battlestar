@@ -1012,7 +1012,46 @@ Tyrants.prototype.getRound = function() {
 }
 
 Tyrants.prototype.getScore = function(player) {
-  return 10
+  // Cards in deck
+  const deckCards = [
+    ...this.getCardsByZone(player, 'hand'),
+    ...this.getCardsByZone(player, 'discard'),
+    ...this.getCardsByZone(player, 'deck'),
+  ].map(card => card.points)
+   .reduce((a, b) => a + b, 0)
+
+  // Cards in inner circle
+  const innerCircleCards = this
+    .getCardsByZone(player, 'innerCircle')
+    .map(card => card.innerPoints)
+    .reduce((a, b) => a + b, 0)
+
+  // Captured troops
+  const capturedTroops = this.getCardsByZone(player, 'trophyHall').length
+
+  // Locations controlled
+  const locationsControlled = this
+    .getLocationAll()
+    .filter(loc => loc.getController() === player)
+    .map(loc => loc.points)
+    .reduce((a, b) => a + b, 0)
+
+  const locationsTotalControlled = this
+    .getLocationAll()
+    .filter(loc => loc.getTotalController() === player)
+    .length * 2
+
+  // Victory Points
+  const vps = player.points
+
+  return (
+    deckCards
+    + innerCircleCards
+    + capturedTroops
+    + locationsControlled
+    + locationsTotalControlled
+    + vps
+  )
 }
 
 Tyrants.prototype.getZoneByCard = function(card) {
