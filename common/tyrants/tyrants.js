@@ -1011,6 +1011,10 @@ Tyrants.prototype.getRound = function() {
   return Math.floor(this.state.turn / this.getPlayerAll().length) + 1
 }
 
+Tyrants.prototype.getScore = function(player) {
+  return 10
+}
+
 Tyrants.prototype.getZoneByCard = function(card) {
   return this.getZoneById(card.zone)
 }

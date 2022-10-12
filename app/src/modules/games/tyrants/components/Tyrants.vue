@@ -9,6 +9,8 @@
         </b-col>
 
         <b-col class="game-column">
+          <Player v-for="player in orderedPlayers" :key="player.name" :player="player" />
+
           <Market />
           <WaitingPanel />
         </b-col>
@@ -36,6 +38,7 @@ import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
 import GameMap from './GameMap'
 import Market from './Market'
+import Player from './Player'
 
 
 // Modals
@@ -48,6 +51,7 @@ export default {
     GameMap,
     GameMenu,
     Market,
+    Player,
     WaitingPanel,
 
     DebugModal,
@@ -71,6 +75,13 @@ export default {
       game: this.game,
       ui: {},
     }
+  },
+
+  computed: {
+    orderedPlayers() {
+      const viewingPlayer = this.game.getPlayerByName(this.actor.name)
+      return this.game.getPlayersStarting(viewingPlayer)
+    },
   },
 
   methods: {
