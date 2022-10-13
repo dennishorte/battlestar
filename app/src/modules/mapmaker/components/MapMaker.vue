@@ -49,11 +49,12 @@
           class="map"
           :style="mapStyle"
         >
-          <svg class="curves" height="800" width="600">
+          <svg class="curves" :height="svgHeight" :width="svgWidth">
             <CubicBezier
               v-for="(curve, index) in elems.curves"
               :key="index"
-              v-model="elems.curves[index]"
+              :points="elems.curves[index].points"
+              can-select="true"
             />
           </svg>
 
@@ -62,10 +63,21 @@
             :key="index"
             :style="div.renderStyle"
             :id="div.id"
-            selectable="true"
-            connectable="true"
+            can-select="true"
+            can-connect="true"
+            can-drag="true"
           >
           </div>
+
+          <template v-if="Boolean(curveHandles)">
+            <div
+              v-for="(point, index) in curveHandles"
+              :key="index"
+              :name="point.name"
+              class="curve-handle"
+              can-drag="true"
+            />
+          </template>
 
         </div>
 
@@ -238,9 +250,7 @@ export default {
         html: false,
       },
 
-      connecting: {
-        active: false,
-      },
+      connecting: false,
 
       selection: {
         elems: [],
@@ -266,11 +276,37 @@ export default {
 
   computed: {
     connectButtonVariant() {
-      if (this.connecting.active) {
+      if (this.connecting) {
         return 'success'
       }
       else {
         return 'secondary'
+      }
+    },
+
+    curveHandles() {
+      if (this.selection.elems.length !== 1) {
+        return
+      }
+
+      const curve = this._getSelectedCurve()
+
+      if (curve) {
+        return [
+          {
+            name: 'sourceHandle',
+            x: curve.points.sourceHandle.x,
+            y: curve.points.sourceHandle.y,
+          },
+          {
+            name: 'targetHandle',
+            x: curve.points.targetHandle.x,
+            y: curve.points.targetHandle.y,
+          },
+        ]
+      }
+      else {
+        return null
       }
     },
 
@@ -311,6 +347,16 @@ export default {
         })
 
       return output
+    },
+
+    svgHeight() {
+      const mapStyle = this.elemMeta.styles['.map']
+      return this.parsePx(mapStyle.height)
+    },
+
+    svgWidth() {
+      const mapStyle = this.elemMeta.styles['.map']
+      return this.parsePx(mapStyle.width)
     },
   },
 
@@ -452,15 +498,15 @@ export default {
 
     startConnecting() {
       this.unselectAll()
-      this.connecting.active = true
+      this.connecting = true
     },
 
     stopConnecting() {
-      this.connecting.active = false
+      this.connecting = false
     },
 
     connect(source, target) {
-      util.assert(this.connecting.active)
+      util.assert(this.connecting)
 
       if (this._isElemsConnected(source, target)) {
         return
@@ -553,12 +599,14 @@ export default {
     },
 
     startDrag(event) {
-      this.dragging = {
-        elem: event.target,
-        mouseX: event.clientX,
-        mouseY: event.clientY,
-        top: event.target.offsetTop,
-        left: event.target.offsetLeft,
+      if (this._isDraggable(event.target)) {
+        this.dragging = {
+          elem: event.target,
+          mouseX: event.clientX,
+          mouseY: event.clientY,
+          top: event.target.offsetTop,
+          left: event.target.offsetLeft,
+        }
       }
     },
 
@@ -586,8 +634,21 @@ export default {
       this.stopDrag()
     },
 
+    _getSelectedCurve() {
+      if (this.selection.elems.length !== 1) {
+        return null
+      }
+
+      const elem = this.selection.elems[0]
+      return this.elems.curves.find(c => c.id === elem.id)
+    },
+
     _isConnectable(elem) {
-      return Boolean(elem.getAttribute('connectable'))
+      return Boolean(elem.getAttribute('can-connect'))
+    },
+
+    _isDraggable(elem) {
+      return Boolean(elem.getAttribute('can-drag'))
     },
 
     _isElemsConnected(a, b) {
@@ -597,8 +658,12 @@ export default {
       ))
     },
 
+    _isElementCurveHandle(elem) {
+      return elem.classList.contains('curve-handle')
+    },
+
     _isSelectable(elem) {
-      return Boolean(elem.getAttribute('selectable'))
+      return Boolean(elem.getAttribute('can-select'))
     },
 
     _catchAllClicksOnMap() {
@@ -608,7 +673,7 @@ export default {
         if (this._isSelectable(event.target)) {
 
           // When in connection mode, select elements until two have been selected.
-          if (this.connecting.active) {
+          if (this.connecting) {
             if (this._isConnectable(event.target)) {
 
               this.select(event.target)
@@ -618,6 +683,11 @@ export default {
               }
 
             }
+          }
+
+          // Click on a curve handle does not select it.
+          else if (this._isElementCurveHandle(event.target)) {
+            this.startDrag(event)
           }
 
           // Click on an element changes the selection to the newly clicked element.
