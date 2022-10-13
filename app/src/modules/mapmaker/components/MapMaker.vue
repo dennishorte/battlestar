@@ -21,7 +21,7 @@
             </b-dropdown-item>
           </b-dropdown>
 
-          <b-button @click="toggleConnect">connect</b-button>
+          <b-button @click="startConnecting" :variant="connectButtonVariant">connect</b-button>
         </div>
 
         <div class="editor-div">
@@ -63,6 +63,7 @@
             :style="div.renderStyle"
             :id="div.id"
             selectable="true"
+            connectable="true"
           >
           </div>
 
@@ -125,6 +126,7 @@ const testNodes = [
 
 const testCurves = [
   {
+    "id": "curve100",
     "ids": {
       "source": "node103",
       "target": "node115"
@@ -238,7 +240,6 @@ export default {
 
       connecting: {
         active: false,
-        first: null,
       },
 
       selection: {
@@ -264,6 +265,15 @@ export default {
   },
 
   computed: {
+    connectButtonVariant() {
+      if (this.connecting.active) {
+        return 'success'
+      }
+      else {
+        return 'secondary'
+      }
+    },
+
     mapStyle() {
       return this.elemMeta.styles['.map'] || {}
     },
@@ -382,13 +392,17 @@ export default {
       }
     },
 
-    makeId() {
+    makeId(prefix) {
       while (true) { // eslint-disable-line no-constant-condition
-        const newId = 'node' + this.nextId
+        const newId = prefix + this.nextId
         this.nextId += 1
 
-        const existingIdUser = this.elems.divs.find(div => div.id === newId)
-        if (existingIdUser) {
+        const elemIdUsed = Object
+          .values(this.elems)
+          .some(array => array.some(elem => elem.id === newId))
+
+
+        if (elemIdUsed) {
           continue
         }
         else {
@@ -416,7 +430,7 @@ export default {
 
     makeDiv() {
       const div = {
-        id: this.makeId(),
+        id: this.makeId('node'),
         classes: ['element'],
         style: {
           left: '20px',
@@ -436,35 +450,30 @@ export default {
     ////////////////////////////////////////////////////////////////////////////////
     // Connect
 
-    connect(event) {
-      if (this.connecting.first) {
-        const sourceId = this.connecting.first.id
-        const targetId = event.target.id
-        const curve = this.newCurve(sourceId, targetId)
-        this.elems.curves.push(curve)
-
-        this.connecting.active = false
-        this.connecting.first = null
-
-        this.updateCurves()
-      }
-      else {
-        this.connecting.first = event.target
-      }
+    startConnecting() {
+      this.unselectAll()
+      this.connecting.active = true
     },
 
-    toggleConnect() {
-      if (this.connecting.active) {
-        this.connecting.active = false
-        this.connecting.first = null
+    stopConnecting() {
+      this.connecting.active = false
+    },
+
+    connect(source, target) {
+      util.assert(this.connecting.active)
+
+      if (this._isElemsConnected(source, target)) {
+        return
       }
-      else {
-        this.connecting.active = true
-      }
+
+      const curve = this.newCurve(source.id, target.id)
+      this.elems.curves.push(curve)
+      this.updateCurves()
     },
 
     newCurve(sourceId, targetId) {
       return {
+        id: this.makeId('curve'),
         ids: {
           source: sourceId,
           target: targetId,
@@ -573,6 +582,19 @@ export default {
 
     unselectAll() {
       this.selection.elems = []
+      this.stopConnecting()
+      this.stopDrag()
+    },
+
+    _isConnectable(elem) {
+      return Boolean(elem.getAttribute('connectable'))
+    },
+
+    _isElemsConnected(a, b) {
+      return this.elems.curves.some(c => (
+        c.ids.source === a.id && c.ids.target === b.id
+        || c.ids.source === b.id && c.ids.target === a.id
+      ))
     },
 
     _isSelectable(elem) {
@@ -583,18 +605,32 @@ export default {
       const mapRender = this.$refs.mapRender
 
       mapRender.addEventListener('mousedown', (event) => {
-        console.log('click', event.target)
-
         if (this._isSelectable(event.target)) {
-          this.unselectAll()
-          this.select(event.target)
-          this.startDrag(event)
+
+          // When in connection mode, select elements until two have been selected.
+          if (this.connecting.active) {
+            if (this._isConnectable(event.target)) {
+
+              this.select(event.target)
+              if (this.selection.elems.length === 2) {
+                this.connect(...this.selection.elems)
+                this.unselectAll()
+              }
+
+            }
+          }
+
+          // Click on an element changes the selection to the newly clicked element.
+          else {
+            this.unselectAll()
+            this.select(event.target)
+            this.startDrag(event)
+          }
         }
       })
 
       mapRender.addEventListener('mouseleave', () => {
         this.unselectAll()
-        this.stopDrag()
       })
 
       mapRender.addEventListener('mousemove', (event) => {
@@ -612,7 +648,6 @@ export default {
         if (e.key === 'Escape') {
           this.bus.$emit('clear-selection')
           this.unselectAll()
-          this.stopDrag()
         }
 
       })
