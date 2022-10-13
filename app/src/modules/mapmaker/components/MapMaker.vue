@@ -43,10 +43,8 @@
         </div>
       </b-col>
 
-      <b-col
-        class="map-render"
-        @mouseup="stopDrag"
-      >
+      <b-col class="map-render" ref="mapRender">
+
         <div
           class="map"
           :style="mapStyle"
@@ -64,8 +62,7 @@
             :key="index"
             :style="div.renderStyle"
             :id="div.id"
-            @mousedown="click"
-            @mousemove="drag"
+            selectable="true"
           >
           </div>
 
@@ -101,56 +98,109 @@ import CubicBezier from './CubicBezier'
 import UploadModal from './UploadModal'
 
 
-/* const testNodes = [
- *   {
- *     "id": "node100",
- *     "classes": [
- *       "element"
- *     ],
- *     "style": {
- *       "background-color": "red",
- *       "left": "233px",
- *       "top": "29px",
- *       "height": "50px",
- *       "width": "50px"
- *     }
- *   },
- *   {
- *     "id": "node101",
- *     "classes": [
- *       "element"
- *     ],
- *     "style": {
- *       "background-color": "blue",
- *       "left": "150px",
- *       "top": "150px",
- *       "height": "50px",
- *       "width": "50px"
- *     }
- *   }
- * ] */
-
-/* const testConnections = [
- *   {
- *     source: 'node100',
- *     target: 'node101',
- *   }
- * ] */
-
-const baseStyle = {
-  '.element': {
-    position: 'absolute',
-    height: '50px',
-    width: '50px',
-    'background-color': 'red',
+const testNodes = [
+  {
+    "id": "node103",
+    "classes": [
+      "element",
+      "secondary"
+    ],
+    "style": {
+      "left": "81px",
+      "top": "56px"
+    }
   },
-  '.map': {
-    position: 'relative',
-    height: '800px',
-    width: '600px',
-    'background-color': '#ddd',
+  {
+    "id": "node115",
+    "classes": [
+      "element",
+      "tertiary"
+    ],
+    "style": {
+      "left": "100px",
+      "top": "125px"
+    }
+  }
+]
+
+const testCurves = [
+  {
+    "ids": {
+      "source": "node103",
+      "target": "node115"
+    },
+    "points": {
+      "source": {
+        "x": 121,
+        "y": 81
+      },
+      "target": {
+        "x": 112,
+        "y": 137
+      },
+      "sourceHandle": {
+        "x": 221,
+        "y": 81,
+        "moveable": true
+      },
+      "targetHandle": {
+        "x": 132,
+        "y": 121,
+        "moveable": true
+      }
+    }
+  }
+]
+
+const testStyle = {
+  ".element": {
+    "position": "absolute",
+    "background-color": "red",
+    "height": "50px",
+    "width": "50px"
   },
+  ".primary": {
+    "background-color": "white",
+    "border-radius": "50%",
+    "border": "3px solid black",
+    "height": "100px",
+    "width": "100px"
+  },
+  ".secondary": {
+    "background-color": "white",
+    "border": "3px solid black",
+    "width": "80px"
+  },
+  ".tertiary": {
+    "border-radius": "50%",
+    "height": "25px",
+    "width": "25px",
+    "border": "1px solid black",
+    "background-color": "white"
+  },
+  ".map": {
+    "position": "relative",
+    "height": "800px",
+    "width": "450px",
+    "background-color": "#ddd"
+  }
 }
+
+/*
+ * const baseStyle = {
+ *   '.element': {
+ *     position: 'absolute',
+ *     height: '50px',
+ *     width: '50px',
+ *     'background-color': 'red',
+ *   },
+ *   '.map': {
+ *     position: 'relative',
+ *     height: '800px',
+ *     width: '600px',
+ *     'background-color': '#ddd',
+ *   },
+ * } */
 
 export default {
   name: 'MapMaker',
@@ -172,13 +222,13 @@ export default {
 
       // Elements
       elems: {
-        divs: [],
-        curves: [],
+        divs: testNodes,
+        curves: testCurves,
       },
 
       // Element relations and styles
       elemMeta: {
-        styles: baseStyle,
+        styles: testStyle,
       },
 
       errors: {
@@ -189,6 +239,10 @@ export default {
       connecting: {
         active: false,
         first: null,
+      },
+
+      selection: {
+        elems: [],
       },
 
       dragging: {
@@ -325,15 +379,6 @@ export default {
       return {
         x: a.x + b.x,
         y: a.y + b.y,
-      }
-    },
-
-    click(event) {
-      if (this.connecting.active) {
-        this.connect(event)
-      }
-      else {
-        this.startDrag(event)
       }
     },
 
@@ -518,23 +563,72 @@ export default {
       }
     },
 
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Special Map Interaction Handlers
+
+    select(element) {
+      this.selection.elems.push(element)
+    },
+
+    unselectAll() {
+      this.selection.elems = []
+    },
+
+    _isSelectable(elem) {
+      return Boolean(elem.getAttribute('selectable'))
+    },
+
+    _catchAllClicksOnMap() {
+      const mapRender = this.$refs.mapRender
+
+      mapRender.addEventListener('mousedown', (event) => {
+        console.log('click', event.target)
+
+        if (this._isSelectable(event.target)) {
+          this.unselectAll()
+          this.select(event.target)
+          this.startDrag(event)
+        }
+      })
+
+      mapRender.addEventListener('mouseleave', () => {
+        this.unselectAll()
+        this.stopDrag()
+      })
+
+      mapRender.addEventListener('mousemove', (event) => {
+        this.drag(event)
+      })
+
+      mapRender.addEventListener('mouseup', () => {
+        this.stopDrag()
+      })
+    },
+
+    _catchAllKeypresses() {
+      window.addEventListener('keydown', (e) => {
+
+        if (e.key === 'Escape') {
+          this.bus.$emit('clear-selection')
+          this.unselectAll()
+          this.stopDrag()
+        }
+
+      })
+    }
   },
 
   ////////////////////////////////////////////////////////////////////////////////
   // Lifecycle
 
-  created() {
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        this.bus.$emit('clear-selection')
-      }
-    })
-  },
-
   mounted() {
     this.updateDivEditorFromData()
     this.updateCssEditorFromData()
     this.updateCurves()
+
+    this._catchAllKeypresses()
+    this._catchAllClicksOnMap()
   },
 }
 </script>
