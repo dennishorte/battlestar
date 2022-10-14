@@ -389,7 +389,7 @@ export default {
     htmlChanged() {
       try {
         this.elems.divs = JSON.parse(this.code.html)
-        this.elems.curves = this.updateCurves()
+        this.updateCurves()
         this.errors.html = false
       }
       catch (e) {
