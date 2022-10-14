@@ -108,35 +108,35 @@ const testNodes = [
   }
 ]
 
-const testCurves = [
-  {
-    "id": "curve100",
-    "ids": {
-      "source": "node103",
-      "target": "node115"
-    },
-    "points": {
-      "source": {
-        "x": 121,
-        "y": 81
-      },
-      "target": {
-        "x": 112,
-        "y": 137
-      },
-      "sourceHandle": {
-        "x": 221,
-        "y": 81,
-        "moveable": true
-      },
-      "targetHandle": {
-        "x": 132,
-        "y": 121,
-        "moveable": true
-      }
-    }
-  }
-]
+/* const testCurves = [
+ *   {
+ *     "id": "curve100",
+ *     "ids": {
+ *       "source": "node103",
+ *       "target": "node115"
+ *     },
+ *     "points": {
+ *       "source": {
+ *         "x": 121,
+ *         "y": 81
+ *       },
+ *       "target": {
+ *         "x": 112,
+ *         "y": 137
+ *       },
+ *       "sourceHandle": {
+ *         "x": 221,
+ *         "y": 81,
+ *         "moveable": true
+ *       },
+ *       "targetHandle": {
+ *         "x": 132,
+ *         "y": 121,
+ *         "moveable": true
+ *       }
+ *     }
+ *   }
+ * ] */
 
 const testStyle = {
   ".element": {
@@ -209,7 +209,7 @@ export default {
       // Elements
       elems: {
         divs: testNodes,
-        curves: testCurves,
+        curves: [],
       },
 
       // Element relations and styles
@@ -482,23 +482,39 @@ export default {
         return
       }
 
-      const curve = this.newCurve(source.id, target.id)
+      const curve = this.newCurve(source, target)
       this.elems.curves.push(curve)
       this.updateCurves()
     },
 
-    newCurve(sourceId, targetId) {
+    newCurve(sourceElem, targetElem) {
+      const sourceDiv = this.styledDivs.find(d => d.id === sourceElem.id)
+      const targetDiv = this.styledDivs.find(d => d.id === targetElem.id)
+
+      const newSourcePoint = this.divCenter(sourceDiv)
+      const newTargetPoint = this.divCenter(targetDiv)
+
+      const newSourceHandlePoint = {
+        x: newSourcePoint.x + (newTargetPoint.x - newSourcePoint.x) / 3,
+        y: newTargetPoint.y,
+      }
+
+      const newTargetHandlePoint = {
+        x: newSourcePoint.x + (newTargetPoint.x - newSourcePoint.x) / 3 * 2,
+        y: newSourcePoint.y,
+      }
+
       return {
         id: this.makeId('curve'),
         ids: {
-          source: sourceId,
-          target: targetId,
+          source: sourceDiv.id,
+          target: targetDiv.id,
         },
         points: {
-          source: { x: 0, y: 0 },
-          target: { x: 100, y: 100 },
-          sourceHandle: { x: 100, y: 0 },
-          targetHandle: { x: 0, y: 100 },
+          source: newSourcePoint,
+          target: newTargetPoint,
+          sourceHandle: newSourceHandlePoint,
+          targetHandle: newTargetHandlePoint,
         },
       }
     },
@@ -618,9 +634,13 @@ export default {
     // Special Map Interaction Handlers
 
     select(elem) {
-      this.selection.elems.push(elem)
-      elem.classList.add('selected')
-      console.log('selected:', this.selection.elems)
+      const selectable = elem.closest('.can-select')
+
+      if (selectable) {
+        this.selection.elems.push(selectable)
+        elem.classList.add('selected')
+        console.log('selected:', selectable.id)
+      }
     },
 
     unselectAll() {
@@ -644,11 +664,11 @@ export default {
     },
 
     _isConnectable(elem) {
-      return Boolean(elem.getAttribute('can-connect'))
+      return Boolean(elem.classList.contains('can-connect'))
     },
 
     _isDraggable(elem) {
-      return Boolean(elem.getAttribute('can-drag'))
+      return Boolean(elem.classList.contains('can-drag'))
     },
 
     _isElemsConnected(a, b) {
@@ -663,7 +683,7 @@ export default {
     },
 
     _isSelectable(elem) {
-      return Boolean(elem.getAttribute('can-select'))
+      return Boolean(elem.classList.contains('can-select'))
     },
 
     _catchAllClicksOnMap() {

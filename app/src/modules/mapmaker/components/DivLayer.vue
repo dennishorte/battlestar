@@ -5,9 +5,7 @@
       :key="div.id"
       :style="div.renderStyle"
       :id="div.id"
-      can-select="true"
-      can-connect="true"
-      can-drag="true"
+      class="can-select can-connect can-drag"
     >
     </div>
   </div>

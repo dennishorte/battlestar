@@ -5,7 +5,7 @@
       :key="curve.id"
       :id="curve.id"
       :points="curve.points"
-      can-select="true"
+      class="can-select"
 
       :borderWidth="1"
       borderColor="black"
