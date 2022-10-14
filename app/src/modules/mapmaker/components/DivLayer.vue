@@ -29,4 +29,8 @@ export default {
 .div-layer {
   position: relative;
 }
+
+.selected {
+  box-shadow: 0 0 4px 4px cyan;
+}
 </style>

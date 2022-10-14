@@ -614,11 +614,13 @@ export default {
     ////////////////////////////////////////////////////////////////////////////////
     // Special Map Interaction Handlers
 
-    select(element) {
-      this.selection.elems.push(element)
+    select(elem) {
+      this.selection.elems.push(elem)
+      elem.classList.add('selected')
     },
 
     unselectAll() {
+      this.selection.elems.forEach(e => e.classList.remove('selected'))
       this.selection.elems = []
       this.stopConnecting()
       this.stopDrag()
@@ -744,5 +746,4 @@ export default {
 .map-render {
   height: 100vh;
 }
-
 </style>
