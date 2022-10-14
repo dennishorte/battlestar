@@ -1,6 +1,7 @@
 <template>
   <path
     :d="coords"
+    :id="id"
     stroke="black"
     stroke-width="4"
     fill="none"
@@ -13,6 +14,7 @@ export default {
   name: 'CubicBezier',
 
   props: {
+    id: String,
     points: Object,
   },
 

@@ -45,40 +45,10 @@
 
       <b-col class="map-render" ref="mapRender">
 
-        <div
-          class="map"
-          :style="mapStyle"
-        >
-          <svg class="curves" :height="svgHeight" :width="svgWidth">
-            <CubicBezier
-              v-for="(curve, index) in elems.curves"
-              :key="index"
-              :points="elems.curves[index].points"
-              can-select="true"
-            />
-          </svg>
-
-          <div
-            v-for="(div, index) in styledDivs"
-            :key="index"
-            :style="div.renderStyle"
-            :id="div.id"
-            can-select="true"
-            can-connect="true"
-            can-drag="true"
-          >
-          </div>
-
-          <template v-if="Boolean(curveHandles)">
-            <div
-              v-for="(point, index) in curveHandles"
-              :key="index"
-              :name="point.name"
-              class="curve-handle"
-              can-drag="true"
-            />
-          </template>
-
+        <div class="map" :style="mapStyle">
+          <CurveLayer :curves="elems.curves" :height="svgHeight" :width="svgWidth" />
+          <DivLayer :styledDivs="styledDivs" />
+          <HandleLayer :curveHandles="curveHandles" />
         </div>
 
 
@@ -92,9 +62,6 @@
 
 
 <script>
-
-import Vue from 'vue'
-
 import { util } from 'battlestar-common'
 import { saveAs } from 'file-saver'
 
@@ -107,7 +74,9 @@ import { highlight, languages } from 'prismjs/components/prism-core'
 import 'prismjs/components/prism-json'
 import 'prismjs/themes/prism-tomorrow.css'
 
-import CubicBezier from './CubicBezier'
+import CurveLayer from './CurveLayer'
+import DivLayer from './DivLayer'
+import HandleLayer from './HandleLayer'
 import UploadModal from './UploadModal'
 
 
@@ -130,8 +99,8 @@ const testNodes = [
       "tertiary"
     ],
     "style": {
-      "left": "100px",
-      "top": "125px"
+      "left": "166px",
+      "top": "392px"
     }
   }
 ]
@@ -220,15 +189,15 @@ export default {
   name: 'MapMaker',
 
   components: {
-    CubicBezier,
+    CurveLayer,
+    DivLayer,
+    HandleLayer,
     PrismEditor,
     UploadModal,
   },
 
   data() {
     return {
-      bus: new Vue(),
-
       code: {
         css: '{}',
         html: '[]',
@@ -262,15 +231,10 @@ export default {
         mouseY: null,
         top: null,
         left: null,
+        didDrag: false,
       },
 
       nextId: 100,
-    }
-  },
-
-  provide() {
-    return {
-      bus: this.bus,
     }
   },
 
@@ -289,16 +253,19 @@ export default {
         return
       }
 
-      const curve = this._getSelectedCurve()
+      const elem = this.selection.elems[0]
+      const curve = this.elems.curves.find(c => c.id === elem.id)
 
       if (curve) {
         return [
           {
+            curveId: curve.id,
             name: 'sourceHandle',
             x: curve.points.sourceHandle.x,
             y: curve.points.sourceHandle.y,
           },
           {
+            curveId: curve.id,
             name: 'targetHandle',
             x: curve.points.targetHandle.x,
             y: curve.points.targetHandle.y,
@@ -533,6 +500,17 @@ export default {
       }
     },
 
+    updateCurveFromHandle(elem) {
+      const curveId = elem.getAttribute('curve-id')
+      const curve = this.elems.curves.find(c => c.id === curveId)
+      util.assert(curve)
+
+      const handleName = elem.getAttribute('name')
+      const point = curve.points[handleName]
+      point.x = elem.offsetLeft
+      point.y = elem.offsetTop
+    },
+
     updateCurves() {
       for (const curve of this.elems.curves) {
         const sourceHandleOffset = {
@@ -576,12 +554,13 @@ export default {
       return parseInt(px.substr(0, px.length - 2))
     },
 
-
     ////////////////////////////////////////////////////////////////////////////////
     // Drag
 
     drag(event) {
       if (this.dragging.elem) {
+        this.dragging.didDrag = true
+
         const distX = event.clientX - this.dragging.mouseX
         const distY = event.clientY - this.dragging.mouseY
 
@@ -591,14 +570,25 @@ export default {
         this.dragging.elem.style.top = newTop
         this.dragging.elem.style.left = newLeft
 
-        const div = this.elems.divs.find(div => div.id === this.dragging.elem.id)
-        this.updateDivFromElem(div, this.dragging.elem)
-        this.updateDivEditorFromData()
-        this.updateCurves()
+        const div = this._getDivFromElem(this.dragging.elem)
+        if (div) {
+          this.updateDivFromElem(div, this.dragging.elem)
+          this.updateDivEditorFromData()
+          this.updateCurves()
+          return
+        }
+
+        const handle = this._getHandleFromElem(this.dragging.elem)
+        if (handle) {
+          this.updateCurveFromHandle(handle)
+          return
+        }
       }
     },
 
     startDrag(event) {
+      util.assert(this._isDraggable(event.target), "Event target is not draggable")
+
       if (this._isDraggable(event.target)) {
         this.dragging = {
           elem: event.target,
@@ -634,13 +624,17 @@ export default {
       this.stopDrag()
     },
 
-    _getSelectedCurve() {
-      if (this.selection.elems.length !== 1) {
+    _getDivFromElem(elem) {
+      return this.elems.divs.find(div => div.id === elem.id)
+    },
+
+    _getHandleFromElem(elem) {
+      if (elem.classList.contains('curve-handle')) {
+        return elem
+      }
+      else {
         return null
       }
-
-      const elem = this.selection.elems[0]
-      return this.elems.curves.find(c => c.id === elem.id)
     },
 
     _isConnectable(elem) {
@@ -670,33 +664,23 @@ export default {
       const mapRender = this.$refs.mapRender
 
       mapRender.addEventListener('mousedown', (event) => {
-        if (this._isSelectable(event.target)) {
+        if (this.connecting) {
+          if (this._isConnectable(event.target)) {
 
-          // When in connection mode, select elements until two have been selected.
-          if (this.connecting) {
-            if (this._isConnectable(event.target)) {
-
-              this.select(event.target)
-              if (this.selection.elems.length === 2) {
-                this.connect(...this.selection.elems)
-                this.unselectAll()
-              }
-
-            }
-          }
-
-          // Click on a curve handle does not select it.
-          else if (this._isElementCurveHandle(event.target)) {
-            this.startDrag(event)
-          }
-
-          // Click on an element changes the selection to the newly clicked element.
-          else {
-            this.unselectAll()
             this.select(event.target)
-            this.startDrag(event)
+            if (this.selection.elems.length === 2) {
+              this.connect(...this.selection.elems)
+              this.unselectAll()
+            }
+
           }
         }
+
+        // Click on a curve handle does not select it.
+        else if (this._isDraggable(event.target)) {
+          this.startDrag(event)
+        }
+
       })
 
       mapRender.addEventListener('mouseleave', () => {
@@ -708,20 +692,18 @@ export default {
       })
 
       mapRender.addEventListener('mouseup', () => {
+        if (this.dragging.didDrag) {
+          // Do nothing special.
+        }
+        else {
+          this.unselectAll()
+          this.select(event.target)
+        }
+
+        // Always turn off drag on mouseup.
         this.stopDrag()
       })
     },
-
-    _catchAllKeypresses() {
-      window.addEventListener('keydown', (e) => {
-
-        if (e.key === 'Escape') {
-          this.bus.$emit('clear-selection')
-          this.unselectAll()
-        }
-
-      })
-    }
   },
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -732,7 +714,6 @@ export default {
     this.updateCssEditorFromData()
     this.updateCurves()
 
-    this._catchAllKeypresses()
     this._catchAllClicksOnMap()
   },
 }
@@ -764,19 +745,4 @@ export default {
   height: 100vh;
 }
 
-.curves {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-}
-
-svg {
-  pointer-events: none;
-}
-
-svg * {
-  pointer-events: auto;
-}
 </style>
