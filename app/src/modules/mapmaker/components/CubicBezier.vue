@@ -1,11 +1,22 @@
 <template>
-  <path
-    :d="coords"
-    :id="id"
-    stroke="black"
-    stroke-width="4"
-    fill="none"
-  />
+  <g :id="id">
+    <path
+      class="curve-border"
+      v-if="borderWidth > 0"
+      :d="coords"
+      :stroke="borderColor"
+      :stroke-width="strokeWidth + borderWidth * 2"
+      fill="none"
+    />
+
+    <path
+      class="stroke-center"
+      :d="coords"
+      :stroke="strokeColor"
+      :stroke-width="strokeWidth"
+      fill="none"
+    />
+  </g>
 </template>
 
 
@@ -16,6 +27,24 @@ export default {
   props: {
     id: String,
     points: Object,
+
+    borderColor: {
+      type: String,
+      default: 'black',
+    },
+    borderWidth: {
+      type: Number,  // in pixels
+      default: 0,
+    },
+
+    strokeColor: {
+      type: String,
+      default: 'black',
+    },
+    strokeWidth: {
+      type: Number,
+      default: 4,
+    },
   },
 
   computed: {

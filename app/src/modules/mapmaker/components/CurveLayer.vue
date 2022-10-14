@@ -6,6 +6,10 @@
       :id="curve.id"
       :points="curve.points"
       can-select="true"
+
+      :borderWidth="1"
+      borderColor="black"
+      strokeColor="white"
     />
   </svg>
 </template>

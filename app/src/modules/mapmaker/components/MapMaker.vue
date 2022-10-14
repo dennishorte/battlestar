@@ -108,35 +108,35 @@ const testNodes = [
   }
 ]
 
-/* const testCurves = [
- *   {
- *     "id": "curve100",
- *     "ids": {
- *       "source": "node103",
- *       "target": "node115"
- *     },
- *     "points": {
- *       "source": {
- *         "x": 121,
- *         "y": 81
- *       },
- *       "target": {
- *         "x": 112,
- *         "y": 137
- *       },
- *       "sourceHandle": {
- *         "x": 221,
- *         "y": 81,
- *         "moveable": true
- *       },
- *       "targetHandle": {
- *         "x": 132,
- *         "y": 121,
- *         "moveable": true
- *       }
- *     }
- *   }
- * ] */
+const testCurves = [
+  {
+    "id": "curve100",
+    "ids": {
+      "source": "node103",
+      "target": "node115"
+    },
+    "points": {
+      "source": {
+        "x": 121,
+        "y": 81
+      },
+      "target": {
+        "x": 112,
+        "y": 137
+      },
+      "sourceHandle": {
+        "x": 221,
+        "y": 81,
+        "moveable": true
+      },
+      "targetHandle": {
+        "x": 132,
+        "y": 121,
+        "moveable": true
+      }
+    }
+  }
+]
 
 const testStyle = {
   ".element": {
@@ -209,7 +209,7 @@ export default {
       // Elements
       elems: {
         divs: testNodes,
-        curves: [],
+        curves: testCurves,
       },
 
       // Element relations and styles
