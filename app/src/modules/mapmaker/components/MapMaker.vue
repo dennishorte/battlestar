@@ -31,6 +31,8 @@
             :highlight="htmlHighlight"
             @input="htmlChanged"
           />
+
+          <div v-if="errors.html" class="error-mark">!</div>
         </div>
 
         <div class="editor-div">
@@ -40,6 +42,7 @@
             :highlight="cssHighlight"
             @input="cssChanged"
           />
+          <div v-if="errors.css" class="error-mark">!</div>
         </div>
       </b-col>
 
@@ -617,6 +620,7 @@ export default {
     select(elem) {
       this.selection.elems.push(elem)
       elem.classList.add('selected')
+      console.log('selected: ' + elem.id)
     },
 
     unselectAll() {
@@ -739,11 +743,26 @@ export default {
 }
 
 .editor-div {
+  position: relative;
   height: 45%;
   margin-top: 5px;
 }
 
 .map-render {
   height: 100vh;
+}
+
+.error-mark {
+  color: white;
+  background-color: red;
+  font-weight: bold;
+  border: 2px solid white;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 1.7em;
+  width: 1.7em;
+  text-align: center;
 }
 </style>
