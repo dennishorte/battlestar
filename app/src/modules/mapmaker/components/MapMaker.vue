@@ -103,40 +103,40 @@ const testNodes = [
     ],
     "style": {
       "left": "166px",
-      "top": "392px"
+      "top": "192px"
     }
   }
 ]
 
-const testCurves = [
-  {
-    "id": "curve100",
-    "ids": {
-      "source": "node103",
-      "target": "node115"
-    },
-    "points": {
-      "source": {
-        "x": 121,
-        "y": 81
-      },
-      "target": {
-        "x": 112,
-        "y": 137
-      },
-      "sourceHandle": {
-        "x": 221,
-        "y": 81,
-        "moveable": true
-      },
-      "targetHandle": {
-        "x": 132,
-        "y": 121,
-        "moveable": true
-      }
-    }
-  }
-]
+/* const testCurves = [
+ *   {
+ *     "id": "curve100",
+ *     "ids": {
+ *       "source": "node103",
+ *       "target": "node115"
+ *     },
+ *     "points": {
+ *       "source": {
+ *         "x": 121,
+ *         "y": 81
+ *       },
+ *       "target": {
+ *         "x": 112,
+ *         "y": 137
+ *       },
+ *       "sourceHandle": {
+ *         "x": 221,
+ *         "y": 81,
+ *         "moveable": true
+ *       },
+ *       "targetHandle": {
+ *         "x": 132,
+ *         "y": 121,
+ *         "moveable": true
+ *       }
+ *     }
+ *   }
+ * ] */
 
 const testStyle = {
   ".element": {
@@ -209,7 +209,7 @@ export default {
       // Elements
       elems: {
         divs: testNodes,
-        curves: testCurves,
+        curves: [],
       },
 
       // Element relations and styles
@@ -620,7 +620,7 @@ export default {
     select(elem) {
       this.selection.elems.push(elem)
       elem.classList.add('selected')
-      console.log('selected: ' + elem.id)
+      console.log('selected:', this.selection.elems)
     },
 
     unselectAll() {
@@ -670,23 +670,9 @@ export default {
       const mapRender = this.$refs.mapRender
 
       mapRender.addEventListener('mousedown', (event) => {
-        if (this.connecting) {
-          if (this._isConnectable(event.target)) {
-
-            this.select(event.target)
-            if (this.selection.elems.length === 2) {
-              this.connect(...this.selection.elems)
-              this.unselectAll()
-            }
-
-          }
-        }
-
-        // Click on a curve handle does not select it.
-        else if (this._isDraggable(event.target)) {
+        if (this._isDraggable(event.target)) {
           this.startDrag(event)
         }
-
       })
 
       mapRender.addEventListener('mouseleave', () => {
@@ -701,6 +687,17 @@ export default {
         if (this.dragging.didDrag) {
           // Do nothing special.
         }
+
+        else if (this.connecting) {
+          if (this._isConnectable(event.target)) {
+            this.select(event.target)
+            if (this.selection.elems.length === 2) {
+              this.connect(...this.selection.elems)
+              this.unselectAll()
+            }
+          }
+        }
+
         else {
           this.unselectAll()
           this.select(event.target)
