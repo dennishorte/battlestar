@@ -152,7 +152,7 @@ export default {
 .game-column {
   height: calc(100vh - 60px);
   min-width: 220px;
-  max-width: 400px;
+  max-width: 300px;
   overflow: scroll;
 }
 

@@ -22,6 +22,7 @@
           </b-dropdown>
 
           <b-button @click="startConnecting" :variant="connectButtonVariant">connect</b-button>
+          <b-button @click="startCutting" :variant="cutButtonVariant">cut</b-button>
         </div>
 
         <div class="editor-div">
@@ -223,6 +224,7 @@ export default {
       },
 
       connecting: false,
+      cutting: false,
 
       selection: {
         elems: [],
@@ -244,6 +246,15 @@ export default {
   computed: {
     connectButtonVariant() {
       if (this.connecting) {
+        return 'success'
+      }
+      else {
+        return 'secondary'
+      }
+    },
+
+    cutButtonVariant() {
+      if (this.cutting) {
         return 'success'
       }
       else {
@@ -475,6 +486,26 @@ export default {
       this.connecting = false
     },
 
+    startCutting() {
+      this.unselectAll()
+      this.cutting = true
+    },
+
+    stopCutting() {
+      this.cutting = false
+    },
+
+    cut(a, b) {
+      util.assert(this.cutting)
+
+      const curve = this._getCurveBetween(a, b)
+      if (!curve) {
+        return
+      }
+
+      util.array.remove(this.elems.curves, curve)
+    },
+
     connect(source, target) {
       util.assert(this.connecting)
 
@@ -647,7 +678,15 @@ export default {
       this.selection.elems.forEach(e => e.classList.remove('selected'))
       this.selection.elems = []
       this.stopConnecting()
+      this.stopCutting()
       this.stopDrag()
+    },
+
+    _getCurveBetween(a, b) {
+      return this.elems.curves.find(c => (
+        c.ids.source === a.id && c.ids.target === b.id
+        || c.ids.source === b.id && c.ids.target === a.id
+      ))
     },
 
     _getDivFromElem(elem) {
@@ -672,10 +711,7 @@ export default {
     },
 
     _isElemsConnected(a, b) {
-      return this.elems.curves.some(c => (
-        c.ids.source === a.id && c.ids.target === b.id
-        || c.ids.source === b.id && c.ids.target === a.id
-      ))
+      return Boolean(this._getCurveBetween(a, b))
     },
 
     _isElementCurveHandle(elem) {
@@ -708,11 +744,21 @@ export default {
           // Do nothing special.
         }
 
-        else if (this.connecting) {
+        else if (this.connecting || this.cutting) {
           if (this._isConnectable(event.target)) {
             this.select(event.target)
             if (this.selection.elems.length === 2) {
-              this.connect(...this.selection.elems)
+
+              if (this.connecting) {
+                this.connect(...this.selection.elems)
+              }
+              else if (this.cutting) {
+                this.cut(...this.selection.elems)
+              }
+              else {
+                throw new Error('How did we get here?')
+              }
+
               this.unselectAll()
             }
           }
