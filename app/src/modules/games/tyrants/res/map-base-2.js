@@ -87,7 +87,7 @@ export default {
       },
       {
         "id": "node107",
-        "name": "Kamaglym",
+        "name": "Kanaglym",
         "classes": [
           "element",
           "secondary"
@@ -387,7 +387,7 @@ export default {
       },
       {
         "id": "node132",
-        "name": "kama-skull",
+        "name": "kana-skull",
         "classes": [
           "element",
           "tertiary"
@@ -483,7 +483,7 @@ export default {
       },
       {
         "id": "node140",
-        "name": "kama-tsen a",
+        "name": "kana-tsen a",
         "classes": [
           "element",
           "tertiary"
@@ -495,7 +495,7 @@ export default {
       },
       {
         "id": "node141",
-        "name": "kama-tsen b",
+        "name": "kana-tsen b",
         "classes": [
           "element",
           "tertiary"
@@ -507,7 +507,7 @@ export default {
       },
       {
         "id": "node142",
-        "name": "eryn-kama a",
+        "name": "eryn-kana a",
         "classes": [
           "element",
           "tertiary"
@@ -519,7 +519,7 @@ export default {
       },
       {
         "id": "node143",
-        "name": "eryn-kama b",
+        "name": "eryn-kana b",
         "classes": [
           "element",
           "tertiary"

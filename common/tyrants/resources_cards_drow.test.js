@@ -526,7 +526,7 @@ describe('Drow Expansion', () => {
       const request2 = t.choose(game, request1, 'Play Card.Masters of Sorcere')
       const request3 = t.choose(game, request2, 'Place 2 spies')
       const request4 = t.choose(game, request3, 'Menzoberranzan')
-      const request5 = t.choose(game, request4, 'Kamaglym')
+      const request5 = t.choose(game, request4, 'Kanaglym')
 
       t.testBoard(game, {
         dennis: {
@@ -536,7 +536,7 @@ describe('Drow Expansion', () => {
           troops: ['neutral', 'neutral', 'neutral'],
           spies: ['dennis'],
         },
-        'Kamaglym': {
+        'Kanaglym': {
           spies: ['dennis'],
         },
       })

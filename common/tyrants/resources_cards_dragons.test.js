@@ -467,7 +467,7 @@ describe('Dragons Expansion Cards', () => {
         'Everfire': {
           troops: ['dennis'],
         },
-        'Kamaglym': {
+        'Kanaglym': {
           troops: ['dennis'],
         },
         'Llacerellyn': {

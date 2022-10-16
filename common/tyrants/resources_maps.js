@@ -213,8 +213,8 @@ const mapData = [
     ]
   },
   {
-    "name": "ch'chi-kama",
-    "short": "ch'chi-kama",
+    "name": "ch'chi-kana",
+    "short": "ch'chi-kana",
     "region": 1,
     "size": 1,
     "neutrals": 0,
@@ -230,7 +230,7 @@ const mapData = [
     },
     "neighbors": [
       "Ch'chitl",
-      "Kamaglym"
+      "Kanaglym"
     ]
   },
   {
@@ -564,8 +564,8 @@ const mapData = [
     ]
   },
   {
-    "name": "erynd-kama a",
-    "short": "erynd-kama a",
+    "name": "erynd-kana a",
+    "short": "erynd-kana a",
     "region": 2,
     "size": 1,
     "neutrals": 0,
@@ -581,7 +581,7 @@ const mapData = [
     },
     "neighbors": [
       "Eryndlyn",
-      "erynd-kama b"
+      "erynd-kana b"
     ],
     "ui": {
       x: 1.67,
@@ -589,8 +589,8 @@ const mapData = [
     },
   },
   {
-    "name": "erynd-kama b",
-    "short": "erynd-kama b",
+    "name": "erynd-kana b",
+    "short": "erynd-kana b",
     "region": 2,
     "size": 1,
     "neutrals": 0,
@@ -605,8 +605,8 @@ const mapData = [
       "points": 0
     },
     "neighbors": [
-      "Kamaglym",
-      "erynd-kama a"
+      "Kanaglym",
+      "erynd-kana a"
     ],
     "ui": {
       x: 1.33,
@@ -827,8 +827,8 @@ const mapData = [
     ]
   },
   {
-    "name": "kama-skull",
-    "short": "kama-skull",
+    "name": "kana-skull",
+    "short": "kana-skull",
     "region": 2,
     "size": 1,
     "neutrals": 0,
@@ -843,7 +843,7 @@ const mapData = [
       "points": 0
     },
     "neighbors": [
-      "Kamaglym",
+      "Kanaglym",
       "Skullport"
     ],
     "ui": {
@@ -852,8 +852,8 @@ const mapData = [
     },
   },
   {
-    "name": "kama-tsen a",
-    "short": "kama-tsen a",
+    "name": "kana-tsen a",
+    "short": "kana-tsen a",
     "region": 2,
     "size": 1,
     "neutrals": 0,
@@ -868,8 +868,8 @@ const mapData = [
       "points": 0
     },
     "neighbors": [
-      "Kamaglym",
-      "kama-tsen b"
+      "Kanaglym",
+      "kana-tsen b"
     ],
     "ui": {
       x: 1.33,
@@ -877,8 +877,8 @@ const mapData = [
     },
   },
   {
-    "name": "kama-tsen b",
-    "short": "kama-tsen b",
+    "name": "kana-tsen b",
+    "short": "kana-tsen b",
     "region": 2,
     "size": 1,
     "neutrals": 0,
@@ -894,7 +894,7 @@ const mapData = [
     },
     "neighbors": [
       "Tsenviilyq",
-      "kama-tsen a"
+      "kana-tsen a"
     ],
     "ui": {
       x: 1.67,
@@ -1360,7 +1360,7 @@ const mapData = [
       "points": 1
     },
     "neighbors": [
-      "ch'chi-kama"
+      "ch'chi-kana"
     ]
   },
   {
@@ -1483,7 +1483,7 @@ const mapData = [
     },
     "neighbors": [
       "skull-stone a",
-      "kama-skull"
+      "kana-skull"
     ],
     "ui": {
       x: 1,
@@ -1491,8 +1491,8 @@ const mapData = [
     },
   },
   {
-    "name": "Kamaglym",
-    "short": "kama",
+    "name": "Kanaglym",
+    "short": "kana",
     "region": 2,
     "size": 3,
     "neutrals": 0,
@@ -1507,9 +1507,9 @@ const mapData = [
       "points": 0
     },
     "neighbors": [
-      "kama-skull",
-      "erynd-kama b",
-      "kama-tsen a"
+      "kana-skull",
+      "erynd-kana b",
+      "kana-tsen a"
     ],
     "ui": {
       x: 1,
@@ -1610,7 +1610,7 @@ const mapData = [
       "points": 0
     },
     "neighbors": [
-      "erynd-kama a",
+      "erynd-kana a",
       "erynd-llace"
     ],
     "ui": {
