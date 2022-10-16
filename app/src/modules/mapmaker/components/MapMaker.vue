@@ -1,28 +1,18 @@
 <template>
   <b-container fluid class="map-maker">
+    <Toolbar
+      :nodeKinds="nodeKinds"
+      @tool-add="addKind"
+      @tool-connect="startConnecting"
+      @tool-cut="startCutting"
+      @tool-export="exportData"
+      @tool-load="showLoadModal"
+    />
+
     <b-row>
       <b-col class="editors-col">
         <div class="menu">
-          <b-dropdown text="menu" class="menu">
-            <b-dropdown-item @click="showLoadModal">load</b-dropdown-item>
-            <b-dropdown-divider />
-            <b-dropdown-item @click="exportData">export</b-dropdown-item>
-          </b-dropdown>
-
-          <b-dropdown text="add" class="menu">
-            <b-dropdown-item @click="add">base</b-dropdown-item>
-
-            <b-dropdown-item
-              v-for="(kind, index) in nodeKinds"
-              :key="index"
-              @click="addKind(kind)"
-            >
-              {{ kind }}
-            </b-dropdown-item>
-          </b-dropdown>
-
-          <b-button @click="startConnecting" :variant="connectButtonVariant">connect</b-button>
-          <b-button @click="startCutting" :variant="cutButtonVariant">cut</b-button>
+          <b-button v-b-toggle.toolbar block>toolbar</b-button>
         </div>
 
         <div class="editor-div">
@@ -81,6 +71,7 @@ import 'prismjs/themes/prism-tomorrow.css'
 import CurveLayer from './CurveLayer'
 import DivLayer from './DivLayer'
 import HandleLayer from './HandleLayer'
+import Toolbar from './Toolbar'
 import UploadModal from './UploadModal'
 
 
@@ -197,6 +188,7 @@ export default {
     DivLayer,
     HandleLayer,
     PrismEditor,
+    Toolbar,
     UploadModal,
   },
 
@@ -306,7 +298,7 @@ export default {
           stylesToId[classes] = div.id
         }
       }
-      return Object.values(stylesToId)
+      return ['base'].concat(Object.values(stylesToId))
     },
 
     styledDivs() {
@@ -438,21 +430,27 @@ export default {
       }
     },
 
+    showTransformMenu() {
+      this.$bvModal.show('transform-modal')
+    },
+
 
     ////////////////////////////////////////////////////////////////////////////////
     // Div rendering
 
 
-    add() {
-      this.makeDiv()
-      this.updateDivEditorFromData()
-    },
-
     addKind(kind) {
-      const original = this.elems.divs.find(div => div.id === kind)
-      const newDiv = this.makeDiv()
-      newDiv.classes = [...original.classes]
-      this.updateDivEditorFromData()
+      if (kind === 'base') {
+        this.makeDiv()
+        this.updateDivEditorFromData()
+      }
+
+      else {
+        const original = this.elems.divs.find(div => div.id === kind)
+        const newDiv = this.makeDiv()
+        newDiv.classes = [...original.classes]
+        this.updateDivEditorFromData()
+      }
     },
 
     makeDiv() {
