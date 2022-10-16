@@ -2,7 +2,7 @@
   <div class="game-card" @click="toggleExpand">
     <div class="header">
       <div class="name">{{ card.name }}</div>
-      <div class="cost">{{ card.cost }}</div>
+      <div class="cost">{{ cost }}</div>
     </div>
 
     <div v-if="expanded" class="details">
@@ -41,6 +41,12 @@ export default {
     return {
       expanded: this.expandedIn,
     }
+  },
+
+  computed: {
+    cost() {
+      return this.card.cost < 0 ? '-' : this.card.cost
+    },
   },
 
   methods: {
