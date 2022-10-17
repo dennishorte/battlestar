@@ -17,7 +17,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const bonuses = game.getBonuses(player).sort()
+      const bonuses = game.getBonuses(player).sort((l, r) => l - r)
       for (const bonus of bonuses) {
         game.aDrawAndTuck(player, bonus)
       }
