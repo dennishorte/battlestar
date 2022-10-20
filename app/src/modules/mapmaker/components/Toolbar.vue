@@ -18,6 +18,25 @@
     <div class="tool-button" @click="$emit('tool-connect')">connect</div>
     <div class="tool-button" @click="$emit('tool-cut')">cut</div>
 
+    <hr />
+
+    <div class="tool-button" v-b-toggle.transform-options>transform</div>
+    <b-collapse id="transform-options">
+      <div>
+        scale x: <b-form-input v-model.number="scale.x"></b-form-input>
+        scale y: <b-form-input v-model.number="scale.y"></b-form-input>
+      </div>
+
+      <div>
+        translate x: <b-form-input v-model.number="translate.x"></b-form-input>
+        translate y: <b-form-input v-model.number="translate.y"></b-form-input>
+      </div>
+
+      <div>
+        <b-button @click="resetTransform">reset</b-button>
+        <b-button @click="applyTransform">apply</b-button>
+      </div>
+    </b-collapse>
 
     <hr />
 
@@ -53,7 +72,20 @@ export default {
 
   methods: {
     applyTransform() {
-      console.log('apply')
+      this.$emit('tool-transform', {
+        scale: {
+          x: this.scale.x / 100,
+          y: this.scale.y / 100,
+        },
+        translate: { ...this.translate },
+      })
+    },
+
+    resetTransform() {
+      this.scale.x = 100
+      this.scale.y = 100
+      this.translate.x = 0
+      this.translate.y = 0
     },
   },
 }
@@ -68,14 +100,18 @@ export default {
 }
 
 .tool-button:hover,
-.tool-button-sub-option:hover
+.collapse div:hover
 {
   background-color: #4d5b7a;
 }
 
-.tool-button-sub-option {
+.collapse div {
   margin: 0 2.5em;
   padding: 5px .5em;
   border-left: 1px solid lightgray;
+}
+
+button {
+  margin-right: 2px;
 }
 </style>

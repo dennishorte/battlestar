@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   "elems": {
     "divs": [
       {
@@ -10,7 +10,7 @@ export default {
         ],
         "style": {
           "left": "180px",
-          "top": "49px"
+          "top": "20px"
         }
       },
       {
@@ -22,7 +22,7 @@ export default {
         ],
         "style": {
           "left": "204px",
-          "top": "673px"
+          "top": "675px"
         }
       },
       {
@@ -34,7 +34,7 @@ export default {
         ],
         "style": {
           "left": "194px",
-          "top": "410px"
+          "top": "399px"
         }
       },
       {
@@ -46,7 +46,7 @@ export default {
         ],
         "style": {
           "left": "67px",
-          "top": "53px"
+          "top": "24px"
         }
       },
       {
@@ -58,7 +58,7 @@ export default {
         ],
         "style": {
           "left": "53px",
-          "top": "175px"
+          "top": "152px"
         }
       },
       {
@@ -70,7 +70,7 @@ export default {
         ],
         "style": {
           "left": "24px",
-          "top": "304px"
+          "top": "288px"
         }
       },
       {
@@ -82,19 +82,19 @@ export default {
         ],
         "style": {
           "left": "25px",
-          "top": "429px"
+          "top": "419px"
         }
       },
       {
         "id": "node107",
-        "name": "Kanaglym",
+        "name": "Kamaglym",
         "classes": [
           "element",
           "secondary"
         ],
         "style": {
           "left": "33px",
-          "top": "702px"
+          "top": "706px"
         }
       },
       {
@@ -106,7 +106,7 @@ export default {
         ],
         "style": {
           "left": "221px",
-          "top": "296px"
+          "top": "278px"
         }
       },
       {
@@ -118,7 +118,7 @@ export default {
         ],
         "style": {
           "left": "334px",
-          "top": "168px"
+          "top": "145px"
         }
       },
       {
@@ -130,7 +130,7 @@ export default {
         ],
         "style": {
           "left": "342px",
-          "top": "287px"
+          "top": "270px"
         }
       },
       {
@@ -142,7 +142,7 @@ export default {
         ],
         "style": {
           "left": "24px",
-          "top": "577px"
+          "top": "574px"
         }
       },
       {
@@ -154,7 +154,7 @@ export default {
         ],
         "style": {
           "left": "351px",
-          "top": "454px"
+          "top": "445px"
         }
       },
       {
@@ -166,7 +166,7 @@ export default {
         ],
         "style": {
           "left": "323px",
-          "top": "607px"
+          "top": "606px"
         }
       },
       {
@@ -178,7 +178,7 @@ export default {
         ],
         "style": {
           "left": "171px",
-          "top": "576px"
+          "top": "573px"
         }
       },
       {
@@ -190,7 +190,7 @@ export default {
         ],
         "style": {
           "left": "100px",
-          "top": "125px"
+          "top": "100px"
         }
       },
       {
@@ -202,7 +202,7 @@ export default {
         ],
         "style": {
           "left": "59px",
-          "top": "251px"
+          "top": "232px"
         }
       },
       {
@@ -214,7 +214,7 @@ export default {
         ],
         "style": {
           "left": "154px",
-          "top": "139px"
+          "top": "114px"
         }
       },
       {
@@ -226,7 +226,7 @@ export default {
         ],
         "style": {
           "left": "165px",
-          "top": "191px"
+          "top": "169px"
         }
       },
       {
@@ -238,7 +238,7 @@ export default {
         ],
         "style": {
           "left": "159px",
-          "top": "246px"
+          "top": "226px"
         }
       },
       {
@@ -250,7 +250,7 @@ export default {
         ],
         "style": {
           "left": "123px",
-          "top": "301px"
+          "top": "285px"
         }
       },
       {
@@ -262,7 +262,7 @@ export default {
         ],
         "style": {
           "left": "172px",
-          "top": "310px"
+          "top": "294px"
         }
       },
       {
@@ -274,7 +274,7 @@ export default {
         ],
         "style": {
           "left": "47px",
-          "top": "381px"
+          "top": "369px"
         }
       },
       {
@@ -286,7 +286,7 @@ export default {
         ],
         "style": {
           "left": "318px",
-          "top": "677px"
+          "top": "678px"
         }
       },
       {
@@ -298,7 +298,7 @@ export default {
         ],
         "style": {
           "left": "324px",
-          "top": "558px"
+          "top": "554px"
         }
       },
       {
@@ -310,7 +310,7 @@ export default {
         ],
         "style": {
           "left": "365px",
-          "top": "530px"
+          "top": "525px"
         }
       },
       {
@@ -322,7 +322,7 @@ export default {
         ],
         "style": {
           "left": "228px",
-          "top": "176px"
+          "top": "153px"
         }
       },
       {
@@ -334,7 +334,7 @@ export default {
         ],
         "style": {
           "left": "225px",
-          "top": "230px"
+          "top": "210px"
         }
       },
       {
@@ -346,7 +346,7 @@ export default {
         ],
         "style": {
           "left": "301px",
-          "top": "130px"
+          "top": "105px"
         }
       },
       {
@@ -358,7 +358,7 @@ export default {
         ],
         "style": {
           "left": "351px",
-          "top": "120px"
+          "top": "95px"
         }
       },
       {
@@ -370,7 +370,7 @@ export default {
         ],
         "style": {
           "left": "301px",
-          "top": "244px"
+          "top": "225px"
         }
       },
       {
@@ -382,19 +382,19 @@ export default {
         ],
         "style": {
           "left": "364px",
-          "top": "241px"
+          "top": "222px"
         }
       },
       {
         "id": "node132",
-        "name": "kana-skull",
+        "name": "kama-skull",
         "classes": [
           "element",
           "tertiary"
         ],
         "style": {
           "left": "45px",
-          "top": "653px"
+          "top": "654px"
         }
       },
       {
@@ -406,7 +406,7 @@ export default {
         ],
         "style": {
           "left": "111px",
-          "top": "398px"
+          "top": "386px"
         }
       },
       {
@@ -418,7 +418,7 @@ export default {
         ],
         "style": {
           "left": "145px",
-          "top": "441px"
+          "top": "431px"
         }
       },
       {
@@ -430,7 +430,7 @@ export default {
         ],
         "style": {
           "left": "31px",
-          "top": "498px"
+          "top": "491px"
         }
       },
       {
@@ -442,7 +442,7 @@ export default {
         ],
         "style": {
           "left": "64px",
-          "top": "532px"
+          "top": "526px"
         }
       },
       {
@@ -454,7 +454,7 @@ export default {
         ],
         "style": {
           "left": "249px",
-          "top": "368px"
+          "top": "355px"
         }
       },
       {
@@ -466,7 +466,7 @@ export default {
         ],
         "style": {
           "left": "346px",
-          "top": "410px"
+          "top": "399px"
         }
       },
       {
@@ -478,55 +478,55 @@ export default {
         ],
         "style": {
           "left": "344px",
-          "top": "358px"
+          "top": "344px"
         }
       },
       {
         "id": "node140",
-        "name": "kana-tsen a",
+        "name": "kama-tsen a",
         "classes": [
           "element",
           "tertiary"
         ],
         "style": {
           "left": "127px",
-          "top": "747px"
+          "top": "753px"
         }
       },
       {
         "id": "node141",
-        "name": "kana-tsen b",
+        "name": "kama-tsen b",
         "classes": [
           "element",
           "tertiary"
         ],
         "style": {
           "left": "161px",
-          "top": "712px"
+          "top": "716px"
         }
       },
       {
         "id": "node142",
-        "name": "eryn-kana a",
+        "name": "eryn-kama a",
         "classes": [
           "element",
           "tertiary"
         ],
         "style": {
           "left": "119px",
-          "top": "603px"
+          "top": "602px"
         }
       },
       {
         "id": "node143",
-        "name": "eryn-kana b",
+        "name": "eryn-kama b",
         "classes": [
           "element",
           "tertiary"
         ],
         "style": {
           "left": "98px",
-          "top": "653px"
+          "top": "654px"
         }
       },
       {
@@ -538,7 +538,7 @@ export default {
         ],
         "style": {
           "left": "278px",
-          "top": "612px"
+          "top": "611px"
         }
       },
       {
@@ -550,7 +550,7 @@ export default {
         ],
         "style": {
           "left": "210px",
-          "top": "532px"
+          "top": "526px"
         }
       },
       {
@@ -562,7 +562,7 @@ export default {
         ],
         "style": {
           "left": "309px",
-          "top": "472px"
+          "top": "464px"
         }
       }
     ],
@@ -576,20 +576,20 @@ export default {
         "points": {
           "source": {
             "x": 107,
-            "y": 78
+            "y": 50
           },
           "target": {
             "x": 112,
-            "y": 137
+            "y": 112
           },
           "sourceHandle": {
             "x": 142,
-            "y": 95,
+            "y": 68,
             "moveable": true
           },
           "targetHandle": {
             "x": 123,
-            "y": 132,
+            "y": 107,
             "moveable": true
           }
         }
@@ -603,20 +603,20 @@ export default {
         "points": {
           "source": {
             "x": 112,
-            "y": 137
+            "y": 112
           },
           "target": {
             "x": 93,
-            "y": 200
+            "y": 179
           },
           "sourceHandle": {
             "x": 103,
-            "y": 151,
+            "y": 126,
             "moveable": true
           },
           "targetHandle": {
             "x": 58,
-            "y": 174,
+            "y": 151,
             "moveable": true
           }
         }
@@ -630,20 +630,20 @@ export default {
         "points": {
           "source": {
             "x": 93,
-            "y": 200
+            "y": 179
           },
           "target": {
             "x": 71,
-            "y": 263
+            "y": 245
           },
           "sourceHandle": {
             "x": 51,
-            "y": 226,
+            "y": 206,
             "moveable": true
           },
           "targetHandle": {
             "x": 56,
-            "y": 246,
+            "y": 226,
             "moveable": true
           }
         }
@@ -657,20 +657,20 @@ export default {
         "points": {
           "source": {
             "x": 71,
-            "y": 263
+            "y": 245
           },
           "target": {
             "x": 64,
-            "y": 329
+            "y": 314
           },
           "sourceHandle": {
             "x": 94,
-            "y": 297,
+            "y": 279,
             "moveable": true
           },
           "targetHandle": {
             "x": 63,
-            "y": 339,
+            "y": 324,
             "moveable": true
           }
         }
@@ -684,20 +684,20 @@ export default {
         "points": {
           "source": {
             "x": 64,
-            "y": 329
+            "y": 314
           },
           "target": {
             "x": 59,
-            "y": 393
+            "y": 380
           },
           "sourceHandle": {
             "x": 51,
-            "y": 315,
+            "y": 299,
             "moveable": true
           },
           "targetHandle": {
             "x": 82,
-            "y": 354,
+            "y": 340,
             "moveable": true
           }
         }
@@ -711,20 +711,20 @@ export default {
         "points": {
           "source": {
             "x": 59,
-            "y": 393
+            "y": 380
           },
           "target": {
             "x": 65,
-            "y": 454
+            "y": 445
           },
           "sourceHandle": {
             "x": 43,
-            "y": 417,
+            "y": 406,
             "moveable": true
           },
           "targetHandle": {
             "x": 54,
-            "y": 456,
+            "y": 447,
             "moveable": true
           }
         }
@@ -738,20 +738,20 @@ export default {
         "points": {
           "source": {
             "x": 76,
-            "y": 544
+            "y": 540
           },
           "target": {
             "x": 64,
-            "y": 602
+            "y": 601
           },
           "sourceHandle": {
             "x": 109,
-            "y": 559,
+            "y": 555,
             "moveable": true
           },
           "targetHandle": {
             "x": 86,
-            "y": 611,
+            "y": 610,
             "moveable": true
           }
         }
@@ -765,20 +765,20 @@ export default {
         "points": {
           "source": {
             "x": 64,
-            "y": 602
+            "y": 601
           },
           "target": {
             "x": 57,
-            "y": 665
+            "y": 667
           },
           "sourceHandle": {
             "x": 44,
-            "y": 599,
+            "y": 597,
             "moveable": true
           },
           "targetHandle": {
             "x": 38,
-            "y": 626,
+            "y": 625,
             "moveable": true
           }
         }
@@ -792,20 +792,20 @@ export default {
         "points": {
           "source": {
             "x": 57,
-            "y": 665
+            "y": 667
           },
           "target": {
             "x": 73,
-            "y": 727
+            "y": 731
           },
           "sourceHandle": {
             "x": 78,
-            "y": 707,
+            "y": 711,
             "moveable": true
           },
           "targetHandle": {
             "x": 43,
-            "y": 719,
+            "y": 723,
             "moveable": true
           }
         }
@@ -819,20 +819,20 @@ export default {
         "points": {
           "source": {
             "x": 73,
-            "y": 727
+            "y": 731
           },
           "target": {
             "x": 139,
-            "y": 759
+            "y": 765
           },
           "sourceHandle": {
             "x": 109,
-            "y": 768,
+            "y": 775,
             "moveable": true
           },
           "targetHandle": {
             "x": 114,
-            "y": 760,
+            "y": 767,
             "moveable": true
           }
         }
@@ -846,20 +846,20 @@ export default {
         "points": {
           "source": {
             "x": 139,
-            "y": 759
+            "y": 765
           },
           "target": {
             "x": 173,
-            "y": 724
+            "y": 728
           },
           "sourceHandle": {
             "x": 146,
-            "y": 757,
+            "y": 763,
             "moveable": true
           },
           "targetHandle": {
             "x": 167,
-            "y": 753,
+            "y": 759,
             "moveable": true
           }
         }
@@ -873,20 +873,20 @@ export default {
         "points": {
           "source": {
             "x": 173,
-            "y": 724
+            "y": 728
           },
           "target": {
             "x": 254,
-            "y": 723
+            "y": 727
           },
           "sourceHandle": {
             "x": 200,
-            "y": 681,
+            "y": 683,
             "moveable": true
           },
           "targetHandle": {
             "x": 245,
-            "y": 720,
+            "y": 725,
             "moveable": true
           }
         }
@@ -900,20 +900,20 @@ export default {
         "points": {
           "source": {
             "x": 254,
-            "y": 723
+            "y": 727
           },
           "target": {
             "x": 330,
-            "y": 689
+            "y": 692
           },
           "sourceHandle": {
             "x": 274,
-            "y": 728,
+            "y": 732,
             "moveable": true
           },
           "targetHandle": {
             "x": 319,
-            "y": 738,
+            "y": 743,
             "moveable": true
           }
         }
@@ -927,20 +927,20 @@ export default {
         "points": {
           "source": {
             "x": 330,
-            "y": 689
+            "y": 692
           },
           "target": {
             "x": 363,
-            "y": 632
+            "y": 631
           },
           "sourceHandle": {
             "x": 337,
-            "y": 653,
+            "y": 654,
             "moveable": true
           },
           "targetHandle": {
             "x": 361,
-            "y": 633,
+            "y": 632,
             "moveable": true
           }
         }
@@ -954,20 +954,20 @@ export default {
         "points": {
           "source": {
             "x": 110,
-            "y": 665
+            "y": 667
           },
           "target": {
             "x": 73,
-            "y": 727
+            "y": 731
           },
           "sourceHandle": {
             "x": 106,
-            "y": 714,
+            "y": 718,
             "moveable": true
           },
           "targetHandle": {
             "x": 85,
-            "y": 705,
+            "y": 709,
             "moveable": true
           }
         }
@@ -981,20 +981,20 @@ export default {
         "points": {
           "source": {
             "x": 110,
-            "y": 665
+            "y": 667
           },
           "target": {
             "x": 131,
-            "y": 615
+            "y": 614
           },
           "sourceHandle": {
             "x": 105,
-            "y": 636,
+            "y": 635,
             "moveable": true
           },
           "targetHandle": {
             "x": 134,
-            "y": 610,
+            "y": 609,
             "moveable": true
           }
         }
@@ -1008,20 +1008,20 @@ export default {
         "points": {
           "source": {
             "x": 131,
-            "y": 615
+            "y": 614
           },
           "target": {
             "x": 211,
-            "y": 601
+            "y": 600
           },
           "sourceHandle": {
             "x": 145,
-            "y": 591,
+            "y": 589,
             "moveable": true
           },
           "targetHandle": {
             "x": 185,
-            "y": 591,
+            "y": 589,
             "moveable": true
           }
         }
@@ -1035,20 +1035,20 @@ export default {
         "points": {
           "source": {
             "x": 211,
-            "y": 601
+            "y": 600
           },
           "target": {
             "x": 222,
-            "y": 544
+            "y": 540
           },
           "sourceHandle": {
             "x": 174,
-            "y": 611,
+            "y": 610,
             "moveable": true
           },
           "targetHandle": {
             "x": 190,
-            "y": 541,
+            "y": 537,
             "moveable": true
           }
         }
@@ -1062,20 +1062,20 @@ export default {
         "points": {
           "source": {
             "x": 222,
-            "y": 544
+            "y": 540
           },
           "target": {
             "x": 244,
-            "y": 460
+            "y": 452
           },
           "sourceHandle": {
             "x": 252,
-            "y": 540,
+            "y": 536,
             "moveable": true
           },
           "targetHandle": {
             "x": 270,
-            "y": 522,
+            "y": 517,
             "moveable": true
           }
         }
@@ -1089,20 +1089,20 @@ export default {
         "points": {
           "source": {
             "x": 65,
-            "y": 454
+            "y": 445
           },
           "target": {
             "x": 123,
-            "y": 410
+            "y": 399
           },
           "sourceHandle": {
             "x": 68,
-            "y": 442,
+            "y": 432,
             "moveable": true
           },
           "targetHandle": {
             "x": 82,
-            "y": 403,
+            "y": 392,
             "moveable": true
           }
         }
@@ -1116,20 +1116,20 @@ export default {
         "points": {
           "source": {
             "x": 123,
-            "y": 410
+            "y": 399
           },
           "target": {
             "x": 157,
-            "y": 453
+            "y": 444
           },
           "sourceHandle": {
             "x": 136,
-            "y": 416,
+            "y": 405,
             "moveable": true
           },
           "targetHandle": {
             "x": 155,
-            "y": 434,
+            "y": 424,
             "moveable": true
           }
         }
@@ -1143,20 +1143,20 @@ export default {
         "points": {
           "source": {
             "x": 157,
-            "y": 453
+            "y": 444
           },
           "target": {
             "x": 244,
-            "y": 460
+            "y": 452
           },
           "sourceHandle": {
             "x": 187,
-            "y": 506,
+            "y": 500,
             "moveable": true
           },
           "targetHandle": {
-            "x": 217.33333333333337,
-            "y": 445,
+            "x": 217,
+            "y": 436,
             "moveable": true
           }
         }
@@ -1170,20 +1170,20 @@ export default {
         "points": {
           "source": {
             "x": 244,
-            "y": 460
+            "y": 452
           },
           "target": {
             "x": 321,
-            "y": 484
+            "y": 476
           },
           "sourceHandle": {
-            "x": 270.3333333333333,
-            "y": 482,
+            "x": 270,
+            "y": 475,
             "moveable": true
           },
           "targetHandle": {
             "x": 288,
-            "y": 504,
+            "y": 498,
             "moveable": true
           }
         }
@@ -1197,20 +1197,20 @@ export default {
         "points": {
           "source": {
             "x": 321,
-            "y": 484
+            "y": 476
           },
           "target": {
             "x": 391,
-            "y": 479
+            "y": 471
           },
           "sourceHandle": {
             "x": 349,
-            "y": 454,
+            "y": 445,
             "moveable": true
           },
           "targetHandle": {
             "x": 368,
-            "y": 479,
+            "y": 471,
             "moveable": true
           }
         }
@@ -1224,7 +1224,7 @@ export default {
         "points": {
           "source": {
             "x": 211,
-            "y": 601
+            "y": 600
           },
           "target": {
             "x": 290,
@@ -1232,12 +1232,12 @@ export default {
           },
           "sourceHandle": {
             "x": 220,
-            "y": 634,
+            "y": 633,
             "moveable": true
           },
           "targetHandle": {
             "x": 240,
-            "y": 602,
+            "y": 601,
             "moveable": true
           }
         }
@@ -1255,16 +1255,16 @@ export default {
           },
           "target": {
             "x": 363,
-            "y": 632
+            "y": 631
           },
           "sourceHandle": {
             "x": 336,
-            "y": 637,
+            "y": 636,
             "moveable": true
           },
           "targetHandle": {
             "x": 365,
-            "y": 605,
+            "y": 604,
             "moveable": true
           }
         }
@@ -1278,20 +1278,20 @@ export default {
         "points": {
           "source": {
             "x": 363,
-            "y": 632
+            "y": 631
           },
           "target": {
             "x": 336,
-            "y": 570
+            "y": 567
           },
           "sourceHandle": {
             "x": 370,
-            "y": 647,
+            "y": 648,
             "moveable": true
           },
           "targetHandle": {
             "x": 309,
-            "y": 598,
+            "y": 596,
             "moveable": true
           }
         }
@@ -1305,20 +1305,20 @@ export default {
         "points": {
           "source": {
             "x": 336,
-            "y": 570
+            "y": 567
           },
           "target": {
             "x": 377,
-            "y": 542
+            "y": 538
           },
           "sourceHandle": {
-            "x": 343.6666666666667,
-            "y": 541,
+            "x": 344,
+            "y": 537,
             "moveable": true
           },
           "targetHandle": {
             "x": 402,
-            "y": 545,
+            "y": 541,
             "moveable": true
           }
         }
@@ -1332,20 +1332,20 @@ export default {
         "points": {
           "source": {
             "x": 377,
-            "y": 542
+            "y": 538
           },
           "target": {
             "x": 391,
-            "y": 479
+            "y": 471
           },
           "sourceHandle": {
             "x": 402,
-            "y": 525,
+            "y": 520,
             "moveable": true
           },
           "targetHandle": {
             "x": 368,
-            "y": 468,
+            "y": 460,
             "moveable": true
           }
         }
@@ -1359,20 +1359,20 @@ export default {
         "points": {
           "source": {
             "x": 261,
-            "y": 380
+            "y": 368
           },
           "target": {
             "x": 244,
-            "y": 460
+            "y": 452
           },
           "sourceHandle": {
             "x": 252,
-            "y": 380,
+            "y": 368,
             "moveable": true
           },
           "targetHandle": {
             "x": 303,
-            "y": 392,
+            "y": 379,
             "moveable": true
           }
         }
@@ -1386,20 +1386,20 @@ export default {
         "points": {
           "source": {
             "x": 261,
-            "y": 321
+            "y": 306
           },
           "target": {
             "x": 261,
-            "y": 380
+            "y": 368
           },
           "sourceHandle": {
             "x": 233,
-            "y": 341,
+            "y": 326,
             "moveable": true
           },
           "targetHandle": {
             "x": 252,
-            "y": 370,
+            "y": 357,
             "moveable": true
           }
         }
@@ -1413,20 +1413,20 @@ export default {
         "points": {
           "source": {
             "x": 64,
-            "y": 329
+            "y": 314
           },
           "target": {
             "x": 135,
-            "y": 313
+            "y": 297
           },
           "sourceHandle": {
             "x": 84,
-            "y": 337,
+            "y": 322,
             "moveable": true
           },
           "targetHandle": {
             "x": 94,
-            "y": 307,
+            "y": 291,
             "moveable": true
           }
         }
@@ -1440,20 +1440,20 @@ export default {
         "points": {
           "source": {
             "x": 135,
-            "y": 313
+            "y": 297
           },
           "target": {
             "x": 184,
-            "y": 322
+            "y": 307
           },
           "sourceHandle": {
             "x": 144,
-            "y": 317,
+            "y": 301,
             "moveable": true
           },
           "targetHandle": {
             "x": 167,
-            "y": 326,
+            "y": 311,
             "moveable": true
           }
         }
@@ -1467,20 +1467,20 @@ export default {
         "points": {
           "source": {
             "x": 184,
-            "y": 322
+            "y": 307
           },
           "target": {
             "x": 261,
-            "y": 321
+            "y": 306
           },
           "sourceHandle": {
             "x": 232,
-            "y": 324,
+            "y": 309,
             "moveable": true
           },
           "targetHandle": {
             "x": 225,
-            "y": 286,
+            "y": 269,
             "moveable": true
           }
         }
@@ -1494,20 +1494,20 @@ export default {
         "points": {
           "source": {
             "x": 93,
-            "y": 200
+            "y": 179
           },
           "target": {
             "x": 171,
-            "y": 258
+            "y": 239
           },
           "sourceHandle": {
             "x": 108,
-            "y": 239,
+            "y": 219,
             "moveable": true
           },
           "targetHandle": {
             "x": 134,
-            "y": 273,
+            "y": 255,
             "moveable": true
           }
         }
@@ -1521,20 +1521,20 @@ export default {
         "points": {
           "source": {
             "x": 171,
-            "y": 258
+            "y": 239
           },
           "target": {
             "x": 177,
-            "y": 203
+            "y": 182
           },
           "sourceHandle": {
             "x": 168,
-            "y": 259,
+            "y": 240,
             "moveable": true
           },
           "targetHandle": {
             "x": 208,
-            "y": 247,
+            "y": 227,
             "moveable": true
           }
         }
@@ -1548,20 +1548,20 @@ export default {
         "points": {
           "source": {
             "x": 177,
-            "y": 203
+            "y": 182
           },
           "target": {
             "x": 166,
-            "y": 151
+            "y": 126
           },
           "sourceHandle": {
             "x": 181,
-            "y": 200,
+            "y": 179,
             "moveable": true
           },
           "targetHandle": {
             "x": 154,
-            "y": 184,
+            "y": 162,
             "moveable": true
           }
         }
@@ -1575,20 +1575,20 @@ export default {
         "points": {
           "source": {
             "x": 166,
-            "y": 151
+            "y": 126
           },
           "target": {
             "x": 230,
-            "y": 99
+            "y": 72
           },
           "sourceHandle": {
             "x": 175,
-            "y": 112,
+            "y": 86,
             "moveable": true
           },
           "targetHandle": {
             "x": 233,
-            "y": 123,
+            "y": 98,
             "moveable": true
           }
         }
@@ -1602,20 +1602,20 @@ export default {
         "points": {
           "source": {
             "x": 230,
-            "y": 99
+            "y": 72
           },
           "target": {
             "x": 240,
-            "y": 188
+            "y": 166
           },
           "sourceHandle": {
             "x": 230,
-            "y": 127,
+            "y": 102,
             "moveable": true
           },
           "targetHandle": {
             "x": 272,
-            "y": 125,
+            "y": 100,
             "moveable": true
           }
         }
@@ -1629,20 +1629,20 @@ export default {
         "points": {
           "source": {
             "x": 240,
-            "y": 188
+            "y": 166
           },
           "target": {
             "x": 237,
-            "y": 242
+            "y": 223
           },
           "sourceHandle": {
             "x": 224,
-            "y": 214,
+            "y": 193,
             "moveable": true
           },
           "targetHandle": {
             "x": 233,
-            "y": 239,
+            "y": 219,
             "moveable": true
           }
         }
@@ -1656,20 +1656,20 @@ export default {
         "points": {
           "source": {
             "x": 237,
-            "y": 242
+            "y": 223
           },
           "target": {
             "x": 261,
-            "y": 321
+            "y": 306
           },
           "sourceHandle": {
             "x": 246,
-            "y": 291,
+            "y": 274,
             "moveable": true
           },
           "targetHandle": {
             "x": 269,
-            "y": 301,
+            "y": 285,
             "moveable": true
           }
         }
@@ -1683,20 +1683,20 @@ export default {
         "points": {
           "source": {
             "x": 261,
-            "y": 321
+            "y": 306
           },
           "target": {
             "x": 313,
-            "y": 256
+            "y": 237
           },
           "sourceHandle": {
             "x": 270,
-            "y": 321,
+            "y": 306,
             "moveable": true
           },
           "targetHandle": {
             "x": 320,
-            "y": 308,
+            "y": 292,
             "moveable": true
           }
         }
@@ -1710,20 +1710,20 @@ export default {
         "points": {
           "source": {
             "x": 313,
-            "y": 256
+            "y": 237
           },
           "target": {
             "x": 374,
-            "y": 193
+            "y": 171
           },
           "sourceHandle": {
             "x": 301,
-            "y": 173,
+            "y": 150,
             "moveable": true
           },
           "targetHandle": {
             "x": 440,
-            "y": 211,
+            "y": 190,
             "moveable": true
           }
         }
@@ -1737,20 +1737,20 @@ export default {
         "points": {
           "source": {
             "x": 391,
-            "y": 479
+            "y": 471
           },
           "target": {
             "x": 358,
-            "y": 422
+            "y": 412
           },
           "sourceHandle": {
             "x": 417,
-            "y": 458,
+            "y": 449,
             "moveable": true
           },
           "targetHandle": {
             "x": 381,
-            "y": 485,
+            "y": 477,
             "moveable": true
           }
         }
@@ -1764,20 +1764,20 @@ export default {
         "points": {
           "source": {
             "x": 358,
-            "y": 422
+            "y": 412
           },
           "target": {
             "x": 356,
-            "y": 370
+            "y": 357
           },
           "sourceHandle": {
             "x": 348,
-            "y": 405,
+            "y": 394,
             "moveable": true
           },
           "targetHandle": {
             "x": 347,
-            "y": 386,
+            "y": 374,
             "moveable": true
           }
         }
@@ -1791,20 +1791,20 @@ export default {
         "points": {
           "source": {
             "x": 356,
-            "y": 370
+            "y": 357
           },
           "target": {
             "x": 382,
-            "y": 312
+            "y": 296
           },
           "sourceHandle": {
             "x": 354,
-            "y": 371,
+            "y": 358,
             "moveable": true
           },
           "targetHandle": {
             "x": 361,
-            "y": 329,
+            "y": 314,
             "moveable": true
           }
         }
@@ -1818,20 +1818,20 @@ export default {
         "points": {
           "source": {
             "x": 382,
-            "y": 312
+            "y": 296
           },
           "target": {
             "x": 376,
-            "y": 253
+            "y": 234
           },
           "sourceHandle": {
             "x": 364,
-            "y": 326,
+            "y": 311,
             "moveable": true
           },
           "targetHandle": {
             "x": 408,
-            "y": 298,
+            "y": 281,
             "moveable": true
           }
         }
@@ -1845,20 +1845,20 @@ export default {
         "points": {
           "source": {
             "x": 376,
-            "y": 253
+            "y": 234
           },
           "target": {
             "x": 374,
-            "y": 193
+            "y": 171
           },
           "sourceHandle": {
             "x": 347,
-            "y": 224,
+            "y": 204,
             "moveable": true
           },
           "targetHandle": {
             "x": 377,
-            "y": 193,
+            "y": 171,
             "moveable": true
           }
         }
@@ -1872,20 +1872,20 @@ export default {
         "points": {
           "source": {
             "x": 313,
-            "y": 142
+            "y": 118
           },
           "target": {
             "x": 230,
-            "y": 99
+            "y": 72
           },
           "sourceHandle": {
             "x": 272,
-            "y": 159,
+            "y": 135,
             "moveable": true
           },
           "targetHandle": {
             "x": 262,
-            "y": 104,
+            "y": 78,
             "moveable": true
           }
         }
@@ -1899,20 +1899,20 @@ export default {
         "points": {
           "source": {
             "x": 65,
-            "y": 454
+            "y": 445
           },
           "target": {
             "x": 76,
-            "y": 544
+            "y": 540
           },
           "sourceHandle": {
             "x": 22,
-            "y": 480,
+            "y": 473,
             "moveable": true
           },
           "targetHandle": {
             "x": 43,
-            "y": 536,
+            "y": 530,
             "moveable": true
           }
         }
@@ -1926,20 +1926,20 @@ export default {
         "points": {
           "source": {
             "x": 313,
-            "y": 142
+            "y": 118
           },
           "target": {
             "x": 374,
-            "y": 193
+            "y": 171
           },
           "sourceHandle": {
             "x": 366,
-            "y": 103,
+            "y": 77,
             "moveable": true
           },
           "targetHandle": {
             "x": 397,
-            "y": 152,
+            "y": 128,
             "moveable": true
           }
         }
@@ -1951,14 +1951,14 @@ export default {
       ".element": {
         "position": "absolute",
         "background-color": "red",
-        "height": "50px",
+        "height": "53px",
         "width": "50px"
       },
       ".primary": {
         "background-color": "white",
         "border-radius": "50%",
         "border": "3px solid black",
-        "height": "100px",
+        "height": "105px",
         "width": "100px"
       },
       ".secondary": {
@@ -1968,7 +1968,7 @@ export default {
       },
       ".tertiary": {
         "border-radius": "50%",
-        "height": "25px",
+        "height": "26px",
         "width": "25px",
         "border": "1px solid black",
         "background-color": "white"

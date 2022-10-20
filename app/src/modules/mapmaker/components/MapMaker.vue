@@ -7,6 +7,7 @@
       @tool-cut="startCutting"
       @tool-export="exportData"
       @tool-load="showLoadModal"
+      @tool-transform="applyTransform"
     />
 
     <b-row>
@@ -411,6 +412,83 @@ export default {
       }
     },
 
+    applyTransform(params) {
+      this._scale(params.scale.x, params.scale.y)
+      this._translate(params.translate.x, params.translate.y)
+
+      this.updateDivEditorFromData()
+      this.updateCssEditorFromData()
+    },
+
+    _transform(x, y, kind, fn) {
+      return (dict, key, value) => {
+        let pxValue = false
+
+        if (typeof value === 'string') {
+          pxValue = true
+          value = this.parsePx(value)
+        }
+
+        let newValue
+
+        const xFields = ['left', 'x']
+        const yFields = ['top', 'y']
+
+        if (kind === 'scale') {
+          xFields.push('width')
+          yFields.push('height')
+        }
+
+        if (xFields.includes(key)) {
+          newValue = fn(value, x)
+        }
+        else if (yFields.includes(key)) {
+          newValue = fn(value, y)
+        }
+
+        if (newValue) {
+          newValue = Math.round(newValue)
+          dict[key] = pxValue ? newValue + 'px' : newValue
+        }
+      }
+    },
+
+    _transformAll(x, y, kind, fn) {
+      const scale = this._transform(x, y, kind, fn)
+
+      // Divs
+      for (const div of this.elems.divs) {
+        for (const [key, value] of Object.entries(div.style)) {
+          scale(div.style, key, value)
+        }
+      }
+
+      // Curves
+      for (const curve of this.elems.curves) {
+        const points = Object.values(curve.points)
+        for(const point of points) {
+          for (const [key, value] of Object.entries(point)) {
+            scale(point, key, value)
+          }
+        }
+      }
+
+      // Styles
+      for (const style of Object.values(this.elemMeta.styles)) {
+        for (const [key, value] of Object.entries(style)) {
+          scale(style, key, value)
+        }
+      }
+    },
+
+    _scale(x, y) {
+      return this._transformAll(x, y, 'scale', (a, b) => a * b)
+    },
+
+    _translate(x, y) {
+      return this._transformAll(x, y, 'translate', (a, b) => a + b)
+    },
+
     makeId(prefix) {
       while (true) { // eslint-disable-line no-constant-condition
         const newId = prefix + this.nextId
@@ -668,7 +746,6 @@ export default {
       if (selectable) {
         this.selection.elems.push(selectable)
         elem.classList.add('selected')
-        console.log('selected:', selectable.id)
       }
     },
 
