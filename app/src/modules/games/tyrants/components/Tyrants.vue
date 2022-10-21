@@ -6,6 +6,8 @@
           <GameMenu>
             <b-dropdown-item @click="openRules">rules</b-dropdown-item>
           </GameMenu>
+
+          <GameLog />
         </b-col>
 
         <b-col class="game-column">
@@ -40,6 +42,7 @@ import { tyr } from 'battlestar-common'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
+import GameLog from './log/GameLog'
 import GameMap from './GameMap'
 import Market from './Market'
 import Player from './Player'
@@ -52,6 +55,7 @@ export default {
   name: 'Tyrants',
 
   components: {
+    GameLog,
     GameMap,
     GameMenu,
     Market,
