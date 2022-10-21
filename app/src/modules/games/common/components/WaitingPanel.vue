@@ -11,7 +11,13 @@
         :key="player.name"
         :title="titleForPlayer(player)"
       >
-        <WaitingChoice v-if="hasActionWaiting(player)" :actor="player" />
+        <WaitingChoice
+          v-if="hasActionWaiting(player)"
+          :actor="player"
+          @mouse-entered="mouseEntered"
+          @mouse-exited="mouseExited"
+          @selection-changed="selectionChanged"
+        />
         <div v-else>
           No actions waiting for you right now.
         </div>
@@ -85,6 +91,18 @@ export default {
 
     hasActionWaiting(player) {
       return this.game.checkPlayerHasActionWaiting(player)
+    },
+
+    mouseEntered(data) {
+      this.$emit('mouse-entered', data)
+    },
+
+    mouseExited(data) {
+      this.$emit('mouse-exited', data)
+    },
+
+    selectionChanged(data) {
+      this.$emit('selection-changed', data)
     },
 
     titleForPlayer(player) {

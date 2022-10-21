@@ -5,6 +5,8 @@
       :key="key"
       :selector="request"
       :required="true"
+      @mouse-entered="mouseEntered"
+      @mouse-exited="mouseExited"
       @selection-changed="childChanged"
     />
 
@@ -88,6 +90,7 @@ export default {
 
     childChanged(event) {
       this.selection = event
+      this.$emit('selection-changed', [...this.selection.selection])
     },
 
     insertDogmaShareSubtitles(selector) {
@@ -134,6 +137,14 @@ export default {
           this.insertSubtitles(option)
         }
       }
+    },
+
+    mouseEntered(data) {
+      this.$emit('mouse-entered', data)
+    },
+
+    mouseExited(data) {
+      this.$emit('mouse-exited', data)
     },
 
     optionHasChildren(selector) {

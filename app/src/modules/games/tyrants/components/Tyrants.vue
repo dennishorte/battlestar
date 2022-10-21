@@ -12,7 +12,11 @@
           <Player v-for="player in orderedPlayers" :key="player.name" :player="player" />
 
           <Market />
-          <WaitingPanel />
+          <WaitingPanel
+            @mouse-entered="mouseEntered"
+            @mouse-exited="mouseExited"
+            @selection-changed="selectionChanged"
+          />
         </b-col>
 
         <b-col class="map-column">
@@ -111,6 +115,18 @@ export default {
       this.game.save = async function() {
         await this.save()
       }.bind(this)
+    },
+
+    mouseEntered(data) {
+      console.log('mouse-entered', data)
+    },
+
+    mouseExited(data) {
+      console.log('mouse-exited', data)
+    },
+
+    selectionChanged(data) {
+      console.log('selection-changed', data)
     },
   },
 

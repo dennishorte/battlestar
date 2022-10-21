@@ -15,7 +15,7 @@
         <div v-if="!optionHasChildren(option)" class="input-row">
           <input type="checkbox" :value="index" v-model="selected" />
 
-          <div>
+          <div @mouseenter="mouseEntered(option)">
             <div class="input-label">
               <OptionName :option="option" />
             </div>
@@ -32,6 +32,8 @@
           <input type="checkbox" :value="index" v-model="selected" disabled />
           <OptionSelector
             :selector="option"
+            @mouse-entered="mouseEntered"
+            @mouse-exited="mouseExited"
             @selection-changed="childChanged"
           />
         </div>
@@ -146,6 +148,14 @@ export default {
   },
 
   methods: {
+    mouseEntered(data) {
+      this.$emit('mouse-entered', data)
+    },
+
+    mouseExited(data) {
+      this.$emit('mouse-exited', data)
+    },
+
     optionDisplayName(option) {
       return option.title ? option.title : option
     },
