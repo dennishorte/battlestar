@@ -2,7 +2,7 @@
   <div class="game-card" @click="toggleExpand">
     <div class="header">
       <div class="name">{{ card.name }}</div>
-      <div class="cost">{{ cost }}</div>
+      <div class="cost" v-if="showCost">{{ cost }}</div>
     </div>
 
     <div v-if="expanded" class="details">
@@ -32,6 +32,10 @@ export default {
   props: {
     card: Object,
     expandedIn: {
+      type: Boolean,
+      default: false,
+    },
+    showCost: {
       type: Boolean,
       default: false,
     },
