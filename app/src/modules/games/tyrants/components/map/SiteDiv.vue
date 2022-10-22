@@ -7,18 +7,29 @@
 
     <div class="troop-spaces">
       <div
-        v-for="(troop, index) in loc.getTroops()"
-        :key="index"
+        v-for="troop in loc.getTroops()"
+        :key="troop.id"
         class="troop-space"
         :class="troopClasses(troop)"
       ></div>
 
       <div
         v-for="count in loc.getEmptySpaces()"
-        :key="count + 100"
+        :key="count"
         class="troop-space"
       ></div>
     </div>
+
+    <div class="spy-zone">
+      <div
+        v-for="spy in loc.getSpies()"
+        :key="spy.id"
+        class="spy troop-space"
+        :class="troopClasses(spy)"
+      ></div>
+    </div>
+
+    <div class="points">{{ loc.points }}</div>
 
   </div>
 </template>
@@ -53,10 +64,31 @@ export default {
 
 <style scoped>
 .site-div {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: .25em 0;
+  padding: .5em 0;
+}
+
+.points {
+  position: absolute;
+  top: -.5em;
+  left: -1.2em;
+  background-color: white;
+  border-radius: 50% 25%;
+  border: 2px solid black;
+  text-align: center;
+  font-size: .8em;
+  font-weight: 500;
+  height: 1.8em;
+  width: 1.8em;
+}
+
+.spy-zone {
+  position: absolute;
+  top: 0;
+  right: -1em;
 }
 
 .troop-spaces {
