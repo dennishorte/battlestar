@@ -28,6 +28,7 @@
       </b-row>
     </b-container>
 
+    <CardViewerModal />
     <DebugModal />
   </div>
 </template>
@@ -49,6 +50,7 @@ import Player from './Player'
 
 
 // Modals
+import CardViewerModal from './CardViewerModal'
 import DebugModal from '@/modules/games/common/components/DebugModal'
 
 export default {
@@ -62,6 +64,7 @@ export default {
     Player,
     WaitingPanel,
 
+    CardViewerModal,
     DebugModal,
   },
 
@@ -74,6 +77,13 @@ export default {
     return {
       game: new tyr.Tyrants(this.data, this.actor.name),
       fakeSave: false,
+      ui: {
+        modals: {
+          cardViewer: {
+            cardId: '',
+          },
+        },
+      },
     }
   },
 
@@ -81,7 +91,7 @@ export default {
     return {
       actor: this.actor,
       game: this.game,
-      ui: {},
+      ui: this.ui,
     }
   },
 

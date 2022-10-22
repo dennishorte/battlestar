@@ -927,6 +927,10 @@ Tyrants.prototype.aSupplant = function(player, loc, owner) {
   })
 }
 
+Tyrants.prototype.getCardById = function(cardId) {
+  return res.cards.byId[cardId]
+}
+
 Tyrants.prototype.getCardsByZone = function(player, name) {
   return this.getZoneByPlayer(player, name).cards()
 }

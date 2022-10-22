@@ -45,7 +45,7 @@ export default {
           LocName,
           PlayerName,
         },
-    }
+      }
     },
   },
 }

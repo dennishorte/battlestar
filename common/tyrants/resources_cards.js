@@ -16,7 +16,7 @@ const byId = {}
 const byName = {}
 for (const data of baseData) {
   for (let i = 0; i < data.count; i++) {
-    const id = data.name.toLowerCase().replace(' ', '-') + '-' + i
+    const id = data.name.toLowerCase().replaceAll(' ', '-') + '-' + i
     const card = new Card(id, data)
 
     cards.push(card)
