@@ -12,7 +12,7 @@ function Card() {
   this.echo = `You may meld a card from your hand.`
   this.karma = []
   this.dogma = [
-    `Return any numer of cards from your hand. Score two cards from your hand for every card you returned.`
+    `Return any number of cards from your hand. Score two cards from your hand for every card you returned.`
   ]
 
   this.dogmaImpl = [
