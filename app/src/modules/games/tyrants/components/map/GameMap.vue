@@ -10,9 +10,9 @@
 import { util } from 'battlestar-common'
 
 import CurveLayer from '@/modules/mapmaker/components/CurveLayer'
-import DivLayer from '@/modules/mapmaker/components/DivLayer'
+import DivLayer from './DivLayer'
 
-import maps from '../res/maps.js'
+import maps from '../../res/maps.js'
 
 export default {
   name: 'GameMap',

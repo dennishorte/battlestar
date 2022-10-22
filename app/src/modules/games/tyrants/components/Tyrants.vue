@@ -44,7 +44,7 @@ import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
 import GameLog from './log/GameLog'
-import GameMap from './GameMap'
+import GameMap from './map/GameMap'
 import Market from './Market'
 import Player from './Player'
 
@@ -52,6 +52,23 @@ import Player from './Player'
 // Modals
 import CardViewerModal from './CardViewerModal'
 import DebugModal from '@/modules/games/common/components/DebugModal'
+
+function getTroopColor(game, troop) {
+  if (troop.owner === undefined) {
+    return 'neutral'
+  }
+  else {
+    const seatNumber = game.getPlayerAll().indexOf(troop.owner)
+    switch (seatNumber) {
+      case 0: return 'red';
+      case 1: return 'blue';
+      case 2: return 'green';
+      case 3: return 'yellow';
+    }
+
+    throw new Error(`Unsupported seat number for color selection: ${seatNumber}`)
+  }
+}
 
 export default {
   name: 'Tyrants',
@@ -78,6 +95,9 @@ export default {
       game: new tyr.Tyrants(this.data, this.actor.name),
       fakeSave: false,
       ui: {
+        fn: {
+          getTroopColor,
+        },
         modals: {
           cardViewer: {
             cardId: '',

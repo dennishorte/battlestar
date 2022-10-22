@@ -102,6 +102,9 @@ Tyrants.prototype.initializePlayers = function() {
     player.points = 0
     this.state.players.push(player)
   }
+
+  util.array.shuffle(this.state.players, this.random)
+  this.mLog({ template: 'Seating shuffled' })
 }
 
 Tyrants.prototype.initializeMapZones = function() {

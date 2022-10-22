@@ -57,8 +57,9 @@ module.exports = {
           "secondary"
         ],
         "style": {
-          "left": "53px",
-          "top": "152px"
+          "left": "37px",
+          "top": "152px",
+          "width": "100px"
         }
       },
       {
@@ -87,7 +88,7 @@ module.exports = {
       },
       {
         "id": "node107",
-        "name": "Kamaglym",
+        "name": "Kanaglym",
         "classes": [
           "element",
           "secondary"
@@ -123,7 +124,7 @@ module.exports = {
       },
       {
         "id": "node110",
-        "name": "Halls of the Scourged Legion",
+        "name": "Halls of the Scoured Legion",
         "classes": [
           "element",
           "secondary"
@@ -141,8 +142,9 @@ module.exports = {
           "secondary"
         ],
         "style": {
-          "left": "24px",
-          "top": "574px"
+          "left": "8px",
+          "top": "574px",
+          "width": "100px",
         }
       },
       {
@@ -207,7 +209,7 @@ module.exports = {
       },
       {
         "id": "node117",
-        "name": "mant-menz c",
+        "name": "mant-menzo c",
         "classes": [
           "element",
           "tertiary"
@@ -219,7 +221,7 @@ module.exports = {
       },
       {
         "id": "node118",
-        "name": "mant-menz b",
+        "name": "mant-menzo b",
         "classes": [
           "element",
           "tertiary"
@@ -231,7 +233,7 @@ module.exports = {
       },
       {
         "id": "node119",
-        "name": "mant-menz a",
+        "name": "mant-menzo a",
         "classes": [
           "element",
           "tertiary"
@@ -387,7 +389,7 @@ module.exports = {
       },
       {
         "id": "node132",
-        "name": "kama-skull",
+        "name": "kana-skull",
         "classes": [
           "element",
           "tertiary"
@@ -399,7 +401,7 @@ module.exports = {
       },
       {
         "id": "node133",
-        "name": "araum-labyr b",
+        "name": "araum-labyr a",
         "classes": [
           "element",
           "tertiary"
@@ -483,7 +485,7 @@ module.exports = {
       },
       {
         "id": "node140",
-        "name": "kama-tsen a",
+        "name": "kana-tsen a",
         "classes": [
           "element",
           "tertiary"
@@ -495,7 +497,7 @@ module.exports = {
       },
       {
         "id": "node141",
-        "name": "kama-tsen b",
+        "name": "kana-tsen b",
         "classes": [
           "element",
           "tertiary"
@@ -507,7 +509,7 @@ module.exports = {
       },
       {
         "id": "node142",
-        "name": "eryn-kama a",
+        "name": "erynd-kana a",
         "classes": [
           "element",
           "tertiary"
@@ -519,7 +521,7 @@ module.exports = {
       },
       {
         "id": "node143",
-        "name": "eryn-kama b",
+        "name": "erynd-kana b",
         "classes": [
           "element",
           "tertiary"

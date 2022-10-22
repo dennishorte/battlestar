@@ -108,6 +108,10 @@ MapZone.prototype.getController = function() {
   }
 }
 
+MapZone.prototype.getEmptySpaces = function() {
+  return this.size - this.getTroops().length
+}
+
 MapZone.prototype.getTotalController = function() {
   // Passageways cannot have total controllers
   if (this.points === 0) {
