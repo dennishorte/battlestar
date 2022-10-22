@@ -1,9 +1,5 @@
 <template>
-  <div
-    class="site-div"
-    :style="loc.ui.renderStyle"
-  >
-    <div class="loc-name">{{ loc.name }}</div>
+  <div class="path-div" :style="loc.ui.renderStyle">
 
     <div class="troop-spaces">
       <div
@@ -11,12 +7,6 @@
         :key="index"
         class="troop-space"
         :class="troopClasses(troop)"
-      ></div>
-
-      <div
-        v-for="count in loc.getEmptySpaces()"
-        :key="count + 100"
-        class="troop-space"
       ></div>
     </div>
 
@@ -52,11 +42,10 @@ export default {
 
 
 <style scoped>
-.site-div {
+.path-div {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: .25em 0;
+  justify-content: center;
+  align-items: center;
 }
 
 .troop-spaces {
@@ -96,7 +85,6 @@ export default {
 .loc-name {
   font-size: .7em;
   text-align: center;
-  line-height: 1em;
 }
 
 .selected {

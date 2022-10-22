@@ -401,7 +401,7 @@ module.exports = {
       },
       {
         "id": "node133",
-        "name": "araum-labyr a",
+        "name": "araum-labyr b",
         "classes": [
           "element",
           "tertiary"
@@ -413,7 +413,7 @@ module.exports = {
       },
       {
         "id": "node134",
-        "name": "araum-labyr b",
+        "name": "araum-labyr a",
         "classes": [
           "element",
           "tertiary"
