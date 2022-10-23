@@ -15,6 +15,7 @@ export default {
 }
 </script>
 
+
 <style scoped>
 .player-name {
   display: inline-block;
