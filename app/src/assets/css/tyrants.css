@@ -1,28 +1,43 @@
 :root {
   --tyr-red-background: #f77278;
+  --tyr-red-foreground: #5e2b2e;
+
   --tyr-blue-background: #73bbfa;
+  --tyr-blue-foreground: #243b4f;
+
   --tyr-green-background: #70fa73;
+  --tyr-green-foreground: #275928;
+
   --tyr-yellow-background: #fcfc6f;
+  --tyr-yellow-foreground: #4d4d21;
+
   --tyr-neutral-background: gray;
+  --tyr-neutral-foreground: black;
+
   --tyr-location-background: #f7a8f7;
 }
 
 .red-element {
+  color: var(--tyr-red-foreground);
   background-color: var(--tyr-red-background);
 }
 
 .blue-element {
+  color: var(--tyr-blue-foreground);
   background-color: var(--tyr-blue-background);
 }
 
 .green-element {
+  color: var(--tyr-green-foreground);
   background-color: var(--tyr-green-background);
 }
 
 .yellow-element {
+  color: var(--tyr-yellow-foreground);
   background-color: var(--tyr-yellow-background);
 }
 
 .neutral-element {
+  color: var(--tyr-neutral-foreground);
   background-color: var(--tyr-neutral-background);
 }

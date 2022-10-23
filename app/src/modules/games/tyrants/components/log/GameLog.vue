@@ -2,7 +2,7 @@
   <div class="gamelog">
     <div v-for="(line, index) in lines" :key="index" :class="line.classes" class="log-line">
       <div v-for="n in line.indent" :key="n" class="indent-spacer" />
-      <GameLogText :text="line.text" :class="`indent-${line.indent}`" />
+      <GameLogText :text="line.text" :class="classes(line)" />
     </div>
     <div class="bottom-space" ref="bottom"></div>
   </div>
@@ -18,7 +18,7 @@ export default {
     GameLogText,
   },
 
-  inject: ['game'],
+  inject: ['game', 'ui'],
 
   computed: {
     lines() {
@@ -45,6 +45,7 @@ export default {
           output.push({
             text,
             classes,
+            args: entry.args,
             indent: Math.max(0, indent),
           })
         }
@@ -97,6 +98,22 @@ export default {
         msg = msg.replace(`{${arg}}`, replacement)
       }
       return msg
+    },
+
+    classes(line) {
+      const classes = [`indent-${line.indent}`]
+
+      if (line.classes.includes('player-turn')) {
+        const playerName = line.args.player.value
+        const player = this.game.getPlayerByName(playerName)
+        const color = this.ui.fn.getPlayerColor(this.game, player)
+        classes.push(`${color}-element`)
+      }
+      else {
+        classes.push('generic')
+      }
+
+      return classes
     },
 
     scrollToBottom() {
@@ -156,13 +173,16 @@ export default {
 
 .indent-0 {
   font-weight: bold;
-  color: #eee;
-  background-color: purple;
   width: 100%;
   text-align: center;
   border-radius: .5em;
   margin-top: 2em;
   line-height: 2em;
+}
+
+.indent-0.generic {
+  color: #eee;
+  background-color: purple;
 }
 
 .player-turn-start {

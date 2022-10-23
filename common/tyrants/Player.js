@@ -16,7 +16,7 @@ Player.prototype.incrementInfluence = function(count) {
 
   const sign = count > 0 ? '+' : '-'
   this.game.mLog({
-    template: '{player} adjusts influence {initial} {increment} = {final}',
+    template: '{player} adjusts influence {initial} {sign} {increment} = {final}',
     args: {
       player: this,
       initial: this.influence - count,

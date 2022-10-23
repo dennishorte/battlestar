@@ -277,7 +277,8 @@ Tyrants.prototype.mainLoop = function() {
       args: {
         player: this.getPlayerCurrent(),
         count: this.getRound(),
-      }
+      },
+      classes: ['player-turn'],
     })
 
     this.mLogIndent()
