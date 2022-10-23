@@ -15,17 +15,40 @@ describe('Tyrants', () => {
     const request1 = game.run()
   })
 
-  test('deploy a troop', () => {
-    const game = t.gameFixture({
-      dennis: {
-        power: 1,
-      }
-    })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Use Power.Deploy a Troop')
-    const request3 = t.choose(game, request2, 'ched-llace a')
+  describe('deploy troops', () => {
 
-    t.testTroops(game, 'ched-llace a', ['dennis'])
+    test('deploy a troop', () => {
+      const game = t.gameFixture({
+        dennis: {
+          power: 1,
+        }
+      })
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Use Power.Deploy a Troop')
+      const request3 = t.choose(game, request2, 'ched-llace a')
+
+      t.testTroops(game, 'ched-llace a', ['dennis'])
+    })
+
+    test('unable to deploy when location is full', () => {
+      const game = t.gameFixture({
+        dennis: {
+          power: 1,
+        },
+        'Ched Nasad': {
+          troops: ['neutral', 'neutral', 'neutral']
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Use Power.Deploy a Troop')
+
+      expect(request2.selectors[0].choices).toStrictEqual([
+        "ched-halls a",
+        "ched-llace a"
+      ])
+    })
+
   })
 
   test('recruit a minion', () => {
@@ -38,8 +61,6 @@ describe('Tyrants', () => {
 
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Recruit.Spellspinner')
-
-    t.dumpLog(game)
 
     t.testBoard(game, {
       dennis: {

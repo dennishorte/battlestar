@@ -603,7 +603,7 @@ Tyrants.prototype.aChooseAndDeploy = function(player) {
 
   const choices = this
     .getPresence(player)
-    .filter(loc => loc.getTroops().length <= loc.size)
+    .filter(loc => loc.getTroops().length < loc.size)
 
   const loc = this.aChooseLocation(player, choices, { title: 'Choose a location to deploy' })
   if (loc) {
