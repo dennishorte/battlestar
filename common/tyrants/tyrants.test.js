@@ -27,4 +27,26 @@ describe('Tyrants', () => {
 
     t.testTroops(game, 'ched-llace a', ['dennis'])
   })
+
+  test('recruit a minion', () => {
+    const game = t.gameFixture({
+      dennis: {
+        hand: [],
+        influence: 5,
+      }
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Recruit.Spellspinner')
+
+    t.dumpLog(game)
+
+    t.testBoard(game, {
+      dennis: {
+        hand: [],
+        discard: ['Spellspinner'],
+        influence: 2,
+      },
+    })
+  })
 })

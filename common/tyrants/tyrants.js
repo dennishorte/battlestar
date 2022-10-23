@@ -327,7 +327,7 @@ Tyrants.prototype.doActions = function() {
       this.aPlayCard(player, card)
     }
     else if (name === 'Recruit') {
-
+      this.aRecruit(player, arg)
     }
     else if (name === 'Use Power') {
       if (arg === 'Deploy a Troop') {
@@ -376,18 +376,18 @@ Tyrants.prototype._generateBuyActions = function() {
 
   for (const card of this.getZoneById('market').cards()) {
     if (card.cost <= influence) {
-      choices.push(card)
+      choices.push(card.name)
     }
   }
 
   const priestess = this.getZoneById('priestess').cards()[0]
   if (priestess && priestess.cost <= influence) {
-    choices.push(priestess)
+    choices.push(priestess.name)
   }
 
   const guard = this.getZoneById('guard').cards()[0]
   if (guard && guard.cost <= influence) {
-    choices.push(guard)
+    choices.push(guard.name)
   }
 
   if (choices.length > 0) {
@@ -862,8 +862,31 @@ Tyrants.prototype.aPromote = function(player, card) {
   })
 }
 
-Tyrants.prototype.aRecruit = function(player, card) {
+Tyrants.prototype.aRecruit = function(player, cardName) {
+  let card
 
+  if (cardName === 'Priestess of Lloth') {
+    card = this.getZoneById('priestess').cards()[0]
+  }
+  else if (cardName === 'House Guard') {
+    card = this.getZoneById('guard').cards()[0]
+  }
+  else {
+    const market = this.getZoneById('market').cards()
+    card = market.find(c => c.name === cardName)
+  }
+
+  util.assert(!!card, `Unable to find card to recruit: ${cardName}`)
+
+  this.mMoveCardTo(card, this.getZoneByPlayer(player, 'discard'))
+  player.incrementInfluence(-card.cost)
+
+  this.mLog({
+    template: '{player} recruits {card}',
+    args: { player, card }
+  })
+
+  this.mRefillMarket()
 }
 
 Tyrants.prototype.aReturnSpy = function(player, loc, owner) {
