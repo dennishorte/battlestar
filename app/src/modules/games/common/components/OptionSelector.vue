@@ -195,6 +195,8 @@ export default {
 input[type='checkbox'] {
   width: 1.5rem;
   height: 1.5rem;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
 }
 
 .input-label {
