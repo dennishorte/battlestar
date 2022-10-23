@@ -475,7 +475,7 @@ describe('Dragons Expansion Cards', () => {
         },
 
         // Don't have control, but have some dudes there.
-        'Halls of the Scourged Legion': {
+        'Halls of the Scoured Legion': {
           troops: ['neutral', 'dennis'],
         },
       })
