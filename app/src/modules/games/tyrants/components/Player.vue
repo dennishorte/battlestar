@@ -1,6 +1,6 @@
 <template>
   <div class="player">
-    <div class="header">
+    <div class="header" :class="headerClasses(player)">
       {{ player.name }}
     </div>
 
@@ -8,6 +8,11 @@
       <div>
         <div>de/di: {{ deckCount }} / {{ discardCount }}</div>
         <div>score: {{ score }}</div>
+      </div>
+
+      <div>
+        <div>inf: {{ player.influence }}</div>
+        <div>pow: {{ player.power }}</div>
       </div>
 
       <div>
@@ -37,7 +42,7 @@ export default {
     GameCard,
   },
 
-  inject: ['actor', 'game'],
+  inject: ['actor', 'game', 'ui'],
 
   props: {
     player: Object,
@@ -72,13 +77,23 @@ export default {
       return this.game.getCardsByZone(this.player, 'troops').length
     },
   },
+
+  methods: {
+    headerClasses(player) {
+      const classes = []
+
+      const color = this.ui.fn.getPlayerColor(this.game, player)
+      classes.push(`${color}-element`)
+
+      return classes
+    },
+  },
 }
 </script>
 
 
 <style scoped>
 .header {
-  background-color: #b174cc;
   border-color: #2f1f36;
   border-top: 1px solid;
   border-left: 1px solid;

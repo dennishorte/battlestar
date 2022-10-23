@@ -12,6 +12,9 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(faUserSecret)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
+// Global Styles
+import '@/assets/css/tyrants.css'
+
 import authUtil from '@/modules/auth/util.js'
 authUtil.initialize()
 

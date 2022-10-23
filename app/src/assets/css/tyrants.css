@@ -1,0 +1,27 @@
+:root {
+  --tyr-red-background: #f77278;
+  --tyr-blue-background: #73bbfa;
+  --tyr-green-background: #70fa73;
+  --tyr-yellow-background: #fcfc6f;
+  --tyr-neutral-background: gray;
+}
+
+.red-element {
+  background-color: var(--tyr-red-background);
+}
+
+.blue-element {
+  background-color: var(--tyr-blue-background);
+}
+
+.green-element {
+  background-color: var(--tyr-green-background);
+}
+
+.yellow-element {
+  background-color: var(--tyr-yellow-background);
+}
+
+.neutral-element {
+  background-color: var(--tyr-neutral-background);
+}

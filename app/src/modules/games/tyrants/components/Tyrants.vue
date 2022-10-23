@@ -53,21 +53,27 @@ import Player from './Player'
 import CardViewerModal from './CardViewerModal'
 import DebugModal from '@/modules/games/common/components/DebugModal'
 
+
 function getTroopColor(game, troop) {
   if (troop.owner === undefined) {
     return 'neutral'
   }
   else {
-    const seatNumber = game.getPlayerAll().indexOf(troop.owner)
-    switch (seatNumber) {
-      case 0: return 'red';
-      case 1: return 'blue';
-      case 2: return 'green';
-      case 3: return 'yellow';
-    }
-
-    throw new Error(`Unsupported seat number for color selection: ${seatNumber}`)
+    return getPlayerColor(game, troop.owner)
   }
+}
+
+
+function getPlayerColor(game, player) {
+  const seatNumber = game.getPlayerAll().indexOf(player)
+  switch (seatNumber) {
+    case 0: return 'red';
+    case 1: return 'blue';
+    case 2: return 'green';
+    case 3: return 'yellow';
+  }
+
+  throw new Error(`Unsupported seat number for color selection: ${seatNumber}`)
 }
 
 export default {
@@ -96,6 +102,7 @@ export default {
       fakeSave: false,
       ui: {
         fn: {
+          getPlayerColor,
           getTroopColor,
         },
         modals: {

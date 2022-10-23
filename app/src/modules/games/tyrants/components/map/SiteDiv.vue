@@ -53,7 +53,7 @@ export default {
       const classes = []
 
       const color = this.ui.fn.getTroopColor(this.game, troop)
-      classes.push(`${color}-troop`)
+      classes.push(`${color}-element`)
 
       return classes
     },
@@ -103,26 +103,6 @@ export default {
   border-radius: 50%;
   border: 1px solid black;
   margin: 1px;
-}
-
-.neutral-troop {
-  background-color: gray;
-}
-
-.red-troop {
-  background-color: red;
-}
-
-.blue-troop {
-  background-color: blue;
-}
-
-.green-troop {
-  background-color: green;
-}
-
-.yellow-troop {
-  background-color: yellow;
 }
 
 .loc-name {

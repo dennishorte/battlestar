@@ -164,7 +164,10 @@ Tyrants.prototype.initializeCards = function() {
   this.mShuffle(this.getZoneById('marketDeck'))
 
   // Market cards
-  this.mRefillMarket()
+  this.mLog({ template: 'Adding starting market cards' })
+  this.mLogIndent()
+  this.mRefillMarket(true)
+  this.mLogOutdent()
 
   // Starter decks
   let x = 0
@@ -1279,7 +1282,7 @@ Tyrants.prototype.mRefillHand = function(player) {
   this.mLogOutdent()
 }
 
-Tyrants.prototype.mRefillMarket = function() {
+Tyrants.prototype.mRefillMarket = function(quiet=false) {
   const deck = this.getZoneById('marketDeck')
   const market = this.getZoneById('market')
   const count = 6 - market.cards().length
@@ -1291,10 +1294,12 @@ Tyrants.prototype.mRefillMarket = function() {
       throw new Error('No cards in market')
     }
 
-    this.mLog({
-      template: '{card} added to the market',
-      args: { card }
-    })
+    if (!quiet) {
+      this.mLog({
+        template: '{card} added to the market',
+        args: { card }
+      })
+    }
 
     this.mMoveCardTo(card, market)
   }
