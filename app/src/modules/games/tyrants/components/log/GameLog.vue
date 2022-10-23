@@ -147,6 +147,7 @@ export default {
 .log-line {
   display: flex;
   flex-direction: row;
+  margin-top: 1px;
 }
 
 .indent-spacer::before {

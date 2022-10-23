@@ -1,6 +1,6 @@
 <template>
   <div class="loc-name">
-    LocName: {{ name }}
+    {{ name }}
   </div>
 </template>
 
@@ -14,3 +14,13 @@ export default {
   },
 }
 </script>
+
+
+<style scoped>
+.loc-name {
+  display: inline-block;
+  background-color: var(--tyr-location-background);
+  border-radius: .1em;
+  padding: 0 .4em;
+}
+</style>
