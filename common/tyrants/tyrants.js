@@ -334,6 +334,17 @@ Tyrants.prototype.doActions = function() {
         player.incrementPower(-1)
         this.aChooseAndDeploy(player)
       }
+
+      else if (arg === 'Assassinate a Troop') {
+        player.incrementPower(-3)
+        this.aChooseAndAssassinate(player)
+      }
+
+      else if (arg === 'Return an Enemy Spy') {
+        player.incrementPower(-3)
+        this.aChooseAndReturn(player, { noTroops: true })
+      }
+
       else {
         throw new Error(`Unknown power action: ${arg}`)
       }

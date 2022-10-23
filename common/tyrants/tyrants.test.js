@@ -82,6 +82,56 @@ describe('Tyrants', () => {
     })
   })
 
+  test('assassinate a troop with power', () => {
+    const game = t.gameFixture({
+      dennis: {
+        hand: ['Spellspinner'],
+        power: 3,
+      },
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Use Power.Assassinate a Troop')
+
+    t.testBoard(game, {
+      dennis: {
+        hand: ['Spellspinner'],
+        power: 0,
+        trophyHall: ['neutral'],
+      },
+      'araum-ched': {
+        troops: []
+      },
+    })
+  })
+
+  test('return a spy with power', () => {
+    const game = t.gameFixture({
+      dennis: {
+        hand: ['Spellspinner'],
+        power: 3,
+      },
+      'Ched Nasad': {
+        spies: ['micah'],
+      },
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Use Power.Return an Enemy Spy')
+
+    t.testBoard(game, {
+      dennis: {
+        hand: ['Spellspinner'],
+        power: 0,
+      },
+      'Ched Nasad': {
+        troops: ['dennis'],
+        spies: [],
+      },
+    })
+
+  })
+
   test('option not available if no valid locations', () => {
     const game = t.gameFixture({
       dennis: {
