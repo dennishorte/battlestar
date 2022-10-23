@@ -407,12 +407,21 @@ Tyrants.prototype._generatePowerActions = function() {
   const choices = []
 
   const power = player.power
-  if (power >= 1 && this.getCardsByZone(player, 'troops').length > 0) {
+  if (
+    power >= 1
+    && this.getCardsByZone(player, 'troops').length > 0
+    && this.getDeployChoices(player).length > 0
+  ) {
     choices.push('Deploy a Troop')
   }
   if (power >= 3) {
-    choices.push('Assassinate a Troop')
-    choices.push('Return an Enemy Spy')
+    if (this.getAssassinateChoices(player).length > 0) {
+      choices.push('Assassinate a Troop')
+    }
+
+    if (this._collectTargets(player).spies.length > 0) {
+      choices.push('Return an Enemy Spy')
+    }
   }
 
   if (choices.length > 0) {
@@ -534,15 +543,7 @@ Tyrants.prototype.aChooseCard = function(player, choices, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndAssassinate = function(player, opts={}) {
-  const presence = this.getPresence(player)
-  const troops = this
-    .getPresence(player)
-    .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
-    .filter(([_, troop]) => troop.owner !== player)
-    .filter(([_, troop]) => opts.whiteOnly ? troop.owner === undefined : true)
-    .map(([loc, troop]) => `${loc.name}, ${troop.getOwnerName()}`)
-  const choices = util.array.distinct(troops).sort()
-
+  const choices = this.getAssassinateChoices(player, opts)
   const selection = this.aChoose(player, choices)
   if (selection.length > 0) {
     const [locName, ownerName] = selection[0].split(', ')
@@ -601,10 +602,7 @@ Tyrants.prototype.aChooseAndDeploy = function(player) {
     return
   }
 
-  const choices = this
-    .getPresence(player)
-    .filter(loc => loc.getTroops().length < loc.size)
-
+  const choices = this.getDeployChoices(player)
   const loc = this.aChooseLocation(player, choices, { title: 'Choose a location to deploy' })
   if (loc) {
     this.aDeploy(player, loc)
@@ -957,6 +955,18 @@ Tyrants.prototype.aSupplant = function(player, loc, owner) {
   })
 }
 
+Tyrants.prototype.getAssassinateChoices = function(player, opts={}) {
+  const presence = this.getPresence(player)
+  const troops = this
+    .getPresence(player)
+    .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
+    .filter(([_, troop]) => troop.owner !== player)
+    .filter(([_, troop]) => opts.whiteOnly ? troop.owner === undefined : true)
+    .map(([loc, troop]) => `${loc.name}, ${troop.getOwnerName()}`)
+  const choices = util.array.distinct(troops).sort()
+  return choices
+}
+
 Tyrants.prototype.getCardById = function(cardId) {
   return res.cards.byId[cardId]
 }
@@ -977,6 +987,13 @@ Tyrants.prototype.getControlMarkers = function(player) {
   else {
     return markers
   }
+}
+
+Tyrants.prototype.getDeployChoices = function(player) {
+  const choices = this
+    .getPresence(player)
+    .filter(loc => loc.getTroops().length < loc.size)
+  return choices
 }
 
 Tyrants.prototype.getExpansionList = function() {
@@ -1215,7 +1232,6 @@ Tyrants.prototype.mMoveCardTo = function(card, zone, opts={}) {
       args: { card, zone }
     })
   }
-
   const source = this.getZoneByCard(card)
   const index = source.cards().indexOf(card)
   this.mMoveByIndices(source, index, zone, zone.cards().length)

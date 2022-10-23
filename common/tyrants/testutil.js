@@ -149,14 +149,22 @@ TestUtil.gameFixture = function(options) {
           TestUtil.setTroops(game, game.getZoneByPlayer(player, 'trophyHall').id, playerSetup.trophyHall)
         }
 
-        if (playerSetup.power) {
+        if ('power' in playerSetup) {
           player.power = playerSetup.power
         }
-        if (playerSetup.influence) {
+        if ('influence' in playerSetup) {
           player.influence = playerSetup.influence
         }
-        if (playerSetup.points) {
+        if ('points' in playerSetup) {
           player.points = playerSetup.points
+        }
+        if ('troops' in playerSetup) {
+          // Need to keep an extra troop for initial location selection.
+          const troops = game.getCardsByZone(player, 'troops').slice(playerSetup.troops + 1)
+          const exile = game.getZoneById('devoured')
+          for (const troop of troops) {
+            game.mMoveCardTo(troop, exile)
+          }
         }
       }
 

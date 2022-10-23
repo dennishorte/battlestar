@@ -49,25 +49,81 @@ describe('Tyrants', () => {
       ])
     })
 
+    test('option not available if no troops', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Spellspinner'],
+          power: 1,
+          troops: 0,
+        },
+      })
+
+      const request1 = game.run()
+
+      expect(request1.selectors[0].choices).toStrictEqual([
+        {
+          "title": "Play Card",
+          "choices": [
+            "Spellspinner"
+          ],
+          "min": 0
+        },
+        "Pass"
+      ])
+
+    })
   })
 
-  test('recruit a minion', () => {
+  test('option not available if no valid locations', () => {
     const game = t.gameFixture({
       dennis: {
-        hand: [],
-        influence: 5,
-      }
+        hand: ['Spellspinner'],
+        power: 1,
+      },
+      'Ched Nasad': {
+        troops: ['neutral', 'neutral', 'neutral'],
+      },
+      'ched-llace a': {
+        troops: ['neutral'],
+      },
+      'ched-halls a': {
+        troops: ['neutral'],
+      },
     })
 
     const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Recruit.Spellspinner')
 
-    t.testBoard(game, {
-      dennis: {
-        hand: [],
-        discard: ['Spellspinner'],
-        influence: 2,
+    expect(request1.selectors[0].choices).toStrictEqual([
+      {
+        "title": "Play Card",
+        "choices": [
+          "Spellspinner"
+        ],
+        "min": 0
       },
-    })
+      "Pass"
+    ])
+
+  })
+
+})
+
+test('recruit a minion', () => {
+  const game = t.gameFixture({
+    dennis: {
+      hand: [],
+      influence: 5,
+    }
+  })
+
+  const request1 = game.run()
+  const request2 = t.choose(game, request1, 'Recruit.Spellspinner')
+
+  t.testBoard(game, {
+    dennis: {
+      hand: [],
+      discard: ['Spellspinner'],
+      influence: 2,
+    },
   })
 })
