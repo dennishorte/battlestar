@@ -20,12 +20,20 @@ describe('Tyrants', () => {
     test('deploy a troop', () => {
       const game = t.gameFixture({
         dennis: {
+          hand: ['Spellspinner'],
           power: 1,
         }
       })
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Use Power.Deploy a Troop')
       const request3 = t.choose(game, request2, 'ched-llace a')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Spellspinner'],
+          power: 0,
+        },
+      })
 
       t.testTroops(game, 'ched-llace a', ['dennis'])
     })

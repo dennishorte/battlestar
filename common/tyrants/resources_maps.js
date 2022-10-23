@@ -1432,7 +1432,8 @@ const mapData = [
     "neighbors": [
       "grack-jhach",
       "chasm-grack b",
-      "grack-labyr"
+      "grack-labyr",
+      "grack-mant"
     ],
     "ui": {
       x: 1,

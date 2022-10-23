@@ -331,6 +331,7 @@ Tyrants.prototype.doActions = function() {
     }
     else if (name === 'Use Power') {
       if (arg === 'Deploy a Troop') {
+        player.incrementPower(-1)
         this.aChooseAndDeploy(player)
       }
       else {
