@@ -1,12 +1,14 @@
 <template>
   <div class="div-layer">
-    <SiteDiv v-for="loc in sites" :key="loc.id" :loc="loc" />
+    <MajorSiteDiv v-for="loc in majorSites" :key="loc.id" :loc="loc" />
+    <SiteDiv v-for="loc in minorSites" :key="loc.id" :loc="loc" />
     <PathDiv v-for="loc in paths" :key="loc.id" :loc="loc" />
   </div>
 </template>
 
 
 <script>
+import MajorSiteDiv from './MajorSiteDiv'
 import PathDiv from './PathDiv'
 import SiteDiv from './SiteDiv'
 
@@ -14,6 +16,7 @@ export default {
   name: 'DivLayer',
 
   components: {
+    MajorSiteDiv,
     PathDiv,
     SiteDiv,
   },
@@ -33,6 +36,14 @@ export default {
           loc.ui = this.styledDivs.find(div => div.name === loc.name)
           return loc
         })
+    },
+
+    majorSites() {
+      return this.sites.filter(loc => loc.checkIsMajorSite())
+    },
+
+    minorSites() {
+      return this.sites.filter(loc => loc.checkIsMinorSite())
     },
 
     paths() {

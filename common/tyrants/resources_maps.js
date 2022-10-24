@@ -1484,7 +1484,8 @@ const mapData = [
     },
     "neighbors": [
       "skull-stone a",
-      "kana-skull"
+      "kana-skull",
+      "labyr-skull a"
     ],
     "ui": {
       x: 1,

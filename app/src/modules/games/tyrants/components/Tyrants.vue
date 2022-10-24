@@ -36,6 +36,7 @@
 
 <script>
 import Vue from 'vue'
+import axios from 'axios'
 
 import { tyr } from 'battlestar-common'
 
@@ -130,18 +131,51 @@ export default {
   },
 
   methods: {
+    handleSaveResult(result) {
+      console.log(result)
+
+      if (result.data.status === 'success') {
+        this.game.usedUndo = false
+
+        this.$bvToast.toast('saved', {
+          autoHideDelay: 1000,
+          noCloseButton: true,
+          solid: true,
+          variant: 'success',
+        })
+      }
+      else {
+        this.$bvToast.toast('error: see console', {
+          autoHideDelay: 999999,
+          noCloseButton: false,
+          solid: true,
+          variant: 'danger',
+        })
+      }
+    },
+
     openRules() {
       window.open("https://media.dnd.wizards.com/TyrantsOfTheUnderdark-Rulebook.pdf")
     },
 
     save: async function() {
-      /* if (this.fakeSave) {
-       *   console.log('fake saved (game)')
-       *   return
-       * }
+      if (this.fakeSave) {
+        console.log('fake saved (game)')
+        return
+      }
 
-       * await this.saveFull() */
-      console.log('saved')
+      await this.saveFull()
+    },
+
+    saveFull: async function() {
+      const game = this.game
+      const payload = {
+        gameId: game._id,
+        responses: game.responses,
+        chat: game.getChat(),
+      }
+      const requestResult = await axios.post('/api/game/saveFull', payload)
+      this.handleSaveResult(requestResult)
     },
 
     _injectChatMethod() {

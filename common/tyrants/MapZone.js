@@ -46,6 +46,14 @@ MapZone.prototype.checkHasPresence = function(player) {
   return this.presence.includes(player)
 }
 
+MapZone.prototype.checkIsMajorSite = function() {
+  return this.checkIsSite() && this.control.influence > 0
+}
+
+MapZone.prototype.checkIsMinorSite = function() {
+  return this.checkIsSite() && this.control.influence === 0
+}
+
 MapZone.prototype.checkIsSite = function() {
   return this.points > 0
 }

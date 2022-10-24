@@ -113,6 +113,17 @@ Game.prototype.checkGameIsOver = function() {
   return this.gameOver
 }
 
+Game.prototype.checkLastActorWas = function(player) {
+  const lastAction = this.getLastUserAction()
+  if (!lastAction) {
+    return false
+  }
+
+  else {
+    return lastAction.actor === player.name
+  }
+}
+
 Game.prototype.checkPlayerHasActionWaiting = function(player) {
   return !!this.getWaiting(player)
 }

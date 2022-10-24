@@ -1865,17 +1865,6 @@ Innovation.prototype.checkInKarma = function() {
   return this.state.karmaDepth > 0
 }
 
-Innovation.prototype.checkLastActorWas = function(player) {
-  const lastAction = this.getLastUserAction()
-  if (!lastAction) {
-    return false
-  }
-
-  else {
-    return lastAction.actor === player.name
-  }
-}
-
 Innovation.prototype.checkSameTeam = function(p1, p2) {
   return p1.team === p2.team
 }

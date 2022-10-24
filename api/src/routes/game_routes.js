@@ -1,7 +1,7 @@
 const db = require('../models/db.js')
 const slack = require('../util/slack.js')
 
-const { GameOverEvent, inn } = require('battlestar-common')
+const { GameOverEvent, inn, tyr } = require('battlestar-common')
 
 const Game = {}
 module.exports = Game
@@ -186,6 +186,9 @@ async function _loadGameFromReq(req) {
 
   if (gameData.settings.game === 'Innovation') {
     return new inn.Innovation(gameData)
+  }
+  else if (gameData.settings.game === 'Tyrants of the Underdark') {
+    return new tyr.Tyrants(gameData)
   }
   else {
     throw new Error(`Unhandled game type: ${gameData.settings.game}`)
