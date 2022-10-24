@@ -57,6 +57,7 @@ Game.findRecentlyFinishedByUserId = async function(userId) {
   return await gameCollection.find({
     'settings.players._id': userId,
     gameOver: true,
+    killed: false,
     lastUpdated: { $gt: threeDaysAgo }
   })
 }
@@ -65,11 +66,17 @@ Game.findWaitingByUserId = async function(userId) {
   return await gameCollection.find({ waiting: userId })
 }
 
-Game.gameOver = async function(gameId) {
+Game.gameOver = async function(gameId, killed=false) {
   return await writeMutex.dispatch(async () => {
+    const setValues = { gameOver: true }
+
+    if (killed) {
+      setValues.killed = true
+    }
+
     await gameCollection.updateOne(
       { _id: gameId },
-      { $set: { gameOver: true } },
+      { $set: setValues },
     )
   })
 }

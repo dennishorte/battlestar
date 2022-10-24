@@ -63,7 +63,7 @@ Game.fetchAll = async function(req, res) {
 }
 
 Game.kill = async function(req, res) {
-  await db.game.gameOver(req.body.gameId)
+  await db.game.gameOver(req.body.gameId, true)
   res.json({
     status: 'success',
   })
@@ -115,6 +115,15 @@ async function _testAndSave(game, res, evalFunc) {
 }
 
 async function updateStatsOne(data) {
+  switch (data.settings.game) {
+    case 'Innovation':
+      return updateStatsOneInnovation(data);
+    default:
+      return false;
+  }
+}
+
+async function updateStatsOneInnovation(data) {
   if (
     !data.stats
     || data.stats.version !== statsVersion
