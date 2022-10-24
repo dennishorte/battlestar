@@ -185,3 +185,87 @@ test('recruit a minion', () => {
     },
   })
 })
+
+describe('control tokens', () => {
+  test('gain influence at start of turn', () => {
+    const game = t.gameFixture({
+      Menzoberranzan: {
+        troops: ['dennis', 'dennis', 'dennis', 'dennis']
+      }
+    })
+
+    const request1 = game.run()
+
+    t.testBoard(game, {
+      dennis: {
+        hand: ['Noble', 'Noble', 'Noble', 'Noble', 'Noble'],
+        influence: 1,
+      },
+    })
+  })
+
+  test('gain influence when claimed', () => {
+    const game = t.gameFixture({
+      dennis: {
+        power: 1,
+      },
+      Menzoberranzan: {
+        troops: [],
+        spies: ['dennis'],
+      }
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Use Power.Deploy a Troop')
+    const request3 = t.choose(game, request2, 'Menzoberranzan')
+
+    t.testBoard(game, {
+      dennis: {
+        hand: ['Noble', 'Noble', 'Noble', 'Noble', 'Noble'],
+        influence: 1,
+      },
+    })
+  })
+
+  test('gain points if total control', () => {
+    const game = t.gameFixture({
+      dennis: {
+        hand: [],
+      },
+      Menzoberranzan: {
+        troops: ['dennis', 'dennis', 'dennis', 'dennis', 'dennis', 'dennis']
+      }
+    })
+
+    const request1 = game.run()
+
+    t.testBoard(game, {
+      dennis: {
+        points: 2,
+      },
+    })
+  })
+
+  test('do not gain points without total control', () => {
+    const game = t.gameFixture({
+      dennis: {
+        hand: [],
+      },
+      Menzoberranzan: {
+        troops: ['dennis', 'dennis', 'dennis', 'dennis', 'dennis']
+      }
+    })
+
+    const request1 = game.run()
+
+    t.testBoard(game, {
+      dennis: {
+        points: 0,
+      },
+    })
+  })
+
+  test.skip('ownership is lost if control is lost', () => {
+    // Not sure how to test this meaningfully.
+  })
+})

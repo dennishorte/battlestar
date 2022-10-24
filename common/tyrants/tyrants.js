@@ -79,7 +79,9 @@ Tyrants.prototype.initialize = function() {
   this.mLogOutdent()
 
   this.state.initializationComplete = true
+  this.doingSetup = true
   this._breakpoint('initialization-complete')
+  this.doingSetup = false
 }
 
 Tyrants.prototype.initializeZones = function() {
@@ -296,7 +298,22 @@ Tyrants.prototype.mainLoop = function() {
 }
 
 Tyrants.prototype.preActions = function() {
+  const player = this.getPlayerCurrent()
+
   // Gain influence from site control tokens.
+  const markers = this.getControlMarkers(player)
+  for (const marker of markers) {
+    const loc = this.getLocationByName(marker.locName)
+    player.incrementInfluence(marker.influence, { silent: true })
+    this.mLog({
+      template: '{player} gains {count} influence for control of {loc}',
+      args: {
+        player,
+        loc,
+        count: marker.influence
+      }
+    })
+  }
 }
 
 Tyrants.prototype.doActions = function() {
@@ -470,6 +487,23 @@ Tyrants.prototype._processEndOfTurnActions = function() {
 
 Tyrants.prototype.endOfTurn = function() {
   this._processEndOfTurnActions()
+
+  // Gain points for control markers.
+  const player = this.getPlayerCurrent()
+  const markers = this.getControlMarkers(player)
+  for (const marker of markers) {
+    if (marker.points) {
+      player.incrementPoints(marker.points, { silent: true })
+      this.mLog({
+        template: '{player} gains {count} points for total control of {loc}',
+        args: {
+          player,
+          loc: this.getLocationByName(marker.locName),
+          count: marker.points
+        }
+      })
+    }
+  }
 }
 
 Tyrants.prototype.cleanup = function() {
@@ -1164,6 +1198,47 @@ Tyrants.prototype.mAdjustCardVisibility = function(card) {
   }
 }
 
+Tyrants.prototype.mAdjustControlMarkerOwnership = function(previous) {
+  const markers = this.getControlMarkers()
+  for (const marker of markers) {
+    const prev = previous.find(p => p.locName === marker.locName)
+
+    if (prev.ownerName !== '' && marker.ownerName === '') {
+      const player = this.getPlayerByName(prev.ownerName)
+      const loc = this.getLocationByName(marker.locName)
+
+      this.mLog({
+        template: '{player} loses the {loc} control marker',
+        args: { player, loc }
+      })
+    }
+
+    else if (prev.ownerName !== marker.ownerName) {
+      const player = this.getPlayerByName(marker.ownerName)
+      const loc = this.getLocationByName(marker.locName)
+
+      this.mLog({
+        template: '{player} claims the {loc} control marker',
+        args: { player, loc }
+      })
+
+      if (this.getPlayerCurrent() === player && !this._checkDoingSetup()) {
+        player.incrementInfluence(marker.influence)
+      }
+    }
+
+    else if (!prev.total && marker.total) {
+      const player = this.getPlayerByName(marker.ownerName)
+      const loc = this.getLocationByName(marker.locName)
+
+      this.mLog({
+        template: '{player} converts the {loc} control marker to total control',
+        args: { player, loc }
+      })
+    }
+  }
+}
+
 Tyrants.prototype.mAdjustPresence = function(source, target, card) {
   if (card.isSpy || card.isTroop) {
     const toUpdate = []
@@ -1225,6 +1300,9 @@ Tyrants.prototype.mDevour = function(player, card) {
 
 Tyrants.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
   util.assert(sourceIndex >= 0 && sourceIndex <= source.cards().length - 1, `Invalid source index ${sourceIndex}`)
+
+  const preControlMarkers = this.getControlMarkers()
+
   const sourceCards = source._cards
   const targetCards = target._cards
   const card = sourceCards[sourceIndex]
@@ -1234,6 +1312,7 @@ Tyrants.prototype.mMoveByIndices = function(source, sourceIndex, target, targetI
   this.mCheckZoneLimits(target)
   this.mAdjustCardVisibility(card)
   this.mAdjustPresence(source, target, card)
+  this.mAdjustControlMarkerOwnership(preControlMarkers)
   return card
 }
 
@@ -1355,6 +1434,10 @@ Tyrants.prototype.mRefillMarket = function(quiet=false) {
 
     this.mMoveCardTo(card, market)
   }
+}
+
+Tyrants.prototype._checkDoingSetup = function() {
+  return this.doingSetup
 }
 
 Tyrants.prototype._enrichLogArgs = function(msg) {

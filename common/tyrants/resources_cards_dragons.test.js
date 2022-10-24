@@ -770,10 +770,14 @@ describe('Dragons Expansion Cards', () => {
       const request2 = t.choose(game, request1, 'Play Card.Green Dragon')
       const request3 = t.choose(game, request2, "Return one of your spies > Supplant a troop at that spy's site, then gain 1 VP for each site control marker you have")
 
+      t.dumpLog(game)
+
       t.testBoard(game, {
         dennis: {
-          discard: ['Green Dragon'],
+          hand: [],
+          played: ['Green Dragon'],
           trophyHall: ['neutral'],
+          influence: 2,
           points: 2,
         },
         'Menzoberranzan': {
