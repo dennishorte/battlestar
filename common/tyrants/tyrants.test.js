@@ -74,7 +74,8 @@ describe('Tyrants', () => {
           "choices": [
             "Spellspinner"
           ],
-          "min": 0
+          "min": 0,
+          "max": 1
         },
         "Pass"
       ])
@@ -157,7 +158,8 @@ describe('Tyrants', () => {
         "choices": [
           "Spellspinner"
         ],
-        "min": 0
+        "min": 0,
+        "max": 1
       },
       "Pass"
     ])

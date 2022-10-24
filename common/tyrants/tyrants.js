@@ -392,6 +392,7 @@ Tyrants.prototype._generateCardActions = function() {
       title: 'Play Card',
       choices,
       min: 0,
+      max: 1,
     }
   }
   else {
@@ -424,6 +425,7 @@ Tyrants.prototype._generateBuyActions = function() {
       title: 'Recruit',
       choices,
       min: 0,
+      max: 1,
     }
   }
   else {
@@ -458,6 +460,7 @@ Tyrants.prototype._generatePowerActions = function() {
       title: 'Use Power',
       choices,
       min: 0,
+      max: 1,
     }
   }
   else {
