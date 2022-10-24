@@ -73,8 +73,8 @@ export default {
 
 .points {
   position: absolute;
-  top: -.5em;
-  left: -1.2em;
+  top: -.6em;
+  left: -.7em;
   background-color: white;
   border-radius: 50% 25%;
   border: 2px solid black;
