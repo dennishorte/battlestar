@@ -184,6 +184,14 @@ export default {
 
     setSelection(optionName) {
       console.log('received select-option', optionName, this.selector)
+
+      for (let i = 0; i < this.selector.choices.length; i++) {
+        const choice = this.selector.choices[i]
+        if (choice.title === optionName || choice === optionName) {
+          this.selected = [i]
+          break
+        }
+      }
     },
   },
 
