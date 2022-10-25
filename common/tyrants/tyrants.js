@@ -621,6 +621,10 @@ Tyrants.prototype.aChooseAndDevourMarket = function(player, opts={}) {
   const chosen = this.aChooseCard(player, this.getZoneById('market').cards(), { min: 0 })
   if (chosen) {
     this.mDevour(player, chosen)
+    this.mLog({
+      template: '{player} devours {card} from the market',
+      args: { player, card: chosen },
+    })
     this.mRefillMarket()
   }
   else {
