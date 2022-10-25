@@ -672,9 +672,10 @@ Tyrants.prototype.aChooseAndMoveTroop = function(player, opts={}) {
       .getLocationAll()
       .filter(loc => loc.checkHasOpenTroopSpace())
       .filter(loc => loc !== source)
-      .map(loc => loc.id)
-    const destId = this.aChoose(player, destChoices)[0]
-    const dest = this.getZoneById(destId)
+      .map(loc => loc.name)
+      .sort()
+    const destName = this.aChoose(player, destChoices)[0]
+    const dest = this.getLocationByName(destName)
 
     util.assert(!!troop, `Invalid selection for moving a troop: ${toMove}`)
 

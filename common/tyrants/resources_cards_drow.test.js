@@ -763,7 +763,7 @@ describe('Drow Expansion', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Council Member')
-      const request3 = t.choose(game, request2, '*map.Gracklstugh')
+      const request3 = t.choose(game, request2, 'Gracklstugh')
 
       t.testBoard(game, {
         dennis: {
@@ -789,7 +789,7 @@ describe('Drow Expansion', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Council Member')
-      const request3 = t.choose(game, request2, '*map.Gracklstugh')
+      const request3 = t.choose(game, request2, 'Gracklstugh')
       const request4 = t.choose(game, request3, 'Play Card.House Guard')
       const request5 = t.choose(game, request4, 'Pass')
 
