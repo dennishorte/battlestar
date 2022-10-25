@@ -176,13 +176,13 @@ Tyrants.prototype.initializeCards = function() {
   let y = 0
   for (const player of this.getPlayerAll()) {
     const deck = this.getZoneByPlayer(player, 'deck')
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 7; i++) {
       const card = res.cards.byName['Noble'][x]
       deck.addCard(card)
       x += 1
     }
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 3; i++) {
       const card = res.cards.byName['Soldier'][y]
       deck.addCard(card)
       y += 1
