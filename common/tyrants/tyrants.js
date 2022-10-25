@@ -722,6 +722,7 @@ Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
   // Player can choose to place a spy on area site that does not have a spy of theirs on it already.
   const choices = this
     .getLocationAll()
+    .filter(l => l.checkIsSite())
     .filter(l => l.getSpies(player).length === 0)
 
   const loc = this.aChooseLocation(player, choices, { title: 'Choose a location for a spy' })
