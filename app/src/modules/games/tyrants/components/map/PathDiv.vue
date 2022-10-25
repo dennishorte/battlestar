@@ -1,5 +1,5 @@
 <template>
-  <div class="path-div" :style="loc.ui.renderStyle">
+  <div class="path-div" :style="loc.ui.renderStyle" @click="click">
 
     <div class="troop-spaces">
       <div
@@ -28,6 +28,10 @@ export default {
   },
 
   methods: {
+    click() {
+      this.ui.fn.clickLocation(this.loc)
+    },
+
     troopClasses(troop) {
       const classes = []
 

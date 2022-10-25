@@ -14,11 +14,7 @@
           <Player v-for="player in orderedPlayers" :key="player.name" :player="player" />
 
           <Market />
-          <WaitingPanel
-            @mouse-entered="mouseEntered"
-            @mouse-exited="mouseExited"
-            @selection-changed="selectionChanged"
-          />
+          <WaitingPanel />
         </b-col>
 
         <b-col class="map-column">
@@ -101,8 +97,12 @@ export default {
     return {
       game: new tyr.Tyrants(this.data, this.actor.name),
       fakeSave: false,
+
+      bus: new Vue(),
+
       ui: {
         fn: {
+          clickLocation: this.clickLocation,
           getPlayerColor,
           getTroopColor,
         },
@@ -118,6 +118,7 @@ export default {
   provide() {
     return {
       actor: this.actor,
+      bus: this.bus,
       game: this.game,
       ui: this.ui,
     }
@@ -131,6 +132,10 @@ export default {
   },
 
   methods: {
+    clickLocation(loc) {
+      this.bus.$emit('user-select-option', loc.name)
+    },
+
     handleSaveResult(result) {
       console.log(result)
 
@@ -192,20 +197,24 @@ export default {
       }.bind(this)
     },
 
-    mouseEntered(data) {
+    waitingMouseEntered(data) {
       console.log('mouse-entered', data)
     },
 
-    mouseExited(data) {
+    waitingMouseExited(data) {
       console.log('mouse-exited', data)
     },
 
-    selectionChanged(data) {
+    waitingSelectionChanged(data) {
       console.log('selection-changed', data)
     },
   },
 
   created() {
+    this.bus.$on('waiting-mouse-entered', this.waitingMouseEntered)
+    this.bus.$on('waiting-mouse-exited', this.waitingMouseExited)
+    this.bus.$on('waiting-selection-changed', this.waitingSelectionChanged)
+
     this.game.testMode = true
 
     Vue.set(this.game, 'ui', {

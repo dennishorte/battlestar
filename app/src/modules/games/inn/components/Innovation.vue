@@ -81,6 +81,7 @@ export default {
 
   data() {
     return {
+      bus: new Vue(),
       game: new inn.Innovation(this.data, this.actor.name),
       fakeSave: false,
     }
@@ -98,6 +99,7 @@ export default {
   provide() {
     return {
       actor: this.actor,
+      bus: this.bus,
       game: this.game,
       ui: this.uiFactory(),
     }

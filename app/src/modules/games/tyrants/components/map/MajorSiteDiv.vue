@@ -2,6 +2,7 @@
   <div
     class="major-site-div"
     :style="loc.ui.renderStyle"
+    @click="click"
   >
     <div class="loc-name">{{ loc.name }}</div>
 
@@ -53,6 +54,10 @@ export default {
   },
 
   methods: {
+    click() {
+      this.ui.fn.clickLocation(this.loc)
+    },
+
     troopClasses(troop) {
       const classes = []
 

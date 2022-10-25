@@ -15,7 +15,7 @@
         <div v-if="!optionHasChildren(option)" class="input-row">
           <input type="checkbox" :value="index" v-model="selected" />
 
-          <div @mouseenter="mouseEntered(option)">
+          <div @mouseenter="mouseEntered(option)" @mouseleave="mouseExited(option)">
             <div class="input-label">
               <OptionName :option="option" />
             </div>
@@ -30,12 +30,7 @@
 
         <div class="nested-options" v-else>
           <input type="checkbox" :value="index" v-model="selected" disabled />
-          <OptionSelector
-            :selector="option"
-            @mouse-entered="mouseEntered"
-            @mouse-exited="mouseExited"
-            @selection-changed="childChanged"
-          />
+          <OptionSelector :selector="option" />
         </div>
       </div>
 
@@ -59,7 +54,7 @@ export default {
     OptionName,
   },
 
-  inject: ['game'],
+  inject: ['game', 'bus'],
 
   props: {
     required: {
@@ -149,11 +144,11 @@ export default {
 
   methods: {
     mouseEntered(data) {
-      this.$emit('mouse-entered', data)
+      this.bus.$emit('waiting-mouse-entered', data)
     },
 
     mouseExited(data) {
-      this.$emit('mouse-exited', data)
+      this.bus.$emit('waiting-mouse-exited', data)
     },
 
     optionDisplayName(option) {
@@ -186,6 +181,14 @@ export default {
       copy.isChecked = this.selected.length > 0
       this.$emit('selection-changed', copy)
     },
+
+    setSelection(optionName) {
+      console.log('received select-option', optionName, this.selector)
+    },
+  },
+
+  created() {
+    this.bus.$on('user-select-option', this.setSelection)
   },
 }
 </script>
