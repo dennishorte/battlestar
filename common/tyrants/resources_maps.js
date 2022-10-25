@@ -1565,7 +1565,8 @@ const mapData = [
     "neighbors": [
       "chasm-grack a",
       "araum-chasm",
-      "chasm-ever"
+      "chasm-ever",
+      "chasm-menzo"
     ],
     "ui": {
       x: 2,
