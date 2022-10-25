@@ -604,9 +604,6 @@ Tyrants.prototype.aChooseLocation = function(player, locations, opts={}) {
   if (selection.length > 0) {
     return locations.find(loc => loc.name === selection[0])
   }
-  else {
-    return undefined
-  }
 }
 
 Tyrants.prototype.aChooseAndAssassinate = function(player, opts={}) {
@@ -802,14 +799,6 @@ Tyrants.prototype.aChooseAndReturn = function(player, opts={}) {
     else {
       throw new Error(`Unknown return type: ${kind}`)
     }
-  }
-}
-
-Tyrants.prototype.aChooseLocation = function(player, choices, opts={}) {
-  const ids = choices.map(loc => loc.name)
-  const selection = this.aChoose(player, ids, opts)
-  if (selection.length > 0) {
-    return this.getLocationByName(selection[0])
   }
 }
 
