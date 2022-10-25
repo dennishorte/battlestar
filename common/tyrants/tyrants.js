@@ -591,6 +591,24 @@ Tyrants.prototype.aChooseCard = function(player, choices, opts={}) {
   }
 }
 
+Tyrants.prototype.aChooseLocation = function(player, locations, opts={}) {
+  const choices = locations
+    .map(loc => loc.name)
+    .sort()
+
+  if (!opts.title) {
+    opts.title = 'Choose a location'
+  }
+
+  const selection = this.aChoose(player, choices, opts)
+  if (selection.length > 0) {
+    return locations.find(loc => loc.name === selection[0])
+  }
+  else {
+    return undefined
+  }
+}
+
 Tyrants.prototype.aChooseAndAssassinate = function(player, opts={}) {
   const choices = this.getAssassinateChoices(player, opts)
   const selection = this.aChoose(player, choices)
@@ -661,7 +679,7 @@ Tyrants.prototype.aChooseAndDeploy = function(player) {
 // Only supports moving troops.
 Tyrants.prototype.aChooseAndMoveTroop = function(player, opts={}) {
   const choices = this._collectTargets(player, opts).troops
-  const toMove = this.aChoose(player, choices)[0]
+  const toMove = this.aChoose(player, choices, { title: "Choose a troop to move" })[0]
   if (toMove) {
     const [locName, ownerName] = toMove.split(', ')
     const source = this.getLocationByName(locName)
@@ -672,10 +690,8 @@ Tyrants.prototype.aChooseAndMoveTroop = function(player, opts={}) {
       .getLocationAll()
       .filter(loc => loc.checkHasOpenTroopSpace())
       .filter(loc => loc !== source)
-      .map(loc => loc.name)
-      .sort()
-    const destName = this.aChoose(player, destChoices)[0]
-    const dest = this.getLocationByName(destName)
+
+    const dest = this.aChooseLocation(player, destChoices)
 
     util.assert(!!troop, `Invalid selection for moving a troop: ${toMove}`)
 
@@ -715,7 +731,7 @@ Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
 }
 
 Tyrants.prototype.aChooseAndPromote = function(player, choices) {
-  const card = this.aChooseCard(player, choices)
+  const card = this.aChooseCard(player, choices, { title: 'Choose a card to promote' })
   if (card) {
     this.aPromote(player, card)
   }
