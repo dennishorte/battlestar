@@ -1,6 +1,7 @@
 <template>
   <div
     class="major-site-div"
+    :class="dynamicClasses"
     :style="loc.ui.renderStyle"
     @click="click"
   >
@@ -51,6 +52,14 @@ export default {
   },
 
   computed: {
+    dynamicClasses() {
+      const classes = []
+      if (this.ui.selectable.includes(this.loc.name)) {
+        classes.push('selected')
+      }
+
+      return classes
+    },
   },
 
   methods: {
@@ -131,6 +140,6 @@ export default {
 }
 
 .selected {
-  box-shadow: 0 0 4px 4px cyan;
+  box-shadow: 0 0 4px 4px #cc99ff;
 }
 </style>

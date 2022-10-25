@@ -111,6 +111,7 @@ export default {
             cardId: '',
           },
         },
+        selectable: [],
       },
     }
   },
@@ -124,7 +125,29 @@ export default {
     }
   },
 
+  watch: {
+    optionSelector() {
+      if (this.optionSelector) {
+        this.ui.selectable = this.optionSelector.choices.map(c => c.title || c)
+      }
+      else {
+        this.ui.selectable = []
+      }
+    }
+  },
+
   computed: {
+    optionSelector() {
+      if (this.game.state.initializationComplete) {
+        const player = this.game.getPlayerByName(this.actor.name)
+        if (this.game.checkPlayerHasActionWaiting(player)) {
+          return this.game.getWaiting(player)
+        }
+      }
+
+      return undefined
+    },
+
     orderedPlayers() {
       const viewingPlayer = this.game.getPlayerByName(this.actor.name)
       return this.game.getPlayersStarting(viewingPlayer)

@@ -30,7 +30,7 @@
 
         <div class="nested-options" v-else>
           <input type="checkbox" :value="index" v-model="selected" disabled />
-          <OptionSelector :selector="option" />
+          <OptionSelector :selector="option" @selection-changed="childChanged" />
         </div>
       </div>
 
@@ -131,7 +131,6 @@ export default {
     },
 
     subtitles() {
-      console.log(this.selector.subtitles)
       return this.selector.subtitles || []
     }
   },
@@ -183,8 +182,6 @@ export default {
     },
 
     setSelection(optionName) {
-      console.log('received select-option', optionName, this.selector)
-
       for (let i = 0; i < this.selector.choices.length; i++) {
         const choice = this.selector.choices[i]
         if (choice.title === optionName || choice === optionName) {
