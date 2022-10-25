@@ -922,7 +922,7 @@ Tyrants.prototype.aPromote = function(player, card) {
 Tyrants.prototype.aRecruit = function(player, cardName) {
   let card
 
-  if (cardName === 'Priestess of Lloth') {
+  if (cardName === 'Priestess of Lolth') {
     card = this.getZoneById('priestess').cards()[0]
   }
   else if (cardName === 'House Guard') {
