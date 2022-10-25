@@ -382,7 +382,7 @@ const cardData = [
       "At end of turn, promote another card played this turn."
     ],
     impl: (game, player, { card }) => {
-      game.aChooseAndMoveTroop(player, { troopOnly: true })
+      game.aChooseAndMoveTroop(player)
       game.aDeferPromotion(player, card)
     }
   },

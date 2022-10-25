@@ -394,7 +394,7 @@ TestUtil.testTableau = function(game, player, testState) {
 
     if (!testState[zoneName] || testState[zoneName] === 'default') {
       if (zoneName === 'hand') {
-        expected[zoneName] = ['Noble', 'Noble', 'Noble', 'Soldier', 'Soldier'].sort()
+        expected[zoneName] = ['Noble', 'Noble', 'Soldier', 'Soldier', 'Soldier'].sort()
       }
       else {
         expected[zoneName] = []

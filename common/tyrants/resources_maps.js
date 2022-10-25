@@ -1406,7 +1406,8 @@ const mapData = [
     "neighbors": [
       "mant-worm",
       "grack-mant",
-      "mant-menzo a"
+      "mant-menzo a",
+      "bling-mant"
     ],
     "ui": {
       x: 1,
@@ -1537,7 +1538,8 @@ const mapData = [
     },
     "neighbors": [
       "chasm-menzo b",
-      "ever-menzo b"
+      "ever-menzo b",
+      "mant-menzo c"
     ],
     "ui": {
       x: 2,
