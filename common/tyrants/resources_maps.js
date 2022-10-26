@@ -1641,7 +1641,8 @@ const mapData = [
       "points": 1
     },
     "neighbors": [
-      "llace-tsen"
+      "llace-tsen",
+      "kana-tsen b"
     ],
     "ui": {
       x: 2,
