@@ -1566,7 +1566,7 @@ const mapData = [
       "chasm-grack a",
       "araum-chasm",
       "chasm-ever",
-      "chasm-menzo"
+      "chasm-menzo a"
     ],
     "ui": {
       x: 2,
