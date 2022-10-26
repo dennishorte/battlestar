@@ -24,10 +24,12 @@
     </div>
 
     <div class="hand" v-if="player.name === actor.name">
+      <div class="header">hand</div>
       <GameCard v-for="card in hand" :key="card.id" :card="card" />
     </div>
 
-    <div class="played">
+    <div class="played" v-if="playedCards.length > 0">
+      <div class="header">played</div>
       <GameCard v-for="card in playedCards" :key="card.id" :card="card" />
     </div>
   </div>

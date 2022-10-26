@@ -23,12 +23,17 @@ export default {
 
   computed: {
     allCards() {
-      return [
-        ...this.game.getCardsByZone(this.player, 'deck'),
-        ...this.game.getCardsByZone(this.player, 'hand'),
-        ...this.game.getCardsByZone(this.player, 'played'),
-        ...this.game.getCardsByZone(this.player, 'discard'),
-      ].sort((l, r) => l.name.localeCompare(r.name))
+      if (this.player) {
+        return [
+          ...this.game.getCardsByZone(this.player, 'deck'),
+          ...this.game.getCardsByZone(this.player, 'hand'),
+          ...this.game.getCardsByZone(this.player, 'played'),
+          ...this.game.getCardsByZone(this.player, 'discard'),
+        ].sort((l, r) => l.name.localeCompare(r.name))
+      }
+      else {
+        return []
+      }
     },
 
     player() {
