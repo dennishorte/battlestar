@@ -64,11 +64,11 @@ export default {
 
 <style scoped>
 .game-card {
-  border: 1px solid #d495ed;
+  border: 1px solid #3b2345;
   margin: 1px 0;
   padding: 4px;
 
-  color: #ddd;
+  color: #eee1f2;
   background-color: #78498c;
 
   border-radius: 3px;
@@ -83,7 +83,7 @@ export default {
 .cost {
   height: 1.7em;
   width: 1.7em;
-  border: 2px solid #ddd;
+  border: 2px solid #eee1f2;
   border-radius: 50%;
   font-size: .9em;
 }

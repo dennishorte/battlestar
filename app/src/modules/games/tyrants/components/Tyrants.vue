@@ -28,6 +28,7 @@
 
     <CardViewerModal />
     <DebugModal />
+    <Tableau-Modal />
   </div>
 </template>
 
@@ -53,6 +54,7 @@ import Player from './Player'
 // Modals
 import CardViewerModal from './CardViewerModal'
 import DebugModal from '@/modules/games/common/components/DebugModal'
+import TableauModal from './TableauModal'
 
 
 function getTroopColor(game, troop) {
@@ -90,6 +92,7 @@ export default {
 
     CardViewerModal,
     DebugModal,
+    TableauModal,
   },
 
   props: {
@@ -113,6 +116,9 @@ export default {
         modals: {
           cardViewer: {
             cardId: '',
+          },
+          tableau: {
+            player: '',
           },
         },
         selectable: [],

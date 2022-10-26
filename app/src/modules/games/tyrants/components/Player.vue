@@ -1,23 +1,25 @@
 <template>
   <div class="player">
-    <div class="header" :class="headerClasses(player)">
-      {{ player.name }}
-    </div>
-
-    <div class="body">
-      <div>
-        <div>de/di: {{ deckCount }} / {{ discardCount }}</div>
-        <div>score: {{ score }}</div>
+    <div class="details" @click="showTableauModal">
+      <div class="header" :class="headerClasses(player)">
+        {{ player.name }}
       </div>
 
-      <div>
-        <div>inf: {{ player.influence }}</div>
-        <div>pow: {{ player.power }}</div>
-      </div>
+      <div class="body">
+        <div>
+          <div>deck: {{ deckCount }} / {{ totalCardCount }}</div>
+          <div>score: {{ score }}</div>
+        </div>
 
-      <div>
-        <div>t: {{ troopCount }}</div>
-        <div>s: {{ spyCount }}</div>
+        <div>
+          <div>inf: {{ player.influence }}</div>
+          <div>pow: {{ player.power }}</div>
+        </div>
+
+        <div>
+          <div>t: {{ troopCount }}</div>
+          <div>s: {{ spyCount }}</div>
+        </div>
       </div>
     </div>
 
@@ -53,10 +55,6 @@ export default {
       return this.game.getCardsByZone(this.player, 'deck').length
     },
 
-    discardCount() {
-      return this.game.getCardsByZone(this.player, 'discard').length
-    },
-
     hand() {
       return this.game.getCardsByZone(this.player, 'hand').sort((l, r) => l.name.localeCompare(r.name))
     },
@@ -73,6 +71,15 @@ export default {
       return this.game.getCardsByZone(this.player, 'spies').length
     },
 
+    totalCardCount() {
+      return (
+        + this.game.getCardsByZone(this.player, 'deck').length
+        + this.game.getCardsByZone(this.player, 'hand').length
+        + this.game.getCardsByZone(this.player, 'played').length
+        + this.game.getCardsByZone(this.player, 'discard').length
+      )
+    },
+
     troopCount() {
       return this.game.getCardsByZone(this.player, 'troops').length
     },
@@ -86,6 +93,11 @@ export default {
       classes.push(`${color}-element`)
 
       return classes
+    },
+
+    showTableauModal() {
+      this.ui.modals.tableau.player = this.player
+      this.$bvModal.show('tableau-modal')
     },
   },
 }
