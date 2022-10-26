@@ -1667,7 +1667,8 @@ const mapData = [
     "neighbors": [
       "chasm-ever",
       "chaul-ever",
-      "ever-halls"
+      "ever-halls",
+      "ever-menzo a"
     ],
     "ui": {
       x: 3,
