@@ -146,11 +146,11 @@ export default {
       const elemMeta = maps[this.game.settings.map].elemMeta
       const mapStyle = elemMeta.styles['.map']
 
-      const height = parsePx(mapStyle.height)
+      // const height = parsePx(mapStyle.height)
       const width = parsePx(mapStyle.width)
 
       return {
-        minHeight: height + 'px',
+        // minHeight: height + 'px',
         minWidth: width + 'px',
       }
     },
