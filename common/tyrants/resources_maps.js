@@ -1694,7 +1694,8 @@ const mapData = [
     },
     "neighbors": [
       "ched-halls b",
-      "halls-yath"
+      "halls-yath",
+      "ever-halls"
     ],
     "ui": {
       x: 3,
