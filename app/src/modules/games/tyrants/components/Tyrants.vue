@@ -17,7 +17,7 @@
           <WaitingPanel />
         </b-col>
 
-        <b-col class="map-column">
+        <b-col class="map-column" :style="mapStyle">
           <GameMap />
         </b-col>
 
@@ -35,6 +35,8 @@ import Vue from 'vue'
 import axios from 'axios'
 
 import { tyr } from 'battlestar-common'
+
+import maps from '../res/maps.js'
 
 // Primary Components
 import GameMenu from '@/modules/games/common/components/GameMenu'
@@ -137,6 +139,20 @@ export default {
   },
 
   computed: {
+    mapStyle() {
+      const parsePx = (px) => parseInt(px.substr(0, px.length - 2))
+      const elemMeta = maps[this.game.settings.map].elemMeta
+      const mapStyle = elemMeta.styles['.map']
+
+      const height = parsePx(mapStyle.height)
+      const width = parsePx(mapStyle.width)
+
+      return {
+        minHeight: height + 'px',
+        minWidth: width + 'px',
+      }
+    },
+
     optionSelector() {
       if (this.game.state.initializationComplete) {
         const player = this.game.getPlayerByName(this.actor.name)
@@ -281,9 +297,8 @@ export default {
 
 .map-column {
   height: calc(100vh - 60px);
-  min-width: 220px;
-  max-width: 600px;
   overflow: scroll;
+  padding: 0;
 }
 
 .history-column {
