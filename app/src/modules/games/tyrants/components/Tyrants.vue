@@ -11,10 +11,12 @@
         </b-col>
 
         <b-col class="game-column">
-          <Player v-for="player in orderedPlayers" :key="player.name" :player="player" />
-
           <Market />
           <WaitingPanel />
+        </b-col>
+
+        <b-col class="game-column">
+          <Player v-for="player in orderedPlayers" :key="player.name" :player="player" />
         </b-col>
 
         <b-col class="map-column" :style="mapStyle">
