@@ -1617,7 +1617,8 @@ const mapData = [
     },
     "neighbors": [
       "erynd-kana a",
-      "erynd-llace"
+      "erynd-llace",
+      "araum-erynd"
     ],
     "ui": {
       x: 2,
