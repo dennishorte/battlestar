@@ -37,7 +37,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 
-import { tyr } from 'battlestar-common'
+import { util, tyr } from 'battlestar-common'
 
 import maps from '../res/maps.js'
 
@@ -138,7 +138,11 @@ export default {
   watch: {
     optionSelector() {
       if (this.optionSelector) {
-        this.ui.selectable = this.optionSelector.choices.map(c => c.title || c)
+        this.ui.selectable = this.optionSelector.choices.flatMap(c => {
+          const name = c.title || c
+          const tokens = name.split(',').map(t => t.trim())
+          return util.array.distinct([name, tokens[0]])
+        })
       }
       else {
         this.ui.selectable = []
