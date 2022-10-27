@@ -180,7 +180,7 @@ export default {
 
   methods: {
     clickLocation(loc) {
-      this.bus.$emit('user-select-option', loc.name)
+      this.bus.$emit('user-select-option', loc.name, { prefix: true })
     },
 
     handleSaveResult(result) {

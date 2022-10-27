@@ -181,10 +181,13 @@ export default {
       this.$emit('selection-changed', copy)
     },
 
-    setSelection(optionName) {
+    setSelection(optionName, opts={}) {
+      optionName = optionName.toLowerCase()
+
       for (let i = 0; i < this.selector.choices.length; i++) {
         const choice = this.selector.choices[i]
-        if (choice.title === optionName || choice === optionName) {
+        const choiceName = (choice.title || choice).toLowerCase()
+        if (choiceName === optionName || (opts.prefix && choiceName.startsWith(optionName))) {
           this.selected = [i]
           break
         }
