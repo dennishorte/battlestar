@@ -8,6 +8,7 @@
             <DropdownItem><router-link to="/">home</router-link></DropdownItem>
             <DropdownItem><router-link to="/lobby/create">new lobby</router-link></DropdownItem>
             <DropdownItem><router-link to="/data">data</router-link></DropdownItem>
+            <DropdownItem><router-link to="/magic/decks">magic</router-link></DropdownItem>
             <DropdownDivider></DropdownDivider>
             <DropdownItem><router-link to="/admin">admin</router-link></DropdownItem>
             <DropdownItem><router-link to="/logout">logout</router-link></DropdownItem>

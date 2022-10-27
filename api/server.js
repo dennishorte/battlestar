@@ -44,6 +44,9 @@ app.post('/api/game/kill', routes.game.kill)
 app.post('/api/game/saveFull', routes.game.saveFull)
 app.post('/api/game/updateStats', routes.game.updateStats)
 
+// Scryfall Routes
+app.post('/api/scryfall/update', routes.scryfall.updateAll)
+
 // Snapshot Routes
 app.post('/api/snapshot/create', routes.snapshot.create)
 app.post('/api/snapshot/fetch', routes.snapshot.fetch)
