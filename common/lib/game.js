@@ -423,7 +423,16 @@ Game.prototype._setInputRequestKey = function() {
 
 Game.prototype._tryToAutomaticallyRespond = function(selectors) {
   for (const sel of selectors) {
+
+    // Don't try to understand nested structures.
+    for (const choice of sel.choices) {
+      if (choice.choices) {
+        return undefined
+      }
+    }
+
     const { min, max } = selector.minMax(sel)
+
     if (min >= sel.choices.length) {
       const response = {
         actor: sel.actor,

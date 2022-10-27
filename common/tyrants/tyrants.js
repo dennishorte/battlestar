@@ -618,7 +618,7 @@ Tyrants.prototype.aChooseAndAssassinate = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndDevourMarket = function(player, opts={}) {
-  const chosen = this.aChooseCard(player, this.getZoneById('market').cards(), { min: 0 })
+  const chosen = this.aChooseCard(player, this.getZoneById('market').cards(), { min: 0, max: 1 })
   if (chosen) {
     this.mDevour(player, chosen)
     this.mLog({
@@ -778,6 +778,7 @@ Tyrants.prototype.aChooseAndReturn = function(player, opts={}) {
       title: 'troop',
       choices: targets.troops,
       min: 0,
+      max: 1,
     })
   }
   if (targets.spies.length > 0) {
@@ -785,10 +786,12 @@ Tyrants.prototype.aChooseAndReturn = function(player, opts={}) {
       title: 'spy',
       choices: targets.spies,
       min: 0,
+      max: 1,
     })
   }
 
   const selection = this.aChoose(player, choices, { title: 'Choose a token to return' })
+
   if (selection.length > 0) {
     const kind = selection[0].title
     const [locName, ownerName] = selection[0].selection[0].split(', ')

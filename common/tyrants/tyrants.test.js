@@ -119,6 +119,7 @@ describe('Tyrants', () => {
 
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Use Power.Return an Enemy Spy')
+    const request3 = t.choose(game, request2, 'spy.Ched Nasad, micah')
 
     t.testBoard(game, {
       dennis: {

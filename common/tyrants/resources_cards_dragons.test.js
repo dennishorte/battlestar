@@ -199,6 +199,7 @@ describe('Dragons Expansion Cards', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Red Dragon')
+      const request3 = t.choose(game, request2, 'spy.Araumycos, micah')
 
       t.testBoard(game, {
         dennis: {
@@ -235,6 +236,7 @@ describe('Dragons Expansion Cards', () => {
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Red Dragon')
       const request3 = t.choose(game, request2, 'araum-ched, neutral')
+      const request4 = t.choose(game, request3, 'spy.Araumycos, micah')
 
       t.testBoard(game, {
         dennis: {
@@ -928,10 +930,14 @@ describe('Dragons Expansion Cards', () => {
         'ched-llace a': {
           troops: ['micah'],
         },
+        'ched-halls a': {
+          troops: ['micah'],
+        },
       })
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Blue Wyrmling')
+      const request3 = t.choose(game, request2, 'troop.ched-llace a, micah')
 
       t.testBoard(game, {
         dennis: {
@@ -941,6 +947,9 @@ describe('Dragons Expansion Cards', () => {
         },
         'ched-llace a': {
           troops: [],
+        },
+        'ched-halls a': {
+          troops: ['micah'],
         },
       })
     })
