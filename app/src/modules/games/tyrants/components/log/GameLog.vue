@@ -1,9 +1,22 @@
 <template>
   <div class="gamelog">
     <div v-for="(line, index) in lines" :key="index" :class="line.classes" class="log-line">
-      <div v-for="n in line.indent" :key="n" class="indent-spacer" />
-      <GameLogText :text="line.text" :class="classes(line)" />
+
+      <template v-if="line.isChat">
+        <div class="chat-container">
+          <div class="chat-message">
+            <span class="chat-author">{{ line.author.name }}:</span>
+            {{ line.text }}
+          </div>
+        </div>
+      </template>
+
+      <template v-else>
+        <div v-for="n in line.indent" :key="n" class="indent-spacer" />
+        <GameLogText :text="line.text" :class="classes(line)" />
+      </template>
     </div>
+
     <div class="bottom-space" ref="bottom"></div>
   </div>
 </template>
@@ -103,7 +116,7 @@ export default {
     classes(line) {
       const classes = [`indent-${line.indent}`]
 
-      if (line.classes.includes('player-turn')) {
+      if (line.classes && line.classes.includes('player-turn')) {
         const playerName = line.args.player.value
         const player = this.game.getPlayerByName(playerName)
         const color = this.ui.fn.getPlayerColor(this.game, player)

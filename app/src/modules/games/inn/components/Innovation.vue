@@ -39,13 +39,13 @@ import Vue from 'vue'
 
 import { inn } from 'battlestar-common'
 
+import ChatInput from '@/modules/games/common/components/ChatInput'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
 import Achievements from './Achievements'
 import Biscuits from './Biscuits'
 import CardNameFull from './CardNameFull'
-import ChatInput from './ChatInput'
 import Decks from './Decks'
 import History from './History'
 import PlayerTableau from './PlayerTableau'

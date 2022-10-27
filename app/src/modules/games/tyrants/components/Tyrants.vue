@@ -13,6 +13,7 @@
         <b-col class="game-column">
           <Market />
           <WaitingPanel />
+          <ChatInput />
         </b-col>
 
         <b-col class="game-column">
@@ -41,10 +42,12 @@ import { util, tyr } from 'battlestar-common'
 
 import maps from '../res/maps.js'
 
-// Primary Components
+// Common Components
+import ChatInput from '@/modules/games/common/components/ChatInput'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
+// Tyrants Components
 import GameLog from './log/GameLog'
 import GameMap from './map/GameMap'
 import Market from './Market'
@@ -83,6 +86,7 @@ export default {
   name: 'Tyrants',
 
   components: {
+    ChatInput,
     GameLog,
     GameMap,
     GameMenu,
@@ -265,20 +269,6 @@ export default {
     this.bus.$on('waiting-mouse-entered', this.waitingMouseEntered)
     this.bus.$on('waiting-mouse-exited', this.waitingMouseExited)
     this.bus.$on('waiting-selection-changed', this.waitingSelectionChanged)
-
-    this.game.testMode = true
-
-    Vue.set(this.game, 'ui', {
-      modals: {
-        achievement: {
-          card: '',
-        },
-        cardsViewer: {
-          cards: [],
-          title: '',
-        },
-      },
-    })
 
     this._injectChatMethod()
     this._injectSaveMethod()
