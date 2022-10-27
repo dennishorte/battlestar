@@ -60,7 +60,12 @@ export default {
     },
 
     trophyHall() {
-      return this.game.getCardsByZone(this.player, 'trophyHall')
+      if (this.player) {
+        return this.game.getCardsByZone(this.player, 'trophyHall')
+      }
+      else {
+        return []
+      }
     },
   },
 
