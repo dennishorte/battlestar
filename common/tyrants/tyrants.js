@@ -1127,46 +1127,50 @@ Tyrants.prototype.getRound = function() {
 }
 
 Tyrants.prototype.getScore = function(player) {
-  // Cards in deck
-  const deckCards = [
-    ...this.getCardsByZone(player, 'hand'),
-    ...this.getCardsByZone(player, 'discard'),
-    ...this.getCardsByZone(player, 'deck'),
-  ].map(card => card.points)
-   .reduce((a, b) => a + b, 0)
+  return this.getScoreBreakdown(player).total
+}
 
-  // Cards in inner circle
-  const innerCircleCards = this
-    .getCardsByZone(player, 'innerCircle')
-    .map(card => card.innerPoints)
-    .reduce((a, b) => a + b, 0)
+Tyrants.prototype.getScoreBreakdown = function(player) {
+  const self = this
 
-  // Captured troops
-  const capturedTroops = this.getCardsByZone(player, 'trophyHall').length
+  const summary = {
+    "deck": [
+      ...self.getCardsByZone(player, 'hand'),
+      ...self.getCardsByZone(player, 'discard'),
+      ...self.getCardsByZone(player, 'deck'),
+    ].map(card => card.points)
+     .reduce((a, b) => a + b, 0),
 
-  // Locations controlled
-  const locationsControlled = this
-    .getLocationAll()
-    .filter(loc => loc.getController() === player)
-    .map(loc => loc.points)
-    .reduce((a, b) => a + b, 0)
+    "inner circle": self
+      .getCardsByZone(player, 'innerCircle')
+      .map(card => card.innerPoints)
+      .reduce((a, b) => a + b, 0),
 
-  const locationsTotalControlled = this
-    .getLocationAll()
-    .filter(loc => loc.getTotalController() === player)
-    .length * 2
+    "trophy hall": self.getCardsByZone(player, 'trophyHall').length,
 
-  // Victory Points
-  const vps = player.points
+    "control": self
+      .getLocationAll()
+      .filter(loc => loc.getTotalController() === player)
+      .length * 2,
 
-  return (
-    deckCards
-    + innerCircleCards
-    + capturedTroops
-    + locationsControlled
-    + locationsTotalControlled
-    + vps
+    "total control": self
+      .getLocationAll()
+      .filter(loc => loc.getTotalController() === player)
+      .length * 2,
+
+    "victory points": player.points
+  }
+
+  summary.total = (
+    + summary['deck']
+    + summary['inner circle']
+    + summary['trophy hall']
+    + summary['control']
+    + summary['total control']
+    + summary['victory points']
   )
+
+  return summary
 }
 
 Tyrants.prototype.getZoneByCard = function(card) {
