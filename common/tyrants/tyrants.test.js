@@ -272,3 +272,62 @@ describe('control tokens', () => {
     // Not sure how to test this meaningfully.
   })
 })
+
+describe.only('score', () => {
+  test('control of a site', () => {
+    const game = t.gameFixture({
+      dennis: {
+        hand: [],
+      },
+      Menzoberranzan: {
+        troops: ['dennis', 'dennis', 'dennis', 'dennis', 'dennis']
+      }
+    })
+
+    const request1 = game.run()
+
+    t.testBoard(game, {
+      dennis: {
+        points: 0,
+        score: 3 + 5,  // Ched Nasad + Menzoberranzan
+      },
+    })
+  })
+
+  test('total control of a site', () => {
+    const game = t.gameFixture({
+      dennis: {
+        hand: [],
+      },
+      Menzoberranzan: {
+        troops: ['dennis', 'dennis', 'dennis', 'dennis', 'dennis', 'dennis']
+      }
+    })
+
+    const request1 = game.run()
+
+    t.testBoard(game, {
+      dennis: {
+        points: 2,
+        score: 3 + 5 + 2 + 2,  // Ched Nasad + Menzoberranzan + Menzo total + 2 vps
+      },
+    })
+
+  })
+
+  test.skip('cards in deck', () => {
+
+  })
+
+  test.skip('inner circle', () => {
+
+  })
+
+  test.skip('trophy hall', () => {
+
+  })
+
+  test.skip('victory points', () => {
+
+  })
+})

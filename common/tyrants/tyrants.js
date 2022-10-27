@@ -1150,8 +1150,9 @@ Tyrants.prototype.getScoreBreakdown = function(player) {
 
     "control": self
       .getLocationAll()
-      .filter(loc => loc.getTotalController() === player)
-      .length * 2,
+      .filter(loc => loc.getController() === player)
+      .map(loc => loc.points)
+      .reduce((a, b) => a + b, 0),
 
     "total control": self
       .getLocationAll()

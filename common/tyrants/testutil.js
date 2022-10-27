@@ -410,6 +410,11 @@ TestUtil.testTableau = function(game, player, testState) {
     expected[key] = testState[key] || 0
   }
 
+  if ('score' in testState) {
+    actual['score'] = game.getScore(player)
+    expected['score'] = testState['score']
+  }
+
   expect(actual).toStrictEqual(expected)
 }
 
