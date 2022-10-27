@@ -31,7 +31,7 @@ function Card() {
       matches: () => true,
       func(game, player, { card }) {
         const eligible = game
-          .getEligibleAchievementsRaw(player)
+          .getEligibleAchievementsRaw(player, { ignoreAge: true })
           .filter(other => card.getAge() === other.getAge())
 
         game.aChooseAndAchieve(player, eligible, { nonAction: true })
