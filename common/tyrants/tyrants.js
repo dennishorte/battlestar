@@ -493,9 +493,10 @@ Tyrants.prototype.endOfTurn = function() {
 
   // Gain points for control markers.
   const player = this.getPlayerCurrent()
+
   const markers = this.getControlMarkers(player)
   for (const marker of markers) {
-    if (marker.points) {
+    if (marker.total && marker.points) {
       player.incrementPoints(marker.points, { silent: true })
       this.mLog({
         template: '{player} gains {count} points for total control of {loc}',

@@ -90,6 +90,10 @@ MapZone.prototype.getControlMarker = function() {
   return marker
 }
 
+MapZone.prototype.getEmptySpaces = function() {
+  return this.size - this.getTroops().length
+}
+
 MapZone.prototype.getController = function() {
   // Passageways cannot have total controllers
   if (this.points === 0) {
@@ -112,37 +116,33 @@ MapZone.prototype.getController = function() {
     return playerMap[mostEntry[0]]
   }
   else {
-    return null
+    return undefined
   }
-}
-
-MapZone.prototype.getEmptySpaces = function() {
-  return this.size - this.getTroops().length
 }
 
 MapZone.prototype.getTotalController = function() {
   // Passageways cannot have total controllers
-  if (this.points === 0) {
-    return null
+  if (!this.checkIsSite()) {
+    return undefined
   }
 
   const troops = this.getTroops()
 
   // All troop spaces must be full.
   if (troops.length !== this.size) {
-    return null
+    return undefined
   }
 
   // All troops must belong to the same player.
-  if (troops.length !== util.array.distinct(troops).length) {
-    return null
+  if (util.array.distinct(troops.map(t => t.owner)).length !== 1) {
+    return undefined
   }
 
   const candidate = troops[0].owner
 
   // Player is defined (not neutral)
   if (candidate === undefined) {
-    return null
+    return undefined
   }
 
   // No enemy spies.
@@ -150,7 +150,7 @@ MapZone.prototype.getTotalController = function() {
     return candidate
   }
   else {
-    return null
+    return undefined
   }
 }
 
