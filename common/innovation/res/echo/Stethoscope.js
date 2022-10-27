@@ -20,9 +20,14 @@ function Card() {
     (game, player) => {
       game.aDraw(player, { age: game.getEffectAge(this, 7) })
 
-      const melded = game.state.dogmaInfo.stethoscope[player.name]
-      if (melded && melded.some(card => card.color === 'blue')) {
-        game.aDraw(player, { age: game.getEffectAge(this, 8) })
+      if (game.state.dogmaInfo.stethoscope) {
+        const melded = game.state.dogmaInfo.stethoscope[player.name]
+        if (melded && melded.some(card => card.color === 'blue')) {
+          game.aDraw(player, { age: game.getEffectAge(this, 8) })
+        }
+      }
+      else {
+        game.mLog({ template: 'No card melded due to echo effect' })
       }
     },
 
