@@ -32,8 +32,8 @@
       </div>
     </div>
 
-    <template v-for="card in cards">
-      <CardStacked :card="card" :key="card.id" />
+    <template v-for="card in cards" :key="card.id">
+      <CardStacked :card="card" />
     </template>
 
   </div>

@@ -114,7 +114,7 @@ export default {
   background-color: white;
 }
 
-.waiting-panel >>> .active-nav-item {
+.waiting-panel ::v-deep(.active-nav-item) {
   background-color: #eee;
   border-color: #ccc;
   border-bottom-color: #eee;

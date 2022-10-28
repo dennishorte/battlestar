@@ -1,24 +1,19 @@
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
-
-import Vue from 'vue'
-Vue.config.devtools = true
-Vue.config.productionTip = false
-
-// Global Styles
-import '@/assets/css/tyrants.css'
+import { createApp } from 'vue'
+import App from '@/App.vue'
+import router from '@/router'
+import store from '@/store'
 
 import authUtil from '@/modules/auth/util.js'
 authUtil.initialize()
 
-import { BootstrapVue } from 'bootstrap-vue'
-Vue.use(BootstrapVue)
+// Global Styles
+import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap"
 
-import App from '@/App.vue'
-import router from '@/router'
-import store from '@/store'
-new Vue({
-  render: h => h(App),
-  router,
-  store,
-}).$mount('#app')
+import '@/assets/css/tyrants.css'
+
+const app = createApp(App)
+app.use(router)
+app.use(store)
+
+app.mount('#app')

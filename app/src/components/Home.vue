@@ -2,17 +2,17 @@
 <div class="home">
   <Header />
 
-  <b-container>
-    <b-row>
-      <b-col>
+  <div class="container">
+    <div class="row">
+      <div class="col">
 
         <MyGames />
 
         <MyLobbies />
 
-      </b-col>
-    </b-row>
-  </b-container>
+      </div>
+    </div>
+  </div>
 
 </div>
 </template>

@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
 import Home from '@/components/Home'
 import Game from '@/components/Game'
@@ -13,11 +12,8 @@ import mapmakerRoutes from '@/modules/mapmaker/router.js'
 import authUtil from '@/modules/auth/util.js'
 
 
-Vue.use(Router)
-
-
-const router = new Router({
-  mode: 'history',
+const router = createRouter({
+  history: createWebHistory(),
   routes: [
     {
       path: '/',

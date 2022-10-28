@@ -7,70 +7,84 @@
     <div class="sub-heading">
       In Progress
     </div>
-    <b-table
-      :items="games"
-      :fields="fields"
-      :small="true"
-      head-variant="light">
 
-      <template #cell(game)="row">
-        {{ gameKind(row.item) }}
-      </template>
+    <table class="table">
+      <thead>
+        <tr class="table-secondary table-head">
+          <th>game</th>
+          <th>name</th>
+          <th>age</th>
+          <th>waiting</th>
+          <th>menu</th>
+        </tr>
+      </thead>
 
-      <template #cell(name)="row">
-        <router-link :to="gameLink(row.item._id)">
-          {{ gameName(row.item) }}
-        </router-link>
-        <div class="opponent-names">
-          vs. {{ opponentNames(row.item) }}
-        </div>
-      </template>
-
-      <template #cell(age)="row">
-        {{ gameAge(row.item) }}
-      </template>
-
-      <template #cell(waiting)="row">
-        {{ waitingForViewer(row.item) ? '\u231B' : '' }}
-      </template>
-
-      <template #cell(menu)="row">
-        <b-dropdown>
-          <b-dropdown-item @click="kill(row.item._id)">kill</b-dropdown-item>
-        </b-dropdown>
-      </template>
-
-    </b-table>
-
-    <template v-if="this.finished.length > 0">
-      <div class="sub-heading">
-        Recently Finished
-      </div>
-      <b-table
-        :items="finished"
-        :fields="finishedFields"
-        :small="true"
-        head-variant="light">
-
-        <template #cell(game)="row">
-          {{ gameKind(row.item) }}
+      <tbody>
+        <template v-for="(game, index) in games" :key="game._id">
+          <tr>
+            <td>{{ gameKind(game) }}</td>
+            <td>
+              <router-link :to="gameLink(game._id)">
+                {{ gameName(game) }}
+              </router-link>
+              <div class="opponent-names">
+                vs. {{ opponentNames(game) }}
+              </div>
+            </td>
+            <td>{{ gameAge(game) }}</td>
+            <td>{{ waitingForViewer(game) ? '\u231B' : '' }}</td>
+            <td>
+              <div class="dropdown">
+                <button
+                  class="btn btn-secondary dropdown-toggle"
+                  type="button"
+                  :id="`menu-${index}`"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                > </button>
+                <ul class="dropdown-menu" :aria-labelledby="`menu-${index}`">
+                  <li @click="kill(game._id)"><a class="dropdown-item" href="#">kill</a></li>
+                </ul>
+              </div>
+            </td>
+          </tr>
         </template>
+      </tbody>
+    </table>
 
-        <template #cell(name)="row">
-          <router-link :to="gameLink(row.item._id)">
-            {{ gameName(row.item) }}
-          </router-link>
-          <div class="opponent-names">
-            vs. {{ opponentNames(row.item) }}
-          </div>
+
+    <div class="sub-heading">
+      Recently Finished
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr class="table-secondary table-head">
+          <th>game</th>
+          <th>name</th>
+          <th>winner</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <template v-for="game in finished" :key="game._id">
+          <tr>
+            <td>{{ gameKind(game) }}</td>
+            <td>
+              <router-link :to="gameLink(game._id)">
+                {{ gameName(game) }}
+              </router-link>
+              <div class="opponent-names">
+                vs. {{ opponentNames(game) }}
+              </div>
+            </td>
+            <td>
+              <span v-if="game.stats">{{ winnerName(game) }}</span>
+            </td>
+          </tr>
         </template>
-
-        <template #cell(winner)="row">
-          {{ row.item.stats.result.player.name || row.item.stats.result.player }}
-        </template>
-
-      </b-table>
-    </template>
+      </tbody>
+    </table>
 
   </div>
 </template>
@@ -143,6 +157,10 @@ export default {
       return (data.waiting || []).includes(this.$store.state.auth.user.name)
     },
 
+    winnerName(game) {
+      return game.stats.result.player.name || game.stats.result.player
+    },
+
     async fetchActiveGames() {
       const fetchResult = await axios.post('/api/user/games', {
         userId: this.$store.state.auth.user._id,
@@ -175,5 +193,11 @@ export default {
   font-weight: 200;
   margin-left: 1em;
   line-height: .7em;
+}
+
+.table-head {
+  color: var(--bs-gray-dark);
+  border-top: 1px solid var(--bs-gray-400);
+  border-bottom: 2px solid var(--bs-gray-400);
 }
 </style>
