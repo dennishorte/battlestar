@@ -46,19 +46,6 @@ export default {
   },
 
   methods: {
-    async fetchAllCards() {
-      console.log('fetching card data')
-      const requestResult = await axios.post('/api/card/all')
-      console.log('card data fetched')
-
-      if (requestResult.data.status === 'success') {
-        this.cards = requestResult.data.cards
-      }
-      else {
-        alert('Error loading game data')
-      }
-    },
-
     async fetchAllDecks() {
       const requestResult = await axios.post('/api/user/decks', {
         userId: this.actor._id,
@@ -74,7 +61,6 @@ export default {
   },
 
   async mounted() {
-    await this.fetchAllCards()
     // await this.fetchAllDecks()
     // console.log(deckUtil.deckListToCardNames(testDeck.decklist))
   },
