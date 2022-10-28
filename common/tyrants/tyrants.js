@@ -50,6 +50,7 @@ Tyrants.prototype._mainProgram = function() {
 }
 
 Tyrants.prototype._gameOver = function(event) {
+  this.mLogOutdent()
   this.mLog({
     template: '{player} wins due to {reason}',
     args: {
@@ -292,6 +293,7 @@ Tyrants.prototype.mainLoop = function() {
 
     this.drawHand()
     this.nextPlayer()
+    this.checkForEndOfGame()
 
     this.mLogOutdent()
   }
@@ -540,6 +542,37 @@ Tyrants.prototype.cleanup = function() {
   // Clear remaining influence and power
   player.power = 0
   player.influence = 0
+
+  this.checkForEndGameTriggers()
+}
+
+Tyrants.prototype.checkForEndGameTriggers = function() {
+
+  // Any player has zero troops left
+  for (const player of this.getPlayerAll()) {
+    if (this.getCardsByZone(player, 'troops').length === 0) {
+      this.mLog({
+        template: '{player} has deployed all of their troops',
+        args: { player }
+      })
+      this.state.endGameTriggered = true
+    }
+  }
+
+  // The market is depleted
+  if (this.getZoneById('market').cards().length === 0) {
+    this.mLog({
+      template: 'The market is depleted'
+    })
+    this.state.endGameTriggered = true
+  }
+
+  if (this.state.endGameTriggered) {
+    this.mLog({
+      template: "The end of the game has been triggered. The game will end at the start of {player}'s next turn.",
+      args: { player: this.getPlayerFirst() }
+    })
+  }
 }
 
 Tyrants.prototype.drawHand = function() {
@@ -549,6 +582,22 @@ Tyrants.prototype.drawHand = function() {
 Tyrants.prototype.nextPlayer = function() {
   this.state.currentPlayer = this.getPlayerNext()
   this.state.turn += 1
+}
+
+Tyrants.prototype.checkForEndOfGame = function() {
+  if (this.state.endGameTriggered && this.state.currentPlayer === this.getPlayerFirst()) {
+
+    const scores = this
+      .getPlayerAll()
+      .map(p => [p, this.getScore(p)])
+      .sort((l, r) => r[1] - l[1])
+    const winner = scores[0][0]
+
+    throw new GameOverEvent({
+      player: winner,
+      reason: 'ALL THE POINTS!'
+    })
+  }
 }
 
 
@@ -1091,6 +1140,10 @@ Tyrants.prototype.getPlayerAll = function() {
 
 Tyrants.prototype.getPlayerByCard = function(card) {
   return card.owner
+}
+
+Tyrants.prototype.getPlayerFirst = function() {
+  return this.getPlayerAll()[0]
 }
 
 Tyrants.prototype.getPlayerByName = function(name) {
