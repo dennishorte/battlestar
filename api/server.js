@@ -25,6 +25,9 @@ app.use(middleware.coerceIds)
 ////////////////////////////////////////////////////////////
 // Routes
 
+// Card routes
+app.post('/api/card/all', routes.card.fetchAll)
+
 // Guest routes
 app.post('/api/guest/slack_test', routes.slackTest)
 app.post('/api/guest/login', routes.login)

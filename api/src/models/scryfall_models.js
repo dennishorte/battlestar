@@ -10,6 +10,10 @@ async function insertCardsIntoDatabase(cards) {
   await scryfallCollection.insertMany(cards, { ordered: true })
 }
 
+Scryfall.fetchAll = async function() {
+  return await scryfallCollection.find({})
+}
+
 Scryfall.updateAll = async function() {
   const cards = await util.getUpdatedCards()
   insertCardsIntoDatabase(cards)
