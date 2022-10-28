@@ -56,7 +56,7 @@ const unwantedScryfallFields = [
 ]
 
 
-Scryfall.cleanScryfallData = function (data) {
+async function cleanScryfallData(data) {
   for (const fieldName of unwantedScryfallFields) {
     delete data[fieldName]
   }
@@ -64,23 +64,21 @@ Scryfall.cleanScryfallData = function (data) {
 }
 
 
-Scryfall.cleanScryfallCards = async function(cards) {
+async function cleanScryfallCards(cards) {
   for (const card of cards) {
-    this.cleanScryfallData(card)
+    cleanScryfallData(card)
   }
 }
 
-Scryfall.fetchScryfallDefaultCards = async function(uri) {
+async function fetchScryfallDefaultCards(uri) {
   console.log(uri) // to prevent annoying unused errors
 
   // Load card data from the disk for now.
   const fs = require('fs')
   const path = require('path')
 
-  const filename = '/Users/dennis/tmp/scryfall/test.json'
+  const filename = '/Users/dennis/tmp/scryfall/default-cards-20221025090507.json'
   const data = fs.readFileSync(filename).toString()
-
-  console.log(data)
 
   return JSON.parse(data)
 
@@ -97,47 +95,38 @@ Scryfall.fetchScryfallDefaultCards = async function(uri) {
    * return result.data */
 }
 
-Scryfall.fetchScryfallDefaultDataUri = async function() {
-  this.status = 'waiting'
-  this.message = 'Downloading latest data'
-
+async function fetchScryfallDefaultDataUri() {
   // Get the list of bulk data.
   const result = await axios.get('https://api.scryfall.com/bulk-data')
 
   if (result.status !== 200) {
-    return {
-      status: 'error',
-      message: result.statusText,
-    }
+    throw new Error('Unable to fetch bulk data list')
   }
 
   const targetData = result.data.data.find(d => d.type === 'default_cards')
 
   if (!targetData) {
-    return {
-      status: 'error',
-      message: 'Unable to find the default_cards data in the bulk data list',
-    }
+    throw new Error('Unable to parse default_cards from the bulk data last')
   }
 
   if (!targetData.download_uri) {
-    return {
-      status: 'error',
-      message: 'Unable to find the download URI for default_cards',
-    }
+    throw new Error('Unable to parse the download URI for default cards')
   }
 
   return targetData.download_uri
 }
 
+async function insertCardsIntoDatabase(cards) {
+  await scryfallCollection.deleteMany({})  // Remove old data
+  await scryfallCollection.insertMany(cards, { ordered: true })
+}
+
 Scryfall.updateAll = async function() {
-  console.log('################################################################################')
-  const downloadUri = await this.fetchScryfallDefaultDataUri()
+  const downloadUri = await fetchScryfallDefaultDataUri()
 
-  const cards = await this.fetchScryfallDefaultCards(downloadUri)
-  this.cleanScryfallCards(cards)
-
-  console.log(cards.slice(0, 10))
+  const cards = await fetchScryfallDefaultCards(downloadUri)
+  cleanScryfallCards(cards)
+  insertCardsIntoDatabase(cards)
 }
 
 module.exports = Scryfall

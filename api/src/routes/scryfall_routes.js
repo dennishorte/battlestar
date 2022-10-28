@@ -6,6 +6,7 @@ Scryfall.updateAll = async function(req, res) {
   await db.scryfall.updateAll()
   res.json({
     status: 'success',
+    message: 'Scryfall data updated'
   })
 }
 
