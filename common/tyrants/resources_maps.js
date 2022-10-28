@@ -1592,7 +1592,8 @@ const mapData = [
     "neighbors": [
       "araum-labyr a",
       "araum-ched",
-      "araum-erynd"
+      "araum-erynd",
+      "araum-chasm"
     ],
     "ui": {
       x: 2,
