@@ -1289,17 +1289,22 @@ Tyrants.prototype.mAssassinate = function(player, loc, owner) {
 Tyrants.prototype.mCalculatePresence = function(location) {
   util.assert(location.kind === 'location')
 
-  const relevant = [
+  const relevantTroops = [
     location,
     ...this.getLocationNeighbors(location)
   ]
 
-  const players = relevant
-    .flatMap(loc => loc.cards())
+  const playersByTroop = relevantTroops
+    .flatMap(loc => loc.getTroops())
     .map(card => this.getPlayerByCard(card))
     .filter(player => player !== undefined)
 
-  location.presence = util.array.distinct(players)
+  const playersBySpy = location
+    .getSpies()
+    .map(card => this.getPlayerByCard(card))
+    .filter(player => player !== undefined)
+
+  location.presence = util.array.distinct([...playersByTroop, ...playersBySpy])
 }
 
 Tyrants.prototype.mCheckZoneLimits = function(zone) {

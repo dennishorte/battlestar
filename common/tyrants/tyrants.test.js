@@ -15,6 +15,40 @@ describe('Tyrants', () => {
     const request1 = game.run()
   })
 
+  describe('presence', () => {
+    test('troops project presense to neighbors', () => {
+      const game = t.gameFixture({})
+      game.run()
+
+      const presentAt = game
+        .getPresence(t.dennis(game))
+        .map(loc => loc.name)
+        .sort()
+
+      const expected = ['Ched Nasad', 'ched-halls a', 'ched-llace a', 'araum-ched'].sort()
+
+      expect(presentAt).toStrictEqual(expected)
+    })
+
+    test('spies give presence only locally', () => {
+      const game = t.gameFixture({
+        Araumycos: {
+          spies: ['dennis'],
+        },
+      })
+      game.run()
+
+      const presentAt = game
+        .getPresence(t.dennis(game))
+        .map(loc => loc.name)
+        .sort()
+
+      const expected = ['Araumycos', 'Ched Nasad', 'ched-halls a', 'ched-llace a', 'araum-ched'].sort()
+
+      expect(presentAt).toStrictEqual(expected)
+    })
+  })
+
   describe('deploy troops', () => {
 
     test('deploy a troop', () => {
@@ -273,7 +307,7 @@ describe('control tokens', () => {
   })
 })
 
-describe.only('score', () => {
+describe('score', () => {
   test('control of a site', () => {
     const game = t.gameFixture({
       dennis: {
