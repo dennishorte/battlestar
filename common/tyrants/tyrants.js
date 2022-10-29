@@ -593,7 +593,7 @@ Tyrants.prototype.checkForEndOfGame = function() {
     const winner = scores[0][0]
 
     throw new GameOverEvent({
-      player: winner,
+      player: winner.name,
       reason: 'ALL THE POINTS!'
     })
   }
