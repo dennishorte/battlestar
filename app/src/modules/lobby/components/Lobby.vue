@@ -1,42 +1,42 @@
 <template>
-<div class='lobby'>
-  <Header />
+  <div class='lobby'>
+    <Header />
 
-  <b-container>
-    <b-row>
-      <b-col>
-        <h2>
-          <EditableText @text-edited="updateName">{{ this.lobby.name }}</EditableText>
-        </h2>
-      </b-col>
-    </b-row>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h2>
+            <EditableText @text-edited="updateName">{{ this.lobby.name }}</EditableText>
+          </h2>
+        </div>
+      </div>
 
 
-    <b-row>
-      <b-col cols="6">
-        <LobbySettings
-          :lobby-id="id"
-          :gameIn="lobby.game"
-          :optionsIn="lobby.options"
-          @settings-save="settingsSave"
-          @settings-updated="settingsUpdated"
-        />
-      </b-col>
+      <div class="row">
+        <div class="col" cols="6">
+          <LobbySettings
+            :lobby-id="id"
+            :gameIn="lobby.game"
+            :options="lobby.options"
+            @settings-updated="settingsUpdated"
+          />
+        </div>
 
-      <b-col cols="6">
-        <LobbyPlayerList :lobby-id="id" :players="players" @users-updated="getLobbyInfo" />
-      </b-col>
-    </b-row>
+        <div class="col" cols="6">
+          <LobbyPlayerList :lobby-id="id" :players="players" @users-updated="getLobbyInfo" />
+        </div>
+      </div>
 
-    <b-row>
-      <b-col>
-        <b-button v-if="lobby.gameLaunched" block variant="primary" @click="goToGame">Go to Game</b-button>
-        <b-button v-else block variant="success" @click="startGame" :disabled="!ready">Start!</b-button>
-      </b-col>
-    </b-row>
-  </b-container>
+      <div class="row">
+        <div class="col d-grid">
+          <button class="btn btn-primary" v-if="lobby.gameLaunched" @click="goToGame">Go to Game</button>
+          <button class="btn btn-success" v-else @click="startGame" :disabled="!settingsValid">Start!</button>
+        </div>
+      </div>
 
-</div>
+    </div>
+
+  </div>
 </template>
 
 <script>
@@ -59,33 +59,34 @@ export default {
   data() {
     return {
       id: this.$route.params.id,
-      error: false,
-      errorMessage: '',
       lobby: {},
       players: [],
+      settingsValid: false,
     }
   },
 
-  computed: {
-    ready() {
-      if (this.lobby.game === 'Tyrants of the Underdark') {
-        const correctNumberOfExpansions = this.lobby.options.expansions.length === 2
-        const correctNumberOfPlayers = this.lobby.options.map.includes(this.players.length)
+  /* computed: {
+   *   ready() {
+   *     if (this.lobby.game === 'Tyrants of the Underdark') {
+   *       const correctNumberOfExpansions = this.lobby.options.expansions.length === 2
+   *       const correctNumberOfPlayers = (
+   *         this.lobby.options.map
+   *         && this.lobby.options.map.includes(this.players.length)
+   *       )
 
-        return correctNumberOfExpansions && correctNumberOfPlayers
-      }
+   *       return correctNumberOfExpansions && correctNumberOfPlayers
+   *     }
 
-      else {
-        return true
-      }
-    },
-  },
+   *     else {
+   *       return true
+   *     }
+   *   },
+   * }, */
 
   methods: {
     processRequestResult(res) {
       if (res.data.status === 'error') {
-        this.error = true
-        this.errorMessage = res.data.message
+        alert(this.errorMessage)
         return null
       }
       else {
@@ -117,18 +118,11 @@ export default {
       })
 
       const data = this.processRequestResult(requestResult)
-      if (data.status === 'success') {
-        this.$bvToast.toast('Settings saved', {
-          autoHideDelay: 500,
-          noCloseButton: true,
-          solid: true,
-          variant: 'success',
-        })
-      }
       return data.status === 'success'
     },
 
-    async settingsUpdated({ game, options }) {
+    async settingsUpdated({ game, options, valid }) {
+      this.settingsValid = valid
       this.lobby.game = game
       this.lobby.options = options
       await this.settingsSave()

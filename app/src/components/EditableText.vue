@@ -1,17 +1,17 @@
 <template>
   <div class="editable-text">
     <template v-if="isEditing">
-      <b-input-group>
-        <b-form-input
-          size="sm"
-          trim
-          v-on:keyup.enter="save"
-          v-model="editedValue"></b-form-input>
-        <b-input-group-append>
-          <b-button variant="primary" size="sm" @click="save">&#10003;</b-button>
-          <b-button variant="warning" size="sm" @click="cancel">&#10799;</b-button>
-        </b-input-group-append>
-      </b-input-group>
+      <div class="input-group">
+        <input
+          type="text"
+          class="form-control"
+          v-model="editedValue"
+          @keyup.enter="save"
+        />
+
+        <button class="btn btn-primary" @click="save">&#10003;</button>
+        <button class="btn btn-warning" @click="cancel">&#10799;</button>
+      </div>
     </template>
 
     <div v-else @click="edit">
@@ -29,7 +29,7 @@ export default {
     return {
       isEditing: false,
       editedValue: '',
-      value: ''
+      value: '',
     }
   },
 

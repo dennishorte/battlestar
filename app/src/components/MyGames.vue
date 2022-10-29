@@ -8,9 +8,9 @@
       In Progress
     </div>
 
-    <table class="table">
+    <table class="table table-light">
       <thead>
-        <tr class="table-secondary table-head">
+        <tr class="table-head">
           <th>game</th>
           <th>name</th>
           <th>age</th>
@@ -57,9 +57,9 @@
       Recently Finished
     </div>
 
-    <table class="table">
+    <table class="table table-light">
       <thead>
-        <tr class="table-secondary table-head">
+        <tr class="">
           <th>game</th>
           <th>name</th>
           <th>winner</th>
@@ -174,7 +174,6 @@ export default {
         userId: this.$store.state.auth.user._id,
       })
 
-      console.log(fetchResult.data.games)
       this.finished = fetchResult.data.games
     },
   },
@@ -193,11 +192,5 @@ export default {
   font-weight: 200;
   margin-left: 1em;
   line-height: .7em;
-}
-
-.table-head {
-  color: var(--bs-gray-dark);
-  border-top: 1px solid var(--bs-gray-400);
-  border-bottom: 2px solid var(--bs-gray-400);
 }
 </style>

@@ -1,4 +1,4 @@
-import Lobby from './view/Lobby'
+import Lobby from './components/Lobby'
 import lobbyUtil from './util'
 
 export default [

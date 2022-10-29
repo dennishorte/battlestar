@@ -1,40 +1,31 @@
 <template>
-<b-container>
-  <b-row>
-    <b-col>
-      <div class="header text-left">
-        <b-dropdown id="header-dropdown" text="menu" right>
-          <b-dropdown-item>
-            <router-link to="/">home</router-link>
-          </b-dropdown-item>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="header text-left">
 
-          <b-dropdown-item>
-            <router-link to="/lobby/create">new lobby</router-link>
-          </b-dropdown-item>
+          <div class="dropdown float-end">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="header-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              menu
+            </button>
 
-          <b-dropdown-item>
-            <router-link to="/data">data</router-link>
-          </b-dropdown-item>
+            <ul class="dropdown-menu" aria-labelledby="header-dropdown">
+              <li class="dropdown-item"><router-link to="/">home</router-link></li>
+              <li class="dropdown-item"><router-link to="/lobby/create">new lobby</router-link></li>
+              <li class="dropdown-item"><router-link to="/data">data</router-link></li>
+              <li class="dropdown-item"><router-link to="/admin">admin</router-link></li>
+              <li class="dropdown-item"><router-link to="/logout">logout</router-link></li>
+            </ul>
+          </div>
 
-          <b-dropdown-divider></b-dropdown-divider>
+          <a href="/" class="link-unstyled">
+            <h1>Game Center</h1>
+          </a>
 
-          <b-dropdown-item>
-            <router-link to="/admin">admin</router-link>
-          </b-dropdown-item>
-
-          <b-dropdown-item>
-            <router-link to="/logout">logout</router-link>
-          </b-dropdown-item>
-        </b-dropdown>
-
-        <a href="/" class="link-unstyled">
-          <h1>Game Center</h1>
-        </a>
-
+        </div>
       </div>
-    </b-col>
-  </b-row>
-</b-container>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -43,13 +34,13 @@ export default {
 }
 </script>
 
-<style>
-.header {
-    text-align: center;
-}
+<style scoped>
+  .header {
+  text-align: center;
+  }
 
-#header-dropdown {
-    float: right;
-    margin: .5em;
-}
+  #header-dropdown {
+  float: right;
+  margin: .5em;
+  }
 </style>

@@ -1,61 +1,76 @@
 <template>
-<div class="lobby-player-list">
-  <div>
-    <div style="float: right;">
-      <b-button
-        size="sm"
-        variant="outline-success"
-        v-b-modal.add-players-modal>
-        +
-      </b-button>
-    </div>
-
-    <div class="section-heading">
-      Players
-    </div>
-  </div>
-
-  <b-table
-    :items="players"
-    :fields="playerFields"
-    :small="true"
-    head-variant="light">
-
-    <template #cell(actions)="row">
-      <div class="text-right">
-        <b-dropdown size="sm" right>
-          <b-dropdown-item-button @click="removePlayer(row.item._id)">
-            remove
-          </b-dropdown-item-button>
-        </b-dropdown>
+  <div class="lobby-player-list">
+    <div>
+      <div class="float-end">
+        <button
+          class="btn btn-outline-success btn-sm"
+          data-bs-toggle="modal"
+          data-bs-target="#add-players-modal"
+        >
+          +
+        </button>
       </div>
-    </template>
 
-  </b-table>
+      <div class="section-heading">
+        Players
+      </div>
+    </div>
 
-  <b-modal
-    id="add-players-modal"
-    @show="fetchUsers"
-    @ok="addPlayers">
+    <table class="table table-sm">
+      <thead>
+        <tr class="table-light">
+          <th>name</th>
+          <th></th>
+        </tr>
+      </thead>
 
-    <template #modal-title="">
-      Add Players
-    </template>
+      <tbody>
+        <tr v-for="player in players" :key="player._id">
+          <td>{{ player.name }}</td>
+          <td>
+            <div class="dropdown d-flex justify-content-end">
+              <button
+                class="btn btn-secondary dropdown-toggle btn-sm"
+                type="button"
+                data-bs-toggle="dropdown">
+              </button>
 
-    <b-form>
+              <ul class="dropdown-menu">
+                <li class="dropdown-item">
+                  <button class="btn" @click="removePlayer(player._id)">remove</button>
+                </li>
+              </ul>
 
-      <b-form-select
-        id="add-players-input"
-        v-model="selected"
-        :options="userOptions"
-        multiple
-        required>
-      </b-form-select>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
-    </b-form>
-  </b-modal>
+    <div id="add-players-modal" class="modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            Add Players
+          </div>
 
-</div>
+          <div class="modal-body">
+
+            <select
+              id="add-players-input"
+              v-model="selected"
+              multiple
+            >
+              <option v-for="user in users" :value="user._id">{{ user.name }}</option>
+            </select>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
 </template>
 
 
@@ -75,7 +90,7 @@ export default {
         { key: 'actions', label: '' },
       ],
       selected: [],
-      userOptions: [],
+      users: [],
     }
   },
   methods: {
@@ -94,12 +109,10 @@ export default {
 
     async fetchUsers() {
       const userRequestResult = await axios.post('/api/user/all')
-      const formattedUsers = userRequestResult.data.users.map(user => ({
-        value: user._id,
-        text: user.name
-      }))
-      formattedUsers.sort((left, right) => left.text.localeCompare(right.text))
-      this.userOptions = formattedUsers
+      this.users = userRequestResult
+        .data
+        .users
+        .sort((left, right) => left.name.localeCompare(right.name))
     },
 
     async removePlayer(id) {

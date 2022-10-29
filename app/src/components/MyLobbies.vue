@@ -1,28 +1,34 @@
 <template>
-<div class="my-lobbies">
-  <div class="section-heading">
-    My Lobbies
+  <div class="my-lobbies">
+    <div class="section-heading">
+      My Lobbies
+    </div>
+
+    <table class="table table-light">
+      <thead>
+        <tr class="table-head">
+          <th>game</th>
+          <th>name</th>
+          <th>age</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <template v-for="(lobby, index) in lobbies" :key="lobby._id">
+          <tr>
+            <td> {{ lobbyGame(lobby) }}</td>
+            <td>
+              <router-link :to="lobbyLink(lobby._id)">
+                {{ lobby.name }}
+              </router-link>
+            </td>
+            <td>{{ lobbyAge(lobby.createdTimestamp) }}</td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+
   </div>
-
-    <b-table
-      :items="lobbies"
-      :fields="fields"
-      :small="true"
-      head-variant="light">
-
-      <template #cell(name)="row">
-        <router-link :to="lobbyLink(row.item._id)">
-          {{ row.item.name }}
-        </router-link>
-      </template>
-
-      <template #cell(age)="row">
-        {{ lobbyAge(row.item.createdTimestamp) }}
-      </template>
-
-    </b-table>
-
-</div>
 </template>
 
 <script>
@@ -50,6 +56,10 @@ export default {
 
       const minutes = Math.floor(millis / (60 * 1000))
       return `${minutes} minutes`
+    },
+
+    lobbyGame(lobby) {
+      return lobby.game || '— not selected —'
     },
 
     lobbyLink(lobbyId) {
