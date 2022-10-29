@@ -66,7 +66,7 @@
         </template>
 
         <template #cell(winner)="row">
-          {{ row.item.stats.result.player.name }}
+          {{ row.item.stats.result.player.name || row.item.stats.result.player }}
         </template>
 
       </b-table>
