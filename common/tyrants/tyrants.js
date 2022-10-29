@@ -58,7 +58,6 @@ Tyrants.prototype._gameOver = function(event) {
       reason: event.data.reason,
     }
   })
-  this.gameOver = true
   return event
 }
 

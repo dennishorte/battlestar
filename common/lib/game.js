@@ -252,6 +252,10 @@ Game.prototype.run = function() {
 Game.prototype.undo = function() {
   this.usedUndo = true
 
+  if (this.gameOver) {
+    this.gameOver = false
+  }
+
   // Undo all responses to the last submitted key.
   while (!this.responses[this.responses.length - 1].isUserResponse) {
     this.responses.pop()

@@ -104,6 +104,9 @@ async function _testAndSave(game, res, evalFunc) {
   if (valid) {
     await db.game.save(game)
     await updateStatsOne(game)
+    if (game.checkGameIsOver()) {
+      await db.game.gameOver(game._id)
+    }
     await _sendNotifications(res, game)
   }
   else {
@@ -167,7 +170,7 @@ Game.saveFull = async function(req, res) {
   const game = await _loadGameFromReq(req)
   game.responses = req.body.responses
   game.chat = req.body.chat
-  return _testAndSave(game, res, (game) => {
+  await _testAndSave(game, res, (game) => {
     game.run()
   })
 }
@@ -207,7 +210,6 @@ async function _loadGameFromReq(req) {
 async function _sendNotifications(res, game) {
   for (const player of game.getPlayerAll()) {
     if (game.checkGameIsOver()) {
-      await db.game.gameOver(game._id)
       _notify(game, player._id, 'Game Over!')
     }
 
