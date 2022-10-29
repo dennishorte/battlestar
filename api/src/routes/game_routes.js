@@ -121,6 +121,8 @@ async function updateStatsOne(data) {
   switch (data.settings.game) {
     case 'Innovation':
       return updateStatsOneInnovation(data);
+    case 'Tyrants of the Underdark':
+      return updateStatsOneTyrants(data);
     default:
       return false;
   }
@@ -139,6 +141,46 @@ async function updateStatsOneInnovation(data) {
     }
 
     const game = new inn.Innovation(data)
+    let result
+    try {
+      result = game.run()
+    }
+    catch {
+      data.stats.error = true
+      await db.game.saveStats(data)
+      return true
+    }
+
+    if (result instanceof GameOverEvent) {
+      data.stats.gameOver = true
+      data.stats.result = result.data
+    }
+    else {
+      data.stats.gameOver = false
+    }
+
+    await db.game.saveStats(data)
+    return true
+  }
+
+  else {
+    return false
+  }
+}
+
+async function updateStatsOneTyrants(data) {
+  if (
+    !data.stats
+    || data.stats.version !== statsVersion
+    || (data.gameOver === true && data.stats.gameOver === false)
+  ) {
+
+    data.stats = {
+      version: statsVersion,
+      error: false,
+    }
+
+    const game = new tyr.Tyrants(data)
     let result
     try {
       result = game.run()
