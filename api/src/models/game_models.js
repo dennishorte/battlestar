@@ -57,7 +57,7 @@ Game.findRecentlyFinishedByUserId = async function(userId) {
   return await gameCollection.find({
     'settings.players._id': userId,
     gameOver: true,
-    killed: false,
+    killed: { $ne: true },
     lastUpdated: { $gt: threeDaysAgo }
   })
 }
