@@ -4,19 +4,14 @@
       <div class="col">
         <div class="header text-left">
 
-          <div class="dropdown float-end">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="header-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              menu
-            </button>
-
-            <ul class="dropdown-menu" aria-labelledby="header-dropdown">
-              <li class="dropdown-item"><router-link to="/">home</router-link></li>
-              <li class="dropdown-item"><router-link to="/lobby/create">new lobby</router-link></li>
-              <li class="dropdown-item"><router-link to="/data">data</router-link></li>
-              <li class="dropdown-item"><router-link to="/admin">admin</router-link></li>
-              <li class="dropdown-item"><router-link to="/logout">logout</router-link></li>
-            </ul>
-          </div>
+          <Dropdown>
+            <DropdownItem><router-link to="/">home</router-link></DropdownItem>
+            <DropdownItem><router-link to="/lobby/create">new lobby</router-link></DropdownItem>
+            <DropdownItem><router-link to="/data">data</router-link></DropdownItem>
+            <DropdownDivider></DropdownDivider>
+            <DropdownItem><router-link to="/admin">admin</router-link></DropdownItem>
+            <DropdownItem><router-link to="/logout">logout</router-link></DropdownItem>
+          </Dropdown>
 
           <a href="/" class="link-unstyled">
             <h1>Game Center</h1>
@@ -29,18 +24,28 @@
 </template>
 
 <script>
+import Dropdown from '@/components/Dropdown'
+import DropdownDivider from '@/components/DropdownDivider'
+import DropdownItem from '@/components/DropdownItem'
+
 export default {
   name: 'Header',
+
+  components: {
+    Dropdown,
+    DropdownDivider,
+    DropdownItem,
+  },
 }
 </script>
 
 <style scoped>
-  .header {
+.header {
   text-align: center;
-  }
+}
 
-  #header-dropdown {
+#header-dropdown {
   float: right;
   margin: .5em;
-  }
+}
 </style>
