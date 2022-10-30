@@ -47,34 +47,19 @@
       </tbody>
     </table>
 
-    <div id="add-players-modal" class="modal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            Add Players
-          </div>
+    <Modal id="add-players-modal" @ok="addPlayers">
+      <template #header>Add Players</template>
 
-          <div class="modal-body">
-
-            <select
-              id="add-players-input"
-              class="form-select"
-              size="15"
-              v-model="selected"
-              multiple
-            >
-              <option v-for="user in users" :value="user._id">{{ user.name }}</option>
-            </select>
-
-          </div>
-
-          <div class="modal-footer justify-content-end">
-            <button class="btn btn-primary" @click="addPlayers">add</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
+      <select
+        id="add-players-input"
+        class="form-select"
+        size="15"
+        v-model="selected"
+        multiple
+      >
+        <option v-for="user in users" :value="user._id">{{ user.name }}</option>
+      </select>
+    </Modal>
 
   </div>
 </template>
@@ -84,8 +69,14 @@
 import axios from 'axios'
 import { util } from 'battlestar-common'
 
+import Modal from '@/components/Modal'
+
 export default {
   name: 'PlayerList',
+
+  components: {
+    Modal,
+  },
 
   inject: ['lobby', 'save'],
 
