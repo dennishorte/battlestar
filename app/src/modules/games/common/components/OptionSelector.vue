@@ -143,11 +143,11 @@ export default {
 
   methods: {
     mouseEntered(data) {
-      this.bus.$emit('waiting-mouse-entered', data)
+      this.bus.emit('waiting-mouse-entered', data)
     },
 
     mouseExited(data) {
-      this.bus.$emit('waiting-mouse-exited', data)
+      this.bus.emit('waiting-mouse-exited', data)
     },
 
     optionDisplayName(option) {
@@ -196,7 +196,7 @@ export default {
   },
 
   created() {
-    this.bus.$on('user-select-option', this.setSelection)
+    this.bus.on('user-select-option', this.setSelection)
   },
 }
 </script>

@@ -88,7 +88,7 @@ export default {
 
     childChanged(event) {
       this.selection = event
-      this.bus.$emit('waiting-selection-changed', [...this.selection.selection])
+      this.bus.emit('waiting-selection-changed', [...this.selection.selection])
     },
 
     insertDogmaShareSubtitles(selector) {

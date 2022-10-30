@@ -35,8 +35,8 @@
 
 
 <script>
-import Vue from 'vue'
 import axios from 'axios'
+import mitt from 'mitt'
 
 import { util, tyr } from 'battlestar-common'
 
@@ -109,7 +109,7 @@ export default {
       game: new tyr.Tyrants(this.data, this.actor.name),
       fakeSave: false,
 
-      bus: new Vue(),
+      bus: mitt(),
 
       ui: {
         fn: {
@@ -188,7 +188,7 @@ export default {
 
   methods: {
     clickLocation(loc) {
-      this.bus.$emit('user-select-option', loc.name, { prefix: true })
+      this.bus.emit('user-select-option', loc.name, { prefix: true })
     },
 
     handleSaveResult(result) {
@@ -266,9 +266,9 @@ export default {
   },
 
   created() {
-    this.bus.$on('waiting-mouse-entered', this.waitingMouseEntered)
-    this.bus.$on('waiting-mouse-exited', this.waitingMouseExited)
-    this.bus.$on('waiting-selection-changed', this.waitingSelectionChanged)
+    this.bus.on('waiting-mouse-entered', this.waitingMouseEntered)
+    this.bus.on('waiting-mouse-exited', this.waitingMouseExited)
+    this.bus.on('waiting-selection-changed', this.waitingSelectionChanged)
 
     this._injectChatMethod()
     this._injectSaveMethod()

@@ -35,7 +35,7 @@
 
 <script>
 import axios from 'axios'
-import Vue from 'vue'
+import mitt from 'mitt'
 
 import { inn } from 'battlestar-common'
 
@@ -81,7 +81,7 @@ export default {
 
   data() {
     return {
-      bus: new Vue(),
+      bus: mitt(),
       game: new inn.Innovation(this.data, this.actor.name),
       fakeSave: false,
     }
