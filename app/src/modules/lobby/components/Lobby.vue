@@ -93,20 +93,17 @@ export default {
 
     async save() {
       const data = await axios.post('/api/lobby/save', this.lobby)
-      return data.status === 'success'
     },
 
     async startGame() {
-      const savedSuccessfully = await this.settingsSave()
-      if (!savedSuccessfully) {
-        alert('Error saving game')
+      await this.save()
+      if (this.errorMessage) {
         return
       }
 
-      const requestResult = await axios.post('/api/game/create', {
+      const data = await this.axiosRequest('/api/game/create', {
         lobbyId: this.lobby._id,
       })
-      const data = this.processRequestResult(requestResult)
       if (data) {
         this.$router.push('/game/' + data.gameId)
       }
