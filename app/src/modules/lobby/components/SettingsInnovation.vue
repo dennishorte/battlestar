@@ -60,11 +60,29 @@ export default {
     }
   },
 
+  watch: {
+    'lobby.users': {
+      handler() {
+        this.updateValid()
+      },
+      deep: true,
+    },
+  },
+
   methods: {
+    updateValid() {
+      // Number of players is between 2 and 4
+      const numPlayers = this.lobby.users.length
+      const playersCondition = 2 <= numPlayers && numPlayers <= 4
+
+      this.lobby.valid = playersCondition
+    },
+
     optionsChanged() {
       this.lobby.options = {
         expansions: [...this.models.expansions],
       }
+      this.updateValid()
       this.save()
     },
   },
@@ -72,6 +90,7 @@ export default {
   created() {
     if (this.lobby.options) {
       this.models.expansions = [...this.lobby.options.expansions]
+      this.updateValid()
     }
     else {
       this.lobby.options = {}

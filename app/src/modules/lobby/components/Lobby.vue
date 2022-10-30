@@ -88,12 +88,10 @@ export default {
       const data = await this.axiosRequest('/api/lobby/info', { id: this.id })
       if (data) {
         this.lobby = data.lobby
-        console.log('info:', this.lobby)
       }
     },
 
     async save() {
-      console.log('saving', this.lobby.options.expansions, this.lobby.options.map)
       const data = await axios.post('/api/lobby/save', this.lobby)
       return data.status === 'success'
     },

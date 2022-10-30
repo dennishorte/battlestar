@@ -89,11 +89,28 @@ export default {
   },
 
   methods: {
+    updateValid() {
+      // Number of players must match map
+      const map = this.maps.find(map => map.value === this.models.map)
+      const numPlayers = this.lobby.users.length
+      const mapAndPlayersCondition = (
+        map
+        && map.minPlayers <= numPlayers
+        && map.maxPlayers >= numPlayers
+      )
+
+      // Exactly two expansions must be selected
+      const expansionCondition = this.models.expansions.length === 2
+
+      this.lobby.valid = mapAndPlayersCondition && expansionCondition
+    },
+
     optionsChanged() {
       this.lobby.options = {
         expansions: [...this.models.expansions],
         map: this.models.map,
       }
+      this.updateValid()
       this.save()
     },
   },
@@ -102,6 +119,7 @@ export default {
     if (this.lobby.options) {
       this.models.expansions = [...this.lobby.options.expansions]
       this.models.map = this.lobby.options.map
+      this.updateValid()
     }
     else {
       this.lobby.options = {}
