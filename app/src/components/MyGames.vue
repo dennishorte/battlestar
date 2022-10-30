@@ -34,18 +34,9 @@
             <td>{{ gameAge(game) }}</td>
             <td>{{ waitingForViewer(game) ? '\u231B' : '' }}</td>
             <td>
-              <div class="dropdown">
-                <button
-                  class="btn btn-secondary dropdown-toggle"
-                  type="button"
-                  :id="`menu-${index}`"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                > </button>
-                <ul class="dropdown-menu" :aria-labelledby="`menu-${index}`">
-                  <li @click="kill(game._id)"><a class="dropdown-item" href="#">kill</a></li>
-                </ul>
-              </div>
+              <Dropdown :notitle="true">
+                <DropdownItem @click="kill(game._id)">kill</DropdownItem>
+              </Dropdown>
             </td>
           </tr>
         </template>
@@ -92,8 +83,18 @@
 <script>
 import axios from 'axios'
 
+import Dropdown from '@/components/Dropdown'
+import DropdownItem from '@/components/DropdownItem'
+
+
 export default {
   name: 'MyLobbies',
+
+  components: {
+    Dropdown,
+    DropdownItem,
+  },
+
   data() {
     return {
       fields: ['game', 'name', 'age', 'waiting', 'menu'],

@@ -16,15 +16,10 @@
 
       <template #cell(actions)="row">
         <div class="text-right">
-          <b-dropdown right>
-            <b-dropdown-item @click="deactivate(row.item._id)">
-              deactivate
-            </b-dropdown-item>
-
-            <b-dropdown-item @click="edit(row.item)">
-              edit
-            </b-dropdown-item>
-          </b-dropdown>
+          <Dropdown>
+            <DropdownItem><button @click="deactivate(row.item._id)">deactivate</button></DropdownItem>
+            <DropdownItem><button @click="edit(row.item)">edit</button></DropdownItem>
+          </Dropdown>
         </div>
       </template>
 
@@ -45,12 +40,16 @@
 <script>
 import axios from 'axios'
 
+import Dropdown from '@/components/Dropdown'
+import DropdownItem from '@/components/DropdownItem'
 import EditUser from './EditUser'
 
 export default {
   name: 'UserList',
 
   components: {
+    Dropdown,
+    DropdownItem,
     EditUser,
   },
 

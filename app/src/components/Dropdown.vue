@@ -1,7 +1,9 @@
 <template>
   <div class="dropdown float-end">
     <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
-      menu
+      <slot name="title">
+        <template v-if="!notitle">menu</template>
+      </slot>
     </button>
 
     <ul class="dropdown-menu">
@@ -14,6 +16,13 @@
 <script>
 export default {
   name: 'Dropdown',
+
+  props: {
+    notitle: {
+      type: Boolean,
+      default: false
+    },
+  },
 }
 </script>
 

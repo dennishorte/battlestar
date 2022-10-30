@@ -4,7 +4,9 @@
       <b-row class="main-row">
         <b-col class="game-column history-column">
           <GameMenu>
-            <b-dropdown-item @click="openRules">rules</b-dropdown-item>
+            <DropdownItem>
+              <button @click="openRules">rules</button>
+            </DropdownItem>
           </GameMenu>
 
           <GameLog />

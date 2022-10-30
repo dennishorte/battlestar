@@ -26,12 +26,6 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col">
-        <LobbyList :lobbies="lobbies" v-on:lobbies-updated="getAllLobbies" />
-      </div>
-    </div>
-
   </div>
 
 </div>
@@ -44,7 +38,6 @@ import Header from '../../../../src/components/Header'
 
 import AdminActions from './AdminActions'
 import CreateUser from './CreateUser'
-import LobbyList from './LobbyList'
 import UserList from './UserList'
 
 export default {
@@ -54,7 +47,6 @@ export default {
 
     AdminActions,
     CreateUser,
-    LobbyList,
     UserList,
   },
   data() {

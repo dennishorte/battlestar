@@ -28,20 +28,13 @@
         <tr v-for="player in lobby.users" :key="player._id">
           <td>{{ player.name }}</td>
           <td>
-            <div class="dropdown d-flex justify-content-end">
-              <button
-                class="btn btn-secondary dropdown-toggle btn-sm"
-                type="button"
-                data-bs-toggle="dropdown">
-              </button>
-
-              <ul class="dropdown-menu">
-                <li class="dropdown-item">
-                  <button class="btn" @click="removePlayer(player._id)">remove</button>
-                </li>
-              </ul>
-
-            </div>
+            <Dropdown size="sm" :notitle="true">
+              <DropdownItem>
+                <button @click="removePlayer(player._id)">
+                  remove
+                </button>
+              </DropdownItem>
+            </Dropdown>
           </td>
         </tr>
       </tbody>
@@ -69,12 +62,16 @@
 import axios from 'axios'
 import { util } from 'battlestar-common'
 
+import Dropdown from '@/components/Dropdown'
+import DropdownItem from '@/components/DropdownItem'
 import Modal from '@/components/Modal'
 
 export default {
   name: 'PlayerList',
 
   components: {
+    Dropdown,
+    DropdownItem,
     Modal,
   },
 
@@ -120,6 +117,7 @@ export default {
 
     // Remove the specified player from the lobby.
     async removePlayer(id) {
+      console.log('hello')
       const user = this.lobby.users.find(u => u._id === id)
       if (user) {
         util.array.remove(this.lobby.users, user)

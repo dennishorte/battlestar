@@ -1,22 +1,32 @@
 <template>
-  <b-dropdown :text="game.settings.name" class="game-menu" block>
-    <b-dropdown-item @click="home">home</b-dropdown-item>
-    <b-dropdown-item @click="next">next</b-dropdown-item>
-    <b-dropdown-divider />
-    <b-dropdown-item @click="undo">undo</b-dropdown-item>
-    <b-dropdown-divider />
-    <b-dropdown-item @click="debug">debug</b-dropdown-item>
+  <Dropdown :text="game.settings.name" class="game-menu" block>
+    <DropdownItem @click="home">home</DropdownItem>
+    <DropdownItem @click="next">next</DropdownItem>
+    <DropdownDivider />
+    <DropdownItem @click="undo">undo</DropdownItem>
+    <DropdownDivider />
+    <DropdownItem @click="debug">debug</DropdownItem>
 
     <slot></slot>
-  </b-dropdown>
+  </Dropdown>
 </template>
 
 
 <script>
 import axios from 'axios'
 
+import Dropdown from '@/components/Dropdown'
+import DropdownDivider from '@/components/DropdownDivider'
+import DropdownItem from '@/components/DropdownItem'
+
 export default {
   name: 'GameMenu',
+
+  components: {
+    Dropdown,
+    DropdownDivider,
+    DropdownItem,
+  },
 
   inject: ['game', 'actor'],
 

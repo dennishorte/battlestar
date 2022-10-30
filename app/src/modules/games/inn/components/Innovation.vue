@@ -5,7 +5,9 @@
         <b-col class="game-column history-column">
 
           <GameMenu>
-            <b-dropdown-item @click="openRules">rules</b-dropdown-item>
+            <DropdownItem>
+              <button @click="openRules">rules</button>
+            </DropdownItem>
           </GameMenu>
 
           <History />
@@ -47,6 +49,7 @@ import Achievements from './Achievements'
 import Biscuits from './Biscuits'
 import CardNameFull from './CardNameFull'
 import Decks from './Decks'
+import DropdownItem from '@/components/DropdownItem'
 import History from './History'
 import PlayerTableau from './PlayerTableau'
 
@@ -63,6 +66,7 @@ export default {
     Biscuits,
     ChatInput,
     Decks,
+    DropdownItem,
     GameMenu,
     History,
     PlayerTableau,
