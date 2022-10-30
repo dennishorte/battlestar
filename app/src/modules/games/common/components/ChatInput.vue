@@ -1,10 +1,6 @@
 <template>
   <div class="chat-input">
-    <b-form-input
-      v-model="text"
-      @keyup.enter="sendChat"
-      placeholder="chat">
-    </b-form-input>
+    <input v-model="text" @keyup.enter="sendChat" placeholder="chat" />
   </div>
 </template>
 
