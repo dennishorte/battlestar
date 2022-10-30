@@ -8,19 +8,16 @@
       @selection-changed="childChanged"
     />
 
-    <GameButton :owner="actor.name" @click="submit" :disabled="!isValid">
-      choose
-    </GameButton>
+    <button @click="submit" :disabled="!isValid">choose</button>
 
   </div>
 </template>
 
 
 <script>
-// import axios from 'axios'
-import GameButton from './GameButton'
-import OptionSelector from './OptionSelector'
 import { selector } from 'battlestar-common'
+
+import OptionSelector from './OptionSelector'
 
 export default {
   name: 'WaitingChoice',
