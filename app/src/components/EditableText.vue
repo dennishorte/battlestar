@@ -14,7 +14,7 @@
       </div>
     </template>
 
-    <div v-else @click="edit">
+    <div v-else @click="edit" ref="slotWrapper">
       <slot></slot>
     </div>
   </div>
@@ -38,11 +38,13 @@ export default {
       this.isEditing = false
       this.editedValue = ''
     },
+
     edit() {
       this.isEditing = true
-      this.value = this.$slots.default[0].text
+      this.value = this.$refs.slotWrapper.textContent
       this.editedValue = this.value
     },
+
     save() {
       if (this.value !== this.editedValue) {
         const from = this.value

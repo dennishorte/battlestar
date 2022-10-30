@@ -33,10 +33,8 @@ app.post('/api/guest/login', routes.login)
 app.post('/api/lobby/all', routes.lobby.all)
 app.post('/api/lobby/create', routes.lobby.create)
 app.post('/api/lobby/info', routes.lobby.info)
-app.post('/api/lobby/name_update', routes.lobby.nameUpdate)
-app.post('/api/lobby/player_add', routes.lobby.playerAdd)
-app.post('/api/lobby/player_remove', routes.lobby.playerRemove)
-app.post('/api/lobby/settings_update', routes.lobby.settingsUpdate)
+app.post('/api/lobby/kill', routes.lobby.kill)
+app.post('/api/lobby/save', routes.lobby.save)
 
 // Game Routes
 app.post('/api/game/create', routes.game.create)

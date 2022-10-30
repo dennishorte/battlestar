@@ -4,82 +4,53 @@
       Settings
     </div>
 
-    <div class="game-picker">
-      <select
-        id="game-select"
-        @change="gameUpdated"
-        v-model="game"
-        class="form-select"
-      >
-        <option v-for="name in gameNames" :value="name">{{ name }}</option>
+    <div class="game-picker" v-if="lobby">
+      <select class="form-select" @change="gameChanged" :value="lobby.game">
+        <option v-for="name in gameNames" :key="name" :value="name">{{ name }}</option>
       </select>
     </div>
 
     <div class="game-options mt-2">
-
-      <SettingsInnovation
-        v-if="game === 'Innovation'"
-        :options-in="options"
-        @settings-updated="settingsUpdated"
-      />
-
-      <SettingsTyrants
-        v-if="game === 'Tyrants of the Underdark'"
-        :options-in="options"
-        @settings-updated="settingsUpdated"
-      />
-
+      <SettingsInnovation v-if="lobby.game === 'Innovation'" />
+      <SettingsTyrants v-if="lobby.game === 'Tyrants of the Underdark'" />
     </div>
-
   </div>
 </template>
 
 
 <script>
-import { util } from 'battlestar-common'
-
 import SettingsInnovation from './SettingsInnovation'
 import SettingsTyrants from './SettingsTyrants'
 
 
 export default {
-  name: 'LobbySettings',
+  name: 'Settings',
 
   components: {
     SettingsInnovation,
     SettingsTyrants,
   },
 
-  props: {
-    lobbyId: String,
-    gameIn: String,
-    options: Object,
-  },
+  inject: ['lobby', 'save'],
 
   data() {
     return {
       gameNames: [
+        '',
         'Innovation',
         'Tyrants of the Underdark',
       ],
-      game: this.gameIn,
     }
   },
 
-  watch: {
-    gameIn: function(val) {
-      this.game = val
-    },
-  },
-
   methods: {
-    gameUpdated() {
-      console.log(this.game)
-    },
-
-    // Just a pass-through function
-    settingsUpdated(options) {
-      this.$emit('settings-updated', options)
+    gameChanged(event) {
+      const newValue = event.target.value
+      if (newValue) {
+        this.lobby.game = newValue
+        delete this.lobby.options
+        this.save()
+      }
     },
   },
 }

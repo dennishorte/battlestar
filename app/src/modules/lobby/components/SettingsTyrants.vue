@@ -3,20 +3,26 @@
 
     Expansions (choose 2)
 
-    <div class="form-check" v-for="expansion in options.expansions" :key="expansion">
+    <div class="form-check" v-for="expansion in expansions" :key="expansion">
       <input
         class="form-check-input"
         type="checkbox"
         :value="expansion.value"
         v-model="models.expansions"
-        @click="settingsUpdated"
+        @change="optionsChanged"
       />
       <label class="form-check-label">{{ expansion.text }}</label>
     </div>
 
     Map
-    <div class="form-check" v-for="map in options.maps" :key="map">
-      <input class="form-check-input" type="radio" v-model="models.map" :value="map.value" />
+    <div class="form-check" v-for="map in maps" :key="map">
+      <input
+        class="form-check-input"
+        type="radio"
+        v-model="models.map"
+        :value="map.value"
+        @change="optionsChanged"
+      />
       <label class="form-check-label">{{ map.text }}</label>
     </div>
   </div>
@@ -24,87 +30,83 @@
 
 
 <script>
-import { util } from 'battlestar-common'
-
-
 export default {
   name: 'TyrantsSettings',
 
-  props: {
-    optionsIn: Object,
-  },
+  inject: ['lobby', 'save'],
 
   data() {
     return {
-      options: {
-        expansions: [
-          {
-            text: 'Dragons',
-            value: 'dragons',
-            disabled: false
-          },
-          {
-            text: 'Drow',
-            value: 'drow',
-            disabled: false
-          },
-        ],
+      expansions: [
+        {
+          text: 'Dragons',
+          value: 'dragons',
+          disabled: false
+        },
+        {
+          text: 'Drow',
+          value: 'drow',
+          disabled: false
+        },
+      ],
 
-        maps: [
-          {
-            text: 'base-2',
-            value: 'base-2',
-            disabled: false,
-            minPlayers: 2,
-            maxPlayers: 2,
-          },
-          {
-            text: 'base-3a',
-            value: 'base-3a',
-            disabled: false,
-            minPlayers: 3,
-            maxPlayers: 3,
-          },
-          {
-            text: 'base-3b',
-            value: 'base-3b',
-            disabled: false,
-            minPlayers: 3,
-            maxPlayers: 3,
-          },
-          {
-            text: 'base-4',
-            value: 'base-4',
-            disabled: false,
-            minPlayers: 4,
-            maxPlayers: 4,
-          },
-        ]
-      },
+      maps: [
+        {
+          text: 'base-2',
+          value: 'base-2',
+          disabled: false,
+          minPlayers: 2,
+          maxPlayers: 2,
+        },
+        {
+          text: 'base-3a',
+          value: 'base-3a',
+          disabled: false,
+          minPlayers: 3,
+          maxPlayers: 3,
+        },
+        {
+          text: 'base-3b',
+          value: 'base-3b',
+          disabled: false,
+          minPlayers: 3,
+          maxPlayers: 3,
+        },
+        {
+          text: 'base-4',
+          value: 'base-4',
+          disabled: false,
+          minPlayers: 4,
+          maxPlayers: 4,
+        },
+      ],
 
       models: {
         expansions: [],
-        map: ''
+        map: '',
       },
     }
   },
 
-  watch: {
-    optionsIn: {
-      handler: function() {
-        this.models = util.deepcopy(this.optionsIn)
-      },
-      deep: true,
+  methods: {
+    optionsChanged() {
+      this.lobby.options = {
+        expansions: [...this.models.expansions],
+        map: this.models.map,
+      }
+      this.save()
     },
   },
 
-  methods: {
-    settingsUpdated() {
-      this.$emit('settings-updated', {
-        game: 'Tyrants of the Underdark',
-        options: this.models
-      })
-    },
+  created() {
+    if (this.lobby.options) {
+      this.models.expansions = [...this.lobby.options.expansions]
+      this.models.map = this.lobby.options.map
+    }
+    else {
+      this.lobby.options = {}
+      this.optionsChanged()  // Will grab the default options.
+    }
   },
 }
 </script>

@@ -1,7 +1,14 @@
 <template>
   <div class="settings-innovation">
-    <div class="form-check" v-for="expansion in expansions" :key="expansion">
-      <input class="form-check-input" type="checkbox" :value="expansion.value" v-model="models.expansions" />
+    <div class="form-check" v-for="expansion in expansions" :key="expansion.value">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        :value="expansion.value"
+        v-model="models.expansions"
+        :disabled="expansion.disabled"
+        @change="optionsChanged"
+      />
       <label class="form-check-label">{{ expansion.text }}</label>
     </div>
   </div>
@@ -15,9 +22,7 @@ import { util } from 'battlestar-common'
 export default {
   name: 'InnovationSettings',
 
-  props: {
-    optionsIn: Object,
-  },
+  inject: ['lobby', 'save'],
 
   data() {
     return {
@@ -55,22 +60,23 @@ export default {
     }
   },
 
-  watch: {
-    optionsIn: {
-      handler: function() {
-        this.models = util.deepcopy(this.optionsIn)
-      },
-      deep: true,
+  methods: {
+    optionsChanged() {
+      this.lobby.options = {
+        expansions: [...this.models.expansions],
+      }
+      this.save()
     },
   },
 
-  methods: {
-    settingsUpdated() {
-      this.$emit('settings-updated', {
-        game: this.game,
-        options: this.models
-      })
-    },
+  created() {
+    if (this.lobby.options) {
+      this.models.expansions = [...this.lobby.options.expansions]
+    }
+    else {
+      this.lobby.options = {}
+      this.optionsChanged()  // Will grab the default options.
+    }
   },
 }
 </script>

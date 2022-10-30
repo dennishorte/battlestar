@@ -18,19 +18,17 @@
             :lobby-id="id"
             :gameIn="lobby.game"
             :options="lobby.options"
-            @settings-updated="settingsUpdated"
           />
         </div>
 
         <div class="col" cols="6">
-          <LobbyPlayerList :lobby-id="id" :players="players" @users-updated="getLobbyInfo" />
+          <LobbyPlayerList :lobby-id="id" />
         </div>
       </div>
 
       <div class="row">
         <div class="col d-grid">
-          <button class="btn btn-primary" v-if="lobby.gameLaunched" @click="goToGame">Go to Game</button>
-          <button class="btn btn-success" v-else @click="startGame" :disabled="!settingsValid">Start!</button>
+          <button class="btn btn-success" @click="startGame" :disabled="!lobby.valid">Start!</button>
         </div>
       </div>
 
@@ -40,12 +38,14 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import axios from 'axios'
 
 import EditableText from '@/components/EditableText'
 import Header from '@/components/Header'
 import LobbyPlayerList from '../components/PlayerList'
 import LobbySettings from '../components/Settings'
+
 
 export default {
   name: 'Lobby',
@@ -60,34 +60,24 @@ export default {
     return {
       id: this.$route.params.id,
       lobby: {},
-      players: [],
-      settingsValid: false,
+      errorMessage: '',
     }
   },
 
-  /* computed: {
-   *   ready() {
-   *     if (this.lobby.game === 'Tyrants of the Underdark') {
-   *       const correctNumberOfExpansions = this.lobby.options.expansions.length === 2
-   *       const correctNumberOfPlayers = (
-   *         this.lobby.options.map
-   *         && this.lobby.options.map.includes(this.players.length)
-   *       )
-
-   *       return correctNumberOfExpansions && correctNumberOfPlayers
-   *     }
-
-   *     else {
-   *       return true
-   *     }
-   *   },
-   * }, */
+  provide() {
+    return {
+      lobby: computed(() => (this.lobby)),
+      save: this.save
+    }
+  },
 
   methods: {
-    processRequestResult(res) {
+    async axiosRequest(api, payload) {
+      const res = await axios.post(api, payload)
+
       if (res.data.status === 'error') {
+        this.errorMessage = res.data.message
         alert(this.errorMessage)
-        return null
       }
       else {
         return res.data
@@ -95,37 +85,17 @@ export default {
     },
 
     async getLobbyInfo() {
-      const requestResult = await axios.post('/api/lobby/info', {
-        id: this.id,
-      })
-
-      const data = this.processRequestResult(requestResult)
+      const data = await this.axiosRequest('/api/lobby/info', { id: this.id })
       if (data) {
         this.lobby = data.lobby
-        this.players = this.lobby.users
+        console.log('info:', this.lobby)
       }
     },
 
-    async goToGame() {
-      console.log('go to game')
-    },
-
-    async settingsSave() {
-      const requestResult = await axios.post('/api/lobby/settings_update', {
-        lobbyId: this.lobby._id,
-        game: this.lobby.game,
-        options: this.lobby.options,
-      })
-
-      const data = this.processRequestResult(requestResult)
+    async save() {
+      console.log('saving', this.lobby.options.expansions, this.lobby.options.map)
+      const data = await axios.post('/api/lobby/save', this.lobby)
       return data.status === 'success'
-    },
-
-    async settingsUpdated({ game, options, valid }) {
-      this.settingsValid = valid
-      this.lobby.game = game
-      this.lobby.options = options
-      await this.settingsSave()
     },
 
     async startGame() {
@@ -145,15 +115,11 @@ export default {
     },
 
     async updateName({ to }) {
-      const requestResult = await axios.post('/api/lobby/name_update', {
-        lobbyId: this.lobby._id,
-        name: to,
-      })
-
-      const data = this.processRequestResult(requestResult)
-      if (!data) return
-
-      await this.getLobbyInfo()
+      const cleaned = to.trim()
+      if (cleaned.length > 0) {
+        this.lobby.name = to
+        await this.save()
+      }
     },
   },
 

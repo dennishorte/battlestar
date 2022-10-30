@@ -12,6 +12,16 @@ Lobby.all = async function(req, res) {
 }
 
 Lobby.create = async function(req, res) {
+  const user = await db.user.findById(req.user._id)
+
+  if (!user) {
+    res.json({
+      status: 'error',
+      message: 'Invalid user for lobby creation: ' + req.user._id,
+    })
+    return
+  }
+
   const lobbyId = await db.lobby.create()
 
   if (!lobbyId) {
@@ -22,14 +32,13 @@ Lobby.create = async function(req, res) {
     return
   }
 
-  const addResult = await _addUsers(lobbyId, [req.user._id])
+  const lobby = await db.lobby.findById(lobbyId)
+  lobby.users = [{
+    _id: user._id,
+    name: user.name,
+  }]
 
-  if (!addResult) {
-    res.json({
-      status: 'error',
-      message: `New lobby ${lobbyId} created, but error adding user to lobby.`,
-    })
-  }
+  db.lobby.save(lobby)
 
   res.json({
     status: 'success',
@@ -54,55 +63,18 @@ Lobby.info = async function(req, res) {
   })
 }
 
-Lobby.nameUpdate = async function(req, res) {
-  const updateResult = await db.lobby.nameUpdate(
-    req.body.lobbyId,
-    req.body.name,
-  )
+Lobby.kill = async function(req, res) {
+  await db.lobby.kill(req.body.id)
   res.json({
     status: 'success',
-    message: 'Name updated',
   })
 }
 
-Lobby.playerAdd = async function(req, res) {
-  await _addUsers(req.body.lobbyId, req.body.userIds)
+Lobby.save = async function(req, res) {
+  await db.lobby.save(req.body)
   res.json({
     status: 'success',
-    message: 'Users successfully added.',
-  })
-}
-
-Lobby.playerRemove = async function(req, res) {
-  const removeResult = await db.lobby.removeUsers(req.body.lobbyId, req.body.userIds)
-  res.json({
-    status: 'success',
-    message: 'Users successfully removed.',
-  })
-}
-
-Lobby.settingsUpdate = async function(req, res) {
-  const updateResult = await db.lobby.updateSettings(
-    req.body.lobbyId,
-    req.body.game,
-    req.body.options,
-  )
-  res.json({
-    status: 'success',
-    message: 'Settings updated',
   })
 }
 
 module.exports = Lobby
-
-
-async function _addUsers(lobbyId, userIds) {
-  const usersCursor = await db.user.findByIds(userIds)
-  const users = await usersCursor.toArray()
-  const userData = users.map(user => ({
-    _id: user._id,
-    name: user.name,
-  }))
-
-  return await db.lobby.addUsers(lobbyId, userData)
-}

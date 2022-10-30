@@ -18,15 +18,9 @@ Lobby.factory = function() {
     users: [],
     game: null,
     options: {},
+    valid: false,
     gameLaunched: false,
   }
-}
-
-Lobby.addUsers = async function(lobbyId, userData) {
-  const filter = { _id: lobbyId }
-  const updater = { $addToSet: { users: { $each: userData } } }
-  const updateResult = await lobbyCollection.updateOne(filter, updater)
-  return updateResult
 }
 
 Lobby.all = async function() {
@@ -58,23 +52,20 @@ Lobby.gameLaunched = async function(lobbyId, gameId) {
   return await lobbyCollection.updateOne(filter, updater)
 }
 
-Lobby.nameUpdate = async function(lobbyId, name) {
+Lobby.kill = async function(lobbyId) {
   const filter = { _id: lobbyId }
-  const updater = { $set: { name } }
-  return await lobbyCollection.updateOne(filter, updater)
+  await lobbyCollection.deleteOne(filter)
 }
 
-Lobby.removeUsers = async function(lobbyId, userIds) {
-  const filter = { _id: lobbyId }
-  const updater = { $pull: { userIds: { $in: userIds } } }
-  return await lobbyCollection.updateOne(filter, updater)
-}
+Lobby.save = async function(lobby) {
+  const orig = await this.findById(lobby._id)
 
-Lobby.updateSettings = async function(lobbyId, game, options) {
-  const filter = { _id: lobbyId }
-  const updater = { $set: {
-    game: game,
-    options: options
-  } }
-  return await lobbyCollection.updateOne(filter, updater)
+  if (!orig) {
+    throw new Error('Lobby does not exist in db. Cannot save: ' + lobby._id)
+  }
+
+  return await lobbyCollection.replaceOne(
+    { _id: lobby._id },
+    lobby,
+  )
 }

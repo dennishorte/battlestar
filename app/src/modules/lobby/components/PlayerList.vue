@@ -25,7 +25,7 @@
       </thead>
 
       <tbody>
-        <tr v-for="player in players" :key="player._id">
+        <tr v-for="player in lobby.users" :key="player._id">
           <td>{{ player.name }}</td>
           <td>
             <div class="dropdown d-flex justify-content-end">
@@ -58,12 +58,18 @@
 
             <select
               id="add-players-input"
+              class="form-select"
+              size="15"
               v-model="selected"
               multiple
             >
               <option v-for="user in users" :value="user._id">{{ user.name }}</option>
             </select>
 
+          </div>
+
+          <div class="modal-footer justify-content-end">
+            <button class="btn btn-primary" @click="addPlayers">add</button>
           </div>
         </div>
       </div>
@@ -76,37 +82,22 @@
 
 <script>
 import axios from 'axios'
+import { util } from 'battlestar-common'
 
 export default {
-  name: 'LobbyPlayerList',
-  props: {
-    lobbyId: String,
-    players: Array,
-  },
+  name: 'PlayerList',
+
+  inject: ['lobby', 'save'],
+
   data() {
     return {
-      playerFields: [
-        { key: 'name' },
-        { key: 'actions', label: '' },
-      ],
-      selected: [],
-      users: [],
+      selected: [],  // Users currently selected in the "add users" dialog
+      users: [],  // All users, for the "add users" dialog
     }
   },
-  methods: {
-    async addPlayers() {
-      const result = await axios.post('/api/lobby/player_add', {
-        lobbyId: this.lobbyId,
-        userIds: this.selected,
-      })
-      if (result.data.status == 'success') {
-        this.$emit('users-updated')
-      }
-      else {
-        alert('Error adding players: ' + result.data.message)
-      }
-    },
 
+  methods: {
+    // Get a list of all users to populate the "add users" dialog.
     async fetchUsers() {
       const userRequestResult = await axios.post('/api/user/all')
       this.users = userRequestResult
@@ -115,18 +106,39 @@ export default {
         .sort((left, right) => left.name.localeCompare(right.name))
     },
 
-    async removePlayer(id) {
-      const result = await axios.post('/api/lobby/player_remove', {
-        lobbyId: this.lobbyId,
-        userIds: [id],
-      })
-      if (result.data.status == 'success') {
-        this.$emit('users-updated')
+    // Add all selected players in the "add users" dialog to the lobby.
+    async addPlayers() {
+      let userAdded = false
+
+      for (const userId of Object.values(this.selected)) {
+        const inLobby = this.lobby.users.find(u => u._id === userId)
+        if (!inLobby) {
+          const user = this.users.find(u => u._id === userId)
+          this.lobby.users.push({
+            _id: user._id,
+            name: user.name,
+          })
+          userAdded = true
+        }
       }
-      else {
-        alert('Error adding players: ' + result.data.message)
+
+      if (userAdded) {
+        await this.save()
       }
     },
+
+    // Remove the specified player from the lobby.
+    async removePlayer(id) {
+      const user = this.lobby.users.find(u => u._id === id)
+      if (user) {
+        util.array.remove(this.lobby.users, user)
+        this.save()
+      }
+    },
+  },
+
+  mounted() {
+    this.fetchUsers()
   },
 }
 </script>
