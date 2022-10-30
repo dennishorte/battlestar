@@ -1,15 +1,22 @@
 <template>
-  <b-modal id="debug-modal" scrollable title="debug">
+  <Modal>
+    <template #title>debug</template>
     <div style="white-space: pre; font-family: monospace;">
       {{ gameData }}
     </div>
-  </b-modal>
+  </Modal>
 </template>
 
 
 <script>
+import Modal from '@/components/Modal'
+
 export default {
   name: 'DebugModal',
+
+  components: {
+    Modal,
+  },
 
   inject: ['game'],
 
