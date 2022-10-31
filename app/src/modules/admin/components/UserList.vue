@@ -84,7 +84,7 @@ export default {
 
     edit(user) {
       this.editingUser = user
-      this.$bvModal.show('user-update-modal')
+      this.$modal('user-update-modal').show()
     },
   },
 }

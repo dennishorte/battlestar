@@ -1,6 +1,6 @@
 <template>
-  <Modal>
-    <template #title>debug</template>
+  <Modal id="debug-modal">
+    <template #header>debug</template>
     <div style="white-space: pre; font-family: monospace;">
       {{ gameData }}
     </div>

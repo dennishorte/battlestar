@@ -63,8 +63,12 @@ export default {
 
   computed: {
     canView() {
+      if (this.zone.kind === 'public') {
+        return true
+      }
+
       const owner = this.game.getPlayerByZone(this.zone)
-      return this.zone.public || owner.name === this.actor.name
+      return owner && owner.name === this.actor.name
     },
 
     cards() {
@@ -93,7 +97,7 @@ export default {
       if (this.canView) {
         this.game.ui.modals.cardsViewer.title = this.zone.name
         this.game.ui.modals.cardsViewer.cards = this.zone.cards()
-        this.$bvModal.show('cards-viewer-modal')
+        this.$modal('cards-viewer-modal').show()
       }
     },
   },

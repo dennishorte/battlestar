@@ -359,7 +359,7 @@ export default {
     },
 
     showLoadModal() {
-      this.$bvModal.show('upload-modal')
+      this.$modal('upload-modal').show()
     },
 
 
@@ -509,7 +509,7 @@ export default {
     },
 
     showTransformMenu() {
-      this.$bvModal.show('transform-modal')
+      this.$modal('transform-modal').show()
     },
 
 

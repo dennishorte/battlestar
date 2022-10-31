@@ -34,7 +34,7 @@ export default {
     closeup() {
       this.game.ui.modals.cardsViewer.title = ''
       this.game.ui.modals.cardsViewer.cards = [this.game.getCardByName(this.name)]
-      this.$bvModal.show('cards-viewer-modal')
+      this.$modal('cards-viewer-modal').show()
     },
   },
 }

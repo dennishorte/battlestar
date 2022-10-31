@@ -24,7 +24,7 @@ export default {
   methods: {
     clicked() {
       this.ui.modals.cardViewer.cardId = this.name
-      this.$bvModal.show('card-viewer-modal')
+      this.$modal('card-viewer-modal').show()
     },
   },
 }

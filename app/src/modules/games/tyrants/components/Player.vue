@@ -99,7 +99,7 @@ export default {
 
     showTableauModal() {
       this.ui.modals.tableau.player = this.player
-      this.$bvModal.show('tableau-modal')
+      this.$modal('tableau-modal').show()
     },
   },
 }

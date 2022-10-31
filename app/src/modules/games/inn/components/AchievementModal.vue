@@ -1,6 +1,6 @@
 <template>
   <Modal id="achievement-modal">
-    <template #title>{{ title }}</template>
+    <template #header>{{ title }}</template>
     <CardText :text="text" />
   </Modal>
 </template>

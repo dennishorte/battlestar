@@ -1,6 +1,6 @@
 <template>
   <Modal id="cards-viewer-modal" scrollable>
-    <template #title>{{ title }}</template>
+    <template #header>{{ title }}</template>
     <div class="card-viewer-list">
       <CardFull
         v-for="card in cards"

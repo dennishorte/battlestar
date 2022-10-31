@@ -65,11 +65,11 @@ export default {
       if (this.card.isRelic) {
         this.game.ui.modals.cardsViewer.title = ''
         this.game.ui.modals.cardsViewer.cards = [this.card]
-        this.$bvModal.show('cards-viewer-modal')
+        this.$modal('cards-viewer-modal').show()
       }
       else if (this.card.isSpecialAchievement) {
         this.game.ui.modals.achievement.card = this.card
-        this.$bvModal.show('achievement-modal')
+        this.$modal('achievement-modal').show()
       }
     }
   }

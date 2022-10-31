@@ -77,7 +77,7 @@ export default {
       const cards = this.game.getCardsByZone(this.player, this.color)
       this.game.ui.modals.cardsViewer.title = this.color
       this.game.ui.modals.cardsViewer.cards = cards
-      this.$bvModal.show('cards-viewer-modal')
+      this.$modal('cards-viewer-modal').show()
     },
   }
 }

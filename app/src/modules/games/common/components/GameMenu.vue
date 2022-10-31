@@ -1,11 +1,11 @@
 <template>
   <Dropdown :text="game.settings.name" class="game-menu">
-    <DropdownItem @click="home">home</DropdownItem>
-    <DropdownItem @click="next">next</DropdownItem>
+    <DropdownItem><button @click="home">home</button></DropdownItem>
+    <DropdownItem><button @click="next">next</button></DropdownItem>
     <DropdownDivider />
-    <DropdownItem @click="undo">undo</DropdownItem>
+    <DropdownItem><button @click="undo">undo</button></DropdownItem>
     <DropdownDivider />
-    <DropdownItem @click="debug">debug</DropdownItem>
+    <DropdownItem><button @click="debug">debug</button></DropdownItem>
 
     <slot></slot>
   </Dropdown>
@@ -32,7 +32,7 @@ export default {
 
   methods: {
     debug() {
-      this.$bvModal.show('debug-modal')
+      this.$modal('debug-modal').show()
     },
 
     home() {
