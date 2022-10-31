@@ -145,22 +145,63 @@ export default {
     uiFactory() {
       const self = this
 
-      return {
-        selectorOptionComponent: function(option) {
-          const name = option.title ? option.title : option
+      const insertSelectorSubtitles = (selector) => {
+        if (selector.title === 'Dogma') {
+          const player = this.game.getPlayerByName(this.actor.name)
+          const updated = []
+          for (const option of selector.choices) {
+            const cardName = option.title || option
+            const card = this.game.getCardByName(cardName)
+            const shareInfo = this.game.getDogmaShareInfo(player, card, { noBiscuitKarma: true })
 
-          if (self.game.getCardByName(name, '')) {
-            return {
-              component: CardNameFull,
-              props: { name },
+            const subtitles = []
+
+            if (shareInfo.hasShare && shareInfo.sharing.length > 0) {
+              const shareNames = shareInfo.sharing.map(p => p.name).join(', ')
+              subtitles.push(`share with ${shareNames}`)
             }
+
+            if (shareInfo.hasCompel && shareInfo.sharing.length > 0) {
+              const compelNames = shareInfo.sharing.map(p => p.name).join(', ')
+              subtitles.push(`compel ${compelNames}`)
+            }
+
+            if (shareInfo.hasDemand && shareInfo.demanding.length > 0) {
+              const demandNames = shareInfo.demanding.map(p => p.name).join(', ')
+              subtitles.push(`demand ${demandNames}`)
+            }
+
+            updated.push({
+              title: cardName,
+              subtitles,
+            })
           }
-          else {
-            return undefined
-          }
-        },
+
+          selector.choices = updated
+        }
       }
-    }
+
+      const selectorOptionComponent = (option) => {
+        const name = option.title ? option.title : option
+
+        if (self.game.getCardByName(name, '')) {
+          return {
+            component: CardNameFull,
+            props: { name },
+          }
+        }
+        else {
+          return undefined
+        }
+      }
+
+      return {
+        fn: {
+          insertSelectorSubtitles,
+          selectorOptionComponent,
+        }
+      }
+    },
   },
 
   created() {

@@ -25,8 +25,8 @@ export default {
 
   computed: {
     componentAndProps() {
-      if (this.ui.selectorOptionComponent) {
-        const result = this.ui.selectorOptionComponent(this.option)
+      if (this.ui.fn.selectorOptionComponent) {
+        const result = this.ui.fn.selectorOptionComponent(this.option)
 
         if (result) {
           return {

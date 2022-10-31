@@ -28,7 +28,7 @@ export default {
     OptionSelector,
   },
 
-  inject: ['game', 'bus'],
+  inject: ['game', 'ui', 'bus'],
 
   props: {
     actor: Object,
@@ -94,47 +94,13 @@ export default {
       this.bus.emit('waiting-selection-changed', [...this.selection.selection])
     },
 
-    insertDogmaShareSubtitles(selector) {
-      const player = this.game.getPlayerByName(this.actor.name)
-      const updated = []
-      for (const option of selector.choices) {
-        const cardName = option.title || option
-        const card = this.game.getCardByName(cardName)
-        const shareInfo = this.game.getDogmaShareInfo(player, card, { noBiscuitKarma: true })
-
-        const subtitles = []
-
-        if (shareInfo.hasShare && shareInfo.sharing.length > 0) {
-          const shareNames = shareInfo.sharing.map(p => p.name).join(', ')
-          subtitles.push(`share with ${shareNames}`)
-        }
-
-        if (shareInfo.hasCompel && shareInfo.sharing.length > 0) {
-          const compelNames = shareInfo.sharing.map(p => p.name).join(', ')
-          subtitles.push(`compel ${compelNames}`)
-        }
-
-        if (shareInfo.hasDemand && shareInfo.demanding.length > 0) {
-          const demandNames = shareInfo.demanding.map(p => p.name).join(', ')
-          subtitles.push(`demand ${demandNames}`)
-        }
-
-        updated.push({
-          title: cardName,
-          subtitles,
-        })
-      }
-
-      selector.choices = updated
-    },
-
     insertSubtitles(selector) {
       if (!selector) {
         return
       }
 
-      if (selector.title === 'Dogma') {
-        this.insertDogmaShareSubtitles(selector)
+      if (this.ui.fn.insertSelectorSubtitles) {
+        this.ui.fn.insertSelectorSubtitles(selector)
       }
 
       for (const option of selector.choices) {
