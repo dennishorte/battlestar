@@ -62,12 +62,7 @@ export default {
 
       else {
         console.log(result)
-        this.$bvToast.toast('error: see console', {
-          autoHideDelay: 999999,
-          noCloseButton: false,
-          solid: true,
-          variant: 'danger',
-        })
+        alert('error: see console')
       }
     },
 

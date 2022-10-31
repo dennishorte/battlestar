@@ -200,21 +200,6 @@ export default {
 
       if (result.data.status === 'success') {
         this.game.usedUndo = false
-
-        this.$bvToast.toast('saved', {
-          autoHideDelay: 1000,
-          noCloseButton: true,
-          solid: true,
-          variant: 'success',
-        })
-      }
-      else {
-        this.$bvToast.toast('error: see console', {
-          autoHideDelay: 999999,
-          noCloseButton: false,
-          solid: true,
-          variant: 'danger',
-        })
       }
     },
 
