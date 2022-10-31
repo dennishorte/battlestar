@@ -23,7 +23,6 @@ export default {
   name: 'WaitingChoice',
 
   components: {
-    GameButton,
     OptionSelector,
   },
 

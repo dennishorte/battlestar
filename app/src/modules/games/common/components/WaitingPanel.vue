@@ -17,7 +17,7 @@
       <div
         v-for="player in playersOrdered"
         :key="player.name"
-        :id="`waiting-${player.name}"
+        :id="`waiting-${player.name}`"
       >
         <WaitingChoice v-if="hasActionWaiting(player)" :actor="player" />
         <div v-else>No actions waiting for you right now.</div>
