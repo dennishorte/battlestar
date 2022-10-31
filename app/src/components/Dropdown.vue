@@ -1,5 +1,5 @@
 <template>
-  <div class="dropdown float-end">
+  <div class="dropdown">
     <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
       <slot name="title">
         <template v-if="!notitle">menu</template>

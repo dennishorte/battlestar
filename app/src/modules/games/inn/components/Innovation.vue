@@ -1,7 +1,7 @@
 <template>
   <div class="innovation">
     <div class="container-fluid">
-      <div class="row main-row">
+      <div class="row flex-nowrap main-row">
         <div class="col game-column history-column">
 
           <GameMenu>
@@ -115,21 +115,6 @@ export default {
 
       if (result.data.status === 'success') {
         this.game.usedUndo = false
-
-        this.$bvToast.toast('saved', {
-          autoHideDelay: 1000,
-          noCloseButton: true,
-          solid: true,
-          variant: 'success',
-        })
-      }
-      else {
-        this.$bvToast.toast('error: see console', {
-          autoHideDelay: 999999,
-          noCloseButton: false,
-          solid: true,
-          variant: 'danger',
-        })
       }
     },
 
@@ -229,10 +214,6 @@ export default {
 
 .history-column {
   min-width: 400px;
-}
-
-.main-row {
-  flex-wrap: nowrap;
 }
 
 .text-base { color: #bba37a; }

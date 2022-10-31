@@ -8,7 +8,9 @@
       @selection-changed="childChanged"
     />
 
-    <button @click="submit" :disabled="!isValid">choose</button>
+    <div class="d-grid">
+      <button @click="submit" :disabled="!isValid" class="btn btn-primary">choose</button>
+    </div>
 
   </div>
 </template>
@@ -122,6 +124,10 @@ export default {
     },
 
     insertSubtitles(selector) {
+      if (!selector) {
+        return
+      }
+
       if (selector.title === 'Dogma') {
         this.insertDogmaShareSubtitles(selector)
       }

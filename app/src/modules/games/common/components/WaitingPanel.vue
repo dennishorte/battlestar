@@ -1,12 +1,15 @@
 <template>
   <div class="waiting-panel">
 
-    <ul class="nav nab-tabs">
-      <li v-for="player in playersOrdered">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item" v-for="player in playersOrdered">
         <button
           class="nav-link"
+          :class="isActive(player)"
+          id="home-tab"
           data-bs-toggle="tab"
           :data-bs-target="`#waiting-${player.name}`"
+          type="button"
         >
           {{ titleForPlayer(player) }}
         </button>
@@ -16,7 +19,8 @@
     <div class="tab-content">
       <div
         v-for="player in playersOrdered"
-        :key="player.name"
+        class="tab-pane fade"
+        :class="isActive(player)"
         :id="`waiting-${player.name}`"
       >
         <WaitingChoice v-if="hasActionWaiting(player)" :actor="player" />
@@ -54,6 +58,10 @@ export default {
   methods: {
     hasActionWaiting(player) {
       return this.game.checkPlayerHasActionWaiting(player)
+    },
+
+    isActive(player) {
+      return player.name === this.actor.name ? ['active', 'show'] : ''
     },
 
     titleForPlayer(player) {

@@ -1,5 +1,5 @@
 <template>
-  <Dropdown :text="game.settings.name" class="game-menu" block>
+  <Dropdown :text="game.settings.name" class="game-menu">
     <DropdownItem @click="home">home</DropdownItem>
     <DropdownItem @click="next">next</DropdownItem>
     <DropdownDivider />

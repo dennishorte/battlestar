@@ -165,11 +165,11 @@ export default {
         .findIndex(o => this.optionDisplayName(o) === event.title)
 
       if (event.isChecked) {
-        Vue.set(this.childInfo, event.title, event)
+        this.childInfo[event.title] = event
         util.array.pushUnique(this.selected, childIndex)
       }
       else {
-        Vue.delete(this.childInfo, event.title)
+        delete this.childInfo[event.title]
         util.array.remove(this.selected, childIndex)
       }
     },
