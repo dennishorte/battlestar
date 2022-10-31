@@ -335,6 +335,11 @@ Tyrants.prototype.doActions = function() {
       break
     }
 
+    else if (chosenAction === 'Auto-play Cards') {
+      this.aAutoPlayCards()
+      continue
+    }
+
     const name = chosenAction.title
     const arg = chosenAction.selection[0]
 
@@ -376,6 +381,7 @@ Tyrants.prototype.doActions = function() {
 Tyrants.prototype._generateActionChoices = function() {
   const choices = []
   choices.push(this._generateCardActions())
+  choices.push(this._generateAutoCardAction())
   choices.push(this._generateBuyActions())
   choices.push(this._generatePowerActions())
   choices.push(this._generatePassAction())
@@ -395,6 +401,18 @@ Tyrants.prototype._generateCardActions = function() {
       min: 0,
       max: 1,
     }
+  }
+  else {
+    return undefined
+  }
+}
+
+Tyrants.prototype._generateAutoCardAction = function() {
+  const player = this.getPlayerCurrent()
+  const cards = this.getCardsByZone(player, 'hand')
+
+  if (cards.some(card => card.autoplay)) {
+    return 'Auto-play Cards'
   }
   else {
     return undefined
@@ -876,6 +894,16 @@ Tyrants.prototype.aDeferPromotion = function(player, source) {
     source,
     action: 'promote-other',
   })
+}
+
+Tyrants.prototype.aAutoPlayCards = function() {
+  const player = this.getPlayerCurrent()
+  const cards = this.getCardsByZone(player, 'hand')
+  for (const card of cards) {
+    if (card.autoplay) {
+      this.aPlayCard(player, card)
+    }
+  }
 }
 
 Tyrants.prototype.aAssassinate = function(player, loc, owner) {

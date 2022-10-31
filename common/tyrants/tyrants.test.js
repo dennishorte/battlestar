@@ -365,3 +365,23 @@ describe('score', () => {
 
   })
 })
+
+test('auto-play cards', () => {
+  const game = t.gameFixture({
+    dennis: {
+      hand: ['House Guard', 'Priestess of Lolth', 'Spellspinner'],
+    },
+  })
+
+  const request1 = game.run()
+  const request2 = t.choose(game, request1, 'Auto-play Cards')
+
+  t.testBoard(game, {
+    dennis: {
+      hand: ['Spellspinner'],
+      played: ['House Guard', 'Priestess of Lolth'],
+      power: 2,
+      influence: 2,
+    },
+  })
+})

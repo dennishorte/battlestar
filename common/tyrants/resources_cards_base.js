@@ -8,6 +8,7 @@ const cardData = [
     points: 1,
     innerPoints: 2,
     count: 15,
+    autoplay: true,
     text: [
       "+2 influence"
     ],
@@ -22,6 +23,7 @@ const cardData = [
     points: 1,
     innerPoints: 3,
     count: 15,
+    autoplay: true,
     text: [
       "+2 power"
     ],
@@ -60,6 +62,7 @@ const cardData = [
     points: 0,
     innerPoints: 1,
     count: 28,
+    autoplay: true,
     text: [
       "+1 influence"
     ],
@@ -74,6 +77,7 @@ const cardData = [
     points: 0,
     innerPoints: 1,
     count: 12,
+    autoplay: true,
     text: [
       "+1 power"
     ],

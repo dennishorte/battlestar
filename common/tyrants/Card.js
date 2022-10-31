@@ -17,6 +17,8 @@ function Card(id, data) {
   this.isTroop = false
   this.isSpy = false
 
+  this.autoPlay = false
+
   this.visibility = []
 
   for (const [key, value] of Object.entries(data)) {

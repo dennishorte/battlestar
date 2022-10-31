@@ -35,6 +35,7 @@ const cardData = [
     points: 2,
     innerPoints: 4,
     count: 2,
+    autoplay: true,
     text: [
       "+3 power"
     ],
@@ -393,6 +394,7 @@ const cardData = [
     points: 1,
     innerPoints: 2,
     count: 2,
+    autoplay: true,
     text: [
       "If there are 4 or more cards in your inner circle, gain +3 influence.",
       "At end of turn, promote another card played this turn."

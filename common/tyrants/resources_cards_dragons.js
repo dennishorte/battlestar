@@ -33,6 +33,7 @@ const cardData = [
     points: 3,
     innerPoints: 5,
     count: 2,
+    autoplay: true,
     text: [
       "+2 power",
       "+2 influence"
@@ -71,6 +72,7 @@ const cardData = [
     points: 4,
     innerPoints: 8,
     count: 1,
+    autoplay: true,
     text: [
       "+5 power"
     ],
@@ -395,6 +397,7 @@ const cardData = [
     points: 1,
     innerPoints: 3,
     count: 3,
+    autoplay: true,
     text: [
       "+1 influence",
       "At end of turn, promote another card played this turn."
@@ -431,6 +434,7 @@ const cardData = [
     points: 4,
     innerPoints: 8,
     count: 1,
+    autoplay: true,
     text: [
       "At end of turn, promote up to 2 other cards played this turn, then gain 1 VP for every 3 cards in your inner circle."
     ],
