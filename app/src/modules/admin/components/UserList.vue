@@ -2,37 +2,34 @@
   <div class='user-list'>
     <h3>User List</h3>
 
-    <b-table
-      :items="users"
-      :fields="fields"
-      :small="true"
-      head-variant="light">
+    <table class="table table-sm">
+      <thead>
+        <tr class="table-light">
+          <th>_id</th>
+          <th>name</th>
+          <th>slack</th>
+          <th></th>
+        </tr>
+      </thead>
 
-      <template #cell(_id)="row">
-        <span class="monospace">
-          <span class="text-secondary">{{ row.value.substr(0, row.value.length-3) }}</span>{{ row.value.substr(-3, 3) }}
-        </span>
-      </template>
-
-      <template #cell(actions)="row">
-        <div class="text-right">
-          <Dropdown>
-            <DropdownItem><button @click="deactivate(row.item._id)">deactivate</button></DropdownItem>
-            <DropdownItem><button @click="edit(row.item)">edit</button></DropdownItem>
-          </Dropdown>
-        </div>
-      </template>
-
-    </b-table>
-
-
-    <b-modal
-      id="user-update-modal"
-      title="Edit User"
-      cancel-only>
-
-      <EditUser :user="editingUser" @user-updated="$emit('users-updated')" />
-    </b-modal>
+      <tbody>
+        <tr v-for="user in users">
+          <td>
+            <span class="monospace">
+              <span class="text-secondary">{{ user._id.substr(0, user._id.length-3) }}</span>{{ user._id.substr(-3, 3) }}
+            </span>
+          </td>
+          <td>{{ user.name }}</td>
+          <td>{{ user.slack }}</td>
+          <td>
+            <Dropdown :notitle="true">
+              <DropdownItem><button @click="deactivate(user._id)">deactivate</button></DropdownItem>
+              <DropdownItem><button @click="edit(user)">edit</button></DropdownItem>
+            </Dropdown>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
   </div>
 </template>
@@ -42,7 +39,6 @@ import axios from 'axios'
 
 import Dropdown from '@/components/Dropdown'
 import DropdownItem from '@/components/DropdownItem'
-import EditUser from './EditUser'
 
 export default {
   name: 'UserList',
@@ -50,7 +46,6 @@ export default {
   components: {
     Dropdown,
     DropdownItem,
-    EditUser,
   },
 
   props: {
@@ -59,8 +54,6 @@ export default {
 
   data() {
     return {
-      editingUser: {},
-
       fields: [
         { key: '_id', label: 'ID', sortable: true },
         { key: 'name', sortable: true },
@@ -83,8 +76,7 @@ export default {
     },
 
     edit(user) {
-      this.editingUser = user
-      this.$modal('user-update-modal').show()
+      alert('not implemented')
     },
   },
 }

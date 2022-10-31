@@ -2,11 +2,11 @@
   <div class="admin-actions">
     <h3>Admin Actions</h3>
 
-    <b-alert v-if="status == 'success'" variant="success" show>{{ message }}</b-alert>
-    <b-alert v-if="status == 'waiting'" variant="warning" show>{{ message }}</b-alert>
-    <b-alert v-if="status == 'error'" variant="danger" show>{{ message }}</b-alert>
+    <div v-if="status == 'success'" class="alert alert-succes">{{ message }}</div>
+    <div v-if="status == 'waiting'" class="alert alert-warning">{{ message }}</div>
+    <div v-if="status == 'error'" class="alert alert-danger">{{ message }}</div>
 
-    <b-button @click="updateGameStats">Update Game Stats</b-button>
+    <button class="btn btn-secondary" @click="updateGameStats">Update Game Stats</button>
   </div>
 </template>
 

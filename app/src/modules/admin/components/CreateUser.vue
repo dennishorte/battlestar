@@ -2,26 +2,16 @@
 <div class='create-user'>
   <h3>Create User</h3>
 
-  <b-alert v-if="status == 'success'" variant="success" show>{{ message }}</b-alert>
-  <b-alert v-if="status == 'submitting'" variant="warning" show>{{ message }}</b-alert>
-  <b-alert v-if="status == 'error'" variant="danger" show>{{ message }}</b-alert>
+  <div v-if="status == 'success'" class="alert alert-succes">{{ message }}</div>
+  <div v-if="status == 'submitting'" class="alert alert-warning">{{ message }}</div>
+  <div v-if="status == 'error'" class="alert alert-danger">{{ message }}</div>
 
-  <b-form @submit="submit" @reset="reset">
-    <b-form-group>
-      <b-form-input v-model="name" placeholder="name" />
-    </b-form-group>
+  <input class="form-control" v-model="name" placeholder="name" />
+  <input class="form-control" v-model="password" placeholder="password" />
+  <input class="form-control" v-model="slace" placeholder="slack" />
 
-    <b-form-group>
-      <b-form-input v-model="password" placeholder="password" />
-    </b-form-group>
-
-    <b-form-group>
-      <b-form-input v-model="slack" placeholder="slack" />
-    </b-form-group>
-
-    <b-button type="submit" variant="primary">create</b-button>
-    <b-button type="reset" variant="warning">reset</b-button>
-  </b-form>
+  <button @click="submit" class="btn btn-primary">create</button>
+  <button @click="reset" class="btn btn-warning">reset</button>
 
 </div>
 </template>
@@ -73,3 +63,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+input {
+  margin-bottom: 2px;
+}
+</style>
