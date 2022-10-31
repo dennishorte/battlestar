@@ -1,19 +1,21 @@
 <template>
-  <b-row class="innovation-win-data">
-    <b-col>
+  <div class="row innovation-win-data">
+    <div class="col">
       <h4>Win Conditions</h4>
       <div v-for="(result, index) in winConditions" :key="index">
         {{ result[1] }} {{ result[0] }}
       </div>
-    </b-col>
+    </div>
 
-    <b-col>
+    <div class="col">
       <h4>Player Stats</h4>
 
       <div class="player-stats" v-for="[player, stats] in playerData" :key="player">
-        <b-button v-b-toggle="`stats-${player}`">{{ player }}</b-button>
-        <b-collapse :id="`stats-${player}`">
-          <b-card>
+        <button class="btn" data-bs-toggle="collapse" :data-bs-target="`#stats-${player}`">
+          {{ player }}
+        </button>
+        <div class="collapse" :id="`stats-${player}`">
+          <div class="card card-body">
             <h5>Win Conditions</h5>
             <div v-for="[cond, count] in Object.entries(stats.conditions)" :key="cond">
               {{ count }} {{ cond }}
@@ -23,12 +25,12 @@
             <div v-for="[opp, { wins, loss }] in Object.entries(stats.vs)" :key="opp">
               {{ wins }}/{{ wins + loss }} {{ opp }}
             </div>
-          </b-card>
-        </b-collapse>
+          </div>
+        </div>
       </div>
 
-    </b-col>
-  </b-row>
+    </div>
+  </div>
 </template>
 
 
