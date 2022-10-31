@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid class="map-maker">
+  <div class="container-fluid map-maker">
     <Toolbar
       :nodeKinds="nodeKinds"
       @tool-add="addKind"
@@ -10,10 +10,10 @@
       @tool-transform="applyTransform"
     />
 
-    <b-row>
-      <b-col class="editors-col">
-        <div class="menu">
-          <b-button v-b-toggle.toolbar block>toolbar</b-button>
+    <div class="row">
+      <div class="col editors-col">
+        <div class="d-grid">
+          <button class="btn btn-secondary" data-bs-toggle="offcanvas" data-bs-target="#toolbar">toolbar</button>
         </div>
 
         <div class="editor-div">
@@ -36,9 +36,9 @@
           />
           <div v-if="errors.css" class="error-mark">!</div>
         </div>
-      </b-col>
+      </div>
 
-      <b-col class="map-render" ref="mapRender">
+      <div class="col map-render" ref="mapRender">
 
         <div class="map" :style="mapStyle">
           <CurveLayer :curves="elems.curves" :height="svgHeight" :width="svgWidth" />
@@ -47,11 +47,11 @@
         </div>
 
 
-      </b-col>
-    </b-row>
+      </div>
+    </div>
 
     <UploadModal @file-ready="loadData" />
-  </b-container>
+  </div>
 
 </template>
 

@@ -1,49 +1,60 @@
 <template>
-  <b-sidebar id="toolbar" class="toolbar" title="Map Tools" bg-variant="dark" text-variant="light">
+  <div class="offcanvas offcanvas-start bg-dark text-light" id="toolbar">
+    <div class="offcanvas-header">
+      Toolbar
+    </div>
 
-    <div class="tool-button" v-b-toggle.add-options>add</div>
-    <b-collapse id="add-options">
+    <div class="offcanvas-body">
+      <div class="tool-button" data-bs-toggle="collapse" data-bs-target="#add-options">add</div>
+      <div class="collapse" id="add-options">
+        <div
+          v-for="(kind, index) in nodeKinds"
+          :key="index"
+          @click="$emit('tool-add', kind)"
+        >
+          {{ kind }}
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="tool-button" @click="$emit('tool-connect')">connect</div>
+      <div class="tool-button" @click="$emit('tool-cut')">cut</div>
+
+      <hr />
+
       <div
-        v-for="(kind, index) in nodeKinds"
-        :key="index"
-        @click="$emit('tool-add', kind)"
-        class="tool-button-sub-option"
+        class="tool-button"
+        data-bs-toggle="collapse"
+        data-bs-target="#transform-options"
       >
-        {{ kind }}
+        transform
       </div>
-    </b-collapse>
+      <div class="collapse" id="transform-options">
+        <div>
+          Scale
+          <input class="form-control" placeholder="x" v-model="scale.x" />
+          <input class="form-control" placeholder="y" v-model="scale.y" />
+        </div>
 
-    <hr />
+        <div>
+          Translate
+          <input class="form-control" placeholder="x" v-model="translate.x" />
+          <input class="form-control" placeholder="y" v-model="translate.y" />
+        </div>
 
-    <div class="tool-button" @click="$emit('tool-connect')">connect</div>
-    <div class="tool-button" @click="$emit('tool-cut')">cut</div>
-
-    <hr />
-
-    <div class="tool-button" v-b-toggle.transform-options>transform</div>
-    <b-collapse id="transform-options">
-      <div>
-        scale x: <b-form-input v-model.number="scale.x"></b-form-input>
-        scale y: <b-form-input v-model.number="scale.y"></b-form-input>
-      </div>
-
-      <div>
-        translate x: <b-form-input v-model.number="translate.x"></b-form-input>
-        translate y: <b-form-input v-model.number="translate.y"></b-form-input>
+        <div>
+          <button class="btn btn-warning" @click="resetTransform">reset</button>
+          <button class="btn btn-primary" @click="applyTransform">apply</button>
+        </div>
       </div>
 
-      <div>
-        <b-button @click="resetTransform">reset</b-button>
-        <b-button @click="applyTransform">apply</b-button>
-      </div>
-    </b-collapse>
+      <hr />
 
-    <hr />
-
-    <div class="tool-button" @click="$emit('tool-load')">load</div>
-    <div class="tool-button" @click="$emit('tool-export')">export</div>
-
-  </b-sidebar>
+      <div class="tool-button" @click="$emit('tool-load')">load</div>
+      <div class="tool-button" @click="$emit('tool-export')">export</div>
+    </div>
+  </div>
 </template>
 
 

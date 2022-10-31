@@ -1,18 +1,22 @@
 <template>
-  <b-modal id="upload-modal" title="Load from file" @ok="maybeLoad">
-    <b-form-file
-      v-model="file"
-      :state="Boolean(file)"
-      placeholder="Choose a file or drop it here..."
-      drop-placeholder="Drop file here..."
-    ></b-form-file>
-  </b-modal>
+  <Modal id="upload-modal" @ok="maybeLoad">
+    <template #header>Load from file</template>
+
+    <input class="form-control" type="file" id="formFile">
+  </Modal>
 </template>
 
 
 <script>
+import Modal from '@/components/Modal'
+
+
 export default {
   name: 'UploadModal',
+
+  components: {
+    Modal,
+  },
 
   data() {
     return {
