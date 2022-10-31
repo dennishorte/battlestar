@@ -22,6 +22,10 @@ export default {
 
   computed: {
     html() {
+      if (!this.text) {
+        return ''
+      }
+
       return this
         .text
         .replaceAll(biscuitMatcher, (match, biscuit) => {

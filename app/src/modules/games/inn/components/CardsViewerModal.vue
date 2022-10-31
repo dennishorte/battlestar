@@ -15,12 +15,14 @@
 
 <script>
 import CardFull from './CardFull'
+import Modal from '@/components/Modal'
 
 export default {
   name: 'CardsViewerModal',
 
   components: {
-    CardFull
+    CardFull,
+    Modal,
   },
 
   inject: ['game'],

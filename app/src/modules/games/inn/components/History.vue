@@ -32,12 +32,12 @@ export default {
 
   inject: ['game'],
 
-  props: {
-    game: Object
-  },
-
   computed: {
     lines() {
+      if (!this.game) {
+        return []
+      }
+
       const output = []
       let indent = 0
 
@@ -97,6 +97,7 @@ export default {
         window.scrollTo(0,0)
       },
       flush: 'post',
+      deep: true,
     },
   },
 

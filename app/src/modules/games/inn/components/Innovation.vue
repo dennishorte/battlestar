@@ -181,7 +181,7 @@ export default {
   created() {
     this.game.testMode = true
 
-    Vue.set(this.game, 'ui', {
+    this.game.ui = {
       modals: {
         achievement: {
           card: '',
@@ -191,7 +191,7 @@ export default {
           title: '',
         },
       },
-    })
+    }
 
     const mChatOrigFunc = this.game.mChat
     this.game.mChat = async function(...args) {
