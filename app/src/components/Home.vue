@@ -3,8 +3,8 @@
   <Header />
 
   <div class="container">
-    <div class="row">
-      <div class="col">
+    <div class="row justify-content-center">
+      <div class="col games-col">
 
         <MyGames />
 
@@ -35,3 +35,12 @@ export default {
   },
 }
 </script>
+
+
+<style scoped>
+.games-col {
+  max-width: 1000px;
+}
+
+
+</style>
