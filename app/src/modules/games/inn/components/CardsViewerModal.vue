@@ -1,10 +1,6 @@
 <template>
-  <b-modal
-    id="cards-viewer-modal"
-    class="cards-viewer-modal"
-    :title="title"
-    scrollable
-  >
+  <Modal id="cards-viewer-modal" scrollable>
+    <template #title>{{ title }}</template>
     <div class="card-viewer-list">
       <CardFull
         v-for="card in cards"
@@ -13,7 +9,7 @@
         class="viewer-card"
       />
     </div>
-  </b-modal>
+  </Modal>
 </template>
 
 
