@@ -1,21 +1,21 @@
 <template>
-  <b-container class="deck-manager">
-    <b-row>
+  <div class="container deck-manager">
+    <div class="row">
 
-      <b-col class="d-none">
+      <div class="col d-none">
         <DeckList :decks="decks" />
-      </b-col>
+      </div>
 
-      <b-col>
+      <div class="col">
         <CardList :cards="cards" />
-      </b-col>
+      </div>
 
-      <b-col>
+      <div class="col">
 
-      </b-col>
+      </div>
 
-    </b-row>
-  </b-container>
+    </div>
+  </div>
 </template>
 
 

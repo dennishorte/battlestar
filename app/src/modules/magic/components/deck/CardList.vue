@@ -1,11 +1,10 @@
 <template>
   <div class="card-list">
-    <b-alert :show="!!error" variant="danger">
-      {{ error }}
-    </b-alert>
+
+    <div v-if="error" class="alert alert-danger">{{ error }}</div>
 
     <div>
-      <b-button @click="updateLocalCards" variant="info" size="sm">update</b-button>
+      <button class="btn btn-sm btn-info" @click="updateLocalCards">update</button>
     </div>
 
     Card List
