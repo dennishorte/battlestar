@@ -87,6 +87,7 @@ export default {
         window.scrollTo(0,0)
       },
       flush: 'post',
+      deep: true,
     },
   },
 

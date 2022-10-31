@@ -1,8 +1,8 @@
 <template>
   <div class="tyrants">
-    <b-container fluid>
-      <b-row class="main-row">
-        <b-col class="game-column history-column">
+    <div class="container-fluid">
+      <div class="row flex-nowrap main-row">
+        <div class="col game-column history-column">
           <GameMenu>
             <DropdownItem>
               <button @click="openRules">rules</button>
@@ -10,24 +10,24 @@
           </GameMenu>
 
           <GameLog />
-        </b-col>
+        </div>
 
-        <b-col class="game-column">
+        <div class="col game-column">
           <Market />
           <WaitingPanel />
           <ChatInput />
-        </b-col>
+        </div>
 
-        <b-col class="game-column">
+        <div class="col game-column">
           <Player v-for="player in orderedPlayers" :key="player.name" :player="player" />
-        </b-col>
+        </div>
 
-        <b-col class="map-column" :style="mapStyle">
+        <div class="col map-column" :style="mapStyle">
           <GameMap />
-        </b-col>
+        </div>
 
-      </b-row>
-    </b-container>
+      </div>
+    </div>
 
     <CardViewerModal />
     <DebugModal />
@@ -46,6 +46,7 @@ import maps from '../res/maps.js'
 
 // Common Components
 import ChatInput from '@/modules/games/common/components/ChatInput'
+import DropdownItem from '@/components/DropdownItem'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
@@ -89,6 +90,7 @@ export default {
 
   components: {
     ChatInput,
+    DropdownItem,
     GameLog,
     GameMap,
     GameMenu,
@@ -153,7 +155,7 @@ export default {
       else {
         this.ui.selectable = []
       }
-    }
+    },
   },
 
   computed: {

@@ -86,6 +86,7 @@ export default {
   border: 2px solid #eee1f2;
   border-radius: 50%;
   font-size: .9em;
+  text-align: center;
 }
 
 .type-line {

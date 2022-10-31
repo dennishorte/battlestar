@@ -1,8 +1,9 @@
 <template>
-  <b-modal id="tableau-modal" scrollable :title="title">
+  <Modal id="tableau-modal" scrollable>
+    <template #header>{{ title }}</template>
 
-    <b-row>
-      <b-col>
+    <div class="row">
+      <div class="col">
 
         <div class="trophyHall">
           <div class="title">Trophy Hall</div>
@@ -28,23 +29,24 @@
           </div>
         </div>
 
-      </b-col>
+      </div>
 
 
-      <b-col cols="7">
+      <div class="col-7">
         <div class="deck">
           <div class="title">All Cards in Deck</div>
           <GameCard v-for="card in allCards" :key="card.id" :card="card" />
         </div>
-      </b-col>
+      </div>
 
-    </b-row>
-  </b-modal>
+    </div>
+  </Modal>
 </template>
 
 
 <script>
 import GameCard from './GameCard'
+import Modal from '@/components/Modal'
 
 
 export default {
@@ -52,6 +54,7 @@ export default {
 
   components: {
     GameCard,
+    Modal,
   },
 
   inject: ['game', 'ui'],
@@ -140,7 +143,6 @@ export default {
 .score-line {
   display: flex;
   flex-direction: row;
-  font-size: .8em;
 }
 
 .score-key {
