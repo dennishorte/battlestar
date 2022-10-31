@@ -1,18 +1,21 @@
 <template>
-  <b-modal id="achievement-modal" class="achievement-modal" :title="title">
+  <Modal id="achievement-modal">
+    <template #title>{{ title }}</template>
     <CardText :text="text" />
-  </b-modal>
+  </Modal>
 </template>
 
 
 <script>
 import CardText from './CardText'
+import Modal from '@/components/Modal'
 
 export default {
   name: 'CardsViewerModal',
 
   components: {
-    CardText
+    CardText,
+    Modal,
   },
 
   inject: ['game'],
