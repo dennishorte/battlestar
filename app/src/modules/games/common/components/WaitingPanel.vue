@@ -78,20 +78,20 @@ export default {
 
 
 <style scoped>
-/* .waiting-panel {
-   background-color: white;
-   }
+.waiting-panel {
+  background-color: white;
+}
 
-   .waiting-panel ::v-deep(.active-nav-item) {
-   background-color: #eee;
-   border-color: #ccc;
-   border-bottom-color: #eee;
-   }
+.nav-link.active {
+  background-color: #eee!important;
+  border-color: #ccc!important;
+  border-bottom-color: #eee!important;
+}
 
-   .active-tab {
-   padding: .05rem .75rem;
-   background-color: #eee;
-   margin-left: -15px;
-   margin-right: -15px;
-   } */
+.tab-content .active {
+  padding: .05rem .75rem;
+  background-color: #eee;
+  margin-left: -15px;
+  margin-right: -15px;
+}
 </style>
