@@ -2,16 +2,16 @@
   <div class="data">
     <Header />
 
-    <b-container>
-      <b-row>
-        <b-col>
+    <div class="container">
+      <div class="row">
+        <div class="col">
           <ul>
             <li><router-link to="/data/innovation/cards">Innovation Cards</router-link></li>
             <li><router-link to="/data/innovation/results">Innovation Results</router-link></li>
           </ul>
-        </b-col>
-      </b-row>
-    </b-container>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
