@@ -88,6 +88,15 @@ export default {
     }
   },
 
+  watch: {
+    'lobby.users': {
+      handler() {
+        this.updateValid()
+      },
+      deep: true,
+    },
+  },
+
   methods: {
     updateValid() {
       // Number of players must match map
