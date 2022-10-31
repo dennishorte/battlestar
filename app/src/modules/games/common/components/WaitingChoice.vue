@@ -61,7 +61,12 @@ export default {
 
   watch: {
     request() {
-      this.selection.title = this.request.title
+      if (this.request) {
+        this.selection.title = this.request.title
+      }
+      else {
+        this.selection.title = ''
+      }
       this.selection.selection = []
     },
   },
