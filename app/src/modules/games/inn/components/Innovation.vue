@@ -209,7 +209,8 @@ export default {
   height: calc(100vh - 60px);
   min-width: 220px;
   max-width: 400px;
-  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 .history-column {
