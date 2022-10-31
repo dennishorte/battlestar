@@ -16,6 +16,7 @@ const app = createApp(App)
 app.use(router)
 app.use(store)
 
+app.config.compilerOptions.whitespace = 'preserve'
 app.config.unwrapInjectedRef = true
 
 // Function for fetching and programatically acting on modals.
