@@ -1,8 +1,8 @@
 <template>
   <div class="innovation">
-    <b-container fluid>
-      <b-row class="main-row">
-        <b-col class="game-column history-column">
+    <div class="container-fluid">
+      <div class="row main-row">
+        <div class="col game-column history-column">
 
           <GameMenu>
             <DropdownItem>
@@ -11,21 +11,21 @@
           </GameMenu>
 
           <History />
-        </b-col>
+        </div>
 
-        <b-col class="game-column">
+        <div class="col game-column">
           <Biscuits />
           <Decks />
           <Achievements />
           <WaitingPanel />
           <ChatInput />
-        </b-col>
+        </div>
 
-        <b-col v-for="player in players" :key="player._id" class="game-column">
+        <div v-for="player in players" :key="player._id" class="col game-column">
           <PlayerTableau :player="player" />
-        </b-col>
+        </div>
 
-      </b-row>
+      </div>
     </b-container>
 
     <AchievementModal />
