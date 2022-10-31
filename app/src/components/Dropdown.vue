@@ -1,6 +1,10 @@
 <template>
   <div class="dropdown">
-    <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+    <button
+      class="btn btn-secondary dropdown-toggle"
+      :class="sizeClass"
+      data-bs-toggle="dropdown"
+    >
       <slot name="title">
         <template v-if="!notitle">menu</template>
       </slot>
@@ -22,6 +26,19 @@ export default {
       type: Boolean,
       default: false
     },
+
+    size: {
+      type: String,
+      default: '',
+    },
+  },
+
+  computed: {
+    sizeClass() {
+      if (this.size === 'sm') return 'btn-sm'
+      if (this.size === 'lg') return 'btn-lg'
+      return ''
+    }
   },
 }
 </script>

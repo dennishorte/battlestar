@@ -28,11 +28,9 @@
         <tr v-for="player in lobby.users" :key="player._id">
           <td>{{ player.name }}</td>
           <td>
-            <Dropdown size="sm" :notitle="true">
+            <Dropdown size="sm" :notitle="true" class="float-end">
               <DropdownItem>
-                <button @click="removePlayer(player._id)">
-                  remove
-                </button>
+                <button @click="removePlayer(player._id)">remove</button>
               </DropdownItem>
             </Dropdown>
           </td>
@@ -117,7 +115,6 @@ export default {
 
     // Remove the specified player from the lobby.
     async removePlayer(id) {
-      console.log('hello')
       const user = this.lobby.users.find(u => u._id === id)
       if (user) {
         util.array.remove(this.lobby.users, user)
