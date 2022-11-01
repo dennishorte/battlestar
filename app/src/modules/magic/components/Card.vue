@@ -52,6 +52,9 @@
 
 
 <script>
+import cardUtil from '../util/cardUtil.js'
+
+
 export default {
   name: 'GameCard',
 
@@ -78,7 +81,8 @@ export default {
         classes.push('scarred')
       }
 
-      classes.push('red-card')
+      const frameColor = cardUtil.frameColor(this.card)
+      classes.push(`${frameColor}-card`)
 
       return classes
     },
