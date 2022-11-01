@@ -4,6 +4,13 @@ module.exports = {
       symlinks: false
     }
   },
+  css: {
+    loaderOptions: {
+      sass: {
+        data: `@import "@/styles/_variables.scss";`
+      }
+    }
+  },
   devServer: {
     host: 'localhost',
     proxy: {

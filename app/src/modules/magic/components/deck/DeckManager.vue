@@ -11,7 +11,7 @@
       </div>
 
       <div class="col">
-
+        <Card :card="testCard" />
       </div>
 
     </div>
@@ -24,8 +24,10 @@ import axios from 'axios'
 
 // import deckUtil from '../../util/deckUtil.js'
 
+import testCard from './test_card.js'
 import testDeck from './test_deck.js'
 
+import Card from '../Card'
 import CardList from './CardList'
 import DeckList from './DeckList'
 
@@ -33,6 +35,7 @@ export default {
   name: 'DeckManager',
 
   components: {
+    Card,
     CardList,
     DeckList,
   },
@@ -42,6 +45,8 @@ export default {
       actor: this.$store.getters['auth/user'],
       cards: [],
       decks: [testDeck],
+
+      testCard,
     }
   },
 
