@@ -9,7 +9,9 @@
             <div class="frame-header frame-foreground">
               <div class="frame-card-name">{{ card.name }}</div>
 
-              <div class="frame-mana-cost">{{ manaCost }}</div>
+              <div class="frame-mana-cost">
+                <Mana v-for="mana in manaCost" :m="mana" />
+              </div>
             </div>
 
             <img
@@ -54,9 +56,14 @@
 <script>
 import cardUtil from '../util/cardUtil.js'
 
+import Mana from './Mana'
 
 export default {
   name: 'GameCard',
+
+  components: {
+    Mana,
+  },
 
   props: {
     card: {
@@ -96,7 +103,7 @@ export default {
     },
 
     manaCost() {
-      return this.card.mana_cost
+      return cardUtil.manaSymbolsFromString(this.card.mana_cost)
     },
 
     oracleText() {
@@ -252,7 +259,8 @@ $gold: #d9631b;
       border: 1px solid;
       min-height: $unit * 7;
       max-height: $unit * 7;
-      width: $unit * 7;
+      min-width: $unit * 7;
+      max-width: $unit * 7;
     }
     .frame-card-icon.mythic {
       background-color: orange;

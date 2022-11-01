@@ -34,4 +34,51 @@ CardUtil.frameColor = function(card) {
   }
 }
 
+CardUtil.manaSymbolFromString = function(text) {
+  if (text.charAt(0) === '{' && text.charAt(text.length-1) === '}') {
+    text = text.substr(1, text.length-2)
+  }
+
+  if (text == '1/2') {
+    return 'ms-1-2'
+  }
+  else {
+    text = text.replace('/', '').toLowerCase().trim()
+
+    if (text == 't') {
+      return 'tap'
+    }
+    else if (text == 'q') {
+      return 'untap'
+    }
+    else if (text == 'inf') {
+      return 'infinity'
+    }
+    else {
+      if (['uw', 'wg', 'gr', 'rb', 'bu', 'w2', 'u2', 'b2', 'r2', 'g2'].indexOf(text) >= 0) {
+        text = util.string_reverse(text)
+      }
+
+      return text
+    }
+  }
+}
+
+CardUtil.manaSymbolsFromString = function(string) {
+  var curr = ''
+  let symbols = []
+
+  for (var i = 0; i < string.length; i++) {
+    let ch = string.charAt(i)
+    curr += ch
+
+    if (ch == '}') {
+      symbols.push(this.manaSymbolFromString(curr))
+      curr = ''
+    }
+  }
+
+  return symbols
+}
+
 export default CardUtil

@@ -2,7 +2,7 @@
   <div class="container deck-manager">
     <div class="row">
 
-      <div class="col d-none">
+      <div class="col">
         <DeckList :decks="decks" />
       </div>
 
