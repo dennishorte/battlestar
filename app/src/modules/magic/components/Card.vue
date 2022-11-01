@@ -19,7 +19,7 @@
 
             <div class="frame-type-line frame-foreground">
               <div class="frame-card-type">{{ card.type_line }}</div>
-              <div class="frame-card-icon">{{ setIcon }}</div>
+              <div class="frame-card-icon" :class="rarity">{{ setIcon }}</div>
             </div>
 
             <div class="frame-text-box">
@@ -117,6 +117,10 @@ export default {
       else {
         return ''
       }
+    },
+
+    rarity() {
+      return this.card.rarity
     },
   },
 }
