@@ -28,11 +28,13 @@
               </div>
 
               <div class="frame-flavor-wrapper">
-                <p class="frame-flavor-text">{{ flavorText }}</p>
+                <p v-if="flavorText" class="frame-flavor-text">{{ flavorText }}</p>
               </div>
 
               <div class="frame-achievements-wrapper">
-                <p class="frame-achievement-desc"></p>
+                <p v-for="ach of achievements" class="frame-achievement-desc">
+                  {{ ach.text }}
+                </p>
               </div>
             </div>
 
@@ -65,6 +67,10 @@ export default {
   },
 
   computed: {
+    achievements() {
+      return []
+    },
+
     containerClasses() {
       const classes = []
 

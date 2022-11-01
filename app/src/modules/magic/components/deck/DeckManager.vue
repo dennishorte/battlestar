@@ -11,7 +11,7 @@
       </div>
 
       <div class="col">
-        <Card :card="testCard" />
+        <Card :card="highlightedCard" />
       </div>
 
     </div>
@@ -21,6 +21,7 @@
 
 <script>
 import axios from 'axios'
+import mitt from 'mitt'
 
 // import deckUtil from '../../util/deckUtil.js'
 
@@ -43,10 +44,17 @@ export default {
   data() {
     return {
       actor: this.$store.getters['auth/user'],
+      bus: mitt(),
       cards: [],
       decks: [testDeck],
 
-      testCard,
+      highlightedCard: testCard,
+    }
+  },
+
+  provide() {
+    return {
+      bus: this.bus,
     }
   },
 
@@ -63,11 +71,14 @@ export default {
         alert('Error loading game data')
       }
     },
+
+    highlightCard(card) {
+      this.highlightedCard = card
+    },
   },
 
-  async mounted() {
-    // await this.fetchAllDecks()
-    // console.log(deckUtil.deckListToCardNames(testDeck.decklist))
+  mounted() {
+    this.bus.on('highlight-card', this.highlightCard)
   },
 }
 </script>

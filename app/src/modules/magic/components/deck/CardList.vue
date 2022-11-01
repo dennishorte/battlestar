@@ -9,7 +9,7 @@
 
     Card List
 
-    <div v-for="name in cardNames" :key="name" class="game-card">
+    <div v-for="name in cardNames" :key="name" class="game-card" @click="highlightCard(name)">
       {{ name }}
     </div>
   </div>
@@ -25,10 +25,13 @@ import { util } from 'battlestar-common'
 export default {
   name: 'CardList',
 
+  inject: ['bus'],
+
   data() {
     return {
       cards: [],
       db: null,
+      highlight: {},
       error: '',
     }
   },
@@ -40,6 +43,11 @@ export default {
   },
 
   methods: {
+    highlightCard(name) {
+      const card = this.cards.find(c => c.name === name)
+      this.bus.emit('highlight-card', card)
+    },
+
     async loadCardsFromDatabase() {
       console.log('loadCardsFromDatabase')
       const objectStore = this.db.transaction('cards').objectStore('cards')
