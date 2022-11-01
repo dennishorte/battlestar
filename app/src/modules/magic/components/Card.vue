@@ -25,9 +25,7 @@
             </div>
 
             <div class="frame-text-box">
-              <div class="frame-description-wrapper">
-                <p class="frame-description">{{ oracleText }}</p>
-              </div>
+              <OracleText :text="oracleText" />
 
               <div class="frame-flavor-wrapper">
                 <p v-if="flavorText" class="frame-flavor-text">{{ flavorText }}</p>
@@ -57,12 +55,14 @@
 import cardUtil from '../util/cardUtil.js'
 
 import Mana from './Mana'
+import OracleText from './OracleText'
 
 export default {
   name: 'GameCard',
 
   components: {
     Mana,
+    OracleText,
   },
 
   props: {
@@ -134,7 +134,7 @@ export default {
 </script>
 
 
-<style lang="scss" scoped>
+<style lang="scss">
 $artifact-bg: #9facc3;
 $artifact-fg: #dfe0f2;
 $artifact-bdr: #dbd9e8;
@@ -280,7 +280,7 @@ $gold: #d9631b;
       display: flex;
       flex-direction: row;
       font-size: $unit * 5;
-      font-weight: 550;
+      font-weight: 500;
       min-height: $unit * 8;
       justify-content: space-between;
       align-items: center;
@@ -338,6 +338,13 @@ $gold: #d9631b;
       .rule-scar {
         font-weight: 550;
         color: #400;
+      }
+      .rules-line {
+        padding: 0;
+        margin-bottom: $unit * 1.5;
+      }
+      .reminder-text {
+        font-style: italic;
       }
     }
     .frame-flavor-text,

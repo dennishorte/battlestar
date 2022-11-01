@@ -29,3 +29,10 @@ export default {
   },
 }
 </script>
+
+
+<style scoped>
+i {
+  margin-left: 0!important;  /* This seems to fix a weird margin problem with mana font */
+}
+</style>
