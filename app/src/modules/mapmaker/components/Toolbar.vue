@@ -1,66 +1,72 @@
 <template>
-  <div class="offcanvas offcanvas-start bg-dark text-light" id="toolbar">
-    <div class="offcanvas-header">
+  <OffCanvas>
+    <template #header>
       Toolbar
-    </div>
+    </template>
 
-    <div class="offcanvas-body">
-      <div class="tool-button" data-bs-toggle="collapse" data-bs-target="#add-options">add</div>
-      <div class="collapse" id="add-options">
-        <div
-          v-for="(kind, index) in nodeKinds"
-          :key="index"
-          @click="$emit('tool-add', kind)"
-        >
-          {{ kind }}
-        </div>
-      </div>
-
-      <hr />
-
-      <div class="tool-button" @click="$emit('tool-connect')">connect</div>
-      <div class="tool-button" @click="$emit('tool-cut')">cut</div>
-
-      <hr />
-
+    <div class="tool-button" data-bs-toggle="collapse" data-bs-target="#add-options">add</div>
+    <div class="collapse" id="add-options">
       <div
-        class="tool-button"
-        data-bs-toggle="collapse"
-        data-bs-target="#transform-options"
+        v-for="(kind, index) in nodeKinds"
+        :key="index"
+        @click="$emit('tool-add', kind)"
       >
-        transform
+        {{ kind }}
       </div>
-      <div class="collapse" id="transform-options">
-        <div>
-          Scale
-          <input class="form-control" placeholder="x" v-model="scale.x" />
-          <input class="form-control" placeholder="y" v-model="scale.y" />
-        </div>
-
-        <div>
-          Translate
-          <input class="form-control" placeholder="x" v-model="translate.x" />
-          <input class="form-control" placeholder="y" v-model="translate.y" />
-        </div>
-
-        <div>
-          <button class="btn btn-warning" @click="resetTransform">reset</button>
-          <button class="btn btn-primary" @click="applyTransform">apply</button>
-        </div>
-      </div>
-
-      <hr />
-
-      <div class="tool-button" @click="$emit('tool-load')">load</div>
-      <div class="tool-button" @click="$emit('tool-export')">export</div>
     </div>
-  </div>
+
+    <hr />
+
+    <div class="tool-button" @click="$emit('tool-connect')">connect</div>
+    <div class="tool-button" @click="$emit('tool-cut')">cut</div>
+
+    <hr />
+
+    <div
+      class="tool-button"
+      data-bs-toggle="collapse"
+      data-bs-target="#transform-options"
+    >
+      transform
+    </div>
+    <div class="collapse" id="transform-options">
+      <div>
+        Scale
+        <input class="form-control" placeholder="x" v-model="scale.x" />
+        <input class="form-control" placeholder="y" v-model="scale.y" />
+      </div>
+
+      <div>
+        Translate
+        <input class="form-control" placeholder="x" v-model="translate.x" />
+        <input class="form-control" placeholder="y" v-model="translate.y" />
+      </div>
+
+      <div>
+        <button class="btn btn-warning" @click="resetTransform">reset</button>
+        <button class="btn btn-primary" @click="applyTransform">apply</button>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="tool-button" @click="$emit('tool-load')">load</div>
+    <div class="tool-button" @click="$emit('tool-export')">export</div>
+
+  </OffCanvas>
 </template>
 
 
 <script>
+import OffCanvas from '@/components/OffCanvas'
+
+
 export default {
   name: 'Toolbar',
+
+  components: {
+    OffCanvas,
+  },
 
   props: {
     nodeKinds: Array,
