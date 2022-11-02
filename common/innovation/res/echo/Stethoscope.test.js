@@ -56,6 +56,8 @@ describe("Stethoscope", () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Stethoscope')
 
+    t.dumpLog(game)
+
     t.testIsSecondPlayer(request2)
     t.testBoard(game, {
       dennis: {
