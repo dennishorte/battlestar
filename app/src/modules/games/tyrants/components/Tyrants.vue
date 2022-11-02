@@ -2,7 +2,7 @@
   <div class="tyrants">
     <div class="container-fluid">
       <div class="row flex-nowrap main-row">
-        <div class="col game-column history-column">
+        <div class="col history-column">
           <GameMenu>
             <DropdownItem>
               <button @click="openRules">rules</button>
@@ -10,12 +10,12 @@
           </GameMenu>
 
           <GameLog />
+          <ChatInput />
         </div>
 
         <div class="col game-column">
           <Market />
           <WaitingPanel />
-          <ChatInput />
         </div>
 
         <div class="col game-column">
@@ -286,7 +286,8 @@ export default {
   height: calc(100vh - 60px);
   min-width: 220px;
   max-width: 300px;
-  overflow: scroll;
+  overflow-x: wrap;
+  overflow-y: scroll;
 }
 
 .map-column {
@@ -296,6 +297,11 @@ export default {
 }
 
 .history-column {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 60px);
   min-width: 400px;
+  max-width: 400px;
+  overflow: hidden;
 }
 </style>

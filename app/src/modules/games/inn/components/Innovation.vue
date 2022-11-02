@@ -2,7 +2,7 @@
   <div class="innovation">
     <div class="container-fluid">
       <div class="row flex-nowrap main-row">
-        <div class="col game-column history-column">
+        <div class="col history-column">
 
           <GameMenu>
             <DropdownItem>
@@ -11,6 +11,7 @@
           </GameMenu>
 
           <History />
+          <ChatInput />
         </div>
 
         <div class="col game-column">
@@ -18,7 +19,6 @@
           <Decks />
           <Achievements />
           <WaitingPanel />
-          <ChatInput />
         </div>
 
         <div v-for="player in players" :key="player._id" class="col game-column">
@@ -255,7 +255,12 @@ export default {
 }
 
 .history-column {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 60px);
   min-width: 400px;
+  max-width: 400px;
+  overflow: hidden;
 }
 
 .text-base { color: #bba37a; }

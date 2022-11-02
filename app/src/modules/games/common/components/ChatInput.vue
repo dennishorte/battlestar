@@ -26,9 +26,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.chat-input {
-  margin-top: .5em;
-}
-</style>

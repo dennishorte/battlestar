@@ -81,8 +81,6 @@ export default {
   align-content: center;
   flex-direction: column;
 
-  position: sticky;
-  top: 0;
   height: 3em;
   padding: 0 .25em;
   text-align: center;

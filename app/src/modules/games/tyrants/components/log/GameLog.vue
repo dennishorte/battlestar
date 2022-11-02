@@ -1,5 +1,5 @@
 <template>
-  <div class="gamelog">
+  <div class="gamelog" ref="gamelog">
     <div v-for="(line, index) in lines" :key="index" :class="line.classes" class="log-line">
 
       <template v-if="line.isChat">
@@ -17,7 +17,7 @@
       </template>
     </div>
 
-    <div class="bottom-space" ref="bottom"></div>
+    <div class="bottom-space"></div>
   </div>
 </template>
 
@@ -132,7 +132,11 @@ export default {
 
     scrollToBottom() {
       this.$nextTick(() => {
-        this.$refs.bottom.scrollIntoView({ behavior: 'smooth' })
+        const elem = this.$refs.gamelog
+        elem.scrollTo({
+          top: 99999,
+          behavior: 'smooth',
+        })
       })
     },
   },
@@ -146,6 +150,7 @@ export default {
 <style scoped>
 .gamelog {
   font-size: .8rem;
+  overflow-y: scroll;
 }
 
 .bottom-space {

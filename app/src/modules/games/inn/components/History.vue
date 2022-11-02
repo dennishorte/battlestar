@@ -1,5 +1,5 @@
 <template>
-  <div class="history">
+  <div class="history" ref="history">
     <div v-for="(line, index) in lines" :key="index" :class="line.classes" class="log-line">
 
       <template v-if="line.isChat">
@@ -16,7 +16,7 @@
         <CardText :text="line.text" />
       </template>
     </div>
-    <div class="bottom-space" ref="bottom"></div>
+    <div class="bottom-space"></div>
   </div>
 </template>
 
@@ -122,7 +122,11 @@ export default {
 
     scrollToBottom() {
       this.$nextTick(() => {
-        this.$refs.bottom.scrollIntoView({ behavior: 'smooth' })
+        const elem = this.$refs.history
+        elem.scrollTo({
+          top: 99999,
+          behavior: 'smooth',
+        })
       })
     },
   },
@@ -136,6 +140,7 @@ export default {
 <style scoped>
 .history {
   font-size: .8rem;
+  overflow-y: scroll;
 }
 
 .bottom-space {
