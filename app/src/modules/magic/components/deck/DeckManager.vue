@@ -1,6 +1,6 @@
 <template>
-  <div class="container deck-manager">
-    <div class="row">
+  <div class="container-fluid deck-manager">
+    <div class="row flex-nowrap">
 
       <div class="col">
         <DeckList :decks="decks" />
@@ -12,6 +12,7 @@
 
       <div class="col">
         <Card :card="highlightedCard" />
+        <CardMarkup :code="JSON.stringify(highlightedCard, null, 2)" />
       </div>
 
     </div>
@@ -29,6 +30,8 @@ import testCard from './test_card.js'
 import testDeck from './test_deck.js'
 
 import Card from '../Card'
+import CardMarkup from '../CardMarkup'
+
 import CardList from './CardList'
 import DeckList from './DeckList'
 
@@ -38,6 +41,7 @@ export default {
   components: {
     Card,
     CardList,
+    CardMarkup,
     DeckList,
   },
 
