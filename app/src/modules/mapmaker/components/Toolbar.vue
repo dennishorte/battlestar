@@ -1,5 +1,5 @@
 <template>
-  <OffCanvas>
+  <OffCanvas id="toolbar">
     <template #header>
       Toolbar
     </template>

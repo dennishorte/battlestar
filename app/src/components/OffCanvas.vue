@@ -1,8 +1,10 @@
 <template>
-  <div class="offcanvas offcanvas-start bg-dark text-light" id="toolbar">
+  <div class="offcanvas offcanvas-start" :id="id" :class="class">
     <div class="offcanvas-header">
-      <slot name="header"></slot>
-      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+      <h5>
+        <slot name="header"></slot>
+      </h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
     </div>
 
     <div class="offcanvas-body">
@@ -15,5 +17,10 @@
 <script>
 export default {
   name: 'OffCanvas',
+
+  props: {
+    id: String,
+    class: [String, Array],
+  }
 }
 </script>
