@@ -193,10 +193,17 @@ export default {
         }
       }
     },
+
+    setSelectionFromEvent({ optionName, opts }) {
+      if (!opts) {
+        opts = {}
+      }
+      this.setSelection(optionName, opts)
+    },
   },
 
   created() {
-    this.bus.on('user-select-option', this.setSelection)
+    this.bus.on('user-select-option', this.setSelectionFromEvent)
   },
 }
 </script>

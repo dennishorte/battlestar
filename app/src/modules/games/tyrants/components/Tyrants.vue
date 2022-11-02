@@ -192,7 +192,10 @@ export default {
 
   methods: {
     clickLocation(loc) {
-      this.bus.emit('user-select-option', loc.name, { prefix: true })
+      this.bus.emit('user-select-option', {
+        optionName: loc.name,
+        opts: { prefix: true },
+      })
     },
 
     handleSaveResult(result) {
