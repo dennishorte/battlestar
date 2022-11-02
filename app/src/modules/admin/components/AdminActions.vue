@@ -2,7 +2,7 @@
   <div class="admin-actions">
     <h3>Admin Actions</h3>
 
-    <div v-if="status == 'success'" class="alert alert-succes">{{ message }}</div>
+    <div v-if="status == 'success'" class="alert alert-success">{{ message }}</div>
     <div v-if="status == 'waiting'" class="alert alert-warning">{{ message }}</div>
     <div v-if="status == 'error'" class="alert alert-danger">{{ message }}</div>
 

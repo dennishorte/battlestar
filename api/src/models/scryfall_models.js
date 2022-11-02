@@ -2,6 +2,8 @@ const databaseClient = require('../util/mongo.js').client
 const database = databaseClient.db('games')
 const scryfallCollection = database.collection('scryfall')
 
+const util = require('./scryfall_util.js')
+
 
 const Scryfall = {}  // This will be the exported module
 
@@ -15,8 +17,8 @@ Scryfall.fetchAll = async function() {
 }
 
 Scryfall.updateAll = async function() {
-  const cards = await util.getUpdatedCards()
-  insertCardsIntoDatabase(cards)
+  const cards = await util.fetchFromScryfallAndClean()
+  await insertCardsIntoDatabase(cards)
 }
 
 module.exports = Scryfall

@@ -57,7 +57,7 @@ const unwantedScryfallFields = [
   "scryfall_uri",
   "highres_image",
   "image_status",
-  "legalities",
+  // "legalities",
   "games",
   "reserved",
   "foil",
@@ -100,8 +100,6 @@ function cleanScryfallCards(cards) {
 }
 
 async function fetchScryfallDefaultCards(uri) {
-  console.log(uri) // to prevent annoying unused errors
-
   // Load card data from the disk for now.
   const fs = require('fs')
   const path = require('path')
@@ -155,20 +153,6 @@ async function findDuplicateNames(cards) {
   const fields = {}
 
   for (const card of cards) {
-
-    ////////////////////
-    /* if (card.all_parts) {
-     *   console.log(card)
-     *   return
-     * }
-     */
-
-
-    if (card.name === 'Court of Grace') {
-      console.log(card)
-    }
-
-
     ////////////////////
     const key = `${card.name} ${card.set}`
     if (
@@ -199,14 +183,6 @@ async function findDuplicateNames(cards) {
     }
   }
 
-  /* const dups = confused
-   *   .sort()
-   *   .forEach(s => console.log(s)) */
-
-  /* console.log('multifaced: ', multifaced.length)
-   * console.log(multifaced[100]) */
-
-  console.log(fields)
 }
 
 async function fetchFromScryfallAndClean() {
@@ -219,4 +195,8 @@ async function fetchFromScryfallAndClean() {
   return cards
 }
 
-fetchFromScryfallAndClean()
+module.exports = {
+  fetchFromScryfallAndClean
+}
+
+// fetchFromScryfallAndClean()

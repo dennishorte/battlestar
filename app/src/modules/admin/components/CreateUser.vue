@@ -8,7 +8,7 @@
 
   <input class="form-control" v-model="name" placeholder="name" />
   <input class="form-control" v-model="password" placeholder="password" />
-  <input class="form-control" v-model="slace" placeholder="slack" />
+  <input class="form-control" v-model="slack" placeholder="slack" />
 
   <button @click="submit" class="btn btn-primary">create</button>
   <button @click="reset" class="btn btn-warning">reset</button>
