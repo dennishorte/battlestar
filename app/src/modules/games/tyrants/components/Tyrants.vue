@@ -288,6 +288,7 @@ export default {
   max-width: 300px;
   overflow-x: wrap;
   overflow-y: scroll;
+  padding-bottom: 3em;
 }
 
 .map-column {

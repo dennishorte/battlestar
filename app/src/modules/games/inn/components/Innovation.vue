@@ -252,6 +252,7 @@ export default {
   max-width: 400px;
   overflow-x: hidden;
   overflow-y: scroll;
+  padding-bottom: 3em;
 }
 
 .history-column {
