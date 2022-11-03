@@ -101,6 +101,49 @@
       </select>
       <button class="btn btn-secondary" value="legality" @click="add">add</button>
     </div>
+
+    <div class="colors-group">
+      <div class="color-buttons">
+        <div class="form-check form-check-inline">
+          <input class="btn-check" type="checkbox" id="colorwhite" ref="colorwhite" />
+          <label class="btn btn-outline-warning" for="colorwhite">white</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="btn-check" type="checkbox" id="colorblue" ref="colorblue" />
+          <label class="btn btn-outline-primary" for="colorblue">blue</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="btn-check" type="checkbox" id="colorblack" ref="colorblack" />
+          <label class="btn btn-outline-dark" for="colorblack">black</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="btn-check" type="checkbox" id="colorred" ref="colorred" />
+          <label class="btn btn-outline-danger" for="colorred">red</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="btn-check" type="checkbox" id="colorgreen" ref="colorgreen" />
+          <label class="btn btn-outline-success" for="colorgreen">green</label>
+        </div>
+      </div>
+
+      <div class="colors-row-two">
+        <div class="color-options">
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" ref="coloronly" />
+            <label class="form-check-label">only</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" ref="coloror" />
+            <label class="form-check-label">or</label>
+          </div>
+        </div>
+
+        <div>
+          <button class="btn btn-secondary" value="identity" @click="add">ident</button>
+          <button class="btn btn-secondary" value="colors" @click="add">color</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div>
@@ -131,17 +174,45 @@ export default {
   methods: {
     add(event) {
       const kind = event.target.value
-      const value = this.$refs[kind].value
-      const operator = this.$refs[`${kind}op`].value
 
-      this.filters.push({
-        kind,
-        value,
-        operator: operator || '='
-      })
-      console.log(JSON.parse(JSON.stringify(this.filters)))
+      if (kind === 'colors' || kind === 'identity') {
+        // Remove any existing color filter
+        const index = this.filters.findIndex(f => f.kind === kind)
+        if (index >= 0) {
+          this.filters.splice(index, 1)
+        }
 
-      this.$refs[kind].value = ''
+        // Add the new color filter
+        const colors = {}
+        let someTrue = false
+        for (const field of ['white', 'blue', 'black', 'red', 'green', 'only', 'or']) {
+          const elem = this.$refs[`color${field}`]
+          colors[field] = elem.checked
+          elem.checked = false
+          if (colors[field]) {
+            someTrue = true
+          }
+        }
+
+        if (someTrue) {
+          colors.kind = kind
+          this.filters.push(colors)
+        }
+      }
+
+      else {
+        const value = this.$refs[kind].value
+        const operator = this.$refs[`${kind}op`].value
+
+        this.filters.push({
+          kind,
+          value,
+          operator: operator || '='
+        })
+        console.log(JSON.parse(JSON.stringify(this.filters)))
+
+        this.$refs[kind].value = ''
+      }
     },
 
     apply() {
@@ -155,6 +226,45 @@ export default {
 <style scoped>
 label {
   min-width: 4em;
+}
+
+/* .colors-group {
+   display: flex;
+   flex-direction: column;
+   }
+ */
+
+.color-buttons .form-check {
+  margin: 0;
+  padding: 0;
+  width: 20%;
+}
+
+.color-buttons .form-check .btn {
+  width: 100%;
+}
+
+.colors-row-two {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.color-options .form-check {
+  margin: 0;
+  padding: 0;
+}
+
+.color-options .form-check input {
+  margin-left: 0;
+  height: 1.5em;
+  width: 1.5em;
+}
+
+.color-options .form-check label {
+  margin-top: .25em;
+  margin-left: .25em;
+  min-width: 3em;
 }
 
 .filter-group {

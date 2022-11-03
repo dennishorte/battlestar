@@ -33,6 +33,15 @@ const fieldMapping = {
   power: 'power',
   toughness: 'toughness',
   loyalty: 'loyalty',
+  colors: 'colors',
+  identity: 'color_identity',
+}
+const colorNameToSymbol = {
+  white: 'W',
+  blue: 'U',
+  black: 'B',
+  red: 'R',
+  green: 'G',
 }
 
 export default {
@@ -68,6 +77,37 @@ export default {
         .filter(card => filters.every(filter => {
           if (filter.kind === 'legality' && 'legalities' in card) {
             return card.legalities[filter.value] === 'legal'
+          }
+          else if (filter.kind === 'colors' || filter.kind === 'identity') {
+            const fieldKey = fieldMapping[filter.kind]
+            const fieldValue = fieldKey in card ? card[fieldKey] : []
+            const targetValueMatches = ['white', 'blue', 'black', 'red', 'green']
+              .map(color => filter[color] ? colorNameToSymbol[color] : undefined)
+              .filter(symbol => symbol !== undefined)
+              .map(symbol => fieldValue.includes(symbol))
+
+            if (filter.or) {
+              if (filter.only) {
+                return (
+                  targetValueMatches.some(x => x)
+                  && fieldValue.length === targetValueMatches.filter(x => x).length
+                )
+              }
+              else {
+                return targetValueMatches.some(x => x)
+              }
+            }
+            else {  // and
+              if (filter.only) {
+                return (
+                  targetValueMatches.every(x => x)
+                  && fieldValue.length === targetValueMatches.length
+                )
+              }
+              else {
+                return targetValueMatches.every(x => x)
+              }
+            }
           }
           else if (textFields.includes(filter.kind)) {
             const fieldKey = fieldMapping[filter.kind]
