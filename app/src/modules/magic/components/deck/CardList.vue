@@ -30,6 +30,8 @@ export default {
   data() {
     return {
       cards: [],
+      cardsFiltered: [],
+
       db: null,
       highlight: {},
       error: '',
@@ -38,11 +40,30 @@ export default {
 
   computed: {
     cardNames() {
-      return util.array.distinct(this.cards.map(c => c.name)).sort()
+      return util.array.distinct(this.cardsFiltered.map(c => c.name)).sort()
     },
   },
 
   methods: {
+    applyFilters(filters) {
+      if (filters.length === 0) {
+        this.filteredCards = this.cards
+      }
+
+      this.cardsFiltered = this
+        .cards
+        .filter(card => {
+          for (const filter of filters) {
+            if (filter.kind === 'legality') {
+              return 'legalities' in card && card.legalities[filter.value] === 'legal'
+            }
+            else {
+              return false
+            }
+          }
+        })
+    },
+
     highlightCard(name) {
       const card = this.cards.find(c => c.name === name)
       this.bus.emit('highlight-card', card)
@@ -60,6 +81,7 @@ export default {
         if (cursor) {
           console.log('Cursor iteration')
           this.cards = cursor.value.json_data
+          this.cardsFiltered = this.cards
           cursor.continue()
         }
         else {
@@ -141,7 +163,11 @@ export default {
   created() {
     this.openLocalStorage()
   },
-}
+
+  mounted() {
+    this.bus.on('card-filter', this.applyFilters)
+            },
+          }
 </script>
 
 

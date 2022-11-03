@@ -1,0 +1,130 @@
+<template>
+  <div class="filter-inputs">
+    <div>
+      <label class="col-3 col-form-label">name</label>
+      <div class="row">
+        <div class="col-3">
+          <select class="form-control">
+            <option>and</option>
+            <option>not</option>
+          </select>
+        </div>
+        <div class="col">
+          <input class="form-control" name="name" />
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <label class="form-label">text</label>
+      <input class="form-control" name="text" />
+    </div>
+
+    <div>
+      <label class="form-label">type</label>
+      <input class="form-control" name="type" />
+    </div>
+
+    <div>
+      <label class="form-label">power</label>
+      <input class="form-control" name="power" />
+    </div>
+
+    <div>
+      <label class="form-label">toughness</label>
+      <input class="form-control" name="toughness" />
+    </div>
+
+    <div>
+      <label class="form-label">flavor</label>
+      <input class="form-control" name="flavor" />
+    </div>
+
+    <div class="filter-group">
+      <label class="col-form-label">legality</label>
+      <select class="form-select" ref="legality">
+        <option value="commander">commander</option>
+        <option value="modern">modern</option>
+        <option value="standard">standard</option>
+        <option value="---">---</option>
+
+        <option value="alchemy">alchemy</option>
+        <option value="brawl">brawl</option>
+        <option value="duel">duel</option>
+        <option value="explorer">explorer</option>
+        <option value="future">future</option>
+        <option value="gladiator">gladiator</option>
+        <option value="historic">historic</option>
+        <option value="historicbrawl">historicbrawl</option>
+        <option value="legacy">legacy</option>
+        <option value="oldschool">oldschool</option>
+        <option value="pauper">pauper</option>
+        <option value="paupercommander">paupercommander</option>
+        <option value="penny">penny</option>
+        <option value="pioneer">pioneer</option>
+        <option value="premodern">premodern</option>
+        <option value="vintage">vintage</option>
+      </select>
+      <button class="btn btn-secondary" value="legality" @click="add">add</button>
+    </div>
+  </div>
+
+  <div>
+    <button class="btn btn-primary" @click="apply()">apply</button>
+  </div>
+
+  <div class="filter-list">
+    <h5>filters</h5>
+    <div class="filter-added" v-for="filter in filters">
+      {{ filter.kind }} {{ filter.operator }} {{ filter.value }}
+    </div>
+  </div>
+</template>
+
+
+<script>
+export default {
+  name: 'CardFilters',
+
+  inject: ['bus'],
+
+  data() {
+    return {
+      filters: [],
+    }
+  },
+
+  methods: {
+    add(event) {
+      const kind = event.target.value
+      const value = this.$refs[kind].value
+      console.log(value)
+      this.filters.push({
+        kind,
+        value,
+        operator: '='
+      })
+    },
+
+    apply() {
+      this.bus.emit('card-filter', [...this.filters])
+    },
+  },
+}
+</script>
+
+
+<style scoped>
+.filter-group {
+  display: flex;
+  flex-direction: row;
+}
+
+.filter-group label {
+  margin-right: .25em;
+}
+
+.filter-group .btn {
+  margin-left: .25em;
+}
+</style>

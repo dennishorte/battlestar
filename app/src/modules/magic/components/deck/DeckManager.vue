@@ -4,6 +4,7 @@
 
       <div class="col">
         <DeckList :decks="decks" />
+        <CardFilters />
       </div>
 
       <div class="col">
@@ -32,6 +33,7 @@ import testDeck from './test_deck.js'
 import Card from '../Card'
 import CardMarkup from '../CardMarkup'
 
+import CardFilters from './CardFilters'
 import CardList from './CardList'
 import DeckList from './DeckList'
 
@@ -40,6 +42,7 @@ export default {
 
   components: {
     Card,
+    CardFilters,
     CardList,
     CardMarkup,
     DeckList,
