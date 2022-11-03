@@ -2,7 +2,7 @@
   <Modal id="upload-modal" @ok="maybeLoad">
     <template #header>Load from file</template>
 
-    <input class="form-control" type="file" id="formFile">
+    <input class="form-control" type="file" id="formFile" ref="fileinput">
   </Modal>
 </template>
 
@@ -18,22 +18,11 @@ export default {
     Modal,
   },
 
-  data() {
-    return {
-      file: null,
-    }
-  },
-
   methods: {
     maybeLoad() {
-      if (this.file) {
-        const reader = new FileReader()
-        reader.onload = (e) => this.$emit('file-ready', e.target.result)
-        reader.readAsText(this.file)
-      }
-      else {
-        console.log('no file uploaded')
-      }
+      const reader = new FileReader()
+      reader.onload = (e) => this.$emit('file-ready', e.target.result)
+      reader.readAsText(this.$refs.fileinput.files[0])
     },
   },
 }

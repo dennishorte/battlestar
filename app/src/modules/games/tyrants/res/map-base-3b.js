@@ -566,6 +566,200 @@ module.exports = {
           "left": "309px",
           "top": "464px"
         }
+      },
+      {
+        "id": "node147",
+        "name": "Ss'zuraass'nee",
+        "classes": [
+          "element",
+          "primary"
+        ],
+        "style": {
+          "left": "464px",
+          "top": "623px"
+        }
+      },
+      {
+        "id": "node148",
+        "name": "The Phaerlin",
+        "classes": [
+          "element",
+          "primary"
+        ],
+        "style": {
+          "left": "474px",
+          "top": "118px"
+        }
+      },
+      {
+        "id": "node149",
+        "name": "Ruins of Dekanter",
+        "classes": [
+          "element",
+          "secondary"
+        ],
+        "style": {
+          "left": "496px",
+          "top": "463px",
+          "height": "73px"
+        }
+      },
+      {
+        "id": "node150",
+        "name": "Yathchol",
+        "classes": [
+          "element",
+          "secondary"
+        ],
+        "style": {
+          "left": "457px",
+          "top": "306px"
+        }
+      },
+      {
+        "id": "node151",
+        "name": "Chaulssin",
+        "classes": [
+          "element",
+          "secondary"
+        ],
+        "style": {
+          "left": "377px",
+          "top": "35px",
+          "width": "100px"
+        }
+      },
+      {
+        "id": "node162",
+        "name": "halls-yath",
+        "classes": [
+          "element",
+          "tertiary"
+        ],
+        "style": {
+          "left": "407px",
+          "top": "338px"
+        }
+      },
+      {
+        "id": "node163",
+        "name": "phaer-yath",
+        "classes": [
+          "element",
+          "tertiary"
+        ],
+        "style": {
+          "left": "470px",
+          "top": "245px"
+        }
+      },
+      {
+        "id": "node164",
+        "name": "phaer-ruins a",
+        "classes": [
+          "element",
+          "tertiary"
+        ],
+        "style": {
+          "left": "526px",
+          "top": "383px"
+        }
+      },
+      {
+        "id": "node165",
+        "name": "phaer-ruins b",
+        "classes": [
+          "element",
+          "tertiary"
+        ],
+        "style": {
+          "left": "558px",
+          "top": "267px"
+        }
+      },
+      {
+        "id": "node166",
+        "name": "chaul-ever",
+        "classes": [
+          "element",
+          "tertiary"
+        ],
+        "style": {
+          "left": "428px",
+          "top": "119px"
+        }
+      },
+      {
+        "id": "node167",
+        "name": "chaul-phaer",
+        "classes": [
+          "element",
+          "tertiary"
+        ],
+        "style": {
+          "left": "490px",
+          "top": "75px"
+        }
+      },
+      {
+        "id": "node168",
+        "name": "llace-ss'zur b",
+        "classes": [
+          "element",
+          "tertiary"
+        ],
+        "style": {
+          "left": "421px",
+          "top": "655px"
+        }
+      },
+      {
+        "id": "node169",
+        "name": "llace-ss'zur a",
+        "classes": [
+          "element",
+          "tertiary"
+        ],
+        "style": {
+          "left": "384px",
+          "top": "700px"
+        }
+      },
+      {
+        "id": "node170",
+        "name": "ruins-ss'zur",
+        "classes": [
+          "element",
+          "tertiary"
+        ],
+        "style": {
+          "left": "514px",
+          "top": "565px"
+        }
+      },
+      {
+        "id": "node171",
+        "name": "ched-yath",
+        "classes": [
+          "element",
+          "tertiary"
+        ],
+        "style": {
+          "left": "428px",
+          "top": "390px"
+        }
+      },
+      {
+        "id": "node174",
+        "name": "ched-ruins",
+        "classes": [
+          "element",
+          "tertiary"
+        ],
+        "style": {
+          "left": "441px",
+          "top": "515px"
+        }
       }
     ],
     "curves": [
@@ -582,7 +776,7 @@ module.exports = {
           },
           "target": {
             "x": 112,
-            "y": 112
+            "y": 113
           },
           "sourceHandle": {
             "x": 142,
@@ -591,7 +785,7 @@ module.exports = {
           },
           "targetHandle": {
             "x": 123,
-            "y": 107,
+            "y": 108,
             "moveable": true
           }
         }
@@ -605,20 +799,20 @@ module.exports = {
         "points": {
           "source": {
             "x": 112,
-            "y": 112
+            "y": 113
           },
           "target": {
-            "x": 93,
-            "y": 179
+            "x": 87,
+            "y": 178
           },
           "sourceHandle": {
             "x": 103,
-            "y": 126,
+            "y": 127,
             "moveable": true
           },
           "targetHandle": {
-            "x": 58,
-            "y": 151,
+            "x": 52,
+            "y": 150,
             "moveable": true
           }
         }
@@ -631,16 +825,16 @@ module.exports = {
         },
         "points": {
           "source": {
-            "x": 93,
-            "y": 179
+            "x": 87,
+            "y": 178
           },
           "target": {
             "x": 71,
             "y": 245
           },
           "sourceHandle": {
-            "x": 51,
-            "y": 206,
+            "x": 45,
+            "y": 205,
             "moveable": true
           },
           "targetHandle": {
@@ -690,7 +884,7 @@ module.exports = {
           },
           "target": {
             "x": 59,
-            "y": 380
+            "y": 382
           },
           "sourceHandle": {
             "x": 51,
@@ -699,7 +893,7 @@ module.exports = {
           },
           "targetHandle": {
             "x": 82,
-            "y": 340,
+            "y": 342,
             "moveable": true
           }
         }
@@ -713,7 +907,7 @@ module.exports = {
         "points": {
           "source": {
             "x": 59,
-            "y": 380
+            "y": 382
           },
           "target": {
             "x": 65,
@@ -721,7 +915,7 @@ module.exports = {
           },
           "sourceHandle": {
             "x": 43,
-            "y": 406,
+            "y": 408,
             "moveable": true
           },
           "targetHandle": {
@@ -740,20 +934,20 @@ module.exports = {
         "points": {
           "source": {
             "x": 76,
-            "y": 540
+            "y": 539
           },
           "target": {
-            "x": 64,
-            "y": 601
+            "x": 58,
+            "y": 600
           },
           "sourceHandle": {
             "x": 109,
-            "y": 555,
+            "y": 554,
             "moveable": true
           },
           "targetHandle": {
-            "x": 86,
-            "y": 610,
+            "x": 80,
+            "y": 609,
             "moveable": true
           }
         }
@@ -766,16 +960,16 @@ module.exports = {
         },
         "points": {
           "source": {
-            "x": 64,
-            "y": 601
+            "x": 58,
+            "y": 600
           },
           "target": {
             "x": 57,
             "y": 667
           },
           "sourceHandle": {
-            "x": 44,
-            "y": 597,
+            "x": 38,
+            "y": 596,
             "moveable": true
           },
           "targetHandle": {
@@ -798,7 +992,7 @@ module.exports = {
           },
           "target": {
             "x": 73,
-            "y": 731
+            "y": 732
           },
           "sourceHandle": {
             "x": 78,
@@ -807,7 +1001,7 @@ module.exports = {
           },
           "targetHandle": {
             "x": 43,
-            "y": 723,
+            "y": 724,
             "moveable": true
           }
         }
@@ -821,20 +1015,20 @@ module.exports = {
         "points": {
           "source": {
             "x": 73,
-            "y": 731
+            "y": 732
           },
           "target": {
             "x": 139,
-            "y": 765
+            "y": 766
           },
           "sourceHandle": {
             "x": 109,
-            "y": 775,
+            "y": 776,
             "moveable": true
           },
           "targetHandle": {
             "x": 114,
-            "y": 767,
+            "y": 768,
             "moveable": true
           }
         }
@@ -848,20 +1042,20 @@ module.exports = {
         "points": {
           "source": {
             "x": 139,
-            "y": 765
+            "y": 766
           },
           "target": {
             "x": 173,
-            "y": 728
+            "y": 729
           },
           "sourceHandle": {
             "x": 146,
-            "y": 763,
+            "y": 764,
             "moveable": true
           },
           "targetHandle": {
             "x": 167,
-            "y": 759,
+            "y": 760,
             "moveable": true
           }
         }
@@ -875,7 +1069,7 @@ module.exports = {
         "points": {
           "source": {
             "x": 173,
-            "y": 728
+            "y": 729
           },
           "target": {
             "x": 254,
@@ -883,7 +1077,7 @@ module.exports = {
           },
           "sourceHandle": {
             "x": 200,
-            "y": 683,
+            "y": 684,
             "moveable": true
           },
           "targetHandle": {
@@ -906,7 +1100,7 @@ module.exports = {
           },
           "target": {
             "x": 330,
-            "y": 692
+            "y": 691
           },
           "sourceHandle": {
             "x": 274,
@@ -915,7 +1109,7 @@ module.exports = {
           },
           "targetHandle": {
             "x": 319,
-            "y": 743,
+            "y": 742,
             "moveable": true
           }
         }
@@ -929,20 +1123,20 @@ module.exports = {
         "points": {
           "source": {
             "x": 330,
-            "y": 692
+            "y": 691
           },
           "target": {
             "x": 363,
-            "y": 631
+            "y": 632
           },
           "sourceHandle": {
             "x": 337,
-            "y": 654,
+            "y": 653,
             "moveable": true
           },
           "targetHandle": {
             "x": 361,
-            "y": 632,
+            "y": 633,
             "moveable": true
           }
         }
@@ -960,7 +1154,7 @@ module.exports = {
           },
           "target": {
             "x": 73,
-            "y": 731
+            "y": 732
           },
           "sourceHandle": {
             "x": 106,
@@ -969,7 +1163,7 @@ module.exports = {
           },
           "targetHandle": {
             "x": 85,
-            "y": 709,
+            "y": 710,
             "moveable": true
           }
         }
@@ -987,7 +1181,7 @@ module.exports = {
           },
           "target": {
             "x": 131,
-            "y": 614
+            "y": 615
           },
           "sourceHandle": {
             "x": 105,
@@ -996,7 +1190,7 @@ module.exports = {
           },
           "targetHandle": {
             "x": 134,
-            "y": 609,
+            "y": 610,
             "moveable": true
           }
         }
@@ -1010,20 +1204,20 @@ module.exports = {
         "points": {
           "source": {
             "x": 131,
-            "y": 614
+            "y": 615
           },
           "target": {
             "x": 211,
-            "y": 600
+            "y": 599
           },
           "sourceHandle": {
             "x": 145,
-            "y": 589,
+            "y": 590,
             "moveable": true
           },
           "targetHandle": {
             "x": 185,
-            "y": 589,
+            "y": 588,
             "moveable": true
           }
         }
@@ -1037,20 +1231,20 @@ module.exports = {
         "points": {
           "source": {
             "x": 211,
-            "y": 600
+            "y": 599
           },
           "target": {
             "x": 222,
-            "y": 540
+            "y": 539
           },
           "sourceHandle": {
             "x": 174,
-            "y": 610,
+            "y": 609,
             "moveable": true
           },
           "targetHandle": {
             "x": 190,
-            "y": 537,
+            "y": 536,
             "moveable": true
           }
         }
@@ -1064,20 +1258,20 @@ module.exports = {
         "points": {
           "source": {
             "x": 222,
-            "y": 540
+            "y": 539
           },
           "target": {
             "x": 244,
-            "y": 452
+            "y": 451
           },
           "sourceHandle": {
             "x": 252,
-            "y": 536,
+            "y": 535,
             "moveable": true
           },
           "targetHandle": {
             "x": 270,
-            "y": 517,
+            "y": 516,
             "moveable": true
           }
         }
@@ -1149,7 +1343,7 @@ module.exports = {
           },
           "target": {
             "x": 244,
-            "y": 452
+            "y": 451
           },
           "sourceHandle": {
             "x": 187,
@@ -1158,7 +1352,7 @@ module.exports = {
           },
           "targetHandle": {
             "x": 217,
-            "y": 436,
+            "y": 435,
             "moveable": true
           }
         }
@@ -1172,20 +1366,20 @@ module.exports = {
         "points": {
           "source": {
             "x": 244,
-            "y": 452
+            "y": 451
           },
           "target": {
             "x": 321,
-            "y": 476
+            "y": 477
           },
           "sourceHandle": {
             "x": 270,
-            "y": 475,
+            "y": 474,
             "moveable": true
           },
           "targetHandle": {
             "x": 288,
-            "y": 498,
+            "y": 499,
             "moveable": true
           }
         }
@@ -1199,7 +1393,7 @@ module.exports = {
         "points": {
           "source": {
             "x": 321,
-            "y": 476
+            "y": 477
           },
           "target": {
             "x": 391,
@@ -1207,7 +1401,7 @@ module.exports = {
           },
           "sourceHandle": {
             "x": 349,
-            "y": 445,
+            "y": 446,
             "moveable": true
           },
           "targetHandle": {
@@ -1226,7 +1420,7 @@ module.exports = {
         "points": {
           "source": {
             "x": 211,
-            "y": 600
+            "y": 599
           },
           "target": {
             "x": 290,
@@ -1234,7 +1428,7 @@ module.exports = {
           },
           "sourceHandle": {
             "x": 220,
-            "y": 633,
+            "y": 632,
             "moveable": true
           },
           "targetHandle": {
@@ -1257,7 +1451,7 @@ module.exports = {
           },
           "target": {
             "x": 363,
-            "y": 631
+            "y": 632
           },
           "sourceHandle": {
             "x": 336,
@@ -1266,7 +1460,7 @@ module.exports = {
           },
           "targetHandle": {
             "x": 365,
-            "y": 604,
+            "y": 605,
             "moveable": true
           }
         }
@@ -1280,7 +1474,7 @@ module.exports = {
         "points": {
           "source": {
             "x": 363,
-            "y": 631
+            "y": 632
           },
           "target": {
             "x": 336,
@@ -1288,7 +1482,7 @@ module.exports = {
           },
           "sourceHandle": {
             "x": 370,
-            "y": 648,
+            "y": 649,
             "moveable": true
           },
           "targetHandle": {
@@ -1365,7 +1559,7 @@ module.exports = {
           },
           "target": {
             "x": 244,
-            "y": 452
+            "y": 451
           },
           "sourceHandle": {
             "x": 252,
@@ -1374,7 +1568,7 @@ module.exports = {
           },
           "targetHandle": {
             "x": 303,
-            "y": 379,
+            "y": 378,
             "moveable": true
           }
         }
@@ -1388,7 +1582,7 @@ module.exports = {
         "points": {
           "source": {
             "x": 261,
-            "y": 306
+            "y": 304
           },
           "target": {
             "x": 261,
@@ -1396,7 +1590,7 @@ module.exports = {
           },
           "sourceHandle": {
             "x": 233,
-            "y": 326,
+            "y": 324,
             "moveable": true
           },
           "targetHandle": {
@@ -1419,7 +1613,7 @@ module.exports = {
           },
           "target": {
             "x": 135,
-            "y": 297
+            "y": 298
           },
           "sourceHandle": {
             "x": 84,
@@ -1428,7 +1622,7 @@ module.exports = {
           },
           "targetHandle": {
             "x": 94,
-            "y": 291,
+            "y": 292,
             "moveable": true
           }
         }
@@ -1442,7 +1636,7 @@ module.exports = {
         "points": {
           "source": {
             "x": 135,
-            "y": 297
+            "y": 298
           },
           "target": {
             "x": 184,
@@ -1450,7 +1644,7 @@ module.exports = {
           },
           "sourceHandle": {
             "x": 144,
-            "y": 301,
+            "y": 302,
             "moveable": true
           },
           "targetHandle": {
@@ -1473,7 +1667,7 @@ module.exports = {
           },
           "target": {
             "x": 261,
-            "y": 306
+            "y": 304
           },
           "sourceHandle": {
             "x": 232,
@@ -1482,7 +1676,7 @@ module.exports = {
           },
           "targetHandle": {
             "x": 225,
-            "y": 269,
+            "y": 267,
             "moveable": true
           }
         }
@@ -1495,16 +1689,16 @@ module.exports = {
         },
         "points": {
           "source": {
-            "x": 93,
-            "y": 179
+            "x": 87,
+            "y": 178
           },
           "target": {
             "x": 171,
             "y": 239
           },
           "sourceHandle": {
-            "x": 108,
-            "y": 219,
+            "x": 102,
+            "y": 218,
             "moveable": true
           },
           "targetHandle": {
@@ -1554,7 +1748,7 @@ module.exports = {
           },
           "target": {
             "x": 166,
-            "y": 126
+            "y": 127
           },
           "sourceHandle": {
             "x": 181,
@@ -1563,7 +1757,7 @@ module.exports = {
           },
           "targetHandle": {
             "x": 154,
-            "y": 162,
+            "y": 163,
             "moveable": true
           }
         }
@@ -1577,7 +1771,7 @@ module.exports = {
         "points": {
           "source": {
             "x": 166,
-            "y": 126
+            "y": 127
           },
           "target": {
             "x": 230,
@@ -1585,7 +1779,7 @@ module.exports = {
           },
           "sourceHandle": {
             "x": 175,
-            "y": 86,
+            "y": 87,
             "moveable": true
           },
           "targetHandle": {
@@ -1662,7 +1856,7 @@ module.exports = {
           },
           "target": {
             "x": 261,
-            "y": 306
+            "y": 304
           },
           "sourceHandle": {
             "x": 246,
@@ -1671,7 +1865,7 @@ module.exports = {
           },
           "targetHandle": {
             "x": 269,
-            "y": 285,
+            "y": 283,
             "moveable": true
           }
         }
@@ -1685,20 +1879,20 @@ module.exports = {
         "points": {
           "source": {
             "x": 261,
-            "y": 306
+            "y": 304
           },
           "target": {
             "x": 313,
-            "y": 237
+            "y": 238
           },
           "sourceHandle": {
             "x": 270,
-            "y": 306,
+            "y": 304,
             "moveable": true
           },
           "targetHandle": {
             "x": 320,
-            "y": 292,
+            "y": 293,
             "moveable": true
           }
         }
@@ -1712,7 +1906,7 @@ module.exports = {
         "points": {
           "source": {
             "x": 313,
-            "y": 237
+            "y": 238
           },
           "target": {
             "x": 374,
@@ -1720,7 +1914,7 @@ module.exports = {
           },
           "sourceHandle": {
             "x": 301,
-            "y": 150,
+            "y": 151,
             "moveable": true
           },
           "targetHandle": {
@@ -1824,7 +2018,7 @@ module.exports = {
           },
           "target": {
             "x": 376,
-            "y": 234
+            "y": 235
           },
           "sourceHandle": {
             "x": 364,
@@ -1833,7 +2027,7 @@ module.exports = {
           },
           "targetHandle": {
             "x": 408,
-            "y": 281,
+            "y": 282,
             "moveable": true
           }
         }
@@ -1847,7 +2041,7 @@ module.exports = {
         "points": {
           "source": {
             "x": 376,
-            "y": 234
+            "y": 235
           },
           "target": {
             "x": 374,
@@ -1855,7 +2049,7 @@ module.exports = {
           },
           "sourceHandle": {
             "x": 347,
-            "y": 204,
+            "y": 205,
             "moveable": true
           },
           "targetHandle": {
@@ -1905,7 +2099,7 @@ module.exports = {
           },
           "target": {
             "x": 76,
-            "y": 540
+            "y": 539
           },
           "sourceHandle": {
             "x": 22,
@@ -1914,7 +2108,7 @@ module.exports = {
           },
           "targetHandle": {
             "x": 43,
-            "y": 530,
+            "y": 529,
             "moveable": true
           }
         }
@@ -1942,6 +2136,330 @@ module.exports = {
           "targetHandle": {
             "x": 397,
             "y": 128,
+            "moveable": true
+          }
+        }
+      },
+      {
+        "id": "curve153",
+        "ids": {
+          "source": "node151",
+          "target": "node148"
+        },
+        "points": {
+          "source": {
+            "x": 437,
+            "y": 61
+          },
+          "target": {
+            "x": 524,
+            "y": 170
+          },
+          "sourceHandle": {
+            "x": 458,
+            "y": 50,
+            "moveable": true
+          },
+          "targetHandle": {
+            "x": 533,
+            "y": 77,
+            "moveable": true
+          }
+        }
+      },
+      {
+        "id": "curve154",
+        "ids": {
+          "source": "node149",
+          "target": "node148"
+        },
+        "points": {
+          "source": {
+            "x": 536,
+            "y": 509
+          },
+          "target": {
+            "x": 524,
+            "y": 170
+          },
+          "sourceHandle": {
+            "x": 505,
+            "y": 346,
+            "moveable": true
+          },
+          "targetHandle": {
+            "x": 639,
+            "y": 277,
+            "moveable": true
+          }
+        }
+      },
+      {
+        "id": "curve155",
+        "ids": {
+          "source": "node151",
+          "target": "node109"
+        },
+        "points": {
+          "source": {
+            "x": 437,
+            "y": 61
+          },
+          "target": {
+            "x": 374,
+            "y": 171
+          },
+          "sourceHandle": {
+            "x": 455,
+            "y": 117,
+            "moveable": true
+          },
+          "targetHandle": {
+            "x": 448,
+            "y": 165,
+            "moveable": true
+          }
+        }
+      },
+      {
+        "id": "curve157",
+        "ids": {
+          "source": "node110",
+          "target": "node150"
+        },
+        "points": {
+          "source": {
+            "x": 382,
+            "y": 296
+          },
+          "target": {
+            "x": 497,
+            "y": 332
+          },
+          "sourceHandle": {
+            "x": 394,
+            "y": 349,
+            "moveable": true
+          },
+          "targetHandle": {
+            "x": 416,
+            "y": 373,
+            "moveable": true
+          }
+        }
+      },
+      {
+        "id": "curve158",
+        "ids": {
+          "source": "node150",
+          "target": "node112"
+        },
+        "points": {
+          "source": {
+            "x": 497,
+            "y": 332
+          },
+          "target": {
+            "x": 391,
+            "y": 471
+          },
+          "sourceHandle": {
+            "x": 469,
+            "y": 432,
+            "moveable": true
+          },
+          "targetHandle": {
+            "x": 419,
+            "y": 371,
+            "moveable": true
+          }
+        }
+      },
+      {
+        "id": "curve159",
+        "ids": {
+          "source": "node112",
+          "target": "node149"
+        },
+        "points": {
+          "source": {
+            "x": 391,
+            "y": 471
+          },
+          "target": {
+            "x": 536,
+            "y": 509
+          },
+          "sourceHandle": {
+            "x": 425,
+            "y": 528,
+            "moveable": true
+          },
+          "targetHandle": {
+            "x": 460,
+            "y": 544,
+            "moveable": true
+          }
+        }
+      },
+      {
+        "id": "curve160",
+        "ids": {
+          "source": "node147",
+          "target": "node149"
+        },
+        "points": {
+          "source": {
+            "x": 514,
+            "y": 675
+          },
+          "target": {
+            "x": 536,
+            "y": 509
+          },
+          "sourceHandle": {
+            "x": 472,
+            "y": 561,
+            "moveable": true
+          },
+          "targetHandle": {
+            "x": 593,
+            "y": 569,
+            "moveable": true
+          }
+        }
+      },
+      {
+        "id": "curve172",
+        "ids": {
+          "source": "node150",
+          "target": "node163"
+        },
+        "points": {
+          "source": {
+            "x": 497,
+            "y": 332
+          },
+          "target": {
+            "x": 482,
+            "y": 258
+          },
+          "sourceHandle": {
+            "x": 464,
+            "y": 319,
+            "moveable": true
+          },
+          "targetHandle": {
+            "x": 453,
+            "y": 285,
+            "moveable": true
+          }
+        }
+      },
+      {
+        "id": "curve173",
+        "ids": {
+          "source": "node148",
+          "target": "node163"
+        },
+        "points": {
+          "source": {
+            "x": 524,
+            "y": 170
+          },
+          "target": {
+            "x": 482,
+            "y": 258
+          },
+          "sourceHandle": {
+            "x": 518,
+            "y": 182,
+            "moveable": true
+          },
+          "targetHandle": {
+            "x": 532,
+            "y": 228,
+            "moveable": true
+          }
+        }
+      },
+      {
+        "id": "curve175",
+        "ids": {
+          "source": "node113",
+          "target": "node169"
+        },
+        "points": {
+          "source": {
+            "x": 363,
+            "y": 632
+          },
+          "target": {
+            "x": 396,
+            "y": 713
+          },
+          "sourceHandle": {
+            "x": 413,
+            "y": 628,
+            "moveable": true
+          },
+          "targetHandle": {
+            "x": 335,
+            "y": 676,
+            "moveable": true
+          }
+        }
+      },
+      {
+        "id": "curve176",
+        "ids": {
+          "source": "node169",
+          "target": "node168"
+        },
+        "points": {
+          "source": {
+            "x": 396,
+            "y": 713
+          },
+          "target": {
+            "x": 433,
+            "y": 668
+          },
+          "sourceHandle": {
+            "x": 436,
+            "y": 716,
+            "moveable": true
+          },
+          "targetHandle": {
+            "x": 442,
+            "y": 694,
+            "moveable": true
+          }
+        }
+      },
+      {
+        "id": "curve177",
+        "ids": {
+          "source": "node168",
+          "target": "node147"
+        },
+        "points": {
+          "source": {
+            "x": 433,
+            "y": 668
+          },
+          "target": {
+            "x": 514,
+            "y": 675
+          },
+          "sourceHandle": {
+            "x": 443,
+            "y": 603,
+            "moveable": true
+          },
+          "targetHandle": {
+            "x": 509,
+            "y": 651,
             "moveable": true
           }
         }
@@ -1978,7 +2496,7 @@ module.exports = {
       ".map": {
         "position": "relative",
         "height": "800px",
-        "width": "450px",
+        "width": "600px",
         "background-color": "#ddd",
         "background-size": "cover",
         "background-position": "center"

@@ -61,7 +61,7 @@ export default {
         {
           text: 'base-3a',
           value: 'base-3a',
-          disabled: false,
+          disabled: true,
           minPlayers: 3,
           maxPlayers: 3,
         },
@@ -75,7 +75,7 @@ export default {
         {
           text: 'base-4',
           value: 'base-4',
-          disabled: false,
+          disabled: true,
           minPlayers: 4,
           maxPlayers: 4,
         },

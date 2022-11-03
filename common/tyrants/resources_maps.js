@@ -1859,7 +1859,8 @@ const mapData = [
       "points": 1
     },
     "neighbors": [
-      "llace-ss'zur b"
+      "llace-ss'zur b",
+      "ruins-ss'zur",
     ]
   }
 ]

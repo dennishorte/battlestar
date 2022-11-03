@@ -299,7 +299,7 @@ export default {
           stylesToId[classes] = div.id
         }
       }
-      return ['base'].concat(Object.values(stylesToId))
+      return ['base'].concat(Object.values(stylesToId).sort())
     },
 
     styledDivs() {
@@ -802,6 +802,7 @@ export default {
 
       mapRender.addEventListener('mousedown', (event) => {
         if (this._isDraggable(event.target)) {
+          console.log(event.target.id)
           this.startDrag(event)
         }
       })

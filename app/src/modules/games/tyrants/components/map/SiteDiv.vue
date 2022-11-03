@@ -109,11 +109,13 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .troop-space {
   height: 1.2em;
   width: 1.2em;
+  min-width: 1.2em;
   border-radius: 50%;
   border: 1px solid black;
   margin: 1px;
