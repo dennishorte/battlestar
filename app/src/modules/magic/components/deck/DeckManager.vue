@@ -2,7 +2,7 @@
   <div class="container-fluid deck-manager">
     <div class="row flex-nowrap">
 
-      <div class="col">
+      <div class="col-5">
         <DeckList :decks="decks" />
         <CardFilters />
       </div>

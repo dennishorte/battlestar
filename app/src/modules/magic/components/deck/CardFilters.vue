@@ -1,43 +1,54 @@
 <template>
   <div class="filter-inputs">
-    <div>
-      <label class="col-3 col-form-label">name</label>
-      <div class="row">
-        <div class="col-3">
-          <select class="form-control">
-            <option>and</option>
-            <option>not</option>
-          </select>
-        </div>
-        <div class="col">
-          <input class="form-control" name="name" />
-        </div>
-      </div>
+
+    <div class="filter-group">
+      <label class="col-form-label">name</label>
+      <select class="form-select operator-select" ref="nameop">
+        <option>and</option>
+        <option>not</option>
+      </select>
+      <input class="form-control" ref="name" />
+      <button class="btn btn-secondary" value="name" @click="add">add</button>
     </div>
 
-    <div>
-      <label class="form-label">text</label>
-      <input class="form-control" name="text" />
+    <div class="filter-group">
+      <label class="col-form-label">text</label>
+      <select class="form-select operator-select" ref="textop">
+        <option>and</option>
+        <option>not</option>
+      </select>
+      <input class="form-control" ref="text" />
+      <button class="btn btn-secondary" value="text" @click="add">add</button>
     </div>
 
-    <div>
-      <label class="form-label">type</label>
-      <input class="form-control" name="type" />
+    <div class="filter-group">
+      <label class="col-form-label">type</label>
+      <select class="form-select operator-select" ref="typeop">
+        <option>and</option>
+        <option>not</option>
+      </select>
+      <input class="form-control" ref="type" />
+      <button class="btn btn-secondary" value="type" @click="add">add</button>
+    </div>
+
+    <div class="filter-group">
+      <label class="col-form-label">flavor</label>
+      <select class="form-select operator-select" ref="flavorop">
+        <option>and</option>
+        <option>not</option>
+      </select>
+      <input class="form-control" ref="flavor" />
+      <button class="btn btn-secondary" value="flavor" @click="add">add</button>
     </div>
 
     <div>
       <label class="form-label">power</label>
-      <input class="form-control" name="power" />
+      <input class="form-control" ref="power" />
     </div>
 
     <div>
       <label class="form-label">toughness</label>
-      <input class="form-control" name="toughness" />
-    </div>
-
-    <div>
-      <label class="form-label">flavor</label>
-      <input class="form-control" name="flavor" />
+      <input class="form-control" ref="toughness" />
     </div>
 
     <div class="filter-group">
@@ -98,12 +109,16 @@ export default {
     add(event) {
       const kind = event.target.value
       const value = this.$refs[kind].value
-      console.log(value)
+      const operator = this.$refs[`${kind}op`].value
+
+      console.log(value, operator)
       this.filters.push({
         kind,
         value,
-        operator: '='
+        operator: operator || '='
       })
+
+      this.$refs[kind].value = ''
     },
 
     apply() {
@@ -115,6 +130,10 @@ export default {
 
 
 <style scoped>
+label {
+  min-width: 4em;
+}
+
 .filter-group {
   display: flex;
   flex-direction: row;
@@ -126,5 +145,9 @@ export default {
 
 .filter-group .btn {
   margin-left: .25em;
+}
+
+.operator-select {
+  max-width: 5em;
 }
 </style>

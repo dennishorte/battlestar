@@ -22,6 +22,14 @@ import axios from 'axios'
 import { util } from 'battlestar-common'
 
 
+const textFields = ['name', 'text', 'flavor', 'type']
+const fieldMapping = {
+  name: 'name',
+  text: 'oracle_text',
+  flavor: 'flavor_text',
+  type: 'type_line',
+}
+
 export default {
   name: 'CardList',
 
@@ -54,12 +62,23 @@ export default {
         .cards
         .filter(card => {
           for (const filter of filters) {
-            if (filter.kind === 'legality') {
-              return 'legalities' in card && card.legalities[filter.value] === 'legal'
+            if (filter.kind === 'legality' && 'legalities' in card) {
+              return card.legalities[filter.value] === 'legal'
             }
-            else {
-              return false
+            else if (textFields.includes(filter.kind)) {
+              const fieldKey = fieldMapping[filter.kind]
+              const fieldValue = fieldKey in card ? card[fieldKey].toLowerCase() : ''
+              const targetValue = filter.value.toLowerCase()
+
+              if (filter.operator === 'and') {
+                return fieldValue.includes(targetValue)
+              }
+              else if (filter.operator === 'not') {
+                return !fieldValue.includes(targetValue)
+              }
             }
+
+            return false
           }
         })
     },
@@ -166,14 +185,20 @@ export default {
 
   mounted() {
     this.bus.on('card-filter', this.applyFilters)
-            },
-          }
+  },
+}
 </script>
 
 
 <style scoped>
 .card-list {
   font-size: .8em;
+  max-width: 15em;
+}
+
+.game-card {
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .error {
