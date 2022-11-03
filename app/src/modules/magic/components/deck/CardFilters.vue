@@ -41,14 +41,37 @@
       <button class="btn btn-secondary" value="flavor" @click="add">add</button>
     </div>
 
-    <div>
-      <label class="form-label">power</label>
-      <input class="form-control" ref="power" />
+    <div class="filter-group">
+      <label class="col-form-label">cmc</label>
+      <select class="form-select operator-select" ref="cmcop">
+        <option>=</option>
+        <option>&lt=</option>
+        <option>&gt=</option>
+      </select>
+      <input class="form-control" ref="cmc" />
+      <button class="btn btn-secondary" value="cmc" @click="add">add</button>
     </div>
 
-    <div>
-      <label class="form-label">toughness</label>
+    <div class="filter-group">
+      <label class="col-form-label">power</label>
+      <select class="form-select operator-select" ref="powerop">
+        <option>=</option>
+        <option>&lt=</option>
+        <option>&gt=</option>
+      </select>
+      <input class="form-control" ref="power" />
+      <button class="btn btn-secondary" value="power" @click="add">add</button>
+    </div>
+
+    <div class="filter-group">
+      <label class="col-form-label">toughness</label>
+      <select class="form-select operator-select" ref="toughnessop">
+        <option>=</option>
+        <option>&lt=</option>
+        <option>&gt=</option>
+      </select>
       <input class="form-control" ref="toughness" />
+      <button class="btn btn-secondary" value="toughness" @click="add">add</button>
     </div>
 
     <div class="filter-group">
@@ -111,12 +134,12 @@ export default {
       const value = this.$refs[kind].value
       const operator = this.$refs[`${kind}op`].value
 
-      console.log(value, operator)
       this.filters.push({
         kind,
         value,
         operator: operator || '='
       })
+      console.log(JSON.parse(JSON.stringify(this.filters)))
 
       this.$refs[kind].value = ''
     },

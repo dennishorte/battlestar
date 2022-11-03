@@ -22,12 +22,17 @@ import axios from 'axios'
 import { util } from 'battlestar-common'
 
 
+const numberFields = ['cmc', 'power', 'toughness', 'loyalty']
 const textFields = ['name', 'text', 'flavor', 'type']
 const fieldMapping = {
+  cmc: 'cmc',
   name: 'name',
   text: 'oracle_text',
   flavor: 'flavor_text',
   type: 'type_line',
+  power: 'power',
+  toughness: 'toughness',
+  loyalty: 'loyalty',
 }
 
 export default {
@@ -60,31 +65,56 @@ export default {
 
       this.cardsFiltered = this
         .cards
-        .filter(card => {
-          for (const filter of filters) {
-            if (filter.kind === 'legality' && 'legalities' in card) {
-              return card.legalities[filter.value] === 'legal'
-            }
-            else if (textFields.includes(filter.kind)) {
-              const fieldKey = fieldMapping[filter.kind]
-              const fieldValue = fieldKey in card ? card[fieldKey].toLowerCase() : ''
-              const targetValue = filter.value.toLowerCase()
-
-              if (filter.operator === 'and') {
-                return fieldValue.includes(targetValue)
-              }
-              else if (filter.operator === 'not') {
-                return !fieldValue.includes(targetValue)
-              }
-            }
-
-            return false
+        .filter(card => filters.every(filter => {
+          if (filter.kind === 'legality' && 'legalities' in card) {
+            return card.legalities[filter.value] === 'legal'
           }
-        })
+          else if (textFields.includes(filter.kind)) {
+            const fieldKey = fieldMapping[filter.kind]
+            const fieldValue = fieldKey in card ? card[fieldKey].toLowerCase() : ''
+            const targetValue = filter.value.toLowerCase()
+
+            if (filter.operator === 'and') {
+              return fieldValue.includes(targetValue)
+            }
+            else if (filter.operator === 'not') {
+              return !fieldValue.includes(targetValue)
+            }
+            else {
+              throw new Error(`Unhandled string operator: ${filter.operator}`)
+            }
+          }
+          else if (numberFields.includes(filter.kind)) {
+            const fieldKey = fieldMapping[filter.kind]
+            const fieldValue = fieldKey in card ? parseFloat(card[fieldKey]) : -999
+            const targetValue = parseFloat(filter.value)
+
+            if (fieldValue === -999) {
+              return false
+            }
+            else if (filter.operator === '=') {
+              return fieldValue === targetValue
+            }
+            else if (filter.operator === '>=') {
+              return fieldValue >= targetValue
+            }
+            else if (filter.operator === '<=') {
+              return fieldValue <= targetValue
+            }
+            else {
+              throw new Error(`Unhandled numeric operator: ${filter.operator}`)
+            }
+          }
+          else {
+            throw new Error(`Unhandled filter field: ${filter.kind}`)
+          }
+
+          return false
+        }))
     },
 
     highlightCard(name) {
-      const card = this.cards.find(c => c.name === name)
+      const card = this.cardsFiltered.find(c => c.name === name)
       this.bus.emit('highlight-card', card)
     },
 
@@ -192,16 +222,18 @@ export default {
 
 <style scoped>
 .card-list {
+  display: flex;
+  flex-direction: column;
   font-size: .8em;
   max-width: 15em;
+  max-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 .game-card {
   white-space: nowrap;
   overflow: hidden;
-}
-
-.error {
-
+  min-height: 1.4em;
 }
 </style>
