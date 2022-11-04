@@ -213,6 +213,32 @@ Util.isDigit = function(str) {
   return str.length === 1 && /[0-9]/.test(str)
 }
 
+Util.range = function(...args) {
+  let start, end, step
+
+  if (args.length === 1) {
+    start = 0
+    end = args[0]
+    step = 1
+  }
+  else if (args.length === 2) {
+    [start, end] = args
+    step = 1
+  }
+  else if (args.length === 3) {
+    [start, end, step] = args
+  }
+  else {
+    throw new Error('Invalid args to range function')
+  }
+
+  const output = []
+  for (let i = start; i < end; i += step) {
+    output.push(i)
+  }
+  return output
+}
+
 Util.toCamelCase = function(str) {
   const downCased = str[0].toLowerCase() + str.slice(1)
   return downCased.replace(/\W/g, '')

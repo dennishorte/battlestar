@@ -162,8 +162,8 @@ export default {
   display: flex;
   flex-direction: column;
   font-size: .8em;
-  max-width: 15em;
   max-height: 100vh;
+  width: 100%;
   overflow-x: hidden;
   overflow-y: scroll;
 }

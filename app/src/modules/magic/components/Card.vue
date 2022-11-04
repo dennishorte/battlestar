@@ -1,68 +1,23 @@
 <template>
   <div class="game-card">
 
-    <div class="card-container card-container-200px" :class="containerClasses">
-      <div class="card-border">
-        <div class="card-background">
-          <div class="card-frame">
-
-            <div class="frame-header frame-foreground">
-              <div class="frame-card-name">{{ card.name }}</div>
-
-              <div class="frame-mana-cost">
-                <Mana v-for="mana in manaCost" :m="mana" />
-              </div>
-            </div>
-
-            <img
-              class="frame-art"
-              alt="card art"
-              :src="imageUrl" />
-
-            <div class="frame-type-line frame-foreground">
-              <div class="frame-card-type">{{ card.type_line }}</div>
-              <div class="frame-card-icon" :class="rarity">{{ setIcon }}</div>
-            </div>
-
-            <div class="frame-text-box">
-              <OracleText :text="oracleText" />
-
-              <div class="frame-flavor-wrapper">
-                <p v-if="flavorText" class="frame-flavor-text">{{ flavorText }}</p>
-              </div>
-
-              <div class="frame-achievements-wrapper">
-                <p v-for="ach of achievements" class="frame-achievement-desc">
-                  {{ ach.text }}
-                </p>
-              </div>
-            </div>
-
-            <div class="frame-pt-loyalty frame-foreground" v-if="powerToughness">
-              {{ powerToughness }}
-            </div>
-
-          </div> <!-- frame -->
-        </div> <!-- background -->
-      </div> <!-- border -->
-    </div> <!-- container -->
+    <CardFace v-for="index in faceIndices" :card="card" :index="index" />
 
   </div>
 </template>
 
 
 <script>
-import cardUtil from '../util/cardUtil.js'
+import { util } from 'battlestar-common'
 
-import Mana from './Mana'
-import OracleText from './OracleText'
+import CardFace from './CardFace'
+
 
 export default {
   name: 'GameCard',
 
   components: {
-    Mana,
-    OracleText,
+    CardFace,
   },
 
   props: {
@@ -70,64 +25,17 @@ export default {
       type: Object,
       default: {},
     },
-    face: {
-      type: Number,
-      default: 0,
-    },
   },
 
   computed: {
-    achievements() {
-      return []
-    },
-
-    containerClasses() {
-      const classes = []
-
-      if (this.card.scarred) {
-        classes.push('scarred')
-      }
-
-      const frameColor = cardUtil.frameColor(this.card)
-      classes.push(`${frameColor}-card`)
-
-      return classes
-    },
-
-    flavorText() {
-      return this.card.flavor_text
-    },
-
-    imageUrl() {
-      return this.card.image_uris.art_crop
-    },
-
-    manaCost() {
-      return cardUtil.manaSymbolsFromString(this.card.mana_cost)
-    },
-
-    oracleText() {
-      return this.card.oracle_text
-    },
-
-    setIcon() {
-      return ''
-    },
-
-    powerToughness() {
-      if (this.card.power) {
-        return `${this.card.power}/${this.card.toughness}`
-      }
-      else if (this.card.loyalty) {
-        return this.card.loyalty
+    faceIndices() {
+      if (this.card.card_faces) {
+        console.log(util.range(this.card.card_faces.length))
+        return util.range(this.card.card_faces.length)
       }
       else {
-        return ''
+        return [0]
       }
-    },
-
-    rarity() {
-      return this.card.rarity
     },
   },
 }
@@ -135,6 +43,15 @@ export default {
 
 
 <style lang="scss">
+.game-card {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: none;
+  overflow: scroll;
+  min-height: 20em;
+  max-height: 20em;
+}
+
 $artifact-bg: #9facc3;
 $artifact-fg: #dfe0f2;
 $artifact-bdr: #dbd9e8;

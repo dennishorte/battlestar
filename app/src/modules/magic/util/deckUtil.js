@@ -53,7 +53,6 @@ DeckUtil.deckListToCardNames = function(decklist) {
     }
   }
 
-  console.log(cards)
   return cards
 }
 

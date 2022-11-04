@@ -9,7 +9,7 @@
         <CardFilters />
       </div>
 
-      <div class="col column">
+      <div class="col column cards-column">
         <Card :card="highlightedCard" />
         <button class="btn btn-sm btn-info" @click="updateLocalCards">update</button>
 
@@ -121,7 +121,10 @@ export default {
         // If there is still another data item to iterate through, keep running this code
         if (cursor) {
           console.log('Cursor iteration')
-          this.cardDatabase.cards = cursor.value.json_data
+          this.cardDatabase.cards = cursor
+            .value
+            .json_data
+            .filter(card => Boolean(card.type_line) && !card.type_line.startsWith('Card'))
           cursor.continue()
         }
         else {
@@ -243,5 +246,9 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100vh;
+}
+
+.cards-column {
+  max-width: 15em;
 }
 </style>

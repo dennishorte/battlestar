@@ -75,7 +75,6 @@ export default {
           nameAndCount.card = cards ? cards[0] : null
         }
       }
-      console.log(data)
       return data
     },
 
@@ -90,7 +89,6 @@ export default {
           sorted[sortType] = [data]
         }
       }
-      console.log(sorted)
       return sorted
     },
   },
