@@ -41,7 +41,6 @@ CardUtil.parseRulesLine = function(line) {
   const newPart = () => ({
     type: 'text',
     text: '',
-    parseError: '',
   })
 
   if (line.startsWith('+ ')) {
@@ -112,8 +111,10 @@ CardUtil.parseOracleText = function(text) {
     catch (e) {
       console.log(e.message)
       output.push({
-        type: 'parse_error',
-        text,
+        parts: [{
+          type: 'parse_error',
+          text: line,
+        }]
       })
     }
   }

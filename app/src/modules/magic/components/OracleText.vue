@@ -3,8 +3,9 @@
     <div v-for="line in lines" class="rules-line">
       <template v-for="part in line.parts">
         <span v-if="part.type === 'text'">{{ part.text }}</span>
-        <Mana v-if="part.type === 'symbol'" :m="part.text" />
-        <ReminderText v-if="part.type === 'reminder'" :text="part.text" />
+        <Mana v-else-if="part.type === 'symbol'" :m="part.text" />
+        <ReminderText v-else-if="part.type === 'reminder'" :text="part.text" />
+        <span class="error-text" v-else>{{ part.text }}</span>
       </template>
     </div>
   </div>
@@ -39,5 +40,7 @@ export default {
 
 
 <style scoped>
-
+.error-text {
+  font-family: monospace;
+}
 </style>
