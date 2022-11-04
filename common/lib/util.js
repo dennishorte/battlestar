@@ -209,6 +209,10 @@ Util.inherit = function(parent, child) {
   })
 }
 
+Util.isDigit = function(str) {
+  return str.length === 1 && /[0-9]/.test(str)
+}
+
 Util.toCamelCase = function(str) {
   const downCased = str[0].toLowerCase() + str.slice(1)
   return downCased.replace(/\W/g, '')

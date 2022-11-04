@@ -1,5 +1,7 @@
 const DeckUtil = {}
 
+import { util } from 'battlestar-common'
+
 DeckUtil.deckListToCardNames = function(decklist) {
   const cards = {
     main: [],
@@ -29,11 +31,30 @@ DeckUtil.deckListToCardNames = function(decklist) {
       zone = cards.command
     }
     else {
-      zone.push(line)
+      // Card has a count in front of it
+      if (util.isDigit(line.charAt(0))) {
+        const firstSpaceIndex = line.indexOf(' ')
+        const count = parseInt(line.slice(0, firstSpaceIndex))
+        const name = line.slice(firstSpaceIndex + 1)
+
+        zone.push({
+          name,
+          count,
+        })
+      }
+
+      // Just a card name, with no count in front
+      else {
+        zone.push({
+          name: line,
+          count: 1,
+        })
+      }
     }
   }
 
+  console.log(cards)
   return cards
 }
 
-module.exports = DeckUtil
+export default DeckUtil

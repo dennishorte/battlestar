@@ -2,7 +2,11 @@
   <div class="deck-list">
     {{ deck.name }}
 
-    <DeckListCard v-for="name in cardNames" :cardName="name" />
+    <div v-for="card in cards" class="card-and-count">
+      <div>{{ card.count }}</div>
+      <DeckListCard :cardId="card.name" />
+    </div>
+
   </div>
 </template>
 
@@ -24,7 +28,7 @@ export default {
   },
 
   computed: {
-    cardNames() {
+    cards() {
       return deckUtil.deckListToCardNames(this.deck.decklist).main
     }
   },
@@ -33,4 +37,8 @@ export default {
 
 
 <style scoped>
+.card-and-count {
+  display: flex;
+  flex-direction: row;
+}
 </style>
