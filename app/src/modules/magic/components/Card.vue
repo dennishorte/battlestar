@@ -1,7 +1,7 @@
 <template>
   <div class="game-card">
 
-    <div class="card-container card-container-220px" :class="containerClasses">
+    <div class="card-container card-container-200px" :class="containerClasses">
       <div class="card-border">
         <div class="card-background">
           <div class="card-frame">
@@ -365,6 +365,7 @@ $gold: #d9631b;
     }
   }
 }
+@include card-face(200px);
 @include card-face(220px);
 @include card-face(270px);
 </style>

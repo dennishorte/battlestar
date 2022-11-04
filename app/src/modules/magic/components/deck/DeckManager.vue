@@ -4,19 +4,19 @@
   <div v-else class="container-fluid deck-manager">
     <div class="row flex-nowrap">
 
-      <div class="col-5">
+      <div class="col-5 column">
         <DeckSelector :decks="decks" />
         <CardFilters />
       </div>
 
-      <div class="col">
+      <div class="col column">
+        <Card :card="highlightedCard" />
         <button class="btn btn-sm btn-info" @click="updateLocalCards">update</button>
 
         <CardList />
       </div>
 
-      <div class="col">
-        <Card :card="highlightedCard" />
+      <div class="col column">
         <DeckList v-if="activeDeck" :deck="activeDeck" />
       </div>
 
@@ -60,6 +60,7 @@ export default {
         db: null,
         loading: true,
         cards: [],
+        lookup: {},
       },
 
       cards: [],
@@ -73,6 +74,7 @@ export default {
   provide() {
     return {
       allcards: computed(() => this.cardDatabase.cards),
+      cardLookup: computed(() => this.cardDatabase.lookup),
       bus: this.bus,
     }
   },
@@ -124,6 +126,17 @@ export default {
         }
         else {
           console.log('all values loaded', this.cardDatabase.cards.length)
+          this.cardDatabase.lookup = {}
+          for (const card of this.cardDatabase.cards) {
+            const cardName = card.name.toLowerCase()
+
+            if (cardName in this.cardDatabase.lookup) {
+              this.cardDatabase.lookup[cardName].push(card)
+            }
+            else {
+              this.cardDatabase.lookup[cardName] = [card]
+            }
+          }
           this.cardDatabase.loading = false
         }
       })
@@ -213,4 +226,14 @@ export default {
 
 
 <style scoped>
+.deck-manager {
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
 </style>

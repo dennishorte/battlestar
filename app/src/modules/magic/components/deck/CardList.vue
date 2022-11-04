@@ -1,7 +1,5 @@
 <template>
   <div class="card-list">
-    Card List
-
     <div v-for="name in cardNames" :key="name" class="game-card" @click="highlightCard(name)">
       {{ name }}
     </div>
@@ -137,7 +135,7 @@ export default {
     },
 
     cardNames() {
-      return util.array.distinct(this.cardsFiltered.map(c => c.name)).sort()
+      return util.array.distinct(this.cardsFiltered.map(c => c.name)).sort().slice(0,1000)
     },
   },
 

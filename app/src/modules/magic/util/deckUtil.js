@@ -27,7 +27,7 @@ DeckUtil.deckListToCardNames = function(decklist) {
     else if (line === 'side' || line === 'sideboard') {
       zone = cards.side
     }
-    else if (line === 'command') {
+    else if (line === 'command' || line === 'commander') {
       zone = cards.command
     }
     else {

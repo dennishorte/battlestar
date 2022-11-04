@@ -1,5 +1,29 @@
 const CardUtil = {}
 
+CardUtil.sortTypes = [
+  'land',
+  'creature',
+  'planeswalker',
+  'enchantment',
+  'artifact',
+  'instant',
+  'sorcery',
+]
+
+CardUtil.getSortType = function(card) {
+  if (card) {
+    const typeline = (card.type_line || '').toLowerCase()
+
+    for (const sortType of this.sortTypes) {
+      if (typeline.includes(sortType)) {
+        return sortType
+      }
+    }
+  }
+
+  return 'other'
+}
+
 CardUtil.isLand = function(card) {
   return card.type_line.toLowerCase().includes('land')
 }
@@ -17,6 +41,7 @@ CardUtil.parseRulesLine = function(line) {
   const newPart = () => ({
     type: 'text',
     text: '',
+    parseError: '',
   })
 
   if (line.startsWith('+ ')) {

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="card" class="deck-list-card">
+  <div v-if="card" class="deck-list-card" @click="highlightCard">
     {{ card.name }}
   </div>
 
@@ -13,7 +13,7 @@
 export default {
   name: 'DeckListCard',
 
-  inject: ['allcards'],
+  inject: ['bus', 'cardLookup'],
 
   props: {
     cardId: String,
@@ -25,24 +25,13 @@ export default {
         return undefined
       }
 
-      const tokens = this.cardId.split(' ')
+      const tokens = this.cardId.toLowerCase().split(' ')
 
       const setId = this.getSetId(tokens)
       const collectorNumber = this.getCollectorNumber(tokens)
 
       const cardName = setId ? tokens.slice(0, -2) : this.cardId
-
-      const matchingCards = this
-        .allcards
-        .filter(card => card.name.toLowerCase() === cardName)
-        .filter(card => {
-          if (setId) {
-            return card.set === setId && card.collector_number === collectorNumber
-          }
-          else {
-            return true
-          }
-        })
+      const matchingCards = this.cardLookup[cardName] || []
 
       return matchingCards[0]
     },
@@ -61,6 +50,10 @@ export default {
 
     getCollectorNumber(tokens) {
       return tokens.slice(-1)[0]
+    },
+
+    highlightCard() {
+      this.bus.emit('highlight-card', this.card)
     },
   },
 }
