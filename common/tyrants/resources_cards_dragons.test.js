@@ -118,7 +118,7 @@ describe('Dragons Expansion Cards', () => {
       })
     })
 
-    test('If you have 5 or more troops in your trophy hall, gain +2 power', () => {
+    test('5 or more troops, but not all player troops', () => {
       const game = t.gameFixture({
         dennis: {
           hand: ['Dragonclaw'],
@@ -131,9 +131,35 @@ describe('Dragons Expansion Cards', () => {
 
       t.testBoard(game, {
         dennis: {
+          discard: ['Dragonclaw'],
+          trophyHall: ['troop-micah', 'troop-micah', 'troop-micah', 'troop-micah', 'neutral'],
+          power: 0,
+        },
+        'araum-ched': {
+          troops: [],
+        },
+      })
+    })
+
+    test('5 or more player troops', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Dragonclaw'],
+          trophyHall: ['micah', 'micah', 'micah', 'micah']
+        },
+        'araum-ched': {
+          troops: ['micah'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Dragonclaw')
+
+      t.testBoard(game, {
+        dennis: {
           hand: [],
           played: ['Dragonclaw'],
-          trophyHall: ['troop-micah', 'troop-micah', 'troop-micah', 'troop-micah', 'neutral'],
+          trophyHall: ['troop-micah', 'troop-micah', 'troop-micah', 'troop-micah', 'troop-micah'],
           power: 2,
         },
         'araum-ched': {

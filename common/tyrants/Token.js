@@ -15,4 +15,8 @@ Token.prototype.getOwnerName = function() {
   return this.owner === undefined ? 'neutral' : this.owner.name
 }
 
+Token.prototype.isNeutral = function() {
+  return this.owner === undefined
+}
+
 module.exports = Token

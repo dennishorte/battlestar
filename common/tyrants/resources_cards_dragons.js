@@ -58,7 +58,12 @@ const cardData = [
     impl: (game, player) => {
       game.aChooseAndAssassinate(player)
 
-      if (game.getCardsByZone(player, 'trophyHall').length >= 5) {
+      const playerTroops = game
+        .getCardsByZone(player, 'trophyHall')
+        .filter(troop => !troop.isNeutral())
+        .length
+
+      if (playerTroops >= 5) {
         player.incrementPower(2)
       }
     }
