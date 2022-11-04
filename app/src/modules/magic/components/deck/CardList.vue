@@ -51,8 +51,6 @@ export default {
 
   computed: {
     cardsFiltered() {
-      console.log('updating cards filtered from ', this.allcards.length)
-
       if (this.filters.length === 0) {
         return this.allcards
       }

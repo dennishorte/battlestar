@@ -5,7 +5,7 @@
     <div class="row flex-nowrap">
 
       <div class="col-5">
-        <DeckList :decks="decks" />
+        <DeckSelector :decks="decks" />
         <CardFilters />
       </div>
 
@@ -17,7 +17,7 @@
 
       <div class="col">
         <Card :card="highlightedCard" />
-        <CardMarkup :code="JSON.stringify(highlightedCard, null, 2)" />
+        <DeckList v-if="activeDeck" :deck="activeDeck" />
       </div>
 
     </div>
@@ -30,17 +30,15 @@ import { computed } from 'vue'
 import axios from 'axios'
 import mitt from 'mitt'
 
-// import deckUtil from '../../util/deckUtil.js'
-
 import testCard from './test_card.js'
 import testDeck from './test_deck.js'
 
 import Card from '../Card'
-import CardMarkup from '../CardMarkup'
 
 import CardFilters from './CardFilters'
 import CardList from './CardList'
 import DeckList from './DeckList'
+import DeckSelector from './DeckSelector'
 
 export default {
   name: 'DeckManager',
@@ -49,8 +47,8 @@ export default {
     Card,
     CardFilters,
     CardList,
-    CardMarkup,
     DeckList,
+    DeckSelector,
   },
 
   data() {
@@ -67,6 +65,7 @@ export default {
       cards: [],
       decks: [testDeck],
 
+      activeDeck: null,
       highlightedCard: testCard,
     }
   },
@@ -79,6 +78,18 @@ export default {
   },
 
   methods: {
+    highlightCard(card) {
+      this.highlightedCard = card
+    },
+
+    selectDeck(deckData) {
+      this.activeDeck = deckData
+    },
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Deck Fetching Methods
+
     async fetchAllDecks() {
       const requestResult = await axios.post('/api/user/decks', {
         userId: this.actor._id,
@@ -90,10 +101,6 @@ export default {
       else {
         alert('Error loading game data')
       }
-    },
-
-    highlightCard(card) {
-      this.highlightedCard = card
     },
 
 
@@ -199,6 +206,7 @@ export default {
 
   mounted() {
     this.bus.on('highlight-card', this.highlightCard)
+    this.bus.on('select-deck', this.selectDeck)
   },
 }
 </script>

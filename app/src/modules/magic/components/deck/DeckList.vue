@@ -1,20 +1,32 @@
 <template>
   <div class="deck-list">
-    Deck List
+    {{ deck.name }}
 
-    <div v-for="deck in decks" :key="deck._id" class="deck">
-      {{ deck.name }}
-    </div>
+    <DeckListCard v-for="name in cardNames" :cardName="name" />
   </div>
 </template>
 
 
 <script>
+import DeckListCard from './DeckListCard'
+
+import deckUtil from '../../util/deckUtil.js'
+
 export default {
   name: 'DeckList',
 
+  components: {
+    DeckListCard,
+  },
+
   props: {
-    decks: Array,  // Each deck will be an object as stored in MongoDB.
+    deck: Object,
+  },
+
+  computed: {
+    cardNames() {
+      return deckUtil.deckListToCardNames(this.deck.decklist).main
+    }
   },
 }
 </script>
