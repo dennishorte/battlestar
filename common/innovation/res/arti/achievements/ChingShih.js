@@ -74,7 +74,7 @@ function Card() {
     {
       trigger: 'score',
       kind: 'would-instead',
-      matches: (game, player, { card }) => card.expansion !== 'figs' && card !== this,
+      matches: (game, player, { card }) => !card.checkIsFigure(),
       func: (game, player, { card }) => {
         const choices = game
           .getPlayerOpponents(player)
