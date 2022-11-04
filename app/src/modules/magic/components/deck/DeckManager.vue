@@ -128,13 +128,21 @@ export default {
           console.log('all values loaded', this.cardDatabase.cards.length)
           this.cardDatabase.lookup = {}
           for (const card of this.cardDatabase.cards) {
-            const cardName = card.name.toLowerCase()
+            const cardNames = [card.name.toLowerCase()]
 
-            if (cardName in this.cardDatabase.lookup) {
-              this.cardDatabase.lookup[cardName].push(card)
+            if (card.card_faces) {
+              for (const face of card.card_faces) {
+                cardNames.push(face.name.toLowerCase())
+              }
             }
-            else {
-              this.cardDatabase.lookup[cardName] = [card]
+
+            for (const cardName of cardNames) {
+              if (cardName in this.cardDatabase.lookup) {
+                this.cardDatabase.lookup[cardName].push(card)
+              }
+              else {
+                this.cardDatabase.lookup[cardName] = [card]
+              }
             }
           }
           this.cardDatabase.loading = false
