@@ -29,3 +29,11 @@ export default {
   },
 }
 </script>
+
+
+<style scoped>
+.mana-cost {
+  overflow: hidden;
+  max-height: 100%;
+}
+</style>
