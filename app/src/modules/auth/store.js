@@ -29,7 +29,7 @@ export default {
     user: getCachedUser(),
   }),
 
-  getters : {
+  getters: {
     isLoggedIn: state => !!state.user.token,
     authStatus: state => state.status,
     user: state => state.user,

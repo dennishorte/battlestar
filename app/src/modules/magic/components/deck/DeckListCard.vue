@@ -80,8 +80,7 @@ export default {
     },
 
     click() {
-      this.bus.emit('highlight-card', this.card)
-      this.bus.emit('deck-edit-card', this.card)
+      this.$store.dispatch('magic/dm/manageCard', this.card)
     },
   },
 }

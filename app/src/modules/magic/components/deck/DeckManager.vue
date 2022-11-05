@@ -10,7 +10,7 @@
       </div>
 
       <div class="col column cards-column">
-        <Card :card="highlightedCard" />
+        <Card :card="managedCard" />
         <button class="btn btn-sm btn-info" @click="updateLocalCards">update</button>
 
         <CardList />
@@ -30,6 +30,8 @@
 
 <script>
 import { computed } from 'vue'
+import { mapState } from 'vuex'
+
 import axios from 'axios'
 import mitt from 'mitt'
 
@@ -74,7 +76,6 @@ export default {
       activeDeck: null,
       cardLock: false,
       editingCard: {},
-      highlightedCard: testCard,
     }
   },
 
@@ -86,14 +87,16 @@ export default {
     }
   },
 
+  computed: {
+    ...mapState('magic/dm', {
+      managedCard: 'managedCard',
+    })
+  },
+
   methods: {
     deckEditCard(card) {
       this.editingCard = card
       this.$modal('card-manager-modal').show()
-    },
-
-    highlightCard(card) {
-      this.highlightedCard = card
     },
 
     selectDeck(deckData) {
@@ -246,7 +249,6 @@ export default {
 
   mounted() {
     this.bus.on('deck-edit-card', this.deckEditCard)
-    this.bus.on('highlight-card', this.highlightCard)
     this.bus.on('select-deck', this.selectDeck)
     this.bus.on('toggle-card-lock', this.toggleCardLock)
   },

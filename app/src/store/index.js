@@ -1,8 +1,11 @@
 import { createStore } from 'vuex'
-import authConfig from '@/modules/auth/store.js'
+
+import authStore from '@/modules/auth/store.js'
+import magicStore from '@/modules/magic/store'
 
 export default createStore({
   modules: {
-    auth: authConfig,
+    auth: authStore,
+    magic: magicStore,
   },
 })

@@ -1,8 +1,6 @@
 <template>
   <div class="game-card">
-
-    <CardFace v-for="index in faceIndices" :card="card" :index="index" />
-
+    <CardFace v-if="card" v-for="index in faceIndices" :card="card" :index="index" />
   </div>
 </template>
 
@@ -23,7 +21,7 @@ export default {
   props: {
     card: {
       type: Object,
-      default: {},
+      default: null,
     },
   },
 

@@ -43,7 +43,6 @@ export default {
   data() {
     return {
       filters: [],
-      highlight: {},
     }
   },
 
@@ -146,7 +145,7 @@ export default {
 
     highlightCard(name) {
       const card = this.cardsFiltered.find(c => c.name === name)
-      this.bus.emit('highlight-card', card)
+      this.$store.dispatch('magic/dm/manageCard', card)
     },
   },
 
