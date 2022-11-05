@@ -21,7 +21,10 @@
       </div>
 
     </div>
+
+    <CardManagerModal :card="editingCard" :cardLock="cardLock" />
   </div>
+
 </template>
 
 
@@ -37,6 +40,7 @@ import Card from '../Card'
 
 import CardFilters from './CardFilters'
 import CardList from './CardList'
+import CardManagerModal from './CardManagerModal'
 import DeckList from './DeckList'
 import DeckSelector from './DeckSelector'
 
@@ -47,6 +51,7 @@ export default {
     Card,
     CardFilters,
     CardList,
+    CardManagerModal,
     DeckList,
     DeckSelector,
   },
@@ -67,6 +72,8 @@ export default {
       decks: [testDeck],
 
       activeDeck: null,
+      cardLock: false,
+      editingCard: {},
       highlightedCard: testCard,
     }
   },
@@ -80,12 +87,21 @@ export default {
   },
 
   methods: {
+    deckEditCard(card) {
+      this.editingCard = card
+      this.$modal('card-manager-modal').show()
+    },
+
     highlightCard(card) {
       this.highlightedCard = card
     },
 
     selectDeck(deckData) {
       this.activeDeck = deckData
+    },
+
+    toggleCardLock() {
+      this.cardLock = !this.cardLock
     },
 
 
@@ -229,8 +245,10 @@ export default {
   },
 
   mounted() {
+    this.bus.on('deck-edit-card', this.deckEditCard)
     this.bus.on('highlight-card', this.highlightCard)
     this.bus.on('select-deck', this.selectDeck)
+    this.bus.on('toggle-card-lock', this.toggleCardLock)
   },
 }
 </script>

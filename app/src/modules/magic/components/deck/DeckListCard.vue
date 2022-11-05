@@ -1,6 +1,8 @@
 <template>
-  <div v-if="card" class="deck-list-card" @click="highlightCard">
-    <div class="name">{{ displayName }}</div>
+  <div v-if="card" class="deck-list-card" @click="click">
+    <div class="name">
+      {{ displayName }}
+    </div>
     <ManaCost class="mana-cost" :cost="manaCost" />
   </div>
 
@@ -77,8 +79,9 @@ export default {
       return tokens.slice(-1)[0]
     },
 
-    highlightCard() {
+    click() {
       this.bus.emit('highlight-card', this.card)
+      this.bus.emit('deck-edit-card', this.card)
     },
   },
 }

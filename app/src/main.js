@@ -9,6 +9,7 @@ authUtil.initialize()
 // Global Styles
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap'
+import 'bootstrap-icons/font/bootstrap-icons.css'
 import 'mana-font/css/mana.min.css'
 
 import '@/assets/css/tyrants.css'

@@ -23,7 +23,6 @@
         name='command'
       />
     </div>
-
   </div>
 </template>
 
@@ -33,6 +32,7 @@ import DeckListSection from './DeckListSection'
 
 import cardUtil from '../../util/cardUtil.js'
 import deckUtil from '../../util/deckUtil.js'
+
 
 export default {
   name: 'DeckList',
