@@ -41,7 +41,7 @@ Player.prototype.incrementPoints = function(count, opts={}) {
         initial: this.points - count,
         sign,
         increment: Math.abs(count),
-        final: this.power
+        final: this.points
       }
     })
   }
