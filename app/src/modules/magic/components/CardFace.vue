@@ -8,7 +8,7 @@
             <div class="frame-card-name">{{ face.name }}</div>
 
             <div class="frame-mana-cost">
-              <Mana v-for="mana in manaCost" :m="mana" />
+              <ManaCost :cost="manaCost" />
             </div>
           </div>
 
@@ -50,7 +50,7 @@
 <script>
 import cardUtil from '../util/cardUtil.js'
 
-import Mana from './Mana'
+import ManaCost from './ManaCost'
 import OracleText from './OracleText'
 
 
@@ -58,7 +58,7 @@ export default {
   name: 'CardFace',
 
   components: {
-    Mana,
+    ManaCost,
     OracleText,
   },
 
@@ -109,7 +109,7 @@ export default {
     },
 
     manaCost() {
-      return cardUtil.manaSymbolsFromString(this.face.mana_cost)
+      return this.face.mana_cost
     },
 
     oracleText() {
