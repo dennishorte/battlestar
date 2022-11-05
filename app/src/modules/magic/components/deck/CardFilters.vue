@@ -215,12 +215,13 @@ export default {
 
       else {
         const value = this.$refs[kind].value
-        const operator = this.$refs[`${kind}op`].value
+        const operatorElem = this.$refs[`${kind}op`]
+        const operator = operatorElem ? operatorElem.value : '='
 
         this.filters.push({
           kind,
           value,
-          operator: operator || '='
+          operator: operator
         })
         console.log(JSON.parse(JSON.stringify(this.filters)))
 
