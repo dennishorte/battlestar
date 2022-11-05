@@ -1,6 +1,6 @@
 <template>
   <div v-if="card" class="deck-list-card" @click="highlightCard">
-    {{ card.name }}
+    {{ displayName }}
   </div>
 
   <div v-else class="deck-list-card unknown-card">
@@ -34,6 +34,15 @@ export default {
       const matchingCards = this.cardLookup[cardName] || []
 
       return matchingCards[0]
+    },
+
+    displayName() {
+      if (this.card.card_faces) {
+        return this.card.card_faces[0].name
+      }
+      else {
+        return this.card.name
+      }
     },
   },
 

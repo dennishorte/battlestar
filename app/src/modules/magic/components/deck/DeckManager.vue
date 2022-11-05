@@ -4,7 +4,7 @@
   <div v-else class="container-fluid deck-manager">
     <div class="row flex-nowrap">
 
-      <div class="col-5 column">
+      <div class="col column filters-column">
         <DeckSelector :decks="decks" />
         <CardFilters />
       </div>
@@ -250,5 +250,9 @@ export default {
 
 .cards-column {
   max-width: 15em;
+}
+
+.filters-column {
+  max-width: 30em;
 }
 </style>

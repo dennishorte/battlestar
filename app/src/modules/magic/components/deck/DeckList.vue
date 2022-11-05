@@ -1,31 +1,27 @@
 <template>
   <div class="deck-list">
-    <h4>{{ deck.name }}</h4>
+    <div class="deck-name">{{ deck.name }}</div>
 
-    <template v-for="sortType in sortTypes">
-      <div v-if="sortedMaindeck[sortType]" class="maindeck deck-section">
-        <h5 class="deck-section-header">{{ sortType }}</h5>
-        <div v-for="data in sortedMaindeck[sortType]" class="card-and-count">
-          <div class="card-count">{{ data.count }}</div>
-          <DeckListCard :cardId="data.name" />
-        </div>
-      </div>
-    </template>
+    <div class="deck-sections">
+      <template v-for="sortType in sortTypes">
+        <DeckListSection
+          v-if="sortedMaindeck[sortType]"
+          :cards="sortedMaindeck[sortType]"
+          :name="sortType"
+        />
+      </template>
 
-    <div v-if="cardData.side" class="sideboard deck-section">
-      <h5 class="deck-section-header">Sideboard</h5>
-      <div v-for="card in cardData.side" class="card-and-count">
-        <div class="card-count">{{ card.count }}</div>
-        <DeckListCard :cardId="card.name" />
-      </div>
-    </div>
+      <DeckListSection
+        v-if="cardData.side"
+        :cards="cardData.side"
+        name='sideboard'
+      />
 
-    <div v-if="cardData.command" class="command deck-section">
-      <h5 class="deck-section-header">Command</h5>
-      <div v-for="card in cardData.command" class="card-and-count">
-        <div class="card-count">{{ card.count }}</div>
-        <DeckListCard :cardId="card.name" />
-      </div>
+      <DeckListSection
+        v-if="cardData.command"
+        :cards="cardData.command"
+        name='command'
+      />
     </div>
 
   </div>
@@ -33,7 +29,7 @@
 
 
 <script>
-import DeckListCard from './DeckListCard'
+import DeckListSection from './DeckListSection'
 
 import cardUtil from '../../util/cardUtil.js'
 import deckUtil from '../../util/deckUtil.js'
@@ -42,7 +38,7 @@ export default {
   name: 'DeckList',
 
   components: {
-    DeckListCard,
+    DeckListSection,
   },
 
   inject: ['cardLookup'],
@@ -98,19 +94,19 @@ export default {
 
 <style scoped>
 .deck-list {
-  overflow-y: scroll;
-}
-
-.card-and-count {
   display: flex;
-  flex-direction: row;
-}
-
-.card-count {
-  margin-right: .25em;
-}
-
-.deck-section {
+  flex-direction: column;
+  max-height: 100%;
   font-size: .8em;
+}
+
+.deck-name {
+  font-size: 1.5em;
+}
+
+.deck-sections {
+  display: flex;
+  max-height: 100%;
+  flex-flow: column wrap;
 }
 </style>
