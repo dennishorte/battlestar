@@ -17,15 +17,13 @@
 export default {
   name: 'DeckSelector',
 
-  inject: ['bus'],
-
   props: {
     decks: Array,  // Each deck will be an object as stored in MongoDB.
   },
 
   methods: {
     selectDeck(deck) {
-      this.bus.emit('select-deck', deck)
+      this.$store.dispatch('magic/dm/selectDeck', deck)
     },
   },
 }

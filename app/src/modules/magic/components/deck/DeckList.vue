@@ -28,6 +28,8 @@
 
 
 <script>
+import { mapState } from 'vuex'
+
 import DeckListSection from './DeckListSection'
 
 import cardUtil from '../../util/cardUtil.js'
@@ -42,10 +44,6 @@ export default {
   },
 
   inject: ['cardLookup'],
-
-  props: {
-    deck: Object,
-  },
 
   data() {
     return {
@@ -63,6 +61,10 @@ export default {
   },
 
   computed: {
+    ...mapState('magic/dm', {
+      deck: 'activeDeck',
+    }),
+
     cardData() {
       const data = deckUtil.deckListToCardNames(this.deck.decklist)
       for (const list of Object.values(data)) {

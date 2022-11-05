@@ -17,7 +17,7 @@
       </div>
 
       <div class="col column">
-        <DeckList v-if="activeDeck" :deck="activeDeck" />
+        <DeckList v-if="activeDeck" />
       </div>
 
     </div>
@@ -72,8 +72,6 @@ export default {
 
       cards: [],
       decks: [testDeck],
-
-      activeDeck: null,
     }
   },
 
@@ -87,6 +85,7 @@ export default {
 
   computed: {
     ...mapState('magic/dm', {
+      activeDeck: 'activeDeck',
       managedCard: 'managedCard',
     })
   },
@@ -95,10 +94,6 @@ export default {
     deckEditCard(card) {
       this.editingCard = card
       this.$modal('card-manager-modal').show()
-    },
-
-    selectDeck(deckData) {
-      this.activeDeck = deckData
     },
 
 
@@ -243,7 +238,6 @@ export default {
 
   mounted() {
     this.bus.on('deck-edit-card', this.deckEditCard)
-    this.bus.on('select-deck', this.selectDeck)
   },
 }
 </script>

@@ -2,6 +2,7 @@ export default {
   namespaced: true,
 
   state: () => ({
+    activeDeck: null,
     cardLock: false,
     managedCard: null,
   }),
@@ -11,6 +12,10 @@ export default {
   },
 
   mutations: {
+    setActiveDeck(state, deck) {
+      state.activeDeck = deck
+    },
+
     setManagedCard(state, card) {
       state.managedCard = card
     },
@@ -23,6 +28,10 @@ export default {
   actions: {
     manageCard({ commit }, card) {
       commit('setManagedCard', card)
+    },
+
+    selectDeck({ commit }, deck) {
+      commit('setActiveDeck', deck)
     },
 
     toggleCardLock({ commit, state }) {
