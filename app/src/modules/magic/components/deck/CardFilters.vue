@@ -139,7 +139,7 @@
         </div>
 
         <div>
-          <button class="btn btn-secondary" value="identity" @click="add">ident</button>
+          <button class="btn btn-secondary" value="identity" @click="add">identity</button>
           <button class="btn btn-secondary" value="colors" @click="add">color</button>
         </div>
       </div>
@@ -147,13 +147,25 @@
   </div>
 
   <div>
-    <button class="btn btn-primary" @click="apply()">apply</button>
+    <button class="btn btn-warning" @click="clear">clear</button>
+    <button class="btn btn-primary" @click="apply">apply</button>
   </div>
 
   <div class="filter-list">
     <h5>filters</h5>
     <div class="filter-added" v-for="filter in filters">
-      {{ filter.kind }} {{ filter.operator }} {{ filter.value }}
+      <div class="filter-display-kind">{{ filter.kind }}</div>
+      <div v-if="filter.kind === 'colors' || filter.kind === 'identity'">
+        <span v-if="filter.only" class="filter-display-operator">only</span>
+        <span v-if="filter.or" class="filter-display-operator">or</span>
+        <template v-for="color in colors">
+          <span v-if="filter[color]" class="filter-display-value">{{ color }}</span>
+        </template>
+      </div>
+      <div v-else>
+        <span class="filter-display-operator">{{ filter.operator }}&nbsp;</span>
+        <span class="filter-display-value">{{ filter.value }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -167,6 +179,7 @@ export default {
 
   data() {
     return {
+      colors: ['white', 'blue', 'black', 'red', 'green'],
       filters: [],
     }
   },
@@ -218,6 +231,10 @@ export default {
     apply() {
       this.bus.emit('card-filter', [...this.filters])
     },
+
+    clear() {
+      this.filters = []
+    },
   },
 }
 </script>
@@ -265,6 +282,25 @@ label {
   margin-top: .25em;
   margin-left: .25em;
   min-width: 3em;
+}
+
+.filter-list {
+  line-height: 1em;
+}
+
+.filter-added {
+  margin-top: .5em;
+}
+
+.filter-display-kind {
+  font-weight: bold;
+  margin-left: .5em;
+}
+
+.filter-display-operator {
+  font-size: .9em;
+  font-style: italic;
+  margin-left: .5em;
 }
 
 .filter-group {
