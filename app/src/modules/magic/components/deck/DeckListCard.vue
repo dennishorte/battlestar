@@ -22,7 +22,7 @@ export default {
     ManaCost,
   },
 
-  inject: ['bus', 'cardLookup'],
+  inject: ['cardLookup'],
 
   props: {
     cardId: String,

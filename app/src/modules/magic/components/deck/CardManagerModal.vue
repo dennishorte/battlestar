@@ -1,6 +1,6 @@
 <template>
   <Modal id="card-manager-modal">
-    <template #header>{{ card.name }}</template>
+    <template #header>{{ cardName }}</template>
 
     <div class="card-lock" @click="toggleCardLock">
       <i v-if="cardLock" class="bi-lock-fill"></i>
@@ -36,6 +36,8 @@
 
 
 <script>
+import { mapState } from 'vuex'
+
 import Modal from '@/components/Modal'
 
 
@@ -48,15 +50,41 @@ export default {
 
   inject: ['bus'],
 
-  props: {
-    card: Object,
-    cardLock: Boolean,
+  computed: {
+    ...mapState('magic/dm', {
+      cardLock: 'cardLock',
+      managedCard: 'managedCard',
+    }),
+
+    cardName() {
+      return this.managedCard ? this.managedCard.name : ''
+    },
   },
 
   methods: {
     toggleCardLock() {
-      this.bus.emit('toggle-card-lock')
+      this.$store.dispatch('magic/dm/toggleCardLock')
     },
+  },
+
+  watch: {
+    managedCard(newValue, oldValue) {
+      if (newValue) {
+        this.$modal('card-manager-modal').show()
+      }
+      else {
+        this.$modal('card-manager-modal').hide()
+      }
+    },
+  },
+
+  mounted() {
+    // Whenever the card management modal is closed, clear the state regarding the managed card.
+    document
+      .getElementById('card-manager-modal')
+      .addEventListener('hidden.bs.modal', () => {
+        this.$store.dispatch('magic/dm/unmanageCard')
+      })
   },
 }
 </script>

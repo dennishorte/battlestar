@@ -22,7 +22,7 @@
 
     </div>
 
-    <CardManagerModal :card="editingCard" :cardLock="cardLock" />
+    <CardManagerModal />
   </div>
 
 </template>
@@ -74,8 +74,6 @@ export default {
       decks: [testDeck],
 
       activeDeck: null,
-      cardLock: false,
-      editingCard: {},
     }
   },
 
@@ -101,10 +99,6 @@ export default {
 
     selectDeck(deckData) {
       this.activeDeck = deckData
-    },
-
-    toggleCardLock() {
-      this.cardLock = !this.cardLock
     },
 
 
@@ -250,7 +244,6 @@ export default {
   mounted() {
     this.bus.on('deck-edit-card', this.deckEditCard)
     this.bus.on('select-deck', this.selectDeck)
-    this.bus.on('toggle-card-lock', this.toggleCardLock)
   },
 }
 </script>
