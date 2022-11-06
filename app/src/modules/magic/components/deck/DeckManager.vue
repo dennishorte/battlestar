@@ -8,7 +8,6 @@
       </div>
 
       <div class="col column cards-column">
-        <Card :card="managedCard" />
         <button class="btn btn-sm btn-info" @click="updateLocalCards">update</button>
 
         <CardList />
@@ -34,8 +33,6 @@ import { mapState } from 'vuex'
 import axios from 'axios'
 import mitt from 'mitt'
 
-import Card from '../Card'
-
 import CardFilters from './CardFilters'
 import CardList from './CardList'
 import CardManagerModal from './CardManagerModal'
@@ -46,7 +43,6 @@ export default {
   name: 'DeckManager',
 
   components: {
-    Card,
     CardFilters,
     CardList,
     CardManagerModal,

@@ -5,32 +5,40 @@
     </template>
 
     <template v-if="managedCard">
-      <div class="card-lock" @click="toggleCardLock">
-        <i v-if="cardLock" class="bi-lock-fill"></i>
-        <i v-else class="bi-unlock-fill"></i>
-      </div>
+      <div class="wrapper">
+        <div class="left-side">
+          <div class="card-lock" @click="toggleCardLock">
+            <i v-if="cardLock" class="bi-lock-fill"></i>
+            <i v-else class="bi-unlock-fill"></i>
+          </div>
 
-      <div class="card-counter">
-        <div class="btn-group">
-          <button type="button" class="btn btn-outline-primary btn-plus-minus">-</button>
-          <button type="button" class="btn btn-primary btn-plus-minus-title">main 2</button>
-          <button type="button" class="btn btn-outline-primary btn-plus-minus">+</button>
+          <div class="card-counter">
+            <div class="btn-group">
+              <button type="button" class="btn btn-outline-primary btn-plus-minus">-</button>
+              <button type="button" class="btn btn-primary btn-plus-minus-title">main 2</button>
+              <button type="button" class="btn btn-outline-primary btn-plus-minus">+</button>
+            </div>
+          </div>
+
+          <div class="card-counter">
+            <div class="btn-group">
+              <button type="button" class="btn btn-outline-info btn-plus-minus">-</button>
+              <button type="button" class="btn btn-info btn-plus-minus-title">side 1</button>
+              <button type="button" class="btn btn-outline-info btn-plus-minus">+</button>
+            </div>
+          </div>
+
+          <div class="card-counter">
+            <div class="btn-group">
+              <button type="button" class="btn btn-outline-success btn-plus-minus">-</button>
+              <button type="button" class="btn btn-success btn-plus-minus-title">cmd 1</button>
+              <button type="button" class="btn btn-outline-success btn-plus-minus">+</button>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="card-counter">
-        <div class="btn-group">
-          <button type="button" class="btn btn-outline-info btn-plus-minus">-</button>
-          <button type="button" class="btn btn-info btn-plus-minus-title">side 1</button>
-          <button type="button" class="btn btn-outline-info btn-plus-minus">+</button>
-        </div>
-      </div>
-
-      <div class="card-counter">
-        <div class="btn-group">
-          <button type="button" class="btn btn-outline-success btn-plus-minus">-</button>
-          <button type="button" class="btn btn-success btn-plus-minus-title">cmd 1</button>
-          <button type="button" class="btn btn-outline-success btn-plus-minus">+</button>
+        <div class="right-side">
+          <Card :card="managedCard" />
         </div>
       </div>
     </template>
@@ -42,6 +50,7 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 
+import Card from '../Card'
 import Modal from '@/components/Modal'
 
 
@@ -49,6 +58,7 @@ export default {
   name: 'CardManagerModal',
 
   components: {
+    Card,
     Modal,
   },
 
@@ -112,5 +122,12 @@ export default {
 
 .btn-plus-minus-title {
   min-width: 6em;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
 }
 </style>
