@@ -172,16 +172,17 @@
 
 
 <script>
+import { mapState} from 'vuex'
+
+
 export default {
   name: 'CardFilters',
 
-  inject: ['bus'],
-
-  data() {
-    return {
-      colors: ['white', 'blue', 'black', 'red', 'green'],
-      filters: [],
-    }
+  computed: {
+    ...mapState('magic/dm', {
+      colors: 'colors',
+      filters: 'cardFilters',
+    }),
   },
 
   methods: {
@@ -189,12 +190,6 @@ export default {
       const kind = event.target.value
 
       if (kind === 'colors' || kind === 'identity') {
-        // Remove any existing color filter
-        const index = this.filters.findIndex(f => f.kind === kind)
-        if (index >= 0) {
-          this.filters.splice(index, 1)
-        }
-
         // Add the new color filter
         const colors = {}
         let someTrue = false
@@ -207,10 +202,8 @@ export default {
           }
         }
 
-        if (someTrue) {
-          colors.kind = kind
-          this.filters.push(colors)
-        }
+        colors.kind = kind
+        this.$store.dispatch('magic/dm/addCardFilter', colors)
       }
 
       else {
@@ -218,23 +211,22 @@ export default {
         const operatorElem = this.$refs[`${kind}op`]
         const operator = operatorElem ? operatorElem.value : '='
 
-        this.filters.push({
+        this.$store.dispatch('magic/dm/addCardFilter', {
           kind,
           value,
           operator: operator
         })
-        console.log(JSON.parse(JSON.stringify(this.filters)))
 
         this.$refs[kind].value = ''
       }
     },
 
     apply() {
-      this.bus.emit('card-filter', [...this.filters])
+      this.$store.dispatch('magic/dm/applyCardFilters')
     },
 
     clear() {
-      this.filters = []
+      this.$store.dispatch('magic/dm/clearCardFilters')
     },
   },
 }

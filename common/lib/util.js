@@ -9,6 +9,28 @@ module.exports = Util
 ////////////////////////////////////////////////////////////////////////////////
 // Array functions
 
+Util.array.collect = function(elems, keyFunc) {
+  const output = {}
+
+  for (const elem of elems) {
+    let keys = keyFunc(elem)
+    if (!Array.isArray(keys)) {
+      keys = [keys]
+    }
+
+    for (const key of keys) {
+      if (key in output) {
+        output[key].push(elem)
+      }
+      else {
+        output[key] = [elem]
+      }
+    }
+  }
+
+  return output
+}
+
 Util.array.distinct = function(array) {
   return [...new Set(array)]
 }

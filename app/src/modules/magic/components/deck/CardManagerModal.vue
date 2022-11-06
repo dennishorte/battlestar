@@ -48,8 +48,6 @@ export default {
     Modal,
   },
 
-  inject: ['bus'],
-
   computed: {
     ...mapState('magic/dm', {
       cardLock: 'cardLock',

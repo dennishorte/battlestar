@@ -13,6 +13,8 @@
 
 
 <script>
+import { mapState } from 'vuex'
+
 import ManaCost from '../ManaCost'
 
 export default {
@@ -22,13 +24,15 @@ export default {
     ManaCost,
   },
 
-  inject: ['cardLookup'],
-
   props: {
     cardId: String,
   },
 
   computed: {
+    ...mapState('magic/dm', {
+      cardLookup: state => state.cardDatabase.lookup,
+    }),
+
     card() {
       if (!this.cardId) {
         return undefined

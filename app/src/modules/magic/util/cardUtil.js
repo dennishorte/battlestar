@@ -10,6 +10,18 @@ CardUtil.sortTypes = [
   'sorcery',
 ]
 
+CardUtil.allCardNames = function(card) {
+  const names = [card.name.toLowerCase()]
+
+  if (card.card_faces) {
+    for (const face of card.card_faces) {
+      names.push(face.name.toLowerCase())
+    }
+  }
+
+  return names
+}
+
 CardUtil.getSortType = function(card) {
   if (card) {
     const typeline = (card.type_line || '').toLowerCase()

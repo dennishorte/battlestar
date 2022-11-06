@@ -10,6 +10,7 @@
 <script>
 import axios from 'axios'
 
+import { mapState } from 'vuex'
 import { util } from 'battlestar-common'
 
 
@@ -38,8 +39,6 @@ const colorNameToSymbol = {
 export default {
   name: 'CardList',
 
-  inject: ['allcards', 'bus'],
-
   data() {
     return {
       filters: [],
@@ -47,6 +46,10 @@ export default {
   },
 
   computed: {
+    ...mapState('magic/dm', {
+      allcards: state => state.cardDatabase.cards,
+    }),
+
     cardsFiltered() {
       if (this.filters.length === 0) {
         return this.allcards
@@ -147,10 +150,6 @@ export default {
       const card = this.cardsFiltered.find(c => c.name === name)
       this.$store.dispatch('magic/dm/manageCard', card)
     },
-  },
-
-  mounted() {
-    this.bus.on('card-filter', this.applyFilters)
   },
 }
 </script>

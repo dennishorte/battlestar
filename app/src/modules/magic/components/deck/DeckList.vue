@@ -43,8 +43,6 @@ export default {
     DeckListSection,
   },
 
-  inject: ['cardLookup'],
-
   data() {
     return {
       sortTypes: [
@@ -62,6 +60,7 @@ export default {
 
   computed: {
     ...mapState('magic/dm', {
+      cardLookup: state => state.cardDatabase.lookup,
       deck: 'activeDeck',
     }),
 

@@ -1,7 +1,5 @@
 <template>
-  <div v-if="cardDatabase.loading" class="alert alert-warning">Loading card data</div>
-
-  <div v-else class="container-fluid deck-manager">
+  <div v-if="cardsLoaded" class="container-fluid deck-manager">
     <div class="row flex-nowrap">
 
       <div class="col column filters-column">
@@ -25,6 +23,7 @@
     <CardManagerModal />
   </div>
 
+  <div v-else class="alert alert-warning">Loading card data</div>
 </template>
 
 
@@ -63,29 +62,14 @@ export default {
       actor: this.$store.getters['auth/user'],
       bus: mitt(),
 
-      cardDatabase: {
-        db: null,
-        loading: true,
-        cards: [],
-        lookup: {},
-      },
-
-      cards: [],
       decks: [testDeck],
-    }
-  },
-
-  provide() {
-    return {
-      allcards: computed(() => this.cardDatabase.cards),
-      cardLookup: computed(() => this.cardDatabase.lookup),
-      bus: this.bus,
     }
   },
 
   computed: {
     ...mapState('magic/dm', {
       activeDeck: 'activeDeck',
+      cardsLoaded: state => state.cardDatabase.loaded,
       managedCard: 'managedCard',
     })
   },
@@ -112,132 +96,10 @@ export default {
         alert('Error loading game data')
       }
     },
-
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // Card Database Management Methods
-
-
-    async loadCardsFromDatabase() {
-      console.log('loadCardsFromDatabase')
-      const objectStore = this.cardDatabase.db.transaction('cards').objectStore('cards')
-
-      objectStore.openCursor().addEventListener('success', (e) => {
-        // Get a reference to the cursor
-        const cursor = e.target.result;
-
-        // If there is still another data item to iterate through, keep running this code
-        if (cursor) {
-          console.log('Cursor iteration')
-          this.cardDatabase.cards = cursor
-            .value
-            .json_data
-            .filter(card => Boolean(card.type_line) && !card.type_line.startsWith('Card'))
-          cursor.continue()
-        }
-        else {
-          console.log('all values loaded', this.cardDatabase.cards.length)
-          this.cardDatabase.lookup = {}
-          for (const card of this.cardDatabase.cards) {
-            const cardNames = [card.name.toLowerCase()]
-
-            if (card.card_faces) {
-              for (const face of card.card_faces) {
-                cardNames.push(face.name.toLowerCase())
-              }
-            }
-
-            for (const cardName of cardNames) {
-              if (cardName in this.cardDatabase.lookup) {
-                this.cardDatabase.lookup[cardName].push(card)
-              }
-              else {
-                this.cardDatabase.lookup[cardName] = [card]
-              }
-            }
-          }
-          this.cardDatabase.loading = false
-        }
-      })
-    },
-
-    async openLocalStorage() {
-      const openRequest = window.indexedDB.open('cards', 1)
-
-      /* openRequest.addEventListener('error', () => {
-       *   console.error('Database failed to open')
-       *   this.error = 'Database failed to open'
-       * })
-       */
-      openRequest.addEventListener('success', () => {
-        console.log('Database opened successfully')
-        this.cardDatabase.db = openRequest.result
-        this.loadCardsFromDatabase()
-      })
-
-      openRequest.addEventListener('upgradeneeded', (e) => {
-        this.cardDatabase.db = e.target.result
-
-        console.log(`Upgrading database to version ${this.cardDatabase.db.version}`)
-
-        // Create an objectStore in our database to store notes and an auto-incrementing key
-        // An objectStore is similar to a 'table' in a relational database
-        const objectStore = this.cardDatabase.db.createObjectStore('cards', {
-          keyPath: 'id',
-          autoIncrement: true,
-        })
-
-        // Define what data items the objectStore will contain
-        objectStore.createIndex('json_data', 'json_data', { unique: false })
-
-        console.log('Database setup complete')
-      })
-    },
-
-    async saveCardsToDatabase(cards) {
-      const newItem = { json_data: cards }
-
-      const transaction = this.cardDatabase.db.transaction(['cards'], 'readwrite')
-      const objectStore = transaction.objectStore('cards')
-      const addRequest = objectStore.add(newItem)
-
-      // What is the difference between success and complete?
-      addRequest.addEventListener('success', () => {})
-
-      transaction.addEventListener('complete', () => {
-        console.log('Transaction completed: database modification finished.')
-        this.loadCardsFromDatabase()
-      })
-
-      /* transaction.addEventListener('error', () => {
-       *   this.error = 'Unable to save cards to database'
-       * }) */
-    },
-
-    // This fetches the latest card data from the database and stores it locally
-    // in an IndexedDB.
-    async updateLocalCards() {
-      console.log('fetching card data')
-      const requestResult = await axios.post('/api/card/all')
-      console.log('card data fetched')
-
-      if (requestResult.data.status === 'success') {
-        await this.saveCardsToDatabase(requestResult.data.cards)
-        await this.loadCardsFromDatabase()
-      }
-      else {
-        alert('Error loading game data')
-      }
-    },
-
   },
 
   created() {
-    this.openLocalStorage()
-  },
-
-  mounted() {
-    this.bus.on('deck-edit-card', this.deckEditCard)
+    this.$store.dispatch('magic/dm/loadCardDatabase')
   },
 }
 </script>
