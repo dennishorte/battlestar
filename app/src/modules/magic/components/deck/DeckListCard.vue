@@ -97,7 +97,6 @@ export default {
   margin-right: .5em;
 
   width: 100%;
-  max-width: 18em;
   max-height: 1.4em;
   overflow: hidden;
 }

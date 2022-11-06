@@ -107,6 +107,7 @@ export default {
 
 .deck-sections {
   display: flex;
+  align-content: flex-start;
   max-height: 100%;
   flex-flow: column wrap;
 }

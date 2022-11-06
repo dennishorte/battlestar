@@ -35,6 +35,11 @@ export default {
 
 
 <style scoped>
+.deck-section {
+  min-width: 18em;
+  max-width: 18em;
+}
+
 .deck-section-header {
   font-size: 1.2em;
   margin-top: 1em;
