@@ -1,6 +1,7 @@
 <template>
   <div class="card-list">
-    <div v-for="name in cardNames" :key="name" class="game-card" @click="highlightCard(name)">
+    <input v-model="cardSearch" class="form-control" placeholder="search" />
+    <div v-for="name in searchedNames" :key="name" class="game-card" @click="highlightCard(name)">
       {{ name }}
     </div>
   </div>
@@ -41,6 +42,7 @@ export default {
 
   data() {
     return {
+      cardSearch: '',
       filters: [],
     }
   },
@@ -137,8 +139,16 @@ export default {
     },
 
     cardNames() {
-      return util.array.distinct(this.cardsFiltered.map(c => c.name)).sort().slice(0,1000)
+      return util.array.distinct(this.cardsFiltered.map(c => c.name)).sort()
     },
+
+    searchedNames() {
+      const searchText = this.cardSearch.toLowerCase()
+      return this
+        .cardNames
+        .filter(name => name.toLowerCase().includes(searchText))
+        .slice(0,1000)
+    }
   },
 
   methods: {
