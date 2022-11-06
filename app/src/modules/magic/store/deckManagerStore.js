@@ -1,6 +1,13 @@
 import { util } from 'battlestar-common'
 
 import cardUtil from '../util/cardUtil.js'
+import testDeck from '../res/test_deck.js'
+import testDeckCmd from '../res/test_deck_commander.js'
+
+
+import deckUtil from '../util/deckUtil.js'
+const cards = deckUtil.deckListToCardNames(testDeckCmd.decklist)
+
 
 export default {
   namespaced: true,
@@ -21,6 +28,13 @@ export default {
     activeDeck: null,
     cardFilters: [],
     cardLock: false,
+    decks: [
+      {
+        name: 'root',
+        folders: [],
+        decks: [testDeck, testDeckCmd],
+      }
+    ],
     managedCard: null,
   }),
 

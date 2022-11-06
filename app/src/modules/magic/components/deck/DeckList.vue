@@ -12,13 +12,13 @@
       </template>
 
       <DeckListSection
-        v-if="cardData.side"
+        v-if="cardData.side.length"
         :cards="cardData.side"
         name='sideboard'
       />
 
       <DeckListSection
-        v-if="cardData.command"
+        v-if="cardData.command.length"
         :cards="cardData.command"
         name='command'
       />

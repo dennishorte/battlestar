@@ -34,9 +34,6 @@ import { mapState } from 'vuex'
 import axios from 'axios'
 import mitt from 'mitt'
 
-import testCard from './test_card.js'
-import testDeck from './test_deck.js'
-
 import Card from '../Card'
 
 import CardFilters from './CardFilters'
@@ -60,9 +57,6 @@ export default {
   data() {
     return {
       actor: this.$store.getters['auth/user'],
-      bus: mitt(),
-
-      decks: [testDeck],
     }
   },
 
@@ -70,6 +64,7 @@ export default {
     ...mapState('magic/dm', {
       activeDeck: 'activeDeck',
       cardsLoaded: state => state.cardDatabase.loaded,
+      decks: 'decks',
       managedCard: 'managedCard',
     })
   },

@@ -1,6 +1,7 @@
 <template>
   <div class="deck-section">
-    <div class="deck-section-header">{{ name }}</div>
+    <SectionHeader>{{ name }}</SectionHeader>
+
     <div v-for="card in cards" class="card-and-count">
       <div class="card-count">{{ card.count }}</div>
       <DeckListCard :cardId="card.name" />
@@ -11,6 +12,7 @@
 
 <script>
 import DeckListCard from './DeckListCard'
+import SectionHeader from '@/components/SectionHeader'
 
 import cardUtil from '../../util/cardUtil.js'
 import deckUtil from '../../util/deckUtil.js'
@@ -21,6 +23,7 @@ export default {
 
   components: {
     DeckListCard,
+    SectionHeader,
   },
 
   props: {

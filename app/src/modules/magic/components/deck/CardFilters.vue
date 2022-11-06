@@ -1,4 +1,6 @@
 <template>
+  <SectionHeader>Card Filters</SectionHeader>
+
   <div class="filter-inputs">
 
     <div class="filter-group">
@@ -174,9 +176,14 @@
 <script>
 import { mapState} from 'vuex'
 
+import SectionHeader from '@/components/SectionHeader'
 
 export default {
   name: 'CardFilters',
+
+  components: {
+    SectionHeader,
+  },
 
   computed: {
     ...mapState('magic/dm', {
@@ -237,12 +244,6 @@ export default {
 label {
   min-width: 4em;
 }
-
-/* .colors-group {
-   display: flex;
-   flex-direction: column;
-   }
- */
 
 .color-buttons .form-check {
   margin: 0;
