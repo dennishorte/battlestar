@@ -1,5 +1,3 @@
-module.exports.RecordKeeper = require('./lib/recordkeeper.js')
-
 module.exports.GameOverEvent = require('./lib/game.js').GameOverEvent
 
 module.exports.inn = require('./innovation/innovation.js')
