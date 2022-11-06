@@ -1,12 +1,8 @@
-import { util } from 'battlestar-common'
+import { mag, util } from 'battlestar-common'
 
 import cardUtil from '../util/cardUtil.js'
 import testDeck from '../res/test_deck.js'
 import testDeckCmd from '../res/test_deck_commander.js'
-
-
-import deckUtil from '../util/deckUtil.js'
-const cards = deckUtil.deckListToCardNames(testDeckCmd.decklist)
 
 
 export default {
@@ -39,7 +35,11 @@ export default {
   }),
 
   getters: {
+    // Decklist Methods
+    //dlCards: decklistCards,
 
+    // Managed Card Methods
+    mcName: state => state.managedCard.name,
   },
 
   mutations: {
@@ -65,8 +65,8 @@ export default {
       state.cardDatabase.lookup = createCardLookup(cards)
     },
 
-    setActiveDeck(state, deck) {
-      state.activeDeck = deck
+    setActiveDeck(state, rawDeck) {
+      state.activeDeck = mag.Deck.deserialize(rawDeck, state.cardDatabase.lookup)
     },
 
     setManagedCard(state, card) {

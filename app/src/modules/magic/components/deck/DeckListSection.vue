@@ -14,10 +14,6 @@
 import DeckListCard from './DeckListCard'
 import SectionHeader from '@/components/SectionHeader'
 
-import cardUtil from '../../util/cardUtil.js'
-import deckUtil from '../../util/deckUtil.js'
-
-
 export default {
   name: 'DeckListSection',
 

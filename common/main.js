@@ -1,6 +1,7 @@
 module.exports.GameOverEvent = require('./lib/game.js').GameOverEvent
 
 module.exports.inn = require('./innovation/innovation.js')
+module.exports.mag = require('./magic/magic.js')
 module.exports.tyr = require('./tyrants/tyrants.js')
 
 module.exports.log = require('./lib/log.js')

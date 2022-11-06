@@ -12,14 +12,14 @@
       </template>
 
       <DeckListSection
-        v-if="cardData.side.length"
-        :cards="cardData.side"
+        v-if="deck.breakdown.side.length"
+        :cards="deck.breakdown.side"
         name='sideboard'
       />
 
       <DeckListSection
-        v-if="cardData.command.length"
-        :cards="cardData.command"
+        v-if="deck.breakdown.command.length"
+        :cards="deck.breakdown.command"
         name='command'
       />
     </div>
@@ -28,6 +28,7 @@
 
 
 <script>
+import { util } from 'battlestar-common'
 import { mapState } from 'vuex'
 
 import DeckListSection from './DeckListSection'
@@ -64,29 +65,8 @@ export default {
       deck: 'activeDeck',
     }),
 
-    cardData() {
-      const data = deckUtil.deckListToCardNames(this.deck.decklist)
-      for (const list of Object.values(data)) {
-        for (const nameAndCount of list) {
-          const cards = this.cardLookup[nameAndCount.name]
-          nameAndCount.card = cards ? cards[0] : null
-        }
-      }
-      return data
-    },
-
     sortedMaindeck() {
-      const sorted = {}
-      for (const data of this.cardData.main) {
-        const sortType = cardUtil.getSortType(data.card)
-        if (sortType in sorted) {
-          sorted[sortType].push(data)
-        }
-        else {
-          sorted[sortType] = [data]
-        }
-      }
-      return sorted
+      return util.array.collect(this.deck.breakdown.main, data => cardUtil.getSortType(data.card))
     },
   },
 }

@@ -103,7 +103,8 @@ export default {
 <style scoped>
 .deck-manager {
   max-height: 100vh;
-  overflow: hidden;
+  overflow-x: scroll;
+  overflow-y: hidden;
 }
 
 .column {

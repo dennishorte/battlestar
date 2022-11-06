@@ -1,42 +1,46 @@
 <template>
   <Modal id="card-manager-modal">
-    <template #header>{{ cardName }}</template>
+    <template #header v-if="managedCard">
+      {{ name }}
+    </template>
 
-    <div class="card-lock" @click="toggleCardLock">
-      <i v-if="cardLock" class="bi-lock-fill"></i>
-      <i v-else class="bi-unlock-fill"></i>
-    </div>
-
-    <div class="card-counter">
-      <div class="btn-group">
-        <button type="button" class="btn btn-outline-primary btn-plus-minus">-</button>
-        <button type="button" class="btn btn-primary btn-plus-minus-title">main 2</button>
-        <button type="button" class="btn btn-outline-primary btn-plus-minus">+</button>
+    <template v-if="managedCard">
+      <div class="card-lock" @click="toggleCardLock">
+        <i v-if="cardLock" class="bi-lock-fill"></i>
+        <i v-else class="bi-unlock-fill"></i>
       </div>
-    </div>
 
-    <div class="card-counter">
-      <div class="btn-group">
-        <button type="button" class="btn btn-outline-info btn-plus-minus">-</button>
-        <button type="button" class="btn btn-info btn-plus-minus-title">side 1</button>
-        <button type="button" class="btn btn-outline-info btn-plus-minus">+</button>
+      <div class="card-counter">
+        <div class="btn-group">
+          <button type="button" class="btn btn-outline-primary btn-plus-minus">-</button>
+          <button type="button" class="btn btn-primary btn-plus-minus-title">main 2</button>
+          <button type="button" class="btn btn-outline-primary btn-plus-minus">+</button>
+        </div>
       </div>
-    </div>
 
-    <div class="card-counter">
-      <div class="btn-group">
-        <button type="button" class="btn btn-outline-success btn-plus-minus">-</button>
-        <button type="button" class="btn btn-success btn-plus-minus-title">cmd 1</button>
-        <button type="button" class="btn btn-outline-success btn-plus-minus">+</button>
+      <div class="card-counter">
+        <div class="btn-group">
+          <button type="button" class="btn btn-outline-info btn-plus-minus">-</button>
+          <button type="button" class="btn btn-info btn-plus-minus-title">side 1</button>
+          <button type="button" class="btn btn-outline-info btn-plus-minus">+</button>
+        </div>
       </div>
-    </div>
+
+      <div class="card-counter">
+        <div class="btn-group">
+          <button type="button" class="btn btn-outline-success btn-plus-minus">-</button>
+          <button type="button" class="btn btn-success btn-plus-minus-title">cmd 1</button>
+          <button type="button" class="btn btn-outline-success btn-plus-minus">+</button>
+        </div>
+      </div>
+    </template>
 
   </Modal>
 </template>
 
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 import Modal from '@/components/Modal'
 
@@ -54,9 +58,9 @@ export default {
       managedCard: 'managedCard',
     }),
 
-    cardName() {
-      return this.managedCard ? this.managedCard.name : ''
-    },
+    ...mapGetters('magic/dm', {
+      name: 'mcName',
+    }),
   },
 
   methods: {
