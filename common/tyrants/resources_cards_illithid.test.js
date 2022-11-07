@@ -195,6 +195,77 @@ describe('Illithids expansion', () => {
     })
   })
 
+  describe('Chuul', () => {
+    test('place a spy and opponents discard', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Chuul', 'House Guard'],
+        },
+        micah: {
+          hand: ['House Guard', 'House Guard', 'House Guard', 'Ambassador'],
+        },
+        'Chasmleap Bridge': {
+          troops: ['micah'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Chuul')
+      const request3 = t.choose(game, request2, 'Chasmleap Bridge')
+      const request4 = t.choose(game, request3, 'House Guard')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Chuul'],
+        },
+        micah: {
+          hand: ['House Guard', 'House Guard', 'Ambassador'],
+          discard: ['House Guard'],
+        },
+        'Chasmleap Bridge': {
+          spies: ['dennis'],
+          troops: ['micah'],
+        },
+      })
+    })
+
+    test('place a spy but opponents do not discard', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Chuul', 'House Guard'],
+        },
+        micah: {
+          hand: ['House Guard', 'House Guard', 'House Guard'],
+        },
+        'Chasmleap Bridge': {
+          troops: ['micah'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Chuul')
+      const request3 = t.choose(game, request2, 'Chasmleap Bridge')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Chuul'],
+        },
+        micah: {
+          hand: ['House Guard', 'House Guard', 'House Guard'],
+        },
+        'Chasmleap Bridge': {
+          spies: ['dennis'],
+          troops: ['micah'],
+        },
+      })
+    })
+
+  })
+
   describe('Gauth', () => {
     test('influence', () => {
       const game = t.gameFixture({

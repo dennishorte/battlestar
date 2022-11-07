@@ -133,7 +133,19 @@ const cardData = [
     text: [
       "Place a spy. Each opponent who has a troop at that spy's site and more than 3 cards, must discard a card."
     ],
-    impl: (game, player) => {}
+    impl: (game, player) => {
+      const location = game.aChooseAndPlaceSpy(player)
+
+      const opponents = game
+        .getPlayerAll()
+        .filter(p => p !== player)
+        .filter(p => game.getCardsByZone(p, 'hand').length > 3)
+        .filter(p => location.getTroops().some(troop => troop.owner === p))
+
+      for (const opponent of opponents) {
+        game.aChooseAndDiscard(opponent, { min: 1, max: 1, forced: true })
+      }
+    }
   },
   {
     name: "Cloaker",
