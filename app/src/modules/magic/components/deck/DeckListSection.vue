@@ -4,7 +4,7 @@
 
     <div v-for="card in cards" class="card-and-count">
       <div class="card-count">{{ card.count }}</div>
-      <DeckListCard :cardId="card.name" />
+      <DeckListCard :card="card.card" />
     </div>
   </div>
 </template>

@@ -1,13 +1,9 @@
 <template>
-  <div v-if="card" class="deck-list-card" @click="click">
+  <div class="deck-list-card" @click="click">
     <div class="name">
       {{ displayName }}
     </div>
     <ManaCost class="mana-cost" :cost="manaCost" />
-  </div>
-
-  <div v-else class="deck-list-card unknown-card">
-    unknown card: `{{ cardId }}`
   </div>
 </template>
 
@@ -25,30 +21,10 @@ export default {
   },
 
   props: {
-    cardId: String,
+    card: Object,
   },
 
   computed: {
-    ...mapState('magic/dm', {
-      cardLookup: state => state.cardDatabase.lookup,
-    }),
-
-    card() {
-      if (!this.cardId) {
-        return undefined
-      }
-
-      const tokens = this.cardId.toLowerCase().split(' ')
-
-      const setId = this.getSetId(tokens)
-      const collectorNumber = this.getCollectorNumber(tokens)
-
-      const cardName = setId ? tokens.slice(0, -2) : this.cardId
-      const matchingCards = this.cardLookup[cardName] || []
-
-      return matchingCards[0]
-    },
-
     displayName() {
       if (this.card.card_faces) {
         return this.card.card_faces[0].name

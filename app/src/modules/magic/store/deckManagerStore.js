@@ -23,7 +23,7 @@ export default {
     // State
     activeDeck: null,
     cardFilters: [],
-    cardLock: false,
+    cardlock: false,
     decks: mag.Deck.buildHierarchy([testDeck, testDeckCmd]),
     managedCard: null,
   }),
@@ -59,6 +59,8 @@ export default {
       state.cardDatabase.lookup = createCardLookup(cards)
     },
 
+    ////////////////////
+    // Decks
     setActiveDeck(state, rawDeck) {
       state.activeDeck = mag.Deck.deserialize(rawDeck, state.cardDatabase.lookup)
     },
@@ -66,18 +68,56 @@ export default {
       state.decks = decks
     },
 
+    ////////////////////
+    // Managed Card
+    addCardToZone(state, { card, zoneName }) {
+      const zone = state.activeDeck.breakdown[zoneName]
+
+      // Already exists?
+      const existing = zone.find(data => (
+        data.card === card
+        || (
+          data.name === card.name
+          && data.setCode === card.set
+          && data.collectorNumber === card.collector_number
+        )
+      ))
+
+      if (existing) {
+        existing.count += 1
+      }
+      else {
+        zone.push({
+          card: card,
+          name: card.name,
+          count: 1,
+          setCode: card.set,
+          collectorNumber: card.collector_number,
+        })
+      }
+      state.activeDeck.modified = true
+    },
+    removeCardFromZone(state, zoneName) {
+      const zone = state.activeDeck.breakdown[zoneName]
+      const elem = zone.find(data => data.card === state.activeCard)
+      util.array.remove(zone, elem)
+      state.activeDeck.modified = true
+    },
+
     setManagedCard(state, card) {
       state.managedCard = card
     },
 
     setCardLock(state, value) {
-      state.cardLock = value
+      state.cardlock = value
     },
   },
 
   actions: {
+
     ////////////////////
     // Card Filters
+
     applyCardFilters({ commit }) {
 
     },
@@ -97,8 +137,39 @@ export default {
       commit('removeCardFilter', filter)
     },
 
+
     ////////////////////
     // Manage Cards
+    addCurrentCard({ commit, state }, zoneName) {
+      // If cardlock is on, steal the card from the sideboard,
+      // or, if adding to sideboard, from the maindeck.
+      if (state.cardlock) {
+        throw new Error('not implemented: adding card when cardlock is enabled')
+      }
+
+      // Otherwise, just add the card.
+      else {
+        commit('addCardToZone', {
+          card: state.managedCard,
+          zoneName,
+        })
+      }
+    },
+    removeCurrentCard({ commit, state }, zoneName) {
+      // If cardlock is on, steal the card from the sideboard,
+      // or, if adding to sideboard, from the maindeck.
+      if (state.cardlock) {
+        throw new Error('not implemented: removing card when cardlock is enabled')
+      }
+
+      // Otherwise, just add the card.
+      else {
+        commit('removeCardFromZone', {
+          card: state.activeCard,
+          zoneName,
+        })
+      }
+    },
     manageCard({ commit }, card) {
       commit('setManagedCard', card)
     },
@@ -124,7 +195,7 @@ export default {
     },
 
     toggleCardLock({ commit, state }) {
-      commit('setCardLock', !state.cardLock)
+      commit('setCardLock', !state.cardlock)
     },
 
     ////////////////////////////////////////////////////////////////////////////////

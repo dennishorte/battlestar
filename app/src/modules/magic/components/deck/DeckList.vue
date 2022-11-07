@@ -1,6 +1,9 @@
 <template>
   <div class="deck-list">
-    <div class="deck-name">{{ deck.name }}</div>
+    <div>
+      <span class="deck-name me-2">{{ deck.name }}</span>
+      <span v-if="deck.modified" class="badge bg-warning text-dark">unsaved changes</span>
+    </div>
 
     <div class="deck-sections">
       <template v-for="sortType in sortTypes">

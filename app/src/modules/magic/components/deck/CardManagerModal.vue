@@ -8,15 +8,15 @@
       <div class="wrapper">
         <div class="left-side">
           <div class="card-lock" @click="toggleCardLock">
-            <i v-if="cardLock" class="bi-lock-fill"></i>
+            <i v-if="cardlock" class="bi-lock-fill"></i>
             <i v-else class="bi-unlock-fill"></i>
           </div>
 
           <div class="card-counter">
             <div class="btn-group">
-              <button type="button" class="btn btn-outline-primary btn-plus-minus">-</button>
-              <button type="button" class="btn btn-primary btn-plus-minus-title">main 2</button>
-              <button type="button" class="btn btn-outline-primary btn-plus-minus">+</button>
+              <button class="btn btn-outline-primary btn-plus-minus">-</button>
+              <button class="btn btn-primary btn-plus-minus-title">main 2</button>
+              <button @click="addCard('main')" class="btn btn-outline-primary btn-plus-minus">+</button>
             </div>
           </div>
 
@@ -64,7 +64,7 @@ export default {
 
   computed: {
     ...mapState('magic/dm', {
-      cardLock: 'cardLock',
+      cardlock: 'cardlock',
       managedCard: 'managedCard',
     }),
 
@@ -74,6 +74,10 @@ export default {
   },
 
   methods: {
+    addCard(zoneName) {
+      this.$store.dispatch('magic/dm/addCurrentCard', zoneName)
+    },
+
     toggleCardLock() {
       this.$store.dispatch('magic/dm/toggleCardLock')
     },

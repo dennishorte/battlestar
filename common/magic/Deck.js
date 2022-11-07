@@ -13,6 +13,7 @@ function Deck() {
 
   // Extra Data
   this.breakdown = {}
+  this.modified = false
 }
 
 module.exports = {
