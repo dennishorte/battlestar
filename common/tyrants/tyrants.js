@@ -629,7 +629,7 @@ Tyrants.prototype.aChoose = function(player, choices, opts={}) {
 
   const selected = this.requestInputSingle({
     actor: player.name,
-    title: opts.title || 'Choose',
+    title: 'Choose',
     choices: choices,
     ...opts
   })
@@ -638,11 +638,6 @@ Tyrants.prototype.aChoose = function(player, choices, opts={}) {
     return []
   }
   else {
-    /* const choice = selected.join(', ')
-     * this.mLog({
-     *   template: '{player} chooses {choice}',
-     *   args: { player, choice }
-     * }) */
     return selected
   }
 }
@@ -799,8 +794,8 @@ Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
   }
 }
 
-Tyrants.prototype.aChooseAndPromote = function(player, choices) {
-  const card = this.aChooseCard(player, choices, { title: 'Choose a card to promote' })
+Tyrants.prototype.aChooseAndPromote = function(player, choices, opts={}) {
+  const card = this.aChooseCard(player, choices, { ...opts, title: 'Choose a card to promote' })
   if (card) {
     this.aPromote(player, card)
   }
@@ -886,6 +881,25 @@ Tyrants.prototype.aChooseOne = function(player, choices, opts={}) {
     args: { player, selection }
   })
   impl(this, player, opts)
+}
+
+Tyrants.prototype.aChooseToDiscard = function(player, opts={}) {
+  const opponents = this
+    .getPlayerAll()
+    .filter(p => p !== player)
+    .filter(p => this.getCardsByZone(p, 'hand').length > 3)
+    .map(p => p.name)
+
+  const choice = this.aChoose(player, opponents, { title: 'Choose an opponent to discard' })
+  if (choice.length > 0) {
+    const opponent = this.getPlayerByName(choice[0])
+    this.aChooseAndDiscard(opponent, { min: 1, max: 1 })
+  }
+  else {
+    game.mLog({
+      template: 'No opponents have more than three cards in hand',
+    })
+  }
 }
 
 Tyrants.prototype.aDeferPromotion = function(player, source) {

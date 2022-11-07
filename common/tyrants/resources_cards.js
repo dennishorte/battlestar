@@ -3,11 +3,13 @@ const Card = require('./Card.js')
 const baseExp = require('./resources_cards_base.js')
 const dragonsExp = require('./resources_cards_dragons.js')
 const drowExp = require('./resources_cards_drow.js')
+const illithidExp = require('./resources_cards_illithid.js')
 
 const baseData = [
   ...baseExp.cardData,
   ...dragonsExp.cardData,
   ...drowExp.cardData,
+  ...illithidExp.cardData,
 ]
 
 const cards = []

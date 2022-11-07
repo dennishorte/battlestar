@@ -1,0 +1,162 @@
+# Set=Illithid
+
+Aboleth
+guile
+aberration
+747
+1
+Choose one:
+- Place 2 spies.
+- Draw a card for each spy you have on the board.
+
+Ambassador
+ambition
+illithid
+313
+4
+At the end of turn, promote another card played this turn.
+If an opponent causes you to discard this, you may promote it instead.
+
+Beholder
+malice
+aberration
+536
+1
+Assassinate a troop.
+Gain 1 power for every 3 troops in your trophy hall.
+
+Brainwashed Slave
+guile
+aberration
+423
+2
+Choose one:
+- Place a spy.
+- Return one of your spies > +2 power, + 2 influence.
+
+Chuul
+guile
+aberration
+314
+2
+Place a spy. Each opponent who has a troop at that spy's site and more than 3 cards, must discard a card.
+
+Cloaker
+guile
+aberration
+213
+3
+Choose one:
+- Place a spy.
+- Return one of your spies > Assassinate a troop at that spy's site.
+
+Cranium Rats
+conquest
+beast
+213
+3
+Deploy 2 troops.
+Choose one opponent with more than 3 cards to discard a card.
+
+Death Tyrant
+malice
+aberration
+736
+1
+Assassinate up to 3 troops at a single site. For each troop removed, gain 1 influence.
+
+Elder Brain
+ambition
+aberration
+749
+1
+Promote the top card of your deck.
+Play a card from your inner circle as if it were in your hand, then return it to your inner circle.
+
+Gauth
+malice
+aberration
+323
+2
+Choose one:
+- +2 influence.
+- Draw a card. Choose one opponent with more than 3 cards to discard a card.
+
+Grimlock
+conquest
+grimlock
+101
+2
+Deploy a troop.
+If an opponent causes you to dicard this, draw 2 cards.
+
+Intellect Devourer
+ambition
+aberration
+413
+2
+Choose one:
+- +3 influence.
+- Return up to two troops or spies.
+
+Mindwitness
+malice
+aberration
+313
+3
+Assassinate a troop. If that troop belonged to another player and they have more than 3 cards, they must discard a card.
+
+Neogi
+conquest
+aberration
+748
+1
+Deploy 4 troops.
+At end of turn, each opponent must discard a card.
+
+Nothic
+guile
+aberration
+313
+2
+Choose one:
+- Place a spy.
+- Return one of your spies > Draw a card. Each opponent with more than 3 cards must discard a card.
+
+Puppeteer
+ambition
+illithid
+526
+2
++2 influence.
+At end of turn, promote another card played this turn.
+
+Quaggoth
+conquest
+quaggoth
+524
+2
+Assassinate one white troop for each site you control.
+
+Spectator
+malice
+aberration
+423
+3
++2 power
++1 influence
+
+Ulitharid
+ambition
+illithid
+636
+1
+Play a card in the market that costs 4 or less as if it was in your hand, then devour that card.
+
+Umber Hulk
+conquest
+monstrosity
+424
+2
+Deploy 3 troops.
+If an opponent causes you to discard this, they must discard a card.
