@@ -1136,8 +1136,10 @@ Tyrants.prototype.aSupplant = function(player, loc, owner) {
 
 Tyrants.prototype.getAssassinateChoices = function(player, opts={}) {
   const presence = this.getPresence(player)
+
   const troops = this
     .getPresence(player)
+    .filter(loc => opts.loc ? loc === opts.loc : true)
     .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
     .filter(([_, troop]) => troop.owner !== player)
     .filter(([_, troop]) => opts.whiteOnly ? troop.owner === undefined : true)

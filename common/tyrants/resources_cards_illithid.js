@@ -161,7 +161,22 @@ const cardData = [
       "- Place a spy.",
       "- Return one of your spies > Assassinate a troop at that spy's site."
     ],
-    impl: (game, player) => {}
+    impl: (game, player) => {
+      game.aChooseOne(player, [
+        {
+          title: 'Place a spy',
+          impl: (game, player) => {
+            game.aChooseAndPlaceSpy(player)
+          }
+        },
+        {
+          title: "Return one of your spies > Assassinate a troop at that spy's site",
+          impl: (game, player) => game.aReturnASpyAnd(player, (game, player, { loc }) => {
+            game.aChooseAndAssassinate(player, { loc })
+          })
+        },
+    ])
+    }
   },
   {
     name: "Cranium Rats",

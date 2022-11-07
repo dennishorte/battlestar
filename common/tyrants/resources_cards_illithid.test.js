@@ -266,6 +266,93 @@ describe('Illithids expansion', () => {
 
   })
 
+  describe('Cloaker', () => {
+    test('place a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Cloaker', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Cloaker')
+      const request3 = t.choose(game, request2, 'Place a spy')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Cloaker'],
+        },
+        'Chasmleap Bridge': {
+          spies: ['dennis'],
+        },
+      })
+    })
+
+    test('return a spy (no valid target)', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Cloaker', 'House Guard'],
+        },
+        Menzoberranzan: {
+          spies: ['dennis']
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Cloaker')
+      const request3 = t.choose(game, request2, "Return one of your spies > Assassinate a troop at that spy's site")
+      const request4 = t.choose(game, request3, 'Menzoberranzan')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Cloaker'],
+        },
+        Menzoberranzan: {
+          spies: [],
+          troops: ['neutral', 'neutral', 'neutral'],
+        },
+        'araum-ched': {
+          troops: ['neutral']
+        },
+      })
+    })
+
+    test('return a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Cloaker', 'House Guard'],
+        },
+        Menzoberranzan: {
+          troops: ['neutral', 'neutral', 'dennis'],
+          spies: ['dennis']
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Cloaker')
+      const request3 = t.choose(game, request2, "Return one of your spies > Assassinate a troop at that spy's site")
+      const request4 = t.choose(game, request3, 'Menzoberranzan')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Cloaker'],
+          trophyHall: ['neutral'],
+        },
+        Menzoberranzan: {
+          spies: [],
+          troops: ['neutral', 'dennis'],
+        },
+      })
+    })
+  })
+
   describe('Gauth', () => {
     test('influence', () => {
       const game = t.gameFixture({
