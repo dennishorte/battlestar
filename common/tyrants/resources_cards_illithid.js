@@ -209,7 +209,19 @@ const cardData = [
     text: [
       "Assassinate up to 3 troops at a single site. For each troop removed, gain 1 influence."
     ],
-    impl: (game, player) => {}
+    impl: (game, player) => {
+      const loc = game.aChooseLocation(player, game.getPresence(player))
+      const troops = loc
+        .getTroops()
+        .filter(troop => troop.owner !== player)
+        .map(troop => troop.getOwnerName())
+      const targets = game.aChoose(player, troops, { min: 0, max: 3, title: 'Choose up to three troops to assassinate' })
+
+      for (const target of targets) {
+        const owner = target === 'neutral' ? 'neutral' : game.getPlayerByName(target)
+        game.aAssassinate(player, loc, owner)
+      }
+    }
   },
   {
     name: "Elder Brain",

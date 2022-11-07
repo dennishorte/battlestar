@@ -390,6 +390,38 @@ describe('Illithids expansion', () => {
     })
   })
 
+  describe('Death Tyrant', () => {
+    test('assassinate and influence', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Death Tyrant', 'House Guard'],
+        },
+        Menzoberranzan: {
+          troops: ['neutral', 'neutral', 'micah', 'neutral'],
+          spies: ['dennis'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Death Tyrant')
+      const request3 = t.choose(game, request2, 'Menzoberranzan')
+      const request4 = t.choose(game, request3, 'neutral', 'neutral', 'micah')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Death Tyrant'],
+          trophyHall: ['neutral', 'neutral', 'troop-micah'],
+        },
+        Menzoberranzan: {
+          troops: ['neutral'],
+          spies: ['dennis'],
+        },
+      })
+    })
+  })
+
   describe('Gauth', () => {
     test('influence', () => {
       const game = t.gameFixture({
