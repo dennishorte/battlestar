@@ -5,7 +5,61 @@ const t = require('./testutil.js')
 
 describe('Illithids expansion', () => {
   describe('Aboleth', () => {
+    test('place 2 spies', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Aboleth', 'House Guard'],
+        }
+      })
 
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Aboleth')
+      const request3 = t.choose(game, request2, 'Place 2 spies')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+      const request5 = t.choose(game, request4, 'Menzoberranzan')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Aboleth'],
+        },
+        Menzoberranzan: {
+          spies: ['dennis'],
+          troops: ['neutral', 'neutral', 'neutral'],
+        },
+        'Chasmleap Bridge': {
+          spies: ['dennis'],
+        },
+      })
+    })
+
+    test('draw a card for each spy you have on the board', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Aboleth'],
+        },
+        Menzoberranzan: {
+          spies: ['dennis'],
+          troops: ['neutral', 'neutral', 'neutral'],
+        },
+        'Chasmleap Bridge': {
+          spies: ['dennis'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Aboleth')
+      const request3 = t.choose(game, request2, 'Draw a card for each spy you have on the board')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Soldier', 'Soldier'],
+          played: ['Aboleth'],
+        },
+      })
+    })
   })
 
   describe('Ambassador', () => {

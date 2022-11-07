@@ -14,13 +14,24 @@ const cardData = [
       "- Draw a card for each spy you have on the board."
     ],
     impl: (game, player) => {
-      game.aChooseAndPlaceSpy(player)
-      game.aChooseAndPlaceSpy(player)
-
-      const count = game.getCardsByZone(player, 'spies').length
-      for (let i = 0; i < count; i++) {
-        game.aDraw(player)
-      }
+      game.aChooseOne(player, [
+        {
+          title: 'Place 2 spies',
+          impl: (game, player) => {
+            game.aChooseAndPlaceSpy(player)
+            game.aChooseAndPlaceSpy(player)
+          }
+        },
+        {
+          title: 'Draw a card for each spy you have on the board',
+          impl: (game, player) => {
+            const count = 5 - game.getCardsByZone(player, 'spies').length
+            for (let i = 0; i < count; i++) {
+              game.aDraw(player)
+            }
+          }
+        },
+      ])
     }
   },
   {
