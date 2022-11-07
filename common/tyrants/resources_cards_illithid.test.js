@@ -139,6 +139,62 @@ describe('Illithids expansion', () => {
     })
   })
 
+  describe('Brainwashed Slave', () => {
+    test('place a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Brainwashed Slave', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Brainwashed Slave')
+      const request3 = t.choose(game, request2, 'Place a spy')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Brainwashed Slave'],
+        },
+        'Chasmleap Bridge': {
+          spies: ['dennis'],
+        },
+      })
+    })
+
+    test('return a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Brainwashed Slave', 'House Guard'],
+        },
+        'Chasmleap Bridge': {
+          spies: ['dennis']
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Brainwashed Slave')
+      const request3 = t.choose(game, request2, 'Return one of your spies > +2 power, + 2 influence')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Brainwashed Slave'],
+          power: 2,
+          influence: 2,
+        },
+        'Chasmleap Bridge': {
+          spies: [],
+        },
+      })
+
+    })
+  })
+
   describe('Gauth', () => {
     test('influence', () => {
       const game = t.gameFixture({
