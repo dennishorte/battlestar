@@ -82,7 +82,12 @@ const cardData = [
       "Assassinate a troop.",
       "Gain 1 power for every 3 troops in your trophy hall."
     ],
-    impl: (game, player) => {}
+    impl: (game, player) => {
+      game.aChooseAndAssassinate(player)
+      const troops = game.getCardsByZone(player, 'trophyHall').length
+      const power = Math.floor(troops / 3)
+      player.incrementPower(power)
+    }
   },
   {
     name: "Brainwashed Slave",

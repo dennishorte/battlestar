@@ -115,6 +115,30 @@ describe('Illithids expansion', () => {
     })
   })
 
+  describe('Beholder', () => {
+    test('assassinate and points', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Beholder'],
+          trophyHall: ['neutral', 'neutral', 'neutral', 'neutral']
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Beholder')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['Beholder'],
+          trophyHall: ['neutral', 'neutral', 'neutral', 'neutral', 'neutral'],
+          power: 1,
+        },
+      })
+    })
+  })
+
   describe('Gauth', () => {
     test('influence', () => {
       const game = t.gameFixture({
