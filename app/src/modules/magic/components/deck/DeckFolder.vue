@@ -1,6 +1,8 @@
 <template>
   <div class="deck-folder">
-    <i class="bi-folder"></i> {{ content.name }}
+    <div>
+      <i class="bi-folder"></i> {{ content.name }}
+    </div>
 
     <div
       v-for="deck in content.decks"
@@ -9,6 +11,8 @@
     >
       <i class="bi-box"></i> {{ deck.name }}
     </div>
+
+    <DeckFolder v-for="folder in content.folders" class="nested" :content="folder" />
   </div>
 </template>
 
@@ -25,10 +29,6 @@ export default {
     selectDeck(deck) {
       this.$store.dispatch('magic/dm/selectDeck', deck)
     },
-  },
-
-  mounted() {
-    console.log(this.content)
   },
 }
 </script>

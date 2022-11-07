@@ -6,6 +6,7 @@ function Deck() {
   this._id = undefined
   this.userId = ''
   this.name = ''
+  this.path = ''
   this.createdTimestamp = Date.now()
   this.updatedTimestamp = this.createdTimestamp
   this.decklist = ''
@@ -17,6 +18,7 @@ function Deck() {
 module.exports = {
   Deck,
 
+  buildHierarchy,
   deserialize,
   parseDecklist,
 }
@@ -28,6 +30,7 @@ function deserialize(data, cardLookup) {
   deck._id = data._id
   deck.userId = data.userId
   deck.name = data.name
+  deck.path = data.path
   deck.createdTimestamp = data.createdTimestamp
   deck.updatedTimestamp = data.updatedTimestamp
   deck.decklist = data.decklist
@@ -54,6 +57,7 @@ Deck.prototype.serialize = function() {
     _id: this._id,
     userId: this.userId,
     name: this.name,
+    path: this.path,
     createdTimestamp: this.createdTimestamp,
     updatedTimestamp: this.updatedTimestamp,
     decklist: this.decklist,
@@ -69,6 +73,42 @@ Deck.prototype.updateDecklist = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Helper Functions
 
+function buildHierarchy(deckData) {
+  const hierarchy = [{
+    name: 'root',
+    folders: [],
+    decks: [],
+  }]
+
+  let node
+  for (const datum of deckData) {
+    node = hierarchy[0]  // start at the root node
+
+    const path = datum.path ? datum.path.split('/') : []
+
+    for (const elem of path) {
+      const folder = node.folders.find(f => f.name === elem)
+      if (folder) {
+        node = folder
+        continue
+      }
+      else {
+        const newFolder = {
+          name: elem,
+          folders: [],
+          decks: [],
+        }
+        node.folders.push(newFolder)
+        node = newFolder
+        continue
+      }
+    }
+
+    node.decks.push(datum)
+  }
+
+  return hierarchy
+}
 
 function parseDecklist(decklist) {
   const cards = {

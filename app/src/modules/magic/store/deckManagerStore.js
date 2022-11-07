@@ -24,13 +24,7 @@ export default {
     activeDeck: null,
     cardFilters: [],
     cardLock: false,
-    decks: [
-      {
-        name: 'root',
-        folders: [],
-        decks: [testDeck, testDeckCmd],
-      }
-    ],
+    decks: mag.Deck.buildHierarchy([testDeck, testDeckCmd]),
     managedCard: null,
   }),
 
@@ -67,6 +61,9 @@ export default {
 
     setActiveDeck(state, rawDeck) {
       state.activeDeck = mag.Deck.deserialize(rawDeck, state.cardDatabase.lookup)
+    },
+    setDecks(state, decks) {
+      state.decks = decks
     },
 
     setManagedCard(state, card) {
@@ -112,6 +109,16 @@ export default {
     ////////////////////
     // Misc
 
+    fetchDecks({ commit, rootGetters }) {
+      const requestResult = axios.post('/api/user/decks', {
+        userId: rootGetters.auth.userId,
+      })
+      if (requestResult.data.status === 'success') {
+        const deckHierarchy = mag.Deck.buildHierarchy(requestResult.data.decks)
+        this.commit('setDecks', deckHierarchy)
+      }
+    },
+
     selectDeck({ commit }, deck) {
       commit('setActiveDeck', deck)
     },
@@ -136,7 +143,7 @@ export default {
 
       commit('setDatabase', cleanedCards)
       commit('setCardsLoaded', true)
-      console.log('Card database ready', state)
+      console.log('Card database ready')
     },
 
     updateCardDatabase({ commit, dispatch }) {
