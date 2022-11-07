@@ -179,6 +179,18 @@ export default {
 
           selector.choices = updated
         }
+
+        else if (selector.title === 'Free Artifact Action') {
+          const player = this.game.getPlayerCurrent()
+          const card = this.game.getCardsByZone(player, 'artifact')[0]
+          const effects = this.game.getVisibleEffects(card, 'echo') || []
+          if (effects.length > 0) {
+            selector.choices[0] = {
+              title: 'dogma',
+              subtitles: [`${effects.length} echo effects will trigger`]
+            }
+          }
+        }
       }
 
       const selectorOptionComponent = (option) => {
