@@ -14,7 +14,7 @@
 
           <div class="card-counter">
             <div class="btn-group">
-              <button class="btn btn-outline-primary btn-plus-minus">-</button>
+              <button @click="removeCard('main')" class="btn btn-outline-primary btn-plus-minus">-</button>
               <button class="btn btn-primary btn-plus-minus-title">main 2</button>
               <button @click="addCard('main')" class="btn btn-outline-primary btn-plus-minus">+</button>
             </div>
@@ -76,6 +76,10 @@ export default {
   methods: {
     addCard(zoneName) {
       this.$store.dispatch('magic/dm/addCurrentCard', zoneName)
+    },
+
+    removeCard(zoneName) {
+      this.$store.dispatch('magic/dm/removeCurrentCard', zoneName)
     },
 
     toggleCardLock() {

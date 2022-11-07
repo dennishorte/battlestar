@@ -74,14 +74,7 @@ export default {
       const zone = state.activeDeck.breakdown[zoneName]
 
       // Already exists?
-      const existing = zone.find(data => (
-        data.card === card
-        || (
-          data.name === card.name
-          && data.setCode === card.set
-          && data.collectorNumber === card.collector_number
-        )
-      ))
+      const existing = findCardInZone(card, zone)
 
       if (existing) {
         existing.count += 1
@@ -99,9 +92,20 @@ export default {
     },
     removeCardFromZone(state, zoneName) {
       const zone = state.activeDeck.breakdown[zoneName]
-      const elem = zone.find(data => data.card === state.activeCard)
-      util.array.remove(zone, elem)
-      state.activeDeck.modified = true
+      const card = findCardInZone(zone, state.managedCard)
+
+      if (card) {
+        if (card.count > 1) {
+          card.count -= 1
+        }
+        else {
+          util.array.remove(zone, card)
+        }
+        state.activeDeck.modified = true
+      }
+      else {
+        throw new Error(`Card not found in deck: ${this.managedCard.name}`)
+      }
     },
 
     setManagedCard(state, card) {
@@ -162,12 +166,9 @@ export default {
         throw new Error('not implemented: removing card when cardlock is enabled')
       }
 
-      // Otherwise, just add the card.
+      // Otherwise, just remove the card.
       else {
-        commit('removeCardFromZone', {
-          card: state.activeCard,
-          zoneName,
-        })
+        commit('removeCardFromZone', zoneName)
       }
     },
     manageCard({ commit }, card) {
@@ -228,6 +229,17 @@ export default {
 
 function createCardLookup(cards) {
   return util.array.collect(cards, cardUtil.allCardNames)
+}
+
+function findCardInZone(zone, card) {
+  return zone.find(data => (
+    data.card === card
+    || (
+      data.name === card.name
+      && data.setCode === card.set
+      && data.collectorNumber === card.collector_number
+    )
+  ))
 }
 
 async function loadCardsFromDatabase(successFunc, errorFunc) {
