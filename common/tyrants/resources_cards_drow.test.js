@@ -369,6 +369,7 @@ describe('Drow Expansion', () => {
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Spellspinner')
       const request3 = t.choose(game, request2, "Return one of your spies > Supplant a troop at that spy's site")
+      const request4 = t.choose(game, request3, 'Menzoberranzan')
 
       t.testBoard(game, {
         dennis: {
@@ -495,6 +496,7 @@ describe('Drow Expansion', () => {
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Information Broker')
       const request3 = t.choose(game, request2, "Return one of your spies > Draw 3 cards")
+      const request4 = t.choose(game, request3, 'Menzoberranzan')
 
       t.testBoard(game, {
         dennis: {
@@ -549,6 +551,7 @@ describe('Drow Expansion', () => {
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Masters of Sorcere')
       const request3 = t.choose(game, request2, "Return one of your spies > +4 power")
+      const request4 = t.choose(game, request3, 'Menzoberranzan')
 
       t.testBoard(game, {
         dennis: {

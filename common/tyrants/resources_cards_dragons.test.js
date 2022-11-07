@@ -611,6 +611,7 @@ describe('Dragons Expansion Cards', () => {
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Watcher of Thay')
       const request3 = t.choose(game, request2, "Return one of your spies > +3 influence")
+      const request4 = t.choose(game, request3, 'Menzoberranzan')
 
       t.testBoard(game, {
         dennis: {
@@ -663,6 +664,7 @@ describe('Dragons Expansion Cards', () => {
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Enchanter of Thay')
       const request3 = t.choose(game, request2, "Return one of your spies > +4 power")
+      const request4 = t.choose(game, request3, 'Menzoberranzan')
 
       t.testBoard(game, {
         dennis: {
@@ -797,6 +799,7 @@ describe('Dragons Expansion Cards', () => {
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Green Dragon')
       const request3 = t.choose(game, request2, "Return one of your spies > Supplant a troop at that spy's site, then gain 1 VP for each site control marker you have")
+      const request4 = t.choose(game, request3, 'Menzoberranzan')
 
       t.testBoard(game, {
         dennis: {

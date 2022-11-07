@@ -1077,7 +1077,15 @@ Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
   const locations = this
     .getLocationAll()
     .filter(loc => loc.getSpies(player).length > 0)
-  const loc = this.aChooseLocation(player, locations)
+
+  if (locations.length === 0) {
+    this.mLog({
+      template: '{player} has no spies to return',
+      args: { player }
+    })
+  }
+
+  const loc = this.aChooseLocation(player, locations, { min: 0, max: 1 })
 
   // If a spy was returned, execute fn
   if (loc) {
@@ -1093,7 +1101,7 @@ Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
   }
   else {
     this.mLog({
-      template: '{player} has no spies to return',
+      template: '{player} chooses not to return a spy',
       args: { player }
     })
   }

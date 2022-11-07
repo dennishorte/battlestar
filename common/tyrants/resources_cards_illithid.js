@@ -103,7 +103,23 @@ const cardData = [
       "- Place a spy.",
       "- Return one of your spies > +2 power, + 2 influence."
     ],
-    impl: (game, player) => {}
+    impl: (game, player) => {
+      game.aChooseOne(player, [
+        {
+          title: 'Place a spy',
+          impl: (game, player) => {
+            game.aChooseAndPlaceSpy(player)
+          }
+        },
+        {
+          title: 'Return one of your spies > +2 power, + 2 influence',
+          impl: (game, player) => game.aReturnASpyAnd(player, (game, player) => {
+            player.incrementPower(2)
+            player.incrementInfluence(2)
+          })
+        },
+      ])
+    }
   },
   {
     name: "Chuul",
