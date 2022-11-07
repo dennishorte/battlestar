@@ -642,6 +642,11 @@ Tyrants.prototype.aChoose = function(player, choices, opts={}) {
   }
 }
 
+Tyrants.prototype.aChooseYesNo = function(player, title) {
+  const choice = this.aChoose(player, ['yes', 'no'], { title })
+  return choice[0] === 'yes'
+}
+
 Tyrants.prototype.aChooseCard = function(player, choices, opts={}) {
   const choiceNames = util.array.distinct(choices.map(c => c.name)).sort()
   const selection = this.aChoose(player, choiceNames, opts)
@@ -700,6 +705,17 @@ Tyrants.prototype.aChooseAndDevourMarket = function(player, opts={}) {
 Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
   const chosen = this.aChooseCard(player, this.getCardsByZone(player, 'hand'), opts)
   if (chosen) {
+    // Some cards have triggers if an opponent causes you to discard.
+    if (opts.forced) {
+      const triggers = chosen.triggers || []
+      for (const trigger of triggers) {
+        if (trigger.kind === 'discard-this') {
+          return trigger.impl(this, player, { card: chosen })
+        }
+      }
+    }
+
+    // Only get to this on fall-through
     this.aDiscard(player, chosen)
     return chosen
   }
@@ -797,7 +813,7 @@ Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
 Tyrants.prototype.aChooseAndPromote = function(player, choices, opts={}) {
   const card = this.aChooseCard(player, choices, { ...opts, title: 'Choose a card to promote' })
   if (card) {
-    this.aPromote(player, card)
+    return this.aPromote(player, card)
   }
 }
 
@@ -893,7 +909,7 @@ Tyrants.prototype.aChooseToDiscard = function(player, opts={}) {
   const choice = this.aChoose(player, opponents, { title: 'Choose an opponent to discard' })
   if (choice.length > 0) {
     const opponent = this.getPlayerByName(choice[0])
-    this.aChooseAndDiscard(opponent, { min: 1, max: 1 })
+    this.aChooseAndDiscard(opponent, { min: 1, max: 1, forced: true })
   }
   else {
     game.mLog({
@@ -1012,6 +1028,7 @@ Tyrants.prototype.aPromote = function(player, card) {
     template: '{player} promotes {card}',
     args: { player, card }
   })
+  return card
 }
 
 Tyrants.prototype.aRecruit = function(player, cardName) {

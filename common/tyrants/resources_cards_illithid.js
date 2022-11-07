@@ -41,9 +41,19 @@ const cardData = [
     },
     triggers: [
       {
-        trigger: 'discard-this',
-        func: (game, player, { card }) => {
-          game.aChooseAndPromote(player, card, { min: 0, max: 1 })
+        kind: 'discard-this',
+        impl: (game, player, { card }) => {
+          game.mLog({
+            template: '{player} was forced to discard {card}, and may choose to promote it',
+            args: { player, card }
+          })
+          const promote = game.aChooseYesNo(player, 'Promote Ambassador instead of discarding?')
+          if (promote) {
+            game.aPromote(player, card)
+          }
+          else {
+            game.aDiscard(player, card)
+          }
         }
       },
     ]
