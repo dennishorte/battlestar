@@ -191,7 +191,11 @@ const cardData = [
       "Deploy 2 troops.",
       "Choose one opponent with more than 3 cards to discard a card."
     ],
-    impl: (game, player) => {}
+    impl: (game, player) => {
+      game.aChooseAndDeploy(player)
+      game.aChooseAndDeploy(player)
+      game.aChooseToDiscard(player)
+    }
   },
   {
     name: "Death Tyrant",
