@@ -3,7 +3,7 @@
     <div class="row flex-nowrap">
 
       <div class="col column filters-column">
-        <DeckSelector :decks="decks" />
+        <DeckSelector />
         <CardFilters />
       </div>
 
