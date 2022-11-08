@@ -867,4 +867,27 @@ describe('Illithids expansion', () => {
       })
     })
   })
+
+  describe('Spectator', () => {
+    test('influence and power', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Spectator', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Spectator')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Spectator'],
+          power: 2,
+          influence: 1,
+        },
+      })
+    })
+  })
 })

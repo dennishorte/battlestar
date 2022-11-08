@@ -493,7 +493,10 @@ const cardData = [
       "+2 power",
       "+1 influence"
     ],
-    impl: (game, player) => {}
+    impl: (game, player) => {
+      player.incrementPower(2)
+      player.incrementInfluence(1)
+    }
   },
   {
     name: "Ulitharid",
