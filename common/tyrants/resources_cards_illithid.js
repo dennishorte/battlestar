@@ -137,13 +137,11 @@ const cardData = [
       const location = game.aChooseAndPlaceSpy(player)
 
       const opponents = game
-        .getPlayerAll()
-        .filter(p => p !== player)
-        .filter(p => game.getCardsByZone(p, 'hand').length > 3)
+        .getPlayerOpponents(player)
         .filter(p => location.getTroops().some(troop => troop.owner === p))
 
       for (const opponent of opponents) {
-        game.aChooseAndDiscard(opponent, { min: 1, max: 1, forced: true })
+        game.aChooseAndDiscard(opponent, { min: 1, max: 1, forced: true, requireThree: true })
       }
     }
   },
@@ -374,12 +372,8 @@ const cardData = [
     ],
     impl: (game, player) => {
       const troop = game.aChooseAndAssassinate(player)
-      console.log(troop)
       if (troop && troop.owner !== undefined) {
-        const cardCount = game.getCardsByZone(troop.owner, 'hand').length
-        if (cardCount > 3) {
-          game.aChooseAndDiscard(troop.owner)
-        }
+        game.aChooseAndDiscard(troop.owner, { requireThree: true, forced: true })
       }
     }
   },
@@ -424,7 +418,27 @@ const cardData = [
       "- Place a spy.",
       "- Return one of your spies > Draw a card. Each opponent with more than 3 cards must discard a card."
     ],
-    impl: (game, player) => {}
+    impl: (game, player) => {
+      game.aChooseOne(player, [
+        {
+          title: 'Place a spy',
+          impl: (game, player) => {
+            game.aChooseAndPlaceSpy(player)
+          }
+        },
+        {
+          title: 'Return one of your spies > Draw a card. Each opponent with more than 3 cards must discard a card',
+          impl: (game, player) => {
+            game.aReturnASpyAnd(player, (game, player) => {
+              game.aDraw(player)
+              game
+                .getPlayerOpponents(player)
+                .forEach(opp => game.aChooseAndDiscard(opp, { requireThree: true, forced: true }))
+            })
+          }
+        },
+      ])
+    }
   },
   {
     name: "Puppeteer",

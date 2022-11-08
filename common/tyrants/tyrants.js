@@ -716,6 +716,17 @@ Tyrants.prototype.aChooseAndDevourMarket = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
+  if (opts.requireThree) {
+    const cardsInHand = this.getCardsByZone(player, 'hand').length
+    if (cardsInHand <= 3) {
+      this.mLog({
+        template: '{player} has only {count} cards in hand, so does not discard',
+        args: { player, count: cardsInHand }
+      })
+      return
+    }
+  }
+
   const chosen = this.aChooseCard(player, this.getCardsByZone(player, 'hand'), opts)
   if (chosen) {
     // Some cards have triggers if an opponent causes you to discard.
@@ -914,8 +925,7 @@ Tyrants.prototype.aChooseOne = function(player, choices, opts={}) {
 
 Tyrants.prototype.aChooseToDiscard = function(player, opts={}) {
   const opponents = this
-    .getPlayerAll()
-    .filter(p => p !== player)
+    .getPlayerOpponents(player)
     .filter(p => this.getCardsByZone(p, 'hand').length > 3)
     .map(p => p.name)
 
@@ -1252,6 +1262,10 @@ Tyrants.prototype.getPlayerNext = function() {
   const currIndex = this.getPlayerAll().indexOf(this.getPlayerCurrent())
   const nextIndex = (currIndex + 1) % this.getPlayerAll().length
   return this.getPlayerAll()[nextIndex]
+}
+
+Tyrants.prototype.getPlayerOpponents = function(player) {
+  return this.getPlayerAll().filter(p => p !== player)
 }
 
 Tyrants.prototype.getPlayersStarting = function(player) {

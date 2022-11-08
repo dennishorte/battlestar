@@ -646,8 +646,6 @@ describe('Illithids expansion', () => {
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Mindwitness')
       const request3 = t.choose(game, request2, 'ched-halls a, micah')
-      t.dumpLog(game)
-      t.deepLog(request3)
       const request4 = t.choose(game, request3, 'House Guard')
 
       t.testBoard(game, {
@@ -706,6 +704,65 @@ describe('Illithids expansion', () => {
         },
         'ched-llace b': {
           troops: ['dennis'],
+        },
+      })
+    })
+  })
+
+  describe('Nothic', () => {
+    test('place a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Nothic', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Nothic')
+      const request3 = t.choose(game, request2, 'Place a spy')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Nothic'],
+        },
+        'Chasmleap Bridge': {
+          spies: ['dennis'],
+        },
+      })
+    })
+
+    test('return a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Nothic'],
+          deck: ['House Guard'],
+        },
+        micah: {
+          hand: ['House Guard', 'House Guard', 'Spellspinner', 'Spellspinner'],
+        },
+        Menzoberranzan: {
+          spies: ['dennis']
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Nothic')
+      const request3 = t.choose(game, request2, '*Return one of your spies > Draw a card. Each opponent with more than 3 cards must discard a card')
+      const request4 = t.choose(game, request3, 'Menzoberranzan')
+      const request5 = t.choose(game, request4, 'Spellspinner')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Nothic'],
+        },
+        micah: {
+          hand: ['House Guard', 'House Guard', 'Spellspinner'],
+          discard: ['Spellspinner'],
         },
       })
     })
