@@ -811,6 +811,60 @@ describe('Illithids expansion', () => {
         },
       })
     })
+  })
 
+  describe('Quaggoth', () => {
+    test('(basic) Assassinate one white troop for each site you control', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Quaggoth', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Quaggoth')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Quaggoth'],
+          trophyHall: ['neutral'],
+        },
+        'araum-ched': {
+          troops: []
+        },
+      })
+    })
+
+    test('(more) Assassinate one white troop for each site you control', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Quaggoth', 'House Guard'],
+        },
+        'Chasmleap Bridge': {
+          troops: ['dennis'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Quaggoth')
+      const request3 = t.choose(game, request2, 'araum-chasm, neutral')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Quaggoth'],
+          trophyHall: ['neutral', 'neutral'],
+        },
+        'araum-chasm': {
+          troops: []
+        },
+        'araum-ched': {
+          troops: []
+        },
+      })
+    })
   })
 })

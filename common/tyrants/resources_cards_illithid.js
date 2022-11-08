@@ -470,7 +470,15 @@ const cardData = [
     text: [
       "Assassinate one white troop for each site you control."
     ],
-    impl: (game, player) => {}
+    impl: (game, player) => {
+      const controlCount = game
+        .getLocationAll()
+        .filter(loc => loc.getController() === player)
+        .length
+      for (let i = 0; i < controlCount; i++) {
+        game.aChooseAndAssassinate(player, { whiteOnly: true })
+      }
+    }
   },
   {
     name: "Spectator",
