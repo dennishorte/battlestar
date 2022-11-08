@@ -890,4 +890,34 @@ describe('Illithids expansion', () => {
       })
     })
   })
+
+  describe('Ulitharid', () => {
+    test('play and then devour a card from the market', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Ulitharid', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Ulitharid')
+      const request3 = t.choose(game, request2, 'Spellspinner')
+      const request4 = t.choose(game, request3, 'Place a spy')
+      const request5 = t.choose(game, request4, 'Chasmleap Bridge')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Ulitharid'],
+        },
+        devoured: ['Spellspinner'],
+        'Chasmleap Bridge': {
+          spies: ['dennis'],
+        },
+      })
+
+      expect(game.getZoneById('market').cards().length).toBe(6)
+    })
+  })
 })

@@ -510,7 +510,19 @@ const cardData = [
     text: [
       "Play a card in the market that costs 4 or less as if it was in your hand, then devour that card."
     ],
-    impl: (game, player) => {}
+    impl: (game, player) => {
+      const choices = game
+        .getZoneById('market')
+        .cards()
+        .filter(card => card.cost <= 4)
+      const card = game.aChooseCard(player, choices)
+      if (card) {
+        game.mMoveCardTo(card, game.getZoneByPlayer(player, 'hand'))
+        game.aPlayCard(player, card)
+        game.aDevour(player, card)
+        game.mRefillMarket()
+      }
+    }
   },
   {
     name: "Umber Hulk",

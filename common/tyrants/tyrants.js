@@ -700,12 +700,7 @@ Tyrants.prototype.aChooseAndAssassinate = function(player, opts={}) {
 Tyrants.prototype.aChooseAndDevourMarket = function(player, opts={}) {
   const chosen = this.aChooseCard(player, this.getZoneById('market').cards(), { min: 0, max: 1 })
   if (chosen) {
-    this.mDevour(player, chosen)
-    this.mLog({
-      template: '{player} devours {card} from the market',
-      args: { player, card: chosen },
-    })
-    this.mRefillMarket()
+    this.aDevour(player, chosen)
   }
   else {
     this.mLog({
@@ -989,7 +984,12 @@ Tyrants.prototype.aDeploy = function(player, loc) {
 }
 
 Tyrants.prototype.aDevour = function(player, card) {
-  throw new Error('not implemented')
+  this.mDevour(card)
+  this.mLog({
+    template: '{player} devours {card}',
+    args: { player, card },
+  })
+  this.mRefillMarket()
 }
 
 Tyrants.prototype.aDiscard = function(player, card) {
@@ -1484,7 +1484,7 @@ Tyrants.prototype.mDeploy = function(player, loc) {
   this.mMoveCardTo(troops[0], loc)
 }
 
-Tyrants.prototype.mDevour = function(player, card) {
+Tyrants.prototype.mDevour = function(card) {
   this.mMoveCardTo(card, this.getZoneById('devoured'))
 }
 
