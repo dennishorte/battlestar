@@ -516,4 +516,59 @@ describe('Illithids expansion', () => {
       })
     })
   })
+
+  describe('Grimlock', () => {
+    test('deploy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Grimlock', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Grimlock')
+      const request3 = t.choose(game, request2, 'ched-halls a')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Grimlock'],
+        },
+        'ched-halls a': {
+          troops: ['dennis'],
+        },
+      })
+    })
+
+    test('discard-this', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Gauth'],
+        },
+        micah: {
+          hand: ['House Guard', 'House Guard', 'House Guard', 'Grimlock'],
+          deck: ['Spellspinner', 'Spellspinner'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Gauth')
+      const request3 = t.choose(game, request2, '*Draw a card. Choose one opponent with more than 3 cards to discard a card')
+      const request4 = t.choose(game, request3, 'Grimlock')
+
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Soldier'],
+          played: ['Gauth'],
+        },
+        micah: {
+          hand: ['House Guard', 'House Guard', 'House Guard', 'Spellspinner', 'Spellspinner'],
+          discard: ['Grimlock'],
+        },
+      })
+    })
+  })
 })

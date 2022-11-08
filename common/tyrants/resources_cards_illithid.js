@@ -312,7 +312,23 @@ const cardData = [
       "Deploy a troop.",
       "If an opponent causes you to dicard this, draw 2 cards."
     ],
-    impl: (game, player) => {}
+    impl: (game, player) => {
+      game.aChooseAndDeploy(player)
+    },
+    triggers: [
+      {
+        kind: 'discard-this',
+        impl: (game, player, { card }) => {
+          game.mLog({
+            template: '{player} was forced to discard {card}, so will draw two cards',
+            args: { player, card }
+          })
+          game.aDiscard(player, card)
+          game.aDraw(player)
+          game.aDraw(player)
+        }
+      },
+    ]
   },
   {
     name: "Intellect Devourer",
