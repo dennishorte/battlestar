@@ -680,7 +680,7 @@ Tyrants.prototype.aChooseAndAssassinate = function(player, opts={}) {
     const [locName, ownerName] = selection[0].split(', ')
     const loc = this.getLocationByName(locName)
     const owner = ownerName === 'neutral' ? 'neutral' : this.getPlayerByName(ownerName)
-    this.aAssassinate(player, loc, owner)
+    return this.aAssassinate(player, loc, owner)
   }
 }
 
@@ -937,15 +937,16 @@ Tyrants.prototype.aAutoPlayCards = function() {
 }
 
 Tyrants.prototype.aAssassinate = function(player, loc, owner) {
-  this.mAssassinate(player, loc, owner)
+  const troop = this.mAssassinate(player, loc, owner)
   this.mLog({
-    template: '{player1} assassinates {player2} troop at {loc}',
+    template: '{player} assassinates {card} at {loc}',
     args: {
-      player1: player,
-      player2: owner,
+      player,
+      card: troop,
       loc
     }
   })
+  return troop
 }
 
 Tyrants.prototype.aDeploy = function(player, loc) {
@@ -1409,6 +1410,7 @@ Tyrants.prototype.mAssassinate = function(player, loc, owner) {
   util.assert(!!target, 'No valid target for owner at location')
 
   this.mMoveCardTo(target, this.getZoneByPlayer(player, 'trophyHall'))
+  return target
 }
 
 Tyrants.prototype.mCalculatePresence = function(location) {

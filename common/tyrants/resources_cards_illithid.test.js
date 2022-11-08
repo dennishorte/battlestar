@@ -602,7 +602,6 @@ describe('Illithids expansion', () => {
           hand: ['Intellect Devourer', 'House Guard'],
         },
         'Ched Nasad': {
-          troop: ['dennis'],
           spies: ['micah']
         },
       })
@@ -626,6 +625,46 @@ describe('Illithids expansion', () => {
           troops: [],
         },
       })
+    })
+  })
+
+  describe('Mindwitness', () => {
+    test('assassinate and discard', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Mindwitness', 'House Guard'],
+        },
+        micah: {
+          hand: ['House Guard', 'House Guard', 'House Guard', 'Grimlock'],
+        },
+        'ched-halls a': {
+          troops: ['micah'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Mindwitness')
+      const request3 = t.choose(game, request2, 'ched-halls a, micah')
+      t.dumpLog(game)
+      t.deepLog(request3)
+      const request4 = t.choose(game, request3, 'House Guard')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Mindwitness'],
+          trophyHall: ['troop-micah'],
+        },
+        micah: {
+          hand: ['House Guard', 'House Guard', 'Grimlock'],
+          discard: ['House Guard'],
+        },
+        'Ched Nasad': {
+          troops: ['dennis'],
+        },
+      })
+
     })
   })
 })

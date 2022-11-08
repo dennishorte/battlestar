@@ -372,7 +372,16 @@ const cardData = [
     text: [
       "Assassinate a troop. If that troop belonged to another player and they have more than 3 cards, they must discard a card."
     ],
-    impl: (game, player) => {}
+    impl: (game, player) => {
+      const troop = game.aChooseAndAssassinate(player)
+      console.log(troop)
+      if (troop && troop.owner !== undefined) {
+        const cardCount = game.getCardsByZone(troop.owner, 'hand').length
+        if (cardCount > 3) {
+          game.aChooseAndDiscard(troop.owner)
+        }
+      }
+    }
   },
   {
     name: "Neogi",
