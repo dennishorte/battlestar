@@ -571,4 +571,61 @@ describe('Illithids expansion', () => {
       })
     })
   })
+
+  describe('Intellect Devourer', () => {
+    test('+3 influence', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Intellect Devourer', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Intellect Devourer')
+      const request3 = t.choose(game, request2, '+3 influence')
+
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Intellect Devourer'],
+          influence: 3
+        },
+      })
+    })
+
+    test('Return up to two troops or spies', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Intellect Devourer', 'House Guard'],
+        },
+        'Ched Nasad': {
+          troop: ['dennis'],
+          spies: ['micah']
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Intellect Devourer')
+      const request3 = t.choose(game, request2, 'Return up to two troops or spies')
+      const request4 = t.choose(game, request3, 'spy.Ched Nasad, micah')
+      const request5 = t.choose(game, request4, 'troop.araum-ched, neutral')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Intellect Devourer'],
+        },
+        'Ched Nasad': {
+          troops: ['dennis'],
+          spies: [],
+        },
+        'araum-ched': {
+          troops: [],
+        },
+      })
+    })
+  })
 })

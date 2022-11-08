@@ -344,7 +344,21 @@ const cardData = [
       "- +3 influence.",
       "- Return up to two troops or spies."
     ],
-    impl: (game, player) => {}
+    impl: (game, player) => {
+      game.aChooseOne(player, [
+        {
+          title: '+3 influence',
+          impl: (game, player) => player.incrementInfluence(3),
+        },
+        {
+          title: 'Return up to two troops or spies',
+          impl: (game, player) => {
+            game.aChooseAndReturn(player)
+            game.aChooseAndReturn(player)
+          }
+        },
+      ])
+    }
   },
   {
     name: "Mindwitness",
