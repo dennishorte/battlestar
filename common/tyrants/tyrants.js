@@ -991,7 +991,7 @@ Tyrants.prototype.aDraw = function(player, opts={}) {
       args: { player }
     })
   }
-  this.mMoveByIndices(deck, 0, hand, hand.cards().length)
+  return this.mMoveByIndices(deck, 0, hand, hand.cards().length)
 }
 
 Tyrants.prototype.aMove = function(player, start, end) {
@@ -1022,12 +1022,15 @@ Tyrants.prototype.aPlayCard = function(player, card) {
   this.mLogOutdent()
 }
 
-Tyrants.prototype.aPromote = function(player, card) {
+Tyrants.prototype.aPromote = function(player, card, opts={}) {
   this.mMoveCardTo(card, this.getZoneByPlayer(player, 'innerCircle'))
-  this.mLog({
-    template: '{player} promotes {card}',
-    args: { player, card }
-  })
+
+  if (!opts.silent) {
+    this.mLog({
+      template: '{player} promotes {card}',
+      args: { player, card }
+    })
+  }
   return card
 }
 

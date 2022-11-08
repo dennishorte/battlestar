@@ -236,7 +236,38 @@ const cardData = [
       "Promote the top card of your deck.",
       "Play a card from your inner circle as if it were in your hand, then return it to your inner circle."
     ],
-    impl: (game, player) => {}
+    impl: (game, player) => {
+      const card = game.aDraw(player, { silent: true })
+      if (card === 'no-more-cards') {
+        game.mLog({
+          template: '{player} has no more cards in their deck or discard pile',
+          args: { player }
+        })
+      }
+      else {
+        game.aPromote(player, card, { silent: true })
+        game.mLog({
+          template: '{player} promotes {card} from the top of their library',
+          args: { player, card }
+        })
+      }
+
+      const choices = game.getCardsByZone(player, 'innerCircle')
+      const toPlay = game.aChooseCard(player, choices)
+      if (toPlay) {
+        game.mLog({
+          template: '{player} choose {card} to play from their innerCircle',
+          args: { player, card: toPlay }
+        })
+        game.mMoveCardTo(toPlay, game.getZoneByPlayer(player, 'hand'))
+        game.aPlayCard(player, toPlay)
+        game.mMoveCardTo(toPlay, game.getZoneByPlayer(player, 'innerCircle'))
+        game.mLog({
+          template: '{player} returns {card} to their inner circle',
+          args: { player, card: toPlay }
+        })
+      }
+    }
   },
   {
     name: "Gauth",

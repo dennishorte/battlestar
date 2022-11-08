@@ -422,6 +422,50 @@ describe('Illithids expansion', () => {
     })
   })
 
+  describe('Elder Brain', () => {
+    test('promote and play', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Elder Brain', 'House Guard'],
+          deck: ['House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Elder Brain')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Elder Brain'],
+          innerCircle: ['House Guard'],
+          power: 2,
+        },
+      })
+    })
+
+    test('promote when deck and discard are empty', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Elder Brain', 'House Guard'],
+          deck: [],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Elder Brain')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Elder Brain'],
+        },
+      })
+    })
+  })
+
   describe('Gauth', () => {
     test('influence', () => {
       const game = t.gameFixture({
