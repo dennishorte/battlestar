@@ -1776,7 +1776,8 @@ const mapData = [
       "points": 0
     },
     "neighbors": [
-      "chaul-phaer"
+      "chaul-phaer",
+      "chaul-ever"
     ]
   },
   {
@@ -1796,6 +1797,7 @@ const mapData = [
       "points": 1
     },
     "neighbors": [
+      "chaul-phaer",
       "phaer-yath",
       "phaer-ruins a"
     ]
