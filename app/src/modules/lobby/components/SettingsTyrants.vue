@@ -48,6 +48,11 @@ export default {
           value: 'drow',
           disabled: false
         },
+        {
+          text: 'Illithid',
+          value: 'illithid',
+          disabled: false
+        },
       ],
 
       maps: [
