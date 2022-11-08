@@ -920,4 +920,68 @@ describe('Illithids expansion', () => {
       expect(game.getZoneById('market').cards().length).toBe(6)
     })
   })
+
+  describe('Umber Hulk', () => {
+    test('deploy 3 troops', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Umber Hulk', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Umber Hulk')
+      const request3 = t.choose(game, request2, 'ched-halls a')
+      const request4 = t.choose(game, request3, 'ched-halls b')
+      const request5 = t.choose(game, request4, 'ched-llace a')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Umber Hulk'],
+        },
+        'ched-halls a': {
+          troops: ['dennis'],
+        },
+        'ched-halls b': {
+          troops: ['dennis'],
+        },
+        'ched-llace a': {
+          troops: ['dennis'],
+        },
+      })
+    })
+
+    test('discard-this', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Gauth', 'House Guard'],
+        },
+        micah: {
+          hand: ['House Guard', 'House Guard', 'House Guard', 'Umber Hulk'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Gauth')
+      const request3 = t.choose(game, request2, '*Draw a card. Choose one opponent with more than 3 cards to discard a card')
+      const request4 = t.choose(game, request3, 'Umber Hulk')
+      const request5 = t.choose(game, request4, 'House Guard')
+
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Soldier'],
+          played: ['Gauth'],
+          discard: ['House Guard'],
+        },
+        micah: {
+          hand: ['House Guard', 'House Guard', 'House Guard'],
+          discard: ['Umber Hulk'],
+        },
+      })
+    })
+  })
 })

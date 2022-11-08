@@ -729,7 +729,7 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
       const triggers = chosen.triggers || []
       for (const trigger of triggers) {
         if (trigger.kind === 'discard-this') {
-          return trigger.impl(this, player, { card: chosen })
+          return trigger.impl(this, player, { card: chosen, forcedBy: opts.forcedBy })
         }
       }
     }
@@ -927,7 +927,7 @@ Tyrants.prototype.aChooseToDiscard = function(player, opts={}) {
   const choice = this.aChoose(player, opponents, { title: 'Choose an opponent to discard' })
   if (choice.length > 0) {
     const opponent = this.getPlayerByName(choice[0])
-    this.aChooseAndDiscard(opponent, { min: 1, max: 1, forced: true })
+    this.aChooseAndDiscard(opponent, { forced: true, forcedBy: player.name })
   }
   else {
     game.mLog({

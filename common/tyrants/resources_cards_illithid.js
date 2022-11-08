@@ -141,7 +141,11 @@ const cardData = [
         .filter(p => location.getTroops().some(troop => troop.owner === p))
 
       for (const opponent of opponents) {
-        game.aChooseAndDiscard(opponent, { min: 1, max: 1, forced: true, requireThree: true })
+        game.aChooseAndDiscard(opponent, {
+          forced: true,
+          requireThree: true,
+          forcedBy: player.name,
+        })
       }
     }
   },
@@ -373,7 +377,11 @@ const cardData = [
     impl: (game, player) => {
       const troop = game.aChooseAndAssassinate(player)
       if (troop && troop.owner !== undefined) {
-        game.aChooseAndDiscard(troop.owner, { requireThree: true, forced: true })
+        game.aChooseAndDiscard(troop.owner, {
+          requireThree: true,
+          forced: true,
+          forcedBy: player.name,
+        })
       }
     }
   },
@@ -433,7 +441,11 @@ const cardData = [
               game.aDraw(player)
               game
                 .getPlayerOpponents(player)
-                .forEach(opp => game.aChooseAndDiscard(opp, { requireThree: true, forced: true }))
+                .forEach(opp => game.aChooseAndDiscard(opp, {
+                  requireThree: true,
+                  forced: true,
+                  forcedBy: player.name,
+                }))
             })
           }
         },
@@ -537,7 +549,25 @@ const cardData = [
       "Deploy 3 troops.",
       "If an opponent causes you to discard this, they must discard a card."
     ],
-    impl: (game, player) => {}
+    impl: (game, player) => {
+      game.aChooseAndDeploy(player)
+      game.aChooseAndDeploy(player)
+      game.aChooseAndDeploy(player)
+    },
+    triggers: [
+      {
+        kind: 'discard-this',
+        impl: (game, player, { card, forcedBy }) => {
+          const opp = game.getPlayerByName(forcedBy)
+          game.mLog({
+            template: '{player} was forced to discard {card} by {player2} so {player2} must discard',
+            args: { player, card, player2: opp }
+          })
+          game.aDiscard(player, card)
+          game.aChooseAndDiscard(opp)
+        }
+      },
+    ]
   }
 ]
 
