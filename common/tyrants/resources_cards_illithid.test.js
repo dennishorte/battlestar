@@ -767,4 +767,50 @@ describe('Illithids expansion', () => {
       })
     })
   })
+
+  describe('Puppeteer', () => {
+    test('+2 influence', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Puppeteer', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.House Guard')
+      const request3 = t.choose(game, request2, 'Play Card.Puppeteer')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['Puppeteer', 'House Guard'],
+          power: 2,
+          influence: 2,
+        },
+      })
+    })
+
+    test('promote', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Puppeteer', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.House Guard')
+      const request3 = t.choose(game, request2, 'Play Card.Puppeteer')
+      const request4 = t.choose(game, request3, 'Pass')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Puppeteer'],
+          innerCircle: ['House Guard'],
+        },
+      })
+    })
+
+  })
 })

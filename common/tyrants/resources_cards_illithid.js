@@ -453,7 +453,10 @@ const cardData = [
       "+2 influence.",
       "At end of turn, promote another card played this turn."
     ],
-    impl: (game, player) => {}
+    impl: (game, player, { card }) => {
+      player.incrementInfluence(2)
+      game.aDeferPromotion(player, card)
+    }
   },
   {
     name: "Quaggoth",
