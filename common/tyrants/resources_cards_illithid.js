@@ -396,7 +396,19 @@ const cardData = [
       "Deploy 4 troops.",
       "At end of turn, each opponent must discard a card."
     ],
-    impl: (game, player) => {}
+    impl: (game, player, { card }) => {
+      game.aChooseAndDeploy(player)
+      game.aChooseAndDeploy(player)
+      game.aChooseAndDeploy(player)
+      game.aChooseAndDeploy(player)
+
+      const opponents = game
+        .getPlayerAll()
+        .filter(p => p !== player)
+      for (const opp of opponents) {
+        game.aDeferDiscard(opp, card)
+      }
+    }
   },
   {
     name: "Nothic",

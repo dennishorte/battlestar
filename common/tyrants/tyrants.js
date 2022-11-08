@@ -494,11 +494,24 @@ Tyrants.prototype._generatePassAction = function() {
 Tyrants.prototype._processEndOfTurnActions = function() {
   for (const action of this.state.endOfTurnActions) {
     if (action.action === 'promote-other') {
+      this.mLog({
+        template: '{player} may promote a card due to {card}',
+        args: { player: action.player, card: action.source }
+      })
       const choices = this
         .getCardsByZone(action.player, 'played')
         .filter(card => card !== action.source)
       this.aChooseAndPromote(action.player, choices)
     }
+
+    else if (action.action === 'discard') {
+      this.mLog({
+        template: '{player} must discard a card due to {card}',
+        args: { player: action.player, card: action.source }
+      })
+      this.aChooseAndDiscard(action.player)
+    }
+
     else {
       throw new Error(`Unknown end of turn action: ${action.action}`)
     }
@@ -916,6 +929,14 @@ Tyrants.prototype.aChooseToDiscard = function(player, opts={}) {
       template: 'No opponents have more than three cards in hand',
     })
   }
+}
+
+Tyrants.prototype.aDeferDiscard = function(player, source) {
+  this.state.endOfTurnActions.push({
+    player,
+    source,
+    action: 'discard',
+  })
 }
 
 Tyrants.prototype.aDeferPromotion = function(player, source) {

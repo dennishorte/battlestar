@@ -667,4 +667,47 @@ describe('Illithids expansion', () => {
 
     })
   })
+
+  describe('Neogi', () => {
+    test('deploy and opponents discard', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'illithid'],
+        dennis: {
+          hand: ['Neogi'],
+        },
+        micah: {
+          hand: ['House Guard', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Neogi')
+      const request3 = t.choose(game, request2, 'ched-halls a')
+      const request4 = t.choose(game, request3, 'ched-halls b')
+      const request5 = t.choose(game, request4, 'ched-llace a')
+      const request6 = t.choose(game, request5, 'ched-llace b')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Neogi'],
+        },
+        micah: {
+          hand: ['House Guard'],
+          discard: ['House Guard'],
+        },
+        'ched-halls a': {
+          troops: ['dennis'],
+        },
+        'ched-halls b': {
+          troops: ['dennis'],
+        },
+        'ched-llace a': {
+          troops: ['dennis'],
+        },
+        'ched-llace b': {
+          troops: ['dennis'],
+        },
+      })
+    })
+  })
 })
