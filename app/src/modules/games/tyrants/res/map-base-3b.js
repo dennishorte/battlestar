@@ -655,7 +655,7 @@ module.exports = {
       },
       {
         "id": "node164",
-        "name": "phaer-ruins a",
+        "name": "phaer-ruins b",
         "classes": [
           "element",
           "tertiary"
@@ -667,7 +667,7 @@ module.exports = {
       },
       {
         "id": "node165",
-        "name": "phaer-ruins b",
+        "name": "phaer-ruins a",
         "classes": [
           "element",
           "tertiary"
