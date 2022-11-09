@@ -25,6 +25,7 @@ export default {
     cardFilters: [],
     cardlock: false,
     decks: mag.Deck.buildHierarchy([testDeck, testDeckCmd]),
+    filteredCards: [],
     managedCard: null,
   }),
 
@@ -45,6 +46,9 @@ export default {
     setCardFilters(state, array) {
       state.cardFilters = array
     },
+    setFilteredCards(state, cards) {
+      state.filteredCards = cards
+    },
     removeCardFilter(state, filter) {
       util.array.remove(state.cardFilters, filter)
     },
@@ -57,6 +61,7 @@ export default {
     setDatabase(state, cards) {
       state.cardDatabase.cards = cards
       state.cardDatabase.lookup = createCardLookup(cards)
+      state.filteredCards = cards
     },
 
     ////////////////////
@@ -122,8 +127,9 @@ export default {
     ////////////////////
     // Card Filters
 
-    applyCardFilters({ commit }) {
-
+    applyCardFilters({ commit, state }) {
+      const filtered = filterCards(state.cardDatabase.cards, state.cardFilters)
+      commit('setFilteredCards', filtered)
     },
     addCardFilter({ commit, state }, filter) {
       // There is only ever a single color or identity filter
@@ -134,8 +140,9 @@ export default {
 
       commit('addCardFilter', filter)
     },
-    clearCardFilters({ commit }) {
+    clearCardFilters({ commit, state }) {
       commit('setCardFilters', [])
+      commit('setFilteredCards', state.cardDatabase.cards)
     },
     removeCardFilter({ commit }, filter) {
       commit('removeCardFilter', filter)
@@ -229,6 +236,115 @@ export default {
 
 function createCardLookup(cards) {
   return util.array.collect(cards, cardUtil.allCardNames)
+}
+
+function filterCards(cards, filters) {
+  if (filters.length === 0) {
+    return cards
+  }
+
+  return cards
+    .filter(card => filters.every(filter => applyOneFilter(card, filter)))
+}
+
+const numberFields = ['cmc', 'power', 'toughness', 'loyalty']
+const textFields = ['name', 'text', 'flavor', 'type']
+const fieldMapping = {
+  cmc: 'cmc',
+  name: 'name',
+  text: 'oracle_text',
+  flavor: 'flavor_text',
+  type: 'type_line',
+  power: 'power',
+  toughness: 'toughness',
+  loyalty: 'loyalty',
+  colors: 'colors',
+  identity: 'color_identity',
+}
+const colorNameToSymbol = {
+  white: 'W',
+  blue: 'U',
+  black: 'B',
+  red: 'R',
+  green: 'G',
+}
+
+function applyOneFilter(card, filter) {
+  if (filter.kind === 'legality' && 'legalities' in card) {
+    return card.legalities[filter.value] === 'legal'
+  }
+  else if (filter.kind === 'colors' || filter.kind === 'identity') {
+    const fieldKey = fieldMapping[filter.kind]
+    const fieldValue = fieldKey in card ? card[fieldKey] : []
+    const targetValueMatches = ['white', 'blue', 'black', 'red', 'green']
+      .map(color => filter[color] ? colorNameToSymbol[color] : undefined)
+      .filter(symbol => symbol !== undefined)
+      .map(symbol => fieldValue.includes(symbol))
+
+    if (filter.or) {
+      if (filter.only) {
+        return (
+          targetValueMatches.some(x => x)
+          && fieldValue.length === targetValueMatches.filter(x => x).length
+        )
+      }
+      else {
+        return targetValueMatches.some(x => x)
+      }
+    }
+    else {  // and
+      if (filter.only) {
+        return (
+          targetValueMatches.every(x => x)
+          && fieldValue.length === targetValueMatches.length
+        )
+      }
+      else {
+        return targetValueMatches.every(x => x)
+      }
+    }
+  }
+  else if (textFields.includes(filter.kind)) {
+    const fieldKey = fieldMapping[filter.kind]
+    const fieldValue = fieldKey in card ? card[fieldKey].toLowerCase() : ''
+    const targetValue = filter.value.toLowerCase()
+
+    if (filter.operator === 'and') {
+      return fieldValue.includes(targetValue)
+    }
+    else if (filter.operator === 'not') {
+      return !fieldValue.includes(targetValue)
+    }
+    else {
+      throw new Error(`Unhandled string operator: ${filter.operator}`)
+    }
+  }
+  else if (numberFields.includes(filter.kind)) {
+    const fieldKey = fieldMapping[filter.kind]
+    const fieldValue = fieldKey in card ? parseFloat(card[fieldKey]) : -999
+    const targetValue = parseFloat(filter.value)
+
+    if (fieldValue === -999) {
+      return false
+    }
+    else if (filter.operator === '=') {
+      return fieldValue === targetValue
+    }
+    else if (filter.operator === '>=') {
+      return fieldValue >= targetValue
+    }
+    else if (filter.operator === '<=') {
+      return fieldValue <= targetValue
+    }
+    else {
+      throw new Error(`Unhandled numeric operator: ${filter.operator}`)
+    }
+  }
+  else {
+    throw new Error(`Unhandled filter field: ${filter.kind}`)
+  }
+
+  return false
 }
 
 function findCardInZone(zone, card) {
