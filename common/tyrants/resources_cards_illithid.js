@@ -43,6 +43,7 @@ const cardData = [
     points: 1,
     innerPoints: 3,
     count: 4,
+    autoplay: true,
     text: [
       "At end of turn, promote another card played this turn.",
       "If an opponent causes you to discard this, you may promote it instead."
@@ -461,6 +462,7 @@ const cardData = [
     points: 2,
     innerPoints: 6,
     count: 2,
+    autoplay: true,
     text: [
       "+2 influence.",
       "At end of turn, promote another card played this turn."
@@ -501,6 +503,7 @@ const cardData = [
     points: 2,
     innerPoints: 3,
     count: 3,
+    autoplay: true,
     text: [
       "+2 power",
       "+1 influence"
