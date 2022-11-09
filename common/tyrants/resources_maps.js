@@ -1841,7 +1841,8 @@ const mapData = [
     },
     "neighbors": [
       "ched-ruins",
-      "ruins-ss'zur"
+      "ruins-ss'zur",
+      "phaer-ruins b"
     ]
   },
   {
