@@ -1153,7 +1153,7 @@ const mapData = [
     },
     "neighbors": [
       "Ruins of Dekanter",
-      "phaer-ruins b"
+      "phaer-ruins a"
     ]
   },
   {
