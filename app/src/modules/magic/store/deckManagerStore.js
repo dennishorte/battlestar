@@ -376,7 +376,7 @@ function applyOneFilter(card, filter) {
   return false
 }
 
-function findCardInZone(zone, card) {
+function findCardInZone(card, zone) {
   return zone.find(data => (
     data.card === card
     || (
