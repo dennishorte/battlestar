@@ -12,29 +12,30 @@
             <i v-else class="bi-unlock-fill"></i>
           </div>
 
-          <div class="card-counter">
-            <div class="btn-group">
-              <button @click="removeCard('main')" class="btn btn-outline-primary btn-plus-minus">-</button>
-              <button class="btn btn-primary btn-plus-minus-title">main {{ mainCount }}</button>
-              <button @click="addCard('main')" class="btn btn-outline-primary btn-plus-minus">+</button>
-            </div>
-          </div>
+          <CardManagerButtonGroup
+            name="main"
+            variant="primary"
+            :count="mainCount"
+            @add-card="addCard"
+            @remove-card="removeCard"
+          />
 
-          <div class="card-counter">
-            <div class="btn-group">
-              <button @click="removeCard('side')" type="button" class="btn btn-outline-info btn-plus-minus">-</button>
-              <button type="button" class="btn btn-info btn-plus-minus-title">side {{ sideCount }}</button>
-              <button @click="addCard('side')" type="button" class="btn btn-outline-info btn-plus-minus">+</button>
-            </div>
-          </div>
+          <CardManagerButtonGroup
+            name="side"
+            variant="info"
+            :count="sideCount"
+            @add-card="addCard"
+            @remove-card="removeCard"
+          />
 
-          <div class="card-counter">
-            <div class="btn-group">
-              <button @click="removeCard('command')" type="button" class="btn btn-outline-success btn-plus-minus">-</button>
-              <button type="button" class="btn btn-success btn-plus-minus-title">cmd {{ commandCount }}</button>
-              <button @click="addCard('command')" type="button" class="btn btn-outline-success btn-plus-minus">+</button>
-            </div>
-          </div>
+          <CardManagerButtonGroup
+            name="cmnd"
+            variant="success"
+            :count="commandCount"
+            @add-card="addCard"
+            @remove-card="removeCard"
+          />
+
         </div>
 
         <div class="right-side">
@@ -53,6 +54,7 @@ import { mapGetters, mapState } from 'vuex'
 import cardUtil from '../../util/cardUtil.js'
 
 import Card from '../Card'
+import CardManagerButtonGroup from './CardManagerButtonGroup'
 import Modal from '@/components/Modal'
 
 
@@ -61,6 +63,7 @@ export default {
 
   components: {
     Card,
+    CardManagerButtonGroup,
     Modal,
   },
 
@@ -108,10 +111,12 @@ export default {
 
   methods: {
     addCard(zoneName) {
+      if (zoneName === 'cmnd') zoneName = 'command'
       this.$store.dispatch('magic/dm/addCurrentCard', zoneName)
     },
 
     removeCard(zoneName) {
+      if (zoneName === 'cmnd') zoneName = 'command'
       this.$store.dispatch('magic/dm/removeCurrentCard', zoneName)
     },
 
@@ -144,10 +149,6 @@ export default {
 
 
 <style scoped>
-.card-counter:not(:first-of-type) {
-  margin-top: .5em;
-}
-
 .card-lock {
   width: 1.8em;
   height: 1.8em;
@@ -155,14 +156,6 @@ export default {
   border-radius: .25em;
   float: right;
   text-align: center;
-}
-
-.btn-plus-minus {
-  min-width: 3em;
-}
-
-.btn-plus-minus-title {
-  min-width: 6em;
 }
 
 .wrapper {
