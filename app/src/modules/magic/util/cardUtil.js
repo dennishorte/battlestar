@@ -22,6 +22,10 @@ CardUtil.allCardNames = function(card) {
   return names
 }
 
+CardUtil.equals = function(a, b) {
+  return a.name === b.name
+}
+
 CardUtil.getSortType = function(card) {
   if (card) {
     const typeline = (card.type_line || '').toLowerCase()
