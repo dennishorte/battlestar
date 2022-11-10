@@ -1,8 +1,14 @@
 <template>
   <div class="deck-list">
-    <div>
-      <span class="deck-name me-2">{{ deck.name }}</span>
-      <span v-if="deck.modified" class="badge bg-warning text-dark">unsaved changes</span>
+    <div class="header">
+      <div class="deck-name me-2">{{ deck.name }}</div>
+
+      <div class="header-buttons">
+        <button class="btn btn-secondary btn-sm">import</button>
+        <button @click="download" class="btn btn-secondary btn-sm">export</button>
+        <button class="btn btn-info btn-sm">edit</button>
+        <button :disabled="!deck.modified" class="btn btn-warning btn-sm">save</button>
+      </div>
     </div>
 
     <div class="deck-sections">
@@ -32,6 +38,7 @@
 
 <script>
 import { util } from 'battlestar-common'
+import { saveAs } from 'file-saver'
 import { mapState } from 'vuex'
 
 import DeckListSection from './DeckListSection'
@@ -72,6 +79,15 @@ export default {
       return util.array.collect(this.deck.breakdown.main, data => cardUtil.getSortType(data.card))
     },
   },
+
+  methods: {
+    download() {
+      this.deck.updateDecklist()
+      const data = this.deck.decklist
+      const blob = new Blob([data], { type: "text/plain;charset=utf-8" })
+      saveAs(blob, `${this.deck.name}.txt`)
+    }
+  },
 }
 </script>
 
@@ -93,5 +109,14 @@ export default {
   align-content: flex-start;
   max-height: 100%;
   flex-flow: column wrap;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+}
+
+.header-buttons button {
+  margin-left: .25em;
 }
 </style>

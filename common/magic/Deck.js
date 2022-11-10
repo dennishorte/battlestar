@@ -93,7 +93,7 @@ Deck.prototype.updateDecklist = function() {
       lines.push(zoneNameLookup[zone])
     }
 
-    for (const data in this.breakdown[zone]) {
+    for (const data of this.breakdown[zone]) {
       const tokens = []
       tokens.push(data.count)
       tokens.push(data.name)
@@ -105,7 +105,11 @@ Deck.prototype.updateDecklist = function() {
     }
   }
 
-  return lines.join('\n')
+  if (lines[lines.length - 1] === '') {
+    lines.pop()
+  }
+
+  this.decklist = lines.join('\n')
 }
 
 
