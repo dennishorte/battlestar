@@ -98,7 +98,7 @@ export default {
       }
       else {
         zone.push({
-          card: card,
+          card,
           name: card.name,
           count: 1,
           setCode: card.set,
@@ -107,21 +107,21 @@ export default {
       }
       state.activeDeck.modified = true
     },
-    removeCardFromZone(state, zoneName) {
+    removeCardFromZone(state, { card, zoneName }) {
       const zone = state.activeDeck.breakdown[zoneName]
-      const card = findCardInZone(zone, state.managedCard)
+      const existing = findCardInZone(card, zone)
 
-      if (card) {
-        if (card.count > 1) {
-          card.count -= 1
+      if (existing) {
+        if (existing.count > 1) {
+          existing.count -= 1
         }
         else {
-          util.array.remove(zone, card)
+          util.array.remove(zone, existing)
         }
         state.activeDeck.modified = true
       }
       else {
-        throw new Error(`Card not found in deck: ${this.managedCard.name}`)
+        throw new Error(`Card not found in deck: ${card.name}`)
       }
     },
 
@@ -187,7 +187,10 @@ export default {
 
       // Otherwise, just remove the card.
       else {
-        commit('removeCardFromZone', zoneName)
+        commit('removeCardFromZone', {
+          card: state.managedCard,
+          zoneName,
+        })
       }
     },
     manageCard({ commit }, card) {
