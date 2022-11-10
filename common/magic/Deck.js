@@ -12,7 +12,11 @@ function Deck() {
   this.decklist = ''
 
   // Extra Data
-  this.breakdown = {}
+  this.breakdown = {
+    main: [],
+    side: [],
+    command: [],
+  }
   this.modified = false
 }
 
@@ -22,6 +26,7 @@ module.exports = {
   buildHierarchy,
   deserialize,
   parseDecklist,
+  pathTokens,
 }
 
 
@@ -54,8 +59,7 @@ function deserialize(data, cardLookup) {
 Deck.prototype.serialize = function() {
   this.updateDecklist()
 
-  return {
-    _id: this._id,
+  const data = {
     userId: this.userId,
     name: this.name,
     path: this.path,
@@ -63,10 +67,45 @@ Deck.prototype.serialize = function() {
     updatedTimestamp: this.updatedTimestamp,
     decklist: this.decklist,
   }
+
+  if (this._id) {
+    data._id = this._id
+  }
+
+  return data
+}
+
+const zoneNameLookup = {
+  main: 'Deck',
+  side: 'Sideboard',
+  command: 'Command',
 }
 
 Deck.prototype.updateDecklist = function() {
-  throw new Error('not implemented')
+  const lines = []
+  const zones = ['main', 'side', 'command']
+
+  for (const zone of zones) {
+    if (this.breakdown[zone].length > 0) {
+      if (lines.length > 0) {
+        lines.push('')
+      }
+      lines.push(zoneNameLookup[zone])
+    }
+
+    for (const data in this.breakdown[zone]) {
+      const tokens = []
+      tokens.push(data.count)
+      tokens.push(data.name)
+      if (data.setCode) {
+        tokens.push(`(${data.setCode})`)
+        tokens.push(data.collectorNumber)
+      }
+      lines.push(tokens.join(' '))
+    }
+  }
+
+  return lines.join('\n')
 }
 
 
@@ -74,9 +113,19 @@ Deck.prototype.updateDecklist = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Helper Functions
 
+function pathTokens(path) {
+  let tokens = path ? path.split('/') : []
+  if (path.length > 0 && path[0].length === 0) {
+    tokens = tokens.splice(0, 1)
+  }
+
+  return tokens.filter(t => Boolean(t))
+}
+
 function buildHierarchy(deckData) {
   const hierarchy = [{
     name: 'root',
+    pwd: '/',
     folders: [],
     decks: [],
   }]
@@ -85,9 +134,7 @@ function buildHierarchy(deckData) {
   for (const datum of deckData) {
     node = hierarchy[0]  // start at the root node
 
-    const path = datum.path ? datum.path.split('/') : []
-
-    for (const elem of path) {
+    for (const elem of pathTokens(datum.path)) {
       const folder = node.folders.find(f => f.name === elem)
       if (folder) {
         node = folder
@@ -96,6 +143,7 @@ function buildHierarchy(deckData) {
       else {
         const newFolder = {
           name: elem,
+          pwd: node.pwd === '/' ? node.pwd + elem : node.pwd + '/' + elem,
           folders: [],
           decks: [],
         }

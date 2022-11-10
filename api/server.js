@@ -28,6 +28,9 @@ app.use(middleware.coerceIds)
 // Card routes
 app.post('/api/card/all', routes.card.fetchAll)
 
+// Deck routes
+app.post('/api/deck/create', routes.deck.create)
+
 // Guest routes
 app.post('/api/guest/slack_test', routes.slackTest)
 app.post('/api/guest/login', routes.login)
@@ -58,6 +61,7 @@ app.post('/api/snapshot/fetch', routes.snapshot.fetch)
 app.post('/api/user/all', routes.user.all)
 app.post('/api/user/create', routes.user.create)
 app.post('/api/user/deactivate', routes.user.deactivate)
+app.post('/api/user/decks', routes.user.decks)
 app.post('/api/user/fetch_many', routes.user.fetchMany)
 app.post('/api/user/games', routes.user.games)
 app.post('/api/user/games_recently_finished', routes.user.gamesRecentlyFinished)

@@ -4,15 +4,17 @@ const deckCollection = database.collection('deck')
 
 
 const Deck = {}
+module.exports = Deck
 
 
-Deck.create = async function(userId, name) {
+Deck.create = async function({ userId, name, path }) {
   const creationDate = Date.now()
 
   const insertResult = await deckCollection.insertOne({
     userId,
     name,
-    decklist: [],
+    path,
+    decklist: '',
     createdTimestamp: creationDate,
     updatedTimestamp: creationDate,
   })
@@ -24,6 +26,10 @@ Deck.create = async function(userId, name) {
   return insertResult.insertedId
 }
 
+
+Deck.findById = async function(id) {
+  return await deckCollection.findOne({ _id: id })
+}
 
 Deck.findByUserId = async function(userId) {
   const decks = await deckCollection.find({ userId })

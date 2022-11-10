@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 import { mag, util } from 'battlestar-common'
 
 import cardUtil from '../util/cardUtil.js'
@@ -22,6 +24,8 @@ export default {
 
     // State
     activeDeck: null,
+    activeFolder: '/',
+
     cardFilters: [],
     cardlock: false,
     decks: mag.Deck.buildHierarchy([testDeck, testDeckCmd]),
@@ -67,7 +71,15 @@ export default {
     ////////////////////
     // Decks
     setActiveDeck(state, rawDeck) {
-      state.activeDeck = mag.Deck.deserialize(rawDeck, state.cardDatabase.lookup)
+      if (rawDeck) {
+        state.activeDeck = mag.Deck.deserialize(rawDeck, state.cardDatabase.lookup)
+      }
+      else {
+        state.activeDeck = null
+      }
+    },
+    setActiveFolder(state, path) {
+      state.activeFolder = path
     },
     setDecks(state, decks) {
       state.decks = decks
@@ -188,18 +200,35 @@ export default {
     ////////////////////
     // Misc
 
-    fetchDecks({ commit, rootGetters }) {
-      const requestResult = axios.post('/api/user/decks', {
-        userId: rootGetters.auth.userId,
+    async fetchDecks({ commit, rootGetters }) {
+      const requestResult = await axios.post('/api/user/decks', {
+        userId: rootGetters['auth/userId'],
       })
       if (requestResult.data.status === 'success') {
         const deckHierarchy = mag.Deck.buildHierarchy(requestResult.data.decks)
-        this.commit('setDecks', deckHierarchy)
+        commit('setDecks', deckHierarchy)
       }
     },
 
     selectDeck({ commit }, deck) {
       commit('setActiveDeck', deck)
+      commit('setActiveFolder', null)
+    },
+
+    selectDeckByPath({ dispatch, state }, { path, name }) {
+      const tokens = mag.Deck.pathTokens(path)
+      let node = this.decks
+      for (const token of tokens) {
+        node = node.folders.find(f => f.name === token)
+      }
+
+      const deck = node.decks.find(d => d.name === name)
+      dispatch('selectDeck', deck)
+    },
+
+    selectFolder({ commit }, path) {
+      commit('setActiveDeck', null)
+      commit('setActiveFolder', path)
     },
 
     toggleCardLock({ commit, state }) {

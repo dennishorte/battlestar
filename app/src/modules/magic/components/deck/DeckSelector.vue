@@ -18,7 +18,7 @@
   <Modal id="new-deck-modal" @ok="createDeck">
     <template #header>New Deck</template>
     <input class="form-control" v-model="newDeckName" placeholder="name" />
-    <input class="form-control" v-model="newDeckPath" placeholder="path" disabled />
+    <input class="form-control" :value="newDeckPath" placeholder="path" disabled />
 
     <DeckFolder v-if="root" :content="root" />
   </Modal>
@@ -28,6 +28,7 @@
 <script>
 import axios from 'axios'
 
+import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
 import DeckFolder from './DeckFolder'
@@ -47,33 +48,49 @@ export default {
   data() {
     return {
       newDeckName: '',
-      newDeckPath: '',
     }
   },
 
   computed: {
     ...mapState('magic/dm', {
-      root: state => state.decks[0]
+      activeDeck: 'activeDeck',
+      activeFolder: 'activeFolder',
+      root: state => state.decks[0],
     }),
+
+    newDeckPath() {
+      if (this.activeFolder) {
+        return this.activeFolder
+      }
+      else if (this.activeDeck) {
+        return '/' + this.activeDeck.path
+      }
+      else {
+        return '/'
+      }
+    },
   },
 
   methods: {
     async createDeck() {
-      const name = newDeckName.trim()
-      const path = newDeckPath.trim()
-      newDeckName = ''
-      newDeckPath = ''
+      const name = this.newDeckName.trim()
+      const path = this.newDeckPath.trim()
+      this.newDeckName = ''
 
       if (name) {
-        const deck = new magic.Deck.Deck()
+        const deck = new mag.Deck.Deck()
         deck.userId = this.$store.getters['auth/user']._id
         deck.name = name
         deck.path = path
         const data = deck.serialize()
-        const requestResult = await axios.post('/api/deck/insert', data)
+
+        const requestResult = await axios.post('/api/deck/create', data)
         if (requestResult.data.status === 'success') {
-          this.$store.dispatch('magic/dm/selectDeck', requestResult.data.deck)
-          this.$store.dispatch('magic/dm/fetchDecks')
+          await this.$store.dispatch('magic/dm/fetchDecks')
+          this.$store.dispatch('magic/dm/selectDeckByPath', {
+            path: requestResult.data.deck.path,
+            name: requestResult.data.deck.name,
+          })
         }
       }
     },

@@ -1,7 +1,7 @@
 export default {
   userId: '',
   name: 'Isperia',
-  path: 'commander',
+  path: '/commander',
   createdTimestamp: '',
   updatedTimestamp: '',
   decklist: `

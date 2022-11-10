@@ -1,7 +1,7 @@
 export default {
   userId: '',
   name: 'test deck',
-  path: '',
+  path: '/',
   createdTimestamp: '',
   updatedTimestamp: '',
   decklist: `

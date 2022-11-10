@@ -91,6 +91,7 @@ export default {
 
   created() {
     this.$store.dispatch('magic/dm/loadCardDatabase')
+    this.$store.dispatch('magic/dm/fetchDecks')
   },
 }
 </script>

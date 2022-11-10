@@ -37,6 +37,16 @@ User.deactivate = async function(req, res) {
   }
 }
 
+User.decks = async function(req, res) {
+  const decks = await db.deck.findByUserId(req.body.userId)
+  console.log(decks)
+
+  res.json({
+    status: 'success',
+    decks,
+  })
+}
+
 User.fetchMany = async function(req, res) {
   const usersCursor = await db.user.findByIds(req.body.userIds)
   const usersArray = await usersCursor.toArray()
