@@ -296,7 +296,6 @@ export default {
     async updateCardDatabase({ commit, dispatch }) {
       commit('setCardsLoaded', false)
       await updateLocalCards()
-      dispatch('loadCardDatabase')
     },
   },
 }
@@ -502,6 +501,7 @@ async function saveCardsToDatabase(cards) {
 
       transaction.addEventListener('complete', () => {
         console.log('Transaction completed: database modification finished.')
+        alert('Reload page to see changes')
       })
     },
     error => { throw new Error(error) }
