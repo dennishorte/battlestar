@@ -10,10 +10,11 @@ const unwantedScryfallFields = [
   "mtgo_foil_id",
   "tcgplayer_id",
   "cardmarket_id",
-  "lang",
+  // "lang",
   "released_at",
   "uri",
   "scryfall_uri",
+  "set_name",
   "highres_image",
   "image_status",
   "games",
@@ -22,9 +23,10 @@ const unwantedScryfallFields = [
   "nonfoil",
   "finishes",
   "oversized",
-  // "promo",
+  "promo",
   "reprint",
-  // "variation",
+  "variation",
+  "all_parts",
   "set_id",
   "set_type",
   "set_uri",
@@ -48,11 +50,69 @@ const unwantedScryfallFields = [
   "related_uris",
 ]
 
+function cleanImageUris(card) {
+
+  let faces
+  if (card.image_uris) {
+    faces = [card]
+  }
+  else {
+    faces = card.card_faces
+  }
+
+  for (const face of faces) {
+    if (!face.image_uris) {
+      console.log(card)
+    }
+    const tokens = face.image_uris.normal.split('/')
+    face.image_uri_basename = tokens.slice(-3).join('/')
+    delete face.image_uris
+  }
+}
+
+function cleanLegalities(card) {
+  card.legal = Object
+    .keys(card.legalities)
+    .filter(key => card.legalities[key] === 'legal')
+  delete card.legalities
+}
 
 function cleanScryfallCards(cards) {
   for (const card of cards) {
     for (const fieldName of unwantedScryfallFields) {
       delete card[fieldName]
+    }
+
+    cleanImageUris(card)
+    cleanLegalities(card)
+  }
+}
+
+function filterVersions(cards) {
+  for (let i = cards.length - 1; i >= 0; i--) {
+    const card = cards[i]
+
+    if (card.layout === 'art_series') {
+      cards.splice(i, 1)
+      continue
+    }
+
+    if (card.lang !== 'en') {
+      cards.splice(i, 1)
+      continue
+    }
+    else {
+      delete card.lang
+    }
+
+    if (card.digital || card.textless || card.full_art) {
+      cards.splice(i, 1)
+      continue
+    }
+    else {
+      delete card.digital
+      delete card.textless
+      delete card.full_art
     }
   }
 }
@@ -61,6 +121,7 @@ async function fetchScryfallDefaultCards(uri) {
   const result = await axios.get(uri, {
     maxBodyLength: Infinity,
     maxConentLength: Infinity,
+    timeout: 0,
   })
 
   if (result.status !== 200) {
@@ -94,48 +155,6 @@ async function fetchScryfallDefaultDataUri() {
   return targetData.download_uri
 }
 
-async function findDuplicateNames(cards) {
-
-  const cardConfusion = {}
-  const confused = []
-
-  const multifaced = []
-
-  const fields = {}
-
-  for (const card of cards) {
-    ////////////////////
-    const key = `${card.name} ${card.set}`
-    if (
-      key in cardConfusion
-      && cardConfusion[key] !== card.oracle_text
-      && !card.type_line.includes('Token')
-    ) {
-      confused.push(card.name)
-    }
-    else {
-      cardConfusion[key] = card.oracle_text
-    }
-
-
-    ////////////////////
-    if (card.name.includes('//')) {
-      multifaced.push(card)
-    }
-
-    ////////////////////
-    for (const key of Object.keys(card)) {
-      if (key in fields) {
-        fields[key] += 1
-      }
-      else {
-        fields[key] = 0
-      }
-    }
-  }
-
-}
-
 async function fetchFromScryfallAndClean() {
   console.log('Fetching latest scryfall data')
 
@@ -144,11 +163,17 @@ async function fetchFromScryfallAndClean() {
   console.log('...downloading card data from ' + downloadUri)
   const cards = await fetchScryfallDefaultCards(downloadUri)
 
+  /* const downloadUri = 'default-cards-20221111100454.json'
+   * const cardData = fs.readFileSync('local_scryfall.json')
+   * const cards = JSON.parse(cardData) */
+
+  console.log('...filtering')
+  filterVersions(cards)
+
   console.log('...cleaning')
   cleanScryfallCards(cards)
-  findDuplicateNames(cards)
 
-  const outputFilename = downloadUri.split('/').slice(-1)[0]
+  const outputFilename = 'card_data/' + downloadUri.split('/').slice(-1)[0]
 
   console.log('...writing data to ' + outputFilename)
   fs.writeFileSync(outputFilename, JSON.stringify(cards, null, 2))
