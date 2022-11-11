@@ -57,16 +57,15 @@ const unwantedScryfallFields = [
   "scryfall_uri",
   "highres_image",
   "image_status",
-  // "legalities",
   "games",
   "reserved",
   "foil",
   "nonfoil",
   "finishes",
   "oversized",
-  "promo",
+  // "promo",
   "reprint",
-  "variation",
+  // "variation",
   "set_id",
   "set_type",
   "set_uri",
@@ -74,13 +73,13 @@ const unwantedScryfallFields = [
   "scryfall_set_uri",
   "rulings_uri",
   "prints_search_uri",
-  "digital",
+  // "digital",
   "card_back_id",
   "artist_ids",
   "illustration_id",
   "border_color",
   "frame",
-  "full_art",
+  // "full_art",
   "textless",
   "booster",
   "story_spotlight",
@@ -104,22 +103,18 @@ async function fetchScryfallDefaultCards(uri) {
   const fs = require('fs')
   const path = require('path')
 
-  const filename = '/Users/dennis/tmp/scryfall/default-cards-20221025090507.json'
-  const data = fs.readFileSync(filename).toString()
+  console.log('downloading data')
+  const result = await axios.get(uri)
+  console.log('download complete')
 
-  return JSON.parse(data)
+  if (result.status !== 200) {
+    return {
+      status: 'error',
+      message: result.statusText,
+    }
+  }
 
-
-  /* const result = await axios.get(uri)
-
-   * if (result.status !== 200) {
-   *   return {
-   *     status: 'error',
-   *     message: result.statusText,
-   *   }
-   * }
-
-   * return result.data */
+  return result.data
 }
 
 async function fetchScryfallDefaultDataUri() {
@@ -199,4 +194,4 @@ module.exports = {
   fetchFromScryfallAndClean
 }
 
-// fetchFromScryfallAndClean()
+fetchFromScryfallAndClean()
