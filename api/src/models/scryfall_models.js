@@ -17,8 +17,11 @@ Scryfall.fetchAll = async function() {
 }
 
 Scryfall.updateAll = async function() {
+  console.log('Update all Scryfall data')
   const cards = await util.fetchFromScryfallAndClean()
+  console.log('...insert into database')
   await insertCardsIntoDatabase(cards)
+  console.log('...update complete')
 }
 
 module.exports = Scryfall
