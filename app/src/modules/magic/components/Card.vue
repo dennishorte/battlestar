@@ -1,5 +1,5 @@
 <template>
-  <div class="game-card">
+  <div class="magic-card">
     <CardFace v-if="card" v-for="index in faceIndices" :card="card" :index="index" />
   </div>
 </template>
@@ -41,7 +41,7 @@ export default {
 
 
 <style lang="scss">
-.game-card {
+.magic-card {
   display: flex;
   flex-direction: row;
   flex-wrap: none;
