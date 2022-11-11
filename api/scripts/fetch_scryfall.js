@@ -1,47 +1,6 @@
 const axios = require('axios')
+const fs = require('fs')
 
-/* {
- *   all_parts: 9012,
- *   arena_id: 9403,
- *   artist: 74655,
- *   attraction_lights: 134,
- *   card_faces: 2387,
- *   cmc: 74650,
- *   collector_number: 74655,
- *   color_identity: 74655,
- *   color_indicator: 92,
- *   colors: 72689,
- *   content_warning: 28,
- *   flavor_name: 78,
- *   flavor_text: 36190,
- *   frame_effects: 7126,
- *   hand_modifier: 118,
- *   id: 74655,
- *   image_uris: 72689,
- *   keywords: 74655,
- *   layout: 74655,
- *   life_modifier: 118,
- *   loyalty: 1102,
- *   mana_cost: 72689,
- *   name: 74655,
- *   oracle_text: 72267,
- *   power: 34849,
- *   preview: 9125,
- *   printed_name: 2088,
- *   printed_text: 212,
- *   printed_type_line: 219,
- *   produced_mana: 10942,
- *   promo_types: 11792,
- *   rarity: 74655,
- *   security_stamp: 19257,
- *   set: 74655,
- *   set_name: 74655,
- *   tcgplayer_etched_id: 745,
- *   toughness: 34849,
- *   type_line: 74650,
- *   variation_of: 69,
- *   watermark: 5169,
- * } */
 
 const unwantedScryfallFields = [
   "object",
@@ -80,7 +39,7 @@ const unwantedScryfallFields = [
   "border_color",
   "frame",
   // "full_art",
-  "textless",
+  // "textless",
   "booster",
   "story_spotlight",
   "edhrec_rank",
@@ -99,13 +58,10 @@ function cleanScryfallCards(cards) {
 }
 
 async function fetchScryfallDefaultCards(uri) {
-  // Load card data from the disk for now.
-  const fs = require('fs')
-  const path = require('path')
-
-  console.log('downloading data')
-  const result = await axios.get(uri)
-  console.log('download complete')
+  const result = await axios.get(uri, {
+    maxBodyLength: Infinity,
+    maxConentLength: Infinity,
+  })
 
   if (result.status !== 200) {
     return {
@@ -181,17 +137,27 @@ async function findDuplicateNames(cards) {
 }
 
 async function fetchFromScryfallAndClean() {
+  console.log('Fetching latest scryfall data')
+
   const downloadUri = await fetchScryfallDefaultDataUri()
+
+  console.log('...downloading card data from ' + downloadUri)
   const cards = await fetchScryfallDefaultCards(downloadUri)
 
+  console.log('...cleaning')
   cleanScryfallCards(cards)
   findDuplicateNames(cards)
 
-  return cards
+  const outputFilename = downloadUri.split('/').slice(-1)[0]
+
+  console.log('...writing data to ' + outputFilename)
+  fs.writeFileSync(outputFilename, JSON.stringify(cards, null, 2))
+
+  console.log('...done')
 }
 
-module.exports = {
-  fetchFromScryfallAndClean
-}
 
-// fetchFromScryfallAndClean()
+////////////////////////////////////////////////////////////////////////////////
+// Main
+
+fetchFromScryfallAndClean()
