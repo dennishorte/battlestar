@@ -8,7 +8,7 @@
       </div>
 
       <div class="col column cards-column">
-        <button class="btn btn-sm btn-info" @click="updateLocalCards">update</button>
+        <button class="btn btn-sm btn-info" @click="updateLocalCards">update local database</button>
 
         <CardList />
       </div>
