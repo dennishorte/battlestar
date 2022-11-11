@@ -17,7 +17,11 @@ export default {
 
   computed: {
     card() {
-      return this.game.getCardById(this.name)
+      const card = this.game.getCardById(this.name)
+      if (!card) {
+        alert('Unable to find card named: ' + this.name)
+      }
+      return card
     },
   },
 
