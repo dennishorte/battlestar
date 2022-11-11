@@ -6,7 +6,7 @@
       <div class="header-buttons">
         <button @click="openImportModal" class="btn btn-secondary btn-sm">import</button>
         <button @click="download" class="btn btn-secondary btn-sm">export</button>
-        <button class="btn btn-info btn-sm">edit</button>
+        <button @click="openEditModal" class="btn btn-info btn-sm">edit</button>
         <button @click="save" :disabled="!deck.modified" class="btn btn-warning btn-sm">save</button>
       </div>
     </div>
@@ -42,6 +42,12 @@
     </div>
     <textarea class="form-control" rows="15" ref="importText"></textarea>
   </Modal>
+
+  <Modal id="edit-deck-modal" @ok="edit">
+    <template #header>Edit Deck</template>
+    <input class="form-control" v-model="newName" placeholder="name" />
+    <input class="form-control" v-model="newPath" placeholder="path" />
+  </Modal>
 </template>
 
 
@@ -67,6 +73,9 @@ export default {
 
   data() {
     return {
+      newName: '',
+      newPath: '',
+
       sortTypes: [
         'creature',
         'planeswalker',
@@ -99,9 +108,24 @@ export default {
       saveAs(blob, `${this.deck.name}.txt`)
     },
 
+    async edit() {
+      this.deck.name = this.newName.trim()
+      this.deck.path = this.newPath.trim()
+      this.$store.commit('magic/dm/setDeckName', this.newName)
+      this.$store.commit('magic/dm/setDeckPath', this.newPath)
+      await this.$store.dispatch('magic/dm/saveActiveDeck')
+      await this.$store.dispatch('magic/dm/fetchDecks')
+    },
+
     importDecklist() {
       const text = this.$refs.importText.value
       this.$store.dispatch('magic/dm/setDecklist', text)
+    },
+
+    openEditModal() {
+      this.newName = this.deck.name
+      this.newPath = this.deck.path
+      this.$modal('edit-deck-modal').show()
     },
 
     openImportModal() {

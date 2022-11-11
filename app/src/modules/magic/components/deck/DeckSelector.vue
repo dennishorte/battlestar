@@ -63,7 +63,7 @@ export default {
         return this.activeFolder
       }
       else if (this.activeDeck) {
-        return '/' + this.activeDeck.path
+        return this.activeDeck.path
       }
       else {
         return '/'

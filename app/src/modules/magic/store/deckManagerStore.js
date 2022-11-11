@@ -91,6 +91,14 @@ export default {
     setModified(state, value) {
       state.activeDeck.modified = Boolean(value)
     },
+    setDeckName(state, value) {
+      state.activeDeck.name = value.trim()
+      state.activeDeck.modified = true
+    },
+    setDeckPath(state, value) {
+      state.activeDeck.path = value.trim()
+      state.activeDeck.modified = true
+    },
 
     ////////////////////
     // Managed Card
@@ -261,6 +269,7 @@ export default {
     // Actions that wrap API calls
 
     async saveActiveDeck({ commit, state }) {
+      console.log(state.activeDeck.serialize())
       const requestResult = await axios.post('/api/deck/save', {
         deck: state.activeDeck.serialize()
       })
