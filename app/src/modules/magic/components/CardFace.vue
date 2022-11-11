@@ -105,7 +105,7 @@ export default {
     },
 
     imageUrl() {
-      return this.face.image_uris.art_crop
+      return this.face.image_uri
     },
 
     manaCost() {

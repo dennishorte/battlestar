@@ -64,8 +64,7 @@ function cleanImageUris(card) {
     if (!face.image_uris) {
       console.log(card)
     }
-    const tokens = face.image_uris.normal.split('/')
-    face.image_uri_basename = tokens.slice(-3).join('/')
+    face.image_uri = face.image_uris.art_crop
     delete face.image_uris
   }
 }
