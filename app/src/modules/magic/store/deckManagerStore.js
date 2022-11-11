@@ -78,7 +78,7 @@ export default {
         state.activeDeck = null
       }
     },
-    setActiveDeckList(state, decklist) {
+    setActiveDecklist(state, decklist) {
       state.activeDeck.setDecklist(decklist)
     },
     setActiveFolder(state, path) {

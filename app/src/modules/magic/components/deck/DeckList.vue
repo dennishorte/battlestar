@@ -102,7 +102,6 @@ export default {
 
   methods: {
     download() {
-      this.deck.updateDecklist()
       const data = this.deck.decklist
       const blob = new Blob([data], { type: "text/plain;charset=utf-8" })
       saveAs(blob, `${this.deck.name}.txt`)
@@ -119,7 +118,7 @@ export default {
 
     importDecklist() {
       const text = this.$refs.importText.value
-      this.$store.commit('magic/dm/setDecklist', text)
+      this.$store.commit('magic/dm/setActiveDecklist', text)
     },
 
     openEditModal() {
