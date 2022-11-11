@@ -30,6 +30,7 @@ app.post('/api/card/all', routes.card.fetchAll)
 
 // Deck routes
 app.post('/api/deck/create', routes.deck.create)
+app.post('/api/deck/save', routes.deck.save)
 
 // Guest routes
 app.post('/api/guest/slack_test', routes.slackTest)

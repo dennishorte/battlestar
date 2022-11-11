@@ -36,6 +36,9 @@ Deck.findByUserId = async function(userId) {
   return await decks.toArray()
 }
 
+Deck.save = async function(deck) {
+  return await deckCollection.replaceOne({ _id: deck._id }, deck)
+}
 
 Deck.rename = async function(deckId, name) {
   const filter = { _id: deckId }

@@ -18,5 +18,12 @@ Deck.create = async function(req, res) {
   })
 }
 
+Deck.save = async function(req, res) {
+  await db.deck.save(req.body.deck)
+  res.json({
+    status: 'success',
+  })
+}
+
 
 module.exports = Deck

@@ -88,6 +88,9 @@ export default {
     setDecks(state, decks) {
       state.decks = decks
     },
+    setModified(state, value) {
+      state.activeDeck.modified = Boolean(value)
+    },
 
     ////////////////////
     // Managed Card
@@ -252,6 +255,24 @@ export default {
     toggleCardLock({ commit, state }) {
       commit('setCardLock', !state.cardlock)
     },
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Actions that wrap API calls
+
+    async saveActiveDeck({ commit, state }) {
+      const requestResult = await axios.post('/api/deck/save', {
+        deck: state.activeDeck.serialize()
+      })
+
+      if (requestResult.data.status === 'success') {
+        commit('setModified', false)
+      }
+      else {
+        alert('Error saving changes to deck')
+      }
+    },
+
 
     ////////////////////////////////////////////////////////////////////////////////
     // Card Database

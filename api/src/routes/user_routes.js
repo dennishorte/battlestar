@@ -39,7 +39,6 @@ User.deactivate = async function(req, res) {
 
 User.decks = async function(req, res) {
   const decks = await db.deck.findByUserId(req.body.userId)
-  console.log(decks)
 
   res.json({
     status: 'success',

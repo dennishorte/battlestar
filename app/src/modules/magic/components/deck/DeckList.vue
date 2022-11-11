@@ -7,7 +7,7 @@
         <button @click="openImportModal" class="btn btn-secondary btn-sm">import</button>
         <button @click="download" class="btn btn-secondary btn-sm">export</button>
         <button class="btn btn-info btn-sm">edit</button>
-        <button :disabled="!deck.modified" class="btn btn-warning btn-sm">save</button>
+        <button @click="save" :disabled="!deck.modified" class="btn btn-warning btn-sm">save</button>
       </div>
     </div>
 
@@ -106,6 +106,10 @@ export default {
 
     openImportModal() {
       this.$modal('deck-import-modal').show()
+    },
+
+    async save() {
+      this.$store.dispatch('magic/dm/saveActiveDeck')
     },
   },
 }
