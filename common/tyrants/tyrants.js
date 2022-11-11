@@ -930,7 +930,7 @@ Tyrants.prototype.aChooseToDiscard = function(player, opts={}) {
     this.aChooseAndDiscard(opponent, { forced: true, forcedBy: player.name })
   }
   else {
-    game.mLog({
+    this.mLog({
       template: 'No opponents have more than three cards in hand',
     })
   }

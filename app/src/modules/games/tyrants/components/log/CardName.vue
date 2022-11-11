@@ -1,6 +1,6 @@
 <template>
   <div class="card-name" @click="clicked">
-    {{ card.name }}
+    {{ displayName }}
   </div>
 </template>
 
@@ -17,11 +17,11 @@ export default {
 
   computed: {
     card() {
-      const card = this.game.getCardById(this.name)
-      if (!card) {
-        alert('Unable to find card named: ' + this.name)
-      }
-      return card
+      return this.game.getCardById(this.name)
+    },
+
+    displayName() {
+      return this.card ? this.card.name : this.name
     },
   },
 
