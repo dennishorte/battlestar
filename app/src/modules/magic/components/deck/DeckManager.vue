@@ -14,7 +14,7 @@
       </div>
 
       <div class="col column">
-        <DeckList v-if="activeDeck" />
+        <Decklist v-if="activeDeck" />
       </div>
 
     </div>
@@ -36,7 +36,7 @@ import mitt from 'mitt'
 import CardFilters from './CardFilters'
 import CardList from './CardList'
 import CardManagerModal from './CardManagerModal'
-import DeckList from './DeckList'
+import Decklist from './Decklist'
 import DeckSelector from './DeckSelector'
 
 export default {
@@ -46,7 +46,7 @@ export default {
     CardFilters,
     CardList,
     CardManagerModal,
-    DeckList,
+    Decklist,
     DeckSelector,
   },
 

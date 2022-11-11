@@ -13,20 +13,20 @@
 
     <div class="deck-sections">
       <template v-for="sortType in sortTypes">
-        <DeckListSection
+        <DecklistSection
           v-if="sortedMaindeck[sortType]"
           :cards="sortedMaindeck[sortType]"
           :name="sortType"
         />
       </template>
 
-      <DeckListSection
+      <DecklistSection
         v-if="deck.breakdown.side.length"
         :cards="deck.breakdown.side"
         name='sideboard'
       />
 
-      <DeckListSection
+      <DecklistSection
         v-if="deck.breakdown.command.length"
         :cards="deck.breakdown.command"
         name='command'
@@ -56,18 +56,17 @@ import { util } from 'battlestar-common'
 import { saveAs } from 'file-saver'
 import { mapState } from 'vuex'
 
-import DeckListSection from './DeckListSection'
+import DecklistSection from './DecklistSection'
 import Modal from '@/components/Modal'
 
 import cardUtil from '../../util/cardUtil.js'
-import deckUtil from '../../util/deckUtil.js'
 
 
 export default {
-  name: 'DeckList',
+  name: 'Decklist',
 
   components: {
-    DeckListSection,
+    DecklistSection,
     Modal,
   },
 

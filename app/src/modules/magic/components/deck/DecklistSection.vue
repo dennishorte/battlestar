@@ -4,21 +4,21 @@
 
     <div v-for="card in cards" class="card-and-count">
       <div class="card-count">{{ card.count }}</div>
-      <DeckListCard :card="card.card" />
+      <DecklistCard :card="card.card" />
     </div>
   </div>
 </template>
 
 
 <script>
-import DeckListCard from './DeckListCard'
+import DecklistCard from './DecklistCard'
 import SectionHeader from '@/components/SectionHeader'
 
 export default {
-  name: 'DeckListSection',
+  name: 'DecklistSection',
 
   components: {
-    DeckListCard,
+    DecklistCard,
     SectionHeader,
   },
 

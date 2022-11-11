@@ -14,7 +14,7 @@ import { mapState } from 'vuex'
 import ManaCost from '../ManaCost'
 
 export default {
-  name: 'DeckListCard',
+  name: 'DecklistCard',
 
   components: {
     ManaCost,
