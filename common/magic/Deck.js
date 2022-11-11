@@ -42,16 +42,7 @@ function deserialize(data, cardLookup) {
   deck.decklist = data.decklist
 
   // Extra data
-  deck.breakdown = parseDecklist(deck.decklist)
-
-  // Add refs to full card data, if available.
-  if (cardLookup) {
-    for (const zone of Object.values(deck.breakdown)) {
-      for (const elem of zone) {
-        elem.card = (cardLookup[elem.name] || [])[0]
-      }
-    }
-  }
+  deck.breakdown = parseDecklist(deck.decklist, cardLookup)
 
   return deck
 }
@@ -163,7 +154,7 @@ function buildHierarchy(deckData) {
   return hierarchy
 }
 
-function parseDecklist(decklist) {
+function parseDecklist(decklist, cardLookup) {
   const cards = {
     main: [],
     side: [],
@@ -193,6 +184,15 @@ function parseDecklist(decklist) {
     }
     else {
       zone.push(parseDeckListLine(line))
+    }
+  }
+
+  // Add refs to full card data, if available.
+  if (cardLookup) {
+    for (const zone of Object.values(cards)) {
+      for (const elem of zone) {
+        elem.card = (cardLookup[elem.name] || [])[0]
+      }
     }
   }
 

@@ -4,7 +4,7 @@
       <div class="deck-name me-2">{{ deck.name }}</div>
 
       <div class="header-buttons">
-        <button class="btn btn-secondary btn-sm">import</button>
+        <button @click="openImportModal" class="btn btn-secondary btn-sm">import</button>
         <button @click="download" class="btn btn-secondary btn-sm">export</button>
         <button class="btn btn-info btn-sm">edit</button>
         <button :disabled="!deck.modified" class="btn btn-warning btn-sm">save</button>
@@ -33,6 +33,15 @@
       />
     </div>
   </div>
+
+  <Modal id="deck-import-modal" @ok="importDecklist">
+    <template #header>Import Deck</template>
+
+    <div class="alert alert-danger">
+      Using this option will overwrite the existing cards in this deck.
+    </div>
+    <textarea class="form-control" rows="15" ref="importText"></textarea>
+  </Modal>
 </template>
 
 
@@ -42,6 +51,7 @@ import { saveAs } from 'file-saver'
 import { mapState } from 'vuex'
 
 import DeckListSection from './DeckListSection'
+import Modal from '@/components/Modal'
 
 import cardUtil from '../../util/cardUtil.js'
 import deckUtil from '../../util/deckUtil.js'
@@ -52,6 +62,7 @@ export default {
 
   components: {
     DeckListSection,
+    Modal,
   },
 
   data() {
@@ -86,7 +97,16 @@ export default {
       const data = this.deck.decklist
       const blob = new Blob([data], { type: "text/plain;charset=utf-8" })
       saveAs(blob, `${this.deck.name}.txt`)
-    }
+    },
+
+    importDecklist() {
+      const text = this.$refs.importText.value
+      this.$store.dispatch('magic/dm/setDecklist', text)
+    },
+
+    openImportModal() {
+      this.$modal('deck-import-modal').show()
+    },
   },
 }
 </script>
