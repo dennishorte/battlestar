@@ -87,6 +87,10 @@ export default {
         alert('Error loading game data')
       }
     },
+
+    async updateLocalCards() {
+      this.$store.dispatch('magic/dm/updateCardDatabase')
+    },
   },
 
   created() {

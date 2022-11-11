@@ -293,9 +293,9 @@ export default {
       console.log('Card database ready')
     },
 
-    updateCardDatabase({ commit, dispatch }) {
+    async updateCardDatabase({ commit, dispatch }) {
       commit('setCardsLoaded', false)
-      updateLocalCards()
+      await updateLocalCards()
       dispatch('loadCardDatabase')
     },
   },
@@ -435,7 +435,7 @@ async function loadCardsFromDatabase(successFunc, errorFunc) {
       const objectStore = db.transaction('cards').objectStore('cards')
       const cursor = objectStore.openCursor()
 
-      let cards = null
+      let cards = []
 
       cursor.addEventListener('success', (e) => {
         const cursor = e.target.result
@@ -445,13 +445,10 @@ async function loadCardsFromDatabase(successFunc, errorFunc) {
           cards = cursor.value.json_data
           cursor.continue()
         }
-        else if (cards ){
+        else {
           console.log('all values loaded', cards.length)
           db.close()
           successFunc(cards)
-        }
-        else {
-          // Do nothing.
         }
       })
     },
@@ -473,13 +470,13 @@ async function openLocalStorage(successFunc, errorFunc) {
   })
 
   openRequest.addEventListener('upgradeneeded', (e) => {
-    this.cardDatabase.db = e.target.result
+    const db = e.target.result
 
-    console.log(`Upgrading database to version ${this.cardDatabase.db.version}`)
+    console.log(`Upgrading database to version ${db.version}`)
 
     // Create an objectStore in our database to store notes and an auto-incrementing key
     // An objectStore is similar to a 'table' in a relational database
-    const objectStore = this.cardDatabase.db.createObjectStore('cards', {
+    const objectStore = db.createObjectStore('cards', {
       keyPath: 'id',
       autoIncrement: true,
     })
@@ -505,7 +502,6 @@ async function saveCardsToDatabase(cards) {
 
       transaction.addEventListener('complete', () => {
         console.log('Transaction completed: database modification finished.')
-        this.loadCardsFromDatabase()
       })
     },
     error => { throw new Error(error) }
