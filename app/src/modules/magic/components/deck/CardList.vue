@@ -4,6 +4,9 @@
     <div v-for="name in searchedNames" :key="name" class="game-card" @click="highlightCard(name)">
       {{ name }}
     </div>
+    <div class="alert alert-warning">
+      For performance reasons, only 1000 cards are included in this list. Use the filters to reduce the card search space.
+    </div>
   </div>
 </template>
 
