@@ -7,14 +7,15 @@ const Deck = {}
 module.exports = Deck
 
 
-Deck.create = async function({ userId, name, path }) {
+Deck.create = async function({ userId, name, path, decklist }) {
   const creationDate = Date.now()
+  const deckName = await getUniqueDecName(userId, name, path)
 
   const insertResult = await deckCollection.insertOne({
     userId,
-    name,
-    path,
-    decklist: '',
+    name: deckName,
+    path: path || '/',
+    decklist: decklist || '',
     createdTimestamp: creationDate,
     updatedTimestamp: creationDate,
   })
@@ -44,4 +45,23 @@ Deck.rename = async function(deckId, name) {
   const filter = { _id: deckId }
   const updater = { $set: { name } }
   return await deckCollection.updateOne(filter, updater)
+}
+
+
+async function getUniqueDecName(userId, name, path) {
+  const cursor = await deckCollection.find({
+    userId,
+    name: new RegExp(name + '.*'),
+    path,
+  })
+  const decks = await cursor.toArray()
+
+  let testName = name
+  let index = 0
+  while (decks.find(d => d.name === testName)) {
+    index += 1
+    testName = name + ' (' + index + ')'
+  }
+
+  return testName
 }

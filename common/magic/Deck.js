@@ -1,7 +1,7 @@
 const util = require('../lib/util.js')
 
 
-function Deck() {
+function Deck(cardLookup) {
   // Serialized Data
   this._id = undefined
   this.userId = ''
@@ -11,7 +11,7 @@ function Deck() {
   this.updatedTimestamp = this.createdTimestamp
   this.decklist = ''
 
-  // Extra Data
+  this.cardLookup = cardLookup
   this.breakdown = {
     main: [],
     side: [],
@@ -39,17 +39,14 @@ function deserialize(data, cardLookup) {
   deck.path = data.path
   deck.createdTimestamp = data.createdTimestamp
   deck.updatedTimestamp = data.updatedTimestamp
-  deck.decklist = data.decklist
 
-  // Extra data
-  deck.breakdown = parseDecklist(deck.decklist, cardLookup)
+  deck.cardLookup = cardLookup
+  deck.setDecklist(data.decklist)
 
   return deck
 }
 
 Deck.prototype.serialize = function() {
-  this.updateDecklist()
-
   const data = {
     userId: this.userId,
     name: this.name,
@@ -66,25 +63,41 @@ Deck.prototype.serialize = function() {
   return data
 }
 
+Deck.prototype.setBreakdown = function(breakdown) {
+  this.breakdown = breakdown
+  injectCardData(this.breakdown, this.cardLookup)
+  this.decklist = breakdownToDecklist(breakdown)
+}
+
+Deck.prototype.setDecklist = function(decklist) {
+  this.decklist = decklist
+  this.breakdown = parseDecklist(decklist)
+  injectCardData(this.breakdown, this.cardLookup)
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Helper Functions
+
 const zoneNameLookup = {
   main: 'Deck',
   side: 'Sideboard',
   command: 'Command',
 }
 
-Deck.prototype.updateDecklist = function() {
+function breakdownToDecklist(breakdown) {
   const lines = []
   const zones = ['main', 'side', 'command']
 
   for (const zone of zones) {
-    if (this.breakdown[zone].length > 0) {
+    if (breakdown[zone].length > 0) {
       if (lines.length > 0) {
         lines.push('')
       }
       lines.push(zoneNameLookup[zone])
     }
 
-    for (const data of this.breakdown[zone]) {
+    for (const data of breakdown[zone]) {
       const tokens = []
       tokens.push(data.count)
       tokens.push(data.name)
@@ -100,13 +113,8 @@ Deck.prototype.updateDecklist = function() {
     lines.pop()
   }
 
-  this.decklist = lines.join('\n')
+  return lines.join('\n')
 }
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Helper Functions
 
 function pathTokens(path) {
   let tokens = path ? path.split('/') : []
@@ -154,6 +162,17 @@ function buildHierarchy(deckData) {
   return hierarchy
 }
 
+// Add refs to full card data, if available.
+function injectCardData(breakdown, cardLookup) {
+  if (cardLookup) {
+    for (const zone of Object.values(breakdown)) {
+      for (const elem of zone) {
+        elem.card = (cardLookup[elem.name] || [])[0]
+      }
+    }
+  }
+}
+
 function parseDecklist(decklist, cardLookup) {
   const cards = {
     main: [],
@@ -184,15 +203,6 @@ function parseDecklist(decklist, cardLookup) {
     }
     else {
       zone.push(parseDeckListLine(line))
-    }
-  }
-
-  // Add refs to full card data, if available.
-  if (cardLookup) {
-    for (const zone of Object.values(cards)) {
-      for (const elem of zone) {
-        elem.card = (cardLookup[elem.name] || [])[0]
-      }
     }
   }
 

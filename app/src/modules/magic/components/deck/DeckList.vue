@@ -119,7 +119,7 @@ export default {
 
     importDecklist() {
       const text = this.$refs.importText.value
-      this.$store.dispatch('magic/dm/setDecklist', text)
+      this.$store.commit('magic/dm/setDecklist', text)
     },
 
     openEditModal() {

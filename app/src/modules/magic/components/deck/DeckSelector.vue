@@ -4,9 +4,8 @@
       <div class="header-content">
         <div>Deck Selector</div>
         <div class="icons">
-          <i class="bi-files"></i>&nbsp;
-          <i class="bi-plus-square" @click="newDeckModal"></i>&nbsp;
-          <i class="bi-pencil-square"></i>
+          <i class="bi-files" @click="duplicate"></i>&nbsp;
+          <i class="bi-plus-square" @click="newDeckModal"></i>
         </div>
       </div>
     </SectionHeader>
@@ -73,25 +72,30 @@ export default {
 
   methods: {
     async createDeck() {
-      const name = this.newDeckName.trim()
-      const path = this.newDeckPath.trim()
+      await this.create(this.newDeckName, this.newDeckPath, '')
       this.newDeckName = ''
+    },
 
-      if (name) {
-        const deck = new mag.Deck.Deck()
-        deck.userId = this.$store.getters['auth/user']._id
-        deck.name = name
-        deck.path = path
-        const data = deck.serialize()
+    async duplicate() {
+      const deck = this.activeDeck
+      await this.create(deck.name, deck.path, deck.decklist)
+    },
 
-        const requestResult = await axios.post('/api/deck/create', data)
-        if (requestResult.data.status === 'success') {
-          await this.$store.dispatch('magic/dm/fetchDecks')
-          this.$store.dispatch('magic/dm/selectDeckByPath', {
-            path: requestResult.data.deck.path,
-            name: requestResult.data.deck.name,
-          })
-        }
+    async create(name, path, decklist) {
+      const deck = new mag.Deck.Deck()
+      deck.userId = this.$store.getters['auth/user']._id
+      deck.name = name.trim()
+      deck.path = path.trim()
+      deck.decklist = decklist
+      const data = deck.serialize()
+
+      const requestResult = await axios.post('/api/deck/create', data)
+      if (requestResult.data.status === 'success') {
+        await this.$store.dispatch('magic/dm/fetchDecks')
+        this.$store.dispatch('magic/dm/selectDeckByPath', {
+          path: requestResult.data.deck.path,
+          name: requestResult.data.deck.name,
+        })
       }
     },
 

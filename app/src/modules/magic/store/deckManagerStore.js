@@ -78,9 +78,8 @@ export default {
         state.activeDeck = null
       }
     },
-    setActiveDeckBreakdown(state, breakdown) {
-      state.activeDeck.breakdown = breakdown
-      state.activeDeck.modified = true
+    setActiveDeckList(state, decklist) {
+      state.activeDeck.setDecklist(decklist)
     },
     setActiveFolder(state, path) {
       state.activeFolder = path
@@ -103,9 +102,8 @@ export default {
     ////////////////////
     // Managed Card
     addCardToZone(state, { card, zoneName }) {
-      const zone = state.activeDeck.breakdown[zoneName]
-
-      // Already exists?
+      const breakdown = state.activeDeck.breakdown
+      const zone = breakdown[zoneName]
       const existing = findCardInZone(card, zone)
 
       if (existing) {
@@ -120,10 +118,13 @@ export default {
           collectorNumber: card.collector_number,
         })
       }
+
+      state.activeDeck.setBreakdown(breakdown)
       state.activeDeck.modified = true
     },
     removeCardFromZone(state, { card, zoneName }) {
-      const zone = state.activeDeck.breakdown[zoneName]
+      const breakdown = state.activeDeck.breakdown
+      const zone = breakdown[zoneName]
       const existing = findCardInZone(card, zone)
 
       if (existing) {
@@ -133,6 +134,7 @@ export default {
         else {
           util.array.remove(zone, existing)
         }
+        state.activeDeck.setBreakdown(breakdown)
         state.activeDeck.modified = true
       }
       else {
@@ -247,17 +249,6 @@ export default {
     selectFolder({ commit }, path) {
       commit('setActiveDeck', null)
       commit('setActiveFolder', path)
-    },
-
-    setDecklist({ commit, state }, text) {
-      try {
-        const breakdown = mag.Deck.parseDecklist(text, state.cardDatabase.lookup)
-        commit('setActiveDeckBreakdown', breakdown)
-      }
-      catch (e) {
-        console.log(e)
-        alert('Error loading decklist')
-      }
     },
 
     toggleCardLock({ commit, state }) {

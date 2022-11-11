@@ -7,7 +7,7 @@
 
     <div
       v-for="deck in content.decks"
-      :key="activeDeck"
+      :key="deck._id"
       @click="selectDeck(deck)"
       class="nested deck-name"
       :class="deckClasses(deck)"

@@ -4,12 +4,7 @@ const Deck = {}
 
 
 Deck.create = async function(req, res) {
-  const deckId = await db.deck.create({
-    userId: req.body.userId,
-    name: req.body.name,
-    path: req.body.path,
-  })
-
+  const deckId = await db.deck.create(req.body)
   const deck = await db.deck.findById(deckId)
 
   res.json({
