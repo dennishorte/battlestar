@@ -3,6 +3,7 @@
     <div class="row flex-nowrap">
 
       <div class="col column filters-column">
+        <MagicMenu />
         <DeckSelector />
         <CardFilters />
       </div>
@@ -38,6 +39,7 @@ import CardList from './CardList'
 import CardManagerModal from './CardManagerModal'
 import Decklist from './Decklist'
 import DeckSelector from './DeckSelector'
+import MagicMenu from '../MagicMenu'
 
 export default {
   name: 'DeckManager',
@@ -48,6 +50,7 @@ export default {
     CardManagerModal,
     Decklist,
     DeckSelector,
+    MagicMenu,
   },
 
   data() {
@@ -119,6 +122,7 @@ export default {
 }
 
 .filters-column {
+  min-width: 400px;
   max-width: 30em;
 }
 </style>
