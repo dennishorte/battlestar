@@ -158,15 +158,21 @@
     <div class="filter-added" v-for="filter in filters">
       <div class="filter-display-kind">{{ filter.kind }}</div>
       <div v-if="filter.kind === 'colors' || filter.kind === 'identity'">
-        <span v-if="filter.only" class="filter-display-operator">only</span>
-        <span v-if="filter.or" class="filter-display-operator">or</span>
+        <span v-if="filter.only" class="filter-display-operator">only&nbsp;</span>
+        <span v-if="filter.or" class="filter-display-operator">or&nbsp;</span>
         <template v-for="color in colors">
-          <span v-if="filter[color]" class="filter-display-value">{{ color }}</span>
+          <span v-if="filter[color]" class="filter-display-value">
+            {{ color }}
+            <i class="bi-x-circle" @click="remove(filter)"></i>
+          </span>
         </template>
       </div>
       <div v-else>
         <span class="filter-display-operator">{{ filter.operator }}&nbsp;</span>
-        <span class="filter-display-value">{{ filter.value }}</span>
+        <span class="filter-display-value">
+          {{ filter.value }}
+          <i class="bi-x-circle" @click="remove(filter)"></i>
+        </span>
       </div>
     </div>
   </div>
@@ -234,6 +240,10 @@ export default {
 
     clear() {
       this.$store.dispatch('magic/dm/clearCardFilters')
+    },
+
+    remove(filter) {
+      this.$store.dispatch('magic/dm/removeCardFilter', filter)
     },
   },
 }
