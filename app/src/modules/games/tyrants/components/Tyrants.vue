@@ -40,6 +40,7 @@
 import axios from 'axios'
 import mitt from 'mitt'
 
+import { nextTick } from 'vue'
 import { util, tyr } from 'battlestar-common'
 
 import maps from '../res/maps.js'
@@ -191,11 +192,56 @@ export default {
   },
 
   methods: {
-    clickLocation(loc) {
-      this.bus.emit('user-select-option', {
-        optionName: loc.name,
-        opts: { prefix: true },
-      })
+    canPlaceTroopAtLocation(loc) {
+      // Location requires empty space to place a troop
+      if (loc.getEmptySpaces() === 0) {
+        return false
+      }
+
+      // Player must have presence to place a troop
+      const player = this.game.getPlayerCurrent()
+      if (!this.game.getPresence(player).some(l => l === loc)) {
+        return false
+      }
+
+      // Player must have the option to place a troop
+      const usePowerOption = this
+        .game
+        .getWaiting()
+        .selectors[0]
+        .choices
+        .find(c => c.title === 'Use Power')
+      const deployOption = usePowerOption
+        .choices
+        .find(c => c === 'Deploy a Troop' || c.title === 'Deploy a Troop')
+
+      return Boolean(deployOption)
+    },
+
+    async clickLocation(loc) {
+      if (this.canPlaceTroopAtLocation(loc)) {
+        this.bus.emit('user-select-option', {
+          optionName: 'Deploy a Troop',
+        })
+
+        await nextTick()
+        this.bus.emit('click-choose-selected-option')
+
+        await nextTick()
+        this.bus.emit('user-select-option', {
+          optionName: loc.name,
+          opts: { prefix: true },
+        })
+
+        await nextTick()
+        this.bus.emit('click-choose-selected-option')
+      }
+      else {
+        this.bus.emit('user-select-option', {
+          optionName: loc.name,
+          opts: { prefix: true },
+        })
+      }
     },
 
     handleSaveResult(result) {

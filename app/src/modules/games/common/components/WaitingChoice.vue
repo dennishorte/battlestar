@@ -89,6 +89,12 @@ export default {
       await this.game.save()
     },
 
+    submitIfValid() {
+      if (this.isValid) {
+        this.submit()
+      }
+    },
+
     childChanged(event) {
       this.selection = event
       this.bus.emit('waiting-selection-changed', [...this.selection.selection])
@@ -117,6 +123,10 @@ export default {
 
   beforeMount() {
     this.selection.title = this.request.title
+  },
+
+  mounted() {
+    this.bus.on('click-choose-selected-option', this.submitIfValid)
   },
 }
 </script>
