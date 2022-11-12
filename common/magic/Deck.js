@@ -180,7 +180,7 @@ function parseDecklist(decklist, cardLookup) {
     command: [],
   }
 
-  let zone = null
+  let zone = cards.main
 
   for (let line of decklist.toLowerCase().split('\n')) {
     line = line.trim()
