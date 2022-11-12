@@ -23,7 +23,10 @@ CardUtil.allCardNames = function(card) {
 }
 
 CardUtil.equals = function(a, b) {
-  return a.name.toLowerCase() === b.name.toLowerCase()
+  const aName = a.name.split(' // ')[0].toLowerCase()
+  const bName = b.name.split(' // ')[0].toLowerCase()
+
+  return aName === bName
 }
 
 CardUtil.getSortType = function(card) {
