@@ -3,8 +3,6 @@ import axios from 'axios'
 import { mag, util } from 'battlestar-common'
 
 import cardUtil from '../util/cardUtil.js'
-import testDeck from '../res/test_deck.js'
-import testDeckCmd from '../res/test_deck_commander.js'
 
 
 export default {
@@ -28,7 +26,12 @@ export default {
 
     cardFilters: [],
     cardlock: false,
-    decks: mag.Deck.buildHierarchy([testDeck, testDeckCmd]),
+    decks: {
+      name: 'root',
+      pwd: '/',
+      folders: [],
+      decks: [],
+    },
     filteredCards: [],
     managedCard: null,
   }),
