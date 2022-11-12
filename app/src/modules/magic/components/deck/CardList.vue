@@ -1,5 +1,5 @@
 <template>
-  <input v-model="cardSearch" class="form-control" placeholder="search" />
+  <input v-model="searchPrefix" class="form-control" placeholder="search" />
   <div class="card-list">
     <div v-for="name in searchedNames" :key="name" class="game-card" @click="highlightCard(name)">
       {{ name }}
@@ -21,25 +21,29 @@ import { util } from 'battlestar-common'
 export default {
   name: 'CardList',
 
-  data() {
-    return {
-      cardSearch: '',
-      filters: [],
-    }
-  },
-
   computed: {
     ...mapState('magic/dm', {
       allcards: state => state.cardDatabase.cards,
       filteredCards: 'filteredCards',
+      // searchedNames: state => state.cardList.searchedNames,
     }),
+
+    searchPrefix: {
+      get() {
+        return this.$store.state.magic.dm.cardList.searchPrefix
+      },
+
+      set(value) {
+        this.$store.commit('magic/dm/setSearchPrefix', value)
+      },
+    },
 
     cardNames() {
       return util.array.distinct(this.filteredCards.map(c => c.name)).sort()
     },
 
     searchedNames() {
-      const searchText = this.cardSearch.toLowerCase()
+      const searchText = this.searchPrefix.toLowerCase()
       return this
         .cardNames
         .filter(name => name.toLowerCase().includes(searchText))

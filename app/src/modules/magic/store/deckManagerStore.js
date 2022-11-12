@@ -20,6 +20,11 @@ export default {
       lookup: {},
     },
 
+    cardList: {
+      searchedNames: [],
+      searchPrefix: '',
+    },
+
     // State
     activeDeck: null,
     activeFolder: '/',
@@ -69,6 +74,12 @@ export default {
       state.cardDatabase.cards = cards
       state.cardDatabase.lookup = createCardLookup(cards)
       state.filteredCards = cards
+    },
+
+    ////////////////////
+    // Card List
+    setSearchPrefix(state, value) {
+      state.cardList.searchPrefix = value
     },
 
     ////////////////////
