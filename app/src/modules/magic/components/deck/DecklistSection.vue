@@ -1,9 +1,11 @@
 <template>
   <div class="deck-section">
-    <SectionHeader>{{ name }}</SectionHeader>
+    <SectionHeader>
+      {{ name }} ({{ count }})
+    </SectionHeader>
 
     <div v-for="card in cards" class="card-and-count">
-      <div class="card-count">{{ card.count }}</div>
+      <div class="card-count">{{ card.count }} </div>
       <DecklistCard :card="card.card" />
     </div>
   </div>
@@ -25,6 +27,12 @@ export default {
   props: {
     cards: Array,
     name: String,
+  },
+
+  computed: {
+    count() {
+      return this.cards.reduce((acc, datum) => acc + datum.count, 0)
+    },
   },
 }
 </script>
