@@ -25,7 +25,7 @@ export default {
     ...mapState('magic/dm', {
       allcards: state => state.cardDatabase.cards,
       filteredCards: 'filteredCards',
-      // searchedNames: state => state.cardList.searchedNames,
+      searchedNames: state => state.cardList.searchedNames,
     }),
 
     searchPrefix: {
@@ -34,21 +34,9 @@ export default {
       },
 
       set(value) {
-        this.$store.commit('magic/dm/setSearchPrefix', value)
+        this.$store.dispatch('magic/dm/setSearchPrefix', value)
       },
     },
-
-    cardNames() {
-      return util.array.distinct(this.filteredCards.map(c => c.name)).sort()
-    },
-
-    searchedNames() {
-      const searchText = this.searchPrefix.toLowerCase()
-      return this
-        .cardNames
-        .filter(name => name.toLowerCase().includes(searchText))
-        .slice(0,1000)
-    }
   },
 
   methods: {

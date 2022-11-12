@@ -72,12 +72,16 @@ export default {
     },
     setDatabase(state, cards) {
       state.cardDatabase.cards = cards
-      state.cardDatabase.lookup = createCardLookup(cards)
-      state.filteredCards = cards
+    },
+    setLookup(state, lookup) {
+      state.cardDatabase.lookup = lookup
     },
 
     ////////////////////
     // Card List
+    setSearchedNames(state, value) {
+      state.cardList.searchedNames = value
+    },
     setSearchPrefix(state, value) {
       state.cardList.searchPrefix = value
     },
@@ -171,9 +175,10 @@ export default {
     ////////////////////
     // Card Filters
 
-    applyCardFilters({ commit, state }) {
+    async applyCardFilters({ commit, dispatch, state }) {
       const filtered = filterCards(state.cardDatabase.cards, state.cardFilters)
       commit('setFilteredCards', filtered)
+      await dispatch('applyCardSearch')
     },
     addCardFilter({ commit, state }, filter) {
       // There is only ever a single color or identity filter
@@ -231,6 +236,36 @@ export default {
     unmanageCard({ commit }) {
       commit('setManagedCard', null)
     },
+
+    manageNextCardInIndex({ commit, state }) {
+      /* const index = state.filteredCards.findIndex(c => c.name === state.managedCard.name)
+       * const nextIndex = (index + 1) % state.filteredCards.length
+       * const card = state.filteredCards */
+    },
+
+    managePrevCardInIndex({ commit, state }) {
+
+    },
+
+
+    ////////////////////
+    // Search
+
+    async applyCardSearch({ commit, state }) {
+      const searchText = state.cardList.searchPrefix.toLowerCase()
+      const cardNames = util.array.distinct(state.filteredCards.map(c => c.name)).sort()
+      const searchedNames = cardNames
+        .filter(name => name.toLowerCase().includes(searchText))
+        .slice(0,1000)
+
+      commit('setSearchedNames', searchedNames)
+    },
+
+    async setSearchPrefix(context, value) {
+      context.commit('setSearchPrefix', value)
+      await context.dispatch('applyCardSearch')
+    },
+
 
     ////////////////////
     // Misc
@@ -299,11 +334,14 @@ export default {
       )
     },
 
-    loadCardDatabaseSuccess({ commit, state }, cards) {
+    async loadCardDatabaseSuccess({ commit, dispatch, state }, cards) {
       const cleanedCards = cards
         .filter(card => Boolean(card.type_line) && !card.type_line.startsWith('Card'))
 
       commit('setDatabase', cleanedCards)
+      commit('setLookup', createCardLookup(cleanedCards))
+      await dispatch('applyCardFilters')
+
       commit('setCardsLoaded', true)
       console.log('Card database ready')
     },
