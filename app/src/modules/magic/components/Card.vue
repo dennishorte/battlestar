@@ -28,7 +28,6 @@ export default {
   computed: {
     faceIndices() {
       if (this.card.card_faces) {
-        console.log(util.range(this.card.card_faces.length))
         return util.range(this.card.card_faces.length)
       }
       else {
