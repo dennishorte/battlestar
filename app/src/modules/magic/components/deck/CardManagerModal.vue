@@ -39,7 +39,20 @@
         </div>
 
         <div class="right-side">
-          <Card :card="managedCard" />
+          <Card :card="activeVersion" />
+
+          <div class="versions">
+            <div
+              v-for="(card, index) in versions"
+              @click="setVersionIndex(index)"
+              class="version-indicator"
+              :class="index === versionIndex ? 'highlight-version-indicator': ''"
+            >{{ index }}</div>
+          </div>
+
+          <button @click="prevVersion" class="btn btn-sm btn-primary">&lt;</button>
+          <button @click="nextVersion" class="btn btn-sm btn-primary">&gt;</button>
+
         </div>
       </div>
     </template>
@@ -67,10 +80,17 @@ export default {
     Modal,
   },
 
+  data() {
+    return {
+      versionIndex: 0,
+    }
+  },
+
   computed: {
     ...mapState('magic/dm', {
       activeDeck: 'activeDeck',
       cardlock: 'cardlock',
+      filteredCards: 'filteredCards',
       managedCard: 'managedCard',
     }),
 
@@ -107,6 +127,17 @@ export default {
         .filter(c => cardUtil.equals(c, this.managedCard))
         .reduce((acc, datum) => datum.count + acc, 0)
     },
+
+    activeVersion() {
+      return this.versions[this.versionIndex]
+    },
+
+    versions() {
+      return this
+        .filteredCards
+        .filter(c => c.name === this.managedCard.name)
+        .sort((l, r) => l === this.managedCard ? -1 : 0)
+    },
   },
 
   methods: {
@@ -115,9 +146,21 @@ export default {
       this.$store.dispatch('magic/dm/addCurrentCard', zoneName)
     },
 
+    nextVersion() {
+      this.versionIndex = (this.versionIndex + 1) % this.versions.length
+    },
+
+    prevVersion() {
+      this.versionIndex = (this.versionIndex + this.versions.length - 1) % this.versions.length
+    },
+
     removeCard(zoneName) {
       if (zoneName === 'cmnd') zoneName = 'command'
       this.$store.dispatch('magic/dm/removeCurrentCard', zoneName)
+    },
+
+    setVersionIndex(index) {
+      this.versionIndex = index
     },
 
     toggleCardLock() {
@@ -128,6 +171,7 @@ export default {
   watch: {
     managedCard(newValue, oldValue) {
       if (newValue) {
+        this.versionIndex = 0
         this.$modal('card-manager-modal').show()
       }
       else {
@@ -156,6 +200,32 @@ export default {
   border-radius: .25em;
   float: right;
   text-align: center;
+}
+
+.version-indicator {
+  font-size: .6em;
+  min-width: 1.4em;
+  max-width: 1.4em;
+  min-height: 1.4em;
+  max-height: 1.4em;
+  margin-right: .25em;
+  margin-bottom: .25em;
+  text-align: center;
+}
+
+.highlight-version-indicator {
+  background-color: lightblue;
+  border-radius: 50%;
+}
+
+.right-side {
+  overflow: scroll;
+}
+
+.versions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .wrapper {
