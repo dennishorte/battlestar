@@ -263,14 +263,14 @@ export default {
     ////////////////////////////////////////////////////////////////////////////////
     // Actions that wrap API calls
 
-    async saveActiveDeck({ commit, state }) {
-      console.log(state.activeDeck.serialize())
+    async saveActiveDeck({ commit, dispatch, state }) {
       const requestResult = await axios.post('/api/deck/save', {
         deck: state.activeDeck.serialize()
       })
 
       if (requestResult.data.status === 'success') {
         commit('setModified', false)
+        dispatch('fetchDecks')
       }
       else {
         alert('Error saving changes to deck')
