@@ -224,6 +224,8 @@ const cardData = [
         const owner = target === 'neutral' ? 'neutral' : game.getPlayerByName(target)
         game.aAssassinate(player, loc, owner)
       }
+
+      player.incrementInfluence(targets.length)
     }
   },
   {

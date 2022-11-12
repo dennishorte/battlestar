@@ -413,6 +413,7 @@ describe('Illithids expansion', () => {
           hand: ['House Guard'],
           played: ['Death Tyrant'],
           trophyHall: ['neutral', 'neutral', 'troop-micah'],
+          influence: 3,
         },
         Menzoberranzan: {
           troops: ['neutral'],
