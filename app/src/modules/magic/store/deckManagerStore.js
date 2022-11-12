@@ -80,6 +80,7 @@ export default {
     },
     setActiveDecklist(state, decklist) {
       state.activeDeck.setDecklist(decklist)
+      state.activeDeck.modified = true
     },
     setActiveFolder(state, path) {
       state.activeFolder = path
