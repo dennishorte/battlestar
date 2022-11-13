@@ -64,7 +64,6 @@ export default {
       activeDeck: 'activeDeck',
       cardsLoaded: state => state.cardDatabase.loaded,
       decks: 'decks',
-      managedCard: 'managedCard',
     })
   },
 
