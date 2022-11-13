@@ -60,7 +60,10 @@ export default {
     },
 
     click() {
-      this.$store.dispatch('magic/dm/manageCard', this.card)
+      this.$store.dispatch('magic/dm/manageCard', {
+        card: this.card,
+        source: 'DeckList',
+      })
     },
   },
 }

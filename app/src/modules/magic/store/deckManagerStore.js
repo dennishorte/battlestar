@@ -25,6 +25,11 @@ export default {
       searchPrefix: '',
     },
 
+    cardManager: {
+      card: null,
+      source: null,
+    },
+
     // State
     activeDeck: null,
     activeFolder: '/',
@@ -38,7 +43,6 @@ export default {
       decks: [],
     },
     filteredCards: [],
-    managedCard: null,
   }),
 
   getters: {
@@ -46,7 +50,7 @@ export default {
     //dlCards: decklistCards,
 
     // Managed Card Methods
-    mcName: state => state.managedCard.name,
+    mcName: state => state.cardManager.card.name,
   },
 
   mutations: {
@@ -162,7 +166,11 @@ export default {
     },
 
     setManagedCard(state, card) {
-      state.managedCard = card
+      state.cardManager.card = card
+    },
+
+    setManagedCardSource(state, source) {
+      state.cardManager.source = source
     },
 
     setCardLock(state, value) {
@@ -210,7 +218,7 @@ export default {
       // Otherwise, just add the card.
       else {
         commit('addCardToZone', {
-          card: state.managedCard,
+          card: state.cardManager.card,
           zoneName,
         })
       }
@@ -225,34 +233,52 @@ export default {
       // Otherwise, just remove the card.
       else {
         commit('removeCardFromZone', {
-          card: state.managedCard,
+          card: state.cardManager.card,
           zoneName,
         })
       }
     },
-    manageCard({ commit }, card) {
+    manageCard({ commit }, { card, source }) {
       commit('setManagedCard', card)
+      if (source) {
+        commit('setManagedCardSource', source)
+      }
     },
     unmanageCard({ commit }) {
       commit('setManagedCard', null)
+      commit('setManagedCardSource', null)
     },
 
     manageNextCardInIndex({ dispatch, state }) {
-      const names = state.cardList.searchedNames
-      const index = names.findIndex(name => name === state.managedCard.name)
-      const nextIndex = (index + 1) % names.length
-      const nextName = names[nextIndex].toLowerCase()
-      const nextCard = state.cardDatabase.lookup[nextName][0]
-      dispatch('manageCard', nextCard)
+      if (state.cardManager.source === 'CardList') {
+        const names = state.cardList.searchedNames
+        const index = names.findIndex(name => name === state.cardManager.card.name)
+        const nextIndex = (index + 1) % names.length
+        const nextName = names[nextIndex].toLowerCase()
+        const nextCard = state.cardDatabase.lookup[nextName][0]
+        dispatch('manageCard', {
+          card: nextCard,
+          source: null
+        })
+      }
+      else if (state.cardManager.source === 'DeckList') {
+        console.log('hello')
+      }
+      else {
+        throw new Error('Unhandled card manager source: ' + state.cardManager.source)
+      }
     },
 
     managePrevCardInIndex({ dispatch, state }) {
       const names = state.cardList.searchedNames
-      const index = names.findIndex(name => name === state.managedCard.name)
+      const index = names.findIndex(name => name === state.cardManager.card.name)
       const nextIndex = (index - 1 + names.length) % names.length
       const nextName = names[nextIndex].toLowerCase()
       const nextCard = state.cardDatabase.lookup[nextName][0]
-      dispatch('manageCard', nextCard)
+      dispatch('manageCard', {
+        card: nextCard,
+        source: null
+      })
     },
 
 

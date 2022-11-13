@@ -42,7 +42,10 @@ export default {
   methods: {
     highlightCard(name) {
       const card = this.filteredCards.find(c => c.name === name)
-      this.$store.dispatch('magic/dm/manageCard', card)
+      this.$store.dispatch('magic/dm/manageCard', {
+        card,
+        source: 'CardList',
+      })
     },
   },
 }

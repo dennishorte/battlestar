@@ -1,10 +1,10 @@
 <template>
   <Modal id="card-manager-modal">
-    <template #header v-if="managedCard">
+    <template #header v-if="card">
       {{ name }}
     </template>
 
-    <template v-if="managedCard">
+    <template v-if="card">
       <div class="wrapper">
         <div class="left-side">
           <div class="card-lock" @click="toggleCardLock">
@@ -97,7 +97,8 @@ export default {
       activeDeck: 'activeDeck',
       cardlock: 'cardlock',
       filteredCards: 'filteredCards',
-      managedCard: 'managedCard',
+      card: state => state.cardManager.card,
+      source: state => state.cardManager.source,
     }),
 
     ...mapGetters('magic/dm', {
@@ -115,8 +116,8 @@ export default {
     versions() {
       return this
         .filteredCards
-        .filter(c => c.name === this.managedCard.name)
-        .sort((l, r) => l === this.managedCard ? -1 : 0)
+        .filter(c => c.name === this.card.name)
+        .sort((l, r) => l === this.card ? -1 : 0)
     },
   },
 
@@ -131,7 +132,7 @@ export default {
       return this
         .activeDeck
         .breakdown[zoneName]
-        .filter(c => cardUtil.equals(c, this.managedCard))
+        .filter(c => cardUtil.equals(c, this.card))
         .reduce((acc, datum) => datum.count + acc, 0)
     },
 
@@ -166,7 +167,7 @@ export default {
   },
 
   watch: {
-    managedCard(newValue, oldValue) {
+    card(newValue, oldValue) {
       if (newValue && oldValue) {
         this.versionIndex = 0
       }
