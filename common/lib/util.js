@@ -1,5 +1,6 @@
 const Util = {
   array: {},
+  dict: {},
   event: {},
   point: {},
 }
@@ -9,7 +10,7 @@ module.exports = Util
 ////////////////////////////////////////////////////////////////////////////////
 // Array functions
 
-Util.array.collect = function(elems, keyFunc) {
+Util.array.collect = function(elems, keyFunc, valueFunc) {
   const output = {}
 
   for (const elem of elems) {
@@ -19,11 +20,13 @@ Util.array.collect = function(elems, keyFunc) {
     }
 
     for (const key of keys) {
+      const value = valueFunc ? valueFunc(elem) : elem
+
       if (key in output) {
-        output[key].push(elem)
+        output[key].push(value)
       }
       else {
-        output[key] = [elem]
+        output[key] = [value]
       }
     }
   }
@@ -165,6 +168,19 @@ Util.array.uniqueMaxBy = function(array, pred) {
   else {
     return undefined
   }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Dict functions
+
+Util.dict.map = function(dict, func) {
+  const output = {}
+  for (const [key, value] of Object.entries(dict)) {
+    const [okey, ovalue] = func(key, value)
+    output[okey] = ovalue
+  }
+  return output
 }
 
 
