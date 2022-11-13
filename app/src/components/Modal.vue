@@ -17,6 +17,8 @@
           </div>
 
           <div class="modal-footer">
+            <slot name="footer-pre"></slot>
+
             <slot name="footer">
               <button class="btn btn-secondary" @click="cancel" data-bs-dismiss="modal" ref="cancelButton">cancel</button>
               <button class="btn btn-primary" @click="ok" data-bs-dismiss="modal">ok</button>

@@ -237,14 +237,22 @@ export default {
       commit('setManagedCard', null)
     },
 
-    manageNextCardInIndex({ commit, state }) {
-      /* const index = state.filteredCards.findIndex(c => c.name === state.managedCard.name)
-       * const nextIndex = (index + 1) % state.filteredCards.length
-       * const card = state.filteredCards */
+    manageNextCardInIndex({ dispatch, state }) {
+      const names = state.cardList.searchedNames
+      const index = names.findIndex(name => name === state.managedCard.name)
+      const nextIndex = (index + 1) % names.length
+      const nextName = names[nextIndex].toLowerCase()
+      const nextCard = state.cardDatabase.lookup[nextName][0]
+      dispatch('manageCard', nextCard)
     },
 
-    managePrevCardInIndex({ commit, state }) {
-
+    managePrevCardInIndex({ dispatch, state }) {
+      const names = state.cardList.searchedNames
+      const index = names.findIndex(name => name === state.managedCard.name)
+      const nextIndex = (index - 1 + names.length) % names.length
+      const nextName = names[nextIndex].toLowerCase()
+      const nextCard = state.cardDatabase.lookup[nextName][0]
+      dispatch('manageCard', nextCard)
     },
 
 

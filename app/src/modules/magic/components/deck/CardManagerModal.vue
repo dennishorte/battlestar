@@ -57,6 +57,12 @@
       </div>
     </template>
 
+    <template #footer-pre>
+      <div class="btn-group">
+        <button @click="prevCard" class="btn btn-outline-info">prev</button>
+        <button @click="nextCard" class="btn btn-outline-info">next</button>
+      </div>
+    </template>
   </Modal>
 </template>
 
@@ -98,35 +104,9 @@ export default {
       name: 'mcName',
     }),
 
-    mainCount() {
-      if (!this.activeDeck) return 0
-      return this
-        .activeDeck
-        .breakdown
-        .main
-        .filter(c => cardUtil.equals(c, this.managedCard))
-        .reduce((acc, datum) => datum.count + acc, 0)
-    },
-
-    sideCount() {
-      if (!this.activeDeck) return 0
-      return this
-        .activeDeck
-        .breakdown
-        .side
-        .filter(c => cardUtil.equals(c, this.managedCard))
-        .reduce((acc, datum) => datum.count + acc, 0)
-    },
-
-    commandCount() {
-      if (!this.activeDeck) return 0
-      return this
-        .activeDeck
-        .breakdown
-        .command
-        .filter(c => cardUtil.equals(c, this.managedCard))
-        .reduce((acc, datum) => datum.count + acc, 0)
-    },
+    mainCount() { return this.count('main') },
+    sideCount() { return this.count('side') },
+    commandCount() { return this.count('command') },
 
     activeVersion() {
       return this.versions[this.versionIndex]
@@ -146,8 +126,25 @@ export default {
       this.$store.dispatch('magic/dm/addCurrentCard', zoneName)
     },
 
+    count(zoneName) {
+      if (!this.activeDeck) return 0
+      return this
+        .activeDeck
+        .breakdown[zoneName]
+        .filter(c => cardUtil.equals(c, this.managedCard))
+        .reduce((acc, datum) => datum.count + acc, 0)
+    },
+
+    nextCard() {
+      this.$store.dispatch('magic/dm/manageNextCardInIndex')
+    },
+
     nextVersion() {
       this.versionIndex = (this.versionIndex + 1) % this.versions.length
+    },
+
+    prevCard() {
+      this.$store.dispatch('magic/dm/managePrevCardInIndex')
     },
 
     prevVersion() {
@@ -170,7 +167,10 @@ export default {
 
   watch: {
     managedCard(newValue, oldValue) {
-      if (newValue) {
+      if (newValue && oldValue) {
+        this.versionIndex = 0
+      }
+      else if (newValue) {
         this.versionIndex = 0
         this.$modal('card-manager-modal').show()
       }
