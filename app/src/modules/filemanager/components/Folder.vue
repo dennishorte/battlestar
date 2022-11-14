@@ -1,15 +1,24 @@
 <template>
   <div class="folder">
-    <div class="folder-name" @click="clickFolder">
+    <div
+      class="folder-name"
+      @click="clickFolder"
+      :class="content.path === selectedFolderPath ? 'selected' : ''"
+    >
       <i class="bi-folder"></i>
       {{ content.name || 'root' }}
     </div>
 
-    <div v-for="file in content.files" class="nested" @click="clickFile(file)">
+    <div
+      v-for="file in content.files"
+      class="nested file-name"
+      :class="file === selectedFile ? 'selected' : ''"
+      @click="clickFile(file)"
+    >
       <i class="bi-box"></i> {{ file.name }}
     </div>
 
-    <Folder v-for="folder in content.folders" class="nested" :content="folder" />
+    <Folder v-for="folder in content.folders" class="nested" :content="folder" :meta="meta" />
   </div>
 </template>
 
@@ -26,6 +35,18 @@ export default {
   },
 
   computed: {
+    selectedFile() {
+      return this.meta.selection ? this.meta.selection.file : null
+    },
+
+    selectedFolderPath() {
+      if (this.meta.selection && this.meta.selection.folder) {
+        return this.meta.selection.folder.path
+      }
+      else {
+        return null
+      }
+    },
   },
 
   methods: {
@@ -48,6 +69,11 @@ export default {
 
 
 <style scoped>
+.folder-name,
+.file-name {
+  padding-left: .25em;
+}
+
 .nested {
   margin-left: 1em;
 }
