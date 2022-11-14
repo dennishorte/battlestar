@@ -6,17 +6,17 @@
         <FileManager />
       </div>
       <div class="col">
-        <FileManager :filelist="singleFile" />
+        <FileManager :filelist="single" />
       </div>
     </div>
 
 
     <div class="row">
       <div class="col">
-        <FileManager :filelist="emptyFileList" />
+        <FileManager :filelist="empty" />
       </div>
       <div class="col">
-        <FileManager :filelist="complexFiles" />
+        <FileManager :filelist="complex" @file-created="fileCreated" />
       </div>
     </div>
 
@@ -33,13 +33,13 @@ export default {
 
   data() {
     return {
-      emptyFileList: [],
-      singleFile: [{
+      empty: [],
+      single: [{
         name: 'single file',
         path: '/',
         kind: 'text'
       }],
-      complexFiles: [
+      complex: [
         {
           name: 'bar',
           path: '/foo',
@@ -56,6 +56,12 @@ export default {
 
   components: {
     FileManager,
+  },
+
+  methods: {
+    fileCreated(event) {
+      this.complex.push(event.file)
+    },
   },
 }
 </script>

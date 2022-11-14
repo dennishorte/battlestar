@@ -5,11 +5,11 @@
       <div class="menu">
         <Dropdown :notitle="true">
           <DropdownItem><button @click="newFile">New File</button></DropdownItem>
-          <DropdownItem><button @click="duplicate">Duplicate</button></DropdownItem>
-          <DropdownItem><button @click="edit">Edit</button></DropdownItem>
-          <DropdownItem><button @click="move">Move</button></DropdownItem>
+          <DropdownItem><button @click="duplicate" :disabled="!fileSelected">Duplicate</button></DropdownItem>
+          <DropdownItem><button @click="edit" :disabled="!fileSelected">Edit</button></DropdownItem>
+          <DropdownItem><button @click="move" :disabled="!fileSelected">Move</button></DropdownItem>
           <DropdownDivider />
-          <DropdownItem><button @click="delete">Delete</button></DropdownItem>
+          <DropdownItem><button @click="delete" :disabled="!fileSelected">Delete</button></DropdownItem>
         </Dropdown>
       </div>
 
@@ -24,6 +24,8 @@
 
 <script>
 import mitt from 'mitt'
+
+import { util } from 'battlestar-common'
 
 import Dropdown from '@/components/Dropdown'
 import DropdownItem from '@/components/DropdownItem'
@@ -63,6 +65,10 @@ export default {
   },
 
   computed: {
+    fileSelected() {
+      return this.meta.selection && this.meta.selection.file
+    },
+
     fileStructure() {
       if (!this.filelist) {
         return null
@@ -107,23 +113,59 @@ export default {
   },
 
   methods: {
-    handleClick(event) {
+    duplicate() {
+      if (!this.meta.selection || !this.meta.selection.file) {
+        return
+      }
+
+      let preventDefault = false
+
+      this.$emit('file-duplicating', {
+        file: this.meta.selection.file,
+        preventDefault: () => preventDefault = true,
+      })
+
+      if (preventDefault) {
+        return
+      }
+
+      const duplicate = util.deepcopy(this.meta.selection.file)
+
+      this.$emit('file-duplicated', {
+        original: this.meta.selection.file,
+        duplicate,
+      })
+
+      this.$emit('file-created', {
+        file: duplicate,
+      })
+    },
+
+    setSelection(fileOrFolder) {
+      let preventDefault = false
+
+      this.$emit('selection-changing', {
+        oldValue: this.meta.selection,
+        newValue: fileOrFolder,
+        preventDefault: () => preventDefault = true,
+      })
+
+      if (preventDefault) {
+        return
+      }
+
       const oldValue = this.meta.selection
-      this.meta.selection = event
+      this.meta.selection = fileOrFolder
 
       this.$emit('selection-changed', {
         oldValue: oldValue,
         newValue: this.meta.selection
       })
     },
-
-    newFile() {
-
-    },
   },
 
   mounted() {
-    this.bus.on('click', this.handleClick)
+    this.bus.on('click', this.setSelection)
   },
 }
 
