@@ -1,6 +1,21 @@
 <template>
   <div class="file-manager">
-    <Folder v-if="fileStructure" :content="fileStructure" />
+    <template v-if="fileStructure">
+
+      <div class="menu">
+        <Dropdown :notitle="true">
+          <DropdownItem><button @click="newFile">New File</button></DropdownItem>
+          <DropdownItem><button @click="duplicate">Duplicate</button></DropdownItem>
+          <DropdownItem><button @click="edit">Edit</button></DropdownItem>
+          <DropdownItem><button @click="move">Move</button></DropdownItem>
+          <DropdownDivider />
+          <DropdownItem><button @click="delete">Delete</button></DropdownItem>
+        </Dropdown>
+      </div>
+
+
+      <Folder :content="fileStructure" :meta="meta" />
+    </template>
 
     <div v-else class="alert alert-danger">Missing File Structure</div>
   </div>
@@ -8,11 +23,11 @@
 
 
 <script>
-import axios from 'axios'
+import mitt from 'mitt'
 
-import { mag } from 'battlestar-common'
-import { mapState } from 'vuex'
-
+import Dropdown from '@/components/Dropdown'
+import DropdownItem from '@/components/DropdownItem'
+import DropdownDivider from '@/components/DropdownDivider'
 import Folder from './Folder'
 import NewFileModal from './NewFileModal'
 
@@ -20,8 +35,27 @@ export default {
   name: 'FileManager',
 
   components: {
+    Dropdown,
+    DropdownItem,
+    DropdownDivider,
     Folder,
     NewFileModal,
+  },
+
+  data() {
+    return {
+      bus: mitt(),
+
+      meta: {
+        selection: null,
+      },
+    }
+  },
+
+  provide() {
+    return {
+      bus: this.bus,
+    }
   },
 
   props: {
@@ -73,6 +107,23 @@ export default {
   },
 
   methods: {
+    handleClick(event) {
+      const oldValue = this.meta.selection
+      this.meta.selection = event
+
+      this.$emit('selection-changed', {
+        oldValue: oldValue,
+        newValue: this.meta.selection
+      })
+    },
+
+    newFile() {
+
+    },
+  },
+
+  mounted() {
+    this.bus.on('click', this.handleClick)
   },
 }
 
@@ -90,4 +141,7 @@ function pathTokens(path) {
 
 
 <style scoped>
+.menu {
+  float: right;
+}
 </style>
