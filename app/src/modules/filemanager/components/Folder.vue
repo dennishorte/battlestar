@@ -10,6 +10,7 @@
     </div>
 
     <div
+      v-if="!meta.hideFiles"
       v-for="file in content.files"
       class="nested file-name"
       :class="file === selectedFile ? 'selected' : ''"
@@ -18,7 +19,13 @@
       <i class="bi-box"></i> {{ file.name }}
     </div>
 
-    <Folder v-for="folder in content.folders" class="nested" :content="folder" :meta="meta" />
+    <Folder
+      v-if="!meta.hideFolders"
+      v-for="folder in content.folders"
+      class="nested"
+      :content="folder"
+      :meta="meta"
+    />
   </div>
 </template>
 

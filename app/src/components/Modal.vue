@@ -9,7 +9,7 @@
                 {{ title }}
               </slot>
             </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" ref="closeButton"></button>
           </div>
 
           <div class="modal-body">
@@ -20,7 +20,7 @@
             <slot name="footer-pre"></slot>
 
             <slot name="footer">
-              <button class="btn btn-secondary" @click="cancel" data-bs-dismiss="modal" ref="cancelButton">cancel</button>
+              <button class="btn btn-secondary" @click="cancel" data-bs-dismiss="modal">cancel</button>
               <button class="btn btn-primary" @click="ok" data-bs-dismiss="modal">ok</button>
             </slot>
           </div>
@@ -55,7 +55,7 @@ export default {
   created() {
     window.addEventListener('keydown', (e) => {
       if (e.key == 'Escape') {
-        this.$refs.cancelButton.click()
+        this.$refs.closeButton.click()
       }
     });
   },
