@@ -492,16 +492,11 @@ Tyrants.prototype._generatePassAction = function() {
 }
 
 Tyrants.prototype._processEndOfTurnActions = function() {
+  const promos = []
+
   for (const action of this.state.endOfTurnActions) {
     if (action.action === 'promote-other') {
-      this.mLog({
-        template: '{player} may promote a card due to {card}',
-        args: { player: action.player, card: action.source }
-      })
-      const choices = this
-        .getCardsByZone(action.player, 'played')
-        .filter(card => card !== action.source)
-      this.aChooseAndPromote(action.player, choices)
+      promos.push(action)
     }
 
     else if (action.action === 'discard') {
@@ -515,6 +510,24 @@ Tyrants.prototype._processEndOfTurnActions = function() {
     else {
       throw new Error(`Unknown end of turn action: ${action.action}`)
     }
+  }
+
+  const promoChoices = []
+  for (const promo of promos) {
+    this
+      .getCardsByZone(promo.player, 'played')
+      .filter(card => card !== promo.source)
+      .forEach(card => util.array.pushUnique(promoChoices, card))
+  }
+
+  if (promoChoices.length > 0) {
+    const player = this.getPlayerCurrent()
+    this.mLog({
+      template: '{player} may promote {count} card(s)',
+      args: { player, count: promos.length }
+    })
+    promoChoices.sort((l, r) => l.name.localeCompare(r.name))
+    this.aChooseAndPromote(player, promoChoices, { count: promos.length })
   }
 
   this.state.endOfTurnActions = []
@@ -829,10 +842,18 @@ Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
   }
 }
 
-Tyrants.prototype.aChooseAndPromote = function(player, choices, opts={}) {
-  const card = this.aChooseCard(player, choices, { ...opts, title: 'Choose a card to promote' })
-  if (card) {
-    return this.aPromote(player, card)
+Tyrants.prototype.aChooseAndPromote = function(player, cardsToChoose, opts={}) {
+  const choiceNames = cardsToChoose
+    .map(c => c.name)
+    .sort()
+
+  const choices = this.aChoose(player, choiceNames, { ...opts, title: 'Choose card(s) to promote' })
+
+  const done = []
+  for (const choice of choices) {
+    const card = cardsToChoose.find(c => c.name === choice && !done.includes(c))
+    done.push(card)
+    this.aPromote(player, card)
   }
 }
 
