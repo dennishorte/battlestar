@@ -6,6 +6,7 @@ import Game from '@/components/Game'
 import adminRoutes from '@/modules/admin/router.js'
 import authRoutes from '@/modules/auth/router.js'
 import dataRoutes from '@/modules/data/router.js'
+import fileManagerRoutes from '@/modules/filemanager/router.js'
 import lobbyRoutes from '@/modules/lobby/router.js'
 import magicRoutes from '@/modules/magic/router.js'
 import mapmakerRoutes from '@/modules/mapmaker/router.js'
@@ -29,6 +30,7 @@ const router = createRouter({
     ...adminRoutes,
     ...authRoutes,
     ...dataRoutes,
+    ...fileManagerRoutes,
     ...lobbyRoutes,
     ...magicRoutes,
     ...mapmakerRoutes,
