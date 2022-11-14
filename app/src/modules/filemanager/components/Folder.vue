@@ -11,7 +11,7 @@
 
     <div
       v-if="!meta.hideFiles"
-      v-for="file in content.files"
+      v-for="file in sortedFiles"
       class="nested file-name"
       :class="file === selectedFile ? 'selected' : ''"
       @click="clickFile(file)"
@@ -21,7 +21,7 @@
 
     <Folder
       v-if="!meta.hideFolders"
-      v-for="folder in content.folders"
+      v-for="folder in sortedFolders"
       class="nested"
       :content="folder"
       :meta="meta"
@@ -53,6 +53,28 @@ export default {
       else {
         return null
       }
+    },
+
+    sortedFiles() {
+      return this
+        .content
+        .files
+        .sort((l, r) => l.name.localeCompare(r.name))
+    },
+
+    sortedFolders() {
+      return this
+        .content
+        .folders
+        .sort((l, r) => {
+          if (l.name === '__trash') {
+            return 1
+          }
+          if (r.name === '__trash') {
+            return -1
+          }
+          return l.name.localeCompare(r.name)
+        })
     },
   },
 

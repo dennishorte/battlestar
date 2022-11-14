@@ -51,7 +51,7 @@ export default {
           kind: 'text',
         },
         {
-          name: 'bar',
+          name: 'abar',
           path: '/foo',
           kind: 'text',
         },
@@ -66,12 +66,12 @@ export default {
           kind: 'text',
         },
         {
-          name: 'bar',
+          name: 'zbar',
           path: '/foo',
           kind: 'text',
         },
         {
-          name: 'bar',
+          name: 'xbar',
           path: '/foo',
           kind: 'text',
         },
