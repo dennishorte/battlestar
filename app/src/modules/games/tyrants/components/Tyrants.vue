@@ -211,6 +211,10 @@ export default {
         .selectors[0]
         .choices
         .find(c => c.title === 'Use Power')
+      if (!usePowerOption) {
+        return false
+      }
+
       const deployOption = usePowerOption
         .choices
         .find(c => c === 'Deploy a Troop' || c.title === 'Deploy a Troop')
