@@ -1,5 +1,5 @@
 <template>
-  <div class="card-container card-container-200px" :class="containerClasses">
+  <div :class="containerClasses">
     <div class="card-border">
       <div class="card-background">
         <div class="card-frame">
@@ -71,6 +71,10 @@ export default {
       type: Number,
       default: 0,
     },
+    size: {
+      type: Number,
+      default: 200,
+    },
   },
 
   computed: {
@@ -88,7 +92,10 @@ export default {
     },
 
     containerClasses() {
-      const classes = []
+      const classes = [
+        'card-container',
+        `card-container-${this.size}px`
+      ]
 
       if (this.face.scarred) {
         classes.push('scarred')

@@ -1,6 +1,6 @@
 <template>
   <div class="magic-card">
-    <CardFace v-if="card" v-for="index in faceIndices" :card="card" :index="index" />
+    <CardFace v-if="card" v-for="index in faceIndices" :card="card" :index="index" :size="size" />
   </div>
 </template>
 
@@ -22,6 +22,11 @@ export default {
     card: {
       type: Object,
       default: null,
+    },
+
+    size: {
+      type: Number,
+      default: 200,
     },
   },
 
