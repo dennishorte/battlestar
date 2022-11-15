@@ -3,20 +3,21 @@
 
     <div class="row">
       <div class="col">
-        <FileManager :filelist="single" />
+        <FileManager :filelist="single" class="file-manager" />
       </div>
       <div class="col">
-        <FileManager :filelist="empty" />
+        <FileManager :filelist="empty" class="file-manager" />
       </div>
     </div>
 
 
     <div class="row">
       <div class="col">
-        <FileManager :filelist="complex" :hide-files="true" />
+        <FileManager :filelist="complex" :hide-files="true" class="file-manager" />
       </div>
       <div class="col">
         <FileManager
+          class="file-manager"
           :filelist="complex"
           :file-types="['foo', 'bar']"
           @file-creating="createFile"
@@ -120,7 +121,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .file-manager {
   min-height: 17rem;
   max-height: 17rem;
