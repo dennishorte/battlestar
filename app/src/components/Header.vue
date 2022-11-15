@@ -5,13 +5,14 @@
         <div class="header text-left">
 
           <Dropdown class="float-end">
-            <DropdownItem><router-link to="/">home</router-link></DropdownItem>
-            <DropdownItem><router-link to="/lobby/create">new lobby</router-link></DropdownItem>
-            <DropdownItem><router-link to="/data">data</router-link></DropdownItem>
-            <DropdownItem><router-link to="/magic/decks">magic</router-link></DropdownItem>
+            <DropdownRouterLink to="/">home</DropdownRouterLink>
+            <DropdownRouterLink to="/lobby/create">lobby</DropdownRouterLink>
+            <DropdownRouterLink to="/data">data</DropdownRouterLink>
+            <DropdownRouterLink to="/magic">magic</DropdownRouterLink>
+            <DropdownRouterLink to="/magic/decks">magic deck</DropdownRouterLink>
             <DropdownDivider></DropdownDivider>
-            <DropdownItem><router-link to="/admin">admin</router-link></DropdownItem>
-            <DropdownItem><router-link to="/logout">logout</router-link></DropdownItem>
+            <DropdownRouterLink to="/admin">admin</DropdownRouterLink>
+            <DropdownRouterLink to="/logout">logout</DropdownRouterLink>
           </Dropdown>
 
           <a href="/" class="link-unstyled">
@@ -28,6 +29,7 @@
 import Dropdown from '@/components/Dropdown'
 import DropdownDivider from '@/components/DropdownDivider'
 import DropdownItem from '@/components/DropdownItem'
+import DropdownRouterLink from '@/components/DropdownRouterLink'
 
 export default {
   name: 'Header',
@@ -36,6 +38,7 @@ export default {
     Dropdown,
     DropdownDivider,
     DropdownItem,
+    DropdownRouterLink,
   },
 }
 </script>
