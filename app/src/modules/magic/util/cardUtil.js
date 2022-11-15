@@ -22,6 +22,34 @@ CardUtil.allCardNames = function(card) {
   return names
 }
 
+CardUtil.blank = function() {
+  return {
+    name: "",
+    layout: "normal",
+    mana_cost: "",
+    cmc: 6,
+    type_line: "",
+    colors: [],
+    color_identity: [],
+    keywords: [],
+    card_faces: [
+      {
+        name: "",
+        mana_cost: "",
+        type_line: "",
+        oracle_text: "",
+        artist: "",
+      }
+    ],
+    set: "",
+    collector_number: "",
+    rarity: "",
+    artist: "",
+    image_uri: "",
+    legal: [],
+  }
+}
+
 CardUtil.equals = function(a, b) {
   const aName = a.name.split(' // ')[0].toLowerCase()
   const bName = b.name.split(' // ')[0].toLowerCase()

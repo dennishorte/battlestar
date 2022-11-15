@@ -3,51 +3,53 @@ const fs = require('fs')
 
 
 const unwantedScryfallFields = [
+  "all_parts",
+  "artist_ids",
+  "arena_id",
+  "booster",
+  "border_color",
+  "card_back_id",
+  "cardmarket_id",
+  "edhrec_rank",
+  "finishes",
+  "foil",
+  "frame",
+  "games",
+  "highres_image",
+  "illustration_id",
+  "image_status",
+  "mtgo_foil_id",
+  "mtgo_id",
+  "multiverse_ids",
+  "nonfoil",
   "object",
   "oracle_id",
-  "multiverse_ids",
-  "mtgo_id",
-  "mtgo_foil_id",
-  "tcgplayer_id",
-  "cardmarket_id",
-  // "lang",
-  "released_at",
-  "uri",
-  "scryfall_uri",
-  "set_name",
-  "highres_image",
-  "image_status",
-  "games",
-  "reserved",
-  "foil",
-  "nonfoil",
-  "finishes",
   "oversized",
+  "penny_rank",
+  "preview",
+  "prices",
+  "prints_search_uri",
   "promo",
+  "related_uris",
+  "released_at",
   "reprint",
-  "variation",
-  "all_parts",
+  "reserved",
+  "rulings_uri",
+  "scryfall_set_uri",
+  "scryfall_uri",
   "set_id",
+  "set_name",
+  "set_search_uri",
   "set_type",
   "set_uri",
-  "set_search_uri",
-  "scryfall_set_uri",
-  "rulings_uri",
-  "prints_search_uri",
-  // "digital",
-  "card_back_id",
-  "artist_ids",
-  "illustration_id",
-  "border_color",
-  "frame",
-  // "full_art",
-  // "textless",
-  "booster",
   "story_spotlight",
-  "edhrec_rank",
-  "penny_rank",
-  "prices",
-  "related_uris",
+  "tcgplayer_id",
+  "uri",
+  "variation",
+  // "digital",
+  // "full_art",
+  // "lang",
+  // "textless",
 ]
 
 function cleanImageUris(card) {
@@ -78,8 +80,17 @@ function cleanLegalities(card) {
 
 function cleanScryfallCards(cards) {
   for (const card of cards) {
-    for (const fieldName of unwantedScryfallFields) {
-      delete card[fieldName]
+    const faces = [card]
+    if (card.card_faces) {
+      for (const face of card.card_faces) {
+        faces.push(face)
+      }
+    }
+
+    for (const face of faces) {
+      for (const fieldName of unwantedScryfallFields) {
+        delete face[fieldName]
+      }
     }
 
     cleanImageUris(card)
