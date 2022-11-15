@@ -18,7 +18,11 @@
       <div class="col">
         <FileManager
           :filelist="complex"
-          @file-created="fileCreated"
+          :file-types="['foo', 'bar']"
+          @file-creating="createFile"
+          @file-deleting="deleteFile"
+          @file-duplicating="duplicateFile"
+          @file-updating="updateFile"
         />
       </div>
     </div>
@@ -89,12 +93,22 @@ export default {
   },
 
   methods: {
-    fileCreated(event) {
-      this.complex.push(event.file)
+    createFile(event) {
+      this.complex.push(event)
     },
 
-    fileDeleted(event) {
+    deleteFile(event) {
       util.array.remove(this.complex, event.file)
+    },
+
+    duplicateFile(event) {
+      const newFile = util.deepcopy(event.file)
+      this.complex.push(newFile)
+    },
+
+    updateFile(event) {
+      event.file.name = event.newName
+      event.file.path = event.newPath
     },
   },
 }

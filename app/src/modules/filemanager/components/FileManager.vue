@@ -17,7 +17,13 @@
 
     <div v-else class="alert alert-danger">Missing File Structure</div>
 
-    <EditModal :file="meta.selection.file" :id="modalId" @save="updateFile" />
+    <EditModal :file="meta.selection.file" :id="editModalId" @save="updateFile" />
+    <NewFileModal
+      :selection="meta.selection"
+      :file-types="fileTypes"
+      :id="newFileModalId"
+      @create="createFile"
+    />
   </div>
 </template>
 
@@ -49,6 +55,7 @@ export default {
 
   props: {
     filelist: Array,
+    fileTypes: Array,
     hideFiles: {
       type: Boolean,
       default: false,
@@ -69,7 +76,8 @@ export default {
         selection: {},
       },
 
-      modalId: 'file-manager-edit-modal-' + uuidv4()
+      editModalId: 'file-manager-edit-modal-' + uuidv4(),
+      newFileModalId: 'file-manager-new-file-modal-' + uuidv4(),
     }
   },
 
@@ -132,63 +140,12 @@ export default {
   },
 
   methods: {
-    deleteFile() {
-      if (!this.meta.selection || !this.meta.selection.file) {
-        return
-      }
-
-      let preventDefault = false
-      const file = this.meta.selection.file
-
-      this.$emit('file-deleting', {
-        file,
-        preventDefault: () => preventDefault = true,
-      })
-
-      if (preventDefault) {
-        return
-      }
-
-      file.path = '/__trash' + file.path
-      if (file.path.endsWith('/')) {
-        file.path = file.path.slice(0, -1)
-      }
-
-      this.$emit('file-deleted', {
-        file,
-      })
-    },
-
-    duplicate() {
-      if (!this.meta.selection || !this.meta.selection.file) {
-        return
-      }
-
-      let preventDefault = false
-
-      this.$emit('file-duplicating', {
-        file: this.meta.selection.file,
-        preventDefault: () => preventDefault = true,
-      })
-
-      if (preventDefault) {
-        return
-      }
-
-      const duplicate = util.deepcopy(this.meta.selection.file)
-
-      this.$emit('file-duplicated', {
-        original: this.meta.selection.file,
-        duplicate,
-      })
-
-      this.$emit('file-created', {
-        file: duplicate,
-      })
-    },
-
     edit() {
-      this.$modal(this.modalId).show()
+      this.$modal(this.editModalId).show()
+    },
+
+    newFile() {
+      this.$modal(this.newFileModalId).show()
     },
 
     setSelection(fileOrFolder) {
@@ -213,30 +170,43 @@ export default {
       })
     },
 
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // File actions
+
+    createFile(event) {
+      this.$emit('file-creating', event)
+    },
+
+    deleteFile() {
+      if (!this.meta.selection || !this.meta.selection.file) {
+        return
+      }
+
+      this.$emit('file-deleting', {
+        file: this.meta.selection.file,
+      })
+    },
+
+    duplicate() {
+      if (!this.meta.selection || !this.meta.selection.file) {
+        return
+      }
+
+      this.$emit('file-duplicating', {
+        file: this.meta.selection.file,
+      })
+    },
+
     updateFile(event) {
       if (!this.meta.selection || !this.meta.selection.file) {
         return
       }
 
-      let preventDefault = false
-      const file = this.meta.selection.file
-
-      this.$emit('file-changing', {
-        file,
+      this.$emit('file-updating', {
+        file: this.meta.selection.file,
         newName: event.newName,
         newPath: event.newPath,
-        preventDefault: () => preventDefault = true,
-      })
-
-      if (preventDefault) {
-        return
-      }
-
-      file.name = event.newName
-      file.path = event.newPath
-
-      this.$emit('file-changed', {
-        file,
       })
     },
   },

@@ -55,7 +55,9 @@ export default {
   created() {
     window.addEventListener('keydown', (e) => {
       if (e.key == 'Escape') {
-        this.$refs.closeButton.click()
+        if (this.$refs.closeButton) {
+          this.$refs.closeButton.click()
+        }
       }
     });
   },
