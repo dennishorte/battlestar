@@ -2,11 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import Home from '@/components/Home'
 import Game from '@/components/Game'
+import FileManagerTest from '@/components/filemanager/FileManagerTest'
 
 import adminRoutes from '@/modules/admin/router.js'
 import authRoutes from '@/modules/auth/router.js'
 import dataRoutes from '@/modules/data/router.js'
-import fileManagerRoutes from '@/modules/filemanager/router.js'
 import lobbyRoutes from '@/modules/lobby/router.js'
 import magicRoutes from '@/modules/magic/router.js'
 import mapmakerRoutes from '@/modules/mapmaker/router.js'
@@ -27,10 +27,17 @@ const router = createRouter({
       name: 'game',
       component: Game,
     },
+
+    {
+      path: '/filemanager',
+      name: 'File Manager Test',
+      title: 'File Manager Test',
+      component: FileManagerTest,
+    },
+
     ...adminRoutes,
     ...authRoutes,
     ...dataRoutes,
-    ...fileManagerRoutes,
     ...lobbyRoutes,
     ...magicRoutes,
     ...mapmakerRoutes,
