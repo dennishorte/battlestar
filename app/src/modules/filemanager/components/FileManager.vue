@@ -4,11 +4,13 @@
 
       <div class="menu">
         <Dropdown :notitle="true">
-          <DropdownItem><button @click="newFile">New File</button></DropdownItem>
-          <DropdownItem><button @click="duplicate" :disabled="!fileSelected">Duplicate</button></DropdownItem>
-          <DropdownItem><button @click="edit" :disabled="!fileSelected">Edit/Move</button></DropdownItem>
+          <DropdownButton @click="openFile" :disabled="!fileSelected">Open</DropdownButton>
           <DropdownDivider />
-          <DropdownItem><button @click="deleteFile" :disabled="!fileSelected">Delete</button></DropdownItem>
+          <DropdownButton @click="newFile">New File</DropdownButton>
+          <DropdownButton @click="duplicate" :disabled="!fileSelected">Duplicate</DropdownButton>
+          <DropdownButton @click="edit" :disabled="!fileSelected">Edit/Move</DropdownButton>
+          <DropdownDivider />
+          <DropdownButton @click="deleteFile" :disabled="!fileSelected">Delete</DropdownButton>
         </Dropdown>
       </div>
 
@@ -35,7 +37,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { util } from 'battlestar-common'
 
 import Dropdown from '@/components/Dropdown'
-import DropdownItem from '@/components/DropdownItem'
+import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
 import EditModal from './EditModal'
 import Folder from './Folder'
@@ -46,7 +48,7 @@ export default {
 
   components: {
     Dropdown,
-    DropdownItem,
+    DropdownButton,
     DropdownDivider,
     EditModal,
     Folder,
@@ -194,6 +196,16 @@ export default {
       }
 
       this.$emit('file-duplicating', {
+        file: this.meta.selection.file,
+      })
+    },
+
+    openFile(event) {
+      if (!this.meta.selection || !this.meta.selection.file) {
+        return
+      }
+
+      this.$emit('file-opening', {
         file: this.meta.selection.file,
       })
     },

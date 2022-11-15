@@ -22,6 +22,7 @@
           @file-creating="createFile"
           @file-deleting="deleteFile"
           @file-duplicating="duplicateFile"
+          @file-opening="openFile"
           @file-updating="updateFile"
         />
       </div>
@@ -106,6 +107,10 @@ export default {
       this.complex.push(newFile)
     },
 
+    openFile(event) {
+      console.log('open', event.file)
+    },
+
     updateFile(event) {
       event.file.name = event.newName
       event.file.path = event.newPath
@@ -117,8 +122,8 @@ export default {
 
 <style>
 .file-manager {
-  min-height: 15.5rem;
-  max-height: 15.5rem;
+  min-height: 17rem;
+  max-height: 17rem;
   background-color: lightgray;
   border: 1px solid gray;
   margin: .25em;
