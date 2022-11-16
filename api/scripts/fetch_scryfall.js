@@ -2,67 +2,89 @@ const axios = require('axios')
 const fs = require('fs')
 
 
-const unwantedScryfallFields = [
-  "all_parts",
-  "artist_ids",
-  "arena_id",
-  "booster",
-  "border_color",
-  "card_back_id",
-  "cardmarket_id",
-  "edhrec_rank",
-  "finishes",
-  "foil",
-  "frame",
-  "games",
-  "highres_image",
-  "illustration_id",
-  "image_status",
-  "mtgo_foil_id",
-  "mtgo_id",
-  "multiverse_ids",
-  "nonfoil",
-  "object",
-  "oracle_id",
-  "oversized",
-  "penny_rank",
-  "preview",
-  "prices",
-  "prints_search_uri",
-  "promo",
-  "related_uris",
-  "released_at",
-  "reprint",
-  "reserved",
-  "rulings_uri",
-  "scryfall_set_uri",
-  "scryfall_uri",
-  "set_id",
-  "set_name",
-  "set_search_uri",
-  "set_type",
-  "set_uri",
-  "story_spotlight",
-  "tcgplayer_id",
-  "uri",
-  "variation",
-  // "digital",
-  // "full_art",
-  // "lang",
-  // "textless",
+const rootFields = [
+  "id",
+  "card_faces",
+  "collector_number",
+  "legalities",
+  "layout",
+  "rarity",
+  "set",
+  "cmc",
 ]
 
+const faceFields = [
+  "artist",
+  "flavor_text",
+  "id",
+  "image_uris",
+  "loyalty",
+  "mana_cost",
+  "name",
+  "oracle_text",
+  "power",
+  "toughness",
+  "type_line",
+
+  "color_identity",
+  "color_indicator",
+  "colors",
+  "produced_mana",
+]
+
+const wantedFields = [].concat(rootFields, faceFields)
+
+
+function adjustFaces(card) {
+  if (!card.card_faces) {
+    card.card_faces = [{}]
+  }
+
+  // Move face fields into card_faces.
+  for (const face of card.card_faces) {
+    for (const key of faceFields) {
+      if (card[key] && !face[key]) {
+        face[key] = card[key]
+      }
+
+      if (card[key]) {
+        delete card[key]
+      }
+    }
+  }
+
+  // Remove all other fields
+  const toRemove = [...card.card_faces]
+  toRemove.push(card)
+  for (const face of toRemove) {
+    for (const key of Object.keys(face)) {
+      if (!wantedFields.includes(key)) {
+        delete face[key]
+      }
+    }
+  }
+
+  // Remove face fields from root
+  for (const key of Object.keys(card)) {
+    if (!rootFields.includes(key)) {
+      delete card[key]
+    }
+  }
+
+  // Duplicate face fields across all faces, if needed
+  const firstFace = card.card_faces[0]
+  const otherFaces = card.card_faces.slice(1)
+  for (const face of otherFaces) {
+    for (const [key, value] of Object.entries(firstFace)) {
+      if (!(key in face)) {
+        face[key] = value
+      }
+    }
+  }
+}
+
 function cleanImageUris(card) {
-
-  let faces
-  if (card.image_uris) {
-    faces = [card]
-  }
-  else {
-    faces = card.card_faces
-  }
-
-  for (const face of faces) {
+  for (const face of card.card_faces) {
     if (!face.image_uris) {
       console.log(card)
     }
@@ -80,19 +102,7 @@ function cleanLegalities(card) {
 
 function cleanScryfallCards(cards) {
   for (const card of cards) {
-    const faces = [card]
-    if (card.card_faces) {
-      for (const face of card.card_faces) {
-        faces.push(face)
-      }
-    }
-
-    for (const face of faces) {
-      for (const fieldName of unwantedScryfallFields) {
-        delete face[fieldName]
-      }
-    }
-
+    adjustFaces(card)
     cleanImageUris(card)
     cleanLegalities(card)
   }
@@ -102,7 +112,12 @@ function filterVersions(cards) {
   for (let i = cards.length - 1; i >= 0; i--) {
     const card = cards[i]
 
-    if (card.layout === 'art_series') {
+    if (
+      card.layout === 'art_series'
+      || card.layout === 'vanguard'
+      || card.layout === 'double_faced_token'
+      || card.layout === 'scheme'
+    ) {
       cards.splice(i, 1)
       continue
     }
@@ -166,16 +181,16 @@ async function fetchScryfallDefaultDataUri() {
 }
 
 async function fetchFromScryfallAndClean() {
-  console.log('Fetching latest scryfall data')
+  /* console.log('Fetching latest scryfall data')
 
-  const downloadUri = await fetchScryfallDefaultDataUri()
+   * const downloadUri = await fetchScryfallDefaultDataUri()
 
-  console.log('...downloading card data from ' + downloadUri)
-  const cards = await fetchScryfallDefaultCards(downloadUri)
-
-  /* const downloadUri = 'default-cards-20221111100454.json'
-   * const cardData = fs.readFileSync('local_scryfall.json')
-   * const cards = JSON.parse(cardData) */
+   * console.log('...downloading card data from ' + downloadUri)
+   * const cards = await fetchScryfallDefaultCards(downloadUri)
+   */
+  const downloadUri = 'default-cards-20221116100556.json'
+  const cardData = fs.readFileSync('local_scryfall.json')
+  const cards = JSON.parse(cardData)
 
   console.log('...filtering')
   filterVersions(cards)
