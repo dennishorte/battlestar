@@ -50,8 +50,7 @@ export default {
   flex-direction: row;
   flex-wrap: none;
   overflow: scroll;
-  min-height: 20em;
-  max-height: 20em;
+  max-height: 25em;
 }
 
 $artifact-bg: #9facc3;
@@ -141,6 +140,10 @@ $gold: #d9631b;
     position: relative;
     min-width: $size;
     max-width: $size;
+
+    .editable:hover {
+      background-color: lightblue;
+    }
 
     .card-border {
       background: $almost-black;

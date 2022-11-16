@@ -22,31 +22,42 @@ CardUtil.allCardNames = function(card) {
   return names
 }
 
+CardUtil.blankFace = function() {
+  return {
+    artist: '',
+    card_faces: '',
+    flavor_text: '',
+    image_uri: '',
+    loyalty: '',
+    mana_cost: '',
+    name: '',
+    oracle_text: '',
+    power: '',
+    toughness: '',
+    type_line: '',
+
+    color_identity: [],
+    color_indicator: [],
+    colors: [],
+    produced_mana: [],
+  }
+}
+
 CardUtil.blank = function() {
   return {
-    name: "",
-    layout: "normal",
-    mana_cost: "",
-    cmc: 6,
-    type_line: "",
-    colors: [],
-    color_identity: [],
-    keywords: [],
-    card_faces: [
-      {
-        name: "",
-        mana_cost: "",
-        type_line: "",
-        oracle_text: "",
-        artist: "",
-      }
-    ],
-    set: "",
-    collector_number: "",
-    rarity: "",
-    artist: "",
-    image_uri: "",
+    card_faces: [this.blankFace()],
+
+    id: '',
+    layout: 'normal',
+    rarity: 'common',
+    set: '',
+    collector_number: '',
     legal: [],
+
+    cmc: '0',
+    color_identity: [],
+    colors: [],
+    produced_mana: [],
   }
 }
 

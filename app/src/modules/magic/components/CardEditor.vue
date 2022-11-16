@@ -4,7 +4,71 @@
       :size="270"
       :card="card"
       @click="editField"
+      class="preview"
     />
+
+    <div class="buttons">
+      <button class="btn btn-primary" @click="addFace">Add Face</button>
+      <button class="btn btn-warning" @click="removeFace" :disabled="card.card_faces.length === 1">Remove {{ faceIndex }}</button>
+    </div>
+
+    <template v-if="fieldName === 'header'">
+      <label class="form-label">Name</label>
+      <input class="form-control" v-model="card.card_faces[faceIndex].name" />
+
+      <label class="form-label">Mana Cost</label>
+      <input class="form-control" v-model="card.card_faces[faceIndex].mana_cost" />
+    </template>
+
+    <template v-if="fieldName === 'type-line'">
+      <label class="form-label">Types</label>
+      <input class="form-control" v-model="types" />
+
+      <label class="form-label">Sub Types</label>
+      <input class="form-control" v-model="subtypes" />
+
+      <label class="form-label">Rarity</label>
+      <select class="form-select" v-model="card.card_faces[faceIndex].rarity">
+        <option>common</option>
+        <option>uncommon</option>
+        <option>rare</option>
+        <option>mythic</option>
+      </select>
+    </template>
+
+    <template v-if="fieldName === 'image-url'">
+      <label class="form-label">Image Url</label>
+      <textarea class="form-control" v-model="card.card_faces[faceIndex].image_uri"></textarea>
+
+      <label class="form-label">Artist</label>
+      <input class="form-control" v-model="card.card_faces[faceIndex].artist" />
+    </template>
+
+    <template v-if="fieldName === 'text-box'">
+      <label class="form-label">Oracle Text</label>
+      <textarea class="form-control" v-model="card.card_faces[faceIndex].oracle_text"></textarea>
+
+      <label class="form-label">Flavor Text</label>
+      <textarea class="form-control" v-model="card.card_faces[faceIndex].flavor_text"></textarea>
+
+      <div class="ptl">
+        <div>
+          <label class="form-label">power</label>
+          <input class="form-control" v-model="card.card_faces[faceIndex].power" />
+        </div>
+
+        <div>
+          <label class="form-label">toughness</label>
+          <input class="form-control" v-model="card.card_faces[faceIndex].toughness" />
+        </div>
+
+        <div>
+          <label class="form-label">loyalty</label>
+          <input class="form-control" v-model="card.card_faces[faceIndex].loyalty" />
+        </div>
+      </div>
+
+    </template>
   </div>
 </template>
 
@@ -25,18 +89,58 @@ export default {
   data() {
     return {
       card: cardUtil.blank(),
+      faceIndex: 0,
+      fieldName: '',
     }
   },
 
-  methods: {
-    editField(event) {
-      console.log('edit', event)
-      const face = event.target.closest('.card-face-outer-container')
-      const faceIndex = face.dataset.faceIndex
+  computed: {
+    types: {
+      set(value) {
+        const base = this.card.card_faces[this.faceIndex].type_line.split(' \u2014 ')
+        base[0] = value
+        this.card.card_faces[this.faceIndex].type_line = base.join(' \u2014 ')
+      },
+      get() {
+        return this.card.card_faces[this.faceIndex].type_line.split(' \u2014 ')[0]
+      },
+    },
 
-      const clickedElement = event.target.closest('.editable-field')
-      const fieldName = clickedElement.dataset.editName
-      console.log(faceIndex, fieldName, face)
+    subtypes: {
+      set(value) {
+        const base = this.card.card_faces[this.faceIndex].type_line.split(' \u2014 ')
+        while (base.length < 2) {
+          base.push('')
+        }
+        base[1] = value
+        this.card.card_faces[this.faceIndex].type_line = base.join(' \u2014 ')
+      },
+      get() {
+        return this.card.card_faces[this.faceIndex].type_line.split(' \u2014 ')[1] || ''
+      },
+    },
+  },
+
+  methods: {
+    addFace() {
+      this.card.card_faces.push(cardUtil.blankFace())
+    },
+
+    removeFace() {
+      this.card.card_faces.splice(this.faceIndex, 1)
+      if (this.faceIndex >= this.card.card_faces.length) {
+        this.faceIndex = this.card.card_faces.length - 1
+      }
+    },
+
+    editField(event) {
+      const face = event.target.closest('.card-container')
+      const clickedElement = event.target.closest('.editable')
+
+        if (face && clickedElement) {
+        this.faceIndex = face.dataset.faceIndex
+        this.fieldName = clickedElement.dataset.editField
+      }
     },
   },
 }
@@ -44,4 +148,13 @@ export default {
 
 
 <style scoped>
+.preview {
+  margin-bottom: .5em;
+  max-width: 18em;
+}
+
+.ptl {
+  display: flex;
+  flex-direction: row;
+}
 </style>

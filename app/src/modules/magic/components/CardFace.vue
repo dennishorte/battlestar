@@ -1,10 +1,10 @@
 <template>
-  <div :class="containerClasses">
+  <div :class="containerClasses" :data-face-index="index">
     <div class="card-border">
       <div class="card-background">
         <div class="card-frame">
 
-          <div class="frame-header frame-foreground">
+          <div class="frame-header frame-foreground editable" data-edit-field="header">
             <div class="frame-card-name">{{ face.name }}</div>
 
             <div class="frame-mana-cost">
@@ -13,16 +13,17 @@
           </div>
 
           <img
-            class="frame-art"
+            class="frame-art editable"
+            data-edit-field="image-url"
             alt="card art"
             :src="imageUrl" />
 
-          <div class="frame-type-line frame-foreground">
+          <div class="frame-type-line frame-foreground editable" data-edit-field="type-line">
             <div class="frame-card-type">{{ face.type_line }}</div>
             <div class="frame-card-icon" :class="rarity">{{ setIcon }}</div>
           </div>
 
-          <div class="frame-text-box">
+          <div class="frame-text-box editable" data-edit-field="text-box">
             <OracleText :text="oracleText" />
 
             <div class="frame-flavor-wrapper">
@@ -36,7 +37,7 @@
             </div>
           </div>
 
-          <div class="frame-pt-loyalty frame-foreground" v-if="powerToughness">
+          <div class="frame-pt-loyalty frame-foreground editable" data-edit-field="loyalty" v-if="powerToughness">
             {{ powerToughness }}
           </div>
 
