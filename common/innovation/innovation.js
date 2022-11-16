@@ -1317,14 +1317,31 @@ Innovation.prototype.aInspire = function(player, color, opts={}) {
 }
 
 Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
+  let info = infos[0]
+
   if (infos.length === 0) {
     return
   }
   else if (infos.length > 1) {
-    throw new Error('Multiple Karmas not handled')
+    if (info.impl.kind && info.impl.kind.startsWith('would')) {
+      this.mLog({
+        template: 'Multiple `would` karma effects would trigger, so {player} will choose one',
+        args: { player: this.getPlayerCurrent() }
+      })
+
+      const infoChoices = infos.map(info => info.card)
+      const chosenCard = this.aChooseCard(
+        this.getPlayerCurrent(),
+        infoChoices,
+        { title: 'Choose a would karma to trigger' }
+      )
+      info = infos.find(info => info.card === chosenCard)
+    }
+    else {
+      throw new Error('Multiple non-would Karmas not handled')
+    }
   }
 
-  const info = infos[0]
   opts = { ...opts, owner: info.owner }
 
   if (info.impl.kind && info.impl.kind.startsWith('would')) {
