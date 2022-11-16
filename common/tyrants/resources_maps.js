@@ -990,7 +990,7 @@ const mapData = [
     },
     "neighbors": [
       "Ss'zuraass'nee",
-      "llace-ss'zur b"
+      "llace-ss'zur a"
     ]
   },
   {
