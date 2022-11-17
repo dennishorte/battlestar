@@ -28,6 +28,10 @@ app.use(middleware.coerceIds)
 // Card routes
 app.post('/api/card/all', routes.card.fetchAll)
 
+// Cube routes
+app.post('/api/cube/create', routes.cube.create)
+app.post('/api/cube/save', routes.cube.save)
+
 // Deck routes
 app.post('/api/deck/create', routes.deck.create)
 app.post('/api/deck/save', routes.deck.save)

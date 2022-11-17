@@ -4,7 +4,7 @@
   <FileManager
     v-else
     :filelist="filelist"
-    :file-types="['Card', 'Deck', 'Set']"
+    :file-types="['card', 'cube', 'deck']"
     @file-creating="createFile"
     @file-deleting="deleteFile"
     @file-duplicating="duplicateFile"
@@ -15,6 +15,8 @@
 
 
 <script>
+import axios from 'axios'
+
 import FileManager from '@/components/filemanager/FileManager'
 import Header from '@/components/Header'
 
@@ -35,7 +37,19 @@ export default {
   },
 
   methods: {
-    createFile(data) {
+    async createFile(data) {
+      if (data.kind === 'cube') {
+        const requestResult = await axios.post('/api/cube/create', data)
+
+        if (requestResult.data.status === 'success') {
+          const cubeId = requestResult.data.cube._id
+          this.$router.push(`/magic/cube/${cubeId}`)
+        }
+        else {
+          alert(requestResult.data.message)
+        }
+      }
+
       console.log('create', data)
     },
 

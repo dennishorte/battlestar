@@ -8,16 +8,15 @@
       </div>
 
       <div class="col">
-        <CardEditor />
       </div>
 
     </div>
+
   </div>
 </template>
 
 
 <script>
-import CardEditor from './CardEditor'
 import MagicFileManager from './MagicFileManager'
 import SectionHeader from '@/components/SectionHeader'
 
@@ -25,7 +24,6 @@ export default {
   name: 'MagicProfile',
 
   components: {
-    CardEditor,
     MagicFileManager,
     SectionHeader
   },

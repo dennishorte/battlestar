@@ -1,4 +1,5 @@
 module.exports = {
+  cube: require('./cube_models.js'),
   deck: require('./deck_models.js'),
   lobby: require('./lobby_models.js'),
   game: require('./game_models.js'),
