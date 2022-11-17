@@ -1,6 +1,5 @@
-const Deck = require('./Deck.js')
-
+const data = require('./data.js')
 
 module.exports = {
-  Deck,
+  data,
 }

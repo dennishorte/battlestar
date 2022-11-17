@@ -1,4 +1,4 @@
-const util = require('../lib/util.js')
+import cardUtil from './cardUtil.js'
 
 
 function Deck(cardLookup) {
@@ -20,12 +20,11 @@ function Deck(cardLookup) {
   this.modified = false
 }
 
-module.exports = {
+export default {
   Deck,
 
   buildHierarchy,
   deserialize,
-  parseDecklist,
   pathTokens,
 }
 
@@ -71,7 +70,8 @@ Deck.prototype.setBreakdown = function(breakdown) {
 
 Deck.prototype.setDecklist = function(decklist) {
   this.decklist = decklist
-  this.breakdown = parseDecklist(decklist)
+  this.breakdown = cardUtil.parseCardlist(decklist)
+  console.log(this.breakdown)
   injectCardData(this.breakdown, this.cardLookup)
 }
 
@@ -171,89 +171,4 @@ function injectCardData(breakdown, cardLookup) {
       }
     }
   }
-}
-
-function parseDecklist(decklist, cardLookup) {
-  const cards = {
-    main: [],
-    side: [],
-    command: [],
-  }
-
-  let zone = cards.main
-
-  for (let line of decklist.toLowerCase().split('\n')) {
-    line = line.trim()
-
-    if (line.endsWith(':')) {
-      line = line.slice(0, line.length - 1)
-    }
-
-    if (line.length === 0) {
-      continue
-    }
-    else if (line === 'deck' || line === 'main' || line === 'maindeck') {
-      zone = cards.main
-    }
-    else if (line === 'side' || line === 'sideboard') {
-      zone = cards.side
-    }
-    else if (line === 'command' || line === 'commander') {
-      zone = cards.command
-    }
-    else {
-      zone.push(parseDeckListLine(line))
-    }
-  }
-
-  return cards
-}
-
-function parseDeckListLine(line0) {
-  const [line1, count] = parseDeckLineCount(line0)
-  const data = parseDeckLineName(line1)
-  data.count = count
-  return data
-}
-
-function parseDeckLineCount(line) {
-  // Card has a count in front of it
-  if (util.isDigit(line.charAt(0))) {
-    const firstSpaceIndex = line.indexOf(' ')
-    const count = parseInt(line.slice(0, firstSpaceIndex))
-    const name = line.slice(firstSpaceIndex + 1)
-    return [name, count]
-  }
-
-  // Just a card name, with no count in front
-  else {
-    return [line, 1]
-  }
-}
-
-function parseDeckLineName(line) {
-  const tokens = line.split(' ')
-  const output = {
-    name: line,
-    setCode: null,
-    collectorNumber: null,
-  }
-
-  if (tokens.length < 3) {
-    return output
-  }
-
-  const lastToken = tokens[tokens.length - 1]
-  if (!util.isDigit(lastToken.charAt(0))) {
-    return output
-  }
-
-  const penultimateToken = tokens[tokens.length - 2]
-  if (penultimateToken.slice(0, 1) === '(' && penultimateToken.slice(-1) === ')') {
-    output.name = tokens.slice(0, -2).join(' ')
-    output.setCode = penultimateToken.slice(1, -1)
-    output.collectorNumber = lastToken
-  }
-
-  return output
 }

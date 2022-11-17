@@ -16,7 +16,7 @@ Cube.create = async function({ userId, name, path }) {
     name: cubeName,
     path: path || '/',
     kind: 'cube',
-    cubelist: '',
+    cardlist: '',
     public: false,
     createdTimestamp: creationDate,
     updatedTimestamp: creationDate,

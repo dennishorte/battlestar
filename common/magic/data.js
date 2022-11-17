@@ -438,7 +438,7 @@ const setCodesToNames = {
   "plgm": "DCI Legend Membership",
   "plgn": "Legions Promos",
   "plist": "The List",
-  "plny": "Lunar New Year 2018 "
+  "plny": "Lunar New Year 2018 ",
   "plrw": "Lorwyn Promos",
   "pls": "Planeshift",
   "pm10": "Magic 2010 Promos",

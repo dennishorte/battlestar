@@ -1,8 +1,9 @@
 import axios from 'axios'
 
-import { mag, util } from 'battlestar-common'
+import { util } from 'battlestar-common'
 
 import cardUtil from '../util/cardUtil.js'
+import deckUtil from '../util/deckUtil.js'
 
 
 export default {
@@ -94,7 +95,7 @@ export default {
     // Decks
     setActiveDeck(state, rawDeck) {
       if (rawDeck) {
-        state.activeDeck = mag.Deck.deserialize(rawDeck, state.cardDatabase.lookup)
+        state.activeDeck = deckUtil.deserialize(rawDeck, state.cardDatabase.lookup)
       }
       else {
         state.activeDeck = null
@@ -309,7 +310,7 @@ export default {
         userId: rootGetters['auth/userId'],
       })
       if (requestResult.data.status === 'success') {
-        const deckHierarchy = mag.Deck.buildHierarchy(requestResult.data.decks)
+        const deckHierarchy = deckUtil.buildHierarchy(requestResult.data.decks)
         commit('setDecks', deckHierarchy)
       }
     },
@@ -320,7 +321,7 @@ export default {
     },
 
     selectDeckByPath({ dispatch, state }, { path, name }) {
-      const tokens = mag.Deck.pathTokens(path)
+      const tokens = deckUtil.pathTokens(path)
       let node = this.decks
       for (const token of tokens) {
         node = node.folders.find(f => f.name === token)
