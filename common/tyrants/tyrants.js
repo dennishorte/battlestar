@@ -735,6 +735,16 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
     }
   }
 
+  this.mLog({
+    template: '{player} must discard a card',
+    args: { player }
+  })
+  this.mLogIndent()
+
+  if (!opts.title) {
+    opts.title = 'Choose a card to discard'
+  }
+
   const chosen = this.aChooseCard(player, this.getCardsByZone(player, 'hand'), opts)
   if (chosen) {
     // Some cards have triggers if an opponent causes you to discard.
@@ -742,18 +752,21 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
       const triggers = chosen.triggers || []
       for (const trigger of triggers) {
         if (trigger.kind === 'discard-this') {
-          return trigger.impl(this, player, { card: chosen, forcedBy: opts.forcedBy })
+          const result = trigger.impl(this, player, { card: chosen, forcedBy: opts.forcedBy })
+          this.mLogOutdent()
+          return result
         }
       }
     }
 
     // Only get to this on fall-through
     this.aDiscard(player, chosen)
+    this.mLogOutdent()
     return chosen
   }
   else {
     this.mLog({
-      template: '{player} chooses not to discard',
+      template: '{player} cannot or chooses not to discard',
       args: { player }
     })
   }
