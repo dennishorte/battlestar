@@ -98,7 +98,7 @@ Game.prototype._validateResponse = function(requests, response) {
   const request = requests.find(r => r.actor === response.actor)
   util.assert(request !== undefined, "No request matches the response actor")
 
-  const result = selector.validate(request, response)
+  const result = selector.validate(request, response, { ignoreTitle: true })
   if (!result.valid) {
     /* console.log(JSON.stringify({
      *   request,

@@ -7,8 +7,8 @@ module.exports = {
 }
 
 
-function validate(selector, selection, annotate) {
-  if (!annotate) {
+function validate(selector, selection, opts={}) {
+  if (!opts.annotate) {
     selector = util.deepcopy(selector)
     selection = util.deepcopy(selection)
   }
@@ -16,7 +16,7 @@ function validate(selector, selection, annotate) {
   return _validate(
     _normalize(selector),
     _normalize(selection),
-    annotate
+    opts
   )
 }
 
@@ -39,14 +39,14 @@ function _normalize(selector) {
   return selector
 }
 
-function _validate(selector, selection, annotate) {
-  if (annotate) {
+function _validate(selector, selection, opts) {
+  if (opts.annotate) {
     selection.annotation = {}
   }
 
   // If titles don't match, doesn't matter how the choices line up.
-  if (selector.title !== selection.title) {
-    if (annotate) {
+  if (!opts.ignoreTitle && selector.title !== selection.title) {
+    if (opts.annotate) {
       selection.annotation.isValid = false
       selection.annotation.mismatch = 'title'
     }
@@ -75,7 +75,7 @@ function _validate(selector, selection, annotate) {
             match = false
           }
           else {
-            match = _validate(opt, sel, annotate).valid
+            match = _validate(opt, sel, opts).valid
           }
         }
 
@@ -105,7 +105,7 @@ function _validate(selector, selection, annotate) {
     }
   }
   else if (exclusive && count > 1) {
-    if (annotate) {
+    if (opts.annotate) {
       selection.annotation.isValid = false
       selection.annotation.mismatch = 'exclusive'
     }
@@ -115,13 +115,13 @@ function _validate(selector, selection, annotate) {
     }
   }
   else if (min <= count && count <= max) {
-    if (annotate) {
+    if (opts.annotate) {
       selection.annotation.isValid = true
     }
     return { valid: true }
   }
   else {
-    if (annotate) {
+    if (opts.annotate) {
       selection.annotation.isValid = false
       selection.annotation.mismatch = `failed test: ${min} <= ${count} <= ${max}`
     }
