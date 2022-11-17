@@ -30,6 +30,7 @@ app.post('/api/card/all', routes.card.fetchAll)
 
 // Cube routes
 app.post('/api/cube/create', routes.cube.create)
+app.post('/api/cube/fetch', routes.cube.fetch)
 app.post('/api/cube/save', routes.cube.save)
 
 // Deck routes

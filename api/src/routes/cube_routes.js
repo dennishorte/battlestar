@@ -13,6 +13,14 @@ Cube.create = async function(req, res) {
   })
 }
 
+Cube.fetch = async function(req, res) {
+  const cube = await db.cube.findById(req.body.cubeId)
+  res.json({
+    status: 'success',
+    cube,
+  })
+}
+
 Cube.save = async function(req, res) {
   await db.cube.save(req.body.cube)
   res.json({
