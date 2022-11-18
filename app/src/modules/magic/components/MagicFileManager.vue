@@ -72,7 +72,7 @@ export default {
     },
 
     updateFile(data) {
-      console.log('update', data)
+      this.$store.dispatch('magic/updateFile', data)
     },
   },
 

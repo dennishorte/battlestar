@@ -37,6 +37,9 @@ app.post('/api/magic/cube/save', routes.magic.cube.save)
 app.post('/api/magic/deck/create', routes.magic.deck.create)
 app.post('/api/magic/deck/save', routes.magic.deck.save)
 
+// File routes
+app.post('/api/magic/file/update', routes.magic.file.update)
+
 // Scryfall Routes
 app.post('/api/magic/scryfall/update', routes.magic.scryfall.updateAll)
 
