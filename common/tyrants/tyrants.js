@@ -523,7 +523,7 @@ Tyrants.prototype._processEndOfTurnActions = function() {
   if (promoChoices.length > 0) {
     const player = this.getPlayerCurrent()
     this.mLog({
-      template: '{player} may promote {count} card(s)',
+      template: '{player} may promote {count} cards',
       args: { player, count: promos.length }
     })
     promoChoices.sort((l, r) => l.name.localeCompare(r.name))
@@ -860,7 +860,7 @@ Tyrants.prototype.aChooseAndPromote = function(player, cardsToChoose, opts={}) {
     .map(c => c.name)
     .sort()
 
-  const choices = this.aChoose(player, choiceNames, { ...opts, title: 'Choose card(s) to promote' })
+  const choices = this.aChoose(player, choiceNames, { ...opts, title: 'Choose cards to promote' })
 
   const done = []
   for (const choice of choices) {
