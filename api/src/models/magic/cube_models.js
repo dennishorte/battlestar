@@ -1,4 +1,4 @@
-const databaseClient = require('../util/mongo.js').client
+const databaseClient = require('../../util/mongo.js').client
 const database = databaseClient.db('games')
 const cubeCollection = database.collection('cube')
 

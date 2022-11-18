@@ -89,7 +89,7 @@ export default {
       deck.decklist = decklist
       const data = deck.serialize()
 
-      const requestResult = await axios.post('/api/deck/create', data)
+      const requestResult = await axios.post('/api/magic/deck/create', data)
       if (requestResult.data.status === 'success') {
         await this.$store.dispatch('magic/dm/fetchDecks')
         this.$store.dispatch('magic/dm/selectDeckByPath', {

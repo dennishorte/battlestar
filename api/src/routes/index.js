@@ -4,12 +4,10 @@ const slack = require('../util/slack.js')
 
 
 module.exports = {
-  card: require('./card_routes.js'),
-  cube: require('./cube_routes.js'),
-  deck: require('./deck_routes.js'),
+  magic: require('./magic'),
+
   lobby: require('./lobby_routes.js'),
   game: require('./game_routes.js'),
-  scryfall: require('./scryfall_routes.js'),
   snapshot: require('./snapshot_routes.js'),
   user: require('./user_routes.js'),
 }

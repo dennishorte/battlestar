@@ -26,7 +26,7 @@ export default {
     async loadCube() {
       this.loading = true
 
-      const requestResult = await axios.post('/api/cube/fetch', {
+      const requestResult = await axios.post('/api/magic/cube/fetch', {
         cubeId: this.id
       })
 

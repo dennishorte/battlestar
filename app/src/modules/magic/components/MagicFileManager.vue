@@ -39,7 +39,7 @@ export default {
   methods: {
     async createFile(data) {
       if (data.kind === 'cube') {
-        const requestResult = await axios.post('/api/cube/create', data)
+        const requestResult = await axios.post('/api/magic/cube/create', data)
 
         if (requestResult.data.status === 'success') {
           const cubeId = requestResult.data.cube._id

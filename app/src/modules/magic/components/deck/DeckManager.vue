@@ -78,7 +78,7 @@ export default {
     // Deck Fetching Methods
 
     async fetchAllDecks() {
-      const requestResult = await axios.post('/api/user/decks', {
+      const requestResult = await axios.post('/api/user/magic/decks', {
         userId: this.actor._id,
       })
 

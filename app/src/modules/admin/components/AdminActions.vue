@@ -41,7 +41,7 @@ export default {
     async updateScryfall() {
       this.status = 'waiting'
       this.message = 'Updating Scryfall data.\nThis can take a minute or two.'
-      const result = await axios.post('/api/scryfall/update', {})
+      const result = await axios.post('/api/magic/scryfall/update', {})
       this.status = result.data.status
       this.message = result.data.message
       console.log(result)

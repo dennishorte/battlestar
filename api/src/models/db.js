@@ -1,9 +1,7 @@
 module.exports = {
-  cube: require('./cube_models.js'),
-  deck: require('./deck_models.js'),
+  magic: require('./magic'),
   lobby: require('./lobby_models.js'),
   game: require('./game_models.js'),
-  scryfall: require('./scryfall_models.js'),
   snapshot: require('./snapshot_models.js'),
   user: require('./user_models.js'),
 }

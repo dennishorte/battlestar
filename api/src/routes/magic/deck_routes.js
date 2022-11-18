@@ -1,11 +1,11 @@
-const db = require('../models/db.js')
+const db = require('../../models/db.js')
 
 const Deck = {}
 
 
 Deck.create = async function(req, res) {
-  const deckId = await db.deck.create(req.body)
-  const deck = await db.deck.findById(deckId)
+  const deckId = await db.magic.deck.create(req.body)
+  const deck = await db.magic.deck.findById(deckId)
 
   res.json({
     status: 'success',
@@ -14,7 +14,7 @@ Deck.create = async function(req, res) {
 }
 
 Deck.save = async function(req, res) {
-  await db.deck.save(req.body.deck)
+  await db.magic.deck.save(req.body.deck)
   res.json({
     status: 'success',
   })

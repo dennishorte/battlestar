@@ -306,7 +306,7 @@ export default {
     // Misc
 
     async fetchDecks({ commit, rootGetters }) {
-      const requestResult = await axios.post('/api/user/decks', {
+      const requestResult = await axios.post('/api/user/magic/decks', {
         userId: rootGetters['auth/userId'],
       })
       if (requestResult.data.status === 'success') {
@@ -345,7 +345,7 @@ export default {
     // Actions that wrap API calls
 
     async saveActiveDeck({ commit, dispatch, state }) {
-      const requestResult = await axios.post('/api/deck/save', {
+      const requestResult = await axios.post('/api/magic/deck/save', {
         deck: state.activeDeck.serialize()
       })
 
@@ -598,7 +598,7 @@ async function saveCardsToDatabase(cards) {
 
 async function getLatestCardDataFromServer(successFunc, errorFunc) {
   console.log('fetching card data')
-  const requestResult = await axios.post('/api/card/all')
+  const requestResult = await axios.post('/api/magic/card/all')
   console.log('card data fetched')
 
   if (requestResult.data.status === 'success') {

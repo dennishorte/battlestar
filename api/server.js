@@ -26,16 +26,22 @@ app.use(middleware.coerceIds)
 // Routes
 
 // Card routes
-app.post('/api/card/all', routes.card.fetchAll)
+app.post('/api/magic/card/all', routes.magic.card.fetchAll)
 
 // Cube routes
-app.post('/api/cube/create', routes.cube.create)
-app.post('/api/cube/fetch', routes.cube.fetch)
-app.post('/api/cube/save', routes.cube.save)
+app.post('/api/magic/cube/create', routes.magic.cube.create)
+app.post('/api/magic/cube/fetch', routes.magic.cube.fetch)
+app.post('/api/magic/cube/save', routes.magic.cube.save)
 
 // Deck routes
-app.post('/api/deck/create', routes.deck.create)
-app.post('/api/deck/save', routes.deck.save)
+app.post('/api/magic/deck/create', routes.magic.deck.create)
+app.post('/api/magic/deck/save', routes.magic.deck.save)
+
+// Scryfall Routes
+app.post('/api/magic/scryfall/update', routes.magic.scryfall.updateAll)
+
+
+////////////////////////////////////////
 
 // Guest routes
 app.post('/api/guest/slack_test', routes.slackTest)
@@ -56,9 +62,6 @@ app.post('/api/game/kill', routes.game.kill)
 app.post('/api/game/saveFull', routes.game.saveFull)
 app.post('/api/game/updateStats', routes.game.updateStats)
 
-// Scryfall Routes
-app.post('/api/scryfall/update', routes.scryfall.updateAll)
-
 // Snapshot Routes
 app.post('/api/snapshot/create', routes.snapshot.create)
 app.post('/api/snapshot/fetch', routes.snapshot.fetch)
@@ -67,11 +70,11 @@ app.post('/api/snapshot/fetch', routes.snapshot.fetch)
 app.post('/api/user/all', routes.user.all)
 app.post('/api/user/create', routes.user.create)
 app.post('/api/user/deactivate', routes.user.deactivate)
-app.post('/api/user/decks', routes.user.decks)
 app.post('/api/user/fetch_many', routes.user.fetchMany)
 app.post('/api/user/games', routes.user.games)
 app.post('/api/user/games_recently_finished', routes.user.gamesRecentlyFinished)
 app.post('/api/user/lobbies', routes.user.lobbies)
+app.post('/api/user/magic/decks', routes.user.decks)
 app.post('/api/user/next', routes.user.next)
 app.post('/api/user/update', routes.user.update)
 
@@ -80,5 +83,5 @@ app.post('/api/user/update', routes.user.update)
 // Initialize
 
 app.listen(port, () => {
-    console.log(`Server listening on the port::${port}`)
+  console.log(`Server listening on the port::${port}`)
 })

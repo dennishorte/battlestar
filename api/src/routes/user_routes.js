@@ -38,7 +38,7 @@ User.deactivate = async function(req, res) {
 }
 
 User.decks = async function(req, res) {
-  const decks = await db.deck.findByUserId(req.body.userId)
+  const decks = await db.magic.deck.findByUserId(req.body.userId)
 
   res.json({
     status: 'success',
