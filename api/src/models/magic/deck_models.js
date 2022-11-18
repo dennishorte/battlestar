@@ -1,5 +1,5 @@
 const databaseClient = require('../../util/mongo.js').client
-const database = databaseClient.db('games')
+const database = databaseClient.db('magic')
 const deckCollection = database.collection('deck')
 
 
