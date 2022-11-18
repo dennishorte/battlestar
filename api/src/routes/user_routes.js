@@ -1,6 +1,8 @@
 const db = require('../models/db.js')
 
-const User = {}
+const User = {
+  magic: {},
+}
 
 User.all = async function(req, res) {
   const users = await db.user.all()
@@ -35,15 +37,6 @@ User.deactivate = async function(req, res) {
       message: 'User not deactivated',
     })
   }
-}
-
-User.decks = async function(req, res) {
-  const decks = await db.magic.deck.findByUserId(req.body.userId)
-
-  res.json({
-    status: 'success',
-    decks,
-  })
 }
 
 User.fetchMany = async function(req, res) {
@@ -119,6 +112,29 @@ User.update = async function(req, res) {
   res.json({
     status: 'success',
     message: 'User updated',
+  })
+}
+
+
+
+User.magic.decks = async function(req, res) {
+  const decks = await db.magic.deck.findByUserId(req.body.userId)
+
+  res.json({
+    status: 'success',
+    decks,
+  })
+}
+
+User.magic.files = async function(req, res) {
+  const files = [
+    await db.magic.deck.findByUserId(req.body.userId),
+    await db.magic.cube.findByUserId(req.body.userId),
+  ].flat()
+
+  res.json({
+    status: 'success',
+    files,
   })
 }
 

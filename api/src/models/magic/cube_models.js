@@ -35,6 +35,12 @@ Cube.findById = async function(id) {
 }
 
 
+Cube.findByUserId = async function(userId) {
+  const cubes = await cubeCollection.find({ userId })
+  return await cubes.toArray()
+}
+
+
 Cube.save = async function(cube) {
   return await cubeCollection.replaceOne({ _id: cube._id }, cube)
 }

@@ -16,6 +16,7 @@
 
 <script>
 import axios from 'axios'
+import { mapState } from 'vuex'
 
 import FileManager from '@/components/filemanager/FileManager'
 import Header from '@/components/Header'
@@ -31,9 +32,14 @@ export default {
 
   data() {
     return {
-      filelist: null,
       loading: true,
     }
+  },
+
+  computed: {
+    ...mapState('magic', {
+      filelist: 'filelist',
+    })
   },
 
   methods: {
@@ -70,19 +76,8 @@ export default {
     },
   },
 
-  mounted() {
-    this.filelist = [
-      {
-        name: 'Red Wins',
-        path: '/decks',
-        kind: 'Deck',
-      },
-      {
-        name: 'CLO',
-        path: '/cubes',
-        kind: 'Set',
-      },
-    ]
+  async mounted() {
+    await this.$store.dispatch('magic/loadFiles')
     this.loading = false
   },
 }
