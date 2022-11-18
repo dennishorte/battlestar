@@ -6,6 +6,7 @@ const rootFields = [
   "id",
   "card_faces",
   "collector_number",
+  "color_identity",
   "legalities",
   "layout",
   "rarity",
@@ -26,8 +27,13 @@ const faceFields = [
   "toughness",
   "type_line",
 
-  "color_identity",
   "color_indicator",
+  "colors",
+  "produced_mana",
+]
+
+const combinedFields = [
+  "name",
   "colors",
   "produced_mana",
 ]
@@ -81,6 +87,15 @@ function adjustFaces(card) {
       }
     }
   }
+
+  // Put combined fields into the root
+  for (const field of combinedFields) {
+    card[field] = card.card_faces.map(face => face[field]).join(' // ')
+  }
+
+  if (!card.name) {
+    console.log(card)
+  }
 }
 
 function cleanImageUris(card) {
@@ -108,7 +123,7 @@ function cleanScryfallCards(cards) {
   }
 }
 
-function filterVersions(cards) {
+function prefilterVersions(cards) {
   for (let i = cards.length - 1; i >= 0; i--) {
     const card = cards[i]
 
@@ -138,6 +153,24 @@ function filterVersions(cards) {
       delete card.digital
       delete card.textless
       delete card.full_art
+    }
+  }
+}
+
+function postfilterVersions(cards) {
+  for (let i = cards.length - 1; i >= 0; i--) {
+    const card = cards[i]
+
+    for (const face of card.card_faces) {
+      if (!face.type_line) {
+        cards.splice(i, 1)
+        break
+      }
+
+      if (face.type_line.includes('Card')) {
+        cards.splice(i, 1)
+        break
+      }
     }
   }
 }
@@ -181,24 +214,41 @@ async function fetchScryfallDefaultDataUri() {
 }
 
 async function fetchFromScryfallAndClean() {
-  /* console.log('Fetching latest scryfall data')
+  console.log('Fetching latest scryfall data')
 
-   * const downloadUri = await fetchScryfallDefaultDataUri()
+  const downloadUri = await fetchScryfallDefaultDataUri()
+  const cachedFilename = 'cached/' + downloadUri.split('/').slice(-1)[0]
+  const outputFilename = 'card_data/' + downloadUri.split('/').slice(-1)[0]
 
-   * console.log('...downloading card data from ' + downloadUri)
-   * const cards = await fetchScryfallDefaultCards(downloadUri)
-   */
-  const downloadUri = 'default-cards-20221116100556.json'
-  const cardData = fs.readFileSync('local_scryfall.json')
-  const cards = JSON.parse(cardData)
+  let cards
 
-  console.log('...filtering')
-  filterVersions(cards)
+  if (fs.existsSync(cachedFilename)) {
+    console.log('...loading card data from disk')
+    const cardData = fs.readFileSync(cachedFilename)
+    cards = JSON.parse(cardData)
+  }
+  else {
+    console.log('...downloading card data from ' + downloadUri)
+    cards = await fetchScryfallDefaultCards(downloadUri)
+
+    console.log('...writing raw data to disk: ' + cachedFilename)
+    if (!fs.existsSync('cached')){
+      fs.mkdirSync('cached')
+    }
+    fs.writeFileSync(cachedFilename, JSON.stringify(cards))
+  }
+
+  console.log('...pre-filtering')
+  prefilterVersions(cards)
 
   console.log('...cleaning')
   cleanScryfallCards(cards)
 
-  const outputFilename = 'card_data/' + downloadUri.split('/').slice(-1)[0]
+  console.log('...post-filtering')
+  postfilterVersions(cards)
+
+  const count = Object.keys(cards).length
+  console.log(`...${count} cards after cleaning`)
 
   console.log('...writing data to ' + outputFilename)
   fs.writeFileSync(outputFilename, JSON.stringify(cards, null, 2))

@@ -26,21 +26,12 @@ export default {
 
   computed: {
     displayName() {
-      if (this.card.card_faces) {
-        return this.card.card_faces[0].name
-      }
-      else {
-        return this.card.name
-      }
+      console.log(this.card)
+      return this.card.name
     },
 
     manaCost() {
-      if (this.card.card_faces) {
-        return this.card.card_faces[0].mana_cost
-      }
-      else {
-        return this.card.mana_cost
-      }
+      return this.card.card_faces[0].mana_cost
     },
   },
 

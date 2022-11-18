@@ -45,6 +45,7 @@ export default {
       this.status = result.data.status
       this.message = result.data.message
       console.log(result)
+      console.log(result.data)
     },
   },
 }

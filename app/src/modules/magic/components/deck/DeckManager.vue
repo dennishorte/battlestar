@@ -23,7 +23,10 @@
     <CardManagerModal />
   </div>
 
-  <div v-else class="alert alert-warning">Loading card data</div>
+  <div v-else class="alert alert-warning">
+    Loading card data
+    <button class="btn btn-sm btn-info float-end" @click="updateLocalCards">update local database</button>
+  </div>
 </template>
 
 

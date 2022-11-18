@@ -14,15 +14,19 @@ CardUtil.sortTypes = [
 ]
 
 CardUtil.allCardNames = function(card) {
-  const names = [card.name.toLowerCase()]
+  if (!card.name) {
+    console.log(card)
+  }
+
+  const names = [card.name]
 
   if (card.card_faces) {
     for (const face of card.card_faces) {
-      names.push(face.name.toLowerCase())
+      names.push(face.name)
     }
   }
 
-  return names
+  return names.map(name => name.toLowerCase())
 }
 
 CardUtil.blankFace = function() {

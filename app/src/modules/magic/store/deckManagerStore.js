@@ -134,13 +134,14 @@ export default {
         existing.count += 1
       }
       else {
-        zone.push({
+        const value = {
           card,
           name: card.name,
           count: 1,
           setCode: card.set,
           collectorNumber: card.collector_number,
-        })
+        }
+        zone.push(value)
       }
 
       state.activeDeck.setBreakdown(breakdown)
@@ -322,7 +323,7 @@ export default {
 
     selectDeckByPath({ dispatch, state }, { path, name }) {
       const tokens = deckUtil.pathTokens(path)
-      let node = this.decks
+      let node = state.decks[0]
       for (const token of tokens) {
         node = node.folders.find(f => f.name === token)
       }
@@ -370,11 +371,8 @@ export default {
     },
 
     async loadCardDatabaseSuccess({ commit, dispatch, state }, cards) {
-      const cleanedCards = cards
-        .filter(card => Boolean(card.type_line) && !card.type_line.startsWith('Card'))
-
-      commit('setDatabase', cleanedCards)
-      commit('setLookup', createCardLookup(cleanedCards))
+      commit('setDatabase', cards)
+      commit('setLookup', createCardLookup(cards))
       await dispatch('applyCardFilters')
 
       commit('setCardsLoaded', true)
