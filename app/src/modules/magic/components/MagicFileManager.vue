@@ -60,7 +60,7 @@ export default {
     },
 
     deleteFile(data) {
-      console.log('delete', data)
+      this.$store.dispatch('magic/deleteFile', data)
     },
 
     duplicateFile(data) {

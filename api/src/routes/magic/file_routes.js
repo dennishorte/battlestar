@@ -3,8 +3,14 @@ const db = require('../../models/db.js')
 const File = {}
 
 
+File.delete = async function(req, res) {
+  await db.magic[req.body.kind].delete(req.body.fileId)
+  res.json({
+    status: 'success',
+  })
+}
+
 File.update = async function(req, res) {
-  console.log(0)
   const file = req.body.file
 
   if (!file._id) {

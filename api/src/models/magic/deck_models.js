@@ -28,6 +28,11 @@ Deck.create = async function({ userId, name, path, decklist }) {
 }
 
 
+Deck.delete = async function(id) {
+  return await deckCollection.deleteOne({ _id: id })
+}
+
+
 Deck.findById = async function(id) {
   return await deckCollection.findOne({ _id: id })
 }

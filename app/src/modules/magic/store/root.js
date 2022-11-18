@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { util } from 'battlestar-common'
 
 
 export default {
@@ -11,6 +12,10 @@ export default {
   },
 
   mutations: {
+    removeFile(state, file) {
+      util.array.remove(state.filelist, file)
+    },
+
     setFiles(state, filelist) {
       state.filelist = filelist
     },
@@ -23,6 +28,20 @@ export default {
   },
 
   actions: {
+    async deleteFile({ commit }, data) {
+      const requestResult = await axios.post('/api/magic/file/delete', {
+        fileId: data.file._id,
+        kind: data.file.kind
+      })
+
+      if (requestResult.data.status === 'success') {
+        commit('removeFile', data.file)
+      }
+      else {
+        alert(requestResult.message)
+      }
+    },
+
     async loadFiles({ commit, rootGetters }) {
       const requestResult = await axios.post('/api/user/magic/files', {
         userId: rootGetters['auth/userId'],

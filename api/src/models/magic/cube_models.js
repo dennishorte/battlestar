@@ -30,6 +30,11 @@ Cube.create = async function({ userId, name, path }) {
 }
 
 
+Cube.delete = async function(id) {
+  return await cubeCollection.deleteOne({ _id: id })
+}
+
+
 Cube.findById = async function(id) {
   return await cubeCollection.findOne({ _id: id })
 }
