@@ -28,6 +28,19 @@ export default {
   },
 
   actions: {
+    async createFile({ dispatch, rootGetters }, data) {
+      data.userId = rootGetters['auth/userId']
+      const requestResult = await axios.post('/api/magic/file/create', data)
+
+      if (requestResult.data.status === 'success') {
+        console.log(requestResult.data)
+        await dispatch('loadFiles')
+      }
+      else {
+        alert(requestResult.message)
+      }
+    },
+
     async deleteFile({ commit }, data) {
       const requestResult = await axios.post('/api/magic/file/delete', {
         fileId: data.file._id,
@@ -36,6 +49,20 @@ export default {
 
       if (requestResult.data.status === 'success') {
         commit('removeFile', data.file)
+      }
+      else {
+        alert(requestResult.message)
+      }
+    },
+
+    async duplicateFile({ dispatch }, data) {
+      const requestResult = await axios.post('/api/magic/file/duplicate', {
+        fileId: data.file._id,
+        kind: data.file.kind
+      })
+
+      if (requestResult.data.status === 'success') {
+        await dispatch('loadFiles')
       }
       else {
         alert(requestResult.message)

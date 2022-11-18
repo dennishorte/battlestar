@@ -2,21 +2,23 @@ const databaseClient = require('../../util/mongo.js').client
 const database = databaseClient.db('magic')
 const cubeCollection = database.collection('cube')
 
+const escapeStringRegexp = require('escape-string-regexp-node')
+const { util } = require('battlestar-common')
 
 const Cube = {}
 module.exports = Cube
 
 
-Cube.create = async function({ userId, name, path }) {
+Cube.create = async function({ userId, name, path, cardlist }) {
   const creationDate = Date.now()
-  const cubeName = await getUniqueDecName(userId, name, path)
+  const cubeName = await getUniqueCubeName(userId, name, path)
 
   const insertResult = await cubeCollection.insertOne({
     userId,
     name: cubeName,
     path: path || '/',
     kind: 'cube',
-    cardlist: '',
+    cardlist: cardlist || '',
     public: false,
     createdTimestamp: creationDate,
     updatedTimestamp: creationDate,
@@ -34,6 +36,10 @@ Cube.delete = async function(id) {
   return await cubeCollection.deleteOne({ _id: id })
 }
 
+Cube.duplicate = async function(id) {
+  const cube = await this.findById(id)
+  return this.create(cube)
+}
 
 Cube.findById = async function(id) {
   return await cubeCollection.findOne({ _id: id })
@@ -58,10 +64,10 @@ Cube.rename = async function(cubeId, name) {
 }
 
 
-async function getUniqueDecName(userId, name, path) {
+async function getUniqueCubeName(userId, name, path) {
   const cursor = await cubeCollection.find({
     userId,
-    name: new RegExp(name + '.*'),
+    name: new RegExp(escapeStringRegexp(name) + '.*'),
     path,
   })
   const cubes = await cursor.toArray()

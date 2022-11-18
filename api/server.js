@@ -38,7 +38,9 @@ app.post('/api/magic/deck/create', routes.magic.deck.create)
 app.post('/api/magic/deck/save', routes.magic.deck.save)
 
 // File routes
+app.post('/api/magic/file/create', routes.magic.file.create)
 app.post('/api/magic/file/delete', routes.magic.file.delete)
+app.post('/api/magic/file/duplicate', routes.magic.file.duplicate)
 app.post('/api/magic/file/update', routes.magic.file.update)
 
 // Scryfall Routes

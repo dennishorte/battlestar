@@ -43,20 +43,8 @@ export default {
   },
 
   methods: {
-    async createFile(data) {
-      if (data.kind === 'cube') {
-        const requestResult = await axios.post('/api/magic/cube/create', data)
-
-        if (requestResult.data.status === 'success') {
-          const cubeId = requestResult.data.cube._id
-          this.$router.push(`/magic/cube/${cubeId}`)
-        }
-        else {
-          alert(requestResult.data.message)
-        }
-      }
-
-      console.log('create', data)
+    createFile(data) {
+      this.$store.dispatch('magic/createFile', data)
     },
 
     deleteFile(data) {
@@ -64,7 +52,7 @@ export default {
     },
 
     duplicateFile(data) {
-      console.log('duplicate', data)
+      this.$store.dispatch('magic/duplicateFile', data)
     },
 
     openFile(data) {

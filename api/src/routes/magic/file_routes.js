@@ -2,9 +2,25 @@ const db = require('../../models/db.js')
 
 const File = {}
 
+File.create = async function(req, res) {
+  const fileId = await db.magic[req.body.kind].create(req.body)
+  res.json({
+    status: 'success',
+    fileId,
+  })
+}
 
 File.delete = async function(req, res) {
   await db.magic[req.body.kind].delete(req.body.fileId)
+  res.json({
+    status: 'success',
+  })
+}
+
+File.duplicate = async function(req, res) {
+  console.log('duplicate', req.body)
+  await db.magic[req.body.kind].duplicate(req.body.fileId)
+  console.log('duplicate', 1)
   res.json({
     status: 'success',
   })

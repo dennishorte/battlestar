@@ -2,6 +2,8 @@ const databaseClient = require('../../util/mongo.js').client
 const database = databaseClient.db('magic')
 const deckCollection = database.collection('deck')
 
+const escapeStringRegexp = require('escape-string-regexp-node')
+const { util } = require('battlestar-common')
 
 const Deck = {}
 module.exports = Deck
@@ -9,7 +11,7 @@ module.exports = Deck
 
 Deck.create = async function({ userId, name, path, decklist }) {
   const creationDate = Date.now()
-  const deckName = await getUniqueDecName(userId, name, path)
+  const deckName = await getUniqueDeckName(userId, name, path)
 
   const insertResult = await deckCollection.insertOne({
     userId,
@@ -32,6 +34,10 @@ Deck.delete = async function(id) {
   return await deckCollection.deleteOne({ _id: id })
 }
 
+Deck.duplicate = async function(id) {
+  const deck = await this.findById(id)
+  return this.create(deck)
+}
 
 Deck.findById = async function(id) {
   return await deckCollection.findOne({ _id: id })
@@ -53,10 +59,10 @@ Deck.rename = async function(deckId, name) {
 }
 
 
-async function getUniqueDecName(userId, name, path) {
+async function getUniqueDeckName(userId, name, path) {
   const cursor = await deckCollection.find({
     userId,
-    name: new RegExp(name + '.*'),
+    name: new RegExp(escapeStringRegexp(name) + '.*'),
     path,
   })
   const decks = await cursor.toArray()
