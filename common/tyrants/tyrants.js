@@ -143,7 +143,7 @@ Tyrants.prototype.initializePlayerZones = function() {
     _addPlayerZone(player, 'discard', 'public', root)
     _addPlayerZone(player, 'trophyHall', 'public', root)
     _addPlayerZone(player, 'hand', 'private', root)
-    _addPlayerZone(player, 'innerCircle', 'private', root)
+    _addPlayerZone(player, 'innerCircle', 'public', root)
 
     _addPlayerZone(player, 'troops', 'tokens', root)
     _addPlayerZone(player, 'spies', 'tokens', root)

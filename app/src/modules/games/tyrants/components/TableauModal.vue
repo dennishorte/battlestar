@@ -37,6 +37,11 @@
           <div class="title">All Cards in Deck</div>
           <GameCard v-for="card in allCards" :key="card.id" :card="card" />
         </div>
+
+        <div class="inner-circle">
+          <div class="title">Inner Circle</div>
+          <GameCard v-for="card in innerCircleCards" :key="card.id" :card="card" />
+        </div>
       </div>
 
     </div>
@@ -68,6 +73,15 @@ export default {
           ...this.game.getCardsByZone(this.player, 'played'),
           ...this.game.getCardsByZone(this.player, 'discard'),
         ].sort((l, r) => l.name.localeCompare(r.name))
+      }
+      else {
+        return []
+      }
+    },
+
+    innerCircleCards() {
+      if (this.player) {
+        return this.game.getCardsByZone(this.player, 'innerCircle')
       }
       else {
         return []
