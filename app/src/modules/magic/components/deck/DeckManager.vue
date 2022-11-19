@@ -9,13 +9,13 @@
           :filelist="deckfiles"
           @selection-changed="selectionChanged"
         />
-        <CardFilters />
+        <CardFilters :cardlist="cardlist" v-model="filteredCards" />
       </div>
 
       <div class="col column cards-column">
         <button class="btn btn-sm btn-info" @click="updateLocalCards">update local database</button>
 
-        <CardList />
+        <CardList :cardlist="filteredCards" />
       </div>
 
       <div class="col column">
@@ -63,11 +63,13 @@ export default {
   data() {
     return {
       actor: this.$store.getters['auth/user'],
+      filteredCards: []
     }
   },
 
   computed: {
     ...mapState('magic/cards', {
+      cardlist: 'cardlist',
       cardsLoaded: state => !state.loading,
     }),
 

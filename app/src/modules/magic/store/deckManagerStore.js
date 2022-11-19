@@ -10,9 +10,6 @@ export default {
   namespaced: true,
 
   state: () => ({
-    // Constants
-    colors: ['white', 'blue', 'black', 'red', 'green'],
-
     cardManager: {
       card: null,
       source: null,
@@ -22,35 +19,10 @@ export default {
     activeDeck: null,
     activeFolder: '/',
 
-    cardFilters: [],
     cardlock: false,
   }),
 
   mutations: {
-    ////////////////////
-    // cardFilters
-    addCardFilter(state, filter) {
-      state.cardFilters.push(filter)
-    },
-    setCardFilters(state, array) {
-      state.cardFilters = array
-    },
-    setFilteredCards(state, cards) {
-      state.filteredCards = cards
-    },
-    removeCardFilter(state, filter) {
-      util.array.remove(state.cardFilters, filter)
-    },
-
-    ////////////////////
-    // Card List
-    setSearchedNames(state, value) {
-      state.cardList.searchedNames = value
-    },
-    setSearchPrefix(state, value) {
-      state.cardList.searchPrefix = value
-    },
-
     ////////////////////
     // Decks
     setActiveDeck(state, deck) {
@@ -133,34 +105,6 @@ export default {
   },
 
   actions: {
-
-    ////////////////////
-    // Card Filters
-
-    async applyCardFilters({ commit, dispatch, state, rootState }) {
-      const allCards = rootState.magic.cards.cardlist
-      const filtered = filterCards(cardlist, state.cardFilters)
-      commit('setFilteredCards', filtered)
-      await dispatch('applyCardSearch')
-    },
-    addCardFilter({ commit, state }, filter) {
-      // There is only ever a single color or identity filter
-      if (filter.kind === 'identity' || filter.kind === 'color') {
-        const existing = state.cardFilters.find(f => f.kind === filter.kind)
-        commit('removeCardFilter', existing)
-      }
-
-      commit('addCardFilter', filter)
-    },
-    clearCardFilters({ commit, rootState }) {
-      commit('setCardFilters', [])
-      commit('setFilteredCards', rootState.magic.cards.cardlist)
-    },
-    removeCardFilter({ commit }, filter) {
-      commit('removeCardFilter', filter)
-    },
-
-
     ////////////////////
     // Manage Cards
     addCurrentCard({ commit, state }, zoneName) {
@@ -240,26 +184,6 @@ export default {
       })
     },
 
-
-    ////////////////////
-    // Search
-
-    async applyCardSearch({ commit, state }) {
-      const searchText = state.cardList.searchPrefix.toLowerCase()
-      const cardNames = util.array.distinct(state.filteredCards.map(c => c.name)).sort()
-      const searchedNames = cardNames
-        .filter(name => name.toLowerCase().includes(searchText))
-        .slice(0,1000)
-
-      commit('setSearchedNames', searchedNames)
-    },
-
-    async setSearchPrefix(context, value) {
-      context.commit('setSearchPrefix', value)
-      await context.dispatch('applyCardSearch')
-    },
-
-
     ////////////////////
     // Misc
 
@@ -311,114 +235,6 @@ function createCardLookup(cards) {
   return util.array.collect(cards, cardUtil.allCardNames)
 }
 
-function filterCards(cards, filters) {
-  if (filters.length === 0) {
-    return cards
-  }
-
-  return cards
-    .filter(card => filters.every(filter => applyOneFilter(card, filter)))
-}
-
-const numberFields = ['cmc', 'power', 'toughness', 'loyalty']
-const textFields = ['name', 'text', 'flavor', 'type']
-const fieldMapping = {
-  cmc: 'cmc',
-  name: 'name',
-  text: 'oracle_text',
-  flavor: 'flavor_text',
-  type: 'type_line',
-  power: 'power',
-  toughness: 'toughness',
-  loyalty: 'loyalty',
-  colors: 'colors',
-  identity: 'color_identity',
-}
-const colorNameToSymbol = {
-  white: 'W',
-  blue: 'U',
-  black: 'B',
-  red: 'R',
-  green: 'G',
-}
-
-function applyOneFilter(card, filter) {
-  if (filter.kind === 'legality' && 'legalities' in card) {
-    return card.legalities[filter.value] === 'legal'
-  }
-  else if (filter.kind === 'colors' || filter.kind === 'identity') {
-    const fieldKey = fieldMapping[filter.kind]
-    const fieldValue = fieldKey in card ? card[fieldKey] : []
-    const targetValueMatches = ['white', 'blue', 'black', 'red', 'green']
-      .map(color => filter[color] ? colorNameToSymbol[color] : undefined)
-      .filter(symbol => symbol !== undefined)
-      .map(symbol => fieldValue.includes(symbol))
-
-    if (filter.or) {
-      if (filter.only) {
-        return (
-          targetValueMatches.some(x => x)
-          && fieldValue.length === targetValueMatches.filter(x => x).length
-        )
-      }
-      else {
-        return targetValueMatches.some(x => x)
-      }
-    }
-    else {  // and
-      if (filter.only) {
-        return (
-          targetValueMatches.every(x => x)
-          && fieldValue.length === targetValueMatches.length
-        )
-      }
-      else {
-        return targetValueMatches.every(x => x)
-      }
-    }
-  }
-  else if (textFields.includes(filter.kind)) {
-    const fieldKey = fieldMapping[filter.kind]
-    const fieldValue = fieldKey in card ? card[fieldKey].toLowerCase() : ''
-    const targetValue = filter.value.toLowerCase()
-
-    if (filter.operator === 'and') {
-      return fieldValue.includes(targetValue)
-    }
-    else if (filter.operator === 'not') {
-      return !fieldValue.includes(targetValue)
-    }
-    else {
-      throw new Error(`Unhandled string operator: ${filter.operator}`)
-    }
-  }
-  else if (numberFields.includes(filter.kind)) {
-    const fieldKey = fieldMapping[filter.kind]
-    const fieldValue = fieldKey in card ? parseFloat(card[fieldKey]) : -999
-    const targetValue = parseFloat(filter.value)
-
-    if (fieldValue === -999) {
-      return false
-    }
-    else if (filter.operator === '=') {
-      return fieldValue === targetValue
-    }
-    else if (filter.operator === '>=') {
-      return fieldValue >= targetValue
-    }
-    else if (filter.operator === '<=') {
-      return fieldValue <= targetValue
-    }
-    else {
-      throw new Error(`Unhandled numeric operator: ${filter.operator}`)
-    }
-  }
-  else {
-    throw new Error(`Unhandled filter field: ${filter.kind}`)
-  }
-
-  return false
-}
 
 function findCardInZone(card, zone) {
   return zone.find(data => (

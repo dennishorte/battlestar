@@ -181,8 +181,12 @@
 
 <script>
 import { mapState} from 'vuex'
+import { util } from 'battlestar-common'
+
+import cardUtil from '../../util/cardUtil.js'
 
 import SectionHeader from '@/components/SectionHeader'
+
 
 export default {
   name: 'CardFilters',
@@ -191,11 +195,19 @@ export default {
     SectionHeader,
   },
 
+  props: {
+    cardlist: Array,
+    modelValue: Array,
+  },
+
+  data() {
+    return {
+      colors: ['white', 'blue', 'black', 'red', 'green'],
+      filters: [],
+    }
+  },
+
   computed: {
-    ...mapState('magic/dm', {
-      colors: 'colors',
-      filters: 'cardFilters',
-    }),
   },
 
   methods: {
@@ -216,7 +228,7 @@ export default {
         }
 
         colors.kind = kind
-        this.$store.dispatch('magic/dm/addCardFilter', colors)
+        this.filters.push(colors)
       }
 
       else {
@@ -224,7 +236,7 @@ export default {
         const operatorElem = this.$refs[`${kind}op`]
         const operator = operatorElem ? operatorElem.value : '='
 
-        this.$store.dispatch('magic/dm/addCardFilter', {
+        this.filters.push({
           kind,
           value,
           operator: operator
@@ -235,18 +247,32 @@ export default {
     },
 
     apply() {
-      this.$store.dispatch('magic/dm/applyCardFilters')
+      this.$emit('update:modelValue', filterCards(this.cardlist, this.filters))
     },
 
     clear() {
-      this.$store.dispatch('magic/dm/clearCardFilters')
+      this.filters = []
+      this.$emit('update:modelValue', this.cardlist)
     },
 
     remove(filter) {
-      this.$store.dispatch('magic/dm/removeCardFilter', filter)
+      util.array.remove(this.filters, filter)
     },
   },
+
+  mounted() {
+    this.$emit('update:modelValue', this.cardlist)
+  },
 }
+
+function filterCards(cards, filters) {
+  if (filters.length === 0) {
+    return cards
+  }
+  return cards
+    .filter(card => filters.every(filter => cardUtil.applyOneFilter(card, filter)))
+}
+
 </script>
 
 

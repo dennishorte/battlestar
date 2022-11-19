@@ -21,6 +21,10 @@ import { util } from 'battlestar-common'
 export default {
   name: 'CardList',
 
+  props: {
+    cardlist: Array,
+  },
+
   data() {
     return {
       searchPrefix: '',
@@ -28,20 +32,17 @@ export default {
   },
 
   computed: {
-    ...mapState('magic/cards', {
-      allcards: state => state.cardlist,
-    }),
-
     ...mapState('magic/dm', {
       filteredCards: 'filteredCards',
     }),
 
-    filteredCards() {
-      return this.allcards
-    },
-
     searchedNames() {
-      return util.array.distinct(this.filteredCards.map(c => c.name)).sort().slice(0, 1000)
+      const searchText = this.searchPrefix.toLowerCase()
+      const cardNames = util.array.distinct(this.cardlist.map(c => c.name)).sort()
+      const searchedNames = cardNames
+        .filter(name => name.toLowerCase().includes(searchText))
+        .slice(0,1000)
+      return searchedNames
     },
   },
 
