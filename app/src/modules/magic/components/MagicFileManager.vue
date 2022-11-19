@@ -55,8 +55,17 @@ export default {
       this.$store.dispatch('magic/file/duplicate', data)
     },
 
-    openFile(data) {
-      console.log('open', data)
+    async openFile({ file }) {
+      if (file.kind === 'deck') {
+        await this.$store.dispatch('magic/dm/selectDeck', file)
+        await this.$router.push('/magic/decks')
+      }
+      else if (file.kind === 'cube') {
+        this.$router.push('/magic/cube/' + file._id)
+      }
+      else {
+        alert('Cannot open file of kind: ' + file.kind)
+      }
     },
 
     updateFile(data) {
