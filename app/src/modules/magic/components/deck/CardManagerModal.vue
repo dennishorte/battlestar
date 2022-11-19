@@ -51,13 +51,6 @@
         </div>
       </div>
     </template>
-
-    <template #footer-pre>
-      <div class="btn-group">
-        <button @click="prevCard" class="btn btn-outline-info">prev</button>
-        <button @click="nextCard" class="btn btn-outline-info">next</button>
-      </div>
-    </template>
   </Modal>
 </template>
 
@@ -126,16 +119,8 @@ export default {
         .reduce((acc, datum) => datum.count + acc, 0)
     },
 
-    nextCard() {
-      this.$store.dispatch('magic/dm/manageNextCardInIndex')
-    },
-
     nextVersion() {
       this.versionIndex = (this.versionIndex + 1) % this.versions.length
-    },
-
-    prevCard() {
-      this.$store.dispatch('magic/dm/managePrevCardInIndex')
     },
 
     prevVersion() {

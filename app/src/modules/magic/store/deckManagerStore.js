@@ -146,42 +146,6 @@ export default {
       commit('setManagedCardSource', null)
     },
 
-    manageNextCardInIndex({ dispatch, state, rootState }) {
-      if (state.cardManager.source === 'CardList') {
-        const names = state.cardList.searchedNames
-        const index = names.findIndex(name => name === state.cardManager.card.name)
-        const nextIndex = (index + 1) % names.length
-        const nextName = names[nextIndex].toLowerCase()
-
-        const lookup = rootState.magic.cards.lookup
-        const nextCard = lookup[nextName][0]
-        dispatch('manageCard', {
-          card: nextCard,
-          source: null
-        })
-      }
-      else if (state.cardManager.source === 'DeckList') {
-        console.log('hello')
-      }
-      else {
-        throw new Error('Unhandled card manager source: ' + state.cardManager.source)
-      }
-    },
-
-    managePrevCardInIndex({ dispatch, state, rootState }) {
-      const names = state.cardList.searchedNames
-      const index = names.findIndex(name => name === state.cardManager.card.name)
-      const nextIndex = (index - 1 + names.length) % names.length
-      const nextName = names[nextIndex].toLowerCase()
-
-      const lookup = rootState.magic.cards.lookup
-      const nextCard = lookup[nextName][0]
-      dispatch('manageCard', {
-        card: nextCard,
-        source: null
-      })
-    },
-
     ////////////////////
     // Misc
 
