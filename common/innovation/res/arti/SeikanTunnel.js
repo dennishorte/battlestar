@@ -20,12 +20,18 @@ function Card() {
     (game, player) => {
       const zones = game
         .getPlayerAll()
-        .flatMap(player => game.utilColors().map(color => game.getZoneByPlayer(player, color)))
-        .sort((l, r) => r.cards().length - l.cards().length)
+        .flatMap(player => game.utilColors().map(color => {
+          return {
+            player,
+            color,
+            count: game.getVisibleCardsByZone(player, color),
+          }
+        }))
+        .sort((l, r) => r.count - l.count)
 
       if (
-        zones[0].cards().length > zones[1].cards().length
-        && game.getPlayerByZone(zones[0]) === player
+        zones[0].count > zones[1].count
+        && zones[0].player === player
       ) {
         throw new GameOverEvent({
           player,
