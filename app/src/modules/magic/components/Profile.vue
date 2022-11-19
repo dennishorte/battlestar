@@ -3,6 +3,7 @@
     <div class="row">
 
       <div class="col">
+        <MagicMenu />
         <SectionHeader>My Data</SectionHeader>
         <MagicFileManager class="file-manager" />
       </div>
@@ -18,6 +19,7 @@
 
 <script>
 import MagicFileManager from './MagicFileManager'
+import MagicMenu from './MagicMenu'
 import SectionHeader from '@/components/SectionHeader'
 
 export default {
@@ -25,7 +27,8 @@ export default {
 
   components: {
     MagicFileManager,
-    SectionHeader
+    MagicMenu,
+    SectionHeader,
   },
 }
 </script>

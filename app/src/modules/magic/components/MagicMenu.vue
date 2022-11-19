@@ -1,8 +1,9 @@
 <template>
   <Dropdown text="Menu" class="game-menu">
-    <DropdownItem><button @click="home">home</button></DropdownItem>
+    <DropdownRouterLink to="/">game center</DropdownRouterLink>
     <DropdownDivider />
-    <DropdownItem><button @click="decks">decks</button></DropdownItem>
+    <DropdownRouterLink to="/magic/decks">decks</DropdownRouterLink>
+    <DropdownRouterLink to="/magic">profile</DropdownRouterLink>
   </Dropdown>
 
 </template>
@@ -11,7 +12,7 @@
 <script>
 import Dropdown from '@/components/Dropdown'
 import DropdownDivider from '@/components/DropdownDivider'
-import DropdownItem from '@/components/DropdownItem'
+import DropdownRouterLink from '@/components/DropdownRouterLink'
 
 export default {
   name: 'MagicMenu',
@@ -19,19 +20,7 @@ export default {
   components: {
     Dropdown,
     DropdownDivider,
-    DropdownItem,
-  },
-
-  methods: {
-    collections() {
-      this.$router.push('/magic/collections')
-    },
-    decks() {
-      this.$router.push('/magic/decks')
-    },
-    home() {
-      this.$router.push('/')
-    },
+    DropdownRouterLink,
   },
 }
 </script>
