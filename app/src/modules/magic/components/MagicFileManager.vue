@@ -37,22 +37,22 @@ export default {
   },
 
   computed: {
-    ...mapState('magic', {
+    ...mapState('magic/file', {
       filelist: 'filelist',
     })
   },
 
   methods: {
     createFile(data) {
-      this.$store.dispatch('magic/createFile', data)
+      this.$store.dispatch('magic/file/create', data)
     },
 
     deleteFile(data) {
-      this.$store.dispatch('magic/deleteFile', data)
+      this.$store.dispatch('magic/file/delete', data)
     },
 
     duplicateFile(data) {
-      this.$store.dispatch('magic/duplicateFile', data)
+      this.$store.dispatch('magic/file/duplicate', data)
     },
 
     openFile(data) {
@@ -60,12 +60,13 @@ export default {
     },
 
     updateFile(data) {
-      this.$store.dispatch('magic/updateFile', data)
+      this.$store.dispatch('magic/file/update', data)
     },
   },
 
   async mounted() {
-    await this.$store.dispatch('magic/loadFiles')
+    console.log(this.$store)
+    await this.$store.dispatch('magic/file/fetchAll')
     this.loading = false
   },
 }

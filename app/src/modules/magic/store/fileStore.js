@@ -3,6 +3,8 @@ import { util } from 'battlestar-common'
 
 
 export default {
+  namespaced: true,
+
   state: () => ({
     filelist: [],
   }),
@@ -12,7 +14,7 @@ export default {
   },
 
   mutations: {
-    removeFile(state, file) {
+    removeOne(state, file) {
       util.array.remove(state.filelist, file)
     },
 
@@ -20,7 +22,7 @@ export default {
       state.filelist = filelist
     },
 
-    updateFile(state, data) {
+    updateOne(state, data) {
       const file = state.filelist.find(f => f === data.file)
       file.name = data.newName
       file.path = data.newPath
@@ -28,47 +30,47 @@ export default {
   },
 
   actions: {
-    async createFile({ dispatch, rootGetters }, data) {
+    async create({ dispatch, rootGetters }, data) {
       data.userId = rootGetters['auth/userId']
       const requestResult = await axios.post('/api/magic/file/create', data)
 
       if (requestResult.data.status === 'success') {
-        await dispatch('loadFiles')
+        await dispatch('fetchAll')
       }
       else {
         alert(requestResult.message)
       }
     },
 
-    async deleteFile({ commit }, data) {
+    async delete({ commit }, data) {
       const requestResult = await axios.post('/api/magic/file/delete', {
         fileId: data.file._id,
         kind: data.file.kind
       })
 
       if (requestResult.data.status === 'success') {
-        commit('removeFile', data.file)
+        commit('removeOne', data.file)
       }
       else {
         alert(requestResult.message)
       }
     },
 
-    async duplicateFile({ dispatch }, data) {
+    async duplicate({ dispatch }, data) {
       const requestResult = await axios.post('/api/magic/file/duplicate', {
         fileId: data.file._id,
         kind: data.file.kind
       })
 
       if (requestResult.data.status === 'success') {
-        await dispatch('loadFiles')
+        await dispatch('fetchAll')
       }
       else {
         alert(requestResult.message)
       }
     },
 
-    async loadFiles({ commit, rootGetters }) {
+    async fetchAll({ commit, rootGetters }) {
       const requestResult = await axios.post('/api/user/magic/files', {
         userId: rootGetters['auth/userId'],
       })
@@ -77,7 +79,7 @@ export default {
       }
     },
 
-    async updateFile({ commit }, data) {
+    async update({ commit }, data) {
       // Dispatch the changes to the server
       const updatedFile = { ...data.file }
       updatedFile.name = data.newName
@@ -88,7 +90,7 @@ export default {
 
       // Update the local data to be reflected in the UI
       if (requestResult.data.status === 'success') {
-        commit('updateFile', data)
+        commit('updateOne', data)
       }
       else {
         alert(requestResult.message)

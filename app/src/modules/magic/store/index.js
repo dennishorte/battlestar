@@ -1,11 +1,10 @@
-import deckManagerStore from './deckManagerStore.js'
-import root from './root.js'
+import dm from './deckManagerStore.js'
+import file from './fileStore.js'
 
 export default {
   namespaced: true,
   modules: {
-    dm: deckManagerStore,
+    dm: dm,
+    file: file,
   },
-
-  ...root,
 }
