@@ -1,9 +1,12 @@
 <template>
   <input v-model="searchPrefix" class="form-control" placeholder="search" />
   <div class="card-list">
-    <div v-for="name in searchedNames" :key="name" class="game-card" @click="highlightCard(name)">
-      {{ name }}
-    </div>
+    <CardListItem
+      v-for="card in searchedCards"
+      :card="card"
+      @click="highlightCard(card.name)"
+    />
+
     <div class="alert alert-warning">
       For performance reasons, only 1000 cards are included in this list. Use the filters to reduce the card search space.
     </div>
@@ -17,9 +20,14 @@ import axios from 'axios'
 import { mapState } from 'vuex'
 import { util } from 'battlestar-common'
 
+import CardListItem from './CardListItem'
 
 export default {
   name: 'CardList',
+
+  components: {
+    CardListItem,
+  },
 
   props: {
     cardlist: Array,
@@ -32,6 +40,14 @@ export default {
   },
 
   computed: {
+    ...mapState('magic/cards', {
+      cardLookup: 'lookup',
+    }),
+
+    searchedCards() {
+      return this.searchedNames.map(name => this.cardLookup[name.toLowerCase()][0])
+    },
+
     searchedNames() {
       const searchText = this.searchPrefix.toLowerCase()
       const cardNames = util.array.distinct(this.cardlist.map(c => c.name)).sort()
@@ -64,11 +80,5 @@ export default {
   width: 100%;
   overflow-x: hidden;
   overflow-y: scroll;
-}
-
-.game-card {
-  white-space: nowrap;
-  overflow: hidden;
-  min-height: 1.4em;
 }
 </style>
