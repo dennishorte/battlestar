@@ -67,13 +67,16 @@ export default {
   },
 
   computed: {
-    ...mapState('magic/file', {
-      filelist: 'filelist',
+    ...mapState('magic/cards', {
+      cardsLoaded: state => !state.loading,
     }),
 
     ...mapState('magic/dm', {
       activeDeck: 'activeDeck',
-      cardsLoaded: state => state.cardDatabase.loaded,
+    }),
+
+    ...mapState('magic/file', {
+      filelist: 'filelist',
     }),
 
     deckfiles() {
@@ -94,13 +97,12 @@ export default {
     },
 
     async updateLocalCards() {
-      this.$store.dispatch('magic/dm/updateCardDatabase')
+      this.$store.dispatch('magic/cards/updateCardDatabase')
     },
   },
 
   created() {
-    this.$store.dispatch('magic/dm/loadCardDatabase')
-    this.$store.dispatch('magic/dm/fetchDecks')
+    this.$store.dispatch('magic/cards/ensureLoaded')
   },
 }
 </script>

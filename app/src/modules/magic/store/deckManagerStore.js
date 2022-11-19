@@ -13,19 +13,6 @@ export default {
     // Constants
     colors: ['white', 'blue', 'black', 'red', 'green'],
 
-    // card database
-    cardDatabase: {
-      db: null,
-      loaded: false,
-      cards: [],
-      lookup: {},
-    },
-
-    cardList: {
-      searchedNames: [],
-      searchPrefix: '',
-    },
-
     cardManager: {
       card: null,
       source: null,
@@ -37,16 +24,7 @@ export default {
 
     cardFilters: [],
     cardlock: false,
-    filteredCards: [],
   }),
-
-  getters: {
-    // Decklist Methods
-    //dlCards: decklistCards,
-
-    // Managed Card Methods
-    mcName: state => state.cardManager.card.name,
-  },
 
   mutations: {
     ////////////////////
@@ -65,18 +43,6 @@ export default {
     },
 
     ////////////////////
-    // Card Database
-    setCardsLoaded(state, value) {
-      state.cardDatabase.loaded = value
-    },
-    setDatabase(state, cards) {
-      state.cardDatabase.cards = cards
-    },
-    setLookup(state, lookup) {
-      state.cardDatabase.lookup = lookup
-    },
-
-    ////////////////////
     // Card List
     setSearchedNames(state, value) {
       state.cardList.searchedNames = value
@@ -87,13 +53,8 @@ export default {
 
     ////////////////////
     // Decks
-    setActiveDeck(state, rawDeck) {
-      if (rawDeck) {
-        state.activeDeck = deckUtil.deserialize(rawDeck, state.cardDatabase.lookup)
-      }
-      else {
-        state.activeDeck = null
-      }
+    setActiveDeck(state, deck) {
+      state.activeDeck = deck
     },
     setActiveDecklist(state, cardlist) {
       state.activeDeck.setDecklist(cardlist)
@@ -176,8 +137,9 @@ export default {
     ////////////////////
     // Card Filters
 
-    async applyCardFilters({ commit, dispatch, state }) {
-      const filtered = filterCards(state.cardDatabase.cards, state.cardFilters)
+    async applyCardFilters({ commit, dispatch, state, rootState }) {
+      const allCards = rootState.magic.cards.cardlist
+      const filtered = filterCards(cardlist, state.cardFilters)
       commit('setFilteredCards', filtered)
       await dispatch('applyCardSearch')
     },
@@ -190,9 +152,9 @@ export default {
 
       commit('addCardFilter', filter)
     },
-    clearCardFilters({ commit, state }) {
+    clearCardFilters({ commit, rootState }) {
       commit('setCardFilters', [])
-      commit('setFilteredCards', state.cardDatabase.cards)
+      commit('setFilteredCards', rootState.magic.cards.cardlist)
     },
     removeCardFilter({ commit }, filter) {
       commit('removeCardFilter', filter)
@@ -242,13 +204,15 @@ export default {
       commit('setManagedCardSource', null)
     },
 
-    manageNextCardInIndex({ dispatch, state }) {
+    manageNextCardInIndex({ dispatch, state, rootState }) {
       if (state.cardManager.source === 'CardList') {
         const names = state.cardList.searchedNames
         const index = names.findIndex(name => name === state.cardManager.card.name)
         const nextIndex = (index + 1) % names.length
         const nextName = names[nextIndex].toLowerCase()
-        const nextCard = state.cardDatabase.lookup[nextName][0]
+
+        const lookup = rootState.magic.cards.lookup
+        const nextCard = lookup[nextName][0]
         dispatch('manageCard', {
           card: nextCard,
           source: null
@@ -262,12 +226,14 @@ export default {
       }
     },
 
-    managePrevCardInIndex({ dispatch, state }) {
+    managePrevCardInIndex({ dispatch, state, rootState }) {
       const names = state.cardList.searchedNames
       const index = names.findIndex(name => name === state.cardManager.card.name)
       const nextIndex = (index - 1 + names.length) % names.length
       const nextName = names[nextIndex].toLowerCase()
-      const nextCard = state.cardDatabase.lookup[nextName][0]
+
+      const lookup = rootState.magic.cards.lookup
+      const nextCard = lookup[nextName][0]
       dispatch('manageCard', {
         card: nextCard,
         source: null
@@ -297,7 +263,16 @@ export default {
     ////////////////////
     // Misc
 
-    selectDeck({ commit }, deck) {
+    selectDeck({ commit, rootState }, rawDeck) {
+      let deck
+      if (rawDeck) {
+        const lookup = rootState.magic.cards.lookup
+        deck = deckUtil.deserialize(rawDeck, lookup)
+      }
+      else {
+        deck = null
+      }
+
       commit('setActiveDeck', deck)
       commit('setActiveFolder', null)
     },
@@ -315,44 +290,19 @@ export default {
     ////////////////////////////////////////////////////////////////////////////////
     // Actions that wrap API calls
 
-    async saveActiveDeck({ commit, dispatch, state }) {
-      const requestResult = await axios.post('/api/magic/deck/save', {
-        deck: state.activeDeck.serialize()
-      })
+    /* async saveActiveDeck({ commit, dispatch, state }) {
+     *   const requestResult = await axios.post('/api/magic/deck/save', {
+     *     deck: state.activeDeck.serialize()
+     *   })
 
-      if (requestResult.data.status === 'success') {
-        commit('setModified', false)
-        dispatch('fetchDecks')
-      }
-      else {
-        alert('Error saving changes to deck')
-      }
-    },
-
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // Card Database
-
-    loadCardDatabase({ dispatch }) {
-      loadCardsFromDatabase(
-        cards => dispatch('loadCardDatabaseSuccess', cards),
-        error => { throw new Error(error) }
-      )
-    },
-
-    async loadCardDatabaseSuccess({ commit, dispatch, state }, cards) {
-      commit('setDatabase', cards)
-      commit('setLookup', createCardLookup(cards))
-      await dispatch('applyCardFilters')
-
-      commit('setCardsLoaded', true)
-      console.log('Card database ready')
-    },
-
-    async updateCardDatabase({ commit, dispatch }) {
-      commit('setCardsLoaded', false)
-      await updateLocalCards()
-    },
+     *   if (requestResult.data.status === 'success') {
+     *     commit('setModified', false)
+     *     dispatch('fetchDecks')
+     *   }
+     *   else {
+     *     alert('Error saving changes to deck')
+     *   }
+     * }, */
   },
 }
 
@@ -479,109 +429,4 @@ function findCardInZone(card, zone) {
       && data.collectorNumber === card.collector_number
     )
   ))
-}
-
-async function loadCardsFromDatabase(successFunc, errorFunc) {
-  console.log('loadCardsFromDatabase')
-
-  openLocalStorage(
-    // Success func
-    db => {
-      const objectStore = db.transaction('cards').objectStore('cards')
-      const cursor = objectStore.openCursor()
-
-      let cards = []
-
-      cursor.addEventListener('success', (e) => {
-        const cursor = e.target.result
-
-        if (cursor) {
-          console.log('Cursor iteration')
-          cards = cursor.value.json_data
-          cursor.continue()
-        }
-        else {
-          console.log('all values loaded', cards.length)
-          db.close()
-          successFunc(cards)
-        }
-      })
-    },
-
-    // Error func (not implemented)
-  )
-}
-
-async function openLocalStorage(successFunc, errorFunc) {
-  const openRequest = window.indexedDB.open('cards', 1)
-
-  openRequest.addEventListener('error', () => {
-    errorFunc('Unable to open database')
-  })
-
-  openRequest.addEventListener('success', () => {
-    console.log('Database opened successfully')
-    successFunc(openRequest.result)
-  })
-
-  openRequest.addEventListener('upgradeneeded', (e) => {
-    const db = e.target.result
-
-    console.log(`Upgrading database to version ${db.version}`)
-
-    // Create an objectStore in our database to store notes and an auto-incrementing key
-    // An objectStore is similar to a 'table' in a relational database
-    const objectStore = db.createObjectStore('cards', {
-      keyPath: 'id',
-      autoIncrement: true,
-    })
-
-    // Define what data items the objectStore will contain
-    objectStore.createIndex('json_data', 'json_data', { unique: false })
-
-    console.log('Database setup complete')
-  })
-}
-
-async function saveCardsToDatabase(cards) {
-  const newItem = { json_data: cards }
-
-  openLocalStorage(
-    db => {
-      const transaction = db.transaction(['cards'], 'readwrite')
-      const objectStore = transaction.objectStore('cards')
-      const addRequest = objectStore.add(newItem)
-
-      // What is the difference between success and complete?
-      addRequest.addEventListener('success', () => {})
-
-      transaction.addEventListener('complete', () => {
-        console.log('Transaction completed: database modification finished.')
-        alert('Reload page to see changes')
-      })
-    },
-    error => { throw new Error(error) }
-  )
-}
-
-async function getLatestCardDataFromServer(successFunc, errorFunc) {
-  console.log('fetching card data')
-  const requestResult = await axios.post('/api/magic/card/all')
-  console.log('card data fetched')
-
-  if (requestResult.data.status === 'success') {
-    successFunc(requestResult.data.cards)
-  }
-  else {
-    errorFunc('Error fetching card data from server. ' + requestResult.data.message)
-  }
-}
-
-// This fetches the latest card data from the database and stores it locally
-// in an IndexedDB.
-async function updateLocalCards() {
-  getLatestCardDataFromServer(
-    cards => { saveCardsToDatabase(cards) },
-    error => { throw new Error(error) },
-  )
 }

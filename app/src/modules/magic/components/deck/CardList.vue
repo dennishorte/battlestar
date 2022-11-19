@@ -21,21 +21,27 @@ import { util } from 'battlestar-common'
 export default {
   name: 'CardList',
 
+  data() {
+    return {
+      searchPrefix: '',
+    }
+  },
+
   computed: {
-    ...mapState('magic/dm', {
-      allcards: state => state.cardDatabase.cards,
-      filteredCards: 'filteredCards',
-      searchedNames: state => state.cardList.searchedNames,
+    ...mapState('magic/cards', {
+      allcards: state => state.cardlist,
     }),
 
-    searchPrefix: {
-      get() {
-        return this.$store.state.magic.dm.cardList.searchPrefix
-      },
+    ...mapState('magic/dm', {
+      filteredCards: 'filteredCards',
+    }),
 
-      set(value) {
-        this.$store.dispatch('magic/dm/setSearchPrefix', value)
-      },
+    filteredCards() {
+      return this.allcards
+    },
+
+    searchedNames() {
+      return util.array.distinct(this.filteredCards.map(c => c.name)).sort().slice(0, 1000)
     },
   },
 

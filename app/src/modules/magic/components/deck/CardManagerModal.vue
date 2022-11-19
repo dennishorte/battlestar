@@ -1,7 +1,7 @@
 <template>
   <Modal id="card-manager-modal">
     <template #header v-if="card">
-      {{ name }}
+      {{ card.name }}
     </template>
 
     <template v-if="card">
@@ -99,10 +99,6 @@ export default {
       filteredCards: 'filteredCards',
       card: state => state.cardManager.card,
       source: state => state.cardManager.source,
-    }),
-
-    ...mapGetters('magic/dm', {
-      name: 'mcName',
     }),
 
     mainCount() { return this.count('main') },
