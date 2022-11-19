@@ -1,36 +1,38 @@
 <template>
-  <div v-if="cardsLoaded" class="container-fluid deck-manager">
-    <div class="row flex-nowrap">
+  <MagicWrapper>
+    <div v-if="cardsLoaded" class="container-fluid deck-manager">
+      <div class="row flex-nowrap">
 
-      <div class="col column filters-column">
-        <MagicMenu />
-        <MagicFileManager
-          class="deck-selector"
-          :filelist="deckfiles"
-          @selection-changed="selectionChanged"
-        />
-        <CardFilters :cardlist="cardlist" v-model="filteredCards" />
+        <div class="col column filters-column">
+          <MagicMenu />
+          <MagicFileManager
+            class="deck-selector"
+            :filelist="deckfiles"
+            @selection-changed="selectionChanged"
+          />
+          <CardFilters :cardlist="cardlist" v-model="filteredCards" />
+        </div>
+
+        <div class="col column cards-column">
+          <button class="btn btn-sm btn-info" @click="updateLocalCards">update local database</button>
+
+          <CardList :cardlist="filteredCards" />
+        </div>
+
+        <div class="col column">
+          <Decklist v-if="activeDeck" />
+        </div>
+
       </div>
 
-      <div class="col column cards-column">
-        <button class="btn btn-sm btn-info" @click="updateLocalCards">update local database</button>
-
-        <CardList :cardlist="filteredCards" />
-      </div>
-
-      <div class="col column">
-        <Decklist v-if="activeDeck" />
-      </div>
-
+      <CardManagerModal />
     </div>
 
-    <CardManagerModal />
-  </div>
-
-  <div v-else class="alert alert-warning">
-    Loading card data
-    <button class="btn btn-sm btn-info float-end" @click="updateLocalCards">update local database</button>
-  </div>
+    <div v-else class="alert alert-warning">
+      Loading card data
+      <button class="btn btn-sm btn-info float-end" @click="updateLocalCards">update local database</button>
+    </div>
+  </MagicWrapper>
 </template>
 
 
@@ -47,6 +49,7 @@ import CardManagerModal from './CardManagerModal'
 import Decklist from './Decklist'
 import MagicFileManager from '../MagicFileManager'
 import MagicMenu from '../MagicMenu'
+import MagicWrapper from '../MagicWrapper'
 
 export default {
   name: 'DeckManager',
@@ -58,6 +61,7 @@ export default {
     Decklist,
     MagicFileManager,
     MagicMenu,
+    MagicWrapper,
   },
 
   data() {
@@ -101,10 +105,6 @@ export default {
     async updateLocalCards() {
       this.$store.dispatch('magic/cards/updateCardDatabase')
     },
-  },
-
-  created() {
-    this.$store.dispatch('magic/cards/ensureLoaded')
   },
 }
 </script>
