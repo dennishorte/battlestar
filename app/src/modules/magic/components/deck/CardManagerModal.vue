@@ -7,11 +7,6 @@
     <template v-if="card">
       <div class="wrapper">
         <div class="left-side">
-          <div class="card-lock" @click="toggleCardLock">
-            <i v-if="cardlock" class="bi-lock-fill"></i>
-            <i v-else class="bi-unlock-fill"></i>
-          </div>
-
           <CardManagerButtonGroup
             name="main"
             variant="primary"
@@ -95,8 +90,6 @@ export default {
   computed: {
     ...mapState('magic/dm', {
       activeDeck: 'activeDeck',
-      cardlock: 'cardlock',
-      filteredCards: 'filteredCards',
       card: state => state.cardManager.card,
       source: state => state.cardManager.source,
     }),
@@ -110,10 +103,11 @@ export default {
     },
 
     versions() {
-      return this
-        .filteredCards
-        .filter(c => c.name === this.card.name)
-        .sort((l, r) => l === this.card ? -1 : 0)
+      return [this.card]
+      /* return this
+       *   .filteredCards
+       *   .filter(c => c.name === this.card.name)
+       *   .sort((l, r) => l === this.card ? -1 : 0) */
     },
   },
 
@@ -155,10 +149,6 @@ export default {
 
     setVersionIndex(index) {
       this.versionIndex = index
-    },
-
-    toggleCardLock() {
-      this.$store.dispatch('magic/dm/toggleCardLock')
     },
   },
 

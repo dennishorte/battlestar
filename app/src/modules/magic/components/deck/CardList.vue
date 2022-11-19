@@ -32,10 +32,6 @@ export default {
   },
 
   computed: {
-    ...mapState('magic/dm', {
-      filteredCards: 'filteredCards',
-    }),
-
     searchedNames() {
       const searchText = this.searchPrefix.toLowerCase()
       const cardNames = util.array.distinct(this.cardlist.map(c => c.name)).sort()
@@ -48,7 +44,7 @@ export default {
 
   methods: {
     highlightCard(name) {
-      const card = this.filteredCards.find(c => c.name === name)
+      const card = this.cardlist.find(c => c.name === name)
       this.$store.dispatch('magic/dm/manageCard', {
         card,
         source: 'CardList',

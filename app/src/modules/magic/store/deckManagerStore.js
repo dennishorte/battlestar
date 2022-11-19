@@ -18,8 +18,6 @@ export default {
     // State
     activeDeck: null,
     activeFolder: '/',
-
-    cardlock: false,
   }),
 
   mutations: {
