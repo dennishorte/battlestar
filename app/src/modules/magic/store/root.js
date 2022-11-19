@@ -33,7 +33,6 @@ export default {
       const requestResult = await axios.post('/api/magic/file/create', data)
 
       if (requestResult.data.status === 'success') {
-        console.log(requestResult.data)
         await dispatch('loadFiles')
       }
       else {

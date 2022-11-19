@@ -2,82 +2,15 @@ const databaseClient = require('../../util/mongo.js').client
 const database = databaseClient.db('magic')
 const cubeCollection = database.collection('cube')
 
-const escapeStringRegexp = require('escape-string-regexp-node')
-const { util } = require('battlestar-common')
+const fileCommon = require('./file_common.js')
 
-const Cube = {}
+
+const Cube = {
+  ...fileCommon({
+    collection: cubeCollection,
+    createFields: () => ({
+      cardlist: '',
+    })
+  })
+}
 module.exports = Cube
-
-
-Cube.create = async function({ userId, name, path, cardlist }) {
-  const creationDate = Date.now()
-  const cubeName = await getUniqueCubeName(userId, name, path)
-
-  const insertResult = await cubeCollection.insertOne({
-    userId,
-    name: cubeName,
-    path: path || '/',
-    kind: 'cube',
-    cardlist: cardlist || '',
-    public: false,
-    createdTimestamp: creationDate,
-    updatedTimestamp: creationDate,
-  })
-
-  if (!insertResult.insertedId) {
-    throw new Error(`Cube insertion failed for user ${userId} cubename ${name}`)
-  }
-
-  return insertResult.insertedId
-}
-
-
-Cube.delete = async function(id) {
-  return await cubeCollection.deleteOne({ _id: id })
-}
-
-Cube.duplicate = async function(id) {
-  const cube = await this.findById(id)
-  return this.create(cube)
-}
-
-Cube.findById = async function(id) {
-  return await cubeCollection.findOne({ _id: id })
-}
-
-
-Cube.findByUserId = async function(userId) {
-  const cubes = await cubeCollection.find({ userId })
-  return await cubes.toArray()
-}
-
-
-Cube.save = async function(cube) {
-  return await cubeCollection.replaceOne({ _id: cube._id }, cube)
-}
-
-
-Cube.rename = async function(cubeId, name) {
-  const filter = { _id: cubeId }
-  const updater = { $set: { name } }
-  return await cubeCollection.updateOne(filter, updater)
-}
-
-
-async function getUniqueCubeName(userId, name, path) {
-  const cursor = await cubeCollection.find({
-    userId,
-    name: new RegExp(escapeStringRegexp(name) + '.*'),
-    path,
-  })
-  const cubes = await cursor.toArray()
-
-  let testName = name
-  let index = 0
-  while (cubes.find(d => d.name === testName)) {
-    index += 1
-    testName = name + ' (' + index + ')'
-  }
-
-  return testName
-}

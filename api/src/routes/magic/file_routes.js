@@ -18,9 +18,7 @@ File.delete = async function(req, res) {
 }
 
 File.duplicate = async function(req, res) {
-  console.log('duplicate', req.body)
   await db.magic[req.body.kind].duplicate(req.body.fileId)
-  console.log('duplicate', 1)
   res.json({
     status: 'success',
   })

@@ -9,7 +9,7 @@ function Deck(cardLookup) {
   this.path = ''
   this.createdTimestamp = Date.now()
   this.updatedTimestamp = this.createdTimestamp
-  this.decklist = ''
+  this.cardlist = ''
 
   this.cardLookup = cardLookup
   this.breakdown = {
@@ -40,7 +40,7 @@ function deserialize(data, cardLookup) {
   deck.updatedTimestamp = data.updatedTimestamp
 
   deck.cardLookup = cardLookup
-  deck.setDecklist(data.decklist)
+  deck.setCardlist(data.cardlist)
 
   return deck
 }
@@ -52,7 +52,7 @@ Deck.prototype.serialize = function() {
     path: this.path,
     createdTimestamp: this.createdTimestamp,
     updatedTimestamp: this.updatedTimestamp,
-    decklist: this.decklist,
+    cardlist: this.cardlist,
   }
 
   if (this._id) {
@@ -65,12 +65,12 @@ Deck.prototype.serialize = function() {
 Deck.prototype.setBreakdown = function(breakdown) {
   this.breakdown = breakdown
   injectCardData(this.breakdown, this.cardLookup)
-  this.decklist = breakdownToDecklist(breakdown)
+  this.cardlist = breakdownToCardlist(breakdown)
 }
 
-Deck.prototype.setDecklist = function(decklist) {
-  this.decklist = decklist
-  this.breakdown = cardUtil.parseCardlist(decklist)
+Deck.prototype.setCardlist = function(cardlist) {
+  this.cardlist = cardlist
+  this.breakdown = cardUtil.parseCardlist(cardlist)
   console.log(this.breakdown)
   injectCardData(this.breakdown, this.cardLookup)
 }
@@ -85,7 +85,7 @@ const zoneNameLookup = {
   command: 'Command',
 }
 
-function breakdownToDecklist(breakdown) {
+function breakdownToCardlist(breakdown) {
   const lines = []
   const zones = ['main', 'side', 'command']
 
