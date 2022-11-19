@@ -69,8 +69,8 @@ export default {
       }
     },
 
-    selectionChanged({ newValue }) {
-      console.log(newValue)
+    selectionChanged(event) {
+      this.$emit('selection-changed', event)
     },
 
     updateFile(data) {
@@ -79,7 +79,6 @@ export default {
   },
 
   async mounted() {
-    console.log(this.$store)
     await this.$store.dispatch('magic/file/fetchAll')
     this.loading = false
   },

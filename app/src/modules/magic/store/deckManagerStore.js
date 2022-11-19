@@ -37,12 +37,6 @@ export default {
 
     cardFilters: [],
     cardlock: false,
-    decks: {
-      name: 'root',
-      pwd: '/',
-      folders: [],
-      decks: [],
-    },
     filteredCards: [],
   }),
 
@@ -101,15 +95,12 @@ export default {
         state.activeDeck = null
       }
     },
-    setActiveDecklist(state, decklist) {
-      state.activeDeck.setDecklist(decklist)
+    setActiveDecklist(state, cardlist) {
+      state.activeDeck.setDecklist(cardlist)
       state.activeDeck.modified = true
     },
     setActiveFolder(state, path) {
       state.activeFolder = path
-    },
-    setDecks(state, decks) {
-      state.decks = decks
     },
     setModified(state, value) {
       state.activeDeck.modified = Boolean(value)
@@ -306,30 +297,9 @@ export default {
     ////////////////////
     // Misc
 
-    async fetchDecks({ commit, rootGetters }) {
-      const requestResult = await axios.post('/api/user/magic/decks', {
-        userId: rootGetters['auth/userId'],
-      })
-      if (requestResult.data.status === 'success') {
-        const deckHierarchy = deckUtil.buildHierarchy(requestResult.data.decks)
-        commit('setDecks', deckHierarchy)
-      }
-    },
-
     selectDeck({ commit }, deck) {
       commit('setActiveDeck', deck)
       commit('setActiveFolder', null)
-    },
-
-    selectDeckByPath({ dispatch, state }, { path, name }) {
-      const tokens = deckUtil.pathTokens(path)
-      let node = state.decks[0]
-      for (const token of tokens) {
-        node = node.folders.find(f => f.name === token)
-      }
-
-      const deck = node.decks.find(d => d.name === name)
-      dispatch('selectDeck', deck)
     },
 
     selectFolder({ commit }, path) {

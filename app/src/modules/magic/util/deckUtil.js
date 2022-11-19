@@ -71,7 +71,6 @@ Deck.prototype.setBreakdown = function(breakdown) {
 Deck.prototype.setCardlist = function(cardlist) {
   this.cardlist = cardlist
   this.breakdown = cardUtil.parseCardlist(cardlist)
-  console.log(this.breakdown)
   injectCardData(this.breakdown, this.cardLookup)
 }
 

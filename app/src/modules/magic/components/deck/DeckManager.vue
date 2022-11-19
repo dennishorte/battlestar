@@ -4,7 +4,11 @@
 
       <div class="col column filters-column">
         <MagicMenu />
-        <DeckSelector />
+        <MagicFileManager
+          class="deck-selector"
+          :filelist="deckfiles"
+          @selection-changed="selectionChanged"
+        />
         <CardFilters />
       </div>
 
@@ -41,7 +45,7 @@ import CardFilters from './CardFilters'
 import CardList from './CardList'
 import CardManagerModal from './CardManagerModal'
 import Decklist from './Decklist'
-import DeckSelector from './DeckSelector'
+import MagicFileManager from '../MagicFileManager'
 import MagicMenu from '../MagicMenu'
 
 export default {
@@ -52,7 +56,7 @@ export default {
     CardList,
     CardManagerModal,
     Decklist,
-    DeckSelector,
+    MagicFileManager,
     MagicMenu,
   },
 
@@ -63,11 +67,18 @@ export default {
   },
 
   computed: {
+    ...mapState('magic/file', {
+      filelist: 'filelist',
+    }),
+
     ...mapState('magic/dm', {
       activeDeck: 'activeDeck',
       cardsLoaded: state => state.cardDatabase.loaded,
-      decks: 'decks',
-    })
+    }),
+
+    deckfiles() {
+      return this.filelist.filter(file => file.kind === 'deck')
+    },
   },
 
   methods: {
@@ -76,20 +87,9 @@ export default {
       this.$modal('card-manager-modal').show()
     },
 
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // Deck Fetching Methods
-
-    async fetchAllDecks() {
-      const requestResult = await axios.post('/api/user/magic/decks', {
-        userId: this.actor._id,
-      })
-
-      if (requestResult.data.status === 'success') {
-        this.decks = requestResult.data.decks
-      }
-      else {
-        alert('Error loading game data')
+    selectionChanged(event) {
+      if (event.newValue.objectType === 'file') {
+        this.$store.dispatch('magic/dm/selectDeck', event.newValue.file)
       }
     },
 
@@ -111,6 +111,13 @@ export default {
   max-height: 100vh;
   overflow-x: scroll;
   overflow-y: hidden;
+}
+
+.deck-selector {
+  border: 1px solid darkgray;
+  background-color: var(--bs-light);
+  border-radius: .25em;
+  margin-top: .25em;
 }
 
 .column {
