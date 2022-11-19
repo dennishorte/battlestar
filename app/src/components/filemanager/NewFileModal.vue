@@ -75,7 +75,6 @@ export default {
       const kind = newValue.folder ? 'folder' : 'file'
       const content = newValue.folder ? newValue.folder : newValue.file
 
-      console.log(content)
       if (content) {
         this.newKind = content.kind || ''
         this.newName = kind === 'file' ? content.name : ''

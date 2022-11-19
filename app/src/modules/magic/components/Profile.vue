@@ -5,7 +5,7 @@
       <div class="col">
         <MagicMenu />
         <SectionHeader>My Data</SectionHeader>
-        <MagicFileManager class="file-manager" />
+        <MagicFileManager class="file-manager" :filelist="filelist" />
       </div>
 
       <div class="col">
@@ -18,6 +18,8 @@
 
 
 <script>
+import { mapState } from 'vuex'
+
 import MagicFileManager from './MagicFileManager'
 import MagicMenu from './MagicMenu'
 import SectionHeader from '@/components/SectionHeader'
@@ -29,6 +31,12 @@ export default {
     MagicFileManager,
     MagicMenu,
     SectionHeader,
+  },
+
+  computed: {
+    ...mapState('magic/file', {
+      filelist: 'filelist',
+    })
   },
 }
 </script>

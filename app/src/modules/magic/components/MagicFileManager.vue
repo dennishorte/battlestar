@@ -10,13 +10,13 @@
     @file-duplicating="duplicateFile"
     @file-opening="openFile"
     @file-updating="updateFile"
+    @selection-changed="selectionChanged"
   />
 </template>
 
 
 <script>
 import axios from 'axios'
-import { mapState } from 'vuex'
 
 import FileManager from '@/components/filemanager/FileManager'
 import Header from '@/components/Header'
@@ -30,16 +30,17 @@ export default {
     Header,
   },
 
+  props: {
+    filelist: {
+      type: Array,
+      default: [],
+    }
+  },
+
   data() {
     return {
       loading: true,
     }
-  },
-
-  computed: {
-    ...mapState('magic/file', {
-      filelist: 'filelist',
-    })
   },
 
   methods: {
@@ -66,6 +67,10 @@ export default {
       else {
         alert('Cannot open file of kind: ' + file.kind)
       }
+    },
+
+    selectionChanged({ newValue }) {
+      console.log(newValue)
     },
 
     updateFile(data) {
