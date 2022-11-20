@@ -1,4 +1,5 @@
 import cardUtil from './cardUtil.js'
+import { util } from 'battlestar-common'
 
 
 function Deck(cardLookup) {
@@ -35,7 +36,7 @@ function deserialize(data) {
 }
 
 Deck.prototype.serialize = function() {
-  const serializedCardlist = [ ...this.cardlist ]
+  const serializedCardlist = util.deepcopy(this.cardlist)
   for (const card of serializedCardlist) {
     delete card.data
   }
