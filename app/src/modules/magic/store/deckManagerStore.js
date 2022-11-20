@@ -12,7 +12,6 @@ export default {
   state: () => ({
     cardManager: {
       card: null,
-      source: null,
     },
 
     // State
@@ -56,10 +55,6 @@ export default {
     setManagedCard(state, card) {
       state.cardManager.card = card
     },
-
-    setManagedCardSource(state, source) {
-      state.cardManager.source = source
-    },
   },
 
   actions: {
@@ -77,15 +72,11 @@ export default {
         zoneName,
       })
     },
-    manageCard({ commit }, { card, source }) {
+    manageCard({ commit }, card) {
       commit('setManagedCard', card)
-      if (source) {
-        commit('setManagedCardSource', source)
-      }
     },
     unmanageCard({ commit }) {
       commit('setManagedCard', null)
-      commit('setManagedCardSource', null)
     },
 
     ////////////////////
