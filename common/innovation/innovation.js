@@ -49,7 +49,7 @@ Innovation.prototype._gameOver = function(event) {
   for (const player of this.getPlayerAll()) {
     try {
       this.state.wouldWinKarma = true
-      this.aKarma(player, 'would-win')
+      this.aKarma(event.data.player, 'would-win')
     }
     catch (e) {
       if (e instanceof GameOverEvent) {

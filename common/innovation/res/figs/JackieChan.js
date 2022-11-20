@@ -25,8 +25,11 @@ function Card() {
     {
       trigger: 'would-win',
       triggerAll: true,
-      matches: (game, player) => {
-        return player === game.getPlayerByCard(this)
+      matches: (game, player, { owner }) => {
+        return (
+          player !== game.getPlayerByCard(this)
+          && owner === game.getPlayerByCard(this)
+        )
       },
       func: (game, player, { owner }) => {
         player = owner
