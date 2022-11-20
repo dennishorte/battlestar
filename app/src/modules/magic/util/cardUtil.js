@@ -169,10 +169,22 @@ CardUtil.blank = function() {
 }
 
 CardUtil.equals = function(a, b) {
+  return this.softEquals(a, b)
+}
+
+CardUtil.softEquals = function(a, b) {
   const aName = a.name.split(' // ')[0].toLowerCase()
   const bName = b.name.split(' // ')[0].toLowerCase()
 
   return aName === bName
+}
+
+CardUtil.strictEquals = function(a, b) {
+  return (
+    a.name === b.name
+    && a.set == b.set
+    && a.collector_number === b.collector_number
+  )
 }
 
 CardUtil.getSortType = function(card) {
@@ -358,6 +370,15 @@ CardUtil.manaSymbolsFromString = function(string) {
   }
 
   return symbols
+}
+
+CardUtil.createCardId = function(card, ignoreSet=false) {
+  if (ignoreSet) {
+    return card.name
+  }
+  else {
+    return `${card.name} (${card.set}) ${card.collector_number}`
+  }
 }
 
 CardUtil.parseCardlist = function(cardlist) {

@@ -9,7 +9,7 @@ const Cube = {
   ...fileCommon({
     collection: cubeCollection,
     createFields: () => ({
-      cardlist: '',
+      cardlist: [],
     })
   })
 }

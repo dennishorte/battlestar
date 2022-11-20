@@ -1,25 +1,60 @@
 <template>
-  <div class="card-list-item" @mouseover="mouseover" @mouseleave="mouseleave" @mousemove="mousemove">
-    {{ card.name }}
+  <div
+    class="card-list-item"
+    @mouseover="mouseover"
+    @mouseleave="mouseleave"
+    @mousemove="mousemove"
+  >
+
+    <div class="name">{{ data.name }}</div>
+    <ManaCost v-if="showManaCost" class="mana-cost" :cost="manaCost" />
+
   </div>
 </template>
 
 
 <script>
+import ManaCost from '../ManaCost'
+
+
 export default {
   name: 'CardListItem',
 
+  components: {
+    ManaCost,
+  },
+
   props: {
     card: Object,
+
+    showManaCost: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  computed: {
+    data() {
+      if (this.card.data) {
+        return this.card.data
+      }
+      else {
+        return this.$store.getters['magic/cards/getByIdDict'](this.card)
+      }
+    },
+
+    manaCost() {
+      return this.data.card_faces[0].mana_cost
+    },
   },
 
   methods: {
     mouseover() {
-      this.$store.commit('magic/setMouseoverCard', this.card)
+      this.$store.commit('magic/setMouseoverCard', this.data)
     },
 
     mouseleave() {
-      this.$store.commit('magic/unsetMouseoverCard', this.card)
+      this.$store.commit('magic/unsetMouseoverCard', this.data)
     },
 
     mousemove(event) {
@@ -35,15 +70,27 @@ export default {
 
 <style scoped>
 .card-list-item {
+  position: relative;
   white-space: nowrap;
   overflow: hidden;
   min-height: 1.4em;
+  max-height: 1.4em;
+  width: 100%;
 }
 
-.card-popup {
-  position: fixed;
-  min-height: 5em;
-  min-width: 5em;
-  background-color: lightgray;
+.name {
+  overflow: hidden;
+  max-height: 1.4em;
+}
+
+.mana-cost {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: .8em;
+  padding-top: 1px;
+  padding-left: 5px;
+  background-color: white;
+  height: 100%;
 }
 </style>

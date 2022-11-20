@@ -16,7 +16,16 @@ export default {
   }),
 
   getters: {
+    getByIdDict: (state) => (dict) => {
+      const versions = state.lookup[dict.name.toLowerCase()]
 
+      if (dict.set && dict.collector_number) {
+        return versions.find(card => card.set === dict.set && card.collector_number === dict.collector_number)
+      }
+      else {
+        return versions[0]
+      }
+    }
   },
 
   mutations: {

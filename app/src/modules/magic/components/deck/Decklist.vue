@@ -12,24 +12,10 @@
     </div>
 
     <div class="deck-sections">
-      <template v-for="sortType in sortTypes">
-        <DecklistSection
-          v-if="sortedMaindeck[sortType]"
-          :cards="sortedMaindeck[sortType]"
-          :name="sortType"
-        />
-      </template>
-
       <DecklistSection
-        v-if="deck.breakdown.side.length"
-        :cards="deck.breakdown.side"
-        name='sideboard'
-      />
-
-      <DecklistSection
-        v-if="deck.breakdown.command.length"
-        :cards="deck.breakdown.command"
-        name='command'
+        v-for="section in cardsBySection"
+        :cards="section[1]"
+        :name="section[0]"
       />
     </div>
   </div>
@@ -90,12 +76,38 @@ export default {
 
   computed: {
     ...mapState('magic/dm', {
-      cardLookup: state => state.cardDatabase.lookup,
       deck: 'activeDeck',
     }),
 
-    sortedMaindeck() {
-      return util.array.collect(this.deck.breakdown.main, data => cardUtil.getSortType(data.card))
+    cardsBySection() {
+      const byZone = util.array.collect(this.deck.cardlist, data => data.zone)
+      const mainByType = util.array.collect(byZone.main || [], data => cardUtil.getSortType(data.card))
+      const orderedSections = Object
+        .entries(mainByType)
+        .sort((l, r) => cardUtil.sortTypes.indexOf(l[0]) - cardUtil.sortTypes.indexOf(r[0]))
+      if (byZone.side) {
+        orderedSections.push(['sideboard', byZone.side])
+      }
+      if (byZone.command) {
+        orderedSections.push(['command', byZone.command])
+      }
+
+      const countedSections = orderedSections
+        .map(([sectionName, cards]) => {
+          const groups = util
+            .array
+            .collect(cards, data => cardUtil.createCardId(data))
+          const cardsWithCounts = Object
+            .values(groups)
+            .map(group => {
+              const value = { ...group[0] }
+              value.count = group.length
+              return value
+            })
+          return [sectionName, cardsWithCounts]
+        })
+
+      return countedSections
     },
   },
 

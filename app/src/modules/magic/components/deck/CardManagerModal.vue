@@ -7,30 +7,31 @@
     <template v-if="card">
       <div class="wrapper">
         <div class="left-side">
-          <CardManagerButtonGroup
-            name="main"
-            variant="primary"
-            :count="mainCount"
-            @add-card="addCard"
-            @remove-card="removeCard"
-          />
+          <template v-if="activeDeck">
+            <CardManagerButtonGroup
+              name="main"
+              variant="primary"
+              :count="mainCount"
+              @add-card="addCard"
+              @remove-card="removeCard"
+            />
 
-          <CardManagerButtonGroup
-            name="side"
-            variant="info"
-            :count="sideCount"
-            @add-card="addCard"
-            @remove-card="removeCard"
-          />
+            <CardManagerButtonGroup
+              name="side"
+              variant="info"
+              :count="sideCount"
+              @add-card="addCard"
+              @remove-card="removeCard"
+            />
 
-          <CardManagerButtonGroup
-            name="cmnd"
-            variant="success"
-            :count="commandCount"
-            @add-card="addCard"
-            @remove-card="removeCard"
-          />
-
+            <CardManagerButtonGroup
+              name="cmnd"
+              variant="success"
+              :count="commandCount"
+              @add-card="addCard"
+              @remove-card="removeCard"
+            />
+          </template>
         </div>
 
         <div class="right-side">
@@ -117,9 +118,9 @@ export default {
       if (!this.activeDeck) return 0
       return this
         .activeDeck
-        .breakdown[zoneName]
-        .filter(c => cardUtil.equals(c, this.card))
-        .reduce((acc, datum) => datum.count + acc, 0)
+        .cardlist
+        .filter(c => c.zone === zoneName && cardUtil.softEquals(c, this.card))
+        .length
     },
 
     nextVersion() {

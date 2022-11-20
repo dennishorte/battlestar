@@ -44,45 +44,12 @@ export default {
     ////////////////////
     // Managed Card
     addCardToZone(state, { card, zoneName }) {
-      const breakdown = state.activeDeck.breakdown
-      const zone = breakdown[zoneName]
-      const existing = findCardInZone(card, zone)
-
-      if (existing) {
-        existing.count += 1
-      }
-      else {
-        const value = {
-          card,
-          name: card.name,
-          count: 1,
-          setCode: card.set,
-          collectorNumber: card.collector_number,
-        }
-        zone.push(value)
-      }
-
-      state.activeDeck.setBreakdown(breakdown)
+      state.activeDeck.addCard(card, zoneName)
       state.activeDeck.modified = true
     },
     removeCardFromZone(state, { card, zoneName }) {
-      const breakdown = state.activeDeck.breakdown
-      const zone = breakdown[zoneName]
-      const existing = findCardInZone(card, zone)
-
-      if (existing) {
-        if (existing.count > 1) {
-          existing.count -= 1
-        }
-        else {
-          util.array.remove(zone, existing)
-        }
-        state.activeDeck.setBreakdown(breakdown)
-        state.activeDeck.modified = true
-      }
-      else {
-        throw new Error(`Card not found in deck: ${card.name}`)
-      }
+      state.activeDeck.removeCard(card, zoneName)
+      state.activeDeck.modified = true
     },
 
     setManagedCard(state, card) {
@@ -92,44 +59,22 @@ export default {
     setManagedCardSource(state, source) {
       state.cardManager.source = source
     },
-
-    setCardLock(state, value) {
-      state.cardlock = value
-    },
   },
 
   actions: {
     ////////////////////
     // Manage Cards
     addCurrentCard({ commit, state }, zoneName) {
-      // If cardlock is on, steal the card from the sideboard,
-      // or, if adding to sideboard, from the maindeck.
-      if (state.cardlock) {
-        throw new Error('not implemented: adding card when cardlock is enabled')
-      }
-
-      // Otherwise, just add the card.
-      else {
-        commit('addCardToZone', {
-          card: state.cardManager.card,
-          zoneName,
-        })
-      }
+      commit('addCardToZone', {
+        card: state.cardManager.card,
+        zoneName,
+      })
     },
     removeCurrentCard({ commit, state }, zoneName) {
-      // If cardlock is on, steal the card from the sideboard,
-      // or, if adding to sideboard, from the maindeck.
-      if (state.cardlock) {
-        throw new Error('not implemented: removing card when cardlock is enabled')
-      }
-
-      // Otherwise, just remove the card.
-      else {
-        commit('removeCardFromZone', {
-          card: state.cardManager.card,
-          zoneName,
-        })
-      }
+      commit('removeCardFromZone', {
+        card: state.cardManager.card,
+        zoneName,
+      })
     },
     manageCard({ commit }, { card, source }) {
       commit('setManagedCard', card)

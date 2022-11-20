@@ -9,7 +9,7 @@ const Deck = {
   ...fileCommon({
     collection: deckCollection,
     createFields: () => ({
-      cardlist: '',
+      cardlist: [],
     })
   })
 }
