@@ -25,7 +25,7 @@
 
       </div>
 
-      <CardManagerModal />
+      <CardManagerModal :cardlist="filteredCards" />
     </div>
 
     <div v-else class="alert alert-warning">

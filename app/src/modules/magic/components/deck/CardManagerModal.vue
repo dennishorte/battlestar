@@ -74,6 +74,10 @@ export default {
     Modal,
   },
 
+  props: {
+    cardlist: Array,
+  },
+
   data() {
     return {
       versionIndex: 0,
@@ -96,11 +100,10 @@ export default {
     },
 
     versions() {
-      return [this.card]
-      /* return this
-       *   .filteredCards
-       *   .filter(c => c.name === this.card.name)
-       *   .sort((l, r) => l === this.card ? -1 : 0) */
+      return this
+        .cardlist
+        .filter(c => c.name === this.card.name)
+        .sort((l, r) => l === this.card ? -1 : 0)
     },
   },
 

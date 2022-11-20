@@ -17,7 +17,6 @@ export default {
 
     // State
     activeDeck: null,
-    activeFolder: '/',
   }),
 
   mutations: {
@@ -29,9 +28,6 @@ export default {
     setActiveDecklist(state, cardlist) {
       state.activeDeck.setDecklist(cardlist)
       state.activeDeck.modified = true
-    },
-    setActiveFolder(state, path) {
-      state.activeFolder = path
     },
     setModified(state, value) {
       state.activeDeck.modified = Boolean(value)
@@ -160,41 +156,8 @@ export default {
       }
 
       commit('setActiveDeck', deck)
-      commit('setActiveFolder', null)
     },
-
-    selectFolder({ commit }, path) {
-      commit('setActiveDeck', null)
-      commit('setActiveFolder', path)
-    },
-
-    toggleCardLock({ commit, state }) {
-      commit('setCardLock', !state.cardlock)
-    },
-
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // Actions that wrap API calls
-
-    /* async saveActiveDeck({ commit, dispatch, state }) {
-     *   const requestResult = await axios.post('/api/magic/deck/save', {
-     *     deck: state.activeDeck.serialize()
-     *   })
-
-     *   if (requestResult.data.status === 'success') {
-     *     commit('setModified', false)
-     *     dispatch('fetchDecks')
-     *   }
-     *   else {
-     *     alert('Error saving changes to deck')
-     *   }
-     * }, */
   },
-}
-
-
-function createCardLookup(cards) {
-  return util.array.collect(cards, cardUtil.allCardNames)
 }
 
 
