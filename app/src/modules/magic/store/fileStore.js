@@ -18,6 +18,11 @@ export default {
       util.array.remove(state.filelist, file)
     },
 
+    replaceOne(state, file) {
+      const index = state.filelist.find(f => f.name === file.name && f.path === file.path && f.kind === file.kind)
+      state.filelist[index] = file
+    },
+
     setFiles(state, filelist) {
       state.filelist = filelist
     },
@@ -79,12 +84,24 @@ export default {
       }
     },
 
+    async save({ dispatch }, file) {
+      const requestResult = await axios.post('/api/magic/file/save', { file })
+
+      // Update the local data to be reflected in the UI
+      if (requestResult.data.status === 'success') {
+        await dispatch('fetchAll')
+      }
+      else {
+        alert(requestResult.message)
+      }
+    },
+
     async update({ commit }, data) {
       // Dispatch the changes to the server
       const updatedFile = { ...data.file }
       updatedFile.name = data.newName
       updatedFile.path = data.newPath
-      const requestResult = await axios.post('/api/magic/file/update', {
+      const requestResult = await axios.post('/api/magic/file/save', {
         file: updatedFile,
       })
 

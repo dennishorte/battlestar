@@ -24,7 +24,7 @@ File.duplicate = async function(req, res) {
   })
 }
 
-File.update = async function(req, res) {
+File.save = async function(req, res) {
   const file = req.body.file
 
   if (!file._id) {
@@ -40,6 +40,5 @@ File.update = async function(req, res) {
     status: 'success',
   })
 }
-
 
 module.exports = File

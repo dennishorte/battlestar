@@ -39,6 +39,7 @@ Deck.prototype.serialize = function() {
     userId: this.userId,
     name: this.name,
     path: this.path,
+    kind: 'deck',
     createdTimestamp: this.createdTimestamp,
     updatedTimestamp: this.updatedTimestamp,
     cardlist: this.cardlist,

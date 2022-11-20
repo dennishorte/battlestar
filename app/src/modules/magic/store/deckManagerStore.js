@@ -90,6 +90,12 @@ export default {
     ////////////////////
     // Misc
 
+    async saveActiveDeck({ commit, dispatch, state }) {
+      const file = state.activeDeck.serialize()
+      await dispatch('magic/file/save', file, { root: true })
+      commit('setModified', false)
+    },
+
     selectDeck({ commit, rootState }, rawDeck) {
       let deck
       if (rawDeck) {
