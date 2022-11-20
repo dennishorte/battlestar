@@ -35,6 +35,11 @@ function deserialize(data) {
 }
 
 Deck.prototype.serialize = function() {
+  const serializedCardlist = [ ...this.cardlist ]
+  for (const card of serializedCardlist) {
+    delete card.data
+  }
+
   const data = {
     userId: this.userId,
     name: this.name,
@@ -42,7 +47,7 @@ Deck.prototype.serialize = function() {
     kind: 'deck',
     createdTimestamp: this.createdTimestamp,
     updatedTimestamp: this.updatedTimestamp,
-    cardlist: this.cardlist,
+    cardlist: serializedCardlist,
   }
 
   if (this._id) {
@@ -53,12 +58,18 @@ Deck.prototype.serialize = function() {
 }
 
 Deck.prototype.addCard = function(card, zone) {
-  this.cardlist.push({
+  const item = {
     name: card.name,
     set: card.set,
     collector_number: card.collector_number,
     zone,
-  })
+  }
+
+  if (card.card_faces) {
+    item.data = card
+  }
+
+  this.cardlist.push(item)
 }
 
 Deck.prototype.removeCard = function(card, zone) {

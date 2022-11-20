@@ -189,7 +189,7 @@ CardUtil.strictEquals = function(a, b) {
 
 CardUtil.getSortType = function(card) {
   if (card) {
-    const typeline = (card.type_line || '').toLowerCase()
+    const typeline = card.card_faces[0].type_line.toLowerCase()
 
     for (const sortType of this.sortTypes) {
       if (typeline.includes(sortType)) {

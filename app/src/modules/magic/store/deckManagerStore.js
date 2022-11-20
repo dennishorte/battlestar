@@ -96,11 +96,18 @@ export default {
       commit('setModified', false)
     },
 
-    selectDeck({ commit, rootState }, rawDeck) {
+    selectDeck({ commit, rootGetters }, rawDeck) {
       let deck
       if (rawDeck) {
-        const lookup = rootState.magic.cards.lookup
-        deck = deckUtil.deserialize(rawDeck, lookup)
+        deck = deckUtil.deserialize(rawDeck)
+
+        // Add in the full card data, if we can find it.
+        for (const card of deck.cardlist) {
+          const data = rootGetters['magic/cards/getByIdDict'](card)
+          if (data) {
+            card.data = data
+          }
+        }
       }
       else {
         deck = null

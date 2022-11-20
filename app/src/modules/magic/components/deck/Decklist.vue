@@ -80,11 +80,11 @@ export default {
     }),
 
     cardsBySection() {
-      const byZone = util.array.collect(this.deck.cardlist, data => data.zone)
-      const mainByType = util.array.collect(byZone.main || [], data => cardUtil.getSortType(data.card))
+      const byZone = util.array.collect(this.deck.cardlist, card => card.zone)
+      const mainByType = util.array.collect(byZone.main || [], card => cardUtil.getSortType(card.data))
       const orderedSections = Object
         .entries(mainByType)
-        .sort((l, r) => cardUtil.sortTypes.indexOf(l[0]) - cardUtil.sortTypes.indexOf(r[0]))
+        .sort((l, r) => cardUtil.sortTypes.indexOf(r[0]) - cardUtil.sortTypes.indexOf(l[0]))
       if (byZone.side) {
         orderedSections.push(['sideboard', byZone.side])
       }
@@ -96,7 +96,7 @@ export default {
         .map(([sectionName, cards]) => {
           const groups = util
             .array
-            .collect(cards, data => cardUtil.createCardId(data))
+            .collect(cards, card => cardUtil.createCardId(card))
           const cardsWithCounts = Object
             .values(groups)
             .map(group => {
