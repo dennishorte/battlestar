@@ -26,7 +26,7 @@
     <div class="alert alert-danger">
       Using this option will overwrite the existing cards in this deck.
     </div>
-    <textarea class="form-control" rows="15" ref="importText"></textarea>
+    <textarea class="form-control" rows="15" v-model="importText"></textarea>
   </Modal>
 
   <Modal id="edit-deck-modal" @ok="edit">
@@ -60,6 +60,8 @@ export default {
     return {
       newName: '',
       newPath: '',
+
+      importText: '',
 
       sortTypes: [
         'creature',
@@ -129,8 +131,8 @@ export default {
     },
 
     importDecklist() {
-      const text = this.$refs.importText.value
-      this.$store.commit('magic/dm/setActiveDecklist', text)
+      const cards = cardUtil.parseCardlist(this.importText)
+      this.$store.dispatch('magic/dm/setActiveDecklist', cards)
     },
 
     openEditModal() {

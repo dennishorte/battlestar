@@ -382,13 +382,9 @@ CardUtil.createCardId = function(card, ignoreSet=false) {
 }
 
 CardUtil.parseCardlist = function(cardlist) {
-  const cards = {
-    main: [],
-    side: [],
-    command: [],
-  }
+  const cards = []
 
-  let zone = cards.main
+  let zoneName = 'main'
 
   for (let line of cardlist.toLowerCase().split('\n')) {
     line = line.trim()
@@ -401,16 +397,24 @@ CardUtil.parseCardlist = function(cardlist) {
       continue
     }
     else if (line === 'deck' || line === 'main' || line === 'maincard') {
-      zone = cards.main
+      zoneName = 'main'
     }
     else if (line === 'side' || line === 'sideboard') {
-      zone = cards.side
+      zoneName = 'side'
     }
     else if (line === 'command' || line === 'commander') {
-      zone = cards.command
+      zoneName = 'command'
     }
     else {
-      zone.push(parseCardListLine(line))
+      const card = parseCardListLine(line)
+      card.zone = zoneName
+
+      const count = card.count
+      delete card.count
+
+      for (let i = 0; i < count; i++) {
+        cards.push({ ...card })
+      }
     }
   }
 

@@ -98,3 +98,7 @@ Deck.prototype.removeCard = function(card, zone) {
 
   throw new Error('Cannot remove card; not found: ' + JSON.stringify(card, null, 2))
 }
+
+Deck.prototype.setDecklist = function(cards) {
+  this.cardlist = cards
+}

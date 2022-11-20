@@ -6,7 +6,7 @@
     @mousemove="mousemove"
   >
 
-    <div class="name">{{ data.name }}</div>
+    <div class="name">{{ name }}</div>
     <ManaCost v-if="showManaCost" class="mana-cost" :cost="manaCost" />
 
   </div>
@@ -43,18 +43,26 @@ export default {
       }
     },
 
+    name() {
+      return this.data ? this.data.name : this.card.name
+    },
+
     manaCost() {
-      return this.data.card_faces[0].mana_cost
+      return this.data ? this.data.card_faces[0].mana_cost : ''
     },
   },
 
   methods: {
     mouseover() {
-      this.$store.commit('magic/setMouseoverCard', this.data)
+      if (this.data) {
+        this.$store.commit('magic/setMouseoverCard', this.data)
+      }
     },
 
     mouseleave() {
-      this.$store.commit('magic/unsetMouseoverCard', this.data)
+      if (this.data) {
+        this.$store.commit('magic/unsetMouseoverCard', this.data)
+      }
     },
 
     mousemove(event) {

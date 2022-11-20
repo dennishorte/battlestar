@@ -116,6 +116,17 @@ export default {
 
       commit('setActiveDeck', deck)
     },
+
+    setActiveDecklist({ commit, rootGetters }, cards) {
+      // Add in the full card data, if we can find it.
+      for (const card of cards) {
+        const data = rootGetters['magic/cards/getByIdDict'](card)
+        if (data) {
+          card.data = data
+        }
+      }
+      commit('setActiveDecklist', cards)
+    }
   },
 }
 
