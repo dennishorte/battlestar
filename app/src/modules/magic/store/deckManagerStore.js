@@ -17,6 +17,7 @@ export default {
 
     // State
     activeDeck: null,
+    modified: false
   }),
 
   mutations: {
@@ -27,29 +28,29 @@ export default {
     },
     setActiveDecklist(state, cardlist) {
       state.activeDeck.setDecklist(cardlist)
-      state.activeDeck.modified = true
+      state.modified = true
     },
     setModified(state, value) {
-      state.activeDeck.modified = Boolean(value)
+      state.modified = Boolean(value)
     },
     setDeckName(state, value) {
       state.activeDeck.name = value.trim()
-      state.activeDeck.modified = true
+      state.modified = true
     },
     setDeckPath(state, value) {
       state.activeDeck.path = value.trim()
-      state.activeDeck.modified = true
+      state.modified = true
     },
 
     ////////////////////
     // Managed Card
     addCardToZone(state, { card, zoneName }) {
       state.activeDeck.addCard(card, zoneName)
-      state.activeDeck.modified = true
+      state.modified = true
     },
     removeCardFromZone(state, { card, zoneName }) {
       state.activeDeck.removeCard(card, zoneName)
-      state.activeDeck.modified = true
+      state.modified = true
     },
 
     setManagedCard(state, card) {

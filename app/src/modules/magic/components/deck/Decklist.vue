@@ -7,7 +7,7 @@
         <button @click="openImportModal" class="btn btn-secondary btn-sm">import</button>
         <button @click="download" class="btn btn-secondary btn-sm">export</button>
         <button @click="openEditModal" class="btn btn-info btn-sm">edit</button>
-        <button @click="save" :disabled="!deck.modified" class="btn btn-warning btn-sm">save</button>
+        <button @click="save" :disabled="!modified" class="btn btn-warning btn-sm">save</button>
       </div>
     </div>
 
@@ -77,6 +77,7 @@ export default {
   computed: {
     ...mapState('magic/dm', {
       deck: 'activeDeck',
+      modified: 'modified',
     }),
 
     cardsBySection() {

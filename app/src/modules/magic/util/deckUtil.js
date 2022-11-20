@@ -72,6 +72,10 @@ Deck.prototype.addCard = function(card, zone) {
   this.cardlist.push(item)
 }
 
+Deck.prototype.clearCards = function() {
+  this.cardlist = []
+}
+
 Deck.prototype.removeCard = function(card, zone) {
   // Remove exact matches
   const exactIndex = this.cardlist.findIndex(data => {
