@@ -1,6 +1,6 @@
 <template>
   <MagicWrapper>
-    <div v-if="cardsLoaded" class="container-fluid deck-manager">
+    <div class="container-fluid deck-manager">
       <div class="row flex-nowrap">
 
         <div class="col column filters-column">
@@ -26,11 +26,6 @@
       </div>
 
       <CardManagerModal :cardlist="filteredCards" />
-    </div>
-
-    <div v-else class="alert alert-warning">
-      Loading card data
-      <button class="btn btn-sm btn-info float-end" @click="updateLocalCards">update local database</button>
     </div>
   </MagicWrapper>
 </template>
@@ -74,7 +69,6 @@ export default {
   computed: {
     ...mapState('magic/cards', {
       cardlist: 'cardlist',
-      cardsLoaded: state => !state.loading,
     }),
 
     ...mapState('magic/dm', {

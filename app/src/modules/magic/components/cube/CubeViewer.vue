@@ -1,24 +1,30 @@
 <template>
-  <div v-if="!loading" class="cube-viewer">
-    {{ id }} {{ cube.name }}
-  </div>
-
-  <div v-else class="alert alert-warning">loading</div>
+  <MagicWrapper :alsoLoading="loadingCube">
+    <div class="cube-viewer">
+      {{ id }} {{ cube.name }}
+    </div>
+  </MagicWrapper>
 </template>
 
 
 <script>
 import axios from 'axios'
 
+import MagicWrapper from '../MagicWrapper'
+
 
 export default {
   name: 'CubeViewer',
+
+  components: {
+    MagicWrapper,
+  },
 
   data() {
     return {
       cube: null,
       id: this.$route.params.id,
-      loading: true,
+      loadingCube: true,
     }
   },
 
@@ -33,7 +39,7 @@ export default {
       if (requestResult.data.status === 'success') {
         console.log(requestResult.data)
         this.cube = requestResult.data.cube
-        this.loading = false
+        this.loadingCube = false
       }
       else {
         alert('Error loading cube: ' + this.id)

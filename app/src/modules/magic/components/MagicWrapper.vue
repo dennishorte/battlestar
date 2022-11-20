@@ -2,7 +2,19 @@
   <div class="magic-wrapper">
     <Card v-if="mouseoverCard" :card="mouseoverCard" :style="mouseoverPosition" />
 
-    <slot></slot>
+    <div v-if="loading" class="alert alert-warning">
+      ...loading card data
+    </div>
+
+    <div v-else-if="alsoLoading" class="alert alert-warning">
+      card data loaded
+      <br>
+      ...loading additional data
+    </div>
+
+    <template v-else>
+      <slot></slot>
+    </template>
   </div>
 </template>
 
@@ -20,11 +32,22 @@ export default {
     Card,
   },
 
+  props: {
+    alsoLoading: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   computed: {
     ...mapState('magic', {
       mouseoverCard: 'mouseoverCard',
       mouseoverX: 'mouseoverX',
       mouseoverY: 'mouseoverY',
+    }),
+
+    ...mapState('magic/cards', {
+      loading: 'loading',
     }),
 
     mouseoverPosition() {
@@ -42,7 +65,6 @@ export default {
 
   created() {
     this.$store.dispatch('magic/cards/ensureLoaded')
-    window.addEventListener('mousemove', this.mousemove)
   },
 }
 </script>
