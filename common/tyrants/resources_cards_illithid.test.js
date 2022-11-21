@@ -298,6 +298,7 @@ describe('Illithids expansion', () => {
           hand: ['Cloaker', 'House Guard'],
         },
         Menzoberranzan: {
+          troops: [],
           spies: ['dennis']
         },
       })
@@ -313,8 +314,8 @@ describe('Illithids expansion', () => {
           played: ['Cloaker'],
         },
         Menzoberranzan: {
+          troops: [],
           spies: [],
-          troops: ['neutral', 'neutral', 'neutral'],
         },
         'araum-ched': {
           troops: ['neutral']
