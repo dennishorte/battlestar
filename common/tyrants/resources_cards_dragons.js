@@ -295,13 +295,15 @@ const cardData = [
     impl: (game, player) => {
       const loc = game.aChooseAndPlaceSpy(player)
 
-      const anotherPlayer = loc
-        .getTroops()
-        .filter(troop => troop.owner !== undefined)
-        .filter(troop => game.getPlayerByCard(troop) !== player)
-        .length > 0
-      if (anotherPlayer) {
-        player.incrementInfluence(2)
+      if (loc) {
+        const anotherPlayer = loc
+          .getTroops()
+          .filter(troop => troop.owner !== undefined)
+          .filter(troop => game.getPlayerByCard(troop) !== player)
+          .length > 0
+        if (anotherPlayer) {
+          player.incrementInfluence(2)
+        }
       }
     }
   },
