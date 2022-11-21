@@ -4,7 +4,10 @@
     <div class="section-name">{{ name }} ({{ cardlist.length }})</div>
 
     <div class="section-cards" :class="columnName">
-      <CardListItem v-for="card in sortedCardlist" :card="card" class="section-card" />
+      <template v-for="elem in sortedCardlist">
+        <CubeBreakdownManaCostDivider v-if="elem.isDivider" :cost="elem.cost" />
+        <CardListItem v-else :card="elem" class="section-card" />
+      </template>
     </div>
 
   </div>
@@ -12,7 +15,10 @@
 
 
 <script>
+import cardUtil from '../../util/cardUtil.js'
+
 import CardListItem from '../CardListItem'
+import CubeBreakdownManaCostDivider from './CubeBreakdownManaCostDivider'
 
 
 export default {
@@ -20,6 +26,7 @@ export default {
 
   components: {
     CardListItem,
+    CubeBreakdownManaCostDivider,
   },
 
   props: {
@@ -30,12 +37,30 @@ export default {
 
   computed: {
     sortedCardlist() {
-      return this.cardlist.sort((l, r) => {
+      const sortedCards = this.cardlist.sort((l, r) => {
         return (
           l.data.cmc - r.data.cmc
           || l.data.name.localeCompare(r.data.name)
         )
       })
+
+      let manaCost = -1
+      const output = []
+
+      for (const card of sortedCards) {
+        const cmc = Math.ceil(cardUtil.cmc(card))
+
+        if (cmc !== manaCost) {
+          output.push({
+            isDivider: true,
+            cost: cmc,
+          })
+          manaCost = cmc
+        }
+        output.push(card)
+      }
+
+      return output
     }
   },
 }

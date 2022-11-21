@@ -74,6 +74,13 @@ CardUtil.colorKey = function(colors) {
   return colors.map(c => c.toLowerCase()).sort().join('')
 }
 
+CardUtil.cmc = function(card) {
+  if (card.data) {
+    card = card.data
+  }
+  return card.cmc
+}
+
 CardUtil.supertypes = function(card) {
   if (card.data) {
     card = card.data
