@@ -1,10 +1,20 @@
 <template>
   <MagicWrapper :alsoLoading="loadingCube">
-    <div class="cube-viewer">
-      <MagicMenu />
-      <h1>{{ cube.name }}</h1>
-      <button class="btn btn-success" @click="$modal('cube-update-modal').show()">Add/Remove Cards</button>
-      <CardListItem v-for="card in cards" :card="card" />
+    <div class="cube-viewer container">
+      <div class="row">
+        <div class="col">
+          <MagicMenu />
+          <h1>{{ cube.name }}</h1>
+          <button class="btn btn-success" @click="$modal('cube-update-modal').show()">Add/Remove Cards</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <CubeBreakdown :cardlist="cards" />
+        </div>
+      </div>
+
     </div>
 
     <CubeImportModal @cube-updates="updateCube" />
@@ -19,7 +29,7 @@ import cardUtil from '../../util/cardUtil.js'
 import cubeUtil from '../../util/cubeUtil.js'
 import { mapState } from 'vuex'
 
-import CardListItem from '../CardListItem'
+import CubeBreakdown from './CubeBreakdown'
 import CubeImportModal from './CubeImportModal'
 import MagicMenu from '../MagicMenu'
 import MagicWrapper from '../MagicWrapper'
@@ -29,7 +39,7 @@ export default {
   name: 'CubeViewer',
 
   components: {
-    CardListItem,
+    CubeBreakdown,
     CubeImportModal,
     MagicMenu,
     MagicWrapper,

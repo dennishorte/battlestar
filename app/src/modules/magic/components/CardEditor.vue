@@ -97,26 +97,26 @@ export default {
   computed: {
     types: {
       set(value) {
-        const base = this.card.card_faces[this.faceIndex].type_line.split(' \u2014 ')
+        const base = this.card.card_faces[this.faceIndex].type_line.split(cardUtil.TYPE_DIVIDER)
         base[0] = value
-        this.card.card_faces[this.faceIndex].type_line = base.join(' \u2014 ')
+        this.card.card_faces[this.faceIndex].type_line = base.join(cardUtil.TYPE_DIVIDER)
       },
       get() {
-        return this.card.card_faces[this.faceIndex].type_line.split(' \u2014 ')[0]
+        return this.card.card_faces[this.faceIndex].type_line.split(cardUtil.TYPE_DIVIDER)[0]
       },
     },
 
     subtypes: {
       set(value) {
-        const base = this.card.card_faces[this.faceIndex].type_line.split(' \u2014 ')
+        const base = this.card.card_faces[this.faceIndex].type_line.split(cardUtil.TYPE_DIVIDER)
         while (base.length < 2) {
           base.push('')
         }
         base[1] = value
-        this.card.card_faces[this.faceIndex].type_line = base.join(' \u2014 ')
+        this.card.card_faces[this.faceIndex].type_line = base.join(cardUtil.TYPE_DIVIDER)
       },
       get() {
-        return this.card.card_faces[this.faceIndex].type_line.split(' \u2014 ')[1] || ''
+        return this.card.card_faces[this.faceIndex].type_line.split(cardUtil.TYPE_DIVIDER)[1] || ''
       },
     },
   },

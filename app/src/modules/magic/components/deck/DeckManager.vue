@@ -97,7 +97,7 @@ export default {
     },
 
     async updateLocalCards() {
-      this.$store.dispatch('magic/cards/updateCardDatabase')
+      this.$store.dispatch('magic/cards/updateLocalCardDatabase')
     },
   },
 }

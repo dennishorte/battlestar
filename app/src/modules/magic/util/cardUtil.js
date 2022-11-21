@@ -2,7 +2,23 @@ import { util } from 'battlestar-common'
 
 
 const CardUtil = {
-  lookup: {}
+  lookup: {},
+}
+
+CardUtil.TYPE_DIVIDER = ' \u2014 '
+
+CardUtil.COLORS = ['white', 'blue', 'black', 'red', 'green']
+
+CardUtil.colorSymbolToName = function(symbol) {
+  switch (symbol.toLowerCase()) {
+    case 'w': return 'white';
+    case 'u': return 'blue';
+    case 'b': return 'black';
+    case 'r': return 'red';
+    case 'g': return 'green';
+    default:
+      throw new Error('Invalid color symbol: ' + symbol)
+  }
 }
 
 CardUtil.sortTypes = [
@@ -14,6 +30,33 @@ CardUtil.sortTypes = [
   'instant',
   'sorcery',
 ]
+
+CardUtil.supertypes = function(card) {
+  if (card.data) {
+    card = card.data
+  }
+
+  return card
+    .type_line
+    .split(' // ')
+    .map(cardType => cardType.split(CardUtil.TYPE_DIVIDER)[0].split(' '))
+    .flat()
+    .map(kind => kind.toLowerCase())
+}
+
+CardUtil.identity = function(card) {
+  if (card.data) {
+    card = card.data
+  }
+  return card.color_identity
+}
+
+CardUtil.colors = function(card) {
+  if (card.data) {
+    card = card.data
+  }
+  return card.colors
+}
 
 CardUtil.allCardNames = function(card) {
   if (!card.name) {
@@ -204,10 +247,16 @@ CardUtil.getSortType = function(card) {
 }
 
 CardUtil.isLand = function(card) {
+  if (card.data) {
+    card = card.data
+  }
   return card.type_line.toLowerCase().includes('land')
 }
 
 CardUtil.isArtifact = function(card) {
+  if (card.data) {
+    card = card.data
+  }
   return card.type_line.toLowerCase().includes('artifact')
 }
 
