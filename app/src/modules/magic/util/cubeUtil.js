@@ -1,4 +1,5 @@
 import cardUtil from './cardUtil.js'
+import { util } from 'battlestar-common'
 
 
 const CubeUtil = {}
@@ -66,6 +67,39 @@ Cube.prototype.removeCard = function(card) {
 
   alert('Cannot remove card; not found: \n' + JSON.stringify(card, null, 2))
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CubeUtil constants
+
+CubeUtil.GOLD_SORT_ORDER = [
+  'azorius',
+  'boros',
+  'dimir',
+  'golgari',
+  'gruul',
+  'izzet',
+  'orzhov',
+  'rakdos',
+  'selesnya',
+  'simic',
+  'abzan',
+  'bant',
+  'esper',
+  'grixis',
+  'jeskai',
+  'jund',
+  'mardu',
+  'naya',
+  'sultai',
+  'temur',
+  'non-red',
+  'non-green',
+  'non-white',
+  'non-blue',
+  'non-black',
+  'five-color',
+]
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -9,6 +9,45 @@ CardUtil.TYPE_DIVIDER = ' \u2014 '
 
 CardUtil.COLORS = ['white', 'blue', 'black', 'red', 'green']
 
+CardUtil.COLOR_KEY_TO_NAME = {
+  '': 'colorless',
+  w: 'white',
+  u: 'blue',
+  b: 'black',
+  r: 'red',
+  g: 'green',
+
+  uw: 'azorius',
+  rw: 'boros',
+  bu: 'dimir',
+  bg: 'golgari',
+  gr: 'gruul',
+  ru: 'izzet',
+  bw: 'orzhov',
+  br: 'rakdos',
+  gw: 'selesnya',
+  gu: 'simic',
+
+  bgw: 'abzan',
+  guw: 'bant',
+  buw: 'esper',
+  bru: 'grixis',
+  ruw: 'jeskai',
+  bgr: 'jund',
+  brw: 'mardu',
+  grw: 'naya',
+  bgu: 'sultai',
+  gru: 'temur',
+
+  bguw: 'non-red',
+  bruw: 'non-green',
+  bgru: 'non-white',
+  bgrw: 'non-blue',
+  gruw: 'non-black',
+
+  bgruw: 'five-color',
+}
+
 CardUtil.colorSymbolToName = function(symbol) {
   switch (symbol.toLowerCase()) {
     case 'w': return 'white';
@@ -30,6 +69,10 @@ CardUtil.sortTypes = [
   'instant',
   'sorcery',
 ]
+
+CardUtil.colorKey = function(colors) {
+  return colors.map(c => c.toLowerCase()).sort().join('')
+}
 
 CardUtil.supertypes = function(card) {
   if (card.data) {

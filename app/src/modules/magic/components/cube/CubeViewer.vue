@@ -97,6 +97,8 @@ export default {
         }
         alert(lines.join('\n'))
       }
+
+      this.$store.dispatch('magic/file/save', this.cube.serialize())
     },
   },
 

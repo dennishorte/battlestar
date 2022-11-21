@@ -88,6 +88,7 @@ export default {
 
 .name {
   overflow: hidden;
+  text-overflow: ellipsis;
   max-height: 1.4em;
 }
 

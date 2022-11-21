@@ -17,6 +17,7 @@
 
 <script>
 import cardUtil from '../../util/cardUtil.js'
+import cubeUtil from '../../util/cubeUtil.js'
 import { util } from 'battlestar-common'
 
 import CubeBreakdownSection from './CubeBreakdownSection'
@@ -50,7 +51,7 @@ export default {
 
   computed: {
     sections() {
-      if (cardUtil.COLORS.includes(this.name.toLowerCase())) {
+      if (cardUtil.COLORS.includes(this.name.toLowerCase()) || this.name.toLowerCase() === 'colorless') {
         const collected = util.array.collect(this.cardlist, card => {
           const superTypes = cardUtil.supertypes(card)
           for (const kind of this.cardTypeSections) {
@@ -67,12 +68,29 @@ export default {
         return output
       }
 
-      else {
+      else if (this.name.toLowerCase() === 'land') {
         return [{
-          name: 'section',
+          name: 'land',
           cards: this.cardlist,
         }]
       }
+
+      else if (this.name.toLowerCase() === 'multicolor') {
+        const collected = util.array.collect(this.cardlist, card => {
+          return cardUtil.colorKey(cardUtil.identity(card))
+        })
+
+        const output = Object
+          .entries(collected)
+          .map(([name, cards]) => ({ name: cardUtil.COLOR_KEY_TO_NAME[name], cards }))
+          .sort((l, r) => cubeUtil.GOLD_SORT_ORDER.indexOf(l.name) - cubeUtil.GOLD_SORT_ORDER.indexOf(r.name))
+
+          return output
+      }
+
+            else {
+              throw new Error('Unhandled cube classification: ' + this.name)
+            }
     },
   },
 }
@@ -83,8 +101,8 @@ export default {
 .cube-breakdown-column {
   display: flex;
   flex-direction: column;
-  min-width: 125px;
-  max-width: 200px;
+  min-width: 12%;
+  max-width: 12%;
 }
 
 .column-name {

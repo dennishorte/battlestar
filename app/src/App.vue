@@ -18,7 +18,7 @@ export default {
 
 <style lang="css">
 #app {
-  font-family: Verdana, sans-serif;
+  /* font-family: Verdana, sans-serif; */
   /* max-width: 400px;
      margin: auto; */
 }

@@ -59,12 +59,11 @@ $table-header: #f8f9fa;
   border: 1px solid black;
 }
 
-.section-card {
-  margin: 0 .25em;
-}
-
 .section-cards {
-  font-size: .8em;
+  font-size: .75em;
+  width: 100%;
+  overflow: hidden;
+  padding: 0 .25em;
 }
 
 .section-cards.white {
