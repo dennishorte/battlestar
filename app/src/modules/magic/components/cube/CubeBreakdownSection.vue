@@ -84,6 +84,10 @@ $table-header: #f8f9fa;
   border: 1px solid black;
 }
 
+.section-card {
+  margin: 2px 0;
+}
+
 .section-cards {
   font-size: .75em;
   width: 100%;
