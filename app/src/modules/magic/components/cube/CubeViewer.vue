@@ -7,29 +7,7 @@
       <CardListItem v-for="card in cards" :card="card" />
     </div>
 
-
-    <Modal id="cube-update-modal" @ok="updateCube">
-      <template #header>Update Cube</template>
-
-      <textarea class="form-control" rows="15" v-model="updateText"></textarea>
-
-      <div class="update-data">
-        <div v-if="parsedUpdate.insert.length > 0">
-          <span class="update-data-heading">adding:</span> {{ parsedUpdate.insert.length }}
-        </div>
-
-        <div v-if="parsedUpdate.remove.length > 0">
-          <span class="update-data-heading">removing:</span> {{ parsedUpdate.remove.length }}
-        </div>
-
-        <div v-if="parsedUpdate.unknown.length > 0">
-          <span class="update-data-heading">unknown cards:</span>
-          <div v-for="card in parsedUpdate.unknown">
-            {{ card.name }}
-          </div>
-        </div>
-      </div>
-    </Modal>
+    <CubeImportModal @cube-updates="updateCube" />
 
   </MagicWrapper>
 </template>
@@ -42,9 +20,9 @@ import cubeUtil from '../../util/cubeUtil.js'
 import { mapState } from 'vuex'
 
 import CardListItem from '../CardListItem'
+import CubeImportModal from './CubeImportModal'
 import MagicMenu from '../MagicMenu'
 import MagicWrapper from '../MagicWrapper'
-import Modal from '@/components/Modal'
 
 
 export default {
@@ -52,9 +30,9 @@ export default {
 
   components: {
     CardListItem,
+    CubeImportModal,
     MagicMenu,
     MagicWrapper,
-    Modal,
   },
 
   data() {
@@ -62,8 +40,6 @@ export default {
       cube: null,
       id: this.$route.params.id,
       loadingCube: true,
-
-      updateText: '',
     }
   },
 
@@ -75,31 +51,6 @@ export default {
     cards() {
       cardUtil.lookup.insertCardData(this.cube.cardlist, this.lookup)
       return this.cube.cardlist
-    },
-
-    parsedUpdate() {
-      const cards = cardUtil.parseCardlist(this.updateText)
-      cardUtil.lookup.insertCardData(cards, this.lookup)
-
-      const operations = {
-        insert: [],
-        remove: [],
-        unknown: [],
-      }
-
-      for (const card of cards) {
-        if (!card.data) {
-          operations.unknown.push(card)
-        }
-        else if (card.remove) {
-          operations.remove.push(card)
-        }
-        else {
-          operations.insert.push(card)
-        }
-      }
-
-      return operations
     },
   },
 
@@ -120,18 +71,18 @@ export default {
       }
     },
 
-    updateCube() {
-      for (const card of this.parsedUpdate.remove) {
+    updateCube(update) {
+      for (const card of update.remove) {
         this.cube.removeCard(card)
       }
 
-      for (const card of this.parsedUpdate.insert) {
+      for (const card of update.insert) {
         this.cube.addCard(card)
       }
 
-      if (this.parsedUpdate.unknown.length) {
+      if (update.unknown.length) {
         const lines = ['Unable to add unknown cards:']
-        for (const card of this.parsedUpdate.unknown) {
+        for (const card of update.unknown) {
           lines.push(card.name)
         }
         alert(lines.join('\n'))
