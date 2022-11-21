@@ -45,14 +45,6 @@ export default {
 
 
 <style lang="scss">
-.magic-card {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: none;
-  overflow: scroll;
-  max-height: 25em;
-}
-
 $artifact-bg: #9facc3;
 $artifact-fg: #dfe0f2;
 $artifact-bdr: #dbd9e8;
@@ -96,6 +88,14 @@ $white-txt: #fdfbf8;
 $almost-black: #171314;
 $silver: #9facb4;
 $gold: #d9631b;
+
+.magic-card {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: none;
+  overflow: scroll;
+  max-height: 25em;
+}
 
 @mixin frame-colors($name, $background, $foreground, $border, $rules-background) {
   .#{$name}-card {

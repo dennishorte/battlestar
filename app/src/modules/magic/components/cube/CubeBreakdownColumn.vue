@@ -6,7 +6,9 @@
     <CubeBreakdownSection
       v-for="section in sections"
       :cardlist="section.cards"
+      :column-name="name"
       :name="section.name"
+      class="column-section"
     />
 
   </div>
@@ -58,7 +60,10 @@ export default {
           }
           return 'other'
         })
-        const output = Object.entries(collected).map(([name, cards]) => ({ name, cards }))
+        const output = Object
+          .entries(collected)
+          .map(([name, cards]) => ({ name, cards }))
+          .sort((l, r) => this.cardTypeSections.indexOf(l.name) - this.cardTypeSections.indexOf(r.name))
         return output
       }
 
@@ -78,5 +83,16 @@ export default {
 .cube-breakdown-column {
   display: flex;
   flex-direction: column;
+  min-width: 125px;
+  max-width: 200px;
+}
+
+.column-name {
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.column-section {
+  margin-top: .25em;
 }
 </style>

@@ -5,6 +5,7 @@
       v-for="column in columns"
       :cardlist="column.cards"
       :name="column.name"
+      class="breakdown-column"
     />
 
   </div>
@@ -29,6 +30,21 @@ export default {
     cardlist: Array,
   },
 
+  data() {
+    return {
+      columnSort: [
+        'white',
+        'blue',
+        'black',
+        'red',
+        'green',
+        'multicolor',
+        'colorless',
+        'land',
+      ],
+    }
+  },
+
   computed: {
     columns() {
       const collected = util.array.collect(this.cardlist, card => {
@@ -49,6 +65,7 @@ export default {
       return Object
         .entries(collected)
         .map(([name, cards]) => ({ name, cards }))
+        .sort((l, r) => this.columnSort.indexOf(l.name) - this.columnSort.indexOf(r.name))
     },
   },
 }
@@ -56,4 +73,12 @@ export default {
 
 
 <style scoped>
+.cube-breakdown {
+  display: flex;
+  flex-direction: row;
+}
+
+.breakdown-column:not(:first-of-type) {
+  margin-left: .25em;
+}
 </style>
