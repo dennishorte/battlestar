@@ -20,7 +20,7 @@ import axios from 'axios'
 import { mapState } from 'vuex'
 import { util } from 'battlestar-common'
 
-import CardListItem from './CardListItem'
+import CardListItem from '../CardListItem'
 
 export default {
   name: 'CardList',

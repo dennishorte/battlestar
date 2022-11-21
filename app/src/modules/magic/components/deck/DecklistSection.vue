@@ -13,7 +13,7 @@
 
 
 <script>
-import CardListItem from './CardListItem'
+import CardListItem from '../CardListItem'
 import SectionHeader from '@/components/SectionHeader'
 
 export default {

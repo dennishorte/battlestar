@@ -17,17 +17,7 @@ export default {
 
   getters: {
     getByIdDict: (state) => (dict) => {
-      const versions = state.lookup[dict.name.toLowerCase()]
-
-      if (!versions) {
-        return null
-      }
-      else if (dict.set && dict.collector_number) {
-        return versions.find(card => card.set === dict.set && card.collector_number === dict.collector_number)
-      }
-      else {
-        return versions[0]
-      }
+      return cardUtil.lookup.getByIdDict(dict, state.lookup)
     }
   },
 

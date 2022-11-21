@@ -14,7 +14,7 @@
 
 
 <script>
-import ManaCost from '../ManaCost'
+import ManaCost from './ManaCost'
 
 
 export default {

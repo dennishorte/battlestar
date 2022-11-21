@@ -1,7 +1,9 @@
 import { util } from 'battlestar-common'
 
 
-const CardUtil = {}
+const CardUtil = {
+  lookup: {}
+}
 
 CardUtil.sortTypes = [
   'land',
@@ -412,8 +414,14 @@ CardUtil.parseCardlist = function(cardlist) {
       const count = card.count
       delete card.count
 
-      for (let i = 0; i < count; i++) {
-        cards.push({ ...card })
+      if (count === -1) {
+        card.remove = true
+        cards.push(card)
+      }
+      else {
+        for (let i = 0; i < count; i++) {
+          cards.push({ ...card })
+        }
       }
     }
   }
@@ -429,8 +437,16 @@ function parseCardListLine(line0) {
 }
 
 function parseCardLineCount(line) {
+  if (line.charAt(0) === '-') {
+    return [line.slice(1).trim(), -1]
+  }
+
+  else if (line.charAt(0) === '+') {
+    return [line.slice(1).trim(), 1]
+  }
+
   // Card has a count in front of it
-  if (util.isDigit(line.charAt(0))) {
+  else if (util.isDigit(line.charAt(0))) {
     const firstSpaceIndex = line.indexOf(' ')
     const count = parseInt(line.slice(0, firstSpaceIndex))
     const name = line.slice(firstSpaceIndex + 1)
@@ -469,5 +485,31 @@ function parseCardLineName(line) {
 
   return output
 }
+
+CardUtil.lookup.getByIdDict = function(dict, lookup) {
+  const versions = lookup[dict.name.toLowerCase()]
+
+  if (!versions) {
+    return null
+  }
+  else if (dict.set && dict.collector_number) {
+    return versions.find(card => card.set === dict.set && card.collector_number === dict.collector_number)
+  }
+  else {
+    return versions[0]
+  }
+}
+
+CardUtil.lookup.insertCardData = function(cardlist, lookup) {
+  for (const card of cardlist) {
+    if (!card.data) {
+      const data = this.getByIdDict(card, lookup)
+      if (data) {
+        card.data = data
+      }
+    }
+  }
+}
+
 
 export default CardUtil
