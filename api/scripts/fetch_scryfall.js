@@ -1,5 +1,6 @@
 const axios = require('axios')
 const fs = require('fs')
+const util = require('../../common/lib/util.js')
 
 
 const rootFields = [
@@ -36,6 +37,7 @@ const combinedFields = [
   "name",
   "colors",
   "produced_mana",
+  "type_line",
 ]
 
 const wantedFields = [].concat(rootFields, faceFields)
@@ -90,7 +92,13 @@ function adjustFaces(card) {
 
   // Put combined fields into the root
   for (const field of combinedFields) {
-    card[field] = card.card_faces.map(face => face[field]).join(' // ')
+    if (Array.isArray(card.card_faces[0][field])) {
+      const combined = card.card_faces.map(face => face[field]).flat()
+      card[field] = util.array.distinct(combined)
+    }
+    else {
+      card[field] = card.card_faces.map(face => face[field]).join(' // ')
+    }
   }
 
   if (!card.name) {
