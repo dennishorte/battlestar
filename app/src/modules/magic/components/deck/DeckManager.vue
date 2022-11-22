@@ -20,13 +20,36 @@
         </div>
 
         <div class="col column">
-          <Decklist v-if="activeDeck" :deck="activeDeck" :modified="modified" />
+          <Decklist v-if="activeDeck" :deck="activeDeck" :modified="modified">
+            <template #menu-options>
+              <DropdownButton @click="openImportModal">import</DropdownButton>
+              <DropdownButton @click="download">export</DropdownButton>
+              <DropdownButton @click="openEditModal">edit</DropdownButton>
+              <DropdownButton @click="save" :disabled="!modified">save</DropdownButton>
+            </template>
+          </Decklist>
         </div>
 
       </div>
 
-      <CardManagerModal :cardlist="filteredCards" />
     </div>
+
+    <CardManagerModal :cardlist="filteredCards" />
+
+    <Modal id="edit-deck-modal" @ok="edit">
+      <template #header>Edit Deck</template>
+      <input class="form-control" v-model="newName" placeholder="name" />
+      <input class="form-control" v-model="newPath" placeholder="path" />
+    </Modal>
+
+    <Modal id="deck-import-modal" @ok="importDecklist">
+      <template #header>Import Deck</template>
+
+      <div class="alert alert-danger">
+        Using this option will overwrite the existing cards in this deck.
+      </div>
+      <textarea class="form-control" rows="15" v-model="importText"></textarea>
+    </Modal>
   </MagicWrapper>
 </template>
 
@@ -36,15 +59,18 @@ import { computed } from 'vue'
 import { mapState } from 'vuex'
 
 import axios from 'axios'
+import cardUtil from '@/modules/magic/util/cardUtil.js'
 import mitt from 'mitt'
 
 import CardFilters from './CardFilters'
 import CardList from './CardList'
 import CardManagerModal from './CardManagerModal'
 import Decklist from './Decklist'
+import DropdownButton from '@/components/DropdownButton'
 import MagicFileManager from '../MagicFileManager'
 import MagicMenu from '../MagicMenu'
 import MagicWrapper from '../MagicWrapper'
+import Modal from '@/components/Modal'
 
 export default {
   name: 'DeckManager',
@@ -54,15 +80,22 @@ export default {
     CardList,
     CardManagerModal,
     Decklist,
+    DropdownButton,
     MagicFileManager,
     MagicMenu,
     MagicWrapper,
+    Modal,
   },
 
   data() {
     return {
       actor: this.$store.getters['auth/user'],
-      filteredCards: []
+      filteredCards: [],
+
+      newName: '',
+      newPath: '',
+
+      importText: '',
     }
   },
 
@@ -99,6 +132,44 @@ export default {
 
     async updateLocalCards() {
       this.$store.dispatch('magic/cards/updateLocalCardDatabase')
+    },
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Menu actions
+
+    download() {
+      const data = this.deck.decklist
+      const blob = new Blob([data], { type: "text/plain;charset=utf-8" })
+      saveAs(blob, `${this.deck.name}.txt`)
+    },
+
+    async edit() {
+      this.deck.name = this.newName.trim()
+      this.deck.path = this.newPath.trim()
+      this.$store.commit('magic/dm/setDeckName', this.newName)
+      this.$store.commit('magic/dm/setDeckPath', this.newPath)
+      await this.$store.dispatch('magic/dm/saveActiveDeck')
+      await this.$store.dispatch('magic/dm/fetchDecks')
+    },
+
+    importDecklist() {
+      const cards = cardUtil.parseCardlist(this.importText)
+      this.$store.dispatch('magic/dm/setActiveDecklist', cards)
+    },
+
+    openEditModal() {
+      this.newName = this.deck.name
+      this.newPath = this.deck.path
+      this.$modal('edit-deck-modal').show()
+    },
+
+    openImportModal() {
+      this.$modal('deck-import-modal').show()
+    },
+
+    async save() {
+      this.$store.dispatch('magic/dm/saveActiveDeck')
     },
   },
 }

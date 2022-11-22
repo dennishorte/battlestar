@@ -3,12 +3,11 @@
     <div class="header">
       <div class="deck-name me-2">{{ deck.name }}</div>
 
-      <div class="header-buttons">
-        <button @click="openImportModal" class="btn btn-secondary btn-sm">import</button>
-        <button @click="download" class="btn btn-secondary btn-sm">export</button>
-        <button @click="openEditModal" class="btn btn-info btn-sm">edit</button>
-        <button @click="save" :disabled="!modified" class="btn btn-warning btn-sm">save</button>
-      </div>
+      <Dropdown class="deck-menu">
+        <template #title>deck menu</template>
+
+        <slot name="menu-options"></slot>
+      </Dropdown>
     </div>
 
     <div class="deck-sections">
@@ -19,21 +18,6 @@
       />
     </div>
   </div>
-
-  <Modal id="deck-import-modal" @ok="importDecklist">
-    <template #header>Import Deck</template>
-
-    <div class="alert alert-danger">
-      Using this option will overwrite the existing cards in this deck.
-    </div>
-    <textarea class="form-control" rows="15" v-model="importText"></textarea>
-  </Modal>
-
-  <Modal id="edit-deck-modal" @ok="edit">
-    <template #header>Edit Deck</template>
-    <input class="form-control" v-model="newName" placeholder="name" />
-    <input class="form-control" v-model="newPath" placeholder="path" />
-  </Modal>
 </template>
 
 
@@ -43,7 +27,7 @@ import { saveAs } from 'file-saver'
 import { mapState } from 'vuex'
 
 import DecklistSection from './DecklistSection'
-import Modal from '@/components/Modal'
+import Dropdown from '@/components/Dropdown'
 
 import cardUtil from '../../util/cardUtil.js'
 
@@ -53,7 +37,7 @@ export default {
 
   components: {
     DecklistSection,
-    Modal,
+    Dropdown,
   },
 
   props: {
@@ -66,11 +50,6 @@ export default {
 
   data() {
     return {
-      newName: '',
-      newPath: '',
-
-      importText: '',
-
       sortTypes: [
         'creature',
         'planeswalker',
@@ -114,42 +93,6 @@ export default {
         })
 
       return countedSections
-    },
-  },
-
-  methods: {
-    download() {
-      const data = this.deck.decklist
-      const blob = new Blob([data], { type: "text/plain;charset=utf-8" })
-      saveAs(blob, `${this.deck.name}.txt`)
-    },
-
-    async edit() {
-      this.deck.name = this.newName.trim()
-      this.deck.path = this.newPath.trim()
-      this.$store.commit('magic/dm/setDeckName', this.newName)
-      this.$store.commit('magic/dm/setDeckPath', this.newPath)
-      await this.$store.dispatch('magic/dm/saveActiveDeck')
-      await this.$store.dispatch('magic/dm/fetchDecks')
-    },
-
-    importDecklist() {
-      const cards = cardUtil.parseCardlist(this.importText)
-      this.$store.dispatch('magic/dm/setActiveDecklist', cards)
-    },
-
-    openEditModal() {
-      this.newName = this.deck.name
-      this.newPath = this.deck.path
-      this.$modal('edit-deck-modal').show()
-    },
-
-    openImportModal() {
-      this.$modal('deck-import-modal').show()
-    },
-
-    async save() {
-      this.$store.dispatch('magic/dm/saveActiveDeck')
     },
   },
 }

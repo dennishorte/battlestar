@@ -2,6 +2,15 @@
   <div class="pre-game container">
 
     <div class="row">
+      <div class="col">
+        <div class="header">
+          {{ game.settings.name }} | Pre-Game Deck Selection
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
 
       <div class="col">
         <GameMenu :disabled="['debug', 'undo']" />
@@ -86,5 +95,13 @@ export default {
   background-color: var(--bs-light);
   border-radius: .25em;
   margin-top: .25em;
+}
+
+.header {
+  color: white;
+  background-color: var(--bs-orange);
+  text-align: center;
+  font-size: 1.2em;
+  border-radius: 0 0 .5em .5em;
 }
 </style>
