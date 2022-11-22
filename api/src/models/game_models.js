@@ -36,7 +36,23 @@ Game.create = async function(lobby) {
     data.lastUpdated = data.settings.createdTimestamp
 
     const insertResult = await gameCollection.insertOne(data)
-    return insertResult.insertedId
+
+    // Need to actually run the game once to make sure 'waiting' field is populated.
+    const gameData = await this.findById(insertResult.insertedId)
+    let game
+    if (lobby.game === 'Innovation') {
+      game = new common.inn.Innovation(gameData)
+    }
+    else if (lobby.game === 'Tyrants of the Underdark') {
+      game = new common.tyr.Tyrants(gameData)
+    }
+    else {
+      throw new Error(`Can't run unknown game ${gameData.settings.name}`)
+    }
+    game.run()
+    await this.save(game, { noMutex: true })
+
+    return game._id
   })
 }
 
@@ -81,20 +97,29 @@ Game.gameOver = async function(gameId, killed=false) {
   })
 }
 
-Game.save = async function(game) {
-  return await writeMutex.dispatch(async () => {
-    await gameCollection.updateOne(
-      { _id: game._id },
-      {
-        $set: {
+async function doSave(game) {
+  return await gameCollection.updateOne(
+    { _id: game._id },
+    {
+      $set: {
         responses: game.responses,
         chat: game.chat,
         waiting: game.getPlayerNamesWaiting(),
         lastUpdated: Date.now(),
-        }
-      },
-    )
-  })
+      }
+    },
+  )
+}
+
+Game.save = async function(game, opts={}) {
+  if (opts.noMutex) {
+    return await doSave(game)
+  }
+  else {
+    return await writeMutex.dispatch(async () => {
+      await doSave(game)
+    })
+  }
 }
 
 Game.saveStats = async function(gameData) {
