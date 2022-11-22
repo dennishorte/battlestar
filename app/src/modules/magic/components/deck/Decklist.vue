@@ -56,6 +56,14 @@ export default {
     Modal,
   },
 
+  props: {
+    deck: Object,
+    modified: {
+      type: Boolean,
+      default: false,
+    }
+  },
+
   data() {
     return {
       newName: '',
@@ -77,11 +85,6 @@ export default {
   },
 
   computed: {
-    ...mapState('magic/dm', {
-      deck: 'activeDeck',
-      modified: 'modified',
-    }),
-
     cardsBySection() {
       const byZone = util.array.collect(this.deck.cardlist, card => card.zone)
       const mainByType = util.array.collect(byZone.main || [], card => cardUtil.getSortType(card.data))

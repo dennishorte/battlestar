@@ -20,7 +20,7 @@
         </div>
 
         <div class="col column">
-          <Decklist v-if="activeDeck" />
+          <Decklist v-if="activeDeck" :deck="activeDeck" :modified="modified" />
         </div>
 
       </div>
@@ -73,6 +73,7 @@ export default {
 
     ...mapState('magic/dm', {
       activeDeck: 'activeDeck',
+      modified: 'modified',
     }),
 
     ...mapState('magic/file', {
