@@ -51,10 +51,10 @@ export default {
         if (cardUtil.isLand(card)) {
           return 'land'
         }
-        else if (cardUtil.colors(card).length === 0) {
+        else if (cardUtil.identity(card).length === 0) {
           return 'colorless'
         }
-        else if (cardUtil.colors(card).length > 1) {
+        else if (cardUtil.identity(card).length > 1) {
           return 'multicolor'
         }
         else {
