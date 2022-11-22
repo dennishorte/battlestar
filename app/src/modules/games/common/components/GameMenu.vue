@@ -1,12 +1,13 @@
 <template>
   <Dropdown class="game-menu">
     <template #title>{{ game.settings.name }}</template>
-    <DropdownItem><button @click="home">home</button></DropdownItem>
-    <DropdownItem><button @click="next">next</button></DropdownItem>
+
+    <DropdownButton @click="home" :disabled="disabled.includes('home')">home</DropdownButton>
+    <DropdownButton @click="next" :disabled="disabled.includes('next')">next</DropdownButton>
     <DropdownDivider />
-    <DropdownItem><button @click="undo">undo</button></DropdownItem>
+    <DropdownButton @click="undo" :disabled="disabled.includes('undo')">undo</DropdownButton>
     <DropdownDivider />
-    <DropdownItem><button @click="debug">debug</button></DropdownItem>
+    <DropdownButton @click="debug" :disabled="disabled.includes('debug')">debug</DropdownButton>
 
     <slot></slot>
   </Dropdown>
@@ -18,7 +19,7 @@ import axios from 'axios'
 
 import Dropdown from '@/components/Dropdown'
 import DropdownDivider from '@/components/DropdownDivider'
-import DropdownItem from '@/components/DropdownItem'
+import DropdownButton from '@/components/DropdownButton'
 
 export default {
   name: 'GameMenu',
@@ -26,7 +27,14 @@ export default {
   components: {
     Dropdown,
     DropdownDivider,
-    DropdownItem,
+    DropdownButton,
+  },
+
+  props: {
+    disabled: {
+      type: Array,
+      default: [],
+    },
   },
 
   inject: ['game', 'actor'],
