@@ -12,6 +12,7 @@
 
     <div class="game-options mt-2">
       <SettingsInnovation v-if="lobby.game === 'Innovation'" />
+      <SettingsMagic v-if="lobby.game === 'Magic'" />
       <SettingsTyrants v-if="lobby.game === 'Tyrants of the Underdark'" />
     </div>
   </div>
@@ -20,6 +21,7 @@
 
 <script>
 import SettingsInnovation from './SettingsInnovation'
+import SettingsMagic from './SettingsMagic'
 import SettingsTyrants from './SettingsTyrants'
 
 
@@ -28,6 +30,7 @@ export default {
 
   components: {
     SettingsInnovation,
+    SettingsMagic,
     SettingsTyrants,
   },
 
@@ -38,6 +41,7 @@ export default {
       gameNames: [
         '',
         'Innovation',
+        'Magic',
         'Tyrants of the Underdark',
       ],
     }

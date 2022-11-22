@@ -6,7 +6,7 @@
     <div class="section-cards" :class="columnName">
       <template v-for="elem in sortedCardlist">
         <CubeBreakdownManaCostDivider v-if="elem.isDivider" :cost="elem.cost" />
-        <CardListItem v-else :card="elem" class="section-card" />
+        <CardListItem v-else :card="elem" class="section-card" @click="cardClicked(elem)" />
       </template>
     </div>
 
@@ -62,6 +62,13 @@ export default {
 
       return output
     }
+  },
+
+  methods: {
+    cardClicked(card) {
+      this.$store.dispatch('magic/cube/manageCard', card)
+      this.$modal('cube-card-modal').show()
+    },
   },
 }
 </script>

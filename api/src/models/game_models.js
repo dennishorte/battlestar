@@ -14,10 +14,24 @@ module.exports = Game
 
 function _factory(lobby) {
   switch (lobby.game) {
+
     case 'Innovation':
       return common.inn.factory(lobby)
+
+    case 'Magic':
+      return {
+        settings: {
+          game: 'Magic',
+          name: lobby.name,
+          format: lobby.format,
+          players: lobby.users,
+          seed: lobby.seed,
+        }
+      }
+
     case 'Tyrants of the Underdark':
       return common.tyr.factory(lobby)
+
     default:
       throw new Error(`Unknown game: ${lobby.game}`)
   }

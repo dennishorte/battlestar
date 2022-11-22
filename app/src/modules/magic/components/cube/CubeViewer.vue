@@ -18,6 +18,7 @@
     </div>
 
     <CubeImportModal @cube-updates="updateCube" />
+    <CubeCardModal :card="managedCard" />
 
   </MagicWrapper>
 </template>
@@ -30,6 +31,7 @@ import cubeUtil from '../../util/cubeUtil.js'
 import { mapState } from 'vuex'
 
 import CubeBreakdown from './CubeBreakdown'
+import CubeCardModal from './CubeCardModal'
 import CubeImportModal from './CubeImportModal'
 import MagicMenu from '../MagicMenu'
 import MagicWrapper from '../MagicWrapper'
@@ -40,6 +42,7 @@ export default {
 
   components: {
     CubeBreakdown,
+    CubeCardModal,
     CubeImportModal,
     MagicMenu,
     MagicWrapper,
@@ -56,6 +59,10 @@ export default {
   computed: {
     ...mapState('magic/cards', {
       lookup: 'lookup',
+    }),
+
+    ...mapState('magic/cube', {
+      managedCard: 'managedCard',
     }),
 
     cards() {

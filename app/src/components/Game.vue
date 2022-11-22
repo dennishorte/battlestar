@@ -7,6 +7,12 @@
       :actor="actor"
     />
 
+    <Magic
+      v-if="game === 'Magic'"
+      :data="gameData"
+      :actor="actor"
+    />
+
     <Tyrants
       v-else-if="game === 'Tyrants of the Underdark'"
       :data="gameData"
@@ -24,6 +30,7 @@
 <script>
 import axios from 'axios'
 import Innovation from '@/modules/games/inn/components/Innovation'
+import Magic from '@/modules/games/magic/components/Magic'
 import Tyrants from '@/modules/games/tyrants/components/Tyrants'
 
 export default {
@@ -31,6 +38,7 @@ export default {
 
   components: {
     Innovation,
+    Magic,
     Tyrants,
   },
 

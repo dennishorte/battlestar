@@ -1,4 +1,5 @@
 import cards from './cardStore.js'
+import cube from './cubeStore.js'
 import dm from './deckManagerStore.js'
 import file from './fileStore.js'
 
@@ -6,6 +7,7 @@ export default {
   namespaced: true,
   modules: {
     cards: cards,
+    cube: cube,
     dm: dm,
     file: file,
   },
