@@ -216,6 +216,23 @@ Magic.prototype.getNextLocalId = function() {
   return this.state.nextLocalId
 }
 
+Magic.prototype.mAdjustCardVisibility = function(card) {
+  const zone = this.getZoneByCard(card)
+
+  if (zone.kind === 'public') {
+    card.visibility = this.getPlayerAll()
+  }
+  else if (zone.kind === 'private' && zone.owner) {
+    util.array.pushUnique(card.visibility, zone.owner)
+  }
+  else if (zone.kind === 'hidden') {
+    // do nothing
+  }
+  else {
+    throw new Error(`Unhandled zone kind '${zone.kind}' for zone '${zone.id}'`)
+  }
+}
+
 Magic.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
   util.assert(sourceIndex >= 0 && sourceIndex <= source.cards().length - 1, `Invalid source index ${sourceIndex}`)
 
@@ -225,7 +242,7 @@ Magic.prototype.mMoveByIndices = function(source, sourceIndex, target, targetInd
   sourceCards.splice(sourceIndex, 1)
   targetCards.splice(targetIndex, 0, card)
   card.zone = target.id
-  // this.mAdjustCardVisibility(card)
+  this.mAdjustCardVisibility(card)
   return card
 }
 
@@ -262,6 +279,7 @@ Magic.prototype.setDeck = function(player, data) {
   const library = this.getZoneByPlayer(player, 'library')
   for (const card of zones.main) {
     library.addCard(card)
+    card.visibility = []
   }
   library.shuffle()
 
@@ -269,6 +287,7 @@ Magic.prototype.setDeck = function(player, data) {
     const sideboard = this.getZoneByPlayer(player, 'sideboard')
     for (const card of zones.side) {
       sideboard.addCard(card)
+      card.visibility = [player]
     }
   }
 
@@ -276,6 +295,7 @@ Magic.prototype.setDeck = function(player, data) {
     const command = this.getZoneByPlayer(player, 'command')
     for (const card of zones.command) {
       command.addCard(card)
+      card.visibility = [player]
     }
   }
 }

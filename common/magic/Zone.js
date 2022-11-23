@@ -50,4 +50,10 @@ Zone.prototype.setCards = function(cards) {
 
 Zone.prototype.shuffle = function() {
   util.array.shuffle(this._cards, this.game.random)
+  if (this.kind === 'hidden') {
+    this._cards.forEach(card => card.visibility = [])
+  }
+  else if (this.kind === 'private') {
+    this._cards.forEach(card => card.visibility = [this.owner])
+  }
 }
