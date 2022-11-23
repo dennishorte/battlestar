@@ -3,7 +3,7 @@
     <div class="header">
       <div class="deck-name me-2">{{ deck.name }}</div>
 
-      <Dropdown class="deck-menu">
+      <Dropdown class="deck-menu" v-if="!noMenu">
         <template #title>deck menu</template>
 
         <slot name="menu-options"></slot>
@@ -45,7 +45,11 @@ export default {
     modified: {
       type: Boolean,
       default: false,
-    }
+    },
+    noMenu: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
