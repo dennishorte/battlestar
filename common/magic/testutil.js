@@ -1,5 +1,6 @@
 const { GameOverEvent } = require('../lib/game.js')
 const { MagicFactory } = require('./magic.js')
+const cardLookup = require('./test_cardlookup.js')
 const log = require('../lib/log.js')
 
 
@@ -34,6 +35,7 @@ TestUtil.fixture = function(options) {
   options.players = options.players.slice(0, options.numPlayers)
 
   const game = MagicFactory(options, 'dennis')
+  game.cardLookup = cardLookup
 
   game.testSetBreakpoint('initialization-complete', (game) => {
     // Set turn order
@@ -42,6 +44,61 @@ TestUtil.fixture = function(options) {
       .map(name => game.getPlayerByName(name))
       .filter(p => p !== undefined)
   })
+
+  return game
+}
+
+const convertNameToCard = (zone) => (name) => ({ name, zone })
+
+TestUtil.fixtureDecksSelected = function(options) {
+  const game = this.fixture(options)
+  const request1 = game.run()
+
+  game.respondToInputRequest({
+    actor: 'dennis',
+    title: 'Choose Deck',
+    deckData: {
+      _id: 'test_deck_dennis',
+      name: 'test_deck_dennis',
+      path: '/',
+      kind: 'deck',
+      cardlist: [
+        'plains',
+        'plains',
+        'Benalish Hero',
+        'White Knight',
+        'Advance Scout',
+        'Tithe',
+        'Holy Strength',
+      ].map(convertNameToCard('main'))
+    },
+    key: request1.key
+  })
+
+  game.respondToInputRequest({
+    actor: 'micah',
+    title: 'Choose Deck',
+    deckData: {
+      _id: 'test_deck_micah',
+      name: 'test_deck_micah',
+      path: '/',
+      kind: 'deck',
+      cardlist: [
+        'mountain',
+        'mountain',
+        'shock',
+        'lightning bolt',
+        'goblin balloon brigade',
+        'akki ember-keeper',
+        'agility',
+      ].map(convertNameToCard('main'))
+    },
+    key: request1.key
+  })
+
+  if (game.settings.numPlayers >= 3) {
+    throw new Error('Deck selection is not set up for 3+ players')
+  }
 
   return game
 }

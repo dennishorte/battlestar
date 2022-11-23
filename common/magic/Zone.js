@@ -34,3 +34,7 @@ Zone.prototype.setCards = function(cards) {
     c.home = this.id
   })
 }
+
+Zone.prototype.shuffle = function() {
+  util.array.shuffle(this._cards, this.game.random)
+}

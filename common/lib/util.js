@@ -89,6 +89,15 @@ Util.array.reverseIter = function*(array) {
   }
 }
 
+Util.array.select = function(array, rng) {
+  if (!rng) {
+    rng = Math.random
+  }
+
+  const index = Math.floor(rng() * array.length)
+  return array[index]
+}
+
 Util.array.shuffle = function(array, rng) {
   if (!rng) {
     rng = Math.random

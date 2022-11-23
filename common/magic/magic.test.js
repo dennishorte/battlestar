@@ -16,4 +16,9 @@ describe('Magic', () => {
     // If no errors thrown, success.
   })
 
+  test('deck selection', () => {
+    const game = t.fixtureDecksSelected()
+    // If no errors, decks were selected successfully.
+  })
+
 })

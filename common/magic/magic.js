@@ -47,10 +47,6 @@ Magic.prototype._mainProgram = function() {
   this.initialize()
   this.chooseDecks()
 
-  // move cards to starting zones
-  // shuffle libraries
-  // draw starting hands
-  // choose starting player
 }
 
 Magic.prototype._gameOver = function() {
@@ -66,6 +62,7 @@ Magic.prototype.initialize = function() {
 
   this.initializePlayers()
   this.initializeZones()
+  this.initializeStartingPlayer()
 
   this.mLogOutdent()
   this.state.initializationComplete = true
@@ -83,6 +80,7 @@ Magic.prototype.initializePlayers = function() {
   this.state.players.forEach((player, index) => {
     player.index = index
   })
+  this.mLog({ template: 'Randomizing player seating' })
 }
 
 Magic.prototype.initializeZones = function() {
@@ -108,12 +106,32 @@ Magic.prototype.initializeZones = function() {
   }
 }
 
+Magic.prototype.initializeStartingPlayer = function() {
+  const player = this.getPlayerByName(this.settings.startingPlayerName)
+  if (player) {
+    this.mLog({
+      template: '{player} was selected to go first',
+      args: { player }
+    })
+    this.currentPlayer = player
+  }
+  else {
+    const randomPlayer = util.array.select(this.getPlayerAll(), this.random)
+    this.mLog({
+      template: 'Randomly selected {player} to go first',
+      args: { player: randomPlayer }
+    })
+    this.currentPlayer = randomPlayer
+  }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Game Phases
 
 Magic.prototype.chooseDecks = function() {
   this.mLog({ template: 'Choosing starting decks' })
+  this.mLogIndent()
 
   const requests = this
     .getPlayerAll()
@@ -129,14 +147,22 @@ Magic.prototype.chooseDecks = function() {
     const player = this.getPlayerByName(response.actor)
     this.setDeck(player, response.deckData)
   }
+
+  this.mLogOutdent()
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Setters, getters, actions, etc.
 
 Magic.prototype.setDeck = function(player, data) {
+  this.mLog({
+    template: '{player} has selected a deck',
+    args: { player },
+  })
+
   player.deck = deckUtil.deserialize(data)
-  cardUtil.insertCardData(player.deck.cardlist, this.cardLookup)
+  cardUtil.lookup.insertCardData(player.deck.cardlist, this.cardLookup)
 
   const zones = util.array.collect(player.deck.cardlist, card => card.zone)
 
@@ -148,6 +174,7 @@ Magic.prototype.setDeck = function(player, data) {
   for (const card of zones.main) {
     library.addCard(card)
   }
+  library.shuffle()
 
   if (zones.side) {
     const sideboard = this.getZoneByPlayer(player, 'sideboard')
@@ -178,5 +205,44 @@ Magic.prototype.utilSerializeObject = function(obj) {
   }
   else {
     throw new Error(`Cannot serialize element of type ${typeof obj}`)
+  }
+}
+
+Magic.prototype._enrichLogArgs = function(msg) {
+  for (const key of Object.keys(msg.args)) {
+    if (key === 'players') {
+      const players = msg.args[key]
+      msg.args[key] = {
+        value: players.map(p => p.name || p).join(', '),
+        classes: ['player-names'],
+      }
+    }
+    else if (key.startsWith('player')) {
+      const player = msg.args[key]
+      msg.args[key] = {
+        value: player.name || player,
+        classes: ['player-name']
+      }
+    }
+    else if (key.startsWith('card')) {
+      const card = msg.args[key]
+      msg.args[key] = {
+        value: card.id,
+        classes: ['card-id'],
+      }
+    }
+    else if (key.startsWith('zone')) {
+      const zone = msg.args[key]
+      msg.args[key] = {
+        value: zone.name,
+        classes: ['zone-name']
+      }
+    }
+    // Convert string args to a dict
+    else if (typeof msg.args[key] !== 'object') {
+      msg.args[key] = {
+        value: msg.args[key],
+      }
+    }
   }
 }
