@@ -102,6 +102,7 @@ Tyrants.prototype.initializePlayers = function() {
     player._id = p._id
     player.game = this
     player.name = p.name
+    player.team = p.name
     player.points = 0
     this.state.players.push(player)
   }
@@ -1356,43 +1357,8 @@ Tyrants.prototype.getLocationsByPresence = function(player) {
     .filter(loc => loc.chechHasPresence(player))
 }
 
-Tyrants.prototype.getPlayerAll = function() {
-  return this.state.players
-}
-
 Tyrants.prototype.getPlayerByCard = function(card) {
   return card.owner
-}
-
-Tyrants.prototype.getPlayerFirst = function() {
-  return this.getPlayerAll()[0]
-}
-
-Tyrants.prototype.getPlayerByName = function(name) {
-  return this.getPlayerAll().find(player => player.name === name)
-}
-
-Tyrants.prototype.getPlayerCurrent = function() {
-  util.assert(this.state.currentPlayer, 'No current player')
-  return this.state.currentPlayer
-}
-
-Tyrants.prototype.getPlayerNext = function() {
-  const currIndex = this.getPlayerAll().indexOf(this.getPlayerCurrent())
-  const nextIndex = (currIndex + 1) % this.getPlayerAll().length
-  return this.getPlayerAll()[nextIndex]
-}
-
-Tyrants.prototype.getPlayerOpponents = function(player) {
-  return this.getPlayerAll().filter(p => p !== player)
-}
-
-Tyrants.prototype.getPlayersStarting = function(player) {
-  const players = [...this.getPlayerAll()]
-  while (players[0] !== player) {
-    players.push(players.shift())
-  }
-  return players
 }
 
 Tyrants.prototype.getPresence = function(player) {

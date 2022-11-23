@@ -484,3 +484,92 @@ function responseIsDuplicate(responses, r) {
   const possibleDuplicates = util.array.takeRightWhile(responses, x => x.key === r.key)
   return possibleDuplicates.some(x => x.actor === r.actor)
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Standard game methods
+
+Game.prototype.checkSameTeam = function(p1, p2) {
+  return p1.team === p2.team
+}
+
+Game.prototype.getCardsByZone = function(player, zoneName) {
+  return this.getZoneByPlayer(player, zoneName).cards()
+}
+
+Game.prototype.getPlayerAll = function() {
+  return this.state.players
+}
+
+Game.prototype.getPlayerOther = function(player) {
+  return this
+    .getPlayerAll()
+    .filter(other => other !== player)
+}
+
+Game.prototype.getPlayerByName = function(name) {
+  return this.getPlayerAll().find(p => p.name === name)
+}
+
+Game.prototype.getPlayerByZone = function(zone) {
+  const regex = /players[.]([^.]+)[.]/
+  const match = zone.id.match(regex)
+
+  if (match) {
+    return this.getPlayerByName(match[1])
+  }
+  else {
+    return undefined
+  }
+}
+
+Game.prototype.getPlayerCurrent = function() {
+  return this.state.currentPlayer
+}
+
+Game.prototype.getPlayerFirst = function() {
+  return this.getPlayerAll()[0]
+}
+
+Game.prototype.getPlayerNext = function() {
+  return this
+    .getPlayersEnding(this.getPlayerCurrent())
+    .filter(player => !player.dead)[0]
+}
+
+Game.prototype.getPlayerOpponents = function(player) {
+  return this
+    .getPlayerAll()
+    .filter(p => !this.checkSameTeam(p, player))
+}
+
+Game.prototype.getPlayersEnding = function(player) {
+  const players = [...this.getPlayerAll()]
+  while (players[players.length - 1] !== player) {
+    players.push(players.shift())
+  }
+  return players
+}
+
+Game.prototype.getPlayersStarting = function(player) {
+  const players = [...this.getPlayerAll()]
+  while (players[0] !== player) {
+    players.push(players.shift())
+  }
+  return players
+}
+
+// Return an array of all players, starting with the current player.
+Game.prototype.getPlayersStartingCurrent = function() {
+  return this.getPlayersStarting(this.getPlayerCurrent())
+}
+
+// Return an array of all players, starting with the player who will follow the current player.
+// Commonly used when evaluating effects
+Game.prototype.getPlayersStartingNext = function() {
+  return this.getPlayersStarting(this.getPlayerNext())
+}
+
+Game.prototype.getZoneByPlayer = function(player, name) {
+  return this.state.zones.players[player.name][name]
+}

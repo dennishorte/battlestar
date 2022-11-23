@@ -1876,10 +1876,6 @@ Innovation.prototype.checkInKarma = function() {
   return this.state.karmaDepth > 0
 }
 
-Innovation.prototype.checkSameTeam = function(p1, p2) {
-  return p1.team === p2.team
-}
-
 Innovation.prototype.checkScoreRequirement = function(player, card, opts={}) {
   return this.getScoreCost(player, card) <= this.getScore(player, opts)
 }
@@ -2142,16 +2138,6 @@ Innovation.prototype.getNumAchievementsToWin = function() {
   return base + numPlayerAdjustment + numExpansionAdjustment
 }
 
-Innovation.prototype.getPlayerAll = function() {
-  return this.state.players
-}
-
-Innovation.prototype.getPlayerOther = function(player) {
-  return this
-    .getPlayerAll()
-    .filter(other => other !== player)
-}
-
 Innovation.prototype.getPlayerByCard = function(card) {
   try {
     const zone = this.getZoneById(card.zone)
@@ -2162,71 +2148,10 @@ Innovation.prototype.getPlayerByCard = function(card) {
   }
 }
 
-Innovation.prototype.getPlayerCurrent = function() {
-  return this.state.currentPlayer
-}
-
-Innovation.prototype.getPlayerNext = function() {
-  return this
-    .getPlayersEnding(this.getPlayerCurrent())
-    .filter(player => !player.dead)[0]
-}
-
-Innovation.prototype.getPlayerByName = function(name) {
-  const player = this.getPlayerAll().find(p => p.name === name)
-  util.assert(!!player, `Player with name '${name}' not found.`)
-  return player
-}
-
-Innovation.prototype.getPlayerByZone = function(zone) {
-  const regex = /players[.]([^.]+)[.]/
-  const match = zone.id.match(regex)
-
-  if (match) {
-    return this.getPlayerByName(match[1])
-  }
-  else {
-    return undefined
-  }
-}
-
 Innovation.prototype.getPlayerTeam = function(player) {
   return this
     .getPlayerAll()
     .filter(p => this.checkSameTeam(p, player))
-}
-
-Innovation.prototype.getPlayerOpponents = function(player) {
-  return this
-    .getPlayerAll()
-    .filter(p => !this.checkSameTeam(p, player))
-}
-
-Innovation.prototype.getPlayersEnding = function(player) {
-  const players = [...this.getPlayerAll()]
-  while (players[players.length - 1] !== player) {
-    players.push(players.shift())
-  }
-  return players
-}
-
-Innovation.prototype.getPlayersStarting = function(player) {
-  const players = [...this.getPlayerAll()]
-  while (players[0] !== player) {
-    players.push(players.shift())
-  }
-  return players
-}
-
-// Return an array of all players, starting with the current player.
-Innovation.prototype.getPlayersStartingCurrent = function() {
-  return this.getPlayersStarting(this.getPlayerCurrent())
-}
-
-// Return an array of all players, starting with the player who will follow the current player.
-// Commonly used when evaluating effects
-Innovation.prototype.getPlayersStartingNext = function() {
-  return this.getPlayersStarting(this.getPlayerNext())
 }
 
 Innovation.prototype.getResources = function() {
