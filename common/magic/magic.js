@@ -170,12 +170,12 @@ Magic.prototype.aChooseAction = function(player) {
     choices: '__UNSPECIFIED__',
   })[0]
 
-  if (action.name === 'draw 7') {
-    this.aDrawSeven(player)
-  }
+  switch (action.name) {
+    case 'draw'                : return this.aDraw(player)
+    case 'draw 7'              : return this.aDrawSeven(player)
 
-  else {
-    throw new Error(`Unknown action: ${action.name}`)
+    default:
+      throw new Error(`Unknown action: ${action.name}`)
   }
 }
 

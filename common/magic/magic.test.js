@@ -21,6 +21,19 @@ describe('Magic', () => {
     // If no errors, decks were selected successfully.
   })
 
+  test('draw action', () => {
+    const game = t.fixtureDecksSelected()
+
+    const request1 = game.run()
+    const request2 = t.do(game, request1, { name: 'draw' })
+
+    t.testBoard(game, {
+      dennis: {
+        hand: ['white knight'],
+      },
+    })
+  })
+
   test('draw 7 action', () => {
     const game = t.fixtureDecksSelected()
 
