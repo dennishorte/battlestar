@@ -19,15 +19,7 @@ function _factory(lobby) {
       return common.inn.factory(lobby)
 
     case 'Magic':
-      return {
-        settings: {
-          game: 'Magic',
-          name: lobby.name,
-          format: lobby.format,
-          players: lobby.users,
-          seed: lobby.seed,
-        }
-      }
+      return common.magic.factory(lobby)
 
     case 'Tyrants of the Underdark':
       return common.tyr.factory(lobby)
@@ -56,6 +48,9 @@ Game.create = async function(lobby) {
     let game
     if (lobby.game === 'Innovation') {
       game = new common.inn.Innovation(gameData)
+    }
+    else if (lobby.game === 'Magic') {
+      game = new common.magic.Magic(gameData)
     }
     else if (lobby.game === 'Tyrants of the Underdark') {
       game = new common.tyr.Tyrants(gameData)
