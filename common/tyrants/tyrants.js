@@ -711,7 +711,11 @@ Tyrants.prototype.aChooseAndAssassinate = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndDevourMarket = function(player, opts={}) {
-  const chosen = this.aChooseCard(player, this.getZoneById('market').cards(), { min: 0, max: 1 })
+  const chosen = this.aChooseCard(player, this.getZoneById('market').cards(), {
+    min: 0,
+    max: 1,
+    title: 'Choose a card to devour from the market',
+  })
   if (chosen) {
     this.aDevour(player, chosen)
   }
