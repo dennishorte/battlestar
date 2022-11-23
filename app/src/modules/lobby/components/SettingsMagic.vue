@@ -2,7 +2,7 @@
   <div class="settings-innovation">
 
     <label class="form-label">Format</label>
-    <select class="form-select" v-model="format">
+    <select class="form-select" v-model="format" @change="optionsChanged">
       <option>Constructed</option>
     </select>
 
@@ -37,13 +37,17 @@ export default {
   methods: {
     // Called by both optionsChanged, and a watcher on users in the lobby.
     updateValid() {
+      const numPlayersCondition = this.lobby.users.length === 2
+      const formatSelectedCondition = Boolean(this.lobby.options.format)
+
       this.lobby.valid = (
-        this.lobby.users.length === 2
-        && Boolean(this.format)
+        numPlayersCondition
+        && formatSelectedCondition
       )
     },
 
     optionsChanged() {
+      this.lobby.options.format = this.format
       this.updateValid()
       this.save()
     },
@@ -51,8 +55,9 @@ export default {
 
   created() {
     if (!this.lobby.options) {
+      this.format = ''
+      this.lobby.options = {}
       this.updateValid()
-      this.format = this.lobby.options.format || ''
     }
     else {
       this.lobby.options = {
