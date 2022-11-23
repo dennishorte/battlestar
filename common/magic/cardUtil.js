@@ -610,3 +610,7 @@ CardUtil.lookup.insertCardData = function(cardlist, lookup) {
     }
   }
 }
+
+CardUtil.createCardLookup = function(cards) {
+  return util.array.collect(cards, CardUtil.allCardNames)
+}

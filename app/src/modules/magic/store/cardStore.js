@@ -61,7 +61,7 @@ export default {
 
     async loadCardDatabaseSuccess({ commit, dispatch }, cards) {
       commit('setCardList', cards)
-      commit('setCardLookup', createCardLookup(cards))
+      commit('setCardLookup', cardUtil.createCardLookup(cards))
       //await dispatch('applyCardFilters')
 
       commit('setCardsLoaded')
@@ -78,10 +78,6 @@ export default {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private functions
-
-function createCardLookup(cards) {
-  return util.array.collect(cards, cardUtil.allCardNames)
-}
 
 async function loadCardsFromDatabase(successFunc, errorFunc) {
   console.log('loadCardsFromDatabase')
