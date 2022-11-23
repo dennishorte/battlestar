@@ -15,15 +15,30 @@
       <div class="col">
         <GameMenu :disabled="['debug', 'undo']" />
 
+        <div class="players">
+          <div v-for="player in game.settings.players">
+            {{ player.name }}
+          </div>
+        </div>
+
         <MagicFileManager
           class="deck-selector"
           :filelist="deckfiles"
           @selection-changed="selectionChanged"
         />
+
+        <div class="mt-2 d-grid">
+          <button class="btn btn-warning" @click="toggleReady" v-if="ready">
+            Click to shout: "Wait a minute!"
+          </button>
+          <button class="btn btn-success" @click="toggleReady" v-else>
+            Click to shout: "I am ready!"
+          </button>
+        </div>
       </div>
 
       <div class="col">
-        <Decklist v-if="activeDeck" :deck="activeDeck" />
+        <Decklist v-if="activeDeck" :deck="activeDeck" :no-menu="true" />
       </div>
 
     </div>
@@ -54,6 +69,7 @@ export default {
   data() {
     return {
       activeDeck: null,
+      ready: false,
     }
   },
 
@@ -76,9 +92,12 @@ export default {
       if (newValue.objectType === 'file') {
         const deck = deckUtil.deserialize(newValue.file)
         cardUtil.lookup.insertCardData(deck.cardlist, this.cardLookup)
-        console.log(deck)
         this.activeDeck = deck
       }
+    },
+
+    toggleReady() {
+      this.ready = !this.ready
     },
   },
 
