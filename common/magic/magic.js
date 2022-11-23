@@ -9,7 +9,7 @@ const cardUtil = require('./cardUtil.js')
 const deckUtil = require('./deckUtil.js')
 const res = require('./data.js')
 const util = require('../lib/util.js')
-const Zone = require('./zone.js')
+const Zone = require('./Zone.js')
 
 
 module.exports = {
