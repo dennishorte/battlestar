@@ -9,7 +9,7 @@ const cardUtil = require('./cardUtil.js')
 const deckUtil = require('./deckUtil.js')
 const res = require('./data.js')
 const util = require('../lib/util.js')
-const Zone = require('./Zone.js')
+const { PlayerZone, Zone } = require('./Zone.js')
 
 
 module.exports = {
@@ -46,7 +46,7 @@ function factoryFromLobby(lobby) {
 Magic.prototype._mainProgram = function() {
   this.initialize()
   this.chooseDecks()
-
+  this.mainLoop()
 }
 
 Magic.prototype._gameOver = function() {
@@ -59,6 +59,8 @@ Magic.prototype._gameOver = function() {
 Magic.prototype.initialize = function() {
   this.mLog({ template: 'Initializing' })
   this.mLogIndent()
+
+  this.state.nextLocalId = 1
 
   this.initializePlayers()
   this.initializeZones()
@@ -91,17 +93,17 @@ Magic.prototype.initializeZones = function() {
   for (const player of this.getPlayerAll()) {
     this.state.zones.players[player.name] = {
       // Private zones
-      hand: new Zone(this, 'hand', 'private'),
-      library: new Zone(this, 'library', 'private'),
-      sideboard: new Zone(this, 'sideboard', 'private'),
+      hand: new PlayerZone(this, player, 'hand', 'private'),
+      library: new PlayerZone(this, player, 'library', 'hidden'),
+      sideboard: new PlayerZone(this, player, 'sideboard', 'private'),
 
       // Public zones
-      battlefield: new Zone(this, 'battlefield', 'public'),
-      command: new Zone(this, 'command', 'public'),
-      creatures: new Zone(this, 'creatures', 'public'),
-      graveyard: new Zone(this, 'graveyard', 'public'),
-      exile: new Zone(this, 'exile', 'public'),
-      land: new Zone(this, 'land', 'public'),
+      battlefield: new PlayerZone(this, player, 'battlefield', 'public'),
+      command: new PlayerZone(this, player, 'command', 'public'),
+      creatures: new PlayerZone(this, player, 'creatures', 'public'),
+      graveyard: new PlayerZone(this, player, 'graveyard', 'public'),
+      exile: new PlayerZone(this, player, 'exile', 'public'),
+      land: new PlayerZone(this, player, 'land', 'public'),
     }
   }
 }
@@ -113,7 +115,7 @@ Magic.prototype.initializeStartingPlayer = function() {
       template: '{player} was selected to go first',
       args: { player }
     })
-    this.currentPlayer = player
+    this.state.currentPlayer = player
   }
   else {
     const randomPlayer = util.array.select(this.getPlayerAll(), this.random)
@@ -121,7 +123,7 @@ Magic.prototype.initializeStartingPlayer = function() {
       template: 'Randomly selected {player} to go first',
       args: { player: randomPlayer }
     })
-    this.currentPlayer = randomPlayer
+    this.state.currentPlayer = randomPlayer
   }
 }
 
@@ -151,9 +153,93 @@ Magic.prototype.chooseDecks = function() {
   this.mLogOutdent()
 }
 
+Magic.prototype.mainLoop = function() {
+  while (true) {
+    this.aChooseAction(this.getPlayerCurrent())
+  }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Setters, getters, actions, etc.
+
+Magic.prototype.aChooseAction = function(player) {
+  const action = this.requestInputSingle({
+    actor: player.name,
+    title: 'Do Something',
+    choices: '__UNSPECIFIED__',
+  })[0]
+
+  if (action.name === 'draw 7') {
+    this.aDrawSeven(player)
+  }
+
+  else {
+    throw new Error(`Unknown action: ${action.name}`)
+  }
+}
+
+Magic.prototype.aDraw = function(player, opts={}) {
+  const libraryCards = this.getCardsByZone(player, 'library')
+
+  if (libraryCards.length === 0) {
+    this.mLog({
+      template: '{player} tries to draw a card, but their library is empty',
+      args: { player }
+    })
+    return
+  }
+
+  const card = libraryCards[0]
+  this.mMoveCardTo(card, this.getZoneByPlayer(player, 'hand'))
+
+  if (!this.silent) {
+    this.mLog({
+      template: '{player} draws {card}',
+      args: { player, card }
+    })
+  }
+}
+
+Magic.prototype.aDrawSeven = function(player, opts={}) {
+  this.mLog({
+    template: '{player} draws 7 cards',
+    args: { player }
+  })
+  for (let i = 0; i < 7; i++) {
+    this.aDraw(player, { silent: true })
+  }
+}
+
+Magic.prototype.getNextLocalId = function() {
+  this.state.nextLocalId += 1
+  return this.state.nextLocalId
+}
+
+Magic.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
+  util.assert(sourceIndex >= 0 && sourceIndex <= source.cards().length - 1, `Invalid source index ${sourceIndex}`)
+
+  const sourceCards = source._cards
+  const targetCards = target._cards
+  const card = sourceCards[sourceIndex]
+  sourceCards.splice(sourceIndex, 1)
+  targetCards.splice(targetIndex, 0, card)
+  card.zone = target.id
+  // this.mAdjustCardVisibility(card)
+  return card
+}
+
+Magic.prototype.mMoveCardTo = function(card, zone, opts={}) {
+  if (opts.verbose) {
+    this.mLog({
+      template: 'Moving {card} to {zone}',
+      args: { card, zone }
+    })
+  }
+  const source = this.getZoneByCard(card)
+  const index = source.cards().indexOf(card)
+  this.mMoveByIndices(source, index, zone, zone.cards().length)
+}
 
 Magic.prototype.setDeck = function(player, data) {
   this.mLog({
@@ -161,8 +247,11 @@ Magic.prototype.setDeck = function(player, data) {
     args: { player },
   })
 
-  player.deck = deckUtil.deserialize(data)
+  player.deck = deckUtil.deserialize(util.deepcopy(data))
   cardUtil.lookup.insertCardData(player.deck.cardlist, this.cardLookup)
+  for (const card of player.deck.cardlist) {
+    card.id = this.getNextLocalId()
+  }
 
   const zones = util.array.collect(player.deck.cardlist, card => card.zone)
 

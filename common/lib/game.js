@@ -609,6 +609,24 @@ Game.prototype.getPlayersStartingNext = function() {
   return this.getPlayersStarting(this.getPlayerNext())
 }
 
+Game.prototype.getZoneByCard = function(card) {
+  return this.getZoneById(card.zone)
+}
+
+Game.prototype.getZoneByCardHome = function(card) {
+  return this.getZoneById(card.home)
+}
+
+Game.prototype.getZoneById = function(id) {
+  const tokens = id.split('.')
+  let curr = this.state.zones
+  for (const token of tokens) {
+    util.assert(curr.hasOwnProperty(token), `Invalid zone id ${id} at token ${token}`)
+    curr = curr[token]
+  }
+  return curr
+}
+
 Game.prototype.getZoneByPlayer = function(player, name) {
   return this.state.zones.players[player.name][name]
 }

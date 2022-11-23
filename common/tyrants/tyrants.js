@@ -1394,26 +1394,8 @@ Tyrants.prototype.getScoreBreakdown = function(player) {
   return summary
 }
 
-Tyrants.prototype.getZoneByCard = function(card) {
-  return this.getZoneById(card.zone)
-}
-
-Tyrants.prototype.getZoneById = function(id) {
-  const tokens = id.split('.')
-  let curr = this.state.zones
-  for (const token of tokens) {
-    util.assert(curr.hasOwnProperty(token), `Invalid zone id ${id} at token ${token}`)
-    curr = curr[token]
-  }
-  return curr
-}
-
 Tyrants.prototype.getZoneByHome = function(card) {
-  return this.getZoneById(card.home)
-}
-
-Tyrants.prototype.getZoneByPlayer = function(player, name) {
-  return this.state.zones.players[player.name][name]
+  return this.getZoneByCardHome(card)
 }
 
 Tyrants.prototype.mAdjustCardVisibility = function(card) {

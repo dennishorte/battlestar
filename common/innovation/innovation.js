@@ -2290,30 +2290,8 @@ Innovation.prototype.getVisibleEffectsByColor = function(player, color, kind) {
   }
 }
 
-Innovation.prototype.getZoneByCard = function(card) {
-  return this.getZoneById(card.zone)
-}
-
-Innovation.prototype.getZoneByCardHome = function(card) {
-  return this.getZoneById(card.home)
-}
-
 Innovation.prototype.getZoneByDeck = function(exp, age) {
   return this.state.zones.decks[exp][age]
-}
-
-Innovation.prototype.getZoneById = function(id) {
-  const tokens = id.split('.')
-  let curr = this.state.zones
-  for (const token of tokens) {
-    util.assert(curr.hasOwnProperty(token), `Invalid zone id ${id} at token ${token}`)
-    curr = curr[token]
-  }
-  return curr
-}
-
-Innovation.prototype.getZoneByPlayer = function(player, name) {
-  return this.state.zones.players[player.name][name]
 }
 
 

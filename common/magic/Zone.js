@@ -1,6 +1,9 @@
 const util = require('../lib/util.js')
 
-module.exports = Zone
+module.exports = {
+  PlayerZone,
+  Zone,
+}
 
 
 function Zone(game, name, kind) {
@@ -11,6 +14,16 @@ function Zone(game, name, kind) {
   this.owner = undefined
   this._cards = []
 }
+
+function PlayerZone(game, player, name, kind) {
+  this.id = 'players.' + player.name + '.' + name
+  this.game = game
+  this.name = `${player.name}'s ${name}`
+  this.kind = kind
+  this.owner = player
+  this._cards = []
+}
+util.inherit(Zone, PlayerZone)
 
 Zone.prototype.cards = function() {
   return [...this._cards]

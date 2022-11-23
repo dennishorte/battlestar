@@ -114,7 +114,39 @@ TestUtil.testBoard = function(game, state) {
   const expected = {}
   const real = {}
 
+  for (const [key, value] of Object.entries(state)) {
+    const player = game.getPlayerByName(key)
+    if (player) {
+      expected[player.name] = {}
+      real[player.name] = {}
+
+      for (const [zone, content] of Object.entries(value)) {
+        // Insert expected value
+        expected[player.name][zone] = content
+          .map(name => name.toLowerCase())
+          .sort()
+
+        // Insert real value
+        real[player.name][zone] = game
+          .getCardsByZone(player, zone)
+          .map(c => c.name.toLowerCase())
+          .sort()
+      }
+    }
+  }
+
   expect(real).toStrictEqual(expected)
+}
+
+TestUtil.do = function(game, request, action) {
+  const selector = request.selectors[0]
+
+  return game.respondToInputRequest({
+    actor: selector.actor,
+    title: selector.title,
+    selection: [action],
+    key: request.key,
+  })
 }
 
 
