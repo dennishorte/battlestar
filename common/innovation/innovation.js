@@ -614,33 +614,6 @@ Innovation.prototype.aCardEffects = function(
   }
 }
 
-Innovation.prototype.aChoose = function(player, choices, opts={}) {
-  if (choices.length === 0) {
-    this.mLogNoEffect()
-    return []
-  }
-
-  const selected = this.requestInputSingle({
-    actor: player.name,
-    title: opts.title || 'Choose',
-    choices: choices,
-    ...opts
-  })
-  if (selected.length === 0) {
-    this.mLogDoNothing(player)
-    return []
-  }
-  else {
-    /* const choice = selected.join(', ')
-     * this.mLog({
-     *   template: '{player} chooses {choice}',
-     *   args: { player, choice }
-     * }) */
-    return selected
-  }
-
-}
-
 Innovation.prototype.aChooseAge = function(player, ages, opts={}) {
   if (!ages) {
     ages = [1,2,3,4,5,6,7,8,9,10]
@@ -1766,13 +1739,7 @@ Innovation.prototype.aUnsplay = function(player, zone, opts={}) {
 }
 
 Innovation.prototype.aYesNo = function(player, title) {
-  const result = this.requestInputSingle({
-    actor: player.name,
-    title,
-    choices: ['yes', 'no'],
-  })[0]
-
-  return result === 'yes'
+  return this.aChooseYesNo(player, title)
 }
 
 Innovation.prototype.aYouLose = function(player) {

@@ -677,32 +677,6 @@ Tyrants.prototype.checkForEndOfGame = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Core Functionality
 
-Tyrants.prototype.aChoose = function(player, choices, opts={}) {
-  if (choices.length === 0) {
-    this.mLogNoEffect()
-    return []
-  }
-
-  const selected = this.requestInputSingle({
-    actor: player.name,
-    title: 'Choose',
-    choices: choices,
-    ...opts
-  })
-  if (selected.length === 0) {
-    this.mLogDoNothing(player)
-    return []
-  }
-  else {
-    return selected
-  }
-}
-
-Tyrants.prototype.aChooseYesNo = function(player, title) {
-  const choice = this.aChoose(player, ['yes', 'no'], { title })
-  return choice[0] === 'yes'
-}
-
 Tyrants.prototype.aChooseCard = function(player, choices, opts={}) {
   const choiceNames = util.array.distinct(choices.map(c => c.name)).sort()
   const selection = this.aChoose(player, choiceNames, opts)

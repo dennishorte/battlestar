@@ -98,6 +98,10 @@ Game.prototype._validateResponse = function(requests, response) {
   const request = requests.find(r => r.actor === response.actor)
   util.assert(request !== undefined, "No request matches the response actor")
 
+  if (request.choices === '__UNSPECIFIED__') {
+    return
+  }
+
   const result = selector.validate(request, response, { ignoreTitle: true })
   if (!result.valid) {
     /* console.log(JSON.stringify({
@@ -495,6 +499,34 @@ function responseIsDuplicate(responses, r) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Standard game methods
+
+
+Game.prototype.aChoose = function(player, choices, opts={}) {
+  if (choices.length === 0) {
+    this.mLogNoEffect()
+    return []
+  }
+
+  const selected = this.requestInputSingle({
+    actor: player.name,
+    title: opts.title || 'Choose',
+    choices: choices,
+    ...opts
+  })
+  if (selected.length === 0) {
+    this.mLogDoNothing(player)
+    return []
+  }
+  else {
+    return selected
+  }
+
+}
+
+Game.prototype.aChooseYesNo = function(player, title) {
+  const choice = this.aChoose(player, ['yes', 'no'], { title })
+  return choice[0] === 'yes'
+}
 
 Game.prototype.checkSameTeam = function(p1, p2) {
   return p1.team === p2.team
