@@ -428,6 +428,13 @@ Game.prototype._setInputRequestKey = function() {
 Game.prototype._tryToAutomaticallyRespond = function(selectors) {
   for (const sel of selectors) {
 
+    // This is a special key to say that there is no fixed response expected
+    // so cannot automatically respond. Used in games like Magic where the
+    // user input is very freeform.
+    if (sel.choices === '__UNSPECIFIED__') {
+      return undefined
+    }
+
     // Don't try to understand nested structures.
     for (const choice of sel.choices) {
       if (choice.choices) {
