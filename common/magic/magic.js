@@ -152,6 +152,8 @@ Magic.prototype.chooseDecks = function() {
     this.setDeck(player, response.deckData)
   }
 
+  this.state.decksSelected = true
+
   this.mLogOutdent()
 }
 
@@ -398,6 +400,10 @@ Magic.prototype.aViewTop = function(player, zoneId, count) {
 
 Magic.prototype.getCardById = function(id) {
   return this.cardsById[id]
+}
+
+Magic.prototype.getDecksSelected = function() {
+  return this.state.decksSelected
 }
 
 Magic.prototype.getNextLocalId = function() {

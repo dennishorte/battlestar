@@ -15,6 +15,7 @@
         v-for="section in cardsBySection"
         :cards="section[1]"
         :name="section[0]"
+        class="deck-section"
       />
     </div>
   </div>
@@ -111,6 +112,10 @@ export default {
 
 .deck-name {
   font-size: 1.5em;
+}
+
+.deck-section {
+  margin-left: 1em;
 }
 
 .deck-sections {

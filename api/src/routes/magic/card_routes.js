@@ -4,8 +4,7 @@ const Card = {}
 
 
 Card.fetchAll = async function(req, res) {
-  const cursor = await db.magic.scryfall.fetchAll()
-  const cards = await cursor.toArray()
+  const cards = await db.magic.card.fetchAll()
 
   res.json({
     status: 'success',

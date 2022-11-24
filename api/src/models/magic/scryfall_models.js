@@ -13,7 +13,8 @@ async function insertCardsIntoDatabase(cards) {
 }
 
 Scryfall.fetchAll = async function() {
-  return await scryfallCollection.find({})
+  const cursor = await scryfallCollection.find({})
+  return await cursor.toArray()
 }
 
 Scryfall.updateAll = async function() {

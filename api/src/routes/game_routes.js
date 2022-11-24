@@ -1,7 +1,7 @@
 const db = require('../models/db.js')
 const slack = require('../util/slack.js')
 
-const { GameOverEvent, inn, tyr } = require('battlestar-common')
+const { GameOverEvent, inn, mag, tyr } = require('battlestar-common')
 
 const Game = {}
 module.exports = Game
@@ -90,31 +90,22 @@ async function _testAndSave(game, res, evalFunc) {
   let message = ''
   try {
     evalFunc(game)
-    valid = true
   }
   catch (e) {
     if (e instanceof inn.GameOverEvent) {
-      valid = true
+      // Do nothing
     }
     else {
-      message = e.message
+      throw e
     }
   }
 
-  if (valid) {
-    await db.game.save(game)
-    await updateStatsOne(game)
-    if (game.checkGameIsOver()) {
-      await db.game.gameOver(game._id)
-    }
-    await _sendNotifications(res, game)
+  await db.game.save(game)
+  await updateStatsOne(game)
+  if (game.checkGameIsOver()) {
+    await db.game.gameOver(game._id)
   }
-  else {
-    res.json({
-      status: 'error',
-      message,
-    })
-  }
+  await _sendNotifications(res, game)
 }
 
 async function updateStatsOne(data) {
@@ -212,6 +203,12 @@ Game.saveFull = async function(req, res) {
   const game = await _loadGameFromReq(req)
   game.responses = req.body.responses
   game.chat = req.body.chat
+
+  if (game.settings.game === 'Magic') {
+    const cards = await db.magic.card.fetchAll()
+    game.cardLookup = mag.util.card.createCardLookup(cards)
+  }
+
   await _testAndSave(game, res, (game) => {
     game.run()
   })
@@ -243,6 +240,9 @@ async function _loadGameFromReq(req) {
   }
   else if (gameData.settings.game === 'Tyrants of the Underdark') {
     return new tyr.Tyrants(gameData)
+  }
+  else if (gameData.settings.game === 'Magic') {
+    return new mag.Magic(gameData)
   }
   else {
     throw new Error(`Unhandled game type: ${gameData.settings.game}`)

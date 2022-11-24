@@ -4,7 +4,7 @@
       <div class="col">
         <div class="header text-left">
 
-          <Dropdown class="float-end">
+          <Dropdown class="float-start">
             <DropdownRouterLink to="/">home</DropdownRouterLink>
             <DropdownRouterLink to="/lobby/create">lobby</DropdownRouterLink>
             <DropdownRouterLink to="/data">data</DropdownRouterLink>

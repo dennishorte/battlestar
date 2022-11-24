@@ -7,9 +7,14 @@
     </div>
 
     <div v-else-if="alsoLoading" class="alert alert-warning">
-      card data loaded
-      <br>
+      card data loaded<br>
       ...loading additional data
+    </div>
+
+    <div v-else-if="!afterLoadedComplete" class="alert alert-warning">
+      card data loaded<br>
+      additional data loaded<br>
+      ...running post-loading scripts
     </div>
 
     <template v-else>
@@ -37,6 +42,17 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    afterLoaded: {
+      type: Function,
+      default: () => {},
+    },
+  },
+
+  data() {
+    return {
+      afterLoadedComplete: false
+    }
   },
 
   computed: {
@@ -61,6 +77,29 @@ export default {
         'z-index': 100,
       }
     },
+
+    ready() {
+      return afterLoadedComplete
+    },
+  },
+
+  methods: {
+    tryAfterLoaded() {
+      if (!this.loading && !this.alsoLoading) {
+        this.afterLoaded()
+        this.afterLoadedComplete = true
+      }
+    }
+  },
+
+  watch: {
+    loading(newValue) {
+      this.tryAfterLoaded()
+    },
+
+    alsoLoading(newValue) {
+      this.tryAfterLoaded()
+    }
   },
 
   created() {
@@ -72,7 +111,9 @@ export default {
 
 <style scoped>
 .magic-wrapper {
-  height: 100vh;
-  width: 100vw;
+  min-width: 100vw;
+  max-width: 100vw;
+  min-height: 100vh;
+  max-height: 100vh;
 }
 </style>
