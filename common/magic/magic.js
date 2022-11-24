@@ -270,7 +270,6 @@ Magic.prototype.aViewTop = function(player, zoneId, count) {
   const cards = zone.cards()
   count = Math.min(count, cards.length)
 
-
   for (let i = 0; i < count; i++) {
     util.array.pushUnique(cards[i].visibility, player)
   }

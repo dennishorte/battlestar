@@ -2,6 +2,7 @@ const { GameOverEvent } = require('../lib/game.js')
 const { MagicFactory } = require('./magic.js')
 const cardLookup = require('./test_cardlookup.js')
 const log = require('../lib/log.js')
+const jsUtil = require('util')
 
 
 const TestUtil = {}
@@ -211,7 +212,8 @@ TestUtil.dennis = function(game) {
 // State Inspectors
 
 TestUtil.deepLog = function(obj) {
-  console.log(JSON.stringify(obj, null, 2))
+  // console.log(JSON.stringify(obj, null, 2))
+  console.log(jsUtil.inspect(obj))
 }
 
 TestUtil.dumpLog = function(game) {

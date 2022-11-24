@@ -112,7 +112,7 @@ describe('Magic', () => {
     })
   })
 
-  test('view next', () => {
+  test.only('view next', () => {
     const game = t.fixtureDecksSelected()
 
     const request1 = game.run()
@@ -123,9 +123,10 @@ describe('Magic', () => {
     t.testVisibility(libraryCards[1])
 
     const request3 = t.do(game, request2, { name: 'view next', zoneId: 'players.dennis.library' })
-    t.testVisibility(libraryCards[0], 'dennis')
-    t.testVisibility(libraryCards[1], 'dennis')
-    t.testVisibility(libraryCards[2])
+    const libraryCards2 = game.getCardsByZone(t.dennis(game), 'library')
+    t.testVisibility(libraryCards2[0], 'dennis')
+    t.testVisibility(libraryCards2[1], 'dennis')
+    t.testVisibility(libraryCards2[2])
   })
 
   test('view top k', () => {
