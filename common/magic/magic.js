@@ -26,6 +26,7 @@ function Magic(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
   this.cardLookup = null
+  this.cardsById = {}
 }
 
 util.inherit(Game, Magic)
@@ -172,6 +173,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'adjust counter'      : return player.incrementCounter(action.counter, action.amount)
       case 'draw'                : return this.aDraw(player)
       case 'draw 7'              : return this.aDrawSeven(player)
+      case 'move card'           : return this.aMoveCard(player, action.cardId, action.destId, action.destIndex)
 
       default:
         throw new Error(`Unknown action: ${action.name}`)
@@ -209,6 +211,20 @@ Magic.prototype.aDrawSeven = function(player, opts={}) {
   for (let i = 0; i < 7; i++) {
     this.aDraw(player, { silent: true })
   }
+}
+
+Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
+  const card = this.getCardById(cardId)
+  const dest = this.getZoneById(destId)
+  this.mMoveCardTo(card, dest, { index: destIndex })
+  this.mLog({
+    template: '{player} moves {card} to {zone}',
+    args: { player, card, zone: dest }
+  })
+}
+
+Magic.prototype.getCardById = function(id) {
+  return this.cardsById[id]
 }
 
 Magic.prototype.getNextLocalId = function() {
@@ -255,7 +271,8 @@ Magic.prototype.mMoveCardTo = function(card, zone, opts={}) {
   }
   const source = this.getZoneByCard(card)
   const index = source.cards().indexOf(card)
-  this.mMoveByIndices(source, index, zone, zone.cards().length)
+  const destIndex = opts.index ? opts.index : zone.cards().length
+  this.mMoveByIndices(source, index, zone, destIndex)
 }
 
 Magic.prototype.setDeck = function(player, data) {
@@ -268,6 +285,7 @@ Magic.prototype.setDeck = function(player, data) {
   cardUtil.lookup.insertCardData(player.deck.cardlist, this.cardLookup)
   for (const card of player.deck.cardlist) {
     card.id = this.getNextLocalId()
+    this.cardsById[card.id] = card
   }
 
   const zones = util.array.collect(player.deck.cardlist, card => card.zone)

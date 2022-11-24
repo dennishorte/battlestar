@@ -110,38 +110,68 @@ TestUtil.setBoard = function(game, state) {
   })
 }
 
+function blankTableau() {
+  return {
+    life: 20,
+    hand: [],
+    battlefield: [],
+    command: [],
+    creatures: [],
+    graveyard: [],
+    exile: [],
+    land: [],
+  }
+}
+
+const playerZones = [
+  'hand',
+  'battlefield',
+  'command',
+  'creatures',
+  'graveyard',
+  'exile',
+  'land',
+]
+
 TestUtil.testBoard = function(game, state) {
   const expected = {}
   const real = {}
 
+  // Fill in base values for everything to be tested.
+  for (const player of game.getPlayerAll()) {
+    expected[player.name] = blankTableau()
+    real[player.name] = {}
+    real[player.name].life = player.getCounter('life')
+
+    for (const key of playerZones) {
+      real[player.name][key] = game
+        .getCardsByZone(player, key)
+        .map(c => c.name.toLowerCase())
+        .sort()
+    }
+  }
+
+  // Update the expected values from the input state.
   for (const [key, value] of Object.entries(state)) {
     const player = game.getPlayerByName(key)
     if (player) {
-      expected[player.name] = {}
-      real[player.name] = {}
-
       for (const [zone, content] of Object.entries(value)) {
         if (zone === 'life') {
-          expected.life = content
-          real.life = player.getCounter('life')
+          expected[player.name].life = content
         }
 
         else {
-          // Insert expected value
           expected[player.name][zone] = content
             .map(name => name.toLowerCase())
-            .sort()
-
-          // Insert real value
-          real[player.name][zone] = game
-            .getCardsByZone(player, zone)
-            .map(c => c.name.toLowerCase())
             .sort()
         }
       }
     }
   }
 
+  /* console.log(real)
+   * console.log(expected)
+   */
   expect(real).toStrictEqual(expected)
 }
 

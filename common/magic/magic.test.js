@@ -72,4 +72,23 @@ describe('Magic', () => {
     })
   })
 
+  test('move card', () => {
+    const game = t.fixtureDecksSelected()
+
+    const request1 = game.run()
+    const request2 = t.do(game, request1, { name: 'draw' })
+    const request3 = t.do(game, request2, {
+      name: 'move card',
+      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].id,
+      destId: 'players.dennis.creatures',
+      destIndex: 0,
+    })
+
+    t.testBoard(game, {
+      dennis: {
+        creatures: ['White Knight'],
+      },
+    })
+  })
+
 })
