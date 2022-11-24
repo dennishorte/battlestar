@@ -112,7 +112,24 @@ describe('Magic', () => {
     })
   })
 
-  test.only('view next', () => {
+  test('reveal next', () => {
+    const game = t.fixtureDecksSelected()
+
+    const request1 = game.run()
+    const request2 = t.do(game, request1, { name: 'reveal next', zoneId: 'players.dennis.library' })
+
+    const libraryCards = game.getCardsByZone(t.dennis(game), 'library')
+    t.testVisibility(libraryCards[0], 'dennis', 'micah')
+    t.testVisibility(libraryCards[1])
+
+    const request3 = t.do(game, request2, { name: 'reveal next', zoneId: 'players.dennis.library' })
+    const libraryCards2 = game.getCardsByZone(t.dennis(game), 'library')
+    t.testVisibility(libraryCards2[0], 'dennis', 'micah')
+    t.testVisibility(libraryCards2[1], 'dennis', 'micah')
+    t.testVisibility(libraryCards2[2])
+  })
+
+  test('view next', () => {
     const game = t.fixtureDecksSelected()
 
     const request1 = game.run()

@@ -175,6 +175,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'draw 7'              : return this.aDrawSeven(player)
       case 'move card'           : return this.aMoveCard(player, action.cardId, action.destId, action.destIndex)
       case 'mulligan'            : return this.aMulligan(player)
+      case 'reveal next'         : return this.aRevealNext(player, action.zoneId)
       case 'view next'           : return this.aViewNext(player, action.zoneId)
       case 'view top k'          : return this.aViewTop(player, action.zoneId, action.count)
 
@@ -242,6 +243,27 @@ Magic.prototype.aMulligan = function(player) {
   library.shuffle({ silent: true })
 
   this.aDrawSeven(player, { silent: true })
+}
+
+Magic.prototype.aRevealNext = function(player, zoneId) {
+  const zone = this.getZoneById(zoneId)
+  const cards = zone.cards()
+  const nextIndex = cards.findIndex(card => card.visibility.length !== this.getPlayerAll().length)
+
+  if (nextIndex === -1) {
+    this.mLog({
+      template: 'No more cards to reveal in {zone}',
+      args: { zone },
+    })
+    return
+  }
+
+  const card = cards[nextIndex]
+  card.visibility = this.getPlayerAll()
+  this.mLog({
+    template: `{player} reveals the next card in {zone} (top+${nextIndex})`,
+    args: { player, zone }
+  })
 }
 
 Magic.prototype.aViewNext = function(player, zoneId) {
