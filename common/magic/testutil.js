@@ -121,16 +121,23 @@ TestUtil.testBoard = function(game, state) {
       real[player.name] = {}
 
       for (const [zone, content] of Object.entries(value)) {
-        // Insert expected value
-        expected[player.name][zone] = content
-          .map(name => name.toLowerCase())
-          .sort()
+        if (zone === 'life') {
+          expected.life = content
+          real.life = player.getCounter('life')
+        }
 
-        // Insert real value
-        real[player.name][zone] = game
-          .getCardsByZone(player, zone)
-          .map(c => c.name.toLowerCase())
-          .sort()
+        else {
+          // Insert expected value
+          expected[player.name][zone] = content
+            .map(name => name.toLowerCase())
+            .sort()
+
+          // Insert real value
+          real[player.name][zone] = game
+            .getCardsByZone(player, zone)
+            .map(c => c.name.toLowerCase())
+            .sort()
+        }
       }
     }
   }

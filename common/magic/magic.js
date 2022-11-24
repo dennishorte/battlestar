@@ -9,6 +9,8 @@ const cardUtil = require('./cardUtil.js')
 const deckUtil = require('./deckUtil.js')
 const res = require('./data.js')
 const util = require('../lib/util.js')
+
+const Player = require('./Player.js')
 const { PlayerZone, Zone } = require('./Zone.js')
 
 
@@ -72,12 +74,7 @@ Magic.prototype.initialize = function() {
 }
 
 Magic.prototype.initializePlayers = function() {
-  this.state.players = this.settings.players.map(p => ({
-    _id: p._id,
-    id: p.name,
-    name: p.name,
-    team: p.name,
-  }))
+  this.state.players = this.settings.players.map(p => new Player(this, p))
   util.array.shuffle(this.state.players, this.random)
   this.state.players.forEach((player, index) => {
     player.index = index
@@ -164,18 +161,21 @@ Magic.prototype.mainLoop = function() {
 // Setters, getters, actions, etc.
 
 Magic.prototype.aChooseAction = function(player) {
-  const action = this.requestInputSingle({
+  const actions = this.requestInputSingle({
     actor: player.name,
     title: 'Do Something',
     choices: '__UNSPECIFIED__',
-  })[0]
+  })
 
-  switch (action.name) {
-    case 'draw'                : return this.aDraw(player)
-    case 'draw 7'              : return this.aDrawSeven(player)
+  for (const action of actions) {
+    switch (action.name) {
+      case 'adjust counter'      : return player.incrementCounter(action.counter, action.amount)
+      case 'draw'                : return this.aDraw(player)
+      case 'draw 7'              : return this.aDrawSeven(player)
 
-    default:
-      throw new Error(`Unknown action: ${action.name}`)
+      default:
+        throw new Error(`Unknown action: ${action.name}`)
+    }
   }
 }
 
