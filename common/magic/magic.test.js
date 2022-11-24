@@ -56,6 +56,26 @@ describe('Magic Actions', () => {
     })
   })
 
+  test('create token', () => {
+    const game = t.fixtureDecksSelected()
+
+    const request1 = game.run()
+    const request2 = t.do(game, request1, {
+      name: 'create token',
+      card: {
+        name: 'Elf Warrior',
+        token: true,
+      },
+      zone: 'players.dennis.creatures',
+    })
+
+    t.testBoard(game, {
+      dennis: {
+        creatures: ['Elf Warrior'],
+      },
+    })
+  })
+
   test('draw action', () => {
     const game = t.fixtureDecksSelected()
 
@@ -100,9 +120,9 @@ describe('Magic Actions', () => {
         name: 'White Knight',
         set: null,
         collectorNumber: null,
+        token: true,
       },
       zone: 'players.dennis.command',
-      isToken: true,
     })
     const request3 = t.do(game, request2, { name: 'draw' })
 

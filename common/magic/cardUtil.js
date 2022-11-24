@@ -257,6 +257,9 @@ CardUtil.blank = function() {
     collector_number: '',
     legal: [],
 
+    name: '',
+    type_line: '',
+
     cmc: '0',
     color_identity: [],
     colors: [],

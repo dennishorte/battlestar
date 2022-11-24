@@ -223,9 +223,10 @@ Magic.prototype.aChooseAction = function(player) {
     switch (action.name) {
       case 'adjust counter'      : return player.incrementCounter(action.counter, action.amount)
       case 'cascade'             : return this.aCascade(player, action.x)
+      case 'create token'        : return this.aCreateToken(player, action.card, action.zone)
       case 'draw'                : return this.aDraw(player)
       case 'draw 7'              : return this.aDrawSeven(player)
-      case 'import'              : return this.aImport(player, action.card, action.zone, action.isToken)
+      case 'import'              : return this.aImport(player, action.card, action.zone)
       case 'move card'           : return this.aMoveCard(player, action.cardId, action.destId, action.destIndex)
       case 'mulligan'            : return this.aMulligan(player)
       case 'reveal next'         : return this.aRevealNext(player, action.zoneId)
@@ -236,6 +237,24 @@ Magic.prototype.aChooseAction = function(player) {
         throw new Error(`Unknown action: ${action.name}`)
     }
   }
+}
+
+Magic.prototype.aCreateToken = function(player, card, zone) {
+  // Create fake card data
+  card.data = cardUtil.blank()
+  card.data.card_faces[0].type_line = 'Token'
+  card.data.type_line = 'Token'
+  card.data.card_faces[0].name = card.name
+  card.data.name = card.name
+  card.data.card_faces[0].image_uri = 'https://i.pinimg.com/736x/6e/fe/d4/6efed4b65fb7666de4b615d8b1195258.jpg'
+
+  // Basic card setup
+  card.id = this.getNextLocalId()
+  this.cardsById[card.id] = card
+
+  // Insert card into game
+  card.owner = player
+  this.getZoneById(zone).addCard(card)
 }
 
 Magic.prototype.aDraw = function(player, opts={}) {
@@ -272,10 +291,9 @@ Magic.prototype.aDrawSeven = function(player, opts={}) {
   }
 }
 
-Magic.prototype.aImport = function(player, card, zone, isToken) {
+Magic.prototype.aImport = function(player, card, zone) {
   cardUtil.lookup.insertCardData([card], this.cardLookup)
   card.id = this.getNextLocalId()
-  card.isToken = isToken
   this.cardsById[card.id] = card
 
   card.owner = player
