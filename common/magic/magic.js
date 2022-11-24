@@ -225,6 +225,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'cascade'             : return this.aCascade(player, action.x)
       case 'draw'                : return this.aDraw(player)
       case 'draw 7'              : return this.aDrawSeven(player)
+      case 'import'              : return this.aImport(player, action.card, action.zone, action.isToken)
       case 'move card'           : return this.aMoveCard(player, action.cardId, action.destId, action.destIndex)
       case 'mulligan'            : return this.aMulligan(player)
       case 'reveal next'         : return this.aRevealNext(player, action.zoneId)
@@ -269,6 +270,16 @@ Magic.prototype.aDrawSeven = function(player, opts={}) {
   for (let i = 0; i < 7; i++) {
     this.aDraw(player, { silent: true })
   }
+}
+
+Magic.prototype.aImport = function(player, card, zone, isToken) {
+  cardUtil.lookup.insertCardData([card], this.cardLookup)
+  card.id = this.getNextLocalId()
+  card.isToken = isToken
+  this.cardsById[card.id] = card
+
+  card.owner = player
+  this.getZoneById(zone).addCard(card)
 }
 
 Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {

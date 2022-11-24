@@ -586,11 +586,14 @@ function parseCardLineName(line) {
   return output
 }
 
-CardUtil.lookup.getByIdDict = function(dict, lookup) {
+CardUtil.lookup.getByIdDict = function(dict, lookup, opts={}) {
   const versions = lookup[dict.name.toLowerCase()]
 
   if (!versions) {
     return null
+  }
+  else if (opts.allVersions) {
+    return versions
   }
   else if (dict.set && dict.collector_number) {
     return versions.find(card => card.set === dict.set && card.collector_number === dict.collector_number)
