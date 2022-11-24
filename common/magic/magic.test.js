@@ -112,4 +112,14 @@ describe('Magic', () => {
     })
   })
 
+  test('view next', () => {
+    const game = t.fixtureDecksSelected()
+
+    const request1 = game.run()
+    const request2 = t.do(game, request1, { name: 'view next', zoneId: 'players.dennis.library' })
+
+    const libraryCards = game.getCardsByZone(t.dennis(game), 'library')
+    t.testVisibility(libraryCards[0], 'dennis')
+  })
+
 })

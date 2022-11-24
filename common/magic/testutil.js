@@ -175,6 +175,18 @@ TestUtil.testBoard = function(game, state) {
   expect(real).toStrictEqual(expected)
 }
 
+TestUtil.testVisibility = function(card, ...names) {
+  const actual = card
+    .visibility
+    .map(player => player.name.toLowerCase())
+    .sort()
+  const expected = names
+    .map(name => name.toLowerCase())
+    .sort()
+
+  expect(expected).toStrictEqual(actual)
+}
+
 TestUtil.do = function(game, request, action) {
   const selector = request.selectors[0]
 
