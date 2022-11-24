@@ -174,6 +174,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'draw'                : return this.aDraw(player)
       case 'draw 7'              : return this.aDrawSeven(player)
       case 'move card'           : return this.aMoveCard(player, action.cardId, action.destId, action.destIndex)
+      case 'mulligan'            : return this.aMulligan(player)
 
       default:
         throw new Error(`Unknown action: ${action.name}`)
@@ -204,10 +205,12 @@ Magic.prototype.aDraw = function(player, opts={}) {
 }
 
 Magic.prototype.aDrawSeven = function(player, opts={}) {
-  this.mLog({
-    template: '{player} draws 7 cards',
-    args: { player }
-  })
+  if (!opts.silent) {
+    this.mLog({
+      template: '{player} draws 7 cards',
+      args: { player }
+    })
+  }
   for (let i = 0; i < 7; i++) {
     this.aDraw(player, { silent: true })
   }
@@ -221,6 +224,22 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
     template: '{player} moves {card} to {zone}',
     args: { player, card, zone: dest }
   })
+}
+
+Magic.prototype.aMulligan = function(player) {
+  this.mLog({
+    template: '{player} takes a mulligan',
+    args: { player }
+  })
+
+  const library = this.getZoneByPlayer(player, 'library')
+  for (const card of game.getCardsByZone(player, 'hand')) {
+    this.mMoveCardTo(card, library)
+  }
+
+  library.shuffle({ silent: true })
+
+  this.aDrawSeven(player, { silent: true })
 }
 
 Magic.prototype.getCardById = function(id) {

@@ -91,4 +91,25 @@ describe('Magic', () => {
     })
   })
 
+  test('mulligan', () => {
+    const game = t.fixtureDecksSelected()
+
+    const request1 = game.run()
+    const request2 = t.do(game, request1, { name: 'draw 7' })
+
+    t.testBoard(game, {
+      dennis: {
+        hand: [
+          'Plains',
+          'Plains',
+          'Benalish Hero',
+          'White Knight',
+          'Advance Scout',
+          'Tithe',
+          'Holy Strength',
+        ],
+      },
+    })
+  })
+
 })

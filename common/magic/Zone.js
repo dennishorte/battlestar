@@ -48,7 +48,17 @@ Zone.prototype.setCards = function(cards) {
   })
 }
 
-Zone.prototype.shuffle = function() {
+Zone.prototype.shuffle = function(opts={}) {
+  if (!opts.silent) {
+    this.game.mLog({
+      template: "{player}'s {zone} shuffled",
+      args: {
+        player: this.owner,
+        zone: this
+      }
+    })
+  }
+
   util.array.shuffle(this._cards, this.game.random)
   if (this.kind === 'hidden') {
     this._cards.forEach(card => card.visibility = [])
