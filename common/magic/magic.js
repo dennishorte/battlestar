@@ -176,6 +176,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'move card'           : return this.aMoveCard(player, action.cardId, action.destId, action.destIndex)
       case 'mulligan'            : return this.aMulligan(player)
       case 'view next'           : return this.aViewNext(player, action.zoneId)
+      case 'view top k'          : return this.aViewTop(player, action.zoneId, action.count)
 
       default:
         throw new Error(`Unknown action: ${action.name}`)
@@ -261,6 +262,22 @@ Magic.prototype.aViewNext = function(player, zoneId) {
   this.mLog({
     template: `{player} views the next card in {zone} (top+${nextIndex})`,
     args: { player, zone }
+  })
+}
+
+Magic.prototype.aViewTop = function(player, zoneId, count) {
+  const zone = this.getZoneById(zoneId)
+  const cards = zone.cards()
+  count = Math.min(count, cards.length)
+
+
+  for (let i = 0; i < count; i++) {
+    util.array.pushUnique(cards[i].visibility, player)
+  }
+
+  this.mLog({
+    template: `{player} views the top ${count} cards of {zone}`,
+    args: { player, zone },
   })
 }
 
