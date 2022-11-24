@@ -51,7 +51,7 @@ Zone.prototype.setCards = function(cards) {
 Zone.prototype.shuffle = function(opts={}) {
   if (!opts.silent) {
     this.game.mLog({
-      template: "{player}'s {zone} shuffled",
+      template: "{zone} shuffled",
       args: {
         player: this.owner,
         zone: this
@@ -60,6 +60,26 @@ Zone.prototype.shuffle = function(opts={}) {
   }
 
   util.array.shuffle(this._cards, this.game.random)
+  if (this.kind === 'hidden') {
+    this._cards.forEach(card => card.visibility = [])
+  }
+  else if (this.kind === 'private') {
+    this._cards.forEach(card => card.visibility = [this.owner])
+  }
+}
+
+Zone.prototype.shuffleBottom = function(count, opts={}) {
+  if (!opts.silent) {
+    this.game.mLog({
+      template: `{zone} bottom ${count} shuffled`,
+      args: { zone: this },
+    })
+  }
+
+  const toShuffle = this._cards.slice(-count)
+  util.array.shuffle(toShuffle, this.game.random)
+  this._cards.splice(this._cards.length - count, count, ...toShuffle)
+
   if (this.kind === 'hidden') {
     this._cards.forEach(card => card.visibility = [])
   }

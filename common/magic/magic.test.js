@@ -38,6 +38,24 @@ describe('Magic', () => {
     })
   })
 
+})
+
+
+describe('Magic Actions', () => {
+
+  test('cascade action', () => {
+    const game = t.fixtureDecksSelected()
+
+    const request1 = game.run()
+    const request2 = t.do(game, request1, { name: 'cascade', x: 2 })
+
+    t.testBoard(game, {
+      dennis: {
+        stack: ['benalish hero'],
+      },
+    })
+  })
+
   test('draw action', () => {
     const game = t.fixtureDecksSelected()
 

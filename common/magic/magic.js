@@ -86,7 +86,6 @@ Magic.prototype.initializePlayers = function() {
 Magic.prototype.initializeZones = function() {
   this.state.zones = {}
   this.state.zones.players = {}
-  this.state.zones.stack = new Zone(this, 'stack', 'public')
 
   for (const player of this.getPlayerAll()) {
     this.state.zones.players[player.name] = {
@@ -102,6 +101,7 @@ Magic.prototype.initializeZones = function() {
       graveyard: new PlayerZone(this, player, 'graveyard', 'public'),
       exile: new PlayerZone(this, player, 'exile', 'public'),
       land: new PlayerZone(this, player, 'land', 'public'),
+      stack: new PlayerZone(this, player, 'stack', 'public'),
     }
   }
 }
@@ -161,6 +161,57 @@ Magic.prototype.mainLoop = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Setters, getters, actions, etc.
 
+Magic.prototype.aCascade = function(player, x) {
+  const cards = this.getCardsByZone(player, 'library')
+
+  this.mLog({
+    template: '{player} cascades for {count}',
+    args: { player, count: x },
+  })
+  this.mLogIndent()
+
+  this.mLog({ template: 'revealing cards' })
+  this.mLogIndent()
+
+  let i
+  for (i = 0; i < cards.length; i++) {
+    this.aReveal(player, cards[i])
+
+    if (cards[i].data.cmc < x && !cardUtil.isLand(cards[i])) {
+      break
+    }
+  }
+
+  this.mLogOutdent()
+
+  if (i < cards.length) {
+    const card = cards[i]
+    this.mLog({
+      template: '{player} cascades into {card}',
+      args: { player, card }
+    })
+    this.mLogIndent()
+
+    this.mMoveCardTo(card, this.getZoneByPlayer(player, 'stack', { index: 0 }))
+    const library = this.getZoneByPlayer(player, 'library')
+    for (let j = 0; j < i; j++) {
+      this.mMoveCardTo(cards[j], library, { verbose: true })
+    }
+    library.shuffleBottom(i)
+
+    this.mLogOutdent()
+  }
+
+  else {
+    this.mLog({
+      template: '{player} fails to find a valid cascade target',
+      args: { player }
+    })
+  }
+
+  this.mLogOutdent()
+}
+
 Magic.prototype.aChooseAction = function(player) {
   const actions = this.requestInputSingle({
     actor: player.name,
@@ -171,6 +222,7 @@ Magic.prototype.aChooseAction = function(player) {
   for (const action of actions) {
     switch (action.name) {
       case 'adjust counter'      : return player.incrementCounter(action.counter, action.amount)
+      case 'cascade'             : return this.aCascade(player, action.x)
       case 'draw'                : return this.aDraw(player)
       case 'draw 7'              : return this.aDrawSeven(player)
       case 'move card'           : return this.aMoveCard(player, action.cardId, action.destId, action.destIndex)
@@ -245,6 +297,15 @@ Magic.prototype.aMulligan = function(player) {
   this.aDrawSeven(player, { silent: true })
 }
 
+Magic.prototype.aReveal = function(player, card) {
+  this.mReveal(card)
+  const zone = this.getZoneByCard(card)
+  this.mLog({
+    template: '{player} reveals {card} from {zone}',
+    args: { player, card, zone },
+  })
+}
+
 Magic.prototype.aRevealNext = function(player, zoneId) {
   const zone = this.getZoneById(zoneId)
   const cards = zone.cards()
@@ -259,7 +320,7 @@ Magic.prototype.aRevealNext = function(player, zoneId) {
   }
 
   const card = cards[nextIndex]
-  card.visibility = this.getPlayerAll()
+  this.mReveal(card)
   this.mLog({
     template: `{player} reveals the next card in {zone} (top+${nextIndex})`,
     args: { player, zone }
@@ -354,6 +415,10 @@ Magic.prototype.mMoveCardTo = function(card, zone, opts={}) {
   this.mMoveByIndices(source, index, zone, destIndex)
 }
 
+Magic.prototype.mReveal = function(card) {
+  card.visibility = this.getPlayerAll()
+}
+
 Magic.prototype.setDeck = function(player, data) {
   this.mLog({
     template: '{player} has selected a deck',
@@ -433,7 +498,7 @@ Magic.prototype._enrichLogArgs = function(msg) {
     else if (key.startsWith('card')) {
       const card = msg.args[key]
       msg.args[key] = {
-        value: card.id,
+        value: card.name,
         classes: ['card-id'],
       }
     }

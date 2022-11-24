@@ -121,6 +121,7 @@ function blankTableau() {
     graveyard: [],
     exile: [],
     land: [],
+    stack: [],
   }
 }
 
@@ -132,6 +133,7 @@ const playerZones = [
   'graveyard',
   'exile',
   'land',
+  'stack',
 ]
 
 TestUtil.testBoard = function(game, state) {
@@ -171,8 +173,8 @@ TestUtil.testBoard = function(game, state) {
   }
 
   /* console.log(real)
-   * console.log(expected)
-   */
+   * console.log(expected) */
+
   expect(real).toStrictEqual(expected)
 }
 
