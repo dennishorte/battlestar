@@ -181,9 +181,7 @@
 
 <script>
 import { mapState} from 'vuex'
-import { util } from 'battlestar-common'
-
-import cardUtil from '../../util/cardUtil.js'
+import { mag, util } from 'battlestar-common'
 
 import SectionHeader from '@/components/SectionHeader'
 
@@ -270,7 +268,7 @@ function filterCards(cards, filters) {
     return cards
   }
   return cards
-    .filter(card => filters.every(filter => cardUtil.applyOneFilter(card, filter)))
+    .filter(card => filters.every(filter => mag.util.card.applyOneFilter(card, filter)))
 }
 
 </script>

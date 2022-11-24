@@ -13,7 +13,7 @@
 
 
 <script>
-import cardUtil from '../util/cardUtil.js'
+import { mag } from 'battlestar-common'
 
 import Mana from './Mana'
 import ReminderText from './ReminderText'
@@ -32,7 +32,7 @@ export default {
 
   computed: {
     lines() {
-      return cardUtil.parseOracleText(this.text)
+      return mag.util.card.parseOracleText(this.text)
     },
   },
 }

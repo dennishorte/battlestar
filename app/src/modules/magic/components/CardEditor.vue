@@ -74,8 +74,7 @@
 
 
 <script>
-import cardUtil from '../util/cardUtil.js'
-import { util } from 'battlestar-common'
+import { mag, util } from 'battlestar-common'
 
 import Card from './Card.vue'
 
@@ -96,7 +95,7 @@ export default {
 
   data() {
     return {
-      newCard: this.card ? util.deepcopy(this.card) : cardUtil.blank(),
+      newCard: this.card ? util.deepcopy(this.card) : mag.util.card.blank(),
       faceIndex: 0,
       fieldName: '',
     }
@@ -105,33 +104,33 @@ export default {
   computed: {
     types: {
       set(value) {
-        const base = this.newCard.card_faces[this.faceIndex].type_line.split(cardUtil.TYPE_DIVIDER)
+        const base = this.newCard.card_faces[this.faceIndex].type_line.split(mag.util.card.TYPE_DIVIDER)
         base[0] = value
-        this.newCard.card_faces[this.faceIndex].type_line = base.join(cardUtil.TYPE_DIVIDER)
+        this.newCard.card_faces[this.faceIndex].type_line = base.join(mag.util.card.TYPE_DIVIDER)
       },
       get() {
-        return this.newCard.card_faces[this.faceIndex].type_line.split(cardUtil.TYPE_DIVIDER)[0]
+        return this.newCard.card_faces[this.faceIndex].type_line.split(mag.util.card.TYPE_DIVIDER)[0]
       },
     },
 
     subtypes: {
       set(value) {
-        const base = this.newCard.card_faces[this.faceIndex].type_line.split(cardUtil.TYPE_DIVIDER)
+        const base = this.newCard.card_faces[this.faceIndex].type_line.split(mag.util.card.TYPE_DIVIDER)
         while (base.length < 2) {
           base.push('')
         }
         base[1] = value
-        this.newCard.card_faces[this.faceIndex].type_line = base.join(cardUtil.TYPE_DIVIDER)
+        this.newCard.card_faces[this.faceIndex].type_line = base.join(mag.util.card.TYPE_DIVIDER)
       },
       get() {
-        return this.newCard.card_faces[this.faceIndex].type_line.split(cardUtil.TYPE_DIVIDER)[1] || ''
+        return this.newCard.card_faces[this.faceIndex].type_line.split(mag.util.card.TYPE_DIVIDER)[1] || ''
       },
     },
   },
 
   methods: {
     addFace() {
-      this.newCard.card_faces.push(cardUtil.blankFace())
+      this.newCard.card_faces.push(mag.util.card.blankFace())
       console.log(this.newCard)
     },
 
@@ -159,7 +158,7 @@ export default {
         this.newCard = newValue
       }
       else {
-        this.newCard = cardUtil.blank()
+        this.newCard = mag.util.card.blank()
       }
     },
   },

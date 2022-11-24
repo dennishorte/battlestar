@@ -9,7 +9,7 @@
 
 
 <script>
-import cardUtil from '../util/cardUtil.js'
+import { mag } from 'battlestar-common'
 
 import Mana from './Mana'
 
@@ -26,7 +26,7 @@ export default {
 
   computed: {
     parts() {
-      return cardUtil.parseOracleText(this.text)[0].parts
+      return mag.util.card.parseOracleText(this.text)[0].parts
     },
   },
 }

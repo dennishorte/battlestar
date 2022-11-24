@@ -6,7 +6,7 @@
 
 
 <script>
-import cardUtil from '../util/cardUtil.js'
+import { mag } from 'battlestar-common'
 
 import Mana from './Mana'
 
@@ -24,7 +24,7 @@ export default {
 
   computed: {
     symbols() {
-      return this.cost ? cardUtil.manaSymbolsFromString(this.cost) : []
+      return this.cost ? mag.util.card.manaSymbolsFromString(this.cost) : []
     },
   },
 }

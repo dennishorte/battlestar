@@ -1,9 +1,6 @@
 import axios from 'axios'
 
-import { util } from 'battlestar-common'
-
-import cardUtil from '../util/cardUtil.js'
-import deckUtil from '../util/deckUtil.js'
+import { mag, util } from 'battlestar-common'
 
 
 export default {
@@ -91,8 +88,8 @@ export default {
     selectDeck({ commit, rootState }, rawDeck) {
       let deck
       if (rawDeck) {
-        deck = deckUtil.deserialize(rawDeck)
-        cardUtil.lookup.insertCardData(deck.cardlist, rootState.magic.cards.lookup)
+        deck = mag.util.deck.deserialize(rawDeck)
+        mag.util.card.lookup.insertCardData(deck.cardlist, rootState.magic.cards.lookup)
       }
       else {
         deck = null

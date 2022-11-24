@@ -47,8 +47,7 @@
 
 
 <script>
-import cardUtil from '@/modules/magic/util/cardUtil.js'
-import deckUtil from '@/modules/magic/util/deckUtil.js'
+import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
 import Decklist from '@/modules/magic/components/deck/Decklist'
@@ -90,8 +89,8 @@ export default {
   methods: {
     selectionChanged({ newValue }) {
       if (newValue.objectType === 'file') {
-        const deck = deckUtil.deserialize(newValue.file)
-        cardUtil.lookup.insertCardData(deck.cardlist, this.cardLookup)
+        const deck = mag.util.deck.deserialize(newValue.file)
+        mag.util.card.lookup.insertCardData(deck.cardlist, this.cardLookup)
         this.activeDeck = deck
       }
     },

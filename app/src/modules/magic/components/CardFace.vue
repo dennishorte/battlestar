@@ -49,7 +49,7 @@
 
 
 <script>
-import cardUtil from '../util/cardUtil.js'
+import { mag } from 'battlestar-common'
 
 import ManaCost from './ManaCost'
 import OracleText from './OracleText'
@@ -102,7 +102,7 @@ export default {
         classes.push('scarred')
       }
 
-      const frameColor = cardUtil.frameColor(this.face)
+      const frameColor = mag.util.card.frameColor(this.face)
       classes.push(`${frameColor}-card`)
 
       return classes

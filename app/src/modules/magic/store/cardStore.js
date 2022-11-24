@@ -1,7 +1,5 @@
 import axios from 'axios'
-import { util } from 'battlestar-common'
-
-import cardUtil from '../util/cardUtil.js'
+import { mag, util } from 'battlestar-common'
 
 
 export default {
@@ -17,7 +15,7 @@ export default {
 
   getters: {
     getByIdDict: (state) => (dict) => {
-      return cardUtil.lookup.getByIdDict(dict, state.lookup)
+      return mag.util.card.lookup.getByIdDict(dict, state.lookup)
     }
   },
 
@@ -61,7 +59,7 @@ export default {
 
     async loadCardDatabaseSuccess({ commit, dispatch }, cards) {
       commit('setCardList', cards)
-      commit('setCardLookup', cardUtil.createCardLookup(cards))
+      commit('setCardLookup', mag.util.card.createCardLookup(cards))
       //await dispatch('applyCardFilters')
 
       commit('setCardsLoaded')

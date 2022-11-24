@@ -57,9 +57,8 @@
 
 
 <script>
+import { mag } from 'battlestar-common'
 import { mapGetters, mapState } from 'vuex'
-
-import cardUtil from '../../util/cardUtil.js'
 
 import Card from '../Card'
 import CardManagerButtonGroup from './CardManagerButtonGroup'
@@ -119,7 +118,7 @@ export default {
       return this
         .activeDeck
         .cardlist
-        .filter(c => c.zone === zoneName && cardUtil.softEquals(c, this.card))
+        .filter(c => c.zone === zoneName && mag.util.card.softEquals(c, this.card))
         .length
     },
 

@@ -16,9 +16,8 @@
 
 
 <script>
-import cardUtil from '../../util/cardUtil.js'
 import cubeUtil from '../../util/cubeUtil.js'
-import { util } from 'battlestar-common'
+import { mag, util } from 'battlestar-common'
 
 import CubeBreakdownSection from './CubeBreakdownSection'
 
@@ -51,9 +50,9 @@ export default {
 
   computed: {
     sections() {
-      if (cardUtil.COLORS.includes(this.name.toLowerCase()) || this.name.toLowerCase() === 'colorless') {
+      if (mag.util.card.COLORS.includes(this.name.toLowerCase()) || this.name.toLowerCase() === 'colorless') {
         const collected = util.array.collect(this.cardlist, card => {
-          const superTypes = cardUtil.supertypes(card)
+          const superTypes = mag.util.card.supertypes(card)
           for (const kind of this.cardTypeSections) {
             if (superTypes.includes(kind)) {
               return kind
@@ -77,12 +76,12 @@ export default {
 
       else if (this.name.toLowerCase() === 'multicolor') {
         const collected = util.array.collect(this.cardlist, card => {
-          return cardUtil.colorKey(cardUtil.identity(card))
+          return mag.util.card.colorKey(mag.util.card.identity(card))
         })
 
         const output = Object
           .entries(collected)
-          .map(([name, cards]) => ({ name: cardUtil.COLOR_KEY_TO_NAME[name], cards }))
+          .map(([name, cards]) => ({ name: mag.util.card.COLOR_KEY_TO_NAME[name], cards }))
           .sort((l, r) => cubeUtil.GOLD_SORT_ORDER.indexOf(l.name) - cubeUtil.GOLD_SORT_ORDER.indexOf(r.name))
 
           return output

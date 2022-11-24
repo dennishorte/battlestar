@@ -1,5 +1,4 @@
-import cardUtil from './cardUtil.js'
-import { util } from 'battlestar-common'
+import { mag, util } from 'battlestar-common'
 
 
 const CubeUtil = {}
@@ -52,14 +51,14 @@ Cube.prototype.addCard = function(card) {
 
 Cube.prototype.removeCard = function(card) {
   // Remove exact matches
-  const exactIndex = this.cardlist.findIndex(data => cardUtil.strictEquals(data, card))
+  const exactIndex = this.cardlist.findIndex(data => mag.util.card.strictEquals(data, card))
   if (exactIndex >= 0) {
     this.cardlist.splice(exactIndex, 1)
     return
   }
 
   // Remove soft matches
-  const softIndex = this.cardlist.findIndex(data => cardUtil.softEquals(data, card))
+  const softIndex = this.cardlist.findIndex(data => mag.util.card.softEquals(data, card))
   if (softIndex >= 0) {
     this.cardlist.splice(softIndex, 1)
     return
@@ -120,7 +119,7 @@ CubeUtil.deserialize = function(data) {
 }
 
 CubeUtil.generateCubeBreakdown = function(cube) {
-  const cards = cardUtil.parseCardlist(cube.cardlist)
+  const cards = mag.util.card.parseCardlist(cube.cardlist)
 
   console.log(cards)
 }

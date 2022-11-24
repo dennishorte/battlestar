@@ -22,14 +22,12 @@
 
 
 <script>
-import { util } from 'battlestar-common'
+import { mag, util } from 'battlestar-common'
 import { saveAs } from 'file-saver'
 import { mapState } from 'vuex'
 
 import DecklistSection from './DecklistSection'
 import Dropdown from '@/components/Dropdown'
-
-import cardUtil from '../../util/cardUtil.js'
 
 
 export default {
@@ -70,10 +68,10 @@ export default {
   computed: {
     cardsBySection() {
       const byZone = util.array.collect(this.deck.cardlist, card => card.zone)
-      const mainByType = util.array.collect(byZone.main || [], card => cardUtil.getSortType(card.data))
+      const mainByType = util.array.collect(byZone.main || [], card => mag.util.card.getSortType(card.data))
       const orderedSections = Object
         .entries(mainByType)
-        .sort((l, r) => cardUtil.sortTypes.indexOf(r[0]) - cardUtil.sortTypes.indexOf(l[0]))
+        .sort((l, r) => mag.util.card.sortTypes.indexOf(r[0]) - mag.util.card.sortTypes.indexOf(l[0]))
       if (byZone.side) {
         orderedSections.push(['sideboard', byZone.side])
       }
@@ -85,7 +83,7 @@ export default {
         .map(([sectionName, cards]) => {
           const groups = util
             .array
-            .collect(cards, card => cardUtil.createCardId(card))
+            .collect(cards, card => mag.util.card.createCardId(card))
           const cardsWithCounts = Object
             .values(groups)
             .map(group => {

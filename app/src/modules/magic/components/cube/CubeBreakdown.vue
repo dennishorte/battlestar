@@ -13,8 +13,7 @@
 
 
 <script>
-import cardUtil from '../../util/cardUtil.js'
-import { util } from 'battlestar-common'
+import { mag, util } from 'battlestar-common'
 
 import CubeBreakdownColumn from './CubeBreakdownColumn'
 
@@ -48,17 +47,17 @@ export default {
   computed: {
     columns() {
       const collected = util.array.collect(this.cardlist, card => {
-        if (cardUtil.isLand(card)) {
+        if (mag.util.card.isLand(card)) {
           return 'land'
         }
-        else if (cardUtil.identity(card).length === 0) {
+        else if (mag.util.card.identity(card).length === 0) {
           return 'colorless'
         }
-        else if (cardUtil.identity(card).length > 1) {
+        else if (mag.util.card.identity(card).length > 1) {
           return 'multicolor'
         }
         else {
-          return cardUtil.colorSymbolToName(cardUtil.identity(card)[0])
+          return mag.util.card.colorSymbolToName(mag.util.card.identity(card)[0])
         }
       })
 

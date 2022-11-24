@@ -20,6 +20,10 @@ module.exports = {
   MagicFactory,
   factory: factoryFromLobby,
   res,
+  util: {
+    card: cardUtil,
+    deck: deckUtil,
+  },
 }
 
 function Magic(serialized_data, viewerName) {

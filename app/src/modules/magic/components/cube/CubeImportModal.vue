@@ -25,7 +25,7 @@
 
 
 <script>
-import cardUtil from '../../util/cardUtil.js'
+import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
 import Modal from '@/components/Modal'
@@ -50,8 +50,8 @@ export default {
     }),
 
     parsedUpdate() {
-      const cards = cardUtil.parseCardlist(this.updateText)
-      cardUtil.lookup.insertCardData(cards, this.lookup)
+      const cards = mag.util.card.parseCardlist(this.updateText)
+      mag.util.card.lookup.insertCardData(cards, this.lookup)
 
       const operations = {
         insert: [],

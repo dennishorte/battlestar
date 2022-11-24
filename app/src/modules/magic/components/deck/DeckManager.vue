@@ -56,10 +56,10 @@
 
 <script>
 import { computed } from 'vue'
+import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
 import axios from 'axios'
-import cardUtil from '@/modules/magic/util/cardUtil.js'
 import mitt from 'mitt'
 
 import CardFilters from './CardFilters'
@@ -154,7 +154,7 @@ export default {
     },
 
     importDecklist() {
-      const cards = cardUtil.parseCardlist(this.importText)
+      const cards = mag.util.card.parseCardlist(this.importText)
       this.$store.dispatch('magic/dm/setActiveDecklist', cards)
     },
 

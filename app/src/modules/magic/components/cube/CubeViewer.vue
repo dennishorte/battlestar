@@ -26,8 +26,8 @@
 
 <script>
 import axios from 'axios'
-import cardUtil from '../../util/cardUtil.js'
 import cubeUtil from '../../util/cubeUtil.js'
+import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
 import CubeBreakdown from './CubeBreakdown'
@@ -66,7 +66,7 @@ export default {
     }),
 
     cards() {
-      cardUtil.lookup.insertCardData(this.cube.cardlist, this.lookup)
+      mag.util.card.lookup.insertCardData(this.cube.cardlist, this.lookup)
       return this.cube.cardlist
     },
   },
