@@ -8,7 +8,7 @@
     />
 
     <Magic
-      v-if="game === 'Magic'"
+      v-else-if="game === 'Magic'"
       :data="gameData"
       :actor="actor"
     />

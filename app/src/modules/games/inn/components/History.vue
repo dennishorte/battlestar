@@ -49,10 +49,8 @@ export default {
           // do nothing
         }
         else if (entry === '__INDENT__') {
-          indent += 1
         }
         else if (entry === '__OUTDENT__') {
-          indent -= 1
         }
         else {
           const text = this.convertLogMessage(entry)
@@ -69,7 +67,7 @@ export default {
           output.push({
             text,
             classes,
-            indent: Math.max(0, indent - 1),
+            indent: entry.indent,
           })
         }
 

@@ -340,7 +340,6 @@ Game.prototype.mLog = function(msg) {
 }
 
 Game.prototype.mLogIndent = function() {
-  this.getLog().push('__INDENT__')
   this.state.indent += 1
 }
 
@@ -357,7 +356,6 @@ Game.prototype.mLogOutdent = function() {
   if (this.indent === 0) {
     throw new Error('Cannot outdent; indent is already 0.')
   }
-  this.getLog().push('__OUTDENT__')
   this.state.indent -= 1
 }
 
