@@ -2,9 +2,7 @@
   <MagicWrapper :afterLoaded="prepGame">
     <PreGame v-if="inPreGame" />
 
-    <div v-else class="magic-game">
-      Magic
-    </div>
+    <MagicGame v-else />
   </MagicWrapper>
 </template>
 
@@ -15,6 +13,7 @@ import { computed } from 'vue'
 import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
+import MagicGame from './MagicGame'
 import MagicWrapper from '@/modules/magic/components/MagicWrapper'
 import PreGame from './PreGame'
 
@@ -23,6 +22,7 @@ export default {
   name: 'Magic',
 
   components: {
+    MagicGame,
     MagicWrapper,
     PreGame,
   },

@@ -18,7 +18,7 @@ function Zone(game, name, kind) {
 function PlayerZone(game, player, name, kind) {
   this.id = 'players.' + player.name + '.' + name
   this.game = game
-  this.name = `${player.name}'s ${name}`
+  this.name = name
   this.kind = kind
   this.owner = player
   this._cards = []
@@ -51,7 +51,7 @@ Zone.prototype.setCards = function(cards) {
 Zone.prototype.shuffle = function(opts={}) {
   if (!opts.silent) {
     this.game.mLog({
-      template: "{zone} shuffled",
+      template: "{player}'s {zone} shuffled",
       args: {
         player: this.owner,
         zone: this
@@ -71,8 +71,8 @@ Zone.prototype.shuffle = function(opts={}) {
 Zone.prototype.shuffleBottom = function(count, opts={}) {
   if (!opts.silent) {
     this.game.mLog({
-      template: `{zone} bottom ${count} shuffled`,
-      args: { zone: this },
+      template: `{player}'s {zone} bottom ${count} shuffled`,
+      args: { player: this.owner, zone: this },
     })
   }
 
