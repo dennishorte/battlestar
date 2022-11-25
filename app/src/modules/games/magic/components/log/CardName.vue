@@ -9,7 +9,7 @@
 export default {
   name: 'CardName',
 
-  inject: ['game', 'ui'],
+  inject: ['game'],
 
   props: {
     name: String,
@@ -27,8 +27,6 @@ export default {
 
   methods: {
     clicked() {
-      this.ui.modals.cardViewer.cardId = this.name
-      this.$modal('card-viewer-modal').show()
     },
   },
 }

@@ -3,39 +3,39 @@
 
     <div class="section">
       <div class="section-heading">Actions</div>
-      <div class="phase-selector-element">pass priority</div>
+      <div class="phase-button" @click="passPriority">pass&nbsp;priority</div>
     </div>
 
     <div class="section">
       <div class="section-heading">Beginning</div>
-      <div class="phase-selector-element">start turn</div>
-      <div class="phase-selector-element">untap</div>
-      <div class="phase-selector-element">upkeep</div>
-      <div class="phase-selector-element">draw</div>
+      <PhaseButton name="start turn" />
+      <PhaseButton name="untap" />
+      <PhaseButton name="upkeep" />
+      <PhaseButton name="draw" />
     </div>
 
     <div class="section">
       <div class="section-heading">Pre-Combat</div>
-      <div class="phase-selector-element">main 1</div>
+      <PhaseButton name="main 1" />
     </div>
 
     <div class="section">
       <div class="section-heading">Combat</div>
-      <div class="phase-selector-element">c begin</div>
-      <div class="phase-selector-element">attackers</div>
-      <div class="phase-selector-element">blockers</div>
-      <div class="phase-selector-element">damage</div>
-      <div class="phase-selector-element">c end</div>
+      <PhaseButton name="c begin" />
+      <PhaseButton name="attackers" />
+      <PhaseButton name="blockers" />
+      <PhaseButton name="damage" />
+      <PhaseButton name="c end" />
     </div>
 
     <div class="section">
       <div class="section-heading">Post-Combat</div>
-      <div class="phase-selector-element">main 2</div>
+      <PhaseButton name="main 2" />
     </div>
 
     <div class="section">
       <div class="section-heading">Ending</div>
-      <div class="phase-selector-element">end</div>
+      <PhaseButton name="end" />
     </div>
 
   </div>
@@ -43,8 +43,15 @@
 
 
 <script>
+import PhaseButton from './PhaseButton'
+
+
 export default {
   name: 'PhaseSelector',
+
+  components: {
+    PhaseButton,
+  },
 
   inject: ['actor', 'game', 'save'],
 
@@ -60,19 +67,15 @@ export default {
       this.save()
     },
   },
-
-  mounted() {
-    document
-      .querySelectorAll('.phase-selector-element')
-      .forEach(el => el.addEventListener('click', event => {
-        this.game.aSelectPhase(el.textContent)
-      }))
-  }
 }
 </script>
 
 
 <style scoped>
+.phase-button {
+  font-size: 1.1em;
+}
+
 .phase-selector {
   color: var(--bs-secondary);
 }
@@ -88,9 +91,5 @@ export default {
 .section-heading {
   font-size: .6em;
   border-bottom: 1px solid var(--bs-secondary);
-}
-
-.phase-selector-element {
-  font-size: 1.1em;
 }
 </style>

@@ -32,7 +32,5 @@ export default {
 <style scoped>
 .player-name {
   display: inline-block;
-  padding: 0 .4em;
-  border-radius: .1em;
 }
 </style>

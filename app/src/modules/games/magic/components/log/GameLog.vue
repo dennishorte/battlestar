@@ -118,7 +118,10 @@ export default {
     },
 
     indentSpacers(entry) {
-      if (entry.classes.includes('set-phase')) {
+      if (
+        entry.classes.includes('set-phase')
+        || entry.classes.includes('pass-priority')
+      ) {
         return 0
       }
       else {
@@ -180,6 +183,7 @@ export default {
   display: flex;
   flex-direction: row;
   margin-top: 1px;
+  padding-left: 1em;
 }
 
 .indent-spacer::before {
@@ -199,10 +203,17 @@ export default {
   background-color: #7db881;
 }
 
-.set-phase {
+.pass-priority {
   background-color: #dca;
   border-radius: 0 .25em .25em 0;
-  width: 35%;
+  width: 40%;
+  padding-left: 1em;
+}
+
+.set-phase {
+  background-color: #C3B091;
+  border-radius: 0 .25em .25em 0;
+  width: 50%;
   padding-left: 1em;
 }
 

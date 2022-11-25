@@ -53,6 +53,23 @@ function factoryFromLobby(lobby) {
 Magic.prototype._mainProgram = function() {
   this.initialize()
   this.chooseDecks()
+
+  this.state.phase = 'start turn'
+  this.mLogSetIndent(0)
+  this.mLog({
+    template: "{player}'s turn",
+    args: {
+      player: this.getPlayerCurrent(),
+      classes: ['start-turn'],
+    }
+  })
+  this.mLogIndent()
+  this.mLog({
+    template: '{player} gets priority',
+    args: { player: this.getPlayerCurrent() },
+    classes: ['pass-priority'],
+  })
+
   this.mainLoop()
 }
 
@@ -338,9 +355,12 @@ Magic.prototype.aMulligan = function(player) {
 Magic.prototype.aPassPriority = function() {
   const player = this.getPlayerNext()
   this.state.currentPlayer = player
+
+  this.mLogSetIndent(1)
   this.mLog({
     template: '{player} gets priority',
     args: { player },
+    classes: ['pass-priority'],
   })
 }
 
@@ -378,7 +398,6 @@ Magic.prototype.aSelectPhase = function(phase) {
   this.state.phase = phase
 
   if (phase === 'start turn') {
-    this.state.currentPlayer = this.getPlayerNext()
     this.mLogSetIndent(0)
     this.mLog({
       template: "{player}'s turn",
@@ -450,6 +469,10 @@ Magic.prototype.getDecksSelected = function() {
 Magic.prototype.getNextLocalId = function() {
   this.state.nextLocalId += 1
   return this.state.nextLocalId
+}
+
+Magic.prototype.getPhase = function() {
+  return this.state.phase
 }
 
 Magic.prototype.mAdjustCardVisibility = function(card) {
