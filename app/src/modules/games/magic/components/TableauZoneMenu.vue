@@ -2,7 +2,6 @@
   <div class="dropdown">
     <button
       class="btn btn-light dropdown-toggle"
-      :class="sizeClass"
       data-bs-toggle="dropdown"
     >
     </button>

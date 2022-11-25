@@ -14,7 +14,10 @@
         <PlayerCounters :player="player" />
       </div>
 
-      <TableauZone :zone="getZone('library')" />
+      <TableauZone :zone="getZone('library')">
+        <DropdownButton @click="drawSeven">draw 7</DropdownButton>
+      </TableauZone>
+
       <TableauZone :zone="getZone('exile')" />
     </div>
 
@@ -36,6 +39,7 @@
 
 
 <script>
+import DropdownButton from '@/components/DropdownButton'
 import PlayerCounters from './PlayerCounters'
 import TableauZone from './TableauZone'
 import TableauZoneMenu from './TableauZoneMenu'
@@ -45,6 +49,7 @@ export default {
   name: 'PlayerTableau',
 
   components: {
+    DropdownButton,
     PlayerCounters,
     TableauZone,
     TableauZoneMenu,
@@ -71,6 +76,10 @@ export default {
   },
 
   methods: {
+    drawSeven() {
+      this.game.aDrawSeven(this.player)
+    },
+
     getZone(name) {
       return this.game.getZoneByPlayer(this.player, name)
     },
@@ -124,7 +133,8 @@ export default {
   font-size: .8em;
   padding: .25em;
 
-  min-width: 37em;
+  min-width: 37.5em;
+  max-width: 37.5em;
 }
 
 .tableau-reverse {

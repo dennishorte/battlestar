@@ -68,6 +68,7 @@ Magic.prototype.initialize = function() {
   this.mLogIndent()
 
   this.state.nextLocalId = 1
+  this.state.turnPlayer = null
 
   this.initializePlayers()
   this.initializeZones()
@@ -127,6 +128,7 @@ Magic.prototype.initializeStartingPlayer = function() {
     })
     this.state.currentPlayer = randomPlayer
   }
+  this.state.turnPlayer = this.state.currentPlayer
 }
 
 
@@ -264,6 +266,7 @@ Magic.prototype.aCreateToken = function(player, card, zone) {
 }
 
 Magic.prototype.aDraw = function(player, opts={}) {
+  player = player || this.getPlayerCurrent()
   const libraryCards = this.getCardsByZone(player, 'library')
 
   if (libraryCards.length === 0) {
@@ -332,6 +335,15 @@ Magic.prototype.aMulligan = function(player) {
   this.aDrawSeven(player, { silent: true })
 }
 
+Magic.prototype.aPassPriority = function() {
+  const player = this.getPlayerNext()
+  this.state.currentPlayer = player
+  this.mLog({
+    template: '{player} gets priority',
+    args: { player },
+  })
+}
+
 Magic.prototype.aReveal = function(player, card) {
   this.mReveal(card)
   const zone = this.getZoneByCard(card)
@@ -360,6 +372,35 @@ Magic.prototype.aRevealNext = function(player, zoneId) {
     template: `{player} reveals the next card in {zone} (top+${nextIndex})`,
     args: { player, zone }
   })
+}
+
+Magic.prototype.aSelectPhase = function(phase) {
+  this.state.phase = phase
+
+  if (phase === 'start turn') {
+    this.state.currentPlayer = this.getPlayerNext()
+    this.mLogSetIndent(0)
+    this.mLog({
+      template: "{player}'s turn",
+      args: {
+        player: this.getPlayerCurrent(),
+        classes: ['start-turn'],
+      }
+    })
+    this.mLogIndent()
+  }
+  else {
+    this.mLogSetIndent(1)
+    this.mLog({
+      template: `phase: ${phase}`,
+      classes: ['set-phase'],
+    })
+    this.mLogIndent()
+  }
+
+  if (phase === 'draw') {
+    this.aDraw()
+  }
 }
 
 Magic.prototype.aViewNext = function(player, zoneId) {

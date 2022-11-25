@@ -289,17 +289,8 @@ Game.prototype.getLog = function() {
   return this.state.log
 }
 
-Game.prototype.getLogIndent = function(msg) {
-  let indent = 0
-  for (const msg of this.getLog()) {
-    if (msg === '__INDENT__') {
-      indent += 1
-    }
-    else if (msg === '__OUTDENT__') {
-      indent -= 1
-    }
-  }
-  return indent
+Game.prototype.getLogIndent = function() {
+  return this.state.indent
 }
 
 Game.prototype.getViewerName = function() {
@@ -339,7 +330,7 @@ Game.prototype.mLog = function(msg) {
   }
 
   msg.id = this.getLog().length
-  msg.indent = this.getLogIndent(msg)
+  msg.indent = this.getLogIndent()
 
   // Making a copy here makes sure that the log items are always distinct from
   // wherever their original data came from.
@@ -350,10 +341,24 @@ Game.prototype.mLog = function(msg) {
 
 Game.prototype.mLogIndent = function() {
   this.getLog().push('__INDENT__')
+  this.state.indent += 1
+}
+
+Game.prototype.mLogSetIndent = function(count) {
+  while (this.state.indent < count) {
+    this.mLogIndent()
+  }
+  while (this.state.indent > count) {
+    this.mLogOutdent()
+  }
 }
 
 Game.prototype.mLogOutdent = function() {
+  if (this.indent === 0) {
+    throw new Error('Cannot outdent; indent is already 0.')
+  }
   this.getLog().push('__OUTDENT__')
+  this.state.indent -= 1
 }
 
 Game.prototype.mLogDoNothing = function(player) {
@@ -382,6 +387,7 @@ Game.prototype._mainProgram = function() {
 Game.prototype._blankState = function(more = {}) {
   return Object.assign({
     log: [],
+    indent: 0,
     responseIndex: -1,
   }, more)
 }

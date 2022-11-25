@@ -3,39 +3,39 @@
 
     <div class="section">
       <div class="section-heading">Actions</div>
-      <div class="section-element">pass priority</div>
+      <div class="phase-selector-element">pass priority</div>
     </div>
 
     <div class="section">
       <div class="section-heading">Beginning</div>
-      <div class="section-element">start turn</div>
-      <div class="section-element">untap</div>
-      <div class="section-element">upkeep</div>
-      <div class="section-element">draw</div>
+      <div class="phase-selector-element">start turn</div>
+      <div class="phase-selector-element">untap</div>
+      <div class="phase-selector-element">upkeep</div>
+      <div class="phase-selector-element">draw</div>
     </div>
 
     <div class="section">
       <div class="section-heading">Pre-Combat</div>
-      <div class="section-element">main 1</div>
+      <div class="phase-selector-element">main 1</div>
     </div>
 
     <div class="section">
       <div class="section-heading">Combat</div>
-      <div class="section-element">begin</div>
-      <div class="section-element">attackers</div>
-      <div class="section-element">blockers</div>
-      <div class="section-element">damage</div>
-      <div class="section-element">end</div>
+      <div class="phase-selector-element">c begin</div>
+      <div class="phase-selector-element">attackers</div>
+      <div class="phase-selector-element">blockers</div>
+      <div class="phase-selector-element">damage</div>
+      <div class="phase-selector-element">c end</div>
     </div>
 
     <div class="section">
       <div class="section-heading">Post-Combat</div>
-      <div class="section-element">main 2</div>
+      <div class="phase-selector-element">main 2</div>
     </div>
 
     <div class="section">
       <div class="section-heading">Ending</div>
-      <div class="section-element">end</div>
+      <div class="phase-selector-element">end</div>
     </div>
 
   </div>
@@ -45,6 +45,29 @@
 <script>
 export default {
   name: 'PhaseSelector',
+
+  inject: ['actor', 'game', 'save'],
+
+  computed: {
+    player() {
+      return this.game.getPlayerByName(this.actor.name)
+    },
+  },
+
+  methods: {
+    passPriority() {
+      this.game.aPassPriority()
+      this.save()
+    },
+  },
+
+  mounted() {
+    document
+      .querySelectorAll('.phase-selector-element')
+      .forEach(el => el.addEventListener('click', event => {
+        this.game.aSelectPhase(el.textContent)
+      }))
+  }
 }
 </script>
 
@@ -67,7 +90,7 @@ export default {
   border-bottom: 1px solid var(--bs-secondary);
 }
 
-.section-element {
+.phase-selector-element {
   font-size: 1.1em;
 }
 </style>
