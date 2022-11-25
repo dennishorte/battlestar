@@ -12,7 +12,7 @@
       </template>
 
       <template v-else>
-        <div v-for="n in line.indent" :key="n" class="indent-spacer" />
+        <div v-for="n in indentSpacers(line)" :key="n" class="indent-spacer" />
         <GameLogText :text="line.text" :class="classes(line)" />
       </template>
     </div>
@@ -46,10 +46,8 @@ export default {
           // do nothing
         }
         else if (entry === '__INDENT__') {
-          indent += 1
         }
         else if (entry === '__OUTDENT__') {
-          indent -= 1
         }
         else {
           const text = this.convertLogMessage(entry)
@@ -59,7 +57,7 @@ export default {
             text,
             classes,
             args: entry.args,
-            indent: Math.max(0, indent),
+            indent: entry.indent,
           })
         }
 
@@ -117,6 +115,15 @@ export default {
     classes(line) {
       const classes = [`indent-${line.indent}`]
       return classes
+    },
+
+    indentSpacers(entry) {
+      if (entry.classes.includes('set-phase')) {
+        return 0
+      }
+      else {
+        return Math.max(0, entry.indent - 1)
+      }
     },
 
     scrollToBottom() {
@@ -190,6 +197,13 @@ export default {
 
   color: white;
   background-color: #7db881;
+}
+
+.set-phase {
+  background-color: #dca;
+  border-radius: 0 .25em .25em 0;
+  width: 35%;
+  padding-left: 1em;
 }
 
 .player-turn-start {
