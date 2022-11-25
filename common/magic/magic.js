@@ -327,6 +327,7 @@ Magic.prototype.aImport = function(player, card, zone) {
 }
 
 Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
+  player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
   const dest = this.getZoneById(destId)
   this.mMoveCardTo(card, dest, { index: destIndex })
@@ -475,6 +476,11 @@ Magic.prototype.getPhase = function() {
   return this.state.phase
 }
 
+Magic.prototype.getZoneIndexByCard = function(card) {
+  const zoneCards = this.getZoneByCard(card).cards()
+  return zoneCards.indexOf(card)
+}
+
 Magic.prototype.mAdjustCardVisibility = function(card) {
   const zone = this.getZoneByCard(card)
 
@@ -514,7 +520,7 @@ Magic.prototype.mMoveCardTo = function(card, zone, opts={}) {
   }
   const source = this.getZoneByCard(card)
   const index = source.cards().indexOf(card)
-  const destIndex = opts.index ? opts.index : zone.cards().length
+  const destIndex = opts.index !== undefined ? opts.index : zone.cards().length
   this.mMoveByIndices(source, index, zone, destIndex)
 }
 

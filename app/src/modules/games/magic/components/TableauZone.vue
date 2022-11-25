@@ -1,5 +1,5 @@
 <template>
-  <div class="tableau-zone">
+  <div class="tableau-zone" @click="zoneClicked">
     <div class="zone-header">
       <div>
         <span class="zone-name">{{ zone.name }}</span>&nbsp;<span class="zone-count">({{ zone.cards().length }})</span>
@@ -15,6 +15,7 @@
     <CardListItem
       v-for="card in zone.cards()"
       :card="card"
+      @click.stop="cardClicked(card)"
     />
 
 
@@ -43,11 +44,25 @@ export default {
       default: false,
     }
   },
+
+  methods: {
+    cardClicked(card) {
+      this.$store.dispatch('magic/game/clickCard', card)
+    },
+
+    zoneClicked() {
+      this.$store.dispatch('magic/game/clickZone', this.zone)
+    },
+  },
 }
 </script>
 
 
 <style scoped>
+.highlighted {
+  background-color: lightblue;
+}
+
 .tableau-zone {
   min-height: 3.7em;
 }

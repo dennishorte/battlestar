@@ -1,7 +1,7 @@
 <template>
-  <MagicWrapper :afterLoaded="prepGame">
-    <PreGame v-if="inPreGame" />
-
+  <MagicWrapper :afterLoaded="loadGame">
+    <div class="alert alert-warning" v-if="!gameReady">Loading game data</div>
+    <PreGame v-else-if="inPreGame" />
     <MagicGame v-else />
   </MagicWrapper>
 </template>
@@ -32,15 +32,14 @@ export default {
     actor: Object,
   },
 
-  data() {
-    return {
-      game: null,
-    }
-  },
-
   computed: {
     ...mapState('magic/cards', {
       cardLookup: 'lookup',
+    }),
+
+    ...mapState('magic/game', {
+      game: 'game',
+      gameReady: 'ready',
     }),
 
     inPreGame() {
@@ -57,13 +56,8 @@ export default {
   },
 
   methods: {
-    prepGame() {
-      const game = new mag.Magic(this.data, this.actor.name)
-      game.cardLookup = this.cardLookup
-      game.run()
-      this.game = game
-
-      document.title = this.game.settings.name
+    loadGame() {
+      this.$store.dispatch('magic/game/loadGame', this.data)
     },
 
     async save() {
