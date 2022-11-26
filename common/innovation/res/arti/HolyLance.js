@@ -4,7 +4,7 @@ const { GameOverEvent } = require('../../../lib/game.js')
 function Card() {
   this.id = `Holy Lance`  // Card names are unique in Innovation
   this.name = `Holy Lance`
-  this.color = `purple`
+  this.color = `green`
   this.age = 2
   this.expansion = `arti`
   this.biscuits = `klhk`
