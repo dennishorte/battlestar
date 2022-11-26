@@ -12,19 +12,13 @@
       </div>
     </div>
 
-    <CardListItem
-      v-for="card in zone.cards()"
-      :card="card"
-      @click.stop="cardClicked(card)"
-    />
-
-
+    <TableauZoneCard v-for="card in zone.cards()" :card="card" @click.stop="cardClicked(card)" />
   </div>
 </template>
 
 
 <script>
-import CardListItem from '@/modules/magic/components/CardListItem'
+import TableauZoneCard from './TableauZoneCard'
 import TableauZoneMenu from './TableauZoneMenu'
 
 
@@ -32,7 +26,7 @@ export default {
   name: 'TableauZone',
 
   components: {
-    CardListItem,
+    TableauZoneCard,
     TableauZoneMenu,
   },
 

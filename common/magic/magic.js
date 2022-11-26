@@ -366,6 +366,7 @@ Magic.prototype.aPassPriority = function() {
 }
 
 Magic.prototype.aReveal = function(player, card) {
+  player = player || this.getPlayerCurrent()
   this.mReveal(card)
   const zone = this.getZoneByCard(card)
   this.mLog({
@@ -420,6 +421,23 @@ Magic.prototype.aSelectPhase = function(phase) {
 
   if (phase === 'draw') {
     this.aDraw()
+  }
+}
+
+Magic.prototype.aTwiddle = function(card) {
+  if (card.tapped) {
+    card.tapped = false
+    this.mLog({
+      template: 'untap: {card}',
+      args: { card }
+    })
+  }
+  else {
+    card.tapped = true
+    this.mLog({
+      template: 'tap: {card}',
+      args: { card }
+    })
   }
 }
 

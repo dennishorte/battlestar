@@ -45,12 +45,17 @@ export default {
     inPreGame() {
       return !this.game.getDecksSelected()
     },
+
+    player() {
+      return this.game ? this.game.getPlayerByName(this.actor.name) : null
+    },
   },
 
   provide() {
     return {
       actor: this.actor,
       game: computed(() => this.game),
+      player: computed(() => this.player),
       save: this.save,
     }
   },

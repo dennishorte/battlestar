@@ -2,15 +2,16 @@
   <div class="dropdown">
     <button
       class="btn btn-secondary dropdown-toggle"
-      :class="sizeClass"
+      :class="buttonClasses"
       data-bs-toggle="dropdown"
+      @click.stop
     >
       <slot name="title">
         <template v-if="!notitle">menu</template>
       </slot>
     </button>
 
-    <ul class="dropdown-menu">
+    <ul class="dropdown-menu" :class="listClasses">
       <slot></slot>
     </ul>
   </div>
@@ -22,6 +23,11 @@ export default {
   name: 'Dropdown',
 
   props: {
+    menuEnd: {
+      type: Boolean,
+      default: false,
+    },
+
     notitle: {
       type: Boolean,
       default: false
@@ -34,11 +40,22 @@ export default {
   },
 
   computed: {
-    sizeClass() {
-      if (this.size === 'sm') return 'btn-sm'
-      if (this.size === 'lg') return 'btn-lg'
-      return ''
-    }
+    buttonClasses() {
+      const classes = []
+
+      if (this.size === 'sm') classes.push('btn-sm')
+      if (this.size === 'lg') classes.push('btn-lg')
+
+      return classes
+    },
+
+    listClasses() {
+      const classes = []
+
+      if (this.menuEnd) classes.push('dropdown-menu-end')
+
+      return classes
+    },
   },
 }
 </script>
