@@ -52,6 +52,7 @@ export default {
     extraClasses() {
       const classes = []
       if (this.hidden) classes.push('hidden')
+      if (this.card.tapped) classes.push('tapped')
       return classes
     },
 
@@ -96,6 +97,11 @@ export default {
 <style scoped>
 .hidden {
   font-weight: 100;
+}
+
+.tapped {
+  color: var(--bs-secondary);
+  font-style: italic;
 }
 
 .menu {
