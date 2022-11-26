@@ -54,6 +54,7 @@ export default {
   provide() {
     return {
       actor: this.actor,
+      do: this.do,
       game: computed(() => this.game),
       player: computed(() => this.player),
       save: this.save,
@@ -65,6 +66,18 @@ export default {
       this.$store.dispatch('magic/game/loadGame', this.data)
     },
 
+    do(action) {
+      const request = this.game.getWaiting()
+      const selector = request.selectors[0]
+
+      this.game.respondToInputRequest({
+        actor: selector.actor,
+        title: selector.title,
+        selection: [action],
+        key: request.key,
+      })
+    },
+
     async save() {
       const game = this.game
       const payload = {
@@ -72,9 +85,11 @@ export default {
         responses: game.responses,
         chat: game.getChat(),
       }
+
       const requestResult = await axios.post('/api/game/saveFull', payload)
 
       if (requestResult.data.status === 'success') {
+        console.log('saved')
         this.game.usedUndo = false
       }
       else {

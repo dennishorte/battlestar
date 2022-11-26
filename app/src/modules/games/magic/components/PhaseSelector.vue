@@ -53,7 +53,7 @@ export default {
     PhaseButton,
   },
 
-  inject: ['actor', 'game', 'save'],
+  inject: ['actor', 'game', 'do', 'save'],
 
   computed: {
     player() {
@@ -63,7 +63,7 @@ export default {
 
   methods: {
     passPriority() {
-      this.game.aPassPriority()
+      this.do({ name: 'pass priority' })
       this.save()
     },
   },

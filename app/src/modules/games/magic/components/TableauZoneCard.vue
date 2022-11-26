@@ -27,7 +27,7 @@ export default {
     DropdownButton,
   },
 
-  inject: ['game', 'player'],
+  inject: ['do'],
 
   props: {
     card: Object,
@@ -49,11 +49,17 @@ export default {
     },
 
     twiddle() {
-      this.game.aTwiddle(this.card)
+      this.do({
+        name: 'twiddle',
+        card: this.card,
+      })
     },
 
     reveal() {
-      this.game.aReveal(this.card)
+      this.do({
+        name: 'reveal',
+        card: this.card,
+      })
     },
   },
 }

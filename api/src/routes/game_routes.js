@@ -205,13 +205,13 @@ Game.saveFull = async function(req, res) {
   game.chat = req.body.chat
 
   if (game.settings.game === 'Magic') {
-    const cards = await db.magic.card.fetchAll()
-    game.cardLookup = mag.util.card.createCardLookup(cards)
+    await _testAndSave(game, res, () => {})
   }
-
-  await _testAndSave(game, res, (game) => {
-    game.run()
-  })
+  else {
+    await _testAndSave(game, res, (game) => {
+      game.run()
+    })
+  }
 }
 
 Game.updateStats = async function(req, res) {
@@ -250,7 +250,7 @@ async function _loadGameFromReq(req) {
 }
 
 async function _sendNotifications(res, game) {
-  for (const player of game.getPlayerAll()) {
+  for (const player of game.settings.players) {
     if (game.checkGameIsOver()) {
       _notify(game, player._id, 'Game Over!')
     }

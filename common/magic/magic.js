@@ -254,7 +254,11 @@ Magic.prototype.aChooseAction = function(player) {
       case 'import'              : return this.aImport(player, action.card, action.zone)
       case 'move card'           : return this.aMoveCard(player, action.cardId, action.destId, action.destIndex)
       case 'mulligan'            : return this.aMulligan(player)
+      case 'pass priority'       : return this.aPassPriority()
+      case 'reveal'              : return this.aReveal(player, action.card)
       case 'reveal next'         : return this.aRevealNext(player, action.zoneId)
+      case 'select phase'        : return this.aSelectPhase(player, action.phase)
+      case 'twiddle'             : return this.aTwiddle(player, action.card)
       case 'view next'           : return this.aViewNext(player, action.zoneId)
       case 'view top k'          : return this.aViewTop(player, action.zoneId, action.count)
 
@@ -396,7 +400,7 @@ Magic.prototype.aRevealNext = function(player, zoneId) {
   })
 }
 
-Magic.prototype.aSelectPhase = function(phase) {
+Magic.prototype.aSelectPhase = function(player, phase) {
   this.state.phase = phase
 
   if (phase === 'start turn') {

@@ -13,7 +13,7 @@
 export default {
   name: 'Phase Button',
 
-  inject: ['game'],
+  inject: ['do', 'game'],
 
   props: {
     name: String,
@@ -32,7 +32,10 @@ export default {
 
   methods: {
     selectPhase() {
-      this.game.aSelectPhase(this.name)
+      this.do({
+        name: 'select phase',
+        phase: this.name,
+      })
     },
   },
 }

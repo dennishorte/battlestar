@@ -55,7 +55,7 @@ export default {
     TableauZoneMenu,
   },
 
-  inject: ['actor', 'game'],
+  inject: ['actor', 'do', 'game'],
 
   props: {
     player: Object,
@@ -77,7 +77,7 @@ export default {
 
   methods: {
     drawSeven() {
-      this.game.aDrawSeven(this.player)
+      this.do({ name: 'draw 7' })
     },
 
     getZone(name) {
