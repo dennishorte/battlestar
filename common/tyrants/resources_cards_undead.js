@@ -22,7 +22,7 @@ const cardData = [
     },
   },
   {
-    "name": "Carrior Crawler",
+    "name": "Carrion Crawler",
     "aspect": "malice",
     "race": "monstrosity",
     "expansion": "undead",
@@ -34,7 +34,13 @@ const cardData = [
       "+3 power.",
       "Devour a card in the market. Instead of replacing it with the top card from the market deck, replace it with this card."
     ],
-    impl: (game, player) => {
+    impl: (game, player, { card }) => {
+      player.incrementPower(3)
+
+      const marketCards = game.getZoneById('market').cards()
+      const toDevour = game.aChooseCard(player, marketCards)
+      game.aDevour(player, toDevour, { noRefill: true })
+      game.mMoveCardTo(card, game.getZoneById('market'), { destIndex: 0, verbose: true })
     },
   },
   {

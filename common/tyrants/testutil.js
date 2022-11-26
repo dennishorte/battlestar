@@ -360,7 +360,7 @@ TestUtil.testBoard = function(game, expected) {
     }
 
     else if (key === 'market') {
-      const actual = game.getZoneById('devoured').cards().map(c => c.name).sort()
+      const actual = game.getZoneById('market').cards().map(c => c.name).sort()
       const expected = value.sort()
       expect(actual).toStrictEqual(expected)
     }

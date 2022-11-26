@@ -87,4 +87,37 @@ describe('Undead expansion', () => {
       })
     })
   })
+
+  describe('Carrion Crawler', () => {
+    test('place a spy; no power', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Carrion Crawler', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Carrion Crawler')
+      const request3 = t.choose(game, request2, 'Advocate')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: [],
+          power: 3,
+        },
+        market: [
+          'Carrion Crawler',
+          'Blackguard',
+          'Bounty Hunter',
+          'Doppelganger',
+          'Infiltrator',
+          'Spellspinner',
+        ],
+      })
+    })
+  })
+
+
 })

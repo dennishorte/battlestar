@@ -1022,13 +1022,17 @@ Tyrants.prototype.aDeploy = function(player, loc) {
   })
 }
 
-Tyrants.prototype.aDevour = function(player, card) {
+Tyrants.prototype.aDevour = function(player, card, opts={}) {
+  const zone = this.getZoneByCard(card)
   this.mDevour(card)
   this.mLog({
-    template: '{player} devours {card}',
-    args: { player, card },
+    template: '{player} devours {card} from {zone}',
+    args: { player, card, zone },
   })
-  this.mRefillMarket()
+
+  if (!opts.noRefill) {
+    this.mRefillMarket()
+  }
 }
 
 Tyrants.prototype.aDiscard = function(player, card) {
@@ -1553,7 +1557,8 @@ Tyrants.prototype.mMoveCardTo = function(card, zone, opts={}) {
   }
   const source = this.getZoneByCard(card)
   const index = source.cards().indexOf(card)
-  this.mMoveByIndices(source, index, zone, zone.cards().length)
+  const destIndex = opts.destIndex !== undefined ? opts.destIndex : zone.cards().length
+  this.mMoveByIndices(source, index, zone, destIndex)
 }
 
 Tyrants.prototype.mPlaceSpy = function(player, loc) {
