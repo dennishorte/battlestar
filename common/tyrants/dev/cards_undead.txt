@@ -1,0 +1,165 @@
+# Set=Undead
+
+Banshee
+guile
+undead
+424
+2
+Place a spy. If another player's spy is at that site, gain 3 power.
+
+Carrior Crawler
+malice
+monstrosity
+202
+2
++3 power.
+Devour a card in the market. Instead of replacing it with the top card from the market deck, replace it with this card.
+
+Conjurer
+guile
+human
+523
+3
+Choose one:
+- Place a spy.
+- Return one of your spies > Recruit up to 2 cards that each cost 3 or less without paying their costs.
+
+Cultist of Myrkul
+ambition
+human
+212
+3
+Choose one:
+- +2 influence.
+- Devour this card > At end of turn, promote up to 2 other cards played this turn.
+
+Death Knight
+malice
+undead
+637
+1
+Supplant a troop.
+Gain 1 VP for every 5 player troops in your trophy hall.
+
+Flesh Golem
+malice
+construct
+313
+2
++2 power.
+Devour this card > Assassinate a troop.
+
+Ghost
+guile
+undead
+313
+2
+Choose one:
+- Place a spy.
+- Return one of your spies > For the rest of your turn treat the top card of the devoured deck as if it was in the market.
+
+High Priest of Myrkul
+ambition
+human
+636
+1
+Return another player's troop or spy.
+At end of turn, you may promote any number of Undead cards played this turn.
+
+Lich
+guile
+undead
+747
+1
+Place a spy. If another player's troop is at that site, take up to 2 troops from their trophy hall and deploy them.
+
+Minotaur Skeleton
+conquest
+undead
+313
+2
+Choose one:
+- Deploy 3 troops.
+- Devour this card > Assassinate up to three white troops at a single site.
+
+Mummy Lord
+conquest
+undead
+636
+1
+Choose 2 times:
+- Assassinate a white troop.
+- Take a white troop from any trophy hall and deploy it anywhere on the board.
+
+Necromancer
+ambition
+human
+514
+2
+Choose one:
+- +3 influence.
+- Promote this card, or a card from our hand or discard pile.
+
+Ogre Zombie
+conquest
+undead
+424
+2
+Supplant a white troop anywhere on the board.
+
+Ravenous Zombies
+conquest
+undead
+312
+2
++1 power.
+Assassinate a white troop.
+
+Revenant
+malice
+undead
+414
+1
+Assassinate two troops. Then, if you have 8 or more troops in your trophy hall, promote this card.
+
+Skeletal Horde
+conquest
+undead
+212
+3
+Deploy 2 troops.
+Devour this card > Deploy 3 troops.
+
+Vampire Spawn
+ambition
+undead
+213
+3
++1 influence.
+Return another player's troop or spy.
+
+Vampire
+ambition
+undead
+747
+1
+Choose one:
+- Supplant a troop.
+- Promote a card from your discard pile, then gain 1 VP for every 3 cards in your inner circle.
+
+Wight
+malice
+undead
+313
+4
+Choose one:
+- +2 power.
+- Devour a card in your hand > Supplant a troop.
+
+Wraith
+guile
+undead
+201
+2
+Place a spy.
+Devour this card > Assassinate a troop at that spy's site.

@@ -162,6 +162,7 @@ Tyrants.prototype.initializeCards = function() {
   const marketCards = this
     .getExpansionList()
     .flatMap(exp => res.cards.byExpansion[exp])
+
   this.state.zones.marketDeck.setCards(marketCards)
   this.mShuffle(this.getZoneById('marketDeck'))
 
