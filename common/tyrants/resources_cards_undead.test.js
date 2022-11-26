@@ -172,4 +172,51 @@ describe('Undead expansion', () => {
     })
   })
 
+  describe('Cultist of Myrkul', () => {
+    test('+2 influence', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Cultist of Myrkul', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Cultist of Myrkul')
+      const request3 = t.choose(game, request2, '+2 influence')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Cultist of Myrkul'],
+          influence: 2,
+        },
+      })
+    })
+
+    test('return a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Cultist of Myrkul', 'House Guard', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Cultist of Myrkul')
+      const request3 = t.choose(game, request2, 'Devour this card > At end of turn, promote up to 2 other cards played this turn')
+      const request4 = t.choose(game, request3, 'Play Card.House Guard')
+      const request5 = t.choose(game, request4, 'Play Card.House Guard')
+      const request6 = t.choose(game, request5, 'Pass')
+
+      t.testBoard(game, {
+        dennis: {
+          played: [],
+          innerCircle: ['House Guard', 'House Guard'],
+        },
+        devoured: ['Cultist of Myrkul'],
+      })
+    })
+  })
+
 })

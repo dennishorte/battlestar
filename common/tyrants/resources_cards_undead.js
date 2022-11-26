@@ -106,7 +106,24 @@ const cardData = [
       "- +2 influence.",
       "- Devour this card > At end of turn, promote up to 2 other cards played this turn."
     ],
-    impl: (game, player) => {
+    impl: (game, player, { card }) => {
+      game.aChooseOne(player, [
+        {
+          title: '+2 influence',
+          impl: (game, player) => {
+            player.incrementInfluence(2)
+          }
+        },
+        {
+          title: 'Devour this card > At end of turn, promote up to 2 other cards played this turn',
+          impl: (game, player) => {
+            // Just assume they actually want to devour this card if they took this choice.
+            game.aDevour(player, card)
+            game.aDeferPromotion(player, card)
+            game.aDeferPromotion(player, card)
+          }
+        },
+      ])
     },
   },
   {
