@@ -219,4 +219,55 @@ describe('Undead expansion', () => {
     })
   })
 
+  describe('Death Knight', () => {
+    test('Supplant a troop and gain VPs', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Death Knight', 'House Guard'],
+          trophyHall: [
+            'micah',
+            'micah',
+            'micah',
+            'micah',
+            'micah',
+
+            'micah',
+            'micah',
+            'micah',
+            'micah',
+          ]
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Death Knight')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Death Knight'],
+          trophyHall: [
+            'troop-micah',
+            'troop-micah',
+            'troop-micah',
+            'troop-micah',
+            'troop-micah',
+
+            'troop-micah',
+            'troop-micah',
+            'troop-micah',
+            'troop-micah',
+            'neutral',
+          ],
+          points: 1,
+        },
+        'araum-ched': {
+          troops: ['dennis'],
+        }
+      })
+    })
+
+  })
+
 })

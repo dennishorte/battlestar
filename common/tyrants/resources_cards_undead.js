@@ -140,6 +140,14 @@ const cardData = [
       "Gain 1 VP for every 5 player troops in your trophy hall."
     ],
     impl: (game, player) => {
+      game.aChooseAndSupplant(player)
+
+      const playerTroops = game
+        .getCardsByZone(player, 'trophyHall')
+        .filter(card => card.getOwnerName() !== 'neutral')
+        .length
+
+      player.incrementPoints(Math.floor(playerTroops / 5))
     },
   },
   {
