@@ -58,6 +58,38 @@ const cardData = [
       "- Return one of your spies > Recruit up to 2 cards that each cost 3 or less without paying their costs."
     ],
     impl: (game, player) => {
+      game.aChooseOne(player, [
+        {
+          title: 'Place a spy',
+          impl: (game, player) => {
+            game.aChooseAndPlaceSpy(player)
+          }
+        },
+        {
+          title: 'Return one of your spies > Recruit up to 2 cards that each cost 3 or less without paying their costs',
+          impl: (game, player) => game.aReturnASpyAnd(player, (game, player) => {
+            for (let i = 0; i < 2; i++) {
+
+              const choices = game
+                .getZoneById('market')
+                .cards()
+                .filter(card => card.cost <= 3)
+
+              const priestesses = game.getZoneById('priestess').cards()
+              if (priestesses.length > 0) {
+                choices.push(priestesses[0])
+              }
+
+              const guards = game.getZoneById('guard').cards()
+              if (guards.length > 0) {
+                choices.push(guards[0])
+              }
+
+              game.aChooseAndRecruit(player, choices)
+            }
+          })
+        },
+      ])
     },
   },
   {

@@ -89,7 +89,7 @@ describe('Undead expansion', () => {
   })
 
   describe('Carrion Crawler', () => {
-    test('place a spy; no power', () => {
+    test('power and devour', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'undead'],
         dennis: {
@@ -119,5 +119,57 @@ describe('Undead expansion', () => {
     })
   })
 
+  describe('Conjurer', () => {
+    test('place a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Conjurer', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Conjurer')
+      const request3 = t.choose(game, request2, 'Place a spy')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Conjurer'],
+        },
+        'Chasmleap Bridge': {
+          spies: ['dennis'],
+        },
+      })
+    })
+
+    test('return a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Conjurer', 'House Guard'],
+        },
+        'Chasmleap Bridge': {
+          spies: ['dennis']
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Conjurer')
+      const request3 = t.choose(game, request2, 'Return one of your spies > Recruit up to 2 cards that each cost 3 or less without paying their costs')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+      const request5 = t.choose(game, request4, 'Advocate')
+      const request6 = t.choose(game, request5, 'Blackguard')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Conjurer'],
+          discard: ['Advocate', 'Blackguard'],
+        },
+      })
+    })
+  })
 
 })

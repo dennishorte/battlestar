@@ -875,6 +875,13 @@ Tyrants.prototype.aChooseAndPromote = function(player, cardsToChoose, opts={}) {
   }
 }
 
+Tyrants.prototype.aChooseAndRecruit = function(player, cardsToChoose, opts={}) {
+  const card = this.aChooseCard(player, cardsToChoose, { ...opts, title: 'Choose cards to recruit' })
+  if (card) {
+    this.aRecruit(player, card.name, { noCost: true })
+  }
+}
+
 Tyrants.prototype._collectTargets = function(player, opts={}) {
   let baseLocations
   if (opts.loc) {
@@ -1109,7 +1116,7 @@ Tyrants.prototype.aPromote = function(player, card, opts={}) {
   return card
 }
 
-Tyrants.prototype.aRecruit = function(player, cardName) {
+Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
   let card
 
   if (cardName === 'Priestess of Lolth') {
@@ -1126,7 +1133,10 @@ Tyrants.prototype.aRecruit = function(player, cardName) {
   util.assert(!!card, `Unable to find card to recruit: ${cardName}`)
 
   this.mMoveCardTo(card, this.getZoneByPlayer(player, 'discard'))
-  player.incrementInfluence(-card.cost)
+
+  if (!opts.noCost) {
+    player.incrementInfluence(-card.cost)
+  }
 
   this.mLog({
     template: '{player} recruits {card}',
