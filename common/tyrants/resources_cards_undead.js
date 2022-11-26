@@ -163,7 +163,14 @@ const cardData = [
       "+2 power.",
       "Devour this card > Assassinate a troop."
     ],
-    impl: (game, player) => {
+    impl: (game, player, { card }) => {
+      player.incrementPower(2)
+      game.aDevourThisAnd(
+        player,
+        card,
+        'Devour this card > Assassinate a troop',
+        () => game.aChooseAndAssassinate(player)
+      )
     },
   },
   {

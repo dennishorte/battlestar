@@ -1042,6 +1042,23 @@ Tyrants.prototype.aDevour = function(player, card, opts={}) {
   }
 }
 
+Tyrants.prototype.aDevourThisAnd = function(player, card, title, fn) {
+  this.mLog({
+    template: `{player} may activate '${title}'`,
+    args: { player }
+  })
+  this.mLogIndent()
+  const doDevour = this.aChooseYesNo(player, title)
+  if (doDevour) {
+    this.aDevour(player, card)
+    fn(this, player)
+  }
+  else {
+    this.mLogDoNothing(player)
+  }
+  this.mLogOutdent()
+}
+
 Tyrants.prototype.aDiscard = function(player, card) {
   this.mMoveCardTo(card, this.getZoneByPlayer(player, 'discard'))
   this.mLog({

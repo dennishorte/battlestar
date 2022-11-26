@@ -267,6 +267,34 @@ describe('Undead expansion', () => {
         }
       })
     })
+  })
+
+  describe('Flesh Golem', () => {
+    test('+2 influence', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Flesh Golem', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Flesh Golem')
+      const request3 = t.choose(game, request2, 'yes')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: [],
+          trophyHall: ['neutral'],
+          power: 2,
+        },
+        devoured: ['Flesh Golem'],
+        'araum-ched': {
+          troops: [],
+        },
+      })
+    })
 
   })
 
