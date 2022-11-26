@@ -32,7 +32,7 @@ export default {
 
   methods: {
     selectPhase() {
-      this.do({
+      this.do(null, {
         name: 'select phase',
         phase: this.name,
       })

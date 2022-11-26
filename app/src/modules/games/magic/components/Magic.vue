@@ -56,19 +56,25 @@ export default {
       actor: this.actor,
       do: this.do,
       game: computed(() => this.game),
-      player: computed(() => this.player),
       save: this.save,
     }
   },
 
   methods: {
     loadGame() {
-      this.$store.dispatch('magic/game/loadGame', this.data)
+      this.$store.dispatch('magic/game/loadGame', {
+        gameData: this.data,
+        doFunc: this.do,
+      })
     },
 
-    do(action) {
+    do(player, action) {
       const request = this.game.getWaiting()
       const selector = request.selectors[0]
+
+      if (player) {
+        action.playerName = player.name
+      }
 
       this.game.respondToInputRequest({
         actor: selector.actor,

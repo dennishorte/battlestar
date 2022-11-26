@@ -39,6 +39,8 @@
 
 
 <script>
+import { computed } from 'vue'
+
 import DropdownButton from '@/components/DropdownButton'
 import PlayerCounters from './PlayerCounters'
 import TableauZone from './TableauZone'
@@ -61,6 +63,12 @@ export default {
     player: Object,
   },
 
+  provide() {
+    return {
+      player: computed(() => this.player),
+    }
+  },
+
   computed: {
     extraClasses() {
       if (this.player.name !== this.actor.name) {
@@ -77,7 +85,7 @@ export default {
 
   methods: {
     drawSeven() {
-      this.do({ name: 'draw 7' })
+      this.do(this.player, { name: 'draw 7' })
     },
 
     getZone(name) {

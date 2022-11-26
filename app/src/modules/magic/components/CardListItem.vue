@@ -6,7 +6,9 @@
     @mousemove="mousemove"
   >
 
-    <div class="name">{{ name }}</div>
+    <div class="name">
+      <slot name="name">{{ name }}</slot>
+    </div>
     <ManaCost v-if="showManaCost" class="mana-cost" :cost="manaCost" />
 
   </div>
@@ -26,6 +28,11 @@ export default {
 
   props: {
     card: Object,
+
+    hidePopup: {
+      type: Boolean,
+      default: false
+    },
 
     showManaCost: {
       type: Boolean,
@@ -54,7 +61,7 @@ export default {
 
   methods: {
     mouseover() {
-      if (this.data) {
+      if (this.data && !this.hidePopup) {
         this.$store.commit('magic/setMouseoverCard', this.data)
       }
     },

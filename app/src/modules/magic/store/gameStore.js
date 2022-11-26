@@ -38,24 +38,34 @@ export default {
       }
 
       else {
-        const destIndex = state.game.getZoneIndexByCard(card)
-        state.game.aMoveCard(null, state.selectedCard.id, card.zone, destIndex)
+        state.game.doFunc(null, {
+          name: 'move card',
+          cardId: state.selectedCard.id,
+          destId: card.zone,
+          destIndex: state.game.getZoneIndexByCard(card),
+        })
         commit('setSelectedCard', null)
       }
     },
 
     clickZone({ commit, state }, zone) {
       if (state.selectedCard) {
-        state.game.aMoveCard(null, state.selectedCard.id, zone.id, 0)
+        state.game.doFunc(null, {
+          name: 'move card',
+          cardId: state.selectedCard.id,
+          destId: zone.id,
+          destIndex: 0,
+        })
         commit('setSelectedCard', null)
       }
     },
 
-    loadGame({ commit, rootGetters, rootState }, gameData) {
+    loadGame({ commit, rootGetters, rootState }, { doFunc, gameData }) {
       commit('setReady', false)
       const actor = rootGetters['auth/user']
       const game = new mag.Magic(gameData, actor.name)
       game.cardLookup = rootState.magic.cards.lookup
+      game.doFunc = doFunc
       game.run()
       commit('setGame', game)
       commit('setReady', true)

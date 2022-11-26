@@ -1,6 +1,12 @@
 <template>
-  <div class="wrapper">
-    <CardListItem :card="card" :class="extraClasses" />
+  <div class="wrapper" :class="wrapperClasses">
+    <CardListItem
+      :card="card"
+      :class="extraClasses"
+      :hide-popup="hidden"
+    >
+      <template #name>{{ displayName }}</template>
+    </CardListItem>
 
     <Dropdown v-if="highlighted" :notitle="true" :menu-end="true" class="menu dropdown">
       <DropdownButton @click.stop="twiddle" v-if="this.card.tapped">untap</DropdownButton>
@@ -27,19 +33,40 @@ export default {
     DropdownButton,
   },
 
-  inject: ['do'],
+  inject: ['actor', 'do'],
 
   props: {
     card: Object,
   },
 
   computed: {
+    displayName() {
+      if (this.hidden) {
+        return 'hidden'
+      }
+      else {
+        return card.data.card_faces[0].name
+      }
+    },
+
     extraClasses() {
-      return this.highlighted ? 'highlighted' : ''
+      const classes = []
+      if (this.hidden) classes.push('hidden')
+      return classes
+    },
+
+    hidden() {
+      return !this.card.visibility.includes(this.actor.name)
     },
 
     highlighted() {
       return this.$store.state.magic.game.selectedCard === this.card
+    },
+
+    wrapperClasses() {
+      const classes = []
+      if (this.highlighted) classes.push('highlighted')
+      return classes
     },
   },
 
@@ -49,14 +76,14 @@ export default {
     },
 
     twiddle() {
-      this.do({
+      this.do(null, {
         name: 'twiddle',
         card: this.card,
       })
     },
 
     reveal() {
-      this.do({
+      this.do(null, {
         name: 'reveal',
         card: this.card,
       })
@@ -67,8 +94,8 @@ export default {
 
 
 <style scoped>
-.highlighted {
-  background-color: cyan;
+.hidden {
+  font-weight: 100;
 }
 
 .menu {
@@ -80,5 +107,7 @@ export default {
 
 .wrapper {
   position: relative;
+  margin: 0 -.25em;
+  padding: 0 .25em;
 }
 </style>

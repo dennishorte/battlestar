@@ -63,7 +63,7 @@ export default {
 
   methods: {
     passPriority() {
-      this.do({ name: 'pass priority' })
+      this.do(null, { name: 'pass priority' })
       this.save()
     },
   },

@@ -245,22 +245,24 @@ Magic.prototype.aChooseAction = function(player) {
   })
 
   for (const action of actions) {
+    const actor = action.playerName ? this.getPlayerByName(action.playerName) : player
+
     switch (action.name) {
-      case 'adjust counter'      : return player.incrementCounter(action.counter, action.amount)
-      case 'cascade'             : return this.aCascade(player, action.x)
-      case 'create token'        : return this.aCreateToken(player, action.card, action.zone)
-      case 'draw'                : return this.aDraw(player)
-      case 'draw 7'              : return this.aDrawSeven(player)
-      case 'import'              : return this.aImport(player, action.card, action.zone)
-      case 'move card'           : return this.aMoveCard(player, action.cardId, action.destId, action.destIndex)
-      case 'mulligan'            : return this.aMulligan(player)
+      case 'adjust counter'      : return actor.incrementCounter(action.counter, action.amount)
+      case 'cascade'             : return this.aCascade(actor, action.x)
+      case 'create token'        : return this.aCreateToken(actor, action.card, action.zone)
+      case 'draw'                : return this.aDraw(actor)
+      case 'draw 7'              : return this.aDrawSeven(actor)
+      case 'import'              : return this.aImport(actor, action.card, action.zone)
+      case 'move card'           : return this.aMoveCard(actor, action.cardId, action.destId, action.destIndex)
+      case 'mulligan'            : return this.aMulligan(actor)
       case 'pass priority'       : return this.aPassPriority()
-      case 'reveal'              : return this.aReveal(player, action.card)
-      case 'reveal next'         : return this.aRevealNext(player, action.zoneId)
-      case 'select phase'        : return this.aSelectPhase(player, action.phase)
-      case 'twiddle'             : return this.aTwiddle(player, action.card)
-      case 'view next'           : return this.aViewNext(player, action.zoneId)
-      case 'view top k'          : return this.aViewTop(player, action.zoneId, action.count)
+      case 'reveal'              : return this.aReveal(actor, action.card)
+      case 'reveal next'         : return this.aRevealNext(actor, action.zoneId)
+      case 'select phase'        : return this.aSelectPhase(actor, action.phase)
+      case 'twiddle'             : return this.aTwiddle(actor, action.card)
+      case 'view next'           : return this.aViewNext(actor, action.zoneId)
+      case 'view top k'          : return this.aViewTop(actor, action.zoneId, action.count)
 
       default:
         throw new Error(`Unknown action: ${action.name}`)
@@ -361,12 +363,14 @@ Magic.prototype.aPassPriority = function() {
   const player = this.getPlayerNext()
   this.state.currentPlayer = player
 
+  const indent = this.getLogIndent()
   this.mLogSetIndent(1)
   this.mLog({
     template: '{player} gets priority',
     args: { player },
     classes: ['pass-priority'],
   })
+  this.mLogSetIndent(indent)
 }
 
 Magic.prototype.aReveal = function(player, card) {
@@ -428,7 +432,7 @@ Magic.prototype.aSelectPhase = function(player, phase) {
   }
 }
 
-Magic.prototype.aTwiddle = function(card) {
+Magic.prototype.aTwiddle = function(player, card) {
   if (card.tapped) {
     card.tapped = false
     this.mLog({
