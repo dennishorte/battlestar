@@ -78,6 +78,7 @@ Tyrants.prototype.initialize = function() {
 
   this.mLogOutdent()
 
+  this.state.ghostFlag = false
   this.state.initializationComplete = true
   this.doingSetup = true
   this._breakpoint('initialization-complete')
@@ -420,8 +421,8 @@ Tyrants.prototype._generateAutoCardAction = function() {
   }
 }
 
-Tyrants.prototype._generateBuyActions = function() {
-  const influence = this.getPlayerCurrent().influence
+Tyrants.prototype._generateBuyActions = function(maxCost=0) {
+  const influence = maxCost ? maxCost : this.getPlayerCurrent().influence
   const choices = []
 
   for (const card of this.getZoneById('market').cards()) {
@@ -438,6 +439,13 @@ Tyrants.prototype._generateBuyActions = function() {
   const guard = this.getZoneById('guard').cards()[0]
   if (guard && guard.cost <= influence) {
     choices.push(guard.name)
+  }
+
+  if (this.state.ghostFlag) {
+    const devoured = this.getZoneById('devoured').cards().slice(-1)[0]
+    if (devoured) {
+      choices.push('devoured: ' + devoured.name)
+    }
   }
 
   if (choices.length > 0) {
@@ -554,6 +562,9 @@ Tyrants.prototype.endOfTurn = function() {
       })
     }
   }
+
+  // Clear till end of turn flags
+  this.state.ghostFlag = false
 }
 
 Tyrants.prototype.cleanup = function() {
@@ -875,10 +886,17 @@ Tyrants.prototype.aChooseAndPromote = function(player, cardsToChoose, opts={}) {
   }
 }
 
-Tyrants.prototype.aChooseAndRecruit = function(player, cardsToChoose, opts={}) {
-  const card = this.aChooseCard(player, cardsToChoose, { ...opts, title: 'Choose cards to recruit' })
-  if (card) {
-    this.aRecruit(player, card.name, { noCost: true })
+Tyrants.prototype.aChooseAndRecruit = function(player, maxCost, opts) {
+  const choices = this._generateBuyActions(maxCost)
+
+  if (choices) {
+    const cardNames = this.aChoose(player, choices.choices, { ...opts, title: 'Choose cards to recruit' })
+    for (const name of cardNames) {
+      this.aRecruit(player, name, { noCost: true })
+    }
+  }
+  else {
+    this.mLog({ template: 'Not able to recruit any cards' })
   }
 }
 
@@ -1136,7 +1154,10 @@ Tyrants.prototype.aPromote = function(player, card, opts={}) {
 Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
   let card
 
-  if (cardName === 'Priestess of Lolth') {
+  if (cardName.startsWith('devoured: ')) {
+    card = this.getZoneById('devoured').cards().slice(-1)[0]
+  }
+  else if (cardName === 'Priestess of Lolth') {
     card = this.getZoneById('priestess').cards()[0]
   }
   else if (cardName === 'House Guard') {
@@ -1694,6 +1715,10 @@ Tyrants.prototype.mRefillMarket = function(quiet=false) {
 
     this.mMoveCardTo(card, market)
   }
+}
+
+Tyrants.prototype.mSetGhostFlag = function() {
+  this.state.ghostFlag = true
 }
 
 Tyrants.prototype._checkDoingSetup = function() {

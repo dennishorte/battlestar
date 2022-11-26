@@ -207,6 +207,15 @@ TestUtil.gameFixture = function(options) {
       }
     }
 
+    if (options.devoured) {
+      const devoured = game.getZoneById('devoured')
+      const market = game.getZoneById('marketDeck')
+      for (const name of options.devoured) {
+        const card = market.cards().find(card => card.name === name)
+        game.mMoveCardTo(card, devoured, { verbose: true })
+      }
+    }
+
     game.mLogOutdent()
   })
 
