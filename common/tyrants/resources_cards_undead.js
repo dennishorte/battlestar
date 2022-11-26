@@ -201,7 +201,9 @@ const cardData = [
       "Return another player's troop or spy.",
       "At end of turn, you may promote any number of undead cards played this turn."
     ],
-    impl: (game, player) => {
+    impl: (game, player, { card }) => {
+      game.aChooseAndReturn(player, { noWhite: true })
+      game.aDeferPromotionSpecial(player, card)
     },
   },
   {

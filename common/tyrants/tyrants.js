@@ -508,6 +508,23 @@ Tyrants.prototype._processEndOfTurnActions = function() {
       promos.push(action)
     }
 
+    else if (action.action === 'promote-special') {
+      if (action.source.name === 'High Priest of Myrkul') {
+        this.mLog({
+          template: '{player} may promote any number of undead cards',
+          args: { player: action.player }
+        })
+        const choices = this
+          .getCardsByZone(action.player, 'played')
+          .filter(card => card.race === 'undead')
+          .sort(card => card.name)
+        this.aChooseAndPromote(action.player, choices, { min: 0, max: choices.length })
+      }
+      else {
+        throw new Error(`Unknown special promotion: ${action.source.name}`)
+      }
+    }
+
     else if (action.action === 'discard') {
       this.mLog({
         template: '{player} must discard a card due to {card}',
@@ -1013,6 +1030,14 @@ Tyrants.prototype.aDeferPromotion = function(player, source) {
     player,
     source,
     action: 'promote-other',
+  })
+}
+
+Tyrants.prototype.aDeferPromotionSpecial = function(player, source) {
+  this.state.endOfTurnActions.push({
+    player,
+    source,
+    action: 'promote-special',
   })
 }
 

@@ -353,4 +353,45 @@ describe('Undead expansion', () => {
     })
   })
 
+  describe('High Priest of Myrkul', () => {
+    test('return and then promote', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['High Priest of Myrkul', 'House Guard', 'Ghost', 'Banshee'],
+        },
+        'Ched Nasad': {
+          spies: ['micah'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.High Priest of Myrkul')
+      const request3 = game.respondToInputRequest({
+        actor: 'dennis',
+        title: 'Choose a token to return',
+        selection: [{
+          title: 'spy',
+          selection: ['Ched Nasad, micah'],
+        }],
+        key: 894270069,
+      })
+      const request4 = t.choose(game, request3, 'Play Card.Banshee')
+      const request5 = t.choose(game, request4, 'Menzoberranzan')
+      const request6 = t.choose(game, request5, 'Play Card.House Guard')
+      const request7 = t.choose(game, request6, 'Play Card.Ghost')
+      const request8 = t.choose(game, request7, 'Place a spy')
+      const request9 = t.choose(game, request8, 'Ched Nasad')
+      const request10 = t.choose(game, request9, 'Pass')
+      const request11 = t.choose(game, request10, 'Ghost', 'Banshee')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['House Guard', 'High Priest of Myrkul'],
+          innerCircle: ['Ghost', 'Banshee']
+        },
+      })
+    })
+  })
+
 })
