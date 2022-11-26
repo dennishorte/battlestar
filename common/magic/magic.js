@@ -257,10 +257,10 @@ Magic.prototype.aChooseAction = function(player) {
       case 'move card'           : return this.aMoveCard(actor, action.cardId, action.destId, action.destIndex)
       case 'mulligan'            : return this.aMulligan(actor)
       case 'pass priority'       : return this.aPassPriority()
-      case 'reveal'              : return this.aReveal(actor, action.card)
+      case 'reveal'              : return this.aReveal(actor, action.cardId)
       case 'reveal next'         : return this.aRevealNext(actor, action.zoneId)
       case 'select phase'        : return this.aSelectPhase(actor, action.phase)
-      case 'twiddle'             : return this.aTwiddle(actor, action.card)
+      case 'twiddle'             : return this.aTwiddle(actor, action.cardId)
       case 'view next'           : return this.aViewNext(actor, action.zoneId)
       case 'view top k'          : return this.aViewTop(actor, action.zoneId, action.count)
 
@@ -373,8 +373,10 @@ Magic.prototype.aPassPriority = function() {
   this.mLogSetIndent(indent)
 }
 
-Magic.prototype.aReveal = function(player, card) {
+Magic.prototype.aReveal = function(player, cardId) {
   player = player || this.getPlayerCurrent()
+  const card = this.getCardById(cardId)
+
   this.mReveal(card)
   const zone = this.getZoneByCard(card)
   this.mLog({
@@ -432,7 +434,9 @@ Magic.prototype.aSelectPhase = function(player, phase) {
   }
 }
 
-Magic.prototype.aTwiddle = function(player, card) {
+Magic.prototype.aTwiddle = function(player, cardId) {
+  const card = this.getCardById(cardId)
+
   if (card.tapped) {
     card.tapped = false
     this.mLog({

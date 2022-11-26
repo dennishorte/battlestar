@@ -78,14 +78,14 @@ export default {
     twiddle() {
       this.do(null, {
         name: 'twiddle',
-        card: this.card,
+        cardId: this.card.id,
       })
     },
 
     reveal() {
       this.do(null, {
         name: 'reveal',
-        card: this.card,
+        cardId: this.card.id,
       })
     },
   },
