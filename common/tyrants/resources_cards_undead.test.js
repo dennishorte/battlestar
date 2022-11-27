@@ -838,4 +838,32 @@ describe('Undead expansion', () => {
     })
   })
 
+  describe('Vampire Spawn', () => {
+    test('place troops; no devour', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Vampire Spawn', 'House Guard'],
+        },
+        'ched-llace a': {
+          troop: ['micah'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Vampire Spawn')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Vampire Spawn'],
+          influence: 1,
+        },
+        'ched-llace a': {
+          troops: [],
+        },
+      })
+    })
+  })
+
 })

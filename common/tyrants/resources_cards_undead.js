@@ -510,6 +510,8 @@ const cardData = [
       "Return another player's troop or spy."
     ],
     impl: (game, player) => {
+      player.incrementInfluence(1)
+      game.aChooseAndReturn(player)
     },
   },
   {
