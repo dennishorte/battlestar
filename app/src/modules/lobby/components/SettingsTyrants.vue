@@ -53,6 +53,11 @@ export default {
           value: 'illithid',
           disabled: false
         },
+        {
+          text: 'Undead',
+          value: 'undead',
+          disabled: false
+        },
       ],
 
       maps: [
