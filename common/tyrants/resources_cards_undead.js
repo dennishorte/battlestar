@@ -318,6 +318,35 @@ const cardData = [
       "- Take a white troop from any trophy hall and deploy it anywhere on the board."
     ],
     impl: (game, player) => {
+      for (let i = 0; i < 2; i++) {
+        game.aChooseOne(player, [
+          {
+            title: 'Assassinate a white troop',
+            impl: () => game.aChooseAndAssassinate(player, { whiteOnly: true })
+          },
+          {
+            title: 'Take a white troop from any trophy hall and deploy it anywhere on the board',
+            impl: () => {
+              const players = game
+                .getPlayerAll()
+                .filter(p => game
+                  .getCardsByZone(p, 'trophyHall')
+                  .some(troop => troop.isNeutral())
+                )
+              const targetPlayer = game.aChoosePlayer(player, players)
+              if (targetPlayer) {
+                const troop = game
+                  .getCardsByZone(targetPlayer, 'trophyHall')
+                  .find(troop => troop.isNeutral())
+                const targetLoc = game.aChooseAndDeploy(player, {
+                  anywhere: true,
+                  troop,
+                })
+              }
+            }
+          },
+        ])
+      }
     },
   },
   {

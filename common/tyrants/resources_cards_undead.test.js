@@ -526,4 +526,43 @@ describe('Undead expansion', () => {
     })
   })
 
+  describe('Mummy Lord', () => {
+    test('choose two times', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Mummy Lord', 'House Guard'],
+        },
+        micah: {
+          trophyHall: ['neutral', 'neutral', 'dennis', 'dennis']
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Mummy Lord')
+      const request3 = t.choose(game, request2, 'Assassinate a white troop')
+      const request4 = t.choose(game, request3, 'Take a white troop from any trophy hall and deploy it anywhere on the board')
+      const request5 = t.choose(game, request4, 'micah')
+      const request6 = t.choose(game, request5, 'Eryndlyn')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Mummy Lord'],
+          trophyHall: ['neutral'],
+        },
+        micah: {
+          hand: ['Noble', 'Noble', 'Noble', 'Noble', 'Noble'],
+          trophyHall: ['neutral', 'troop-dennis', 'troop-dennis'],
+        },
+        Eryndlyn: {
+          troops: ['micah', 'neutral'],
+        },
+        'araum-ched': {
+          troops: [],
+        },
+      })
+    })
+  })
+
 })

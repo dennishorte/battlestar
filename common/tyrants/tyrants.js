@@ -832,7 +832,7 @@ Tyrants.prototype.aChooseAndDeploy = function(player, opts={}) {
     return
   }
 
-  const choices = this.getDeployChoices(player)
+  const choices = this.getDeployChoices(player, opts)
   const loc = this.aChooseLocation(player, choices, { title: 'Choose a location to deploy' })
   if (loc) {
     this.aDeploy(player, loc, opts)
@@ -1326,11 +1326,9 @@ Tyrants.prototype.getControlMarkers = function(player) {
   }
 }
 
-Tyrants.prototype.getDeployChoices = function(player) {
-  const choices = this
-    .getPresence(player)
-    .filter(loc => loc.getTroops().length < loc.size)
-  return choices
+Tyrants.prototype.getDeployChoices = function(player, opts={}) {
+  const base = opts.anywhere ? this.getLocationAll() : this.getPresence(player)
+  return base.filter(loc => loc.getTroops().length < loc.size)
 }
 
 Tyrants.prototype.getExpansionList = function() {
