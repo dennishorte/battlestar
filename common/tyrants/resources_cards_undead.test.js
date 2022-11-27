@@ -774,4 +774,68 @@ describe('Undead expansion', () => {
     })
   })
 
+  describe('Skeletal Horde', () => {
+    test('place troops; no devour', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Skeletal Horde', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Skeletal Horde')
+      const request3 = t.choose(game, request2, 'ched-llace a')
+      const request4 = t.choose(game, request3, 'ched-llace b')
+      const request5 = t.choose(game, request4, 'no')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Skeletal Horde'],
+        },
+        'ched-llace a': {
+          troops: ['dennis'],
+        },
+        'ched-llace b': {
+          troops: ['dennis'],
+        },
+      })
+    })
+
+    test('place troops and devour', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Skeletal Horde', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Skeletal Horde')
+      const request3 = t.choose(game, request2, 'ched-llace a')
+      const request4 = t.choose(game, request3, 'ched-llace b')
+      const request5 = t.choose(game, request4, 'yes')
+      const request6 = t.choose(game, request5, 'Ched Nasad')
+      const request7 = t.choose(game, request6, 'Ched Nasad')
+      const request8 = t.choose(game, request7, 'Ched Nasad')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+        },
+        'Ched Nasad': {
+          troops: ['dennis', 'dennis', 'dennis', 'dennis'],
+        },
+        'ched-llace a': {
+          troops: ['dennis'],
+        },
+        'ched-llace b': {
+          troops: ['dennis'],
+        },
+        devoured: ['Skeletal Horde'],
+      })
+    })
+  })
+
 })

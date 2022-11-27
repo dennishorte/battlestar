@@ -483,7 +483,17 @@ const cardData = [
       "Deploy 2 troops.",
       "Devour this card > Deploy 3 troops."
     ],
-    impl: (game, player) => {
+    impl: (game, player, { card }) => {
+      game.aChooseAndDeploy(player)
+      game.aChooseAndDeploy(player)
+
+      const doDevour = game.aChooseYesNo(player, 'Devour Skeletal Horde to deploy 3 more troops?')
+      if (doDevour) {
+        game.aDevour(player, card)
+        game.aChooseAndDeploy(player)
+        game.aChooseAndDeploy(player)
+        game.aChooseAndDeploy(player)
+      }
     },
   },
   {
