@@ -972,4 +972,57 @@ describe('Undead expansion', () => {
     })
   })
 
+  describe('Wraith', () => {
+    test('spy, no devour', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Wraith', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Wraith')
+      const request3 = t.choose(game, request2, 'Eryndlyn')
+      const request4 = t.choose(game, request3, 'no')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Wraith'],
+        },
+        Eryndlyn: {
+          spies: ['dennis'],
+          troops: ['micah'],
+        }
+      })
+    })
+
+    test('spy with devour', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Wraith', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Wraith')
+      const request3 = t.choose(game, request2, 'Eryndlyn')
+      const request4 = t.choose(game, request3, 'yes')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          trophyHall: ['troop-micah'],
+        },
+        Eryndlyn: {
+          spies: ['dennis'],
+          troops: [],
+        },
+        devoured: ['Wraith'],
+      })
+    })
+  })
+
 })

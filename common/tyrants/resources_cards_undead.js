@@ -599,7 +599,14 @@ const cardData = [
       "Place a spy.",
       "Devour this card > Assassinate a troop at that spy's site."
     ],
-    impl: (game, player) => {
+    impl: (game, player, { card }) => {
+      const loc = game.aChooseAndPlaceSpy(player)
+
+      const doDevour = game.aChooseYesNo(player, `Devour this wraith to assassinate a troop at ${loc.name}`)
+      if (doDevour) {
+        game.aDevour(player, card)
+        game.aChooseAndAssassinate(player, { loc })
+      }
     },
   }
 ]
