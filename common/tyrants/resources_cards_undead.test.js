@@ -923,4 +923,53 @@ describe('Undead expansion', () => {
     })
   })
 
+  describe('Wight', () => {
+    test('+2 power', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Wight', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Wight')
+      const request3 = t.choose(game, request2, '+2 power')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Wight'],
+          power: 2,
+        },
+      })
+    })
+
+    test('devour to supplant', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Wight', 'House Guard', 'Spellspinner'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Wight')
+      const request3 = t.choose(game, request2, 'Devour a card in your hand > Supplant a troop')
+      const request4 = t.choose(game, request3, 'House Guard')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Spellspinner'],
+          played: ['Wight'],
+          trophyHall: ['neutral'],
+        },
+        'araum-ched': {
+          troops: ['dennis'],
+        },
+        devoured: ['House Guard'],
+      })
+    })
+  })
+
 })

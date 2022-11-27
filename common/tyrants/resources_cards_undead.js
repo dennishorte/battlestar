@@ -562,6 +562,28 @@ const cardData = [
       "- Devour a card in your hand > Supplant a troop."
     ],
     impl: (game, player) => {
+      game.aChooseOne(player, [
+        {
+          title: '+2 power',
+          impl: () => {
+            player.incrementPower(2)
+          }
+        },
+        {
+          title: 'Devour a card in your hand > Supplant a troop',
+          impl: () => {
+            const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'), {
+              title: 'Choose a card to feed to your wight',
+              min: 0,
+              max: 1,
+            })
+            if (card) {
+              game.aDevour(player, card)
+              game.aChooseAndSupplant(player)
+            }
+          }
+        },
+      ])
     },
   },
   {
