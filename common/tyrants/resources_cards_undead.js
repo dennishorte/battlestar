@@ -272,7 +272,35 @@ const cardData = [
       "- Deploy 3 troops.",
       "- Devour this card > Assassinate up to three white troops at a single site."
     ],
-    impl: (game, player) => {
+    impl: (game, player, { card }) => {
+      game.aChooseOne(player, [
+        {
+          title: 'Deploy 3 troops',
+          impl: () => {
+            game.aChooseAndDeploy(player)
+            game.aChooseAndDeploy(player)
+            game.aChooseAndDeploy(player)
+          }
+        },
+        {
+          title: 'Devour this card > Assassinate up to three white troops at a single site',
+          impl: () => {
+            game.aDevour(player, card)
+            const loc = game.aChooseLocation(player, game.getPresence(player))
+            if (loc) {
+              const troops = loc.getTroops().filter(troop => troop.isNeutral())
+              const chosen = game.aChoose(player, troops.map(t => 'neutral'), {
+                title: 'Choose which troops to deploy your Minotaur Skeleton against',
+                min: 0,
+                max: 3,
+              })
+              for (let i = 0; i < chosen.length; i++) {
+                game.aAssassinate(player, loc, 'neutral')
+              }
+            }
+          }
+        },
+      ])
     },
   },
   {

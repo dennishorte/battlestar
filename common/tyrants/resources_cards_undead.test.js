@@ -461,4 +461,69 @@ describe('Undead expansion', () => {
     })
   })
 
+  describe('Minotaur Skeleton', () => {
+    test('deploy 3 troops', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Minotaur Skeleton', 'House Guard'],
+        },
+        micah: {
+          trophyHall: ['neutral', 'neutral', 'dennis', 'dennis']
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Minotaur Skeleton')
+      const request3 = t.choose(game, request2, 'Deploy 3 troops')
+      const request4 = t.choose(game, request3, 'Ched Nasad')
+      const request5 = t.choose(game, request4, 'Ched Nasad')
+      const request6 = t.choose(game, request5, 'Ched Nasad')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Minotaur Skeleton'],
+        },
+        'Ched Nasad': {
+          troops: ['dennis', 'dennis', 'dennis', 'dennis'],
+        },
+      })
+    })
+
+    test('devour to assassinate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Minotaur Skeleton', 'House Guard'],
+        },
+        micah: {
+          trophyHall: ['neutral', 'neutral', 'dennis', 'dennis']
+        },
+        Menzoberranzan: {
+          troops: ['neutral', 'neutral', 'neutral', 'micah'],
+          spies: ['dennis'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Minotaur Skeleton')
+      const request3 = t.choose(game, request2, 'Devour this card > Assassinate up to three white troops at a single site')
+      const request4 = t.choose(game, request3, 'Menzoberranzan')
+      const request5 = t.choose(game, request4, 'neutral', 'neutral', 'neutral')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          trophyHall: ['neutral', 'neutral', 'neutral'],
+        },
+        Menzoberranzan: {
+          troops: ['micah'],
+          spies: ['dennis'],
+        },
+        devoured: ['Minotaur Skeleton'],
+      })
+    })
+  })
+
 })
