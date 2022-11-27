@@ -529,6 +529,22 @@ const cardData = [
       "- Promote a card from your discard pile, then gain 1 VP for every 3 cards in your inner circle."
     ],
     impl: (game, player) => {
+      game.aChooseOne(player, [
+        {
+          title: 'Supplant a troop',
+          impl: () => {
+            game.aChooseAndSupplant(player)
+          }
+        },
+        {
+          title: 'Promote a card from your discard pile, then gain 1 VP for every 3 cards in your inner circle',
+          impl: () => {
+            game.aChooseAndPromote(player, game.getCardsByZone(player, 'discard'))
+            const innerCircle = game.getCardsByZone(player, 'innerCircle').length
+            player.incrementPoints(Math.floor(innerCircle / 3))
+          }
+        },
+      ])
     },
   },
   {

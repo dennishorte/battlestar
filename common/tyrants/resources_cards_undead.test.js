@@ -866,4 +866,61 @@ describe('Undead expansion', () => {
     })
   })
 
+  describe('Vampire', () => {
+    test('supplant', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Vampire', 'House Guard'],
+        },
+        'ched-llace a': {
+          troops: ['micah'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Vampire')
+      const request3 = t.choose(game, request2, 'Supplant a troop')
+      const request4 = t.choose(game, request3, 'ched-llace a, micah')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Vampire'],
+          trophyHall: ['troop-micah'],
+        },
+        'ched-llace a': {
+          troops: ['dennis'],
+        },
+      })
+    })
+
+    test('promote', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Vampire', 'House Guard'],
+          discard: ['Spellspinner'],
+          innerCircle: ['House Guard', 'House Guard'],
+        },
+        'ched-llace a': {
+          troops: ['micah'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Vampire')
+      const request3 = t.choose(game, request2, 'Promote a card from your discard pile, then gain 1 VP for every 3 cards in your inner circle')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Vampire'],
+          innerCircle: ['House Guard', 'House Guard', 'Spellspinner'],
+          points: 1,
+        },
+      })
+    })
+  })
+
 })
