@@ -26,10 +26,12 @@ function Card() {
         const choices = game
           .getPlayerAll()
           .flatMap(player => game
-            .getTopCards(player)
-            .filter(card => game.getZoneByPlayer(player, card.color).splay !== 'none')
+            .utilColors()
+            .map(color => game.getZoneByPlayer(player, color))
+            .filter(zone => zone.splay !== 'none')
           )
-          .filter(card => card !== this)
+          .filter(zone => !zone.cards().includes(card))
+          .map(zone => zone.cards()[0])
         const choice = game.aChooseCard(player, choices)
         if (choice) {
           game.aCardEffects(player, choice, 'dogma')

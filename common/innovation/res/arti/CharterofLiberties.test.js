@@ -9,8 +9,12 @@ describe('Charter of Liberties', () => {
     t.setBoard(game,  {
       dennis: {
         artifact: ['Charter of Liberties'],
-        blue: ['Experimentation'],
-        hand: ['Mathematics'],
+        blue: {
+          cards: ['Experimentation', 'Alchemy'],
+          splay: 'left',
+        },
+        yellow: ['Fermenting'],
+        hand: ['Masonry'],
       },
       micah: {
         red: ['Engineering'],
@@ -37,52 +41,11 @@ describe('Charter of Liberties', () => {
     t.testBoard(game, {
       dennis: {
         blue: {
-          cards: ['Tools', 'Experimentation', 'Mathematics'],
+          cards: ['Tools', 'Experimentation', 'Alchemy'],
           splay: 'left',
         },
-      },
-      micah: {
-        red: ['Engineering'],
-        green: {
-          cards: ['Sailing', 'The Wheel'],
-          splay: 'right'
-        },
-      },
-    })
-  })
-
-  test('dogma: cannot choose itself', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-    t.setBoard(game,  {
-      dennis: {
-        blue: {
-          cards: ['Charter of Liberties', 'Experimentation'],
-          splay: 'left'
-        },
-        hand: ['Mathematics'],
-      },
-      micah: {
-        red: ['Engineering'],
-        green: {
-          cards: ['Sailing', 'The Wheel'],
-          splay: 'right'
-        },
-      },
-      decks: {
-        base: {
-          1: ['Tools'],
-        }
-      },
-    })
-
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Charter of Liberties')
-
-    t.testIsSecondPlayer(request2)
-    t.testBoard(game, {
-      dennis: {
-        blue: {
-          cards: ['Tools', 'Charter of Liberties', 'Experimentation', 'Mathematics'],
+        yellow: {
+          cards: ['Fermenting', 'Masonry'],
           splay: 'left',
         },
       },
