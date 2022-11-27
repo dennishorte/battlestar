@@ -428,6 +428,7 @@ const cardData = [
       "Supplant a white troop anywhere on the board."
     ],
     impl: (game, player) => {
+      game.aChooseAndSupplant(player, { whiteOnly: true, anywhere: true })
     },
   },
   {

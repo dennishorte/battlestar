@@ -658,4 +658,30 @@ describe('Undead expansion', () => {
     })
   })
 
+  describe('Ogre Zombie', () => {
+    test('Supplant a white troop anywhere on the board', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Ogre Zombie', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Ogre Zombie')
+      const request3 = t.choose(game, request2, 'Araumycos, neutral')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Ogre Zombie'],
+          trophyHall: ['neutral'],
+        },
+        Araumycos: {
+          troops: ['neutral', 'neutral', 'neutral', 'dennis'],
+        },
+      })
+    })
+  })
+
 })
