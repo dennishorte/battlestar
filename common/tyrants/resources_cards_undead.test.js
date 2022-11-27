@@ -684,4 +684,30 @@ describe('Undead expansion', () => {
     })
   })
 
+  describe('Ravenous Zombies', () => {
+    test('power and assassinate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Ravenous Zombies', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Ravenous Zombies')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Ravenous Zombies'],
+          trophyHall: ['neutral'],
+          power: 1,
+        },
+        'araum-ched': {
+          troops: [],
+        },
+      })
+    })
+  })
+
 })

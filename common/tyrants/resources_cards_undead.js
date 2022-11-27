@@ -445,6 +445,8 @@ const cardData = [
       "Assassinate a white troop."
     ],
     impl: (game, player) => {
+      player.incrementPower(1)
+      game.aChooseAndAssassinate(player, { whiteOnly: true })
     },
   },
   {
