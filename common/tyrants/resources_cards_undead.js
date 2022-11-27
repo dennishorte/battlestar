@@ -461,7 +461,13 @@ const cardData = [
     "text": [
       "Assassinate two troops. Then, if you have 8 or more troops in your trophy hall, promote this card."
     ],
-    impl: (game, player) => {
+    impl: (game, player, { card }) => {
+      game.aChooseAndAssassinate(player)
+      game.aChooseAndAssassinate(player)
+
+      if (game.getCardsByZone(player, 'trophyHall').length >= 8) {
+        game.aPromote(player, card)
+      }
     },
   },
   {

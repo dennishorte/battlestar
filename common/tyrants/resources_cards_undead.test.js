@@ -710,4 +710,68 @@ describe('Undead expansion', () => {
     })
   })
 
+  describe('Revenant', () => {
+    test('Assassinate, but no promotion', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Revenant', 'House Guard'],
+          trophyHall: ['micah', 'micah', 'micah', 'micah', 'micah'],
+        },
+        'ched-llace a': {
+          troops: ['micah'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Revenant')
+      const request3 = t.choose(game, request2, 'ched-llace a, micah')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Revenant'],
+          trophyHall: ['neutral', 'troop-micah', 'troop-micah', 'troop-micah', 'troop-micah', 'troop-micah', 'troop-micah'],
+        },
+        'araum-ched': {
+          troops: [],
+        },
+        'ched-llace a': {
+          troops: [],
+        },
+      })
+    })
+
+    test('Assassinate and promotion', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Revenant', 'House Guard'],
+          trophyHall: ['micah', 'micah', 'micah', 'micah', 'micah', 'micah'],
+        },
+        'ched-llace a': {
+          troops: ['micah'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Revenant')
+      const request3 = t.choose(game, request2, 'ched-llace a, micah')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          innerCircle: ['Revenant'],
+          trophyHall: ['neutral', 'troop-micah', 'troop-micah', 'troop-micah', 'troop-micah', 'troop-micah', 'troop-micah', 'troop-micah'],
+        },
+        'araum-ched': {
+          troops: [],
+        },
+        'ched-llace a': {
+          troops: [],
+        },
+      })
+    })
+  })
+
 })
