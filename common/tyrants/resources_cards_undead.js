@@ -361,9 +361,58 @@ const cardData = [
     "text": [
       "Choose one:",
       "- +3 influence.",
-      "- Promote this card, or a card from our hand or discard pile."
+      "- Promote this card, or a card from your hand or discard pile."
     ],
-    impl: (game, player) => {
+    impl: (game, player, { card }) => {
+      game.aChooseOne(player, [
+        {
+          title: '+3 influence',
+          impl: () => {
+            player.incrementInfluence(3)
+          }
+        },
+        {
+          title: 'Promote this card, or a card from your hand or discard pile',
+          impl: () => {
+            const choices = [{
+              title: 'this card',
+              choices: [card.name],
+              min: 0,
+              max: 1,
+            }]
+
+            if (game.getCardsByZone(player, 'hand').length > 0) {
+              choices.push({
+                title: 'hand',
+                choices: game.getCardsByZone(player, 'hand').map(c => c.name),
+                min: 0,
+                max: 1,
+              })
+            }
+
+            if (game.getCardsByZone(player, 'discard').length > 0) {
+              choices.push({
+                title: 'discard',
+                choices: game.getCardsByZone(player, 'discard').map(c => c.name),
+                min: 0,
+                max: 1,
+              })
+            }
+
+            const selection = game.aChoose(player, choices, { title: 'Choose a card to promote' })[0]
+
+            if (selection.title === 'this card') {
+              game.aPromote(player, card)
+            }
+
+            else {
+              const zone = game.getZoneByPlayer(player, selection.title)
+              const card = zone.cards().find(c => c.name === selection.selection[0])
+              game.aPromote(player, card)
+            }
+          }
+        },
+      ])
     },
   },
   {

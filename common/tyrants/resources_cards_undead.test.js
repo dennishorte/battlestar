@@ -565,4 +565,97 @@ describe('Undead expansion', () => {
     })
   })
 
+  describe('Necromancer', () => {
+    test('choose two times', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Necromancer', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Necromancer')
+      const request3 = t.choose(game, request2, '+3 influence')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Necromancer'],
+          influence: 3,
+        },
+      })
+    })
+
+    test('promote this card', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Necromancer', 'House Guard'],
+          discard: ['Priestess of Lolth'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Necromancer')
+      const request3 = t.choose(game, request2, 'Promote this card, or a card from your hand or discard pile')
+      const request4 = t.choose(game, request3, 'this card.Necromancer')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          discard: ['Priestess of Lolth'],
+          innerCircle: ['Necromancer'],
+        },
+      })
+    })
+
+    test('promote from hand', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Necromancer', 'House Guard', 'Spellspinner'],
+          discard: ['Priestess of Lolth'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Necromancer')
+      const request3 = t.choose(game, request2, 'Promote this card, or a card from your hand or discard pile')
+      const request4 = t.choose(game, request3, 'hand.House Guard')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Spellspinner'],
+          innerCircle: ['House Guard'],
+          discard: ['Priestess of Lolth'],
+          played: ['Necromancer'],
+        },
+      })
+    })
+
+    test('promote from discard', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Necromancer', 'House Guard'],
+          discard: ['Priestess of Lolth'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Necromancer')
+      const request3 = t.choose(game, request2, 'Promote this card, or a card from your hand or discard pile')
+      const request4 = t.choose(game, request3, 'discard.Priestess of Lolth')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          innerCircle: ['Priestess of Lolth'],
+          played: ['Necromancer'],
+        },
+      })
+    })
+  })
+
 })
