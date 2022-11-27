@@ -19,4 +19,8 @@ Token.prototype.isNeutral = function() {
   return this.owner === undefined
 }
 
+Token.prototype.isOtherPlayer = function(player) {
+  return this.owner !== undefined && this.owner !== player
+}
+
 module.exports = Token

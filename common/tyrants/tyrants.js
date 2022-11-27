@@ -713,6 +713,12 @@ Tyrants.prototype.aChooseCard = function(player, choices, opts={}) {
   }
 }
 
+Tyrants.prototype.aChoosePlayer = function(player, choices, opts={}) {
+  const names = choices.map(p => p.name)
+  const chosen = this.aChoose(player, names, opts)
+  return choices.find(p => p.name === chosen[0])
+}
+
 Tyrants.prototype.aChooseLocation = function(player, locations, opts={}) {
   const choices = locations
     .map(loc => loc.name)
@@ -816,9 +822,9 @@ Tyrants.prototype.aChooseAndSupplant = function(player, opts={}) {
   }
 }
 
-Tyrants.prototype.aChooseAndDeploy = function(player) {
+Tyrants.prototype.aChooseAndDeploy = function(player, opts={}) {
   const troops = this.getCardsByZone(player, 'troops')
-  if (troops.length === 0) {
+  if (troops.length === 0 && !opts.troop) {
     this.mLog({
       template: '{player} has no more troops',
       args: { player }
@@ -829,7 +835,7 @@ Tyrants.prototype.aChooseAndDeploy = function(player) {
   const choices = this.getDeployChoices(player)
   const loc = this.aChooseLocation(player, choices, { title: 'Choose a location to deploy' })
   if (loc) {
-    this.aDeploy(player, loc)
+    this.aDeploy(player, loc, opts)
   }
 }
 
@@ -1064,11 +1070,11 @@ Tyrants.prototype.aAssassinate = function(player, loc, owner) {
   return troop
 }
 
-Tyrants.prototype.aDeploy = function(player, loc) {
-  this.mDeploy(player, loc)
+Tyrants.prototype.aDeploy = function(player, loc, opts={}) {
+  const deployed = this.mDeploy(player, loc, opts)
   this.mLog({
-    template: '{player} deploys a troop to {loc}',
-    args: { player, loc }
+    template: '{player} deploys {card} to {loc}',
+    args: { player, loc, card: deployed }
   })
 }
 
@@ -1594,9 +1600,10 @@ Tyrants.prototype.mCheckZoneLimits = function(zone) {
   }
 }
 
-Tyrants.prototype.mDeploy = function(player, loc) {
-  const troops = this.getCardsByZone(player, 'troops')
-  this.mMoveCardTo(troops[0], loc)
+Tyrants.prototype.mDeploy = function(player, loc, opts={}) {
+  const troop = opts.troop || this.getCardsByZone(player, 'troops')[0]
+  this.mMoveCardTo(troop, loc)
+  return troop
 }
 
 Tyrants.prototype.mDevour = function(card) {

@@ -394,4 +394,71 @@ describe('Undead expansion', () => {
     })
   })
 
+  describe('Lich', () => {
+    test('place a spy and then reanimate troops', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Lich', 'House Guard'],
+        },
+        micah: {
+          trophyHall: ['neutral', 'neutral', 'dennis', 'dennis']
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Lich')
+      const request3 = t.choose(game, request2, 'Eryndlyn')
+      const request4 = t.choose(game, request3, 'dennis', 'dennis')
+      const request5 = t.choose(game, request4, 'Ched Nasad')
+      const request6 = t.choose(game, request5, 'Ched Nasad')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Lich'],
+        },
+        micah: {
+          hand: ['Noble', 'Noble', 'Noble', 'Noble', 'Noble'],
+          trophyHall: ['neutral', 'neutral'],
+        },
+        'Ched Nasad': {
+          troops: ['dennis', 'dennis', 'dennis'],
+        },
+      })
+    })
+
+    test('cannot reanimate if no enemy troop', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['Lich', 'House Guard'],
+        },
+        micah: {
+          trophyHall: ['neutral', 'neutral', 'dennis', 'dennis']
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Lich')
+      const request3 = t.choose(game, request2, 'Menzoberranzan')
+      const request4 = t.choose(game, request3, 'Play Card.House Guard')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['Lich', 'House Guard'],
+          power: 2,
+        },
+        micah: {
+          hand: ['Noble', 'Noble', 'Noble', 'Noble', 'Noble'],
+          trophyHall: ['neutral', 'neutral', 'troop-dennis', 'troop-dennis'],
+        },
+        'Ched Nasad': {
+          troops: ['dennis'],
+        },
+      })
+    })
+  })
+
 })

@@ -1,3 +1,6 @@
+const util = require('../lib/util.js')
+
+
 const cardData = [
   {
     "name": "Banshee",
@@ -219,6 +222,40 @@ const cardData = [
       "Place a spy. If another player's troop is at that site, take up to 2 troops from their trophy hall and deploy them."
     ],
     impl: (game, player) => {
+      const loc = game.aChooseAndPlaceSpy(player)
+      const otherPlayers = loc
+        .getTroops()
+        .filter(troop => troop.isOtherPlayer(player))
+        .map(troop => troop.owner)
+      const otherPlayersDistinct = util.array.distinct(otherPlayers)
+
+      if (otherPlayersDistinct.length > 0) {
+        const targetPlayer = game.aChoosePlayer(player, otherPlayersDistinct, {
+          title: 'Choose a player whose dead you will raise'
+        })
+
+        if (targetPlayer) {
+          for (let i = 0; i < 2; i++) {
+            const troopZone = game.getZoneByPlayer(targetPlayer, 'trophyHall')
+            const choices = troopZone.cards().map(troop => troop.getOwnerName()).sort()
+            const selections = game.aChoose(player, choices, {
+              title: 'Choose up to 2 troops to reanimate',
+              min: 0,
+              max: 2,
+            })
+
+            for (const selection of selections) {
+              const troop = troopZone.cards().find(c => c.getOwnerName() === selection)
+              game.aChooseAndDeploy(player, { troop })
+            }
+          }
+        }
+      }
+      else {
+        game.mLog({
+          template: 'The chosen site has no enemy player troops.'
+        })
+      }
     },
   },
   {
