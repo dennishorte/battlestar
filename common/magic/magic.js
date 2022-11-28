@@ -260,7 +260,9 @@ Magic.prototype.aChooseAction = function(player) {
       case 'reveal'              : return this.aReveal(actor, action.cardId)
       case 'reveal next'         : return this.aRevealNext(actor, action.zoneId)
       case 'select phase'        : return this.aSelectPhase(actor, action.phase)
+      case 'shuffle'             : return this.aShuffle(actor, action.zoneId)
       case 'twiddle'             : return this.aTwiddle(actor, action.cardId)
+      case 'view all'            : return this.aViewAll(actor, action.zoneId)
       case 'view next'           : return this.aViewNext(actor, action.zoneId)
       case 'view top k'          : return this.aViewTop(actor, action.zoneId, action.count)
 
@@ -303,7 +305,7 @@ Magic.prototype.aDraw = function(player, opts={}) {
   const card = libraryCards[0]
   this.mMoveCardTo(card, this.getZoneByPlayer(player, 'hand'))
 
-  if (!this.silent) {
+  if (!opts.silent) {
     this.mLog({
       template: '{player} draws {card}',
       args: { player, card }
@@ -348,15 +350,17 @@ Magic.prototype.aMulligan = function(player) {
     template: '{player} takes a mulligan',
     args: { player }
   })
+  this.mLogIndent()
 
   const library = this.getZoneByPlayer(player, 'library')
-  for (const card of game.getCardsByZone(player, 'hand')) {
+  for (const card of this.getCardsByZone(player, 'hand')) {
     this.mMoveCardTo(card, library)
   }
 
-  library.shuffle({ silent: true })
+  library.shuffle()
 
-  this.aDrawSeven(player, { silent: true })
+  this.aDrawSeven(player)
+  this.mLogOutdent()
 }
 
 Magic.prototype.aPassPriority = function() {
@@ -434,6 +438,11 @@ Magic.prototype.aSelectPhase = function(player, phase) {
   }
 }
 
+Magic.prototype.aShuffle = function(player, zoneId) {
+  const zone = this.getZoneById(zoneId)
+  zone.shuffle()
+}
+
 Magic.prototype.aTwiddle = function(player, cardId) {
   const card = this.getCardById(cardId)
 
@@ -451,6 +460,17 @@ Magic.prototype.aTwiddle = function(player, cardId) {
       args: { card }
     })
   }
+}
+
+Magic.prototype.aViewAll = function(player, zoneId) {
+  const zone = this.getZoneById(zoneId)
+  zone.sortCardsByName()
+  zone.cards().forEach(card => util.array.pushUnique(card.visibility, player))
+
+  this.mLog({
+    template: `{player} views {zone}`,
+    args: { player, zone },
+  })
 }
 
 Magic.prototype.aViewNext = function(player, zoneId) {

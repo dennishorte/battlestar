@@ -87,3 +87,7 @@ Zone.prototype.shuffleBottom = function(count, opts={}) {
     this._cards.forEach(card => card.visibility = [this.owner])
   }
 }
+
+Zone.prototype.sortCardsByName = function() {
+  this._cards.sort((l, r) => l.name.localeCompare(r.name))
+}

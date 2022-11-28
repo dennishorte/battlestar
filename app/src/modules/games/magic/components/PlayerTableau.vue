@@ -15,8 +15,16 @@
       </div>
 
       <TableauZone :zone="getZone('library')">
-        <DropdownButton @click="viewNext('library')">view next</DropdownButton>
+        <DropdownButton @click="viewNext()">view next</DropdownButton>
+        <DropdownButton @click="viewTopN()">view top n</DropdownButton>
+        <DropdownButton @click="viewAll()">view all</DropdownButton>
+        <DropdownButton @click="revealNext()">reveal next</DropdownButton>
+        <DropdownDivider />
+        <DropdownButton @click="draw">draw</DropdownButton>
         <DropdownButton @click="drawSeven">draw 7</DropdownButton>
+        <DropdownButton @click="mulligan">mulligan</DropdownButton>
+        <DropdownDivider />
+        <DropdownButton @click="shuffle">shuffle</DropdownButton>
       </TableauZone>
 
       <TableauZone :zone="getZone('exile')" />
@@ -35,6 +43,10 @@
       <TableauZone :zone="getZone('stack')" />
     </div>
 
+    <Modal id="magic-top-n-modal" @ok="viewTopNDo()">
+      <template #header>View Top Cards of Library</template>
+      <input class="form-control" placeholder="number of view" v-model.number="topNCount" />
+    </Modal>
   </div>
 </template>
 
@@ -43,6 +55,8 @@
 import { computed } from 'vue'
 
 import DropdownButton from '@/components/DropdownButton'
+import DropdownDivider from '@/components/DropdownDivider'
+import Modal from '@/components/Modal'
 import PlayerCounters from './PlayerCounters'
 import TableauZone from './TableauZone'
 import TableauZoneMenu from './TableauZoneMenu'
@@ -53,6 +67,8 @@ export default {
 
   components: {
     DropdownButton,
+    DropdownDivider,
+    Modal,
     PlayerCounters,
     TableauZone,
     TableauZoneMenu,
@@ -64,6 +80,12 @@ export default {
     player: Object,
   },
 
+  data() {
+    return {
+      topNCount: 1,
+    }
+  },
+
   provide() {
     return {
       player: computed(() => this.player),
@@ -71,6 +93,10 @@ export default {
   },
 
   computed: {
+    actorPlayer() {
+      return this.game.getPlayerByName(this.actor.name)
+    },
+
     extraClasses() {
       if (this.player.name !== this.actor.name) {
         return 'tableau-reverse'
@@ -85,20 +111,51 @@ export default {
   },
 
   methods: {
+    draw() {
+      this.do(this.player, { name: 'draw' })
+    },
+
     drawSeven() {
       this.do(this.player, { name: 'draw 7' })
+    },
+
+    mulligan() {
+      this.do(this.player, { name: 'mulligan' })
     },
 
     getZone(name) {
       return this.game.getZoneByPlayer(this.player, name)
     },
 
-    viewNext(zoneName) {
-      const actorPlayer = this.game.getPlayerByName(this.actor.name)
-      const zoneId = `players.${this.player.name}.${zoneName}`
-      this.do(actorPlayer, { name: 'view next', zoneId })
+    revealNext() {
+      const zoneId = `players.${this.player.name}.library`
+      this.do(this.actorPlayer, { name: 'reveal next', zoneId })
     },
-  },
+
+    shuffle() {
+      const zoneId = `players.${this.player.name}.library`
+      this.do(this.actorPlayer, { name: 'shuffle', zoneId })
+    },
+
+    viewAll() {
+      const zoneId = `players.${this.player.name}.library`
+      this.do(this.actorPlayer, { name: 'view all', zoneId })
+    },
+
+    viewNext() {
+      const zoneId = `players.${this.player.name}.library`
+      this.do(this.actorPlayer, { name: 'view next', zoneId })
+    },
+
+    viewTopN() {
+      this.$modal('magic-top-n-modal').show()
+    },
+
+    viewTopNDo() {
+      const zoneId = `players.${this.player.name}.library`
+      this.do(this.actorPlayer, { name: 'view top k', count: this.topNCount, zoneId })
+    },
+  }
 }
 </script>
 
