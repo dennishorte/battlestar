@@ -636,9 +636,20 @@ Magic.prototype._enrichLogArgs = function(msg) {
     }
     else if (key.startsWith('card')) {
       const card = msg.args[key]
-      msg.args[key] = {
-        value: card.name,
-        classes: ['card-id'],
+      const isHidden = !card.visibility.find(p => p.name === this.viewerName)
+
+      if (isHidden) {
+        msg.args[key] = {
+          value: 'a card',
+          classes: ['card-hidden'],
+        }
+      }
+      else {
+        msg.args[key] = {
+          value: card.name,
+          cardId: card.id,  // Important in some UI situations.
+          classes: ['card-name'],
+        }
       }
     }
     else if (key.startsWith('zone')) {

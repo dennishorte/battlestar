@@ -95,7 +95,7 @@ export default {
       for (const [arg, value] of Object.entries(entry.args)) {
         let replacement = value.value
 
-        if (arg === 'card' && !value.value.startsWith('*')) {
+        if (arg === 'card' && !value.classes.includes('card-hidden')) {
           replacement = `card(${value.value})`
         }
 
