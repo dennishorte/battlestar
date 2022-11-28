@@ -33,7 +33,7 @@ export default {
     DropdownButton,
   },
 
-  inject: ['actor', 'do'],
+  inject: ['actor', 'do', 'game'],
 
   props: {
     card: Object,
@@ -45,7 +45,7 @@ export default {
         return 'hidden'
       }
       else {
-        return card.data.card_faces[0].name
+        return this.card.data.card_faces[0].name
       }
     },
 
@@ -57,7 +57,8 @@ export default {
     },
 
     hidden() {
-      return !this.card.visibility.includes(this.actor.name)
+      const player = this.game.getPlayerByName(this.actor.name)
+      return !this.card.visibility.includes(player)
     },
 
     highlighted() {
