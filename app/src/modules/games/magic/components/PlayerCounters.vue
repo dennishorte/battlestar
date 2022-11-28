@@ -6,10 +6,10 @@
       </div>
 
       <div class="counter-buttons">
-        <i class="bi bi-dice-5-fill counter-green" @click="increment(name, 5)"></i>
-        <i class="bi bi-dice-1-fill counter-green" @click="increment(name, 1)"></i>
-        <i class="bi bi-dice-1-fill counter-red" @click="increment(name, -1)"></i>
         <i class="bi bi-dice-5-fill counter-red" @click="increment(name, -5)"></i>
+        <i class="bi bi-dice-1-fill counter-red" @click="increment(name, -1)"></i>
+        <i class="bi bi-dice-1-fill counter-green" @click="increment(name, 1)"></i>
+        <i class="bi bi-dice-5-fill counter-green" @click="increment(name, 5)"></i>
       </div>
     </div>
   </div>
