@@ -1,12 +1,17 @@
 <template>
   <div class="wrapper" :class="wrapperClasses">
-    <CardListItem
-      :card="card"
-      :class="extraClasses"
-      :hide-popup="hidden"
-    >
-      <template #name>{{ displayName }}</template>
-    </CardListItem>
+    <div class="card-line">
+      <i class="bi bi-eye-fill" v-if="cardIsRevealed"></i>
+      <i class="bi bi-eye" v-else-if="cardIsViewed"></i>
+
+      <CardListItem
+        :card="card"
+        :class="extraClasses"
+        :hide-popup="hidden"
+      >
+        <template #name>{{ displayName }}</template>
+      </CardListItem>
+    </div>
 
     <Dropdown v-if="highlighted" :notitle="true" :menu-end="true" class="menu dropdown">
       <DropdownButton @click.stop="twiddle" v-if="this.card.tapped">untap</DropdownButton>
@@ -40,6 +45,19 @@ export default {
   },
 
   computed: {
+    cardIsRevealed() {
+      return this.card.visibility.length > 1
+    },
+
+    cardIsViewed() {
+      const zoneTokens = this.card.zone.split('.')
+      const inALibrary = zoneTokens.slice(-1)[0] === 'library'
+      const inActorZone = zoneTokens.slice(-2, -1)[0] === this.actor.name
+      const inActorLibrary = inActorZone && inALibrary
+
+      return this.card.visibility.length === 1 && inActorLibrary
+    },
+
     displayName() {
       if (this.hidden) {
         return 'hidden'
@@ -82,6 +100,7 @@ export default {
         name: 'twiddle',
         cardId: this.card.id,
       })
+      this.$store.dispatch('magic/game/unselectCard')
     },
 
     reveal() {
@@ -89,6 +108,7 @@ export default {
         name: 'reveal',
         cardId: this.card.id,
       })
+      this.$store.dispatch('magic/game/unselectCard')
     },
   },
 }
@@ -96,6 +116,11 @@ export default {
 
 
 <style scoped>
+.card-line {
+  display: flex;
+  flex-direction: row;
+}
+
 .hidden {
   font-weight: 100;
 }

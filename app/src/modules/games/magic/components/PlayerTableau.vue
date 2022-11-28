@@ -15,6 +15,7 @@
       </div>
 
       <TableauZone :zone="getZone('library')">
+        <DropdownButton @click="viewNext('library')">view next</DropdownButton>
         <DropdownButton @click="drawSeven">draw 7</DropdownButton>
       </TableauZone>
 
@@ -90,6 +91,12 @@ export default {
 
     getZone(name) {
       return this.game.getZoneByPlayer(this.player, name)
+    },
+
+    viewNext(zoneName) {
+      const actorPlayer = this.game.getPlayerByName(this.actor.name)
+      const zoneId = `players.${this.player.name}.${zoneName}`
+      this.do(actorPlayer, { name: 'view next', zoneId })
     },
   },
 }

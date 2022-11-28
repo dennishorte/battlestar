@@ -70,5 +70,9 @@ export default {
       commit('setGame', game)
       commit('setReady', true)
     },
+
+    unselectCard({ commit }) {
+      commit('setSelectedCard', null)
+    },
   },
 }
