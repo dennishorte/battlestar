@@ -27,4 +27,8 @@ export default {
 
 
 <style scoped>
+.dropdown-toggle {
+  max-height: 1.5em;
+  padding: 0 1.2em;
+}
 </style>
