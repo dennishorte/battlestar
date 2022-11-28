@@ -14,17 +14,19 @@
         <PlayerCounters :player="player" />
       </div>
 
-      <TableauZone :zone="getZone('library')">
-        <DropdownButton @click="viewNext()">view next</DropdownButton>
-        <DropdownButton @click="viewTopN()">view top n</DropdownButton>
-        <DropdownButton @click="viewAll()">view all</DropdownButton>
-        <DropdownButton @click="revealNext()">reveal next</DropdownButton>
-        <DropdownDivider />
-        <DropdownButton @click="draw">draw</DropdownButton>
-        <DropdownButton @click="drawSeven">draw 7</DropdownButton>
-        <DropdownButton @click="mulligan">mulligan</DropdownButton>
-        <DropdownDivider />
-        <DropdownButton @click="shuffle">shuffle</DropdownButton>
+      <TableauZone :zone="getZone('library')" :library-view="true">
+        <template #menu>
+          <DropdownButton @click="viewNext()">view next</DropdownButton>
+          <DropdownButton @click="viewTopN()">view top n</DropdownButton>
+          <DropdownButton @click="viewAll()">view all</DropdownButton>
+          <DropdownButton @click="revealNext()">reveal next</DropdownButton>
+          <DropdownDivider />
+          <DropdownButton @click="draw">draw</DropdownButton>
+          <DropdownButton @click="drawSeven">draw 7</DropdownButton>
+          <DropdownButton @click="mulligan">mulligan</DropdownButton>
+          <DropdownDivider />
+          <DropdownButton @click="shuffle">shuffle</DropdownButton>
+        </template>
       </TableauZone>
 
       <TableauZone :zone="getZone('exile')" />
@@ -32,8 +34,10 @@
 
     <div class="tableau-col" :class="extraColumnClasses">
       <TableauZone :zone="getZone('hand')">
-        <DropdownButton @click="revealHand()">reveal</DropdownButton>
-        <DropdownButton @click="hideHand()">hide</DropdownButton>
+        <template #menu>
+          <DropdownButton @click="revealHand()">reveal</DropdownButton>
+          <DropdownButton @click="hideHand()">hide</DropdownButton>
+        </template>
       </TableauZone>
 
       <TableauZone :zone="getZone('command')" />
