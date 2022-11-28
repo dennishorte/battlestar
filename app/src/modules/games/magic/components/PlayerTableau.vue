@@ -31,7 +31,11 @@
     </div>
 
     <div class="tableau-col" :class="extraColumnClasses">
-      <TableauZone :zone="getZone('hand')" />
+      <TableauZone :zone="getZone('hand')">
+        <DropdownButton @click="revealHand()">reveal</DropdownButton>
+        <DropdownButton @click="hideHand()">hide</DropdownButton>
+      </TableauZone>
+
       <TableauZone :zone="getZone('command')" />
       <TableauZone :zone="getZone('graveyard')" />
     </div>
@@ -125,6 +129,16 @@ export default {
 
     getZone(name) {
       return this.game.getZoneByPlayer(this.player, name)
+    },
+
+    hideHand() {
+      const zoneId = `players.${this.player.name}.hand`
+      this.do(this.actorPlayer, { name: 'hide all', zoneId })
+    },
+
+    revealHand() {
+      const zoneId = `players.${this.player.name}.hand`
+      this.do(this.actorPlayer, { name: 'reveal all', zoneId })
     },
 
     revealNext() {

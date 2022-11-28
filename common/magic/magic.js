@@ -253,11 +253,13 @@ Magic.prototype.aChooseAction = function(player) {
       case 'create token'        : return this.aCreateToken(actor, action.card, action.zone)
       case 'draw'                : return this.aDraw(actor)
       case 'draw 7'              : return this.aDrawSeven(actor)
+      case 'hide all'            : return this.aHideAll(actor, action.zoneId)
       case 'import'              : return this.aImport(actor, action.card, action.zone)
       case 'move card'           : return this.aMoveCard(actor, action.cardId, action.destId, action.destIndex)
       case 'mulligan'            : return this.aMulligan(actor)
       case 'pass priority'       : return this.aPassPriority()
       case 'reveal'              : return this.aReveal(actor, action.cardId)
+      case 'reveal all'          : return this.aRevealAll(actor, action.zoneId)
       case 'reveal next'         : return this.aRevealNext(actor, action.zoneId)
       case 'select phase'        : return this.aSelectPhase(actor, action.phase)
       case 'shuffle'             : return this.aShuffle(actor, action.zoneId)
@@ -325,6 +327,16 @@ Magic.prototype.aDrawSeven = function(player, opts={}) {
   }
 }
 
+Magic.prototype.aHideAll = function(player, zoneId) {
+  const zone = this.getZoneById(zoneId)
+  zone.cards().forEach(card => this.mHide(card))
+
+  this.mLog({
+    template: `{player} hides {zone}`,
+    args: { player, zone }
+  })
+}
+
 Magic.prototype.aImport = function(player, card, zone) {
   cardUtil.lookup.insertCardData([card], this.cardLookup)
   card.id = this.getNextLocalId()
@@ -386,6 +398,16 @@ Magic.prototype.aReveal = function(player, cardId) {
   this.mLog({
     template: '{player} reveals {card} from {zone}',
     args: { player, card, zone },
+  })
+}
+
+Magic.prototype.aRevealAll = function(player, zoneId) {
+  const zone = this.getZoneById(zoneId)
+  zone.cards().forEach(card => this.mReveal(card))
+
+  this.mLog({
+    template: `{player} reveals {zone}`,
+    args: { player, zone }
   })
 }
 
@@ -545,6 +567,22 @@ Magic.prototype.mAdjustCardVisibility = function(card) {
   }
   else {
     throw new Error(`Unhandled zone kind '${zone.kind}' for zone '${zone.id}'`)
+  }
+}
+
+Magic.prototype.mHide = function(card) {
+  const zone = this.getZoneByCard(card)
+  if (zone.kind === 'public') {
+    throw new Error(`Can't hide cards in public zone ${zone.id}`)
+  }
+  else if (zone.kind === 'private') {
+    card.visibility = [zone.owner]
+  }
+  else if (zone.kind === 'hidden') {
+    card.visibility = []
+  }
+  else {
+    throw new Error(`Unhandled zone type ${zone.kind}`)
   }
 }
 
