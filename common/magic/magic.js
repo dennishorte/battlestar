@@ -73,8 +73,16 @@ Magic.prototype._mainProgram = function() {
   this.mainLoop()
 }
 
-Magic.prototype._gameOver = function() {
-  throw new Error('_gameOver is not used in Magic games')
+Magic.prototype._gameOver = function(event) {
+  this.mLogSetIndent(0)
+  this.mLog({
+    template: '{player} wins due to {reason}',
+    args: {
+      player: event.data.player,
+      reason: event.data.reason,
+    }
+  })
+  return event
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -237,6 +245,35 @@ Magic.prototype.aCascade = function(player, x) {
   this.mLogOutdent()
 }
 
+Magic.prototype.aConcede = function(player) {
+  this.mLog({
+    template: '{player} concedes',
+    args: { player },
+    classes: ['player-concedes']
+  })
+  player.eliminated = true
+
+  // If only one team remains, then the game is over.
+  const teams = util.array.collect(this.getPlayerAll(), p => p.team)
+  const remaining = Object.values(teams).filter(players => players.some(p => !p.eliminated))
+
+  if (remaining.length === 1) {
+    const winningTeam = remaining[0]
+    if (winningTeam.length === 1) {
+      throw new GameOverEvent({
+        player: winningTeam[0].name,
+        reason: 'I am the best, you are the rest!',
+      })
+    }
+    else {
+      throw new GameOverEvent({
+        player: `team ${winningTeam[0].team}`,
+        reason: 'All your base are belong to us.',
+      })
+    }
+  }
+}
+
 Magic.prototype.aChooseAction = function(player) {
   const actions = this.requestInputSingle({
     actor: player.name,
@@ -251,8 +288,10 @@ Magic.prototype.aChooseAction = function(player) {
       case 'adjust counter'      : return actor.incrementCounter(action.counter, action.amount)
       case 'cascade'             : return this.aCascade(actor, action.x)
       case 'create token'        : return this.aCreateToken(actor, action.card, action.zone)
+      case 'concede'             : return this.aConcede(actor)
       case 'draw'                : return this.aDraw(actor)
       case 'draw 7'              : return this.aDrawSeven(actor)
+      case 'draw game'           : return this.aDrawGame(actor)
       case 'hide all'            : return this.aHideAll(actor, action.zoneId)
       case 'import'              : return this.aImport(actor, action.card, action.zone)
       case 'move card'           : return this.aMoveCard(actor, action.cardId, action.destId, action.destIndex)
@@ -261,6 +300,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'reveal'              : return this.aReveal(actor, action.cardId)
       case 'reveal all'          : return this.aRevealAll(actor, action.zoneId)
       case 'reveal next'         : return this.aRevealNext(actor, action.zoneId)
+      case 'roll die'            : return this.aRollDie(actor, action.faces)
       case 'select phase'        : return this.aSelectPhase(actor, action.phase)
       case 'shuffle'             : return this.aShuffle(actor, action.zoneId)
       case 'twiddle'             : return this.aTwiddle(actor, action.cardId)
@@ -313,6 +353,18 @@ Magic.prototype.aDraw = function(player, opts={}) {
       args: { player, card }
     })
   }
+}
+
+Magic.prototype.aDrawGame = function(player) {
+  this.mLog({
+    template: '{player} declares a draw',
+    args: { player },
+    classes: ['draw-game']
+  })
+  throw new GameOverEvent({
+    player: 'nobody',
+    reason: 'Draw Game',
+  })
 }
 
 Magic.prototype.aDrawSeven = function(player, opts={}) {
@@ -429,6 +481,26 @@ Magic.prototype.aRevealNext = function(player, zoneId) {
   this.mLog({
     template: `{player} reveals the next card in {zone} (top+${nextIndex})`,
     args: { player, zone }
+  })
+}
+
+Magic.prototype.aRollDie = function(player, faces) {
+  const result = Math.floor(this.random() * faces) + 1
+
+  let extra = ''
+  if (faces === 2) {
+    if (result === 1) {
+      extra = ' (heads)'
+    }
+    else {
+      extra = ' (tails)'
+    }
+  }
+
+  this.mLog({
+    template: `{player} rolled ${result} on a d${faces}${extra}`,
+    args: { player },
+    classes: ['die-roll'],
   })
 }
 

@@ -9,6 +9,8 @@ function Player(game, data) {
   this.name = data.name
   this.team = data.name
 
+  this.eliminated = false
+
   this.counters = {
     life: 20,
   }

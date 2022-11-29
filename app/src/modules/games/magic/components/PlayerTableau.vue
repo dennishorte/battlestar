@@ -8,6 +8,10 @@
 
           <div class="zone-menu">
             <TableauZoneMenu>
+              <DropdownButton @click="rollDie">roll a die</DropdownButton>
+              <DropdownDivider />
+              <DropdownButton @click="concede">concede</DropdownButton>
+              <DropdownButton @click="drawGame">draw game</DropdownButton>
             </TableauZoneMenu>
           </div>
         </div>
@@ -51,9 +55,14 @@
       <TableauZone :zone="getZone('stack')" />
     </div>
 
+    <Modal id="magic-die-roll-modal" @ok="rollDieDo()">
+      <template #header>Roll a Die</template>
+      <input class="form-control" placeholder="number of faces" v-model.number="dieFaces" />
+    </Modal>
+
     <Modal id="magic-top-n-modal" @ok="viewTopNDo()">
       <template #header>View Top Cards of Library</template>
-      <input class="form-control" placeholder="number of view" v-model.number="topNCount" />
+      <input class="form-control" placeholder="number to view" v-model.number="topNCount" />
     </Modal>
   </div>
 </template>
@@ -90,6 +99,7 @@ export default {
 
   data() {
     return {
+      dieFaces: 2,
       topNCount: 1,
     }
   },
@@ -119,8 +129,16 @@ export default {
   },
 
   methods: {
+    concede() {
+      this.do(this.player, { name: 'concede' })
+    },
+
     draw() {
       this.do(this.player, { name: 'draw' })
+    },
+
+    drawGame() {
+      this.do(this.actorPlayer, { name: 'draw game' })
     },
 
     drawSeven() {
@@ -148,6 +166,14 @@ export default {
     revealNext() {
       const zoneId = `players.${this.player.name}.library`
       this.do(this.actorPlayer, { name: 'reveal next', zoneId })
+    },
+
+    rollDie() {
+      this.$modal('magic-die-roll-modal').show()
+    },
+
+    rollDieDo() {
+      this.do(this.player, { name: 'roll die', faces: this.dieFaces })
     },
 
     shuffle() {
