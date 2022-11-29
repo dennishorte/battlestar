@@ -9,6 +9,10 @@ export default {
     cardlist: [],
     lookup: {},
 
+    localVersion: '__NOT_LOADED__',
+    remoteVersion: '__NOT_LOADED__',
+    declinedCardUpdate: false,
+
     loadedOnce: false,
     loading: true,
   }),
@@ -16,7 +20,16 @@ export default {
   getters: {
     getByIdDict: (state) => (dict) => {
       return mag.util.card.lookup.getByIdDict(dict, state.lookup)
-    }
+    },
+
+    versionMismatch(state) {
+      const value = (
+        state.localVersion !== '__NOT_LOADED__'
+        && state.remoteVersion !== '__NOT_LOADED__'
+        && state.localVersion !== state.remoteVersion
+      )
+      return value
+    },
   },
 
   mutations: {
@@ -36,6 +49,14 @@ export default {
       state.loading = true
     },
 
+    setCardVersion(state, version) {
+      state.localVersion = version
+    },
+
+    setRemoteVersion(state, version) {
+      state.remoteVersion = version
+    },
+
     setLoadedOnce(state) {
       state.loadedOnce = true
     },
@@ -45,6 +66,17 @@ export default {
     ensureLoaded({ dispatch, state }) {
       if (!state.loadedOnce) {
         dispatch('loadCardsFromLocalDatabase')
+        dispatch('getRemoteVersion')
+      }
+    },
+
+    async getRemoteVersion({ commit }) {
+      const requestResult = await axios.post('/api/magic/card/version')
+      if (requestResult.data.status === 'success') {
+        commit('setRemoteVersion', requestResult.data.version)
+      }
+      else {
+        alert('Error fetching remote cards verion.\n' + requestResult.data.message)
       }
     },
 
@@ -52,12 +84,13 @@ export default {
       commit('setLoadedOnce')
       commit('setCardsLoading')
       loadCardsFromDatabase(
-        cards => dispatch('loadCardDatabaseSuccess', cards),
+        data => dispatch('loadCardDatabaseSuccess', data),
         error => { throw new Error(error) }
       )
     },
 
-    async loadCardDatabaseSuccess({ commit, dispatch }, cards) {
+    async loadCardDatabaseSuccess({ commit, dispatch }, { cards, version }) {
+      commit('setCardVersion', version)
       commit('setCardList', cards)
       commit('setCardLookup', mag.util.card.createCardLookup(cards))
       //await dispatch('applyCardFilters')
@@ -87,6 +120,7 @@ async function loadCardsFromDatabase(successFunc, errorFunc) {
       const cursor = objectStore.openCursor()
 
       let cards = []
+      let version = ''
 
       cursor.addEventListener('success', (e) => {
         const cursor = e.target.result
@@ -94,12 +128,13 @@ async function loadCardsFromDatabase(successFunc, errorFunc) {
         if (cursor) {
           console.log('Cursor iteration')
           cards = cursor.value.json_data
+          version = cursor.value.version
           cursor.continue()
         }
         else {
           console.log('all values loaded', cards.length)
           db.close()
-          successFunc(cards)
+          successFunc({ cards, version })
         }
       })
     },
@@ -143,7 +178,7 @@ async function openLocalStorage(successFunc, errorFunc) {
 // in an IndexedDB.
 async function updateLocalCards() {
   getLatestCardDataFromServer(
-    cards => { saveCardsToDatabase(cards) },
+    (cards, version) => { saveCardsToDatabase(cards, version) },
     error => { throw new Error(error) },
   )
 }
@@ -154,15 +189,22 @@ async function getLatestCardDataFromServer(successFunc, errorFunc) {
   console.log('card data fetched')
 
   if (requestResult.data.status === 'success') {
-    successFunc(requestResult.data.cards)
+    console.log(requestResult.data)
+    const { cards, version } = requestResult.data
+    successFunc(cards, version)
   }
   else {
     errorFunc('Error fetching card data from server. ' + requestResult.data.message)
   }
 }
 
-async function saveCardsToDatabase(cards) {
-  const newItem = { json_data: cards }
+async function saveCardsToDatabase(cards, version) {
+  const newItem = {
+    json_data: cards,
+    version,
+  }
+
+  console.log('saved data with version:', newItem.version)
 
   openLocalStorage(
     db => {

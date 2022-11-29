@@ -3,13 +3,17 @@ const fs = require('fs')
 const databaseClient = require('../../util/mongo.js').client
 const database = databaseClient.db('magic')
 const scryfallCollection = database.collection('scryfall')
+const scryfallVersionCollection = database.collection('scryfall_version')
 
 
 const Scryfall = {}  // This will be the exported module
 
-async function insertCardsIntoDatabase(cards) {
+async function insertCardsIntoDatabase(cards, version) {
   await scryfallCollection.deleteMany({})  // Remove old data
   await scryfallCollection.insertMany(cards, { ordered: true })
+
+  await scryfallVersionCollection.deleteMany({})
+  await scryfallVersionCollection.insertOne({ version })
 }
 
 Scryfall.fetchAll = async function() {
@@ -29,7 +33,7 @@ Scryfall.updateAll = async function() {
 
   const data = fs.readFileSync(scryfallFolder + '/' + latest).toString()
   const cards = JSON.parse(data)
-  await insertCardsIntoDatabase(cards)
+  await insertCardsIntoDatabase(cards, latest)
 
   return {
     count: Object.keys(cards).length,

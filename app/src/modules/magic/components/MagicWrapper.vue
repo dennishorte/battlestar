@@ -20,14 +20,20 @@
     <template v-else>
       <slot></slot>
     </template>
+
+    <Modal id="cards-version-update-modal" @ok="updateCardDatabase">
+      <template #header>Card database out of date</template>
+      You card database is out of date. Click 'ok' to update it. Updating typically takes several to tens of seconds. You can cancel to skip this update for now, but this may cause errors when trying to load cards that have been modified or are not included in your database.
+    </Modal>
   </div>
 </template>
 
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 import Card from './Card'
+import Modal from '@/components/Modal'
 
 
 export default {
@@ -35,6 +41,7 @@ export default {
 
   components: {
     Card,
+    Modal,
   },
 
   props: {
@@ -66,6 +73,10 @@ export default {
       loading: 'loading',
     }),
 
+    ...mapGetters('magic/cards', {
+      versionMismatch: 'versionMismatch',
+    }),
+
     mouseoverPosition() {
       const top = this.mouseoverY + 10
       const left = this.mouseoverX + 10
@@ -84,22 +95,40 @@ export default {
   },
 
   methods: {
+    showVersionMismatchModal() {
+      this.$modal('cards-version-update-modal').show()
+    },
+
     tryAfterLoaded() {
       if (!this.loading && !this.alsoLoading) {
         this.afterLoaded()
         this.afterLoadedComplete = true
+
+        if (this.versionMismatch) {
+          this.showVersionMismatchModal()
+        }
       }
-    }
+    },
+
+    updateCardDatabase() {
+      this.$store.dispatch('magic/cards/updateLocalCardDatabase')
+    },
   },
 
   watch: {
+    alsoLoading(newValue) {
+      this.tryAfterLoaded()
+    },
+
     loading(newValue) {
       this.tryAfterLoaded()
     },
 
-    alsoLoading(newValue) {
-      this.tryAfterLoaded()
-    }
+    versionMismath(newValue) {
+      if (newValue) {
+        showVersionMismatchModal()
+      }
+    },
   },
 
   created() {
