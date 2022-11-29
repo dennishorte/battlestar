@@ -604,7 +604,12 @@ Magic.prototype.aViewTop = function(player, zoneId, count) {
 }
 
 Magic.prototype.getCardById = function(id) {
-  return this.cardsById[id]
+  if (typeof id === 'object') {
+    return id
+  }
+  else {
+    return this.cardsById[id]
+  }
 }
 
 Magic.prototype.getDecksSelected = function() {
