@@ -105,6 +105,10 @@ export default {
   created() {
     this.$store.dispatch('magic/cards/ensureLoaded')
   },
+
+  mounted() {
+    this.tryAfterLoaded()
+  },
 }
 </script>
 
