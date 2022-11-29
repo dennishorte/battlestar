@@ -205,6 +205,7 @@ Game.saveFull = async function(req, res) {
   game.chat = req.body.chat
 
   if (game.settings.game === 'Magic') {
+    game.waiting = req.body.waiting
     await _testAndSave(game, res, () => {})
   }
   else {
