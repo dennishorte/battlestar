@@ -8,6 +8,7 @@
         :card="card"
         :class="extraClasses"
         :hide-popup="hidden"
+        :show-mana-cost="showManaCost"
       >
         <template #name>{{ displayName }}</template>
       </CardListItem>
@@ -42,6 +43,11 @@ export default {
 
   props: {
     card: Object,
+
+    showManaCost: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   computed: {

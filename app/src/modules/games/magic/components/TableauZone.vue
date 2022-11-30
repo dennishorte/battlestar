@@ -22,7 +22,12 @@
     </template>
 
     <template v-else>
-      <TableauZoneCard v-for="card in zone.cards()" :card="card" @click.stop="cardClicked(card)" />
+      <TableauZoneCard
+        v-for="card in zone.cards()"
+        :card="card"
+        :show-mana-cost="showManaCost"
+        @click.stop="cardClicked(card)"
+      />
     </template>
   </div>
 </template>
@@ -56,7 +61,12 @@ export default {
     noMenu: {
       type: Boolean,
       default: false,
-    }
+    },
+
+    showManaCost: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   computed: {
