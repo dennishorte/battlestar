@@ -46,7 +46,7 @@ export default {
 
   computed: {
     cardIsRevealed() {
-      return this.card.visibility.length > 1
+      return !this.cardZoneIsPublic && this.card.visibility.length > 1
     },
 
     cardIsViewed() {
@@ -55,7 +55,12 @@ export default {
       const inActorZone = zoneTokens.slice(-2, -1)[0] === this.actor.name
       const inActorLibrary = inActorZone && inALibrary
 
-      return this.card.visibility.length === 1 && inActorLibrary
+      return !this.cardZoneIsPublic && this.card.visibility.length === 1 && inActorLibrary
+    },
+
+    cardZoneIsPublic() {
+      const zone = this.game.getZoneByCard(this.card)
+      return zone.kind === 'public'
     },
 
     displayName() {
