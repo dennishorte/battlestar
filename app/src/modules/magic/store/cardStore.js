@@ -65,7 +65,7 @@ export default {
   actions: {
     ensureLoaded({ dispatch, state }) {
       if (!state.loadedOnce) {
-        dispatch('loadCardsFromLocalDatabase')
+        dispatch('loadCards')
         dispatch('getRemoteVersion')
       }
     },
@@ -80,26 +80,22 @@ export default {
       }
     },
 
-    loadCardsFromLocalDatabase({ commit, dispatch }) {
+    async loadCards({ commit, dispatch }) {
       commit('setLoadedOnce')
       commit('setCardsLoading')
-      loadCardsFromDatabase(
-        data => dispatch('loadCardDatabaseSuccess', data),
-        error => { throw new Error(error) }
-      )
-    },
 
-    async loadCardDatabaseSuccess({ commit, dispatch }, { cards, version }) {
-      commit('setCardVersion', version)
-      commit('setCardList', cards)
-      commit('setCardLookup', mag.util.card.createCardLookup(cards))
+      const data = await loadCardsFromDatabase()
+
+      commit('setCardVersion', data.version)
+      commit('setCardList', data.cards)
+      commit('setCardLookup', mag.util.card.createCardLookup(data.cards))
       //await dispatch('applyCardFilters')
 
       commit('setCardsLoaded')
       console.log('Card database ready')
     },
 
-    async updateLocalCardDatabase({ commit }) {
+    async updateCards({ commit }) {
       commit('setCardsLoading')
       await updateLocalCards()
     },
@@ -110,67 +106,67 @@ export default {
 ////////////////////////////////////////////////////////////////////////////////
 // Private functions
 
-async function loadCardsFromDatabase(successFunc, errorFunc) {
-  console.log('loadCardsFromDatabase')
+function loadCardsFromDatabase() {
+  return new Promise(async (resolve, reject) => {
+    console.log('loadCardsFromDatabase')
 
-  openLocalStorage(
-    // Success func
-    db => {
-      const objectStore = db.transaction('cards').objectStore('cards')
-      const cursor = objectStore.openCursor()
+    const db = await openLocalStorage()
 
-      let cards = []
-      let version = ''
+    const objectStore = db.transaction('cards').objectStore('cards')
+    const cursor = objectStore.openCursor()
 
-      cursor.addEventListener('success', (e) => {
-        const cursor = e.target.result
+    let cards = []
+    let version = '__NO_VERSION__'
 
-        if (cursor) {
-          console.log('Cursor iteration')
-          cards = cursor.value.json_data
-          version = cursor.value.version
-          cursor.continue()
-        }
-        else {
-          console.log('all values loaded', cards.length)
-          db.close()
-          successFunc({ cards, version })
-        }
-      })
-    },
+    cursor.addEventListener('success', (e) => {
+      const cursor = e.target.result
 
-    // Error func (not implemented)
-  )
+      if (cursor) {
+        console.log('Cursor iteration')
+        cards = cursor.value.json_data
+        version = cursor.value.version
+        cursor.continue()
+      }
+      else {
+        console.log('all values loaded', cards.length)
+        db.close()
+
+        resolve({ cards, version })
+      }
+    })
+  })
 }
 
-async function openLocalStorage(successFunc, errorFunc) {
-  const openRequest = window.indexedDB.open('cards', 1)
+async function openLocalStorage(handlers) {
+  return new Promise((resolve, reject) => {
+    const openRequest = window.indexedDB.open('cards', 1)
 
-  openRequest.addEventListener('error', () => {
-    errorFunc('Unable to open database')
-  })
-
-  openRequest.addEventListener('success', () => {
-    console.log('Database opened successfully')
-    successFunc(openRequest.result)
-  })
-
-  openRequest.addEventListener('upgradeneeded', (e) => {
-    const db = e.target.result
-
-    console.log(`Upgrading database to version ${db.version}`)
-
-    // Create an objectStore in our database to store notes and an auto-incrementing key
-    // An objectStore is similar to a 'table' in a relational database
-    const objectStore = db.createObjectStore('cards', {
-      keyPath: 'id',
-      autoIncrement: true,
+    openRequest.addEventListener('error', () => {
+      reject(new Error('Unable to open local card database'))
     })
 
-    // Define what data items the objectStore will contain
-    objectStore.createIndex('json_data', 'json_data', { unique: false })
+    openRequest.addEventListener('success', () => {
+      console.log('Database opened successfully')
+      resolve(openRequest.result)
+    })
 
-    console.log('Database setup complete')
+    openRequest.addEventListener('upgradeneeded', (e) => {
+      const db = e.target.result
+
+      console.log(`Upgrading database to version ${db.version}`)
+
+      // Create an objectStore in our database to store notes and an auto-incrementing key
+      // An objectStore is similar to a 'table' in a relational database
+      const objectStore = db.createObjectStore('cards', {
+        keyPath: 'id',
+        autoIncrement: true,
+      })
+
+      // Define what data items the objectStore will contain
+      objectStore.createIndex('json_data', 'json_data', { unique: false })
+
+      console.log('Database setup complete')
+    })
   })
 }
 
@@ -204,22 +200,18 @@ async function saveCardsToDatabase(cards, version) {
     version,
   }
 
-  console.log('saved data with version:', newItem.version)
+  console.log('saving data with version:', newItem.version)
 
-  openLocalStorage(
-    db => {
-      const transaction = db.transaction(['cards'], 'readwrite')
-      const objectStore = transaction.objectStore('cards')
-      const addRequest = objectStore.add(newItem)
+  const db = await openLocalStorage()
+  const transaction = db.transaction(['cards'], 'readwrite')
+  const objectStore = transaction.objectStore('cards')
+  const addRequest = objectStore.add(newItem)
 
-      // What is the difference between success and complete?
-      addRequest.addEventListener('success', () => {})
+  // What is the difference between success and complete?
+  addRequest.addEventListener('success', () => {})
 
-      transaction.addEventListener('complete', () => {
-        console.log('Transaction completed: database modification finished.')
-        alert('Reload page to see changes')
-      })
-    },
-    error => { throw new Error(error) }
-  )
+  transaction.addEventListener('complete', () => {
+    console.log('Transaction completed: database modification finished.')
+    alert('Reload page to see changes')
+  })
 }

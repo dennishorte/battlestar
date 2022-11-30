@@ -111,7 +111,7 @@ export default {
     },
 
     updateCardDatabase() {
-      this.$store.dispatch('magic/cards/updateLocalCardDatabase')
+      this.$store.dispatch('magic/cards/updateCards')
     },
   },
 

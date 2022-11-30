@@ -14,8 +14,6 @@
         </div>
 
         <div class="col column cards-column">
-          <button class="btn btn-sm btn-info" @click="updateLocalCards">update local database</button>
-
           <CardList :cardlist="filteredCards" />
         </div>
 
@@ -129,11 +127,6 @@ export default {
         this.$store.dispatch('magic/dm/selectDeck', event.newValue.file)
       }
     },
-
-    async updateLocalCards() {
-      this.$store.dispatch('magic/cards/updateLocalCardDatabase')
-    },
-
 
     ////////////////////////////////////////////////////////////////////////////////
     // Menu actions
