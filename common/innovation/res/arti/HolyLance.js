@@ -14,7 +14,8 @@ function Card() {
   this.karma = []
   this.dogma = [
     `I compel you to transfer a top Artifact from your board to my board!`,
-    `If Holy Grail is a top card on your board, you win.`
+    `If Holy Grail is a top card on your board, draw and score a {6}.`
+    // `If Holy Grail is a top card on your board, you win.`
   ]
 
   this.dogmaImpl = [
@@ -35,10 +36,11 @@ function Card() {
         .length > 0
 
       if (grailIsTop) {
-        throw new GameOverEvent({
-          player,
-          reason: this.name
-        })
+        game.aDrawAndScore(player, 6)
+        /* throw new GameOverEvent({
+         *   player,
+         *   reason: this.name
+         * }) */
       }
     }
   ]
