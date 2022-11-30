@@ -342,7 +342,26 @@ CardUtil.parseRulesLine = function(line) {
   for (let i = 0; i < line.length; i++) {
     const ch = line.charAt(i)
 
-    if (ch === '{') {
+    if (ch === ')') {
+      if (part.type !== 'reminder') {
+        throw new Error('text parse error: unmatched close paren')
+      }
+      close()
+    }
+
+    else if (part.type === 'reminder') {
+      part.text += ch
+    }
+
+    else if (ch === '(') {
+      if (part.type === 'reminder') {
+        throw new Error('text parse error: already in a reminder')
+      }
+      close()
+      part.type = 'reminder'
+    }
+
+    else if (ch === '{') {
       if (part.type === 'symbol') {
         throw new Error('text parse error: already in a symbol')
       }
@@ -355,21 +374,6 @@ CardUtil.parseRulesLine = function(line) {
         throw new Error('text parse error: unmatched close curly')
       }
       part.text = this.manaSymbolFromString(part.text)
-      close()
-    }
-
-    else if (ch === '(') {
-      if (part.type === 'reminder') {
-        throw new Error('text parse error: already in a reminder')
-      }
-      close()
-      part.type = 'reminder'
-    }
-
-    else if (ch === ')') {
-      if (part.type !== 'reminder') {
-        throw new Error('text parse error: unmatched close paren')
-      }
       close()
     }
 
