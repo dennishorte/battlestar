@@ -548,7 +548,18 @@ Magic.prototype.aSelectPhase = function(player, phase) {
     this.mLogIndent()
   }
 
-  if (phase === 'draw') {
+  if (phase === 'untap') {
+    const cards = [
+      ...this.getCardsByZone(player, 'creatures'),
+      ...this.getCardsByZone(player, 'battlefield'),
+      ...this.getCardsByZone(player, 'land'),
+    ].flat()
+
+    for (const card of cards) {
+      this.mUntap(card)
+    }
+  }
+  else if (phase === 'draw') {
     this.aDraw()
   }
 }
@@ -730,6 +741,10 @@ Magic.prototype.mMoveCardTo = function(card, zone, opts={}) {
 
 Magic.prototype.mReveal = function(card) {
   card.visibility = this.getPlayerAll()
+}
+
+Magic.prototype.mUntap = function(card) {
+  card.tapped = false
 }
 
 Magic.prototype.setDeck = function(player, data) {
