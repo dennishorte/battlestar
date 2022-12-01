@@ -37,7 +37,7 @@
     </div>
 
     <div class="tableau-col" :class="extraColumnClasses">
-      <TableauZone :zone="getZone('hand')" :show-mana-cost="true">
+      <TableauZone :zone="getZone('hand')" :show-mana-cost="player.name === actor.name">
         <template #menu>
           <DropdownButton @click="revealHand()">reveal</DropdownButton>
           <DropdownButton @click="hideHand()">hide</DropdownButton>
