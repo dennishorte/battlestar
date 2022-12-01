@@ -783,8 +783,12 @@ Magic.prototype.setDeck = function(player, data) {
   cardUtil.lookup.insertCardData(player.deck.cardlist, this.cardLookupFunc)
   for (const card of player.deck.cardlist) {
     card.annotation = ''
+    card.counters = {}
     card.id = this.getNextLocalId()
+    card.morph = false
     card.owner = player
+    card.tapped = false
+    card.visibility = []
 
     this.cardsById[card.id] = card
   }
@@ -798,7 +802,6 @@ Magic.prototype.setDeck = function(player, data) {
   const library = this.getZoneByPlayer(player, 'library')
   for (const card of zones.main) {
     library.addCard(card)
-    card.visibility = []
   }
   library.shuffle()
 
@@ -806,7 +809,7 @@ Magic.prototype.setDeck = function(player, data) {
     const sideboard = this.getZoneByPlayer(player, 'sideboard')
     for (const card of zones.side) {
       sideboard.addCard(card)
-      card.visibility = [player]
+      card.visibility.push(player)
     }
   }
 
@@ -814,7 +817,7 @@ Magic.prototype.setDeck = function(player, data) {
     const command = this.getZoneByPlayer(player, 'command')
     for (const card of zones.command) {
       command.addCard(card)
-      card.visibility = [player]
+      card.visibility.push(player)
     }
   }
 }

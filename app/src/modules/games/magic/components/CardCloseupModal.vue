@@ -1,7 +1,9 @@
 <template>
-  <Modal id="card-closeup-modal">
+  <Modal id="card-closeup-modal" @ok="saveChanges">
     <div class="modal-body">
       <Card v-if="selectedCard" :card="selectedCard.data" :size="270" />
+
+      <input class="form-control" v-model="annotation" placeholder="annotation" />
     </div>
   </Modal>
 </template>
@@ -22,6 +24,14 @@ export default {
     Modal,
   },
 
+  inject: ['do', 'game'],
+
+  data() {
+    return {
+      annotation: '',
+    }
+  },
+
   computed: {
     ...mapState('magic/game', {
       selectedCard: 'selectedCard',
@@ -29,8 +39,21 @@ export default {
   },
 
   watch: {
-    selectedCard(newValue, oldValue) {
-      console.log('selected card', newValue, oldValue)
+    selectedCard(newValue) {
+      if (newValue) {
+        this.annotation = newValue.annotation
+      }
+    },
+  },
+
+  methods: {
+    saveChanges() {
+      this.do(null, {
+        name: 'annotate',
+        cardId: this.selectedCard.id,
+        annotation: this.annotation,
+      })
+      this.$store.dispatch('magic/game/unselectCard')
     },
   },
 }

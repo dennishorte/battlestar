@@ -16,6 +16,10 @@
       </CardListItem>
     </div>
 
+    <div v-if="card.annotation" class="annotation">
+      {{ card.annotation }}
+    </div>
+
     <Dropdown v-if="highlighted" :notitle="true" :menu-end="true" class="menu dropdown">
       <DropdownButton @click.stop="twiddle" v-if="card.tapped">untap</DropdownButton>
       <DropdownButton @click.stop="twiddle" v-else>tap</DropdownButton>
@@ -155,6 +159,13 @@ export default {
 
 
 <style scoped>
+.annotation {
+  color: var(--bs-secondary);
+  font-size: .8em;
+  margin-left: .5em;
+  margin-top: -.25em;
+}
+
 .card-line {
   display: flex;
   flex-direction: row;
