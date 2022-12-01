@@ -1,6 +1,8 @@
 <template>
   <Modal id="card-closeup-modal">
-    <Card v-if="selectedCard" :card="selectedCard.data" :size="270" />
+    <div class="modal-body">
+      <Card v-if="selectedCard" :card="selectedCard.data" :size="270" />
+    </div>
   </Modal>
 </template>
 
@@ -33,3 +35,13 @@ export default {
   },
 }
 </script>
+
+
+<style scoped>
+.modal-body {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+</style>
