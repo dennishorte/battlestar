@@ -4,6 +4,8 @@
       <i class="bi bi-eye-fill" v-if="cardIsRevealed"></i>
       <i class="bi bi-eye" v-else-if="cardIsViewed"></i>
 
+      <i class="bi bi-browser-edge" v-if="card.morph"></i>
+
       <CardListItem
         :card="card"
         :class="extraClasses"
@@ -15,8 +17,11 @@
     </div>
 
     <Dropdown v-if="highlighted" :notitle="true" :menu-end="true" class="menu dropdown">
-      <DropdownButton @click.stop="twiddle" v-if="this.card.tapped">untap</DropdownButton>
+      <DropdownButton @click.stop="twiddle" v-if="card.tapped">untap</DropdownButton>
       <DropdownButton @click.stop="twiddle" v-else>tap</DropdownButton>
+
+      <DropdownButton @click.stop="unmorph" v-if="card.morph">unmorph</DropdownButton>
+      <DropdownButton @click.stop="morph" v-else>morph</DropdownButton>
 
       <DropdownButton @click.stop="reveal">reveal</DropdownButton>
     </Dropdown>
@@ -71,7 +76,12 @@ export default {
 
     displayName() {
       if (this.hidden) {
-        return 'hidden'
+        if (this.card.morph) {
+          return 'morph'
+        }
+        else {
+          return 'hidden'
+        }
       }
       else {
         return this.card.data.card_faces[0].name
@@ -103,7 +113,11 @@ export default {
 
   methods: {
     morph() {
-      console.log('morph', this.card.name)
+      this.do(null, {
+        name: 'morph',
+        cardId: this.card.id,
+      })
+      this.$store.dispatch('magic/game/unselectCard')
     },
 
     twiddle() {
@@ -117,6 +131,14 @@ export default {
     reveal() {
       this.do(null, {
         name: 'reveal',
+        cardId: this.card.id,
+      })
+      this.$store.dispatch('magic/game/unselectCard')
+    },
+
+    unmorph() {
+      this.do(null, {
+        name: 'unmorph',
         cardId: this.card.id,
       })
       this.$store.dispatch('magic/game/unselectCard')

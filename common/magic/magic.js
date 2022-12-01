@@ -294,6 +294,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'draw game'           : return this.aDrawGame(actor)
       case 'hide all'            : return this.aHideAll(actor, action.zoneId)
       case 'import'              : return this.aImport(actor, action.card, action.zone)
+      case 'morph'               : return this.aMorph(actor, action.cardId)
       case 'move card'           : return this.aMoveCard(actor, action.cardId, action.destId, action.destIndex)
       case 'mulligan'            : return this.aMulligan(actor)
       case 'pass priority'       : return this.aPassPriority()
@@ -304,6 +305,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'select phase'        : return this.aSelectPhase(actor, action.phase)
       case 'shuffle'             : return this.aShuffle(actor, action.zoneId)
       case 'twiddle'             : return this.aTwiddle(actor, action.cardId)
+      case 'unmorph'             : return this.aUnmorph(actor, action.cardId)
       case 'view all'            : return this.aViewAll(actor, action.zoneId)
       case 'view next'           : return this.aViewNext(actor, action.zoneId)
       case 'view top k'          : return this.aViewTop(actor, action.zoneId, action.count)
@@ -396,6 +398,14 @@ Magic.prototype.aImport = function(player, card, zone) {
 
   card.owner = player
   this.getZoneById(zone).addCard(card)
+}
+
+Magic.prototype.aMorph = function(player, cardId) {
+  player = player || this.getPlayerCurrent()
+  const zone = this.getZoneByPlayer(player, 'stack')
+  const card = this.getCardById(cardId)
+  card.morph = true
+  this.aMoveCard(player, cardId, zone.id, 0)
 }
 
 Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
@@ -556,6 +566,16 @@ Magic.prototype.aTwiddle = function(player, cardId) {
   }
 }
 
+Magic.prototype.aUnmorph = function(player, cardId) {
+  player = player || this.getPlayerCurrent()
+  const card = this.getCardById(cardId)
+  card.morph = false
+  this.mLog({
+    template: '{player} unmorphs {card}',
+    args: { player, card },
+  })
+}
+
 Magic.prototype.aViewAll = function(player, zoneId) {
   const zone = this.getZoneById(zoneId)
   zone.sortCardsByName()
@@ -625,6 +645,11 @@ Magic.prototype.getPhase = function() {
   return this.state.phase
 }
 
+Magic.prototype.getPlayerByCardController = function(card) {
+  const zone = this.getZoneByCard(card)
+  return this.getPlayerByZone(zone)
+}
+
 Magic.prototype.getZoneIndexByCard = function(card) {
   const zoneCards = this.getZoneByCard(card).cards()
   return zoneCards.indexOf(card)
@@ -633,7 +658,10 @@ Magic.prototype.getZoneIndexByCard = function(card) {
 Magic.prototype.mAdjustCardVisibility = function(card) {
   const zone = this.getZoneByCard(card)
 
-  if (zone.kind === 'public') {
+  if (card.morph) {
+    card.visibility = [this.getPlayerByCardController(card)]
+  }
+  else if (zone.kind === 'public') {
     card.visibility = this.getPlayerAll()
   }
   else if (zone.kind === 'private' && zone.owner) {
@@ -703,6 +731,8 @@ Magic.prototype.setDeck = function(player, data) {
   cardUtil.lookup.insertCardData(player.deck.cardlist, this.cardLookupFunc)
   for (const card of player.deck.cardlist) {
     card.id = this.getNextLocalId()
+    card.owner = player
+
     this.cardsById[card.id] = card
   }
 
@@ -775,7 +805,7 @@ Magic.prototype._enrichLogArgs = function(msg) {
 
       if (isHidden) {
         msg.args[key] = {
-          value: 'a card',
+          value: card.morph ? 'a morph' : 'a card',
           classes: ['card-hidden'],
         }
       }
