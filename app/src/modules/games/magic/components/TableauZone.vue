@@ -1,5 +1,5 @@
 <template>
-  <div class="tableau-zone" @click="zoneClicked">
+  <div class="tableau-zone" @click="zoneClicked('top')">
     <div class="zone-header">
       <div>
         <span class="zone-name">{{ zone.name }}</span>&nbsp;<span class="zone-count">({{ zone.cards().length }})</span>
@@ -28,6 +28,8 @@
         :show-mana-cost="showManaCost"
         @click.stop="cardClicked(card)"
       />
+
+      <div class="bottom-space" @click.stop="zoneClicked('bottom')"></div>
     </template>
   </div>
 </template>
@@ -105,8 +107,11 @@ export default {
       this.$store.dispatch('magic/game/clickCard', card)
     },
 
-    zoneClicked() {
-      this.$store.dispatch('magic/game/clickZone', this.zone)
+    zoneClicked(position) {
+      this.$store.dispatch('magic/game/clickZone', {
+        zone: this.zone,
+        position,
+      })
     },
   },
 }
@@ -114,6 +119,11 @@ export default {
 
 
 <style scoped>
+.bottom-space {
+  min-height: 1.2em;
+  width: 100%
+}
+
 .highlighted {
   background-color: lightblue;
 }

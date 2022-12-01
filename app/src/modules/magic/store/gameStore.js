@@ -48,13 +48,15 @@ export default {
       }
     },
 
-    clickZone({ commit, state }, zone) {
+    clickZone({ commit, state }, { zone, position }) {
       if (state.selectedCard) {
+        const index = position === 'top' ? 0 : zone.cards().length
+
         state.game.doFunc(null, {
           name: 'move card',
           cardId: state.selectedCard.id,
           destId: zone.id,
-          destIndex: 0,
+          destIndex: index,
         })
         commit('setSelectedCard', null)
       }
