@@ -29,9 +29,8 @@ export default {
   methods: {
     increment(name, count) {
       const actorPlayer = this.game.getPlayerByName(this.actor.name)
-      this.do(actorPlayer, {
+      this.do(this.player, {
         name: 'adjust counter',
-        playerName: this.player.name,
         counter: name,
         amount: count,
       })
