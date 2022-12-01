@@ -433,13 +433,21 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
   })
 
   // Card was moved to stack.
-  if (this.getZoneByCard(card).id.endsWith('.stack')) {
+  if (dest.id.endsWith('.stack')) {
     this.mLogIndent()
   }
 
   // Card was removed from stack.
   if (startingZone.id.endsWith('.stack')) {
     this.mLogOutdent()
+  }
+
+  // Card moved to a non-tap zone
+  if (card.tapped) {
+    const zoneKind = dest.id.split('.').slice(-1)[0]
+    if (!['creatures', 'battlefield', 'land'].includes(zoneKind)) {
+      this.mUntap(card)
+    }
   }
 }
 
