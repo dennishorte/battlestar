@@ -148,5 +148,7 @@ export default {
   max-width: 100vw;
   min-height: 100vh;
   max-height: 100vh;
+
+  overflow-x: scroll;
 }
 </style>
