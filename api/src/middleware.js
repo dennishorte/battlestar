@@ -78,7 +78,11 @@ function _coerceIdsRecurse(obj) {
 
 
 function _tryConvertToObjectId(key, value) {
-  if (typeof value === 'string' && value.length === 24) {
+  if (
+    typeof value === 'string'
+    && value.length === 24
+    && /^[0-9a-f]*$/.test(value)
+  ) {
     return ObjectId(value)
   }
   else {
