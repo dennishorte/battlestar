@@ -315,6 +315,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'roll die'            : return this.aRollDie(actor, action.faces)
       case 'select phase'        : return this.aSelectPhase(actor, action.phase)
       case 'shuffle'             : return this.aShuffle(actor, action.zoneId)
+      case 'trigger'             : return this.aTrigger(actor, action.cardId)
       case 'twiddle'             : return this.aTwiddle(actor, action.cardId)
       case 'unmorph'             : return this.aUnmorph(actor, action.cardId)
       case 'view all'            : return this.aViewAll(actor, action.zoneId)
@@ -421,13 +422,25 @@ Magic.prototype.aMorph = function(player, cardId) {
 
 Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
   player = player || this.getPlayerCurrent()
+
   const card = this.getCardById(cardId)
+  const startingZone = this.getZoneByCard(card)
   const dest = this.getZoneById(destId)
   this.mMoveCardTo(card, dest, { index: destIndex })
   this.mLog({
     template: '{player} moves {card} to {zone}',
     args: { player, card, zone: dest }
   })
+
+  // Card was moved to stack.
+  if (this.getZoneByCard(card).id.endsWith('.stack')) {
+    this.mLogIndent()
+  }
+
+  // Card was removed from stack.
+  if (startingZone.id.endsWith('.stack')) {
+    this.mLogOutdent()
+  }
 }
 
 Magic.prototype.aMulligan = function(player) {
@@ -567,6 +580,11 @@ Magic.prototype.aSelectPhase = function(player, phase) {
 Magic.prototype.aShuffle = function(player, zoneId) {
   const zone = this.getZoneById(zoneId)
   zone.shuffle()
+}
+
+Magic.prototype.aTrigger = function(player, cardId) {
+  const card = this.getCardById(cardId)
+  const token = this.aCreateEffect(player, card)
 }
 
 Magic.prototype.aTwiddle = function(player, cardId) {
