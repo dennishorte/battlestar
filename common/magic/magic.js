@@ -29,7 +29,7 @@ module.exports = {
 function Magic(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
-  this.cardLookup = null
+  this.cardLookupFunc = null
   this.cardsById = {}
 }
 
@@ -390,7 +390,7 @@ Magic.prototype.aHideAll = function(player, zoneId) {
 }
 
 Magic.prototype.aImport = function(player, card, zone) {
-  cardUtil.lookup.insertCardData([card], this.cardLookup)
+  cardUtil.lookup.insertCardData([card], this.cardLookupFunc)
   card.id = this.getNextLocalId()
   this.cardsById[card.id] = card
 
@@ -700,7 +700,7 @@ Magic.prototype.setDeck = function(player, data) {
   })
 
   player.deck = deckUtil.deserialize(util.deepcopy(data))
-  cardUtil.lookup.insertCardData(player.deck.cardlist, this.cardLookup)
+  cardUtil.lookup.insertCardData(player.deck.cardlist, this.cardLookupFunc)
   for (const card of player.deck.cardlist) {
     card.id = this.getNextLocalId()
     this.cardsById[card.id] = card

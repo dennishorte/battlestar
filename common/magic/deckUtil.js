@@ -2,7 +2,7 @@ const cardUtil = require('./cardUtil.js')
 const util = require('../lib/util.js')
 
 
-function Deck(cardLookup) {
+function Deck() {
   // Serialized Data
   this._id = undefined
   this.userId = ''

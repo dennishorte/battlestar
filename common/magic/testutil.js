@@ -1,6 +1,6 @@
 const { GameOverEvent } = require('../lib/game.js')
 const { MagicFactory } = require('./magic.js')
-const cardLookup = require('./test_cardlookup.js')
+const cardLookupFunc = require('./test_cardlookup.js')
 const log = require('../lib/log.js')
 const jsUtil = require('util')
 
@@ -36,7 +36,7 @@ TestUtil.fixture = function(options) {
   options.players = options.players.slice(0, options.numPlayers)
 
   const game = MagicFactory(options, 'dennis')
-  game.cardLookup = cardLookup
+  game.cardLookupFunc = cardLookupFunc
 
   game.testSetBreakpoint('initialization-complete', (game) => {
     // Set turn order

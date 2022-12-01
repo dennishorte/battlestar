@@ -85,11 +85,12 @@ export default {
       commit('setModified', false)
     },
 
-    selectDeck({ commit, rootState }, rawDeck) {
+    selectDeck({ commit, rootGetters }, rawDeck) {
       let deck
       if (rawDeck) {
         deck = mag.util.deck.deserialize(rawDeck)
-        mag.util.card.lookup.insertCardData(deck.cardlist, rootState.magic.cards.lookup)
+        const lookupFunc = rootGetters['magic/cards/getLookupFunc']
+        mag.util.card.lookup.insertCardData(deck.cardlist, lookupFunc)
       }
       else {
         deck = null
@@ -99,13 +100,8 @@ export default {
     },
 
     setActiveDecklist({ commit, rootGetters }, cards) {
-      // Add in the full card data, if we can find it.
-      for (const card of cards) {
-        const data = rootGetters['magic/cards/getByIdDict'](card)
-        if (data) {
-          card.data = data
-        }
-      }
+      const lookupFunc = rootGetters['magic/cards/getLookupFunc']
+      mag.util.card.insertCardData(cards, lookupFunc)
       commit('setActiveDecklist', cards)
     }
   },

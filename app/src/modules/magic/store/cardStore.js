@@ -18,8 +18,10 @@ export default {
   }),
 
   getters: {
-    getByIdDict: (state) => (dict) => {
-      return mag.util.card.lookup.getByIdDict(dict, state.lookup)
+    getLookupFunc(state) {
+      return (cardId, opts) => {
+        return mag.util.card.lookup.getByIdDict(cardId, state.lookup, opts)
+      }
     },
 
     versionMismatch(state) {

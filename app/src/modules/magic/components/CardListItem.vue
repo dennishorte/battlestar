@@ -46,7 +46,7 @@ export default {
         return this.card.data
       }
       else {
-        return this.$store.getters['magic/cards/getByIdDict'](this.card)
+        return this.$store.getters['magic/cards/getLookupFunc'](this.card)
       }
     },
 

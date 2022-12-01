@@ -85,10 +85,6 @@ export default {
   },
 
   computed: {
-    ...mapState('magic/cards', {
-      cardLookup: 'lookup',
-    }),
-
     ...mapState('magic/file', {
       filelist: 'filelist',
     }),
@@ -107,7 +103,8 @@ export default {
     selectionChanged({ newValue }) {
       if (newValue.objectType === 'file') {
         const deck = mag.util.deck.deserialize(newValue.file)
-        mag.util.card.lookup.insertCardData(deck.cardlist, this.cardLookup)
+        const lookupFunc = this.$store.getters['magic/cards/getLookupFunc']
+        mag.util.card.lookup.insertCardData(deck.cardlist, lookupFunc)
         this.activeDeck = deck
       }
     },

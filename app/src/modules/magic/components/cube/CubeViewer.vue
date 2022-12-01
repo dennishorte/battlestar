@@ -57,16 +57,13 @@ export default {
   },
 
   computed: {
-    ...mapState('magic/cards', {
-      lookup: 'lookup',
-    }),
-
     ...mapState('magic/cube', {
       managedCard: 'managedCard',
     }),
 
     cards() {
-      mag.util.card.lookup.insertCardData(this.cube.cardlist, this.lookup)
+      const lookupFunc = this.$store.getters['magic/cards/getLookupFunc']
+      mag.util.card.lookup.insertCardData(this.cube.cardlist, lookupFunc)
       return this.cube.cardlist
     },
   },

@@ -45,13 +45,10 @@ export default {
   },
 
   computed: {
-    ...mapState('magic/cards', {
-      lookup: 'lookup',
-    }),
-
     parsedUpdate() {
       const cards = mag.util.card.parseCardlist(this.updateText)
-      mag.util.card.lookup.insertCardData(cards, this.lookup)
+      const lookupFunc = this.$store.getters['magic/cards/getLookupFunc']
+      mag.util.card.lookup.insertCardData(cards, lookupFunc)
 
       const operations = {
         insert: [],

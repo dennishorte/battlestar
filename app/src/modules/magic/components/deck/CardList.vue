@@ -40,12 +40,9 @@ export default {
   },
 
   computed: {
-    ...mapState('magic/cards', {
-      cardLookup: 'lookup',
-    }),
-
     searchedCards() {
-      return this.searchedNames.map(name => this.cardLookup[name.toLowerCase()][0])
+      const lookupFunc = this.$store.getters['magic/cards/getLookupFunc']
+      return this.searchedNames.map(name => lookupFunc({ name }))
     },
 
     searchedNames() {

@@ -64,9 +64,10 @@ export default {
       commit('setReady', false)
       const actor = rootGetters['auth/user']
       const game = new mag.Magic(gameData, actor.name)
-      game.cardLookup = rootState.magic.cards.lookup
+      game.cardLookupFunc = rootGetters['magic/cards/getLookupFunc']
       game.doFunc = doFunc
       game.run()
+
       commit('setGame', game)
       commit('setReady', true)
     },

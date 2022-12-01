@@ -593,8 +593,8 @@ function parseCardLineName(line) {
   return output
 }
 
-CardUtil.lookup.getByIdDict = function(dict, lookup, opts={}) {
-  const versions = lookup[dict.name.toLowerCase()]
+CardUtil.lookup.getByIdDict = function(dict, lookupMap, opts={}) {
+  const versions = lookupMap[dict.name.toLowerCase()]
 
   if (!versions) {
     return null
@@ -610,10 +610,10 @@ CardUtil.lookup.getByIdDict = function(dict, lookup, opts={}) {
   }
 }
 
-CardUtil.lookup.insertCardData = function(cardlist, lookup) {
+CardUtil.lookup.insertCardData = function(cardlist, lookupFunc) {
   for (const card of cardlist) {
     if (!card.data) {
-      const data = this.getByIdDict(card, lookup)
+      const data = lookupFunc(card)
       if (data) {
         card.data = data
       }
@@ -623,4 +623,9 @@ CardUtil.lookup.insertCardData = function(cardlist, lookup) {
 
 CardUtil.createCardLookup = function(cards) {
   return util.array.collect(cards, CardUtil.allCardNames)
+}
+
+CardUtil.createCardLookupFunc = function(cards) {
+  const lookupMap = this.createCardLookup(cards)
+  return (cardId, opts) => this.lookup.getByIdDict(cardId, lookupMap, opts)
 }
