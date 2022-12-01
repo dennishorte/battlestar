@@ -33,10 +33,6 @@ export default {
   },
 
   computed: {
-    ...mapState('magic/cards', {
-      cardLookup: 'lookup',
-    }),
-
     ...mapState('magic/game', {
       game: 'game',
       gameReady: 'ready',
