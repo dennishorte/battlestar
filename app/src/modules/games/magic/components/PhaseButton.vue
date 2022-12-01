@@ -44,6 +44,7 @@ export default {
 
 <style scoped>
 .highlighted {
+  color: black;
   font-weight: bold;
 }
 
