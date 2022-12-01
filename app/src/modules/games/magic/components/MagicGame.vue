@@ -19,11 +19,16 @@
       <PlayerTableau :player="player" />
     </div>
 
+
+    <CardCloseupModal />
   </div>
 </template>
 
 
 <script>
+import { mapState } from 'vuex'
+
+import CardCloseupModal from './CardCloseupModal'
 import ChatInput from '@/modules/games/common/components/ChatInput'
 import GameLog from './log/GameLog'
 import GameMenu from '@/modules/games/common/components/GameMenu'
@@ -34,6 +39,7 @@ export default {
   name: 'MagicGame',
 
   components: {
+    CardCloseupModal,
     ChatInput,
     GameLog,
     GameMenu,
@@ -44,6 +50,10 @@ export default {
   inject: ['game', 'actor', 'save'],
 
   computed: {
+    ...mapState('magic/game', {
+      selectedCard: 'selectedCard',
+    }),
+
     orderedPlayers() {
       const player = this.game.getPlayerByName(this.actor.name)
       return this.game.getPlayersStarting(player)

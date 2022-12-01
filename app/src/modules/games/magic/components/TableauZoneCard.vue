@@ -20,6 +20,8 @@
       <DropdownButton @click.stop="twiddle" v-if="card.tapped">untap</DropdownButton>
       <DropdownButton @click.stop="twiddle" v-else>tap</DropdownButton>
 
+      <DropdownButton @click.stop="closeup">close up</DropdownButton>
+
       <DropdownButton @click.stop="unmorph" v-if="card.morph">unmorph</DropdownButton>
       <DropdownButton @click.stop="morph" v-else>morph</DropdownButton>
 
@@ -112,6 +114,10 @@ export default {
   },
 
   methods: {
+    closeup() {
+      this.$modal('card-closeup-modal').show()
+    },
+
     morph() {
       this.do(null, {
         name: 'morph',

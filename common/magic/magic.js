@@ -194,6 +194,16 @@ Magic.prototype.mainLoop = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Setters, getters, actions, etc.
 
+Magic.prototype.aAnnotate = function(player, cardId, annotation) {
+  player = player || this.getPlayerCurrent()
+  const card = this.getCardById(cardId)
+  card.annotation = annotation
+  this.mLog({
+    template: '{player} sets annotation on {card} to {annotation}',
+    args: { player, card, annotation },
+  })
+}
+
 Magic.prototype.aCascade = function(player, x) {
   const cards = this.getCardsByZone(player, 'library')
 
@@ -286,6 +296,7 @@ Magic.prototype.aChooseAction = function(player) {
 
     switch (action.name) {
       case 'adjust counter'      : return actor.incrementCounter(action.counter, action.amount)
+      case 'annotate'            : return this.aAnnotate(actor, action.cardId, action.annotation)
       case 'cascade'             : return this.aCascade(actor, action.x)
       case 'create token'        : return this.aCreateToken(actor, action.card, action.zone)
       case 'concede'             : return this.aConcede(actor)
@@ -730,6 +741,7 @@ Magic.prototype.setDeck = function(player, data) {
   player.deck = deckUtil.deserialize(util.deepcopy(data))
   cardUtil.lookup.insertCardData(player.deck.cardlist, this.cardLookupFunc)
   for (const card of player.deck.cardlist) {
+    card.annotation = ''
     card.id = this.getNextLocalId()
     card.owner = player
 
