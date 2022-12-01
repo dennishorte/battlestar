@@ -4,6 +4,7 @@
     <div class="section">
       <div class="section-heading">Actions</div>
       <div class="phase-button" @click="passPriority">pass&nbsp;priority</div>
+      <div class="phase-button" @click="save">save</div>
     </div>
 
     <div class="section">
