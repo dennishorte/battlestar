@@ -310,7 +310,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'adjust counter'      : return actor.incrementCounter(action.counter, action.amount)
       case 'annotate'            : return this.aAnnotate(actor, action.cardId, action.annotation)
       case 'cascade'             : return this.aCascade(actor, action.x)
-      case 'create token'        : return this.aCreateToken(actor, action.card, action.zone)
+      case 'create token'        : return this.aCreateToken(actor, action.data)
       case 'concede'             : return this.aConcede(actor)
       case 'draw'                : return this.aDraw(actor)
       case 'draw 7'              : return this.aDrawSeven(actor)
@@ -340,22 +340,38 @@ Magic.prototype.aChooseAction = function(player) {
   }
 }
 
-Magic.prototype.aCreateToken = function(player, card, zone) {
-  // Create fake card data
-  card.data = cardUtil.blank()
-  card.data.card_faces[0].type_line = 'Token'
-  card.data.type_line = 'Token'
-  card.data.card_faces[0].name = card.name
-  card.data.name = card.name
-  card.data.card_faces[0].image_uri = 'https://i.pinimg.com/736x/6e/fe/d4/6efed4b65fb7666de4b615d8b1195258.jpg'
+Magic.prototype.aCreateToken = function(player, data) {
+  const zone = this.getZoneById(data.zoneId)
+  const owner = this.getPlayerByZone(zone)
 
-  // Basic card setup
-  card.id = this.getNextLocalId()
-  this.cardsById[card.id] = card
+  for (let i = 0; i < data.count; i++) {
+    // Create fake card data
+    const card = {
+      name: data.name,
+      set: '',
+      collectorNumber: '',
+      data: cardUtil.blank(),
+    }
 
-  // Insert card into game
-  card.owner = player
-  this.getZoneById(zone).addCard(card)
+    card.data.name = card.name
+    card.data.type_line = 'Token'
+
+    card.data.card_faces[0].type_line = 'Token'
+    card.data.card_faces[0].name = card.name
+    card.data.card_faces[0].image_uri = 'https://i.pinimg.com/736x/6e/fe/d4/6efed4b65fb7666de4b615d8b1195258.jpg'
+
+    // Insert card into game
+    this.mInitializeCard(card, owner)
+    card.annotation = data.annotation
+    card.token = true
+    card.visibility = this.getPlayerAll()
+    zone.addCard(card)
+
+    this.mLog({
+      template: '{card} token created in {zone}',
+      args: { card, zone },
+    })
+  }
 }
 
 Magic.prototype.aDraw = function(player, opts={}) {
@@ -751,6 +767,20 @@ Magic.prototype.mHide = function(card) {
   }
 }
 
+Magic.prototype.mInitializeCard = function(card, owner) {
+  card.activeFace = card.data.card_faces[0].name
+  card.annotation = ''
+  card.counters = {}
+  card.id = this.getNextLocalId()
+  card.morph = false
+  card.owner = owner
+  card.tapped = false
+  card.token = false
+  card.visibility = []
+
+  this.cardsById[card.id] = card
+}
+
 Magic.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
   util.assert(sourceIndex >= 0 && sourceIndex <= source.cards().length - 1, `Invalid source index ${sourceIndex}`)
 
@@ -794,16 +824,7 @@ Magic.prototype.setDeck = function(player, data) {
   player.deck = deckUtil.deserialize(util.deepcopy(data))
   cardUtil.lookup.insertCardData(player.deck.cardlist, this.cardLookupFunc)
   for (const card of player.deck.cardlist) {
-    card.activeFace = card.data.card_faces[0].name
-    card.annotation = ''
-    card.counters = {}
-    card.id = this.getNextLocalId()
-    card.morph = false
-    card.owner = player
-    card.tapped = false
-    card.visibility = []
-
-    this.cardsById[card.id] = card
+    this.mInitializeCard(card, player)
   }
 
   const zones = util.array.collect(player.deck.cardlist, card => card.zone)

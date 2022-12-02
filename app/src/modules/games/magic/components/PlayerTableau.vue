@@ -44,25 +44,59 @@
         </template>
       </TableauZone>
 
-      <TableauZone :zone="getZone('command')" />
+      <TableauZone :zone="getZone('command')">
+        <template #menu>
+          <DropdownButton @click="makeToken('command')">make token</DropdownButton>
+        </template>
+      </TableauZone>
+
       <TableauZone :zone="getZone('graveyard')" />
     </div>
 
     <div class="tableau-col" :class="extraColumnClasses">
-      <TableauZone :zone="getZone('creatures')" />
-      <TableauZone :zone="getZone('battlefield')" />
-      <TableauZone :zone="getZone('land')" />
-      <TableauZone :zone="getZone('stack')" />
+      <TableauZone :zone="getZone('creatures')">
+        <template #menu>
+          <DropdownButton @click="makeToken('creatures')">make token</DropdownButton>
+        </template>
+      </TableauZone>
+
+      <TableauZone :zone="getZone('battlefield')">
+        <template #menu>
+          <DropdownButton @click="makeToken('battlefield')">make token</DropdownButton>
+        </template>
+      </TableauZone>
+
+      <TableauZone :zone="getZone('land')">
+        <template #menu>
+          <DropdownButton @click="makeToken('land')">make token</DropdownButton>
+        </template>
+      </TableauZone>
+
+      <TableauZone :zone="getZone('stack')">
+        <template #menu>
+          <DropdownButton @click="makeToken('stack')">make token</DropdownButton>
+        </template>
+      </TableauZone>
     </div>
 
-    <Modal id="magic-die-roll-modal" @ok="rollDieDo()">
+    <Modal id="magic-die-roll-modal" @ok="rollDieDo">
       <template #header>Roll a Die</template>
       <input class="form-control" placeholder="number of faces" v-model.number="dieFaces" />
     </Modal>
 
-    <Modal id="magic-top-n-modal" @ok="viewTopNDo()">
+    <Modal id="magic-top-n-modal" @ok="viewTopNDo">
       <template #header>View Top Cards of Library</template>
       <input class="form-control" placeholder="number to view" v-model.number="topNCount" />
+    </Modal>
+
+    <Modal id="make-token-modal" @ok="makeTokenDo">
+      <template #header>Make Tokens</template>
+      <input class="form-control" v-model="token.name" placeholder="name" />
+      <input class="form-control mt-2" v-model="token.annotation" placeholder="annotation" />
+      <select class="form-select mt-2" v-model="token.zoneId">
+        <option v-for="zoneId in tokenZoneIds">{{ zoneId }}</option>
+      </select>
+      <input class="form-control mt-2" v-model.number="token.count" placeholder="count" />
     </Modal>
   </div>
 </template>
@@ -101,6 +135,12 @@ export default {
     return {
       dieFaces: 2,
       topNCount: 1,
+      token: {
+        annotation: '',
+        count: 1,
+        name: '',
+        zoneId: '',
+      },
     }
   },
 
@@ -125,6 +165,18 @@ export default {
       if (this.player.name !== this.actor.name) {
         return 'tableau-col-reverse'
       }
+    },
+
+    tokenZoneIds() {
+      const ids = []
+
+      for (const player of this.game.getPlayersStarting(this.player)) {
+        for (const name of ['battlefield', 'command', 'creatures', 'land', 'stack']) {
+          ids.push(`players.${player.name}.${name}`)
+        }
+      }
+
+      return ids
     },
   },
 
@@ -156,6 +208,23 @@ export default {
     hideHand() {
       const zoneId = `players.${this.player.name}.hand`
       this.do(this.actorPlayer, { name: 'hide all', zoneId })
+    },
+
+    makeToken(zoneName) {
+      this.token.zoneId = `players.${this.player.name}.${zoneName}`
+      this.$modal('make-token-modal').show()
+    },
+
+    makeTokenDo() {
+      this.do(null, {
+        name: 'create token',
+        data: {
+          name: this.token.name,
+          annotation: this.token.annotation,
+          count: this.token.count,
+          zoneId: this.token.zoneId,
+        }
+      })
     },
 
     revealHand() {
