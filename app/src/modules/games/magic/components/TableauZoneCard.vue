@@ -131,10 +131,18 @@ export default {
     },
 
     twiddle() {
-      this.do(null, {
-        name: 'twiddle',
-        cardId: this.card.id,
-      })
+      if (this.card.tapped) {
+        this.do(null, {
+          name: 'untap',
+          cardId: this.card.id,
+        })
+      }
+      else {
+        this.do(null, {
+          name: 'tap',
+          cardId: this.card.id,
+        })
+      }
       this.$store.dispatch('magic/game/unselectCard')
     },
 

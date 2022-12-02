@@ -327,12 +327,16 @@ Magic.prototype.aChooseAction = function(player) {
       case 'roll die'            : return this.aRollDie(actor, action.faces)
       case 'select phase'        : return this.aSelectPhase(actor, action.phase)
       case 'shuffle'             : return this.aShuffle(actor, action.zoneId)
+      case 'tap'                 : return this.aTap(actor, action.cardId)
       case 'trigger'             : return this.aTrigger(actor, action.cardId)
-      case 'twiddle'             : return this.aTwiddle(actor, action.cardId)
       case 'unmorph'             : return this.aUnmorph(actor, action.cardId)
+      case 'untap'               : return this.aUntap(actor, action.cardId)
       case 'view all'            : return this.aViewAll(actor, action.zoneId)
       case 'view next'           : return this.aViewNext(actor, action.zoneId)
       case 'view top k'          : return this.aViewTop(actor, action.zoneId, action.count)
+
+      // Deprecated
+      case 'twiddle'             : return this.aTwiddle(actor, action.cardId)
 
       default:
         throw new Error(`Unknown action: ${action.name}`)
@@ -618,6 +622,15 @@ Magic.prototype.aShuffle = function(player, zoneId) {
   zone.shuffle()
 }
 
+Magic.prototype.aTap = function(player, cardId) {
+  const card = this.getCardById(cardId)
+  card.tapped = true
+  this.mLog({
+    template: 'tap: {card}',
+    args: { card }
+  })
+}
+
 Magic.prototype.aTrigger = function(player, cardId) {
   const card = this.getCardById(cardId)
   const token = this.aCreateEffect(player, card)
@@ -649,6 +662,15 @@ Magic.prototype.aUnmorph = function(player, cardId) {
   this.mLog({
     template: '{player} unmorphs {card}',
     args: { player, card },
+  })
+}
+
+Magic.prototype.aUntap = function(player, cardId) {
+  const card = this.getCardById(cardId)
+  card.tapped = false
+  this.mLog({
+    template: 'untap: {card}',
+    args: { card }
   })
 }
 
