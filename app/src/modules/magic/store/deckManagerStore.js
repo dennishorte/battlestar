@@ -101,7 +101,7 @@ export default {
 
     setActiveDecklist({ commit, rootGetters }, cards) {
       const lookupFunc = rootGetters['magic/cards/getLookupFunc']
-      mag.util.card.insertCardData(cards, lookupFunc)
+      mag.util.card.lookup.insertCardData(cards, lookupFunc)
       commit('setActiveDecklist', cards)
     }
   },
