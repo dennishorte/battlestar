@@ -206,6 +206,7 @@ Game.saveFull = async function(req, res) {
 
   if (game.settings.game === 'Magic') {
     game.waiting = req.body.waiting
+    game.gameOver = req.body.gameOver
     await _testAndSave(game, res, () => {})
   }
   else {
