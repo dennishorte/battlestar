@@ -1,11 +1,15 @@
 <template>
   <Modal id="card-closeup-modal" @ok="saveChanges">
+    <template #header>
+      <div class="header-button" @click="debug">debug</div>
+    </template>
+
     <div v-if="selectedCard" class="modal-body">
       <div class="card-holder">
         <Card :card="selectedCard.data" :size="270" />
       </div>
 
-      <div class="labeled-input-wrapper">
+      <div class="labeled-input-wrapper mt-2">
         <label class="col-form-label">Active Face</label>
         <div>
           <select class="form-select" v-model.number="activeFace">
@@ -24,6 +28,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { util } from 'battlestar-common'
 
 import Card from '@/modules/magic/components/Card'
 import Modal from '@/components/Modal'
@@ -62,6 +67,15 @@ export default {
   },
 
   methods: {
+    debug() {
+      const copy = { ...this.selectedCard }
+      copy.owner = copy.owner.name
+      copy.data = util.deepcopy(copy.data)
+      copy.visibility = copy.visibility.map(player => player.name)
+
+      console.log(copy)
+    },
+
     saveChanges() {
       if (this.selectedCard.activeFace !== this.activeFace) {
         this.do(null, {
@@ -88,6 +102,16 @@ export default {
 .card-holder {
   width: 100%;
   overflow-x: scroll;
+}
+
+.header-button {
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+.header-stuff {
+  width: 100%;
+  margin-left: auto;
 }
 
 .labeled-input-wrapper {
