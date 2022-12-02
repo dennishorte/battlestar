@@ -90,7 +90,7 @@ export default {
         }
       }
       else {
-        return this.card.data.card_faces[0].name
+        return this.card.activeFace
       }
     },
 

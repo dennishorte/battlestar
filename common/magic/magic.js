@@ -194,6 +194,17 @@ Magic.prototype.mainLoop = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Setters, getters, actions, etc.
 
+Magic.prototype.aActiveFace = function(player, cardId, face) {
+  player = player || this.getPlayerCurrent()
+  const card = this.getCardById(cardId)
+  const prevFace = card.activeFace
+  card.activeFace = face
+  this.mLog({
+    template: `{player} flips ${prevFace} to ${card.activeFace}`,
+    args: { player },
+  })
+}
+
 Magic.prototype.aAnnotate = function(player, cardId, annotation) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
@@ -295,6 +306,7 @@ Magic.prototype.aChooseAction = function(player) {
     const actor = action.playerName ? this.getPlayerByName(action.playerName) : player
 
     switch (action.name) {
+      case 'active face'         : return this.aActiveFace(actor, action.cardId, action.face)
       case 'adjust counter'      : return actor.incrementCounter(action.counter, action.amount)
       case 'annotate'            : return this.aAnnotate(actor, action.cardId, action.annotation)
       case 'cascade'             : return this.aCascade(actor, action.x)
@@ -782,6 +794,7 @@ Magic.prototype.setDeck = function(player, data) {
   player.deck = deckUtil.deserialize(util.deepcopy(data))
   cardUtil.lookup.insertCardData(player.deck.cardlist, this.cardLookupFunc)
   for (const card of player.deck.cardlist) {
+    card.activeFace = card.data.card_faces[0].name
     card.annotation = ''
     card.counters = {}
     card.id = this.getNextLocalId()
