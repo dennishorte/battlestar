@@ -8,12 +8,21 @@ export default {
     game: null,
     ready: false,
     selectedCard: null,
+
+    doubleClick: {
+      card: null,
+      time: null,
+    },
   }),
 
   getters: {
   },
 
   mutations: {
+    setDoubleClick(state, data) {
+      state.doubleClick = data
+    },
+
     setGame(state, game) {
       state.game = game
     },
@@ -29,6 +38,33 @@ export default {
 
   actions: {
     clickCard({ commit, state }, card) {
+      // Check for double click
+      if (
+        state.doubleClick.card === card
+        && state.doubleClick.time
+        && Date.now() - state.doubleClick.time < 500  // 500 ms
+      ) {
+        state.game.doFunc(null, {
+          name: card.tapped ? 'untap' : 'tap',
+          cardId: card.id,
+        })
+        commit('setSelectedCard', null)
+        commit('setDoubleClick', {
+          card: null,
+          time: null,
+        })
+        return
+      }
+
+      else {
+        commit('setDoubleClick', {
+          card,
+          time: Date.now(),
+        })
+        // Fall through.
+      }
+
+      // Handle single clicks
       if (state.selectedCard === null) {
         commit('setSelectedCard', card)
       }
