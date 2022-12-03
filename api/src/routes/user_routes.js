@@ -85,12 +85,14 @@ User.next = async function(req, res) {
   const gameCursor = await db.game.findByUserId(req.body.userId)
   const gameArray = await gameCursor.toArray()
 
-  for (let i = 0; i < gameArray.length; i++) {
-    if (!gameArray[gameArray.length - 1]._id.equals(req.body.gameId)) {
-      gameArray.push(gameArray.shift())
-    }
-    else {
-      break
+  if (req.body.gameId) {
+    for (let i = 0; i < gameArray.length; i++) {
+      if (!gameArray[gameArray.length - 1]._id.equals(req.body.gameId)) {
+        gameArray.push(gameArray.shift())
+      }
+      else {
+        break
+      }
     }
   }
 

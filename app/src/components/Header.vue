@@ -6,8 +6,11 @@
 
           <Dropdown class="float-start">
             <DropdownRouterLink to="/">home</DropdownRouterLink>
-            <DropdownRouterLink to="/lobby/create">lobby</DropdownRouterLink>
+            <DropdownButton @click="nextGame">next game</DropdownButton>
+
+            <DropdownRouterLink to="/lobby/create">new lobby</DropdownRouterLink>
             <DropdownRouterLink to="/data">data</DropdownRouterLink>
+            <DropdownDivider></DropdownDivider>
             <DropdownRouterLink to="/magic">magic</DropdownRouterLink>
             <DropdownRouterLink to="/magic/decks">magic deck</DropdownRouterLink>
             <DropdownDivider></DropdownDivider>
@@ -26,9 +29,11 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 import Dropdown from '@/components/Dropdown'
 import DropdownDivider from '@/components/DropdownDivider'
-import DropdownItem from '@/components/DropdownItem'
+import DropdownButton from '@/components/DropdownButton'
 import DropdownRouterLink from '@/components/DropdownRouterLink'
 
 export default {
@@ -37,8 +42,43 @@ export default {
   components: {
     Dropdown,
     DropdownDivider,
-    DropdownItem,
+    DropdownButton,
     DropdownRouterLink,
+  },
+
+  computed: {
+    actor() {
+      return this.$store.getters['auth/user']
+    },
+  },
+
+  methods: {
+    async nextGame() {
+      const result = await axios.post('/api/user/next', {
+        userId: this.actor._id,
+        gameId: null,
+      })
+
+      if (result.data.status === 'success') {
+        const gameId = result.data.gameId
+        if (gameId) {
+          if (this.$route.path === `/game/${gameId}`) {
+            this.$router.go()
+          }
+          else {
+            this.$router.push(`/game/${gameId}`)
+          }
+        }
+        else {
+          this.$router.push('/')
+        }
+      }
+
+      else {
+        console.log(result)
+        alert('error: see console')
+      }
+    },
   },
 }
 </script>
