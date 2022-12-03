@@ -316,7 +316,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'draw 7'              : return this.aDrawSeven(actor)
       case 'draw game'           : return this.aDrawGame(actor)
       case 'hide all'            : return this.aHideAll(actor, action.zoneId)
-      case 'import'              : return this.aImport(actor, action.card, action.zone)
+      case 'import card'         : return this.aImportCard(actor, action.data)
       case 'morph'               : return this.aMorph(actor, action.cardId)
       case 'move card'           : return this.aMoveCard(actor, action.cardId, action.destId, action.destIndex)
       case 'mulligan'            : return this.aMulligan(actor)
@@ -435,13 +435,19 @@ Magic.prototype.aHideAll = function(player, zoneId) {
   })
 }
 
-Magic.prototype.aImport = function(player, card, zone) {
-  cardUtil.lookup.insertCardData([card], this.cardLookupFunc)
-  card.id = this.getNextLocalId()
-  this.cardsById[card.id] = card
+Magic.prototype.aImportCard = function(player, data) {
+  for (let i = 0; i < data.count; i++) {
+    const card = {
+      name: data.card.name,
+      set: data.card.set,
+      collectorNumber: data.card.collector_number,
+      data: data.card,
+    }
 
-  card.owner = player
-  this.getZoneById(zone).addCard(card)
+    this.mInitializeCard(card, player)
+    card.visibility = this.getPlayerAll()
+    this.getZoneById(data.zoneId).addCard(card)
+  }
 }
 
 Magic.prototype.aMorph = function(player, cardId) {

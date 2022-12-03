@@ -46,6 +46,7 @@
 
       <TableauZone :zone="getZone('command')">
         <template #menu>
+          <DropdownButton @click="importCard('command')">import card</DropdownButton>
           <DropdownButton @click="makeToken('command')">make token</DropdownButton>
         </template>
       </TableauZone>
@@ -56,24 +57,28 @@
     <div class="tableau-col" :class="extraColumnClasses">
       <TableauZone :zone="getZone('creatures')">
         <template #menu>
+          <DropdownButton @click="importCard('creatures')">import card</DropdownButton>
           <DropdownButton @click="makeToken('creatures')">make token</DropdownButton>
         </template>
       </TableauZone>
 
       <TableauZone :zone="getZone('battlefield')">
         <template #menu>
+          <DropdownButton @click="importCard('battlefield')">import card</DropdownButton>
           <DropdownButton @click="makeToken('battlefield')">make token</DropdownButton>
         </template>
       </TableauZone>
 
       <TableauZone :zone="getZone('land')">
         <template #menu>
+          <DropdownButton @click="importCard('land')">import card</DropdownButton>
           <DropdownButton @click="makeToken('land')">make token</DropdownButton>
         </template>
       </TableauZone>
 
       <TableauZone :zone="getZone('stack')">
         <template #menu>
+          <DropdownButton @click="importCard('stack')">import card</DropdownButton>
           <DropdownButton @click="makeToken('stack')">make token</DropdownButton>
         </template>
       </TableauZone>
@@ -94,19 +99,23 @@
       <input class="form-control" v-model="token.name" placeholder="name" />
       <input class="form-control mt-2" v-model="token.annotation" placeholder="annotation" />
       <select class="form-select mt-2" v-model="token.zoneId">
-        <option v-for="zoneId in tokenZoneIds">{{ zoneId }}</option>
+        <option v-for="zoneId in importZoneId">{{ zoneId }}</option>
       </select>
       <input class="form-control mt-2" v-model.number="token.count" placeholder="count" />
     </Modal>
+
+    <ImportCardModal :zone-suggestion="importZoneId" @import-card="importCardDo" />
   </div>
 </template>
 
 
 <script>
 import { computed } from 'vue'
+import { mapGetters } from 'vuex'
 
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
+import ImportCardModal from './ImportCardModal'
 import Modal from '@/components/Modal'
 import PlayerCounters from './PlayerCounters'
 import TableauZone from './TableauZone'
@@ -119,6 +128,7 @@ export default {
   components: {
     DropdownButton,
     DropdownDivider,
+    ImportCardModal,
     Modal,
     PlayerCounters,
     TableauZone,
@@ -134,6 +144,7 @@ export default {
   data() {
     return {
       dieFaces: 2,
+      importZoneId: '',
       topNCount: 1,
       token: {
         annotation: '',
@@ -151,6 +162,10 @@ export default {
   },
 
   computed: {
+    ...mapGetters('magic/game', {
+      importZoneIds: 'importZoneIds',
+    }),
+
     actorPlayer() {
       return this.game.getPlayerByName(this.actor.name)
     },
@@ -165,18 +180,6 @@ export default {
       if (this.player.name !== this.actor.name) {
         return 'tableau-col-reverse'
       }
-    },
-
-    tokenZoneIds() {
-      const ids = []
-
-      for (const player of this.game.getPlayersStarting(this.player)) {
-        for (const name of ['battlefield', 'command', 'creatures', 'land', 'stack']) {
-          ids.push(`players.${player.name}.${name}`)
-        }
-      }
-
-      return ids
     },
   },
 
@@ -197,10 +200,6 @@ export default {
       this.do(this.player, { name: 'draw 7' })
     },
 
-    mulligan() {
-      this.do(this.player, { name: 'mulligan' })
-    },
-
     getZone(name) {
       return this.game.getZoneByPlayer(this.player, name)
     },
@@ -208,6 +207,18 @@ export default {
     hideHand() {
       const zoneId = `players.${this.player.name}.hand`
       this.do(this.actorPlayer, { name: 'hide all', zoneId })
+    },
+
+    importCard(zoneName) {
+      this.importZoneId = `players.${this.player.name}.${zoneName}`
+      this.$modal('import-card-modal').show()
+    },
+
+    importCardDo(data) {
+      this.do(null, {
+        name: 'import card',
+        data,
+      })
     },
 
     makeToken(zoneName) {
@@ -225,6 +236,10 @@ export default {
           zoneId: this.token.zoneId,
         }
       })
+    },
+
+    mulligan() {
+      this.do(this.player, { name: 'mulligan' })
     },
 
     revealHand() {

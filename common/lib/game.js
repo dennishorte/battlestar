@@ -149,6 +149,10 @@ Game.prototype.getPlayerNamesWaiting = function() {
   }
 }
 
+Game.prototype.getPlayerViewer = function() {
+  return this.getPlayerByName(this.viewerName)
+}
+
 Game.prototype.getWaiting = function(player) {
   if (!this.waiting) {
     return undefined

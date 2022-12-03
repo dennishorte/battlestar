@@ -16,6 +16,17 @@ export default {
   }),
 
   getters: {
+    importZoneIds(state) {
+      const ids = []
+
+      for (const player of state.game.getPlayersStarting(state.game.getPlayerViewer())) {
+        for (const name of ['battlefield', 'command', 'creatures', 'land', 'stack']) {
+          ids.push(`players.${player.name}.${name}`)
+        }
+      }
+
+      return ids
+    },
   },
 
   mutations: {

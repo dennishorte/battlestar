@@ -18,6 +18,10 @@ export default {
   }),
 
   getters: {
+    cardNames(state) {
+      return Object.keys(state.lookup).sort()
+    },
+
     getLookupFunc(state) {
       return (cardId, opts) => {
         return mag.util.card.lookup.getByIdDict(cardId, state.lookup, opts)
