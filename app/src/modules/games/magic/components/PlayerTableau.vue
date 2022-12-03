@@ -99,7 +99,7 @@
       <input class="form-control" v-model="token.name" placeholder="name" />
       <input class="form-control mt-2" v-model="token.annotation" placeholder="annotation" />
       <select class="form-select mt-2" v-model="token.zoneId">
-        <option v-for="zoneId in importZoneId">{{ zoneId }}</option>
+        <option v-for="zoneId in importZoneIds">{{ zoneId }}</option>
       </select>
       <input class="form-control mt-2" v-model.number="token.count" placeholder="count" />
     </Modal>
