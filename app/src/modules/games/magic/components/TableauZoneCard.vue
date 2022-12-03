@@ -5,6 +5,7 @@
       <i class="bi bi-eye" v-else-if="cardIsViewed"></i>
 
       <i class="bi bi-browser-edge" v-if="card.morph"></i>
+      <i class="bi bi-bookmark-fill" v-if="card.token"></i>
 
       <CardListItem
         :card="card"
