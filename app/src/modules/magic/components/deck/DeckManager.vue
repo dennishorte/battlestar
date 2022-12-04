@@ -138,12 +138,11 @@ export default {
     },
 
     async edit() {
-      this.deck.name = this.newName.trim()
-      this.deck.path = this.newPath.trim()
+      this.activeDeck.name = this.newName.trim()
+      this.activeDeck.path = this.newPath.trim()
       this.$store.commit('magic/dm/setDeckName', this.newName)
       this.$store.commit('magic/dm/setDeckPath', this.newPath)
       await this.$store.dispatch('magic/dm/saveActiveDeck')
-      await this.$store.dispatch('magic/dm/fetchDecks')
     },
 
     importDecklist() {
@@ -152,8 +151,8 @@ export default {
     },
 
     openEditModal() {
-      this.newName = this.deck.name
-      this.newPath = this.deck.path
+      this.newName = this.activeDeck.name
+      this.newPath = this.activeDeck.path
       this.$modal('edit-deck-modal').show()
     },
 
