@@ -1,7 +1,7 @@
 <template>
   <div class="deck-list">
     <div class="header">
-      <div class="deck-name me-2">{{ deck.name }}</div>
+      <div class="deck-name me-2">{{ deck.name }} ({{ deck.cardlist.length }})</div>
 
       <Dropdown class="deck-menu" v-if="!noMenu">
         <template #title>deck menu</template>

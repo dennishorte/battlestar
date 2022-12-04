@@ -37,7 +37,7 @@ export default {
   methods: {
     // Called by both optionsChanged, and a watcher on users in the lobby.
     updateValid() {
-      const numPlayersCondition = this.lobby.users.length === 2
+      const numPlayersCondition = this.lobby.users.length >= 2
       const formatSelectedCondition = Boolean(this.lobby.options.format)
 
       this.lobby.valid = (
