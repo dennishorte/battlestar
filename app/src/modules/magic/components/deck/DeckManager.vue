@@ -8,6 +8,7 @@
           <MagicFileManager
             class="deck-selector"
             :filelist="deckfiles"
+            default-file-type="deck"
             @selection-changed="selectionChanged"
           />
           <CardFilters :cardlist="cardlist" v-model="filteredCards" />
@@ -26,6 +27,8 @@
               <DropdownButton @click="save" :disabled="!modified">save</DropdownButton>
             </template>
           </Decklist>
+
+          <div v-else class="alert alert-warning">No deck selected</div>
         </div>
 
       </div>

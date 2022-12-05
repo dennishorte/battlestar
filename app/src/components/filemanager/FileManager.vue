@@ -24,6 +24,7 @@
       :selection="meta.selection"
       :file-types="fileTypes"
       :id="newFileModalId"
+      :default-file-type="defaultFileType"
       @create="createFile"
     />
   </div>
@@ -64,6 +65,10 @@ export default {
     },
     hideFolders: {
       type: Boolean,
+      default: false,
+    },
+    defaultFileType: {
+      type: String,
       default: false,
     },
   },

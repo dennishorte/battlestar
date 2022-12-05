@@ -35,11 +35,16 @@ export default {
   props: {
     fileTypes: Array,
     selection: Object,
+
+    defaultFileType: {
+      type: String,
+      default: '',
+    },
   },
 
   data() {
     return {
-      newKind: '',
+      newKind: this.defaultFileType,
       newName: '',
       newPath: '/',
     }
