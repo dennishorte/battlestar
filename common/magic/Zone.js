@@ -39,6 +39,11 @@ Zone.prototype.addCard = function(card) {
   this._cards.push(card)
 }
 
+Zone.prototype.removeCard = function(card) {
+  card.zone = undefined
+  util.array.remove(this._cards, card)
+}
+
 Zone.prototype.setCards = function(cards) {
   util.assert(Array.isArray(cards), `Cards parameter must be an array. Got ${typeof cards}.`)
   this._cards = [...cards]

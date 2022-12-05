@@ -464,11 +464,11 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
   const card = this.getCardById(cardId)
   const startingZone = this.getZoneByCard(card)
   const dest = this.getZoneById(destId)
-  this.mMoveCardTo(card, dest, { index: destIndex })
   this.mLog({
     template: '{player} moves {card} to {zone}',
     args: { player, card, zone: dest }
   })
+  this.mMoveCardTo(card, dest, { index: destIndex })
 
   // Card was moved to stack.
   if (dest.id.endsWith('.stack')) {
@@ -809,6 +809,23 @@ Magic.prototype.mInitializeCard = function(card, owner) {
   this.cardsById[card.id] = card
 }
 
+Magic.prototype.mMaybeRemoveTokens = function(card) {
+  const validZones = ['creatures', 'battlefield', 'land', 'stack']
+
+  if (card.token && !validZones.some(id => card.zone.endsWith(id))) {
+    this.mLogIndent()
+    this.mLog({
+      template: '{card} token ceases to exist',
+      args: { card }
+    })
+    this.mLogOutdent()
+
+    const zone = this.getZoneByCard(card)
+    zone.removeCard(card)
+    card.owner = undefined
+  }
+}
+
 Magic.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
   util.assert(sourceIndex >= 0 && sourceIndex <= source.cards().length - 1, `Invalid source index ${sourceIndex}`)
 
@@ -819,6 +836,7 @@ Magic.prototype.mMoveByIndices = function(source, sourceIndex, target, targetInd
   targetCards.splice(targetIndex, 0, card)
   card.zone = target.id
   this.mAdjustCardVisibility(card)
+  this.mMaybeRemoveTokens(card)
   return card
 }
 
