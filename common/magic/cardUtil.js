@@ -184,7 +184,21 @@ CardUtil.applyOneFilter = function(card, filter) {
   }
   else if (textFields.includes(filter.kind)) {
     const fieldKey = fieldMapping[filter.kind]
-    const fieldValue = fieldKey in card ? card[fieldKey].toLowerCase() : ''
+
+    const fieldValues = []
+
+    if (fieldKey in card) {
+      fieldValues.push(card[fieldKey])
+    }
+    else {
+      for (const face of card.card_faces) {
+        if (fieldKey in face) {
+          fieldValues.push(face[fieldKey])
+        }
+      }
+    }
+
+    const fieldValue = fieldValues.join(' ').toLowerCase()
     const targetValue = filter.value.toLowerCase()
 
     if (filter.operator === 'and') {
@@ -199,24 +213,39 @@ CardUtil.applyOneFilter = function(card, filter) {
   }
   else if (numberFields.includes(filter.kind)) {
     const fieldKey = fieldMapping[filter.kind]
-    const fieldValue = fieldKey in card ? parseFloat(card[fieldKey]) : -999
     const targetValue = parseFloat(filter.value)
 
-    if (fieldValue === -999) {
-      return false
-    }
-    else if (filter.operator === '=') {
-      return fieldValue === targetValue
-    }
-    else if (filter.operator === '>=') {
-      return fieldValue >= targetValue
-    }
-    else if (filter.operator === '<=') {
-      return fieldValue <= targetValue
+    let fieldValues = []
+    if (fieldKey in card) {
+      fieldValues.push(card[fieldKey])
     }
     else {
-      throw new Error(`Unhandled numeric operator: ${filter.operator}`)
+      for (const face of card.card_faces) {
+        if (fieldKey in face) {
+          fieldValues.push(face[fieldKey])
+        }
+      }
     }
+    fieldValues = fieldValues.map(val => parseFloat(val))
+
+
+    return fieldValues.some(fieldValue => {
+      if (fieldValue === -999) {
+        return false
+      }
+      else if (filter.operator === '=') {
+        return fieldValue === targetValue
+      }
+      else if (filter.operator === '>=') {
+        return fieldValue >= targetValue
+      }
+      else if (filter.operator === '<=') {
+        return fieldValue <= targetValue
+      }
+      else {
+        throw new Error(`Unhandled numeric operator: ${filter.operator}`)
+      }
+    })
   }
   else {
     throw new Error(`Unhandled filter field: ${filter.kind}`)
