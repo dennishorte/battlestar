@@ -464,11 +464,11 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
   const card = this.getCardById(cardId)
   const startingZone = this.getZoneByCard(card)
   const dest = this.getZoneById(destId)
+  this.mMoveCardTo(card, dest, { index: destIndex })
   this.mLog({
     template: '{player} moves {card} to {zone}',
     args: { player, card, zone: dest }
   })
-  this.mMoveCardTo(card, dest, { index: destIndex })
 
   // Card was moved to stack.
   if (dest.id.endsWith('.stack')) {
