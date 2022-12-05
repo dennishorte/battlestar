@@ -183,6 +183,7 @@ export default {
   background-color: var(--bs-light);
   border-radius: .25em;
   margin-top: .25em;
+  min-height: 15em;
 }
 
 .column {
@@ -198,5 +199,6 @@ export default {
 .filters-column {
   min-width: 400px;
   max-width: 30em;
+  overflow-y: scroll;
 }
 </style>
