@@ -148,8 +148,8 @@ const colorNameToSymbol = {
 }
 
 CardUtil.applyOneFilter = function(card, filter) {
-  if (filter.kind === 'legality' && 'legalities' in card) {
-    return card.legalities[filter.value] === 'legal'
+  if (filter.kind === 'legality') {
+    return 'legal' in card && card.legal.includes(filter.value)
   }
   else if (filter.kind === 'colors' || filter.kind === 'identity') {
     const fieldKey = fieldMapping[filter.kind]
