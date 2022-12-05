@@ -7,6 +7,8 @@
     <template v-if="card">
       <div class="wrapper">
         <div class="left-side">
+          <h5>Deck Info</h5>
+
           <template v-if="activeDeck">
             <CardManagerButtonGroup
               name="main"
@@ -32,6 +34,8 @@
               @remove-card="removeCard"
             />
           </template>
+
+          <div v-else class="alert alert-warning">No deck selected</div>
         </div>
 
         <div class="right-side">
