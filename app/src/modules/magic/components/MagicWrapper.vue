@@ -78,15 +78,42 @@ export default {
     }),
 
     mouseoverPosition() {
-      const top = this.mouseoverY + 10
-      const left = this.mouseoverX + 10
+      const leftPixelSpace = this.mouseoverX
+      const rightPixelSpace = window.innerWidth - leftPixelSpace
+      const topPixelSpace = this.mouseoverY
+      const bottomPixelSpace = window.innerHeight - topPixelSpace
 
-      return {
+      const x_offset = this.mouseoverX + window.pageXOffset
+      const y_offset = this.mouseoverY + window.pageYOffset
+
+      const style = {
         position: 'fixed',
-        top: top + 'px',
-        left: left + 'px',
         'z-index': 100,
+        top: null,
+        bottom: null,
+        left: null,
+        right: null,
       }
+
+      if (rightPixelSpace > leftPixelSpace) {
+        // display on right
+        style.left = Math.max(window.pageXOffset, 5 + x_offset) + 'px'
+      }
+      else {
+        // display on left
+        style.right = Math.max(window.innerWidth + 5 - x_offset, 0) + 'px'
+      }
+
+      if (bottomPixelSpace > topPixelSpace) {
+        // display on bottom
+        style.top = 5 + y_offset + 'px'
+      }
+      else {
+        // display on top
+        style.bottom = window.innerHeight + 5 - y_offset + 'px'
+      }
+
+      return style
     },
 
     ready() {
