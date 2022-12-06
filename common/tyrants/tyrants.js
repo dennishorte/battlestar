@@ -787,6 +787,15 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndSupplant = function(player, opts={}) {
+  const troops = this.getCardsByZone(player, 'troops')
+  if (troops.length === 0) {
+    this.mLog({
+      template: '{player} has no more troops',
+      args: { player }
+    })
+    return
+  }
+
   const choices = this._collectTargets(player, opts).troops
   const selection = this.aChoose(player, choices)
   if (selection.length > 0) {
