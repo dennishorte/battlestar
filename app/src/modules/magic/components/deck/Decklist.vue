@@ -142,6 +142,6 @@ export default {
 }
 
 .modified {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='50px' width='120px'><text x='0' y='15' fill='rgb(240, 180, 200)' font-size='20'>unsaved</text></svg>");
+  background-color: rgb(240, 180, 200);
 }
 </style>
