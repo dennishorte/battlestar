@@ -113,7 +113,7 @@ export default {
 .deck-list {
   display: flex;
   flex-direction: column;
-  max-height: 100%;
+  max-height: 95%;
   font-size: .8em;
 }
 
