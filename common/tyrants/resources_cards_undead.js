@@ -235,19 +235,17 @@ const cardData = [
         })
 
         if (targetPlayer) {
-          for (let i = 0; i < 2; i++) {
-            const troopZone = game.getZoneByPlayer(targetPlayer, 'trophyHall')
-            const choices = troopZone.cards().map(troop => troop.getOwnerName()).sort()
-            const selections = game.aChoose(player, choices, {
-              title: 'Choose up to 2 troops to reanimate',
-              min: 0,
-              max: 2,
-            })
+          const troopZone = game.getZoneByPlayer(targetPlayer, 'trophyHall')
+          const choices = troopZone.cards().map(troop => troop.getOwnerName()).sort()
+          const selections = game.aChoose(player, choices, {
+            title: 'Choose up to 2 troops to reanimate',
+            min: 0,
+            max: 2,
+          })
 
-            for (const selection of selections) {
-              const troop = troopZone.cards().find(c => c.getOwnerName() === selection)
-              game.aChooseAndDeploy(player, { troop })
-            }
+          for (const selection of selections) {
+            const troop = troopZone.cards().find(c => c.getOwnerName() === selection)
+            game.aChooseAndDeploy(player, { troop })
           }
         }
       }
