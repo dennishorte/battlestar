@@ -6,7 +6,7 @@
 
     <div v-for="card in cards" class="card-and-count">
       <div class="card-count">{{ card.count }} </div>
-      <CardListItem :card="card" :showManaCost="true" @click="manageCard(card)" />
+      <CardListItem :card="card" :showManaCost="true" @click="click(card)" />
     </div>
   </div>
 </template>
@@ -36,13 +36,8 @@ export default {
   },
 
   methods: {
-    manageCard(card) {
-      if (card.data) {
-        this.$store.dispatch('magic/dm/manageCard', card.data)
-      }
-      else {
-        this.$store.dispatch('magic/dm/manageCard', card)
-      }
+    click(card){
+      this.$emit('card-clicked', card)
     },
   },
 }

@@ -16,6 +16,7 @@
         :cards="section[1]"
         :name="section[0]"
         class="deck-section"
+        @card-clicked="cardClicked"
       />
     </div>
   </div>
@@ -96,6 +97,12 @@ export default {
         })
 
       return countedSections
+    },
+  },
+
+  methods: {
+    cardClicked(card) {
+      this.$emit('card-clicked', card)
     },
   },
 }

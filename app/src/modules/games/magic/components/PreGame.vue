@@ -51,7 +51,7 @@
       </div>
 
       <div class="content-column deck-list-column">
-        <Decklist v-if="activeDeck" :deck="activeDeck" :no-menu="true" />
+        <Decklist v-if="activeDeck" :deck="activeDeck" :no-menu="true" @card-clicked="cardClicked" />
       </div>
 
     </div>
@@ -100,6 +100,10 @@ export default {
   },
 
   methods: {
+    cardClicked(card) {
+      console.log(card)
+    },
+
     selectionChanged({ newValue }) {
       if (newValue.objectType === 'file') {
         const deck = mag.util.deck.deserialize(newValue.file)

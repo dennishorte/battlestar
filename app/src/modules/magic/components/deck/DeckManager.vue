@@ -19,7 +19,7 @@
         </div>
 
         <div class="col column">
-          <Decklist v-if="activeDeck" :deck="activeDeck" :modified="modified">
+          <Decklist v-if="activeDeck" :deck="activeDeck" :modified="modified" @card-clicked="manageCard">
             <template #menu-options>
               <DropdownButton @click="openImportModal">import</DropdownButton>
               <DropdownButton @click="download">export</DropdownButton>
@@ -123,6 +123,15 @@ export default {
     deckEditCard(card) {
       this.editingCard = card
       this.$modal('card-manager-modal').show()
+    },
+
+    manageCard(card) {
+      if (card.data) {
+        this.$store.dispatch('magic/dm/manageCard', card.data)
+      }
+      else {
+        this.$store.dispatch('magic/dm/manageCard', card)
+      }
     },
 
     selectionChanged(event) {
