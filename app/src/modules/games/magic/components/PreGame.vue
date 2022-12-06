@@ -101,7 +101,14 @@ export default {
 
   methods: {
     cardClicked(card) {
-      console.log(card)
+      if (card.zone === 'side') {
+        this.activeDeck.removeCard(card, 'side')
+        this.activeDeck.addCard(card, 'main')
+      }
+      else if (card.zone === 'main') {
+        this.activeDeck.removeCard(card, 'main')
+        this.activeDeck.addCard(card, 'side')
+      }
     },
 
     selectionChanged({ newValue }) {

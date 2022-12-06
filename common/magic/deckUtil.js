@@ -66,7 +66,10 @@ Deck.prototype.addCard = function(card, zone) {
     zone,
   }
 
-  if (card.card_faces) {
+  if (card.data) {
+    item.data = card.data
+  }
+  else if (card.card_faces) {
     item.data = card
   }
 
