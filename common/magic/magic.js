@@ -466,8 +466,13 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
   const dest = this.getZoneById(destId)
   this.mMoveCardTo(card, dest, { index: destIndex })
   this.mLog({
-    template: '{player} moves {card} to {zone}',
-    args: { player, card, zone: dest }
+    template: '{player} moves {card} from {zone1} to {zone2}',
+    args: {
+      player,
+      card,
+      zone1: startingZone,
+      zone2: dest,
+    }
   })
 
   // Card was moved to stack.
