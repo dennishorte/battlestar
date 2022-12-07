@@ -17,8 +17,8 @@
       </CardListItem>
     </div>
 
-    <div v-if="card.annotation" class="annotation">
-      {{ card.annotation }}
+    <div v-if="annotation" class="annotation">
+      {{ annotation }}
     </div>
 
     <Dropdown v-if="highlighted" :notitle="true" :menu-end="true" class="menu dropdown">
@@ -31,6 +31,19 @@
       <DropdownButton @click.stop="morph" v-else>morph</DropdownButton>
 
       <DropdownButton @click.stop="reveal">reveal</DropdownButton>
+
+      <DropdownDivider />
+
+      <li>
+        <button @click.stop="() => {}" class="dropdown-item counter-button">
+          <div>+1/+1</div>
+          <div class="btn-group">
+            <button class="btn btn-sm btn-outline-warning" @click.stop="incrementCounter('+1/+1', -1)">-</button>
+            <button class="btn btn-sm btn-secondary">{{ this.card.counters['+1/+1'] }}</button>
+            <button class="btn btn-sm btn-outline-success" @click.stop="incrementCounter('+1/+1', 1)">+</button>
+          </div>
+        </button>
+      </li>
     </Dropdown>
 
   </div>
@@ -41,6 +54,7 @@
 import CardListItem from '@/modules/magic/components/CardListItem'
 import Dropdown from '@/components/Dropdown'
 import DropdownButton from '@/components/DropdownButton'
+import DropdownDivider from '@/components/DropdownDivider'
 
 export default {
   name: 'TableauZoneCard',
@@ -49,6 +63,7 @@ export default {
     CardListItem,
     Dropdown,
     DropdownButton,
+    DropdownDivider,
   },
 
   inject: ['actor', 'do', 'game'],
@@ -63,6 +78,22 @@ export default {
   },
 
   computed: {
+    annotation() {
+      const parts = []
+
+      for (const [key, value] of Object.entries(this.card.counters)) {
+        if (value !== 0) {
+          parts.push(`${key}: ${value}`)
+        }
+      }
+
+      if (this.card.annotation) {
+        this.parts.push(this.card.annotation)
+      }
+
+      return parts.join(', ')
+    },
+
     cardIsRevealed() {
       return !this.cardZoneIsPublic && this.card.visibility.length > 1
     },
@@ -119,6 +150,10 @@ export default {
   },
 
   methods: {
+    incrementCounter(kind, count) {
+      this.card.counters[kind] += count
+    },
+
     closeup() {
       this.$modal('card-closeup-modal').show()
     },
@@ -178,6 +213,12 @@ export default {
 .card-line {
   display: flex;
   flex-direction: row;
+}
+
+.counter-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .hidden {

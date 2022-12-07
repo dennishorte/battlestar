@@ -803,7 +803,9 @@ Magic.prototype.mHide = function(card) {
 Magic.prototype.mInitializeCard = function(card, owner) {
   card.activeFace = card.data.card_faces[0].name
   card.annotation = ''
-  card.counters = {}
+  card.counters = {
+    '+1/+1': 0,
+  }
   card.id = this.getNextLocalId()
   card.morph = false
   card.owner = owner
