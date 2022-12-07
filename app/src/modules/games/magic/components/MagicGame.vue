@@ -50,10 +50,6 @@ export default {
   inject: ['game', 'actor', 'save'],
 
   computed: {
-    ...mapState('magic/game', {
-      selectedCard: 'selectedCard',
-    }),
-
     orderedPlayers() {
       const player = this.game.getPlayerByName(this.actor.name)
       return this.game.getPlayersStarting(player)

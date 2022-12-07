@@ -36,7 +36,7 @@
 
       <li v-for="counter in Object.keys(card.counters)">
         <button @click.stop="() => {}" class="dropdown-item counter-button">
-          <CounterButtons :card="card" :name="counter" />
+          <CounterButtons @click.stop="() => {}" :card="card" :name="counter" />
         </button>
       </li>
     </Dropdown>
@@ -136,7 +136,7 @@ export default {
     },
 
     highlighted() {
-      return this.$store.state.magic.game.selectedCard === this.card
+      return this.$store.state.magic.game.selectedCardId === this.card.id
     },
 
     wrapperClasses() {

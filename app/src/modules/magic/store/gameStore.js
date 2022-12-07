@@ -7,7 +7,7 @@ export default {
   state: () => ({
     game: null,
     ready: false,
-    selectedCard: null,
+    selectedCardId: null,
 
     doubleClick: {
       card: null,
@@ -43,7 +43,7 @@ export default {
     },
 
     setSelectedCard(state, card) {
-      state.selectedCard = card
+      state.selectedCardId = card ? card.id : null
     },
   },
 
@@ -76,18 +76,18 @@ export default {
       }
 
       // Handle single clicks
-      if (state.selectedCard === null) {
+      if (state.selectedCardId === null) {
         commit('setSelectedCard', card)
       }
 
-      else if (state.selectedCard === card) {
+      else if (state.selectedCardId === card.id) {
         commit('setSelectedCard', null)
       }
 
       else {
         state.game.doFunc(null, {
           name: 'move card',
-          cardId: state.selectedCard.id,
+          cardId: state.selectedCardId,
           destId: card.zone,
           destIndex: state.game.getZoneIndexByCard(card),
         })
@@ -96,12 +96,12 @@ export default {
     },
 
     clickZone({ commit, state }, { zone, position }) {
-      if (state.selectedCard) {
+      if (state.selectedCardId) {
         const index = position === 'top' ? 0 : zone.cards().length
 
         state.game.doFunc(null, {
           name: 'move card',
-          cardId: state.selectedCard.id,
+          cardId: state.selectedCardId,
           destId: zone.id,
           destIndex: index,
         })

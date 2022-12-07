@@ -23,14 +23,15 @@
       <input class="form-control mt-2" v-model="annotation" placeholder="annotation" />
 
       <div class="counters">
+        <h5>Counters</h5>
         <div class="row">
           <div class="col-6">
-            <div class="counter mt-2" v-for="[key, value] in counters">
+            <div class="counter" v-for="[key, value] in counters">
               <CounterButtons :card="selectedCard" :name="key" />
             </div>
           </div>
           <div class="col-6">
-            <div class="d-flex flex-row mt-2">
+            <div class="d-flex flex-row">
               <input class="form-control" v-model="newCounter" placeholder="new counter name" />
               <button class="btn btn-sm btn-success" @click="addCounter">
                 <i class="bi bi-plus-lg"></i>
@@ -75,11 +76,15 @@ export default {
 
   computed: {
     ...mapState('magic/game', {
-      selectedCard: 'selectedCard',
+      selectedCardId: 'selectedCardId',
     }),
 
     counters() {
       return Object.entries(this.selectedCard.counters)
+    },
+
+    selectedCard() {
+      return this.game.getCardById(this.selectedCardId)
     },
   },
 
@@ -135,6 +140,11 @@ export default {
 
 
 <style scoped>
+h5 {
+  margin-top: .5em;
+  margin-bottom: 0;
+}
+
 .card-holder {
   width: 100%;
   overflow-x: scroll;
