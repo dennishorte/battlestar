@@ -34,14 +34,9 @@
 
       <DropdownDivider />
 
-      <li>
+      <li v-for="counter in Object.keys(card.counters)">
         <button @click.stop="() => {}" class="dropdown-item counter-button">
-          <div>+1/+1</div>
-          <div class="btn-group">
-            <button class="btn btn-sm btn-outline-warning" @click.stop="incrementCounter('+1/+1', -1)">-</button>
-            <button class="btn btn-sm btn-secondary">{{ this.card.counters['+1/+1'] }}</button>
-            <button class="btn btn-sm btn-outline-success" @click.stop="incrementCounter('+1/+1', 1)">+</button>
-          </div>
+          <CounterButtons :card="card" :name="counter" />
         </button>
       </li>
     </Dropdown>
@@ -52,6 +47,7 @@
 
 <script>
 import CardListItem from '@/modules/magic/components/CardListItem'
+import CounterButtons from './CounterButtons'
 import Dropdown from '@/components/Dropdown'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
@@ -61,6 +57,7 @@ export default {
 
   components: {
     CardListItem,
+    CounterButtons,
     Dropdown,
     DropdownButton,
     DropdownDivider,
@@ -150,10 +147,6 @@ export default {
   },
 
   methods: {
-    incrementCounter(kind, count) {
-      this.card.counters[kind] += count
-    },
-
     closeup() {
       this.$modal('card-closeup-modal').show()
     },

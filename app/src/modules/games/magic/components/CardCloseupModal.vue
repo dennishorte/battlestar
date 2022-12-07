@@ -21,6 +21,25 @@
       </div>
 
       <input class="form-control mt-2" v-model="annotation" placeholder="annotation" />
+
+      <div class="counters">
+        <div class="row">
+          <div class="col-6">
+            <div class="counter mt-2" v-for="[key, value] in counters">
+              <CounterButtons :card="selectedCard" :name="key" />
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="d-flex flex-row mt-2">
+              <input class="form-control" v-model="newCounter" placeholder="new counter name" />
+              <button class="btn btn-sm btn-success" @click="addCounter">
+                <i class="bi bi-plus-lg"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </Modal>
 </template>
@@ -31,6 +50,7 @@ import { mapState } from 'vuex'
 import { util } from 'battlestar-common'
 
 import Card from '@/modules/magic/components/Card'
+import CounterButtons from './CounterButtons'
 import Modal from '@/components/Modal'
 
 
@@ -39,6 +59,7 @@ export default {
 
   components: {
     Card,
+    CounterButtons,
     Modal,
   },
 
@@ -48,13 +69,18 @@ export default {
     return {
       activeFace: '',
       annotation: '',
+      newCounter: '',
     }
   },
 
   computed: {
     ...mapState('magic/game', {
       selectedCard: 'selectedCard',
-    })
+    }),
+
+    counters() {
+      return Object.entries(this.selectedCard.counters)
+    },
   },
 
   watch: {
@@ -67,6 +93,16 @@ export default {
   },
 
   methods: {
+    addCounter() {
+      if (this.newCounter) {
+        this.do(null, {
+          name: 'add counter',
+          cardId: this.selectedCard.id,
+          key: this.newCounter,
+        })
+      }
+    },
+
     debug() {
       const copy = { ...this.selectedCard }
       copy.owner = copy.owner.name
@@ -102,6 +138,10 @@ export default {
 .card-holder {
   width: 100%;
   overflow-x: scroll;
+}
+
+.counters {
+  width: 100%;
 }
 
 .header-button {

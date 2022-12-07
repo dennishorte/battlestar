@@ -205,6 +205,35 @@ Magic.prototype.aActiveFace = function(player, cardId, face) {
   })
 }
 
+Magic.prototype.aAddCounter = function(player, cardId, name) {
+  player = player || this.getPlayerCurrent()
+  const card = this.getCardById(cardId)
+  card.counters[name] = 0
+  this.aAdjustCardCounter(player, cardId, name, 1)
+}
+
+Magic.prototype.aAdjustCardCounter = function(player, cardId, name, amount) {
+  player = player || this.getPlayerCurrent()
+  const card = this.getCardById(cardId)
+  card.counters[name] += 1
+
+  let msg
+  if (amount === 1) {
+    msg = 'added'
+  }
+  else if (amount === -1) {
+    msg = 'removed'
+  }
+  else {
+    msg = `adjusted by ${amount}`
+  }
+
+  this.mLog({
+    template: `{card} ${name} counter ${msg}`,
+    args: { card }
+  })
+}
+
 Magic.prototype.aAnnotate = function(player, cardId, annotation) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
@@ -307,6 +336,8 @@ Magic.prototype.aChooseAction = function(player) {
 
     switch (action.name) {
       case 'active face'         : return this.aActiveFace(actor, action.cardId, action.face)
+      case 'add counter'         : return this.aAddCounter(actor, action.cardId, action.key)
+      case 'adjust c-counter'    : return this.aAdjustCardCounter(actor, action.cardId, action.key, action.count)
       case 'adjust counter'      : return actor.incrementCounter(action.counter, action.amount)
       case 'annotate'            : return this.aAnnotate(actor, action.cardId, action.annotation)
       case 'cascade'             : return this.aCascade(actor, action.x)
