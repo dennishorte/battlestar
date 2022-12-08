@@ -84,6 +84,75 @@ async function _notify(game, userId, msg) {
   const sendResult = slack.sendMessage(userId, message)
 }
 
+Game.rematch = async function(req, res) {
+  const game = await db.game.findById(req.body.gameId)
+  const lobbyId = await db.lobby.create()
+  const lobby = await db.lobby.findById(lobbyId)
+
+  lobby.game = game.settings.game
+  lobby.users = game.settings.players
+
+  const nonOptionKeys = [
+    'createdTimestamp',
+    'game',
+    'name',
+    'players',
+    'seed',
+  ]
+
+  for (const key of Object.keys(game.settings)) {
+    if (!nonOptionKeys.includes(key)) {
+      lobby.options[key] = game.settings[key]
+    }
+  }
+
+  await db.lobby.save(lobby)
+
+  res.json({
+    status: 'success',
+    redirect: `/lobby/${lobbyId}`,
+  })
+}
+
+Game.saveFull = async function(req, res) {
+  const game = await _loadGameFromReq(req)
+  game.responses = req.body.responses
+  game.chat = req.body.chat
+
+  if (game.settings.game === 'Magic') {
+    game.waiting = req.body.waiting
+    game.gameOver = req.body.gameOver
+    await _testAndSave(game, res, () => {})
+  }
+  else {
+    await _testAndSave(game, res, (game) => {
+      game.run()
+    })
+  }
+}
+
+Game.updateStats = async function(req, res) {
+  const cursor = await db.game.all()
+  const games = await cursor.toArray()
+  let numUpdated = 0
+
+  for (const data of games) {
+    if (updateStatsOne(data)) {
+      numUpdated += 1
+    }
+  }
+
+  res.json({
+    status: 'success',
+    count: numUpdated,
+    message: `Updated stats for ${numUpdated} games`,
+  })
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Helper functions
+
 async function _testAndSave(game, res, evalFunc) {
   // Test that the response is valid.
   let valid = false
@@ -197,41 +266,6 @@ async function updateStatsOneTyrants(data) {
   else {
     return false
   }
-}
-
-Game.saveFull = async function(req, res) {
-  const game = await _loadGameFromReq(req)
-  game.responses = req.body.responses
-  game.chat = req.body.chat
-
-  if (game.settings.game === 'Magic') {
-    game.waiting = req.body.waiting
-    game.gameOver = req.body.gameOver
-    await _testAndSave(game, res, () => {})
-  }
-  else {
-    await _testAndSave(game, res, (game) => {
-      game.run()
-    })
-  }
-}
-
-Game.updateStats = async function(req, res) {
-  const cursor = await db.game.all()
-  const games = await cursor.toArray()
-  let numUpdated = 0
-
-  for (const data of games) {
-    if (updateStatsOne(data)) {
-      numUpdated += 1
-    }
-  }
-
-  res.json({
-    status: 'success',
-    count: numUpdated,
-    message: `Updated stats for ${numUpdated} games`,
-  })
 }
 
 async function _loadGameFromReq(req) {

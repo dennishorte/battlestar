@@ -27,7 +27,7 @@ Lobby.all = async function() {
   return await lobbyCollection.find({})
 }
 
-Lobby.create = async function(lobbyDict) {
+Lobby.create = async function() {
   const insertResult = await lobbyCollection.insertOne(Lobby.factory())
   return insertResult.insertedId
 }

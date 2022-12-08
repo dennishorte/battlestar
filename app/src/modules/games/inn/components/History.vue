@@ -16,18 +16,25 @@
         <CardText :text="line.text" />
       </template>
     </div>
+
+    <div v-if="game.gameOver">
+      <RematchButton />
+    </div>
+
     <div class="bottom-space"></div>
   </div>
 </template>
 
 <script>
 import CardText from './CardText'
+import RematchButton from '@/modules/games/common/components/RematchButton'
 
 export default {
   name: 'History',
 
   components: {
     CardText,
+    RematchButton,
   },
 
   inject: ['game'],
