@@ -4,6 +4,8 @@
     <DropdownDivider />
     <DropdownRouterLink to="/magic/decks">decks</DropdownRouterLink>
     <DropdownRouterLink to="/magic">profile</DropdownRouterLink>
+    <DropdownDivider />
+    <DropdownButton @click="updateDatabase">update database</DropdownButton>
   </Dropdown>
 
 </template>
@@ -11,6 +13,7 @@
 
 <script>
 import Dropdown from '@/components/Dropdown'
+import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
 import DropdownRouterLink from '@/components/DropdownRouterLink'
 
@@ -19,8 +22,15 @@ export default {
 
   components: {
     Dropdown,
+    DropdownButton,
     DropdownDivider,
     DropdownRouterLink,
+  },
+
+  methods: {
+    updateDatabase() {
+      this.$store.dispatch('magic/cards/updateCards')
+    },
   },
 }
 </script>
