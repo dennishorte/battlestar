@@ -21,6 +21,7 @@
       </div>
 
       <input class="form-control mt-2" v-model="annotation" placeholder="annotation" />
+      <input class="form-control mt-2" v-model="annotationEOT" placeholder="end of turn" />
 
       <div class="counters">
         <h5>Counters</h5>
@@ -70,6 +71,7 @@ export default {
     return {
       activeFace: '',
       annotation: '',
+      annotationEOT: '',
       newCounter: '',
     }
   },
@@ -130,6 +132,13 @@ export default {
           name: 'annotate',
           cardId: this.selectedCard.id,
           annotation: this.annotation,
+        })
+      }
+      if (this.selectedCard.annotationEOT !== this.annotationEOT) {
+        this.do(null, {
+          name: 'annotate eot',
+          cardId: this.selectedCard.id,
+          annotation: this.annotationEOT,
         })
       }
       this.$store.dispatch('magic/game/unselectCard')

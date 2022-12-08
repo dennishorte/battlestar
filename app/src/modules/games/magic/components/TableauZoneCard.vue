@@ -85,7 +85,11 @@ export default {
       }
 
       if (this.card.annotation) {
-        this.parts.push(this.card.annotation)
+        parts.push(this.card.annotation)
+      }
+
+      if (this.card.annotationEOT) {
+        parts.push(this.card.annotationEOT)
       }
 
       return parts.join(', ')

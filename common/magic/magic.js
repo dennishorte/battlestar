@@ -244,6 +244,16 @@ Magic.prototype.aAnnotate = function(player, cardId, annotation) {
   })
 }
 
+Magic.prototype.aAnnotateEOT = function(player, cardId, annotation) {
+  player = player || this.getPlayerCurrent()
+  const card = this.getCardById(cardId)
+  card.annotationEOT = annotation
+  this.mLog({
+    template: '{player} sets EOT annotation on {card} to {annotation}',
+    args: { player, card, annotation },
+  })
+}
+
 Magic.prototype.aCascade = function(player, x) {
   const cards = this.getCardsByZone(player, 'library')
 
@@ -340,6 +350,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'adjust c-counter'    : return this.aAdjustCardCounter(actor, action.cardId, action.key, action.count)
       case 'adjust counter'      : return actor.incrementCounter(action.counter, action.amount)
       case 'annotate'            : return this.aAnnotate(actor, action.cardId, action.annotation)
+      case 'annotate eot'        : return this.aAnnotateEOT(actor, action.cardId, action.annotation)
       case 'cascade'             : return this.aCascade(actor, action.x)
       case 'create token'        : return this.aCreateToken(actor, action.data)
       case 'concede'             : return this.aConcede(actor)
@@ -621,6 +632,7 @@ Magic.prototype.aRollDie = function(player, faces) {
 }
 
 Magic.prototype.aSelectPhase = function(player, phase) {
+  console.log('phase: ', phase)
   this.state.phase = phase
 
   if (phase === 'start turn') {
@@ -656,6 +668,19 @@ Magic.prototype.aSelectPhase = function(player, phase) {
   }
   else if (phase === 'draw') {
     this.aDraw()
+  }
+  else if (phase === 'end') {
+    this.mLogIndent()
+    for (const card of this.getCardAll()) {
+      if (card.annotationEOT) {
+        this.mLog({
+          template: `{card} status ${card.annotationEOT} clears`,
+          args: { card }
+        })
+        card.annotationEOT = ''
+      }
+    }
+    this.mLogOutdent()
   }
 }
 
@@ -770,6 +795,10 @@ Magic.prototype.getCardById = function(id) {
   else {
     return this.cardsById[id]
   }
+}
+
+Magic.prototype.getCardAll = function() {
+  return Object.values(this.cardsById)
 }
 
 Magic.prototype.getDecksSelected = function() {
