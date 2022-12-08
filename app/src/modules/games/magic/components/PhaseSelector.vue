@@ -2,6 +2,11 @@
   <div class="phase-selector">
 
     <div class="section">
+      <div class="section-heading">Undo</div>
+      <div class="phase-button" @click="undo">undo</div>
+    </div>
+
+    <div class="section">
       <div class="section-heading">Actions</div>
       <div class="phase-button" @click="passPriority">pass&nbsp;priority</div>
       <div class="phase-button" @click="save">save</div>
@@ -66,6 +71,10 @@ export default {
     passPriority() {
       this.do(null, { name: 'pass priority' })
       this.save()
+    },
+
+    undo() {
+      this.game.undo()
     },
   },
 }

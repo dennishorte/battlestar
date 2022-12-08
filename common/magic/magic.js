@@ -632,7 +632,6 @@ Magic.prototype.aRollDie = function(player, faces) {
 }
 
 Magic.prototype.aSelectPhase = function(player, phase) {
-  console.log('phase: ', phase)
   this.state.phase = phase
 
   if (phase === 'start turn') {
