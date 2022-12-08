@@ -15,7 +15,10 @@
         <div v-for="n in line.indent" :key="n" class="indent-spacer" />
         <GameLogText :text="line.text" :class="classes(line)" />
       </template>
+
     </div>
+
+    <RematchButton v-if="game.gameOver" />
 
     <div class="bottom-space"></div>
   </div>
@@ -23,12 +26,14 @@
 
 <script>
 import GameLogText from './GameLogText'
+import RematchButton from '@/modules/games/common/components/RematchButton'
 
 export default {
   name: 'GameLog',
 
   components: {
     GameLogText,
+    RematchButton,
   },
 
   inject: ['game', 'ui'],
