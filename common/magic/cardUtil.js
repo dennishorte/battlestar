@@ -126,18 +126,19 @@ CardUtil.allCardNames = function(card) {
 }
 
 const numberFields = ['cmc', 'power', 'toughness', 'loyalty']
-const textFields = ['name', 'text', 'flavor', 'type']
+const textFields = ['name', 'text', 'flavor', 'set', 'type']
 const fieldMapping = {
   cmc: 'cmc',
-  name: 'name',
-  text: 'oracle_text',
-  flavor: 'flavor_text',
-  type: 'type_line',
-  power: 'power',
-  toughness: 'toughness',
-  loyalty: 'loyalty',
   colors: 'colors',
+  flavor: 'flavor_text',
   identity: 'color_identity',
+  loyalty: 'loyalty',
+  name: 'name',
+  power: 'power',
+  set: 'set',
+  text: 'oracle_text',
+  toughness: 'toughness',
+  type: 'type_line',
 }
 const colorNameToSymbol = {
   white: 'W',
@@ -198,17 +199,25 @@ CardUtil.applyOneFilter = function(card, filter) {
       }
     }
 
-    const fieldValue = fieldValues.join(' ').toLowerCase()
-    const targetValue = filter.value.toLowerCase()
+    if (filter.operator === 'or') {
+      const fieldValue = fieldValues.map(v => v.toLowerCase())
+      const targetValues = filter.value.map(v => v.toLowerCase())
+      return targetValues.some(v => fieldValue.includes(v))
+    }
 
-    if (filter.operator === 'and') {
-      return fieldValue.includes(targetValue)
-    }
-    else if (filter.operator === 'not') {
-      return !fieldValue.includes(targetValue)
-    }
     else {
-      throw new Error(`Unhandled string operator: ${filter.operator}`)
+      const fieldValue = fieldValues.join(' ').toLowerCase()
+      const targetValue = filter.value.toLowerCase()
+
+      if (filter.operator === 'and') {
+        return fieldValue.includes(targetValue)
+      }
+      else if (filter.operator === 'not') {
+        return !fieldValue.includes(targetValue)
+      }
+      else {
+        throw new Error(`Unhandled string operator: ${filter.operator}`)
+      }
     }
   }
   else if (numberFields.includes(filter.kind)) {

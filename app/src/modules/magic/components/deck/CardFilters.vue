@@ -104,6 +104,19 @@
       <button class="btn btn-secondary" value="legality" @click="add">add</button>
     </div>
 
+    <div class="filter-group">
+      <label class="col-form-label">set</label>
+      <select class="form-select" ref="set">
+        <option
+          v-for="[key, value] in sets"
+          :value="key"
+        >
+          {{ value }}
+        </option>
+      </select>
+      <button class="btn btn-secondary" value="set" @click="add">add</button>
+    </div>
+
     <div class="colors-group">
       <div class="color-buttons">
         <div class="form-check form-check-inline">
@@ -206,6 +219,11 @@ export default {
   },
 
   computed: {
+    sets() {
+      return Object
+        .entries(mag.res.setCodesToNames)
+        .sort((l, r) => l[1].localeCompare(r[1]))
+    },
   },
 
   methods: {
@@ -227,6 +245,23 @@ export default {
 
         colors.kind = kind
         this.filters.push(colors)
+      }
+
+      else if (kind === 'set') {
+        const value = this.$refs[kind].value
+
+        // See if there is an existing filter
+        const existing = this.filters.find(f => f.kind === 'set')
+        if (existing) {
+          existing.value.push(value)
+        }
+        else {
+          this.filters.push({
+            kind,
+            value: [value],
+            operator: 'or',
+          })
+        }
       }
 
       else {
