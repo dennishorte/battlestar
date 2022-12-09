@@ -215,7 +215,7 @@ Magic.prototype.aAddCounter = function(player, cardId, name) {
 Magic.prototype.aAdjustCardCounter = function(player, cardId, name, amount) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
-  card.counters[name] += 1
+  card.counters[name] += amount
 
   let msg
   if (amount === 1) {
