@@ -36,6 +36,7 @@ export default {
         name: 'select phase',
         phase: this.name,
       })
+      this.$store.dispatch('magic/game/unselectCard')
     },
   },
 }
