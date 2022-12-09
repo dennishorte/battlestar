@@ -1,7 +1,7 @@
 <template>
   <div class="deck-list" :class="modified ? 'modified' : ''">
     <div class="header">
-      <div class="deck-name me-2">{{ deck.name }} ({{ deck.cardlist.length }})</div>
+      <div class="deck-name me-2">{{ deck.name }} ({{ maindeckSize }})</div>
 
       <Dropdown class="deck-menu" v-if="!noMenu">
         <template #title>deck menu</template>
@@ -97,6 +97,10 @@ export default {
         })
 
       return countedSections
+    },
+
+    maindeckSize() {
+      return this.deck.cardlist.filter(card => card.zone === 'main').length
     },
   },
 
