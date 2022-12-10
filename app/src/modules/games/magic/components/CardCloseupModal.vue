@@ -1,5 +1,5 @@
 <template>
-  <Modal id="card-closeup-modal" @ok="saveChanges">
+  <Modal id="card-closeup-modal" @ok="saveChanges" @hidden.bs.modal="clearSelection">
     <template #header>
       <div class="header-button" @click="debug">debug</div>
     </template>
@@ -108,6 +108,10 @@ export default {
           key: this.newCounter,
         })
       }
+    },
+
+    clearSelection() {
+      this.$store.dispatch('magic/game/unselectCard')
     },
 
     debug() {

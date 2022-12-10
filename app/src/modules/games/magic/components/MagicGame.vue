@@ -1,5 +1,5 @@
 <template>
-  <div class="magic-game">
+  <div class="magic-game" @click="unselectCard">
 
     <div class="magic-column log-column">
       <GameMenu />
@@ -18,10 +18,9 @@
     >
       <PlayerTableau :player="player" />
     </div>
-
-
-    <CardCloseupModal />
   </div>
+
+  <CardCloseupModal />
 </template>
 
 
@@ -54,7 +53,13 @@ export default {
       const player = this.game.getPlayerByName(this.actor.name)
       return this.game.getPlayersStarting(player)
     },
-  }
+  },
+
+  methods: {
+    unselectCard() {
+      this.$store.dispatch('magic/game/unselectCard')
+    },
+  },
 }
 </script>
 
