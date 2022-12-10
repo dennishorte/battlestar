@@ -3,6 +3,8 @@
     <div class="alert alert-warning" v-if="!gameReady">Loading game data</div>
     <PreGame v-else-if="inPreGame" />
     <MagicGame v-else />
+
+    <DebugModal />
   </MagicWrapper>
 </template>
 
@@ -13,6 +15,7 @@ import { computed } from 'vue'
 import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
+import DebugModal from '@/modules/games/common/components/DebugModal'
 import MagicGame from './MagicGame'
 import MagicWrapper from '@/modules/magic/components/MagicWrapper'
 import PreGame from './PreGame'
@@ -22,6 +25,7 @@ export default {
   name: 'Magic',
 
   components: {
+    DebugModal,
     MagicGame,
     MagicWrapper,
     PreGame,
