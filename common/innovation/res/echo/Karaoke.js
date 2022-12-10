@@ -38,7 +38,13 @@ function Card() {
       game.state.dogmaInfo.karaoke = {}
     }
 
-    const age = game.aChooseAge(player, [1,2,3,4,5,6,7,8,9])
+    const effectAge = game.getEffectAge(this, 9)
+    const ages = []
+    for (let i = 1; i <= effectAge; i++) {
+      ages.push(i)
+    }
+
+    const age = game.aChooseAge(player, ages)
     const card = game.aDrawAndMeld(player, age)
     if (card) {
       game.state.dogmaInfo.karaoke[player.name] = card
