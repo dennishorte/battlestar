@@ -22,7 +22,7 @@
     </div>
 
     <div ref="menu" :class="highlighted ? '' : 'd-none'">
-      <Dropdown :notitle="true" :menu-end="true" class="menu dropdown">
+      <Dropdown :notitle="true" class="menu dropdown">
         <DropdownButton @click.stop="twiddle" v-if="card.tapped">untap</DropdownButton>
         <DropdownButton @click.stop="twiddle" v-else>tap</DropdownButton>
 
