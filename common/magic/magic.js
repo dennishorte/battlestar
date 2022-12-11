@@ -489,7 +489,15 @@ Magic.prototype.aImportCard = function(player, data) {
     this.mInitializeCard(card, player)
     card.token = data.isToken
     card.visibility = this.getPlayerAll()
-    this.getZoneById(data.zoneId).addCard(card)
+
+    const zone = this.getZoneById(data.zoneId)
+    const owner = this.getPlayerByZone(zone)
+    zone.addCard(card)
+
+    this.mLog({
+      template: "{card} imported to {player}'s {zone}",
+      args: { player: owner, card, zone },
+    })
   }
 }
 
