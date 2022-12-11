@@ -30,6 +30,7 @@
           <DropdownButton @click="mulligan">mulligan</DropdownButton>
           <DropdownDivider />
           <DropdownButton @click="shuffle">shuffle</DropdownButton>
+          <DropdownButton @click="shuffleBottom">shuffle bottom</DropdownButton>
         </template>
       </TableauZone>
 
@@ -89,6 +90,11 @@
       <input class="form-control" placeholder="number of faces" v-model.number="dieFaces" />
     </Modal>
 
+    <Modal id="magic-shuffle-bottom" @ok="shuffleBottomDo">
+      <template #header>Shuffle Bottom of Library</template>
+      <input class="form-control" placeholder="number to shuffle" v-model.number="shuffleBottomCount" />
+    </Modal>
+
     <Modal id="magic-top-n-modal" @ok="viewTopNDo">
       <template #header>View Top Cards of Library</template>
       <input class="form-control" placeholder="number to view" v-model.number="topNCount" />
@@ -145,6 +151,7 @@ export default {
     return {
       dieFaces: 2,
       importZoneId: '',
+      shuffleBottomCount: 5,
       topNCount: 1,
       token: {
         annotation: '',
@@ -263,6 +270,19 @@ export default {
     shuffle() {
       const zoneId = `players.${this.player.name}.library`
       this.do(this.actorPlayer, { name: 'shuffle', zoneId })
+    },
+
+    shuffleBottom() {
+      this.$modal('magic-shuffle-bottom').show()
+    },
+
+    shuffleBottomDo() {
+      const zoneId = `players.${this.player.name}.library`
+      this.do(this.actorPlayer, {
+        name: 'shuffle bottom',
+        zoneId,
+        count: this.shuffleBottomCount,
+      })
     },
 
     viewAll() {

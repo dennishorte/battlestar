@@ -86,10 +86,10 @@ Zone.prototype.shuffleBottom = function(count, opts={}) {
   this._cards.splice(this._cards.length - count, count, ...toShuffle)
 
   if (this.kind === 'hidden') {
-    this._cards.forEach(card => card.visibility = [])
+    toShuffle.forEach(card => card.visibility = [])
   }
   else if (this.kind === 'private') {
-    this._cards.forEach(card => card.visibility = [this.owner])
+    toShuffle.forEach(card => card.visibility = [this.owner])
   }
 }
 

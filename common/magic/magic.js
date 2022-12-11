@@ -369,6 +369,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'roll die'            : return this.aRollDie(actor, action.faces)
       case 'select phase'        : return this.aSelectPhase(actor, action.phase)
       case 'shuffle'             : return this.aShuffle(actor, action.zoneId)
+      case 'shuffle bottom'      : return this.aShuffleBottom(actor, action.zoneId, action.count)
       case 'tap'                 : return this.aTap(actor, action.cardId)
       case 'trigger'             : return this.aTrigger(actor, action.cardId)
       case 'unmorph'             : return this.aUnmorph(actor, action.cardId)
@@ -695,6 +696,11 @@ Magic.prototype.aSelectPhase = function(player, phase) {
 Magic.prototype.aShuffle = function(player, zoneId) {
   const zone = this.getZoneById(zoneId)
   zone.shuffle()
+}
+
+Magic.prototype.aShuffleBottom = function(player, zoneId, count) {
+  const zone = this.getZoneById(zoneId)
+  zone.shuffleBottom(count)
 }
 
 Magic.prototype.aTap = function(player, cardId) {
