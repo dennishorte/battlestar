@@ -487,6 +487,7 @@ Magic.prototype.aImportCard = function(player, data) {
     }
 
     this.mInitializeCard(card, player)
+    card.token = data.isToken
     card.visibility = this.getPlayerAll()
     this.getZoneById(data.zoneId).addCard(card)
   }

@@ -10,6 +10,11 @@
       <option v-for="zoneId in importZoneIds">{{ zoneId }}</option>
     </select>
     <input class="form-control mt-2" v-model.number="count" placeholder="count" />
+
+    <div class="form-check mt-2">
+      <input class="form-check-input" type="checkbox" v-model="isToken" />
+      <label class="form-check-label">token</label>
+    </div>
   </Modal>
 </template>
 
@@ -34,6 +39,7 @@ export default {
   data() {
     return {
       count: 1,
+      isToken: true,
       name: '',
       zoneId: this.zoneSuggestion,
     }
@@ -61,6 +67,7 @@ export default {
           card,
           count: this.count,
           zoneId: this.zoneId,
+          isToken: this.isToken,
         })
       }
       else {
@@ -73,4 +80,13 @@ export default {
 
 
 <style scoped>
+.form-check-input {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.form-check-label {
+  font-size: 1.2em;
+  margin-left: .25em;
+}
 </style>
