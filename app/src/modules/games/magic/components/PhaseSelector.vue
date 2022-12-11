@@ -47,6 +47,7 @@
     <div class="section">
       <div class="section-heading">Ending</div>
       <PhaseButton name="end" />
+      <div class="phase-button" @click="passPriority">pass&nbsp;priority</div>
     </div>
 
   </div>
