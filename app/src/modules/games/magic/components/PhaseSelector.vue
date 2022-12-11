@@ -13,7 +13,12 @@
     </div>
 
     <div class="section">
-      <div class="section-heading">Beginning</div>
+      <div class="section-heading beginning-heading">
+        <div>Beginning</div>
+        <div @click="fastBeginning">
+          <i class="bi bi-star-fill"></i>
+        </div>
+      </div>
       <PhaseButton name="start turn" />
       <PhaseButton name="untap" />
       <PhaseButton name="upkeep" />
@@ -68,6 +73,14 @@ export default {
   },
 
   methods: {
+    fastBeginning() {
+      this.do(null, { name: 'select phase', phase: 'start turn' })
+      this.do(null, { name: 'select phase', phase: 'untap' })
+      this.do(null, { name: 'select phase', phase: 'upkeep' })
+      this.do(null, { name: 'select phase', phase: 'draw' })
+      this.do(null, { name: 'select phase', phase: 'main 1' })
+    },
+
     passPriority() {
       this.do(null, { name: 'pass priority' })
       this.save()
@@ -82,6 +95,12 @@ export default {
 
 
 <style scoped>
+.beginning-heading {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .phase-button {
   font-size: 1.1em;
 }
