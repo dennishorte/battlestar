@@ -11,6 +11,7 @@ function Deck() {
   this.createdTimestamp = Date.now()
   this.updatedTimestamp = this.createdTimestamp
   this.cardlist = []
+  this.filters = []
 
   this.modified = false
 }
@@ -31,6 +32,7 @@ function deserialize(data) {
   deck.cardlist = data.cardlist
   deck.createdTimestamp = data.createdTimestamp
   deck.updatedTimestamp = data.updatedTimestamp
+  deck.filters = data.filters
 
   return deck
 }
@@ -49,6 +51,7 @@ Deck.prototype.serialize = function() {
     createdTimestamp: this.createdTimestamp,
     updatedTimestamp: this.updatedTimestamp,
     cardlist: serializedCardlist,
+    filters: this.filters,
   }
 
   if (this._id) {

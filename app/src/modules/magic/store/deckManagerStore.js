@@ -33,6 +33,9 @@ export default {
       state.activeDeck.name = value.trim()
       state.modified = true
     },
+    setDeckFiters(state, value) {
+      state.activeDeck.filters = value
+    },
     setDeckPath(state, value) {
       state.activeDeck.path = value.trim()
       state.modified = true
@@ -81,6 +84,7 @@ export default {
 
     async saveActiveDeck({ commit, dispatch, state }) {
       const file = state.activeDeck.serialize()
+      file.filters =
       await dispatch('magic/file/save', file, { root: true })
       commit('setModified', false)
     },
@@ -103,7 +107,11 @@ export default {
       const lookupFunc = rootGetters['magic/cards/getLookupFunc']
       mag.util.card.lookup.insertCardData(cards, lookupFunc)
       commit('setActiveDecklist', cards)
-    }
+    },
+
+    storeFiltersOnDeck({ commit }, filters) {
+      commit('setDeckFiters', filters)
+    },
   },
 }
 

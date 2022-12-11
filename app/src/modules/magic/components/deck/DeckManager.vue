@@ -11,7 +11,11 @@
             default-file-type="deck"
             @selection-changed="selectionChanged"
           />
-          <CardFilters :cardlist="cardlist" v-model="filteredCards" />
+          <CardFilters
+            :cardlist="cardlist"
+            v-model="filteredCards"
+            @filters-applied="storeFiltersOnDeck"
+          />
         </div>
 
         <div class="col column cards-column">
@@ -90,6 +94,8 @@ export default {
 
   data() {
     return {
+      bus: mitt(),
+
       actor: this.$store.getters['auth/user'],
       filteredCards: [],
 
@@ -97,6 +103,12 @@ export default {
       newPath: '',
 
       importText: '',
+    }
+  },
+
+  provide() {
+    return {
+      bus: this.bus,
     }
   },
 
@@ -140,6 +152,10 @@ export default {
       }
     },
 
+    storeFiltersOnDeck(filters) {
+      this.$store.dispatch('magic/dm/storeFiltersOnDeck', filters)
+    },
+
     ////////////////////////////////////////////////////////////////////////////////
     // Menu actions
 
@@ -175,6 +191,20 @@ export default {
     async save() {
       this.$store.dispatch('magic/dm/saveActiveDeck')
     },
+  },
+
+  watch: {
+    activeDeck(newDeck) {
+      if (newDeck.filters) {
+        this.bus.emit('set-filters', newDeck.filters)
+      }
+    },
+  },
+
+  mounted() {
+    if (this.activeDeck && this.activeDeck.filters) {
+      this.bus.emit('set-filters', this.activeDeck.filters)
+    }
   },
 }
 </script>
