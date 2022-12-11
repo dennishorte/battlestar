@@ -12,6 +12,7 @@
         :class="extraClasses"
         :hide-popup="hidden"
         :show-mana-cost="showManaCost"
+        :show-power="showPower"
       >
         <template #name>{{ displayName }}</template>
       </CardListItem>
@@ -73,6 +74,11 @@ export default {
     card: Object,
 
     showManaCost: {
+      type: Boolean,
+      default: false,
+    },
+
+    showPower: {
       type: Boolean,
       default: false,
     },

@@ -9,7 +9,11 @@
     <div class="name">
       <slot name="name">{{ name }}</slot>
     </div>
+
     <ManaCost v-if="showManaCost" class="mana-cost" :cost="manaCost" />
+    <div v-else-if(="showPower" class="mana-cost">
+      {{ powerToughness }}
+    </div>
 
   </div>
 </template>
@@ -38,6 +42,11 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    showPower: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   computed: {
@@ -56,6 +65,16 @@ export default {
 
     manaCost() {
       return this.data ? this.data.card_faces[0].mana_cost : ''
+    },
+
+    powerToughness() {
+      const face = this.card.data.card_faces.find(face => face.name === this.card.activeFace)
+      if (face.power) {
+        return `${face.power}/${face.toughness}`
+      }
+      else {
+        return ''
+      }
     },
   },
 

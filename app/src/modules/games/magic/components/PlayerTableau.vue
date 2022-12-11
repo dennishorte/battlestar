@@ -56,7 +56,7 @@
     </div>
 
     <div class="tableau-col" :class="extraColumnClasses">
-      <TableauZone :zone="getZone('creatures')">
+      <TableauZone :zone="getZone('creatures')" :show-power="true">
         <template #menu>
           <DropdownButton @click="importCard('creatures')">import card</DropdownButton>
           <DropdownButton @click="makeToken('creatures')">make token</DropdownButton>

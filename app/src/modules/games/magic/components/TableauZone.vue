@@ -26,6 +26,7 @@
         v-for="card in zone.cards()"
         :card="card"
         :show-mana-cost="showManaCost"
+        :show-power="showPower"
         @click.stop="cardClicked(card)"
       />
 
@@ -66,6 +67,11 @@ export default {
     },
 
     showManaCost: {
+      type: Boolean,
+      default: false,
+    },
+
+    showPower: {
       type: Boolean,
       default: false,
     },
