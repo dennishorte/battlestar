@@ -36,6 +36,7 @@ app.post('/api/magic/cube/save', routes.magic.cube.save)
 
 // Deck routes
 app.post('/api/magic/deck/create', routes.magic.deck.create)
+app.post('/api/magic/deck/fetch', routes.magic.deck.fetch)
 app.post('/api/magic/deck/save', routes.magic.deck.save)
 
 // File routes

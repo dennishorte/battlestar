@@ -29,6 +29,7 @@
               <DropdownButton @click="download">export</DropdownButton>
               <DropdownButton @click="openEditModal">edit</DropdownButton>
               <DropdownButton @click="save" :disabled="!modified">save</DropdownButton>
+              <DropdownButton @click="share">share</DropdownButton>
             </template>
           </Decklist>
 
@@ -150,6 +151,10 @@ export default {
       if (event.newValue.objectType === 'file') {
         this.$store.dispatch('magic/dm/selectDeck', event.newValue.file)
       }
+    },
+
+    share() {
+      this.$router.push(`/magic/deck/${this.activeDeck._id}`)
     },
 
     storeFiltersOnDeck(filters) {
