@@ -21,31 +21,35 @@
       {{ annotation }}
     </div>
 
-    <Dropdown v-if="highlighted" :notitle="true" :menu-end="true" class="menu dropdown">
-      <DropdownButton @click.stop="twiddle" v-if="card.tapped">untap</DropdownButton>
-      <DropdownButton @click.stop="twiddle" v-else>tap</DropdownButton>
+    <div ref="menu" :class="highlighted ? '' : 'd-none'">
+      <Dropdown :notitle="true" :menu-end="true" class="menu dropdown">
+        <DropdownButton @click.stop="twiddle" v-if="card.tapped">untap</DropdownButton>
+        <DropdownButton @click.stop="twiddle" v-else>tap</DropdownButton>
 
-      <DropdownButton @click.stop="closeup">close up</DropdownButton>
+        <DropdownButton @click.stop="closeup">close up</DropdownButton>
 
-      <DropdownButton @click.stop="unmorph" v-if="card.morph">unmorph</DropdownButton>
-      <DropdownButton @click.stop="morph" v-else>morph</DropdownButton>
+        <DropdownButton @click.stop="unmorph" v-if="card.morph">unmorph</DropdownButton>
+        <DropdownButton @click.stop="morph" v-else>morph</DropdownButton>
 
-      <DropdownButton @click.stop="reveal">reveal</DropdownButton>
+        <DropdownButton @click.stop="reveal">reveal</DropdownButton>
 
-      <DropdownDivider />
+        <DropdownDivider />
 
-      <li v-for="counter in Object.keys(card.counters)">
-        <button @click.stop="() => {}" class="dropdown-item counter-button">
-          <CounterButtons @click.stop="() => {}" :card="card" :name="counter" />
-        </button>
-      </li>
-    </Dropdown>
+        <li v-for="counter in Object.keys(card.counters)">
+          <button @click.stop="() => {}" class="dropdown-item counter-button">
+            <CounterButtons @click.stop="() => {}" :card="card" :name="counter" />
+          </button>
+        </li>
+      </Dropdown>
+    </div>
 
   </div>
 </template>
 
 
 <script>
+import { Dropdown as bsDropdown } from 'bootstrap'
+
 import CardListItem from '@/modules/magic/components/CardListItem'
 import CounterButtons from './CounterButtons'
 import Dropdown from '@/components/Dropdown'
@@ -193,6 +197,16 @@ export default {
         cardId: this.card.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
+    },
+  },
+
+  watch: {
+    highlighted(newValue) {
+      if (newValue) {
+        const toggleElem = this.$refs.menu.querySelector('.dropdown-toggle')
+        const dropdown = new bsDropdown(toggleElem)
+        dropdown.show()
+      }
     },
   },
 }
