@@ -1,5 +1,11 @@
 <template>
-  <div class="card-name" @click="clicked">
+  <div
+    class="card-name"
+    @click="clicked"
+    @mouseover="mouseover"
+    @mouseleave="mouseleave"
+    @mousemove="mousemove"
+  >
     {{ displayName }}
   </div>
 </template>
@@ -27,6 +33,21 @@ export default {
 
   methods: {
     clicked() {
+    },
+
+    mouseover() {
+      this.$store.commit('magic/setMouseoverCard', this.card.data)
+    },
+
+    mouseleave() {
+      this.$store.commit('magic/unsetMouseoverCard', this.card.data)
+    },
+
+    mousemove(event) {
+      this.$store.commit('magic/setMouseoverPosition', {
+        x: event.clientX,
+        y: event.clientY,
+      })
     },
   },
 }

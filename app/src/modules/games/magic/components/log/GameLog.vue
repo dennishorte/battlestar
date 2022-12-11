@@ -102,7 +102,7 @@ export default {
         let replacement = value.value
 
         if (arg === 'card' && !value.classes.includes('card-hidden')) {
-          replacement = `card(${value.value})`
+          replacement = `card(${value.cardId})`
         }
 
         else if (arg === 'player') {
