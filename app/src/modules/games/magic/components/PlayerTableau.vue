@@ -85,22 +85,22 @@
       </TableauZone>
     </div>
 
-    <Modal id="magic-die-roll-modal" @ok="rollDieDo">
+    <Modal :id="`magic-die-roll-modal-${player.name}`" @ok="rollDieDo">
       <template #header>Roll a Die</template>
       <input class="form-control" placeholder="number of faces" v-model.number="dieFaces" />
     </Modal>
 
-    <Modal id="magic-shuffle-bottom" @ok="shuffleBottomDo">
+    <Modal :id="`magic-shuffle-bottom-${player.name}`" @ok="shuffleBottomDo">
       <template #header>Shuffle Bottom of Library</template>
       <input class="form-control" placeholder="number to shuffle" v-model.number="shuffleBottomCount" />
     </Modal>
 
-    <Modal id="magic-top-n-modal" @ok="viewTopNDo">
+    <Modal :id="`magic-top-n-modal-${player.name}`" @ok="viewTopNDo">
       <template #header>View Top Cards of Library</template>
       <input class="form-control" placeholder="number to view" v-model.number="topNCount" />
     </Modal>
 
-    <Modal id="make-token-modal" @ok="makeTokenDo">
+    <Modal :id="`make-token-modal-${player.name}`" @ok="makeTokenDo">
       <template #header>Make Tokens</template>
       <input class="form-control" v-model="token.name" placeholder="name" />
       <input class="form-control mt-2" v-model="token.annotation" placeholder="annotation" />
@@ -110,7 +110,7 @@
       <input class="form-control mt-2" v-model.number="token.count" placeholder="count" />
     </Modal>
 
-    <ImportCardModal :zone-suggestion="importZoneId" @import-card="importCardDo" />
+    <ImportCardModal :id="`import-card-modal-${player.name}`" :zone-suggestion="importZoneId" @import-card="importCardDo" />
   </div>
 </template>
 
@@ -218,7 +218,7 @@ export default {
 
     importCard(zoneName) {
       this.importZoneId = `players.${this.player.name}.${zoneName}`
-      this.$modal('import-card-modal').show()
+      this.$modal(`import-card-modal-${this.player.name}`).show()
     },
 
     importCardDo(data) {
@@ -230,7 +230,7 @@ export default {
 
     makeToken(zoneName) {
       this.token.zoneId = `players.${this.player.name}.${zoneName}`
-      this.$modal('make-token-modal').show()
+      this.$modal(`make-token-modal-${this.player.name}`).show()
     },
 
     makeTokenDo() {
@@ -260,7 +260,7 @@ export default {
     },
 
     rollDie() {
-      this.$modal('magic-die-roll-modal').show()
+      this.$modal(`magic-die-roll-modal-${this.player.name}`).show()
     },
 
     rollDieDo() {
@@ -273,7 +273,7 @@ export default {
     },
 
     shuffleBottom() {
-      this.$modal('magic-shuffle-bottom').show()
+      this.$modal(`magic-shuffle-bottom-${this.player.name}`).show()
     },
 
     shuffleBottomDo() {
@@ -296,12 +296,12 @@ export default {
     },
 
     viewTopN() {
-      this.$modal('magic-top-n-modal').show()
+      this.$modal(`magic-top-n-modal-${this.player.name}`).show()
     },
 
     viewTopNDo() {
       const zoneId = `players.${this.player.name}.library`
-      this.do(this.actorPlayer, { name: 'view top k', count: this.topNCount, zoneId })
+        this.do(this.actorPlayer, { name: 'view top k', count: this.topNCount, zoneId })
     },
   }
 }

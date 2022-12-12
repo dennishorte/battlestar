@@ -1,5 +1,5 @@
 <template>
-  <Modal id="import-card-modal" @ok="importCardDo">
+  <Modal @ok="importCardDo">
     <template #header>Insert Card</template>
 
     <div class="type-ahead">
