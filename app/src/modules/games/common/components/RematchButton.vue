@@ -9,12 +9,10 @@ import axios from 'axios'
 export default {
   name: 'RematchButton',
 
-  inject: ['game', 'save'],
+  inject: ['game'],
 
   methods: {
     async rematch() {
-      await save()
-
       const result = await axios.post('/api/game/rematch', { gameId: this.game._id })
       if (result.data.status === 'success') {
         this.$router.push(result.data.redirect)
