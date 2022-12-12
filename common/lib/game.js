@@ -638,3 +638,14 @@ Game.prototype.getZoneById = function(id) {
 Game.prototype.getZoneByPlayer = function(player, name) {
   return this.state.zones.players[player.name][name]
 }
+
+Game.prototype.historicalView = function(index) {
+  const data = {
+    _id: this._id,
+    chat: this.chat,
+    settings: this.settings,
+    responses: this.responses.slice(0, index + 1),
+  }
+
+  return new this.constructor(data, this.viewerName)
+}
