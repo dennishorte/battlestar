@@ -93,6 +93,7 @@ export default {
               value.count = group.length
               return value
             })
+            .sort((l, r) => l.name.localeCompare(r.name))
           return [sectionName, cardsWithCounts]
         })
 
