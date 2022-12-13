@@ -600,10 +600,12 @@ const cardData = [
     impl: (game, player, { card }) => {
       const loc = game.aChooseAndPlaceSpy(player)
 
-      const doDevour = game.aChooseYesNo(player, `Devour this wraith to assassinate a troop at ${loc.name}`)
-      if (doDevour) {
-        game.aDevour(player, card)
-        game.aChooseAndAssassinate(player, { loc })
+      if (loc) {
+        const doDevour = game.aChooseYesNo(player, `Devour this wraith to assassinate a troop at ${loc.name}`)
+        if (doDevour) {
+          game.aDevour(player, card)
+          game.aChooseAndAssassinate(player, { loc })
+        }
       }
     },
   }
