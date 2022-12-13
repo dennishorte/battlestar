@@ -28,6 +28,10 @@ export default {
       }
     },
 
+    remoteVersionLoaded(state) {
+      return state.remoteVersion !== '__NOT_LOADED__'
+    },
+
     versionMismatch(state) {
       const value = (
         state.localVersion !== '__NOT_LOADED__'
@@ -70,16 +74,22 @@ export default {
 
   actions: {
     ensureLoaded({ dispatch, state }) {
+      console.log('ensureLoaded')
+
       if (!state.loadedOnce) {
-        dispatch('loadCards')
         dispatch('getRemoteVersion')
+        dispatch('loadCards')
+      }
+      else {
+        console.log('...already loaded once')
       }
     },
 
-    async getRemoteVersion({ commit }) {
+    async getRemoteVersion({ commit, state }) {
       const requestResult = await axios.post('/api/magic/card/version')
       if (requestResult.data.status === 'success') {
         commit('setRemoteVersion', requestResult.data.version)
+        console.log(`...db versions: local [${state.localVersion}] remote [${state.remoteVersion}]`)
       }
       else {
         alert('Error fetching remote cards verion.\n' + requestResult.data.message)
@@ -87,6 +97,7 @@ export default {
     },
 
     async loadCards({ commit, dispatch }) {
+      console.log('...load cards')
       commit('setLoadedOnce')
       commit('setCardsLoading')
 
@@ -98,7 +109,7 @@ export default {
       //await dispatch('applyCardFilters')
 
       commit('setCardsLoaded')
-      console.log('Card database ready')
+      console.log('...card database ready')
     },
 
     async updateCards({ commit }) {
@@ -114,7 +125,7 @@ export default {
 
 function loadCardsFromDatabase() {
   return new Promise(async (resolve, reject) => {
-    console.log('loadCardsFromDatabase')
+    console.log('...load cards from database')
 
     const db = await openLocalStorage()
 
@@ -128,13 +139,13 @@ function loadCardsFromDatabase() {
       const cursor = e.target.result
 
       if (cursor) {
-        console.log('Cursor iteration')
+        console.log('...cursor iteration')
         cards = cursor.value.json_data
         version = cursor.value.version
         cursor.continue()
       }
       else {
-        console.log('all values loaded', cards.length)
+        console.log('...all values loaded', cards.length)
         db.close()
 
         resolve({ cards, version })
@@ -152,14 +163,14 @@ async function openLocalStorage(handlers) {
     })
 
     openRequest.addEventListener('success', () => {
-      console.log('Database opened successfully')
+      console.log('...database opened successfully')
       resolve(openRequest.result)
     })
 
     openRequest.addEventListener('upgradeneeded', (e) => {
       const db = e.target.result
 
-      console.log(`Upgrading database to version ${db.version}`)
+      console.log(`...upgrading database to version ${db.version}`)
 
       // Create an objectStore in our database to store notes and an auto-incrementing key
       // An objectStore is similar to a 'table' in a relational database
@@ -171,7 +182,7 @@ async function openLocalStorage(handlers) {
       // Define what data items the objectStore will contain
       objectStore.createIndex('json_data', 'json_data', { unique: false })
 
-      console.log('Database setup complete')
+      console.log('...database setup complete')
     })
   })
 }
