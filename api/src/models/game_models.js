@@ -111,10 +111,12 @@ async function doSave(game) {
     { _id: game._id },
     {
       $set: {
-        responses: game.responses,
         chat: game.chat,
-        waiting: game.getPlayerNamesWaiting(),
+        gameOver: game.gameOver,
+        gameOverData: game.gameOverData,
         lastUpdated: Date.now(),
+        responses: game.responses,
+        waiting: game.getPlayerNamesWaiting(),
       }
     },
   )

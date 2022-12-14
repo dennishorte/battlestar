@@ -264,6 +264,7 @@ Game.prototype.undo = function() {
 
   if (this.gameOver) {
     this.gameOver = false
+    this.gameOverData = null
   }
 
   // Undo all responses to the last submitted key.

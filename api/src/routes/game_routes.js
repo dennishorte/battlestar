@@ -200,7 +200,7 @@ async function updateStatsOneMagic(data) {
   if (
     !data.stats
     || data.stats.version !== statsVersion
-    || (data.gameOver === true && data.stats.gameOver === false)
+    || data.gameOver !== data.stat.gameOver
   ) {
 
     data.stats = {
