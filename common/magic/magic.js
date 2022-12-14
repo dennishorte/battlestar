@@ -361,6 +361,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'import card'         : return this.aImportCard(actor, action.data)
       case 'morph'               : return this.aMorph(actor, action.cardId)
       case 'move card'           : return this.aMoveCard(actor, action.cardId, action.destId, action.destIndex)
+      case 'move revealed'       : return this.aMoveRevealed(actor, action.sourceId, action.targetId)
       case 'mulligan'            : return this.aMulligan(actor)
       case 'pass priority'       : return this.aPassPriority()
       case 'reveal'              : return this.aReveal(actor, action.cardId)
@@ -543,6 +544,19 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
     if (!['creatures', 'battlefield', 'land'].includes(zoneKind)) {
       this.mUntap(card)
     }
+  }
+}
+
+Magic.prototype.aMoveRevealed = function(player, sourceId, targetId) {
+  const source = this.getZoneById(sourceId)
+  const numPlayers = this.getPlayerAll().length
+
+  const toMove = util
+    .array
+    .takeWhile(source.cards(), card => card.visibility.length === numPlayers)
+
+  for (const card of toMove) {
+    this.aMoveCard(player, card.id, targetId)
   }
 }
 

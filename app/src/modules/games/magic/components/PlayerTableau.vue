@@ -31,6 +31,8 @@
           <DropdownDivider />
           <DropdownButton @click="shuffle">shuffle</DropdownButton>
           <DropdownButton @click="shuffleBottom">shuffle bottom</DropdownButton>
+          <DropdownDivider />
+          <DropdownButton @click="moveRevealed">move revealed</DropdownButton>
         </template>
       </TableauZone>
 
@@ -111,11 +113,25 @@
     </Modal>
 
     <ImportCardModal :id="`import-card-modal-${player.name}`" :zone-suggestion="importZoneId" @import-card="importCardDo" />
+
+
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
+      <div id="move-revealed-toast" class="toast" ref="moveRevealedToast">
+        <div class="toast-header">
+          <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body">
+          Click on a zone to move all revealed cards from the library.
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
 
 <script>
+import { Dropdown as bsDropdown, Toast } from 'bootstrap'
 import { computed } from 'vue'
 import { mapGetters } from 'vuex'
 
@@ -245,6 +261,14 @@ export default {
       })
     },
 
+    moveRevealed(event) {
+      this.stopPropagation(event)
+      const zoneId = `players.${this.player.name}.library`
+      this.$store.commit('magic/game/setMovingRevealedSource', zoneId)
+      const toast = new Toast(this.$refs.moveRevealedToast)
+      toast.show()
+    },
+
     mulligan() {
       this.do(this.player, { name: 'mulligan' })
     },
@@ -283,6 +307,14 @@ export default {
         zoneId,
         count: this.shuffleBottomCount,
       })
+    },
+
+    stopPropagation(event) {
+      event.stopPropagation()
+      const dropdown = event.target.closest('.dropdown')
+      const toggle = dropdown.querySelector('.dropdown-toggle')
+      const dd = new bsDropdown(toggle)
+      dd.hide()
     },
 
     viewAll() {

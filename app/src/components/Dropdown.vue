@@ -4,7 +4,6 @@
       class="btn btn-secondary dropdown-toggle"
       :class="buttonClasses"
       data-bs-toggle="dropdown"
-      @click.stop
     >
       <slot name="title">
         <template v-if="!notitle">menu</template>

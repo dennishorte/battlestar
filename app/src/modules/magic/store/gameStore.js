@@ -6,6 +6,7 @@ export default {
 
   state: () => ({
     game: null,
+    movingRevealedSource: null,
     ready: false,
     selectedCardId: null,
 
@@ -27,6 +28,10 @@ export default {
 
       return ids
     },
+
+    isMovingRevealed(state) {
+      return Boolean(state.movingRevealedSource)
+    },
   },
 
   mutations: {
@@ -42,13 +47,22 @@ export default {
       state.ready = value
     },
 
+    setMovingRevealedSource(state, value) {
+      state.movingRevealedSource = value
+    },
+
     setSelectedCard(state, card) {
       state.selectedCardId = card ? card.id : null
     },
   },
 
   actions: {
-    clickCard({ commit, state }, card) {
+    clickCard({ commit, dispatch, getters, state }, card) {
+      if (getters.isMovingRevealed) {
+        dispatch('moveRevealed', state.game.getZoneByCard(card))
+        return
+      }
+
       // Check for double click
       if (
         state.doubleClick.card === card
@@ -95,7 +109,12 @@ export default {
       }
     },
 
-    clickZone({ commit, state }, { zone, position }) {
+    clickZone({ commit, dispatch, getters, state }, { zone, position }) {
+      if (getters.isMovingRevealed) {
+        dispatch('moveRevealed', zone)
+        return
+      }
+
       if (state.selectedCardId) {
         const index = position === 'top' ? 0 : zone.cards().length
 
@@ -119,6 +138,15 @@ export default {
 
       commit('setGame', game)
       commit('setReady', true)
+    },
+
+    moveRevealed({ commit, state }, targetZone) {
+      state.game.doFunc(null, {
+        name: 'move revealed',
+        sourceId: state.movingRevealedSource,
+        targetId: targetZone.id,
+      })
+      commit('setMovingRevealedSource', null)
     },
 
     unselectCard({ commit }) {
