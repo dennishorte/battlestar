@@ -20,16 +20,16 @@
 
       <TableauZone :zone="getZone('library')" :library-view="true">
         <template #menu>
-          <DropdownButton @click="viewNext()">view next</DropdownButton>
-          <DropdownButton @click="viewTopN()">view top n</DropdownButton>
-          <DropdownButton @click="viewAll()">view all</DropdownButton>
-          <DropdownButton @click="revealNext()">reveal next</DropdownButton>
+          <DropdownButton @click="viewNext">view next</DropdownButton>
+          <DropdownButton @click="viewTopN">view top n</DropdownButton>
+          <DropdownButton @click="viewAll">view all</DropdownButton>
+          <DropdownButton @click="revealNext">reveal next</DropdownButton>
           <DropdownDivider />
           <DropdownButton @click="draw">draw</DropdownButton>
           <DropdownButton @click="drawSeven">draw 7</DropdownButton>
           <DropdownButton @click="mulligan">mulligan</DropdownButton>
           <DropdownDivider />
-          <DropdownButton @click="shuffle">shuffle</DropdownButton>
+          <DropdownButton @click="shuffle('library')">shuffle</DropdownButton>
           <DropdownButton @click="shuffleBottom">shuffle bottom</DropdownButton>
           <DropdownDivider />
           <DropdownButton @click="moveRevealed">move revealed</DropdownButton>
@@ -42,8 +42,9 @@
     <div class="tableau-col" :class="extraColumnClasses">
       <TableauZone :zone="getZone('hand')" :show-mana-cost="player.name === actor.name">
         <template #menu>
-          <DropdownButton @click="revealHand()">reveal</DropdownButton>
-          <DropdownButton @click="hideHand()">hide</DropdownButton>
+          <DropdownButton @click="revealHand">reveal</DropdownButton>
+          <DropdownButton @click="hideHand">hide</DropdownButton>
+          <DropdownButton @click="shuffle('hand')">shuffle</DropdownButton>
         </template>
       </TableauZone>
 
@@ -291,8 +292,8 @@ export default {
       this.do(this.player, { name: 'roll die', faces: this.dieFaces })
     },
 
-    shuffle() {
-      const zoneId = `players.${this.player.name}.library`
+    shuffle(zoneName) {
+      const zoneId = `players.${this.player.name}.${zoneName}`
       this.do(this.actorPlayer, { name: 'shuffle', zoneId })
     },
 
