@@ -92,6 +92,7 @@ export default {
         chat: game.getChat(),
         waiting: game.waiting,
         gameOver: game.gameOver,
+        gameOverData: game.gameOverData,
       }
 
       const requestResult = await axios.post('/api/game/saveFull', payload)

@@ -32,6 +32,7 @@ function Game(serialized_data, viewerName) {
   this.breakpoints = {}
 
   this.gameOver = false
+  this.gameOverData = null
   this.random = 'uninitialized'
   this.key = 'uninitialized'
 
@@ -249,6 +250,7 @@ Game.prototype.run = function() {
     }
     else if (e instanceof GameOverEvent) {
       this.gameOver = true
+      this.gameOverData = e.data
       return this._gameOver(e)
     }
     else {

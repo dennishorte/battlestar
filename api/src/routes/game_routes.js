@@ -119,9 +119,12 @@ Game.saveFull = async function(req, res) {
   game.responses = req.body.responses
   game.chat = req.body.chat
 
+  // Magic doesn't run when saving because that would require loading the card
+  // database, which is slow.
   if (game.settings.game === 'Magic') {
     game.waiting = req.body.waiting
     game.gameOver = req.body.gameOver
+    game.gameOverData = req.body.gameOverData
     await _testAndSave(game, res, () => {})
   }
   else {
@@ -180,11 +183,45 @@ async function _testAndSave(game, res, evalFunc) {
 async function updateStatsOne(data) {
   switch (data.settings.game) {
     case 'Innovation':
-      return updateStatsOneInnovation(data);
+      return updateStatsOneInnovation(data)
+
+    case 'Magic':
+      return updateStatsOneMagic(data)
+
     case 'Tyrants of the Underdark':
-      return updateStatsOneTyrants(data);
+      return updateStatsOneTyrants(data)
+
     default:
       return false;
+  }
+}
+
+async function updateStatsOneMagic(data) {
+  if (
+    !data.stats
+    || data.stats.version !== statsVersion
+    || (data.gameOver === true && data.stats.gameOver === false)
+  ) {
+
+    data.stats = {
+      version: statsVersion,
+      error: false,
+    }
+
+    if (data.gameOver) {
+      data.stats.gameOver = true
+      data.stats.result = data.gameOverData
+    }
+    else {
+      data.stats.gameOver = false
+    }
+
+    await db.game.saveStats(data)
+    return true
+  }
+
+  else {
+    return false
   }
 }
 
