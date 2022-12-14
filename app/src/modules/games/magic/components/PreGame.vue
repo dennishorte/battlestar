@@ -7,9 +7,14 @@
 
 
     <div class="content">
-      <div class="content-column">
+      <div class="chat-column">
         <GameMenu :disabled="['debug', 'undo']" />
 
+        <GameLog />
+        <ChatInput @chat-added="save" />
+      </div>
+
+      <div class="deck-column">
         <div class="players">
           <table class="table table-sm">
             <thead>
@@ -63,7 +68,9 @@
 import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
+import ChatInput from '@/modules/games/common/components/ChatInput'
 import Decklist from '@/modules/magic/components/deck/Decklist'
+import GameLog from './log/GameLog'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import MagicFileManager from '@/modules/magic/components/MagicFileManager'
 
@@ -71,7 +78,9 @@ export default {
   name: 'PreGame',
 
   components: {
+    ChatInput,
     Decklist,
+    GameLog,
     GameMenu,
     MagicFileManager,
   },
@@ -162,6 +171,10 @@ export default {
   margin: 0 1em;
 }
 
+.chat-column {
+  min-width: 20em;
+}
+
 .content {
   display: flex;
   flex-direction: row;
@@ -170,13 +183,13 @@ export default {
   overflow-x: scroll;
 }
 
-.content-column {
+.deck-column {
   display: flex;
   flex-direction: column;
-  min-width: 30em;
+  min-width: 20em;
 }
 
-.content-column:not(:first-of-type) {
+.deck-column:not(:first-of-type) {
   margin-left: .5em;
 }
 

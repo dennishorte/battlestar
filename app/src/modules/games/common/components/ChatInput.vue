@@ -20,7 +20,7 @@ export default {
   methods: {
     async sendChat() {
       await this.game.mChat(this.actor.name, this.text)
-      console.log(this.game.getChat())
+      this.$emit('chat-added', this.text)
       this.text = ''
     }
   },
