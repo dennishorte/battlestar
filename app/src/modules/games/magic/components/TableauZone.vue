@@ -19,6 +19,7 @@
         <div>bottom</div>
       </div>
       <TableauZoneCard v-for="card in bottomCards" :card="card" @click.stop="cardClicked(card)" />
+      <div class="bottom-space" @click.stop="zoneClicked('bottom')"></div>
     </template>
 
     <template v-else>
