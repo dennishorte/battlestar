@@ -41,6 +41,15 @@
             <CounterButtons @click.stop="() => {}" :card="card" :name="counter" />
           </button>
         </li>
+
+        <DropdownDivider />
+
+        <DropdownButton @click="toggleUntap">
+          doesn't untap
+          <i class="bi bi-check-square" v-if="card.noUntap"></i>
+          <i class="bi bi-square" v-else></i>
+        </DropdownButton>
+
       </Dropdown>
     </div>
 
@@ -56,6 +65,7 @@ import CounterButtons from './CounterButtons'
 import Dropdown from '@/components/Dropdown'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
+
 
 export default {
   name: 'TableauZoneCard',
@@ -195,6 +205,13 @@ export default {
         cardId: this.card.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
+    },
+
+    toggleUntap() {
+      this.do(null, {
+        name: this.card.noUntap ? 'notap clear' : 'notap set',
+        cardId: this.card.id,
+      })
     },
 
     unmorph() {

@@ -363,6 +363,8 @@ Magic.prototype.aChooseAction = function(player) {
       case 'move card'           : return this.aMoveCard(actor, action.cardId, action.destId, action.destIndex)
       case 'move revealed'       : return this.aMoveRevealed(actor, action.sourceId, action.targetId)
       case 'mulligan'            : return this.aMulligan(actor)
+      case 'notap clear'         : return this.aSetNoUntap(actor, action.cardId, false)
+      case 'notap set'           : return this.aSetNoUntap(actor, action.cardId, true)
       case 'pass priority'       : return this.aPassPriority()
       case 'reveal'              : return this.aReveal(actor, action.cardId)
       case 'reveal all'          : return this.aRevealAll(actor, action.zoneId)
@@ -684,10 +686,8 @@ Magic.prototype.aSelectPhase = function(player, phase) {
       ...this.getCardsByZone(player, 'battlefield'),
       ...this.getCardsByZone(player, 'land'),
     ].flat()
-
-    for (const card of cards) {
-      this.mUntap(card)
-    }
+     .filter(card => !card.noUntap)
+     .forEach(card => this.mUntap(card))
   }
   else if (phase === 'draw') {
     this.aDraw()
@@ -704,6 +704,24 @@ Magic.prototype.aSelectPhase = function(player, phase) {
       }
     }
     this.mLogOutdent()
+  }
+}
+
+Magic.prototype.aSetNoUntap = function(player, cardId, value) {
+  const card = this.getCardById(cardId)
+  card.noUntap = value
+
+  if (value) {
+    this.mLog({
+      template: '{card} will no longer auto-untap',
+      args: { card },
+    })
+  }
+  else {
+    this.mLog({
+      template: '{card} will untap as normal',
+      args: { card },
+    })
   }
 }
 
@@ -897,6 +915,7 @@ Magic.prototype.mInitializeCard = function(card, owner) {
   }
   card.id = this.getNextLocalId()
   card.morph = false
+  card.noUntap = false
   card.owner = owner
   card.tapped = false
   card.token = false
