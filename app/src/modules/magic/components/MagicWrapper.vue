@@ -30,12 +30,7 @@
     </div>
 
     <template v-else>
-      <Card
-        v-if="mouseoverCard"
-        :card="mouseoverCard"
-        :style="mouseoverPosition"
-        @click="hideMouseoverCard"
-      />
+      <Card v-if="mouseoverCard" :card="mouseoverCard" :style="mouseoverPosition" />
 
       <slot></slot>
     </template>
@@ -135,10 +130,6 @@ export default {
   },
 
   methods: {
-    hideMouseoverCard() {
-      this.$store.commit('magic/unsetMouseoverCard')
-    },
-
     showVersionMismatchModal() {
       this.$modal('cards-version-update-modal').show()
     },
