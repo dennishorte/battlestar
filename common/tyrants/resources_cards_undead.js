@@ -550,7 +550,7 @@ const cardData = [
     "aspect": "malice",
     "race": "undead",
     "expansion": "undead",
-    "cost": 3,
+    "cost": 4,
     "points": 1,
     "innerPoints": 3,
     "count": 4,
