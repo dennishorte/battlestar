@@ -449,6 +449,8 @@ Tyrants.prototype._generateBuyActions = function(maxCost=0) {
     }
   }
 
+  choices.sort()
+
   if (choices.length > 0) {
     return {
       title: 'Recruit',
