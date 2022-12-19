@@ -14,24 +14,21 @@ describe("Papyrus of Ani", () => {
       },
       decks: {
         base: {
-          3: ['Engineering'],
+          3: ['Education'],
         },
-        arti: {
-          3: ['Necronomicon']
-        }
       }
     })
 
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'arti')
+    const request3 = t.choose(game, request2, 'no')
 
     t.testIsFirstAction(request3)
     t.testBoard(game, {
       dennis: {
-        purple: ['Necronomicon'],
-        hand: ['Engineering'],
-      },
+        purple: ['Education'],
+        score: ['Sailing'],
+     },
     })
   })
 

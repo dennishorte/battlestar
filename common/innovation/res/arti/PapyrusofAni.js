@@ -12,7 +12,8 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Return a purple card from your hand. If you do, draw and reveal a card of any type of value two higher. If the drawn card is purple, meld is and execute each of its non-demand dogma effects. Do not share them.`
+    // `Return a purple card from your hand. If you do, draw and reveal a card of any type of value two higher. If the drawn card is purple, meld is and execute each of its non-demand dogma effects. Do not share them.`
+    `Return a purple card from your hand. If you do, draw and reveal a card of value two higher. If the drawn card is purple, meld is and execute each of its non-demand dogma effects. Do not share them.`
   ]
 
   this.dogmaImpl = [
@@ -24,8 +25,7 @@ function Card() {
 
       if (returned && returned.length > 0) {
         const returnedCard = returned[0]
-        const exp = game.aChoose(player, game.getExpansionList(), { title: 'Choose a Card Type' })
-        const drawn = game.aDraw(player, { age: returnedCard.age + 2, exp })
+        const drawn = game.aDraw(player, { age: returnedCard.age + 2 })
 
         if (drawn && drawn.color === 'purple') {
           game.aMeld(player, drawn)
