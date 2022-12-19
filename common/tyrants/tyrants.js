@@ -397,6 +397,8 @@ Tyrants.prototype._generateCardActions = function() {
     choices.push(card.name)
   }
 
+  choices.sort()
+
   if (choices.length > 0) {
     return {
       title: 'Play Card',
