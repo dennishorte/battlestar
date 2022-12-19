@@ -13,7 +13,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I compel you to draw a card of value 2 higher than your highest top card and transfer it to my board.`
+    `I compel you to draw a {4} and transfer it to my board.`
     // `I compel you to transfer Dancing Girl to your board!`,
     // `If Dancing Girl has been on every board during this action, and it started on your board, you win.`
   ]
@@ -21,8 +21,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player, { leader }) => {
       const highestCard = game.utilHighestCards(game.getTopCards(player))[0]
-      const age = highestCard ? highestCard.getAge() + 2 : 2
-      const card = game.aDraw(player, { age })
+      const card = game.aDraw(player, { age: 4 })
       if (card) {
         game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
       }
