@@ -544,6 +544,12 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
   const card = this.getCardById(cardId)
   const startingZone = this.getZoneByCard(card)
   const dest = this.getZoneById(destId)
+
+  const enforceOrdering = dest.name === 'graveyard'
+  if (enforceOrdering) {
+    destIndex = 0
+  }
+
   this.mMoveCardTo(card, dest, { index: destIndex })
   this.mLog({
     template: '{player} moves {card} from {zone1} to {zone2}',
