@@ -1,65 +1,27 @@
 <template>
   <div class="player-counters">
-    <div v-for="[name, count] in Object.entries(player.counters)" class="counter">
-      <div class="counter-text">
-        {{ name }}: {{ count }}
-      </div>
-
-      <div class="counter-buttons">
-        <i class="bi bi-dice-5-fill counter-red" @click="increment(name, -5)"></i>
-        <i class="bi bi-dice-1-fill counter-red" @click="increment(name, -1)"></i>
-        <i class="bi bi-dice-1-fill counter-green" @click="increment(name, 1)"></i>
-        <i class="bi bi-dice-5-fill counter-green" @click="increment(name, 5)"></i>
-      </div>
-    </div>
+    <PlayerCounter v-for="name in Object.keys(player.counters)" :player="player" :name="name" />
   </div>
 </template>
 
 
 <script>
-export default {
-  name: 'TableauZone',
+import PlayerCounter from './PlayerCounter'
 
-  inject: ['actor', 'do', 'game'],
+
+export default {
+  name: 'PlayerCounters',
+
+  components: {
+    PlayerCounter,
+  },
 
   props: {
     player: Object,
-  },
-
-  methods: {
-    increment(name, count) {
-      const actorPlayer = this.game.getPlayerByName(this.actor.name)
-      this.do(this.player, {
-        name: 'adjust counter',
-        counter: name,
-        amount: count,
-      })
-    },
   },
 }
 </script>
 
 
 <style scoped>
-.counter {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.counter-buttons {
-  font-size: .9em;
-}
-
-.bi:not(:first-of-type) {
-  margin-left: 2px;
-}
-
-.counter-green {
-  color: green;
-}
-
-.counter-red {
-  color: red;
-}
 </style>

@@ -8,6 +8,7 @@
 
           <div class="zone-menu">
             <TableauZoneMenu>
+              <DropdownButton @click="countersCloseup">counters</DropdownButton>
               <DropdownButton @click="rollDie">roll a die</DropdownButton>
               <DropdownDivider />
               <DropdownButton @click="concede">concede</DropdownButton>
@@ -210,6 +211,10 @@ export default {
   methods: {
     concede() {
       this.do(this.player, { name: 'concede' })
+    },
+
+    countersCloseup() {
+      this.$modal('counter-closeup-modal').show()
     },
 
     draw() {

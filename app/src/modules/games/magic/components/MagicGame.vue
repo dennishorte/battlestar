@@ -21,6 +21,7 @@
   </div>
 
   <CardCloseupModal />
+  <CounterCloseupModal />
 </template>
 
 
@@ -29,6 +30,7 @@ import { mapState } from 'vuex'
 
 import CardCloseupModal from './CardCloseupModal'
 import ChatInput from '@/modules/games/common/components/ChatInput'
+import CounterCloseupModal from './CounterCloseupModal'
 import GameLog from './log/GameLog'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import PhaseSelector from './PhaseSelector'
@@ -39,6 +41,7 @@ export default {
 
   components: {
     CardCloseupModal,
+    CounterCloseupModal,
     ChatInput,
     GameLog,
     GameMenu,

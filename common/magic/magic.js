@@ -212,6 +212,21 @@ Magic.prototype.aAddCounter = function(player, cardId, name) {
   this.aAdjustCardCounter(player, cardId, name, 1)
 }
 
+Magic.prototype.aAddCounterPlayer = function(player, targetName, counterName) {
+  const target = this.getPlayerByName(targetName)
+
+  if (counterName in target.counters) {
+    throw new Error(`Counter already exists: ${counterName}`)
+  }
+
+  target.counters[counterName] = 0
+
+  this.mLog({
+    template: 'Counter {name} added to {player}',
+    args: { player: target, name: counterName },
+  })
+}
+
 Magic.prototype.aAdjustCardCounter = function(player, cardId, name, amount) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
@@ -347,6 +362,7 @@ Magic.prototype.aChooseAction = function(player) {
     switch (action.name) {
       case 'active face'         : return this.aActiveFace(actor, action.cardId, action.face)
       case 'add counter'         : return this.aAddCounter(actor, action.cardId, action.key)
+      case 'add counter player'  : return this.aAddCounterPlayer(actor, action.playerName, action.key)
       case 'adjust c-counter'    : return this.aAdjustCardCounter(actor, action.cardId, action.key, action.count)
       case 'adjust counter'      : return actor.incrementCounter(action.counter, action.amount)
       case 'annotate'            : return this.aAnnotate(actor, action.cardId, action.annotation)
