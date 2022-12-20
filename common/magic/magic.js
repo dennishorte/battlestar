@@ -376,6 +376,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'hide all'            : return this.aHideAll(actor, action.zoneId)
       case 'import card'         : return this.aImportCard(actor, action.data)
       case 'morph'               : return this.aMorph(actor, action.cardId)
+      case 'move all'            : return this.aMoveAll(actor, action.sourceId, action.targetId)
       case 'move card'           : return this.aMoveCard(actor, action.cardId, action.destId, action.destIndex)
       case 'move revealed'       : return this.aMoveRevealed(actor, action.sourceId, action.targetId)
       case 'mulligan'            : return this.aMulligan(actor)
@@ -527,6 +528,14 @@ Magic.prototype.aMorph = function(player, cardId) {
   const card = this.getCardById(cardId)
   card.morph = true
   this.aMoveCard(player, cardId, zone.id, 0)
+}
+
+Magic.prototype.aMoveAll = function(player, sourceId, targetId) {
+  const source = this.getZoneById(sourceId)
+  const toMove = source.cards()
+  for (const card of toMove) {
+    this.aMoveCard(player, card.id, targetId)
+  }
 }
 
 Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {

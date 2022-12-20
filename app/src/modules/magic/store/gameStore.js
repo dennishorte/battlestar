@@ -6,6 +6,7 @@ export default {
 
   state: () => ({
     game: null,
+    movingAllSource: null,
     movingRevealedSource: null,
     ready: false,
     selectedCardId: null,
@@ -29,6 +30,14 @@ export default {
       return ids
     },
 
+    isMovingAll(state) {
+      return Boolean(state.movingAllSource)
+    },
+
+    isMovingCards(state) {
+      return Boolean(state.movingRevealedSource) || Boolean(state.movingAllSource)
+    },
+
     isMovingRevealed(state) {
       return Boolean(state.movingRevealedSource)
     },
@@ -45,6 +54,10 @@ export default {
 
     setReady(state, value) {
       state.ready = value
+    },
+
+    setMovingAllSource(state, value) {
+      state.movingAllSource = value
     },
 
     setMovingRevealedSource(state, value) {
@@ -110,6 +123,11 @@ export default {
     },
 
     clickZone({ commit, dispatch, getters, state }, { zone, position }) {
+      if (getters.isMovingAll) {
+        dispatch('moveAll', zone)
+        return
+      }
+
       if (getters.isMovingRevealed) {
         dispatch('moveRevealed', zone)
         return
@@ -138,6 +156,14 @@ export default {
 
       commit('setGame', game)
       commit('setReady', true)
+    },
+
+    moveAll({ commit, state }, targetZone) {
+      state.game.doFunc(null, {
+        name: 'move all',
+        sourceId: state.movingAllSource,
+        targetId: targetZone.id,
+      })
     },
 
     moveRevealed({ commit, state }, targetZone) {

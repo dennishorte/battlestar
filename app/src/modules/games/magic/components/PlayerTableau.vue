@@ -46,6 +46,8 @@
           <DropdownButton @click="revealHand">reveal</DropdownButton>
           <DropdownButton @click="hideHand">hide</DropdownButton>
           <DropdownButton @click="shuffle('hand')">shuffle</DropdownButton>
+          <DropdownDivider />
+          <DropdownButton @click="moveAll($event, 'hand')">move all</DropdownButton>
         </template>
       </TableauZone>
 
@@ -56,7 +58,9 @@
         </template>
       </TableauZone>
 
-      <TableauZone :zone="getZone('graveyard')" />
+      <TableauZone :zone="getZone('graveyard')">
+        <DropdownButton @click="moveAll($event, 'graveyard')">move all</DropdownButton>
+      </TableauZone>
     </div>
 
     <div class="tableau-col" :class="extraColumnClasses">
@@ -64,6 +68,8 @@
         <template #menu>
           <DropdownButton @click="importCard('creatures')">import card</DropdownButton>
           <DropdownButton @click="makeToken('creatures')">make token</DropdownButton>
+          <DropdownDivider />
+          <DropdownButton @click="moveAll($event, 'creatures')">move all</DropdownButton>
         </template>
       </TableauZone>
 
@@ -71,6 +77,8 @@
         <template #menu>
           <DropdownButton @click="importCard('battlefield')">import card</DropdownButton>
           <DropdownButton @click="makeToken('battlefield')">make token</DropdownButton>
+          <DropdownDivider />
+          <DropdownButton @click="moveAll($event, 'battlefield')">move all</DropdownButton>
         </template>
       </TableauZone>
 
@@ -78,6 +86,8 @@
         <template #menu>
           <DropdownButton @click="importCard('land')">import card</DropdownButton>
           <DropdownButton @click="makeToken('land')">make token</DropdownButton>
+          <DropdownDivider />
+          <DropdownButton @click="moveAll($event, 'land')">move all</DropdownButton>
         </template>
       </TableauZone>
 
@@ -267,8 +277,16 @@ export default {
       })
     },
 
+    moveAll(event, zone) {
+      event.stopPropagation()
+      const zoneId = `players.${this.player.name}.${zone}`
+      this.$store.commit('magic/game/setMovingAllSource', zoneId)
+      const toast = new Toast(this.$refs.moveRevealedToast)
+      toast.show()
+    },
+
     moveRevealed(event) {
-      this.stopPropagation(event)
+      event.stopPropagation()
       const zoneId = `players.${this.player.name}.library`
       this.$store.commit('magic/game/setMovingRevealedSource', zoneId)
       const toast = new Toast(this.$refs.moveRevealedToast)
