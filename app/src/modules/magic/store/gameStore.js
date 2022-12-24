@@ -71,6 +71,11 @@ export default {
 
   actions: {
     clickCard({ commit, dispatch, getters, state }, card) {
+      if (getters.isMovingAll) {
+        dispatch('moveAll', zone)
+        return
+      }
+
       if (getters.isMovingRevealed) {
         dispatch('moveRevealed', state.game.getZoneByCard(card))
         return
