@@ -30,7 +30,7 @@
     </div>
 
     <template v-else>
-      <Card v-if="mouseoverCard" :card="mouseoverCard" :style="mouseoverPosition" />
+      <Card v-if="!isMobile && mouseoverCard" :card="mouseoverCard" :style="mouseoverPosition" />
 
       <slot></slot>
     </template>
@@ -88,6 +88,10 @@ export default {
       remoteVersionLoaded: 'remoteVersionLoaded',
       versionMismatch: 'versionMismatch',
     }),
+
+    isMobile() {
+      return window.innerWidth < window.innerHeight
+    },
 
     mouseoverPosition() {
       const leftPixelSpace = this.mouseoverX
