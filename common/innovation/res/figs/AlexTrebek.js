@@ -31,6 +31,7 @@ function Card() {
           .getZoneByPlayer(player, 'hand')
           .cards()
           .filter(card => card.getAge() === age)
+          .filter(card => card.checkIsFigure())
 
         return cardsOfSameAge.length === 0
       },
