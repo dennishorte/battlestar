@@ -18,6 +18,10 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      if (!game.state.dogmaInfo.karaoke) {
+        game.mLogNoEffect()
+        return
+      }
       const card = game.state.dogmaInfo.karaoke[player.name]
       if (card) {
         game.aCardEffects(player, card, 'dogma')
