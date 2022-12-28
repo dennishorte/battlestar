@@ -33,6 +33,7 @@
           <DropdownButton @click="shuffle('library')">shuffle</DropdownButton>
           <DropdownButton @click="shuffleBottom">shuffle bottom</DropdownButton>
           <DropdownDivider />
+          <DropdownButton @click="moveAll($event, 'library')">move all</DropdownButton>
           <DropdownButton @click="moveRevealed">move revealed</DropdownButton>
         </template>
       </TableauZone>
