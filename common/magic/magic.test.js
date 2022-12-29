@@ -62,11 +62,12 @@ describe('Magic Actions', () => {
     const request1 = game.run()
     const request2 = t.do(game, request1, {
       name: 'create token',
-      card: {
+      data: {
         name: 'Elf Warrior',
-        token: true,
+        annotation: '1/1',
+        count: 1,
+        zoneId: 'players.dennis.creatures',
       },
-      zone: 'players.dennis.creatures',
     })
 
     t.testBoard(game, {
