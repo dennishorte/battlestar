@@ -110,19 +110,18 @@ describe('Magic Actions', () => {
     })
   })
 
-  test('import', () => {
+  test('import card', () => {
     const game = t.fixtureDecksSelected()
 
     const request1 = game.run()
     const request2 = t.do(game, request1, {
-      name: 'import',
-      card: {
-        name: 'White Knight',
-        set: null,
-        collectorNumber: null,
-        token: true,
+      name: 'import card',
+      data: {
+        count: 1,
+        card: game.cardLookupFunc({ name: 'White Knight' }),
+        isToken: true,
+        zoneId: 'players.dennis.command',
       },
-      zone: 'players.dennis.command',
     })
     const request3 = t.do(game, request2, { name: 'draw' })
 
