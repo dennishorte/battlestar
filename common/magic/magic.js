@@ -516,7 +516,7 @@ Magic.prototype.aImportCard = function(player, data) {
     zone.addCard(card)
 
     this.mLog({
-      template: "{card} imported to {player}'s {zone}",
+      template: "{card} imported to {zone}",
       args: { player: owner, card, zone },
     })
   }
@@ -1101,8 +1101,12 @@ Magic.prototype._enrichLogArgs = function(msg) {
     }
     else if (key.startsWith('zone')) {
       const zone = msg.args[key]
+      const owner = this.getPlayerByZone(zone)
+
+      const value = owner ? `${owner.name}'s ${zone.name}` : zone.name
+
       msg.args[key] = {
-        value: zone.name,
+        value,
         classes: ['zone-name']
       }
     }
