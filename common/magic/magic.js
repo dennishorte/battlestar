@@ -689,6 +689,7 @@ Magic.prototype.aRollDie = function(player, faces) {
 }
 
 Magic.prototype.aSelectPhase = function(player, phase) {
+  this.mClearStack()
   this.state.phase = phase
 
   if (phase === 'start turn') {
@@ -710,6 +711,9 @@ Magic.prototype.aSelectPhase = function(player, phase) {
     })
     this.mLogIndent()
   }
+
+
+  // Special handling for some phases
 
   if (phase === 'untap') {
     const cards = [
@@ -921,15 +925,28 @@ Magic.prototype.mAdjustCardVisibility = function(card) {
   }
 }
 
-Magic.prototype.mClearAnnotations = function(card) {
-  card.annotation = ''
-  card.annotationEOT = ''
-}
+Magic.prototype.mClearStack = function() {
 
-Magic.prototype.mClearCounters = function(card) {
-  Object
-    .keys(card.counters)
-    .forEach(c => card.counters[c] = 0)
+  const toClear = []
+
+  for (const player of this.getPlayerAll()) {
+    const cards = this.getCardsByZone(player, 'stack')
+    for (const card of cards) {
+      toClear.push(card)
+    }
+  }
+
+  if (toClear.length > 0) {
+    this.mLog({ template: 'clearing stack' })
+    this.mLogIndent()
+
+    for (const card of toClear) {
+      const owner = this.getPlayerByOwner(card)
+      const graveyard = this.getZoneByPlayer(owner, 'graveyard')
+      this.mMoveCardTo(card, graveyard, { verbose: true })
+    }
+    this.mLogOutdent()
+  }
 }
 
 Magic.prototype.mHide = function(card) {
@@ -966,6 +983,25 @@ Magic.prototype.mInitializeCard = function(card, owner) {
   this.cardsById[card.id] = card
 }
 
+Magic.prototype.mMaybeClearAnnotations = function(card) {
+  const validZones = ['creatures', 'battlefield', 'land']
+
+  if (!validZones.some(id => card.zone.endsWith(id))) {
+    card.annotation = ''
+    card.annotationEOT = ''
+  }
+}
+
+Magic.prototype.mMaybeClearCounters = function(card) {
+  const validZones = ['creatures', 'battlefield', 'land']
+
+  if (!validZones.some(id => card.zone.endsWith(id))) {
+    Object
+      .keys(card.counters)
+      .forEach(c => card.counters[c] = 0)
+  }
+}
+
 Magic.prototype.mMaybeRemoveTokens = function(card) {
   const validZones = ['creatures', 'battlefield', 'land', 'stack']
 
@@ -993,8 +1029,8 @@ Magic.prototype.mMoveByIndices = function(source, sourceIndex, target, targetInd
   targetCards.splice(targetIndex, 0, card)
   card.zone = target.id
   this.mAdjustCardVisibility(card)
-  this.mClearAnnotations(card)
-  this.mClearCounters(card)
+  this.mMaybeClearAnnotations(card)
+  this.mMaybeClearCounters(card)
   this.mMaybeRemoveTokens(card)
   return card
 }

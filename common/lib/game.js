@@ -561,6 +561,10 @@ Game.prototype.getPlayerByName = function(name) {
   return this.getPlayerAll().find(p => p.name === name)
 }
 
+Game.prototype.getPlayerByOwner = function(card) {
+  return card.owner
+}
+
 Game.prototype.getPlayerByZone = function(zone) {
   const regex = /players[.]([^.]+)[.]/
   const match = zone.id.match(regex)
