@@ -33,6 +33,7 @@
         <DropdownButton @click.stop="morph" v-else>morph</DropdownButton>
 
         <DropdownButton @click.stop="reveal">reveal</DropdownButton>
+        <DropdownButton @click.stop="stack">stack</DropdownButton>
 
         <DropdownDivider />
 
@@ -205,6 +206,13 @@ export default {
         cardId: this.card.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
+    },
+
+    stack() {
+      this.do(null, {
+        name: 'stack effect',
+        cardId: this.card.id,
+      })
     },
 
     toggleUntap() {

@@ -390,6 +390,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'select phase'        : return this.aSelectPhase(actor, action.phase)
       case 'shuffle'             : return this.aShuffle(actor, action.zoneId)
       case 'shuffle bottom'      : return this.aShuffleBottom(actor, action.zoneId, action.count)
+      case 'stack effect'        : return this.aStackEffect(actor, action.cardId)
       case 'tap'                 : return this.aTap(actor, action.cardId)
       case 'trigger'             : return this.aTrigger(actor, action.cardId)
       case 'unmorph'             : return this.aUnmorph(actor, action.cardId)
@@ -407,7 +408,7 @@ Magic.prototype.aChooseAction = function(player) {
   }
 }
 
-Magic.prototype.aCreateToken = function(player, data) {
+Magic.prototype.aCreateToken = function(player, data, opts={}) {
   const zone = this.getZoneById(data.zoneId)
   const owner = this.getPlayerByZone(zone)
 
@@ -434,10 +435,12 @@ Magic.prototype.aCreateToken = function(player, data) {
     card.visibility = this.getPlayerAll()
     zone.addCard(card)
 
-    this.mLog({
-      template: '{card} token created in {zone}',
-      args: { card, zone },
-    })
+    if (!opts.silent) {
+      this.mLog({
+        template: '{card} token created in {zone}',
+        args: { card, zone },
+      })
+    }
   }
 }
 
@@ -768,6 +771,24 @@ Magic.prototype.aShuffle = function(player, zoneId) {
 Magic.prototype.aShuffleBottom = function(player, zoneId, count) {
   const zone = this.getZoneById(zoneId)
   zone.shuffleBottom(count)
+}
+
+Magic.prototype.aStackEffect = function(player, cardId) {
+  const card = this.getCardById(cardId)
+  const owner = this.getPlayerByOwner(card)
+  const stack = this.getZoneByPlayer(owner, 'stack')
+
+  const data = {
+    zoneId: stack.id,
+    count: 1,
+    name: 'effect: ' + card.name,
+  }
+
+  this.aCreateToken(owner, data, { silent: true })
+  this.mLog({
+    template: '{player} puts effect of {card} on stack',
+    args: { player: owner, card }
+  })
 }
 
 Magic.prototype.aTap = function(player, cardId) {
