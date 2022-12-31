@@ -412,6 +412,8 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
   const zone = this.getZoneById(data.zoneId)
   const owner = this.getPlayerByZone(zone)
 
+  const created = []
+
   for (let i = 0; i < data.count; i++) {
     // Create fake card data
     const card = {
@@ -434,6 +436,7 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
     card.token = true
     card.visibility = this.getPlayerAll()
     zone.addCard(card)
+    created.push(card)
 
     if (!opts.silent) {
       this.mLog({
@@ -447,6 +450,8 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
       this.mLogIndent()
     }
   }
+
+  return created
 }
 
 Magic.prototype.aDraw = function(player, opts={}) {
@@ -776,10 +781,10 @@ Magic.prototype.aStackEffect = function(player, cardId) {
     name: 'effect: ' + card.name,
   }
 
-  this.aCreateToken(owner, data, { silent: true })
+  const token = this.aCreateToken(owner, data, { silent: true })[0]
   this.mLog({
-    template: '{player} puts effect of {card} on stack',
-    args: { player: owner, card }
+    template: '{player} puts {card} on stack',
+    args: { player: owner, card: token }
   })
 }
 
