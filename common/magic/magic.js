@@ -921,6 +921,17 @@ Magic.prototype.mAdjustCardVisibility = function(card) {
   }
 }
 
+Magic.prototype.mClearAnnotations = function(card) {
+  card.annotation = ''
+  card.annotationEOT = ''
+}
+
+Magic.prototype.mClearCounters = function(card) {
+  Object
+    .keys(card.counters)
+    .forEach(c => card.counters[c] = 0)
+}
+
 Magic.prototype.mHide = function(card) {
   const zone = this.getZoneByCard(card)
   if (zone.kind === 'public') {
@@ -982,6 +993,8 @@ Magic.prototype.mMoveByIndices = function(source, sourceIndex, target, targetInd
   targetCards.splice(targetIndex, 0, card)
   card.zone = target.id
   this.mAdjustCardVisibility(card)
+  this.mClearAnnotations(card)
+  this.mClearCounters(card)
   this.mMaybeRemoveTokens(card)
   return card
 }
