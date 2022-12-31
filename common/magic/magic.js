@@ -441,6 +441,11 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
         args: { card, zone },
       })
     }
+
+    // Card was moved to stack.
+    if (zone.id.endsWith('.stack')) {
+      this.mLogIndent()
+    }
   }
 }
 
@@ -522,6 +527,11 @@ Magic.prototype.aImportCard = function(player, data) {
       template: "{card} imported to {zone}",
       args: { player: owner, card, zone },
     })
+
+    // Card was moved to stack.
+    if (zone.id.endsWith('.stack')) {
+      this.mLogIndent()
+    }
   }
 }
 
@@ -563,24 +573,6 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
       zone2: dest,
     }
   })
-
-  // Card was moved to stack.
-  if (dest.id.endsWith('.stack')) {
-    this.mLogIndent()
-  }
-
-  // Card was removed from stack.
-  if (startingZone.id.endsWith('.stack')) {
-    this.mLogOutdent()
-  }
-
-  // Card moved to a non-tap zone
-  if (card.tapped) {
-    const zoneKind = dest.id.split('.').slice(-1)[0]
-    if (!['creatures', 'battlefield', 'land'].includes(zoneKind)) {
-      this.mUntap(card)
-    }
-  }
 }
 
 Magic.prototype.aMoveRevealed = function(player, sourceId, targetId) {
@@ -1063,10 +1055,29 @@ Magic.prototype.mMoveCardTo = function(card, zone, opts={}) {
       args: { card, zone }
     })
   }
+  const startingZone = this.getZoneByCard(card)
   const source = this.getZoneByCard(card)
   const index = source.cards().indexOf(card)
   const destIndex = opts.index !== undefined ? opts.index : zone.cards().length
   this.mMoveByIndices(source, index, zone, destIndex)
+
+  // Card was moved to stack.
+  if (zone.id.endsWith('.stack')) {
+    this.mLogIndent()
+  }
+
+  // Card was removed from stack.
+  if (startingZone.id.endsWith('.stack')) {
+    this.mLogOutdent()
+  }
+
+  // Card moved to a non-tap zone
+  if (card.tapped) {
+    const zoneKind = zone.id.split('.').slice(-1)[0]
+    if (!['creatures', 'battlefield', 'land'].includes(zoneKind)) {
+      this.mUntap(card)
+    }
+  }
 }
 
 Magic.prototype.mReveal = function(card) {
