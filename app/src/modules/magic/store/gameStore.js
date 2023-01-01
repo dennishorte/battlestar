@@ -71,6 +71,8 @@ export default {
 
   actions: {
     clickCard({ commit, dispatch, getters, state }, card) {
+      commit('magic/clearMouseoverCard', null, { root: true })
+
       if (getters.isMovingAll) {
         dispatch('moveAll', zone)
         return
@@ -128,6 +130,8 @@ export default {
     },
 
     clickZone({ commit, dispatch, getters, state }, { zone, position }) {
+      commit('magic/clearMouseoverCard', null, { root: true })
+
       if (getters.isMovingAll) {
         dispatch('moveAll', zone)
         return

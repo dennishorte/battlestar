@@ -165,6 +165,10 @@ export default {
   },
 
   created() {
+    window.addEventListener('click', () => {
+      this.$store.commit('magic/clearMouseoverCard')
+    })
+
     this.$store.dispatch('magic/cards/ensureLoaded')
   },
 

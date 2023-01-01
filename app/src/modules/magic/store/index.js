@@ -21,6 +21,10 @@ export default {
   }),
 
   mutations: {
+    clearMouseoverCard(state) {
+      state.mouseoverCard = null
+    },
+
     setMouseoverCard(state, card) {
       state.mouseoverCard = card
     },
