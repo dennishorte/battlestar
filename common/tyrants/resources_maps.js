@@ -730,7 +730,7 @@ const mapData = [
       "points": 0
     },
     "neighbors": [
-      "Gauntlgrim",
+      "Gauntlgrym",
       "Jhachalkhyn"
     ]
   },
@@ -1241,7 +1241,7 @@ const mapData = [
     ]
   },
   {
-    "name": "Gauntlgrim",
+    "name": "Gauntlgrym",
     "short": "gaunt",
     "region": 1,
     "size": 3,
@@ -1257,6 +1257,7 @@ const mapData = [
       "points": 1
     },
     "neighbors": [
+      "The Wormwrithings",
       "gaunt-jhach"
     ]
   },
@@ -1277,6 +1278,7 @@ const mapData = [
       "points": 0
     },
     "neighbors": [
+      "Gauntlgrym",
       "mant-worm"
     ]
   },
@@ -1297,6 +1299,7 @@ const mapData = [
       "points": 0
     },
     "neighbors": [
+      "gaunt-jhach",
       "grack-jhach",
       "buiyr-jhach"
     ]
@@ -1318,6 +1321,7 @@ const mapData = [
       "points": 0
     },
     "neighbors": [
+      "buiyr-jhach",
       "buiyr-labyr",
       "buiyr-stone"
     ]
@@ -1339,7 +1343,8 @@ const mapData = [
       "points": 0
     },
     "neighbors": [
-      "skull-stone a",
+      "buiyr-stone",
+      "skull-stone b",
       "ch'chi-stone"
     ]
   },
@@ -1360,7 +1365,8 @@ const mapData = [
       "points": 1
     },
     "neighbors": [
-      "ch'chi-kana"
+      "ch'chi-kana",
+      "ch'chi-stone"
     ]
   },
   {
