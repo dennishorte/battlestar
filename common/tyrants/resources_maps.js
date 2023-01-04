@@ -1820,7 +1820,8 @@ const mapData = [
     },
     "neighbors": [
       "halls-yath",
-      "ched-yath"
+      "ched-yath",
+      "phaer-yath",
     ]
   },
   {
