@@ -32,14 +32,14 @@
     <div class="collapse" id="transform-options">
       <div>
         Scale
-        <input class="form-control" placeholder="x" v-model="scale.x" />
-        <input class="form-control" placeholder="y" v-model="scale.y" />
+        <input class="form-control" placeholder="x" v-model.number="scale.x" />
+        <input class="form-control" placeholder="y" v-model.number="scale.y" />
       </div>
 
       <div>
         Translate
-        <input class="form-control" placeholder="x" v-model="translate.x" />
-        <input class="form-control" placeholder="y" v-model="translate.y" />
+        <input class="form-control" placeholder="x" v-model.number="translate.x" />
+        <input class="form-control" placeholder="y" v-model.number="translate.y" />
       </div>
 
       <div>
