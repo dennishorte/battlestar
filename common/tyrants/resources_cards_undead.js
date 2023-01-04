@@ -166,7 +166,7 @@ const cardData = [
     "race": "undead",
     "expansion": "undead",
     "cost": 3,
-    "points": 1,
+    "points": 2,
     "innerPoints": 3,
     "count": 2,
     "text": [
