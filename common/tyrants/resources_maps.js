@@ -1519,7 +1519,8 @@ const mapData = [
     "neighbors": [
       "kana-skull",
       "erynd-kana b",
-      "kana-tsen a"
+      "kana-tsen a",
+      "ch'chi-kana"
     ],
     "ui": {
       x: 1,
