@@ -825,6 +825,7 @@ Magic.prototype.aUnmorph = function(player, cardId) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
   card.morph = false
+  this.mReveal(card)
   this.mLog({
     template: '{player} unmorphs {card}',
     args: { player, card },
