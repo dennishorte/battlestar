@@ -11,6 +11,8 @@
               <DropdownButton @click="countersCloseup">counters</DropdownButton>
               <DropdownButton @click="rollDie">roll a die</DropdownButton>
               <DropdownDivider />
+              <DropdownButton @click="passToThisPlayer">pass to this player</DropdownButton>
+              <DropdownDivider />
               <DropdownButton @click="concede">concede</DropdownButton>
               <DropdownButton @click="drawGame">draw game</DropdownButton>
             </TableauZoneMenu>
@@ -170,7 +172,7 @@ export default {
     TableauZoneMenu,
   },
 
-  inject: ['actor', 'do', 'game'],
+  inject: ['actor', 'do', 'game', 'save'],
 
   props: {
     player: Object,
@@ -296,6 +298,11 @@ export default {
 
     mulligan() {
       this.do(this.player, { name: 'mulligan' })
+    },
+
+    passToThisPlayer() {
+      this.do(this.actorPlayer, { name: 'pass priority', playerName: this.player.name })
+      this.save()
     },
 
     revealHand() {
