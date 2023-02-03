@@ -612,8 +612,6 @@ Magic.prototype.aMulligan = function(player) {
 }
 
 Magic.prototype.aPassPriority = function(actor, targetName) {
-  console.log(0, actor, targetName)
-
   const player = targetName ? this.getPlayerByName(targetName) : this.getPlayerNext()
   this.state.currentPlayer = player
 
