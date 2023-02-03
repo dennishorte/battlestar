@@ -301,7 +301,7 @@ export default {
     },
 
     passToThisPlayer() {
-      this.do(this.actorPlayer, { name: 'pass priority', playerName: this.player.name })
+      this.do(this.actorPlayer, { name: 'pass priority', target: this.player.name })
       this.save()
     },
 

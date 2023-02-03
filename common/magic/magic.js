@@ -382,7 +382,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'mulligan'            : return this.aMulligan(actor)
       case 'notap clear'         : return this.aSetNoUntap(actor, action.cardId, false)
       case 'notap set'           : return this.aSetNoUntap(actor, action.cardId, true)
-      case 'pass priority'       : return this.aPassPriority(actor, action.playerName)
+      case 'pass priority'       : return this.aPassPriority(actor, action.target)
       case 'reveal'              : return this.aReveal(actor, action.cardId)
       case 'reveal all'          : return this.aRevealAll(actor, action.zoneId)
       case 'reveal next'         : return this.aRevealNext(actor, action.zoneId)
@@ -611,8 +611,10 @@ Magic.prototype.aMulligan = function(player) {
   this.mLogOutdent()
 }
 
-Magic.prototype.aPassPriority = function(actor, playerName) {
-  const player = playerName ? this.getPlayerByName(playerName) : this.getPlayerNext()
+Magic.prototype.aPassPriority = function(actor, targetName) {
+  console.log(0, actor, targetName)
+
+  const player = targetName ? this.getPlayerByName(targetName) : this.getPlayerNext()
   this.state.currentPlayer = player
 
   const indent = this.getLogIndent()
