@@ -68,6 +68,10 @@ export default {
     },
 
     powerToughness() {
+      if (this.card.morph) {
+        return '2/2'
+      }
+
       const face = this.card.data.card_faces.find(face => face.name === this.card.activeFace)
       if (face.power) {
         return `${face.power}/${face.toughness}`
