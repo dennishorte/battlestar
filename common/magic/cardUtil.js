@@ -427,6 +427,10 @@ CardUtil.parseRulesLine = function(line) {
 }
 
 CardUtil.parseOracleText = function(text) {
+  if (!text) {
+    return []
+  }
+
   const output = []
 
   for (const line of text.split('\n')) {
