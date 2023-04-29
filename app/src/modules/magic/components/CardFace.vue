@@ -135,7 +135,7 @@ export default {
       else if (this.face.loyalty) {
         return this.face.loyalty
       }
-      else if (this.face.defense) {
+      else if (this.face.type_line.includes('Siege') && this.face.defense) {
         return this.face.defense
       }
       else {
