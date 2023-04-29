@@ -125,11 +125,12 @@ CardUtil.allCardNames = function(card) {
   return names.map(name => name.toLowerCase())
 }
 
-const numberFields = ['cmc', 'power', 'toughness', 'loyalty']
+const numberFields = ['cmc', 'power', 'toughness', 'loyalty', 'defense']
 const textFields = ['name', 'text', 'flavor', 'set', 'type']
 const fieldMapping = {
   cmc: 'cmc',
   colors: 'colors',
+  defense: 'defense',
   flavor: 'flavor_text',
   identity: 'color_identity',
   loyalty: 'loyalty',
