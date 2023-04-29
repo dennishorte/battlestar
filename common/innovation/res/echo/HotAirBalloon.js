@@ -41,7 +41,17 @@ function Card() {
       if (card) {
         const owner = game.getPlayerByCard(card)
         game.aClaimAchievement(player, { card })
-        game.aTransfer(player, game.getTopCard(player, 'green'), game.getZoneByPlayer(owner, 'green'))
+
+        const cardToTransfer = game.getTopCard(player, 'green')
+        if (cardToTransfer) {
+          game.aTransfer(player, cardToTransfer, game.getZoneByPlayer(owner, 'green'))
+        }
+        else {
+          game.mLog({
+            template: '{player} has no top green card',
+            args: { player }
+          })
+        }
       }
       else {
         game.aDrawAndMeld(player, game.getEffectAge(this, 7))
