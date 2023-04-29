@@ -135,6 +135,9 @@ export default {
       else if (this.face.loyalty) {
         return this.face.loyalty
       }
+      else if (this.face.defense) {
+        return this.face.defense
+      }
       else {
         return ''
       }

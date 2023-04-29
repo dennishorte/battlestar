@@ -17,6 +17,7 @@ const rootFields = [
 
 const faceFields = [
   "artist",
+  "defense",
   "flavor_text",
   "id",
   "image_uris",
