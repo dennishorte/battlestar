@@ -20,6 +20,9 @@ module.exports = {
   MagicFactory,
   factory: factoryFromLobby,
   res,
+  draft: {
+    cube: require('./draft/cube.js'),
+  },
   util: {
     card: cardUtil,
     deck: deckUtil,
