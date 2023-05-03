@@ -1,5 +1,7 @@
 const CardBase = require(`../CardBase.js`)
 const { GameOverEvent } = require('../../../lib/game.js')
+const util = require('../../../lib/util.js')
+
 
 function Card() {
   this.id = `Dancing Girl`  // Card names are unique in Innovation
@@ -13,17 +15,27 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I compel you to draw a {4} and transfer it to my board.`
+    `I compel you to transfer Dancing Girl to your board! If you do, transfer all of your highest top cards to my board!`,
     // `I compel you to transfer Dancing Girl to your board!`,
     // `If Dancing Girl has been on every board during this action, and it started on your board, you win.`
   ]
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      const highestCard = game.utilHighestCards(game.getTopCards(player))[0]
-      const card = game.aDraw(player, { age: 4 })
-      if (card) {
+      game.aTransfer(player, this, game.getZoneByPlayer(player, this.color))
+
+      const age = game.getHighestTopAge(player)
+      const toTransfer = game
+        .getTopCards(player)
+        .filter(card => card.getAge() == age)
+
+      while (toTransfer.length > 0) {
+        const card = game.aChooseCard(player, toTransfer, {
+          title: `Choose a card to transfer to ${leader.name}`,
+        })
+
         game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+        util.array.remove(toTransfer, card)
       }
     }
 

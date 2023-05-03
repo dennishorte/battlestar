@@ -6,33 +6,38 @@ describe('Dancing Girl', () => {
 
   test('dogma', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-    t.setBoard(game,  {
+    t.setBoard(game, {
       dennis: {
         yellow: ['Dancing Girl'],
       },
       micah: {
-        purple: ['Philosophy'],
-      },
-      decks: {
-        base: {
-          4: ['Gunpowder'],
-        }
+        purple: ['Philosophy', 'Code of Laws'],
+        red: ['Construction'],
+        yellow: ['Canal Building'],
+        green: ['Sailing'],
       },
     })
 
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Dancing Girl')
+    const request3 = t.choose(game, request2, 'Construction')
 
-    t.testBoard(game,  {
+    t.dumpLog(game)
+
+//    t.testIsFirstAction(request3)
+    t.testBoard(game, {
       dennis: {
-        yellow: ['Dancing Girl'],
-        red: ['Gunpowder'],
+        red: ['Construction'],
+        purple: ['Philosophy'],
       },
       micah: {
-        purple: ['Philosophy'],
+        purple: ['Code of Laws'],
+        yellow: ['Dancing Girl', 'Canal Building'],
+        green: ['Sailing'],
       },
     })
   })
+
 
   /* test('dogma', () => {
    *   const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
