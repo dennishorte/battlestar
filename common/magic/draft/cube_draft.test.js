@@ -95,4 +95,52 @@ describe('CubeDraft', () => {
     })
   })
 
+  describe('open next packs', () => {
+
+    test('dennis opens first', () => {
+      const game = t.fixture()
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'dennis', 'agility')
+      const request3 = t.choose(game, request2, 'micah', 'lightning bolt')
+      const request4 = t.choose(game, request3, 'micah', 'advance scout')
+      const request5 = t.choose(game, request4, 'dennis', 'mountain')
+      const request6 = t.choose(game, request5, 'dennis', 'akki ember-keeper')
+
+      t.testBoard(game, {
+        dennis: {
+          picked: ['agility', 'mountain', 'akki ember-keeper'],
+          waiting: ['dennis-1'],
+        },
+        micah: {
+          picked: ['lightning bolt', 'advance scout'],
+          waiting: ['micah-0'],
+        },
+      })
+    })
+
+    test('dennis opens then picks', () => {
+      const game = t.fixture()
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'dennis', 'agility')
+      const request3 = t.choose(game, request2, 'micah', 'lightning bolt')
+      const request4 = t.choose(game, request3, 'micah', 'advance scout')
+      const request5 = t.choose(game, request4, 'dennis', 'mountain')
+      const request6 = t.choose(game, request5, 'dennis', 'akki ember-keeper')
+      const request7 = t.choose(game, request6, 'dennis', 'goblin balloon brigade')
+
+      t.testBoard(game, {
+        dennis: {
+          picked: ['agility', 'mountain', 'akki ember-keeper', 'goblin balloon brigade'],
+          waiting: [],
+        },
+        micah: {
+          picked: ['lightning bolt', 'advance scout'],
+          waiting: ['micah-0', 'dennis-1'],
+        },
+      })
+    })
+
+  })
 })
