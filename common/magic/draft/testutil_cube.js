@@ -1,5 +1,5 @@
 const { GameOverEvent } = require('../../lib/game.js')
-const { CubeDraftFactory } = require('./cube.js')
+const { CubeDraftFactory } = require('./cube_draft.js')
 const cardLookupFunc = require('../test_cardlookup.js')
 const log = require('../../lib/log.js')
 const jsUtil = require('util')
@@ -35,6 +35,7 @@ TestUtil.fixture = function(options) {
     packs: [
       {
         owner: 'dennis',
+        id: 'dennis-0',
         cards: [
           'advance scout',
           'agility',
@@ -43,6 +44,7 @@ TestUtil.fixture = function(options) {
       },
       {
         owner: 'dennis',
+        id: 'dennis-1',
         cards: [
           'benalish hero',
           'goblin balloon brigade',
@@ -51,6 +53,7 @@ TestUtil.fixture = function(options) {
       },
       {
         owner: 'dennis',
+        id: 'dennis-1',
         cards: [
           'advance scout',
           'agility',
@@ -59,6 +62,7 @@ TestUtil.fixture = function(options) {
       },
       {
         owner: 'micah',
+        id: 'micah-0',
         cards: [
           'lightning bolt',
           'mountain',
@@ -67,6 +71,7 @@ TestUtil.fixture = function(options) {
       },
       {
         owner: 'micah',
+        id: 'micah-1',
         cards: [
           'shock',
           'tithe',
@@ -75,6 +80,7 @@ TestUtil.fixture = function(options) {
       },
       {
         owner: 'micah',
+        id: 'micah-2',
         cards: [
           'benalish hero',
           'advance scout',
@@ -84,7 +90,7 @@ TestUtil.fixture = function(options) {
     ],
   }, options)
 
-options.players = options.players.slice(0, options.numPlayers)
+  options.players = options.players.slice(0, options.numPlayers)
   options.packs = options.packs.slice(0, options.numPlayers * options.numPacks)
 
   const game = CubeDraftFactory(options, 'dennis')
@@ -101,6 +107,35 @@ options.players = options.players.slice(0, options.numPlayers)
   return game
 }
 
+TestUtil.choose = function(game, request, actor, option) {
+  const selector = request.selectors.find(s => s.actor === actor)
+
+  return game.respondToInputRequest({
+    actor: selector.actor,
+    title: selector.title,
+    selection: [option],
+   })
+}
+
+TestUtil.testBoard = function(game, expected) {
+  for (const player of game.getPlayerAll()) {
+    this.testPicks(game, player.name, expected[player.name].picked)
+    this.testPacks(game, player.name, expected[player.name].waiting)
+  }
+}
+
+TestUtil.testPicks = function(game, playerName, cardNames) {
+  const player = game.getPlayerByName(playerName)
+  const picks = game.getPicksByPlayer(player).map(c => c.name)
+  expect(picks).toStrictEqual(cardNames)
+}
+
+TestUtil.testPacks = function(game, playerName, packIds) {
+  const player = game.getPlayerByName(playerName)
+  const waiting = game.getWaitingPacksForPlayer(player).map(p => p.id)
+  expect(packIds).toStrictEqual(waiting)
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Data Shortcuts
 
@@ -113,8 +148,8 @@ TestUtil.dennis = function(game) {
 // State Inspectors
 
 TestUtil.deepLog = function(obj) {
-  // console.log(JSON.stringify(obj, null, 2))
-  console.log(jsUtil.inspect(obj))
+  console.log(JSON.stringify(obj, null, 2))
+  // console.log(jsUtil.inspect(obj))
 }
 
 TestUtil.dumpLog = function(game) {

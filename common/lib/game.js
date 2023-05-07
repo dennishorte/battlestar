@@ -177,10 +177,10 @@ Game.prototype.requestInputAny = function(array) {
     array = [array]
   }
 
-  const resp = this._getResponse() || this._tryToAutomaticallyRespond(array)
+  const resp = this._getResponse() // || this._tryToAutomaticallyRespond(array)
 
   if (resp) {
-    this._validateResponse([array], resp)
+    this._validateResponse(array, resp)
     if (resp.isUserResponse) {
       this.getLog().push({
         type: 'response-received',
@@ -608,6 +608,19 @@ Game.prototype.getPlayerCurrent = function() {
 
 Game.prototype.getPlayerFirst = function() {
   return this.getPlayerAll()[0]
+}
+
+Game.prototype.getPlayerFollowing = function(player) {
+  return this
+    .getPlayersEnding(player)
+    .filter(player => !player.dead)[0]
+}
+
+Game.prototype.getPlayerPreceding = function(player) {
+  return this
+    .getPlayersStarting(player)
+    .filter(player => !player.dead)
+    .slice(-1)[0]
 }
 
 Game.prototype.getPlayerNext = function() {

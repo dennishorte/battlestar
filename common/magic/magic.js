@@ -21,7 +21,7 @@ module.exports = {
   factory: factoryFromLobby,
   res,
   draft: {
-    cube: require('./draft/cube.js'),
+    cube: require('./draft/cube_draft.js'),
   },
   util: {
     card: cardUtil,
