@@ -142,5 +142,78 @@ describe('CubeDraft', () => {
       })
     })
 
+    test('micah opens a new pack after dennis passes a new pack to him', () => {
+      const game = t.fixture()
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'dennis', 'agility')
+      const request3 = t.choose(game, request2, 'micah', 'lightning bolt')
+      const request4 = t.choose(game, request3, 'micah', 'advance scout')
+      const request5 = t.choose(game, request4, 'dennis', 'mountain')
+      const request6 = t.choose(game, request5, 'dennis', 'akki ember-keeper')
+      const request7 = t.choose(game, request6, 'dennis', 'goblin balloon brigade')
+      const request8 = t.choose(game, request7, 'micah', 'plains')
+      const request9 = t.choose(game, request8, 'micah', 'shock')
+      const request10 = t.choose(game, request9, 'micah', 'holy strength')
+
+      t.testBoard(game, {
+        dennis: {
+          picked: ['agility', 'mountain', 'akki ember-keeper', 'goblin balloon brigade'],
+          waiting: ['micah-1', 'dennis-1'],
+        },
+        micah: {
+          picked: ['lightning bolt', 'advance scout', 'plains', 'shock', 'holy strength'],
+          waiting: [],
+        },
+      })
+    })
+
+  })
+
+  describe('game complete', () => {
+
+    test('last pick', () => {
+      const game = t.fixture({ numPacks: 2 })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'dennis', 'agility')
+      const request3 = t.choose(game, request2, 'micah', 'lightning bolt')
+      const request4 = t.choose(game, request3, 'micah', 'advance scout')
+      const request5 = t.choose(game, request4, 'dennis', 'mountain')
+      const request6 = t.choose(game, request5, 'dennis', 'akki ember-keeper')
+      const request7 = t.choose(game, request6, 'dennis', 'goblin balloon brigade')
+      const request8 = t.choose(game, request7, 'micah', 'plains')
+      const request9 = t.choose(game, request8, 'micah', 'shock')
+      const request10 = t.choose(game, request9, 'micah', 'holy strength')
+      const request11 = t.choose(game, request10, 'dennis', 'white knight')
+      const request12 = t.choose(game, request11, 'micah', 'tithe')
+      const request13 = t.choose(game, request12, 'dennis', 'benalish hero')
+
+      t.testBoard(game, {
+        dennis: {
+          picked: [
+            'agility',
+            'mountain',
+            'akki ember-keeper',
+            'goblin balloon brigade',
+            'white knight',
+            'benalish hero',
+          ],
+          waiting: [],
+        },
+        micah: {
+          picked: [
+            'lightning bolt',
+            'advance scout',
+            'plains',
+            'shock',
+            'holy strength',
+            'tithe',
+          ],
+          waiting: [],
+        },
+      })
+    })
+
   })
 })

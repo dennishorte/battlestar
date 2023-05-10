@@ -36,6 +36,7 @@ TestUtil.fixture = function(options) {
       {
         owner: 'dennis',
         id: 'dennis-0',
+        testIndex: 0,
         cards: [
           'advance scout',
           'agility',
@@ -45,6 +46,7 @@ TestUtil.fixture = function(options) {
       {
         owner: 'dennis',
         id: 'dennis-1',
+        testIndex: 1,
         cards: [
           'benalish hero',
           'goblin balloon brigade',
@@ -53,7 +55,8 @@ TestUtil.fixture = function(options) {
       },
       {
         owner: 'dennis',
-        id: 'dennis-1',
+        testIndex: 2,
+        id: 'dennis-2',
         cards: [
           'advance scout',
           'agility',
@@ -62,6 +65,7 @@ TestUtil.fixture = function(options) {
       },
       {
         owner: 'micah',
+        testIndex: 0,
         id: 'micah-0',
         cards: [
           'lightning bolt',
@@ -71,6 +75,7 @@ TestUtil.fixture = function(options) {
       },
       {
         owner: 'micah',
+        testIndex: 1,
         id: 'micah-1',
         cards: [
           'shock',
@@ -80,6 +85,7 @@ TestUtil.fixture = function(options) {
       },
       {
         owner: 'micah',
+        testIndex: 2,
         id: 'micah-2',
         cards: [
           'benalish hero',
@@ -91,7 +97,7 @@ TestUtil.fixture = function(options) {
   }, options)
 
   options.players = options.players.slice(0, options.numPlayers)
-  options.packs = options.packs.slice(0, options.numPlayers * options.numPacks)
+  options.packs = options.packs.filter(p => p.testIndex < options.numPacks)
 
   const game = CubeDraftFactory(options, 'dennis')
   game.cardLookupFunc = cardLookupFunc

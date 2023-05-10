@@ -114,7 +114,7 @@ CubeDraft.prototype.initializePacks = function() {
 // Main
 
 CubeDraft.prototype.mainLoop = function() {
-  while (true) {
+  while (!this.checkGameComplete()) {
     const playerOptions = this
       .getPlayerAll()
       .filter(p => this.checkPlayerHasOption(p))
@@ -133,6 +133,8 @@ CubeDraft.prototype.mainLoop = function() {
         break
     }
   }
+
+  this.mLog({ template: 'Draft is complete' })
 }
 
 CubeDraft.prototype.aDraftCard = function(player, pack, cardId) {
@@ -171,7 +173,9 @@ CubeDraft.prototype.aOpenNextPack = function(player) {
       args: { player }
     })
 
-    this.mPushWaitingPack(player, pack)
+    player.waitingPacks.splice(0, 0, pack)
+    pack.waiting = player
+    //this.mPushWaitingPack(player, pack)
     for (const card of pack.cards) {
       this.mMakeCardVisible(card, player)
     }
@@ -182,6 +186,12 @@ CubeDraft.prototype.aOpenNextPack = function(player) {
   else {
     player.draftComplete = true
   }
+}
+
+CubeDraft.prototype.checkGameComplete = function() {
+  return this
+    .getPlayerAll()
+    .every(player => !this.getNextPackForPlayer(player))
 }
 
 CubeDraft.prototype.checkPlayerHasOption = function(player) {
@@ -205,6 +215,8 @@ CubeDraft.prototype.getPacks = function() {
 }
 
 CubeDraft.prototype.getPlayerNextForPack = function(pack) {
+  util.assert(Boolean(pack.waiting), 'pack does not have a waiting player')
+
   const direction = pack.index % 2
   if (direction === 0) {
     return this.getPlayerFollowing(pack.waiting)
