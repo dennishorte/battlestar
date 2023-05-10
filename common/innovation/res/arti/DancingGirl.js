@@ -22,7 +22,8 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      game.aTransfer(player, this, game.getZoneByPlayer(player, this.color))
+      const self = game.getCardByName('Dancing Girl')
+      game.aTransfer(player, self, game.getZoneByPlayer(player, self.color))
 
       const age = game.getHighestTopAge(player)
       const toTransfer = game
