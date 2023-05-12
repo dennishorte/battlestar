@@ -50,6 +50,12 @@ CardBase.prototype.checkHasDemandExplicit = function() {
     .some(text => text.startsWith('I demand'))
 }
 
+CardBase.prototype.checkHasBiscuit = function(biscuit) {
+  return this
+    .getBiscuits()
+    .includes(biscuit)
+}
+
 CardBase.prototype.checkHasCompelExplicit = function() {
   return this
     .dogma

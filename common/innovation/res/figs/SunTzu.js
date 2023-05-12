@@ -33,7 +33,7 @@ function Card() {
       func: (game, player, { featuredBiscuit }) => {
         const choices = game
           .getCardsByZone(player, 'hand')
-          .filter(card => card.dogmaBiscuit === featuredBiscuit)
+          .filter(card => card.checkHasBiscuit(featuredBiscuit))
         game.aChooseAndMeld(player, choices, { min: 0, max: choices.length })
       }
     },

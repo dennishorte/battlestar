@@ -39,7 +39,7 @@ describe('Sun Tzu', () => {
       dennis: {
         red: ['Sun Tzu'],
         green: ['The Wheel'],
-        hand: ['Construction'],
+        hand: ['Fermenting'],
       },
       micah: {
         yellow: ['Masonry'],
@@ -58,16 +58,17 @@ describe('Sun Tzu', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.The Wheel')
 
-    t.testChoices(request2, ['Construction', 'Archery'])
+    t.testChoices(request2, ['Fermenting', 'Archery'])
 
-    const request3 = t.choose(game, request2, 'Construction', 'Archery')
+    const request3 = t.choose(game, request2, 'Fermenting', 'Archery')
     const request4 = t.choose(game, request3, 'Archery')
 
     t.testIsSecondPlayer(request4)
     t.testBoard(game, {
       dennis: {
-        red: ['Construction', 'Archery', 'Sun Tzu'],
+        red: ['Archery', 'Sun Tzu'],
         green: ['The Wheel'],
+        yellow: ['Fermenting'],
         hand: ['Sailing', 'Archimedes'],
       },
       micah: {
