@@ -1,3 +1,6 @@
+const util = require('../../lib/util.js')
+
+
 module.exports = Pack
 
 function Pack(game, data) {
@@ -10,9 +13,10 @@ function Pack(game, data) {
   this.cards = data.cards.map(c => ({
     id: c,
     name: c,
-    visibility: [],
+    picker: null,
   }))
   this.picked = []
+  this.knownCards = {}
 }
 
 Pack.prototype.checkCardIsAvailable = function(card) {
@@ -35,4 +39,35 @@ Pack.prototype.getRemainingCards = function() {
   return this
     .cards
     .filter(card => !this.picked.includes(card))
+}
+
+Pack.prototype.getKnownCards = function(player) {
+  return this.knownCards[player.name]
+}
+
+Pack.prototype.getKnownPickedCards = function(player) {
+  const known = this.getKnownCards(player)
+  return this.picked.filter(c => known.includes(c))
+}
+
+Pack.prototype.getPlayerPicks = function(player) {
+  return this.cards.filter(c => c.picker === player)
+}
+
+Pack.prototype.pickCardById = function(player, cardId) {
+  const card = this.cards.find(c => c.id === cardId)
+
+  util.assert(Boolean(card), `Card with id=${cardId} not in this pack`)
+  util.assert(!Boolean(card.picker), `Card with id=${cardId} is already picked`)
+
+  card.picker = player
+  this.picked.push(card)
+}
+
+// If this player has not viewed this pack before, take note of all unpicked cards.
+// This is the set of cards that the player knows are in this pack.
+Pack.prototype.viewPack = function(player) {
+  if (player.name in this.knownCards === false) {
+    this.knownCards[player.name] = this.getRemainingCards()
+  }
 }

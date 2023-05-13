@@ -147,7 +147,7 @@ CubeDraft.prototype.aDraftCard = function(player, pack, cardId) {
     template: '{player} drafted {card}',
     args: { player, card },
   })
-  pack.picked.push(card)
+  pack.pickCardById(player, cardId)
   player.picked.push(card)
   player.waitingPacks.shift() // remove this pack from the front of the player queue
 
@@ -162,6 +162,7 @@ CubeDraft.prototype.aDraftCard = function(player, pack, cardId) {
     const nextPlayer = this.getPlayerNextForPack(pack)
     nextPlayer.waitingPacks.push(pack)
     pack.waiting = nextPlayer
+    pack.viewPack(nextPlayer)
   }
 }
 
@@ -175,10 +176,7 @@ CubeDraft.prototype.aOpenNextPack = function(player) {
 
     player.waitingPacks.splice(0, 0, pack)
     pack.waiting = player
-    //this.mPushWaitingPack(player, pack)
-    for (const card of pack.cards) {
-      this.mMakeCardVisible(card, player)
-    }
+    pack.viewPack(player)
   }
 
   // Player has no remaining packs.
@@ -229,6 +227,7 @@ CubeDraft.prototype.getPlayerNextForPack = function(pack) {
 CubeDraft.prototype.getPlayerOptions = function(player) {
   const pack = this.getWaitingPacksForPlayer(player)[0]
   if (pack) {
+    pack.viewPack(player)
     return {
       actor: player.name,
       title: 'Draft Card',
@@ -238,10 +237,6 @@ CubeDraft.prototype.getPlayerOptions = function(player) {
   else {
     return []
   }
-}
-
-CubeDraft.prototype.mMakeCardVisible = function(card, player) {
-  util.array.pushUnique(card.visibility, player)
 }
 
 CubeDraft.prototype.mPushWaitingPack = function(player, pack) {
@@ -271,7 +266,7 @@ CubeDraft.prototype._enrichLogArgs = function(msg) {
     }
     else if (key.startsWith('card')) {
       const card = msg.args[key]
-      const isHidden = !card.visibility.find(p => p.name === this.viewerName)
+      const isHidden = false
 
       if (isHidden) {
         msg.args[key] = {

@@ -32,6 +32,7 @@ TestUtil.fixture = function(options) {
     ],
 
     numPacks: 3,
+    packSize: 3,
     packs: [
       {
         owner: 'dennis',
@@ -41,6 +42,8 @@ TestUtil.fixture = function(options) {
           'advance scout',
           'agility',
           'akki ember-keeper',
+          'white knight',
+          'shock',
         ],
       },
       {
@@ -51,6 +54,8 @@ TestUtil.fixture = function(options) {
           'benalish hero',
           'goblin balloon brigade',
           'holy strength',
+          'agility',
+          'mountain',
         ],
       },
       {
@@ -61,6 +66,8 @@ TestUtil.fixture = function(options) {
           'advance scout',
           'agility',
           'akki ember-keeper',
+          'plains',
+          'advance scout',
         ],
       },
       {
@@ -71,6 +78,8 @@ TestUtil.fixture = function(options) {
           'lightning bolt',
           'mountain',
           'plains',
+          'tithe',
+          'goblin balloon brigade',
         ],
       },
       {
@@ -81,6 +90,8 @@ TestUtil.fixture = function(options) {
           'shock',
           'tithe',
           'white knight',
+          'mountain',
+          'advance scout',
         ],
       },
       {
@@ -91,13 +102,20 @@ TestUtil.fixture = function(options) {
           'benalish hero',
           'advance scout',
           'lightning bolt',
+          'tithe',
+          'shock',
         ],
       },
     ],
   }, options)
 
   options.players = options.players.slice(0, options.numPlayers)
-  options.packs = options.packs.filter(p => p.testIndex < options.numPacks)
+  options.packs = options
+    .packs
+    .filter(p => p.testIndex < options.numPacks)
+  options
+    .packs
+    .forEach(p => p.cards = p.cards.slice(0, options.packSize))
 
   const game = CubeDraftFactory(options, 'dennis')
   game.cardLookupFunc = cardLookupFunc
@@ -142,6 +160,20 @@ TestUtil.testPacks = function(game, playerName, packIds) {
   expect(packIds).toStrictEqual(waiting)
 }
 
+TestUtil.testVisibility = function(game, playerName, expected) {
+  const player = game.getPlayerByName(playerName)
+  const pack = game.getNextPackForPlayer(player)
+
+  const visibleCards = pack.getKnownCards(player).map(c => c.name).sort()
+  expect(visibleCards).toStrictEqual(expected.visible.sort())
+
+  const picked = pack.getKnownPickedCards(player).map(c => c.name).sort()
+  expect(picked).toStrictEqual(expected.picked.sort())
+
+  const yourPicks = pack.getPlayerPicks(player).map(c => c.name).sort()
+  expect(yourPicks).toStrictEqual(expected.yourPicks.sort())
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Data Shortcuts
 
@@ -154,8 +186,8 @@ TestUtil.dennis = function(game) {
 // State Inspectors
 
 TestUtil.deepLog = function(obj) {
-  console.log(JSON.stringify(obj, null, 2))
-  // console.log(jsUtil.inspect(obj))
+  //console.log(JSON.stringify(obj, null, 2))
+  console.log(jsUtil.inspect(obj, false, 3, true))
 }
 
 TestUtil.dumpLog = function(game) {

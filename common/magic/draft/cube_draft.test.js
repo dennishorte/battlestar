@@ -167,7 +167,67 @@ describe('CubeDraft', () => {
         },
       })
     })
+  })
 
+  describe('pack visibility', () => {
+    test('can see all unpicked cards the first time seeing a pack', () => {
+      const game = t.fixture({ packSize: 5 })
+
+      const request1 = game.run()
+
+      t.testVisibility(game, 'dennis', {
+        visible: [
+          'advance scout',
+          'agility',
+          'akki ember-keeper',
+          'white knight',
+          'shock',
+        ],
+        picked: [],
+        yourPicks: [],
+      })
+    })
+
+    test('cannot see cards picked before first time seeing a pack', () => {
+      const game = t.fixture({ packSize: 5 })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'dennis', 'agility')
+      const request3 = t.choose(game, request2, 'micah', 'lightning bolt')
+
+      t.testVisibility(game, 'micah', {
+        visible: [
+          'advance scout',
+          'akki ember-keeper',
+          'white knight',
+          'shock',
+        ],
+        picked: [],
+        yourPicks: [],
+      })
+    })
+
+    test('can see cards missing from pack since you last saw it', () => {
+      const game = t.fixture({ packSize: 5 })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'dennis', 'agility')
+      const request3 = t.choose(game, request2, 'micah', 'lightning bolt')
+      const request4 = t.choose(game, request3, 'micah', 'advance scout')
+      const request5 = t.choose(game, request4, 'dennis', 'mountain')
+
+      t.testVisibility(game, 'dennis', {
+        visible: [
+          'agility',
+          'akki ember-keeper',
+          'advance scout',
+          'white knight',
+          'shock',
+        ],
+        picked: ['agility', 'advance scout'],
+        yourPicks: ['agility'],
+      })
+    })
   })
 
   describe('game complete', () => {
