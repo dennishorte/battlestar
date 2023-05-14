@@ -29,13 +29,18 @@ function CubeDraftFactory(settings, viewerName) {
   return new CubeDraft(data, viewerName)
 }
 
-function factoryFromLobby(lobby) {
+function factoryFromLobby(lobby, db) {
   return GameFactory({
     game: 'CubeDraft',
     name: lobby.name,
-    expansions: lobby.options.expansions,
     players: lobby.users,
     seed: lobby.seed,
+
+    cubeId: lobby.options.cubeId,
+
+    packSize: lobby.options.packSize,
+    numPacks: lobby.options.numPacks,
+    packs: lobby.packs,
   })
 }
 
@@ -103,6 +108,7 @@ CubeDraft.prototype.initializePacks = function() {
       const pack = this.state.packs[packIndex]
       pack.index = p_i
       pack.owner = player
+      pack.id = player.name + '-' + p_i
       player.unopenedPacks.push(pack)
       packIndex += 1
     }

@@ -113,9 +113,8 @@ TestUtil.fixture = function(options) {
   options.packs = options
     .packs
     .filter(p => p.testIndex < options.numPacks)
-  options
-    .packs
-    .forEach(p => p.cards = p.cards.slice(0, options.packSize))
+    .map(p => p.cards)
+    .map(p => p.slice(0, options.packSize))
 
   const game = CubeDraftFactory(options, 'dennis')
   game.cardLookupFunc = cardLookupFunc

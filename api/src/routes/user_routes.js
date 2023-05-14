@@ -119,6 +119,15 @@ User.update = async function(req, res) {
 
 
 
+User.magic.cubes = async function(req, res) {
+  const cubes = await db.magic.cube.findByUserId(req.body.userId)
+
+  res.json({
+    status: 'success',
+    cubes,
+  })
+}
+
 User.magic.decks = async function(req, res) {
   const decks = await db.magic.deck.findByUserId(req.body.userId)
 

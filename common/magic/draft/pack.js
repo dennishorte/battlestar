@@ -3,18 +3,30 @@ const util = require('../../lib/util.js')
 
 module.exports = Pack
 
-function Pack(game, data) {
+function Pack(game, cards) {
   this.game = game
-  this.id = data.id
 
+  this.id = null
   this.owner = null
   this.waiting = null
   this.index = null  // Used for determining pass direction
-  this.cards = data.cards.map(c => ({
-    id: c,
-    name: c,
-    picker: null,
-  }))
+
+  this.cards = cards.map(c => {
+    if (typeof c === 'string') {
+      return {
+        id: c,
+        name: c,
+        picker: null,
+      }
+    }
+    else {
+      return Object.assign({
+        id: c.id,
+        name: c.name,
+        picked: null,
+      }, c)
+    }
+  })
   this.picked = []
   this.knownCards = {}
 }

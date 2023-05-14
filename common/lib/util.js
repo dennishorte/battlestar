@@ -10,6 +10,14 @@ module.exports = Util
 ////////////////////////////////////////////////////////////////////////////////
 // Array functions
 
+Util.array.chunk = function(array, size) {
+  const chunks = []
+  for (let i = 0; i < array.length; i += size) {
+    chunks.push(array.slice(i, i + size))
+  }
+  return chunks
+}
+
 Util.array.collect = function(elems, keyFunc, valueFunc) {
   const output = {}
 

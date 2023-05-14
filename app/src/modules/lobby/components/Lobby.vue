@@ -96,6 +96,13 @@ export default {
     },
 
     async startGame() {
+      if (this.lobby.onStart) {
+        this.lobby.onStart(this.lobby)
+        delete this.lobby.onStart  // Don't want to save this callback function
+      }
+
+      return
+
       await this.save()
       if (this.errorMessage) {
         return

@@ -1,5 +1,5 @@
 <template>
-  <div class="settings-innovation">
+  <div class="settings-magic">
 
     <label class="form-label">Format</label>
     <select class="form-select" v-model="format" @change="optionsChanged">
