@@ -10,7 +10,13 @@
 
 
 <script>
+import axios from 'axios'
+
+import { computed } from 'vue'
+import { mapState } from 'vuex'
+
 import DebugModal from '@/modules/games/common/components/DebugModal'
+import MagicWrapper from '@/modules/magic/components/MagicWrapper'
 
 
 export default {
@@ -18,6 +24,7 @@ export default {
 
   components: {
     DebugModal,
+    MagicWrapper,
   },
 
   props: {
@@ -26,7 +33,10 @@ export default {
   },
 
   computed: {
-
+    ...mapState('magic/cubeDraft', {
+      game: 'game',
+      gameReady: 'ready',
+    }),
   },
 
   provide() {
@@ -40,7 +50,7 @@ export default {
 
   methods: {
     loadGame() {
-      this.$store.dispatch('magic/game/loadGame', {
+      this.$store.dispatch('magic/cubeDraft/loadGame', {
         gameData: this.data,
         doFunc: this.do,
       })

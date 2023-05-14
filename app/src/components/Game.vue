@@ -1,6 +1,12 @@
 <template>
   <div class="game">
 
+    <CubeDraft
+      v-if="game === 'CubeDraft'"
+      :data="gameData"
+      :actor="actor"
+    />
+
     <Innovation
       v-if="game === 'Innovation'"
       :data="gameData"
@@ -29,6 +35,7 @@
 
 <script>
 import axios from 'axios'
+import CubeDraft from '@/modules/games/cube_draft/components/CubeDraft'
 import Innovation from '@/modules/games/inn/components/Innovation'
 import Magic from '@/modules/games/magic/components/Magic'
 import Tyrants from '@/modules/games/tyrants/components/Tyrants'
@@ -37,6 +44,7 @@ export default {
   name: 'Game',
 
   components: {
+    CubeDraft,
     Innovation,
     Magic,
     Tyrants,

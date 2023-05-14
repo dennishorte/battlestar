@@ -107,8 +107,6 @@ describe('CubeDraft', () => {
       const request5 = t.choose(game, request4, 'dennis', 'mountain')
       const request6 = t.choose(game, request5, 'dennis', 'akki ember-keeper')
 
-      t.dumpLog(game)
-
       t.testBoard(game, {
         dennis: {
           picked: ['agility', 'mountain', 'akki ember-keeper'],

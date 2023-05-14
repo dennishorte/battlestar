@@ -22,11 +22,16 @@ export default {
 
   computed: {
     gameData() {
-      return JSON.stringify({
-        _id: this.game._id,
-        settings: this.game.settings,
-        responses: this.game.responses,
-      }, null, 2)
+      if (this.game) {
+        return JSON.stringify({
+          _id: this.game._id,
+          settings: this.game.settings,
+          responses: this.game.responses,
+        }, null, 2)
+      }
+      else {
+        return 'Game data not loaded'
+      }
     }
   },
 }
