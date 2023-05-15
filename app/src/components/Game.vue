@@ -8,7 +8,7 @@
     />
 
     <Innovation
-      v-if="game === 'Innovation'"
+      v-else-if="game === 'Innovation'"
       :data="gameData"
       :actor="actor"
     />

@@ -141,10 +141,6 @@ $gold: #d9631b;
     min-width: $size;
     max-width: $size;
 
-    .editable:hover {
-      background-color: lightblue;
-    }
-
     .card-border {
       background: $almost-black;
       border-radius: $unit * 3;

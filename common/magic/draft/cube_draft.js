@@ -98,6 +98,7 @@ CubeDraft.prototype.initializePlayers = function() {
 
 CubeDraft.prototype.initializePacks = function() {
   this.state.packs = this.settings.packs.map(pack => new Pack(this, pack))
+  this.cardsById = {}
 
   this.mLog({ template: 'Passing out packs' })
 
@@ -111,6 +112,10 @@ CubeDraft.prototype.initializePacks = function() {
       pack.id = player.name + '-' + p_i
       player.unopenedPacks.push(pack)
       packIndex += 1
+
+      for (const card of pack.cards) {
+        this.cardsById[card.id] = card
+      }
     }
   }
 }
@@ -200,6 +205,10 @@ CubeDraft.prototype.checkGameComplete = function() {
 
 CubeDraft.prototype.checkPlayerHasOption = function(player) {
   return this.getWaitingPacksForPlayer(player).length > 0
+}
+
+CubeDraft.prototype.getCardById = function(cardId) {
+  return this.cardsById[cardId]
 }
 
 CubeDraft.prototype.getPicksByPlayer = function(player) {
