@@ -140,6 +140,10 @@ export default {
     selection() {
       this.notifyParent()
     },
+
+    selector() {
+      this.clearSelection()
+    },
   },
 
   methods: {
@@ -173,6 +177,10 @@ export default {
         delete this.childInfo[event.title]
         util.array.remove(this.selected, childIndex)
       }
+    },
+
+    clearSelection() {
+      this.selected = []
     },
 
     // Need to share our selected info upwards
