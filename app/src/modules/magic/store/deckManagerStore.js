@@ -84,7 +84,6 @@ export default {
 
     async saveActiveDeck({ commit, dispatch, state }) {
       const file = state.activeDeck.serialize()
-      file.filters =
       await dispatch('magic/file/save', file, { root: true })
       commit('setModified', false)
     },
