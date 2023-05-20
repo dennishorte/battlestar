@@ -118,12 +118,20 @@ export default {
 
   methods: {
     deckSaveAs() {
-      console.log(this.fileModalId)
       this.$modal(this.fileModalId).show()
     },
 
-    deckSaveAsDo({ name, path }) {
-      console.log('save as...', name, path)
+    deckSaveAsDo(fileData) {
+      fileData.cardlist = this
+        .tempDeck()
+        .cardlist
+        .map(c => {
+          const card = { ...c }
+          delete card.data
+          return card
+        })
+
+      this.$store.dispatch('magic/file/create', fileData)
     },
 
     loadGame() {
