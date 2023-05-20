@@ -20,6 +20,7 @@
         <Decklist :deck="tempDeck()">
           <template #menu-options>
             <DropdownButton @click="deckSaveAs">save as...</DropdownButton>
+            <DropdownRouterLink to="/magic/decks">deck manager</DropdownRouterLink>
           </template>
         </Decklist>
       </div>
@@ -53,6 +54,7 @@ import { mag } from 'battlestar-common'
 import CardSelector from './CardSelector'
 
 import DropdownButton from '@/components/DropdownButton'
+import DropdownRouterLink from '@/components/DropdownRouterLink'
 import NewFileModal from '@/components/filemanager/NewFileModal'
 
 import ChatInput from '@/modules/games/common/components/ChatInput'
@@ -74,6 +76,7 @@ export default {
     DebugModal,
     Decklist,
     DropdownButton,
+    DropdownRouterLink,
     NewFileModal,
     GameMenu,
     MagicWrapper,

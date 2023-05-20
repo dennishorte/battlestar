@@ -69,7 +69,7 @@ export default {
     },
     defaultFileType: {
       type: String,
-      default: false,
+      default: '',
     },
   },
 
