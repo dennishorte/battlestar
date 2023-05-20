@@ -17,7 +17,11 @@
            </div>
       -->
       <div class="game-column deck-column">
-        <Decklist :deck="tempDeck()" />
+        <Decklist :deck="tempDeck()">
+          <template #menu-options>
+            <DropdownButton @click="deckSaveAs">save as...</DropdownButton>
+          </template>
+        </Decklist>
       </div>
 
     </div>
@@ -38,6 +42,8 @@ import { mag } from 'battlestar-common'
 
 import CardSelector from './CardSelector'
 
+import DropdownButton from '@/components/DropdownButton'
+
 import ChatInput from '@/modules/games/common/components/ChatInput'
 import DebugModal from '@/modules/games/common/components/DebugModal'
 import GameMenu from '@/modules/games/common/components/GameMenu'
@@ -56,6 +62,7 @@ export default {
     ChatInput,
     DebugModal,
     Decklist,
+    DropdownButton,
     GameMenu,
     MagicWrapper,
     WaitingPanel,
@@ -96,6 +103,10 @@ export default {
   },
 
   methods: {
+    deckSaveAs() {
+      console.log('save as...')
+    },
+
     loadGame() {
       this.$store.dispatch('magic/cubeDraft/loadGame', {
         gameData: this.data,

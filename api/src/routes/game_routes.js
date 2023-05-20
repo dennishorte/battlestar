@@ -182,6 +182,9 @@ async function _testAndSave(game, res, evalFunc) {
 
 async function updateStatsOne(data) {
   switch (data.settings.game) {
+    case 'CubeDraft':
+      return true
+
     case 'Innovation':
       return updateStatsOneInnovation(data)
 
@@ -192,7 +195,7 @@ async function updateStatsOne(data) {
       return updateStatsOneTyrants(data)
 
     default:
-      return false;
+      return false
   }
 }
 
@@ -316,6 +319,9 @@ async function _loadGameFromReq(req) {
   }
   else if (gameData.settings.game === 'Magic') {
     return new mag.Magic(gameData)
+  }
+  else if (gameData.settings.game === 'CubeDraft') {
+    return new mag.draft.cube.CubeDraft(gameData)
   }
   else {
     throw new Error(`Unhandled game type: ${gameData.settings.game}`)
