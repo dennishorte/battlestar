@@ -170,6 +170,31 @@ Game.prototype.getWaitingKey = function() {
   return this.waiting ? this.waiting.key : undefined
 }
 
+// Intended for use in Magic Drafts, this allows any player to send an input request.
+// The key is completely ignored, and only the validity of the response is considered.
+Game.prototype.requestInputAny = function(array) {
+  if (!Array.isArray(array)) {
+    array = [array]
+  }
+
+  const resp = this._getResponse() // || this._tryToAutomaticallyRespond(array)
+
+  if (resp) {
+    this._validateResponse(array, resp)
+    if (resp.isUserResponse) {
+      this.getLog().push({
+        type: 'response-received',
+        data: resp,
+      })
+    }
+    this._responseReceived(resp)
+    return resp
+  }
+  else {
+    throw new InputRequestEvent(array)
+  }
+}
+
 Game.prototype.requestInputMany = function(array) {
   this.key = this._setInputRequestKey()
 
@@ -221,7 +246,7 @@ Game.prototype.requestInputSingle = function(selector) {
 }
 
 Game.prototype.respondToInputRequest = function(response) {
-  util.assert(response.key === this.key, `Invalid response. State has updated. this: ${this.key} resp: ${response.key}`)
+  // util.assert(response.key === this.key, `Invalid response. State has updated. this: ${this.key} resp: ${response.key}`)
 
   response.isUserResponse = true  // As opposed to an automated response.
   this.responses.push(response)
@@ -583,6 +608,19 @@ Game.prototype.getPlayerCurrent = function() {
 
 Game.prototype.getPlayerFirst = function() {
   return this.getPlayerAll()[0]
+}
+
+Game.prototype.getPlayerFollowing = function(player) {
+  return this
+    .getPlayersEnding(player)
+    .filter(player => !player.dead)[0]
+}
+
+Game.prototype.getPlayerPreceding = function(player) {
+  return this
+    .getPlayersStarting(player)
+    .filter(player => !player.dead)
+    .slice(-1)[0]
 }
 
 Game.prototype.getPlayerNext = function() {

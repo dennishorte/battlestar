@@ -5,7 +5,7 @@
     v-else
     :filelist="filelist"
     :file-types="['card', 'cube', 'deck']"
-    :default-file-type="defaultFileType"
+    :file-type="defaultFileType"
     @file-creating="createFile"
     @file-deleting="deleteFile"
     @file-duplicating="duplicateFile"

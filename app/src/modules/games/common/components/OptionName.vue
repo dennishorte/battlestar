@@ -17,7 +17,7 @@
 export default {
   name: 'OptionName',
 
-  inject: ['game', 'ui'],
+  inject: ['ui'],
 
   props: {
     option: [Object, String]
@@ -50,6 +50,5 @@ export default {
 <style scoped>
 .option-name {
   font-size: 1.1em;
-  margin-left: .2em;
 }
 </style>

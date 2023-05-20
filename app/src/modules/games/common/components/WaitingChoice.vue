@@ -28,7 +28,7 @@ export default {
     OptionSelector,
   },
 
-  inject: ['game', 'ui', 'bus'],
+  inject: ['game', 'ui', 'bus', 'save'],
 
   props: {
     actor: Object,
@@ -86,7 +86,16 @@ export default {
         alert('Error!\nCheck console for details.')
         throw e
       }
-      await this.game.save()
+
+      if (this.save) {
+        await this.save()
+      }
+      else if (this.game.save) {
+        await this.game.save()
+      }
+      else {
+        alert('No save function provided')
+      }
     },
 
     submitIfValid() {

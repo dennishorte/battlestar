@@ -1,11 +1,13 @@
 const db = require('../models/db.js')
 const slack = require('../util/slack.js')
 
+const { Mutex } = require('../util/mutex.js')
 const { GameOverEvent, inn, mag, tyr } = require('battlestar-common')
 
 const Game = {}
 module.exports = Game
 
+const saveResponseMutext = new Mutex()
 const statsVersion = 2
 
 
@@ -134,6 +136,17 @@ Game.saveFull = async function(req, res) {
   }
 }
 
+Game.saveResponse = async function(req, res) {
+  // Using this mutex ensures that each response is added in sequence, none overwriting the others.
+  return await saveResponseMutext.dispatch(async () => {
+    const game = await _loadGameFromReq(req)
+
+    await _testAndSave(game, res, (game) => {
+      game.respondToInputRequest(req.body.response)
+    })
+  })
+}
+
 Game.updateStats = async function(req, res) {
   const cursor = await db.game.all()
   const games = await cursor.toArray()
@@ -182,6 +195,9 @@ async function _testAndSave(game, res, evalFunc) {
 
 async function updateStatsOne(data) {
   switch (data.settings.game) {
+    case 'CubeDraft':
+      return true
+
     case 'Innovation':
       return updateStatsOneInnovation(data)
 
@@ -192,7 +208,7 @@ async function updateStatsOne(data) {
       return updateStatsOneTyrants(data)
 
     default:
-      return false;
+      return false
   }
 }
 
@@ -316,6 +332,9 @@ async function _loadGameFromReq(req) {
   }
   else if (gameData.settings.game === 'Magic') {
     return new mag.Magic(gameData)
+  }
+  else if (gameData.settings.game === 'CubeDraft') {
+    return new mag.draft.cube.CubeDraft(gameData)
   }
   else {
     throw new Error(`Unhandled game type: ${gameData.settings.game}`)

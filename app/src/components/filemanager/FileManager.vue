@@ -24,7 +24,7 @@
       :selection="meta.selection"
       :file-types="fileTypes"
       :id="newFileModalId"
-      :default-file-type="defaultFileType"
+      :file-type="defaultFileType"
       @create="createFile"
     />
   </div>
@@ -69,7 +69,7 @@ export default {
     },
     defaultFileType: {
       type: String,
-      default: false,
+      default: '',
     },
   },
 

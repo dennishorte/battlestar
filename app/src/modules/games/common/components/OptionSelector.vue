@@ -11,11 +11,12 @@
 
     <div class="option-checkboxes">
       <div v-for="(option, index) in selector.choices" :key="index">
-
         <div v-if="!optionHasChildren(option)" class="input-row">
           <input type="checkbox" :value="index" v-model="selected" />
 
-          <div @mouseenter="mouseEntered(option)" @mouseleave="mouseExited(option)">
+          <div class="spacer" />
+
+          <div @mouseenter="mouseEntered(option)" @mouseleave="mouseExited(option)" class="input-wrapper">
             <div class="input-label">
               <OptionName :option="option" />
             </div>
@@ -139,6 +140,10 @@ export default {
     selection() {
       this.notifyParent()
     },
+
+    selector() {
+      this.clearSelection()
+    },
   },
 
   methods: {
@@ -172,6 +177,10 @@ export default {
         delete this.childInfo[event.title]
         util.array.remove(this.selected, childIndex)
       }
+    },
+
+    clearSelection() {
+      this.selected = []
     },
 
     // Need to share our selected info upwards
@@ -219,12 +228,17 @@ input[type='checkbox'] {
 
 .input-label {
   vertical-align: top;
+  min-width: 100%;
 }
 
 .input-row {
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+.input-wrapper {
+  flex-grow: 1;
 }
 
 .input-row, .nested-options {
@@ -255,6 +269,11 @@ input[type='checkbox'] {
 
 .option-name {
   margin-top: .45rem;
+}
+
+.spacer {
+  min-width: .3em;
+  max-width: .3em;
 }
 
 .subtitle {

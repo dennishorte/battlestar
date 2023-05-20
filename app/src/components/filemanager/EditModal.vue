@@ -2,8 +2,11 @@
   <Modal>
     <template #header>Edit File</template>
 
-    <input class="form-control" v-model="newName" />
-    <input class="form-control" v-model="newPath" />
+    <label class="form-label">name</label>
+    <input class="form-control" v-model="newName" placeholder="name" />
+
+    <label class="form-label">path</label>
+    <input class="form-control" v-model="newPath" placeholder="path" />
 
     <template #footer>
       <button class="btn btn-secondary" @click="cancel" data-bs-dismiss="modal">cancel</button>

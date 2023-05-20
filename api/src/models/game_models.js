@@ -15,6 +15,9 @@ module.exports = Game
 function _factory(lobby) {
   switch (lobby.game) {
 
+    case 'Cube Draft':
+      return common.mag.draft.cube.factory(lobby)
+
     case 'Innovation':
       return common.inn.factory(lobby)
 
@@ -46,7 +49,10 @@ Game.create = async function(lobby) {
     // Need to actually run the game once to make sure 'waiting' field is populated.
     const gameData = await this.findById(insertResult.insertedId)
     let game
-    if (lobby.game === 'Innovation') {
+    if (lobby.game === 'Cube Draft') {
+      game = new common.mag.draft.cube.CubeDraft(gameData)
+    }
+    else if (lobby.game === 'Innovation') {
       game = new common.inn.Innovation(gameData)
     }
     else if (lobby.game === 'Magic') {
