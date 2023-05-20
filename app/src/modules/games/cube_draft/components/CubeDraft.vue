@@ -28,12 +28,22 @@
 
     <DebugModal />
   </MagicWrapper>
+
+  <NewFileModal
+    :id="fileModalId"
+    :fileTypes="['deck']"
+    :fileType="'deck'"
+    :name="'new draft deck'"
+    :path="'/decks/draft'"
+    @create="deckSaveAsDo"
+  />
 </template>
 
 
 <script>
 import axios from 'axios'
 import mitt from 'mitt'
+import { v4 as uuidv4 } from 'uuid'
 
 import { computed } from 'vue'
 import { mapState } from 'vuex'
@@ -43,6 +53,7 @@ import { mag } from 'battlestar-common'
 import CardSelector from './CardSelector'
 
 import DropdownButton from '@/components/DropdownButton'
+import NewFileModal from '@/components/filemanager/NewFileModal'
 
 import ChatInput from '@/modules/games/common/components/ChatInput'
 import DebugModal from '@/modules/games/common/components/DebugModal'
@@ -63,6 +74,7 @@ export default {
     DebugModal,
     Decklist,
     DropdownButton,
+    NewFileModal,
     GameMenu,
     MagicWrapper,
     WaitingPanel,
@@ -76,6 +88,8 @@ export default {
   data() {
     return {
       bus: mitt(),  // Used by WaitingPanel
+
+      fileModalId: 'file-manager-edit-modal-' + uuidv4(),
     }
   },
 
@@ -104,7 +118,12 @@ export default {
 
   methods: {
     deckSaveAs() {
-      console.log('save as...')
+      console.log(this.fileModalId)
+      this.$modal(this.fileModalId).show()
+    },
+
+    deckSaveAsDo({ name, path }) {
+      console.log('save as...', name, path)
     },
 
     loadGame() {
