@@ -36,17 +36,27 @@ export default {
     fileTypes: Array,
     selection: Object,
 
-    defaultFileType: {
+    fileType: {
       type: String,
       default: '',
+    },
+
+    name: {
+      type: String,
+      default: '',
+    },
+
+    path: {
+      type: String,
+      default: '/',
     },
   },
 
   data() {
     return {
-      newKind: this.defaultFileType,
-      newName: '',
-      newPath: '/',
+      newKind: this.fileType,
+      newName: this.name,
+      newPath: this.path,
     }
   },
 
@@ -56,7 +66,7 @@ export default {
     }
   },
 
-    methods: {
+  methods: {
     create() {
       this.newName = this.newName.trim()
       this.newPath = this.newPath.trim()
