@@ -69,6 +69,7 @@ app.post('/api/game/fetchAll', routes.game.fetchAll)
 app.post('/api/game/kill', routes.game.kill)
 app.post('/api/game/rematch', routes.game.rematch)
 app.post('/api/game/saveFull', routes.game.saveFull)
+app.post('/api/game/saveResponse', routes.game.saveResponse)
 app.post('/api/game/updateStats', routes.game.updateStats)
 
 // Snapshot Routes

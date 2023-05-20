@@ -132,16 +132,29 @@ export default {
 
     async save() {
       const game = this.game
-      const payload = {
-        gameId: game._id,
-        responses: game.responses,
-        chat: game.getChat(),
-        waiting: game.waiting,
-        gameOver: game.gameOver,
-        gameOverData: game.gameOverData,
+      let requestResult
+
+      if (game.usedUndo) {
+        const payload = {
+          gameId: game._id,
+          responses: game.responses,
+          chat: game.getChat(),
+          waiting: game.waiting,
+          gameOver: game.gameOver,
+          gameOverData: game.gameOverData,
+        }
+
+        requestResult = await axios.post('/api/game/saveFull', payload)
       }
 
-      const requestResult = await axios.post('/api/game/saveFull', payload)
+      else {
+        const payload = {
+          gameId: game._id,
+          response: game.getLastUserAction(),
+        }
+
+        requestResult = await axios.post('/api/game/saveResponse', payload)
+      }
 
       if (requestResult.data.status === 'success') {
         console.log('saved')

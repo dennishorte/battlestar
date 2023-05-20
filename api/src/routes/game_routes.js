@@ -1,11 +1,13 @@
 const db = require('../models/db.js')
 const slack = require('../util/slack.js')
 
+const { Mutex } = require('../util/mutex.js')
 const { GameOverEvent, inn, mag, tyr } = require('battlestar-common')
 
 const Game = {}
 module.exports = Game
 
+const saveResponseMutext = new Mutex()
 const statsVersion = 2
 
 
@@ -132,6 +134,17 @@ Game.saveFull = async function(req, res) {
       game.run()
     })
   }
+}
+
+Game.saveResponse = async function(req, res) {
+  // Using this mutex ensures that each response is added in sequence, none overwriting the others.
+  return await saveResponseMutext.dispatch(async () => {
+    const game = await _loadGameFromReq(req)
+
+    await _testAndSave(game, res, (game) => {
+      game.respondToInputRequest(req.body.response)
+    })
+  })
 }
 
 Game.updateStats = async function(req, res) {
