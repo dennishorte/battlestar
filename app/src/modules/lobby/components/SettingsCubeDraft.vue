@@ -120,6 +120,8 @@ export default {
       const packs = util.array.chunk(cards, this.lobby.options.packSize)
       const totalPacks = this.lobby.users.length * this.lobby.options.numPacks
       lobby.packs = packs.slice(0, totalPacks)
+
+      lobby.options.cubeName = cube.name
     },
 
     defaultOptions() {

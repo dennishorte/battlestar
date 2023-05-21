@@ -37,6 +37,7 @@ function factoryFromLobby(lobby, db) {
     seed: lobby.seed,
 
     cubeId: lobby.options.cubeId,
+    cubeName: lobby.options.cubeName,
 
     packSize: lobby.options.packSize,
     numPacks: lobby.options.numPacks,
@@ -101,6 +102,11 @@ CubeDraft.prototype.initializePacks = function() {
   this.cardsById = {}
 
   this.mLog({ template: 'Passing out packs' })
+  this.mLogIndent()
+  this.mLog({ template: 'cube name: ' + this.settings.cubeName })
+  this.mLog({ template: 'number of packs: ' + this.settings.numPacks })
+  this.mLog({ template: 'cards per pack: ' + this.settings.packSize })
+  this.mLogOutdent()
 
   let packIndex = 0
 
