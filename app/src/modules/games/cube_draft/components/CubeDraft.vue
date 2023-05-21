@@ -17,7 +17,7 @@
            </div>
       -->
       <div class="game-column deck-column">
-        <Decklist :deck="tempDeck()">
+        <Decklist :deck="tempDeck()" @card-clicked="showCardCloseup">
           <template #menu-options>
             <DropdownButton @click="deckSaveAs">save as...</DropdownButton>
             <DropdownRouterLink to="/magic/decks">deck manager</DropdownRouterLink>
@@ -237,8 +237,16 @@ export default {
     },
 
     showCardCloseup(cardId) {
-      const card = this.game.getCardById(cardId)
-      this.closeupCardData = this.$store.getters['magic/cards/getLookupFunc'](card)
+      // Handle a card with data already populated
+      if (cardId.data) {
+        this.closeupCardData = cardId.data
+      }
+
+      // Handle just getting a card id
+      else {
+        const card = this.game.getCardById(cardId)
+        this.closeupCardData = this.$store.getters['magic/cards/getLookupFunc'](card)
+      }
 
       if (this.closeupCardData) {
         this.$modal(this.cardCloseupModalId).show()
