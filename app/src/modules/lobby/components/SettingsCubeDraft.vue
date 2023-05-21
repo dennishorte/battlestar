@@ -59,7 +59,7 @@ export default {
       this.users = userRequestResult
         .data
         .users
-        .sort((left, right) => left.name.localeCompare(right.name))
+        .sort((l, r) => l.name.localeCompare(r.name))
       this.updateValid()
     },
 
@@ -68,7 +68,7 @@ export default {
       this.cubes = cubeRequestResult
         .data
         .cubes
-        .sort((l, r) => l.name.localeCompare(right.name))
+        .sort((l, r) => l.name.localeCompare(r.name))
       this.updateValid()
     },
 
