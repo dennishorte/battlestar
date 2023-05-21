@@ -4,6 +4,7 @@
     @mouseover="mouseover"
     @mouseleave="mouseleave"
     @mousemove="mousemove"
+    @click="onClick"
   >
 
     <div class="name">
@@ -35,7 +36,12 @@ export default {
 
     hidePopup: {
       type: Boolean,
-      default: false
+      default: false,
+    },
+
+    onClick: {
+      type: Function,
+      default: () => {},
     },
 
     showManaCost: {
