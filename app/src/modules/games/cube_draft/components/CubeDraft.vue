@@ -30,6 +30,8 @@
     <DebugModal />
   </MagicWrapper>
 
+  <CardCloseupModal :id="cardCloseupModalId" :cardData="closeupCardData" />
+
   <NewFileModal
     :id="fileModalId"
     :fileTypes="['deck']"
@@ -51,6 +53,7 @@ import { mapState } from 'vuex'
 
 import { mag } from 'battlestar-common'
 
+import CardCloseupModal from './CardCloseupModal'
 import CardSelector from './CardSelector'
 
 import DropdownButton from '@/components/DropdownButton'
@@ -71,6 +74,7 @@ export default {
   name: 'CubeDraft',
 
   components: {
+    CardCloseupModal,
     CardSelector,
     ChatInput,
     DebugModal,
@@ -92,7 +96,10 @@ export default {
     return {
       bus: mitt(),  // Used by WaitingPanel
 
+      cardCloseupModalId: 'card-closeup-modal-' + uuidv4(),
       fileModalId: 'file-manager-edit-modal-' + uuidv4(),
+
+      closeupCardData: null,
     }
   },
 
@@ -229,6 +236,15 @@ export default {
       return deck
     },
 
+    showCardCloseup(cardId) {
+      const card = this.game.getCardById(cardId)
+      this.closeupCardData = this.$store.getters['magic/cards/getLookupFunc'](card)
+
+      if (this.closeupCardData) {
+        this.$modal(this.cardCloseupModalId).show()
+      }
+    },
+
     uiFactory() {
 
       const selectorOptionComponent = (option) => {
@@ -238,7 +254,11 @@ export default {
         if (card) {
           return {
             component: CardListItem,
-            props: { card, showManaCost: true },
+            props: {
+              card,
+              showManaCost: true,
+              onClick: () => { this.showCardCloseup(cardId) },
+            },
           }
         }
         else {
