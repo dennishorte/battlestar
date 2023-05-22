@@ -55,7 +55,7 @@ export default {
 
 <style scoped>
 .card-holder {
-  width: 100%;
+  max-width: 100%;
   overflow-x: scroll;
   margin-left: .25em;
   margin-bottom: .25em;
