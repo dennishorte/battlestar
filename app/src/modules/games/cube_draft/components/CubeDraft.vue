@@ -5,6 +5,7 @@
     <div v-else class="cube-draft">
       <div class="game-column log-column">
         <GameMenu />
+        <GameLog />
         <ChatInput />
       </div>
 
@@ -58,6 +59,7 @@ import { mag } from 'battlestar-common'
 import CardCloseupModal from './CardCloseupModal'
 import CardSelector from './CardSelector'
 import CardTableauModal from './CardTableauModal'
+import GameLog from './log/GameLog'
 
 import DropdownButton from '@/components/DropdownButton'
 import DropdownRouterLink from '@/components/DropdownRouterLink'
@@ -85,9 +87,10 @@ export default {
     Decklist,
     DropdownButton,
     DropdownRouterLink,
-    NewFileModal,
+    GameLog,
     GameMenu,
     MagicWrapper,
+    NewFileModal,
     WaitingPanel,
   },
 

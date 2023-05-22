@@ -36,11 +36,15 @@ export default {
     },
 
     mouseover() {
-      this.$store.commit('magic/setMouseoverCard', this.card.data)
+      if (this.card && this.card.data) {
+        this.$store.commit('magic/setMouseoverCard', this.card.data)
+      }
     },
 
     mouseleave() {
-      this.$store.commit('magic/unsetMouseoverCard', this.card.data)
+      if (this.card && this.card.data) {
+        this.$store.commit('magic/unsetMouseoverCard', this.card.data)
+      }
     },
 
     mousemove(event) {
