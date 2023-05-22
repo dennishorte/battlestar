@@ -9,6 +9,7 @@
       </div>
 
       <div class="game-column data-column">
+        <button class="btn btn-primary" @click="showPackTableau">Tableau View</button>
         <WaitingPanel />
       </div>
 
@@ -31,6 +32,7 @@
   </MagicWrapper>
 
   <CardCloseupModal :id="cardCloseupModalId" :cardData="closeupCardData" />
+  <CardTableauModal :id="cardTableauModalId" :cards="tableauCards" title="Card Tableau" />
 
   <NewFileModal
     :id="fileModalId"
@@ -55,6 +57,7 @@ import { mag } from 'battlestar-common'
 
 import CardCloseupModal from './CardCloseupModal'
 import CardSelector from './CardSelector'
+import CardTableauModal from './CardTableauModal'
 
 import DropdownButton from '@/components/DropdownButton'
 import DropdownRouterLink from '@/components/DropdownRouterLink'
@@ -76,6 +79,7 @@ export default {
   components: {
     CardCloseupModal,
     CardSelector,
+    CardTableauModal,
     ChatInput,
     DebugModal,
     Decklist,
@@ -97,6 +101,7 @@ export default {
       bus: mitt(),  // Used by WaitingPanel
 
       cardCloseupModalId: 'card-closeup-modal-' + uuidv4(),
+      cardTableauModalId: 'card-tableau-modal-' + uuidv4(),
       fileModalId: 'file-manager-edit-modal-' + uuidv4(),
 
       closeupCardData: null,
@@ -111,6 +116,22 @@ export default {
 
     player() {
       return this.game.getPlayerByName(this.actor.name)
+    },
+
+    tableauCards() {
+      if (!this.game) {
+        return []
+      }
+
+      const pack = this.game.getNextPackForPlayer(this.player)
+
+      if (pack) {
+        return pack.getRemainingCards()
+      }
+
+      else {
+        return []
+      }
     },
   },
 
@@ -251,6 +272,10 @@ export default {
       if (this.closeupCardData) {
         this.$modal(this.cardCloseupModalId).show()
       }
+    },
+
+    showPackTableau() {
+      this.$modal(this.cardTableauModalId).show()
     },
 
     uiFactory() {
