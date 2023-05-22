@@ -160,10 +160,10 @@ CubeDraft.prototype.aDraftCard = function(player, pack, cardId) {
   const card = pack.getCardById(cardId)
   util.assert(pack.checkCardIsAvailable(card), "The selected card is not in the pack.")
 
-  this.mLog({
-    template: '{player} drafted {card}',
-    args: { player, card },
-  })
+  /* this.mLog({
+   *   template: '{player} drafted {card}',
+   *   args: { player, card },
+   * }) */
   pack.pickCardById(player, cardId)
   player.picked.push(card)
   player.waitingPacks.shift() // remove this pack from the front of the player queue
