@@ -14,10 +14,6 @@
         <WaitingPanel />
       </div>
 
-      <!-- <div class="game-column">
-           <CardSelector />
-           </div>
-      -->
       <div class="game-column deck-column">
         <Decklist :deck="tempDeck()" @card-clicked="showCardCloseup">
           <template #menu-options>
@@ -57,7 +53,6 @@ import { mapState } from 'vuex'
 import { mag } from 'battlestar-common'
 
 import CardCloseupModal from './CardCloseupModal'
-import CardSelector from './CardSelector'
 import CardTableauModal from './CardTableauModal'
 import GameLog from './log/GameLog'
 
@@ -80,7 +75,6 @@ export default {
 
   components: {
     CardCloseupModal,
-    CardSelector,
     CardTableauModal,
     ChatInput,
     DebugModal,
