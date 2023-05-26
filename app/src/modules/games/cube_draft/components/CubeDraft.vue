@@ -9,7 +9,7 @@
         <ChatInput />
       </div>
 
-      <div class="game-column data-column">
+      <div class="game-column data-column" v-if="tableauCards.length > 0">
         <CardTableau :cards="tableauCards" @card-clicked="chooseCard" />
 
         <!-- <button class="btn btn-primary" @click="showPackTableau">Tableau View</button> -->
@@ -23,6 +23,10 @@
             <DropdownRouterLink to="/magic/decks">deck manager</DropdownRouterLink>
           </template>
         </Decklist>
+      </div>
+
+      <div class="game-column info-column">
+        <SeatingInfo />
       </div>
 
     </div>
@@ -58,6 +62,7 @@ import CardCloseupModal from './CardCloseupModal'
 import CardTableau from './CardTableau'
 import CardTableauModal from './CardTableauModal'
 import GameLog from './log/GameLog'
+import SeatingInfo from './SeatingInfo'
 
 import DropdownButton from '@/components/DropdownButton'
 import DropdownRouterLink from '@/components/DropdownRouterLink'
@@ -89,6 +94,7 @@ export default {
     GameMenu,
     MagicWrapper,
     NewFileModal,
+    SeatingInfo,
     WaitingPanel,
   },
 
