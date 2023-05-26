@@ -1,7 +1,7 @@
 <template>
   <div class="card-tableau">
-    <div class="card-holder" v-for="card in cardData" :key="card.id">
-      <Card :size="220" :card="card" />
+    <div class="card-holder" v-for="card in cards" :key="card.id">
+      <Card :size="220" :card="card.data" @click="cardClicked(card)" />
     </div>
   </div>
 </template>
@@ -29,20 +29,19 @@ export default {
     },
   },
 
-  computed: {
-    cardData() {
-      if (this.cards.length === 0) {
-        return []
+  watch: {
+    cards(newValue, oldValue) {
+      for (const card of newValue) {
+        if (!card.data) {
+          card.data = this.$store.getters['magic/cards/getLookupFunc'](card)
+        }
       }
-      else if (this.cards[0].card_faces) {
-        return this.cards
-      }
-      else if (this.cards[0].data) {
-        return this.cards.map(c => c.data)
-      }
-      else if (this.cards[0].name) {
-        return this.cards.map(c => this.$store.getters['magic/cards/getLookupFunc'](c))
-      }
+    },
+  },
+
+  methods: {
+    cardClicked(card) {
+      this.$emit('card-clicked', card)
     },
   },
 }

@@ -10,8 +10,10 @@
       </div>
 
       <div class="game-column data-column">
-        <button class="btn btn-primary" @click="showPackTableau">Tableau View</button>
-        <WaitingPanel />
+        <CardTableau :cards="tableauCards" @card-clicked="chooseCard" />
+
+        <!-- <button class="btn btn-primary" @click="showPackTableau">Tableau View</button> -->
+        <WaitingPanel class="d-none" />
       </div>
 
       <div class="game-column deck-column">
@@ -47,12 +49,13 @@ import axios from 'axios'
 import mitt from 'mitt'
 import { v4 as uuidv4 } from 'uuid'
 
-import { computed } from 'vue'
+import { computed, nextTick } from 'vue'
 import { mapState } from 'vuex'
 
 import { mag } from 'battlestar-common'
 
 import CardCloseupModal from './CardCloseupModal'
+import CardTableau from './CardTableau'
 import CardTableauModal from './CardTableauModal'
 import GameLog from './log/GameLog'
 
@@ -75,6 +78,7 @@ export default {
 
   components: {
     CardCloseupModal,
+    CardTableau,
     CardTableauModal,
     ChatInput,
     DebugModal,
@@ -145,6 +149,12 @@ export default {
   },
 
   methods: {
+    async chooseCard(card) {
+      this.bus.emit('user-select-option', { optionName: card.id })
+      await nextTick()
+      this.bus.emit('click-choose-selected-option')
+    },
+
     deckSaveAs() {
       this.$modal(this.fileModalId).show()
     },
@@ -320,8 +330,6 @@ export default {
 
 .game-column {
   height: 100vh;
-  min-width: 220px;
-  max-width: 400px;
   overflow-x: hidden;
   overflow-y: scroll;
   padding-bottom: 3em;
@@ -329,14 +337,15 @@ export default {
 
 .data-column {
   padding: 1em;
+  min-width: 700px;
 }
 
 .log-column {
   display: flex;
   flex-direction: column;
+  min-width: 340px;
+  max-width: 340px;
   height: 100vh;
-  min-width: 400px;
-  max-width: 400px;
   overflow: hidden;
 }
 
