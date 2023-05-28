@@ -9,11 +9,9 @@
         <ChatInput />
       </div>
 
-      <div class="game-column data-column" v-if="tableauCards.length > 0">
+      <div class="game-column data-column" v-if="tableauCards.length > 0 || showWaitingPanel">
         <CardTableau :cards="tableauCards" @card-clicked="chooseCard" />
-
-        <!-- <button class="btn btn-primary" @click="showPackTableau">Tableau View</button> -->
-        <WaitingPanel class="d-none" />
+        <WaitingPanel :class="waitingPanelClasses" />
       </div>
 
       <div class="game-column deck-column">
@@ -27,6 +25,7 @@
 
       <div class="game-column info-column">
         <SeatingInfo />
+        <AdminOptions />
       </div>
 
     </div>
@@ -58,6 +57,7 @@ import { mapState } from 'vuex'
 
 import { mag } from 'battlestar-common'
 
+import AdminOptions from './AdminOptions'
 import CardCloseupModal from './CardCloseupModal'
 import CardTableau from './CardTableau'
 import CardTableauModal from './CardTableauModal'
@@ -82,6 +82,7 @@ export default {
   name: 'CubeDraft',
 
   components: {
+    AdminOptions,
     CardCloseupModal,
     CardTableau,
     CardTableauModal,
@@ -112,6 +113,7 @@ export default {
       fileModalId: 'file-manager-edit-modal-' + uuidv4(),
 
       closeupCardData: null,
+      showWaitingPanel: false,
     }
   },
 
@@ -139,6 +141,12 @@ export default {
       else {
         return []
       }
+    },
+
+    waitingPanelClasses() {
+      return [
+        this.showWaitingPanel ? '' : 'd-none',
+      ]
     },
   },
 
@@ -312,9 +320,14 @@ export default {
         }
       }
 
+      const toggleWaitingPanel = () => {
+        this.showWaitingPanel = !this.showWaitingPanel
+      }
+
       return {
         fn: {
           selectorOptionComponent,
+          toggleWaitingPanel,
         },
       }
     },
