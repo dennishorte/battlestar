@@ -18,10 +18,11 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = (game, player) => {
+    const self = game.getCardByName(this.name)
     const choices = game
       .getTopCardsAll()
       .filter(card => card.checkHasBiscuit('k'))
-      .filter(card => card !== this)
+      .filter(card => card !== self)
     game.aChooseAndScore(player, choices)
   }
   this.inspireImpl = []
