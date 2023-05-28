@@ -1,8 +1,13 @@
 <template>
   <div class="seating-info">
 
+    <div>Seating Chart</div>
+
     <div v-for="info in playerInfo" :key="info.player.name">
-      {{ info.player.name }} {{ info.waitingPacks[0] }} {{ info.waitingPacks[1] }}
+      <span class="name-span">{{ info.player.name }}</span>
+      <span v-for="count in info.waitingPacks" class="count-span">
+        &nbsp{{ count }}
+      </span>
     </div>
 
   </div>
@@ -42,3 +47,12 @@ export default {
   },
 }
 </script>
+
+
+<style scoped>
+.name-span {
+  display: inline-block;
+  min-width: 50px;
+  max-width: 50px;
+}
+</style>
