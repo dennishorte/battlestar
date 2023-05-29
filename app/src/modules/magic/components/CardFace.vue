@@ -43,6 +43,12 @@
 
         </div> <!-- frame -->
       </div> <!-- background -->
+
+      <div class="artist-name">
+        <i class="ms ms-artist-nib"></i>
+        {{ face.artist }}
+      </div>
+
     </div> <!-- border -->
   </div> <!-- container -->
 </template>

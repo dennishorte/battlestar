@@ -141,11 +141,17 @@ $gold: #d9631b;
     min-width: $size;
     max-width: $size;
 
+    .artist-name {
+      color: #ddd;
+      font-size: $unit * 3.5;
+      margin-left: $unit * 3;
+    }
     .card-border {
       background: $almost-black;
       border-radius: $unit * 3;
       justify-content: space-between;
       padding: $unit * 3;
+      padding-bottom: $unit;
     }
     .card-background {
       $border-width: $unit * 2.5;
