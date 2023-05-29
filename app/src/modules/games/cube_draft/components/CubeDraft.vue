@@ -359,6 +359,10 @@ export default {
   min-width: 700px;
 }
 
+.deck-column {
+  min-width: 18em;
+}
+
 .log-column {
   display: flex;
   flex-direction: column;
