@@ -6,6 +6,10 @@
       <Dropdown class="deck-menu" v-if="!noMenu">
         <template #title>deck menu</template>
 
+        <!-- <DropdownButton @click="setViewType('card-type')">view: card type</DropdownButton>
+             <DropdownButton @click="setViewType('mana-cost')">view: mana cost</DropdownButton>
+             <DropdownDivider />
+        -->
         <slot name="menu-options"></slot>
       </Dropdown>
     </div>
@@ -30,6 +34,8 @@ import { mapState } from 'vuex'
 
 import DecklistSection from './DecklistSection'
 import Dropdown from '@/components/Dropdown'
+import DropdownButton from '@/components/DropdownButton'
+import DropdownDivider from '@/components/DropdownDivider'
 
 
 export default {
@@ -38,6 +44,8 @@ export default {
   components: {
     DecklistSection,
     Dropdown,
+    DropdownButton,
+    DropdownDivider,
   },
 
   props: {
@@ -55,6 +63,7 @@ export default {
   data() {
     return {
       sortTypes: [
+        'command',
         'creature',
         'planeswalker',
         'enchantment',
@@ -63,7 +72,10 @@ export default {
         'sorcery',
         'other',
         'land',
+        'sideboard',
       ],
+
+      viewType: 'card-type',
     }
   },
 
@@ -93,9 +105,17 @@ export default {
               value.count = group.length
               return value
             })
-            .sort((l, r) => l.name.localeCompare(r.name))
+            .sort((l, r) => {
+              if (l.data.cmc !== r.data.cmc) {
+                return l.data.cmc - r.data.cmc
+              }
+              else {
+                return l.name.localeCompare(r.name)
+              }
+            })
           return [sectionName, cardsWithCounts]
         })
+        .sort((l, r) => this.sortTypes.indexOf(l[0]) - this.sortTypes.indexOf(r[0]))
 
       return countedSections
     },
@@ -108,6 +128,11 @@ export default {
   methods: {
     cardClicked(card) {
       this.$emit('card-clicked', card)
+    },
+
+    setViewType(typeName) {
+      this.viewType = typeName
+      console.log(this.viewType)
     },
   },
 }
