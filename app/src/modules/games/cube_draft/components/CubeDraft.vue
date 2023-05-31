@@ -10,7 +10,11 @@
       </div>
 
       <div class="game-column data-column" v-if="tableauCards.length > 0 || showWaitingPanel">
-        <CardTableau :cards="tableauCards" @card-clicked="chooseCard" />
+        <CardTableau
+          :cards="tableauCards"
+          :cardScroll="false"
+          @card-clicked="showDraftModal"
+        />
         <WaitingPanel :class="waitingPanelClasses" />
       </div>
 
@@ -34,6 +38,7 @@
   </MagicWrapper>
 
   <CardCloseupModal :id="cardCloseupModalId" :cardData="closeupCardData" />
+  <CardDraftModal :id="cardDraftModalId" :card="closeupDraftCard" @draft-card="chooseCard" />
   <CardTableauModal :id="cardTableauModalId" :cards="tableauCards" title="Card Tableau" />
 
   <NewFileModal
@@ -59,6 +64,7 @@ import { mag } from 'battlestar-common'
 
 import AdminOptions from './AdminOptions'
 import CardCloseupModal from './CardCloseupModal'
+import CardDraftModal from './CardDraftModal'
 import CardTableau from './CardTableau'
 import CardTableauModal from './CardTableauModal'
 import GameLog from './log/GameLog'
@@ -84,6 +90,7 @@ export default {
   components: {
     AdminOptions,
     CardCloseupModal,
+    CardDraftModal,
     CardTableau,
     CardTableauModal,
     ChatInput,
@@ -109,10 +116,12 @@ export default {
       bus: mitt(),  // Used by WaitingPanel
 
       cardCloseupModalId: 'card-closeup-modal-' + uuidv4(),
+      cardDraftModalId: 'card-draft-modal-' + uuidv4(),
       cardTableauModalId: 'card-tableau-modal-' + uuidv4(),
       fileModalId: 'file-manager-edit-modal-' + uuidv4(),
 
       closeupCardData: null,
+      closeupDraftCard: null,
       showWaitingPanel: false,
     }
   },
@@ -276,6 +285,18 @@ export default {
       mag.util.card.lookup.insertCardData(deck.cardlist, lookupFunc)
 
       return deck
+    },
+
+    showDraftModal(card) {
+      if (!card.data) {
+        card.data = this.$store.getters['magic/cards/getLookupFunc'](card)
+      }
+
+      this.closeupDraftCard = card
+
+      if (this.closeupDraftCard) {
+        this.$modal(this.cardDraftModalId).show()
+      }
     },
 
     showCardCloseup(cardId) {

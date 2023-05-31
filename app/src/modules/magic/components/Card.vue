@@ -1,6 +1,12 @@
 <template>
-  <div class="magic-card">
-    <CardFace v-if="card" v-for="index in faceIndices" :card="card" :index="index" :size="size" />
+  <div class="magic-card" :style="cardStyles">
+    <CardFace
+      v-if="card"
+      v-for="index in faceIndices"
+      :card="card"
+      :index="index"
+      :size="size"
+    />
   </div>
 </template>
 
@@ -28,9 +34,23 @@ export default {
       type: Number,
       default: 200,
     },
+
+    scrollable: {
+      type: Boolean,
+      default: true
+    },
   },
 
   computed: {
+    cardStyles() {
+      if (this.scrollable) {
+        return {}
+      }
+      else {
+        return { 'overflow-y': 'hidden' }
+      }
+    },
+
     faceIndices() {
       if (this.card.card_faces) {
         return util.range(this.card.card_faces.length)

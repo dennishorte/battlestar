@@ -1,7 +1,7 @@
 <template>
   <div class="card-tableau">
     <div class="card-holder" v-for="card in cards" :key="card.id">
-      <Card :size="220" :card="card.data" @click="cardClicked(card)" />
+      <Card :size="220" :card="card.data" @click="cardClicked(card)" :scrollable="cardScroll" />
     </div>
   </div>
 </template>
@@ -26,6 +26,11 @@ export default {
     cards: {
       type: Array,
       default: [],
+    },
+
+    cardScroll: {
+      type: Boolean,
+      default: true,
     },
   },
 
