@@ -106,6 +106,42 @@ TestUtil.fixture = function(options) {
           'shock',
         ],
       },
+      {
+        owner: 'scott',
+        testIndex: 0,
+        id: 'scott-0',
+        cards: [
+          'lightning bolt',
+          'mountain',
+          'plains',
+          'tithe',
+          'goblin balloon brigade',
+        ],
+      },
+      {
+        owner: 'scott',
+        testIndex: 1,
+        id: 'scott-1',
+        cards: [
+          'shock',
+          'tithe',
+          'white knight',
+          'mountain',
+          'advance scout',
+        ],
+      },
+      {
+        owner: 'scott',
+        testIndex: 2,
+        id: 'scott-2',
+        cards: [
+          'benalish hero',
+          'advance scout',
+          'lightning bolt',
+          'tithe',
+          'shock',
+        ],
+      },
     ],
   }, options)
 
@@ -143,7 +179,8 @@ TestUtil.choose = function(game, request, actor, option) {
 TestUtil.testBoard = function(game, expected) {
   for (const player of game.getPlayerAll()) {
     this.testPicks(game, player.name, expected[player.name].picked)
-    this.testPacks(game, player.name, expected[player.name].waiting)
+    this.testWaitingPacks(game, player.name, expected[player.name].waiting)
+    this.testNextRoundPacks(game, player.name, expected[player.name].nextRound || [])
   }
 }
 
@@ -153,9 +190,15 @@ TestUtil.testPicks = function(game, playerName, cardNames) {
   expect(picks).toStrictEqual(cardNames)
 }
 
-TestUtil.testPacks = function(game, playerName, packIds) {
+TestUtil.testWaitingPacks = function(game, playerName, packIds) {
   const player = game.getPlayerByName(playerName)
   const waiting = game.getWaitingPacksForPlayer(player).map(p => p.id)
+  expect(packIds).toStrictEqual(waiting)
+}
+
+TestUtil.testNextRoundPacks = function(game, playerName, packIds) {
+  const player = game.getPlayerByName(playerName)
+  const waiting = player.nextRoundPacks.map(p => p.id)
   expect(packIds).toStrictEqual(waiting)
 }
 

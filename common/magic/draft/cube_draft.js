@@ -88,6 +88,7 @@ CubeDraft.prototype.initializePlayers = function() {
     draftCompelete: false,
     picked: [],
     waitingPacks: [],
+    nextRoundPacks: [],
     unopenedPacks: [],
   }))
   this.mLog({ template: 'Randomizing player seating' })
@@ -177,7 +178,15 @@ CubeDraft.prototype.aDraftCard = function(player, pack, cardId) {
   else {
     // Pass this pack to the next player.
     const nextPlayer = this.getPlayerNextForPack(pack)
-    nextPlayer.waitingPacks.push(pack)
+    const nextPlayerPackIndex = this.getPackIndexForPlayer(nextPlayer)
+
+    if (nextPlayerPackIndex === pack.index) {
+      nextPlayer.waitingPacks.push(pack)
+    }
+    else {
+      nextPlayer.nextRoundPacks.push(pack)
+    }
+
     pack.waiting = nextPlayer
     pack.viewPack(nextPlayer)
   }
@@ -191,9 +200,14 @@ CubeDraft.prototype.aOpenNextPack = function(player) {
       args: { player }
     })
 
-    player.waitingPacks.splice(0, 0, pack)
+    player.waitingPacks.push(pack)
     pack.waiting = player
     pack.viewPack(player)
+
+    // Move all the next round packs that piled up into the waiting packs queue
+    while (player.nextRoundPacks.length > 0) {
+      player.waitingPacks.push(player.nextRoundPacks.shift())
+    }
   }
 
   // Player has no remaining packs.
@@ -210,7 +224,7 @@ CubeDraft.prototype.checkGameComplete = function() {
 }
 
 CubeDraft.prototype.checkPlayerHasOption = function(player) {
-  return this.getWaitingPacksForPlayer(player).length > 0
+  return Boolean(this.getNextPackForPlayer(player))
 }
 
 CubeDraft.prototype.getCardById = function(cardId) {
@@ -222,7 +236,15 @@ CubeDraft.prototype.getPicksByPlayer = function(player) {
 }
 
 CubeDraft.prototype.getNextPackForPlayer = function(player) {
-  return this.getWaitingPacksForPlayer(player)[0]
+  const nextPack = this.getWaitingPacksForPlayer(player)[0]
+  const playerPackIndex = this.getPackIndexForPlayer(player)
+
+  if (nextPack && nextPack.index === playerPackIndex) {
+    return nextPack
+  }
+  else {
+    return undefined
+  }
 }
 
 CubeDraft.prototype.getWaitingPacksForPlayer = function(player) {
@@ -231,6 +253,10 @@ CubeDraft.prototype.getWaitingPacksForPlayer = function(player) {
 
 CubeDraft.prototype.getPacks = function() {
   return this.state.packs
+}
+
+CubeDraft.prototype.getPackIndexForPlayer = function(player) {
+  return Math.floor(player.picked.length / this.settings.packSize)
 }
 
 CubeDraft.prototype.getPlayerNextForPack = function(pack) {

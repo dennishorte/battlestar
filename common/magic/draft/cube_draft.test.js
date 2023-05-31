@@ -134,10 +134,12 @@ describe('CubeDraft', () => {
         dennis: {
           picked: ['agility', 'mountain', 'akki ember-keeper', 'goblin balloon brigade'],
           waiting: [],
+          nextRound: [],
         },
         micah: {
           picked: ['lightning bolt', 'advance scout'],
-          waiting: ['micah-0', 'dennis-1'],
+          waiting: ['micah-0'],
+          nextRound: ['dennis-1'],
         },
       })
     })
@@ -166,6 +168,41 @@ describe('CubeDraft', () => {
           waiting: [],
         },
       })
+    })
+
+    test('cannot pick from a pack passed to you until you have finished the current pack', () => {
+      const game = t.fixture({ numPlayers: 3, packSize: 2 })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'dennis', 'agility')
+      const request3 = t.choose(game, request2, 'micah', 'lightning bolt')
+      const request4 = t.choose(game, request3, 'micah', 'advance scout')
+      const request5 = t.choose(game, request4, 'micah', 'shock')
+
+      // At this point, micah has opened his second pack and selected a card from it,
+      // but dennis has only drafted one card, so he shouldn't be able to pick from the
+      // pack that micah passed him.
+      expect(request5.selectors.length).toBe(1)
+      expect(request5.selectors[0].actor).toBe('scott')
+
+      const request6 = t.choose(game, request5, 'scott', 'lightning bolt')
+
+      // Now, scott passed dennis a pack, so dennis should be able to draft from this index 0 pack.
+      // Scott still needs to pick his second card from the first round pack.
+      expect(request6.selectors.length).toBe(2)
+
+      const request7 = t.choose(game, request6, 'dennis', 'mountain')
+
+      // Now, dennis has picked two cards from the first pack (of size 2), so he should be able
+      // to pick a card from the pack second round pack that micah passed him.
+      // Scott still needs to pick his second card from the first round pack.
+      expect(request7.selectors.length).toBe(2)
+
+      const request8 = t.choose(game, request7, 'dennis', 'benalish hero')
+
+      // Now, dennis has picked a card from his round 2 pack, and can see micah's round 2 pack.
+      // Scott still needs to pick his second card from the first round pack.
+      expect(request8.selectors.length).toBe(2)
     })
   })
 
