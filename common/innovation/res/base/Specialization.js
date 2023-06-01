@@ -22,6 +22,11 @@ function Card() {
       const card = game.aChooseCard(player, hand.cards())
 
       if (card) {
+        game.mLog({
+          template: '{player} reveals {card}',
+          args: { player, card }
+        })
+
         const stolen = game
           .getPlayerOpponents(player)
           .map(opponent => game.getTopCard(opponent, card.color))
