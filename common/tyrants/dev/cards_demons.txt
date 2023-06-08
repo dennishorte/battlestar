@@ -1,0 +1,158 @@
+# Set=Demons
+
+Ghoul
+malice
+undead
+424
+3
++2 power
+Each opponent recruits an Insane Outcast
+
+Mind Flayer
+malice
+illithid
+313
+3
+Devour a card in your hand > Choose one:
+- +3 influence
+- Assassinate a troop
+
+Glavrezu
+malice
+fiend
+524
+1
+Devour a card in your hand > Assassinate 2 troops.
+
+Marilith
+malice
+fiend
+625
+2
+Devour a card in your hand > +5 power
+
+Orcus
+malice
+fiend
+8510
+1
+Devour a card in your hand > Assassinate 2 troops. Then you may take up to 2 troops from any trophy halls and deploy them anywhere on the board.
+
+Gibbering Mouther
+conquest
+aberration
+213
+3
+Deploy 2 troops, then choose an opponent with a troop adjacent to at least 1 of them. He or she recruits an Insane Outcast.
+
+Derro
+conquest
+derro
+314
+2
+Supplant a white troop anywhere on the board. You recruit an Insane Outcast.
+
+Ettin
+conquest
+giant
+412
+3
+Choose one:
+- Deploy 3 troops.
+- Assassinate 2 white troops.
+
+Balor
+conquest
+fiend
+636
+1
+Devour a card in your hand > Supplant a white troop anywhere on the board. Then deploy a white troop.
+
+Demogorgon
+conquest
+fiend
+8510
+1
+Devour a card in your hand > Supplant 2 white troops. Each opponent recruits 2 Insane Outcasts.
+
+Night Hag
+guile
+fiend
+313
+3
+Choose one:
+- Place a spy
+- Return one of your spies > Draw 2 cards.
+
+Jackalwere
+guile
+shapechanger
+424
+3
+Choose one:
+- Place a spy
+- Return one of your spies > +2 power, +2 influence
+
+Succubus
+guile
+fiend
+525
+2
+Devour a card in your hand > Place a spy, then assassinate a troop at that spy’s site.
+
+Vrock
+guile
+fiend
+524
+1
+Choose one:
+- Place a spy.
+- Return one of your spies > +5 power
+
+Graz’zt
+guile
+fiend
+625
+1
+Choose one:
+- Place 2 spies.
+- Return any number of your spies > Supplant a troop at each of the returned spies’ sites.
+
+Myconid Adult
+ambition
+myconid
+313
+3
++2 influence
+Choose an opponent. He or she recruits an Insane Outcast.
+
+Nalfeshnee
+ambition
+fiend
+525
+2
++3 influence
+Promote the top card of your deck.
+
+Hezrou
+ambition
+fiend
+313
+2
+Move an enemy troop.
+Promote the top card of your deck.
+
+Myconid Sovereign
+ambition
+myconid
+425
+2
+Choose an opponent. He or she recruits an Insane Outcast.
+At end of turn, promote another card played this turn.
+
+Zuggtmoy
+ambition
+fiend
+636
+1
+Devour a card in your inner circle > +3 influence and at end of turn, promote up to 2 other cards played this turn.

@@ -1,0 +1,170 @@
+# Set=Elementals
+
+Eternal Flame Cultist
+malice
+human
+424
+3
+Assassinate a troop
+Malice Focus > +2 power
+
+Fire Elemental
+malice
+elemental
+313
+3
+Choose one:
+- +2 power
+- +2 influence
+Malice focus > Draw a card
+
+Fire Elemental Myrmidon
+malice
+elemental
+413
+2
++2 power
+At end of turn, promote an Obedience card played this turn
+
+Vanifer
+malice
+tiefling
+525
+1
+Assassinate a troop
+Recruit a Malice card that costs 4 or less without paying its cost
+
+Imix
+malice
+elemental prince
+636
+1
++4 power
+Malice Focus > +2 power
+
+Crushing Wave Cultist
+conquest
+human
+314
+3
+Assassinate a white troop
+Conquest Focus > Deploy 2 troops
+
+Water Elemental
+conquest
+elemental
+212
+3
+Deploy 2 troops
+Conquest Focus > Draw a card
+
+Water Elemental Myrmidon
+conquest
+elemental
+424
+2
+Assassinate a white troop
+At end of turn, promote an Obedience card played this turn
+
+Gar Shatterkeel
+conquest
+human
+525
+1
+Deploy 3 troops
+Recruit a Conquest card that costs 4 or less without paying its cost
+
+Olhydra
+conquest
+elemental prince
+636
+1
+Supplant a white troop anywhere on the board.
+Conquest Focus > Deploy 2 troops.
+
+Air Elemental
+guile
+elemental
+312
+4
+Choose one:
+- Place a spy
+- Return one of your spies > Deploy 3 troops
+Guile Focus > Draw a card
+
+Howling Hatred Cultist
+guile
+human
+313
+2
+Choose one:
+- Place a spy
+- Return one of your spies > +3 influence
+Guile Focus > +1 power
+
+Air Elemental Myrmidon
+guile
+elemental
+413
+2
+Place a spy.
+At end of turn, promote an Obedience card played this turn.
+
+Aerisi Kalinoth
+guile
+elf
+525
+1
++1 power
+Place a spy.
+Recruit a Guile card that costs 4 or less without paying its cost.
+
+Yan-C-Bin
+guile
+elemental prince
+636
+1
+Place a spy, then assassinate a troop at that spy’s site.
+Guile Focus > Place a spy
+
+Black Earth Cultist
+ambition
+human
+212
+4
+At end of turn, promote another card played this turn.
+Ambition Focus > +2 influence
+
+Earth Elemental
+ambition
+elemental
+313
+2
++1 influence
+Return another player’s troop or spy.
+Ambition focus > Draw a card
+
+Earth Elemental Myrmidon
+ambition
+elemental
+424
+2
++2 influence
+At end of turn, promote another card played this turn
+
+Marlos Urnrayle
+ambition
+medusa
+525
++1 influence
+At end of turn, promote another card played this turn.
+Recruit an Ambition card that costs 4 or less without paying its cost.
+
+Ogremoch
+ambition
+elemental prince
+637
+1
++2 influence
+At end of turn, promote another card played this turn.
+Ambition Focus > At end of turn, promote another card played this turn.
