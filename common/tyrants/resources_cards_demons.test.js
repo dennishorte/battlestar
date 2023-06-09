@@ -149,4 +149,49 @@ describe('Undead expansion', () => {
       })
     })
   })
+
+  describe('Marilith', () => {
+    test('devour and assassinate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Marilith', 'Priestess of Lolth', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Marilith')
+      const request3 = t.choose(game, request2, 'House Guard')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Priestess of Lolth'],
+          played: ['Marilith'],
+          power: 5,
+        },
+        devoured: ['House Guard'],
+      })
+    })
+
+    test('do not devour', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Marilith', 'Priestess of Lolth', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Marilith')
+      const request3 = t.choose(game, request2)
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Priestess of Lolth', 'House Guard'],
+          played: ['Marilith'],
+          power: 0,
+        },
+      })
+    })
+  })
 })

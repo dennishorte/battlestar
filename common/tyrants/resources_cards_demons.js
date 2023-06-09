@@ -84,7 +84,11 @@ const cardData = [
     "text": [
       "Devour a card in your hand > +5 power"
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      game.aChooseAndDevour(player, {
+        then: () => player.incrementPower(5)
+      })
+    },
   },
   {
     "name": "Orcus",
