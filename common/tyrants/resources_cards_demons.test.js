@@ -101,4 +101,52 @@ describe('Undead expansion', () => {
       })
     })
   })
+
+  describe('Glavrezu', () => {
+    test('devour and assassinate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Glavrezu', 'Priestess of Lolth', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Glavrezu')
+      const request3 = t.choose(game, request2, 'House Guard')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Priestess of Lolth'],
+          played: ['Glavrezu'],
+          trophyHall: ['neutral'],
+          influence: 0,
+        },
+        devoured: ['House Guard'],
+        'araum-ched': {
+          troops: [],
+        },
+      })
+    })
+
+    test('do not devour', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Glavrezu', 'Priestess of Lolth', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Glavrezu')
+      const request3 = t.choose(game, request2)
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Priestess of Lolth', 'House Guard'],
+          played: ['Glavrezu'],
+        },
+      })
+    })
+  })
 })

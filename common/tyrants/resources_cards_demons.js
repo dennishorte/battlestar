@@ -63,7 +63,14 @@ const cardData = [
     "text": [
       "Devour a card in your hand > Assassinate 2 troops."
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      game.aChooseAndDevour(player, {
+        then: () => {
+          game.aChooseAndAssassinate(player)
+          game.aChooseAndAssassinate(player)
+        }
+      })
+    },
   },
   {
     "name": "Marilith",
