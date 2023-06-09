@@ -1,4 +1,7 @@
-[
+const util = require('../lib/util.js')
+
+
+const cardData = [
   {
     "name": "Eternal Flame Cultist",
     "aspect": "malice",
@@ -289,3 +292,7 @@
     ]
   }
 ]
+
+module.exports = {
+  cardData,
+}

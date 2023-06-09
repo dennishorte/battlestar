@@ -1,0 +1,78 @@
+Error.stackTraceLimit = 100
+
+const t = require('./testutil.js')
+
+
+describe('Undead expansion', () => {
+  describe('Mind Flayer', () => {
+    test('devour and influence', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Mind Flayer', 'Priestess of Lolth', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Mind Flayer')
+      const request3 = t.choose(game, request2, 'House Guard')
+      const request4 = t.choose(game, request3, '+3 influence')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Priestess of Lolth'],
+          played: ['Mind Flayer'],
+          influence: 3,
+        },
+        devoured: ['House Guard'],
+      })
+    })
+
+    test('devour and assassinate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Mind Flayer', 'Priestess of Lolth', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Mind Flayer')
+      const request3 = t.choose(game, request2, 'House Guard')
+      const request4 = t.choose(game, request3, 'Assassinate a troop')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Priestess of Lolth'],
+          played: ['Mind Flayer'],
+          trophyHall: ['neutral'],
+          influence: 0,
+        },
+        devoured: ['House Guard'],
+        'araum-ched': {
+          troops: [],
+        },
+      })
+    })
+
+    test('do not devour', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Mind Flayer', 'Priestess of Lolth', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Mind Flayer')
+      const request3 = t.choose(game, request2)
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Priestess of Lolth', 'House Guard'],
+          played: ['Mind Flayer'],
+        },
+      })
+    })
+  })
+})
