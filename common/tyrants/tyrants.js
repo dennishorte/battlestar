@@ -1202,6 +1202,16 @@ Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
   else if (cardName === 'House Guard') {
     card = this.getZoneById('guard').cards()[0]
   }
+  else if (cardName === 'Insane Outcast') {
+    card = this.getZoneById('outcast').cards()[0]
+
+    if (!card) {
+      this.mLogIndent()
+      this.mLog({ template: 'No more insane outcasts remaining' })
+      this.mLogOutdent()
+      return
+    }
+  }
   else {
     const market = this.getZoneById('market').cards()
     card = market.find(c => c.name === cardName)

@@ -15,7 +15,12 @@ const cardData = [
       "+2 power",
       "Each opponent recruits an Insane Outcast"
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      player.incrementPower(2)
+      for (const opp of game.getPlayerOpponents(player)) {
+        game.aRecruit(opp, 'Insane Outcast', { noCost: true })
+      }
+    },
   },
   {
     "name": "Mind Flayer",

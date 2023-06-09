@@ -4,6 +4,32 @@ const t = require('./testutil.js')
 
 
 describe('Undead expansion', () => {
+  describe('Ghoul', () => {
+    test('power and outcasts', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Ghoul', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Ghoul')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Ghoul'],
+          power: 2,
+        },
+        micah: {
+          hand: ['Noble', 'Noble', 'Noble', 'Noble', 'Noble'],
+          discard: ['Insane Outcast'],
+        },
+      })
+    })
+  })
+
   describe('Mind Flayer', () => {
     test('devour and influence', () => {
       const game = t.gameFixture({
