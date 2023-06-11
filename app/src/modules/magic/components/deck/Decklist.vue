@@ -1,8 +1,6 @@
 <template>
   <div class="deck-list" :class="modified ? 'modified' : ''">
     <div class="header">
-      <div class="deck-name me-2">{{ deck.name }} ({{ maindeckSize }})</div>
-
       <Dropdown class="deck-menu" v-if="!noMenu">
         <template #title>deck menu</template>
 
@@ -10,8 +8,17 @@
              <DropdownButton @click="setViewType('mana-cost')">view: mana cost</DropdownButton>
              <DropdownDivider />
         -->
+
+        <DropdownButton @click="setEditMode('build')">edit mode: build</DropdownButton>
+        <DropdownButton @click="setEditMode('sideboard')">edit mode: sideboard</DropdownButton>
+        <DropdownDivider />
+
+
         <slot name="menu-options"></slot>
       </Dropdown>
+
+      <div class="deck-name me-2">{{ deck.name }} ({{ maindeckSize }})</div>
+      <div class="edit-mode">{{ editMode }}</div>
     </div>
 
     <div class="deck-sections">
@@ -75,6 +82,7 @@ export default {
         'sideboard',
       ],
 
+      editMode: 'build',
       viewType: 'card-type',
     }
   },
@@ -130,6 +138,10 @@ export default {
       this.$emit('card-clicked', card)
     },
 
+    setEditMode(modeName) {
+      this.editMode = modeName
+    },
+
     setViewType(typeName) {
       this.viewType = typeName
       console.log(this.viewType)
@@ -164,7 +176,7 @@ export default {
 
 .header {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 .header-buttons button {
