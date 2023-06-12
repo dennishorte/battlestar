@@ -208,11 +208,14 @@ Magic.prototype.aActiveFace = function(player, cardId, face) {
   })
 }
 
-Magic.prototype.aAddCounter = function(player, cardId, name) {
+Magic.prototype.aAddCounter = function(player, cardId, name, opts={}) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
   card.counters[name] = 0
-  this.aAdjustCardCounter(player, cardId, name, 1)
+
+  if (!opts.noIncrement) {
+    this.aAdjustCardCounter(player, cardId, name, 1)
+  }
 }
 
 Magic.prototype.aAddCounterPlayer = function(player, targetName, counterName) {
@@ -581,6 +584,19 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
       zone2: dest,
     }
   })
+
+
+  // If the card moved from a non-battlefield zone to a battlefield zone,
+  // add counters to it if appropriate.
+  if (card.zone) {
+    const endingZone = this.getZoneByCard(card)
+    if (!this.checkIsBattlefieldZone(startingZone) && this.checkIsBattlefieldZone(endingZone)) {
+      if (card.data.card_faces[0].loyalty) {
+        this.aAddCounter(player, cardId, 'loyalty', { noIncrement: true })
+        this.aAdjustCardCounter(player, cardId, 'loyalty', parseInt(card.data.card_faces[0].loyalty))
+      }
+    }
+  }
 }
 
 Magic.prototype.aMoveRevealed = function(player, sourceId, targetId) {
@@ -891,6 +907,14 @@ Magic.prototype.aViewTop = function(player, zoneId, count) {
   })
 }
 
+Magic.prototype.checkIsBattlefieldZone = function(zone) {
+  return (
+    zone.id.endsWith('battlefield')
+    || zone.id.endsWith('creatures')
+    || zone.id.endsWith('land')
+  )
+}
+
 Magic.prototype.getCardById = function(id) {
   if (typeof id === 'object') {
     return id
@@ -1064,7 +1088,6 @@ Magic.prototype.mMoveCardTo = function(card, zone, opts={}) {
       args: { card, zone }
     })
   }
-  const startingZone = this.getZoneByCard(card)
   const source = this.getZoneByCard(card)
   const index = source.cards().indexOf(card)
   const destIndex = opts.index !== undefined ? opts.index : zone.cards().length
@@ -1076,7 +1099,7 @@ Magic.prototype.mMoveCardTo = function(card, zone, opts={}) {
   }
 
   // Card was removed from stack.
-  if (startingZone.id.endsWith('.stack')) {
+  if (source.id.endsWith('.stack')) {
     this.mLogOutdent()
   }
 
