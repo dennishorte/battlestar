@@ -211,10 +211,13 @@ Magic.prototype.aActiveFace = function(player, cardId, face) {
 Magic.prototype.aAddCounter = function(player, cardId, name, opts={}) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
-  card.counters[name] = 0
 
-  if (!opts.noIncrement) {
-    this.aAdjustCardCounter(player, cardId, name, 1)
+  if (!card.counters[name]) {
+    card.counters[name] = 0
+
+    if (!opts.noIncrement) {
+      this.aAdjustCardCounter(player, cardId, name, 1)
+    }
   }
 }
 
@@ -588,12 +591,45 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
 
   // If the card moved from a non-battlefield zone to a battlefield zone,
   // add counters to it if appropriate.
-  if (card.zone) {
+  if (card.zone) {  // Do this check because tokens actually disappear when they move sometimes.
+
     const endingZone = this.getZoneByCard(card)
     if (!this.checkIsBattlefieldZone(startingZone) && this.checkIsBattlefieldZone(endingZone)) {
+
+      // Loyalty counters are a special case
       if (card.data.card_faces[0].loyalty) {
         this.aAddCounter(player, cardId, 'loyalty', { noIncrement: true })
         this.aAdjustCardCounter(player, cardId, 'loyalty', parseInt(card.data.card_faces[0].loyalty))
+      }
+
+      // Defense counters are a special case
+      else if (card.data.card_faces[0].defense) {
+        this.aAddCounter(player, cardId, 'defense', { noIncrement: true })
+        this.aAdjustCardCounter(player, cardId, 'defense', parseInt(card.data.card_faces[0].defense))
+      }
+
+      // All other counters, infer their existence on the card and add an empty counter
+      // field for them.
+      else if (card.data.card_faces[0].oracle_text) {
+        const exceptions = ['a', 'any', 'all', 'and', 'another', 'be', 'crank!', 'each', 'five', 'get', 'goes', 'had', 'have', 'instead', 'is', 'may', 'no', 'of', 'that', 'those', 'three', 'was', 'with', 'would', 'x', ]
+        const re = /([^ ]+) counter/
+        const text = card.data.card_faces[0].oracle_text
+        const match = re.exec(text)
+        if (match) {
+          const kind = match[1].toLowerCase()
+          if (exceptions.includes(kind)) {
+            // do nothing
+          }
+          else if (kind.startsWith('(')) {
+            // do nothing
+          }
+          else if (kind.endsWith(',')) {
+            // do nothing
+          }
+          else {
+            this.aAddCounter(player, cardId, kind, { noIncrement: true })
+          }
+        }
       }
     }
   }
