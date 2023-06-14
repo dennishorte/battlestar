@@ -17,6 +17,11 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      if (!game.state.dogmaInfo.charitableTrust) {
+        game.mLog({ template: "Charitable Trust's echo effect was not used." })
+        return
+      }
+
       const cards = game.state.dogmaInfo.charitableTrust[player.name]
                         .filter(card => card.zone.includes('hand'))
       const melded = game.aChooseAndMeld(player, cards, { min: 0, max: 1 })[0]
