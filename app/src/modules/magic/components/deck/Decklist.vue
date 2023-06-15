@@ -18,7 +18,7 @@
       </Dropdown>
 
       <div class="deck-name me-2">{{ deck.name }} ({{ maindeckSize }})</div>
-      <div class="edit-mode">{{ editMode }}</div>
+      <div class="edit-mode">mode: {{ editMode }}</div>
     </div>
 
     <div class="deck-sections">
@@ -65,6 +65,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    defaultEditMode: {
+      type: String,
+      default: 'sideboard',
+    },
   },
 
   data() {
@@ -82,12 +86,15 @@ export default {
         'sideboard',
       ],
 
-      editMode: 'build',
       viewType: 'card-type',
     }
   },
 
   computed: {
+    ...mapState('magic/dm', {
+      editMode: 'editMode',
+    }),
+
     cardsBySection() {
       const byZone = util.array.collect(this.deck.cardlist, card => card.zone)
       const mainByType = util.array.collect(byZone.main || [], card => mag.util.card.getSortType(card.data))
@@ -139,13 +146,17 @@ export default {
     },
 
     setEditMode(modeName) {
-      this.editMode = modeName
+      this.$store.commit('magic/dm/setEditMode', modeName)
     },
 
     setViewType(typeName) {
       this.viewType = typeName
       console.log(this.viewType)
     },
+  },
+
+  mounted() {
+    this.setEditMode(this.defaultEditMode)
   },
 }
 </script>

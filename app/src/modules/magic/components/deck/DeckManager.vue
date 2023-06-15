@@ -23,7 +23,13 @@
         </div>
 
         <div class="col column">
-          <Decklist v-if="activeDeck" :deck="activeDeck" :modified="modified" @card-clicked="manageCard">
+          <Decklist
+            v-if="activeDeck"
+            :deck="activeDeck"
+            :modified="modified"
+            default-edit-mode="build"
+            @card-clicked="manageCard"
+          >
             <template #menu-options>
               <DropdownButton @click="openImportModal">import</DropdownButton>
               <DropdownButton @click="download">export</DropdownButton>

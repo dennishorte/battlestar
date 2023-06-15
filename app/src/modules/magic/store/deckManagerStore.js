@@ -13,7 +13,9 @@ export default {
 
     // State
     activeDeck: null,
-    modified: false
+    modified: false,
+
+    editMode: 'sideboard',
   }),
 
   mutations: {
@@ -25,6 +27,9 @@ export default {
     setActiveDecklist(state, cardlist) {
       state.activeDeck.setDecklist(cardlist)
       state.modified = true
+    },
+    setEditMode(state, mode) {
+      state.editMode = mode
     },
     setModified(state, value) {
       state.modified = Boolean(value)
@@ -55,9 +60,31 @@ export default {
     setManagedCard(state, card) {
       state.cardManager.card = card
     },
+
+    ////////////////////
+    // Other
+    swapZone(state, card) {
+      if (card.zone === 'side') {
+        state.activeDeck.removeCard(card, 'side')
+        state.activeDeck.addCard(card, 'main')
+      }
+      else if (card.zone === 'main') {
+        state.activeDeck.removeCard(card, 'main')
+        state.activeDeck.addCard(card, 'side')
+      }
+    },
   },
 
   actions: {
+    clickCard({ commit, dispatch, state }, card) {
+      if (state.editMode === 'build') {
+        dispatch('manageCard', card)
+      }
+      else if (state.editMode === 'sideboard') {
+        commit('swapZone', card)
+      }
+    },
+
     ////////////////////
     // Manage Cards
     addCurrentCard({ commit, state }, zoneName) {

@@ -46,6 +46,7 @@
           <button class="btn btn-success" @click="selectDeck" v-else :disabled="!activeDeck">
             Click to shout: "I am ready!"
           </button>
+          <button @click="test">test</button>
         </div>
 
         <MagicFileManager
@@ -56,7 +57,12 @@
       </div>
 
       <div class="content-column deck-list-column">
-        <Decklist v-if="activeDeck" :deck="activeDeck" :no-menu="true" @card-clicked="cardClicked" />
+        <Decklist
+          v-if="activeDeck"
+          :deck="activeDeck"
+          :no-menu="true"
+          @card-clicked="cardClicked"
+        />
       </div>
 
     </div>
@@ -87,13 +93,12 @@ export default {
 
   inject: ['actor', 'game', 'save'],
 
-  data() {
-    return {
-      activeDeck: null,
-    }
-  },
-
   computed: {
+    ...mapState('magic/dm', {
+      activeDeck: 'activeDeck',
+      modified: 'modified',
+    }),
+
     ...mapState('magic/file', {
       filelist: 'filelist',
     }),
@@ -110,22 +115,12 @@ export default {
 
   methods: {
     cardClicked(card) {
-      if (card.zone === 'side') {
-        this.activeDeck.removeCard(card, 'side')
-        this.activeDeck.addCard(card, 'main')
-      }
-      else if (card.zone === 'main') {
-        this.activeDeck.removeCard(card, 'main')
-        this.activeDeck.addCard(card, 'side')
-      }
+      this.$store.dispatch('magic/dm/clickCard', card)
     },
 
     selectionChanged({ newValue }) {
       if (newValue.objectType === 'file') {
-        const deck = mag.util.deck.deserialize(newValue.file)
-        const lookupFunc = this.$store.getters['magic/cards/getLookupFunc']
-        mag.util.card.lookup.insertCardData(deck.cardlist, lookupFunc)
-        this.activeDeck = deck
+        this.$store.dispatch('magic/dm/selectDeck', newValue.file)
       }
     },
 
