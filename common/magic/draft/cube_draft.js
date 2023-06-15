@@ -152,7 +152,10 @@ CubeDraft.prototype.mainLoop = function() {
     }
   }
 
-  this.mLog({ template: 'Draft is complete' })
+  throw new GameOverEvent({
+    player: 'everyone',
+    reason: 'Draft is complete'
+  })
 }
 
 CubeDraft.prototype.aDraftCard = function(player, pack, cardId) {
