@@ -26,6 +26,7 @@
       <TableauZoneCard
         v-for="card in zone.cards()"
         :card="card"
+        :show-grave-powers="showGravePowers"
         :show-mana-cost="showManaCost"
         :show-power="showPower"
         @click.stop="cardClicked(card)"
@@ -63,6 +64,11 @@ export default {
     },
 
     noMenu: {
+      type: Boolean,
+      default: false,
+    },
+
+    showGravePowers: {
       type: Boolean,
       default: false,
     },

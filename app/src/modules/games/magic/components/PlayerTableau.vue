@@ -61,7 +61,7 @@
         </template>
       </TableauZone>
 
-      <TableauZone :zone="getZone('graveyard')">
+      <TableauZone :zone="getZone('graveyard')" :show-grave-powers="true">
         <DropdownButton @click="moveAll($event, 'graveyard')">move all</DropdownButton>
       </TableauZone>
     </div>

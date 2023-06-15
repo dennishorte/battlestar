@@ -7,6 +7,16 @@
       <i class="bi bi-browser-edge" v-if="card.morph"></i>
       <i class="bi bi-bookmark-fill" v-if="card.token"></i>
 
+      <template v-if="showGravePowers">
+        <i class="ms ms-cost ms-ability-aftermath" v-if="hasAftermath" />
+        <i class="ms ms-cost ms-ability-disturb" v-if="hasDisturb" />
+        <i class="ms ms-cost ms-ability-embalm" v-if="hasEmbalm" />
+        <i class="ms ms-cost ms-ability-eternalize" v-if="hasEternalize" />
+        <i class="ms ms-cost ms-flashback" v-if="hasFlashback" />
+        <i class="ms ms-cost ms-ability-unearth" v-if="hasUnearth" />
+        <i class="ms ms-cost ms-ability-escape" v-if="hasEscape" />
+      </template>
+
       <CardListItem
         :card="card"
         :class="extraClasses"
@@ -84,6 +94,11 @@ export default {
   props: {
     card: Object,
 
+    showGravePowers: {
+      type: Boolean,
+      default: false,
+    },
+
     showManaCost: {
       type: Boolean,
       default: false,
@@ -155,6 +170,14 @@ export default {
       return classes
     },
 
+    hasAftermath() { return this.hasGraveAbility('Aftermath') },
+    hasDisturb() { return this.hasGraveAbility('Disturb') },
+    hasEmbalm() { return this.hasGraveAbility('Embalm') },
+    hasEscape() { return this.hasGraveAbility('Escape') },
+    hasEternalize() { return this.hasGraveAbility('Eternalize') },
+    hasFlashback() { return this.hasGraveAbility('Flashback') },
+    hasUnearth() { return this.hasGraveAbility('Unearth') },
+
     hidden() {
       const player = this.game.getPlayerByName(this.actor.name)
       return !this.card.visibility.includes(player)
@@ -174,6 +197,10 @@ export default {
   methods: {
     closeup() {
       this.$modal('card-closeup-modal').show()
+    },
+
+    hasGraveAbility(name) {
+      return this.card.data.card_faces.some(face => face.oracle_text.includes(name))
     },
 
     morph() {
