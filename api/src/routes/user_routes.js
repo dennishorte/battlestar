@@ -60,7 +60,30 @@ User.lobbies = async function(req, res) {
 }
 
 User.games = async function(req, res) {
-  const gameCursor = await db.game.findByUserId(req.body.userId)
+  const filters = {}
+
+  if (req.body.userId) {
+    filters['settings.players._id'] = req.body.userId
+  }
+
+  if (req.body.state) {
+    if (req.body.state === 'all') {
+      // Do nothing. Get all game states.
+    }
+  }
+  else {
+    filters.gameOver = false
+  }
+
+  if (req.body.kind) {
+    filters['settings.game'] = req.body.kind
+  }
+
+  if (req.body.killed === false) {
+    filters.killed = { $ne: true }
+  }
+
+  const gameCursor = await db.game.find(filters)
   const gameArray = await gameCursor.toArray()
 
   res.json({

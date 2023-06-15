@@ -9,6 +9,10 @@
       </div>
 
       <div class="col">
+        <DraftList />
+      </div>
+
+      <div class="col">
       </div>
 
     </div>
@@ -20,6 +24,7 @@
 <script>
 import { mapState } from 'vuex'
 
+import DraftList from './DraftList'
 import MagicFileManager from './MagicFileManager'
 import MagicMenu from './MagicMenu'
 import SectionHeader from '@/components/SectionHeader'
@@ -28,6 +33,7 @@ export default {
   name: 'MagicProfile',
 
   components: {
+    DraftList,
     MagicFileManager,
     MagicMenu,
     SectionHeader,

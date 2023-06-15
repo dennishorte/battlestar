@@ -71,6 +71,10 @@ Game.create = async function(lobby) {
   })
 }
 
+Game.find = async function(filters) {
+  return await gameCollection.find(filters)
+}
+
 Game.findById = async function(gameId) {
   return await gameCollection.findOne({ _id: gameId })
 }
