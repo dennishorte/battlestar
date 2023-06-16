@@ -143,6 +143,13 @@ Game.save = async function(game, opts={}) {
   }
 }
 
+Game.saveSettings = async function(gameId, settings) {
+  return await gameCollection.updateOne(
+    { _id: gameId },
+    { $set: { settings } }
+  )
+}
+
 Game.saveStats = async function(gameData) {
   return await writeMutex.dispatch(async () => {
     await gameCollection.updateOne(

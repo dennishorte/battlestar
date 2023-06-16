@@ -28,8 +28,26 @@ Game.create = async function(req, res) {
     // Save the game id in the lobby
     await db.lobby.gameLaunched(lobby._id, gameId)
 
+    const gameData = await db.game.findById(gameId)
+    const game = new mag.Magic(gameData)
+
+    // For drafts, create decks for each user.
+    if (game.settings.game === 'CubeDraft') {
+      for (const player of game.settings.players) {
+        const deckId = await db.magic.deck.create({
+          userId: player._id,
+          path: '/draft_decks',
+          name: game.settings.name,
+        })
+
+        player.deckId = deckId
+      }
+
+      // Save the draft settings afterwards so the deck ids get saved.
+      await db.game.saveSettings(game._id, game.settings)
+    }
+
     // Notify players of the new game
-    const game = await db.game.findById(gameId)
     for (const user of lobby.users) {
       _notify(game, user._id, 'A new game has started!')
     }

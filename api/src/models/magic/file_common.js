@@ -31,7 +31,6 @@ module.exports = function({ collection, createFields }) {
       }
 
       return insertResult.insertedId
-
     },
 
     'delete': async function(id) {
