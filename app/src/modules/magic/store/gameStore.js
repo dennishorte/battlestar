@@ -173,6 +173,7 @@ export default {
         sourceId: state.movingAllSource,
         targetId: targetZone.id,
       })
+      commit('setMovingAllSource', null)
     },
 
     moveRevealed({ commit, state }, targetZone) {
