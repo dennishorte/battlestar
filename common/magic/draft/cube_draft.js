@@ -84,6 +84,7 @@ CubeDraft.prototype.initializePlayers = function() {
     _id: p._id,
     id: p.name,
     name: p.name,
+    deckId: p.deckId,
     index: null,
     draftCompelete: false,
     picked: [],

@@ -19,9 +19,8 @@
       </div>
 
       <div class="game-column deck-column">
-        <Decklist :deck="tempDeck()" @card-clicked="showCardCloseup">
+        <Decklist v-if="activeDeck" :deck="activeDeck" @card-clicked="swapCardZone">
           <template #menu-options>
-            <DropdownButton @click="deckSaveAs">save as...</DropdownButton>
             <DropdownRouterLink to="/magic/decks">deck manager</DropdownRouterLink>
           </template>
         </Decklist>
@@ -40,15 +39,6 @@
   <CardCloseupModal :id="cardCloseupModalId" :cardData="closeupCardData" />
   <CardDraftModal :id="cardDraftModalId" :card="closeupDraftCard" @draft-card="chooseCard" />
   <CardTableauModal :id="cardTableauModalId" :cards="tableauCards" title="Card Tableau" />
-
-  <NewFileModal
-    :id="fileModalId"
-    :fileTypes="['deck']"
-    :fileType="'deck'"
-    :name="'new draft deck'"
-    :path="'/decks/draft'"
-    @create="deckSaveAsDo"
-  />
 </template>
 
 
@@ -72,7 +62,6 @@ import SeatingInfo from './SeatingInfo'
 
 import DropdownButton from '@/components/DropdownButton'
 import DropdownRouterLink from '@/components/DropdownRouterLink'
-import NewFileModal from '@/components/filemanager/NewFileModal'
 
 import ChatInput from '@/modules/games/common/components/ChatInput'
 import DebugModal from '@/modules/games/common/components/DebugModal'
@@ -101,7 +90,6 @@ export default {
     GameLog,
     GameMenu,
     MagicWrapper,
-    NewFileModal,
     SeatingInfo,
     WaitingPanel,
   },
@@ -130,6 +118,11 @@ export default {
     ...mapState('magic/cubeDraft', {
       game: 'game',
       gameReady: 'ready',
+    }),
+
+    ...mapState('magic/dm', {
+      activeDeck: 'activeDeck',
+      modified: 'modified',
     }),
 
     player() {
@@ -176,23 +169,6 @@ export default {
       this.bus.emit('user-select-option', { optionName: card.id })
       await nextTick()
       this.bus.emit('click-choose-selected-option')
-    },
-
-    deckSaveAs() {
-      this.$modal(this.fileModalId).show()
-    },
-
-    deckSaveAsDo(fileData) {
-      fileData.cardlist = this
-        .tempDeck()
-        .cardlist
-        .map(c => {
-          const card = { ...c }
-          delete card.data
-          return card
-        })
-
-      this.$store.dispatch('magic/file/create', fileData)
     },
 
     loadGame() {
@@ -253,40 +229,6 @@ export default {
       }
     },
 
-    tempDeck() {
-      const deckData = {
-        _id: "temp deck",
-        userId: "fake user id",
-        name: '__draft_deck__',
-        path: '/__draft_decks',
-        kind: 'deck',
-        createdTimestamp: Date.now(),
-        updatedTimestamp: Date.now(),
-        cardlist: this
-          .game
-          .getPicksByPlayer(this.player)
-          .map(c => ({
-            name: c.name,
-            zone: 'main'
-          })),
-
-        /* [
-         *   {
-         *     name: 'ash barrens',
-         *     setCode: null,
-         *     collectorNumber: null,
-         *     zone: 'main'
-         *   },
-         * ], */
-      }
-
-      const deck = mag.util.deck.deserialize(deckData)
-      const lookupFunc = this.$store.getters['magic/cards/getLookupFunc']
-      mag.util.card.lookup.insertCardData(deck.cardlist, lookupFunc)
-
-      return deck
-    },
-
     showDraftModal(card) {
       if (!card.data) {
         card.data = this.$store.getters['magic/cards/getLookupFunc'](card)
@@ -320,8 +262,11 @@ export default {
       this.$modal(this.cardTableauModalId).show()
     },
 
-    uiFactory() {
+    swapCardZone(card) {
+      this.$store.dispatch('magic/dm/clickCard', card)
+    },
 
+    uiFactory() {
       const selectorOptionComponent = (option) => {
         const cardId = option.title ? option.title : option
         const card = this.game.getCardById(cardId)
@@ -352,6 +297,27 @@ export default {
         },
       }
     },
+  },
+
+  watch: {
+    async game(newValue) {
+      if (!newValue) {
+        return
+      }
+
+      // Load deck
+      const player = newValue.getPlayerByName(this.actor.name)
+      const response = await axios.post('/api/magic/deck/fetch', {
+        deckId: player.deckId,
+      })
+
+      if (response.data.status === 'success') {
+        this.$store.dispatch('magic/dm/selectDeck', response.data.deck)
+      }
+      else {
+        alert('Unable to load deck')
+      }
+    }
   },
 }
 </script>
