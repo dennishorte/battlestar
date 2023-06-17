@@ -12,7 +12,8 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Choose a color on your board having the highest top card. Meld the bottom card on your board of that color. Claim an achievement, ignoring eligibility.`
+    // `Choose a color on your board having the highest top card. Meld the bottom card on your board of that color. Claim an achievement, ignoring eligibility.`
+    `Choose a color on your board having the highest top card. Meld the bottom card on your board of that color. If that color has more than one card, claim an achievement, ignoring eligibility.`
   ]
 
   this.dogmaImpl = [
@@ -26,8 +27,10 @@ function Card() {
         const cards = game.getCardsByZone(player, color)
         game.aMeld(player, cards[cards.length - 1])
 
-        const achs = game.getAvailableAchievementsRaw(player)
-        game.aChooseAndAchieve(player, achs)
+        if (cards.length > 1) {
+          const achs = game.getAvailableAchievementsRaw(player)
+          game.aChooseAndAchieve(player, achs)
+        }
       }
     }
   ]
