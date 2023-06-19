@@ -9,7 +9,7 @@
         <ChatInput />
       </div>
 
-      <div class="game-column data-column" v-if="tableauCards.length > 0 || showWaitingPanel">
+      <div class="game-column data-column" :class="widthClass" v-if="tableauCards.length > 0 || showWaitingPanel">
         <CardTableau
           :cards="tableauCards"
           :cardScroll="false"
@@ -149,6 +149,18 @@ export default {
       return [
         this.showWaitingPanel ? '' : 'd-none',
       ]
+    },
+
+    widthClass() {
+      if (this.tableauCards.length === 1) {
+        return 'one-card-width'
+      }
+      else if (this.tableauCards.length <= 6) {
+        return 'two-card-width'
+      }
+      else {
+        return 'three-card-width'
+      }
     },
   },
 
@@ -343,6 +355,17 @@ export default {
 
 .data-column {
   padding: 1em;
+}
+
+.data-column.one-card-width {
+  min-width: 260px;
+}
+
+.data-column.two-card-width {
+  min-width: 480px;
+}
+
+.data-column.three-card-width {
   min-width: 700px;
 }
 
