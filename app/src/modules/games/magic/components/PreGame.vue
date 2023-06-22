@@ -46,7 +46,6 @@
           <button class="btn btn-success" @click="selectDeck" v-else :disabled="!activeDeck">
             Click to shout: "I am ready!"
           </button>
-          <button @click="test">test</button>
         </div>
 
         <MagicFileManager
