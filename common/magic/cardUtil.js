@@ -122,6 +122,13 @@ CardUtil.allCardNames = function(card) {
     }
   }
 
+  for (const name of names) {
+    const normalized = name.normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+    if (names.indexOf(normalized) === -1) {
+      names.push(normalized)
+    }
+  }
+
   return names.map(name => name.toLowerCase())
 }
 
