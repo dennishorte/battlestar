@@ -48,20 +48,20 @@
 
     <CardManagerModal :cardlist="filteredCards" />
 
+    <CardImportModal modal-id="deck-import-modal" @import-card-updates="importDecklist">
+      <template #top-slot>
+        <div class="alert alert-danger">
+          Using this option will overwrite the existing cards in this deck.
+        </div>
+      </template>
+    </CardImportModal>
+
     <Modal id="edit-deck-modal" @ok="edit">
       <template #header>Edit Deck</template>
       <input class="form-control" v-model="newName" placeholder="name" />
       <input class="form-control" v-model="newPath" placeholder="path" />
     </Modal>
 
-    <Modal id="deck-import-modal" @ok="importDecklist">
-      <template #header>Import Deck</template>
-
-      <div class="alert alert-danger">
-        Using this option will overwrite the existing cards in this deck.
-      </div>
-      <textarea class="form-control" rows="15" v-model="importText"></textarea>
-    </Modal>
   </MagicWrapper>
 </template>
 
@@ -76,6 +76,7 @@ import mitt from 'mitt'
 
 import CardFilters from './CardFilters'
 import CardList from './CardList'
+import CardImportModal from '../CardImportModal'
 import CardManagerModal from './CardManagerModal'
 import Decklist from './Decklist'
 import DropdownButton from '@/components/DropdownButton'
@@ -90,6 +91,7 @@ export default {
   components: {
     CardFilters,
     CardList,
+    CardImportModal,
     CardManagerModal,
     Decklist,
     DropdownButton,
@@ -184,9 +186,8 @@ export default {
       await this.$store.dispatch('magic/dm/saveActiveDeck')
     },
 
-    importDecklist() {
-      const cards = mag.util.card.parseCardlist(this.importText)
-      this.$store.dispatch('magic/dm/setActiveDecklist', cards)
+    importDecklist(update) {
+      this.$store.dispatch('magic/dm/setActiveDecklist', update.insert)
     },
 
     openEditModal() {
