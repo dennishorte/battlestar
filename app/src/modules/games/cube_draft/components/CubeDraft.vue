@@ -18,9 +18,10 @@
         <WaitingPanel :class="waitingPanelClasses" />
       </div>
 
-      <div class="game-column deck-column">
+      <div class="game-column deck-column" :class="modifiedClass">
         <Decklist v-if="activeDeck" :deck="activeDeck" @card-clicked="swapCardZone">
           <template #menu-options>
+            <DropdownButton @click="saveDeck">save</DropdownButton>
             <DropdownRouterLink to="/magic/decks">deck manager</DropdownRouterLink>
           </template>
         </Decklist>
@@ -124,6 +125,15 @@ export default {
       activeDeck: 'activeDeck',
       modified: 'modified',
     }),
+
+    modifiedClass() {
+      if (this.modified) {
+        return 'deck-modified'
+      }
+      else {
+        return undefined
+      }
+    },
 
     player() {
       return this.game.getPlayerByName(this.actor.name)
@@ -229,6 +239,10 @@ export default {
       else {
         alert('Save game failed. Try reloading and trying again.\n' + requestResult.data.message)
       }
+    },
+
+    saveDeck() {
+      this.$store.dispatch('magic/dm/saveActiveDeck')
     },
 
     showDraftModal(card) {
@@ -361,6 +375,10 @@ export default {
 
 .deck-column {
   min-width: 18em;
+}
+
+.deck-modified {
+  background-color: #faa;
 }
 
 .log-column {

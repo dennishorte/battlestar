@@ -72,6 +72,8 @@ export default {
         state.activeDeck.removeCard(card, 'main')
         state.activeDeck.addCard(card, 'side')
       }
+
+      state.modified = true
     },
   },
 
