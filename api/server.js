@@ -72,6 +72,9 @@ app.post('/api/game/saveFull', routes.game.saveFull)
 app.post('/api/game/saveResponse', routes.game.saveResponse)
 app.post('/api/game/updateStats', routes.game.updateStats)
 
+// Magic Routes
+app.post('/api/magic/deck/add_card', routes.magic.deck.addCard)
+
 // Snapshot Routes
 app.post('/api/snapshot/create', routes.snapshot.create)
 app.post('/api/snapshot/fetch', routes.snapshot.fetch)

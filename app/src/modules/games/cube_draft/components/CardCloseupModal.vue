@@ -31,7 +31,7 @@ export default {
     },
   },
 
-  inject: ['do', 'game'],
+  inject: ['game'],
 
   data() {
     return {

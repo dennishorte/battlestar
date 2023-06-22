@@ -28,5 +28,12 @@ Deck.save = async function(req, res) {
   })
 }
 
+Deck.addCard = async function(req, res) {
+  await db.magic.deck.addCard(req.body.deckId, req.body.card)
+  res.json({
+    status: 'success',
+  })
+}
+
 
 module.exports = Deck

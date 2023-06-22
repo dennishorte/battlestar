@@ -167,7 +167,6 @@ export default {
   provide() {
     return {
       actor: this.actor,
-      do: this.do,
       game: computed(() => this.game),
       save: this.save,
 
@@ -181,28 +180,19 @@ export default {
       this.bus.emit('user-select-option', { optionName: card.id })
       await nextTick()
       this.bus.emit('click-choose-selected-option')
+
+      // Add the card to the player's deck.
+      this.$store.dispatch('magic/dm/addCard', {
+        card: card.data,
+        zoneName: 'main',
+      })
+      this.$store.dispatch('magic/dm/saveActiveDeck')
     },
 
     loadGame() {
       this.$store.dispatch('magic/cubeDraft/loadGame', {
         gameData: this.data,
         doFunc: this.do,
-      })
-    },
-
-    do(player, action) {
-      const request = this.game.getWaiting()
-      const selector = request.selectors[0]
-
-      if (player) {
-        action.playerName = player.name
-      }
-
-      this.game.respondToInputRequest({
-        actor: selector.actor,
-        title: selector.title,
-        selection: [action],
-        key: request.key,
       })
     },
 

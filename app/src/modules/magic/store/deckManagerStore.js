@@ -87,6 +87,10 @@ export default {
 
     ////////////////////
     // Manage Cards
+    addCard({ commit }, { card, zoneName }) {
+      commit('addCardToZone', { card, zoneName })
+    },
+
     addCurrentCard({ commit, state }, zoneName) {
       commit('addCardToZone', {
         card: state.cardManager.card,

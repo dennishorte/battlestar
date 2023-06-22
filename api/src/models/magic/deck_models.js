@@ -11,6 +11,12 @@ const Deck = {
     createFields: () => ({
       cardlist: [],
     })
-  })
+  }),
+
+  async addCard(deckId, card) {
+    const deck = await Deck.findById(deckId)
+    deck.cardlist.push(card)
+    await Deck.save(deck)
+  },
 }
 module.exports = Deck
