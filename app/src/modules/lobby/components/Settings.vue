@@ -16,7 +16,7 @@
 
       <SettingsMagic v-if="lobby.game === 'Magic'" />
       <SettingsCubeDraft v-if="lobby.game === 'Cube Draft'" />
-      <SettingsPackDraft v-if="lobby.game === 'Pack Draft'" />
+      <SettingsSetDraft v-if="lobby.game === 'Set Draft'" />
     </div>
   </div>
 </template>
@@ -26,7 +26,7 @@
 import SettingsCubeDraft from './SettingsCubeDraft'
 import SettingsInnovation from './SettingsInnovation'
 import SettingsMagic from './SettingsMagic'
-import SettingsPackDraft from './SettingsPackDraft'
+import SettingsSetDraft from './SettingsSetDraft'
 import SettingsTyrants from './SettingsTyrants'
 
 
@@ -37,7 +37,7 @@ export default {
     SettingsCubeDraft,
     SettingsInnovation,
     SettingsMagic,
-    SettingsPackDraft,
+    SettingsSetDraft,
     SettingsTyrants,
   },
 
@@ -52,7 +52,7 @@ export default {
 
         'Magic',
         'Cube Draft',
-        'Pack Draft',
+        'Set Draft',
       ],
     }
   },
