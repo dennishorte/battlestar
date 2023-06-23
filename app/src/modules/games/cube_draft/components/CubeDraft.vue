@@ -19,7 +19,7 @@
       </div>
 
       <div class="game-column deck-column" :class="modifiedClass">
-        <Decklist v-if="activeDeck" :deck="activeDeck" @card-clicked="swapCardZone">
+        <Decklist v-if="activeDeck" :deck="activeDeck" @card-clicked="showCardCloseup">
           <template #menu-options>
             <DropdownButton @click="saveDeck">save</DropdownButton>
             <DropdownRouterLink to="/magic/decks">deck manager</DropdownRouterLink>
@@ -37,7 +37,7 @@
     <DebugModal />
   </MagicWrapper>
 
-  <CardCloseupModal :id="cardCloseupModalId" :cardData="closeupCardData" />
+  <CardCloseupModal :id="cardCloseupModalId" :card="closeupCard" />
   <CardDraftModal :id="cardDraftModalId" :card="closeupDraftCard" @draft-card="chooseCard" />
   <CardTableauModal :id="cardTableauModalId" :cards="tableauCards" title="Card Tableau" />
 </template>
@@ -109,7 +109,7 @@ export default {
       cardTableauModalId: 'card-tableau-modal-' + uuidv4(),
       fileModalId: 'file-manager-edit-modal-' + uuidv4(),
 
-      closeupCardData: null,
+      closeupCard: null,
       closeupDraftCard: null,
       showWaitingPanel: false,
     }
@@ -257,29 +257,17 @@ export default {
       }
     },
 
-    showCardCloseup(cardId) {
-      // Handle a card with data already populated
-      if (cardId.data) {
-        this.closeupCardData = cardId.data
-      }
+    showCardCloseup(card) {
+      console.log(card)
+      this.closeupCard = card
 
-      // Handle just getting a card id
-      else {
-        const card = this.game.getCardById(cardId)
-        this.closeupCardData = this.$store.getters['magic/cards/getLookupFunc'](card)
-      }
-
-      if (this.closeupCardData) {
+      if (this.closeupCard) {
         this.$modal(this.cardCloseupModalId).show()
       }
     },
 
     showPackTableau() {
       this.$modal(this.cardTableauModalId).show()
-    },
-
-    swapCardZone(card) {
-      this.$store.dispatch('magic/dm/clickCard', card)
     },
 
     uiFactory() {

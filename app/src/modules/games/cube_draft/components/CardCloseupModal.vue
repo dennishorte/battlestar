@@ -1,10 +1,38 @@
 <template>
   <Modal id="card-closeup-modal">
-    <div v-if="!!cardData" class="modal-body">
+    <div v-if="!!card" class="modal-body">
       <div class="card-holder">
-        <Card :card="cardData" :size="270" />
+        <Card :card="card.data" :size="270" />
       </div>
     </div>
+
+    <template #footer>
+      <button
+        class="btn btn-secondary"
+        :class="commandClass"
+        @click="setZone('command')"
+        data-bs-dismiss="modal"
+      >
+        command
+      </button>
+
+      <button
+        class="btn btn-secondary"
+        :class="sideClass"
+        @click="setZone('side')"
+        data-bs-dismiss="modal"
+      >sideboard</button>
+
+      <button
+        class="btn"
+        :class="mainClass"
+        @click="setZone('main')"
+        data-bs-dismiss="modal"
+      >main</button>
+
+      <button class="btn btn-primary" @click="ok" data-bs-dismiss="modal">ok</button>
+    </template>
+
   </Modal>
 </template>
 
@@ -25,7 +53,7 @@ export default {
   },
 
   props: {
-    cardData: {
+    card: {
       type: Object,
       default: null,
     },
@@ -39,12 +67,30 @@ export default {
   },
 
   computed: {
-  },
-
-  watch: {
+    commandClass() {
+      if (this.card) {
+        return this.card.zone === 'command' ? 'btn-success' : 'btn-secondary'
+      }
+    },
+    mainClass() {
+      if (this.card) {
+        return this.card.zone === 'main' ? 'btn-success' : 'btn-secondary'
+      }
+    },
+    sideClass() {
+      if (this.card) {
+        return this.card.zone === 'side' ? 'btn-success' : 'btn-secondary'
+      }
+    },
   },
 
   methods: {
+    setZone(name) {
+      this.$store.commit('magic/dm/setCardZone', {
+        card: this.card,
+        zoneName: name
+      })
+    },
   },
 }
 </script>

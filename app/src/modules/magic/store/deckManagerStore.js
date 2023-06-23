@@ -63,6 +63,11 @@ export default {
 
     ////////////////////
     // Other
+    setCardZone(state, { card, zoneName }) {
+      state.activeDeck.removeCard(card, card.zone)
+      state.activeDeck.addCard(card, zoneName)
+    },
+
     swapZone(state, card) {
       if (card.zone === 'side') {
         state.activeDeck.removeCard(card, 'side')
@@ -92,7 +97,6 @@ export default {
     addCard({ commit }, { card, zoneName }) {
       commit('addCardToZone', { card, zoneName })
     },
-
     addCurrentCard({ commit, state }, zoneName) {
       commit('addCardToZone', {
         card: state.cardManager.card,
