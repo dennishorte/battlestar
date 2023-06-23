@@ -187,7 +187,7 @@ function postfilterVersions(cards) {
 async function fetchScryfallDefaultCards(uri) {
   const result = await axios.get(uri, {
     maxBodyLength: Infinity,
-    maxConentLength: Infinity,
+    maxContentLength: Infinity,
     timeout: 0,
   })
 
