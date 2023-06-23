@@ -67,10 +67,18 @@ Game.create = async function(req, res) {
 
 Game.fetch = async function(req, res) {
   const game = await db.game.findById(req.body.gameId)
-  res.json({
-    status: 'success',
-    game,
-  })
+  if (!game) {
+    res.json({
+      status: 'error',
+      message: `Game not found. ID: ${req.body.gameId}`,
+    })
+  }
+  else {
+    res.json({
+      status: 'success',
+      game,
+    })
+  }
 }
 
 Game.fetchAll = async function(req, res) {
