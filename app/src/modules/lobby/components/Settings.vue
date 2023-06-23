@@ -11,10 +11,12 @@
     </div>
 
     <div class="game-options mt-2">
-      <SettingsCubeDraft v-if="lobby.game === 'Cube Draft'" />
       <SettingsInnovation v-if="lobby.game === 'Innovation'" />
-      <SettingsMagic v-if="lobby.game === 'Magic'" />
       <SettingsTyrants v-if="lobby.game === 'Tyrants of the Underdark'" />
+
+      <SettingsMagic v-if="lobby.game === 'Magic'" />
+      <SettingsCubeDraft v-if="lobby.game === 'Cube Draft'" />
+      <SettingsPackDraft v-if="lobby.game === 'Pack Draft'" />
     </div>
   </div>
 </template>
@@ -24,6 +26,7 @@
 import SettingsCubeDraft from './SettingsCubeDraft'
 import SettingsInnovation from './SettingsInnovation'
 import SettingsMagic from './SettingsMagic'
+import SettingsPackDraft from './SettingsPackDraft'
 import SettingsTyrants from './SettingsTyrants'
 
 
@@ -34,6 +37,7 @@ export default {
     SettingsCubeDraft,
     SettingsInnovation,
     SettingsMagic,
+    SettingsPackDraft,
     SettingsTyrants,
   },
 
@@ -43,10 +47,12 @@ export default {
     return {
       gameNames: [
         '',
-        'Cube Draft',
         'Innovation',
-        'Magic',
         'Tyrants of the Underdark',
+
+        'Magic',
+        'Cube Draft',
+        'Pack Draft',
       ],
     }
   },
