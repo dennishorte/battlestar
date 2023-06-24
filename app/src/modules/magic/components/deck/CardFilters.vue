@@ -224,8 +224,10 @@ export default {
 
   computed: {
     sets() {
-      return Object
-        .entries(mag.res.setCodesToNames)
+      return mag
+        .res
+        .setData
+        .map(s => [s.code, s.name])
         .sort((l, r) => l[1].localeCompare(r[1]))
     },
   },
