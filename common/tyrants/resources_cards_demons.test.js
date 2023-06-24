@@ -194,4 +194,83 @@ describe('Undead expansion', () => {
       })
     })
   })
+
+  describe('Orcus', () => {
+    test('devour and assassinate; choose none', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Orcus', 'Priestess of Lolth', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Orcus')
+      const request3 = t.choose(game, request2, 'House Guard')
+      const request4 = t.choose(game, request3)
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Priestess of Lolth'],
+          played: ['Orcus'],
+          trophyHall: ['neutral'],
+        },
+        devoured: ['House Guard'],
+      })
+    })
+
+    test('devour and assassinate; choose one', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Orcus', 'Priestess of Lolth', 'House Guard'],
+        },
+        micah: {
+          trophyHall: ['neutral'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Orcus')
+      const request3 = t.choose(game, request2, 'House Guard')
+      const request4 = t.choose(game, request3, 'micah: neutral')
+      const request5 = t.choose(game, request4, 'Chasmleap Bridge')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Priestess of Lolth'],
+          played: ['Orcus'],
+          trophyHall: ['neutral'],
+        },
+        micah: {
+          hand: ['Noble', 'Noble', 'Noble', 'Noble', 'Noble'],
+          trophyHall: [],
+        },
+        devoured: ['House Guard'],
+        'Chasmleap Bridge': {
+          troops: ['neutral'],
+        },
+      })
+    })
+
+    test('do not devour', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Orcus', 'Priestess of Lolth', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Orcus')
+      const request3 = t.choose(game, request2)
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Priestess of Lolth', 'House Guard'],
+          played: ['Orcus'],
+        },
+      })
+    })
+  })
 })

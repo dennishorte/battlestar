@@ -102,7 +102,45 @@ const cardData = [
     "text": [
       "Devour a card in your hand > Assassinate 2 troops. Then you may take up to 2 troops from any trophy halls and deploy them anywhere on the board."
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      game.aChooseAndDevour(player, {
+        then: () => {
+          // Assassinate two troops.
+          game.aChooseAndAssassinate(player)
+          game.aChooseAndAssassinate(player)
+
+          // Select two troops from any trophy halls.
+          const choices = game
+            .getPlayerAll()
+            .flatMap(player => {
+              const trophies = game
+                .getCardsByZone(player, 'trophyHall')
+                .map(troop => troop.getOwnerName())
+              const distinct = util.array.distinct(trophies)
+              return trophies.map(ownerName => `${player.name}: ${ownerName}`)
+            })
+            .sort()
+
+          const selected = game.aChoose(player, choices, {
+            title: `Choose up to two trophies to deploy`,
+            min: 0,
+            max: 2,
+          })
+
+          for (const selection of selected) {
+            const [trophyName, ownerName] = selection.split(': ')
+            const trophyPlayer = game.getPlayerByName(trophyName)
+            const troop = game
+              .getCardsByZone(trophyPlayer, 'trophyHall')
+              .find(c => c.getOwnerName() === ownerName)
+            game.aChooseAndDeploy(player, {
+              troop,
+              anywhere: true,
+            })
+          }
+        }
+      })
+    },
   },
   {
     "name": "Gibbering Mouther",
