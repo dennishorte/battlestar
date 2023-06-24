@@ -1,14 +1,15 @@
 <template>
   <div class="settings-pack-draft">
 
-    <label class="form-label">Set</label>
-    <select class="form-select" v-model="options.setId" @change="optionsChanged">
-      <option v-for="set in sets" :key="set.short_name" :value="set.short_name">{{ set.name }}</option>
-    </select>
+    <div class="set-picker-div">
+      <div class="form-label">Set: {{ selectedSet }}</div>
+      <button class="btn btn-secondary" @click="openSetPicker">Open Set Picker</button>
+    </div>
 
     <label class="form-label">Number of Packs</label>
     <input class="form-control" v-model.number="options.numPacks" @change="optionsChanged" />
 
+    <SetPickerModal :id="setPickerModalId" @set-selected="selectSet" />
   </div>
 </template>
 
@@ -16,10 +17,17 @@
 <script>
 import axios from 'axios'
 import { util } from 'battlestar-common'
+import { v4 as uuidv4 } from 'uuid'
+
+import SetPickerModal from '@/modules/magic/components/SetPickerModal'
 
 
 export default {
   name: 'SetDraftSettings',
+
+  components: {
+    SetPickerModal,
+  },
 
   inject: ['lobby', 'save'],
 
@@ -28,7 +36,15 @@ export default {
       options: {},
 
       users: [],
+
+      setPickerModalId: 'set-picker-modal-' + uuidv4(),
     }
+  },
+
+  computed: {
+    selectedSet() {
+      return this.options.set ? this.options.set.name : 'none'
+    },
   },
 
   watch: {
@@ -38,10 +54,6 @@ export default {
       },
       deep: true,
     },
-  },
-
-  computed: {
-
   },
 
   methods: {
@@ -60,10 +72,12 @@ export default {
 
       const numPlayersCondition = this.lobby.users.length >= 2
       const numPacksCondition = opts.numPacks > 0
+      const setSelectedCondition = opts.set && ['expansion', 'core', 'draft_innovation'].includes(opts.set.set_type)
 
       this.lobby.valid = (
         numPlayersCondition
         && numPacksCondition
+        && setSelectedCondition
       )
     },
 
@@ -88,6 +102,15 @@ export default {
       lobby.packs = packs.slice(0, totalPacks)
 
       lobby.options.packName = pack.name
+    },
+
+    openSetPicker() {
+      this.$modal(this.setPickerModalId).show()
+    },
+
+    selectSet(sett) {
+      this.options.set = sett
+      this.optionsChanged()
     },
 
     defaultOptions() {
@@ -116,3 +139,7 @@ export default {
   },
 }
 </script>
+
+
+<style scoped>
+</style>
