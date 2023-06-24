@@ -845,6 +845,8 @@ Tyrants.prototype.aChooseAndDeploy = function(player, opts={}) {
   if (loc) {
     this.aDeploy(player, loc, opts)
   }
+
+  return loc
 }
 
 // Only supports moving troops.

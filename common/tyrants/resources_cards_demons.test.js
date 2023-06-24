@@ -273,4 +273,34 @@ describe('Undead expansion', () => {
       })
     })
   })
+
+  describe('Gibbering Mouther', () => {
+    test('devour and assassinate; choose none', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Gibbering Mouther', 'House Guard'],
+        },
+        Llacerellyn: {
+          troops: ['dennis'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Gibbering Mouther')
+      const request3 = t.choose(game, request2, 'erynd-llace')
+      const request4 = t.choose(game, request3, 'llace-tsen')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Gibbering Mouther'],
+        },
+        micah: {
+          hand: ['Noble', 'Noble', 'Noble', 'Noble', 'Noble'],
+          discard: ['Insane Outcast'],
+        },
+      })
+    })
+  })
 })

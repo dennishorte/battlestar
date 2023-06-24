@@ -154,7 +154,28 @@ const cardData = [
     "text": [
       "Deploy 2 troops, then choose an opponent with a troop adjacent to at least 1 of them. He or she recruits an Insane Outcast."
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      const loc1 = game.aChooseAndDeploy(player)
+      const loc2 = game.aChooseAndDeploy(player)
+
+      // Get locations and adjacent locations of deployed troops
+      const locs = [loc1, loc2].filter(l => Boolean(l))
+      const neighbors = locs.flatMap(l => game.getLocationNeighbors(l))
+      const combined = util.array.distinct(locs.concat(neighbors))
+
+      // Get all opponents at the locations
+      const opponents = util
+        .array
+        .distinct(combined.flatMap(loc => loc.cards().map(troop => troop.getOwnerName())))
+        .filter(name => name !== 'neutral')
+        .map(name => game.getPlayerByName(name))
+        .filter(p => p !== player)
+
+      const opponent = game.aChoosePlayer(player, opponents)
+      if (opponent) {
+        game.aRecruit(opponent, 'Insane Outcast', { noCost: true })
+      }
+    },
   },
   {
     "name": "Derro",
