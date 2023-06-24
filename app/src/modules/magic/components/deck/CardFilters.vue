@@ -107,15 +107,7 @@
 
       <div class="filter-group">
         <label class="col-form-label">set</label>
-        <select class="form-select" ref="set">
-          <option
-            v-for="[key, value] in sets"
-            :value="key"
-          >
-            {{ value }}
-          </option>
-        </select>
-        <button class="btn btn-secondary" value="set" @click="add">add</button>
+        <button class="btn btn-secondary" @click="openSetPicker">open set selector</button>
       </div>
 
       <div class="colors-group">
@@ -190,15 +182,20 @@
         </div>
       </div>
     </div>
+
+    <SetPickerModal :id="setPickerModalId" @set-selected="addSetFilter" />
   </div>
 </template>
 
 
 <script>
+import { v4 as uuidv4 } from 'uuid'
+
 import { mapState} from 'vuex'
 import { mag, util } from 'battlestar-common'
 
 import SectionHeader from '@/components/SectionHeader'
+import SetPickerModal from '../SetPickerModal'
 
 
 export default {
@@ -206,6 +203,7 @@ export default {
 
   components: {
     SectionHeader,
+    SetPickerModal,
   },
 
   inject: ['bus'],
@@ -219,17 +217,9 @@ export default {
     return {
       colors: ['white', 'blue', 'black', 'red', 'green'],
       filters: [],
-    }
-  },
 
-  computed: {
-    sets() {
-      return mag
-        .res
-        .setData
-        .map(s => [s.code, s.name])
-        .sort((l, r) => l[1].localeCompare(r[1]))
-    },
+      setPickerModalId: 'set-picker-modal-' + uuidv4(),
+    }
   },
 
   methods: {
@@ -253,23 +243,6 @@ export default {
         this.filters.push(colors)
       }
 
-      else if (kind === 'set') {
-        const value = this.$refs[kind].value
-
-        // See if there is an existing filter
-        const existing = this.filters.find(f => f.kind === 'set')
-        if (existing) {
-          existing.value.push(value)
-        }
-        else {
-          this.filters.push({
-            kind,
-            value: [value],
-            operator: 'or',
-          })
-        }
-      }
-
       else {
         const value = this.$refs[kind].value
         const operatorElem = this.$refs[`${kind}op`]
@@ -285,6 +258,23 @@ export default {
       }
     },
 
+    addSetFilter(sett) {
+      const value = sett.code
+
+      // See if there is an existing filter
+      const existing = this.filters.find(f => f.kind === 'set')
+      if (existing) {
+        existing.value.push(value)
+      }
+      else {
+        this.filters.push({
+          kind: 'set',
+          value: [value],
+          operator: 'or',
+        })
+      }
+    },
+
     apply() {
       this.$emit('update:modelValue', filterCards(this.cardlist, this.filters))
       this.$emit('filters-applied', util.deepcopy(this.filters))
@@ -293,6 +283,10 @@ export default {
     clear() {
       this.filters = []
       this.$emit('update:modelValue', this.cardlist)
+    },
+
+    openSetPicker() {
+      this.$modal(this.setPickerModalId).show()
     },
 
     remove(filter) {
