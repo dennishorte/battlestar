@@ -18,6 +18,10 @@ export default {
   }),
 
   getters: {
+    all(state) {
+      return state.cardlist
+    },
+
     cardNames(state) {
       return Object.keys(state.lookup).sort()
     },

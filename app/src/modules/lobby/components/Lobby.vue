@@ -1,40 +1,42 @@
 <template>
-  <div class='lobby'>
-    <Header />
+  <MagicWrapper>
+    <div class='lobby'>
+      <Header />
 
-    <div class="container">
-      <div class="row">
-        <div class="col">
-          <h2>
-            <EditableText @text-edited="updateName">{{ this.lobby.name }}</EditableText>
-          </h2>
-        </div>
-      </div>
-
-
-      <div class="row">
-        <div class="col" cols="6">
-          <LobbySettings
-            :lobby-id="id"
-            :gameIn="lobby.game"
-            :options="lobby.options"
-          />
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <h2>
+              <EditableText @text-edited="updateName">{{ this.lobby.name }}</EditableText>
+            </h2>
+          </div>
         </div>
 
-        <div class="col" cols="6">
-          <LobbyPlayerList :lobby-id="id" />
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col d-grid">
-          <button class="btn btn-success" @click="startGame" :disabled="!lobby.valid">Start!</button>
+        <div class="row">
+          <div class="col" cols="6">
+            <LobbySettings
+              :lobby-id="id"
+              :gameIn="lobby.game"
+              :options="lobby.options"
+            />
+          </div>
+
+          <div class="col" cols="6">
+            <LobbyPlayerList :lobby-id="id" />
+          </div>
         </div>
+
+        <div class="row">
+          <div class="col d-grid">
+            <button class="btn btn-success" @click="startGame" :disabled="!lobby.valid">Start!</button>
+          </div>
+        </div>
+
       </div>
 
     </div>
-
-  </div>
+  </MagicWrapper>
 </template>
 
 <script>
@@ -45,6 +47,7 @@ import EditableText from '@/components/EditableText'
 import Header from '@/components/Header'
 import LobbyPlayerList from '../components/PlayerList'
 import LobbySettings from '../components/Settings'
+import MagicWrapper from '@/modules/magic/components/MagicWrapper'
 
 
 export default {
@@ -54,6 +57,7 @@ export default {
     Header,
     LobbyPlayerList,
     LobbySettings,
+    MagicWrapper,
   },
 
   data() {

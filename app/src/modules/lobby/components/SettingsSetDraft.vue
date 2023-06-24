@@ -16,7 +16,7 @@
 
 <script>
 import axios from 'axios'
-import { util } from 'battlestar-common'
+import { mag, util } from 'battlestar-common'
 import { v4 as uuidv4 } from 'uuid'
 
 import SetPickerModal from '@/modules/magic/components/SetPickerModal'
@@ -88,20 +88,57 @@ export default {
     },
 
     makePacks(lobby) {
-      const pack = this.packs.find(c => c._id === this.options.packId)
-      const cards = util
-        .deepcopy(pack.cardlist)
-        .map((card, index) => ({
-          id: card.name + `(${index})`,
-          name: card.name
-        }))
-      util.array.shuffle(cards)
+      const setCode = this.lobby.options.set.code
 
-      const packs = util.array.chunk(cards, this.lobby.options.packSize)
+      const cards = this
+        .$store
+        .getters['magic/cards/all']
+        .filter(c => c.set === setCode)
+        .filter(c => !c.type_line.includes('Basic'))
+
+      const rarityPools = util.array.collect(cards, c => c.rarity)
+
       const totalPacks = this.lobby.users.length * this.lobby.options.numPacks
-      lobby.packs = packs.slice(0, totalPacks)
 
-      lobby.options.packName = pack.name
+      const getCard = (rarity) => util.array.select(rarityPools[rarity])
+
+      let index = 0
+      const packs = []
+      while (packs.length < totalPacks) {
+        const pack = []
+
+        // One rare or mythic card
+        // About 1 out of 7.4 rare slots have a mythic.
+        if (rarityPools['mythic'] && Math.random() < .135) {
+          pack.push(getCard('mythic'))
+        }
+
+        // No mythic was added, so add a rare instead.
+        if (pack.length === 0) {
+          pack.push(getCard('rare'))
+        }
+
+        for (let i = 0; i < 3; i++) {
+          pack.push(getCard('uncommon'))
+        }
+
+        for (let i = 0; i < 10; i++) {
+          pack.push(getCard('common'))
+        }
+
+        const simplified = pack.map(card => {
+          index += 1
+          return {
+            id: card.name + `(${index})`,
+            name: card.name,
+            set: card.set,
+            collector_number: card.collector_number,
+          }
+        })
+        packs.push(simplified)
+      }
+
+      lobby.packs = packs
     },
 
     openSetPicker() {

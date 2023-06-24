@@ -15,6 +15,7 @@ module.exports = Game
 function _factory(lobby) {
   switch (lobby.game) {
 
+    case 'Set Draft':
     case 'Cube Draft':
       return common.mag.draft.cube.factory(lobby)
 
@@ -49,20 +50,20 @@ Game.create = async function(lobby) {
     // Need to actually run the game once to make sure 'waiting' field is populated.
     const gameData = await this.findById(insertResult.insertedId)
     let game
-    if (lobby.game === 'Cube Draft') {
+    if (gameData.settings.game === 'CubeDraft') {
       game = new common.mag.draft.cube.CubeDraft(gameData)
     }
-    else if (lobby.game === 'Innovation') {
+    else if (gameData.settings.game === 'Innovation') {
       game = new common.inn.Innovation(gameData)
     }
-    else if (lobby.game === 'Magic') {
+    else if (gameData.settings.game === 'Magic') {
       game = new common.mag.Magic(gameData)
     }
-    else if (lobby.game === 'Tyrants of the Underdark') {
+    else if (gameData.settings.game === 'Tyrants of the Underdark') {
       game = new common.tyr.Tyrants(gameData)
     }
     else {
-      throw new Error(`Can't run unknown game ${gameData.settings.name}`)
+      throw new Error(`Can't run unknown game ${gameData.settings.game}`)
     }
     game.run()
     await this.save(game, { noMutex: true })

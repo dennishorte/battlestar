@@ -38,6 +38,7 @@ function factoryFromLobby(lobby, db) {
 
     cubeId: lobby.options.cubeId,
     cubeName: lobby.options.cubeName,
+    set: lobby.options.set,
 
     packSize: lobby.options.packSize,
     numPacks: lobby.options.numPacks,
@@ -101,13 +102,20 @@ CubeDraft.prototype.initializePlayers = function() {
 
 CubeDraft.prototype.initializePacks = function() {
   this.state.packs = this.settings.packs.map(pack => new Pack(this, pack))
+  console.log(this.state.packs)
   this.cardsById = {}
 
   this.mLog({ template: 'Passing out packs' })
   this.mLogIndent()
-  this.mLog({ template: 'cube name: ' + this.settings.cubeName })
-  this.mLog({ template: 'number of packs: ' + this.settings.numPacks })
-  this.mLog({ template: 'cards per pack: ' + this.settings.packSize })
+
+  if (this.settings.cubeName !== null) {
+    this.mLog({ template: 'cube name: ' + this.settings.cubeName })
+    this.mLog({ template: 'number of packs: ' + this.settings.numPacks })
+    this.mLog({ template: 'cards per pack: ' + this.settings.packSize })
+  }
+  else if (this.settings.set) {
+    this.mLog({ template: 'set name: ' + this.settings.set.name })
+  }
   this.mLogOutdent()
 
   let packIndex = 0
