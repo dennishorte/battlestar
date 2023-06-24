@@ -139,6 +139,7 @@ export default {
       }
 
       lobby.packs = packs
+      lobby.options.packSize = packs[0].length
     },
 
     openSetPicker() {

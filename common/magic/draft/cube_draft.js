@@ -102,7 +102,6 @@ CubeDraft.prototype.initializePlayers = function() {
 
 CubeDraft.prototype.initializePacks = function() {
   this.state.packs = this.settings.packs.map(pack => new Pack(this, pack))
-  console.log(this.state.packs)
   this.cardsById = {}
 
   this.mLog({ template: 'Passing out packs' })
