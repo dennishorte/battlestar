@@ -303,4 +303,31 @@ describe('Undead expansion', () => {
       })
     })
   })
+
+  describe('Derro', () => {
+    test('devour and assassinate; choose none', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Derro', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Derro')
+      const request3 = t.choose(game, request2, 'Menzoberranzan, neutral')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Derro'],
+          discard: ['Insane Outcast'],
+          trophyHall: ['neutral'],
+        },
+        Menzoberranzan: {
+          troops: ['neutral', 'neutral', 'dennis'],
+        },
+      })
+    })
+  })
 })

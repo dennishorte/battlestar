@@ -189,7 +189,13 @@ const cardData = [
     "text": [
       "Supplant a white troop anywhere on the board. You recruit an Insane Outcast."
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      game.aChooseAndSupplant(player, {
+        whiteOnly: true,
+        anywhere: true,
+      })
+      game.aRecruit(player, 'Insane Outcast', { noCost: true })
+    },
   },
   {
     "name": "Ettin",
