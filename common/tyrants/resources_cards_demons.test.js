@@ -432,17 +432,30 @@ describe('Undead expansion', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'demons'],
         dennis: {
-          hand: ['Demogorgon', 'House Guard'],
+          hand: ['Demogorgon', 'House Guard', 'Priestess of Lolth'],
         },
       })
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Demogorgon')
+      const request3 = t.choose(game, request2, 'Priestess of Lolth')
 
       t.testBoard(game, {
         dennis: {
           hand: ['House Guard'],
           played: ['Demogorgon'],
+          trophyHall: ['neutral', 'neutral'],
+        },
+        micah: {
+          hand: ['Noble', 'Noble', 'Noble', 'Noble', 'Noble'],
+          discard: ['Insane Outcast', 'Insane Outcast'],
+        },
+        devoured: ['Priestess of Lolth'],
+        Araumycos: {
+          troops: ['neutral', 'neutral', 'neutral', 'dennis']
+        },
+        'araum-ched': {
+          troops: ['dennis'],
         },
       })
     })

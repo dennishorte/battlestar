@@ -269,7 +269,19 @@ const cardData = [
     "text": [
       "Devour a card in your hand > Supplant 2 white troops. Each opponent recruits 2 Insane Outcasts."
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      game.aChooseAndDevour(player, {
+        then: () => {
+          game.aChooseAndSupplant(player, { whiteOnly: true })
+          game.aChooseAndSupplant(player, { whiteOnly: true })
+
+          for (const opp of game.getPlayerOpponents(player)) {
+            game.aRecruit(opp, 'Insane Outcast', { noCost: true })
+            game.aRecruit(opp, 'Insane Outcast', { noCost: true })
+          }
+        },
+      })
+    },
   },
   {
     "name": "Night Hag",
