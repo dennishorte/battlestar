@@ -515,7 +515,13 @@ const cardData = [
       "Choose an opponent. He or she recruits an Insane Outcast.",
       "At end of turn, promote another card played this turn."
     ],
-    impl: (game, player) => {},
+    impl: (game, player, { card }) => {
+      const opp = game.aChoosePlayer(player, game.getPlayerOpponents(player))
+      if (opp) {
+        game.aRecruit(opp, 'Insane Outcast', { noCost: true })
+        game.aDeferPromotion(player, card)
+      }
+    },
   },
   {
     "name": "Zuggtmoy",

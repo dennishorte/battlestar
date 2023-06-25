@@ -850,11 +850,18 @@ describe('Undead expansion', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Myconid Sovereign')
+      const request3 = t.choose(game, request2, 'Play Card.House Guard')
+      const request4 = t.choose(game, request3, 'Pass')
+
 
       t.testBoard(game, {
         dennis: {
-          hand: ['House Guard'],
-          played: ['Myconid Sovereign'],
+          innerCircle: ['House Guard'],
+          discard: ['Myconid Sovereign'],
+        },
+        micah: {
+          hand: ['Noble', 'Noble', 'Noble', 'Noble', 'Noble'],
+          discard: ['Insane Outcast']
         },
       })
     })
