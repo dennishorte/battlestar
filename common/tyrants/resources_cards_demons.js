@@ -297,7 +297,21 @@ const cardData = [
       "- Place a spy",
       "- Return one of your spies > Draw 2 cards."
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      game.aChooseOne(player, [
+        {
+          title: 'Place a spy',
+          impl: (game, player) => game.aChooseAndPlaceSpy(player)
+        },
+        {
+          title: 'Return one of your spies > Draw 2 cards',
+          impl: (game, player) => {
+            game.aDraw(player)
+            game.aDraw(player)
+          }
+        },
+      ])
+    },
   },
   {
     "name": "Jackalwere",
@@ -313,7 +327,21 @@ const cardData = [
       "- Place a spy",
       "- Return one of your spies > +2 power, +2 influence"
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      game.aChooseOne(player, [
+        {
+          title: 'Place a spy',
+          impl: (game, player) => game.aChooseAndPlaceSpy(player)
+        },
+        {
+          title: 'Return one of your spies > +2 power, +2 influence',
+          impl: (game, player) => {
+            player.incrementInfluence(2)
+            player.incrementPower(2)
+          }
+        },
+      ])
+    },
   },
   {
     "name": "Succubus",

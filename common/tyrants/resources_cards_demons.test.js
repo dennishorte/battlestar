@@ -462,7 +462,7 @@ describe('Undead expansion', () => {
   })
 
   describe('Night Hag', () => {
-    test('activate', () => {
+    test('place a spy', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'demons'],
         dennis: {
@@ -472,10 +472,40 @@ describe('Undead expansion', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Night Hag')
+      const request3 = t.choose(game, request2, 'Place a spy')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
 
       t.testBoard(game, {
         dennis: {
           hand: ['House Guard'],
+          played: ['Night Hag'],
+        },
+        'Chasmleap Bridge': {
+          troops: [],
+          spies: ['dennis'],
+        },
+      })
+    })
+
+    test('return a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Night Hag', 'House Guard'],
+        },
+        'Chasmleap Bridge': {
+          troops: [],
+          spies: ['dennis']
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Night Hag')
+      const request3 = t.choose(game, request2, 'Return one of your spies > Draw 2 cards')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard', 'Soldier', 'Soldier'],
           played: ['Night Hag'],
         },
       })
@@ -483,7 +513,7 @@ describe('Undead expansion', () => {
   })
 
   describe('Jackalwere', () => {
-    test('activate', () => {
+    test('place a spy', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'demons'],
         dennis: {
@@ -493,11 +523,43 @@ describe('Undead expansion', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Jackalwere')
+      const request3 = t.choose(game, request2, 'Place a spy')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
 
       t.testBoard(game, {
         dennis: {
           hand: ['House Guard'],
           played: ['Jackalwere'],
+        },
+        'Chasmleap Bridge': {
+          troops: [],
+          spies: ['dennis'],
+        },
+      })
+    })
+
+    test('return a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Jackalwere', 'House Guard'],
+        },
+        'Chasmleap Bridge': {
+          troops: [],
+          spies: ['dennis']
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Jackalwere')
+      const request3 = t.choose(game, request2, 'Return one of your spies > +2 power, +2 influence')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Jackalwere'],
+          power: 2,
+          influence: 2,
         },
       })
     })
