@@ -305,7 +305,7 @@ describe('Undead expansion', () => {
   })
 
   describe('Derro', () => {
-    test('devour and assassinate; choose none', () => {
+    test('supplant', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'demons'],
         dennis: {
@@ -330,4 +330,278 @@ describe('Undead expansion', () => {
       })
     })
   })
+
+  describe('Ettin', () => {
+    test('activate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Ettin', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Ettin')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Ettin'],
+        },
+      })
+    })
+  })
+
+  describe('Balor', () => {
+    test('activate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Balor', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Balor')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Balor'],
+        },
+      })
+    })
+  })
+
+  describe('Demogorgon', () => {
+    test('activate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Demogorgon', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Demogorgon')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Demogorgon'],
+        },
+      })
+    })
+  })
+
+  describe('Night Hag', () => {
+    test('activate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Night Hag', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Night Hag')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Night Hag'],
+        },
+      })
+    })
+  })
+
+  describe('Jackalwere', () => {
+    test('activate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Jackalwere', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Jackalwere')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Jackalwere'],
+        },
+      })
+    })
+  })
+
+  describe('Succubus', () => {
+    test('activate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Succubus', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Succubus')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Succubus'],
+        },
+      })
+    })
+  })
+
+  describe('Vrock', () => {
+    test('activate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Vrock', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Vrock')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Vrock'],
+        },
+      })
+    })
+  })
+
+  describe("Graz'zt", () => {
+    test('activate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ["Graz'zt", 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, "Play Card.Graz'zt")
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ["Graz'zt"],
+        },
+      })
+    })
+  })
+
+  describe('Myconid Adult', () => {
+    test('activate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Myconid Adult', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Myconid Adult')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Myconid Adult'],
+        },
+      })
+    })
+  })
+
+  describe('Nalfeshnee', () => {
+    test('activate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Nalfeshnee', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Nalfeshnee')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Nalfeshnee'],
+        },
+      })
+    })
+  })
+
+  describe('Hezrou', () => {
+    test('activate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Hezrou', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Hezrou')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Hezrou'],
+        },
+      })
+    })
+  })
+
+  describe('Myconid Sovereign', () => {
+    test('activate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Myconid Sovereign', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Myconid Sovereign')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Myconid Sovereign'],
+        },
+      })
+    })
+  })
+
+  describe('Zuggtmoy', () => {
+    test('activate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Zuggtmoy', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Zuggtmoy')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Zuggtmoy'],
+        },
+      })
+    })
+  })
+
 })

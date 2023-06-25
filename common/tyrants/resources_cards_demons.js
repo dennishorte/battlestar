@@ -211,7 +211,25 @@ const cardData = [
       "- Deploy 3 troops.",
       "- Assassinate 2 white troops."
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      game.aChooseOne(player, [
+        {
+          title: 'Deploy 3 troops',
+          impl: (game, player) => {
+            game.aChooseAndDeploy(player)
+            game.aChooseAndDeploy(player)
+            game.aChooseAndDeploy(player)
+          }
+        },
+        {
+          title: 'Assassinate 2 white troops',
+          impl: (game, player) => {
+            game.aChooseAndAssassinate(player, { whiteOnly: true })
+            game.aChooseAndAssassinate(player, { whiteOnly: true })
+          }
+        }
+      ])
+    },
   },
   {
     "name": "Balor",
@@ -304,7 +322,7 @@ const cardData = [
     impl: (game, player) => {},
   },
   {
-    "name": "Graz’zt",
+    "name": "Graz'zt",
     "aspect": "guile",
     "race": "fiend",
     "expansion": "demons",
