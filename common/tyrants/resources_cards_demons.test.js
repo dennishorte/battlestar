@@ -502,11 +502,16 @@ describe('Undead expansion', () => {
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Night Hag')
       const request3 = t.choose(game, request2, 'Return one of your spies > Draw 2 cards')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
 
       t.testBoard(game, {
         dennis: {
           hand: ['House Guard', 'Soldier', 'Soldier'],
           played: ['Night Hag'],
+        },
+        'Chasmleap Bridge': {
+          troops: [],
+          spies: [],
         },
       })
     })
@@ -553,6 +558,7 @@ describe('Undead expansion', () => {
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Jackalwere')
       const request3 = t.choose(game, request2, 'Return one of your spies > +2 power, +2 influence')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
 
       t.testBoard(game, {
         dennis: {
@@ -560,6 +566,10 @@ describe('Undead expansion', () => {
           played: ['Jackalwere'],
           power: 2,
           influence: 2,
+        },
+        'Chasmleap Bridge': {
+          troops: [],
+          spies: [],
         },
       })
     })
@@ -635,12 +645,17 @@ describe('Undead expansion', () => {
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Vrock')
       const request3 = t.choose(game, request2, 'Return one of your spies > +5 power')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
 
       t.testBoard(game, {
         dennis: {
           hand: ['House Guard'],
           played: ['Vrock'],
           power: 5,
+        },
+        'Chasmleap Bridge': {
+          troops: [],
+          spies: [],
         },
       })
     })

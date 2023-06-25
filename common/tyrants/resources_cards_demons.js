@@ -306,8 +306,10 @@ const cardData = [
         {
           title: 'Return one of your spies > Draw 2 cards',
           impl: (game, player) => {
-            game.aDraw(player)
-            game.aDraw(player)
+            game.aReturnASpyAnd(player, (game, player, { loc }) => {
+              game.aDraw(player)
+              game.aDraw(player)
+            })
           }
         },
       ])
@@ -336,8 +338,10 @@ const cardData = [
         {
           title: 'Return one of your spies > +2 power, +2 influence',
           impl: (game, player) => {
-            player.incrementInfluence(2)
-            player.incrementPower(2)
+            game.aReturnASpyAnd(player, (game, player, { loc }) => {
+              player.incrementInfluence(2)
+              player.incrementPower(2)
+            })
           }
         },
       ])
@@ -389,7 +393,9 @@ const cardData = [
         {
           title: 'Return one of your spies > +5 power',
           impl: (game, player) => {
-            player.incrementPower(5)
+            game.aReturnASpyAnd(player, (game, player, { loc }) => {
+              player.incrementPower(5)
+            })
           }
         },
       ])
@@ -407,9 +413,37 @@ const cardData = [
     "text": [
       "Choose one:",
       "- Place 2 spies.",
-      "- Return any number of your spies > Supplant a troop at each of the returned spies’ sites."
+      "- Return any number of your spies > Supplant a troop at each of the returned spies' sites."
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      game.aChooseOne(player, [
+        {
+          title: 'Place 2 spies',
+          impl: (game, player) => {
+            game.aChooseAndPlaceSpy(player)
+            game.aChooseAndPlaceSpy(player)
+          }
+        },
+        {
+          title: "Return any number of your spies > Supplant a troop at each of the returned spies' sites",
+          impl: (game, player) => {
+            while (true) {
+              let returned = false
+              game.aReturnASpyAnd(player, (game, player, { loc }) => {
+                if (loc) {
+                  returned = true
+                  game.aChooseAndSupplant(player, { loc })
+                }
+              })
+
+              if (!returned) {
+                break
+              }
+            }
+          }
+        },
+      ])
+    },
   },
   {
     "name": "Myconid Adult",
