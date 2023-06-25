@@ -39,6 +39,11 @@ export default {
     return {
       expansions: [
         {
+          text: 'Demons',
+          value: 'demons',
+          disabled: false
+        },
+        {
           text: 'Dragons',
           value: 'dragons',
           disabled: false
@@ -47,6 +52,11 @@ export default {
           text: 'Drow',
           value: 'drow',
           disabled: false
+        },
+        {
+          text: 'Elementals',
+          value: 'elementals',
+          disabled: true
         },
         {
           text: 'Illithid',
