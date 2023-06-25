@@ -30,6 +30,17 @@ export default {
 
   inject: ['game', 'ui', 'bus', 'save'],
 
+  inject: {
+    bus: { from: 'bus' },
+    game: { from: 'game' },
+    ui: { from: 'ui' },
+
+    save: {
+      from: 'save',
+      default: null,
+    },
+  },
+
   props: {
     actor: Object,
   },
