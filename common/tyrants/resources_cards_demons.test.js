@@ -595,7 +595,7 @@ describe('Undead expansion', () => {
   })
 
   describe('Vrock', () => {
-    test('activate', () => {
+    test('place a spy', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'demons'],
         dennis: {
@@ -605,11 +605,42 @@ describe('Undead expansion', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Vrock')
+      const request3 = t.choose(game, request2, 'Place a spy')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
 
       t.testBoard(game, {
         dennis: {
           hand: ['House Guard'],
           played: ['Vrock'],
+        },
+        'Chasmleap Bridge': {
+          troops: [],
+          spies: ['dennis'],
+        },
+      })
+    })
+
+    test('return a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Vrock', 'House Guard'],
+        },
+        'Chasmleap Bridge': {
+          troops: [],
+          spies: ['dennis']
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Vrock')
+      const request3 = t.choose(game, request2, 'Return one of your spies > +5 power')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Vrock'],
+          power: 5,
         },
       })
     })

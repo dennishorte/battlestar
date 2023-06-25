@@ -380,7 +380,20 @@ const cardData = [
       "- Place a spy.",
       "- Return one of your spies > +5 power"
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      game.aChooseOne(player, [
+        {
+          title: 'Place a spy',
+          impl: (game, player) => game.aChooseAndPlaceSpy(player)
+        },
+        {
+          title: 'Return one of your spies > +5 power',
+          impl: (game, player) => {
+            player.incrementPower(5)
+          }
+        },
+      ])
+    },
   },
   {
     "name": "Graz'zt",
