@@ -662,7 +662,7 @@ describe('Undead expansion', () => {
   })
 
   describe("Graz'zt", () => {
-    test('activate', () => {
+    test('place a spy', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'demons'],
         dennis: {
@@ -672,11 +672,70 @@ describe('Undead expansion', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, "Play Card.Graz'zt")
+      const request3 = t.choose(game, request2, 'Place 2 spies')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+      const request5 = t.choose(game, request4, 'Everfire')
 
       t.testBoard(game, {
         dennis: {
           hand: ['House Guard'],
           played: ["Graz'zt"],
+        },
+        'Chasmleap Bridge': {
+          troops: [],
+          spies: ['dennis'],
+        },
+        'Everfire': {
+          troops: [],
+          spies: ['dennis'],
+        },
+      })
+    })
+
+    test('return a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ["Graz'zt", 'House Guard'],
+        },
+        'Chasmleap Bridge': {
+          troops: [],
+          spies: ['dennis'],
+        },
+        'Menzoberranzan': {
+          troops: ['neutral', 'neutral', 'neutral'],
+          spies: ['dennis']
+        },
+        'Blingdenstone': {
+          troops: ['neutral', 'neutral'],
+          spies: ['dennis']
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, "Play Card.Graz'zt")
+      const request3 = t.choose(game, request2, "Return any number of your spies > Supplant a troop at each of the returned spies' sites")
+      const request4 = t.choose(game, request3, 'Menzoberranzan')
+      const request5 = t.choose(game, request4, 'Blingdenstone')
+      const request6 = t.choose(game, request5)
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ["Graz'zt"],
+          trophyHall: ['neutral', 'neutral'],
+        },
+        'Chasmleap Bridge': {
+          troops: [],
+          spies: ['dennis'],
+        },
+        'Menzoberranzan': {
+          troops: ['neutral', 'neutral', 'dennis'],
+          spies: []
+        },
+        'Blingdenstone': {
+          troops: ['neutral', 'dennis'],
+          spies: []
         },
       })
     })
