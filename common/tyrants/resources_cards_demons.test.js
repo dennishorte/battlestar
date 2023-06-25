@@ -332,7 +332,7 @@ describe('Undead expansion', () => {
   })
 
   describe('Ettin', () => {
-    test('activate', () => {
+    test('deploy', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'demons'],
         dennis: {
@@ -342,11 +342,54 @@ describe('Undead expansion', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Ettin')
+      const request3 = t.choose(game, request2, 'Deploy 3 troops')
+      const request4 = t.choose(game, request3, 'ched-llace a')
+      const request5 = t.choose(game, request4, 'ched-llace b')
+      const request6 = t.choose(game, request5, 'Llacerellyn')
 
       t.testBoard(game, {
         dennis: {
           hand: ['House Guard'],
           played: ['Ettin'],
+        },
+        'ched-llace a': {
+          troops: ['dennis'],
+        },
+        'ched-llace b': {
+          troops: ['dennis'],
+        },
+        'Llacerellyn': {
+          troops: ['dennis'],
+        },
+      })
+    })
+
+    test('assassinate', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Ettin', 'House Guard'],
+        },
+        'erynd-llace': {
+          troops: ['dennis'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Ettin')
+      const request3 = t.choose(game, request2, 'Assassinate 2 white troops')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Ettin'],
+          trophyHall: ['neutral'],
+        },
+        'erynd-llace': {
+          troops: ['dennis'],
+        },
+        'araum-ched': {
+          troops: []
         },
       })
     })
