@@ -535,7 +535,16 @@ const cardData = [
     "text": [
       "Devour a card in your inner circle > +3 influence and at end of turn, promote up to 2 other cards played this turn."
     ],
-    impl: (game, player) => {},
+    impl: (game, player, { card }) => {
+      game.aChooseAndDevour(player, {
+        zone: 'innerCircle',
+        then: () => {
+          player.incrementInfluence(3)
+          game.aDeferPromotion(player, card)
+          game.aDeferPromotion(player, card)
+        }
+      })
+    },
   }
 ]
 

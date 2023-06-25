@@ -725,10 +725,11 @@ Tyrants.prototype.aChooseAndAssassinate = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndDevour = function(player, opts={}) {
-  const chosen = this.aChooseCard(player, this.getCardsByZone(player, 'hand'), {
+  const zoneName = opts.zone ? opts.zone : 'hand'
+  const chosen = this.aChooseCard(player, this.getCardsByZone(player, zoneName), {
     min: 0,
     max: 1,
-    title: 'Devour a card from your hand?',
+    title: `Devour a card from your ${zoneName}?`,
   })
   if (chosen) {
     this.aDevour(player, chosen)
@@ -738,7 +739,7 @@ Tyrants.prototype.aChooseAndDevour = function(player, opts={}) {
   }
   else {
     this.mLog({
-      template: '{player} choose not to devour a card in the market',
+      template: '{player} choose not to devour a card',
       args: { player },
     })
   }

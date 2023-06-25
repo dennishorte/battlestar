@@ -872,18 +872,24 @@ describe('Undead expansion', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'demons'],
         dennis: {
-          hand: ['Zuggtmoy', 'House Guard'],
+          hand: ['Zuggtmoy', 'House Guard', 'House Guard'],
+          innerCircle: ['Priestess of Lolth'],
         },
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Zuggtmoy')
+      const request2 = t.choose(game, request1, 'Play Card.House Guard')
+      const request3 = t.choose(game, request2, 'Play Card.House Guard')
+      const request4 = t.choose(game, request3, 'Play Card.Zuggtmoy')
+      const request5 = t.choose(game, request4, 'Priestess of Lolth')
+      const request6 = t.choose(game, request5, 'Pass')
 
       t.testBoard(game, {
         dennis: {
-          hand: ['House Guard'],
-          played: ['Zuggtmoy'],
+          innerCircle: ['House Guard', 'House Guard'],
+          discard: ['Zuggtmoy'],
         },
+        devoured: ['Priestess of Lolth'],
       })
     })
   })
