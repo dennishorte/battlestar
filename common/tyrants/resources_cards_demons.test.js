@@ -791,7 +791,7 @@ describe('Undead expansion', () => {
   })
 
   describe('Hezrou', () => {
-    test('activate', () => {
+    test('no enemy troops', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'demons'],
         dennis: {
@@ -806,6 +806,34 @@ describe('Undead expansion', () => {
         dennis: {
           hand: ['House Guard'],
           played: ['Hezrou'],
+          innerCircle: ['Soldier'],
+        },
+      })
+    })
+
+    test('move a troop', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Hezrou', 'House Guard'],
+        },
+        'ched-llace a': {
+          troops: ['micah'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Hezrou')
+      const request3 = t.choose(game, request2, 'Eryndlyn')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Hezrou'],
+          innerCircle: ['Soldier'],
+        },
+        Eryndlyn: {
+          troops: ['micah', 'micah'],
         },
       })
     })

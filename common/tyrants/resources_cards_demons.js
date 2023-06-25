@@ -497,7 +497,10 @@ const cardData = [
       "Move an enemy troop.",
       "Promote the top card of your deck."
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      game.aChooseAndMoveTroop(player, { noWhite: true })
+      game.aPromoteTopCard(player)
+    },
   },
   {
     "name": "Myconid Sovereign",
