@@ -757,6 +757,11 @@ describe('Undead expansion', () => {
         dennis: {
           hand: ['House Guard'],
           played: ['Myconid Adult'],
+          influence: 2,
+        },
+        micah: {
+          hand: ['Noble', 'Noble', 'Noble', 'Noble', 'Noble'],
+          discard: ['Insane Outcast'],
         },
       })
     })

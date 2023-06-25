@@ -458,7 +458,13 @@ const cardData = [
       "+2 influence",
       "Choose an opponent. He or she recruits an Insane Outcast."
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      player.incrementInfluence(2)
+      const opp = game.aChoosePlayer(player, game.getPlayerOpponents(player))
+      if (opp) {
+        game.aRecruit(opp, 'Insane Outcast', { noCost: true })
+      }
+    },
   },
   {
     "name": "Nalfeshnee",
