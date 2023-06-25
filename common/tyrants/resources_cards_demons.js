@@ -479,7 +479,10 @@ const cardData = [
       "+3 influence",
       "Promote the top card of your deck."
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      player.incrementInfluence(3)
+      game.aPromoteTopCard(player)
+    },
   },
   {
     "name": "Hezrou",

@@ -783,6 +783,8 @@ describe('Undead expansion', () => {
         dennis: {
           hand: ['House Guard'],
           played: ['Nalfeshnee'],
+          innerCircle: ['Soldier'],
+          influence: 3,
         },
       })
     })

@@ -1203,6 +1203,32 @@ Tyrants.prototype.aPromote = function(player, card, opts={}) {
   return card
 }
 
+Tyrants.prototype.aPromoteTopCard = function(player) {
+  const deck = this.getZoneByPlayer(player, 'deck')
+
+  if (deck.cards().length === 0) {
+    // See if we can reshuffle.
+    const discard = this.getZoneByPlayer(player, 'discard')
+    if (discard.cards().length > 0) {
+      this.mReshuffleDiscard(player)
+    }
+
+    // If not, do nothing.
+    else {
+      this.mLog({
+        template: '{player} has no cards in deck or discard pile',
+        args: { player }
+      })
+      return
+    }
+  }
+
+  this.mLog({ template: 'Promoting top card of deck' })
+  this.mLogIndent()
+  this.aPromote(player, deck.cards()[0])
+  this.mLogOutdent()
+}
+
 Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
   let card
 
