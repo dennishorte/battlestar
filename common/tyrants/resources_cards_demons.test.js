@@ -570,17 +570,25 @@ describe('Undead expansion', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'demons'],
         dennis: {
-          hand: ['Succubus', 'House Guard'],
+          hand: ['Succubus', 'House Guard', 'Priestess of Lolth'],
         },
       })
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Succubus')
+      const request3 = t.choose(game, request2, 'Priestess of Lolth')
+      const request4 = t.choose(game, request3, 'Menzoberranzan')
 
       t.testBoard(game, {
         dennis: {
           hand: ['House Guard'],
           played: ['Succubus'],
+          devoured: ['Priestess of Lolth'],
+          trophyHall: ['neutral'],
+        },
+        Menzoberranzan: {
+          troops: ['neutral', 'neutral'],
+          spies: ['dennis'],
         },
       })
     })

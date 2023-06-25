@@ -355,7 +355,16 @@ const cardData = [
     "text": [
       "Devour a card in your hand > Place a spy, then assassinate a troop at that spy’s site."
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      game.aChooseAndDevour(player, {
+        then: () => {
+          const loc = game.aChooseAndPlaceSpy(player)
+          if (loc) {
+            game.aChooseAndAssassinate(player, { loc })
+          }
+        }
+      })
+    },
   },
   {
     "name": "Vrock",
