@@ -831,6 +831,17 @@ Tyrants.prototype.aChooseAndSupplant = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndDeploy = function(player, opts={}) {
+  // If the player is deploying a white troop, fetch it from the bank.
+  if (opts.white) {
+    const white = this.getZoneById('neutrals').cards()[0]
+    if (!white) {
+      this.mLog({ template: 'There are no neutral troops left in the supply' })
+      return
+    }
+    opts.troop = white
+  }
+
+  // Ensure there are troops to be deployed
   const troops = this.getCardsByZone(player, 'troops')
   if (troops.length === 0 && !opts.troop) {
     this.mLog({

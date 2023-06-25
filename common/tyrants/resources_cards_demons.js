@@ -243,7 +243,19 @@ const cardData = [
     "text": [
       "Devour a card in your hand > Supplant a white troop anywhere on the board. Then deploy a white troop."
     ],
-    impl: (game, player) => {},
+    impl: (game, player) => {
+      game.aChooseAndDevour(player, {
+        then: () => {
+          game.aChooseAndSupplant(player, {
+            whiteOnly: true,
+            anywhere: true,
+          })
+          game.aChooseAndDeploy(player, {
+            white: true,
+          })
+        }
+      })
+    },
   },
   {
     "name": "Demogorgon",
