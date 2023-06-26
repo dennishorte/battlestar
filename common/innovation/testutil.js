@@ -1,9 +1,10 @@
 const { GameOverEvent } = require('../lib/game.js')
 const { InnovationFactory } = require('./innovation.js')
+const TestCommon = require('../lib/test_common.js')
 const log = require('../lib/log.js')
 
 
-const TestUtil = {}
+const TestUtil = { ...TestCommon }
 
 TestUtil.fixture = function(options) {
   options = Object.assign({
@@ -370,37 +371,6 @@ TestUtil.zone = function(game, zoneName, playerName='dennis') {
 ////////////////////////////////////////////////////////////////////////////////
 // Handy functions
 
-TestUtil.choose = function(game, request, ...selections) {
-  const selector = request.selectors[0]
-  selections = selections.map(string => {
-    if (typeof string === 'string' && string.startsWith('*')) {
-      return string.slice(1)
-    }
-
-    const tokens = typeof string === 'string' ? string.split('.') : [string]
-
-    if (tokens.length === 1) {
-      return tokens[0]
-    }
-    else if (tokens.length === 2) {
-      return {
-        title: tokens[0],
-        selection: tokens[1] === '*' ? [] : [tokens[1]]
-      }
-    }
-    else {
-      throw new Error(`Selection is too deep: ${string}`)
-    }
-  })
-
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: selections,
-    key: request.key,
-  })
-}
-
 TestUtil.clearZone = function(game, playerName, zoneName) {
   const player = game.getPlayerByName(playerName)
   const zone = game.getZoneByPlayer(player, zoneName)
@@ -539,48 +509,5 @@ TestUtil.setSplay = function(game, playerName, color, direction) {
   const zone = game.getZoneByPlayer(player, color)
   zone.splay = direction
 }
-
-
-////////////////////////////////////////////////////////////////////////////////
-// State Inspectors
-
-TestUtil.deepLog = function(obj) {
-  console.log(JSON.stringify(obj, null, 2))
-}
-
-TestUtil.dumpLog = function(game) {
-  const output = []
-  for (const entry of game.getLog()) {
-    if (entry === '__INDENT__' || entry === '__OUTDENT__' || entry.type === 'response-received') {
-      continue
-    }
-    output.push(log.toString(entry))
-  }
-  console.log(output.join('\n'))
-}
-
-function _dumpZonesRecursive(root, indent=0) {
-  const output = []
-
-  if (root.id) {
-    output.push(root.id)
-    for (const card of root.cards()) {
-      output.push(`   ${card.id}`)
-    }
-  }
-
-  else {
-    for (const zone of Object.values(root)) {
-      output.push(_dumpZonesRecursive(zone, indent+1))
-    }
-  }
-
-  return output.join('\n')
-}
-
-TestUtil.dumpZones = function(root) {
-  console.log(_dumpZonesRecursive(root))
-}
-
 
 module.exports = TestUtil

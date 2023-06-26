@@ -1,11 +1,12 @@
 const { GameOverEvent } = require('../lib/game.js')
 const { MagicFactory } = require('./magic.js')
+const TestCommon = require('../lib/test_common.js')
 const cardLookupFunc = require('./test_cardlookup.js')
 const log = require('../lib/log.js')
 const jsUtil = require('util')
 
 
-const TestUtil = {}
+const TestUtil = { ...TestCommon }
 
 TestUtil.fixture = function(options) {
   options = Object.assign({
@@ -200,57 +201,5 @@ TestUtil.do = function(game, request, action) {
     key: request.key,
   })
 }
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Data Shortcuts
-
-TestUtil.dennis = function(game) {
-  return game.getPlayerByName('dennis')
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// State Inspectors
-
-TestUtil.deepLog = function(obj) {
-  // console.log(JSON.stringify(obj, null, 2))
-  console.log(jsUtil.inspect(obj))
-}
-
-TestUtil.dumpLog = function(game) {
-  const output = []
-  for (const entry of game.getLog()) {
-    if (entry === '__INDENT__' || entry === '__OUTDENT__' || entry.type === 'response-received') {
-      continue
-    }
-    output.push(log.toString(entry))
-  }
-  console.log(output.join('\n'))
-}
-
-function _dumpZonesRecursive(root, indent=0) {
-  const output = []
-
-  if (root.id) {
-    output.push(root.id)
-    for (const card of root.cards()) {
-      output.push(`   ${card.id}`)
-    }
-  }
-
-  else {
-    for (const zone of Object.values(root)) {
-      output.push(_dumpZonesRecursive(zone, indent+1))
-    }
-  }
-
-  return output.join('\n')
-}
-
-TestUtil.dumpZones = function(root) {
-  console.log(_dumpZonesRecursive(root))
-}
-
 
 module.exports = TestUtil

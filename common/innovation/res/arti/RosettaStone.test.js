@@ -28,7 +28,7 @@ describe("Rosetta Stone", () => {
         green: ['Baghdad Battery'],
       },
       micah: {
-        purple: ['Holy Lance'],
+        green: ['Holy Lance'],
       },
     })
   })
