@@ -53,6 +53,14 @@ Util.array.elementsEqual = function(a, b) {
   )
 }
 
+Util.array.fill = function(count, value) {
+  const output = []
+  for (let i = 0; i < count; i++) {
+    output.push(value)
+  }
+  return output
+}
+
 Util.array.intersection = function(array1, array2) {
   return array1.filter(x => array2.includes(x))
 }
