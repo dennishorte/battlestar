@@ -11,4 +11,9 @@ describe('fixture', () => {
   test('game is created', () => {
     const game = t.fixture()
   })
+
+  test('game can initialize', () => {
+    const game = t.fixture()
+    game.run()
+  })
 })

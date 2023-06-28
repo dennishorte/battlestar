@@ -6,7 +6,7 @@ const {
 } = require('../lib/game.js')
 const res = require('./resources.js')
 const util = require('../lib/util.js')
-const zone = require('../lib/gameZone.js')
+const Zone = require('../lib/gameZone.js')
 
 
 module.exports = {
@@ -194,12 +194,12 @@ Agricola.prototype.initializeCards = function() {
   // Shuffle and deal the minor improvements and occupations
   const occupations = util.array.shuffle(this.getAllOccupations(), this.random)
   const minorImprovements = util.array.shuffle(this.getAllMinorImprovements(), this.random)
-  for (const player in this.getPlayerAll()) {
+  for (const player of this.getPlayerAll()) {
     const occupationZone = this.getZoneByPlayer(player, 'occupations')
-    const minorImprovementZone = this.getZoneByPlayer(player, 'minorOccupations')
+    const minorImprovementZone = this.getZoneByPlayer(player, 'minorImprovements')
     for (let i = 0; i < 7; i++) {
       occupationZone.addCard(occupations.pop())
-      minorImprovementZone.addCard(occupations.pop())
+      minorImprovementZone.addCard(minorImprovements.pop())
     }
   }
 }
@@ -259,6 +259,22 @@ Agricola.prototype.checkIsHarvestRound = function() {
 
 Agricola.prototype.checkGameOver = function() {
   return this.state.round > 14
+}
+
+Agricola.prototype.getAllMinorImprovements = function() {
+  let minorImprovements = []
+  for (const exp of this.settings.expansions) {
+    minorImprovements = minorImprovements.concat(res.cards[exp].minorImprovements)
+  }
+  return minorImprovements
+}
+
+Agricola.prototype.getAllOccupations = function() {
+  let occupations = []
+  for (const exp of this.settings.expansions) {
+    occupations = occupations.concat(res.cards[exp].occupations)
+  }
+  return occupations
 }
 
 ////////////////////////////////////////////////////////////////////////////////

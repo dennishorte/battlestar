@@ -12,7 +12,7 @@ TestUtil.fixture = function(options) {
   options = Object.assign({
     name: 'test_game',
     seed: 'test_seed',
-    expansions: ['base'],
+    expansions: ['baseA'],
     numPlayers: 2,
     players: [
       {
