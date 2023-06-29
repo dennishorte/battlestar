@@ -17,3 +17,19 @@ describe('fixture', () => {
     game.run()
   })
 })
+
+describe('draft', () => {
+  test('draft disabled', () => {
+    const game = t.fixture({ draft: false })
+    game.run()
+
+    expect(game.state.phase).toEqual('main')
+  })
+
+  test.skip('draft enabled', () => {
+    const game = t.fixture({ draft: true })
+    game.run()
+
+    expect(game.state.phase).toEqual('draft')
+  })
+})

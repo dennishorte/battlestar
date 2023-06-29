@@ -208,7 +208,10 @@ Agricola.prototype.initializeCards = function() {
 // Game Functions
 
 Agricola.prototype.draftCards = function() {
-  this.state.phase = 'draft'
+  if (this.settings.draft === true) {
+    this.state.phase = 'draft'
+    throw new Error('Drafting is not yet implemented')
+  }
 }
 
 Agricola.prototype.mainLoop = function() {
