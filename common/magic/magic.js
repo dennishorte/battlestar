@@ -89,6 +89,39 @@ Magic.prototype._gameOver = function(event) {
   return event
 }
 
+Magic.prototype._cardMovedCallback = function({ card, sourceZone, targetZone }) {
+  this.mAdjustCardVisibility(card)
+  this.mMaybeClearAnnotations(card)
+  this.mMaybeClearCounters(card)
+  this.mMaybeRemoveTokens(card)
+
+  const sourceKind = sourceZone.id.split('.').slice(-1)[0]
+  const targetKind = targetZone.id.split('.').slice(-1)[0]
+
+  // Card was moved to stack.
+  if (targetKind === 'stack') {
+    this.mLogIndent()
+  }
+
+  // Card was removed from stack.
+  if (sourceKind === 'stack') {
+    this.mLogOutdent()
+  }
+
+  // Card moved to a non-tap zone
+  if (card.tapped) {
+    if (!['creatures', 'battlefield', 'land', 'attacking', 'blocking'].includes(targetKind)) {
+      this.mUntap(card)
+    }
+  }
+
+  // Move card to the attacking zone, which usually taps them
+  if (targetKind === 'attacking') {
+    this.mTap(card)
+  }
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
 
@@ -1132,60 +1165,6 @@ Magic.prototype.mMaybeRemoveTokens = function(card) {
     const zone = this.getZoneByCard(card)
     zone.removeCard(card)
     card.owner = undefined
-  }
-}
-
-Magic.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
-  util.assert(sourceIndex >= 0 && sourceIndex <= source.cards().length - 1, `Invalid source index ${sourceIndex}`)
-
-  const sourceCards = source._cards
-  const targetCards = target._cards
-  const card = sourceCards[sourceIndex]
-  sourceCards.splice(sourceIndex, 1)
-  targetCards.splice(targetIndex, 0, card)
-  card.zone = target.id
-  this.mAdjustCardVisibility(card)
-  this.mMaybeClearAnnotations(card)
-  this.mMaybeClearCounters(card)
-  this.mMaybeRemoveTokens(card)
-  return card
-}
-
-Magic.prototype.mMoveCardTo = function(card, zone, opts={}) {
-  if (opts.verbose) {
-    this.mLog({
-      template: 'Moving {card} to {zone}',
-      args: { card, zone }
-    })
-  }
-  const source = this.getZoneByCard(card)
-  const index = source.cards().indexOf(card)
-  const destIndex = opts.index !== undefined ? opts.index : zone.cards().length
-  this.mMoveByIndices(source, index, zone, destIndex)
-
-  const sourceKind = source.id.split('.').slice(-1)[0]
-  const targetKind = zone.id.split('.').slice(-1)[0]
-
-  // Card was moved to stack.
-  if (targetKind === 'stack') {
-    this.mLogIndent()
-  }
-
-  // Card was removed from stack.
-  if (sourceKind === 'stack') {
-    this.mLogOutdent()
-  }
-
-  // Card moved to a non-tap zone
-  if (card.tapped) {
-    if (!['creatures', 'battlefield', 'land', 'attacking', 'blocking'].includes(targetKind)) {
-      this.mUntap(card)
-    }
-  }
-
-  // Move card to the attacking zone, which usually taps them
-  if (targetKind === 'attacking') {
-    this.mTap(card)
   }
 }
 

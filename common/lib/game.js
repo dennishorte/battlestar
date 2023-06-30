@@ -406,6 +406,14 @@ Game.prototype._postEnrichArgs = function(msg) {
   // To be overridden by child classes.
 }
 
+Game.prototype._undoCalled = function() {
+  // To be overridden by child classes.
+}
+
+Game.prototype._cardMovedCallback = function(card) {
+  // To be overridden by child classes.
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Private Methods
 
@@ -642,6 +650,44 @@ Game.prototype.getZoneById = function(id) {
 Game.prototype.getZoneByPlayer = function(player, name) {
   return this.state.zones.players[player.name][name]
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// State modifying functions
+
+Game.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
+  util.assert(sourceIndex >= 0 && sourceIndex <= source.cards().length - 1, `Invalid source index ${sourceIndex}`)
+
+  const sourceCards = source._cards
+  const targetCards = target._cards
+  const card = sourceCards[sourceIndex]
+  sourceCards.splice(sourceIndex, 1)
+  targetCards.splice(targetIndex, 0, card)
+  card.zone = target.id
+
+  this._cardMovedCallback({
+    card,
+    sourceZone: source,
+    targetZone: target,
+  })
+  return card
+}
+
+Game.prototype.mMoveCardTo = function(card, zone, opts={}) {
+  if (opts.verbose) {
+    this.mLog({
+      template: 'Moving {card} to {zone}',
+      args: { card, zone }
+    })
+  }
+  const source = this.getZoneByCard(card)
+  const index = source.cards().indexOf(card)
+  const destIndex = opts.index !== undefined ? opts.index : zone.cards().length
+  this.mMoveByIndices(source, index, zone, destIndex)
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Specialty functions
 
 Game.prototype.historicalView = function(index) {
   const data = {
