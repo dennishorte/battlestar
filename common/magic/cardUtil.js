@@ -122,8 +122,19 @@ CardUtil.allCardNames = function(card) {
     }
   }
 
+  // Add version with accents removed, so the lookup works either way
   for (const name of names) {
     const normalized = name.normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+    if (names.indexOf(normalized) === -1) {
+      names.push(normalized)
+    }
+  }
+
+  // Add version with smart quotes removed, so the lookup works either way
+  for (const name of names) {
+    const normalized = name
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/[\u201C\u201D]/g, '"')
     if (names.indexOf(normalized) === -1) {
       names.push(normalized)
     }
@@ -545,7 +556,13 @@ CardUtil.parseCardlist = function(cardlist) {
 
   let zoneName = 'main'
 
-  for (let line of cardlist.toLowerCase().split('\n')) {
+  const normalizedLines = cardlist
+    .toLowerCase()
+    .replace(/[\u2018\u2019]/g, "'")  // Replace single smart quotes with normal quotes
+    .replace(/[\u201C\u201D]/g, '"')  // Replace double smart quotes with normal quotes
+    .split('\n')
+
+  for (let line of normalizedLines) {
     line = line.trim()
 
     if (line.endsWith(':')) {
