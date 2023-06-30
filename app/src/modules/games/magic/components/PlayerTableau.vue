@@ -125,6 +125,10 @@
         <option v-for="zoneId in importZoneIds">{{ zoneId }}</option>
       </select>
       <input class="form-control mt-2" v-model.number="token.count" placeholder="count" />
+      <div class="form-check mt-2 bigger-font">
+        <input class="form-check-input" type="checkbox" v-model="token.morph" />
+        <label class="form-check-label">morphed</label>
+      </div>
     </Modal>
 
     <ImportCardModal :id="`import-card-modal-${player.name}`" :zone-suggestion="importZoneId" @import-card="importCardDo" />
@@ -189,6 +193,7 @@ export default {
         count: 1,
         name: '',
         zoneId: '',
+        morph: false,
       },
     }
   },
@@ -276,6 +281,7 @@ export default {
           annotation: this.token.annotation,
           count: this.token.count,
           zoneId: this.token.zoneId,
+          morph: this.token.morph,
         }
       })
     },
@@ -373,6 +379,10 @@ export default {
 
 
 <style>
+.bigger-font {
+  font-size: 1.25em;
+}
+
 .tableau-zone {
   border: 1px solid var(--bs-secondary);
   border-radius: .25em;

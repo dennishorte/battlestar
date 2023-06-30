@@ -443,7 +443,15 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
     this.mInitializeCard(card, owner)
     card.annotation = data.annotation
     card.token = true
-    card.visibility = this.getPlayerAll()
+
+    if (data.morph) {
+      card.morph = true
+      card.visibility = [player]
+    }
+    else {
+      card.visibility = this.getPlayerAll()
+    }
+
     zone.addCard(card)
     created.push(card)
 
