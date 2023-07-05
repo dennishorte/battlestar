@@ -90,6 +90,9 @@ export default {
         gameId: game._id,
         responses: game.responses,
         chat: game.getChat(),
+
+        // Include these because Magic doesn't run on the backend when saving,
+        // so can't calculate these values.
         waiting: game.waiting,
         gameOver: game.gameOver,
         gameOverData: game.gameOverData,

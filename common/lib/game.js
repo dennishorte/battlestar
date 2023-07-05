@@ -274,9 +274,12 @@ Game.prototype.run = function() {
       return e
     }
     else if (e instanceof GameOverEvent) {
+      // Some games, such as Innovation, can alter the outcome of a game over event based on
+      // board conditions. (eg. Jackie Chan in Innovation)
+      const result = this._gameOver(e)
+
       this.gameOver = true
-      this.gameOverData = e.data
-      return this._gameOver(e)
+      this.gameOverData = result.data
     }
     else {
       throw e
