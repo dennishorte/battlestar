@@ -8,6 +8,7 @@
         class="form-check-input"
         type="checkbox"
         :value="expansion.value"
+        :disabled="expansion.disabled"
         v-model="models.expansions"
         @change="optionsChanged"
       />

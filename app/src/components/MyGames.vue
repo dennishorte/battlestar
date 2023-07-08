@@ -168,7 +168,12 @@ export default {
     },
 
     winnerName(game) {
-      return game.stats.result.player.name || game.stats.result.player
+      if (game.stats.result) {
+        return game.stats.result.player.name || game.stats.result.player
+      }
+      else {
+        'result missing'
+      }
     },
 
     async fetchActiveGames() {
