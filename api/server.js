@@ -70,7 +70,7 @@ app.post('/api/game/kill', routes.game.kill)
 app.post('/api/game/rematch', routes.game.rematch)
 app.post('/api/game/saveFull', routes.game.saveFull)
 app.post('/api/game/saveResponse', routes.game.saveResponse)
-// app.post('/api/game/stats/innovation', routes.game.stats.innovation)
+app.post('/api/game/stats/innovation', routes.game.stats.innovation)
 
 // Magic Routes
 app.post('/api/magic/deck/add_card', routes.magic.deck.addCard)

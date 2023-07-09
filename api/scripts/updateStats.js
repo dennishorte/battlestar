@@ -102,25 +102,27 @@ async function updateInnovationStats() {
 }
 
 async function showStats() {
-  const cursor = await db.game.collection.find(
-    {
-      'settings.game': req.body.game,
-      gameOver: true,
-      killed: false,
-    },
-    {
-      _id: 0,
-      stats: 1,
-      settings: 1,
-    },
-  )
-  const processed = stats.processInnovationStats(cursor)
-  console.log(processed)
+  const cursor = await db.game.collection.find({
+    'settings.game': 'Innovation',
+    'settings.players.2': { $exists: false }, // Two player games only
+    'stats.error': false,
+    gameOver: true,
+    killed: false,
+  }).project({
+    _id: 0,
+    stats: 1,
+    settings: 1,
+  })
+
+  const processed = await stats.processInnovationStats(cursor)
+  console.log(processed.reasons.slice(0, 10))
+//  console.log(processed.cards.slice(0, 10))
+//  console.log(processed.players)
 }
 
 async function main() {
   await updateInnovationStats()
-//  await showStats()
+  await showStats()
   process.exit(0)
 }
 

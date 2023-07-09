@@ -178,7 +178,9 @@ Game.saveResponse = async function(req, res) {
 Game.stats.innovation = async function(req, res) {
   const cursor = await db.game.find(
     {
-      'settings.game': req.body.game,
+      'settings.game': 'Innovation',
+      'settings.players.2': { $exists: false }, // Two player games only
+      'stats.error': false,
       gameOver: true,
       killed: false,
     },
