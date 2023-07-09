@@ -22,7 +22,6 @@ function Card() {
 
       if (game.state.dogmaInfo.stethoscope) {
         const melded = game.state.dogmaInfo.stethoscope[player.name]
-        console.log(melded)
         if (melded && melded.some(card => card.color === 'blue')) {
           game.aDraw(player, { age: game.getEffectAge(this, 8) })
         }
