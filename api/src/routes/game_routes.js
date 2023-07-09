@@ -1,14 +1,16 @@
 const db = require('../models/db.js')
 const slack = require('../util/slack.js')
+const stats = require('../util/stats.js')
 
 const { Mutex } = require('../util/mutex.js')
 const { GameOverEvent, inn, mag, tyr } = require('battlestar-common')
 
-const Game = {}
+const Game = {
+  stats: {}
+}
 module.exports = Game
 
 const saveResponseMutext = new Mutex()
-const statsVersion = 2
 
 
 Game.create = async function(req, res) {
@@ -173,21 +175,23 @@ Game.saveResponse = async function(req, res) {
   })
 }
 
-Game.updateStats = async function(req, res) {
-  const cursor = await db.game.all()
-  const games = await cursor.toArray()
-  let numUpdated = 0
-
-  for (const data of games) {
-    if (updateStatsOne(data)) {
-      numUpdated += 1
-    }
-  }
+Game.stats.innovation = async function(req, res) {
+  const cursor = await db.game.find(
+    {
+      'settings.game': req.body.game,
+      gameOver: true,
+      killed: false,
+    },
+    {
+      _id: 0,
+      stats: 1,
+      settings: 1,
+    },
+  )
 
   res.json({
     status: 'success',
-    count: numUpdated,
-    message: `Updated stats for ${numUpdated} games`,
+    data: await stats.processInnovationStats(cursor),
   })
 }
 
@@ -212,139 +216,10 @@ async function _testAndSave(game, res, evalFunc) {
   }
 
   await db.game.save(game)
-  await updateStatsOne(game)
   if (game.checkGameIsOver()) {
     await db.game.gameOver(game._id)
   }
   await _sendNotifications(res, game)
-}
-
-async function updateStatsOne(data) {
-  switch (data.settings.game) {
-    case 'CubeDraft':
-      return true
-
-    case 'Innovation':
-      return updateStatsOneInnovation(data)
-
-    case 'Magic':
-      return updateStatsOneMagic(data)
-
-    case 'Tyrants of the Underdark':
-      return updateStatsOneTyrants(data)
-
-    default:
-      return false
-  }
-}
-
-async function updateStatsOneMagic(data) {
-  if (
-    !data.stats
-    || data.stats.version !== statsVersion
-    || data.gameOver !== data.stat.gameOver
-  ) {
-
-    data.stats = {
-      version: statsVersion,
-      error: false,
-    }
-
-    if (data.gameOver) {
-      data.stats.gameOver = true
-      data.stats.result = data.gameOverData
-    }
-    else {
-      data.stats.gameOver = false
-    }
-
-    await db.game.saveStats(data)
-    return true
-  }
-
-  else {
-    return false
-  }
-}
-
-async function updateStatsOneInnovation(data) {
-  if (
-    !data.stats
-    || data.stats.version !== statsVersion
-    || (data.gameOver === true && data.stats.gameOver === false)
-  ) {
-
-    data.stats = {
-      version: statsVersion,
-      error: false,
-    }
-
-    const game = new inn.Innovation(data)
-    let result
-    try {
-      result = game.run()
-    }
-    catch {
-      data.stats.error = true
-      await db.game.saveStats(data)
-      return true
-    }
-
-    if (result instanceof GameOverEvent) {
-      data.stats.gameOver = true
-      data.stats.result = result.data
-    }
-    else {
-      data.stats.gameOver = false
-    }
-
-    await db.game.saveStats(data)
-    return true
-  }
-
-  else {
-    return false
-  }
-}
-
-async function updateStatsOneTyrants(data) {
-  if (
-    !data.stats
-    || data.stats.version !== statsVersion
-    || (data.gameOver === true && data.stats.gameOver === false)
-  ) {
-
-    data.stats = {
-      version: statsVersion,
-      error: false,
-    }
-
-    const game = new tyr.Tyrants(data)
-    let result
-    try {
-      result = game.run()
-    }
-    catch {
-      data.stats.error = true
-      await db.game.saveStats(data)
-      return true
-    }
-
-    if (result instanceof GameOverEvent) {
-      data.stats.gameOver = true
-      data.stats.result = result.data
-    }
-    else {
-      data.stats.gameOver = false
-    }
-
-    await db.game.saveStats(data)
-    return true
-  }
-
-  else {
-    return false
-  }
 }
 
 async function _loadGameFromReq(req) {

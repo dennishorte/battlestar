@@ -147,8 +147,8 @@ export default {
   },
 
   async created() {
-    const requestResult = await axios.post('/api/game/fetchAll')
-    this.gameDataRaw = requestResult.data.games
+    const requestResult = await axios.post('/api/game/stats/innovation')
+    this.data = requestResult.data.data
   },
 }
 </script>

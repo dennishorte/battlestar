@@ -103,6 +103,13 @@ Innovation.prototype.initializeTransientState = function() {
   this.state.wouldWinKarma = false
   this.state.didInspire = false
   this.state.didEndorse = false
+  this.stats = {
+    melded: [],
+    meldedBy: {},
+    highestMelded: 1,
+    firstToMeldOfAge: [],
+    dogmaActions: {},
+  }
 }
 
 Innovation.prototype.initializePlayers = function() {
@@ -510,6 +517,7 @@ Innovation.prototype.aOneEffect = function(
   impl,
   opts={},
 ) {
+
   // Default opts
   opts = Object.assign({
     sharing: [],
@@ -1011,6 +1019,8 @@ Innovation.prototype._aDogmaHelper_executeEffects = function(player, card, share
     demanding: shareData.demanding,
     endorsed: opts.endorsed,
   }
+
+  this.statsRecordDogmaActions(player, card, effectOpts)
 
   for (const e of effects) {
     for (let i = 0; i < e.texts.length; i++) {
@@ -2466,6 +2476,11 @@ Innovation.prototype.mMeld = function(player, card) {
     args: { player, card }
   })
 
+  // Stats
+  this.statsCardWasMelded(card)
+  this.statsCardWasMeldedBy(player, card)
+  this.statsFirstToMeldOfAge(player, card)
+
   this.mActed(player)
   return card
 }
@@ -3220,5 +3235,38 @@ Innovation.prototype._walkZones = function(root, fn, path=[]) {
     else {
       this._walkZones(obj, fn, thisPath)
     }
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Stats functions
+
+Innovation.prototype.statsCardWasMelded = function(card) {
+  util.array.pushUnique(this.stats.melded, card.name)
+}
+
+Innovation.prototype.statsCardWasMeldedBy = function(player, card) {
+  if (card.name in this.stats.meldedBy) {
+    return
+  }
+  else {
+    this.stats.meldedBy[card.name] = player.name
+  }
+}
+
+Innovation.prototype.statsFirstToMeldOfAge = function(player, card) {
+  if (card.age > this.stats.highestMelded) {
+    this.stats.firstToMeldOfAge.push([card.age, player.name])
+    this.stats.highestMelded = card.age
+  }
+}
+
+Innovation.prototype.statsRecordDogmaActions = function(player, card, opts) {
+  if (card.name in this.stats.dogmaActions) {
+    this.stats.dogmaActions[card.name] += 1
+  }
+  else {
+    this.stats.dogmaActions[card.name] = 1
   }
 }

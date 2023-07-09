@@ -8,7 +8,9 @@ const gameCollection = database.collection('game')
 
 const writeMutex = new Mutex()
 
-const Game = {}
+const Game = {
+  collection: gameCollection,
+}
 module.exports = Game
 
 

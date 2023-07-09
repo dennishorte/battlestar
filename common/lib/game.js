@@ -280,6 +280,8 @@ Game.prototype.run = function() {
 
       this.gameOver = true
       this.gameOverData = result.data
+
+      return e
     }
     else {
       throw e
