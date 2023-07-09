@@ -4,8 +4,23 @@ const sets = {
   figs: require('./res/figs'),
   city: require('./res/city'),
   arti: require('./res/arti'),
+  byName: {},
   generate
 }
+
+for (const exp of ['base', 'echo', 'figs', 'city', 'arti']) {
+  const data = sets[exp].generateCardInstances()
+  for (const card of data.cards) {
+    sets.byName[card.name] = card
+  }
+
+  if (exp === 'arti') {
+    for (const card of data.achievements) {
+      sets.byName[card.name] = card
+    }
+  }
+}
+
 
 function generate() {
   const output = {

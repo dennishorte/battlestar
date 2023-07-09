@@ -37,15 +37,19 @@
             <thead>
               <tr>
                 <th>card</th>
-                <th>melded</th>
-                <th>wins</th>
+                <th @click="sortBy('age')">age</th>
+                <th @click="sortBy('melded')">melded</th>
+                <th @click="sortBy('wins')">wins</th>
+                <th @click="sortBy('win rate')">win rate</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="([card, datum], index) in data.cards" :key="index">
                 <td>{{ card }}</td>
+                <td>{{ cardAge(card) }}</td>
                 <td>{{ datum.melded }}</td>
-                <td>{{ datum.wins }}&nbsp({{ Math.floor(datum.wins/datum.melded * 100) }}%)</td>
+                <td>{{ datum.wins }}</td>
+                <td>{{ Math.floor(datum.wins/datum.melded * 100) }}%</td>
               </tr>
             </tbody>
           </table>
@@ -65,7 +69,7 @@
 <script>
 import axios from 'axios'
 
-import { util } from 'battlestar-common'
+import { inn, util } from 'battlestar-common'
 
 import Header from '@/components/Header'
 
@@ -84,6 +88,44 @@ export default {
   },
 
   computed: {
+  },
+
+  methods: {
+    cardAge(cardName) {
+      if (inn.res.byName[cardName]) {
+        return inn.res.byName[cardName].age
+      }
+      else {
+        console.log(cardName, inn.res.byName[cardName])
+        return '?'
+      }
+    },
+
+    sortBy(field) {
+      if (field === 'win rate') {
+        this.data.cards.sort((l, r) => {
+          const l_rate = l[1].wins / l[1].melded
+          const r_rate = r[1].wins / r[1].melded
+          return r_rate - l_rate
+        })
+      }
+
+      else if (field === 'age') {
+        this.data.cards.sort((l, r) => {
+          const l_age = this.cardAge(l[0])
+          const r_age = this.cardAge(r[0])
+          return r_age - l_age
+        })
+      }
+
+      else if (field === 'melded') {
+        this.data.cards.sort((l, r) => r[1].melded - l[1].melded)
+      }
+
+      else if (field === 'wins') {
+        this.data.cards.sort((l, r) => r[1].wins - l[1].wins)
+      }
+    },
   },
 
   async created() {
