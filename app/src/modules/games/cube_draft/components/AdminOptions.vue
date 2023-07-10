@@ -2,7 +2,8 @@
   <div class="admin-options">
     Admin Options
 
-    <div @click="toggleWaitingPanel">toggle waiting panel</div>
+    <div @click="ui.fn.toggleGameStats">toggle game stats</div>
+    <div @click="ui.fn.toggleWaitingPanel">toggle waiting panel</div>
   </div>
 </template>
 
@@ -12,11 +13,5 @@ export default {
   name: 'AdminOptions',
 
   inject: ['ui'],
-
-  methods: {
-    toggleWaitingPanel() {
-      this.ui.fn.toggleWaitingPanel()
-    },
-  },
 }
 </script>
