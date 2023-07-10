@@ -9,13 +9,21 @@
         <ChatInput />
       </div>
 
-      <div class="game-column data-column" :class="widthClass" v-if="tableauCards.length > 0 || showWaitingPanel">
+      <div
+        v-if="tableauCards.length > 0 || showWaitingPanel"
+        class="game-column data-column"
+        :class="widthClass"
+      >
         <CardTableau
           :cards="tableauCards"
           :cardScroll="false"
           @card-clicked="showDraftModal"
         />
         <WaitingPanel :class="waitingPanelClasses" />
+      </div>
+
+      <div class="game-column" v-if="game.gameOver || showGameStats">
+        <MatchResults />
       </div>
 
       <div class="game-column deck-column" :class="modifiedClass">
@@ -59,6 +67,7 @@ import CardDraftModal from './CardDraftModal'
 import CardTableau from './CardTableau'
 import CardTableauModal from './CardTableauModal'
 import GameLog from './log/GameLog'
+import MatchResults from './MatchResults'
 import SeatingInfo from './SeatingInfo'
 
 import DropdownButton from '@/components/DropdownButton'
@@ -91,6 +100,7 @@ export default {
     GameLog,
     GameMenu,
     MagicWrapper,
+    MatchResults,
     SeatingInfo,
     WaitingPanel,
   },
@@ -111,6 +121,8 @@ export default {
 
       closeupCard: null,
       closeupDraftCard: null,
+
+      showGameStats: false,
       showWaitingPanel: false,
     }
   },
@@ -261,7 +273,6 @@ export default {
     },
 
     showCardCloseup(card) {
-      console.log(card)
       this.closeupCard = card
 
       if (this.closeupCard) {
@@ -293,13 +304,13 @@ export default {
         }
       }
 
-      const toggleWaitingPanel = () => {
-        this.showWaitingPanel = !this.showWaitingPanel
-      }
+      const toggleGameStats = () => this.showGameStats = !this.showGameStats
+      const toggleWaitingPanel = () => this.showWaitingPanel = !this.showWaitingPanel
 
       return {
         fn: {
           selectorOptionComponent,
+          toggleGameStats,
           toggleWaitingPanel,
         },
       }

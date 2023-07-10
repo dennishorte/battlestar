@@ -45,6 +45,10 @@ app.post('/api/magic/file/delete', routes.magic.file.delete)
 app.post('/api/magic/file/duplicate', routes.magic.file.duplicate)
 app.post('/api/magic/file/save', routes.magic.file.save)
 
+// Link routes
+app.post('/api/magic/link/create', routes.magic.link.create)
+app.post('/api/magic/link/fetchByDraft', routes.magic.link.fetchByDraft)
+
 // Scryfall Routes
 app.post('/api/magic/scryfall/update', routes.magic.scryfall.updateAll)
 
