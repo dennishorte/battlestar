@@ -38,7 +38,7 @@ function Card() {
           // Everything else
           count += cards
             .slice(1)
-            .filter(card => card.checkBiscuitIsVisible('m', zone.splay))
+            .filter(card => card.checkHasBiscuit('m'))
             .length
         }
       }
