@@ -182,7 +182,10 @@ export default {
     hasReturnFromGrave() {
       return this.card.data.card_faces.some(face => {
         const return_string = 'return ' + face.name.toLowerCase() + ' from your graveyard'
-        return face.oracle_text.toLowerCase().includes(return_string)
+        return (
+          face.oracle_text
+          && face.oracle_text.toLowerCase().includes(return_string)
+        )
       })
     },
 
@@ -208,7 +211,12 @@ export default {
     },
 
     hasGraveAbility(name) {
-      return this.card.data.card_faces.some(face => face.oracle_text.includes(name))
+      return this.card.data.card_faces.some(face => {
+        return (
+          face.oracle_text
+          && face.oracle_text.includes(name)
+        )
+      })
     },
 
     morph() {
