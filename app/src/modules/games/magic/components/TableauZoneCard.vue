@@ -12,6 +12,7 @@
         <i class="ms ms-cost ms-ability-disturb" v-if="hasDisturb" />
         <i class="ms ms-cost ms-ability-embalm" v-if="hasEmbalm" />
         <i class="ms ms-cost ms-ability-eternalize" v-if="hasEternalize" />
+        <i class="ms ms-cost ms-ability-jumpstart" v-if="hasJumpstart" />
         <i class="ms ms-cost ms-flashback" v-if="hasFlashback" />
         <i class="ms ms-cost ms-ability-unearth" v-if="hasUnearth" />
         <i class="ms ms-cost ms-ability-escape" v-if="hasEscape" />
@@ -177,6 +178,7 @@ export default {
     hasEscape() { return this.hasGraveAbility('Escape') },
     hasEternalize() { return this.hasGraveAbility('Eternalize') },
     hasFlashback() { return this.hasGraveAbility('Flashback') },
+    hasJumpstart() { return this.hasGraveAbility('Jump-start') },
     hasUnearth() { return this.hasGraveAbility('Unearth') },
 
     hasReturnFromGrave() {
