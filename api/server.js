@@ -23,7 +23,7 @@ app.use(middleware.coerceIds)
 
 
 ////////////////////////////////////////////////////////////
-// Routes
+// Magic Routes
 
 // Card routes
 app.post('/api/magic/card/all', routes.magic.card.fetchAll)
@@ -35,6 +35,7 @@ app.post('/api/magic/cube/fetch', routes.magic.cube.fetch)
 app.post('/api/magic/cube/save', routes.magic.cube.save)
 
 // Deck routes
+app.post('/api/magic/deck/add_card', routes.magic.deck.addCard)
 app.post('/api/magic/deck/create', routes.magic.deck.create)
 app.post('/api/magic/deck/fetch', routes.magic.deck.fetch)
 app.post('/api/magic/deck/save', routes.magic.deck.save)
@@ -47,6 +48,7 @@ app.post('/api/magic/file/save', routes.magic.file.save)
 
 // Link routes
 app.post('/api/magic/link/create', routes.magic.link.create)
+app.post('/api/magic/link/fetchDrafts', routes.magic.link.fetchDrafts)
 app.post('/api/magic/link/fetchByDraft', routes.magic.link.fetchByDraft)
 
 // Scryfall Routes
@@ -75,9 +77,6 @@ app.post('/api/game/rematch', routes.game.rematch)
 app.post('/api/game/saveFull', routes.game.saveFull)
 app.post('/api/game/saveResponse', routes.game.saveResponse)
 app.post('/api/game/stats/innovation', routes.game.stats.innovation)
-
-// Magic Routes
-app.post('/api/magic/deck/add_card', routes.magic.deck.addCard)
 
 // Snapshot Routes
 app.post('/api/snapshot/create', routes.snapshot.create)

@@ -10,12 +10,13 @@ Link.create = async function(req, res, next) {
 
   if (gameId && draftId) {
     await db.game.linkGameToDraft(gameId, draftId)
-    gameIds = await db.game.linkDraftToGame(draftId, gameId)
+    await db.game.linkDraftToGame(draftId, gameId)
   }
   else {
     res.json({
       status: 'error',
       message: 'unable to create link',
+      requestBody: req.body,
     })
     return next()
   }
@@ -24,6 +25,23 @@ Link.create = async function(req, res, next) {
     status: 'success',
   })
 }
+
+Link.fetchDrafts = async function(req, res) {
+  const cursor = await db.game.collection.find({
+    'settings.game': 'CubeDraft',
+    'settings.players': { $elemMatch: { _id: req.body.userId } },
+    killed: { $ne: true },
+  }).sort({
+    lastUpdated: -1,
+  })
+  const array = await cursor.toArray()
+
+  res.json({
+    status: 'success',
+    drafts: array,
+  })
+}
+
 
 Link.fetchByDraft = async function(req, res, next) {
   const { draftId } = req.body
@@ -47,13 +65,14 @@ Link.fetchByDraft = async function(req, res, next) {
   }
 
   const linkedGameIds = draft.linkedGames
-  const games = db.game.find(
-    { _id: { $in: linkedGameIds } },
-    {
+  const games = await db
+    .game
+    .collection
+    .find({ _id: { $in: linkedGameIds } })
+    .project({
       responses: 0,
       chat: 0,
-    },
-  )
+    })
 
   res.json({
     status: 'success',

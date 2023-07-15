@@ -131,7 +131,7 @@ Game.linkDraftToGame = async function(draftId, gameId) {
     else {
       await gameCollection.updateOne(
         { _id: draftId },
-        { $set: { linkedGames: [gameId] } }
+        { $set: { 'settings.linkedGames': [gameId] } }
       )
     }
   })
@@ -141,7 +141,7 @@ Game.linkGameToDraft = async function(gameId, draftId) {
   await writeMutex.dispatch(async () => {
     await gameCollection.updateOne(
       { _id: gameId },
-      { $set: { linkedDraftId: draftId } },
+      { $set: { 'settings.linkedDraftId': draftId } },
     )
   })
 }

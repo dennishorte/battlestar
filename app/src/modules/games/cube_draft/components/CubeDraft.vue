@@ -22,10 +22,6 @@
         <WaitingPanel :class="waitingPanelClasses" />
       </div>
 
-      <div class="game-column" v-if="game.gameOver || showGameStats">
-        <MatchResults />
-      </div>
-
       <div class="game-column deck-column" :class="modifiedClass">
         <Decklist v-if="activeDeck" :deck="activeDeck" @card-clicked="showCardCloseup">
           <template #menu-options>
@@ -33,6 +29,10 @@
             <DropdownRouterLink to="/magic/decks">deck manager</DropdownRouterLink>
           </template>
         </Decklist>
+      </div>
+
+      <div class="game-column" v-if="game.gameOver || showGameStats">
+        <MatchResults />
       </div>
 
       <div class="game-column info-column">

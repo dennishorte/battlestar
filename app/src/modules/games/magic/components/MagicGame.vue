@@ -2,7 +2,10 @@
   <div class="magic-game" @click="unselectCard">
 
     <div class="magic-column log-column">
-      <GameMenu />
+      <GameMenu>
+        <DropdownDivider />
+        <DropdownButton @click="openLinkModal">link to draft</DropdownButton>
+      </GameMenu>
 
       <GameLog />
       <ChatInput />
@@ -22,6 +25,7 @@
 
   <CardCloseupModal />
   <CounterCloseupModal />
+  <LinkToDraftModal />
 </template>
 
 
@@ -31,8 +35,11 @@ import { mapState } from 'vuex'
 import CardCloseupModal from './CardCloseupModal'
 import ChatInput from '@/modules/games/common/components/ChatInput'
 import CounterCloseupModal from './CounterCloseupModal'
+import DropdownDivider from '@/components/DropdownDivider'
+import DropdownButton from '@/components/DropdownButton'
 import GameLog from './log/GameLog'
 import GameMenu from '@/modules/games/common/components/GameMenu'
+import LinkToDraftModal from './LinkToDraftModal'
 import PhaseSelector from './PhaseSelector'
 import PlayerTableau from './PlayerTableau'
 
@@ -43,8 +50,11 @@ export default {
     CardCloseupModal,
     CounterCloseupModal,
     ChatInput,
+    DropdownDivider,
+    DropdownButton,
     GameLog,
     GameMenu,
+    LinkToDraftModal,
     PhaseSelector,
     PlayerTableau,
   },
@@ -59,6 +69,10 @@ export default {
   },
 
   methods: {
+    openLinkModal() {
+      this.$modal('link-to-draft-modal').show()
+    },
+
     unselectCard() {
       this.$store.dispatch('magic/game/unselectCard')
     },
