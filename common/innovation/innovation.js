@@ -68,6 +68,7 @@ Innovation.prototype._gameOver = function(event) {
       reason: event.data.reason,
     }
   })
+
   return event
 }
 
@@ -1325,7 +1326,7 @@ Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
     }
   }
 
-  opts = { ...opts, owner: info.owner }
+  opts = { ...opts, owner: info.owner, self: info.card }
 
   if (info.impl.kind && info.impl.kind.startsWith('would')) {
     if (opts.trigger === 'splay') {
@@ -1415,7 +1416,7 @@ Innovation.prototype.aKarma = function(player, kind, opts={}) {
     .getInfoByKarmaTrigger(player, kind)
     .filter(info => info.impl.matches)
     .filter(info => {
-      return info.impl.matches(this, player, { ...opts, owner: info.owner })
+      return info.impl.matches(this, player, { ...opts, owner: info.owner, self: info.card })
     })
   return this._aKarmaHelper(player, infos, { ...opts, trigger: kind })
 }

@@ -25,20 +25,19 @@ function Card() {
     {
       trigger: 'would-win',
       triggerAll: true,
-      matches: (game, player, { owner }) => {
+      matches: (game, player, { owner, self }) => {
         return (
-          player !== game.getPlayerByCard(this)
-          && owner === game.getPlayerByCard(this)
+          player !== game.getPlayerByCard(self)
+          && owner === game.getPlayerByCard(self)
         )
       },
-      func: (game, player, { owner }) => {
-        game.mLog({ template: 'hello' })
+      func: (game, player, { owner, self }) => {
         player = owner
         const topFigures = game
           .getPlayerAll()
           .flatMap(player => game.getTopCards(player))
           .filter(card => card.checkIsFigure())
-          .filter(card => card !== this)
+          .filter(card => card !== self)
         game.aScoreMany(player, topFigures, { ordered: true })
 
         const score = game.getScore(player)

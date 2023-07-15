@@ -281,7 +281,7 @@ Game.prototype.run = function() {
       this.gameOver = true
       this.gameOverData = result.data
 
-      return e
+      return result
     }
     else {
       throw e
