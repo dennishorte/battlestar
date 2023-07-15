@@ -32,13 +32,14 @@ function Card() {
         )
       },
       func: (game, player, { owner }) => {
+        game.mLog({ template: 'hello' })
         player = owner
         const topFigures = game
           .getPlayerAll()
           .flatMap(player => game.getTopCards(player))
           .filter(card => card.checkIsFigure())
           .filter(card => card !== this)
-        game.aScoreMany(player, topFigures)
+        game.aScoreMany(player, topFigures, { ordered: true })
 
         const score = game.getScore(player)
         const others = game
@@ -46,6 +47,10 @@ function Card() {
           .map(other => game.getScore(other))
         const mostPointsCondition = others.every(otherScore => otherScore < score)
         if (mostPointsCondition) {
+          game.mLog({
+            template: '{player} now has the most points',
+            args: { player }
+          })
           throw new GameOverEvent({
             player,
             reason: this.name

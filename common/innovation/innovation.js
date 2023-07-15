@@ -56,7 +56,7 @@ Innovation.prototype._gameOver = function(event) {
         event = e
       }
       else {
-        continue
+        throw e
       }
     }
   }
