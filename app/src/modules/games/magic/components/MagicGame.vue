@@ -4,7 +4,7 @@
     <div class="magic-column log-column">
       <GameMenu>
         <DropdownDivider />
-        <DropdownButton @click="openLinkModal">link to draft</DropdownButton>
+        <DropdownButton data-bs-toggle="modal" data-bs-target="#link-to-draft-modal">link to draft</DropdownButton>
       </GameMenu>
 
       <GameLog />
@@ -25,7 +25,6 @@
 
   <CardCloseupModal />
   <CounterCloseupModal />
-  <LinkToDraftModal />
 </template>
 
 
@@ -39,7 +38,6 @@ import DropdownDivider from '@/components/DropdownDivider'
 import DropdownButton from '@/components/DropdownButton'
 import GameLog from './log/GameLog'
 import GameMenu from '@/modules/games/common/components/GameMenu'
-import LinkToDraftModal from './LinkToDraftModal'
 import PhaseSelector from './PhaseSelector'
 import PlayerTableau from './PlayerTableau'
 
@@ -54,7 +52,6 @@ export default {
     DropdownButton,
     GameLog,
     GameMenu,
-    LinkToDraftModal,
     PhaseSelector,
     PlayerTableau,
   },
@@ -69,10 +66,6 @@ export default {
   },
 
   methods: {
-    openLinkModal() {
-      this.$modal('link-to-draft-modal').show()
-    },
-
     unselectCard() {
       this.$store.dispatch('magic/game/unselectCard')
     },

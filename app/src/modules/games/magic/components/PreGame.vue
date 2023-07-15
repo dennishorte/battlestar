@@ -8,7 +8,10 @@
 
     <div class="content">
       <div class="chat-column">
-        <GameMenu :disabled="['debug', 'undo']" />
+        <GameMenu :disabled="['debug', 'undo']">
+          <DropdownDivider />
+          <DropdownButton data-bs-toggle="modal" data-bs-target="#link-to-draft-modal">link to draft</DropdownButton>
+        </GameMenu>
 
         <GameLog />
         <ChatInput @chat-added="save" />
@@ -75,6 +78,8 @@ import { mapState } from 'vuex'
 
 import ChatInput from '@/modules/games/common/components/ChatInput'
 import Decklist from '@/modules/magic/components/deck/Decklist'
+import DropdownDivider from '@/components/DropdownDivider'
+import DropdownButton from '@/components/DropdownButton'
 import GameLog from './log/GameLog'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import MagicFileManager from '@/modules/magic/components/MagicFileManager'
@@ -85,6 +90,8 @@ export default {
   components: {
     ChatInput,
     Decklist,
+    DropdownDivider,
+    DropdownButton,
     GameLog,
     GameMenu,
     MagicFileManager,
