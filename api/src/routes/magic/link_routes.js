@@ -54,7 +54,7 @@ Link.fetchByDraft = async function(req, res, next) {
     return next()
   }
 
-  const draft = await db.game.fetchById(draftId)
+  const draft = await db.game.findById(draftId)
 
   if (!draft) {
     res.json({
@@ -73,6 +73,7 @@ Link.fetchByDraft = async function(req, res, next) {
       responses: 0,
       chat: 0,
     })
+    .toArray()
 
   res.json({
     status: 'success',
