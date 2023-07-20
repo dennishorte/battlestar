@@ -1,6 +1,6 @@
 <template>
   <div class="match-results" v-if="!!game">
-    <div>match results</div>
+    <div class="heading">Match Results</div>
     <div>total games: {{ this.linkedGames.length }}</div>
     <div>
       <table class="table table-sm" :key="game._id">

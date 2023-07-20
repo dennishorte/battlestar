@@ -1,7 +1,7 @@
 <template>
   <div class="seating-info">
 
-    <div>Seating Chart</div>
+    <div class="heading">Seating Chart</div>
 
     <div v-for="info in playerInfo" :key="info.player.name">
       <span class="name-span">{{ info.player.name }}</span>

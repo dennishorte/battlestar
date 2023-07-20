@@ -31,12 +31,9 @@
         </Decklist>
       </div>
 
-      <div class="game-column" v-if="game.gameOver || showGameStats">
-        <MatchResults />
-      </div>
-
       <div class="game-column info-column">
-        <SeatingInfo />
+        <MatchResults v-if="game.gameOver || showGameStats" class="mb-4" />
+        <SeatingInfo class="mb-4" />
         <AdminOptions />
       </div>
 
@@ -340,6 +337,11 @@ export default {
 }
 </script>
 
+<style>
+.heading {
+  font-size: 1.5em;
+}
+</style>
 
 <style scoped>
 .cube-draft {
