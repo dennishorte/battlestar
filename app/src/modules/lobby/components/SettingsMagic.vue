@@ -22,6 +22,7 @@ export default {
   data() {
     return {
       format: '',
+      linkedDraftId: '',
     }
   },
 
@@ -60,9 +61,6 @@ export default {
       this.updateValid()
     }
     else {
-      this.lobby.options = {
-        format: 'Constructed',
-      }
       this.format = this.lobby.options.format || ''
       this.optionsChanged()
     }

@@ -8,13 +8,25 @@
 
     <div class="content">
       <div class="chat-column">
-        <GameMenu :disabled="['debug', 'undo']" />
+        <GameMenu :disabled="['debug', 'undo']">
+          <DropdownDivider />
+          <DropdownButton data-bs-toggle="modal" data-bs-target="#link-to-draft-modal">link to draft</DropdownButton>
+        </GameMenu>
 
         <GameLog />
         <ChatInput @chat-added="save" />
       </div>
 
       <div class="deck-column">
+        <div v-if="!!linkedDraft" class="alert alert-primary linked-draft-info">
+          <div>Linked Draft</div>
+          <div>
+            <button @click="goToDraft" data-bs-dismiss="modal" class="btn btn-link">
+              {{ linkedDraft.settings.name }}
+            </button>
+          </div>
+        </div>
+
         <div class="players">
           <table class="table table-sm">
             <thead>
@@ -75,6 +87,8 @@ import { mapState } from 'vuex'
 
 import ChatInput from '@/modules/games/common/components/ChatInput'
 import Decklist from '@/modules/magic/components/deck/Decklist'
+import DropdownDivider from '@/components/DropdownDivider'
+import DropdownButton from '@/components/DropdownButton'
 import GameLog from './log/GameLog'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import MagicFileManager from '@/modules/magic/components/MagicFileManager'
@@ -85,6 +99,8 @@ export default {
   components: {
     ChatInput,
     Decklist,
+    DropdownDivider,
+    DropdownButton,
     GameLog,
     GameMenu,
     MagicFileManager,
@@ -102,6 +118,10 @@ export default {
       filelist: 'filelist',
     }),
 
+    ...mapState('magic/game', {
+      linkedDraft: 'linkedDraft',
+    }),
+
     deckfiles() {
       return this.filelist.filter(file => file.kind === 'deck')
     },
@@ -115,6 +135,10 @@ export default {
   methods: {
     cardClicked(card) {
       this.$store.dispatch('magic/dm/clickCard', card)
+    },
+
+    goToDraft() {
+      this.$router.push(`/game/${this.linkedDraft._id}`)
     },
 
     selectionChanged({ newValue }) {
@@ -209,5 +233,11 @@ export default {
   font-size: 1.2em;
   border-radius: 0 0 .5em .5em;
   height: 5vh;
+}
+
+.linked-draft-info {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 </style>

@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { mag, util } from 'battlestar-common'
 
 
@@ -6,9 +7,12 @@ export default {
 
   state: () => ({
     game: null,
+    linkedDraft: null,
+
+    ready: false,
+
     movingAllSource: null,
     movingRevealedSource: null,
-    ready: false,
     selectedCardId: null,
 
     doubleClick: {
@@ -50,6 +54,10 @@ export default {
 
     setGame(state, game) {
       state.game = game
+    },
+
+    setLinkedDraft(state, draft) {
+      state.linkedDraft = draft
     },
 
     setReady(state, value) {
@@ -155,7 +163,22 @@ export default {
       }
     },
 
-    loadGame({ commit, rootGetters, rootState }, { doFunc, gameData }) {
+    async fetchLinkedDraft({ commit, state }) {
+      if (state.game.settings.linkedDraftId) {
+        const requestResult = await axios.post('/api/game/fetch', {
+          gameId: state.game.settings.linkedDraftId,
+        })
+
+        if (requestResult.data.status === 'success') {
+          commit('setLinkedDraft', requestResult.data.game)
+        }
+        else {
+          alert('Error fetching existing link')
+        }
+      }
+    },
+
+    async loadGame({ commit, dispatch, rootGetters, rootState }, { doFunc, gameData }) {
       commit('setReady', false)
       const actor = rootGetters['auth/user']
       const game = new mag.Magic(gameData, actor.name)
@@ -165,6 +188,8 @@ export default {
 
       commit('setGame', game)
       commit('setReady', true)
+
+      await dispatch('fetchLinkedDraft')
     },
 
     moveAll({ commit, state }, targetZone) {

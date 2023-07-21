@@ -54,7 +54,6 @@ export default {
       })
 
       this.drafts = fetchResult.data.games
-      console.log(this.drafts)
     },
 
     gameKind(data) {

@@ -33,12 +33,24 @@ Lobby.create = async function(req, res) {
   }
 
   const lobby = await db.lobby.findById(lobbyId)
-  lobby.users = [{
+  const userIds = req.body.userIds || [user._id]
+  const userCursor = await db.user.findByIds(userIds)
+  const users = await userCursor.toArray()
+
+  lobby.users = users.map(user => ({
     _id: user._id,
     name: user.name,
-  }]
+  }))
 
-  db.lobby.save(lobby)
+  if (req.body.game) {
+    lobby.game = req.body.game
+  }
+
+  if (req.body.options) {
+    lobby.options = req.body.options
+  }
+
+  await db.lobby.save(lobby)
 
   res.json({
     status: 'success',

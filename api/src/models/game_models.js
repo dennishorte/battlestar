@@ -119,6 +119,33 @@ Game.gameOver = async function(gameId, killed=false) {
   })
 }
 
+Game.linkDraftToGame = async function(draftId, gameId) {
+  await writeMutex.dispatch(async () => {
+    const draft = this.findById(draftId)
+    if (draft.linkedGames) {
+      await gameCollection.updateOne(
+        { _id: draftId },
+        { $addToSet: { linkedGames: gameId } }
+      )
+    }
+    else {
+      await gameCollection.updateOne(
+        { _id: draftId },
+        { $set: { 'settings.linkedGames': [gameId] } }
+      )
+    }
+  })
+}
+
+Game.linkGameToDraft = async function(gameId, draftId) {
+  await writeMutex.dispatch(async () => {
+    await gameCollection.updateOne(
+      { _id: gameId },
+      { $set: { 'settings.linkedDraftId': draftId } },
+    )
+  })
+}
+
 async function doSave(game) {
   return await gameCollection.updateOne(
     { _id: game._id },

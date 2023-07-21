@@ -47,7 +47,8 @@ function factoryFromLobby(lobby) {
   return GameFactory({
     game: 'Magic',
     name: lobby.name,
-    expansions: lobby.options.expansions,
+    format: lobby.options.format,
+    linkedDraftId: lobby.options.linkedDraftId,
     players: lobby.users,
     seed: lobby.seed,
   })

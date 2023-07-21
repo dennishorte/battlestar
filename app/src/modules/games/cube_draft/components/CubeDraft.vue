@@ -9,7 +9,11 @@
         <ChatInput />
       </div>
 
-      <div class="game-column data-column" :class="widthClass" v-if="tableauCards.length > 0 || showWaitingPanel">
+      <div
+        v-if="tableauCards.length > 0 || showWaitingPanel"
+        class="game-column data-column"
+        :class="widthClass"
+      >
         <CardTableau
           :cards="tableauCards"
           :cardScroll="false"
@@ -28,7 +32,8 @@
       </div>
 
       <div class="game-column info-column">
-        <SeatingInfo />
+        <MatchResults v-if="game.gameOver || showGameStats" class="mb-4" />
+        <SeatingInfo class="mb-4" />
         <AdminOptions />
       </div>
 
@@ -59,6 +64,7 @@ import CardDraftModal from './CardDraftModal'
 import CardTableau from './CardTableau'
 import CardTableauModal from './CardTableauModal'
 import GameLog from './log/GameLog'
+import MatchResults from './MatchResults'
 import SeatingInfo from './SeatingInfo'
 
 import DropdownButton from '@/components/DropdownButton'
@@ -91,6 +97,7 @@ export default {
     GameLog,
     GameMenu,
     MagicWrapper,
+    MatchResults,
     SeatingInfo,
     WaitingPanel,
   },
@@ -111,6 +118,8 @@ export default {
 
       closeupCard: null,
       closeupDraftCard: null,
+
+      showGameStats: false,
       showWaitingPanel: false,
     }
   },
@@ -261,7 +270,6 @@ export default {
     },
 
     showCardCloseup(card) {
-      console.log(card)
       this.closeupCard = card
 
       if (this.closeupCard) {
@@ -293,13 +301,13 @@ export default {
         }
       }
 
-      const toggleWaitingPanel = () => {
-        this.showWaitingPanel = !this.showWaitingPanel
-      }
+      const toggleGameStats = () => this.showGameStats = !this.showGameStats
+      const toggleWaitingPanel = () => this.showWaitingPanel = !this.showWaitingPanel
 
       return {
         fn: {
           selectorOptionComponent,
+          toggleGameStats,
           toggleWaitingPanel,
         },
       }
@@ -329,6 +337,11 @@ export default {
 }
 </script>
 
+<style>
+.heading {
+  font-size: 1.5em;
+}
+</style>
 
 <style scoped>
 .cube-draft {

@@ -5,6 +5,7 @@
     <MagicGame v-else />
 
     <DebugModal />
+    <LinkToDraftModal />
   </MagicWrapper>
 </template>
 
@@ -16,6 +17,7 @@ import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
 import DebugModal from '@/modules/games/common/components/DebugModal'
+import LinkToDraftModal from './LinkToDraftModal'
 import MagicGame from './MagicGame'
 import MagicWrapper from '@/modules/magic/components/MagicWrapper'
 import PreGame from './PreGame'
@@ -26,6 +28,7 @@ export default {
 
   components: {
     DebugModal,
+    LinkToDraftModal,
     MagicGame,
     MagicWrapper,
     PreGame,
