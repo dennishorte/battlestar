@@ -100,7 +100,7 @@ export default {
 
       const totalPacks = this.lobby.users.length * this.lobby.options.numPacks
 
-      const getCard = (rarity) => util.array.select(rarityPools[rarity])
+      const getCards = (rarity, count) => util.array.selectMany(rarityPools[rarity], count)
 
       let index = 0
       const packs = []
@@ -110,21 +110,16 @@ export default {
         // One rare or mythic card
         // About 1 out of 7.4 rare slots have a mythic.
         if (rarityPools['mythic'] && Math.random() < .135) {
-          pack.push(getCard('mythic'))
+          getCards('mythic', 1).forEach(card => pack.push(card))
+        }
+        else {
+          getCards('rare', 1).forEach(card => pack.push(card))
         }
 
-        // No mythic was added, so add a rare instead.
-        if (pack.length === 0) {
-          pack.push(getCard('rare'))
-        }
+        getCards('uncommon', 3).forEach(card => pack.push(card))
+        getCards('common', 10).forEach(card => pack.push(card))
 
-        for (let i = 0; i < 3; i++) {
-          pack.push(getCard('uncommon'))
-        }
-
-        for (let i = 0; i < 10; i++) {
-          pack.push(getCard('common'))
-        }
+        console.log(pack)
 
         const simplified = pack.map(card => {
           index += 1
