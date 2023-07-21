@@ -49,6 +49,11 @@ Game.create = async function(req, res) {
       await db.game.saveSettings(game._id, game.settings)
     }
 
+    if (game.settings.game === 'Magic' && req.body.linkedDraftId) {
+      await db.game.linkGameToDraft(gameId, req.body.linkedDraftId)
+      await db.game.linkDraftToGame(req.body.linkedDraftId, gameId)
+    }
+
     // Notify players of the new game
     for (const user of lobby.users) {
       _notify(game, user._id, 'A new game has started!')
