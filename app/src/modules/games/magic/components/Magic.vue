@@ -79,12 +79,18 @@ export default {
         action.playerName = player.name
       }
 
-      this.game.respondToInputRequest({
-        actor: selector.actor,
-        title: selector.title,
-        selection: [action],
-        key: request.key,
-      })
+      try {
+        this.game.respondToInputRequest({
+          actor: selector.actor,
+          title: selector.title,
+          selection: [action],
+          key: request.key,
+        })
+      }
+      catch (e) {
+        console.log(e)
+        alert('error: see console')
+      }
     },
 
     async save() {
