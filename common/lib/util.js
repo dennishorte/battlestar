@@ -107,7 +107,7 @@ Util.array.select = function(array, rng) {
 }
 
 Util.array.selectMany = function(array, count, rng) {
-  return this.array.shuffle([...array], rng).slice(0, count)
+  return Util.array.shuffle([...array], rng).slice(0, count)
 }
 
 Util.array.shuffle = function(array, rng) {
