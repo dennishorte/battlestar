@@ -18,6 +18,15 @@
       </div>
 
       <div class="deck-column">
+        <div v-if="!!linkedDraft" class="alert alert-primary linked-draft-info">
+          <div>Linked Draft</div>
+          <div>
+            <button @click="goToDraft" data-bs-dismiss="modal" class="btn btn-link">
+              {{ linkedDraft.settings.name }}
+            </button>
+          </div>
+        </div>
+
         <div class="players">
           <table class="table table-sm">
             <thead>
@@ -109,6 +118,10 @@ export default {
       filelist: 'filelist',
     }),
 
+    ...mapState('magic/game', {
+      linkedDraft: 'linkedDraft',
+    }),
+
     deckfiles() {
       return this.filelist.filter(file => file.kind === 'deck')
     },
@@ -122,6 +135,10 @@ export default {
   methods: {
     cardClicked(card) {
       this.$store.dispatch('magic/dm/clickCard', card)
+    },
+
+    goToDraft() {
+      this.$router.push(`/game/${this.linkedDraft._id}`)
     },
 
     selectionChanged({ newValue }) {
@@ -216,5 +233,11 @@ export default {
   font-size: 1.2em;
   border-radius: 0 0 .5em .5em;
   height: 5vh;
+}
+
+.linked-draft-info {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 </style>

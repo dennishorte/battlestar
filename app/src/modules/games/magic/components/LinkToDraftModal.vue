@@ -4,10 +4,10 @@
 
     <div class="modal-body">
 
-      <div v-if="!!existingLink" class="alert alert-primary">
+      <div v-if="!!linkedDraft" class="alert alert-primary">
         Currently linked to:
         <button @click="goToDraft" data-bs-dismiss="modal" class="btn btn-link">
-          {{ existingLink.settings.name }}
+          {{ linkedDraft.settings.name }}
         </button>
       </div>
 
@@ -28,6 +28,7 @@
 
 <script>
 import axios from 'axios'
+import { mapState } from 'vuex'
 
 import Modal from '@/components/Modal'
 
@@ -45,15 +46,19 @@ export default {
     return {
       draftId: '',
       drafts: [],
-      existingLink: null,
     }
+  },
+
+  computed: {
+    ...mapState('magic/game', {
+      linkedDraft: 'linkedDraft',
+    })
   },
 
   methods: {
     goToDraft() {
-      this.$router.push(`/game/${this.existingLink._id}`)
+      this.$router.push(`/game/${this.linkedDraft._id}`)
     },
-
 
     async link() {
       const requestResult = await axios.post('/api/magic/link/create', {
@@ -82,25 +87,6 @@ export default {
       }
     },
 
-    async fetchExistingLink() {
-      if (this.game.settings.linkedDraftId) {
-        const requestResult = await axios.post('/api/game/fetch', {
-          gameId: this.game.settings.linkedDraftId,
-        })
-
-        if (requestResult.data.status === 'success') {
-          this.existingLink = requestResult.data.game
-        }
-        else {
-          alert('Error fetching existing link')
-        }
-      }
-    },
-  },
-
-  async mounted() {
-    this.fetchDrafts()
-    this.fetchExistingLink()
   },
 }
 </script>
