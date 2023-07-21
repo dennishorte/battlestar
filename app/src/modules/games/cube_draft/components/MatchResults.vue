@@ -78,7 +78,12 @@ export default {
       const other = games.length - p1wins - p2wins
       const otherString = other > 0 ? '*' : ''
 
-      return `${p1wins}-${p2wins}${otherString}`
+      if (p1wins + p2wins + other > 0) {
+        return `${p1wins}-${p2wins}${otherString}`
+      }
+      else {
+        return ''
+      }
     },
   },
 
