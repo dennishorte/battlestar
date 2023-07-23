@@ -131,7 +131,7 @@ Game.linkDraftToGame = async function(draftId, gameId) {
     else {
       await gameCollection.updateOne(
         { _id: draftId },
-        { $set: { 'settings.linkedGames': [gameId] } }
+        { $set: { linkedGames: [gameId] } }
       )
     }
   })

@@ -64,7 +64,7 @@ Link.fetchByDraft = async function(req, res, next) {
     return next()
   }
 
-  const linkedGameIds = draft.linkedGames
+  const linkedGameIds = draft.linkedGames || []
   const games = await db
     .game
     .collection
