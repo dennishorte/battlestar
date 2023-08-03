@@ -797,6 +797,9 @@ describe('Undead expansion', () => {
         dennis: {
           hand: ['Hezrou', 'House Guard'],
         },
+        'araum-ched': {
+          troops: []
+        },
       })
 
       const request1 = game.run()
@@ -817,6 +820,9 @@ describe('Undead expansion', () => {
         dennis: {
           hand: ['Hezrou', 'House Guard'],
         },
+        'araum-ched': {
+          troops: []
+        },
         'ched-llace a': {
           troops: ['micah'],
         },
@@ -824,6 +830,7 @@ describe('Undead expansion', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Hezrou')
+      t.deepLog(request2)
       const request3 = t.choose(game, request2, 'Eryndlyn')
 
       t.testBoard(game, {

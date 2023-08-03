@@ -498,7 +498,7 @@ const cardData = [
       "Promote the top card of your deck."
     ],
     impl: (game, player) => {
-      game.aChooseAndMoveTroop(player, { noWhite: true })
+      game.aChooseAndMoveTroop(player)
       game.aPromoteTopCard(player)
     },
   },
