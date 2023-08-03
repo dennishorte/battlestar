@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `ATM`  // Card names are unique in Innovation
@@ -18,11 +19,23 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      const choices = game
+      const topCoins = game
         .getTopCards(player)
         .filter(card => card.color !== 'yellow')
         .filter(card => !card.checkHasBiscuit('c'))
-      const card = game.aChooseCard(player, choices)
+        .sort((l, r) => r.getAge() - l.getAge())
+
+      // In case there are no valid options.
+      if (topCoins.length === 0) {
+        game.mLog({ template: 'No valid cards' })
+        return
+      }
+
+      const highest = util
+        .array
+        .takeWhile(topCoins, card => card.getAge() === topCoins[0].getAge())
+
+      const card = game.aChooseCard(player, highest)
       if (card) {
         game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
       }
