@@ -60,7 +60,7 @@ function Card() {
             const age = parseInt(cardToken.split(' ')[1])
             card = game
               .getCardsByZone(target, 'achievements')
-              .find(card => card.getAge() === age)
+              .find(card => card.getAge() === age && !card.isSpecialAchievement)
           }
           else {
             card = game.getCardByName(cardToken)
