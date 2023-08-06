@@ -1193,7 +1193,12 @@ Tyrants.prototype.aPlayCard = function(player, card) {
 }
 
 Tyrants.prototype.aPromote = function(player, card, opts={}) {
-  this.mMoveCardTo(card, this.getZoneByPlayer(player, 'innerCircle'))
+  if (card.name === 'Insane Outcast') {
+    this.mMoveCardTo(card, this.getZoneById('outcast'))
+  }
+  else {
+    this.mMoveCardTo(card, this.getZoneByPlayer(player, 'innerCircle'))
+  }
 
   if (!opts.silent) {
     this.mLog({

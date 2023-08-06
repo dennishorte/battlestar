@@ -70,8 +70,23 @@ describe('Core Cards', () => {
 
     })
 
-    test.skip('promote', () => {
+    test.only('promote', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Insane Outcast', 'Drow Negotiator'],
+        }
+      })
 
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Insane Outcast')
+      const request3 = t.choose(game, request2)
+      const request4 = t.choose(game, request3, 'Play Card.Drow Negotiator')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Drow Negotiator'],
+        }
+      })
     })
   })
 
