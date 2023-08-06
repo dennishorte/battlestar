@@ -298,6 +298,10 @@ Util.range = function(...args) {
   return output
 }
 
+Util.stringReverse = function(str) {
+  return [...str].reverse().join("")
+}
+
 Util.toCamelCase = function(str) {
   const downCased = str[0].toLowerCase() + str.slice(1)
   return downCased.replace(/\W/g, '')

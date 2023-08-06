@@ -286,6 +286,7 @@ CardUtil.blankFace = function() {
   return {
     artist: '',
     card_faces: '',
+    defense: '',
     flavor_text: '',
     image_uri: '',
     loyalty: '',
@@ -297,7 +298,7 @@ CardUtil.blankFace = function() {
     type_line: '',
 
     color_identity: [],
-    color_indicator: [],
+    color_indicator: null,
     colors: [],
     produced_mana: [],
   }
@@ -471,7 +472,7 @@ CardUtil.parseOracleText = function(text) {
 
 CardUtil.frameColor = function(card) {
   if (card.colors.length === 1) {
-    switch (card.colors[0]) {
+    switch (card.colors[0].toUpperCase()) {
       case 'R': return 'red';
       case 'W': return 'white';
       case 'U': return 'blue';
@@ -496,6 +497,8 @@ CardUtil.frameColor = function(card) {
 }
 
 CardUtil.manaSymbolFromString = function(text) {
+  text = text.toLowerCase()
+
   if (text.charAt(0) === '{' && text.charAt(text.length-1) === '}') {
     text = text.substr(1, text.length-2)
   }
@@ -517,7 +520,7 @@ CardUtil.manaSymbolFromString = function(text) {
     }
     else {
       if (['uw', 'wg', 'gr', 'rb', 'bu', 'w2', 'u2', 'b2', 'r2', 'g2'].indexOf(text) >= 0) {
-        text = util.string_reverse(text)
+        text = util.stringReverse(text)
       }
 
       return text
@@ -526,6 +529,8 @@ CardUtil.manaSymbolFromString = function(text) {
 }
 
 CardUtil.manaSymbolsFromString = function(string) {
+  string = string.toLowerCase()
+
   var curr = ''
   let symbols = []
 
@@ -540,6 +545,20 @@ CardUtil.manaSymbolsFromString = function(string) {
   }
 
   return symbols
+}
+
+CardUtil.updateColors = function(card) {
+  for (const face of card.card_faces) {
+    face.mana_cost = face.mana_cost.toUpperCase()
+
+    // Most cards have no color indicator; you can see it in cards like Pact of Negation.
+    if (face.color_indicator) {
+      face.colors = [...face.color_indicator]
+    }
+    else {
+      face.colors = ['W', 'U', 'B', 'R', 'G'].filter(letter => face.mana_cost.includes(letter))
+    }
+  }
 }
 
 CardUtil.createCardId = function(card, ignoreSet=false) {

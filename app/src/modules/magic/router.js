@@ -2,6 +2,7 @@ import CubeViewer from './components/cube/CubeViewer'
 import DeckManager from './components/deck/DeckManager'
 import DeckShare from './components/deck/DeckShare'
 import Profile from'./components/Profile'
+import CardEditorTest from './components/CardEditorTest'
 
 
 export default [
@@ -28,5 +29,11 @@ export default [
     name: 'Deck Manager',
     title: 'Deck Manager',
     component: DeckManager,
+  },
+  {
+    path: '/magic/card/edit/:name',
+    name: 'Card Editor Test',
+    title: 'Card Editor Test',
+    component: CardEditorTest
   },
 ]

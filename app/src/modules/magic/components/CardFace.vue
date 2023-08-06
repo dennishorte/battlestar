@@ -4,7 +4,7 @@
       <div class="card-background">
         <div class="card-frame">
 
-          <div class="frame-header frame-foreground" data-edit-field="header">
+          <div class="frame-header frame-foreground editable" data-edit-field="header">
             <div class="frame-card-name">{{ face.name }}</div>
 
             <div class="frame-mana-cost">
@@ -12,18 +12,19 @@
             </div>
           </div>
 
-          <img
-            class="frame-art"
-            data-edit-field="image-url"
-            alt="card art"
-            :src="imageUrl" />
+          <div class="editable test" data-edit-field="image-url">
+            <img
+              class="frame-art"
+              alt="card art"
+              :src="imageUrl" />
+          </div>
 
-          <div class="frame-type-line frame-foreground" data-edit-field="type-line">
+          <div class="frame-type-line frame-foreground editable" data-edit-field="type-line">
             <div class="frame-card-type">{{ face.type_line }}</div>
             <div class="frame-card-icon" :class="rarity">{{ setIcon }}</div>
           </div>
 
-          <div class="frame-text-box" data-edit-field="text-box">
+          <div class="frame-text-box editable" data-edit-field="text-box">
             <OracleText :text="oracleText" />
 
             <div class="frame-flavor-wrapper">
@@ -37,14 +38,14 @@
             </div>
           </div>
 
-          <div class="frame-pt-loyalty frame-foreground" data-edit-field="loyalty" v-if="powerToughness">
-            {{ powerToughness }}
+          <div class="frame-pt-loyalty frame-foreground editable" data-edit-field="loyalty" v-if="loyalty">
+            {{ loyalty }}
           </div>
 
         </div> <!-- frame -->
       </div> <!-- background -->
 
-      <div class="artist-name">
+      <div class="artist-name editable" data-edit-field="image-url">
         <i class="ms ms-artist-nib"></i>
         {{ face.artist }}
       </div>
@@ -81,6 +82,10 @@ export default {
     size: {
       type: Number,
       default: 200,
+    },
+    forceLoyalty: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -134,7 +139,7 @@ export default {
       return ''
     },
 
-    powerToughness() {
+    loyalty() {
       if (this.face.power) {
         return `${this.face.power}/${this.face.toughness}`
       }
@@ -155,3 +160,10 @@ export default {
   },
 }
 </script>
+
+
+<style scoped>
+div {
+  position: relative;
+}
+</style>
