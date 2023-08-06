@@ -18,10 +18,10 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { self }) => {
       const choices = game
         .getTopCards(player)
-        .filter(card => card !== this)
+        .filter(card => card !== self)
       const card = game.aChooseCard(player, choices)
       if (card) {
         game.aCardEffects(player, card, 'dogma')

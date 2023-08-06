@@ -584,7 +584,10 @@ Innovation.prototype.aOneEffect = function(
           }
         }
 
-        const result = this.aCardEffect(actor, effectInfo, { leader: opts.leader })
+        const result = this.aCardEffect(actor, effectInfo, {
+          leader: opts.leader,
+          self: card,
+        })
 
         this.state.dogmaInfo.demanding = false
         this.mLogOutdent()
