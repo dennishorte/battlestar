@@ -506,6 +506,18 @@ Tyrants.prototype._generatePassAction = function() {
 }
 
 Tyrants.prototype._processEndOfTurnActions = function() {
+  // Discard
+  for (const action of this.state.endOfTurnActions) {
+    if (action.action === 'discard') {
+      this.mLog({
+        template: '{player} must discard a card due to {card}',
+        args: { player: action.player, card: action.source }
+      })
+      this.aChooseAndDiscard(action.player, { forced: true })
+    }
+  }
+
+  // Promotions
   const promos = []
 
   for (const action of this.state.endOfTurnActions) {
@@ -529,19 +541,8 @@ Tyrants.prototype._processEndOfTurnActions = function() {
         throw new Error(`Unknown special promotion: ${action.source.name}`)
       }
     }
-
-    else if (action.action === 'discard') {
-      this.mLog({
-        template: '{player} must discard a card due to {card}',
-        args: { player: action.player, card: action.source }
-      })
-      this.aChooseAndDiscard(action.player, { forced: true })
-    }
-
-    else {
-      throw new Error(`Unknown end of turn action: ${action.action}`)
-    }
   }
+
 
   const promoChoices = []
   for (const promo of promos) {
@@ -559,6 +560,14 @@ Tyrants.prototype._processEndOfTurnActions = function() {
     })
     promoChoices.sort((l, r) => l.name.localeCompare(r.name))
     this.aChooseAndPromote(player, promoChoices, { count: promos.length })
+  }
+
+  // Special
+
+  for (const action of this.state.endOfTurnActions) {
+    if (action.action === 'special') {
+      action.fn(this, action.player)
+    }
   }
 
   this.state.endOfTurnActions = []
@@ -1066,6 +1075,15 @@ Tyrants.prototype.aDeferPromotionSpecial = function(player, source) {
     player,
     source,
     action: 'promote-special',
+  })
+}
+
+Tyrants.prototype.aDeferSpecial = function(player, source, fn) {
+  this.state.endOfTurnActions.push({
+    player,
+    source,
+    action: 'special',
+    fn,
   })
 }
 

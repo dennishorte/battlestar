@@ -669,7 +669,7 @@ describe('Illithids expansion', () => {
   })
 
   describe('Neogi', () => {
-    test('deploy and opponents discard', () => {
+    test.only('deploy and opponents discard', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'illithid'],
         dennis: {

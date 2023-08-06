@@ -448,9 +448,10 @@ const cardData = [
     impl: (game, player, { card }) => {
       game.aDeferPromotion(player, card)
       game.aDeferPromotion(player, card)
-
-      const innerCircle = game.getCardsByZone(player, 'innerCircle').length
-      player.incrementPoints(Math.floor(innerCircle / 3))
+      game.aDeferSpecial(player, card, (game, player) => {
+        const innerCircle = game.getCardsByZone(player, 'innerCircle').length
+        player.incrementPoints(Math.floor(innerCircle / 3))
+      })
     }
   }
 ]
