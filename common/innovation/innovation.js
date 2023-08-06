@@ -2514,6 +2514,8 @@ Innovation.prototype.mMoveCardTo = function(card, target, opts={}) {
   this.mMoveByIndices(source, sourceIndex, target, targetIndex)
 
   if (opts.player) {
+    this.mActed(opts.player)
+
     this.mLog({
       template: '{player} moves {card} to {zone}',
       args: {
