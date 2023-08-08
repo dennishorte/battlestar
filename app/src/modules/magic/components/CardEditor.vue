@@ -74,13 +74,16 @@
           <input class="form-control" v-model="newCard.card_faces[faceIndex].toughness" />
         </div>
 
+      </div>
+
+      <div class="ptl">
         <div>
           <label class="form-label">loyalty</label>
           <input class="form-control" v-model="newCard.card_faces[faceIndex].loyalty" />
         </div>
 
         <div>
-          <label class="form-label">defense (only visible on siege type)</label>
+          <label class="form-label">defense</label>
           <input class="form-control" v-model="newCard.card_faces[faceIndex].defense" />
         </div>
       </div>
