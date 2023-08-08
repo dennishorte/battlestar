@@ -4,20 +4,19 @@ const Card = {}
 
 
 Card.fetchAll = async function(req, res) {
-  const { cards, version } = await db.magic.card.fetchAll()
+  const cardData = await db.magic.card.fetchAll(req.body.source)
 
   res.json({
     status: 'success',
-    cards,
-    version,
+    ...cardData
   })
 }
 
-Card.version = async function(req, res) {
-  const version = await db.magic.card.version()
+Card.versions = async function(req, res) {
+  const versions = await db.magic.card.versions()
   res.json({
     status: 'success',
-    version,
+    versions,
   })
 }
 

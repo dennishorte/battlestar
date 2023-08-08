@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { get as getKey, set as setKey } from 'idb-keyval'
 import { mag, util } from 'battlestar-common'
 
 
@@ -9,12 +10,11 @@ export default {
     cardlist: [],
     lookup: {},
 
-    localVersion: '__NOT_LOADED__',
-    remoteVersion: '__NOT_LOADED__',
-    declinedCardUpdate: false,
+    localVersions: '__NOT_READY__',
+    remoteVersions: '__NOT_READY__',
 
-    loadedOnce: false,
-    loading: true,
+    cardsReady: false,
+    log: [],
   }),
 
   getters: {
@@ -31,22 +31,21 @@ export default {
         return mag.util.card.lookup.getByIdDict(cardId, state.lookup, opts)
       }
     },
-
-    remoteVersionLoaded(state) {
-      return state.remoteVersion !== '__NOT_LOADED__'
-    },
-
-    versionMismatch(state) {
-      const value = (
-        state.localVersion !== '__NOT_LOADED__'
-        && state.remoteVersion !== '__NOT_LOADED__'
-        && state.localVersion !== state.remoteVersion
-      )
-      return value
-    },
   },
 
   mutations: {
+    clearLog(state) {
+      state.log = []
+    },
+
+    logError(state, msg) {
+      state.log.push(msg)
+    },
+
+    logInfo(state, msg) {
+      state.log.push(msg)
+    },
+
     setCardList(state, cardlist) {
       state.cardlist = cardlist
     },
@@ -55,70 +54,81 @@ export default {
       state.lookup = cardLookup
     },
 
-    setCardsLoaded(state) {
-      state.loading = false
+    setCardsReady(state) {
+      state.cardsReady = true
     },
 
-    setCardsLoading(state) {
-      state.loading = true
+    setLocalVersions(state, versions) {
+      state.localVersions = versions
     },
 
-    setCardVersion(state, version) {
-      state.localVersion = version
+    setRemoteVersions(state, versions) {
+      state.remoteVersions = versions
     },
 
-    setRemoteVersion(state, version) {
-      state.remoteVersion = version
+    setUpdateNeededCustom(state, value) {
+      state.updateNeededCustom = value
     },
 
-    setLoadedOnce(state) {
-      state.loadedOnce = true
+    setUpdateNeededScryfall(state, value) {
+      state.updateNeededScryfall = value
     },
   },
 
   actions: {
-    ensureLoaded({ dispatch, state }) {
+    async ensureLoaded({ commit, dispatch, state, getters }) {
       console.log('ensureLoaded')
+      commit('clearLog')
+      commit('logInfo', 'Loading card data')
 
-      if (!state.loadedOnce) {
-        dispatch('getRemoteVersion')
-        dispatch('loadCards')
+      if (state.cardsReady) {
+        console.log('...already loaded once')
+        commit('logInfo', 'Cards were previously loaded')
       }
       else {
-        console.log('...already loaded once')
+//        try {
+          await dispatch('ensureLatest')
+          await dispatch('loadCards')
+          /* }
+           * catch (error) {
+           *   commit('logError', error)
+           *   alert(error)
+           * } */
       }
     },
 
-    async getRemoteVersion({ commit, state }) {
-      const requestResult = await axios.post('/api/magic/card/version')
-      if (requestResult.data.status === 'success') {
-        commit('setRemoteVersion', requestResult.data.version)
-        console.log(`...db versions: local [${state.localVersion}] remote [${state.remoteVersion}]`)
-      }
-      else {
-        alert('Error fetching remote cards verion.\n' + requestResult.data.message)
+    async ensureLatest({ dispatch, state }) {
+      const localVersions = await getLocalVersions()
+      const remoteVersions = await getRemoteVersions()
+
+      const toUpdate = Object
+        .keys(remoteVersions)
+        .filter(source => remoteVersions[source] !== localVersions[source])
+
+      for (const source of toUpdate) {
+        await dispatch('updateLocalDatabase', source)
       }
     },
 
     async loadCards({ commit, dispatch }) {
       console.log('...load cards')
-      commit('setLoadedOnce')
-      commit('setCardsLoading')
+      commit('logInfo', 'Loading cards from database')
 
-      const data = await loadCardsFromDatabase()
+      const cards = await loadCardsFromDatabase()
 
-      commit('setCardVersion', data.version)
-      commit('setCardList', data.cards)
-      commit('setCardLookup', mag.util.card.createCardLookup(data.cards))
-      //await dispatch('applyCardFilters')
+      commit('setCardList', cards)
+      commit('setCardLookup', mag.util.card.createCardLookup(cards))
+      commit('setCardsReady')
 
-      commit('setCardsLoaded')
       console.log('...card database ready')
+      commit('logInfo', 'Cards successfully loaded from local database')
     },
 
-    async updateCards({ commit }) {
-      commit('setCardsLoading')
-      await updateLocalCards()
+    async updateLocalDatabase({ commit, state }, source) {
+      commit('logInfo', `Updating card database: ${source}. This can take several minutes.`)
+      const { cards, version } = await getLatestCardDataFromServer(source)
+      await setKey('cards_' + source, cards)
+      await setKey('version_' + source, version)
     },
   },
 }
@@ -127,112 +137,43 @@ export default {
 ////////////////////////////////////////////////////////////////////////////////
 // Private functions
 
-function loadCardsFromDatabase() {
-  return new Promise(async (resolve, reject) => {
-    console.log('...load cards from database')
-
-    const db = await openLocalStorage()
-
-    const objectStore = db.transaction('cards').objectStore('cards')
-    const cursor = objectStore.openCursor()
-
-    let cards = []
-    let version = '__NO_VERSION__'
-
-    cursor.addEventListener('success', (e) => {
-      const cursor = e.target.result
-
-      if (cursor) {
-        console.log('...cursor iteration')
-        cards = cursor.value.json_data
-        version = cursor.value.version
-        cursor.continue()
-      }
-      else {
-        console.log('...all values loaded', cards.length)
-        db.close()
-
-        resolve({ cards, version })
-      }
-    })
-  })
+async function getLocalVersions() {
+  return {
+    custom: await getKey('version_custom'),
+    scryfall: await getKey('version_scryfall'),
+  }
 }
 
-async function openLocalStorage(handlers) {
-  return new Promise((resolve, reject) => {
-    const openRequest = window.indexedDB.open('cards', 1)
-
-    openRequest.addEventListener('error', () => {
-      reject(new Error('Unable to open local card database'))
-    })
-
-    openRequest.addEventListener('success', () => {
-      console.log('...database opened successfully')
-      resolve(openRequest.result)
-    })
-
-    openRequest.addEventListener('upgradeneeded', (e) => {
-      const db = e.target.result
-
-      console.log(`...upgrading database to version ${db.version}`)
-
-      // Create an objectStore in our database to store notes and an auto-incrementing key
-      // An objectStore is similar to a 'table' in a relational database
-      const objectStore = db.createObjectStore('cards', {
-        keyPath: 'id',
-        autoIncrement: true,
-      })
-
-      // Define what data items the objectStore will contain
-      objectStore.createIndex('json_data', 'json_data', { unique: false })
-
-      console.log('...database setup complete')
-    })
-  })
-}
-
-// This fetches the latest card data from the database and stores it locally
-// in an IndexedDB.
-async function updateLocalCards() {
-  getLatestCardDataFromServer(
-    (cards, version) => { saveCardsToDatabase(cards, version) },
-    error => { throw new Error(error) },
-  )
-}
-
-async function getLatestCardDataFromServer(successFunc, errorFunc) {
-  console.log('fetching card data')
-  const requestResult = await axios.post('/api/magic/card/all')
-  console.log('card data fetched')
-
+async function getRemoteVersions() {
+  const requestResult = await axios.post('/api/magic/card/versions')
   if (requestResult.data.status === 'success') {
-    console.log(requestResult.data)
-    const { cards, version } = requestResult.data
-    successFunc(cards, version)
+    return requestResult.data.versions
   }
   else {
-    errorFunc('Error fetching card data from server. ' + requestResult.data.message)
+    throw Error('Unable to get remote card versions')
   }
 }
 
-async function saveCardsToDatabase(cards, version) {
-  const newItem = {
-    json_data: cards,
-    version,
+async function loadCardsFromDatabase() {
+  const custom = await getKey('cards_custom')
+  const scryfall = await getKey('cards_scryfall')
+
+  return [
+    ...(custom || []),
+    ...(scryfall || []),
+  ]
+}
+
+async function getLatestCardDataFromServer(source) {
+  console.log('...fetching card data for:', source)
+  const requestResult = await axios.post('/api/magic/card/all', { source })
+
+  if (requestResult.data.status === 'success') {
+    console.log('...card data fetched')
+    console.log(requestResult.data)
+    return requestResult.data[source]
   }
-
-  console.log('saving data with version:', newItem.version)
-
-  const db = await openLocalStorage()
-  const transaction = db.transaction(['cards'], 'readwrite')
-  const objectStore = transaction.objectStore('cards')
-  const addRequest = objectStore.add(newItem)
-
-  // What is the difference between success and complete?
-  addRequest.addEventListener('success', () => {})
-
-  transaction.addEventListener('complete', () => {
-    console.log('Transaction completed: database modification finished.')
-    alert('Reload page to see changes')
-  })
+  else {
+    throw new Error(`Error fetching ${source} card data from server. ` + requestResult.data.message)
+  }
 }

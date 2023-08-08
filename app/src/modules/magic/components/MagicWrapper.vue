@@ -1,46 +1,23 @@
 <template>
   <div class="magic-wrapper">
-    <div v-if="versionMismatch && !skipUpdate" class="alert alert-warning">
-      You card database is out of date. Click 'ok' to update it. Updating typically takes several to tens of seconds. You can cancel to skip this update for now, but this may cause errors when trying to load cards that have been modified or are not included in your database.
-
-      <button class="btn btn-danger" @click="skipUpdateDo">Skip Update</button>
-      <button class="btn btn-primary" @click="updateCardDatabase">Update Card Database</button>
-    </div>
-
-    <div v-else-if="!remoteVersionLoaded" class="alert alert-warning">
-      ...getting database version
-    </div>
-
-    <div v-else-if="loading" class="alert alert-warning">
-      database version fetched<br>
-      ...loading card data
-    </div>
-
-    <div v-else-if="alsoLoading" class="alert alert-warning">
-      database version fetched<br>
-      card data loaded<br>
-      ...loading additional data
-    </div>
-
-    <div v-else-if="!afterLoadedComplete" class="alert alert-warning">
-      database version fetched<br>
-      card data loaded<br>
-      additional data loaded<br>
-      ...running post-loading scripts
-    </div>
-
-    <template v-else>
+    <template v-if="allReady">
       <Card v-if="!isMobile && mouseoverCard" :card="mouseoverCard" :style="mouseoverPosition" />
 
       <slot></slot>
     </template>
+
+    <div v-else class="alert alert-warning">
+      <div v-for="line of log">
+        {{ line }}
+      </div>
+    </div>
 
   </div>
 </template>
 
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 
 import Card from './Card'
 import Modal from '@/components/Modal'
@@ -68,8 +45,7 @@ export default {
 
   data() {
     return {
-      afterLoadedComplete: false,
-      skipUpdate: false,
+      allReady: false,
     }
   },
 
@@ -81,12 +57,8 @@ export default {
     }),
 
     ...mapState('magic/cards', {
-      loading: 'loading',
-    }),
-
-    ...mapGetters('magic/cards', {
-      remoteVersionLoaded: 'remoteVersionLoaded',
-      versionMismatch: 'versionMismatch',
+      cardsReady: 'cardsReady',
+      log: 'log',
     }),
 
     isMobile() {
@@ -134,23 +106,15 @@ export default {
   },
 
   methods: {
-    showVersionMismatchModal() {
-      this.$modal('cards-version-update-modal').show()
-    },
-
     skipUpdateDo() {
-      this.skipUpdate = true
+      this.$store.commit('magic/cards/skipUpdate')
     },
 
     tryAfterLoaded() {
-      if (!this.loading && !this.alsoLoading && this.remoteVersionLoaded) {
+      if (!this.alsoLoading && this.cardsReady) {
         this.afterLoaded()
-        this.afterLoadedComplete = true
+        this.allReady = true
       }
-    },
-
-    updateCardDatabase() {
-      this.$store.dispatch('magic/cards/updateCards')
     },
   },
 
@@ -159,7 +123,7 @@ export default {
       this.tryAfterLoaded()
     },
 
-    loading(newValue) {
+    cardsReady(newValue) {
       this.tryAfterLoaded()
     },
   },

@@ -2,26 +2,47 @@ const fs = require('fs')
 
 const databaseClient = require('../../util/mongo.js').client
 const database = databaseClient.db('magic')
-const cardCollection = database.collection('card')
+
+const customCollection = database.collection('custom_cards')
 const scryfallCollection = database.collection('scryfall')
-const scryfallVersionCollection = database.collection('scryfall_version')
+const versionCollection = database.collection('versions')
 
 const Card = {}
 module.exports = Card
 
-Card.fetchAll = async function() {
-  const scryfallCursor = await scryfallCollection.find({})
-  const scryfallCards = await scryfallCursor.toArray()
+Card.fetchAll = async function(source) {
+  const result = {}
 
-  const scryfallVersion = await scryfallVersionCollection.findOne({})
+  const versions = await Card.versions()
 
-  return {
-    cards: scryfallCards,
-    version: scryfallVersion.version,
+  if (!source || source === 'all' || source === 'custom') {
+    const customCursor = await customCollection.find({})
+    const customCards = await customCursor.toArray()
+
+    result.custom = {
+      cards: customCards,
+      version: versions.custom,
+    }
   }
+
+  if (!source || source === 'all' || source === 'scryfall') {
+    const scryfallCursor = await scryfallCollection.find({})
+    const scryfallCards = await scryfallCursor.toArray()
+
+    result.scryfall = {
+      cards: scryfallCards,
+      version: versions.scryfall,
+    }
+  }
+
+  return result
 }
 
-Card.version = async function() {
-  const result = await scryfallVersionCollection.findOne({})
-  return result.version
+Card.versions = async function() {
+  const versions = await versionCollection.findOne({})
+
+  return {
+    custom: versions.custom,
+    scryfall: versions.scryfall,
+  }
 }
