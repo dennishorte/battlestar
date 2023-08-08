@@ -26,6 +26,8 @@ Cube.prototype.serialize = function() {
     createdTimestamp: this.createdTimestamp,
     updatedTimestamp: this.updatedTimestamp,
     cardlist: serializedCardlist,
+
+    allowEdits: Boolean(this.allowEdits),
   }
 
   if (this._id) {
@@ -114,6 +116,7 @@ CubeUtil.deserialize = function(data) {
   cube.cardlist = data.cardlist
   cube.createdTimestamp = data.createdTimestamp
   cube.updatedTimestamp = data.updatedTimestamp
+  cube.allowEdits = data.allowEdits
 
   return cube
 }

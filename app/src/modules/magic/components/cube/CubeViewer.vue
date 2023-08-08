@@ -6,6 +6,7 @@
           <MagicMenu />
           <h1>{{ cube.name }}</h1>
           <button class="btn btn-success" @click="$modal('cube-update-modal').show()">Add/Remove Cards</button>
+          <button class="btn btn-info" @click="toggleCardEditing">{{ cardEditButtonText }}</button>
         </div>
       </div>
 
@@ -18,7 +19,7 @@
     </div>
 
     <CubeImportModal @cube-updates="updateCube" />
-    <CubeCardModal :card="managedCard" />
+    <CubeCardModal :card="managedCard" :editable="cube.allowEdits" />
 
   </MagicWrapper>
 </template>
@@ -66,6 +67,15 @@ export default {
       mag.util.card.lookup.insertCardData(this.cube.cardlist, lookupFunc)
       return this.cube.cardlist
     },
+
+    cardEditButtonText() {
+      if (this.cube.allowEdits) {
+        return 'Disable Card Editing'
+      }
+      else {
+        return 'Enable Card Editing'
+      }
+    },
   },
 
   methods: {
@@ -83,6 +93,21 @@ export default {
       else {
         alert('Error loading cube: ' + this.id)
       }
+    },
+
+    async toggleCardEditing() {
+      this.cube.allowEdits = !Boolean(this.cube.allowEdits)
+
+      /* const requestResult = await axios.post('/api/magic/cube/toggleEdits', {
+       *   cubeId: this.id,
+       * })
+
+       * if (requestResult.data.status === 'success') {
+
+       * }
+       * else {
+       *   alert('Error toggling card edit status.\n' + requestResult.data.message)
+       * } */
     },
 
     updateCube(update) {
