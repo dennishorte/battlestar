@@ -86,14 +86,8 @@ export default {
         commit('logInfo', 'Cards were previously loaded')
       }
       else {
-//        try {
-          await dispatch('ensureLatest')
-          await dispatch('loadCards')
-          /* }
-           * catch (error) {
-           *   commit('logError', error)
-           *   alert(error)
-           * } */
+        await dispatch('ensureLatest')
+        await dispatch('loadCards')
       }
     },
 
