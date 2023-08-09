@@ -28,5 +28,13 @@ Cube.save = async function(req, res) {
   })
 }
 
+Cube.toggleEdits = async function(req, res) {
+  const allowEdits = await db.magic.cube.toggleEdits(req.body.cubeId)
+  res.json({
+    status: 'success',
+    allowEdits,
+  })
+}
+
 
 module.exports = Cube

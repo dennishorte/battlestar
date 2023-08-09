@@ -33,6 +33,7 @@ app.post('/api/magic/card/versions', routes.magic.card.versions)
 app.post('/api/magic/cube/create', routes.magic.cube.create)
 app.post('/api/magic/cube/fetch', routes.magic.cube.fetch)
 app.post('/api/magic/cube/save', routes.magic.cube.save)
+app.post('/api/magic/cube/toggleEdits', routes.magic.cube.toggleEdits)
 
 // Deck routes
 app.post('/api/magic/deck/add_card', routes.magic.deck.addCard)

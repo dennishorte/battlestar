@@ -8,6 +8,7 @@
     />
 
     <div class="buttons">
+      <button class="btn btn-info" @click="save">Save</button>
       <button class="btn btn-primary" @click="addFace">Add Face</button>
 
       <template v-if="newCard.card_faces.length > 1">
@@ -94,6 +95,8 @@
 
 
 <script>
+import axios from 'axios'
+
 import { mag, util } from 'battlestar-common'
 
 import Card from './Card.vue'
@@ -176,6 +179,10 @@ export default {
 
     manaCostUpdated() {
       mag.util.card.updateColors(this.newCard)
+    },
+
+    save() {
+      this.$emit('save', this.newCard)
     },
   },
 

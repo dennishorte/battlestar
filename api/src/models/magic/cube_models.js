@@ -11,6 +11,18 @@ const Cube = {
     createFields: () => ({
       cardlist: [],
     })
-  })
+  }),
+
+  async toggleEdits(cubeId) {
+    const cube = await Cube.findById(cubeId)
+    const newValue = !Boolean(cube.allowEdits)
+
+    await cubeCollection.updateOne(
+      { _id: cubeId },
+      { $set: { allowEdits: newValue } },
+    )
+
+    return newValue
+  },
 }
 module.exports = Cube

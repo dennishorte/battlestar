@@ -2,7 +2,7 @@
   <Modal id="cube-card-modal">
     <template #header>Cube Card Viewer</template>
 
-    <CardEditor :card="data" v-if="editable" />
+    <CardEditor :card="data" v-if="editable" @save="save" />
     <Card :card="data" :size="270" v-else />
   </Modal>
 </template>
@@ -35,6 +35,12 @@ export default {
   computed: {
     data() {
       return this.card ? this.card.data : null
+    },
+  },
+
+  methods: {
+    save(card) {
+      this.$emit('card-updated', card)
     },
   },
 }

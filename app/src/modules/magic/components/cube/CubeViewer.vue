@@ -19,7 +19,7 @@
     </div>
 
     <CubeImportModal @cube-updates="updateCube" />
-    <CubeCardModal :card="managedCard" :editable="cube.allowEdits" />
+    <CubeCardModal :card="managedCard" :editable="cube.allowEdits" @card-updated="saveCard" />
 
   </MagicWrapper>
 </template>
@@ -95,19 +95,21 @@ export default {
       }
     },
 
+    async saveCard(card) {
+      console.log('save', card)
+    },
+
     async toggleCardEditing() {
-      this.cube.allowEdits = !Boolean(this.cube.allowEdits)
+      const requestResult = await axios.post('/api/magic/cube/toggleEdits', {
+        cubeId: this.id,
+      })
 
-      /* const requestResult = await axios.post('/api/magic/cube/toggleEdits', {
-       *   cubeId: this.id,
-       * })
-
-       * if (requestResult.data.status === 'success') {
-
-       * }
-       * else {
-       *   alert('Error toggling card edit status.\n' + requestResult.data.message)
-       * } */
+      if (requestResult.data.status === 'success') {
+        this.cube.allowEdits = requestResult.data.allowEdits
+      }
+      else {
+        alert('Error toggling card edit status.\n' + requestResult.data.message)
+      }
     },
 
     updateCube(update) {
