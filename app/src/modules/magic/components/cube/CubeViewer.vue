@@ -97,6 +97,24 @@ export default {
 
     async saveCard(card) {
       console.log('save', card)
+
+      // Changes to a custom card
+      if (card.set && card.set === 'custom') {
+        const requestResult = await axios.post('/api/magic/card/save', {
+          cubeId: this.cube._id,
+          card,
+          replace: true,
+        })
+      }
+
+      // A completely new card OR changes to a scryfall card
+      else {
+        const requestResult = await axios.post('/api/magic/card/create', {
+          cubeId: this.cube._id,
+          card,
+          replace: Boolean(card._id),
+        })
+      }
     },
 
     async toggleCardEditing() {

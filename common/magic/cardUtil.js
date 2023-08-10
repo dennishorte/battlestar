@@ -561,7 +561,21 @@ CardUtil.updateColors = function(card) {
   }
 }
 
-CardUtil.createCardId = function(card, ignoreSet=false) {
+CardUtil.createCardIdDict = function(card) {
+  const dict = {
+    name: card.name,
+    set: card.set,
+    collector_number: card.collector_number,
+  }
+
+  if (card.custom_id) {
+    dict.custom_id = card.custom_id
+  }
+
+  return dict
+}
+
+CardUtil.createCardIdString = function(card, ignoreSet=false) {
   if (ignoreSet) {
     return card.name
   }
@@ -687,6 +701,9 @@ CardUtil.lookup.getByIdDict = function(dict, lookupMap, opts={}) {
   }
   else if (opts.allVersions) {
     return versions
+  }
+  else if (dict.custom_id) {
+    return versions.find(card => card.custom_id === custom_id)
   }
   else if (dict.set && dict.collector_number) {
     return versions.find(card => card.set === dict.set && card.collector_number === dict.collector_number)

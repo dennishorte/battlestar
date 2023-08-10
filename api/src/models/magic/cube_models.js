@@ -4,7 +4,6 @@ const cubeCollection = database.collection('cube')
 
 const fileCommon = require('./file_common.js')
 
-
 const Cube = {
   ...fileCommon({
     collection: cubeCollection,
@@ -12,6 +11,19 @@ const Cube = {
       cardlist: [],
     })
   }),
+
+  // cubeId is a mongoDB ObjectId
+  // cardId is a magic card ID dict
+  async addCard(cubeId, cardId) {
+    await cubeCollection.updateOne(
+      { _id: cubeId },
+      { $push: { cardlist: cardId } }
+    )
+  },
+
+  async removeCard(cubeId, cardId) {
+    // TODO
+  },
 
   async toggleEdits(cubeId) {
     const cube = await Cube.findById(cubeId)

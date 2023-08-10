@@ -38,6 +38,30 @@ Card.fetchAll = async function(source) {
   return result
 }
 
+Card.findById = async function(id) {
+  const maybeScryfall = await scryfallCollection.findOne({ _id: id })
+  if (maybeScryfall) {
+    return maybeScryfall
+  }
+  else {
+    return await customCollection.findOne({ _id: id })
+  }
+}
+
+Card.insertCustom = async function(card) {
+  if (card._id) {
+    delete card._id
+  }
+
+  const { insertedId } = await customCollection.insertOne(card)
+  await customCollection.updateOne(
+    { _id: insertedId },
+    { $set: { customId: insertedId } },
+  )
+
+  return await customCollection.findOne({ _id: insertedId })
+}
+
 Card.versions = async function() {
   const versions = await versionCollection.findOne({})
 

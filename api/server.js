@@ -27,6 +27,7 @@ app.use(middleware.coerceIds)
 
 // Card routes
 app.post('/api/magic/card/all', routes.magic.card.fetchAll)
+app.post('/api/magic/card/create', routes.magic.card.create)
 app.post('/api/magic/card/versions', routes.magic.card.versions)
 
 // Cube routes
