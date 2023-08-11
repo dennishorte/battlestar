@@ -1,4 +1,5 @@
 const fs = require('fs')
+const { Mutex } = require('../../util/mutex.js')
 
 const databaseClient = require('../../util/mongo.js').client
 const database = databaseClient.db('magic')
@@ -7,8 +8,13 @@ const customCollection = database.collection('custom_cards')
 const scryfallCollection = database.collection('scryfall')
 const versionCollection = database.collection('versions')
 
+
 const Card = {}
 module.exports = Card
+
+
+const versionMutex = new Mutex()
+
 
 Card.fetchAll = async function(source) {
   const result = {}
@@ -58,6 +64,14 @@ Card.insertCustom = async function(card) {
     { _id: insertedId },
     { $set: { customId: insertedId } },
   )
+
+  // Update the custom db version to include this change
+  await versionMutex.dispatch(async () => {
+    await versionCollection.updateOne(
+      { name: 'custom' },
+      { $inc: { value: 1 } }
+    )
+  })
 
   return await customCollection.findOne({ _id: insertedId })
 }
