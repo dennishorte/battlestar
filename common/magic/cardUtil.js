@@ -109,6 +109,42 @@ CardUtil.colors = function(card) {
   return card.colors
 }
 
+CardUtil.calculateManaCost = function(card) {
+  const symbolRegex = /[{]([^{}]+)[}]/g
+  const numberRegex = /^[0-9]+$/
+  const convertCastingCostToManaCost = (manaString) => {
+    return [...manaString.matchAll(symbolRegex)]
+      .map(match => match[1])
+      .map(symbol => {
+        symbol = symbol.toUpperCase()
+
+        if (symbol.match(numberRegex)) {
+          return parseInt(symbol)
+        }
+        else if (symbol === 'X' || symbol === 'Y' || symbol === 'Z') {
+          return 0
+        }
+        else {
+          return 1
+        }
+      })
+      .reduce((acc, x) => acc + x, 0)
+  }
+
+  const mainCardLayouts = ['adventure', 'prototype', 'modal_dfc']
+
+  if (mainCardLayouts.includes(card.layout)) {
+    // Exclude everything except the main card
+    return convertCastingCostToManaCost(card.card_faces[0].mana_cost)
+  }
+  else {
+    return card
+      .card_faces
+      .map(face => convertCastingCostToManaCost(face.mana_cost))
+      .reduce((acc, next) => acc + next, 0)
+  }
+}
+
 CardUtil.allCardNames = function(card) {
   if (!card.name) {
     console.log(card)
