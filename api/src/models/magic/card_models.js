@@ -63,10 +63,14 @@ Card.insertCustom = async function(card) {
 }
 
 Card.versions = async function() {
-  const versions = await versionCollection.findOne({})
+  const versionCursor = await versionCollection.find({})
+  const versionArray = await versionCursor.toArray()
 
-  return {
-    custom: versions.custom,
-    scryfall: versions.scryfall,
+  const versions = {}
+
+  for (const entry of versionArray) {
+    versions[entry.name] = entry.value
   }
+
+  return versions
 }
