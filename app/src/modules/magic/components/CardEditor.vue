@@ -18,27 +18,30 @@
           @click="removeFace(index)"
          >Remove {{ index }}</button>
       </template>
-
     </div>
 
     <template v-if="fieldName === 'header'">
       <label class="form-label">Name</label>
-      <input class="form-control" v-model="newCard.card_faces[faceIndex].name" />
+      <input
+        class="form-control"
+        v-model="newCard.card_faces[faceIndex].name"
+        @input="updateRootValues"
+      />
 
       <label class="form-label">Mana Cost</label>
       <input
         class="form-control"
         v-model="newCard.card_faces[faceIndex].mana_cost"
-        @input="manaCostUpdated"
+        @input="updateRootValues"
       />
     </template>
 
     <template v-if="fieldName === 'type-line'">
       <label class="form-label">Types</label>
-      <input class="form-control" v-model="types" />
+      <input class="form-control" v-model="types" @input="updateRootValues" />
 
       <label class="form-label">Sub Types</label>
-      <input class="form-control" v-model="subtypes" />
+      <input class="form-control" v-model="subtypes" @input="updateRootValues" />
 
       <label class="form-label">Rarity</label>
       <select class="form-select" v-model="newCard.card_faces[faceIndex].rarity">
@@ -158,6 +161,7 @@ export default {
   methods: {
     addFace() {
       this.newCard.card_faces.push(mag.util.card.blankFace())
+      this.updateRootValues()
     },
 
     removeFace(index) {
@@ -165,6 +169,7 @@ export default {
       if (this.faceIndex >= this.newCard.card_faces.length) {
         this.faceIndex = this.newCard.card_faces.length - 1
       }
+      this.updateRootValues()
     },
 
     editField(event) {
@@ -177,12 +182,15 @@ export default {
       }
     },
 
-    manaCostUpdated() {
-      mag.util.card.updateColors(this.newCard)
-    },
-
     save() {
       this.$emit('save', this.newCard)
+    },
+
+    updateRootValues() {
+      this.newCard.cmc = mag.util.card.calculateManaCost(this.newCard)
+      this.newCard.name = this.newCard.card_faces.map(face => face.name).join(' // ')
+      this.newCard.type_line = this.newCard.card_faces.map(face => face.type_line).join(' // ')
+      mag.util.card.updateColors(this.newCard)
     },
   },
 
