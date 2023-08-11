@@ -739,7 +739,7 @@ CardUtil.lookup.getByIdDict = function(dict, lookupMap, opts={}) {
     return versions
   }
   else if (dict.custom_id) {
-    return versions.find(card => card.custom_id === custom_id)
+    return versions.find(card => card.custom_id === dict.custom_id)
   }
   else if (dict.set && dict.collector_number) {
     return versions.find(card => card.set === dict.set && card.collector_number === dict.collector_number)
