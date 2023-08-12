@@ -3,13 +3,24 @@ const { mag } = require('battlestar-common')
 
 const Card = {}
 
-Card.create = async function(req, res) {
-  const { cubeId, card, replace } = req.body
+
+Card.fetchAll = async function(req, res) {
+  const cardData = await db.magic.card.fetchAll(req.body.source)
+
+  res.json({
+    status: 'success',
+    ...cardData
+  })
+}
+
+Card.save = async function(req, res) {
+  const { cubeId, card, original } = req.body
   const cube = await db.magic.cube.findById(cubeId)
 
-  if (replace) {
-    await _insertOriginalCardReference(card)
-    await db.magic.cube.removeCard(cubeId, card.original)
+  if (original) {
+    const originalIdDict = mag.util.card.createCardIdDict(original)
+    card.original = originalIdDict
+    await db.magic.cube.removeCard(cubeId, originalIdDict)
   }
 
   const inserted = await db.magic.card.insertCustom(card)
@@ -23,16 +34,6 @@ Card.create = async function(req, res) {
   })
 }
 
-
-Card.fetchAll = async function(req, res) {
-  const cardData = await db.magic.card.fetchAll(req.body.source)
-
-  res.json({
-    status: 'success',
-    ...cardData
-  })
-}
-
 Card.versions = async function(req, res) {
   const versions = await db.magic.card.versions()
   res.json({
@@ -42,14 +43,3 @@ Card.versions = async function(req, res) {
 }
 
 module.exports = Card
-
-
-async function _insertOriginalCardReference(card) {
-  if (card._id) {
-    // Since this will be inserted as a new card, need to remove the existing id.
-    delete card._id
-
-    const original = await db.magic.card.findById(card._id)
-    card.original = mag.util.card.createCardIdDict(card)
-  }
-}

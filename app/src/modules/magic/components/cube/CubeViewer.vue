@@ -5,7 +5,7 @@
         <div class="col">
           <MagicMenu />
           <h1>{{ cube.name }}</h1>
-          <button class="btn btn-success" @click="$modal('cube-update-modal').show()">Add/Remove Cards</button>
+          <button class="btn btn-success" @click="this.$modal('cube-update-modal').show()">Add/Remove Cards</button>
           <button class="btn btn-info" @click="toggleCardEditing">{{ cardEditButtonText }}</button>
         </div>
       </div>
@@ -19,7 +19,8 @@
     </div>
 
     <CubeImportModal @cube-updates="updateCube" />
-    <CubeCardModal :card="managedCard" :editable="cube.allowEdits" @card-updated="saveCard" />
+    <CubeCardModal :card="managedCard" :editable="cube.allowEdits" />
+    <CardEditorModal :original="managedCard" @card-update="saveCard" />
 
   </MagicWrapper>
 </template>
@@ -28,9 +29,12 @@
 <script>
 import axios from 'axios'
 import cubeUtil from '../../util/cubeUtil.js'
+import mitt from 'mitt'
+
 import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
+import CardEditorModal from '../CardEditorModal'
 import CubeBreakdown from './CubeBreakdown'
 import CubeCardModal from './CubeCardModal'
 import CubeImportModal from './CubeImportModal'
@@ -42,6 +46,7 @@ export default {
   name: 'CubeViewer',
 
   components: {
+    CardEditorModal,
     CubeBreakdown,
     CubeCardModal,
     CubeImportModal,
@@ -51,9 +56,16 @@ export default {
 
   data() {
     return {
+      bus: mitt(),
       cube: null,
       id: this.$route.params.id,
       loadingCube: true,
+    }
+  },
+
+  provide() {
+    return {
+      bus: this.bus,
     }
   },
 
@@ -103,25 +115,23 @@ export default {
       }
     },
 
-    async saveCard(card) {
-      console.log('save', card)
+    // If original is passed in, the new card will replace the original.
+    // Otherwise, the new card will be added to the cube with nothing removed.
+    async saveCard({ card, original }) {
+      console.log({ card, original })
+      /* const requestResult = await axios.post('/api/magic/card/save', {
+       *   cubeId: this.cube._id,
+       *   card,
+       *   original,
+       * }) */
+    },
 
-      // Changes to a custom card
-      if (card.set && card.set === 'custom') {
-        const requestResult = await axios.post('/api/magic/card/save', {
-          cubeId: this.cube._id,
-          card,
-          replace: true,
-        })
+    showCardModal() {
+      if (this.cube.allowEdits) {
+        this.$modal('card-editor-modal').show()
       }
-
-      // A completely new card OR changes to a scryfall card
       else {
-        const requestResult = await axios.post('/api/magic/card/create', {
-          cubeId: this.cube._id,
-          card,
-          replace: Boolean(card._id),
-        })
+        this.$modal('cube-card-modal').show()
       }
     },
 
@@ -168,6 +178,8 @@ export default {
 
   async mounted() {
     await this.loadCube()
+    this.bus.on('card-clicked', this.showCardModal)
+    this.bus.on('card-saved', this.saveCard)
   },
 }
 </script>

@@ -35,6 +35,8 @@ export default {
     name: String,
   },
 
+  inject: ['bus'],
+
   computed: {
     sortedCardlist() {
       const sortedCards = this.cardlist.sort((l, r) => {
@@ -67,7 +69,7 @@ export default {
   methods: {
     cardClicked(card) {
       this.$store.dispatch('magic/cube/manageCard', card)
-      this.$modal('cube-card-modal').show()
+      this.bus.emit('card-clicked')
     },
   },
 }

@@ -2,15 +2,13 @@
   <Modal id="cube-card-modal">
     <template #header>Cube Card Viewer</template>
 
-    <CardEditor :card="data" v-if="editable" @save="save" />
-    <Card :card="data" :size="270" v-else />
+    <Card :card="data" :size="270" />
   </Modal>
 </template>
 
 
 <script>
 import Card from '../Card'
-import CardEditor from '../CardEditor'
 import Modal from '@/components/Modal'
 
 
@@ -19,28 +17,16 @@ export default {
 
   components: {
     Card,
-    CardEditor,
     Modal,
   },
 
   props: {
     card: Object,
-
-    editable: {
-      type: Boolean,
-      default: false,
-    },
   },
 
   computed: {
     data() {
       return this.card ? this.card.data : null
-    },
-  },
-
-  methods: {
-    save(card) {
-      this.$emit('card-updated', card)
     },
   },
 }

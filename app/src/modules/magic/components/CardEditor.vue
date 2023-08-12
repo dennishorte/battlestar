@@ -1,19 +1,18 @@
 <template>
-  <div class="card-editor">
+  <div class="card-editor" v-if="Boolean(card)">
     <Card
       :size="270"
-      :card="newCard"
+      :card="card"
       @click="editField"
       class="preview"
     />
 
     <div class="buttons">
-      <button class="btn btn-info" @click="save">Save</button>
       <button class="btn btn-primary" @click="addFace">Add Face</button>
 
-      <template v-if="newCard.card_faces.length > 1">
+      <template v-if="card.card_faces.length > 1">
         <button
-          v-for="(_, index) in newCard.card_faces"
+          v-for="(_, index) in card.card_faces"
           class="btn btn-warning"
           @click="removeFace(index)"
          >Remove {{ index }}</button>
@@ -24,14 +23,14 @@
       <label class="form-label">Name</label>
       <input
         class="form-control"
-        v-model="newCard.card_faces[faceIndex].name"
+        v-model="card.card_faces[faceIndex].name"
         @input="updateRootValues"
       />
 
       <label class="form-label">Mana Cost</label>
       <input
         class="form-control"
-        v-model="newCard.card_faces[faceIndex].mana_cost"
+        v-model="card.card_faces[faceIndex].mana_cost"
         @input="updateRootValues"
       />
     </template>
@@ -44,7 +43,7 @@
       <input class="form-control" v-model="subtypes" @input="updateRootValues" />
 
       <label class="form-label">Rarity</label>
-      <select class="form-select" v-model="newCard.card_faces[faceIndex].rarity">
+      <select class="form-select" v-model="card.card_faces[faceIndex].rarity">
         <option>common</option>
         <option>uncommon</option>
         <option>rare</option>
@@ -54,28 +53,28 @@
 
     <template v-if="fieldName === 'image-url'">
       <label class="form-label">Image Url</label>
-      <textarea class="form-control" v-model="newCard.card_faces[faceIndex].image_uri"></textarea>
+      <textarea class="form-control" v-model="card.card_faces[faceIndex].image_uri"></textarea>
 
       <label class="form-label">Artist</label>
-      <input class="form-control" v-model="newCard.card_faces[faceIndex].artist" />
+      <input class="form-control" v-model="card.card_faces[faceIndex].artist" />
     </template>
 
     <template v-if="fieldName === 'text-box'">
       <label class="form-label">Oracle Text</label>
-      <textarea class="form-control" v-model="newCard.card_faces[faceIndex].oracle_text"></textarea>
+      <textarea class="form-control" v-model="card.card_faces[faceIndex].oracle_text"></textarea>
 
       <label class="form-label">Flavor Text</label>
-      <textarea class="form-control" v-model="newCard.card_faces[faceIndex].flavor_text"></textarea>
+      <textarea class="form-control" v-model="card.card_faces[faceIndex].flavor_text"></textarea>
 
       <div class="ptl">
         <div>
           <label class="form-label">power</label>
-          <input class="form-control" v-model="newCard.card_faces[faceIndex].power" />
+          <input class="form-control" v-model="card.card_faces[faceIndex].power" />
         </div>
 
         <div>
           <label class="form-label">toughness</label>
-          <input class="form-control" v-model="newCard.card_faces[faceIndex].toughness" />
+          <input class="form-control" v-model="card.card_faces[faceIndex].toughness" />
         </div>
 
       </div>
@@ -83,12 +82,12 @@
       <div class="ptl">
         <div>
           <label class="form-label">loyalty</label>
-          <input class="form-control" v-model="newCard.card_faces[faceIndex].loyalty" />
+          <input class="form-control" v-model="card.card_faces[faceIndex].loyalty" />
         </div>
 
         <div>
           <label class="form-label">defense</label>
-          <input class="form-control" v-model="newCard.card_faces[faceIndex].defense" />
+          <input class="form-control" v-model="card.card_faces[faceIndex].defense" />
         </div>
       </div>
 
@@ -113,15 +112,17 @@ export default {
   },
 
   props: {
-    card: {
+    original: {
       type: Object,
       default: null,
     },
   },
 
+  inject: ['bus'],
+
   data() {
     return {
-      newCard: this.card ? util.deepcopy(this.card) : mag.util.card.blank(),
+      card: null,
       faceIndex: 0,
       fieldName: '',
     }
@@ -129,7 +130,7 @@ export default {
 
   computed: {
     face() {
-      return this.newCard.card_faces[this.faceIndex]
+      return this.card.card_faces[this.faceIndex]
     },
 
     types: {
@@ -160,16 +161,20 @@ export default {
 
   methods: {
     addFace() {
-      this.newCard.card_faces.push(mag.util.card.blankFace())
+      this.card.card_faces.push(mag.util.card.blankFace())
       this.updateRootValues()
     },
 
     removeFace(index) {
-      this.newCard.card_faces.splice(index, 1)
-      if (this.faceIndex >= this.newCard.card_faces.length) {
-        this.faceIndex = this.newCard.card_faces.length - 1
+      this.card.card_faces.splice(index, 1)
+      if (this.faceIndex >= this.card.card_faces.length) {
+        this.faceIndex = this.card.card_faces.length - 1
       }
       this.updateRootValues()
+    },
+
+    originalUpdated() {
+      this.card = this.original ? util.deepcopy(this.original) : mag.util.card.blank()
     },
 
     editField(event) {
@@ -182,27 +187,36 @@ export default {
       }
     },
 
-    save() {
-      this.$emit('save', this.newCard)
-    },
-
     updateRootValues() {
-      this.newCard.cmc = mag.util.card.calculateManaCost(this.newCard)
-      this.newCard.name = this.newCard.card_faces.map(face => face.name).join(' // ')
-      this.newCard.type_line = this.newCard.card_faces.map(face => face.type_line).join(' // ')
-      mag.util.card.updateColors(this.newCard)
+      this.card.cmc = mag.util.card.calculateManaCost(this.card)
+      this.card.name = this.card.card_faces.map(face => face.name).join(' // ')
+      this.card.type_line = this.card.card_faces.map(face => face.type_line).join(' // ')
+      mag.util.card.updateColors(this.card)
     },
   },
 
   watch: {
-    card(newValue) {
-      if (newValue) {
-        this.newCard = newValue
-      }
-      else {
-        this.newCard = mag.util.card.blank()
-      }
+    card: {
+      handler(newValue, oldValue) {
+        // Some internal value of the card was changed, so we'll update our parent.
+        if (newValue === oldValue) {
+          this.bus.emit('card-updated', this.card)
+        }
+
+        // The original card has changed, causing this to change. Our parent is already aware of this.
+        else {
+          // Do nothing
+        }
+      },
+      deep: true,
     },
+    original() {
+      this.originalUpdated()
+    },
+  },
+
+  mounted() {
+    this.originalUpdated()
   },
 }
 </script>

@@ -24,8 +24,6 @@ const Cube = {
     )
   },
 
-  // cubeId is a mongoDB ObjectId
-  // cardId is a magic card ID dict
   async removeCard(cubeId, cardId) {
     const cube = await Cube.findById(cubeId)
 
@@ -33,6 +31,7 @@ const Cube = {
     for (const card of cube.cardlist) {
       if (mag.util.card.cardIdEquals(card, cardId)) {
         util.array.remove(card)
+        await Cube.save(cube)
         return
       }
     }
@@ -41,6 +40,7 @@ const Cube = {
     for (const card of cube.cardlist) {
       if (mag.util.card.cardIdEquals(card, cardId, { nameOnly: true })) {
         util.array.remove(card)
+        await Cube.save(cube)
         return
       }
     }
