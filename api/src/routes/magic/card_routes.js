@@ -13,7 +13,6 @@ Card.create = async function(req, res) {
   }
 
   const inserted = await db.magic.card.insertCustom(card)
-  console.log(2, inserted)
 
   // Add the new card to the cube
   const cardId = mag.util.card.createCardIdDict(inserted)
@@ -47,25 +46,10 @@ module.exports = Card
 
 async function _insertOriginalCardReference(card) {
   if (card._id) {
-    const original = await db.magic.card.findById(card._id)
+    // Since this will be inserted as a new card, need to remove the existing id.
     delete card._id
 
-    card.original = {
-      name: original.name,
-      set: original.set,
-      collector_number: original.collector_number,
-    }
-
-    if (original.custom_id) {
-      card.original.custom_id = original.custom_id
-      return false
-    }
-    else {
-      return true
-    }
-  }
-
-  else {
-    return false
+    const original = await db.magic.card.findById(card._id)
+    card.original = mag.util.card.createCardIdDict(card)
   }
 }

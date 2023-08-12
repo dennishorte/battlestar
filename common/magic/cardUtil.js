@@ -729,6 +729,20 @@ function parseCardLineName(line) {
   return output
 }
 
+CardUtil.cardIdEquals = function(a, b, opts={}) {
+  if (opts.nameOnly) {
+    return a.name === b.name
+  }
+  else {
+    return (
+      a.name === b.name
+      && a.set === b.set
+      && a.collector_number === b.collector_number
+      && a.custom_id === b.custom_id
+    )
+  }
+}
+
 CardUtil.lookup.getByIdDict = function(dict, lookupMap, opts={}) {
   const versions = lookupMap[dict.name.toLowerCase()]
 
