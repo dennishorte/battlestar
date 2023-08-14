@@ -42,6 +42,7 @@ Cube.prototype.addCard = function(card) {
     name: card.name,
     set: card.set,
     collector_number: card.collector_number,
+    custom_id: card.custom_id,
   }
 
   if (card.card_faces) {

@@ -4,6 +4,7 @@ const { Mutex } = require('../../util/mutex.js')
 const databaseClient = require('../../util/mongo.js').client
 const database = databaseClient.db('magic')
 
+const countersCollection = database.collection('counters')
 const customCollection = database.collection('custom_cards')
 const scryfallCollection = database.collection('scryfall')
 const versionCollection = database.collection('versions')
@@ -55,17 +56,32 @@ Card.findById = async function(id) {
 }
 
 Card.insertCustom = async function(card) {
+
+  // Since this is intended to create a new card, make sure we don't insert with
+  // an existing MongoDB id.
   if (card._id) {
     delete card._id
   }
 
+  // Sometimes, we copy an original card to a new cube.
+  if (card.custom_id) {
+    delete card.custom_id
+  }
+
+  card.set = 'custom'
+  card.collector_number = await _getNextCollectorNumber()
+  card.legal = ['custom']
+
   const { insertedId } = await customCollection.insertOne(card)
+
+  // MongoDB ids are globally unique, so they make good unique identifiers for custom cards.
   await customCollection.updateOne(
     { _id: insertedId },
     { $set: { customId: insertedId } },
   )
 
-  // Update the custom db version to include this change
+  // Update the custom db version to include this change so that the frontend app will
+  // automatically update its database to get the newest cards.
   await versionMutex.dispatch(async () => {
     await versionCollection.updateOne(
       { name: 'custom' },
@@ -74,6 +90,13 @@ Card.insertCustom = async function(card) {
   })
 
   return await customCollection.findOne({ _id: insertedId })
+}
+
+Card.save = async function(card) {
+  await customCollection.replaceOne(
+    { _id: card._id },
+    card
+  )
 }
 
 Card.versions = async function() {
@@ -87,4 +110,19 @@ Card.versions = async function() {
   }
 
   return versions
+}
+
+
+async function _getNextCollectorNumber() {
+  return await versionMutex.dispatch(async () => {
+    const record = await countersCollection.findOne({ name: 'custom_collector_number' })
+    const value = record.value
+
+    await countersCollection.updateOne(
+      { name: 'custom_collector_number' },
+      { $inc: { value: 1 } },
+    )
+
+    return value
+  })
 }

@@ -55,7 +55,7 @@ export default {
     save() {
       this.bus.emit('card-saved', {
         card: this.updatedCard,
-        original: this.original
+        original: this.original.data,
       })
     },
   },

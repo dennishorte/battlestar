@@ -20,7 +20,7 @@
 
     <CubeImportModal @cube-updates="updateCube" />
     <CubeCardModal :card="managedCard" :editable="cube.allowEdits" />
-    <CardEditorModal :original="managedCard" @card-update="saveCard" />
+    <CardEditorModal :original="managedCard" />
 
   </MagicWrapper>
 </template>
@@ -56,6 +56,7 @@ export default {
 
   data() {
     return {
+      actor: this.$store.getters['auth/user'],
       bus: mitt(),
       cube: null,
       id: this.$route.params.id,
@@ -65,6 +66,7 @@ export default {
 
   provide() {
     return {
+      actor: this.actor,
       bus: this.bus,
     }
   },
@@ -118,12 +120,32 @@ export default {
     // If original is passed in, the new card will replace the original.
     // Otherwise, the new card will be added to the cube with nothing removed.
     async saveCard({ card, original }) {
-      console.log({ card, original })
-      /* const requestResult = await axios.post('/api/magic/card/save', {
-       *   cubeId: this.cube._id,
-       *   card,
-       *   original,
-       * }) */
+      const requestResult = await axios.post('/api/magic/card/save', {
+        card,
+        original,
+        editor: this.actor,
+        comment: 'Comments not implemented',
+      })
+
+      if (requestResult.data.status === 'success') {
+        // Need to update the cube, if the edited card was a scryfall card that was replaced
+        // with a custom card.
+        if (requestResult.data.cardReplaced) {
+          this.cube.removeCard(original)
+          this.cube.addCard(requestResult.data.finalizedCard)
+          await this.saveCube()
+        }
+
+        // In either case, update the local card database.
+        await this.$store.dispatch('magic/cards/reloadDatabase')
+      }
+      else {
+        alert('Error saving card: ' + requestResult.message)
+      }
+    },
+
+    async saveCube() {
+      await this.$store.dispatch('magic/file/save', this.cube.serialize())
     },
 
     showCardModal() {
@@ -165,7 +187,7 @@ export default {
         alert(lines.join('\n'))
       }
 
-      this.$store.dispatch('magic/file/save', this.cube.serialize())
+      this.saveCube()
     },
   },
 

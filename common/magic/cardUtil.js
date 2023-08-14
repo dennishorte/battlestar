@@ -602,10 +602,13 @@ CardUtil.createCardIdDict = function(card) {
     name: card.name,
     set: card.set,
     collector_number: card.collector_number,
+    custom_id: card.custom_id,
   }
 
-  if (card.custom_id) {
-    dict.custom_id = card.custom_id
+  for (const key of Object.keys(dict)) {
+    if (dict[key] === undefined) {
+      delete dict[key]
+    }
   }
 
   return dict

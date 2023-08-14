@@ -54,8 +54,8 @@ export default {
       state.lookup = cardLookup
     },
 
-    setCardsReady(state) {
-      state.cardsReady = true
+    setCardsReady(state, value=true) {
+      state.cardsReady = value
     },
 
     setLocalVersions(state, versions) {
@@ -110,12 +110,24 @@ export default {
 
       const cards = await loadCardsFromDatabase()
 
+      for (const card of cards) {
+        if (card.data) {
+          console.log(card)
+          break
+        }
+      }
+
       commit('setCardList', cards)
       commit('setCardLookup', mag.util.card.createCardLookup(cards))
       commit('setCardsReady')
 
       console.log('...card database ready')
       commit('logInfo', 'Cards successfully loaded from local database')
+    },
+
+    async reloadDatabase({ commit, dispatch }) {
+      commit('setCardsReady', false)
+      await dispatch('ensureLoaded')
     },
 
     async updateLocalDatabase({ commit, state }, source) {
