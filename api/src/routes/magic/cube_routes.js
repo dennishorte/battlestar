@@ -36,5 +36,13 @@ Cube.toggleEdits = async function(req, res) {
   })
 }
 
+Cube.togglePublic = async function(req, res) {
+  const isPublic = await db.magic.cube.togglePublic(req.body.cubeId)
+  res.json({
+    status: 'success',
+    public: isPublic,
+  })
+}
+
 
 module.exports = Cube

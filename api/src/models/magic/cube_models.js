@@ -59,5 +59,17 @@ const Cube = {
 
     return newValue
   },
+
+  async togglePublic(cubeId) {
+    const cube = await Cube.findById(cubeId)
+    const newValue = !Boolean(cube.public)
+
+    await cubeCollection.updateOne(
+      { _id: cubeId },
+      { $set: { public: newValue } },
+    )
+
+    return newValue
+  },
 }
 module.exports = Cube

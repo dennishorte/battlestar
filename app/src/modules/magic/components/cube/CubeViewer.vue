@@ -7,6 +7,7 @@
           <h1>{{ cube.name }}</h1>
           <button class="btn btn-success" @click="this.$modal('cube-update-modal').show()">Add/Remove Cards</button>
           <button class="btn btn-info" @click="toggleCardEditing">{{ cardEditButtonText }}</button>
+          <button class="btn btn-secondary" @click="togglePublic">{{ cardPublicButtonText }}</button>
         </div>
       </div>
 
@@ -98,6 +99,10 @@ export default {
         return 'Enable Card Editing'
       }
     },
+
+    cardPublicButtonText() {
+      return this.cube.public ? 'Remove from Public' : 'Set as Public'
+    },
   },
 
   methods: {
@@ -167,6 +172,20 @@ export default {
       }
       else {
         alert('Error toggling card edit status.\n' + requestResult.data.message)
+      }
+    },
+
+    async togglePublic() {
+      const requestResult = await axios.post('/api/magic/cube/togglePublic', {
+        cubeId: this.id,
+        value: !this.cube.public,
+      })
+
+      if (requestResult.data.status === 'success') {
+        this.cube.public = requestResult.data.public
+      }
+      else {
+        alert('Error toggling public status.\n' + requestResult.data.message)
       }
     },
 

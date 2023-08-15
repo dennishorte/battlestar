@@ -13,6 +13,7 @@
       </div>
 
       <div class="col">
+        <PublicCubes />
       </div>
 
     </div>
@@ -27,6 +28,7 @@ import { mapState } from 'vuex'
 import DraftList from './DraftList'
 import MagicFileManager from './MagicFileManager'
 import MagicMenu from './MagicMenu'
+import PublicCubes from './PublicCubes'
 import SectionHeader from '@/components/SectionHeader'
 
 export default {
@@ -36,6 +38,7 @@ export default {
     DraftList,
     MagicFileManager,
     MagicMenu,
+    PublicCubes,
     SectionHeader,
   },
 
