@@ -4,6 +4,8 @@ const escapeStringRegexp = require('escape-string-regexp-node')
 module.exports = function({ collection, createFields }) {
 
   return {
+    collection,
+
     create: async function(file) {
       if (file._id) {
         delete file._id

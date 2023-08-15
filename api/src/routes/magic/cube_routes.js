@@ -21,6 +21,15 @@ Cube.fetch = async function(req, res) {
   })
 }
 
+Cube.fetchPublic = async function(req, res) {
+  const cubesCursor = await db.magic.cube.collection.find({ public: true })
+  const cubes = await cubesCursor.toArray()
+  res.json({
+    status: 'success',
+    cubes,
+  })
+}
+
 Cube.save = async function(req, res) {
   await db.magic.cube.save(req.body.cube)
   res.json({
