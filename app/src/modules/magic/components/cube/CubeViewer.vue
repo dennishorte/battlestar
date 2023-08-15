@@ -6,8 +6,11 @@
           <MagicMenu />
           <h1>{{ cube.name }}</h1>
           <button class="btn btn-success" @click="this.$modal('cube-update-modal').show()">Add/Remove Cards</button>
-          <button class="btn btn-info" @click="toggleCardEditing">{{ cardEditButtonText }}</button>
-          <button class="btn btn-secondary" @click="togglePublic">{{ cardPublicButtonText }}</button>
+
+          <template v-if="viewerIsOwner">
+            <button class="btn btn-info" @click="toggleCardEditing">{{ cardEditButtonText }}</button>
+            <button class="btn btn-secondary" @click="togglePublic">{{ cardPublicButtonText }}</button>
+          </template>
         </div>
       </div>
 
@@ -102,6 +105,10 @@ export default {
 
     cardPublicButtonText() {
       return this.cube.public ? 'Remove from Public' : 'Set as Public'
+    },
+
+    viewerIsOwner() {
+      return this.cube ? this.actor._id === this.cube.userId : false
     },
   },
 
