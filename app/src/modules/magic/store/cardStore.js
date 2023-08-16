@@ -22,6 +22,10 @@ export default {
       return state.cardlist
     },
 
+    byDatabaseId(state) {
+      return (id) => state.cardlist.find(card => card._id === id)
+    },
+
     cardNames(state) {
       return Object.keys(state.lookup).sort()
     },

@@ -1,6 +1,15 @@
 <template>
   <Modal id="card-editor-modal">
-    <template #header>Card Editor</template>
+    <template #header>
+      Card Editor
+      <button
+        class="btn btn-outline-secondary"
+        v-if="!!data"
+        @click="goToCardLink"
+        data-bs-dismiss="modal">
+        card link
+      </button>
+    </template>
 
     <CardEditor :original="data" @card-updated="cardUpdated" />
 
@@ -50,6 +59,10 @@ export default {
   methods: {
     cardUpdated(card) {
       this.updatedCard = card
+    },
+
+    goToCardLink() {
+      this.$router.push('/magic/card/' + this.data._id)
     },
 
     save() {
