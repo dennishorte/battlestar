@@ -75,7 +75,7 @@ export default {
 .cube-breakdown {
   display: flex;
   flex-direction: row;
-  min-width: 1000px;
+  min-width: 1200px;
 }
 
 .breakdown-column:not(:first-of-type) {

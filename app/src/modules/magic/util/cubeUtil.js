@@ -40,8 +40,8 @@ Cube.prototype.serialize = function() {
 
 Cube.prototype.addCard = function(card) {
   const item = {
-    name: card.name,
-    set: card.set,
+    name: card.name.toLowerCase(),
+    set: (card.set || '').toLowerCase(),
     collector_number: card.collector_number,
     custom_id: card.custom_id,
   }

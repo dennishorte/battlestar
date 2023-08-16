@@ -17,6 +17,7 @@ Card.save = async function(req, res) {
   const { card, original, editor, comment } = req.body
 
   const replaceScryfallCard = original && !original.custom_id
+  let cardCreated = false
 
   // You can't edit a Scryfall card. Create a copy of the Scryfall card and update that.
   let toUpdate
@@ -26,12 +27,21 @@ Card.save = async function(req, res) {
   else if (original) {
     toUpdate = await db.magic.card.findById(original._id)
   }
-  else {
+  else if (card._id) {
     toUpdate = await db.magic.card.findById(card._id)
   }
 
-  // Save the past edits.
-  const prevEdits = toUpdate.edits || []
+  // If this is a new card, we're not updating anything.
+  else {
+    cardCreated = true
+
+    card.id = 'no_id_for_custom_cards'
+    if (!card.name.trim()) {
+      card.name = 'unnamed'
+    }
+
+    toUpdate = card
+  }
 
   // Remove fields that should not be altered.
   delete card._id
@@ -41,29 +51,28 @@ Card.save = async function(req, res) {
   delete card.collector_number
   delete card.legal
 
-  console.log({ card, toUpdate })
-
   // Update the card model.
-  const final = {
+  const toInsert = {
     ...toUpdate,
     ...card
   }
 
-
   // Update the edit history.
-  final.edits = final.edits || []
-  final.edits.push({
+  toInsert.edits = toInsert.edits || []
+  toInsert.edits.push({
     editor,
     comment: comment || 'no comment',
     timestamp: Date.now(),
   })
 
-  await db.magic.card.save(final)
+  const finalId = await db.magic.card.save(toInsert)
+  const finalizedCard = await db.magic.card.findById(finalId)
 
   res.json({
     status: 'success',
+    cardCreated,
     cardReplaced: replaceScryfallCard,
-    finalizedCard: final,
+    finalizedCard,
   })
 }
 

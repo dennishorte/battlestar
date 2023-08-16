@@ -77,26 +77,29 @@ Card.insertCustom = async function(card) {
   // MongoDB ids are globally unique, so they make good unique identifiers for custom cards.
   await customCollection.updateOne(
     { _id: insertedId },
-    { $set: { customId: insertedId } },
+    { $set: { custom_id: insertedId } },
   )
 
-  // Update the custom db version to include this change so that the frontend app will
-  // automatically update its database to get the newest cards.
-  await versionMutex.dispatch(async () => {
-    await versionCollection.updateOne(
-      { name: 'custom' },
-      { $inc: { value: 1 } }
-    )
-  })
+  await _incrementCustomCardDatabaseVersion()
 
   return await customCollection.findOne({ _id: insertedId })
 }
 
 Card.save = async function(card) {
-  await customCollection.replaceOne(
-    { _id: card._id },
-    card
-  )
+  if (card._id) {
+    await customCollection.replaceOne(
+      { _id: card._id },
+      card
+    )
+    await _incrementCustomCardDatabaseVersion()
+    return card._id
+  }
+  else {
+    const insertedCard = await Card.insertCustom(card)
+    // The database increment is handled in insertCustom
+    // await _incrementCustomCardDatabaseVersion()
+    return insertedCard._id
+  }
 }
 
 Card.versions = async function() {
@@ -112,6 +115,15 @@ Card.versions = async function() {
   return versions
 }
 
+
+async function _incrementCustomCardDatabaseVersion() {
+  await versionMutex.dispatch(async () => {
+    await versionCollection.updateOne(
+      { name: 'custom' },
+      { $inc: { value: 1 } }
+    )
+  })
+}
 
 async function _getNextCollectorNumber() {
   return await versionMutex.dispatch(async () => {

@@ -7,6 +7,10 @@
           <h1>{{ cube.name }}</h1>
           <button class="btn btn-success" @click="this.$modal('cube-update-modal').show()">Add/Remove Cards</button>
 
+          <template v-if="cube.allowEdits">
+            <button class="btn btn-primary" @click="createCard">Create Card</button>
+          </template>
+
           <template v-if="viewerIsOwner">
             <button class="btn btn-info" @click="toggleCardEditing">{{ cardEditButtonText }}</button>
             <button class="btn btn-secondary" @click="togglePublic">{{ cardPublicButtonText }}</button>
@@ -113,6 +117,11 @@ export default {
   },
 
   methods: {
+    createCard() {
+      this.$store.dispatch('magic/cube/manageCard', mag.util.card.blank())
+      this.$modal('card-editor-modal').show()
+    },
+
     async loadCube() {
       this.loading = true
 
@@ -135,7 +144,10 @@ export default {
       const requestResult = await axios.post('/api/magic/card/save', {
         card,
         original,
-        editor: this.actor,
+        editor: {
+          _id: this.actor._id,
+          name: this.actor.name,
+        },
         comment: 'Comments not implemented',
       })
 
@@ -148,8 +160,16 @@ export default {
           await this.saveCube()
         }
 
+        else if (requestResult.data.cardCreated) {
+          this.cube.addCard(requestResult.data.finalizedCard)
+          await this.saveCube()
+        }
+
         // In either case, update the local card database.
         await this.$store.dispatch('magic/cards/reloadDatabase')
+
+        // And set the created card to be the managed card.
+        this.$store.dispatch('magic/cube/manageCard', requestResult.data.finalizedCard)
       }
       else {
         alert('Error saving card: ' + requestResult.message)

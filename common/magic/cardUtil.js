@@ -595,6 +595,9 @@ CardUtil.updateColors = function(card) {
       face.colors = ['W', 'U', 'B', 'R', 'G'].filter(letter => face.mana_cost.includes(letter))
     }
   }
+
+  card.colors = util.array.distinct(card.card_faces.flatMap(face => face.colors))
+  card.color_identity = [...card.colors]
 }
 
 CardUtil.createCardIdDict = function(card) {
