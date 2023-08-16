@@ -236,18 +236,18 @@ export default {
 
 
 <style>
-.editable:after {
-  content: '\A';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background: rgba(0,200,255,0.4);
-  opacity: 0;
-}
+/* .editable:after {
+   content: '\A';
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   top: 0;
+   left: 0;
+   background: rgba(0,200,255,0.4);
+   opacity: 0;
+   }
 
-.editable:hover:after {
-  opacity: 1;
-}
+   .editable:hover:after {
+   opacity: 1;
+   } */
 </style>
