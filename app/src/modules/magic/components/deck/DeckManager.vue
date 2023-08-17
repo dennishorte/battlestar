@@ -22,7 +22,7 @@
           <CardList :cardlist="filteredCards" />
         </div>
 
-        <div class="col column">
+        <div class="col column deck-column">
           <Decklist
             v-if="activeDeck"
             :deck="activeDeck"
@@ -245,6 +245,10 @@ export default {
 
 .cards-column {
   max-width: 15em;
+}
+
+.deck-column {
+  max-height: 95vh;
 }
 
 .filters-column {

@@ -166,8 +166,9 @@ export default {
 .deck-list {
   display: flex;
   flex-direction: column;
-  max-height: 95%;
+  max-height: 100%;
   font-size: .8em;
+  margin-bottom: 4em;
 }
 
 .deck-name {
