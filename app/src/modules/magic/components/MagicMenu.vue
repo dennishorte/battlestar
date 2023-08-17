@@ -1,5 +1,7 @@
 <template>
-  <Dropdown text="Menu" class="game-menu">
+  <Dropdown class="game-menu">
+    <template #title>{{ title }}</template>
+
     <DropdownRouterLink to="/">game center</DropdownRouterLink>
     <DropdownDivider />
     <DropdownRouterLink to="/magic/decks">decks</DropdownRouterLink>
@@ -25,6 +27,13 @@ export default {
     DropdownButton,
     DropdownDivider,
     DropdownRouterLink,
+  },
+
+  props: {
+    title: {
+      type: String,
+      default: 'Menu',
+    },
   },
 
   methods: {

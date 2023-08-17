@@ -1,27 +1,51 @@
 <template>
   <MagicWrapper :alsoLoading="loadingCube">
-    <div class="cube-viewer container">
+    <div class="container">
+
       <div class="row">
-        <div class="col">
-          <MagicMenu />
-          <h1>{{ cube.name }}</h1>
-          <button class="btn btn-success" @click="this.$modal('cube-update-modal').show()">Add/Remove Cards</button>
-
-          <template v-if="cube.allowEdits">
-            <button class="btn btn-primary" @click="createCard">Create Card</button>
-          </template>
-
-          <template v-if="viewerIsOwner">
-            <button class="btn btn-info" @click="toggleCardEditing">{{ cardEditButtonText }}</button>
-            <button class="btn btn-secondary" @click="togglePublic">{{ cardPublicButtonText }}</button>
-          </template>
+        <div class="col-6">
+          <MagicMenu :title="cube.name" />
         </div>
       </div>
 
       <div class="row">
         <div class="col">
-          <CubeBreakdown :cardlist="cards" />
+          <div class="cube-menu">
+            <button class="btn" :class="buttonClassesCards" @click="navigate('cards')">cards</button>
+
+            <template v-if="!!cube.allowEdits">
+              <button class="btn" :class="buttonClassesScars" @click="navigate('scars')">scars</button>
+              <button class="btn" :class="buttonClassesAchievements" @click="navigate('achievements')">achievements</button>
+            </template>
+
+            <Dropdown text="menu">
+              <DropdownButton @click="this.$modal('cube-update-modal').show()">add/remove cards</DropdownButton>
+              <DropdownButton @click="createCard">create card</DropdownButton>
+              <DropdownButton @click="toggleCardEditing">
+                toggle edits
+                <i v-if="cube.allowEdits" class="bi-toggle-on" />
+                <i v-else class="bi-toggle-off" />
+              </DropdownButton>
+              <DropdownButton @click="togglePublic">
+                toggle public
+                <i v-if="cube.public" class="bi-toggle-on" />
+                <i v-else class="bi-toggle-off" />
+              </DropdownButton>
+            </Dropdown>
+          </div>
         </div>
+      </div>
+
+      <div v-if="showing === 'cards'">
+        <CubeViewerCards v-if="!!cube" :cube="cube" />
+      </div>
+
+      <div v-if="showing === 'scars'">
+        Cube Scars
+      </div>
+
+      <div v-if="showing === 'achievements'">
+        Cube Achievements
       </div>
 
     </div>
@@ -29,7 +53,6 @@
     <CubeImportModal @cube-updates="updateCube" />
     <CubeCardModal :card="managedCard" :editable="cube.allowEdits" />
     <CardEditorModal :original="managedCard" />
-
   </MagicWrapper>
 </template>
 
@@ -43,9 +66,11 @@ import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
 import CardEditorModal from '../CardEditorModal'
-import CubeBreakdown from './CubeBreakdown'
 import CubeCardModal from './CubeCardModal'
+import CubeViewerCards from './CubeViewerCards'
 import CubeImportModal from './CubeImportModal'
+import Dropdown from '@/components/Dropdown'
+import DropdownButton from '@/components/DropdownButton'
 import MagicMenu from '../MagicMenu'
 import MagicWrapper from '../MagicWrapper'
 
@@ -55,9 +80,11 @@ export default {
 
   components: {
     CardEditorModal,
-    CubeBreakdown,
+    CubeViewerCards,
     CubeCardModal,
     CubeImportModal,
+    Dropdown,
+    DropdownButton,
     MagicMenu,
     MagicWrapper,
   },
@@ -69,6 +96,8 @@ export default {
       cube: null,
       id: this.$route.params.id,
       loadingCube: true,
+
+      showing: 'cards',
     }
   },
 
@@ -83,6 +112,18 @@ export default {
     ...mapState('magic/cube', {
       managedCard: 'managedCard',
     }),
+
+    buttonClassesCards() {
+      return this.showing === 'cards' ? 'btn-primary' : 'btn-secondary'
+    },
+
+    buttonClassesScars() {
+      return this.showing === 'scars' ? 'btn-primary' : 'btn-secondary'
+    },
+
+    buttonClassesAchievements() {
+      return this.showing === 'achievements' ? 'btn-primary' : 'btn-secondary'
+    },
 
     cards() {
       const lookupFunc = this.$store.getters['magic/cards/getLookupFunc']
@@ -117,10 +158,50 @@ export default {
   },
 
   methods: {
+    ////////////////////////////////////////////////////////////////////////////////
+    // Sync methods
+
     createCard() {
       this.$store.dispatch('magic/cube/manageCard', mag.util.card.blank())
       this.$modal('card-editor-modal').show()
     },
+
+    navigate(target) {
+      this.showing = target
+    },
+
+    showCardModal() {
+      if (this.cube.allowEdits) {
+        this.$modal('card-editor-modal').show()
+      }
+      else {
+        this.$modal('cube-card-modal').show()
+      }
+    },
+
+    updateCube(update) {
+      for (const card of update.remove) {
+        this.cube.removeCard(card)
+      }
+
+      for (const card of update.insert) {
+        this.cube.addCard(card)
+      }
+
+      if (update.unknown.length) {
+        const lines = ['Unable to add unknown cards:']
+        for (const card of update.unknown) {
+          lines.push(card.name)
+        }
+        alert(lines.join('\n'))
+      }
+
+      this.saveCube()
+    },
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Async Methods
 
     async loadCube() {
       this.loading = true
@@ -184,15 +265,6 @@ export default {
       await this.$store.dispatch('magic/file/save', this.cube.serialize())
     },
 
-    showCardModal() {
-      if (this.cube.allowEdits) {
-        this.$modal('card-editor-modal').show()
-      }
-      else {
-        this.$modal('cube-card-modal').show()
-      }
-    },
-
     async toggleCardEditing() {
       const requestResult = await axios.post('/api/magic/cube/toggleEdits', {
         cubeId: this.id,
@@ -219,26 +291,6 @@ export default {
         alert('Error toggling public status.\n' + requestResult.data.message)
       }
     },
-
-    updateCube(update) {
-      for (const card of update.remove) {
-        this.cube.removeCard(card)
-      }
-
-      for (const card of update.insert) {
-        this.cube.addCard(card)
-      }
-
-      if (update.unknown.length) {
-        const lines = ['Unable to add unknown cards:']
-        for (const card of update.unknown) {
-          lines.push(card.name)
-        }
-        alert(lines.join('\n'))
-      }
-
-      this.saveCube()
-    },
   },
 
   watch: {
@@ -258,13 +310,8 @@ export default {
 
 
 <style scoped>
-.update-data {
-  margin-top: .25em;
-  font-size: .8em;
-  font-color: var(--bs-gray-700);
-}
-
-.update-data-heading {
-  font-weight: bold;
+.cube-menu {
+  display: flex;
+  flex-direction: row;
 }
 </style>
