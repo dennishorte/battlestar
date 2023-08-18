@@ -12,11 +12,15 @@
     </select>
 
     <label class="form-label">Number of Packs</label>
-    <input class="form-control" v-model.number="options.numPacks" @change="optionsChanged" />
+    <input class="form-control" v-model.number="options.numPacks" @input="optionsChanged" />
 
     <label class="form-label">Cards per Pack</label>
-    <input class="form-control" v-model.number="options.packSize" @change="optionsChanged" />
+    <input class="form-control" v-model.number="options.packSize" @input="optionsChanged" />
 
+    <template v-if="allowScarRounds">
+      <label class="form-label">Scar Rounds</label>
+      <input class="form-control" v-model="options.scarRounds" @input="optionsChanged" />
+    </template>
   </div>
 </template>
 
@@ -50,7 +54,13 @@ export default {
   },
 
   computed: {
-
+    allowScarRounds() {
+      return (
+        this.cubes.length > 0
+        && this.options.cubeId
+        && this.cubes.find(c => c._id === this.options.cubeId).allowEdits
+      )
+    },
   },
 
   methods: {
@@ -104,6 +114,10 @@ export default {
       const numPacksCondition = opts.numPacks > 0
       const packSizeCondition = opts.packSize > 0
       const cubeSelectedCondition = Boolean(opts.cubeId)
+      const scarRoundsCondition = !opts.scarRounds || opts.scarRounds.split(',').every(elem => {
+        const number = parseInt(elem)
+        return !Number.isNaN(number) && number <= opts.numPacks
+      })
 
       const neededCards = this.lobby.users.length * opts.numPacks * opts.packSize
       const selectedCube = this.cubes.find(c => c._id === opts.cubeId)
@@ -116,6 +130,7 @@ export default {
         && packSizeCondition
         && cubeSelectedCondition
         && sufficientCardsCondition
+        && scarRoundsCondition
       )
     },
 
@@ -153,7 +168,8 @@ export default {
         numPacks: 3,
         packSize: 15,
         cubeOwnerId: '',
-        cubeId: ''
+        cubeId: '',
+        scarRounds: '',
       }
     },
   },
