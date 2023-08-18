@@ -3,7 +3,7 @@
 
     <label class="form-label">Cube Owner</label>
     <select class="form-select" v-model="options.cubeOwnerId" @change="ownerChanged">
-      <option v-for="user in users" :key="user._id" :value="user._id">{{ user.name }}</option>
+      <option v-for="user in users" :key="user._id" :value="user._id" :disabled="user.disabled">{{ user.name }}</option>
     </select>
 
     <label class="form-label">Cube</label>
@@ -55,17 +55,41 @@ export default {
 
   methods: {
     async fetchUsers() {
+      const output = [
+        {
+          _id: 'public',
+          name: 'public',
+        },
+        {
+          _id: '---',
+          name: '-----',
+          disabled: true,
+        },
+      ]
+
       const userRequestResult = await axios.post('/api/user/all')
-      this.users = userRequestResult
+      userRequestResult
         .data
         .users
         .sort((l, r) => l.name.localeCompare(r.name))
+        .forEach(user => output.push(user))
+
+      this.users = output
+
       this.updateValid()
     },
 
     async fetchCubesForUser(userId) {
-      const cubeRequestResult = await axios.post('/api/user/magic/cubes', { userId })
-      this.cubes = cubeRequestResult
+      let requestResult
+
+      if (userId === 'public') {
+        requestResult = await axios.post('/api/magic/cube/fetchPublic')
+      }
+      else {
+        requestResult = await axios.post('/api/user/magic/cubes', { userId })
+      }
+
+      this.cubes = requestResult
         .data
         .cubes
         .sort((l, r) => l.name.localeCompare(r.name))
