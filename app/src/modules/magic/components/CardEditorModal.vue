@@ -14,7 +14,7 @@
     <CardEditor :original="data" @card-updated="cardUpdated" />
 
     <template #footer>
-      <button class="btn btn-secondary" @click="cancel" data-bs-dismiss="modal">cancel</button>
+      <button class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
       <button class="btn btn-danger" @click="save" data-bs-dismiss="modal" :disabled="!updatedCard">save</button>
     </template>
   </Modal>

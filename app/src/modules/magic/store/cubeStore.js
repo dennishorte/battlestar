@@ -3,6 +3,7 @@ export default {
 
   state: () => ({
     managedCard: null,
+    managedScar: null,
   }),
 
   getters: {
@@ -12,11 +13,12 @@ export default {
     manageCard(state, card) {
       state.managedCard = card
     },
+
+    manageScar(state, scar) {
+      state.managedScar = scar
+    },
   },
 
   actions: {
-    manageCard({ commit }, card) {
-      commit('manageCard', card)
-    },
   },
 }

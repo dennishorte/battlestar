@@ -20,17 +20,23 @@
 
             <Dropdown text="menu">
               <DropdownButton @click="this.$modal('cube-update-modal').show()">add/remove cards</DropdownButton>
+              <DropdownDivider />
               <DropdownButton @click="createCard">create card</DropdownButton>
-              <DropdownButton @click="toggleCardEditing">
-                toggle edits
-                <i v-if="cube.allowEdits" class="bi-toggle-on" />
-                <i v-else class="bi-toggle-off" />
-              </DropdownButton>
-              <DropdownButton @click="togglePublic">
-                toggle public
-                <i v-if="cube.public" class="bi-toggle-on" />
-                <i v-else class="bi-toggle-off" />
-              </DropdownButton>
+              <DropdownButton @click="createScar">create scar</DropdownButton>
+
+              <template v-if="viewerIsOwner">
+                <DropdownDivider />
+                <DropdownButton @click="toggleCardEditing">
+                  toggle edits
+                  <i v-if="cube.allowEdits" class="bi-toggle-on" />
+                  <i v-else class="bi-toggle-off" />
+                </DropdownButton>
+                <DropdownButton @click="togglePublic">
+                  toggle public
+                  <i v-if="cube.public" class="bi-toggle-on" />
+                  <i v-else class="bi-toggle-off" />
+                </DropdownButton>
+              </template>
             </Dropdown>
           </div>
         </div>
@@ -41,7 +47,12 @@
       </div>
 
       <div v-if="showing === 'scars'">
-        Cube Scars
+        <div v-for="scar in scars" class="scar-container">
+          <div>{{ scar.text }}</div>
+          <div>
+            <button class="btn btn-link" @click="editScar(scar)">edit</button>
+          </div>
+        </div>
       </div>
 
       <div v-if="showing === 'achievements'">
@@ -53,6 +64,7 @@
     <CubeImportModal @cube-updates="updateCube" />
     <CubeCardModal :card="managedCard" :editable="cube.allowEdits" />
     <CardEditorModal :original="managedCard" />
+    <ScarModal />
   </MagicWrapper>
 </template>
 
@@ -71,8 +83,10 @@ import CubeViewerCards from './CubeViewerCards'
 import CubeImportModal from './CubeImportModal'
 import Dropdown from '@/components/Dropdown'
 import DropdownButton from '@/components/DropdownButton'
+import DropdownDivider from '@/components/DropdownDivider'
 import MagicMenu from '../MagicMenu'
 import MagicWrapper from '../MagicWrapper'
+import ScarModal from './ScarModal'
 
 
 export default {
@@ -85,17 +99,21 @@ export default {
     CubeImportModal,
     Dropdown,
     DropdownButton,
+    DropdownDivider,
     MagicMenu,
     MagicWrapper,
+    ScarModal,
   },
 
   data() {
     return {
       actor: this.$store.getters['auth/user'],
       bus: mitt(),
-      cube: null,
       id: this.$route.params.id,
       loadingCube: true,
+
+      cube: null,
+      scars: [],
 
       showing: 'cards',
     }
@@ -111,6 +129,7 @@ export default {
   computed: {
     ...mapState('magic/cube', {
       managedCard: 'managedCard',
+      managedScar: 'managedScar',
     }),
 
     buttonClassesCards() {
@@ -162,8 +181,26 @@ export default {
     // Sync methods
 
     createCard() {
-      this.$store.dispatch('magic/cube/manageCard', mag.util.card.blank())
+      this.$store.commit('magic/cube/manageCard', mag.util.card.blank())
       this.$modal('card-editor-modal').show()
+    },
+
+    createScar() {
+      const blank = {
+        _id: null,
+        cubeId: this.cube._id,
+        text: '',
+        description: '',
+        appliedTo: null,
+        appliedTimestamp: null,
+      }
+      this.$store.commit('magic/cube/manageScar', blank)
+      this.$modal('scar-modal').show()
+    },
+
+    editScar(scar) {
+      this.$store.commit('magic/cube/manageScar', scar)
+      this.$modal('scar-modal').show()
     },
 
     navigate(target) {
@@ -219,6 +256,19 @@ export default {
       }
     },
 
+    async loadScars() {
+      const requestResult = await axios.post('/api/magic/scar/byCube', {
+        cubeId: this.id,
+      })
+
+      if (requestResult.data.status === 'success') {
+        this.scars = requestResult.data.scars
+      }
+      else {
+        alert('Error loading cube: ' + this.id)
+      }
+    },
+
     // If original is passed in, the new card will replace the original.
     // Otherwise, the new card will be added to the cube with nothing removed.
     async saveCard({ card, original }) {
@@ -265,6 +315,19 @@ export default {
       await this.$store.dispatch('magic/file/save', this.cube.serialize())
     },
 
+    async saveScar() {
+      const requestResult = await axios.post('/api/magic/scar/save', {
+        scar: this.managedScar,
+      })
+
+      if (requestResult.data.status === 'success') {
+        await this.loadScars()
+      }
+      else {
+        alert('Error save scar.\n' + requestResult.data.message)
+      }
+    },
+
     async toggleCardEditing() {
       const requestResult = await axios.post('/api/magic/cube/toggleEdits', {
         cubeId: this.id,
@@ -301,9 +364,11 @@ export default {
   },
 
   async mounted() {
-    await this.loadCube()
+    this.loadCube()
+    this.loadScars()
     this.bus.on('card-clicked', this.showCardModal)
     this.bus.on('card-saved', this.saveCard)
+    this.bus.on('scar-saved', this.saveScar)
   },
 }
 </script>
@@ -313,5 +378,16 @@ export default {
 .cube-menu {
   display: flex;
   flex-direction: row;
+}
+
+.scar-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 400px;
+  border: 1px solid #ddd;
+  padding-left: .5em;
+  margin-top: .25em;
 }
 </style>

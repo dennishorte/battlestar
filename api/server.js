@@ -55,6 +55,10 @@ app.post('/api/magic/link/create', routes.magic.link.create)
 app.post('/api/magic/link/fetchDrafts', routes.magic.link.fetchDrafts)
 app.post('/api/magic/link/fetchByDraft', routes.magic.link.fetchByDraft)
 
+// Scar routes
+app.post('/api/magic/scar/byCube', routes.magic.scar.fetchByCube)
+app.post('/api/magic/scar/save', routes.magic.scar.save)
+
 // Scryfall Routes
 app.post('/api/magic/scryfall/update', routes.magic.scryfall.updateAll)
 
