@@ -300,7 +300,7 @@ export default {
         await this.$store.dispatch('magic/cards/reloadDatabase')
 
         // And set the created card to be the managed card.
-        this.$store.dispatch('magic/cube/manageCard', requestResult.data.finalizedCard)
+        this.$store.commit('magic/cube/manageCard', requestResult.data.finalizedCard)
 
         // Update the card data for the edited card, if applicable
         this.cube.removeCard(requestResult.data.finalizedCard)

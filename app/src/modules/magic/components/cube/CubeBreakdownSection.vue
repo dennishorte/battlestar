@@ -68,7 +68,7 @@ export default {
 
   methods: {
     cardClicked(card) {
-      this.$store.dispatch('magic/cube/manageCard', card)
+      this.$store.commit('magic/cube/manageCard', card)
       this.bus.emit('card-clicked')
     },
   },
