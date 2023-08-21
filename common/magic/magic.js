@@ -534,7 +534,8 @@ Magic.prototype.aImportCard = function(player, data) {
     const card = {
       name: data.card.name,
       set: data.card.set,
-      collectorNumber: data.card.collector_number,
+      collector_number: data.card.collector_number,
+      custom_id: data.card.custom_id,
       data: data.card,
     }
 

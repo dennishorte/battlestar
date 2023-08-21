@@ -321,7 +321,6 @@ CardUtil.applyOneFilter = function(card, filter) {
 CardUtil.blankFace = function() {
   return {
     artist: '',
-    card_faces: '',
     defense: '',
     flavor_text: '',
     image_uri: '',
@@ -747,6 +746,43 @@ CardUtil.cardIdEquals = function(a, b, opts={}) {
       && a.custom_id === b.custom_id
     )
   }
+}
+
+// Return true if the playable stats are the same, false otherwise.
+CardUtil.playableStatsEquals = function(a, b) {
+  const topEquals = (
+    a.name === b.name
+    && a.layout === b.layout
+    && a.type_line === b.type_line
+    && a.cmc === b.cmc
+    && a.card_faces.length === b.card_faces.length
+  )
+
+  if (!topEquals) {
+    return false
+  }
+
+  for (let i = 0; i < a.card_faces.length; i++) {
+    const af = a.card_faces[i]
+    const bf = b.card_faces[i]
+
+    const faceEquals = (
+      af.name === bf.name
+      && af.oracle_text === bf.oracle_text
+      && af.type_line === bf.type_line
+      && af.mana_cost === bf.mana_cost
+      && af.defense === bf.defense
+      && af.loyalty === bf.loyalty
+      && af.power === bf.power
+      && af.toughness === bf.toughness
+    )
+
+    if (!faceEquals) {
+      return false
+    }
+  }
+
+  return true
 }
 
 CardUtil.lookup.getByIdDict = function(dict, lookupMap, opts={}) {
