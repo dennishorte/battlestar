@@ -309,6 +309,8 @@ $gold: #d9631b;
     }
   }
 }
+
+@include card-face(160px);
 @include card-face(200px);
 @include card-face(220px);
 @include card-face(270px);
