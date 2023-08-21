@@ -540,6 +540,7 @@ Magic.prototype.aImportCard = function(player, data) {
     }
 
     this.mInitializeCard(card, player)
+    card.annotation = data.annotation
     card.token = data.isToken
     card.visibility = this.getPlayerAll()
 

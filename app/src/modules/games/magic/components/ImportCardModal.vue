@@ -11,6 +11,8 @@
     </select>
     <input class="form-control mt-2" v-model.number="count" placeholder="count" />
 
+    <input class="form-control mt-2" v-model="annotation" placeholder="annotation" />
+
     <div class="form-check mt-2">
       <input class="form-check-input" type="checkbox" v-model="isToken" />
       <label class="form-check-label">token</label>
@@ -38,6 +40,7 @@ export default {
 
   data() {
     return {
+      annotation: '',
       count: 1,
       isToken: true,
       name: '',
@@ -65,6 +68,7 @@ export default {
       if (card) {
         this.$emit('import-card', {
           card,
+          annotation: this.annotation,
           count: this.count,
           zoneId: this.zoneId,
           isToken: this.isToken,
