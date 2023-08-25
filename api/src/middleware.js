@@ -43,6 +43,10 @@ Middleware.authenticate = (req, res, next)  => {
 
 
 function _coerceIdsRecurse(obj) {
+  if (obj === undefined || obj === null) {
+    return
+  }
+
   for (const [key, value] of Object.entries(obj)) {
     const lowKey = key.toLowerCase()
 
