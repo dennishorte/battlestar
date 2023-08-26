@@ -818,6 +818,8 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
       args: { player }
     })
   }
+
+  this.mLogOutdent()
 }
 
 Tyrants.prototype.aChooseAndSupplant = function(player, opts={}) {
