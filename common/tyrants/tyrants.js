@@ -277,6 +277,7 @@ Tyrants.prototype.chooseInitialLocations = function() {
 
 Tyrants.prototype.mainLoop = function() {
   while (true) {
+    this.mLogSetIndent(0)
     this.mLog({
       template: '{player} turn {count}',
       args: {
@@ -290,14 +291,14 @@ Tyrants.prototype.mainLoop = function() {
 
     this.preActions()
     this.doActions()
+
+    this.mLogIndent()
     this.endOfTurn()
     this.cleanup()
 
     this.drawHand()
     this.nextPlayer()
     this.checkForEndOfGame()
-
-    this.mLogOutdent()
   }
 }
 
@@ -353,22 +354,46 @@ Tyrants.prototype.doActions = function() {
       this.aPlayCard(player, card)
     }
     else if (name === 'Recruit') {
+      this.mLog({
+        template: '{player} recruit',
+        args: { player }
+      })
+      this.mLogIndent()
       this.aRecruit(player, arg)
+      this.mLogOutdent()
     }
     else if (name === 'Use Power') {
       if (arg === 'Deploy a Troop') {
-        player.incrementPower(-1)
+        this.mLog({
+          template: '{player} power: Deploy a Troop',
+          args: { player }
+        })
+        this.mLogIndent()
         this.aChooseAndDeploy(player)
+        player.incrementPower(-1)
+        this.mLogOutdent()
       }
 
       else if (arg === 'Assassinate a Troop') {
-        player.incrementPower(-3)
+        this.mLog({
+          template: '{player} power: Assassinate a Troop',
+          args: { player }
+        })
+        this.mLogIndent()
         this.aChooseAndAssassinate(player)
+        player.incrementPower(-3)
+        this.mLogOutdent()
       }
 
       else if (arg === 'Return an Enemy Spy') {
-        player.incrementPower(-3)
+        this.mLog({
+          template: '{player} power: Return an Enemy Spy',
+          args: { player }
+        })
+        this.mLogIndent()
         this.aChooseAndReturn(player, { noTroops: true })
+        player.incrementPower(-3)
+        this.mLogOutdent()
       }
 
       else {

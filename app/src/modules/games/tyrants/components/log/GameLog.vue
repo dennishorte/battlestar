@@ -126,6 +126,22 @@ export default {
         const color = this.ui.fn.getPlayerColor(this.game, player)
         classes.push(`${color}-element`)
       }
+      else if (line.text.includes(' plays ')) {
+        classes.push('player-action')
+        classes.push('play-a-card')
+      }
+      else if (line.text.endsWith(' recruit')) {
+        classes.push('player-action')
+        classes.push('recruit-action')
+      }
+      else if (line.text.includes(' power: ')) {
+        classes.push('player-action')
+        classes.push('power-action')
+      }
+      else if (line.text.endsWith(' passes')) {
+        classes.push('player-action')
+        classes.push('pass-action')
+      }
       else {
         classes.push('generic')
       }
@@ -205,6 +221,27 @@ export default {
 .indent-0.generic {
   color: #eee;
   background-color: purple;
+}
+
+.player-action {
+  padding: 5px 10px;
+  border-radius: 3px;
+}
+
+.player-action.recruit-action {
+  background-color: #e8b687;
+}
+
+.player-action.play-a-card {
+  background-color: #e8d987;
+}
+
+.player-action.power-action {
+  background-color: #e8c887;
+}
+
+.player-action.pass-action {
+  background-color: #c96d2c;
 }
 
 .player-turn-start {
