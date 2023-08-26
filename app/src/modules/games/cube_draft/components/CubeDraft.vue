@@ -44,7 +44,6 @@
 
   <CardCloseupModal :id="cardCloseupModalId" :card="closeupCard" />
   <CardDraftModal :id="cardDraftModalId" :card="closeupDraftCard" @draft-card="chooseCard" />
-  <CardTableauModal :id="cardTableauModalId" :cards="tableauCards" title="Card Tableau" />
 </template>
 
 
@@ -62,7 +61,6 @@ import AdminOptions from './AdminOptions'
 import CardCloseupModal from './CardCloseupModal'
 import CardDraftModal from './CardDraftModal'
 import CardTableau from './CardTableau'
-import CardTableauModal from './CardTableauModal'
 import GameLog from './log/GameLog'
 import MatchResults from './MatchResults'
 import SeatingInfo from './SeatingInfo'
@@ -88,7 +86,6 @@ export default {
     CardCloseupModal,
     CardDraftModal,
     CardTableau,
-    CardTableauModal,
     ChatInput,
     DebugModal,
     Decklist,
@@ -113,7 +110,6 @@ export default {
 
       cardCloseupModalId: 'card-closeup-modal-' + uuidv4(),
       cardDraftModalId: 'card-draft-modal-' + uuidv4(),
-      cardTableauModalId: 'card-tableau-modal-' + uuidv4(),
       fileModalId: 'file-manager-edit-modal-' + uuidv4(),
 
       closeupCard: null,
@@ -275,10 +271,6 @@ export default {
       if (this.closeupCard) {
         this.$modal(this.cardCloseupModalId).show()
       }
-    },
-
-    showPackTableau() {
-      this.$modal(this.cardTableauModalId).show()
     },
 
     uiFactory() {

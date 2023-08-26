@@ -35,12 +35,8 @@ export default {
   },
 
   watch: {
-    cards(newValue, oldValue) {
-      for (const card of newValue) {
-        if (!card.data) {
-          card.data = this.$store.getters['magic/cards/getLookupFunc'](card)
-        }
-      }
+    cards(newValue) {
+      this.ensureData(newValue)
     },
   },
 
@@ -48,6 +44,18 @@ export default {
     cardClicked(card) {
       this.$emit('card-clicked', card)
     },
+
+    ensureData(cards) {
+      for (const card of cards) {
+        if (!card.data) {
+          card.data = this.$store.getters['magic/cards/getLookupFunc'](card)
+        }
+      }
+    },
+  },
+
+  mounted() {
+    this.ensureData(this.cards)
   },
 }
 </script>
