@@ -1,6 +1,9 @@
 <template>
   <div class="market">
-    <div class="title">Market</div>
+    <div class="market-header">
+      <div class="title">Market</div>
+      <div class="cards-remaining">({{ cardsRemaining }})</div>
+    </div>
     <GameCard v-if="Boolean(guard)" :card="guard" :show-cost="true" />
     <GameCard v-if="Boolean(priestess)" :card="priestess" :show-cost="true" />
     <hr class="market-separator" />
@@ -26,6 +29,10 @@ export default {
       return this.game.getZoneById('market').cards()
     },
 
+    cardsRemaining() {
+      return this.game.getZoneById('marketDeck').cards().length
+    },
+
     guard() {
       return this.game.getZoneById('guard').cards()[0]
     },
@@ -43,6 +50,16 @@ export default {
   margin: 0 -15px;
   margin-bottom: 1em;
   padding: 5px 15px;
+}
+
+.cards-remaining {
+  margin-left: .5em;
+}
+
+.market-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .market-separator {
