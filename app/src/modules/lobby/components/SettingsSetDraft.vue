@@ -87,7 +87,7 @@ export default {
       this.save()
     },
 
-    makePacks(lobby) {
+    async makePacks(lobby) {
       const setCode = this.lobby.options.set.code
 
       const cards = this

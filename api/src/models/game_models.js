@@ -116,6 +116,8 @@ Game.gameOver = async function(gameId, killed=false) {
       { _id: gameId },
       { $set: setValues },
     )
+
+    // Hook to release scars from cube draft games.
   })
 }
 

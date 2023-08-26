@@ -167,7 +167,7 @@ export default {
       return {
         numPacks: 3,
         packSize: 15,
-        cubeOwnerId: '',
+        cubeOwnerId: 'public',
         cubeId: '',
         scarRounds: '',
       }
@@ -182,6 +182,9 @@ export default {
       this.options = this.defaultOptions()
       this.lobby.options = this.defaultOptions()
       this.updateValid()
+      if (this.options.cubeOwnerId) {
+        this.fetchCubesForUser(this.options.cubeOwnerId)
+      }
     }
     else {
       // Load the saved options into the selected options
