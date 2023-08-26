@@ -76,7 +76,7 @@ Lobby.info = async function(req, res) {
 }
 
 Lobby.kill = async function(req, res) {
-  await db.lobby.kill(req.body.id)
+  await db.lobby.kill(req.body.lobbyId)
   res.json({
     status: 'success',
   })

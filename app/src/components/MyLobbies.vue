@@ -10,6 +10,7 @@
           <th>game</th>
           <th>name</th>
           <th>age</th>
+          <th>menu</th>
         </tr>
       </thead>
 
@@ -23,6 +24,11 @@
               </router-link>
             </td>
             <td>{{ lobbyAge(lobby.createdTimestamp) }}</td>
+            <td>
+              <Dropdown :notitle="true">
+                <DropdownItem @click="kill(lobby._id)">kill</DropdownItem>
+              </Dropdown>
+            </td>
           </tr>
         </template>
       </tbody>
@@ -34,6 +40,10 @@
 <script>
 import axios from 'axios'
 
+import Dropdown from '@/components/Dropdown'
+import DropdownItem from '@/components/DropdownItem'
+
+
 export default {
   name: 'MyLobbies',
   data() {
@@ -43,7 +53,17 @@ export default {
     }
   },
 
+  components: {
+    Dropdown,
+    DropdownItem,
+  },
+
   methods: {
+    async kill(lobbyId) {
+      await axios.post('/api/lobby/kill', { lobbyId })
+      this.$router.go()
+    },
+
     lobbyAge(timestamp) {
       const millis = Date.now() - timestamp
       const years = Math.floor(millis / (365 * 24 * 60 * 60 * 1000))
