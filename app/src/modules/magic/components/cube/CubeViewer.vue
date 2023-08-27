@@ -272,47 +272,20 @@ export default {
     // If original is passed in, the new card will replace the original.
     // Otherwise, the new card will be added to the cube with nothing removed.
     async saveCard({ card, original }) {
-      const requestResult = await axios.post('/api/magic/card/save', {
-        card,
+      const updatedCard = await this.$store.dispatch('magic/cards/save', {
+        actor: this.actor,
+        cube: this.cube,
+        updated: card,
         original,
-        editor: {
-          _id: this.actor._id,
-          name: this.actor.name,
-        },
-        comment: 'Comments not implemented',
+        comment: 'Updated in the cube editor',
       })
 
-      if (requestResult.data.status === 'success') {
-        // Need to update the cube, if the edited card was a scryfall card that was replaced
-        // with a custom card.
-        if (requestResult.data.cardReplaced) {
-          this.cube.removeCard(original)
-          this.cube.addCard(requestResult.data.finalizedCard)
-          await this.saveCube()
-        }
-
-        else if (requestResult.data.cardCreated) {
-          this.cube.addCard(requestResult.data.finalizedCard)
-          await this.saveCube()
-        }
-
-        // In either case, update the local card database.
-        await this.$store.dispatch('magic/cards/reloadDatabase')
-
-        // And set the created card to be the managed card.
-        this.$store.commit('magic/cube/manageCard', requestResult.data.finalizedCard)
-
-        // Update the card data for the edited card, if applicable
-        this.cube.removeCard(requestResult.data.finalizedCard)
-        this.cube.addCard(requestResult.data.finalizedCard)
-      }
-      else {
-        alert('Error saving card: ' + requestResult.message)
-      }
+      // And set the created card to be the managed card.
+      await this.$store.commit('magic/cube/manageCard', updatedCard, { root: true })
     },
 
     async saveCube() {
-      await this.$store.dispatch('magic/file/save', this.cube.serialize())
+      await this.$store.dispatch('magic/cube/save', this.cube)
     },
 
     async saveScar() {
