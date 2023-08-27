@@ -14,6 +14,13 @@
         class="game-column data-column"
         :class="widthClass"
       >
+        <div v-if="doingScars" class="alert alert-warning">
+          <h3>Scar Round!</h3>
+
+          <div v-for="scar in scars">
+            {{ scar.text }}
+          </div>
+        </div>
         <CardTableau
           :cards="tableauCards"
           :cardScroll="false"
@@ -131,6 +138,10 @@ export default {
       modified: 'modified',
     }),
 
+    doingScars() {
+      return this.scars && this.scars.length > 0
+    },
+
     modifiedClass() {
       if (this.modified) {
         return 'deck-modified'
@@ -142,6 +153,10 @@ export default {
 
     player() {
       return this.game.getPlayerByName(this.actor.name)
+    },
+
+    scars() {
+      return this.game.getScarsForWaitingPack(this.player)
     },
 
     tableauCards() {

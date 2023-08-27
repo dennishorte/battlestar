@@ -146,7 +146,12 @@ export default {
       this.fetchCubesForUser(this.options.cubeOwnerId)
     },
 
-    makePacks(lobby) {
+    async beforeStart(lobby) {
+      await this.makePacks(lobby)
+      await this.prepareScars(lobby)
+    },
+
+    async makePacks(lobby) {
       const cube = this.cubes.find(c => c._id === this.options.cubeId)
       const cards = util
         .deepcopy(cube.cardlist)
@@ -163,6 +168,27 @@ export default {
       lobby.options.cubeName = cube.name
     },
 
+    async prepareScars(lobby) {
+      const requestResult = await axios.post('/api/magic/scar/byCube', {
+        cubeId: lobby.options.cubeId,
+      })
+
+      if (requestResult.data.status !== 'success') {
+        alert('Failed to fetch scars.\n' + requestResult.message)
+        throw new Error('Unable to load scars')
+      }
+
+      const scarRounds = lobby.options.scarRounds.split(',').length
+      const requiredScars = scarRounds * lobby.users.length * 2
+      if (requestResult.data.scars.length < requiredScars) {
+        alert(`Not enough scars.\n Got ${requestResult.data.scars.length}. Needed ${requiredScars}`)
+      }
+
+      lobby.scars = util.array.selectMany(requestResult.data.scars, requiredScars)
+
+      // TODO: lock the scars
+    },
+
     defaultOptions() {
       return {
         numPacks: 3,
@@ -175,7 +201,7 @@ export default {
   },
 
   created() {
-    this.lobby.onStart = this.makePacks
+    this.lobby.onStart = this.beforeStart
 
     if (!this.lobby.options) {
       // Initialize with default options

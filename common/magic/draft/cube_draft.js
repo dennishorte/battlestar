@@ -43,6 +43,9 @@ function factoryFromLobby(lobby, db) {
     packSize: lobby.options.packSize,
     numPacks: lobby.options.numPacks,
     packs: lobby.packs,
+
+    scars: lobby.scars,
+    scarRounds: (lobby.options.scarRounds || '').split(',').map(x => parseInt(x)),
   })
 }
 
@@ -143,7 +146,7 @@ CubeDraft.prototype.initializeScars = function() {
     const players = this.getPlayerAll()
     const scars = this.settings.scars
     const scarRounds = this.settings.scarRounds
-    const scarsPerPlayer = scarRounds * 2
+    const scarsPerPlayer = scarRounds.length * 2
 
     for (let i = 0; i < players.length; i++) {
       const player = players[i]
@@ -276,13 +279,6 @@ CubeDraft.prototype.aOpenNextPack = function(player) {
     pack.waiting = player
     pack.viewPack(player)
 
-    // If this is a scar round, queue up some scars to apply.
-    if (this.settings.scarRounds && this.settings.scarRounds.includes(packNum)) {
-      pack.scars = []
-      pack.scars.push(player.scars.pop())
-      pack.scars.push(player.scars.pop())
-    }
-
     // Move all the next round packs that piled up into the waiting packs queue
     while (player.nextRoundPacks.length > 0) {
       player.waitingPacks.push(player.nextRoundPacks.shift())
@@ -404,11 +400,10 @@ CubeDraft.prototype.getScarsForWaitingPack = function(player) {
     return []
   }
 
-
   const pack = this.getNextPackForPlayer(player)
   if (pack) {
     const packRound = pack.index + 1
-    return this.player.scars[packRound] || []
+    return player.scars[packRound] || []
   }
 
   // No scars need to be applied to this pack.
