@@ -24,9 +24,13 @@ Card.save = async function(req, res) {
   if (replaceScryfallCard) {
     toUpdate = await db.magic.card.insertCustom(original)
   }
+
+  // Overwrite the existing custom card, in-place.
   else if (original) {
     toUpdate = await db.magic.card.findById(original._id)
   }
+
+  // Overwrite the existing custom card, in-place.
   else if (card._id) {
     toUpdate = await db.magic.card.findById(card._id)
   }
@@ -71,7 +75,7 @@ Card.save = async function(req, res) {
   res.json({
     status: 'success',
     cardCreated,
-    cardReplaced: replaceScryfallCard,
+    cardReplaced: !cardCreated, // The cube containing this card should be updated, probably.
     finalizedCard,
   })
 }

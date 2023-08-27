@@ -20,5 +20,8 @@ export default {
   },
 
   actions: {
+    async save({ dispatch }, cube) {
+      await dispatch('magic/file/save', cube.serialize(), { root: true })
+    },
   },
 }

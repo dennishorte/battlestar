@@ -80,6 +80,9 @@ export default {
   },
 
   actions: {
+    ////////////////////////////////////////////////////////////////////////////////
+    // Data loading
+
     async ensureLoaded({ commit, dispatch, state, getters }) {
       console.log('ensureLoaded')
       commit('clearLog')
@@ -139,6 +142,45 @@ export default {
       const { cards, version } = await getLatestCardDataFromServer(source)
       await setKey('cards_' + source, cards)
       await setKey('version_' + source, version)
+    },
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Card editing
+
+    async save({ dispatch }, { actor, cube, updated, original, comment }) {
+      const requestResult = await axios.post('/api/magic/card/save', {
+        card: updated,
+        original,
+        editor: {
+          _id: actor._id,
+          name: actor.name,
+        },
+        comment,
+      })
+
+      if (requestResult.data.status === 'success') {
+        // Need to update the cube, if the edited card was a scryfall card that was replaced
+        // with a custom card.
+        if (requestResult.data.cardReplaced) {
+          cube.removeCard(original)
+          cube.addCard(requestResult.data.finalizedCard)
+          await dispatch('magic/cube/save', cube, { root: true })
+        }
+
+        else if (requestResult.data.cardCreated) {
+          cube.addCard(requestResult.data.finalizedCard)
+          await dispatch('magic/cube/save', cube, { root: true })
+        }
+
+        // In either case, update the local card database.
+        await dispatch('reloadDatabase')
+
+        return requestResult.data.finalizedCard
+      }
+      else {
+        alert('Error saving card: ' + requestResult.message)
+      }
     },
   },
 }
