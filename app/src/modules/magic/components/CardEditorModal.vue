@@ -11,11 +11,15 @@
       </button>
     </template>
 
+    <slot name="before-card"></slot>
+
     <CardEditor :original="data" @card-updated="cardUpdated" />
 
     <template #footer>
-      <button class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
-      <button class="btn btn-danger" @click="save" data-bs-dismiss="modal" :disabled="!updatedCard">save</button>
+      <slot name="footer" :original="original" :updated="updatedCard">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
+        <button class="btn btn-danger" @click="save" data-bs-dismiss="modal" :disabled="!updatedCard">save</button>
+      </slot>
     </template>
   </Modal>
 </template>

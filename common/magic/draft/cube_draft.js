@@ -75,11 +75,14 @@ CubeDraft.prototype.initialize = function() {
   this.mLog({ template: 'Initializing' })
   this.mLogIndent()
 
+  this.state.usedScars = []
+
   this.initializePlayers()
   this.initializePacks()
   this.initializeScars()
 
   this.mLogOutdent()
+
   this.state.initializationComplete = true
   this._breakpoint('initialization-complete')
 }
@@ -197,42 +200,50 @@ CubeDraft.prototype.mainLoop = function() {
   })
 }
 
-CubeDraft.prototype.aApplyScar = function(player, selection) {
+CubeDraft.prototype.aApplyScar = function(player, data) {
   this.mLog({
     template: '{player} applied a scar',
     args: { player },
   })
 
-  console.log(selection)
-  return
+  const scarIndex = data.scarIndex
+  const originalId = data.originalId
+  const newData = data.newData
 
-  const origId = selection.origId
-  const newData = selection.newData
-
-  // Remove the used scars
   const pack = this.getNextPackForPlayer(player)
-  const packRound = packIndex + 1
+  const packRound = pack.index + 1
+
+  // Remember which scars were actually used in this game.
+  this.state.usedScars.push(player.scars[packRound][scarIndex])
+
+  // Remove the used scars from the player
   player.scars[packRound] = null
 
   // Mark the card so this player can't draft it this round
-  this.player.scarredCardId = origId
+  player.scarredCardId = originalId
 
   // Update the card in the pack to match the new, scarred data.
-  const card = this.getCardById(origId)
+  const card = this.getCardById(originalId)
   card.name = newData.name
   card.set = newData.set
   card.collector_number = newData.collector_number
   card.custom_id = newData.custom_id
+  card.data = newData
 }
 
 CubeDraft.prototype.aDraftCard = function(player, pack, cardId) {
   util.assert(this.getNextPackForPlayer(player) === pack, "This pack isn't ready for this player")
 
+  console.log(cardId, player.scarredCardId)
+  if (cardId === player.scarredCardId) {
+    throw new Error('Player tried to draft the card they scarred')
+  }
+
   const card = pack.getCardById(cardId)
   util.assert(pack.checkCardIsAvailable(card), "The selected card is not in the pack.")
 
   // Clear draft blocks caused by scarring
-  this.player.scarredCardId = null
+  player.scarredCardId = null
 
   /* this.mLog({
    *   template: '{player} drafted {card}',
@@ -297,7 +308,7 @@ CubeDraft.prototype.aOpenNextPack = function(player) {
 // Checkers
 
 CubeDraft.prototype.checkForWaitingScar = function(player) {
-  return Boolean(this.getScarsForWaitingPack(player))
+  return this.getScarsForWaitingPack(player).length > 0
 }
 
 CubeDraft.prototype.checkForWaitingPack = function(player) {
@@ -373,7 +384,7 @@ CubeDraft.prototype.getPlayerOptions = function(player) {
     return {
       actor: player.name,
       title: 'Apply Scar',
-      choices: ['scar 1', 'scar 2'],
+      choices: '__UNSPECIFIED__',
     }
   }
 

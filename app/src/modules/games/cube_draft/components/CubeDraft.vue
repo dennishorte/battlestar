@@ -24,7 +24,7 @@
         <CardTableau
           :cards="tableauCards"
           :cardScroll="false"
-          @card-clicked="showDraftModal"
+          @card-clicked="cardClicked"
         />
         <WaitingPanel :class="waitingPanelClasses" />
       </div>
@@ -51,6 +51,40 @@
 
   <CardCloseupModal :id="cardCloseupModalId" :card="closeupCard" />
   <CardDraftModal :id="cardDraftModalId" :card="closeupDraftCard" @draft-card="chooseCard" />
+
+  <CardEditorModal :original="scarCard">
+
+    <!-- Need this v-if="!!game" to prevent errors before the game finished loading. -->
+    <template #before-card v-if="!!game">
+      <div class="alert alert-warning">
+        <ol>
+          <li v-for="scar in scars">{{ scar.text }}</li>
+        </ol>
+      </div>
+    </template>
+
+    <template #footer="footerProps">
+      <button class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
+
+      <button
+        class="btn btn-danger"
+        @click="scarApplied(0, footerProps.updated, footerProps.original)"
+        data-bs-dismiss="modal"
+      >
+        applied 1
+      </button>
+
+      <button
+        class="btn btn-danger"
+        @click="scarApplied(1, footerProps.updated, footerProps.original)"
+        data-bs-dismiss="modal"
+      >
+        applied 2
+      </button>
+
+    </template>
+  </CardEditorModal>
+
 </template>
 
 
@@ -80,6 +114,7 @@ import DebugModal from '@/modules/games/common/components/DebugModal'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
+import CardEditorModal from '@/modules/magic/components/CardEditorModal'
 import CardListItem from '@/modules/magic/components/CardListItem'
 import Decklist from '@/modules/magic/components/deck/Decklist'
 import MagicWrapper from '@/modules/magic/components/MagicWrapper'
@@ -92,6 +127,7 @@ export default {
     AdminOptions,
     CardCloseupModal,
     CardDraftModal,
+    CardEditorModal,
     CardTableau,
     ChatInput,
     DebugModal,
@@ -121,6 +157,7 @@ export default {
 
       closeupCard: null,
       closeupDraftCard: null,
+      scarCard: null,
 
       showGameStats: false,
       showWaitingPanel: false,
@@ -206,6 +243,15 @@ export default {
   },
 
   methods: {
+    cardClicked(card) {
+      if (this.doingScars) {
+        this.showScarModal(card)
+      }
+      else {
+        this.showDraftModal(card)
+      }
+    },
+
     async chooseCard(card) {
       this.bus.emit('user-select-option', {
         actor: this.actor,
@@ -215,11 +261,11 @@ export default {
       this.bus.emit('click-choose-selected-option')
 
       // Add the card to the player's deck.
-      this.$store.dispatch('magic/dm/addCard', {
+      await this.$store.dispatch('magic/dm/addCard', {
         card: card.data,
         zoneName: 'main',
       })
-      this.$store.dispatch('magic/dm/saveActiveDeck')
+      await this.$store.dispatch('magic/dm/saveActiveDeck')
     },
 
     loadGame() {
@@ -271,6 +317,41 @@ export default {
       this.$store.dispatch('magic/dm/saveActiveDeck')
     },
 
+    async scarApplied(scarIndex, updated, original) {
+      if (!updated) {
+        alert('No changes where made to the card')
+        return
+      }
+
+      this.game.respondToInputRequest({
+        actor: this.actor.name,
+        title: 'Apply Scar',
+        selection: [{
+          scarIndex,
+          originalId: original.id,
+          newData: updated,
+          // newData: savedCard,
+        }]
+      })
+
+      try {
+        /* const savedCard = await this.$store.dispatch('magic/cards/save', {
+         *   actors: this.actor,
+         *   cube: this.cube,
+         *   updated,
+         *   original,
+         *   comment: `Scarred in ${this.game.settings.name}.`,
+         * })
+         */
+      }
+
+      catch (e) {
+        alert('Error saving card')
+      }
+
+      await this.save()
+    },
+
     showDraftModal(card) {
       if (!card.data) {
         card.data = this.$store.getters['magic/cards/getLookupFunc'](card)
@@ -289,6 +370,11 @@ export default {
       if (this.closeupCard) {
         this.$modal(this.cardCloseupModalId).show()
       }
+    },
+
+    showScarModal(card) {
+      this.scarCard = card
+      this.$modal('card-editor-modal').show()
     },
 
     uiFactory() {

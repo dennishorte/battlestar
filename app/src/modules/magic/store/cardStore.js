@@ -179,7 +179,8 @@ export default {
         return requestResult.data.finalizedCard
       }
       else {
-        alert('Error saving card: ' + requestResult.message)
+        console.log(requestResult.data)
+        throw new Error('Error saving card')
       }
     },
   },
