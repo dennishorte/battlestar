@@ -8,7 +8,12 @@
 
     <template #footer>
       <button class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
-      <button class="btn btn-danger" @click="draftCard" data-bs-dismiss="modal">draft</button>
+      <button
+        class="btn btn-danger"
+        @click="draftCard"
+        data-bs-dismiss="modal"
+        :disabled="cannotDraft"
+      >draft</button>
     </template>
   </Modal>
 </template>
@@ -33,6 +38,20 @@ export default {
     card: {
       type: Object,
       default: null,
+    },
+  },
+
+  inject: ['actor', 'game'],
+
+  computed: {
+    cannotDraft() {
+      if (this.card) {
+        const player = this.game.getPlayerByName(this.actor.name)
+        return this.card.id === player.scarredCardId
+      }
+      else {
+        return true
+      }
     },
   },
 

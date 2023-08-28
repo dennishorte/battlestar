@@ -1,7 +1,8 @@
 <template>
   <div class="card-tableau">
-    <div class="card-holder" v-for="card in cards" :key="card.id">
-      <Card :size="220" :card="card.data" @click="cardClicked(card)" :scrollable="cardScroll" />
+    <div class="card-holder" v-for="card in cards" :key="card.id" @click="cardClicked(card)" >
+      <Card :size="220" :card="card.data" :scrollable="cardScroll" />
+      <div class="card-overlay" v-if="cannotDraft(card)"></div>
     </div>
   </div>
 </template>
@@ -34,6 +35,8 @@ export default {
     },
   },
 
+  inject: ['actor', 'game'],
+
   watch: {
     cards(newValue) {
       this.ensureData(newValue)
@@ -41,6 +44,11 @@ export default {
   },
 
   methods: {
+    cannotDraft(card) {
+      const player = this.game.getPlayerByName(this.actor.name)
+      return card.id === player.scarredCardId
+    },
+
     cardClicked(card) {
       this.$emit('card-clicked', card)
     },
@@ -69,9 +77,20 @@ export default {
 }
 
 .card-holder {
+  position: relative;
   max-width: 100%;
   overflow-x: scroll;
   margin-left: .25em;
   margin-bottom: .25em;
+}
+
+.card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: .5em;
 }
 </style>

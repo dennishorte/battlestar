@@ -234,7 +234,8 @@ CubeDraft.prototype.aApplyScar = function(player, data) {
 CubeDraft.prototype.aDraftCard = function(player, pack, cardId) {
   util.assert(this.getNextPackForPlayer(player) === pack, "This pack isn't ready for this player")
 
-  console.log(cardId, player.scarredCardId)
+  cardId = cardId.title ? cardId.title : cardId
+
   if (cardId === player.scarredCardId) {
     throw new Error('Player tried to draft the card they scarred')
   }
