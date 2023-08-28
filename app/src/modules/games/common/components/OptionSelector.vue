@@ -31,7 +31,7 @@
 
         <div class="nested-options" v-else>
           <input type="checkbox" :value="index" v-model="selected" disabled />
-          <OptionSelector :selector="option" @selection-changed="childChanged" />
+          <OptionSelector :owner="owner" :selector="option" @selection-changed="childChanged" />
         </div>
       </div>
 
@@ -55,7 +55,7 @@ export default {
     OptionName,
   },
 
-  inject: ['game', 'bus'],
+  inject: ['actor', 'game', 'bus'],
 
   props: {
     required: {
@@ -63,6 +63,7 @@ export default {
       default: false,
     },
     selector: Object,
+    owner: Object,
   },
 
   data() {
@@ -203,7 +204,13 @@ export default {
       }
     },
 
-    setSelectionFromEvent({ optionName, opts }) {
+    setSelectionFromEvent({ actor, optionName, opts }) {
+      if (!actor) {
+        throw new Error('Must specify actor')
+      }
+      if (actor._id !== this.owner._id) {
+        return
+      }
       if (!opts) {
         opts = {}
       }

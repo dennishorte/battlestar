@@ -23,7 +23,7 @@
         :class="isActive(player)"
         :id="`waiting-${player.name}`"
       >
-        <WaitingChoice v-if="hasActionWaiting(player)" :actor="player" />
+        <WaitingChoice v-if="hasActionWaiting(player)" :owner="player" />
         <div v-else>No actions waiting for you right now.</div>
       </div>
     </div>

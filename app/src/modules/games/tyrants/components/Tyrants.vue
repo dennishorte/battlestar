@@ -225,6 +225,7 @@ export default {
     async clickLocation(loc) {
       if (this.canPlaceTroopAtLocation(loc)) {
         this.bus.emit('user-select-option', {
+          actor: this.actor,
           optionName: 'Deploy a Troop',
         })
 
@@ -233,6 +234,7 @@ export default {
 
         await nextTick()
         this.bus.emit('user-select-option', {
+          actor: this.actor,
           optionName: loc.name,
           opts: { prefix: true },
         })
@@ -242,6 +244,7 @@ export default {
       }
       else {
         this.bus.emit('user-select-option', {
+          actor: this.actor,
           optionName: loc.name,
           opts: { prefix: true },
         })

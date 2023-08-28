@@ -207,7 +207,10 @@ export default {
 
   methods: {
     async chooseCard(card) {
-      this.bus.emit('user-select-option', { optionName: card.id })
+      this.bus.emit('user-select-option', {
+        actor: this.actor,
+        optionName: card.id
+      })
       await nextTick()
       this.bus.emit('click-choose-selected-option')
 

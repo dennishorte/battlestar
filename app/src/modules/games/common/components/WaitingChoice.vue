@@ -5,6 +5,7 @@
       :key="key"
       :selector="request"
       :required="true"
+      :owner="owner"
       @selection-changed="childChanged"
     />
 
@@ -42,7 +43,7 @@ export default {
   },
 
   props: {
-    actor: Object,
+    owner: Object,
   },
 
   data() {
@@ -60,7 +61,7 @@ export default {
     },
 
     request() {
-      const waiting = this.game.getWaiting(this.actor)
+      const waiting = this.game.getWaiting(this.owner)
       this.insertSubtitles(waiting)
       return waiting
     },
@@ -83,13 +84,14 @@ export default {
   },
 
   methods: {
-    async submit() {
+    async submit(extraPayload={}) {
       const payload = {
-        actor: this.actor.name,
+        actor: this.owner.name,
         title: this.request.title,
         selection: this.selection.selection,
         key: this.game.getWaitingKey(),
       }
+
       try {
         this.game.respondToInputRequest(payload)
       }
