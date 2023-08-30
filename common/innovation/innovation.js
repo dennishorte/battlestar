@@ -3106,10 +3106,15 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
     .filter(card => card.checkIsCity())
     .filter(city => city.getAge() >= lowestHandAge)
 
+  /* const stacksWithEndorsableEffects = this
+   *   .utilColors()
+   *   .map(color => this.getZoneByPlayer(player, color))
+   *   .filter(zone => this.checkZoneHasVisibleDogmaOrEcho(player, zone))
+   */
+
   const stacksWithEndorsableEffects = this
-    .utilColors()
-    .map(color => this.getZoneByPlayer(player, color))
-    .filter(zone => this.checkZoneHasVisibleDogmaOrEcho(player, zone))
+    .getTopCards(player)
+    .map(card => this.getZoneByPlayer(player, card.color))
 
   const colors = []
 
