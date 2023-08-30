@@ -2,185 +2,192 @@
   <div class="card-filters">
     <SectionHeader>Card Filters</SectionHeader>
 
-    <div class="filter-inputs">
+    <div class="filter-components" :class="layoutClass">
+      <div class="filter-inputs">
 
-      <div class="filter-group">
-        <label class="col-form-label">name</label>
-        <select class="form-select operator-select" ref="nameop">
-          <option>and</option>
-          <option>not</option>
-        </select>
-        <input class="form-control" ref="name" />
-        <button class="btn btn-secondary" value="name" @click="add">add</button>
-      </div>
-
-      <div class="filter-group">
-        <label class="col-form-label">text</label>
-        <select class="form-select operator-select" ref="textop">
-          <option>and</option>
-          <option>not</option>
-        </select>
-        <input class="form-control" ref="text" />
-        <button class="btn btn-secondary" value="text" @click="add">add</button>
-      </div>
-
-      <div class="filter-group">
-        <label class="col-form-label">type</label>
-        <select class="form-select operator-select" ref="typeop">
-          <option>and</option>
-          <option>not</option>
-        </select>
-        <input class="form-control" ref="type" />
-        <button class="btn btn-secondary" value="type" @click="add">add</button>
-      </div>
-
-      <div class="filter-group">
-        <label class="col-form-label">flavor</label>
-        <select class="form-select operator-select" ref="flavorop">
-          <option>and</option>
-          <option>not</option>
-        </select>
-        <input class="form-control" ref="flavor" />
-        <button class="btn btn-secondary" value="flavor" @click="add">add</button>
-      </div>
-
-      <div class="filter-group">
-        <label class="col-form-label">cmc</label>
-        <select class="form-select operator-select" ref="cmcop">
-          <option>=</option>
-          <option>&lt=</option>
-          <option>&gt=</option>
-        </select>
-        <input class="form-control" ref="cmc" />
-        <button class="btn btn-secondary" value="cmc" @click="add">add</button>
-      </div>
-
-      <div class="filter-group">
-        <label class="col-form-label">power</label>
-        <select class="form-select operator-select" ref="powerop">
-          <option>=</option>
-          <option>&lt=</option>
-          <option>&gt=</option>
-        </select>
-        <input class="form-control" ref="power" />
-        <button class="btn btn-secondary" value="power" @click="add">add</button>
-      </div>
-
-      <div class="filter-group">
-        <label class="col-form-label">toughness</label>
-        <select class="form-select operator-select" ref="toughnessop">
-          <option>=</option>
-          <option>&lt=</option>
-          <option>&gt=</option>
-        </select>
-        <input class="form-control" ref="toughness" />
-        <button class="btn btn-secondary" value="toughness" @click="add">add</button>
-      </div>
-
-      <div class="filter-group">
-        <label class="col-form-label">legality</label>
-        <select class="form-select" ref="legality">
-          <option value="commander">commander</option>
-          <option value="modern">modern</option>
-          <option value="standard">standard</option>
-          <option value="---">---</option>
-
-          <option value="alchemy">alchemy</option>
-          <option value="brawl">brawl</option>
-          <option value="duel">duel</option>
-          <option value="explorer">explorer</option>
-          <option value="future">future</option>
-          <option value="gladiator">gladiator</option>
-          <option value="historic">historic</option>
-          <option value="historicbrawl">historicbrawl</option>
-          <option value="legacy">legacy</option>
-          <option value="oldschool">oldschool</option>
-          <option value="pauper">pauper</option>
-          <option value="paupercommander">paupercommander</option>
-          <option value="penny">penny</option>
-          <option value="pioneer">pioneer</option>
-          <option value="premodern">premodern</option>
-          <option value="vintage">vintage</option>
-        </select>
-        <button class="btn btn-secondary" value="legality" @click="add">add</button>
-      </div>
-
-      <div class="filter-group">
-        <label class="col-form-label">set</label>
-        <button class="btn btn-secondary" @click="openSetPicker">open set selector</button>
-      </div>
-
-      <div class="colors-group">
-        <div class="color-buttons">
-          <div class="form-check form-check-inline">
-            <input class="btn-check" type="checkbox" id="colorwhite" ref="colorwhite" />
-            <label class="btn btn-outline-warning" for="colorwhite">white</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="btn-check" type="checkbox" id="colorblue" ref="colorblue" />
-            <label class="btn btn-outline-primary" for="colorblue">blue</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="btn-check" type="checkbox" id="colorblack" ref="colorblack" />
-            <label class="btn btn-outline-dark" for="colorblack">black</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="btn-check" type="checkbox" id="colorred" ref="colorred" />
-            <label class="btn btn-outline-danger" for="colorred">red</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="btn-check" type="checkbox" id="colorgreen" ref="colorgreen" />
-            <label class="btn btn-outline-success" for="colorgreen">green</label>
-          </div>
+        <div class="filter-group">
+          <label class="col-form-label">name</label>
+          <select class="form-select operator-select" ref="nameop">
+            <option>and</option>
+            <option>not</option>
+          </select>
+          <input class="form-control" ref="name" />
+          <button class="btn btn-secondary" value="name" @click="add">add</button>
         </div>
 
-        <div class="colors-row-two">
-          <div class="color-options">
+        <div class="filter-group">
+          <label class="col-form-label">text</label>
+          <select class="form-select operator-select" ref="textop">
+            <option>and</option>
+            <option>not</option>
+          </select>
+          <input class="form-control" ref="text" />
+          <button class="btn btn-secondary" value="text" @click="add">add</button>
+        </div>
+
+        <div class="filter-group">
+          <label class="col-form-label">type</label>
+          <select class="form-select operator-select" ref="typeop">
+            <option>and</option>
+            <option>not</option>
+          </select>
+          <input class="form-control" ref="type" />
+          <button class="btn btn-secondary" value="type" @click="add">add</button>
+        </div>
+
+        <div class="filter-group">
+          <label class="col-form-label">flavor</label>
+          <select class="form-select operator-select" ref="flavorop">
+            <option>and</option>
+            <option>not</option>
+          </select>
+          <input class="form-control" ref="flavor" />
+          <button class="btn btn-secondary" value="flavor" @click="add">add</button>
+        </div>
+
+        <div class="filter-group">
+          <label class="col-form-label">cmc</label>
+          <select class="form-select operator-select" ref="cmcop">
+            <option>=</option>
+            <option>&lt=</option>
+            <option>&gt=</option>
+          </select>
+          <input class="form-control" ref="cmc" />
+          <button class="btn btn-secondary" value="cmc" @click="add">add</button>
+        </div>
+
+        <div class="filter-group">
+          <label class="col-form-label">power</label>
+          <select class="form-select operator-select" ref="powerop">
+            <option>=</option>
+            <option>&lt=</option>
+            <option>&gt=</option>
+          </select>
+          <input class="form-control" ref="power" />
+          <button class="btn btn-secondary" value="power" @click="add">add</button>
+        </div>
+
+        <div class="filter-group">
+          <label class="col-form-label">toughness</label>
+          <select class="form-select operator-select" ref="toughnessop">
+            <option>=</option>
+            <option>&lt=</option>
+            <option>&gt=</option>
+          </select>
+          <input class="form-control" ref="toughness" />
+          <button class="btn btn-secondary" value="toughness" @click="add">add</button>
+        </div>
+
+        <div class="filter-group">
+          <label class="col-form-label">legality</label>
+          <select class="form-select" ref="legality">
+            <option value="commander">commander</option>
+            <option value="modern">modern</option>
+            <option value="standard">standard</option>
+            <option value="---">---</option>
+
+            <option value="alchemy">alchemy</option>
+            <option value="brawl">brawl</option>
+            <option value="duel">duel</option>
+            <option value="explorer">explorer</option>
+            <option value="future">future</option>
+            <option value="gladiator">gladiator</option>
+            <option value="historic">historic</option>
+            <option value="historicbrawl">historicbrawl</option>
+            <option value="legacy">legacy</option>
+            <option value="oldschool">oldschool</option>
+            <option value="pauper">pauper</option>
+            <option value="paupercommander">paupercommander</option>
+            <option value="penny">penny</option>
+            <option value="pioneer">pioneer</option>
+            <option value="premodern">premodern</option>
+            <option value="vintage">vintage</option>
+          </select>
+          <button class="btn btn-secondary" value="legality" @click="add">add</button>
+        </div>
+
+        <div class="filter-group">
+          <label class="col-form-label">set</label>
+          <button class="btn btn-secondary" @click="openSetPicker">open set selector</button>
+        </div>
+
+        <div class="colors-group">
+          <div class="color-buttons">
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" ref="coloronly" />
-              <label class="form-check-label">only</label>
+              <input class="btn-check" type="checkbox" id="colorwhite" ref="colorwhite" />
+              <label class="btn btn-outline-warning" for="colorwhite">white</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" ref="coloror" />
-              <label class="form-check-label">or</label>
+              <input class="btn-check" type="checkbox" id="colorblue" ref="colorblue" />
+              <label class="btn btn-outline-primary" for="colorblue">blue</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="btn-check" type="checkbox" id="colorblack" ref="colorblack" />
+              <label class="btn btn-outline-dark" for="colorblack">black</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="btn-check" type="checkbox" id="colorred" ref="colorred" />
+              <label class="btn btn-outline-danger" for="colorred">red</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="btn-check" type="checkbox" id="colorgreen" ref="colorgreen" />
+              <label class="btn btn-outline-success" for="colorgreen">green</label>
             </div>
           </div>
 
-          <div>
-            <button class="btn btn-secondary" value="identity" @click="add">identity</button>
-            <button class="btn btn-secondary" value="colors" @click="add">color</button>
+          <div class="colors-row-two">
+            <div class="color-options">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" ref="coloronly" />
+                <label class="form-check-label">only</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" ref="coloror" />
+                <label class="form-check-label">or</label>
+              </div>
+            </div>
+
+            <div>
+              <button class="btn btn-secondary" value="identity" @click="add">identity</button>
+              <button class="btn btn-secondary" value="colors" @click="add">color</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div>
-      <button class="btn btn-warning" @click="clear">clear</button>
-      <button class="btn btn-primary" @click="apply">apply</button>
-    </div>
+      <div class="filter-controls">
 
-    <div class="filter-list">
-      <h5>filters</h5>
-      <div class="filter-added" v-for="filter in filters">
-        <div class="filter-display-kind">{{ filter.kind }}</div>
-        <div v-if="filter.kind === 'colors' || filter.kind === 'identity'">
-          <span v-if="filter.only" class="filter-display-operator">only&nbsp;</span>
-          <span v-if="filter.or" class="filter-display-operator">or&nbsp;</span>
-          <template v-for="color in colors">
-            <span v-if="filter[color]" class="filter-display-value">
-              {{ color }}
-              <i class="bi-x-circle" @click="remove(filter)"></i>
-            </span>
-          </template>
+        <div>
+          <button class="btn btn-warning" @click="clear">clear</button>
+          <button class="btn btn-primary" @click="apply">apply</button>
         </div>
-        <div v-else>
-          <span class="filter-display-operator">{{ filter.operator }}&nbsp;</span>
-          <span class="filter-display-value">
-            {{ filter.value }}
-            <i class="bi-x-circle" @click="remove(filter)"></i>
-          </span>
+
+        <div class="filter-list">
+          <h5>filters</h5>
+          <div class="filter-added" v-for="filter in filters">
+            <div class="filter-display-kind">{{ filter.kind }}</div>
+            <div v-if="filter.kind === 'colors' || filter.kind === 'identity'">
+              <span v-if="filter.only" class="filter-display-operator">only&nbsp;</span>
+              <span v-if="filter.or" class="filter-display-operator">or&nbsp;</span>
+              <template v-for="color in colors">
+                <span v-if="filter[color]" class="filter-display-value">
+                  {{ color }}
+                  <i class="bi-x-circle" @click="remove(filter)"></i>
+                </span>
+              </template>
+            </div>
+            <div v-else>
+              <span class="filter-display-operator">{{ filter.operator }}&nbsp;</span>
+              <span class="filter-display-value">
+                {{ filter.value }}
+                <i class="bi-x-circle" @click="remove(filter)"></i>
+              </span>
+            </div>
+          </div>
         </div>
+
       </div>
+
     </div>
 
     <SetPickerModal :id="setPickerModalId" @set-selected="addSetFilter" />
@@ -211,6 +218,11 @@ export default {
   props: {
     cardlist: Array,
     modelValue: Array,
+
+    layoutDirection: {
+      type: String,
+      default: 'column'
+    },
   },
 
   data() {
@@ -220,6 +232,12 @@ export default {
 
       setPickerModalId: 'set-picker-modal-' + uuidv4(),
     }
+  },
+
+  computed: {
+    layoutClass() {
+      return this.layoutDirection === 'row' ? 'row-layout' : ''
+    },
   },
 
   methods: {
@@ -317,6 +335,19 @@ function filterCards(cards, filters) {
 
 
 <style scoped>
+.filter-components {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-components.row-layout {
+  flex-direction: row;
+}
+
+.row-layout > .filter-controls {
+  margin-left: .5em;
+}
+
 label {
   min-width: 4em;
 }

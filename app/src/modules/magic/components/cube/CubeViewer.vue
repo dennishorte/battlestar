@@ -1,6 +1,6 @@
 <template>
-  <MagicWrapper :alsoLoading="loadingCube">
-    <div class="container">
+  <MagicWrapper :also-loading="loadingCube" :after-loaded="insertCardData">
+    <div class="container" v-if="!!cube">
 
       <div class="row">
         <div class="col-6">
@@ -17,6 +17,11 @@
               <button class="btn" :class="buttonClassesScars" @click="navigate('scars')">scars</button>
               <button class="btn" :class="buttonClassesAchievements" @click="navigate('achievements')">achievements</button>
             </template>
+
+            <button class="btn btn-secondary" @click="toggleSearch">
+              search
+              <input type="checkbox" class="form-check-input" v-model="showSearch" />
+            </button>
 
             <Dropdown text="menu">
               <DropdownButton @click="this.$modal('cube-update-modal').show()">add/remove cards</DropdownButton>
@@ -43,7 +48,13 @@
       </div>
 
       <div v-if="showing === 'cards'">
-        <CubeViewerCards v-if="!!cube" :cube="cube" />
+        <CardFilters
+          layout-direction="row"
+          :cardlist="cube.cardlist"
+          :class="showSearch ? '' : 'd-none'"
+          v-model="filteredCards"
+        />
+        <CubeBreakdown :cardlist="filteredCards" />
       </div>
 
       <div v-if="showing === 'scars'">
@@ -78,8 +89,9 @@ import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
 import CardEditorModal from '../CardEditorModal'
+import CubeBreakdown from './CubeBreakdown'
+import CardFilters from '../CardFilters'
 import CubeCardModal from './CubeCardModal'
-import CubeViewerCards from './CubeViewerCards'
 import CubeImportModal from './CubeImportModal'
 import Dropdown from '@/components/Dropdown'
 import DropdownButton from '@/components/DropdownButton'
@@ -94,7 +106,8 @@ export default {
 
   components: {
     CardEditorModal,
-    CubeViewerCards,
+    CardFilters,
+    CubeBreakdown,
     CubeCardModal,
     CubeImportModal,
     Dropdown,
@@ -116,6 +129,8 @@ export default {
       scars: [],
 
       showing: 'cards',
+      showSearch: false,
+      filteredCards: [],
     }
   },
 
@@ -216,6 +231,10 @@ export default {
       }
     },
 
+    toggleSearch() {
+      this.showSearch = !this.showSearch
+    },
+
     updateCube(update) {
       for (const card of update.remove) {
         this.cube.removeCard(card)
@@ -239,6 +258,10 @@ export default {
 
     ////////////////////////////////////////////////////////////////////////////////
     // Async Methods
+
+    async insertCardData() {
+      await this.$store.dispatch('magic/cards/insertCardData', this.cube.cardlist)
+    },
 
     async loadCube() {
       this.loading = true
@@ -348,9 +371,17 @@ export default {
 
 
 <style scoped>
+.container {
+  margin-bottom: 2em;
+}
+
 .cube-menu {
   display: flex;
   flex-direction: row;
+}
+
+.cube-menu > .btn {
+  margin-right: .25em;
 }
 
 .scar-container {

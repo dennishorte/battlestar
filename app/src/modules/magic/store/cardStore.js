@@ -80,6 +80,24 @@ export default {
   },
 
   actions: {
+    insertCardData({ getters }, cardlist) {
+      const lookupFunc = getters['getLookupFunc']
+      mag.util.card.lookup.insertCardData(cardlist, lookupFunc)
+
+      const missingData = []
+      for (const card of cardlist) {
+        if (!card.data) {
+          missingData.push(card)
+        }
+      }
+
+      if (missingData.length > 0) {
+        console.log(missingData)
+        alert('Unable to fetch data for some cards')
+      }
+    },
+
+
     ////////////////////////////////////////////////////////////////////////////////
     // Data loading
 

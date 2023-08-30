@@ -204,6 +204,10 @@ const colorNameToSymbol = {
 }
 
 CardUtil.applyOneFilter = function(card, filter) {
+  if (card.data) {
+    card = card.data
+  }
+
   if (filter.kind === 'legality') {
     return 'legal' in card && card.legal.includes(filter.value)
   }
