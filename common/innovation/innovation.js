@@ -3060,15 +3060,20 @@ Innovation.prototype.getDogmaTargets = function(player) {
 Innovation.prototype._generateActionChoicesDogma = function() {
   const player = this.getPlayerCurrent()
 
-  const dogmaTargets = this.getDogmaTargets(player)
+  /* const dogmaTargets = this.getDogmaTargets(player)
 
-  const extraEffects = this
-    .getInfoByKarmaTrigger(player, 'list-effects')
-    .flatMap(info => info.impl.func(this, player))
+   * const extraEffects = this
+   *   .getInfoByKarmaTrigger(player, 'list-effects')
+   *   .flatMap(info => info.impl.func(this, player))
 
-  const allTargets = util
-    .array
-    .distinct([...dogmaTargets, ...extraEffects])
+   * const allTargets = util
+   *   .array
+   *   .distinct([...dogmaTargets, ...extraEffects])
+   *   .map(card => card.name)
+   */
+
+  const allTargets = this
+    .getTopCards(player)
     .map(card => card.name)
 
   return {
