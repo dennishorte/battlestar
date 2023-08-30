@@ -11,11 +11,17 @@
       <div class="row">
         <div class="col">
           <div class="cube-menu">
-            <button class="btn" :class="buttonClassesCards" @click="navigate('cards')">cards</button>
+            <button class="btn" :class="buttonClassesCards" @click="navigate('cards')">
+              cards ({{ filteredCards.length }})
+            </button>
 
             <template v-if="!!cube.allowEdits">
-              <button class="btn" :class="buttonClassesScars" @click="navigate('scars')">scars</button>
-              <button class="btn" :class="buttonClassesAchievements" @click="navigate('achievements')">achievements</button>
+              <button class="btn" :class="buttonClassesScars" @click="navigate('scars')">
+                scars ({{ scars.length }})
+              </button>
+              <button class="btn" :class="buttonClassesAchievements" @click="navigate('achievements')">
+                achievements ({{ achievements.length }})
+              </button>
             </template>
 
             <button class="btn btn-secondary" @click="toggleSearch">
@@ -126,6 +132,7 @@ export default {
       loadingCube: true,
 
       cube: null,
+      achievements: [],
       scars: [],
 
       showing: 'cards',
