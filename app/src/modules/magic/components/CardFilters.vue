@@ -195,7 +195,7 @@ import { mapState} from 'vuex'
 import { mag, util } from 'battlestar-common'
 
 import SectionHeader from '@/components/SectionHeader'
-import SetPickerModal from '../SetPickerModal'
+import SetPickerModal from './SetPickerModal'
 
 
 export default {

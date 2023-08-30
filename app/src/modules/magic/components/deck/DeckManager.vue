@@ -74,7 +74,7 @@ import { mapState } from 'vuex'
 import axios from 'axios'
 import mitt from 'mitt'
 
-import CardFilters from './CardFilters'
+import CardFilters from '../CardFilters'
 import CardList from './CardList'
 import CardImportModal from '../CardImportModal'
 import CardManagerModal from './CardManagerModal'
