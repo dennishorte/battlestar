@@ -323,19 +323,10 @@ export default {
         return
       }
 
-      this.game.respondToInputRequest({
-        actor: this.actor.name,
-        title: 'Apply Scar',
-        selection: [{
-          scarIndex,
-          originalId: original.id,
-          newData: updated,
-          // newData: savedCard,
-        }]
-      })
+      let savedCard
 
       try {
-        const savedCard = await this.$store.dispatch('magic/cards/save', {
+        savedCard = await this.$store.dispatch('magic/cards/save', {
           actor: this.actor,
           cubeId: this.game.settings.cubeId,
           updated,
@@ -348,6 +339,16 @@ export default {
         alert('Error saving card')
         throw e
       }
+
+      this.game.respondToInputRequest({
+        actor: this.actor.name,
+        title: 'Apply Scar',
+        selection: [{
+          scarIndex,
+          originalId: original.id,
+          newData: savedCard,
+        }]
+      })
 
       await this.save()
     },
