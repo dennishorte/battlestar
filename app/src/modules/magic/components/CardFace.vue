@@ -109,7 +109,7 @@ export default {
         `card-container-${this.size}px`
       ]
 
-      if (this.face.scarred) {
+      if (this.isScarred) {
         classes.push('scarred')
       }
 
@@ -125,6 +125,10 @@ export default {
 
     imageUrl() {
       return this.face.image_uri
+    },
+
+    isScarred() {
+      return Boolean(this.card.custom_id)
     },
 
     manaCost() {
