@@ -25,7 +25,6 @@ export default {
 
   actions: {
     async load(context, { cubeId }) {
-      console.log(cubeId)
       const requestResult = await axios.post('/api/magic/cube/fetch', { cubeId })
 
       if (requestResult.data.status === 'success') {

@@ -272,7 +272,7 @@ export default {
 
     async loadCube() {
       this.loadingCube = true
-      this.cube = await this.$store.dispatch('magic/cube/load', this.id)
+      this.cube = await this.$store.dispatch('magic/cube/load', { cubeId: this.id })
       this.loadingCube = false
     },
 

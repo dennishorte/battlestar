@@ -14,7 +14,17 @@ Card.fetchAll = async function(req, res) {
 }
 
 Card.save = async function(req, res) {
-  const { card, original, editor, comment } = req.body
+  const card = req.body.card.data ? req.body.card.data : req.body.card
+  const original = req.body.original.data ? req.body.original.data : req.body.original
+  const { editor, comment } = req.body
+
+  if (card.data) {
+    throw new Error('Card had data ' + card.name)
+  }
+
+  if (original.data) {
+    throw new Error('Original had data ' + original.name)
+  }
 
   const replaceScryfallCard = original && !original.custom_id
   let cardCreated = false

@@ -167,6 +167,8 @@ export default {
     // Card editing
 
     async save({ dispatch }, { actor, cubeId, updated, original, comment }) {
+      updated = updated.data ? updated.data : updated
+
       const requestResult = await axios.post('/api/magic/card/save', {
         card: updated,
         original,
