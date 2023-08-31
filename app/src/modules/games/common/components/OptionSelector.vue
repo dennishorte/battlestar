@@ -192,14 +192,15 @@ export default {
     },
 
     setSelection(optionName, opts={}) {
+      this.selected = []
+
       optionName = optionName.toLowerCase()
 
       for (let i = 0; i < this.selector.choices.length; i++) {
         const choice = this.selector.choices[i]
         const choiceName = (choice.title || choice).toLowerCase()
         if (choiceName === optionName || (opts.prefix && choiceName.startsWith(optionName))) {
-          this.selected = [i]
-          break
+          this.selected.push(i)
         }
       }
     },
