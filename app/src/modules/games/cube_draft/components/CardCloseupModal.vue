@@ -8,6 +8,14 @@
 
     <template #footer>
       <button
+        class="btn btn-danger"
+        @click="removeCard"
+        data-bs-dismiss
+      >
+        remove
+      </button>
+
+      <button
         class="btn btn-secondary"
         :class="commandClass"
         @click="setZone('command')"
@@ -81,6 +89,10 @@ export default {
       if (this.card) {
         return this.card.zone === 'side' ? 'btn-success' : 'btn-secondary'
       }
+    },
+
+    removeCard() {
+      this.$store.commit('magic/dm/removeCard', this.card)
     },
   },
 

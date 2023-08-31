@@ -52,6 +52,13 @@ export default {
       state.activeDeck.addCard(card, zoneName)
       state.modified = true
     },
+
+    removeCard(state, card) {
+      util.assert(card.zone, 'Card does not have a zone specified.')
+      state.activeDeck.removeCard(card, card.zone)
+      state.modified = true
+    },
+
     removeCardFromZone(state, { card, zoneName }) {
       state.activeDeck.removeCard(card, zoneName)
       state.modified = true
