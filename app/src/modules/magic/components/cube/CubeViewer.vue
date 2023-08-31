@@ -271,19 +271,9 @@ export default {
     },
 
     async loadCube() {
-      this.loading = true
-
-      const requestResult = await axios.post('/api/magic/cube/fetch', {
-        cubeId: this.id
-      })
-
-      if (requestResult.data.status === 'success') {
-        this.cube = cubeUtil.deserialize(requestResult.data.cube)
-        this.loadingCube = false
-      }
-      else {
-        alert('Error loading cube: ' + this.id)
-      }
+      this.loadingCube = true
+      this.cube = await this.$store.dispatch('magic/cube/load', this.id)
+      this.loadingCube = false
     },
 
     async loadScars() {

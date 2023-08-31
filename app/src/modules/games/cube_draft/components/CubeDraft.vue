@@ -335,18 +335,18 @@ export default {
       })
 
       try {
-        /* const savedCard = await this.$store.dispatch('magic/cards/save', {
-         *   actors: this.actor,
-         *   cube: this.cube,
-         *   updated,
-         *   original,
-         *   comment: `Scarred in ${this.game.settings.name}.`,
-         * })
-         */
+        const savedCard = await this.$store.dispatch('magic/cards/save', {
+          actor: this.actor,
+          cubeId: this.game.settings.cubeId,
+          updated,
+          original,
+          comment: `Scarred in ${this.game.settings.name}.`,
+        })
       }
 
       catch (e) {
         alert('Error saving card')
+        throw e
       }
 
       await this.save()

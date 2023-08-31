@@ -166,7 +166,7 @@ export default {
     ////////////////////////////////////////////////////////////////////////////////
     // Card editing
 
-    async save({ dispatch }, { actor, cube, updated, original, comment }) {
+    async save({ dispatch }, { actor, cubeId, updated, original, comment }) {
       const requestResult = await axios.post('/api/magic/card/save', {
         card: updated,
         original,
@@ -178,6 +178,8 @@ export default {
       })
 
       if (requestResult.data.status === 'success') {
+        const cube = await dispatch('magic/cube/load', { cubeId }, {root: true })
+
         // Need to update the cube, if the edited card was a scryfall card that was replaced
         // with a custom card.
         if (requestResult.data.cardReplaced) {
