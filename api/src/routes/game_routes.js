@@ -161,7 +161,6 @@ Game.saveFull = async function(req, res) {
   }
 
   game.responses = req.body.responses
-  game.chat = req.body.chat
 
   // Magic doesn't run when saving because that would require loading the card
   // database, which is slow.

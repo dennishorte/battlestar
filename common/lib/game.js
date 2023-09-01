@@ -15,7 +15,6 @@ function Game(serialized_data, viewerName) {
 
   // State will be reset each time the game is run
   this.state = this._blankState()
-  this.chat = serialized_data.chat || []
 
   // Settings are immutable data
   this.settings = serialized_data.settings
@@ -56,7 +55,6 @@ function GameFactory(settings, viewerName=undefined) {
   util.assert(!!settings.seed)
 
   const data = {
-    chat: [],
     responses: [],
     settings,
   }
@@ -306,21 +304,11 @@ Game.prototype.undo = function() {
   this._undoCalled()
 
   this.run()
-
-  for (const chat of this.getChat()) {
-    if (chat.position > this.getLog().length) {
-      chat.position = this.getLog().length
-    }
-  }
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Logging
-
-Game.prototype.getChat = function() {
-  return this.chat
-}
 
 Game.prototype.getLog = function() {
   return this.state.log
@@ -332,19 +320,6 @@ Game.prototype.getLogIndent = function() {
 
 Game.prototype.getViewerName = function() {
   return this.viewerName
-}
-
-Game.prototype.mChat = function(player, text) {
-  player = player.name ? player.name : player
-  util.assert(typeof player === 'string', "Player param is not a string")
-
-  this.getChat().push({
-    player,
-    text,
-
-    // The position is used to interleave chat with the log messages, if desired.
-    position: this.getLog().length
-  })
 }
 
 Game.prototype.mLog = function(msg) {
@@ -692,7 +667,6 @@ Game.prototype.getZoneByPlayer = function(player, name) {
 Game.prototype.historicalView = function(index) {
   const data = {
     _id: this._id,
-    chat: this.chat,
     settings: this.settings,
     responses: this.responses.slice(0, index + 1),
   }

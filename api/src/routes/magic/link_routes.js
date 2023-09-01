@@ -69,10 +69,7 @@ Link.fetchByDraft = async function(req, res, next) {
     .game
     .collection
     .find({ _id: { $in: linkedGameIds } })
-    .project({
-      responses: 0,
-      chat: 0,
-    })
+    .project({ responses: 0 })
     .toArray()
 
   res.json({
