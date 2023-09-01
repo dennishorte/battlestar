@@ -89,7 +89,6 @@
 
 
 <script>
-import axios from 'axios'
 import mitt from 'mitt'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -277,7 +276,6 @@ export default {
 
     async save() {
       const game = this.game
-      let requestResult
 
       if (game.usedUndo) {
         const payload = {
@@ -292,7 +290,7 @@ export default {
           gameOverData: game.gameOverData,
         }
 
-        requestResult = await axios.post('/api/game/saveFull', payload)
+        await this.$post('/api/game/saveFull', payload)
       }
 
       else {
@@ -301,16 +299,10 @@ export default {
           response: game.getLastUserAction(),
         }
 
-        requestResult = await axios.post('/api/game/saveResponse', payload)
+        await this.$post('/api/game/saveResponse', payload)
       }
 
-      if (requestResult.data.status === 'success') {
-        console.log('saved')
-        this.game.usedUndo = false
-      }
-      else {
-        alert('Save game failed. Try reloading and trying again.\n' + requestResult.data.message)
-      }
+      this.game.usedUndo = false
     },
 
     saveDeck() {
@@ -419,16 +411,11 @@ export default {
 
       // Load deck
       const player = newValue.getPlayerByName(this.actor.name)
-      const response = await axios.post('/api/magic/deck/fetch', {
+      const { deck } = await this.$post('/api/magic/deck/fetch', {
         deckId: player.deckId,
       })
 
-      if (response.data.status === 'success') {
-        this.$store.dispatch('magic/dm/selectDeck', response.data.deck)
-      }
-      else {
-        alert('Unable to load deck')
-      }
+      this.$store.dispatch('magic/dm/selectDeck', response.data.deck)
     }
   },
 }

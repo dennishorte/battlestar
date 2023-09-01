@@ -27,7 +27,6 @@
 
 
 <script>
-import axios from 'axios'
 import { mapState } from 'vuex'
 
 import Modal from '@/components/Modal'
@@ -61,30 +60,19 @@ export default {
     },
 
     async link() {
-      const requestResult = await axios.post('/api/magic/link/create', {
+      await this.$post('/api/magic/link/create', {
         gameId: this.game._id,
         draftId: this.draftId,
       })
-
-      if (requestResult.data.status !== 'success') {
-        console.log(requestResult.data)
-        alert('link failed')
-      }
     },
 
     async fetchDrafts() {
-      const requestResult = await axios.post('/api/magic/link/fetchDrafts', {
+      const { drafts } = await this.$post('/api/magic/link/fetchDrafts', {
         userId: this.actor._id,
       })
 
-      if (requestResult.data.status === 'success') {
-        this.drafts = requestResult.data.drafts
-        this.draftId = this.drafts[0] ? this.drafts[0]._id : ''
-      }
-      else {
-        console.log(requestResult.data)
-        alert('Error fetching draft list')
-      }
+      this.drafts = drafts
+      this.draftId = this.drafts[0] ? this.drafts[0]._id : ''
     },
 
   },

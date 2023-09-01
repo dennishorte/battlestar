@@ -36,7 +36,6 @@
 
 
 <script>
-import axios from 'axios'
 import mitt from 'mitt'
 
 import { inn } from 'battlestar-common'
@@ -110,14 +109,6 @@ export default {
   },
 
   methods: {
-    handleSaveResult(result) {
-      console.log(result)
-
-      if (result.data.status === 'success') {
-        this.game.usedUndo = false
-      }
-    },
-
     openRules() {
       window.open("https://asmadigames.com/rules/Rulebook_Deluxe_spreads.pdf")
     },
@@ -138,8 +129,10 @@ export default {
         responses: game.responses,
         chat: game.getChat(),
       }
-      const requestResult = await axios.post('/api/game/saveFull', payload)
-      this.handleSaveResult(requestResult)
+
+      await this.$post('/api/game/saveFull', payload)
+
+      this.game.usedUndo = false
     },
 
     uiFactory() {

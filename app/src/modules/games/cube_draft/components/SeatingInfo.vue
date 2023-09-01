@@ -20,9 +20,6 @@
 
 
 <script>
-import axios from 'axios'
-
-
 export default {
   name: 'SeatingInfo',
 
@@ -57,7 +54,7 @@ export default {
   methods: {
     async newGame(opponent) {
       // Create a lobby for a new game.
-      const requestResult = await axios.post('/api/lobby/create', {
+      const { lobbyId } = await this.$post('/api/lobby/create', {
         userIds: [this.actor._id, opponent._id],
         game: 'Magic',
         options: {
@@ -66,13 +63,8 @@ export default {
         },
       })
 
-      if (requestResult.data.status !== 'success') {
-        alert('Error creating lobby for new game')
-        return
-      }
-
       // Redirect to the new lobby.
-      this.$router.push(`/lobby/${requestResult.data.lobbyId}`)
+      this.$router.push(`/lobby/${lobbyId}`)
     },
   },
 }

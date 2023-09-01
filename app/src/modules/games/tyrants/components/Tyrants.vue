@@ -37,7 +37,6 @@
 
 
 <script>
-import axios from 'axios'
 import mitt from 'mitt'
 
 import { nextTick } from 'vue'
@@ -279,8 +278,10 @@ export default {
         responses: game.responses,
         chat: game.getChat(),
       }
-      const requestResult = await axios.post('/api/game/saveFull', payload)
-      this.handleSaveResult(requestResult)
+
+      await this.$post('/api/game/saveFull', payload)
+
+      this.game.usedUndo = false
     },
 
     _injectChatMethod() {

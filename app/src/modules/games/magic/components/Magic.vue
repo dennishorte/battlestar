@@ -11,7 +11,6 @@
 
 
 <script>
-import axios from 'axios'
 import { computed } from 'vue'
 import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
@@ -107,15 +106,8 @@ export default {
         gameOverData: game.gameOverData,
       }
 
-      const requestResult = await axios.post('/api/game/saveFull', payload)
-
-      if (requestResult.data.status === 'success') {
-        console.log('saved')
-        this.game.usedUndo = false
-      }
-      else {
-        alert('Save game failed. Try reloading and trying again.\n' + requestResult.data.message)
-      }
+      await this.$post('/api/game/saveFull', payload)
+      this.game.usedUndo = false
     },
   },
 }

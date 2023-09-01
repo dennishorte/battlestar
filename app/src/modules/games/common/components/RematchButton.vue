@@ -4,8 +4,6 @@
 
 
 <script>
-import axios from 'axios'
-
 export default {
   name: 'RematchButton',
 
@@ -13,13 +11,8 @@ export default {
 
   methods: {
     async rematch() {
-      const result = await axios.post('/api/game/rematch', { gameId: this.game._id })
-      if (result.data.status === 'success') {
-        this.$router.push(result.data.redirect)
-      }
-      else {
-        alert(result.data.message)
-      }
+      const { redirect } = await this.$post('/api/game/rematch', { gameId: this.game._id })
+      this.$router.push(redirect)
     },
   },
 }

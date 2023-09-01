@@ -28,9 +28,6 @@
 
 
 <script>
-import axios from 'axios'
-
-
 export default {
   name: 'MatchResults',
 
@@ -44,11 +41,11 @@ export default {
 
   methods: {
     async fetchLinkedGameResults() {
-      const requestResult = await axios.post('/api/magic/link/fetchByDraft', {
+      const { games } = await this.$post('/api/magic/link/fetchByDraft', {
         draftId: this.game._id,
       })
 
-      this.linkedGames = requestResult.data.games
+      this.linkedGames = games
     },
 
     resultString(p1, p2) {
