@@ -58,6 +58,9 @@ Cube.prototype.addCard = function(card) {
   if (card.card_faces) {
     item.data = card
   }
+  else if (card.data) {
+    item.data = card.data
+  }
 
   this.cardlist.push(item)
 }
