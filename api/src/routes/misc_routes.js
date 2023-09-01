@@ -7,6 +7,7 @@ module.exports = Misc
 
 Misc.appVersion = async function(req, res) {
   res.json({
+    status: 'success',
     version: await db.misc.appVersion(),
   })
 }
