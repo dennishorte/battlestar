@@ -2,7 +2,7 @@
   <Modal id="tableau-modal" scrollable>
     <template #header>{{ title }}</template>
 
-    <div class="row">
+    <div class="row" v-if="!!player">
       <div class="col">
 
         <div class="trophyHall">
@@ -42,6 +42,11 @@
           <div class="title">Inner Circle</div>
           <GameCard v-for="card in innerCircleCards" :key="card.id" :card="card" />
         </div>
+
+        <div class="discard">
+          <div class="title">Discard</div>
+          <GameCard v-for="card in discardCards" :key="card.id" :card="card" />
+        </div>
       </div>
 
     </div>
@@ -66,26 +71,26 @@ export default {
 
   computed: {
     allCards() {
-      if (this.player) {
-        return [
-          ...this.game.getCardsByZone(this.player, 'deck'),
-          ...this.game.getCardsByZone(this.player, 'hand'),
-          ...this.game.getCardsByZone(this.player, 'played'),
-          ...this.game.getCardsByZone(this.player, 'discard'),
-        ].sort((l, r) => l.name.localeCompare(r.name))
-      }
-      else {
-        return []
-      }
+      return [
+        ...this.game.getCardsByZone(this.player, 'deck'),
+        ...this.game.getCardsByZone(this.player, 'hand'),
+        ...this.game.getCardsByZone(this.player, 'played'),
+        ...this.game.getCardsByZone(this.player, 'discard'),
+      ].sort((l, r) => l.name.localeCompare(r.name))
+    },
+
+    discardCards() {
+      return this
+        .game
+        .getCardsByZone(this.player, 'discard')
+        .sort((l, r) => l.name.localeCompare(r.name))
     },
 
     innerCircleCards() {
-      if (this.player) {
-        return this.game.getCardsByZone(this.player, 'innerCircle')
-      }
-      else {
-        return []
-      }
+      return this
+        .game
+        .getCardsByZone(this.player, 'innerCircle')
+        .sort((l, r) => l.name.localeCompare(r.name))
     },
 
     player() {
@@ -93,7 +98,7 @@ export default {
     },
 
     scoreBreakdown() {
-      return this.player ? Object.entries(this.game.getScoreBreakdown(this.player)) : []
+      return Object.entries(this.game.getScoreBreakdown(this.player))
     },
 
     title() {
@@ -101,12 +106,7 @@ export default {
     },
 
     trophyHall() {
-      if (this.player) {
-        return this.game.getCardsByZone(this.player, 'trophyHall')
-      }
-      else {
-        return []
-      }
+      return this.game.getCardsByZone(this.player, 'trophyHall')
     },
   },
 
