@@ -32,8 +32,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 import Header from '../../../../src/components/Header'
 
 import AdminActions from './AdminActions'
@@ -57,13 +55,13 @@ export default {
   },
   methods: {
     async getAllLobbies() {
-      const response = await axios.post('/api/lobby/all')
-      this.lobbies = response.data.lobbies
+      const { lobbies } = await this.$post('/api/lobby/all')
+      this.lobbies = lobbies
     },
 
     async getAllUsers() {
-      const response = await axios.post('/api/user/all')
-      this.users = response.data.users
+      const { users } = await this.$post('/api/user/all')
+      this.users = users
     },
   },
 

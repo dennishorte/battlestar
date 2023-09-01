@@ -14,9 +14,6 @@
 
 
 <script>
-import axios from 'axios'
-
-
 export default {
   name: 'AdminActions',
 
@@ -31,11 +28,16 @@ export default {
     async updateScryfall() {
       this.status = 'waiting'
       this.message = 'Updating Scryfall data.\nThis can take a minute or two.'
-      const result = await axios.post('/api/magic/scryfall/update', {})
-      this.status = result.data.status
-      this.message = result.data.message
-      console.log(result)
-      console.log(result.data)
+
+      try {
+        await this.$post('/api/magic/scryfall/update', {})
+        this.status = 'success'
+      }
+      catch (e) {
+        this.status = error
+        this.message = 'Check console for details'
+        throw e
+      }
     },
   },
 }

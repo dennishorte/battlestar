@@ -35,8 +35,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 import Dropdown from '@/components/Dropdown'
 import DropdownItem from '@/components/DropdownItem'
 
@@ -65,14 +63,8 @@ export default {
 
   methods: {
     async deactivate(id) {
-      const result = await axios.post('/api/user/deactivate', { id })
-      if (result.data.status === 'success') {
-        this.$emit('users-updated')
-      }
-      else {
-        console.log('error deactivating user: ', result)
-        alert("Error. See console for details.")
-      }
+      await this.$post('/api/user/deactivate', { id })
+      this.$emit('users-updated')
     },
 
     edit(user) {
