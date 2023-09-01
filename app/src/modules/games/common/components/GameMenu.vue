@@ -1,16 +1,18 @@
 <template>
-  <Dropdown class="game-menu">
-    <template #title>{{ game.settings.name }}</template>
+  <div class="menu-wrapper">
+    <Dropdown class="game-menu">
+      <template #title>{{ game.settings.name }}</template>
 
-    <DropdownButton @click="home" :disabled="disabled.includes('home')">home</DropdownButton>
-    <DropdownButton @click="next" :disabled="disabled.includes('next')">next</DropdownButton>
-    <DropdownDivider />
-    <DropdownButton @click="undo" :disabled="disabled.includes('undo')">undo</DropdownButton>
-    <DropdownDivider />
-    <DropdownButton @click="debug" :disabled="disabled.includes('debug')">debug</DropdownButton>
+      <DropdownButton @click="home" :disabled="disabled.includes('home')">home</DropdownButton>
+      <DropdownButton @click="next" :disabled="disabled.includes('next')">next</DropdownButton>
+      <DropdownDivider />
+      <DropdownButton @click="debug" :disabled="disabled.includes('debug')">debug</DropdownButton>
 
-    <slot></slot>
-  </Dropdown>
+      <slot></slot>
+    </Dropdown>
+
+    <button v-if="!disabled.includes('undo')" class="btn btn-secondary" @click="undo">undo</button>
+  </div>
 </template>
 
 
@@ -84,11 +86,17 @@ export default {
 
 
 <style scoped>
+.menu-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
 .game-menu {
   display: flex;
   justify-content: center;
   align-content: center;
   flex-direction: column;
+  flex-grow: 2;
 
   height: 3em;
   padding: 0 .25em;
