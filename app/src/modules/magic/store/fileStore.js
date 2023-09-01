@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { util } from 'battlestar-common'
 
 
@@ -37,63 +36,36 @@ export default {
   actions: {
     async create({ dispatch, rootGetters }, data) {
       data.userId = rootGetters['auth/userId']
-      const requestResult = await axios.post('/api/magic/file/create', data)
-
-      if (requestResult.data.status === 'success') {
-        await dispatch('fetchAll')
-      }
-      else {
-        alert(requestResult.message)
-      }
+      await this.$post('/api/magic/file/create', data)
+      await dispatch('fetchAll')
     },
 
     async delete({ commit }, data) {
-      const requestResult = await axios.post('/api/magic/file/delete', {
+      await this.$post('/api/magic/file/delete', {
         fileId: data.file._id,
         kind: data.file.kind
       })
-
-      if (requestResult.data.status === 'success') {
-        commit('removeOne', data.file)
-      }
-      else {
-        alert(requestResult.message)
-      }
+      commit('removeOne', data.file)
     },
 
     async duplicate({ dispatch }, data) {
-      const requestResult = await axios.post('/api/magic/file/duplicate', {
+      await this.$post('/api/magic/file/duplicate', {
         fileId: data.file._id,
         kind: data.file.kind
       })
-
-      if (requestResult.data.status === 'success') {
-        await dispatch('fetchAll')
-      }
-      else {
-        alert(requestResult.message)
-      }
+      await dispatch('fetchAll')
     },
 
     async fetchAll({ commit, rootGetters }) {
-      const requestResult = await axios.post('/api/user/magic/files', {
+      const { files } = await this.$post('/api/user/magic/files', {
         userId: rootGetters['auth/userId'],
       })
-      if (requestResult.data.status === 'success') {
-        commit('setFiles', requestResult.data.files)
-      }
+      commit('setFiles', files)
     },
 
     async save({ dispatch }, file) {
-      const requestResult = await axios.post('/api/magic/file/save', { file })
-
-      // Update the local data to be reflected in the UI
-      if (requestResult.data.status === 'success') {
-        await dispatch('fetchAll')
-      }
-      else {
-        alert(requestResult.message)
-      }
+      await this.$post('/api/magic/file/save', { file })
+      await dispatch('fetchAll')
     },
 
     async update({ commit }, data) {
@@ -101,17 +73,10 @@ export default {
       const updatedFile = { ...data.file }
       updatedFile.name = data.newName
       updatedFile.path = data.newPath
-      const requestResult = await axios.post('/api/magic/file/save', {
+      await this.$post('/api/magic/file/save', {
         file: updatedFile,
       })
-
-      // Update the local data to be reflected in the UI
-      if (requestResult.data.status === 'success') {
-        commit('updateOne', data)
-      }
-      else {
-        alert(requestResult.message)
-      }
+      commit('updateOne', data)
     }
   },
 }

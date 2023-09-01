@@ -1,4 +1,3 @@
-import axios from 'axios'
 import cubeUtil from '../util/cubeUtil.js'
 
 
@@ -25,16 +24,9 @@ export default {
 
   actions: {
     async load(context, { cubeId }) {
-      const requestResult = await axios.post('/api/magic/cube/fetch', { cubeId })
-
-      if (requestResult.data.status === 'success') {
-        const cube = cubeUtil.deserialize(requestResult.data.cube)
-        return cube
-      }
-      else {
-        alert('Unable to load cube: ' + cubeId)
-        throw new Error('Unable to load cube')
-      }
+      const response = await this.$post('/api/magic/cube/fetch', { cubeId })
+      const cube = cubeUtil.deserialize(response.cube)
+      return cube
     },
 
     async save({ dispatch }, cube) {

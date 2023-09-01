@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { mag, util } from 'battlestar-common'
 
 
@@ -165,16 +164,10 @@ export default {
 
     async fetchLinkedDraft({ commit, state }) {
       if (state.game.settings.linkedDraftId) {
-        const requestResult = await axios.post('/api/game/fetch', {
+        const { game } = await this.$post('/api/game/fetch', {
           gameId: state.game.settings.linkedDraftId,
         })
-
-        if (requestResult.data.status === 'success') {
-          commit('setLinkedDraft', requestResult.data.game)
-        }
-        else {
-          alert('Error fetching existing link')
-        }
+        commit('setLinkedDraft', game)
       }
     },
 

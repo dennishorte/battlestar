@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { get as getKey, set as setKey } from 'idb-keyval'
 import { mag, util } from 'battlestar-common'
 
@@ -118,7 +117,7 @@ export default {
 
     async ensureLatest({ dispatch, state }) {
       const localVersions = await getLocalVersions()
-      const remoteVersions = await getRemoteVersions()
+      const remoteVersions = await getRemoteVersions.call(this)
 
       const toUpdate = Object
         .keys(remoteVersions)
@@ -157,7 +156,7 @@ export default {
 
     async updateLocalDatabase({ commit, state }, source) {
       commit('logInfo', `Updating card database: ${source}. This can take several minutes.`)
-      const { cards, version } = await getLatestCardDataFromServer(source)
+      const { cards, version } = await getLatestCardDataFromServer.call(this, source)
       await setKey('cards_' + source, cards)
       await setKey('version_' + source, version)
     },
@@ -169,7 +168,7 @@ export default {
     async save({ dispatch }, { actor, cubeId, updated, original, comment }) {
       updated = updated.data ? updated.data : updated
 
-      const requestResult = await axios.post('/api/magic/card/save', {
+      const response = await this.$post('/api/magic/card/save', {
         card: updated,
         original,
         editor: {
@@ -179,31 +178,25 @@ export default {
         comment,
       })
 
-      if (requestResult.data.status === 'success') {
-        const cube = await dispatch('magic/cube/load', { cubeId }, {root: true })
+      const cube = await dispatch('magic/cube/load', { cubeId }, {root: true })
 
-        // Need to update the cube, if the edited card was a scryfall card that was replaced
-        // with a custom card.
-        if (requestResult.data.cardReplaced) {
-          cube.removeCard(original)
-          cube.addCard(requestResult.data.finalizedCard)
-          await dispatch('magic/cube/save', cube, { root: true })
-        }
-
-        else if (requestResult.data.cardCreated) {
-          cube.addCard(requestResult.data.finalizedCard)
-          await dispatch('magic/cube/save', cube, { root: true })
-        }
-
-        // In either case, update the local card database.
-        await dispatch('reloadDatabase')
-
-        return requestResult.data.finalizedCard
+      // Need to update the cube, if the edited card was a scryfall card that was replaced
+      // with a custom card.
+      if (response.cardReplaced) {
+        cube.removeCard(original)
+        cube.addCard(response.finalizedCard)
+        await dispatch('magic/cube/save', cube, { root: true })
       }
-      else {
-        console.log(requestResult.data)
-        throw new Error('Error saving card')
+
+      else if (response.cardCreated) {
+        cube.addCard(response.finalizedCard)
+        await dispatch('magic/cube/save', cube, { root: true })
       }
+
+      // In either case, update the local card database.
+      await dispatch('reloadDatabase')
+
+      return response.finalizedCard
     },
   },
 }
@@ -220,13 +213,8 @@ async function getLocalVersions() {
 }
 
 async function getRemoteVersions() {
-  const requestResult = await axios.post('/api/magic/card/versions')
-  if (requestResult.data.status === 'success') {
-    return requestResult.data.versions
-  }
-  else {
-    throw Error('Unable to get remote card versions')
-  }
+  const { versions } = await this.$post('/api/magic/card/versions')
+  return versions
 }
 
 async function loadCardsFromDatabase() {
@@ -240,15 +228,6 @@ async function loadCardsFromDatabase() {
 }
 
 async function getLatestCardDataFromServer(source) {
-  console.log('...fetching card data for:', source)
-  const requestResult = await axios.post('/api/magic/card/all', { source })
-
-  if (requestResult.data.status === 'success') {
-    console.log('...card data fetched')
-    console.log(requestResult.data)
-    return requestResult.data[source]
-  }
-  else {
-    throw new Error(`Error fetching ${source} card data from server. ` + requestResult.data.message)
-  }
+  const response = await this.$post('/api/magic/card/all', { source })
+  return response[source]
 }
