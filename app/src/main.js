@@ -28,4 +28,8 @@ app.config.globalProperties.$modal = (elemId, opts={}) => {
   return new Modal(elem, opts)
 }
 
+// Standardized handling for axios requests
+import axiosWrapper from './util/axiosWrapper.js'
+app.config.globalProperties.$post = axiosWrapper.post
+
 app.mount('#app')
