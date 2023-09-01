@@ -26,7 +26,6 @@
 
 
 <script>
-import axios from 'axios'
 import { util } from 'battlestar-common'
 
 
@@ -77,10 +76,8 @@ export default {
         },
       ]
 
-      const userRequestResult = await axios.post('/api/user/all')
-      userRequestResult
-        .data
-        .users
+      const { users } = await this.$post('/api/user/all')
+      users
         .sort((l, r) => l.name.localeCompare(r.name))
         .forEach(user => output.push(user))
 
@@ -90,17 +87,16 @@ export default {
     },
 
     async fetchCubesForUser(userId) {
-      let requestResult
+      let response
 
       if (userId === 'public') {
-        requestResult = await axios.post('/api/magic/cube/fetchPublic')
+        response = await this.$post('/api/magic/cube/fetchPublic')
       }
       else {
-        requestResult = await axios.post('/api/user/magic/cubes', { userId })
+        response = await this.$post('/api/user/magic/cubes', { userId })
       }
 
-      this.cubes = requestResult
-        .data
+      this.cubes = response
         .cubes
         .sort((l, r) => l.name.localeCompare(r.name))
       this.updateValid()
@@ -169,22 +165,17 @@ export default {
     },
 
     async prepareScars(lobby) {
-      const requestResult = await axios.post('/api/magic/scar/byCube', {
+      const { scars } = await this.$post('/api/magic/scar/byCube', {
         cubeId: lobby.options.cubeId,
       })
 
-      if (requestResult.data.status !== 'success') {
-        alert('Failed to fetch scars.\n' + requestResult.message)
-        throw new Error('Unable to load scars')
-      }
-
       const scarRounds = lobby.options.scarRounds.split(',').length
       const requiredScars = scarRounds * lobby.users.length * 2
-      if (requestResult.data.scars.length < requiredScars) {
-        alert(`Not enough scars.\n Got ${requestResult.data.scars.length}. Needed ${requiredScars}`)
+      if (scars.length < requiredScars) {
+        alert(`Not enough scars.\n Got ${scars.length}. Needed ${requiredScars}`)
       }
 
-      lobby.scars = util.array.selectMany(requestResult.data.scars, requiredScars)
+      lobby.scars = util.array.selectMany(scars, requiredScars)
 
       // TODO: lock the scars
     },

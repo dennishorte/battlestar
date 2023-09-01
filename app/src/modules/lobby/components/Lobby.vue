@@ -41,7 +41,6 @@
 
 <script>
 import { computed } from 'vue'
-import axios from 'axios'
 
 import EditableText from '@/components/EditableText'
 import Header from '@/components/Header'
@@ -76,27 +75,13 @@ export default {
   },
 
   methods: {
-    async axiosRequest(api, payload) {
-      const res = await axios.post(api, payload)
-
-      if (res.data.status === 'error') {
-        this.errorMessage = res.data.message
-        alert(this.errorMessage)
-      }
-      else {
-        return res.data
-      }
-    },
-
     async getLobbyInfo() {
-      const data = await this.axiosRequest('/api/lobby/info', { id: this.id })
-      if (data) {
-        this.lobby = data.lobby
-      }
+      const { lobby } = await this.$post('/api/lobby/info', { id: this.id })
+      this.lobby = data.lobby
     },
 
     async save() {
-      const data = await axios.post('/api/lobby/save', this.lobby)
+      await this.$post('/api/lobby/save', this.lobby)
     },
 
     async startGame() {
@@ -110,12 +95,10 @@ export default {
         return
       }
 
-      const data = await this.axiosRequest('/api/game/create', {
+      const { gameId } = await this.$post('/api/game/create', {
         lobbyId: this.lobby._id,
       })
-      if (data) {
-        this.$router.push('/game/' + data.gameId)
-      }
+      this.$router.push('/game/' + gameId)
     },
 
     async updateName({ to }) {

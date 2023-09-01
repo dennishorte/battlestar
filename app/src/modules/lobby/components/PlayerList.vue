@@ -57,7 +57,6 @@
 
 
 <script>
-import axios from 'axios'
 import { util } from 'battlestar-common'
 
 import Dropdown from '@/components/Dropdown'
@@ -85,10 +84,8 @@ export default {
   methods: {
     // Get a list of all users to populate the "add users" dialog.
     async fetchUsers() {
-      const userRequestResult = await axios.post('/api/user/all')
-      this.users = userRequestResult
-        .data
-        .users
+      const { users } = await this.$post('/api/user/all')
+      this.users = users
         .sort((left, right) => left.name.localeCompare(right.name))
     },
 

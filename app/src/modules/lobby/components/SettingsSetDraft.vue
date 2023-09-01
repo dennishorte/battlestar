@@ -15,7 +15,6 @@
 
 
 <script>
-import axios from 'axios'
 import { mag, util } from 'battlestar-common'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -58,11 +57,8 @@ export default {
 
   methods: {
     async fetchUsers() {
-      const userRequestResult = await axios.post('/api/user/all')
-      this.users = userRequestResult
-        .data
-        .users
-        .sort((l, r) => l.name.localeCompare(r.name))
+      const { users } = await this.$post('/api/user/all')
+      this.users = users.sort((l, r) => l.name.localeCompare(r.name))
       this.updateValid()
     },
 
