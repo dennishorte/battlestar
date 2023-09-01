@@ -97,8 +97,6 @@
 
 
 <script>
-import axios from 'axios'
-
 import { mag, util } from 'battlestar-common'
 
 import Card from './Card.vue'

@@ -32,9 +32,6 @@
 
 
 <script>
-import axios from 'axios'
-
-
 export default {
   name: 'DraftList',
 
@@ -46,14 +43,14 @@ export default {
 
   methods: {
     async fetchDrafts() {
-      const fetchResult = await axios.post('/api/user/games', {
+      const { games } = await this.$post('/api/user/games', {
         userId: this.$store.state.auth.user._id,
         kind: 'CubeDraft',
         state: 'all',
         killed: false,
       })
 
-      this.drafts = fetchResult.data.games
+      this.drafts = games
     },
 
     gameKind(data) {

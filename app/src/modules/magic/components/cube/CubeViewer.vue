@@ -87,7 +87,6 @@
 
 
 <script>
-import axios from 'axios'
 import cubeUtil from '../../util/cubeUtil.js'
 import mitt from 'mitt'
 
@@ -277,16 +276,10 @@ export default {
     },
 
     async loadScars() {
-      const requestResult = await axios.post('/api/magic/scar/byCube', {
+      const { scars } = await this.$post('/api/magic/scar/byCube', {
         cubeId: this.id,
       })
-
-      if (requestResult.data.status === 'success') {
-        this.scars = requestResult.data.scars
-      }
-      else {
-        alert('Error loading cube: ' + this.id)
-      }
+      this.scars = scars
     },
 
     // If original is passed in, the new card will replace the original.
@@ -309,43 +302,25 @@ export default {
     },
 
     async saveScar() {
-      const requestResult = await axios.post('/api/magic/scar/save', {
+      await this.$post('/api/magic/scar/save', {
         scar: this.managedScar,
       })
-
-      if (requestResult.data.status === 'success') {
-        await this.loadScars()
-      }
-      else {
-        alert('Error save scar.\n' + requestResult.data.message)
-      }
+      await this.loadScars()
     },
 
     async toggleCardEditing() {
-      const requestResult = await axios.post('/api/magic/cube/toggleEdits', {
+      const { allowEdits } = await this.$post('/api/magic/cube/toggleEdits', {
         cubeId: this.id,
       })
-
-      if (requestResult.data.status === 'success') {
-        this.cube.allowEdits = requestResult.data.allowEdits
-      }
-      else {
-        alert('Error toggling card edit status.\n' + requestResult.data.message)
-      }
+      this.cube.allowEdits = allowEdits
     },
 
     async togglePublic() {
-      const requestResult = await axios.post('/api/magic/cube/togglePublic', {
+      const response = await this.$post('/api/magic/cube/togglePublic', {
         cubeId: this.id,
         value: !this.cube.public,
       })
-
-      if (requestResult.data.status === 'success') {
-        this.cube.public = requestResult.data.public
-      }
-      else {
-        alert('Error toggling public status.\n' + requestResult.data.message)
-      }
+      this.cube.public = response.public
     },
   },
 

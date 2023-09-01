@@ -17,8 +17,6 @@
 
 
 <script>
-import axios from 'axios'
-
 import FileManager from '@/components/filemanager/FileManager'
 import Header from '@/components/Header'
 

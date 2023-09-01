@@ -13,9 +13,6 @@
 
 
 <script>
-import axios from 'axios'
-
-
 export default {
   name: 'PublicCubes',
 
@@ -26,15 +23,8 @@ export default {
   },
 
   async mounted() {
-    const requestResult = await axios.post('/api/magic/cube/fetchPublic')
-
-    if (requestResult.data.status === 'success') {
-      this.cubes = requestResult.data.cubes.sort((l, r) => l.name.localeCompare(r.name))
-    }
-
-    else {
-      alert('Error loading public cubes: ' + requestResult.data.message)
-    }
+    const { cubes } = await this.$post('/api/magic/cube/fetchPublic')
+    this.cubes = cubes.sort((l, r) => l.name.localeCompare(r.name))
   },
 }
 </script>

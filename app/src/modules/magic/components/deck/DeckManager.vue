@@ -71,7 +71,6 @@ import { computed } from 'vue'
 import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
-import axios from 'axios'
 import mitt from 'mitt'
 
 import CardFilters from '../CardFilters'
