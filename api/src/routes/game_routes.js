@@ -151,6 +151,15 @@ Game.rematch = async function(req, res) {
 
 Game.saveFull = async function(req, res) {
   const game = await _loadGameFromReq(req)
+
+  if (game.killed) {
+    res.json({
+      status: 'error',
+      message: 'This game was killed',
+    })
+    return
+  }
+
   game.responses = req.body.responses
   game.chat = req.body.chat
 
@@ -173,6 +182,14 @@ Game.saveResponse = async function(req, res) {
   // Using this mutex ensures that each response is added in sequence, none overwriting the others.
   return await saveResponseMutext.dispatch(async () => {
     const game = await _loadGameFromReq(req)
+
+    if (game.killed) {
+      res.json({
+        status: 'error',
+        message: 'This game was killed',
+      })
+      return
+    }
 
     await _testAndSave(game, res, (game) => {
       game.respondToInputRequest(req.body.response)
