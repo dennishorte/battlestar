@@ -67,8 +67,6 @@
 
 
 <script>
-import axios from 'axios'
-
 import { inn, util } from 'battlestar-common'
 
 import Header from '@/components/Header'
@@ -129,8 +127,8 @@ export default {
   },
 
   async created() {
-    const requestResult = await axios.post('/api/game/stats/innovation')
-    this.data = requestResult.data.data
+    const { data } = await this.$post('/api/game/stats/innovation')
+    this.data = data
   },
 }
 </script>
