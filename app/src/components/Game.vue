@@ -40,6 +40,9 @@ import Innovation from '@/modules/games/inn/components/Innovation'
 import Magic from '@/modules/games/magic/components/Magic'
 import Tyrants from '@/modules/games/tyrants/components/Tyrants'
 
+const appVersion = require('@/assets/version.js')
+
+
 export default {
   name: 'Game',
 
@@ -60,6 +63,15 @@ export default {
   },
 
   methods: {
+    async checkVersion() {
+      const requestResult = await axios.post('/api/appVersion')
+      const latestVersion = requestResult.data.version.value
+
+      console.log(latestVersion, appVersion)
+
+      console.log(latestVersion === appVersion)
+    },
+
     async loadGame() {
       this.game = ''
 
@@ -82,11 +94,13 @@ export default {
   watch: {
     async $route() {
       this.id = this.$route.params.id
+      await this.checkVersion()
       await this.loadGame()
     },
   },
 
   async mounted() {
+    await this.checkVersion()
     await this.loadGame()
   },
 }

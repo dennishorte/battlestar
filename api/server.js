@@ -88,6 +88,9 @@ app.post('/api/game/saveFull', routes.game.saveFull)
 app.post('/api/game/saveResponse', routes.game.saveResponse)
 app.post('/api/game/stats/innovation', routes.game.stats.innovation)
 
+// Misc Routes
+app.post('/api/appVersion', routes.misc.appVersion)
+
 // Snapshot Routes
 app.post('/api/snapshot/create', routes.snapshot.create)
 app.post('/api/snapshot/fetch', routes.snapshot.fetch)

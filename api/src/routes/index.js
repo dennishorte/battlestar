@@ -7,6 +7,7 @@ module.exports = {
   magic: require('./magic'),
 
   lobby: require('./lobby_routes.js'),
+  misc: require('./misc_routes.js'),
   game: require('./game_routes.js'),
   snapshot: require('./snapshot_routes.js'),
   user: require('./user_routes.js'),
