@@ -1,5 +1,5 @@
 <template>
-  <div class="game">
+  <div class="game" v-if="validVersion">
 
     <CubeDraft
       v-if="game === 'CubeDraft'"
@@ -59,17 +59,23 @@ export default {
       actor: {},
       game: '',
       gameData: {},
+      validVersion: false,
     }
   },
 
   methods: {
     async checkVersion() {
+      this.validVersion = false
+
       const requestResult = await axios.post('/api/appVersion')
       const latestVersion = requestResult.data.version.value
 
-      console.log(latestVersion, appVersion)
-
-      console.log(latestVersion === appVersion)
+      if (latestVersion !== appVersion) {
+        alert('New version of app available. Please reload.')
+      }
+      else {
+        this.validVersion = true
+      }
     },
 
     async loadGame() {
