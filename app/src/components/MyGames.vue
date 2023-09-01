@@ -83,8 +83,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 import Dropdown from '@/components/Dropdown'
 import DropdownItem from '@/components/DropdownItem'
 
@@ -130,7 +128,7 @@ export default {
     },
 
     async kill(gameId) {
-      await axios.post('/api/game/kill', { gameId })
+      await this.$post('/api/game/kill', { gameId })
       this.$router.go()
     },
 
@@ -177,21 +175,18 @@ export default {
     },
 
     async fetchActiveGames() {
-      const fetchResult = await axios.post('/api/user/games', {
+      const { games } = await this.$post('/api/user/games', {
         userId: this.$store.state.auth.user._id,
       })
-
-      this.games = fetchResult.data.games
+      this.games = games
     },
 
     async fetchRecentlyFinishedGames() {
-      const fetchResult = await axios.post('/api/user/games_recently_finished', {
+      const { games } = await this.$post('/api/user/games_recently_finished', {
         userId: this.$store.state.auth.user._id,
       })
 
-      this.finished = fetchResult
-        .data
-        .games
+      this.finished = games
         .sort((l, r) => r.lastUpdated - l.lastUpdated)
     },
   },

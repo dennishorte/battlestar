@@ -34,7 +34,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import CubeDraft from '@/modules/games/cube_draft/components/CubeDraft'
 import Innovation from '@/modules/games/inn/components/Innovation'
 import Magic from '@/modules/games/magic/components/Magic'
@@ -67,8 +66,8 @@ export default {
     async checkVersion() {
       this.validVersion = false
 
-      const requestResult = await axios.post('/api/appVersion')
-      const latestVersion = requestResult.data.version.value
+      const response = await this.$post('/api/appVersion')
+      const latestVersion = response.version.value
 
       if (latestVersion !== appVersion) {
         alert('New version of app available. Please reload.')
@@ -81,19 +80,13 @@ export default {
     async loadGame() {
       this.game = ''
 
-      const requestResult = await axios.post('/api/game/fetch', {
+      const { game } = await this.$post('/api/game/fetch', {
         gameId: this.id,
       })
 
-      if (requestResult.data.status === 'success') {
-        const data = requestResult.data.game
-        this.game = data.settings ? data.settings.game : data.game
-        this.gameData = requestResult.data.game
-        this.actor = this.$store.getters['auth/user']
-      }
-      else {
-        alert('Error loading game data')
-      }
+      this.game = game.settings.game
+      this.gameData = game
+      this.actor = this.$store.getters['auth/user']
     }
   },
 

@@ -38,8 +38,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 import Dropdown from '@/components/Dropdown'
 import DropdownItem from '@/components/DropdownItem'
 
@@ -60,7 +58,7 @@ export default {
 
   methods: {
     async kill(lobbyId) {
-      await axios.post('/api/lobby/kill', { lobbyId })
+      await this.$post('/api/lobby/kill', { lobbyId })
       this.$router.go()
     },
 
@@ -88,11 +86,10 @@ export default {
   },
 
   async mounted() {
-    const fetchResult = await axios.post('/api/user/lobbies', {
+    const { lobbies } = await this.$post('/api/user/lobbies', {
       userId: this.$store.state.auth.user._id,
     })
-
-    this.lobbies = fetchResult.data.lobbies
+    this.lobbies = lobbies
   }
 }
 </script>

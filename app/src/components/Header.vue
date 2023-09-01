@@ -29,8 +29,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 import Dropdown from '@/components/Dropdown'
 import DropdownDivider from '@/components/DropdownDivider'
 import DropdownButton from '@/components/DropdownButton'
@@ -54,29 +52,21 @@ export default {
 
   methods: {
     async nextGame() {
-      const result = await axios.post('/api/user/next', {
+      const { gameId } = await this.$post('/api/user/next', {
         userId: this.actor._id,
         gameId: null,
       })
 
-      if (result.data.status === 'success') {
-        const gameId = result.data.gameId
-        if (gameId) {
-          if (this.$route.path === `/game/${gameId}`) {
-            this.$router.go()
-          }
-          else {
-            this.$router.push(`/game/${gameId}`)
-          }
+      if (gameId) {
+        if (this.$route.path === `/game/${gameId}`) {
+          this.$router.go()
         }
         else {
-          this.$router.push('/')
+          this.$router.push(`/game/${gameId}`)
         }
       }
-
       else {
-        console.log(result)
-        alert('error: see console')
+        this.$router.push('/')
       }
     },
   },
