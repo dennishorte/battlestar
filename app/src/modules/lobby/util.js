@@ -1,9 +1,9 @@
-import axios from 'axios'
+import axiosWrapper from '@/util/axiosWrapper.js'
 
 const Util = {}
 export default Util
 
 Util.create = async function() {
-  const createResult = await axios.post('/api/lobby/create', {})
-  return createResult.data.lobbyId
+  const { lobbyId } = await axiosWrapper.post('/api/lobby/create', {})
+  return lobbyId
 }
