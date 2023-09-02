@@ -4,7 +4,11 @@ const JwtStrategy = require('passport-jwt').Strategy
 const ExtractJwt = require('passport-jwt').ExtractJwt
 const db = require('./models/db.js')
 
-const Middleware = {}
+const Middleware = {
+  authenticate,
+  coerceIds,
+  ensureVersion,
+}
 module.exports = Middleware
 
 
@@ -32,7 +36,7 @@ passport.use(new JwtStrategy(
    By default, all routes require authentication.
    Routes that start with '/api/guest/' do not require authentication.
  */
-Middleware.authenticate = (req, res, next)  => {
+function authenticate(req, res, next) {
   if (req.path.startsWith('/api/guest/') || req.method === 'GET') {
     next()
   }
@@ -98,7 +102,21 @@ function _tryConvertToObjectId(key, value) {
    By coercing all ids into ObjectId, we make sure that they are all handled the same inside
    the app, regardless of whether or not they came from the database or the user.
  */
-Middleware.coerceIds = (req, res, next) => {
+function coerceIds(req, res, next) {
   _coerceIdsRecurse(req.body)
   next()
+}
+
+const latestVersion = require('./version.js')
+function ensureVersion(req, res, next) {
+  if (!req.body.appVersion || req.body.appVersion != latestVersion) {
+    res.json({
+      status: 'version_mismatch',
+      currentVersion: req.body.appVersion,
+      latestVersion,
+    })
+  }
+  else {
+    next()
+  }
 }

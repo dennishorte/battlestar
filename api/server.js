@@ -19,6 +19,7 @@ app.use(history({ index: '/' }))
 app.use(express.static(path.join(__dirname, '../app/dist')))
 app.use(middleware.authenticate)
 app.use(bodyParser.json({ limit: "500kb" }))
+app.use(middleware.ensureVersion)
 app.use(middleware.coerceIds)
 
 

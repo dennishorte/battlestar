@@ -15,6 +15,7 @@ async function main() {
 
   // Write the latest version into the code
   fs.writeFileSync('./app/src/assets/version.js', 'module.exports = ' + version)
+  fs.writeFileSync('./api/src/version.js', 'module.exports = ' + version)
 
   process.exit(0)
 }

@@ -27,7 +27,7 @@ async function post(path, body) {
   }
 
   else if (response.data.status === 'version_mismatch') {
-    alert('App version out of date. Please reload this page.')
+    alert('App version out of date. Please reload this page and try again.')
     console.log({
       currentVersion: appVersion,
       latestVersion: response.data.latestVersion,
@@ -36,6 +36,7 @@ async function post(path, body) {
   }
 
   else if (response.data.status === 'error') {
+    alert('Received error from server. See console for details.')
     console.log(response.data)
     throw new Error('Recieved error from server')
   }
