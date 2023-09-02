@@ -81,15 +81,6 @@ Game.prototype.serialize = function() {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Custom Errors
-
-util.inherit(Error, DuplicateResponseError)
-function DuplicateResponseError(msg) {
-  Error.call(this, msg)
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
 // Input Requests / Responses
 
 Game.prototype.checkGameIsOver = function() {
@@ -230,9 +221,6 @@ Game.prototype.respondToInputRequest = function(response) {
     return this.run()
   }
   catch (e) {
-    if (e instanceof DuplicateResponseError) {
-      this.responses.pop()
-    }
     throw e
   }
 }

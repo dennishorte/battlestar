@@ -3,7 +3,6 @@ const {
   GameFactory,
   GameOverEvent,
   InputRequestEvent,
-  DuplicateResponseError,
 } = require('./game.js')
 const util = require('../lib/util.js')
 
@@ -110,23 +109,6 @@ describe('user input', () => {
         title: 'How Many',
         choices: [5,6,7],
       }))
-    })
-
-    test('same person sends multiple responses causes error', () => {
-      const [game, request] = multiFixture()
-      const result = game.respondToInputRequest({
-        actor: 'dennis',
-        title: 'How Many',
-        selection: [3],
-      })
-      const badRequest = () => {
-        game.respondToInputRequest({
-          actor: 'dennis',
-          title: 'How Many',
-          selection: [2],
-        })
-      }
-      expect(badRequest).toThrow(DuplicateResponseError)
     })
 
     test('second response finalizes request and all responses are returned', () => {
