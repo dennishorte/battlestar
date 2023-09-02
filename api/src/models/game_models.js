@@ -1,5 +1,5 @@
 const { Mutex } = require('../util/mutex.js')
-const common = require('battlestar-common')
+const games = require('../games')
 
 // Database and collection
 const databaseClient = require('../util/mongo.js').client
@@ -14,34 +14,13 @@ const Game = {
 module.exports = Game
 
 
-function _factory(lobby) {
-  switch (lobby.game) {
-
-    case 'Set Draft':
-    case 'Cube Draft':
-      return common.mag.draft.cube.factory(lobby)
-
-    case 'Innovation':
-      return common.inn.factory(lobby)
-
-    case 'Magic':
-      return common.mag.factory(lobby)
-
-    case 'Tyrants of the Underdark':
-      return common.tyr.factory(lobby)
-
-    default:
-      throw new Error(`Unknown game: ${lobby.game}`)
-  }
-}
-
 Game.all = async function() {
   return await gameCollection.find({})
 }
 
 Game.create = async function(lobby) {
   return await writeMutex.dispatch(async () => {
-    const data = _factory(lobby)
+    const data = games.factory(lobby.game)
     data.settings.createdTimestamp = Date.now()
 
     // Added in order to support showing games that have recently ended on user home screens.
@@ -51,23 +30,10 @@ Game.create = async function(lobby) {
 
     // Need to actually run the game once to make sure 'waiting' field is populated.
     const gameData = await this.findById(insertResult.insertedId)
-    let game
-    if (gameData.settings.game === 'CubeDraft') {
-      game = new common.mag.draft.cube.CubeDraft(gameData)
-    }
-    else if (gameData.settings.game === 'Innovation') {
-      game = new common.inn.Innovation(gameData)
-    }
-    else if (gameData.settings.game === 'Magic') {
-      game = new common.mag.Magic(gameData)
-    }
-    else if (gameData.settings.game === 'Tyrants of the Underdark') {
-      game = new common.tyr.Tyrants(gameData)
-    }
-    else {
-      throw new Error(`Can't run unknown game ${gameData.settings.game}`)
-    }
+    const constructor = games.constructor(gameData.settings.game)
+    const game = new constructor(gameData)
     game.run()
+
     await this.save(game, { noMutex: true })
 
     return game._id

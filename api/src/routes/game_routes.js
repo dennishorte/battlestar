@@ -2,7 +2,8 @@ const db = require('../models/db.js')
 const slack = require('../util/slack.js')
 const stats = require('../util/stats.js')
 
-const { GameOverEvent, inn, mag, tyr } = require('battlestar-common')
+const games = require('../games')
+const { GameOverEvent } = require('battlestar-common')
 
 const Game = {
   stats: {}
@@ -224,7 +225,7 @@ async function _testAndSave(game, res, evalFunc) {
     evalFunc(game)
   }
   catch (e) {
-    if (e instanceof inn.GameOverEvent) {
+    if (e instanceof GameOverEvent) {
       // Do nothing
     }
     else {
@@ -241,22 +242,8 @@ async function _testAndSave(game, res, evalFunc) {
 
 async function _loadGameFromReq(req) {
   const gameData = await db.game.findById(req.body.gameId)
-
-  if (gameData.settings.game === 'Innovation') {
-    return new inn.Innovation(gameData)
-  }
-  else if (gameData.settings.game === 'Tyrants of the Underdark') {
-    return new tyr.Tyrants(gameData)
-  }
-  else if (gameData.settings.game === 'Magic') {
-    return new mag.Magic(gameData)
-  }
-  else if (gameData.settings.game === 'CubeDraft') {
-    return new mag.draft.cube.CubeDraft(gameData)
-  }
-  else {
-    throw new Error(`Unhandled game type: ${gameData.settings.game}`)
-  }
+  const constructor = games.constructor(gameData.settings.game)
+  return new constructor(gameData)
 }
 
 async function _sendNotifications(res, game) {
