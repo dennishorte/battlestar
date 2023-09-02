@@ -51,6 +51,6 @@ describe('Sergey Brin', () => {
 
     const request1 = game.run()
 
-    t.testActionChoices(request1, 'Dogma', ['Computers', 'Robotics', 'Enterprise', 'Satellites'])
+    t.testActionChoices(request1, 'Dogma', ['Computers', 'Robotics', 'Enterprise', 'Satellites', 'Sergey Brin'])
   })
 })

@@ -206,7 +206,7 @@ describe('Innovation', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
       game.testSetBreakpoint('before-first-player', (game) => {
         t.setColor(game, 'dennis', 'red', ['Alexander the Great'])
-        t.setColor(game, 'dennis', 'purple', ['Alfred Nobel', 'Adam Smith'])
+        t.setColor(game, 'dennis', 'green', ['Alfred Nobel', 'Adam Smith'])
         t.setColor(game, 'dennis', 'yellow', ['Shennong', 'Alex Trebek'])
       })
       const request1 = game.run()
@@ -304,7 +304,7 @@ describe('Innovation', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
       t.setBoard(game, {
         dennis: {
-          red: ['Brussels'],
+          purple: ['Brussels'],
         },
       })
 
@@ -992,7 +992,7 @@ describe('Innovation', () => {
       expect(t.cards(game, 'score', 'scott').sort()).toStrictEqual(['Mysticism'])
     })
 
-    test('city biscuits must match featured biscuit', () => {
+    test('city biscuits must match featured biscuit; cities match themselves', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
       game.testSetBreakpoint('before-first-player', (game) => {
         t.setColor(game, 'dennis', 'green', ['The Wheel'])
@@ -1000,7 +1000,7 @@ describe('Innovation', () => {
         t.setHand(game, 'dennis', ['Mathematics', 'Tools'])
       })
       const result1 = game.run()
-      expect(t.getChoices(result1, 'Endorse')).toStrictEqual([])
+      expect(t.getChoices(result1, 'Endorse')).toStrictEqual(['blue'])
     })
 
     test('triggers dogma karmas', () => {

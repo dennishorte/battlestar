@@ -3060,20 +3060,15 @@ Innovation.prototype.getDogmaTargets = function(player) {
 Innovation.prototype._generateActionChoicesDogma = function() {
   const player = this.getPlayerCurrent()
 
-  /* const dogmaTargets = this.getDogmaTargets(player)
+  const dogmaTargets = this.getTopCards(player)
 
-   * const extraEffects = this
-   *   .getInfoByKarmaTrigger(player, 'list-effects')
-   *   .flatMap(info => info.impl.func(this, player))
+  const extraEffects = this
+    .getInfoByKarmaTrigger(player, 'list-effects')
+    .flatMap(info => info.impl.func(this, player))
 
-   * const allTargets = util
-   *   .array
-   *   .distinct([...dogmaTargets, ...extraEffects])
-   *   .map(card => card.name)
-   */
-
-  const allTargets = this
-    .getTopCards(player)
+  const allTargets = util
+    .array
+    .distinct([...dogmaTargets, ...extraEffects])
     .map(card => card.name)
 
   return {
@@ -3105,12 +3100,6 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
     .getTopCards(player)
     .filter(card => card.checkIsCity())
     .filter(city => city.getAge() >= lowestHandAge)
-
-  /* const stacksWithEndorsableEffects = this
-   *   .utilColors()
-   *   .map(color => this.getZoneByPlayer(player, color))
-   *   .filter(zone => this.checkZoneHasVisibleDogmaOrEcho(player, zone))
-   */
 
   const stacksWithEndorsableEffects = this
     .getTopCards(player)

@@ -480,12 +480,21 @@ Game.prototype.aChoose = function(player, choices, opts={}) {
     return []
   }
 
-  const selected = this.requestInputSingle({
+  const chooseSelector = {
     actor: player.name,
     title: opts.title || 'Choose',
     choices: choices,
     ...opts
-  })
+  }
+
+  const selected = this.requestInputSingle(chooseSelector)
+
+  // Validate counts
+  const { min, max } = selector.minMax(chooseSelector)
+
+  if (selected.length < min || selected.length > max) {
+    throw new Error('Invalid number of options selected')
+  }
 
   if (selected.length === 0) {
     this.mLogDoNothing(player)

@@ -54,7 +54,7 @@ describe('Ptolemy', () => {
 
     const request1 = game.run()
 
-    t.testActionChoices(request1, 'Dogma', ['Domestication', 'Pottery', 'Writing'])
+    t.testActionChoices(request1, 'Dogma', ['Domestication', 'Pottery', 'Writing', 'Ptolemy'])
 
     const request2 = t.choose(game, request1, 'Dogma.Writing')
 
