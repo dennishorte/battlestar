@@ -74,7 +74,6 @@ TestUtil.fixtureDecksSelected = function(options) {
         'Holy Strength',
       ].map(convertNameToCard('main'))
     },
-    key: request1.key
   })
 
   game.respondToInputRequest({
@@ -95,7 +94,6 @@ TestUtil.fixtureDecksSelected = function(options) {
         'agility',
       ].map(convertNameToCard('main'))
     },
-    key: request1.key
   })
 
   if (game.settings.numPlayers >= 3) {
@@ -198,7 +196,6 @@ TestUtil.do = function(game, request, action) {
     actor: selector.actor,
     title: selector.title,
     selection: [action],
-    key: request.key,
   })
 }
 

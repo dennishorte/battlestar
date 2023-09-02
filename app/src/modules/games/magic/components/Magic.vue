@@ -83,7 +83,6 @@ export default {
           actor: selector.actor,
           title: selector.title,
           selection: [action],
-          key: request.key,
         })
       }
       catch (e) {

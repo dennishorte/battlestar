@@ -46,7 +46,6 @@ TestCommon.choose = function(game, request, ...selections) {
     actor: selector.actor,
     title: selector.title,
     selection: selections,
-    key: request.key,
   })
 }
 
@@ -58,7 +57,6 @@ TestCommon.do = function(game, request, action) {
     actor: selector.actor,
     title: selector.title,
     selection: [action],
-    key: request.key,
   })
 }
 

@@ -226,14 +226,12 @@ TestUtil.gameFixture = function(options) {
     actor: 'dennis',
     title: 'Choose starting location',
     selection: ['Ched Nasad'],
-    key: request1.key
   })
 
   game.respondToInputRequest({
     actor: 'micah',
     title: 'Choose starting location',
     selection: ['Eryndlyn'],
-    key: request2.key
   })
 
   return game

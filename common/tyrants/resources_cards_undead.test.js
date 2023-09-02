@@ -374,7 +374,6 @@ describe('Undead expansion', () => {
           title: 'spy',
           selection: ['Ched Nasad, micah'],
         }],
-        key: 894270069,
       })
       const request4 = t.choose(game, request3, 'Play Card.Banshee')
       const request5 = t.choose(game, request4, 'Menzoberranzan')

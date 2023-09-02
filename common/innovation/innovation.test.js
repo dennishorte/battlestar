@@ -72,13 +72,11 @@ describe('Innovation', () => {
         actor: 'micah',
         title: 'Choose First Card',
         selection: ['Code of Laws'],
-        key: request1.key
       })
       const request3 = game.respondToInputRequest({
         actor: 'dennis',
         title: 'Choose First Card',
         selection: ['Archery'],
-        key: request1.key
       })
 
       const dennisRed = game
@@ -101,13 +99,11 @@ describe('Innovation', () => {
         actor: 'micah',
         title: 'Choose First Card',
         selection: ['Code of Laws'],
-        key: request1.key
       })
       const request3 = game.respondToInputRequest({
         actor: 'dennis',
         title: 'Choose First Card',
         selection: ['Archery'],
-        key: request1.key
       })
 
       expect(game.getPlayerCurrent().name).toBe('dennis')
@@ -120,13 +116,11 @@ describe('Innovation', () => {
         actor: 'micah',
         title: 'Choose First Card',
         selection: ['Code of Laws'],
-        key: request1.key
       })
       const request3 = game.respondToInputRequest({
         actor: 'dennis',
         title: 'Choose First Card',
         selection: ['Domestication'],
-        key: request1.key
       })
 
       expect(game.getPlayerCurrent().name).toBe('micah')

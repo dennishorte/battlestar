@@ -76,7 +76,6 @@ describe('user input', () => {
       actor: 'dennis',
       title: 'Choose a Color',
       selection: ['red'],
-      key: result1.key
     })
 
     expect(result2).toBeInstanceOf(InputRequestEvent)
@@ -92,7 +91,6 @@ describe('user input', () => {
         actor: 'dennis',
         title: 'Choose a Color',
         selection: ['red'],
-        key: result1.key
       })
       return [game, result2]
     }
@@ -103,7 +101,6 @@ describe('user input', () => {
         actor: 'dennis',
         title: 'How Many',
         selection: [3],
-        key: request.key,
       })
 
       expect(result).toBeInstanceOf(InputRequestEvent)
@@ -121,14 +118,12 @@ describe('user input', () => {
         actor: 'dennis',
         title: 'How Many',
         selection: [3],
-        key: request.key,
       })
       const badRequest = () => {
         game.respondToInputRequest({
           actor: 'dennis',
           title: 'How Many',
           selection: [2],
-          key: request.key,
         })
       }
       expect(badRequest).toThrow(DuplicateResponseError)
@@ -140,13 +135,11 @@ describe('user input', () => {
         actor: 'dennis',
         title: 'How Many',
         selection: [3],
-        key: request.key,
       })
       const result2 = game.respondToInputRequest({
         actor: 'micah',
         title: 'How Many',
         selection: [5],
-        key: result1.key,
       })
 
       expect(result2).not.toBeInstanceOf(InputRequestEvent)
@@ -155,13 +148,11 @@ describe('user input', () => {
           actor: 'dennis',
           title: 'How Many',
           selection: [3],
-          key: request.key,
         }),
         expect.objectContaining({
           actor: 'micah',
           title: 'How Many',
           selection: [5],
-          key: result1.key,
         }),
       ]))
     })

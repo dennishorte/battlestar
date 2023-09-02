@@ -39,7 +39,6 @@ describe('Susan Blackmore', () => {
       actor: 'dennis',
       title: 'Choose',
       selection: ['Daedalus: Score the bottom card of this color.'],
-      key: request2.key,
     })
 
     t.testIsSecondPlayer(request3)

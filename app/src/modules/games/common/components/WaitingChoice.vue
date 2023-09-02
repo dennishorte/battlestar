@@ -2,7 +2,6 @@
   <div class="waiting-choice">
 
     <OptionSelector
-      :key="key"
       :selector="request"
       :required="true"
       :owner="owner"
@@ -56,10 +55,6 @@ export default {
   },
 
   computed: {
-    key() {
-      return this.game.getWaitingKey()
-    },
-
     request() {
       const waiting = this.game.getWaiting(this.owner)
       this.insertSubtitles(waiting)
@@ -89,7 +84,6 @@ export default {
         actor: this.owner.name,
         title: this.request.title,
         selection: this.selection.selection,
-        key: this.game.getWaitingKey(),
       }
 
       try {

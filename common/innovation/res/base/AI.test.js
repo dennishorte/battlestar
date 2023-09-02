@@ -16,7 +16,6 @@ describe('A.I.', () => {
         title: 'Dogma',
         selection: ['A.I.']
       }],
-      key: request1.key
     })
 
     expect(t.cards(game, 'score')).toStrictEqual(['Globalization'])
@@ -37,7 +36,6 @@ describe('A.I.', () => {
         title: 'Dogma',
         selection: ['A.I.']
       }],
-      key: request1.key
     })
 
     expect(request2).toEqual(expect.objectContaining({

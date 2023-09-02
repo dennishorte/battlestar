@@ -24,7 +24,6 @@ describe('J.P. Morgan', () => {
         title: 'Dogma',
         selection: ['J.P. Morgan']
       }],
-      key: request1.key,
     })
 
     t.testChoices(request2, ['green', 'red'])

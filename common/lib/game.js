@@ -33,7 +33,6 @@ function Game(serialized_data, viewerName) {
   this.gameOver = false
   this.gameOverData = null
   this.random = 'uninitialized'
-  this.key = 'uninitialized'
 
   this.viewerName = viewerName
 }
@@ -145,12 +144,7 @@ Game.prototype.getWaiting = function(player) {
   }
 }
 
-Game.prototype.getWaitingKey = function() {
-  return this.waiting ? this.waiting.key : undefined
-}
-
 // Intended for use in Magic Drafts, this allows any player to send an input request.
-// The key is completely ignored, and only the validity of the response is considered.
 Game.prototype.requestInputAny = function(array) {
   if (!Array.isArray(array)) {
     array = [array]
@@ -174,8 +168,6 @@ Game.prototype.requestInputAny = function(array) {
 }
 
 Game.prototype.requestInputMany = function(array) {
-  this.key = this._setInputRequestKey()
-
   if (!Array.isArray(array)) {
     array = [array]
   }
@@ -194,10 +186,8 @@ Game.prototype.requestInputMany = function(array) {
 
   while (responses.length < array.length) {
     const resp = this._getResponse()
-    if (responseIsDuplicate(responses, resp)) {
-      throw new DuplicateResponseError(`Duplicate response from ${resp.actor}`)
-    }
-    else if (resp) {
+
+    if (resp) {
       if (resp.type === 'chat') {
         const player = this.getPlayerByName(resp.actor)
         this.getLog().push({
@@ -233,8 +223,6 @@ Game.prototype.requestInputSingle = function(selector) {
 }
 
 Game.prototype.respondToInputRequest = function(response) {
-  // util.assert(response.key === this.key, `Invalid response. State has updated. this: ${this.key} resp: ${response.key}`)
-
   response.isUserResponse = true  // As opposed to an automated response.
   this.responses.push(response)
 
@@ -256,7 +244,6 @@ Game.prototype.run = function() {
   }
   catch (e) {
     if (e instanceof InputRequestEvent) {
-      e.key = this.key
       this.waiting = e
       return e
     }
@@ -284,7 +271,7 @@ Game.prototype.undo = function() {
     this.gameOverData = null
   }
 
-  // Undo all responses to the last submitted key.
+  // Undo all responses to the last submitted user response.
   while (!this.responses[this.responses.length - 1].isUserResponse) {
     this.responses.pop()
   }
@@ -424,14 +411,8 @@ Game.prototype._getResponse = function() {
 
 // When overriding, always call super before doing any additional state updates.
 Game.prototype._reset = function() {
-  this.key = 0
   this.random = seedrandom(this.settings.seed)
   this.state = this._blankState()
-}
-
-Game.prototype._setInputRequestKey = function() {
-  this.key = this.random.int32()
-  return this.key
 }
 
 Game.prototype._tryToAutomaticallyRespond = function(selectors) {
@@ -486,19 +467,6 @@ Game.prototype.testSetBreakpoint = function(name, fn) {
   else {
     this.breakpoints[name] = [fn]
   }
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// non-class methods
-
-function responseIsDuplicate(responses, r) {
-  if (!r) {
-    return false
-  }
-
-  const possibleDuplicates = util.array.takeRightWhile(responses, x => x.key === r.key)
-  return possibleDuplicates.some(x => x.actor === r.actor)
 }
 
 

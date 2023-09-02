@@ -74,20 +74,17 @@ TestUtil.fixtureFirstPlayer = function(options) {
     actor: 'dennis',
     title: 'Choose First Card',
     selection: ['Archery'],
-    key: request1.key
   })
   game.respondToInputRequest({
     actor: 'micah',
     title: 'Choose First Card',
     selection: ['Code of Laws'],
-    key: request1.key
   })
   if (game.settings.numPlayers >= 3) {
     game.respondToInputRequest({
       actor: 'scott',
       title: 'Choose First Card',
       selection: ['Sailing'],
-      key: request1.key
     })
   }
   if (game.settings.numPlayers >= 4) {
@@ -95,7 +92,6 @@ TestUtil.fixtureFirstPlayer = function(options) {
       actor: 'eliya',
       title: 'Choose First Card',
       selection: ['Writing'],
-      key: request1.key
     })
   }
 

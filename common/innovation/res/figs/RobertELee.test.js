@@ -29,7 +29,6 @@ describe('Robert E. Lee', () => {
         title: 'Dogma',
         selection: ['Robert E. Lee']
       }],
-      key: request1.key
     })
 
     const request3 = t.choose(game, request2, 'Stem Cells')

@@ -160,7 +160,6 @@ export default {
         actor: this.actor.name,
         title: waiting.title,
         deckData: this.activeDeck.serialize(),
-        key: this.game.getWaitingKey(),
       })
       this.save()
     },
