@@ -185,6 +185,7 @@ Magic.prototype.chooseDecks = function() {
 
   this.state.decksSelected = true
 
+  this._breakpoint('decks-selected')
   this.mLogOutdent()
 }
 

@@ -100,6 +100,21 @@ TestUtil.fixtureDecksSelected = function(options) {
     throw new Error('Deck selection is not set up for 3+ players')
   }
 
+  game.testSetBreakpoint('decks-selected', (game) => {
+    const dennis = game.getPlayerByName('dennis')
+    const deck = game.getZoneByPlayer(dennis, 'library')
+    const cards = deck.cards()
+    deck._cards = [
+      cards.find(c => c.name === 'White Knight'),
+      cards.find(c => c.name === 'Benalish Hero'),
+      cards.find(c => c.name === 'Advance Scout'),
+      cards.find(c => c.name === 'Tithe'),
+      cards.find(c => c.name === 'Holy Strength'),
+      cards.find(c => c.id === 2), // plains
+      cards.find(c => c.id === 3), // plains
+    ]
+  })
+
   return game
 }
 
