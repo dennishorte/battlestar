@@ -79,7 +79,10 @@ Game.find = async function(filters) {
 }
 
 Game.findById = async function(gameId) {
-  return await gameCollection.findOne({ _id: gameId })
+  return await gameCollection.findOne({
+    _id: gameId,
+    killed: { $ne: true },
+  })
 }
 
 Game.findByUserId = async function(userId) {
