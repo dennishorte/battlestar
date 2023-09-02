@@ -276,20 +276,11 @@ export default {
       const payload = {
         gameId: game._id,
         responses: game.responses,
-        chat: game.getChat(),
       }
 
       await this.$post('/api/game/saveFull', payload)
 
       this.game.usedUndo = false
-    },
-
-    _injectChatMethod() {
-      const mChatOrigFunc = this.game.mChat
-      this.game.mChat = async function(...args) {
-        mChatOrigFunc.apply(this.game, args)
-        await this.save()
-      }.bind(this)
     },
 
     _injectSaveMethod() {
@@ -316,7 +307,6 @@ export default {
     this.bus.on('waiting-mouse-exited', this.waitingMouseExited)
     this.bus.on('waiting-selection-changed', this.waitingSelectionChanged)
 
-    this._injectChatMethod()
     this._injectSaveMethod()
     this.game.run()
   },

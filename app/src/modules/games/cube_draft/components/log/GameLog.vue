@@ -2,10 +2,10 @@
   <div class="gamelog" ref="gamelog">
     <div v-for="(line, index) in lines" :key="index" :class="line.classes" class="log-line">
 
-      <template v-if="line.isChat">
+      <template v-if="line.type === 'chat'">
         <div class="chat-container">
           <div class="chat-message">
-            <span class="chat-author">{{ line.author.name }}:</span>
+            <span class="chat-author">{{ line.author }}:</span>
             {{ line.text }}
           </div>
         </div>
@@ -51,6 +51,9 @@ export default {
         }
         else if (entry === '__OUTDENT__') {
         }
+        else if (entry.type === 'chat') {
+          output.push(entry)
+        }
         else {
           const text = this.convertLogMessage(entry)
           const classes = entry.classes || []
@@ -62,19 +65,6 @@ export default {
             indent: entry.indent,
           })
         }
-
-        // Insert any chats that go after this entry.
-        this
-          .game
-          .getChat()
-          .filter(x => x.position === i + 1)
-          .forEach(chat => {
-            output.push({
-              text: chat.text,
-              author: this.game.getPlayerByName(chat.player),
-              isChat: true,
-            })
-          })
       }
       return output
     }
@@ -174,7 +164,6 @@ export default {
   margin-left: 1em;
   text-align: right;
 }
-
 .chat-author {
   font-size: .8em;
   line-height: .5em;

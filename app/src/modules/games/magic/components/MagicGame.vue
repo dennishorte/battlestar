@@ -8,7 +8,7 @@
       </GameMenu>
 
       <GameLog />
-      <ChatInput />
+      <ChatInput @save-on-chat="false" />
     </div>
 
     <div class="magic-column phase-selector-column">

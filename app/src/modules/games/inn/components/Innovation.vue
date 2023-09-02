@@ -127,7 +127,6 @@ export default {
       const payload = {
         gameId: game._id,
         responses: game.responses,
-        chat: game.getChat(),
       }
 
       await this.$post('/api/game/saveFull', payload)
@@ -223,12 +222,6 @@ export default {
         },
       },
     }
-
-    const mChatOrigFunc = this.game.mChat
-    this.game.mChat = async function(...args) {
-      mChatOrigFunc.apply(this.game, args)
-      await this.save()
-    }.bind(this)
 
     this.game.save = async function() {
       await this.save()

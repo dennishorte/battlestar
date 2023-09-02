@@ -281,7 +281,6 @@ export default {
         const payload = {
           gameId: game._id,
           responses: game.responses,
-          chat: game.getChat(),
 
           // Include these because Magic doesn't run on the backend when saving,
           // so can't calculate these values.

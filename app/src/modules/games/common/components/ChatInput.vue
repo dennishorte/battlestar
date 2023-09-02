@@ -9,7 +9,21 @@
 export default {
   name: 'ChatInput',
 
-  inject: ['game', 'actor'],
+  inject: {
+    game: { from: 'game' },
+    actor: { from: 'actor' },
+    save: {
+      from: 'save',
+      default: null
+    },
+  },
+
+  props: {
+    saveOnChat: {
+      type: Boolean,
+      default: true,
+    },
+  },
 
   data() {
     return {
@@ -19,8 +33,23 @@ export default {
 
   methods: {
     async sendChat() {
-      await this.game.mChat(this.actor.name, this.text)
-      this.$emit('chat-added', this.text)
+      this.game.respondToInputRequest({
+        actor: this.actor.name,
+        type: 'chat',
+        text: this.text,
+      })
+
+      if (this.saveOnChat) {
+        if (this.save) {
+          await this.save()
+        }
+        else if (this.game.save) {
+          await this.game.save()
+        }
+        else {
+          alert('No save function provided')
+        }
+      }
       this.text = ''
     }
   },

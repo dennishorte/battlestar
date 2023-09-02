@@ -93,25 +93,6 @@ function DuplicateResponseError(msg) {
 ////////////////////////////////////////////////////////////////////////////////
 // Input Requests / Responses
 
-Game.prototype._validateResponse = function(requests, response) {
-  const request = requests.find(r => r.actor === response.actor)
-  util.assert(request !== undefined, "No request matches the response actor")
-
-  if (request.choices === '__UNSPECIFIED__') {
-    return
-  }
-
-  const result = selector.validate(request, response, { ignoreTitle: true })
-  if (!result.valid) {
-    /* console.log(JSON.stringify({
-     *   request,
-     *   response,
-     *   result,
-     * }, null, 2)) */
-    throw new Error('Invalid response')
-  }
-}
-
 Game.prototype.checkGameIsOver = function() {
   return this.gameOver
 }
@@ -178,7 +159,6 @@ Game.prototype.requestInputAny = function(array) {
   const resp = this._getResponse() // || this._tryToAutomaticallyRespond(array)
 
   if (resp) {
-    this._validateResponse(array, resp)
     if (resp.isUserResponse) {
       this.getLog().push({
         type: 'response-received',
@@ -218,14 +198,22 @@ Game.prototype.requestInputMany = function(array) {
       throw new DuplicateResponseError(`Duplicate response from ${resp.actor}`)
     }
     else if (resp) {
-      this._validateResponse(array, resp)
-      __prepareInput(resp)
+      if (resp.type === 'chat') {
+        const player = this.getPlayerByName(resp.actor)
+        this.getLog().push({
+          author: resp.actor,
+          text: resp.text,
+          type: 'chat'
+        })
+      }
+      else {
+        __prepareInput(resp)
+      }
     }
     else {
       const unanswered = array.filter(request => !responses.find(r => r.actor === request.actor))
       const answer = this._tryToAutomaticallyRespond(unanswered)
       if (answer) {
-        this._validateResponse(array, answer)
         this.responses.push(answer)
         __prepareInput(answer)
       }
@@ -234,6 +222,7 @@ Game.prototype.requestInputMany = function(array) {
       }
     }
   }
+
   return responses
 }
 
@@ -529,6 +518,7 @@ Game.prototype.aChoose = function(player, choices, opts={}) {
     choices: choices,
     ...opts
   })
+
   if (selected.length === 0) {
     this.mLogDoNothing(player)
     return []

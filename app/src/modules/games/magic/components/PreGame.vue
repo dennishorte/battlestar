@@ -14,7 +14,7 @@
         </GameMenu>
 
         <GameLog />
-        <ChatInput @chat-added="save" />
+        <ChatInput />
       </div>
 
       <div class="deck-column">
