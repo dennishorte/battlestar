@@ -1,6 +1,8 @@
 node_modules
 dist
 restart_prod.sh
+api/src/version.js
+app/src/assets/version.js
 #*
 .#*
 ik*
