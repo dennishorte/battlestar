@@ -20,7 +20,7 @@ Game.all = async function() {
 
 Game.create = async function(lobby) {
   return await writeMutex.dispatch(async () => {
-    const data = games.factory(lobby.game)
+    const data = games.factory(lobby.game)(lobby)
     data.settings.createdTimestamp = Date.now()
 
     // Added in order to support showing games that have recently ended on user home screens.

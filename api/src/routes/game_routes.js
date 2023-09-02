@@ -11,6 +11,32 @@ const Game = {
 module.exports = Game
 
 
+async function _maybeHandleCubeDraft(game) {
+  if (game.settings.game === 'Cube Draft' || game.settings.game === 'Set Draft') {
+    // Create decks for each user.
+    for (const player of game.settings.players) {
+      const deckId = await db.magic.deck.create({
+        userId: player._id,
+        path: '/draft_decks',
+        name: game.settings.name,
+      })
+
+      player.deckId = deckId
+    }
+
+    // Save the draft settings afterwards so the deck ids get saved.
+    await db.game.saveSettings(game._id, game.settings)
+  }
+}
+
+async function _maybeHandleMagicLinks(game, linkedDraftId) {
+  if (game.settings.game === 'Magic' && linkedDraftId) {
+    await db.game.linkGameToDraft(gameId, linkedDraftId)
+    await db.game.linkDraftToGame(linkedDraftId, gameId)
+  }
+}
+
+
 Game.create = async function(req, res) {
   const lobby = await db.lobby.findById(req.body.lobbyId)
 
@@ -25,32 +51,13 @@ Game.create = async function(req, res) {
   const gameId = await db.game.create(lobby)
 
   if (gameId) {
+    const game = await db.game.findById(gameId)
+
     // Save the game id in the lobby
     await db.lobby.gameLaunched(lobby._id, gameId)
 
-    const gameData = await db.game.findById(gameId)
-    const game = new mag.Magic(gameData)
-
-    // For drafts, create decks for each user.
-    if (game.settings.game === 'CubeDraft') {
-      for (const player of game.settings.players) {
-        const deckId = await db.magic.deck.create({
-          userId: player._id,
-          path: '/draft_decks',
-          name: game.settings.name,
-        })
-
-        player.deckId = deckId
-      }
-
-      // Save the draft settings afterwards so the deck ids get saved.
-      await db.game.saveSettings(game._id, game.settings)
-    }
-
-    if (game.settings.game === 'Magic' && req.body.linkedDraftId) {
-      await db.game.linkGameToDraft(gameId, req.body.linkedDraftId)
-      await db.game.linkDraftToGame(req.body.linkedDraftId, gameId)
-    }
+    await _maybeHandleCubeDraft(game)
+    await _maybeHandleMagicLinks(game, req.body.linkedDraftId)
 
     // Notify players of the new game
     for (const user of lobby.users) {
@@ -107,8 +114,8 @@ async function _notify(game, userId, msg) {
     return
   }
 
-  const gameKind = game.settings ? game.settings.game : game.game
-  const gameName = game.settings ? game.settings.name : game.name
+  const gameKind = game.settings.game
+  const gameName = game.settings.name
 
   const domain_host = process.env.DOMAIN_HOST
   const link = `http://${domain_host}/game/${game._id}`
