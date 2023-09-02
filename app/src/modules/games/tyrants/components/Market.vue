@@ -7,7 +7,7 @@
     <GameCard v-if="Boolean(guard)" :card="guard" :show-cost="true" />
     <GameCard v-if="Boolean(priestess)" :card="priestess" :show-cost="true" />
     <hr class="market-separator" />
-    <GameCard v-for="card in cards" :key="card.id" :card="card" :show-cost="true" />
+    <GameCard v-for="card in cards" :key="card.id" :card="card" :show-cost="true" :expanded-in="true" />
   </div>
 </template>
 
@@ -26,7 +26,12 @@ export default {
 
   computed: {
     cards() {
-      return this.game.getZoneById('market').cards()
+      return this
+        .game
+        .getZoneById('market')
+        .cards()
+        .sort((l, r) => l.name.localeCompare(r.name))
+        .sort((l, r) => l.cost - r.cost)
     },
 
     cardsRemaining() {

@@ -25,12 +25,12 @@
 
     <div class="hand" v-if="player.name === actor.name">
       <div class="header">hand</div>
-      <GameCard v-for="card in hand" :key="card.id" :card="card" />
+      <GameCard v-for="card in hand" :key="card.id" :card="card" :expanded-in="true" />
     </div>
 
     <div class="played" v-if="playedCards.length > 0">
       <div class="header">played</div>
-      <GameCard v-for="card in playedCards" :key="card.id" :card="card" />
+      <GameCard v-for="card in playedCards" :key="card.id" :card="card" :expanded-in="true" />
     </div>
   </div>
 </template>
@@ -58,11 +58,17 @@ export default {
     },
 
     hand() {
-      return this.game.getCardsByZone(this.player, 'hand').sort((l, r) => l.name.localeCompare(r.name))
+      return this
+        .game
+        .getCardsByZone(this.player, 'hand')
+        .sort((l, r) => l.name.localeCompare(r.name))
     },
 
     playedCards() {
-      return this.game.getCardsByZone(this.player, 'played')
+      return this
+        .game
+        .getCardsByZone(this.player, 'played')
+        .sort((l, r) => l.name.localeCompare(r.name))
     },
 
     score() {
