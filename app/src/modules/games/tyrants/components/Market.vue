@@ -7,7 +7,7 @@
     <GameCard v-if="Boolean(guard)" :card="guard" :show-cost="true" />
     <GameCard v-if="Boolean(priestess)" :card="priestess" :show-cost="true" />
     <hr class="market-separator" />
-    <GameCard v-for="card in cards" :key="card.id" :card="card" :show-cost="true" :expanded-in="true" />
+    <GameCard v-for="card in cards" :key="card.id" :card="card" :show-cost="true" />
   </div>
 </template>
 
