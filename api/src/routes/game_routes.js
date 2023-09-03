@@ -10,7 +10,6 @@ const Game = {
 }
 module.exports = Game
 
-
 async function _maybeHandleCubeDraft(game) {
   if (game.settings.game === 'Cube Draft' || game.settings.game === 'Set Draft') {
     // Create decks for each user.
@@ -35,7 +34,6 @@ async function _maybeHandleMagicLinks(game, linkedDraftId) {
     await db.game.linkDraftToGame(linkedDraftId, gameId)
   }
 }
-
 
 Game.create = async function(req, res) {
   const lobby = await db.lobby.findById(req.body.lobbyId)
@@ -157,6 +155,20 @@ Game.rematch = async function(req, res) {
 Game.saveFull = async function(req, res) {
   const game = await _loadGameFromReq(req)
 
+  // Test if the gameData is safe to write to based on this request
+  // If games don't have branchIds, they haven't been created in the new
+  // system. Once old games are wrapped up, this if clause can be removed.
+  if (game.branchId) {
+    if (!req.body.branchId || req.body.branchId !== game.branchId) {
+      res.json({
+        status: 'game_overwrite',
+        reqBranchId: req.body.branchId,
+        gameBranchId: game.branchId,
+      })
+      return
+    }
+  }
+
   if (game.killed) {
     res.json({
       status: 'error',
@@ -240,11 +252,17 @@ async function _testAndSave(game, res, evalFunc) {
     }
   }
 
-  await db.game.save(game)
+  const { branchId } = await db.game.save(game)
   if (game.checkGameIsOver()) {
     await db.game.gameOver(game._id)
   }
-  await _sendNotifications(res, game)
+  await _sendNotifications(game)
+
+
+  res.json({
+    status: 'success',
+    branchId,
+  })
 }
 
 async function _loadGameFromReq(req) {
@@ -253,7 +271,7 @@ async function _loadGameFromReq(req) {
   return new constructor(gameData)
 }
 
-async function _sendNotifications(res, game) {
+async function _sendNotifications(game) {
   for (const player of game.settings.players) {
     if (game.checkGameIsOver()) {
       _notify(game, player._id, 'Game Over!')
@@ -266,9 +284,4 @@ async function _sendNotifications(res, game) {
       _notify(game, player._id, "You're up!")
     }
   }
-
-  res.json({
-    status: 'success',
-    message: 'Saved',
-  })
 }

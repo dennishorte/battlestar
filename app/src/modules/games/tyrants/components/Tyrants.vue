@@ -111,7 +111,6 @@ export default {
   data() {
     return {
       game: new tyr.Tyrants(this.data, this.actor.name),
-      fakeSave: false,
 
       bus: mitt(),
 
@@ -250,35 +249,20 @@ export default {
       }
     },
 
-    handleSaveResult(result) {
-      if (result.data.status === 'success') {
-        this.game.usedUndo = false
-      }
-    },
-
     openRules() {
       window.open("https://media.dnd.wizards.com/TyrantsOfTheUnderdark-Rulebook.pdf")
     },
 
     save: async function() {
-      if (this.fakeSave) {
-        console.log('fake saved (game)')
-        return
-      }
-
-      await this.saveFull()
-    },
-
-    saveFull: async function() {
       const game = this.game
-      const payload = {
+      const response = await this.$post('/api/game/saveFull', {
         gameId: game._id,
         responses: game.responses,
-      }
-
-      await this.$post('/api/game/saveFull', payload)
+        branchId: game.branchId,
+      })
 
       this.game.usedUndo = false
+      this.game.branchId = response.branchId
     },
 
     _injectSaveMethod() {

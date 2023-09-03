@@ -93,19 +93,20 @@ export default {
 
     async save() {
       const game = this.game
-      const payload = {
+      const response = await this.$post('/api/game/saveFull', {
         gameId: game._id,
         responses: game.responses,
+        branchId: game.branchId,
 
         // Include these because Magic doesn't run on the backend when saving,
         // so can't calculate these values.
         waiting: game.waiting,
         gameOver: game.gameOver,
         gameOverData: game.gameOverData,
-      }
+      })
 
-      await this.$post('/api/game/saveFull', payload)
       this.game.usedUndo = false
+      this.game.branchId = response.branchId
     },
   },
 }

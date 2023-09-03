@@ -16,6 +16,10 @@ function Game(serialized_data, viewerName) {
   // State will be reset each time the game is run
   this.state = this._blankState()
 
+  // The branch id is used when saving the game to see if another player has taken an
+  // action since this game was loaded.
+  this.branchId = serialized_data.branchId
+
   // Settings are immutable data
   this.settings = serialized_data.settings
 
@@ -76,6 +80,7 @@ Game.prototype.serialize = function() {
   return {
     settings: this.settings,
     responses: this.responses,
+    branchId: this.branchId,
   }
 }
 

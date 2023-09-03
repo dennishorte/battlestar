@@ -118,10 +118,13 @@ Game.linkGameToDraft = async function(gameId, draftId) {
 }
 
 async function doSave(game) {
-  return await gameCollection.updateOne(
+  const branchId = Date.now()
+
+  await gameCollection.updateOne(
     { _id: game._id },
     {
       $set: {
+        branchId,
         gameOver: game.gameOver,
         gameOverData: game.gameOverData,
         lastUpdated: Date.now(),
@@ -130,6 +133,8 @@ async function doSave(game) {
       }
     },
   )
+
+  return { branchId }
 }
 
 Game.save = async function(game, opts={}) {
@@ -138,7 +143,7 @@ Game.save = async function(game, opts={}) {
   }
   else {
     return await writeMutex.dispatch(async () => {
-      await doSave(game)
+      return await doSave(game)
     })
   }
 }

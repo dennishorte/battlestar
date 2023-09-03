@@ -289,7 +289,8 @@ export default {
           gameOverData: game.gameOverData,
         }
 
-        await this.$post('/api/game/saveFull', payload)
+        const response = await this.$post('/api/game/saveFull', payload)
+        this.game.branchId = response.branchId
       }
 
       else {
