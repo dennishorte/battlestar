@@ -69,7 +69,6 @@ app.post('/api/magic/scryfall/update', routes.magic.scryfall.updateAll)
 ////////////////////////////////////////
 
 // Guest routes
-app.post('/api/guest/slack_test', routes.slackTest)
 app.post('/api/guest/login', routes.login)
 
 // Lobby Routes

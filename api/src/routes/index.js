@@ -24,14 +24,9 @@ async function _createFirstUserIfNone(name, password) {
   }
 }
 
-module.exports.slackTest = async function(req, res) {
-  const slackRes = await slack.test()
-  res.json(slackRes)
-}
-
 module.exports.login = async function(req, res) {
   await _createFirstUserIfNone(req.body.name, req.body.password)
-  const user = await db.user.checkPassword(req.body.name, req.body.password)
+  const user = await db.user.checkPassword(req.body.user.name, req.body.user.password)
 
   if (!user) {
     res.json({

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import axiosWrapper from '@/util/axiosWrapper.js'
 
 
 function getCachedUser() {
@@ -64,13 +65,10 @@ export default {
     login({ commit }, user) {
       return new Promise((resolve, reject) => {
         commit('auth_request')
-        axios({
-          url: '/api/guest/login',
-          method: 'POST',
-          data: user,
-        })
+        axiosWrapper
+          .post('/api/guest/login', { user })
           .then(resp => {
-            const user = resp.data.user
+            const user = resp.user
             commit('auth_success', user)
             resolve(resp)
           })
