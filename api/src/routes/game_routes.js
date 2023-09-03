@@ -11,7 +11,11 @@ const Game = {
 module.exports = Game
 
 async function _maybeHandleCubeDraft(game) {
-  if (game.settings.game === 'Cube Draft' || game.settings.game === 'Set Draft') {
+  if (
+    game.settings.game === 'CubeDraft'
+    || game.settings.game === 'Cube Draft'
+    || game.settings.game === 'Set Draft'
+  ) {
     // Create decks for each user.
     for (const player of game.settings.players) {
       const deckId = await db.magic.deck.create({

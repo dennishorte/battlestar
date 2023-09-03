@@ -415,7 +415,7 @@ export default {
         deckId: player.deckId,
       })
 
-      this.$store.dispatch('magic/dm/selectDeck', response.data.deck)
+      this.$store.dispatch('magic/dm/selectDeck', deck)
     }
   },
 }
