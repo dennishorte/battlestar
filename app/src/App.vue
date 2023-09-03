@@ -1,12 +1,21 @@
 <template>
   <div id="app">
     <router-view></router-view>
+
+    <ErrorModal />
   </div>
 </template>
 
 <script>
+import ErrorModal from '@/components/ErrorModal'
+
+
 export default {
   name: 'app',
+
+  components: {
+    ErrorModal,
+  },
 
   mounted() {
     if(process.env.NODE_ENV === 'development') {

@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 const appVersion = require('@/assets/version.js')
+const modalWrapper = require('@/util/modal.js').default
 
 
 export default {
@@ -27,13 +28,13 @@ async function post(path, body) {
   }
 
   else if (response.data.status === 'game_overwrite') {
-    alert('Your actions will overwrite the actions of another player.')
+    modalWrapper.pleaseReload('Your actions will overwrite the actions of another player.')
     console.log(response.data)
     throw new Error('Conflicting actions')
   }
 
   else if (response.data.status === 'version_mismatch') {
-    alert('App version out of date. Please reload this page and try again.')
+    modalWrapper.pleaseReload('App version out of date. Please reload this page and try again.')
     console.log({
       currentVersion: appVersion,
       latestVersion: response.data.latestVersion,

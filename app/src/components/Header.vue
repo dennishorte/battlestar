@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col">
-        <div class="header text-left">
+        <div class="header">
 
           <Dropdown class="float-start">
             <DropdownRouterLink to="/">home</DropdownRouterLink>
@@ -33,6 +33,8 @@ import Dropdown from '@/components/Dropdown'
 import DropdownDivider from '@/components/DropdownDivider'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownRouterLink from '@/components/DropdownRouterLink'
+
+import modalWrapper from '@/util/modal.js'
 
 export default {
   name: 'Header',
