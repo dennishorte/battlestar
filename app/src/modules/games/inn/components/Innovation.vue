@@ -103,6 +103,7 @@ export default {
       actor: this.actor,
       bus: this.bus,
       game: this.game,
+      save: this.save,
       ui: this.uiFactory(),
     }
   },
@@ -122,12 +123,6 @@ export default {
 
       this.game.usedUndo = false
       this.game.branchId = response.branchId
-    },
-
-    _injectSaveMethod() {
-      this.game.save = async function() {
-        await this.save()
-      }.bind(this)
     },
 
     uiFactory() {
@@ -217,7 +212,6 @@ export default {
       },
     }
 
-    this._injectSaveMethod()
     this.game.run()
   },
 

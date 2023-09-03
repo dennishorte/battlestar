@@ -138,6 +138,7 @@ export default {
       actor: this.actor,
       bus: this.bus,
       game: this.game,
+      save: this.save,
       ui: this.ui,
     }
   },
@@ -257,12 +258,6 @@ export default {
       this.game.branchId = response.branchId
     },
 
-    _injectSaveMethod() {
-      this.game.save = async function() {
-        await this.save()
-      }.bind(this)
-    },
-
     waitingMouseEntered(data) {
       // console.log('mouse-entered', data)
     },
@@ -281,7 +276,6 @@ export default {
     this.bus.on('waiting-mouse-exited', this.waitingMouseExited)
     this.bus.on('waiting-selection-changed', this.waitingSelectionChanged)
 
-    this._injectSaveMethod()
     this.game.run()
   },
 

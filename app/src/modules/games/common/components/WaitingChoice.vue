@@ -35,7 +35,7 @@ export default {
 
     save: {
       from: 'save',
-      default: null,
+      default: () => { alert('no save function') },
     },
   },
 
@@ -92,15 +92,7 @@ export default {
         throw e
       }
 
-      if (this.save) {
-        await this.save()
-      }
-      else if (this.game.save) {
-        await this.game.save()
-      }
-      else {
-        alert('No save function provided')
-      }
+      await this.save()
     },
 
     submitIfValid() {
