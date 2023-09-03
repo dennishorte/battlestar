@@ -28,8 +28,6 @@ export default {
     OptionSelector,
   },
 
-  inject: ['game', 'ui', 'bus', 'save'],
-
   inject: {
     bus: { from: 'bus' },
     game: { from: 'game' },
