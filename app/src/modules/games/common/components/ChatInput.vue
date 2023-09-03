@@ -40,15 +40,7 @@ export default {
       })
 
       if (this.saveOnChat) {
-        if (this.save) {
-          await this.save()
-        }
-        else if (this.game.save) {
-          await this.game.save()
-        }
-        else {
-          alert('No save function provided')
-        }
+        await this.save()
       }
       this.text = ''
     }
