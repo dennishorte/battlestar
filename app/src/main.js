@@ -21,15 +21,12 @@ app.use(store)
 app.config.compilerOptions.whitespace = 'preserve'
 app.config.unwrapInjectedRef = true
 
-// Function for fetching and programatically acting on modals.
-import Modal from 'bootstrap/js/dist/modal'
-app.config.globalProperties.$modal = (elemId, opts={}) => {
-  const elem = document.getElementById(elemId)
-  return new Modal(elem, opts)
-}
-
-// Standardized handling for axios requests
+// Global function imports
 import axiosWrapper from './util/axiosWrapper.js'
+import modalWrapper from './util/modal.js'
+
+app.config.globalProperties.$modal = modalWrapper.getModal
 app.config.globalProperties.$post = axiosWrapper.post
+
 
 app.mount('#app')
