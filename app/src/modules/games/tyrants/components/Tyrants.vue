@@ -251,8 +251,6 @@ export default {
     },
 
     handleSaveResult(result) {
-      console.log(result)
-
       if (result.data.status === 'success') {
         this.game.usedUndo = false
       }
@@ -290,15 +288,15 @@ export default {
     },
 
     waitingMouseEntered(data) {
-      console.log('mouse-entered', data)
+      // console.log('mouse-entered', data)
     },
 
     waitingMouseExited(data) {
-      console.log('mouse-exited', data)
+      // console.log('mouse-exited', data)
     },
 
     waitingSelectionChanged(data) {
-      console.log('selection-changed', data)
+      // console.log('selection-changed', data)
     },
   },
 
