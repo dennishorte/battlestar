@@ -344,6 +344,11 @@ Tyrants.prototype.doActions = function() {
       continue
     }
 
+    else if (chosenAction.action === 'place-troop-with-power') {
+      this.aDeployWithPowerAt(player, chosenAction.location)
+      continue
+    }
+
     const name = chosenAction.title
     const arg = chosenAction.selection[0]
 
@@ -352,6 +357,7 @@ Tyrants.prototype.doActions = function() {
         .getCardsByZone(player, 'hand')
         .find(c => c.name === arg)
       this.aPlayCard(player, card)
+      continue
     }
     else if (name === 'Recruit') {
       this.mLog({
@@ -361,17 +367,12 @@ Tyrants.prototype.doActions = function() {
       this.mLogIndent()
       this.aRecruit(player, arg)
       this.mLogOutdent()
+      continue
     }
     else if (name === 'Use Power') {
       if (arg === 'Deploy a Troop') {
-        this.mLog({
-          template: '{player} power: Deploy a Troop',
-          args: { player }
-        })
-        this.mLogIndent()
-        this.aChooseAndDeploy(player)
-        player.incrementPower(-1)
-        this.mLogOutdent()
+        this.aDeployWithPowerAt(player)
+        continue
       }
 
       else if (arg === 'Assassinate a Troop') {
@@ -383,6 +384,7 @@ Tyrants.prototype.doActions = function() {
         this.aChooseAndAssassinate(player)
         player.incrementPower(-3)
         this.mLogOutdent()
+        continue
       }
 
       else if (arg === 'Return an Enemy Spy') {
@@ -394,6 +396,7 @@ Tyrants.prototype.doActions = function() {
         this.aChooseAndReturn(player, { noTroops: true })
         player.incrementPower(-3)
         this.mLogOutdent()
+        continue
       }
 
       else {
@@ -709,6 +712,29 @@ Tyrants.prototype.checkForEndOfGame = function() {
       reason: 'ALL THE POINTS!'
     })
   }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Alt Actions
+
+Tyrants.prototype.aDeployWithPowerAt = function(player, locId=null) {
+  this.mLog({
+    template: '{player} power: Deploy a Troop',
+    args: { player }
+  })
+  this.mLogIndent()
+
+  if (locId) {
+    const loc = this.getLocationByName(locId)
+    this.aDeploy(player, loc)
+  }
+  else {
+    this.aChooseAndDeploy(player)
+  }
+
+  player.incrementPower(-1)
+  this.mLogOutdent()
 }
 
 

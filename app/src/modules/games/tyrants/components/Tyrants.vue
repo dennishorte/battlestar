@@ -222,23 +222,15 @@ export default {
 
     async clickLocation(loc) {
       if (this.canPlaceTroopAtLocation(loc)) {
-        this.bus.emit('user-select-option', {
-          actor: this.actor,
-          optionName: 'Deploy a Troop',
+        this.game.respondToInputRequest({
+          actor: this.actor.name,
+          title: '__ALT_ACTION__',
+          selection: [{
+            action: 'place-troop-with-power',
+            location: loc.name,
+          }]
         })
-
-        await nextTick()
-        this.bus.emit('click-choose-selected-option')
-
-        await nextTick()
-        this.bus.emit('user-select-option', {
-          actor: this.actor,
-          optionName: loc.name,
-          opts: { prefix: true },
-        })
-
-        await nextTick()
-        this.bus.emit('click-choose-selected-option')
+        await this.save()
       }
       else {
         this.bus.emit('user-select-option', {
