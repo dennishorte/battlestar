@@ -4,9 +4,9 @@
       <div class="row flex-nowrap main-row">
         <div class="col history-column">
           <GameMenu>
-            <DropdownItem>
-              <button @click="openRules">rules</button>
-            </DropdownItem>
+            <DropdownButton @click="openRules">rules</DropdownButton>
+            <DropdownDivider />
+            <DropdownButton @click="showScores">scores</DropdownButton>
           </GameMenu>
 
           <GameLog />
@@ -32,6 +32,11 @@
     <CardViewerModal />
     <DebugModal />
     <Tableau-Modal />
+
+    <Modal id="tyrants-scores">
+      <template #header>Score Overview</template>
+      <ScoreTable />
+    </Modal>
   </div>
 </template>
 
@@ -46,7 +51,8 @@ import maps from '../res/maps.js'
 
 // Common Components
 import ChatInput from '@/modules/games/common/components/ChatInput'
-import DropdownItem from '@/components/DropdownItem'
+import DropdownButton from '@/components/DropdownButton'
+import DropdownDivider from '@/components/DropdownDivider'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
@@ -55,12 +61,15 @@ import GameLog from './log/GameLog'
 import GameMap from './map/GameMap'
 import Market from './Market'
 import Player from './Player'
+import ScoreTable from './ScoreTable'
 
 
 // Modals
 import CardViewerModal from './CardViewerModal'
 import DebugModal from '@/modules/games/common/components/DebugModal'
 import TableauModal from './TableauModal'
+
+import Modal from '@/components/Modal'
 
 
 function getTroopColor(game, troop) {
@@ -90,12 +99,15 @@ export default {
 
   components: {
     ChatInput,
-    DropdownItem,
+    DropdownButton,
+    DropdownDivider,
     GameLog,
     GameMap,
     GameMenu,
     Market,
+    Modal,
     Player,
+    ScoreTable,
     WaitingPanel,
 
     CardViewerModal,
@@ -256,6 +268,10 @@ export default {
 
       this.game.usedUndo = false
       this.game.branchId = response.branchId
+    },
+
+    showScores() {
+      this.$modal('tyrants-scores').show()
     },
 
     waitingMouseEntered(data) {
