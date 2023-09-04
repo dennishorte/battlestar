@@ -4,7 +4,7 @@
 
     <div v-else class="cube-draft">
       <div class="game-column log-column">
-        <GameMenu />
+        <GameMenu :disabled="['undo']" />
         <GameLog />
         <ChatInput />
       </div>
