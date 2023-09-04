@@ -7,6 +7,18 @@ const scarCollection = database.collection('scar')
 const Scar = {}
 module.exports = Scar
 
+Scar.apply = async function(scarId, userId, cardIdDict) {
+  await scarCollection.updateOne(
+    { _id: scarId },
+    {
+      $set: {
+        appliedTo: cardIdDict,
+        appliedBy: userId,
+        appliedTimestamp: Date.now(),
+      },
+    },
+  )
+}
 
 Scar.fetchByCubeId = async function(cubeId) {
   const cursor = await scarCollection.find({ cubeId })
@@ -14,7 +26,17 @@ Scar.fetchByCubeId = async function(cubeId) {
   return scars
 }
 
-Scar.lock = async function(scars, reason) {
+Scar.fetchAvailable = async function(cubeId) {
+  const cursor = await scarCollection.find({
+    cubeId,
+    lockedBy: { $exists: false },
+    appliedTimestamp: null
+  })
+  const scars = await cursor.toArray()
+  return scars
+}
+
+Scar.lock = async function(scars, userId) {
   const scarIds = scars.map(s => s._id)
 
   // Fetch the scars to make sure they aren't already locked, etc.
@@ -25,7 +47,7 @@ Scar.lock = async function(scars, reason) {
     throw new Error('Unable to find all specified scars')
   }
 
-  if (fetched.some(s => s.locked)) {
+  if (fetched.some(s => Boolean(s.lockedBy))) {
     throw new Error('Some or all scars are already locked')
   }
 
@@ -33,10 +55,16 @@ Scar.lock = async function(scars, reason) {
     { _id: { $in: scarIds } },
     {
       $set: {
-        locked: true,
-        lockedReason: reason,
+        lockedBy: userId,
       },
     },
+  )
+}
+
+Scar.releaseByUser = async function(userId) {
+  await scarCollection.updateMany(
+    { lockedBy: userId },
+    { $unset: { lockedBy: '' } },
   )
 }
 
@@ -52,16 +80,4 @@ Scar.save = async function(scar) {
     const { insertedId } = await scarCollection.insertOne(scar)
     return scarCollection.findOne({ _id: insertedId })
   }
-}
-
-Scar.unlock = async function(scars) {
-  const scarIds = scars.map(s => s._id)
-
-  await scarCollection.updateMany(
-    { _id: { $in: scarIds } },
-    {
-      $set: { locked: false },
-      $unset: { lockedReason: 0 },
-    },
-  )
 }

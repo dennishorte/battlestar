@@ -17,9 +17,15 @@
         <div v-if="doingScars" class="alert alert-warning">
           <h3>Scar Round!</h3>
 
-          <div v-for="scar in scars">
-            {{ scar.text }}
-          </div>
+          <template v-if="scars.length === 0">
+            {{ scarMessage }}
+          </template>
+
+          <template v-else>
+            <div v-for="scar in scars">
+              {{ scar.text }}
+            </div>
+          </template>
         </div>
         <CardTableau
           :cards="tableauCards"
@@ -158,6 +164,9 @@ export default {
       closeupDraftCard: null,
       scarCard: null,
 
+      scars: [],
+      scarMessage: 'loading scars',
+
       showGameStats: false,
       showWaitingPanel: false,
     }
@@ -175,7 +184,9 @@ export default {
     }),
 
     doingScars() {
-      return this.scars && this.scars.length > 0
+      const player = this.game.getPlayerByName(this.actor.name)
+      const waiting = this.game.getWaiting(player)
+      return waiting && waiting.title === 'Apply Scar'
     },
 
     modifiedClass() {
@@ -189,10 +200,6 @@ export default {
 
     player() {
       return this.game.getPlayerByName(this.actor.name)
-    },
-
-    scars() {
-      return this.game.getScarsForWaitingPack(this.player)
     },
 
     tableauCards() {
@@ -267,6 +274,36 @@ export default {
       await this.$store.dispatch('magic/dm/saveActiveDeck')
     },
 
+    async fetchScars() {
+      this.scars = []
+      this.scarMessage = 'Loading scars'
+
+      console.log('fetchScars', this.doingScars)
+      return
+
+      // Make sure the doingScars property will be updated by now.
+      await nextTick()
+
+      if (this.doingScars) {
+        // Release any previously reserved scars
+        await this.$post('/api/magic/scar/releaseByUser', {
+          userId: this.actor._id,
+        })
+
+        // Load some scars, in case needed
+        const { scars } = await this.$post('/api/magic/scar/fetchAvailable', {
+          cubeId: this.game.settings.cubeId,
+          count: 2,
+          lock: true,
+        })
+
+        this.scars = scars
+        if (this.scars.length === 0) {
+          this.scarMessage = 'No scars available'
+        }
+      }
+    },
+
     loadGame() {
       this.$store.dispatch('magic/cubeDraft/loadGame', {
         gameData: this.data,
@@ -303,6 +340,9 @@ export default {
       }
 
       this.game.usedUndo = false
+
+      // Fetch scars when a new game is loaded or when the game is saved.
+      this.fetchScars()
     },
 
     saveDeck() {
@@ -416,6 +456,9 @@ export default {
       })
 
       this.$store.dispatch('magic/dm/selectDeck', deck)
+
+      // Fetch scars when a new game is loaded or when the game is saved.
+      this.fetchScars()
     }
   },
 }

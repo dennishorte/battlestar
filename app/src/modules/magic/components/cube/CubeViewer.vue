@@ -276,7 +276,7 @@ export default {
     },
 
     async loadScars() {
-      const { scars } = await this.$post('/api/magic/scar/byCube', {
+      const { scars } = await this.$post('/api/magic/scar/fetchAll', {
         cubeId: this.id,
       })
       this.scars = scars

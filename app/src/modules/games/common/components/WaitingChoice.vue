@@ -1,16 +1,26 @@
 <template>
   <div class="waiting-choice">
 
-    <OptionSelector
-      :selector="request"
-      :required="true"
-      :owner="owner"
-      @selection-changed="childChanged"
-    />
+    <template v-if="request.choices === '__UNSPECIFIED__'">
+      <div class="alert alert-info mt-3">
+        <div>This is a special action: {{ request.title }}.</div>
+        <div>You cannot use this selector pane for it.</div>
+        <div>There should be an alternate UI for performing this action.</div>
+      </div>
+    </template>
 
-    <div class="d-grid">
-      <button @click="submit" :disabled="!isValid" class="btn btn-primary">choose</button>
-    </div>
+    <template v-else>
+      <OptionSelector
+        :selector="request"
+        :required="true"
+        :owner="owner"
+        @selection-changed="childChanged"
+      />
+
+      <div class="d-grid">
+        <button @click="submit" :disabled="!isValid" class="btn btn-primary">choose</button>
+      </div>
+    </template>
 
   </div>
 </template>

@@ -144,7 +144,6 @@ export default {
 
     async beforeStart(lobby) {
       await this.makePacks(lobby)
-      await this.prepareScars(lobby)
     },
 
     async makePacks(lobby) {
@@ -162,22 +161,6 @@ export default {
       lobby.packs = packs.slice(0, totalPacks)
 
       lobby.options.cubeName = cube.name
-    },
-
-    async prepareScars(lobby) {
-      const { scars } = await this.$post('/api/magic/scar/byCube', {
-        cubeId: lobby.options.cubeId,
-      })
-
-      const scarRounds = lobby.options.scarRounds.split(',').length
-      const requiredScars = scarRounds * lobby.users.length * 2
-      if (scars.length < requiredScars) {
-        alert(`Not enough scars.\n Got ${scars.length}. Needed ${requiredScars}`)
-      }
-
-      lobby.scars = util.array.selectMany(scars, requiredScars)
-
-      // TODO: lock the scars
     },
 
     defaultOptions() {

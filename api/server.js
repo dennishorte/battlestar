@@ -57,10 +57,10 @@ app.post('/api/magic/link/fetchDrafts', routes.magic.link.fetchDrafts)
 app.post('/api/magic/link/fetchByDraft', routes.magic.link.fetchByDraft)
 
 // Scar routes
-app.post('/api/magic/scar/byCube', routes.magic.scar.fetchByCube)
-app.post('/api/magic/scar/lock', routes.magic.scar.lock)
+app.post('/api/magic/scar/fetchAll', routes.magic.scar.fetchAll)
+app.post('/api/magic/scar/fetchAvailable', routes.magic.scar.fetchAvailable)
 app.post('/api/magic/scar/save', routes.magic.scar.save)
-app.post('/api/magic/scar/unlock', routes.magic.scar.unlock)
+app.post('/api/magic/scar/releaseByUser', routes.magic.scar.releaseByUser)
 
 // Scryfall Routes
 app.post('/api/magic/scryfall/update', routes.magic.scryfall.updateAll)

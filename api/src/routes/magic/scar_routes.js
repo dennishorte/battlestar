@@ -1,48 +1,65 @@
 const db = require('../../models/db.js')
-const { mag } = require('battlestar-common')
+const { Mutex } = require('../../util/mutex.js')
+const { util } = require('battlestar-common')
 
 const Scar = {}
 module.exports = Scar
 
 
-Scar.fetchByCube = async function(req, res) {
-  const scars = await db.magic.scar.fetchByCubeId(req.body.cubeId)
+const scarMutex = new Mutex()
 
-  res.json({
-    status: 'success',
-    scars,
+
+Scar.apply = async function(req, res) {
+  throw new Error('not implemented')
+
+  await scarMutex.dispatch(async () => {
   })
 }
 
-Scar.lock = async function(req, res) {
-  try {
-    await db.magic.scar.lock(req.body.scars, req.body.reason)
+Scar.fetchAll = async function(req, res) {
+  await scarMutex.dispatch(async () => {
+    const scars = await db.magic.scar.fetchByCubeId(req.body.cubeId)
+    res.json({
+      status: 'success',
+      scars,
+    })
+  })
+}
+
+Scar.fetchAvailable = async function(req, res) {
+  await scarMutex.dispatch(async () => {
+    const scars = await db.magic.scar.fetchAvailable(req.body.cubeId)
+    util.array.shuffle(scars)
+
+    const toReturn = scars.slice(0, req.body.count)
+
+    if (req.body.lock) {
+      await db.magic.scar.lock(toReturn)
+    }
 
     res.json({
       status: 'success',
+      scars: toReturn,
     })
-  }
-  catch (e) {
-    res.json({
-      status: 'error',
-      message: e.message,
-    })
-  }
-}
-
-Scar.save = async function(req, res) {
-  const scar = await db.magic.scar.save(req.body.scar)
-
-  res.json({
-    status: 'success',
-    scar,
   })
 }
 
-Scar.unlock = async function(req, res) {
-  await db.magic.scar.unlock(req.body.scars)
+Scar.releaseByUser = async function(req, res) {
+  await scarMutex.dispatch(async () => {
+    db.magic.scar.releaseByUser(req.body.userId)
+    res.json({
+      status: 'success'
+    })
+  })
+}
 
-  res.json({
-    status: 'success',
+Scar.save = async function(req, res) {
+  await scarMutex.dispatch(async () => {
+    const scar = await db.magic.scar.save(req.body.scar)
+
+    res.json({
+      status: 'success',
+      scar,
+    })
   })
 }
