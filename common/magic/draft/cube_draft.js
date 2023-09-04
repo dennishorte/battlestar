@@ -293,7 +293,8 @@ CubeDraft.prototype.checkIsScarAction = function(player) {
   if (pack) {
     const packRound = pack.index + 1
     return (
-      this.settings.scarRounds.includes(packRound)
+      this.settings.scarRounds
+      && this.settings.scarRounds.includes(packRound)
       && !player.scarredRounds.includes(packRound)
     )
   }
