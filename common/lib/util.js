@@ -70,6 +70,13 @@ Util.array.groupBy = function(array, fn) {
   return groups
 }
 
+Util.array.last = function(array) {
+  if (array.length === 0) {
+    throw new Error('Cannot call last on empty array')
+  }
+  return array[array.length - 1]
+}
+
 Util.array.pairs = function(array) {
   return array.flatMap(
     (v, i) => array.slice(i+1).map(w => [v, w])

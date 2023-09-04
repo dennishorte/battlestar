@@ -155,7 +155,6 @@ Game.prototype.requestInputAny = function(array) {
         data: resp,
       })
     }
-    this._responseReceived(resp)
     return resp
   }
   else {
@@ -177,7 +176,6 @@ Game.prototype.requestInputMany = function(array) {
         data: input,
       })
     }
-    this._responseReceived(input)
   }
 
   while (responses.length < array.length) {
@@ -219,6 +217,8 @@ Game.prototype.requestInputSingle = function(selector) {
 }
 
 Game.prototype.respondToInputRequest = function(response) {
+  this._responseReceived(response)
+
   response.isUserResponse = true  // As opposed to an automated response.
   this.responses.push(response)
 
@@ -257,22 +257,39 @@ Game.prototype.run = function() {
 }
 
 Game.prototype.undo = function() {
-  this.usedUndo = true
-
   if (this.gameOver) {
     this.gameOver = false
     this.gameOverData = null
   }
 
-  // Undo all responses to the last submitted user response.
-  while (!this.responses[this.responses.length - 1].isUserResponse) {
-    this.responses.pop()
+  const responsesCopy = [...this.responses]
+
+  while (true) {
+    // We didn't find anything that could be undone.
+    if (responsesCopy.length === 0) {
+      return '__NO_MORE_ACTIONS__'
+    }
+
+    const next = responsesCopy.pop()
+
+    // Some things can't be undone.
+    // Games can insert special events into the responses object that
+    if (next.noUndo) {
+      return '__NO_UNDO__'
+    }
+
+    // We undid an actual user response, rather than some automated action,
+    // so we have completed the undo action.
+    if (next.isUserResponse) {
+      break
+    }
   }
-  this.responses.pop()
 
-  this._undoCalled()
-
+  this.responses = responsesCopy
+  this.usedUndo = true
   this.run()
+
+  return '__SUCCESS__'
 }
 
 
@@ -380,10 +397,6 @@ Game.prototype._enrichLogArgs = function(msg) {
 }
 
 Game.prototype._postEnrichArgs = function(msg) {
-  // To be overridden by child classes.
-}
-
-Game.prototype._undoCalled = function() {
   // To be overridden by child classes.
 }
 

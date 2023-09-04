@@ -216,10 +216,10 @@ CubeDraft.prototype.aDraftCard = function(player, pack, cardId) {
   // Clear draft blocks caused by scarring
   player.scarredCardId = null
 
-  /* this.mLog({
-   *   template: '{player} drafted {card}',
-   *   args: { player, card },
-   * }) */
+  this.mLog({
+    template: '{player} drafted a card',
+    args: { player },
+  })
   pack.pickCardById(player, cardId)
   player.picked.push(card)
   player.waitingPacks.shift() // remove this pack from the front of the player queue
@@ -441,5 +441,12 @@ CubeDraft.prototype._enrichLogArgs = function(msg) {
         value: msg.args[key],
       }
     }
+  }
+}
+
+CubeDraft.prototype._responseReceived = function(response) {
+  console.log('_responseReceived', response)
+  if (response.title === 'Apply Scar') {
+    response.noUndo = true
   }
 }

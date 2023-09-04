@@ -68,7 +68,17 @@ export default {
     },
 
     undo() {
-      this.game.undo()
+      const result = this.game.undo()
+
+      if (result === '__NO_MORE_ACTIONS__') {
+        alert('There is nothing left to undo')
+      }
+      else if (result === '__NO_UNDO__') {
+        alert('The previous action cannot be undone')
+      }
+      else if (result !== '__SUCCESS__') {
+        alert('Unhandled undo result: ' + result)
+      }
     }
   },
 }
