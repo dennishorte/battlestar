@@ -10,9 +10,9 @@ const scarMutex = new Mutex()
 
 
 Scar.apply = async function(req, res) {
-  throw new Error('not implemented')
-
   await scarMutex.dispatch(async () => {
+    await db.magic.scar.apply(req.body.scarId, req.body.userId, req.body.cardIdDict)
+    res.json({ status: 'success' })
   })
 }
 
@@ -34,7 +34,7 @@ Scar.fetchAvailable = async function(req, res) {
     const toReturn = scars.slice(0, req.body.count)
 
     if (req.body.lock) {
-      await db.magic.scar.lock(toReturn)
+      await db.magic.scar.lock(toReturn, req.body.userId)
     }
 
     res.json({

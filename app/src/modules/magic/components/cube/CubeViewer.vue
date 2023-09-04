@@ -211,9 +211,6 @@ export default {
         _id: null,
         cubeId: this.cube._id,
         text: '',
-        description: '',
-        appliedTo: null,
-        appliedTimestamp: null,
       }
       this.$store.commit('magic/cube/manageScar', blank)
       this.$modal('scar-modal').show()

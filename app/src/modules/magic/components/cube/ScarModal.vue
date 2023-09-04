@@ -5,9 +5,6 @@
     <template v-if="!!scar">
       <label class="form-label">Scar Text</label>
       <textarea class="form-control" v-model="scar.text" />
-
-      <label class="form-label">Restrictions, etc.</label>
-      <input class="form-control" v-model="scar.description" />
     </template>
 
     <template #footer>

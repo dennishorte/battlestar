@@ -27,10 +27,12 @@ Scar.fetchByCubeId = async function(cubeId) {
 }
 
 Scar.fetchAvailable = async function(cubeId) {
+  await _freeOld()
+
   const cursor = await scarCollection.find({
     cubeId,
     lockedBy: { $exists: false },
-    appliedTimestamp: null
+    appliedTimestamp: { $exists: false },
   })
   const scars = await cursor.toArray()
   return scars
@@ -56,16 +58,14 @@ Scar.lock = async function(scars, userId) {
     {
       $set: {
         lockedBy: userId,
+        lockedTimestamp: Date.now(),
       },
     },
   )
 }
 
 Scar.releaseByUser = async function(userId) {
-  await scarCollection.updateMany(
-    { lockedBy: userId },
-    { $unset: { lockedBy: '' } },
-  )
+  await _unlock({ lockedBy: userId })
 }
 
 Scar.save = async function(scar) {
@@ -80,4 +80,24 @@ Scar.save = async function(scar) {
     const { insertedId } = await scarCollection.insertOne(scar)
     return scarCollection.findOne({ _id: insertedId })
   }
+}
+
+async function _unlock(query) {
+  return await scarCollection.updateMany(
+    query,
+    {
+      $unset: {
+        lockedBy: '',
+        lockedTimestamp: '',
+      }
+    }
+  )
+}
+
+async function _freeOld() {
+  const maxAge = 1000 * 60 * 30  // 30 minutes
+  const oldestTimestamp = Date.now() - maxAge
+  await _unlock({
+    lockedTimestamp: { $lt: oldestTimestamp },
+  })
 }

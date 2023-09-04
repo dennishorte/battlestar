@@ -25,6 +25,10 @@
             <div v-for="scar in scars">
               {{ scar.text }}
             </div>
+
+            <div class="small border-top border-warning mt-2">
+              Reloading the page will cause new scars to be chosen.
+            </div>
           </template>
         </div>
         <CardTableau
@@ -66,27 +70,33 @@
         <ol>
           <li v-for="scar in scars">{{ scar.text }}</li>
         </ol>
+
+        <div class="small border-top border-warning">
+          You must manually edit the card text.
+        </div>
       </div>
     </template>
 
     <template #footer="footerProps">
-      <button class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
+      <div>
+        <button class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
 
-      <button
-        class="btn btn-danger"
-        @click="scarApplied(0, footerProps.updated, footerProps.original)"
-        data-bs-dismiss="modal"
-      >
-        applied 1
-      </button>
+        <button
+          class="btn btn-danger"
+          @click="scarApplied(0, footerProps.updated, footerProps.original)"
+          data-bs-dismiss="modal"
+        >
+          manually applied 1
+        </button>
 
-      <button
-        class="btn btn-danger"
-        @click="scarApplied(1, footerProps.updated, footerProps.original)"
-        data-bs-dismiss="modal"
-      >
-        applied 2
-      </button>
+        <button
+          class="btn btn-danger"
+          @click="scarApplied(1, footerProps.updated, footerProps.original)"
+          data-bs-dismiss="modal"
+        >
+          manually applied 2
+        </button>
+      </div>
 
     </template>
   </CardEditorModal>
@@ -278,9 +288,6 @@ export default {
       this.scars = []
       this.scarMessage = 'Loading scars'
 
-      console.log('fetchScars', this.doingScars)
-      return
-
       // Make sure the doingScars property will be updated by now.
       await nextTick()
 
@@ -293,6 +300,7 @@ export default {
         // Load some scars, in case needed
         const { scars } = await this.$post('/api/magic/scar/fetchAvailable', {
           cubeId: this.game.settings.cubeId,
+          userId: this.actor._id,
           count: 2,
           lock: true,
         })
@@ -355,22 +363,23 @@ export default {
         return
       }
 
-      let savedCard
+      const savedCard = await this.$store.dispatch('magic/cards/save', {
+        actor: this.actor,
+        cubeId: this.game.settings.cubeId,
+        updated,
+        original,
+        comment: `Scarred in ${this.game.settings.name}.`,
+      })
 
-      try {
-        savedCard = await this.$store.dispatch('magic/cards/save', {
-          actor: this.actor,
-          cubeId: this.game.settings.cubeId,
-          updated,
-          original,
-          comment: `Scarred in ${this.game.settings.name}.`,
-        })
-      }
+      await this.$post('/api/magic/scar/apply', {
+        scarId: this.scars[scarIndex],
+        userId: this.actor._id,
+        cardIdDict: mag.util.card.createCardIdDict(savedCard),
+      })
 
-      catch (e) {
-        alert('Error saving card')
-        throw e
-      }
+      await this.$post('/api/magic/scar/releaseByUser', {
+        userId: this.actor._id,
+      })
 
       this.game.respondToInputRequest({
         actor: this.actor.name,

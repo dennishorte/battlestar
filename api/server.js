@@ -57,6 +57,7 @@ app.post('/api/magic/link/fetchDrafts', routes.magic.link.fetchDrafts)
 app.post('/api/magic/link/fetchByDraft', routes.magic.link.fetchByDraft)
 
 // Scar routes
+app.post('/api/magic/scar/apply', routes.magic.scar.apply)
 app.post('/api/magic/scar/fetchAll', routes.magic.scar.fetchAll)
 app.post('/api/magic/scar/fetchAvailable', routes.magic.scar.fetchAvailable)
 app.post('/api/magic/scar/save', routes.magic.scar.save)
