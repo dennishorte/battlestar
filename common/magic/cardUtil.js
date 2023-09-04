@@ -113,6 +113,10 @@ CardUtil.calculateManaCost = function(card) {
   const symbolRegex = /[{]([^{}]+)[}]/g
   const numberRegex = /^[0-9]+$/
   const convertCastingCostToManaCost = (manaString) => {
+    if (!manaString) {
+      return 0
+    }
+
     return [...manaString.matchAll(symbolRegex)]
       .map(match => match[1])
       .map(symbol => {
@@ -588,14 +592,19 @@ CardUtil.manaSymbolsFromString = function(string) {
 
 CardUtil.updateColors = function(card) {
   for (const face of card.card_faces) {
-    face.mana_cost = face.mana_cost.toUpperCase()
+    if (face.mana_cost) {
+      face.mana_cost = face.mana_cost.toUpperCase()
+    }
 
     // Most cards have no color indicator; you can see it in cards like Pact of Negation.
     if (face.color_indicator) {
       face.colors = [...face.color_indicator]
     }
-    else {
+    else if (face.mana_cost) {
       face.colors = ['W', 'U', 'B', 'R', 'G'].filter(letter => face.mana_cost.includes(letter))
+    }
+    else {
+      face.colors = []
     }
   }
 
