@@ -155,6 +155,11 @@ Tyrants.prototype.initializePlayerZones = function() {
 }
 
 Tyrants.prototype.initializeCards = function() {
+  const expansions = this.getExpansionList()
+
+  this.mLog({ template: 'Loading expansion: ' + expansions[0] })
+  this.mLog({ template: 'Loading expansion: ' + expansions[1] })
+
   this.state.zones.priestess.setCards(res.cards.byName['Priestess of Lolth'])
   this.state.zones.guard.setCards(res.cards.byName['House Guard'])
   this.state.zones.outcast.setCards(res.cards.byName['Insane Outcast'])
