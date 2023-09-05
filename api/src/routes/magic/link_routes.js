@@ -43,7 +43,7 @@ Link.fetchDrafts = async function(req, res) {
 }
 
 
-Link.fetchByDraft = async function(req, res, next) {
+Link.fetchByDraft = async function(req, res) {
   const { draftId } = req.body
 
   if (!draftId) {
@@ -51,24 +51,13 @@ Link.fetchByDraft = async function(req, res, next) {
       status: 'error',
       message: '`draft_id` not specified in request body',
     })
-    return next()
+    return
   }
 
-  const draft = await db.game.findById(draftId)
-
-  if (!draft) {
-    res.json({
-      status: 'error',
-      message: `Draft not found for id: ${draftId}`,
-    })
-    return next()
-  }
-
-  const linkedGameIds = draft.linkedGames || []
   const games = await db
     .game
     .collection
-    .find({ _id: { $in: linkedGameIds } })
+    .find({ 'settings.linkedDraftId': draftId })
     .project({ responses: 0 })
     .toArray()
 

@@ -64,7 +64,7 @@ export default {
             return (
               game.gameOver
               && game.gameOverData
-              && game.gameOverData.player.name === player.name
+              && game.gameOverData.player === player.name
             )
           })
           .length
