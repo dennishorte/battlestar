@@ -54,6 +54,9 @@ Link.fetchByDraft = async function(req, res) {
     return
   }
 
+  const draft = await db.game.findById(draftId)
+  delete draft.responses
+
   const games = await db
     .game
     .collection
@@ -64,6 +67,7 @@ Link.fetchByDraft = async function(req, res) {
   res.json({
     status: 'success',
     games,
+    draft,
   })
 }
 

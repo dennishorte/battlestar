@@ -4,7 +4,21 @@
     <div class="magic-column log-column">
       <GameMenu>
         <DropdownDivider />
-        <DropdownButton data-bs-toggle="modal" data-bs-target="#link-to-draft-modal">link to draft</DropdownButton>
+
+        <DropdownButton
+          data-bs-toggle="modal"
+          data-bs-target="#link-to-draft-modal"
+        >
+          link to draft
+        </DropdownButton>
+
+        <DropdownButton
+          data-bs-toggle="modal"
+          data-bs-target="#match-stats-modal"
+        >
+          match stats
+        </DropdownButton>
+
       </GameMenu>
 
       <GameLog />
