@@ -63,11 +63,33 @@
         <CubeBreakdown :cardlist="filteredCards" />
       </div>
 
-      <div v-if="showing === 'scars'">
-        <div v-for="scar in scars" class="scar-container">
-          <div>{{ scar.text }}</div>
-          <div>
-            <button class="btn btn-link" @click="editScar(scar)">edit</button>
+      <div v-if="showing === 'scars'" class="row">
+        <div class="col">
+          <h5>Avaiable Scars</h5>
+
+          <div v-for="scar in scarsUnused" class="scar-container">
+            <div>{{ scar.text }}</div>
+            <div>
+              <button class="btn btn-link" @click="editScar(scar)">edit</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <h5>Used Scars</h5>
+          <div v-for="scar in scarsUsed" class="scar-container vertical">
+            <div>{{ scar.text }}</div>
+            <div class="scar-applied-info">
+              <div
+                @mouseover="mouseover(scar.appliedTo)"
+                @mouseleave="mouseleave(scar.appliedTo)"
+                @mousemove="mousemove"
+                @click="goToCard(scar.appliedTo)"
+              >
+                card: {{ scar.appliedTo.name }}
+              </div>
+              <div>user: {{ getUserNameById(scar.appliedBy) }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -133,6 +155,7 @@ export default {
       cube: null,
       achievements: [],
       scars: [],
+      users: [],
 
       showing: 'cards',
       showSearch: false,
@@ -192,6 +215,14 @@ export default {
       return this.cube.public ? 'Remove from Public' : 'Set as Public'
     },
 
+    scarsUnused() {
+      return this.scars.filter(scar => !scar.appliedTimestamp)
+    },
+
+    scarsUsed() {
+      return this.scars.filter(scar => scar.appliedTimestamp)
+    },
+
     viewerIsOwner() {
       return this.cube ? this.actor._id === this.cube.userId : false
     },
@@ -219,6 +250,11 @@ export default {
     editScar(scar) {
       this.$store.commit('magic/cube/manageScar', scar)
       this.$modal('scar-modal').show()
+    },
+
+    getUserNameById(id) {
+      const user = this.users.find(u => u._id === id)
+      return user ? user.name : id
     },
 
     navigate(target) {
@@ -260,6 +296,33 @@ export default {
 
 
     ////////////////////////////////////////////////////////////////////////////////
+    // Card pop-up methods
+
+    goToCard(cardIdDict) {
+      const data = this.$store.getters['magic/cards/getLookupFunc'](cardIdDict)
+      const link = this.$store.getters['magic/cards/cardLink'](data._id)
+      this.$router.push(link)
+    },
+
+    mouseover(cardIdDict) {
+      const data = this.$store.getters['magic/cards/getLookupFunc'](cardIdDict)
+      this.$store.commit('magic/setMouseoverCard', data)
+    },
+
+    mouseleave(cardIdDict) {
+      const data = this.$store.getters['magic/cards/getLookupFunc'](cardIdDict)
+      this.$store.commit('magic/unsetMouseoverCard', data)
+    },
+
+    mousemove(event) {
+      this.$store.commit('magic/setMouseoverPosition', {
+        x: event.clientX,
+        y: event.clientY,
+      })
+    },
+
+
+    ////////////////////////////////////////////////////////////////////////////////
     // Async Methods
 
     async insertCardData() {
@@ -277,6 +340,11 @@ export default {
         cubeId: this.id,
       })
       this.scars = scars
+    },
+
+    async loadUsers() {
+      const { users } = await this.$post('/api/user/all')
+      this.users = users
     },
 
     // If original is passed in, the new card will replace the original.
@@ -330,6 +398,7 @@ export default {
 
   async mounted() {
     this.loadCube()
+    this.loadUsers()
     this.loadScars()
     this.bus.on('card-clicked', this.showCardModal)
     this.bus.on('card-saved', this.saveCard)
@@ -362,5 +431,17 @@ export default {
   border: 1px solid #ddd;
   padding-left: .5em;
   margin-top: .25em;
+}
+
+.scar-container.vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.scar-applied-info {
+  font-size: .8em;
+  color: #333;
+  margin-left: .5em;
 }
 </style>

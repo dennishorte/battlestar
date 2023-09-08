@@ -25,6 +25,10 @@ export default {
       return (id) => state.cardlist.find(card => card._id === id)
     },
 
+    cardLink(state) {
+      return (databaseId) => '/magic/card/' + databaseId
+    },
+
     cardNames(state) {
       return Object.keys(state.lookup).sort()
     },
