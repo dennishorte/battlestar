@@ -220,7 +220,10 @@ export default {
     },
 
     scarsUsed() {
-      return this.scars.filter(scar => scar.appliedTimestamp)
+      return this
+        .scars
+        .filter(scar => scar.appliedTimestamp)
+        .sort((l, r) => r.appliedTimestamp - l.appliedTimestamp)
     },
 
     viewerIsOwner() {
