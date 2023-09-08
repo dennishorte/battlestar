@@ -17,7 +17,7 @@
 
             <template v-if="!!cube.allowEdits">
               <button class="btn" :class="buttonClassesScars" @click="navigate('scars')">
-                scars ({{ scars.length }})
+                scars ({{ scarsUnused.length }})
               </button>
               <button class="btn" :class="buttonClassesAchievements" @click="navigate('achievements')">
                 achievements ({{ achievements.length }})
