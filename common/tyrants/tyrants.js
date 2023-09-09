@@ -479,7 +479,7 @@ Tyrants.prototype._generateBuyActions = function(maxCost=0) {
 
   if (this.state.ghostFlag) {
     const devoured = this.getZoneById('devoured').cards().slice(-1)[0]
-    if (devoured) {
+    if (devoured && devoured.cost <= influence) {
       choices.push('devoured: ' + devoured.name)
     }
   }
