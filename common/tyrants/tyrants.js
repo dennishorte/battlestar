@@ -1819,7 +1819,8 @@ Tyrants.prototype.mRefillMarket = function(quiet=false) {
     const card = deck.cards()[0]
 
     if (!card) {
-      throw new Error('No cards in market')
+      this.mLog({ template: 'The market deck is empty' })
+      return
     }
 
     if (!quiet) {
