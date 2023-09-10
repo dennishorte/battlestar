@@ -7,6 +7,8 @@ export default {
   state: () => ({
     managedCard: null,
     managedScar: null,
+    managedAchievement: null,
+    managedAchievementShowAll: false,
   }),
 
   getters: {
@@ -19,6 +21,11 @@ export default {
 
     manageScar(state, scar) {
       state.managedScar = scar
+    },
+
+    manageAchievement(state, { achievement, showAll }) {
+      state.managedAchievement = achievement
+      state.managedAchievementShowAll = showAll
     },
   },
 

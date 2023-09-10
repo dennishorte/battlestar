@@ -107,6 +107,7 @@
     <CubeCardModal :card="managedCard" :editable="cube.allowEdits" />
     <CardEditorModal :original="managedCard" />
     <ScarModal />
+    <AchievementModal />
   </MagicWrapper>
 </template>
 
@@ -118,6 +119,7 @@ import mitt from 'mitt'
 import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
+import AchievementModal from './AchievementModal'
 import Achievements from './Achievements'
 import CardEditorModal from '../CardEditorModal'
 import CubeBreakdown from './CubeBreakdown'
@@ -136,6 +138,7 @@ export default {
   name: 'CubeViewer',
 
   components: {
+    AchievementModal,
     Achievements,
     CardEditorModal,
     CardFilters,
@@ -162,7 +165,7 @@ export default {
       scars: [],
       users: [],
 
-      showing: 'achievements',
+      showing: 'cards',
       showSearch: false,
       filteredCards: [],
     }
@@ -179,6 +182,7 @@ export default {
 
   computed: {
     ...mapState('magic/cube', {
+      managedAchievement: 'managedAchievement',
       managedCard: 'managedCard',
       managedScar: 'managedScar',
     }),
@@ -379,6 +383,13 @@ export default {
       await this.$store.commit('magic/cube/manageCard', updatedCard, { root: true })
     },
 
+    async saveAchievement() {
+      await this.$post('/api/magic/achievement/save', {
+        achievement: this.managedAchievement,
+      })
+      await this.loadAchievements()
+    },
+
     async saveCube() {
       await this.$store.dispatch('magic/cube/save', this.cube)
     },
@@ -421,6 +432,7 @@ export default {
     this.bus.on('card-clicked', this.showCardModal)
     this.bus.on('card-saved', this.saveCard)
     this.bus.on('scar-saved', this.saveScar)
+    this.bus.on('achievement-saved', this.saveAchievement)
   },
 }
 </script>

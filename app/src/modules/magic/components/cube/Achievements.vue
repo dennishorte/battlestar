@@ -23,8 +23,8 @@
         <div>
           <Dropdown :notitle="true">
             <DropdownButton>claim</DropdownButton>
-            <DropdownButton @click="editTags(ach)">tags</DropdownButton>
             <DropdownButton @click="edit(ach)">edit</DropdownButton>
+            <DropdownButton @click="editTags(ach)">tags</DropdownButton>
             <DropdownDivider />
             <DropdownButton>delete</DropdownButton>
           </Dropdown>
@@ -32,43 +32,6 @@
       </div>
     </div>
 
-    <Modal id="achievement-editor" @ok="save">
-      <template #header>Achievement Editor</template>
-
-      <div class="mb-3">
-        <label class="form-label">Achievement Name</label>
-        <input class="form-control" v-model="achievement.name" />
-
-        <label class="form-label">Unlock Conditions</label>
-        <textarea class="form-control" v-model="achievement.unlock" />
-
-        <label class="form-label">Tags (separated by spaces)</label>
-        <input class="form-control" v-model="computedTags" />
-      </div>
-
-      <div v-for="(h, index) in achievement.hidden" v-if="showAll">
-        <div class="hidden-header">
-          <div>Hidden Tab {{ index }}</div>
-          <div>
-            <button class="btn btn-outline-danger" @click="removeHidden(index)">delete me</button>
-          </div>
-        </div>
-
-        <div class="alert alert-info">
-          <label class="form-label">visible text</label>
-          <input class="form-control" v-model="h.name" />
-
-          <label class="form-label">hidden details</label>
-          <textarea class="form-control" rows="8" v-model="h.text" />
-        </div>
-      </div>
-
-      <div v-if="!showAll" class="alert alert-danger">
-        Hidden info is hidden
-      </div>
-
-      <button class="btn btn-primary" @click="addHidden" v-if="showAll">add hidden tab</button>
-    </Modal>
   </div>
 </template>
 
@@ -102,23 +65,11 @@ export default {
 
   data() {
     return {
-      achievement: this.blank(),
-
       showAll: false,
     }
   },
 
   computed: {
-    computedTags: {
-      get() {
-        return this.achievement.tags.join(' ')
-      },
-
-      set(newValue) {
-        this.achievement.tags = newValue.split(' ')
-      },
-    },
-
     sortedAchievements() {
       return this
         .achievements
@@ -127,13 +78,6 @@ export default {
   },
 
   methods: {
-    addHidden() {
-      this.achievement.hidden.push({
-        name: '',
-        text: '',
-      })
-    },
-
     ageString(ach) {
       const millis = Date.now() - ach.createdTimestamp
       const day = 1000 * 60 * 60 * 24
@@ -155,38 +99,33 @@ export default {
     },
 
     create() {
-      this.achievement = this.blank()
-      this.addHidden()
-      this.showAll = true
+      this.$store.commit('magic/cube/manageAchievement', {
+        achievement: this.blank(),
+        showAll: true,
+      })
       this.$modal('achievement-editor').show()
     },
 
     edit(ach) {
-      this.achievement = ach
-      this.showAll = true
+      this.$store.commit('magic/cube/manageAchievement', {
+        achievement: ach,
+        showAll: true,
+      })
       this.$modal('achievement-editor').show()
     },
 
     editTags(ach) {
-      this.achievement = ach
-      this.showAll = false
-      this.$modal('achievement-editor').show()
-    },
-
-    removeHidden(index) {
-      this.achievement.hidden.splice(index, 1)
-    },
+      this.$store.commit('magic/cube/manageAchievement', {
+        achievement: ach,
+        showAll: false,
+      })
+    this.showAll = false
+    this.$modal('achievement-editor').show()
+  },
 
     username(id) {
       const user = this.users.find(u => u._id === id)
       return user ? user.name : id
-    },
-
-    async save() {
-      await this.$post('/api/magic/achievement/save', {
-        achievement: this.achievement,
-      })
-      this.$emit('achievements-updated')
     },
   },
 }
