@@ -26,6 +26,10 @@ app.use(middleware.coerceIds)
 ////////////////////////////////////////////////////////////
 // Magic Routes
 
+// Achievement routes
+app.post('/api/magic/achievement/all', routes.magic.achievement.fetchAll)
+app.post('/api/magic/achievement/save', routes.magic.achievement.save)
+
 // Card routes
 app.post('/api/magic/card/all', routes.magic.card.fetchAll)
 app.post('/api/magic/card/save', routes.magic.card.save)

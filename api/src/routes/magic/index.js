@@ -1,4 +1,5 @@
 module.exports = {
+  achievement: require('./achievement_routes.js'),
   card: require('./card_routes.js'),
   cube: require('./cube_routes.js'),
   deck: require('./deck_routes.js'),

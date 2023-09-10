@@ -94,9 +94,12 @@
         </div>
       </div>
 
-      <div v-if="showing === 'achievements'">
-        Cube Achievements
-      </div>
+      <Achievements
+        v-if="showing === 'achievements'"
+        :achievements="achievements"
+        :users="users"
+        @achievements-updated="loadAchievements"
+      />
 
     </div>
 
@@ -115,6 +118,7 @@ import mitt from 'mitt'
 import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
+import Achievements from './Achievements'
 import CardEditorModal from '../CardEditorModal'
 import CubeBreakdown from './CubeBreakdown'
 import CardFilters from '../CardFilters'
@@ -132,6 +136,7 @@ export default {
   name: 'CubeViewer',
 
   components: {
+    Achievements,
     CardEditorModal,
     CardFilters,
     CubeBreakdown,
@@ -157,7 +162,7 @@ export default {
       scars: [],
       users: [],
 
-      showing: 'cards',
+      showing: 'achievements',
       showSearch: false,
       filteredCards: [],
     }
@@ -167,6 +172,8 @@ export default {
     return {
       actor: this.actor,
       bus: this.bus,
+
+      cubeId: this.id,
     }
   },
 
@@ -332,6 +339,13 @@ export default {
       await this.$store.dispatch('magic/cards/insertCardData', this.cube.cardlist)
     },
 
+    async loadAchievements() {
+      const { achievements } = await this.$post('/api/magic/achievement/all', {
+        cubeId: this.id,
+      })
+      this.achievements = achievements
+    },
+
     async loadCube() {
       this.loadingCube = true
       this.cube = await this.$store.dispatch('magic/cube/load', { cubeId: this.id })
@@ -401,8 +415,9 @@ export default {
 
   async mounted() {
     this.loadCube()
-    this.loadUsers()
+    await this.loadUsers()
     this.loadScars()
+    this.loadAchievements()
     this.bus.on('card-clicked', this.showCardModal)
     this.bus.on('card-saved', this.saveCard)
     this.bus.on('scar-saved', this.saveScar)
