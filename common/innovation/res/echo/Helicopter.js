@@ -16,12 +16,12 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { self }) => {
       while (true) {
         const choices = game
           .getPlayerAll()
           .flatMap(player => game.getTopCards(player))
-          .filter(card => card !== this)
+          .filter(c => c !== self)
         const card = game.aChooseCard(player, choices)
 
         if (card) {
