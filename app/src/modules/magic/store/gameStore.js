@@ -168,6 +168,11 @@ export default {
           gameId: state.game.settings.linkedDraftId,
         })
         commit('setLinkedDraft', game)
+
+        // Loading the cube ensures the achievements will be available to render on relevant cards.
+        await dispatch('magic/cube/loadCube', {
+          cubeId: state.linkedDraft.settings.cubeId
+        })
       }
     },
 

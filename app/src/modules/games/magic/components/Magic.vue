@@ -66,8 +66,8 @@ export default {
   },
 
   methods: {
-    loadGame() {
-      this.$store.dispatch('magic/game/loadGame', {
+    async loadGame() {
+      await this.$store.dispatch('magic/game/loadGame', {
         gameData: this.data,
         doFunc: this.do,
       })

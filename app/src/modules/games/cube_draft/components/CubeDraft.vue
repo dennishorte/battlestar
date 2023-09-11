@@ -319,11 +319,18 @@ export default {
       }
     },
 
-    loadGame() {
-      this.$store.dispatch('magic/cubeDraft/loadGame', {
+    async loadGame() {
+      await this.$store.dispatch('magic/cubeDraft/loadGame', {
         gameData: this.data,
         doFunc: this.do,
       })
+
+      if (this.game.settings.cubeId) {
+        // Loading the cube ensures the achievements will be available to render on relevant cards.
+        await this.$store.dispatch('magic/cube/loadCube', {
+          cubeId: this.game.settings.cubeId,
+        })
+      }
     },
 
     async save() {
