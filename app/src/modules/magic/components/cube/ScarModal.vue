@@ -28,8 +28,6 @@ export default {
     Modal,
   },
 
-  inject: ['bus'],
-
   computed: {
     ...mapState('magic/cube', {
       scar: 'managedScar'
@@ -37,8 +35,11 @@ export default {
   },
 
   methods: {
-    save() {
-      this.bus.emit('scar-saved')
+    async save() {
+      await this.$post('/api/magic/scar/save', {
+        scar: this.managedScar,
+      })
+      await this.$store.dispatch('magic/cube/loadScars')
     },
   },
 }

@@ -8,6 +8,9 @@ export default {
     cube: null,
     cubeLoaded: false,
 
+    achievements: [],
+    scars: [],
+
     managedCard: null,
     managedScar: null,
     managedAchievement: null,
@@ -42,7 +45,25 @@ export default {
     async loadCube({ dispatch, state }, { cubeId }) {
       state.cubeLoaded = false
       state.cube = await dispatch('getById', { cubeId })
+
+      await dispatch('loadScars')
+      await dispatch('loadAchievements')
+
       state.cubeLoaded = true
+    },
+
+    async loadScars({ state }) {
+      const { scars } = await this.$post('/api/magic/scar/fetchAll', {
+        cubeId: state.cube._id,
+      })
+      state.scars = scars
+    },
+
+    async loadAchievements({ state }) {
+      const { achievements } = await this.$post('/api/magic/achievement/all', {
+        cubeId: state.cube._id,
+      })
+      state.achievements = achievements
     },
 
     async save({ dispatch }, cube) {

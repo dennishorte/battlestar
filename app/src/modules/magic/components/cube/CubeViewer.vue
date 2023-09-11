@@ -98,7 +98,6 @@
         v-if="showing === 'achievements'"
         :achievements="achievements"
         :users="users"
-        @achievements-updated="loadAchievements"
       />
 
     </div>
@@ -159,8 +158,6 @@ export default {
       bus: mitt(),
       id: this.$route.params.id,
 
-      achievements: [],
-      scars: [],
       users: [],
 
       showing: 'cards',
@@ -182,6 +179,10 @@ export default {
     ...mapState('magic/cube', {
       cube: 'cube',
       cubeLoaded: 'cubeLoaded',
+
+      achievements: 'achievements',
+      scars: 'scars',
+
       managedAchievement: 'managedAchievement',
       managedCard: 'managedCard',
       managedScar: 'managedScar',
@@ -288,7 +289,7 @@ export default {
       this.showSearch = !this.showSearch
     },
 
-    updateCube(update) {
+    async updateCube(update) {
       for (const card of update.remove) {
         this.cube.removeCard(card)
       }
@@ -305,7 +306,7 @@ export default {
         alert(lines.join('\n'))
       }
 
-      this.saveCube()
+      await this.$store.dispatch('magic/cube/save', this.cube)
     },
 
 
@@ -343,27 +344,14 @@ export default {
       await this.$store.dispatch('magic/cards/insertCardData', this.cube.cardlist)
     },
 
-    async loadAchievements() {
-      const { achievements } = await this.$post('/api/magic/achievement/all', {
-        cubeId: this.id,
-      })
-      this.achievements = achievements
-    },
-
-    async loadCube() {
-      await this.$store.dispatch('magic/cube/loadCube', { cubeId: this.id })
-    },
-
-    async loadScars() {
-      const { scars } = await this.$post('/api/magic/scar/fetchAll', {
-        cubeId: this.id,
-      })
-      this.scars = scars
-    },
-
     async loadUsers() {
       const { users } = await this.$post('/api/user/all')
       this.users = users
+    },
+
+    async reload() {
+      await this.$store.dispatch('magic/cube/loadCube', { cubeId: this.id })
+      await this.loadUsers()
     },
 
     // If original is passed in, the new card will replace the original.
@@ -379,24 +367,6 @@ export default {
 
       // And set the created card to be the managed card.
       await this.$store.commit('magic/cube/manageCard', updatedCard, { root: true })
-    },
-
-    async saveAchievement() {
-      await this.$post('/api/magic/achievement/save', {
-        achievement: this.managedAchievement,
-      })
-      await this.loadAchievements()
-    },
-
-    async saveCube() {
-      await this.$store.dispatch('magic/cube/save', this.cube)
-    },
-
-    async saveScar() {
-      await this.$post('/api/magic/scar/save', {
-        scar: this.managedScar,
-      })
-      await this.loadScars()
     },
 
     async toggleCardEditing() {
@@ -418,19 +388,14 @@ export default {
   watch: {
     async $route() {
       this.id = this.$route.params.id
-      await this.loadCube()
+      await this.reload()
     },
   },
 
   async mounted() {
-    this.loadCube()
-    await this.loadUsers()
-    this.loadScars()
-    this.loadAchievements()
+    await this.reload()
     this.bus.on('card-clicked', this.showCardModal)
     this.bus.on('card-saved', this.saveCard)
-    this.bus.on('scar-saved', this.saveScar)
-    this.bus.on('achievement-saved', this.saveAchievement)
   },
 }
 </script>

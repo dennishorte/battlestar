@@ -53,8 +53,6 @@ export default {
     Modal,
   },
 
-  inject: ['bus'],
-
   computed: {
     ...mapState('magic/cube', {
       achievement: 'managedAchievement',
@@ -84,8 +82,11 @@ export default {
       this.achievement.hidden.splice(index, 1)
     },
 
-    save() {
-      this.bus.emit('achievement-saved')
+    async save() {
+      await this.$post('/api/magic/achievement/save', {
+        achievement,
+      })
+      await this.$store.dispatch('magic/cube/loadAchievements')
     },
   },
 }
