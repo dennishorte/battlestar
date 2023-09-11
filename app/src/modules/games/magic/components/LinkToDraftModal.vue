@@ -64,6 +64,10 @@ export default {
         gameId: this.game._id,
         draftId: this.draftId,
       })
+
+      this.game.settings.linkedDraftId = draftId
+
+      await this.$store.dispatch('magic/game/fetchLinkedDraft')
     },
 
     async fetchDrafts() {
@@ -75,6 +79,10 @@ export default {
       this.draftId = this.drafts[0] ? this.drafts[0]._id : ''
     },
 
+  },
+
+  mounted() {
+    this.fetchDrafts()
   },
 }
 </script>
