@@ -393,7 +393,7 @@ export default {
     async saveCard({ card, original }) {
       const updatedCard = await this.$store.dispatch('magic/cards/save', {
         actor: this.actor,
-        cube: this.cube,
+        cubeId: this.cube._id,
         updated: card,
         original,
         comment: 'Updated in the cube editor',
