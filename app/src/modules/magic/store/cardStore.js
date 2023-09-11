@@ -182,7 +182,7 @@ export default {
         comment,
       })
 
-      const cube = await dispatch('magic/cube/load', { cubeId }, {root: true })
+      const cube = await dispatch('magic/cube/getById', { cubeId }, { root: true })
 
       // Need to update the cube, if the edited card was a scryfall card that was replaced
       // with a custom card.

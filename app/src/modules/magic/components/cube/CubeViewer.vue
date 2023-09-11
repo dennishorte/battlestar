@@ -1,5 +1,5 @@
 <template>
-  <MagicWrapper :also-loading="loadingCube" :after-loaded="insertCardData">
+  <MagicWrapper :also-loading="!cubeLoaded" :after-loaded="insertCardData">
     <div class="container" v-if="!!cube">
 
       <div class="row">
@@ -158,9 +158,7 @@ export default {
       actor: this.$store.getters['auth/user'],
       bus: mitt(),
       id: this.$route.params.id,
-      loadingCube: true,
 
-      cube: null,
       achievements: [],
       scars: [],
       users: [],
@@ -182,6 +180,8 @@ export default {
 
   computed: {
     ...mapState('magic/cube', {
+      cube: 'cube',
+      cubeLoaded: 'cubeLoaded',
       managedAchievement: 'managedAchievement',
       managedCard: 'managedCard',
       managedScar: 'managedScar',
@@ -351,9 +351,7 @@ export default {
     },
 
     async loadCube() {
-      this.loadingCube = true
-      this.cube = await this.$store.dispatch('magic/cube/load', { cubeId: this.id })
-      this.loadingCube = false
+      await this.$store.dispatch('magic/cube/loadCube', { cubeId: this.id })
     },
 
     async loadScars() {

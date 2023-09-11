@@ -5,6 +5,9 @@ export default {
   namespaced: true,
 
   state: () => ({
+    cube: null,
+    cubeLoaded: false,
+
     managedCard: null,
     managedScar: null,
     managedAchievement: null,
@@ -30,10 +33,16 @@ export default {
   },
 
   actions: {
-    async load(context, { cubeId }) {
+    async getById(context, { cubeId }) {
       const response = await this.$post('/api/magic/cube/fetch', { cubeId })
       const cube = cubeUtil.deserialize(response.cube)
       return cube
+    },
+
+    async loadCube({ dispatch, state }, { cubeId }) {
+      state.cubeLoaded = false
+      state.cube = await dispatch('getById', { cubeId })
+      state.cubeLoaded = true
     },
 
     async save({ dispatch }, cube) {
