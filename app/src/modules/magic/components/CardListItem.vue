@@ -8,6 +8,7 @@
   >
 
     <div class="name">
+      <i class="bi bi-lightning-fill" v-if="!!card.custom_id"></i>
       <slot name="name">{{ name }}</slot>
     </div>
 
