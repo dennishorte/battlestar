@@ -318,8 +318,7 @@ function filterCards(cards, filters) {
   if (filters.length === 0) {
     return cards
   }
-  return cards
-    .filter(card => filters.every(filter => mag.util.card.applyOneFilter(card, filter)))
+  return cards.filter(card => mag.util.card.filtersMatchCard(filters, card))
 }
 
 </script>
@@ -374,25 +373,6 @@ label {
   margin-top: .25em;
   margin-left: .25em;
   min-width: 3em;
-}
-
-.filter-list {
-  line-height: 1em;
-}
-
-.filter-added {
-  margin-top: .5em;
-}
-
-.filter-display-kind {
-  font-weight: bold;
-  margin-left: .5em;
-}
-
-.filter-display-operator {
-  font-size: .9em;
-  font-style: italic;
-  margin-left: .5em;
 }
 
 .filter-group {

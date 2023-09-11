@@ -207,6 +207,10 @@ const colorNameToSymbol = {
   green: 'G',
 }
 
+CardUtil.filtersMatchCard = function(filters, card) {
+  return filters.every(filter => CardUtil.applyOneFilter(card, filter))
+}
+
 CardUtil.applyOneFilter = function(card, filter) {
   if (card.data) {
     card = card.data
