@@ -6,11 +6,19 @@
         <DropdownDivider />
 
         <DropdownButton
+          v-if="!linkedDraft"
           data-bs-toggle="modal"
           data-bs-target="#link-to-draft-modal"
         >
           link to draft
         </DropdownButton>
+
+        <DropdownRouterLink
+          v-if="!!linkedDraft"
+          :to="'/magic/cube/' + linkedDraft.settings.cubeId"
+        >
+          cube
+        </DropdownRouterLink>
 
         <DropdownButton
           data-bs-toggle="modal"
@@ -50,6 +58,7 @@ import ChatInput from '@/modules/games/common/components/ChatInput'
 import CounterCloseupModal from './CounterCloseupModal'
 import DropdownDivider from '@/components/DropdownDivider'
 import DropdownButton from '@/components/DropdownButton'
+import DropdownRouterLink from '@/components/DropdownRouterLink'
 import GameLog from './log/GameLog'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import PhaseSelector from './PhaseSelector'
@@ -64,6 +73,7 @@ export default {
     ChatInput,
     DropdownDivider,
     DropdownButton,
+    DropdownRouterLink,
     GameLog,
     GameMenu,
     PhaseSelector,
@@ -73,6 +83,10 @@ export default {
   inject: ['game', 'actor', 'save'],
 
   computed: {
+    ...mapState('magic/game', {
+      linkedDraft: 'linkedDraft',
+    }),
+
     orderedPlayers() {
       const player = this.game.getPlayerByName(this.actor.name)
       return this.game.getPlayersStarting(player)

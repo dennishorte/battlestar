@@ -4,7 +4,9 @@
 
     <div v-else class="cube-draft">
       <div class="game-column log-column">
-        <GameMenu :disabled="['undo']" />
+        <GameMenu :disabled="['undo']">
+          <DropdownRouterLink :to="'/magic/cube/' + game.settings.cubeId">cube</DropdownRouterLink>
+        </GameMenu>
         <GameLog />
         <ChatInput />
       </div>
@@ -51,6 +53,11 @@
       <div class="game-column info-column">
         <MatchResults v-if="game.gameOver || showGameStats" class="mb-4" />
         <SeatingInfo class="mb-4" />
+
+        <div>
+          <router-link :to="'/magic/cube/' + game.settings.cubeId">cube</router-link>
+        </div>
+
         <AdminOptions />
       </div>
 
