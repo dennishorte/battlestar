@@ -12,6 +12,11 @@ Ach.fetchAll = async function(req, res) {
   })
 }
 
+Ach.claim = async function(req, res) {
+  await db.magic.achievement.claim(req.body.achId, req.body.userId)
+  return res.json({ status: 'success' })
+}
+
 Ach.save = async function(req, res) {
   const ach = req.body.achievement
 

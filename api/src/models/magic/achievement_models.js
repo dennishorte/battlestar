@@ -12,6 +12,23 @@ Ach.findByCubeId = async function(cubeId) {
   return output
 }
 
+Ach.claim = async function(achId, userId) {
+  await achCollection.updateOne(
+    { _id: achId },
+    {
+      $set: {
+        claimed: {
+          userId: userId,
+          timestamp: Date.now(),
+          finalized: false,
+          memo: '',
+        }
+      }
+    }
+  )
+
+}
+
 Ach.save = async function(ach) {
   if (ach.createdTimestamp) {
     ach.updatedTimestamp = Date.now()
