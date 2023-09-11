@@ -33,7 +33,8 @@
 
             <div class="frame-achievements-wrapper">
               <p v-for="ach of achievements" class="frame-achievement-desc">
-                {{ ach.text }}
+                <i class="bi bi-star-fill achievement-icon"></i>
+                {{ ach.unlock }}
               </p>
             </div>
           </div>
@@ -100,7 +101,7 @@ export default {
     },
 
     achievements() {
-      return []
+      return this.$store.getters['magic/cube/achievementsForCard'](this.card)
     },
 
     containerClasses() {
@@ -169,5 +170,13 @@ export default {
 <style scoped>
 div {
   position: relative;
+}
+
+.achievement-icon {
+  color: gold;
+  background-color: black;
+  font-size: 1.5em;
+  padding: 2px 3px;
+  border-radius: 50%;
 }
 </style>
