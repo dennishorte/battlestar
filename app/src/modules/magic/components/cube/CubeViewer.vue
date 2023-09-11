@@ -59,7 +59,18 @@
           :cardlist="cube.cardlist"
           :class="showSearch ? '' : 'd-none'"
           v-model="filteredCards"
-        />
+          @filters-updated="storeCardFilters"
+        >
+          <template #extra-actions>
+            <button
+              class="btn btn-info"
+              @click="linkFiltersToAchievement"
+              :disabled="!canLinkFilters"
+            >
+              link to achievement
+            </button>
+          </template>
+        </CardFilters>
         <CubeBreakdown :cardlist="filteredCards" />
       </div>
 
@@ -107,6 +118,8 @@
     <CardEditorModal :original="managedCard" />
     <ScarModal />
     <AchievementModal />
+    <AchievementViewerModal />
+    <AchievementSearchLinkerModal :achievements="achievements" />
   </MagicWrapper>
 </template>
 
@@ -119,6 +132,8 @@ import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
 import AchievementModal from './AchievementModal'
+import AchievementViewerModal from './AchievementViewerModal'
+import AchievementSearchLinkerModal from './AchievementSearchLinkerModal'
 import Achievements from './Achievements'
 import CardEditorModal from '../CardEditorModal'
 import CubeBreakdown from './CubeBreakdown'
@@ -138,6 +153,8 @@ export default {
 
   components: {
     AchievementModal,
+    AchievementViewerModal,
+    AchievementSearchLinkerModal,
     Achievements,
     CardEditorModal,
     CardFilters,
@@ -163,6 +180,7 @@ export default {
       showing: 'cards',
       showSearch: false,
       filteredCards: [],
+      filtersApplied: false,
     }
   },
 
@@ -172,6 +190,7 @@ export default {
       bus: this.bus,
 
       cubeId: this.id,
+      users: this.users,
     }
   },
 
@@ -182,6 +201,8 @@ export default {
 
       achievements: 'achievements',
       scars: 'scars',
+
+      cardFilters: 'cardFilters',
 
       managedAchievement: 'managedAchievement',
       managedCard: 'managedCard',
@@ -225,6 +246,10 @@ export default {
 
     cardPublicButtonText() {
       return this.cube.public ? 'Remove from Public' : 'Set as Public'
+    },
+
+    canLinkFilters() {
+      return this.cardFilters.length > 0 && this.filtersApplied
     },
 
     scarsUnused() {
@@ -272,6 +297,10 @@ export default {
       return user ? user.name : id
     },
 
+    linkFiltersToAchievement(filters) {
+      this.$modal('achievement-search-linker-modal').show()
+    },
+
     navigate(target) {
       this.showing = target
     },
@@ -283,6 +312,11 @@ export default {
       else {
         this.$modal('cube-card-modal').show()
       }
+    },
+
+    storeCardFilters(filters) {
+      this.filtersApplied = false
+      this.$store.commit('magic/cube/setFilters', filters)
     },
 
     toggleSearch() {
@@ -389,6 +423,10 @@ export default {
     async $route() {
       this.id = this.$route.params.id
       await this.reload()
+    },
+
+    filteredCards() {
+      this.filtersApplied = true
     },
   },
 

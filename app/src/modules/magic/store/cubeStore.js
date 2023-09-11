@@ -15,6 +15,8 @@ export default {
     managedScar: null,
     managedAchievement: null,
     managedAchievementShowAll: false,
+
+    cardFilters: [],
   }),
 
   getters: {
@@ -32,6 +34,10 @@ export default {
     manageAchievement(state, { achievement, showAll }) {
       state.managedAchievement = achievement
       state.managedAchievementShowAll = showAll
+    },
+
+    setFilters(state, filters) {
+      state.cardFilters = filters
     },
   },
 

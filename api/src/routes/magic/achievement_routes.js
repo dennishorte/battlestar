@@ -17,6 +17,12 @@ Ach.claim = async function(req, res) {
   return res.json({ status: 'success' })
 }
 
+// Overwrites an existing filters.
+Ach.linkFilters = async function(req, res) {
+  await db.magic.achievement.linkFilters(req.body.achId, req.body.filters)
+  return res.json({ status: 'success' })
+}
+
 Ach.save = async function(req, res) {
   const ach = req.body.achievement
 

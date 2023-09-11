@@ -160,31 +160,10 @@
         <div>
           <button class="btn btn-warning" @click="clear">clear</button>
           <button class="btn btn-primary" @click="apply">apply</button>
+          <slot name="extra-actions"></slot>
         </div>
 
-        <div class="filter-list">
-          <h5>filters</h5>
-          <div class="filter-added" v-for="filter in filters">
-            <div class="filter-display-kind">{{ filter.kind }}</div>
-            <div v-if="filter.kind === 'colors' || filter.kind === 'identity'">
-              <span v-if="filter.only" class="filter-display-operator">only&nbsp;</span>
-              <span v-if="filter.or" class="filter-display-operator">or&nbsp;</span>
-              <template v-for="color in colors">
-                <span v-if="filter[color]" class="filter-display-value">
-                  {{ color }}
-                  <i class="bi-x-circle" @click="remove(filter)"></i>
-                </span>
-              </template>
-            </div>
-            <div v-else>
-              <span class="filter-display-operator">{{ filter.operator }}&nbsp;</span>
-              <span class="filter-display-value">
-                {{ filter.value }}
-                <i class="bi-x-circle" @click="remove(filter)"></i>
-              </span>
-            </div>
-          </div>
-        </div>
+        <CardFilterList :filters="filters" @remove-card-filter="remove" />
 
       </div>
 
@@ -201,6 +180,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { mapState} from 'vuex'
 import { mag, util } from 'battlestar-common'
 
+import CardFilterList from './CardFilterList'
 import SectionHeader from '@/components/SectionHeader'
 import SetPickerModal from './SetPickerModal'
 
@@ -209,6 +189,7 @@ export default {
   name: 'CardFilters',
 
   components: {
+    CardFilterList,
     SectionHeader,
     SetPickerModal,
   },
@@ -227,7 +208,6 @@ export default {
 
   data() {
     return {
-      colors: ['white', 'blue', 'black', 'red', 'green'],
       filters: [],
 
       setPickerModalId: 'set-picker-modal-' + uuidv4(),
@@ -274,6 +254,8 @@ export default {
 
         this.$refs[kind].value = ''
       }
+
+      this.onFiltersUpdated()
     },
 
     addSetFilter(sett) {
@@ -291,6 +273,8 @@ export default {
           operator: 'or',
         })
       }
+
+      this.onFiltersUpdated()
     },
 
     apply() {
@@ -301,6 +285,11 @@ export default {
     clear() {
       this.filters = []
       this.$emit('update:modelValue', this.cardlist)
+      this.onFiltersUpdated()
+    },
+
+    onFiltersUpdated() {
+      this.$emit('filters-updated', util.deepcopy(this.filters))
     },
 
     openSetPicker() {
@@ -309,11 +298,13 @@ export default {
 
     remove(filter) {
       util.array.remove(this.filters, filter)
+      this.onFiltersUpdated()
     },
 
     setFilters(filters) {
       this.filters = filters
       this.apply()
+      this.onFiltersUpdated()
     },
   },
 

@@ -26,7 +26,13 @@ Ach.claim = async function(achId, userId) {
       }
     }
   )
+}
 
+Ach.linkFilters = async function(achId, filters) {
+  await achCollection.updateOne(
+    { _id: achId },
+    { $set: { filters } },
+  )
 }
 
 Ach.save = async function(ach) {
