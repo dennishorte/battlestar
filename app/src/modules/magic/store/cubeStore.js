@@ -86,7 +86,7 @@ export default {
     },
 
     async setFilters({ state }, filters) {
-      state.cardFilters = filters
+      state.cardFilters = filters || []
       if (filters.length === 0) {
         state.filteredCards = state.cube.cardlist
       }

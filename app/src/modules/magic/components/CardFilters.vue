@@ -302,7 +302,7 @@ export default {
     },
 
     setFilters(filters) {
-      this.filters = filters
+      this.filters = util.deepcopy(filters)
       this.apply()
       this.onFiltersUpdated()
     },
@@ -310,7 +310,7 @@ export default {
 
   mounted() {
     this.$emit('update:modelValue', this.cardlist)
-    this.bus.on('set-filters', this.setFilters)
+    this.bus.on('card-filters-set', this.setFilters)
   },
 }
 

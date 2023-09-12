@@ -16,12 +16,12 @@
     </div>
     <div v-if="!hideMenu">
       <Dropdown :notitle="true">
-        <DropdownButton @click="claim(ach)">claim</DropdownButton>
-        <DropdownButton @click="edit(ach)">edit</DropdownButton>
-        <DropdownButton @click="editTags(ach)">tags</DropdownButton>
+        <DropdownButton @click="claim">claim</DropdownButton>
+        <DropdownButton @click="edit">edit</DropdownButton>
+        <DropdownButton @click="editTags">tags</DropdownButton>
         <template v-if="ach.filters">
           <DropdownDivider />
-          <DropdownButton @click="showFilters">filters</DropdownButton>
+          <DropdownButton @click="showFilters">targets</DropdownButton>
         </template>
         <DropdownDivider />
         <DropdownButton>delete</DropdownButton>
@@ -46,6 +46,8 @@ export default {
     DropdownDivider,
   },
 
+  inject: ['bus'],
+
   props: {
     ach: Object,
 
@@ -63,9 +65,9 @@ export default {
       return `${days} days`
     },
 
-    claim(ach) {
+    claim() {
       this.$store.commit('magic/cube/manageAchievement', {
-        achievement: ach,
+        achievement: this.ach,
         showAll: false,
       })
       this.$modal('achievement-viewer-modal').show()
@@ -75,21 +77,26 @@ export default {
       alert('not implemented; nag Dennis')
     },
 
-    edit(ach) {
+    edit() {
       this.$store.commit('magic/cube/manageAchievement', {
-        achievement: ach,
+        achievement: this.ach,
         showAll: true,
       })
       this.$modal('achievement-editor').show()
     },
 
-    editTags(ach) {
+    editTags() {
       this.$store.commit('magic/cube/manageAchievement', {
-        achievement: ach,
+        achievement: this.ach,
         showAll: false,
       })
       this.showAll = false
       this.$modal('achievement-editor').show()
+    },
+
+    showFilters() {
+      this.$store.dispatch('magic/cube/setFilters', this.ach.filters)
+      this.bus.emit('achievement-show-filters', this.ach.filters)
     },
 
     username(id) {

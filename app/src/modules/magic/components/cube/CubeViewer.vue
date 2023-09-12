@@ -129,6 +129,7 @@ import mitt from 'mitt'
 
 import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
+import { nextTick } from 'vue'
 
 import AchievementModal from './AchievementModal'
 import AchievementViewerModal from './AchievementViewerModal'
@@ -316,6 +317,14 @@ export default {
       this.$store.dispatch('magic/cube/setFilters', filters)
     },
 
+    async showAchievementFilters(filters) {
+      this.showing = 'cards'
+      this.showSearch = true
+      await nextTick()
+      this.updateCardFilters(filters)
+      this.bus.emit('card-filters-set', filters)
+    },
+
     toggleSearch() {
       this.showSearch = !this.showSearch
     },
@@ -427,6 +436,7 @@ export default {
     await this.reload()
     this.bus.on('card-clicked', this.showCardModal)
     this.bus.on('card-saved', this.saveCard)
+    this.bus.on('achievement-show-filters', this.showAchievementFilters)
   },
 }
 </script>

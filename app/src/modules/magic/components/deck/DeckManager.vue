@@ -207,14 +207,14 @@ export default {
   watch: {
     activeDeck(newDeck) {
       if (newDeck.filters) {
-        this.bus.emit('set-filters', newDeck.filters)
+        this.bus.emit('card-filters-set', newDeck.filters)
       }
     },
   },
 
   mounted() {
     if (this.activeDeck && this.activeDeck.filters) {
-      this.bus.emit('set-filters', this.activeDeck.filters)
+      this.bus.emit('card-filters-set', this.activeDeck.filters)
     }
   },
 }
