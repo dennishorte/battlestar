@@ -84,7 +84,7 @@ export default {
 
     async save() {
       await this.$post('/api/magic/achievement/save', {
-        achievement,
+        achievement: this.achievement,
       })
       await this.$store.dispatch('magic/cube/loadAchievements')
     },
