@@ -58,8 +58,7 @@
           layout-direction="row"
           :cardlist="cube.cardlist"
           :class="showSearch ? '' : 'd-none'"
-          v-model="filteredCards"
-          @filters-updated="storeCardFilters"
+          @filters-updated="updateCardFilters"
         >
           <template #extra-actions>
             <button
@@ -179,8 +178,6 @@ export default {
 
       showing: 'cards',
       showSearch: false,
-      filteredCards: [],
-      filtersApplied: false,
     }
   },
 
@@ -198,6 +195,7 @@ export default {
     ...mapState('magic/cube', {
       cube: 'cube',
       cubeLoaded: 'cubeLoaded',
+      filteredCards: 'filteredCards',
 
       achievements: 'achievements',
       scars: 'scars',
@@ -249,7 +247,7 @@ export default {
     },
 
     canLinkFilters() {
-      return this.cardFilters.length > 0 && this.filtersApplied
+      return this.cardFilters.length > 0
     },
 
     scarsUnused() {
@@ -314,9 +312,8 @@ export default {
       }
     },
 
-    storeCardFilters(filters) {
-      this.filtersApplied = false
-      this.$store.commit('magic/cube/setFilters', filters)
+    updateCardFilters(filters) {
+      this.$store.dispatch('magic/cube/setFilters', filters)
     },
 
     toggleSearch() {
@@ -423,10 +420,6 @@ export default {
     async $route() {
       this.id = this.$route.params.id
       await this.reload()
-    },
-
-    filteredCards() {
-      this.filtersApplied = true
     },
   },
 

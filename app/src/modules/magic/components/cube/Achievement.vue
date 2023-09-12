@@ -19,6 +19,10 @@
         <DropdownButton @click="claim(ach)">claim</DropdownButton>
         <DropdownButton @click="edit(ach)">edit</DropdownButton>
         <DropdownButton @click="editTags(ach)">tags</DropdownButton>
+        <template v-if="ach.filters">
+          <DropdownDivider />
+          <DropdownButton @click="showFilters">filters</DropdownButton>
+        </template>
         <DropdownDivider />
         <DropdownButton>delete</DropdownButton>
       </Dropdown>

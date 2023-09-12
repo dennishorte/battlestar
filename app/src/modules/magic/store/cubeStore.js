@@ -19,6 +19,7 @@ export default {
     managedAchievementShowAll: false,
 
     cardFilters: [],
+    filteredCards: [],
   }),
 
   getters: {
@@ -46,10 +47,6 @@ export default {
       state.managedAchievement = achievement
       state.managedAchievementShowAll = showAll
     },
-
-    setFilters(state, filters) {
-      state.cardFilters = filters
-    },
   },
 
   actions: {
@@ -62,6 +59,7 @@ export default {
     async loadCube({ dispatch, state }, { cubeId }) {
       state.cubeLoaded = false
       state.cube = await dispatch('getById', { cubeId })
+      state.filteredCards = state.cube.cardlist
 
       await dispatch('loadScars')
       await dispatch('loadAchievements')
@@ -86,5 +84,18 @@ export default {
     async save({ dispatch }, cube) {
       await dispatch('magic/file/save', cube.serialize(), { root: true })
     },
+
+    async setFilters({ state }, filters) {
+      state.cardFilters = filters
+      if (filters.length === 0) {
+        state.filteredCards = state.cube.cardlist
+      }
+      else {
+        state.filteredCards = state
+          .cube
+          .cardlist
+          .filter(card => mag.util.card.filtersMatchCard(filters, card))
+      }
+    }
   },
 }
