@@ -24,7 +24,7 @@
           <DropdownButton @click="showFilters">targets</DropdownButton>
         </template>
         <DropdownDivider />
-        <DropdownButton>delete</DropdownButton>
+        <DropdownButton @click="del">delete</DropdownButton>
       </Dropdown>
     </div>
   </div>
@@ -73,8 +73,8 @@ export default {
       this.$modal('achievement-viewer-modal').show()
     },
 
-    delete() {
-      alert('not implemented; nag Dennis')
+    del() {
+      this.$store.dispatch('magic/cube/deleteAchievement', this.ach)
     },
 
     edit() {

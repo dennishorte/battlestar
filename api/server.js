@@ -29,6 +29,7 @@ app.use(middleware.coerceIds)
 // Achievement routes
 app.post('/api/magic/achievement/all', routes.magic.achievement.fetchAll)
 app.post('/api/magic/achievement/claim', routes.magic.achievement.claim)
+app.post('/api/magic/achievement/delete', routes.magic.achievement.delete)
 app.post('/api/magic/achievement/linkFilters', routes.magic.achievement.linkFilters)
 app.post('/api/magic/achievement/save', routes.magic.achievement.save)
 

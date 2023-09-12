@@ -28,6 +28,10 @@ Ach.claim = async function(achId, userId) {
   )
 }
 
+Ach.delete = async function(achId) {
+  await achCollection.deleteOne({ _id : achId })
+}
+
 Ach.linkFilters = async function(achId, filters) {
   await achCollection.updateOne(
     { _id: achId },
