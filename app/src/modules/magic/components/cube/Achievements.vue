@@ -4,8 +4,16 @@
       <button class="btn btn-success" @click="create">create</button>
     </div>
 
-    <div>
-      <Achievement v-for="ach in sortedAchievements" :ach="ach" />
+    <div class="row">
+      <div class="col">
+        <h3>Unclaimed Achievements</h3>
+        <Achievement v-for="ach in sortedAchievements" :ach="ach" />
+      </div>
+
+      <div class="col">
+        <h3>Claimed Achievements</h3>
+        <Achievement v-for="ach in claimedAchievements" :ach="ach" />
+      </div>
     </div>
 
   </div>
@@ -41,9 +49,17 @@ export default {
   },
 
   computed: {
+    claimedAchievements() {
+      return this
+        .achievements
+        .filter(ach => ach.claimed)
+        .sort((l, r) => r.claimed.timestamp - l.claimed.timestamp)
+    },
+
     sortedAchievements() {
       return this
         .achievements
+        .filter(ach => !ach.claimed)
         .sort((l, r) => r.createdTimestamp - l.createdTimestamp)
     },
   },

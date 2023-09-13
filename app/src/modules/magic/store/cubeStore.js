@@ -50,6 +50,14 @@ export default {
   },
 
   actions: {
+    async claimAchievement({ dispatch }, { achId, userId }) {
+      await this.$post('/api/magic/achievement/claim', {
+        achId,
+        userId,
+      })
+      await dispatch('loadAchievements')
+    },
+
     async deleteAchievement({ dispatch }, ach) {
       await this.$post('/api/magic/achievement/delete', { achId: ach._id })
       await dispatch('loadAchievements')

@@ -11,7 +11,9 @@
 
 
       <template v-if="!!achievement.claimed">
-        Claimed!
+
+
+        <button class="btn btn-primary" @click="finalize">finalize</button>
       </template>
 
       <template v-else>
@@ -44,6 +46,8 @@ export default {
     Modal,
   },
 
+  inject: ['actor'],
+
   computed: {
     ...mapState('magic/cube', {
       achievement: 'managedAchievement',
@@ -51,9 +55,15 @@ export default {
   },
 
   methods: {
-    unlock() {
-      console.log('unlocked')
-      this.achievement.claimed = true
+    finalize() {
+      alert('not implemented')
+    },
+
+    async unlock() {
+      await this.$store.dispatch('magic/cube/claimAchievement', {
+        achId: this.achievement._id,
+        userId: this.actor._id,
+      })
     }
   },
 }

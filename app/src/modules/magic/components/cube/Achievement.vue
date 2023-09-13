@@ -3,6 +3,7 @@
     <div>
       <div class="achievement-name">{{ ach.name }}</div>
       <div>{{ ach.unlock }}</div>
+      <div class="subtext" v-if="claimed">claimed by: {{ username(ach.claimed.userId) }}</div>
       <div class="subtext">created by: {{ username(ach.creatorId) }}</div>
       <div class="subtext">age: {{ ageString(ach) }}</div>
       <div v-if="ach.tags.length > 0">
@@ -14,17 +15,25 @@
         </div>
       </div>
     </div>
+
     <div v-if="!hideMenu">
       <Dropdown :notitle="true">
-        <DropdownButton @click="claim">claim</DropdownButton>
-        <DropdownButton @click="edit">edit</DropdownButton>
-        <DropdownButton @click="editTags">tags</DropdownButton>
-        <template v-if="ach.filters">
-          <DropdownDivider />
-          <DropdownButton @click="showFilters">targets</DropdownButton>
+
+        <template v-if="claimed">
+          <DropdownButton @click="view">view</DropdownButton>
         </template>
-        <DropdownDivider />
-        <DropdownButton @click="del">delete</DropdownButton>
+
+        <template v-else>
+          <DropdownButton @click="claim">claim</DropdownButton>
+          <DropdownButton @click="edit">edit</DropdownButton>
+          <DropdownButton @click="editTags">tags</DropdownButton>
+          <template v-if="ach.filters">
+            <DropdownDivider />
+            <DropdownButton @click="showFilters">targets</DropdownButton>
+          </template>
+          <DropdownDivider />
+          <DropdownButton @click="del">delete</DropdownButton>
+        </template>
       </Dropdown>
     </div>
   </div>
@@ -54,6 +63,12 @@ export default {
     hideMenu: {
       type: Boolean,
       default: false
+    },
+  },
+
+  computed: {
+    claimed() {
+      return Boolean(this.ach.claimed)
     },
   },
 
@@ -103,6 +118,14 @@ export default {
       return id
       /* const user = this.users.find(u => u._id === id)
        * return user ? user.name : id */
+    },
+
+    view() {
+      this.$store.commit('magic/cube/manageAchievement', {
+        achievement: this.ach,
+        showAll: false,
+      })
+      this.$modal('achievement-viewer-modal').show()
     },
   },
 }
