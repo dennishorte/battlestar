@@ -135,6 +135,7 @@ export default {
           clickLocation: this.clickLocation,
           getPlayerColor,
           getTroopColor,
+          insertSelectorSubtitles: this.insertSelectorSubtitles,
         },
         modals: {
           cardViewer: {
@@ -264,6 +265,21 @@ export default {
           optionName: loc.name,
           opts: { prefix: true },
         })
+      }
+    },
+
+    insertSelectorSubtitles: function(selector) {
+      if (selector.title === 'Choose cards to promote') {
+        const updated = []
+        for (const option of selector.choices) {
+          const card = tyr.res.cards.byName[option][0]
+          updated.push({
+            title: option,
+            subtitles: [`${card.points} / ${card.innerPoints}`],
+          })
+        }
+
+        selector.choices = updated
       }
     },
 
