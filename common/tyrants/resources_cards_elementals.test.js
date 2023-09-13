@@ -209,4 +209,56 @@ describe('Elementals expansion', () => {
     })
   })
 
+  describe('Vanifer', () => {
+    test('assassinate a troop', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Vanifer', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Vanifer')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Vanifer'],
+          trophyHall: ['neutral'],
+          power: 0,
+        },
+        'araum-ched': {
+          troops: [],
+        },
+      })
+
+    })
+
+    test('Recruit a Malice card that costs 4 or less without paying its cost', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Vanifer', 'Fire Elemental'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Vanifer')
+      const request3 = t.choose(game, request2, 'Blackguard')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Fire Elemental'],
+          played: ['Vanifer'],
+          discard: ['Blackguard'],
+          trophyHall: ['neutral'],
+        },
+        'araum-ched': {
+          troops: [],
+        },
+      })
+    })
+  })
+
 })

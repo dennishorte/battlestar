@@ -83,7 +83,11 @@ const cardData = [
     "text": [
       "Assassinate a troop",
       "Recruit a Malice card that costs 4 or less without paying its cost"
-    ]
+    ],
+    impl: (game, player) => {
+      game.aChooseAndAssassinate(player)
+      game.aChooseAndRecruit(player, 4, { aspect: 'malice' })
+    }
   },
   {
     "name": "Imix",

@@ -457,39 +457,55 @@ Tyrants.prototype._generateAutoCardAction = function() {
   }
 }
 
-Tyrants.prototype._generateBuyActions = function(maxCost=0) {
-  const influence = maxCost ? maxCost : this.getPlayerCurrent().influence
+Tyrants.prototype._generateBuyActions = function(maxCost=0, opts={}) {
   const choices = []
 
-  for (const card of this.getZoneById('market').cards()) {
-    if (card.cost <= influence) {
-      choices.push(card.name)
-    }
-  }
-
   const priestess = this.getZoneById('priestess').cards()[0]
-  if (priestess && priestess.cost <= influence) {
-    choices.push(priestess.name)
+  if (priestess) {
+    choices.push({ card: priestess })
   }
 
   const guard = this.getZoneById('guard').cards()[0]
-  if (guard && guard.cost <= influence) {
-    choices.push(guard.name)
+  if (guard) {
+    choices.push({ card: guard })
+  }
+
+  const market = this
+    .getZoneById('market')
+    .cards()
+    .sort((l, r) => l.name.localeCompare(r.name))
+    .sort((l, r) => l.cost - r.cost)
+  for (const card of market) {
+    choices.push({ card })
   }
 
   if (this.state.ghostFlag) {
     const devoured = this.getZoneById('devoured').cards().slice(-1)[0]
-    if (devoured && devoured.cost <= influence) {
-      choices.push('devoured: ' + devoured.name)
+    if (devoured) {
+      choices.push({
+        card: devoured,
+        devoured: true,
+      })
     }
   }
 
-  choices.sort()
+  const influence = maxCost ? maxCost : this.getPlayerCurrent().influence
+  const filteredChoices = choices
+    .filter(choice => choice.card.cost <= influence)
+    .filter(choice => opts.aspect ? choice.card.aspect === opts.aspect : true)
+    .map(choice => {
+      if (choice.devoured) {
+        return 'devoured: ' + choice.card.name
+      }
+      else {
+        return choice.card.name
+      }
+    })
 
-  if (choices.length > 0) {
+  if (filteredChoices.length > 0) {
     return {
       title: 'Recruit',
-      choices,
+      choices: filteredChoices,
       min: 0,
       max: 1,
     }
@@ -1014,7 +1030,7 @@ Tyrants.prototype.aChooseAndPromote = function(player, cardsToChoose, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndRecruit = function(player, maxCost, opts) {
-  const choices = this._generateBuyActions(maxCost)
+  const choices = this._generateBuyActions(maxCost, opts)
 
   if (choices) {
     const cardNames = this.aChoose(player, choices.choices, { ...opts, title: 'Choose cards to recruit' })

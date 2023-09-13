@@ -125,7 +125,7 @@ describe('Drow Expansion', () => {
   })
 
   describe('Inquisitor', () => {
-    test('power', () => {
+    test('influence', () => {
       const game = t.gameFixture({
         dennis: {
           hand: ['Inquisitor'],
