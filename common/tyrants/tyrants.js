@@ -1430,6 +1430,41 @@ Tyrants.prototype.aSupplant = function(player, loc, owner) {
   })
 }
 
+Tyrants.prototype.aWithFocus = function(player, aspect, fn) {
+  const played = this.getCardsByZone(player, 'played')
+  const playedAspect = played
+    .filter(card => card.aspect === aspect)
+    .length > 1
+
+  if (playedAspect) {
+    this.mLog({
+      template: '{player} has already played a {aspect} card',
+      args: { player, aspect }
+    })
+    fn()
+    return
+  }
+
+  const inHand = this.getCardsByZone(player, 'hand')
+  const inHandAspect = inHand
+    .filter(card => card.aspect === aspect)
+    .length > 0
+
+  if (inHandAspect) {
+    this.mLog({
+      template: '{player} has a {aspect} card in hand',
+      args: { player, aspect },
+    })
+    fn()
+    return
+  }
+
+  this.mLog({
+    template: 'No card matching focus {aspect}',
+    args: { aspect },
+  })
+}
+
 Tyrants.prototype.getAssassinateChoices = function(player, opts={}) {
   const presence = opts.loc ? [opts.loc] : this.getPresence(player)
 
