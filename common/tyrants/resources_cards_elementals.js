@@ -36,7 +36,22 @@ const cardData = [
       "- +2 power",
       "- +2 influence",
       "Malice focus > Draw a card"
-    ]
+    ],
+    impl: (game, player) => {
+      game.aChooseOne(player, [
+        {
+          title: '+2 power',
+          impl: (game, player) => player.incrementPower(2),
+        },
+        {
+          title: '+2 influence',
+          impl: (game, player) => player.incrementInfluence(2),
+        },
+      ])
+      game.aWithFocus(player, 'malice', () => {
+        game.aDraw(player)
+      })
+    },
   },
   {
     "name": "Fire Elemental Myrmidon",

@@ -81,4 +81,70 @@ describe('Elementals expansion', () => {
     })
   })
 
+  describe('Fire Elemental', () => {
+    test('Choose: +2 power', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Fire Elemental', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Fire Elemental')
+      const request3 = t.choose(game, request2, '+2 power')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Fire Elemental'],
+          power: 2,
+        },
+      })
+    })
+
+    test('Choose: +2 influence', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Fire Elemental', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Fire Elemental')
+      const request3 = t.choose(game, request2, '+2 influence')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Fire Elemental'],
+          influence: 2,
+        },
+      })
+    })
+
+    test('Malice Focus > draw a card', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Fire Elemental', 'Fire Elemental'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Fire Elemental')
+      const request3 = t.choose(game, request2, '+2 influence')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Fire Elemental', 'Soldier',],
+          played: ['Fire Elemental'],
+          influence: 2,
+        },
+      })
+    })
+
+  })
+
 })
