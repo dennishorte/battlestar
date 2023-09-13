@@ -68,7 +68,7 @@ const cardData = [
     ],
     impl: (game, player, { self }) => {
       player.incrementPower(2)
-      game.aDeferPromotion(player, self)
+      game.aDeferPromotionAspect(player, self, 'obedience')
     }
   },
   {

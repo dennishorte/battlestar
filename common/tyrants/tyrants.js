@@ -558,6 +558,21 @@ Tyrants.prototype._processEndOfTurnActions = function() {
       promos.push(action)
     }
 
+    else if (action.action === 'promote-aspect') {
+      this.mLog({
+        template: '{player} may promote a card with aspect {aspect}',
+        args: {
+          player: action.player,
+          aspect: action.aspect,
+        }
+      })
+      const choices = this
+        .getCardsByZone(action.player, 'played')
+        .filter(card => card.aspect === action.aspect)
+        .sort(card => card.name)
+      this.aChooseAndPromote(action.player, choices, { min: 1, max: 1 })
+    }
+
     else if (action.action === 'promote-special') {
       if (action.source.name === 'High Priest of Myrkul') {
         this.mLog({
@@ -1125,6 +1140,15 @@ Tyrants.prototype.aDeferPromotion = function(player, source) {
     player,
     source,
     action: 'promote-other',
+  })
+}
+
+Tyrants.prototype.aDeferPromotionAspect = function(player, source, aspect) {
+  this.state.endOfTurnActions.push({
+    player,
+    source,
+    aspect,
+    action: 'promote-aspect',
   })
 }
 

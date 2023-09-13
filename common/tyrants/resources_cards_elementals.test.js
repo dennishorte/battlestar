@@ -144,7 +144,69 @@ describe('Elementals expansion', () => {
         },
       })
     })
+  })
 
+  describe('Fire Elemental Myrmidon', () => {
+    test('+2 power, no promo', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Fire Elemental Myrmidon'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Fire Elemental Myrmidon')
+      const request3 = t.choose(game, request2, 'Pass')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Fire Elemental Myrmidon'],
+        },
+      })
+    })
+
+    test('+2 power, promote obdience', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Fire Elemental Myrmidon', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Fire Elemental Myrmidon')
+      const request3 = t.choose(game, request2, 'Play Card.House Guard')
+      const request4 = t.choose(game, request3, 'Pass')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Fire Elemental Myrmidon'],
+          innerCircle: ['House Guard'],
+        },
+      })
+    })
+
+    test('+2 power, cannot promote malice', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Fire Elemental Myrmidon', 'Eternal Flame Cultist'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Fire Elemental Myrmidon')
+      const request3 = t.choose(game, request2, 'Play Card.Eternal Flame Cultist')
+      const request4 = t.choose(game, request3, 'Pass')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Fire Elemental Myrmidon', 'Eternal Flame Cultist'],
+          trophyHall: ['neutral'],
+        },
+      })
+    })
   })
 
 })
