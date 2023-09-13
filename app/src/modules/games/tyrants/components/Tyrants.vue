@@ -284,7 +284,7 @@ export default {
     },
 
     openRules() {
-      window.open("https://media.dnd.wizards.com/TyrantsOfTheUnderdark-Rulebook.pdf")
+      window.open("https://tesera.ru/images/items/783812/Tyrants_Of_The_Underdark_Rulebook.pdf")
     },
 
     save: async function() {
