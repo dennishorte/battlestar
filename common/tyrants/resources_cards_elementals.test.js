@@ -261,4 +261,47 @@ describe('Elementals expansion', () => {
     })
   })
 
+  describe('Imix', () => {
+    test('+4 power', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Imix', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Imix')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Imix'],
+          power: 4,
+        },
+      })
+
+    })
+
+    test('Malice Focus > +2 power', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Imix', 'Fire Elemental'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Imix')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Fire Elemental'],
+          played: ['Imix'],
+          power: 6
+        },
+      })
+    })
+  })
+
 })

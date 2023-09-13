@@ -101,7 +101,13 @@ const cardData = [
     "text": [
       "+4 power",
       "Malice Focus > +2 power"
-    ]
+    ],
+    impl: (game, player) => {
+      player.incrementPower(4)
+      game.aWithFocus(player, 'malice', () => {
+        player.incrementPower(2)
+      })
+    }
   },
   {
     "name": "Crushing Wave Cultist",
