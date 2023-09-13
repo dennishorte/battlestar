@@ -134,6 +134,7 @@ export default {
     })
 
     this.$store.dispatch('magic/cards/ensureLoaded')
+    this.$store.dispatch('magic/loadUsers')
   },
 
   mounted() {

@@ -41,6 +41,8 @@
 
 
 <script>
+import { mapState } from 'vuex'
+
 import Dropdown from '@/components/Dropdown'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
@@ -67,6 +69,10 @@ export default {
   },
 
   computed: {
+    ...mapState('magic', {
+      users: 'users',
+    }),
+
     claimed() {
       return Boolean(this.ach.claimed)
     },
@@ -115,9 +121,8 @@ export default {
     },
 
     username(id) {
-      return id
-      /* const user = this.users.find(u => u._id === id)
-       * return user ? user.name : id */
+      const user = this.users.find(u => u._id === id)
+      return user ? user.name : id
     },
 
     view() {

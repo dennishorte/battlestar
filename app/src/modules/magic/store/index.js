@@ -20,6 +20,8 @@ export default {
     mouseoverCard: null,
     mouseoverX: 0,
     mouseoverY: 0,
+
+    users: [],
   }),
 
   mutations: {
@@ -40,6 +42,13 @@ export default {
       if (state.mouseoverCard === card) {
         state.mouseoverCard = null
       }
+    },
+  },
+
+  actions: {
+    async loadUsers({ state }) {
+      const { users } = await this.$post('/api/user/all')
+      state.users = users
     },
   },
 }
