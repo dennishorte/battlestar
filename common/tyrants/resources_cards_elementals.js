@@ -334,7 +334,17 @@ const cardData = [
     "text": [
       "Place a spy, then assassinate a troop at that spy’s site.",
       "Guile Focus > Place a spy"
-    ]
+    ],
+    impl: (game, player) => {
+      const loc = game.aChooseAndPlaceSpy(player)
+      if (loc) {
+        game.aChooseAndAssassinate(player, { loc })
+      }
+
+      game.aWithFocus(player, 'guile', () => {
+        game.aChooseAndPlaceSpy(player)
+      })
+    }
   },
   {
     "name": "Black Earth Cultist",

@@ -745,7 +745,7 @@ describe('Elementals expansion', () => {
   })
 
   describe('Air Elemental Myrmidon', () => {
-    test('do it all', () => {
+    test('place a spy; no promo', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'elementals'],
         dennis: {
@@ -794,7 +794,7 @@ describe('Elementals expansion', () => {
   })
 
   describe('Aerisi Kalinoth', () => {
-    test('Place a spy, no promo', () => {
+    test('All the things', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'elementals'],
         dennis: {
@@ -807,8 +807,6 @@ describe('Elementals expansion', () => {
       const request3 = t.choose(game, request2, 'Everfire')
       const request4 = t.choose(game, request3, 'Spellspinner')
 
-      t.deepLog(request3)
-
       t.testBoard(game, {
         dennis: {
           hand: ['House Guard'],
@@ -818,6 +816,65 @@ describe('Elementals expansion', () => {
         },
         Everfire: {
           spies: ['dennis'],
+        },
+      })
+    })
+  })
+
+  describe('Yan-C-Bin', () => {
+    test('Place a spy, no focus', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Yan-C-Bin', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Yan-C-Bin')
+      const request3 = t.choose(game, request2, 'Skullport')
+      const request4 = t.choose(game, request3, 'Play Card.House Guard')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['Yan-C-Bin', 'House Guard'],
+          trophyHall: ['neutral'],
+          power: 2,
+        },
+        Skullport: {
+          spies: ['dennis'],
+          troops: ['neutral'],
+        },
+      })
+    })
+
+    test('Place a spy, with focus', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Yan-C-Bin', 'Spellspinner'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Yan-C-Bin')
+      const request3 = t.choose(game, request2, 'Skullport')
+      const request4 = t.choose(game, request3, 'Everfire')
+      const request5 = t.choose(game, request4, 'Play Card.Spellspinner')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['Yan-C-Bin', 'Spellspinner'],
+          trophyHall: ['neutral'],
+        },
+        Everfire: {
+          spies: ['dennis'],
+        },
+        Skullport: {
+          spies: ['dennis'],
+          troops: ['neutral'],
         },
       })
     })
