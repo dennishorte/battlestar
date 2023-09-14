@@ -925,5 +925,65 @@ describe('Elementals expansion', () => {
     })
   })
 
+  describe('Earth Elemental', () => {
+    test('Influence plus return', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Earth Elemental', 'House Guard'],
+        },
+        'Everfire': {
+          troops: ['dennis'],
+          spies: ['micah'],
+        }
+      })
 
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Earth Elemental')
+      const request3 = t.choose(game, request2, 'spy.Everfire, micah')
+      const request4 = t.choose(game, request3, 'Play Card.House Guard')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['Earth Elemental', 'House Guard'],
+          influence: 1,
+          power: 2,
+        },
+        'Everfire': {
+          troops: ['dennis']
+        },
+      })
+    })
+
+    test('Ambition Focus', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Earth Elemental', 'House Guard', 'Council Member'],
+        },
+        'Everfire': {
+          troops: ['dennis'],
+          spies: ['micah'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Earth Elemental')
+      const request3 = t.choose(game, request2, 'spy.Everfire, micah')
+      const request4 = t.choose(game, request3, 'Play Card.House Guard')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Soldier', 'Council Member'],
+          played: ['Earth Elemental', 'House Guard'],
+          influence: 1,
+          power: 2,
+        },
+        'Everfire': {
+          troops: ['dennis']
+        },
+      })
+    })
+  })
 })

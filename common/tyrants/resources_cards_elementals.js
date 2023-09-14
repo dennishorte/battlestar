@@ -379,7 +379,14 @@ const cardData = [
       "+1 influence",
       "Return another player’s troop or spy.",
       "Ambition focus > Draw a card"
-    ]
+    ],
+    impl: (game, player) => {
+      player.incrementInfluence(1)
+      game.aChooseAndReturn(player, { noWhite: true })
+      game.aWithFocus(player, 'ambition', () => {
+        game.aDraw(player)
+      })
+    }
   },
   {
     "name": "Earth Elemental Myrmidon",
