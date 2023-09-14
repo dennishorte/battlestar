@@ -471,7 +471,6 @@ describe('Elementals expansion', () => {
     })
   })
 
-
   describe('Gar Shatterkeel', () => {
     test('deploy 3 troops', () => {
       const game = t.gameFixture({
@@ -520,6 +519,62 @@ describe('Elementals expansion', () => {
         },
         'Ched Nasad': {
           troops: ['dennis', 'dennis', 'dennis', 'dennis'],
+        },
+      })
+    })
+  })
+
+  describe('Olhydra', () => {
+    test('supplant a white troop anywhere on the board', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Olhydra', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Olhydra')
+      const request3 = t.choose(game, request2, 'Blingdenstone')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Olhydra'],
+          trophyHall: ['neutral'],
+        },
+        Blingdenstone: {
+          troops: ['neutral', 'dennis'],
+        },
+      })
+
+    })
+
+    test('Conquest Focus > Deploy 2 troops', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Olhydra', 'Advance Scout'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Olhydra')
+      const request3 = t.choose(game, request2, 'Blingdenstone')
+      const request4 = t.choose(game, request3, 'Ched Nasad')
+      const request5 = t.choose(game, request4, 'Ched Nasad')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Advance Scout'],
+          played: ['Olhydra'],
+          trophyHall: ['neutral'],
+        },
+        Blingdenstone: {
+          troops: ['neutral', 'dennis'],
+        },
+        'Ched Nasad': {
+          troops: ['dennis', 'dennis', 'dennis'],
         },
       })
     })

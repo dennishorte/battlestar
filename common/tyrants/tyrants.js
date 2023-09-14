@@ -1460,6 +1460,9 @@ Tyrants.prototype.aReturnTroop = function(player, loc, owner) {
 Tyrants.prototype.aSupplant = function(player, loc, owner) {
   this.mAssassinate(player, loc, owner)
   this.mDeploy(player, loc)
+
+  owner = owner ? owner : 'neutral'
+
   this.mLog({
     template: '{player1} supplants {player2} troop at {loc}',
     args: {

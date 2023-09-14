@@ -201,7 +201,14 @@ const cardData = [
     "text": [
       "Supplant a white troop anywhere on the board.",
       "Conquest Focus > Deploy 2 troops."
-    ]
+    ],
+    impl: (game, player) => {
+      game.aChooseAndSupplant(player, { whiteOnly: true, anywhere: true })
+      game.aWithFocus(player, 'conquest', () => {
+        game.aChooseAndDeploy(player)
+        game.aChooseAndDeploy(player)
+      })
+    }
   },
   {
     "name": "Air Elemental",
