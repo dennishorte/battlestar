@@ -976,6 +976,11 @@ Tyrants.prototype.aChooseAndMoveTroop = function(player, opts={}) {
 
     const dest = this.aChooseLocation(player, destChoices)
 
+    if (!dest) {
+      this.mLog({ template: 'No valid targets for moving a troop' })
+      return
+    }
+
     util.assert(!!troop, `Invalid selection for moving a troop: ${toMove}`)
 
     this.mMoveCardTo(troop, dest)
