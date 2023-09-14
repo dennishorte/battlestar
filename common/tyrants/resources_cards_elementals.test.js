@@ -406,4 +406,68 @@ describe('Elementals expansion', () => {
     })
   })
 
+  describe('Water Elemental Myrmidon', () => {
+    test('Assassinate a white troop, no promo', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Water Elemental Myrmidon'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Water Elemental Myrmidon')
+      const request3 = t.choose(game, request2, 'Pass')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Water Elemental Myrmidon'],
+          trophyHall: ['neutral'],
+        },
+      })
+    })
+
+    test('Assassinate a white troop, promote obdience', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Water Elemental Myrmidon', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Water Elemental Myrmidon')
+      const request3 = t.choose(game, request2, 'Play Card.House Guard')
+      const request4 = t.choose(game, request3, 'Pass')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Water Elemental Myrmidon'],
+          innerCircle: ['House Guard'],
+          trophyHall: ['neutral'],
+        },
+      })
+    })
+
+    test('Assassinate a white troop, cannot promote malice', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Water Elemental Myrmidon', 'Eternal Flame Cultist'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Water Elemental Myrmidon')
+      const request3 = t.choose(game, request2, 'Play Card.Eternal Flame Cultist')
+      const request4 = t.choose(game, request3, 'Pass')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Water Elemental Myrmidon', 'Eternal Flame Cultist'],
+          trophyHall: ['neutral'],
+        },
+      })
+    })
+  })
 })

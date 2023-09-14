@@ -163,7 +163,11 @@ const cardData = [
     "text": [
       "Assassinate a white troop",
       "At end of turn, promote an Obedience card played this turn"
-    ]
+    ],
+    impl: (game, player, { self }) => {
+      game.aChooseAndAssassinate(player, { whiteOnly: true })
+      game.aDeferPromotionAspect(player, self, 'obedience')
+    }
   },
   {
     "name": "Gar Shatterkeel",
