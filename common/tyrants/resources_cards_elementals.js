@@ -142,7 +142,14 @@ const cardData = [
     "text": [
       "Deploy 2 troops",
       "Conquest Focus > Draw a card"
-    ]
+    ],
+    impl: (game, player) => {
+      game.aChooseAndDeploy(player)
+      game.aChooseAndDeploy(player)
+      game.aWithFocus(player, 'conquest', () => {
+        game.aDraw(player)
+      })
+    }
   },
   {
     "name": "Water Elemental Myrmidon",

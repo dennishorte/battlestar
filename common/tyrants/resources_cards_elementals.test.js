@@ -355,4 +355,55 @@ describe('Elementals expansion', () => {
     })
   })
 
+  describe('Water Elemental', () => {
+    test('Assassinate a white troop', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Water Elemental', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Water Elemental')
+      const request3 = t.choose(game, request2, 'Ched Nasad')
+      const request4 = t.choose(game, request3, 'Ched Nasad')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Water Elemental'],
+        },
+        'Ched Nasad': {
+          troops: ['dennis', 'dennis', 'dennis'],
+        },
+      })
+
+    })
+
+    test('Conquest Focus > Deploy 2 troops', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Water Elemental', 'Advance Scout'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Water Elemental')
+      const request3 = t.choose(game, request2, 'Ched Nasad')
+      const request4 = t.choose(game, request3, 'Ched Nasad')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Advance Scout', 'Soldier'],
+          played: ['Water Elemental'],
+        },
+        'Ched Nasad': {
+          troops: ['dennis', 'dennis', 'dennis'],
+        },
+      })
+    })
+  })
+
 })
