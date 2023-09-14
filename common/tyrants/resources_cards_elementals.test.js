@@ -745,7 +745,7 @@ describe('Elementals expansion', () => {
   })
 
   describe('Air Elemental Myrmidon', () => {
-    test('Place a spy, no promo', () => {
+    test('do it all', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'elementals'],
         dennis: {
@@ -756,7 +756,6 @@ describe('Elementals expansion', () => {
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Air Elemental Myrmidon')
       const request3 = t.choose(game, request2, 'Everfire')
-      const request4 = t.choose(game, request3, 'Pass')
 
       t.testBoard(game, {
         dennis: {
@@ -786,6 +785,36 @@ describe('Elementals expansion', () => {
         dennis: {
           discard: ['Air Elemental Myrmidon'],
           innerCircle: ['House Guard'],
+        },
+        Everfire: {
+          spies: ['dennis'],
+        },
+      })
+    })
+  })
+
+  describe('Aerisi Kalinoth', () => {
+    test('Place a spy, no promo', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Aerisi Kalinoth', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Aerisi Kalinoth')
+      const request3 = t.choose(game, request2, 'Everfire')
+      const request4 = t.choose(game, request3, 'Spellspinner')
+
+      t.deepLog(request3)
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Aerisi Kalinoth'],
+          discard: ['Spellspinner'],
+          power: 1,
         },
         Everfire: {
           spies: ['dennis'],

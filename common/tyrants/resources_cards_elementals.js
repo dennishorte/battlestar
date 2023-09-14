@@ -315,7 +315,12 @@ const cardData = [
       "+1 power",
       "Place a spy.",
       "Recruit a Guile card that costs 4 or less without paying its cost."
-    ]
+    ],
+    impl: (game, player) => {
+      player.incrementPower(1)
+      game.aChooseAndPlaceSpy(player)
+      game.aChooseAndRecruit(player, 4, { aspect: 'guile' })
+    }
   },
   {
     "name": "Yan-C-Bin",
