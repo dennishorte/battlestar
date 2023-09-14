@@ -579,4 +579,88 @@ describe('Elementals expansion', () => {
       })
     })
   })
+
+  describe('Air Elemental', () => {
+    test('choose: place a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Air Elemental', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Air Elemental')
+      const request3 = t.choose(game, request2, 'Place a spy')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Air Elemental'],
+        },
+        'Chasmleap Bridge': {
+          spies: ['dennis']
+        },
+      })
+    })
+
+    test('choose: return a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Air Elemental', 'Advance Scout'],
+        },
+        Everfire: {
+          spies: ['dennis']
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Air Elemental')
+      const request3 = t.choose(game, request2, 'Return one of your spies > Deploy 3 troops')
+      const request4 = t.choose(game, request3, 'Everfire')
+      const request5 = t.choose(game, request4, 'Ched Nasad')
+      const request6 = t.choose(game, request5, 'Ched Nasad')
+      const request7 = t.choose(game, request6, 'Ched Nasad')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Advance Scout'],
+          played: ['Air Elemental'],
+        },
+        Everfire: {
+          troops: [],
+          spies: [],
+        },
+        'Ched Nasad': {
+          troops: ['dennis', 'dennis', 'dennis', 'dennis'],
+        },
+      })
+    })
+
+    test('guile focus', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Air Elemental', 'Spellspinner'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Air Elemental')
+      const request3 = t.choose(game, request2, 'Place a spy')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Spellspinner', 'Soldier'],
+          played: ['Air Elemental'],
+        },
+        'Chasmleap Bridge': {
+          spies: ['dennis']
+        },
+      })
+    })
+  })
 })

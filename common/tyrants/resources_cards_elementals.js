@@ -224,7 +224,29 @@ const cardData = [
       "- Place a spy",
       "- Return one of your spies > Deploy 3 troops",
       "Guile Focus > Draw a card"
-    ]
+    ],
+    impl: (game, player) => {
+      game.aChooseOne(player, [
+        {
+          title: 'Place a spy',
+          impl: () => game.aChooseAndPlaceSpy(player)
+        },
+        {
+          title: 'Return one of your spies > Deploy 3 troops',
+          impl: () => {
+            game.aReturnASpyAnd(player, () => {
+              game.aChooseAndDeploy(player)
+              game.aChooseAndDeploy(player)
+              game.aChooseAndDeploy(player)
+            })
+          }
+        },
+      ])
+
+      game.aWithFocus(player, 'guile', () => {
+        game.aDraw(player)
+      })
+    }
   },
   {
     "name": "Howling Hatred Cultist",
