@@ -743,4 +743,54 @@ describe('Elementals expansion', () => {
       })
     })
   })
+
+  describe('Air Elemental Myrmidon', () => {
+    test('Place a spy, no promo', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Air Elemental Myrmidon'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Air Elemental Myrmidon')
+      const request3 = t.choose(game, request2, 'Everfire')
+      const request4 = t.choose(game, request3, 'Pass')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Air Elemental Myrmidon'],
+        },
+        Everfire: {
+          spies: ['dennis'],
+        },
+      })
+    })
+
+    test('Place a spy, promote obdience', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Air Elemental Myrmidon', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Air Elemental Myrmidon')
+      const request3 = t.choose(game, request2, 'Everfire')
+      const request4 = t.choose(game, request3, 'Play Card.House Guard')
+      const request5 = t.choose(game, request4, 'Pass')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Air Elemental Myrmidon'],
+          innerCircle: ['House Guard'],
+        },
+        Everfire: {
+          spies: ['dennis'],
+        },
+      })
+    })
+  })
 })

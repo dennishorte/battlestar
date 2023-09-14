@@ -296,7 +296,11 @@ const cardData = [
     "text": [
       "Place a spy.",
       "At end of turn, promote an Obedience card played this turn."
-    ]
+    ],
+    impl: (game, player, { self }) => {
+      game.aChooseAndPlaceSpy(player)
+      game.aDeferPromotionAspect(player, self, 'obedience')
+    }
   },
   {
     "name": "Aerisi Kalinoth",
