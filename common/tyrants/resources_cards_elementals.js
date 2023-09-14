@@ -181,7 +181,13 @@ const cardData = [
     "text": [
       "Deploy 3 troops",
       "Recruit a Conquest card that costs 4 or less without paying its cost"
-    ]
+    ],
+    impl: (game, player) => {
+      game.aChooseAndDeploy(player)
+      game.aChooseAndDeploy(player)
+      game.aChooseAndDeploy(player)
+      game.aChooseAndRecruit(player, 4, { aspect: 'conquest' })
+    }
   },
   {
     "name": "Olhydra",

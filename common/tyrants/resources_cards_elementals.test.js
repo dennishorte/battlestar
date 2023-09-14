@@ -470,4 +470,58 @@ describe('Elementals expansion', () => {
       })
     })
   })
+
+
+  describe('Gar Shatterkeel', () => {
+    test('deploy 3 troops', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Gar Shatterkeel', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Gar Shatterkeel')
+      const request3 = t.choose(game, request2, 'Ched Nasad')
+      const request4 = t.choose(game, request3, 'Ched Nasad')
+      const request5 = t.choose(game, request4, 'Ched Nasad')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Gar Shatterkeel'],
+        },
+        'Ched Nasad': {
+          troops: ['dennis', 'dennis', 'dennis', 'dennis'],
+        },
+      })
+
+    })
+
+    test.skip('Recruit a Malice card that costs 4 or less without paying its cost', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Gar Shatterkeel', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Gar Shatterkeel')
+      const request3 = t.choose(game, request2, 'Ched Nasad')
+      const request4 = t.choose(game, request3, 'Ched Nasad')
+      const request5 = t.choose(game, request4, 'Ched Nasad')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Gar Shatterkeel'],
+        },
+        'Ched Nasad': {
+          troops: ['dennis', 'dennis', 'dennis', 'dennis'],
+        },
+      })
+    })
+  })
 })
