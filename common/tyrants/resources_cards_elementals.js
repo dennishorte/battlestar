@@ -418,7 +418,11 @@ const cardData = [
     "text": [
       "At end of turn, promote another card played this turn.",
       "Recruit an Ambition card that costs 4 or less without paying its cost."
-    ]
+    ],
+    impl: (game, player) => {
+      game.aDeferPromotion(player)
+      game.aChooseAndRecruit(player, 4, { aspect: 'ambition' })
+    }
   },
   {
     "name": "Ogremoch",
