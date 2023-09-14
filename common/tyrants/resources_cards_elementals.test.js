@@ -879,4 +879,51 @@ describe('Elementals expansion', () => {
       })
     })
   })
+
+  describe('Black Earth Cultist', () => {
+    test('Promotion', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Black Earth Cultist', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Black Earth Cultist')
+      const request3 = t.choose(game, request2, 'Play Card.House Guard')
+      const request4 = t.choose(game, request3, 'Pass')
+      const request5 = t.choose(game, request4, 'House Guard')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Black Earth Cultist'],
+          innerCircle: ['House Guard'],
+        },
+      })
+    })
+
+    test('Ambition Focus', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Black Earth Cultist', 'Council Member'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Black Earth Cultist')
+      const request3 = t.choose(game, request2, 'Play Card.Council Member')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['Black Earth Cultist', 'Council Member'],
+          influence: 2,
+        },
+      })
+    })
+  })
+
+
 })

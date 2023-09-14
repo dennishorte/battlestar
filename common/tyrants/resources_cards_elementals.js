@@ -358,7 +358,13 @@ const cardData = [
     "text": [
       "At end of turn, promote another card played this turn.",
       "Ambition Focus > +2 influence"
-    ]
+    ],
+    impl: (game, player) => {
+      game.aDeferPromotion(player)
+      game.aWithFocus(player, 'ambition', () => {
+        player.incrementInfluence(2)
+      })
+    }
   },
   {
     "name": "Earth Elemental",
