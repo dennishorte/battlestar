@@ -262,7 +262,27 @@ const cardData = [
       "- Place a spy",
       "- Return one of your spies > +3 influence",
       "Guile Focus > +1 power"
-    ]
+    ],
+    impl: (game, player) => {
+      game.aChooseOne(player, [
+        {
+          title: 'Place a spy',
+          impl: () => game.aChooseAndPlaceSpy(player)
+        },
+        {
+          title: 'Return one of your spies > Deploy 3 troops',
+          impl: () => {
+            game.aReturnASpyAnd(player, () => {
+              player.incrementInfluence(3)
+            })
+          }
+        },
+      ])
+
+      game.aWithFocus(player, 'guile', () => {
+        player.incrementPower(1)
+      })
+    }
   },
   {
     "name": "Air Elemental Myrmidon",

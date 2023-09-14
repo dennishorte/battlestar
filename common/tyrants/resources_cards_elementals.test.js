@@ -663,4 +663,84 @@ describe('Elementals expansion', () => {
       })
     })
   })
+
+  describe('Howling Hatred Cultist', () => {
+    test('choose: place a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Howling Hatred Cultist', 'House Guard'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Howling Hatred Cultist')
+      const request3 = t.choose(game, request2, 'Place a spy')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard'],
+          played: ['Howling Hatred Cultist'],
+        },
+        'Chasmleap Bridge': {
+          spies: ['dennis']
+        },
+      })
+    })
+
+    test('choose: return a spy', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Howling Hatred Cultist', 'Advance Scout'],
+        },
+        Everfire: {
+          spies: ['dennis']
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Howling Hatred Cultist')
+      const request3 = t.choose(game, request2, 'Return one of your spies > Deploy 3 troops')
+      const request4 = t.choose(game, request3, 'Everfire')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Advance Scout'],
+          played: ['Howling Hatred Cultist'],
+          influence: 3,
+        },
+        Everfire: {
+          troops: [],
+          spies: [],
+        },
+      })
+    })
+
+    test('guile focus', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Howling Hatred Cultist', 'Spellspinner'],
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Howling Hatred Cultist')
+      const request3 = t.choose(game, request2, 'Place a spy')
+      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Spellspinner'],
+          played: ['Howling Hatred Cultist'],
+          power: 1,
+        },
+        'Chasmleap Bridge': {
+          spies: ['dennis']
+        },
+      })
+    })
+  })
 })
