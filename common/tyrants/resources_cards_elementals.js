@@ -121,7 +121,14 @@ const cardData = [
     "text": [
       "Assassinate a white troop",
       "Conquest Focus > Deploy 2 troops"
-    ]
+    ],
+    impl: (game, player) => {
+      game.aChooseAndAssassinate(player, { whiteOnly: true })
+      game.aWithFocus(player, 'conquest', () => {
+        game.aChooseAndDeploy(player)
+        game.aChooseAndDeploy(player)
+      })
+    }
   },
   {
     "name": "Water Elemental",
