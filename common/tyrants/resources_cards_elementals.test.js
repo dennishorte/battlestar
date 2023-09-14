@@ -986,4 +986,50 @@ describe('Elementals expansion', () => {
       })
     })
   })
+
+  describe('Earth Elemental Myrmidon', () => {
+    test('Influence', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Earth Elemental Myrmidon', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Earth Elemental Myrmidon')
+      const request3 = t.choose(game, request2, 'Play Card.House Guard')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['Earth Elemental Myrmidon', 'House Guard'],
+          influence: 2,
+          power: 2,
+        },
+      })
+    })
+
+    test('Promote', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Earth Elemental Myrmidon', 'House Guard'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Earth Elemental Myrmidon')
+      const request3 = t.choose(game, request2, 'Play Card.House Guard')
+      const request4 = t.choose(game, request3, 'Pass')
+      const request5 = t.choose(game, request4, 'House Guard')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Earth Elemental Myrmidon'],
+          innerCircle: ['House Guard'],
+        },
+      })
+    })
+  })
 })

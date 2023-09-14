@@ -400,7 +400,11 @@ const cardData = [
     "text": [
       "+2 influence",
       "At end of turn, promote another card played this turn"
-    ]
+    ],
+    impl: (game, player) => {
+      player.incrementInfluence(2)
+      game.aDeferPromotion(player)
+    }
   },
   {
     "name": "Marlos Urnrayle",
