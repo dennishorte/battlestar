@@ -437,7 +437,14 @@ const cardData = [
       "+2 influence",
       "At end of turn, promote another card played this turn.",
       "Ambition Focus > At end of turn, promote another card played this turn."
-    ]
+    ],
+    impl: (game, player) => {
+      player.incrementInfluence(2)
+      game.aDeferPromotion(player)
+      game.aWithFocus(player, 'ambition', () => {
+        game.aDeferPromotion(player)
+      })
+    }
   }
 ]
 

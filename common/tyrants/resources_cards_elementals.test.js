@@ -1058,4 +1058,79 @@ describe('Elementals expansion', () => {
       })
     })
   })
+
+  describe('Ogremoch', () => {
+    test('Influence', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Ogremoch', 'House Guard'],
+        },
+      })
+
+      // TODO: Put an ambition card in the market to buy
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Ogremoch')
+      const request3 = t.choose(game, request2, 'Play Card.House Guard')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: [],
+          played: ['Ogremoch', 'House Guard'],
+          influence: 2,
+          power: 2,
+        },
+      })
+    })
+
+    test('Promote', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Ogremoch', 'House Guard'],
+        },
+      })
+
+      // TODO: Put an ambition card in the market to buy
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Ogremoch')
+      const request3 = t.choose(game, request2, 'Play Card.House Guard')
+      const request4 = t.choose(game, request3, 'Pass')
+      const request5 = t.choose(game, request4, 'House Guard')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Ogremoch'],
+          innerCircle: ['House Guard'],
+        },
+      })
+    })
+
+    test('Ambition Focus', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'elementals'],
+        dennis: {
+          hand: ['Ogremoch', 'House Guard', 'House Guard', 'Council Member'],
+        },
+      })
+
+      // TODO: Put an ambition card in the market to buy
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Ogremoch')
+      const request3 = t.choose(game, request2, 'Play Card.House Guard')
+      const request4 = t.choose(game, request3, 'Play Card.House Guard')
+      const request5 = t.choose(game, request4, 'Pass')
+      const request6 = t.choose(game, request5, 'House Guard', 'House Guard')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Ogremoch', 'Council Member'],
+          innerCircle: ['House Guard', 'House Guard'],
+        },
+      })
+    })
+  })
 })
