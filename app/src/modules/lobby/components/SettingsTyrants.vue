@@ -57,7 +57,7 @@ export default {
         {
           text: 'Elementals',
           value: 'elementals',
-          disabled: true
+          disabled: false
         },
         {
           text: 'Illithid',
