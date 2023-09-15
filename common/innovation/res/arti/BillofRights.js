@@ -20,9 +20,9 @@ function Card() {
       const choices = game
         .utilColors()
         .filter(color => {
-          const yours = game.getZoneByPlayer(player, color)
-          const mine = game.getZoneByPlayer(leader, color)
-          return yours.cards().length > mine.cards().length
+          const yours = game.getZoneByPlayer(player, color).numVisibleCards()
+          const mine = game.getZoneByPlayer(leader, color).numVisibleCards()
+          return yours > mine
         })
       const colors = game.aChoose(player, choices, { title: 'Choose a Color' })
       if (colors && colors.length > 0) {

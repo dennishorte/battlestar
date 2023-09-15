@@ -12,7 +12,10 @@ describe('Bill of Rights', () => {
         blue: ['Pottery'],
       },
       micah: {
-        blue: ['Experimentation', 'Tools', 'Alchemy']
+        blue: {
+          cards: ['Experimentation', 'Tools', 'Alchemy'],
+          splay: 'left',
+        }
       }
     })
 
@@ -23,6 +26,32 @@ describe('Bill of Rights', () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Experimentation', 'Tools', 'Alchemy', 'Pottery'],
+      }
+    })
+  })
+
+  test('dogma: visibility matters', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+    t.setBoard(game,  {
+      dennis: {
+        artifact: ['Bill of Rights'],
+        blue: ['Pottery'],
+      },
+      micah: {
+        blue: ['Experimentation', 'Tools', 'Alchemy']
+      }
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'dogma')
+
+    t.testIsFirstAction(request2)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Pottery'],
+      },
+      micah: {
+        blue: ['Experimentation', 'Tools', 'Alchemy']
       }
     })
   })

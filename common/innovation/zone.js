@@ -40,3 +40,15 @@ Zone.prototype.player = function() {
 Zone.prototype.setCards = function(cards) {
   this._cards = cards
 }
+
+Zone.prototype.numVisibleCards = function() {
+  if (this._cards.length === 0) {
+    return 0
+  }
+  else if (this.splay === undefined || this.splay === 'none') {
+    return 1
+  }
+  else {
+    return this._cards.length
+  }
+}
