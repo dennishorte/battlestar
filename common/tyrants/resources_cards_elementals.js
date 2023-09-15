@@ -62,6 +62,7 @@ const cardData = [
     "points": 1,
     "innerPoints": 3,
     "count": 2,
+    autoplay: true,
     "text": [
       "+2 power",
       "At end of turn, promote an Obedience card played this turn"
@@ -98,6 +99,7 @@ const cardData = [
     "points": 3,
     "innerPoints": 6,
     "count": 1,
+    autoplay: true,
     "text": [
       "+4 power",
       "Malice Focus > +2 power"
@@ -355,6 +357,7 @@ const cardData = [
     "points": 1,
     "innerPoints": 2,
     "count": 4,
+    autoplay: true,
     "text": [
       "At end of turn, promote another card played this turn.",
       "Ambition Focus > +2 influence"
@@ -397,6 +400,7 @@ const cardData = [
     "points": 2,
     "innerPoints": 4,
     "count": 2,
+    autoplay: true,
     "text": [
       "+2 influence",
       "At end of turn, promote another card played this turn"
@@ -433,6 +437,7 @@ const cardData = [
     "points": 3,
     "innerPoints": 7,
     "count": 1,
+    autoplay: true,
     "text": [
       "+2 influence",
       "At end of turn, promote another card played this turn.",

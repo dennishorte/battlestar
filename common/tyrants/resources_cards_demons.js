@@ -11,6 +11,7 @@ const cardData = [
     "points": 2,
     "innerPoints": 4,
     "count": 3,
+    autoplay: true,
     "text": [
       "+2 power",
       "Each opponent recruits an Insane Outcast"
@@ -475,6 +476,7 @@ const cardData = [
     "points": 2,
     "innerPoints": 5,
     "count": 2,
+    autoplay: true,
     "text": [
       "+3 influence",
       "Promote the top card of your deck."
