@@ -29,6 +29,13 @@
           </div>
         </div>
 
+        <div class="aspects">
+          <div class="title">Aspects</div>
+          <div v-for="[key, value] in aspects" class="score-line">
+            <div class="score-key">{{ key }}</div>
+            <div class="score-value">{{ value }}</div>
+          </div>
+        </div>
       </div>
 
 
@@ -55,6 +62,8 @@
 
 
 <script>
+import { util } from 'battlestar-common'
+
 import GameCard from './GameCard'
 import Modal from '@/components/Modal'
 
@@ -77,6 +86,15 @@ export default {
         ...this.game.getCardsByZone(this.player, 'played'),
         ...this.game.getCardsByZone(this.player, 'discard'),
       ].sort((l, r) => l.name.localeCompare(r.name))
+    },
+
+    aspects() {
+      const groups = util.array.groupBy(this.allCards, card => card.aspect)
+      const counts = Object
+        .entries(groups)
+        .map(([aspect, cards]) => [aspect, cards.length])
+        .sort((l, r) => l[0].localeCompare(r[0]))
+      return counts
     },
 
     discardCards() {
@@ -133,6 +151,7 @@ export default {
 .title {
   font-size: 1.2em;
   font-weight: 500;
+  margin-top: .5em;
 }
 
 .trophies {
