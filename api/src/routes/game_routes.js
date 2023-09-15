@@ -111,21 +111,6 @@ Game.kill = async function(req, res) {
   })
 }
 
-async function _notify(game, userId, msg) {
-  if (process.env.NODE_ENV === 'development') {
-    return
-  }
-
-  const gameKind = game.settings.game
-  const gameName = game.settings.name
-
-  const domain_host = process.env.DOMAIN_HOST
-  const link = `http://${domain_host}/game/${game._id}`
-  const message = `${msg} <${link}|${gameKind}: ${gameName}>`
-
-  const sendResult = slack.sendMessage(userId, message)
-}
-
 Game.rematch = async function(req, res) {
   const game = await db.game.findById(req.body.gameId)
   const lobbyId = await db.lobby.create()
@@ -196,6 +181,8 @@ Game.saveFull = async function(req, res) {
       game.run()
     })
   }
+
+  await _clearNotification(game)
 }
 
 Game.saveResponse = async function(req, res) {
@@ -212,6 +199,8 @@ Game.saveResponse = async function(req, res) {
   await _testAndSave(game, res, (game) => {
     game.respondToInputRequest(req.body.response)
   })
+
+  await _clearNotification(game)
 }
 
 Game.stats.innovation = async function(req, res) {
@@ -239,6 +228,11 @@ Game.stats.innovation = async function(req, res) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper functions
+
+async function _clearNotification(game) {
+  const player = game.getLastActor()
+  await db.user.clearNotification(player._id)
+}
 
 async function _testAndSave(game, res, evalFunc) {
   // Test that the response is valid.
@@ -275,10 +269,33 @@ async function _loadGameFromReq(req) {
   return new constructor(gameData)
 }
 
+async function _notify(game, userId, msg, force=false) {
+  if (process.env.NODE_ENV === 'development') {
+    return
+  }
+
+  const prevNotification = await db.user.getNotification(userId)
+  if (prevNotification && prevNotification.gameId === game._id && !force) {
+    return
+  }
+  else {
+    db.user.recordNotification(userId, game._id)
+  }
+
+  const gameKind = game.settings.game
+  const gameName = game.settings.name
+
+  const domain_host = process.env.DOMAIN_HOST
+  const link = `http://${domain_host}/game/${game._id}`
+  const message = `${msg} <${link}|${gameKind}: ${gameName}>`
+
+  const sendResult = slack.sendMessage(userId, message)
+}
+
 async function _sendNotifications(game) {
   for (const player of game.settings.players) {
     if (game.checkGameIsOver()) {
-      _notify(game, player._id, 'Game Over!')
+      _notify(game, player._id, 'Game Over!', true)
     }
 
     else if (

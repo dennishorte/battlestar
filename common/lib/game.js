@@ -107,7 +107,13 @@ Game.prototype.checkPlayerHasActionWaiting = function(player) {
   return !!this.getWaiting(player)
 }
 
-Game.prototype.getLastUserAction = function(player) {
+Game.prototype.getLastActor = function() {
+  const action = this.getLastUserAction()
+  const player = this.getPlayerAll().find(p => p.name === action.actor)
+  return player
+}
+
+Game.prototype.getLastUserAction = function() {
   const copy = [...this.responses]
   while (copy.length > 0 && !copy[copy.length - 1].isUserResponse) {
     copy.pop()
