@@ -272,7 +272,7 @@ const cardData = [
           impl: () => game.aChooseAndPlaceSpy(player)
         },
         {
-          title: 'Return one of your spies > Deploy 3 troops',
+          title: 'Return one of your spies > +3 influence',
           impl: () => {
             game.aReturnASpyAnd(player, () => {
               player.incrementInfluence(3)
