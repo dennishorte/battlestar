@@ -607,7 +607,6 @@ Tyrants.prototype._processEndOfTurnActions = function() {
     }
   }
 
-
   const promoChoices = []
   for (const promo of promos) {
     this

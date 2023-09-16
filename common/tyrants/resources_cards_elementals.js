@@ -67,9 +67,9 @@ const cardData = [
       "+2 power",
       "At end of turn, promote an Obedience card played this turn"
     ],
-    impl: (game, player, { self }) => {
+    impl: (game, player, { card }) => {
       player.incrementPower(2)
-      game.aDeferPromotionAspect(player, self, 'obedience')
+      game.aDeferPromotionAspect(player, card, 'obedience')
     }
   },
   {
@@ -166,9 +166,9 @@ const cardData = [
       "Assassinate a white troop",
       "At end of turn, promote an Obedience card played this turn"
     ],
-    impl: (game, player, { self }) => {
+    impl: (game, player, { card }) => {
       game.aChooseAndAssassinate(player, { whiteOnly: true })
-      game.aDeferPromotionAspect(player, self, 'obedience')
+      game.aDeferPromotionAspect(player, card, 'obedience')
     }
   },
   {
@@ -299,9 +299,9 @@ const cardData = [
       "Place a spy.",
       "At end of turn, promote an Obedience card played this turn."
     ],
-    impl: (game, player, { self }) => {
+    impl: (game, player, { card }) => {
       game.aChooseAndPlaceSpy(player)
-      game.aDeferPromotionAspect(player, self, 'obedience')
+      game.aDeferPromotionAspect(player, card, 'obedience')
     }
   },
   {
@@ -362,8 +362,8 @@ const cardData = [
       "At end of turn, promote another card played this turn.",
       "Ambition Focus > +2 influence"
     ],
-    impl: (game, player) => {
-      game.aDeferPromotion(player)
+    impl: (game, player, { card }) => {
+      game.aDeferPromotion(player, card)
       game.aWithFocus(player, 'ambition', () => {
         player.incrementInfluence(2)
       })
@@ -405,9 +405,9 @@ const cardData = [
       "+2 influence",
       "At end of turn, promote another card played this turn"
     ],
-    impl: (game, player) => {
+    impl: (game, player, { card }) => {
       player.incrementInfluence(2)
-      game.aDeferPromotion(player)
+      game.aDeferPromotion(player, card)
     }
   },
   {
@@ -423,8 +423,8 @@ const cardData = [
       "At end of turn, promote another card played this turn.",
       "Recruit an Ambition card that costs 4 or less without paying its cost."
     ],
-    impl: (game, player) => {
-      game.aDeferPromotion(player)
+    impl: (game, player, { card }) => {
+      game.aDeferPromotion(player, card)
       game.aChooseAndRecruit(player, 4, { aspect: 'ambition' })
     }
   },
@@ -443,11 +443,11 @@ const cardData = [
       "At end of turn, promote another card played this turn.",
       "Ambition Focus > At end of turn, promote another card played this turn."
     ],
-    impl: (game, player) => {
+    impl: (game, player, { card }) => {
       player.incrementInfluence(2)
-      game.aDeferPromotion(player)
+      game.aDeferPromotion(player, card)
       game.aWithFocus(player, 'ambition', () => {
-        game.aDeferPromotion(player)
+        game.aDeferPromotion(player, card)
       })
     }
   }
