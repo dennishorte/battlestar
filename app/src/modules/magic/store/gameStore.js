@@ -162,7 +162,7 @@ export default {
       }
     },
 
-    async fetchLinkedDraft({ commit, state }) {
+    async fetchLinkedDraft({ commit, dispatch, state }) {
       if (state.game.settings.linkedDraftId) {
         const { game } = await this.$post('/api/game/fetch', {
           gameId: state.game.settings.linkedDraftId,
@@ -172,7 +172,7 @@ export default {
         // Loading the cube ensures the achievements will be available to render on relevant cards.
         await dispatch('magic/cube/loadCube', {
           cubeId: state.linkedDraft.settings.cubeId
-        })
+        }, { root: true })
       }
     },
 
