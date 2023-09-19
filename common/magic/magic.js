@@ -136,6 +136,9 @@ Magic.prototype.initializeZones = function() {
       exile: new PlayerZone(this, player, 'exile', 'public'),
       land: new PlayerZone(this, player, 'land', 'public'),
       stack: new PlayerZone(this, player, 'stack', 'public'),
+
+      attacking: new PlayerZone(this, player, 'attacking', 'public'),
+      blocking: new PlayerZone(this, player, 'blocking', 'public'),
     }
   }
 }
@@ -769,6 +772,7 @@ Magic.prototype.aSelectPhase = function(player, phase) {
       }
     })
     this.mLogIndent()
+    this.state.turnPlayer = this.getPlayerCurrent()
   }
   else {
     this.mLogSetIndent(1)
@@ -806,6 +810,20 @@ Magic.prototype.aSelectPhase = function(player, phase) {
       }
     }
     this.mLogOutdent()
+  }
+
+  // Move all cards out of the attackers and blockers zones
+  if (!this.utilCombatPhases().includes(phase)) {
+    for (const player of this.getPlayerAll()) {
+      const creaturesZone = this.getZoneByPlayer(player, 'creatures')
+
+      for (const zoneName of ['attacking', 'blocking']) {
+        const cards = this.getCardsByZone(player, zoneName)
+        for (const card of cards) {
+          this.mMoveCardTo(card, creaturesZone)
+        }
+      }
+    }
   }
 }
 
@@ -857,7 +875,7 @@ Magic.prototype.aStackEffect = function(player, cardId) {
 
 Magic.prototype.aTap = function(player, cardId) {
   const card = this.getCardById(cardId)
-  card.tapped = true
+  this.mTap(card)
   this.mLog({
     template: 'tap: {card}',
     args: { card }
@@ -992,6 +1010,10 @@ Magic.prototype.getPhase = function() {
 Magic.prototype.getPlayerByCardController = function(card) {
   const zone = this.getZoneByCard(card)
   return this.getPlayerByZone(zone)
+}
+
+Magic.prototype.getPlayerTurn = function() {
+  return this.state.turnPlayer
 }
 
 Magic.prototype.getZoneIndexByCard = function(card) {
@@ -1141,27 +1163,38 @@ Magic.prototype.mMoveCardTo = function(card, zone, opts={}) {
   const destIndex = opts.index !== undefined ? opts.index : zone.cards().length
   this.mMoveByIndices(source, index, zone, destIndex)
 
+  const sourceKind = source.id.split('.').slice(-1)[0]
+  const targetKind = zone.id.split('.').slice(-1)[0]
+
   // Card was moved to stack.
-  if (zone.id.endsWith('.stack')) {
+  if (targetKind === 'stack') {
     this.mLogIndent()
   }
 
   // Card was removed from stack.
-  if (source.id.endsWith('.stack')) {
+  if (sourceKind === 'stack') {
     this.mLogOutdent()
   }
 
   // Card moved to a non-tap zone
   if (card.tapped) {
-    const zoneKind = zone.id.split('.').slice(-1)[0]
-    if (!['creatures', 'battlefield', 'land'].includes(zoneKind)) {
+    if (!['creatures', 'battlefield', 'land'].includes(targetKind)) {
       this.mUntap(card)
     }
+  }
+
+  // Move card to the attacking zone, which usually taps them
+  if (targetKind === 'attacking') {
+    this.mTap(card)
   }
 }
 
 Magic.prototype.mReveal = function(card) {
   card.visibility = this.getPlayerAll()
+}
+
+Magic.prototype.mTap = function(card) {
+  card.tapped = true
 }
 
 Magic.prototype.mUntap = function(card) {
@@ -1212,6 +1245,10 @@ Magic.prototype.setDeck = function(player, data) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Utility functions
+
+Magic.prototype.utilCombatPhases = function() {
+  return ['c begin', 'attackers', 'blockers', 'damage', 'c end']
+}
 
 Magic.prototype.utilSerializeObject = function(obj) {
   if (typeof obj === 'object') {

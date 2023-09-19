@@ -67,6 +67,12 @@
     </div>
 
     <div class="tableau-col" :class="extraColumnClasses">
+      <TableauZone :zone="getZone('attacking')" :show-power="true" v-if="isAttacker">
+      </TableauZone>
+
+      <TableauZone :zone="getZone('blocking')" :show-power="true" v-if="isDefender">
+      </TableauZone>
+
       <TableauZone :zone="getZone('creatures')" :show-power="true">
         <template #menu>
           <DropdownButton @click="importCard('creatures')">import card</DropdownButton>
@@ -223,6 +229,18 @@ export default {
       if (this.player.name !== this.actor.name) {
         return 'tableau-col-reverse'
       }
+    },
+
+    isCombatPhase() {
+      return this.game.utilCombatPhases().includes(this.game.getPhase())
+    },
+
+    isAttacker() {
+      return this.isCombatPhase && this.game.getPlayerTurn() === this.player
+    },
+
+    isDefender() {
+      return this.isCombatPhase && this.game.getPlayerTurn() !== this.player
     },
   },
 
