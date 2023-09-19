@@ -1178,7 +1178,7 @@ Magic.prototype.mMoveCardTo = function(card, zone, opts={}) {
 
   // Card moved to a non-tap zone
   if (card.tapped) {
-    if (!['creatures', 'battlefield', 'land'].includes(targetKind)) {
+    if (!['creatures', 'battlefield', 'land', 'attacking', 'blocking'].includes(targetKind)) {
       this.mUntap(card)
     }
   }
