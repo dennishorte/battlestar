@@ -1100,7 +1100,7 @@ Magic.prototype.mInitializeCard = function(card, owner) {
 }
 
 Magic.prototype.mMaybeClearAnnotations = function(card) {
-  const validZones = ['creatures', 'battlefield', 'land']
+  const validZones = ['creatures', 'battlefield', 'land', 'attacking', 'blocking']
 
   if (!validZones.some(id => card.zone.endsWith(id))) {
     card.annotation = ''
@@ -1109,7 +1109,7 @@ Magic.prototype.mMaybeClearAnnotations = function(card) {
 }
 
 Magic.prototype.mMaybeClearCounters = function(card) {
-  const validZones = ['creatures', 'battlefield', 'land']
+  const validZones = ['creatures', 'battlefield', 'land', 'attacking', 'blocking']
 
   if (!validZones.some(id => card.zone.endsWith(id))) {
     Object
@@ -1119,7 +1119,7 @@ Magic.prototype.mMaybeClearCounters = function(card) {
 }
 
 Magic.prototype.mMaybeRemoveTokens = function(card) {
-  const validZones = ['creatures', 'battlefield', 'land', 'stack']
+  const validZones = ['creatures', 'battlefield', 'land', 'stack', 'attacking', 'blocking']
 
   if (card.token && !validZones.some(id => card.zone.endsWith(id))) {
     this.mLogIndent()
