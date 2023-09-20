@@ -107,10 +107,9 @@ Game.prototype.checkPlayerHasActionWaiting = function(player) {
   return !!this.getWaiting(player)
 }
 
-Game.prototype.getLastActor = function() {
+Game.prototype.getLastActorId = function() {
   const action = this.getLastUserAction()
-  const player = this.getPlayerAll().find(p => p.name === action.actor)
-  return player
+  return this.settings.players.find(user => user.name === action.actor)._id
 }
 
 Game.prototype.getLastUserAction = function() {

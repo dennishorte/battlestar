@@ -230,8 +230,8 @@ Game.stats.innovation = async function(req, res) {
 // Helper functions
 
 async function _clearNotification(game) {
-  const player = game.getLastActor()
-  await db.user.clearNotification(player._id)
+  const playerId = game.getLastActorId()
+  await db.user.clearNotification(playerId)
 }
 
 async function _testAndSave(game, res, evalFunc) {
