@@ -626,15 +626,18 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
   }
 
   this.mMoveCardTo(card, dest, { index: destIndex })
-  this.mLog({
-    template: '{player} moves {card} from {zone1} to {zone2}',
-    args: {
-      player,
-      card,
-      zone1: startingZone,
-      zone2: dest,
-    }
-  })
+
+  if (startingZone !== dest) {
+    this.mLog({
+      template: '{player} moves {card} from {zone1} to {zone2}',
+      args: {
+        player,
+        card,
+        zone1: startingZone,
+        zone2: dest,
+      }
+    })
+  }
 
 
   // If the card moved from a non-battlefield zone to a battlefield zone,
