@@ -12,9 +12,11 @@
       <slot name="name">{{ name }}</slot>
     </div>
 
-    <ManaCost v-if="showManaCost" class="mana-cost" :cost="manaCost" />
-    <div v-else-if(="showPower" class="mana-cost">
-      {{ powerToughness }}
+    <div class="extra-info">
+      <ManaCost v-if="showManaCost" class="mana-cost" :cost="manaCost" />
+      <div v-else-if(="showPower" class="mana-cost">
+        {{ powerToughness }}
+      </div>
     </div>
 
   </div>
@@ -115,12 +117,15 @@ export default {
 
 <style scoped>
 .card-list-item {
-  position: relative;
   white-space: nowrap;
   overflow: hidden;
   min-height: 1.4em;
   max-height: 1.4em;
   width: 100%;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .name {
@@ -130,13 +135,9 @@ export default {
 }
 
 .mana-cost {
-  position: absolute;
-  top: 0;
-  right: 0;
   font-size: .8em;
   padding-top: 1px;
   padding-left: 5px;
-  background-color: white;
   height: 100%;
 }
 </style>
