@@ -10,15 +10,21 @@ function apply(entry) {
 }
 
 function toString(entry) {
-  const tokens = templateSubstitute(entry.template, entry.args)
-  const message = tokens.map(t => t.value).join('')
-
-  let indent = ''
-  for (let i = 0; i < entry.indent; i++) {
-    indent += '..'
+  if (entry.type === 'chat') {
+    return `chat> ${entry.author} ${entry.text}`
   }
 
-  return `${indent}${message}`
+  else {
+    const tokens = templateSubstitute(entry.template, entry.args)
+    const message = tokens.map(t => t.value).join('')
+
+    let indent = ''
+    for (let i = 0; i < entry.indent; i++) {
+      indent += '..'
+    }
+
+    return `${indent}${message}`
+  }
 }
 
 function templateSubstitute(template, args) {
