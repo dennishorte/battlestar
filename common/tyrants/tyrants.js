@@ -1307,9 +1307,7 @@ Tyrants.prototype.aPlayCard = function(player, card) {
     args: { player, card }
   })
 
-  this.mLogIndent()
-  card.impl(this, player, { card })
-  this.mLogOutdent()
+  this.mExecuteCard(player, card)
 }
 
 Tyrants.prototype.aPromote = function(player, card, opts={}) {
@@ -1774,6 +1772,12 @@ Tyrants.prototype.mDeploy = function(player, loc, opts={}) {
 
 Tyrants.prototype.mDevour = function(card) {
   this.mMoveCardTo(card, this.getZoneById('devoured'))
+}
+
+Tyrants.prototype.mExecuteCard = function(player, card) {
+  this.mLogIndent()
+  card.impl(this, player, { card })
+  this.mLogOutdent()
 }
 
 Tyrants.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {

@@ -171,23 +171,46 @@ const cardData = [
     "count": 2,
     "text": [
       "Choose one:",
-      "- Place a spy.",
-      "- Return one of your spies > For the rest of your turn treat the top card of the devoured deck as if it was in the market."
+      //      "- Place a spy.",
+      //      "- Return one of your spies > For the rest of your turn treat the top card of the devoured deck as if it was in the market."
+      "- Place a spy. For the rest of your turn treat the top card of the devoured deck as if it was in the market.",
+      "- Return one of your spies > You may devour a card in your discard pile. If you do, gain the effects of the devoured card.",
     ],
     impl: (game, player) => {
       game.aChooseOne(player, [
         {
-          title: 'Place a spy',
+          title: 'Place a spy; for the rest of your turn treat the top card of the devoured deck as if it was in the market',
           impl: () => {
             game.aChooseAndPlaceSpy(player)
+            game.mSetGhostFlag()
           }
         },
         {
-          title: 'Return one of your spies > For the rest of your turn treat the top card of the devoured deck as if it was in the market',
-          impl: () => game.aReturnASpyAnd(player, () => {
-            game.mSetGhostFlag()
-          })
+          title: 'Return one of your spies > You may devour a card in your discard pile; if you do, gain the effects of the devoured card',
+          impl: () => {
+            game.aReturnASpyAnd(player, () => {
+              const discard = game.getCardsByZone(player, 'discard')
+              const card = game.aChooseCard(player, discard, { title: 'Choose a card to devour' })
+              if (card) {
+                game.aDevour(player, card)
+                game.mExecuteCard(player, card)
+              }
+            })
+          },
         },
+
+        /* {
+         *   title: 'Place a spy',
+         *   impl: () => {
+         *     game.aChooseAndPlaceSpy(player)
+         *   }
+         * },
+         * {
+         *   title: 'Return one of your spies > For the rest of your turn treat the top card of the devoured deck as if it was in the market',
+         *   impl: () => game.aReturnASpyAnd(player, () => {
+         *     game.mSetGhostFlag()
+         *   })
+         * }, */
       ])
     },
   },

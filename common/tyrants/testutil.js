@@ -104,7 +104,7 @@ TestUtil.gameFixture = function(options) {
       const playerSetup = options[player.name]
       if (playerSetup) {
 
-        for (const key of ['hand', 'innerCircle', 'deck', 'discard']) {
+        for (const key of ['hand', 'innerCircle', 'deck', 'discard', 'played']) {
 
           if (playerSetup[key]) {
             game.mLog({

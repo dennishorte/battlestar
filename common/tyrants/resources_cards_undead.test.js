@@ -303,18 +303,22 @@ describe('Undead expansion', () => {
         expansions: ['drow', 'undead'],
         dennis: {
           hand: ['Ghost', 'House Guard'],
-        }
+          influence: 3,
+        },
+        devoured: ['Flesh Golem'],
       })
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Ghost')
-      const request3 = t.choose(game, request2, 'Place a spy')
+      const request3 = t.choose(game, request2, 'Place a spy; for the rest of your turn treat the top card of the devoured deck as if it was in the market')
       const request4 = t.choose(game, request3, 'Menzoberranzan')
+      const request5 = t.choose(game, request4, 'Recruit.devoured: Flesh Golem')
 
       t.testBoard(game, {
         dennis: {
           hand: ['House Guard'],
           played: ['Ghost'],
+          discard: ['Flesh Golem'],
           power: 0,
         },
         Menzoberranzan: {
@@ -324,14 +328,13 @@ describe('Undead expansion', () => {
       })
     })
 
-    test('Return one of your spies > For the rest of your turn treat the top card of the devoured deck as if it was in the market', () => {
+    test('Return a spy', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'undead'],
         dennis: {
           hand: ['Ghost', 'House Guard'],
-          influence: 3,
+          discard: ['Priestess of Lolth'],
         },
-        devoured: ['Flesh Golem'],
         'Chasmleap Bridge': {
           spies: ['dennis']
         },
@@ -339,18 +342,49 @@ describe('Undead expansion', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Ghost')
-      const request3 = t.choose(game, request2, 'Return one of your spies > For the rest of your turn treat the top card of the devoured deck as if it was in the market')
+      const request3 = t.choose(game, request2, 'Return one of your spies > You may devour a card in your discard pile; if you do, gain the effects of the devoured card')
       const request4 = t.choose(game, request3, 'Chasmleap Bridge')
-      const request5 = t.choose(game, request4, 'Recruit.devoured: Flesh Golem')
 
       t.testBoard(game, {
         dennis: {
           hand: ['House Guard'],
           played: ['Ghost'],
-          discard: ['Flesh Golem'],
+          discard: [],
+          influence: 2,
+        },
+        'Chasmleap Bridge': {
+          spies: []
         },
       })
     })
+
+    /* test('Return one of your spies > For the rest of your turn treat the top card of the devoured deck as if it was in the market', () => {
+     *   const game = t.gameFixture({
+     *     expansions: ['drow', 'undead'],
+     *     dennis: {
+     *       hand: ['Ghost', 'House Guard'],
+     *       influence: 3,
+     *     },
+     *     devoured: ['Flesh Golem'],
+     *     'Chasmleap Bridge': {
+     *       spies: ['dennis']
+     *     },
+     *   })
+
+     *   const request1 = game.run()
+     *   const request2 = t.choose(game, request1, 'Play Card.Ghost')
+     *   const request3 = t.choose(game, request2, 'Return one of your spies > For the rest of your turn treat the top card of the devoured deck as if it was in the market')
+     *   const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+     *   const request5 = t.choose(game, request4, 'Recruit.devoured: Flesh Golem')
+
+     *   t.testBoard(game, {
+     *     dennis: {
+     *       hand: ['House Guard'],
+     *       played: ['Ghost'],
+     *       discard: ['Flesh Golem'],
+     *     },
+     *   })
+     * }) */
   })
 
   describe('High Priest of Myrkul', () => {
@@ -358,7 +392,8 @@ describe('Undead expansion', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'undead'],
         dennis: {
-          hand: ['High Priest of Myrkul', 'House Guard', 'Ghost', 'Banshee'],
+          hand: ['High Priest of Myrkul'],
+          played: ['Ghost', 'Banshee', 'House Guard'],
         },
         'Ched Nasad': {
           spies: ['micah'],
@@ -375,14 +410,7 @@ describe('Undead expansion', () => {
           selection: ['Ched Nasad, micah'],
         }],
       })
-      const request4 = t.choose(game, request3, 'Play Card.Banshee')
-      const request5 = t.choose(game, request4, 'Menzoberranzan')
-      const request6 = t.choose(game, request5, 'Play Card.House Guard')
-      const request7 = t.choose(game, request6, 'Play Card.Ghost')
-      const request8 = t.choose(game, request7, 'Place a spy')
-      const request9 = t.choose(game, request8, 'Ched Nasad')
-      const request10 = t.choose(game, request9, 'Pass')
-      const request11 = t.choose(game, request10, 'Ghost', 'Banshee')
+      const request4 = t.choose(game, request3, 'Ghost', 'Banshee')
 
       t.testBoard(game, {
         dennis: {
@@ -390,6 +418,34 @@ describe('Undead expansion', () => {
           innerCircle: ['Ghost', 'Banshee']
         },
       })
+    })
+
+    test('return and then promote; cannot promote non-undead', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        dennis: {
+          hand: ['High Priest of Myrkul'],
+          played: ['Ghost', 'Banshee', 'House Guard'],
+        },
+        'Ched Nasad': {
+          spies: ['micah'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.High Priest of Myrkul')
+      const request3 = game.respondToInputRequest({
+        actor: 'dennis',
+        title: 'Choose a token to return',
+        selection: [{
+          title: 'spy',
+          selection: ['Ched Nasad, micah'],
+        }],
+      })
+
+      const nextRequest = () => t.choose(game, request3, 'House Guard')
+
+      expect(nextRequest).toThrow()
     })
   })
 
