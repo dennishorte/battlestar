@@ -642,7 +642,7 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
     // Say nothing. This is handled in the move card functionality.
   }
 
-  else if (startingZone !== dest) {
+  else if (startingZone !== dest || dest.id.endsWith('library')) {
     this.mLog({
       template: '{player} moves {card} from {zone1} to {zone2}',
       args: {
