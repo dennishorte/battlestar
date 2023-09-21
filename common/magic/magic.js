@@ -105,6 +105,11 @@ Magic.prototype._cardMovedCallback = function({ card, sourceZone, targetZone }) 
 
   // Card was removed from stack.
   if (sourceKind === 'stack') {
+    this.mLog({
+      template: '{card} resolves',
+      args: { card },
+      classes: ['stack-pop'],
+    })
     this.mLogOutdent()
   }
 
@@ -493,16 +498,16 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
     zone.addCard(card)
     created.push(card)
 
-    if (!opts.silent) {
-      this.mLog({
-        template: '{card} token created in {zone}',
-        args: { card, zone },
-      })
-    }
 
-    // Card was moved to stack.
     if (zone.id.endsWith('.stack')) {
+      this.mLogStackPush(player, card)
       this.mLogIndent()
+    }
+    else if (!opts.silent) {
+      this.mLog({
+        template: "{card} imported to {zone}",
+        args: { player: owner, card, zone },
+      })
     }
   }
 
@@ -585,14 +590,16 @@ Magic.prototype.aImportCard = function(player, data) {
     const owner = this.getPlayerByZone(zone)
     zone.addCard(card)
 
-    this.mLog({
-      template: "{card} imported to {zone}",
-      args: { player: owner, card, zone },
-    })
-
     // Card was moved to stack.
     if (zone.id.endsWith('.stack')) {
+      this.mLogStackPush(player, card)
       this.mLogIndent()
+    }
+    else {
+      this.mLog({
+        template: "{card} imported to {zone}",
+        args: { player: owner, card, zone },
+      })
     }
   }
 }
@@ -627,7 +634,15 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
 
   this.mMoveCardTo(card, dest, { index: destIndex })
 
-  if (startingZone !== dest) {
+  if (dest.id.endsWith('stack')) {
+    this.mLogStackPush(player, card)
+  }
+
+  else if (startingZone.id.endsWith('stack')) {
+    // Say nothing. This is handled in the move card functionality.
+  }
+
+  else if (startingZone !== dest) {
     this.mLog({
       template: '{player} moves {card} from {zone1} to {zone2}',
       args: {
@@ -903,10 +918,6 @@ Magic.prototype.aStackEffect = function(player, cardId) {
   }
 
   const token = this.aCreateToken(owner, data, { silent: true })[0]
-  this.mLog({
-    template: '{player} puts {card} on stack',
-    args: { player: owner, card: token }
-  })
 }
 
 Magic.prototype.aTap = function(player, cardId) {
@@ -1133,6 +1144,14 @@ Magic.prototype.mInitializeCard = function(card, owner) {
   card.visibility = []
 
   this.cardsById[card.id] = card
+}
+
+Magic.prototype.mLogStackPush = function(player, card) {
+  this.mLog({
+    template: '{player} puts {card} on the stack',
+    args: { player, card },
+    classes: ['stack-push'],
+  })
 }
 
 Magic.prototype.mMaybeClearAnnotations = function(card) {

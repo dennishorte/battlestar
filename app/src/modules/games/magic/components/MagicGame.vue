@@ -29,7 +29,7 @@
 
       </GameMenu>
 
-      <GameLog />
+      <GameLog :entries="game.getLog()" />
       <ChatInput @save-on-chat="false" />
     </div>
 

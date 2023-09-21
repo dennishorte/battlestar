@@ -1,26 +1,32 @@
 <template>
-  <div class="gamelog" ref="gamelog">
-    <div v-for="(line, index) in lines" :key="index" :class="line.classes" class="log-line">
+  <div class="gamelog" ref="gamelog" :class="nestedClasses">
+    <template v-for="(line, index) in lines" :key="index">
 
-      <template v-if="line.type === 'chat'">
-        <div class="chat-container">
-          <div class="chat-message">
-            <span class="chat-author">{{ line.author }}:</span>
-            {{ line.text }}
+      <div v-if="line.type === 'nest'">
+        <GameLog :entries="line.entries" :depth="line.depth" />
+      </div>
+
+      <div v-else class="log-line" :class="line.classes">
+        <template v-if="line.type === 'chat'">
+          <div class="chat-container">
+            <div class="chat-message">
+              <span class="chat-author">{{ line.author }}:</span>
+              {{ line.text }}
+            </div>
           </div>
-        </div>
-      </template>
+        </template>
 
-      <template v-else>
-        <div v-for="n in indentSpacers(line)" :key="n" class="indent-spacer" />
-        <GameLogText :text="line.text" :class="classes(line)" />
-      </template>
+        <template v-else>
+          <div v-for="n in indentSpacers(line)" :key="n" class="indent-spacer" />
+          <GameLogText :text="line.text" :class="classes(line)" />
+        </template>
+      </div>
 
-    </div>
+    </template>
 
     <RematchButton v-if="game.gameOver" />
 
-    <div class="bottom-space"></div>
+    <div class="bottom-space" v-if="!nested"></div>
   </div>
 </template>
 
@@ -37,40 +43,36 @@ export default {
     RematchButton,
   },
 
+  props: {
+    entries: Array,
+    depth: {
+      type: Number,
+      default: 0,
+    },
+  },
+
   inject: ['game'],
 
   computed: {
     lines() {
-      const output = []
-      let indent = 0
-
-      const entries = this.game.getLog()
-      for (let i = 0; i < entries.length; i++) {
-        const entry = entries[i]
-
-        if (entry.type === 'response-received') {
-          // do nothing
-        }
-        else if (entry === '__INDENT__') {
-        }
-        else if (entry === '__OUTDENT__') {
-        }
-        else if (entry.type === 'chat') {
-          output.push(entry)
-        }
-        else {
-          const text = this.convertLogMessage(entry)
-          const classes = entry.classes || []
-
-          output.push({
-            text,
-            classes,
-            args: entry.args,
-            indent: entry.indent,
-          })
-        }
+      if (this.nested) {
+        return this.entries
       }
-      return output
+      else {
+        const output = _nestLog(this.entries).output
+        return output
+      }
+    },
+
+    nested() {
+      return this.depth > 0
+    },
+
+    nestedClasses() {
+      return [
+        'nested',
+        `nested-${this.depth}`,
+      ]
     }
   },
 
@@ -86,31 +88,13 @@ export default {
   },
 
   methods: {
-    convertLogMessage(entry) {
-      let msg = entry.template
-      for (const [arg, value] of Object.entries(entry.args)) {
-        let replacement = value.value
-
-        if (arg === 'card' && !value.classes.includes('card-hidden')) {
-          replacement = `card(${value.cardId})`
-        }
-
-        else if (arg === 'player') {
-          replacement = `player(${value.value})`
-        }
-
-        else if (arg === 'loc') {
-          replacement = `loc(${value.value})`
-        }
-
-        msg = msg.replace(`{${arg}}`, replacement)
-      }
-      return msg
-    },
-
     classes(line) {
-      const classes = [`indent-${line.indent}`]
-      return classes
+      if (line.indent === 0) {
+        return 'log-header'
+      }
+      else {
+        return ''
+      }
     },
 
     indentSpacers(entry) {
@@ -140,10 +124,90 @@ export default {
     this.scrollToBottom()
   },
 }
+
+function _convertLogMessage(entry) {
+  let msg = entry.template
+  for (const [arg, value] of Object.entries(entry.args)) {
+    let replacement = value.value
+
+    if (arg === 'card' && !value.classes.includes('card-hidden')) {
+      replacement = `card(${value.cardId})`
+    }
+
+    else if (arg === 'player') {
+      replacement = `player(${value.value})`
+    }
+
+    else if (arg === 'loc') {
+      replacement = `loc(${value.value})`
+    }
+
+    msg = msg.replace(`{${arg}}`, replacement)
+  }
+  return msg
+}
+
+function _nestLog(entries, depth=0) {
+  const output = []
+  let indent = 0
+  let count = 0
+
+  for (let i = 0; i < entries.length; i++) {
+    count += 1
+
+    const entry = entries[i]
+
+    if (entry.type === 'response-received') {
+      // do nothing
+    }
+    else if (entry === '__INDENT__') {
+    }
+    else if (entry === '__OUTDENT__') {
+    }
+    else if (entry.type === 'chat') {
+      output.push(entry)
+    }
+    else {
+      const text = _convertLogMessage(entry)
+      const line = {
+        text,
+        classes: entry.classes || [],
+        args: entry.args,
+        indent: entry.indent === 0 ? 0 : 1,
+//        indent: entry.indent,
+      }
+
+      if (line.classes.includes('stack-push')) {
+        const result = _nestLog(entries.slice(i + 1), depth + 1)
+        const nested = result.output
+
+        i += result.consumed
+        count += result.consumed
+        nested.splice(0, 0, line)
+
+        output.push({
+          type: 'nest',
+          depth: depth + 1,
+          entries: nested
+        })
+      }
+      else if (line.classes.includes('stack-pop')) {
+        output.push(line)
+        break
+      }
+      else {
+        output.push(line)
+      }
+    }
+  }
+
+  return { output, consumed: count }
+}
 </script>
 
 <style scoped>
 .gamelog {
+  position: relative;
   font-size: .8rem;
   overflow-y: scroll;
 }
@@ -185,7 +249,7 @@ export default {
   content: "|\00A0";
 }
 
-.indent-0 {
+.log-header {
   font-weight: bold;
   width: 100%;
   text-align: center;
@@ -196,6 +260,44 @@ export default {
 
   color: white;
   background-color: #7db881;
+}
+
+.nested {
+  margin: 2px .5em 0 0;
+  border-radius: 0 .5em .5em 0;
+  padding: .25em 0;
+}
+
+.nested-1 {
+  background-color: #DCEDC8;
+}
+
+.nested-2 {
+  background-color: #C5E1A5;
+}
+
+.nested-3 {
+  background-color: #AED581;
+}
+
+.nested-4 {
+  background-color: #9CCC65;
+}
+
+.nested-5 {
+  background-color: #8BC34A;
+}
+
+.nested-6 {
+  background-color: #7CB342;
+}
+
+.nested-7 {
+  background-color: #689F38;
+}
+
+.nested-8 {
+  background-color: #558B2F;
 }
 
 .pass-priority {
