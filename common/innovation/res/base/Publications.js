@@ -57,6 +57,8 @@ function Card() {
           args: { player, card }
         })
 
+        game.mActed(player)
+
         position += 1
         remaining = remaining.filter(other => other != card)
       }
