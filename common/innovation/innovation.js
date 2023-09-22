@@ -2434,8 +2434,8 @@ Innovation.prototype.mDraw = function(player, exp, age, opts={}) {
         }
         else {
           throw new GameOverEvent({
-            player: this.getPlayerCurrent(),
-            reason: 'Tied for points and achievements; current player wins'
+            player,
+            reason: 'Tied for points and achievements; player who drew the big card wins!'
           })
         }
       })
