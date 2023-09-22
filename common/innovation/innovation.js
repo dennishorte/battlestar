@@ -2433,7 +2433,10 @@ Innovation.prototype.mDraw = function(player, exp, age, opts={}) {
           return r.achs - l.achs
         }
         else {
-          throw new Error('Draws are not handled yet')
+          throw new GameOverEvent({
+            player: this.getPlayerCurrent(),
+            reason: 'Tied for points and achievements; current player wins'
+          })
         }
       })
 
