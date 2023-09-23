@@ -267,13 +267,16 @@ const cardData = [
     ],
     impl: (game, player) => {
       const loc = game.aChooseAndPlaceSpy(player)
-      const players = loc
-        .getTroops()
-        .map(troop => game.getPlayerByCard(troop))
-        .filter(other => other !== undefined)
-        .filter(other => other !== player)
-      if (players.length > 0) {
-        player.incrementPower(1)
+
+      if (loc) {
+        const players = loc
+          .getTroops()
+          .map(troop => game.getPlayerByCard(troop))
+          .filter(other => other !== undefined)
+          .filter(other => other !== player)
+        if (players.length > 0) {
+          player.incrementPower(1)
+        }
       }
     },
   },
