@@ -50,6 +50,8 @@
           <DropdownButton @click="hideHand">hide</DropdownButton>
           <DropdownButton @click="shuffle('hand')">shuffle</DropdownButton>
           <DropdownDivider />
+          <DropdownButton @click="importCard('hand')">import card</DropdownButton>
+          <DropdownButton @click="makeToken('hand')">make token</DropdownButton>
           <DropdownButton @click="moveAll($event, 'hand')">move all</DropdownButton>
         </template>
       </TableauZone>
