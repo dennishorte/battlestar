@@ -345,7 +345,7 @@ const cardData = [
   },
   {
     name: "Advocate",
-    aspect: "abmition",
+    aspect: "ambition",
     race: "drow",
     expansion: "drow",
     cost: 2,
