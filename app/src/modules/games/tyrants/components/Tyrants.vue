@@ -16,6 +16,7 @@
         </div>
 
         <div class="col game-column">
+          <Devoured />
           <Market />
           <WaitingPanel />
         </div>
@@ -60,6 +61,7 @@ import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
 // Tyrants Components
+import Devoured from './Devoured'
 import GameLog from './log/GameLog'
 import GameMap from './map/GameMap'
 import Market from './Market'
@@ -103,6 +105,7 @@ export default {
   components: {
     ChatInput,
     ChatOffCanvas,
+    Devoured,
     DropdownButton,
     DropdownDivider,
     GameLog,
@@ -183,6 +186,10 @@ export default {
         output[player.name] = `${color}-element`
       }
       return output
+    },
+
+    devouredCount() {
+      return this.game.getZoneById('devoured').cards().length
     },
 
     mapStyle() {
