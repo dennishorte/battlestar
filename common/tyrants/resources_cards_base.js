@@ -35,7 +35,7 @@ const cardData = [
     race: "drow",
     expansion: "core",
     cost: -1,
-    points: 0,
+    points: -1,
     innerPoints: 0,
     count: 30,
     text: [

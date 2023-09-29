@@ -1771,7 +1771,12 @@ Tyrants.prototype.mDeploy = function(player, loc, opts={}) {
 }
 
 Tyrants.prototype.mDevour = function(card) {
-  this.mMoveCardTo(card, this.getZoneById('devoured'))
+  if (card.name === 'Insane Outcast') {
+    this.mMoveCardTo(card, this.getZoneById('outcast'))
+  }
+  else {
+    this.mMoveCardTo(card, this.getZoneById('devoured'))
+  }
 }
 
 Tyrants.prototype.mExecuteCard = function(player, card) {
