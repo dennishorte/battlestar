@@ -95,6 +95,7 @@ export default {
       if (newValue) {
         this.activeFace = newValue.activeFace
         this.annotation = newValue.annotation
+        this.annotationEOT = newValue.annotationEOT
       }
     },
   },
