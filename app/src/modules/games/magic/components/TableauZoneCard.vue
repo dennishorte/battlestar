@@ -44,6 +44,9 @@
         <DropdownButton @click.stop="unmorph" v-if="card.morph">unmorph</DropdownButton>
         <DropdownButton @click.stop="morph" v-else>morph</DropdownButton>
 
+        <DropdownButton @click.stop="detach" v-if="card.attachedTo">detach</DropdownButton>
+        <DropdownButton @click.stop="attach" v-else>attach</DropdownButton>
+
         <DropdownButton @click.stop="reveal">reveal</DropdownButton>
         <DropdownButton @click.stop="stack">stack</DropdownButton>
 
@@ -124,6 +127,15 @@ export default {
 
       if (this.card.annotation) {
         parts.push(this.card.annotation)
+      }
+
+      if (this.card.attachedTo) {
+        parts.push('attached to: ' + this.card.attachedTo.name)
+      }
+
+      if (this.card.attached.length > 0) {
+        const names = this.card.attached.map(c => c.name).join(', ')
+        parts.push('attached: ' + names)
       }
 
       if (this.card.annotationEOT) {
@@ -208,6 +220,28 @@ export default {
   },
 
   methods: {
+    attach() {
+      const callback = (card) => {
+        console.log('callback', card.name)
+        this.do(null, {
+          name: 'attach',
+          cardId: this.card.id,
+          targetId: card.id
+        })
+      }
+
+      this.$store.commit('magic/game/setChooseTargetCallback', callback)
+      this.$store.dispatch('magic/game/unselectCard')
+    },
+
+    detach() {
+      this.do(null, {
+        name: 'detach',
+        cardId: this.card.id,
+      })
+      this.$store.dispatch('magic/game/unselectCard')
+    },
+
     closeup() {
       this.$modal('card-closeup-modal').show()
     },

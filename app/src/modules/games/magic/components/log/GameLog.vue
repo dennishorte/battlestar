@@ -130,7 +130,7 @@ function _convertLogMessage(entry) {
   for (const [arg, value] of Object.entries(entry.args)) {
     let replacement = value.value
 
-    if (arg === 'card' && !value.classes.includes('card-hidden')) {
+    if (arg.startsWith('card') && !value.classes.includes('card-hidden')) {
       replacement = `card(${value.cardId})`
     }
 

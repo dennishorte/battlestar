@@ -10,6 +10,7 @@ export default {
 
     ready: false,
 
+    chooseTargetCallback: null,
     movingAllSource: null,
     movingRevealedSource: null,
     selectedCardId: null,
@@ -33,6 +34,10 @@ export default {
       return ids
     },
 
+    isChoosingTarget(state) {
+      return Boolean(state.chooseTargetCallback)
+    },
+
     isMovingAll(state) {
       return Boolean(state.movingAllSource)
     },
@@ -47,6 +52,14 @@ export default {
   },
 
   mutations: {
+    cancelChooseTarget(state) {
+      state.chooseTargetCallback = null
+    },
+
+    setChooseTargetCallback(state, callback) {
+      state.chooseTargetCallback = callback
+    },
+
     setDoubleClick(state, data) {
       state.doubleClick = data
     },
@@ -79,6 +92,11 @@ export default {
   actions: {
     clickCard({ commit, dispatch, getters, state }, card) {
       commit('magic/clearMouseoverCard', null, { root: true })
+
+      if (getters.isChoosingTarget) {
+        state.chooseTargetCallback(card)
+        return
+      }
 
       if (getters.isMovingAll) {
         dispatch('moveAll', zone)

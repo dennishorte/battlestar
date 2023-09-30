@@ -96,6 +96,7 @@ export default {
   methods: {
     unselectCard() {
       this.$store.dispatch('magic/game/unselectCard')
+      this.$store.commit('magic/game/cancelChooseTarget')
     },
   },
 }

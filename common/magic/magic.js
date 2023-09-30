@@ -114,9 +114,17 @@ Magic.prototype._cardMovedCallback = function({ card, sourceZone, targetZone }) 
   }
 
   // Card moved to a non-tap zone
-  if (card.tapped) {
-    if (!['creatures', 'battlefield', 'land', 'attacking', 'blocking'].includes(targetKind)) {
+  if (!['creatures', 'battlefield', 'land', 'attacking', 'blocking'].includes(targetKind)) {
+    if (card.tapped) {
       this.mUntap(card)
+    }
+
+    if (card.attachedTo) {
+      this.mDetach(card)
+    }
+
+    for (const attached of card.attached) {
+      this.mDetach(attached)
     }
   }
 
@@ -321,6 +329,16 @@ Magic.prototype.aAnnotateEOT = function(player, cardId, annotation) {
   })
 }
 
+Magic.prototype.aAttach = function(player, cardId, targetId) {
+  const source = this.getCardById(cardId)
+  const target = this.getCardById(targetId)
+
+  if (source.attachedTo) {
+    this.mDetach(source)
+  }
+  this.mAttach(target, source)
+}
+
 Magic.prototype.aCascade = function(player, x) {
   const cards = this.getCardsByZone(player, 'library')
 
@@ -419,9 +437,11 @@ Magic.prototype.aChooseAction = function(player) {
       case 'adjust counter'      : return actor.incrementCounter(action.counter, action.amount)
       case 'annotate'            : return this.aAnnotate(actor, action.cardId, action.annotation)
       case 'annotate eot'        : return this.aAnnotateEOT(actor, action.cardId, action.annotation)
+      case 'attach'              : return this.aAttach(actor, action.cardId, action.targetId)
       case 'cascade'             : return this.aCascade(actor, action.x)
       case 'create token'        : return this.aCreateToken(actor, action.data)
       case 'concede'             : return this.aConcede(actor)
+      case 'detach'              : return this.aDetach(actor, action.cardId)
       case 'draw'                : return this.aDraw(actor)
       case 'draw 7'              : return this.aDrawSeven(actor)
       case 'draw game'           : return this.aDrawGame(actor)
@@ -512,6 +532,11 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
   }
 
   return created
+}
+
+Magic.prototype.aDetach = function(player, cardId) {
+  const card = this.getCardById(cardId)
+  this.mDetach(card)
 }
 
 Magic.prototype.aDraw = function(player, opts={}) {
@@ -1088,6 +1113,32 @@ Magic.prototype.mAdjustCardVisibility = function(card) {
   }
 }
 
+Magic.prototype.mAttach = function(target, attachee) {
+  attachee.attachedTo = target
+  util.array.pushUnique(target.attached, attachee)
+
+  this.mLog({
+    template: '{card1} attached to {card2}',
+    args: {
+      card1: attachee,
+      card2: target,
+    },
+  })
+}
+
+Magic.prototype.mDetach = function(card) {
+  this.mLog({
+    template: '{card1} detached from {card2}',
+    args: {
+      card1: card,
+      card2: card.attachedTo,
+    },
+  })
+
+  util.array.remove(card.attachedTo.attached, card)
+  card.attachedTo = null
+}
+
 Magic.prototype.mClearStack = function() {
 
   const toClear = []
@@ -1132,6 +1183,8 @@ Magic.prototype.mInitializeCard = function(card, owner) {
   card.activeFace = card.data.card_faces[0].name
   card.annotation = ''
   card.annotationEOT = ''
+  card.attached = []
+  card.attachedTo = null
   card.counters = {
     '+1/+1': 0,
   }
