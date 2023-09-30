@@ -21,6 +21,24 @@ function Card() {
     (game, player, { leader }) => {
       const yours = game.getCardsByZone(player, 'hand')
       const mine = game.utilHighestCards(game.getCardsByZone(leader, 'hand'))
+
+      game.mLog({
+        template: '{player} steals {count} cards from {player2}',
+        args: {
+          player: leader,
+          count: yours.length,
+          player2: player,
+        }
+      })
+      game.mLog({
+        template: '{player} give back {count} cards to {player2}',
+        args: {
+          player: leader,
+          count: mine.length,
+          player2: player,
+        }
+      })
+
       for (const card of yours) {
         game.mMoveCardTo(card, game.getZoneByPlayer(leader, 'hand'))
       }
