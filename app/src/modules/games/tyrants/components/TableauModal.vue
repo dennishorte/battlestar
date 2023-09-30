@@ -41,18 +41,23 @@
 
       <div class="col-7">
         <div class="deck">
-          <div class="title">All Cards in Deck</div>
-          <GameCard v-for="card in allCards" :key="card.id" :card="card" />
+          <div class="title">Deck</div>
+          <GameCard v-for="card in deckCards" :key="card.id" :card="card" />
         </div>
 
-        <div class="inner-circle">
-          <div class="title">Inner Circle</div>
-          <GameCard v-for="card in innerCircleCards" :key="card.id" :card="card" />
+        <div class="hand">
+          <div class="title">Hand/Played</div>
+          <GameCard v-for="card in handCards" :key="card.id" :card="card" />
         </div>
 
         <div class="discard">
           <div class="title">Discard</div>
           <GameCard v-for="card in discardCards" :key="card.id" :card="card" />
+        </div>
+
+        <div class="inner-circle">
+          <div class="title">Inner Circle</div>
+          <GameCard v-for="card in innerCircleCards" :key="card.id" :card="card" />
         </div>
       </div>
 
@@ -97,11 +102,25 @@ export default {
       return counts
     },
 
+    deckCards() {
+      return this
+        .game
+        .getCardsByZone(this.player, 'deck')
+        .sort((l, r) => l.name.localeCompare(r.name))
+    },
+
     discardCards() {
       return this
         .game
         .getCardsByZone(this.player, 'discard')
         .sort((l, r) => l.name.localeCompare(r.name))
+    },
+
+    handCards() {
+      return [
+        ...this.game.getCardsByZone(this.player, 'hand'),
+        ...this.game.getCardsByZone(this.player, 'played'),
+      ].sort((l, r) => l.name.localeCompare(r.name))
     },
 
     innerCircleCards() {
