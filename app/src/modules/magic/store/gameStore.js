@@ -95,6 +95,7 @@ export default {
 
       if (getters.isChoosingTarget) {
         state.chooseTargetCallback(card)
+        state.chooseTargetCallback = null
         return
       }
 
