@@ -1237,7 +1237,7 @@ const mapData = [
     },
     "neighbors": [
       "Stoneshaft Clanhold",
-      "skull-stone b"
+      "skull-stone a"
     ]
   },
   {
