@@ -81,7 +81,7 @@ export default {
     Modal,
   },
 
-  inject: ['game', 'ui'],
+  inject: ['actor', 'game', 'ui'],
 
   computed: {
     allCards() {
@@ -103,10 +103,18 @@ export default {
     },
 
     deckCards() {
-      return this
-        .game
-        .getCardsByZone(this.player, 'deck')
-        .sort((l, r) => l.name.localeCompare(r.name))
+      if (this.isOwner) {
+        return this
+          .game
+          .getCardsByZone(this.player, 'deck')
+          .sort((l, r) => l.name.localeCompare(r.name))
+      }
+      else {
+        return [
+          ...this.game.getCardsByZone(this.player, 'deck'),
+          ...this.game.getCardsByZone(this.player, 'hand'),
+        ].sort((l, r) => l.name.localeCompare(r.name))
+      }
     },
 
     discardCards() {
@@ -117,10 +125,18 @@ export default {
     },
 
     handCards() {
-      return [
-        ...this.game.getCardsByZone(this.player, 'hand'),
-        ...this.game.getCardsByZone(this.player, 'played'),
-      ].sort((l, r) => l.name.localeCompare(r.name))
+      if (this.isOwner) {
+        return [
+          ...this.game.getCardsByZone(this.player, 'hand'),
+          ...this.game.getCardsByZone(this.player, 'played'),
+        ].sort((l, r) => l.name.localeCompare(r.name))
+      }
+      else {
+        return this
+          .game
+          .getCardsByZone(this.player, 'played')
+          .sort((l, r) => l.name.localeCompare(r.name))
+      }
     },
 
     innerCircleCards() {
@@ -128,6 +144,10 @@ export default {
         .game
         .getCardsByZone(this.player, 'innerCircle')
         .sort((l, r) => l.name.localeCompare(r.name))
+    },
+
+    isOwner() {
+      return this.player.name === this.actor.name
     },
 
     player() {
