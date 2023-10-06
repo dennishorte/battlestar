@@ -4,6 +4,7 @@ import Home from '@/components/Home'
 import Game from '@/components/Game'
 import GameEditor from '@/modules/games/common/components/GameEditor'
 import FileManagerTest from '@/components/filemanager/FileManagerTest'
+import TyrantsTest from '@/modules/games/tyrants/components/hexmap/HexMap'
 
 import adminRoutes from '@/modules/admin/router.js'
 import authRoutes from '@/modules/auth/router.js'
@@ -43,6 +44,13 @@ const router = createRouter({
       name: 'File Manager Test',
       title: 'File Manager Test',
       component: FileManagerTest,
+    },
+
+    {
+      path: '/tyrantstest',
+      name: 'Tyrants Test',
+      title: 'Tyrants Test',
+      component: TyrantsTest,
     },
 
     ...adminRoutes,
