@@ -110,7 +110,7 @@ export default {
 
 .site-rect {
   stroke: black;
-  stroke-width: 2;
+  stroke-width: 2.3;
   fill: white;
 }
 </style>
