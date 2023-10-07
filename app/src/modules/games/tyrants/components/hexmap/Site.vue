@@ -7,17 +7,21 @@
     </text>
 
     <SiteTroopSpaces :cx="x" :cy="troopsY" :count="size" />
+
+    <SitePoints :cx="topLeft.left" :cy="topLeft.top" :value="value" />
   </g>
 </template>
 
 
 <script>
+import SitePoints from './SitePoints'
 import SiteTroopSpaces from './SiteTroopSpaces'
 
 export default {
   name: 'Site',
 
   components: {
+    SitePoints,
     SiteTroopSpaces,
   },
 
@@ -26,6 +30,7 @@ export default {
     x: Number,
     y: Number,
     size: Number,
+    value: Number,
   },
 
   computed: {
@@ -74,6 +79,13 @@ export default {
         [this.x + this.halfWidth, this.y + this.halfHeight],
         [this.x - this.halfWidth, this.y + this.halfHeight],
       ]
+    },
+
+    topLeft() {
+      return {
+        top: this.y - this.halfHeight,
+        left: this.x - this.halfWidth,
+      }
     },
 
     troopsY() {

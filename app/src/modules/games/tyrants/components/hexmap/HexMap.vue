@@ -9,10 +9,10 @@
         fill="yellow"
         stroke-width="2" />
 
-      <Site name="Chaulsin" :x="270" :y="380" :size="4" />
-      <Site name="Caves" :x="360" :y="310" :size="6" />
-      <Site name="Halls of the|Scoured Legion" :x="265" :y="230" :size="3" />
-      <Site name="Chasmleap|Bridge" :x="250" :y="300" :size="5" />
+      <Site name="Chaulsin" :x="270" :y="380" :size="4" :value="1" />
+      <Site name="Caves" :x="360" :y="310" :size="6" :value="2" />
+      <Site name="Halls of the|Scoured Legion" :x="265" :y="230" :size="3" :value="3" />
+      <Site name="Chasmleap|Bridge" :x="250" :y="300" :size="5" :value="4" />
 
     </svg>
   </div>
