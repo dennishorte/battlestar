@@ -2,7 +2,7 @@
   <div class="hex-map">
     <svg class="game-map" width="1000" height="800" ref="gamemap">
 
-      <Hex :cx="300" :cy="300" :sites="testSites" />
+      <Hex :cx="300" :cy="300" :sites="testSites" :rotation="0" />
 
 
     </svg>
@@ -36,13 +36,13 @@ const testSites = [
     size: 3,
     value: 3,
   },
-  {
-    name: 'Chasmleap|Brdige',
-    dx: -50,
-    dy: +0,
-    size: 5,
-    value: 4,
-  },
+  /* {
+   *   name: 'Chasmleap|Brdige',
+   *   dx: -50,
+   *   dy: +0,
+   *   size: 5,
+   *   value: 4,
+   * }, */
 ]
 
 

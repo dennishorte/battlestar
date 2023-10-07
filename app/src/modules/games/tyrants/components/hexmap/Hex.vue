@@ -22,15 +22,26 @@ export default {
     cx: Number,
     cy: Number,
     sites: Array,
+    rotation: Number,  // In the range [0, 5]
   },
 
   computed: {
     absolutelyPositionedSites() {
-      return this.sites.map(s => ({
-        ...s,
-        x: this.cx + s.dx,
-        y: this.cy + s.dy,
-      }))
+      const theta = this.rotation * ((2 * Math.PI) / 6)
+
+      return this.sites.map(s => {
+        const cosTheta = Math.cos(theta)
+        const sinTheta = Math.sin(theta)
+
+        const dx = s.dx * cosTheta - s.dy * sinTheta
+        const dy = s.dy * cosTheta + s.dx * sinTheta
+
+        return {
+          ...s,
+          x: this.cx + dx,
+          y: this.cy + dy,
+        }
+      })
     },
 
     testHex() {
