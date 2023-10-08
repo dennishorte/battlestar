@@ -1,12 +1,12 @@
 <template>
   <g>
     <polygon class="site-rect" :points="points" />
-    <text :x="x" :y="nameY" class="site-name">
+    <text :x="cx" :y="nameY" class="site-name">
       <tspan>{{ name1 }}</tspan>
-      <tspan v-if="name2" :x="x" dy="10">{{ name2 }}</tspan>
+      <tspan v-if="name2" :x="cx" dy="10">{{ name2 }}</tspan>
     </text>
 
-    <SiteTroopSpaces :cx="x" :cy="troopsY" :count="size" />
+    <SiteTroopSpaces :cx="cx" :cy="troopsY" :count="size" />
 
     <SitePoints :cx="topLeft.left" :cy="topLeft.top" :value="value" />
   </g>
@@ -27,8 +27,8 @@ export default {
 
   props: {
     name: String,
-    x: Number,
-    y: Number,
+    cx: Number,
+    cy: Number,
     size: Number,
     value: Number,
   },
@@ -52,6 +52,7 @@ export default {
     halfWidth() {
       switch (this.size) {
         case 1:
+          return 28
         case 2:
         case 3:
         case 4:
@@ -69,27 +70,27 @@ export default {
     name2() { return this.name.split('|')[1] },
 
     nameY() {
-      return this.name2 ? this.y - this.halfHeight + 13 : this.y - this.halfHeight + 18
+      return this.name2 ? this.cy - this.halfHeight + 13 : this.cy - this.halfHeight + 18
     },
 
     points() {
       return [
-        [this.x - this.halfWidth, this.y - this.halfHeight],
-        [this.x + this.halfWidth, this.y - this.halfHeight],
-        [this.x + this.halfWidth, this.y + this.halfHeight],
-        [this.x - this.halfWidth, this.y + this.halfHeight],
+        [this.cx - this.halfWidth, this.cy - this.halfHeight],
+        [this.cx + this.halfWidth, this.cy - this.halfHeight],
+        [this.cx + this.halfWidth, this.cy + this.halfHeight],
+        [this.cx - this.halfWidth, this.cy + this.halfHeight],
       ]
     },
 
     topLeft() {
       return {
-        top: this.y - this.halfHeight,
-        left: this.x - this.halfWidth,
+        top: this.cy - this.halfHeight,
+        left: this.cx - this.halfWidth,
       }
     },
 
     troopsY() {
-      return this.name2 ? this.y + 10 : this.y + 8
+      return this.name2 ? this.cy + 10 : this.cy + 8
     },
   },
 
