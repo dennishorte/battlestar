@@ -15,7 +15,7 @@ async function insertCardsIntoDatabase(cards, version) {
   const versionRecord = await versionCollection.findOne({})
   await versionCollection.updateOne(
     { _id: versionRecord._id },
-    { $set: { scryfall: version } }
+    { $set: { value: version } }
   )
 }
 
