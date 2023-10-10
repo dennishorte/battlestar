@@ -1,6 +1,130 @@
 module.exports = [
   {
     "object": "set",
+    "id": "fed2c8cd-ab92-44f6-808a-41e7809bcfe2",
+    "code": "rvr",
+    "tcgplayer_id": 23319,
+    "name": "Ravnica Remastered",
+    "uri": "https://api.scryfall.com/sets/fed2c8cd-ab92-44f6-808a-41e7809bcfe2",
+    "scryfall_uri": "https://scryfall.com/sets/rvr",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Arvr&unique=prints",
+    "released_at": "2024-03-01",
+    "set_type": "masters",
+    "card_count": 49,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rvr.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "47c94e14-a3a2-4353-910d-dfc310dc869a",
+    "code": "pw24",
+    "name": "Wizards Play Network 2024",
+    "uri": "https://api.scryfall.com/sets/47c94e14-a3a2-4353-910d-dfc310dc869a",
+    "scryfall_uri": "https://scryfall.com/sets/pw24",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apw24&unique=prints",
+    "released_at": "2024-01-01",
+    "set_type": "promo",
+    "card_count": 5,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": true,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "c01003a2-b3e2-4e7f-a26d-2348144c8056",
+    "code": "spg",
+    "tcgplayer_id": 23318,
+    "name": "Special Guests",
+    "uri": "https://api.scryfall.com/sets/c01003a2-b3e2-4e7f-a26d-2348144c8056",
+    "scryfall_uri": "https://scryfall.com/sets/spg",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aspg&unique=prints",
+    "released_at": "2023-11-17",
+    "set_type": "masterpiece",
+    "card_count": 8,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/spg.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "70169a6e-89d1-4a3a-aef7-3152958d55ac",
+    "code": "lci",
+    "mtgo_code": "lci",
+    "arena_code": "lci",
+    "tcgplayer_id": 23312,
+    "name": "The Lost Caverns of Ixalan",
+    "uri": "https://api.scryfall.com/sets/70169a6e-89d1-4a3a-aef7-3152958d55ac",
+    "scryfall_uri": "https://scryfall.com/sets/lci",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Alci&unique=prints",
+    "released_at": "2023-11-17",
+    "set_type": "expansion",
+    "card_count": 23,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/lci.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "d253edc3-5bc7-4cf1-9446-a8540dedffa5",
+    "code": "lcc",
+    "mtgo_code": "lcc",
+    "arena_code": "lcc",
+    "tcgplayer_id": 23316,
+    "name": "Lost Caverns of Ixalan Commander",
+    "uri": "https://api.scryfall.com/sets/d253edc3-5bc7-4cf1-9446-a8540dedffa5",
+    "scryfall_uri": "https://scryfall.com/sets/lcc",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Alcc&unique=prints",
+    "released_at": "2023-11-17",
+    "set_type": "commander",
+    "card_count": 1,
+    "parent_set_code": "lci",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/lcc.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "647b6fd3-6935-4b96-85a4-d0191487ea5a",
+    "code": "rex",
+    "tcgplayer_id": 23317,
+    "name": "Jurassic World Collection",
+    "uri": "https://api.scryfall.com/sets/647b6fd3-6935-4b96-85a4-d0191487ea5a",
+    "scryfall_uri": "https://scryfall.com/sets/rex",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Arex&unique=prints",
+    "released_at": "2023-11-17",
+    "set_type": "masterpiece",
+    "card_count": 3,
+    "parent_set_code": "lci",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rex.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "07ee7ac3-059b-4de5-924a-2bd1b7910c8b",
+    "code": "tlci",
+    "name": "Lost Caverns of Ixalan Tokens",
+    "uri": "https://api.scryfall.com/sets/07ee7ac3-059b-4de5-924a-2bd1b7910c8b",
+    "scryfall_uri": "https://scryfall.com/sets/tlci",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atlci&unique=prints",
+    "released_at": "2023-11-17",
+    "set_type": "token",
+    "card_count": 0,
+    "parent_set_code": "lci",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": true,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
+  },
+  {
+    "object": "set",
     "id": "efdfdd99-cee7-4c11-a5e9-03d60f88bdd6",
     "code": "who",
     "tcgplayer_id": 23165,
@@ -10,11 +134,279 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Awho&unique=prints",
     "released_at": "2023-10-13",
     "set_type": "commander",
-    "card_count": 6,
+    "card_count": 1168,
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/who.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/who.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "d2d6e9d3-40dd-4e84-897f-fb8f82fc6b91",
+    "code": "twho",
+    "name": "Doctor Who Tokens",
+    "uri": "https://api.scryfall.com/sets/d2d6e9d3-40dd-4e84-897f-fb8f82fc6b91",
+    "scryfall_uri": "https://scryfall.com/sets/twho",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atwho&unique=prints",
+    "released_at": "2023-10-13",
+    "set_type": "token",
+    "card_count": 32,
+    "parent_set_code": "who",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/who.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "217f004e-8669-45c9-a0ba-1baf81eefab0",
+    "code": "ywoe",
+    "name": "Alchemy: Wilds of Eldraine",
+    "uri": "https://api.scryfall.com/sets/217f004e-8669-45c9-a0ba-1baf81eefab0",
+    "scryfall_uri": "https://scryfall.com/sets/ywoe",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aywoe&unique=prints",
+    "released_at": "2023-10-10",
+    "set_type": "alchemy",
+    "card_count": 30,
+    "parent_set_code": "woe",
+    "digital": true,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "y23",
+    "block": "Alchemy 2023",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/y23.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "909bf1bb-3277-41d6-af0f-293df1203099",
+    "code": "pwoe",
+    "name": "Wilds of Eldraine Promos",
+    "uri": "https://api.scryfall.com/sets/909bf1bb-3277-41d6-af0f-293df1203099",
+    "scryfall_uri": "https://scryfall.com/sets/pwoe",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apwoe&unique=prints",
+    "released_at": "2023-09-08",
+    "set_type": "promo",
+    "card_count": 160,
+    "parent_set_code": "woe",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/woe.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "273c0661-0af3-4b64-880f-e287799325e9",
+    "code": "twoe",
+    "mtgo_code": "twoe",
+    "arena_code": "twoe",
+    "name": "Wilds of Eldraine Tokens",
+    "uri": "https://api.scryfall.com/sets/273c0661-0af3-4b64-880f-e287799325e9",
+    "scryfall_uri": "https://scryfall.com/sets/twoe",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atwoe&unique=prints",
+    "released_at": "2023-09-08",
+    "set_type": "token",
+    "card_count": 18,
+    "parent_set_code": "woe",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/woe.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "4cd014a3-abf0-4192-9d55-d96d9c5c7eca",
+    "code": "wwoe",
+    "name": "Wilds of Eldraine Japanese Promo Tokens",
+    "uri": "https://api.scryfall.com/sets/4cd014a3-abf0-4192-9d55-d96d9c5c7eca",
+    "scryfall_uri": "https://scryfall.com/sets/wwoe",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Awwoe&unique=prints",
+    "released_at": "2023-09-08",
+    "set_type": "token",
+    "card_count": 6,
+    "parent_set_code": "woe",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "d1eba841-452b-4f81-88c9-b32973ac8176",
+    "code": "wot",
+    "mtgo_code": "wot",
+    "arena_code": "wot",
+    "tcgplayer_id": 23273,
+    "name": "Wilds of Eldraine: Enchanting Tales",
+    "uri": "https://api.scryfall.com/sets/d1eba841-452b-4f81-88c9-b32973ac8176",
+    "scryfall_uri": "https://scryfall.com/sets/wot",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Awot&unique=prints",
+    "released_at": "2023-09-08",
+    "set_type": "masterpiece",
+    "card_count": 103,
+    "parent_set_code": "woe",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/wot.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "1e769157-d90e-4b4f-bd6e-67162a3285ad",
+    "code": "twoc",
+    "name": "Wilds of Eldraine Commander Tokens",
+    "uri": "https://api.scryfall.com/sets/1e769157-d90e-4b4f-bd6e-67162a3285ad",
+    "scryfall_uri": "https://scryfall.com/sets/twoc",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atwoc&unique=prints",
+    "released_at": "2023-09-08",
+    "set_type": "token",
+    "card_count": 17,
+    "parent_set_code": "woc",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/woc.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "619b10dc-7915-41ef-9590-83770f3bff68",
+    "code": "awoe",
+    "name": "Wilds of Eldraine Art Series",
+    "uri": "https://api.scryfall.com/sets/619b10dc-7915-41ef-9590-83770f3bff68",
+    "scryfall_uri": "https://scryfall.com/sets/awoe",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aawoe&unique=prints",
+    "released_at": "2023-09-08",
+    "set_type": "memorabilia",
+    "card_count": 81,
+    "parent_set_code": "woe",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/woe.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "51c0814a-2db2-4182-9aac-77340e9a540d",
+    "code": "woc",
+    "tcgplayer_id": 23164,
+    "name": "Wilds of Eldraine Commander",
+    "uri": "https://api.scryfall.com/sets/51c0814a-2db2-4182-9aac-77340e9a540d",
+    "scryfall_uri": "https://scryfall.com/sets/woc",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Awoc&unique=prints",
+    "released_at": "2023-09-08",
+    "set_type": "commander",
+    "card_count": 173,
+    "parent_set_code": "woe",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/woc.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "79139661-13ee-43c4-8bad-a8c069f1a1df",
+    "code": "woe",
+    "mtgo_code": "woe",
+    "arena_code": "woe",
+    "tcgplayer_id": 23163,
+    "name": "Wilds of Eldraine",
+    "uri": "https://api.scryfall.com/sets/79139661-13ee-43c4-8bad-a8c069f1a1df",
+    "scryfall_uri": "https://scryfall.com/sets/woe",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Awoe&unique=prints",
+    "released_at": "2023-09-08",
+    "set_type": "expansion",
+    "card_count": 381,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/woe.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "0cd69528-1ce7-46e0-ac5e-fd10f8699d33",
+    "code": "pmda",
+    "name": "Magic × Duel Masters Promos",
+    "uri": "https://api.scryfall.com/sets/0cd69528-1ce7-46e0-ac5e-fd10f8699d33",
+    "scryfall_uri": "https://scryfall.com/sets/pmda",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apmda&unique=prints",
+    "released_at": "2023-09-08",
+    "set_type": "promo",
+    "card_count": 4,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": true,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "fb140855-cf1e-4496-9104-7ab45e2afe36",
+    "code": "p30t",
+    "name": "30th Anniversary Celebration Tokyo",
+    "uri": "https://api.scryfall.com/sets/fb140855-cf1e-4496-9104-7ab45e2afe36",
+    "scryfall_uri": "https://scryfall.com/sets/p30t",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ap30t&unique=prints",
+    "released_at": "2023-09-01",
+    "set_type": "promo",
+    "card_count": 2,
+    "parent_set_code": "30a",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": true,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "bfd52011-8440-4d33-ac40-c9a63da86c90",
+    "code": "pagl",
+    "name": "Angels: They're Just Like Us but Cooler and with Wings",
+    "uri": "https://api.scryfall.com/sets/bfd52011-8440-4d33-ac40-c9a63da86c90",
+    "scryfall_uri": "https://scryfall.com/sets/pagl",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apagl&unique=prints",
+    "released_at": "2023-08-14",
+    "set_type": "commander",
+    "card_count": 59,
+    "parent_set_code": "sld",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/planeswalker.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "2b5268ef-c332-4cfc-bd22-804ef512f625",
+    "code": "acmm",
+    "name": "Commander Masters Art Series",
+    "uri": "https://api.scryfall.com/sets/2b5268ef-c332-4cfc-bd22-804ef512f625",
+    "scryfall_uri": "https://scryfall.com/sets/acmm",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aacmm&unique=prints",
+    "released_at": "2023-08-04",
+    "set_type": "memorabilia",
+    "card_count": 81,
+    "parent_set_code": "cmm",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cmm.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "3fa29655-8840-4a5b-8289-3964109e436b",
+    "code": "tcmm",
+    "name": "Commander Masters Tokens",
+    "uri": "https://api.scryfall.com/sets/3fa29655-8840-4a5b-8289-3964109e436b",
+    "scryfall_uri": "https://scryfall.com/sets/tcmm",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atcmm&unique=prints",
+    "released_at": "2023-08-04",
+    "set_type": "token",
+    "card_count": 81,
+    "parent_set_code": "cmm",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cmm.svg?1696824000"
   },
   {
     "object": "set",
@@ -29,11 +421,43 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Acmm&unique=prints",
     "released_at": "2023-08-04",
     "set_type": "masters",
-    "card_count": 29,
+    "card_count": 1067,
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cmm.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cmm.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "da212dd5-8312-4723-b043-d9e9f2e479f2",
+    "code": "ha7",
+    "name": "Historic Anthology 7",
+    "uri": "https://api.scryfall.com/sets/da212dd5-8312-4723-b043-d9e9f2e479f2",
+    "scryfall_uri": "https://scryfall.com/sets/ha7",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aha7&unique=prints",
+    "released_at": "2023-07-18",
+    "set_type": "box",
+    "card_count": 25,
+    "digital": true,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ha1.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "b94d7cb4-b974-4863-b741-b1619f3fcb73",
+    "code": "ea3",
+    "name": "Explorer Anthology 3",
+    "uri": "https://api.scryfall.com/sets/b94d7cb4-b974-4863-b741-b1619f3fcb73",
+    "scryfall_uri": "https://scryfall.com/sets/ea3",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aea3&unique=prints",
+    "released_at": "2023-07-18",
+    "set_type": "box",
+    "card_count": 25,
+    "digital": true,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtga.svg?1696824000"
   },
   {
     "object": "set",
@@ -45,11 +469,28 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apf23&unique=prints",
     "released_at": "2023-07-01",
     "set_type": "promo",
-    "card_count": 2,
+    "card_count": 4,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "1012754e-18e5-4a76-b9a3-24c55eaab1c5",
+    "code": "pltr",
+    "name": "Tales of Middle-earth Promos",
+    "uri": "https://api.scryfall.com/sets/1012754e-18e5-4a76-b9a3-24c55eaab1c5",
+    "scryfall_uri": "https://scryfall.com/sets/pltr",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apltr&unique=prints",
+    "released_at": "2023-06-23",
+    "set_type": "promo",
+    "card_count": 86,
+    "parent_set_code": "ltr",
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ltr.svg?1696824000"
   },
   {
     "object": "set",
@@ -64,83 +505,14 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Altc&unique=prints",
     "released_at": "2023-06-23",
     "set_type": "commander",
-    "card_count": 410,
+    "card_count": 562,
     "parent_set_code": "ltr",
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ltc.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "f6267b1d-21e9-4a7f-a5b3-7c2af4fc958b",
-    "code": "tltr",
-    "name": "Tales of Middle-earth Tokens",
-    "uri": "https://api.scryfall.com/sets/f6267b1d-21e9-4a7f-a5b3-7c2af4fc958b",
-    "scryfall_uri": "https://scryfall.com/sets/tltr",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atltr&unique=prints",
-    "released_at": "2023-06-23",
-    "set_type": "token",
-    "card_count": 13,
-    "parent_set_code": "ltr",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ltr.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "af23b3cb-d42f-426b-90f0-8a07fcb302b8",
-    "code": "altr",
-    "name": "Tales of Middle-earth Art Series",
-    "uri": "https://api.scryfall.com/sets/af23b3cb-d42f-426b-90f0-8a07fcb302b8",
-    "scryfall_uri": "https://scryfall.com/sets/altr",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aaltr&unique=prints",
-    "released_at": "2023-06-23",
-    "set_type": "memorabilia",
-    "card_count": 81,
-    "parent_set_code": "ltr",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ltr.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "5228e74d-3e0f-47e7-b674-3af565ce04ec",
-    "code": "fltr",
-    "tcgplayer_id": 23019,
-    "name": "Tales of Middle-earth Front Cards",
-    "uri": "https://api.scryfall.com/sets/5228e74d-3e0f-47e7-b674-3af565ce04ec",
-    "scryfall_uri": "https://scryfall.com/sets/fltr",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Afltr&unique=prints",
-    "released_at": "2023-06-23",
-    "set_type": "memorabilia",
-    "card_count": 5,
-    "parent_set_code": "ltr",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ltr.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "08078706-ac5d-439b-8f01-894d38751367",
-    "code": "ltr",
-    "mtgo_code": "ltr",
-    "arena_code": "ltr",
-    "tcgplayer_id": 23019,
-    "name": "The Lord of the Rings: Tales of Middle-earth",
-    "uri": "https://api.scryfall.com/sets/08078706-ac5d-439b-8f01-894d38751367",
-    "scryfall_uri": "https://scryfall.com/sets/ltr",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Altr&unique=prints",
-    "released_at": "2023-06-23",
-    "set_type": "draft_innovation",
-    "card_count": 462,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ltr.svg?1687147200"
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ltc.svg?1696824000"
   },
   {
     "object": "set",
@@ -157,7 +529,77 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ltc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ltc.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "5228e74d-3e0f-47e7-b674-3af565ce04ec",
+    "code": "fltr",
+    "name": "Tales of Middle-earth Front Cards",
+    "uri": "https://api.scryfall.com/sets/5228e74d-3e0f-47e7-b674-3af565ce04ec",
+    "scryfall_uri": "https://scryfall.com/sets/fltr",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Afltr&unique=prints",
+    "released_at": "2023-06-23",
+    "set_type": "memorabilia",
+    "card_count": 5,
+    "parent_set_code": "ltr",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ltr.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "f6267b1d-21e9-4a7f-a5b3-7c2af4fc958b",
+    "code": "tltr",
+    "name": "Tales of Middle-earth Tokens",
+    "uri": "https://api.scryfall.com/sets/f6267b1d-21e9-4a7f-a5b3-7c2af4fc958b",
+    "scryfall_uri": "https://scryfall.com/sets/tltr",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atltr&unique=prints",
+    "released_at": "2023-06-23",
+    "set_type": "token",
+    "card_count": 13,
+    "parent_set_code": "ltr",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ltr.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "08078706-ac5d-439b-8f01-894d38751367",
+    "code": "ltr",
+    "mtgo_code": "ltr",
+    "arena_code": "ltr",
+    "tcgplayer_id": 23019,
+    "name": "The Lord of the Rings: Tales of Middle-earth",
+    "uri": "https://api.scryfall.com/sets/08078706-ac5d-439b-8f01-894d38751367",
+    "scryfall_uri": "https://scryfall.com/sets/ltr",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Altr&unique=prints",
+    "released_at": "2023-06-23",
+    "set_type": "draft_innovation",
+    "card_count": 834,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ltr.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "af23b3cb-d42f-426b-90f0-8a07fcb302b8",
+    "code": "altr",
+    "name": "Tales of Middle-earth Art Series",
+    "uri": "https://api.scryfall.com/sets/af23b3cb-d42f-426b-90f0-8a07fcb302b8",
+    "scryfall_uri": "https://scryfall.com/sets/altr",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aaltr&unique=prints",
+    "released_at": "2023-06-23",
+    "set_type": "memorabilia",
+    "card_count": 81,
+    "parent_set_code": "ltr",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ltr.svg?1696824000"
   },
   {
     "object": "set",
@@ -176,7 +618,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mat.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mat.svg?1696824000"
   },
   {
     "object": "set",
@@ -193,7 +635,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/planeswalker.svg?1696824000"
   },
   {
     "object": "set",
@@ -210,7 +652,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mom.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mom.svg?1696824000"
   },
   {
     "object": "set",
@@ -227,24 +669,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/moc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/moc.svg?1696824000"
   },
   {
     "object": "set",
-    "id": "69cb6b1c-61db-4d66-beee-b849b34a519c",
-    "code": "smom",
-    "name": "March of the Machine Substitute Cards",
-    "uri": "https://api.scryfall.com/sets/69cb6b1c-61db-4d66-beee-b849b34a519c",
-    "scryfall_uri": "https://scryfall.com/sets/smom",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Asmom&unique=prints",
+    "id": "4af147e4-cf99-4f32-a77e-d116412f469a",
+    "code": "pmom",
+    "name": "March of the Machine Promos",
+    "uri": "https://api.scryfall.com/sets/4af147e4-cf99-4f32-a77e-d116412f469a",
+    "scryfall_uri": "https://scryfall.com/sets/pmom",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apmom&unique=prints",
     "released_at": "2023-04-21",
-    "set_type": "token",
-    "card_count": 1,
+    "set_type": "promo",
+    "card_count": 134,
     "parent_set_code": "mom",
     "digital": false,
-    "nonfoil_only": true,
+    "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mom.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mom.svg?1696824000"
   },
   {
     "object": "set",
@@ -262,7 +704,26 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/moc.svg?1687147200"
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/moc.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "fd03645a-f585-43e2-94d3-f8932b7e9284",
+    "code": "tmul",
+    "name": "Multiverse Legends Tokens",
+    "uri": "https://api.scryfall.com/sets/fd03645a-f585-43e2-94d3-f8932b7e9284",
+    "scryfall_uri": "https://scryfall.com/sets/tmul",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atmul&unique=prints",
+    "released_at": "2023-04-21",
+    "set_type": "token",
+    "card_count": 2,
+    "parent_set_code": "mul",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mul.svg?1696824000"
   },
   {
     "object": "set",
@@ -281,58 +742,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mom.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "fd03645a-f585-43e2-94d3-f8932b7e9284",
-    "code": "tmul",
-    "name": "Multiverse Legends Tokens",
-    "uri": "https://api.scryfall.com/sets/fd03645a-f585-43e2-94d3-f8932b7e9284",
-    "scryfall_uri": "https://scryfall.com/sets/tmul",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atmul&unique=prints",
-    "released_at": "2023-04-21",
-    "set_type": "token",
-    "card_count": 2,
-    "parent_set_code": "mul",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "f835c2e6-0f96-4a98-9e6c-5d2836ce1c54",
-    "code": "amom",
-    "name": "March of the Machine Art Series",
-    "uri": "https://api.scryfall.com/sets/f835c2e6-0f96-4a98-9e6c-5d2836ce1c54",
-    "scryfall_uri": "https://scryfall.com/sets/amom",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aamom&unique=prints",
-    "released_at": "2023-04-21",
-    "set_type": "memorabilia",
-    "card_count": 81,
-    "parent_set_code": "mom",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mom.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "2c73a39a-a359-41e7-879a-3857234f2a4b",
-    "code": "tmom",
-    "name": "March of the Machine Tokens",
-    "uri": "https://api.scryfall.com/sets/2c73a39a-a359-41e7-879a-3857234f2a4b",
-    "scryfall_uri": "https://scryfall.com/sets/tmom",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atmom&unique=prints",
-    "released_at": "2023-04-21",
-    "set_type": "token",
-    "card_count": 23,
-    "parent_set_code": "mom",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mom.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mom.svg?1696824000"
   },
   {
     "object": "set",
@@ -349,7 +759,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mom.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mom.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "f835c2e6-0f96-4a98-9e6c-5d2836ce1c54",
+    "code": "amom",
+    "name": "March of the Machine Art Series",
+    "uri": "https://api.scryfall.com/sets/f835c2e6-0f96-4a98-9e6c-5d2836ce1c54",
+    "scryfall_uri": "https://scryfall.com/sets/amom",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aamom&unique=prints",
+    "released_at": "2023-04-21",
+    "set_type": "memorabilia",
+    "card_count": 81,
+    "parent_set_code": "mom",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mom.svg?1696824000"
   },
   {
     "object": "set",
@@ -367,24 +794,41 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mul.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mul.svg?1696824000"
   },
   {
     "object": "set",
-    "id": "4af147e4-cf99-4f32-a77e-d116412f469a",
-    "code": "pmom",
-    "name": "March of the Machine Promos",
-    "uri": "https://api.scryfall.com/sets/4af147e4-cf99-4f32-a77e-d116412f469a",
-    "scryfall_uri": "https://scryfall.com/sets/pmom",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apmom&unique=prints",
+    "id": "2c73a39a-a359-41e7-879a-3857234f2a4b",
+    "code": "tmom",
+    "name": "March of the Machine Tokens",
+    "uri": "https://api.scryfall.com/sets/2c73a39a-a359-41e7-879a-3857234f2a4b",
+    "scryfall_uri": "https://scryfall.com/sets/tmom",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atmom&unique=prints",
     "released_at": "2023-04-21",
-    "set_type": "promo",
-    "card_count": 134,
+    "set_type": "token",
+    "card_count": 23,
     "parent_set_code": "mom",
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mom.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mom.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "69cb6b1c-61db-4d66-beee-b849b34a519c",
+    "code": "smom",
+    "name": "March of the Machine Substitute Cards",
+    "uri": "https://api.scryfall.com/sets/69cb6b1c-61db-4d66-beee-b849b34a519c",
+    "scryfall_uri": "https://scryfall.com/sets/smom",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Asmom&unique=prints",
+    "released_at": "2023-04-21",
+    "set_type": "token",
+    "card_count": 1,
+    "parent_set_code": "mom",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mom.svg?1696824000"
   },
   {
     "object": "set",
@@ -400,7 +844,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/sis.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/sis.svg?1696824000"
   },
   {
     "object": "set",
@@ -416,7 +860,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/sir.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/sir.svg?1696824000"
   },
   {
     "object": "set",
@@ -435,7 +879,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "y23",
     "block": "Alchemy 2023",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/y23.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/y23.svg?1696824000"
   },
   {
     "object": "set",
@@ -448,12 +892,12 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aslp&unique=prints",
     "released_at": "2023-02-17",
     "set_type": "promo",
-    "card_count": 10,
+    "card_count": 11,
     "parent_set_code": "sld",
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -469,7 +913,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -486,24 +930,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/one.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "04ed1b78-cc80-4888-9536-c69facdc19e3",
-    "code": "tonc",
-    "name": "Phyrexia: All Will Be One Commander Tokens",
-    "uri": "https://api.scryfall.com/sets/04ed1b78-cc80-4888-9536-c69facdc19e3",
-    "scryfall_uri": "https://scryfall.com/sets/tonc",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atonc&unique=prints",
-    "released_at": "2023-02-03",
-    "set_type": "token",
-    "card_count": 23,
-    "parent_set_code": "onc",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/onc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/one.svg?1696824000"
   },
   {
     "object": "set",
@@ -520,58 +947,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/one.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/one.svg?1696824000"
   },
   {
     "object": "set",
-    "id": "7024a171-1b99-49dc-8777-0db9c552eb06",
-    "code": "aone",
-    "name": "Phyrexia: All Will Be One Art Series",
-    "uri": "https://api.scryfall.com/sets/7024a171-1b99-49dc-8777-0db9c552eb06",
-    "scryfall_uri": "https://scryfall.com/sets/aone",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aaone&unique=prints",
+    "id": "04ed1b78-cc80-4888-9536-c69facdc19e3",
+    "code": "tonc",
+    "name": "Phyrexia: All Will Be One Commander Tokens",
+    "uri": "https://api.scryfall.com/sets/04ed1b78-cc80-4888-9536-c69facdc19e3",
+    "scryfall_uri": "https://scryfall.com/sets/tonc",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atonc&unique=prints",
     "released_at": "2023-02-03",
-    "set_type": "memorabilia",
-    "card_count": 81,
-    "parent_set_code": "one",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/one.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "afd227e8-5f97-4227-bc81-532ca2a2201e",
-    "code": "fone",
-    "name": "Phyrexia: All Will Be One Jumpstart Front Cards",
-    "uri": "https://api.scryfall.com/sets/afd227e8-5f97-4227-bc81-532ca2a2201e",
-    "scryfall_uri": "https://scryfall.com/sets/fone",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Afone&unique=prints",
-    "released_at": "2023-02-03",
-    "set_type": "memorabilia",
-    "card_count": 5,
-    "parent_set_code": "one",
+    "set_type": "token",
+    "card_count": 23,
+    "parent_set_code": "onc",
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/one.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "373c3b45-3ba4-4c8a-a84e-575ece096062",
-    "code": "mone",
-    "name": "Phyrexia: All Will Be One Minigames",
-    "uri": "https://api.scryfall.com/sets/373c3b45-3ba4-4c8a-a84e-575ece096062",
-    "scryfall_uri": "https://scryfall.com/sets/mone",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Amone&unique=prints",
-    "released_at": "2023-02-03",
-    "set_type": "minigame",
-    "card_count": 5,
-    "parent_set_code": "one",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/one.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/onc.svg?1696824000"
   },
   {
     "object": "set",
@@ -591,7 +984,41 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/one.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/one.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "afd227e8-5f97-4227-bc81-532ca2a2201e",
+    "code": "fone",
+    "name": "Phyrexia: All Will Be One Jumpstart Front Cards",
+    "uri": "https://api.scryfall.com/sets/afd227e8-5f97-4227-bc81-532ca2a2201e",
+    "scryfall_uri": "https://scryfall.com/sets/fone",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Afone&unique=prints",
+    "released_at": "2023-02-03",
+    "set_type": "memorabilia",
+    "card_count": 5,
+    "parent_set_code": "one",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/one.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "373c3b45-3ba4-4c8a-a84e-575ece096062",
+    "code": "mone",
+    "name": "Phyrexia: All Will Be One Minigames",
+    "uri": "https://api.scryfall.com/sets/373c3b45-3ba4-4c8a-a84e-575ece096062",
+    "scryfall_uri": "https://scryfall.com/sets/mone",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Amone&unique=prints",
+    "released_at": "2023-02-03",
+    "set_type": "minigame",
+    "card_count": 5,
+    "parent_set_code": "one",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/one.svg?1696824000"
   },
   {
     "object": "set",
@@ -612,7 +1039,26 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/onc.svg?1687147200"
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/onc.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "7024a171-1b99-49dc-8777-0db9c552eb06",
+    "code": "aone",
+    "name": "Phyrexia: All Will Be One Art Series",
+    "uri": "https://api.scryfall.com/sets/7024a171-1b99-49dc-8777-0db9c552eb06",
+    "scryfall_uri": "https://scryfall.com/sets/aone",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aaone&unique=prints",
+    "released_at": "2023-02-03",
+    "set_type": "memorabilia",
+    "card_count": 81,
+    "parent_set_code": "one",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/one.svg?1696824000"
   },
   {
     "object": "set",
@@ -629,7 +1075,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/one.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/one.svg?1696824000"
   },
   {
     "object": "set",
@@ -646,13 +1092,12 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmr.svg?1696824000"
   },
   {
     "object": "set",
     "id": "d583889f-a8c3-48ce-82c1-361c06de93dc",
     "code": "tdmr",
-    "tcgplayer_id": 17670,
     "name": "Dominaria Remastered Tokens",
     "uri": "https://api.scryfall.com/sets/d583889f-a8c3-48ce-82c1-361c06de93dc",
     "scryfall_uri": "https://scryfall.com/sets/tdmr",
@@ -664,7 +1109,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmr.svg?1696824000"
   },
   {
     "object": "set",
@@ -680,23 +1125,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "3963badb-c147-489a-95a7-6520a2960bf6",
-    "code": "pw23",
-    "name": "Wizards Play Network 2023",
-    "uri": "https://api.scryfall.com/sets/3963badb-c147-489a-95a7-6520a2960bf6",
-    "scryfall_uri": "https://scryfall.com/sets/pw23",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apw23&unique=prints",
-    "released_at": "2023-01-01",
-    "set_type": "promo",
-    "card_count": 3,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -708,13 +1137,29 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ap23&unique=prints",
     "released_at": "2023-01-01",
     "set_type": "promo",
-    "card_count": 5,
+    "card_count": 10,
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/archie.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/archie.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "3963badb-c147-489a-95a7-6520a2960bf6",
+    "code": "pw23",
+    "name": "Wizards Play Network 2023",
+    "uri": "https://api.scryfall.com/sets/3963badb-c147-489a-95a7-6520a2960bf6",
+    "scryfall_uri": "https://scryfall.com/sets/pw23",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apw23&unique=prints",
+    "released_at": "2023-01-01",
+    "set_type": "promo",
+    "card_count": 9,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -733,7 +1178,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "y23",
     "block": "Alchemy 2023",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/y23.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/y23.svg?1696824000"
   },
   {
     "object": "set",
@@ -749,7 +1194,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtga.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtga.svg?1696824000"
   },
   {
     "object": "set",
@@ -766,7 +1211,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/scd.svg?1696824000"
   },
   {
     "object": "set",
@@ -783,7 +1228,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/scd.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/scd.svg?1696824000"
   },
   {
     "object": "set",
@@ -800,7 +1245,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/j22.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/j22.svg?1696824000"
   },
   {
     "object": "set",
@@ -817,24 +1262,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/j22.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "3f5e3680-ab46-4517-9444-38d367b01f92",
-    "code": "t30a",
-    "name": "30th Anniversary Tokens",
-    "uri": "https://api.scryfall.com/sets/3f5e3680-ab46-4517-9444-38d367b01f92",
-    "scryfall_uri": "https://scryfall.com/sets/t30a",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3At30a&unique=prints",
-    "released_at": "2022-11-28",
-    "set_type": "token",
-    "card_count": 16,
-    "parent_set_code": "30a",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/30a.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/j22.svg?1696824000"
   },
   {
     "object": "set",
@@ -851,7 +1279,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/30a.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/30a.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "3f5e3680-ab46-4517-9444-38d367b01f92",
+    "code": "t30a",
+    "name": "30th Anniversary Tokens",
+    "uri": "https://api.scryfall.com/sets/3f5e3680-ab46-4517-9444-38d367b01f92",
+    "scryfall_uri": "https://scryfall.com/sets/t30a",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3At30a&unique=prints",
+    "released_at": "2022-11-28",
+    "set_type": "token",
+    "card_count": 16,
+    "parent_set_code": "30a",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/30a.svg?1696824000"
   },
   {
     "object": "set",
@@ -867,7 +1312,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -885,7 +1330,9 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/brc.svg?1687147200"
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/brc.svg?1696824000"
   },
   {
     "object": "set",
@@ -903,7 +1350,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/brr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/brr.svg?1696824000"
   },
   {
     "object": "set",
@@ -920,7 +1367,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bro.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bro.svg?1696824000"
   },
   {
     "object": "set",
@@ -937,7 +1384,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bot.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bot.svg?1696824000"
   },
   {
     "object": "set",
@@ -955,41 +1402,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bot.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bot.svg?1696824000"
   },
   {
     "object": "set",
-    "id": "440c0aa1-45ce-4323-a74b-b9d3d9f0513c",
-    "code": "sbro",
-    "name": "The Brothers' War Substitute Cards",
-    "uri": "https://api.scryfall.com/sets/440c0aa1-45ce-4323-a74b-b9d3d9f0513c",
-    "scryfall_uri": "https://scryfall.com/sets/sbro",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Asbro&unique=prints",
+    "id": "8650bb2b-88b4-4769-bb10-1c6107b37bdd",
+    "code": "ptbro",
+    "name": "The Brothers' War Southeast Asia Tokens",
+    "uri": "https://api.scryfall.com/sets/8650bb2b-88b4-4769-bb10-1c6107b37bdd",
+    "scryfall_uri": "https://scryfall.com/sets/ptbro",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aptbro&unique=prints",
     "released_at": "2022-11-18",
     "set_type": "token",
-    "card_count": 1,
+    "card_count": 3,
     "parent_set_code": "bro",
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bro.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "32685506-c036-4773-9ccd-2ef50f28b2a1",
-    "code": "tbrc",
-    "name": "The Brothers' War Commander Tokens",
-    "uri": "https://api.scryfall.com/sets/32685506-c036-4773-9ccd-2ef50f28b2a1",
-    "scryfall_uri": "https://scryfall.com/sets/tbrc",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atbrc&unique=prints",
-    "released_at": "2022-11-18",
-    "set_type": "token",
-    "card_count": 14,
-    "parent_set_code": "brc",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/brc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bro.svg?1696824000"
   },
   {
     "object": "set",
@@ -1005,7 +1435,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bro.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bro.svg?1696824000"
   },
   {
     "object": "set",
@@ -1022,7 +1452,41 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bro.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bro.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "32685506-c036-4773-9ccd-2ef50f28b2a1",
+    "code": "tbrc",
+    "name": "The Brothers' War Commander Tokens",
+    "uri": "https://api.scryfall.com/sets/32685506-c036-4773-9ccd-2ef50f28b2a1",
+    "scryfall_uri": "https://scryfall.com/sets/tbrc",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atbrc&unique=prints",
+    "released_at": "2022-11-18",
+    "set_type": "token",
+    "card_count": 14,
+    "parent_set_code": "brc",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/brc.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "440c0aa1-45ce-4323-a74b-b9d3d9f0513c",
+    "code": "sbro",
+    "name": "The Brothers' War Substitute Cards",
+    "uri": "https://api.scryfall.com/sets/440c0aa1-45ce-4323-a74b-b9d3d9f0513c",
+    "scryfall_uri": "https://scryfall.com/sets/sbro",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Asbro&unique=prints",
+    "released_at": "2022-11-18",
+    "set_type": "token",
+    "card_count": 1,
+    "parent_set_code": "bro",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bro.svg?1696824000"
   },
   {
     "object": "set",
@@ -1041,7 +1505,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bro.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bro.svg?1696824000"
   },
   {
     "object": "set",
@@ -1058,7 +1522,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bro.svg?1696824000"
   },
   {
     "object": "set",
@@ -1075,23 +1539,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bro.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "c11ce77d-f0d2-4bcf-b6c3-304c9b05bf27",
-    "code": "q08",
-    "name": "Pioneer Challenger Decks 2022",
-    "uri": "https://api.scryfall.com/sets/c11ce77d-f0d2-4bcf-b6c3-304c9b05bf27",
-    "scryfall_uri": "https://scryfall.com/sets/q08",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aq08&unique=prints",
-    "released_at": "2022-11-04",
-    "set_type": "box",
-    "card_count": 0,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bro.svg?1696824000"
   },
   {
     "object": "set",
@@ -1109,7 +1557,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -1126,7 +1574,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/gn3.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/gn3.svg?1696824000"
   },
   {
     "object": "set",
@@ -1143,7 +1591,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/gn3.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/gn3.svg?1696824000"
   },
   {
     "object": "set",
@@ -1160,7 +1608,42 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/planeswalker.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/planeswalker.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "565e3302-2fed-487e-a0f7-7f8037d25030",
+    "code": "sunf",
+    "name": "Unfinity Sticker Sheets",
+    "uri": "https://api.scryfall.com/sets/565e3302-2fed-487e-a0f7-7f8037d25030",
+    "scryfall_uri": "https://scryfall.com/sets/sunf",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Asunf&unique=prints",
+    "released_at": "2022-10-07",
+    "set_type": "funny",
+    "card_count": 48,
+    "parent_set_code": "unf",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/unf.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "b314f553-8f07-4ba9-96c8-16be7784eff3",
+    "code": "unf",
+    "tcgplayer_id": 2958,
+    "name": "Unfinity",
+    "uri": "https://api.scryfall.com/sets/b314f553-8f07-4ba9-96c8-16be7784eff3",
+    "scryfall_uri": "https://scryfall.com/sets/unf",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aunf&unique=prints",
+    "released_at": "2022-10-07",
+    "set_type": "funny",
+    "card_count": 639,
+    "printed_size": 244,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/unf.svg?1696824000"
   },
   {
     "object": "set",
@@ -1178,60 +1661,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/unf.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "565e3302-2fed-487e-a0f7-7f8037d25030",
-    "code": "sunf",
-    "name": "Unfinity Sticker Sheets",
-    "uri": "https://api.scryfall.com/sets/565e3302-2fed-487e-a0f7-7f8037d25030",
-    "scryfall_uri": "https://scryfall.com/sets/sunf",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Asunf&unique=prints",
-    "released_at": "2022-10-07",
-    "set_type": "funny",
-    "card_count": 48,
-    "parent_set_code": "unf",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/unf.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "b314f553-8f07-4ba9-96c8-16be7784eff3",
-    "code": "unf",
-    "tcgplayer_id": 2958,
-    "name": "Unfinity",
-    "uri": "https://api.scryfall.com/sets/b314f553-8f07-4ba9-96c8-16be7784eff3",
-    "scryfall_uri": "https://scryfall.com/sets/unf",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aunf&unique=prints",
-    "released_at": "2022-10-07",
-    "set_type": "funny",
-    "card_count": 638,
-    "printed_size": 244,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/unf.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "671f2e10-501c-42ef-a1e3-9aa63ec3ec6c",
-    "code": "t40k",
-    "name": "Warhammer 40,000 Tokens",
-    "uri": "https://api.scryfall.com/sets/671f2e10-501c-42ef-a1e3-9aa63ec3ec6c",
-    "scryfall_uri": "https://scryfall.com/sets/t40k",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3At40k&unique=prints",
-    "released_at": "2022-10-07",
-    "set_type": "token",
-    "card_count": 31,
-    "printed_size": 23,
-    "parent_set_code": "40k",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/40k.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/unf.svg?1696824000"
   },
   {
     "object": "set",
@@ -1249,7 +1679,27 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/40k.svg?1687147200"
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/40k.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "671f2e10-501c-42ef-a1e3-9aa63ec3ec6c",
+    "code": "t40k",
+    "name": "Warhammer 40,000 Tokens",
+    "uri": "https://api.scryfall.com/sets/671f2e10-501c-42ef-a1e3-9aa63ec3ec6c",
+    "scryfall_uri": "https://scryfall.com/sets/t40k",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3At40k&unique=prints",
+    "released_at": "2022-10-07",
+    "set_type": "token",
+    "card_count": 31,
+    "printed_size": 23,
+    "parent_set_code": "40k",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/40k.svg?1696824000"
   },
   {
     "object": "set",
@@ -1268,7 +1718,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "y23",
     "block": "Alchemy 2023",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/y23.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/y23.svg?1696824000"
   },
   {
     "object": "set",
@@ -1284,7 +1734,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -1301,7 +1751,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -1318,24 +1768,41 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmu.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmu.svg?1696824000"
   },
   {
     "object": "set",
-    "id": "1e96e903-601f-4286-b61e-8da021cbceff",
-    "code": "tdmu",
-    "name": "Dominaria United Tokens",
-    "uri": "https://api.scryfall.com/sets/1e96e903-601f-4286-b61e-8da021cbceff",
-    "scryfall_uri": "https://scryfall.com/sets/tdmu",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atdmu&unique=prints",
+    "id": "16641515-88d3-4fc8-9b49-86e2991f1713",
+    "code": "ptdmu",
+    "name": "Dominaria United Southeast Asia Tokens",
+    "uri": "https://api.scryfall.com/sets/16641515-88d3-4fc8-9b49-86e2991f1713",
+    "scryfall_uri": "https://scryfall.com/sets/ptdmu",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aptdmu&unique=prints",
     "released_at": "2022-09-09",
     "set_type": "token",
-    "card_count": 26,
+    "card_count": 3,
+    "parent_set_code": "dmu",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmu.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "3f0fefdd-cd39-4fee-beda-aeb21b8c1787",
+    "code": "fdmu",
+    "name": "Dominaria United Jumpstart Front Cards",
+    "uri": "https://api.scryfall.com/sets/3f0fefdd-cd39-4fee-beda-aeb21b8c1787",
+    "scryfall_uri": "https://scryfall.com/sets/fdmu",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Afdmu&unique=prints",
+    "released_at": "2022-09-09",
+    "set_type": "memorabilia",
+    "card_count": 10,
     "parent_set_code": "dmu",
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmu.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmu.svg?1696824000"
   },
   {
     "object": "set",
@@ -1352,7 +1819,78 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmu.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmu.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "78076b27-f888-4723-b27c-44074accd261",
+    "code": "dmc",
+    "tcgplayer_id": 3140,
+    "name": "Dominaria United Commander",
+    "uri": "https://api.scryfall.com/sets/78076b27-f888-4723-b27c-44074accd261",
+    "scryfall_uri": "https://scryfall.com/sets/dmc",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Admc&unique=prints",
+    "released_at": "2022-09-09",
+    "set_type": "commander",
+    "card_count": 240,
+    "parent_set_code": "dmu",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmc.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "86ed728a-cc0e-4d10-9d12-9f6be42c6ec7",
+    "code": "mdmu",
+    "name": "Dominaria United Minigames",
+    "uri": "https://api.scryfall.com/sets/86ed728a-cc0e-4d10-9d12-9f6be42c6ec7",
+    "scryfall_uri": "https://scryfall.com/sets/mdmu",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Amdmu&unique=prints",
+    "released_at": "2022-09-09",
+    "set_type": "minigame",
+    "card_count": 3,
+    "parent_set_code": "dmu",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmu.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "1e96e903-601f-4286-b61e-8da021cbceff",
+    "code": "tdmu",
+    "name": "Dominaria United Tokens",
+    "uri": "https://api.scryfall.com/sets/1e96e903-601f-4286-b61e-8da021cbceff",
+    "scryfall_uri": "https://scryfall.com/sets/tdmu",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atdmu&unique=prints",
+    "released_at": "2022-09-09",
+    "set_type": "token",
+    "card_count": 26,
+    "parent_set_code": "dmu",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmu.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "03a103bc-60be-463f-a2ab-3d2ad5363354",
+    "code": "tdmc",
+    "name": "Dominaria United Commander Tokens",
+    "uri": "https://api.scryfall.com/sets/03a103bc-60be-463f-a2ab-3d2ad5363354",
+    "scryfall_uri": "https://scryfall.com/sets/tdmc",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atdmc&unique=prints",
+    "released_at": "2022-09-09",
+    "set_type": "token",
+    "card_count": 12,
+    "parent_set_code": "dmc",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmc.svg?1696824000"
   },
   {
     "object": "set",
@@ -1372,7 +1910,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmu.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmu.svg?1696824000"
   },
   {
     "object": "set",
@@ -1389,76 +1927,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
-    "id": "3f0fefdd-cd39-4fee-beda-aeb21b8c1787",
-    "code": "fdmu",
-    "name": "Dominaria United Jumpstart Front Cards",
-    "uri": "https://api.scryfall.com/sets/3f0fefdd-cd39-4fee-beda-aeb21b8c1787",
-    "scryfall_uri": "https://scryfall.com/sets/fdmu",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Afdmu&unique=prints",
-    "released_at": "2022-09-09",
-    "set_type": "memorabilia",
-    "card_count": 10,
-    "parent_set_code": "dmu",
+    "id": "a3ab636c-20a0-4d79-b55a-e097c2a03cd5",
+    "code": "p30m",
+    "name": "30th Anniversary Misc Promos",
+    "uri": "https://api.scryfall.com/sets/a3ab636c-20a0-4d79-b55a-e097c2a03cd5",
+    "scryfall_uri": "https://scryfall.com/sets/p30m",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ap30m&unique=prints",
+    "released_at": "2022-09-02",
+    "set_type": "promo",
+    "card_count": 5,
+    "parent_set_code": "30a",
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmu.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "86ed728a-cc0e-4d10-9d12-9f6be42c6ec7",
-    "code": "mdmu",
-    "name": "Dominaria United Minigames",
-    "uri": "https://api.scryfall.com/sets/86ed728a-cc0e-4d10-9d12-9f6be42c6ec7",
-    "scryfall_uri": "https://scryfall.com/sets/mdmu",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Amdmu&unique=prints",
-    "released_at": "2022-09-09",
-    "set_type": "minigame",
-    "card_count": 3,
-    "parent_set_code": "dmu",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "78076b27-f888-4723-b27c-44074accd261",
-    "code": "dmc",
-    "tcgplayer_id": 3140,
-    "name": "Dominaria United Commander",
-    "uri": "https://api.scryfall.com/sets/78076b27-f888-4723-b27c-44074accd261",
-    "scryfall_uri": "https://scryfall.com/sets/dmc",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Admc&unique=prints",
-    "released_at": "2022-09-09",
-    "set_type": "commander",
-    "card_count": 240,
-    "parent_set_code": "dmu",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmc.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "03a103bc-60be-463f-a2ab-3d2ad5363354",
-    "code": "tdmc",
-    "name": "Dominaria United Commander Tokens",
-    "uri": "https://api.scryfall.com/sets/03a103bc-60be-463f-a2ab-3d2ad5363354",
-    "scryfall_uri": "https://scryfall.com/sets/tdmc",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atdmc&unique=prints",
-    "released_at": "2022-09-09",
-    "set_type": "token",
-    "card_count": 12,
-    "parent_set_code": "dmc",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dmc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -1471,12 +1957,28 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ap30a&unique=prints",
     "released_at": "2022-09-02",
     "set_type": "promo",
-    "card_count": 34,
+    "card_count": 30,
     "parent_set_code": "30a",
     "digital": false,
     "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "foil_only": true,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "3e69d407-6a48-4073-97b3-9b7720aed6b6",
+    "code": "psvc",
+    "name": "Summer Vacation Promos 2022",
+    "uri": "https://api.scryfall.com/sets/3e69d407-6a48-4073-97b3-9b7720aed6b6",
+    "scryfall_uri": "https://scryfall.com/sets/psvc",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apsvc&unique=prints",
+    "released_at": "2022-08-01",
+    "set_type": "promo",
+    "card_count": 3,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": true,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -1494,23 +1996,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "htr",
     "block": "Heroes of the Realm",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "3e69d407-6a48-4073-97b3-9b7720aed6b6",
-    "code": "psvc",
-    "name": "Summer Vacation Promos 2022",
-    "uri": "https://api.scryfall.com/sets/3e69d407-6a48-4073-97b3-9b7720aed6b6",
-    "scryfall_uri": "https://scryfall.com/sets/psvc",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apsvc&unique=prints",
-    "released_at": "2022-08-01",
-    "set_type": "promo",
-    "card_count": 3,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -1526,7 +2012,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ha1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ha1.svg?1696824000"
   },
   {
     "object": "set",
@@ -1542,7 +2028,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtga.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtga.svg?1696824000"
   },
   {
     "object": "set",
@@ -1554,29 +2040,11 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Asch&unique=prints",
     "released_at": "2022-07-09",
     "set_type": "promo",
-    "card_count": 14,
+    "card_count": 17,
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "5a645837-b050-449f-ac90-1e7ccbf45031",
-    "code": "2x2",
-    "tcgplayer_id": 3070,
-    "name": "Double Masters 2022",
-    "uri": "https://api.scryfall.com/sets/5a645837-b050-449f-ac90-1e7ccbf45031",
-    "scryfall_uri": "https://scryfall.com/sets/2x2",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3A2x2&unique=prints",
-    "released_at": "2022-07-08",
-    "set_type": "masters",
-    "card_count": 579,
-    "printed_size": 331,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/2x2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -1594,7 +2062,25 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/2x2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/2x2.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "5a645837-b050-449f-ac90-1e7ccbf45031",
+    "code": "2x2",
+    "tcgplayer_id": 3070,
+    "name": "Double Masters 2022",
+    "uri": "https://api.scryfall.com/sets/5a645837-b050-449f-ac90-1e7ccbf45031",
+    "scryfall_uri": "https://scryfall.com/sets/2x2",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3A2x2&unique=prints",
+    "released_at": "2022-07-08",
+    "set_type": "masters",
+    "card_count": 579,
+    "printed_size": 331,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/2x2.svg?1696824000"
   },
   {
     "object": "set",
@@ -1606,13 +2092,13 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ahbg&unique=prints",
     "released_at": "2022-07-07",
     "set_type": "alchemy",
-    "card_count": 438,
+    "card_count": 436,
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
     "block_code": "y22",
     "block": "Alchemy 2022",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/hbg.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/hbg.svg?1696824000"
   },
   {
     "object": "set",
@@ -1628,7 +2114,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -1645,7 +2131,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/clb.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/clb.svg?1696824000"
   },
   {
     "object": "set",
@@ -1662,7 +2148,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/clb.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/clb.svg?1696824000"
   },
   {
     "object": "set",
@@ -1680,25 +2166,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/clb.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "5a1e41c1-05f4-4c73-9bc4-a2d7889ac3bb",
-    "code": "aclb",
-    "name": "Battle for Baldur's Gate Art Series",
-    "uri": "https://api.scryfall.com/sets/5a1e41c1-05f4-4c73-9bc4-a2d7889ac3bb",
-    "scryfall_uri": "https://scryfall.com/sets/aclb",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aaclb&unique=prints",
-    "released_at": "2022-06-10",
-    "set_type": "memorabilia",
-    "card_count": 81,
-    "printed_size": 81,
-    "parent_set_code": "clb",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/clb.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/clb.svg?1696824000"
   },
   {
     "object": "set",
@@ -1716,7 +2184,25 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/clb.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/clb.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "5a1e41c1-05f4-4c73-9bc4-a2d7889ac3bb",
+    "code": "aclb",
+    "name": "Battle for Baldur's Gate Art Series",
+    "uri": "https://api.scryfall.com/sets/5a1e41c1-05f4-4c73-9bc4-a2d7889ac3bb",
+    "scryfall_uri": "https://scryfall.com/sets/aclb",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aaclb&unique=prints",
+    "released_at": "2022-06-10",
+    "set_type": "memorabilia",
+    "card_count": 81,
+    "printed_size": 81,
+    "parent_set_code": "clb",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/clb.svg?1696824000"
   },
   {
     "object": "set",
@@ -1735,7 +2221,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "y22",
     "block": "Alchemy 2022",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/y22.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/y22.svg?1696824000"
   },
   {
     "object": "set",
@@ -1752,7 +2238,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/snc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/snc.svg?1696824000"
   },
   {
     "object": "set",
@@ -1769,7 +2255,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ncc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ncc.svg?1696824000"
   },
   {
     "object": "set",
@@ -1787,7 +2273,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/snc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/snc.svg?1696824000"
   },
   {
     "object": "set",
@@ -1807,7 +2293,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/snc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/snc.svg?1696824000"
   },
   {
     "object": "set",
@@ -1826,7 +2312,9 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ncc.svg?1687147200"
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ncc.svg?1696824000"
   },
   {
     "object": "set",
@@ -1843,7 +2331,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/snc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/snc.svg?1696824000"
   },
   {
     "object": "set",
@@ -1860,7 +2348,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/snc.svg?1696824000"
   },
   {
     "object": "set",
@@ -1877,7 +2365,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/snc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/snc.svg?1696824000"
   },
   {
     "object": "set",
@@ -1894,7 +2382,9 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/planeswalker.svg?1687147200"
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/planeswalker.svg?1696824000"
   },
   {
     "object": "set",
@@ -1912,7 +2402,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ncc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ncc.svg?1696824000"
   },
   {
     "object": "set",
@@ -1928,7 +2418,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -1944,7 +2434,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -1963,7 +2453,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "y22",
     "block": "Alchemy 2022",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/y22.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/y22.svg?1696824000"
   },
   {
     "object": "set",
@@ -1979,7 +2469,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -1992,12 +2482,12 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aslx&unique=prints",
     "released_at": "2022-03-03",
     "set_type": "masters",
-    "card_count": 17,
+    "card_count": 23,
     "parent_set_code": "sld",
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -2013,7 +2503,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -2030,7 +2520,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/neo.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/neo.svg?1696824000"
   },
   {
     "object": "set",
@@ -2047,7 +2537,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/neo.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/neo.svg?1696824000"
   },
   {
     "object": "set",
@@ -2064,7 +2554,25 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/neo.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/neo.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "5bd03f4f-1766-4a47-a70b-e717651f06be",
+    "code": "tnec",
+    "name": "Neon Dynasty Commander Tokens",
+    "uri": "https://api.scryfall.com/sets/5bd03f4f-1766-4a47-a70b-e717651f06be",
+    "scryfall_uri": "https://scryfall.com/sets/tnec",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atnec&unique=prints",
+    "released_at": "2022-02-18",
+    "set_type": "token",
+    "card_count": 12,
+    "printed_size": 12,
+    "parent_set_code": "nec",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/nec.svg?1696824000"
   },
   {
     "object": "set",
@@ -2082,7 +2590,27 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/neo.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/neo.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "59a2059f-5482-433f-8761-eb2e17859b71",
+    "code": "neo",
+    "mtgo_code": "neo",
+    "arena_code": "neo",
+    "tcgplayer_id": 2965,
+    "name": "Kamigawa: Neon Dynasty",
+    "uri": "https://api.scryfall.com/sets/59a2059f-5482-433f-8761-eb2e17859b71",
+    "scryfall_uri": "https://scryfall.com/sets/neo",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aneo&unique=prints",
+    "released_at": "2022-02-18",
+    "set_type": "expansion",
+    "card_count": 531,
+    "printed_size": 302,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/neo.svg?1696824000"
   },
   {
     "object": "set",
@@ -2101,45 +2629,9 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/nec.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "5bd03f4f-1766-4a47-a70b-e717651f06be",
-    "code": "tnec",
-    "name": "Neon Dynasty Commander Tokens",
-    "uri": "https://api.scryfall.com/sets/5bd03f4f-1766-4a47-a70b-e717651f06be",
-    "scryfall_uri": "https://scryfall.com/sets/tnec",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atnec&unique=prints",
-    "released_at": "2022-02-18",
-    "set_type": "token",
-    "card_count": 12,
-    "printed_size": 12,
-    "parent_set_code": "nec",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/nec.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "59a2059f-5482-433f-8761-eb2e17859b71",
-    "code": "neo",
-    "mtgo_code": "neo",
-    "arena_code": "neo",
-    "tcgplayer_id": 2965,
-    "name": "Kamigawa: Neon Dynasty",
-    "uri": "https://api.scryfall.com/sets/59a2059f-5482-433f-8761-eb2e17859b71",
-    "scryfall_uri": "https://scryfall.com/sets/neo",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aneo&unique=prints",
-    "released_at": "2022-02-18",
-    "set_type": "expansion",
-    "card_count": 532,
-    "printed_size": 302,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/neo.svg?1687147200"
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/nec.svg?1696824000"
   },
   {
     "object": "set",
@@ -2156,7 +2648,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/neo.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/neo.svg?1696824000"
   },
   {
     "object": "set",
@@ -2174,7 +2666,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cc2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cc2.svg?1696824000"
   },
   {
     "object": "set",
@@ -2191,7 +2683,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -2209,7 +2701,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/archie.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/archie.svg?1696824000"
   },
   {
     "object": "set",
@@ -2227,7 +2719,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "y22",
     "block": "Alchemy 2022",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/y22.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/y22.svg?1696824000"
   },
   {
     "object": "set",
@@ -2244,27 +2736,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/vow.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "381f2eb8-544e-409c-a8c5-7171cd78edea",
-    "code": "tvow",
-    "name": "Innistrad: Crimson Vow Tokens",
-    "uri": "https://api.scryfall.com/sets/381f2eb8-544e-409c-a8c5-7171cd78edea",
-    "scryfall_uri": "https://scryfall.com/sets/tvow",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atvow&unique=prints",
-    "released_at": "2021-11-19",
-    "set_type": "token",
-    "card_count": 21,
-    "printed_size": 21,
-    "parent_set_code": "vow",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "block_code": "dbl",
-    "block": "Innistrad: Double Feature",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/vow.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/vow.svg?1696824000"
   },
   {
     "object": "set",
@@ -2284,7 +2756,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "dbl",
     "block": "Innistrad: Double Feature",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/voc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/voc.svg?1696824000"
   },
   {
     "object": "set",
@@ -2304,7 +2776,27 @@ module.exports = [
     "foil_only": false,
     "block_code": "dbl",
     "block": "Innistrad: Double Feature",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/voc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/voc.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "381f2eb8-544e-409c-a8c5-7171cd78edea",
+    "code": "tvow",
+    "name": "Innistrad: Crimson Vow Tokens",
+    "uri": "https://api.scryfall.com/sets/381f2eb8-544e-409c-a8c5-7171cd78edea",
+    "scryfall_uri": "https://scryfall.com/sets/tvow",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atvow&unique=prints",
+    "released_at": "2021-11-19",
+    "set_type": "token",
+    "card_count": 21,
+    "printed_size": 21,
+    "parent_set_code": "vow",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "block_code": "dbl",
+    "block": "Innistrad: Double Feature",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/vow.svg?1696824000"
   },
   {
     "object": "set",
@@ -2321,7 +2813,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/vow.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/vow.svg?1696824000"
   },
   {
     "object": "set",
@@ -2338,7 +2830,48 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/vow.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/vow.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "595121bf-ef1d-4ee8-a8ce-591ca2a74ef1",
+    "code": "avow",
+    "name": "Crimson Vow Art Series",
+    "uri": "https://api.scryfall.com/sets/595121bf-ef1d-4ee8-a8ce-591ca2a74ef1",
+    "scryfall_uri": "https://scryfall.com/sets/avow",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aavow&unique=prints",
+    "released_at": "2021-11-19",
+    "set_type": "memorabilia",
+    "card_count": 81,
+    "parent_set_code": "vow",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "block_code": "dbl",
+    "block": "Innistrad: Double Feature",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/vow.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "8144b676-569f-4716-8005-bc8f0778f3fa",
+    "code": "vow",
+    "mtgo_code": "vow",
+    "arena_code": "vow",
+    "tcgplayer_id": 2862,
+    "name": "Innistrad: Crimson Vow",
+    "uri": "https://api.scryfall.com/sets/8144b676-569f-4716-8005-bc8f0778f3fa",
+    "scryfall_uri": "https://scryfall.com/sets/vow",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Avow&unique=prints",
+    "released_at": "2021-11-19",
+    "set_type": "expansion",
+    "card_count": 423,
+    "printed_size": 277,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "block_code": "dbl",
+    "block": "Innistrad: Double Feature",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/vow.svg?1696824000"
   },
   {
     "object": "set",
@@ -2359,48 +2892,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/voc.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "595121bf-ef1d-4ee8-a8ce-591ca2a74ef1",
-    "code": "avow",
-    "name": "Crimson Vow Art Series",
-    "uri": "https://api.scryfall.com/sets/595121bf-ef1d-4ee8-a8ce-591ca2a74ef1",
-    "scryfall_uri": "https://scryfall.com/sets/avow",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aavow&unique=prints",
-    "released_at": "2021-11-19",
-    "set_type": "memorabilia",
-    "card_count": 81,
-    "parent_set_code": "vow",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "block_code": "dbl",
-    "block": "Innistrad: Double Feature",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/vow.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "8144b676-569f-4716-8005-bc8f0778f3fa",
-    "code": "vow",
-    "mtgo_code": "vow",
-    "arena_code": "vow",
-    "tcgplayer_id": 2862,
-    "name": "Innistrad: Crimson Vow",
-    "uri": "https://api.scryfall.com/sets/8144b676-569f-4716-8005-bc8f0778f3fa",
-    "scryfall_uri": "https://scryfall.com/sets/vow",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Avow&unique=prints",
-    "released_at": "2021-11-19",
-    "set_type": "expansion",
-    "card_count": 424,
-    "printed_size": 277,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "block_code": "dbl",
-    "block": "Innistrad: Double Feature",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/vow.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/voc.svg?1696824000"
   },
   {
     "object": "set",
@@ -2416,7 +2908,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -2435,7 +2927,66 @@ module.exports = [
     "foil_only": false,
     "block_code": "dbl",
     "block": "Innistrad: Double Feature",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mid.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mid.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "56d23ab2-9edd-4250-bf33-3225c183cc1a",
+    "code": "tmic",
+    "name": "Midnight Hunt Commander Tokens",
+    "uri": "https://api.scryfall.com/sets/56d23ab2-9edd-4250-bf33-3225c183cc1a",
+    "scryfall_uri": "https://scryfall.com/sets/tmic",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atmic&unique=prints",
+    "released_at": "2021-09-24",
+    "set_type": "token",
+    "card_count": 11,
+    "printed_size": 11,
+    "parent_set_code": "mic",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mic.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "cb7c7eac-c13c-465e-b276-85517f1472d8",
+    "code": "tmid",
+    "name": "Innistrad: Midnight Hunt Tokens",
+    "uri": "https://api.scryfall.com/sets/cb7c7eac-c13c-465e-b276-85517f1472d8",
+    "scryfall_uri": "https://scryfall.com/sets/tmid",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atmid&unique=prints",
+    "released_at": "2021-09-24",
+    "set_type": "token",
+    "card_count": 19,
+    "printed_size": 19,
+    "parent_set_code": "mid",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "block_code": "dbl",
+    "block": "Innistrad: Double Feature",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mid.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "fe07d074-f59a-4765-bbbf-80b9bca25130",
+    "code": "amid",
+    "name": "Midnight Hunt Art Series",
+    "uri": "https://api.scryfall.com/sets/fe07d074-f59a-4765-bbbf-80b9bca25130",
+    "scryfall_uri": "https://scryfall.com/sets/amid",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aamid&unique=prints",
+    "released_at": "2021-09-24",
+    "set_type": "memorabilia",
+    "card_count": 81,
+    "parent_set_code": "mid",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "block_code": "dbl",
+    "block": "Innistrad: Double Feature",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mid.svg?1696824000"
   },
   {
     "object": "set",
@@ -2458,27 +3009,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mic.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "56d23ab2-9edd-4250-bf33-3225c183cc1a",
-    "code": "tmic",
-    "name": "Midnight Hunt Commander Tokens",
-    "uri": "https://api.scryfall.com/sets/56d23ab2-9edd-4250-bf33-3225c183cc1a",
-    "scryfall_uri": "https://scryfall.com/sets/tmic",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atmic&unique=prints",
-    "released_at": "2021-09-24",
-    "set_type": "token",
-    "card_count": 11,
-    "printed_size": 11,
-    "parent_set_code": "mic",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "cmd",
-    "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mic.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mic.svg?1696824000"
   },
   {
     "object": "set",
@@ -2497,7 +3028,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "dbl",
     "block": "Innistrad: Double Feature",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mid.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mid.svg?1696824000"
   },
   {
     "object": "set",
@@ -2516,46 +3047,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mic.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "fe07d074-f59a-4765-bbbf-80b9bca25130",
-    "code": "amid",
-    "name": "Midnight Hunt Art Series",
-    "uri": "https://api.scryfall.com/sets/fe07d074-f59a-4765-bbbf-80b9bca25130",
-    "scryfall_uri": "https://scryfall.com/sets/amid",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aamid&unique=prints",
-    "released_at": "2021-09-24",
-    "set_type": "memorabilia",
-    "card_count": 81,
-    "parent_set_code": "mid",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "block_code": "dbl",
-    "block": "Innistrad: Double Feature",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mid.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "cb7c7eac-c13c-465e-b276-85517f1472d8",
-    "code": "tmid",
-    "name": "Innistrad: Midnight Hunt Tokens",
-    "uri": "https://api.scryfall.com/sets/cb7c7eac-c13c-465e-b276-85517f1472d8",
-    "scryfall_uri": "https://scryfall.com/sets/tmid",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atmid&unique=prints",
-    "released_at": "2021-09-24",
-    "set_type": "token",
-    "card_count": 19,
-    "printed_size": 19,
-    "parent_set_code": "mid",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "block_code": "dbl",
-    "block": "Innistrad: Double Feature",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mid.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mic.svg?1696824000"
   },
   {
     "object": "set",
@@ -2577,7 +3069,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "dbl",
     "block": "Innistrad: Double Feature",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mid.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mid.svg?1696824000"
   },
   {
     "object": "set",
@@ -2594,7 +3086,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mid.svg?1696824000"
   },
   {
     "object": "set",
@@ -2610,7 +3102,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/j21.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/j21.svg?1696824000"
   },
   {
     "object": "set",
@@ -2628,7 +3120,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/planeswalker.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/planeswalker.svg?1696824000"
   },
   {
     "object": "set",
@@ -2646,7 +3138,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "htr",
     "block": "Heroes of the Realm",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -2663,7 +3155,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/afr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/afr.svg?1696824000"
   },
   {
     "object": "set",
@@ -2680,7 +3172,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/afc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/afc.svg?1696824000"
   },
   {
     "object": "set",
@@ -2697,7 +3189,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/afr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/afr.svg?1696824000"
   },
   {
     "object": "set",
@@ -2716,7 +3208,9 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/afc.svg?1687147200"
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/afc.svg?1696824000"
   },
   {
     "object": "set",
@@ -2734,7 +3228,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/afr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/afr.svg?1696824000"
   },
   {
     "object": "set",
@@ -2752,7 +3246,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/afc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/afc.svg?1696824000"
   },
   {
     "object": "set",
@@ -2769,7 +3263,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/afr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/afr.svg?1696824000"
   },
   {
     "object": "set",
@@ -2789,7 +3283,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/afr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/afr.svg?1696824000"
   },
   {
     "object": "set",
@@ -2805,7 +3299,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -2822,7 +3316,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh2.svg?1696824000"
   },
   {
     "object": "set",
@@ -2839,7 +3333,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh2.svg?1696824000"
   },
   {
     "object": "set",
@@ -2857,41 +3351,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh2.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "ab6507a5-d3c1-4384-927c-4ec7e6fd1e20",
-    "code": "pw21",
-    "name": "Wizards Play Network 2021",
-    "uri": "https://api.scryfall.com/sets/ab6507a5-d3c1-4384-927c-4ec7e6fd1e20",
-    "scryfall_uri": "https://scryfall.com/sets/pw21",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apw21&unique=prints",
-    "released_at": "2021-06-18",
-    "set_type": "promo",
-    "card_count": 6,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "95671546-fd82-43e2-966f-eba5968f629b",
-    "code": "amh2",
-    "name": "Modern Horizons 2 Art Series",
-    "uri": "https://api.scryfall.com/sets/95671546-fd82-43e2-966f-eba5968f629b",
-    "scryfall_uri": "https://scryfall.com/sets/amh2",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aamh2&unique=prints",
-    "released_at": "2021-06-18",
-    "set_type": "memorabilia",
-    "card_count": 162,
-    "printed_size": 81,
-    "parent_set_code": "mh2",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh2.svg?1696824000"
   },
   {
     "object": "set",
@@ -2909,7 +3369,41 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh1.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "ab6507a5-d3c1-4384-927c-4ec7e6fd1e20",
+    "code": "pw21",
+    "name": "Wizards Play Network 2021",
+    "uri": "https://api.scryfall.com/sets/ab6507a5-d3c1-4384-927c-4ec7e6fd1e20",
+    "scryfall_uri": "https://scryfall.com/sets/pw21",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apw21&unique=prints",
+    "released_at": "2021-06-18",
+    "set_type": "promo",
+    "card_count": 6,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "95671546-fd82-43e2-966f-eba5968f629b",
+    "code": "amh2",
+    "name": "Modern Horizons 2 Art Series",
+    "uri": "https://api.scryfall.com/sets/95671546-fd82-43e2-966f-eba5968f629b",
+    "scryfall_uri": "https://scryfall.com/sets/amh2",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aamh2&unique=prints",
+    "released_at": "2021-06-18",
+    "set_type": "memorabilia",
+    "card_count": 162,
+    "printed_size": 81,
+    "parent_set_code": "mh2",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh2.svg?1696824000"
   },
   {
     "object": "set",
@@ -2929,7 +3423,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh2.svg?1696824000"
   },
   {
     "object": "set",
@@ -2945,7 +3439,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ha1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ha1.svg?1696824000"
   },
   {
     "object": "set",
@@ -2962,25 +3456,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/stx.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "0626d2d5-5b60-48fa-97b5-960eb263a051",
-    "code": "tc21",
-    "name": "Commander 2021 Tokens",
-    "uri": "https://api.scryfall.com/sets/0626d2d5-5b60-48fa-97b5-960eb263a051",
-    "scryfall_uri": "https://scryfall.com/sets/tc21",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atc21&unique=prints",
-    "released_at": "2021-04-23",
-    "set_type": "token",
-    "card_count": 30,
-    "printed_size": 30,
-    "parent_set_code": "c21",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c21.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/stx.svg?1696824000"
   },
   {
     "object": "set",
@@ -2998,7 +3474,25 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/stx.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/stx.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "0626d2d5-5b60-48fa-97b5-960eb263a051",
+    "code": "tc21",
+    "name": "Commander 2021 Tokens",
+    "uri": "https://api.scryfall.com/sets/0626d2d5-5b60-48fa-97b5-960eb263a051",
+    "scryfall_uri": "https://scryfall.com/sets/tc21",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atc21&unique=prints",
+    "released_at": "2021-04-23",
+    "set_type": "token",
+    "card_count": 30,
+    "printed_size": 30,
+    "parent_set_code": "c21",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c21.svg?1696824000"
   },
   {
     "object": "set",
@@ -3015,7 +3509,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/stx.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/stx.svg?1696824000"
   },
   {
     "object": "set",
@@ -3032,7 +3526,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/stx.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/stx.svg?1696824000"
   },
   {
     "object": "set",
@@ -3052,7 +3546,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/stx.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/stx.svg?1696824000"
   },
   {
     "object": "set",
@@ -3071,7 +3565,29 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c21.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c21.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "27bf6dbd-a9e1-4904-afa7-d28fc7745c4f",
+    "code": "c21",
+    "mtgo_code": "c21",
+    "arena_code": "c21",
+    "tcgplayer_id": 2801,
+    "name": "Commander 2021",
+    "uri": "https://api.scryfall.com/sets/27bf6dbd-a9e1-4904-afa7-d28fc7745c4f",
+    "scryfall_uri": "https://scryfall.com/sets/c21",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ac21&unique=prints",
+    "released_at": "2021-04-23",
+    "set_type": "commander",
+    "card_count": 409,
+    "printed_size": 81,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c21.svg?1696824000"
   },
   {
     "object": "set",
@@ -3092,27 +3608,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/sta.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "27bf6dbd-a9e1-4904-afa7-d28fc7745c4f",
-    "code": "c21",
-    "mtgo_code": "c21",
-    "arena_code": "c21",
-    "tcgplayer_id": 2801,
-    "name": "Commander 2021",
-    "uri": "https://api.scryfall.com/sets/27bf6dbd-a9e1-4904-afa7-d28fc7745c4f",
-    "scryfall_uri": "https://scryfall.com/sets/c21",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ac21&unique=prints",
-    "released_at": "2021-04-23",
-    "set_type": "commander",
-    "card_count": 409,
-    "printed_size": 81,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c21.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/sta.svg?1696824000"
   },
   {
     "object": "set",
@@ -3129,7 +3625,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/stx.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/stx.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "92e36faf-5459-428f-b1fa-687ad31ebfcc",
+    "code": "ttsr",
+    "name": "Time Spiral Remastered Tokens",
+    "uri": "https://api.scryfall.com/sets/92e36faf-5459-428f-b1fa-687ad31ebfcc",
+    "scryfall_uri": "https://scryfall.com/sets/ttsr",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Attsr&unique=prints",
+    "released_at": "2021-03-19",
+    "set_type": "token",
+    "card_count": 15,
+    "parent_set_code": "tsr",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/tsr.svg?1696824000"
   },
   {
     "object": "set",
@@ -3146,25 +3659,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/tsr.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "92e36faf-5459-428f-b1fa-687ad31ebfcc",
-    "code": "ttsr",
-    "tcgplayer_id": 2772,
-    "name": "Time Spiral Remastered Tokens",
-    "uri": "https://api.scryfall.com/sets/92e36faf-5459-428f-b1fa-687ad31ebfcc",
-    "scryfall_uri": "https://scryfall.com/sets/ttsr",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Attsr&unique=prints",
-    "released_at": "2021-03-19",
-    "set_type": "token",
-    "card_count": 15,
-    "parent_set_code": "tsr",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/tsr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/tsr.svg?1696824000"
   },
   {
     "object": "set",
@@ -3180,7 +3675,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ha1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ha1.svg?1696824000"
   },
   {
     "object": "set",
@@ -3197,7 +3692,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/khm.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/khm.svg?1696824000"
   },
   {
     "object": "set",
@@ -3214,7 +3709,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/khm.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/khm.svg?1696824000"
   },
   {
     "object": "set",
@@ -3231,13 +3726,12 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/khm.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/khm.svg?1696824000"
   },
   {
     "object": "set",
     "id": "d44c4073-9771-4a9a-a304-317591f3de8c",
     "code": "tkhc",
-    "tcgplayer_id": 2766,
     "name": "Kaldheim Commander Tokens",
     "uri": "https://api.scryfall.com/sets/d44c4073-9771-4a9a-a304-317591f3de8c",
     "scryfall_uri": "https://scryfall.com/sets/tkhc",
@@ -3249,7 +3743,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/khc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/khc.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "b8e64975-c16d-4463-b465-6c7dfcc579ff",
+    "code": "akhm",
+    "name": "Kaldheim Art Series",
+    "uri": "https://api.scryfall.com/sets/b8e64975-c16d-4463-b465-6c7dfcc579ff",
+    "scryfall_uri": "https://scryfall.com/sets/akhm",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aakhm&unique=prints",
+    "released_at": "2021-02-05",
+    "set_type": "memorabilia",
+    "card_count": 81,
+    "parent_set_code": "khm",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/khm.svg?1696824000"
   },
   {
     "object": "set",
@@ -3268,24 +3779,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/khm.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "b8e64975-c16d-4463-b465-6c7dfcc579ff",
-    "code": "akhm",
-    "name": "Kaldheim Art Series",
-    "uri": "https://api.scryfall.com/sets/b8e64975-c16d-4463-b465-6c7dfcc579ff",
-    "scryfall_uri": "https://scryfall.com/sets/akhm",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aakhm&unique=prints",
-    "released_at": "2021-02-05",
-    "set_type": "memorabilia",
-    "card_count": 81,
-    "parent_set_code": "khm",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/khm.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/khm.svg?1696824000"
   },
   {
     "object": "set",
@@ -3302,7 +3796,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/khm.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/khm.svg?1696824000"
   },
   {
     "object": "set",
@@ -3320,7 +3814,9 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/khc.svg?1687147200"
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/khc.svg?1696824000"
   },
   {
     "object": "set",
@@ -3336,23 +3832,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "21382cd7-3c03-44f8-9445-f4e4e86cc0b1",
-    "code": "pf21",
-    "name": "MagicFest 2021",
-    "uri": "https://api.scryfall.com/sets/21382cd7-3c03-44f8-9445-f4e4e86cc0b1",
-    "scryfall_uri": "https://scryfall.com/sets/pf21",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apf21&unique=prints",
-    "released_at": "2021-01-01",
-    "set_type": "promo",
-    "card_count": 0,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -3370,7 +3850,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/archie.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/archie.svg?1696824000"
   },
   {
     "object": "set",
@@ -3389,25 +3869,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cc1.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "6bcdcd3c-15a1-49b2-bbe7-639d18395a5d",
-    "code": "tcmr",
-    "tcgplayer_id": 2708,
-    "name": "Commander Legends Tokens",
-    "uri": "https://api.scryfall.com/sets/6bcdcd3c-15a1-49b2-bbe7-639d18395a5d",
-    "scryfall_uri": "https://scryfall.com/sets/tcmr",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atcmr&unique=prints",
-    "released_at": "2020-11-20",
-    "set_type": "token",
-    "card_count": 23,
-    "parent_set_code": "cmr",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cmr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cc1.svg?1696824000"
   },
   {
     "object": "set",
@@ -3426,7 +3888,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cmr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cmr.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "6bcdcd3c-15a1-49b2-bbe7-639d18395a5d",
+    "code": "tcmr",
+    "name": "Commander Legends Tokens",
+    "uri": "https://api.scryfall.com/sets/6bcdcd3c-15a1-49b2-bbe7-639d18395a5d",
+    "scryfall_uri": "https://scryfall.com/sets/tcmr",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atcmr&unique=prints",
+    "released_at": "2020-11-20",
+    "set_type": "token",
+    "card_count": 23,
+    "parent_set_code": "cmr",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cmr.svg?1696824000"
   },
   {
     "object": "set",
@@ -3442,7 +3921,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/klr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/klr.svg?1696824000"
   },
   {
     "object": "set",
@@ -3455,11 +3934,11 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aplist&unique=prints",
     "released_at": "2020-09-26",
     "set_type": "masters",
-    "card_count": 1089,
+    "card_count": 1288,
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/planeswalker.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/planeswalker.svg?1696824000"
   },
   {
     "object": "set",
@@ -3476,7 +3955,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/znr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/znr.svg?1696824000"
   },
   {
     "object": "set",
@@ -3493,61 +3972,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/znc.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "ee023dc4-fe71-4224-be95-7c889d771ee1",
-    "code": "tznr",
-    "name": "Zendikar Rising Tokens",
-    "uri": "https://api.scryfall.com/sets/ee023dc4-fe71-4224-be95-7c889d771ee1",
-    "scryfall_uri": "https://scryfall.com/sets/tznr",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atznr&unique=prints",
-    "released_at": "2020-09-25",
-    "set_type": "token",
-    "card_count": 12,
-    "parent_set_code": "znr",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/znr.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "f4e01fa7-b254-42dd-849f-69b58027a8c4",
-    "code": "znr",
-    "mtgo_code": "znr",
-    "arena_code": "znr",
-    "tcgplayer_id": 2648,
-    "name": "Zendikar Rising",
-    "uri": "https://api.scryfall.com/sets/f4e01fa7-b254-42dd-849f-69b58027a8c4",
-    "scryfall_uri": "https://scryfall.com/sets/znr",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aznr&unique=prints",
-    "released_at": "2020-09-25",
-    "set_type": "expansion",
-    "card_count": 408,
-    "printed_size": 280,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/znr.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "40f22d42-6fa9-4de4-8423-916a1b2268ab",
-    "code": "mznr",
-    "name": "Zendikar Rising Minigames",
-    "uri": "https://api.scryfall.com/sets/40f22d42-6fa9-4de4-8423-916a1b2268ab",
-    "scryfall_uri": "https://scryfall.com/sets/mznr",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Amznr&unique=prints",
-    "released_at": "2020-09-25",
-    "set_type": "minigame",
-    "card_count": 5,
-    "parent_set_code": "znr",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/znr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/znc.svg?1696824000"
   },
   {
     "object": "set",
@@ -3567,24 +3992,27 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/znc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/znc.svg?1696824000"
   },
   {
     "object": "set",
-    "id": "168acc08-0dea-40e7-ab0d-93bb2832e72b",
-    "code": "aznr",
-    "name": "Zendikar Rising Art Series",
-    "uri": "https://api.scryfall.com/sets/168acc08-0dea-40e7-ab0d-93bb2832e72b",
-    "scryfall_uri": "https://scryfall.com/sets/aznr",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aaznr&unique=prints",
+    "id": "f4e01fa7-b254-42dd-849f-69b58027a8c4",
+    "code": "znr",
+    "mtgo_code": "znr",
+    "arena_code": "znr",
+    "tcgplayer_id": 2648,
+    "name": "Zendikar Rising",
+    "uri": "https://api.scryfall.com/sets/f4e01fa7-b254-42dd-849f-69b58027a8c4",
+    "scryfall_uri": "https://scryfall.com/sets/znr",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aznr&unique=prints",
     "released_at": "2020-09-25",
-    "set_type": "memorabilia",
-    "card_count": 81,
-    "parent_set_code": "znr",
+    "set_type": "expansion",
+    "card_count": 408,
+    "printed_size": 280,
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/znr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/znr.svg?1696824000"
   },
   {
     "object": "set",
@@ -3602,7 +4030,41 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/zne.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/zne.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "168acc08-0dea-40e7-ab0d-93bb2832e72b",
+    "code": "aznr",
+    "name": "Zendikar Rising Art Series",
+    "uri": "https://api.scryfall.com/sets/168acc08-0dea-40e7-ab0d-93bb2832e72b",
+    "scryfall_uri": "https://scryfall.com/sets/aznr",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aaznr&unique=prints",
+    "released_at": "2020-09-25",
+    "set_type": "memorabilia",
+    "card_count": 81,
+    "parent_set_code": "znr",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/znr.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "40f22d42-6fa9-4de4-8423-916a1b2268ab",
+    "code": "mznr",
+    "name": "Zendikar Rising Minigames",
+    "uri": "https://api.scryfall.com/sets/40f22d42-6fa9-4de4-8423-916a1b2268ab",
+    "scryfall_uri": "https://scryfall.com/sets/mznr",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Amznr&unique=prints",
+    "released_at": "2020-09-25",
+    "set_type": "minigame",
+    "card_count": 5,
+    "parent_set_code": "znr",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/znr.svg?1696824000"
   },
   {
     "object": "set",
@@ -3619,23 +4081,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/znr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/znr.svg?1696824000"
   },
   {
     "object": "set",
-    "id": "915dabb1-b82a-432d-939d-d9b128e65582",
-    "code": "akr",
-    "name": "Amonkhet Remastered",
-    "uri": "https://api.scryfall.com/sets/915dabb1-b82a-432d-939d-d9b128e65582",
-    "scryfall_uri": "https://scryfall.com/sets/akr",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aakr&unique=prints",
-    "released_at": "2020-08-13",
-    "set_type": "masters",
-    "card_count": 339,
-    "digital": true,
-    "nonfoil_only": true,
+    "id": "ee023dc4-fe71-4224-be95-7c889d771ee1",
+    "code": "tznr",
+    "name": "Zendikar Rising Tokens",
+    "uri": "https://api.scryfall.com/sets/ee023dc4-fe71-4224-be95-7c889d771ee1",
+    "scryfall_uri": "https://scryfall.com/sets/tznr",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atznr&unique=prints",
+    "released_at": "2020-09-25",
+    "set_type": "token",
+    "card_count": 12,
+    "parent_set_code": "znr",
+    "digital": false,
+    "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/akr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/znr.svg?1696824000"
   },
   {
     "object": "set",
@@ -3651,7 +4114,23 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtga.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtga.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "915dabb1-b82a-432d-939d-d9b128e65582",
+    "code": "akr",
+    "name": "Amonkhet Remastered",
+    "uri": "https://api.scryfall.com/sets/915dabb1-b82a-432d-939d-d9b128e65582",
+    "scryfall_uri": "https://scryfall.com/sets/akr",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aakr&unique=prints",
+    "released_at": "2020-08-13",
+    "set_type": "masters",
+    "card_count": 339,
+    "digital": true,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/akr.svg?1696824000"
   },
   {
     "object": "set",
@@ -3671,7 +4150,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/2xm.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/2xm.svg?1696824000"
   },
   {
     "object": "set",
@@ -3688,7 +4167,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/2xm.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/2xm.svg?1696824000"
   },
   {
     "object": "set",
@@ -3706,7 +4185,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "htr",
     "block": "Heroes of the Realm",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -3723,7 +4202,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/jmp.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/jmp.svg?1696824000"
   },
   {
     "object": "set",
@@ -3740,7 +4219,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/jmp.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/jmp.svg?1696824000"
   },
   {
     "object": "set",
@@ -3757,7 +4236,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m21.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m21.svg?1696824000"
   },
   {
     "object": "set",
@@ -3775,7 +4254,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m21.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m21.svg?1696824000"
   },
   {
     "object": "set",
@@ -3797,7 +4276,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m21.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m21.svg?1696824000"
   },
   {
     "object": "set",
@@ -3815,7 +4294,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ss3.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ss3.svg?1696824000"
   },
   {
     "object": "set",
@@ -3832,7 +4311,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/jmp.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/jmp.svg?1696824000"
   },
   {
     "object": "set",
@@ -3850,7 +4329,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -3866,7 +4345,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ha1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ha1.svg?1696824000"
   },
   {
     "object": "set",
@@ -3882,7 +4361,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -3899,7 +4378,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/iko.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/iko.svg?1696824000"
   },
   {
     "object": "set",
@@ -3919,7 +4398,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/iko.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/iko.svg?1696824000"
   },
   {
     "object": "set",
@@ -3936,7 +4415,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/iko.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/iko.svg?1696824000"
   },
   {
     "object": "set",
@@ -3953,7 +4432,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c20.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c20.svg?1696824000"
   },
   {
     "object": "set",
@@ -3974,7 +4453,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c20.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c20.svg?1696824000"
   },
   {
     "object": "set",
@@ -3993,7 +4472,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c20.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c20.svg?1696824000"
   },
   {
     "object": "set",
@@ -4009,7 +4488,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ha1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ha1.svg?1696824000"
   },
   {
     "object": "set",
@@ -4027,7 +4506,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/planeswalker.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/planeswalker.svg?1696824000"
   },
   {
     "object": "set",
@@ -4044,7 +4523,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/und.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/und.svg?1696824000"
   },
   {
     "object": "set",
@@ -4061,7 +4540,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/und.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/und.svg?1696824000"
   },
   {
     "object": "set",
@@ -4078,7 +4557,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/thb.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/thb.svg?1696824000"
   },
   {
     "object": "set",
@@ -4095,7 +4574,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/thb.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/thb.svg?1696824000"
   },
   {
     "object": "set",
@@ -4114,23 +4593,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/thb.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "09e53c37-1e43-4f45-933d-af75b9cd6f76",
-    "code": "pf20",
-    "name": "MagicFest 2020",
-    "uri": "https://api.scryfall.com/sets/09e53c37-1e43-4f45-933d-af75b9cd6f76",
-    "scryfall_uri": "https://scryfall.com/sets/pf20",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apf20&unique=prints",
-    "released_at": "2020-01-01",
-    "set_type": "promo",
-    "card_count": 6,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/thb.svg?1696824000"
   },
   {
     "object": "set",
@@ -4148,7 +4611,23 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/archie.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/archie.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "09e53c37-1e43-4f45-933d-af75b9cd6f76",
+    "code": "pf20",
+    "name": "MagicFest 2020",
+    "uri": "https://api.scryfall.com/sets/09e53c37-1e43-4f45-933d-af75b9cd6f76",
+    "scryfall_uri": "https://scryfall.com/sets/pf20",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apf20&unique=prints",
+    "released_at": "2020-01-01",
+    "set_type": "promo",
+    "card_count": 6,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -4161,11 +4640,11 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Asld&unique=prints",
     "released_at": "2019-12-02",
     "set_type": "box",
-    "card_count": 973,
+    "card_count": 1142,
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -4181,7 +4660,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ha1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ha1.svg?1696824000"
   },
   {
     "object": "set",
@@ -4198,7 +4677,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/gn2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/gn2.svg?1696824000"
   },
   {
     "object": "set",
@@ -4215,7 +4694,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/gn2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/gn2.svg?1696824000"
   },
   {
     "object": "set",
@@ -4233,7 +4712,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/planeswalker.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/planeswalker.svg?1696824000"
   },
   {
     "object": "set",
@@ -4250,7 +4729,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/planeswalker.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/planeswalker.svg?1696824000"
   },
   {
     "object": "set",
@@ -4267,7 +4746,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ptg.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ptg.svg?1696824000"
   },
   {
     "object": "set",
@@ -4284,7 +4763,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/eld.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/eld.svg?1696824000"
   },
   {
     "object": "set",
@@ -4303,7 +4782,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/eld.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/eld.svg?1696824000"
   },
   {
     "object": "set",
@@ -4315,11 +4794,11 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apwcs&unique=prints",
     "released_at": "2019-10-01",
     "set_type": "promo",
-    "card_count": 23,
+    "card_count": 26,
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -4336,7 +4815,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/eld.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/eld.svg?1696824000"
   },
   {
     "object": "set",
@@ -4355,7 +4834,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c19.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c19.svg?1696824000"
   },
   {
     "object": "set",
@@ -4376,7 +4855,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c19.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c19.svg?1696824000"
   },
   {
     "object": "set",
@@ -4395,7 +4874,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c19.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c19.svg?1696824000"
   },
   {
     "object": "set",
@@ -4413,7 +4892,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "htr",
     "block": "Heroes of the Realm",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -4429,7 +4908,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/war.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/war.svg?1696824000"
   },
   {
     "object": "set",
@@ -4447,7 +4926,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m20.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m20.svg?1696824000"
   },
   {
     "object": "set",
@@ -4466,7 +4945,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -4483,7 +4962,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m20.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m20.svg?1696824000"
   },
   {
     "object": "set",
@@ -4504,7 +4983,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m20.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m20.svg?1696824000"
   },
   {
     "object": "set",
@@ -4521,7 +5000,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ss2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ss2.svg?1696824000"
   },
   {
     "object": "set",
@@ -4540,7 +5019,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh1.svg?1696824000"
   },
   {
     "object": "set",
@@ -4560,7 +5039,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh1.svg?1696824000"
   },
   {
     "object": "set",
@@ -4577,7 +5056,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh1.svg?1696824000"
   },
   {
     "object": "set",
@@ -4594,7 +5073,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mh1.svg?1696824000"
   },
   {
     "object": "set",
@@ -4611,7 +5090,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/war.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/war.svg?1696824000"
   },
   {
     "object": "set",
@@ -4630,7 +5109,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "grn",
     "block": "Guilds of Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/war.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/war.svg?1696824000"
   },
   {
     "object": "set",
@@ -4651,7 +5130,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "grn",
     "block": "Guilds of Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/war.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/war.svg?1696824000"
   },
   {
     "object": "set",
@@ -4669,7 +5148,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -4688,24 +5167,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "grn",
     "block": "Guilds of Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/rna.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "ce193344-b2a8-4b56-8243-c6ba4f6e20ef",
-    "code": "gk2",
-    "tcgplayer_id": 2388,
-    "name": "RNA Guild Kit",
-    "uri": "https://api.scryfall.com/sets/ce193344-b2a8-4b56-8243-c6ba4f6e20ef",
-    "scryfall_uri": "https://scryfall.com/sets/gk2",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Agk2&unique=prints",
-    "released_at": "2019-02-15",
-    "set_type": "box",
-    "card_count": 133,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/rna.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rna.svg?1696824000"
   },
   {
     "object": "set",
@@ -4722,7 +5184,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/rna.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rna.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "ce193344-b2a8-4b56-8243-c6ba4f6e20ef",
+    "code": "gk2",
+    "tcgplayer_id": 2388,
+    "name": "RNA Guild Kit",
+    "uri": "https://api.scryfall.com/sets/ce193344-b2a8-4b56-8243-c6ba4f6e20ef",
+    "scryfall_uri": "https://scryfall.com/sets/gk2",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Agk2&unique=prints",
+    "released_at": "2019-02-15",
+    "set_type": "box",
+    "card_count": 133,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rna.svg?1696824000"
   },
   {
     "object": "set",
@@ -4741,7 +5220,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "grn",
     "block": "Guilds of Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/rna.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rna.svg?1696824000"
   },
   {
     "object": "set",
@@ -4763,7 +5242,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "grn",
     "block": "Guilds of Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/rna.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rna.svg?1696824000"
   },
   {
     "object": "set",
@@ -4782,7 +5261,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "grn",
     "block": "Guilds of Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/rna.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rna.svg?1696824000"
   },
   {
     "object": "set",
@@ -4798,7 +5277,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -4815,7 +5294,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pca.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pca.svg?1696824000"
   },
   {
     "object": "set",
@@ -4835,7 +5314,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/uma.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/uma.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "804240d7-957c-4860-a684-d3d51dfe1c77",
+    "code": "tuma",
+    "name": "Ultimate Masters Tokens",
+    "uri": "https://api.scryfall.com/sets/804240d7-957c-4860-a684-d3d51dfe1c77",
+    "scryfall_uri": "https://scryfall.com/sets/tuma",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atuma&unique=prints",
+    "released_at": "2018-12-07",
+    "set_type": "token",
+    "card_count": 16,
+    "parent_set_code": "uma",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/uma.svg?1696824000"
   },
   {
     "object": "set",
@@ -4855,24 +5351,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/uma.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "804240d7-957c-4860-a684-d3d51dfe1c77",
-    "code": "tuma",
-    "name": "Ultimate Masters Tokens",
-    "uri": "https://api.scryfall.com/sets/804240d7-957c-4860-a684-d3d51dfe1c77",
-    "scryfall_uri": "https://scryfall.com/sets/tuma",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atuma&unique=prints",
-    "released_at": "2018-12-07",
-    "set_type": "token",
-    "card_count": 16,
-    "parent_set_code": "uma",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/uma.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/uma.svg?1696824000"
   },
   {
     "object": "set",
@@ -4889,7 +5368,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m19.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m19.svg?1696824000"
   },
   {
     "object": "set",
@@ -4906,7 +5385,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/gnt.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/gnt.svg?1696824000"
   },
   {
     "object": "set",
@@ -4925,7 +5404,24 @@ module.exports = [
     "foil_only": true,
     "block_code": "grn",
     "block": "Guilds of Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/grn.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/grn.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "9cabda5f-97cd-4eb3-93b9-83d1e9a191cb",
+    "code": "tgk1",
+    "name": "GRN Guild Kit Tokens",
+    "uri": "https://api.scryfall.com/sets/9cabda5f-97cd-4eb3-93b9-83d1e9a191cb",
+    "scryfall_uri": "https://scryfall.com/sets/tgk1",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atgk1&unique=prints",
+    "released_at": "2018-11-02",
+    "set_type": "token",
+    "card_count": 10,
+    "parent_set_code": "gk1",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/grn.svg?1696824000"
   },
   {
     "object": "set",
@@ -4942,44 +5438,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/grn.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "9cabda5f-97cd-4eb3-93b9-83d1e9a191cb",
-    "code": "tgk1",
-    "tcgplayer_id": 2334,
-    "name": "GRN Guild Kit Tokens",
-    "uri": "https://api.scryfall.com/sets/9cabda5f-97cd-4eb3-93b9-83d1e9a191cb",
-    "scryfall_uri": "https://scryfall.com/sets/tgk1",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atgk1&unique=prints",
-    "released_at": "2018-11-02",
-    "set_type": "token",
-    "card_count": 10,
-    "parent_set_code": "gk1",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/grn.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "967bba11-2f81-452c-98c4-56bd7c051242",
-    "code": "tgrn",
-    "name": "Guilds of Ravnica Tokens",
-    "uri": "https://api.scryfall.com/sets/967bba11-2f81-452c-98c4-56bd7c051242",
-    "scryfall_uri": "https://scryfall.com/sets/tgrn",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atgrn&unique=prints",
-    "released_at": "2018-10-05",
-    "set_type": "token",
-    "card_count": 8,
-    "parent_set_code": "grn",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "grn",
-    "block": "Guilds of Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/grn.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/grn.svg?1696824000"
   },
   {
     "object": "set",
@@ -4998,7 +5457,26 @@ module.exports = [
     "foil_only": false,
     "block_code": "grn",
     "block": "Guilds of Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/grn.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/grn.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "967bba11-2f81-452c-98c4-56bd7c051242",
+    "code": "tgrn",
+    "name": "Guilds of Ravnica Tokens",
+    "uri": "https://api.scryfall.com/sets/967bba11-2f81-452c-98c4-56bd7c051242",
+    "scryfall_uri": "https://scryfall.com/sets/tgrn",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atgrn&unique=prints",
+    "released_at": "2018-10-05",
+    "set_type": "token",
+    "card_count": 8,
+    "parent_set_code": "grn",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "grn",
+    "block": "Guilds of Ravnica",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/grn.svg?1696824000"
   },
   {
     "object": "set",
@@ -5020,13 +5498,12 @@ module.exports = [
     "foil_only": false,
     "block_code": "grn",
     "block": "Guilds of Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/grn.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/grn.svg?1696824000"
   },
   {
     "object": "set",
     "id": "3a9213f3-71d0-4e17-a9f4-f85f705f3cbe",
     "code": "tmed",
-    "tcgplayer_id": 2326,
     "name": "Mythic Edition Tokens",
     "uri": "https://api.scryfall.com/sets/3a9213f3-71d0-4e17-a9f4-f85f705f3cbe",
     "scryfall_uri": "https://scryfall.com/sets/tmed",
@@ -5038,7 +5515,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/med.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/med.svg?1696824000"
   },
   {
     "object": "set",
@@ -5057,7 +5534,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/med.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/med.svg?1696824000"
   },
   {
     "object": "set",
@@ -5076,26 +5553,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c18.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "06ce6bc2-85cd-4cca-85b1-8c620d3e0902",
-    "code": "c18",
-    "tcgplayer_id": 2251,
-    "name": "Commander 2018",
-    "uri": "https://api.scryfall.com/sets/06ce6bc2-85cd-4cca-85b1-8c620d3e0902",
-    "scryfall_uri": "https://scryfall.com/sets/c18",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ac18&unique=prints",
-    "released_at": "2018-08-09",
-    "set_type": "commander",
-    "card_count": 307,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "block_code": "cmd",
-    "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c18.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c18.svg?1696824000"
   },
   {
     "object": "set",
@@ -5114,7 +5572,26 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c18.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c18.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "06ce6bc2-85cd-4cca-85b1-8c620d3e0902",
+    "code": "c18",
+    "tcgplayer_id": 2251,
+    "name": "Commander 2018",
+    "uri": "https://api.scryfall.com/sets/06ce6bc2-85cd-4cca-85b1-8c620d3e0902",
+    "scryfall_uri": "https://scryfall.com/sets/c18",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ac18&unique=prints",
+    "released_at": "2018-08-09",
+    "set_type": "commander",
+    "card_count": 307,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c18.svg?1696824000"
   },
   {
     "object": "set",
@@ -5132,7 +5609,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "htr",
     "block": "Heroes of the Realm",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -5148,7 +5625,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -5165,7 +5642,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtga.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtga.svg?1696824000"
   },
   {
     "object": "set",
@@ -5181,7 +5658,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtga.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtga.svg?1696824000"
   },
   {
     "object": "set",
@@ -5197,7 +5674,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtga.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtga.svg?1696824000"
   },
   {
     "object": "set",
@@ -5214,7 +5691,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtga.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtga.svg?1696824000"
   },
   {
     "object": "set",
@@ -5231,41 +5708,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m19.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "60ec31ea-b56b-4b64-b0ef-cee965f8b45e",
-    "code": "pss3",
-    "name": "M19 Standard Showdown",
-    "uri": "https://api.scryfall.com/sets/60ec31ea-b56b-4b64-b0ef-cee965f8b45e",
-    "scryfall_uri": "https://scryfall.com/sets/pss3",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apss3&unique=prints",
-    "released_at": "2018-07-13",
-    "set_type": "promo",
-    "card_count": 5,
-    "parent_set_code": "m19",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "f291a61b-4afa-4c57-85ac-c67d5ab1403d",
-    "code": "tm19",
-    "name": "Core Set 2019 Tokens",
-    "uri": "https://api.scryfall.com/sets/f291a61b-4afa-4c57-85ac-c67d5ab1403d",
-    "scryfall_uri": "https://scryfall.com/sets/tm19",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atm19&unique=prints",
-    "released_at": "2018-07-13",
-    "set_type": "token",
-    "card_count": 18,
-    "parent_set_code": "m19",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m19.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m19.svg?1696824000"
   },
   {
     "object": "set",
@@ -5287,7 +5730,41 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m19.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m19.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "60ec31ea-b56b-4b64-b0ef-cee965f8b45e",
+    "code": "pss3",
+    "name": "M19 Standard Showdown",
+    "uri": "https://api.scryfall.com/sets/60ec31ea-b56b-4b64-b0ef-cee965f8b45e",
+    "scryfall_uri": "https://scryfall.com/sets/pss3",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apss3&unique=prints",
+    "released_at": "2018-07-13",
+    "set_type": "promo",
+    "card_count": 5,
+    "parent_set_code": "m19",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": true,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "f291a61b-4afa-4c57-85ac-c67d5ab1403d",
+    "code": "tm19",
+    "name": "Core Set 2019 Tokens",
+    "uri": "https://api.scryfall.com/sets/f291a61b-4afa-4c57-85ac-c67d5ab1403d",
+    "scryfall_uri": "https://scryfall.com/sets/tm19",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atm19&unique=prints",
+    "released_at": "2018-07-13",
+    "set_type": "token",
+    "card_count": 18,
+    "parent_set_code": "m19",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m19.svg?1696824000"
   },
   {
     "object": "set",
@@ -5305,7 +5782,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/gs1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/gs1.svg?1696824000"
   },
   {
     "object": "set",
@@ -5323,7 +5800,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ss1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ss1.svg?1696824000"
   },
   {
     "object": "set",
@@ -5340,7 +5817,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bbd.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bbd.svg?1696824000"
   },
   {
     "object": "set",
@@ -5357,7 +5834,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bbd.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bbd.svg?1696824000"
   },
   {
     "object": "set",
@@ -5376,13 +5853,12 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cm2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cm2.svg?1696824000"
   },
   {
     "object": "set",
     "id": "fa6a256f-bad4-495d-a2f7-007c0a773307",
     "code": "tcm2",
-    "tcgplayer_id": 2246,
     "name": "Commander Anthology Volume II Tokens",
     "uri": "https://api.scryfall.com/sets/fa6a256f-bad4-495d-a2f7-007c0a773307",
     "scryfall_uri": "https://scryfall.com/sets/tcm2",
@@ -5396,7 +5872,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cm2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cm2.svg?1696824000"
   },
   {
     "object": "set",
@@ -5414,7 +5890,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bbd.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bbd.svg?1696824000"
   },
   {
     "object": "set",
@@ -5431,24 +5907,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dom.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "c402d02c-7d42-41e4-99ea-d2540ca10b0c",
-    "code": "tdom",
-    "name": "Dominaria Tokens",
-    "uri": "https://api.scryfall.com/sets/c402d02c-7d42-41e4-99ea-d2540ca10b0c",
-    "scryfall_uri": "https://scryfall.com/sets/tdom",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atdom&unique=prints",
-    "released_at": "2018-04-27",
-    "set_type": "token",
-    "card_count": 16,
-    "parent_set_code": "dom",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dom.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dom.svg?1696824000"
   },
   {
     "object": "set",
@@ -5468,7 +5927,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dom.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dom.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "c402d02c-7d42-41e4-99ea-d2540ca10b0c",
+    "code": "tdom",
+    "name": "Dominaria Tokens",
+    "uri": "https://api.scryfall.com/sets/c402d02c-7d42-41e4-99ea-d2540ca10b0c",
+    "scryfall_uri": "https://scryfall.com/sets/tdom",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atdom&unique=prints",
+    "released_at": "2018-04-27",
+    "set_type": "token",
+    "card_count": 16,
+    "parent_set_code": "dom",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dom.svg?1696824000"
   },
   {
     "object": "set",
@@ -5487,13 +5963,12 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddu.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddu.svg?1696824000"
   },
   {
     "object": "set",
     "id": "ec7c4edd-56ae-46a7-9c05-efbff73bcf8c",
     "code": "tddu",
-    "tcgplayer_id": 2207,
     "name": "Duel Decks: Elves vs. Inventors Tokens",
     "uri": "https://api.scryfall.com/sets/ec7c4edd-56ae-46a7-9c05-efbff73bcf8c",
     "scryfall_uri": "https://scryfall.com/sets/tddu",
@@ -5505,7 +5980,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddu.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddu.svg?1696824000"
   },
   {
     "object": "set",
@@ -5525,7 +6000,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/a25.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/a25.svg?1696824000"
   },
   {
     "object": "set",
@@ -5542,7 +6017,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/a25.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/a25.svg?1696824000"
   },
   {
     "object": "set",
@@ -5558,7 +6033,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -5574,26 +6049,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "a49703ee-b842-44f1-aff3-20a7c75253f6",
-    "code": "trix",
-    "name": "Rivals of Ixalan Tokens",
-    "uri": "https://api.scryfall.com/sets/a49703ee-b842-44f1-aff3-20a7c75253f6",
-    "scryfall_uri": "https://scryfall.com/sets/trix",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atrix&unique=prints",
-    "released_at": "2018-01-19",
-    "set_type": "token",
-    "card_count": 7,
-    "parent_set_code": "rix",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "xln",
-    "block": "Ixalan",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/rix.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -5612,7 +6068,26 @@ module.exports = [
     "foil_only": false,
     "block_code": "xln",
     "block": "Ixalan",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/rix.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rix.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "a49703ee-b842-44f1-aff3-20a7c75253f6",
+    "code": "trix",
+    "name": "Rivals of Ixalan Tokens",
+    "uri": "https://api.scryfall.com/sets/a49703ee-b842-44f1-aff3-20a7c75253f6",
+    "scryfall_uri": "https://scryfall.com/sets/trix",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atrix&unique=prints",
+    "released_at": "2018-01-19",
+    "set_type": "token",
+    "card_count": 7,
+    "parent_set_code": "rix",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "xln",
+    "block": "Ixalan",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rix.svg?1696824000"
   },
   {
     "object": "set",
@@ -5634,7 +6109,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "xln",
     "block": "Ixalan",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/rix.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rix.svg?1696824000"
   },
   {
     "object": "set",
@@ -5653,7 +6128,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -5671,7 +6146,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "fnm",
     "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -5688,7 +6163,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ust.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ust.svg?1696824000"
   },
   {
     "object": "set",
@@ -5705,7 +6180,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ust.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ust.svg?1696824000"
   },
   {
     "object": "set",
@@ -5723,7 +6198,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ust.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ust.svg?1696824000"
   },
   {
     "object": "set",
@@ -5740,7 +6215,43 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ima.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ima.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "a5531353-3534-4882-8802-0304e5c2bf64",
+    "code": "e02",
+    "tcgplayer_id": 2077,
+    "name": "Explorers of Ixalan",
+    "uri": "https://api.scryfall.com/sets/a5531353-3534-4882-8802-0304e5c2bf64",
+    "scryfall_uri": "https://scryfall.com/sets/e02",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ae02&unique=prints",
+    "released_at": "2017-11-24",
+    "set_type": "box",
+    "card_count": 48,
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/e02.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "2b5230c7-25a8-4521-9f6a-7e3cefb07213",
+    "code": "pxtc",
+    "name": "XLN Treasure Chest",
+    "uri": "https://api.scryfall.com/sets/2b5230c7-25a8-4521-9f6a-7e3cefb07213",
+    "scryfall_uri": "https://scryfall.com/sets/pxtc",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apxtc&unique=prints",
+    "released_at": "2017-11-24",
+    "set_type": "promo",
+    "card_count": 10,
+    "parent_set_code": "xln",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": true,
+    "block_code": "xln",
+    "block": "Ixalan",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/xln.svg?1696824000"
   },
   {
     "object": "set",
@@ -5760,43 +6271,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/v17.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "a5531353-3534-4882-8802-0304e5c2bf64",
-    "code": "e02",
-    "tcgplayer_id": 2077,
-    "name": "Explorers of Ixalan",
-    "uri": "https://api.scryfall.com/sets/a5531353-3534-4882-8802-0304e5c2bf64",
-    "scryfall_uri": "https://scryfall.com/sets/e02",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ae02&unique=prints",
-    "released_at": "2017-11-24",
-    "set_type": "box",
-    "card_count": 48,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/e02.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "2b5230c7-25a8-4521-9f6a-7e3cefb07213",
-    "code": "pxtc",
-    "name": "XLN Treasure Chest",
-    "uri": "https://api.scryfall.com/sets/2b5230c7-25a8-4521-9f6a-7e3cefb07213",
-    "scryfall_uri": "https://scryfall.com/sets/pxtc",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apxtc&unique=prints",
-    "released_at": "2017-11-24",
-    "set_type": "promo",
-    "card_count": 10,
-    "parent_set_code": "xln",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": true,
-    "block_code": "xln",
-    "block": "Ixalan",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/xln.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/v17.svg?1696824000"
   },
   {
     "object": "set",
@@ -5816,7 +6291,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ima.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ima.svg?1696824000"
   },
   {
     "object": "set",
@@ -5833,7 +6308,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddt.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddt.svg?1696824000"
   },
   {
     "object": "set",
@@ -5850,7 +6325,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddt.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddt.svg?1696824000"
   },
   {
     "object": "set",
@@ -5866,7 +6341,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -5885,7 +6360,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "xln",
     "block": "Ixalan",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/xln.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/xln.svg?1696824000"
   },
   {
     "object": "set",
@@ -5907,7 +6382,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "xln",
     "block": "Ixalan",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/xln.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/xln.svg?1696824000"
   },
   {
     "object": "set",
@@ -5926,7 +6401,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "xln",
     "block": "Ixalan",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/xln.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/xln.svg?1696824000"
   },
   {
     "object": "set",
@@ -5945,7 +6420,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "xln",
     "block": "Ixalan",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -5961,7 +6436,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/h17.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/h17.svg?1696824000"
   },
   {
     "object": "set",
@@ -5979,7 +6454,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "htr",
     "block": "Heroes of the Realm",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -5996,7 +6471,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/e01.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/e01.svg?1696824000"
   },
   {
     "object": "set",
@@ -6015,26 +6490,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c17.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "d6402450-8ab0-4ae6-b909-87ef6464a637",
-    "code": "tc17",
-    "name": "Commander 2017 Tokens",
-    "uri": "https://api.scryfall.com/sets/d6402450-8ab0-4ae6-b909-87ef6464a637",
-    "scryfall_uri": "https://scryfall.com/sets/tc17",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atc17&unique=prints",
-    "released_at": "2017-08-25",
-    "set_type": "token",
-    "card_count": 11,
-    "parent_set_code": "c17",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "cmd",
-    "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c17.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c17.svg?1696824000"
   },
   {
     "object": "set",
@@ -6053,7 +6509,26 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c17.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c17.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "d6402450-8ab0-4ae6-b909-87ef6464a637",
+    "code": "tc17",
+    "name": "Commander 2017 Tokens",
+    "uri": "https://api.scryfall.com/sets/d6402450-8ab0-4ae6-b909-87ef6464a637",
+    "scryfall_uri": "https://scryfall.com/sets/tc17",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atc17&unique=prints",
+    "released_at": "2017-08-25",
+    "set_type": "token",
+    "card_count": 11,
+    "parent_set_code": "c17",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c17.svg?1696824000"
   },
   {
     "object": "set",
@@ -6069,7 +6544,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -6088,7 +6563,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "akh",
     "block": "Amonkhet",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/hou.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/hou.svg?1696824000"
   },
   {
     "object": "set",
@@ -6110,7 +6585,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "akh",
     "block": "Amonkhet",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/hou.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/hou.svg?1696824000"
   },
   {
     "object": "set",
@@ -6129,7 +6604,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "akh",
     "block": "Amonkhet",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/hou.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/hou.svg?1696824000"
   },
   {
     "object": "set",
@@ -6146,7 +6621,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/e01.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/e01.svg?1696824000"
   },
   {
     "object": "set",
@@ -6163,7 +6638,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/e01.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/e01.svg?1696824000"
   },
   {
     "object": "set",
@@ -6182,7 +6657,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cma.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cma.svg?1696824000"
   },
   {
     "object": "set",
@@ -6201,7 +6676,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cma.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cma.svg?1696824000"
   },
   {
     "object": "set",
@@ -6220,7 +6695,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "akh",
     "block": "Amonkhet",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/akh.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/akh.svg?1696824000"
   },
   {
     "object": "set",
@@ -6242,7 +6717,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "akh",
     "block": "Amonkhet",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/akh.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/akh.svg?1696824000"
   },
   {
     "object": "set",
@@ -6261,7 +6736,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "akh",
     "block": "Amonkhet",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/akh.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/akh.svg?1696824000"
   },
   {
     "object": "set",
@@ -6283,7 +6758,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "akh",
     "block": "Amonkhet",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mp2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mp2.svg?1696824000"
   },
   {
     "object": "set",
@@ -6302,7 +6777,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/w17.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/w17.svg?1696824000"
   },
   {
     "object": "set",
@@ -6319,7 +6794,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dds.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dds.svg?1696824000"
   },
   {
     "object": "set",
@@ -6336,7 +6811,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dds.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dds.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "6ea10568-e3e6-4a54-9ba5-cabfc2715eeb",
+    "code": "tmm3",
+    "name": "Modern Masters 2017 Tokens",
+    "uri": "https://api.scryfall.com/sets/6ea10568-e3e6-4a54-9ba5-cabfc2715eeb",
+    "scryfall_uri": "https://scryfall.com/sets/tmm3",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atmm3&unique=prints",
+    "released_at": "2017-03-17",
+    "set_type": "token",
+    "card_count": 21,
+    "parent_set_code": "mm3",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mm3.svg?1696824000"
   },
   {
     "object": "set",
@@ -6356,24 +6848,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mm3.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "6ea10568-e3e6-4a54-9ba5-cabfc2715eeb",
-    "code": "tmm3",
-    "name": "Modern Masters 2017 Tokens",
-    "uri": "https://api.scryfall.com/sets/6ea10568-e3e6-4a54-9ba5-cabfc2715eeb",
-    "scryfall_uri": "https://scryfall.com/sets/tmm3",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atmm3&unique=prints",
-    "released_at": "2017-03-17",
-    "set_type": "token",
-    "card_count": 21,
-    "parent_set_code": "mm3",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mm3.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mm3.svg?1696824000"
   },
   {
     "object": "set",
@@ -6392,7 +6867,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "kld",
     "block": "Kaladesh",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/aer.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/aer.svg?1696824000"
   },
   {
     "object": "set",
@@ -6411,7 +6886,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "kld",
     "block": "Kaladesh",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/aer.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/aer.svg?1696824000"
   },
   {
     "object": "set",
@@ -6433,7 +6908,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "kld",
     "block": "Kaladesh",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/aer.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/aer.svg?1696824000"
   },
   {
     "object": "set",
@@ -6449,25 +6924,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "690dae5c-2de4-4071-b77c-19883791f987",
-    "code": "f17",
-    "name": "Friday Night Magic 2017",
-    "uri": "https://api.scryfall.com/sets/690dae5c-2de4-4071-b77c-19883791f987",
-    "scryfall_uri": "https://scryfall.com/sets/f17",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Af17&unique=prints",
-    "released_at": "2017-01-01",
-    "set_type": "promo",
-    "card_count": 12,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": true,
-    "block_code": "fnm",
-    "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -6486,24 +6943,25 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
-    "id": "b2578381-a42d-4fa5-b9ab-9265f4cca101",
-    "code": "tpca",
-    "name": "Planechase Anthology Tokens",
-    "uri": "https://api.scryfall.com/sets/b2578381-a42d-4fa5-b9ab-9265f4cca101",
-    "scryfall_uri": "https://scryfall.com/sets/tpca",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atpca&unique=prints",
-    "released_at": "2016-11-25",
-    "set_type": "token",
-    "card_count": 19,
-    "parent_set_code": "pca",
+    "id": "690dae5c-2de4-4071-b77c-19883791f987",
+    "code": "f17",
+    "name": "Friday Night Magic 2017",
+    "uri": "https://api.scryfall.com/sets/690dae5c-2de4-4071-b77c-19883791f987",
+    "scryfall_uri": "https://scryfall.com/sets/f17",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Af17&unique=prints",
+    "released_at": "2017-01-01",
+    "set_type": "promo",
+    "card_count": 12,
     "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pca.svg?1687147200"
+    "nonfoil_only": false,
+    "foil_only": true,
+    "block_code": "fnm",
+    "block": "Friday Night Magic",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -6520,7 +6978,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pca.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pca.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "b2578381-a42d-4fa5-b9ab-9265f4cca101",
+    "code": "tpca",
+    "name": "Planechase Anthology Tokens",
+    "uri": "https://api.scryfall.com/sets/b2578381-a42d-4fa5-b9ab-9265f4cca101",
+    "scryfall_uri": "https://scryfall.com/sets/tpca",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atpca&unique=prints",
+    "released_at": "2016-11-25",
+    "set_type": "token",
+    "card_count": 19,
+    "parent_set_code": "pca",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pca.svg?1696824000"
   },
   {
     "object": "set",
@@ -6538,7 +7013,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pz2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pz2.svg?1696824000"
   },
   {
     "object": "set",
@@ -6557,7 +7032,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c16.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c16.svg?1696824000"
   },
   {
     "object": "set",
@@ -6576,7 +7051,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c16.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c16.svg?1696824000"
   },
   {
     "object": "set",
@@ -6595,7 +7070,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c16.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c16.svg?1696824000"
   },
   {
     "object": "set",
@@ -6611,7 +7086,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -6630,7 +7105,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "kld",
     "block": "Kaladesh",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/kld.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/kld.svg?1696824000"
   },
   {
     "object": "set",
@@ -6652,7 +7127,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "kld",
     "block": "Kaladesh",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/kld.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/kld.svg?1696824000"
   },
   {
     "object": "set",
@@ -6671,7 +7146,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "kld",
     "block": "Kaladesh",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/kld.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/kld.svg?1696824000"
   },
   {
     "object": "set",
@@ -6693,7 +7168,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "kld",
     "block": "Kaladesh",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mps.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mps.svg?1696824000"
   },
   {
     "object": "set",
@@ -6710,7 +7185,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddr.svg?1696824000"
   },
   {
     "object": "set",
@@ -6730,7 +7205,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cns",
     "block": "Conspiracy",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cn2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cn2.svg?1696824000"
   },
   {
     "object": "set",
@@ -6749,7 +7224,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cns",
     "block": "Conspiracy",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cn2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cn2.svg?1696824000"
   },
   {
     "object": "set",
@@ -6769,7 +7244,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/v16.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/v16.svg?1696824000"
   },
   {
     "object": "set",
@@ -6788,7 +7263,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "soi",
     "block": "Shadows over Innistrad",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/emn.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/emn.svg?1696824000"
   },
   {
     "object": "set",
@@ -6810,7 +7285,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "soi",
     "block": "Shadows over Innistrad",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/emn.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/emn.svg?1696824000"
   },
   {
     "object": "set",
@@ -6829,7 +7304,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "soi",
     "block": "Shadows over Innistrad",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/emn.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/emn.svg?1696824000"
   },
   {
     "object": "set",
@@ -6849,7 +7324,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ema.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ema.svg?1696824000"
   },
   {
     "object": "set",
@@ -6866,7 +7341,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ema.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ema.svg?1696824000"
   },
   {
     "object": "set",
@@ -6885,7 +7360,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "soi",
     "block": "Shadows over Innistrad",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/soi.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/soi.svg?1696824000"
   },
   {
     "object": "set",
@@ -6904,26 +7379,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "soi",
     "block": "Shadows over Innistrad",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/soi.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "b3a0e4a1-5f2c-44e1-8558-61e6dcd88fda",
-    "code": "w16",
-    "mtgo_code": "w16",
-    "arena_code": "w16",
-    "tcgplayer_id": 1765,
-    "name": "Welcome Deck 2016",
-    "uri": "https://api.scryfall.com/sets/b3a0e4a1-5f2c-44e1-8558-61e6dcd88fda",
-    "scryfall_uri": "https://scryfall.com/sets/w16",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aw16&unique=prints",
-    "released_at": "2016-04-08",
-    "set_type": "starter",
-    "card_count": 16,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/w16.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/soi.svg?1696824000"
   },
   {
     "object": "set",
@@ -6945,7 +7401,26 @@ module.exports = [
     "foil_only": false,
     "block_code": "soi",
     "block": "Shadows over Innistrad",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/soi.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/soi.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "b3a0e4a1-5f2c-44e1-8558-61e6dcd88fda",
+    "code": "w16",
+    "mtgo_code": "w16",
+    "arena_code": "w16",
+    "tcgplayer_id": 1765,
+    "name": "Welcome Deck 2016",
+    "uri": "https://api.scryfall.com/sets/b3a0e4a1-5f2c-44e1-8558-61e6dcd88fda",
+    "scryfall_uri": "https://scryfall.com/sets/w16",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aw16&unique=prints",
+    "released_at": "2016-04-08",
+    "set_type": "starter",
+    "card_count": 16,
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/w16.svg?1696824000"
   },
   {
     "object": "set",
@@ -6962,7 +7437,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddq.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddq.svg?1696824000"
   },
   {
     "object": "set",
@@ -6981,7 +7456,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "bfz",
     "block": "Battle for Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ogw.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ogw.svg?1696824000"
   },
   {
     "object": "set",
@@ -7003,7 +7478,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "bfz",
     "block": "Battle for Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ogw.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ogw.svg?1696824000"
   },
   {
     "object": "set",
@@ -7022,7 +7497,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "bfz",
     "block": "Battle for Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ogw.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ogw.svg?1696824000"
   },
   {
     "object": "set",
@@ -7038,7 +7513,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -7057,7 +7532,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -7075,7 +7550,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "fnm",
     "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -7093,7 +7568,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pz1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pz1.svg?1696824000"
   },
   {
     "object": "set",
@@ -7112,26 +7587,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c15.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "75af5bab-521e-47f4-b3b6-655ebddf5cb2",
-    "code": "tc15",
-    "name": "Commander 2015 Tokens",
-    "uri": "https://api.scryfall.com/sets/75af5bab-521e-47f4-b3b6-655ebddf5cb2",
-    "scryfall_uri": "https://scryfall.com/sets/tc15",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atc15&unique=prints",
-    "released_at": "2015-11-13",
-    "set_type": "token",
-    "card_count": 25,
-    "parent_set_code": "c15",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "cmd",
-    "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c15.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c15.svg?1696824000"
   },
   {
     "object": "set",
@@ -7150,7 +7606,45 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c15.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c15.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "75af5bab-521e-47f4-b3b6-655ebddf5cb2",
+    "code": "tc15",
+    "name": "Commander 2015 Tokens",
+    "uri": "https://api.scryfall.com/sets/75af5bab-521e-47f4-b3b6-655ebddf5cb2",
+    "scryfall_uri": "https://scryfall.com/sets/tc15",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atc15&unique=prints",
+    "released_at": "2015-11-13",
+    "set_type": "token",
+    "card_count": 25,
+    "parent_set_code": "c15",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "cmd",
+    "block": "Commander",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c15.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "1b5e95bd-4947-4991-8d7d-b770d6b2aaff",
+    "code": "pbfz",
+    "name": "Battle for Zendikar Promos",
+    "uri": "https://api.scryfall.com/sets/1b5e95bd-4947-4991-8d7d-b770d6b2aaff",
+    "scryfall_uri": "https://scryfall.com/sets/pbfz",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apbfz&unique=prints",
+    "released_at": "2015-10-02",
+    "set_type": "promo",
+    "card_count": 89,
+    "parent_set_code": "bfz",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "block_code": "bfz",
+    "block": "Battle for Zendikar",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bfz.svg?1696824000"
   },
   {
     "object": "set",
@@ -7172,26 +7666,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "bfz",
     "block": "Battle for Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bfz.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "1b5e95bd-4947-4991-8d7d-b770d6b2aaff",
-    "code": "pbfz",
-    "name": "Battle for Zendikar Promos",
-    "uri": "https://api.scryfall.com/sets/1b5e95bd-4947-4991-8d7d-b770d6b2aaff",
-    "scryfall_uri": "https://scryfall.com/sets/pbfz",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apbfz&unique=prints",
-    "released_at": "2015-10-02",
-    "set_type": "promo",
-    "card_count": 89,
-    "parent_set_code": "bfz",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "block_code": "bfz",
-    "block": "Battle for Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bfz.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bfz.svg?1696824000"
   },
   {
     "object": "set",
@@ -7210,7 +7685,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "bfz",
     "block": "Battle for Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bfz.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bfz.svg?1696824000"
   },
   {
     "object": "set",
@@ -7229,7 +7704,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "bfz",
     "block": "Battle for Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bfz.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bfz.svg?1696824000"
   },
   {
     "object": "set",
@@ -7251,7 +7726,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "bfz",
     "block": "Battle for Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/exp.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/exp.svg?1696824000"
   },
   {
     "object": "set",
@@ -7268,7 +7743,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddp.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddp.svg?1696824000"
   },
   {
     "object": "set",
@@ -7288,7 +7763,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/v15.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/v15.svg?1696824000"
   },
   {
     "object": "set",
@@ -7305,7 +7780,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -7322,7 +7797,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ori.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ori.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "cfc3f929-420a-4236-8d06-8e227cfb6933",
+    "code": "tori",
+    "name": "Magic Origins Tokens",
+    "uri": "https://api.scryfall.com/sets/cfc3f929-420a-4236-8d06-8e227cfb6933",
+    "scryfall_uri": "https://scryfall.com/sets/tori",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atori&unique=prints",
+    "released_at": "2015-07-17",
+    "set_type": "token",
+    "card_count": 15,
+    "parent_set_code": "ori",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ori.svg?1696824000"
   },
   {
     "object": "set",
@@ -7344,24 +7836,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ori.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "cfc3f929-420a-4236-8d06-8e227cfb6933",
-    "code": "tori",
-    "name": "Magic Origins Tokens",
-    "uri": "https://api.scryfall.com/sets/cfc3f929-420a-4236-8d06-8e227cfb6933",
-    "scryfall_uri": "https://scryfall.com/sets/tori",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atori&unique=prints",
-    "released_at": "2015-07-17",
-    "set_type": "token",
-    "card_count": 15,
-    "parent_set_code": "ori",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ori.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ori.svg?1696824000"
   },
   {
     "object": "set",
@@ -7377,24 +7852,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ori.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "f7aa47c6-c1e2-4de5-9a68-4406d84bd6bb",
-    "code": "tmm2",
-    "name": "Modern Masters 2015 Tokens",
-    "uri": "https://api.scryfall.com/sets/f7aa47c6-c1e2-4de5-9a68-4406d84bd6bb",
-    "scryfall_uri": "https://scryfall.com/sets/tmm2",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atmm2&unique=prints",
-    "released_at": "2015-05-22",
-    "set_type": "token",
-    "card_count": 16,
-    "parent_set_code": "mm2",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mm2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ori.svg?1696824000"
   },
   {
     "object": "set",
@@ -7414,7 +7872,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mm2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mm2.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "f7aa47c6-c1e2-4de5-9a68-4406d84bd6bb",
+    "code": "tmm2",
+    "name": "Modern Masters 2015 Tokens",
+    "uri": "https://api.scryfall.com/sets/f7aa47c6-c1e2-4de5-9a68-4406d84bd6bb",
+    "scryfall_uri": "https://scryfall.com/sets/tmm2",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atmm2&unique=prints",
+    "released_at": "2015-05-22",
+    "set_type": "token",
+    "card_count": 16,
+    "parent_set_code": "mm2",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mm2.svg?1696824000"
   },
   {
     "object": "set",
@@ -7433,7 +7908,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/tpr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/tpr.svg?1696824000"
   },
   {
     "object": "set",
@@ -7453,7 +7928,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ktk",
     "block": "Khans of Tarkir",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dtk.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dtk.svg?1696824000"
   },
   {
     "object": "set",
@@ -7472,7 +7947,26 @@ module.exports = [
     "foil_only": false,
     "block_code": "ktk",
     "block": "Khans of Tarkir",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dtk.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dtk.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "e9bd9e1e-754a-4d8f-a1d1-b9b6f18474c5",
+    "code": "tdtk",
+    "name": "Dragons of Tarkir Tokens",
+    "uri": "https://api.scryfall.com/sets/e9bd9e1e-754a-4d8f-a1d1-b9b6f18474c5",
+    "scryfall_uri": "https://scryfall.com/sets/tdtk",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atdtk&unique=prints",
+    "released_at": "2015-03-27",
+    "set_type": "token",
+    "card_count": 8,
+    "parent_set_code": "dtk",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "ktk",
+    "block": "Khans of Tarkir",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dtk.svg?1696824000"
   },
   {
     "object": "set",
@@ -7494,26 +7988,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ktk",
     "block": "Khans of Tarkir",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dtk.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "e9bd9e1e-754a-4d8f-a1d1-b9b6f18474c5",
-    "code": "tdtk",
-    "name": "Dragons of Tarkir Tokens",
-    "uri": "https://api.scryfall.com/sets/e9bd9e1e-754a-4d8f-a1d1-b9b6f18474c5",
-    "scryfall_uri": "https://scryfall.com/sets/tdtk",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atdtk&unique=prints",
-    "released_at": "2015-03-27",
-    "set_type": "token",
-    "card_count": 8,
-    "parent_set_code": "dtk",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "ktk",
-    "block": "Khans of Tarkir",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dtk.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dtk.svg?1696824000"
   },
   {
     "object": "set",
@@ -7530,7 +8005,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddo.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddo.svg?1696824000"
   },
   {
     "object": "set",
@@ -7549,7 +8024,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ktk",
     "block": "Khans of Tarkir",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/frf.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/frf.svg?1696824000"
   },
   {
     "object": "set",
@@ -7568,7 +8043,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "ktk",
     "block": "Khans of Tarkir",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -7587,7 +8062,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ktk",
     "block": "Khans of Tarkir",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/frf.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/frf.svg?1696824000"
   },
   {
     "object": "set",
@@ -7609,7 +8084,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ktk",
     "block": "Khans of Tarkir",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/frf.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/frf.svg?1696824000"
   },
   {
     "object": "set",
@@ -7629,7 +8104,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ktk",
     "block": "Khans of Tarkir",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/frf.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/frf.svg?1696824000"
   },
   {
     "object": "set",
@@ -7645,7 +8120,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -7664,7 +8139,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -7682,7 +8157,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "fnm",
     "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -7699,7 +8174,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dd2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dd2.svg?1696824000"
   },
   {
     "object": "set",
@@ -7716,7 +8191,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddc.svg?1696824000"
   },
   {
     "object": "set",
@@ -7733,72 +8208,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddd.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "b9ffeaf1-b0d1-4fbc-a899-c41d37c7203e",
-    "code": "tevg",
-    "name": "Duel Decks Anthology: Elves vs. Goblins Tokens",
-    "uri": "https://api.scryfall.com/sets/b9ffeaf1-b0d1-4fbc-a899-c41d37c7203e",
-    "scryfall_uri": "https://scryfall.com/sets/tevg",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atevg&unique=prints",
-    "released_at": "2014-12-05",
-    "set_type": "token",
-    "card_count": 3,
-    "parent_set_code": "evg",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dd1.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "02a67a0d-b4da-4ca9-be01-b0d78dc62ed0",
-    "code": "dvd",
-    "name": "Duel Decks Anthology: Divine vs. Demonic",
-    "uri": "https://api.scryfall.com/sets/02a67a0d-b4da-4ca9-be01-b0d78dc62ed0",
-    "scryfall_uri": "https://scryfall.com/sets/dvd",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Advd&unique=prints",
-    "released_at": "2014-12-05",
-    "set_type": "duel_deck",
-    "card_count": 62,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddc.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "37832684-2fe0-4b06-842b-eec06e5a17cb",
-    "code": "jvc",
-    "name": "Duel Decks Anthology: Jace vs. Chandra",
-    "uri": "https://api.scryfall.com/sets/37832684-2fe0-4b06-842b-eec06e5a17cb",
-    "scryfall_uri": "https://scryfall.com/sets/jvc",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ajvc&unique=prints",
-    "released_at": "2014-12-05",
-    "set_type": "duel_deck",
-    "card_count": 62,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dd2.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "db352daa-9827-44ca-ba19-511969a97689",
-    "code": "gvl",
-    "name": "Duel Decks Anthology: Garruk vs. Liliana",
-    "uri": "https://api.scryfall.com/sets/db352daa-9827-44ca-ba19-511969a97689",
-    "scryfall_uri": "https://scryfall.com/sets/gvl",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Agvl&unique=prints",
-    "released_at": "2014-12-05",
-    "set_type": "duel_deck",
-    "card_count": 63,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddd.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddd.svg?1696824000"
   },
   {
     "object": "set",
@@ -7815,7 +8225,72 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dd1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dd1.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "37832684-2fe0-4b06-842b-eec06e5a17cb",
+    "code": "jvc",
+    "name": "Duel Decks Anthology: Jace vs. Chandra",
+    "uri": "https://api.scryfall.com/sets/37832684-2fe0-4b06-842b-eec06e5a17cb",
+    "scryfall_uri": "https://scryfall.com/sets/jvc",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ajvc&unique=prints",
+    "released_at": "2014-12-05",
+    "set_type": "duel_deck",
+    "card_count": 62,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dd2.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "b9ffeaf1-b0d1-4fbc-a899-c41d37c7203e",
+    "code": "tevg",
+    "name": "Duel Decks Anthology: Elves vs. Goblins Tokens",
+    "uri": "https://api.scryfall.com/sets/b9ffeaf1-b0d1-4fbc-a899-c41d37c7203e",
+    "scryfall_uri": "https://scryfall.com/sets/tevg",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atevg&unique=prints",
+    "released_at": "2014-12-05",
+    "set_type": "token",
+    "card_count": 3,
+    "parent_set_code": "evg",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dd1.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "02a67a0d-b4da-4ca9-be01-b0d78dc62ed0",
+    "code": "dvd",
+    "name": "Duel Decks Anthology: Divine vs. Demonic",
+    "uri": "https://api.scryfall.com/sets/02a67a0d-b4da-4ca9-be01-b0d78dc62ed0",
+    "scryfall_uri": "https://scryfall.com/sets/dvd",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Advd&unique=prints",
+    "released_at": "2014-12-05",
+    "set_type": "duel_deck",
+    "card_count": 62,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddc.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "db352daa-9827-44ca-ba19-511969a97689",
+    "code": "gvl",
+    "name": "Duel Decks Anthology: Garruk vs. Liliana",
+    "uri": "https://api.scryfall.com/sets/db352daa-9827-44ca-ba19-511969a97689",
+    "scryfall_uri": "https://scryfall.com/sets/gvl",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Agvl&unique=prints",
+    "released_at": "2014-12-05",
+    "set_type": "duel_deck",
+    "card_count": 63,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddd.svg?1696824000"
   },
   {
     "object": "set",
@@ -7834,7 +8309,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c14.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c14.svg?1696824000"
   },
   {
     "object": "set",
@@ -7853,7 +8328,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c14.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c14.svg?1696824000"
   },
   {
     "object": "set",
@@ -7874,7 +8349,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c14.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c14.svg?1696824000"
   },
   {
     "object": "set",
@@ -7893,7 +8368,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ktk",
     "block": "Khans of Tarkir",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ktk.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ktk.svg?1696824000"
   },
   {
     "object": "set",
@@ -7912,7 +8387,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ktk",
     "block": "Khans of Tarkir",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ktk.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ktk.svg?1696824000"
   },
   {
     "object": "set",
@@ -7934,7 +8409,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ktk",
     "block": "Khans of Tarkir",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ktk.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ktk.svg?1696824000"
   },
   {
     "object": "set",
@@ -7951,7 +8426,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddn.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddn.svg?1696824000"
   },
   {
     "object": "set",
@@ -7971,7 +8446,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/v14.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/v14.svg?1696824000"
   },
   {
     "object": "set",
@@ -7993,7 +8468,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m15.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m15.svg?1696824000"
   },
   {
     "object": "set",
@@ -8010,7 +8485,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -8027,7 +8502,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m15.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m15.svg?1696824000"
   },
   {
     "object": "set",
@@ -8044,7 +8519,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m15.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m15.svg?1696824000"
   },
   {
     "object": "set",
@@ -8061,7 +8536,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m15.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m15.svg?1696824000"
   },
   {
     "object": "set",
@@ -8077,7 +8552,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m15.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m15.svg?1696824000"
   },
   {
     "object": "set",
@@ -8093,7 +8568,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -8112,7 +8587,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/vma.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/vma.svg?1696824000"
   },
   {
     "object": "set",
@@ -8131,7 +8606,26 @@ module.exports = [
     "foil_only": true,
     "block_code": "cns",
     "block": "Conspiracy",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cns.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cns.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "48fa7ece-52b1-446b-9855-413ee4714185",
+    "code": "tcns",
+    "name": "Conspiracy Tokens",
+    "uri": "https://api.scryfall.com/sets/48fa7ece-52b1-446b-9855-413ee4714185",
+    "scryfall_uri": "https://scryfall.com/sets/tcns",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atcns&unique=prints",
+    "released_at": "2014-06-06",
+    "set_type": "token",
+    "card_count": 9,
+    "parent_set_code": "cns",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "cns",
+    "block": "Conspiracy",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cns.svg?1696824000"
   },
   {
     "object": "set",
@@ -8151,26 +8645,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cns",
     "block": "Conspiracy",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cns.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "48fa7ece-52b1-446b-9855-413ee4714185",
-    "code": "tcns",
-    "name": "Conspiracy Tokens",
-    "uri": "https://api.scryfall.com/sets/48fa7ece-52b1-446b-9855-413ee4714185",
-    "scryfall_uri": "https://scryfall.com/sets/tcns",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atcns&unique=prints",
-    "released_at": "2014-06-06",
-    "set_type": "token",
-    "card_count": 9,
-    "parent_set_code": "cns",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "cns",
-    "block": "Conspiracy",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cns.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cns.svg?1696824000"
   },
   {
     "object": "set",
@@ -8187,7 +8662,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/md1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/md1.svg?1696824000"
   },
   {
     "object": "set",
@@ -8205,7 +8680,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/md1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/md1.svg?1696824000"
   },
   {
     "object": "set",
@@ -8224,26 +8699,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ths",
     "block": "Theros",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/jou.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "6fae3972-2ed8-4203-95b7-7f1229a91468",
-    "code": "thp3",
-    "name": "Journey into Nyx Hero's Path",
-    "uri": "https://api.scryfall.com/sets/6fae3972-2ed8-4203-95b7-7f1229a91468",
-    "scryfall_uri": "https://scryfall.com/sets/thp3",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Athp3&unique=prints",
-    "released_at": "2014-05-02",
-    "set_type": "memorabilia",
-    "card_count": 8,
-    "parent_set_code": "jou",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "ths",
-    "block": "Theros",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/jou.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/jou.svg?1696824000"
   },
   {
     "object": "set",
@@ -8262,7 +8718,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ths",
     "block": "Theros",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/jou.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/jou.svg?1696824000"
   },
   {
     "object": "set",
@@ -8284,7 +8740,26 @@ module.exports = [
     "foil_only": false,
     "block_code": "ths",
     "block": "Theros",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/jou.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/jou.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "6fae3972-2ed8-4203-95b7-7f1229a91468",
+    "code": "thp3",
+    "name": "Journey into Nyx Hero's Path",
+    "uri": "https://api.scryfall.com/sets/6fae3972-2ed8-4203-95b7-7f1229a91468",
+    "scryfall_uri": "https://scryfall.com/sets/thp3",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Athp3&unique=prints",
+    "released_at": "2014-05-02",
+    "set_type": "memorabilia",
+    "card_count": 8,
+    "parent_set_code": "jou",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "ths",
+    "block": "Theros",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/jou.svg?1696824000"
   },
   {
     "object": "set",
@@ -8303,7 +8778,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ths",
     "block": "Theros",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/jou.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/jou.svg?1696824000"
   },
   {
     "object": "set",
@@ -8322,7 +8797,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddm.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddm.svg?1696824000"
   },
   {
     "object": "set",
@@ -8339,7 +8814,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddm.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddm.svg?1696824000"
   },
   {
     "object": "set",
@@ -8358,7 +8833,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ths",
     "block": "Theros",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bng.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bng.svg?1696824000"
   },
   {
     "object": "set",
@@ -8377,26 +8852,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ths",
     "block": "Theros",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bng.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "81dd6941-9598-43ab-abd7-fd5f2b71b171",
-    "code": "tbng",
-    "name": "Born of the Gods Tokens",
-    "uri": "https://api.scryfall.com/sets/81dd6941-9598-43ab-abd7-fd5f2b71b171",
-    "scryfall_uri": "https://scryfall.com/sets/tbng",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atbng&unique=prints",
-    "released_at": "2014-02-07",
-    "set_type": "token",
-    "card_count": 11,
-    "parent_set_code": "bng",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "ths",
-    "block": "Theros",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bng.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bng.svg?1696824000"
   },
   {
     "object": "set",
@@ -8418,7 +8874,26 @@ module.exports = [
     "foil_only": false,
     "block_code": "ths",
     "block": "Theros",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bng.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bng.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "81dd6941-9598-43ab-abd7-fd5f2b71b171",
+    "code": "tbng",
+    "name": "Born of the Gods Tokens",
+    "uri": "https://api.scryfall.com/sets/81dd6941-9598-43ab-abd7-fd5f2b71b171",
+    "scryfall_uri": "https://scryfall.com/sets/tbng",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atbng&unique=prints",
+    "released_at": "2014-02-07",
+    "set_type": "token",
+    "card_count": 11,
+    "parent_set_code": "bng",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "ths",
+    "block": "Theros",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bng.svg?1696824000"
   },
   {
     "object": "set",
@@ -8437,23 +8912,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ths",
     "block": "Theros",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bng.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "484d6b67-06d0-4b8f-ad26-c6e06b2efe97",
-    "code": "pi14",
-    "name": "IDW Comics 2014",
-    "uri": "https://api.scryfall.com/sets/484d6b67-06d0-4b8f-ad26-c6e06b2efe97",
-    "scryfall_uri": "https://scryfall.com/sets/pi14",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Api14&unique=prints",
-    "released_at": "2014-01-01",
-    "set_type": "promo",
-    "card_count": 0,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pidw.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bng.svg?1696824000"
   },
   {
     "object": "set",
@@ -8469,7 +8928,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -8487,7 +8946,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "fnm",
     "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -8506,7 +8965,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -8525,7 +8984,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c13.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c13.svg?1696824000"
   },
   {
     "object": "set",
@@ -8546,7 +9005,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/c13.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/c13.svg?1696824000"
   },
   {
     "object": "set",
@@ -8565,7 +9024,45 @@ module.exports = [
     "foil_only": false,
     "block_code": "ths",
     "block": "Theros",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ths.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ths.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "fbed88b2-db9b-4606-8202-8ff746f0513f",
+    "code": "tths",
+    "name": "Theros Tokens",
+    "uri": "https://api.scryfall.com/sets/fbed88b2-db9b-4606-8202-8ff746f0513f",
+    "scryfall_uri": "https://scryfall.com/sets/tths",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atths&unique=prints",
+    "released_at": "2013-09-27",
+    "set_type": "token",
+    "card_count": 11,
+    "parent_set_code": "ths",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "ths",
+    "block": "Theros",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ths.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "d1b5d85e-f18a-4e47-8305-de8b6661cfbe",
+    "code": "thp1",
+    "name": "Theros Hero's Path",
+    "uri": "https://api.scryfall.com/sets/d1b5d85e-f18a-4e47-8305-de8b6661cfbe",
+    "scryfall_uri": "https://scryfall.com/sets/thp1",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Athp1&unique=prints",
+    "released_at": "2013-09-27",
+    "set_type": "memorabilia",
+    "card_count": 7,
+    "parent_set_code": "ths",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "ths",
+    "block": "Theros",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ths.svg?1696824000"
   },
   {
     "object": "set",
@@ -8587,45 +9084,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ths",
     "block": "Theros",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ths.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "fbed88b2-db9b-4606-8202-8ff746f0513f",
-    "code": "tths",
-    "name": "Theros Tokens",
-    "uri": "https://api.scryfall.com/sets/fbed88b2-db9b-4606-8202-8ff746f0513f",
-    "scryfall_uri": "https://scryfall.com/sets/tths",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atths&unique=prints",
-    "released_at": "2013-09-27",
-    "set_type": "token",
-    "card_count": 11,
-    "parent_set_code": "ths",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "ths",
-    "block": "Theros",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ths.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "d1b5d85e-f18a-4e47-8305-de8b6661cfbe",
-    "code": "thp1",
-    "name": "Theros Hero's Path",
-    "uri": "https://api.scryfall.com/sets/d1b5d85e-f18a-4e47-8305-de8b6661cfbe",
-    "scryfall_uri": "https://scryfall.com/sets/thp1",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Athp1&unique=prints",
-    "released_at": "2013-09-27",
-    "set_type": "memorabilia",
-    "card_count": 7,
-    "parent_set_code": "ths",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "ths",
-    "block": "Theros",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ths.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ths.svg?1696824000"
   },
   {
     "object": "set",
@@ -8644,7 +9103,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ths",
     "block": "Theros",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ths.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ths.svg?1696824000"
   },
   {
     "object": "set",
@@ -8663,7 +9122,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddl.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddl.svg?1696824000"
   },
   {
     "object": "set",
@@ -8680,7 +9139,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddl.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddl.svg?1696824000"
   },
   {
     "object": "set",
@@ -8700,7 +9159,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/v13.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/v13.svg?1696824000"
   },
   {
     "object": "set",
@@ -8722,7 +9181,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m14.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m14.svg?1696824000"
   },
   {
     "object": "set",
@@ -8739,7 +9198,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m14.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m14.svg?1696824000"
   },
   {
     "object": "set",
@@ -8756,7 +9215,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m14.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m14.svg?1696824000"
   },
   {
     "object": "set",
@@ -8772,7 +9231,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "e03160f8-6045-4613-9869-f5f4fa12604d",
+    "code": "tmma",
+    "name": "Modern Masters Tokens",
+    "uri": "https://api.scryfall.com/sets/e03160f8-6045-4613-9869-f5f4fa12604d",
+    "scryfall_uri": "https://scryfall.com/sets/tmma",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atmma&unique=prints",
+    "released_at": "2013-06-07",
+    "set_type": "token",
+    "card_count": 16,
+    "parent_set_code": "mma",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mma.svg?1696824000"
   },
   {
     "object": "set",
@@ -8792,24 +9268,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mma.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "e03160f8-6045-4613-9869-f5f4fa12604d",
-    "code": "tmma",
-    "name": "Modern Masters Tokens",
-    "uri": "https://api.scryfall.com/sets/e03160f8-6045-4613-9869-f5f4fa12604d",
-    "scryfall_uri": "https://scryfall.com/sets/tmma",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atmma&unique=prints",
-    "released_at": "2013-06-07",
-    "set_type": "token",
-    "card_count": 16,
-    "parent_set_code": "mma",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mma.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mma.svg?1696824000"
   },
   {
     "object": "set",
@@ -8831,7 +9290,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "rtr",
     "block": "Return to Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dgm.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dgm.svg?1696824000"
   },
   {
     "object": "set",
@@ -8850,7 +9309,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "rtr",
     "block": "Return to Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dgm.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dgm.svg?1696824000"
   },
   {
     "object": "set",
@@ -8869,7 +9328,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "rtr",
     "block": "Return to Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dgm.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dgm.svg?1696824000"
   },
   {
     "object": "set",
@@ -8885,7 +9344,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "5a20bd6d-97c6-4ba1-b737-9c6455777cf1",
+    "code": "tddk",
+    "name": "Duel Decks: Sorin vs. Tibalt Tokens",
+    "uri": "https://api.scryfall.com/sets/5a20bd6d-97c6-4ba1-b737-9c6455777cf1",
+    "scryfall_uri": "https://scryfall.com/sets/tddk",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atddk&unique=prints",
+    "released_at": "2013-03-15",
+    "set_type": "token",
+    "card_count": 1,
+    "parent_set_code": "ddk",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddk.svg?1696824000"
   },
   {
     "object": "set",
@@ -8904,24 +9380,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddk.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "5a20bd6d-97c6-4ba1-b737-9c6455777cf1",
-    "code": "tddk",
-    "name": "Duel Decks: Sorin vs. Tibalt Tokens",
-    "uri": "https://api.scryfall.com/sets/5a20bd6d-97c6-4ba1-b737-9c6455777cf1",
-    "scryfall_uri": "https://scryfall.com/sets/tddk",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atddk&unique=prints",
-    "released_at": "2013-03-15",
-    "set_type": "token",
-    "card_count": 1,
-    "parent_set_code": "ddk",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddk.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddk.svg?1696824000"
   },
   {
     "object": "set",
@@ -8943,7 +9402,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "rtr",
     "block": "Return to Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/gtc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/gtc.svg?1696824000"
   },
   {
     "object": "set",
@@ -8962,7 +9421,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "rtr",
     "block": "Return to Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/gtc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/gtc.svg?1696824000"
   },
   {
     "object": "set",
@@ -8981,7 +9440,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "rtr",
     "block": "Return to Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/gtc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/gtc.svg?1696824000"
   },
   {
     "object": "set",
@@ -8997,23 +9456,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m14.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "fb61dd41-313c-44f0-ba03-b35b57727f2c",
-    "code": "pi13",
-    "name": "IDW Comics 2013",
-    "uri": "https://api.scryfall.com/sets/fb61dd41-313c-44f0-ba03-b35b57727f2c",
-    "scryfall_uri": "https://scryfall.com/sets/pi13",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Api13&unique=prints",
-    "released_at": "2013-01-01",
-    "set_type": "promo",
-    "card_count": 0,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pidw.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m14.svg?1696824000"
   },
   {
     "object": "set",
@@ -9029,7 +9472,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -9048,7 +9491,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -9066,7 +9509,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "fnm",
     "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -9085,7 +9528,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cm1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cm1.svg?1696824000"
   },
   {
     "object": "set",
@@ -9104,7 +9547,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cm1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cm1.svg?1696824000"
   },
   {
     "object": "set",
@@ -9126,7 +9569,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "rtr",
     "block": "Return to Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/rtr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rtr.svg?1696824000"
   },
   {
     "object": "set",
@@ -9145,7 +9588,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "rtr",
     "block": "Return to Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/rtr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rtr.svg?1696824000"
   },
   {
     "object": "set",
@@ -9164,7 +9607,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "rtr",
     "block": "Return to Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/rtr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rtr.svg?1696824000"
   },
   {
     "object": "set",
@@ -9183,7 +9626,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddj.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddj.svg?1696824000"
   },
   {
     "object": "set",
@@ -9200,7 +9643,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddj.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddj.svg?1696824000"
   },
   {
     "object": "set",
@@ -9220,7 +9663,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/v12.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/v12.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "cd869f42-f58f-4ce3-a79d-7949b514ba52",
+    "code": "tm13",
+    "name": "Magic 2013 Tokens",
+    "uri": "https://api.scryfall.com/sets/cd869f42-f58f-4ce3-a79d-7949b514ba52",
+    "scryfall_uri": "https://scryfall.com/sets/tm13",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atm13&unique=prints",
+    "released_at": "2012-07-13",
+    "set_type": "token",
+    "card_count": 11,
+    "parent_set_code": "m13",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m13.svg?1696824000"
   },
   {
     "object": "set",
@@ -9242,24 +9702,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m13.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "cd869f42-f58f-4ce3-a79d-7949b514ba52",
-    "code": "tm13",
-    "name": "Magic 2013 Tokens",
-    "uri": "https://api.scryfall.com/sets/cd869f42-f58f-4ce3-a79d-7949b514ba52",
-    "scryfall_uri": "https://scryfall.com/sets/tm13",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atm13&unique=prints",
-    "released_at": "2012-07-13",
-    "set_type": "token",
-    "card_count": 11,
-    "parent_set_code": "m13",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m13.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m13.svg?1696824000"
   },
   {
     "object": "set",
@@ -9276,7 +9719,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m13.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m13.svg?1696824000"
   },
   {
     "object": "set",
@@ -9295,7 +9738,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pc2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pc2.svg?1696824000"
   },
   {
     "object": "set",
@@ -9314,7 +9757,26 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pc2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pc2.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "c362c2a9-2782-4cbc-917f-05334cb81c5b",
+    "code": "tavr",
+    "name": "Avacyn Restored Tokens",
+    "uri": "https://api.scryfall.com/sets/c362c2a9-2782-4cbc-917f-05334cb81c5b",
+    "scryfall_uri": "https://scryfall.com/sets/tavr",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atavr&unique=prints",
+    "released_at": "2012-05-04",
+    "set_type": "token",
+    "card_count": 8,
+    "parent_set_code": "avr",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "isd",
+    "block": "Innistrad",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/avr.svg?1696824000"
   },
   {
     "object": "set",
@@ -9336,26 +9798,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "isd",
     "block": "Innistrad",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/avr.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "c362c2a9-2782-4cbc-917f-05334cb81c5b",
-    "code": "tavr",
-    "name": "Avacyn Restored Tokens",
-    "uri": "https://api.scryfall.com/sets/c362c2a9-2782-4cbc-917f-05334cb81c5b",
-    "scryfall_uri": "https://scryfall.com/sets/tavr",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atavr&unique=prints",
-    "released_at": "2012-05-04",
-    "set_type": "token",
-    "card_count": 8,
-    "parent_set_code": "avr",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "isd",
-    "block": "Innistrad",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/avr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/avr.svg?1696824000"
   },
   {
     "object": "set",
@@ -9372,7 +9815,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/avr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/avr.svg?1696824000"
   },
   {
     "object": "set",
@@ -9391,7 +9834,24 @@ module.exports = [
     "foil_only": false,
     "block_code": "isd",
     "block": "Innistrad",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/avr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/avr.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "7ed0ca7e-daea-4cf6-8667-9fdc894e539c",
+    "code": "tddi",
+    "name": "Duel Decks: Venser vs. Koth Tokens",
+    "uri": "https://api.scryfall.com/sets/7ed0ca7e-daea-4cf6-8667-9fdc894e539c",
+    "scryfall_uri": "https://scryfall.com/sets/tddi",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atddi&unique=prints",
+    "released_at": "2012-03-30",
+    "set_type": "token",
+    "card_count": 2,
+    "parent_set_code": "ddi",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddi.svg?1696824000"
   },
   {
     "object": "set",
@@ -9410,24 +9870,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddi.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "7ed0ca7e-daea-4cf6-8667-9fdc894e539c",
-    "code": "tddi",
-    "name": "Duel Decks: Venser vs. Koth Tokens",
-    "uri": "https://api.scryfall.com/sets/7ed0ca7e-daea-4cf6-8667-9fdc894e539c",
-    "scryfall_uri": "https://scryfall.com/sets/tddi",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atddi&unique=prints",
-    "released_at": "2012-03-30",
-    "set_type": "token",
-    "card_count": 2,
-    "parent_set_code": "ddi",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddi.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddi.svg?1696824000"
   },
   {
     "object": "set",
@@ -9446,7 +9889,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "isd",
     "block": "Innistrad",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dka.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dka.svg?1696824000"
   },
   {
     "object": "set",
@@ -9468,7 +9911,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "isd",
     "block": "Innistrad",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dka.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dka.svg?1696824000"
   },
   {
     "object": "set",
@@ -9487,7 +9930,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "isd",
     "block": "Innistrad",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dka.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dka.svg?1696824000"
   },
   {
     "object": "set",
@@ -9503,7 +9946,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -9519,7 +9962,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m13.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m13.svg?1696824000"
   },
   {
     "object": "set",
@@ -9535,7 +9978,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pidw.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pidw.svg?1696824000"
   },
   {
     "object": "set",
@@ -9551,7 +9994,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -9570,7 +10013,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -9588,7 +10031,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "fnm",
     "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -9608,7 +10051,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pd3.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pd3.svg?1696824000"
   },
   {
     "object": "set",
@@ -9627,7 +10070,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "isd",
     "block": "Innistrad",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/isd.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/isd.svg?1696824000"
   },
   {
     "object": "set",
@@ -9649,7 +10092,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "isd",
     "block": "Innistrad",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/isd.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/isd.svg?1696824000"
   },
   {
     "object": "set",
@@ -9668,7 +10111,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "isd",
     "block": "Innistrad",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/isd.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/isd.svg?1696824000"
   },
   {
     "object": "set",
@@ -9687,7 +10130,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddh.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddh.svg?1696824000"
   },
   {
     "object": "set",
@@ -9704,7 +10147,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddh.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddh.svg?1696824000"
   },
   {
     "object": "set",
@@ -9724,7 +10167,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/v11.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/v11.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "56ca128d-320c-430f-b083-1950f80aa11f",
+    "code": "tm12",
+    "name": "Magic 2012 Tokens",
+    "uri": "https://api.scryfall.com/sets/56ca128d-320c-430f-b083-1950f80aa11f",
+    "scryfall_uri": "https://scryfall.com/sets/tm12",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atm12&unique=prints",
+    "released_at": "2011-07-15",
+    "set_type": "token",
+    "card_count": 7,
+    "parent_set_code": "m12",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m12.svg?1696824000"
   },
   {
     "object": "set",
@@ -9746,24 +10206,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m12.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "56ca128d-320c-430f-b083-1950f80aa11f",
-    "code": "tm12",
-    "name": "Magic 2012 Tokens",
-    "uri": "https://api.scryfall.com/sets/56ca128d-320c-430f-b083-1950f80aa11f",
-    "scryfall_uri": "https://scryfall.com/sets/tm12",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atm12&unique=prints",
-    "released_at": "2011-07-15",
-    "set_type": "token",
-    "card_count": 7,
-    "parent_set_code": "m12",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m12.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m12.svg?1696824000"
   },
   {
     "object": "set",
@@ -9780,7 +10223,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m12.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m12.svg?1696824000"
   },
   {
     "object": "set",
@@ -9799,7 +10242,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cmd.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cmd.svg?1696824000"
   },
   {
     "object": "set",
@@ -9818,7 +10261,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cmd.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cmd.svg?1696824000"
   },
   {
     "object": "set",
@@ -9839,7 +10282,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "cmd",
     "block": "Commander",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cmd.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cmd.svg?1696824000"
   },
   {
     "object": "set",
@@ -9857,7 +10300,26 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/td2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/td2.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "7b5e3883-6588-412a-b979-7de44d50b3de",
+    "code": "tnph",
+    "name": "New Phyrexia Tokens",
+    "uri": "https://api.scryfall.com/sets/7b5e3883-6588-412a-b979-7de44d50b3de",
+    "scryfall_uri": "https://scryfall.com/sets/tnph",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atnph&unique=prints",
+    "released_at": "2011-05-13",
+    "set_type": "token",
+    "card_count": 5,
+    "parent_set_code": "nph",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "som",
+    "block": "Scars of Mirrodin",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/nph.svg?1696824000"
   },
   {
     "object": "set",
@@ -9879,26 +10341,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "som",
     "block": "Scars of Mirrodin",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/nph.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "7b5e3883-6588-412a-b979-7de44d50b3de",
-    "code": "tnph",
-    "name": "New Phyrexia Tokens",
-    "uri": "https://api.scryfall.com/sets/7b5e3883-6588-412a-b979-7de44d50b3de",
-    "scryfall_uri": "https://scryfall.com/sets/tnph",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atnph&unique=prints",
-    "released_at": "2011-05-13",
-    "set_type": "token",
-    "card_count": 5,
-    "parent_set_code": "nph",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "som",
-    "block": "Scars of Mirrodin",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/nph.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/nph.svg?1696824000"
   },
   {
     "object": "set",
@@ -9917,7 +10360,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "som",
     "block": "Scars of Mirrodin",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/nph.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/nph.svg?1696824000"
   },
   {
     "object": "set",
@@ -9936,7 +10379,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddg.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddg.svg?1696824000"
   },
   {
     "object": "set",
@@ -9953,7 +10396,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddg.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddg.svg?1696824000"
   },
   {
     "object": "set",
@@ -9975,7 +10418,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "som",
     "block": "Scars of Mirrodin",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mbs.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mbs.svg?1696824000"
   },
   {
     "object": "set",
@@ -9994,7 +10437,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "som",
     "block": "Scars of Mirrodin",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mbs.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mbs.svg?1696824000"
   },
   {
     "object": "set",
@@ -10013,7 +10456,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "som",
     "block": "Scars of Mirrodin",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mbs.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mbs.svg?1696824000"
   },
   {
     "object": "set",
@@ -10032,7 +10475,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/me4.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/me4.svg?1696824000"
   },
   {
     "object": "set",
@@ -10048,7 +10491,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmps.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmps.svg?1696824000"
   },
   {
     "object": "set",
@@ -10064,7 +10507,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmtg2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmtg2.svg?1696824000"
   },
   {
     "object": "set",
@@ -10080,7 +10523,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -10097,59 +10540,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/psal.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "757ed42f-384b-450d-ab70-217cadca2847",
-    "code": "f11",
-    "name": "Friday Night Magic 2011",
-    "uri": "https://api.scryfall.com/sets/757ed42f-384b-450d-ab70-217cadca2847",
-    "scryfall_uri": "https://scryfall.com/sets/f11",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Af11&unique=prints",
-    "released_at": "2011-01-01",
-    "set_type": "promo",
-    "card_count": 12,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": true,
-    "block_code": "fnm",
-    "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "ba0f80c9-7a21-425b-8a02-cb17c2a50e36",
-    "code": "p11",
-    "name": "Magic Player Rewards 2011",
-    "uri": "https://api.scryfall.com/sets/ba0f80c9-7a21-425b-8a02-cb17c2a50e36",
-    "scryfall_uri": "https://scryfall.com/sets/p11",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ap11&unique=prints",
-    "released_at": "2011-01-01",
-    "set_type": "promo",
-    "card_count": 5,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "block_code": "mpr",
-    "block": "Magic Player Rewards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "1f7e87ba-8d80-4484-a7bb-075a54f9182e",
-    "code": "olgc",
-    "name": "Legacy Championship",
-    "uri": "https://api.scryfall.com/sets/1f7e87ba-8d80-4484-a7bb-075a54f9182e",
-    "scryfall_uri": "https://scryfall.com/sets/olgc",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aolgc&unique=prints",
-    "released_at": "2011-01-01",
-    "set_type": "memorabilia",
-    "card_count": 24,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmei.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/psal.svg?1696824000"
   },
   {
     "object": "set",
@@ -10168,7 +10559,59 @@ module.exports = [
     "foil_only": false,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "ba0f80c9-7a21-425b-8a02-cb17c2a50e36",
+    "code": "p11",
+    "name": "Magic Player Rewards 2011",
+    "uri": "https://api.scryfall.com/sets/ba0f80c9-7a21-425b-8a02-cb17c2a50e36",
+    "scryfall_uri": "https://scryfall.com/sets/p11",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ap11&unique=prints",
+    "released_at": "2011-01-01",
+    "set_type": "promo",
+    "card_count": 7,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "block_code": "mpr",
+    "block": "Magic Player Rewards",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "1f7e87ba-8d80-4484-a7bb-075a54f9182e",
+    "code": "olgc",
+    "name": "Legacy Championship",
+    "uri": "https://api.scryfall.com/sets/1f7e87ba-8d80-4484-a7bb-075a54f9182e",
+    "scryfall_uri": "https://scryfall.com/sets/olgc",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aolgc&unique=prints",
+    "released_at": "2011-01-01",
+    "set_type": "memorabilia",
+    "card_count": 24,
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmei.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "757ed42f-384b-450d-ab70-217cadca2847",
+    "code": "f11",
+    "name": "Friday Night Magic 2011",
+    "uri": "https://api.scryfall.com/sets/757ed42f-384b-450d-ab70-217cadca2847",
+    "scryfall_uri": "https://scryfall.com/sets/f11",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Af11&unique=prints",
+    "released_at": "2011-01-01",
+    "set_type": "promo",
+    "card_count": 12,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": true,
+    "block_code": "fnm",
+    "block": "Friday Night Magic",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -10188,7 +10631,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pd2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pd2.svg?1696824000"
   },
   {
     "object": "set",
@@ -10206,7 +10649,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/td0.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/td0.svg?1696824000"
   },
   {
     "object": "set",
@@ -10225,7 +10668,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "som",
     "block": "Scars of Mirrodin",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/som.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/som.svg?1696824000"
   },
   {
     "object": "set",
@@ -10247,7 +10690,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "som",
     "block": "Scars of Mirrodin",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/som.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/som.svg?1696824000"
   },
   {
     "object": "set",
@@ -10266,24 +10709,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "som",
     "block": "Scars of Mirrodin",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/som.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "0bded9df-2f2b-4862-b35f-1e64d3decb8b",
-    "code": "tddf",
-    "name": "Duel Decks: Elspeth vs. Tezzeret Tokens",
-    "uri": "https://api.scryfall.com/sets/0bded9df-2f2b-4862-b35f-1e64d3decb8b",
-    "scryfall_uri": "https://scryfall.com/sets/tddf",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atddf&unique=prints",
-    "released_at": "2010-09-03",
-    "set_type": "token",
-    "card_count": 1,
-    "parent_set_code": "ddf",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddf.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/som.svg?1696824000"
   },
   {
     "object": "set",
@@ -10302,7 +10728,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddf.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddf.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "0bded9df-2f2b-4862-b35f-1e64d3decb8b",
+    "code": "tddf",
+    "name": "Duel Decks: Elspeth vs. Tezzeret Tokens",
+    "uri": "https://api.scryfall.com/sets/0bded9df-2f2b-4862-b35f-1e64d3decb8b",
+    "scryfall_uri": "https://scryfall.com/sets/tddf",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atddf&unique=prints",
+    "released_at": "2010-09-03",
+    "set_type": "token",
+    "card_count": 1,
+    "parent_set_code": "ddf",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddf.svg?1696824000"
   },
   {
     "object": "set",
@@ -10322,7 +10765,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/v10.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/v10.svg?1696824000"
   },
   {
     "object": "set",
@@ -10344,7 +10787,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m11.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m11.svg?1696824000"
   },
   {
     "object": "set",
@@ -10361,7 +10804,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m11.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m11.svg?1696824000"
   },
   {
     "object": "set",
@@ -10373,12 +10816,12 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apm11&unique=prints",
     "released_at": "2010-07-15",
     "set_type": "promo",
-    "card_count": 3,
+    "card_count": 4,
     "parent_set_code": "m11",
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m11.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m11.svg?1696824000"
   },
   {
     "object": "set",
@@ -10395,7 +10838,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/arc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/arc.svg?1696824000"
   },
   {
     "object": "set",
@@ -10412,24 +10855,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/arc.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "35e052c6-7249-4482-8864-897f83fa0a0e",
-    "code": "parc",
-    "name": "Archenemy Promos",
-    "uri": "https://api.scryfall.com/sets/35e052c6-7249-4482-8864-897f83fa0a0e",
-    "scryfall_uri": "https://scryfall.com/sets/parc",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aparc&unique=prints",
-    "released_at": "2010-06-18",
-    "set_type": "archenemy",
-    "card_count": 0,
-    "parent_set_code": "arc",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/arc.svg?1696824000"
   },
   {
     "object": "set",
@@ -10446,7 +10872,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dpa.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dpa.svg?1696824000"
   },
   {
     "object": "set",
@@ -10465,7 +10891,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "zen",
     "block": "Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/roe.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/roe.svg?1696824000"
   },
   {
     "object": "set",
@@ -10487,7 +10913,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "zen",
     "block": "Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/roe.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/roe.svg?1696824000"
   },
   {
     "object": "set",
@@ -10506,7 +10932,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "zen",
     "block": "Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/roe.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/roe.svg?1696824000"
   },
   {
     "object": "set",
@@ -10523,7 +10949,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dde.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dde.svg?1696824000"
   },
   {
     "object": "set",
@@ -10542,7 +10968,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dde.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dde.svg?1696824000"
   },
   {
     "object": "set",
@@ -10561,7 +10987,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "zen",
     "block": "Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/wwk.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/wwk.svg?1696824000"
   },
   {
     "object": "set",
@@ -10580,7 +11006,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "zen",
     "block": "Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/wwk.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/wwk.svg?1696824000"
   },
   {
     "object": "set",
@@ -10602,7 +11028,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "zen",
     "block": "Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/wwk.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/wwk.svg?1696824000"
   },
   {
     "object": "set",
@@ -10618,23 +11044,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmtg2.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "47a10564-4d80-4cf0-9851-80bf13a00533",
-    "code": "pw10",
-    "name": "Wizards Play Network 2010",
-    "uri": "https://api.scryfall.com/sets/47a10564-4d80-4cf0-9851-80bf13a00533",
-    "scryfall_uri": "https://scryfall.com/sets/pw10",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apw10&unique=prints",
-    "released_at": "2010-01-01",
-    "set_type": "promo",
-    "card_count": 0,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmtg2.svg?1696824000"
   },
   {
     "object": "set",
@@ -10650,7 +11060,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmps.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmps.svg?1696824000"
   },
   {
     "object": "set",
@@ -10668,25 +11078,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "fnm",
     "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "d871e33b-7086-4549-89d6-fedd4422161f",
-    "code": "p10",
-    "name": "Magic Player Rewards 2010",
-    "uri": "https://api.scryfall.com/sets/d871e33b-7086-4549-89d6-fedd4422161f",
-    "scryfall_uri": "https://scryfall.com/sets/p10",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ap10&unique=prints",
-    "released_at": "2010-01-01",
-    "set_type": "promo",
-    "card_count": 9,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "block_code": "mpr",
-    "block": "Magic Player Rewards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -10705,7 +11097,25 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "d871e33b-7086-4549-89d6-fedd4422161f",
+    "code": "p10",
+    "name": "Magic Player Rewards 2010",
+    "uri": "https://api.scryfall.com/sets/d871e33b-7086-4549-89d6-fedd4422161f",
+    "scryfall_uri": "https://scryfall.com/sets/p10",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ap10&unique=prints",
+    "released_at": "2010-01-01",
+    "set_type": "promo",
+    "card_count": 13,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "block_code": "mpr",
+    "block": "Magic Player Rewards",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -10725,7 +11135,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/h09.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/h09.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "bc6b3b40-d55f-44d3-9c7a-a5279cdf1fc8",
+    "code": "tddd",
+    "name": "Duel Decks: Garruk vs. Liliana Tokens",
+    "uri": "https://api.scryfall.com/sets/bc6b3b40-d55f-44d3-9c7a-a5279cdf1fc8",
+    "scryfall_uri": "https://scryfall.com/sets/tddd",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atddd&unique=prints",
+    "released_at": "2009-10-30",
+    "set_type": "token",
+    "card_count": 3,
+    "parent_set_code": "ddd",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddd.svg?1696824000"
   },
   {
     "object": "set",
@@ -10744,24 +11171,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddd.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "bc6b3b40-d55f-44d3-9c7a-a5279cdf1fc8",
-    "code": "tddd",
-    "name": "Duel Decks: Garruk vs. Liliana Tokens",
-    "uri": "https://api.scryfall.com/sets/bc6b3b40-d55f-44d3-9c7a-a5279cdf1fc8",
-    "scryfall_uri": "https://scryfall.com/sets/tddd",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atddd&unique=prints",
-    "released_at": "2009-10-30",
-    "set_type": "token",
-    "card_count": 3,
-    "parent_set_code": "ddd",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddd.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddd.svg?1696824000"
   },
   {
     "object": "set",
@@ -10780,7 +11190,26 @@ module.exports = [
     "foil_only": true,
     "block_code": "zen",
     "block": "Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/zen.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/zen.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "f97260a2-5fb8-4261-aedc-ce0836b01400",
+    "code": "tzen",
+    "name": "Zendikar Tokens",
+    "uri": "https://api.scryfall.com/sets/f97260a2-5fb8-4261-aedc-ce0836b01400",
+    "scryfall_uri": "https://scryfall.com/sets/tzen",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atzen&unique=prints",
+    "released_at": "2009-10-02",
+    "set_type": "token",
+    "card_count": 11,
+    "parent_set_code": "zen",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "zen",
+    "block": "Zendikar",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/zen.svg?1696824000"
   },
   {
     "object": "set",
@@ -10802,26 +11231,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "zen",
     "block": "Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/zen.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "f97260a2-5fb8-4261-aedc-ce0836b01400",
-    "code": "tzen",
-    "name": "Zendikar Tokens",
-    "uri": "https://api.scryfall.com/sets/f97260a2-5fb8-4261-aedc-ce0836b01400",
-    "scryfall_uri": "https://scryfall.com/sets/tzen",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atzen&unique=prints",
-    "released_at": "2009-10-02",
-    "set_type": "token",
-    "card_count": 11,
-    "parent_set_code": "zen",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "zen",
-    "block": "Zendikar",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/zen.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/zen.svg?1696824000"
   },
   {
     "object": "set",
@@ -10840,7 +11250,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/me3.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/me3.svg?1696824000"
   },
   {
     "object": "set",
@@ -10859,7 +11269,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/hop.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/hop.svg?1696824000"
   },
   {
     "object": "set",
@@ -10878,7 +11288,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/hop.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/hop.svg?1696824000"
   },
   {
     "object": "set",
@@ -10895,7 +11305,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -10915,24 +11325,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/v09.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "6d9f49c1-4784-4fd6-a9f1-05e36e25befe",
-    "code": "tm10",
-    "name": "Magic 2010 Tokens",
-    "uri": "https://api.scryfall.com/sets/6d9f49c1-4784-4fd6-a9f1-05e36e25befe",
-    "scryfall_uri": "https://scryfall.com/sets/tm10",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atm10&unique=prints",
-    "released_at": "2009-07-17",
-    "set_type": "token",
-    "card_count": 8,
-    "parent_set_code": "m10",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m10.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/v09.svg?1696824000"
   },
   {
     "object": "set",
@@ -10954,7 +11347,24 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m10.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m10.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "6d9f49c1-4784-4fd6-a9f1-05e36e25befe",
+    "code": "tm10",
+    "name": "Magic 2010 Tokens",
+    "uri": "https://api.scryfall.com/sets/6d9f49c1-4784-4fd6-a9f1-05e36e25befe",
+    "scryfall_uri": "https://scryfall.com/sets/tm10",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atm10&unique=prints",
+    "released_at": "2009-07-17",
+    "set_type": "token",
+    "card_count": 8,
+    "parent_set_code": "m10",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m10.svg?1696824000"
   },
   {
     "object": "set",
@@ -10971,7 +11381,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/m10.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/m10.svg?1696824000"
   },
   {
     "object": "set",
@@ -10990,26 +11400,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "ala",
     "block": "Alara",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/arb.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "f1c5bbc9-2b74-443f-8b26-f495f2b4de18",
-    "code": "tarb",
-    "name": "Alara Reborn Tokens",
-    "uri": "https://api.scryfall.com/sets/f1c5bbc9-2b74-443f-8b26-f495f2b4de18",
-    "scryfall_uri": "https://scryfall.com/sets/tarb",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atarb&unique=prints",
-    "released_at": "2009-04-30",
-    "set_type": "token",
-    "card_count": 4,
-    "parent_set_code": "arb",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "ala",
-    "block": "Alara",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/arb.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/arb.svg?1696824000"
   },
   {
     "object": "set",
@@ -11031,7 +11422,43 @@ module.exports = [
     "foil_only": false,
     "block_code": "ala",
     "block": "Alara",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/arb.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/arb.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "f1c5bbc9-2b74-443f-8b26-f495f2b4de18",
+    "code": "tarb",
+    "name": "Alara Reborn Tokens",
+    "uri": "https://api.scryfall.com/sets/f1c5bbc9-2b74-443f-8b26-f495f2b4de18",
+    "scryfall_uri": "https://scryfall.com/sets/tarb",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atarb&unique=prints",
+    "released_at": "2009-04-30",
+    "set_type": "token",
+    "card_count": 4,
+    "parent_set_code": "arb",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "ala",
+    "block": "Alara",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/arb.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "4281ce5b-05ea-4ff1-a242-8c136cce5224",
+    "code": "tddc",
+    "name": "Duel Decks: Divine vs. Demonic Tokens",
+    "uri": "https://api.scryfall.com/sets/4281ce5b-05ea-4ff1-a242-8c136cce5224",
+    "scryfall_uri": "https://scryfall.com/sets/tddc",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atddc&unique=prints",
+    "released_at": "2009-04-10",
+    "set_type": "token",
+    "card_count": 3,
+    "parent_set_code": "ddc",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddc.svg?1696824000"
   },
   {
     "object": "set",
@@ -11050,24 +11477,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddc.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "4281ce5b-05ea-4ff1-a242-8c136cce5224",
-    "code": "tddc",
-    "name": "Duel Decks: Divine vs. Demonic Tokens",
-    "uri": "https://api.scryfall.com/sets/4281ce5b-05ea-4ff1-a242-8c136cce5224",
-    "scryfall_uri": "https://scryfall.com/sets/tddc",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atddc&unique=prints",
-    "released_at": "2009-04-10",
-    "set_type": "token",
-    "card_count": 3,
-    "parent_set_code": "ddc",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ddc.svg?1696824000"
   },
   {
     "object": "set",
@@ -11079,11 +11489,11 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apurl&unique=prints",
     "released_at": "2009-02-08",
     "set_type": "promo",
-    "card_count": 9,
+    "card_count": 8,
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -11102,7 +11512,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "ala",
     "block": "Alara",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/con.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/con.svg?1696824000"
   },
   {
     "object": "set",
@@ -11124,7 +11534,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ala",
     "block": "Alara",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/con.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/con.svg?1696824000"
   },
   {
     "object": "set",
@@ -11143,7 +11553,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ala",
     "block": "Alara",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/con.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/con.svg?1696824000"
   },
   {
     "object": "set",
@@ -11159,23 +11569,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pbook.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "bd6d27ea-c134-4375-8c2d-472e8730a9ab",
-    "code": "pw09",
-    "name": "Wizards Play Network 2009",
-    "uri": "https://api.scryfall.com/sets/bd6d27ea-c134-4375-8c2d-472e8730a9ab",
-    "scryfall_uri": "https://scryfall.com/sets/pw09",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apw09&unique=prints",
-    "released_at": "2009-01-01",
-    "set_type": "promo",
-    "card_count": 0,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pbook.svg?1696824000"
   },
   {
     "object": "set",
@@ -11191,7 +11585,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pxbox.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pxbox.svg?1696824000"
   },
   {
     "object": "set",
@@ -11207,43 +11601,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmps.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "a540bc4f-d0c3-4758-9636-547ec9df7fc9",
-    "code": "f09",
-    "name": "Friday Night Magic 2009",
-    "uri": "https://api.scryfall.com/sets/a540bc4f-d0c3-4758-9636-547ec9df7fc9",
-    "scryfall_uri": "https://scryfall.com/sets/f09",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Af09&unique=prints",
-    "released_at": "2009-01-01",
-    "set_type": "promo",
-    "card_count": 12,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": true,
-    "block_code": "fnm",
-    "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "824eec08-e609-41db-8de4-4e58d8aeb37d",
-    "code": "p09",
-    "name": "Magic Player Rewards 2009",
-    "uri": "https://api.scryfall.com/sets/824eec08-e609-41db-8de4-4e58d8aeb37d",
-    "scryfall_uri": "https://scryfall.com/sets/p09",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ap09&unique=prints",
-    "released_at": "2009-01-01",
-    "set_type": "promo",
-    "card_count": 9,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "block_code": "mpr",
-    "block": "Magic Player Rewards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmps.svg?1696824000"
   },
   {
     "object": "set",
@@ -11262,7 +11620,60 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "a540bc4f-d0c3-4758-9636-547ec9df7fc9",
+    "code": "f09",
+    "name": "Friday Night Magic 2009",
+    "uri": "https://api.scryfall.com/sets/a540bc4f-d0c3-4758-9636-547ec9df7fc9",
+    "scryfall_uri": "https://scryfall.com/sets/f09",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Af09&unique=prints",
+    "released_at": "2009-01-01",
+    "set_type": "promo",
+    "card_count": 12,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": true,
+    "block_code": "fnm",
+    "block": "Friday Night Magic",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "824eec08-e609-41db-8de4-4e58d8aeb37d",
+    "code": "p09",
+    "name": "Magic Player Rewards 2009",
+    "uri": "https://api.scryfall.com/sets/824eec08-e609-41db-8de4-4e58d8aeb37d",
+    "scryfall_uri": "https://scryfall.com/sets/p09",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ap09&unique=prints",
+    "released_at": "2009-01-01",
+    "set_type": "promo",
+    "card_count": 13,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "block_code": "mpr",
+    "block": "Magic Player Rewards",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "596b1b68-c669-44e8-8163-5a5e272f77e8",
+    "code": "tdd2",
+    "name": "Duel Decks: Jace vs. Chandra Tokens",
+    "uri": "https://api.scryfall.com/sets/596b1b68-c669-44e8-8163-5a5e272f77e8",
+    "scryfall_uri": "https://scryfall.com/sets/tdd2",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atdd2&unique=prints",
+    "released_at": "2008-11-07",
+    "set_type": "token",
+    "card_count": 1,
+    "parent_set_code": "dd2",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dd2.svg?1696824000"
   },
   {
     "object": "set",
@@ -11281,24 +11692,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dd2.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "596b1b68-c669-44e8-8163-5a5e272f77e8",
-    "code": "tdd2",
-    "name": "Duel Decks: Jace vs. Chandra Tokens",
-    "uri": "https://api.scryfall.com/sets/596b1b68-c669-44e8-8163-5a5e272f77e8",
-    "scryfall_uri": "https://scryfall.com/sets/tdd2",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atdd2&unique=prints",
-    "released_at": "2008-11-07",
-    "set_type": "token",
-    "card_count": 1,
-    "parent_set_code": "dd2",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dd2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dd2.svg?1696824000"
   },
   {
     "object": "set",
@@ -11317,7 +11711,26 @@ module.exports = [
     "foil_only": true,
     "block_code": "ala",
     "block": "Alara",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ala.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ala.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "835956e2-d0ea-4219-b77e-b439208d0655",
+    "code": "tala",
+    "name": "Shards of Alara Tokens",
+    "uri": "https://api.scryfall.com/sets/835956e2-d0ea-4219-b77e-b439208d0655",
+    "scryfall_uri": "https://scryfall.com/sets/tala",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atala&unique=prints",
+    "released_at": "2008-10-03",
+    "set_type": "token",
+    "card_count": 10,
+    "parent_set_code": "ala",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "ala",
+    "block": "Alara",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ala.svg?1696824000"
   },
   {
     "object": "set",
@@ -11339,42 +11752,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ala",
     "block": "Alara",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ala.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "835956e2-d0ea-4219-b77e-b439208d0655",
-    "code": "tala",
-    "name": "Shards of Alara Tokens",
-    "uri": "https://api.scryfall.com/sets/835956e2-d0ea-4219-b77e-b439208d0655",
-    "scryfall_uri": "https://scryfall.com/sets/tala",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atala&unique=prints",
-    "released_at": "2008-10-03",
-    "set_type": "token",
-    "card_count": 10,
-    "parent_set_code": "ala",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "ala",
-    "block": "Alara",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ala.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "351a824a-fcf0-42a0-8b64-8fac64d8f04d",
-    "code": "pwpn",
-    "name": "Wizards Play Network 2008",
-    "uri": "https://api.scryfall.com/sets/351a824a-fcf0-42a0-8b64-8fac64d8f04d",
-    "scryfall_uri": "https://scryfall.com/sets/pwpn",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apwpn&unique=prints",
-    "released_at": "2008-10-01",
-    "set_type": "promo",
-    "card_count": 0,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ala.svg?1696824000"
   },
   {
     "object": "set",
@@ -11393,7 +11771,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/me2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/me2.svg?1696824000"
   },
   {
     "object": "set",
@@ -11413,7 +11791,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/drb.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/drb.svg?1696824000"
   },
   {
     "object": "set",
@@ -11432,26 +11810,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "shm",
     "block": "Shadowmoor",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/eve.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "107e2bde-bf04-42e9-ab9d-44175d1bebe7",
-    "code": "teve",
-    "name": "Eventide Tokens",
-    "uri": "https://api.scryfall.com/sets/107e2bde-bf04-42e9-ab9d-44175d1bebe7",
-    "scryfall_uri": "https://scryfall.com/sets/teve",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ateve&unique=prints",
-    "released_at": "2008-07-25",
-    "set_type": "token",
-    "card_count": 7,
-    "parent_set_code": "eve",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "shm",
-    "block": "Shadowmoor",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/eve.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/eve.svg?1696824000"
   },
   {
     "object": "set",
@@ -11473,7 +11832,26 @@ module.exports = [
     "foil_only": false,
     "block_code": "shm",
     "block": "Shadowmoor",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/eve.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/eve.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "107e2bde-bf04-42e9-ab9d-44175d1bebe7",
+    "code": "teve",
+    "name": "Eventide Tokens",
+    "uri": "https://api.scryfall.com/sets/107e2bde-bf04-42e9-ab9d-44175d1bebe7",
+    "scryfall_uri": "https://scryfall.com/sets/teve",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ateve&unique=prints",
+    "released_at": "2008-07-25",
+    "set_type": "token",
+    "card_count": 7,
+    "parent_set_code": "eve",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "shm",
+    "block": "Shadowmoor",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/eve.svg?1696824000"
   },
   {
     "object": "set",
@@ -11492,7 +11870,26 @@ module.exports = [
     "foil_only": true,
     "block_code": "shm",
     "block": "Shadowmoor",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/shm.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/shm.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "2dd7782a-5e58-4338-81ff-0841c66ee647",
+    "code": "tshm",
+    "name": "Shadowmoor Tokens",
+    "uri": "https://api.scryfall.com/sets/2dd7782a-5e58-4338-81ff-0841c66ee647",
+    "scryfall_uri": "https://scryfall.com/sets/tshm",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atshm&unique=prints",
+    "released_at": "2008-05-02",
+    "set_type": "token",
+    "card_count": 12,
+    "parent_set_code": "shm",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "shm",
+    "block": "Shadowmoor",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/shm.svg?1696824000"
   },
   {
     "object": "set",
@@ -11514,26 +11911,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "shm",
     "block": "Shadowmoor",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/shm.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "2dd7782a-5e58-4338-81ff-0841c66ee647",
-    "code": "tshm",
-    "name": "Shadowmoor Tokens",
-    "uri": "https://api.scryfall.com/sets/2dd7782a-5e58-4338-81ff-0841c66ee647",
-    "scryfall_uri": "https://scryfall.com/sets/tshm",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atshm&unique=prints",
-    "released_at": "2008-05-02",
-    "set_type": "token",
-    "card_count": 12,
-    "parent_set_code": "shm",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "shm",
-    "block": "Shadowmoor",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/shm.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/shm.svg?1696824000"
   },
   {
     "object": "set",
@@ -11549,7 +11927,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -11568,26 +11946,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "lrw",
     "block": "Lorwyn",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mor.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "cf25354d-817d-4756-b786-604ac93ba3b7",
-    "code": "tmor",
-    "name": "Morningtide Tokens",
-    "uri": "https://api.scryfall.com/sets/cf25354d-817d-4756-b786-604ac93ba3b7",
-    "scryfall_uri": "https://scryfall.com/sets/tmor",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atmor&unique=prints",
-    "released_at": "2008-02-01",
-    "set_type": "token",
-    "card_count": 3,
-    "parent_set_code": "mor",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "lrw",
-    "block": "Lorwyn",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mor.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mor.svg?1696824000"
   },
   {
     "object": "set",
@@ -11609,7 +11968,26 @@ module.exports = [
     "foil_only": false,
     "block_code": "lrw",
     "block": "Lorwyn",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mor.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mor.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "cf25354d-817d-4756-b786-604ac93ba3b7",
+    "code": "tmor",
+    "name": "Morningtide Tokens",
+    "uri": "https://api.scryfall.com/sets/cf25354d-817d-4756-b786-604ac93ba3b7",
+    "scryfall_uri": "https://scryfall.com/sets/tmor",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atmor&unique=prints",
+    "released_at": "2008-02-01",
+    "set_type": "token",
+    "card_count": 3,
+    "parent_set_code": "mor",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "lrw",
+    "block": "Lorwyn",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mor.svg?1696824000"
   },
   {
     "object": "set",
@@ -11625,41 +12003,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmps.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "b7ad4229-c7af-4cc1-90e0-b21b8785a6b0",
-    "code": "pg08",
-    "name": "Gateway 2008",
-    "uri": "https://api.scryfall.com/sets/b7ad4229-c7af-4cc1-90e0-b21b8785a6b0",
-    "scryfall_uri": "https://scryfall.com/sets/pg08",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apg08&unique=prints",
-    "released_at": "2008-01-01",
-    "set_type": "promo",
-    "card_count": 0,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "1d9c28af-5035-4b6d-9944-62b51cfd688d",
-    "code": "f08",
-    "name": "Friday Night Magic 2008",
-    "uri": "https://api.scryfall.com/sets/1d9c28af-5035-4b6d-9944-62b51cfd688d",
-    "scryfall_uri": "https://scryfall.com/sets/f08",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Af08&unique=prints",
-    "released_at": "2008-01-01",
-    "set_type": "promo",
-    "card_count": 12,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": true,
-    "block_code": "fnm",
-    "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmps.svg?1696824000"
   },
   {
     "object": "set",
@@ -11678,7 +12022,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -11696,25 +12040,25 @@ module.exports = [
     "foil_only": false,
     "block_code": "mpr",
     "block": "Magic Player Rewards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
-    "id": "005f56a5-9661-4bd1-bf05-cf133ccdcdcf",
-    "code": "tdd1",
-    "tcgplayer_id": 33,
-    "name": "Duel Decks: Elves vs. Goblins Tokens",
-    "uri": "https://api.scryfall.com/sets/005f56a5-9661-4bd1-bf05-cf133ccdcdcf",
-    "scryfall_uri": "https://scryfall.com/sets/tdd1",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atdd1&unique=prints",
-    "released_at": "2007-11-16",
-    "set_type": "token",
-    "card_count": 3,
-    "parent_set_code": "dd1",
+    "id": "1d9c28af-5035-4b6d-9944-62b51cfd688d",
+    "code": "f08",
+    "name": "Friday Night Magic 2008",
+    "uri": "https://api.scryfall.com/sets/1d9c28af-5035-4b6d-9944-62b51cfd688d",
+    "scryfall_uri": "https://scryfall.com/sets/f08",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Af08&unique=prints",
+    "released_at": "2008-01-01",
+    "set_type": "promo",
+    "card_count": 12,
     "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dd1.svg?1687147200"
+    "nonfoil_only": false,
+    "foil_only": true,
+    "block_code": "fnm",
+    "block": "Friday Night Magic",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -11733,7 +12077,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dd1.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dd1.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "005f56a5-9661-4bd1-bf05-cf133ccdcdcf",
+    "code": "tdd1",
+    "name": "Duel Decks: Elves vs. Goblins Tokens",
+    "uri": "https://api.scryfall.com/sets/005f56a5-9661-4bd1-bf05-cf133ccdcdcf",
+    "scryfall_uri": "https://scryfall.com/sets/tdd1",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Atdd1&unique=prints",
+    "released_at": "2007-11-16",
+    "set_type": "token",
+    "card_count": 3,
+    "parent_set_code": "dd1",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dd1.svg?1696824000"
   },
   {
     "object": "set",
@@ -11752,7 +12113,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "lrw",
     "block": "Lorwyn",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/lrw.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/lrw.svg?1696824000"
   },
   {
     "object": "set",
@@ -11774,7 +12135,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lrw",
     "block": "Lorwyn",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/lrw.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/lrw.svg?1696824000"
   },
   {
     "object": "set",
@@ -11793,7 +12154,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lrw",
     "block": "Lorwyn",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/lrw.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/lrw.svg?1696824000"
   },
   {
     "object": "set",
@@ -11812,23 +12173,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/me1.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "ba6630e5-3f20-4866-8ecf-9b31d50d7af2",
-    "code": "psum",
-    "name": "Summer of Magic",
-    "uri": "https://api.scryfall.com/sets/ba6630e5-3f20-4866-8ecf-9b31d50d7af2",
-    "scryfall_uri": "https://scryfall.com/sets/psum",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apsum&unique=prints",
-    "released_at": "2007-07-21",
-    "set_type": "promo",
-    "card_count": 0,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/10e.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/me1.svg?1696824000"
   },
   {
     "object": "set",
@@ -11843,14 +12188,14 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3A10e&unique=prints",
     "released_at": "2007-07-13",
     "set_type": "core",
-    "card_count": 508,
+    "card_count": 510,
     "printed_size": 383,
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/10e.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/10e.svg?1696824000"
   },
   {
     "object": "set",
@@ -11867,7 +12212,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/10e.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/10e.svg?1696824000"
   },
   {
     "object": "set",
@@ -11884,7 +12229,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/10e.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/10e.svg?1696824000"
   },
   {
     "object": "set",
@@ -11903,7 +12248,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "tsp",
     "block": "Time Spiral",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/fut.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/fut.svg?1696824000"
   },
   {
     "object": "set",
@@ -11925,7 +12270,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "tsp",
     "block": "Time Spiral",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/fut.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/fut.svg?1696824000"
   },
   {
     "object": "set",
@@ -11942,7 +12287,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -11959,7 +12304,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -11978,7 +12323,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "tsp",
     "block": "Time Spiral",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/plc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/plc.svg?1696824000"
   },
   {
     "object": "set",
@@ -12000,7 +12345,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "tsp",
     "block": "Time Spiral",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/plc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/plc.svg?1696824000"
   },
   {
     "object": "set",
@@ -12012,27 +12357,11 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apres&unique=prints",
     "released_at": "2007-01-01",
     "set_type": "promo",
-    "card_count": 38,
+    "card_count": 40,
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "025f23a4-4f80-48d1-b34f-75886be6b1af",
-    "code": "pg07",
-    "name": "Gateway 2007",
-    "uri": "https://api.scryfall.com/sets/025f23a4-4f80-48d1-b34f-75886be6b1af",
-    "scryfall_uri": "https://scryfall.com/sets/pg07",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apg07&unique=prints",
-    "released_at": "2007-01-01",
-    "set_type": "promo",
-    "card_count": 0,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -12048,7 +12377,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmps.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmps.svg?1696824000"
   },
   {
     "object": "set",
@@ -12066,7 +12395,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "mpr",
     "block": "Magic Player Rewards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -12085,7 +12414,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -12103,7 +12432,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "fnm",
     "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -12119,7 +12448,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -12138,7 +12467,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "tsp",
     "block": "Time Spiral",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/tsp.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/tsp.svg?1696824000"
   },
   {
     "object": "set",
@@ -12161,7 +12490,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "tsp",
     "block": "Time Spiral",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/tsp.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/tsp.svg?1696824000"
   },
   {
     "object": "set",
@@ -12183,7 +12512,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "tsp",
     "block": "Time Spiral",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/tsp.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/tsp.svg?1696824000"
   },
   {
     "object": "set",
@@ -12202,7 +12531,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "ice",
     "block": "Ice Age",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/csp.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/csp.svg?1696824000"
   },
   {
     "object": "set",
@@ -12224,7 +12553,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ice",
     "block": "Ice Age",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/csp.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/csp.svg?1696824000"
   },
   {
     "object": "set",
@@ -12244,7 +12573,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ice",
     "block": "Ice Age",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/csp.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/csp.svg?1696824000"
   },
   {
     "object": "set",
@@ -12263,7 +12592,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "rav",
     "block": "Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dis.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dis.svg?1696824000"
   },
   {
     "object": "set",
@@ -12285,7 +12614,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "rav",
     "block": "Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dis.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dis.svg?1696824000"
   },
   {
     "object": "set",
@@ -12302,7 +12631,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -12321,7 +12650,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "rav",
     "block": "Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/gpt.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/gpt.svg?1696824000"
   },
   {
     "object": "set",
@@ -12336,14 +12665,14 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Agpt&unique=prints",
     "released_at": "2006-02-03",
     "set_type": "expansion",
-    "card_count": 166,
+    "card_count": 167,
     "printed_size": 165,
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
     "block_code": "rav",
     "block": "Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/gpt.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/gpt.svg?1696824000"
   },
   {
     "object": "set",
@@ -12361,7 +12690,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "parl",
     "block": "Arena League",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/parl.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/parl.svg?1696824000"
   },
   {
     "object": "set",
@@ -12377,7 +12706,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmtg2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmtg2.svg?1696824000"
   },
   {
     "object": "set",
@@ -12393,41 +12722,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "ff711291-dc0f-4b9a-bd3d-663428550d55",
-    "code": "phuk",
-    "name": "Hachette UK",
-    "uri": "https://api.scryfall.com/sets/ff711291-dc0f-4b9a-bd3d-663428550d55",
-    "scryfall_uri": "https://scryfall.com/sets/phuk",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aphuk&unique=prints",
-    "released_at": "2006-01-01",
-    "set_type": "box",
-    "card_count": 60,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/phuk.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "619f656b-94dc-4772-bc99-62bac48f1eb9",
-    "code": "p06",
-    "name": "Magic Player Rewards 2006",
-    "uri": "https://api.scryfall.com/sets/619f656b-94dc-4772-bc99-62bac48f1eb9",
-    "scryfall_uri": "https://scryfall.com/sets/p06",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ap06&unique=prints",
-    "released_at": "2006-01-01",
-    "set_type": "promo",
-    "card_count": 7,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "block_code": "mpr",
-    "block": "Magic Player Rewards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -12445,7 +12740,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "fnm",
     "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -12461,7 +12756,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -12480,23 +12775,41 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
-    "id": "ee2cd6db-f61e-411b-ad0d-882b14ff4592",
-    "code": "pgtw",
-    "name": "Gateway 2006",
-    "uri": "https://api.scryfall.com/sets/ee2cd6db-f61e-411b-ad0d-882b14ff4592",
-    "scryfall_uri": "https://scryfall.com/sets/pgtw",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apgtw&unique=prints",
+    "id": "619f656b-94dc-4772-bc99-62bac48f1eb9",
+    "code": "p06",
+    "name": "Magic Player Rewards 2006",
+    "uri": "https://api.scryfall.com/sets/619f656b-94dc-4772-bc99-62bac48f1eb9",
+    "scryfall_uri": "https://scryfall.com/sets/p06",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ap06&unique=prints",
     "released_at": "2006-01-01",
     "set_type": "promo",
-    "card_count": 0,
+    "card_count": 7,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "block_code": "mpr",
+    "block": "Magic Player Rewards",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "ff711291-dc0f-4b9a-bd3d-663428550d55",
+    "code": "phuk",
+    "name": "Hachette UK",
+    "uri": "https://api.scryfall.com/sets/ff711291-dc0f-4b9a-bd3d-663428550d55",
+    "scryfall_uri": "https://scryfall.com/sets/phuk",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aphuk&unique=prints",
+    "released_at": "2006-01-01",
+    "set_type": "box",
+    "card_count": 60,
     "digital": false,
     "nonfoil_only": true,
-    "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/phuk.svg?1696824000"
   },
   {
     "object": "set",
@@ -12512,7 +12825,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -12531,7 +12844,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "rav",
     "block": "Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/rav.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rav.svg?1696824000"
   },
   {
     "object": "set",
@@ -12553,7 +12866,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "rav",
     "block": "Ravnica",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/rav.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rav.svg?1696824000"
   },
   {
     "object": "set",
@@ -12570,7 +12883,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/phuk.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/phuk.svg?1696824000"
   },
   {
     "object": "set",
@@ -12589,7 +12902,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/9ed.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/9ed.svg?1696824000"
   },
   {
     "object": "set",
@@ -12611,7 +12924,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/9ed.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/9ed.svg?1696824000"
   },
   {
     "object": "set",
@@ -12630,7 +12943,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "chk",
     "block": "Kamigawa",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/sok.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/sok.svg?1696824000"
   },
   {
     "object": "set",
@@ -12652,7 +12965,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "chk",
     "block": "Kamigawa",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/sok.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/sok.svg?1696824000"
   },
   {
     "object": "set",
@@ -12671,7 +12984,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "chk",
     "block": "Kamigawa",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bok.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bok.svg?1696824000"
   },
   {
     "object": "set",
@@ -12693,7 +13006,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "chk",
     "block": "Kamigawa",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/bok.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/bok.svg?1696824000"
   },
   {
     "object": "set",
@@ -12709,7 +13022,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/rav.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rav.svg?1696824000"
   },
   {
     "object": "set",
@@ -12727,7 +13040,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "parl",
     "block": "Arena League",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/parl.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/parl.svg?1696824000"
   },
   {
     "object": "set",
@@ -12743,43 +13056,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "e7f182b7-cd28-46de-bce8-223e83a78ae0",
-    "code": "p05",
-    "name": "Magic Player Rewards 2005",
-    "uri": "https://api.scryfall.com/sets/e7f182b7-cd28-46de-bce8-223e83a78ae0",
-    "scryfall_uri": "https://scryfall.com/sets/p05",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ap05&unique=prints",
-    "released_at": "2005-01-01",
-    "set_type": "promo",
-    "card_count": 6,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "block_code": "mpr",
-    "block": "Magic Player Rewards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "ff1a761c-57d0-45b5-be9f-16019ce0f652",
-    "code": "f05",
-    "name": "Friday Night Magic 2005",
-    "uri": "https://api.scryfall.com/sets/ff1a761c-57d0-45b5-be9f-16019ce0f652",
-    "scryfall_uri": "https://scryfall.com/sets/f05",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Af05&unique=prints",
-    "released_at": "2005-01-01",
-    "set_type": "promo",
-    "card_count": 12,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": true,
-    "block_code": "fnm",
-    "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -12798,7 +13075,43 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "e7f182b7-cd28-46de-bce8-223e83a78ae0",
+    "code": "p05",
+    "name": "Magic Player Rewards 2005",
+    "uri": "https://api.scryfall.com/sets/e7f182b7-cd28-46de-bce8-223e83a78ae0",
+    "scryfall_uri": "https://scryfall.com/sets/p05",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ap05&unique=prints",
+    "released_at": "2005-01-01",
+    "set_type": "promo",
+    "card_count": 6,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "block_code": "mpr",
+    "block": "Magic Player Rewards",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "ff1a761c-57d0-45b5-be9f-16019ce0f652",
+    "code": "f05",
+    "name": "Friday Night Magic 2005",
+    "uri": "https://api.scryfall.com/sets/ff1a761c-57d0-45b5-be9f-16019ce0f652",
+    "scryfall_uri": "https://scryfall.com/sets/f05",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Af05&unique=prints",
+    "released_at": "2005-01-01",
+    "set_type": "promo",
+    "card_count": 12,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": true,
+    "block_code": "fnm",
+    "block": "Friday Night Magic",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -12815,7 +13128,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/unh.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/unh.svg?1696824000"
   },
   {
     "object": "set",
@@ -12833,7 +13146,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/unh.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/unh.svg?1696824000"
   },
   {
     "object": "set",
@@ -12852,7 +13165,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "chk",
     "block": "Kamigawa",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/chk.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/chk.svg?1696824000"
   },
   {
     "object": "set",
@@ -12874,7 +13187,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "chk",
     "block": "Kamigawa",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/chk.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/chk.svg?1696824000"
   },
   {
     "object": "set",
@@ -12890,26 +13203,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "b586f845-b8dd-455f-ae21-817d0c09ec61",
-    "code": "pdst",
-    "name": "Darksteel Promos",
-    "uri": "https://api.scryfall.com/sets/b586f845-b8dd-455f-ae21-817d0c09ec61",
-    "scryfall_uri": "https://scryfall.com/sets/pdst",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apdst&unique=prints",
-    "released_at": "2004-06-04",
-    "set_type": "promo",
-    "card_count": 1,
-    "parent_set_code": "dst",
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": true,
-    "block_code": "mrd",
-    "block": "Mirrodin",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dst.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -12928,7 +13222,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "mrd",
     "block": "Mirrodin",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mrd.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mrd.svg?1696824000"
   },
   {
     "object": "set",
@@ -12947,7 +13241,26 @@ module.exports = [
     "foil_only": true,
     "block_code": "mrd",
     "block": "Mirrodin",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/5dn.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/5dn.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "b586f845-b8dd-455f-ae21-817d0c09ec61",
+    "code": "pdst",
+    "name": "Darksteel Promos",
+    "uri": "https://api.scryfall.com/sets/b586f845-b8dd-455f-ae21-817d0c09ec61",
+    "scryfall_uri": "https://scryfall.com/sets/pdst",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apdst&unique=prints",
+    "released_at": "2004-06-04",
+    "set_type": "promo",
+    "card_count": 1,
+    "parent_set_code": "dst",
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": true,
+    "block_code": "mrd",
+    "block": "Mirrodin",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dst.svg?1696824000"
   },
   {
     "object": "set",
@@ -12969,7 +13282,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "mrd",
     "block": "Mirrodin",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/5dn.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/5dn.svg?1696824000"
   },
   {
     "object": "set",
@@ -12991,7 +13304,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "mrd",
     "block": "Mirrodin",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dst.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dst.svg?1696824000"
   },
   {
     "object": "set",
@@ -13009,7 +13322,25 @@ module.exports = [
     "foil_only": false,
     "block_code": "parl",
     "block": "Arena League",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/parl.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/parl.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "10b8cbe8-4beb-496b-97d7-889a81dde83b",
+    "code": "f04",
+    "name": "Friday Night Magic 2004",
+    "uri": "https://api.scryfall.com/sets/10b8cbe8-4beb-496b-97d7-889a81dde83b",
+    "scryfall_uri": "https://scryfall.com/sets/f04",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Af04&unique=prints",
+    "released_at": "2004-01-01",
+    "set_type": "promo",
+    "card_count": 12,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": true,
+    "block_code": "fnm",
+    "block": "Friday Night Magic",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -13027,7 +13358,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "mpr",
     "block": "Magic Player Rewards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -13046,25 +13377,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "10b8cbe8-4beb-496b-97d7-889a81dde83b",
-    "code": "f04",
-    "name": "Friday Night Magic 2004",
-    "uri": "https://api.scryfall.com/sets/10b8cbe8-4beb-496b-97d7-889a81dde83b",
-    "scryfall_uri": "https://scryfall.com/sets/f04",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Af04&unique=prints",
-    "released_at": "2004-01-01",
-    "set_type": "promo",
-    "card_count": 12,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": true,
-    "block_code": "fnm",
-    "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -13086,7 +13399,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "mrd",
     "block": "Mirrodin",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mrd.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mrd.svg?1696824000"
   },
   {
     "object": "set",
@@ -13102,7 +13415,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -13121,7 +13434,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/8ed.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/8ed.svg?1696824000"
   },
   {
     "object": "set",
@@ -13143,7 +13456,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/8ed.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/8ed.svg?1696824000"
   },
   {
     "object": "set",
@@ -13162,7 +13475,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "ons",
     "block": "Onslaught",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/scg.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/scg.svg?1696824000"
   },
   {
     "object": "set",
@@ -13184,7 +13497,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ons",
     "block": "Onslaught",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/scg.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/scg.svg?1696824000"
   },
   {
     "object": "set",
@@ -13203,7 +13516,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "ons",
     "block": "Onslaught",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/lgn.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/lgn.svg?1696824000"
   },
   {
     "object": "set",
@@ -13222,7 +13535,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "ons",
     "block": "Onslaught",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ons.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ons.svg?1696824000"
   },
   {
     "object": "set",
@@ -13244,7 +13557,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ons",
     "block": "Onslaught",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/lgn.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/lgn.svg?1696824000"
   },
   {
     "object": "set",
@@ -13262,7 +13575,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtgo.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtgo.svg?1696824000"
   },
   {
     "object": "set",
@@ -13278,7 +13591,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -13296,7 +13609,23 @@ module.exports = [
     "foil_only": false,
     "block_code": "parl",
     "block": "Arena League",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/parl.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/parl.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "c6a6b61b-143a-43f2-b74d-b140f3d93490",
+    "code": "ovnt",
+    "name": "Vintage Championship",
+    "uri": "https://api.scryfall.com/sets/c6a6b61b-143a-43f2-b74d-b140f3d93490",
+    "scryfall_uri": "https://scryfall.com/sets/ovnt",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aovnt&unique=prints",
+    "released_at": "2003-01-01",
+    "set_type": "memorabilia",
+    "card_count": 32,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmei.svg?1696824000"
   },
   {
     "object": "set",
@@ -13315,7 +13644,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -13333,23 +13662,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "fnm",
     "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "c6a6b61b-143a-43f2-b74d-b140f3d93490",
-    "code": "ovnt",
-    "name": "Vintage Championship",
-    "uri": "https://api.scryfall.com/sets/c6a6b61b-143a-43f2-b74d-b140f3d93490",
-    "scryfall_uri": "https://scryfall.com/sets/ovnt",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aovnt&unique=prints",
-    "released_at": "2003-01-01",
-    "set_type": "memorabilia",
-    "card_count": 32,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmei.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -13367,7 +13680,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "mpr",
     "block": "Magic Player Rewards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -13389,7 +13702,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ons",
     "block": "Onslaught",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ons.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ons.svg?1696824000"
   },
   {
     "object": "set",
@@ -13405,7 +13718,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -13421,7 +13734,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -13435,11 +13748,11 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aprm&unique=prints",
     "released_at": "2002-06-24",
     "set_type": "promo",
-    "card_count": 3060,
+    "card_count": 3067,
     "digital": true,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtgo.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mtgo.svg?1696824000"
   },
   {
     "object": "set",
@@ -13458,7 +13771,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "ody",
     "block": "Odyssey",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/jud.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/jud.svg?1696824000"
   },
   {
     "object": "set",
@@ -13480,7 +13793,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ody",
     "block": "Odyssey",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/jud.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/jud.svg?1696824000"
   },
   {
     "object": "set",
@@ -13499,7 +13812,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "ody",
     "block": "Odyssey",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/tor.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/tor.svg?1696824000"
   },
   {
     "object": "set",
@@ -13521,7 +13834,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ody",
     "block": "Odyssey",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/tor.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/tor.svg?1696824000"
   },
   {
     "object": "set",
@@ -13539,7 +13852,43 @@ module.exports = [
     "foil_only": true,
     "block_code": "parl",
     "block": "Arena League",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/parl.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/parl.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "b3978acb-8a06-4362-b835-dbda8611a48c",
+    "code": "pr2",
+    "name": "Magic Player Rewards 2002",
+    "uri": "https://api.scryfall.com/sets/b3978acb-8a06-4362-b835-dbda8611a48c",
+    "scryfall_uri": "https://scryfall.com/sets/pr2",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apr2&unique=prints",
+    "released_at": "2002-01-01",
+    "set_type": "promo",
+    "card_count": 6,
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "mpr",
+    "block": "Magic Player Rewards",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "1037d505-8080-4f98-92c6-c9816735c172",
+    "code": "f02",
+    "name": "Friday Night Magic 2002",
+    "uri": "https://api.scryfall.com/sets/1037d505-8080-4f98-92c6-c9816735c172",
+    "scryfall_uri": "https://scryfall.com/sets/f02",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Af02&unique=prints",
+    "released_at": "2002-01-01",
+    "set_type": "promo",
+    "card_count": 12,
+    "digital": false,
+    "nonfoil_only": false,
+    "foil_only": true,
+    "block_code": "fnm",
+    "block": "Friday Night Magic",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -13558,43 +13907,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "b3978acb-8a06-4362-b835-dbda8611a48c",
-    "code": "pr2",
-    "name": "Magic Player Rewards 2002",
-    "uri": "https://api.scryfall.com/sets/b3978acb-8a06-4362-b835-dbda8611a48c",
-    "scryfall_uri": "https://scryfall.com/sets/pr2",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apr2&unique=prints",
-    "released_at": "2002-01-01",
-    "set_type": "promo",
-    "card_count": 6,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "mpr",
-    "block": "Magic Player Rewards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "1037d505-8080-4f98-92c6-c9816735c172",
-    "code": "f02",
-    "name": "Friday Night Magic 2002",
-    "uri": "https://api.scryfall.com/sets/1037d505-8080-4f98-92c6-c9816735c172",
-    "scryfall_uri": "https://scryfall.com/sets/f02",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Af02&unique=prints",
-    "released_at": "2002-01-01",
-    "set_type": "promo",
-    "card_count": 12,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": true,
-    "block_code": "fnm",
-    "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -13611,7 +13924,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dkm.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dkm.svg?1696824000"
   },
   {
     "object": "set",
@@ -13630,7 +13943,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "ody",
     "block": "Odyssey",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ody.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ody.svg?1696824000"
   },
   {
     "object": "set",
@@ -13652,7 +13965,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ody",
     "block": "Odyssey",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ody.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ody.svg?1696824000"
   },
   {
     "object": "set",
@@ -13668,7 +13981,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -13684,7 +13997,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/psdg.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/psdg.svg?1696824000"
   },
   {
     "object": "set",
@@ -13703,7 +14016,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "inv",
     "block": "Invasion",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/apc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/apc.svg?1696824000"
   },
   {
     "object": "set",
@@ -13725,7 +14038,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "inv",
     "block": "Invasion",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/apc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/apc.svg?1696824000"
   },
   {
     "object": "set",
@@ -13747,7 +14060,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/7ed.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/7ed.svg?1696824000"
   },
   {
     "object": "set",
@@ -13766,7 +14079,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "inv",
     "block": "Invasion",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pls.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pls.svg?1696824000"
   },
   {
     "object": "set",
@@ -13788,7 +14101,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "inv",
     "block": "Invasion",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pls.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pls.svg?1696824000"
   },
   {
     "object": "set",
@@ -13806,25 +14119,25 @@ module.exports = [
     "foil_only": true,
     "block_code": "parl",
     "block": "Arena League",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/parl2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/parl2.svg?1696824000"
   },
   {
     "object": "set",
-    "id": "84cd4f76-a638-41ac-8c60-3a82d8708b5c",
-    "code": "mpr",
-    "name": "Magic Player Rewards 2001",
-    "uri": "https://api.scryfall.com/sets/84cd4f76-a638-41ac-8c60-3a82d8708b5c",
-    "scryfall_uri": "https://scryfall.com/sets/mpr",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ampr&unique=prints",
+    "id": "1edf0887-20de-4e75-bce3-45d842f0066d",
+    "code": "f01",
+    "name": "Friday Night Magic 2001",
+    "uri": "https://api.scryfall.com/sets/1edf0887-20de-4e75-bce3-45d842f0066d",
+    "scryfall_uri": "https://scryfall.com/sets/f01",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Af01&unique=prints",
     "released_at": "2001-01-01",
     "set_type": "promo",
-    "card_count": 8,
+    "card_count": 7,
     "digital": false,
     "nonfoil_only": false,
-    "foil_only": false,
-    "block_code": "mpr",
-    "block": "Magic Player Rewards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "foil_only": true,
+    "block_code": "fnm",
+    "block": "Friday Night Magic",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -13843,25 +14156,25 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
-    "id": "1edf0887-20de-4e75-bce3-45d842f0066d",
-    "code": "f01",
-    "name": "Friday Night Magic 2001",
-    "uri": "https://api.scryfall.com/sets/1edf0887-20de-4e75-bce3-45d842f0066d",
-    "scryfall_uri": "https://scryfall.com/sets/f01",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Af01&unique=prints",
+    "id": "84cd4f76-a638-41ac-8c60-3a82d8708b5c",
+    "code": "mpr",
+    "name": "Magic Player Rewards 2001",
+    "uri": "https://api.scryfall.com/sets/84cd4f76-a638-41ac-8c60-3a82d8708b5c",
+    "scryfall_uri": "https://scryfall.com/sets/mpr",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ampr&unique=prints",
     "released_at": "2001-01-01",
     "set_type": "promo",
-    "card_count": 7,
+    "card_count": 8,
     "digital": false,
     "nonfoil_only": false,
-    "foil_only": true,
-    "block_code": "fnm",
-    "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "foil_only": false,
+    "block_code": "mpr",
+    "block": "Magic Player Rewards",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -13880,7 +14193,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "inv",
     "block": "Invasion",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/inv.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/inv.svg?1696824000"
   },
   {
     "object": "set",
@@ -13895,14 +14208,14 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Ainv&unique=prints",
     "released_at": "2000-10-02",
     "set_type": "expansion",
-    "card_count": 352,
+    "card_count": 353,
     "printed_size": 350,
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
     "block_code": "inv",
     "block": "Invasion",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/inv.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/inv.svg?1696824000"
   },
   {
     "object": "set",
@@ -13919,7 +14232,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/btd.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/btd.svg?1696824000"
   },
   {
     "object": "set",
@@ -13935,7 +14248,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -13954,7 +14267,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "mmq",
     "block": "Masques",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pcy.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pcy.svg?1696824000"
   },
   {
     "object": "set",
@@ -13976,7 +14289,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "mmq",
     "block": "Masques",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pcy.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pcy.svg?1696824000"
   },
   {
     "object": "set",
@@ -13993,7 +14306,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/s00.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/s00.svg?1696824000"
   },
   {
     "object": "set",
@@ -14012,7 +14325,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "mmq",
     "block": "Masques",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/nem.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/nem.svg?1696824000"
   },
   {
     "object": "set",
@@ -14034,7 +14347,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "mmq",
     "block": "Masques",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/nem.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/nem.svg?1696824000"
   },
   {
     "object": "set",
@@ -14051,7 +14364,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/peuro.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/peuro.svg?1696824000"
   },
   {
     "object": "set",
@@ -14069,7 +14382,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "parl",
     "block": "Arena League",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/parl2.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/parl2.svg?1696824000"
   },
   {
     "object": "set",
@@ -14088,7 +14401,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "fnm",
     "block": "Friday Night Magic",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -14107,7 +14420,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -14124,7 +14437,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/dci.svg?1696824000"
   },
   {
     "object": "set",
@@ -14141,7 +14454,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/brb.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/brb.svg?1696824000"
   },
   {
     "object": "set",
@@ -14160,7 +14473,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "mmq",
     "block": "Masques",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mmq.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mmq.svg?1696824000"
   },
   {
     "object": "set",
@@ -14182,7 +14495,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "mmq",
     "block": "Masques",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mmq.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mmq.svg?1696824000"
   },
   {
     "object": "set",
@@ -14198,7 +14511,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -14214,7 +14527,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": true,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -14230,7 +14543,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -14247,42 +14560,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pgru.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "2676ff2e-9d86-4b5b-b935-e84e41b0755e",
-    "code": "ptk",
-    "tcgplayer_id": 88,
-    "name": "Portal Three Kingdoms",
-    "uri": "https://api.scryfall.com/sets/2676ff2e-9d86-4b5b-b935-e84e41b0755e",
-    "scryfall_uri": "https://scryfall.com/sets/ptk",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aptk&unique=prints",
-    "released_at": "1999-07-06",
-    "set_type": "starter",
-    "card_count": 180,
-    "printed_size": 180,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ptk.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "27b4f670-a760-4783-9f5a-4986c3a50e86",
-    "code": "pptk",
-    "name": "Portal: Three Kingdoms Promos",
-    "uri": "https://api.scryfall.com/sets/27b4f670-a760-4783-9f5a-4986c3a50e86",
-    "scryfall_uri": "https://scryfall.com/sets/pptk",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apptk&unique=prints",
-    "released_at": "1999-07-01",
-    "set_type": "promo",
-    "card_count": 2,
-    "parent_set_code": "ptk",
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ptk.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pgru.svg?1696824000"
   },
   {
     "object": "set",
@@ -14300,7 +14578,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/s99.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/s99.svg?1696824000"
   },
   {
     "object": "set",
@@ -14319,7 +14597,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "usg",
     "block": "Urza",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/uds.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/uds.svg?1696824000"
   },
   {
     "object": "set",
@@ -14341,7 +14619,42 @@ module.exports = [
     "foil_only": false,
     "block_code": "usg",
     "block": "Urza",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/uds.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/uds.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "27b4f670-a760-4783-9f5a-4986c3a50e86",
+    "code": "pptk",
+    "name": "Portal: Three Kingdoms Promos",
+    "uri": "https://api.scryfall.com/sets/27b4f670-a760-4783-9f5a-4986c3a50e86",
+    "scryfall_uri": "https://scryfall.com/sets/pptk",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apptk&unique=prints",
+    "released_at": "1999-05-01",
+    "set_type": "promo",
+    "card_count": 2,
+    "parent_set_code": "ptk",
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ptk.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "2676ff2e-9d86-4b5b-b935-e84e41b0755e",
+    "code": "ptk",
+    "tcgplayer_id": 88,
+    "name": "Portal Three Kingdoms",
+    "uri": "https://api.scryfall.com/sets/2676ff2e-9d86-4b5b-b935-e84e41b0755e",
+    "scryfall_uri": "https://scryfall.com/sets/ptk",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aptk&unique=prints",
+    "released_at": "1999-05-01",
+    "set_type": "starter",
+    "card_count": 180,
+    "printed_size": 180,
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ptk.svg?1696824000"
   },
   {
     "object": "set",
@@ -14361,7 +14674,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/6ed.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/6ed.svg?1696824000"
   },
   {
     "object": "set",
@@ -14380,7 +14693,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "usg",
     "block": "Urza",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ulg.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ulg.svg?1696824000"
   },
   {
     "object": "set",
@@ -14402,7 +14715,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "usg",
     "block": "Urza",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ulg.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ulg.svg?1696824000"
   },
   {
     "object": "set",
@@ -14420,7 +14733,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "parl",
     "block": "Arena League",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/usg.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/usg.svg?1696824000"
   },
   {
     "object": "set",
@@ -14439,7 +14752,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -14456,7 +14769,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ath.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ath.svg?1696824000"
   },
   {
     "object": "set",
@@ -14475,7 +14788,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "usg",
     "block": "Urza",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/usg.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/usg.svg?1696824000"
   },
   {
     "object": "set",
@@ -14497,7 +14810,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "usg",
     "block": "Urza",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/usg.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/usg.svg?1696824000"
   },
   {
     "object": "set",
@@ -14514,7 +14827,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/papac.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/papac.svg?1696824000"
   },
   {
     "object": "set",
@@ -14530,7 +14843,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -14547,7 +14860,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -14565,7 +14878,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ugl.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ugl.svg?1696824000"
   },
   {
     "object": "set",
@@ -14582,7 +14895,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/p02.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/p02.svg?1696824000"
   },
   {
     "object": "set",
@@ -14601,7 +14914,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "tmp",
     "block": "Tempest",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/exo.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/exo.svg?1696824000"
   },
   {
     "object": "set",
@@ -14623,7 +14936,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "tmp",
     "block": "Tempest",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/exo.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/exo.svg?1696824000"
   },
   {
     "object": "set",
@@ -14642,7 +14955,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "tmp",
     "block": "Tempest",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/sth.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/sth.svg?1696824000"
   },
   {
     "object": "set",
@@ -14663,7 +14976,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "tmp",
     "block": "Tempest",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/sth.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/sth.svg?1696824000"
   },
   {
     "object": "set",
@@ -14682,7 +14995,7 @@ module.exports = [
     "foil_only": true,
     "block_code": "jgp",
     "block": "Judge Gift Cards",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -14701,7 +15014,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "tmp",
     "block": "Tempest",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/tmp.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/tmp.svg?1696824000"
   },
   {
     "object": "set",
@@ -14722,7 +15035,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "tmp",
     "block": "Tempest",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/tmp.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/tmp.svg?1696824000"
   },
   {
     "object": "set",
@@ -14739,7 +15052,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -14760,7 +15073,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "mir",
     "block": "Mirage",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/wth.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/wth.svg?1696824000"
   },
   {
     "object": "set",
@@ -14776,24 +15089,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "478c47df-5058-4ce6-830e-7e80732b2ca9",
-    "code": "por",
-    "tcgplayer_id": 86,
-    "name": "Portal",
-    "uri": "https://api.scryfall.com/sets/478c47df-5058-4ce6-830e-7e80732b2ca9",
-    "scryfall_uri": "https://scryfall.com/sets/por",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apor&unique=prints",
-    "released_at": "1997-05-01",
-    "set_type": "starter",
-    "card_count": 257,
-    "digital": false,
-    "nonfoil_only": false,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/por.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -14810,7 +15106,24 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/van.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/van.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "478c47df-5058-4ce6-830e-7e80732b2ca9",
+    "code": "por",
+    "tcgplayer_id": 86,
+    "name": "Portal",
+    "uri": "https://api.scryfall.com/sets/478c47df-5058-4ce6-830e-7e80732b2ca9",
+    "scryfall_uri": "https://scryfall.com/sets/por",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apor&unique=prints",
+    "released_at": "1997-05-01",
+    "set_type": "starter",
+    "card_count": 257,
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/por.svg?1696824000"
   },
   {
     "object": "set",
@@ -14827,7 +15140,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/past.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/past.svg?1696824000"
   },
   {
     "object": "set",
@@ -14843,7 +15156,7 @@ module.exports = [
     "digital": true,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/past.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/past.svg?1696824000"
   },
   {
     "object": "set",
@@ -14862,7 +15175,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/5ed.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/5ed.svg?1696824000"
   },
   {
     "object": "set",
@@ -14883,7 +15196,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "mir",
     "block": "Mirage",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/vis.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/vis.svg?1696824000"
   },
   {
     "object": "set",
@@ -14900,7 +15213,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/x2ps.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/x2ps.svg?1696824000"
   },
   {
     "object": "set",
@@ -14916,7 +15229,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/vis.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/vis.svg?1696824000"
   },
   {
     "object": "set",
@@ -14937,7 +15250,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "mir",
     "block": "Mirage",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/mir.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/mir.svg?1696824000"
   },
   {
     "object": "set",
@@ -14953,7 +15266,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -14969,7 +15282,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -14987,7 +15300,23 @@ module.exports = [
     "foil_only": false,
     "block_code": "parl",
     "block": "Arena League",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/parl.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/parl.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "5b6a6daa-5a80-435c-a534-fd5dd04c5540",
+    "code": "plgm",
+    "name": "DCI Legend Membership",
+    "uri": "https://api.scryfall.com/sets/5b6a6daa-5a80-435c-a534-fd5dd04c5540",
+    "scryfall_uri": "https://scryfall.com/sets/plgm",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aplgm&unique=prints",
+    "released_at": "1996-07-01",
+    "set_type": "promo",
+    "card_count": 2,
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -15004,23 +15333,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "5b6a6daa-5a80-435c-a534-fd5dd04c5540",
-    "code": "plgm",
-    "name": "DCI Legend Membership",
-    "uri": "https://api.scryfall.com/sets/5b6a6daa-5a80-435c-a534-fd5dd04c5540",
-    "scryfall_uri": "https://scryfall.com/sets/plgm",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Aplgm&unique=prints",
-    "released_at": "1996-07-01",
-    "set_type": "promo",
-    "card_count": 2,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -15039,7 +15352,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ice",
     "block": "Ice Age",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/all.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/all.svg?1696824000"
   },
   {
     "object": "set",
@@ -15055,7 +15368,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/default.svg?1696824000"
   },
   {
     "object": "set",
@@ -15071,7 +15384,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/star.svg?1696824000"
   },
   {
     "object": "set",
@@ -15088,7 +15401,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/hml.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/hml.svg?1696824000"
   },
   {
     "object": "set",
@@ -15104,7 +15417,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/rin.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/rin.svg?1696824000"
   },
   {
     "object": "set",
@@ -15121,7 +15434,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ren.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ren.svg?1696824000"
   },
   {
     "object": "set",
@@ -15138,7 +15451,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/chr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/chr.svg?1696824000"
   },
   {
     "object": "set",
@@ -15155,7 +15468,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/chr.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/chr.svg?1696824000"
   },
   {
     "object": "set",
@@ -15174,7 +15487,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "ice",
     "block": "Ice Age",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ice.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ice.svg?1696824000"
   },
   {
     "object": "set",
@@ -15191,7 +15504,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/4ed.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/4ed.svg?1696824000"
   },
   {
     "object": "set",
@@ -15210,7 +15523,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/4ed.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/4ed.svg?1696824000"
   },
   {
     "object": "set",
@@ -15223,11 +15536,11 @@ module.exports = [
     "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3Apmei&unique=prints",
     "released_at": "1995-01-01",
     "set_type": "promo",
-    "card_count": 47,
+    "card_count": 50,
     "digital": false,
     "nonfoil_only": false,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmei.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pmei.svg?1696824000"
   },
   {
     "object": "set",
@@ -15244,7 +15557,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/fem.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/fem.svg?1696824000"
   },
   {
     "object": "set",
@@ -15260,7 +15573,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pbook.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pbook.svg?1696824000"
   },
   {
     "object": "set",
@@ -15277,7 +15590,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/drk.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/drk.svg?1696824000"
   },
   {
     "object": "set",
@@ -15293,7 +15606,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/pdrc.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/pdrc.svg?1696824000"
   },
   {
     "object": "set",
@@ -15312,7 +15625,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/psum.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/psum.svg?1696824000"
   },
   {
     "object": "set",
@@ -15329,7 +15642,26 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/leg.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/leg.svg?1696824000"
+  },
+  {
+    "object": "set",
+    "id": "45a69797-8adf-468e-a4e1-ba81fd9d66ac",
+    "code": "3ed",
+    "tcgplayer_id": 97,
+    "name": "Revised Edition",
+    "uri": "https://api.scryfall.com/sets/45a69797-8adf-468e-a4e1-ba81fd9d66ac",
+    "scryfall_uri": "https://scryfall.com/sets/3ed",
+    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3A3ed&unique=prints",
+    "released_at": "1994-04-01",
+    "set_type": "core",
+    "card_count": 306,
+    "digital": false,
+    "nonfoil_only": true,
+    "foil_only": false,
+    "block_code": "lea",
+    "block": "Core Set",
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/3ed.svg?1696824000"
   },
   {
     "object": "set",
@@ -15349,26 +15681,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/3ed.svg?1687147200"
-  },
-  {
-    "object": "set",
-    "id": "45a69797-8adf-468e-a4e1-ba81fd9d66ac",
-    "code": "3ed",
-    "tcgplayer_id": 97,
-    "name": "Revised Edition",
-    "uri": "https://api.scryfall.com/sets/45a69797-8adf-468e-a4e1-ba81fd9d66ac",
-    "scryfall_uri": "https://scryfall.com/sets/3ed",
-    "search_uri": "https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3A3ed&unique=prints",
-    "released_at": "1994-04-01",
-    "set_type": "core",
-    "card_count": 306,
-    "digital": false,
-    "nonfoil_only": true,
-    "foil_only": false,
-    "block_code": "lea",
-    "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/3ed.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/3ed.svg?1696824000"
   },
   {
     "object": "set",
@@ -15385,7 +15698,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/atq.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/atq.svg?1696824000"
   },
   {
     "object": "set",
@@ -15402,7 +15715,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/arn.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/arn.svg?1696824000"
   },
   {
     "object": "set",
@@ -15419,7 +15732,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/cei.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/cei.svg?1696824000"
   },
   {
     "object": "set",
@@ -15436,7 +15749,7 @@ module.exports = [
     "digital": false,
     "nonfoil_only": true,
     "foil_only": false,
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/ced.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/ced.svg?1696824000"
   },
   {
     "object": "set",
@@ -15455,7 +15768,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/2ed.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/2ed.svg?1696824000"
   },
   {
     "object": "set",
@@ -15474,7 +15787,7 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/leb.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/leb.svg?1696824000"
   },
   {
     "object": "set",
@@ -15493,6 +15806,6 @@ module.exports = [
     "foil_only": false,
     "block_code": "lea",
     "block": "Core Set",
-    "icon_svg_uri": "https://svgs.scryfall.io/sets/lea.svg?1687147200"
+    "icon_svg_uri": "https://svgs.scryfall.io/sets/lea.svg?1696824000"
   }
 ]

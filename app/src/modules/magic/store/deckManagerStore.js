@@ -37,7 +37,9 @@ export default {
       state.modified = true
     },
     setDeckFiters(state, value) {
-      state.activeDeck.filters = value
+      if (state.activeDeck) {
+        state.activeDeck.filters = value
+      }
     },
     setDeckPath(state, value) {
       state.activeDeck.path = value.trim()
