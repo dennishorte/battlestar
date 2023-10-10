@@ -2,11 +2,6 @@
   <div class="hex-map">
     <svg class="game-map" width="1000" height="800" ref="gamemap">
 
-      <!-- <Hex :cx="300" :cy="300" :sites="a2sites" :rotation="0" />
-           <Hex :cx="525" :cy="430" :sites="b2sites" :rotation="0" />
-           <Hex :cx="525" :cy="170" :sites="c1sites" :rotation="0" />
-      -->
-
       <Hex
         v-for="tile in tiles"
         :cx="calculateXpos(tile)"
@@ -14,7 +9,6 @@
         :sites="tile.data.sites"
         :rotation="0"
       />
-
 
     </svg>
   </div>

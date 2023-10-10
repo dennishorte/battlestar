@@ -63,7 +63,7 @@ const b2sites = [
   {
     name: 'Vrith',
     dx: +0,
-    dy: -90,
+    dy: -70,
     size: 1,
     neutrals: 1,
     value: 2,
@@ -144,7 +144,7 @@ const c1sites = [
   {
     name: 'Spiral Desert',
     dx: -40,
-    dy: +40,
+    dy: +35,
     size: 3,
     value: 3,
     paths: [
@@ -166,7 +166,7 @@ const c1sites = [
   {
     name: 'c1-troop-b',
     kind: 'troop-spot',
-    dx: -45,
+    dx: -25,
     dy: +100,
     paths: [
       'Spiral Desert',
@@ -285,6 +285,22 @@ export default {
   layouts: {
     test: layout_test,
     2: layout_2p,
+  },
+
+  directions: {
+    N: 0,
+    NE: 1,
+    SE: 2,
+    S: 3,
+    SW: 4,
+    NW: 5,
+  },
+
+  translate: (hex, dir) => {
+    switch (dir) {
+      case this.directions.N:
+        hex.pos[0]
+    }
   },
 
   oppositeDirection: (dir) => (dir + 3) % 6,

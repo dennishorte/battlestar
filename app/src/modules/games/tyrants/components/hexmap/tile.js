@@ -35,13 +35,12 @@ function Tile(data, context) {
 
   this.layoutId = data.layoutId
 
-  this.rotation = 0
   this.layout = {
     x: data.pos[0],
     y: data.pos[1],
   }
 
-  this.sites = []
+  this.rotation = 0
 }
 
 Tile.prototype.connectionsAt = function(dir) {
@@ -53,25 +52,6 @@ Tile.prototype.neighbors = function() {
     .map(([x, y]) => this.context.tiles.find(h => t.layout.x === x && t.layout.y === y))
     .filter(h => h !== undefined)
 }
-
-Tile.prototype.rotate = function(rot) {
-  this.rotation = (this.rotation + rot + 36) % 6
-
-  const theta = rot * ((2 * Math.PI) / 6)
-  const cosTheta = Math.cos(theta)
-  const sinTheta = Math.sin(theta)
-
-  for (const site of this.sites) {
-    site.dx = site.dx * cosTheta - site.dy * sinTheta
-    site.dy = site.dy * cosTheta + site.dx * sinTheta
-  }
-}
-
-Tile.prototype.translate = function(dir) {
-  this.layout.x += Translation[dir][0]
-  this.layout.y += Translation[dir][1]
-}
-
 
 
 export default {
