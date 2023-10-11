@@ -120,7 +120,7 @@ describe('Undead expansion', () => {
   })
 
   describe('Conjurer', () => {
-    test('place a spy', () => {
+    test('place two spies', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'undead'],
         dennis: {
@@ -130,8 +130,9 @@ describe('Undead expansion', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Conjurer')
-      const request3 = t.choose(game, request2, 'Place a spy')
+      const request3 = t.choose(game, request2, 'Place two spies')
       const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+      const request5 = t.choose(game, request4, 'Everfire')
 
       t.testBoard(game, {
         dennis: {
@@ -139,6 +140,9 @@ describe('Undead expansion', () => {
           played: ['Conjurer'],
         },
         'Chasmleap Bridge': {
+          spies: ['dennis'],
+        },
+        'Everfire': {
           spies: ['dennis'],
         },
       })
@@ -398,24 +402,28 @@ describe('Undead expansion', () => {
         'Ched Nasad': {
           spies: ['micah'],
         },
+        'ched-llace a': {
+          troops: ['micah']
+        },
       })
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.High Priest of Myrkul')
-      const request3 = game.respondToInputRequest({
-        actor: 'dennis',
-        title: 'Choose a token to return',
-        selection: [{
-          title: 'spy',
-          selection: ['Ched Nasad, micah'],
-        }],
-      })
+      const request3 = t.choose(game, request2, 'spy.Ched Nasad, micah')
       const request4 = t.choose(game, request3, 'Ghost', 'Banshee')
+
 
       t.testBoard(game, {
         dennis: {
           discard: ['House Guard', 'High Priest of Myrkul'],
           innerCircle: ['Ghost', 'Banshee']
+        },
+        'Ched Nasad': {
+          troops: ['dennis'],
+          spies: [],
+        },
+        'ched-llace a': {
+          troops: ['micah']
         },
       })
     })
