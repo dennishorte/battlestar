@@ -33,9 +33,14 @@
               @add-card="addCard"
               @remove-card="removeCard"
             />
+
           </template>
 
           <div v-else class="alert alert-warning">No deck selected</div>
+
+          <div>
+            <button class="btn btn-outline-warning" @click="debug">debug</button>
+          </div>
         </div>
 
         <div class="right-side">
@@ -124,6 +129,13 @@ export default {
         .cardlist
         .filter(c => c.zone === zoneName && mag.util.card.softEquals(c, this.card))
         .length
+    },
+
+    debug() {
+      console.log(this.versions)
+      for (const version of this.versions) {
+        console.log(version.set, version.collector_number)
+      }
     },
 
     nextVersion() {
