@@ -138,6 +138,21 @@ export default {
         deck = mag.util.deck.deserialize(rawDeck)
         const lookupFunc = rootGetters['magic/cards/getLookupFunc']
         mag.util.card.lookup.insertCardData(deck.cardlist, lookupFunc)
+
+        for (const card of deck.cardlist) {
+          const missingData = []
+          if (!card.data) {
+            missingData.push(card)
+          }
+
+          if (missingData.length > 0) {
+            console.log('Missing data for some cards')
+            for (const card of missingData) {
+              console.log(card)
+            }
+            throw new Error('Missing data for some cards. See console for details.')
+          }
+        }
       }
       else {
         deck = null
