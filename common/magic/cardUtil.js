@@ -817,14 +817,23 @@ CardUtil.lookup.getByIdDict = function(dict, lookupMap, opts={}) {
   else if (dict.set && dict.collector_number) {
     // Added this weird hack to handle a case where a version number seems to have changed
     // in the scryfall data.
-    const maybe = versions.find(card => card.set === dict.set && card.collector_number === dict.collector_number)
+
+    let maybe
+
+    maybe = versions.find(card => card.set === dict.set && card.collector_number === dict.collector_number)
 
     if (maybe) {
       return maybe
     }
-
     else {
-      return versions.find(card => card.set === dict.set)
+      maybe = versions.find(card => card.set === dict.set)
+    }
+
+    if (maybe) {
+      return maybe
+    }
+    else {
+      return versions[0]
     }
   }
   else {
