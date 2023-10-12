@@ -1180,6 +1180,11 @@ Magic.prototype.mHide = function(card) {
 }
 
 Magic.prototype.mInitializeCard = function(card, owner) {
+  if (!card.data) {
+    console.log(card)
+    throw new Error(`No card data for card: ` + card.name)
+  }
+
   card.activeFace = card.data.card_faces[0].name
   card.annotation = ''
   card.annotationEOT = ''
