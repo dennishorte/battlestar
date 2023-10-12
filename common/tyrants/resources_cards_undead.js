@@ -226,11 +226,33 @@ const cardData = [
     "innerPoints": 6,
     "count": 1,
     "text": [
-      "Return another player's troop or spy.",
+      // "Return another player's troop or spy."
+      // "At end of turn, you may promote any number of undead cards played this turn."
+
+      "Choose one:",
+      "- Return another player's troop or spy.",
+      "- Undead cascade 4.",
       "At end of turn, you may promote any number of undead cards played this turn."
     ],
     impl: (game, player, { card }) => {
-      game.aChooseAndReturn(player, { noWhite: true })
+      game.aChooseOne(player, [
+        {
+          title: "Return another player's troop or spy",
+          impl: () => {
+            game.aChooseAndReturn(player, { noWhite: true })
+          }
+        },
+        {
+          title: "Undead cascade 4",
+          impl: () => {
+            game.aCascade(player, {
+              maxCost: 4,
+              key: 'race',
+              value: 'undead',
+            })
+          }
+        }
+      ])
       game.aDeferPromotionSpecial(player, card)
     },
   },

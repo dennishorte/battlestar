@@ -672,15 +672,15 @@ Game.prototype.mMoveByIndices = function(source, sourceIndex, target, targetInde
 }
 
 Game.prototype.mMoveCardTo = function(card, zone, opts={}) {
-  if (opts.verbose) {
-    this.mLog({
-      template: 'Moving {card} to {zone}',
-      args: { card, zone }
-    })
-  }
   const source = this.getZoneByCard(card)
   const index = source.cards().indexOf(card)
   const destIndex = opts.index !== undefined ? opts.index : zone.cards().length
+  if (opts.verbose) {
+    this.mLog({
+      template: 'Moving {card} to {zone} at index {index}',
+      args: { card, zone, index: destIndex }
+    })
+  }
   this.mMoveByIndices(source, index, zone, destIndex)
 }
 

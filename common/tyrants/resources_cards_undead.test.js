@@ -409,9 +409,9 @@ describe('Undead expansion', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.High Priest of Myrkul')
-      const request3 = t.choose(game, request2, 'spy.Ched Nasad, micah')
-      const request4 = t.choose(game, request3, 'Ghost', 'Banshee')
-
+      const request3 = t.choose(game, request2, "Return another player's troop or spy")
+      const request4 = t.choose(game, request3, 'spy.Ched Nasad, micah')
+      const request5 = t.choose(game, request4, 'Ghost', 'Banshee')
 
       t.testBoard(game, {
         dennis: {
@@ -442,18 +442,42 @@ describe('Undead expansion', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.High Priest of Myrkul')
-      const request3 = game.respondToInputRequest({
-        actor: 'dennis',
-        title: 'Choose a token to return',
-        selection: [{
-          title: 'spy',
-          selection: ['Ched Nasad, micah'],
-        }],
-      })
+      const request3 = t.choose(game, request2, "Return another player's troop or spy")
+      const request4 = t.choose(game, request3, 'spy.Ched Nasad, micah')
 
-      const nextRequest = () => t.choose(game, request3, 'House Guard')
+      const nextRequest = () => t.choose(game, request4, 'House Guard')
 
       expect(nextRequest).toThrow()
+    })
+
+    test('undead cascade', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        market: [
+          'Lich',
+          'Doppelganger',
+          'Bounty Hunter',
+          'Necromancer',
+          'Ogre Zombie',
+        ],
+        dennis: {
+          hand: ['High Priest of Myrkul'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.High Priest of Myrkul')
+      const request3 = t.choose(game, request2, 'Undead cascade 4')
+      const request4 = t.choose(game, request3, "Blingdenstone, neutral")
+      const request5 = t.choose(game, request4, 'yes')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['Ogre Zombie', 'High Priest of Myrkul'],
+          trophyHall: ['neutral'],
+        },
+      })
+
     })
   })
 

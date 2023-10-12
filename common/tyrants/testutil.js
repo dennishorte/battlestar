@@ -217,6 +217,34 @@ TestUtil.gameFixture = function(options) {
       }
     }
 
+    if (options.market) {
+      game.mLog({ template: 'setting up market' })
+      game.mLogIndent()
+
+      const market = game.getZoneById('marketDeck')
+      const cards = market.cards()
+      const toMove = []
+
+      for (const name of options.market) {
+        game.mLog({ template: 'searching for: ' + name })
+        const card = cards.find(c => c.name === name && !toMove.includes(c))
+        if (!card) {
+          throw new Error('Unable to find card: ' + name)
+        }
+        toMove.push(card)
+      }
+
+      toMove.reverse()
+      for (const card of toMove) {
+        game.mMoveCardTo(card, market, { index: 0, verbose: true })
+      }
+
+      // const topOfMarket = market.cards().slice(0, 5).map(c => c.name).join(',')
+      // game.mLog({ template: topOfMarket })
+
+      game.mLogOutdent()
+    }
+
     game.mLogOutdent()
   })
 

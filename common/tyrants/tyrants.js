@@ -776,6 +776,54 @@ Tyrants.prototype.aDeployWithPowerAt = function(player, locId=null) {
 ////////////////////////////////////////////////////////////////////////////////
 // Core Functionality
 
+Tyrants.prototype.aCascade = function(player, opts) {
+  const marketZone = this.getZoneById('marketDeck')
+
+  const unused = []
+  let found = null
+
+  for (const card of marketZone.cards()) {
+    if (card[opts.key] === opts.value && card.cost <= opts.maxCost) {
+      found = card
+      break
+    }
+    else {
+      this.mLog({
+        template: 'skipping {card}',
+        args: { card }
+      })
+      unused.push(card)
+    }
+  }
+
+  for (const card of unused) {
+    this.mMoveCardTo(card, marketZone)
+  }
+
+  if (found) {
+    this.mLog({
+      template: '{card} found',
+      args: { card: found }
+    })
+    this.mMoveCardTo(found, this.getZoneByPlayer(player, 'hand'))
+    this.aPlayCard(player, found)
+
+    if (this.aChooseYesNo(player, 'Acquire ' + found.name + '?')) {
+      this.mLog({
+        template: '{player} adds {card} to their deck',
+        args: { player, card: found }
+      })
+      this.mMoveCardTo(found, this.getZoneByPlayer(player, 'discard'))
+    }
+    else {
+      this.aDevour(player, found)
+    }
+  }
+  else {
+    this.mLog({ template: 'No cards found' })
+  }
+}
+
 Tyrants.prototype.aChooseCard = function(player, choices, opts={}) {
   const choiceNames = util.array.distinct(choices.map(c => c.name)).sort()
   const selection = this.aChoose(player, choiceNames, opts)
@@ -1801,19 +1849,6 @@ Tyrants.prototype.mMoveByIndices = function(source, sourceIndex, target, targetI
   this.mAdjustPresence(source, target, card)
   this.mAdjustControlMarkerOwnership(preControlMarkers)
   return card
-}
-
-Tyrants.prototype.mMoveCardTo = function(card, zone, opts={}) {
-  if (opts.verbose) {
-    this.mLog({
-      template: 'Moving {card} to {zone}',
-      args: { card, zone }
-    })
-  }
-  const source = this.getZoneByCard(card)
-  const index = source.cards().indexOf(card)
-  const destIndex = opts.destIndex !== undefined ? opts.destIndex : zone.cards().length
-  this.mMoveByIndices(source, index, zone, destIndex)
 }
 
 Tyrants.prototype.mPlaceSpy = function(player, loc) {
