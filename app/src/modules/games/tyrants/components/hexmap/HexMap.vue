@@ -3,7 +3,7 @@
     <svg class="game-map" width="1000" height="800" ref="gamemap">
 
       <Hex
-        v-for="tile in tiles"
+        v-for="tile in game.tiles"
         :tile="tile"
       />
 
@@ -40,13 +40,18 @@ export default {
 
   data() {
     return {
-      context: {
-        layout: data.layouts.test,
+      game: {
+        getLayout: () => data.layouts.test,
         hexes: [],
-        origin_cx: 300,
-        origin_cy: 170,
-        dx: 225,
-        dy: 260,
+        tiles: [],
+
+        ui: {
+          tiles: [],
+          origin_cx: 300,
+          origin_cy: 170,
+          dx: 225,
+          dy: 260,
+        },
       },
     }
   },
@@ -54,9 +59,12 @@ export default {
   computed: {
     hexConnections() {
       return []
+      console.log('hexConnections')
+
       const output = []
 
-      for (const tile of this.tiles) {
+      for (const tile of this.game.tiles) {
+        console.log(tile.neighbors().length)
         for (const nei of tile.neighbors()) {
           const connections = this.generateConnection(tile, nei)
           for (const connection of connections) {
@@ -68,24 +76,19 @@ export default {
       // TODO: handle duplicates
       return output.filter(c => c !== undefined)
     },
-
-    tiles() {
-      const output = this.context.hexes.map(h => new tile.Tile(h, this.context))
-      output.forEach(tile => this.positionTile(tile))
-      return output
-    },
   },
 
   methods: {
     calculateXpos(tile) {
-      return this.context.origin_cx + tile.layout.x * this.context.dx
+      return this.game.ui.origin_cx + tile.layoutPos().x * this.game.ui.dx
     },
 
     calculateYpos(tile) {
-      return this.context.origin_cy + tile.layout.y * this.context.dy
+      return this.game.ui.origin_cy + tile.layoutPos().y * this.game.ui.dy
     },
 
     generateConnections(a, b) {
+      console.log('generateConnections')
       const output = []
 
       const aSide = a.sideTouching(b)
@@ -120,9 +123,11 @@ export default {
     },
 
     selectHexes() {
+      const layout = this.game.getLayout()
+
       const needed = util
         .array
-        .collect(this.context.layout, x => x.id[0], x => x.id)
+        .collect(layout, x => x.id[0], x => x.id)
 
       const selected = Object
         .entries(needed)
@@ -130,8 +135,8 @@ export default {
           const elems = util.array.selectMany(data.hexes[letter], ids.length)
           return elems.map((hex, i) => ({
             layoutId: ids[i],
-            pos: this.context.layout.find(x => x.id === ids[i]).pos,
-            rotation: 0,
+            pos: layout.find(x => x.id === ids[i]).pos,
+            rotation: -1,
             ...hex,
           }))
         })
@@ -141,7 +146,12 @@ export default {
   },
 
   mounted() {
-    this.context.hexes = this.selectHexes()
+    this.game.hexes = this.selectHexes()
+
+    this.game.tiles = this.game.hexes.map(h => new tile.Tile(h, this.game))
+    this.game.tiles.forEach(tile => this.positionTile(tile))
+
+    console.log(this.game.tiles)
   },
 }
 </script>
