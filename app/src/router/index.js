@@ -27,7 +27,11 @@ const router = createRouter({
       name: 'game',
       component: Game,
     },
-
+    {
+      path: '/game/next',
+      name: 'Next Game',
+      component: Game,
+    },
     {
       path: '/filemanager',
       name: 'File Manager Test',

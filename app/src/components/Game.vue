@@ -49,7 +49,7 @@ export default {
   data() {
     return {
       id: this.$route.params.id,
-      actor: {},
+      actor: this.$store.getters['auth/user'],
       game: '',
       gameData: {},
     }
@@ -57,6 +57,10 @@ export default {
 
   methods: {
     async loadGame() {
+      if (!this.id) {
+        return this.nextGame()
+      }
+
       this.game = ''
 
       const { game } = await this.$post('/api/game/fetch', {
@@ -65,8 +69,26 @@ export default {
 
       this.game = game.settings.game
       this.gameData = game
-      this.actor = this.$store.getters['auth/user']
-    }
+    },
+
+    async nextGame() {
+      const { gameId } = await this.$post('/api/user/next', {
+        userId: this.actor._id,
+        gameId: null,
+      })
+
+      if (gameId) {
+        if (this.$route.path === `/game/${gameId}`) {
+          this.$router.go()
+        }
+        else {
+          this.$router.push(`/game/${gameId}`)
+        }
+      }
+      else {
+        this.$router.push('/')
+      }
+    },
   },
 
   watch: {
