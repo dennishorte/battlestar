@@ -25,41 +25,20 @@ export default {
   },
 
   props: {
-    cx: Number,
-    cy: Number,
-    sites: Array,
-    rotation: Number,  // In the range [0, 5]
+    tile: Object,
   },
 
   computed: {
-    absolutelyPositioned() {
-      const theta = this.rotation * ((2 * Math.PI) / 6)
-
-      return this.sites.map(s => {
-        const cosTheta = Math.cos(theta)
-        const sinTheta = Math.sin(theta)
-
-        const dx = s.dx * cosTheta - s.dy * sinTheta
-        const dy = s.dy * cosTheta + s.dx * sinTheta
-
-        return {
-          ...s,
-          cx: this.cx + dx,
-          cy: this.cy + dy,
-        }
-      })
-    },
-
     connectors() {
       const output = []
 
-      for (const loc of this.absolutelyPositioned) {
+      for (const loc of this.tile.sitesAbsolute()) {
         for (const name2 of loc.paths) {
           if (name2.startsWith('hex')) {
             continue
           }
 
-          const loc2 = this.absolutelyPositioned.find(x => x.name === name2)
+          const loc2 = this.tile.sitesAbsolute().find(x => x.name === name2)
           output.push({
             cx1: loc.cx,
             cy1: loc.cy,
@@ -73,15 +52,15 @@ export default {
     },
 
     sitesOnly() {
-      return this.absolutelyPositioned.filter(x => x.kind !== 'troop-spot')
+      return this.tile.sitesAbsolute().filter(x => x.kind !== 'troop-spot')
     },
 
     spotsOnly() {
-      return this.absolutelyPositioned.filter(x => x.kind === 'troop-spot')
+      return this.tile.sitesAbsolute().filter(x => x.kind === 'troop-spot')
     },
 
     testHex() {
-      return this.svgPointsFromArray(this.hexPointsWithRadius(this.cx, this.cy, 150))
+      return this.svgPointsFromArray(this.hexPointsWithRadius(this.tile.cx, this.tile.cy, 150))
     },
   },
 

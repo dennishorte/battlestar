@@ -40,10 +40,31 @@ function Tile(data, context) {
     y: data.pos[1],
   }
 
-  this.rotation = 0
+  this.cx = 0
+  this.cy = 0
+
+  this.rotation = 1
 }
 
-Tile.prototype.connectionsAt = function(dir) {
+////////////////////////////////////////////////////////////////////////////////
+// Setters
+
+Tile.prototype.setCenterPoint = function(x, y) {
+  this.cx = x
+  this.cy = y
+}
+
+Tile.prototype.setRotation = function(r) {
+  this.rotation = (r + 36) % 6
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Getters
+
+Tile.prototype.linksToSide = function(dir) {
+  const sideName = 'hex' + dir
+  return this.sitesAbsolute().filter(s => s.paths.includes(sideName))
 }
 
 Tile.prototype.neighbors = function() {
@@ -51,6 +72,31 @@ Tile.prototype.neighbors = function() {
   return candidates
     .map(([x, y]) => this.context.tiles.find(h => t.layout.x === x && t.layout.y === y))
     .filter(h => h !== undefined)
+}
+
+Tile.prototype.sideTouching = function(other) {
+  return Direction.N
+}
+
+Tile.prototype.sites = function() {
+  return this.data.sites
+}
+
+Tile.prototype.sitesAbsolute = function() {
+  const theta = this.rotation * ((2 * Math.PI) / 6)
+  const cosTheta = Math.cos(theta)
+  const sinTheta = Math.sin(theta)
+
+  return this.sites().map(s => {
+    const dx = s.dx * cosTheta - s.dy * sinTheta
+    const dy = s.dy * cosTheta + s.dx * sinTheta
+
+    return {
+      ...s,
+      cx: this.cx + dx,
+      cy: this.cy + dy,
+    }
+  })
 }
 
 

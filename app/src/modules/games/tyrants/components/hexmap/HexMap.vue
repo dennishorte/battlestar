@@ -4,11 +4,17 @@
 
       <Hex
         v-for="tile in tiles"
-        :cx="calculateXpos(tile)"
-        :cy="calculateYpos(tile)"
-        :sites="tile.data.sites"
-        :rotation="0"
+        :tile="tile"
       />
+
+      <Connector
+        v-for="c in hexConnections"
+        :cx1="c.a.x"
+        :cy1="c.a.y"
+        :cx2="c.b.x"
+        :cy2="c.b.y"
+      />
+
 
     </svg>
   </div>
@@ -18,6 +24,7 @@
 <script>
 import { util } from 'battlestar-common'
 
+import Connector from './Connector'
 import Hex from './Hex'
 import data from './data.js'
 import tile from './tile.js'
@@ -27,6 +34,7 @@ export default {
   name: 'HexMap',
 
   components: {
+    Connector,
     Hex,
   },
 
@@ -45,19 +53,26 @@ export default {
 
   computed: {
     hexConnections() {
+      return []
       const output = []
 
-      for (const hex of this.hexes) {
-        for (const nei of this.neighbors(hex)) {
-          output.push(this.hexConnection(hex, nei, 1))
+      for (const tile of this.tiles) {
+        for (const nei of tile.neighbors()) {
+          const connections = this.generateConnection(tile, nei)
+          for (const connection of connections) {
+            output.push(connection)
+          }
         }
       }
 
-      return output
+      // TODO: handle duplicates
+      return output.filter(c => c !== undefined)
     },
 
     tiles() {
-      return this.context.hexes.map(h => new tile.Tile(h, this.context))
+      const output = this.context.hexes.map(h => new tile.Tile(h, this.context))
+      output.forEach(tile => this.positionTile(tile))
+      return output
     },
   },
 
@@ -68,6 +83,40 @@ export default {
 
     calculateYpos(tile) {
       return this.context.origin_cy + tile.layout.y * this.context.dy
+    },
+
+    generateConnections(a, b) {
+      const output = []
+
+      const aSide = a.sideTouching(b)
+      const aSites = a.linksToSide(aSide)
+
+      const bSide = b.sideTouching(a)
+      const bSites = b.linksToSide(bSide)
+
+      for (const aSite of aSites) {
+        for (const bSite of bSites) {
+          output.push({
+            a: {
+              x: aSite.x,
+              y: aSite.y,
+            },
+            b: {
+              x: bSite.x,
+              y: ySite.y,
+            },
+          })
+        }
+      }
+
+      return output
+    },
+
+    positionTile(tile) {
+      tile.setCenterPoint(
+        this.calculateXpos(tile),
+        this.calculateYpos(tile),
+      )
     },
 
     selectHexes() {
