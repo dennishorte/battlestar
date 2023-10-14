@@ -40,6 +40,7 @@ function factoryFromLobby(lobby) {
     map: lobby.options.map,
     players: lobby.users,
     seed: lobby.seed,
+    chooseColors: true,
   })
 }
 

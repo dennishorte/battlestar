@@ -1,7 +1,7 @@
 <template>
   <div class="player">
     <div class="details" @click="showTableauModal">
-      <div class="header" :class="headerClasses(player)">
+      <div class="header" :class="headerClasses(player)" :style="headerStyles(player)">
         {{ player.name }}
       </div>
 
@@ -97,10 +97,22 @@ export default {
     headerClasses(player) {
       const classes = []
 
-      const color = this.ui.fn.getPlayerColor(this.game, player)
-      classes.push(`${color}-element`)
+      if (!this.game.settings.chooseColors) {
+        const color = this.ui.fn.getPlayerColor(this.game, player)
+        classes.push(`${color}-element`)
+      }
 
       return classes
+    },
+
+    headerStyles(player) {
+      const output = {}
+
+      if (this.game.settings.chooseColors) {
+        output['background-color'] = player.color
+      }
+
+      return output
     },
 
     showTableauModal() {
@@ -120,6 +132,7 @@ export default {
   border-right: 1px solid;
   margin: 0 1em;
   margin-bottom: 1px;
+  padding-left: .25em;
 }
 
 .body {

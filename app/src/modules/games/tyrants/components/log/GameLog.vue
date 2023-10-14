@@ -13,7 +13,7 @@
 
       <template v-else>
         <div v-for="n in line.indent" :key="n" class="indent-spacer" />
-        <GameLogText :text="line.text" :class="classes(line)" />
+        <GameLogText :text="line.text" :class="classes(line)" :style="styles(line)" />
       </template>
 
     </div>
@@ -114,7 +114,10 @@ export default {
         const playerName = line.args.player.value
         const player = this.game.getPlayerByName(playerName)
         const color = this.ui.fn.getPlayerColor(this.game, player)
-        classes.push(`${color}-element`)
+
+        if (!this.game.settings.chooseColors) {
+          classes.push(`${color}-element`)
+        }
       }
       else if (line.text.includes(' plays ')) {
         classes.push('player-action')
@@ -137,6 +140,16 @@ export default {
       }
 
       return classes
+    },
+
+    styles(line) {
+      if (this.game.settings.chooseColors && line.classes && line.classes.includes('player-turn')) {
+        const playerName = line.args.player.value
+        const player = this.game.getPlayerByName(playerName)
+        return {
+          'background-color': player.color,
+        }
+      }
     },
 
     scrollToBottom() {

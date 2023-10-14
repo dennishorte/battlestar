@@ -13,6 +13,7 @@
         :key="troop.id"
         class="troop-space"
         :class="troopClasses(troop)"
+        :style="troopStyles(troop)"
       ></div>
 
       <div
@@ -28,6 +29,7 @@
         :key="spy.id"
         class="spy troop-space"
         :class="troopClasses(spy)"
+        :style="troopStyles(spy)"
       ></div>
     </div>
 
@@ -70,10 +72,24 @@ export default {
     troopClasses(troop) {
       const classes = []
 
-      const color = this.ui.fn.getTroopColor(this.game, troop)
-      classes.push(`${color}-element`)
+      if (!this.game.settings.chooseColors) {
+        const color = this.ui.fn.getTroopColor(this.game, troop)
+        classes.push(`${color}-element`)
+      }
 
       return classes
+    },
+
+    troopStyles(troop) {
+      if (this.game.settings.chooseColors) {
+        const player = this.game.getPlayerByCard(troop)
+        if (player) {
+          return { 'background-color': player.color }
+        }
+        else {
+          return { 'background-color': 'gray' }
+        }
+      }
     },
   },
 }

@@ -12,6 +12,7 @@
               v-for="token in trophyHall"
               :key="token.id"
               :class="trophyClasses(token)"
+              :style="trophyStyles(token)"
             ></div>
           </div>
 
@@ -171,15 +172,29 @@ export default {
     trophyClasses(troop) {
       const classes = ['trophy']
 
-      if (troop.owner === undefined) {
-        classes.push('neutral-element')
-      }
-      else {
-        const color = this.ui.fn.getPlayerColor(this.game, troop.owner)
-        classes.push(`${color}-element`)
+      if (!this.game.settings.chooseColors) {
+        if (troop.owner === undefined) {
+          classes.push('neutral-element')
+        }
+        else {
+          const color = this.ui.fn.getPlayerColor(this.game, troop.owner)
+          classes.push(`${color}-element`)
+        }
       }
 
       return classes
+    },
+
+    trophyStyles(troop) {
+      if (this.game.settings.chooseColors) {
+        const player = this.game.getPlayerByCard(troop)
+        if (player) {
+          return { 'background-color': player.color }
+        }
+        else {
+          return { 'background-color': 'gray' }
+        }
+      }
     },
   },
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="player-name" :class="classes">
+  <div class="player-name" :class="classes" :style="styles">
     {{ name }}
   </div>
 </template>
@@ -19,10 +19,22 @@ export default {
     classes() {
       const classes = []
 
-      const color = this.ui.fn.getPlayerColor(this.game, this.player)
-      classes.push(`${color}-element`)
+      if (!this.game.settings.chooseColors) {
+        const color = this.ui.fn.getPlayerColor(this.game, this.player)
+        classes.push(`${color}-element`)
+      }
 
       return classes
+    },
+
+    styles() {
+      const output = {}
+
+      if (this.game.settings.chooseColors) {
+        output['background-color'] = this.player.color
+      }
+
+      return output
     },
 
     player() {

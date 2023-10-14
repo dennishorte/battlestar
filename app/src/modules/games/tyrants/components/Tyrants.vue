@@ -1,6 +1,6 @@
 <template>
   <div class="tyrants">
-    <ChatOffCanvas :classes="chatClasses" />
+    <ChatOffCanvas :classes="chatClasses" :colors="chatColors" />
 
     <div class="container-fluid">
       <div class="row flex-nowrap main-row">
@@ -180,12 +180,26 @@ export default {
 
   computed: {
     chatClasses() {
-      const output = {}
-      for (const player of this.game.getPlayerAll()) {
-        const color = getPlayerColor(this.game, player)
-        output[player.name] = `${color}-element`
+      if (!this.game.settings.chooseColors) {
+        const output = {}
+        for (const player of this.game.getPlayerAll()) {
+          const color = getPlayerColor(this.game, player)
+          output[player.name] = `${color}-element`
+        }
+        return output
       }
-      return output
+    },
+
+    chatColors() {
+      if (this.game.settings.chooseColors) {
+        const output = {}
+
+        for (const player of this.game.getPlayerAll()) {
+          output[player.name] = player.color
+        }
+
+        return output
+      }
     },
 
     devouredCount() {
