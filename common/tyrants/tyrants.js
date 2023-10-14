@@ -264,6 +264,8 @@ Tyrants.prototype.chooseInitialLocations = function() {
   this.mLogIndent()
 
   for (const player of this.getPlayerAll()) {
+    this.aChooseColor(player)
+
     const choices = this
       .getLocationAll()
       .filter(loc => loc.start)
@@ -833,6 +835,23 @@ Tyrants.prototype.aChooseCard = function(player, choices, opts={}) {
   else {
     return undefined
   }
+}
+
+Tyrants.prototype.aChooseColor = function(player) {
+  // This option exists so that games in progress when color selection is introduced don't break
+  if (!this.settings.chooseColors) {
+    return
+  }
+
+  const availableColors = Object
+    .entries(res.colors)
+    .filter(([_, hex]) => !this.getPlayerAll().some(p => p.color === hex))
+    .map(([name, _]) => name)
+
+  const chosen = this.aChoose(player, availableColors, {
+    title: 'Choose a player color',
+  })
+  player.color = res.colors[chosen]
 }
 
 Tyrants.prototype.aChoosePlayer = function(player, choices, opts={}) {

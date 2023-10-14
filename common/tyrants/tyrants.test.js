@@ -15,6 +15,17 @@ describe('Tyrants', () => {
     const request1 = game.run()
   })
 
+  test('choose colors', () => {
+    const game = t.fixture({ chooseColors: true })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'green')
+    const request3 = t.choose(game, request2, 'Ched Nasad')
+
+    expect(request3.selectors[0].choices).toStrictEqual(['red', 'orange', 'yellow', 'lime', 'blue', 'indigo', 'pink'])
+    expect(t.dennis(game).color).toBe('#70fa73')
+  })
+
   describe('presence', () => {
     test('troops project presense to neighbors', () => {
       const game = t.gameFixture({})

@@ -2,6 +2,7 @@ function Player() {
   this._id = undefined
   this.game = undefined
   this.name = undefined
+  this.color = undefined
 
   this.points = 0
   this.influence = 0

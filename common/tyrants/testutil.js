@@ -14,6 +14,7 @@ TestUtil.fixture = function(options) {
     expansions: ['drow', 'dragons'],
     map: undefined,
     numPlayers: 2,
+    chooseColors: false,
     players: [
       {
         _id: 'dennis_id',
@@ -81,7 +82,6 @@ TestUtil.fixture = function(options) {
         game.mMoveCardTo(card, market, { silent: true })
       }
     }
-
   })
 
   return game

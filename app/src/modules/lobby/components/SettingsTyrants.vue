@@ -139,6 +139,9 @@ export default {
       this.lobby.options = {
         expansions: [...this.models.expansions],
         map: this.models.map,
+
+        // This option exists so that games in progress when this change is introduced aren't broken.
+        chooseColors: true,
       }
       this.updateValid()
       this.save()
