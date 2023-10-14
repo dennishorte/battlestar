@@ -1,12 +1,12 @@
-const Card = require('./Card.js')
+const Card = require('../../Card.js')
 
-const baseExp = require('./resources_cards_base.js')
-const demonsExp = require('./resources_cards_demons.js')
-const dragonsExp = require('./resources_cards_dragons.js')
-const drowExp = require('./resources_cards_drow.js')
-const elementalExp = require('./resources_cards_elementals.js')
-const illithidExp = require('./resources_cards_illithid.js')
-const undeadExp = require('./resources_cards_undead.js')
+const baseExp = require('./base.js')
+const demonsExp = require('./demons.js')
+const dragonsExp = require('./dragons.js')
+const drowExp = require('./drow.js')
+const elementalExp = require('./elementals.js')
+const illithidExp = require('./illithid.js')
+const undeadExp = require('./undead.js')
 
 const baseData = [
   ...baseExp.cardData,

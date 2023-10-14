@@ -8,7 +8,7 @@ const MapZone = require('./MapZone.js')
 const Player = require('./Player.js')
 const Token = require('./Token.js')
 const Zone = require('./Zone.js')
-const res = require('./resources.js')
+const res = require('./res/index.js')
 const util = require('../lib/util.js')
 
 
