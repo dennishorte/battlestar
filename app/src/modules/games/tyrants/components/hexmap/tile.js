@@ -53,6 +53,10 @@ Tile.prototype.setRotation = function(r) {
 ////////////////////////////////////////////////////////////////////////////////
 // Getters
 
+Tile.prototype.name = function() {
+  return this.data.name
+}
+
 Tile.prototype.linksToSide = function(dir) {
   const sideName = 'hex' + dir
   return this.sitesAbsolute().filter(s => s.paths.includes(sideName))
@@ -66,17 +70,12 @@ Tile.prototype.layoutPos = function() {
 }
 
 Tile.prototype.neighbors = function() {
-  console.log(this.layoutPos())
-
   const candidates = Object
     .values(Translation)
     .map(([dx, dy]) => ({
       x: this.layoutPos().x + dx,
       y: this.layoutPos().y + dy,
     }))
-
-  console.log(0, this.game.tiles.map(t => t.layoutPos()))
-  console.log(1, candidates)
 
   return candidates
     .map(c => this.game.tiles.find(t => t.layoutPos().x === c.x && t.layoutPos().y === c.y))
@@ -88,7 +87,16 @@ Tile.prototype.rotation = function() {
 }
 
 Tile.prototype.sideTouching = function(other) {
-  return Direction.N
+  for (const [direction, delta] of Object.entries(Translation)) {
+    const dx = this.layoutPos().x + delta[0]
+    const dy = this.layoutPos().y + delta[1]
+
+    if (other.layoutPos().x === dx && other.layoutPos().y === dy) {
+      return (direction - this.rotation() + 6) % 6
+    }
+  }
+
+  throw new Error('not touching')
 }
 
 Tile.prototype.sites = function() {

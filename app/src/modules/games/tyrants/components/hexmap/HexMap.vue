@@ -58,15 +58,11 @@ export default {
 
   computed: {
     hexConnections() {
-      return []
-      console.log('hexConnections')
-
       const output = []
 
       for (const tile of this.game.tiles) {
-        console.log(tile.neighbors().length)
         for (const nei of tile.neighbors()) {
-          const connections = this.generateConnection(tile, nei)
+          const connections = this.generateConnections(tile, nei)
           for (const connection of connections) {
             output.push(connection)
           }
@@ -88,7 +84,6 @@ export default {
     },
 
     generateConnections(a, b) {
-      console.log('generateConnections')
       const output = []
 
       const aSide = a.sideTouching(b)
@@ -101,12 +96,12 @@ export default {
         for (const bSite of bSites) {
           output.push({
             a: {
-              x: aSite.x,
-              y: aSite.y,
+              x: aSite.cx,
+              y: aSite.cy,
             },
             b: {
-              x: bSite.x,
-              y: ySite.y,
+              x: bSite.cx,
+              y: bSite.cy,
             },
           })
         }
@@ -136,7 +131,7 @@ export default {
           return elems.map((hex, i) => ({
             layoutId: ids[i],
             pos: layout.find(x => x.id === ids[i]).pos,
-            rotation: -1,
+            rotation: -2,
             ...hex,
           }))
         })
@@ -150,8 +145,6 @@ export default {
 
     this.game.tiles = this.game.hexes.map(h => new tile.Tile(h, this.game))
     this.game.tiles.forEach(tile => this.positionTile(tile))
-
-    console.log(this.game.tiles)
   },
 }
 </script>

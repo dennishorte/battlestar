@@ -1,8 +1,8 @@
 const a2sites = [
   {
     name: 'Fogtown',
-    dx: -30,
-    dy: +80,
+    dx: -35,
+    dy: -70,
     size: 3,
     neutrals: 2,
     value: 4,
@@ -10,7 +10,7 @@ const a2sites = [
       'Gallenghast',
       'Darkflame',
       'hex0',
-      'hex6',
+      'hex5',
     ],
   },
   {
@@ -29,16 +29,16 @@ const a2sites = [
   },
   {
     name: 'Darkflame',
-    dx: -35,
-    dy: -70,
+    dx: -30,
+    dy: +80,
     size: 3,
     neutrals: 2,
     value: 3,
     paths: [
       'Fogtown',
       'Gallenghast',
+      'hex3',
       'hex4',
-      'hex5',
     ],
   },
 ]
