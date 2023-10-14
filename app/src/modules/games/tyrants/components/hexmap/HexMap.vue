@@ -2,19 +2,9 @@
   <div class="hex-map">
     <svg class="game-map" width="1000" height="800" ref="gamemap">
 
-      <Hex
-        v-for="tile in game.tiles"
-        :tile="tile"
-      />
-
-      <Connector
-        v-for="c in hexConnections"
-        :cx1="c.a.x"
-        :cy1="c.a.y"
-        :cx2="c.b.x"
-        :cy2="c.b.y"
-      />
-
+      <TileLayer :tiles="game.tiles" />
+      <ConnectorLayer :tiles="game.tiles" />
+      <SiteLayer :tiles="game.tiles" />
 
     </svg>
   </div>
@@ -24,8 +14,9 @@
 <script>
 import { util } from 'battlestar-common'
 
-import Connector from './Connector'
-import Hex from './Hex'
+import ConnectorLayer from './ConnectorLayer'
+import SiteLayer from './SiteLayer'
+import TileLayer from './TileLayer'
 import data from './data.js'
 import tile from './tile.js'
 
@@ -34,8 +25,9 @@ export default {
   name: 'HexMap',
 
   components: {
-    Connector,
-    Hex,
+    ConnectorLayer,
+    SiteLayer,
+    TileLayer,
   },
 
   data() {
@@ -81,33 +73,6 @@ export default {
 
     calculateYpos(tile) {
       return this.game.ui.origin_cy + tile.layoutPos().y * this.game.ui.dy
-    },
-
-    generateConnections(a, b) {
-      const output = []
-
-      const aSide = a.sideTouching(b)
-      const aSites = a.linksToSide(aSide)
-
-      const bSide = b.sideTouching(a)
-      const bSites = b.linksToSide(bSide)
-
-      for (const aSite of aSites) {
-        for (const bSite of bSites) {
-          output.push({
-            a: {
-              x: aSite.cx,
-              y: aSite.cy,
-            },
-            b: {
-              x: bSite.cx,
-              y: bSite.cy,
-            },
-          })
-        }
-      }
-
-      return output
     },
 
     positionTile(tile) {
