@@ -12,6 +12,12 @@
       :cy="cy2"
       r="8"
       class="site-troop-space" />
+    <circle
+      v-for="x in x3Points"
+      :cx="x"
+      :cy="cy3"
+      r="8"
+      class="site-troop-space" />
   </g>
 </template>
 
@@ -28,7 +34,10 @@ export default {
 
   computed: {
     cy1() {
-      if (this.x2Points.length) {
+      if (this.x3Points.length) {
+        return this.cy - 18
+      }
+      else if (this.x2Points.length) {
         return this.cy - 9
       }
       else {
@@ -37,15 +46,27 @@ export default {
     },
 
     cy2() {
-      return this.cy + 9
+      if (this.x3Points.length) {
+        return this.cy
+      }
+      else {
+        return this.cy + 9
+      }
+    },
+
+    cy3() {
+      return this.cy + 18
     },
 
     x1Points() {
       if (this.count === 5) {
         return this.xPoints(2)
       }
-      else if (this.count === 6) {
+      else if (this.count === 6 || this.count === 7 || this.count === 9) {
         return this.xPoints(3)
+      }
+      else if (this.count === 8) {
+        return this.xPoints(4)
       }
       else {
         return this.xPoints(this.count)
@@ -53,7 +74,19 @@ export default {
     },
 
     x2Points() {
-      if (this.count === 5 || this.count === 6) {
+      if (this.count === 5 || this.count === 6 || this.count === 9) {
+        return this.xPoints(3)
+      }
+      else if (this.count === 7 || this.count === 8) {
+        return this.xPoints(4)
+      }
+      else {
+        return []
+      }
+    },
+
+    x3Points() {
+      if (this.count === 9) {
         return this.xPoints(3)
       }
       else {

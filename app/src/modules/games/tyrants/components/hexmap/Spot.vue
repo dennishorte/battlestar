@@ -1,8 +1,8 @@
 <template>
-  <g>
+  <g :filter="filters">
     <circle
-      :cx="cx"
-      :cy="cy"
+      :cx="spot.cx"
+      :cy="spot.cy"
       r="10"
       class="site-troop-space" />
 
@@ -20,8 +20,19 @@ export default {
   name: 'Spot',
 
   props: {
-    cx: Number,
-    cy: Number,
+    spot: Object,
+    highlight: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  computed: {
+    filters() {
+      if (this.highlight) {
+        return 'url(#selected)'
+      }
+    },
   },
 }
 </script>

@@ -4,6 +4,8 @@ import Home from '@/components/Home'
 import Game from '@/components/Game'
 import GameEditor from '@/modules/games/common/components/GameEditor'
 import FileManagerTest from '@/components/filemanager/FileManagerTest'
+
+import TyrantsTileEditor from '@/modules/games/tyrants/components/tileEditor/TileEditor'
 import TyrantsTest from '@/modules/games/tyrants/components/hexmap/HexMap'
 
 import adminRoutes from '@/modules/admin/router.js'
@@ -47,10 +49,16 @@ const router = createRouter({
     },
 
     {
-      path: '/tyrantstest',
+      path: '/tyrants/test',
       name: 'Tyrants Test',
       title: 'Tyrants Test',
       component: TyrantsTest,
+    },
+    {
+      path: '/tyrants/tile_editor',
+      name: 'Tyrants Tile Editor',
+      title: 'Tyrants Tile Editor',
+      component: TyrantsTileEditor,
     },
 
     ...adminRoutes,

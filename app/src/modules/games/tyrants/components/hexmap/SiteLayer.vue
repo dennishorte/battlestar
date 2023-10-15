@@ -1,6 +1,32 @@
 <template>
-  <Site v-for="site in sitesOnly" v-bind="site" />
-  <Spot v-for="spot in spotsOnly" v-bind="spot" />
+  <defs>
+    <filter id="selected" x="-100%" y="-100%" width="400%" height="400%">
+      <feFlood id="outline-color" flood-color="#a34ff7" result="base" />
+      <feMorphology result="bigger" in="SourceGraphic" operator="dilate" radius="2"/>
+      <feColorMatrix result="mask" in="bigger" type="matrix"
+                     values="0 0 0 0 0
+                             0 0 0 0 0
+                             0 0 0 0 0
+                             0 0 0 1 0" />
+      <feComposite result="drop" in="base" in2="mask" operator="in" />
+      <feGaussianBlur result="blur" in="drop" stdDeviation="5" />
+      <feBlend in="SourceGraphic" in2="blur" mode="normal" />
+    </filter>
+  </defs>
+
+  <Site
+    v-for="site in sites"
+    :site="site"
+    :highlight="selected && site.index === selected.index"
+    @mousedown="mousedown($event, site)"
+  />
+
+  <Spot
+    v-for="spot in spots"
+    :spot="spot"
+    :highlight="selected && spot.index === selected.index"
+    @mousedown="mousedown($event, spot)"
+  />
 </template>
 
 
@@ -17,18 +43,52 @@ export default {
     Spot,
   },
 
+  inject: {
+    bus: {
+      default: null
+    },
+  },
+
   props: {
+    selected: {
+      type: Object,
+      default: null,
+    },
     tiles: Array,
   },
 
-  computed: {
-    sitesOnly() {
-      return this.tiles.flatMap(tile => tile.sitesAbsolute().filter(x => x.kind !== 'troop-spot'))
+  data() {
+    return {
+      sites: [],
+      spots: [],
+    }
+  },
+
+  methods: {
+    mousedown(event, site) {
+      if (this.bus) {
+        this.bus.emit('site-mousedown', { event, site })
+      }
     },
 
-    spotsOnly() {
-      return this.tiles.flatMap(tile => tile.sitesAbsolute().filter(x => x.kind === 'troop-spot'))
+    siteSelected(site) {
+      this.selected = site
     },
-  }
+  },
+
+  watch: {
+    tiles: {
+      handler(newValue) {
+        this.sites = this
+          .tiles
+          .flatMap(tile => tile.sitesAbsolute().filter(x => x.kind !== 'troop-spot'))
+        this.spots = this
+          .tiles
+          .flatMap(tile => tile.sitesAbsolute().filter(x => x.kind === 'troop-spot'))
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
 }
 </script>

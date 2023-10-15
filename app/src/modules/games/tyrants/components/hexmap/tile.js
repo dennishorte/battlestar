@@ -35,6 +35,8 @@ function Tile(data, game) {
 
   this.cx = 0
   this.cy = 0
+
+  this.rotation = 0
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -82,10 +84,6 @@ Tile.prototype.neighbors = function() {
     .filter(h => h !== undefined)
 }
 
-Tile.prototype.rotation = function() {
-  return this.data.rotation
-}
-
 Tile.prototype.sideTouching = function(other) {
   for (const [direction, delta] of Object.entries(Translation)) {
     const dx = this.layoutPos().x + delta[0]
@@ -104,7 +102,7 @@ Tile.prototype.sites = function() {
 }
 
 Tile.prototype.sitesAbsolute = function() {
-  const theta = this.rotation() * ((2 * Math.PI) / 6)
+  const theta = this.rotation * ((2 * Math.PI) / 6)
   const cosTheta = Math.cos(theta)
   const sinTheta = Math.sin(theta)
 
