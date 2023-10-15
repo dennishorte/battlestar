@@ -13,7 +13,7 @@
           <DropdownButton data-bs-toggle="modal" data-bs-target="#link-to-draft-modal">link to draft</DropdownButton>
         </GameMenu>
 
-        <GameLog />
+        <GameLog :entries="game.getLog()" />
         <ChatInput />
       </div>
 
