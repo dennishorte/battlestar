@@ -29,7 +29,7 @@
         :key="spy.id"
         class="spy troop-space"
         :class="troopClasses(spy)"
-        :style="troopStyles(troop)"
+        :style="troopStyles(spy)"
       ></div>
     </div>
 
