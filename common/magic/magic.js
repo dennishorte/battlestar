@@ -690,7 +690,11 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
       // Loyalty counters are a special case
       if (card.data.card_faces[0].loyalty) {
         this.aAddCounter(player, cardId, 'loyalty', { noIncrement: true })
-        this.aAdjustCardCounter(player, cardId, 'loyalty', parseInt(card.data.card_faces[0].loyalty))
+
+        const counters = parseInt(card.data.card_faces[0].loyalty)
+        if (!isNaN(counters)) {
+          this.aAdjustCardCounter(player, cardId, 'loyalty', counters)
+        }
       }
 
       // Defense counters are a special case
