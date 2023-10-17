@@ -1100,6 +1100,7 @@ Innovation.prototype.aDogma = function(player, card, opts={}) {
   this.mLogIndent()
   this.aDogmaHelper(player, card, opts)
   this.mLogOutdent()
+  this.mResetDogmaInfo()
 }
 
 Innovation.prototype._getAgeForDrawAction = function(player, isAction) {
