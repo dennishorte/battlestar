@@ -98,7 +98,7 @@ const cardData = [
     "expansion": "demons",
     "cost": 8,
     "points": 5,
-    "innerPoints": 1,
+    "innerPoints": 10,
     "count": 1,
     "text": [
       "Devour a card in your hand > Assassinate 2 troops. Then you may take up to 2 troops from any trophy halls and deploy them anywhere on the board."
