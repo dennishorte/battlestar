@@ -13,16 +13,25 @@ Card.fetchAll = async function(req, res) {
   })
 }
 
+function _extractOriginalCard(req) {
+  if (!req.original) {
+    return null
+  }
+  else {
+    return req.body.original.data ? req.body.original.data : req.body.original
+  }
+}
+
 Card.save = async function(req, res) {
   const card = req.body.card.data ? req.body.card.data : req.body.card
-  const original = req.body.original.data ? req.body.original.data : req.body.original
+  const original = _extractOriginalCard(req)
   const { editor, comment } = req.body
 
   if (card.data) {
     throw new Error('Card had data ' + card.name)
   }
 
-  if (original.data) {
+  if (original && original.data) {
     throw new Error('Original had data ' + original.name)
   }
 
