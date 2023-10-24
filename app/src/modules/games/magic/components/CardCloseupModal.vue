@@ -6,10 +6,10 @@
 
     <div v-if="selectedCard" class="modal-body">
       <div class="card-holder">
-        <Card :card="selectedCard.data" :size="270" />
+        <Card v-if="cardIsVisible" :card="selectedCard.data" :size="270" />
       </div>
 
-      <div class="labeled-input-wrapper mt-2">
+      <div v-if="cardIsVisible" class="labeled-input-wrapper mt-2">
         <label class="col-form-label">Active Face</label>
         <div>
           <select class="form-select" v-model.number="activeFace">
@@ -65,7 +65,7 @@ export default {
     Modal,
   },
 
-  inject: ['do', 'game'],
+  inject: ['actor', 'do', 'game'],
 
   data() {
     return {
@@ -80,6 +80,11 @@ export default {
     ...mapState('magic/game', {
       selectedCardId: 'selectedCardId',
     }),
+
+    cardIsVisible() {
+      const player = this.game.getPlayerByName(this.actor.name)
+      return this.game.checkCardIsVisible(player, this.selectedCard)
+    },
 
     counters() {
       return Object.entries(this.selectedCard.counters)

@@ -1049,6 +1049,10 @@ Magic.prototype.aViewTop = function(player, zoneId, count) {
   })
 }
 
+Magic.prototype.checkCardIsVisible = function(player, card) {
+  return card.visibility.includes(player)
+}
+
 Magic.prototype.checkIsBattlefieldZone = function(zone) {
   return (
     zone.id.endsWith('battlefield')
