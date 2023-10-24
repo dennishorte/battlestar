@@ -813,8 +813,8 @@ Magic.prototype.aRevealNext = function(player, zoneId) {
   const card = cards[nextIndex]
   this.mReveal(card)
   this.mLog({
-    template: `{player} reveals the next card in {zone} (top+${nextIndex})`,
-    args: { player, zone }
+    template: `{player} reveals the next card in {zone} (top+${nextIndex}): {card}`,
+    args: { player, zone, card }
   })
 }
 
