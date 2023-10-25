@@ -228,7 +228,7 @@ Tyrants.prototype.initializeTokens = function() {
 
   // Neutrals
   const neutralZone = this.getZoneById('neutrals')
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 80; i++) {
     const name = 'neutral'
     const token = new Token(name + '-' + i, name)
     token.isTroop = true
