@@ -838,6 +838,18 @@ Tyrants.prototype.aChooseCard = function(player, choices, opts={}) {
   }
 }
 
+Tyrants.prototype.aChooseCards = function(player, choices, opts={}) {
+  const choiceNames = util.array.distinct(choices.map(c => c.name)).sort()
+  const selection = this.aChoose(player, choiceNames, opts)
+  const used = []
+
+  return selection.map(s => {
+    const card = choices.find(c => c.name === s && !used.includes(c))
+    used.push(card)
+    return card
+  })
+}
+
 Tyrants.prototype.aChooseColor = function(player) {
   // This option exists so that games in progress when color selection is introduced don't break
   if (!this.settings.chooseColors) {
@@ -909,13 +921,15 @@ Tyrants.prototype.aChooseAndDevour = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndDevourMarket = function(player, opts={}) {
-  const chosen = this.aChooseCard(player, this.getZoneById('market').cards(), {
+  const chosen = this.aChooseCards(player, this.getZoneById('market').cards(), {
     min: 0,
-    max: 1,
-    title: 'Choose a card to devour from the market',
+    max: opts.max || 1,
+    title: 'Choose cards to devour from the market',
   })
-  if (chosen) {
-    this.aDevour(player, chosen)
+  if (chosen.length > 0) {
+    for (const card of chosen) {
+      this.aDevour(player, card)
+    }
   }
   else {
     this.mLog({

@@ -145,12 +145,12 @@ const cardData = [
     count: 3,
     text: [
       "Deploy 2 troops.",
-      "You may devour a card in the market."
+      "You may devour up to three cards in the market."
     ],
     impl: (game, player) => {
       game.aChooseAndDeploy(player)
       game.aChooseAndDeploy(player)
-      game.aChooseAndDevourMarket(player)
+      game.aChooseAndDevourMarket(player, { max: 3 })
     }
   },
   {
@@ -370,11 +370,11 @@ const cardData = [
     count: 2,
     text: [
       "+2 influence",
-      "You may devour a card in the market."
+      "You may devour up to three cards in the market."
     ],
     impl: (game, player) => {
       player.incrementInfluence(2)
-      game.aChooseAndDevourMarket(player)
+      game.aChooseAndDevourMarket(player, { max: 3 })
     }
   },
   {
