@@ -839,7 +839,7 @@ Tyrants.prototype.aChooseCard = function(player, choices, opts={}) {
 }
 
 Tyrants.prototype.aChooseCards = function(player, choices, opts={}) {
-  const choiceNames = util.array.distinct(choices.map(c => c.name)).sort()
+  const choiceNames = choices.map(c => c.name).sort()
   const selection = this.aChoose(player, choiceNames, opts)
   const used = []
 
