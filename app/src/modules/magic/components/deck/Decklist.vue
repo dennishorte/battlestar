@@ -96,6 +96,8 @@ export default {
     }),
 
     cardsBySection() {
+      this.$store.dispatch('magic/cards/insertCardData', this.deck.cardlist)
+
       const byZone = util.array.collect(this.deck.cardlist, card => card.zone)
       const mainByType = util.array.collect(byZone.main || [], card => mag.util.card.getSortType(card.data))
       const orderedSections = Object

@@ -1,9 +1,11 @@
 <template>
-  <div class="deck-share" v-if="deck">
-    <MagicMenu />
+  <MagicWrapper>
+    <div class="deck-share" v-if="deck">
+      <MagicMenu />
 
-    <Decklist :deck="deck" :no-menu="true" />
-  </div>
+      <Decklist :deck="deck" :no-menu="true" />
+    </div>
+  </MagicWrapper>
 </template>
 
 
@@ -12,6 +14,7 @@ import { mag } from 'battlestar-common'
 
 import Decklist from './Decklist'
 import MagicMenu from '../MagicMenu'
+import MagicWrapper from '../MagicWrapper'
 
 export default {
   name: 'DeckShare',
@@ -19,6 +22,7 @@ export default {
   components: {
     Decklist,
     MagicMenu,
+    MagicWrapper,
   },
 
   data() {
