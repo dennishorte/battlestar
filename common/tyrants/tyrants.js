@@ -620,12 +620,16 @@ Tyrants.prototype._processEndOfTurnActions = function() {
 
   if (promoChoices.length > 0) {
     const player = this.getPlayerCurrent()
+
+    const max = promos.length
+    const min = promos.filter(p => !p.opts.optional).length
+
     this.mLog({
-      template: '{player} may promote {count} cards',
-      args: { player, count: promos.length }
+      template: '{player} may promote {max} cards',
+      args: { player, max }
     })
     promoChoices.sort((l, r) => l.name.localeCompare(r.name))
-    this.aChooseAndPromote(player, promoChoices, { count: promos.length })
+    this.aChooseAndPromote(player, promoChoices, { min, max })
   }
 
   // Special
@@ -1237,11 +1241,12 @@ Tyrants.prototype.aDeferDiscard = function(player, source) {
   })
 }
 
-Tyrants.prototype.aDeferPromotion = function(player, source) {
+Tyrants.prototype.aDeferPromotion = function(player, source, opts={}) {
   this.state.endOfTurnActions.push({
     player,
     source,
     action: 'promote-other',
+    opts,
   })
 }
 

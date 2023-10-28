@@ -446,8 +446,8 @@ const cardData = [
       "At end of turn, promote up to 2 other cards played this turn, then gain 1 VP for every 3 cards in your inner circle."
     ],
     impl: (game, player, { card }) => {
-      game.aDeferPromotion(player, card)
-      game.aDeferPromotion(player, card)
+      game.aDeferPromotion(player, card, { optional: true })
+      game.aDeferPromotion(player, card, { optional: true })
       game.aDeferSpecial(player, card, (game, player) => {
         const innerCircle = game.getCardsByZone(player, 'innerCircle').length
         player.incrementPoints(Math.floor(innerCircle / 3))
