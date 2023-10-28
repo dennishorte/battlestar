@@ -1040,8 +1040,6 @@ describe('Elementals expansion', () => {
         },
       })
 
-      // TODO: Put an ambition card in the market to buy
-
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Marlos Urnrayle')
       const request3 = t.choose(game, request2, 'Play Card.House Guard')
@@ -1049,7 +1047,7 @@ describe('Elementals expansion', () => {
 
       t.testBoard(game, {
         dennis: {
-          discard: ['Marlos Urnrayle'],
+          discard: ['Marlos Urnrayle', 'Advocate'],
           innerCircle: ['House Guard'],
         },
       })
