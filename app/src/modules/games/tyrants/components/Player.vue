@@ -3,6 +3,7 @@
     <div class="details" @click="showTableauModal">
       <div class="header" :class="headerClasses(player)" :style="headerStyles(player)">
         {{ player.name }}
+        <i v-if="isFirstPlayer" class="bi bi-1-circle" />
       </div>
 
       <div class="body">
@@ -62,6 +63,10 @@ export default {
         .game
         .getCardsByZone(this.player, 'hand')
         .sort((l, r) => l.name.localeCompare(r.name))
+    },
+
+    isFirstPlayer() {
+      return this.game.getPlayerFirst() === this.player
     },
 
     playedCards() {

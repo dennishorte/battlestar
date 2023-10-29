@@ -1666,6 +1666,10 @@ Tyrants.prototype.getPlayerByCard = function(card) {
   return card.owner
 }
 
+Tyrants.prototype.getPlayerFirst = function() {
+  return this.getPlayerAll()[0]
+}
+
 Tyrants.prototype.getPresence = function(player) {
   return this
     .getLocationAll()
