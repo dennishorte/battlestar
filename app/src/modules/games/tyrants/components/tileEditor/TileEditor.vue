@@ -4,7 +4,7 @@
     <div class="sidebar">
       <div class="menu-option" @click="newTile">
         New Tile
-        <span class="badge bg-warning text-dark">unsaved changes</span>
+        <span class="badge bg-warning text-dark" v-if="unsavedChanges">unsaved changes</span>
       </div>
 
       <hr />
@@ -16,11 +16,11 @@
 
       <div class="menu-option" @click="save">Save</div>
 
-      <div class="site-details">
+      <div class="site-details" v-if="tile">
         <div>Tile Info</div>
 
         <div class="info-label">name</div>
-        <input class="form-control" v-model="name" />
+        <input class="form-control" v-model="tile.name" />
       </div>
 
       <div class="site-details" v-if="selectedSite && selectedSite.kind !== 'troop-spot'">
@@ -107,8 +107,8 @@ export default {
       dragX: null,
       dragY: null,
       selectedSite: {},
+      unsavedChanges: false,
 
-      name: 'new-tile',
       tiles: [],
 
       savedTiles: [],
@@ -148,7 +148,7 @@ export default {
         token: null,
       }
 
-      this.tiles[0].data.sites.push(site)
+      this.tile.data.sites.push(site)
       this.select(site)
       this.index += 1
     },
@@ -163,7 +163,7 @@ export default {
         neutrals: 0,
       }
 
-      this.tiles[0].data.sites.push(spot)
+      this.tile.data.sites.push(spot)
       this.select(spot)
       this.index += 1
     },
@@ -207,6 +207,8 @@ export default {
         tiles[i].setRotation(positions[i].rotation)
       }
 
+      tiles[0].name = 'new tile'
+
       this.tiles = tiles
     },
 
@@ -214,7 +216,7 @@ export default {
       // Check that the name is unique
 
       // Save the tile
-      const saveResult = await this.$post('/api/tyrants/hex/save', { hex: this.tiles[0] })
+      const saveResult = await this.$post('/api/tyrants/hex/save', { hex: this.tile })
 
       if (saveResult.status !== 'success') {
         console.log(saveResult)
@@ -227,7 +229,7 @@ export default {
     },
 
     select(site) {
-      const actual = this.tiles[0].data.sites.find(s => s.index === site.index)
+      const actual = this.tile.data.sites.find(s => s.index === site.index)
       this.selectedSite = actual
     },
 
