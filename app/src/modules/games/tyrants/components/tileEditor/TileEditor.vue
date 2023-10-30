@@ -2,12 +2,19 @@
   <div class="tile-editor">
 
     <div class="sidebar">
-      <div class="menu-option" @click="newTile">New Tile</div>
+      <div class="menu-option" @click="newTile">
+        New Tile
+        <span class="badge bg-warning text-dark">unsaved changes</span>
+      </div>
 
       <hr />
 
       <div class="menu-option" @click="addSite">Add Site</div>
       <div class="menu-option" @click="addSpot">Add Spot</div>
+
+      <hr />
+
+      <div class="menu-option" @click="save">Save</div>
 
       <div class="site-details">
         <div>Tile Info</div>
@@ -104,6 +111,8 @@ export default {
       name: 'new-tile',
       tiles: [],
 
+      savedTiles: [],
+
       index: 0,
     }
   },
@@ -159,6 +168,18 @@ export default {
       this.index += 1
     },
 
+    async loadHexes() {
+      const requestResult = await this.$post('/api/tyrants/hex/all')
+      if (requestResult.status === 'success') {
+        this.savedTiles = requestResult.hexes
+        console.log(this.savedTiles)
+      }
+      else {
+        console.log(requestResult)
+        alert('error: ' + requestResult.message)
+      }
+    },
+
     newTile() {
       const base = {
         sites: [],
@@ -189,6 +210,22 @@ export default {
       this.tiles = tiles
     },
 
+    async save() {
+      // Check that the name is unique
+
+      // Save the tile
+      const saveResult = await this.$post('/api/tyrants/hex/save', { hex: this.tiles[0] })
+
+      if (saveResult.status !== 'success') {
+        console.log(saveResult)
+        alert('error saving tile')
+        throw new Error('save error')
+      }
+
+      // Update the tile list
+      await this.loadHexes()
+    },
+
     select(site) {
       const actual = this.tiles[0].data.sites.find(s => s.index === site.index)
       this.selectedSite = actual
@@ -203,6 +240,8 @@ export default {
   },
 
   mounted() {
+    this.loadHexes()
+
     this.newTile()
     this.addSite()
 
@@ -242,7 +281,7 @@ export default {
 .tile-editor {
   display: flex;
   flex-direction: row;
-  height: 1000px;
+  height: 100vh;
   width: 100vw;
 }
 
@@ -261,6 +300,7 @@ export default {
   padding: .5em;
   height: 100%;
   width: 300px;
+  overflow-y: scroll;
 }
 
 .site-details {
@@ -271,7 +311,7 @@ export default {
 }
 
 .viewer {
-  height: 100%;
   width: 100%;
+  overflow-y: scroll;
 }
 </style>

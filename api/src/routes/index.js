@@ -5,6 +5,7 @@ const slack = require('../util/slack.js')
 
 module.exports = {
   magic: require('./magic'),
+  tyrants: require('./tyrants'),
 
   lobby: require('./lobby_routes.js'),
   misc: require('./misc_routes.js'),

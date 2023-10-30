@@ -74,7 +74,13 @@ app.post('/api/magic/scar/releaseByUser', routes.magic.scar.releaseByUser)
 app.post('/api/magic/scryfall/update', routes.magic.scryfall.updateAll)
 
 
-////////////////////////////////////////
+////////////////////////////////////////////////////////////
+// Tyrants
+
+app.post('/api/tyrants/hex/all', routes.tyrants.hex.all)
+app.post('/api/tyrants/hex/save', routes.tyrants.hex.save)
+
+////////////////////////////////////////////////////////////
 
 // Guest routes
 app.post('/api/guest/login', routes.login)
