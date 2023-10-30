@@ -1488,10 +1488,10 @@ Tyrants.prototype.aReturnSpy = function(player, loc, owner) {
   util.assert(!!spy, `No spy belonging to ${owner.name} at ${loc.name}`)
   this.mReturn(spy)
   this.mLog({
-    template: `{player} returns {player2}'s spy from {zone}`,
+    template: `{player} returns {card} from {zone}`,
     args: {
       player,
-      player2: owner,
+      card: spy,
       zone: loc,
     },
   })
@@ -1514,12 +1514,17 @@ Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
 
   // If a spy was returned, execute fn
   if (loc) {
+    const spy = loc.getSpies(player)[0]
+
     this.mLog({
-      template: '{player} returns a spy from {loc}',
-      args: { player, loc }
+      template: `{player} returns {card} from {zone}`,
+      args: {
+        player,
+        card: spy,
+        zone: loc,
+      },
     })
 
-    const spy = loc.getSpies(player)[0]
     this.mReturn(spy)
 
     fn(this, player, { loc })
@@ -1535,15 +1540,15 @@ Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
 Tyrants.prototype.aReturnTroop = function(player, loc, owner) {
   const troop = loc.getTroops(owner, loc)[0]
   util.assert(!!troop, `No troop belonging to ${owner.name} at ${loc.name}`)
-  this.mReturn(troop)
   this.mLog({
-    template: `{player} returns {player2}'s troop from {zone}`,
+    template: `{player} returns {card} from {zone}`,
     args: {
       player,
-      player2: owner,
+      card: troop,
       zone: loc,
     },
   })
+  this.mReturn(troop)
 }
 
 Tyrants.prototype.aSupplant = function(player, loc, owner) {
