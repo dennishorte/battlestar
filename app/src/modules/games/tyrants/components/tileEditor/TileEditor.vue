@@ -213,8 +213,6 @@ export default {
     },
 
     async save() {
-      // Check that the name is unique
-
       // Save the tile
       const saveResult = await this.$post('/api/tyrants/hex/save', { hex: this.tile })
 
@@ -223,6 +221,8 @@ export default {
         alert('error saving tile')
         throw new Error('save error')
       }
+
+      this.unsavedChanges = false
 
       // Update the tile list
       await this.loadHexes()
@@ -273,7 +273,15 @@ export default {
     viewer.addEventListener('mouseup', (event) => {
       this.dragging = false
     })
+  },
 
+  watch: {
+    tile: {
+      handler() {
+        this.unsavedChanges = true
+      },
+      deep: true,
+    },
   },
 }
 </script>
