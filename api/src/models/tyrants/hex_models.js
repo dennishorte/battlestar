@@ -11,12 +11,7 @@ Hex.fetchAll = async function() {
 }
 
 Hex.save = async function(hex) {
-  if (hex._id) {
-    await hexCollection.replaceOne({ _id: hex._id }, hex)
-  }
-  else {
-    await hexCollection.insertOne(hex)
-  }
+  await hexCollection.replaceOne({ name: hex.name }, hex, { upsert: true })
 }
 
 module.exports = Hex

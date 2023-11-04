@@ -211,6 +211,8 @@ export default {
       }
 
       this.tiles = tiles
+
+      this.index = Math.max(...this.tiles[0].sites().map(s => s.index)) + 1
     },
 
     async loadHexes() {
