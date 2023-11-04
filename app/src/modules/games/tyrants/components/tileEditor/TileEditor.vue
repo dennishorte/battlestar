@@ -20,7 +20,7 @@
         <div>Tile Info</div>
 
         <div class="info-label">name</div>
-        <input class="form-control" v-model="tile.name" />
+        <input class="form-control" v-model="tile.data.name" />
       </div>
 
       <div class="site-details" v-if="selectedSite && selectedSite.kind !== 'troop-spot'">
@@ -67,6 +67,16 @@
         </select>
       </div>
 
+      <hr />
+
+      <div class="saved-tiles">
+        <h6>Saved Tiles</h6>
+
+        <div v-for="tile in savedTiles">
+          {{ tile.name() }}
+        </div>
+      </div>
+
     </div>
 
     <div class="viewer" ref="viewer">
@@ -89,6 +99,8 @@ import SiteLayer from '../hexmap/SiteLayer'
 import TileLayer from '../hexmap/TileLayer'
 
 import tile from '../hexmap/tile.js'
+
+import { util } from 'battlestar-common'
 
 
 export default {
@@ -168,23 +180,7 @@ export default {
       this.index += 1
     },
 
-    async loadHexes() {
-      const requestResult = await this.$post('/api/tyrants/hex/all')
-      if (requestResult.status === 'success') {
-        this.savedTiles = requestResult.hexes
-        console.log(this.savedTiles)
-      }
-      else {
-        console.log(requestResult)
-        alert('error: ' + requestResult.message)
-      }
-    },
-
-    newTile() {
-      const base = {
-        sites: [],
-      }
-
+    editTile(base) {
       const tiles = [
         new tile.Tile(base, null),
         new tile.Tile(base, null),
@@ -207,14 +203,38 @@ export default {
         tiles[i].setRotation(positions[i].rotation)
       }
 
-      tiles[0].name = 'new tile'
-
       this.tiles = tiles
     },
 
+    async loadHexes() {
+      const requestResult = await this.$post('/api/tyrants/hex/all')
+      if (requestResult.status === 'success') {
+        this.savedTiles = requestResult
+          .hexes
+          .map(data => new tile.Tile(data, null))
+          .sort((l, r) => l.name().localeCompare(r.name()))
+        console.log(this.savedTiles)
+      }
+      else {
+        console.log(requestResult)
+        alert('error: ' + requestResult.message)
+      }
+    },
+
+    newTile() {
+      const base = {
+        name: 'new-tile',
+        sites: [],
+      }
+      this.editTile(base)
+    },
+
     async save() {
+      // Make a copy of the tile being edited and remove unneeded values
+      const hex = util.deepcopy(this.tile.data)
+
       // Save the tile
-      const saveResult = await this.$post('/api/tyrants/hex/save', { hex: this.tile })
+      const saveResult = await this.$post('/api/tyrants/hex/save', { hex })
 
       if (saveResult.status !== 'success') {
         console.log(saveResult)
