@@ -72,7 +72,7 @@
       <div class="saved-tiles">
         <h6>Saved Tiles</h6>
 
-        <div v-for="tile in savedTiles">
+        <div v-for="tile in savedTiles" @click="editTile(tile.data)">
           {{ tile.name() }}
         </div>
       </div>
@@ -180,7 +180,14 @@ export default {
       this.index += 1
     },
 
+    clearSelectedSite() {
+      this.selectedSite = {}
+    },
+
     editTile(base) {
+      this.clearSelectedSite()
+      this.unsavedChanges = false
+
       const tiles = [
         new tile.Tile(base, null),
         new tile.Tile(base, null),
@@ -230,7 +237,6 @@ export default {
     },
 
     async save() {
-      // Make a copy of the tile being edited and remove unneeded values
       const hex = util.deepcopy(this.tile.data)
 
       // Save the tile
