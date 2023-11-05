@@ -6,6 +6,7 @@
         New Tile
         <span class="badge bg-warning text-dark" v-if="unsavedChanges">unsaved changes</span>
       </div>
+      <div class="menu-option" @click="duplicate">duplicate</div>
 
       <hr />
 
@@ -234,6 +235,13 @@ export default {
 
     clearSelectedSite() {
       this.selectedSite = {}
+    },
+
+    duplicate() {
+      const data = util.deepcopy(this.tile.data)
+      data.name = 'duplicate of ' + data.name
+      delete data._id
+      this.editTile(data)
     },
 
     editTile(base) {
