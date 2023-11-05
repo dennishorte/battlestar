@@ -1,7 +1,21 @@
 <template>
-  <g>
-    <path :d="path"  class="connector-outer" />
-    <path :d="path"  class="connector-inner" />
+  <g :id="id">
+    <path
+      class="curve-border"
+      v-if="borderWidth > 0"
+      :d="coords"
+      :stroke="borderColor"
+      :stroke-width="strokeWidth + borderWidth * 2"
+      fill="none"
+    />
+
+    <path
+      class="stroke-center"
+      :d="coords"
+      :stroke="strokeColor"
+      :stroke-width="strokeWidth"
+      fill="none"
+    />
   </g>
 </template>
 
@@ -11,30 +25,38 @@ export default {
   name: 'Connector',
 
   props: {
-    cx1: Number,
-    cy1: Number,
-    cx2: Number,
-    cy2: Number,
+    id: String,
+    points: Object,
+
+    borderColor: {
+      type: String,
+      default: 'black',
+    },
+    borderWidth: {
+      type: Number,  // in pixels
+      default: 0,
+    },
+
+    strokeColor: {
+      type: String,
+      default: 'black',
+    },
+    strokeWidth: {
+      type: Number,
+      default: 4,
+    },
   },
 
   computed: {
-    path() {
-      const { cx1, cx2, cy1, cy2 } = this
-      return `M ${cx1} ${cy1} L ${cx2} ${cy2}`
-    }
+    coords() {
+      const s = this.points.source
+      const t = this.points.target
+
+      const sh = this.points.sourceHandle
+      const th = this.points.targetHandle
+
+      return `M ${s.x} ${s.y} C ${sh.x} ${sh.y} ${th.x} ${th.y} ${t.x} ${t.y}`
+    },
   },
 }
 </script>
-
-
-<style scoped>
-.connector-outer {
-  stroke: black;
-  stroke-width: 6;
-}
-
-.connector-inner {
-  stroke: white;
-  stroke-width: 4;
-}
-</style>

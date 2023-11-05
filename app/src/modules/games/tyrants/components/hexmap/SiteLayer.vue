@@ -17,14 +17,14 @@
   <Site
     v-for="site in sites"
     :site="site"
-    :highlight="selected && site.index === selected.index"
+    :highlight="selected && site.name === selected.name"
     @mousedown="mousedown($event, site)"
   />
 
   <Spot
     v-for="spot in spots"
     :spot="spot"
-    :highlight="selected && spot.index === selected.index"
+    :highlight="selected && spot.name === selected.name"
     @mousedown="mousedown($event, spot)"
   />
 </template>

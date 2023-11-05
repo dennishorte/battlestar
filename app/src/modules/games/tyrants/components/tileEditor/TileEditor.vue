@@ -11,6 +11,7 @@
 
       <div class="menu-option" @click="addSite">Add Site</div>
       <div class="menu-option" @click="addSpot">Add Spot</div>
+      <div class="menu-option" @click="connectBegin" :class="connecting ? 'highlight-button' : ''">Connect</div>
 
       <hr />
 
@@ -23,7 +24,7 @@
         <input class="form-control" v-model="tile.data.name" />
       </div>
 
-      <div class="site-details" v-if="selectedSite && selectedSite.kind !== 'troop-spot'">
+      <div class="site-details" v-if="siteIsSelected">
         <div>Site Info</div>
 
         <div class="info-label">name</div>
@@ -55,7 +56,7 @@
         </div>
       </div>
 
-      <div class="site-details" v-if="selectedSite && selectedSite.kind === 'troop-spot'">
+      <div class="site-details" v-if="spotIsSelected">
         <div>Spot Info</div>
 
         <div class="info-label">name</div>
@@ -72,7 +73,7 @@
       <div class="saved-tiles">
         <h6>Saved Tiles</h6>
 
-        <div v-for="tile in savedTiles" @click="editTile(tile.data)">
+        <div v-for="tile in savedTiles" @click="loadTile(tile)">
           {{ tile.name() }}
         </div>
       </div>
@@ -93,6 +94,7 @@
 
 
 <script>
+import { nextTick } from 'vue'
 import mitt from 'mitt'
 
 import SiteLayer from '../hexmap/SiteLayer'
@@ -115,17 +117,19 @@ export default {
     return {
       bus: mitt(),
 
+      connecting: false,
+      connectFirst: null,
+
       dragging: false,
       dragX: null,
       dragY: null,
+
       selectedSite: {},
       unsavedChanges: false,
 
       tiles: [],
 
       savedTiles: [],
-
-      index: 0,
     }
   },
 
@@ -136,6 +140,14 @@ export default {
   },
 
   computed: {
+    siteIsSelected() {
+      return this.selectedSite && this.selectedSite.kind === 'standard'
+    },
+
+    spotIsSelected() {
+      return this.selectedSite && this.selectedSite.kind === 'troop-spot'
+    },
+
     sites() {
       return this.tile.data.sites
     },
@@ -146,10 +158,23 @@ export default {
   },
 
   methods: {
+    newName(base) {
+      let name
+      for (let i = 0; i < 100000; i++) {
+        name = base + ' ' + i
+        if (this.tile.sites().some(s => s.name === name)) {
+          continue
+        }
+        else {
+          return name
+        }
+      }
+    },
+
     addSite() {
       const site = {
-        index: this.index,
-        name: 'test',
+        name: this.newName('site'),
+        kind: 'standard',
         dx: 0,
         dy: 0,
         size: 1,
@@ -162,13 +187,11 @@ export default {
 
       this.tile.data.sites.push(site)
       this.select(site)
-      this.index += 1
     },
 
     addSpot() {
       const spot = {
-        index: this.index,
-        name: 'spot',
+        name: this.newName('spot'),
         kind: 'troop-spot',
         dx: 0,
         dy: 0,
@@ -177,7 +200,36 @@ export default {
 
       this.tile.data.sites.push(spot)
       this.select(spot)
-      this.index += 1
+    },
+
+    connectBegin() {
+      if (this.connecting) {
+        this.connectClear()
+      }
+      else {
+        this.connecting = true
+      }
+    },
+
+    connectClear() {
+      this.connecting = false
+      this.connectFirst = null
+      this.clearSelectedSite()
+    },
+
+    connectFinalize(a, b) {
+      this.connectClear()
+      this.site.connectors.push([a.name, b.name])
+    },
+
+    connectSelect(site) {
+      if (this.connectFirst) {
+        this.connectFinalize(this.connectFirst, site)
+      }
+      else {
+        this.connectFirst = site
+        this.selectedSite = site
+      }
     },
 
     clearSelectedSite() {
@@ -186,7 +238,6 @@ export default {
 
     editTile(base) {
       this.clearSelectedSite()
-      this.unsavedChanges = false
 
       const tiles = [
         new tile.Tile(base, null),
@@ -211,8 +262,6 @@ export default {
       }
 
       this.tiles = tiles
-
-      this.index = Math.max(...this.tiles[0].sites().map(s => s.index)) + 1
     },
 
     async loadHexes() {
@@ -230,9 +279,16 @@ export default {
       }
     },
 
+    async loadTile(tile) {
+      this.editTile(tile.data)
+      await nextTick()
+      this.unsavedChanges = false
+    },
+
     newTile() {
       const base = {
         name: 'new-tile',
+        connectors: [],
         sites: [],
       }
       this.editTile(base)
@@ -257,8 +313,17 @@ export default {
     },
 
     select(site) {
-      const actual = this.tile.data.sites.find(s => s.index === site.index)
+      const actual = this.tile.data.sites.find(s => s.name === site.name)
       this.selectedSite = actual
+    },
+
+    siteClicked({ event, site }) {
+      if (this.connecting) {
+        this.connectSelect(site)
+      }
+      else {
+        this.startDragging({ event, site })
+      }
     },
 
     startDragging({ event, site }) {
@@ -277,7 +342,7 @@ export default {
 
     const viewer = this.$refs.viewer
 
-    this.bus.on('site-mousedown', this.startDragging)
+    this.bus.on('site-mousedown', this.siteClicked)
 
     viewer.addEventListener('mouseleave', (event) => {
 
@@ -326,6 +391,13 @@ export default {
 .checkbox-wrapper {
   display: flex;
   flex-direction: row;
+}
+
+.highlight-button {
+  background-color: #a34ff7;
+  border-radius: .5em;
+  margin-left: -.25em;
+  padding-left: .25em;
 }
 
 .info-label {
