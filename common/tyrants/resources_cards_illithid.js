@@ -411,7 +411,7 @@ const cardData = [
         .getPlayerAll()
         .filter(p => p !== player)
       for (const opp of opponents) {
-        game.aDeferDiscard(opp, card)
+        game.aDeferDiscard(opp, card, player)
       }
     }
   },

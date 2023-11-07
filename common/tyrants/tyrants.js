@@ -565,7 +565,7 @@ Tyrants.prototype._processEndOfTurnActions = function() {
         template: '{player} must discard a card due to {card}',
         args: { player: action.player, card: action.source }
       })
-      this.aChooseAndDiscard(action.player, { forced: true })
+      this.aChooseAndDiscard(action.player, { forced: true, forcedBy: action.forcedBy })
     }
   }
 
@@ -1233,11 +1233,12 @@ Tyrants.prototype.aChooseToDiscard = function(player, opts={}) {
   }
 }
 
-Tyrants.prototype.aDeferDiscard = function(player, source) {
+Tyrants.prototype.aDeferDiscard = function(player, source, forcingPlayer) {
   this.state.endOfTurnActions.push({
     player,
     source,
     action: 'discard',
+    forcedBy: forcingPlayer.name,
   })
 }
 
