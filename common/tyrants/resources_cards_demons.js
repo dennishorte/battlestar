@@ -265,7 +265,7 @@ const cardData = [
     "expansion": "demons",
     "cost": 8,
     "points": 5,
-    "innerPoints": 1,
+    "innerPoints": 10,
     "count": 1,
     "text": [
       "Devour a card in your hand > Supplant 2 white troops. Each opponent recruits 2 Insane Outcasts."
