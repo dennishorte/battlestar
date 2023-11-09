@@ -37,7 +37,7 @@ export default {
   methods: {
     async save() {
       await this.$post('/api/magic/scar/save', {
-        scar: this.managedScar,
+        scar: this.scar,
       })
       await this.$store.dispatch('magic/cube/loadScars')
     },
