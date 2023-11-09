@@ -74,6 +74,10 @@
       </div>
 
       <div v-if="showing === 'scars'" class="row">
+        <div class="mt-2">
+          <button class="btn btn-success" @click="createScar">create</button>
+        </div>
+
         <div class="col">
           <h5>Avaiable Scars</h5>
 
