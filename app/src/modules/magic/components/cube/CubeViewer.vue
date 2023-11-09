@@ -305,6 +305,7 @@ export default {
     },
 
     navigate(target) {
+      this.$router.push(`/magic/cube/${this.id}/${target}`)
       this.showing = target
     },
 

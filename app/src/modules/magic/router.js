@@ -19,13 +19,7 @@ export default [
     component: CardViewer,
   },
   {
-    path: '/magic/cube/:id',
-    name: 'Cube Viewer',
-    title: 'Cube Viewer',
-    component: CubeViewer,
-  },
-  {
-    path: '/magic/cube/:id/:tab',
+    path: '/magic/cube/:id/:tab?',
     name: 'Cube Viewer',
     title: 'Cube Viewer',
     component: CubeViewer,
