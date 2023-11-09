@@ -181,7 +181,7 @@ export default {
 
       users: [],
 
-      showing: 'cards',
+      showing: this.$route.params.tab || 'cards',
       showSearch: false,
     }
   },
