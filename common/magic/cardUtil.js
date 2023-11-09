@@ -79,12 +79,18 @@ CardUtil.cmc = function(card) {
   if (card.data) {
     card = card.data
   }
+  else {
+    return 0
+  }
   return card.cmc
 }
 
 CardUtil.supertypes = function(card) {
   if (card.data) {
     card = card.data
+  }
+  else {
+    return []
   }
 
   return card
@@ -99,12 +105,18 @@ CardUtil.identity = function(card) {
   if (card.data) {
     card = card.data
   }
+  else {
+    return []
+  }
   return card.color_identity
 }
 
 CardUtil.colors = function(card) {
   if (card.data) {
     card = card.data
+  }
+  else {
+    return []
   }
   return card.colors
 }
@@ -409,12 +421,18 @@ CardUtil.isLand = function(card) {
   if (card.data) {
     card = card.data
   }
+  else {
+    return false
+  }
   return card.type_line.toLowerCase().includes('land')
 }
 
 CardUtil.isArtifact = function(card) {
   if (card.data) {
     card = card.data
+  }
+  else {
+    return false
   }
   return card.type_line.toLowerCase().includes('artifact')
 }
