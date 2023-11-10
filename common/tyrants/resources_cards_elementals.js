@@ -17,7 +17,7 @@ const cardData = [
     ],
     impl: (game, player) => {
       game.aChooseAndAssassinate(player)
-      game.aWithFocus(player, 'malice', () => {
+      game.aWithFocusAspect(player, 'malice', () => {
         player.incrementPower(2)
       })
     },
@@ -48,7 +48,7 @@ const cardData = [
           impl: (game, player) => player.incrementInfluence(2),
         },
       ])
-      game.aWithFocus(player, 'malice', () => {
+      game.aWithFocusAspect(player, 'malice', () => {
         game.aDraw(player)
       })
     },
@@ -106,7 +106,7 @@ const cardData = [
     ],
     impl: (game, player) => {
       player.incrementPower(4)
-      game.aWithFocus(player, 'malice', () => {
+      game.aWithFocusAspect(player, 'malice', () => {
         player.incrementPower(2)
       })
     }
@@ -126,7 +126,7 @@ const cardData = [
     ],
     impl: (game, player) => {
       game.aChooseAndAssassinate(player, { whiteOnly: true })
-      game.aWithFocus(player, 'conquest', () => {
+      game.aWithFocusAspect(player, 'conquest', () => {
         game.aChooseAndDeploy(player)
         game.aChooseAndDeploy(player)
       })
@@ -148,7 +148,7 @@ const cardData = [
     impl: (game, player) => {
       game.aChooseAndDeploy(player)
       game.aChooseAndDeploy(player)
-      game.aWithFocus(player, 'conquest', () => {
+      game.aWithFocusAspect(player, 'conquest', () => {
         game.aDraw(player)
       })
     }
@@ -206,7 +206,7 @@ const cardData = [
     ],
     impl: (game, player) => {
       game.aChooseAndSupplant(player, { whiteOnly: true, anywhere: true })
-      game.aWithFocus(player, 'conquest', () => {
+      game.aWithFocusAspect(player, 'conquest', () => {
         game.aChooseAndDeploy(player)
         game.aChooseAndDeploy(player)
       })
@@ -245,7 +245,7 @@ const cardData = [
         },
       ])
 
-      game.aWithFocus(player, 'guile', () => {
+      game.aWithFocusAspect(player, 'guile', () => {
         game.aDraw(player)
       })
     }
@@ -281,7 +281,7 @@ const cardData = [
         },
       ])
 
-      game.aWithFocus(player, 'guile', () => {
+      game.aWithFocusAspect(player, 'guile', () => {
         player.incrementPower(1)
       })
     }
@@ -343,7 +343,7 @@ const cardData = [
         game.aChooseAndAssassinate(player, { loc })
       }
 
-      game.aWithFocus(player, 'guile', () => {
+      game.aWithFocusAspect(player, 'guile', () => {
         game.aChooseAndPlaceSpy(player)
       })
     }
@@ -364,7 +364,7 @@ const cardData = [
     ],
     impl: (game, player, { card }) => {
       game.aDeferPromotion(player, card)
-      game.aWithFocus(player, 'ambition', () => {
+      game.aWithFocusAspect(player, 'ambition', () => {
         player.incrementInfluence(2)
       })
     }
@@ -386,7 +386,7 @@ const cardData = [
     impl: (game, player) => {
       player.incrementInfluence(1)
       game.aChooseAndReturn(player, { noWhite: true })
-      game.aWithFocus(player, 'ambition', () => {
+      game.aWithFocusAspect(player, 'ambition', () => {
         game.aDraw(player)
       })
     }
@@ -446,7 +446,7 @@ const cardData = [
     impl: (game, player, { card }) => {
       player.incrementInfluence(2)
       game.aDeferPromotion(player, card)
-      game.aWithFocus(player, 'ambition', () => {
+      game.aWithFocusAspect(player, 'ambition', () => {
         game.aDeferPromotion(player, card)
       })
     }

@@ -329,6 +329,31 @@ describe('Undead expansion', () => {
         },
       })
     })
+
+    test('insane outcast focus', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'demons'],
+        dennis: {
+          hand: ['Derro', 'House Guard', 'Insane Outcast'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.Derro')
+      const request3 = t.choose(game, request2, 'Menzoberranzan, neutral')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['House Guard', 'Insane Outcast', 'Soldier'],
+          played: ['Derro'],
+          discard: ['Insane Outcast'],
+          trophyHall: ['neutral'],
+        },
+        Menzoberranzan: {
+          troops: ['neutral', 'neutral', 'dennis'],
+        },
+      })
+    })
   })
 
   describe('Ettin', () => {

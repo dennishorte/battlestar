@@ -1568,16 +1568,16 @@ Tyrants.prototype.aSupplant = function(player, loc, owner) {
   })
 }
 
-Tyrants.prototype.aWithFocus = function(player, aspect, fn) {
+Tyrants.prototype.aWithFocus = function(player, test, fn) {
   const played = this.getCardsByZone(player, 'played')
   const playedAspect = played
-    .filter(card => card.aspect === aspect)
+    .filter(card => test(card))
     .length > 1
 
   if (playedAspect) {
     this.mLog({
-      template: '{player} has already played a {aspect} card',
-      args: { player, aspect }
+      template: '{player} has already played a matching focus card',
+      args: { player }
     })
     fn()
     return
@@ -1585,22 +1585,31 @@ Tyrants.prototype.aWithFocus = function(player, aspect, fn) {
 
   const inHand = this.getCardsByZone(player, 'hand')
   const inHandAspect = inHand
-    .filter(card => card.aspect === aspect)
+    .filter(card => test(card))
     .length > 0
 
   if (inHandAspect) {
     this.mLog({
-      template: '{player} has a {aspect} card in hand',
-      args: { player, aspect },
+      template: '{player} has matching focus card in hand',
+      args: { player },
     })
     fn()
     return
   }
 
   this.mLog({
-    template: 'No card matching focus {aspect}',
-    args: { aspect },
+    template: 'No card matching focus card',
   })
+}
+
+Tyrants.prototype.aWithFocusAspect = function(player, aspect, fn) {
+  const test = (card) => card.aspect === aspect
+  this.aWithFocus(player, test, fn)
+}
+
+Tyrants.prototype.aWithFocusInsaneOutcast = function(player, fn) {
+  const test = (card) => card.name === 'Insane Outcast'
+  this.aWithFocus(player, test, fn)
 }
 
 Tyrants.prototype.getAssassinateChoices = function(player, opts={}) {

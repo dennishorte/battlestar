@@ -188,7 +188,8 @@ const cardData = [
     "innerPoints": 4,
     "count": 2,
     "text": [
-      "Supplant a white troop anywhere on the board. You recruit an Insane Outcast."
+      "Supplant a white troop anywhere on the board. You recruit an Insane Outcast.",
+      "Insane Outcast Focus: Draw a card",
     ],
     impl: (game, player) => {
       game.aChooseAndSupplant(player, {
@@ -196,6 +197,7 @@ const cardData = [
         anywhere: true,
       })
       game.aRecruit(player, 'Insane Outcast', { noCost: true })
+      game.aWithFocusInsaneOutcast(player, () => game.aDraw(player))
     },
   },
   {
