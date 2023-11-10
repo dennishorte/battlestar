@@ -31,6 +31,7 @@
 
             <Dropdown text="menu">
               <DropdownButton @click="this.$modal('cube-update-modal').show()">add/remove cards</DropdownButton>
+              <DropdownButton @click="this.$modal('cube-add-modal').show()">add one card</DropdownButton>
               <DropdownDivider />
               <DropdownButton @click="createCard">create card</DropdownButton>
               <DropdownButton @click="createScar">create scar</DropdownButton>
@@ -116,6 +117,7 @@
 
     </div>
 
+    <CubeAddModal @cube-updates="updateCube" />
     <CubeImportModal @cube-updates="updateCube" />
     <CubeCardModal :card="managedCard" :editable="cube.allowEdits" />
     <CardEditorModal :original="managedCard" />
@@ -141,6 +143,7 @@ import AchievementSearchLinkerModal from './AchievementSearchLinkerModal'
 import Achievements from './Achievements'
 import CardEditorModal from '../CardEditorModal'
 import CubeBreakdown from './CubeBreakdown'
+import CubeAddModal from './CubeAddModal'
 import CardFilters from '../CardFilters'
 import CubeCardModal from './CubeCardModal'
 import CubeImportModal from './CubeImportModal'
@@ -162,6 +165,7 @@ export default {
     Achievements,
     CardEditorModal,
     CardFilters,
+    CubeAddModal,
     CubeBreakdown,
     CubeCardModal,
     CubeImportModal,
