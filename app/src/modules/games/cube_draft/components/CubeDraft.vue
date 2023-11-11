@@ -56,6 +56,8 @@
 
         <div>
           <router-link :to="'/magic/cube/' + game.settings.cubeId">cube</router-link>
+          <br />
+          <router-link :to="'/magic/cube/' + game.settings.cubeId + '/achievements'">achievements</router-link>
         </div>
 
         <AdminOptions />
