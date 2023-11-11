@@ -13,6 +13,7 @@ const rootFields = [
   "rarity",
   "set",
   "cmc",
+  "digital",
 ]
 
 const faceFields = [
@@ -154,12 +155,11 @@ function prefilterVersions(cards) {
       delete card.lang
     }
 
-    if (card.digital || card.textless || card.full_art) {
+    if (card.textless || card.full_art) {
       cards.splice(i, 1)
       continue
     }
     else {
-      delete card.digital
       delete card.textless
       delete card.full_art
     }
