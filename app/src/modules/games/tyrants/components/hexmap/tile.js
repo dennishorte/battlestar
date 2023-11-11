@@ -55,6 +55,10 @@ Tile.prototype.setRotation = function(r) {
 ////////////////////////////////////////////////////////////////////////////////
 // Getters
 
+Tile.prototype.connectors = function() {
+  return this.data.connectors
+}
+
 Tile.prototype.name = function() {
   return this.data.name
 }

@@ -85,6 +85,7 @@
       <svg width="800" height="1000">
 
         <TileLayer :tiles="tiles" />
+        <ConnectorLayer :tiles="tiles" />
         <SiteLayer :tiles="tiles" :selected="selectedSite" />
 
       </svg>
@@ -98,6 +99,7 @@
 import { nextTick } from 'vue'
 import mitt from 'mitt'
 
+import ConnectorLayer from '../hexmap/ConnectorLayer'
 import SiteLayer from '../hexmap/SiteLayer'
 import TileLayer from '../hexmap/TileLayer'
 
@@ -110,6 +112,7 @@ export default {
   name: 'TileEditor',
 
   components: {
+    ConnectorLayer,
     SiteLayer,
     TileLayer,
   },
@@ -220,7 +223,7 @@ export default {
 
     connectFinalize(a, b) {
       this.connectClear()
-      this.site.connectors.push([a.name, b.name])
+      this.tile.connectors().push([a.name, b.name])
     },
 
     connectSelect(site) {
@@ -279,7 +282,6 @@ export default {
           .hexes
           .map(data => new tile.Tile(data, null))
           .sort((l, r) => l.name().localeCompare(r.name()))
-        console.log(this.savedTiles)
       }
       else {
         console.log(requestResult)

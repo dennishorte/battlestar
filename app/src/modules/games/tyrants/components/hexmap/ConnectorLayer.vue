@@ -1,5 +1,10 @@
 <template>
-  <Connector v-for="conn of connections" v-bind="conn" />
+  <Connector
+    v-for="conn of connections"
+    v-bind="conn"
+    strokeColor="white"
+    :borderWidth="1"
+  />
 </template>
 
 
@@ -27,32 +32,40 @@ export default {
           output.push(c)
         }
 
-        for (const c of this.connectionsOutOfTile(tile)) {
-          output.push(c)
-        }
+        /* for (const c of this.connectionsOutOfTile(tile)) {
+         *   output.push(c)
+         * } */
       }
 
       return output
-    }
+    },
   },
 
   methods: {
     connectionsOnTile(tile) {
+      const sites = tile.sitesAbsolute()
       const output = []
 
-      for (const loc of tile.sitesAbsolute()) {
-        for (const name2 of loc.paths) {
-          if (name2.startsWith('hex')) {
-            continue
-          }
+      for (const connector of tile.connectors()) {
+        const cSites = connector
+          .map(name => sites.find(s => s.name === name))
+          .filter(s => s !== undefined)
 
-          const loc2 = tile.sitesAbsolute().find(x => x.name === name2)
+        if (cSites.length === 2) {
           output.push({
-            cx1: loc.cx,
-            cy1: loc.cy,
-            cx2: loc2.cx,
-            cy2: loc2.cy,
+            id: `${tile.name()}:${connector[0]}:${connector[1]}`,
+            points: {
+              source: { x: cSites[0].cx, y: cSites[0].cy },
+              target: { x: cSites[1].cx, y: cSites[1].cy },
+              sourceHandle: { x: cSites[0].cx, y: cSites[0].cy },
+              targetHandle: { x: cSites[1].cx, y: cSites[1].cy },
+            },
           })
+        }
+
+        // At least one of the sites was an edge connector
+        else {
+          continue
         }
       }
 
