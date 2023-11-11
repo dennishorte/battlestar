@@ -172,29 +172,45 @@ export default {
     async save({ dispatch }, { actor, cubeId, updated, original, comment }) {
       updated = updated.data ? updated.data : updated
 
-      const response = await this.$post('/api/magic/card/save', {
-        card: updated,
-        original,
-        editor: {
-          _id: actor._id,
-          name: actor.name,
-        },
-        comment,
-      })
+      let response
 
-      const cube = await dispatch('magic/cube/getById', { cubeId }, { root: true })
-
-      // Need to update the cube, if the edited card was a scryfall card that was replaced
-      // with a custom card.
-      if (response.cardReplaced) {
-        cube.removeCard(original)
-        cube.addCard(response.finalizedCard)
-        await dispatch('magic/cube/save', cube, { root: true })
+      try {
+        response = await this.$post('/api/magic/card/save', {
+          card: updated,
+          original,
+          editor: {
+            _id: actor._id,
+            name: actor.name,
+          },
+          comment,
+        })
+      }
+      catch (e) {
+        alert('Server side error saving card')
+        throw e
       }
 
-      else if (response.cardCreated) {
-        cube.addCard(response.finalizedCard)
-        await dispatch('magic/cube/save', cube, { root: true })
+      if (response.status !== 'success') {
+        console.log(response.data)
+        alert('Server returned error')
+        throw new Error('Received error from server')
+      }
+
+      if (cubeId) {
+        const cube = await dispatch('magic/cube/getById', { cubeId }, { root: true })
+
+        // Need to update the cube, if the edited card was a scryfall card that was replaced
+        // with a custom card.
+        if (response.cardReplaced) {
+          cube.removeCard(original)
+          cube.addCard(response.finalizedCard)
+          await dispatch('magic/cube/save', cube, { root: true })
+        }
+
+        else if (response.cardCreated) {
+          cube.addCard(response.finalizedCard)
+          await dispatch('magic/cube/save', cube, { root: true })
+        }
       }
 
       // In either case, update the local card database.

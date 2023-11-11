@@ -414,8 +414,7 @@ export default {
         comment: 'Updated in the cube editor',
       })
 
-      // And set the created card to be the managed card.
-      await this.$store.commit('magic/cube/manageCard', updatedCard, { root: true })
+      window.location.reload()
     },
 
     async toggleCardEditing() {

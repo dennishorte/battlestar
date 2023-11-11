@@ -13,18 +13,18 @@ Card.fetchAll = async function(req, res) {
   })
 }
 
-function _extractOriginalCard(req) {
-  if (!req.original) {
+function _extractCardData(req, name) {
+  if (!req.body[name]) {
     return null
   }
   else {
-    return req.body.original.data ? req.body.original.data : req.body.original
+    return req.body[name].data ? req.body[name].data : req.body[name]
   }
 }
 
 Card.save = async function(req, res) {
-  const card = req.body.card.data ? req.body.card.data : req.body.card
-  const original = _extractOriginalCard(req)
+  const card = _extractCardData(req, 'card')
+  const original = _extractCardData(req, 'original')
   const { editor, comment } = req.body
 
   if (card.data) {
