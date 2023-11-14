@@ -42,12 +42,19 @@ function Card() {
           .byAge[age]
           .sort((l, r) => l.name.localeCompare(r.name))
         const card = game.aChooseCard(player, choices)
+
+        game.mLog({
+          template: '{player} says "Who is {name}?"',
+          args: { player, name: card.name }
+        })
+
         if (card.zone === card.home) {
           game.mMoveCardTo(card, game.getZoneByPlayer(player, 'hand'))
           game.mLog({
             template: '{player} takes {card} into hand',
             args: { player, card }
           })
+          game.mReveal(player, card)
         }
         else {
           game.mLog({
