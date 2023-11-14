@@ -4,6 +4,12 @@
     <div style="white-space: pre; font-family: monospace;">
       {{ gameData }}
     </div>
+
+    <template #footer>
+      <button class="btn btn-outline-danger" @click="editResponses" data-bs-dismiss="modal">edit</button>
+      <button class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
+      <button class="btn btn-primary" data-bs-dismiss="modal">ok</button>
+    </template>
   </Modal>
 </template>
 
@@ -33,6 +39,12 @@ export default {
         return 'Game data not loaded'
       }
     }
+  },
+
+  methods: {
+    editResponses() {
+      this.$router.push('/game/editor/' + this.game._id)
+    },
   },
 }
 </script>

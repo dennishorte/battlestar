@@ -147,7 +147,7 @@ Game.saveFull = async function(req, res) {
   // Test if the gameData is safe to write to based on this request
   // If games don't have branchIds, they haven't been created in the new
   // system. Once old games are wrapped up, this if clause can be removed.
-  if (game.branchId) {
+  if (game.branchId && !req.body.overwrite) {
     if (!req.body.branchId || req.body.branchId !== game.branchId) {
       res.json({
         status: 'game_overwrite',

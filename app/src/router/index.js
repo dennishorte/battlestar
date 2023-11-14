@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import Home from '@/components/Home'
 import Game from '@/components/Game'
+import GameEditor from '@/modules/games/common/components/GameEditor'
 import FileManagerTest from '@/components/filemanager/FileManagerTest'
 
 import adminRoutes from '@/modules/admin/router.js'
@@ -31,6 +32,11 @@ const router = createRouter({
       path: '/game/next',
       name: 'Next Game',
       component: Game,
+    },
+    {
+      path: '/game/editor/:id',
+      name: 'Game Editor',
+      component: GameEditor,
     },
     {
       path: '/filemanager',
