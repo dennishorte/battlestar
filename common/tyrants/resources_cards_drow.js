@@ -433,9 +433,9 @@ const cardData = [
     aspect: "ambition",
     race: "drow",
     expansion: "drow",
-    cost: 6,
-    points: 3,
-    innerPoints: 6,
+    cost: 4,
+    points: 2,
+    innerPoints: 4,
     count: 1,
     text: [
       "Put your deck into your discard pile. Then promote a card from your discard pile."
