@@ -38,6 +38,7 @@ export default {
         'instant',
         'artifact',
         'enchantment',
+        'battle',
         'other',
       ],
     }
@@ -52,7 +53,7 @@ export default {
     sections() {
       if (mag.util.card.COLORS.includes(this.name.toLowerCase()) || this.name.toLowerCase() === 'colorless') {
         const collected = util.array.collect(this.cardlist, card => {
-          const superTypes = mag.util.card.supertypes(card)
+          const superTypes = mag.util.card.supertypes(card.data.card_faces[0])
           for (const kind of this.cardTypeSections) {
             if (superTypes.includes(kind)) {
               return kind

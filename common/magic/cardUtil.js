@@ -86,7 +86,10 @@ CardUtil.cmc = function(card) {
 }
 
 CardUtil.supertypes = function(card) {
-  if (card.data) {
+  if (card.type_line) {
+    // do nothing
+  }
+  else if (card.data) {
     card = card.data
   }
   else {
