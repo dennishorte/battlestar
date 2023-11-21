@@ -32,9 +32,15 @@
             <Dropdown text="menu">
               <DropdownButton @click="this.$modal('cube-update-modal').show()">add/remove cards</DropdownButton>
               <DropdownButton @click="this.$modal('cube-add-modal').show()">add one card</DropdownButton>
+
               <DropdownDivider />
+
               <DropdownButton @click="createCard">create card</DropdownButton>
               <DropdownButton @click="createScar">create scar</DropdownButton>
+
+              <DropdownDivider />
+
+              <DropdownButton @click="randomCard">random card</DropdownButton>
 
               <template v-if="viewerIsOwner">
                 <DropdownDivider />
@@ -133,7 +139,7 @@
 import cubeUtil from '../../util/cubeUtil.js'
 import mitt from 'mitt'
 
-import { mag } from 'battlestar-common'
+import { mag, util } from 'battlestar-common'
 import { mapState } from 'vuex'
 import { nextTick } from 'vue'
 
@@ -311,6 +317,11 @@ export default {
     navigate(target) {
       this.$router.push(`/magic/cube/${this.id}/${target}`)
       this.showing = target
+    },
+
+    randomCard() {
+      const card = util.array.select(this.cube.cardlist)
+      this.goToCard(card)
     },
 
     showCardModal() {
