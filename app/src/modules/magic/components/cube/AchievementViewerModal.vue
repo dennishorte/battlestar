@@ -6,14 +6,29 @@
 
       <div>
         <h2 class="achievement-name">{{ achievement.name }}</h2>
-        <div class="achievement-text">{{ achievement.unlock }}</div>
+
+        <div class="area">
+          <h5>Requirements</h5>
+          <div class="achievement-text">{{ achievement.unlock }}</div>
+        </div>
       </div>
 
 
       <template v-if="!!achievement.claimed">
 
+        <div class="area">
+          <h5>Sections</h5>
+          <div v-for="(section, index) of achievement.hidden" class="d-grid gap-2">
+            <div class="d-grid gap-2">
+              <button class="btn btn-success" @click="toggle(index)">{{ section.name }}</button>
+              <div v-if="toggled[index]" class="area">
+                {{ section.text }}
+              </div>
+            </div>
+          </div>
+        </div>
 
-        <button class="btn btn-primary" @click="finalize">finalize</button>
+        <!-- <button class="btn btn-primary" @click="finalize">finalize</button> -->
       </template>
 
       <template v-else>
@@ -48,6 +63,12 @@ export default {
 
   inject: ['actor'],
 
+  data() {
+    return {
+      toggled: [],
+    }
+  },
+
   computed: {
     ...mapState('magic/cube', {
       achievement: 'managedAchievement',
@@ -57,6 +78,10 @@ export default {
   methods: {
     finalize() {
       alert('not implemented')
+    },
+
+    toggle(index) {
+      this.toggled[index] = !this.toggled[index]
     },
 
     async unlock() {
@@ -75,6 +100,17 @@ export default {
   font-weight: bold;
   text-align: center;
   width: 100%;
+}
+
+.area {
+  border: 1px solid #999;
+  border-radius: .5em;
+  margin-bottom: .5em;
+  padding: .5em;
+}
+
+.area-header {
+
 }
 
 .buttons-row {
