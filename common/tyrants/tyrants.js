@@ -716,7 +716,7 @@ Tyrants.prototype.checkForEndGameTriggers = function() {
   }
 
   // The market is depleted
-  if (this.getZoneById('market').cards().length === 0) {
+  if (this.getZoneById('marketDeck').cards().length === 0) {
     this.mLog({
       template: 'The market is depleted'
     })
