@@ -194,16 +194,13 @@ export default {
     },
 
     addSpot() {
-      const spot = {
-        name: this.newName('spot'),
-        kind: 'troop-spot',
-        dx: 0,
-        dy: 0,
-        neutrals: 0,
-      }
+      const spot = this.createSpot()
+      spot.name = this.newName('spot')
 
       this.tile.data.sites.push(spot)
       this.select(spot)
+
+      return spot
     },
 
     connectBegin() {
@@ -211,6 +208,7 @@ export default {
         this.connectClear()
       }
       else {
+        this.clearSelectedSite()
         this.connecting = true
       }
     },
@@ -223,7 +221,16 @@ export default {
 
     connectFinalize(a, b) {
       this.connectClear()
-      this.tile.connectors().push([a.name, b.name])
+
+      const connection = [a.name, b.name].sort()
+
+      // Prevent duplicates
+      if (this.tile.connectors().find(([a, b]) => a === connection[0] && b === connection[1])) {
+        console.log('duplicate')
+        return
+      }
+
+      this.tile.connectors().push([a.name, b.name].sort())
     },
 
     connectSelect(site) {
@@ -240,6 +247,16 @@ export default {
       this.selectedSite = {}
     },
 
+    createSpot() {
+      return {
+        name: 'spot',
+        kind: 'troop-spot',
+        dx: 0,
+        dy: 0,
+        neutrals: 0,
+      }
+    },
+
     duplicate() {
       const data = util.deepcopy(this.tile.data)
       data.name = 'duplicate of ' + data.name
@@ -249,6 +266,7 @@ export default {
 
     editTile(base) {
       this.clearSelectedSite()
+      this.insertTileEdgeSpots(base)
 
       const tiles = [
         new tile.Tile(base, null),
@@ -306,6 +324,7 @@ export default {
 
     async save() {
       const hex = util.deepcopy(this.tile.data)
+      this.removeTileEdgeSpots(hex)
 
       // Save the tile
       const saveResult = await this.$post('/api/tyrants/hex/save', { hex })
@@ -341,6 +360,49 @@ export default {
       this.dragging = true
       this.dragX = event.offsetX
       this.dragY = event.offsetY
+    },
+
+    insertTileEdgeSpots(data) {
+      const dx = 117
+      const dy = 67
+
+      for (let i = 0; i < 6; i++) {
+        const spot = this.createSpot()
+        spot.name = '_hex ' + i
+
+        switch (i) {
+          case tile.Direction.N:
+            spot.dy = -135
+            break
+          case tile.Direction.S:
+            spot.dy = 135
+            break
+          case tile.Direction.NE:
+            spot.dy = -dy
+            spot.dx = dx
+            break
+          case tile.Direction.NW:
+            spot.dy = -dy
+            spot.dx = -dx
+            break
+          case tile.Direction.SE:
+            spot.dy = dy
+            spot.dx = dx
+            break
+          case tile.Direction.SW:
+            spot.dy = dy
+            spot.dx = -dx
+            break
+          default:
+            break
+        }
+
+        data.sites.push(spot)
+      }
+    },
+
+    removeTileEdgeSpots(data) {
+      data.sites = data.sites.filter(x => !x.name.startsWith('_hex'))
     },
   },
 
