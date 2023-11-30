@@ -18,6 +18,10 @@
 
       <div class="menu-option" @click="save">Save</div>
 
+      <hr />
+
+      <div class="menu-option" @click="deleteTile">Delete</div>
+
       <div class="site-details" v-if="tile">
         <div>Tile Info</div>
 
@@ -255,6 +259,16 @@ export default {
         dy: 0,
         neutrals: 0,
       }
+    },
+
+    deleteTile() {
+      if (this.tile.id()) {
+        const result = this.$post('/api/tyrants/hex/delete', {
+          id: this.tile.id(),
+        })
+      }
+
+      this.$router.go()
     },
 
     duplicate() {

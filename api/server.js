@@ -78,6 +78,7 @@ app.post('/api/magic/scryfall/update', routes.magic.scryfall.updateAll)
 // Tyrants
 
 app.post('/api/tyrants/hex/all', routes.tyrants.hex.all)
+app.post('/api/tyrants/hex/delete', routes.tyrants.hex.delete)
 app.post('/api/tyrants/hex/save', routes.tyrants.hex.save)
 
 ////////////////////////////////////////////////////////////

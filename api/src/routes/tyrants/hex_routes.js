@@ -11,6 +11,13 @@ Hex.all = async function(req, res) {
   })
 }
 
+Hex.delete = async function(req, res) {
+  await db.tyrants.hex.delete(req.body.id)
+  res.json({
+    status: 'success',
+  })
+}
+
 Hex.save = async function(req, res) {
   await db.tyrants.hex.save(req.body.hex)
   res.json({

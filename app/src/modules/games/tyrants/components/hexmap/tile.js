@@ -59,6 +59,10 @@ Tile.prototype.connectors = function() {
   return this.data.connectors
 }
 
+Tile.prototype.id = function() {
+  return this.data._id
+}
+
 Tile.prototype.name = function() {
   return this.data.name
 }
