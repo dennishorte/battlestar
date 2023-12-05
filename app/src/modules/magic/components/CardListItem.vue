@@ -8,7 +8,7 @@
   >
 
     <div class="name">
-      <i class="bi bi-lightning-fill" v-if="!!card.custom_id"></i>
+      <i class="bi bi-lightning-fill" v-if="isScarred"></i>
       <slot name="name">{{ name }}</slot>
     </div>
 
@@ -25,6 +25,7 @@
 
 <script>
 import ManaCost from './ManaCost'
+import { mag } from 'battlestar-common'
 
 
 export default {
@@ -66,6 +67,10 @@ export default {
       else {
         return this.$store.getters['magic/cards/getLookupFunc'](this.card)
       }
+    },
+
+    isScarred() {
+      return mag.util.card.isScarred(this.card)
     },
 
     name() {

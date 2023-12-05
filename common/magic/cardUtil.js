@@ -440,6 +440,10 @@ CardUtil.isArtifact = function(card) {
   return card.type_line.toLowerCase().includes('artifact')
 }
 
+CardUtil.isScarred = function(card) {
+  return Boolean(card.custom_id)
+}
+
 CardUtil.parseRulesLine = function(line) {
   const output = {
     isScar: false,
