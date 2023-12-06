@@ -7,6 +7,8 @@
       <i class="bi bi-browser-edge" v-if="card.morph"></i>
       <i class="bi bi-bookmark-fill" v-if="card.token"></i>
 
+      <i class="bi bi-lightning-fill" v-if="isScarred"></i>
+
       <template v-if="showGravePowers">
         <i class="ms ms-cost ms-ability-aftermath" v-if="hasAftermath" />
         <i class="ms ms-cost ms-ability-disturb" v-if="hasDisturb" />
@@ -81,6 +83,8 @@ import CounterButtons from './CounterButtons'
 import Dropdown from '@/components/Dropdown'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
+
+import { mag } from 'battlestar-common'
 
 
 export default {
@@ -210,6 +214,10 @@ export default {
 
     highlighted() {
       return this.$store.state.magic.game.selectedCardId === this.card.id
+    },
+
+    isScarred() {
+      return mag.util.card.isScarred(this.card.data)
     },
 
     wrapperClasses() {
