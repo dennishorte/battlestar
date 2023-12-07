@@ -21,11 +21,13 @@
 
         <template v-if="claimed">
           <DropdownButton @click="view">view</DropdownButton>
+          <DropdownButton @click="clone">clone</DropdownButton>
         </template>
 
         <template v-else>
           <DropdownButton @click="claim">claim</DropdownButton>
           <DropdownButton @click="edit">edit</DropdownButton>
+          <DropdownButton @click="clone">clone</DropdownButton>
           <DropdownButton @click="editTags">tags</DropdownButton>
           <template v-if="ach.filters">
             <DropdownDivider />
@@ -42,6 +44,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { util } from 'battlestar-common'
 
 import Dropdown from '@/components/Dropdown'
 import DropdownButton from '@/components/DropdownButton'
@@ -92,6 +95,17 @@ export default {
         showAll: false,
       })
       this.$modal('achievement-viewer-modal').show()
+    },
+
+    clone() {
+      const dup = util.deepcopy(this.ach)
+      dup.name = dup.name + ' clone'
+      delete dup._id
+      this.$store.commit('magic/cube/manageAchievement', {
+        achievement: dup,
+        showAll: true,
+      })
+      this.$modal('achievement-editor').show()
     },
 
     del() {
