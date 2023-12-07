@@ -7,7 +7,7 @@
       <i class="bi bi-browser-edge" v-if="card.morph"></i>
       <i class="bi bi-bookmark-fill" v-if="card.token"></i>
 
-      <i class="bi bi-lightning-fill" v-if="isScarred"></i>
+      <i class="bi bi-lightning-fill" v-if="showScarIcon"></i>
 
       <template v-if="showGravePowers">
         <i class="ms ms-cost ms-ability-aftermath" v-if="hasAftermath" />
@@ -218,6 +218,10 @@ export default {
 
     isScarred() {
       return mag.util.card.isScarred(this.card.data)
+    },
+
+    showScarIcon() {
+      return this.isScarred && !this.hidden
     },
 
     wrapperClasses() {
