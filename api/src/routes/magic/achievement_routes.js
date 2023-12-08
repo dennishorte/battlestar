@@ -1,4 +1,5 @@
 const db = require('../../models/db.js')
+const slack = require('../../util/slack.js')
 const { util } = require('battlestar-common')
 
 const Ach = {}
@@ -14,6 +15,7 @@ Ach.fetchAll = async function(req, res) {
 
 Ach.claim = async function(req, res) {
   await db.magic.achievement.claim(req.body.achId, req.body.userId)
+  await _sendAchievementClaimMessage(req.body.achId, req.body.userId)
   return res.json({ status: 'success' })
 }
 
@@ -60,4 +62,21 @@ Ach.save = async function(req, res) {
 
   await db.magic.achievement.save(ach)
   res.json({ status: 'success' })
+}
+
+async function _sendAchievementClaimMessage(achId, userId) {
+  const cloChannelId = 'C01AV1RGJSK'
+
+  const ach = await db.magic.achievement.findById(achId)
+  const user = await db.user.findById(userId)
+
+  const message = `${user.name} unlocked an achievement!
+
+*${ach.name}*
+>${ach.unlock}
+
+_${ach.hidden[0].name}_
+\`\`\`${ach.hidden[0].text}\`\`\`
+`
+  await slack.sendToSlackId(cloChannelId, message)
 }

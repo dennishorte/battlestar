@@ -12,6 +12,10 @@ Ach.findByCubeId = async function(cubeId) {
   return output
 }
 
+Ach.findById = async function(achId) {
+  return await achCollection.findOne({ _id: achId })
+}
+
 Ach.claim = async function(achId, userId) {
   await achCollection.updateOne(
     { _id: achId },
