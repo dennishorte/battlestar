@@ -79,13 +79,22 @@ export default {
 
   props: {
     data: Object,
-    actor: Object,
   },
 
   data() {
     return {
       bus: mitt(),
       game: new inn.Innovation(this.data, this.actor.name),
+    }
+  },
+
+  inject: ['actor', 'save'],
+
+  provide() {
+    return {
+      bus: this.bus,
+      game: this.game,
+      ui: this.uiFactory(),
     }
   },
 
@@ -98,31 +107,9 @@ export default {
     },
   },
 
-  provide() {
-    return {
-      actor: this.actor,
-      bus: this.bus,
-      game: this.game,
-      save: this.save,
-      ui: this.uiFactory(),
-    }
-  },
-
   methods: {
     openRules() {
       window.open("https://asmadigames.com/rules/Rulebook_Deluxe_spreads.pdf")
-    },
-
-    save: async function() {
-      const game = this.game
-      const response = await this.$post('/api/game/saveFull', {
-        gameId: game._id,
-        responses: game.responses,
-        branchId: game.branchId,
-      })
-
-      this.game.usedUndo = false
-      this.game.branchId = response.branchId
     },
 
     uiFactory() {

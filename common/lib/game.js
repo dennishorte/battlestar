@@ -28,6 +28,9 @@ function Game(serialized_data, viewerName) {
   this.responses = serialized_data.responses
   this.usedUndo = false
 
+  // Chat is separate from the game history.
+  this.chat = []
+
   // This holds a reference to the latest input request
   this.waiting = null
 
@@ -78,9 +81,11 @@ function InputRequestEvent(selectors) {
 
 Game.prototype.serialize = function() {
   return {
+    gameId: this._id,
     settings: this.settings,
     responses: this.responses,
     branchId: this.branchId,
+    chat: this.chat,
   }
 }
 

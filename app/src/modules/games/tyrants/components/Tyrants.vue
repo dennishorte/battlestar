@@ -124,7 +124,6 @@ export default {
 
   props: {
     data: Object,
-    actor: Object,
   },
 
   data() {
@@ -153,12 +152,15 @@ export default {
     }
   },
 
+  inject: [
+    'actor',
+    'save',
+  ],
+
   provide() {
     return {
-      actor: this.actor,
       bus: this.bus,
       game: this.game,
-      save: this.save,
       ui: this.ui,
     }
   },
@@ -306,18 +308,6 @@ export default {
 
     openRules() {
       window.open("https://tesera.ru/images/items/783812/Tyrants_Of_The_Underdark_Rulebook.pdf")
-    },
-
-    save: async function() {
-      const game = this.game
-      const response = await this.$post('/api/game/saveFull', {
-        gameId: game._id,
-        responses: game.responses,
-        branchId: game.branchId,
-      })
-
-      this.game.usedUndo = false
-      this.game.branchId = response.branchId
     },
 
     showScores() {

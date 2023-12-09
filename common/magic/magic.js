@@ -54,6 +54,18 @@ function factoryFromLobby(lobby) {
   })
 }
 
+Magic.prototype.serialize = function() {
+  const base = Game.prototype.serialize.call(this)
+
+  // Include these because Magic doesn't run on the backend when saving,
+  // so can't calculate these values.
+  base.waiting = game.waiting
+  base.gameOver = game.gameOver
+  base.gameOverData = game.gameOverData
+
+  return base
+}
+
 Magic.prototype._mainProgram = function() {
   this.initialize()
   this.chooseDecks()

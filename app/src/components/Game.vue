@@ -1,31 +1,31 @@
 <template>
   <CubeDraft
-    v-if="game === 'CubeDraft'"
+    v-if="gameType === 'CubeDraft'"
     :data="gameData"
     :actor="actor"
   />
 
   <Innovation
-    v-else-if="game === 'Innovation'"
+    v-else-if="gameType === 'Innovation'"
     :data="gameData"
     :actor="actor"
   />
 
   <Magic
-    v-else-if="game === 'Magic'"
+    v-else-if="gameType === 'Magic'"
     :data="gameData"
     :actor="actor"
   />
 
   <Tyrants
-    v-else-if="game === 'Tyrants of the Underdark'"
+    v-else-if="gameType === 'Tyrants of the Underdark'"
     :data="gameData"
     :actor="actor"
   />
 
   <div v-else>
     Loading...
-    ...or maybe unknown game '{{ this.game }}'
+    ...or maybe unknown game '{{ this.gameType }}'
   </div>
 </template>
 
@@ -50,24 +50,36 @@ export default {
     return {
       id: this.$route.params.id,
       actor: this.$store.getters['auth/user'],
-      game: '',
+      gameType: '',
       gameData: {},
     }
   },
 
+  provide() {
+    return {
+      actor: this.actor,
+      chat: this.chat,
+      save: this.save,
+    }
+  },
+
   methods: {
+    async chat(text) {
+      console.log('chat', text)
+    },
+
     async loadGame() {
       if (!this.id) {
         return this.nextGame()
       }
 
-      this.game = ''
+      this.gameType = ''
 
       const { game } = await this.$post('/api/game/fetch', {
         gameId: this.id,
       })
 
-      this.game = game.settings.game
+      this.gameType = game.settings.game
       this.gameData = game
     },
 
@@ -88,6 +100,12 @@ export default {
       else {
         this.$router.push('/')
       }
+    },
+
+    async save(game) {
+      const response = await this.$post('/api/game/saveFull', this.game.serialize())
+      this.game.usedUndo = false
+      this.game.branchId = response.branchId
     },
   },
 

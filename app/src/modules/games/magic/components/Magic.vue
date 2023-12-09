@@ -38,7 +38,15 @@ export default {
 
   props: {
     data: Object,
-    actor: Object,
+  },
+
+  inject: ['actor', 'save'],
+
+  provide() {
+    return {
+      do: this.do,
+      game: computed(() => this.game),
+    }
   },
 
   computed: {
@@ -54,15 +62,6 @@ export default {
     player() {
       return this.game ? this.game.getPlayerByName(this.actor.name) : null
     },
-  },
-
-  provide() {
-    return {
-      actor: this.actor,
-      do: this.do,
-      game: computed(() => this.game),
-      save: this.save,
-    }
   },
 
   methods: {
@@ -92,24 +91,6 @@ export default {
         console.log(e)
         alert('error: see console')
       }
-    },
-
-    async save() {
-      const game = this.game
-      const response = await this.$post('/api/game/saveFull', {
-        gameId: game._id,
-        responses: game.responses,
-        branchId: game.branchId,
-
-        // Include these because Magic doesn't run on the backend when saving,
-        // so can't calculate these values.
-        waiting: game.waiting,
-        gameOver: game.gameOver,
-        gameOverData: game.gameOverData,
-      })
-
-      this.game.usedUndo = false
-      this.game.branchId = response.branchId
     },
   },
 }

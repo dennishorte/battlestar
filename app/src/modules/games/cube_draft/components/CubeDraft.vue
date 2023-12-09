@@ -191,6 +191,17 @@ export default {
     }
   },
 
+  inject: ['actor'],
+
+  provide() {
+    return {
+      bus: this.bus,
+      game: computed(() => this.game),
+      save: this.save,
+      ui: this.uiFactory(),
+    }
+  },
+
   computed: {
     ...mapState('magic/cubeDraft', {
       game: 'game',
@@ -254,17 +265,6 @@ export default {
         return 'three-card-width'
       }
     },
-  },
-
-  provide() {
-    return {
-      actor: this.actor,
-      game: computed(() => this.game),
-      save: this.save,
-
-      bus: this.bus,
-      ui: this.uiFactory(),
-    }
   },
 
   methods: {

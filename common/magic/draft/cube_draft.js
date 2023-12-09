@@ -48,6 +48,10 @@ function factoryFromLobby(lobby, db) {
   })
 }
 
+CubeDraft.prototype.serialize = function() {
+  throw new Error('not implemented; see implementation in CubeDraft.vue')
+}
+
 CubeDraft.prototype._mainProgram = function() {
   this.initialize()
   this.mLog({ template: "Draft Begins" })

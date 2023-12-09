@@ -24,6 +24,7 @@ export default {
   name: 'ChatInput',
 
   inject: {
+    chat: { from: 'chat' },
     game: { from: 'game' },
     actor: { from: 'actor' },
     save: {
@@ -69,12 +70,7 @@ export default {
 
   methods: {
     async sendChat() {
-      this.game.respondToInputRequest({
-        actor: this.actor.name,
-        type: 'chat',
-        text: this.text,
-      })
-
+      this.chat(this.text)
       if (this.saveOnChat) {
         await this.save()
       }
