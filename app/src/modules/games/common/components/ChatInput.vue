@@ -24,7 +24,6 @@ export default {
   name: 'ChatInput',
 
   inject: {
-    chat: { from: 'chat' },
     game: { from: 'game' },
     actor: { from: 'actor' },
     save: {
@@ -50,7 +49,7 @@ export default {
     hasNewChat() {
       // See if any chats exist before the last response of this player.
       // If yes, assume they are new.
-      const rlog = [...this.game.getLog()].reverse()
+      const rlog = [...this.game.getMergedLog()].reverse()
 
       let count = 0
 
@@ -70,9 +69,9 @@ export default {
 
   methods: {
     async sendChat() {
-      this.chat(this.text)
+      this.game.mChat(this.actor.name, this.text)
       if (this.saveOnChat) {
-        await this.save()
+        await this.save(this.game)
       }
       this.text = ''
     }

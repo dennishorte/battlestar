@@ -29,7 +29,7 @@ function Game(serialized_data, viewerName) {
   this.usedUndo = false
 
   // Chat is separate from the game history.
-  this.chat = []
+  this.chat = serialized_data.chat || []
 
   // This holds a reference to the latest input request
   this.waiting = null
@@ -306,6 +306,10 @@ Game.prototype.undo = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Logging
 
+Game.prototype.getChat = function() {
+  return this.chat
+},
+
 Game.prototype.getLog = function() {
   return this.state.log
 }
@@ -314,8 +318,48 @@ Game.prototype.getLogIndent = function() {
   return this.state.indent
 }
 
+Game.prototype.getMergedLog = function() {
+  const log = this.getLog()
+  const chat = this.getChat()
+
+  if (chat.length === 0) {
+    return log
+  }
+
+  const output = []
+
+  let chatIndex = 0
+  let logIndex = 0
+
+  for (; logIndex < log.length; logIndex++) {
+    output.push(log[logIndex])
+
+    while (chat[chatIndex].position === logIndex) {
+      output.push(chat[chatIndex])
+      chatIndex += 1
+    }
+  }
+
+  while (chatIndex < chat.length) {
+    output.push(chat[chatIndex])
+    chatIndex += 1
+  }
+
+  return output
+}
+
 Game.prototype.getViewerName = function() {
   return this.viewerName
+}
+
+Game.prototype.mChat = function(playerName, text) {
+  this.chat.push({
+    id: Date.now(),
+    author: playerName,
+    position: this.getLog().length,
+    text,
+    type: 'chat',
+  })
 }
 
 Game.prototype.mLog = function(msg) {

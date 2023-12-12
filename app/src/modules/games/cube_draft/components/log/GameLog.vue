@@ -40,7 +40,7 @@ export default {
       const output = []
       let indent = 0
 
-      const entries = this.game.getLog()
+      const entries = this.game.getMergedLog()
       for (let i = 0; i < entries.length; i++) {
         const entry = entries[i]
 

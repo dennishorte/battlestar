@@ -58,16 +58,11 @@ export default {
   provide() {
     return {
       actor: this.actor,
-      chat: this.chat,
       save: this.save,
     }
   },
 
   methods: {
-    async chat(text) {
-      console.log('chat', text)
-    },
-
     async loadGame() {
       if (!this.id) {
         return this.nextGame()
@@ -103,9 +98,9 @@ export default {
     },
 
     async save(game) {
-      const response = await this.$post('/api/game/saveFull', this.game.serialize())
-      this.game.usedUndo = false
-      this.game.branchId = response.branchId
+      const response = await this.$post('/api/game/saveFull', game.serialize())
+      game.usedUndo = false
+      game.branchId = response.branchId
     },
   },
 

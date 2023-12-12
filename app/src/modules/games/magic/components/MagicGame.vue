@@ -29,8 +29,8 @@
 
       </GameMenu>
 
-      <GameLog :entries="game.getLog()" />
-      <ChatInput @save-on-chat="false" />
+      <GameLog :entries="game.getMergedLog()" />
+      <ChatInput :save-on-chat="false" />
     </div>
 
     <div class="magic-column phase-selector-column">

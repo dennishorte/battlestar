@@ -128,6 +128,7 @@ async function doSave(game) {
         gameOver: game.gameOver,
         gameOverData: game.gameOverData,
         lastUpdated: Date.now(),
+        chat: game.chat,
         responses: game.responses,
         waiting: game.getPlayerNamesWaiting(),
       }

@@ -59,9 +59,9 @@ Magic.prototype.serialize = function() {
 
   // Include these because Magic doesn't run on the backend when saving,
   // so can't calculate these values.
-  base.waiting = game.waiting
-  base.gameOver = game.gameOver
-  base.gameOverData = game.gameOverData
+  base.waiting = this.waiting
+  base.gameOver = this.gameOver
+  base.gameOverData = this.gameOverData
 
   return base
 }
