@@ -937,8 +937,8 @@ Magic.prototype.aShuffleBottom = function(player, zoneId, count) {
 
 Magic.prototype.aStackEffect = function(player, cardId) {
   const card = this.getCardById(cardId)
-  const owner = this.getPlayerByOwner(card)
-  const stack = this.getZoneByPlayer(owner, 'stack')
+  const controller = this.getPlayerByCardController(card)
+  const stack = this.getZoneByPlayer(controller, 'stack')
 
   const data = {
     zoneId: stack.id,
@@ -946,7 +946,7 @@ Magic.prototype.aStackEffect = function(player, cardId) {
     name: 'effect: ' + card.name,
   }
 
-  const token = this.aCreateToken(owner, data, { silent: true })[0]
+  const token = this.aCreateToken(controller, data, { silent: true })[0]
 }
 
 Magic.prototype.aTap = function(player, cardId) {
