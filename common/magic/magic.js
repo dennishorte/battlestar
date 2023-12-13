@@ -1240,7 +1240,7 @@ Magic.prototype.mMaybeClearCounters = function(card) {
 }
 
 Magic.prototype.mMaybeRemoveTokens = function(card) {
-  const validZones = ['creatures', 'battlefield', 'land', 'stack', 'attacking', 'blocking']
+  const validZones = ['creatures', 'battlefield', 'land', 'stack', 'attacking', 'blocking', 'command']
 
   if (card.token && !validZones.some(id => card.zone.endsWith(id))) {
     this.mLogIndent()
