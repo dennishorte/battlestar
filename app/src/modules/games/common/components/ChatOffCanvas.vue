@@ -41,7 +41,6 @@ export default {
 
   computed: {
     chats() {
-      // TODO: Stop using getMergedLog and just use getChat once old games are gone.
       return this
         .game
         .getMergedLog()
@@ -49,23 +48,7 @@ export default {
     },
 
     hasNewChat() {
-      // See if any chats exist before the last response of this player.
-      // If yes, assume they are new.
-      const rlog = [...this.game.getMergedLog()].reverse()
-
-      let count = 0
-
-      for (const msg of rlog) {
-        if (msg.type === 'response-received' && msg.data.actor === this.actor.name) {
-          return count
-        }
-
-        if (msg.type === 'chat' && msg.author !== this.actor.name) {
-          count += 1
-        }
-      }
-
-      return count
+      return this.game.getNewChatCount(this.actor) > 0
     },
   },
 

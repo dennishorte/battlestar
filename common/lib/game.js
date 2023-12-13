@@ -304,7 +304,29 @@ Game.prototype.undo = function() {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Logging
+// Chat and Logging
+
+Game.prototype.getNewChatCount = function(playerOrName) {
+  const playerName = playerOrName.name ? playerOrName.name : playerOrName
+
+  // See if any chats exist before the last response of this player.
+  // If yes, assume they are new.
+  const rlog = [...this.getMergedLog()].reverse()
+
+  let count = 0
+
+  for (const msg of rlog) {
+    if (msg.type === 'response-received' && msg.data.actor === playerName) {
+      return count
+    }
+
+    if (msg.type === 'chat' && msg.author !== playerName) {
+      count += 1
+    }
+  }
+
+  return count
+}
 
 Game.prototype.getChat = function() {
   return this.chat
