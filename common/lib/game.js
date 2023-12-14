@@ -356,7 +356,7 @@ Game.prototype.getMergedLog = function() {
   for (; logIndex < log.length; logIndex++) {
     output.push(log[logIndex])
 
-    while (chat[chatIndex].position === logIndex) {
+    while (chat[chatIndex] && chat[chatIndex].position === logIndex) {
       output.push(chat[chatIndex])
       chatIndex += 1
     }
