@@ -13,6 +13,8 @@ module.exports = {
   GameOverEvent,
   Agricola,
   AgricolaFactory,
+
+  constructor: Agricola,
   factory: factoryFromLobby,
   res,
 }

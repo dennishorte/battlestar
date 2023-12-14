@@ -18,6 +18,8 @@ module.exports = {
   GameOverEvent,
   Magic,
   MagicFactory,
+
+  constructor: Magic,
   factory: factoryFromLobby,
   res,
   draft: {

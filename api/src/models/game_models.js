@@ -1,5 +1,5 @@
 const { Mutex } = require('../util/mutex.js')
-const games = require('../games')
+const { fromData, fromLobby } = require('battlestar-common')
 
 // Database and collection
 const databaseClient = require('../util/mongo.js').client
@@ -20,7 +20,7 @@ Game.all = async function() {
 
 Game.create = async function(lobby) {
   return await writeMutex.dispatch(async () => {
-    const data = games.factory(lobby.game)(lobby)
+    const data = fromLobby(lobby)
     data.settings.createdTimestamp = Date.now()
 
     // Added in order to support showing games that have recently ended on user home screens.
@@ -30,8 +30,7 @@ Game.create = async function(lobby) {
 
     // Need to actually run the game once to make sure 'waiting' field is populated.
     const gameData = await this.findById(insertResult.insertedId)
-    const constructor = games.constructor(gameData.settings.game)
-    const game = new constructor(gameData)
+    const game = fromData(gameData)
     game.run()
 
     await this.save(game, { noMutex: true })

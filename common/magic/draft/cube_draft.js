@@ -12,6 +12,8 @@ module.exports = {
   GameOverEvent,
   CubeDraft,
   CubeDraftFactory,
+
+  constructor: CubeDraft,
   factory: factoryFromLobby,
 }
 

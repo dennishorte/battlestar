@@ -13,6 +13,8 @@ module.exports = {
   GameOverEvent,
   Innovation,
   InnovationFactory,
+
+  constructor: Innovation,
   factory: factoryFromLobby,
   res,
 }

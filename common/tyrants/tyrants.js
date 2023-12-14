@@ -16,6 +16,8 @@ module.exports = {
   GameOverEvent,
   Tyrants,
   TyrantsFactory,
+
+  constructor: Tyrants,
   factory: factoryFromLobby,
   res,
 }

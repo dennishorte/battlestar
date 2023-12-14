@@ -2,8 +2,7 @@ const db = require('../models/db.js')
 const slack = require('../util/slack.js')
 const stats = require('../util/stats.js')
 
-const games = require('../games')
-const { GameOverEvent } = require('battlestar-common')
+const { GameOverEvent, fromData } = require('battlestar-common')
 
 const Game = {
   stats: {}
@@ -266,8 +265,7 @@ async function _testAndSave(game, res, evalFunc) {
 
 async function _loadGameFromReq(req) {
   const gameData = await db.game.findById(req.body.gameId)
-  const constructor = games.constructor(gameData.settings.game)
-  return new constructor(gameData)
+  return fromData(gameData)
 }
 
 async function _notify(game, userId, msg, force=false) {
