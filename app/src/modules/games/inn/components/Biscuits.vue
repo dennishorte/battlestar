@@ -38,7 +38,7 @@ export default {
     CardBiscuit,
   },
 
-  inject: ['game'],
+  inject: ['actor', 'game'],
 
   computed: {
     achievements() {
@@ -58,7 +58,7 @@ export default {
     },
 
     players() {
-      const viewer = this.game.getPlayerByName(this.game.viewerName)
+      const viewer = this.game.getPlayerByName(this.actor.name)
       return this.game.getPlayersStarting(viewer)
     },
   },

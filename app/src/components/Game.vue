@@ -5,23 +5,14 @@
     :actor="actor"
   />
 
-  <Innovation
-    v-else-if="gameType === 'Innovation'"
-    :data="gameData"
-    :actor="actor"
-  />
-
   <Magic
     v-else-if="gameType === 'Magic'"
     :data="gameData"
     :actor="actor"
   />
 
-  <Tyrants
-    v-else-if="gameType === 'Tyrants of the Underdark'"
-    :data="gameData"
-    :actor="actor"
-  />
+  <Innovation v-else-if="gameType === 'Innovation'" />
+  <Tyrants v-else-if="gameType === 'Tyrants of the Underdark'" />
 
   <div v-else>
     Loading...
@@ -30,6 +21,9 @@
 </template>
 
 <script>
+import { computed } from 'vue'
+import { fromData } from 'battlestar-common'
+
 import CubeDraft from '@/modules/games/cube_draft/components/CubeDraft'
 import Innovation from '@/modules/games/inn/components/Innovation'
 import Magic from '@/modules/games/magic/components/Magic'
@@ -50,16 +44,26 @@ export default {
     return {
       id: this.$route.params.id,
       actor: this.$store.getters['auth/user'],
-      gameType: '',
-      gameData: {},
+      game: null,
     }
   },
 
   provide() {
     return {
       actor: this.actor,
+      game: computed(() => this.game ),
       save: this.save,
     }
+  },
+
+  computed: {
+    gameData() {
+      this.game ? this.game.serialize() : {}
+    },
+
+    gameType() {
+      return this.game ? this.game.settings.game : null
+    },
   },
 
   methods: {
@@ -68,14 +72,12 @@ export default {
         return this.nextGame()
       }
 
-      this.gameType = ''
-
       const { game } = await this.$post('/api/game/fetch', {
         gameId: this.id,
       })
 
-      this.gameType = game.settings.game
-      this.gameData = game
+      this.game = fromData(game)
+      this.game.run()
     },
 
     async nextGame() {

@@ -122,14 +122,8 @@ export default {
     TableauModal,
   },
 
-  props: {
-    data: Object,
-  },
-
   data() {
     return {
-      game: new tyr.Tyrants(this.data, this.actor.name),
-
       bus: mitt(),
 
       ui: {
@@ -154,13 +148,13 @@ export default {
 
   inject: [
     'actor',
+    'game',
     'save',
   ],
 
   provide() {
     return {
       bus: this.bus,
-      game: this.game,
       ui: this.ui,
     }
   },
@@ -331,8 +325,6 @@ export default {
     this.bus.on('waiting-mouse-entered', this.waitingMouseEntered)
     this.bus.on('waiting-mouse-exited', this.waitingMouseExited)
     this.bus.on('waiting-selection-changed', this.waitingSelectionChanged)
-
-    this.game.run()
   },
 
   mounted() {

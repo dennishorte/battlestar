@@ -77,23 +77,17 @@ export default {
     DebugModal,
   },
 
-  props: {
-    data: Object,
-  },
-
   data() {
     return {
       bus: mitt(),
-      game: new inn.Innovation(this.data, this.actor.name),
     }
   },
 
-  inject: ['actor', 'save'],
+  inject: ['actor', 'game', 'save'],
 
   provide() {
     return {
       bus: this.bus,
-      game: this.game,
       ui: this.uiFactory(),
     }
   },
@@ -198,8 +192,6 @@ export default {
         },
       },
     }
-
-    this.game.run()
   },
 
   mounted() {
