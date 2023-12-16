@@ -46,6 +46,10 @@ export default {
 
   computed: {
     columns() {
+      if (this.cardlist.length === 0 || !this.cardlist[0].data) {
+        return []
+      }
+
       const collected = util.array.collect(this.cardlist, card => {
         if (mag.util.card.isLand(card)) {
           return 'land'
@@ -61,10 +65,12 @@ export default {
         }
       })
 
-      return Object
+      const columns = Object
         .entries(collected)
         .map(([name, cards]) => ({ name, cards }))
         .sort((l, r) => this.columnSort.indexOf(l.name) - this.columnSort.indexOf(r.name))
+
+      return columns
     },
   },
 }
