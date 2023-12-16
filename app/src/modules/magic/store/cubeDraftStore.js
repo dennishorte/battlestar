@@ -23,10 +23,9 @@ export default {
   },
 
   actions: {
-    loadGame({ commit, rootGetters, rootState }, { doFunc, gameData }) {
+    loadGame({ commit, rootGetters, rootState }, { doFunc, game }) {
       commit('setReady', false)
-      const actor = rootGetters['auth/user']
-      const game = new mag.draft.cube.CubeDraft(gameData, actor.name)
+
       game.cardLookupFunc = rootGetters['magic/cards/getLookupFunc']
       game.doFunc = doFunc
       game.run()

@@ -20,9 +20,9 @@ const Games = {
   'Innovation': module.exports.innovation,
   'Magic': module.exports.magic,
   'Tyrants of the Underdark': module.exports.tyrants,
-  'Set Draft': module.exports.magic.draft.cube_draft,
-  'Cube Draft': module.exports.magic.draft.cube_draft,
-  'CubeDraft': module.exports.magic.draft.cube_draft,
+  'Set Draft': module.exports.magic.draft.cube,
+  'Cube Draft': module.exports.magic.draft.cube,
+  'CubeDraft': module.exports.magic.draft.cube,
 }
 
 module.exports.fromData = function(gameData, viewerName) {

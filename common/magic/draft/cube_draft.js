@@ -51,7 +51,24 @@ function factoryFromLobby(lobby, db) {
 }
 
 CubeDraft.prototype.serialize = function() {
-  throw new Error('not implemented; see implementation in CubeDraft.vue')
+  const base = Game.prototype.serialize.call(this)
+
+  // Include these because Magic doesn't run on the backend when saving,
+  // so can't calculate these values.
+  base.waiting = this.waiting
+  base.gameOver = this.gameOver
+  base.gameOverData = this.gameOverData
+
+  return base
+}
+
+CubeDraft.prototype.run = function() {
+  if (this.cardLookupFunc) {
+    Game.prototype.run.call(this)
+  }
+  else {
+    // do nothing
+  }
 }
 
 CubeDraft.prototype._mainProgram = function() {

@@ -1,10 +1,5 @@
 <template>
-  <CubeDraft
-    v-if="gameType === 'CubeDraft'"
-    :data="gameData"
-    :actor="actor"
-  />
-
+  <CubeDraft v-if="gameType === 'CubeDraft'" />
   <Magic v-else-if="gameType === 'Magic'" />
   <Innovation v-else-if="gameType === 'Innovation'" />
   <Tyrants v-else-if="gameType === 'Tyrants of the Underdark'" />
@@ -52,10 +47,6 @@ export default {
   },
 
   computed: {
-    gameData() {
-      this.game ? this.game.serialize() : {}
-    },
-
     gameType() {
       return this.game ? this.game.settings.game : null
     },

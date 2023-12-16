@@ -166,11 +166,6 @@ export default {
     WaitingPanel,
   },
 
-  props: {
-    data: Object,
-    actor: Object,
-  },
-
   data() {
     return {
       bus: mitt(),  // Used by WaitingPanel
@@ -191,12 +186,11 @@ export default {
     }
   },
 
-  inject: ['actor'],
+  inject: ['actor', 'game'],
 
   provide() {
     return {
       bus: this.bus,
-      game: computed(() => this.game),
       save: this.save,
       ui: this.uiFactory(),
     }
@@ -204,7 +198,6 @@ export default {
 
   computed: {
     ...mapState('magic/cubeDraft', {
-      game: 'game',
       gameReady: 'ready',
     }),
 
@@ -323,7 +316,7 @@ export default {
 
     async loadGame() {
       await this.$store.dispatch('magic/cubeDraft/loadGame', {
-        gameData: this.data,
+        game: this.game,
         doFunc: this.do,
       })
 
@@ -333,6 +326,16 @@ export default {
           cubeId: this.game.settings.cubeId,
         })
       }
+
+      // Load deck
+      const player = this.game.getPlayerByName(this.actor.name)
+      const { deck } = await this.$post('/api/magic/deck/fetch', {
+        deckId: player.deckId,
+      })
+
+      this.$store.dispatch('magic/dm/selectDeck', deck)
+
+      await this.fetchScars()
     },
 
     async save() {
@@ -466,25 +469,6 @@ export default {
         },
       }
     },
-  },
-
-  watch: {
-    async game(newValue) {
-      if (!newValue) {
-        return
-      }
-
-      // Load deck
-      const player = newValue.getPlayerByName(this.actor.name)
-      const { deck } = await this.$post('/api/magic/deck/fetch', {
-        deckId: player.deckId,
-      })
-
-      this.$store.dispatch('magic/dm/selectDeck', deck)
-
-      // Fetch scars when a new game is loaded or when the game is saved.
-      this.fetchScars()
-    }
   },
 }
 </script>
