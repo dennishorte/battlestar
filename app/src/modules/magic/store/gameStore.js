@@ -22,10 +22,13 @@ export default {
   }),
 
   getters: {
-    importZoneIds(state) {
+    importZoneIds(state, _1, _2, rootGetters) {
       const ids = []
 
-      for (const player of state.game.getPlayersStarting(state.game.getPlayerViewer())) {
+      const actor = rootGetters['auth/user']
+      const actorPlayer = state.game.getPlayerByName(actor.name)
+
+      for (const player of state.game.getPlayersStarting(actorPlayer)) {
         for (const name of ['battlefield', 'command', 'creatures', 'land', 'stack']) {
           ids.push(`players.${player.name}.${name}`)
         }
@@ -195,10 +198,9 @@ export default {
       }
     },
 
-    async loadGame({ commit, dispatch, rootGetters, rootState }, { doFunc, gameData }) {
+    async loadGame({ commit, dispatch, rootGetters, rootState }, { doFunc, game }) {
       commit('setReady', false)
       const actor = rootGetters['auth/user']
-      const game = new mag.Magic(gameData, actor.name)
       game.cardLookupFunc = rootGetters['magic/cards/getLookupFunc']
       game.doFunc = doFunc
       game.run()

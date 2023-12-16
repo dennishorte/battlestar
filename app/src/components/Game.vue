@@ -5,12 +5,7 @@
     :actor="actor"
   />
 
-  <Magic
-    v-else-if="gameType === 'Magic'"
-    :data="gameData"
-    :actor="actor"
-  />
-
+  <Magic v-else-if="gameType === 'Magic'" />
   <Innovation v-else-if="gameType === 'Innovation'" />
   <Tyrants v-else-if="gameType === 'Tyrants of the Underdark'" />
 

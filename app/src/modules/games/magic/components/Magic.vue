@@ -36,22 +36,16 @@ export default {
     PreGame,
   },
 
-  props: {
-    data: Object,
-  },
-
-  inject: ['actor', 'save'],
+  inject: ['actor', 'game', 'save'],
 
   provide() {
     return {
       do: this.do,
-      game: computed(() => this.game),
     }
   },
 
   computed: {
     ...mapState('magic/game', {
-      game: 'game',
       gameReady: 'ready',
     }),
 
@@ -67,7 +61,7 @@ export default {
   methods: {
     async loadGame() {
       await this.$store.dispatch('magic/game/loadGame', {
-        gameData: this.data,
+        game: this.game,
         doFunc: this.do,
       })
     },

@@ -141,7 +141,6 @@
 
     <ImportCardModal :id="`import-card-modal-${player.name}`" :zone-suggestion="importZoneId" @import-card="importCardDo" />
 
-
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
       <div id="move-revealed-toast" class="toast" ref="moveRevealedToast">
         <div class="toast-header">

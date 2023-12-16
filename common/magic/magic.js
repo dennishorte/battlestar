@@ -68,6 +68,15 @@ Magic.prototype.serialize = function() {
   return base
 }
 
+Magic.prototype.run = function() {
+  if (this.cardLookupFunc) {
+    Game.prototype.run.call(this)
+  }
+  else {
+    // do nothing
+  }
+}
+
 Magic.prototype._mainProgram = function() {
   this.initialize()
   this.chooseDecks()
