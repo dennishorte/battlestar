@@ -71,7 +71,7 @@ export default {
         gameId: this.id,
       })
 
-      this.game = fromData(game)
+      this.game = fromData(game, this.actor.name)
       this.game.run()
     },
 

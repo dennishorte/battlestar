@@ -25,11 +25,11 @@ const Games = {
   'CubeDraft': module.exports.magic.draft.cube_draft,
 }
 
-module.exports.fromData = function(gameData) {
+module.exports.fromData = function(gameData, viewerName) {
   const name = gameData.settings.game
   if (name in Games) {
     const constructor = Games[name].constructor
-    return new constructor(gameData)
+    return new constructor(gameData, viewerName)
   }
   else {
     throw new Error(`No constructor for game: ${name}`)
