@@ -102,7 +102,7 @@ export default {
         throw e
       }
 
-      await this.save()
+      await this.save(this.game)
     },
 
     submitIfValid() {

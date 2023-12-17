@@ -11,8 +11,7 @@
         v-for="(troop, index) in loc.getTroops()"
         :key="index"
         class="troop-space"
-        :class="troopClasses(troop)"
-        :style="troopStyles(troop)"
+        :style="this.ui.fn.troopStyle(troop)"
       ></div>
     </div>
 
@@ -44,29 +43,6 @@ export default {
   methods: {
     click() {
       this.ui.fn.clickLocation(this.loc)
-    },
-
-    troopClasses(troop) {
-      const classes = []
-
-      if (!this.game.settings.chooseColors) {
-        const color = this.ui.fn.getTroopColor(this.game, troop)
-        classes.push(`${color}-element`)
-      }
-
-      return classes
-    },
-
-    troopStyles(troop) {
-      if (this.game.settings.chooseColors) {
-        const player = this.game.getPlayerByCard(troop)
-        if (player) {
-          return { 'background-color': player.color }
-        }
-        else {
-          return { 'background-color': 'gray' }
-        }
-      }
     },
   },
 }

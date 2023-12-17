@@ -36,7 +36,20 @@ export default {
     RematchButton,
   },
 
+  props: {
+    funcs: {
+      type: Object,
+      default: {},
+    }
+  },
+
   inject: ['game', 'ui'],
+
+  provide() {
+    return {
+      funcs: this.funcs,
+    }
+  },
 
   computed: {
     lines() {
@@ -108,47 +121,17 @@ export default {
     },
 
     classes(line) {
-      const classes = [`indent-${line.indent}`]
-
-      if (line.classes && line.classes.includes('player-turn')) {
-        const playerName = line.args.player.value
-        const player = this.game.getPlayerByName(playerName)
-        const color = this.ui.fn.getPlayerColor(this.game, player)
-
-        if (!this.game.settings.chooseColors) {
-          classes.push(`${color}-element`)
-        }
+      if (this.funcs.lineClasses) {
+        return this.funcs.lineClasses(line)
       }
-      else if (line.text.includes(' plays ')) {
-        classes.push('player-action')
-        classes.push('play-a-card')
-      }
-      else if (line.text.endsWith(' recruit')) {
-        classes.push('player-action')
-        classes.push('recruit-action')
-      }
-      else if (line.text.includes(' power: ')) {
-        classes.push('player-action')
-        classes.push('power-action')
-      }
-      else if (line.text.endsWith(' passes')) {
-        classes.push('player-action')
-        classes.push('pass-action')
-      }
-      else {
-        classes.push('generic')
-      }
-
-      return classes
     },
 
+    // This is convenient when you need dynamic selection of styles that can't easily be handled
+    // by static CSS code. eg. When a user can select their player color, and you want to inject
+    // that color into the log.
     styles(line) {
-      if (this.game.settings.chooseColors && line.classes && line.classes.includes('player-turn')) {
-        const playerName = line.args.player.value
-        const player = this.game.getPlayerByName(playerName)
-        return {
-          'background-color': player.color,
-        }
+      if (this.funcs.lineStyles) {
+        return this.funcs.lineStyles(line)
       }
     },
 
@@ -218,45 +201,5 @@ export default {
   border-radius: .5em;
   margin-top: 2em;
   line-height: 2em;
-}
-
-.indent-0.generic {
-  color: #eee;
-  background-color: purple;
-}
-
-.player-action {
-  padding: 5px 10px;
-  border-radius: 3px;
-}
-
-.player-action.recruit-action {
-  background-color: #e8b687;
-}
-
-.player-action.play-a-card {
-  background-color: #e8d987;
-}
-
-.player-action.power-action {
-  background-color: #e8c887;
-}
-
-.player-action.pass-action {
-  background-color: #c96d2c;
-}
-
-.player-turn-start {
-  font-weight: bold;
-  font-size: 1.2em;
-  margin-top: 1em;
-  background-color: lightgreen;
-  border-radius: .2em;
-}
-.player-turn-start::before {
-  content: "—";
-}
-.player-turn-start::after {
-  content: "—";
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="player">
     <div class="details" @click="showTableauModal">
-      <div class="header" :class="headerClasses(player)" :style="headerStyles(player)">
+      <div class="header" :style="headerStyles(player)">
         {{ player.name }}
         <i v-if="isFirstPlayer" class="bi bi-1-circle" />
       </div>
@@ -99,24 +99,9 @@ export default {
   },
 
   methods: {
-    headerClasses(player) {
-      const classes = []
-
-      if (!this.game.settings.chooseColors) {
-        const color = this.ui.fn.getPlayerColor(this.game, player)
-        classes.push(`${color}-element`)
-      }
-
-      return classes
-    },
-
     headerStyles(player) {
       const output = {}
-
-      if (this.game.settings.chooseColors) {
-        output['background-color'] = player.color
-      }
-
+      output['background-color'] = player.color
       return output
     },
 

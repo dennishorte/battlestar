@@ -12,8 +12,7 @@
         v-for="troop in loc.getTroops()"
         :key="troop.id"
         class="troop-space"
-        :class="troopClasses(troop)"
-        :style="troopStyles(troop)"
+        :style="ui.fn.troopStyle(troop)"
       ></div>
 
       <div
@@ -28,8 +27,7 @@
         v-for="spy in loc.getSpies()"
         :key="spy.id"
         class="spy troop-space"
-        :class="troopClasses(spy)"
-        :style="troopStyles(spy)"
+        :style="ui.fn.troopStyle(spy)"
       ></div>
     </div>
 
@@ -67,29 +65,6 @@ export default {
   methods: {
     click() {
       this.ui.fn.clickLocation(this.loc)
-    },
-
-    troopClasses(troop) {
-      const classes = []
-
-      if (!this.game.settings.chooseColors) {
-        const color = this.ui.fn.getTroopColor(this.game, troop)
-        classes.push(`${color}-element`)
-      }
-
-      return classes
-    },
-
-    troopStyles(troop) {
-      if (this.game.settings.chooseColors) {
-        const player = this.game.getPlayerByCard(troop)
-        if (player) {
-          return { 'background-color': player.color }
-        }
-        else {
-          return { 'background-color': 'gray' }
-        }
-      }
     },
   },
 }

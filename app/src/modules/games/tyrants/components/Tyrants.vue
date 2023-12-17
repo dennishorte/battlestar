@@ -1,6 +1,6 @@
 <template>
   <div class="tyrants">
-    <ChatOffCanvas :classes="chatClasses" :colors="chatColors" />
+    <ChatOffCanvas :colors="chatColors" />
 
     <div class="container-fluid">
       <div class="row flex-nowrap main-row">
@@ -11,7 +11,7 @@
             <DropdownButton @click="showScores">scores</DropdownButton>
           </GameMenu>
 
-          <GameLog />
+          <GameLogTyrants />
           <ChatInput />
         </div>
 
@@ -62,7 +62,7 @@ import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
 // Tyrants Components
 import Devoured from './Devoured'
-import GameLog from './log/GameLog'
+import GameLogTyrants from './log/GameLogTyrants'
 import GameMap from './map/GameMap'
 import Market from './Market'
 import Player from './Player'
@@ -77,28 +77,6 @@ import TableauModal from './TableauModal'
 import Modal from '@/components/Modal'
 
 
-function getTroopColor(game, troop) {
-  if (troop.owner === undefined) {
-    return 'neutral'
-  }
-  else {
-    return getPlayerColor(game, troop.owner)
-  }
-}
-
-
-function getPlayerColor(game, player) {
-  const seatNumber = game.getPlayerAll().indexOf(player)
-  switch (seatNumber) {
-    case 0: return 'red';
-    case 1: return 'blue';
-    case 2: return 'green';
-    case 3: return 'yellow';
-  }
-
-  throw new Error(`Unsupported seat number for color selection: ${seatNumber}`)
-}
-
 export default {
   name: 'Tyrants',
 
@@ -108,7 +86,7 @@ export default {
     Devoured,
     DropdownButton,
     DropdownDivider,
-    GameLog,
+    GameLogTyrants,
     GameMap,
     GameMenu,
     Market,
@@ -129,9 +107,8 @@ export default {
       ui: {
         fn: {
           clickLocation: this.clickLocation,
-          getPlayerColor,
-          getTroopColor,
           insertSelectorSubtitles: this.insertSelectorSubtitles,
+          troopStyle: this.troopStyle,
         },
         modals: {
           cardViewer: {
@@ -175,27 +152,14 @@ export default {
   },
 
   computed: {
-    chatClasses() {
-      if (!this.game.settings.chooseColors) {
-        const output = {}
-        for (const player of this.game.getPlayerAll()) {
-          const color = getPlayerColor(this.game, player)
-          output[player.name] = `${color}-element`
-        }
-        return output
-      }
-    },
-
     chatColors() {
-      if (this.game.settings.chooseColors) {
-        const output = {}
+      const output = {}
 
-        for (const player of this.game.getPlayerAll()) {
-          output[player.name] = player.color
-        }
-
-        return output
+      for (const player of this.game.getPlayerAll()) {
+        output[player.name] = player.color
       }
+
+      return output
     },
 
     devouredCount() {
@@ -306,6 +270,16 @@ export default {
 
     showScores() {
       this.$modal('tyrants-scores').show()
+    },
+
+    troopStyle(troop) {
+      const player = this.game.getPlayerByCard(troop)
+      if (player) {
+        return { 'background-color': player.color }
+      }
+      else {
+        return { 'background-color': 'gray' }
+      }
     },
 
     waitingMouseEntered(data) {

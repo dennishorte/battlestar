@@ -204,6 +204,8 @@ Tyrants.prototype.initializeCards = function() {
 }
 
 Tyrants.prototype.initializeTokens = function() {
+  this.state.tokenLookup = {}
+
   for (const player of this.getPlayerAll()) {
     const troopZone = this.getZoneByPlayer(player, 'troops')
     for (let i = 0; i < 40; i++) {
@@ -214,6 +216,7 @@ Tyrants.prototype.initializeTokens = function() {
       token.home = troopZone.id
       token.owner = player
       troopZone.addCard(token)
+      this.state.tokenLookup[token.id] = token
     }
 
     const spyZone = this.getZoneByPlayer(player, 'spies')
@@ -225,6 +228,7 @@ Tyrants.prototype.initializeTokens = function() {
       token.home = spyZone.id
       token.owner = player
       spyZone.addCard(token)
+      this.state.tokenLookup[token.id] = token
     }
   }
 
@@ -237,6 +241,7 @@ Tyrants.prototype.initializeTokens = function() {
     token.zone = neutralZone.id
     token.home = neutralZone.id
     neutralZone.addCard(token)
+    this.state.tokenLookup[token.id] = token
   }
 
   // Place neutrals on map
@@ -1637,7 +1642,15 @@ Tyrants.prototype.getAssassinateChoices = function(player, opts={}) {
 }
 
 Tyrants.prototype.getCardById = function(cardId) {
-  return res.cards.byId[cardId]
+  if (cardId in res.cards.byId) {
+    return res.cards.byId[cardId]
+  }
+  else if (cardId in this.state.tokenLookup) {
+    return this.state.tokenLookup[cardId]
+  }
+  else {
+    throw new Error(`Unknown card: ${cardId}`)
+  }
 }
 
 Tyrants.prototype.getCardsByZone = function(player, name) {
