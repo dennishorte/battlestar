@@ -327,7 +327,7 @@ export default {
 
     passToThisPlayer() {
       this.do(this.actorPlayer, { name: 'pass priority', target: this.player.name })
-      this.save()
+      this.save(this.game)
     },
 
     revealHand() {

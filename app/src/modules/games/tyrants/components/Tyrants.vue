@@ -238,7 +238,7 @@ export default {
             location: loc.name,
           }]
         })
-        await this.save()
+        await this.save(this.game)
       }
       else {
         this.bus.emit('user-select-option', {

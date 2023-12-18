@@ -161,12 +161,12 @@ export default {
         title: waiting.title,
         deckData: this.activeDeck.serialize(),
       })
-      this.save()
+      this.save(this.game)
     },
 
     unselectDeck() {
       this.game.undo()
-      this.save()
+      this.save(this.game)
     },
 
     waiting(player) {
