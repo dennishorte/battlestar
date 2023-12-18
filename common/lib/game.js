@@ -299,6 +299,14 @@ Game.prototype.undo = function() {
   this.usedUndo = true
   this.run()
 
+  // Update the chat indices so that they are no bigger than the length of the log.
+  const logLength = this.getLog().length
+  for (const chat of this.chat) {
+    if (chat.position > logLength) {
+      chat.position = logLength
+    }
+  }
+
   return '__SUCCESS__'
 }
 
