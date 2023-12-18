@@ -2429,8 +2429,8 @@ Innovation.prototype.mDraw = function(player, exp, age, opts={}) {
           return r.score - l.score
         }
         else if (r.achs !== l.achs) {
-          r.reason = 'high draw - tie breaker'
-          l.reason = 'high draw - tie breaker'
+          r.reason = 'high draw - tie breaker (achievements)'
+          l.reason = 'high draw - tie breaker (achievements)'
           return r.achs - l.achs
         }
         else {
