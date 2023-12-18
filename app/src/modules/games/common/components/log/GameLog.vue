@@ -18,7 +18,7 @@
 
     </div>
 
-    <RematchButton v-if="game.gameOver" />
+    <RematchButton v-if="showRematchButton && game.gameOver" />
 
     <div class="bottom-space"></div>
   </div>
@@ -40,7 +40,12 @@ export default {
     funcs: {
       type: Object,
       default: {},
-    }
+    },
+
+    showRematchButton: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   inject: ['game', 'ui'],

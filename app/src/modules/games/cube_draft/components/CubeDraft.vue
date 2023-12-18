@@ -7,7 +7,7 @@
         <GameMenu :disabled="['undo']">
           <DropdownRouterLink :to="'/magic/cube/' + game.settings.cubeId">cube</DropdownRouterLink>
         </GameMenu>
-        <GameLog />
+        <GameLogCubeDraft />
         <ChatInput />
       </div>
 
@@ -126,7 +126,7 @@ import AdminOptions from './AdminOptions'
 import CardCloseupModal from './CardCloseupModal'
 import CardDraftModal from './CardDraftModal'
 import CardTableau from './CardTableau'
-import GameLog from './log/GameLog'
+import GameLogCubeDraft from './log/GameLogCubeDraft'
 import MatchResults from './MatchResults'
 import SeatingInfo from './SeatingInfo'
 
@@ -158,7 +158,7 @@ export default {
     Decklist,
     DropdownButton,
     DropdownRouterLink,
-    GameLog,
+    GameLogCubeDraft,
     GameMenu,
     MagicWrapper,
     MatchResults,
