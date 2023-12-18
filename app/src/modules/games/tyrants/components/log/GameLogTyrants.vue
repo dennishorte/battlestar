@@ -92,6 +92,10 @@ export default {
 </script>
 
 <style>
+#gamelog .indent-0 {
+  color: black;
+}
+
 #gamelog .indent-0.generic {
   color: #eee;
   background-color: purple;
