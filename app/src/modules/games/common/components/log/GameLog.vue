@@ -5,8 +5,13 @@
       <template v-if="line.type === 'chat'">
         <div class="chat-container">
           <div class="chat-message">
-            <span class="chat-author">{{ line.author }}:</span>
-            {{ line.text }}
+            <div>
+              <span class="chat-author">{{ line.author }}:</span>
+              {{ line.text }}
+            </div>
+            <div class="chat-delete" @click="deleteChat(line)" v-if="line.id">
+              <i class="bi bi-x-circle"></i>
+            </div>
           </div>
         </div>
       </template>
@@ -48,7 +53,7 @@ export default {
     },
   },
 
-  inject: ['game', 'ui'],
+  inject: ['game', 'save', 'ui'],
 
   provide() {
     return {
@@ -131,6 +136,11 @@ export default {
       }
     },
 
+    deleteChat(line) {
+      this.game.deleteChatById(line.id)
+      this.save(this.game)
+    },
+
     // This is convenient when you need dynamic selection of styles that can't easily be handled
     // by static CSS code. eg. When a user can select their player color, and you want to inject
     // that color into the log.
@@ -182,11 +192,17 @@ export default {
   border-radius: .25em;
   margin-left: 1em;
   text-align: right;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .chat-author {
   font-size: .8em;
   line-height: .5em;
-  margin-top: -.5em;;
+  margin-top: -.5em;
+}
+.chat-delete {
+  margin-left: .5em;
 }
 
 .log-line {

@@ -306,6 +306,11 @@ Game.prototype.undo = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Chat and Logging
 
+Game.prototype.deleteChatById = function(id) {
+  const index = this.chat.findIndex(c => c.id === id)
+  this.chat.splice(index, 1)
+}
+
 Game.prototype.getNewChatCount = function(playerOrName) {
   const playerName = playerOrName.name ? playerOrName.name : playerOrName
 
