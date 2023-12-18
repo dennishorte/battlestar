@@ -815,6 +815,15 @@ Tyrants.prototype.aCascade = function(player, opts) {
     this.mMoveCardTo(found, this.getZoneByPlayer(player, 'hand'))
     this.aPlayCard(player, found)
 
+    // If the player devoured the card as part of using it, they cannot acquire it.
+    if (this.getZoneByCard(found).id === 'devoured') {
+      this.mLog({
+        template: '{card} cannot be acquired because it was devoured',
+        args: { card: found }
+      })
+      return
+    }
+
     if (this.aChooseYesNo(player, 'Acquire ' + found.name + '?')) {
       this.mLog({
         template: '{player} adds {card} to their deck',

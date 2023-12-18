@@ -453,7 +453,7 @@ describe('Undead expansion', () => {
     test('undead cascade', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'undead'],
-        market: [
+        marketDeck: [
           'Lich',
           'Doppelganger',
           'Bounty Hunter',
@@ -477,7 +477,38 @@ describe('Undead expansion', () => {
           trophyHall: ['neutral'],
         },
       })
+    })
 
+    test('undead cascade: cannot acquire devoured cards', () => {
+      const game = t.gameFixture({
+        expansions: ['drow', 'undead'],
+        marketDeck: [
+          'Lich',
+          'Doppelganger',
+          'Bounty Hunter',
+          'Necromancer',
+          'Skeletal Horde',
+        ],
+        dennis: {
+          hand: ['High Priest of Myrkul'],
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Play Card.High Priest of Myrkul')
+      const request3 = t.choose(game, request2, 'Undead cascade 4')
+      const request4 = t.choose(game, request3, 'ched-halls a')
+      const request5 = t.choose(game, request4, 'ched-halls b')
+      const request6 = t.choose(game, request5, 'yes')
+      const request7 = t.choose(game, request6, 'Halls of the Scoured Legion')
+      const request8 = t.choose(game, request7, 'ever-halls')
+      const request9 = t.choose(game, request8, 'Everfire')
+
+      t.testBoard(game, {
+        dennis: {
+          discard: ['High Priest of Myrkul'],
+        },
+      })
     })
   })
 

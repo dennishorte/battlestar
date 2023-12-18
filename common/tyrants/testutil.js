@@ -217,7 +217,7 @@ TestUtil.gameFixture = function(options) {
       }
     }
 
-    if (options.market) {
+    if (options.marketDeck) {
       game.mLog({ template: 'setting up market' })
       game.mLogIndent()
 
@@ -225,7 +225,7 @@ TestUtil.gameFixture = function(options) {
       const cards = market.cards()
       const toMove = []
 
-      for (const name of options.market) {
+      for (const name of options.marketDeck) {
         game.mLog({ template: 'searching for: ' + name })
         const card = cards.find(c => c.name === name && !toMove.includes(c))
         if (!card) {
