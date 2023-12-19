@@ -71,10 +71,6 @@ export default {
 </script>
 
 <style scoped>
-#gamelog >>> .indent-spacer::before {
-  content: "…\00A0";
-}
-
 #gamelog >>> .player-turn-start {
   font-weight: bold;
   font-size: 1.2em;

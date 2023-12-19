@@ -208,7 +208,7 @@ export default {
 }
 
 .indent-spacer::before {
-  content: "|\00A0";
+  content: "…\00A0";
 }
 
 .indent-0 {
