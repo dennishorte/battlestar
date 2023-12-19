@@ -126,7 +126,7 @@ import AdminOptions from './AdminOptions'
 import CardCloseupModal from './CardCloseupModal'
 import CardDraftModal from './CardDraftModal'
 import CardTableau from './CardTableau'
-import GameLogCubeDraft from './log/GameLogCubeDraft'
+import GameLogCubeDraft from './GameLogCubeDraft'
 import MatchResults from './MatchResults'
 import SeatingInfo from './SeatingInfo'
 

@@ -62,7 +62,7 @@ import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
 // Tyrants Components
 import Devoured from './Devoured'
-import GameLogTyrants from './log/GameLogTyrants'
+import GameLogTyrants from './GameLogTyrants'
 import GameMap from './map/GameMap'
 import Market from './Market'
 import Player from './Player'
