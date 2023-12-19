@@ -50,7 +50,7 @@ export default {
     }),
 
     inPreGame() {
-      return !this.game.getDecksSelected()
+      return this.gameReady && !this.game.getDecksSelected()
     },
 
     player() {
