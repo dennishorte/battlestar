@@ -10,7 +10,7 @@
             </DropdownItem>
           </GameMenu>
 
-          <History />
+          <GameLogInnovation />
           <ChatInput />
         </div>
 
@@ -49,7 +49,7 @@ import Biscuits from './Biscuits'
 import CardNameFull from './CardNameFull'
 import Decks from './Decks'
 import DropdownItem from '@/components/DropdownItem'
-import History from './History'
+import GameLogInnovation from './GameLogInnovation'
 import PlayerTableau from './PlayerTableau'
 
 // Modals
@@ -67,7 +67,7 @@ export default {
     Decks,
     DropdownItem,
     GameMenu,
-    History,
+    GameLogInnovation,
     PlayerTableau,
     WaitingPanel,
 

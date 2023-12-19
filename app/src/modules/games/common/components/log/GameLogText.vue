@@ -18,19 +18,28 @@ export default {
     text: String,
   },
 
+  inject: ['funcs'],
+
   computed: {
     html() {
-      return this
-        .text
-        .replaceAll(cardNameMatcher, (match, name) => {
-          return `<CardName name="${name}" />`
-        })
-        .replaceAll(locNameMatcher, (match, name) => {
-          return `<LocName name="${name}" />`
-        })
-        .replaceAll(playerMatcher, (match, name) => {
-          return `<PlayerName name="${name}" />`
-        })
+      if (this.funcs.componentMatchers) {
+        return this.funcs.componentMatchers(this.text)
+      }
+
+      // A set of default matchers that will be good enough for many games.
+      else {
+        return this
+          .text
+          .replaceAll(cardNameMatcher, (match, name) => {
+            return `<CardName name="${name}" />`
+          })
+          .replaceAll(locNameMatcher, (match, name) => {
+            return `<LocName name="${name}" />`
+          })
+          .replaceAll(playerMatcher, (match, name) => {
+            return `<PlayerName name="${name}" />`
+          })
+      }
     },
 
     processedText() {
@@ -38,13 +47,17 @@ export default {
         'display:inline-block',
       ].join(';')
 
+
+      const defaultComponents = {
+        CardName,
+        LocName,
+        PlayerName,
+      }
+      const components = this.funcs.components ? this.funcs.components : defaultComponents
+
       return {
         template: `<div style="${style};">` + this.html + '</div>',
-        components: {
-          CardName,
-          LocName,
-          PlayerName,
-        },
+        components,
       }
     },
   },

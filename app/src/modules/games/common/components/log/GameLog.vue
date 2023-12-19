@@ -73,10 +73,6 @@ export default {
         if (entry.type === 'response-received') {
           // do nothing
         }
-        else if (entry === '__INDENT__') {
-        }
-        else if (entry === '__OUTDENT__') {
-        }
         else if (entry.type === 'chat') {
           output.push(entry)
         }
