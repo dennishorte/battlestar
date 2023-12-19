@@ -9,7 +9,7 @@
 export default {
   name: 'PlayerName',
 
-  inject: ['game', 'funcs', 'ui'],
+  inject: ['game', 'funcs'],
 
   props: {
     name: String,
@@ -37,4 +37,7 @@ export default {
 
 
 <style scoped>
+.player-name {
+  display: inline-block;
+}
 </style>

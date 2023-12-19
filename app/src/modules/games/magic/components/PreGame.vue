@@ -13,7 +13,7 @@
           <DropdownButton data-bs-toggle="modal" data-bs-target="#link-to-draft-modal">link to draft</DropdownButton>
         </GameMenu>
 
-        <GameLog :entries="game.getMergedLog()" />
+        <GameLogMagic :entries="game.getMergedLog()" />
         <ChatInput />
       </div>
 
@@ -89,7 +89,7 @@ import ChatInput from '@/modules/games/common/components/ChatInput'
 import Decklist from '@/modules/magic/components/deck/Decklist'
 import DropdownDivider from '@/components/DropdownDivider'
 import DropdownButton from '@/components/DropdownButton'
-import GameLog from './log/GameLog'
+import GameLogMagic from './GameLogMagic'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import MagicFileManager from '@/modules/magic/components/MagicFileManager'
 
@@ -101,7 +101,7 @@ export default {
     Decklist,
     DropdownDivider,
     DropdownButton,
-    GameLog,
+    GameLogMagic,
     GameMenu,
     MagicFileManager,
   },

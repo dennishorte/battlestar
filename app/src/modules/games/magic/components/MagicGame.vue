@@ -29,7 +29,7 @@
 
       </GameMenu>
 
-      <GameLog :entries="game.getMergedLog()" />
+      <GameLogMagic />
       <ChatInput :save-on-chat="false" />
     </div>
 
@@ -59,7 +59,7 @@ import CounterCloseupModal from './CounterCloseupModal'
 import DropdownDivider from '@/components/DropdownDivider'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownRouterLink from '@/components/DropdownRouterLink'
-import GameLog from './log/GameLog'
+import GameLogMagic from './GameLogMagic'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import PhaseSelector from './PhaseSelector'
 import PlayerTableau from './PlayerTableau'
@@ -74,7 +74,7 @@ export default {
     DropdownDivider,
     DropdownButton,
     DropdownRouterLink,
-    GameLog,
+    GameLogMagic,
     GameMenu,
     PhaseSelector,
     PlayerTableau,

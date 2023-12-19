@@ -1,31 +1,37 @@
 <template>
-  <div class="gamelog" ref="gamelog">
-    <div v-for="(line, index) in lines" :key="index" :class="line.classes" class="log-line">
+  <div class="gamelog" ref="gamelog" :class="nestedClasses">
+    <template v-for="(line, index) in lines">
 
-      <template v-if="line.type === 'chat'">
-        <div class="chat-container">
-          <div class="chat-message">
-            <div>
-              <span class="chat-author">{{ line.author }}:</span>
-              {{ line.text }}
-            </div>
-            <div class="chat-delete" @click="deleteChat(line)" v-if="line.id">
-              <i class="bi bi-x-circle"></i>
+      <div v-if="line.type === 'nest'">
+        <GameLog :entries="line.entries" :depth="line.depth" />
+      </div>
+
+      <div v-else class="log-line" :class="line.classes">
+        <template v-if="line.type === 'chat'">
+          <div class="chat-container">
+            <div class="chat-message">
+              <div>
+                <span class="chat-author">{{ line.author }}:</span>
+                {{ line.text }}
+              </div>
+              <div class="chat-delete" @click="deleteChat(line)" v-if="line.id">
+                <i class="bi bi-x-circle"></i>
+              </div>
             </div>
           </div>
-        </div>
-      </template>
+        </template>
 
-      <template v-else>
-        <div v-for="n in line.indent" :key="n" class="indent-spacer" />
-        <GameLogText :text="line.text" :class="classes(line)" :style="styles(line)" />
-      </template>
+        <template v-else>
+          <div v-for="n in indentSpacers(line)" :key="n" class="indent-spacer" />
+          <GameLogText :text="line.text" :class="classes(line)" />
+        </template>
+      </div>
 
-    </div>
+    </template>
 
     <RematchButton v-if="showRematchButton && game.gameOver" />
 
-    <div class="bottom-space"></div>
+    <div class="bottom-space" v-if="!nested"></div>
   </div>
 </template>
 
@@ -42,6 +48,16 @@ export default {
   },
 
   props: {
+    depth: {
+      type: Number,
+      default: 0,
+    },
+
+    entries: {
+      type: Array,
+      default: null,
+    },
+
     funcs: {
       type: Object,
       default: {},
@@ -53,7 +69,7 @@ export default {
     },
   },
 
-  inject: ['game', 'save', 'ui'],
+  inject: ['game', 'save'],
 
   provide() {
     return {
@@ -63,33 +79,25 @@ export default {
 
   computed: {
     lines() {
-      const output = []
-      let indent = 0
-
-      const entries = this.game.getMergedLog()
-      for (let i = 0; i < entries.length; i++) {
-        const entry = entries[i]
-
-        if (entry.type === 'response-received') {
-          // do nothing
-        }
-        else if (entry.type === 'chat') {
-          output.push(entry)
-        }
-        else {
-          const text = this.convertLogMessage(entry)
-          const classes = entry.classes || []
-
-          output.push({
-            text,
-            classes,
-            args: entry.args,
-            indent: entry.indent,
-          })
-        }
+      if (this.entries) {
+        return this.entries
       }
-      return output
-    }
+      else {
+        const output = this.nestLog(this.game.getMergedLog()).output
+        return output
+      }
+    },
+
+    nested() {
+      return this.depth > 0
+    },
+
+    nestedClasses() {
+      return [
+        'nested',
+        `nested-${this.depth}`,
+      ]
+    },
   },
 
   watch: {
@@ -126,6 +134,57 @@ export default {
       return msg
     },
 
+    nestLog(entries, depth=0) {
+      const output = []
+      let indent = 0
+      let count = 0
+
+      for (let i = 0; i < entries.length; i++) {
+        count += 1
+
+        const entry = entries[i]
+
+        if (entry.type === 'response-received') {
+          // do nothing
+        }
+        else if (entry.type === 'chat') {
+          output.push(entry)
+        }
+        else {
+          const text = this.convertLogMessage(entry)
+          const line = {
+            text,
+            classes: entry.classes || [],
+            args: entry.args,
+            indent: entry.indent,
+          }
+
+          if (line.classes.includes('stack-push')) {
+            const result = this.nestLog(entries.slice(i + 1), depth + 1)
+            const nested = result.output
+
+            i += result.consumed
+            count += result.consumed
+            nested.splice(0, 0, line)
+
+            output.push({
+              type: 'nest',
+              depth: depth + 1,
+              entries: nested
+            })
+          }
+          else if (line.classes.includes('stack-pop')) {
+            output.push(line)
+            break
+          }
+          else {
+            output.push(line)
+          }
+        }
+      }
+      return { output, consumed: count }
+    },
+
     classes(line) {
       if (this.funcs.lineClasses) {
         return this.funcs.lineClasses(line)
@@ -135,6 +194,16 @@ export default {
     deleteChat(line) {
       this.game.deleteChatById(line.id)
       this.save(this.game)
+    },
+
+    indentSpacers(entry) {
+      return 0
+      if (this.funcs.lineIndent) {
+        return this.funcs.lineIndent(entry)
+      }
+      else {
+        return entry.indent
+      }
     },
 
     // This is convenient when you need dynamic selection of styles that can't easily be handled
@@ -205,6 +274,8 @@ export default {
   display: flex;
   flex-direction: row;
   margin-top: 1px;
+  padding-left: 1em;
+  width: 100%;
 }
 
 .indent-spacer::before {

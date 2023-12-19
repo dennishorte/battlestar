@@ -53,6 +53,7 @@ export default {
     },
 
     mouseover() {
+      console.log(this.name, this.card)
       if (this.funcs.cardMouseover) {
         this.funcs.cardMouseover(this.card)
       }

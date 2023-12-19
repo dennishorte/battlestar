@@ -17,7 +17,7 @@ const playerMatcher = /player[(]([^()]+)[)]/g
 
 
 export default {
-  name: 'GameLogTyrants',
+  name: 'GameLogInnovation',
 
   components: {
     GameLog
