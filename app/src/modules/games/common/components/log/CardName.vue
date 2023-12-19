@@ -1,5 +1,13 @@
 <template>
-  <div class="card-name" @click="clicked" :class="classes" :style="styles">
+  <div
+    class="card-name"
+    @click="click"
+    @mouseover="mouseover"
+    @mouseleave="mouseleave"
+    @mousemove="mousemove"
+    :class="classes"
+    :style="styles"
+  >
     {{ displayName }}
   </div>
 </template>
@@ -9,7 +17,7 @@
 export default {
   name: 'CardName',
 
-  inject: ['game', 'ui', 'funcs'],
+  inject: ['game', 'funcs'],
 
   props: {
     name: String,
@@ -38,9 +46,28 @@ export default {
   },
 
   methods: {
-    clicked() {
-      this.ui.modals.cardViewer.cardId = this.name
-      this.$modal('card-viewer-modal').show()
+    click() {
+      if (this.funcs.cardClick) {
+        this.funcs.cardClick(this.card)
+      }
+    },
+
+    mouseover() {
+      if (this.funcs.cardMouseover) {
+        this.funcs.cardMouseover(this.card)
+      }
+    },
+
+    mouseleave() {
+      if (this.funcs.cardMouseleave) {
+        this.funcs.cardMouseleave(this.card)
+      }
+    },
+
+    mousemove(event) {
+      if (this.funcs.cardMousemove) {
+        this.funcs.cardMousemove(event, this.card)
+      }
     },
   },
 }
@@ -48,4 +75,7 @@ export default {
 
 
 <style scoped>
+.card-name {
+  display: inline-block;
+}
 </style>

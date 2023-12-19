@@ -17,11 +17,17 @@ export default {
   methods: {
     propFuncs() {
       return {
+        cardClick: this.cardClick,
         cardStyles: this.cardStyles,
         lineClasses: this.lineClasses,
         lineStyles: this.lineStyles,
         playerStyles: this.playerStyles,
       }
+    },
+
+    cardClick(card) {
+      this.ui.modals.cardViewer.cardId = card.id
+      this.$modal('card-viewer-modal').show()
     },
 
     cardStyles(card) {
