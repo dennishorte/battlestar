@@ -23,7 +23,7 @@
 
         <template v-else>
           <div v-for="n in indentSpacers(line)" :key="n" class="indent-spacer" />
-          <GameLogText :text="line.text" :class="classes(line)" />
+          <GameLogText :text="line.text" :class="classes(line)" :style="styles(line)" />
         </template>
       </div>
 

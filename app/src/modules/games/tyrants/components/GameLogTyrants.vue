@@ -128,20 +128,6 @@ export default {
   background-color: #c96d2c;
 }
 
-#gamelog:deep() .player-turn-start {
-  font-weight: bold;
-  font-size: 1.2em;
-  margin-top: 1em;
-  background-color: lightgreen;
-  border-radius: .2em;
-}
-#gamelog:deep() .player-turn-start::before {
-  content: "—";
-}
-#gamelog:deep() .player-turn-start::after {
-  content: "—";
-}
-
 #gamelog:deep() .card-name {
   display: inline-block;
   color: #2a1247;
