@@ -62,14 +62,6 @@ export default {
   justify-content: center;
 }
 
-.troop-space {
-  height: 1.2em;
-  width: 1.2em;
-  border-radius: 50%;
-  border: 1px solid black;
-  margin: 1px;
-}
-
 .loc-name {
   font-size: .7em;
   text-align: center;

@@ -10,7 +10,7 @@
           <div class="trophies" v-if="trophyHall.length > 0">
             <div
               v-for="token in trophyHall"
-              :key="token.id"
+              class="troop-space"
               :style="ui.fn.troopStyle(token)"
             ></div>
           </div>

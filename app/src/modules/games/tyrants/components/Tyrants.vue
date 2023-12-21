@@ -322,4 +322,12 @@ export default {
   max-width: 400px;
   overflow: hidden;
 }
+
+.tyrants:deep() .troop-space {
+  height: 1.2em;
+  width: 1.2em;
+  border-radius: 50%;
+  border: 1px solid black;
+  margin: 1px;
+}
 </style>
