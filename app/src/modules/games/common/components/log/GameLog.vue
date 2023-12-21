@@ -3,7 +3,7 @@
     <template v-for="(line, index) in lines">
 
       <div v-if="line.type === 'nest'">
-        <GameLog :entries="line.entries" :depth="line.depth" />
+        <GameLog :entries="line.entries" :depth="line.depth" :funcs="funcs" />
       </div>
 
       <div v-else class="log-line" :class="line.classes">
@@ -117,8 +117,14 @@ export default {
       for (const [arg, value] of Object.entries(entry.args)) {
         let replacement = value.value
 
-        if (arg === 'card' && !value.value.startsWith('*')) {
-          replacement = `card(${value.value})`
+        if (arg === 'card') {
+          if (this.funcs.convertCard) {
+            replacement = this.funcs.convertCard(value)
+          }
+
+          else if (!value.value.startsWith('*')) {
+            replacement = `card(${value.value})`
+          }
         }
 
         else if (arg === 'player') {

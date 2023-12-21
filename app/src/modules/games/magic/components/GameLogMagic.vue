@@ -20,6 +20,7 @@ export default {
         cardMouseover: this.cardMouseover,
         cardMouseleave: this.cardMouseleave,
         cardMousemove: this.cardMousemove,
+        convertCard: this.convertCard,
         lineClasses: this.lineClasses,
         lineIndent: this.lineIndent,
       }
@@ -30,7 +31,6 @@ export default {
     },
 
     cardMouseover(card) {
-      console.log(card)
       if (card && card.data) {
         this.$store.commit('magic/setMouseoverCard', card.data)
       }
@@ -47,6 +47,15 @@ export default {
         x: event.clientX,
         y: event.clientY,
       })
+    },
+
+    convertCard(card) {
+      if (!card.classes.includes('card-hidden')) {
+        return `card(${card.cardId})`
+      }
+      else {
+        return card.value
+      }
     },
 
     lineClasses(line) {
