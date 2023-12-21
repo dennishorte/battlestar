@@ -29,7 +29,7 @@ export default {
 </script>
 
 <style>
-#gamelog >>> .indent-0 {
+#gamelog:deep() .indent-0 {
   margin: 2em 1em 0 1em;
 
   color: white;

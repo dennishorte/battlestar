@@ -98,65 +98,65 @@ export default {
 </script>
 
 <style scoped>
-#gamelog >>> .indent-0 {
+#gamelog:deep() .indent-0 {
   color: black;
 }
 
-#gamelog >>> .indent-0.generic {
+#gamelog:deep() .indent-0.generic {
   color: #eee;
   background-color: purple;
 }
 
-#gamelog >>> .player-action {
+#gamelog:deep() .player-action {
   padding: 5px 10px;
   border-radius: 3px;
 }
 
-#gamelog >>> .player-action.recruit-action {
+#gamelog:deep() .player-action.recruit-action {
   background-color: #e8b687;
 }
 
-#gamelog >>> .player-action.play-a-card {
+#gamelog:deep() .player-action.play-a-card {
   background-color: #e8d987;
 }
 
-#gamelog >>> .player-action.power-action {
+#gamelog:deep() .player-action.power-action {
   background-color: #e8c887;
 }
 
-#gamelog >>> .player-action.pass-action {
+#gamelog:deep() .player-action.pass-action {
   background-color: #c96d2c;
 }
 
-#gamelog >>> .player-turn-start {
+#gamelog:deep() .player-turn-start {
   font-weight: bold;
   font-size: 1.2em;
   margin-top: 1em;
   background-color: lightgreen;
   border-radius: .2em;
 }
-#gamelog >>> .player-turn-start::before {
+#gamelog:deep() .player-turn-start::before {
   content: "—";
 }
-#gamelog >>> .player-turn-start::after {
+#gamelog:deep() .player-turn-start::after {
   content: "—";
 }
 
-#gamelog >>> .card-name {
+#gamelog:deep() .card-name {
   display: inline-block;
   color: #2a1247;
   font-weight: bold;
   text-decoration: underline;
 }
 
-#gamelog >>> .loc-name {
+#gamelog:deep() .loc-name {
   display: inline-block;
   background-color: var(--tyr-location-background);
   border-radius: .1em;
   padding: 0 .4em;
 }
 
-#gamelog >>> .player-name {
+#gamelog:deep() .player-name {
   display: inline-block;
   padding: 0 .4em;
   border-radius: .1em;

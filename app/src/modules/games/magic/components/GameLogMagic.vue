@@ -80,59 +80,59 @@ export default {
 </script>
 
 <style scoped>
-#gamelog >>> .nested {
+#gamelog:deep() .nested {
   margin: 2px .5em 0 0;
   border-radius: 0 .5em .5em 0;
   padding: .25em 0;
 }
 
-#gamelog >>> .nested-1 {
+#gamelog:deep() .nested-1 {
   background-color: #DCEDC8;
 }
 
-#gamelog >>> .nested-2 {
+#gamelog:deep() .nested-2 {
   background-color: #C5E1A5;
 }
 
-#gamelog >>> .nested-3 {
+#gamelog:deep() .nested-3 {
   background-color: #AED581;
 }
 
-#gamelog >>> .nested-4 {
+#gamelog:deep() .nested-4 {
   background-color: #9CCC65;
 }
 
-#gamelog >>> .nested-5 {
+#gamelog:deep() .nested-5 {
   background-color: #8BC34A;
 }
 
-#gamelog >>> .nested-6 {
+#gamelog:deep() .nested-6 {
   background-color: #7CB342;
 }
 
-#gamelog >>> .nested-7 {
+#gamelog:deep() .nested-7 {
   background-color: #689F38;
 }
 
-#gamelog >>> .nested-8 {
+#gamelog:deep() .nested-8 {
   background-color: #558B2F;
 }
 
-#gamelog >>> .pass-priority {
+#gamelog:deep() .pass-priority {
   background-color: #dca;
   border-radius: 0 .25em .25em 0;
   width: 40%;
   padding-left: 1em;
 }
 
-#gamelog >>> .set-phase {
+#gamelog:deep() .set-phase {
   background-color: #C3B091;
   border-radius: 0 .25em .25em 0;
   width: 50%;
   padding-left: 1em;
 }
 
-#gamelog >>> .player-turn-start {
+#gamelog:deep() .player-turn-start {
   font-weight: bold;
   font-size: 1.2em;
   margin-top: 1em;
@@ -141,14 +141,14 @@ export default {
   width: 100%;
   text-align: center;
 }
-#gamelog >>> .player-turn-start::before {
+#gamelog:deep() .player-turn-start::before {
   content: "—";
 }
-#gamelog >>> .player-turn-start::after {
+#gamelog:deep() .player-turn-start::after {
   content: "—";
 }
 
-#gamelog >>> .card-name {
+#gamelog:deep() .card-name {
   display: inline-block;
   color: #2a1247;
   font-weight: bold;

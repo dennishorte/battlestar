@@ -71,31 +71,31 @@ export default {
 </script>
 
 <style scoped>
-#gamelog >>> .player-turn-start {
+#gamelog:deep() .player-turn-start {
   font-weight: bold;
   font-size: 1.2em;
   margin-top: 1em;
   background-color: lightgreen;
   border-radius: .2em;
 }
-#gamelog >>> .player-turn-start::before {
+#gamelog:deep() .player-turn-start::before {
   content: "—";
 }
-#gamelog >>> .player-turn-start::after {
+#gamelog:deep() .player-turn-start::after {
   content: "—";
 }
 
-#gamelog >>> .action-header {
+#gamelog:deep() .action-header {
   font-weight: bold;
   margin-top: .5em;
 }
 
-#gamelog >>> .faded-text {
+#gamelog:deep() .faded-text {
   font-weight: 200;
   color: lightgray;
 }
 
-#gamelog >>> .card-effect {
+#gamelog:deep() .card-effect {
   background-color: lightgray;
   border-radius: .5em;
 }
