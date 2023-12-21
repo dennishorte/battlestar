@@ -11,7 +11,6 @@
           </GameMenu>
 
           <GameLogInnovation />
-          <ChatInput />
         </div>
 
         <div class="col game-column">
@@ -40,7 +39,6 @@ import mitt from 'mitt'
 
 import { inn } from 'battlestar-common'
 
-import ChatInput from '@/modules/games/common/components/ChatInput'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
@@ -63,7 +61,6 @@ export default {
   components: {
     Achievements,
     Biscuits,
-    ChatInput,
     Decks,
     DropdownItem,
     GameMenu,

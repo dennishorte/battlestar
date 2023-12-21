@@ -8,7 +8,6 @@
           <DropdownRouterLink :to="'/magic/cube/' + game.settings.cubeId">cube</DropdownRouterLink>
         </GameMenu>
         <GameLogCubeDraft />
-        <ChatInput />
       </div>
 
       <div
@@ -133,7 +132,6 @@ import SeatingInfo from './SeatingInfo'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownRouterLink from '@/components/DropdownRouterLink'
 
-import ChatInput from '@/modules/games/common/components/ChatInput'
 import DebugModal from '@/modules/games/common/components/DebugModal'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
@@ -153,7 +151,6 @@ export default {
     CardDraftModal,
     CardEditorModal,
     CardTableau,
-    ChatInput,
     DebugModal,
     Decklist,
     DropdownButton,

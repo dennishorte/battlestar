@@ -34,10 +34,13 @@
     <RematchButton v-if="showRematchButton && game.gameOver" />
 
     <div class="bottom-space" v-if="!nested"></div>
+
+    <ChatInput id="chat-input-main" :save-on-chat="saveOnChat" v-if="!nested" />
   </div>
 </template>
 
 <script>
+import ChatInput from '@/modules/games/common/components/ChatInput'
 import ChatOffCanvas from '@/modules/games/common/components/log/ChatOffCanvas'
 import GameLogText from '@/modules/games/common/components/log/GameLogText'
 import RematchButton from '@/modules/games/common/components/RematchButton'
@@ -47,6 +50,7 @@ export default {
   name: 'GameLog',
 
   components: {
+    ChatInput,
     ChatOffCanvas,
     GameLogText,
     RematchButton,
@@ -66,6 +70,11 @@ export default {
     funcs: {
       type: Object,
       default: {},
+    },
+
+    saveOnChat: {
+      type: Boolean,
+      default: true,
     },
 
     showRematchButton: {

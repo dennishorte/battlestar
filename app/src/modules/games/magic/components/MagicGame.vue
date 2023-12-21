@@ -30,7 +30,6 @@
       </GameMenu>
 
       <GameLogMagic />
-      <ChatInput :save-on-chat="false" />
     </div>
 
     <div class="magic-column phase-selector-column">
@@ -54,7 +53,6 @@
 import { mapState } from 'vuex'
 
 import CardCloseupModal from './CardCloseupModal'
-import ChatInput from '@/modules/games/common/components/ChatInput'
 import CounterCloseupModal from './CounterCloseupModal'
 import DropdownDivider from '@/components/DropdownDivider'
 import DropdownButton from '@/components/DropdownButton'
@@ -70,7 +68,6 @@ export default {
   components: {
     CardCloseupModal,
     CounterCloseupModal,
-    ChatInput,
     DropdownDivider,
     DropdownButton,
     DropdownRouterLink,

@@ -23,6 +23,7 @@ export default {
         convertCard: this.convertCard,
         lineClasses: this.lineClasses,
         lineIndent: this.lineIndent,
+        saveOnChat: this.saveOnChat,
       }
     },
 
@@ -74,6 +75,10 @@ export default {
       else {
         return Math.max(0, line.indent - 1)
       }
+    },
+
+    saveOnChat() {
+      return false
     },
   },
 }

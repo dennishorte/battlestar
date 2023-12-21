@@ -10,7 +10,6 @@
           </GameMenu>
 
           <GameLogTyrants />
-          <ChatInput />
         </div>
 
         <div class="col game-column">
@@ -51,7 +50,6 @@ import { util, tyr } from 'battlestar-common'
 import maps from '../res/maps.js'
 
 // Common Components
-import ChatInput from '@/modules/games/common/components/ChatInput'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
 import GameMenu from '@/modules/games/common/components/GameMenu'
@@ -78,7 +76,6 @@ export default {
   name: 'Tyrants',
 
   components: {
-    ChatInput,
     Devoured,
     DropdownButton,
     DropdownDivider,

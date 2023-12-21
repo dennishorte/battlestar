@@ -14,7 +14,6 @@
         </GameMenu>
 
         <GameLogMagic :entries="game.getMergedLog()" />
-        <ChatInput />
       </div>
 
       <div class="deck-column">
@@ -85,7 +84,6 @@
 import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
-import ChatInput from '@/modules/games/common/components/ChatInput'
 import Decklist from '@/modules/magic/components/deck/Decklist'
 import DropdownDivider from '@/components/DropdownDivider'
 import DropdownButton from '@/components/DropdownButton'
@@ -97,7 +95,6 @@ export default {
   name: 'PreGame',
 
   components: {
-    ChatInput,
     Decklist,
     DropdownDivider,
     DropdownButton,
