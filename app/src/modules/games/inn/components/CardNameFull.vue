@@ -31,7 +31,8 @@ export default {
   },
 
   methods: {
-    closeup() {
+    closeup(event) {
+      event.stopPropagation()
       this.game.ui.modals.cardsViewer.title = ''
       this.game.ui.modals.cardsViewer.cards = [this.game.getCardByName(this.name)]
       this.$modal('cards-viewer-modal').show()
