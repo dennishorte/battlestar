@@ -1,7 +1,5 @@
 <template>
   <div class="tyrants">
-    <ChatOffCanvas :colors="chatColors" />
-
     <div class="container-fluid">
       <div class="row flex-nowrap main-row">
         <div class="col history-column">
@@ -54,7 +52,6 @@ import maps from '../res/maps.js'
 
 // Common Components
 import ChatInput from '@/modules/games/common/components/ChatInput'
-import ChatOffCanvas from '@/modules/games/common/components/ChatOffCanvas'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
 import GameMenu from '@/modules/games/common/components/GameMenu'
@@ -82,7 +79,6 @@ export default {
 
   components: {
     ChatInput,
-    ChatOffCanvas,
     Devoured,
     DropdownButton,
     DropdownDivider,
@@ -152,16 +148,6 @@ export default {
   },
 
   computed: {
-    chatColors() {
-      const output = {}
-
-      for (const player of this.game.getPlayerAll()) {
-        output[player.name] = player.color
-      }
-
-      return output
-    },
-
     devouredCount() {
       return this.game.getZoneById('devoured').cards().length
     },

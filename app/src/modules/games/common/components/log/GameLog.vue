@@ -1,5 +1,7 @@
 <template>
   <div class="gamelog" ref="gamelog" :class="nestedClasses">
+    <ChatOffCanvas :colors="chatColors" v-if="!nested" />
+
     <template v-for="(line, index) in lines">
 
       <div v-if="line.type === 'nest'">
@@ -36,13 +38,16 @@
 </template>
 
 <script>
-import GameLogText from './GameLogText'
+import ChatOffCanvas from '@/modules/games/common/components/log/ChatOffCanvas'
+import GameLogText from '@/modules/games/common/components/log/GameLogText'
 import RematchButton from '@/modules/games/common/components/RematchButton'
+
 
 export default {
   name: 'GameLog',
 
   components: {
+    ChatOffCanvas,
     GameLogText,
     RematchButton,
   },
@@ -78,6 +83,15 @@ export default {
   },
 
   computed: {
+    chatColors() {
+      if (this.funcs.chatColors) {
+        return this.funcs.chatColors()
+      }
+      else {
+        return {}
+      }
+    },
+
     lines() {
       if (this.entries) {
         return this.entries

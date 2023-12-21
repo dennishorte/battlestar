@@ -19,6 +19,7 @@ export default {
       return {
         cardClick: this.cardClick,
         cardStyles: this.cardStyles,
+        chatColors: this.chatColors,
         lineClasses: this.lineClasses,
         lineStyles: this.lineStyles,
         playerStyles: this.playerStyles,
@@ -47,6 +48,16 @@ export default {
           return this.game.getPlayerByName(nameBits[1])
         }
       }
+    },
+
+    chatColors() {
+      const output = {}
+
+      for (const player of this.game.getPlayerAll()) {
+        output[player.name] = player.color
+      }
+
+      return output
     },
 
     lineClasses(line) {
