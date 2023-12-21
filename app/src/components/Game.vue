@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, nextTick } from 'vue'
 import { fromData } from 'battlestar-common'
 
 import CubeDraft from '@/modules/games/cube_draft/components/CubeDraft'
@@ -54,6 +54,9 @@ export default {
 
   methods: {
     async loadGame() {
+      this.game = null
+      await nextTick()
+
       if (!this.id) {
         return this.nextGame()
       }
