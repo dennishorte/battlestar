@@ -97,14 +97,19 @@ export default {
 
 
 <style scoped>
+#chat-off-canvas:deep() .offcanvas-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
 .chat {
-  /* color: #eee; */
   padding: .25em .5em;
   border-radius: .25em;
   margin-left: 1em;
   text-align: right;
   margin-bottom: .25em;
-  display: inline-block;
+  max-width: fit-content;
 }
 
 .chat-other {
