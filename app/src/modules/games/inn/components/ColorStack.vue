@@ -4,12 +4,18 @@
     @click="openCardsViewerModal"
   >
     <div class="color-stack-header" :class="[color]">
-      <div>
-        {{ zone.cards().length }} {{ zone.splay }}
+      <div class="card-splay">
+        {{ zone.cards().length }}
+        {{ zone.splay }}
+      </div>
+
+      <div class="hex-count-container">
+        <span class="hex-count-text">
+          {{ hexes.length }}
+        </span>
       </div>
 
       <div class="biscuit-counts">
-
         <div class="biscuit-count-square color-biscuit-castle">
           {{ biscuits.k }}
         </div>
@@ -28,17 +34,14 @@
         <div class="biscuit-count-square color-biscuit-clock">
           {{ biscuits.i }}
         </div>
-
       </div>
     </div>
 
     <template v-for="card in cards" :key="card.id">
       <CardStacked :card="card" />
     </template>
-
   </div>
 </template>
-
 
 <script>
 import CardStacked from './CardStacked'
@@ -58,17 +61,24 @@ export default {
   },
 
   computed: {
-    biscuits() {
-      const zone = this.game.getZoneByPlayer(this.player, this.color)
-      return this.game.getBiscuitsByZone(zone)
-    },
-
     cards() {
       return this.zone.cards()
     },
 
     zone() {
       return this.game.getZoneByPlayer(this.player, this.color)
+    },
+
+    biscuits() {
+      return this.game.getBiscuitsByZone(this.zone)
+    },
+
+    hexes() {
+      return this.cards
+        .map((card, idx) =>
+          card.checkBiscuitIsVisible('h', idx ? this.zone.splay : 'top')
+        )
+        .filter(Boolean)
     },
   },
 
@@ -79,7 +89,7 @@ export default {
       this.game.ui.modals.cardsViewer.cards = cards
       this.$modal('cards-viewer-modal').show()
     },
-  }
+  },
 }
 </script>
 
@@ -87,32 +97,57 @@ export default {
 .biscuit-counts {
   display: flex;
   flex-direction: row;
-  opacity: .4;
+  opacity: 0.4;
 }
 
 .biscuit-count-square {
   display: flex;
   justify-content: center;
-  align-text: center;
+  align-items: center;
 
-  font-size: .9em;
+  font-size: 0.9em;
   margin: 1px 0;
   color: #ddd;
   width: 1.2em;
+}
+
+.card-splay {
+  flex-grow: 1;
 }
 
 .color-stack-header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-
-  margin-left: .5rem;
-  margin-right: .5rem;
-  margin-top: .25rem;
-  padding: 0 .25rem;
+  align-items: center;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  margin-top: 0.25rem;
+  padding: 0 0.25rem;
   border-top: 1px solid #7d6c50;
   border-right: 1px solid #7d6c50;
   border-left: 1px solid #7d6c50;
   max-width: 284px;
 }
+
+.hex-count-container {
+  display: flex;
+  height: 1.1em;
+  width: 1.1em;
+  margin-top: 1px;
+  margin-right: 0.25rem;
+  
+  opacity: 0.4;
+  background-image: url("~@/assets/img/biscuit-hex.png");
+  background-size: 1.1em 1.1em;
+  
+  align-items: center;
+  justify-content: center;
+}
+
+.hex-count-text {
+  color: #ddd;
+  font-size: 0.7em;
+}
+
 </style>
