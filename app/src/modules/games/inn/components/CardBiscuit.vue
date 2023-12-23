@@ -52,6 +52,7 @@ export default {
 
   props: {
     biscuit: String,
+    slot: Number,
 
     classes: {
       type: Array,
@@ -78,6 +79,10 @@ export default {
 
       if (this.biscuit === '*') {
         base.push('inspire-biscuit')
+      }
+
+      if (this.slot === 1 && this.biscuit && 'cfikls'.indexOf(this.biscuit) !== -1) {
+        base.push('discover-biscuit')
       }
 
       return base
@@ -143,4 +148,9 @@ export default {
   border: 1px solid darkgray;
   border-radius: 50%;
 }
+
+.discover-biscuit {
+  box-shadow: 0 0 5px 1px gold;
+}
+
 </style>

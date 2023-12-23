@@ -11,6 +11,7 @@
               v-for="(biscuit, index) in biscuitsTopRow"
               :key="index"
               :biscuit="biscuit"
+              :slot="index"
             />
           </div>
           <div class="card-biscuits-row">
