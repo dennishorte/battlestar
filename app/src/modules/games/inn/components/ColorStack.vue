@@ -9,7 +9,11 @@
         {{ zone.splay }}
       </div>
 
-      <HexCount :count="hexCount" />
+      <div class="hex-count-container">
+        <span class="hex-count-text">
+          {{ hexes.length }}
+        </span>
+      </div>
 
       <div class="biscuit-counts">
         <div class="biscuit-count-square color-biscuit-castle">
@@ -41,14 +45,12 @@
 
 <script>
 import CardStacked from './CardStacked'
-import HexCount from './HexCount'
 
 export default {
   name: 'ColorStack',
 
   components: {
     CardStacked,
-    HexCount,
   },
 
   inject: ['game'],
@@ -71,12 +73,12 @@ export default {
       return this.game.getBiscuitsByZone(this.zone)
     },
 
-    hexCount() {
+    hexes() {
       return this.cards
         .map((card, idx) =>
           card.checkBiscuitIsVisible('h', idx ? this.zone.splay : 'top')
         )
-        .filter(Boolean).length
+        .filter(Boolean)
     },
   },
 
@@ -101,7 +103,7 @@ export default {
 .biscuit-count-square {
   display: flex;
   justify-content: center;
-  align-text: center;
+  align-items: center;
 
   font-size: 0.9em;
   margin: 1px 0;
@@ -127,4 +129,25 @@ export default {
   border-left: 1px solid #7d6c50;
   max-width: 284px;
 }
+
+.hex-count-container {
+  display: flex;
+  height: 1.1em;
+  width: 1.1em;
+  margin-top: 1px;
+  margin-right: 0.25rem;
+  
+  opacity: 0.4;
+  background-image: url("~@/assets/img/biscuit-hex.png");
+  background-size: 1.1em 1.1em;
+  
+  align-items: center;
+  justify-content: center;
+}
+
+.hex-count-text {
+  color: #ddd;
+  font-size: 0.7em;
+}
+
 </style>
