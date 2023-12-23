@@ -113,7 +113,6 @@ export default {
         return imageMap[this.biscuit]
       }
     },
-
   },
 }
 </script>
