@@ -150,7 +150,7 @@ export default {
 }
 
 .discover-biscuit {
-  box-shadow: 0 0 2px 2px gold;
+  box-shadow: 0 0 5px 1px gold;
 }
 
 </style>
