@@ -4,9 +4,12 @@
     @click="openCardsViewerModal"
   >
     <div class="color-stack-header" :class="[color]">
-      <div>
-        {{ zone.cards().length }} {{ zone.splay }}
+      <div class="card-splay">
+        {{ zone.cards().length }}
+        {{ zone.splay }}
       </div>
+
+      <HexCount :count="biscuits.h" />
 
       <div class="biscuit-counts">
 
@@ -42,12 +45,14 @@
 
 <script>
 import CardStacked from './CardStacked'
+import HexCount from './HexCount'
 
 export default {
   name: 'ColorStack',
 
   components: {
     CardStacked,
+    HexCount,
   },
 
   inject: ['game'],
@@ -101,10 +106,15 @@ export default {
   width: 1.2em;
 }
 
+.card-splay {
+  flex-grow: 1
+}
+
 .color-stack-header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 
   margin-left: .5rem;
   margin-right: .5rem;

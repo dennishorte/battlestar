@@ -169,7 +169,7 @@ CardBase.prototype.getBiscuits = function(splay) {
     return ''
   }
   else if (splay === 'left') {
-    return this.biscuits[3]
+    return this.biscuits.slice(3,4) + this.biscuits.slice(5,6)
   }
   else if (splay === 'right') {
     return this.biscuits.slice(0, 2)
