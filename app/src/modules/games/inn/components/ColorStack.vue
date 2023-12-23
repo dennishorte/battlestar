@@ -9,10 +9,9 @@
         {{ zone.splay }}
       </div>
 
-      <HexCount :count="biscuits.h" />
+      <HexCount :count="hexCount" />
 
       <div class="biscuit-counts">
-
         <div class="biscuit-count-square color-biscuit-castle">
           {{ biscuits.k }}
         </div>
@@ -31,17 +30,14 @@
         <div class="biscuit-count-square color-biscuit-clock">
           {{ biscuits.i }}
         </div>
-
       </div>
     </div>
 
     <template v-for="card in cards" :key="card.id">
       <CardStacked :card="card" />
     </template>
-
   </div>
 </template>
-
 
 <script>
 import CardStacked from './CardStacked'
@@ -63,17 +59,24 @@ export default {
   },
 
   computed: {
-    biscuits() {
-      const zone = this.game.getZoneByPlayer(this.player, this.color)
-      return this.game.getBiscuitsByZone(zone)
-    },
-
     cards() {
       return this.zone.cards()
     },
 
     zone() {
       return this.game.getZoneByPlayer(this.player, this.color)
+    },
+
+    biscuits() {
+      return this.game.getBiscuitsByZone(this.zone)
+    },
+
+    hexCount() {
+      return this.cards
+        .map((card, idx) =>
+          card.checkBiscuitIsVisible('h', idx ? this.zone.splay : 'top')
+        )
+        .filter(Boolean).length
     },
   },
 
@@ -84,7 +87,7 @@ export default {
       this.game.ui.modals.cardsViewer.cards = cards
       this.$modal('cards-viewer-modal').show()
     },
-  }
+  },
 }
 </script>
 
@@ -92,7 +95,7 @@ export default {
 .biscuit-counts {
   display: flex;
   flex-direction: row;
-  opacity: .4;
+  opacity: 0.4;
 }
 
 .biscuit-count-square {
@@ -100,14 +103,14 @@ export default {
   justify-content: center;
   align-text: center;
 
-  font-size: .9em;
+  font-size: 0.9em;
   margin: 1px 0;
   color: #ddd;
   width: 1.2em;
 }
 
 .card-splay {
-  flex-grow: 1
+  flex-grow: 1;
 }
 
 .color-stack-header {
@@ -115,11 +118,10 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-
-  margin-left: .5rem;
-  margin-right: .5rem;
-  margin-top: .25rem;
-  padding: 0 .25rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  margin-top: 0.25rem;
+  padding: 0 0.25rem;
   border-top: 1px solid #7d6c50;
   border-right: 1px solid #7d6c50;
   border-left: 1px solid #7d6c50;

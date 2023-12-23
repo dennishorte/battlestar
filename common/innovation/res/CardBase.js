@@ -32,7 +32,7 @@ CardBase.prototype.checkBiscuitIsVisible = function(biscuit, splay) {
 
   const biscuitIndex = this.biscuits.indexOf(biscuit)
   switch (splay) {
-    case 'left': return biscuitIndex === 3
+    case 'left': return biscuitIndex === 3 || biscuitIndex === 5
     case 'right': return biscuitIndex === 0 || biscuitIndex === 1
     case 'up': return biscuitIndex === 1 || biscuitIndex === 2 || biscuitIndex === 3
     case 'top': return biscuitIndex !== -1
@@ -198,13 +198,7 @@ CardBase.prototype.getBonuses = function(splay) {
 
   else {
     return matches
-      .map(bonus => {
-        switch (bonus) {
-          case 'a': return 10;
-          case 'b': return 11;
-          default: return parseInt(bonus)
-        }
-      })
+      .map(bonus => parseInt(bonus, 16))
   }
 }
 
