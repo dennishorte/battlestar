@@ -132,14 +132,14 @@ export default {
 
 .hex-count-container {
   display: flex;
-  height: 1.1em;
-  width: 1.1em;
+  height: 1.2em;
+  width: 1.2em;
   margin-top: 1px;
   margin-right: 0.25rem;
   
   opacity: 0.4;
   background-image: url("~@/assets/img/biscuit-hex.png");
-  background-size: 1.1em 1.1em;
+  background-size: 1.2em 1.2em;
   
   align-items: center;
   justify-content: center;
