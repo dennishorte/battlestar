@@ -9,20 +9,12 @@
 
 <script>
 
-const hexImage = require('@/assets/img/biscuit-hex.png')
-
 export default {
   name: 'HexCount',
 
   props: {
     count: Number,
   },
-
-  computed: {
-    imageUrl() {
-      return hexImage
-    },
-  }
 }
 
 </script>
