@@ -46,7 +46,8 @@ const cardData = [
     autoplay: true,
     text: [
       "At end of turn, promote another card played this turn.",
-      "If an opponent causes you to discard this, you may promote it instead."
+//      "If an opponent causes you to discard this, you may promote it instead."
+      "If an opponent causes you to discard this, you may promote it instead. If you do, draw a card.",
     ],
     impl: (game, player, { card }) => {
       game.aDeferPromotion(player, card)
@@ -62,6 +63,7 @@ const cardData = [
           const promote = game.aChooseYesNo(player, 'Promote Ambassador instead of discarding?')
           if (promote) {
             game.aPromote(player, card)
+            game.aDraw(player)
           }
           else {
             game.aDiscard(player, card)
@@ -553,7 +555,7 @@ const cardData = [
     count: 2,
     text: [
       "Deploy 3 troops.",
-      "If an opponent causes you to discard this, they must discard a card."
+      "If an opponent causes you to discard this, you draw a card and they draw only 4 cards the next time they would refill their hand."
     ],
     impl: (game, player) => {
       game.aChooseAndDeploy(player)
@@ -570,7 +572,8 @@ const cardData = [
             args: { player, card, player2: opp }
           })
           game.aDiscard(player, card)
-          game.aChooseAndDiscard(opp)
+          game.aDraw(player)
+          game.aReduceDraw(opp)
         }
       },
     ]

@@ -108,7 +108,7 @@ describe('Illithids expansion', () => {
           played: ['Gauth'],
         },
         micah: {
-          hand: ['House Guard', 'House Guard', 'House Guard'],
+          hand: ['House Guard', 'House Guard', 'House Guard', 'Soldier'],
           innerCircle: ['Ambassador'],
         },
       })
@@ -669,7 +669,7 @@ describe('Illithids expansion', () => {
   })
 
   describe('Neogi', () => {
-    test.only('deploy and opponents discard', () => {
+    test('deploy and opponents discard', () => {
       const game = t.gameFixture({
         expansions: ['drow', 'illithid'],
         dennis: {
@@ -970,17 +970,17 @@ describe('Illithids expansion', () => {
       const request2 = t.choose(game, request1, 'Play Card.Gauth')
       const request3 = t.choose(game, request2, '*Draw a card. Choose one opponent with more than 3 cards to discard a card')
       const request4 = t.choose(game, request3, 'Umber Hulk')
-      const request5 = t.choose(game, request4, 'House Guard')
-
+      const request5 = t.choose(game, request4, 'Play Card.House Guard')
+      const request6 = t.choose(game, request5, 'Play Card.Soldier')
+      const request7 = t.choose(game, request6, 'Pass')
 
       t.testBoard(game, {
         dennis: {
-          hand: ['Soldier'],
-          played: ['Gauth'],
-          discard: ['House Guard'],
+          hand: ['Noble', 'Noble', 'Soldier', 'Soldier'],
+          discard: ['Gauth', 'House Guard', 'Soldier'],
         },
         micah: {
-          hand: ['House Guard', 'House Guard', 'House Guard'],
+          hand: ['House Guard', 'House Guard', 'House Guard', 'Soldier'],
           discard: ['Umber Hulk'],
         },
       })

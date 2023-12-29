@@ -71,6 +71,8 @@ Tyrants.prototype.initialize = function() {
   this.mLog({ template: 'Initializing' })
   this.mLogIndent()
 
+  this.state.reduceDraw = {}
+
   this.initializePlayers()
   this.initializeZones()
   this.initializeCards()
@@ -108,6 +110,7 @@ Tyrants.prototype.initializePlayers = function() {
     player.team = p.name
     player.points = 0
     this.state.players.push(player)
+    this.state.reduceDraw[player.name] = 0
   }
 
   util.array.shuffle(this.state.players, this.random)
@@ -1500,6 +1503,11 @@ Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
   this.mRefillMarket()
 }
 
+// Player will draw one less card the next time they refill their hand.
+Tyrants.prototype.aReduceDraw = function(player) {
+  this.state.reduceDraw[player.name] += 1
+}
+
 Tyrants.prototype.aReturnSpy = function(player, loc, owner) {
   const spy = loc.getSpies(owner, loc)[0]
   util.assert(!!spy, `No spy belonging to ${owner.name} at ${loc.name}`)
@@ -1983,12 +1991,23 @@ Tyrants.prototype.mRefillHand = function(player) {
   })
   this.mLogIndent()
 
+  const reduceDraw = this.state.reduceDraw[player.name]
+  const numberToDraw = 5 - reduceDraw
+
+  if (reduceDraw > 0) {
+    this.mLog({
+      template: '{player} will draw {count} fewer cards this round',
+      args: { player, count: reduceDraw }
+    })
+    this.state.reduceDraw[player.name] = 0
+  }
+
   const drawnAfterShuffle = Math.min(
-    Math.max(0, 5 - deck.cards().length),  // Number of cards left to draw after reshuffling
+    Math.max(0, numberToDraw - deck.cards().length),  // Number of cards left to draw after reshuffling
     this.getCardsByZone(player, 'discard').length  // Number of cards in discard pile
   )
 
-  if (deck.cards().length < 5) {
+  if (deck.cards().length < numberToDraw) {
     this.mLog({
       template: '{player} draws the remaining {count} cards from deck',
       args: {
@@ -1998,7 +2017,7 @@ Tyrants.prototype.mRefillHand = function(player) {
     })
   }
 
-  while (hand.cards().length < 5) {
+  while (hand.cards().length < numberToDraw) {
     const drawResult = this.aDraw(player, { silent: true })
     if (drawResult === 'no-more-cards') {
       break
