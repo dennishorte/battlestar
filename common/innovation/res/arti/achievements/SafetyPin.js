@@ -17,6 +17,7 @@ function Card() {
   this.dogma = [
     `I demand you return all cards of value higher than 6 from your hand! Draw a {6}!`
   ]
+  this.relicExpansion = 'echo'
 
   this.dogmaImpl = [
     (game, player) => {

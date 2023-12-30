@@ -19,6 +19,7 @@ function Card() {
     `If you would score a non-figure, instead transfer a card of the same value from an opponent's score pile to yours.`,
   ]
   this.dogma = []
+  this.relicExpansion = 'figs'
 
   this.dogmaImpl = []
   this.echoImpl = []

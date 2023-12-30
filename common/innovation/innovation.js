@@ -1497,11 +1497,22 @@ Innovation.prototype._checkCanSeizeRelic = function(card) {
 }
 
 Innovation.prototype.aSeizeRelic = function(player, card) {
-  const choice = this.aChoose(player, [
-    'to my achievements',
-    'to my hand',
-    'do not seize',
-  ], { title: `How would you like to seize ${card.name}` })[0]
+  console.log(card, this.getExpansionList(), this.getExpansionList().includes(card.relicExpansion))
+
+  const relicSeizeOptions =
+    this.getExpansionList().includes(card.relicExpansion) ?
+      [
+        'to my achievements',
+        'to my hand',
+        'do not seize',
+      ] : [
+        'to my achievements',
+        'do not seize',
+      ]
+
+  const choice = this.aChoose(player, relicSeizeOptions, {
+    title: `How would you like to seize ${card.name}`
+  })[0]
 
   if (choice === 'to my achievements') {
     this.mMoveCardTo(card, this.getZoneByPlayer(player, 'achievements'), { player })
