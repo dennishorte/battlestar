@@ -1497,8 +1497,6 @@ Innovation.prototype._checkCanSeizeRelic = function(card) {
 }
 
 Innovation.prototype.aSeizeRelic = function(player, card) {
-  console.log(card, this.getExpansionList(), this.getExpansionList().includes(card.relicExpansion))
-
   const relicSeizeOptions =
     this.getExpansionList().includes(card.relicExpansion) ?
       [
