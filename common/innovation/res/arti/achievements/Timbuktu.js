@@ -16,6 +16,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = []
+  this.relicExpansion = 'city'
 
   this.dogmaImpl = []
   this.echoImpl = []

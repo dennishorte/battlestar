@@ -17,6 +17,7 @@ function Card() {
   this.dogma = [
     `You may reveal a card from your hand having exactly the same icons, in type and number, as a top card on your board. If you do, claim an achievement of matching value, ignoring eligibility.`
   ]
+  this.relicExpansion = 'base'
 
   this.dogmaImpl = [
     (game, player) => {

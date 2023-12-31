@@ -17,6 +17,7 @@ function Card() {
   this.dogma = [
     `You may return any number of cards from your score pile. If you do, draw and meld a card of value equal to the number of cards returned. If the melded card has a {i}, return it.`
   ]
+  this.relicExpansion = 'arti'
 
   this.dogmaImpl = [
     (game, player) => {
