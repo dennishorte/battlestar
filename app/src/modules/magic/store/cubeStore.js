@@ -50,12 +50,17 @@ export default {
   },
 
   actions: {
-    async claimAchievement({ dispatch }, { achId, userId }) {
+    async claimAchievement({ commit, dispatch, state }, { achId, userId }) {
       await this.$post('/api/magic/achievement/claim', {
         achId,
         userId,
       })
       await dispatch('loadAchievements')
+
+      if (state.managedAchievement) {
+        const updated = state.achievements.find(a => a._id === achId)
+        commit('manageAchievement', { achievement: updated })
+      }
     },
 
     async deleteAchievement({ dispatch }, ach) {
