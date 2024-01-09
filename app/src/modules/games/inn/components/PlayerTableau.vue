@@ -19,7 +19,6 @@
     <CardPile
       :zone="game.getZoneByPlayer(player, 'achievements')"
       :header="achievementsHeader(player)"
-      :key="game.responses.length"
     >
       <AchievementExtras :player="player" />
     </CardPile>
