@@ -568,8 +568,8 @@ const cardData = [
         impl: (game, player, { card, forcedBy }) => {
           const opp = game.getPlayerByName(forcedBy)
           game.mLog({
-            template: '{player} was forced to discard {card} by {player2} so {player2} must discard',
-            args: { player, card, player2: opp }
+            template: '{player} will draw one fewer card on their next hand refill',
+            args: { player: opp }
           })
           game.aDiscard(player, card)
           game.aDraw(player)

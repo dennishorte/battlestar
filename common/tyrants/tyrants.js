@@ -1986,7 +1986,7 @@ Tyrants.prototype.mRefillHand = function(player) {
   const hand = this.getZoneByPlayer(player, 'hand')
 
   this.mLog({
-    template: '{player} refills their hand',
+    template: '{player} will refill their hand',
     args: { player }
   })
   this.mLogIndent()
