@@ -192,7 +192,10 @@ const cardData = [
           impl: () => {
             game.aReturnASpyAnd(player, () => {
               const discard = game.getCardsByZone(player, 'discard')
-              const card = game.aChooseCard(player, discard, { title: 'Choose a card to devour' })
+              const card = game.aChooseCard(player, discard, {
+                title: 'Choose a card to devour',
+                min: 0,
+              })
               if (card) {
                 game.aDevour(player, card)
                 game.mExecuteCard(player, card)
