@@ -193,7 +193,7 @@ describe('Innovation', () => {
       const request2 = t.choose(game, request1, 'Dogma.Mathematics')
       const request3 = t.choose(game, request2, 'Software')
 
-      t.testGameOver(request3, 'micah', 'high draw - tie breaker')
+      t.testGameOver(request3, 'micah', 'high draw - tie breaker (achievements)')
     })
 
     test.skip('draws are handled smoothly', () => {
