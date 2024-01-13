@@ -89,6 +89,7 @@ export default {
     },
 
     async save(game) {
+      console.log(game.serialize())
       const response = await this.$post('/api/game/saveFull', game.serialize())
       game.usedUndo = false
       game.branchId = response.branchId

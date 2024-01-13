@@ -170,7 +170,11 @@ Game.saveFull = async function(req, res) {
 
   // Magic doesn't run when saving because that would require loading the card
   // database, which is slow.
-  if (game.settings.game === 'Magic') {
+  if (game.settings.game === 'Magic'
+      || game.settings.game === 'CubeDraft'
+      || game.settings.game === 'Cube Draft'
+      || game.settings.game === 'Set Draft'
+  ) {
     game.waiting = req.body.waiting
     game.gameOver = req.body.gameOver
     game.gameOverData = req.body.gameOverData
