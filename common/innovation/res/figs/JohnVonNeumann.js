@@ -18,8 +18,8 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = (game, player) => {
-    const card1 = game.aDraw(player, { age: game.getEffectAge(this, 9) })
-    const card2 = game.aDraw(player, { age: game.getEffectAge(this, 9) })
+    const card1 = game.aDrawAndReveal(player, game.getEffectAge(this, 9))
+    const card2 = game.aDrawAndReveal(player, game.getEffectAge(this, 9))
 
     if (card1.color === 'purple' || card2.color === 'purple') {
       game.mLog({
