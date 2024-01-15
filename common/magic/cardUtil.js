@@ -843,26 +843,30 @@ CardUtil.lookup.getByIdDict = function(dict, lookupMap, opts={}) {
     // Added this weird hack to handle a case where a version number seems to have changed
     // in the scryfall data.
 
+    // Don't choose a custom card if no custom card id is present.
+    const remainder = versions.filter(card => !card.custom_id)
+
     let maybe
 
-    maybe = versions.find(card => card.set === dict.set && card.collector_number === dict.collector_number)
+    maybe = remainder.find(card => card.set === dict.set && card.collector_number === dict.collector_number)
 
     if (maybe) {
       return maybe
     }
     else {
-      maybe = versions.find(card => card.set === dict.set)
+      maybe = remainder.find(card => card.set === dict.set)
     }
 
     if (maybe) {
       return maybe
     }
     else {
-      return versions[0]
+      return remainder[0]
     }
   }
   else {
-    return versions[0]
+    // Custom cards tend to end up in the first position, so choose a non-custom card if possible.
+    return versions.slice(-1)[0]
   }
 }
 
