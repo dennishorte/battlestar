@@ -544,8 +544,8 @@ const cardData = [
         zone: 'innerCircle',
         then: () => {
           player.incrementInfluence(3)
-          game.aDeferPromotion(player, card)
-          game.aDeferPromotion(player, card)
+          game.aDeferPromotion(player, card, { optional: true })
+          game.aDeferPromotion(player, card, { optional: true })
         }
       })
     },

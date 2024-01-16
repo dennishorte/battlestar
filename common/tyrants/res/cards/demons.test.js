@@ -914,6 +914,7 @@ describe('Undead expansion', () => {
       const request4 = t.choose(game, request3, 'Play Card.Zuggtmoy')
       const request5 = t.choose(game, request4, 'Priestess of Lolth')
       const request6 = t.choose(game, request5, 'Pass')
+      const request7 = t.choose(game, request6, 'House Guard', 'House Guard')
 
       t.testBoard(game, {
         dennis: {
