@@ -3,6 +3,7 @@
     <div class="card-line">
       <i class="bi bi-eye-fill" v-if="cardIsRevealed"></i>
       <i class="bi bi-eye" v-else-if="cardIsViewed"></i>
+      <i class="bi bi-eye-slash-fill" v-else-if="cardIsSecret"></i>
 
       <i class="bi bi-browser-edge" v-if="card.morph"></i>
       <i class="bi bi-bookmark-fill" v-if="card.token"></i>
@@ -45,6 +46,9 @@
 
         <DropdownButton @click.stop="unmorph" v-if="card.morph">unmorph</DropdownButton>
         <DropdownButton @click.stop="morph" v-else>morph</DropdownButton>
+
+        <DropdownButton @click.stop="unsecret" v-if="card.secret">unsecret</DropdownButton>
+        <DropdownButton @click.stop="secret" v-else>secret</DropdownButton>
 
         <DropdownButton @click.stop="detach" v-if="card.attachedTo">detach</DropdownButton>
         <DropdownButton @click.stop="attach" v-else>attach</DropdownButton>
@@ -149,6 +153,10 @@ export default {
       return parts.join(', ')
     },
 
+    cardIsSecret() {
+      return this.card.secret === true
+    },
+
     cardIsRevealed() {
       return !this.cardZoneIsPublic && this.card.visibility.length > 1
     },
@@ -169,7 +177,10 @@ export default {
 
     displayName() {
       if (this.hidden) {
-        if (this.card.morph) {
+        if (this.card.secret) {
+          return 'secret'
+        }
+        else if (this.card.morph) {
           return 'morph'
         }
         else {
@@ -275,6 +286,14 @@ export default {
       this.$store.dispatch('magic/game/unselectCard')
     },
 
+    secret() {
+      this.do(null, {
+        name: 'secret',
+        cardId: this.card.id,
+      })
+      this.$store.dispatch('magic/game/unselectCard')
+    },
+
     twiddle() {
       if (this.card.tapped) {
         this.do(null, {
@@ -316,6 +335,14 @@ export default {
     unmorph() {
       this.do(null, {
         name: 'unmorph',
+        cardId: this.card.id,
+      })
+      this.$store.dispatch('magic/game/unselectCard')
+    },
+
+    unsecret() {
+      this.do(null, {
+        name: 'unsecret',
         cardId: this.card.id,
       })
       this.$store.dispatch('magic/game/unselectCard')

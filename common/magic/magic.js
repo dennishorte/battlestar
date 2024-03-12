@@ -482,6 +482,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'reveal all'          : return this.aRevealAll(actor, action.zoneId)
       case 'reveal next'         : return this.aRevealNext(actor, action.zoneId)
       case 'roll die'            : return this.aRollDie(actor, action.faces)
+      case 'secret'              : return this.aSecret(actor, action.cardId)
       case 'select phase'        : return this.aSelectPhase(actor, action.phase)
       case 'shuffle'             : return this.aShuffle(actor, action.zoneId)
       case 'shuffle bottom'      : return this.aShuffleBottom(actor, action.zoneId, action.count)
@@ -489,6 +490,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'tap'                 : return this.aTap(actor, action.cardId)
       case 'trigger'             : return this.aTrigger(actor, action.cardId)
       case 'unmorph'             : return this.aUnmorph(actor, action.cardId)
+      case 'unsecret'            : return this.aUnsecret(actor, action.cardId)
       case 'untap'               : return this.aUntap(actor, action.cardId)
       case 'view all'            : return this.aViewAll(actor, action.zoneId)
       case 'view next'           : return this.aViewNext(actor, action.zoneId)
@@ -650,6 +652,19 @@ Magic.prototype.aImportCard = function(player, data) {
       })
     }
   }
+}
+
+Magic.prototype.aSecret = function(player, cardId) {
+  player = player || this.getPlayerCurrent()
+  const card = this.getCardById(cardId)
+  card.secret = true
+  card.visibility = []
+
+  const zone = this.getZoneByCard(card)
+  this.mLog({
+    template: '{player} makes a card in {zone} secret',
+    args: { player, zone }
+  })
 }
 
 Magic.prototype.aMorph = function(player, cardId) {
@@ -1016,6 +1031,17 @@ Magic.prototype.aUnmorph = function(player, cardId) {
   })
 }
 
+Magic.prototype.aUnsecret = function(player, cardId) {
+  player = player || this.getPlayerCurrent()
+  const card = this.getCardById(cardId)
+  card.secret = false
+  this.mReveal(card)
+  this.mLog({
+    template: '{player} unsecrets {card}',
+    args: { player, card },
+  })
+}
+
 Magic.prototype.aUntap = function(player, cardId) {
   const card = this.getCardById(cardId)
   card.tapped = false
@@ -1127,7 +1153,10 @@ Magic.prototype.getZoneIndexByCard = function(card) {
 Magic.prototype.mAdjustCardVisibility = function(card) {
   const zone = this.getZoneByCard(card)
 
-  if (card.morph) {
+  if (card.secret) {
+    card.visibility = []
+  }
+  else if (card.morph) {
     card.visibility = [this.getPlayerByCardController(card)]
   }
   else if (zone.kind === 'public') {
