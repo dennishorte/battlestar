@@ -1035,7 +1035,7 @@ Magic.prototype.aUnsecret = function(player, cardId) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
   card.secret = false
-  this.mReveal(card)
+  this.mAdjustCardVisibility(card)
   this.mLog({
     template: '{player} unsecrets {card}',
     args: { player, card },
