@@ -24,8 +24,10 @@ function Card() {
       )
 
       if (cards) {
-        const scored = game.aChooseAndScore(player, cards, { count: 2 })
-        const remaining = cards.filter(card => !scored.includes(card))
+        const toScore = game.aChooseCards(player, cards, { count: 2, title: 'Card to score' })
+        const scored = game.aScoreMany(player, toScore)
+
+        const remaining = cards.filter(card => !toScore.includes(card))
         if (remaining.length > 0) {
           game.aTuck(player, remaining[0])
         }
