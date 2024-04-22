@@ -27,9 +27,11 @@ function Card() {
       decree: 'Advancement'
     },
     {
-      trigger: 'effect-age',
+      trigger: 'dogma',
+      karmaKind: 'would-first',
+      matches: () => true,
       func(game, player, card, age) {
-        return age + 1
+        game.state.dogmaInfo.globalAgeIncrease = 1
       }
     }
   ]
