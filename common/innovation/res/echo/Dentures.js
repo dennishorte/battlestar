@@ -18,6 +18,13 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      if (!game.state.dogmaInfo.dentures) {
+        game.mLog({
+          template: "No cards scored with Dentures's echo effect"
+        })
+        return
+      }
+
       let card = game.state.dogmaInfo.dentures[player.name]
 
       while (true) {

@@ -613,6 +613,7 @@ Innovation.prototype.aCardEffects = function(
   kind,
   opts={}
 ) {
+  console.log(player)
   const effects = this.getVisibleEffects(card, kind)
   if (!effects) {
     return
