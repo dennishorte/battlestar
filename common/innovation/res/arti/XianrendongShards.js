@@ -23,7 +23,7 @@ function Card() {
         { count: 3 }
       )
 
-      if (cards) {
+      if (cards.length > 0) {
         const toScore = game.aChooseCards(player, cards, { count: 2, title: 'Card to score' })
         const scored = game.aScoreMany(player, toScore)
 
