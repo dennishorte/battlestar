@@ -21,11 +21,12 @@ function Card() {
         const topCards = game
           .getPlayerAll()
           .flatMap(player => game.getTopCards(player))
+        game.aRemoveMany(player, topCards)
+
         const hands = game
           .getPlayerAll()
           .flatMap(player => game.getCardsByZone(player, 'hand'))
         game.aRemoveMany(player, hands, { ordered: true })
-        game.aRemoveMany(player, topCards)
       }
       else {
         game.mLogNoEffect()
