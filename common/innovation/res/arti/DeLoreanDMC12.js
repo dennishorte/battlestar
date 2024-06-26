@@ -16,8 +16,8 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
-      if (game.checkCardIsTop(this) && !this.zone.endsWith('.artifact')) {
+    (game, player, { self }) => {
+      if (game.checkCardIsTop(self) && !this.zone.endsWith('.artifact')) {
         const topCards = game
           .getPlayerAll()
           .flatMap(player => game.getTopCards(player))
