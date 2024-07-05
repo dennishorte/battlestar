@@ -1909,7 +1909,7 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
     }
   }
 
-  const flags = this
+  const flagsTemp = this
     .utilColors()
     .flatMap(color => this.getCardsByZone(player, color))
     .map(card => {
@@ -1927,7 +1927,7 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
         .getPlayerAll()
         .filter(other => other !== player)
         .map(other => this.getVisibleCardsByZone(other, x.card.color))
-      return otherCounts.every(count => count < myCount)
+      return otherCounts.every(count => count <= myCount)
     })
     .forEach(x => {
       for (let i = 0; i < x.count; i++) {
