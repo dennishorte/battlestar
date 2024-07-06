@@ -219,7 +219,7 @@ describe('Innovation', () => {
     })
   })
 
-  describe.only('cities biscuits', () => {
+  describe('cities biscuits', () => {
     test('plus icon', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
       t.setBoard(game, {
@@ -266,7 +266,7 @@ describe('Innovation', () => {
       expect(achievements.total).toBe(1)
     })
 
-    test.only('flag and equal', () => {
+    test('flag and equal', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
       t.setBoard(game, {
         dennis: {
@@ -290,8 +290,10 @@ describe('Innovation', () => {
           purple: ['Tokyo'],
         },
         micah: {
-          purple: ['Enterprise', 'Kaleidoscope'],
-          splay: 'left'
+          purple: {
+            cards: ['Enterprise', 'Kaleidoscope'],
+            splay: 'left',
+          },
         },
       })
 
@@ -305,10 +307,13 @@ describe('Innovation', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
       t.setBoard(game, {
         dennis: {
-          purple: ['Tokyo', 'Code of Laws'],
+          purple: ['Tokyo', 'Code of Laws', 'The Internet'],
         },
         micah: {
-          purple: ['Enterprise'],
+          purple: {
+            cards: ['Enterprise', 'Johannes Vermeer'],
+            splay: 'right',
+          },
         },
       })
 

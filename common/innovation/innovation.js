@@ -1909,7 +1909,8 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
     }
   }
 
-  const flagsTemp = this
+  // Flags
+  this
     .utilColors()
     .flatMap(color => this.getCardsByZone(player, color))
     .map(card => {
