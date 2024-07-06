@@ -253,7 +253,10 @@ describe('Innovation', () => {
           purple: ['Tokyo'],
         },
         micah: {
-          purple: ['Enterprise'],
+          purple: {
+            cards: ['Enterprise', 'Kaleidoscope'],
+            splay: 'left',
+          },
         },
       })
 
@@ -283,14 +286,34 @@ describe('Innovation', () => {
       expect(achievements.total).toBe(1)
     })
 
+    test('flag and equal', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Tokyo'],
+        },
+        micah: {
+          purple: ['Enterprise'],
+        },
+      })
+
+      const request1 = game.run()
+
+      const achievements = game.getAchievementsByPlayer(t.dennis(game))
+      expect(achievements.total).toBe(1)
+    })
+
     test('flag and most, but not splayed, so not visible', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
       t.setBoard(game, {
         dennis: {
-          purple: ['Tokyo', 'Code of Laws'],
+          purple: ['Tokyo', 'Code of Laws', 'The Internet'],
         },
         micah: {
-          purple: ['Enterprise'],
+          purple: {
+            cards: ['Enterprise', 'Johannes Vermeer'],
+            splay: 'right',
+          },
         },
       })
 
