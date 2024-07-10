@@ -9,7 +9,14 @@ function Card() {
   this.alt = 'Photography'
   this.isSpecialAchievement = true
   this.checkPlayerIsEligible = function(game, player, reduceCost) {
+
     const targetCount = reduceCost ? 3 : 4
+
+    const infos = game.getInfoByKarmaTrigger(player, 'hex-effect')
+    const includeHexesAsEcho = (card) => (
+      infos.some(info => info.impl.matches(game, player, { card }))
+    )
+
     return game
     // Grab each stack
       .utilColors()
@@ -18,8 +25,11 @@ function Card() {
     // Convert each stack to a count of echo effects
       .map(zone => zone
         .cards()
-        .map(c => (game.getBiscuitsRaw(c, zone.splay).match(/&/g) || []).length )
-        .reduce((prev, curr) => prev + curr, 0)
+        .flatMap(c => [
+          ...(game.getBiscuitsRaw(c, zone.splay).match(/&/g) || []),
+          ...(includeHexesAsEcho(c) && game.getBiscuitsRaw(c, zone.splay).match(/[hm]/g) || []),
+        ])
+        .length
       )
       .some(count => count >= targetCount)
   }

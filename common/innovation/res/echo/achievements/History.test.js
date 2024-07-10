@@ -41,4 +41,28 @@ describe('History', () => {
 
     expect(t.cards(game, 'achievements')).toStrictEqual([])
   })
+
+  test('Hawking w/3 turtles', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo', 'figs'] })
+    game.testSetBreakpoint('before-first-player', (game) => {
+      t.setColor(game, 'dennis', 'blue', ['Atomic Theory', 'Chemistry', 'Mathematics'])
+      t.setSplay(game, 'dennis', 'blue', 'up')
+      t.setHand(game, 'dennis', ['Stephen Hawking'])
+    })
+
+    t.choose(game, game.run(), 'Meld.Stephen Hawking')
+    expect(t.cards(game, 'achievements')).toStrictEqual([])
+  })
+
+  test('Hawking w/4 turtles', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo', 'figs'] })
+    game.testSetBreakpoint('before-first-player', (game) => {
+      t.setColor(game, 'dennis', 'blue', ['Atomic Theory', 'Chemistry', 'Lever'])
+      t.setSplay(game, 'dennis', 'blue', 'up')
+      t.setHand(game, 'dennis', ['Stephen Hawking'])
+    })
+
+    t.choose(game, game.run(), 'Meld.Stephen Hawking')
+    expect(t.cards(game, 'achievements')).toStrictEqual(['History'])
+  })
 })
