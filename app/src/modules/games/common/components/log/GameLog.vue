@@ -31,7 +31,7 @@
 
     </template>
 
-    <RematchButton v-if="showRematchButton && game.gameOver" />
+    <RematchButton v-if="rematchButtonVisible" />
 
     <div class="bottom-space" v-if="!nested"></div>
 
@@ -120,6 +120,10 @@ export default {
         'nested',
         `nested-${this.depth}`,
       ]
+    },
+
+    rematchButtonVisible() {
+      return this.showRematchButton && this.game.gameOver && !this.nested
     },
   },
 
