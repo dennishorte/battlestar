@@ -26,7 +26,7 @@ async function _createFirstUserIfNone(name, password) {
 }
 
 module.exports.login = async function(req, res) {
-  await _createFirstUserIfNone(req.body.name, req.body.password)
+  await _createFirstUserIfNone(req.body.user.name, req.body.user.password)
   const user = await db.user.checkPassword(req.body.user.name, req.body.user.password)
 
   if (!user) {
