@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board. Execute the effects on the chosen card as if they were on this card. Do not share them.`
+    `If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board. Execute the echo and dogma effects on the chosen card as if they were on this card. Do not share them.`
   ]
 
   this.dogmaImpl = [
