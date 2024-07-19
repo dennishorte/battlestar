@@ -13,7 +13,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Meld an {8} from your hand. If the melded card has no effects, you win. Otherwise, execute the effects of the melded card as if they were on this card. Do not share them.`
+    `Meld an {8} from your hand. If the melded card has no effects (of any kind), you win. Otherwise, execute the effects of the melded card as if they were on this card. Do not share them.`
   ]
 
   this.dogmaImpl = [
@@ -28,10 +28,8 @@ function Card() {
         if (
           card.dogma.length === 0
           && card.echo.length === 0
-
-          // Do these count as effects for the purpose of this card?
-          // && card.inspire.length === 0
-          // && card.karma.length === 0
+          && card.inspire.length === 0
+          && card.karma.length === 0
         ) {
           throw new GameOverEvent({
             player,
