@@ -22,3 +22,9 @@ SECRET_KEY='my_secret_key'               # This can be anything. Used by express
 SLACK_BOT_TOKEN='my_slack_bot_token'
 DOMAIN_HOST='localhost:8080'             # This should be the actual serving host.
 ```
+
+
+Running Locally
+=====
+In the `api/` folder, run `npm run dev`.
+In the `app/` folder, run `npm run serve`.
