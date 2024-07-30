@@ -40,6 +40,7 @@ function factoryFromLobby(lobby) {
     name: lobby.name,
     expansions: lobby.options.expansions,
     map: lobby.options.map,
+    menzoExtraNeutral: lobby.options.menzoExtraNeutral,
     players: lobby.users,
     seed: lobby.seed,
     chooseColors: true,
@@ -252,6 +253,12 @@ Tyrants.prototype.initializeTokens = function() {
     for (let i = 0; i < loc.neutrals; i++) {
       this.mMoveByIndices(neutralZone, 0, loc, loc.cards().length)
     }
+  }
+
+  if (this.settings.menzoExtraNeutral) {
+    const neutralZone = this.getZoneById('neutrals')
+    const menzo = this.getLocationByName('Menzoberranzan')
+    this.mMoveByIndices(neutralZone, 0, menzo, menzo.cards().length)
   }
 }
 

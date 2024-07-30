@@ -26,6 +26,13 @@
       />
       <label class="form-check-label">{{ map.text }}</label>
     </div>
+
+    <hr />
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" v-model="models.menzoExtraNeutral" @change="optionsChanged" />
+      <label class="form-check-label">extra neutral in Menzoberranzan</label>
+    </div>
   </div>
 </template>
 
@@ -105,6 +112,7 @@ export default {
       models: {
         expansions: [],
         map: '',
+        menzoExtraNeutral: true,
       },
     }
   },
@@ -139,6 +147,7 @@ export default {
       this.lobby.options = {
         expansions: [...this.models.expansions],
         map: this.models.map,
+        menzoExtraNeutral: this.models.menzoExtraNeutral
       }
       this.updateValid()
       this.save()
@@ -149,6 +158,12 @@ export default {
     if (this.lobby.options) {
       this.models.expansions = [...this.lobby.options.expansions]
       this.models.map = this.lobby.options.map
+      if (this.lobby.options.menzoExtraNeutral === undefined) {
+        this.models.menzoExtraNeutral = true
+      }
+      else {
+        this.models.menzoExtraNeutral = this.lobby.options.menzoExtraNeutral
+      }
       this.updateValid()
     }
     else {
