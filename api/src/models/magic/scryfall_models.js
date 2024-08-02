@@ -12,11 +12,19 @@ async function insertCardsIntoDatabase(cards, version) {
   await scryfallCollection.deleteMany({})  // Remove old data
   await scryfallCollection.insertMany(cards, { ordered: true })
 
-  const versionRecord = await versionCollection.findOne({})
-  await versionCollection.updateOne(
-    { _id: versionRecord._id },
-    { $set: { value: version } }
-  )
+  const versionRecord = await versionCollection.findOne({
+    name: 'scryfall',
+  })
+
+  if (versionRecord) {
+    await versionCollection.updateOne(
+      { _id: versionRecord._id },
+      { $set: { value: version } }
+    )
+  }
+  else {
+    await versionCollection.insertOne({ name: 'scryfall', value: version })
+  }
 }
 
 Scryfall.fetchAll = async function() {

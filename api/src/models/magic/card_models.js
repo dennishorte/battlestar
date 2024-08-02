@@ -118,10 +118,22 @@ Card.versions = async function() {
 
 async function _incrementCustomCardDatabaseVersion() {
   await versionMutex.dispatch(async () => {
-    await versionCollection.updateOne(
-      { name: 'custom' },
-      { $inc: { value: 1 } }
-    )
+    const customVersion = await versionCollection.findOne({
+      name: 'custom',
+    })
+
+    if (customVersion) {
+      await versionCollection.updateOne(
+        { name: 'custom' },
+        { $inc: { value: 1 } }
+      )
+    }
+    else {
+      await versionCollection.insertOne({
+        name: 'custom',
+        value: 1,
+      })
+    }
   })
 }
 
