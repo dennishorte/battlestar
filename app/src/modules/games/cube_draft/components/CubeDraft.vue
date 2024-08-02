@@ -273,14 +273,20 @@ export default {
         optionName: card.id
       })
       await nextTick()
-      this.bus.emit('click-choose-selected-option')
 
-      // Add the card to the player's deck.
-      await this.$store.dispatch('magic/dm/addCard', {
-        card: card.data,
-        zoneName: 'main',
+      this.bus.emit('click-choose-selected-option', {
+
+        // Execute this after the option is successfully submitted and saved on the server.
+        callback: async () => {
+          // Add the card to the player's deck.
+          await this.$store.dispatch('magic/dm/addCard', {
+            card: card.data,
+            zoneName: 'main',
+          })
+          await this.$store.dispatch('magic/dm/saveActiveDeck')
+
+        }
       })
-      await this.$store.dispatch('magic/dm/saveActiveDeck')
     },
 
     async fetchScars() {

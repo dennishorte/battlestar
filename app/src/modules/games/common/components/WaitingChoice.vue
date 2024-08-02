@@ -105,9 +105,13 @@ export default {
       await this.save(this.game)
     },
 
-    submitIfValid() {
+    submitIfValid(options) {
       if (this.isValid) {
         this.submit()
+
+        if (options.callback) {
+          options.callback()
+        }
       }
     },
 
