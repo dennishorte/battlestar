@@ -1,7 +1,7 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "description": "example project vue with nodejs",
+  "description": "API for Game Center",
   "main": "server.js",
   "scripts": {
     "start": "node server.bundle.js",
@@ -14,10 +14,6 @@
       "../common"
     ],
     "ext": "js, mjs, json"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bbachi/vuejs-nginx-docker.git"
   },
   "author": "Dennis Horte",
   "license": "ISC",
