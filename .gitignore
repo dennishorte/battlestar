@@ -6,3 +6,5 @@ app/src/assets/version.js
 #*
 .#*
 ik*
+.DS_Store
+
