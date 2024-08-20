@@ -1468,7 +1468,7 @@ Innovation.prototype._checkCityMeldAchievements = function(player, card) {
 }
 
 Innovation.prototype.aDigArtifact = function(player, age) {
-  if (this.getZoneByDeck('arti', age).cards().length === 0) {
+  if (age > 10 || this.getZoneByDeck('arti', age).cards().length === 0) {
     this.mLog({
       template: `Artifacts deck for age ${age} is empty.`
     })
