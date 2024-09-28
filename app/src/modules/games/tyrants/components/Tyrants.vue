@@ -37,6 +37,8 @@
       <template #header>Score Overview</template>
       <ScoreTable />
     </Modal>
+
+    <SavingOverlay />
   </div>
 </template>
 
@@ -53,6 +55,7 @@ import maps from '../res/maps.js'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
 import GameMenu from '@/modules/games/common/components/GameMenu'
+import SavingOverlay from '@/modules/games/common/components/SavingOverlay'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
 // Tyrants Components
@@ -85,6 +88,7 @@ export default {
     Market,
     Modal,
     Player,
+    SavingOverlay,
     ScoreTable,
     WaitingPanel,
 
@@ -213,6 +217,12 @@ export default {
 
     async clickLocation(loc) {
       if (this.canPlaceTroopAtLocation(loc)) {
+        if (this.$store.getters['game/isSaving']) {
+          return
+        }
+
+        this.$store.commit('game/setSaving', true)
+
         this.game.respondToInputRequest({
           actor: this.actor.name,
           title: '__ALT_ACTION__',
@@ -222,6 +232,8 @@ export default {
           }]
         })
         await this.save(this.game)
+
+        this.$store.commit('game/setSaving', false)
       }
       else {
         this.bus.emit('user-select-option', {

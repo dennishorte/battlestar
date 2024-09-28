@@ -18,7 +18,7 @@
       />
 
       <div class="d-grid">
-        <button @click="submit" :disabled="!isValid" class="btn btn-primary">choose</button>
+        <button @click="submitIfValid" :disabled="!isValid" class="btn btn-primary">choose</button>
       </div>
     </template>
 
@@ -106,6 +106,12 @@ export default {
     },
 
     async submitIfValid(options) {
+      if (this.$store.getters['game/isSaving']) {
+        return
+      }
+
+      this.$store.commit('game/setSaving', true)
+
       if (this.isValid) {
         await this.submit()
 
@@ -113,6 +119,8 @@ export default {
           await options.callback()
         }
       }
+
+      this.$store.commit('game/setSaving', false)
     },
 
     childChanged(event) {
