@@ -1,5 +1,5 @@
 <template>
-  <div class="saving-overlay" :class="saving ? 'show' : ''">
+  <div class="saving-overlay" :class="saveQueued ? 'show' : ''">
   </div>
 </template>
 
@@ -13,7 +13,7 @@ export default {
 
   computed: {
     ...mapState('game', {
-      saving: 'saving',
+      saveQueued: 'saveQueued',
     })
   },
 }

@@ -106,12 +106,6 @@ export default {
     },
 
     async submitIfValid(options) {
-      if (this.$store.getters['game/isSaving']) {
-        return
-      }
-
-      this.$store.commit('game/setSaving', true)
-
       if (this.isValid) {
         await this.submit()
 
@@ -119,8 +113,6 @@ export default {
           await options.callback()
         }
       }
-
-      this.$store.commit('game/setSaving', false)
     },
 
     childChanged(event) {
