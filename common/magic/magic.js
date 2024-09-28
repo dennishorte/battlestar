@@ -70,7 +70,7 @@ Magic.prototype.serialize = function() {
 
 Magic.prototype.run = function() {
   if (this.cardLookupFunc) {
-    Game.prototype.run.call(this)
+    return Game.prototype.run.call(this)
   }
   else {
     // do nothing

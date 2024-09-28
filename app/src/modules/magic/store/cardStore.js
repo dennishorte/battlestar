@@ -146,7 +146,7 @@ export default {
       }
 
       commit('setCardList', cards)
-      commit('setCardLookup', mag.util.card.createCardLookup(cards))
+      commit('setCardLookup', mag.util.card.lookup.factory(cards))
       commit('setCardsReady')
 
       console.log('...card database ready')

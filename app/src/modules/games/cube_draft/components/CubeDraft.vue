@@ -401,7 +401,7 @@ export default {
       await this.$post('/api/magic/scar/apply', {
         scarId: this.scars[scarIndex]._id,
         userId: this.actor._id,
-        cardIdDict: mag.util.card.createCardIdDict(savedCard),
+        cardIdDict: mag.util.card.id.asDict(savedCard),
       })
 
       await this.$post('/api/magic/scar/releaseByUser', {

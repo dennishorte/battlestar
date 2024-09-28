@@ -64,7 +64,7 @@ CubeDraft.prototype.serialize = function() {
 
 CubeDraft.prototype.run = function() {
   if (this.cardLookupFunc) {
-    Game.prototype.run.call(this)
+    return Game.prototype.run.call(this)
   }
   else {
     // do nothing
@@ -172,7 +172,6 @@ CubeDraft.prototype.mainLoop = function() {
       .getPlayerAll()
       .filter(p => this.checkPlayerHasOption(p))
       .map(p => this.getPlayerOptions(p))
-
     const action = this.requestInputAny(playerOptions)
     const player = this.getPlayerByName(action.actor)
 
@@ -469,7 +468,6 @@ CubeDraft.prototype._enrichLogArgs = function(msg) {
 }
 
 CubeDraft.prototype._responseReceived = function(response) {
-  console.log('_responseReceived', response)
   if (response.title === 'Apply Scar') {
     response.noUndo = true
   }

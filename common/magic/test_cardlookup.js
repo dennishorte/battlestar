@@ -537,4 +537,4 @@ const cards = [
 
 
 const cardUtil = require('./cardUtil.js')
-module.exports = cardUtil.createCardLookupFunc(cards)
+module.exports = cardUtil.lookup.factory(cards)

@@ -114,7 +114,7 @@ export default {
         .map(([sectionName, cards]) => {
           const groups = util
             .array
-            .collect(cards, card => mag.util.card.createCardIdString(card))
+            .collect(cards, card => mag.util.card.id.asString(card))
           const cardsWithCounts = Object
             .values(groups)
             .map(group => {
