@@ -41,20 +41,20 @@ export default {
     return {
       id: this.$route.params.id,
       actor: this.$store.getters['auth/user'],
-      game: null,
     }
   },
 
   provide() {
     return {
       actor: this.actor,
-      game: computed(() => this.game ),
+      game: computed(() => this.game),
       save: this.save,
     }
   },
 
   computed: {
     ...mapState('game', {
+      game: 'game',
       saving: 'saving',
     }),
 
@@ -65,19 +65,21 @@ export default {
 
   methods: {
     async loadGame() {
-      this.game = null
+      this.$store.commit('game/setGame', null)
       await nextTick()
 
       if (!this.id) {
+        throw new Error('unexpected')
         return this.nextGame()
       }
 
-      const { game } = await this.$post('/api/game/fetch', {
+      const response = await this.$post('/api/game/fetch', {
         gameId: this.id,
       })
 
-      this.game = fromData(game, this.actor.name)
-      this.game.run()
+      const game = fromData(response.game, this.actor.name)
+      game.run()
+      this.$store.commit('game/setGame', game)
     },
 
     async nextGame() {
