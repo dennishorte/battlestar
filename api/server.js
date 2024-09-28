@@ -102,6 +102,7 @@ app.post('/api/game/rematch', routes.game.rematch)
 app.post('/api/game/saveFull', routes.game.saveFull)
 app.post('/api/game/saveResponse', routes.game.saveResponse)
 app.post('/api/game/stats/innovation', routes.game.stats.innovation)
+app.post('/api/game/undo', routes.game.undo)
 
 // Misc Routes
 app.post('/api/appVersion', routes.misc.appVersion)

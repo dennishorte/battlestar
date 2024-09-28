@@ -229,6 +229,22 @@ Game.stats.innovation = async function(req, res) {
   })
 }
 
+Game.undo = async function(req, res) {
+  const game = await _loadGameFromReq(req)
+  for (let i = 0; i < req.body.count; i++) {
+    const result = game.undo()
+    if (result !== '__SUCCESS__') {
+      throw new Error('Error performing undo')
+    }
+  }
+
+  const { branchId } = await db.game.save(game)
+  res.json({
+    status: 'success',
+    branchId,
+  })
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper functions

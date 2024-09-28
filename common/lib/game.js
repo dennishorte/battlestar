@@ -26,7 +26,7 @@ function Game(serialized_data, viewerName) {
   // Responses are the history of choices made by users.
   // This should never be reset.
   this.responses = serialized_data.responses
-  this.usedUndo = false
+  this.undoCount = 0
 
   // Chat is separate from the game history.
   this.chat = serialized_data.chat || []
@@ -296,7 +296,7 @@ Game.prototype.undo = function() {
   }
 
   this.responses = responsesCopy
-  this.usedUndo = true
+  this.undoCount += 1
   this.run()
 
   // Update the chat indices so that they are no bigger than the length of the log.
