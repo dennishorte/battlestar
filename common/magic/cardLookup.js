@@ -59,8 +59,12 @@ CardLookup.insertCardData = function(cardlist, lookupFunc) {
   }
 }
 
+CardLookup.dictFactory = function(cards) {
+  return util.array.collect(cards, _allCardNames)
+}
+
 CardLookup.factory = function(cards) {
-  const lookupMap = util.array.collect(cards, _allCardNames)
+  const lookupMap = CardLookup.dictFactory(cards)
   return (cardId, opts) => CardLookup.getByIdDict(cardId, lookupMap, opts)
 }
 
