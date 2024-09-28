@@ -117,7 +117,6 @@ export default {
       const response = await this.$post('/api/game/saveFull', game.serialize())
       game.usedUndo = false
       game.branchId = response.branchId
-      await this.delay(1000)
       this.$store.commit('game/setSaving', false)
     },
   },
