@@ -1,21 +1,23 @@
 <template>
-  <CubeDraft v-if="gameType === 'CubeDraft'" />
+  <div v-if="!gameReady">
+    Loading...
+  </div>
+
+  <CubeDraft v-else-if="gameType === 'CubeDraft'" />
   <Magic v-else-if="gameType === 'Magic'" />
   <Innovation v-else-if="gameType === 'Innovation'" />
   <Tyrants v-else-if="gameType === 'Tyrants of the Underdark'" />
 
   <div v-else>
-    Loading...
-    ...or maybe unknown game '{{ this.gameType }}'
+    error
   </div>
 
   <SavingOverlay />
 </template>
 
 <script>
-import { computed, nextTick } from 'vue'
+import { computed } from 'vue'
 import { mapState } from 'vuex'
-import { fromData } from 'battlestar-common'
 
 import CubeDraft from '@/modules/games/cube_draft/components/CubeDraft'
 import Innovation from '@/modules/games/inn/components/Innovation'
@@ -55,6 +57,7 @@ export default {
   computed: {
     ...mapState('game', {
       game: 'game',
+      gameReady: 'gameReady',
       saving: 'saving',
     }),
 
@@ -65,21 +68,10 @@ export default {
 
   methods: {
     async loadGame() {
-      this.$store.commit('game/setGame', null)
-      await nextTick()
-
-      if (!this.id) {
-        throw new Error('unexpected')
-        return this.nextGame()
-      }
-
-      const response = await this.$post('/api/game/fetch', {
+      await this.$store.dispatch('game/load', {
         gameId: this.id,
+        actor: this.actor,
       })
-
-      const game = fromData(response.game, this.actor.name)
-      game.run()
-      this.$store.commit('game/setGame', game)
     },
 
     async nextGame() {

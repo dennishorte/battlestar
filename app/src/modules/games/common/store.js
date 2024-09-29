@@ -1,8 +1,13 @@
+import { fromData } from 'battlestar-common'
+import { nextTick } from 'vue'
+
+
 export default {
   namespaced: true,
 
   state: () => ({
     game: null,
+    gameReady: false,
 
     // These two values are used by the save action and SavingOverlay to tell the user they are acting faster
     // than the server is responding, and need to wait a moment.
@@ -18,6 +23,7 @@ export default {
 
   mutations: {
     setGame: (state, value) => state.game = value,
+    setGameReady: (state, value) => state.gameReady = value,
     setSaveQueued: (state, value) => state.saveQueued = value,
     setSaving: (state, value) => state.saving = value,
   },
@@ -27,21 +33,15 @@ export default {
       throw new Error('not implemented')
     },
 
-    async load({ commit, dispatch }, gameId) {
-      this.game = null
+    async load({ commit, dispatch }, { gameId, actor }) {
+      commit('setGameReady', false)
       await nextTick()
 
-      if (!this.id) {
-        alert('No game id specified in path')
-        dispatch('goto', '/')
-      }
-
-      const { game } = await this.$post('/api/game/fetch', {
-        gameId: this.id,
-      })
-
-      this.game = fromData(game, this.actor.name)
-      this.game.run()
+      const response = await this.$post('/api/game/fetch', { gameId })
+      const game = fromData(response.game, actor.name)
+      game.run()
+      commit('setGame', game)
+      commit('setGameReady', true)
     },
 
     async next({ commit }) {
