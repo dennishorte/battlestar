@@ -50,7 +50,6 @@ export default {
     return {
       actor: this.actor,
       game: computed(() => this.game),
-      save: this.save,
     }
   },
 
@@ -76,10 +75,6 @@ export default {
 
     async nextGame() {
       await this.$store.dispatch('game/next')
-    },
-
-    async save() {
-      await this.$store.dispatch('game/save')
     },
   },
 
