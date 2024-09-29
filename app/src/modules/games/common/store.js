@@ -64,7 +64,6 @@ export default {
       const game = state.game
 
       while (state.saving) {
-        console.log('blocked')
         commit('setSaveQueued', true)
         await delay(500)
       }

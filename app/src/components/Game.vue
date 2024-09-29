@@ -78,37 +78,8 @@ export default {
       await this.$store.dispatch('game/next')
     },
 
-    delay(milliseconds){
-      return new Promise(resolve => {
-        setTimeout(resolve, milliseconds)
-      })
-    },
-
-    async save(game) {
-      while (this.saving) {
-        console.log('blocked')
-        this.$store.commit('game/setSaveQueued', true)
-        await this.delay(500)
-      }
-
-      this.$store.commit('game/setSaveQueued', false)
-      this.$store.commit('game/setSaving', true)
-
-      // If the player used undo, first execute and save the undone state.
-      // This is done so that, in the general case, we only ever need to save the latest action of the
-      // user and there is no need to save the whole state. This allows actions to be played asynchronously
-      // in games like Cube Draft, where the relative order of the user actions doesn't matter.
-      if (game.undoCount > 0) {
-        await this.$post('/api/game/undo', {
-          gameId: game._id,
-          count: game.undoCount,
-        })
-      }
-
-      const response = await this.$post('/api/game/saveFull', game.serialize())
-      game.undoCount = 0
-      game.branchId = response.branchId
-      this.$store.commit('game/setSaving', false)
+    async save() {
+      await this.$store.dispatch('game/save')
     },
   },
 
