@@ -26,10 +26,6 @@ export default {
   inject: {
     game: { from: 'game' },
     actor: { from: 'actor' },
-    save: {
-      from: 'save',
-      default: null
-    },
   },
 
   props: {
@@ -55,7 +51,7 @@ export default {
     async sendChat() {
       this.game.mChat(this.actor.name, this.text)
       if (this.saveOnChat) {
-        await this.save(this.game)
+        await this.$store.dispatch('game/save')
       }
       this.text = ''
     }

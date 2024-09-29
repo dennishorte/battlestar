@@ -183,12 +183,11 @@ export default {
     }
   },
 
-  inject: ['actor', 'game', 'save'],
+  inject: ['actor', 'game'],
 
   provide() {
     return {
       bus: this.bus,
-      save: this.savePlusAlpha,
       ui: this.uiFactory(),
     }
   },
@@ -341,45 +340,6 @@ export default {
       await this.fetchScars()
     },
 
-    async savePlusAlpha() {
-      await this.save(this.game)
-      await this.fetchScars()
-    },
-
-    /* async save() {
-     *   const game = this.game
-
-     *   if (game.usedUndo) {
-     *     const payload = {
-     *       gameId: game._id,
-     *       responses: game.responses,
-
-     *       // Include these because Magic doesn't run on the backend when saving,
-     *       // so can't calculate these values.
-     *       waiting: game.waiting,
-     *       gameOver: game.gameOver,
-     *       gameOverData: game.gameOverData,
-     *     }
-
-     *     const response = await this.$post('/api/game/saveFull', payload)
-     *     this.game.branchId = response.branchId
-     *   }
-
-     *   else {
-     *     const payload = {
-     *       gameId: game._id,
-     *       response: game.getLastUserAction(),
-     *     }
-
-     *     await this.$post('/api/game/saveResponse', payload)
-     *   }
-
-     *   this.game.usedUndo = false
-
-     *   // Fetch scars when a new game is loaded or when the game is saved.
-     *   await this.fetchScars()
-     * },
-     */
     saveDeck() {
       this.$store.dispatch('magic/dm/saveActiveDeck')
     },

@@ -80,7 +80,7 @@ export default {
     }
   },
 
-  inject: ['actor', 'game', 'save'],
+  inject: ['actor', 'game'],
 
   provide() {
     return {

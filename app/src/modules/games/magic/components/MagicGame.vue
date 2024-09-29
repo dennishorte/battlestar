@@ -77,7 +77,7 @@ export default {
     PlayerTableau,
   },
 
-  inject: ['game', 'actor', 'save'],
+  inject: ['game', 'actor'],
 
   computed: {
     ...mapState('magic/game', {

@@ -103,7 +103,7 @@ export default {
     MagicFileManager,
   },
 
-  inject: ['actor', 'game', 'save'],
+  inject: ['actor', 'game'],
 
   computed: {
     ...mapState('magic/dm', {
@@ -158,12 +158,12 @@ export default {
         title: waiting.title,
         deckData: this.activeDeck.serialize(),
       })
-      this.save(this.game)
+      this.$store.dispatch('game/save')
     },
 
     unselectDeck() {
       this.game.undo()
-      this.save(this.game)
+      this.$store.dispatch('game/save')
     },
 
     waiting(player) {

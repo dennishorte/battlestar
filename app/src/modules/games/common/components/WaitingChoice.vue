@@ -42,11 +42,6 @@ export default {
     bus: { from: 'bus' },
     game: { from: 'game' },
     ui: { from: 'ui' },
-
-    save: {
-      from: 'save',
-      default: () => { alert('no save function') },
-    },
   },
 
   props: {
@@ -102,7 +97,7 @@ export default {
         throw e
       }
 
-      await this.save(this.game)
+      await this.$store.dispatch('game/save')
     },
 
     async submitIfValid(options) {

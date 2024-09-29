@@ -83,7 +83,7 @@ export default {
     },
   },
 
-  inject: ['game', 'save'],
+  inject: ['game'],
 
   provide() {
     return {
@@ -226,7 +226,7 @@ export default {
 
     deleteChat(line) {
       this.game.deleteChatById(line.id)
-      this.save(this.game)
+      this.$store.dispatch('game/save')
     },
 
     indentSpacers(entry) {

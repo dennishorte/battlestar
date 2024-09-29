@@ -117,11 +117,7 @@ export default {
     }
   },
 
-  inject: [
-    'actor',
-    'game',
-    'save',
-  ],
+  inject: ['actor', 'game'],
 
   provide() {
     return {
@@ -222,7 +218,7 @@ export default {
             location: loc.name,
           }]
         })
-        await this.save(this.game)
+        this.$store.dispatch('game/save')
       }
       else {
         this.bus.emit('user-select-option', {

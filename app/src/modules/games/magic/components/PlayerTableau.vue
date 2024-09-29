@@ -183,7 +183,7 @@ export default {
     TableauZoneMenu,
   },
 
-  inject: ['actor', 'do', 'game', 'save'],
+  inject: ['actor', 'do', 'game'],
 
   props: {
     player: Object,
@@ -327,7 +327,7 @@ export default {
 
     passToThisPlayer() {
       this.do(this.actorPlayer, { name: 'pass priority', target: this.player.name })
-      this.save(this.game)
+      this.$store.dispatch('game/save')
     },
 
     revealHand() {

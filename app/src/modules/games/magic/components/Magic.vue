@@ -36,7 +36,7 @@ export default {
     PreGame,
   },
 
-  inject: ['actor', 'game', 'save'],
+  inject: ['actor', 'game'],
 
   provide() {
     return {
