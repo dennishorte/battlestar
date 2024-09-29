@@ -75,22 +75,7 @@ export default {
     },
 
     async nextGame() {
-      const { gameId } = await this.$post('/api/user/next', {
-        userId: this.actor._id,
-        gameId: null,
-      })
-
-      if (gameId) {
-        if (this.$route.path === `/game/${gameId}`) {
-          this.$router.go()
-        }
-        else {
-          this.$router.push(`/game/${gameId}`)
-        }
-      }
-      else {
-        this.$router.push('/')
-      }
+      await this.$store.dispatch('game/next')
     },
 
     delay(milliseconds){

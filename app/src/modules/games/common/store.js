@@ -1,5 +1,6 @@
 import { fromData } from 'battlestar-common'
 import { nextTick } from 'vue'
+import router from '@/router'
 
 
 export default {
@@ -29,10 +30,6 @@ export default {
   },
 
   actions: {
-    async goto({}, path) {
-      throw new Error('not implemented')
-    },
-
     async load({ commit, dispatch }, { gameId, actor }) {
       commit('setGameReady', false)
       await nextTick()
@@ -51,15 +48,15 @@ export default {
       })
 
       if (gameId) {
-        if (this.$route.path === `/game/${gameId}`) {
-          this.$router.go()
+        if (router.path === `/game/${gameId}`) {
+          router.go()
         }
         else {
-          this.$router.push(`/game/${gameId}`)
+          router.push(`/game/${gameId}`)
         }
       }
       else {
-        this.$router.push('/')
+        router.push('/')
       }
     },
 
