@@ -76,10 +76,12 @@ export default {
       // user and there is no need to save the whole state. This allows actions to be played asynchronously
       // in games like Cube Draft, where the relative order of the user actions doesn't matter.
       if (game.undoCount > 0) {
-        await this.$post('/api/game/undo', {
+        const undoResponse = await this.$post('/api/game/undo', {
           gameId: game._id,
           count: game.undoCount,
         })
+
+        game.branchId = undoResponse.branchId
       }
 
       const response = await this.$post('/api/game/saveFull', game.serialize())
