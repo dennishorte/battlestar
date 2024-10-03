@@ -32,11 +32,6 @@ const router = createRouter({
       component: Game,
     },
     {
-      path: '/game/next',
-      name: 'Next Game',
-      component: Game,
-    },
-    {
       path: '/game/editor/:id',
       name: 'Game Editor',
       component: GameEditor,

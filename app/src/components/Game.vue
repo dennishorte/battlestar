@@ -67,14 +67,19 @@ export default {
 
   methods: {
     async loadGame() {
-      await this.$store.dispatch('game/load', {
-        gameId: this.id,
-        actor: this.actor,
-      })
+      if (this.id === 'next') {
+        await this.nextGame()
+      }
+      else {
+        await this.$store.dispatch('game/load', {
+          gameId: this.id,
+          actor: this.actor,
+        })
+      }
     },
 
     async nextGame() {
-      await this.$store.dispatch('game/next')
+      await this.$store.dispatch('game/next', { actor: this.actor })
     },
   },
 

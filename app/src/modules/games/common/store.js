@@ -41,9 +41,9 @@ export default {
       commit('setGameReady', true)
     },
 
-    async next({ commit }) {
+    async next({ commit }, { actor }) {
       const { gameId } = await this.$post('/api/user/next', {
-        userId: this.actor._id,
+        userId: actor._id,
         gameId: null,
       })
 
