@@ -881,6 +881,7 @@ describe('Illithids expansion', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Spectator')
+      const request3 = t.choose(game, request2, '+2 power and +1 influence')
 
       t.testBoard(game, {
         dennis: {

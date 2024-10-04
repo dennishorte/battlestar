@@ -509,12 +509,32 @@ const cardData = [
     count: 3,
     autoplay: true,
     text: [
-      "+2 power",
-      "+1 influence"
+      "Choose 1:",
+      "- +2 power and +1 influence",
+      "- +1 power and +2 influence",
+      /* "+2 power",
+       * "+1 influence" */
     ],
     impl: (game, player) => {
-      player.incrementPower(2)
-      player.incrementInfluence(1)
+      game.aChooseOne(player, [
+        {
+          title: '+2 power and +1 influence',
+          impl: (game, player) => {
+            player.incrementPower(2)
+            player.incrementInfluence(1)
+          }
+        },
+        {
+          title: '+1 power and +2 influence',
+          impl: (game, player) => {
+            player.incrementPower(1)
+            player.incrementInfluence(2)
+          }
+        },
+      ])
+
+      /* player.incrementPower(2)
+       * player.incrementInfluence(1) */
     }
   },
   {
