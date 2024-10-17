@@ -323,6 +323,7 @@ export default {
         name: 'stack effect',
         cardId: this.card.id,
       })
+      this.$store.dispatch('magic/game/unselectCard')
     },
 
     toggleUntap() {
