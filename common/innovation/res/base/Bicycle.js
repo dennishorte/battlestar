@@ -32,6 +32,7 @@ function Card() {
 
         handCards.forEach(card => game.mMoveCardTo(card, score))
         scoreCards.forEach(card => game.mMoveCardTo(card, hand))
+        game.mActed(player)
       }
       else {
         game.mLogDoNothing(player)
