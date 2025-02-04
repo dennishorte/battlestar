@@ -138,16 +138,16 @@ export default {
       }
 
       if (this.card.attachedTo) {
-        parts.push('attached to: ' + this.card.attachedTo.name)
+        parts.push('attached to: ' + this.getDisplayName(this.card.attachedTo))
       }
 
       if (this.card.attached.length > 0) {
-        const names = this.card.attached.map(c => c.name).join(', ')
+        const names = this.card.attached.map(c => this.getDisplayName(c)).join(', ')
         parts.push('attached: ' + names)
       }
 
       if (this.card.annotationEOT) {
-        parts.push(this.card.annotationEOT)
+        parts.push('eot: ' + this.card.annotationEOT)
       }
 
       return parts.join(', ')
@@ -176,20 +176,7 @@ export default {
     },
 
     displayName() {
-      if (this.hidden) {
-        if (this.card.secret) {
-          return 'secret'
-        }
-        else if (this.card.morph) {
-          return 'morph'
-        }
-        else {
-          return 'hidden'
-        }
-      }
-      else {
-        return this.card.activeFace
-      }
+      return this.getDisplayName(this.card)
     },
 
     extraClasses() {
@@ -219,8 +206,7 @@ export default {
     },
 
     hidden() {
-      const player = this.game.getPlayerByName(this.actor.name)
-      return !this.card.visibility.includes(player)
+      return this.getHidden(this.card)
     },
 
     highlighted() {
@@ -267,6 +253,28 @@ export default {
 
     closeup() {
       this.$modal('card-closeup-modal').show()
+    },
+
+    getDisplayName(card) {
+      if (this.getHidden(card)) {
+        if (card.secret) {
+          return 'secret'
+        }
+        else if (card.morph) {
+          return 'morph'
+        }
+        else {
+          return 'hidden'
+        }
+      }
+      else {
+        return card.activeFace
+      }
+    },
+
+    getHidden(card) {
+      const player = this.game.getPlayerByName(this.actor.name)
+      return !card.visibility.includes(player)
     },
 
     hasGraveAbility(name) {
