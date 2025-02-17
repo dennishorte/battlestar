@@ -39,6 +39,9 @@ function Card() {
       trigger: 'splay',
       kind: 'would-instead',
       matches(game, player, { color, direction }) {
+        if (direction !== 'left') {
+          return false
+        }
         const notLeftCondition = game.getZoneByPlayer(player, color).splay !== 'left'
         const leftCondition = game
           .utilColors()

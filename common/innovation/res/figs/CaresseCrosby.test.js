@@ -115,7 +115,7 @@ describe('Caresse Crosby', () => {
           splay: 'left'
         },
         purple: {
-          cards: ['Code of Laws', 'Mysticism'],
+          cards: ['Lighting', 'Code of Laws', 'Mysticism'],
           splay: 'left'
         },
         green: ['Navigation', 'Sailing', 'The Wheel'],
@@ -123,4 +123,137 @@ describe('Caresse Crosby', () => {
       },
     })
   })
+
+  test.only('karma: splay right from none', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        red: {
+          cards: ['Construction', 'Archery'],
+          splay: 'left'
+        },
+        yellow: {
+          cards: ['Caresse Crosby', 'Fermenting'],
+          splay: 'left'
+        },
+        blue: ['Atomic Theory', 'Calendar', 'Tools'],
+        purple: {
+          cards: ['Code of Laws', 'Mysticism'],
+          splay: 'left'
+        },
+        green: {
+          cards: ['Navigation', 'Sailing'],
+          splay: 'left',
+        },
+        hand: ['The Wheel'],
+      },
+      decks: {
+        base: {
+          7: ['Railroad'],
+        }
+      }
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Atomic Theory')
+    const request3 = t.choose(game, request2, 'blue')
+
+    t.testNotGameOver(request3)
+
+    t.testBoard(game, {
+      dennis: {
+        red: {
+          cards: ['Construction', 'Archery'],
+          splay: 'left'
+        },
+        yellow: {
+          cards: ['Caresse Crosby', 'Fermenting'],
+          splay: 'left'
+        },
+        blue: {
+          cards: ['Atomic Theory', 'Calendar', 'Tools'],
+          splay: 'right',
+        },
+        purple: {
+          cards: ['Railroad', 'Code of Laws', 'Mysticism'],
+          splay: 'left'
+        },
+        green: {
+          cards: ['Navigation', 'Sailing'],
+          splay: 'left',
+        },
+        hand: ['The Wheel'],
+      },
+    })
+  })
+
+  test.only('karma: splay right from left', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        red: {
+          cards: ['Construction', 'Archery'],
+          splay: 'left'
+        },
+        yellow: {
+          cards: ['Caresse Crosby', 'Fermenting'],
+          splay: 'left'
+        },
+        blue: {
+          cards: ['Atomic Theory', 'Calendar', 'Tools'],
+          splay: 'left',
+        },
+        purple: {
+          cards: ['Code of Laws', 'Mysticism'],
+          splay: 'left'
+        },
+        green: {
+          cards: ['Invention', 'Sailing'],
+          splay: 'left',
+        },
+        hand: ['The Wheel'],
+      },
+      decks: {
+        base: {
+          4: ['Gunpowder'],
+        }
+      }
+
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Invention')
+    const request3 = t.choose(game, request2, 'blue')
+
+    t.testNotGameOver(request3)
+
+    t.testBoard(game, {
+      dennis: {
+        red: {
+          cards: ['Construction', 'Archery'],
+          splay: 'left'
+        },
+        yellow: {
+          cards: ['Caresse Crosby', 'Fermenting'],
+          splay: 'left'
+        },
+        blue: {
+          cards: ['Atomic Theory', 'Calendar', 'Tools'],
+          splay: 'right',
+        },
+        purple: {
+          cards: ['Code of Laws', 'Mysticism'],
+          splay: 'left'
+        },
+        green: {
+          cards: ['Invention', 'Sailing'],
+          splay: 'left',
+        },
+        hand: ['The Wheel'],
+        score: ['Gunpowder'], 
+        achievements: ["Wonder"],
+      },
+    })
+  })
+
 })
