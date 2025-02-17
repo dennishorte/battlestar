@@ -68,7 +68,7 @@ describe('Caresse Crosby', () => {
     })
   })
 
-  test('karma: you win', () => {
+   test('karma: you win', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
@@ -120,6 +120,66 @@ describe('Caresse Crosby', () => {
         },
         green: ['Navigation', 'Sailing', 'The Wheel'],
         hand: [],
+      },
+    })
+  })
+
+  test('karma: you win (must be splaying left)', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        red: {
+          cards: ['Construction', 'Archery'],
+          splay: 'left'
+        },
+        yellow: {
+          cards: ['Caresse Crosby', 'Fermenting'],
+          splay: 'left'
+        },
+        blue: {
+          cards: ['Calendar', 'Tools'],
+          splay: 'left'
+        },
+        purple: {
+          cards: ['Reformation', 'Mysticism'],
+          splay: 'up'
+        },
+        green: {
+          cards: ['Navigation', 'Sailing'],
+          splay: 'left',
+        },
+      },
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Reformation')
+    const request3 = t.choose(game, request2, 'no')
+    const request4 = t.choose(game, request3, 'purple')
+
+    t.testIsSecondPlayer(request4)
+
+    t.testBoard(game, {
+      dennis: {
+        red: {
+          cards: ['Construction', 'Archery'],
+          splay: 'left'
+        },
+        yellow: {
+          cards: ['Caresse Crosby', 'Fermenting'],
+          splay: 'left'
+        },
+        blue: {
+          cards: ['Calendar', 'Tools'],
+          splay: 'left'
+        },
+        purple: {
+          cards: ['Reformation', 'Mysticism'],
+          splay: 'right'
+        },
+        green: {
+          cards: ['Navigation', 'Sailing'],
+          splay: 'left',
+        },
       },
     })
   })

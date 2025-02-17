@@ -39,6 +39,7 @@ function Card() {
       trigger: 'splay',
       kind: 'would-instead',
       matches(game, player, { color, direction }) {
+        const toSplayLeftCondition = direction === 'left'
         const notLeftCondition = game.getZoneByPlayer(player, color).splay !== 'left'
         const leftCondition = game
           .utilColors()
@@ -46,7 +47,7 @@ function Card() {
           .map(color => game.getZoneByPlayer(player, color).splay)
           .filter(splay => splay === 'left')
           .length === 4
-        return leftCondition && notLeftCondition
+        return toSplayLeftCondition && leftCondition && notLeftCondition
       },
       func(game, player) {
         throw new GameOverEvent({
