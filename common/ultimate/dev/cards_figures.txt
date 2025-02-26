@@ -1,0 +1,782 @@
+Sinuhe
+purple
+1
+&llh
+& Draw and foreshadow a {2} or {3}.
+- You may issue a Rivaly Decree with any two figures.
+- Each {k} on your board provides one additional point towards your score.
+
+Homer
+purple
+1
+h*2k
+* Draw and tuck a {2}.
+- If you would remove or return a figure from your hand, instead tuck it.
+
+Fu Xi
+green
+1
+&chc
+& Draw and score a {2}.
+- You may issue a Trade Decree with any two figures.
+- Each card in your score pile and forecast provides one additional {s}.
+
+Hatshepsut
+green
+1
+1c*h
+* Draw a {1}
+- If you would draw a card of value higher than 1 and you have a {1} in your hand, first return all cards from your hand and draw two cards of that value.
+
+Daedalus
+blue
+1
+&hkk
+& Draw and foreshadow a {4}.
+- Each card in your forecast adds one to the value of your highest top card for the purpose of claiming achievements. Each achievement adds its value to your score.
+
+Ptahhotep
+purple
+1
+h*kk
+* Score a top card from your board.
+- If a player would successfully demand something of you, first transfer the highest card from that player's score pile to your score pile.
+
+Shennong
+yellow
+1
+llh*
+* Draw and foreshadow a {2}.
+- If you would foreshadow a card of the same value as a card in your forecast, first score each card of that value in your forecast.
+
+Huang Di
+blue
+1
+ss&h
+& Draw a {2}.
+- You may issue an advancement decree with any two figures.
+- Each {s} on your board provides one additional {l}.
+
+Imhotep
+blue
+1
+khk&
+& Draw and meld a {2}.
+- If you would meld a card over an unsplayed color with more than one card, instead splay that color left and return the card.
+
+Tigernmas
+red
+1
+hl*l
+* Draw a {1}.
+- You may issue a War Decree with any two figures.
+- Each card in your hand provides one additional point toward your score.
+
+Gilgamesh
+red
+1
+*h1k
+* Score a card from your hand.
+- Each bonus on your board provides one additional {k} for every top card on your board.
+
+Sunshu Ao
+yellow
+1
+h1*k
+* Tuck a card from your hand.
+- If you would tuck a yellow card, instead execute all of the non-demand Dogma effects on it for yourself only, then return it to your hand.
+
+Sneferu
+yellow
+1
+hkk*
+* Draw and tuck a {2}. If it has a {k}, repeat this effect.
+- You may issue an expansion decree with any two figures.
+- Each {k} on your board provides one additional {c}.
+
+Hammurabi
+red
+1
+s*h2
+* Meld a card from your hand.
+- If a player would successfully demand something of you, first successfully demand that same thing of that player.
+
+Sargon of Akkad
+green
+1
+1ch*
+* Draw and meld a {1}.
+- If you would meld a card, and your current top card of that color is of equal value, instead tuck it.
+
+Plato
+purple
+2
+shs*
+* You may splay one color of your cards left.
+- You may issue a Rivalry Decree with any two figures.
+- Each splayed stack on your board provides one additional {k}, {s}, {l}, and {c}.
+
+Sun Tzu
+red
+2
+*khk
+* Draw a {2}.
+- You may issue a War Decree with any two figures.
+- If you would draw for a share bonus, first meld any number of cards from your hand matching the Dogma action's featured icon.
+
+Alexander the Great
+red
+2
+2*hk
+* Score a card from your hand.
+- When you meld this card, score all opponent's top figures of value 1 or 2.
+- If you would take a Dogma action, instead of using the featured icon use each player's current score.
+
+Confucius
+purple
+2
+hl&3
+& Score an opponent's top figure of value 1.
+- If you would take a Dogma action and activate a card with a {k} as a featured icon, instead choose any other icon on your board as the featured icon.
+
+Zhang Heng
+blue
+2
+l&2h
+& Draw and tuck a {3}. Score all cards above it.
+- Each card in your score pile counts as a bonus of its value on your board.
+
+Archimedes
+blue
+2
+sh&s
+& Draw a {2}.
+- You may issue an Advancement Decree with any two figures.
+- If you would take a Dogma action, first increase every {} value in each echo and dogma effect by one.
+
+Ptolemy
+green
+2
+hc*c
+* Draw and meld a {2}.
+- You may issue a Trade Decree with any two figures.
+- Each top blue card on every player's board counts as a card you can activate with a Dogma action.
+
+Augustus Caesar
+green
+2
+khk*
+* Draw and foreshadow a {3}.
+- If any player would meld or foreshadow a card of value less than 4, first reveal it. If it is red or green and has a {k}, instead transfer it to your board, then tuck all cards from your forecast.
+
+Ximen Bao
+yellow
+2
+*2hl
+* Tuck a card from your hand.
+- You may issue an Expansion Decree with any two figures.
+- Each Inspire and Echo effect on your board counts as a part of this stack. When executing, order them from bottom to top, red, blue, green, purple, yellow.
+
+Cai Lun
+yellow
+2
+&cch
+& You may splay one color of your cards left.
+- If you would claim an achievement, first draw and foreshadow a {3}.
+- Each card in your forecast counts as an available achievement for you.
+
+Murasaki Shikibu
+purple
+3
+sh4*
+* Draw a {3}.
+- You may issue a Rivaly Decree with any two figures.
+- If you would claim a standard achievement, instead achieve a card of equal value from your score pile. Then claim the achievement, if you are still eligible.
+
+Shen Kuo
+green
+3
+ch*c
+* You may splay one color of your cards left.
+- Each splayed color on your board provides three additional points towards your score.
+
+Saladin
+red
+3
+3h&k
+& Score any other top card with a {k} from anywhere.
+- You may issue a War Decree with any two figures.
+- If you would score a non-figure card, instead meld the card, then you may splsy left the color of that card.
+
+Avicenna
+yellow
+3
+*lhl
+* Draw and tuck a {3}.
+- You may issue an Expansion Decree with any two figures.
+- If you are required to fade a figure, instead do nothing.
+
+Tran Huang Dao
+red
+3
+h&kk
+& Score a top red card of value less than 4 from anywhere.
+- Each two {k} on your board provides one additional icon of every other type on your board.
+
+Sejong the Great
+blue
+3
+&3hs
+& Draw and meld a {4}.
+- You may issue an advancement decree with any two figures.
+- If you would meld a blue card of value above 3, instead return it and draw and meld a card of value one higher.
+
+Rhazes
+yellow
+3
+hll&
+& Draw and foreshadow a {3}, {4}, or {5}.
+- If you would draw a card, first tuck a card of the same value from your hand.
+
+Su Song
+green
+3
+c*h3
+* Draw and meld a {3}. If it has a {l}, repeat this effect.
+- You may issue a Trade Decree with any two figures.
+- If you would draw a {3}, first transfer a card from your score pile to your forecast.
+
+Alhazen
+blue
+3
+ss&h
+& Tuck a top card with a {k} from anywhere.
+- Each of your splayed colors counts as having a top card of value equal to the number of {s} or {k} in that color (whichever is higher) for the purpose of taking a Draw or Inspire action.
+
+Al-Kindi
+purple
+3
+hcc*
+* Score a card from your hand.
+- If you would draw a card for sharing, first draw two cards of the same value.
+
+Leonarda Da Vinci
+yellow
+4
+&5hl
+& Score a top figure with a bonus from anywhere.
+- If you would meld a yellow card, first meld every non-yellow, non-purple card in your hand.
+- If you would meld a purple card, first draw three {4}.
+
+Cristopher Columbus
+green
+4
+4lh*
+* Draw a {4}.
+- You may issue a Trade Decree with any two figures.
+- Each {f} on your board provides two additional {c}.
+
+Johannes Kepler
+blue
+4
+hs&s
+& Draw a {5}.
+- If you would take a Dogma actions, first reveal all cards of the chosen card's color from your hand. Increase each {} value in any effect during this action by the number of cards you revealed.
+
+Yi Sun-Sin
+red
+4
+4hf&
+& Score a top card with a {k} from anywhere.
+- If you would score a card of a color you have splayed, instead tuck it, then draw a {3}.
+
+Niccolo Machiavelli
+purple
+4
+&ssh
+& Splay one color right that you have splayed left.
+- Each color splayed right on your board but not splayed in any direction on any other player's board counts as an achievement.
+
+Amina Sukhera
+red
+4
+f*fh
+* Score all bottom purple cards.
+- When you meld this card, score all opponents' top figures of value 4.
+- Each top card with a {k} on your board counts as an available achievement for you.
+
+Michaelangelo
+yellow
+4
+ch*c
+* Score a card from your hand.
+- Each card in your hand is also considered part of your score pile.
+
+Takiyuddin
+blue
+4
+*llh
+* Draw and tuck a {5}. If it has a {s}, meld it instead.
+- You may issue an Advancement Decree with any two figures.
+- If you would take an Inspire action, first you may splay that color right.
+
+Galileo Galilei
+green
+4
+hcc&
+& Draw and foreshadow a {5} or {6}.
+- If you would foreshadow a card of value not present in your forecast, first transfer all cards from your forecast into your hand.
+
+William Shakespeare
+purple
+4
+4*hs
+* Meld a card from your hand.
+- You may issue a Rivaly Decree with any two figures.
+- Each HEX on your board provides one additional point toward your score.
+
+Samuel de Champlain
+green
+5
+c5h*
+* Return a {5} from your hand. Draw a {6}.
+- If you would draw a fifth card into your hand, first claim an achievement of that card's value or below, regardless of eligibility.
+
+Johannes Vermeer
+purple
+5
+5h*c
+* Draw and score a {3}.
+- If you would claim a standard achievement, first claim an achievement of value one higher, regardless of eligibility.
+
+Christiaan Huygens
+blue
+5
+&ssh
+& Draw and foreshadow a {7}, {8}, {9}, or {0}.
+- If you would foreshadow a card, instead meld it if it both has a {i} and its value is no more than two higher than your highest top card. Otherwise, foreshadow it.
+
+Bartolomeo Cristofori
+purple
+5
+l*hl
+* Meld a card from your hand.
+- If you would meld the fifth visible card of a color on your board, first claim an achievement ignoring the scoring restriction.
+
+Bartholomew Roberts
+green
+5
+*hc6
+* Score a top card with a {c} from anywhere.
+- If you would score a card, first claim an achievement matching that card's value, ignoring the age requirement.
+
+Peter the Great
+red
+5
+f*5h
+* Tuck a card from your hand.
+- When you meld this card, return all opponents' top figures.
+- If you would tuck a card with a {f}, first achieve your bottom green card, if elibible. Otherwise, score it.
+
+Isaac Newton
+blue
+5
+hs&s
+& Splay one color of your cards right.
+- If you would take a Draw or Inspire action, first draw a {1} and transfer it to any player's board.
+
+Antoine Van Leeuwenhoek
+yellow
+5
+&shs
+& Draw a {6}.
+- Each card in hand counts as ten points towards the cost of claiming an achievement of that card's value.
+
+Shivaji
+red
+5
+&ffh
+& Transfer one of your top cards to the available achievements.
+- You may issue a War Decree with any two figures.
+- If an opponent would claim an achievement, first you claim it if eligible.
+
+Christopher Polhem
+yellow
+5
+hff*
+* Draw and tuck a {4}.
+- You may issue an Expansion Decree with any two figures.
+- Each {f} on your board provides two additional points towards your score.
+
+Ludwig Van Beethoven
+purple
+6
+h*7c
+* Score a card from your hand.
+- You may issue a Rivalry Decree with any two figures.
+- If you would score a card with a {s}, instead return it and all cards from your score pile, then draw and score four {5}.
+
+John Harrison
+green
+6
+6ch*
+* Draw a {6}.
+- You may issue a Trade Decree with any two figures.
+- If an opponent would draw a card for sharing, first draw a {6}. You may choose the type of card drawn.
+
+John Loudon McAdam
+yellow
+6
+hf*f
+* Meld a card from your hand.
+- You may issue an Expansion Decree with any two figures.
+- Each top card with a {f} on your board counts as an available achievement for you.
+
+Adam Smith
+green
+6
+*fcc
+* You may splay one color of your cards right.
+- Each {c} on your board provides two additional {c}.
+
+Tecumseh
+red
+6
+fh&f
+& Draw and tuck a {6}.
+- If you would tuck a card with a {f}, first return a top card with a {f} from another player's board.
+
+Napoleon Bonaparte
+red
+6
+h6f&
+& Score a top figure of value 5 or 6 from anywhere.
+- You may issue a War Decree with any two figures.
+- If you would score or return a card with a {f}, instead tuck it and score a top card of value 6 from anywhere.
+
+Catherine the Great
+purple
+6
+*ssh
+* Draw and meld a {6}.
+- Each {s} on your board provides two additional {s}.
+- If you would meld a purple card, first transfer your top purple card into your hand.
+
+Benjanmin Franklin
+blue
+6
+s&h6
+& Take a top figure into your hand from any player's board. Meld it.
+- You may issue an Advancement Decree with any two figures.
+- If you would meld a card, first draw and meld a card of one higher value.
+
+Carl Friedrich Gauss
+blue
+6
+ss&h
+& Draw a {7}.
+- If you would meld a card, first choose a value and meld all cards of that value from your hand and score pile.
+
+Edward Jenner
+yellow
+6
+*llh
+* Tuck a card from your hand.
+- If a player would successfully demand something of you, instead return a card from your hand.
+
+George Stephenson
+green
+7
+7&fh
+& You may splay up a color you have splayed right.
+- If you would claim an achievement, first transfer the bottom card from each non-empty age below 10 to the available achievements.
+
+Emperor Meiji
+purple
+7
+hii*
+* Draw and foreshadow an {8} or {9}.
+- If you would meld a card of value 10 and you have top cards of values 9 and 8 on your board, instead you win.
+- Each card in your forecast counts as being in your hand.
+
+Rowland Hill
+yellow
+7
+*chc
+* Draw a {7}.
+- If you would claim an achievement, first return three cards from your hand. If you do, claim all other cards in your hand as achievements, ignoring eligibility.
+
+Charles Darwin
+blue
+7
+&8hs
+& Draw an {8}.
+- You may issue an Advancement Decree with any two figures.
+- If you would claim an achievement, first if no other player has as many or more achievements as you, instead you win.
+
+Alfred Nobel
+green
+7
+chc*
+* Score a card from your hand.
+- Each icon type on your board counts as an achievement, if you have at least twice as many of that icon as every other player.
+
+Florence Nightingale
+yellow
+7
+hl*7
+* Tuck a card from your hand.
+- You may issue an expansion decree with any two figures.
+- If an opponent's effect would transfer, return, or remove a card from your score pile, instead leave it there.
+
+James Clerk Maxwell
+blue
+7
+h*7i
+* Draw an {8}.
+- Each card in hand provides one additional icon of every type on your board.
+
+John Ericsson
+red
+7
+hff*
+* Draw and tuck a {7}.
+- When you meld this card, score all opponents' top figures of value less than 7.
+- Each {f} on your board provides two additional {i}.
+
+Robert E. Lee
+red
+7
+&hll
+& Transfer a top card with a {l} from anywhere to any player's board.
+- You may issue a War Decree with any two figures.
+- Each seven {l} on your board counts as an achievement.
+
+Queen Victoria
+purple
+7
+ss&h
+& Transfer a figure from any score pile to yours.
+- You may issue a Rivalry Decree with any two figures.
+- If you would claim a standard achievement, first make an achievement available from any lower non-empty age.
+
+Duke Ellington
+purple
+8
+s9*h
+* Draw and meld an {8} figure.
+- If you are required to fade a figure, instead do nothing.
+- If you would meld a figure and have four top figures already, instead achieve it regardless of eligibility.
+
+John Von Neumann
+red
+8
+hii&
+& Draw and reveal two {9}. If either is purple, return them.
+- When you meld this card, return all opponents' top figures.
+- Each card in your hand provides two additional {i}.
+
+Albert Einstein
+blue
+8
+hs&8
+& Meld all cards from your hand with a {s} or {i}.
+- You may issue an Advancement Decree with any two figures.
+- Each {} value in any of your effects counts as a {0}.
+
+Emmy Noether
+green
+8
+*iih
+* Draw and meld an {8}.
+- Each {i} on your board provides an additional number of points equal to the number of {i} on your board.
+
+Erwin Rommel
+red
+8
+fhf&
+& Transfer a card from any score pile to yours.
+- You may issue a War Decree with any two figures.
+- If you would score a card, instead score the top card of its color from all boards.
+
+Marie Curie
+blue
+8
+f&hf
+& Draw a {9}.
+- Each different value present in your score pile above 6 counts as an achievement.
+
+Nikola Tesla
+yellow
+8
+8*sh
+* Draw an {8}.
+- You may issue an Expansion Decree with any two figures.
+- If you would meld a card with a {s} or {i}, first score an opponent's top card with neither {s} nor {i}.
+
+J.P. Morgan
+green
+8
+c&hc
+& You may splay one color of your cards up.
+- You may issue a Trade Decree with any two figures.
+- Each icon in each color you have splayed up provides an additional icon of the same type.
+
+Caresse Crosby
+yellow
+8
+lh8*
+* Tuck a card from your hand.
+- If you would tuck a card with a {l}, first splay that color of your cards left, then draw two {2}.
+- If you would splay a fifth color left, instead you win,.
+
+H.G. Wells
+purple
+8
+l*hl
+* Draw and foreshadow a {0}.
+- If you would foreshadow a card, instead meld it, execute its non-demand Dogma effects for yourself only, and remove it from the game if it is still a top card on your board.
+
+Nelson Mandela
+red
+9
+l*hl
+* Draw and meld a {9}.
+- If you are required to fade a figure, instead do nothing.
+- Each two inspire effects visibile on your board counts as an achievement.
+
+Mikhail Kalashnikov
+red
+9
+*ffh
+* Tuck a card from your hand.
+- If you would tuck a red card, instead choose a top red card on an opponent's board. Either transfer it to your score pile, or execute its non-demand Dogma effects for yourself only.
+
+Ruth Handler
+yellow
+9
+9*hf
+* Transfer a top card from your board to your hand.
+- If you would meld a card, first meld all other cards of that color from your hand, then draw and achieve a {9} for each card you melded in this way, regardless of eligibility.
+
+Che Guevara
+yellow
+9
+hl&l
+& Draw and score a {9}.
+- When you meld this card, score all opponents' top figures.
+- If you would score a green card, instead remove it and all cards in all score piles from the game.
+
+Hedy Lamar
+green
+9
+i&ih
+& You may splay one color of your cards up.
+- You may issue a Trade Decree with any two figures.
+- Each special achievement is claimed with one fewer or one lower of each requirement listed for you.
+
+Pele
+purple
+9
+ha*c
+* Draw and tuck three {9}.
+- You may issue a Rivalry Decree with any two figures.
+- If you would tuck a yellow card after tucking a green card in the same turn, instead you win.
+
+Grace Hopper
+blue
+9
+sh9*
+* Tuck two cards from your hand.
+- If another player would not draw a card for sharing after a Dogma action, first draw and reveal a {0}. If it is blue, you win.
+
+Taiichi Ono
+green
+9
+hii&
+& Draw a {0}.
+- If you would take a Dogma action and activate a card, first achieve a card from your hand with featured icon matching that card's featured icon, regardless of eligibility.
+
+Gene Roddenberry
+purple
+9
+ch&9
+& Meld a top purple card from anywhere.
+- If you would meld a purple card, instead if it is Enterprise, you win. Otherwise, instead tuck the card and return any top figure.
+
+Wernher Von Braun
+blue
+9
+*ssh
+* Draw and foreshadow a {0}.
+- Each card in your forecast counts as being in your score pile.
+
+Jackie Chan
+red
+10
+*iih
+* Score a card from your hand.
+- If an opponent would win, first score all other top figures in play. If you now have the most points, you win instead.
+
+Stephen Hawking
+blue
+10
+b*sh
+* Draw and tuck a {0}.
+- Each HEX on your board also counts as an echo effet reading "Score the bottom card of this color".
+
+Martin Scorsese
+purple
+10
+fha&
+& Draw and meld a {0}.
+- If you would meld a figure, instead tuck the figure and claim a standard achievement, regardless of eligibility.
+
+Kim Yu-Na
+purple
+10
+hl&a
+& Score a top card from your board.
+- If you would score a card with a {k}, instead you win.
+
+Susan Blackmore
+blue
+10
+*shs
+* Execute any echo or inspire effect.
+- If another player would not draw a share bonus after a Dogma action, first transfer the card they activated to your score pile.
+
+Margaret Thatcher
+red
+10
+ff&h
+& Score a top card with a {f} or {c}.
+- If you would take a Dogma action, first score any top card with a {c} or {f} from anywhere.
+
+Alex Trebek
+yellow
+10
+sh*s
+* Draw and meld a card of any value.
+- If you would draw a card and have no figures of that value in hand, first say "Who is" and name a figure. Search the figures deck of that age for the named firge and take it into hand if present. Then shuffle that deck.
+
+Shigeru Miyamoto
+yellow
+10
+hai&
+& Draw a {0}. If it does not have a {i}, score it.
+- If you would take a Dogma action and activate a card using {i} as the featured icon, first if you have exactly one, three, or six {i} on your board, you win.
+
+Muhammad Yunus
+green
+10
+c*hc
+* Draw a {0}.
+- If any player would take a Dogma action, first you may return a card. If you do, you have the sole majority in its featured icon until the end of the action.
+
+Sergey Brin
+green
+10
+hii*
+* You may splay one color of your cards up.
+- Each top card on every player's board counts as a card you can activate with a Dogma action.
