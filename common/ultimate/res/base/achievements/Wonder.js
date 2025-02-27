@@ -5,7 +5,7 @@ function Card() {
   this.name = 'Wonder'
   this.shortName = 'wond'
   this.expansion = 'base'
-  this.text = 'Have five colors splayed either up or right.'
+  this.text = 'Have five colors splayed either right, up, or aslant.'
   this.alt = 'Invention'
   this.isSpecialAchievement = true
   this.checkPlayerIsEligible = function(game, player, reduceCost) {
@@ -15,7 +15,7 @@ function Card() {
       .map(c => game.getZoneByPlayer(player, c).splay)
 
     const directionMatch = splays
-      .filter(splay => splay === 'right' || splay === 'up')
+      .filter(splay => splay === 'right' || splay === 'up' || splay === 'aslant')
       .length
 
     return directionMatch >= numColors
