@@ -13,14 +13,16 @@ function Card() {
   this.karma = []
   this.dogma = [
     `You may splay your red or green cards up.`,
-    `Draw and meld a {0}, then execute each of its non-demand dogma effects. Do not share them.`
+    `Draw and meld a {0}, then self-execute it.`,
   ]
 
   this.dogmaImpl = [
     (game, player) => game.aChooseAndSplay(player, ['red', 'green'], 'up'),
     (game, player) => {
       const card = game.aDrawAndMeld(player, game.getEffectAge(this, 10))
-      game.aCardEffects(player, card, 'dogma')
+      if (card) {
+        game.aSelfExecute(player, card)
+      }
     }
   ]
   this.echoImpl = []
