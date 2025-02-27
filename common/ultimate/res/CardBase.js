@@ -120,10 +120,6 @@ CardBase.prototype.checkHasEcho = function() {
   return this.echo.length > 0
 }
 
-CardBase.prototype.checkHasBiscuit = function(biscuit) {
-  return this.biscuits.includes(biscuit)
-}
-
 CardBase.prototype.checkHasBonus = function() {
   const re = /[0-9ab]/gi
   const match = this.biscuits.match(re)
