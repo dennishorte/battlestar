@@ -880,7 +880,7 @@ Innovation.prototype.aClaimAchievement = function(player, opts={}) {
     card = this
       .getZoneById('achievements')
       .cards()
-      .filter(card => !card.isSpecialAchievement)
+      .filter(card => !card.isSpecialAchievement && !card.isDecree)
       .find(c => c.getAge() === opts.age)
   }
 
@@ -1915,7 +1915,7 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
   }
 
   for (const card of this.getZoneByPlayer(player, 'achievements').cards()) {
-    if (card.isSpecialAchievement) {
+    if (card.isSpecialAchievement || card.isDecree) {
       ach.special.push(card)
     }
     else {
@@ -2052,6 +2052,13 @@ Innovation.prototype.getCardByName = function(name, def) {
 Innovation.prototype.getAgesByZone = function(player, zoneName) {
   const ages = this.getCardsByZone(player, zoneName).map(c => c.getAge())
   return util.array.distinct(ages).sort()
+}
+
+Innovation.prototype.getAvailableSpecialAchievements = function() {
+  return this
+    .getZoneById('achievements')
+    .cards()
+    .filter(c => c.isSpecialAchievement)
 }
 
 Innovation.prototype.getCardsByZone = function(player, zoneName) {
@@ -2855,7 +2862,7 @@ Innovation.prototype.utilEmptyBiscuits = function() {
 
 Innovation.prototype._cardLogData = function(card) {
   let name
-  if (card.isSpecialAchievement) {
+  if (card.isSpecialAchievement || card.isDecree) {
     name = card.name
   }
   else {
@@ -3047,7 +3054,7 @@ Innovation.prototype.getAvailableAchievementsByAge = function(age) {
   const available = this
     .getZoneById('achievements')
     .cards()
-    .filter(c => !c.isSpecialAchievement)
+    .filter(c => !c.isSpecialAchievement && !c.isDecree)
 
   return available.filter(c => c.age === age)
 }
@@ -3056,7 +3063,7 @@ Innovation.prototype.getAvailableAchievementsRaw = function(player) {
   const achievementsZone = this
     .getZoneById('achievements')
     .cards()
-    .filter(c => !c.isSpecialAchievement)
+    .filter(c => !c.isSpecialAchievement && !c.isDecree)
 
   const fromKarma = this
     .getInfoByKarmaTrigger(player, 'list-achievements')

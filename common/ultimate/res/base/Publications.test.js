@@ -4,7 +4,7 @@ const t = require('../../testutil.js')
 
 describe('Publications', () => {
 
-  test('dogma', () => {
+  test('dogma: send to junk', () => {
     const game = t.fixtureFirstPlayer()
     t.setBoard(game, {
       dennis: {
@@ -15,23 +15,53 @@ describe('Publications', () => {
 
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Publications')
+    const request3 = t.choose(game, request2, 'blue')
+    const request4 = t.choose(game, request3, 'Monument')
 
-    t.testChoices(request2, ['blue', 'green'])
-
-    const request3 = t.choose(game, request2, 'green')
-    const request4 = t.choose(game, request3, 'Databases')
-    const request5 = t.choose(game, request4, 'auto')
-    const request6 = t.choose(game, request5, 'blue')
-
-    t.testIsSecondPlayer(request6)
+    t.testIsSecondPlayer(request4)
     t.testBoard(game, {
       dennis: {
         blue: {
           cards: ['Publications', 'Tools'],
           splay: 'up',
         },
-        green: ['Databases', 'Sailing', 'Navigation', 'The Wheel'],
+        green: ['Sailing', 'Navigation', 'Databases', 'The Wheel'],
       },
+      junk: ['Monument']
     })
+  })
+
+  test('dogma: return from junk', () => {
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Publications', 'Tools'],
+        green: ['Sailing', 'Navigation', 'Databases', 'The Wheel'],
+      },
+      junk: ['Monument'],
+    })
+
+    const request1 = game.run()
+
+    expect(game.getCardByName('Monument').zone).toEqual('junk')
+
+    const request2 = t.choose(game, request1, 'Dogma.Publications')
+    const request3 = t.choose(game, request2, 'blue')
+    const request4 = t.choose(game, request3)
+    const request5 = t.choose(game, request4, 'Monument')
+
+    t.testIsSecondPlayer(request5)
+    t.testBoard(game, {
+      dennis: {
+        blue: {
+          cards: ['Publications', 'Tools'],
+          splay: 'up',
+        },
+        green: ['Sailing', 'Navigation', 'Databases', 'The Wheel'],
+      },
+      junk: [],
+    })
+
+    expect(game.getCardByName('Monument').zone).toEqual('achievements')
   })
 })

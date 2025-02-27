@@ -12,61 +12,51 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `You may rearrange the order of one color of cards on your board.`,
-    `You may splay your yellow or blue cards up.`
+    `You may splay your yellow or blue cards up.`,
+    `You may junk an available special achievement, or make a special achievement in the junk available.`,
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const colors = game
-        .utilColors()
-        .filter(color => game.getCardsByZone(player, color).length > 0)
-
-      const color = game.aChoose(player, colors, 'Choose a Color')[0]
-      game.mLog({
-        template: '{player} choose {color}',
-        args: { player, color }
-      })
-
-      const zone = game.getZoneByPlayer(player, color)
-      let remaining = zone.cards()
-      let position = 0
-      while (true) {
-        const posString = position === 0 ? 'top' : 'top+' + position
-        const card = game.aChooseCard(
-          player,
-          remaining.concat(['auto']),
-          { title: `Choose the card you want at ${posString} at the end of this action.` },
-        )
-
-        if (card === 'auto') {
-          game.mLog({
-            template: '{player} leaves the rest in their current order',
-            args: { player }
-          })
-          break
-        }
-
-        game.mMoveByIndices(
-          zone, zone.cards().indexOf(card),
-          zone, position
-        )
-
-        game.mLog({
-          template: `{player} moves {card} to ${posString}`,
-          args: { player, card }
-        })
-
-        game.mActed(player)
-
-        position += 1
-        remaining = remaining.filter(other => other != card)
-      }
+      game.aChooseAndSplay(player, ['yellow', 'blue'], 'up')
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['yellow', 'blue'], 'up')
-    }
+      const toJunkOptions = game.getAvailableSpecialAchievements()
+      const fromJunkOptions = game
+        .getZoneById('junk')
+        .cards()
+        .filter(c => c.isSpecialAchievement)
+
+      let junked = false
+      if (toJunkOptions.length > 0) {
+        const toJunk = game.aChooseCard(player, toJunkOptions, {
+          title: 'Optional: Junk a special achievement?',
+          min: 0,
+        })
+        if (toJunk) {
+          junked = true
+          game.aRemove(player, toJunk)
+        }
+      }
+      else {
+        game.mLog({ template: 'no special achievements available' })
+      }
+
+      if (!junked && fromJunkOptions) {
+        const fromJunk = game.aChooseCard(player, fromJunkOptions, {
+          title: 'Optional: Return a special achievement from junk?',
+          min: 0,
+        })
+        if (fromJunk) {
+          junked = true
+          game.mMoveCardTo(fromJunk, game.getZoneById('achievements'), { player })
+        }
+      }
+      else if (!junked) {
+        game.mLog({ template: 'no special achievements in junk' })
+      }
+    },
   ]
   this.echoImpl = []
   this.inspireImpl = []

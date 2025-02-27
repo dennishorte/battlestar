@@ -7,7 +7,8 @@ function Card() {
   this.expansion = 'figs'
   this.text = "Choose a value. Return all top cards of that value from all other players' boards."
   this.alt = ''
-  this.isSpecialAchievement = true
+  this.isSpecialAchievement = false
+  this.isDecree = true
   this.decreeImpl = (game, player) => {
     const value = game.requestInputSingle({
       actor: player.name,

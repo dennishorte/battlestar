@@ -7,7 +7,8 @@ function Card() {
   this.expansion = 'figs'
   this.text = 'Draw a card of value two higher than your highest top card.'
   this.alt = ''
-  this.isSpecialAchievement = true
+  this.isSpecialAchievement = false
+  this.isDecree = true
   this.decreeImpl = (game, player) => {
     const highestAge = game.getHighestTopAge(player)
     const decreeAge = highestAge + 2

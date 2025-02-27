@@ -7,7 +7,8 @@ function Card() {
   this.expansion = 'figs'
   this.text = 'Choose another player. Return three cards from their score pile, and all their top figures.'
   this.alt = ''
-  this.isSpecialAchievement = true
+  this.isSpecialAchievement = false
+  this.isDecree = true
   this.decreeImpl = (game, player) => {
     // Choose a player
     const otherPlayers = game

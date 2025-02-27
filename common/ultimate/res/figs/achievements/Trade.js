@@ -7,7 +7,8 @@ function Card() {
   this.expansion = 'figs'
   this.text = 'Draw and foreshadow three cards of value one higher than your highest top card.'
   this.alt = ''
-  this.isSpecialAchievement = true
+  this.isSpecialAchievement = false
+  this.isDecree = true
   this.decreeImpl = (game, player) => {
     const age = game.getHighestTopAge(player) + 1
     game.aDrawAndForeshadow(player, age)

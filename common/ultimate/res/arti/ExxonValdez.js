@@ -32,7 +32,7 @@ function Card() {
       game.aRemoveMany(player, toRemove)
 
       game.mLog({
-        template: '{player} exiles all of their cards',
+        template: '{player} junks all of their cards',
         args: { player }
       })
 

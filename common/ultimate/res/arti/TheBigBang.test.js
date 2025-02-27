@@ -30,7 +30,7 @@ describe("The Big Bang", () => {
       dennis: {
         blue: ['Encyclopedia', 'Mathematics'],
       },
-      exile: ['Software'],
+      junk: ['Software'],
     })
   })
 })

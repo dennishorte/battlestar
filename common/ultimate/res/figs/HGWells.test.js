@@ -61,7 +61,7 @@ describe('H.G. Wells', () => {
       },
     })
 
-    expect(game.getCardByName('Bioengineering').zone).toBe('exile')
+    expect(game.getCardByName('Bioengineering').zone).toBe('junk')
   })
 
 })

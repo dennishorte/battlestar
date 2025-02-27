@@ -7,7 +7,8 @@ function Card() {
   this.expansion = 'figs'
   this.text = 'Splay any one of your colors up.'
   this.alt = ''
-  this.isSpecialAchievement = true
+  this.isSpecialAchievement = false
+  this.isDecree = true
   this.decreeImpl = (game, player) => {
     game.aChooseAndSplay(player, null, 'up', { count: 1 })
   }

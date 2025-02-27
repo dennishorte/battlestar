@@ -195,6 +195,10 @@ TestUtil.setBoard = function(game, state) {
       TestUtil.setAvailableAchievements(game, state.achievements)
     }
 
+    if (state.junk) {
+      TestUtil.setJunk(game, state.junk)
+    }
+
     for (const name of ['dennis', 'micah', 'scott', 'eliya']) {
       const playerBoard = state[name]
       if (playerBoard) {
@@ -299,9 +303,9 @@ TestUtil.testBoard = function(game, state) {
     real[player.name] = realBoard
   }
 
-  if (state.exile) {
-    expected.exile = state.exile.sort()
-    real.exile = game.getZoneById('exile').cards().map(c => c.name).sort()
+  if (state.junk) {
+    expected.junk = state.junk.sort()
+    real.junk = game.getZoneById('junk').cards().map(c => c.name).sort()
   }
 
   if (state.achievements) {
@@ -336,7 +340,7 @@ TestUtil.dumpBoard = function(game) {
     real[player.name] = realBoard
   }
 
-  real.exile = game.getZoneById('exile').cards().map(c => c.name).sort()
+  real.junk = game.getZoneById('junk').cards().map(c => c.name).sort()
   real.achievements = game.getZoneById('achievements').cards().map(c => c.name).sort()
 
   return real
@@ -439,6 +443,15 @@ TestUtil.setAvailableAchievements = function(game, cardNames) {
       game.mMoveCardTo(card, game.getZoneById(card.home))
     }
   }
+
+  for (const card of cards) {
+    game.mMoveCardTo(card, zone)
+  }
+}
+
+TestUtil.setJunk = function(game, cardNames) {
+  const cards = cardNames.map(name => game.getCardByName(name))
+  const zone = game.getZoneById('junk')
 
   for (const card of cards) {
     game.mMoveCardTo(card, zone)
