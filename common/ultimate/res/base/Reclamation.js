@@ -6,7 +6,7 @@ function Card() {
   this.color = `yellow`
   this.age = 11
   this.expansion = `base`
-  this.biscuits = `lhl`
+  this.biscuits = `clhl`
   this.dogmaBiscuit = `l`
   this.inspire = ``
   this.echo = ``
@@ -19,38 +19,31 @@ function Card() {
     (game, player) => {
       const doEffect = (color) => {
         const cards = game.getCardsByZone(player, color);
-        if (cards.length < 3) {
-          game.mLog({
-            template: '{player} has fewer than three {color} cards',
-            args: { player, color }
-          });
-          return null;
-        }
-        
+
         // Get the bottom three cards
         const bottomThree = cards.slice(Math.max(0, cards.length - 3));
-        game.aReturnMany(player, bottomThree);
-        
+        const returned = game.aReturnMany(player, bottomThree, { ordered: true });
+
         // Calculate sum of values
         const totalValue = bottomThree.reduce((sum, card) => sum + card.getAge(), 0);
         const drawValue = Math.ceil(totalValue / 2);
-        
+
         game.mLog({
           template: 'Sum of returned cards is {total}, drawing and melding a {value}',
           args: { total: totalValue, value: drawValue }
         });
-        
-        const melded = game.aDrawAndMeld(player, drawValue);
-        return melded;
+
+        const meldedCard = game.aDrawAndMeld(player, drawValue);
+        return { meldedCard, returnedCount: returned.length }
       };
-      
-      const meldedCard = doEffect('red');
-      if (meldedCard && game.getCardsByZone(player, 'red').length >= 3) {
+
+      const { meldedCard, returnedCount } = doEffect('red');
+      if (meldedCard && returnedCount === 3) {
         game.mLog({
           template: '{player} repeats the effect using {color}',
           args: { player, color: meldedCard.color }
         });
-        
+
         doEffect(meldedCard.color);
       }
     }
