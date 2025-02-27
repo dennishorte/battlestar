@@ -7,40 +7,42 @@ function Card() {
   this.color = `red`
   this.age = 11
   this.expansion = `base`
-  this.biscuits = `chii`
-  this.dogmaBiscuit = `c`
+  this.biscuits = `chff`
+  this.dogmaBiscuit = `f`
   this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and reveal an 11. Splay its color on your board aslant. If you do, return all but your top four cards of that color to your hand.`,
+    `Draw and reveal an {b}. Splay its color on your board aslant. If you do, transfer all but your top four cards of that color to your hand.`,
     `If you have at least eight cards in your hand, you win.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const card = game.aDrawAndReveal(player, 11);
+      const card = game.aDrawAndReveal(player, 11)
       if (card) {
-        const color = card.color;
-        game.aSplay(player, color, 'aslant');
-        
-        const cards = game.getCardsByZone(player, color);
-        if (cards.length > 4) {
-          const toReturn = cards.slice(0, cards.length - 4);
-          game.aReturnMany(player, toReturn);
+        const color = card.color
+        const splayed = Boolean(game.aSplay(player, color, 'aslant'))
+
+        if (splayed) {
+          const cards = game.getCardsByZone(player, color)
+          if (cards.length > 4) {
+            const toReturn = cards.slice(4)
+            game.aTransferMany(player, toReturn, game.getZoneByPlayer(player, 'hand'), { ordered: true })
+          }
         }
       }
     },
-    
+
     (game, player) => {
-      const handSize = game.getZoneByPlayer(player, 'hand').cards().length;
+      const handSize = game.getZoneByPlayer(player, 'hand').cards().length
       if (handSize >= 8) {
         throw new GameOverEvent({
           player,
           reason: this.name
-        });
+        })
       } else {
-        game.mLogNoEffect();
+        game.mLogNoEffect()
       }
     }
   ]
