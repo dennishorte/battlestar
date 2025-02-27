@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `You may draw and tuck a {6}. If you do, score all your top cards without a {f}.`,
+    `You may draw and tuck a {6}. If you tuck a card, score a top card without a {f} of each color on your board.`,
     `You may splay your yellow cards right.`
   ]
 
