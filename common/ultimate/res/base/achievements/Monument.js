@@ -5,13 +5,16 @@ function Card() {
   this.name = 'Monument'
   this.shortName = 'monu'
   this.expansion = 'base'
-  this.text = 'Tuck or score six cards in one turn.'
+  this.text = 'Have at least four top cards with a demand effect.'
   this.alt = 'Masonry'
   this.isSpecialAchievement = true
   this.checkPlayerIsEligible = function(game, player, reduceCost) {
-    const counts = game.state.monument[player.name] || {}
-    const targetCount = reduceCost ? 5 : 6
-    return counts.score >= targetCount || counts.tuck >= targetCount
+    const topDemands = game
+      .getTopCards(player)
+      .filter(c => c.checkHasDemand())
+
+    const targetCount = reduceCost ? 3 : 4
+    return topDemands.length >= targetCount
   }
 }
 
