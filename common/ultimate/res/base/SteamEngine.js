@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and tuck two {4}, then score your bottom yellow card.`
+    `Draw and tuck two {4}, then score your bottom yellow card. If it is Steam Engine, junk all cards in the {6} deck.`
   ]
 
   this.dogmaImpl = [
@@ -23,6 +23,10 @@ function Card() {
       const cards = game.getCardsByZone(player, 'yellow')
       const card = cards[cards.length - 1]
       game.aScore(player, card)
+
+      if (card.name === 'Steam Engine') {
+        game.aJunkDeck(player, 6)
+      }
     }
   ]
   this.echoImpl = []
