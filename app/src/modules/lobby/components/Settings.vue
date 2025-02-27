@@ -12,6 +12,7 @@
 
     <div class="game-options mt-2">
       <SettingsInnovation v-if="lobby.game === 'Innovation'" />
+      <SettingsUltimate v-if="lobby.game === 'Innovation: Ultimate'" />
       <SettingsTyrants v-if="lobby.game === 'Tyrants of the Underdark'" />
 
       <SettingsMagic v-if="lobby.game === 'Magic'" />
@@ -28,6 +29,7 @@ import SettingsInnovation from './SettingsInnovation'
 import SettingsMagic from './SettingsMagic'
 import SettingsSetDraft from './SettingsSetDraft'
 import SettingsTyrants from './SettingsTyrants'
+import SettingsUltimate from './SettingsUltimate'
 
 
 export default {
@@ -39,6 +41,7 @@ export default {
     SettingsMagic,
     SettingsSetDraft,
     SettingsTyrants,
+    SettingsUltimate,
   },
 
   inject: ['lobby', 'save'],
@@ -48,6 +51,7 @@ export default {
       gameNames: [
         '',
         'Innovation',
+        'Innovation: Ultimate',
         'Tyrants of the Underdark',
 
         'Magic',

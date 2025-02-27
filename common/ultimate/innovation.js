@@ -32,7 +32,7 @@ function InnovationFactory(settings, viewerName) {
 
 function factoryFromLobby(lobby) {
   return GameFactory({
-    game: 'Innovation',
+    game: 'Innovation: Ultimate',
     name: lobby.name,
     expansions: lobby.options.expansions,
     players: lobby.users,
@@ -192,7 +192,7 @@ Innovation.prototype.initializeZonesAchievements = function() {
   zones.achievements = new Zone(this, 'achievements', 'achievements')
 
   // Standard achievements
-  for (const age of [1,2,3,4,5,6,7,8,9]) {
+  for (const age of [1,2,3,4,5,6,7,8,9,10]) {
     const ageZone = this.getZoneByDeck('base', age)
     const achZone = this.getZoneById('achievements')
     const card = this.mMoveTopCard(ageZone, achZone)

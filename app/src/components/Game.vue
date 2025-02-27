@@ -6,6 +6,7 @@
   <CubeDraft v-else-if="gameType === 'CubeDraft'" />
   <Magic v-else-if="gameType === 'Magic'" />
   <Innovation v-else-if="gameType === 'Innovation'" />
+  <Ultimate v-else-if="gameType === 'Innovation: Ultimate'" />
   <Tyrants v-else-if="gameType === 'Tyrants of the Underdark'" />
 
   <div v-else>
@@ -21,6 +22,7 @@ import { mapState } from 'vuex'
 
 import CubeDraft from '@/modules/games/cube_draft/components/CubeDraft'
 import Innovation from '@/modules/games/inn/components/Innovation'
+import Ultimate from '@/modules/games/ultimate/components/Ultimate'
 import Magic from '@/modules/games/magic/components/Magic'
 import Tyrants from '@/modules/games/tyrants/components/Tyrants'
 
@@ -35,6 +37,7 @@ export default {
     Innovation,
     Magic,
     Tyrants,
+    Ultimate,
 
     SavingOverlay,
   },
