@@ -14,7 +14,8 @@ describe('Computers', () => {
       },
       decks: {
         base: {
-          10: ['Stem Cells']
+          10: ['Stem Cells'],
+          11: ['Fusion'],
         }
       }
     })
@@ -33,6 +34,7 @@ describe('Computers', () => {
           cards: ['Engineering', 'Archery'],
           splay: 'up'
         },
+        hand: ['Fusion'],
         score: ['Gunpowder'],
       },
     })
