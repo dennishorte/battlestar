@@ -1495,15 +1495,17 @@ Innovation.prototype._checkCanSeizeRelic = function(card) {
   return card.zone.includes('achievement')
 }
 
-Innovation.prototype.aJunkAvailableAchievement = function(player, ages=[]) {
+Innovation.prototype.aJunkAvailableAchievement = function(player, ages=[], opts={}) {
   const eligible = ages.filter(age => this.getAvailableAchievementsByAge(age).length > 0)
   if (eligible.length === 0) {
     this.mLogNoEffect()
     return
   }
 
-  const age = this.aChooseAge(player, eligible, { title: 'Choose an achievement to junk' })[0]
-  this.aRemove(player, this.getAvailableAchievementsByAge(age)[0])
+  const age = this.aChooseAge(player, eligible, { title: 'Choose an achievement to junk', ...opts })
+  if (age) {
+    this.aRemove(player, this.getAvailableAchievementsByAge(age)[0])
+  }
 }
 
 Innovation.prototype.aJunkDeck = function(player, age) {

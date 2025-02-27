@@ -12,18 +12,34 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `You may meld all the highest cards in your score pile. If you meld one of the highest, you must meld all of the highest.`
+    `Choose a value. You may meld all the cards of that value in your score pile.`,
+    `You may junk an available achievement of value 5, 6, or 7.`,
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const highest = game.utilHighestCards(game.getCardsByZone(player, 'score'))
-      const doIt = game.aYesNo(player, 'Meld all the highest cards in your score pile?')
+      const values = game.getAgesByZone(player, 'score')
 
-      if (doIt) {
-        game.aMeldMany(player, highest)
+      if (values.length === 0) {
+        game.mLog({ template: 'no cards in score' })
+        return
       }
-    }
+
+      const chosenValue = game.aChooseAge(player, values, {
+        title: 'Optionally: choose an age to merge from your score',
+        min: 0,
+      })
+      if (chosenValue) {
+        const toMeld = game
+          .getCardsByZone(player, 'score')
+          .filter(c => c.getAge() === chosenValue)
+        game.aMeldMany(player, toMeld)
+      }
+    },
+
+    (game, player) => {
+      game.aJunkAvailableAchievement(player, [5, 6, 7], { min: 0 })
+    },
   ]
   this.echoImpl = []
   this.inspireImpl = []
