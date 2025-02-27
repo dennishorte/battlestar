@@ -47,7 +47,7 @@ CardBase.prototype.checkEchoIsVisible = function(splay) {
 CardBase.prototype.checkHasDemandExplicit = function() {
   return this
     .dogma
-    .some(text => text.startsWith('I demand'))
+    .some(text => text.toLowerCase().startsWith('i demand'))
 }
 
 CardBase.prototype.checkHasBiscuit = function(biscuit) {
@@ -59,19 +59,19 @@ CardBase.prototype.checkHasBiscuit = function(biscuit) {
 CardBase.prototype.checkHasCompelExplicit = function() {
   return this
     .dogma
-    .some(text => text.startsWith('I compel'))
+    .some(text => text.toLowerCase().startsWith('i compel'))
 }
 
 CardBase.prototype.checkHasDemand = function() {
   return this
     .dogma
-    .some(text => text.startsWith('I demand') || text.startsWith('I compel'))
+    .some(text => this.checkHasDemandExplicit() || this.checkHasCompelExplicit())
 }
 
 CardBase.prototype.checkHasShare = function() {
   const shareDogmaEffect = this
     .dogma
-    .some(text => !text.startsWith('I demand') && !text.startsWith('I compel'))
+    .some(text => !this.checkHasDemand())
 
   const shareEchoEffect = !!this.echo
 
