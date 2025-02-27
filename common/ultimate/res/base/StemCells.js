@@ -12,7 +12,8 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `You may score all cards from your hand. If you score one, you must score them all.`
+    `You may score all cards from your hand.`,
+    `Draw an {b}.`,
   ]
 
   this.dogmaImpl = [
@@ -31,6 +32,10 @@ function Card() {
       else {
         game.mLogDoNothing(player)
       }
+    },
+
+    (game, player) => {
+      game.aDraw(player, { age: game.getEffectAge(this, 11) })
     },
   ]
   this.echoImpl = []
