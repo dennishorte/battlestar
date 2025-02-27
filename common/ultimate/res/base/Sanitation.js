@@ -12,7 +12,8 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you exchange the two highest cards in your hand with the lowest card in my hand!`
+    `I demand you exchange the two highest cards in your hand with the lowest card in my hand!`,
+    `Choose {7} or {8}. Junk all cards in that deck.`,
   ]
 
   this.dogmaImpl = [
@@ -22,7 +23,12 @@ function Card() {
 
       game.mMoveCardsTo(player, highest, game.getZoneByPlayer(leader, 'hand'))
       game.mMoveCardsTo(player, lowest, game.getZoneByPlayer(player, 'hand'))
-    }
+    },
+
+    (game, player) => {
+      const age = game.aChooseAge(player, [7, 8])
+      game.aJunkDeck(player, age)
+    },
   ]
   this.echoImpl = []
   this.inspireImpl = []

@@ -20,8 +20,10 @@ describe('Sanitation', () => {
     const request2 = t.choose(game, request1, 'Dogma.Sanitation')
     const request3 = t.choose(game, request2, 'Services')
     const request4 = t.choose(game, request3, 'Tools')
+    const request5 = t.choose(game, request4, 7)
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(request5)
+    t.testDeckIsJunked(game, 7)
     t.testBoard(game, {
       dennis: {
         yellow: ['Sanitation'],
