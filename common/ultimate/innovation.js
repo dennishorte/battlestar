@@ -2239,6 +2239,27 @@ Innovation.prototype.getTopCardsAll = function() {
     .flatMap(player => this.getTopCards(player))
 }
 
+Innovation.prototype.getUniquePlayerWithMostBiscuits = function(biscuit) {
+  const biscuits = this.getBiscuits()
+
+  let most = 0
+  let mostPlayerName = ''
+  for (const [playerName, bis] of Object.entries(biscuits)) {
+    const count = bis[biscuit]
+    if (count > most) {
+      most = count
+      mostPlayerName = playerName
+    }
+    else if (count === most) {
+      return null
+    }
+  }
+
+  if (most > 0) {
+    return this.getPlayerByName(mostPlayerName)
+  }
+}
+
 Innovation.prototype.getVisibleCardsByZone = function(player, zoneName) {
   const zone = this.getZoneByPlayer(player, zoneName)
   const cards = zone.cards()

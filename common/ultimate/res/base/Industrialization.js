@@ -12,20 +12,22 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and tuck a {6} for every color on your board with one or more {f}.`,
+    `Draw and tuck three {6}. Then, if you are the single player with the most {i}, return your top red card.`,
     `You may splay your red or purple cards right.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const count = game
-        .utilColors()
-        .map(color => game.getZoneByPlayer(player, color))
-        .filter(zone => game.getBiscuitsByZone(zone).f > 0)
-        .length
-
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < 3; i++) {
         game.aDrawAndTuck(player, game.getEffectAge(this, 6))
+      }
+
+      const playerWithMost = game.getUniquePlayerWithMostBiscuits('i')
+      if (playerWithMost && playerWithMost.name === player.name) {
+        const card = game.getTopCard(player, 'red')
+        if (card) {
+          game.aReturn(player, card)
+        }
       }
     },
     (game, player) => {
