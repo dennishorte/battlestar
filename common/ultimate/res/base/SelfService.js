@@ -13,28 +13,18 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Execute each of the non-demand dogma effects of any other top card on your board. Do not share them.`,
-    `If you have more achievements than each opponent, you win.`
+    `If you have at least twice as many achievements as any other opponent, you win.`,
+    `Self-execute any top card other than Self Service on your board.`,
   ]
 
   this.dogmaImpl = [
-    (game, player, { self }) => {
-      const choices = game
-        .getTopCards(player)
-        .filter(card => card !== self)
-      const card = game.aChooseCard(player, choices)
-      if (card) {
-        game.aCardEffects(player, card, 'dogma')
-      }
-    },
-
     (game, player) => {
       const mine = game.getAchievementsByPlayer(player).total
       const others = game
         .getPlayerOpponents(player)
-        .map(player => game.getAchievementsByPlayer(player).total)
+        .map(player => game.getAchievementsByPlayer(player).total * 2)
 
-      if (others.every(count => count < mine)) {
+      if (mine > 0 && others.every(count => count <= mine)) {
         throw new GameOverEvent({
           player,
           reason: this.name
@@ -43,7 +33,18 @@ function Card() {
       else {
         game.mLogNoEffect()
       }
-    }
+    },
+
+    (game, player, { self }) => {
+      const choices = game
+        .getTopCards(player)
+        .filter(card => card !== self)
+      const card = game.aChooseCard(player, choices)
+      if (card) {
+        game.aSelfExecute(player, card)
+      }
+    },
+
   ]
   this.echoImpl = []
   this.inspireImpl = []
