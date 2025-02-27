@@ -302,8 +302,14 @@ Innovation.prototype.mainLoop = function() {
     })
 
     this.artifact()
+    this.mAchievementCheck()
+
     this.action(1)
+    this.mAchievementCheck()
+
     this.action(2)
+    this.mAchievementCheck()
+
     this.endTurn()
   }
 }
@@ -2528,9 +2534,6 @@ Innovation.prototype.mActed = function(player) {
 
   this.mSplayCheck()
 
-  // Any time someone acts, there is the possibility that they should claim
-  // a special achievement.
-  this.mAchievementCheck()
   this.mAchievementVictoryCheck()
 }
 
