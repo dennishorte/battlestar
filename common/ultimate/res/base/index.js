@@ -9,7 +9,7 @@ const cardData = [
   require('./Sailing.js'),
   require('./TheWheel.js'),
   require('./CityStates.js'),
-  require('./CodeOfLaws.js'),
+  require('./CodeofLaws.js'),
   require('./Mysticism.js'),
   require('./Agriculture.js'),
   require('./Domestication.js'),
