@@ -6,7 +6,7 @@ function Card() {
   this.color = `purple`
   this.age = 10
   this.expansion = `base`
-  this.biscuits = `hiis`
+  this.biscuits = `hipp`
   this.dogmaBiscuit = `i`
   this.inspire = ``
   this.echo = ``
@@ -14,7 +14,7 @@ function Card() {
   this.dogma = [
     `You may splay your green cards up.`,
     `Draw and score a {0}.`,
-    `Draw and meld a {0} for every two {i} on your board.`
+    `Draw and meld 2 {0}.`
   ]
 
   this.dogmaImpl = [
@@ -27,10 +27,8 @@ function Card() {
     },
 
     (game, player) => {
-      const count = Math.floor(game.getBiscuitsByPlayer(player,).i / 2)
-      for (let i = 0; i < count; i++) {
-        game.aDrawAndMeld(player, game.getEffectAge(this, 10))
-      }
+      game.aDrawAndMeld(player, game.getEffectAge(this, 10))
+      game.aDrawAndMeld(player, game.getEffectAge(this, 10))
     },
   ]
   this.echoImpl = []
