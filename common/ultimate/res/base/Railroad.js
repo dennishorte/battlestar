@@ -12,13 +12,17 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Return all cards from your hand, then draw three {6}.`,
+    `Return all cards from your hand`,
+    `Draw three {6}.`,
     `You may splay up any one color of your cards current splayed right.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
       game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+    },
+
+    (game, player) => {
       game.aDraw(player, { age: game.getEffectAge(this, 6) })
       game.aDraw(player, { age: game.getEffectAge(this, 6) })
       game.aDraw(player, { age: game.getEffectAge(this, 6) })
