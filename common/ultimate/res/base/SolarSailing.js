@@ -7,43 +7,43 @@ function Card() {
   this.color = `blue`
   this.age = 11
   this.expansion = `base`
-  this.biscuits = `illh`
-  this.dogmaBiscuit = `i`
+  this.biscuits = `issh`
+  this.dogmaBiscuit = `s`
   this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and meld an 11. If its color is not splayed aslant on your board, return all but your top four cards of that color, and splay that color aslant. If there are at least six cards of that color on your board, you win.`
+    `Draw and meld an {b}. If its color is not splayed aslant on your board, return all but your top four cards of that color, and splay that color aslant. If there are at least six cards of that color on your board, you win.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const card = game.aDrawAndMeld(player, 11);
+      const card = game.aDrawAndMeld(player, 11)
       if (!card) {
-        game.mLogNoEffect();
-        return;
+        game.mLogNoEffect()
+        return
       }
-      
-      const color = card.color;
-      const zone = game.getZoneByPlayer(player, color);
-      
+
+      const color = card.color
+      const zone = game.getZoneByPlayer(player, color)
+
       if (zone.splay !== 'aslant') {
-        const cards = zone.cards();
+        const cards = zone.cards()
         if (cards.length > 4) {
-          const toReturn = cards.slice(0, cards.length - 4);
-          game.aReturnMany(player, toReturn);
+          const toReturn = cards.slice(4)
+          game.aReturnMany(player, toReturn, { ordered: true })
         }
-        
-        game.aSplay(player, color, 'aslant');
+
+        game.aSplay(player, color, 'aslant')
       }
-      
+
       // Check for win condition
-      const colorCount = zone.cards().length;
+      const colorCount = zone.cards().length
       if (colorCount >= 6) {
         throw new GameOverEvent({
           player,
           reason: this.name
-        });
+        })
       }
     }
   ]
