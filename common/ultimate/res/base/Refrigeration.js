@@ -12,14 +12,14 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you return half (round down) of the cards in your hand!`,
+    `I demand you return all but one card from your hand!`,
     `You may score a card from your hand.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
       const cards = game.getCardsByZone(player, 'hand')
-      const count = Math.floor(cards.length / 2)
+      const count = Math.max(cards.length - 1, 0)
       game.aChooseAndReturn(player, cards, { count })
     },
     (game, player) => {
