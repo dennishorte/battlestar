@@ -4,7 +4,7 @@ const t = require('../../testutil.js')
 
 describe('Miniaturization', () => {
 
-  test('dogma', () => {
+  test('dogma: age 10', () => {
     const game = t.fixtureFirstPlayer()
     t.setBoard(game, {
       dennis: {
@@ -32,6 +32,27 @@ describe('Miniaturization', () => {
         red: ['Miniaturization'],
         hand: ['Services', 'Robotics', 'Self Service'],
         score: ['The Wheel', 'Tools', 'Canning'],
+      },
+    })
+  })
+
+  test('dogma: age 11', () => {
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        red: ['Miniaturization'],
+        hand: ['Hypersonics'],
+      },
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Miniaturization')
+
+    t.testIsSecondPlayer(request2)
+    t.testDeckIsJunked(game, 11)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Miniaturization'],
       },
     })
   })

@@ -21,7 +21,7 @@ function Card() {
       const cards = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), { min: 1, max: 1 })
       if (cards && cards.length > 0) {
         const card = cards[0]
-        if (card.getAge() === 10) {
+        if (card.getAge() === game.getEffectAge(this, 10)) {
           const allAges = game
             .getCardsByZone(player, 'score')
             .map(card => card.getAge())
@@ -30,8 +30,8 @@ function Card() {
             game.aDraw(player, { age: game.getEffectAge(this, 10) })
           }
         }
-        else if (card.getAge() === 11) {
-          game.aJunkDeck(player, 11)
+        else if (card.getAge() === game.getEffectAge(this, 11)) {
+          game.aJunkDeck(player, game.getEffectAge(this, 11))
         }
       }
     }
