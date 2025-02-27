@@ -4,7 +4,7 @@ const t = require('../../testutil.js')
 const { GameOverEvent, InputRequestEvent } = require('../../../lib/game.js')
 
 describe('Bioengineering', () => {
-  test('transfer a card', () => {
+  test('score a card', () => {
     const game = t.fixtureTopCard('Bioengineering')
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setColor(game, 'micah', 'yellow', ['Agriculture'])
@@ -14,7 +14,7 @@ describe('Bioengineering', () => {
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Bioengineering')
 
-    expect(result2.selectors[0].choices.sort()).toStrictEqual(['Agriculture', 'Sailing'])
+    expect(result2.selectors[0].choices.sort()).toStrictEqual(['Agriculture', 'Clothing', 'Sailing'])
 
     const result3 = t.choose(game, result2, 'Sailing')
 
@@ -23,15 +23,22 @@ describe('Bioengineering', () => {
 
   test('win condition yes', () => {
     const game = t.fixtureTopCard('Bioengineering')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'yellow', ['Agriculture'])
-      t.setColor(game, 'micah', 'green', ['Sailing'])
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Agriculture'],
+        green: ['Clothing'],
+      },
+      micah: {
+        green: ['Sailing'],
+      },
     })
+
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Bioengineering')
+    const result3 = t.choose(game, result2, 'Clothing')
 
-    expect(result2).toEqual(expect.any(GameOverEvent))
-    expect(result2).toEqual(expect.objectContaining({
+    expect(result3).toEqual(expect.any(GameOverEvent))
+    expect(result3).toEqual(expect.objectContaining({
       data: expect.objectContaining({
         player: expect.objectContaining({ name: 'dennis' }),
         reason: 'Bioengineering'

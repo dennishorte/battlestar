@@ -13,20 +13,19 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Transfer a top card with a {l} from any opponent's board to your score pile.`,
-    `If any player has fewer than three {l} on their board, the single player with the most {l} on their board wins.`
+    `Score a top card with a {l} on any player's board.`,
+    `If any player has fewer than two {l} on their board, the single player with the most {l} on their board wins.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
       const choices = game
-        .getPlayerOpponents(player)
-        .flatMap(opp => game.getTopCards(opp))
+        .getPlayerAll()
+        .flatMap(p => game.getTopCards(p))
         .filter(card => card !== undefined)
         .filter(card => card.biscuits.includes('l'))
-      const target = game.getZoneByPlayer(player, 'score')
 
-      game.aChooseAndTransfer(player, choices, target)
+      game.aChooseAndScore(player, choices)
     },
 
     (game, player) => {
@@ -36,7 +35,7 @@ function Card() {
         .sort((l, r) => r.leafs - l.leafs)
 
       const conditionMet = (
-        biscuits[biscuits.length - 1].leafs < 3
+        biscuits[biscuits.length - 1].leafs < 2
         && biscuits[0].leafs > biscuits[1].leafs
       )
 
