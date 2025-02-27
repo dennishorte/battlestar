@@ -3,7 +3,7 @@ const CardBase = require(`../CardBase.js`)
 function Card() {
   this.id = `Escapism`  // Card names are unique in Innovation
   this.name = `Escapism`
-  this.color = `blue`
+  this.color = `purple`
   this.age = 11
   this.expansion = `base`
   this.biscuits = `pphp`
@@ -22,25 +22,27 @@ function Card() {
         game.mLogNoEffect();
         return;
       }
-      
+
       const card = game.aChooseCard(player, hand);
       if (card) {
         game.mReveal(player, card);
-        game.aJunk(player, card);
-        
+        game.aRemove(player, card);
+
         const cardValue = card.getAge();
         game.mLog({
-          template: '{player} returns all cards of value {value} from hand',
+          template: '{player} will return all cards of value {value} from hand',
           args: { player, value: cardValue }
         });
-        
-        const toReturn = hand.filter(c => c.getAge() === cardValue);
-        game.aReturnMany(player, toReturn);
-        
+
+        const toReturn = hand
+          .filter(c => c.getAge() === cardValue)
+          .filter(c => c.name !== card.name)
+        game.aReturnMany(player, toReturn, { ordered: true });
+
         for (let i = 0; i < 3; i++) {
           game.aDraw(player, { age: cardValue });
         }
-        
+
         game.aSelfExecute(player, card);
       }
     }

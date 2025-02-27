@@ -614,7 +614,7 @@ Innovation.prototype.aCardEffects = function(
   kind,
   opts={}
 ) {
-  const effects = this.getVisibleEffects(card, kind)
+  const effects = this.getVisibleEffects(card, kind, opts)
   if (!effects) {
     return
   }
@@ -631,6 +631,8 @@ Innovation.prototype.aCardEffects = function(
 
 Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
   const isTopCard = this.getTopCard(player, card.color).name === card.name
+
+  opts.selfExecutor = player
 
   // Do all visible echo effects in this color.
   if (isTopCard) {
@@ -2345,13 +2347,13 @@ Innovation.prototype.getVisibleCardsByZone = function(player, zoneName) {
   }
 }
 
-Innovation.prototype.getVisibleEffects = function(card, kind) {
-  const player = this.getPlayerByCard(card)
+Innovation.prototype.getVisibleEffects = function(card, kind, opts={}) {
+  const player = opts.selfExecutor || this.getPlayerByCard(card)
   const isTop = this.checkCardIsTop(card) || card.zone.endsWith('.artifact')
   const splay = this.getSplayByCard(card)
 
   if (kind === 'dogma') {
-    if (isTop && card.dogma.length > 0) {
+    if ((opts.selfExecutor || isTop) && card.dogma.length > 0) {
       return {
         card,
         texts: card.dogma,
