@@ -103,7 +103,17 @@ const cardData = [
   require('./Databases.js'),
   require('./SelfService.js'),
   require('./Software.js'),
-  require('./Bioengineering.js')
+  require('./Bioengineering.js'),
+  require('./Whataboutism.js'),
+  require('./Escapism.js'),
+  require('./Reclamation.js'),
+  require('./Astrogeology.js'),
+  require('./Fusion.js'),
+  require('./NearFieldComm.js'),
+  require('./SolarSailing.js'),
+  require('./Climatology.js'),
+  require('./Hypersonics.js'),
+  require('./SpaceTraffic.js'),
 ]
 
 const achievementData = [
@@ -127,7 +137,7 @@ function generateCardInstances() {
   }
 
   const byAge = {}
-  for (const i of [1,2,3,4,5,6,7,8,9,10]) {
+  for (const i of [1,2,3,4,5,6,7,8,9,10,11]) {
     byAge[i] = []
   }
   for (const card of cards) {
