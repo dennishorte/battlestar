@@ -12,14 +12,17 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you return half (rounded up) of the cards in your score pile.`
+    `I demand you return a number of cards from your score pile equal to the value of your highest achievement.`,
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const cards = game.getCardsByZone(player, 'score')
-      const count = Math.ceil(cards.length / 2)
-      game.aChooseAndReturn(player, cards, { count })
+      const achievementAges = game
+        .getCardsByZone(player, 'achievements')
+        .filter(c => !c.isSpecialAchievement && !c.isDecree)
+        .map(c => c.getAge())
+      const count = Math.max(...achievementAges)
+      game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'), { count })
     }
   ]
   this.echoImpl = []

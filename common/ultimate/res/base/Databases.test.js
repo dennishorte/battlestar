@@ -12,6 +12,7 @@ describe('Databases', () => {
       },
       micah: {
         score: ['Tools', 'Enterprise', 'Reformation'],
+        achievements: ['Road Building']
       }
     })
 
@@ -27,6 +28,7 @@ describe('Databases', () => {
       },
       micah: {
         score: ['Enterprise'],
+        achievements: ['Road Building']
       }
     })
   })
