@@ -18,7 +18,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const card = game.aDrawAndMeld(player, 11)
+      const card = game.aDrawAndMeld(player, game.getEffectAge(this, 11))
       if (!card) {
         game.mLogNoEffect()
         return

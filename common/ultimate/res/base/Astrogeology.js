@@ -19,7 +19,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const card = game.aDrawAndReveal(player, 11)
+      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 11))
       if (card) {
         const color = card.color
         const splayed = Boolean(game.aSplay(player, color, 'aslant'))

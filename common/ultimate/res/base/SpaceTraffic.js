@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player, { self }) => {
       const executeEffect = () => {
-        const card = game.aDrawAndTuck(player, 11)
+        const card = game.aDrawAndTuck(player, game.getEffectAge(this, 11))
         const color = card.color
         const stack = game.getCardsByZone(player, color)
 
@@ -27,7 +27,7 @@ function Card() {
         }
         else {
           const cardAbove = stack.slice(-2, -1)[0]
-          if (cardAbove.getAge() === 11) {
+          if (cardAbove.getAge() === game.getEffectAge(this, 11)) {
             game.mLog({
               template: '{player} tucked the card just under an 11',
               args: { player },
