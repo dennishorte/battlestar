@@ -14,8 +14,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `I demand you return a top card with a {l} from your board!`,
-    `Draw and score a {6}.`,
-    `If no player has more {l} than {f} on their board, the single player with the most points wins.`
+    `Draw and meld an {b}. If no player has more {l} than {f} on their board, the single player with the most points wins.`
   ]
 
   this.dogmaImpl = [
@@ -32,10 +31,10 @@ function Card() {
     },
 
     (game, player) => {
-      game.aDrawAndScore(player, game.getEffectAge(this, 6))
-    },
+      game.aDrawAndMeld(player, game.getEffectAge(this, 11))
 
-    (game, player) => {
+      game.mLog({ template: 'Checking win condition' })
+
       const biscuitCounts = Object.values(game.getBiscuits())
       const conditionMet = biscuitCounts
         .filter(({ l, f }) => l > f)

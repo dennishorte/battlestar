@@ -33,7 +33,7 @@ describe('Globalization', () => {
     expect(t.cards(game, 'score')).toStrictEqual(['Atomic Theory'])
   })
 
-  test.only('win condition (yes)', () => {
+  test('win condition (yes)', () => {
     const game = t.fixtureTopCard('Globalization')
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setColor(game, 'dennis', 'yellow', ['Globalization'])

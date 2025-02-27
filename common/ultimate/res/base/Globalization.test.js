@@ -25,18 +25,19 @@ describe('Globalization', () => {
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setColor(game, 'dennis', 'yellow', ['Globalization', 'Stem Cells', 'Fermenting'])
       t.setSplay(game, 'dennis', 'yellow', 'up')
-      t.setDeckTop(game, 'base', 6, ['Atomic Theory'])
+      t.setDeckTop(game, 'base', 11, ['Hypersonics'])
     })
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Globalization')
 
-    expect(t.cards(game, 'score')).toStrictEqual(['Atomic Theory'])
+    expect(t.cards(game, 'green')).toStrictEqual(['Hypersonics'])
   })
 
-  test.only('win condition (yes)', () => {
+  test('win condition (yes)', () => {
     const game = t.fixtureTopCard('Globalization')
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setColor(game, 'dennis', 'yellow', ['Globalization'])
+      t.setScore(game, 'dennis', ['Metalworking'])
       t.setSplay(game, 'dennis', 'yellow', 'up')
     })
     const request1 = game.run()
