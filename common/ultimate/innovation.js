@@ -1845,12 +1845,22 @@ Innovation.prototype.aYesNo = function(player, title) {
   return this.aChooseYesNo(player, title)
 }
 
-Innovation.prototype.aYouLose = function(player) {
+Innovation.prototype.aYouLose = function(player, card) {
   this.mLog({
-    template: '{player} loses the game',
-    args: { player },
+    template: '{player} loses the game due to {card}',
+    args: { player, card },
   })
   player.dead = true
+
+  const livingPlayers = this.getPlayerAll().filter(player => !player.dead)
+
+  if (livingPlayers.length === 1) {
+    throw new GameOverEvent({
+      player: livingPlayers[0],
+      reason: card.name,
+    })
+  }
+
 }
 
 function ManyFactory(baseFuncName, extraArgCount=0) {

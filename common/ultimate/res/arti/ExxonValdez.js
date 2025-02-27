@@ -17,7 +17,7 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { self }) => {
       const toRemove = [
         game.getCardsByZone(player, 'hand'),
         game.getCardsByZone(player, 'score'),
@@ -36,16 +36,7 @@ function Card() {
         args: { player }
       })
 
-      game.aYouLose(player)
-
-      const livingPlayers = game.getPlayerAll().filter(player => !player.dead)
-
-      if (livingPlayers.length === 1) {
-        throw new GameOverEvent({
-          player: livingPlayers[0],
-          reason: this.name,
-        })
-      }
+      game.aYouLose(player, self)
     }
   ]
   this.echoImpl = []

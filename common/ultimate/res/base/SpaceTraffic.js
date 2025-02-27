@@ -6,68 +6,64 @@ function Card() {
   this.color = `green`
   this.age = 11
   this.expansion = `base`
-  this.biscuits = `cih`
+  this.biscuits = `ccih`
   this.dogmaBiscuit = `c`
   this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and tuck an 11. If you tuck directly under an 11, you lose. Otherwise, score all but your top five cards of the color of the tucked card, splay that color aslant, and if you do not have the highest score, repeat this effect.`
+    `Draw and tuck an {b}. If you tuck directly under an {b}, you lose. Otherwise, score all but your top five cards of the color of the tucked card, splay that color aslant, and if you do not have the highest score, repeat this effect.`
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { self }) => {
       const executeEffect = () => {
-        const card = game.aDraw(player, { age: 11 });
-        if (!card) {
-          game.mLogNoEffect();
-          return false;
+        const card = game.aDrawAndTuck(player, 11)
+        const color = card.color
+        const stack = game.getCardsByZone(player, color)
+
+        if (stack.length === 1) {
+          game.mLog({ template: 'no card above tucked card' })
         }
-        
-        // Check if we're tucking directly under an 11
-        const color = card.color;
-        const topCard = game.getTopCard(player, color);
-        
-        game.aTuck(player, card);
-        
-        if (topCard && topCard.getAge() === 11) {
-          game.mLog({
-            template: '{player} tucked directly under an 11 and loses the game',
-            args: { player }
-          });
-          
-          game.aLose(player, this.name);
-          return false;
+        else {
+          const cardAbove = stack.slice(-2, -1)[0]
+          if (cardAbove.getAge() === 11) {
+            game.mLog({
+              template: '{player} tucked the card just under an 11',
+              args: { player },
+            })
+            game.aYouLose(player, self)
+          }
         }
-        
+
         // Score all but top 5 cards of that color
-        const cards = game.getCardsByZone(player, color);
+        const cards = game.getCardsByZone(player, color)
         if (cards.length > 5) {
-          const toScore = cards.slice(0, cards.length - 5);
-          game.aScoreMany(player, toScore);
+          const toScore = cards.slice(5)
+          game.aScoreMany(player, toScore, { ordered: true })
         }
-        
+
         // Splay that color aslant
-        game.aSplay(player, color, 'aslant');
-        
+        game.aSplay(player, color, 'aslant')
+
         // Check if player doesn't have highest score
-        const playerScore = game.getScore(player);
-        const highestScore = Math.max(...game.getPlayerAll().map(p => game.getScore(p)));
-        
-        return playerScore < highestScore;
-      };
-      
+        const playerScore = game.getScore(player)
+        const highestScore = Math.max(...game.getPlayerAll().map(p => game.getScore(p)))
+
+        return playerScore < highestScore
+      }
+
       // First execution
-      let shouldRepeat = executeEffect();
-      
+      let shouldRepeat = executeEffect()
+
       // Repeat if needed
       while (shouldRepeat) {
         game.mLog({
           template: '{player} repeats the effect',
           args: { player }
-        });
-        
-        shouldRepeat = executeEffect();
+        })
+
+        shouldRepeat = executeEffect()
       }
     }
   ]
