@@ -22,7 +22,7 @@ describe('Miniaturization', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Miniaturization')
 
-    t.testChoices(request2, ['Software', 'Services'], 0, 1)
+    t.testChoices(request2, ['Software', 'Services'], 1, 1)
 
     const request3 = t.choose(game, request2, 'Software')
 
