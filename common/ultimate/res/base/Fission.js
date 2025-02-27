@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you draw and reveal a {0}! If it is red, remove all hands, boards, and score piles from the game! If this occurs, the dogma action is complete.`,
+    `I demand you draw and reveal a {0}! If it is red, junk all players' non-achievement cards, and the Dogma action is complete!`,
     `Return a top card other than Fission from any player's board. Draw a {0}.`
   ]
 
@@ -23,7 +23,7 @@ function Card() {
         game.mLog({ template: 'The card was red. Nuclear War!' })
         game.mLogIndent()
 
-        const zones = ['red', 'yellow', 'green', 'blue', 'purple', 'hand', 'score']
+        const zones = ['red', 'yellow', 'green', 'blue', 'purple', 'hand', 'score', 'forecast', 'museum', 'safe']
         const toRemove = game
           .getPlayerAll()
           .flatMap(player => zones.flatMap(name => game.getCardsByZone(player, name)))
