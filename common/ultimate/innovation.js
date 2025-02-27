@@ -545,8 +545,8 @@ Innovation.prototype.aOneEffect = function(
 
     for (let z = 0; z < repeatCount; z++) {
 
-      const isDemand = text.startsWith('I demand')
-      const isCompel = text.startsWith('I compel')
+      const isDemand = text.toLowerCase().startsWith('i demand')
+      const isCompel = text.toLowerCase().startsWith('i compel')
 
       if (!isDemand && !isCompel) {
         this.state.couldShare = true
@@ -627,6 +627,32 @@ Innovation.prototype.aCardEffects = function(
       return
     }
   }
+}
+
+Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
+  const isTopCard = this.getTopCard(player, card.color).name === card.name
+
+  // Do all visible echo effects in this color.
+  if (isTopCard) {
+    const cards = this.getCardsByZone(player, card.color).slice(1).reverse()
+    for (const other of cards) {
+      this.aCardEffects(player, other, 'echo', opts)
+    }
+  }
+
+  // Do the card's echo effects.
+  this.aCardEffects(player, card, 'echo', opts)
+
+  // Do the card's dogma effects.
+  if (opts.superExecute) {
+    // Demand all opponents
+    opts.demanding = this.getPlayerOpponents(player)
+  }
+  this.aCardEffects(player, card, 'dogma', opts)
+}
+
+Innovation.prototype.superExecute = function(player, card, opts={}) {
+  this.selfExecute(player, card, { superExecute: true })
 }
 
 Innovation.prototype.aChooseAge = function(player, ages, opts={}) {

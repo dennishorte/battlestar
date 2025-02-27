@@ -14,7 +14,7 @@ function Card() {
   this.dogma = [
     `Return all cards from your hand, and draw three {8}.`,
     `You may splay your purple cards up.`,
-    `Meld a card from your hand and then execute each of its non-demand dogma effects. Do not share them.`
+    `Meld a card from your hand and then self-execute it.`
   ]
 
   this.dogmaImpl = [
@@ -30,7 +30,7 @@ function Card() {
     (game, player) => {
       const cards = game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
       if (cards && cards.length > 0) {
-        game.aCardEffects(player, cards[0], 'dogma')
+        game.aSelfExecute(player, cards[0])
       }
     }
   ]
