@@ -149,6 +149,11 @@ TestUtil.testIsSecondPlayer = function(request) {
   expect(selector.title).toBe('Choose First Action')
 }
 
+TestUtil.testDeckIsJunked = function(game, age) {
+  const cardsInDeck = game.getZoneByDeck('base', age).cards()
+  expect(cardsInDeck.length).toBe(0)
+}
+
 TestUtil.testDecreeForTwo = function(figureName, decreeName) {
   const game = TestUtil.fixtureTopCard(figureName, { expansions: ['base', 'figs'] })
   game.testSetBreakpoint('before-first-player', (game) => {

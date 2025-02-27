@@ -23,14 +23,7 @@ function Card() {
       }
     },
     (game, player) => {
-      const eligible = [1, 2].filter(age => game.getAvailableAchievementsByAge(age).length > 0)
-      if (eligible.length === 0) {
-        game.mLogNoEffect()
-        return
-      }
-
-      const age = game.aChooseAge(player, eligible, { title: 'Choose an achievement to junk' })[0]
-      game.aRemove(player, game.getAvailableAchievementsByAge(age)[0])
+      game.aJunkAvailableAchievement(player, [1, 2])
     }
   ]
   this.echoImpl = []

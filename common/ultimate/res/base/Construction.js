@@ -17,35 +17,15 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { leader }) => {
       // Choose two cards
-      const playerHand = game
-        .getZoneByPlayer(player, 'hand')
-        .cards()
-        .map(c => c.name)
-      const cards = game
-        .requestInputSingle({
-          actor: player.name,
-          title: 'Choose Two Cards',
-          choices: playerHand,
-          count: 2
-        })
-        .map(card => game.getCardByName(card))
-
-      // Transfer them to leader's hand
-      if (cards.length === 0) {
-        game.mLog({
-          template: '{player} transfers nothing',
-          args: { player }
-        })
-      }
-      else {
-        for (const card of cards) {
-          const target = game.getZoneByPlayer(game.getPlayerCurrent(), 'hand')
-          game.aTransfer(player, card, target)
-        }
-      }
-
+      const cards = game.aChooseAndTransfer(
+        player,
+        game.getCardsByZone(player, 'hand'),
+        game.getZoneByPlayer(leader, 'hand'),
+        { min: 0, max: 2 }
+      )
+      
       // Draw a 2
       game.aDraw(player, { age: game.getEffectAge(this, 2) })
     },

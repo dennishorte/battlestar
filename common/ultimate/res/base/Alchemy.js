@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and reveal a {4} for every three {k} on your board. If ay of the drawn cards are red, return the cards drawn and all card in your hand. Otherwise, keep them.`,
+    `Draw and reveal a {4} for every three {k} on your board. If any of the drawn cards are red, return the cards drawn and all card in your hand. Otherwise, keep them.`,
     `Meld a card from your hand, then score a card from your hand.`
   ]
 

@@ -12,15 +12,17 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `You may exchange all the highest cards in your hand with all the highest cards in your score pile.`
+    `You may choose to exchange all the highest cards in your hand with all the highest cards in your score pile, or junk all cards in the {3} deck.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const decision = game.aYesNo(player, 'Exchange the highest card in your hand and score pile?')
-      if (decision) {
+      const choices = ["Exchange highest cards between hand and score pile", "Junk all cards in the 3 deck"]
+      const decision = game.aChoose(player, choices, { title: "Choose one" })[0]
+
+      if (decision === choices[0]) {
         game.mLog({
-          template: '{player} swaps the highest cards in their hand and score pile',
+          template: '{player} exchanges the highest cards in their hand and score pile',
           args: { player }
         })
         const hand = game.getZoneByPlayer(player, 'hand')
@@ -32,7 +34,7 @@ function Card() {
         scoreHighest.forEach(card => game.mMoveCardTo(card, hand))
       }
       else {
-        game.mLogDoNothing(player)
+        game.aJunkDeck(player, 3)
       }
     }
   ]

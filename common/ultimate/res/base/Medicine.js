@@ -12,7 +12,8 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you exchange the highest card in your score pile with the lowest card in my score pile.`
+    `I demand you exchange the highest card in your score pile with the lowest card in my score pile!`,
+    `Junk an available achievement of value 3 or 4.`
   ]
 
   this.dogmaImpl = [
@@ -26,9 +27,14 @@ function Card() {
       if (highestCards && highestCards.length > 0) {
         game.mMoveCardTo(highestCards[0], game.getZoneByPlayer(leader, 'score'), { player })
       }
+
       if (lowestCards && lowestCards.length > 0) {
         game.mMoveCardTo(lowestCards[0], game.getZoneByPlayer(player, 'score'), { player })
       }
+    },
+
+    (game, player) => {
+      game.aJunkAvailableAchievement(player, [3, 4])
     }
   ]
   this.echoImpl = []

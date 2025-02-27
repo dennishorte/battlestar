@@ -33,7 +33,7 @@ describe('Archery', () => {
     })
   })
 
-  test.only('dogma: demand effect with no transferable cards', () => {
+  test('dogma: demand effect with no transferable cards', () => {
     const game = t.fixtureFirstPlayer()
     t.setBoard(game, {
       dennis: {

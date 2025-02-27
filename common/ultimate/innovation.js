@@ -1496,6 +1496,27 @@ Innovation.prototype._checkCanSeizeRelic = function(card) {
   return card.zone.includes('achievement')
 }
 
+Innovation.prototype.aJunkAvailableAchievement = function(player, ages=[]) {
+  const eligible = ages.filter(age => this.getAvailableAchievementsByAge(age).length > 0)
+  if (eligible.length === 0) {
+    this.mLogNoEffect()
+    return
+  }
+
+  const age = this.aChooseAge(player, eligible, { title: 'Choose an achievement to junk' })[0]
+  this.aRemove(player, this.getAvailableAchievementsByAge(age)[0])
+}
+
+Innovation.prototype.aJunkDeck = function(player, age) {
+  this.mLog({
+    template: '{player} junks all cards in the {3} deck',
+    args: { player }
+  })
+
+  const cards = this.getZoneByDeck('base', age).cards()
+  this.aRemoveMany(player, cards, { ordered: true })
+}
+
 Innovation.prototype.aSeizeRelic = function(player, card) {
   const relicSeizeOptions =
     this.getExpansionList().includes(card.relicExpansion) ?

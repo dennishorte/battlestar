@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Meld one or two cards from your hand. If you melded two, you may transfer your top red card to another player's board. If you do, transfer that player's top green card to your board.`
+    `Meld one or two cards from your hand. If you meld two, you may transfer your top red card to another player's board. If you do, meld that player's top green card.`
   ]
 
   this.dogmaImpl = [
@@ -27,24 +27,26 @@ function Card() {
         const choices = game
           .getPlayerAll()
           .filter(other => other !== player)
-        const title = '(optional) Choose a player to swap cards with'
+        const title = '(optional) Choose a player to transfer your top red card to'
         const opp = game.aChoosePlayer(player, choices, { title, min: 0, max: 1 })
 
         // If you chose to swap, do it.
         if (opp) {
           const topRed = game.getTopCard(player, 'red')
-          const topGreen = game.getTopCard(opp, 'green')
 
           if (topRed) {
             game.aTransfer(player, topRed, game.getZoneByPlayer(opp, 'red'))
-          }
-          if (topGreen) {
-            game.aTransfer(player, topGreen, game.getZoneByPlayer(player, 'green'))
+            
+            // After transferring, meld their top green card
+            const topGreen = game.getTopCard(opp, 'green')
+            if (topGreen) {
+              game.aMeld(player, topGreen)
+            }
           }
         }
         else {
           game.mLog({
-            template: '{player} chooses not to swap cards',
+            template: '{player} chooses not to transfer cards',
             args: { player }
           })
         }

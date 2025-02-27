@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you transfer a top non-green card with a {l} from your board to my board and then you transfer a top card without a {l} from my board to your board!`
+    `I demand you transfer a top non-green card with {l} from your board to my board, and then meld a top card without {l} from my board!`
   ]
 
   this.dogmaImpl = [
@@ -21,6 +21,7 @@ function Card() {
         .getTopCards(player)
         .filter(card => card.color !== 'green')
         .filter(card => card.checkHasBiscuit('l'))
+      
       const card = game.aChooseCard(player, leafChoices)
       if (card) {
         game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
@@ -29,9 +30,10 @@ function Card() {
       const nonLeafChoices = game
         .getTopCards(leader)
         .filter(card => !card.checkHasBiscuit('l'))
+      
       const card2 = game.aChooseCard(player, nonLeafChoices)
       if (card2) {
-        game.aTransfer(player, card2, game.getZoneByPlayer(player, card2.color))
+        game.aMeld(player, card2)
       }
     }
   ]

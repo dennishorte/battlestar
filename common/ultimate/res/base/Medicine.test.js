@@ -4,7 +4,7 @@ const t = require('../../testutil.js')
 
 describe('Medicine', () => {
 
-  test('dogma', () => {
+  test.only('dogma', () => {
     const game = t.fixtureFirstPlayer()
     t.setBoard(game, {
       dennis: {
@@ -19,8 +19,9 @@ describe('Medicine', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Medicine')
     const request3 = t.choose(game, request2, 'Reformation')
+    const request4 = t.choose(game, request2, '3')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(request4)
     t.testBoard(game, {
       dennis: {
         yellow: ['Medicine'],
@@ -46,8 +47,9 @@ describe('Medicine', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Medicine')
     const request3 = t.choose(game, request2, 'Reformation')
+    const request4 = t.choose(game, request2, '4')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(request4)
     t.testBoard(game, {
       dennis: {
         yellow: ['Medicine'],
