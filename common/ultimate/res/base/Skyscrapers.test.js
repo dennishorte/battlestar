@@ -24,7 +24,7 @@ describe('Skyscrapers', () => {
     t.testIsSecondPlayer(request3)
     t.testBoard(game, {
       dennis: {
-        yellow: ['Skyscrapers'],
+        hand: ['Skyscrapers'],
         blue: ['Computers'],
       },
       micah: {

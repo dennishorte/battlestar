@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you transfer your two highest non-red top cards without a {f} from your board to my score pile! If you transferred any cards, draw an {8}!`
+    `I demand you transfer your two highest non-red top cards without {f} of different colors from your board to my score pile! If you transfer any, draw an {8}!`
   ]
 
   this.dogmaImpl = [

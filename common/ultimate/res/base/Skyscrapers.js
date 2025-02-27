@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you transfer a top non-yellow card with a {i} from your board to my board! If you do, score the card beneath it, and return all other cards from that pile!`
+    `I demand you transfer a top non-yellow card with a {i} from your board to mine! If you do, score the top card of that color, then return all cards of that color from your board, and transfer Skyscrapers to my hand if it is a top card!`
   ]
 
   this.dogmaImpl = [
@@ -27,6 +27,11 @@ function Card() {
           game.aScore(player, remaining[0])
         }
         game.aReturnMany(player, remaining.slice(1), { ordered: true })
+
+        const topYellowCard = game.getTopCard(leader, 'yellow')
+        if (topYellowCard && topYellowCard.name === 'Skyscrapers') {
+          game.aTransfer(player, topYellowCard, game.getZoneByPlayer(leader, 'hand'))
+        }
       }
     }
   ]
