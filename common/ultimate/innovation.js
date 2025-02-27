@@ -2006,6 +2006,14 @@ Innovation.prototype.getBiscuitsByCard = function(card, splay) {
   return this.utilParseBiscuits(card.getBiscuits(splay))
 }
 
+Innovation.prototype.getBiscuitsByColor = function(player) {
+  const output = {}
+  for (const color of this.utilColors()) {
+    output[color] = this.getBiscuitsByZone(this.getZoneByPlayer(player, color))
+  }
+  return output
+}
+
 Innovation.prototype.getBiscuitsByZone = function(zone) {
   return zone
     .cards()

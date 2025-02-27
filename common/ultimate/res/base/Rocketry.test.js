@@ -10,6 +10,7 @@ describe('Rocketry', () => {
       dennis: {
         blue: ['Rocketry'],
         purple: ['The Internet'],
+        yellow: ['Agriculture'],
       },
       micah: {
         score: ['The Wheel', 'Canning', 'Services']
@@ -26,6 +27,7 @@ describe('Rocketry', () => {
       dennis: {
         blue: ['Rocketry'],
         purple: ['The Internet'],
+        yellow: ['Agriculture'],
       },
       micah: {
         score: ['The Wheel'],
