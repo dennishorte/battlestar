@@ -3,8 +3,32 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 
 describe('Robotics', () => {
+  test('dogma: no matching biscuit', () => {
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game,  {
+      dennis: {
+        red: ['Robotics'],
+        hand: ['Tools'],
+      },
+      decks: {
+        base: {
+          10: ['Miniaturization'],
+        }
+      }
+    })
 
-  test('dogma', () => {
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Robotics')
+
+    t.testIsSecondPlayer(request2)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Miniaturization', 'Robotics'],
+      },
+    })
+  })
+
+  test('dogma: no matching biscuit', () => {
     const game = t.fixtureFirstPlayer()
     t.setBoard(game,  {
       dennis: {
@@ -21,15 +45,15 @@ describe('Robotics', () => {
 
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Robotics')
-    const request3 = t.choose(game, request2, 'yes')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(request2)
     t.testBoard(game, {
       dennis: {
         red: ['Robotics'],
         green: ['Currency'],
         yellow: ['Stem Cells'],
-        score: ['Tools', 'Sailing'],
+        score: ['Sailing'],
+        hand: ['Tools'],
       },
     })
   })

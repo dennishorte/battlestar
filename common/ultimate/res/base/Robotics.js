@@ -13,7 +13,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `Score your top green card.`,
-    `Draw and meld a {0}, then execute each of its non-demand dogma effects. Do not share them.`
+    `Draw and meld a {0}. If it has a {f} or {i}, self-execute it.`,
   ]
 
   this.dogmaImpl = [
@@ -22,7 +22,9 @@ function Card() {
     },
     (game, player) => {
       const card = game.aDrawAndMeld(player, game.getEffectAge(this, 10))
-      game.aCardEffects(player, card, 'dogma')
+      if (card.checkHasBiscuit('f') || card.checkHasBiscuit('i')) {
+        game.aSelfExecute(player, card)
+      }
     },
   ]
   this.echoImpl = []

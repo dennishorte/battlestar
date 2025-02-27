@@ -52,7 +52,7 @@ CardBase.prototype.checkHasDemandExplicit = function() {
 
 CardBase.prototype.checkHasBiscuit = function(biscuit) {
   return this
-    .getBiscuits()
+    .getBiscuits('top')
     .includes(biscuit)
 }
 
@@ -172,6 +172,9 @@ CardBase.prototype.getBiscuits = function(splay) {
   }
   else if (splay === 'up') {
     return this.biscuits.slice(1, 4)
+  }
+  else if (splay === 'aslant') {
+    return this.biscuits.slice(0, 4)
   }
   else {
     throw new Error(`Unknown splay type: ${splay}`)
