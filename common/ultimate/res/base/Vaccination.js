@@ -13,14 +13,25 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you return all the lowest cards in your score pile! If you returned any, draw and meld a {6}!`,
+    `I demand you choose a card in your score pile! Return all cards from your score pile of its value. If you do, draw and meld a {6}!`,
     `If any card was returned as a result of the demand, draw and meld a {7}.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const lowest = game.utilLowestCards(game.getCardsByZone(player, 'score'))
-      const returned = game.aReturnMany(player, lowest)
+      const values = game.getAgesByZone(player, 'score')
+
+      if (values.length === 0) {
+        game.mLog({ template: 'no cards in score' })
+        return
+      }
+
+      const chosenValue = game.aChooseAge(player, values)
+      const toReturn = game
+        .getCardsByZone(player, 'score')
+        .filter(c => c.getAge() === chosenValue)
+
+      const returned = game.aReturnMany(player, toReturn)
 
       if (returned.length > 0) {
         game.aDrawAndMeld(player, game.getEffectAge(this, 6))

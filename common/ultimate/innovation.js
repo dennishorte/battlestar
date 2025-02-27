@@ -2047,6 +2047,11 @@ Innovation.prototype.getCardByName = function(name, def) {
   }
 }
 
+Innovation.prototype.getAgesByZone = function(player, zoneName) {
+  const ages = this.getCardsByZone(player, zoneName).map(c => c.getAge())
+  return util.array.distinct(ages).sort()
+}
+
 Innovation.prototype.getCardsByZone = function(player, zoneName) {
   return this.getZoneByPlayer(player, zoneName).cards()
 }
