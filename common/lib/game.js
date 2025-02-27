@@ -583,9 +583,14 @@ Game.prototype.aChoose = function(player, choices, opts={}) {
     return []
   }
 
+  let title = opts.title || 'Choose'
+  if (opts.min === 0) {
+    title = '(optional) ' + title
+  }
+
   const chooseSelector = {
     actor: player.name,
-    title: opts.title || 'Choose',
+    title,
     choices: choices,
     ...opts
   }

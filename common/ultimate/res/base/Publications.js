@@ -31,7 +31,7 @@ function Card() {
       let junked = false
       if (toJunkOptions.length > 0) {
         const toJunk = game.aChooseCard(player, toJunkOptions, {
-          title: 'Optional: Junk a special achievement?',
+          title: 'Junk a special achievement?',
           min: 0,
         })
         if (toJunk) {

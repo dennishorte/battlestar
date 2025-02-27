@@ -27,7 +27,7 @@ function Card() {
         const choices = game
           .getPlayerAll()
           .filter(other => other !== player)
-        const title = '(optional) Choose a player to transfer your top red card to'
+        const title = 'Choose a player to transfer your top red card to'
         const opp = game.aChoosePlayer(player, choices, { title, min: 0, max: 1 })
 
         // If you chose to swap, do it.
@@ -36,7 +36,7 @@ function Card() {
 
           if (topRed) {
             game.aTransfer(player, topRed, game.getZoneByPlayer(opp, 'red'))
-            
+
             // After transferring, meld their top green card
             const topGreen = game.getTopCard(opp, 'green')
             if (topGreen) {

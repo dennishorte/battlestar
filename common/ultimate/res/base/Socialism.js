@@ -13,35 +13,27 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `You may tuck all cards from your hand. If you tuck one, you must tuck them all. If you tucked at least one purple card, take all the lowest cards in each opponent's hand into your hand.`
+    `You may tuck a top card from your board. If you do, tuck all cards from your hand.`,
+    `You may junk an available achievement of value 8, 9, or 10.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const cards = game.getCardsByZone(player, 'hand')
-      if (cards.length === 0) {
-        game.mLogNoEffect()
-      }
-      else {
-        const tuckThem = game.aYesNo(player, 'Tuck all cards from your hand?')
-        if (tuckThem) {
-          const tucked = game.aTuckMany(player, cards)
+      const topCards = game.getTopCards(player)
+      const card = game.aChooseCard(player, topCards, {
+        title: 'Tuck a top card from your board?',
+        min: 0,
+      })
 
-          // If you tucked a purple card...
-          if (tucked.find(card => card.color === 'purple')) {
-            const accumulator = []
-            for (const opp of game.getPlayerOpponents(player)) {
-              const lowest = game.utilLowestCards(game.getCardsByZone(opp, 'hand'))
-              accumulator.push(lowest)
-            }
-            game.aTransferMany(player, accumulator.flat(), game.getZoneByPlayer(player, 'hand'))
-          }
-        }
-        else {
-          game.mLogDoNothing(player)
-        }
+      if (card) {
+        game.aTuck(player, card)
+        game.aTuckMany(player, game.getCardsByZone(player, 'hand'))
       }
-    }
+    },
+
+    (game, player) => {
+      game.aJunkAvailableAchievement(player, [8, 9, 10], { min: 0 })
+    },
   ]
   this.echoImpl = []
   this.inspireImpl = []

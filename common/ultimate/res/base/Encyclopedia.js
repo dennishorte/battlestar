@@ -26,7 +26,7 @@ function Card() {
       }
 
       const chosenValue = game.aChooseAge(player, values, {
-        title: 'Optionally: choose an age to merge from your score',
+        title: 'Choose an age to merge from your score',
         min: 0,
       })
       if (chosenValue) {
