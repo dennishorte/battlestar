@@ -231,6 +231,8 @@ Innovation.prototype.initializeZonesPlayers = function() {
     _addPlayerZone(player, 'yellow', 'public', root)
     _addPlayerZone(player, 'purple', 'public', root)
     _addPlayerZone(player, 'artifact', 'public', root)
+    _addPlayerZone(player, 'museum', 'public', root)
+    _addPlayerZone(player, 'safe', 'hidden', root)
     zones.players[player.name] = root
 
     for (const color of this.utilColors()) {
