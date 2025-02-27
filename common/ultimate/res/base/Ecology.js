@@ -32,13 +32,7 @@ function Card() {
     },
 
     (game, player) => {
-      const doJunk = game.aChooseYesNo(player, 'Junk the 10 deck?')
-      if (doJunk) {
-        game.aJunkDeck(player, 10)
-      }
-      else {
-        game.mLogDoNothing(player)
-      }
+      game.aJunkDeck(player, 10, { optional: true })
     },
   ]
   this.echoImpl = []

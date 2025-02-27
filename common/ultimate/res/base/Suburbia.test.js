@@ -23,8 +23,10 @@ describe('Suburbia', () => {
     const request2 = t.choose(game, request1, 'Dogma.Suburbia')
     const request3 = t.choose(game, request2, 'Agriculture', 'Mapmaking')
     const request4 = t.choose(game, request3, 'auto')
+    const request5 = t.choose(game, request4, 'yes')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(request5)
+    t.testDeckIsJunked(game, 9)
     t.testBoard(game, {
       dennis: {
         yellow: ['Suburbia', 'Agriculture'],

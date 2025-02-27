@@ -1510,14 +1510,36 @@ Innovation.prototype.aJunkAvailableAchievement = function(player, ages=[], opts=
   }
 }
 
-Innovation.prototype.aJunkDeck = function(player, age) {
-  this.mLog({
-    template: '{player} junks all cards in the {age} deck',
-    args: { player, age }
-  })
-
+Innovation.prototype.aJunkDeck = function(player, age, opts={}) {
   const cards = this.getZoneByDeck('base', age).cards()
-  this.aRemoveMany(player, cards, { ordered: true })
+  if (cards.length === 0) {
+    this.mLog({
+      template: 'The {age} deck is already empty.',
+      args: { age },
+    })
+    return
+  }
+
+  let doJunk = true
+  if (opts.optional) {
+    doJunk = this.aChooseYesNo(player, `Junk the ${age} deck?`)
+  }
+
+  if (doJunk) {
+    this.mLog({
+      template: '{player} junks all cards in the {age} deck',
+      args: { player, age }
+    })
+
+    const cards = this.getZoneByDeck('base', age).cards()
+    this.aRemoveMany(player, cards, { ordered: true })
+  }
+  else {
+    this.mLog({
+      template: '{player} chooses not to junk the {age} deck',
+      args: { player, age }
+    })
+  }
 }
 
 Innovation.prototype.aSeizeRelic = function(player, card) {
