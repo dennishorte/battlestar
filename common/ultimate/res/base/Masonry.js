@@ -1,5 +1,4 @@
 const CardBase = require(`../CardBase.js`)
-
 function Card() {
   this.id = `Masonry`  // Card names are unique in Innovation
   this.name = `Masonry`
@@ -13,7 +12,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `You may meld any number of cards from your hand, each with a {k}.`,
-    `If you melded four or more cards in this way, claim the Monument achievement.`
+    `If you have exactly three red cards on your board, claim the Monument achievement.`
   ]
 
   this.dogmaImpl = [
@@ -23,20 +22,15 @@ function Card() {
         .filter(card => card.checkHasBiscuit('k'))
       const cards = game.aChooseCards(player, choices, { min: 0, max: choices.length })
       if (cards) {
-        const melded = game.aMeldMany(player, cards)
-
-        if (melded.length >= 4 && !game.state.dogmaInfo.masonryMonumentPlayer) {
-          game.state.dogmaInfo.masonryMonumentPlayer = player
-        }
+        game.aMeldMany(player, cards)
       }
     },
 
     (game, player) => {
-      if (game.checkAchievementAvailable('monument')) {
-        game.mLogNoEffect()
-      }
-      else if (game.state.dogmaInfo.masonryMonumentPlayer === player) {
-        game.aClaimAchievement(game.state.dogmaInfo.masonryMonumentPlayer, { name: 'Monument' })
+      const redCards = game.getCardsByZone(player, 'red')
+      
+      if (redCards.length === 3 && game.checkAchievementAvailable('Monument')) {
+        game.aClaimAchievement(player, { name: 'Monument' })
       }
       else {
         game.mLogNoEffect()

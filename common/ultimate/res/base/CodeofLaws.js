@@ -1,5 +1,4 @@
 const CardBase = require(`../CardBase.js`)
-
 function Card() {
   this.id = `Code of Laws`  // Card names are unique in Innovation
   this.name = `Code of Laws`
@@ -26,10 +25,11 @@ function Card() {
         .cards()
         .filter(card => boardColors.includes(card.color))
 
-      const cards = game.aChooseAndTuck(player, choices, { min: 0, max: 1 })
+      const tucked = game.aChooseAndTuck(player, choices, { min: 0, max: 1 })
 
-      if (cards && cards.length > 0) {
-        game.aChooseAndSplay(player, [cards[0].color], 'left')
+      if (tucked && tucked.length > 0) {
+        const color = tucked[0].color
+        game.aChooseAndSplay(player, [color], 'left')
       }
     }
   ]

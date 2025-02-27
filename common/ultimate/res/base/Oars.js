@@ -1,5 +1,4 @@
 const CardBase = require(`../CardBase.js`)
-
 function Card() {
   this.id = `Oars`  // Card names are unique in Innovation
   this.name = `Oars`
@@ -12,7 +11,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you transfer a card with a {c} from your hand to my score pile! if you do, draw a {1}, and repeat this dogma effect!`,
+    `I demand you transfer a card with {c} from your hand to my score pile! If you do, draw a {1}, and repeat this effect!`,
     `If no cards were transferred due to this demand, draw a {1}.`
   ]
 
