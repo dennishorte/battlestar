@@ -12,23 +12,21 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you transfer one card from your score pile to my score pile for every four {c} on my board!`,
+    `I demand you transfer one card from your score pile to my score pile for every top card with {c} on my board!`,
     `Return your bottom red card.`
   ]
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      const biscuits = game.getBiscuits()
-      const count = Math.floor(biscuits[leader.name].c / 4)
+      const count = game
+        .getTopCards(leader)
+        .filter(c => c.checkHasBiscuit('c'))
+        .length
 
-      game.mLog({
-        template: '{player} has {biscuits} {c} biscuits; transfer {count} cards',
-        args: {
-          player: leader,
-          biscuits: biscuits[leader.name].c,
-          count
-        }
-      })
+      if (count === 0) {
+        game.mLog({ template: 'No {c} in top cards' })
+        return
+      }
 
       const choices = game.getZoneByPlayer(player, 'score').cards()
       const target = game.getZoneByPlayer(leader, 'score')
