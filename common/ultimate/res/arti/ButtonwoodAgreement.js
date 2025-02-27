@@ -29,7 +29,7 @@ function Card() {
           .getCardsByZone(player, 'score')
           .filter(other => other.color === card.color)
         game.aReturnMany(player, toReturn)
-        game.aUnsplay(player, game.getZoneByPlayer(player, card.color))
+        game.aUnsplay(player, card.color)
       }
     }
   ]

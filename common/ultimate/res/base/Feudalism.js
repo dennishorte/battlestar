@@ -24,7 +24,7 @@ function Card() {
       const cards = game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(leader, 'hand'))
       if (cards && cards.length > 0) {
         const card = cards[0]
-        game.aUnsplay(player, game.getZoneByPlayer(player, card.color))
+        game.aUnsplay(player, card.color)
       }
     },
 

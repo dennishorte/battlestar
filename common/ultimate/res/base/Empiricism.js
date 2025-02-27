@@ -13,8 +13,8 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Choose two colors, then draw and reveal a {9}. If it is either of the colors you chose, meld it and your may splay your cards of that color up.`,
-    `If you have twenty or more {s} on your board, you win.`
+    `Choose two colors, then draw and reveal a {9}. If the drawn card is one of those colors, meld it and splay your cards of that color up, otherwise unsplay that color.`,
+    `If you have at least twenty {s} on your board, you win.`
   ]
 
   this.dogmaImpl = [
@@ -32,7 +32,10 @@ function Card() {
       const card = game.aDrawAndReveal(player, game.getEffectAge(this, 9))
       if (colors.includes(card.color)) {
         game.aMeld(player, card)
-        game.aChooseAndSplay(player, [card.color], 'up')
+        game.aSplay(player, card.color, 'up')
+      }
+      else {
+        game.aUnsplay(player, card.color)
       }
     },
 

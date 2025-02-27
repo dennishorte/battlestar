@@ -1770,7 +1770,9 @@ Innovation.prototype.aTuck = function(player, card, opts={}) {
   return tucked
 }
 
-Innovation.prototype.aUnsplay = function(player, zone, opts={}) {
+Innovation.prototype.aUnsplay = function(player, color, opts={}) {
+  const zone = this.getZoneByPlayer(player, color)
+
   if (zone.splay === 'none') {
     this.mLog({
       template: '{zone} is already unsplayed',
