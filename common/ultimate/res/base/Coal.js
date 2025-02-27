@@ -14,7 +14,7 @@ function Card() {
   this.dogma = [
     `Draw and tuck a {5}.`,
     `You may splay your red cards right.`,
-    `You may score any one of your top cards. If you do, also score the card beneath it.`
+    `You may choose a color. If you do, score your top card, twice.`,
   ]
 
   this.dogmaImpl = [
@@ -27,10 +27,16 @@ function Card() {
     },
 
     (game, player) => {
-      const card = game.aChooseCard(player, game.getTopCards(player), { min: 0, max: 1 })
-      if (card) {
+      const validColors = game.getTopCards(player).map(c => c.color)
+      const color = game.aChoose(player, validColors, {
+        title: 'Choose a color to score, twice',
+        min: 0,
+        max: 1,
+      })[0]
+
+      if (color) {
         for (let i = 0; i < 2; i++) {
-          const toScore = game.getZoneByPlayer(player, card.color).cards()[0]
+          const toScore = game.getCardsByZone(player, color)[0]
           if (toScore) {
             game.aScore(player, toScore)
           }

@@ -12,7 +12,7 @@ describe('Coal', () => {
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Coal')
     const result3 = t.choose(game, result2, 'red')
-    const result4 = t.choose(game, result3, 'Alchemy')
+    const result4 = t.choose(game, result3, 'blue')
 
     expect(t.cards(game, 'blue')).toStrictEqual(['Tools'])
     expect(t.cards(game, 'score').sort()).toStrictEqual(['Alchemy', 'Calendar'])
