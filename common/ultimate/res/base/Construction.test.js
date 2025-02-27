@@ -27,7 +27,8 @@ describe('Construction', () => {
       })
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Dogma.Construction')
-      t.choose(game, request2, 'Experimentation', 'Statistics')
+      const request3 = t.choose(game, request2, 'Experimentation', 'Statistics')
+      const request4 = t.choose(game, request3, 'auto')
 
       const micah = game.getPlayerByName('micah')
       const micahHandAges = game.getZoneByPlayer(micah, 'hand').cards().map(c => c.age).sort()

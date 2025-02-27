@@ -23,9 +23,9 @@ function Card() {
         player,
         game.getCardsByZone(player, 'hand'),
         game.getZoneByPlayer(leader, 'hand'),
-        { min: 0, max: 2 }
+        { count: 2 }
       )
-      
+
       // Draw a 2
       game.aDraw(player, { age: game.getEffectAge(this, 2) })
     },
