@@ -6,7 +6,7 @@ function Card() {
   this.color = `red`
   this.age = 11
   this.expansion = `base`
-  this.biscuits = `iihc`
+  this.biscuits = `iiih`
   this.dogmaBiscuit = `i`
   this.inspire = ``
   this.echo = ``
@@ -20,35 +20,30 @@ function Card() {
       const executeEffect = (value) => {
         const choices = game
           .getTopCards(player)
-          .filter(card => card.getAge() === value);
-          
-        if (choices.length === 0) {
-          game.mLog({
-            template: '{player} has no top cards of value {value}',
-            args: { player, value }
-          });
-          return false;
+          .filter(card => card.getAge() === value)
+
+        return game.aChooseAndScore(player, choices)[0]
+      }
+
+      let value = 11
+      while (true) {
+        const card = executeEffect(value)
+
+        if (!card) {
+          break
         }
-        
-        const card = game.aChooseCard(player, choices);
-        if (!card) return false;
-        
-        game.aScore(player, card);
-        return true;
-      };
-      
-      // First execution with value 11
-      if (executeEffect(11)) {
-        // Choose a value 1 or 2 lower
-        const options = [9, 10];
-        const chosenValue = game.aChoose(player, options, { title: 'Choose a value to repeat the effect with' })[0];
-        
-        game.mLog({
-          template: '{player} chooses to repeat the effect with value {value}',
-          args: { player, value: chosenValue }
-        });
-        
-        executeEffect(chosenValue);
+
+        const options = [value - 2, value - 1]
+          .filter(v => game.checkAgeZeroInPlay() ? v >= 0 : v >= 1)
+
+        if (options.length === 0) {
+          game.mLog({ template: 'Player has reached the minimum age' })
+          break
+        }
+
+        value = game.aChooseAge(player, options, {
+          title: 'Choose next value to return',
+        })
       }
     }
   ]

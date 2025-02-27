@@ -1925,6 +1925,10 @@ Innovation.prototype.checkAchievementEligibility = function(player, card, opts={
   return ageRequirement && scoreRequirement
 }
 
+Innovation.prototype.checkAgeZeroInPlay = function() {
+  return false
+}
+
 Innovation.prototype.checkCardIsTop = function(card) {
   const re = /^players.[^.]*.(yellow|red|green|blue|purple)$/i
   const isOnBoard = card.zone.match(re) !== null
