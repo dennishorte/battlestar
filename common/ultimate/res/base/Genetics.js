@@ -12,12 +12,12 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and meld a {0}. Score all cards beneath it.`
+    `Draw and meld a {b}. Score all cards beneath it.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const card = game.aDrawAndMeld(player, game.getEffectAge(this, 10))
+      const card = game.aDrawAndMeld(player, game.getEffectAge(this, 11))
       if (card) {
         const cards = game.getCardsByZone(player, card.color)
         const cardIndex = cards.indexOf(card)
@@ -28,7 +28,7 @@ function Card() {
           })
         }
         else {
-          game.aScoreMany(player, cards.slice(cardIndex + 1))
+          game.aScoreMany(player, cards.slice(cardIndex + 1), { ordered: true })
         }
       }
     }

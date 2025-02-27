@@ -12,19 +12,18 @@ describe('Genetics', () => {
       },
       decks: {
         base: {
-          10: ['Software'],
+          11: ['Climatology'],
         }
       }
     })
 
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Genetics')
-    const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(request2)
     t.testBoard(game, {
       dennis: {
-        blue: ['Software'],
+        blue: ['Climatology'],
         score: ['Genetics', 'Tools'],
       },
     })
