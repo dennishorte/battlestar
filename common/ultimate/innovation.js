@@ -657,7 +657,7 @@ Innovation.prototype.superExecute = function(player, card, opts={}) {
 
 Innovation.prototype.aChooseAge = function(player, ages, opts={}) {
   if (!ages) {
-    ages = [1,2,3,4,5,6,7,8,9,10]
+    ages = [1,2,3,4,5,6,7,8,9,10,11]
   }
   else {
     ages = [...ages]
@@ -1495,7 +1495,7 @@ Innovation.prototype._checkCityMeldAchievements = function(player, card) {
 }
 
 Innovation.prototype.aDigArtifact = function(player, age) {
-  if (age > 10 || this.getZoneByDeck('arti', age).cards().length === 0) {
+  if (age > 11 || this.getZoneByDeck('arti', age).cards().length === 0) {
     this.mLog({
       template: `Artifacts deck for age ${age} is empty.`
     })
@@ -2214,7 +2214,7 @@ Innovation.prototype.getHighestTopCard = function(player) {
 }
 
 Innovation.prototype.getNonEmptyAges = function() {
-  return [1,2,3,4,5,6,7,8,9,10]
+  return [1,2,3,4,5,6,7,8,9,10,11]
     .filter(age => this.getZoneByDeck('base', age).cards().length > 0)
 }
 
@@ -2548,7 +2548,7 @@ Innovation.prototype.mAdjustCardVisibility = function(card) {
 }
 
 Innovation.prototype.mDraw = function(player, exp, age, opts={}) {
-  if (age > 10) {
+  if (age > 11) {
     const scores = this
       .getPlayerAll()
       .map(player => ({
@@ -3047,8 +3047,8 @@ Innovation.prototype._getHiddenName = function(card) {
 }
 
 Innovation.prototype._adjustedDrawDeck = function(age, exp) {
-  if (age > 10) {
-    return [11, 'base']
+  if (age > 11) {
+    return [12, 'base']
   }
 
   const baseDeck = this.getZoneByDeck('base', age)
