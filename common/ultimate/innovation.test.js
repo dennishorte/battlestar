@@ -159,7 +159,7 @@ describe('Innovation', () => {
       t.setBoard(game,  {
         dennis: {
           blue: ['Mathematics'],
-          hand: ['Software'],
+          hand: ['Fusion'],
           score: ['Navigation'],
         },
         micah: {
@@ -170,7 +170,7 @@ describe('Innovation', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Dogma.Mathematics')
-      const request3 = t.choose(game, request2, 'Software')
+      const request3 = t.choose(game, request2, 'Fusion')
 
       t.testGameOver(request3, 'dennis', 'high draw')
     })
@@ -180,7 +180,7 @@ describe('Innovation', () => {
       t.setBoard(game,  {
         dennis: {
           blue: ['Mathematics'],
-          hand: ['Software'],
+          hand: ['Fusion'],
           score: ['Metalworking'],
         },
         micah: {
@@ -191,7 +191,7 @@ describe('Innovation', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Dogma.Mathematics')
-      const request3 = t.choose(game, request2, 'Software')
+      const request3 = t.choose(game, request2, 'Fusion')
 
       t.testGameOver(request3, 'micah', 'high draw - tie breaker (achievements)')
     })
@@ -954,7 +954,7 @@ describe('Innovation', () => {
 
         game.run()
         const trigger = () => {
-          game.mDraw(game.getPlayerByName('dennis'), 'base', 11)
+          game.mDraw(game.getPlayerByName('dennis'), 'base', 12)
         }
         expect(trigger).toThrow(GameOverEvent)
       })
