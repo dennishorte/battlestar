@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw three {6} and reveal them. If two or more of the drawn cards are the same color, return the drawn cards and all cards in your hand. Otherwise, keep them.`
+    `Draw three {6} and reveal them. If two or more of the drawn cards are the same color, return all cards in your hand.`
   ]
 
   this.dogmaImpl = [
