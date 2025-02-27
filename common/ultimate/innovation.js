@@ -630,7 +630,8 @@ Innovation.prototype.aCardEffects = function(
 }
 
 Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
-  const isTopCard = this.getTopCard(player, card.color).name === card.name
+  const topCard = this.getTopCard(player, card.color)
+  const isTopCard = topCard && topCard.name === card.name
 
   opts.selfExecutor = player
 
