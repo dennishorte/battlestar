@@ -8,24 +8,26 @@ describe('Software', () => {
     t.setBoard(game, {
       dennis: {
         blue: ['Software'],
-        hand: ['Gunpowder'],
       },
       decks: {
         base: {
-          10: ['The Internet', 'Globalization', 'Stem Cells']
+          9: ['Satellites', 'Suburbia'],
+          10: ['The Internet'],
         }
       }
     })
 
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Software')
-    const request3 = t.choose(game, request2, 'yes')
+    const request3 = t.choose(game, request2, 'no')
 
+    t.testIsSecondPlayer(request3)
     t.testBoard(game, {
       dennis: {
         blue: ['Software'],
-        yellow: ['Stem Cells', 'Globalization'],
-        score: ['The Internet', 'Gunpowder'],
+        yellow: ['Suburbia'],
+        green: ['Satellites'],
+        score: ['The Internet'],
       },
     })
   })

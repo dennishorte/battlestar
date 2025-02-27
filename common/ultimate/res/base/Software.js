@@ -6,14 +6,14 @@ function Card() {
   this.color = `blue`
   this.age = 10
   this.expansion = `base`
-  this.biscuits = `iiih`
+  this.biscuits = `ipih`
   this.dogmaBiscuit = `i`
   this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = [
     `Draw and score a {0}.`,
-    `Draw and meld two {0}, then execute each of the second card's non-demand dogma effects. Do not share them.`
+    `Draw and meld two {9}, then self-execute the second card.`,
   ]
 
   this.dogmaImpl = [
@@ -21,8 +21,8 @@ function Card() {
       game.aDrawAndScore(player, game.getEffectAge(this, 10))
     },
     (game, player) => {
-      game.aDrawAndMeld(player, game.getEffectAge(this, 10))
-      const card = game.aDrawAndMeld(player, game.getEffectAge(this, 10))
+      game.aDrawAndMeld(player, game.getEffectAge(this, 9))
+      const card = game.aDrawAndMeld(player, game.getEffectAge(this, 9))
       game.mLog({
         template: '{player} will execute {card}',
         args: { player, card }
