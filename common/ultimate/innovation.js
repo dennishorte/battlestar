@@ -2885,6 +2885,32 @@ Innovation.prototype.mTuck = function(player, card) {
 ////////////////////////////////////////////////////////////////////////////////
 // Utility Functions
 
+Game.prototype.utilBiscuits = function() {
+  return [
+    'castle',
+    'clock',
+    'coin',
+    'factory',
+    'leaf',
+    'lightbulb',
+    'person',
+  ]
+}
+
+Game.prototype.utilBiscuitNameToIcon = function(name) {
+  switch (name) {
+    case 'castle': return 'k';
+    case 'clock': return 'i';
+    case 'coin': return 'c';
+    case 'factory': return 'f';
+    case 'leaf': return 'l';
+    case 'lightbulb': return 's';
+    case 'person': return 'p';
+  }
+
+  throw new Error('Unknown biscuit name: ' + name)
+}
+
 Game.prototype.utilColors = function() {
   return [
     'red',
