@@ -11,7 +11,7 @@ describe('Empire Achievement', () => {
       t.setColor(game, 'dennis', 'red', ['Coal'])
       t.setColor(game, 'dennis', 'blue', ['Philosophy'])
       t.setColor(game, 'dennis', 'purple', ['Reformation'])
-      t.setColor(game, 'dennis', 'green', ['The Wheel', 'Self Service'])
+      t.setColor(game, 'dennis', 'green', ['The Wheel', 'Navigation'])
       t.setSplay(game, 'dennis', 'green', 'up')
     })
 
@@ -37,7 +37,7 @@ describe('Empire Achievement', () => {
       t.setColor(game, 'dennis', 'red', ['Coal'])
       t.setColor(game, 'dennis', 'blue', ['Philosophy'])
       t.setColor(game, 'dennis', 'purple', ['Reformation'])
-      t.setColor(game, 'dennis', 'green', ['The Wheel', 'Self Service'])
+      t.setColor(game, 'dennis', 'green', ['The Wheel', 'Navigation'])
       t.setSplay(game, 'dennis', 'green', 'up')
     })
 

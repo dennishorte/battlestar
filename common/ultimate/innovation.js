@@ -2960,6 +2960,7 @@ Innovation.prototype.utilEmptyBiscuits = function() {
     k: 0,
     l: 0,
     s: 0,
+    p: 0,
   }
 }
 
