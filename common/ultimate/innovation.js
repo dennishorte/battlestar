@@ -1512,8 +1512,8 @@ Innovation.prototype.aJunkAvailableAchievement = function(player, ages=[], opts=
 
 Innovation.prototype.aJunkDeck = function(player, age) {
   this.mLog({
-    template: '{player} junks all cards in the {3} deck',
-    args: { player }
+    template: '{player} junks all cards in the {age} deck',
+    args: { player, age }
   })
 
   const cards = this.getZoneByDeck('base', age).cards()

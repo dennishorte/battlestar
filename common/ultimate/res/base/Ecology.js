@@ -12,7 +12,8 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `You may return a card from your hand. If you do, score a card from your hand and draw two {0}.`
+    `You may return a card from your hand. If you do, score a card from your hand and draw two {0}.`,
+    `You may junk all cards in the {0} deck.`,
   ]
 
   this.dogmaImpl = [
@@ -28,7 +29,17 @@ function Card() {
         game.aDraw(player, { age: game.getEffectAge(this, 10) })
         game.aDraw(player, { age: game.getEffectAge(this, 10) })
       }
-    }
+    },
+
+    (game, player) => {
+      const doJunk = game.aChooseYesNo(player, 'Junk the 10 deck?')
+      if (doJunk) {
+        game.aJunkDeck(player, 10)
+      }
+      else {
+        game.mLogDoNothing(player)
+      }
+    },
   ]
   this.echoImpl = []
   this.inspireImpl = []
