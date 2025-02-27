@@ -12,13 +12,17 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you transfer all the highest cards from your score pile to my hand! If you transferred any cards, then transfer a top card from my board without a {l} to your hand.`
+    `I demand you transfer all the cards of the value of my choice from your score pile to my hand! If you transferred any cards, then transfer a top card without a {l} from my board to your hand.`
   ]
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      const highest = game.utilHighestCards(game.getCardsByZone(player, 'score'))
-      const transferred = game.aTransferMany(player, highest, game.getZoneByPlayer(leader, 'hand'))
+      const value = game.aChooseAge(player)
+      const cards = game
+        .getCardsByZone(player, 'score')
+        .filter(c => c.getAge() === value)
+
+      const transferred = game.aTransferMany(player, cards, game.getZoneByPlayer(leader, 'hand'))
       if (transferred && transferred.length > 0) {
         const choices = game
           .getTopCards(leader)
