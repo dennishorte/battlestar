@@ -19,7 +19,6 @@ module.exports = {
   res,
 }
 
-
 function Innovation(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 }
@@ -234,7 +233,7 @@ Innovation.prototype.initializeZonesPlayers = function() {
     _addPlayerZone(player, 'artifact', 'public', root)
     zones.players[player.name] = root
 
-    for (const color of ['red', 'yellow', 'green', 'blue', 'purple']) {
+    for (const color of this.utilColors()) {
       root[color].color = color
       root[color].splay = 'none'
     }
@@ -2213,6 +2212,13 @@ Innovation.prototype.getBottomCard = function(player, color) {
   return this
     .getCardsByZone(player, color)
     .slice(-1)[0]
+}
+
+Innovation.prototype.getSplayedZones = function(player) {
+  return this
+    .utilColors()
+    .map(color => this.getZoneByPlayer(player, color))
+    .filter(zone => zone.splay !== 'none')
 }
 
 Innovation.prototype.getTopCard = function(player, color) {

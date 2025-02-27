@@ -12,14 +12,24 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `You may tuck a card from your hand for every two {l} on your board.`,
-    `You may splay your yellow or purple cards right.`
+    `You may splay your yellow or purple cards right.`,
+    `You may tuck a card from your hand for every splayed color on your board.`,
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const biscuits = game.getBiscuits()
-      const count = Math.floor(biscuits[player.name].l / 2)
+      game.aChooseAndSplay(player, ['yellow', 'purple'], 'right')
+    },
+    (game, player) => {
+      const count = game
+        .getSplayedZones(player)
+        .length
+
+      if (count === 0) {
+        game.mLog({ template: 'no splayed colors' })
+        return
+      }
+
       const proceed = game.requestInputSingle({
         actor: player.name,
         title: `Tuck ${count} cards from your hand?`,
@@ -39,9 +49,6 @@ function Card() {
         .cards()
         .map(c => c.id)
       game.aChooseAndTuck(player, choices, { count })
-    },
-    (game, player) => {
-      game.aChooseAndSplay(player, ['yellow', 'purple'], 'right')
     }
   ]
   this.echoImpl = []
