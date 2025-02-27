@@ -95,7 +95,7 @@ const cardData = [
   require('./Genetics.js'),
   require('./Computers.js'),
   require('./Robotics.js'),
-  require('./Miniturization.js'),
+  require('./Miniaturization.js'),
   require('./AI.js'),
   require('./TheInternet.js'),
   require('./StemCells.js'),
