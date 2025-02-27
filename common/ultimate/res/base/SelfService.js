@@ -7,7 +7,7 @@ function Card() {
   this.color = `green`
   this.age = 10
   this.expansion = `base`
-  this.biscuits = `hccc`
+  this.biscuits = `hcpc`
   this.dogmaBiscuit = `c`
   this.inspire = ``
   this.echo = ``
