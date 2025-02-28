@@ -251,6 +251,8 @@ function _blankTableau() {
     score: [],
     forecast: [],
     artifact: [],
+    museum: [],
+    safe: [],
     red: [],
     yellow: [],
     green: [],
@@ -271,7 +273,7 @@ function _buildPlayerBoard(game, opts) {
     }
   }
 
-  for (const zone of ['hand', 'score', 'forecast', 'achievements']) {
+  for (const zone of ['hand', 'score', 'forecast', 'achievements', 'safe', 'museum']) {
     playerBoard[zone].sort()
   }
 
@@ -295,7 +297,7 @@ TestUtil.testBoard = function(game, state) {
       }
     }
 
-    for (const zone of ['artifact', 'hand', 'score', 'forecast', 'achievements']) {
+    for (const zone of ['artifact', 'hand', 'score', 'forecast', 'achievements', 'safe', 'museum']) {
       realBoard[zone] = game.getCardsByZone(player, zone).map(c => c.name).sort()
     }
 

@@ -1814,6 +1814,17 @@ Innovation.prototype.aReturn = function(player, card, opts={}) {
   return this.mReturn(player, card, opts)
 }
 
+Innovation.prototype.aSafeguard = function(player, card, opts={}) {
+  const zone = this.getZoneByCard(card)
+  this.mMoveCardTo(card, this.getZoneByPlayer(player, 'safe'))
+  this.mLog({
+    template: '{player} safeguards {card} from {zone}',
+    args: { player, card, zone },
+  })
+  this.mActed(player)
+  return card
+}
+
 Innovation.prototype.aScore = function(player, card, opts={}) {
   if (card === undefined) {
     return
@@ -2632,6 +2643,10 @@ Innovation.prototype.mAdjustCardVisibility = function(card) {
 
   else if (zone.kind === 'private') {
     util.array.pushUnique(card.visibility, zone.owner)
+  }
+
+  else if (zone.kind === 'hidden') {
+    card.visibility = []
   }
 
   else {
