@@ -1,0 +1,758 @@
+Assassination
+red
+1
+chck
+c: I demand you draw and reveal a {1}. If it has {l}, transfer it and the top card on your board of its color to my score pile!
+c: If no player has a top green card, claim the Confidence achievement.
+
+Maze
+red
+1
+kkhk
+k: I demand you score a card from your hand of matching color for each card in my hand. If you don't, and I turn a card in my hand, I'll exchange all cards in your hand with all cards in my score pile!
+
+Pilgrimage
+green
+1
+llhl
+l: You may return a card of value 1 from your hand. If you do, achieve an available achievement of value equal to the returned card, then repeat this effect using a value one higher.
+l: Draw and tuck all cards in the {1} deck.
+
+Handshake
+yellow
+1
+hckk
+c: I demand you transfer all cards from my hand to your hand! Choose two colors of cards in your hand! Transfer all cards in your hand of those colors to my hand!
+
+Tomb
+yellow
+1
+chkk
+k: Safeguard an available achievement of value equal to the number of achievements you have.
+k: You may transfer the lowest-valued achievement to your hand. If you do, return all purple and all blue cards on your board.
+
+Woodworking
+green
+1
+llhs
+l: Draw and meld a {2}. If the melded card is a bottom card on your board, score it.
+
+Dance
+green
+1
+llhl
+l: Transfer a top card on your board with {l} to the board of any other player. If you do, meld the lowest top card without {l} from that player's board.
+
+Rumor
+green
+1
+cchc
+c: Return a card from your score pile. If you do, draw a card of value one higher than the card you return.
+c: Transfer a card from your hand to the hand of the player on your left.
+
+Silk
+yellow
+1
+cclh
+c: Meld a card from your hand.
+c: You may score a card from your hand of each color on your board.
+
+Espionage
+blue
+1
+khkk
+k: I demand you reveal a card in your hand. If you do, and I have no card in my hand of the same color, transfer it to my hand, then repeat this effect!
+
+Palmistry
+blue
+1
+lkhk
+l: Draw and meld a {1}.
+l: Return two cards from your hand. If you do, draw and score a {3}.
+
+Proverb
+blue
+1
+hckk
+l: Draw, reveal, and return a {1}. If the color of the returned card is yellow or purple, safeguard an available achievement of value equal to your hand size. If you do, then return all cards from your hand. Otherwise, draw two {1}.
+
+Myth
+purple
+1
+hkkk
+k: If you have two cards of the same color in your hand, tuck them both. If you do, splay left that color, and draw and safeguard a card of value equal to the value of your bottom card of that color.
+
+Polytheism
+purple
+1
+hssk
+p: Meld a card from your hand with no icon on a card already melded by you during this action due to Polytheism. If you do, repeat this effect.
+p: Draw and tuck a {1}.
+
+Symbology
+purple
+1
+sshk
+p: If you have at least four each of at least four icon on your board, draw a {3}. Otherwise, if you have three of three icons, draw a {2}. Otherwise, if you have two of two icons, draw a {1}.
+
+Padlock
+red
+2
+ckhk
+k: I demand you transfer one of your secrets to the available achievements!
+k: If no card was transferred due to the demand, you may score up to three cards from your hand of different values.
+
+Password
+red
+2
+hckk
+p: Draw and reveal a {2}. You may safeguard another card from your hand of the color of the drawn card. If you do, score the drawn card. Otherwise, return all cards from your hand except the drawn card.
+
+Astrology
+blue
+2
+cchl
+c: You may splay left the color of which you have the most cards on your board.
+c: Draw and meld a card of value equal to the number of visible purple cards on your board. If the melded card has no {s}, tuck it.
+
+Fingerprints
+yellow
+2
+lshl
+l: You may splay your red or yellow cards left.
+l: Safeguard an available achievement of value equal to the number of splayed colors on your board. Transfer a card of that value in your hand to any board.
+
+Exile
+yellow
+2
+lhlk
+l: I demand you return a top card without {c} from your board! Return all cards of the returned card's value from your score pile!
+l: If exactly one card was returned due to the demand, return Exile if it is a top card on any board and draw a {3}.
+
+Meteorology
+blue
+2
+sslh
+p: Draw and reveal a {2}. If it has {l}, score it. Otherwise, if it has {c}, return it and draw two {2}. Otherwise, tuck it.
+p: If you have no {l}, claim the Zen achievement.
+
+Cipher
+green
+2
+hssk
+p: Return all cards from your hand. If you return at least two, draw a card of value one higher than the highest value of card you return.
+p: Draw a {3}. You may splay your blue cards left.
+
+Counterfeiting
+green
+2
+scch
+c: Score a top card from your board of a value not in your score pile. If you do, repeat this effect.
+c: You may splay your green or purple cards left.
+
+Steganography
+purple
+2
+hkkk
+h: You may splay left a color on your board with {k}. If you do, safeguard an available achievement of value equal to the number of cards of that color on your board. Otherwise, draw and tuck a {3}.
+
+Propaganda
+purple
+2
+chkk
+k: I demand you meld a card of the color of my choice from your hand! If you do, transfer the card beneath it to my board!
+k: Meld a card from your hand.
+
+Knights Templar
+red
+3
+hlkk
+k: I demand you unsplay a splayed color on your board! If you do, transfer the top card on your board of that color to my score pile!
+k: You may splay your red or green cards left.
+
+Secret Police
+yellow
+3
+kkkh
+k: I demand you tuck a card in your hand, then return your top card of its color! If you do, repeat this effect! Otherwise, draw a {1}!
+k: You may tuck any number of cards of any one color from your hand.
+
+Secretum Secretorum
+blue
+3
+shsc
+s: Return five cards from your hand and/or score pile. Draw two cards of value equal to the number of different colors of cards you return. Meld one of the drawn cards and score the other.
+
+Cliffhanger
+green
+3
+sllh
+l: Reveal a {3} in your safe. If it is: green, tuck it; purple, meld it; red, achieve it regardless of eligibility; yellow, score it; blue, draw a {3}. Otherwise, safeguard the top card of the {3} deck.
+
+Red Envelope
+red
+3
+lchc
+c: Choose a value at which you have exactly two or three cards altogether in your hand and score pile. Transfer those cards to the score pile of the player on your right.
+c: You may score exactly two or three cards from your hand.
+
+Masquerade
+purple
+3
+cchk
+c: Safeguard an available achievement of value equal to the number of cards in your hand. If you do, return all cards of that value from your hand. If you return a {3}, claim the Anonymity achievement.
+c: You may splay your purple cards left.
+
+Freemasons
+yellow
+3
+chck
+c: For each color, you may tuck a card from your hand of that color. If you tuck any yellow cards or expansion cards, draw two {3}.
+c: You may splay your yellow or blue cards left.
+
+Smuggling
+green
+3
+cchc
+c: I demand you transfer a card of value equal to your top yellow card and a card of value equal to my top yellow card from your score pile to my score pile!
+
+Taqiyya
+purple
+3
+slhl
+l: Choose a color. Transfer all cards of that color on your board into your hand.
+l: Draw and meld a {3}. If the melded card is a bottom card on your board, score it and any number of cards of its color in your hand.
+
+Brethren of Purity
+blue
+3
+sslh
+s: Draw and meld a {3} or a card of value one higher than the last card melded due to Brethren of Purity during this action. If you meld over a card with a l, repeat this effect.
+
+Ninja
+red
+4
+clhl
+l: I demand you return a card of the color of my choice from your hand! If you do, transfer the top card of that color from your board to mine!
+l: You may splay your red cards right.
+
+Heirloom
+yellow
+4
+fcfh
+f: Transfer one of your secrets to the available achievements and draw a card of value one higher than the transferred card. If you don't, safeguard an available achievement of value equal to the value of your top red card.
+
+The Prophecies
+blue
+4
+sshs
+s: Choose to either draw and safeguard a {4}, or draw and score a card of value one higher than one of your secrets. If you reveal a red or purple secret, meld one of your other secrets. If you do, safeguard the drawn card.
+
+Spanish Inquisition
+red
+4
+shss
+l: I demand you return all but the highest cards from your hand and all but the highest cards from your score pile!
+l: If Spanish Inquisition is a top card on your board, return all red cards from your board.
+
+Blackmail
+green
+4
+hffl
+f: I demand you reveal your hand! Meld a revealed card of my choice! Reveal your score pile! Self-execute a card revealed due to this effect of my choice, replacing 'may' with 'must'!
+
+Confession
+purple
+4
+ccch
+c: Return a top card with {f} of each color from your board. If you return none, meld a card from your score pile, then draw and score a {4}.
+c: Draw a {4} for each {f} in your score pile.
+
+April Fool's Day
+yellow
+4
+hsll
+l: Transfer a card from your hand or score pile to the board of the player on your right. If you don't, claim the Folklore achievement.
+l: Splay your yellow cards right, and unsplay your purple cards, or vice versa.
+
+El Dorado
+green
+4
+cchc
+c: Draw and meld a {4}, a {2}, and a {1}. If all three cards have c, score all cards in the {4} deck. If at least two have c, splay your green and blue cards right.
+
+Legend
+purple
+4
+hlls
+l: Choose a non-purple color. Self-execute your top card of that color. Score your top card of that color. If you do, repeat this effect with the same color if you have scored fewer than nine points due to Legend during this action.
+
+Quackery
+blue
+4
+hsfs
+s: Choose to either score a card from your hand, or draw a {4}.
+s: Return exactly two cards in your hand. If you do, draw a card of value equal to the sum number of {f} and {l} on the returned cards.
+
+Gallery
+yellow
+5
+csch
+c: If you have a {3} in your score pile, draw a {2}.
+c: If you have a {1} in your score pile, draw a {4}. Otherwise, draw a {3}.
+
+Cabal
+red
+5
+hffc
+f: I demand you transfer all cards from your hand that have a value matching any of my secrets to my score pile! Draw a {5}!
+f: Safeguard an available achievement of value equal to a top card on your board.
+
+Probability
+blue
+5
+hsss
+s: Return all cards from your hand.
+s: Draw and meld two {5}, then return them. If exactly two different icon types appear on the drawn cards, draw and score two {5}. If exactly four different icon types appear, draw a {5}. Draw a {4}.
+
+Witch Trial
+red
+5
+fffh
+f: I demand you draw and reveal a {5}! Return your top card of the color of the drawn card, another card of that color from your hand, and a card from your score pile! If you do, repeat this effect!
+
+Buried Treasure
+green
+5
+cchc
+c: Choose an odd value. Transfer all cards of that value from all score piles to the available achievements. If you transfer at least four cards, draw and safeguard a card of that value, and score three available standard achievements.
+
+Pantheism
+purple
+5
+hlss
+s: Tuck a card from your hand. If you do, draw and tuck a {5}, score all cards on your board of the color of one of the tucked cards, and splay right the color on your board of the other tucked card.
+s: Draw and tuck a {5}.
+
+Chartreuse
+yellow
+5
+lfhl
+l: Draw and reveal a {5}, a {4}, a {3}, and a {2}. Meld each drawn green card and each drawn yellow card, in any order. Return the other drawn cards.
+l: You may splay your green or yellow cards right.
+
+Secret History
+green
+5
+fcfh
+f: I demand you transfer one of your secrets to my safe!
+f: If your red and purple cards are splayed right, claim the Mystery achievement. Otherwise, splay your red or purple cards right.
+
+Pen Name
+purple
+5
+fhfs
+f: Choose to either splay an unsplayed non-purple color on your board left and self-execute its top card, or meld a card from your hand and splay its color on your board right.
+
+Popular Science
+blue
+5
+scsh
+s: Draw and meld a card of value equal to the value of a top green card anywhere.
+s: Draw and meld a card of value one higher than the value of your top yellow card.
+s: You may splay your blue cards right.
+
+Sabotage
+yellow
+6
+hfff
+f: I demand you draw a {6}! Reveal the cards in your hand! Return the card of my choice from your hand! Tuck your top card and all cards from your score pile of the same color as the returned card!
+
+Red Herring
+red
+6
+chcc
+c: Splay your red cards left, right, or up.
+c: Draw and tuck a {6}. If the color on your board of the card you tuck is splayed in the same direction as your red cards, splay that color up. Otherwise, unsplay that color.
+
+Reconnaissance
+blue
+6
+fhfs
+f: I demand you reveal your hand!
+f: Draw and reveal three {6}. Return two of the drawn cards. You may splay the color of the card not returned right.
+
+Sniping
+red
+6
+ffhf
+f: I demand you unsplay the color on your board of my choice! Meld your bottom card of that color! Transfer your bottom non-top card of that color to my board!
+
+Hiking
+green
+6
+llhs
+l: Draw and reveal a {6}. If the top card on your board of the drawn card's color has {l}, tuck the drawn card and draw and reveal a {5}. If the second drawn card has {l}, meld it and draw an {8}.
+
+Illuminati
+purple
+6
+shss
+l: Reveal a card in your hand. Splay the card's color on your board right. Safeguard the top card on your board of that color. Safeguard an available achievement of value one higher than the secret.
+
+Attic
+yellow
+6
+fhfc
+f: You may score or safeguard a card from your hand.
+f: Return a card from your score pile.
+f: Draw and score a card of value equal to a card in your score pile.
+
+Swiss Bank Account
+green
+6
+ccch
+c: Safeguard an available achievement of value equal to the number of cards in your score pile. If you do, score all cards in your hand of its value.
+c: Draw a {6} for each secret in your safe.
+
+Placebo
+blue
+6
+ssfh
+s: Return a top card on your board, then you may repeat as many times as you want with the same color. Draw a {6} for each card you return. If you return exactly one {6}, draw an {8}.
+
+Triad
+purple
+6
+slhs
+s: If you have at least three cards in your hand, return a card from your hand and splay the color of the returned card right, tuck a card from your hand, and score a card from your hand.
+
+Camouflage
+red
+7
+fhfl
+f: Choose to either tuck exactly two top cards of different colors and equal value on your board, then safeguard them, or score exactly two of your secrets of equal value.
+f: Draw a {7} for each special achievement you have.
+
+Subway
+yellow
+7
+liih
+i: Draw and tuck a {7}. If you have at least seven visible cards on your board of the color of the tucked card, draw a {7}. Otherwise, junk all cards on your board of that color, and draw an {8}.
+
+Private Eye
+blue
+7
+llsh
+l: I demand you reveal your hand! Transfer the card in your hand of my choice to my board! Draw a {7}!
+l: Score one of your secrets.
+l: You may splay your blue cards right.
+
+Safe Deposit Box
+red
+7
+hcic
+c: You may choose to either draw and junk two {7}, or exchange all cards in your score pile with all valued cards in the junk.
+
+Black Market
+green
+7
+hcfc
+c: You may safeguard a card from your hand. If you do, reveal two available standard achievements. You may meld a revealed card with no {k} or {l}. Return each revealed card you do not meld.
+
+Fortune Cookie
+purple
+7
+hllc
+l: If you have exactly seven of any icon on your board, draw and score a {7}; exactly eight, splay your green or purple cards right and draw an {9}; exactly nine, draw a {7}.
+
+Mafia
+yellow
+7
+fhff
+f: I demand you transfer your lowest secret to my safe!
+f: Tuck a card from any score pile.
+f: You may splay your red or yellow cards right.
+
+Plot Voucher
+green
+7
+sslh
+s: Meld a card from your score pile. Safeguard the lowest available standard achievement. If you do, super-execute the melded card if it is your turn, or if it is not your turn self-execute it.
+
+Counterintelligence
+blue
+7
+sshs
+s: I demand you tuck a top card on your board with {i}! If you do, transfer your top card of color matching the tucked card to my board, and draw a {7}!
+s: Draw an {8}.
+
+Slot Machine
+purple
+7
+fiih
+i: Draw and reveal a {1}, {2}, {3}, {4}, and {5}. If at least one drawn card is green, splay your green or purple cards right. If at least two are, score all drawn cards, otherwise return them. If at least three are, you win.
+
+Concealment
+red
+8
+hffi
+f: I demand you tuck all your secrets!
+f: Safeguard your bottom purple card.
+
+Shangri-La
+yellow
+8
+hcll
+l: Draw and tuck an {8}. If it has {l}, score it. Otherwise, draw and meld an {8}. If it is an {l}, repeat this effect.
+
+Scouting
+blue
+8
+lssh
+s: Draw and reveal two {8}. Return at least one of the drawn cards. If you return two, reveal the top card of the {10} deck. If the color of the revealed card matches the color of at least one of the returned cards, draw a {10}.
+
+Enigma Machine
+red
+8
+iihi
+i: Choose to either safeguard all available standard achievements, transfer all your secrets to your hand, or transfer all cards in your hand to the available achievements.
+i: Choose a color you have splayed left and splay it up.
+
+Handbag
+green
+8
+hcic
+c: You may choose to either transfer your bottom card of each color to your hand, or tuck all cards from your score pile, or choose a value and score all cards from your hand of that value.
+
+Joy Buzzer
+purple
+8
+icih
+i: I demand you exchange all cards in your hand with all the lowest cards in my hand!
+i: You may choose a value and score all the cards in your hand of that value. If you do, score your top purple card.
+
+Jackalope
+yellow
+8
+lhll
+l: I demand you transfer the highest card on your board without {l} to my board! If you do, unsplay the transferred card's color on your board!
+l: Unsplay the color on your board with the most visible cards.
+
+Hitchhiking
+green
+8
+fiih
+i: Choose another player. They transfer a card from their hand to your board. If they do, self-execute the card, with that player making all decisions and allowed to look at any card that you can.
+
+Blacklight
+blue
+8
+hfff
+f: Choose to either unsplay one color of your cards, or splay up an unsplayed color on your board and draw a {9}.
+
+Opus Dei
+purple
+8
+sshs
+s: Reveal the highest card in your score pile. If you do, splay your cards of the revealed card's color up, and safeguard that card.
+s: Draw an {8} for every color on your board splayed up.
+
+Surveillance
+yellow
+9
+siih
+i: I demand you reveal your hand! If each color present in my hand is present in yours, and vice versa, and your hand is not empty, I win!
+i: Draw a {10}.
+
+Iron Curtain
+red
+9
+hlil
+l: Unsplay each splayed color on your board. For each color you unsplay, return your top card of that color and safeguard an available standard achievement.
+
+Fermi Paradox
+blue
+9
+hiis
+i: Reveal the top card of the {9} deck and the {10} deck. Return the top card of the {9} deck or the {10} deck.
+i: If you have no cards on your board, you win. Otherwise, transfer all valued cards in the junk to your hand.
+
+McCarthyism
+red
+9
+fiih
+i: I demand you draw and meld an {8}! If Socialism is a top card on your board, you lose!
+i: Score your top purple card.
+i: You may splay your red or blue cards up.
+
+Area 51
+green
+9
+shss
+s: You may splay your green cards up.
+s: Choose to either draw a {9}, or safeguard an available standard achievement.
+s: Reveal one of your secrets, and super-execute it if it is your turn.
+
+Clown Car
+purple
+9
+cchl
+c: I demand you meld a card from my score pile! If the melded card has no {l}, repeat this effect!
+
+Magic 8-Ball
+yellow
+9
+hlll
+l: Choose whether you wish to draw two {9}, draw and score one {9}, or safeguard two available standard achievements. Draw and tuck an {8}. If it has {l}, do as you wish. If it is red or purple, repeat this effect.
+
+Teleprompter
+green
+9
+liih
+i: Reveal the top card of any value deck from any set. Execute the first sentence of non-demand dogma effect on the card. If you do, return the revealed card and repeat this effect using the next sentence.
+
+Consulting
+blue
+9
+hffc
+f: Choose an opponent. Draw and meld two {9}. Self-execute the top card on your board of that player's choice.
+
+Urban Legend
+purple
+9
+fhff
+f: For every color on your board with {f}, draw a {9}. If you draw five cards, you win.
+f: You may splay your yellow or purple cards up.
+
+Fight Club
+red
+10
+hppl
+p: I demand you transfer one of your secrets to my achievements!
+p: You may splay your yellow cards up.
+
+Whatchamacallit
+yellow
+10
+hlfl
+l: For each value, in ascending order, if that value is not a value of a top card on your board or a card in your score pile, draw and score a card of that value.
+
+Inhomogeneous Cosmology
+blue
+10
+ihii
+i: You may place a top card from your board on top of its deck. You may meld a card from your hand. If you do either, repeat this effect.
+i: Draw an {11} for every color not on your board.
+
+Secret Santa
+red
+10
+sshp
+s: I demand you meld a card from my score pile!
+s: Draw and score three {10}.
+
+Cryptocurrency
+green
+10
+cffh
+f: Return all cards from your score pile. For each different value of card you return, draw and score a {10}.
+f: You may splay your red cards up.
+
+3D Printing
+purple
+10
+siih
+i: Return a top or bottom card on your board. Achieve one of your secrets of value equal to the returned card regardless of eligibility, then safeguard an available standard achievement. If you do, repeat this effect.
+
+Ride-Hailing
+yellow
+10
+iiih
+i: You may splay your green cards up.
+i: Meld a top non-yellow card with {p} from another player's board. If you do, self-execute it. Otherwise, draw an {11}.
+
+Denver Airport
+green
+10
+cchp
+c: You may achieve one of your secrets regardless of eligibility.
+c: You may splay your purple cards up.
+
+Hacking
+blue
+10
+hiis
+i: I demand you transfer your two highest secrets to my safe! Transfer the two highest cards in your score pile to my score pile! Meld the two lowest cards from your score pile!
+
+Order of the Occult Hand
+purple
+10
+hfss
+s: If you have a {3} in your score pile, you lose.
+s: If you have a {7} in your hand, you win.
+s: Meld two cards from your hand. Score four cards from your hand. Splay your blue cards up.
+
+Cloaking
+red
+11
+hsfs
+s: I demand you transfer one of your claimed standard achievements to my safe!
+
+Fashion Mask
+yellow
+11
+hlll
+l: Tuck a top card with {l} or {p} of each color on your board. You may safeguard one of the tucked cards.
+l: Score all but the top five each of your yellow and purple cards. Splay those colors aslant.
+
+Quantum Computers
+blue
+11
+iihi
+i: I demand you flip a coin! If you lose the flip, you lose!
+i: Flip a coin. If you win the flip, this effect is complete. If you lose the flip, return one of your secrets. If you don't, you lose. Otherwise, repeat this effect.
+
+Dark Web
+red
+11
+fhii
+i: Unsplay any color on any board.
+i: Choose to either safeguard any number of available standard achievements, or achieve any number of secrets from your safe regardless of eligibility.
+
+Green Hydrogen
+green
+11
+fffh
+f: Score all non-top green cards on your board. Draw and tuck an {11} for each card scored.
+
+Holography
+purple
+11
+pphp
+p: Choose red, blue, or green. Score all but your top two cards of that color, then splay it aslant. If you do both, exchange all the lowest cards in your score pile with all your claimed standard achievements of lower value.
+
+Escape Room
+yellow
+11
+icih
+i: I demand you draw, reveal, and score an {11}! Score a card from your hand of the same color as the drawn card! If you don't, you lose!
+i: Score four top non-yellow cards each with {l} of different colors on your board.
+
+Mystery Box
+green
+11
+hccc
+c: Claim an available standard achievement, regardless of eligibility. Self-execute it.
+
+Astrobiology
+blue
+11
+llph
+l: Return a bottom card from your board. Splay that color on your board aslant. Score all cards on your board of that color without {l}.
+
+Metaverse
+purple
+11
+spph
+p: For each splayed color on your board, score its top card. If you score fewer than three cards, you lose.
