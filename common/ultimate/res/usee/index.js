@@ -118,6 +118,11 @@ const cardData = [
 
 
 const achievementData = [
+  require('./achievements/Anonymity.js'),
+  require('./achievements/Confidence.js'),
+  require('./achievements/Folklore.js'),
+  require('./achievements/Mystery.js'),
+  require('./achievements/Zen.js'),
 ]
 
 function generateCardInstances() {
