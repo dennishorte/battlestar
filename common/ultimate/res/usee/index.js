@@ -1,4 +1,4 @@
-const cards = [
+const cardData = [
   require('./Assassination.js'),
   require('./Maze.js'),
   require('./Pilgrimage.js'),
@@ -114,7 +114,7 @@ const cards = [
   require('./MysteryBox.js'),
   require('./Astrobiology.js'),
   require('./Metaverse.js')
-].map(f => new f())
+]
 
 
 const achievementData = [

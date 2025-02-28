@@ -1,0 +1,115 @@
+red|Assassination
+red|Maze
+green|Pilgrimage
+yellow|Handshake
+yellow|Tomb
+green|Woodworking
+green|Dance
+green|Rumor
+yellow|Silk
+blue|Espionage
+blue|Palmistry
+blue|Proverb
+purple|Myth
+purple|Polytheism
+purple|Symbology
+red|Padlock
+red|Password
+blue|Astrology
+yellow|Fingerprints
+yellow|Exile
+blue|Meteorology
+green|Cipher
+green|Counterfeiting
+purple|Steganography
+purple|Propaganda
+red|Knights Templar
+yellow|Secret Police
+blue|Secretum Secretorum
+green|Cliffhanger
+red|Red Envelope
+purple|Masquerade
+yellow|Freemasons
+green|Smuggling
+purple|Taqiyya
+blue|Brethren of Purity
+red|Ninja
+yellow|Heirloom
+blue|The Prophecies
+red|Spanish Inquisition
+green|Blackmail
+purple|Confession
+yellow|April Fool's Day
+green|El Dorado
+purple|Legend
+blue|Quackery
+yellow|Gallery
+red|Cabal
+blue|Probability
+red|Witch Trial
+green|Buried Treasure
+purple|Pantheism
+yellow|Chartreuse
+green|Secret History
+purple|Pen Name
+blue|Popular Science
+yellow|Sabotage
+red|Red Herring
+blue|Reconnaissance
+red|Sniping
+green|Hiking
+purple|Illuminati
+yellow|Attic
+green|Swiss Bank Account
+blue|Placebo
+purple|Triad
+red|Camouflage
+yellow|Subway
+blue|Private Eye
+red|Safe Deposit Box
+green|Black Market
+purple|Fortune Cookie
+yellow|Mafia
+green|Plot Voucher
+blue|Counterintelligence
+purple|Slot Machine
+red|Concealment
+yellow|Shangri-La
+blue|Scouting
+red|Enigma Machine
+green|Handbag
+purple|Joy Buzzer
+yellow|Jackalope
+green|Hitchhiking
+blue|Blacklight
+purple|Opus Dei
+yellow|Surveillance
+red|Iron Curtain
+blue|Fermi Paradox
+red|McCarthyism
+green|Area 51
+purple|Clown Car
+yellow|Magic 8-Ball
+green|Teleprompter
+blue|Consulting
+purple|Urban Legend
+red|Fight Club
+yellow|Whatchamacallit
+blue|Inhomogeneous Cosmology
+red|Secret Santa
+green|Cryptocurrency
+purple|3D Printing
+yellow|Ride-Hailing
+green|Denver Airport
+blue|Hacking
+purple|Order of the Occult Hand
+red|Cloaking
+yellow|Fashion Mask
+blue|Quantum Computers
+red|Dark Web
+green|Green Hydrogen
+purple|Holography
+yellow|Escape Room
+green|Mystery Box
+blue|Astrobiology
+purple|Metaverse
