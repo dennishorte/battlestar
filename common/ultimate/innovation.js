@@ -1343,6 +1343,27 @@ Innovation.prototype.aEndorse = function(player, color, opts={}) {
   this.mLogOutdent()
 }
 
+Innovation.prototype.aExchangeCards = function(player, cards1, cards2, zone1, zone2) {
+  for (const card of cards1) {
+    this.mMoveCardTo(card, zone2)
+  }
+  for (const card of cards2) {
+    this.mMoveCardTo(card, zone1)
+  }
+}
+
+Innovation.prototype.aExchangeZones = function(player, zone1, zone2) {
+  const cards1 = zone1.cards()
+  const cards2 = zone2.cards()
+
+  this.aExchangeCards(player, cards1, cards2, zone1, zone2)
+
+  this.mLog({
+    template: '{player} exchanges all cards from {zone1} and {zone2}',
+    args: { player, zone1, zone2 }
+  })
+}
+
 Innovation.prototype.aForeshadow = function(player, card, opts={}) {
   const karmaKind = this.aKarma(player, 'foreshadow', { ...opts, card })
   if (karmaKind === 'would-instead') {
