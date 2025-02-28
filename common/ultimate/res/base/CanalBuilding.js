@@ -30,8 +30,7 @@ function Card() {
         const handHighest = game.utilHighestCards(hand.cards())
         const scoreHighest = game.utilHighestCards(score.cards())
 
-        handHighest.forEach(card => game.mMoveCardTo(card, score))
-        scoreHighest.forEach(card => game.mMoveCardTo(card, hand))
+        game.aExchangeCards(player, handHighest, scoreHighest, hand, score)
       }
       else {
         game.aJunkDeck(player, 3)

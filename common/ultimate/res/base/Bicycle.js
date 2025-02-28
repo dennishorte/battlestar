@@ -19,20 +19,11 @@ function Card() {
     (game, player) => {
       const decision = game.aYesNo(player, 'Exchange your hand and score pile?')
       if (decision) {
-        game.mLog({
-          template: '{player} swaps all cards in hand and score pile',
-          args: { player }
-        })
-
-        const hand = game.getZoneByPlayer(player, 'hand')
-        const score = game.getZoneByPlayer(player, 'score')
-
-        const handCards = hand.cards()
-        const scoreCards = score.cards()
-
-        handCards.forEach(card => game.mMoveCardTo(card, score))
-        scoreCards.forEach(card => game.mMoveCardTo(card, hand))
-        game.mActed(player)
+        game.aExchangeZones(
+          player,
+          game.getZoneByPlayer(player, 'hand'),
+          game.getZoneByPlayer(player, 'score'),
+        )
       }
       else {
         game.mLogDoNothing(player)

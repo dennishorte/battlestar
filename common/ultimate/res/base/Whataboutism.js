@@ -32,21 +32,7 @@ function Card() {
       }
 
       if (transferred) {
-        const yours = game.getCardsByZone(player, 'score');
-        const mine = game.getCardsByZone(leader, 'score');
-
-        game.mLog({
-          template: '{player} exchanges score pile with {leader}',
-          args: { player, leader }
-        });
-
-        // Exchange score piles
-        for (const card of yours) {
-          game.mMoveCardTo(card, game.getZoneByPlayer(leader, 'score'))
-        }
-        for (const card of mine) {
-          game.mMoveCardTo(card, game.getZoneByPlayer(player, 'score'))
-        }
+        game.aExchangeZones(player, game.getZoneByPlayer(player, 'score'), game.getZoneByPlayer(leader, 'score'))
       }
     }
   ]

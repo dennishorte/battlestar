@@ -18,11 +18,18 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      const highest = game.aChooseHighest(player, game.getCardsByZone(player, 'hand'), 2)
-      const lowest = game.aChooseLowest(leader, game.getCardsByZone(leader, 'hand'), 1)
+      const playerHand = game.getZoneByPlayer(player, 'hand')
+      const leaderHand = game.getZoneByPlayer(leader, 'hand')
+      const highest = game.aChooseHighest(player, playerHand.cards(), 2)
+      const lowest = game.aChooseLowest(leader, leaderHand.cards(), 1)
 
-      game.mMoveCardsTo(player, highest, game.getZoneByPlayer(leader, 'hand'))
-      game.mMoveCardsTo(player, lowest, game.getZoneByPlayer(player, 'hand'))
+      game.aExchangeCards(
+        player,
+        highest,
+        lowest,
+        playerHand,
+        leaderHand,
+      )
     },
 
     (game, player) => {

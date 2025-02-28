@@ -1362,6 +1362,8 @@ Innovation.prototype.aExchangeZones = function(player, zone1, zone2) {
     template: '{player} exchanges all cards from {zone1} and {zone2}',
     args: { player, zone1, zone2 }
   })
+
+  this.mActed(player)
 }
 
 Innovation.prototype.aForeshadow = function(player, card, opts={}) {

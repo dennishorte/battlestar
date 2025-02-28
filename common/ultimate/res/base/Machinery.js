@@ -19,8 +19,19 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      const yours = game.getCardsByZone(player, 'hand')
-      const mine = game.utilHighestCards(game.getCardsByZone(leader, 'hand'))
+      const playerHand = game.getZoneByPlayer(player, 'hand')
+      const leaderHand = game.getZoneByPlayer(leader, 'hand')
+
+      const yours = playerHand.cards()
+      const mine = game.utilHighestCards(leaderHand.cards())
+
+      game.aExchangeCards(
+        player,
+        yours,
+        mine,
+        playerHand,
+        leaderHand
+      )
 
       game.mLog({
         template: '{player} steals {count} cards from {player2}',
@@ -38,13 +49,6 @@ function Card() {
           player2: player,
         }
       })
-
-      for (const card of yours) {
-        game.mMoveCardTo(card, game.getZoneByPlayer(leader, 'hand'))
-      }
-      for (const card of mine) {
-        game.mMoveCardTo(card, game.getZoneByPlayer(player, 'hand'))
-      }
     },
 
     (game, player) => {
