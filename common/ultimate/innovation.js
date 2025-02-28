@@ -169,7 +169,7 @@ Innovation.prototype.initializeZones = function() {
 Innovation.prototype.initializeZonesDecks = function() {
   const zones = this.state.zones
   zones.decks = {}
-  for (const exp of ['base', 'echo', 'figs', 'city', 'arti']) {
+  for (const exp of ['base', 'echo', 'figs', 'city', 'arti', 'usee']) {
     zones.decks[exp] = {}
     const data = this.cardData[exp]
     for (const [age, cards] of Object.entries(this.cardData[exp].byAge)) {
@@ -199,7 +199,7 @@ Innovation.prototype.initializeZonesAchievements = function() {
   }
 
   // Special achievements
-  for (const exp of ['base', 'echo', 'figs', 'city', 'arti']) {
+  for (const exp of ['base', 'echo', 'figs', 'city', 'arti', 'usee']) {
     if (this.getExpansionList().includes(exp)) {
       for (const ach of this.cardData[exp].achievements) {
         zones.achievements._cards.push(ach)
