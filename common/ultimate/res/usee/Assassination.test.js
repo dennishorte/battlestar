@@ -8,6 +8,14 @@ describe('Assassination', () => {
       dennis: {
         red: ['Assassination'],
       },
+      micah: {
+        blue: ['Writing'],
+      },
+      decks: {
+        base: {
+          1: ['Palmistry'],
+        }
+      }
     })
 
     const request1 = game.run()
@@ -17,6 +25,8 @@ describe('Assassination', () => {
     t.testBoard(game, {
       dennis: {
         red: ['Assassination'],
+        score: ['Palmistry', 'Writing'],
+        achievements: ['Confidence'],
       },
     })
   })

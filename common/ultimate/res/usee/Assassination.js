@@ -12,14 +12,15 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you draw and reveal a {1}. If it has [l], transfer it and the top card on your board of its color to my score pile!`,
+    `I demand you draw and reveal a {1}. If it has {k}, transfer it and the top card on your board of its color to my score pile!`,
     `If no player has a top green card, claim the Confidence achievement.`
   ]
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
       const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
-      if (card.checkHasBiscuit('l')) {
+
+      if (card.checkHasBiscuit('k')) {
         game.aTransfer(player, card, game.getZoneByPlayer(leader, 'score'))
         const topCard = game.getTopCard(player, card.color)
         if (topCard) {
@@ -27,10 +28,11 @@ function Card() {
         }
       }
     },
+
     (game, player) => {
       const topGreenCards = game
         .getPlayerAll()
-        .flatMap(p => game.getTopCard(p, 'green'))
+        .map(p => game.getTopCard(p, 'green'))
         .filter(card => Boolean(card))
 
       if (topGreenCards.length === 0) {
