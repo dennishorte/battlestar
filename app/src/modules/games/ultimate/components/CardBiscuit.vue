@@ -47,7 +47,7 @@ const imageMap = {
   'l': require('@/assets/img/biscuit-leaf.png'),
   's': require('@/assets/img/biscuit-lightbulb.png'),
   'p': require('@/assets/img/biscuit-person.png'),
-  'f': require('@/assets/img/biscuit-meat.png'),      // f = food (m is used for music notes)
+  'r': require('@/assets/img/biscuit-meat.png'),      // r = raw meat
 }
 
 export default {
