@@ -3,7 +3,7 @@ const CardBase = require(`../CardBase.js`)
 function Card() {
   this.id = `Scouting`  // Card names are unique in Innovation
   this.name = `Scouting`
-  this.color = `blue`
+  this.color = `blue` 
   this.age = 8
   this.expansion = `usee`
   this.biscuits = `lssh`
@@ -17,7 +17,19 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const cardsDrawn = []
+      cardsDrawn.push(game.aDrawAndReveal(player, game.getEffectAge(this, 8)))
+      cardsDrawn.push(game.aDrawAndReveal(player, game.getEffectAge(this, 8)))
 
+      const returned = game.aChooseAndReturn(player, cardsDrawn, { min: 1, max: 2 })
+
+      if (returned.length === 2) {
+        const revealedCard = game.mReveal(game, game.aDraw(game, { age: 10 })[0])
+
+        if (returned.some(card => card.color === revealedCard.color)) {
+          game.mMoveCardTo(revealedCard, game.getZoneByPlayer(player, 'hand'))
+        }
+      }
     },
   ]
   this.echoImpl = []

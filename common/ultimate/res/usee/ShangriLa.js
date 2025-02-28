@@ -17,7 +17,19 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-
+      const executeEffect = () => {
+        const tucked = game.aDrawAndTuck(player, game.getEffectAge(this, 8))
+        if (tucked.checkHasBiscuit('l')) {
+          game.aScore(player, tucked)
+        } else {
+          const melded = game.aDrawAndMeld(player, game.getEffectAge(this, 8))
+          if (melded.checkHasBiscuit('l')) {
+            executeEffect()
+          }
+        }
+      }
+      
+      executeEffect()
     },
   ]
   this.echoImpl = []

@@ -3,9 +3,9 @@ const CardBase = require(`../CardBase.js`)
 function Card() {
   this.id = `Brethren of Purity`  // Card names are unique in Innovation
   this.name = `Brethren of Purity`
-  this.color = `blue`
+  this.color = `blue` 
   this.age = 3
-  this.expansion = `usee`
+  this.expansion = `echoes`
   this.biscuits = `sslh`
   this.dogmaBiscuit = `s`
   this.inspire = ``
@@ -17,7 +17,31 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-
+      let lastMeldedAge = game.getEffectAge(this, 3)
+      
+      while (true) {
+        const choices = [lastMeldedAge, lastMeldedAge + 1]
+          .filter(age => game.getDrawableAges(player).includes(age))
+        
+        if (choices.length === 0) {
+          game.mLogNoEffect()
+          break
+        }
+        
+        const age = game.aChooseAge(player, choices)
+        const card = game.aDrawAndMeld(player, age)
+        lastMeldedAge = card.age
+        
+        const meldedOver = game
+          .getPlayerBoard(player)
+          .getZone(card.color)
+          .cards()
+          .find(c => c.id !== card.id)
+        
+        if (!meldedOver || !meldedOver.checkHasBiscuit('l')) {
+          break  
+        }
+      }
     },
   ]
   this.echoImpl = []

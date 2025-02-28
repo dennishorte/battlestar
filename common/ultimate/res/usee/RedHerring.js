@@ -18,9 +18,22 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-
+      game.aChooseAndSplay(player, ['red'], null) 
     },
+    (game, player) => {
+      const card = game.aDrawAndTuck(player, game.getEffectAge(this, 6))
+      if (card) {
+        const redSplay = game.getZoneByPlayer(player, 'red').splay
+        const cardSplay = game.getZoneByPlayer(player, card.color).splay
+        if (redSplay === cardSplay) {
+          game.aSplay(player, card.color, 'up')
+        } else {
+          game.aSplay(player, card.color, 'none')
+        }
+      }
+    }
   ]
+
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

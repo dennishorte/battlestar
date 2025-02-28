@@ -5,7 +5,7 @@ function Card() {
   this.name = `Hacking`
   this.color = `blue`
   this.age = 10
-  this.expansion = `usee`
+  this.expansion = `base` 
   this.biscuits = `hiis`
   this.dogmaBiscuit = `i`
   this.inspire = ``
@@ -16,8 +16,16 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
-
+    (game, player, { leader }) => {
+      const opponentScore = game.getCardsByZone(player, 'score')
+      
+      // Transfer two highest score cards
+      const highestScore = game.utilHighestCards(opponentScore, 2)
+      game.aTransferMany(player, highestScore, game.getZoneByPlayer(leader, 'score'))
+      
+      // Meld two lowest score cards
+      const lowestScore = game.utilLowestCards(opponentScore, 2)
+      game.aMeldMany(player, lowestScore)
     },
   ]
   this.echoImpl = []

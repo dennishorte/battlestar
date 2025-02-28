@@ -6,7 +6,7 @@ function Card() {
   this.color = `purple`
   this.age = 4
   this.expansion = `usee`
-  this.biscuits = `hlls`
+  this.biscuits = `hlls` 
   this.dogmaBiscuit = `l`
   this.inspire = ``
   this.echo = ``
@@ -17,9 +17,39 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const colors = ['red', 'blue', 'green', 'yellow']
+      const chosenColor = game.aChooseColor(player, colors, {
+        title: 'Choose a non-purple color'
+      })
+      
+      let totalScored = 0
+      while (true) {
+        const topCardOfColor = game.getTopCard(player, chosenColor)
+        if (!topCardOfColor) break
 
+        game.mLog({
+          template: '{player} self-executes {card}',
+          args: { player, card: topCardOfColor }
+        })        
+        game.aCardEffects(player, topCardOfColor, 'dogma')
+        
+        const scoreCard = game.getTopCard(player, chosenColor)
+        if (scoreCard) {
+          game.mLog({
+            template: '{player} scores {card}',
+            args: { player, card: scoreCard }
+          })
+          const scoredCard = game.aScore(player, scoreCard)
+          if (scoredCard) {
+            totalScored += scoredCard.data.age  
+          }
+        }
+
+        if (totalScored >= 9) break
+      }
     },
   ]
+  
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

@@ -16,8 +16,35 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { leader }) => {
+      const colors = ['red', 'blue', 'green', 'yellow', 'purple']
+      const chosenColor = game.aChooseColor(leader, colors, { title: 'Choose a color' })
+      
+      game.mLog({
+        template: '{leader} demands {player} unsplay their {color} pile',
+        args: { leader, player, color: chosenColor }
+      })
+      
+      game.aUnsplay(player, chosenColor)
 
+      const cards = game.getCardsByZone(player, chosenColor)
+      if (cards.length > 0) {
+        const bottomCard = cards[0]
+        game.aMeld(player, bottomCard)
+        game.mLog({
+          template: '{player} melds {card} from the bottom of their {color} pile',
+          args: { player, card: bottomCard, color: chosenColor }
+        })
+
+        if (cards.length > 1) {
+          const bottomNonTop = cards[1]
+          game.aTransfer(player, bottomNonTop, game.getZoneByPlayer(leader, chosenColor))
+          game.mLog({
+            template: '{player} transfers {card} to {leader}\'s board',
+            args: { player, card: bottomNonTop, leader }
+          })
+        }
+      }
     },
   ]
   this.echoImpl = []

@@ -16,8 +16,37 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { leader }) => {
+      // Reveal opponent's hand
+      const opponentHand = game.getZoneByPlayer(player, 'hand').cards()
+      game.mReveal(player, opponentHand)
+      
+      // Leader chooses a card to meld
+      const meldChoice = game.aChooseCard(leader, opponentHand, { 
+        title: 'Choose a card for opponent to meld'
+      })
+      if (meldChoice) {
+        game.aMeld(player, meldChoice)
+      }
 
+      // Reveal opponent's score pile  
+      const opponentScore = game.getZoneByPlayer(player, 'score').cards()
+      game.mReveal(player, opponentScore)
+
+      // Leader picks a revealed card to self-execute
+      const revealedCards = [...opponentHand, ...opponentScore] 
+      const executeChoice = game.aChooseCard(leader, revealedCards, {
+        title: 'Choose a card to self-execute'
+      })
+      if (executeChoice) {
+        game.mLog({
+          template: '{player} must self-execute {card}',
+          args: { player, card: executeChoice }
+        })
+        for (const dogmaImpl of executeChoice.dogmaImpl) {
+          dogmaImpl(game, player)
+        }
+      }
     },
   ]
   this.echoImpl = []

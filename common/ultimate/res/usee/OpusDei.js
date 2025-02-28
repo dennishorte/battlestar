@@ -18,8 +18,22 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const highestScoreCards = game.utilHighestCards(game.getCardsByZone(player, 'score'))
+      const revealed = game.aChooseAndReveal(player, highestScoreCards, { min: 0, max: 1 })
 
+      if (revealed && revealed.length > 0) {
+        const card = revealed[0]
+        game.aSplay(player, card.color, 'up')
+        game.aSafeguard(player, card)
+      }
     },
+    (game, player) => {
+      const splayColors = game.utilColors().filter(color => game.getZoneByPlayer(player, color).splay === 'up')
+      
+      splayColors.forEach(() => {
+        game.aDraw(player, { age: game.getEffectAge(this, 8) })
+      })
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

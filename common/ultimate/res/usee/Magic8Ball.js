@@ -3,7 +3,7 @@ const CardBase = require(`../CardBase.js`)
 function Card() {
   this.id = `Magic 8-Ball`  // Card names are unique in Innovation
   this.name = `Magic 8-Ball`
-  this.color = `yellow`
+  this.color = `yellow` 
   this.age = 9
   this.expansion = `usee`
   this.biscuits = `hlll`
@@ -17,7 +17,33 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const choice = game.aChoose(player, [
+        'Draw two 9',
+        'Draw and score one 9', 
+        'Safeguard two available standard achievements'
+      ], { title: 'Magic 8-Ball Dogma' })
 
+      switch (choice[0]) {
+        case 'Draw two 9':
+          game.aDraw(player, { age: game.getEffectAge(this, 9) })
+          game.aDraw(player, { age: game.getEffectAge(this, 9) })
+          break
+        case 'Draw and score one 9':
+          game.aDrawAndScore(player, game.getEffectAge(this, 9))
+          break
+        case 'Safeguard two available standard achievements':
+          game.aSafeguardAchievements(player, 2, 'standard')
+          break
+      }
+      
+      let repeat = false
+      do {
+        const tuckedCard = game.aDrawAndTuck(player, game.getEffectAge(this, 8))
+        if (tuckedCard.checkHasBiscuit('l')) {
+          game.aCardEffects(player, tuckedCard, 'dogma', { leader: player })
+        } 
+        repeat = tuckedCard.color === 'red' || tuckedCard.color === 'purple'
+      } while (repeat)
     },
   ]
   this.echoImpl = []

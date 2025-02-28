@@ -17,7 +17,23 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const card = game.aDraw(player, { age: game.getEffectAge(this, 7) })
+      game.mTuck(player, card)
 
+      const color = card.color
+      const visibleCards = game
+        .getTopCards(player)
+        .filter(c => c.color === color)
+      
+      if (visibleCards.length >= 7) {
+        game.aDraw(player, { age: game.getEffectAge(this, 7) })
+      } else {
+        const toJunk = game
+          .getBoard(player)[color].cards()
+
+        game.aJunkMany(player, toJunk)
+        game.aDraw(player, { age: game.getEffectAge(this, 8) })
+      }
     },
   ]
   this.echoImpl = []

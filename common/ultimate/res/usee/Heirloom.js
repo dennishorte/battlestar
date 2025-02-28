@@ -17,7 +17,22 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-
+      const secrets = game.getCardsByZone(player, 'secrets')
+      const transferred = game.aChooseAndTransfer(player, secrets, game.getZoneById('achievements'), { count: 1, transferTail: false })[0]
+      
+      if (transferred) {
+        game.aDraw(player, transferred.getAge() + 1)
+      } else {
+        const topRed = game.getTopCard(player, 'red')
+        if (topRed) {
+          const value = topRed.getAge() 
+          const available = game.getAvailableAchievements()
+          const achievement = available.find(card => card.getAge() === value)
+          if (achievement) {
+            game.mSafeguard(player, achievement)
+          }
+        }
+      }
     },
   ]
   this.echoImpl = []

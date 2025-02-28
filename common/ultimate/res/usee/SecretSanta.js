@@ -17,9 +17,15 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
-
+    (game, player, { leader }) => {
+      const choices = game.getZoneByPlayer(leader, 'score').cards()
+      game.aChooseAndMeld(player, choices)
     },
+    (game, player) => {
+      game.aDrawAndScore(player, game.getEffectAge(this, 10))
+      game.aDrawAndScore(player, game.getEffectAge(this, 10)) 
+      game.aDrawAndScore(player, game.getEffectAge(this, 10))
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

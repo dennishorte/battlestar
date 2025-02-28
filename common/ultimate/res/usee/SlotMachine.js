@@ -5,8 +5,8 @@ function Card() {
   this.name = `Slot Machine`
   this.color = `purple`
   this.age = 7
-  this.expansion = `usee`
-  this.biscuits = `fiih`
+  this.expansion = `base`
+  this.biscuits = `fiih` 
   this.dogmaBiscuit = `i`
   this.inspire = ``
   this.echo = ``
@@ -17,12 +17,35 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const drawnCards = [
+        game.aDrawAndReveal(player, game.getEffectAge(this, 1)),
+        game.aDrawAndReveal(player, game.getEffectAge(this, 2)), 
+        game.aDrawAndReveal(player, game.getEffectAge(this, 3)),
+        game.aDrawAndReveal(player, game.getEffectAge(this, 4)),
+        game.aDrawAndReveal(player, game.getEffectAge(this, 5))
+      ]
+      
+      const numGreen = drawnCards.filter(card => card.color === 'green').length
+      
+      if (numGreen >= 1) {
+        game.aChooseAndSplay(player, ['green', 'purple'], 'right')
+      }
+      
+      if (numGreen >= 2) {
+        game.aScoreMany(player, drawnCards)
+      } else {
+        game.aReturnMany(player, drawnCards)
+      }
 
+      if (numGreen >= 3) {
+        throw new GameOverEvent({ player, reason: this.name })
+      }
     },
   ]
+  
   this.echoImpl = []
   this.inspireImpl = []
-  this.karmaImpl = []
+  this.karmaImpl = [] 
 }
 
 Card.prototype = Object.create(CardBase.prototype)

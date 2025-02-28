@@ -17,7 +17,34 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const choices = [
+        ...game.getZoneByPlayer(player, 'hand').cards(), 
+        ...game.getZoneByPlayer(player, 'score').cards()
+      ]
 
+      const returned = game.aChooseAndReturn(player, choices, {
+        min: 5,
+        max: 5,
+        title: 'Choose 5 cards to return'
+      })
+
+      if (returned.length === 5) {
+        const numColors = new Set(returned.map(card => card.color)).size
+        const drawnCards = []
+
+        for (let i = 0; i < 2; i++) {
+          const card = game.aDraw(player, { age: numColors })
+          drawnCards.push(card)
+        }
+        
+        const toMeld = game.aChooseCard(player, drawnCards, {
+          title: 'Choose a card to meld'
+        })
+        game.aMeld(player, toMeld)
+
+        const toScore = drawnCards.find(card => card !== toMeld)
+        game.aScore(player, toScore)
+      }
     },
   ]
   this.echoImpl = []

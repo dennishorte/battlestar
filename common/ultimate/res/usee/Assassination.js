@@ -17,9 +17,26 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
-
+    (game, player, { leader }) => {
+      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
+      if (card.checkHasBiscuit('l')) {
+        game.aTransfer(player, card, game.getZoneByPlayer(leader, 'score'))
+        const topCard = game.getTopCard(player, card.color)
+        if (topCard) {
+          game.aTransfer(player, topCard, game.getZoneByPlayer(leader, 'score'))
+        }
+      }
     },
+    (game, player) => {
+      const topGreenCards = game
+        .getPlayerAll()
+        .flatMap(p => game.getTopCard(p, 'green'))
+        .filter(card => Boolean(card))
+
+      if (topGreenCards.length === 0) {
+        game.aClaimAchievement(player, { name: 'Confidence' })
+      }
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

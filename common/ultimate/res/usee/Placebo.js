@@ -17,7 +17,37 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const topCards = game.getTopCards(player)
+      
+      let returnedCards = []
+      let color = null
+      
+      while (true) {
+        const choices = color 
+          ? topCards.filter(card => card.color === color)
+          : topCards
 
+        if (choices.length === 0) {
+          break
+        }
+        
+        const card = game.aChooseAndReturn(player, choices, { min: 0, max: 1 })[0]
+        
+        if (!card) {
+          break
+        }
+
+        returnedCards.push(card)
+        color = color || card.color
+      }
+
+      returnedCards.forEach(() => {
+        game.aDraw(player, { age: game.getEffectAge(this, 6) })
+      })
+
+      if (returnedCards.length === 1 && returnedCards[0].getAge() === 6) {
+        game.aDraw(player, { age: game.getEffectAge(this, 8) })
+      }
     },
   ]
   this.echoImpl = []

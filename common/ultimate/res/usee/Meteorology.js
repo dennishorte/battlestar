@@ -18,8 +18,25 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-
+      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 2))
+      if (card.checkHasBiscuit('l')) {
+        game.aScore(player, card)
+      } else if (card.checkHasBiscuit('c')) {
+        game.aReturn(player, card)
+        game.aDraw(player, { age: game.getEffectAge(this, 2) })
+        game.aDraw(player, { age: game.getEffectAge(this, 2) })
+      } else {
+        game.aTuck(player, card)
+      }
     },
+    (game, player) => {
+      const biscuits = game.getBiscuits()
+      if (biscuits[player.name].l === 0) {
+        game.aClaimAchievement(player, { name: 'Zen' })  
+      } else {
+        game.mLogNoEffect()
+      }
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

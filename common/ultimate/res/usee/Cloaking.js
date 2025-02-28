@@ -1,7 +1,7 @@
 const CardBase = require(`../CardBase.js`)
 
 function Card() {
-  this.id = `Cloaking`  // Card names are unique in Innovation
+  this.id = `Cloaking`  
   this.name = `Cloaking`
   this.color = `red`
   this.age = 11
@@ -16,10 +16,22 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { leader }) => {
+      const choices = game
+        .getCardsByZone(player, 'achievements')
+        .filter(card => !card.isSpecialAchievement())
+      
+      const card = game.aChooseCard(player, choices, { 
+        title: 'Choose a standard achievement to transfer',
+        count: 1
+      })
 
+      if (card) {
+        game.aTransfer(player, card, game.getZoneByPlayer(leader, 'safe'))
+      }
     },
   ]
+
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

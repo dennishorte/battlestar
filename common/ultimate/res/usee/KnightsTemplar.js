@@ -17,8 +17,23 @@ function Card() {
   ]
 
   this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const splayedColors = ['red', 'yellow', 'green', 'blue', 'purple']
+        .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
+      
+      const color = game.aChoose(player, splayedColors)
+      if (color && color.length > 0) {
+        const unsplayed = game.aUnsplay(player, color[0])
+        if (unsplayed) {
+          const topCard = game.getTopCard(player, color[0]) 
+          if (topCard) {
+            game.aTransfer(player, topCard, game.getZoneByPlayer(leader, 'score'))
+          }
+        }
+      }
+    },
     (game, player) => {
-
+      game.aChooseAndSplay(player, ['red', 'green'], 'left') 
     },
   ]
   this.echoImpl = []

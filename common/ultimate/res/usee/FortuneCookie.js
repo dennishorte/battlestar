@@ -17,7 +17,36 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-
+      const biscuits = game.getBiscuits()
+      const playerBiscuits = biscuits[player.name]
+      
+      const exactlySevenIcon = Object.entries(playerBiscuits).find(([icon, count]) => count === 7)
+      const exactlyEightIcon = Object.entries(playerBiscuits).find(([icon, count]) => count === 8)  
+      const exactlyNineIcon = Object.entries(playerBiscuits).find(([icon, count]) => count === 9)
+      
+      if (exactlySevenIcon) {
+        game.aDrawAndScore(player, game.getEffectAge(this, 7))
+      }
+      
+      if (exactlyEightIcon) {
+        const choices = ['green', 'purple'].filter(color => game.getZoneByPlayer(player, color).splay !== 'right')
+        if (choices.length > 0) {
+          const color = game.aChoose(player, choices, { title: 'Choose a color to splay right' })[0]
+          game.aSplay(player, color, 'right')
+          game.aDraw(player, { age: game.getEffectAge(this, 9) })
+        }
+        else {
+          game.mLogNoEffect() 
+        }
+      }
+      
+      if (exactlyNineIcon) {
+        game.aDraw(player, { age: game.getEffectAge(this, 7) })
+      }
+      
+      if (!exactlySevenIcon && !exactlyEightIcon && !exactlyNineIcon) {
+        game.mLogNoEffect()
+      }
     },
   ]
   this.echoImpl = []

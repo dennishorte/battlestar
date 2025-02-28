@@ -18,8 +18,17 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const scorePile = game.getZoneByPlayer(player, 'score')
+      const returned = game.aReturnMany(player, scorePile.cards())
 
+      const uniqueAges = [...new Set(returned.map(card => card.age))]
+      uniqueAges.forEach(() => {
+        game.aDrawAndScore(player, game.getEffectAge(this, 10))
+      })
     },
+    (game, player) => {
+      game.aChooseAndSplay(player, ['red'], 'up')
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

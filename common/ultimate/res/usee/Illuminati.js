@@ -17,7 +17,32 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-
+      const hand = game.getZoneByPlayer(player, 'hand').cards()
+      const card = game.aChooseCard(player, hand, { title: 'Choose a card to reveal' })
+      
+      if (card) {
+        game.mReveal(player, card)
+        game.aSplay(player, card.color, 'right')
+        
+        const topCard = game.getTopCard(player, card.color)
+        game.mSafeguard(player, topCard)
+        
+        const availableAchievements = game.getAvailableAchievements()
+        const higherAchievement = availableAchievements.find(a => a.age === card.age + 1)
+        
+        if (higherAchievement) {
+          game.mSafeguard(player, higherAchievement)
+        }
+        else {
+          game.mLog({
+            template: 'No available achievement of value {age} to safeguard',
+            args: { age: card.age + 1 }
+          })
+        }
+      }
+      else {
+        game.mLogDoNothing(player)
+      }
     },
   ]
   this.echoImpl = []

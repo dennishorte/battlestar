@@ -17,7 +17,38 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const choices = game
+        .getColorsInZoneForPlayer(player, 'board')
+        .filter(color => game.getZoneByPlayer(player, color).cards().some(card => card.checkHasBiscuit('k')))
 
+      const color = game.aChooseCard(player, choices, { 
+        title: 'Choose a color to splay left',
+        min: 0, 
+        max: 1
+      })
+
+      if (color) {
+        const splay = game.aSplay(player, color, 'left')
+        if (splay) {
+          const cardCount = game.getZoneByPlayer(player, color).cards().length
+          const achievements = game.getAvailableAchievements(cardCount)
+
+          const achievement = game.aChooseCard(player, achievements, {
+            title: 'Choose an achievement to safeguard',
+            min: 1,
+            max: 1
+          })
+
+          if (achievement) {
+            game.aSafeguard(player, achievement)
+          }
+        }
+      }
+      else {
+        const age = game.getEffectAge(this, 3) 
+        const card = game.aDraw(player, { age })
+        game.aTuck(player, card)
+      }
     },
   ]
   this.echoImpl = []

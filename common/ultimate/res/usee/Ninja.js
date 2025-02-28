@@ -5,7 +5,7 @@ function Card() {
   this.name = `Ninja`
   this.color = `red`
   this.age = 4
-  this.expansion = `usee`
+  this.expansion = `figs`
   this.biscuits = `clhl`
   this.dogmaBiscuit = `l`
   this.inspire = ``
@@ -17,8 +17,22 @@ function Card() {
   ]
 
   this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const chosenColor = game.aChoose(leader, ['red', 'blue', 'yellow', 'green', 'purple'], {
+        title: 'Choose a color'
+      })
+      
+      const returnedCard = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand').filter(c => c.color === chosenColor))
+      
+      if (returnedCard) {
+        const topCard = game.getTopCard(player, chosenColor)
+        if (topCard) {
+          game.aTransfer(player, topCard, game.getZoneByPlayer(leader, topCard.color))
+        }
+      }
+    },
     (game, player) => {
-
+      game.aChooseAndSplay(player, ['red'], 'right')
     },
   ]
   this.echoImpl = []

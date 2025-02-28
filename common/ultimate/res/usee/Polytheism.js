@@ -18,8 +18,33 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const hand = game.getZoneByPlayer(player, 'hand').cards()
+      const meldedThisTurn = game
+        .getCardsByZone(player, ['blue', 'red', 'green', 'yellow', 'purple'])
+        .filter(card => card.justMelded)
 
+      while (true) {
+        const choices = hand.filter(card => 
+          !meldedThisTurn.some(melded => melded.biscuits.includes(card.dogmaBiscuit))
+        )
+
+        if (choices.length === 0) {
+          break
+        }
+
+        const selected = game.aChooseCard(player, choices)
+        
+        if (selected) {
+          game.aMeld(player, selected) 
+          meldedThisTurn.push(selected)
+        } else {
+          break
+        }
+      }
     },
+    (game, player) => {
+      game.aDrawAndTuck(player, game.getEffectAge(this, 1))
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

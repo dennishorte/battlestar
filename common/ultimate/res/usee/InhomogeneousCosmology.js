@@ -18,8 +18,31 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      while (true) {
+        const topCards = game.getTopCards(player)
+        const handCards = game.getCardsByZone(player, 'hand')
+        
+        const topCardReturned = game.aChooseAndReturn(player, topCards, { min: 0, max: 1 })[0]
+        const handCardMelded = game.aChooseAndMeld(player, handCards, { min: 0, max: 1 })[0]
 
+        if (!topCardReturned && !handCardMelded) {
+          break
+        }
+      }
     },
+    (game, player) => {
+      const colorsOnBoard = game
+        .utilColors()
+        .filter(color => game.getCardsByZone(player, color).length > 0)
+
+      const missingColors = game
+        .utilColors()
+        .filter(color => !colorsOnBoard.includes(color))
+
+      missingColors.forEach(color => {
+        game.aDraw(player, { age: game.getEffectAge(this, 11) })
+      })
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

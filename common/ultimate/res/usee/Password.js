@@ -5,7 +5,7 @@ function Card() {
   this.name = `Password`
   this.color = `red`
   this.age = 2
-  this.expansion = `usee`
+  this.expansion = `base` // verified against image
   this.biscuits = `hckk`
   this.dogmaBiscuit = `p`
   this.inspire = ``
@@ -17,7 +17,33 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-
+      const drawnCard = game.aDrawAndReveal(player, game.getEffectAge(this, 2))
+      
+      const handCards = game.getZoneByPlayer(player, 'hand').cards()
+      const sameColorCards = handCards.filter(c => c.color === drawnCard.color)
+      
+      if (sameColorCards.length > 0) {
+        const safeguarded = game.aChooseCard(player, sameColorCards, {
+          title: 'Choose a card to safeguard',
+          min: 0,
+          max: 1
+        })
+        
+        if (safeguarded) {
+          game.mLog({
+            template: '{player} safeguards {card}',
+            args: { player, card: safeguarded }
+          })
+          game.aScore(player, drawnCard)
+        } else {
+          const toReturn = handCards.filter(c => c.id !== drawnCard.id)
+          game.aReturnMany(player, toReturn)
+        }
+      } else {
+        // No cards of same color, return all but drawn card
+        const toReturn = handCards.filter(c => c.id !== drawnCard.id) 
+        game.aReturnMany(player, toReturn)
+      }
     },
   ]
   this.echoImpl = []

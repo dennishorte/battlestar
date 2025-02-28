@@ -16,8 +16,19 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
-
+    (game, player, { leader }) => {
+      let canRepeat = true
+      while (canRepeat) {
+        const scoreCards = game.getCardsByZone(leader, 'score')
+        const card = game.aChooseAndTransfer(leader, scoreCards, game.getZoneByPlayer(player, card => card.color))
+        if (card) {
+          game.mMeldCard(player, card)
+          canRepeat = !card.checkHasBiscuit('l')
+        }
+        else {
+          canRepeat = false
+        }
+      }
     },
   ]
   this.echoImpl = []

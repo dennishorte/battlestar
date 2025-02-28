@@ -5,19 +5,26 @@ function Card() {
   this.name = `Woodworking`
   this.color = `green`
   this.age = 1
-  this.expansion = `usee`
-  this.biscuits = `llhs`
+  this.expansion = `base`
+  this.biscuits = `llhs` 
   this.dogmaBiscuit = `l`
   this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and meld a [2]. If the melded card is a bottom card on your board, score it.`
+    `Draw and meld a {2}. If the melded card is a bottom card on your board, score it.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-
+      const card = game.aDrawAndMeld(player, game.getEffectAge(this, 2))
+      
+      if (card) {
+        const isBottom = game.getBottomCards(player).includes(card)
+        if (isBottom) {
+          game.aScore(player, card)
+        }
+      }
     },
   ]
   this.echoImpl = []

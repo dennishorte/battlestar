@@ -19,8 +19,42 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-
+      game.aChooseAndSplay(player, ['green'], 'up')
     },
+    (game, player) => {
+      const choices = ['Draw a 9', 'Safeguard a standard achievement']
+      const choice = game.aChoose(player, choices)
+
+      if (choice === choices[0]) {
+        game.aDraw(player, { age: game.getEffectAge(this, 9) })
+      } else {
+        const available = game.getAvailableStandardAchievements()
+        const achievement = game.aChooseCard(player, available)
+        
+        if (achievement) {
+          game.aSafeguard(player, achievement)
+        }
+      }
+    },
+    (game, player) => {
+      const secrets = game
+        .getZoneByPlayer(player, 'secrets')
+        .cards()
+
+      const secret = game.aChooseCard(player, secrets, { title: 'Choose a secret to reveal and execute' })
+
+      if (secret) {
+        game.mReveal(player, secret)
+
+        if (game.getCurrentPlayer() === player) {
+          game.mLog({
+            template: '{player} super-executes {card}',
+            args: { player, card: secret }
+          })
+          game.aSuperStarEffect(player, secret)
+        }
+      }
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

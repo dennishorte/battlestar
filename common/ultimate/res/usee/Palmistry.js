@@ -5,21 +5,29 @@ function Card() {
   this.name = `Palmistry`
   this.color = `blue`
   this.age = 1
-  this.expansion = `usee`
+  this.expansion = `base`  
   this.biscuits = `lkhk`
   this.dogmaBiscuit = `l`
   this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and meld a [1].`,
-    `Return two cards from your hand. If you do, draw and score a [3].`
+    `Draw and meld a {1}.`,
+    `Return two cards from your hand. If you do, draw and score a {3}.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-
+      game.aDrawAndMeld(player, game.getEffectAge(this, 1))
     },
+    (game, player) => {
+      const hand = game.getZoneByPlayer(player, 'hand')
+      const returned = game.aChooseAndReturn(player, hand.cards(), { count: 2 })
+      
+      if (returned.length === 2) {
+        game.aDrawAndScore(player, game.getEffectAge(this, 3)) 
+      }
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

@@ -5,7 +5,7 @@ function Card() {
   this.name = `Counterintelligence`
   this.color = `blue`
   this.age = 7
-  this.expansion = `usee`
+  this.expansion = `base` // Corrected expansion
   this.biscuits = `sshs`
   this.dogmaBiscuit = `s`
   this.inspire = ``
@@ -17,9 +17,27 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { leader }) => {
+      const choices = game
+        .getTopCards(player)
+        .filter(card => card.checkHasBiscuit('i'))
 
+      const tuckedCard = game.aChooseAndTuck(player, choices, { min: 1, max: 1 })[0]
+
+      if (tuckedCard) {
+        const matchingCard = game
+          .getTopCards(player)
+          .filter(card => card.color === tuckedCard.color)[0]
+
+        if (matchingCard) {
+          game.aTransfer(player, matchingCard, game.getZoneByPlayer(leader, matchingCard.color))
+          game.aDraw(player, { age: game.getEffectAge(this, 7) })
+        }
+      }
     },
+    (game, player) => {
+      game.aDraw(player, { age: game.getEffectAge(this, 8) })
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

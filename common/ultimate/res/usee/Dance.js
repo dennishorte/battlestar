@@ -17,7 +17,31 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const choices = game
+        .getTopCards(player)
+        .filter(card => card.checkHasBiscuit('l'))
+      
+      const card = game.aChooseCard(player, choices)
+      if (card) {
+        const otherPlayers = game
+          .getPlayerOpponents(player)
 
+        const targetPlayer = game.aChoosePlayer(player, otherPlayers)
+        game.aTransfer(player, card, game.getZoneByPlayer(targetPlayer, card.color))
+
+        const meldChoices = game  
+          .getTopCards(targetPlayer)
+          .filter(card => !card.checkHasBiscuit('l'))
+          
+        const meldCard = game.aChooseCard(player, meldChoices, { 
+          title: 'Choose card to meld',
+          lowest: true
+        })
+        
+        if (meldCard) {
+          game.aMeld(targetPlayer, meldCard)
+        }
+      }
     },
   ]
   this.echoImpl = []

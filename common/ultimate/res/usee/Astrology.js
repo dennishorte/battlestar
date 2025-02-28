@@ -18,8 +18,30 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-
+      const mostCardsColor = game.utilColors().reduce((mostColor, color) => {
+        const currentCount = game.getCardsByZone(player, color).length
+        const mostCount = game.getCardsByZone(player, mostColor).length
+        return currentCount > mostCount ? color : mostColor
+      }, game.utilColors()[0])
+      
+      game.aChooseAndSplay(player, [mostCardsColor], 'left')
     },
+    (game, player) => {
+      const numPurpleCards = game
+        .getTopCards(player)
+        .filter(card => card.color === 'purple')
+        .length
+
+      const card = game.aDrawAndMeld(player, numPurpleCards)
+      
+      if (card && !card.checkHasBiscuit('s')) {
+        game.mLog({
+          template: '{player} tucks {card}',
+          args: { player, card }
+        })
+        game.mMoveCardTo(card, game.getZoneByPlayer(player, card.color), { tuck: true })
+      }
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

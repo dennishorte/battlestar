@@ -17,9 +17,30 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { leader }) => {
+      const choices = game
+        .getTopCards(player)
+        .filter(card => !card.checkHasBiscuit('l'))
 
+      const card = game.aChooseCard(player, choices)
+      if (card) {
+        const transferred = game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+        if (transferred) {
+          game.aUnsplay(player, card.color)
+        }
+      }
     },
+    (game, player) => {
+      const colors = game.utilColors()
+      const colorCounts = colors.map(color => ({
+        color,
+        count: game.getZoneByPlayer(player, color).cards({ faceUp: true }).length
+      }))
+      const maxCount = Math.max(...colorCounts.map(c => c.count))
+      const maxColors = colorCounts.filter(c => c.count === maxCount).map(c => c.color)
+      
+      game.aChooseAndUnsplay(player, maxColors)
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

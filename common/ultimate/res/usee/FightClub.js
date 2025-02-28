@@ -17,9 +17,20 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
-
+    (game, player, { leader }) => {
+      const choices = game.getZoneByPlayer(player, 'secrets').cards()
+      const secret = game.aChooseCard(player, choices)
+      
+      if (secret) {
+        game.aTransfer(player, secret, game.getZoneByPlayer(leader, 'achievements'))
+      }
+      else {
+        game.mLogNoEffect()
+      }
     },
+    (game, player) => {
+      game.aChooseAndSplay(player, ['yellow'], 'up')
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

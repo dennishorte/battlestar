@@ -18,8 +18,28 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const scoreCount = game.getCardsByZone(player, 'score').length;
+      const availableAchievements = game.getAvailableAchievements();
+      const achievementChoices = availableAchievements.filter(a => a.age === scoreCount);
 
+      if (achievementChoices.length > 0) {
+        const achievement = game.aChooseCard(player, achievementChoices);
+        if (achievement) {
+          game.aSafeguard(player, achievement);
+          const cardsInHand = game.getCardsByZone(player, 'hand').filter(c => c.age === achievement.age);
+          game.aScoreMany(player, cardsInHand);
+        }
+      }
+      else {
+        game.mLogNoEffect();
+      }
     },
+    (game, player) => {
+      const secretCount = game.getZoneById(player, 'secrets').cards().length;
+      for(let i=0; i<secretCount; i++) {
+        game.aDraw(player, { age: game.getEffectAge(this, 6) });
+      }
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

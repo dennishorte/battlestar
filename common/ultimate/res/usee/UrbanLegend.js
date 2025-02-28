@@ -18,8 +18,23 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const colors = ['red', 'yellow', 'green', 'blue', 'purple']
+      let drawnCards = 0
+      colors.forEach(color => {
+        if (game.getBiscuitsByPlayer(player, color).f > 0) {
+          game.aDraw(player, { age: game.getEffectAge(this, 9) })
+          drawnCards++
+        }
+      })
 
+      if (drawnCards >= 5) {
+        game.mLogEffect(player, 'drew 5 cards and wins the game', this)
+        throw new GameOverEvent({ player })
+      }
     },
+    (game, player) => {
+      game.aChooseAndSplay(player, ['yellow', 'purple'], 'up')
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

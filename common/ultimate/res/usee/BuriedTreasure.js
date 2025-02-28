@@ -17,7 +17,25 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const oddValues = [1, 3, 5, 7, 9].filter(n => n <= game.getMaxAge())
+      const value = game.aChooseAge(player, oddValues)[0]
 
+      const transferred = game
+        .getPlayerAll()
+        .flatMap(p => game.getCardsByZone(p, 'score'))
+        .filter(card => card.age === value)
+
+      transferred.forEach(card => {
+        game.mMoveCardTo(card, game.getZoneById('achievements'), { visibility: 'public' })
+      })
+
+      if (transferred.length >= 4) {
+        game.aDraw(player, { age: value })
+        game.aSafeguard(player)
+
+        const availableStandard = game.getAvailableStandardAchievements().slice(0, 3)
+        availableStandard.forEach(ach => game.aClaimAchievement(player, ach))
+      }
     },
   ]
   this.echoImpl = []

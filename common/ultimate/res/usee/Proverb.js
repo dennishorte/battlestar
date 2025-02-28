@@ -5,8 +5,8 @@ function Card() {
   this.name = `Proverb`
   this.color = `blue`
   this.age = 1
-  this.expansion = `usee`
-  this.biscuits = `hckk`
+  this.expansion = `base`
+  this.biscuits = `hckk` 
   this.dogmaBiscuit = `l`
   this.inspire = ``
   this.echo = ``
@@ -17,7 +17,27 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
+      
+      const returned = game.aReturn(player, card)
+      if (returned) {
+        if (card.color === 'yellow' || card.color === 'purple') {
+          const handSize = game.getCardsByZone(player, 'hand').length
+          const achievement = game.getAvailableAchievement(handSize)
 
+          if (achievement) {
+            const safeguarded = game.aSafeguard(player, achievement)
+            
+            if (safeguarded) {
+              game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+            }  
+          }
+        } 
+        else {
+          game.aDraw(player, { age: game.getEffectAge(this, 1) })
+          game.aDraw(player, { age: game.getEffectAge(this, 1) })
+        }
+      }
     },
   ]
   this.echoImpl = []

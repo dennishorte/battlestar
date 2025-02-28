@@ -17,7 +17,24 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const safeguarded = game.aChooseAndSafeguard(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
+      
+      if (safeguarded && safeguarded.length > 0) {
+        const availableAchievements = game.getAvailableStandardAchievements().slice(0, 2)
 
+        game.mReveal(player, availableAchievements)
+
+        const meldableAchievements = availableAchievements.filter(card => !card.biscuits.includes('k') && !card.biscuits.includes('l'))
+
+        const toMeld = game.aChooseCard(player, meldableAchievements, { min: 0, max: 1 })
+
+        if (toMeld) {
+          game.aMeld(player, toMeld)
+        }
+
+        const toReturn = availableAchievements.filter(card => card !== toMeld)
+        toReturn.forEach(card => game.aReturn(player, card, { achievements: true }))
+      }
     },
   ]
   this.echoImpl = []

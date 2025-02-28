@@ -1,11 +1,12 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../../lib/game.js')
 
 function Card() {
-  this.id = `Surveillance`  // Card names are unique in Innovation
+  this.id = `Surveillance`  
   this.name = `Surveillance`
   this.color = `yellow`
   this.age = 9
-  this.expansion = `usee`
+  this.expansion = `usee` 
   this.biscuits = `siih`
   this.dogmaBiscuit = `i`
   this.inspire = ``
@@ -17,9 +18,28 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
-
+    (game, player, { leader }) => {
+      const leaderHand = game.getCardsByZone(leader, 'hand')
+      const leaderColors = [...new Set(leaderHand.map(card => card.color))]
+      
+      const playerHand = game.getCardsByZone(player, 'hand')
+      const playerColors = [...new Set(playerHand.map(card => card.color))]
+      
+      game.mReveal(player, playerHand)
+      
+      if (playerHand.length > 0 &&
+          leaderColors.every(color => playerColors.includes(color)) && 
+          playerColors.every(color => leaderColors.includes(color))) {
+        throw new GameOverEvent({
+          player: leader,
+          reason: this.name 
+        })
+      }
     },
+
+    (game, player) => {
+      game.aDraw(player, { age: game.getEffectAge(this, 10) })
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

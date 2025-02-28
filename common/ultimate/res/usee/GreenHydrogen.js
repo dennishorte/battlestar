@@ -17,7 +17,15 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const greenCards = game
+        .getCardsByZone(player, 'green')
+        .filter(card => !game.getTopCards(player).includes(card))
+      
+      const numScored = game.aScoreMany(player, greenCards).length
 
+      for (let i = 0; i < numScored; i++) {
+        game.aDrawAndTuck(player, game.getEffectAge(this, 11))
+      }
     },
   ]
   this.echoImpl = []

@@ -18,8 +18,30 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-
+      const cards = game.getCardsByZone(player, 'hand')
+      game.aChooseAndMeld(player, cards) 
     },
+    (game, player) => {
+      const boardColors = game
+        .getTopCards(player)
+        .map(card => card.color)
+
+      const choices = game  
+        .getCardsByZone(player, 'hand')
+        .filter(card => boardColors.includes(card.color))
+
+      const colorChoices = {}
+      choices.forEach(card => {
+        if (!colorChoices[card.color]) {
+          colorChoices[card.color] = []
+        }
+        colorChoices[card.color].push(card)
+      })
+
+      Object.entries(colorChoices).forEach(([color, cards]) => {
+        game.aChooseAndScore(player, cards, { min: 0, max: 1 })
+      })
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

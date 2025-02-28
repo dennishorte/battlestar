@@ -1,7 +1,7 @@
 const CardBase = require(`../CardBase.js`)
 
 function Card() {
-  this.id = `Blacklight`  // Card names are unique in Innovation
+  this.id = `Blacklight`  
   this.name = `Blacklight`
   this.color = `blue`
   this.age = 8
@@ -17,7 +17,23 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const unsplayChoices = ['yellow', 'red', 'blue', 'green', 'purple']
+        .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
+      
+      const splayChoices = ['yellow', 'red', 'blue', 'green', 'purple'] 
+        .filter(color => game.getZoneByPlayer(player, color).splay === 'none')
 
+      const choice = game.aChoose(player, ['Unsplay', 'Splay Up'], { title: 'Choose an action:' })[0]
+
+      if (choice === 'Unsplay') {
+        const color = game.aChoose(player, unsplayChoices, { title: 'Choose a color to unsplay:' })[0]
+        game.aUnsplay(player, color)
+      } 
+      else if (choice === 'Splay Up') {
+        const color = game.aChoose(player, splayChoices, { title: 'Choose a color to splay up:' })[0]
+        game.aSplay(player, color, 'up')
+        game.aDraw(player, { age: game.getEffectAge(this, 9) })
+      }
     },
   ]
   this.echoImpl = []

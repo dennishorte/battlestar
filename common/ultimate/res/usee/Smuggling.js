@@ -16,8 +16,41 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { leader }) => {
+      const opponentTopYellow = game
+        .getTopCards(player)
+        .find(card => card.color === 'yellow')
 
+      const leaderTopYellow = game  
+        .getTopCards(leader)
+        .find(card => card.color === 'yellow')
+
+      if (!opponentTopYellow || !leaderTopYellow) {
+        game.mLogNoEffect()
+        return
+      }
+      
+      const oppValue = opponentTopYellow.getAge()
+      const leaderValue = leaderTopYellow.getAge()
+
+      const oppChoices = game
+        .getCardsByZone(player, 'score')
+        .filter(card => card.getAge() === oppValue)
+
+      const leaderChoices = game  
+        .getCardsByZone(player, 'score')
+        .filter(card => card.getAge() === leaderValue)
+
+      if (oppChoices.length === 0 || leaderChoices.length === 0) {
+        game.mLogNoEffect()
+        return  
+      }
+
+      const oppCard = game.aChooseCard(player, oppChoices, { count: 1 })
+      const leaderCard = game.aChooseCard(player, leaderChoices, { count: 1 })
+
+      game.aTransfer(player, oppCard[0], game.getZoneByPlayer(leader, 'score'))  
+      game.aTransfer(player, leaderCard[0], game.getZoneByPlayer(leader, 'score'))
     },
   ]
   this.echoImpl = []

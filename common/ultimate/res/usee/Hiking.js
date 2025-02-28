@@ -7,7 +7,7 @@ function Card() {
   this.age = 6
   this.expansion = `usee`
   this.biscuits = `llhs`
-  this.dogmaBiscuit = `l`
+  this.dogmaBiscuit = `l` 
   this.inspire = ``
   this.echo = ``
   this.karma = []
@@ -17,7 +17,22 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const firstCard = game.aDrawAndReveal(player, game.getEffectAge(this, 6))
+      
+      if (firstCard) {
+        const topCard = game.getTopCard(player, firstCard.color)
 
+        if (topCard && topCard.checkHasBiscuit('l')) {
+          game.aTuck(player, firstCard)
+          
+          const secondCard = game.aDrawAndReveal(player, game.getEffectAge(this, 5))
+          
+          if (secondCard && secondCard.checkHasBiscuit('l')) {
+            game.aMeld(player, secondCard)
+            game.aDraw(player, { age: game.getEffectAge(this, 8) })
+          }
+        }
+      }
     },
   ]
   this.echoImpl = []

@@ -3,7 +3,7 @@ const CardBase = require(`../CardBase.js`)
 function Card() {
   this.id = `El Dorado`  // Card names are unique in Innovation
   this.name = `El Dorado`
-  this.color = `green`
+  this.color = `green` 
   this.age = 4
   this.expansion = `usee`
   this.biscuits = `cchc`
@@ -17,7 +17,27 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      // Draw and meld the three cards
+      const card4 = game.aDrawAndMeld(player, game.getEffectAge(this, 4))
+      const card2 = game.aDrawAndMeld(player, game.getEffectAge(this, 2))
+      const card1 = game.aDrawAndMeld(player, game.getEffectAge(this, 1))
+      
+      // Check if all three cards have a crown
+      const allCrowns = [card4, card2, card1].every(card => card.checkHasBiscuit('c'))
 
+      if (allCrowns) {
+        // Score the entire age 4 deck
+        const deck4 = game.getCardsByZone(game.getZoneById('deck4'))
+        game.aScoreMany(player, deck4)
+      }
+
+      // Check if at least two cards have a crown  
+      const crownCount = [card4, card2, card1].filter(card => card.checkHasBiscuit('c')).length
+      if (crownCount >= 2) {
+        // Splay green and blue right
+        game.aSplay(player, 'green', 'right')
+        game.aSplay(player, 'blue', 'right') 
+      }
     },
   ]
   this.echoImpl = []

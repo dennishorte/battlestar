@@ -5,8 +5,8 @@ function Card() {
   this.name = `Iron Curtain`
   this.color = `red`
   this.age = 9
-  this.expansion = `usee`
-  this.biscuits = `hlil`
+  this.expansion = `figs`
+  this.biscuits = `hlhl`
   this.dogmaBiscuit = `l`
   this.inspire = ``
   this.echo = ``
@@ -17,7 +17,32 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const splays = ['yellow', 'red', 'purple', 'green', 'blue']
+        .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
 
+      for (const color of splays) {
+        const zone = game.getZoneByPlayer(player, color)
+        const unsplayed = game.aUnsplay(player, color)
+        
+        if (unsplayed) {
+          const topCard = zone.cards().slice(-1)[0]
+          if (topCard) {
+            game.aReturnTopCard(player, topCard)
+
+            const available = game
+              .getAvailableStandardAchievements()
+              .filter(ach => ach.isStandard)
+            
+            if (available.length > 0) {
+              const selected = available[0]
+              game.aSafeguardAchievement(player, selected)
+            }
+            else {
+              game.mLog({ template: 'no standard achievements available' })
+            }
+          }
+        } 
+      }
     },
   ]
   this.echoImpl = []

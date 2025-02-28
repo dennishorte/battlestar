@@ -5,7 +5,7 @@ function Card() {
   this.name = `Whatchamacallit`
   this.color = `yellow`
   this.age = 10
-  this.expansion = `usee`
+  this.expansion = `base`
   this.biscuits = `hlfl`
   this.dogmaBiscuit = `l`
   this.inspire = ``
@@ -17,9 +17,22 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const topCardValues = game
+        .getTopCards(player)
+        .map(c => c.age)
+      
+      const scoreCardValues = game  
+        .getCardsByZone(player, 'score')
+        .map(c => c.age)
 
+      for (let age = 1; age <= 10; age++) {
+        if (!topCardValues.includes(age) && !scoreCardValues.includes(age)) {
+          game.aDrawAndScore(player, age)
+        }
+      }
     },
   ]
+
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

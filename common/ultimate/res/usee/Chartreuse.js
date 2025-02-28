@@ -18,8 +18,22 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const cards = [
+        game.aDrawAndReveal(player, game.getEffectAge(this, 5)),
+        game.aDrawAndReveal(player, game.getEffectAge(this, 4)), 
+        game.aDrawAndReveal(player, game.getEffectAge(this, 3)),
+        game.aDrawAndReveal(player, game.getEffectAge(this, 2))
+      ]
+      
+      const greenAndYellow = cards.filter(card => card.color === 'green' || card.color === 'yellow')
+      const others = cards.filter(card => card.color !== 'green' && card.color !== 'yellow')
 
+      game.aMeldMany(player, greenAndYellow)
+      game.aReturnMany(player, others)
     },
+    (game, player) => {
+      game.aChooseAndSplay(player, ['green', 'yellow'], 'right')
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

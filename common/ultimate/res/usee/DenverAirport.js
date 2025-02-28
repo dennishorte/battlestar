@@ -18,8 +18,29 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const secrets = game
+        .getZoneByPlayer(player, 'secrets')
+        .cards()
 
+      if (secrets.length > 0) {
+        const secret = game.aChooseCard(player, secrets, { 
+          title: 'Choose a secret to achieve',
+          min: 0,
+          max: 1
+        })
+
+        if (secret) {
+          game.aAchieveSecret(player, secret)
+        }
+      }
+      else {
+        game.mLogNoEffect()
+      }
     },
+
+    (game, player) => {
+      game.aChooseAndSplay(player, ['purple'], 'up')
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

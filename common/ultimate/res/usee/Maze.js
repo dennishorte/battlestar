@@ -16,8 +16,26 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { leader }) => {
+      const leaderHandSize = game.getCardsByZone(leader, 'hand').length
+      const matchingColorCards = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => card.color === this.color)
 
+      const scoredCards = game.aChooseAndScore(player, matchingColorCards, { max: leaderHandSize })
+      
+      if (scoredCards.length < leaderHandSize) {
+        const leaderHandCard = game.aChooseCard(leader, game.getCardsByZone(leader, 'hand'), { title: 'Choose a card to tuck' })
+        if (leaderHandCard) {
+          game.aTuck(leader, leaderHandCard)
+          
+          const playerHand = game.getCardsByZone(player, 'hand')
+          const playerScore = game.getCardsByZone(player, 'score')
+
+          game.aTransferMany(player, playerHand, game.getZoneByPlayer(player, 'score'), { ordered: true })
+          game.aTransferMany(player, playerScore, game.getZoneByPlayer(player, 'hand'), { ordered: true })
+        }
+      }
     },
   ]
   this.echoImpl = []

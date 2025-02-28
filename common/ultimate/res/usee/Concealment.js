@@ -6,7 +6,7 @@ function Card() {
   this.color = `red`
   this.age = 8
   this.expansion = `usee`
-  this.biscuits = `hffi`
+  this.biscuits = `hffi` 
   this.dogmaBiscuit = `f`
   this.inspire = ``
   this.echo = ``
@@ -18,7 +18,47 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const secrets = game
+        .getTopCards(player)
+        .filter(card => card.checkHasBiscuit('f'))
+      
+      if (secrets.length > 0) {
+        game.mLogIndent()
+        game.mLogIndent()
+        secrets.forEach(secret => {
+          game.mLog({
+            template: '{player} tucks {card}',
+            args: { player, card: secret }
+          })
+          game.aTuck(player, secret)
+        })
+        game.mLogOutdent()
+        game.mLogOutdent()
+      }
+      else {
+        game.mLog({
+          template: '{player} has no secrets to tuck',
+          args: { player }
+        })
+      }
+    },
+    (game, player) => {
+      const bottomPurpleCard = game
+        .getBottomCards(player)
+        .find(card => card.color === 'purple')
 
+      if (bottomPurpleCard) {
+        game.mLog({
+          template: '{player} safeguards {card}',
+          args: { player, card: bottomPurpleCard }
+        })
+      }
+      else {
+        game.mLog({
+          template: '{player} has no bottom purple card',
+          args: { player }
+        })
+      }
     },
   ]
   this.echoImpl = []

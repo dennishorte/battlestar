@@ -18,8 +18,25 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const color = game.aChooseColor(player)
+      const toTransfer = game
+        .getCardsByZone(player, color)
 
+      game.aTransferMany(player, toTransfer, game.getZoneByPlayer(player, 'hand'))
     },
+    (game, player) => {
+      const card = game.aDrawAndMeld(player, game.getEffectAge(this, 3))
+
+      if (game.getBottomCards(player).includes(card)) {
+        game.aScore(player, card)
+
+        const sameColorInHand = game
+          .getCardsByZone(player, 'hand')
+          .filter(c => c.color === card.color)
+
+        game.aChooseAndScore(player, sameColorInHand, { min: 0, max: sameColorInHand.length })
+      }
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

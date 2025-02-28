@@ -17,8 +17,35 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { leader }) => {
+      const secrets = game
+        .getTopCards(player)
+        .filter(card => card.checkHasBiscuit('c'))
 
+      if (secrets.length > 0) {
+        const secret = game.aChooseCard(player, secrets)
+        const transferred = game.aTransfer(player, secret, game.getZoneById('achievements')) 
+        
+        if (!transferred) {
+          game.mLogNoEffect()
+        }
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    },
+    (game, player, { leader }) => {
+      const secrets = game
+        .getTopCards(player)
+        .filter(card => card.checkHasBiscuit('c'))
+
+      if (secrets.length === 0) { // No secrets were transferred
+        const hand = game.getCardsByZone(player, 'hand')
+        const ages = hand.map(c => c.age).filter((v, i, a) => a.indexOf(v) === i)
+        const toScore = game.aChooseCards(player, hand, { count: ages.length, min: 0, max: 3 })
+
+        toScore.forEach(card => game.aScore(player, card))
+      }
     },
   ]
   this.echoImpl = []

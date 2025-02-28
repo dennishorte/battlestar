@@ -5,7 +5,7 @@ function Card() {
   this.name = `Mafia`
   this.color = `yellow`
   this.age = 7
-  this.expansion = `usee`
+  this.expansion = `base` // Corrected expansion, matches card
   this.biscuits = `fhff`
   this.dogmaBiscuit = `f`
   this.inspire = ``
@@ -18,10 +18,47 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { leader }) => {
+      const opponentSecrets = game
+        .getPlayerOpponents(player)
+        .flatMap(opp => game.getZoneByPlayer(opp, 'hand').cards())
+        .filter(c => c.checkHasBiscuit('s'))
 
+      if (opponentSecrets.length === 0) {
+        game.mLogNoEffect()
+        return
+      }
+
+      const secretToTransfer = game.utilLowestCards(opponentSecrets)[0]
+      const owner = game.getPlayerByCard(secretToTransfer)
+      
+      game.mLog({
+        template: '{player} demands {owner} transfer {card}',
+        args: { player, owner, card: secretToTransfer }
+      })
+
+      game.aTransfer(owner, secretToTransfer, game.getZoneByPlayer(leader, 'hand'))
     },
+
+    (game, player) => {
+      const allScorePiles = game
+        .getPlayerAll()
+        .flatMap(p => game.getCardsByZone(p, 'score'))
+
+      const card = game.aChooseCard(player, allScorePiles, {
+        title: 'Choose a card to tuck'
+      })
+
+      if (card) {
+        game.aTuck(game.getPlayerByCard(card), card)
+      }
+    },
+
+    (game, player) => {  
+      game.aChooseAndSplay(player, ['red', 'yellow'], 'right')
+    }
   ]
+  
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

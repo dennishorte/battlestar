@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../../lib/game.js')
 
 function Card() {
   this.id = `Fermi Paradox`  // Card names are unique in Innovation
@@ -6,7 +7,7 @@ function Card() {
   this.color = `blue`
   this.age = 9
   this.expansion = `usee`
-  this.biscuits = `hiis`
+  this.biscuits = `hiis` 
   this.dogmaBiscuit = `i`
   this.inspire = ``
   this.echo = ``
@@ -18,9 +19,41 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const age9Card = game.aReveal(player, game.getZoneById('deck9').cards().slice(-1)[0])
+      const age10Card = game.aReveal(player, game.getZoneById('deck10').cards().slice(-1)[0])
 
+      const cardsToChoose = [age9Card, age10Card].filter(card => card !== undefined)
+      const cardToReturn = game.aChooseAndReturn(player, cardsToChoose)[0]
+      
+      game.mLog({
+        template: '{player} returned {card}',
+        args: { player, card: cardToReturn }
+      })
     },
+
+    (game, player) => {
+      const numBoardCards = game
+        .getPlayerBoard(player)
+        .flatMap(stack => stack.cards())
+        .length
+
+      if (numBoardCards === 0) {
+        throw new GameOverEvent({
+          player, 
+          reason: 'Fermi Paradox'
+        })
+      }
+      else {
+        const valuedJunkCards = game
+          .getZoneById('junk')
+          .cards()
+          .filter(card => card.age > 0)
+
+        game.aTransferMany(player, valuedJunkCards, game.getZoneByPlayer(player, 'hand'))
+      }
+    }
   ]
+  
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

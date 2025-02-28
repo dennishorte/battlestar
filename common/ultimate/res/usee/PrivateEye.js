@@ -5,7 +5,7 @@ function Card() {
   this.name = `Private Eye`
   this.color = `blue`
   this.age = 7
-  this.expansion = `usee`
+  this.expansion = `figs`
   this.biscuits = `llsh`
   this.dogmaBiscuit = `l`
   this.inspire = ``
@@ -18,9 +18,30 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
-
+    (game, player, { leader }) => {
+      const opponentHand = game.getZoneByPlayer(player, 'hand').cards()
+      game.mRevealHand(player)
+      
+      if (opponentHand.length > 0) {
+        const card = game.aChooseCard(leader, opponentHand)
+        if (card) {
+          game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+          game.aDraw(leader, { age: game.getEffectAge(this, 7) })
+        }
+      }
     },
+    (game, player) => {
+      const secrets = game.getCardsByZone(player, 'secrets')
+      if (secrets.length > 0) {
+        const card = game.aChooseCard(player, secrets)
+        if (card) {
+          game.aScore(player, card)
+        }
+      }
+    },
+    (game, player) => {
+      game.aChooseAndSplay(player, ['blue'], 'right')
+    }     
   ]
   this.echoImpl = []
   this.inspireImpl = []

@@ -18,7 +18,26 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const cardsInHand = game.getCardsByZone(player, 'hand')
+      game.aReturnMany(player, cardsInHand)
+    },
+    (game, player) => {
+      const card1 = game.aDrawAndMeld(player, game.getEffectAge(this, 5))
+      const card2 = game.aDrawAndMeld(player, game.getEffectAge(this, 5))
+      
+      game.aReturn(player, card1)
+      game.aReturn(player, card2)
 
+      const drawnBiscuits = [...new Set(card1.biscuits + card2.biscuits)].length
+      
+      if (drawnBiscuits === 2) {
+        game.aDrawAndScore(player, game.getEffectAge(this, 5))
+        game.aDrawAndScore(player, game.getEffectAge(this, 5))
+      } else if (drawnBiscuits === 4) {
+        game.aDraw(player, {age: game.getEffectAge(this, 5)})
+      }
+
+      game.aDraw(player, {age: game.getEffectAge(this, 4)})
     },
   ]
   this.echoImpl = []

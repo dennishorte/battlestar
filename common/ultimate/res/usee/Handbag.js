@@ -17,7 +17,36 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const choices = [
+        'Transfer bottom cards to hand',
+        'Tuck score pile',
+        'Score cards of chosen value from hand'
+      ]
+      
+      const choice = game.aChoose(player, choices)
 
+      if (choice === choices[0]) {
+        // Transfer bottom cards
+        game.getColorsInPlay().forEach(color => {
+          const cards = game.getCardsByZone(player, color)
+          if (cards.length > 0) {
+            game.aTransfer(player, cards[cards.length - 1], game.getZoneByPlayer(player, 'hand'))
+          }
+        })
+      }
+      else if (choice === choices[1]) {
+        // Tuck score pile  
+        const cards = game.getCardsByZone(player, 'score')
+        game.aTuckMany(player, cards)
+      } 
+      else if (choice === choices[2]) {
+        // Score cards of chosen value
+        const values = game.getCardsByZone(player, 'hand').map(c => c.age)
+        const value = game.aChooseAge(player, values)
+        
+        const toScore = game.getCardsByZone(player, 'hand').filter(c => c.age === value)
+        game.aScoreMany(player, toScore)
+      }
     },
   ]
   this.echoImpl = []

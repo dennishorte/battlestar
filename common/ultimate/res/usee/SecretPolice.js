@@ -5,7 +5,7 @@ function Card() {
   this.name = `Secret Police`
   this.color = `yellow`
   this.age = 3
-  this.expansion = `usee`
+  this.expansion = `base` // Corrected expansion 
   this.biscuits = `kkkh`
   this.dogmaBiscuit = `k`
   this.inspire = ``
@@ -17,9 +17,33 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
-
+    (game, player, { leader }) => {
+      while (true) {
+        const tuckedCard = game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
+        
+        if (tuckedCard.length > 0) {
+          const topCard = game.getTopCard(player, tuckedCard[0].color)
+          if (topCard) {
+            game.aReturnSingle(player, topCard)
+          } else {
+            break  
+          }
+        } else {
+          game.aDraw(player, { age: game.getEffectAge(this, 1) })
+          break
+        }
+      }
     },
+    (game, player) => {
+      const colors = ['red', 'blue', 'yellow', 'purple', 'green']
+      const colorName = game.aChoose(player, colors, { title: 'Choose a color' })[0]
+
+      const cards = game
+        .getCardsByZone(player, 'hand')
+        .filter(c => c.color === colorName)
+
+      game.aTuckMany(player, cards)
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []
@@ -30,7 +54,7 @@ Card.prototype = Object.create(CardBase.prototype)
 Object.defineProperty(Card.prototype, `constructor`, {
   value: Card,
   enumerable: false,
-  writable: true
+  writable: true 
 })
 
 module.exports = Card

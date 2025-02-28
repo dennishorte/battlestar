@@ -5,7 +5,7 @@ function Card() {
   this.name = `Triad`
   this.color = `purple`
   this.age = 6
-  this.expansion = `usee`
+  this.expansion = `base`
   this.biscuits = `slhs`
   this.dogmaBiscuit = `s`
   this.inspire = ``
@@ -17,7 +17,16 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-
+      const hand = game.getZoneByPlayer(player, 'hand')
+      if (hand.size() >= 3) {
+        const returned = game.aChooseAndReturn(player, hand.cards(), { min: 1, max: 1 })[0]
+        game.aSplay(player, returned.color, 'right')
+        game.aTuck(player, game.aChooseCard(player, hand.cards()))
+        game.aChooseAndScore(player, hand.cards())
+      }
+      else {
+        game.mLogNoEffect()
+      }
     },
   ]
   this.echoImpl = []

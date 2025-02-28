@@ -5,7 +5,7 @@ function Card() {
   this.name = `Reconnaissance`
   this.color = `blue`
   this.age = 6
-  this.expansion = `usee`
+  this.expansion = `base`
   this.biscuits = `fhfs`
   this.dogmaBiscuit = `f`
   this.inspire = ``
@@ -17,8 +17,23 @@ function Card() {
   ]
 
   this.dogmaImpl = [
+    (game, player, { leader }) => {
+      const playerHand = game.getCardsByZone(player, 'hand')
+      game.mReveal(player, playerHand)
+    },
     (game, player) => {
+      const drawnCards = []
+      for (let i = 0; i < 3; i++) {
+        const card = game.aDrawAndReveal(player, game.getEffectAge(this, 6))
+        drawnCards.push(card)
+      }
 
+      const cardsToReturn = game.aChooseAndReturn(player, drawnCards, { count: 2 })
+      const keptCard = drawnCards.find(c => !cardsToReturn.includes(c))
+
+      if (keptCard) {
+        game.aChooseAndSplay(player, [keptCard.color], 'right')
+      }
     },
   ]
   this.echoImpl = []

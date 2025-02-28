@@ -18,9 +18,19 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const returned = game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
 
+      if (returned.length >= 2) {
+        const highestValue = Math.max(...returned.map(card => card.age))
+        game.aDraw(player, { age: highestValue + 1 })
+      }
     },
+    (game, player) => {
+      game.aDraw(player, { age: 3 })
+      game.aChooseAndSplay(player, ['blue'], 'left')
+    }
   ]
+
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []

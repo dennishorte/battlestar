@@ -5,8 +5,8 @@ function Card() {
   this.name = `The Prophecies`
   this.color = `blue`
   this.age = 4
-  this.expansion = `usee`
-  this.biscuits = `sshs`
+  this.expansion = `figs`
+  this.biscuits = `sshs` 
   this.dogmaBiscuit = `s`
   this.inspire = ``
   this.echo = ``
@@ -17,7 +17,34 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const choice = game.aChoose(player, [
+        'Draw and safeguard a 4',
+        'Draw and score based on a secret',
+      ], { title: 'Choose one:' })
 
+      if (choice === 0) {
+        // Draw and safeguard a 4
+        game.aDrawAndSafeguard(player, game.getEffectAge(this, 4))
+      } 
+      else if (choice === 1) {
+        // Draw and score based on a secret
+        const secrets = game.getSecrets(player)
+        const secretValues = secrets.map(card => card.value)
+        const revealedSecret = game.aChooseCard(player, secrets, { title: 'Choose a secret to reveal:' })
+        game.mReveal(player, revealedSecret)
+
+        const drawAge = revealedSecret.getAge() + 1
+        const drawnCard = game.aDrawAndScore(player, drawAge)
+
+        if (revealedSecret.color === 'red' || revealedSecret.color === 'purple') {
+          const otherSecrets = secrets.filter(card => card !== revealedSecret)
+          const secretToMeld = game.aChooseCard(player, otherSecrets, { title: 'Choose a secret to meld:' })
+          if (secretToMeld) {
+            game.aMeld(player, secretToMeld)
+            game.aSafeguard(player, drawnCard)
+          }
+        }
+      }
     },
   ]
   this.echoImpl = []

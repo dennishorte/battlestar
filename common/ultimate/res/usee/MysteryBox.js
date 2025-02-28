@@ -17,7 +17,25 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const choices = game.getAvailableStandardAchievements()
+      const achievement = game.aChooseCard(player, choices)
 
+      if (achievement) {
+        game.aClaimAchievement(player, achievement)
+        game.mLog({
+          template: '{player} claimed {achievement}',
+          args: { player, achievement }
+        })
+        
+        game.mLog({
+          template: '{player} will self-execute {achievement}',
+          args: { player, achievement }
+        })
+        game.aAchievementEffects(player, achievement)
+      }
+      else {
+        game.mLogNoEffect()
+      }
     },
   ]
   this.echoImpl = []

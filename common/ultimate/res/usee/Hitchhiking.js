@@ -17,7 +17,25 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const otherPlayer = game.aChoosePlayer(player, game.getPlayerOpponents(player))
 
+      if (otherPlayer) {
+        const cardInHand = game.aChooseCard(otherPlayer, game.getZoneByPlayer(otherPlayer, 'hand').cards())
+
+        if (cardInHand) {
+          game.aTransfer(otherPlayer, cardInHand, game.getZoneByPlayer(player, cardInHand.color))
+
+          game.mLog({
+            template: '{player} will execute {card}',
+            args: { player, card: cardInHand }
+          })
+
+          game.aCardEffects(otherPlayer, cardInHand, 'dogma', player)
+        }
+        else {
+          game.mLogNoEffect()
+        }
+      }
     },
   ]
   this.echoImpl = []

@@ -18,8 +18,32 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const handSize = game.getZoneByPlayer(player, 'hand').cards().length
+      const availableAchievements = game.getAvailableAchievements().filter(a => a.age === handSize)
+      
+      const achievement = game.aChooseCard(player, availableAchievements, {
+        title: 'Choose an achievement to safeguard',
+        min: 0, 
+        max: 1
+      })
 
+      if (achievement) {
+        game.aSafeguard(player, achievement)
+
+        const toReturn = game.getZoneByPlayer(player, 'hand')
+          .cards()
+          .filter(c => c.getAge() === handSize)
+        
+        game.aReturnMany(player, toReturn)
+
+        if (handSize === 3) {
+          game.aClaimAchievement(player, game.getCardByName('Anonymity'))
+        }
+      }
     },
+    (game, player) => {
+      game.aChooseAndSplay(player, ['purple'], 'left')
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

@@ -6,7 +6,7 @@ function Card() {
   this.color = `green`
   this.age = 1
   this.expansion = `usee`
-  this.biscuits = `llhl`
+  this.biscuits = `llhl` 
   this.dogmaBiscuit = `l`
   this.inspire = ``
   this.echo = ``
@@ -18,8 +18,36 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      let value = 1
+      
+      while (true) {
+        const choices = game.getCardsByZone(player, 'hand').filter(c => c.age === value)
+        const card = game.aChooseAndReturn(player, choices, { min: 0, max: 1 })[0]
 
+        if (!card) {
+          break
+        }
+        
+        const availableAchievements = game.getAvailableAchievements(player).filter(a => a.age === value)
+        
+        if (availableAchievements.length > 0) {
+          game.aClaimAchievement(player, availableAchievements[0])
+        }
+        else {
+          game.mLogNoEffect()
+          break
+        }
+
+        value++
+      }
     },
+    (game, player) => {
+      const age1Deck = game.getZoneById('1')
+      const cards = age1Deck.cards()
+
+      game.aTuckMany(player, cards)
+      game.aDrawMany(game.getZoneById('1'), cards.length)
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []

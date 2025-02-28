@@ -1,7 +1,7 @@
 const CardBase = require(`../CardBase.js`)
 
 function Card() {
-  this.id = `3D Printing`  // Card names are unique in Innovation
+  this.id = `3D Printing`  
   this.name = `3D Printing`
   this.color = `purple`
   this.age = 10
@@ -17,7 +17,30 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
+      const repeatEffect = () => {
+        const topCards = game.getTopCards(player)
+        const bottomCards = game.getBottomCards(player)
+        const choices = topCards.concat(bottomCards)
 
+        const returned = game.aChooseAndReturn(player, choices, { min: 0, max: 1 })
+
+        if (returned.length > 0) {
+          const age = returned[0].age
+          const secret = game.aChooseCard(player, game.getSecretsByAge(player, age), { min: 0, max: 1 })
+
+          if (secret) {
+            game.aAchieveSecret(player, secret)
+
+            const standard = game.aChooseAvailableStandardAchievement(player)
+            if (standard) {
+              game.aSafeguardAchievement(player, standard)
+              repeatEffect()  // Repeat the effect
+            }
+          }
+        }
+      }
+
+      repeatEffect() // Start the repeating effect
     },
   ]
   this.echoImpl = []
