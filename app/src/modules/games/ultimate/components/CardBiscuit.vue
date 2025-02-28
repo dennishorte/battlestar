@@ -32,6 +32,7 @@ const imageMap = {
   '<': require('@/assets/img/biscuit-left.png'),
   '>': require('@/assets/img/biscuit-right.png'),
   '^': require('@/assets/img/biscuit-up.png'),
+  '/': require('@/assets/img/biscuit-aslant.png'),
 
   '&': require('@/assets/img/biscuit-echo.png'),
   '*': require('@/assets/img/biscuit-inspire.png'),
@@ -45,6 +46,8 @@ const imageMap = {
   'k': require('@/assets/img/biscuit-castle.png'),
   'l': require('@/assets/img/biscuit-leaf.png'),
   's': require('@/assets/img/biscuit-lightbulb.png'),
+  'p': require('@/assets/img/biscuit-person.png'),
+  'f': require('@/assets/img/biscuit-meat.png'),      // f = food (m is used for music notes)
 }
 
 export default {
@@ -102,8 +105,8 @@ export default {
       }
       else {
         return ''
-      }
-    },
+}
+},
 
     imagePath() {
       if (this.inline && !isNaN(this.biscuit)) {
