@@ -24,7 +24,7 @@ describe("Laser", () => {
     const request4 = t.choose(game, request3, 'auto')
 
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Software', 'Laser'],

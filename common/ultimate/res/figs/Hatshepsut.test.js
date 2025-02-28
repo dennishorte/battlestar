@@ -47,7 +47,7 @@ describe('Hatshepsut', () => {
     const request2 = t.choose(game, request1, 'Dogma.Writing')
     const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Hatshepsut'],
@@ -75,7 +75,7 @@ describe('Hatshepsut', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Writing')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Hatshepsut'],

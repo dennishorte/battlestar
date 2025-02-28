@@ -18,7 +18,7 @@ describe('Queen Victoria', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Queen Victoria')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Queen Victoria'],
@@ -49,7 +49,7 @@ describe('Queen Victoria', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Achieve.age 2')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Queen Victoria'],

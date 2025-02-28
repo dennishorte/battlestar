@@ -30,7 +30,7 @@ describe("Octant", () => {
 
     const request3 = t.choose(game, request2, 'Pottery')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Octant'],

@@ -22,7 +22,7 @@ describe('Zhang Heng', () => {
     const request2 = t.choose(game, request1, 'Dogma.Zhang Heng')
 
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Zhang Heng'],

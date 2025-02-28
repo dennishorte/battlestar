@@ -22,7 +22,7 @@ describe('John Loudon McAdam', () => {
     const request2 = t.choose(game, request1, 'Inspire.yellow')
     const request3 = t.choose(game, request2, 'Canning')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Canning', 'John Loudon McAdam'],

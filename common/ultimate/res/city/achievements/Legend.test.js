@@ -18,7 +18,7 @@ describe('Legend achievement', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Meld.Beijing')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: {
@@ -47,7 +47,7 @@ describe('Legend achievement', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Meld.Beijing')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: {
@@ -77,7 +77,7 @@ describe('Legend achievement', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Meld.Beijing')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: {

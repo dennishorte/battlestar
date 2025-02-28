@@ -25,7 +25,7 @@ describe('Augustus Caesar', () => {
     const request2 = t.choose(game, request1, 'Inspire.green')
     const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testZone(game, 'red', ['Engineering', 'Archery', 'Construction'])
     t.testZone(game, 'blue', ['Tools'])
     t.testZone(game, 'forecast', [])
@@ -94,7 +94,7 @@ describe('Augustus Caesar', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Meld.The Wheel')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       micah: {
         red: ['Archery'],

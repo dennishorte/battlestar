@@ -25,7 +25,7 @@ describe("Piano", () => {
     const request2 = t.choose(game, request1, 'Dogma.Piano')
     const request3 = t.choose(game, request2, 6)
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Piano'],
@@ -48,7 +48,7 @@ describe("Piano", () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Piano')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Piano'],
@@ -82,7 +82,7 @@ describe("Piano", () => {
     const request2 = t.choose(game, request1, 'Dogma.Piano')
     const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Piano'],
@@ -111,7 +111,7 @@ describe("Piano", () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Piano')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Piano'],

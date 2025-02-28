@@ -24,7 +24,7 @@ describe("Human Genome", () => {
     const request4 = t.choose(game, request3, 4)
     const request5 = t.choose(game, request4, 'Canning')
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Human Genome'],

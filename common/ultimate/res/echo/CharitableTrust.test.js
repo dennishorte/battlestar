@@ -31,7 +31,7 @@ describe("Charitable Trust", () => {
     const request5 = t.choose(game, request4, 'Homing Pigeons')  // micah
     const request6 = t.choose(game, request5) // dennis
 
-    t.testIsSecondPlayer(request6)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Charitable Trust'],
@@ -63,7 +63,7 @@ describe("Charitable Trust", () => {
     const request3 = t.choose(game, request2, 4)
     const request4 = t.choose(game, request3, 'Enterprise')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Enterprise'],

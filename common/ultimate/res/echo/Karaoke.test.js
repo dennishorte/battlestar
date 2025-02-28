@@ -23,7 +23,7 @@ describe("Karaoke", () => {
     const request4 = t.choose(game, request3, 'Tools')
 
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Karaoke'],

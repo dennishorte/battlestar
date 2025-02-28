@@ -24,7 +24,7 @@ describe('Feudalism', () => {
     const request3 = t.choose(game, request2, 'The Wheel')
     const request4 = t.choose(game, request3, 'purple')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: {

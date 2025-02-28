@@ -21,7 +21,7 @@ describe("Linguistics", () => {
     const request2 = t.choose(game, request1, 'Dogma.Linguistics')
     const request3 = t.choose(game, request2, 'Draw a 3')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Linguistics'],
@@ -49,7 +49,7 @@ describe("Linguistics", () => {
     const request2 = t.choose(game, request1, 'Dogma.Linguistics')
     const request3 = t.choose(game, request2, 'Draw and foreshadow a 4')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Linguistics'],

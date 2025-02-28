@@ -26,7 +26,7 @@ describe('Quantum Theory', () => {
     const request3 = t.choose(game, request2, 'Tools', 'Calendar')
     const request4 = t.choose(game, request3, 'auto')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Quantum Theory'],
@@ -57,7 +57,7 @@ describe('Quantum Theory', () => {
 
     const request3 = t.choose(game, request2, 'Tools')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Quantum Theory'],

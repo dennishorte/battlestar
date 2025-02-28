@@ -21,7 +21,7 @@ describe('John Von Neumann', () => {
     const request2 = t.choose(game, request1, 'Dogma.John Von Neumann')
     const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['John Von Neumann'],
@@ -45,7 +45,7 @@ describe('John Von Neumann', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.John Von Neumann')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['John Von Neumann'],
@@ -72,7 +72,7 @@ describe('John Von Neumann', () => {
     const request3 = t.choose(game, request2, 'auto')
     const request4 = t.choose(game, request3, 'Homer') // fade
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         score: ['Homer'],

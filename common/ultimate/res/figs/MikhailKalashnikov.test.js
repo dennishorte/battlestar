@@ -21,7 +21,7 @@ describe('Mikhail Kalashnikov', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Inspire.red')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Mikhail Kalashnikov'],
@@ -52,7 +52,7 @@ describe('Mikhail Kalashnikov', () => {
     const request2 = t.choose(game, request1, 'Inspire.red')
     const request3 = t.choose(game, request2, 'transfer it')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Mikhail Kalashnikov'],
@@ -84,7 +84,7 @@ describe('Mikhail Kalashnikov', () => {
     const request2 = t.choose(game, request1, 'Inspire.red')
     const request3 = t.choose(game, request2, 'execute it')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Mikhail Kalashnikov'],

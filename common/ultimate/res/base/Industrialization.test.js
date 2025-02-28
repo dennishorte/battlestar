@@ -28,7 +28,7 @@ describe('Industrialization', () => {
     const request2 = t.choose(game, request1, 'Dogma.Industrialization')
     const request3 = t.choose(game, request2, 'red')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: {
@@ -69,7 +69,7 @@ describe('Industrialization', () => {
     const request2 = t.choose(game, request1, 'Dogma.Industrialization')
     const request3 = t.choose(game, request2, 'red')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: {

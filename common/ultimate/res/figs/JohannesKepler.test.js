@@ -20,7 +20,7 @@ describe('Johannes Kepler', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Johannes Kepler')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Johannes Kepler'],
@@ -60,7 +60,7 @@ describe('Johannes Kepler', () => {
     const request4 = t.choose(game, request3, 'Email')  // Meld Email
     const request5 = t.choose(game, request4)  // Agriculture (don't return a card)
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Johannes Kepler'],

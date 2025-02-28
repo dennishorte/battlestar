@@ -24,7 +24,7 @@ describe("Novel", () => {
     const request2 = t.choose(game, request1, 'Dogma.Novel')
     const request3 = t.choose(game, request2, 'purple')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: {
@@ -59,7 +59,7 @@ describe("Novel", () => {
     const request2 = t.choose(game, request1, 'Dogma.Novel')
     const request3 = t.choose(game, request2, 'purple')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: {
@@ -97,7 +97,7 @@ describe("Novel", () => {
     const request2 = t.choose(game, request1, 'Dogma.Novel')
     const request3 = t.choose(game, request2, 'purple')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: {

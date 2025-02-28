@@ -22,7 +22,7 @@ describe('Napoleon Bonaparte', () => {
 
     const request3 = t.choose(game, request2, 'Christiaan Huygens')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Napoleon Bonaparte'],
@@ -53,7 +53,7 @@ describe('Napoleon Bonaparte', () => {
     const request3 = t.choose(game, request2, 'Christopher Polhem')
     const request4 = t.choose(game, request3, 'Canning')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Napoleon Bonaparte'],

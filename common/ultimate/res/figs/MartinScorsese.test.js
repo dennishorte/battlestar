@@ -20,7 +20,7 @@ describe('Martin Scorsese', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Martin Scorsese')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Martin Scorsese'],
@@ -47,7 +47,7 @@ describe('Martin Scorsese', () => {
 
     const request3 = t.choose(game, request2, 'age 6')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.setBoard(game, {
       dennis: {
         purple: ['Martin Scorsese'],

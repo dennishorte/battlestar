@@ -23,7 +23,7 @@ describe('Ecology', () => {
     const request3 = t.choose(game, request2, 'The Wheel')
     const request4 = t.choose(game, request3, 'yes')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testDeckIsJunked(game, 10)
     t.testBoard(game, {
       dennis: {
@@ -48,7 +48,7 @@ describe('Ecology', () => {
     const request3 = t.choose(game, request2)
     const request4 = t.choose(game, request3, 'no')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Ecology'],

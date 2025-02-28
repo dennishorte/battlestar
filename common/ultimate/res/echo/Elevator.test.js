@@ -22,7 +22,7 @@ describe("Elevator", () => {
     const request3 = t.choose(game, request2, 6)
     const request4 = t.choose(game, request3, 'from scores')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Elevator'],
@@ -53,7 +53,7 @@ describe("Elevator", () => {
     const request3 = t.choose(game, request2, 6)
     const request4 = t.choose(game, request3, 'from hands')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Elevator'],

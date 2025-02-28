@@ -25,7 +25,7 @@ describe('Oars', () => {
     const request3 = t.choose(game, request2, 'Sailing')
     const request4 = t.choose(game, request3, 'Writing')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Oars'],
@@ -56,7 +56,7 @@ describe('Oars', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Oars')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Oars'],

@@ -20,7 +20,7 @@ describe('Socialism', () => {
     const request4 = t.choose(game, request3, 'auto')
     const request5 = t.choose(game, request4)
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Socialism', 'Code of Laws'],

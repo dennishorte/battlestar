@@ -22,7 +22,7 @@ describe('Mathematics', () => {
     const request2 = t.choose(game, request1, 'Dogma.Mathematics')
     const request3 = t.choose(game, request2, 'Engineering')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Mathematics'],

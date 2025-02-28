@@ -27,7 +27,7 @@ describe("Camcorder", () => {
     const request2 = t.choose(game, request1, 'Dogma.Camcorder')
     const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Composites', 'Camcorder'],

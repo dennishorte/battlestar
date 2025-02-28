@@ -29,7 +29,7 @@ describe("Hot Air Balloon", () => {
     const request2 = t.choose(game, request1, 'Dogma.Hot Air Balloon')
     const request3 = t.choose(game, request2, 'Agriculture')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Philosophy'],
@@ -69,7 +69,7 @@ describe("Hot Air Balloon", () => {
     const request2 = t.choose(game, request1, 'Dogma.Hot Air Balloon')
     const request3 = t.choose(game, request2)
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Hot Air Balloon'],
@@ -107,7 +107,7 @@ describe("Hot Air Balloon", () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Hot Air Balloon')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Hot Air Balloon'],
@@ -148,7 +148,7 @@ describe("Hot Air Balloon", () => {
 
     t.dumpLog(game)
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Hot Air Balloon'],

@@ -26,7 +26,7 @@ describe('Tran Huang Dao', () => {
 
     const request3 = t.choose(game, request2, 'Engineering')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Tran Huang Dao'],

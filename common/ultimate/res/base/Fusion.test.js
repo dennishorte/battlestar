@@ -19,7 +19,7 @@ describe('Fusion', () => {
     const request3 = t.choose(game, request2, 9)
     const request4 = t.choose(game, request3, 7)
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Mass Media'],

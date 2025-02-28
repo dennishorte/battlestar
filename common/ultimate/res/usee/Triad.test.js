@@ -13,7 +13,7 @@ describe('Triad', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Triad')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Triad'],

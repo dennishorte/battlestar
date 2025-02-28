@@ -22,7 +22,7 @@ describe("Ching Shih", () => {
 
     const request3 = t.choose(game, request2, 'micah, age 2')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Ching Shih'],
@@ -52,7 +52,7 @@ describe("Ching Shih", () => {
 
     const request3 = t.choose(game, request2, 'micah, Monument')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Ching Shih'],
@@ -80,7 +80,7 @@ describe("Ching Shih", () => {
     const request2 = t.choose(game, request1, 'Dogma.Encyclopedia')
     const request3 = t.choose(game, request2, 'yes')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Ching Shih'],
@@ -109,7 +109,7 @@ describe("Ching Shih", () => {
     const request2 = t.choose(game, request1, 'Dogma.Philosophy')
     const request3 = t.choose(game, request2, 'Fermenting')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ["Ching Shih"],
@@ -140,7 +140,7 @@ describe("Ching Shih", () => {
     const request2 = t.choose(game, request1, 'Dogma.Philosophy')
     const request3 = t.choose(game, request2, 'Fermenting')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ["Ching Shih"],

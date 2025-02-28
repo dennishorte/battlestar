@@ -28,7 +28,7 @@ describe('Democracy', () => {
     const request3 = t.choose(game, request2, 'Coal')
     const request4 = t.choose(game, request3, 'The Wheel')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Democracy'],
@@ -69,7 +69,7 @@ describe('Democracy', () => {
     const request5 = t.choose(game, request4, 'The Wheel', 'Masonry')
     const request6 = t.choose(game, request5, 'auto')
 
-    t.testIsSecondPlayer(request6)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Edinburgh'],

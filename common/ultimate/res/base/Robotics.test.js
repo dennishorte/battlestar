@@ -20,7 +20,7 @@ describe('Robotics', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Robotics')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Miniaturization', 'Robotics'],
@@ -46,7 +46,7 @@ describe('Robotics', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Robotics')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Robotics'],

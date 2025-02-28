@@ -22,7 +22,7 @@ describe("Pagoda", () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Pagoda')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Pagoda'],
@@ -48,7 +48,7 @@ describe("Pagoda", () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Pagoda')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Pagoda'],

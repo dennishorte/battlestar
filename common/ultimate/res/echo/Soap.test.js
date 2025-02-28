@@ -21,7 +21,7 @@ describe("Soap", () => {
     const request5 = t.choose(game, request4, 'auto')
     const request6 = t.choose(game, request5, 'Sailing')
 
-    t.testIsSecondPlayer(request6)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Soap', 'Agriculture', 'Masonry', 'Domestication'],
@@ -48,7 +48,7 @@ describe("Soap", () => {
     const request5 = t.choose(game, request4, 'auto')
     const request6 = t.choose(game, request5)
 
-    t.testIsSecondPlayer(request6)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Soap', 'Agriculture', 'Masonry', 'Domestication'],
@@ -74,7 +74,7 @@ describe("Soap", () => {
     const request4 = t.choose(game, request3, 'Agriculture', 'Masonry')
     const request5 = t.choose(game, request4, 'auto')
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Soap', 'Agriculture', 'Masonry'],

@@ -21,7 +21,7 @@ describe('Sunshu Ao', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Inspire.yellow')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Sunshu Ao'],
@@ -49,7 +49,7 @@ describe('Sunshu Ao', () => {
     const request2 = t.choose(game, request1, 'Inspire.yellow')
     const request3 = t.choose(game, request2, 'Domestication')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Sunshu Ao'],

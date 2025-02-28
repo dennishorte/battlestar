@@ -13,7 +13,7 @@ describe('Polytheism', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Polytheism')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Polytheism'],

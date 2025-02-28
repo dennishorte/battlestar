@@ -31,7 +31,7 @@ describe('Self Service', () => {
 
     const request3 = t.choose(game, request2, 'Domestication')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Self Service'],

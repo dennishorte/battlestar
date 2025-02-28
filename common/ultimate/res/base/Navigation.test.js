@@ -22,7 +22,7 @@ describe('Navigation', () => {
 
     const request3 = t.choose(game, request2, 'Calendar')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Navigation'],

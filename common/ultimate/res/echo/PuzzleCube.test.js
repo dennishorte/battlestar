@@ -25,7 +25,7 @@ describe("Puzzle Cube", () => {
     const request2 = t.choose(game, request1, 'Dogma.Puzzle Cube')
     const request3 = t.choose(game, request2)
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Puzzle Cube'],

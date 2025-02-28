@@ -24,7 +24,7 @@ describe("Watermill", () => {
     const request3 = t.choose(game, request2, 'Sailing')
     const request4 = t.choose(game, request3)
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Watermill'],

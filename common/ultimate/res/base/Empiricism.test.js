@@ -21,7 +21,7 @@ describe('Empiricism', () => {
     const request2 = t.choose(game, request1, 'Dogma.Empiricism')
     const request3 = t.choose(game, request2, 'purple', 'blue')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: {
@@ -49,7 +49,7 @@ describe('Empiricism', () => {
     const request2 = t.choose(game, request1, 'Dogma.Empiricism')
     const request3 = t.choose(game, request2, 'purple', 'blue')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: {
@@ -128,7 +128,7 @@ describe('Empiricism', () => {
     const request2 = t.choose(game, request1, 'Dogma.Empiricism')
     const request3 = t.choose(game, request2, 'purple', 'green')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: {
@@ -181,6 +181,6 @@ describe('Empiricism', () => {
     const request2 = t.choose(game, request1, 'Dogma.Empiricism')
     const request3 = t.choose(game, request2, 'purple', 'blue')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
   })
 })

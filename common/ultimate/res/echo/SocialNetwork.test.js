@@ -22,7 +22,7 @@ describe("Social Network", () => {
     const request3 = t.choose(game, request2, '{f}')
     const request4 = t.choose(game, request3, 'auto')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Social Network'],

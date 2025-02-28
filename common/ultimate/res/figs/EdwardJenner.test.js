@@ -81,7 +81,7 @@ describe('Edward Jenner', () => {
     const request2 = t.choose(game, request1, 'Dogma.Archery')
     const request3 = t.choose(game, request2, 'Enterprise')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Archery'],

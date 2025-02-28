@@ -34,7 +34,7 @@ describe('Railroad', () => {
 
     const request4 = t.choose(game, request3, 'green')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Railroad', 'Code of Laws'],

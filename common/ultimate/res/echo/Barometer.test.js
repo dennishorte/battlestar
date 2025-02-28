@@ -25,7 +25,7 @@ describe("Barometer", () => {
     const request2 = t.choose(game, request1, 'Dogma.Barometer')
     const request3 = t.choose(game, request2, 'no')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Barometer'],

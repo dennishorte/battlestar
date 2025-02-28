@@ -29,7 +29,7 @@ describe('Gujin Tushu Jinsheng', () => {
 
     const request3 = t.choose(game, request2, 'Sailing')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Gujin Tushu Jinsheng'],

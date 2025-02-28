@@ -18,7 +18,7 @@ describe("Globe", () => {
     const request3 = t.choose(game, request2, 'blue')
     const request4 = t.choose(game, request3)
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: {
@@ -50,7 +50,7 @@ describe("Globe", () => {
     const request4 = t.choose(game, request3, 'Calendar')
     //const request5 = t.choose(game, request4, 'auto')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: {
@@ -83,7 +83,7 @@ describe("Globe", () => {
     const request4 = t.choose(game, request3, 'Calendar', 'Mathematics')
     const request5 = t.choose(game, request4, 'auto')
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: {
@@ -116,7 +116,7 @@ describe("Globe", () => {
     const request4 = t.choose(game, request3, 'Calendar', 'Mathematics', 'Tools')
     const request5 = t.choose(game, request4, 'auto')
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: {

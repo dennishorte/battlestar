@@ -27,7 +27,7 @@ describe("Cell Phone", () => {
     const request3 = t.choose(game, request2, 'green')
     const request4 = t.choose(game, request3, 'Software')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Cell Phone'],

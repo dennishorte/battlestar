@@ -25,7 +25,7 @@ describe("Radio Telescope", () => {
     const request2 = t.choose(game, request1, 'Dogma.Radio Telescope')
     const request3 = t.choose(game, request2, 'Rock')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Radio Telescope'],

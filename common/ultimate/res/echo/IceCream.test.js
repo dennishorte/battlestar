@@ -26,7 +26,7 @@ describe("Ice Cream", () => {
     const request3 = t.choose(game, request2, 'yes')
     const request4 = t.choose(game, request3, 7)
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Ice Cream'],

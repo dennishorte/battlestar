@@ -20,7 +20,7 @@ describe("Artificial Heart", () => {
 
     const request3 = t.choose(game, request2, 'age 4')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Artificial Heart'],

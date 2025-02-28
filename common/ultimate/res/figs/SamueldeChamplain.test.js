@@ -22,7 +22,7 @@ describe('Samuel de Champlain', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Inspire.green')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Samuel de Champlain'],
@@ -51,7 +51,7 @@ describe('Samuel de Champlain', () => {
     const request2 = t.choose(game, request1, 'Inspire.green')
     const request3 = t.choose(game, request2, 'age 6')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Samuel de Champlain'],

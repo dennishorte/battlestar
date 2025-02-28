@@ -13,7 +13,7 @@ describe('Iron Curtain', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Iron Curtain')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Iron Curtain'],

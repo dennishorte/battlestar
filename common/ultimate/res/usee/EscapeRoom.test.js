@@ -13,7 +13,7 @@ describe('Escape Room', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Escape Room')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Escape Room'],

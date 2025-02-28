@@ -24,7 +24,7 @@ describe('Solar Sailing', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Solar Sailing')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Solar Sailing'],
@@ -56,7 +56,7 @@ describe('Solar Sailing', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Solar Sailing')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Solar Sailing'],
@@ -85,7 +85,7 @@ describe('Solar Sailing', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Solar Sailing')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Solar Sailing'],

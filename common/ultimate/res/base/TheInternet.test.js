@@ -22,7 +22,7 @@ describe('The Internet', () => {
     const request2 = t.choose(game, request1, 'Dogma.The Internet')
     const request3 = t.choose(game, request2, 'green')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['The Internet'],

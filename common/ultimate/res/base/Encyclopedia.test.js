@@ -19,7 +19,7 @@ describe('Encyclopedia', () => {
     const request4 = t.choose(game, request3, 'auto')
     const request5 = t.choose(game, request4)
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Translation', 'Encyclopedia'],
@@ -43,7 +43,7 @@ describe('Encyclopedia', () => {
     const request3 = t.choose(game, request2)
     const request4 = t.choose(game, request3, 7)
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Encyclopedia'],

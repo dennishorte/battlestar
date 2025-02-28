@@ -14,7 +14,7 @@ describe('Alex Trebek', () => {
     const request4 = t.choose(game, request3, 'Ruth Handler')
     // Ecology covers Alex, so no trigger when doing inspire draw; also, only draw a 9.
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testZone(game, 'yellow', ['Ecology', 'Alex Trebek'])
     t.testZone(game, 'hand', ['Ruth Handler', 'Computers'], { sort: true })
   })

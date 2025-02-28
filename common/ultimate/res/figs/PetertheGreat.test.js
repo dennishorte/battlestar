@@ -21,7 +21,7 @@ describe('Peter the Great', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Inspire.red')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Peter the Great', 'Archery'],
@@ -47,7 +47,7 @@ describe('Peter the Great', () => {
     const request2 = t.choose(game, request1, 'Meld.Peter the Great')
     const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Peter the Great'],
@@ -76,7 +76,7 @@ describe('Peter the Great', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Inspire.red')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Peter the Great'],
@@ -107,7 +107,7 @@ describe('Peter the Great', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Inspire.red')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Peter the Great'],

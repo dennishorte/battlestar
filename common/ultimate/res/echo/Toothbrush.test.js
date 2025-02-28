@@ -22,7 +22,7 @@ describe("Toothbrush", () => {
     const request4 = t.choose(game, request3, 'yellow')
     const request5 = t.choose(game, request4, 'yes')
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: {

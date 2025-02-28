@@ -22,7 +22,7 @@ describe("Seed Drill", () => {
     const request3 = t.choose(game, request2, 3)
     const request4 = t.choose(game, request3, 'no')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Seed Drill'],
@@ -53,7 +53,7 @@ describe("Seed Drill", () => {
     const request3 = t.choose(game, request2, 3)
     const request4 = t.choose(game, request3, 'yes')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Seed Drill'],

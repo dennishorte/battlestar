@@ -13,7 +13,7 @@ describe('Safe Deposit Box', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Safe Deposit Box')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Safe Deposit Box'],

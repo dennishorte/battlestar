@@ -28,7 +28,7 @@ describe("Ice Skates", () => {
     const request7 = t.choose(game, request6, 'draw and foreshadow a {3}')
     const request8 = t.choose(game, request7, 'Horseshoes')
 
-    t.testIsSecondPlayer(request8)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Ice Skates'],

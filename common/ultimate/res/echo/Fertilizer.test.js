@@ -28,7 +28,7 @@ describe("Fertilizer", () => {
     const request4 = t.choose(game, request3, 'auto')
     const request5 = t.choose(game, request4, 2)
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Fertilizer'],
@@ -65,7 +65,7 @@ describe("Fertilizer", () => {
     const request3 = t.choose(game, request2)
     const request4 = t.choose(game, request3, 2)
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Fertilizer'],

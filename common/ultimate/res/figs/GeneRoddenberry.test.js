@@ -69,7 +69,7 @@ describe('Gene Roddenberry', () => {
     const request3 = t.choose(game, request2, 'Reformation')
     const request4 = t.choose(game, request3, 'Alexander the Great')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Gene Roddenberry', 'Reformation'],

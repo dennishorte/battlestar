@@ -23,7 +23,7 @@ describe('Mass Media', () => {
     const request4 = t.choose(game, request3, 6)
     const request5 = t.choose(game, request4, 'auto')
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Mass Media'],

@@ -23,7 +23,7 @@ describe("Newton-Wickins Telescope", () => {
     const request3 = t.choose(game, request2, 'Canning', 'Lighting', 'Flight')
     const request4 = t.choose(game, request3, 'auto')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ["Newton-Wickins Telescope"],
@@ -52,7 +52,7 @@ describe("Newton-Wickins Telescope", () => {
     const request3 = t.choose(game, request2, 'Tools', 'Sailing', 'Mathematics', 'Coal', 'Canning', 'Industrialization', 'Flight')
     const request4 = t.choose(game, request3, 'auto')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ["Newton-Wickins Telescope"],

@@ -28,7 +28,7 @@ describe("MP3", () => {
     const request5 = t.choose(game, request4, 'age 1')
     const request6 = t.choose(game, request5, 'age 1')
 
-    t.testIsSecondPlayer(request6)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['MP3'],

@@ -15,7 +15,7 @@ describe('Kim Yu-Na', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Kim Yu-Na')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         score: ['Kim Yu-Na'],

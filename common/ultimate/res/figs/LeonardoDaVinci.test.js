@@ -23,7 +23,7 @@ describe('Leonardo Da Vinci', () => {
 
     const request3 = t.choose(game, request2, 'Homer')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Leonardo Da Vinci'],

@@ -19,7 +19,7 @@ describe("Umbrella", () => {
     const request4 = t.choose(game, request3, 'Sailing')
     const request5 = t.choose(game, request4, 'auto')
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Umbrella'],

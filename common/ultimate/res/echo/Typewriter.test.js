@@ -26,7 +26,7 @@ describe("Typewriter", () => {
     const request2 = t.choose(game, request1, 'Dogma.Typewriter')
     const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Typewriter'],

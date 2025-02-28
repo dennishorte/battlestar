@@ -22,7 +22,7 @@ describe('Ptahotep', () => {
     const request2 = t.choose(game, request1, 'Inspire.purple')
     const request3 = t.choose(game, request2, 'Sailing')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Ptahotep'],
@@ -53,7 +53,7 @@ describe('Ptahotep', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Construction')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Construction'],

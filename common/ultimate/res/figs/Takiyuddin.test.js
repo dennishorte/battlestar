@@ -22,7 +22,7 @@ describe('Takiyuddin', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Inspire.blue')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Takiyuddin'],
@@ -50,7 +50,7 @@ describe('Takiyuddin', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Inspire.blue')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Takiyuddin'],
@@ -83,7 +83,7 @@ describe('Takiyuddin', () => {
     const request2 = t.choose(game, request1, 'Inspire.blue')
     const request3 = t.choose(game, request2, 'blue')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: {

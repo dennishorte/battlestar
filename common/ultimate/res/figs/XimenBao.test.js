@@ -23,7 +23,7 @@ describe('Ximen Bao', () => {
     const request2 = t.choose(game, request1, 'Inspire.yellow')
 
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Ximen Bao'],
@@ -69,7 +69,7 @@ describe('Ximen Bao', () => {
     const request4 = t.choose(game, request3, 'Monotheism')
     const request5 = t.choose(game, request4, 'Ximen Bao')
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: {
@@ -110,7 +110,7 @@ describe('Ximen Bao', () => {
     const request2 = t.choose(game, request1, 'Dogma.Ximen Bao')
     const request3 = t.choose(game, request2, 2)
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Ximen Bao'],

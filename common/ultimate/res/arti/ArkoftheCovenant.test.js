@@ -41,7 +41,7 @@ describe('Ark of the Covenant', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Ark of the Covenant')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         hand: ['Ark of the Covenant'],

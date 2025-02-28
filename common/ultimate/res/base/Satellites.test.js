@@ -25,7 +25,7 @@ describe('Satellites', () => {
     const request4 = t.choose(game, request3, 'purple')
     const request5 = t.choose(game, request4, 'Corporations')
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: {

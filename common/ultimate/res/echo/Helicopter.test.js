@@ -22,7 +22,7 @@ describe("Helicopter", () => {
     const request3 = t.choose(game, request2, 'Canning')
     const request4 = t.choose(game, request3, 'Coal')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Helicopter'],

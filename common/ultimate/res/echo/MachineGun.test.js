@@ -22,7 +22,7 @@ describe("Machine Gun", () => {
     const request2 = t.choose(game, request1, 'Dogma.Machine Gun')
     const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Machine Gun'],
@@ -58,7 +58,7 @@ describe("Machine Gun", () => {
     const request2 = t.choose(game, request1, 'Dogma.Machine Gun')
     const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Machine Gun'],
@@ -98,7 +98,7 @@ describe("Machine Gun", () => {
     const request2 = t.choose(game, request1, 'Dogma.Machine Gun')
     const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Machine Gun'],

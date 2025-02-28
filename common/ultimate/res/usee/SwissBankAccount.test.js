@@ -13,7 +13,7 @@ describe('Swiss Bank Account', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Swiss Bank Account')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Swiss Bank Account'],

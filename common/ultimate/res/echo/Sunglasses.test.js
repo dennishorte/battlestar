@@ -25,7 +25,7 @@ describe("Sunglasses", () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Sunglasses')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Sunglasses'],
@@ -65,7 +65,7 @@ describe("Sunglasses", () => {
     const request2 = t.choose(game, request1, 'Dogma.Sunglasses')
     const request3 = t.choose(game, request2, 'purple right')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: {
@@ -109,7 +109,7 @@ describe("Sunglasses", () => {
     const request2 = t.choose(game, request1, 'Dogma.Sunglasses')
     const request3 = t.choose(game, request2, 'yellow right')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: {

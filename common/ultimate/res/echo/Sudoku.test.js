@@ -22,7 +22,7 @@ describe("Sudoku", () => {
     const request2 = t.choose(game, request1, 'Dogma.Sudoku')
     const request3 = t.choose(game, request2, 4)
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Sudoku'],

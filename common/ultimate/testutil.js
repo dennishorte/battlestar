@@ -143,7 +143,8 @@ TestUtil.testIsFirstAction = function(request) {
   expect(selector.title).toBe('Choose First Action')
 }
 
-TestUtil.testIsSecondPlayer = function(request) {
+TestUtil.testIsSecondPlayer = function(game) {
+  const request = game.waiting
   const selector = request.selectors[0]
   expect(selector.actor).toBe('micah')
   expect(selector.title).toBe('Choose First Action')

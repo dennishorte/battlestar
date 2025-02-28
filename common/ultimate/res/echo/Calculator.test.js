@@ -28,7 +28,7 @@ describe("Calculator", () => {
     const request4 = t.choose(game, request3, 'auto')
     const request5 = t.choose(game, request4, 'blue')
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: {
@@ -56,7 +56,7 @@ describe("Calculator", () => {
     const request2 = t.choose(game, request1, 'Dogma.Calculator')
     const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Calculator'],

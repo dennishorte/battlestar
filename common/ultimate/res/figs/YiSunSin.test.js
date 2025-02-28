@@ -25,7 +25,7 @@ describe('Yi Sun-Sin', () => {
 
     const request3 = t.choose(game,request2, 'Construction')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Yi Sun-Sin'],
@@ -62,7 +62,7 @@ describe('Yi Sun-Sin', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Yi Sun-Sin')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Yi Sun-Sin'],

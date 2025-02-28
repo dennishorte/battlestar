@@ -16,7 +16,7 @@ describe("Loom", () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Loom')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Loom'],
@@ -38,7 +38,7 @@ describe("Loom", () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Loom')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Loom'],
@@ -61,7 +61,7 @@ describe("Loom", () => {
     const request2 = t.choose(game, request1, 'Dogma.Loom')
     const request3 = t.choose(game, request2)
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Loom'],
@@ -89,7 +89,7 @@ describe("Loom", () => {
     const request2 = t.choose(game, request1, 'Dogma.Loom')
     const request3 = t.choose(game, request2, 'Sailing')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Loom', 'Industrialization'],
@@ -121,7 +121,7 @@ describe("Loom", () => {
     const request2 = t.choose(game, request1, 'Dogma.Loom')
     const request3 = t.choose(game, request2, 'Sailing')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: {

@@ -22,7 +22,7 @@ describe('Ludwig Van Beethoven', () => {
     const request2 = t.choose(game, request1, 'Inspire.purple')
     const request3 = t.choose(game, request2, 'Canning')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Ludwig Van Beethoven'],
@@ -56,7 +56,7 @@ describe('Ludwig Van Beethoven', () => {
     const request2 = t.choose(game, request1, 'Inspire.purple')
     const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Ludwig Van Beethoven'],

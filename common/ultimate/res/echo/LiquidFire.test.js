@@ -25,7 +25,7 @@ describe("Liquid Fire", () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Liquid Fire')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Liquid Fire'],
@@ -61,7 +61,7 @@ describe("Liquid Fire", () => {
     const request2 = t.choose(game, request1, 'Dogma.Liquid Fire')
     const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Liquid Fire'],
@@ -86,7 +86,7 @@ describe("Liquid Fire", () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Liquid Fire')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Liquid Fire'],

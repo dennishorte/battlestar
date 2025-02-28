@@ -25,7 +25,7 @@ describe('Climatology', () => {
     const request4 = t.choose(game, request3, 'Writing', 'Astronomy')
 
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         score: ['Software'],

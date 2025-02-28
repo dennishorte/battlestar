@@ -13,7 +13,7 @@ describe('Brethren of Purity', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Brethren of Purity')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Brethren of Purity'],

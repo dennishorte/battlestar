@@ -17,7 +17,7 @@ describe('Victory achievement', () => {
     const request3 = t.choose(game, request2, 'yes')
     const request4 = t.choose(game, request3)
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Reformation', 'Brussels'],

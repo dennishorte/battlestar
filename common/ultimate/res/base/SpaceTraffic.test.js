@@ -22,7 +22,7 @@ describe('Space Traffic', () => {
     const request2 = t.choose(game, request1, 'Dogma.Space Traffic')
 
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Space Traffic'],

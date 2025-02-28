@@ -26,7 +26,7 @@ describe('Tools', () => {
     const request5 = t.choose(game, request4, 'auto')
     const request6 = t.choose(game, request5, 'Engineering')
 
-    t.testIsSecondPlayer(request6)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Translation', 'Tools'],

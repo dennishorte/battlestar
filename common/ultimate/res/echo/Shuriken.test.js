@@ -27,7 +27,7 @@ describe("Shuriken", () => {
     const request2 = t.choose(game, request1, 'Dogma.Shuriken')
     const request3 = t.choose(game, request2, 'purple')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Shuriken'],

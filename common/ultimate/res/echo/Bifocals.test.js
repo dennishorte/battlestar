@@ -26,7 +26,7 @@ describe("Bifocals", () => {
     const request4 = t.choose(game, request3, 'Canning')
     const request5 = t.choose(game, request4, 'green')
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Bifocals'],

@@ -22,7 +22,7 @@ describe('DeLorean DMC-12', () => {
     const request2 = t.choose(game, request1, 'Dogma.DeLorean DMC-12')
     const request3 = t.choose(game, request2, 'auto')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Calendar'],

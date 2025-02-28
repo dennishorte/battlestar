@@ -22,7 +22,7 @@ describe('Sanitation', () => {
     const request4 = t.choose(game, request3, 'Tools')
     const request5 = t.choose(game, request4, 7)
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testDeckIsJunked(game, 7)
     t.testBoard(game, {
       dennis: {

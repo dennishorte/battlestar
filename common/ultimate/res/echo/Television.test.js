@@ -25,7 +25,7 @@ describe("Television", () => {
     const request3 = t.choose(game, request2, 1)
     const request4 = t.choose(game, request3, 'Sailing')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Television'],
@@ -60,7 +60,7 @@ describe("Television", () => {
     const request3 = t.choose(game, request2, 1)
     const request4 = t.choose(game, request3, 'Sailing')
 
-    t.testIsSecondPlayer(request4)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Television'],

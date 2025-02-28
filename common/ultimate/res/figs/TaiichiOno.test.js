@@ -20,7 +20,7 @@ describe('Taiichi Ono', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Taiichi Ono')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Taiichi Ono'],
@@ -47,7 +47,7 @@ describe('Taiichi Ono', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Experimentation')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Taiichi Ono'],

@@ -25,7 +25,7 @@ describe("Credit Card", () => {
     const request2 = t.choose(game, request1, 'Dogma.Credit Card')
     const request3 = t.choose(game, request2, 'Canning')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Credit Card'],

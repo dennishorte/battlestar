@@ -26,7 +26,7 @@ describe("Tuning Fork", () => {
     const request5 = t.choose(game, request4, 'Domestication')
     const request6 = t.choose(game, request5, 'yes')
 
-    t.testIsSecondPlayer(request6)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         purple: ['Tuning Fork'],

@@ -24,7 +24,7 @@ describe('Rhazes', () => {
 
     const request3 = t.choose(game, request2, 5)
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Rhazes'],
@@ -50,7 +50,7 @@ describe('Rhazes', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Draw.draw a card')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Rhazes', 'Machinery'],

@@ -13,7 +13,7 @@ describe('Fight Club', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Fight Club')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Fight Club'],

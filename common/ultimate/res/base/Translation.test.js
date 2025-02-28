@@ -19,7 +19,7 @@ describe('Translation', () => {
     const request4 = t.choose(game, request3, 'Machinery')
     const request5 = t.choose(game, request4, 'auto')
 
-    t.testIsSecondPlayer(request5)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Translation'],
@@ -44,7 +44,7 @@ describe('Translation', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Translation')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Translation'],

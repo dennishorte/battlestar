@@ -26,7 +26,7 @@ describe('Miniaturization', () => {
 
     const request3 = t.choose(game, request2, 'Software')
 
-    t.testIsSecondPlayer(request3)
+    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Miniaturization'],
@@ -48,7 +48,7 @@ describe('Miniaturization', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Miniaturization')
 
-    t.testIsSecondPlayer(request2)
+    t.testIsSecondPlayer(game)
     t.testDeckIsJunked(game, 11)
     t.testBoard(game, {
       dennis: {
