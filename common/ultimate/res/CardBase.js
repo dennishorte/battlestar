@@ -116,6 +116,10 @@ CardBase.prototype.checkIsOnPlayerBoard = function(player) {
   return match && (!player || match[1] === player.name)
 }
 
+CardBase.prototype.checkIsStandardAchievement = function() {
+  return !this.isSpecialAchievement && !this.isDecree
+}
+
 CardBase.prototype.checkHasEcho = function() {
   return this.echo.length > 0
 }
