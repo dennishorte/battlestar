@@ -18,11 +18,12 @@ describe('Buttonwood Agreement', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'green', 'blue', 'red')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'green', 'blue', 'red')
 
-    t.testIsFirstAction(request3)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         red: {
@@ -52,11 +53,12 @@ describe('Buttonwood Agreement', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'green', 'blue', 'yellow')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'green', 'blue', 'yellow')
 
-    t.testIsFirstAction(request3)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         red: ['Coal', 'Gunpowder'],

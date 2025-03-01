@@ -16,10 +16,11 @@ describe("Earhart's Lockheed Electra 10E", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testGameOver(request2, 'dennis', "Earhart's Lockheed Electra 10E")
+    t.testGameOver(request, 'dennis', "Earhart's Lockheed Electra 10E")
   })
 
   test('dogma: achieve', () => {
@@ -35,10 +36,11 @@ describe("Earhart's Lockheed Electra 10E", () => {
       achievements: ['Software'],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         achievements: ['Software'],

@@ -25,9 +25,10 @@ describe("Hot Air Balloon", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Hot Air Balloon')
-    const request3 = t.choose(game, request2, 'Agriculture')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Hot Air Balloon')
+    request = t.choose(game, request, 'Agriculture')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -65,9 +66,10 @@ describe("Hot Air Balloon", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Hot Air Balloon')
-    const request3 = t.choose(game, request2)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Hot Air Balloon')
+    request = t.choose(game, request)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -104,8 +106,9 @@ describe("Hot Air Balloon", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Hot Air Balloon')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Hot Air Balloon')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -142,9 +145,10 @@ describe("Hot Air Balloon", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Hot Air Balloon')
-    const request3 = t.choose(game, request2, 'Philosophy')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Hot Air Balloon')
+    request = t.choose(game, request, 'Philosophy')
 
     t.dumpLog(game)
 

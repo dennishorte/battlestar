@@ -27,13 +27,14 @@ describe("Katana", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Katana')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Katana')
 
-    t.testChoices(request2, ['Archery', 'Fermenting', 'Mysticism'])
+    t.testChoices(request, ['Archery', 'Fermenting', 'Mysticism'])
 
-    const request3 = t.choose(game, request2, 'Fermenting', 'Mysticism')
-    const request4 = t.choose(game, request3, 'auto')
+    request = t.choose(game, request, 'Fermenting', 'Mysticism')
+    request = t.choose(game, request, 'auto')
 
 
     t.testIsSecondPlayer(game)

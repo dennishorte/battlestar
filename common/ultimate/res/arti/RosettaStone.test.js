@@ -17,12 +17,13 @@ describe("Rosetta Stone", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'arti')
-    const request4 = t.choose(game, request3, 'Baghdad Battery')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'arti')
+    request = t.choose(game, request, 'Baghdad Battery')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         green: ['Baghdad Battery'],

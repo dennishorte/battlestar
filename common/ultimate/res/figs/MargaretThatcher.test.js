@@ -16,13 +16,14 @@ describe('Margaret Thatcher', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Margaret Thatcher')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Margaret Thatcher')
 
-    t.testChoices(request2, ['Canning', 'Navigation', 'Margaret Thatcher'])
+    t.testChoices(request, ['Canning', 'Navigation', 'Margaret Thatcher'])
 
-    const request3 = t.choose(game, request2, 'Navigation')
-    const request4 = t.choose(game, request3, 'Canning')
+    request = t.choose(game, request, 'Navigation')
+    request = t.choose(game, request, 'Canning')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -16,11 +16,12 @@ describe("Flash Drive", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Flash Drive')
-    const request3 = t.choose(game, request2, 'Tools', 'Fermenting', 'Engineering', 'Sailing')
-    const request4 = t.choose(game, request3, 'auto')
-    const request5 = t.choose(game, request4, 'green')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Flash Drive')
+    request = t.choose(game, request, 'Tools', 'Fermenting', 'Engineering', 'Sailing')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'green')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -10,8 +10,9 @@ describe('History', () => {
       t.setSplay(game, 'dennis', 'yellow', 'up')
       t.setHand(game, 'dennis', ['Barometer'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Barometer')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Barometer')
 
     expect(t.cards(game, 'achievements')).toStrictEqual(['History'])
   })
@@ -23,8 +24,9 @@ describe('History', () => {
       t.setSplay(game, 'dennis', 'yellow', 'up')
       t.setHand(game, 'dennis', ['Barometer'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Barometer')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Barometer')
 
     expect(t.cards(game, 'achievements')).toStrictEqual([])
   })
@@ -36,8 +38,9 @@ describe('History', () => {
       t.setSplay(game, 'dennis', 'yellow', 'up')
       t.setHand(game, 'dennis', ['Toilet'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Toilet')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Toilet')
 
     expect(t.cards(game, 'achievements')).toStrictEqual([])
   })

@@ -19,11 +19,12 @@ describe('Suburbia', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Suburbia')
-    const request3 = t.choose(game, request2, 'Agriculture', 'Mapmaking')
-    const request4 = t.choose(game, request3, 'auto')
-    const request5 = t.choose(game, request4, 'yes')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Suburbia')
+    request = t.choose(game, request, 'Agriculture', 'Mapmaking')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testDeckIsJunked(game, 9)

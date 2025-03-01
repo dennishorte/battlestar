@@ -23,11 +23,12 @@ describe("Yeager's Bell X-1A", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'Coal')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'Coal')
 
-    t.testIsFirstAction(request3)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         red: ['Composites'],

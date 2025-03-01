@@ -19,13 +19,14 @@ describe("Xianrendong Shards", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'auto')
-    const request4 = t.choose(game, request3, 'Calendar', 'Tools')
-    const request5 = t.choose(game, request4, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'Calendar', 'Tools')
+    request = t.choose(game, request, 'auto')
 
-    t.testIsFirstAction(request5)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         red: ['Oars', 'Archery'],
@@ -50,12 +51,13 @@ describe("Xianrendong Shards", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'auto')
-    const request4 = t.choose(game, request3, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'auto')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         red: ['Oars'],
@@ -75,13 +77,14 @@ describe("Xianrendong Shards", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'auto')
-    const request4 = t.choose(game, request3, 'Calendar', 'Archery')
-    const request5 = t.choose(game, request4, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'Calendar', 'Archery')
+    request = t.choose(game, request, 'auto')
 
-    t.testIsFirstAction(request5)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         red: ['Oars'],

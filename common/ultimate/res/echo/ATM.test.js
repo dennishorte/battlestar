@@ -29,10 +29,11 @@ describe("ATM", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.ATM')
-    const request3 = t.choose(game, request2, 10)
-    const request4 = t.choose(game, request3, 'purple')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.ATM')
+    request = t.choose(game, request, 10)
+    request = t.choose(game, request, 'purple')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

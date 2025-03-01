@@ -18,10 +18,11 @@ describe("Newton-Wickins Telescope", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Newton-Wickins Telescope')
-    const request3 = t.choose(game, request2, 'Canning', 'Lighting', 'Flight')
-    const request4 = t.choose(game, request3, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Newton-Wickins Telescope')
+    request = t.choose(game, request, 'Canning', 'Lighting', 'Flight')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -47,10 +48,11 @@ describe("Newton-Wickins Telescope", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Newton-Wickins Telescope')
-    const request3 = t.choose(game, request2, 'Tools', 'Sailing', 'Mathematics', 'Coal', 'Canning', 'Industrialization', 'Flight')
-    const request4 = t.choose(game, request3, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Newton-Wickins Telescope')
+    request = t.choose(game, request, 'Tools', 'Sailing', 'Mathematics', 'Coal', 'Canning', 'Industrialization', 'Flight')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -20,15 +20,16 @@ describe('Cyrus Cylinder', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testChoices(request2, ['Enterprise', 'Code of Laws'])
+    t.testChoices(request, ['Enterprise', 'Code of Laws'])
 
-    const request3 = t.choose(game, request2, 'Code of Laws')
-    const request4 = t.choose(game, request3, 'micah-blue')
+    request = t.choose(game, request, 'Code of Laws')
+    request = t.choose(game, request, 'micah-blue')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         purple: ['Enterprise', 'Monotheism'],

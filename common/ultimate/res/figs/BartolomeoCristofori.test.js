@@ -8,12 +8,13 @@ describe('Bartolomeo Cristofori', () => {
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setHand(game, 'dennis', ['Construction', 'The Wheel'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.purple')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.purple')
 
-    t.testChoices(request2, ['Construction', 'The Wheel'])
+    t.testChoices(request, ['Construction', 'The Wheel'])
 
-    const request3 = t.choose(game, request2, 'The Wheel')
+    request = t.choose(game, request, 'The Wheel')
 
     t.testZone(game, 'green', ['The Wheel'])
   })
@@ -33,9 +34,10 @@ describe('Bartolomeo Cristofori', () => {
       achievements: ['The Wheel', 'Enterprise', 'The Pirate Code', 'Vaccination', 'Lighting'],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Canning')
-    const request3 = t.choose(game, request2, 'age 5')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Canning')
+    request = t.choose(game, request, 'age 5')
 
     t.testBoard(game, {
       dennis: {
@@ -65,8 +67,9 @@ describe('Bartolomeo Cristofori', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Canning')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Canning')
 
     t.testBoard(game, {
       dennis: {
@@ -96,8 +99,9 @@ describe('Bartolomeo Cristofori', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Canning')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Canning')
 
     t.testBoard(game, {
       dennis: {

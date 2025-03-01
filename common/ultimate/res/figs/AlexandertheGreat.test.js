@@ -8,9 +8,10 @@ describe('Alexander the Great', () => {
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setHand(game, 'dennis', ['Philosophy', 'Code of Laws'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.red')
-    const request3 = t.choose(game, request2, 'Philosophy')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.red')
+    request = t.choose(game, request, 'Philosophy')
 
     t.testZone(game, 'score', ['Philosophy'])
   })
@@ -23,9 +24,10 @@ describe('Alexander the Great', () => {
       t.setColor(game, 'micah', 'purple', ['Al-Kindi'])
       t.setColor(game, 'micah', 'yellow', ['Cai Lun'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Alexander the Great')
-    const request3 = t.choose(game, request2, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Alexander the Great')
+    request = t.choose(game, request, 'auto')
 
     t.testZone(game, 'score', ['Hatshepsut', 'Cai Lun'], { sort: true })
   })
@@ -40,8 +42,9 @@ describe('Alexander the Great', () => {
 
       t.setDeckTop(game, 'base', 7, ['Electricity', 'Bicycle'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Atomic Theory')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Atomic Theory')
 
     t.testZone(game, 'green', ['Electricity'])
     t.testZone(game, 'green', [], { player: 'micah' })
@@ -57,8 +60,9 @@ describe('Alexander the Great', () => {
 
       t.setDeckTop(game, 'base', 7, ['Electricity', 'Bicycle'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Atomic Theory')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Atomic Theory')
 
     t.testZone(game, 'green', ['Bicycle'])
     t.testZone(game, 'green', ['Electricity'], { player: 'micah' })

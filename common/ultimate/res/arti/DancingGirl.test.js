@@ -18,13 +18,14 @@ describe('Dancing Girl', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Dancing Girl')
-    const request3 = t.choose(game, request2, 'Construction')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Dancing Girl')
+    request = t.choose(game, request, 'Construction')
 
     t.dumpLog(game)
 
-//    t.testIsFirstAction(request3)
+//    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         red: ['Construction'],
@@ -51,13 +52,14 @@ describe('Dancing Girl', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Dancing Girl')
-    const request3 = t.choose(game, request2, 'Construction')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Dancing Girl')
+    request = t.choose(game, request, 'Construction')
 
     t.dumpLog(game)
 
-//    t.testIsFirstAction(request3)
+//    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         red: ['Construction'],
@@ -83,10 +85,11 @@ describe('Dancing Girl', () => {
    *     },
    *   })
 
-   *   const request1 = game.run()
-   *   const request2 = t.choose(game, request1, 'Dogma.Dancing Girl')
+   *   let request
+    request = game.run()
+   *   request = t.choose(game, request, 'Dogma.Dancing Girl')
 
-   *   t.testGameOver(request2, 'dennis', 'Dancing Girl')
+   *   t.testGameOver(request, 'dennis', 'Dancing Girl')
    * })
 
    * test('dogma: free artifact action does not win', () => {
@@ -100,10 +103,11 @@ describe('Dancing Girl', () => {
    *     },
    *   })
 
-   *   const request1 = game.run()
-   *   const request2 = t.choose(game, request1, 'dogma')
+   *   let request
+    request = game.run()
+   *   request = t.choose(game, request, 'dogma')
 
-   *   t.testIsFirstAction(request2)
+   *   t.testIsFirstAction(request)
    *   t.testBoard(game, {
    *     micah: {
    *       yellow: ['Dancing Girl'],

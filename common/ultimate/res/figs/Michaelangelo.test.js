@@ -10,9 +10,10 @@ describe('Michaelangelo', () => {
       t.setHand(game, 'dennis', ['Sailing', 'Al-Kindi'])
       t.setDeckTop(game, 'base', 4, ['Enterprise'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.yellow')
-    const request3 = t.choose(game, request2, 'Al-Kindi')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.yellow')
+    request = t.choose(game, request, 'Al-Kindi')
     expect(t.cards(game, 'score').sort()).toStrictEqual([
       'Al-Kindi',
       'Construction',
@@ -29,7 +30,8 @@ describe('Michaelangelo', () => {
       t.setScore(game, 'dennis', ['Tools', 'Construction'])
       t.setHand(game, 'dennis', ['Sailing', 'Al-Kindi'])
     })
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     expect(t.cards(game, 'score').sort()).toStrictEqual([
       'Al-Kindi',

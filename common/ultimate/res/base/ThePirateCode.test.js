@@ -16,13 +16,14 @@ describe('The Pirate Code', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.The Pirate Code')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.The Pirate Code')
 
-    t.testChoices(request2, ['The Wheel', 'Calendar', 'Engineering'])
+    t.testChoices(request, ['The Wheel', 'Calendar', 'Engineering'])
 
-    const request3 = t.choose(game, request2, 'The Wheel', 'Calendar')
-    const request4 = t.choose(game, request3, 'auto')
+    request = t.choose(game, request, 'The Wheel', 'Calendar')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -45,8 +46,9 @@ describe('The Pirate Code', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.The Pirate Code')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.The Pirate Code')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

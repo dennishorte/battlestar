@@ -19,12 +19,13 @@ describe("Molasses Reef Caravel", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'Reformation')
-    const request4 = t.choose(game, request3, 'Sailing')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'Reformation')
+    request = t.choose(game, request, 'Sailing')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         blue: ['Experimentation'],
@@ -49,12 +50,13 @@ describe("Molasses Reef Caravel", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'Reformation')
-    const request4 = t.choose(game, request3, 'Sailing')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'Reformation')
+    request = t.choose(game, request, 'Sailing')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         score: ['Reformation'],

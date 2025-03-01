@@ -18,12 +18,13 @@ describe('Dolly the Sheep', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'no')
-    const request4 = t.choose(game, request3, 'yes')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'no')
+    request = t.choose(game, request, 'yes')
 
-    t.testGameOver(request4, 'dennis', 'Dolly the Sheep')
+    t.testGameOver(request, 'dennis', 'Dolly the Sheep')
   })
 
   test('dogma: no win', () => {
@@ -42,12 +43,13 @@ describe('Dolly the Sheep', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'no')
-    const request4 = t.choose(game, request3, 'yes')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'no')
+    request = t.choose(game, request, 'yes')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         yellow: ['Statistics'],

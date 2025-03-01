@@ -18,15 +18,16 @@ describe("Maldives", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'Sailing', 'Tools')
-    const request4 = t.choose(game, request3, 'auto')
-    const request5 = t.choose(game, request4, 'Calendar')
-    const request6 = t.choose(game, request5, 'The Wheel', 'Masonry')
-    const request7 = t.choose(game, request6, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'Sailing', 'Tools')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'Calendar')
+    request = t.choose(game, request, 'The Wheel', 'Masonry')
+    request = t.choose(game, request, 'auto')
 
-    t.testIsFirstAction(request7)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         score: ['Archery', 'Agriculture', 'Clothing', 'Mathematics'],
@@ -50,10 +51,11 @@ describe("Maldives", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
       },

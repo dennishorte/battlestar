@@ -10,8 +10,9 @@ describe('Buried Treasure', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Buried Treasure')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Buried Treasure')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

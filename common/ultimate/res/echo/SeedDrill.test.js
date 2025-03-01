@@ -17,10 +17,11 @@ describe("Seed Drill", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Seed Drill')
-    const request3 = t.choose(game, request2, 3)
-    const request4 = t.choose(game, request3, 'no')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Seed Drill')
+    request = t.choose(game, request, 3)
+    request = t.choose(game, request, 'no')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -48,10 +49,11 @@ describe("Seed Drill", () => {
       achievements: ['Translation'],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Seed Drill')
-    const request3 = t.choose(game, request2, 3)
-    const request4 = t.choose(game, request3, 'yes')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Seed Drill')
+    request = t.choose(game, request, 3)
+    request = t.choose(game, request, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

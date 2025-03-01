@@ -18,8 +18,9 @@ describe('William Shakespeare', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.purple')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.purple')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -46,7 +47,8 @@ describe('William Shakespeare', () => {
       },
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     expect(game.getScore(t.dennis(game))).toBe(4 + 3)
   })

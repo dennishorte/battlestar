@@ -21,14 +21,15 @@ describe('Hansen Writing Ball', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testChoices(request2, ['Atomic Theory', 'Experimentation'])
+    t.testChoices(request, ['Atomic Theory', 'Experimentation'])
 
-    const request3 = t.choose(game, request2, 'Atomic Theory')
+    request = t.choose(game, request, 'Atomic Theory')
 
-    t.testIsFirstAction(request3)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         yellow: ['Refrigeration'],

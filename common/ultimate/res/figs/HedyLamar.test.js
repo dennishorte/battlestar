@@ -17,12 +17,13 @@ describe('Hedy Lamar', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Hedy Lamar')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Hedy Lamar')
 
-    t.testChoices(request2, ['red', 'blue'])
+    t.testChoices(request, ['red', 'blue'])
 
-    const request3 = t.choose(game, request2, 'blue')
+    request = t.choose(game, request, 'blue')
 
     t.testBoard(game, {
       dennis: {
@@ -63,8 +64,9 @@ describe('Hedy Lamar', () => {
         },
       })
 
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Meld.Hedy Lamar')
+      let request
+    request = game.run()
+      request = t.choose(game, request, 'Meld.Hedy Lamar')
 
       t.testBoard(game, {
         dennis: {
@@ -102,8 +104,9 @@ describe('Hedy Lamar', () => {
         },
       })
 
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Meld.Hedy Lamar')
+      let request
+    request = game.run()
+      request = t.choose(game, request, 'Meld.Hedy Lamar')
 
       t.testBoard(game, {
         dennis: {

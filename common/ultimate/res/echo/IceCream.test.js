@@ -21,10 +21,11 @@ describe("Ice Cream", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Ice Cream')
-    const request3 = t.choose(game, request2, 'yes')
-    const request4 = t.choose(game, request3, 7)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Ice Cream')
+    request = t.choose(game, request, 'yes')
+    request = t.choose(game, request, 7)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

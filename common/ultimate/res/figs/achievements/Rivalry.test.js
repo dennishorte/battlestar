@@ -7,11 +7,12 @@ test('Rivalry', () => {
     t.setColor(game, 'micah', 'yellow', ['Sunshu Ao', 'Sneferu'])
     t.setColor(game, 'scott', 'yellow', ['Shennong'])
   })
-  const request1 = game.run()
-  const request2 = t.choose(game, request1, 'Decree.Rivalry')
-  const request3 = t.choose(game, request2, 'micah')
-  const request4 = t.choose(game, request3, 'Software', 'Coal', 'Mathematics')
-  const request5 = t.choose(game, request4, 'auto')
+  let request
+    request = game.run()
+  request = t.choose(game, request, 'Decree.Rivalry')
+  request = t.choose(game, request, 'micah')
+  request = t.choose(game, request, 'Software', 'Coal', 'Mathematics')
+  request = t.choose(game, request, 'auto')
 
   expect(t.cards(game, 'yellow', 'scott')).toStrictEqual(['Shennong'])
   expect(t.cards(game, 'yellow', 'micah')).toStrictEqual(['Sneferu'])

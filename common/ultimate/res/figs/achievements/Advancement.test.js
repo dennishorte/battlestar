@@ -9,8 +9,9 @@ test('Advancement', () => {
     t.setColor(game, 'dennis', 'purple', ['Monotheism'])
     t.setDeckTop(game, 'base', 8, ['Flight'])
   })
-  const request1 = game.run()
-  const request2 = t.choose(game, request1, 'Decree.Advancement')
+  let request
+    request = game.run()
+  request = t.choose(game, request, 'Decree.Advancement')
 
   expect(t.cards(game, 'hand')).toStrictEqual(['Flight'])
 })

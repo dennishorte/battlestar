@@ -18,8 +18,9 @@ describe('Christopher Polhem', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.yellow')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.yellow')
 
     t.testBoard(game, {
       dennis: {
@@ -42,7 +43,8 @@ describe('Christopher Polhem', () => {
       },
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     expect(game.getScore(t.dennis(game))).toBe(10)
   })

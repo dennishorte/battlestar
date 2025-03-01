@@ -18,9 +18,10 @@ describe('DeLorean DMC-12', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.DeLorean DMC-12')
-    const request3 = t.choose(game, request2, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.DeLorean DMC-12')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -47,10 +48,11 @@ describe('DeLorean DMC-12', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         blue: ['Mathematics'],

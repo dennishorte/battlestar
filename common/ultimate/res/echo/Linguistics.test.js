@@ -17,9 +17,10 @@ describe("Linguistics", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Linguistics')
-    const request3 = t.choose(game, request2, 'Draw a 3')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Linguistics')
+    request = t.choose(game, request, 'Draw a 3')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -45,9 +46,10 @@ describe("Linguistics", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Linguistics')
-    const request3 = t.choose(game, request2, 'Draw and foreshadow a 4')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Linguistics')
+    request = t.choose(game, request, 'Draw and foreshadow a 4')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

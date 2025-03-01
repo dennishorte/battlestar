@@ -19,10 +19,11 @@ describe("Priest-King", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         yellow: ['Masonry'],
@@ -49,10 +50,11 @@ describe("Priest-King", () => {
       achievements: ['Pottery'],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         yellow: ['Masonry'],

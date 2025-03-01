@@ -16,12 +16,13 @@ describe('Isaac Newton', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Isaac Newton')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Isaac Newton')
 
-    t.testChoices(request2, ['blue', 'red'])
+    t.testChoices(request, ['blue', 'red'])
 
-    const request3 = t.choose(game, request2, 'blue')
+    request = t.choose(game, request, 'blue')
 
     t.testBoard(game, {
       dennis: {
@@ -51,9 +52,10 @@ describe('Isaac Newton', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Draw.draw a card')
-    const request3 = t.choose(game, request2, 'micah')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Draw.draw a card')
+    request = t.choose(game, request, 'micah')
 
     t.testBoard(game, {
       dennis: {
@@ -80,8 +82,9 @@ describe('Isaac Newton', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.The Wheel')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.The Wheel')
 
     t.testBoard(game, {
       dennis: {

@@ -19,12 +19,13 @@ describe('Tran Huang Dao', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Tran Huang Dao')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Tran Huang Dao')
 
-    t.testChoices(request2, ['Tran Huang Dao', 'Engineering'])
+    t.testChoices(request, ['Tran Huang Dao', 'Engineering'])
 
-    const request3 = t.choose(game, request2, 'Engineering')
+    request = t.choose(game, request, 'Engineering')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -51,7 +52,8 @@ describe('Tran Huang Dao', () => {
       },
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     expect(game.getBiscuitsByPlayer(t.dennis(game))).toStrictEqual({
       c: 3,

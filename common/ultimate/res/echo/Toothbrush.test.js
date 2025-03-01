@@ -13,14 +13,15 @@ describe("Toothbrush", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Toothbrush')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Toothbrush')
 
-    t.testChoices(request2, [1, 3])
+    t.testChoices(request, [1, 3])
 
-    const request3 = t.choose(game, request2, 3)
-    const request4 = t.choose(game, request3, 'yellow')
-    const request5 = t.choose(game, request4, 'yes')
+    request = t.choose(game, request, 3)
+    request = t.choose(game, request, 'yellow')
+    request = t.choose(game, request, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

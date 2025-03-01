@@ -17,8 +17,9 @@ describe('Pele', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.purple')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.purple')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -48,10 +49,11 @@ describe('Pele', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.purple')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.purple')
 
-    t.testGameOver(request2, 'dennis', 'Pele')
+    t.testGameOver(request, 'dennis', 'Pele')
     t.testBoard(game, {
       dennis: {
         purple: ['Pele'],

@@ -17,11 +17,12 @@ describe('Road Building', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Road Building')
-    const request3 = t.choose(game, request2, 'Tools', 'Computers')
-    const request4 = t.choose(game, request3, 'Tools')
-    const request5 = t.choose(game, request4, 'micah')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Road Building')
+    request = t.choose(game, request, 'Tools', 'Computers')
+    request = t.choose(game, request, 'Tools')
+    request = t.choose(game, request, 'micah')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -48,9 +49,10 @@ describe('Road Building', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Road Building')
-    const request3 = t.choose(game, request2, 'Computers')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Road Building')
+    request = t.choose(game, request, 'Computers')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

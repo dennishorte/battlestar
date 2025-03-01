@@ -8,8 +8,9 @@ describe('A.I.', () => {
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setDeckTop(game, 'base', 10, ['Globalization'])
     })
-    const request1 = game.run()
-    const request2 = game.respondToInputRequest({
+    let request
+    request = game.run()
+    request = game.respondToInputRequest({
       actor: 'dennis',
       title: 'Choose First Action',
       selection: [{
@@ -28,8 +29,9 @@ describe('A.I.', () => {
       t.setColor(game, 'dennis', 'blue', ['Software'])
       t.setColor(game, 'micah', 'red', ['Robotics'])
     })
-    const request1 = game.run()
-    const request2 = game.respondToInputRequest({
+    let request
+    request = game.run()
+    request = game.respondToInputRequest({
       actor: 'dennis',
       title: 'Choose First Action',
       selection: [{
@@ -38,7 +40,7 @@ describe('A.I.', () => {
       }],
     })
 
-    expect(request2).toEqual(expect.objectContaining({
+    expect(request).toEqual(expect.objectContaining({
       data: expect.objectContaining({
         player: expect.objectContaining({ name: 'micah' }),
         reason: 'A.I.'

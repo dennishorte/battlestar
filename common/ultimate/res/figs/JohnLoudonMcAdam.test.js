@@ -18,9 +18,10 @@ describe('John Loudon McAdam', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.yellow')
-    const request3 = t.choose(game, request2, 'Canning')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.yellow')
+    request = t.choose(game, request, 'Canning')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -46,8 +47,9 @@ describe('John Loudon McAdam', () => {
       achievements: ['The Wheel', 'Calendar', 'Machinery'],
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
-    t.testActionChoices(request1, 'Achieve', ['age 1', 'age 2', 'Sparta'])
+    t.testActionChoices(request, 'Achieve', ['age 1', 'age 2', 'Sparta'])
   })
 })

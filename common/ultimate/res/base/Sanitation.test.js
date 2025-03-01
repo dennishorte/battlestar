@@ -16,11 +16,12 @@ describe('Sanitation', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Sanitation')
-    const request3 = t.choose(game, request2, 'Services')
-    const request4 = t.choose(game, request3, 'Tools')
-    const request5 = t.choose(game, request4, 7)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Sanitation')
+    request = t.choose(game, request, 'Services')
+    request = t.choose(game, request, 'Tools')
+    request = t.choose(game, request, 7)
 
     t.testIsSecondPlayer(game)
     t.testDeckIsJunked(game, 7)

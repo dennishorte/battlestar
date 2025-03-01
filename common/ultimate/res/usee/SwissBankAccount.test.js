@@ -10,8 +10,9 @@ describe('Swiss Bank Account', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Swiss Bank Account')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Swiss Bank Account')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

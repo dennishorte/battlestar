@@ -18,8 +18,9 @@ describe('Zhang Heng', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Zhang Heng')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Zhang Heng')
 
 
     t.testIsSecondPlayer(game)
@@ -41,7 +42,8 @@ describe('Zhang Heng', () => {
       },
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     expect(game.getBonuses(t.dennis(game))).toStrictEqual([10, 4, 2])
   })

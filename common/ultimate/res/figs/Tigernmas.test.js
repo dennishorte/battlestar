@@ -17,8 +17,9 @@ describe('Tigernmas', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.red')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.red')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -42,7 +43,8 @@ describe('Tigernmas', () => {
       },
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     expect(game.getScore(t.dennis(game))).toBe(2)
   })

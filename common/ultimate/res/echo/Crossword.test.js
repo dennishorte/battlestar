@@ -21,9 +21,10 @@ describe("Crossword", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Crossword')
-    const request3 = t.choose(game, request2, 8)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Crossword')
+    request = t.choose(game, request, 8)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

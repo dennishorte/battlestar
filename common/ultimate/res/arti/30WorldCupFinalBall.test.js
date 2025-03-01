@@ -19,10 +19,11 @@ describe('30 World Cup Final Ball', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         hand: ['Quantum Theory'],
@@ -49,10 +50,11 @@ describe('30 World Cup Final Ball', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         blue: ['Alchemy'],
@@ -83,10 +85,11 @@ describe('30 World Cup Final Ball', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         hand: ['Socialism', 'Sailing'],

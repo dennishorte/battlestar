@@ -21,12 +21,13 @@ describe("Plush Beweglich Rod Bear", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 9)
-    const request4 = t.choose(game, request3, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 9)
+    request = t.choose(game, request, 'auto')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         blue: {

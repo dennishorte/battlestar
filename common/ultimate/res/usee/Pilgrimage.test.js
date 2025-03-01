@@ -12,12 +12,13 @@ describe('Pilgrimage', () => {
       achievements: ['Domestication', 'Engineering', 'Reformation'],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Pilgrimage')
-    const request3 = t.choose(game, request2, 'Agriculture')
-    const request4 = t.choose(game, request3, 'Construction')
-    const request5 = t.choose(game, request4, 'Machinery')
-    const request6 = t.choose(game, request5, 'yes')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Pilgrimage')
+    request = t.choose(game, request, 'Agriculture')
+    request = t.choose(game, request, 'Construction')
+    request = t.choose(game, request, 'Machinery')
+    request = t.choose(game, request, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testDeckIsJunked(game, 1)

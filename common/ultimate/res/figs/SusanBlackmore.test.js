@@ -24,10 +24,11 @@ describe('Susan Blackmore', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.blue')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.blue')
 
-    t.testChoices(request2, [
+    t.testChoices(request, [
       "Email: Draw and foreshadow a {0}.",
       "Stephen Hawking: Score the bottom card of this color.",
       "Stephen Hawking: Draw and tuck a {0}.",
@@ -35,7 +36,7 @@ describe('Susan Blackmore', () => {
       "Daedalus: Score the bottom card of this color."
     ])
 
-    const request3 = game.respondToInputRequest({
+    request = game.respondToInputRequest({
       actor: 'dennis',
       title: 'Choose',
       selection: ['Daedalus: Score the bottom card of this color.'],
@@ -73,8 +74,9 @@ describe('Susan Blackmore', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Experimentation')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Experimentation')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

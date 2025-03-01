@@ -19,18 +19,19 @@ describe("Pavlovian Tusk", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testChoices(request2, ['Experimentation', 'Perspective', 'Gunpowder'])
+    t.testChoices(request, ['Experimentation', 'Perspective', 'Gunpowder'])
 
-    const request3 = t.choose(game, request2, 'Perspective')
+    request = t.choose(game, request, 'Perspective')
 
-    t.testChoices(request3, ['Experimentation', 'Gunpowder'])
+    t.testChoices(request, ['Experimentation', 'Gunpowder'])
 
-    const request4 = t.choose(game, request3, 'Experimentation')
+    request = t.choose(game, request, 'Experimentation')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         green: ['Navigation'],
@@ -54,18 +55,19 @@ describe("Pavlovian Tusk", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testChoices(request2, ['Sailing', 'Tools', 'Archery'])
+    t.testChoices(request, ['Sailing', 'Tools', 'Archery'])
 
-    const request3 = t.choose(game, request2, 'Archery')
+    request = t.choose(game, request, 'Archery')
 
-    t.testChoices(request3, ['Sailing', 'Tools'])
+    t.testChoices(request, ['Sailing', 'Tools'])
 
-    const request4 = t.choose(game, request3, 'Tools')
+    request = t.choose(game, request, 'Tools')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         hand: ['Sailing', 'Enterprise'],

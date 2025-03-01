@@ -12,8 +12,9 @@ describe('Universe Achievement', () => {
       t.setColor(game, 'dennis', 'blue', ['Rocketry'])
       t.setHand(game, 'dennis', ['Empiricism'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Empiricism')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Empiricism')
 
     expect(t.cards(game, 'achievements')).toStrictEqual(['Universe'])
   })

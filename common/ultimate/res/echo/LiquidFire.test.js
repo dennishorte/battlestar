@@ -22,8 +22,9 @@ describe("Liquid Fire", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Liquid Fire')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Liquid Fire')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -57,9 +58,10 @@ describe("Liquid Fire", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Liquid Fire')
-    const request3 = t.choose(game, request2, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Liquid Fire')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -83,8 +85,9 @@ describe("Liquid Fire", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Liquid Fire')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Liquid Fire')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

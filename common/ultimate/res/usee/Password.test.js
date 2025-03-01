@@ -10,8 +10,9 @@ describe('Password', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Password')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Password')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

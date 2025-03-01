@@ -16,12 +16,13 @@ describe("Twister", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'Sailing')
-    const request4 = t.choose(game, request3, 'Mathematics')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'Sailing')
+    request = t.choose(game, request, 'Mathematics')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       micah: {
         red: ['Oars', 'Coal'],

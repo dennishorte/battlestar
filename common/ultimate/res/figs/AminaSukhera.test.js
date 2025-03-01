@@ -9,9 +9,10 @@ describe('Amina Sukhera', () => {
       t.setColor(game, 'dennis', 'purple', ['Enterprise'])
       t.setColor(game, 'micah', 'purple', ['City States', 'Code of Laws'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.red')
-    const request3 = t.choose(game, request2, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.red')
+    request = t.choose(game, request, 'auto')
 
     t.testZone(game, 'score', ['Enterprise', 'Code of Laws'], { sort: true })
   })
@@ -24,8 +25,9 @@ describe('Amina Sukhera', () => {
       t.setColor(game, 'micah', 'purple', ['Al-Kindi'])
       t.setColor(game, 'micah', 'yellow', ['Michaelangelo'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Amina Sukhera')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Amina Sukhera')
 
     t.testZone(game, 'score', ['Michaelangelo'])
   })
@@ -38,8 +40,9 @@ describe('Amina Sukhera', () => {
       t.setColor(game, 'dennis', 'yellow', ['Fermenting'])
       t.setScore(game, 'dennis', ['Statistics'])
     })
-    const request1 = game.run()
+    let request
+    request = game.run()
 
-    t.testActionChoices(request1, 'Achieve', ['age 1', 'The Wheel'])
+    t.testActionChoices(request, 'Achieve', ['age 1', 'The Wheel'])
   })
 })

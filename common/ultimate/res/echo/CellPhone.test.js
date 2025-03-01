@@ -22,10 +22,11 @@ describe("Cell Phone", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Cell Phone')
-    const request3 = t.choose(game, request2, 'green')
-    const request4 = t.choose(game, request3, 'Software')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Cell Phone')
+    request = t.choose(game, request, 'green')
+    request = t.choose(game, request, 'Software')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

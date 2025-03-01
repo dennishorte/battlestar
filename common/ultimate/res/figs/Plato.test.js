@@ -7,9 +7,10 @@ describe('Plato', () => {
       t.setColor(game, 'dennis', 'blue', ['Mathematics', 'Tools'])
       t.setColor(game, 'dennis', 'purple', ['Plato', 'Mysticism'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.purple')
-    const request3 = t.choose(game, request2, 'blue')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.purple')
+    request = t.choose(game, request, 'blue')
 
     expect(t.zone(game, 'blue').splay).toBe('left')
   })
@@ -28,7 +29,8 @@ describe('Plato', () => {
       t.setSplay(game, 'dennis', 'blue', 'left')
       t.setSplay(game, 'dennis', 'yellow', 'up')
     })
-    const request1 = game.run()
+    let request
+    request = game.run()
     const biscuits = game.getBiscuits()
     expect(biscuits.dennis).toEqual({
       c: 1 + 2,

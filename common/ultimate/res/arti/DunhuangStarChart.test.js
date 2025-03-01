@@ -18,11 +18,12 @@ describe('Dunhuang Star Chart', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'auto')
 
-    t.testIsFirstAction(request3)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         hand: ['Canning'],

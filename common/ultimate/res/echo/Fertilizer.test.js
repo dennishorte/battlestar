@@ -22,11 +22,12 @@ describe("Fertilizer", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Fertilizer')
-    const request3 = t.choose(game, request2, 'Construction')
-    const request4 = t.choose(game, request3, 'auto')
-    const request5 = t.choose(game, request4, 2)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Fertilizer')
+    request = t.choose(game, request, 'Construction')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 2)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -60,10 +61,11 @@ describe("Fertilizer", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Fertilizer')
-    const request3 = t.choose(game, request2)
-    const request4 = t.choose(game, request3, 2)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Fertilizer')
+    request = t.choose(game, request)
+    request = t.choose(game, request, 2)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

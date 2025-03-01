@@ -10,9 +10,10 @@ describe('Philosophy', () => {
       game.testSetBreakpoint('before-first-player', (game) => {
         t.setColor(game, 'dennis', 'red', ['Construction', 'Industrialization'])
       })
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Dogma.Philosophy')
-      t.choose(game, request2, 'red')
+      let request
+    request = game.run()
+      request = t.choose(game, request, 'Dogma.Philosophy')
+      t.choose(game, request, 'red')
 
       const red = game.getZoneByPlayer(t.dennis(game), 'red')
       expect(red.splay).toBe('left')
@@ -23,9 +24,10 @@ describe('Philosophy', () => {
       game.testSetBreakpoint('before-first-player', (game) => {
         t.setColor(game, 'dennis', 'red', ['Construction', 'Industrialization'])
       })
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Dogma.Philosophy')
-      t.choose(game, request2)
+      let request
+    request = game.run()
+      request = t.choose(game, request, 'Dogma.Philosophy')
+      t.choose(game, request)
 
       const red = game.getZoneByPlayer(t.dennis(game), 'red')
       expect(red.splay).toBe('none')
@@ -38,9 +40,10 @@ describe('Philosophy', () => {
       game.testSetBreakpoint('before-first-player', (game) => {
         t.setHand(game, 'dennis', ['Construction', 'Industrialization'])
       })
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Dogma.Philosophy')
-      t.choose(game, request2, 'Industrialization')
+      let request
+    request = game.run()
+      request = t.choose(game, request, 'Dogma.Philosophy')
+      t.choose(game, request, 'Industrialization')
 
       const score = game.getZoneByPlayer(t.dennis(game), 'score').cards().map(c => c.name)
       expect(score).toStrictEqual(['Industrialization'])
@@ -51,9 +54,10 @@ describe('Philosophy', () => {
       game.testSetBreakpoint('before-first-player', (game) => {
         t.setHand(game, 'dennis', ['Construction', 'Industrialization'])
       })
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Dogma.Philosophy')
-      t.choose(game, request2)
+      let request
+    request = game.run()
+      request = t.choose(game, request, 'Dogma.Philosophy')
+      t.choose(game, request)
 
       const score = game.getZoneByPlayer(t.dennis(game), 'score').cards().map(c => c.name)
       expect(score).toStrictEqual([])

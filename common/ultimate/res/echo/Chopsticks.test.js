@@ -18,9 +18,10 @@ describe("Chopsticks", () => {
       achievements: [],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Chopsticks')
-    const request3 = t.choose(game, request2, 'yes')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Chopsticks')
+    request = t.choose(game, request, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -52,9 +53,10 @@ describe("Chopsticks", () => {
       achievements: [],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Chopsticks')
-    const request3 = t.choose(game, request2, 'no')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Chopsticks')
+    request = t.choose(game, request, 'no')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

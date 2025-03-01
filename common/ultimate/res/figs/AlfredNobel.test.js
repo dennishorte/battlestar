@@ -8,9 +8,10 @@ describe('Alfred Nobel', () => {
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setHand(game, 'dennis', ['Philosophy', 'Code of Laws'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.green')
-    const request3 = t.choose(game, request2, 'Philosophy')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.green')
+    request = t.choose(game, request, 'Philosophy')
 
     t.testZone(game, 'score', ['Philosophy'])
   })
@@ -25,7 +26,8 @@ describe('Alfred Nobel', () => {
       t.setColor(game, 'micah', 'blue', ['Tools'])
       t.setColor(game, 'micah', 'red', ['Archery'])
     })
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     const achs = game.getAchievementsByPlayer(t.dennis(game))
     expect(achs.total).toBe(2)

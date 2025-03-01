@@ -17,10 +17,11 @@ describe("Social Network", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Social Network')
-    const request3 = t.choose(game, request2, '{f}')
-    const request4 = t.choose(game, request3, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Social Network')
+    request = t.choose(game, request, '{f}')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -47,11 +48,12 @@ describe("Social Network", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Social Network')
-    const request3 = t.choose(game, request2, '{f}')
-    const request4 = t.choose(game, request3, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Social Network')
+    request = t.choose(game, request, '{f}')
+    request = t.choose(game, request, 'auto')
 
-    t.testGameOver(request4, 'dennis', 'Social Network')
+    t.testGameOver(request, 'dennis', 'Social Network')
   })
 })

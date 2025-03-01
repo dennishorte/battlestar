@@ -17,8 +17,9 @@ describe('Stephen Hawking', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.blue')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.blue')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -55,9 +56,10 @@ describe('Stephen Hawking', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.The Wheel')
-    const request3 = t.choose(game, request2, 'blue')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.The Wheel')
+    request = t.choose(game, request, 'blue')
 
     t.testBoard(game, {
       dennis: {
@@ -93,8 +95,9 @@ describe('Stephen Hawking', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Stephen Hawking')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Stephen Hawking')
 
     t.setBoard(game, {
       dennis: {

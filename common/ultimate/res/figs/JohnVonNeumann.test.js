@@ -17,9 +17,10 @@ describe('John Von Neumann', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.John Von Neumann')
-    const request3 = t.choose(game, request2, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.John Von Neumann')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -42,8 +43,9 @@ describe('John Von Neumann', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.John Von Neumann')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.John Von Neumann')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -67,10 +69,11 @@ describe('John Von Neumann', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.John Von Neumann')
-    const request3 = t.choose(game, request2, 'auto')
-    const request4 = t.choose(game, request3, 'Homer') // fade
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.John Von Neumann')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'Homer') // fade
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -90,7 +93,8 @@ describe('John Von Neumann', () => {
       },
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     expect(game.getBiscuitsByPlayer(t.dennis(game))).toEqual({
       k: 0,

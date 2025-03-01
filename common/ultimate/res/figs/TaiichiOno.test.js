@@ -17,8 +17,9 @@ describe('Taiichi Ono', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Taiichi Ono')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Taiichi Ono')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -44,8 +45,9 @@ describe('Taiichi Ono', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Experimentation')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Experimentation')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

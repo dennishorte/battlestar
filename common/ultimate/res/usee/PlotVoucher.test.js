@@ -10,8 +10,9 @@ describe('Plot Voucher', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Plot Voucher')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Plot Voucher')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

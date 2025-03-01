@@ -14,10 +14,11 @@ describe('Fusion', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Fusion')
-    const request3 = t.choose(game, request2, 9)
-    const request4 = t.choose(game, request3, 7)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Fusion')
+    request = t.choose(game, request, 9)
+    request = t.choose(game, request, 7)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

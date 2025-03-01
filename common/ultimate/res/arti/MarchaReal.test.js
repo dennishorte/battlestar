@@ -13,11 +13,12 @@ describe("Marcha Real", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'auto')
 
-    t.testIsFirstAction(request3)
+    t.testIsFirstAction(request)
     t.testBoard(game, {})
   })
 
@@ -31,12 +32,13 @@ describe("Marcha Real", () => {
       achievements: ['The Wheel', 'Robotics'],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'auto')
-    const request4 = t.choose(game, request3, 'age 10')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'age 10')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         achievements: ['Robotics'],
@@ -58,11 +60,12 @@ describe("Marcha Real", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'auto')
 
-    t.testIsFirstAction(request3)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         hand: ['Machinery'],

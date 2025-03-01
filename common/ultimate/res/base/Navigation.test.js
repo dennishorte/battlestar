@@ -15,12 +15,13 @@ describe('Navigation', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Navigation')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Navigation')
 
-    t.testChoices(request2, ['Calendar', 'Machinery'])
+    t.testChoices(request, ['Calendar', 'Machinery'])
 
-    const request3 = t.choose(game, request2, 'Calendar')
+    request = t.choose(game, request, 'Calendar')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

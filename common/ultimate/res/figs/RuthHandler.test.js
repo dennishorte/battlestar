@@ -18,9 +18,10 @@ describe('Ruth Handler', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.yellow')
-    const request3 = t.choose(game, request2, 'Lighting')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.yellow')
+    request = t.choose(game, request, 'Lighting')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -45,9 +46,10 @@ describe('Ruth Handler', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Antibiotics')
-    const request3 = t.choose(game, request2, 'Agriculture')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Antibiotics')
+    request = t.choose(game, request, 'Agriculture')
 
     t.testBoard(game, {
       dennis: {

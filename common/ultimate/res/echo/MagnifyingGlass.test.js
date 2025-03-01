@@ -19,12 +19,13 @@ describe("Magnifying Glass", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Magnifying Glass')
-    const request3 = t.choose(game, request2, 'Sailing')
-    const request4 = t.choose(game, request3, 4)
-    const request5 = t.choose(game, request4, 'auto')
-    const request6 = t.choose(game, request5, 'yellow')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Magnifying Glass')
+    request = t.choose(game, request, 'Sailing')
+    request = t.choose(game, request, 4)
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'yellow')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

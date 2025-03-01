@@ -10,10 +10,11 @@ describe('Construction', () => {
       game.testSetBreakpoint('before-first-player', (game) => {
         t.setHand(game, 'micah', handNames)
       })
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Dogma.Construction')
+      let request
+    request = game.run()
+      request = t.choose(game, request, 'Dogma.Construction')
 
-      const selector = request2.selectors[0]
+      const selector = request.selectors[0]
       expect(selector.actor).toBe('micah')
       expect(selector.count).toBe(2)
       expect(selector.choices.sort()).toStrictEqual(handNames)
@@ -25,10 +26,11 @@ describe('Construction', () => {
       game.testSetBreakpoint('before-first-player', (game) => {
         t.setHand(game, 'micah', handNames)
       })
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Dogma.Construction')
-      const request3 = t.choose(game, request2, 'Experimentation', 'Statistics')
-      const request4 = t.choose(game, request3, 'auto')
+      let request
+    request = game.run()
+      request = t.choose(game, request, 'Dogma.Construction')
+      request = t.choose(game, request, 'Experimentation', 'Statistics')
+      request = t.choose(game, request, 'auto')
 
       const micah = game.getPlayerByName('micah')
       const micahHandAges = game.getZoneByPlayer(micah, 'hand').cards().map(c => c.age).sort()
@@ -45,8 +47,9 @@ describe('Construction', () => {
         t.setColor(game, 'dennis', 'blue', ['Mathematics'])
         t.setColor(game, 'dennis', 'purple', ['Monotheism'])
       })
-      const request1 = game.run()
-      t.choose(game, request1, 'Dogma.Construction')
+      let request
+    request = game.run()
+      t.choose(game, request, 'Dogma.Construction')
 
       const dennis = game.getPlayerByName('dennis')
       const dennisAchievements = game.getZoneByPlayer(dennis, 'achievements').cards().map(c => c.name)
@@ -69,8 +72,9 @@ describe('Construction', () => {
         t.setColor(game, 'micah', 'purple', ['Reformation'])
       })
 
-      const request1 = game.run()
-      t.choose(game, request1, 'Dogma.Construction')
+      let request
+    request = game.run()
+      t.choose(game, request, 'Dogma.Construction')
 
       const dennis = game.getPlayerByName('dennis')
       const dennisAchievements = game.getZoneByPlayer(dennis, 'achievements').cards().map(c => c.name)
@@ -85,8 +89,9 @@ describe('Construction', () => {
         t.setColor(game, 'dennis', 'blue', ['Mathematics'])
         // t.setColor(game, 'dennis', 'purple', ['Monotheism'])
       })
-      const request1 = game.run()
-      t.choose(game, request1, 'Dogma.Construction')
+      let request
+    request = game.run()
+      t.choose(game, request, 'Dogma.Construction')
 
       const dennis = game.getPlayerByName('dennis')
       const dennisAchievements = game.getZoneByPlayer(dennis, 'achievements').cards().map(c => c.name)

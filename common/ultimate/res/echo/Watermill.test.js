@@ -19,10 +19,11 @@ describe("Watermill", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Watermill')
-    const request3 = t.choose(game, request2, 'Sailing')
-    const request4 = t.choose(game, request3)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Watermill')
+    request = t.choose(game, request, 'Sailing')
+    request = t.choose(game, request)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

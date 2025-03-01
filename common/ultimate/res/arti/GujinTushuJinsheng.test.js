@@ -22,12 +22,13 @@ describe('Gujin Tushu Jinsheng', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Gujin Tushu Jinsheng')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Gujin Tushu Jinsheng')
 
-    t.testChoices(request2, ['Sailing', 'Experimentation'])
+    t.testChoices(request, ['Sailing', 'Experimentation'])
 
-    const request3 = t.choose(game, request2, 'Sailing')
+    request = t.choose(game, request, 'Sailing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -56,10 +57,11 @@ describe('Gujin Tushu Jinsheng', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         red: ['Coal'],

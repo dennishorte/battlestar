@@ -24,12 +24,13 @@ describe('Self Service', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Self Service')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Self Service')
 
-    t.testChoices(request2, ['Computers', 'Domestication'])
+    t.testChoices(request, ['Computers', 'Domestication'])
 
-    const request3 = t.choose(game, request2, 'Domestication')
+    request = t.choose(game, request, 'Domestication')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -63,10 +64,11 @@ describe('Self Service', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Self Service')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Self Service')
 
-    t.testGameOver(request2, 'dennis', 'Self Service')
+    t.testGameOver(request, 'dennis', 'Self Service')
   })
 
   test('dogma (you win 2)', () => {
@@ -89,9 +91,10 @@ describe('Self Service', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Self Service')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Self Service')
 
-    t.testGameOver(request2, 'dennis', 'Self Service')
+    t.testGameOver(request, 'dennis', 'Self Service')
   })
 })

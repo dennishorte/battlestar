@@ -23,8 +23,9 @@ describe("Saxophone", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Saxophone')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Saxophone')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -57,10 +58,11 @@ describe("Saxophone", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Saxophone')
-    const request3 = t.choose(game, request2, 'purple')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Saxophone')
+    request = t.choose(game, request, 'purple')
 
-    t.testGameOver(request3, 'dennis', 'Saxophone')
+    t.testGameOver(request, 'dennis', 'Saxophone')
   })
 })

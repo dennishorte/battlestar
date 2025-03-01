@@ -17,8 +17,9 @@ describe('Daedalus', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Daedalus')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Daedalus')
 
     t.testBoard(game, {
       dennis: {
@@ -39,9 +40,10 @@ describe('Daedalus', () => {
       achievements: ['The Wheel', 'Calendar', 'Engineering', 'Enterprise'],
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
-    t.testActionChoices(request1, 'Achieve', ['age 1', 'age 2', 'age 3'])
+    t.testActionChoices(request, 'Achieve', ['age 1', 'age 2', 'age 3'])
   })
 
   test('karma: score', () => {
@@ -53,7 +55,8 @@ describe('Daedalus', () => {
       },
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     expect(game.getScore(t.dennis(game))).toBe(7)
   })

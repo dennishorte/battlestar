@@ -23,12 +23,13 @@ describe('Benjamin Franklin', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Benjamin Franklin')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Benjamin Franklin')
 
-    t.testChoices(request2, ['Benjamin Franklin', 'Shennong'])
+    t.testChoices(request, ['Benjamin Franklin', 'Shennong'])
 
-    const request3 = t.choose(game, request2, 'Shennong')
+    request = t.choose(game, request, 'Shennong')
 
     t.testBoard(game, {
       dennis: {

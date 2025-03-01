@@ -17,8 +17,9 @@ describe('Martin Scorsese', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Martin Scorsese')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Martin Scorsese')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -40,12 +41,13 @@ describe('Martin Scorsese', () => {
       achievements: ['Code of Laws', 'Canning', 'Robotics']
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Fu Xi')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Fu Xi')
 
-    t.testChoices(request2, ['age 1', 'age 6', 'age 10'])
+    t.testChoices(request, ['age 1', 'age 6', 'age 10'])
 
-    const request3 = t.choose(game, request2, 'age 6')
+    request = t.choose(game, request, 'age 6')
 
     t.testIsSecondPlayer(game)
     t.setBoard(game, {

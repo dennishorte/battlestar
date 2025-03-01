@@ -18,8 +18,9 @@ describe('Sneferu', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.yellow')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.yellow')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -43,7 +44,8 @@ describe('Sneferu', () => {
       },
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     expect(game.getBiscuitsByPlayer(t.dennis(game)).c).toBe(5)
   })

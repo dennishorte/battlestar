@@ -13,11 +13,12 @@ describe('Encyclopedia', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Encyclopedia')
-    const request3 = t.choose(game, request2, 3)
-    const request4 = t.choose(game, request3, 'auto')
-    const request5 = t.choose(game, request4)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Encyclopedia')
+    request = t.choose(game, request, 3)
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -38,10 +39,11 @@ describe('Encyclopedia', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Encyclopedia')
-    const request3 = t.choose(game, request2)
-    const request4 = t.choose(game, request3, 7)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Encyclopedia')
+    request = t.choose(game, request)
+    request = t.choose(game, request, 7)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

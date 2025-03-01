@@ -19,8 +19,9 @@ describe('Ximen Bao', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.yellow')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.yellow')
 
 
     t.testIsSecondPlayer(game)
@@ -60,14 +61,15 @@ describe('Ximen Bao', () => {
       }
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
-    t.testActionChoices(request1, 'Inspire', ['yellow', 'purple', 'red'])
+    t.testActionChoices(request, 'Inspire', ['yellow', 'purple', 'red'])
 
-    const request2 = t.choose(game, request1, 'Inspire.yellow')
-    const request3 = t.choose(game, request2, 'Archery')
-    const request4 = t.choose(game, request3, 'Monotheism')
-    const request5 = t.choose(game, request4, 'Ximen Bao')
+    request = t.choose(game, request, 'Inspire.yellow')
+    request = t.choose(game, request, 'Archery')
+    request = t.choose(game, request, 'Monotheism')
+    request = t.choose(game, request, 'Ximen Bao')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -106,9 +108,10 @@ describe('Ximen Bao', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Ximen Bao')
-    const request3 = t.choose(game, request2, 2)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Ximen Bao')
+    request = t.choose(game, request, 2)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

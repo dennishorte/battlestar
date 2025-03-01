@@ -21,10 +21,11 @@ describe('Vaccination', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Vaccination')
-    const request3 = t.choose(game, request2, 1)
-    const request4 = t.choose(game, request3, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Vaccination')
+    request = t.choose(game, request, 1)
+    request = t.choose(game, request, 'auto')
 
     t.testBoard(game, {
       dennis: {
@@ -46,8 +47,9 @@ describe('Vaccination', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Vaccination')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Vaccination')
 
     t.testIsSecondPlayer(game)
 

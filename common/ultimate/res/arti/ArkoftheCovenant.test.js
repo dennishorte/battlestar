@@ -18,10 +18,11 @@ describe('Ark of the Covenant', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         blue: ['Mathematics'],
@@ -38,8 +39,9 @@ describe('Ark of the Covenant', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Ark of the Covenant')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Ark of the Covenant')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -11,9 +11,10 @@ describe("Reformation", () => {
         yellow: ['Agriculture', 'Canal Building'],
       },
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Reformation')
-    const request3 = t.choose(game, request2, 'yellow')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Reformation')
+    request = t.choose(game, request, 'yellow')
 
     t.testBoard(game, {
       dennis: {
@@ -34,9 +35,10 @@ describe("Reformation", () => {
         yellow: ['Agriculture', 'Canal Building'],
       },
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Reformation')
-    const request3 = t.choose(game, request2)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Reformation')
+    request = t.choose(game, request)
 
     t.testBoard(game, {
       dennis: {
@@ -62,11 +64,12 @@ describe("Reformation", () => {
         },
       },
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Reformation')
-    const request3 = t.choose(game, request2, 'yes') // Choose to tuck
-    const request4 = t.choose(game, request3, 'Agriculture', 'Metalworking') // Tuck two cards
-    const request5 = t.choose(game, request4, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Reformation')
+    request = t.choose(game, request, 'yes') // Choose to tuck
+    request = t.choose(game, request, 'Agriculture', 'Metalworking') // Tuck two cards
+    request = t.choose(game, request, 'auto')
 
     t.testBoard(game, {
       dennis: {

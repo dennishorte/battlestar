@@ -17,8 +17,9 @@ describe('Marie Curie', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Marie Curie')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Marie Curie')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -38,7 +39,8 @@ describe('Marie Curie', () => {
       },
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     expect(game.getAchievementsByPlayer(t.dennis(game)).other.length).toBe(2)
   })

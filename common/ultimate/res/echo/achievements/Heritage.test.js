@@ -18,9 +18,10 @@ describe('Heritage', () => {
         'Atomic Theory',
       ])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Specialization')
-    const request3 = t.choose(game, request2, 'blue')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Specialization')
+    request = t.choose(game, request, 'blue')
 
     expect(t.cards(game, 'achievements')).toStrictEqual(['Heritage'])
   })
@@ -40,9 +41,10 @@ describe('Heritage', () => {
       ])
       t.setColor(game, 'dennis', 'red', ['Metalworking'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Specialization')
-    const request3 = t.choose(game, request2, 'blue')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Specialization')
+    request = t.choose(game, request, 'blue')
 
     expect(t.cards(game, 'achievements')).toStrictEqual([])
   })
@@ -61,9 +63,10 @@ describe('Heritage', () => {
         'Atomic Theory',
       ])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Specialization')
-    const request3 = t.choose(game, request2, 'blue')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Specialization')
+    request = t.choose(game, request, 'blue')
 
     expect(t.cards(game, 'achievements')).toStrictEqual([])
   })

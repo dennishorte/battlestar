@@ -9,12 +9,13 @@ describe('Bartholomew Roberts', () => {
       t.setColor(game, 'dennis', 'red', ['Oars'])
       t.setColor(game, 'micah', 'green', ['Sailing'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.green')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.green')
 
-    t.testChoices(request2, ['Oars', 'Sailing', 'Bartholomew Roberts'])
+    t.testChoices(request, ['Oars', 'Sailing', 'Bartholomew Roberts'])
 
-    const request3 = t.choose(game, request2, 'Sailing')
+    request = t.choose(game, request, 'Sailing')
 
     t.testZone(game, 'score', ['Sailing'])
   })
@@ -27,9 +28,10 @@ describe('Bartholomew Roberts', () => {
       t.setDeckTop(game, 'base', 6, ['Vaccination'])
       t.setAvailableAchievements(game, ['Societies', 'Classification', 'Lighting'])
     })
-    const request1 = game.run()
+    let request
+    request = game.run()
 
-    const request2 = t.choose(game, request1, 'Dogma.Machine Tools')
+    request = t.choose(game, request, 'Dogma.Machine Tools')
 
     t.testZone(game, 'score', ['Canning', 'Atomic Theory', 'Metric System', 'Encyclopedia', 'Industrialization', 'Vaccination'])
     t.testZone(game, 'achievements', ['Classification'])
@@ -43,8 +45,9 @@ describe('Bartholomew Roberts', () => {
       t.setDeckTop(game, 'base', 6, ['Vaccination'])
       t.setAvailableAchievements(game, ['Societies', 'Classification', 'Lighting'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Machine Tools')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Machine Tools')
 
     t.testZone(game, 'score', ['Canning', 'Atomic Theory', 'Encyclopedia', 'Vaccination'])
     t.testZone(game, 'achievements', [])
@@ -68,9 +71,10 @@ describe('Bartholomew Roberts', () => {
       achievements: ['Mobility'],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.green')
-    const request3 = t.choose(game, request2, 'Skyscrapers')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.green')
+    request = t.choose(game, request, 'Skyscrapers')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -14,12 +14,13 @@ describe("Mask of Warka", () => {
       achievements: ['The Wheel', 'Construction', 'Engineering', 'Computers', 'Robotics'],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'blue')
-    const request4 = t.choose(game, request3, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'blue')
+    request = t.choose(game, request, 'auto')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         hand: ['Sailing'],
@@ -40,11 +41,12 @@ describe("Mask of Warka", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'blue')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'blue')
 
-    t.testIsFirstAction(request3)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         hand: ['Sailing', 'Calendar', 'Software'],

@@ -13,10 +13,11 @@ describe('Publications', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Publications')
-    const request3 = t.choose(game, request2, 'blue')
-    const request4 = t.choose(game, request3, 'Monument')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Publications')
+    request = t.choose(game, request, 'blue')
+    request = t.choose(game, request, 'Monument')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -41,14 +42,15 @@ describe('Publications', () => {
       junk: ['Monument'],
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     expect(game.getCardByName('Monument').zone).toEqual('junk')
 
-    const request2 = t.choose(game, request1, 'Dogma.Publications')
-    const request3 = t.choose(game, request2, 'blue')
-    const request4 = t.choose(game, request3)
-    const request5 = t.choose(game, request4, 'Monument')
+    request = t.choose(game, request, 'Dogma.Publications')
+    request = t.choose(game, request, 'blue')
+    request = t.choose(game, request)
+    request = t.choose(game, request, 'Monument')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

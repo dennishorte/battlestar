@@ -17,10 +17,11 @@ describe("Elevator", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Elevator')
-    const request3 = t.choose(game, request2, 6)
-    const request4 = t.choose(game, request3, 'from scores')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Elevator')
+    request = t.choose(game, request, 6)
+    request = t.choose(game, request, 'from scores')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -48,10 +49,11 @@ describe("Elevator", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Elevator')
-    const request3 = t.choose(game, request2, 6)
-    const request4 = t.choose(game, request3, 'from hands')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Elevator')
+    request = t.choose(game, request, 6)
+    request = t.choose(game, request, 'from hands')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -75,8 +77,9 @@ describe("Elevator", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Elevator')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Elevator')
 
     t.testBoard(game, {
       dennis: {
@@ -95,9 +98,10 @@ describe("Elevator", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Elevator')
-    const request3 = t.choose(game, request2, 'score top green')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Elevator')
+    request = t.choose(game, request, 'score top green')
 
     t.testBoard(game, {
       dennis: {
@@ -117,9 +121,10 @@ describe("Elevator", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Elevator')
-    const request3 = t.choose(game, request2, 'score bottom green')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Elevator')
+    request = t.choose(game, request, 'score bottom green')
 
     t.testBoard(game, {
       dennis: {

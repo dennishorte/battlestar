@@ -21,8 +21,9 @@ describe('Solar Sailing', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Solar Sailing')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Solar Sailing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -53,8 +54,9 @@ describe('Solar Sailing', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Solar Sailing')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Solar Sailing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -82,8 +84,9 @@ describe('Solar Sailing', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Solar Sailing')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Solar Sailing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -114,9 +117,10 @@ describe('Solar Sailing', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Solar Sailing')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Solar Sailing')
 
-    t.testGameOver(request2, 'dennis', 'Solar Sailing')
+    t.testGameOver(request, 'dennis', 'Solar Sailing')
   })
 })

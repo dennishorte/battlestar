@@ -10,8 +10,9 @@ describe('Green Hydrogen', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Green Hydrogen')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Green Hydrogen')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

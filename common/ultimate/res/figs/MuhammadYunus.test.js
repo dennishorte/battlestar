@@ -17,8 +17,9 @@ describe('Muhammad Yunus', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.green')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.green')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -44,11 +45,12 @@ describe('Muhammad Yunus', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Code of Laws')
-    const request3 = t.choose(game, request2)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Code of Laws')
+    request = t.choose(game, request)
 
-    t.testChoices(request3, ['Invention']) // Micah's choice for Code of Laws
+    t.testChoices(request, ['Invention']) // Micah's choice for Code of Laws
   })
 
   test('karma: dogma (active player, yes)', () => {
@@ -66,11 +68,12 @@ describe('Muhammad Yunus', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Code of Laws')
-    const request3 = t.choose(game, request2, 'Canning')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Code of Laws')
+    request = t.choose(game, request, 'Canning')
 
-    t.testChoices(request3, ['The Wheel']) // Dennis's choice for Code of Laws
+    t.testChoices(request, ['The Wheel']) // Dennis's choice for Code of Laws
   })
 
   test('karma: dogma (non-active player, no)', () => {
@@ -87,11 +90,12 @@ describe('Muhammad Yunus', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Code of Laws')
-    const request3 = t.choose(game, request2)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Code of Laws')
+    request = t.choose(game, request)
 
-    t.testChoices(request3, ['Invention']) // Dennis's choice for Code of Laws
+    t.testChoices(request, ['Invention']) // Dennis's choice for Code of Laws
   })
 
   test('karma: dogma (non-active player, yes)', () => {
@@ -108,11 +112,12 @@ describe('Muhammad Yunus', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Code of Laws')
-    const request3 = t.choose(game, request2, 'Canning')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Code of Laws')
+    request = t.choose(game, request, 'Canning')
 
-    t.testChoices(request3, ['The Wheel']) // Micah's choice for Code of Laws
+    t.testChoices(request, ['The Wheel']) // Micah's choice for Code of Laws
   })
 
   test('karma: three players', () => {
@@ -132,10 +137,11 @@ describe('Muhammad Yunus', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Code of Laws')
-    const request3 = t.choose(game, request2, 'Canning')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Code of Laws')
+    request = t.choose(game, request, 'Canning')
 
-    t.testChoices(request3, ['The Wheel']) // Micah's choice for Code of Laws
+    t.testChoices(request, ['The Wheel']) // Micah's choice for Code of Laws
   })
 })

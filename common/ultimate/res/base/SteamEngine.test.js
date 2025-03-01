@@ -17,8 +17,9 @@ describe('Steam Engine', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Steam Engine')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Steam Engine')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -43,8 +44,9 @@ describe('Steam Engine', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Steam Engine')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Steam Engine')
 
     t.testIsSecondPlayer(game)
     t.testDeckIsJunked(game, 6)

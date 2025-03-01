@@ -18,8 +18,9 @@ describe('Space Traffic', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Space Traffic')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Space Traffic')
 
 
     t.testIsSecondPlayer(game)
@@ -52,10 +53,11 @@ describe('Space Traffic', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Space Traffic')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Space Traffic')
 
-    t.testGameOver(request2, 'micah', 'Space Traffic')
+    t.testGameOver(request, 'micah', 'Space Traffic')
   })
 
   test('dogma: you lose', () => {
@@ -71,10 +73,11 @@ describe('Space Traffic', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Space Traffic')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Space Traffic')
 
-    t.testGameOver(request2, 'micah', 'Space Traffic')
+    t.testGameOver(request, 'micah', 'Space Traffic')
   })
 
 })

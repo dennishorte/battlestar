@@ -30,14 +30,15 @@ describe('Charter of Liberties', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testChoices(request2, ['Sailing', 'Experimentation'])
+    t.testChoices(request, ['Sailing', 'Experimentation'])
 
-    const request3 = t.choose(game, request2, 'Sailing')
+    request = t.choose(game, request, 'Sailing')
 
-    t.testIsFirstAction(request3)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         blue: {
@@ -80,10 +81,11 @@ describe('Charter of Liberties', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         blue: ['Experimentation'],
@@ -119,10 +121,11 @@ describe('Charter of Liberties', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         blue: ['Tools', 'Mathematics'],

@@ -17,8 +17,9 @@ describe('Murasaki Shikibu', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.purple')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.purple')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -43,8 +44,9 @@ describe('Murasaki Shikibu', () => {
       achievements: ['The Wheel']
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Achieve.age 1')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Achieve.age 1')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -66,8 +68,9 @@ describe('Murasaki Shikibu', () => {
       achievements: ['The Wheel']
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Achieve.age 1')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Achieve.age 1')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -89,8 +92,9 @@ describe('Murasaki Shikibu', () => {
       achievements: ['The Wheel']
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Achieve.age 1')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Achieve.age 1')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -112,8 +116,9 @@ describe('Murasaki Shikibu', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Decree.Rivalry')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Decree.Rivalry')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

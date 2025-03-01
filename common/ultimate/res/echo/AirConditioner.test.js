@@ -21,10 +21,11 @@ describe("Air Conditioner", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Air Conditioner')
-    const request3 = t.choose(game, request2, 'Mathematics')
-    const request4 = t.choose(game, request3, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Air Conditioner')
+    request = t.choose(game, request, 'Mathematics')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

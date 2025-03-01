@@ -8,9 +8,10 @@ describe('Agriculture', () => {
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setHand(game, 'dennis', ['Domestication'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Agriculture')
-    t.choose(game, request2, 'Domestication')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Agriculture')
+    t.choose(game, request, 'Domestication')
 
     const dennis = game.getPlayerByName('dennis')
     expect(game.getScore(dennis)).toBe(2)
@@ -21,9 +22,10 @@ describe('Agriculture', () => {
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setHand(game, 'dennis', ['Domestication'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Agriculture')
-    t.choose(game, request2)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Agriculture')
+    t.choose(game, request)
 
     const dennis = game.getPlayerByName('dennis')
     expect(game.getScore(dennis)).toBe(0)

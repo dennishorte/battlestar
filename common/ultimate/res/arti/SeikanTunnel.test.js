@@ -19,10 +19,11 @@ describe("Seikan Tunnel", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testGameOver(request2, 'dennis', 'Seikan Tunnel')
+    t.testGameOver(request, 'dennis', 'Seikan Tunnel')
   })
 
   test('dogma: unsplayed counts as 1', () => {
@@ -37,10 +38,11 @@ describe("Seikan Tunnel", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
   })
 
   test('dogma: tied', () => {
@@ -55,10 +57,11 @@ describe("Seikan Tunnel", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         red: ['Archery', 'Construction'],

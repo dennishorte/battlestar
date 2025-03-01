@@ -17,8 +17,9 @@ describe('Charles Darwin', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Charles Darwin')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Charles Darwin')
 
     t.testBoard(game, {
       dennis: {
@@ -43,10 +44,11 @@ describe('Charles Darwin', () => {
       achievements: ['The Wheel']
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Achieve.age 1')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Achieve.age 1')
 
-    t.testGameOver(request2, 'dennis', 'Charles Darwin')
+    t.testGameOver(request, 'dennis', 'Charles Darwin')
   })
 
   test('karma: do not win (tied)', () => {
@@ -64,8 +66,9 @@ describe('Charles Darwin', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Achieve.age 1')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Achieve.age 1')
 
     t.testBoard(game, {
       dennis: {

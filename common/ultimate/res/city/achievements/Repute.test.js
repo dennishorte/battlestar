@@ -15,8 +15,9 @@ describe('Repute achievement', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Washington')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Washington')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -44,8 +45,9 @@ describe('Repute achievement', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Washington')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Washington')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -74,8 +76,9 @@ describe('Repute achievement', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Washington')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Washington')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -32,12 +32,13 @@ describe("Philips Compact Cassette", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'red', 'green')
-    const request4 = t.choose(game, request3, 'red', 'blue')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'red', 'green')
+    request = t.choose(game, request, 'red', 'blue')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         red: {

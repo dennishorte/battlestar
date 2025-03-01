@@ -13,10 +13,11 @@ describe('Cross of Coronado', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testGameOver(request2, 'dennis', 'Cross of Coronado')
+    t.testGameOver(request, 'dennis', 'Cross of Coronado')
   })
 
   test('dogma: no win', () => {
@@ -28,10 +29,11 @@ describe('Cross of Coronado', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game,  {
       dennis: {
         hand: ['Mathematics', 'Archery', 'Domestication', 'Sailing', 'Experimentation'],

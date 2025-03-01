@@ -8,10 +8,11 @@ describe('Albert Einstein', () => {
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setHand(game, 'dennis', ['Tools', 'Gunpowder', 'Databases'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Albert Einstein')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Albert Einstein')
 
-    t.testChoices(request2, ['Tools', 'Databases'])
+    t.testChoices(request, ['Tools', 'Databases'])
   })
 
   test('karma decree', () => {
@@ -24,8 +25,9 @@ describe('Albert Einstein', () => {
       t.setColor(game, 'dennis', 'purple', ['Astronomy'])
       t.setDeckTop(game, 'base', 10, ['Robotics'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Astronomy')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Astronomy')
 
     t.testZone(game, 'hand', ['Robotics'])
   })

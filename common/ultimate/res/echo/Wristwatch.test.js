@@ -19,8 +19,9 @@ describe("Wristwatch", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Wristwatch')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Wristwatch')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

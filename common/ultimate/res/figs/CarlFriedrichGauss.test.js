@@ -17,8 +17,9 @@ describe('Carl Friedrich Gauss', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Carl Friedrich Gauss')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Carl Friedrich Gauss')
 
     t.testBoard(game, {
       dennis: {
@@ -38,10 +39,11 @@ describe('Carl Friedrich Gauss', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Quantum Theory')
-    const request3 = t.choose(game, request2, 1)
-    const request4 = t.choose(game, request3, 'Sailing')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Quantum Theory')
+    request = t.choose(game, request, 1)
+    request = t.choose(game, request, 'Sailing')
 
     t.testBoard(game, {
       dennis: {
@@ -63,9 +65,10 @@ describe('Carl Friedrich Gauss', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Quantum Theory')
-    const request3 = t.choose(game, request2, 8)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Quantum Theory')
+    request = t.choose(game, request, 8)
 
     t.testBoard(game, {
       dennis: {

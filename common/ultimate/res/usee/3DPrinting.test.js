@@ -10,8 +10,9 @@ describe('3D Printing', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.3D Printing')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.3D Printing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

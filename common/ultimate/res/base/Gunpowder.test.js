@@ -22,12 +22,13 @@ describe('Gunpowder', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Gunpowder')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Gunpowder')
 
-    t.testChoices(request2, ['Tools', 'Construction'])
+    t.testChoices(request, ['Tools', 'Construction'])
 
-    const request3 = t.choose(game, request2, 'Tools')
+    request = t.choose(game, request, 'Tools')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -53,8 +54,9 @@ describe('Gunpowder', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Gunpowder')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Gunpowder')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -8,9 +8,10 @@ describe('Adam Smith', () => {
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setColor(game, 'dennis', 'blue', ['Tools', 'Writing'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.green')
-    const request3 = t.choose(game, request2, 'blue')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.green')
+    request = t.choose(game, request, 'blue')
     expect(t.zone(game, 'blue').splay).toBe('right')
   })
 
@@ -19,7 +20,8 @@ describe('Adam Smith', () => {
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setColor(game, 'dennis', 'blue', ['Writing'])
     })
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     expect(game.getBiscuitsByPlayer(t.dennis(game)).c).toBe(9)
   })

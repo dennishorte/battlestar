@@ -16,8 +16,9 @@ describe('Destiny', () => {
         'Shuriken',
       ])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Bangle')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Bangle')
 
     expect(t.cards(game, 'achievements')).toStrictEqual(['Destiny'])
   })
@@ -34,8 +35,9 @@ describe('Destiny', () => {
         'Shuriken',
       ])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Bangle')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Bangle')
 
     expect(t.cards(game, 'achievements')).toStrictEqual([])
   })

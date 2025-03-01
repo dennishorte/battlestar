@@ -16,10 +16,11 @@ describe("Maastricht Treaty", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         score: ['Tools', 'Sailing'],
@@ -42,9 +43,10 @@ describe("Maastricht Treaty", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testGameOver(request2, 'dennis', 'Maastricht Treaty')
+    t.testGameOver(request, 'dennis', 'Maastricht Treaty')
   })
 })

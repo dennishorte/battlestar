@@ -21,9 +21,10 @@ describe("Puzzle Cube", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Puzzle Cube')
-    const request3 = t.choose(game, request2)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Puzzle Cube')
+    request = t.choose(game, request)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -50,11 +51,12 @@ describe("Puzzle Cube", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Puzzle Cube')
-    const request3 = t.choose(game, request2, 'red')
-    const request4 = t.choose(game, request3, 1)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Puzzle Cube')
+    request = t.choose(game, request, 'red')
+    request = t.choose(game, request, 1)
 
-    t.testGameOver(request4, 'dennis', 'Puzzle Cube')
+    t.testGameOver(request, 'dennis', 'Puzzle Cube')
   })
 })

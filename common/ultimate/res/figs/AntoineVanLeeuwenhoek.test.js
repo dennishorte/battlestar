@@ -8,8 +8,9 @@ describe('Antoine Van Leeuwenhoek', () => {
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setDeckTop(game, 'base', 6, ['Canning'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Antoine Van Leeuwenhoek')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Antoine Van Leeuwenhoek')
 
     t.testZone(game, 'hand', ['Canning'])
   })
@@ -21,8 +22,9 @@ describe('Antoine Van Leeuwenhoek', () => {
       t.setScore(game, 'dennis', ['Statistics'])
       t.setAvailableAchievements(game, ['The Wheel', 'Monotheism', 'Machinery', 'Reformation'])
     })
-    const request1 = game.run()
+    let request
+    request = game.run()
 
-    t.testActionChoices(request1, 'Achieve', ['age 1', 'age 3'])
+    t.testActionChoices(request, 'Achieve', ['age 1', 'age 3'])
   })
 })

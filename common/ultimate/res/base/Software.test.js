@@ -17,9 +17,10 @@ describe('Software', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Software')
-    const request3 = t.choose(game, request2, 'no')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Software')
+    request = t.choose(game, request, 'no')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

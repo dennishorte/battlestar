@@ -11,8 +11,9 @@ describe('Supremacy Achievement', () => {
       t.setColor(game, 'dennis', 'red', ['Metalworking'])
       t.setHand(game, 'dennis', ['Mysticism'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Mysticism')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Mysticism')
 
     expect(t.cards(game, 'achievements')).toStrictEqual(['Supremacy'])
   })

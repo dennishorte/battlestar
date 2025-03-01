@@ -10,8 +10,9 @@ describe('Order of the Occult Hand', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Order of the Occult Hand')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Order of the Occult Hand')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

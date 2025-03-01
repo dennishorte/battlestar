@@ -15,8 +15,9 @@ describe('Queen Victoria', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Queen Victoria')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Queen Victoria')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -46,8 +47,9 @@ describe('Queen Victoria', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Achieve.age 2')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Achieve.age 2')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -18,10 +18,11 @@ describe('Evolution', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Evolution')
-    const request3 = t.choose(game, request2, 'Draw and Score and Return')
-    const request4 = t.choose(game, request3, 'Mapmaking')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Evolution')
+    request = t.choose(game, request, 'Draw and Score and Return')
+    request = t.choose(game, request, 'Mapmaking')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -46,9 +47,10 @@ describe('Evolution', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Evolution')
-    const request3 = t.choose(game, request2, 'Draw a Higher Card')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Evolution')
+    request = t.choose(game, request, 'Draw a Higher Card')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -13,12 +13,13 @@ describe("Artificial Heart", () => {
       achievements: ['Machinery', 'Enterprise'],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Artificial Heart')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Artificial Heart')
 
-    t.testChoices(request2, ['age 3', 'age 4'])
+    t.testChoices(request, ['age 3', 'age 4'])
 
-    const request3 = t.choose(game, request2, 'age 4')
+    request = t.choose(game, request, 'age 4')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

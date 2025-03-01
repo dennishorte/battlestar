@@ -17,8 +17,9 @@ describe('Fu Xi', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Fu Xi')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Fu Xi')
 
     t.testBoard(game, {
       dennis: {
@@ -42,7 +43,8 @@ describe('Fu Xi', () => {
       },
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     expect(game.getBiscuitsByPlayer(t.dennis(game)).s).toBe(4)
   })

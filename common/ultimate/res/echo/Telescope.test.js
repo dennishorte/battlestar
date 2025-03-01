@@ -19,9 +19,10 @@ describe("Telescope", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Telescope')
-    const request3 = t.choose(game, request2, 'Metric System')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Telescope')
+    request = t.choose(game, request, 'Metric System')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

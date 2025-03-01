@@ -18,10 +18,11 @@ describe("Laser", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Laser')
-    const request3 = t.choose(game, request2, 'Tools', 'Sailing')
-    const request4 = t.choose(game, request3, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Laser')
+    request = t.choose(game, request, 'Tools', 'Sailing')
+    request = t.choose(game, request, 'auto')
 
 
     t.testIsSecondPlayer(game)

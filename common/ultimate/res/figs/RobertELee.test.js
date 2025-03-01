@@ -21,18 +21,19 @@ describe('Robert E. Lee', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = game.respondToInputRequest({
+    let request
+    request = game.run()
+    request = game.respondToInputRequest({
       actor: 'dennis',
-      title: request1.selectors[0].title,
+      title: request.selectors[0].title,
       selection: [{
         title: 'Dogma',
         selection: ['Robert E. Lee']
       }],
     })
 
-    const request3 = t.choose(game, request2, 'Stem Cells')
-    const request4 = t.choose(game, request3, 'dennis')
+    request = t.choose(game, request, 'Stem Cells')
+    request = t.choose(game, request, 'dennis')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -65,7 +66,8 @@ describe('Robert E. Lee', () => {
       },
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     const achs = game.getAchievementsByPlayer(t.dennis(game))
     expect(achs.other.length).toBe(2)

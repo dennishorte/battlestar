@@ -15,12 +15,13 @@ describe("Ching Shih", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Ching Shih')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Ching Shih')
 
-    t.testChoices(request2, ['micah, age 1', 'micah, age 2', 'micah, Monument'])
+    t.testChoices(request, ['micah, age 1', 'micah, age 2', 'micah, Monument'])
 
-    const request3 = t.choose(game, request2, 'micah, age 2')
+    request = t.choose(game, request, 'micah, age 2')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -45,12 +46,13 @@ describe("Ching Shih", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Ching Shih')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Ching Shih')
 
-    t.testChoices(request2, ['micah, age 1', 'micah, age 2', 'micah, Monument'])
+    t.testChoices(request, ['micah, age 1', 'micah, age 2', 'micah, Monument'])
 
-    const request3 = t.choose(game, request2, 'micah, Monument')
+    request = t.choose(game, request, 'micah, Monument')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -76,9 +78,10 @@ describe("Ching Shih", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Encyclopedia')
-    const request3 = t.choose(game, request2, 'yes')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Encyclopedia')
+    request = t.choose(game, request, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -105,9 +108,10 @@ describe("Ching Shih", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Philosophy')
-    const request3 = t.choose(game, request2, 'Fermenting')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Philosophy')
+    request = t.choose(game, request, 'Fermenting')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -136,9 +140,10 @@ describe("Ching Shih", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Philosophy')
-    const request3 = t.choose(game, request2, 'Fermenting')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Philosophy')
+    request = t.choose(game, request, 'Fermenting')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

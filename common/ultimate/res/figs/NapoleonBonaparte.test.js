@@ -15,12 +15,13 @@ describe('Napoleon Bonaparte', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Napoleon Bonaparte')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Napoleon Bonaparte')
 
-    t.testChoices(request2, ['Christiaan Huygens', 'Napoleon Bonaparte'])
+    t.testChoices(request, ['Christiaan Huygens', 'Napoleon Bonaparte'])
 
-    const request3 = t.choose(game, request2, 'Christiaan Huygens')
+    request = t.choose(game, request, 'Christiaan Huygens')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -48,10 +49,11 @@ describe('Napoleon Bonaparte', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Napoleon Bonaparte')
-    const request3 = t.choose(game, request2, 'Christopher Polhem')
-    const request4 = t.choose(game, request3, 'Canning')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Napoleon Bonaparte')
+    request = t.choose(game, request, 'Christopher Polhem')
+    request = t.choose(game, request, 'Canning')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -19,13 +19,14 @@ describe('Pottery', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Pottery')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Pottery')
 
-    t.testChoices(request2, ['Tools', 'Calendar', 'Sailing', 'Domestication'], 0, 3)
+    t.testChoices(request, ['Tools', 'Calendar', 'Sailing', 'Domestication'], 0, 3)
 
-    const request3 = t.choose(game, request2, 'Tools', 'Sailing')
-    const request4 = t.choose(game, request3, 'auto')
+    request = t.choose(game, request, 'Tools', 'Sailing')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -18,9 +18,10 @@ describe('Jackie Chan', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.red')
-    const request3 = t.choose(game, request2, 'Coal')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.red')
+    request = t.choose(game, request, 'Coal')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -47,8 +48,9 @@ describe('Jackie Chan', () => {
       achievements: ['Canning']
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Achieve.age 6')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Achieve.age 6')
 
     t.testBoard(game, {
       dennis: {
@@ -60,7 +62,7 @@ describe('Jackie Chan', () => {
         score: ['Stem Cells', 'Bioengineering', 'Empiricism', 'Alex Trebek']
       },
     })
-    t.testGameOver(request2, 'micah', 'Jackie Chan')
+    t.testGameOver(request, 'micah', 'Jackie Chan')
   })
 
   test('karma: lose', () => {
@@ -78,8 +80,9 @@ describe('Jackie Chan', () => {
       achievements: ['Canning']
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Achieve.age 6')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Achieve.age 6')
 
     t.testBoard(game, {
       dennis: {
@@ -92,7 +95,7 @@ describe('Jackie Chan', () => {
         score: ['Stem Cells', 'Bioengineering', 'Empiricism']
       },
     })
-    t.testGameOver(request2, 'dennis', 'achievements')
+    t.testGameOver(request, 'dennis', 'achievements')
   })
 
 })

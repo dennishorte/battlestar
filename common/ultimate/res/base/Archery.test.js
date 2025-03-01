@@ -19,8 +19,9 @@ describe('Archery', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Archery')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Archery')
 
     t.testBoard(game, {
       dennis: {
@@ -50,8 +51,9 @@ describe('Archery', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Archery')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Archery')
 
     t.testBoard(game, {
       dennis: {
@@ -74,9 +76,10 @@ describe('Archery', () => {
       achievements: ['The Wheel', 'Mathematics', 'Machinery', 'Navigation'],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Archery')
-    const request3 = t.choose(game, request2, '1')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, request, '1')
 
     expect(game.getAvailableAchievementsByAge(1)).toHaveLength(0)
     expect(game.getAvailableAchievementsByAge(2)).toHaveLength(1)
@@ -92,9 +95,10 @@ describe('Archery', () => {
       achievements: ['The Wheel', 'Mathematics', 'Machinery', 'Navigation'],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Archery')
-    const request3 = t.choose(game, request2, '2')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, request, '2')
 
     expect(game.getAvailableAchievementsByAge(1)).toHaveLength(1)
     expect(game.getAvailableAchievementsByAge(2)).toHaveLength(0)
@@ -110,8 +114,9 @@ describe('Archery', () => {
       achievements: ['Machinery', 'Navigation'],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Archery')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Archery')
 
     expect(game.getAvailableAchievementsByAge(3)).toHaveLength(1)
   })
@@ -133,9 +138,10 @@ describe('Archery', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Archery')
-    const request3 = t.choose(game, request2, 'Mathematics')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, request, 'Mathematics')
 
     t.testBoard(game, {
       dennis: {

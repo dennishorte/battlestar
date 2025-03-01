@@ -8,8 +8,9 @@ describe('Avicenna', () => {
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setDeckTop(game, 'base', 3, ['Machinery'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.yellow')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.yellow')
 
     t.testZone(game, 'yellow', ['Avicenna', 'Machinery'])
   })

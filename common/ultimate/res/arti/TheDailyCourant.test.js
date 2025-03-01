@@ -24,12 +24,13 @@ describe("The Daily Courant", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 6)
-    const request4 = t.choose(game, request3, 'Archery')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 6)
+    request = t.choose(game, request, 'Archery')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         red: ['Archery'],

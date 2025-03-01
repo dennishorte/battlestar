@@ -14,12 +14,13 @@ describe("Marilyn Diptych", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'Software')
-    const request4 = t.choose(game, request3, 'Astronomy')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'Software')
+    request = t.choose(game, request, 'Astronomy')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         hand: ['Astronomy'],
@@ -38,11 +39,12 @@ describe("Marilyn Diptych", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'Software')
-    const request4 = t.choose(game, request3, 'Canning')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'Software')
+    request = t.choose(game, request, 'Canning')
 
-    t.testGameOver(request4, 'dennis', 'Marilyn Diptych')
+    t.testGameOver(request, 'dennis', 'Marilyn Diptych')
   })
 })

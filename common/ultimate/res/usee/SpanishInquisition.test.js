@@ -10,8 +10,9 @@ describe('Spanish Inquisition', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Spanish Inquisition')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Spanish Inquisition')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

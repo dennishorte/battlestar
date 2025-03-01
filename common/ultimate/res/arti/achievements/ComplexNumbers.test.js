@@ -15,9 +15,10 @@ describe("Complex Numbers", () => {
       achievements: ['Tools', 'Calendar'],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Complex Numbers')
-    const request3 = t.choose(game, request2, 'The Wheel')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Complex Numbers')
+    request = t.choose(game, request, 'The Wheel')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

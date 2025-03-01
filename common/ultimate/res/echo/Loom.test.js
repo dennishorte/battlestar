@@ -13,8 +13,9 @@ describe("Loom", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Loom')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Loom')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -35,8 +36,9 @@ describe("Loom", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Loom')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Loom')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -57,9 +59,10 @@ describe("Loom", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Loom')
-    const request3 = t.choose(game, request2)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Loom')
+    request = t.choose(game, request)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -85,9 +88,10 @@ describe("Loom", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Loom')
-    const request3 = t.choose(game, request2, 'Sailing')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Loom')
+    request = t.choose(game, request, 'Sailing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -117,9 +121,10 @@ describe("Loom", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Loom')
-    const request3 = t.choose(game, request2, 'Sailing')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Loom')
+    request = t.choose(game, request, 'Sailing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

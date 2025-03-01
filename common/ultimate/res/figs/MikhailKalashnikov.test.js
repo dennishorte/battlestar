@@ -18,8 +18,9 @@ describe('Mikhail Kalashnikov', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.red')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.red')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -48,9 +49,10 @@ describe('Mikhail Kalashnikov', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.red')
-    const request3 = t.choose(game, request2, 'transfer it')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.red')
+    request = t.choose(game, request, 'transfer it')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -80,9 +82,10 @@ describe('Mikhail Kalashnikov', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.red')
-    const request3 = t.choose(game, request2, 'execute it')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.red')
+    request = t.choose(game, request, 'execute it')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

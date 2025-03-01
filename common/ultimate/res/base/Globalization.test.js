@@ -14,8 +14,9 @@ describe('Globalization', () => {
       t.setColor(game, 'micah', 'yellow', ['Agriculture', 'Statistics'])
       t.setSplay(game, 'micah', 'yellow', 'left')
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Globalization')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Globalization')
 
     expect(t.cards(game, 'yellow', 'micah')).toStrictEqual(['Statistics'])
   })
@@ -27,8 +28,9 @@ describe('Globalization', () => {
       t.setSplay(game, 'dennis', 'yellow', 'up')
       t.setDeckTop(game, 'base', 11, ['Hypersonics'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Globalization')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Globalization')
 
     expect(t.cards(game, 'green')).toStrictEqual(['Hypersonics'])
   })
@@ -40,10 +42,11 @@ describe('Globalization', () => {
       t.setScore(game, 'dennis', ['Metalworking'])
       t.setSplay(game, 'dennis', 'yellow', 'up')
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Globalization')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Globalization')
 
-    expect(request2).toEqual(expect.any(GameOverEvent))
+    expect(request).toEqual(expect.any(GameOverEvent))
   })
 
   test('win condition (no)', () => {
@@ -54,9 +57,10 @@ describe('Globalization', () => {
       t.setColor(game, 'micah', 'yellow', ['Agriculture', 'Statistics'])
       t.setSplay(game, 'micah', 'yellow', 'left')
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Globalization')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Globalization')
 
-    expect(request2).toEqual(expect.any(InputRequestEvent))
+    expect(request).toEqual(expect.any(InputRequestEvent))
   })
 })

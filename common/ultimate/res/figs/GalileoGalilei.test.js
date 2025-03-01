@@ -17,12 +17,13 @@ describe('Galileo Galilei', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Galileo Galilei')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Galileo Galilei')
 
-    t.testChoices(request2, [5,6])
+    t.testChoices(request, [5,6])
 
-    const request3 = t.choose(game, request2, 6)
+    request = t.choose(game, request, 6)
 
     t.testBoard(game, {
       dennis: {
@@ -46,9 +47,10 @@ describe('Galileo Galilei', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Galileo Galilei')
-    const request3 = t.choose(game, request2, 5)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Galileo Galilei')
+    request = t.choose(game, request, 5)
 
     t.testBoard(game, {
       dennis: {
@@ -72,10 +74,11 @@ describe('Galileo Galilei', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Galileo Galilei')
-    const request3 = t.choose(game, request2, 5)
-    const request4 = t.choose(game, request3, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Galileo Galilei')
+    request = t.choose(game, request, 5)
+    request = t.choose(game, request, 'auto')
 
     t.testBoard(game, {
       dennis: {

@@ -18,9 +18,10 @@ describe('Emperor Meiji', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.purple')
-    const request3 = t.choose(game, request2, 8)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.purple')
+    request = t.choose(game, request, 8)
 
     t.testBoard(game, {
       dennis: {
@@ -42,10 +43,11 @@ describe('Emperor Meiji', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Software')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Software')
 
-    t.testGameOver(request2, 'dennis', 'Emperor Meiji')
+    t.testGameOver(request, 'dennis', 'Emperor Meiji')
   })
 
   test('karma: win (test 2)', () => {
@@ -58,8 +60,9 @@ describe('Emperor Meiji', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Software')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Software')
 
     t.testNotGameOver()
   })
@@ -75,8 +78,9 @@ describe('Emperor Meiji', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Flight')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Flight')
 
     t.testNotGameOver()
   })

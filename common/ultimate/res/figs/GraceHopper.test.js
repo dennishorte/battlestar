@@ -18,13 +18,14 @@ describe('Grace Hopper', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.blue')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.blue')
 
-    t.testChoices(request2, ['Homer', 'Calendar', 'Robotics'])
+    t.testChoices(request, ['Homer', 'Calendar', 'Robotics'])
 
-    const request3 = t.choose(game, request2, 'Calendar', 'Robotics')
-    const request4 = t.choose(game, request3, 'auto')
+    request = t.choose(game, request, 'Calendar', 'Robotics')
+    request = t.choose(game, request, 'auto')
 
     t.testBoard(game, {
       dennis: {
@@ -52,8 +53,9 @@ describe('Grace Hopper', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.The Wheel')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.The Wheel')
 
     t.testBoard(game, {
       dennis: {
@@ -84,10 +86,11 @@ describe('Grace Hopper', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.The Wheel')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.The Wheel')
 
-    t.testGameOver(request2, 'micah', 'Grace Hopper')
+    t.testGameOver(request, 'micah', 'Grace Hopper')
   })
 
 })

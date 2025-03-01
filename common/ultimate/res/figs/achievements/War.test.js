@@ -9,10 +9,11 @@ test('War', () => {
     t.setColor(game, 'scott', 'red', ['Optics'])
     t.setColor(game, 'scott', 'green', ['Databases'])
   })
-  const request1 = game.run()
-  const request2 = t.choose(game, request1, 'Decree.War')
-  const request3 = t.choose(game, request2, 3)
-  const request4 = t.choose(game, request3, 'auto')
+  let request
+    request = game.run()
+  request = t.choose(game, request, 'Decree.War')
+  request = t.choose(game, request, 3)
+  request = t.choose(game, request, 'auto')
 
   expect(t.cards(game, 'purple', 'dennis')).toStrictEqual(['Education'])
   expect(t.cards(game, 'yellow', 'micah')).toStrictEqual(['Medicine'])

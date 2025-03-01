@@ -5,8 +5,9 @@ test('Expansion', () => {
   game.testSetBreakpoint('before-first-player', (game) => {
     t.setColor(game, 'dennis', 'yellow', ['Statistics', 'Masonry'])
   })
-  const request1 = game.run()
-  const request2 = t.choose(game, request1, 'Decree.Expansion')
+  let request
+    request = game.run()
+  request = t.choose(game, request, 'Decree.Expansion')
 
   expect(t.zone(game, 'yellow').splay).toBe('up')
 })

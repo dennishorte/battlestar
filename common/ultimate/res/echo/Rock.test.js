@@ -12,9 +12,10 @@ describe("Rock", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Rock')
-    const request3 = t.choose(game, request2)
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Rock')
+    request = t.choose(game, request)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -35,10 +36,11 @@ describe("Rock", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Rock')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Rock')
 
-    t.testGameOver(request2, 'dennis', 'Rock')
+    t.testGameOver(request, 'dennis', 'Rock')
   })
 
   test('dogma: paper wraps rock', () => {
@@ -50,10 +52,11 @@ describe("Rock", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Rock')
-    const request3 = t.choose(game, request2, 'Scissors')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Rock')
+    request = t.choose(game, request, 'Scissors')
 
-    t.testGameOver(request3, 'dennis', 'Rock')
+    t.testGameOver(request, 'dennis', 'Rock')
   })
 })

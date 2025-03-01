@@ -10,8 +10,9 @@ describe('El Dorado', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.El Dorado')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.El Dorado')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

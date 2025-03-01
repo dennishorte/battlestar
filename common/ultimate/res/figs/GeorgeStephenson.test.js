@@ -23,12 +23,13 @@ describe('George Stephenson', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.George Stephenson')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.George Stephenson')
 
-    t.testChoices(request2, ['green', 'purple'])
+    t.testChoices(request, ['green', 'purple'])
 
-    const request3 = t.choose(game, request2, 'purple')
+    request = t.choose(game, request, 'purple')
 
     t.testBoard(game, {
       dennis: {
@@ -72,8 +73,9 @@ describe('George Stephenson', () => {
       game.getZoneByDeck('base', 3).cards().forEach(card => game.mRemove(t.dennis(game), card))
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Software')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Software')
 
     t.testBoard(game, {
       dennis: {

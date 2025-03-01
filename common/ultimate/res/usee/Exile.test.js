@@ -10,8 +10,9 @@ describe('Exile', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Exile')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Exile')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

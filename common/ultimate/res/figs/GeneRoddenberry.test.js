@@ -18,9 +18,10 @@ describe('Gene Roddenberry', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Socialism')
-    const request3 = t.choose(game, request2, 'Empiricism')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Socialism')
+    request = t.choose(game, request, 'Empiricism')
 
     t.testBoard(game, {
       dennis: {
@@ -44,11 +45,12 @@ describe('Gene Roddenberry', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Gene Roddenberry')
-    const request3 = t.choose(game, request2, 'Enterprise')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Gene Roddenberry')
+    request = t.choose(game, request, 'Enterprise')
 
-    t.testGameOver(request3, 'dennis', 'Gene Roddenberry')
+    t.testGameOver(request, 'dennis', 'Gene Roddenberry')
   })
 
   test('karma: non-Enterprise', () => {
@@ -64,10 +66,11 @@ describe('Gene Roddenberry', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Gene Roddenberry')
-    const request3 = t.choose(game, request2, 'Reformation')
-    const request4 = t.choose(game, request3, 'Alexander the Great')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Gene Roddenberry')
+    request = t.choose(game, request, 'Reformation')
+    request = t.choose(game, request, 'Alexander the Great')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

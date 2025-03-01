@@ -15,11 +15,12 @@ describe('Higgs Boson', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'yes')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'yes')
 
-    t.testIsFirstAction(request3)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         score: ['Atomic Theory', 'Experimentation', 'Canning', 'Agriculture', 'Sailing'],
@@ -38,15 +39,16 @@ describe('Higgs Boson', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'no')
-    const request4 = t.choose(game, request3, 'Canning')
-    const request5 = t.choose(game, request4, 'Atomic Theory')
-    const request6 = t.choose(game, request5, 'Sailing')
-    const request7 = t.choose(game, request6, 'Experimentation')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'no')
+    request = t.choose(game, request, 'Canning')
+    request = t.choose(game, request, 'Atomic Theory')
+    request = t.choose(game, request, 'Sailing')
+    request = t.choose(game, request, 'Experimentation')
 
-    t.testIsFirstAction(request7)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         score: ['Atomic Theory', 'Experimentation', 'Canning', 'Agriculture', 'Sailing'],

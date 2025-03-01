@@ -13,8 +13,9 @@ describe("Bandage", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Bandage')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Bandage')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -40,8 +41,9 @@ describe("Bandage", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Bandage')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Bandage')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

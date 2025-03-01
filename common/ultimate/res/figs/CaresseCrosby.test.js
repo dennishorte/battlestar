@@ -20,12 +20,13 @@ describe('Caresse Crosby', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.yellow')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.yellow')
 
-    t.testChoices(request2, ['Clothing', 'Metalworking'])
+    t.testChoices(request, ['Clothing', 'Metalworking'])
 
-    const request3 = t.choose(game, request2, 'Metalworking')
+    request = t.choose(game, request, 'Metalworking')
 
     t.testBoard(game, {
       dennis: {
@@ -53,8 +54,9 @@ describe('Caresse Crosby', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.yellow')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.yellow')
 
     t.testBoard(game, {
       dennis: {
@@ -93,12 +95,13 @@ describe('Caresse Crosby', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Code of Laws')
-    const request3 = t.choose(game, request2, 'The Wheel')
-    const request4 = t.choose(game, request3, 'green')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Code of Laws')
+    request = t.choose(game, request, 'The Wheel')
+    request = t.choose(game, request, 'green')
 
-    t.testGameOver(request4, 'dennis', 'Caresse Crosby')
+    t.testGameOver(request, 'dennis', 'Caresse Crosby')
 
     t.testBoard(game, {
       dennis: {
@@ -151,10 +154,11 @@ describe('Caresse Crosby', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Reformation')
-    const request3 = t.choose(game, request2, 'no')
-    const request4 = t.choose(game, request3, 'purple')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Reformation')
+    request = t.choose(game, request, 'no')
+    request = t.choose(game, request, 'purple')
 
     t.testIsSecondPlayer(game)
 

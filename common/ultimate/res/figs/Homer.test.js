@@ -10,8 +10,9 @@ describe('Homer', () => {
       t.setColor(game, 'dennis', 'blue', ['Tools'])
       t.setDeckTop(game, 'base', 2, ['Mathematics'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.purple')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.purple')
     expect(t.cards(game, 'blue')).toStrictEqual(['Tools', 'Mathematics'])
   })
 

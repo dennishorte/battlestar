@@ -17,10 +17,11 @@ describe("Karaoke", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Karaoke')
-    const request3 = t.choose(game, request2, 1)
-    const request4 = t.choose(game, request3, 'Tools')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Karaoke')
+    request = t.choose(game, request, 1)
+    request = t.choose(game, request, 'Tools')
 
 
     t.testIsSecondPlayer(game)

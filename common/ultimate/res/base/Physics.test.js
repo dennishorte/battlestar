@@ -18,8 +18,9 @@ describe('Physics', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Physics')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Physics')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -44,9 +45,10 @@ describe('Physics', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Physics')
-    const request3 = t.choose(game, request2, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Physics')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

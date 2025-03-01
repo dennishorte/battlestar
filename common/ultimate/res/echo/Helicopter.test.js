@@ -17,10 +17,11 @@ describe("Helicopter", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Helicopter')
-    const request3 = t.choose(game, request2, 'Canning')
-    const request4 = t.choose(game, request3, 'Coal')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Helicopter')
+    request = t.choose(game, request, 'Canning')
+    request = t.choose(game, request, 'Coal')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

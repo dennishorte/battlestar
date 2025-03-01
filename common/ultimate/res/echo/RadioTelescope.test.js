@@ -21,9 +21,10 @@ describe("Radio Telescope", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Radio Telescope')
-    const request3 = t.choose(game, request2, 'Rock')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Radio Telescope')
+    request = t.choose(game, request, 'Rock')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -57,10 +58,11 @@ describe("Radio Telescope", () => {
       game.state.zones.decks.base['9'].cards().forEach(card => game.mMoveCardTo(card, game.getZoneById('junk')))
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Radio Telescope')
-    const request3 = t.choose(game, request2, '*A.I.')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Radio Telescope')
+    request = t.choose(game, request, '*A.I.')
 
-    t.testGameOver(request3, 'dennis', 'Radio Telescope')
+    t.testGameOver(request, 'dennis', 'Radio Telescope')
   })
 })

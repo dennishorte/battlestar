@@ -19,14 +19,15 @@ describe('Excalibur', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testChoices(request2, ['The Wheel', 'Enterprise'])
+    t.testChoices(request, ['The Wheel', 'Enterprise'])
 
-    const request3 = t.choose(game, request2, 'The Wheel')
+    request = t.choose(game, request, 'The Wheel')
 
-    t.testIsFirstAction(request3)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         green: ['The Wheel'],

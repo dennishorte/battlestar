@@ -16,8 +16,9 @@ describe('J.P. Morgan', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = game.respondToInputRequest({
+    let request
+    request = game.run()
+    request = game.respondToInputRequest({
       actor: 'dennis',
       title: 'Choose First Action',
       selection: [{
@@ -26,9 +27,9 @@ describe('J.P. Morgan', () => {
       }],
     })
 
-    t.testChoices(request2, ['green', 'red'])
+    t.testChoices(request, ['green', 'red'])
 
-    const request3 = t.choose(game, request2, 'green')
+    request = t.choose(game, request, 'green')
 
     t.testBoard(game, {
       dennis: {
@@ -63,7 +64,8 @@ describe('J.P. Morgan', () => {
       },
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     expect(game.getBiscuitsByPlayer(t.dennis(game))).toEqual({
       k: 2,

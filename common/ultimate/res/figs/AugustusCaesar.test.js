@@ -8,8 +8,9 @@ describe('Augustus Caesar', () => {
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setDeckTop(game, 'base', 3, ['Machinery'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.green')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.green')
 
     t.testZone(game, 'forecast', ['Machinery'])
   })
@@ -21,9 +22,10 @@ describe('Augustus Caesar', () => {
       t.setColor(game, 'dennis', 'red', ['Archery'])
       t.setForecast(game, 'dennis', ['Construction', 'Tools'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.green')
-    const request3 = t.choose(game, request2, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.green')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testZone(game, 'red', ['Engineering', 'Archery', 'Construction'])
@@ -38,8 +40,9 @@ describe('Augustus Caesar', () => {
       t.setColor(game, 'dennis', 'red', ['Archery'])
       t.setForecast(game, 'dennis', ['Tools'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.green')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.green')
 
     t.testZone(game, 'red', ['Archery'])
     t.testZone(game, 'forecast', ['Machinery', 'Tools'], { sort: true })
@@ -52,8 +55,9 @@ describe('Augustus Caesar', () => {
       t.setColor(game, 'dennis', 'red', ['Archery'])
       t.setForecast(game, 'dennis', ['Tools'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.green')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.green')
 
     t.testZone(game, 'red', ['Archery'])
     t.testZone(game, 'forecast', ['Optics', 'Tools'], { sort: true })
@@ -67,9 +71,10 @@ describe('Augustus Caesar', () => {
       t.setForecast(game, 'micah', ['Construction', 'Tools'])
       t.setHand(game, 'dennis', ['The Wheel'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.The Wheel')
-    const request3 = t.choose(game, request2, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.The Wheel')
+    request = t.choose(game, request, 'auto')
 
     t.testZone(game, 'red', ['Archery', 'Construction'], { player: 'micah' })
     t.testZone(game, 'blue', ['Tools'], { player: 'micah' })
@@ -91,8 +96,9 @@ describe('Augustus Caesar', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.The Wheel')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.The Wheel')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

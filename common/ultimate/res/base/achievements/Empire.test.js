@@ -15,7 +15,8 @@ describe('Empire Achievement', () => {
       t.setSplay(game, 'dennis', 'green', 'up')
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
     const biscuits = game.getBiscuitsByPlayer(t.dennis(game))
     expect(biscuits.c).toBe(3)
     expect(biscuits.f).toBe(3)
@@ -24,7 +25,7 @@ describe('Empire Achievement', () => {
     expect(biscuits.s).toBe(3)
     expect(biscuits.i).toBe(0)
 
-    const request2 = t.choose(game, request1, 'Meld.Databases')
+    request = t.choose(game, request, 'Meld.Databases')
 
     expect(t.cards(game, 'achievements')).toStrictEqual(['Empire'])
   })
@@ -41,7 +42,8 @@ describe('Empire Achievement', () => {
       t.setSplay(game, 'dennis', 'green', 'up')
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
     const biscuits = game.getBiscuitsByPlayer(t.dennis(game))
     expect(biscuits.c).toBe(3)
     expect(biscuits.f).toBe(3)
@@ -50,7 +52,7 @@ describe('Empire Achievement', () => {
     expect(biscuits.s).toBe(3)
     expect(biscuits.i).toBe(0)
 
-    const request2 = t.choose(game, request1, 'Meld.Bioengineering')
+    request = t.choose(game, request, 'Meld.Bioengineering')
 
     expect(t.cards(game, 'achievements')).toStrictEqual([])
   })

@@ -17,8 +17,9 @@ describe('Sargon of Akkad', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.green')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.green')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

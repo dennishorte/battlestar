@@ -23,8 +23,9 @@ describe("Thermometer", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Thermometer')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Thermometer')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -57,8 +58,9 @@ describe("Thermometer", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Thermometer')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Thermometer')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

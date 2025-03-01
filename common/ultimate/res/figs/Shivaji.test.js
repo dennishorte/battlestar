@@ -13,9 +13,10 @@ describe('Shivaji', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Shivaji')
-    const request3 = t.choose(game, request2, 'Navigation')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Shivaji')
+    request = t.choose(game, request, 'Navigation')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -44,8 +45,9 @@ describe('Shivaji', () => {
       achievements: ['The Wheel'],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Achieve.age 1')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Achieve.age 1')
 
     t.setBoard(game, {
       dennis: {

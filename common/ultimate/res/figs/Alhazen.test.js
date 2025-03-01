@@ -9,12 +9,13 @@ describe('Alhazen', () => {
       t.setColor(game, 'dennis', 'green', ['The Wheel'])
       t.setColor(game, 'micah', 'red', ['Archery'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Alhazen')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Alhazen')
 
-    t.testChoices(request2, ['The Wheel', 'Archery'])
+    t.testChoices(request, ['The Wheel', 'Archery'])
 
-    const request3 = t.choose(game, request2, 'The Wheel')
+    request = t.choose(game, request, 'The Wheel')
 
     t.testZone(game, 'green', ['The Wheel'])
   })
@@ -25,12 +26,13 @@ describe('Alhazen', () => {
       t.setColor(game, 'dennis', 'green', ['The Wheel'])
       t.setColor(game, 'micah', 'red', ['Archery'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Alhazen')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Alhazen')
 
-    t.testChoices(request2, ['The Wheel', 'Archery'])
+    t.testChoices(request, ['The Wheel', 'Archery'])
 
-    const request3 = t.choose(game, request2, 'Archery')
+    request = t.choose(game, request, 'Archery')
 
     t.testZone(game, 'red', ['Archery'])
   })
@@ -43,8 +45,9 @@ describe('Alhazen', () => {
       t.setDeckTop(game, 'base', 5, ['Chemistry'])
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Draw.draw a card')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Draw.draw a card')
 
     t.testZone(game, 'hand', ['Chemistry'])
   })
@@ -57,8 +60,9 @@ describe('Alhazen', () => {
       t.setDeckTop(game, 'base', 4, ['Experimentation'])
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Draw.draw a card')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Draw.draw a card')
 
     t.testZone(game, 'hand', ['Experimentation'])
   })
@@ -73,8 +77,9 @@ describe('Alhazen', () => {
       t.setDeckTop(game, 'base', 1, ['Domestication'])
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.yellow')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.yellow')
 
     t.testZone(game, 'hand', ['Domestication'])
   })
@@ -88,8 +93,9 @@ describe('Alhazen', () => {
       t.setDeckTop(game, 'base', 3, ['Engineering', 'Machinery'])
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.yellow')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.yellow')
 
     t.testZone(game, 'hand', ['Machinery'])
   })

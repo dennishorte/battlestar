@@ -18,12 +18,13 @@ describe('Yi Sun-Sin', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Yi Sun-Sin')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Yi Sun-Sin')
 
-    t.testChoices(request2, ['The Wheel', 'Masonry', 'Construction'])
+    t.testChoices(request, ['The Wheel', 'Masonry', 'Construction'])
 
-    const request3 = t.choose(game,request2, 'Construction')
+    request = t.choose(game,request, 'Construction')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -59,8 +60,9 @@ describe('Yi Sun-Sin', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Yi Sun-Sin')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Yi Sun-Sin')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

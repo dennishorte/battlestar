@@ -17,9 +17,10 @@ describe('Empiricism', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Empiricism')
-    const request3 = t.choose(game, request2, 'purple', 'blue')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Empiricism')
+    request = t.choose(game, request, 'purple', 'blue')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -45,9 +46,10 @@ describe('Empiricism', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Empiricism')
-    const request3 = t.choose(game, request2, 'purple', 'blue')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Empiricism')
+    request = t.choose(game, request, 'purple', 'blue')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -91,11 +93,12 @@ describe('Empiricism', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Empiricism')
-    const request3 = t.choose(game, request2, 'purple', 'blue')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Empiricism')
+    request = t.choose(game, request, 'purple', 'blue')
 
-    t.testGameOver(request3, 'dennis', 'Empiricism')
+    t.testGameOver(request, 'dennis', 'Empiricism')
   })
 
   test('win', () => {
@@ -124,9 +127,10 @@ describe('Empiricism', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Empiricism')
-    const request3 = t.choose(game, request2, 'purple', 'green')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Empiricism')
+    request = t.choose(game, request, 'purple', 'green')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -177,9 +181,10 @@ describe('Empiricism', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Empiricism')
-    const request3 = t.choose(game, request2, 'purple', 'blue')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Empiricism')
+    request = t.choose(game, request, 'purple', 'blue')
 
     t.testIsSecondPlayer(game)
   })

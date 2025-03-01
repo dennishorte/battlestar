@@ -23,12 +23,13 @@ describe("Moses", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'auto')
-    const request4 = t.choose(game, request3, 'The Pirate Code')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'The Pirate Code')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         score: ['Navigation', 'Code of Laws', 'Sailing'],

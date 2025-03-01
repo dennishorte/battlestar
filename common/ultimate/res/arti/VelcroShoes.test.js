@@ -16,10 +16,11 @@ describe("Velcro Shoes", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         hand: ['Computers'],
@@ -42,10 +43,11 @@ describe("Velcro Shoes", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testIsFirstAction(request2)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         score: ['Computers'],
@@ -67,9 +69,10 @@ describe("Velcro Shoes", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testGameOver(request2, 'dennis', 'Velcro Shoes')
+    t.testGameOver(request, 'dennis', 'Velcro Shoes')
   })
 })

@@ -15,9 +15,10 @@ describe("Where's Waldo", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
-    t.testGameOver(request2, 'micah', "Where's Waldo")
+    t.testGameOver(request, 'micah', "Where's Waldo")
   })
 })

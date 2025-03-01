@@ -10,8 +10,9 @@ describe('Mapmaking', () => {
       t.setScore(game, 'scott', ['Navigation'])
       t.setDeckTop(game, 'base', 1, ['Mysticism'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Mapmaking')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Mapmaking')
 
     expect(t.cards(game, 'score').sort()).toStrictEqual(['Mysticism', 'The Wheel'])
   })
@@ -24,8 +25,9 @@ describe('Mapmaking', () => {
       t.setScore(game, 'micah', ['Mathematics'])
       t.setScore(game, 'scott', ['Navigation'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Mapmaking')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Mapmaking')
 
     expect(t.cards(game, 'score').sort()).toStrictEqual([])
   })

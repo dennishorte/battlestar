@@ -17,8 +17,9 @@ describe('Nikola Tesla', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.yellow')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.yellow')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -48,12 +49,13 @@ describe('Nikola Tesla', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Writing')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Writing')
 
-    t.testChoices(request2, ['Canning', 'Mysticism'])
+    t.testChoices(request, ['Canning', 'Mysticism'])
 
-    const request3 = t.choose(game, request2, 'Canning')
+    request = t.choose(game, request, 'Canning')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

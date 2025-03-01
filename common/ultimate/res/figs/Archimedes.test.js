@@ -8,8 +8,9 @@ describe('Archimedes', () => {
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setDeckTop(game, 'base', 3, ['Machinery']) // Affected by his own karma.
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Archimedes')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Archimedes')
     expect(t.cards(game, 'hand').sort()).toStrictEqual(['Machinery'])
   })
 
@@ -23,8 +24,9 @@ describe('Archimedes', () => {
       t.setColor(game, 'dennis', 'green', ['The Wheel'])
       t.setDeckTop(game, 'base', 2, ['Calendar', 'Construction'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.The Wheel')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.The Wheel')
 
     expect(t.cards(game, 'hand').sort()).toStrictEqual(['Calendar', 'Construction'])
   })
@@ -44,8 +46,9 @@ describe('Archimedes', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
 
     t.testBoard(game, {
       dennis: {

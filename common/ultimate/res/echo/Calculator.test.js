@@ -22,11 +22,12 @@ describe("Calculator", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Calculator')
-    const request3 = t.choose(game, request2, 'auto')
-    const request4 = t.choose(game, request3, 'auto')
-    const request5 = t.choose(game, request4, 'blue')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Calculator')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'blue')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -52,9 +53,10 @@ describe("Calculator", () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Calculator')
-    const request3 = t.choose(game, request2, 'auto')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Calculator')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

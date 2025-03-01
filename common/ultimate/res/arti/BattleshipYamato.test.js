@@ -13,10 +13,11 @@ describe('Battleship Yamato', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Draw.draw a card')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Draw.draw a card')
 
-    t.testGameOver(request2, 'dennis', 'high draw')
+    t.testGameOver(request, 'dennis', 'high draw')
   })
 
   test('drawing an artifact off Battleship Yamato', () => {
@@ -31,8 +32,9 @@ describe('Battleship Yamato', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Optics')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Optics')
 
     t.testBoard(game,  {
       dennis: {

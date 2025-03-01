@@ -18,8 +18,9 @@ describe('John Ericsson', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.red')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.red')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -43,8 +44,9 @@ describe('John Ericsson', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.John Ericsson')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.John Ericsson')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -71,7 +73,8 @@ describe('John Ericsson', () => {
       }
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     expect(game.getBiscuitsByPlayer(t.dennis(game))).toEqual({
       k: 0,

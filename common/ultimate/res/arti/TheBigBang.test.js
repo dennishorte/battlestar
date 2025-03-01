@@ -20,12 +20,13 @@ describe("The Big Bang", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'dogma')
-    const request3 = t.choose(game, request2, 'Societies')
-    const request4 = t.choose(game, request3, 'no')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'Societies')
+    request = t.choose(game, request, 'no')
 
-    t.testIsFirstAction(request4)
+    t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         blue: ['Encyclopedia', 'Mathematics'],

@@ -8,9 +8,10 @@ describe('Al-Kindi', () => {
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setHand(game, 'dennis', ['Tools', 'Writing'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.purple')
-    const request3 = t.choose(game, request2, 'Writing')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.purple')
+    request = t.choose(game, request, 'Writing')
     expect(t.cards(game, 'score')).toStrictEqual(['Writing'])
   })
 
@@ -25,8 +26,9 @@ describe('Al-Kindi', () => {
       t.setDeckTop(game, 'figs', 4, ['Yi Sun-Sin'])
       t.setDeckTop(game, 'base', 2, ['Calendar', 'Monotheism'])
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Writing')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Writing')
 
     expect(t.cards(game, 'hand').sort()).toStrictEqual(['Invention', 'Monotheism', 'Perspective', 'Yi Sun-Sin'])
   })

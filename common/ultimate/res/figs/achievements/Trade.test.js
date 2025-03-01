@@ -6,8 +6,9 @@ test('Trade', () => {
     t.setColor(game, 'dennis', 'yellow', ['Sunshu Ao', 'Software'])
     t.setColor(game, 'dennis', 'purple', ['Reformation'])
   })
-  const request1 = game.run()
-  const request2 = t.choose(game, request1, 'Decree.Trade')
+  let request
+    request = game.run()
+  request = t.choose(game, request, 'Decree.Trade')
 
   const ages = t.zone(game, 'forecast').cards().map(c => c.age).sort()
   expect(ages).toStrictEqual([5, 5, 5])

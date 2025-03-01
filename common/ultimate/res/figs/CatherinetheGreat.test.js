@@ -18,8 +18,9 @@ describe('Catherine the Great', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.purple')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.purple')
 
     t.testBoard(game, {
       dennis: {
@@ -39,7 +40,8 @@ describe('Catherine the Great', () => {
       },
     })
 
-    const request1 = game.run()
+    let request
+    request = game.run()
 
     expect(game.getBiscuitsByPlayer(t.dennis(game)).s).toBe(9)
   })
@@ -57,8 +59,9 @@ describe('Catherine the Great', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.purple')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.purple')
 
     t.testBoard(game, {
       dennis: {

@@ -17,9 +17,10 @@ describe('Wonder Achievement', () => {
       t.setSplay(game, 'dennis', 'blue', 'up')
       t.setSplay(game, 'dennis', 'purple', 'right')
     })
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Flight')
-    const request3 = t.choose(game, request2, 'red')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Flight')
+    request = t.choose(game, request, 'red')
 
     expect(t.cards(game, 'achievements')).toStrictEqual(['Wonder'])
   })

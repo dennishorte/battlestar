@@ -20,10 +20,11 @@ describe("Television", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Television')
-    const request3 = t.choose(game, request2, 1)
-    const request4 = t.choose(game, request3, 'Sailing')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Television')
+    request = t.choose(game, request, 1)
+    request = t.choose(game, request, 'Sailing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -55,10 +56,11 @@ describe("Television", () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Television')
-    const request3 = t.choose(game, request2, 1)
-    const request4 = t.choose(game, request3, 'Sailing')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Television')
+    request = t.choose(game, request, 1)
+    request = t.choose(game, request, 'Sailing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -19,8 +19,9 @@ describe('Samuel de Champlain', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.green')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.green')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -47,9 +48,10 @@ describe('Samuel de Champlain', () => {
       achievements: ['Domestication', 'Banking', 'Democracy'],
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Inspire.green')
-    const request3 = t.choose(game, request2, 'age 6')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Inspire.green')
+    request = t.choose(game, request, 'age 6')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

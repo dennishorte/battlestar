@@ -16,12 +16,13 @@ describe('Leonardo Da Vinci', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Leonardo Da Vinci')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Leonardo Da Vinci')
 
-    t.testChoices(request2, ['Homer', 'Leonardo Da Vinci'])
+    t.testChoices(request, ['Homer', 'Leonardo Da Vinci'])
 
-    const request3 = t.choose(game, request2, 'Homer')
+    request = t.choose(game, request, 'Homer')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -49,8 +50,9 @@ describe('Leonardo Da Vinci', () => {
       }
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Monotheism')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Monotheism')
 
     t.testBoard(game, {
       dennis: {
@@ -70,12 +72,13 @@ describe('Leonardo Da Vinci', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Vaccination')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Vaccination')
 
-    t.testChoices(request2, ['Tools', 'Coal'])
+    t.testChoices(request, ['Tools', 'Coal'])
 
-    const request3 = t.choose(game, request2, 'auto')
+    request = t.choose(game, request, 'auto')
 
     t.testBoard(game, {
       dennis: {
@@ -96,8 +99,9 @@ describe('Leonardo Da Vinci', () => {
       },
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Meld.Coal')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Coal')
 
     t.testBoard(game, {
       dennis: {
