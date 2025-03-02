@@ -6,7 +6,7 @@ function Card() {
   this.color = `green`
   this.age = 1
   this.expansion = `base`
-  this.biscuits = `llhs` 
+  this.biscuits = `llhs`
   this.dogmaBiscuit = `l`
   this.inspire = ``
   this.echo = ``
@@ -18,9 +18,9 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const card = game.aDrawAndMeld(player, game.getEffectAge(this, 2))
-      
+
       if (card) {
-        const isBottom = game.getBottomCards(player).includes(card)
+        const isBottom = game.getBottomCard(player, card.color).name === card.name
         if (isBottom) {
           game.aScore(player, card)
         }

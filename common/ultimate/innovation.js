@@ -99,6 +99,7 @@ Innovation.prototype.initializeTransientState = function() {
   this.mResetDogmaInfo()
   this.mResetMonumentCounts()
   this.mResetPeleCount()
+  this.mResetDrawInfo()
   this.state.turn = 1
   this.state.round = 1
   this.state.karmaDepth = 0
@@ -469,6 +470,7 @@ Innovation.prototype.endTurn = function() {
   this.mResetDogmaInfo()
   this.mResetMonumentCounts()
   this.mResetPeleCount()
+  this.mResetDrawInfo()
 }
 
 
@@ -2049,6 +2051,10 @@ Innovation.prototype.checkInKarma = function() {
   return this.state.karmaDepth > 0
 }
 
+Innovation.prototype.checkIsFirstBaseDraw = function(player) {
+  return !this.state.drawInfo[player.name].drewFirstBaseCard
+}
+
 Innovation.prototype.checkScoreRequirement = function(player, card, opts={}) {
   return this.getScoreCost(player, card) <= this.getScore(player, opts)
 }
@@ -2225,6 +2231,14 @@ Innovation.prototype.getAvailableSpecialAchievements = function() {
     .getZoneById('achievements')
     .cards()
     .filter(c => c.isSpecialAchievement)
+}
+
+Innovation.prototype.getBottomCards = function(player) {
+  return this
+    .utilColors()
+    .map(color => this.getCardsByZone(player, color))
+    .map(cards => cards[cards.length - 1])
+    .filter(card => card !== undefined)
 }
 
 Innovation.prototype.getCardsByZone = function(player, zoneName) {
@@ -2851,6 +2865,15 @@ Innovation.prototype.mResetDogmaInfo = function() {
   this.state.dogmaInfo = {}
 }
 
+Innovation.prototype.mResetDrawInfo = function() {
+  this.state.drawInfo = {}
+  for (const player of this.getPlayerAll()) {
+    this.state.drawInfo[player.name] = {
+      drewFirstBaseCard: false
+    }
+  }
+}
+
 Innovation.prototype.mResetMonumentCounts = function() {
   const emptyInfo = this
     .getPlayerAll()
@@ -2892,6 +2915,10 @@ Innovation.prototype.mReveal = function(player, card) {
   })
   this.mActed(player)
   return card
+}
+
+Innovation.prototype.mSetFirstBaseDraw = function(player) {
+  this.state.drawInfo[player.name].drewFirstBaseCard = true
 }
 
 Innovation.prototype.mScore = function(player, card) {
@@ -3204,11 +3231,26 @@ Innovation.prototype._adjustedDrawDeck = function(age, exp) {
 
 // Determine which expansion to draw from.
 Innovation.prototype._determineBaseDrawExpansion = function(player) {
+  // Whether the player ends up drawing echoes, unseen, or base, this counts as their
+  // first base draw, and so following draws won't draw unseen cards.
+  const isFirstBaseDraw = this.checkIsFirstBaseDraw(player)
+  if (isFirstBaseDraw){
+    this.mSetFirstBaseDraw(player)
+  }
   if (this.getExpansionList().includes('echo')) {
-    const hand = this.getZoneByPlayer(player, 'hand')
-    const echoesCards = hand.cards().filter(c => c.checkIsEchoes())
-    if (hand.cards().length > 0 && echoesCards.length === 0) {
+    const topCards = game
+      .getTopCards(player)
+      .map(c => c.getAge())
+      .sort()
+      .reverse()
+
+    if (topAges.length === 1 || (topAges.length > 1 && topAges[0] != topAges[1])) {
       return 'echo'
+    }
+  }
+  if (this.getExpansionList().includes('usee')) {
+    if (isFirstBaseDraw) {
+      return 'usee'
     }
   }
   return 'base'
