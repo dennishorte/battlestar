@@ -72,7 +72,7 @@ export default {
     ageBiscuit() {
       if (this.biscuit === '0') return 10
       if (this.biscuit === 'e') return 11
-      else return this.biscuit
+      return this.biscuit
     },
 
     classesComputed() {
@@ -93,22 +93,24 @@ export default {
       return base
     },
 
+    isAgeBiscuit() {
+      return this.biscuit === 'e' || !isNaN(this.biscuit)
+    },
+
     kind() {
       if (this.imagePath) {
         return 'image'
       }
+      else if (this.isAgeBiscuit) {
+        return 'inline-age'
+      }
       else if (this.inline) {
-        if (isNaN(this.biscuit)) {
-          return 'inline-other'
-        }
-        else {
-          return 'inline-age'
-        }
+        return 'inline-other'
       }
       else {
         return ''
-}
-},
+      }
+    },
 
     imagePath() {
       if (this.inline && !isNaN(this.biscuit)) {
