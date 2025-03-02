@@ -797,19 +797,31 @@ Innovation.prototype.aChooseCards = function(player, cards, opts={}) {
     return undefined
   }
 
-  // Card names were hidden. Convert back to arbitrary matching cards.
-  else if (cardNames[0].startsWith('*')) {
-    const output = []
-    for (const name of cardNames) {
-      const mapping = choiceMap.find(m => m.name === name && !output.includes(m.card))
-      output.push(mapping.card)
+  let output
+
+  while (true) {
+    if (cardNames[0].startsWith('*')) {
+      // Card names were hidden. Convert back to arbitrary matching cards.
+      output = []
+      for (const name of cardNames) {
+        const mapping = choiceMap.find(m => m.name === name && !output.includes(m.card))
+        output.push(mapping.card)
+      }
     }
-    return output
+    else {
+      output = cardNames.map(name => this.getCardByName(name))
+    }
+
+    if (opts.guard && !opts.guard(output)) {
+      this.mLog({ template: 'invalid selection' })
+      continue
+    }
+    else {
+      break
+    }
   }
 
-  else {
-    return cardNames.map(name => this.getCardByName(name))
-  }
+  return output
 }
 
 Innovation.prototype.aChoosePlayer = function(player, choices, opts={}) {

@@ -6,7 +6,7 @@ function Card() {
   this.color = `purple`
   this.age = 1
   this.expansion = `base`
-  this.biscuits = `hkkk` 
+  this.biscuits = `hkkk`
   this.dogmaBiscuit = `k`
   this.inspire = ``
   this.echo = ``
@@ -17,8 +17,8 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const hand = game.getZoneByPlayer(player, 'hand')
-      const cardsByColor = hand.cards().reduce((map, card) => {
+      const hand = game.getCardsByZone(player, 'hand')
+      const cardsByColor = hand.reduce((map, card) => {
         map[card.color] = (map[card.color] || 0) + 1
         return map
       }, {})
@@ -26,23 +26,37 @@ function Card() {
       const colorWithTwo = Object.keys(cardsByColor).find(color => cardsByColor[color] >= 2)
 
       if (colorWithTwo) {
-        const toTuck = hand.cards().filter(card => card.color === colorWithTwo).slice(0, 2)
-        game.aTuckMany(player, toTuck)
-
-        game.aSplay(player, colorWithTwo, 'left')
-        
-        const bottomCard = game.getCardsByZone(player, colorWithTwo).slice(-1)[0]
-        const bottomValue = bottomCard ? bottomCard.age : 1
-
-        const drawnCard = game.aDraw(player, { age: bottomValue })
-        game.mLog({
-          template: '{player} drew {card} and safeguarded it',
-          args: { player, card: drawnCard }
+        const tuckable = hand.filter(c => colorWithTwo.includes(c.color))
+        const tucked = game.aChooseAndTuck(player, tuckable, {
+          title: 'Tuck two cards with the same color',
+          count: 2,
+          guard: (toTuck) => {
+            if (toTuck.length == 2 && toTuck[0].color === toTuck[1].color) {
+              return true
+            }
+            else if (toTuck.length < 2) {
+              return true
+            }
+            else {
+              return false
+            }
+          }
         })
-        game.mSafeguard(player, drawnCard)
+
+        if (tucked.length == 2) {
+          game.aSplay(player, tucked[0].color, 'left')
+          const bottomCard = game.getBottomCard(player, tucked[0].color)
+          const bottomValue = bottomCard ? bottomCard.age : 1
+          const drawnCard = game.aDraw(player, { age: bottomValue })
+          game.aSafeguard(player, drawnCard)
+        }
       }
       else {
-        game.mLogNoEffect()
+        game.mLog({
+          template: '{player} reveals hand to show no matching cards',
+          args: { player },
+        })
+        game.aRevealMany(player, hand, { ordered: true })
       }
     },
   ]
