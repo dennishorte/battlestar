@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player, { leader }) => {
       const validIcons = game
-        .utilBiscuits()
+        .utilBiscuitNames()
         .filter(b => b !== 'leaf')
       const iconName = game.aChoose(leader, validIcons, { title: 'Choose an icon' })[0]
       const icon = game.utilBiscuitNameToIcon(iconName)

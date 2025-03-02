@@ -7,37 +7,33 @@ function Card() {
   this.age = 1
   this.expansion = `usee`
   this.biscuits = `hssk`
-  this.dogmaBiscuit = `p`
+  this.dogmaBiscuit = `s`
   this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Meld a card from your hand with no icon on a card already melded by you during this action due to Polytheism. If you do, repeat this effect.`,
-    `Draw and tuck a [1].`
+    `Meld a card from your hand with no biscuit on a card already melded by you during this action due to Polytheism. If you do, repeat this effect.`,
+    `Draw and tuck a {1}.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const hand = game.getZoneByPlayer(player, 'hand').cards()
-      const meldedThisTurn = game
-        .getCardsByZone(player, ['blue', 'red', 'green', 'yellow', 'purple'])
-        .filter(card => card.justMelded)
+      const meldedBiscuits = game.utilEmptyBiscuits()
 
       while (true) {
-        const choices = hand.filter(card => 
-          !meldedThisTurn.some(melded => melded.biscuits.includes(card.dogmaBiscuit))
-        )
+        const hand = game.getCardsByZone(player, 'hand')
+        const choices = hand.filter(c => ![...c.biscuits].some(b => b in meldedBiscuits && meldedBiscuits[b] > 0))
+        const melded = game.aChooseAndMeld(player, choices, { count: 1 })
 
-        if (choices.length === 0) {
-          break
+        if (melded.length > 0) {
+          for (const b of melded[0].biscuits) {
+            if (b in meldedBiscuits) {
+              meldedBiscuits[b] += 1
+            }
+          }
+          continue
         }
-
-        const selected = game.aChooseCard(player, choices)
-        
-        if (selected) {
-          game.aMeld(player, selected) 
-          meldedThisTurn.push(selected)
-        } else {
+        else {
           break
         }
       }

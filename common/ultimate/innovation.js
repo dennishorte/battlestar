@@ -3081,7 +3081,7 @@ Innovation.prototype.mTuck = function(player, card) {
 ////////////////////////////////////////////////////////////////////////////////
 // Utility Functions
 
-Game.prototype.utilBiscuits = function() {
+Game.prototype.utilBiscuitNames = function() {
   return [
     'castle',
     'clock',
