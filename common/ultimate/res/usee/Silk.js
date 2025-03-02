@@ -1,9 +1,10 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `Silk`  // Card names are unique in Innovation
   this.name = `Silk`
-  this.color = `yellow`
+  this.color = `green`
   this.age = 1
   this.expansion = `usee`
   this.biscuits = `cclh`
@@ -19,28 +20,35 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const cards = game.getCardsByZone(player, 'hand')
-      game.aChooseAndMeld(player, cards) 
+      game.aChooseAndMeld(player, cards)
     },
     (game, player) => {
       const boardColors = game
         .getTopCards(player)
         .map(card => card.color)
 
-      const choices = game  
+      const choices = game
         .getCardsByZone(player, 'hand')
         .filter(card => boardColors.includes(card.color))
 
-      const colorChoices = {}
-      choices.forEach(card => {
-        if (!colorChoices[card.color]) {
-          colorChoices[card.color] = []
-        }
-        colorChoices[card.color].push(card)
-      })
+      while (true) {
+        const choiceColors = util.array.distinct(choices.map(c => c.color))
 
-      Object.entries(colorChoices).forEach(([color, cards]) => {
-        game.aChooseAndScore(player, cards, { min: 0, max: 1 })
-      })
+        const toScore = game.aChooseCards(player, choices, {
+          title: 'You may score a card from your hand of each color on your board.',
+          min: 0,
+          max: choiceColors.length,
+        })
+
+        if (util.array.isDistinct(toScore.map(c => c.color))) {
+          game.aScoreMany(player, toScore)
+          break
+        }
+        else {
+          game.mLog({ template: 'Must choose only one card per color' })
+          continue
+        }
+      }
     }
   ]
   this.echoImpl = []

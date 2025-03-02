@@ -65,6 +65,10 @@ Util.array.intersection = function(array1, array2) {
   return array1.filter(x => array2.includes(x))
 }
 
+Util.array.isDistinct = function(array) {
+  return array.length === Util.array.distinct(array).length
+}
+
 Util.array.groupBy = function(array, fn) {
   const groups = {}
   for (let i = 0; i < array.length; i++) {
