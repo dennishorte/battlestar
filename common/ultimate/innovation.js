@@ -2340,20 +2340,20 @@ Innovation.prototype.getUniquePlayerWithMostBiscuits = function(biscuit) {
   const biscuits = this.getBiscuits()
 
   let most = 0
-  let mostPlayerName = ''
+  let mostPlayerNames = []
   for (const [playerName, bis] of Object.entries(biscuits)) {
     const count = bis[biscuit]
     if (count > most) {
       most = count
-      mostPlayerName = playerName
+      mostPlayerNames = [playerName]
     }
     else if (count === most) {
-      return null
+      mostPlayerNames.push(playerName)
     }
   }
 
-  if (most > 0) {
-    return this.getPlayerByName(mostPlayerName)
+  if (most > 0 && mostPlayerNames.length === 1) {
+    return this.getPlayerByName(mostPlayerNames[0])
   }
 }
 
