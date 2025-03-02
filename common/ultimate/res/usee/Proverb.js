@@ -6,33 +6,31 @@ function Card() {
   this.color = `blue`
   this.age = 1
   this.expansion = `base`
-  this.biscuits = `hckk` 
-  this.dogmaBiscuit = `l`
+  this.biscuits = `hckk`
+  this.dogmaBiscuit = `k`
   this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw, reveal, and return a [1]. If the color of the returned card is yellow or purple, safeguard an available achievement of value equal to your hand size. If you do, then return all cards from your hand. Otherwise, draw two [1].`
+    `Draw, reveal, and return a {1}. If the color of the returned card is yellow or purple, safeguard an available achievement of value equal to a card in your hand, then return all cards from your hand. Otherwise, draw two {1}.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
       const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
-      
       const returned = game.aReturn(player, card)
+
       if (returned) {
         if (card.color === 'yellow' || card.color === 'purple') {
-          const handSize = game.getCardsByZone(player, 'hand').length
-          const achievement = game.getAvailableAchievement(handSize)
+          const handAges = game.getCardsByZone(player, 'hand').map(c => c.getAge())
+          const maxAge = Math.max(...handAges)
+          const achievement = game.getAvailableAchievementsByAge(maxAge)[0]
 
           if (achievement) {
-            const safeguarded = game.aSafeguard(player, achievement)
-            
-            if (safeguarded) {
-              game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
-            }  
+            game.aSafeguard(player, achievement)
+            game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
           }
-        } 
+        }
         else {
           game.aDraw(player, { age: game.getEffectAge(this, 1) })
           game.aDraw(player, { age: game.getEffectAge(this, 1) })
