@@ -12,27 +12,29 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Return a card from your score pile. If you do, draw a card of value one higher than the card you return.`,
+    `Return a card from your score pile. If you do, draw a card of value one higher than the card you returned.`,
     `Transfer a card from your hand to the hand of the player on your left.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
       const choices = game.getCardsByZone(player, 'score')
-      const returned = game.aChooseAndReturn(player, choices, { min: 0, max: 1 })
-      
-      if (returned && returned.length > 0) {
-        const returnedAge = returned[0].age
-        game.aDraw(player, { age: returnedAge + 1 })
+      const returned = game.aChooseAndReturn(player, choices, {
+        title: 'Return a card from your score pile',
+        count: 1,
+      })[0]
+
+      if (returned) {
+        game.aDraw(player, { age: returned.age + 1 })
       }
     },
 
     (game, player) => {
-      const playerOnLeft = game.getPlayerByOffset(player, 1)
       const choices = game.getCardsByZone(player, 'hand')
       const card = game.aChooseCard(player, choices)
 
       if (card) {
+        const playerOnLeft = game.getPlayerFollowing(player)
         game.aTransfer(player, card, game.getZoneByPlayer(playerOnLeft, 'hand'))
       }
     }
