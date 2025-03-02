@@ -2764,14 +2764,25 @@ Innovation.prototype.mDraw = function(player, exp, age, opts={}) {
 }
 
 Innovation.prototype.mForeshadow = function(player, card) {
+  const zoneLimit = this.getForecastLimit(player)
   const target = this.getZoneByPlayer(player, 'forecast')
-  this.mMoveCardTo(card, target)
-  this.mLog({
-    template: '{player} foreshadows {card}',
-    args: { player, card }
-  })
-  this.mActed(player)
-  return card
+
+  if (target.cards().length >= zoneLimit) {
+    this.mLog({
+      template: '{player} has reached the limit for their forecast',
+      args: { player },
+    })
+    return
+  }
+  else {
+    this.mMoveCardTo(card, target)
+    this.mLog({
+      template: '{player} foreshadows {card}',
+      args: { player, card }
+    })
+    this.mActed(player)
+    return card
+  }
 }
 
 Innovation.prototype.mMeld = function(player, card) {
