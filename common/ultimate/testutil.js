@@ -214,24 +214,10 @@ TestUtil.setBoard = function(game, state) {
           }
         }
 
-        if (playerBoard.artifact) {
-          TestUtil.setArtifact(game, name, playerBoard.artifact)
-        }
-
-        if (playerBoard.score) {
-          TestUtil.setScore(game, name, playerBoard.score)
-        }
-
-        if (playerBoard.achievements) {
-          TestUtil.setAchievements(game, name, playerBoard.achievements)
-        }
-
-        if (playerBoard.forecast) {
-          TestUtil.setForecast(game, name, playerBoard.forecast)
-        }
-
-        if (playerBoard.hand) {
-          TestUtil.setHand(game, name, playerBoard.hand)
+        for (const zoneName of ['artifact', 'score', 'achievements', 'forecast', 'hand', 'safe', 'museum']) {
+          if (zoneName in playerBoard) {
+            TestUtil.setPlayerZone(game, name, zoneName, playerBoard[zoneName])
+          }
         }
       }
     }
@@ -483,42 +469,22 @@ TestUtil.setDeckTop = function(game, exp, age, cardNames) {
   }
 }
 
-TestUtil.setForecast = function(game, playerName, cardNames) {
-  TestUtil.clearHand(game, playerName)
+TestUtil.setPlayerZone = function(game, playerName, zoneName, cardNames) {
+  TestUtil.clearZone(game, playerName, zoneName)
   const player = game.getPlayerByName(playerName)
-  const forecast = game.getZoneByPlayer(player, 'forecast')
+  const zone = game.getZoneByPlayer(player, zoneName)
   for (const name of cardNames) {
     const card = game.getCardByName(name)
-    game.mMoveCardTo(card, forecast)
+    game.mMoveCardTo(card, zone)
   }
 }
 
 TestUtil.setHand = function(game, playerName, cardNames) {
-  TestUtil.clearHand(game, playerName)
-  const player = game.getPlayerByName(playerName)
-  const hand = game.getZoneByPlayer(player, 'hand')
-  for (const name of cardNames) {
-    const card = game.getCardByName(name)
-    game.mMoveCardTo(card, hand)
-  }
+  TestUtil.setPlayerZone(game, playerName, 'hand', cardNames)
 }
 
 TestUtil.setScore = function(game, playerName, cardNames) {
-  TestUtil.clearZone(game, playerName, 'score')
-  const player = game.getPlayerByName(playerName)
-  const score = game.getZoneByPlayer(player, 'score')
-  for (const name of cardNames) {
-    const card = game.getCardByName(name)
-    game.mMoveCardTo(card, score)
-  }
-}
-
-TestUtil.setArtifact = function(game, playerName, cardName) {
-  TestUtil.clearZone(game, playerName, 'artifact')
-  const player = game.getPlayerByName(playerName)
-  const score = game.getZoneByPlayer(player, 'artifact')
-  const card = game.getCardByName(cardName)
-  game.mMoveCardTo(card, score)
+  TestUtil.setPlayerZone(game, playerName, 'score', cardNames)
 }
 
 TestUtil.setSplay = function(game, playerName, color, direction) {
