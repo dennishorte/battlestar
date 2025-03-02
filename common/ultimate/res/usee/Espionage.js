@@ -1,12 +1,12 @@
 const CardBase = require(`../CardBase.js`)
 
 function Card() {
-  this.id = `Espionage`  
+  this.id = `Espionage`
   this.name = `Espionage`
   this.color = `blue`
   this.age = 1
   this.expansion = `usee`
-  this.biscuits = `khkk` 
+  this.biscuits = `khkk`
   this.dogmaBiscuit = `k`
   this.inspire = ``
   this.echo = ``
@@ -17,24 +17,29 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
+      let leaderHandRevealed = false
       while (true) {
         const hand = game.getCardsByZone(player, 'hand')
-        const choices = hand.map(c => c.id)
 
-        const revealedId = game.aChoose(player, choices, {
+        const revealed = game.aChooseAndReveal(player, hand, {
           title: 'Choose a card to reveal',
-          min: 0, 
-          max: 1
+          count: 1,
         })[0]
 
-        if (!revealedId) break
-
-        const revealedCard = hand.find(c => c.id === revealedId)
-        game.mReveal(player, revealedCard)
+        if (!revealed) {
+          break
+        }
 
         const leaderHand = game.getCardsByZone(leader, 'hand')
-        if (!leaderHand.some(c => c.color === revealedCard.color)) {
-          game.mTransfer(player, revealedCard, game.getZoneByPlayer(leader, 'hand'))
+        game.mLog({
+          template: '{player} reveals their hand',
+          args: { player: leader }
+        })
+        game.aRevealMany(leader, leaderHand, { ordered: true })
+
+        if (!leaderHand.some(c => c.color === revealed.color)) {
+          game.mTransfer(player, revealed, game.getZoneByPlayer(leader, 'hand'))
+          game.mLog({ template: 'Repeat this effect' })
         }
         else {
           break
