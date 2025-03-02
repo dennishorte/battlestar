@@ -12,15 +12,15 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Transfer a top card on your board with [l] to the board of any other player. If you do, meld the lowest top card without [l] from that player's board.`
+    `Transfer a top card on your board with {k} to the board of any other player. If you do, meld the lowest top card without {k} from that player's board.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
       const choices = game
         .getTopCards(player)
-        .filter(card => card.checkHasBiscuit('l'))
-      
+        .filter(card => card.checkHasBiscuit('k'))
+
       const card = game.aChooseCard(player, choices)
       if (card) {
         const otherPlayers = game
@@ -29,17 +29,18 @@ function Card() {
         const targetPlayer = game.aChoosePlayer(player, otherPlayers)
         game.aTransfer(player, card, game.getZoneByPlayer(targetPlayer, card.color))
 
-        const meldChoices = game  
+        const topCastleCards = game
           .getTopCards(targetPlayer)
-          .filter(card => !card.checkHasBiscuit('l'))
-          
-        const meldCard = game.aChooseCard(player, meldChoices, { 
+          .filter(card => !card.checkHasBiscuit('k'))
+
+        const meldChoices = game.utilLowestCards(topCastleCards)
+
+        const meldCard = game.aChooseCard(player, meldChoices, {
           title: 'Choose card to meld',
-          lowest: true
         })
-        
+
         if (meldCard) {
-          game.aMeld(targetPlayer, meldCard)
+          game.aMeld(player, meldCard)
         }
       }
     },
