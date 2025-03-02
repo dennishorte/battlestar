@@ -6,7 +6,7 @@ describe('Woodworking', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
-        green: ['Woodworking'],
+        yellow: ['Woodworking'],
       },
       decks: {
         usee: {
@@ -22,7 +22,7 @@ describe('Woodworking', () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        green: ['Woodworking'],
+        yellow: ['Woodworking'],
         score: ['Padlock'],
       },
     })
@@ -33,7 +33,7 @@ describe('Woodworking', () => {
     t.setBoard(game, {
       dennis: {
         red: ['Metalworking'],
-        green: ['Woodworking'],
+        yellow: ['Woodworking'],
       },
       decks: {
         usee: {
@@ -50,7 +50,7 @@ describe('Woodworking', () => {
     t.testBoard(game, {
       dennis: {
         red: ['Padlock', 'Metalworking'],
-        green: ['Woodworking'],
+        yellow: ['Woodworking'],
       },
     })
   })
