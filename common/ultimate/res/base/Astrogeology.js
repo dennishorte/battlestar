@@ -13,7 +13,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and reveal an {b}. Splay its color on your board aslant. If you do, transfer all but your top four cards of that color to your hand.`,
+    `Draw and reveal an {e}. Splay its color on your board aslant. If you do, transfer all but your top four cards of that color to your hand.`,
     `If you have at least eight cards in your hand, you win.`
   ]
 

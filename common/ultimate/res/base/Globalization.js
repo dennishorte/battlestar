@@ -14,7 +14,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `I demand you return a top card with a {l} from your board!`,
-    `Draw and meld an {b}. If no player has more {l} than {f} on their board, the single player with the most points wins.`
+    `Draw and meld an {e}. If no player has more {l} than {f} on their board, the single player with the most points wins.`
   ]
 
   this.dogmaImpl = [

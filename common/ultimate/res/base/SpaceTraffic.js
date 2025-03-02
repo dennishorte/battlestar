@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and tuck an {b}. If you tuck directly under an {b}, you lose. Otherwise, score all but your top five cards of the color of the tucked card, splay that color aslant, and if you do not have the highest score, repeat this effect.`
+    `Draw and tuck an {e}. If you tuck directly under an {e}, you lose. Otherwise, score all but your top five cards of the color of the tucked card, splay that color aslant, and if you do not have the highest score, repeat this effect.`
   ]
 
   this.dogmaImpl = [

@@ -13,7 +13,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Return a card from your hand. If you returned a {0}, draw a {0} for every different value of card in your score pile. If you return an {b}, junk all cards in the {b} deck.`
+    `Return a card from your hand. If you returned a {0}, draw a {0} for every different value of card in your score pile. If you return an {e}, junk all cards in the {e} deck.`
   ]
 
   this.dogmaImpl = [
