@@ -1716,3 +1716,345 @@ describe('Innovation', () => {
 
   })
 })
+
+describe.only('zone size limits', () => {
+
+  test('no splay: six is too many', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Tomb'],
+        blue: ['Tools', 'Writing'],
+        green: ['The Wheel'],
+        achievements: ['Agriculture'],
+        safe: ['Software', 'Flight', 'Optics', 'Tools', 'Metalworking'],
+      },
+      achievements: ['Domestication', 'Construction', 'Optics'],
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Tomb')
+    request = t.choose(game, request, 'yes')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: ['The Wheel'],
+        hand: ['Domestication'],
+        safe: ['Software', 'Flight', 'Optics', 'Tools', 'Metalworking'],
+        achievements: ['Agriculture'],
+      },
+    })
+  })
+
+  test('no splay: five is just right', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Tomb'],
+        blue: ['Tools', 'Writing'],
+        green: ['The Wheel'],
+        achievements: ['Agriculture'],
+        safe: ['Software', 'Flight', 'Optics', 'Tools'],
+      },
+      achievements: ['Domestication', 'Construction', 'Optics'],
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Tomb')
+    request = t.choose(game, request, 'yes')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: ['The Wheel'],
+        hand: ['Domestication'],
+        safe: ['Software', 'Flight', 'Optics', 'Tools', 'Construction'],
+        achievements: ['Agriculture'],
+      },
+    })
+  })
+
+  test('left splay: five is too many', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Tomb'],
+        blue: ['Tools', 'Writing'],
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'left',
+        },
+        achievements: ['Agriculture'],
+        safe: ['Software', 'Flight', 'Optics', 'Tools'],
+      },
+      achievements: ['Domestication', 'Construction', 'Optics'],
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Tomb')
+    request = t.choose(game, request, 'yes')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'left',
+        },
+        hand: ['Domestication'],
+        safe: ['Software', 'Flight', 'Optics', 'Tools'],
+        achievements: ['Agriculture'],
+      },
+    })
+  })
+
+  test('left splay: four is just right', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Tomb'],
+        blue: ['Tools', 'Writing'],
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'left',
+        },
+        achievements: ['Agriculture'],
+        safe: ['Software', 'Flight', 'Optics'],
+      },
+      achievements: ['Domestication', 'Construction', 'Optics'],
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Tomb')
+    request = t.choose(game, request, 'yes')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'left',
+        },
+        hand: ['Domestication'],
+        safe: ['Software', 'Flight', 'Optics', 'Construction'],
+        achievements: ['Agriculture'],
+      },
+    })
+  })
+
+  test('right splay: four is too many', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Tomb'],
+        blue: ['Tools', 'Writing'],
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'right',
+        },
+        achievements: ['Agriculture'],
+        safe: ['Software', 'Flight', 'Optics'],
+      },
+      achievements: ['Domestication', 'Construction', 'Optics'],
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Tomb')
+    request = t.choose(game, request, 'yes')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'right',
+        },
+        hand: ['Domestication'],
+        safe: ['Software', 'Flight', 'Optics'],
+        achievements: ['Agriculture'],
+      },
+    })
+  })
+
+  test('right splay: three is just right', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Tomb'],
+        blue: ['Tools', 'Writing'],
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'right',
+        },
+        achievements: ['Agriculture'],
+        safe: ['Software', 'Flight'],
+      },
+      achievements: ['Domestication', 'Construction'],
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Tomb')
+    request = t.choose(game, request, 'yes')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'right',
+        },
+        hand: ['Domestication'],
+        safe: ['Software', 'Flight', 'Construction'],
+        achievements: ['Agriculture'],
+      },
+    })
+  })
+
+  test('up splay: three is too many', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Tomb'],
+        blue: ['Tools', 'Writing'],
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'up',
+        },
+        achievements: ['Agriculture'],
+        safe: ['Software', 'Flight'],
+      },
+      achievements: ['Domestication', 'Construction'],
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Tomb')
+    request = t.choose(game, request, 'yes')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'up',
+        },
+        hand: ['Domestication'],
+        safe: ['Software', 'Flight'],
+        achievements: ['Agriculture'],
+      },
+    })
+  })
+
+  test('up splay: two is just right', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Tomb'],
+        blue: ['Tools', 'Writing'],
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'up',
+        },
+        achievements: ['Agriculture'],
+        safe: ['Software'],
+      },
+      achievements: ['Domestication', 'Construction'],
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Tomb')
+    request = t.choose(game, request, 'yes')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'up',
+        },
+        hand: ['Domestication'],
+        safe: ['Software', 'Construction'],
+        achievements: ['Agriculture'],
+      },
+    })
+  })
+
+  test('aslant splay: two is too many', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Tomb'],
+        blue: ['Tools', 'Writing'],
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'aslant',
+        },
+        achievements: ['Agriculture'],
+        safe: ['Software'],
+      },
+      achievements: ['Domestication', 'Construction'],
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Tomb')
+    request = t.choose(game, request, 'yes')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'aslant',
+        },
+        hand: ['Domestication'],
+        safe: ['Software'],
+        achievements: ['Agriculture'],
+      },
+    })
+  })
+
+  test('aslant splay: one is just right', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Tomb'],
+        blue: ['Tools', 'Writing'],
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'aslant',
+        },
+        achievements: ['Agriculture'],
+        safe: [],
+      },
+      achievements: ['Domestication', 'Construction'],
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Tomb')
+    request = t.choose(game, request, 'yes')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'aslant',
+        },
+        hand: ['Domestication'],
+        safe: ['Construction'],
+        achievements: ['Agriculture'],
+      },
+    })
+  })
+
+})

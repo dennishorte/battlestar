@@ -1817,8 +1817,22 @@ Innovation.prototype.aReturn = function(player, card, opts={}) {
 }
 
 Innovation.prototype.aSafeguard = function(player, card, opts={}) {
+  const safeLimit = this.getSafeLimit(player)
+  const safeZone = this.getZoneByPlayer(player, 'safe')
+
+  this.mLog({ template: 'safe limit is: ' + safeLimit })
+  this.mLog({ template: 'num cards in safe is: ' + safeZone.cards().length })
+
+  if (safeZone.cards().length >= safeLimit) {
+    this.mLog({
+      template: '{player} has reached their safe limit',
+      args: { player }
+    })
+    return
+  }
+
   const zone = this.getZoneByCard(card)
-  this.mMoveCardTo(card, this.getZoneByPlayer(player, 'safe'))
+  this.mMoveCardTo(card, safeZone)
   this.mLog({
     template: '{player} safeguards {card} from {zone}',
     args: { player, card, zone },
@@ -2561,6 +2575,38 @@ Innovation.prototype.getVisibleEffectsByColor = function(player, color, kind) {
 
 Innovation.prototype.getZoneByDeck = function(exp, age) {
   return this.state.zones.decks[exp][age]
+}
+
+Innovation.prototype.getSafeLimit = function(player) {
+  return this.getZoneLimit(player)
+}
+
+Innovation.prototype.getForecastLimit = function(player) {
+  return this.getZoneLimit(player)
+}
+
+Innovation.prototype.getZoneLimit = function(player) {
+  const splays = this
+    .utilColors()
+    .map(color => this.getZoneByPlayer(player, color).splay)
+
+  this.mLog({ template: 'splays: ' + splays })
+
+  if (splays.includes('aslant')) {
+    return 1
+  }
+  else if (splays.includes('up')) {
+    return 2
+  }
+  else if (splays.includes('right')) {
+    return 3
+  }
+  else if (splays.includes('left')) {
+    return 4
+  }
+  else {
+    return 5
+  }
 }
 
 
