@@ -7,46 +7,46 @@ function Card() {
   this.age = 1
   this.expansion = `usee`
   this.biscuits = `sshk`
-  this.dogmaBiscuit = `p`
+  this.dogmaBiscuit = `s`
   this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `If you have at least four each of at least four icon on your board, draw a {4}. Otherwise, if you have three of three icons, draw a {3}. Otherwise, if you have two of two icons, draw a {2}.`
+    `If you have at least four each of at least four biscuit on your board, draw a {4}. Otherwise, if you have three of three biscuits, draw a {3}. Otherwise, if you have two of two biscuits, draw a {2}.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
       const biscuits = game.getBiscuits()[player.name]
-      const icons = ['c', 'f', 'h', 'i', 'k', 'l', 'p', 's'] // All biscuit icons
+      const biscuitCounts = [0, 0, 0, 0, 0]
 
-      // Count number of icons with at least 4 biscuits
-      let count4 = icons.reduce((count, icon) => {
-        return biscuits[icon] >= 4 ? count + 1 : count
-      }, 0)
+      for (const count of Object.values(biscuits)) {
+        if (count >= 4) {
+          biscuitCounts[4] += 1
+        }
+        if (count >= 3) {
+          biscuitCounts[3] += 1
+        }
+        if (count >= 2) {
+          biscuitCounts[2] += 1
+        }
+      }
 
-      if (count4 >= 4) {
+      game.mLog({ template: 'four biscuits: ' + biscuitCounts[4] })
+      game.mLog({ template: 'three biscuits: ' + biscuitCounts[3] })
+      game.mLog({ template: 'two biscuits: ' + biscuitCounts[2] })
+
+      if (biscuitCounts[4] >= 4) {
         game.aDraw(player, { age: game.getEffectAge(this, 4) })
       }
+      else if (biscuitCounts[3] >= 3) {
+        game.aDraw(player, { age: game.getEffectAge(this, 3) })
+      }
+      else if (biscuitCounts[2] >= 2) {
+        game.aDraw(player, { age: game.getEffectAge(this, 2) })
+      }
       else {
-        // Count number of icons with at least 3 biscuits
-        let count3 = icons.reduce((count, icon) => {
-          return biscuits[icon] >= 3 ? count + 1 : count
-        }, 0)
-
-        if (count3 >= 3) {
-          game.aDraw(player, { age: game.getEffectAge(this, 3) })
-        }
-        else {
-          // Count number of icons with at least 2 biscuits
-          let count2 = icons.reduce((count, icon) => {
-            return biscuits[icon] >= 2 ? count + 1 : count
-          }, 0)
-
-          if (count2 >= 2) {
-            game.aDraw(player, { age: game.getEffectAge(this, 2) })
-          }
-        }
+        game.mLogNoEffect()
       }
     },
   ]
