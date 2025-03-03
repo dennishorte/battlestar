@@ -13,33 +13,27 @@ function Card() {
   this.karma = []
   this.dogma = [
     `You may splay left the color of which you have the most cards on your board.`,
-    `Draw and meld a card of value equal to the number of visible purple cards on your board. If the melded card has no [s], tuck it.`
+    `Draw and meld a card of value equal to the number of visible purple cards on your board. If the melded card has no {c}, tuck it.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const mostCardsColor = game.utilColors().reduce((mostColor, color) => {
-        const currentCount = game.getCardsByZone(player, color).length
-        const mostCount = game.getCardsByZone(player, mostColor).length
-        return currentCount > mostCount ? color : mostColor
-      }, game.utilColors()[0])
-      
-      game.aChooseAndSplay(player, [mostCardsColor], 'left')
+      const cardsPerColor = game
+        .utilColors()
+        .map(color => game.getCardsByZone(player, color).length)
+      const mostCount = Math.max(...cardsPerColor)
+      const choices = game
+        .utilColors()
+        .filter(color => game.getCardsByZone(player, color).length === mostCount)
+
+      game.aChooseAndSplay(player, choices, 'left', { min: 0, max: 1 })
     },
     (game, player) => {
-      const numPurpleCards = game
-        .getTopCards(player)
-        .filter(card => card.color === 'purple')
-        .length
-
+      const numPurpleCards = game.getVisibleCardsByZone(player, 'purple')
       const card = game.aDrawAndMeld(player, numPurpleCards)
-      
-      if (card && !card.checkHasBiscuit('s')) {
-        game.mLog({
-          template: '{player} tucks {card}',
-          args: { player, card }
-        })
-        game.mMoveCardTo(card, game.getZoneByPlayer(player, card.color), { tuck: true })
+
+      if (card && !card.checkHasBiscuit('c')) {
+        game.aTuck(player, card)
       }
     }
   ]
