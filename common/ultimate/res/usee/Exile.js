@@ -12,37 +12,40 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you return a top card without [c] from your board! Return all cards of the returned card's value from your score pile!`,
-    `If exactly one card was returned due to the demand, return Exile if it is a top card on any board and draw a [3].`
+    `I demand you return a top card without {l} from your board! Return all cards of the returned card's value from your score pile!`,
+    `If exactly one card was returned due to the demand, return Exile if it is a top card on any board and draw a {3}.`
   ]
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
       const choices = game
         .getTopCards(player)
-        .filter(card => !card.checkHasBiscuit('c'))
-      
-      const returned = game.aChooseAndReturn(player, choices, { min: 1, max: 1 })
+        .filter(card => !card.checkHasBiscuit('l'))
 
-      if (returned.length > 0) {
-        const returnedCard = returned[0]
+      const returned = game.aChooseAndReturn(player, choices, { count: 1 })[0]
+
+      if (returned) {
         const scoreCards = game
           .getCardsByZone(player, 'score')
-          .filter(card => card.age === returnedCard.age)
-        
-        game.aReturnMany(player, scoreCards)
+          .filter(card => card.age === returned.age)
+
+        const scored = game.aReturnMany(player, scoreCards)
+
+        if (scored.length === 0) {
+          game.state.dogmaInfo.exileReturnedOneCard = true
+        }
       }
     },
     (game, player, { leader }) => {
-      const topCards = game
-        .getPlayerAll()
-        .flatMap(player => game.getTopCards(player))
+      if (game.state.dogmaInfo.exileReturnedOneCard) {
+        const topCards = game
+          .getPlayerAll()
+          .flatMap(player => game.getTopCards(player))
 
-      if (game.getZoneByPlayer(leader).dogmaEvents[0].cards.length === 1) {
         const exileCards = topCards.filter(card => card.name === 'Exile')
         if (exileCards.length > 0) {
-          game.aChooseAndReturn(leader, exileCards, { min: 0, max: 1 })
-          game.aDraw(leader, { age: game.getEffectAge(this, 3) })
+          game.aReturn(player, exileCards[0])
+          game.aDraw(player, { age: game.getEffectAge(this, 3) })
         }
       }
     }
