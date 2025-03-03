@@ -18,26 +18,16 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const scoredAges = game
-        .getCardsByZone(player, 'score')
-        .map(c => c.age)
-
-      const availableAges = game
-        .getTopCards(player)
-        .map(c => c.age)
-        .filter(age => !scoredAges.includes(age))
-
-      while (availableAges.length > 0) {
-        const choices = game
-          .getTopCards(player)
-          .filter(card => availableAges.includes(card.age))
-    
-        const card = game.aChooseCard(player, choices)
-        
-        if (!card) break
-
-        game.aScore(player, card)
-        availableAges.splice(availableAges.indexOf(card.age), 1)
+      while (true) {
+        const agesInScore = game.getCardsByZone(player, 'score').map(c => c.getAge())
+        const canScore = game.getTopCards(player).filter(c => !agesInScore.includes(c.getAge()))
+        const scored = game.aChooseAndScore(player, canScore, { count: 1 })[0]
+        if (scored) {
+          continue
+        }
+        else {
+          break
+        }
       }
     },
     (game, player) => {
