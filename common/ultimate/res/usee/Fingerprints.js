@@ -26,14 +26,7 @@ function Card() {
         .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
         .length
 
-      const availableAchievements = game.getAvailableAchievementsByAge(splayedColors)
-
-      if (availableAchievements.length === 0) {
-        this.mLog({ template: 'No available achievements of age ' + splayedColors })
-      }
-      else {
-        game.aSafeguard(player, availableAchievements[0])
-      }
+      game.aSafeguardAvailableAchievement(player, splayedColors)
 
       const choices = game
         .getCardsByZone(player, 'hand')

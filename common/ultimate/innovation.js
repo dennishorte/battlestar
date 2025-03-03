@@ -1855,6 +1855,17 @@ Innovation.prototype.aSafeguard = function(player, card, opts={}) {
   return card
 }
 
+Innovation.prototype.aSafeguardAvailableAchievement = function(player, age) {
+  const availableAchievements = this.getAvailableAchievementsByAge(age)
+
+  if (availableAchievements.length === 0) {
+    this.mLog({ template: 'No available achievements of age ' + age })
+  }
+  else {
+    this.aSafeguard(player, availableAchievements[0])
+  }
+}
+
 Innovation.prototype.aScore = function(player, card, opts={}) {
   if (card === undefined) {
     return
