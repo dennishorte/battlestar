@@ -6,18 +6,36 @@ describe('Knights Templar', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
-        red: ['Knights Templar'],
+        yellow: ['Masonry'],
+        red: ['Knights Templar', 'Metalworking'],
+      },
+      micah: {
+        blue: ['Tools', 'Writing'],
+        green: {
+          cards: ['Paper', 'Mapmaking', 'The Wheel'],
+          splay: 'left',
+        },
       },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Knights Templar')
+    request = t.choose(game, request, 'red')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        red: ['Knights Templar'],
+        yellow: ['Masonry'],
+        red: {
+          cards: ['Knights Templar', 'Metalworking'],
+          splay: 'left',
+        },
+        score: ['Paper'],
+      },
+      micah: {
+        blue: ['Tools', 'Writing'],
+        green: ['Mapmaking', 'The Wheel'],
       },
     })
   })

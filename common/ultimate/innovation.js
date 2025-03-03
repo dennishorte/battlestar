@@ -1966,6 +1966,7 @@ Innovation.prototype.aUnsplay = function(player, color, opts={}) {
       args: { player, zone }
     })
     zone.splay = 'none'
+    return color
   }
 }
 
