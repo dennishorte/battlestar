@@ -7,33 +7,36 @@ function Card() {
   this.age = 2
   this.expansion = `usee`
   this.biscuits = `sslh`
-  this.dogmaBiscuit = `p`
+  this.dogmaBiscuit = `s`
   this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and reveal a [2]. If it has [l], score it. Otherwise, if it has [c], return it and draw two [2]. Otherwise, tuck it.`,
-    `If you have no [l], claim the Zen achievement.`
+    `Draw and reveal a {3}. If it has {l}, score it. Otherwise, if it has {c}, return it and draw two {3}. Otherwise, tuck it.`,
+    `If you have no {k}, claim the Zen achievement.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 2))
+      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 3))
       if (card.checkHasBiscuit('l')) {
         game.aScore(player, card)
-      } else if (card.checkHasBiscuit('c')) {
+      }
+      else if (card.checkHasBiscuit('c')) {
         game.aReturn(player, card)
         game.aDraw(player, { age: game.getEffectAge(this, 2) })
         game.aDraw(player, { age: game.getEffectAge(this, 2) })
-      } else {
+      }
+      else {
         game.aTuck(player, card)
       }
     },
     (game, player) => {
-      const biscuits = game.getBiscuits()
-      if (biscuits[player.name].l === 0) {
-        game.aClaimAchievement(player, { name: 'Zen' })  
-      } else {
+      const biscuits = game.getBiscuitsByPlayer(player)
+      if (biscuits.k === 0) {
+        game.aClaimAchievement(player, { name: 'Zen' })
+      }
+      else {
         game.mLogNoEffect()
       }
     }

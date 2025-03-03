@@ -8,6 +8,11 @@ describe('Meteorology', () => {
       dennis: {
         blue: ['Meteorology'],
       },
+      decks: {
+        usee: {
+          3: ['Cliffhanger'],
+        },
+      },
     })
 
     let request
@@ -18,6 +23,8 @@ describe('Meteorology', () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Meteorology'],
+        score: ['Cliffhanger'],
+        achievements: ['Zen'],
       },
     })
   })
