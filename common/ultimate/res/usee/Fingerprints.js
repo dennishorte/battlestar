@@ -6,7 +6,7 @@ function Card() {
   this.color = `yellow`
   this.age = 2
   this.expansion = `usee`
-  this.biscuits = `lshl` 
+  this.biscuits = `lshl`
   this.dogmaBiscuit = `l`
   this.inspire = ``
   this.echo = ``
@@ -21,35 +21,32 @@ function Card() {
       game.aChooseAndSplay(player, ['red', 'yellow'], 'left')
     },
     (game, player) => {
-      const splayedColors = ['red', 'yellow', 'blue', 'purple', 'green']
+      const splayedColors = game
+        .utilColors()
         .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
         .length
-      
-      const availableAchievements = game.getAvailableAchievements(splayedColors)
-      if (availableAchievements.length > 0) {
-        const achievement = game.aChooseCard(player, availableAchievements, {
-          title: 'Choose an achievement to safeguard'
+
+      const availableAchievements = game.getAvailableAchievementsByAge(splayedColors)
+
+      if (availableAchievements.length === 0) {
+        this.mLog({ template: 'No available achievements of age ' + splayedColors })
+      }
+      else {
+        game.aSafeguard(player, availableAchievements[0])
+      }
+
+      const choices = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => card.age === splayedColors)
+
+      if (choices.length > 0) {
+        const transferTo = game.aChoosePlayer(player, game.getPlayerAll(), {
+          title: 'Choose a player to transfer card to'
         })
-        if (achievement) {
-          game.aSafeguardAchievement(player, achievement)
-
-          const choices = game
-            .getCardsByZone(player, 'hand')
-            .filter(card => card.age === splayedColors)
-
-          if (choices.length > 0) {
-            const transferTo = game.aChoosePlayer(player, null, {
-              title: 'Choose a player to transfer card to'
-            })
-            const card = game.aChooseCard(player, choices, {
-              title: 'Choose a card to transfer'
-            })
-            game.aTransfer(player, card, game.getZoneByPlayer(transferTo, card.color))
-          }
-          else {
-            game.mLogNoEffect()  
-          }
-        }
+        const card = game.aChooseCard(player, choices, {
+          title: 'Choose a card to transfer'
+        })
+        game.aTransfer(player, card, game.getZoneByPlayer(transferTo, card.color))
       }
       else {
         game.mLogNoEffect()

@@ -2592,6 +2592,12 @@ Innovation.prototype.getZoneByDeck = function(exp, age) {
   return this.state.zones.decks[exp][age]
 }
 
+Innovation.prototype.getColorZonesByPlayer = function(player) {
+  return this
+    .utilColor()
+    .map(color => this.getZoneByPlayer(player, color))
+}
+
 Innovation.prototype.getSafeLimit = function(player) {
   return this.getZoneLimit(player)
 }
