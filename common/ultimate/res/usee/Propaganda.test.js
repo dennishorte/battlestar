@@ -7,18 +7,30 @@ describe('Propaganda', () => {
     t.setBoard(game, {
       dennis: {
         purple: ['Propaganda'],
+        hand: ['Mathematics'],
+      },
+      micah: {
+        yellow: ['Agriculture'],
+        hand: ['Tools', 'Domestication'],
       },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Propaganda')
+    request = t.choose(game, request, 'yellow')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        yellow: ['Agriculture'],
         purple: ['Propaganda'],
+        blue: ['Mathematics'],
       },
+      micah: {
+        yellow: ['Domestication'],
+        hand: ['Tools'],
+      }
     })
   })
 
