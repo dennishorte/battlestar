@@ -945,7 +945,7 @@ Innovation.prototype.aChooseAndSplay = function(player, choices, direction, opts
 
   if (choices.length === 0) {
     this.mLogNoEffect()
-    return
+    return []
   }
 
   if (!opts.count && !opts.min && !opts.max) {
@@ -960,6 +960,7 @@ Innovation.prototype.aChooseAndSplay = function(player, choices, direction, opts
   )
   if (colors.length === 0) {
     this.mLogDoNothing(player)
+    return []
   }
   else {
     const splayed = []
@@ -1834,9 +1835,6 @@ Innovation.prototype.aSafeguard = function(player, card, opts={}) {
   const safeLimit = this.getSafeLimit(player)
   const safeZone = this.getZoneByPlayer(player, 'safe')
 
-  this.mLog({ template: 'safe limit is: ' + safeLimit })
-  this.mLog({ template: 'num cards in safe is: ' + safeZone.cards().length })
-
   if (safeZone.cards().length >= safeLimit) {
     this.mLog({
       template: '{player} has reached their safe limit',
@@ -2621,8 +2619,6 @@ Innovation.prototype.getZoneLimit = function(player) {
   const splays = this
     .utilColors()
     .map(color => this.getZoneByPlayer(player, color).splay)
-
-  this.mLog({ template: 'splays: ' + splays })
 
   if (splays.includes('aslant')) {
     return 1
