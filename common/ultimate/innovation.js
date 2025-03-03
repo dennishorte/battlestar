@@ -786,20 +786,21 @@ Innovation.prototype.aChooseCards = function(player, cards, opts={}) {
 
   opts.title = opts.title || 'Choose Cards(s)'
   const choices = choiceMap.map(x => x.name)
-  const cardNames = this.aChoose(
-    player,
-    choices,
-    opts
-  )
-
-  if (cardNames.length === 0) {
-    this.mLogDoNothing(player)
-    return undefined
-  }
 
   let output
 
   while (true) {
+    const cardNames = this.aChoose(
+      player,
+      choices,
+      opts
+    )
+
+    if (cardNames.length === 0) {
+      this.mLogDoNothing(player)
+      return undefined
+    }
+
     if (cardNames[0].startsWith('*')) {
       // Card names were hidden. Convert back to arbitrary matching cards.
       output = []

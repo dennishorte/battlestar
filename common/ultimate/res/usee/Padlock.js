@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `Padlock`  // Card names are unique in Innovation
@@ -18,33 +19,30 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      const secrets = game
-        .getTopCards(player)
-        .filter(card => card.checkHasBiscuit('c'))
+      const secrets = game.getCardsByZone(player, 'safe')
 
-      if (secrets.length > 0) {
-        const secret = game.aChooseCard(player, secrets)
-        const transferred = game.aTransfer(player, secret, game.getZoneById('achievements')) 
-        
-        if (!transferred) {
-          game.mLogNoEffect()
-        }
+      if (secrets.length === 0) {
+        game.mLog({ template: 'no secrets to transfer' })
+        return
       }
-      else {
-        game.mLogNoEffect()
+
+      const secret = game.aChooseCards(player, secrets, { hidden: true })[0]
+      const transferred = game.aTransfer(player, secret, game.getZoneById('achievements'))
+      if (transferred) {
+        game.state.dogmaInfo.padlockCardTransferred = true
       }
     },
     (game, player, { leader }) => {
-      const secrets = game
-        .getTopCards(player)
-        .filter(card => card.checkHasBiscuit('c'))
-
-      if (secrets.length === 0) { // No secrets were transferred
-        const hand = game.getCardsByZone(player, 'hand')
-        const ages = hand.map(c => c.age).filter((v, i, a) => a.indexOf(v) === i)
-        const toScore = game.aChooseCards(player, hand, { count: ages.length, min: 0, max: 3 })
-
-        toScore.forEach(card => game.aScore(player, card))
+      if (!game.state.dogmaInfo.padlockCardTransferred) {
+        game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'), {
+          title: 'Choose up the three cards of different values',
+          min: 0,
+          max: 3,
+          guard: (cards) => util.array.isDistinct(cards.map(c => c.getAge()))
+        })
+      }
+      else {
+        game.mLogNoEffect()
       }
     },
   ]
