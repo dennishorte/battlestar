@@ -12,31 +12,25 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Safeguard an available achievement of value equal to the number of cards in your hand. If you do, return all cards of that value from your hand. If you return a {3}, claim the Anonymity achievement.`,
+    `Safeguard an available achievement of value equal to the number of cards in your hand. If you do, return all cards of that value from your hand. If you return a {4}, claim the Anonymity achievement.`,
     `You may splay your purple cards left.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
       const handSize = game.getZoneByPlayer(player, 'hand').cards().length
-      const availableAchievements = game.getAvailableAchievements().filter(a => a.age === handSize)
-      
-      const achievement = game.aChooseCard(player, availableAchievements, {
-        title: 'Choose an achievement to safeguard',
-        min: 0, 
-        max: 1
-      })
+      const availableAchievement = game.getAvailableAchievementsByAge(handSize)[0]
 
-      if (achievement) {
-        game.aSafeguard(player, achievement)
+      if (availableAchievement) {
+        game.aSafeguard(player, availableAchievement)
 
-        const toReturn = game.getZoneByPlayer(player, 'hand')
-          .cards()
+        const toReturn = game
+          .getCardsByZone(player, 'hand')
           .filter(c => c.getAge() === handSize)
-        
+
         game.aReturnMany(player, toReturn)
 
-        if (handSize === 3) {
+        if (handSize === game.getEffectAge(this, 4)) {
           game.aClaimAchievement(player, game.getCardByName('Anonymity'))
         }
       }
