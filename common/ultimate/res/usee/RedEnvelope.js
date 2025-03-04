@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `Red Envelope`  // Card names are unique in Innovation
@@ -18,11 +19,11 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const handAndScore = game.getZoneByPlayer(player, 'hand').cards().concat(game.getZoneByPlayer(player, 'score').cards())
-      const cardCounts = handAndScore.reduce((counts, card) => {
-        counts[card.age] = (counts[card.age] || 0) + 1
-        return counts
-      }, {})
+      const handAndScore = [
+        ...game.getCardsByZone(player, 'hand'),
+        ...game.getCardsByZone(player, 'score'),
+      ]
+      const cardCounts = util.array.countBy(handAndScore, (card) => card.getAge())
 
       const eligibleAges = Object.entries(cardCounts)
         .filter(([age, count]) => count === 2 || count === 3)
@@ -33,15 +34,21 @@ function Card() {
         return
       }
 
-      const age = game.aChooseAge(player, eligibleAges)
-      
-      const transferCards = handAndScore.filter(card => card.age === age)
-      const nextPlayer = game.getNextPlayer(player)
-      game.aTransferMany(player, transferCards, game.getZoneByPlayer(nextPlayer, 'score'))
+      const age = game.aChooseAge(player, eligibleAges, { title: 'Choose age of cards to transfer' })
+
+      const transferCards = handAndScore.filter(card => card.getAge() === age)
+      const rightPlayer = game.getPlayerPreceding(player)
+      game.aTransferMany(player, transferCards, game.getZoneByPlayer(rightPlayer, 'score'))
     },
     (game, player) => {
-      const choices = game.getZoneByPlayer(player, 'hand').cards()
-      game.aChooseAndScore(player, choices, { count: 2, max: 3 })
+      const choices = game.getCardsByZone(player, 'hand')
+
+      if (choices.length < 2) {
+        game.mLog({ template: 'not enough cards in hand' })
+        return
+      }
+
+      game.aChooseAndScore(player, choices, { min: 2, max: 3 })
     }
   ]
   this.echoImpl = []

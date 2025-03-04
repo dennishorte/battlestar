@@ -7,17 +7,55 @@ describe('Red Envelope', () => {
     t.setBoard(game, {
       dennis: {
         red: ['Red Envelope'],
+        hand: ['Optics', 'Masonry', 'Sailing', 'Domestication'],
+        score: ['Machinery', 'Tools']
       },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Red Envelope')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'Masonry', 'Sailing')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Red Envelope'],
+        hand: ['Domestication'],
+        score: ['Masonry', 'Sailing', 'Tools'],
+      },
+      micah: {
+        score: ['Machinery', 'Optics']
+      },
+    })
+  })
+
+  test('dogma: only one card in hand', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        red: ['Red Envelope'],
+        hand: ['Optics', 'Domestication'],
+        score: ['Machinery']
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Red Envelope')
+    request = t.choose(game, request, 'auto')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Red Envelope'],
+        hand: ['Domestication'],
+        score: [],
+      },
+      micah: {
+        score: ['Machinery', 'Optics']
       },
     })
   })

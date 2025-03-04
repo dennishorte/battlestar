@@ -42,6 +42,13 @@ Util.array.collect = function(elems, keyFunc, valueFunc) {
   return output
 }
 
+Util.array.countBy = function(array, fn) {
+  return array.reduce((counts, elem) => {
+    counts[fn(elem)] = (counts[fn(elem)] || 0) + 1
+    return counts
+  }, {})
+}
+
 Util.array.distinct = function(array) {
   return [...new Set(array)]
 }
