@@ -5,7 +5,7 @@ function Card() {
   this.name = `Teleprompter`
   this.color = `green`
   this.age = 9
-  this.expansion = `base` // corrected expansion
+  this.expansion = `usee` // corrected expansion
   this.biscuits = `liih`
   this.dogmaBiscuit = `i`
   this.inspire = ``

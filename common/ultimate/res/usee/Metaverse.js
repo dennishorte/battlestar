@@ -5,7 +5,7 @@ function Card() {
   this.name = `Metaverse`
   this.color = `purple`
   this.age = 11
-  this.expansion = `base` // Expansion should be 'base', not 'usee'
+  this.expansion = `usee` // Expansion should be 'base', not 'usee'
   this.biscuits = `spph`
   this.dogmaBiscuit = `p`
   this.inspire = ``

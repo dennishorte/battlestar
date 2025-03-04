@@ -5,7 +5,7 @@ function Card() {
   this.name = `Woodworking`
   this.color = `yellow`
   this.age = 1
-  this.expansion = `base`
+  this.expansion = `usee`
   this.biscuits = `llhs`
   this.dogmaBiscuit = `l`
   this.inspire = ``

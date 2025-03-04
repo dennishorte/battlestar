@@ -5,7 +5,7 @@ function Card() {
   this.name = `Quantum Computers`
   this.color = `blue` 
   this.age = 11
-  this.expansion = `base`
+  this.expansion = `usee`
   this.biscuits = `iihi`
   this.dogmaBiscuit = `i`
   this.inspire = ``
