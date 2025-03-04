@@ -17,40 +17,18 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      const opponentTopYellow = game
-        .getTopCards(player)
-        .find(card => card.color === 'yellow')
-
-      const leaderTopYellow = game  
-        .getTopCards(leader)
-        .find(card => card.color === 'yellow')
-
-      if (!opponentTopYellow || !leaderTopYellow) {
-        game.mLogNoEffect()
-        return
+      for (const target of [player, leader]) {
+        const topYellow = game.getTopCard(target, 'yellow')
+        if (topYellow) {
+          const choices = game
+            .getCardsByZone(player, 'score')
+            .filter(c => c.getAge() === topYellow.getAge())
+          game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(leader, 'score'), {
+            title: 'Transfer a card for ' + target.name,
+            count: 1,
+          })
+        }
       }
-      
-      const oppValue = opponentTopYellow.getAge()
-      const leaderValue = leaderTopYellow.getAge()
-
-      const oppChoices = game
-        .getCardsByZone(player, 'score')
-        .filter(card => card.getAge() === oppValue)
-
-      const leaderChoices = game  
-        .getCardsByZone(player, 'score')
-        .filter(card => card.getAge() === leaderValue)
-
-      if (oppChoices.length === 0 || leaderChoices.length === 0) {
-        game.mLogNoEffect()
-        return  
-      }
-
-      const oppCard = game.aChooseCard(player, oppChoices, { count: 1 })
-      const leaderCard = game.aChooseCard(player, leaderChoices, { count: 1 })
-
-      game.aTransfer(player, oppCard[0], game.getZoneByPlayer(leader, 'score'))  
-      game.aTransfer(player, leaderCard[0], game.getZoneByPlayer(leader, 'score'))
     },
   ]
   this.echoImpl = []

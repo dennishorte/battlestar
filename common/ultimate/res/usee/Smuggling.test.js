@@ -7,7 +7,12 @@ describe('Smuggling', () => {
     t.setBoard(game, {
       dennis: {
         green: ['Smuggling'],
+        yellow: ['Perspective'],
       },
+      micah: {
+        yellow: ['Domestication'],
+        score: ['Agriculture', 'Heirloom', 'Machinery'],
+      }
     })
 
     let request
@@ -18,7 +23,13 @@ describe('Smuggling', () => {
     t.testBoard(game, {
       dennis: {
         green: ['Smuggling'],
+        yellow: ['Perspective'],
+        score: ['Agriculture', 'Heirloom'],
       },
+      micah: {
+        yellow: ['Domestication'],
+        score: ['Machinery'],
+      }
     })
   })
 
