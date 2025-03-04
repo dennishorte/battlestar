@@ -825,6 +825,13 @@ Innovation.prototype.aChooseCards = function(player, cards, opts={}) {
   return output
 }
 
+Innovation.prototype.aChooseColor = function(player, opts={}) {
+  return this.aChoose(player, this.utilColors(), {
+    title: 'Choose a color',
+    ...opts
+  })
+}
+
 Innovation.prototype.aChoosePlayer = function(player, choices, opts={}) {
   if (choices.length === 0) {
     this.mLogNoEffect()

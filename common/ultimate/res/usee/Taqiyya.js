@@ -18,11 +18,10 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const color = game.aChooseColor(player)
-      const toTransfer = game
-        .getCardsByZone(player, color)
+      const color = game.aChooseColor(player)[0]
+      const toTransfer = game.getCardsByZone(player, color)
 
-      game.aTransferMany(player, toTransfer, game.getZoneByPlayer(player, 'hand'))
+      game.aTransferMany(player, toTransfer, game.getZoneByPlayer(player, 'hand'), { ordered: true })
     },
     (game, player) => {
       const card = game.aDrawAndMeld(player, game.getEffectAge(this, 3))
