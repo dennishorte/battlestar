@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `Freemasons`  // Card names are unique in Innovation
@@ -13,33 +14,20 @@ function Card() {
   this.karma = []
   this.dogma = [
     `For each color, you may tuck a card from your hand of that color. If you tuck any yellow or expansion cards, draw two {3}.`,
-    `You may splay your yellow or purple cards left.`
+    `You may splay your yellow or blue cards left.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const choicesByColor = game
-        .utilColors()
-        .reduce((choices, color) => ({
-          ...choices, 
-          [color]: game.getCardsByZone(player, 'hand').filter(c => c.color === color)
-        }), {})
-
-      let tuckedYellow = false
-      let tuckedExpansion = false
-
-      Object.keys(choicesByColor).forEach(color => {
-        const card = game.aChooseCard(player, choicesByColor[color], {
-          title: `Choose a ${color} card to tuck`,
-          min: 0,
-          max: 1
-        })
-        if (card) {
-          game.aTuck(player, card)
-          if (card.color === 'yellow') tuckedYellow = true
-          if (game.isCardExpansion(card)) tuckedExpansion = true
-        }
+      const tucked = game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'), {
+        title: 'Choose up to one card of each color',
+        min: 0,
+        max: 5,
+        guard: (cards) => util.array.isDistinct(cards.map(c => c.color)),
       })
+
+      const tuckedYellow = tucked.some(c => c.color === 'yellow')
+      const tuckedExpansion = tucked.some(c => c.expansion !== 'base')
 
       if (tuckedYellow || tuckedExpansion) {
         game.aDraw(player, { age: game.getEffectAge(this, 3) })
@@ -47,7 +35,7 @@ function Card() {
       }
     },
     (game, player) => {
-      game.aChooseAndSplay(player, ['yellow', 'purple'], 'left')
+      game.aChooseAndSplay(player, ['yellow', 'blue'], 'left')
     }
   ]
   this.echoImpl = []
