@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `Cliffhanger`  // Card names are unique in Innovation
@@ -12,44 +13,53 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Reveal a {3} in your safe. If it is: green, tuck it; purple, meld it; red, achieve it regardless of eligibility; yellow, score it; blue, draw a {3}. Otherwise, safeguard the top card of the {3} deck.`
+    `Reveal a {4} in your safe. If it is: green, tuck it; purple, meld it; red, achieve it regardless of eligibility; yellow, score it; blue, draw a {5}. Otherwise, safeguard the top card of the {4} deck.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const choices = game.getCardsByZone(player, 'safe')
-        .filter(card => card.age === 3)
-      
+      const choices = game
+        .getCardsByZone(player, 'safe')
+        .filter(card => card.age === 4)
+
       if (choices.length === 0) {
-        game.mLogNoEffect()
+        const age = game.getEffectAge(this, 4)
+        game.mLog({
+          template: 'No cards of age {4} in safe; safeguarding top of {age} pile',
+          args: { age }
+        })
+
+        const topCard = game.getZoneByDeck('base', 4).cards()[0]
+
+        if (topCard) {
+          game.aSafeguard(player, topCard)
+        }
+        else {
+          game.mLog({ template: 'No cards in the 4 deck. (This is not a draw action.)' })
+        }
         return
       }
 
-      const revealed = game.aChooseCard(player, choices)
-      game.mReveal(player, revealed)
+      const card = util.array.select(choices)
+      game.mReveal(player, card)
 
-      switch (revealed.color) {
+      switch (card.color) {
         case 'green':
-          game.aTuck(player, revealed)
+          game.aTuck(player, card)
           break
         case 'purple':
-          game.aMeld(player, revealed)
+          game.aMeld(player, card)
           break
         case 'red':
-          game.aAchieveRegardless(player, revealed)
+          game.aClaimAchievement(player, card)
           break
-        case 'yellow':  
-          game.aScore(player, revealed)
+        case 'yellow':
+          game.aScore(player, card)
           break
         case 'blue':
-          game.aDraw(player, { age: game.getEffectAge(this, 3) })
+          game.aDraw(player, { age: game.getEffectAge(this, 5) })
           break
         default:
-          game.mLog({
-            template: 'No card was revealed from safe, safeguarding top of {age3} pile',
-            args: { age3: game.getEffectAge(this, 3) }  
-          })
-          game.aSafeguard(player, game.getDeckTopCard(3))
           break
       }
     },
