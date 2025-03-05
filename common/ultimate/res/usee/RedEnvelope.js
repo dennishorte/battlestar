@@ -37,7 +37,7 @@ function Card() {
       const age = game.aChooseAge(player, eligibleAges, { title: 'Choose age of cards to transfer' })
 
       const transferCards = handAndScore.filter(card => card.getAge() === age)
-      const rightPlayer = game.getPlayerPreceding(player)
+      const rightPlayer = game.getPlayerRight(player)
       game.aTransferMany(player, transferCards, game.getZoneByPlayer(rightPlayer, 'score'))
     },
     (game, player) => {

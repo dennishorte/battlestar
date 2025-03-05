@@ -678,6 +678,10 @@ Game.prototype.getPlayerPreceding = function(player) {
     .slice(-1)[0]
 }
 
+Game.prototype.getPlayerLeft = function(player) {
+  return this.getPlayerNext(player)
+}
+
 Game.prototype.getPlayerNext = function() {
   return this
     .getPlayersEnding(this.getPlayerCurrent())
@@ -688,6 +692,10 @@ Game.prototype.getPlayerOpponents = function(player) {
   return this
     .getPlayerAll()
     .filter(p => !this.checkSameTeam(p, player))
+}
+
+Game.prototype.getPlayerRight = function(player) {
+  return this.getPlayerPreceding(player)
 }
 
 Game.prototype.getPlayersEnding = function(player) {
