@@ -715,6 +715,14 @@ Innovation.prototype.superExecute = function(player, card, opts={}) {
   this.selfExecute(player, card, { superExecute: true })
 }
 
+Innovation.prototype.aChoose = function(player, choices, opts={}) {
+  if (this.state.dogmaInfo.mayIsMust) {
+    opts.min = Math.max(1, opts.min || 1)
+  }
+
+  return Game.prototype.aChoose.call(this, player, choices, opts)
+}
+
 Innovation.prototype.aChooseAge = function(player, ages, opts={}) {
   if (!ages) {
     ages = [1,2,3,4,5,6,7,8,9,10,11]

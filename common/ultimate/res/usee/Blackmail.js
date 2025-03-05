@@ -18,34 +18,33 @@ function Card() {
   this.dogmaImpl = [
     (game, player, { leader }) => {
       // Reveal opponent's hand
-      const opponentHand = game.getZoneByPlayer(player, 'hand').cards()
-      game.mReveal(player, opponentHand)
-      
-      // Leader chooses a card to meld
-      const meldChoice = game.aChooseCard(leader, opponentHand, { 
-        title: 'Choose a card for opponent to meld'
+      const hand = game.getCardsByZone(player, 'hand')
+      game.aRevealMany(player, hand)
+      const toMeld = game.aChooseCard(leader, hand, {
+        title: 'Choose a card for your opponent to meld',
       })
-      if (meldChoice) {
-        game.aMeld(player, meldChoice)
+
+      if (toMeld) {
+        game.aMeld(player, toMeld)
       }
 
-      // Reveal opponent's score pile  
-      const opponentScore = game.getZoneByPlayer(player, 'score').cards()
-      game.mReveal(player, opponentScore)
+      // Reveal opponent's score pile
+      const score = game.getCardsByZone(player, 'score')
+      game.aRevealMany(player, score)
 
-      // Leader picks a revealed card to self-execute
-      const revealedCards = [...opponentHand, ...opponentScore] 
-      const executeChoice = game.aChooseCard(leader, revealedCards, {
-        title: 'Choose a card to self-execute'
+      const choices = score
+      if (toMeld) {
+        choices.push(toMeld)
+      }
+
+      const toExecute = game.aChooseCard(leader, choices, {
+        title: 'Choose a card to force opponent to self-execute',
       })
-      if (executeChoice) {
-        game.mLog({
-          template: '{player} must self-execute {card}',
-          args: { player, card: executeChoice }
-        })
-        for (const dogmaImpl of executeChoice.dogmaImpl) {
-          dogmaImpl(game, player)
-        }
+      if (toExecute) {
+        game.mLog({ template: `Replacing 'may' with 'must' is almost certainly buggy. Tell Dennis what goes wrong.` })
+        game.state.dogmaInfo.mayIsMust = true
+        game.aSelfExecute(player, toExecute)
+        game.state.dogmaInfo.mayIsMust = false
       }
     },
   ]
