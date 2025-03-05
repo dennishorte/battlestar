@@ -161,6 +161,10 @@ CardBase.prototype.getAge = function() {
   return this.checkIsOnPlayerBoard() ? (this.visibleAge || this.age) : this.age
 }
 
+CardBase.prototype.getBiscuitCount = function(biscuit) {
+  return this.biscuits.split(biscuit).length - 1
+}
+
 CardBase.prototype.getBiscuits = function(splay) {
   if (splay === 'top') {
     return this.biscuits

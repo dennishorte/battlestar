@@ -13,30 +13,48 @@ function Card() {
   this.karma = []
   this.dogma = [
     `Choose to either score a card from your hand, or draw a {4}.`,
-    `Return exactly two cards in your hand. If you do, draw a card of value equal to the sum number of {f} and {l} on the returned cards.`
+    `Return exactly two cards in your hand. If you do, draw a card of value equal to the sum number of {l} and {s} on the returned cards.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const choices = ['Score a card', 'Draw a 4']
-      const choice = game.aChooseOne(player, choices, { title: 'Choose an option:' })
+      const choices = [
+        'Draw a ' + game.getEffectAge(this, 4),
+      ]
 
-      if (choice === 'Score a card') {
-        game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'))
-      } else if (choice === 'Draw a 4') {
+      const hand = game.getCardsByZone(player, 'hand').map(c => c.name)
+      if (hand.length > 0) {
+        choices.push({
+          title: 'Score',
+          choices: hand,
+          min: 0,
+        })
+      }
+
+      const selected = game.aChoose(player, choices, { title: 'Choose an option:' })[0]
+
+      if (selected === 'Draw a 4') {
         game.aDraw(player, { age: game.getEffectAge(this, 4) })
+      }
+      else {
+        const card = game.getCardByName(selected.selection[0])
+        game.aScore(player, card)
       }
     },
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), {
-        count: 2,
-        exact: true,
-      })
+      const hand = game.getCardsByZone(player, 'hand')
+
+      if (hand.length < 2) {
+        game.mLogNoEffect()
+        return
+      }
+
+      const returned = game.aChooseAndReturn(player, hand, { count: 2 })
 
       if (returned.length === 2) {
-        const leafCount = returned.reduce((total, card) => total + card.biscuits.filter(b => b === 'l').length, 0)
-        const factoryCount = returned.reduce((total, card) => total + card.biscuits.filter(b => b === 'f').length, 0)
-        const drawAge = leafCount + factoryCount
+        const leafCount = returned.map(c => c.getBiscuitCount('l')).reduce((x, acc) => x + acc, 0)
+        const bulbCount = returned.map(c => c.getBiscuitCount('s')).reduce((x, acc) => x + acc, 0)
+        const drawAge = leafCount + bulbCount
 
         game.aDraw(player, { age: drawAge })
       }
