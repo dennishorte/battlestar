@@ -17,19 +17,19 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const secrets = game.getCardsByZone(player, 'secrets')
-      const transferred = game.aChooseAndTransfer(player, secrets, game.getZoneById('achievements'), { count: 1, transferTail: false })[0]
-      
+      const secrets = game.getCardsByZone(player, 'safe')
+      const transferred = game.aChooseAndTransfer(player, secrets, game.getZoneById('achievements'))[0]
+
       if (transferred) {
-        game.aDraw(player, transferred.getAge() + 1)
-      } else {
+        game.aDraw(player, { age: transferred.getAge() + 1 })
+      }
+      else {
         const topRed = game.getTopCard(player, 'red')
         if (topRed) {
-          const value = topRed.getAge() 
-          const available = game.getAvailableAchievements()
-          const achievement = available.find(card => card.getAge() === value)
+          const value = topRed.getAge()
+          const achievement = game.getAvailableAchievementsByAge(value)[0]
           if (achievement) {
-            game.mSafeguard(player, achievement)
+            game.aSafeguard(player, achievement)
           }
         }
       }
