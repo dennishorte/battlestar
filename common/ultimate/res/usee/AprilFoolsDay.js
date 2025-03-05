@@ -20,46 +20,30 @@ function Card() {
     (game, player) => {
       const handCards = game.getZoneByPlayer(player, 'hand').cards()
       const scoreCards = game.getZoneByPlayer(player, 'score').cards()
-      const rightPlayer = game.getPlayerRightOf(player)
-      
-      const choices = ['hand', 'score']
-      const source = game.aChoose(player, choices, { title: 'Choose zone to transfer card from' })
-      
-      let selectedCard = null
-      if (source === 'hand') {
-        selectedCard = game.aChooseCard(player, handCards)
-      } else {
-        selectedCard = game.aChooseCard(player, scoreCards)
-      }
+      const rightPlayer = game.getPlayerRight(player)
+
+      const choices = [...handCards, ...scoreCards]
+      const selectedCard = game.aChooseCard(player, choices)
 
       if (selectedCard) {
-        game.aTransfer(player, selectedCard, game.getBoard(rightPlayer, selectedCard.color))
-      } else {
+        game.aTransfer(player, selectedCard, game.getZoneByPlayer(rightPlayer, 'score'))
+      }
+      else {
         game.aClaimAchievement(player, { name: 'Folklore' })
       }
     },
     (game, player) => {
-      const yellowSplay = game.getZoneByPlayer(player, 'yellow').splay
-      const purpleSplay = game.getZoneByPlayer(player, 'purple').splay
-
-      const choices = []
-      if (yellowSplay !== 'right') {
-        choices.push('yellow')
-      }
-      if (purpleSplay !== 'none') {
-        choices.push('purple')  
-      }
-
-      const selected = game.aChoose(player, choices, { title: 'Choose color to splay' })
+      const selected = game.aChoose(player, ['yellow', 'purple'], {
+        title: 'Choose a color to splay right',
+      })[0]
 
       if (selected === 'yellow') {
         game.aSplay(player, 'yellow', 'right')
         game.aUnsplay(player, 'purple')
-      } else if (selected === 'purple') {
-        game.aUnsplay(player, 'yellow')
+      }
+      else {
         game.aSplay(player, 'purple', 'right')
-      } else {
-        game.mLogNoEffect()
+        game.aUnsplay(player, 'yellow')
       }
     }
   ]
