@@ -6,8 +6,8 @@ function Card() {
   this.color = `red`
   this.age = 4
   this.expansion = `usee`
-  this.biscuits = `shss` 
-  this.dogmaBiscuit = `l`
+  this.biscuits = `shss`
+  this.dogmaBiscuit = `s`
   this.inspire = ``
   this.echo = ``
   this.karma = []
@@ -17,25 +17,25 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player, { leader }) => {
+    (game, player) => {
       const hand = game.getZoneByPlayer(player, 'hand')
       const handHighest = game.utilHighestCards(hand.cards())
       const handReturn = hand.cards().filter(c => !handHighest.includes(c))
       game.aReturnMany(player, handReturn)
 
-      const score = game.getZoneByPlayer(player, 'score')  
+      const score = game.getZoneByPlayer(player, 'score')
       const scoreHighest = game.utilHighestCards(score.cards())
       const scoreReturn = score.cards().filter(c => !scoreHighest.includes(c))
       game.aReturnMany(player, scoreReturn)
     },
     (game, player) => {
-      if (game.getTopCards(player).includes(this)) {
+      if (game.getTopCard(player, 'red').name === 'Spanish Inquisition') {
         const redCards = game.getCardsByZone(player, 'red')
         game.aReturnMany(player, redCards, { ordered: true })
       }
       else {
         game.mLogNoEffect()
-      }        
+      }
     },
   ]
   this.echoImpl = []
