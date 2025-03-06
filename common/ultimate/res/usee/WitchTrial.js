@@ -18,13 +18,23 @@ function Card() {
   this.dogmaImpl = [
     (game, player, { leader }) => {
       const effectAge = game.getEffectAge(this, 5)
+
       while (true) {
         const drawnCard = game.aDrawAndReveal(player, effectAge)
         const returnColor = drawnCard.color
 
         const topCard = game.getTopCard(player, returnColor)
-        const handCard = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand').filter(c => c.color === returnColor), { min: 0, max: 1 })[0]
-        const scoreCard = game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'), { min: 0, max: 1 })[0]
+        if (topCard) {
+          game.aReturn(player, topCard)
+        }
+
+        const handCards = game
+          .getCardsByZone(player, 'hand')
+          .filter(c => c.id !== drawnCard.id)
+          .filter(c => c.color === returnColor)
+
+        const handCard = game.aChooseAndReturn(player, handCards)[0]
+        const scoreCard = game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'))[0]
 
         const cardsReturned = [topCard, handCard, scoreCard].filter(c => c)
         const didReturn = cardsReturned.length === 3
@@ -34,14 +44,16 @@ function Card() {
             template: '{player} returned a top card, hand card, and score card. Repeating the dogma effect.',
             args: { player }
           })
-        } else {
+          continue
+        }
+        else {
           game.mLog({
             template: '{player} did not return all three required cards. Ending the dogma effect.',
             args: { player }
           })
           break
         }
-      }      
+      }
     },
   ]
 

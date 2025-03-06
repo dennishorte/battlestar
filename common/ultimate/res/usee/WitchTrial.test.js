@@ -8,6 +8,20 @@ describe('Witch Trial', () => {
       dennis: {
         red: ['Witch Trial'],
       },
+      micah: {
+        red: ['Metalworking', 'Oars'],
+        purple: ['Reformation'],
+        score: ['The Wheel'],
+        hand: ['Optics', 'Monotheism', 'Agriculture'],
+      },
+      decks: {
+        base: {
+          5: ['Astronomy'],
+        },
+        usee: {
+          5: ['Cabal'],
+        }
+      }
     })
 
     let request
@@ -18,6 +32,10 @@ describe('Witch Trial', () => {
     t.testBoard(game, {
       dennis: {
         red: ['Witch Trial'],
+      },
+      micah: {
+        red: ['Oars'],
+        hand: ['Agriculture', 'Cabal', 'Astronomy'],
       },
     })
   })
