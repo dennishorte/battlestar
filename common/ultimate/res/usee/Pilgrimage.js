@@ -28,7 +28,7 @@ function Card() {
           break
         }
 
-        const availableAchievements = game.getAvailableAchievementsByAge(value)
+        const availableAchievements = game.getAvailableAchievementsByAge(player, value)
 
         if (availableAchievements.length > 0) {
           game.aSafeguard(player, availableAchievements[0])

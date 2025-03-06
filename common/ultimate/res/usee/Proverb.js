@@ -24,7 +24,7 @@ function Card() {
         if (card.color === 'yellow' || card.color === 'purple') {
           const handAges = game.getCardsByZone(player, 'hand').map(c => c.getAge())
           const maxAge = Math.max(...handAges)
-          const achievement = game.getAvailableAchievementsByAge(maxAge)[0]
+          const achievement = game.getAvailableAchievementsByAge(player, maxAge)[0]
 
           if (achievement) {
             game.aSafeguard(player, achievement)

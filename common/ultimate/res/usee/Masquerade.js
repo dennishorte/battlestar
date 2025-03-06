@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const handSize = game.getZoneByPlayer(player, 'hand').cards().length
-      const availableAchievement = game.getAvailableAchievementsByAge(handSize)[0]
+      const availableAchievement = game.getAvailableAchievementsByAge(player, handSize)[0]
 
       if (availableAchievement) {
         game.aSafeguard(player, availableAchievement)

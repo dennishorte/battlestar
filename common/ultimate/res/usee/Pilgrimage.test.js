@@ -6,7 +6,7 @@ describe('Pilgrimage', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
-        green: ['Pilgrimage'],
+        red: ['Pilgrimage'],
         hand: ['Agriculture', 'Construction', 'Machinery'],
       },
       achievements: ['Domestication', 'Engineering', 'Reformation'],
@@ -24,7 +24,7 @@ describe('Pilgrimage', () => {
     t.testDeckIsJunked(game, 1)
     t.testBoard(game, {
       dennis: {
-        green: ['Pilgrimage'],
+        red: ['Pilgrimage'],
         safe: ['Domestication', 'Engineering'],
       },
     })

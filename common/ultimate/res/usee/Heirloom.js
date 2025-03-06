@@ -27,7 +27,7 @@ function Card() {
         const topRed = game.getTopCard(player, 'red')
         if (topRed) {
           const value = topRed.getAge()
-          const achievement = game.getAvailableAchievementsByAge(value)[0]
+          const achievement = game.getAvailableAchievementsByAge(player, value)[0]
           if (achievement) {
             game.aSafeguard(player, achievement)
           }

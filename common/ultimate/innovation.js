@@ -1649,7 +1649,7 @@ Innovation.prototype._checkCanSeizeRelic = function(card) {
 }
 
 Innovation.prototype.aJunkAvailableAchievement = function(player, ages=[], opts={}) {
-  const eligible = ages.filter(age => this.getAvailableAchievementsByAge(age).length > 0)
+  const eligible = ages.filter(age => this.getAvailableAchievementsByAge(player, age).length > 0)
   if (eligible.length === 0) {
     this.mLogNoEffect()
     return
@@ -1657,7 +1657,7 @@ Innovation.prototype.aJunkAvailableAchievement = function(player, ages=[], opts=
 
   const age = this.aChooseAge(player, eligible, { title: 'Choose an achievement to junk', ...opts })
   if (age) {
-    this.aRemove(player, this.getAvailableAchievementsByAge(age)[0])
+    this.aRemove(player, this.getAvailableAchievementsByAge(player, age)[0])
   }
 }
 
@@ -1881,7 +1881,7 @@ Innovation.prototype.aSafeguard = function(player, card, opts={}) {
 }
 
 Innovation.prototype.aSafeguardAvailableAchievement = function(player, age) {
-  const availableAchievements = this.getAvailableAchievementsByAge(age)
+  const availableAchievements = this.getAvailableAchievementsByAge(player, age)
 
   if (availableAchievements.length === 0) {
     this.mLog({ template: 'No available achievements of age ' + age })
@@ -3400,17 +3400,9 @@ Innovation.prototype.getScoreCost = function(player, card) {
   return card.getAge() * 5 * (sameAge.length + 1) - karmaAdjustment
 }
 
-Innovation.prototype.getAvailableAchievementsByAge = function(age) {
-  if (typeof age === 'string') {
-    age = parseInt(age)
-  }
-
-  const available = this
-    .getZoneById('achievements')
-    .cards()
-    .filter(c => !c.isSpecialAchievement && !c.isDecree)
-
-  return available.filter(c => c.age === age)
+Innovation.prototype.getAvailableAchievementsByAge = function(player, age) {
+  age = parseInt(age)
+  return this.getAvailableStandardAchievements(player).filter(c => c.getAge() === age)
 }
 
 Innovation.prototype.getAvailableStandardAchievements = function(player) {
@@ -3558,6 +3550,10 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
 
   if (!this.state.didEndorse) {
     for (const zone of stacksWithEndorsableEffects) {
+      if (zone.cards().length === 0) {
+        throw new Error('"Endorsable" stack has no cards: ' + zone.id)
+      }
+
       const dogmaBiscuit = zone.cards()[0].dogmaBiscuit
       const canEndorse = cities.some(city => city.biscuits.includes(dogmaBiscuit))
       if (canEndorse) {
