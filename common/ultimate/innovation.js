@@ -725,7 +725,7 @@ Innovation.prototype.aChoose = function(player, choices, opts={}) {
 
 Innovation.prototype.aChooseAge = function(player, ages, opts={}) {
   if (!ages) {
-    ages = [1,2,3,4,5,6,7,8,9,10,11]
+    ages = this.utilAges()
   }
   else {
     ages = [...ages]
@@ -2395,7 +2395,8 @@ Innovation.prototype.getHighestTopCard = function(player) {
 }
 
 Innovation.prototype.getNonEmptyAges = function() {
-  return [1,2,3,4,5,6,7,8,9,10,11]
+  return this
+    .utilAges()
     .filter(age => this.getZoneByDeck('base', age).cards().length > 0)
 }
 
@@ -3119,6 +3120,10 @@ Innovation.prototype.mTuck = function(player, card) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Utility Functions
+
+Game.prototype.utilAges = function() {
+  return [1,2,3,4,5,6,7,8,9,10,11]
+}
 
 Game.prototype.utilBiscuitNames = function() {
   return [
