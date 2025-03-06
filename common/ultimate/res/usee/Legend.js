@@ -6,7 +6,7 @@ function Card() {
   this.color = `purple`
   this.age = 4
   this.expansion = `usee`
-  this.biscuits = `hlls` 
+  this.biscuits = `hlls`
   this.dogmaBiscuit = `l`
   this.inspire = ``
   this.echo = ``
@@ -17,39 +17,43 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const colors = ['red', 'blue', 'green', 'yellow']
-      const chosenColor = game.aChooseColor(player, colors, {
-        title: 'Choose a non-purple color'
-      })
-      
-      let totalScored = 0
-      while (true) {
-        const topCardOfColor = game.getTopCard(player, chosenColor)
-        if (!topCardOfColor) break
+      let keepGoing = true
+      let total = 0
 
-        game.mLog({
-          template: '{player} self-executes {card}',
-          args: { player, card: topCardOfColor }
-        })        
-        game.aCardEffects(player, topCardOfColor, 'dogma')
-        
-        const scoreCard = game.getTopCard(player, chosenColor)
-        if (scoreCard) {
-          game.mLog({
-            template: '{player} scores {card}',
-            args: { player, card: scoreCard }
-          })
-          const scoredCard = game.aScore(player, scoreCard)
-          if (scoredCard) {
-            totalScored += scoredCard.data.age  
+      const doEffect = (card) => {
+        if (!card) {
+          keepGoing = false
+          game.mLog({ template: 'No top card remaining in ' + firstCard.color })
+          return
+        }
+        game.aSelfExecute(player, card)
+        const scored = game.aScore(player, game.getTopCard(player, firstCard.color))
+        if (scored) {
+          total += scored.getAge()
+          keepGoing = total < 9
+
+          if (!keepGoing) {
+            game.mLog({ template: `Scored ${total} points due to Legend.` })
           }
         }
+        else {
+          keepGoing = false
+          game.mLog({ template: 'Did not score the top card.' })
+        }
+      }
 
-        if (totalScored >= 9) break
+      const topNonPurple = game.getTopCards(player).filter(c => c.color !== 'purple')
+      const firstCard = game.aChooseCard(player, topNonPurple)
+
+      doEffect(firstCard)
+
+      while (keepGoing) {
+        const card = game.getTopCard(player, firstCard.color)
+        doEffect(card)
       }
     },
   ]
-  
+
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
