@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `Popular Science`  // Card names are unique in Innovation
@@ -6,7 +7,7 @@ function Card() {
   this.color = `blue`
   this.age = 5
   this.expansion = `usee`
-  this.biscuits = `scsh` 
+  this.biscuits = `scsh`
   this.dogmaBiscuit = `s`
   this.inspire = ``
   this.echo = ``
@@ -21,32 +22,31 @@ function Card() {
     (game, player) => {
       const topGreenCards = game
         .getPlayerAll()
-        .flatMap(player => game.getTopCards(player))
-        .filter(card => card.color === 'green')
-      
+        .map(player => game.getTopCard(player, 'green'))
+
       if (topGreenCards.length === 0) {
-        game.mLogNoEffect()
+        game.mLog({ template: 'No player has a top green card.' })
         return
       }
 
-      const ages = topGreenCards.map(card => card.age)
+      const ages = util.array.distinct(topGreenCards.map(card => card.getAge()))
       const age = game.aChooseAge(player, ages, { title: 'Choose age of card to draw and meld' })
       game.aDrawAndMeld(player, age)
     },
 
     (game, player) => {
-      const topYellowCard = game.getTopCard(player, 'yellow') 
+      const topYellowCard = game.getTopCard(player, 'yellow')
       if (!topYellowCard) {
         game.mLogNoEffect()
         return
       }
 
-      const age = topYellowCard.age + 1
+      const age = topYellowCard.getAge() + 1
       game.aDrawAndMeld(player, age)
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['blue'], 'right') 
+      game.aChooseAndSplay(player, ['blue'], 'right')
     },
   ]
   this.echoImpl = []
