@@ -12,19 +12,19 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and reveal a {5}, a {4}, a {3}, and a {2}. Meld each drawn green card and each drawn yellow card, in any order. Return the other drawn cards.`,
+    `Draw and reveal a {3}, a {4}, a {5}, and a {6}. Meld each drawn green card and each drawn yellow card, in any order. Return the other drawn cards.`,
     `You may splay your green or yellow cards right.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
       const cards = [
-        game.aDrawAndReveal(player, game.getEffectAge(this, 5)),
-        game.aDrawAndReveal(player, game.getEffectAge(this, 4)), 
         game.aDrawAndReveal(player, game.getEffectAge(this, 3)),
-        game.aDrawAndReveal(player, game.getEffectAge(this, 2))
+        game.aDrawAndReveal(player, game.getEffectAge(this, 4)),
+        game.aDrawAndReveal(player, game.getEffectAge(this, 5)),
+        game.aDrawAndReveal(player, game.getEffectAge(this, 6)),
       ]
-      
+
       const greenAndYellow = cards.filter(card => card.color === 'green' || card.color === 'yellow')
       const others = cards.filter(card => card.color !== 'green' && card.color !== 'yellow')
 
