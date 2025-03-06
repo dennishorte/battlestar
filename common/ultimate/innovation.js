@@ -1329,6 +1329,13 @@ Innovation.prototype.aDrawAndReveal = function(player, age, opts={}) {
   }
 }
 
+Innovation.prototype.aDrawAndSafeguard = function(player, age, opts={}) {
+  const card = this.aDraw(player, {...opts, age })
+  if (card) {
+    return this.aSafeguard(player, card, opts)
+  }
+}
+
 Innovation.prototype.aDrawAndScore = function(player, age, opts={}) {
   const card = this.aDraw(player, {...opts, age })
   if (card) {

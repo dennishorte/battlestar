@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `The Prophecies`  // Card names are unique in Innovation
@@ -6,42 +7,46 @@ function Card() {
   this.color = `blue`
   this.age = 4
   this.expansion = `usee`
-  this.biscuits = `sshs` 
+  this.biscuits = `sshs`
   this.dogmaBiscuit = `s`
   this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Choose to either draw and safeguard a {4}, or draw and score a card of value one higher than one of your secrets. If you reveal a red or purple secret, meld one of your other secrets. If you do, safeguard the drawn card.`
+    `Choose to either draw and safeguard a {4}, or draw and reveal a card of value one higher than one of your secrets. If you reveal a red or purple card, meld one of your secrets. If you do, safeguard the drawn card.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const choice = game.aChoose(player, [
-        'Draw and safeguard a 4',
-        'Draw and score based on a secret',
-      ], { title: 'Choose one:' })
+      const drawAge = game.getEffectAge(this, 4)
+      const secretAges = game
+        .getCardsByZone(player, 'safe')
+        .map(c => c.getAge())
+      const revealChoices = util.array.distinct(secretAges).sort().map(age => age + 1)
 
-      if (choice === 0) {
-        // Draw and safeguard a 4
-        game.aDrawAndSafeguard(player, game.getEffectAge(this, 4))
-      } 
-      else if (choice === 1) {
-        // Draw and score based on a secret
-        const secrets = game.getSecrets(player)
-        const secretValues = secrets.map(card => card.value)
-        const revealedSecret = game.aChooseCard(player, secrets, { title: 'Choose a secret to reveal:' })
-        game.mReveal(player, revealedSecret)
+      const drawOption = 'Draw and safeguard a ' + drawAge
+      const choices = [drawOption]
+      if (revealChoices.length > 0) {
+        choices.push({
+          title: 'Draw and reveal',
+          choices: revealChoices,
+          min: 0,
+        })
+      }
 
-        const drawAge = revealedSecret.getAge() + 1
-        const drawnCard = game.aDrawAndScore(player, drawAge)
+      const selected = game.aChoose(player, choices)[0]
 
-        if (revealedSecret.color === 'red' || revealedSecret.color === 'purple') {
-          const otherSecrets = secrets.filter(card => card !== revealedSecret)
-          const secretToMeld = game.aChooseCard(player, otherSecrets, { title: 'Choose a secret to meld:' })
-          if (secretToMeld) {
-            game.aMeld(player, secretToMeld)
-            game.aSafeguard(player, drawnCard)
+      if (selected === drawOption) {
+        game.aDrawAndSafeguard(player, drawAge)
+      }
+      else {
+        const revealAge = parseInt(selected.selection[0])
+        const revealed = game.aDrawAndReveal(player, revealAge)
+
+        if (revealed.color === 'red' || revealed.color === 'purple') {
+          const melded = game.aChooseAndMeld(player, game.getCardsByZone(player, 'safe'))
+          if (melded) {
+            game.aSafeguard(player, revealed)
           }
         }
       }
