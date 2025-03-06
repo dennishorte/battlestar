@@ -12,26 +12,33 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Return a top card with {f} of each color from your board. If you return none, meld a card from your score pile, then draw and score a {4}.`,
-    `Draw a {4} for each {f} in your score pile.`
+    `Return a top card with {k} of each color from your board. If you return none, meld a card from your score pile, then draw and score a {4}.`,
+    `Draw a {4} for each {4} in your score pile.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const topCards = game.getTopCards(player)
-      const chosenCards = game.aChooseAndReturn(player, topCards.filter(card => card.biscuits.includes('f')), { min: 0, max: 4 })
-      
-      if (chosenCards.length === 0) {
-        const scorePile = game.getZoneByPlayer(player, 'score')
-        game.aChooseAndMeld(player, scorePile.cards(), { min: 1, max: 1 })
+      const topCastleCards = game
+        .getTopCards(player)
+        .filter(c => c.checkHasBiscuit('k'))
+
+      const returned = game.aReturnMany(player, topCastleCards)
+
+      if (returned.length === 0) {
+        game.aChooseAndMeld(player, game.getCardsByZone(player, 'score'))
         game.aDrawAndScore(player, game.getEffectAge(this, 4))
       }
     },
     (game, player) => {
-      const scorePile = game.getZoneByPlayer(player, 'score')
-      const numBiscuits = scorePile.cards().reduce((total, card) => total + card.biscuits.split('').filter(b => b === 'f').length, 0)
+      const age = game.getEffectAge(this, 4)
+      const scorePile = game
+        .getCardsByZone(player, 'score')
+        .filter(c => c.getAge() === age)
+        .length
 
-      game.aDraw(player, { age: game.getEffectAge(this, 4), count: numBiscuits })
+      for (let i = 0; i < scorePile; i++) {
+        game.aDraw(player, { age })
+      }
     }
   ]
   this.echoImpl = []
