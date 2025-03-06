@@ -387,6 +387,11 @@ Innovation.prototype.action = function(count) {
     choices: this._generateActionChoices(),
   })[0]
 
+  if (!chosenAction.selection) {
+    console.log(chosenAction)
+    throw new Error('Invalid selection')
+  }
+
   const name = chosenAction.title
   const arg = chosenAction.selection[0]
 
@@ -3408,7 +3413,7 @@ Innovation.prototype.getAvailableAchievementsByAge = function(age) {
   return available.filter(c => c.age === age)
 }
 
-Innovation.prototype.getAvailableAchievementsRaw = function(player) {
+Innovation.prototype.getAvailableStandardAchievements = function(player) {
   const achievementsZone = this
     .getZoneById('achievements')
     .cards()
@@ -3419,6 +3424,10 @@ Innovation.prototype.getAvailableAchievementsRaw = function(player) {
     .flatMap(info => info.impl.func(this, player))
 
   return [achievementsZone, fromKarma].flat()
+}
+
+Innovation.prototype.getAvailableAchievementsRaw = function(player) {
+  return this.getAvailableStandardAchievements(player)
 }
 
 Innovation.prototype.getEligibleAchievementsRaw = function(player, opts={}) {

@@ -17,24 +17,21 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const oddValues = [1, 3, 5, 7, 9].filter(n => n <= game.getMaxAge())
-      const value = game.aChooseAge(player, oddValues)[0]
+      const oddValues = game.utilAges().filter(x => x % 2 === 1)
+      const value = game.aChooseAge(player, oddValues)
 
-      const transferred = game
+      const toTransfer = game
         .getPlayerAll()
         .flatMap(p => game.getCardsByZone(p, 'score'))
-        .filter(card => card.age === value)
+        .filter(card => card.getAge() === value)
 
-      transferred.forEach(card => {
-        game.mMoveCardTo(card, game.getZoneById('achievements'), { visibility: 'public' })
-      })
+      const transferred = game.aTransferMany(player, toTransfer, game.getZoneById('achievements'))
 
       if (transferred.length >= 4) {
-        game.aDraw(player, { age: value })
-        game.aSafeguard(player)
+        game.aDrawAndSafeguard(player, value)
 
-        const availableStandard = game.getAvailableStandardAchievements().slice(0, 3)
-        availableStandard.forEach(ach => game.aClaimAchievement(player, ach))
+        const availableStandard = game.getAvailableStandardAchievements(player)
+        game.aChooseAndScore(player, availableStandard, { count: 3 })
       }
     },
   ]
