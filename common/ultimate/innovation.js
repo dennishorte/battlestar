@@ -635,7 +635,35 @@ Innovation.prototype.aCardEffects = function(
   }
 }
 
+Innovation.prototype.aTrackChainRule = function(player) {
+  if (!this.state.dogmaInfo.chainRule) {
+    this.state.dogmaInfo.chainRule = 'start'
+  }
+  else if (this.state.dogmaInfo.chainRule === 'start') {
+    this.state.dogmaInfo.chainRule = 'awarded'
+    this.mLog({
+      template: '{player} achieves a Chain Achievement',
+      args: { player }
+    })
+    const card = this.getZoneByDeck('base', 11).cards()[0]
+    if (card) {
+      this.aClaimAchievement(player, card)
+    }
+    else {
+      this.mLog({ template: 'There are no cards left in the 11 deck to achieve.' })
+    }
+  }
+  else if (this.state.dogmaInfo.chainRule === 'awarded') {
+    return
+  }
+  else {
+    throw new Error('Should never reach this point in the code.')
+  }
+}
+
 Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
+  this.aTrackChainRule(player)
+
   const topCard = this.getTopCard(player, card.color)
   const isTopCard = topCard && topCard.name === card.name
 
