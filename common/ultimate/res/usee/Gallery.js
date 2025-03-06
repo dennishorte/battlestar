@@ -1,7 +1,7 @@
 const CardBase = require(`../CardBase.js`)
 
 function Card() {
-  this.id = `Gallery`  
+  this.id = `Gallery`
   this.name = `Gallery`
   this.color = `yellow`
   this.age = 5
@@ -12,27 +12,27 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `If you have a {3} in your score pile, draw a {2}.`,
-    `If you have a {1} in your score pile, draw a {4}. Otherwise, draw a {3}.`
+    `If you have a {2} in your score pile, draw a {6}.`,
+    `If you have a {1} in your score pile, draw a {7}. Otherwise, draw a {5}.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
       const scoreCards = game.getCardsByZone(player, 'score')
-      if (scoreCards.some(card => card.age === 3)) {
-        game.aDraw(player, { age: game.getEffectAge(this, 2) })
+      if (scoreCards.some(card => card.age === game.getEffectAge(this, 2))) {
+        game.aDraw(player, { age: game.getEffectAge(this, 6) })
       }
       else {
         game.mLogNoEffect()
-      }      
+      }
     },
     (game, player) => {
       const scoreCards = game.getCardsByZone(player, 'score')
-      if (scoreCards.some(card => card.age === 1)) {
-        game.aDraw(player, { age: game.getEffectAge(this, 4) })
+      if (scoreCards.some(card => card.age === game.getEffectAge(this, 1))) {
+        game.aDraw(player, { age: game.getEffectAge(this, 7) })
       }
       else {
-        game.aDraw(player, { age: game.getEffectAge(this, 3) })
+        game.aDraw(player, { age: game.getEffectAge(this, 5) })
       }
     }
   ]
