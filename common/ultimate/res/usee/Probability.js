@@ -13,7 +13,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `Return all cards from your hand.`,
-    `Draw and meld two {5}, then return them. If exactly two different icon types appear on the drawn cards, draw and score two {5}. If exactly four different icon types appear, draw a {5}. Draw a {4}.`
+    `Draw and reveal two {6}, then return them. If exactly two different biscuit types appear on the drawn cards, draw and score two {6}. If exactly four different biscuit types appear, draw a {7}. Draw a {6}.`
   ]
 
   this.dogmaImpl = [
@@ -22,22 +22,30 @@ function Card() {
       game.aReturnMany(player, cardsInHand)
     },
     (game, player) => {
-      const card1 = game.aDrawAndMeld(player, game.getEffectAge(this, 5))
-      const card2 = game.aDrawAndMeld(player, game.getEffectAge(this, 5))
-      
+      const card1 = game.aDrawAndReveal(player, game.getEffectAge(this, 6))
+      const card2 = game.aDrawAndReveal(player, game.getEffectAge(this, 6))
+
       game.aReturn(player, card1)
       game.aReturn(player, card2)
 
-      const drawnBiscuits = [...new Set(card1.biscuits + card2.biscuits)].length
-      
-      if (drawnBiscuits === 2) {
-        game.aDrawAndScore(player, game.getEffectAge(this, 5))
-        game.aDrawAndScore(player, game.getEffectAge(this, 5))
-      } else if (drawnBiscuits === 4) {
-        game.aDraw(player, {age: game.getEffectAge(this, 5)})
+      const drawnBiscuits = game.utilCombineBiscuits(
+        game.utilParseBiscuits(card1.biscuits),
+        game.utilParseBiscuits(card2.biscuits),
+      )
+
+      const numberOfBiscuits = Object.values(drawnBiscuits).filter(x => x > 0).length
+
+      game.mLog({ template: `The revealed cards had ${numberOfBiscuits} biscuit types total.` })
+
+      if (numberOfBiscuits === 2) {
+        game.aDrawAndScore(player, game.getEffectAge(this, 6))
+        game.aDrawAndScore(player, game.getEffectAge(this, 6))
+      }
+      else if (numberOfBiscuits === 4) {
+        game.aDraw(player, {age: game.getEffectAge(this, 7)})
       }
 
-      game.aDraw(player, {age: game.getEffectAge(this, 4)})
+      game.aDraw(player, {age: game.getEffectAge(this, 6)})
     },
   ]
   this.echoImpl = []
