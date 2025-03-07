@@ -744,7 +744,13 @@ Game.prototype.getZoneById = function(id) {
 }
 
 Game.prototype.getZoneByPlayer = function(player, name) {
-  return this.state.zones.players[player.name][name]
+  const zone = this.state.zones.players[player.name][name]
+
+  if (!zone) {
+    throw new Error('Invalid player zone name: ' + name)
+  }
+
+  return zone
 }
 
 ////////////////////////////////////////////////////////////////////////////////
