@@ -18,7 +18,19 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      game.aChooseAndSplay(player, ['red'], null) 
+      const red = game.getZoneByPlayer(player, 'red')
+
+      if (red.cards().length < 2) {
+        game.mLog({ template: 'Red cannot be splayed' })
+        return
+      }
+
+      const choices = ['left', 'right', 'up'].filter(x => x !== red.splay)
+
+      const direction = game.aChoose(player, choices, {
+        title: 'Choose a direction to splay red',
+      })[0]
+      game.aSplay(player, 'red', direction)
     },
     (game, player) => {
       const card = game.aDrawAndTuck(player, game.getEffectAge(this, 6))
@@ -27,8 +39,9 @@ function Card() {
         const cardSplay = game.getZoneByPlayer(player, card.color).splay
         if (redSplay === cardSplay) {
           game.aSplay(player, card.color, 'up')
-        } else {
-          game.aSplay(player, card.color, 'none')
+        }
+        else {
+          game.aUnsplay(player, card.color)
         }
       }
     }
