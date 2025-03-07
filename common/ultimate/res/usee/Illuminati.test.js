@@ -6,8 +6,10 @@ describe('Illuminati', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
-        purple: ['Illuminati'],
+        purple: ['Illuminati', 'Monotheism', 'Code of Laws'],
+        hand: ['Reformation']
       },
+      achievements: ['Lighting'],
     })
 
     let request
@@ -17,7 +19,12 @@ describe('Illuminati', () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        purple: ['Illuminati'],
+        purple: {
+          cards: ['Monotheism', 'Code of Laws'],
+          splay: 'right',
+        },
+        hand: ['Reformation'],
+        safe: ['Illuminati', 'Lighting'],
       },
     })
   })
