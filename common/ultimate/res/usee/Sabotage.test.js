@@ -8,6 +8,15 @@ describe('Sabotage', () => {
       dennis: {
         yellow: ['Sabotage'],
       },
+      micah: {
+        purple: ['Reformation', 'Monotheism'],
+        score: ['The Wheel', 'Code of Laws'],
+      },
+      decks: {
+        usee: {
+          6: ['Triad'],
+        }
+      }
     })
 
     let request
@@ -18,6 +27,10 @@ describe('Sabotage', () => {
     t.testBoard(game, {
       dennis: {
         yellow: ['Sabotage'],
+      },
+      micah: {
+        purple: ['Monotheism', 'Reformation', 'Code of Laws'],
+        score: ['The Wheel'],
       },
     })
   })

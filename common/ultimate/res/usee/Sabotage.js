@@ -6,7 +6,7 @@ function Card() {
   this.color = `yellow`
   this.age = 6
   this.expansion = `usee`
-  this.biscuits = `hfff` 
+  this.biscuits = `hfff`
   this.dogmaBiscuit = `f`
   this.inspire = ``
   this.echo = ``
@@ -17,36 +17,30 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      // Draw a 6
       game.aDraw(player, { age: game.getEffectAge(this, 6) })
 
-      // Reveal hand
-      const cards = game
-        .getZoneByPlayer(player, 'hand')
-        .cards()
-      game.mReveal(player, cards)
+      const cards = game.getCardsByZone(player, 'hand')
+      game.aRevealMany(player, cards)
 
-      // Leader chooses a card to return
-      const choices = cards.map(c => c.id) 
-      const card = game.getCardById(game.aChoose(leader, choices, { title: 'Choose card to return' })[0])
+      const choices = cards.map(c => c.id)
+      const card = game.aChooseCard(leader, choices)
 
-      // Return chosen card
-      const returned = game.aReturn(player, card)
-      
-      // Tuck top card of returned color
-      const color = returned.color
-      const tuckChoices = game
-        .getTopCards(player)
-        .filter(c => c.color === color)
-      if (tuckChoices.length > 0) {
-        game.aTuck(player, tuckChoices[0])
+      if (card) {
+        const returned = game.aReturn(player, card)
+
+        // Tuck top card of returned color
+        const color = returned.color
+        const topCard = game.getTopCard(player, color)
+        if (topCard) {
+          game.aTuck(player, topCard)
+        }
+
+        // Tuck score pile cards of returned color
+        const tuckScore = game
+          .getCardsByZone(player, 'score')
+          .filter(c => c.color === color)
+        game.aTuckMany(player, tuckScore)
       }
-
-      // Tuck score pile cards of returned color  
-      const tuckScore = game
-        .getCardsByZone(player, 'score')
-        .filter(c => c.color === color)
-      game.aTuckMany(player, tuckScore)
     },
   ]
   this.echoImpl = []
