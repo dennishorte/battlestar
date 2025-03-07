@@ -7,6 +7,14 @@ describe('Swiss Bank Account', () => {
     t.setBoard(game, {
       dennis: {
         green: ['Swiss Bank Account'],
+        score: ['The Wheel', 'Monotheism'],
+        hand: ['Metalworking', 'Construction'],
+      },
+      achievements: ['Agriculture', 'Mathematics', 'Optics'],
+      decks: {
+        usee: {
+          6: ['Hiking'],
+        },
       },
     })
 
@@ -18,6 +26,9 @@ describe('Swiss Bank Account', () => {
     t.testBoard(game, {
       dennis: {
         green: ['Swiss Bank Account'],
+        score: ['The Wheel', 'Monotheism', 'Construction'],
+        hand: ['Metalworking', 'Hiking'],
+        safe: ['Mathematics'],
       },
     })
   })
