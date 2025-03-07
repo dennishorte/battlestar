@@ -18,10 +18,10 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const hand = game.getZoneByPlayer(player, 'hand')
-      if (hand.size() >= 3) {
-        const returned = game.aChooseAndReturn(player, hand.cards(), { min: 1, max: 1 })[0]
+      if (hand.cards().length >= 3) {
+        const returned = game.aChooseAndReturn(player, hand.cards())[0]
         game.aSplay(player, returned.color, 'right')
-        game.aTuck(player, game.aChooseCard(player, hand.cards()))
+        game.aChooseAndTuck(player, hand.cards())
         game.aChooseAndScore(player, hand.cards())
       }
       else {

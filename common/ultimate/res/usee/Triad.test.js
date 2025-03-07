@@ -2,11 +2,12 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 describe('Triad', () => {
 
-  test('dogma', () => {
+  test('dogma: two cards', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
         purple: ['Triad'],
+        hand: ['Optics', 'Monotheism'],
       },
     })
 
@@ -18,6 +19,36 @@ describe('Triad', () => {
     t.testBoard(game, {
       dennis: {
         purple: ['Triad'],
+        hand: ['Optics', 'Monotheism'],
+      },
+    })
+  })
+
+  test('dogma: three cards', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Triad', 'Code of Laws'],
+        blue: ['Mathematics'],
+        hand: ['Optics', 'Monotheism', 'Tools'],
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Triad')
+    request = t.choose(game, request, 'Monotheism')
+    request = t.choose(game, request, 'Tools')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: {
+          cards: ['Triad', 'Code of Laws'],
+          splay: 'right',
+        },
+        blue: ['Mathematics', 'Tools'],
+        score: ['Optics'],
       },
     })
   })
