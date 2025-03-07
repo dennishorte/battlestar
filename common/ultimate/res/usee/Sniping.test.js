@@ -8,16 +8,27 @@ describe('Sniping', () => {
       dennis: {
         red: ['Sniping'],
       },
+      micah: {
+        green: {
+          cards: ['Measurement', 'Paper', 'The Wheel'],
+          splay: 'right',
+        }
+      },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Sniping')
+    request = t.choose(game, request, 'green')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Sniping'],
+        green: ['Paper'],
+      },
+      micah: {
+        green: ['The Wheel', 'Measurement'],
       },
     })
   })
