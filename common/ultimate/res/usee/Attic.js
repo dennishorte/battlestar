@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `Attic`  // Card names are unique in Innovation
@@ -22,30 +23,32 @@ function Card() {
       const choices = game.getCardsByZone(player, 'hand')
       const card = game.aChooseCard(player, choices, {
         title: 'Choose a card to score or safeguard',
-        min: 0, 
+        min: 0,
         max: 1
       })
       if (card) {
         const action = game.aChoose(player, ['score', 'safeguard'], {
           title: 'Choose an action'
-        })
+        })[0]
         if (action === 'score') {
           game.aScore(player, card)
-        } else {
+        }
+        else {
           game.aSafeguard(player, card)
         }
       }
     },
     (game, player) => {
       const choices = game.getCardsByZone(player, 'score')
-      game.aChooseAndReturn(player, choices, { min: 0, max: 1 })
+      game.aChooseAndReturn(player, choices)
     },
     (game, player) => {
-      const choices = game.getCardsByZone(player, 'score')
-      const card = game.aChooseCard(player, choices, { min: 0, max: 1 })
-      if (card) {
-        game.aDrawAndScore(player, card.age)
-      }
+      const values = game
+        .getCardsByZone(player, 'score')
+        .map(c => c.getAge())
+      const choices = util.array.distinct(values).sort()
+      const value = game.aChooseAge(player, choices) || 0
+      game.aDrawAndScore(player, value)
     }
   ]
   this.echoImpl = []
