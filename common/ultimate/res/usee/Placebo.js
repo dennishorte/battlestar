@@ -12,40 +12,42 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Return a top card on your board, then you may repeat as many times as you want with the same color. Draw a {6} for each card you return. If you return exactly one {6}, draw an {8}.`
+    `Return a top card on your board, then you may repeat as many times as you want with the same color. Draw a {7} for each card you return. If you return exactly one {7}, draw an {8}.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const topCards = game.getTopCards(player)
-      
-      let returnedCards = []
-      let color = null
-      
-      while (true) {
-        const choices = color 
-          ? topCards.filter(card => card.color === color)
-          : topCards
+      const firstCard = game.aChooseAndReturn(player, game.getTopCards(player))[0]
 
-        if (choices.length === 0) {
-          break
-        }
-        
-        const card = game.aChooseAndReturn(player, choices, { min: 0, max: 1 })[0]
-        
+      if (!firstCard) {
+        return
+      }
+
+      const returnedCards = [firstCard]
+      const color = firstCard.color
+
+      while (true) {
+        const card = game.aChooseAndReturn(player, [game.getTopCard(player, color)], { min: 0, max: 1 })[0]
+
         if (!card) {
           break
         }
 
         returnedCards.push(card)
-        color = color || card.color
       }
 
       returnedCards.forEach(() => {
-        game.aDraw(player, { age: game.getEffectAge(this, 6) })
+        game.aDraw(player, { age: game.getEffectAge(this, 7) })
       })
 
-      if (returnedCards.length === 1 && returnedCards[0].getAge() === 6) {
+      const numSevensReturned = returnedCards
+        .reduce((acc, c) => c.getAge() === 7 ? acc + 1 : acc, 0)
+
+      if (numSevensReturned === 1) {
+        game.mLog({
+          template: '{player} returned exactly one card of value 7',
+          args: { player }
+        })
         game.aDraw(player, { age: game.getEffectAge(this, 8) })
       }
     },
