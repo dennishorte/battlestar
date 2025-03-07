@@ -7,17 +7,33 @@ describe('Pantheism', () => {
     t.setBoard(game, {
       dennis: {
         purple: ['Pantheism'],
+        red: ['Optics'],
+        hand: ['Reformation'],
+      },
+      decks: {
+        base: {
+          4: ['Gunpowder'],
+        },
+        usee: {
+          4: ['Ninja'],
+        },
       },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Pantheism')
+    request = t.choose(game, request, 'purple')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        purple: ['Pantheism'],
+        red: {
+          cards: ['Optics', 'Ninja', 'Gunpowder'],
+          splay: 'right',
+        },
+        score: ['Pantheism', 'Reformation'],
       },
     })
   })
