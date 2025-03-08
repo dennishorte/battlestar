@@ -5,51 +5,84 @@ function Card() {
   this.name = `Camouflage`
   this.color = `red`
   this.age = 7
-  this.expansion = `usee` 
+  this.expansion = `usee`
   this.biscuits = `fhfl`
   this.dogmaBiscuit = `f`
   this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Choose to either tuck exactly two top cards of different colors and equal value on your board, then safeguard them, or score exactly two of your secrets of equal value.`,
+    `Choose to either junk exactly two top cards of different colors and equal value on your board, then safeguard them, or score exactly two of your secrets of equal value.`,
     `Draw a {7} for each special achievement you have.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const options = ['Tuck and safeguard', 'Score secrets']
-      const choice = game.aChoose(player, options, { title: 'Choose an action' })
-
-      if (choice === 'Tuck and safeguard') {
-        const eligibleCards = game
-          .getTopCards(player)
-          .filter(card => card.age === game.utilColors().find(color => color !== card.color))
-
-        const tuckedCards = game.aChooseCards(player, eligibleCards, { count: 2 })
-        if (tuckedCards.length === 2) {
-          game.aTuckMany(player, tuckedCards, { zone: 'safeguard' })
+      const junkOptions = function() {
+        const topCards = game.getTopCards(player)
+        const validCards = []
+        for (const card of topCards) {
+          for (const other of topCards) {
+            if (card !== other && card.getAge() === other.getAge()) {
+              validCards.push(card)
+              break
+            }
+          }
         }
-        else {
-          game.mLogNoEffect()
+        return validCards
+      }()
+
+      const scoreOptions = function() {
+        const secrets = game.getCardsByZone(player, 'safe')
+        const validCards = []
+
+        for (const card of secrets) {
+          for (const other of secrets) {
+            if (card !== other && card.getAge() === other.getAge()) {
+              validCards.push(card)
+              break
+            }
+          }
         }
-      } 
+        return validCards
+      }()
+
+      const options = []
+
+      if (junkOptions.length > 0) {
+        options.push('Junk and safeguard')
+      }
+      if (scoreOptions.length > 0) {
+        options.push('Score secrets')
+      }
+
+      const choice = game.aChoose(player, options, { title: 'Choose an action' })[0]
+
+      if (choice === 'Junk and safeguard') {
+        const cards = game.aChooseCards(player, junkOptions, {
+          count: 2,
+          guard: (cards) => cards.every(c => c.getAge() === cards[0].getAge())
+        })
+        game.aJunkMany(player, cards)
+        game.aSafeguardMany(player, cards)
+      }
       else if (choice === 'Score secrets') {
-        const secrets = game.getZoneByPlayer(player, 'secrets').cards()
-        const eligibleSecrets = game.utilGroupCardsOfSameValue(secrets).find(group => group.length >= 2)
-
-        if (eligibleSecrets) {
-          const scoredSecrets = game.aChooseCards(player, eligibleSecrets, { count: 2 })
-          game.aScoreMany(player, scoredSecrets)
-        }
-        else {
-          game.mLogNoEffect()
-        }
+        const cards = game.aChooseCards(player, scoreOptions, {
+          count: 2,
+          guard: (cards) => cards.every(c => c.getAge() === cards[0].getAge())
+        })
+        game.aScoreMany(player, cards)
       }
     },
     (game, player) => {
-      const specialAchievements = player.getSpecialAchievementCount()
-      game.aDraw(player, { age: game.getEffectAge(this, 7), count: specialAchievements })
+      const specialAchievements = game
+        .getCardsByZone(player, 'achievements')
+        .filter(a => a.isSpecialAchievement)
+        .length
+
+      for (let i = 0; i < specialAchievements; i++) {
+        game.aDraw(player, { age: game.getEffectAge(this, 7) })
+      }
     },
   ]
   this.echoImpl = []

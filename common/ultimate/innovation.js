@@ -944,6 +944,7 @@ function ChooseAndFactory(manyFuncName, numArgs) {
   }
 }
 
+Innovation.prototype.aChooseAndJunk = ChooseAndFactory('aJunkMany', 2)
 Innovation.prototype.aChooseAndMeld = ChooseAndFactory('aMeldMany', 2)
 Innovation.prototype.aChooseAndReturn = ChooseAndFactory('aReturnMany', 2)
 Innovation.prototype.aChooseAndReveal = ChooseAndFactory('aRevealMany', 2)
@@ -1648,6 +1649,10 @@ Innovation.prototype._checkCanSeizeRelic = function(card) {
   return card.zone.includes('achievement')
 }
 
+Innovation.prototype.aJunk = function(player, cards, opts={}) {
+  this.aRemove(player, cards, opts)
+}
+
 Innovation.prototype.aJunkAvailableAchievement = function(player, ages=[], opts={}) {
   const eligible = ages.filter(age => this.getAvailableAchievementsByAge(player, age).length > 0)
   if (eligible.length === 0) {
@@ -2068,6 +2073,7 @@ function ManyFactory(baseFuncName, extraArgCount=0) {
   }
 }
 
+Innovation.prototype.aJunkMany = ManyFactory('aJunk')
 Innovation.prototype.aMeldMany = ManyFactory('aMeld')
 Innovation.prototype.aRemoveMany = ManyFactory('aRemove')
 Innovation.prototype.aReturnMany = ManyFactory('aReturn')
