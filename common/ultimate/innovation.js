@@ -1321,6 +1321,13 @@ Innovation.prototype.aDrawAndForeshadow = function(player, age, opts={}) {
   }
 }
 
+Innovation.prototype.aDrawAndJunk = function(player, age, opts={}) {
+  const card = this.aDraw(player, {...opts, age })
+  if (card) {
+    return this.aJunk(player, card, opts)
+  }
+}
+
 Innovation.prototype.aDrawAndMeld = function(player, age, opts={}) {
   const card = this.aDraw(player, {...opts, age })
   if (card) {

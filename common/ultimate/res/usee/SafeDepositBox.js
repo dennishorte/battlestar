@@ -17,22 +17,34 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const options = ['Draw and junk', 'Exchange'];
+      const options = ['Draw and junk', 'Exchange']
       const choice = game.aChoose(player, options, {
         title: 'Choose an option'
-      });
-      
-      if (choice === 'Draw and junk') {
-        game.aDrawAndJunk(player, game.getEffectAge(this, 7));
-        game.aDrawAndJunk(player, game.getEffectAge(this, 7));
-      } else if (choice === 'Exchange') {
-        const scoreCards = game.getCardsByZone(player, 'score');
-        const valuedJunkCards = game.getZoneById('junk')
-          .cards()
-          .filter(card => card.age > 0);
+      })[0]
 
-        game.aReturnMany(player, scoreCards);
-        game.mMoveCardsTo(valuedJunkCards, game.getZoneByPlayer(player, 'score'), { player });
+      if (choice === 'Draw and junk') {
+        game.aDrawAndJunk(player, game.getEffectAge(this, 7))
+        game.aDrawAndJunk(player, game.getEffectAge(this, 7))
+      }
+      else if (choice === 'Exchange') {
+        const scoreCards = game.getCardsByZone(player, 'score')
+        const valuedJunkCards = game
+          .getZoneById('junk')
+          .cards()
+          .filter(card => card.age !== undefined)
+
+        game.aExchangeCards(
+          player,
+          scoreCards,
+          valuedJunkCards,
+          game.getZoneByPlayer(player, 'score'),
+          game.getZoneById('junk'),
+        )
+
+        game.mLog({
+          template: '{player} exchanges their score with the valued cards in junk',
+          args: { player },
+        })
       }
     },
   ]
