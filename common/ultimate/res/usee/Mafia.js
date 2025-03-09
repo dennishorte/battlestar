@@ -19,46 +19,44 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      const opponentSecrets = game
-        .getPlayerOpponents(player)
-        .flatMap(opp => game.getZoneByPlayer(opp, 'hand').cards())
-        .filter(c => c.checkHasBiscuit('s'))
+      const opponentSecrets = game.getCardsByZone(player, 'safe')
+      const lowestSecret = game.utilLowestCards(opponentSecrets)[0]
 
-      if (opponentSecrets.length === 0) {
+      if (!lowestSecret) {
         game.mLogNoEffect()
         return
       }
 
-      const secretToTransfer = game.utilLowestCards(opponentSecrets)[0]
-      const owner = game.getPlayerByCard(secretToTransfer)
-      
-      game.mLog({
-        template: '{player} demands {owner} transfer {card}',
-        args: { player, owner, card: secretToTransfer }
-      })
-
-      game.aTransfer(owner, secretToTransfer, game.getZoneByPlayer(leader, 'hand'))
+      game.aTransfer(player, lowestSecret, game.getZoneByPlayer(leader, 'safe'))
     },
 
     (game, player) => {
-      const allScorePiles = game
-        .getPlayerAll()
-        .flatMap(p => game.getCardsByZone(p, 'score'))
+      const players = game
+        .getPlayerAll(player)
+        .filter(p => game.getCardsByZone(p, 'score').length > 0)
+        .map(p => p.name)
 
-      const card = game.aChooseCard(player, allScorePiles, {
-        title: 'Choose a card to tuck'
-      })
+      const targetName = game.aChoose(player, players, {
+        title: 'Choose a player to tuck from'
+      })[0]
 
-      if (card) {
-        game.aTuck(game.getPlayerByCard(card), card)
+      if (targetName) {
+        const target = game.getPlayerByName(targetName)
+
+        const card = game.aChooseCards(player, game.getCardsByZone(target, 'score'), {
+          title: 'Choose a card to tuck',
+          hidden: targetName !== player.name
+        })[0]
+
+        game.aTuck(player, card)
       }
     },
 
-    (game, player) => {  
+    (game, player) => {
       game.aChooseAndSplay(player, ['red', 'yellow'], 'right')
     }
   ]
-  
+
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
