@@ -8,6 +8,16 @@ describe('Counterintelligence', () => {
       dennis: {
         blue: ['Counterintelligence'],
       },
+      micah: {
+        purple: ['Astronomy', 'Monotheism', 'Polytheism'],
+        green: ['Navigation'],
+      },
+      decks: {
+        usee: {
+          7: ['Slot Machine'],
+          8: ['Concealment'],
+        },
+      }
     })
 
     let request
@@ -18,6 +28,13 @@ describe('Counterintelligence', () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Counterintelligence'],
+        purple: ['Monotheism'],
+        hand: ['Concealment'],
+      },
+      micah: {
+        purple: ['Polytheism', 'Astronomy'],
+        green: ['Navigation'],
+        hand: ['Slot Machine'],
       },
     })
   })

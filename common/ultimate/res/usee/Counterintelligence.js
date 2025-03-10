@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you tuck a top card on your board with {i}! If you do, transfer your top card of color matching the tucked card to my board, and draw a {7}!`,
+    `I demand you tuck a top card on your board with {s}! If you do, transfer your top card of color matching the tucked card to my board, and draw a {7}!`,
     `Draw an {8}.`
   ]
 
@@ -20,14 +20,12 @@ function Card() {
     (game, player, { leader }) => {
       const choices = game
         .getTopCards(player)
-        .filter(card => card.checkHasBiscuit('i'))
+        .filter(card => card.checkHasBiscuit('s'))
 
-      const tuckedCard = game.aChooseAndTuck(player, choices, { min: 1, max: 1 })[0]
+      const tuckedCard = game.aChooseAndTuck(player, choices)[0]
 
       if (tuckedCard) {
-        const matchingCard = game
-          .getTopCards(player)
-          .filter(card => card.color === tuckedCard.color)[0]
+        const matchingCard = game.getTopCard(player, tuckedCard.color)
 
         if (matchingCard) {
           game.aTransfer(player, matchingCard, game.getZoneByPlayer(leader, matchingCard.color))
