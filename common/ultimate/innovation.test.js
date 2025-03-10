@@ -1684,31 +1684,35 @@ describe('Innovation', () => {
     })
   })
 
-  test('chain achievement', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-    t.setBoard(game, {
-      dennis: {
-        blue: ['Computers'],
-      },
-      decks: {
-        base: {
-          10: ['Robotics', 'Databases'],
-          11: ['Whataboutism'],
+  describe('chain achievement', () => {
+
+    test('basic case', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+      t.setBoard(game, {
+        dennis: {
+          blue: ['Computers'],
+        },
+        decks: {
+          base: {
+            10: ['Robotics', 'Databases'],
+            11: ['Whataboutism'],
+          }
         }
-      }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Dogma.Computers')
+
+      t.testIsSecondPlayer(request2)
+      t.testBoard(game, {
+        dennis: {
+          blue: ['Computers'],
+          red: ['Robotics'],
+          green: ['Databases'],
+          achievements: ['Whataboutism'],
+        },
+      })
     })
 
-    const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Dogma.Computers')
-
-    t.testIsSecondPlayer(request2)
-    t.testBoard(game, {
-      dennis: {
-        blue: ['Computers'],
-        red: ['Robotics'],
-        green: ['Databases'],
-        achievements: ['Whataboutism'],
-      },
-    })
   })
 })

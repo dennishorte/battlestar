@@ -635,12 +635,23 @@ Innovation.prototype.aCardEffects = function(
   }
 }
 
-Innovation.prototype.aTrackChainRule = function(player) {
+Innovation.prototype.aTrackChainRule = function(player, card) {
   if (!this.state.dogmaInfo.chainRule) {
-    this.state.dogmaInfo.chainRule = 'start'
+    this.state.dogmaInfo.chainRule = {}
   }
-  else if (this.state.dogmaInfo.chainRule === 'start') {
-    this.state.dogmaInfo.chainRule = 'awarded'
+  if (!this.state.dogmaInfo.chainRule[player.name]) {
+    this.state.dogmaInfo.chainRule[player.name] = {}
+  }
+
+  const data = this.state.dogmaInfo.chainRule[player.name]
+
+  // This is the first card in a potential chain event.
+  if (!data.cardName) {
+    data.cardName = card.name
+  }
+
+  // A second card is calling self-execute. Award the chain achievement.
+  else if (data.cardName !== card.name) {
     this.mLog({
       template: '{player} achieves a Chain Achievement',
       args: { player }
@@ -653,16 +664,24 @@ Innovation.prototype.aTrackChainRule = function(player) {
       this.mLog({ template: 'There are no cards left in the 11 deck to achieve.' })
     }
   }
-  else if (this.state.dogmaInfo.chainRule === 'awarded') {
-    return
+}
+
+Innovation.prototype.aFinishChainEvent = function(player, card) {
+  const data = this.state.dogmaInfo.chainRule[player.name]
+
+  // Got to the end of the dogma action for the original chain card.
+  if (data.cardName === card.name) {
+    delete this.state.dogmaInfo.chainRule[player.name]
   }
+
+  // This card is finished, but some earlier card is still executing.
   else {
-    throw new Error('Should never reach this point in the code.')
+    // do nothing
   }
 }
 
 Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
-  this.aTrackChainRule(player)
+  this.aTrackChainRule(player, card)
 
   const topCard = this.getTopCard(player, card.color)
   const isTopCard = topCard && topCard.name === card.name
@@ -686,6 +705,8 @@ Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
     opts.demanding = this.getPlayerOpponents(player)
   }
   this.aCardEffects(player, card, 'dogma', opts)
+
+  this.aFinishChainEvent(player, card)
 }
 
 Innovation.prototype.superExecute = function(player, card, opts={}) {
