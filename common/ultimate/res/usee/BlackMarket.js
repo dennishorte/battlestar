@@ -12,19 +12,24 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `You may safeguard a card from your hand. If you do, reveal two available standard achievements. You may meld a revealed card with no {k} or {l}. Return each revealed card you do not meld.`
+    `You may safeguard a card from your hand. If you do, reveal two available standard achievements. You may meld a revealed card with no {i} or {p}. Return each revealed card you do not meld.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
       const safeguarded = game.aChooseAndSafeguard(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
-      
+
       if (safeguarded && safeguarded.length > 0) {
-        const availableAchievements = game.getAvailableStandardAchievements().slice(0, 2)
+        const availableAchievements = game.getAvailableStandardAchievements(player)
+        const achievements = game.aChooseCards(player, availableAchievements, {
+          title: 'Choose two available achievements to reveal',
+          hidden: true,
+          count: 2,
+        })
 
-        game.mReveal(player, availableAchievements)
+        game.aRevealMany(player, achievements, { ordered: true })
 
-        const meldableAchievements = availableAchievements.filter(card => !card.biscuits.includes('k') && !card.biscuits.includes('l'))
+        const meldableAchievements = achievements.filter(card => !card.checkHasBiscuit('i') && !card.checkHasBiscuit('p'))
 
         const toMeld = game.aChooseCard(player, meldableAchievements, { min: 0, max: 1 })
 
@@ -32,8 +37,7 @@ function Card() {
           game.aMeld(player, toMeld)
         }
 
-        const toReturn = availableAchievements.filter(card => card !== toMeld)
-        toReturn.forEach(card => game.aReturn(player, card, { achievements: true }))
+        // No need to return the achievements that weren't melded, since they were never moved.
       }
     },
   ]
