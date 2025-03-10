@@ -7,17 +7,35 @@ describe('Private Eye', () => {
     t.setBoard(game, {
       dennis: {
         blue: ['Private Eye'],
+        safe: ['Tools'],
+      },
+      micah: {
+        hand: ['Monotheism', 'Mathematics'],
+      },
+      decks: {
+        usee: {
+          7: ['Counterintelligence'],
+        },
       },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Private Eye')
+    request = t.choose(game, request, 'Mathematics')
+    request = t.choose(game, request, 'blue')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        blue: ['Private Eye'],
+        blue: {
+          cards: ['Mathematics', 'Private Eye'],
+          splay: 'right',
+        },
+        score: ['Tools'],
+      },
+      micah: {
+        hand: ['Monotheism', 'Counterintelligence'],
       },
     })
   })
