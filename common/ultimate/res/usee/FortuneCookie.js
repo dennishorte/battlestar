@@ -12,38 +12,30 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `If you have exactly seven of any icon on your board, draw and score a {7}; exactly eight, splay your green or purple cards right and draw an {9}; exactly nine, draw a {7}.`
+    `If you have exactly seven of any icon on your board, draw and score a {7}; exactly eight, splay your green or purple cards right and draw an {8}; exactly nine, draw a {9}.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const biscuits = game.getBiscuits()
-      const playerBiscuits = biscuits[player.name]
-      
-      const exactlySevenIcon = Object.entries(playerBiscuits).find(([icon, count]) => count === 7)
-      const exactlyEightIcon = Object.entries(playerBiscuits).find(([icon, count]) => count === 8)  
-      const exactlyNineIcon = Object.entries(playerBiscuits).find(([icon, count]) => count === 9)
-      
+      const biscuits = game.getBiscuits()[player.name]
+
+      const exactlySevenIcon = Object.values(biscuits).find(count => count === 7)
+      const exactlyEightIcon = Object.values(biscuits).find(count => count === 8)
+      const exactlyNineIcon = Object.values(biscuits).find(count => count === 9)
+
       if (exactlySevenIcon) {
         game.aDrawAndScore(player, game.getEffectAge(this, 7))
       }
-      
+
       if (exactlyEightIcon) {
-        const choices = ['green', 'purple'].filter(color => game.getZoneByPlayer(player, color).splay !== 'right')
-        if (choices.length > 0) {
-          const color = game.aChoose(player, choices, { title: 'Choose a color to splay right' })[0]
-          game.aSplay(player, color, 'right')
-          game.aDraw(player, { age: game.getEffectAge(this, 9) })
-        }
-        else {
-          game.mLogNoEffect() 
-        }
+        const color = game.aChooseAndSplay(player, ['green', 'purple'], 'right')
+        game.aDraw(player, { age: game.getEffectAge(this, 8) })
       }
-      
+
       if (exactlyNineIcon) {
-        game.aDraw(player, { age: game.getEffectAge(this, 7) })
+        game.aDraw(player, { age: game.getEffectAge(this, 9) })
       }
-      
+
       if (!exactlySevenIcon && !exactlyEightIcon && !exactlyNineIcon) {
         game.mLogNoEffect()
       }
