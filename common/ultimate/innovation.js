@@ -716,8 +716,8 @@ Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
   this.aFinishChainEvent(player, card)
 }
 
-Innovation.prototype.superExecute = function(player, card, opts={}) {
-  this.selfExecute(player, card, { superExecute: true })
+Innovation.prototype.aSuperExecute = function(player, card, opts={}) {
+  this.aSelfExecute(player, card, { superExecute: true })
 }
 
 Innovation.prototype.aChoose = function(player, choices, opts={}) {

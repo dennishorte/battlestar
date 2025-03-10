@@ -7,6 +7,22 @@ describe('Plot Voucher', () => {
     t.setBoard(game, {
       dennis: {
         green: ['Plot Voucher'],
+        score: ['Oars'],
+      },
+      micah: {
+        purple: ['Philosophy'],
+        hand: ['Navigation'],
+        score: ['Monotheism'],
+      },
+      achievements: ['Tools', 'Optics'],
+      decks: {
+        base: {
+          1: ['The Wheel'],
+        },
+        usee: {
+          1: ['Polytheism'],
+          7: ['Private Eye'],
+        }
       },
     })
 
@@ -18,6 +34,15 @@ describe('Plot Voucher', () => {
     t.testBoard(game, {
       dennis: {
         green: ['Plot Voucher'],
+        red: ['Oars'],
+        hand: ['Private Eye'],
+        score: ['Navigation'],
+        safe: ['Optics'],
+      },
+      micah: {
+        purple: ['Monotheism', 'Philosophy', 'Polytheism'],
+        hand: ['The Wheel'],
+        safe: ['Tools'],
       },
     })
   })

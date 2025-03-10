@@ -18,38 +18,21 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const scoreCards = game.getCardsByZone(player, 'score')
-      const melded = game.aChooseAndMeld(player, scoreCards)
+      const melded = game.aChooseAndMeld(player, scoreCards)[0]
 
-      if (melded) {
-        const availableAchievements = game.getAvailableStandardAchievements()
-        const lowestAchievement = availableAchievements.sort((a, b) => a.name.localeCompare(b.name))[0]
-        
-        if (lowestAchievement) {
-          game.mLog({
-            template: '{player} safeguards {card}',
-            args: { player, card: lowestAchievement }
-          })
-          game.mRemove(player, lowestAchievement)
+      const lowestAchievement = game.utilLowestCards(game.getAvailableStandardAchievements(player))[0]
+      let safeguarded
+      if (lowestAchievement) {
+        safeguarded = game.aSafeguard(player, lowestAchievement)
+      }
 
-          if (player === game.getPlayerCurrent()) {
-            game.mLog({
-              template: '{player} super-executes {card}',
-              args: { player, card: melded }
-            })
-            game.aSuperExecution(player, melded)
-          } else {
-            game.mLog({
-              template: '{player} self-executes {card}',
-              args: { player, card: melded }
-            })
-            game.aCardEffects(player, melded, 'dogma')
-          }
+      if (safeguarded && melded) {
+        if (game.getPlayerCurrent().name === player.name) {
+          game.aSuperExecute(player, melded)
         }
         else {
-          game.mLog({
-            template: 'No standard achievements available to safeguard'
-          })
-        }        
+          game.aSelfExecute(player, melded)
+        }
       }
     },
   ]
