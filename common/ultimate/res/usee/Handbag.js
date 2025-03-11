@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `Handbag`  // Card names are unique in Innovation
@@ -22,30 +23,25 @@ function Card() {
         'Tuck score pile',
         'Score cards of chosen value from hand'
       ]
-      
-      const choice = game.aChoose(player, choices)
+
+      const choice = game.aChoose(player, choices)[0]
 
       if (choice === choices[0]) {
-        // Transfer bottom cards
-        game.getColorsInPlay().forEach(color => {
-          const cards = game.getCardsByZone(player, color)
-          if (cards.length > 0) {
-            game.aTransfer(player, cards[cards.length - 1], game.getZoneByPlayer(player, 'hand'))
-          }
-        })
+        const cards = game.getBottomCards(player)
+        game.aTransferMany(player, cards, game.getZoneByPlayer(player, 'hand'))
       }
       else if (choice === choices[1]) {
-        // Tuck score pile  
         const cards = game.getCardsByZone(player, 'score')
         game.aTuckMany(player, cards)
-      } 
+      }
       else if (choice === choices[2]) {
-        // Score cards of chosen value
-        const values = game.getCardsByZone(player, 'hand').map(c => c.age)
-        const value = game.aChooseAge(player, values)
-        
-        const toScore = game.getCardsByZone(player, 'hand').filter(c => c.age === value)
+        const values = game.getCardsByZone(player, 'hand').map(c => c.getAge())
+        const value = game.aChooseAge(player, util.array.distinct(values).sort())
+        const toScore = game.getCardsByZone(player, 'hand').filter(c => c.getAge() === value)
         game.aScoreMany(player, toScore)
+      }
+      else {
+        throw new Error('Invalid choice: ' + choice)
       }
     },
   ]
