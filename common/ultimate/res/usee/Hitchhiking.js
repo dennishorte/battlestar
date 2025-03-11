@@ -17,23 +17,18 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const otherPlayer = game.aChoosePlayer(player, game.getPlayerOpponents(player))
+      const otherPlayers = game.getPlayerAll().filter(other => other.name !== player.name)
+      const otherPlayer = game.aChoosePlayer(player, otherPlayers)
 
       if (otherPlayer) {
         const cardInHand = game.aChooseCard(otherPlayer, game.getZoneByPlayer(otherPlayer, 'hand').cards())
 
         if (cardInHand) {
           game.aTransfer(otherPlayer, cardInHand, game.getZoneByPlayer(player, cardInHand.color))
-
           game.mLog({
-            template: '{player} will execute {card}',
-            args: { player, card: cardInHand }
+            template: 'Having the other player make the decisions is not implemented yet.'
           })
-
-          game.aCardEffects(otherPlayer, cardInHand, 'dogma', player)
-        }
-        else {
-          game.mLogNoEffect()
+          game.aSelfExecute(player, cardInHand)
         }
       }
     },

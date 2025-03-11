@@ -697,7 +697,10 @@ Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
 
   // Do all visible echo effects in this color.
   if (isTopCard) {
-    const cards = this.getCardsByZone(player, card.color).slice(1).reverse()
+    const cards = this
+      .getCardsByZone(player, card.color)
+      .filter(other => other.id !== card.id)
+      .reverse()
     for (const other of cards) {
       this.aCardEffects(player, other, 'echo', opts)
     }
