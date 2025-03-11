@@ -8,6 +8,14 @@ describe('Shangri-La', () => {
       dennis: {
         yellow: ['Shangri-La'],
       },
+      decks: {
+        base: {
+          8: ['Socialism', 'Mobility'],
+        },
+        usee: {
+          8: ['Jackalope'],
+        },
+      },
     })
 
     let request
@@ -17,7 +25,9 @@ describe('Shangri-La', () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        yellow: ['Shangri-La'],
+        yellow: ['Shangri-La', 'Jackalope'],
+        purple: ['Socialism'],
+        score: ['Mobility'],
       },
     })
   })

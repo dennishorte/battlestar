@@ -12,23 +12,25 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and tuck an {8}. If it has {l}, score it. Otherwise, draw and meld an {8}. If it is an {l}, repeat this effect.`
+    `Draw and tuck an {8}. If it has {f}, score it. Otherwise, draw and meld an {8}. If it is an {8}, repeat this effect.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
       const executeEffect = () => {
         const tucked = game.aDrawAndTuck(player, game.getEffectAge(this, 8))
-        if (tucked.checkHasBiscuit('l')) {
+        if (tucked.checkHasBiscuit('f')) {
           game.aScore(player, tucked)
-        } else {
+        }
+        else {
           const melded = game.aDrawAndMeld(player, game.getEffectAge(this, 8))
-          if (melded.checkHasBiscuit('l')) {
+          if (melded.getAge() === 8) {
+            game.mLog({ template: 'Repeating effect' })
             executeEffect()
           }
         }
       }
-      
+
       executeEffect()
     },
   ]
