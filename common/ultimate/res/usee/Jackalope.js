@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you transfer the highest card on your board without {l} to my board! If you do, unsplay the transferred card's color on your board!`,
+    `I demand you transfer the highest card on your board without {i} to my board! If you do, unsplay the transferred card's color on your board!`,
     `Unsplay the color on your board with the most visible cards.`
   ]
 
@@ -20,7 +20,7 @@ function Card() {
     (game, player, { leader }) => {
       const choices = game
         .getTopCards(player)
-        .filter(card => !card.checkHasBiscuit('l'))
+        .filter(card => !card.checkHasBiscuit('i'))
 
       const card = game.aChooseCard(player, choices)
       if (card) {
@@ -34,11 +34,11 @@ function Card() {
       const colors = game.utilColors()
       const colorCounts = colors.map(color => ({
         color,
-        count: game.getZoneByPlayer(player, color).cards({ faceUp: true }).length
+        count: game.getVisibleCardsByZone(player, color)
       }))
       const maxCount = Math.max(...colorCounts.map(c => c.count))
       const maxColors = colorCounts.filter(c => c.count === maxCount).map(c => c.color)
-      
+
       game.aChooseAndUnsplay(player, maxColors)
     }
   ]

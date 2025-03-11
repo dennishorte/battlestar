@@ -6,7 +6,25 @@ describe('Jackalope', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
-        yellow: ['Jackalope'],
+        yellow: ['Jackalope', 'Canning', 'Agriculture'],
+        green: {
+          cards: ['Metric System', 'Paper', 'The Wheel'],
+          splay: 'up',
+        },
+        red: {
+          cards: ['Optics', 'Metalworking'],
+          splay: 'left',
+        },
+      },
+      micah: {
+        purple: {
+          cards: ['Lighting', 'Monotheism'],
+          splay: 'left',
+        },
+        blue: {
+          cards: ['Evolution', 'Atomic Theory', 'Tools'],
+          splay: 'right',
+        },
       },
     })
 
@@ -17,7 +35,20 @@ describe('Jackalope', () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        yellow: ['Jackalope'],
+        yellow: ['Jackalope', 'Canning', 'Agriculture'],
+        green: ['Metric System', 'Paper', 'The Wheel'],
+        red: {
+          cards: ['Optics', 'Metalworking'],
+          splay: 'left',
+        },
+        blue: ['Evolution']
+      },
+      micah: {
+        purple: {
+          cards: ['Lighting', 'Monotheism'],
+          splay: 'left',
+        },
+        blue: ['Atomic Theory', 'Tools'],
       },
     })
   })

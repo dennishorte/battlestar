@@ -953,6 +953,16 @@ Innovation.prototype.aChooseAndScore = ChooseAndFactory('aScoreMany', 2)
 Innovation.prototype.aChooseAndTransfer = ChooseAndFactory('aTransferMany', 3)
 Innovation.prototype.aChooseAndTuck = ChooseAndFactory('aTuckMany', 2)
 
+Innovation.prototype.aChooseAndUnsplay = function(player, choices, opts={}) {
+  const colors = this.aChoose(player, choices, {
+    title: 'Choose a color',
+    ...opts
+  })
+  for (const color of colors) {
+    this.aUnsplay(player, color)
+  }
+}
+
 Innovation.prototype.aChooseAndSplay = function(player, choices, direction, opts={}) {
   util.assert(direction, 'No direction specified for splay')
 
