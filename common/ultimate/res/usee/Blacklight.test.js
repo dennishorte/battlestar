@@ -6,18 +6,62 @@ describe('Blacklight', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
-        blue: ['Blacklight'],
+        blue: {
+          cards: ['Blacklight', 'Tools'],
+          splay: 'left',
+        },
+        red: ['Coal', 'Metalworking'],
       },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Blacklight')
+    request = t.choose(game, request, 'Unsplay.blue')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        blue: ['Blacklight'],
+        blue: ['Blacklight', 'Tools'],
+        red: ['Coal', 'Metalworking'],
+      },
+    })
+  })
+
+  test('dogma', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        blue: {
+          cards: ['Blacklight', 'Tools'],
+          splay: 'left',
+        },
+        red: ['Coal', 'Metalworking'],
+      },
+      decks: {
+        usee: {
+          9: ['Fermi Paradox'],
+        }
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Blacklight')
+    request = t.choose(game, request, 'Splay up and draw.red')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: {
+          cards: ['Blacklight', 'Tools'],
+          splay: 'left',
+        },
+        red: {
+          cards: ['Coal', 'Metalworking'],
+          splay: 'up',
+        },
+        hand: ['Fermi Paradox'],
       },
     })
   })

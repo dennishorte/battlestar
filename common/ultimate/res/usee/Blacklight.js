@@ -1,7 +1,7 @@
 const CardBase = require(`../CardBase.js`)
 
 function Card() {
-  this.id = `Blacklight`  
+  this.id = `Blacklight`
   this.name = `Blacklight`
   this.color = `blue`
   this.age = 8
@@ -19,20 +19,37 @@ function Card() {
     (game, player) => {
       const unsplayChoices = ['yellow', 'red', 'blue', 'green', 'purple']
         .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
-      
-      const splayChoices = ['yellow', 'red', 'blue', 'green', 'purple'] 
+
+      const splayChoices = ['yellow', 'red', 'blue', 'green', 'purple']
         .filter(color => game.getZoneByPlayer(player, color).splay === 'none')
 
-      const choice = game.aChoose(player, ['Unsplay', 'Splay Up'], { title: 'Choose an action:' })[0]
+      const choices = []
+      if (unsplayChoices.length > 0) {
+        choices.push({
+          title: 'Unsplay',
+          options: unsplayChoices,
+          min: 0,
+        })
+      }
+      if (splayChoices.length > 0) {
+        choices.push({
+          title: 'Splay up and draw',
+          options: splayChoices,
+          min: 0,
+        })
+      }
 
-      if (choice === 'Unsplay') {
-        const color = game.aChoose(player, unsplayChoices, { title: 'Choose a color to unsplay:' })[0]
-        game.aUnsplay(player, color)
-      } 
-      else if (choice === 'Splay Up') {
-        const color = game.aChoose(player, splayChoices, { title: 'Choose a color to splay up:' })[0]
-        game.aSplay(player, color, 'up')
+      const choice = game.aChoose(player, choices)[0]
+
+      if (choice.title === 'Unsplay') {
+        game.aUnsplay(player, choice.selection[0])
+      }
+      else if (choice.title === 'Splay up and draw') {
+        game.aSplay(player, choice.selection[0], 'up')
         game.aDraw(player, { age: game.getEffectAge(this, 9) })
+      }
+      else {
+        throw new Error('Invalid option: ' + choice)
       }
     },
   ]
