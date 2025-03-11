@@ -302,6 +302,16 @@ TestUtil.testBoard = function(game, state) {
     real.achievements = game.getZoneById('achievements').cards().map(c => c.name).sort()
   }
 
+  if (state.standardAchievements) {
+    expected.standardAchievements = state.standardAchievements.sort()
+    real.standardAchievements = game
+      .getZoneById('achievements')
+      .cards()
+      .filter(c => c.checkIsStandardAchievement())
+      .map(c => c.name)
+      .sort()
+  }
+
   expect(real).toStrictEqual(expected)
 }
 

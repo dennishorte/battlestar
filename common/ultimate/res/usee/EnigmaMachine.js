@@ -6,7 +6,7 @@ function Card() {
   this.color = `red`
   this.age = 8
   this.expansion = `usee`
-  this.biscuits = `iihi` 
+  this.biscuits = `iihi`
   this.dogmaBiscuit = `i`
   this.inspire = ``
   this.echo = ``
@@ -23,14 +23,14 @@ function Card() {
         'Transfer all your secrets to your hand',
         'Transfer all cards in your hand to the available achievements'
       ]
-      const choice = game.aChoose(player, choices, { title: 'Choose one:' })
+      const choice = game.aChoose(player, choices)[0]
 
       if (choice === choices[0]) {
-        const achievements = game.getAvailableAchievements()
-        game.aSafeguardMany(player, achievements) 
-      } 
+        const achievements = game.getAvailableStandardAchievements(player)
+        game.aSafeguardMany(player, achievements)
+      }
       else if (choice === choices[1]) {
-        const secrets = game.getZoneByPlayer(player, 'secrets').cards()
+        const secrets = game.getZoneByPlayer(player, 'safe').cards()
         game.aTransferMany(player, secrets, game.getZoneByPlayer(player, 'hand'))
       }
       else if (choice === choices[2]) {
@@ -40,9 +40,9 @@ function Card() {
     },
     (game, player) => {
       const colors = game.utilColors().filter(color => {
-        return game.getZoneByPlayer(player, color).splay === 'left' 
+        return game.getZoneByPlayer(player, color).splay === 'left'
       })
-      game.aChooseAndSplay(player, colors, 'up')
+      game.aChooseAndSplay(player, colors, 'up', { count: 1 })
     }
   ]
   this.echoImpl = []
