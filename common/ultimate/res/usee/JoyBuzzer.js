@@ -6,7 +6,7 @@ function Card() {
   this.color = `purple`
   this.age = 8
   this.expansion = `usee`
-  this.biscuits = `icih` 
+  this.biscuits = `icih`
   this.dogmaBiscuit = `i`
   this.inspire = ``
   this.echo = ``
@@ -20,37 +20,24 @@ function Card() {
     (game, player, { leader }) => {
       const playerHand = game.getZoneByPlayer(player, 'hand')
       const leaderHand = game.getZoneByPlayer(leader, 'hand')
-      
+
       const playerCards = playerHand.cards()
       const leaderLowest = game.utilLowestCards(leaderHand.cards())
-      
-      game.aTransferMany(player, playerCards, leaderHand)
-      game.aTransferMany(leader, leaderLowest, playerHand)
+
+      game.aExchangeCards(player, playerCards, leaderLowest, playerHand, leaderHand)
     },
     (game, player) => {
-      const hand = game.getZoneByPlayer(player, 'hand').cards()
-      const ages = hand.map(c => c.age).filter((v, i, a) => a.indexOf(v) === i)
+      const age = game.aChooseAge(player)
+      const cardsOfAge = game.getCardsByZone(player, 'hand').filter(c => c.getAge() === age)
+      game.aScoreMany(player, cardsOfAge)
 
-      const age = game.aChooseAge(
-        player, 
-        ages, 
-        {
-          title: 'Choose a value to score from hand'
-        }
-      ) 
-
-      if (age) {
-        const cardsOfAge = hand.filter(c => c.age === age)
-        cardsOfAge.forEach(card => game.aScore(player, card))
-
-        const topPurple = game.getTopCard(player, 'purple')
-        if (topPurple) {
-          game.aScore(player, topPurple)
-        }
+      const topPurple = game.getTopCard(player, 'purple')
+      if (topPurple) {
+        game.aScore(player, topPurple)
       }
     }
   ]
-  
+
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
