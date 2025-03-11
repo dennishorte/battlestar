@@ -6,7 +6,8 @@ describe('Opus Dei', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
-        purple: ['Opus Dei'],
+        purple: ['Opus Dei', 'Monotheism'],
+        score: ['Reformation', 'Optics'],
       },
     })
 
@@ -17,7 +18,12 @@ describe('Opus Dei', () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        purple: ['Opus Dei'],
+        purple: {
+          cards: ['Opus Dei', 'Monotheism'],
+          splay: 'up',
+        },
+        score: ['Optics'],
+        safe: ['Reformation'],
       },
     })
   })

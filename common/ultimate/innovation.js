@@ -1409,6 +1409,15 @@ Innovation.prototype.aEndorse = function(player, color, opts={}) {
 }
 
 Innovation.prototype.aExchangeCards = function(player, cards1, cards2, zone1, zone2) {
+  this.mLog({
+    template: '{player} exchanges {count1} cards for {count2} cards',
+    args: {
+      player,
+      count1: cards1.length,
+      count2: cards2.length,
+    }
+  })
+
   for (const card of cards1) {
     this.mMoveCardTo(card, zone2)
   }
@@ -1424,8 +1433,8 @@ Innovation.prototype.aExchangeZones = function(player, zone1, zone2) {
   this.aExchangeCards(player, cards1, cards2, zone1, zone2)
 
   this.mLog({
-    template: '{player} exchanges all cards from {zone1} and {zone2}',
-    args: { player, zone1, zone2 }
+    template: '{player} exchanges {count1} cards from {zone1} for {count2} cards from {zone2}',
+    args: { player, zone1, zone2, count1: cards1.length, count2: cards2.length }
   })
 
   this.mActed(player)
