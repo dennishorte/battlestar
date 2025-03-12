@@ -13,7 +13,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `You may splay your green cards up.`,
-    `Choose to either draw a {9}, or safeguard an available standard achievement.`,
+    `Choose to either draw a {e}, or safeguard an available standard achievement.`,
     `Reveal one of your secrets, and super-execute it if it is your turn.`
   ]
 
@@ -22,36 +22,36 @@ function Card() {
       game.aChooseAndSplay(player, ['green'], 'up')
     },
     (game, player) => {
-      const choices = ['Draw a 9', 'Safeguard a standard achievement']
-      const choice = game.aChoose(player, choices)
+      const choices = [
+        'Draw a ' + game.getEffectAge(this, 11),
+        'Safeguard a standard achievement',
+      ]
+      const choice = game.aChoose(player, choices)[0]
 
       if (choice === choices[0]) {
-        game.aDraw(player, { age: game.getEffectAge(this, 9) })
-      } else {
-        const available = game.getAvailableStandardAchievements()
-        const achievement = game.aChooseCard(player, available)
-        
+        game.aDraw(player, { age: game.getEffectAge(this, 11) })
+      }
+      else {
+        const available = game.getAvailableStandardAchievements(player)
+        const achievement = game.aChooseCards(player, available, { hidden: true })[0]
+
         if (achievement) {
           game.aSafeguard(player, achievement)
         }
       }
     },
     (game, player) => {
-      const secrets = game
-        .getZoneByPlayer(player, 'secrets')
-        .cards()
-
-      const secret = game.aChooseCard(player, secrets, { title: 'Choose a secret to reveal and execute' })
+      const secrets = game.getCardsByZone(player, 'safe')
+      const secret = game.aChooseCards(player, secrets, {
+        title: 'Choose a secret to reveal and execute',
+        hidden: true,
+      })[0]
 
       if (secret) {
         game.mReveal(player, secret)
 
-        if (game.getCurrentPlayer() === player) {
-          game.mLog({
-            template: '{player} super-executes {card}',
-            args: { player, card: secret }
-          })
-          game.aSuperStarEffect(player, secret)
+        if (game.getPlayerCurrent() === player) {
+          game.aSuperExecute(player, secret)
         }
       }
     }
