@@ -695,6 +695,15 @@ Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
 
   opts.selfExecutor = player
 
+  this.mLog({
+    template: '{player} will {kind}-execute {card}',
+    args: {
+      player,
+      card,
+      kind: (opts.superExecute ? 'super' : 'self'),
+    }
+  })
+
   // Do all visible echo effects in this color.
   if (isTopCard) {
     const cards = this
