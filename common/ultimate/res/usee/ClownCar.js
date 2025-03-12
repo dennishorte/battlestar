@@ -12,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you meld a card from my score pile! If the melded card has no {l}, repeat this effect!`
+    `I demand you meld a card from my score pile! If the melded card has no {c}, repeat this effect!`
   ]
 
   this.dogmaImpl = [
@@ -20,10 +20,10 @@ function Card() {
       let canRepeat = true
       while (canRepeat) {
         const scoreCards = game.getCardsByZone(leader, 'score')
-        const card = game.aChooseAndTransfer(leader, scoreCards, game.getZoneByPlayer(player, card => card.color))
+        const card = game.aChooseCards(leader, scoreCards, { hidden: true })[0]
         if (card) {
-          game.mMeldCard(player, card)
-          canRepeat = !card.checkHasBiscuit('l')
+          game.aMeld(player, card)
+          canRepeat = !card.checkHasBiscuit('c')
         }
         else {
           canRepeat = false
