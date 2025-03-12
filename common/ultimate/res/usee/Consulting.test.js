@@ -7,17 +7,34 @@ describe('Consulting', () => {
     t.setBoard(game, {
       dennis: {
         blue: ['Consulting'],
+        green: ['Mapmaking'],
+      },
+      micah: {
+        score: ['The Wheel'],
+      },
+      decks: {
+        base: {
+          1: ['Tools'],
+          10: ['Software'],
+        },
+        usee: {
+          10: ['Fight Club'],
+        },
       },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Consulting')
+    request = t.choose(game, request, 'Mapmaking')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        blue: ['Consulting'],
+        blue: ['Software', 'Consulting'],
+        red: ['Fight Club'],
+        green: ['Mapmaking'],
+        score: ['The Wheel', 'Tools'],
       },
     })
   })

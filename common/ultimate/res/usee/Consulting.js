@@ -12,25 +12,25 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Choose an opponent. Draw and meld two {9}. Execute the top card on your board of that player's choice.`
+    `Choose an opponent. Draw and meld two {10}. Super-execute the top card on your board of that player's choice.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
       const opponent = game.aChoosePlayer(player, game.getPlayerOpponents(player))
-      
-      game.aDrawAndMeld(player, game.getEffectAge(this, 9))
-      game.aDrawAndMeld(player, game.getEffectAge(this, 9))
+
+      game.aDrawAndMeld(player, game.getEffectAge(this, 10))
+      game.aDrawAndMeld(player, game.getEffectAge(this, 10))
 
       const topCards = game.getTopCards(player)
       const card = game.aChooseCard(opponent, topCards)
-      
+
       game.mLog({
         template: '{opponent} chooses {card} for {player} to execute',
-        args: { opponent, player, card }  
+        args: { opponent, player, card }
       })
-      
-      game.aCardEffects(player, card, 'dogma')
+
+      game.aSuperExecute(player, card)
     },
   ]
   this.echoImpl = []
