@@ -6,7 +6,48 @@ describe('Urban Legend', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
-        purple: ['Urban Legend'],
+        purple: ['Urban Legend', 'Monotheism'],
+        blue: ['Tools'],
+        red: ['Coal'],
+      },
+      decks: {
+        base: {
+          9: ['Software'],
+        },
+        usee: {
+          9: ['Consulting'],
+        },
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Urban Legend')
+    request = t.choose(game, request, 'purple')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: {
+          cards: ['Urban Legend', 'Monotheism'],
+          splay: 'up',
+        },
+        blue: ['Tools'],
+        red: ['Coal'],
+        hand: ['Software', 'Consulting'],
+      },
+    })
+  })
+
+  test('dogma', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Urban Legend', 'Monotheism'],
+        blue: ['Chemistry'],
+        red: ['Coal'],
+        green: ['Corporations'],
+        yellow: ['Canning'],
       },
     })
 
@@ -14,12 +55,7 @@ describe('Urban Legend', () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Urban Legend')
 
-    t.testIsSecondPlayer(game)
-    t.testBoard(game, {
-      dennis: {
-        purple: ['Urban Legend'],
-      },
-    })
+    t.testGameOver(request, 'dennis', 'Urban Legend')
   })
 
 })

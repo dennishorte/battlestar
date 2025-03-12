@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const { GameOverEvent } = require('../../../lib/game.js')
 
 function Card() {
   this.id = `Urban Legend`  // Card names are unique in Innovation
@@ -21,15 +22,18 @@ function Card() {
       const colors = ['red', 'yellow', 'green', 'blue', 'purple']
       let drawnCards = 0
       colors.forEach(color => {
-        if (game.getBiscuitsByPlayer(player, color).f > 0) {
+        const zone = game.getZoneByPlayer(player, color)
+        if (game.getBiscuitsByZone(zone).f > 0) {
           game.aDraw(player, { age: game.getEffectAge(this, 9) })
           drawnCards++
         }
       })
 
-      if (drawnCards >= 5) {
-        game.mLogEffect(player, 'drew 5 cards and wins the game', this)
-        throw new GameOverEvent({ player })
+      if (drawnCards === 5) {
+        throw new GameOverEvent({
+          player,
+          reason: this.name
+        })
       }
     },
     (game, player) => {
