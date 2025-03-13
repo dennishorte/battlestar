@@ -706,6 +706,10 @@ Game.prototype.getPlayersEnding = function(player) {
   return players
 }
 
+Game.prototype.getPlayersOther = function(player) {
+  return this.getPlayerAll().filter(p => p.name !== player.name)
+}
+
 Game.prototype.getPlayersStarting = function(player) {
   const players = [...this.getPlayerAll()]
   while (players[0] !== player) {

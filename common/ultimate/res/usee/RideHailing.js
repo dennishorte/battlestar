@@ -6,14 +6,14 @@ function Card() {
   this.color = `yellow`
   this.age = 10
   this.expansion = `usee`
-  this.biscuits = `iiih` 
+  this.biscuits = `iiih`
   this.dogmaBiscuit = `i`
   this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = [
     `You may splay your green cards up.`,
-    `Meld a top non-yellow card with {i} from another player's board. If you do, self-execute it. Otherwise, draw an {11}.`
+    `Meld a top non-yellow card with {i} from another player's board. If you do, self-execute it. Otherwise, draw an {e}.`
   ]
 
   this.dogmaImpl = [
@@ -22,26 +22,19 @@ function Card() {
     },
     (game, player) => {
       const choices = game
-        .getPlayerOpponents(player)
+        .getPlayersOther(player)
         .flatMap(opp => game.getTopCards(opp))
         .filter(card => card.color !== 'yellow' && card.checkHasBiscuit('i'))
-        
-      const card = game.aChooseCard(player, choices, {
-        title: 'Choose a card to meld'
-      })
+
+      const card = game.aChooseAndMeld(player, choices)[0]
 
       if (card) {
-        game.aMeld(player, card)
-        game.mLog({
-          template: '{player} melds {card} and will self-execute it',
-          args: { player, card }
-        })
-        game.aCardEffects(player, card, 'dogma')
+        game.aSelfExecute(player, card)
       }
       else {
         game.aDraw(player, { age: game.getEffectAge(this, 11) })
       }
-    } 
+    }
   ]
   this.echoImpl = []
   this.inspireImpl = []
