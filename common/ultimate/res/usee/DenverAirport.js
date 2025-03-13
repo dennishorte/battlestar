@@ -18,23 +18,15 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const secrets = game
-        .getZoneByPlayer(player, 'secrets')
-        .cards()
+      const secrets = game.getCardsByZone(player, 'safe')
+      const card = game.aChooseCards(player, secrets, {
+        title: 'Choose a card to achieve',
+        hidden: true,
+        min: 0,
+      })[0]
 
-      if (secrets.length > 0) {
-        const secret = game.aChooseCard(player, secrets, { 
-          title: 'Choose a secret to achieve',
-          min: 0,
-          max: 1
-        })
-
-        if (secret) {
-          game.aAchieveSecret(player, secret)
-        }
-      }
-      else {
-        game.mLogNoEffect()
+      if (card) {
+        game.aClaimAchievement(player, { card })
       }
     },
 
