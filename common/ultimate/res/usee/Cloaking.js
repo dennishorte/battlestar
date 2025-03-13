@@ -1,7 +1,7 @@
 const CardBase = require(`../CardBase.js`)
 
 function Card() {
-  this.id = `Cloaking`  
+  this.id = `Cloaking`
   this.name = `Cloaking`
   this.color = `red`
   this.age = 11
@@ -19,12 +19,12 @@ function Card() {
     (game, player, { leader }) => {
       const choices = game
         .getCardsByZone(player, 'achievements')
-        .filter(card => !card.isSpecialAchievement())
-      
-      const card = game.aChooseCard(player, choices, { 
+        .filter(card => card.checkIsStandardAchievement())
+
+      const card = game.aChooseCards(player, choices, {
         title: 'Choose a standard achievement to transfer',
-        count: 1
-      })
+        hidden: true
+      })[0]
 
       if (card) {
         game.aTransfer(player, card, game.getZoneByPlayer(leader, 'safe'))

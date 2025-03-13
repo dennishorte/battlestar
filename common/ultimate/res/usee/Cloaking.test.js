@@ -8,6 +8,9 @@ describe('Cloaking', () => {
       dennis: {
         red: ['Cloaking'],
       },
+      micah: {
+        achievements: ['Monument', 'Tools'],
+      },
     })
 
     let request
@@ -18,6 +21,10 @@ describe('Cloaking', () => {
     t.testBoard(game, {
       dennis: {
         red: ['Cloaking'],
+        safe: ['Tools'],
+      },
+      micah: {
+        achievements: ['Monument'],
       },
     })
   })
