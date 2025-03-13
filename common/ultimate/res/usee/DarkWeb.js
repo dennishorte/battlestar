@@ -18,72 +18,67 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const playerChoices = game
-        .getPlayerAll()
-        .flatMap(player => 
-          game.utilColors().map(color => ({
-            player,
-            color,
-            splay: game.getZoneByPlayer(player, color).splay
-          }))
-        )
-        .filter(({ splay }) => splay !== null)
-        
-      const { player: targetPlayer, color } = game.aChooseOne(player, playerChoices, {
-        title: 'Unsplay a color on any board'
-      })
-      
-      game.mLog({
-        template: '{player} unsplays {targetPlayer}\'s {color} cards',
-        args: { player, targetPlayer, color }
-      })
-      
-      game.aSplayColor(targetPlayer, color, null)
+      const choices = []
+
+      for (const other of game.getPlayersStarting(player)) {
+        const colors = game
+          .utilColors()
+          .filter(color => game.getZoneByPlayer(other, color).splay !== 'none')
+
+        if (colors.length > 0) {
+          choices.push({
+            title: other.name,
+            options: colors,
+            min: 0
+          })
+        }
+      }
+
+      const selected = game.aChoose(player, choices, {
+        title: 'Choose a color to unsplay',
+      })[0]
+
+      if (selected) {
+        const otherName = selected.title
+        const other = game.getPlayerByName(otherName)
+        const color = selected.selection[0]
+
+        game.aUnsplay(other, color)
+      }
     },
 
-    (game, player) => {    
+    (game, player) => {
       const choices = [
         'Safeguard achievements',
         'Achieve secrets'
       ]
 
-      const choice = game.aChooseOne(player, choices, {
-        title: 'Choose an action'
-      })
+      const choice = game.aChoose(player, choices)[0]
 
       if (choice === choices[0]) {
         // Safeguard achievements
-        const available = game
-          .getAvailableStandardAchievements()
+        const available = game.getAvailableStandardAchievements(player)
 
-        const toSafeguard = game.aChooseMany(player, available, {
+        const max = Math.min(available.length, game.getSafeOpenings(player))
+        const toSafeguard = game.aChooseAndSafeguard(player, available, {
           title: 'Choose achievements to safeguard',
-          min: 0
-        })
-
-        toSafeguard.forEach(card => {
-          game.mLogNoEffect()
-          game.mSafeguardAchievement(player, card)
+          min: 0,
+          max,
+          hidden: true,
         })
       }
       else if (choice === choices[1]) {
         // Achieve secrets
-        const secrets = game
-          .getZoneByPlayer(player, 'safe')
-          .cards()
-          .filter(c => c.isSecret)
-
-        const toAchieve = game.aChooseMany(player, secrets, {
+        const secrets = game.getCardsByZone(player, 'safe')
+        const toAchieve = game.aChooseCards(player, secrets, {
           title: 'Choose secrets to achieve',
-          min: 0  
+          min: 0,
+          max: secrets.length,
+          hidden: true,
         })
 
         toAchieve.forEach(card => {
-          game.mLog({
-            template: '{player} achieves the secret {card} directly from their safe',
-            args: { player, card }
-          })
-          game.aAchieveFromSafe(player, card)
+          game.aClaimAchievement(player, card)
         })
       }
     },

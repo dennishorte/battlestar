@@ -2698,6 +2698,10 @@ Innovation.prototype.getColorZonesByPlayer = function(player) {
     .map(color => this.getZoneByPlayer(player, color))
 }
 
+Innovation.prototype.getSafeOpenings = function(player) {
+  return Math.max(0, this.getSafeLimit(player) - this.getCardsByZone(player, 'safe').length)
+}
+
 Innovation.prototype.getSafeLimit = function(player) {
   return this.getZoneLimit(player)
 }
