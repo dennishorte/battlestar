@@ -4,7 +4,7 @@
     <div class="biscuits-row">
       <div class="biscuits-box-name"></div>
       <div
-        v-for="biscuit in ['k', 'c', 's', 'l', 'f', 'i']"
+        v-for="biscuit in ['k', 'c', 's', 'l', 'f', 'i', 'p']"
         :key="biscuit"
         class="biscuits-box">
         <CardBiscuit :biscuit="biscuit" />
@@ -16,7 +16,7 @@
     <div v-for="player in players" :key="player.name" class="biscuits-row">
       <div class="biscuits-box-name">{{ player.name }}</div>
       <div
-        v-for="biscuit in ['k', 'c', 's', 'l', 'f', 'i']"
+        v-for="biscuit in ['k', 'c', 's', 'l', 'f', 'i', 'p']"
         :key="biscuit"
         class="biscuits-box">
         {{ biscuits[player.name][biscuit] }}
