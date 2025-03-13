@@ -1,7 +1,7 @@
 const CardBase = require(`../CardBase.js`)
 
 function Card() {
-  this.id = `3D Printing`  
+  this.id = `3D Printing`
   this.name = `3D Printing`
   this.color = `purple`
   this.age = 10
@@ -22,20 +22,34 @@ function Card() {
         const bottomCards = game.getBottomCards(player)
         const choices = topCards.concat(bottomCards)
 
-        const returned = game.aChooseAndReturn(player, choices, { min: 0, max: 1 })
+        const returned = game.aChooseAndReturn(player, choices)[0]
 
-        if (returned.length > 0) {
-          const age = returned[0].age
-          const secret = game.aChooseCard(player, game.getSecretsByAge(player, age), { min: 0, max: 1 })
+        if (returned) {
+          const age = returned.age
+          const secretOptions = game
+            .getCardsByZone(player, 'safe')
+            .filter(c => c.getAge() === age)
+
+          const secret = game.aChooseCards(player, secretOptions, {
+            title: 'Choose a secret to achieve',
+            hidden: true,
+          })[0]
 
           if (secret) {
-            game.aAchieveSecret(player, secret)
+            game.aClaimAchievement(player, secret)
+          }
 
-            const standard = game.aChooseAvailableStandardAchievement(player)
-            if (standard) {
-              game.aSafeguardAchievement(player, standard)
-              repeatEffect()  // Repeat the effect
-            }
+          const standard = game.aChooseCards(player, game.getAvailableStandardAchievements(player), {
+            title: 'Choose a standard achievement to safeguard',
+            hidden: true
+          })[0]
+
+          if (standard) {
+            game.aSafeguard(player, standard)
+          }
+
+          if (secret && standard) {
+            repeatEffect()
           }
         }
       }
