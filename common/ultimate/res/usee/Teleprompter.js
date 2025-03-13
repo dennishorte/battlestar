@@ -12,49 +12,56 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Reveal the top card of any value deck from any set. Execute the first sentence of non-demand dogma effect on the card. If you do, return the revealed card and repeat this effect using the next sentence.`
+//    `Reveal the top card of any value deck from any set. Execute the first sentence of non-demand dogma effect on the card. If you do, return the revealed card and repeat this effect using the next sentence.`
+    `Reveal the top card of any value deck from any set. Execute the first non-demand dogma effect on the card. If the revealed card has a {c}, repeat this effect with a different deck.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
+      const checkHasDemand = (text) => {
+        const lower = text.toLowerCase()
+        return lower.startsWith('i demand') || lower.startsWith('i compel')
+      }
+
+      const used = []
+
       while (true) {
         // Prompt player to choose an age (value) deck
+        const exp = game.aChoose(player, game.getExpansionList())[0]
         const age = game.aChooseAge(player)
-        const deck = game.aChooseDeck(player, age)
-        
+
+        const key = `${exp}-${age}`
+        if (used.includes(key)) {
+          game.mLog({ template: 'You have already chosen that deck.' })
+          continue
+        }
+
+        used.push(key)
+
         // Reveal the top card of the chosen deck
-        const card = game.aRevealTopCard(deck)
-        const dogmaText = card.dogma[0]
+        const card = game.getZoneByDeck(exp, age).cards()[0]
+        if (!card) {
+          game.mLogNoEffect()
+          return
+        }
 
-        // Extract first sentence of dogma text
-        const firstSentence = dogmaText.split('.')[0] + '.'
+        for (let i = 0; i < card.dogma.length; i++) {
+          if (checkHasDemand(card.dogma[i])) {
+            continue
+          }
 
-        game.mLog({
-          template: 'Executing first sentence of {card}: "{text}"',
-          args: { card, text: firstSentence }
-        })
+          game.aOneEffect(
+            player,
+            card,
+            card.dogma[i],
+            card.dogmaImpl[i],
+          )
+        }
 
-        // Execute the first sentence dogma effect
-        game.aCardEffectByText(player, card, firstSentence)
-
-        // Return the revealed card
-        game.mMoveCardTo(card, deck)
-
-        // Extract the second sentence, if any
-        const sentences = dogmaText.split('.')
-        if (sentences.length > 1 && sentences[1].trim()) {
-          const secondSentence = sentences[1].trim()
-          
-          game.mLog({
-            template: 'Executing next sentence: "{text}"',
-            args: { text: secondSentence }
-          })
-
-          // Execute the second sentence dogma effect  
-          game.aCardEffectByText(player, card, secondSentence)
+        if (card.checkHasBiscuit('c')) {
+          continue
         }
         else {
-          // No more sentences, end the loop
           break
         }
       }
