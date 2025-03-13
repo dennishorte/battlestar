@@ -20,7 +20,7 @@ describe('Medicine', () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Medicine')
     request = t.choose(game, request, 'Reformation')
-    request = t.choose(game, request, '3')
+    request = t.choose(game, request, '**base-3*')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -49,7 +49,7 @@ describe('Medicine', () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Medicine')
     request = t.choose(game, request, 'Reformation')
-    request = t.choose(game, request, '4')
+    request = t.choose(game, request, '**base-4*')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

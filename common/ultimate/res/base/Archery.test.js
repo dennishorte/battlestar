@@ -79,7 +79,7 @@ describe('Archery', () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Archery')
-    request = t.choose(game, request, '1')
+    request = t.choose(game, request, '**base-1*')
 
     expect(game.getAvailableAchievementsByAge(t.dennis(game), 1)).toHaveLength(0)
     expect(game.getAvailableAchievementsByAge(t.dennis(game), 2)).toHaveLength(1)
@@ -98,7 +98,7 @@ describe('Archery', () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Archery')
-    request = t.choose(game, request, '2')
+    request = t.choose(game, request, '**base-2*')
 
     expect(game.getAvailableAchievementsByAge(t.dennis(game), 1)).toHaveLength(1)
     expect(game.getAvailableAchievementsByAge(t.dennis(game), 2)).toHaveLength(0)
@@ -154,25 +154,3 @@ describe('Archery', () => {
     })
   })
 })
-
-
-
-/* Error.stackTraceLimit = 100
- *
- * const t = require('../../testutil.js')
- *
- * describe('Archery', () => {
- *   test('returned none', () => {
- *     const game = t.fixtureTopCard('Archery')
- *     game.testSetBreakpoint('before-first-player', (game) => {
- *       t.clearHand(game, 'dennis')
- *       t.setHand(game, 'micah', ['Gunpowder'])
- *       t.setDeckTop(game, 'base', 1, ['Tools'])
- *     })
- *     const result1 = game.run()
- *     const result2 = t.choose(game, result1, 'Dogma.Archery')
- *
- *     expect(t.cards(game, 'hand')).toStrictEqual(['Gunpowder'])
- *     expect(t.cards(game, 'hand', 'micah')).toStrictEqual(['Tools'])
- *   })
- * }) */

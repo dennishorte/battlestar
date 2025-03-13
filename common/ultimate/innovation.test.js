@@ -582,7 +582,7 @@ describe('Innovation', () => {
         })
         const request1 = game.run()
 
-        expect(t.getChoices(request1, 'Achieve')).toStrictEqual(['age 1', 'age 2', 'age 3'])
+        expect(t.getChoices(request1, 'Achieve')).toStrictEqual(['*base-1*', '*base-2*', '*base-3*'])
       })
 
       test('duplicate achievements are deduped', () => {
@@ -594,7 +594,7 @@ describe('Innovation', () => {
         })
         const request1 = game.run()
 
-        expect(t.getChoices(request1, 'Achieve')).toStrictEqual(['age 1', 'age 2', 'age 3'])
+        expect(t.getChoices(request1, 'Achieve')).toStrictEqual(['*base-1*', '*base-2*', '*base-3*'])
       })
 
       test('cost for second of same age is double (part 1)', () => {
@@ -607,7 +607,7 @@ describe('Innovation', () => {
         })
         const request1 = game.run()
 
-        expect(t.getChoices(request1, 'Achieve')).toStrictEqual(['age 3'])
+        expect(t.getChoices(request1, 'Achieve')).toStrictEqual(['*base-3*'])
       })
 
       test('cost for second of same age is double (part 2)', () => {
@@ -620,7 +620,7 @@ describe('Innovation', () => {
         })
         const request1 = game.run()
 
-        expect(t.getChoices(request1, 'Achieve')).toStrictEqual(['age 2', 'age 3'])
+        expect(t.getChoices(request1, 'Achieve')).toStrictEqual(['*base-2*', '*base-3*'])
       })
 
       test('cost for third of same age is triple (part 1)', () => {
@@ -646,7 +646,7 @@ describe('Innovation', () => {
         })
         const request1 = game.run()
 
-        expect(t.getChoices(request1, 'Achieve')).toStrictEqual(['age 1'])
+        expect(t.getChoices(request1, 'Achieve')).toStrictEqual(['*base-1*'])
       })
 
       test('age restriction', () => {
@@ -658,7 +658,7 @@ describe('Innovation', () => {
         })
         const request1 = game.run()
 
-        expect(t.getChoices(request1, 'Achieve')).toStrictEqual(['age 1', 'age 2'])
+        expect(t.getChoices(request1, 'Achieve')).toStrictEqual(['*base-1*', '*base-2*'])
       })
 
       test('achieved cards are moved to achievements', () => {
@@ -669,7 +669,7 @@ describe('Innovation', () => {
           t.setAvailableAchievements(game, ['The Wheel', 'Monotheism', 'Machinery'])
         })
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Achieve.age 2')
+        const request2 = t.choose(game, request1, 'Achieve.*base-2*')
 
         expect(t.cards(game, 'achievements')).toStrictEqual(['Monotheism'])
       })
@@ -685,7 +685,7 @@ describe('Innovation', () => {
           t.setHand(game, 'micah', [])
         })
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Achieve.age 2')
+        const request2 = t.choose(game, request1, 'Achieve.*base-2*')
 
         expect(t.cards(game, 'hand', 'micah')).toStrictEqual(['Imhotep'])
       })
@@ -701,7 +701,7 @@ describe('Innovation', () => {
           t.setHand(game, 'micah', [])
         })
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Achieve.age 2')
+        const request2 = t.choose(game, request1, 'Achieve.*base-2*')
 
         expect(t.cards(game, 'hand', 'micah')).toStrictEqual([])
       })
@@ -731,6 +731,49 @@ describe('Innovation', () => {
         const request1 = game.run()
 
         expect(game.getScore(t.dennis(game))).toBe(2)
+      })
+    })
+
+    describe('achieve action with safe', () => {
+      test('not enough points', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+        t.setBoard(game, {
+          dennis: {
+            safe: ['Tools', 'Optics'],
+          },
+        })
+
+        const request = game.run()
+
+        const achieveOptions = request.selectors[0].choices.find(x => x.title === 'Achieve').choices
+        expect(achieveOptions.length).toBe(0)
+      })
+
+      test('enough points', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+        t.setBoard(game, {
+          dennis: {
+            green: ['The Wheel'],
+            safe: ['Tools', 'Optics'],
+            score: ['Coal'],
+          },
+        })
+
+        let request = game.run()
+
+        const achieveOptions = request.selectors[0].choices.find(x => x.title === 'Achieve').choices
+        expect(achieveOptions).toStrictEqual(['*base-1*', 'safe: *base-1*'])
+
+        request = t.choose(game, request, 'Achieve.safe: *base-1*')
+
+        t.testBoard(game, {
+          dennis: {
+            green: ['The Wheel'],
+            safe: ['Optics'],
+            score: ['Coal'],
+            achievements: ['Tools'],
+          }
+        })
       })
     })
 
@@ -1717,7 +1760,7 @@ describe('Innovation', () => {
   })
 })
 
-describe.only('zone size limits', () => {
+describe('zone size limits', () => {
 
   test('no splay: six is too many', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })

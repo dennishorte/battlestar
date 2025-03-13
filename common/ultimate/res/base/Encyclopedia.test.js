@@ -43,7 +43,7 @@ describe('Encyclopedia', () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Encyclopedia')
     request = t.choose(game, request)
-    request = t.choose(game, request, 7)
+    request = t.choose(game, request, '**base-7*')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -482,11 +482,26 @@ Innovation.prototype.endTurn = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Actions
 
+Innovation.prototype._parseHiddenCardName = function(name) {
+  return {
+    expansion: name.substr(1,4),
+    age: parseInt(name.substr(6)),
+  }
+}
+
 Innovation.prototype.aAchieveAction = function(player, arg, opts={}) {
-  if (arg.startsWith('age ')) {
-    const age = parseInt(arg.slice(4))
+  if (arg.startsWith('safe: ')) {
+    const hiddenName = arg.substr(6)
+    const { expansion, age } = this._parseHiddenCardName(hiddenName)
+    const card = this
+      .getCardsByZone(player, 'safe')
+      .find(c => c.expansion === expansion && c.getAge() === age)
+    this.aClaimAchievement(player, { card })
+  }
+  else if (arg.startsWith('*')) {
+    const { expansion, age } = this._parseHiddenCardName(arg)
     const isStandard = opts.nonAction ? false : true
-    this.aClaimAchievement(player, { age, isStandard })
+    this.aClaimAchievement(player, { expansion, age, isStandard })
   }
   else {
     const card = this.getCardByName(arg)
@@ -785,7 +800,7 @@ Innovation.prototype.aChooseCard = function(player, cards, opts={}) {
 Innovation.prototype.aChooseCards = function(player, cards, opts={}) {
   if (cards.length === 0) {
     this.mLogNoEffect()
-    return undefined
+    return []
   }
 
   if (opts.count === 0 || opts.max === 0) {
@@ -823,7 +838,7 @@ Innovation.prototype.aChooseCards = function(player, cards, opts={}) {
 
     if (cardNames.length === 0) {
       this.mLogDoNothing(player)
-      return undefined
+      return []
     }
 
     if (cardNames[0].startsWith('*')) {
@@ -1027,7 +1042,7 @@ Innovation.prototype.aClaimAchievement = function(player, opts={}) {
       .getZoneById('achievements')
       .cards()
       .filter(card => !card.isSpecialAchievement && !card.isDecree)
-      .find(c => c.getAge() === opts.age)
+      .find(c => c.getAge() === opts.age && c.expansion === opts.expansion)
   }
 
   if (!card) {
@@ -1687,20 +1702,23 @@ Innovation.prototype._checkCanSeizeRelic = function(card) {
   return card.zone.includes('achievement')
 }
 
-Innovation.prototype.aJunk = function(player, cards, opts={}) {
-  this.aRemove(player, cards, opts)
+Innovation.prototype.aJunk = function(player, card, opts={}) {
+  this.aRemove(player, card, opts)
 }
 
 Innovation.prototype.aJunkAvailableAchievement = function(player, ages=[], opts={}) {
-  const eligible = ages.filter(age => this.getAvailableAchievementsByAge(player, age).length > 0)
-  if (eligible.length === 0) {
-    this.mLogNoEffect()
-    return
-  }
+  const eligible = this
+    .utilAges()
+    .flatMap(age => this.getAvailableAchievementsByAge(player, age))
 
-  const age = this.aChooseAge(player, eligible, { title: 'Choose an achievement to junk', ...opts })
-  if (age) {
-    this.aRemove(player, this.getAvailableAchievementsByAge(player, age)[0])
+  const card = this.aChooseCards(player, eligible, {
+    title: 'Choose an achievement to junk',
+    hidden: true,
+    ...opts
+  })[0]
+
+  if (card) {
+    this.aJunk(player, card)
   }
 }
 
@@ -3476,7 +3494,7 @@ Innovation.prototype.formatAchievements = function(array) {
   return array
     .map(ach => {
       if (ach.zone === 'achievements') {
-        return `age ${ach.getAge()}`
+        return ach.getHiddenName()
       }
       else {
         return ach.id
@@ -3487,8 +3505,17 @@ Innovation.prototype.formatAchievements = function(array) {
 
 Innovation.prototype.getEligibleAchievements = function(player, opts={}) {
   const formatted = this.formatAchievements(this.getEligibleAchievementsRaw(player, opts))
-  const distinct = util.array.distinct(formatted).sort()
-  return distinct
+  const standard = util.array.distinct(formatted).sort()
+
+  const secrets = this
+    .getCardsByZone(player, 'safe')
+    .filter(card => this.checkAchievementEligibility(player, card))
+    .map(card => `safe: ${card.getHiddenName()}`)
+
+  return [
+    ...standard,
+    ...secrets,
+  ]
 }
 
 Innovation.prototype._generateActionChoicesAchieve = function() {

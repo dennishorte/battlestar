@@ -218,6 +218,10 @@ CardBase.prototype.getHexIndex = function() {
   }
 }
 
+CardBase.prototype.getHiddenName = function() {
+  return `*${this.expansion}-${this.age}*`
+}
+
 CardBase.prototype.getKarmaInfo = function(trigger) {
   const matches = []
   for (let i = 0; i < this.karma.length; i++) {
