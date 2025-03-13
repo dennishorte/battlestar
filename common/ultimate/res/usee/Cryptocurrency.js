@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `Cryptocurrency`  // Card names are unique in Innovation
@@ -12,7 +13,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Return all cards from your score pile. For each different value of card you return, draw and score a {10}.`,
+    `Return all cards from your score pile. For each different value of card you return, draw and score a {0}.`,
     `You may splay your red cards up.`
   ]
 
@@ -21,7 +22,7 @@ function Card() {
       const scorePile = game.getZoneByPlayer(player, 'score')
       const returned = game.aReturnMany(player, scorePile.cards())
 
-      const uniqueAges = [...new Set(returned.map(card => card.age))]
+      const uniqueAges = util.array.distinct(returned.map(card => card.getAge()))
       uniqueAges.forEach(() => {
         game.aDrawAndScore(player, game.getEffectAge(this, 10))
       })
