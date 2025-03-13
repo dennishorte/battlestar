@@ -2,7 +2,7 @@ const CardBase = require(`../CardBase.js`)
 const { GameOverEvent } = require('../../../lib/game.js')
 
 function Card() {
-  this.id = `Order of the Occult Hand`  
+  this.id = `Order of the Occult Hand`
   this.name = `Order of the Occult Hand`
   this.color = `purple`
   this.age = 10
@@ -19,37 +19,30 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { self }) => {
       const hasAge3 = game
         .getCardsByZone(player, 'score')
-        .some(card => card.age === 3)
-      
+        .some(card => card.getAge() === 3)
+
       if (hasAge3) {
+        game.aYouLose(player, self)
+      }
+    },
+    (game, player) => {
+      const hasAge7 = game
+        .getCardsByZone(player, 'hand')
+        .some(card => card.getAge() === 7)
+
+      if (hasAge7) {
         throw new GameOverEvent({
-          player: game.getPlayerOpponents(player)[0], // Opponent wins
+          player,
           reason: this.name
         })
       }
     },
     (game, player) => {
-      const hasAge7 = game  
-        .getCardsByZone(player, 'hand')
-        .some(card => card.age === 7)
-
-      if (hasAge7) {
-        throw new GameOverEvent({
-          player,
-          reason: this.name  
-        })
-      }
-    },
-    (game, player) => {
-      const choices = game
-        .getZoneByPlayer(player, 'hand')
-        .cards()
-        
-      game.aChooseAndMeld(player, choices, { count: 2 })
-      game.aChooseAndScore(player, choices, { count: 4 })
+      game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'), { count: 2 })
+      game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'), { count: 4 })
       game.aSplay(player, 'blue', 'up')
     }
   ]
