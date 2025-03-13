@@ -20,12 +20,12 @@ function Card() {
       const topCardValues = game
         .getTopCards(player)
         .map(c => c.age)
-      
-      const scoreCardValues = game  
+
+      const scoreCardValues = game
         .getCardsByZone(player, 'score')
         .map(c => c.age)
 
-      for (let age = 1; age <= 10; age++) {
+      for (const age of game.utilAges()) {
         if (!topCardValues.includes(age) && !scoreCardValues.includes(age)) {
           game.aDrawAndScore(player, age)
         }
