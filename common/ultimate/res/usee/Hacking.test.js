@@ -8,16 +8,32 @@ describe('Hacking', () => {
       dennis: {
         blue: ['Hacking'],
       },
+      micah: {
+        safe: ['Software', 'Canning', 'Industrialization', 'Reformation'],
+        score: ['Robotics', 'Flight', 'Tools', 'Optics', 'Coal'],
+      },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Hacking')
+    request = t.choose(game, request, 'Canning')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         blue: ['Hacking'],
+        safe: ['Software', 'Canning'],
+        score: ['Robotics', 'Flight'],
+      },
+      micah: {
+        red: ['Optics'],
+        blue: ['Tools'],
+        safe: ['Industrialization', 'Reformation'],
+        score: ['Coal'],
       },
     })
   })

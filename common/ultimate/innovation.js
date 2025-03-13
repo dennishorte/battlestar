@@ -919,7 +919,7 @@ Innovation.prototype.aChooseAndAchieve = function(player, choices, opts={}) {
   }
 }
 
-Innovation.prototype.aChooseByPredicate = function(player, cards, count, pred) {
+Innovation.prototype.aChooseByPredicate = function(player, cards, count, pred, opts={}) {
   let numRemaining = count
   let cardsRemaining = [...cards]
   let selected = []
@@ -933,7 +933,7 @@ Innovation.prototype.aChooseByPredicate = function(player, cards, count, pred) {
       numRemaining -= choices.length
     }
     else {
-      const chosen = this.aChooseCards(player, choices, { count: numRemaining })
+      const chosen = this.aChooseCards(player, choices, { count: numRemaining, ...opts })
       selected = selected.concat(chosen)
       numRemaining -= chosen.length
     }
@@ -942,11 +942,11 @@ Innovation.prototype.aChooseByPredicate = function(player, cards, count, pred) {
   return selected
 }
 
-Innovation.prototype.aChooseHighest = function(player, cards, count) {
+Innovation.prototype.aChooseHighest = function(player, cards, count, opts={}) {
   return this.aChooseByPredicate(player, cards, count, this.utilHighestCards)
 }
 
-Innovation.prototype.aChooseLowest = function(player, cards, count) {
+Innovation.prototype.aChooseLowest = function(player, cards, count, opts={}) {
   return this.aChooseByPredicate(player, cards, count, this.utilLowestCards)
 }
 
