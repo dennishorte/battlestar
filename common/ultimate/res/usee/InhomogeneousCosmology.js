@@ -21,8 +21,13 @@ function Card() {
       while (true) {
         const topCards = game.getTopCards(player)
         const handCards = game.getCardsByZone(player, 'hand')
-        
-        const topCardReturned = game.aChooseAndReturn(player, topCards, { min: 0, max: 1 })[0]
+
+        const topCardChosen = game.aChooseCards(player, topCards, { min: 0, max: 1 })[0]
+        let topCardReturned
+        if (topCardChosen) {
+          topCardReturned = game.mMoveCardToTop(topCardChosen, game.getZoneByCardHome(topCardChosen), { player })
+        }
+
         const handCardMelded = game.aChooseAndMeld(player, handCards, { min: 0, max: 1 })[0]
 
         if (!topCardReturned && !handCardMelded) {
@@ -31,13 +36,9 @@ function Card() {
       }
     },
     (game, player) => {
-      const colorsOnBoard = game
-        .utilColors()
-        .filter(color => game.getCardsByZone(player, color).length > 0)
-
       const missingColors = game
         .utilColors()
-        .filter(color => !colorsOnBoard.includes(color))
+        .filter(color => game.getCardsByZone(player, color).length === 0)
 
       missingColors.forEach(color => {
         game.aDraw(player, { age: game.getEffectAge(this, 11) })
