@@ -19,11 +19,14 @@ function Card() {
   this.dogmaImpl = [
     (game, player, { leader }) => {
       const choices = game.getZoneByPlayer(leader, 'score').cards()
-      game.aChooseAndMeld(player, choices)
+      const card = game.aChooseCards(player, choices, { hidden: true })[0]
+      if (card) {
+        game.aMeld(player, card)
+      }
     },
     (game, player) => {
       game.aDrawAndScore(player, game.getEffectAge(this, 10))
-      game.aDrawAndScore(player, game.getEffectAge(this, 10)) 
+      game.aDrawAndScore(player, game.getEffectAge(this, 10))
       game.aDrawAndScore(player, game.getEffectAge(this, 10))
     }
   ]
