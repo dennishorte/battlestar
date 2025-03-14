@@ -10,6 +10,7 @@ describe('Folklore', () => {
         hand: ['Empiricism'],
         achievements: ['Tools'],
       },
+      achievements: ['Folklore'],
     })
 
     let request
@@ -33,6 +34,7 @@ describe('Folklore', () => {
         hand: ['Empiricism'],
         achievements: ['Tools'],
       },
+      achievements: ['Folklore'],
     })
 
     let request
@@ -56,6 +58,7 @@ describe('Folklore', () => {
         hand: ['Sanitation'],
         achievements: ['Tools'],
       },
+      achievements: ['Folklore'],
     })
 
     let request

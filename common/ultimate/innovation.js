@@ -1924,7 +1924,8 @@ Innovation.prototype.aRemove = function(player, card, opts={}) {
     return
   }
 
-  return this.mRemove(player, card, opts)
+  this.mActed(player)
+  return this.mRemove(card)
 }
 
 Innovation.prototype.aReturn = function(player, card, opts={}) {
@@ -3053,13 +3054,8 @@ Innovation.prototype._attemptToCombineWithPreviousEntry = function(msg) {
   return false
 }
 
-Innovation.prototype.mRemove = function(player, card) {
+Innovation.prototype.mRemove = function(card) {
   this.mMoveCardTo(card, this.getZoneById('junk'))
-  this.mLog({
-    template: '{player} junks {card}',
-    args: { player, card }
-  })
-  this.mActed(player)
   return card
 }
 

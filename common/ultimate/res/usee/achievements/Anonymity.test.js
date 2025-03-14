@@ -10,6 +10,7 @@ describe('Anonymity', () => {
         hand: ['Evolution'],
         achievements: ['Monument'],
       },
+      achievements: ['Anonymity'],
     })
 
     let request
@@ -32,6 +33,7 @@ describe('Anonymity', () => {
         hand: ['Evolution'],
         achievements: ['Monument', 'Tools'],
       },
+      achievements: ['Anonymity'],
     })
 
     let request
@@ -54,6 +56,7 @@ describe('Anonymity', () => {
         hand: ['Canning'],
         achievements: ['Monument'],
       },
+      achievements: ['Anonymity'],
     })
 
     let request

@@ -9,8 +9,8 @@ describe('Confidence', () => {
       dennis: {
         hand: ['Astronomy'],
         safe: ['Tools', 'Optics', 'Coal', 'Mathematics'],
-        achievements: ['Monument'],
       },
+      achievements: ['Confidence'],
     })
 
     let request
@@ -22,7 +22,7 @@ describe('Confidence', () => {
       dennis: {
         purple: ['Astronomy'],
         safe: ['Tools', 'Optics', 'Coal', 'Mathematics'],
-        achievements: ['Monument', 'Confidence'],
+        achievements: ['Confidence'],
       }
     })
   })
@@ -33,8 +33,8 @@ describe('Confidence', () => {
       dennis: {
         hand: ['Astronomy'],
         safe: ['Tools', 'Optics', 'Coal'],
-        achievements: ['Monument'],
       },
+      achievements: ['Confidence'],
     })
 
     let request
@@ -46,7 +46,6 @@ describe('Confidence', () => {
       dennis: {
         purple: ['Astronomy'],
         safe: ['Tools', 'Optics', 'Coal'],
-        achievements: ['Monument'],
       }
     })
   })
@@ -56,8 +55,8 @@ describe('Confidence', () => {
     t.setBoard(game, {
       dennis: {
         hand: ['Perspective'],
-        achievements: ['Monument'],
       },
+      achievements: ['Confidence'],
     })
 
     let request
@@ -68,7 +67,6 @@ describe('Confidence', () => {
     t.testBoard(game, {
       dennis: {
         yellow: ['Perspective'],
-        achievements: ['Monument'],
       }
     })
   })

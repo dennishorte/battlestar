@@ -53,6 +53,19 @@ TestUtil.fixture = function(options) {
     if (options.numPlayers >= 4) {
       TestUtil.setHand(game, 'eliya', ['Oars', 'Writing'])
     }
+
+    // If using Unseen, remove the special achievements.
+    // These are so easy to claim in test scenarios that they break dozens of tests.
+    const unseenAchievementNames = [
+      'Anonymity',
+      'Confidence',
+      'Folklore',
+      'Mystery',
+      'Zen',
+    ]
+    for (const name of unseenAchievementNames) {
+      game.mRemove(game.getCardByName(name))
+    }
   })
 
   return game
@@ -438,7 +451,7 @@ TestUtil.setAvailableAchievements = function(game, cardNames) {
   const zone = game.getZoneById('achievements')
 
   for (const card of zone.cards()) {
-    if (!card.isSpecialAchievement) {
+    if (card.checkIsStandardAchievement()) {
       game.mMoveCardTo(card, game.getZoneById(card.home))
     }
   }
