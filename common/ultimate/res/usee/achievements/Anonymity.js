@@ -9,7 +9,21 @@ function Card() {
   this.alt = 'Masquerade'
   this.isSpecialAchievement = true
   this.checkPlayerIsEligible = function(game, player, reduceCost) {
-    return false
+    const age = reduceCost ? 6 : 7
+    const numAchievements = reduceCost ? 1 : 0
+
+    const topCardAges = game
+      .getTopCards(player)
+      .map(card => card.getAge())
+
+    const topCardMaxAge = Math.max(topCardAges)
+
+    const numStandardAchievements = game
+      .getCardsByZone(player, 'achievements')
+      .filter(card => card.checkIsStandardAchievement())
+      .length
+
+    return topCardMaxAge >= age && numStandardAchievements <= numAchievements
   }
 }
 
