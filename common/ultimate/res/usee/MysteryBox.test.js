@@ -7,7 +7,14 @@ describe('Mystery Box', () => {
     t.setBoard(game, {
       dennis: {
         green: ['Mystery Box'],
+        hand: ['Software'],
       },
+      achievements: ['Domestication'],
+      decks: {
+        usee: {
+          1: ['Polytheism'],
+        },
+      }
     })
 
     let request
@@ -18,6 +25,9 @@ describe('Mystery Box', () => {
     t.testBoard(game, {
       dennis: {
         green: ['Mystery Box'],
+        blue: ['Software'],
+        hand: ['Polytheism'],
+        achievements: ['Domestication'],
       },
     })
   })
