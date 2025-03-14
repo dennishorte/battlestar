@@ -55,7 +55,7 @@ export default {
         {
           text: 'The Unseen',
           value: 'usee',
-          disabled: true,
+          disabled: false,
         },
       ],
 

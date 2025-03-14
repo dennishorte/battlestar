@@ -27,7 +27,7 @@ export default {
     },
 
     expansions() {
-      return ['arti', 'city', 'figs', 'echo', 'base']
+      return ['arti', 'city', 'figs', 'echo', 'usee', 'base']
         .filter(exp => this.game.getExpansionList().includes(exp))
     },
   },

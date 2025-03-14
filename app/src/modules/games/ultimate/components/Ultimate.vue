@@ -228,12 +228,14 @@ export default {
 .text-figs { color: #519432; }
 .text-city { color: #cc0000; }
 .text-arti { color: #9532a8; }
+.text-usee { color: #777777; }
 
 .bg-base { background-color: #bba37a; }
 .bg-echo { background-color: #6889ec; }
 .bg-figs { background-color: #519432; }
 .bg-city { background-color: #cc0000; }
 .bg-arti { background-color: #9532a8; }
+.bg-usee { background-color: #777777; }
 
 .color-biscuit-castle {
   /* color: #b6bcc6;  */
@@ -263,6 +265,10 @@ export default {
 .color-biscuit-clock {
   /* color: #317ead; */
   background-color: #055386;
+}
+
+.color-biscuit-person {
+  background-color: #AFEEEE;
 }
 
 .red {
