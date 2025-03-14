@@ -13,7 +13,7 @@ function Card() {
     const topCardAges = game
       .getTopCards(player)
       .map(card => card.getAge())
-    const topCardMaxAge = Math.max(topCardAges)
+    const topCardMaxAge = Math.max(...topCardAges)
 
     const targetFactories = reduceCost ? 1 : 0
     const numFactories = game.getBiscuitsByPlayer(player).f

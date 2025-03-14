@@ -16,7 +16,7 @@ function Card() {
       .getTopCards(player)
       .map(card => card.getAge())
 
-    const topCardMaxAge = Math.max(topCardAges)
+    const topCardMaxAge = Math.max(...topCardAges)
 
     const numStandardAchievements = game
       .getCardsByZone(player, 'achievements')
