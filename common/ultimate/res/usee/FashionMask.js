@@ -6,50 +6,38 @@ function Card() {
   this.color = `yellow`
   this.age = 11
   this.expansion = `usee`
-  this.biscuits = `hlll` 
+  this.biscuits = `hlll`
   this.dogmaBiscuit = `l`
   this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Tuck a top card with {l} or {p} of each color on your board. You may safeguard one of the tucked cards.`,
+    `Tuck a top card with {c} or {f} of each color on your board. You may safeguard one of the tucked cards.`,
     `Score all but the top five each of your yellow and purple cards. Splay those colors aslant.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const validColors = ['blue', 'red', 'green', 'yellow', 'purple']
-      const tuckedCards = []
-      
-      for (const color of validColors) {
-        const choices = game
-          .getTopCards(player)
-          .filter(card => 
-            card.color === color && 
-            (card.checkHasBiscuit('l') || card.checkHasBiscuit('p'))
-          )
-        const tucked = game.aChooseAndTuck(player, choices, { min: 0, max: 1 })
-        if (tucked.length > 0) {
-          tuckedCards.push(tucked[0])
-        }
-      }
-      
-      if (tuckedCards.length > 0) {
-        game.aChooseAndSafeguard(player, tuckedCards, { min: 0, max: 1 })
-      }
+      const toTuck = game
+        .getTopCards(player)
+        .filter(card => card.checkHasBiscuit('c') || card.checkHasBiscuit('f'))
+
+      const tucked = game.aTuckMany(player, toTuck)
+      game.aChooseAndSafeguard(player, tucked, { min: 0 })
     },
     (game, player) => {
       const yellows = game
         .getCardsByZone(player, 'yellow')
-        .slice(0, -5)
-        
-      const purples = game  
+        .slice(5)
+
+      const purples = game
         .getCardsByZone(player, 'purple')
-        .slice(0, -5)
-        
-      game.aScoreMany(player, yellows)
-      game.aScoreMany(player, purples)
-      
+        .slice(5)
+
+      const toScore = [...yellows, ...purples]
+
+      game.aScoreMany(player, toScore)
+
       game.aSplay(player, 'yellow', 'aslant')
       game.aSplay(player, 'purple', 'aslant')
     }
