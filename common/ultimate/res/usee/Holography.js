@@ -20,19 +20,35 @@ function Card() {
       const color = game.aChoose(player, ['red', 'blue', 'green'], {
         title: 'Choose a color to score and splay'
       })[0]
-      
+
       const cards = game.getCardsByZone(player, color)
       const toScore = cards.slice(2)
-      game.aScoreMany(player, toScore)
+      const scored = game.aScoreMany(player, toScore)
 
       const splayed = game.aSplay(player, color, 'aslant')
 
-      if (toScore.length > 0 && splayed) {
+      if (scored.length > 0 && scored.length === toScore.length && splayed) {
         const lowestScoreCards = game.utilLowestCards(game.getCardsByZone(player, 'score'))
-        const lowestAchievements = game.utilLowestCards(game.getClaimedStandardAchievements(player)).filter(a => a.age < Math.min(...lowestScoreCards.map(c => c.age)))
 
-        game.mMoveCardsTo(lowestScoreCards, game.getZoneById('achievements'), { player })
-        game.mMoveCardsTo(lowestAchievements, game.getZoneByPlayer(player, 'score'), { player })
+        if (!lowestScoreCards) {
+          game.mLogDoNothing()
+          return
+        }
+
+        const lowestScoreCardsValue = lowestScoreCards[0].getAge()
+
+        const matchingAchievements = game
+          .getCardsByZone(player, 'achievements')
+          .filter(card => card.checkIsStandardAchievement())
+          .filter(card => card.getAge() < lowestScoreCardsValue)
+
+        game.aExchangeCards(
+          player,
+          lowestScoreCards,
+          matchingAchievements,
+          game.getZoneByPlayer(player, 'score'),
+          game.getZoneByPlayer(player, 'achievements'),
+        )
       }
     },
   ]
