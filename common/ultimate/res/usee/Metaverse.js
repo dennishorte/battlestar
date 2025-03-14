@@ -1,7 +1,7 @@
 const CardBase = require(`../CardBase.js`)
 
 function Card() {
-  this.id = `Metaverse`  
+  this.id = `Metaverse`
   this.name = `Metaverse`
   this.color = `purple`
   this.age = 11
@@ -16,25 +16,19 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
-      const splayedColors = ['red', 'green', 'yellow', 'blue', 'purple']
-        .filter(color => game.getZoneByPlayer(player, color).splay !== '')
+    (game, player, { self }) => {
+      const topSplayedCards = game
+        .getTopCards(player)
+        .filter(c => game.checkColorIsSplayed(player, c.color))
 
-      const scoredCards = splayedColors.map(color => {
-        const topCard = game.getTopCard(player, color)
-        game.aScore(player, topCard)
-        return topCard
-      })
+      const scored = game.aScoreMany(player, topSplayedCards)
 
-      if (scoredCards.length < 3) {
+      if (scored.length < 3) {
         game.mLog({
           template: '{player} scored fewer than three cards and loses the game!',
           args: { player }
         })
-        throw new GameOverEvent({
-          reason: 'Metaverse',
-          player
-        })
+        game.aYouLose(player, self)
       }
     },
   ]

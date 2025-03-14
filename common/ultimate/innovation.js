@@ -2184,6 +2184,10 @@ Innovation.prototype.checkCardIsTop = function(card) {
   return isOnBoard && isTop
 }
 
+Innovation.prototype.checkColorIsSplayed = function(player, color) {
+  return this.getZoneByPlayer(player, color).splay !== 'none'
+}
+
 Innovation.prototype.checkEffectIsVisible = function(card) {
   return this.getVisibleEffects(card, 'dogma') || this.getVisibleEffects(card, 'echo')
 }
