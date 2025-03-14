@@ -36,6 +36,11 @@
     />
 
     <CardPile
+      :zone="game.getZoneByPlayer(player, 'safe')"
+      :header="countHeader(player, 'safe')"
+    />
+
+    <CardPile
       :zone="game.getZoneByPlayer(player, 'hand')"
       :header="countHeader(player, 'hand')"
       :expanded="actor.name === player.name"
