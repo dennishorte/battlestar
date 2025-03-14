@@ -12,15 +12,15 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Score all non-top green cards on your board. Draw and tuck an {11} for each card scored.`
+    `Score all non-top green cards on your board. Draw and tuck an {e} for each card scored.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
       const greenCards = game
         .getCardsByZone(player, 'green')
-        .filter(card => !game.getTopCards(player).includes(card))
-      
+        .slice(1)
+
       const numScored = game.aScoreMany(player, greenCards).length
 
       for (let i = 0; i < numScored; i++) {
