@@ -9,7 +9,18 @@ function Card() {
   this.alt = 'Assassination'
   this.isSpecialAchievement = true
   this.checkPlayerIsEligible = function(game, player, reduceCost) {
-    return false
+    const targetAge = reduceCost ? 4 : 5
+    const topCardAges = game
+      .getTopCards(player)
+      .map(card => card.getAge())
+    const topCardMaxAge = Math.max(topCardAges)
+
+    const targetNumSecrets = reduceCost ? 3 : 4
+    const numSecrets = game
+      .getCardsByZone(player, 'safe')
+      .length
+
+    return topCardMaxAge >= targetAge && numSecrets >= targetNumSecrets
   }
 }
 
