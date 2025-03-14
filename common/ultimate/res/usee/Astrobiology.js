@@ -3,7 +3,7 @@ const CardBase = require(`../CardBase.js`)
 function Card() {
   this.id = `Astrobiology`  // Card names are unique in Innovation
   this.name = `Astrobiology`
-  this.color = `blue` 
+  this.color = `blue`
   this.age = 11
   this.expansion = `usee`
   this.biscuits = `llph`
@@ -17,22 +17,16 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const bottomCards = game
-        .getPlayerStacks(player)
-        .flatMap(stack => stack.cards.slice(-1))
+      const bottomCards = game.getBottomCards(player)
+      const card = game.aChooseAndReturn(player, bottomCards)[0]
 
-      const card = game.aChooseCard(player, bottomCards, {
-        title: 'Choose a bottom card to return'
-      })
-      
       if (card) {
-        game.aReturn(player, card)
         game.aSplay(player, card.color, 'aslant')
-        
+
         const cardsToScore = game
           .getCardsByZone(player, card.color)
           .filter(c => !c.checkHasBiscuit('l'))
-        
+
         game.aScoreMany(player, cardsToScore)
       }
     },

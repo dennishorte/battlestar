@@ -6,18 +6,23 @@ describe('Astrobiology', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
-        blue: ['Astrobiology'],
+        blue: ['Astrobiology', 'Physics', 'Pottery', 'Chemistry', 'Tools'],
       },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Astrobiology')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        blue: ['Astrobiology'],
+        blue: {
+          cards: ['Astrobiology', 'Pottery'],
+          splay: 'aslant',
+        },
+        score: ['Physics', 'Chemistry'],
       },
     })
   })
