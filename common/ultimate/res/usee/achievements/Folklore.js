@@ -9,7 +9,16 @@ function Card() {
   this.alt = "April Fool's Day"
   this.isSpecialAchievement = true
   this.checkPlayerIsEligible = function(game, player, reduceCost) {
-    return false
+    const targetAge = reduceCost ? 7 : 8
+    const topCardAges = game
+      .getTopCards(player)
+      .map(card => card.getAge())
+    const topCardMaxAge = Math.max(topCardAges)
+
+    const targetFactories = reduceCost ? 1 : 0
+    const numFactories = game.getBiscuitsByPlayer(player).f
+
+    return topCardMaxAge >= targetAge && numFactories <= targetFactories
   }
 }
 
