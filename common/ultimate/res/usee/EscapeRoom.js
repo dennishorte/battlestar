@@ -12,36 +12,32 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you draw, reveal, and score an {11}! Score a card from your hand of the same color as the drawn card! If you don't, you lose!`,
-    `Score four top non-yellow cards each with {l} of different colors on your board.`
+    `I demand you draw, reveal, and score an {e}! Score a card from your hand of the same color as the drawn card! If you don't, you lose!`,
+    `Score four top non-yellow cards each with {i} of different colors on your board.`
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { self }) => {
       const card = game.aDrawAndReveal(player, game.getEffectAge(this, 11))
       if (card) {
         game.aScore(player, card)
-        const choices = game.getCardsByZone(player, 'hand').filter(c => c.color === card.color)
-        const scored = game.aChooseAndScore(player, choices, { min: 1, max: 1 })
-        if (scored.length === 0) {
-          game.mLogNoEffect()
-          throw new GameOverEvent({
-            player: player,
-            reason: this.name
-          })
+        const choices = game
+          .getCardsByZone(player, 'hand')
+          .filter(c => c.color === card.color)
+
+        const scored = game.aChooseAndScore(player, choices)[0]
+        if (!scored) {
+          game.aYouLose(player, self)
         }
       }
     },
     (game, player) => {
-      const colors = game.utilColors().filter(c => c !== 'yellow')
-      let count = 0
-      colors.forEach(color => {
-        const choices = game.getTopCards(player).filter(c => c.color === color && c.checkHasBiscuit('l'))
-        count += game.aChooseAndScore(player, choices, { min: 0, max: 1 }).length
-      })
-      if (count !== 4) {
-        game.mLogNoEffect()
-      }
+      const toScore = game
+        .getTopCards(player)
+        .filter(c => c.color !== 'yellow')
+        .filter(c => c.checkHasBiscuit('i'))
+
+      game.aScoreMany(player, toScore)
     }
   ]
   this.echoImpl = []
