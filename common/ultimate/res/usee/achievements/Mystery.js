@@ -9,7 +9,16 @@ function Card() {
   this.alt = 'Secret History'
   this.isSpecialAchievement = true
   this.checkPlayerIsEligible = function(game, player, reduceCost) {
-    return false
+    const targetAge = reduceCost ? 8 : 9
+    const topCardAges = game
+      .getTopCards(player)
+      .map(card => card.getAge())
+    const topCardMaxAge = Math.max(...topCardAges)
+
+    const targetColors = reduceCost ? 4 : 5
+    const actualColors = game.getTopCards(player).map(c => c.color).length
+
+    return topCardMaxAge >= targetAge && actualColors < targetColors
   }
 }
 
