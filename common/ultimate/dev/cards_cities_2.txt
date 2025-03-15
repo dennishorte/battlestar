@@ -1,0 +1,116 @@
+name            age  color   biscuits
+Athens          1    red     sssl+h
+Chang'An        1    red     lllc+h
+Thebes          1    red     cccssh
+Damascus        1    yellow  cccckh
+Linzi           1    yellow  kcckkh
+Uruk            1    yellow  kckkkh
+Babylon         1    green   sssc|h
+Jerusalem       1    green   ksskkh
+Memphis         1    green   klkkkh
+Atlantis        1    blue    llllkh
+Troy            1    blue    ccckxh
+Yin             1    blue    kllkkh
+Ephesus         1    purple  ccck+h
+Hattusa         1    purple  lllkkh
+Mohenjo-Daro    1    purple  lllk+h
+Sparta          2    red     kfkkxh
+Tikal           2    red     kl4kkh
+Nineveh         2    yellow  llc2lh
+Teotihuacan     2    yellow  ll3klh
+Marseille       2    green   c2ckch
+Nanjing         2    green   3ckkkh
+Alexandria      2    blue    c2cs+h
+Carthage        2    blue    cscc+h
+Luoyang         2    purple  ssl2|h
+Rome            2    purple  2ssksh
+Barcelona       3    red     4kck+h
+Delhi           3    red     slss<h
+Jakarta         3    yellow  lcllxh
+Kaifeng         3    yellow  klkk<h
+Baghdad         3    green   ccs3<h
+Venice          3    green   fccc+h
+Cordoba         3    blue    fffs<h
+Hangzhou        3    blue    sssk|h
+Constantinople  3    purple  kc3k<h
+Mecca           3    purple  l5cllh
+Milan           4    red     ff|s+h
+Tenochtitlan    4    red     kk4s<h
+Beijing         4    yellow  kkkl<h
+Lisbon          4    yellow  ff+l+h
+Calicut         4    green   5clllh
+Manila          4    green   c4cl<h
+Frankfurk       4    blue    ss+f+h
+Madrid          4    blue    sssc<h
+Florence        4    purple  css4<h
+Seville         4    purple  cccsxh
+Algiers         5    red     css5;h
+Zurich          5    red     fffsxh
+Hoi An          5    yellow  7cclch
+Osaka           5    yellow  llsssh
+Amsterdam       5    green   kl|k+h
+Stockholm       5    green   fc5c;h
+Boston          5    blue    fs+s+h
+Naples          5    blue    ss+l+h
+Gdansk          5    purple  c5fc;h
+Tokyo           5    purple  kkik;h
+Philadelphia    6    red     fi+i+h
+Tehran          6    red     fc>c;h
+Dublin          6    yellow  fl>fxh
+Paris           6    yellow  lli7;h
+Bombay          6    green   6cll>h
+Rio De Janeiro  6    green   f7fc;h
+Berlin          6    blue    ff>s;h
+Edinburgh       6    blue    sf+s+h
+New York City   6    purple  sc|c+h
+Vienna          6    purple  ss6c>h
+Lyon            7    red     cf>f;h
+Montreal        7    red     ff+cxh
+Melbourne       7    yellow  77lc7h
+St. Petersburg  7    yellow  lf>l;h
+London          7    green   fi|i>h
+Toronto         7    green   77il7h
+Johannesburg    7    blue    77sc7h
+Munich          7    blue    si+s>h
+San Francisco   7    purple  cs999h
+Washington      7    purple  fs>s;h
+Kuala Lumpur    8    red     ffif:h
+Los Angeles     8    red     9f9s9h
+Chicago         8    yellow  88il8h
+Shanghai        8    yellow  lcll:h
+Hamburg         8    green   ciiixh
+Sao Paulo       8    green   88cl8h
+Chongqing       8    blue    ff|s+h
+Kiev            8    blue    fi+f+h
+Buenos Aires    8    purple  9i9s9h
+Vancouver       8    purple  cs+s+h
+Dallas          9    red     fi+i^h
+Perth           9    red     afacah
+Guadalajara     9    yellow  li+i^h
+Miami           9    yellow  9c9l9h
+Santiago        9    green   99is9h
+Sydney          9    green   sc^c:h
+Houston         9    blue    aiacah
+Taipei          9    blue    ii^s:h
+Hong Kong       9    purple  fi|f^h
+Moscow          9    purple  lsxl:h
+Seoul           10   red     pp^p=h
+Singapore       10   red     fafc+h
+Copenhagen      10   yellow  li^l=h
+Dubai           10   yellow  acic+h
+Bangkok         10   green   icbbbh
+Tel Aviv        10   green   si^i=h
+Atlanta         10   blue    aiis+h
+Bangalore       10   blue    ll^s=h
+Brussels        10   purple  fpffxh
+Essen           10   purple  ls^s=h
+Guangzhou       11   red     cf:f:h
+Warsaw          11   red     ibsi=h
+Nairobi         11   yellow  fl:l:h
+Shenzhen        11   yellow  biii=h
+Beirut          11   green   cpcb=h
+Riyadh          11   green   itctth
+Prague          11   blue    ss:i:h
+Seattle         11   blue    ffbp=h
+Brisbane        11   purple  pbblbh
+Lima            11   purple  slbs=h
