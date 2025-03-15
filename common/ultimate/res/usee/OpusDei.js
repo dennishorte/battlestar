@@ -20,7 +20,7 @@ function Card() {
     (game, player) => {
       const highestScoreCards = game.utilHighestCards(game.getCardsByZone(player, 'score'))
 
-      const card = game.aChooseAndReveal(player, highestScoreCards, { min: 0 })[0]
+      const card = game.aChooseAndReveal(player, highestScoreCards)[0]
 
       if (card) {
         game.aSplay(player, card.color, 'up')

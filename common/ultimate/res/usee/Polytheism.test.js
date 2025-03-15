@@ -24,8 +24,6 @@ describe('Polytheism', () => {
 
     request = t.choose(game, request, 'Symbology')
 
-    t.dumpLog(game)
-
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {

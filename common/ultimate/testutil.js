@@ -56,15 +56,17 @@ TestUtil.fixture = function(options) {
 
     // If using Unseen, remove the special achievements.
     // These are so easy to claim in test scenarios that they break dozens of tests.
-    const unseenAchievementNames = [
-      'Anonymity',
-      'Confidence',
-      'Folklore',
-      'Mystery',
-      'Zen',
-    ]
-    for (const name of unseenAchievementNames) {
-      game.mRemove(game.getCardByName(name))
+    if (game.getExpansionList().includes('usee')) {
+      const unseenAchievementNames = [
+        'Anonymity',
+        'Confidence',
+        'Folklore',
+        'Mystery',
+        'Zen',
+      ]
+      for (const name of unseenAchievementNames) {
+        game.mRemove(game.getCardByName(name))
+      }
     }
   })
 
@@ -307,7 +309,12 @@ TestUtil.testBoard = function(game, state) {
 
   if (state.junk) {
     expected.junk = state.junk.sort()
-    real.junk = game.getZoneById('junk').cards().map(c => c.name).sort()
+    real.junk = game
+      .getZoneById('junk')
+      .cards()
+      .filter(c => !(c.isSpecialAchievement && c.expansion === 'usee'))
+      .map(c => c.name)
+      .sort()
   }
 
   if (state.achievements) {

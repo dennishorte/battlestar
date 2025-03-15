@@ -41,7 +41,6 @@ describe(`April Fool's Day`, () => {
     request = game.run()
     request = t.choose(game, request, `Dogma.April Fool's Day`)
     request = t.choose(game, request, 'yellow')
-    t.dumpLog(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -9,6 +9,11 @@ describe('Opus Dei', () => {
         purple: ['Opus Dei', 'Monotheism'],
         score: ['Reformation', 'Optics'],
       },
+      decks: {
+        usee: {
+          8: ['Blacklight'],
+        }
+      }
     })
 
     let request
@@ -24,6 +29,7 @@ describe('Opus Dei', () => {
         },
         score: ['Optics'],
         safe: ['Reformation'],
+        hand: ['Blacklight'],
       },
     })
   })

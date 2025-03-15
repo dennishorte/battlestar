@@ -1724,10 +1724,8 @@ Innovation.prototype.aJunk = function(player, card, opts={}) {
   this.aRemove(player, card, opts)
 }
 
-Innovation.prototype.aJunkAvailableAchievement = function(player, ages=[], opts={}) {
-  const eligible = this
-    .utilAges()
-    .flatMap(age => this.getAvailableAchievementsByAge(player, age))
+Innovation.prototype.aJunkAvailableAchievement = function(player, ages, opts={}) {
+  const eligible = ages.flatMap(age => this.getAvailableAchievementsByAge(player, age))
 
   const card = this.aChooseCards(player, eligible, {
     title: 'Choose an achievement to junk',
