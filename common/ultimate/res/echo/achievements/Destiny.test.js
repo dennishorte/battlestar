@@ -3,42 +3,76 @@ Error.stackTraceLimit = 100
 const t = require('../../../testutil.js')
 
 describe('Destiny', () => {
-  test('gained on the seventh card', () => {
-    const game = t.fixtureTopCard('Bangle', { expansions: ['base', 'echo'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', [])
-      t.setForecast(game, 'dennis', [
-        'Magnifying Glass',
-        'Sandpaper',
-        'Chintz',
-        'Globe',
-        'Clock',
-        'Shuriken',
-      ])
+  test('gained on the fifth card', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Pagoda'],
+        forecast: [
+          'Magnifying Glass',
+          'Sandpaper',
+          'Chintz',
+          'Globe',
+        ]
+      },
+      decks: {
+        echo: {
+          3: ['Novel'],
+        }
+      }
     })
+
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Bangle')
+    request = t.choose(game, request, 'Dogma.Pagoda')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['Destiny'])
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Pagoda'],
+        forecast: [
+          'Magnifying Glass',
+          'Sandpaper',
+          'Chintz',
+          'Globe',
+          'Novel',
+        ],
+        achievements: ['Destiny'],
+      }
+    })
   })
 
-  test('not gained on sixth card', () => {
-    const game = t.fixtureTopCard('Bangle', { expansions: ['base', 'echo'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', [])
-      t.setForecast(game, 'dennis', [
-        'Magnifying Glass',
-        'Sandpaper',
-        'Chintz',
-        'Clock',
-        'Shuriken',
-      ])
+  test('not gained on fourth card', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Pagoda'],
+        forecast: [
+          'Magnifying Glass',
+          'Sandpaper',
+          'Globe',
+        ]
+      },
+      decks: {
+        echo: {
+          3: ['Novel'],
+        }
+      }
     })
+
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Bangle')
+    request = t.choose(game, request, 'Dogma.Pagoda')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Pagoda'],
+        forecast: [
+          'Magnifying Glass',
+          'Sandpaper',
+          'Globe',
+          'Novel',
+        ],
+      }
+    })
   })
 })

@@ -5,11 +5,11 @@ function Card() {
   this.name = 'Destiny'
   this.shortName = 'dest'
   this.expansion = 'echo'
-  this.text = 'Have seven cards forecasted'
+  this.text = 'Have five cards forecasted'
   this.alt = 'Barometer'
   this.isSpecialAchievement = true
   this.checkPlayerIsEligible = function(game, player, reduceCost) {
-    const targetCount = reduceCost ? 6 : 7
+    const targetCount = reduceCost ? 4 : 5
     return game.getZoneByPlayer(player, 'forecast').cards().length >= targetCount
   }
 }
