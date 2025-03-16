@@ -136,11 +136,11 @@ export default {
   width: 1.2em;
   margin-top: 1px;
   margin-right: 0.25rem;
-  
+
   opacity: 0.4;
-  background-image: url("~@/assets/img/biscuit-hex.png");
+  background-image: url("~@/assets/img/old/biscuit-hex.png");
   background-size: 1.2em 1.2em;
-  
+
   align-items: center;
   justify-content: center;
 }
