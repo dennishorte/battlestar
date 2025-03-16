@@ -1848,10 +1848,7 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
       const cards = this.aChooseAndMeld(player, choices)
       if (cards && cards.length > 0) {
         const melded = cards[0]
-        const doDogma = this.aYesNo(player, `Activate ${melded.name}?`)
-        if (doDogma) {
-          this.aDogma(player, melded)
-        }
+        this.aDogma(player, melded)
       }
     }
   }
