@@ -9,7 +9,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `sh9*`
   this.dogmaBiscuit = `s`
-  this.inspire = `Tuck two cards from your hand.`
   this.echo = ``
   this.karma = [
     `If another player would not draw a card for sharing after a Dogma action, first draw and reveal a {0}. If it is blue, you win.`
@@ -18,9 +17,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'), { count: 2 })
-  }
   this.karmaImpl = [
     {
       trigger: 'no-share',

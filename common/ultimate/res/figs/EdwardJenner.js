@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `*llh`
   this.dogmaBiscuit = `l`
-  this.inspire = `Tuck a card from your hand.`
   this.echo = ``
   this.karma = [
     `If a player would successfully demand something of you, instead return a card from your hand.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'))
-  }
   this.karmaImpl = [
     {
       trigger: 'demand-success',

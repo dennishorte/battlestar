@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `*hc6`
   this.dogmaBiscuit = `c`
-  this.inspire = `Score a top card with a {c} from anywhere.`
   this.echo = ``
   this.karma = [
     `If you would score a card, first claim an achievement matching that card's value, ignoring the age requirement.`
@@ -17,13 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    const choices = game
-      .getPlayerAll()
-      .flatMap(p => game.getTopCards(p))
-      .filter(card => card.biscuits.includes('c'))
-    game.aChooseAndScore(player, choices)
-  }
   this.karmaImpl = [
     {
       trigger: 'score',

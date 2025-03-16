@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `s9*h`
   this.dogmaBiscuit = `s`
-  this.inspire = `Draw and meld an {8} figure.`
   this.echo = ``
   this.karma = [
     `If you are required to fade a figure, instead do nothing.`,
@@ -18,10 +17,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    const card = game.aDraw(player, { exp: 'figs', age: game.getEffectAge(this, 8) })
-    game.aMeld(player, card)
-  }
   this.karmaImpl = [
     {
       trigger: 'no-fade',

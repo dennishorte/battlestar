@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `l*hl`
   this.dogmaBiscuit = `l`
-  this.inspire = `Meld a card from your hand.`
   this.echo = ``
   this.karma = [
     `If you would meld the fifth visible card of a color on your board, first claim an achievement ignoring the scoring restriction.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
-  }
   this.karmaImpl = [
     {
       trigger: 'meld',

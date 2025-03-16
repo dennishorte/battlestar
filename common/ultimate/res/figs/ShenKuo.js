@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `ch*c`
   this.dogmaBiscuit = `c`
-  this.inspire = `You may splay one color of your cards left.`
   this.echo = ``
   this.karma = [
     `Each splayed color on your board provides three additional points towards your score.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aChooseAndSplay(player, null, 'left')
-  }
   this.karmaImpl = [
     {
       trigger: 'calculate-score',

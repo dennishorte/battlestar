@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `h1*k`
   this.dogmaBiscuit = `k`
-  this.inspire = `Tuck a card from your hand.`
   this.echo = ``
   this.karma = [
     `If you would tuck a yellow card, instead meld it and execute all of the non-demand Dogma effects on it for yourself only, then return it to your hand if it is still a top card on your board.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'))
-  }
   this.karmaImpl = [
     {
       trigger: 'tuck',

@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `f*5h`
   this.dogmaBiscuit = `f`
-  this.inspire = `Tuck a card from your hand.`
   this.echo = ``
   this.karma = [
     `When you meld this card, return all opponents' top figures.`,
@@ -18,9 +17,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'))
-  }
   this.karmaImpl = [
     {
       trigger: 'when-meld',

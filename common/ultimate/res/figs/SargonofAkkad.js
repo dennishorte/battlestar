@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `1ch*`
   this.dogmaBiscuit = `c`
-  this.inspire = `Draw and meld a {1}.`
   this.echo = ``
   this.karma = [
     `If you would meld a card, and your current top card of that color is of equal value, instead tuck it.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aDrawAndMeld(player, game.getEffectAge(this, 1))
-  }
   this.karmaImpl = [
     {
       trigger: 'meld',

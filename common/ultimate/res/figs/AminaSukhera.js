@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `f*fh`
   this.dogmaBiscuit = `f`
-  this.inspire = `Score all bottom purple cards.`
   this.echo = ``
   this.karma = [
     `When you meld this card, score all opponents' top figures of value 4.`,
@@ -18,13 +17,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    const cards = game
-      .getPlayerAll()
-      .map(p => game.getZoneByPlayer(p, 'purple').cards().slice(-1)[0])
-      .filter(card => card !== undefined)
-    game.aScoreMany(player, cards)
-  }
   this.karmaImpl = [
     {
       trigger: 'when-meld',

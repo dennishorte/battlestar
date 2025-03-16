@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `ch*c`
   this.dogmaBiscuit = `c`
-  this.inspire = `Score a card from your hand.`
   this.echo = ``
   this.karma = [
     `Each card in your hand is also considered part of your score pile.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'))
-  }
   this.karmaImpl = [
     {
       trigger: 'list-score',

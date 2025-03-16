@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `hff*`
   this.dogmaBiscuit = `f`
-  this.inspire = `Draw and tuck a {7}.`
   this.echo = ``
   this.karma = [
     `When you meld this card, score all opponents' top figures of value less than 7.`,
@@ -18,9 +17,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aDrawAndTuck(player, game.getEffectAge(this, 7))
-  }
   this.karmaImpl = [
     {
       trigger: 'when-meld',

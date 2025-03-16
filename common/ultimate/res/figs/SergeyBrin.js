@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `hii*`
   this.dogmaBiscuit = `i`
-  this.inspire = `You may splay one color of your cards up.`
   this.echo = ``
   this.karma = [
     `Each top card on every player's board counts as a card you can activate with a Dogma action.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aChooseAndSplay(player, null, 'up')
-  }
   this.karmaImpl = [
     {
       trigger: 'list-effects',

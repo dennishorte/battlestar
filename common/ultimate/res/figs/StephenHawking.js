@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `b*sh`
   this.dogmaBiscuit = `s`
-  this.inspire = `Draw and tuck a {0}.`
   this.echo = ``
   this.karma = [
     `Each {h} on your board also counts as an echo effect reading "Score the bottom card of this color".`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aDrawAndTuck(player, game.getEffectAge(this, 10))
-  }
   this.karmaImpl = [
     {
       trigger: 'hex-effect',

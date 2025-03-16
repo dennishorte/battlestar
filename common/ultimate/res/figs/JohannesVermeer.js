@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `5h*c`
   this.dogmaBiscuit = `c`
-  this.inspire = `Draw and score a {3}.`
   this.echo = ``
   this.karma = [
     `If you would claim a standard achievement, first claim an achievement of value one higher, regardless of eligibility.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aDrawAndScore(player, game.getEffectAge(this, 3))
-  }
   this.karmaImpl = [
     {
       trigger: 'achieve',

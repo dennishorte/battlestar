@@ -9,7 +9,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `hii*`
   this.dogmaBiscuit = `i`
-  this.inspire = `Draw and foreshadow an {8} or {9}.`
   this.echo = ``
   this.karma = [
     `If you would meld a card of value 10 and you have top cards of values 9 and 8 on your board, instead you win.`,
@@ -19,13 +18,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    const age = game.aChooseAge(player, [
-      game.getEffectAge(this, 8),
-      game.getEffectAge(this, 9)
-    ])
-    game.aDrawAndForeshadow(player, age)
-  }
   this.karmaImpl = [
     {
       trigger: 'meld',

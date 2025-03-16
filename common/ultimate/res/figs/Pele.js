@@ -9,7 +9,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `ha*c`
   this.dogmaBiscuit = `c`
-  this.inspire = `Draw and tuck three {9}.`
   this.echo = ``
   this.karma = [
     `You may issue a Rivalry Decree with any two figures.`,
@@ -19,11 +18,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aDrawAndTuck(player, game.getEffectAge(this, 9))
-    game.aDrawAndTuck(player, game.getEffectAge(this, 9))
-    game.aDrawAndTuck(player, game.getEffectAge(this, 9))
-  }
   this.karmaImpl = [
     {
       trigger: 'decree-for-two',

@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `hkk*`
   this.dogmaBiscuit = `k`
-  this.inspire = `Draw and tuck a {2}. If it has a {k}, repeat this effect.`
   this.echo = ``
   this.karma = [
     `You may issue an Expansion decree with any two figures.`,
@@ -18,14 +17,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    while (true) {
-      const card = game.aDrawAndTuck(player, game.getEffectAge(this, 2))
-      if (!card.checkHasBiscuit('k')) {
-        break
-      }
-    }
-  }
   this.karmaImpl = [
     {
       trigger: 'decree-for-two',

@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `h*kk`
   this.dogmaBiscuit = `k`
-  this.inspire = `Score a top card from your board.`
   this.echo = ``
   this.karma = [
     `If a player would successfully demand something of you, first transfer the highest card from that player's score pile to your score pile.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aChooseAndScore(player, game.getTopCards(player))
-  }
   this.karmaImpl = [
     {
       trigger: 'demand-success',

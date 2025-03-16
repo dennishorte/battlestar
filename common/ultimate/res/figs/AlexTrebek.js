@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `sh*s`
   this.dogmaBiscuit = `s`
-  this.inspire = `Draw and meld a card of any value.`
   this.echo = ``
   this.karma = [
     `If you would draw a card and have no figures of that value in hand, first say "Who is" and name a figure. Search the figures deck of that age for the named figure and take it into hand if present. Then shuffle that deck.`

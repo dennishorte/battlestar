@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `c5h*`
   this.dogmaBiscuit = `c`
-  this.inspire = `Return a {5} from your hand. Draw a {6}.`
   this.echo = ``
   this.karma = [
     `If you would draw a fifth card into your hand, first claim an achievement of that card's value or below, regardless of eligibility.`
@@ -17,13 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    const fives = game
-      .getCardsByZone(player, 'hand')
-      .filter(card => card.getAge() === game.getEffectAge(this, 5))
-    game.aChooseAndReturn(player, fives)
-    game.aDraw(player, { age: game.getEffectAge(this, 6) })
-  }
   this.karmaImpl = [
     {
       trigger: 'draw',

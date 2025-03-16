@@ -9,7 +9,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `*iih`
   this.dogmaBiscuit = `i`
-  this.inspire = `Score a card from your hand.`
   this.echo = ``
   this.karma = [
     `If an opponent would win, first score all other top figures in play. If you now have the most points, you win instead.`
@@ -18,9 +17,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'))
-  }
   this.karmaImpl = [
     {
       trigger: 'would-win',

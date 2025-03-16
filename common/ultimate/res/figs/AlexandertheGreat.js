@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `2*hk`
   this.dogmaBiscuit = `k`
-  this.inspire = `Score a card from your hand.`
   this.echo = ``
   this.karma = [
     `When you meld this card, score all opponent's top figures of value 1 or 2.`,
@@ -18,12 +17,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    const choices = game
-      .getZoneByPlayer(player, 'hand')
-      .cards()
-    game.aChooseAndScore(player, choices)
-  }
   this.karmaImpl = [
     {
       trigger: 'when-meld',

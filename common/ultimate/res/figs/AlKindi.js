@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `hcc*`
   this.dogmaBiscuit = `c`
-  this.inspire = `Score a card from your hand.`
   this.echo = ``
   this.karma = [
     `If you would draw a card for sharing, first draw two cards of the same value.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aChooseAndScore(player, game.getZoneByPlayer(player, 'hand').cards())
-  }
   this.karmaImpl = [
     {
       trigger: 'draw',

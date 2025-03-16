@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `hc*c`
   this.dogmaBiscuit = `c`
-  this.inspire = `Draw and meld a {2}.`
   this.echo = ``
   this.karma = [
     `You may issue a Trade Decree with any two figures.`,
@@ -18,9 +17,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aDrawAndMeld(player, game.getEffectAge(this, 2))
-  }
   this.karmaImpl = [
     {
       trigger: 'decree-for-two',

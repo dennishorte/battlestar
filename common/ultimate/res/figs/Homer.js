@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `h*2k`
   this.dogmaBiscuit = `k`
-  this.inspire = `Draw and tuck a {2}.`
   this.echo = ``
   this.karma = [
     `If you would remove or return a figure from your hand, instead tuck it.`

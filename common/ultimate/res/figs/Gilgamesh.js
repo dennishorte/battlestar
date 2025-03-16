@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `*h1k`
   this.dogmaBiscuit = `k`
-  this.inspire = `Score a card from your hand.`
   this.echo = ``
   this.karma = [
     `Each bonus on your board provides one additional {k} for every top card on your board.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'))
-  }
   this.karmaImpl = [
     {
       trigger: 'calculate-biscuits',

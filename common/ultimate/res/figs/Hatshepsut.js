@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `1c*h`
   this.dogmaBiscuit = `c`
-  this.inspire = `Draw a {1}`
   this.echo = ``
   this.karma = [
     `If you would draw a card of value higher than 1 and you have a {1} in your hand, first return all cards from your hand and draw two cards of that value.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aDraw(player, { age: game.getEffectAge(this, 1) })
-  }
   this.karmaImpl = [
     {
       trigger: 'draw',

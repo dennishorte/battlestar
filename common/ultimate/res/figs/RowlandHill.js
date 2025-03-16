@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `*chc`
   this.dogmaBiscuit = `c`
-  this.inspire = `Draw a {7}.`
   this.echo = ``
   this.karma = [
     `If you would claim an achievement, first return three cards from your hand. If you do, claim all other cards in your hand as achievements, ignoring eligibility.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aDraw(player, { age: game.getEffectAge(this, 7) })
-  }
   this.karmaImpl = [
     {
       trigger: 'achieve',

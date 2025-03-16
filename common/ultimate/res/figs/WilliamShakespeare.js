@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `4*hs`
   this.dogmaBiscuit = `s`
-  this.inspire = `Meld a card from your hand.`
   this.echo = ``
   this.karma = [
     `You may issue a Rivaly Decree with any two figures.`,
@@ -18,9 +17,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
-  }
   this.karmaImpl = [
     {
       trigger: 'decree-for-two',

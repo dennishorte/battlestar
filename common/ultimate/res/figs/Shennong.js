@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `llh*`
   this.dogmaBiscuit = `l`
-  this.inspire = `Draw and foreshadow a {2}.`
   this.echo = ``
   this.karma = [
     `If you would foreshadow a card of the same value as a card in your forecast, first score each card of that value in your forecast.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aDrawAndForeshadow(player, game.getEffectAge(this, 2))
-  }
   this.karmaImpl = [
     {
       trigger: 'foreshadow',

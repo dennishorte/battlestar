@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `*iih`
   this.dogmaBiscuit = `i`
-  this.inspire = `Draw and meld an {8}.`
   this.echo = ``
   this.karma = [
     `Each {i} on your board provides an additional number of points equal to the number of {i} on your board.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aDrawAndMeld(player, game.getEffectAge(this, 8))
-  }
   this.karmaImpl = [
     {
       trigger: 'calculate-score',

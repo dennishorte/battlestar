@@ -9,7 +9,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `lh8*`
   this.dogmaBiscuit = `l`
-  this.inspire = `Tuck a card from your hand.`
   this.echo = ``
   this.karma = [
     `If you would tuck a card with a {l}, first splay that color of your cards left, then draw two {2}.`,
@@ -19,9 +18,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'))
-  }
   this.karmaImpl = [
     {
       trigger: 'tuck',

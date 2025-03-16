@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `*llh`
   this.dogmaBiscuit = `l`
-  this.inspire = `Draw and tuck a {5}. If it has a {s}, meld it instead.`
   this.echo = ``
   this.karma = [
     `You may issue an Advancement Decree with any two figures.`,
@@ -18,15 +17,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    const card = game.aDraw(player, { age: game.getEffectAge(this, 5) })
-    if (card.checkHasBiscuit('s')) {
-      game.aMeld(player, card)
-    }
-    else {
-      game.aTuck(player, card)
-    }
-  }
   this.karmaImpl = [
     {
       trigger: 'decree-for-two',

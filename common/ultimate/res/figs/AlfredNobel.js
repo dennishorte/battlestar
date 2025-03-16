@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `chc*`
   this.dogmaBiscuit = `c`
-  this.inspire = `Score a card from your hand.`
   this.echo = ``
   this.karma = [
     `Each icon type on your board counts as an achievement, if you have at least twice as many of that icon as every other player.`
@@ -17,12 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    const choices = game
-      .getZoneByPlayer(player, 'hand')
-      .cards()
-    game.aChooseAndScore(player, choices)
-  }
   this.karmaImpl = [
     {
       trigger: 'extra-achievements',

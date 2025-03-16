@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `c*hc`
   this.dogmaBiscuit = `c`
-  this.inspire = `Draw a {0}.`
   this.echo = ``
   this.karma = [
     `If any player would take a Dogma action, first you may return a card from your hand. If you do, you have the sole majority in its featured icon until the end of the action.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aDraw(player, { age: game.getEffectAge(this, 10) })
-  }
   this.karmaImpl = [
     {
       trigger: 'dogma',

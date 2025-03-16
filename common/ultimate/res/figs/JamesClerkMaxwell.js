@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `h*7i`
   this.dogmaBiscuit = `i`
-  this.inspire = `Draw an {8}.`
   this.echo = ``
   this.karma = [
     `Each card in hand provides one additional icon of every type on your board.`
@@ -17,9 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = (game, player) => {
-    game.aDraw(player, { age: game.getEffectAge(this, 8) })
-  }
   this.karmaImpl = [
     {
       trigger: 'calculate-biscuits',
