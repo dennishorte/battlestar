@@ -5,7 +5,7 @@ function Card() {
   this.name = 'Victory'
   this.shortName = 'vcty'
   this.expansion = 'city'
-  this.text = 'Claim this achievement immediately if you tuck a city with a {:}.'
+  this.text = 'Claim this achievement immediately if you junk a city with a {:}.'
   this.isSpecialAchievement = true
 }
 

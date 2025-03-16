@@ -1722,6 +1722,7 @@ Innovation.prototype._checkCanSeizeRelic = function(card) {
 
 Innovation.prototype.aJunk = function(player, card, opts={}) {
   this.aRemove(player, card, opts)
+  this._checkCityJunkAchievements(player, card)
 }
 
 Innovation.prototype.aJunkAvailableAchievement = function(player, ages, opts={}) {
@@ -2047,7 +2048,7 @@ Innovation.prototype.aTransfer = function(player, card, target, opts={}) {
   return this.mTransfer(player, card, target, opts)
 }
 
-Innovation.prototype._checkCityTuckAchievements = function(player, card) {
+Innovation.prototype._checkCityJunkAchievements = function(player, card) {
   if (
     card.checkHasBiscuit(';')
     && this.getCardByName('Glory').zone === 'achievements'
@@ -2071,7 +2072,6 @@ Innovation.prototype.aTuck = function(player, card, opts={}) {
   }
 
   const tucked = this.mTuck(player, card, opts)
-  this._checkCityTuckAchievements(player, card)
   return tucked
 }
 
