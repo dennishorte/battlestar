@@ -104,7 +104,6 @@ Innovation.prototype.initializeTransientState = function() {
   this.state.round = 1
   this.state.karmaDepth = 0
   this.state.wouldWinKarma = false
-  this.state.didInspire = false
   this.state.didEndorse = false
   this.stats = {
     melded: [],
@@ -411,9 +410,6 @@ Innovation.prototype.action = function(count) {
   else if (name === 'Endorse') {
     this.aEndorse(player, arg)
   }
-  else if (name === 'Inspire') {
-    this.aInspire(player, arg)
-  }
   else if (name === 'Meld') {
     const card = this.getCardByName(arg)
     this.aMeld(player, card, { asAction: true })
@@ -471,7 +467,6 @@ Innovation.prototype.endTurn = function() {
 
   // Reset various turn-centric state
   this.state.didEndorse = false
-  this.state.didInspire = false
   this.mResetDogmaInfo()
   this.mResetMonumentCounts()
   this.mResetPeleCount()
@@ -1300,27 +1295,6 @@ Innovation.prototype._getAgeForDrawAction = function(player, isAction) {
   return Math.max(...ageValues)
 }
 
-Innovation.prototype._getAgeForInspireAction = function(player, color) {
-  const karmaInfos = this
-    .getInfoByKarmaTrigger(player, 'top-card-value')
-    .filter(info => info.impl.matches(this, player, { action: 'inspire', color }))
-  const cards = this.getCardsByZone(player, color)
-
-  if (karmaInfos.length === 1) {
-    const info = karmaInfos[0]
-    this._karmaIn()
-    const result = info.impl.func(this, player, { color })
-    this._karmaOut()
-    return result
-  }
-  else if (cards.length === 0) {
-    return 1
-  }
-  else {
-    return cards[0].getAge()
-  }
-}
-
 Innovation.prototype.aDraw = function(player, opts={}) {
   const { age, share, isAction } = opts
 
@@ -1474,44 +1448,6 @@ Innovation.prototype.aForeshadow = function(player, card, opts={}) {
   return this.mForeshadow(player, card, opts)
 }
 
-Innovation.prototype.aInspire = function(player, color, opts={}) {
-  this.mLog({
-    template: '{player} inspires {color}',
-    args: { player, color }
-  })
-  this.mLogIndent()
-
-  this.state.didInspire = true
-
-  const zone = this.getZoneByPlayer(player, color)
-  const biscuits = this.getBiscuits()
-
-  const karmaKind = this.aKarma(player, 'inspire', { ...opts, color })
-  if (karmaKind === 'would-instead') {
-    this.mActed(player)
-    return
-  }
-
-  // Gather effects
-  const effectCards = this
-    .getVisibleEffectsByColor(player, color, 'inspire')
-    .map(effect => effect.card)
-
-  // Execute effects
-  for (const card of effectCards) {
-    this.aCardEffects(
-      player,
-      card,
-      'inspire',
-    )
-  }
-
-  const drawAge = this._getAgeForInspireAction(player, color)
-  this.aDraw(player, { age: drawAge })
-
-  this.mLogOutdent()
-}
-
 Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
   let info = infos[0]
 
@@ -1579,15 +1515,6 @@ Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
         template: '{player} would take a draw action, triggering...',
         args: {
           player,
-        }
-      })
-    }
-    else if (opts.trigger === 'inspire') {
-      this.mLog({
-        template: '{player} would inspire {color}, triggering...',
-        args: {
-          player,
-          color: opts.color,
         }
       })
     }
@@ -2211,11 +2138,6 @@ Innovation.prototype.checkEffectIsVisible = function(card) {
   return this.getVisibleEffects(card, 'dogma') || this.getVisibleEffects(card, 'echo')
 }
 
-Innovation.prototype.checkInspireIsVisible = function(card) {
-  const splay = this.checkCardIsTop(card) ? 'top' : this.getZoneByCard(card).splay
-  return card.checkInspireIsVisible(splay)
-}
-
 Innovation.prototype.checkInKarma = function() {
   return this.state.karmaDepth > 0
 }
@@ -2466,7 +2388,7 @@ Innovation.prototype.getInfoByKarmaTrigger = function(player, trigger) {
 }
 
 Innovation.prototype.getEffectByText = function(card, text) {
-  for (const kind of ['dogma', 'echo', 'inspire']) {
+  for (const kind of ['dogma', 'echo']) {
     const effects = this.getVisibleEffects(card, kind)
     if (!effects) {
       continue
@@ -2683,16 +2605,6 @@ Innovation.prototype.getVisibleEffects = function(card, kind, opts={}) {
         card,
         texts,
         impls,
-      }
-    }
-  }
-
-  else if (kind === 'inspire') {
-    if (card.checkBiscuitIsVisible('*', splay)) {
-      return {
-        card,
-        texts: util.getAsArray(card, 'inspire'),
-        impls: util.getAsArray(card, 'inspireImpl')
       }
     }
   }
@@ -3483,7 +3395,6 @@ Innovation.prototype._generateActionChoices = function() {
   choices.push(this._generateActionChoicesDogma())
   choices.push(this._generateActionChoicesDraw())
   choices.push(this._generateActionChoicesEndorse())
-  choices.push(this._generateActionChoicesInspire())
   choices.push(this._generateActionChoicesMeld())
   return choices
 }
@@ -3676,26 +3587,6 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
   return {
     title: 'Endorse',
     choices: colors,
-    min: 0,
-  }
-}
-
-Innovation.prototype._generateActionChoicesInspire = function() {
-  const player = this.getPlayerCurrent()
-  const inspireColors = []
-
-  if (!this.state.didInspire) {
-    for (const color of this.utilColors()) {
-      const effects = this.getVisibleEffectsByColor(player, color, 'inspire')
-      if (effects.length > 0) {
-        inspireColors.push(color)
-      }
-    }
-  }
-
-  return {
-    title: 'Inspire',
-    choices: inspireColors,
     min: 0,
   }
 }
