@@ -1861,18 +1861,37 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
   if (opts.asAction) {
     // City biscuits
     const biscuits = card.getBiscuits('top')
-    const plusses = biscuits.split('+').length - 1
-    for (let i = 0; i < plusses; i++) {
-      this.aDraw(player, { age: card.age + 1 })
-    }
-    if (biscuits.includes('<')) {
-      this.aSplay(player, card.color, 'left')
-    }
-    if (biscuits.includes('>')) {
-      this.aSplay(player, card.color, 'right')
-    }
-    if (biscuits.includes('^')) {
-      this.aSplay(player, card.color, 'up')
+
+    for (const biscuit of biscuits) {
+      switch (biscuit) {
+        case '+':
+          this.aDraw(player, { age: card.age + 1 })
+          break
+        case '<':
+          this.aSplay(player, card.color, 'left')
+          break
+        case '>':
+          this.aSplay(player, card.color, 'right')
+          break
+        case '^':
+          this.aSplay(player, card.color, 'up')
+          break
+        case '=':
+          for (const opp of this.getPlayerOpponents(player)) {
+            this.aUnsplay(opp, card.color)
+          }
+          break
+        case '|':
+          this.aJunkDeck(player, card.getAge())
+          this.aDraw(player, { age: card.getAge() + 1 })
+          break
+        case 'x':
+          this.aJunkAvailableAchievement(player, [card.getAge()])
+          break
+        default:
+          // Most biscuits don't do anything special.
+          break
+      }
     }
 
     // Discover biscuit

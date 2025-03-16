@@ -543,8 +543,109 @@ describe('Innovation', () => {
           hand: ['Medicine', 'Compass', 'Machinery'],
         }
       })
-
     })
+
+    test('junk biscuit', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Reformation'],
+          hand: ['Seville'],
+        },
+        achievements: ['Optics', 'Perspective', 'Coal'],
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Meld.Seville')
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          purple: ['Seville', 'Reformation'],
+        },
+        junk: ['Perspective'],
+      })
+    })
+
+    test('uplift biscuit', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Monotheism'],
+          hand: ['Luoyang'],
+        },
+        decks: {
+          base: {
+            3: ['Paper']
+          }
+        }
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Meld.Luoyang')
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          purple: ['Luoyang', 'Monotheism'],
+          hand: ['Paper']
+        },
+        junk: [
+          "Calendar",
+          "Canal Building",
+          "Construction",
+          "Currency",
+          "Fermenting",
+          "Mapmaking",
+          "Mathematics",
+          "Road Building",
+        ]
+      })
+    })
+
+    test('unsplay biscuit', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          red: {
+            cards: ['Coal', 'Metalworking'],
+            splay: 'left',
+          },
+          hand: ['Warsaw'],
+        },
+        micah: {
+          red: {
+            cards: ['Flight', 'Optics'],
+            splay: 'up',
+          },
+          green: {
+            cards: ['Measurement', 'Paper'],
+            splay: 'right',
+          },
+        },
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'Meld.Warsaw')
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          red: {
+            cards: ['Warsaw', 'Coal', 'Metalworking'],
+            splay: 'left',
+          },
+        },
+        micah: {
+          red: ['Flight', 'Optics'],
+          green: {
+            cards: ['Measurement', 'Paper'],
+            splay: 'right',
+          },
+        },
+      })
+    })
+
   })
 
   describe('karma', () => {
