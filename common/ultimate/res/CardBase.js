@@ -11,13 +11,11 @@ function CardBase() {
   this.expansion
   this.biscuits
   this.dogmaBiscuit
-  this.inspire
   this.echo
   this.karma
   this.dogma
 
   this.dogmaImpl
-  this.inspireImpl
   this.karmaImpl
 }
 
@@ -76,10 +74,6 @@ CardBase.prototype.checkHasShare = function() {
   const shareEchoEffect = !!this.echo
 
   return shareDogmaEffect || shareEchoEffect
-}
-
-CardBase.prototype.checkInspireIsVisible = function(splay) {
-  return this.checkBiscuitIsVisible('*', splay)
 }
 
 CardBase.prototype.checkIsArtifact = function() {
