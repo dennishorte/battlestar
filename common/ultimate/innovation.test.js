@@ -1317,8 +1317,7 @@ describe('Innovation', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Meld.Reformation')
-      const request3 = t.choose(game, request2, 'Sailing')
-      const request4 = t.choose(game, request3, 'yes')
+      const request3 = t.choose(game, request2, 'yes')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

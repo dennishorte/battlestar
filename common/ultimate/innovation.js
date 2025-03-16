@@ -1912,12 +1912,13 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
     const choices = this
       .getCardsByZone(player, 'forecast')
       .filter(other => other.getAge() <= card.getAge())
+
     if (choices.length > 0) {
       this.mLog({
-        template: '{player} may promote a card from forecast',
+        template: '{player} muse promote a card from forecast',
         args: { player },
       })
-      const cards = this.aChooseAndMeld(player, choices, { min: 0, max: 1 })
+      const cards = this.aChooseAndMeld(player, choices)
       if (cards && cards.length > 0) {
         const melded = cards[0]
         const doDogma = this.aYesNo(player, `Activate ${melded.name}?`)
