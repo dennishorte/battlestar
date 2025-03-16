@@ -3438,7 +3438,7 @@ Innovation.prototype._determineBaseDrawExpansion = function(player) {
     this.mSetFirstBaseDraw(player)
   }
   if (this.getExpansionList().includes('echo')) {
-    const topCards = game
+    const topAges = this
       .getTopCards(player)
       .map(c => c.getAge())
       .sort()
