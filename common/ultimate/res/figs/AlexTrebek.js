@@ -16,12 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = [
-    (game, player) => {
-      const age = game.aChooseAge(player, [1,2,3,4,5,6,7,8,9,10])
-      game.aDrawAndMeld(player, age)
-    }
-  ]
   this.karmaImpl = [
     {
       trigger: 'draw',

@@ -16,11 +16,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = [
-    (game, player) => {
-      game.aDrawAndTuck(player, game.getEffectAge(this, 2))
-    }
-  ]
   this.karmaImpl = [
     {
       trigger: ['remove', 'return'],
