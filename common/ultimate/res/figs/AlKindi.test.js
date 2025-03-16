@@ -3,17 +3,6 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 
 describe('Al-Kindi', () => {
-  test('inspire', () => {
-    const game = t.fixtureTopCard('Al-Kindi', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Tools', 'Writing'])
-    })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.purple')
-    request = t.choose(game, request, 'Writing')
-    expect(t.cards(game, 'score')).toStrictEqual(['Writing'])
-  })
 
   test('karma', () => {
     const game = t.fixtureTopCard('Al-Kindi', { expansions: ['base', 'figs'] })

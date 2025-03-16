@@ -4,32 +4,6 @@ const t = require('../../testutil.js')
 
 describe('Hammurabi', () => {
 
-  test('inspire', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        red: ['Hammurabi'],
-        hand: ['Domestication'],
-      },
-      decks: {
-        base: {
-          1: ['The Wheel']
-        }
-      }
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.red')
-
-    t.testBoard(game, {
-      dennis: {
-        red: ['Hammurabi'],
-        yellow: ['Domestication'],
-        hand: ['The Wheel']
-      },
-    })
-  })
 
   test('karma', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })

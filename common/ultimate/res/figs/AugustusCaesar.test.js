@@ -3,17 +3,6 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 
 describe('Augustus Caesar', () => {
-  test('inspire', () => {
-    const game = t.fixtureTopCard('Augustus Caesar', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setDeckTop(game, 'base', 3, ['Machinery'])
-    })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.green')
-
-    t.testZone(game, 'forecast', ['Machinery'])
-  })
 
   test('karma (foreshadow)', () => {
     const game = t.fixtureTopCard('Augustus Caesar', { expansions: ['base', 'figs'] })

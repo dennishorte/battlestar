@@ -4,31 +4,6 @@ const t = require('../../testutil.js')
 
 describe('Murasaki Shikibu', () => {
 
-  test('inspire', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        purple: ['Murasaki Shikibu'],
-      },
-      decks: {
-        base: {
-          3: ['Machinery', 'Engineering']
-        }
-      }
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.purple')
-
-    t.testIsSecondPlayer(game)
-    t.testBoard(game, {
-      dennis: {
-        purple: ['Murasaki Shikibu'],
-        hand: ['Machinery', 'Engineering'],
-      },
-    })
-  })
 
   test('karma: decree', () => {
     t.testDecreeForTwo('Murasaki Shikibu', 'Rivalry')

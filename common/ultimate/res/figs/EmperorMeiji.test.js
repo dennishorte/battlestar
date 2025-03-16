@@ -4,33 +4,6 @@ const t = require('../../testutil.js')
 
 describe('Emperor Meiji', () => {
 
-  test('inspire (and forecast in hand karma)', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        purple: ['Emperor Meiji'],
-      },
-      decks: {
-        base: {
-          7: ['Lighting'],
-          8: ['Antibiotics']
-        },
-      }
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.purple')
-    request = t.choose(game, request, 8)
-
-    t.testBoard(game, {
-      dennis: {
-        purple: ['Emperor Meiji'],
-        hand: ['Lighting', 'Antibiotics'],
-        forecast: ['Antibiotics']
-      },
-    })
-  })
 
   test('karma: win (test 1)', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })

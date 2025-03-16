@@ -3,19 +3,6 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 
 describe('Amina Sukhera', () => {
-  test('inspire', () => {
-    const game = t.fixtureTopCard('Amina Sukhera', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'purple', ['Enterprise'])
-      t.setColor(game, 'micah', 'purple', ['City States', 'Code of Laws'])
-    })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.red')
-    request = t.choose(game, request, 'auto')
-
-    t.testZone(game, 'score', ['Enterprise', 'Code of Laws'], { sort: true })
-  })
 
   test('karma: when-meld', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })

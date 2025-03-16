@@ -4,17 +4,6 @@ const t = require('../../testutil.js')
 
 describe('Homer', () => {
 
-  test('inspire', () => {
-    const game = t.fixtureTopCard('Homer', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'blue', ['Tools'])
-      t.setDeckTop(game, 'base', 2, ['Mathematics'])
-    })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.purple')
-    expect(t.cards(game, 'blue')).toStrictEqual(['Tools', 'Mathematics'])
-  })
 
   test('karma: remove', () => {
     const game = t.fixtureDecrees()

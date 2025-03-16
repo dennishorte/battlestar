@@ -3,22 +3,6 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 
 describe('Bartholomew Roberts', () => {
-  test('inspire', () => {
-    const game = t.fixtureTopCard('Bartholomew Roberts', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'red', ['Oars'])
-      t.setColor(game, 'micah', 'green', ['Sailing'])
-    })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.green')
-
-    t.testChoices(request, ['Oars', 'Sailing', 'Bartholomew Roberts'])
-
-    request = t.choose(game, request, 'Sailing')
-
-    t.testZone(game, 'score', ['Sailing'])
-  })
 
   test('karma (success)', () => {
     const game = t.fixtureTopCard('Bartholomew Roberts', { expansions: ['base', 'figs'] })

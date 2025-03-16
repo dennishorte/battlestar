@@ -1,19 +1,6 @@
 const t = require('../../testutil.js')
 
 describe('Plato', () => {
-  test('inspire', () => {
-    const game = t.fixtureTopCard('Plato', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'blue', ['Mathematics', 'Tools'])
-      t.setColor(game, 'dennis', 'purple', ['Plato', 'Mysticism'])
-    })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.purple')
-    request = t.choose(game, request, 'blue')
-
-    expect(t.zone(game, 'blue').splay).toBe('left')
-  })
 
   test('karma: decree', () => {
     t.testDecreeForTwo('Plato', 'Rivalry')

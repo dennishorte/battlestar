@@ -4,7 +4,7 @@ const t = require('../../testutil.js')
 
 describe('Composites', () => {
 
-  test('inspire', () => {
+  test('dogma', () => {
     const game = t.fixtureFirstPlayer()
     t.setBoard(game, {
       dennis: {

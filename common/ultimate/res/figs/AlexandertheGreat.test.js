@@ -3,18 +3,6 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 
 describe('Alexander the Great', () => {
-  test('inspire', () => {
-    const game = t.fixtureTopCard('Alexander the Great', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Philosophy', 'Code of Laws'])
-    })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.red')
-    request = t.choose(game, request, 'Philosophy')
-
-    t.testZone(game, 'score', ['Philosophy'])
-  })
 
   test('karma: meld-this', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })

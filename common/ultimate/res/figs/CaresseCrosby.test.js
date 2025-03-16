@@ -4,39 +4,6 @@ const t = require('../../testutil.js')
 
 describe('Caresse Crosby', () => {
 
-  test('inspire (no leaf, so no karma trigger)', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        red: ['Archery'],
-        green: ['Navigation', 'Sailing'],
-        yellow: ['Caresse Crosby', 'Fermenting'],
-        hand: ['Clothing', 'Metalworking'],
-      },
-      decks: {
-        base: {
-          8: ['Quantum Theory']
-        }
-      }
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.yellow')
-
-    t.testChoices(request, ['Clothing', 'Metalworking'])
-
-    request = t.choose(game, request, 'Metalworking')
-
-    t.testBoard(game, {
-      dennis: {
-        red: ['Archery', 'Metalworking'],
-        green: ['Navigation', 'Sailing'],
-        yellow: ['Caresse Crosby', 'Fermenting'],
-        hand: ['Clothing', 'Quantum Theory'],
-      },
-    })
-  })
 
   test('karma: if you would tuck', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })

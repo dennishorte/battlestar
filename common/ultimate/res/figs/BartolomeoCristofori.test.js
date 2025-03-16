@@ -3,21 +3,6 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 
 describe('Bartolomeo Cristofori', () => {
-  test('inspire', () => {
-    const game = t.fixtureTopCard('Bartolomeo Cristofori', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Construction', 'The Wheel'])
-    })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.purple')
-
-    t.testChoices(request, ['Construction', 'The Wheel'])
-
-    request = t.choose(game, request, 'The Wheel')
-
-    t.testZone(game, 'green', ['The Wheel'])
-  })
 
   test('karma fifth card', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
