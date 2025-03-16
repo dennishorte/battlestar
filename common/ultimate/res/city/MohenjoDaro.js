@@ -6,14 +6,18 @@ function Card() {
   this.color = `purple`
   this.age = 1
   this.expansion = `city`
-  this.biscuits = `sssk+h`
-  this.dogmaBiscuit = `s`
+  this.biscuits = `lllk+h`
+  this.dogmaBiscuit = `l`
   this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = []
 
-  this.dogmaImpl = []
+  this.dogmaImpl = [
+    (game, player) => {
+
+    },
+  ]
   this.echoImpl = []
   this.inspireImpl = []
   this.karmaImpl = []
