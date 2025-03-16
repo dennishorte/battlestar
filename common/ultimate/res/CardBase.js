@@ -194,7 +194,7 @@ CardBase.prototype.getBonuses = function(splay) {
     splay = 'top'
   }
 
-  const rx = /([ab1-9])/g
+  const rx = /([abt1-9])/g
   const matches = this
     .getBiscuits(splay)
     .match(rx)
@@ -204,8 +204,14 @@ CardBase.prototype.getBonuses = function(splay) {
   }
 
   else {
-    return matches
-      .map(bonus => parseInt(bonus, 16))
+    return matches.map(bonus => {
+      if (bonus === 't') {
+        return 12
+      }
+      else {
+        return parseInt(bonus, 16)
+      }
+    })
   }
 }
 
