@@ -1199,12 +1199,12 @@ describe('Innovation', () => {
           yellow: ['Vaccination'],
           blue: ['Rocketry', 'Johannes Kepler'],
           red: ['Flight', 'Athens'],
-          green: ['Sailing'],
           hand: ['Masonry'],
         },
         micah: {
           purple: ['Lighting'],
         },
+        junk: ['Sailing'],
       })
 
     })

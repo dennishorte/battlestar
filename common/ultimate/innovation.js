@@ -1418,13 +1418,13 @@ Innovation.prototype.aEndorse = function(player, color, opts={}) {
     .getTopCards(player)
     .filter(card => card.checkIsCity())
     .filter(card => card.biscuits.includes(featuredBiscuit))
-  const tuckChoices = this
+  const junkChoices = this
     .getZoneByPlayer(player, 'hand')
     .cards()
     .filter(card => cities.some(city => card.getAge() <= city.getAge()))
     .map(card => card.id)
 
-  this.aChooseAndTuck(player, tuckChoices)
+  this.aChooseAndJunk(player, junkChoices)
 
   const card = this.getTopCard(player, color)
   this.aDogmaHelper(player, card, { ...opts, endorsed: true })
