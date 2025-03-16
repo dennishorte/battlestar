@@ -9,7 +9,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `2&hl`
   this.dogmaBiscuit = `l`
-  this.inspire = ``
   this.echo = `Tuck all cards of one present value from your hand.`
   this.karma = []
   this.dogma = [
@@ -47,7 +46,6 @@ function Card() {
       game.aTuckMany(player, toTuck)
     }
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

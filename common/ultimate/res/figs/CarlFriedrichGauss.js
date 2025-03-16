@@ -9,7 +9,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `ss&h`
   this.dogmaBiscuit = `s`
-  this.inspire = ``
   this.echo = `Draw a {7}.`
   this.karma = [
     `If you would meld a card, first choose a value and meld all other cards of that value from your hand and score pile.`
@@ -20,7 +19,6 @@ function Card() {
   this.echoImpl = (game, player) => {
     game.aDraw(player, { age: game.getEffectAge(this, 7) })
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'meld',

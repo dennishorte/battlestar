@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `hs&8`
   this.dogmaBiscuit = `s`
-  this.inspire = ``
   this.echo = `Meld all cards from your hand with a {s} or {i}.`
   this.karma = [
     `You may issue an Advancement Decree with any two figures.`,
@@ -27,7 +26,6 @@ function Card() {
       game.aMeldMany(player, cards)
     }
   ]
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'decree-for-two',

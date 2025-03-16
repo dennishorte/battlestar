@@ -11,7 +11,6 @@ function Card() {
   this.dogmaBiscuit = `i`
   this.isSpecialAchievement = true
   this.isRelic = true
-  this.inspire = ``
   this.echo = ``
   this.karma = [
     // `When you meld this card, transfer an achievement from an opponent's achievements to yours.`,
@@ -23,7 +22,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'when-meld',

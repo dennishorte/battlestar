@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `&5hs`
   this.dogmaBiscuit = `s`
-  this.inspire = ``
   this.echo = `You may splay your color with the most cards right.`
   this.karma = []
   this.dogma = [
@@ -54,7 +53,6 @@ function Card() {
 
     game.aChooseAndSplay(player, choices, 'right')
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

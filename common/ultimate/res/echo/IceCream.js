@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `h8l&`
   this.dogmaBiscuit = `l`
-  this.inspire = ``
   this.echo = `Score a non-purple top card from your board without a bonus.`
   this.karma = []
   this.dogma = [
@@ -47,7 +46,6 @@ function Card() {
       .filter(card => !card.checkHasBonus())
     game.aChooseAndScore(player, choices)
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

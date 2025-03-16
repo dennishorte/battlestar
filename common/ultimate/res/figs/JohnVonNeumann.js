@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `hii&`
   this.dogmaBiscuit = `i`
-  this.inspire = ``
   this.echo = `Draw and reveal two {9}. If either is purple, return them.`
   this.karma = [
     `When you meld this card, return all opponents' top figures.`,
@@ -29,7 +28,6 @@ function Card() {
       game.aReturnMany(player, [card1, card2])
     }
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'when-meld',

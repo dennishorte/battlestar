@@ -9,7 +9,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `hl&a`
   this.dogmaBiscuit = `l`
-  this.inspire = ``
   this.echo = `Score a top card from your board.`
   this.karma = [
     `If you would score a card with a {k}, instead you win.`
@@ -20,7 +19,6 @@ function Card() {
   this.echoImpl = (game, player) => {
     game.aChooseAndScore(player, game.getTopCards(player))
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'score',

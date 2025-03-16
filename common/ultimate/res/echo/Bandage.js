@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `l&hl`
   this.dogmaBiscuit = `l`
-  this.inspire = ``
   this.echo = `Meld a card from hand with a {l}.`
   this.karma = []
   this.dogma = [
@@ -38,7 +37,6 @@ function Card() {
       .filter(card => card.checkHasBiscuit('l'))
     game.aChooseAndMeld(player, choices)
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

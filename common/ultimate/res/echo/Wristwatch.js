@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `hfa&`
   this.dogmaBiscuit = `f`
-  this.inspire = ``
   this.echo = `Take a non-yellow top card from your board and tuck it.`
   this.karma = []
   this.dogma = [
@@ -29,7 +28,6 @@ function Card() {
       .filter(card => card.color !== 'yellow')
     game.aChooseAndTuck(player, choices)
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

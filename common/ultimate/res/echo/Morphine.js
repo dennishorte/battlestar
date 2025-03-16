@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `sh7&`
   this.dogmaBiscuit = `s`
-  this.inspire = ``
   this.echo = `Score an odd-valued card from your hand.`
   this.karma = []
   this.dogma = [
@@ -55,7 +54,6 @@ function Card() {
       .filter(card => card.getAge() % 2 === 1)
     game.aChooseAndScore(player, choices)
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

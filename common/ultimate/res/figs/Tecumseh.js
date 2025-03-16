@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `fh&f`
   this.dogmaBiscuit = `f`
-  this.inspire = ``
   this.echo = `Draw and tuck a {6}.`
   this.karma = [
     `If you would tuck a card with a {f}, first return a top card with a {f} from another player's board.`
@@ -19,7 +18,6 @@ function Card() {
   this.echoImpl = (game, player) => {
     game.aDrawAndTuck(player, game.getEffectAge(this, 6))
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'tuck',

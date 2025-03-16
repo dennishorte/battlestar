@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `hl9&`
   this.dogmaBiscuit = `l`
-  this.inspire = ``
   this.echo = `Draw and meld a card of value less than {0}.`
   this.karma = []
   this.dogma = [
@@ -54,7 +53,6 @@ function Card() {
       game.state.dogmaInfo.karaoke[player.name] = card
     }
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

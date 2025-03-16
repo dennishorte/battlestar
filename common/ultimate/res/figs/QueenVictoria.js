@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `ss&h`
   this.dogmaBiscuit = `s`
-  this.inspire = ``
   this.echo = `Transfer a figure from any score pile to yours.`
   this.karma = [
     `You may issue a Rivalry Decree with any two figures.`,
@@ -25,7 +24,6 @@ function Card() {
       .filter(card => card.checkIsFigure())
     game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'score'))
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'decree-for-two',

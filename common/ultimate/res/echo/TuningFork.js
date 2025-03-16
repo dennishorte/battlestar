@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `&ssh`
   this.dogmaBiscuit = `s`
-  this.inspire = ``
   this.echo = `Look at the top card of any deck, then place it back on top.`
   this.karma = []
   this.dogma = [
@@ -58,7 +57,6 @@ function Card() {
     const card = game.mDraw(player, exp, age)
     game.mMoveCardToTop(card, game.getZoneById(card.home), { player })
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

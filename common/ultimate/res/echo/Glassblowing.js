@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `hcc&`
   this.dogmaBiscuit = `c`
-  this.inspire = ``
   this.echo = `Score a card with a bonus from your hand.`
   this.karma = []
   this.dogma = [
@@ -36,7 +35,6 @@ function Card() {
       .filter(card => card.checkHasBonus())
     game.aChooseAndScore(player, choices)
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

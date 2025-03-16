@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `hll&`
   this.dogmaBiscuit = `l`
-  this.inspire = ``
   this.echo = `Draw a {1}.`
   this.karma = []
   this.dogma = [
@@ -34,7 +33,6 @@ function Card() {
   this.echoImpl = (game, player) => {
     game.aDraw(player, { age: game.getEffectAge(this, 1) })
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

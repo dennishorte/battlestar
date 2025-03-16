@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `&ssh`
   this.dogmaBiscuit = `s`
-  this.inspire = ``
   this.echo = `Splay one color right that you have splayed left.`
   this.karma = [
     `Each color splayed right on your board but not splayed in any direction on any other player's board counts as an achievement.`
@@ -24,7 +23,6 @@ function Card() {
       game.aChooseAndSplay(player, choices, 'right', { count: 1 })
     }
   ]
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'extra-achievements',

@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `&hc3`
   this.dogmaBiscuit = `c`
-  this.inspire = ``
   this.echo = `Draw a {3} or {4}.`
   this.karma = []
   this.dogma = [
@@ -50,7 +49,6 @@ function Card() {
 
     game.state.dogmaInfo.charitableTrust[player.name].push(card)
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

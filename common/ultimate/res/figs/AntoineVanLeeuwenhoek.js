@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `&shs`
   this.dogmaBiscuit = `s`
-  this.inspire = ``
   this.echo = `Draw a {6}.`
   this.karma = [
     `Each card in hand counts as ten points towards the cost of claiming an achievement of that card's value.`
@@ -19,7 +18,6 @@ function Card() {
   this.echoImpl = (game, player) => {
     game.aDraw(player, { age: 6 })
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'achievement-cost-discount',

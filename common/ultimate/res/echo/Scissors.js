@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `&h2k`
   this.dogmaBiscuit = `k`
-  this.inspire = ``
   this.echo = `Take a bottom card from your board into your hand.`
   this.karma = []
   this.dogma = [
@@ -70,7 +69,6 @@ function Card() {
       game.mMoveCardTo(card, game.getZoneByPlayer(player, 'hand'), { player })
     }
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

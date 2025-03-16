@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `&hll`
   this.dogmaBiscuit = `l`
-  this.inspire = ``
   this.echo = `Transfer a top card with a {l} from anywhere to any player's board.`
   this.karma = [
     `You may issue a War Decree with any two figures.`,
@@ -30,7 +29,6 @@ function Card() {
       game.aTransfer(player, card, target)
     }
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'decree-for-two',

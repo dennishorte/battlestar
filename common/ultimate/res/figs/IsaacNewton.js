@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `hs&s`
   this.dogmaBiscuit = `s`
-  this.inspire = ``
   this.echo = `Splay one color of your cards right.`
   this.karma = [
     `If you would take a Draw or Inspire action, first draw and reveal a {1} and transfer it to any player's board.`
@@ -19,7 +18,6 @@ function Card() {
   this.echoImpl = (game, player) => {
     game.aChooseAndSplay(player, null, 'right')
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: ['draw-action', 'inspire'],

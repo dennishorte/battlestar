@@ -9,7 +9,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `hai&`
   this.dogmaBiscuit = `i`
-  this.inspire = ``
   this.echo = `Draw and reveal a {0}. If it does not have a {i}, score it.`
   this.karma = [
     `If you would take a Dogma action and activate a card whose featured biscuit is {i}, first if you have exactly one, three, or six {i} on your board, you win.`
@@ -29,7 +28,6 @@ function Card() {
       })
     }
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'dogma',

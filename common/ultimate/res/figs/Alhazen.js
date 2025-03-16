@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `ss&h`
   this.dogmaBiscuit = `s`
-  this.inspire = ``
   this.echo = `Tuck a top card with a {k} from anywhere.`
   this.karma = [
     `Each of your splayed colors counts as having a top card of value equal to the number of {s} or {k} in that color (whichever is higher) for the purpose of taking a Draw or Inspire action.`
@@ -26,7 +25,6 @@ function Card() {
       game.aChooseAndTuck(player, topCardsWithCastles)
     }
   ]
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'top-card-value',

@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `i&ih`
   this.dogmaBiscuit = `i`
-  this.inspire = ``
   this.echo = `You may splay one color of your cards up.`
   this.karma = [
     `You may issue a Trade Decree with any two figures.`,
@@ -20,7 +19,6 @@ function Card() {
   this.echoImpl = (game, player) => {
     game.aChooseAndSplay(player, null, 'up')
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'decree-for-two',

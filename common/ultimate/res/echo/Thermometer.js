@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `h&5s`
   this.dogmaBiscuit = `s`
-  this.inspire = ``
   this.echo = `Meld your bottom green card. Maintain its splay.`
   this.karma = []
   this.dogma = [
@@ -41,7 +40,6 @@ function Card() {
       game.getZoneByPlayer(player, 'green').splay = splay
     }
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `ff&h`
   this.dogmaBiscuit = `f`
-  this.inspire = ``
   this.echo = `If you have five top cards, draw and score a {7}.`
   this.karma = []
   this.dogma = [
@@ -44,7 +43,6 @@ function Card() {
       game.mLogNoEffect()
     }
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

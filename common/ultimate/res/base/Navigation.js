@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `base`
   this.biscuits = `hccc`
   this.dogmaBiscuit = `c`
-  this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = [
@@ -24,7 +23,6 @@ function Card() {
     }
   ]
   this.echoImpl = []
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

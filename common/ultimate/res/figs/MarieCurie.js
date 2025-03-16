@@ -9,7 +9,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `f&hf`
   this.dogmaBiscuit = `f`
-  this.inspire = ``
   this.echo = `Draw a {9}.`
   this.karma = [
     `Each different value present in your score pile above 6 counts as an achievement.`
@@ -20,7 +19,6 @@ function Card() {
   this.echoImpl = (game, player) => {
     game.aDraw(player, { age: game.getEffectAge(this, 9) })
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'extra-achievements',

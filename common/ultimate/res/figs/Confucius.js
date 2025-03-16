@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `hl&3`
   this.dogmaBiscuit = `l`
-  this.inspire = ``
   this.echo = `Score an opponent's top figure of value 1.`
   this.karma = [
     `If you would take a Dogma action and activate a card with a {k} as a featured icon, instead choose any other icon on your board as the featured icon.`
@@ -24,7 +23,6 @@ function Card() {
       .filter(card => card.getAge() === 1)
     game.aChooseAndScore(player, choices)
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'featured-biscuit',

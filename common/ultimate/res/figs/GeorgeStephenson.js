@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `7&fh`
   this.dogmaBiscuit = `f`
-  this.inspire = ``
   this.echo = `You may splay up a color you have splayed right.`
   this.karma = [
     `If you would claim an achievement, first transfer the bottom card from each non-empty age below 10 to the available achievements.`
@@ -22,7 +21,6 @@ function Card() {
       .filter(color => game.getZoneByPlayer(player, color).splay === 'right')
     game.aChooseAndSplay(player, rightColors, 'up')
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'achieve',

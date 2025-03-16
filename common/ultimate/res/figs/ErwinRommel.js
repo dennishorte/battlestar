@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `fhf&`
   this.dogmaBiscuit = `f`
-  this.inspire = ``
   this.echo = `Transfer a card from any score pile to yours.`
   this.karma = [
     `You may issue a War Decree with any two figures.`,
@@ -24,7 +23,6 @@ function Card() {
       .flatMap(player => game.getCardsByZone(player, 'score'))
     game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'score'), { hidden: true })
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'decree-for-two',

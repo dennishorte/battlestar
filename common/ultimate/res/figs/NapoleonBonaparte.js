@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `h6f&`
   this.dogmaBiscuit = `f`
-  this.inspire = ``
   this.echo = `Score a top figure of value 5 or 6 from anywhere.`
   this.karma = [
     `You may issue a War Decree with any two figures.`,
@@ -24,7 +23,6 @@ function Card() {
       .filter(card => card.getAge() === 5 || card.getAge() === 6)
     game.aChooseAndScore(player, choices)
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'decree-for-two',

@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `&ffh`
   this.dogmaBiscuit = `f`
-  this.inspire = ``
   this.echo = `Transfer one of your top cards to the available achievements.`
   this.karma = [
     `You may issue a War Decree with any two figures.`,
@@ -20,7 +19,6 @@ function Card() {
   this.echoImpl = (game, player) => {
     game.aChooseAndTransfer(player, game.getTopCards(player), game.getZoneById('achievements'))
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'decree-for-two',

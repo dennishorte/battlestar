@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `&2hk`
   this.dogmaBiscuit = `k`
-  this.inspire = ``
   this.echo = `Score a bottom card from your board.`
   this.karma = []
   this.dogma = [
@@ -25,7 +24,6 @@ function Card() {
       .filter(card => card !== undefined)
     game.aChooseAndScore(player, choices)
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

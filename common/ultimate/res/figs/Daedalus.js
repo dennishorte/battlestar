@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `&hkk`
   this.dogmaBiscuit = `k`
-  this.inspire = ``
   this.echo = `Draw and foreshadow a {4}.`
   this.karma = [
     `Each card in your forecast adds one to the value of your highest top card for the purpose of claiming achievements.`,
@@ -20,7 +19,6 @@ function Card() {
   this.echoImpl = (game, player) => {
     game.aDrawAndForeshadow(player, game.getEffectAge(this, 4))
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'calculate-eligibility',

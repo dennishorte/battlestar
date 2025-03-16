@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `h6f&`
   this.dogmaBiscuit = `f`
-  this.inspire = ``
   this.echo = `Score a top card from your board without a {f}.`
   this.karma = []
   this.dogma = [
@@ -37,7 +36,6 @@ function Card() {
       .filter(card => !card.checkHasBiscuit('f'))
     game.aChooseAndScore(player, choices)
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

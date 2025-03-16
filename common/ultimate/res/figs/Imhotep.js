@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `khk&`
   this.dogmaBiscuit = `k`
-  this.inspire = ``
   this.echo = `Draw and meld a {2}.`
   this.karma = [
     `If you would meld a card over an unsplayed color with more than one card, instead splay that color left and return the card.`
@@ -19,7 +18,6 @@ function Card() {
   this.echoImpl = (game, player) => {
     game.aDrawAndMeld(player, game.getEffectAge(this, 2))
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'meld',

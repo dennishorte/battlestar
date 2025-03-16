@@ -12,7 +12,6 @@ function Card() {
   this.isSpecialAchievement = true
   this.isRelic = true
   this.isCity = true
-  this.inspire = ``
   this.echo = ``
   this.karma = []
   this.dogma = []
@@ -20,7 +19,6 @@ function Card() {
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

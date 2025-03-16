@@ -9,7 +9,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `f6h&`
   this.dogmaBiscuit = `f`
-  this.inspire = ``
   this.echo = `Score your lowest top card.`
   this.karma = []
   this.dogma = [
@@ -73,7 +72,6 @@ function Card() {
     const choices = game.utilLowestCards(game.getTopCards(player))
     game.aChooseAndScore(player, choices)
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

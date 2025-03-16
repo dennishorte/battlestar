@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `l&2h`
   this.dogmaBiscuit = `l`
-  this.inspire = ``
   this.echo = `Draw and tuck a {3}. Score all cards above it.`
   this.karma = [
     `Each card in your score pile counts as a bonus of its value on your board.`
@@ -27,7 +26,6 @@ function Card() {
       game.aScoreMany(player, toScore, { ordered: true })
     }
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'list-bonuses',

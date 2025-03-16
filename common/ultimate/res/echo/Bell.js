@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `kmk&`
   this.dogmaBiscuit = `k`
-  this.inspire = ``
   this.echo = `You may score a card from your hand.`
   this.karma = []
   this.dogma = [
@@ -23,7 +22,6 @@ function Card() {
   this.echoImpl = (game, player) => {
     game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

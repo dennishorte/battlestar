@@ -9,7 +9,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `7&ih`
   this.dogmaBiscuit = `i`
-  this.inspire = ``
   this.echo = `Score your top or bottom green card.`
   this.karma = []
   this.dogma = [
@@ -71,7 +70,6 @@ function Card() {
       }
     }
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

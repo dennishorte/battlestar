@@ -9,14 +9,12 @@ function Card() {
   this.expansion = `arti`
   this.biscuits = `_h__`
   this.dogmaBiscuit = `s`
-  this.inspire = ``
   this.echo = ``
   this.karma = ['This card counts as an age 11 card when on your board.']
   this.dogma = []
 
   this.dogmaImpl = []
   this.echoImpl = []
-  this.inspireImpl = []
   this.karmaImpl = [
     {}  // empty karma for the reminder text in the karma field
   ]

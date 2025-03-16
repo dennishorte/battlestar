@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `&cch`
   this.dogmaBiscuit = `c`
-  this.inspire = ``
   this.echo = `You may splay one color of your cards left.`
   this.karma = [
     `If you would claim an achievement, first draw and foreshadow a {3}.`,
@@ -22,7 +21,6 @@ function Card() {
       game.aChooseAndSplay(player, null, 'left')
     }
   ]
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'achieve',

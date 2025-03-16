@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `4hf&`
   this.dogmaBiscuit = `f`
-  this.inspire = ``
   this.echo = `Score a top card with a {k} from anywhere.`
   this.karma = [
     `If you would score a card of a color you have splayed, instead tuck it, then draw a {3}.`
@@ -22,7 +21,6 @@ function Card() {
       .filter(card => card.checkHasBiscuit('k'))
     game.aChooseAndScore(player, choices)
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'score',

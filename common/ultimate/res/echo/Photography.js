@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `&sh7`
   this.dogmaBiscuit = `s`
-  this.inspire = ``
   this.echo = `Meld a card from your forecast.`
   this.karma = []
   this.dogma = [
@@ -52,7 +51,6 @@ function Card() {
   this.echoImpl = (game, player) => {
     game.aChooseAndMeld(player, game.getCardsByZone(player, 'forecast'))
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

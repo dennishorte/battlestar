@@ -11,7 +11,6 @@ function Card() {
   this.dogmaBiscuit = `l`
   this.isSpecialAchievement = true
   this.isRelic = true
-  this.inspire = ``
   this.echo = `Draw and score a {7}.`
   this.karma = []
   this.dogma = [
@@ -33,7 +32,6 @@ function Card() {
       game.aDrawAndScore(player, game.getEffectAge(this, 7))
     }
   ]
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

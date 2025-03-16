@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `ff&h`
   this.dogmaBiscuit = `f`
-  this.inspire = ``
   this.echo = `Score a top card with a {f} or {c}.`
   this.karma = [
     `If you would take a Dogma action, first score any top card with a {c} or {f} from anywhere.`
@@ -23,7 +22,6 @@ function Card() {
       .filter(card => card.biscuits.includes('f') || card.biscuits.includes('c'))
     game.aChooseAndScore(player, choices)
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'dogma',

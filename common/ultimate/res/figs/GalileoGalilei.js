@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `hcc&`
   this.dogmaBiscuit = `c`
-  this.inspire = ``
   this.echo = `Draw and foreshadow a {5} or {6}.`
   this.karma = [
     `If you would foreshadow a card of value not present in your forecast, first transfer all cards from your forecast into your hand.`
@@ -23,7 +22,6 @@ function Card() {
     ])
     game.aDrawAndForeshadow(player, age)
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'foreshadow',

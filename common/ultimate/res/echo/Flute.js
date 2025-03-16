@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `1mc&`
   this.dogmaBiscuit = `c`
-  this.inspire = ``
   this.echo = `You may splay one color of your cards left.`
   this.karma = []
   this.dogma = [
@@ -34,7 +33,6 @@ function Card() {
   this.echoImpl = (game, player) => {
     game.aChooseAndSplay(player, null, 'left')
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

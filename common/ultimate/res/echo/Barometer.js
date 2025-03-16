@@ -9,7 +9,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `l&lh`
   this.dogmaBiscuit = `l`
-  this.inspire = ``
   this.echo = `Transfer a {5} from your forecast to your hand.`
   this.karma = []
   this.dogma = [
@@ -47,7 +46,6 @@ function Card() {
       .filter(card => card.getAge() === 5)
     game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'hand'))
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

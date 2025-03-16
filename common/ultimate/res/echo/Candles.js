@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `&1hs`
   this.dogmaBiscuit = `s`
-  this.inspire = ``
   this.echo = `If every other player has a higher score than you, draw a {3}.`
   this.karma = []
   this.dogma = [
@@ -38,7 +37,6 @@ function Card() {
       game.aDraw(player, { age: game.getEffectAge(this, 3) })
     }
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

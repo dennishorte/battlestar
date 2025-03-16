@@ -9,7 +9,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `ch&9`
   this.dogmaBiscuit = `c`
-  this.inspire = ``
   this.echo = `Draw and score a card of any value.`
   this.karma = []
   this.dogma = [
@@ -49,7 +48,6 @@ function Card() {
     const age = game.aChooseAge(player)
     game.aDrawAndScore(player, age)
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

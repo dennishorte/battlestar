@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `h&kk`
   this.dogmaBiscuit = `k`
-  this.inspire = ``
   this.echo = `Score a top red card of value less than 4 from anywhere.`
   this.karma = [
     `Each two {k} on your board provides one additional icon of every other type on your board.`
@@ -23,7 +22,6 @@ function Card() {
       .filter(card => card.color === 'red')
     game.aChooseAndScore(player, choices)
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'calculate-biscuits',

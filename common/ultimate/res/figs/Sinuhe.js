@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `&llh`
   this.dogmaBiscuit = `l`
-  this.inspire = ``
   this.echo = `Draw and foreshadow a {2} or {3}.`
   this.karma = [
     `You may issue a Rivaly Decree with any two figures.`,
@@ -23,7 +22,6 @@ function Card() {
       game.aDrawAndForeshadow(player, age)
     }
   ]
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'decree-for-two',

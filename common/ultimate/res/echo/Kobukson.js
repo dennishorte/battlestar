@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `5fh&`
   this.dogmaBiscuit = `f`
-  this.inspire = ``
   this.echo = `Splay left one color on any player's board.`
   this.karma = []
   this.dogma = [
@@ -58,7 +57,6 @@ function Card() {
       game.aSplay(player, color, 'left', { owner: target })
     }
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

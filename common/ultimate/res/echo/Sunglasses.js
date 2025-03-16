@@ -9,7 +9,6 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `h3&k`
   this.dogmaBiscuit = `k`
-  this.inspire = ``
   this.echo = `Score a card from your hand of a color you have splayed.`
   this.karma = []
   this.dogma = [
@@ -63,7 +62,6 @@ function Card() {
       .filter(card => splayedColors.includes(card.color))
     game.aChooseAndScore(player, choices)
   }
-  this.inspireImpl = []
   this.karmaImpl = []
 }
 

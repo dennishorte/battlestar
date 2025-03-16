@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `&5hl`
   this.dogmaBiscuit = `l`
-  this.inspire = ``
   this.echo = `Score a top figure with a bonus from anywhere.`
   this.karma = [
     `If you would meld a yellow card, first meld every non-yellow, non-purple card in your hand.`,
@@ -25,7 +24,6 @@ function Card() {
       .filter(card => card.checkHasBonus())
     game.aChooseAndScore(player, choices)
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'meld',

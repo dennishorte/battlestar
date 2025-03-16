@@ -8,7 +8,6 @@ function Card() {
   this.expansion = `figs`
   this.biscuits = `fha&`
   this.dogmaBiscuit = `f`
-  this.inspire = ``
   this.echo = `Draw and meld a {0}.`
   this.karma = [
     `If you would meld a figure, instead tuck the figure and claim a standard achievement, regardless of eligibility.`
@@ -19,7 +18,6 @@ function Card() {
   this.echoImpl = (game, player) => {
     game.aDrawAndMeld(player, game.getEffectAge(this, 10))
   }
-  this.inspireImpl = []
   this.karmaImpl = [
     {
       trigger: 'meld',
