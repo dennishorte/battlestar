@@ -327,7 +327,7 @@ describe('Innovation', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
       t.setBoard(game, {
         dennis: {
-          purple: ['Brussels'],
+          yellow: ['Nairobi'],
         },
       })
 
@@ -341,8 +341,8 @@ describe('Innovation', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
       t.setBoard(game, {
         dennis: {
-          red: {
-            cards: ['Archery', 'Brussels'],
+          yellow: {
+            cards: ['Agriculture', 'Nairobi'],
             splay: 'up'
           }
         },
@@ -501,7 +501,7 @@ describe('Innovation', () => {
       game.testSetBreakpoint('before-first-player', (game) => {
         const toExile = game.getZoneByDeck('base', 3).cards().slice(2)
         for (const card of toExile) {
-          game.mRemove(t.dennis(game), card)
+          game.mRemove(card)
         }
       })
 
