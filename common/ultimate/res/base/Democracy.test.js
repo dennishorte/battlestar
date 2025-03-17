@@ -76,7 +76,6 @@ describe('Democracy', () => {
       dennis: {
         blue: ['Edinburgh'],
         purple: ['Democracy'],
-        green: ['Sailing'],
         hand: ['Canning'],
         score: ['Mobility', 'Rocketry'],
       },
@@ -84,7 +83,8 @@ describe('Democracy', () => {
         blue: ['Tools'],
         purple: ['Vienna'],
         score: ['Flight'],
-      }
+      },
+      junk: ['Sailing'],
     })
   })
 
