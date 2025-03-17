@@ -2,7 +2,7 @@ Error.stackTraceLimit = 100
 
 const t = require('../../../testutil.js')
 
-describe('Legendary achievement', () => {
+describe('Tradition achievement', () => {
   test('on a color splayed left', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
     t.setBoard(game, {
@@ -26,7 +26,7 @@ describe('Legendary achievement', () => {
           cards: ['Beijing', 'Canning', 'Masonry'],
           splay: 'left'
         },
-        achievements: ['Legendary'],
+        achievements: ['Tradition'],
       }
     })
   })
@@ -72,7 +72,7 @@ describe('Legendary achievement', () => {
         hand: ['Beijing'],
       },
       micah: {
-        achievements: ['Legendary'],
+        achievements: ['Tradition'],
       },
     })
 
@@ -89,7 +89,7 @@ describe('Legendary achievement', () => {
         },
       },
       micah: {
-        achievements: ['Legendary'],
+        achievements: ['Tradition'],
       }
     })
   })

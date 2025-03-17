@@ -1578,9 +1578,9 @@ Innovation.prototype._checkCityMeldAchievements = function(player, card) {
   if (
     card.checkHasBiscuit('<')
     && this.getZoneByPlayer(player, card.color).splay === 'left'
-    && this.getCardByName('Legendary').zone === 'achievements'
+    && this.getCardByName('Tradition').zone === 'achievements'
   ) {
-    this.aClaimAchievement(player, { name: 'Legendary' })
+    this.aClaimAchievement(player, { name: 'Tradition' })
   }
 
   if (
