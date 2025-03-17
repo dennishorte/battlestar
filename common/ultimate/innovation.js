@@ -1648,6 +1648,11 @@ Innovation.prototype._checkCanSeizeRelic = function(card) {
 }
 
 Innovation.prototype.aJunk = function(player, card, opts={}) {
+  this.mLog({
+    template: '{player} junks {card}',
+    args: { player, card }
+  })
+
   this.aRemove(player, card, opts)
   this._checkCityJunkAchievements(player, card)
 }
