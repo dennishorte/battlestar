@@ -8,30 +8,61 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `hk&1`
   this.dogmaBiscuit = `k`
-  this.echo = [`Tuck a red card from your hand.`]
+  this.echo = [`Tuck a {1} from your hand.`]
   this.karma = []
   this.dogma = [
-    `Draw and foreshadow a {2}.`
+    `Choose to either draw and foreshadow a {2} or tuck a {2} from your forecast.`,
+    `If you have no cards in your forecast, draw and foreshadow a {3}`,
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      game.aDrawAndForeshadow(player, game.getEffectAge(this, 2))
-    }
+      const choices = ['Draw and foreshadow']
+
+      const forecast = game
+        .getCardsByZone(player, 'forecast')
+        .filter(card => card.getAge() === game.getEffectAge(this, 2))
+
+      if (forecast) {
+        choices.push({
+          title: 'Tuck from forecast',
+          options: forecast,
+          min: 0,
+        })
+      }
+
+      const choice = game.aChoose(player, choices)[0]
+
+      if (choice === choices[0]) {
+        game.aDrawAndForeshadow(player, game.getEffectAge(this, 2))
+      }
+      else {
+        const card = game.getCardByName(choice.selection[0])
+        game.aTuck(player, card)
+      }
+    },
+
+    (game, player) => {
+      const count = game
+        .getCardsByZone(player, 'forecast')
+        .length
+
+      if (count === 0) {
+        game.aDrawAndForeshadow(player, game.getEffectAge(this, 3))
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    },
   ]
   this.echoImpl = [
     (game, player) => {
-      const redCards = game
+      const cards = game
         .getZoneByPlayer(player, 'hand')
         .cards()
-        .filter(card => card.color === 'red')
-        .map(c => c.id)
+        .filter(card => card.getAge() === game.getEffectAge(this, 1))
 
-      const card = game.aChooseCard(player, redCards)
-
-      if (card) {
-        game.aTuck(player, card)
-      }
+      game.aChooseAndTuck(player, cards)
     }
   ]
   this.karmaImpl = []
