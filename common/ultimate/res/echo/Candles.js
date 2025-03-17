@@ -8,17 +8,21 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `&1hs`
   this.dogmaBiscuit = `s`
-  this.echo = `If every other player has a higher score than you, draw a {3}.`
+  this.echo = `If no player has fewer points than you, draw a {3}.`
   this.karma = []
   this.dogma = [
-    `I demand you transfer a card with a {k} from your hand to my hand! If you do, draw a {1}!`
+    `I demand you transfer a card with {k} or {s} from your hand to my hand! If you do, draw a {1}!`
   ]
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
+      const valid = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => card.checkHasBiscuit('k') || card.checkHasBiscuit('s'))
+
       const transferred = game.aChooseAndTransfer(
         player,
-        game.getCardsByZone(player, 'hand').filter(card => card.checkHasBiscuit('k')),
+        valid,
         game.getZoneByPlayer(leader, 'hand')
       )
       if (transferred && transferred.length > 0) {
@@ -32,7 +36,8 @@ function Card() {
       .getPlayerAll()
       .filter(other => other !== player)
       .map(other => game.getScore(other))
-    const isLowest = otherScores.every(score => score > playerScore)
+
+    const isLowest = otherScores.every(score => score >= playerScore)
     if (isLowest) {
       game.aDraw(player, { age: game.getEffectAge(this, 3) })
     }

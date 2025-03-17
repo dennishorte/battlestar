@@ -8,6 +8,7 @@ describe("Candles", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
+        green: ['The Wheel'],
         red: ['Candles'],
       },
       micah: {
@@ -16,11 +17,9 @@ describe("Candles", () => {
       },
       decks: {
         base: {
+          1: ['Metalworking'],
           3: ['Machinery'],
         },
-        echo: {
-          1: ['Noodles'],
-        }
       },
     })
 
@@ -31,11 +30,12 @@ describe("Candles", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        green: ['The Wheel'],
         red: ['Candles'],
         hand: ['Machinery', 'Masonry'],
       },
       micah: {
-        hand: ['Sailing', 'Noodles'],
+        hand: ['Sailing', 'Metalworking'],
         score: ['Software'],
       },
     })
@@ -45,11 +45,12 @@ describe("Candles", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
+        green: ['The Wheel'],
         red: ['Candles'],
       },
       micah: {
         hand: ['Sailing'],
-        score: ['Software'],
+        score: ['Bangle'],
       },
       decks: {
         base: {
@@ -65,12 +66,13 @@ describe("Candles", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        green: ['The Wheel'],
         red: ['Candles'],
         hand: ['Machinery'],
       },
       micah: {
         hand: ['Sailing'],
-        score: ['Software'],
+        score: ['Bangle'],
       },
     })
   })
