@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `Plumbing`  // Card names are unique in Innovation
@@ -8,21 +9,23 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `&2hk`
   this.dogmaBiscuit = `k`
-  this.echo = `Score a bottom card from your board.`
+  this.echo = `Score the bottom blue card from your board.`
   this.karma = []
   this.dogma = [
-    `No effect.`
+    `Junk all cards in the 1 deck.`
   ]
 
   this.dogmaImpl = [
-    (game, player) => {}
+    (game, player) => game.aJunkDeck(player, 1)
   ]
   this.echoImpl = (game, player) => {
-    const choices = game
-      .utilColors()
-      .map(color => game.getBottomCard(player, color))
-      .filter(card => card !== undefined)
-    game.aChooseAndScore(player, choices)
+    const card = util.array.last(game.getCardsByZone(player, 'blue'))
+    if (card) {
+      game.aScore(player, card)
+    }
+    else {
+      game.mLogNoEffect()
+    }
   }
   this.karmaImpl = []
 }
