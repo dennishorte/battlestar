@@ -30,10 +30,6 @@ function Card() {
       })[0]
 
       if (safeguarded) {
-        game.mLog({
-          template: '{player} safeguards {card}',
-          args: { player, card: safeguarded }
-        })
         game.aScore(player, drawnCard)
       }
       else {
