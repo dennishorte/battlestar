@@ -5,10 +5,6 @@
       <CardBiscuit :biscuit="'&'" />
       <CardText :text="effect" />
     </div>
-    <div v-for="(effect, index) in visibleInspireEffects" :key="index" class="card-effect">
-      <CardBiscuit :biscuit="'*'" />
-      <CardText :text="effect" />
-    </div>
 
   </div>
 </template>
@@ -47,15 +43,6 @@ export default {
       }
     },
 
-    visibleInspireEffects() {
-      const effects = this.game.getVisibleEffects(this.card, 'inspire')
-      if (effects) {
-        return effects.texts
-      }
-      else {
-        return []
-      }
-    },
   },
 }
 </script>

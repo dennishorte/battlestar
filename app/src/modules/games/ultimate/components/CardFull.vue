@@ -84,7 +84,6 @@ export default {
     effects() {
       const above = []
         .concat(util.getAsArray(this.card, 'echo'))
-        .concat(util.getAsArray(this.card, 'inspire'))
         .filter(line => !!line)
 
       const below = []

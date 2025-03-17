@@ -85,10 +85,6 @@ export default {
         base.push('inline-image')
       }
 
-      if (this.biscuit === '*') {
-        base.push('inspire-biscuit')
-      }
-
       if (this.slot === 1 && this.biscuit && 'cfikls'.indexOf(this.biscuit) !== -1) {
         base.push('discover-biscuit')
       }
@@ -152,11 +148,6 @@ export default {
   color: white;
   display: inline-block;
   text-align: center;
-}
-
-.inspire-biscuit {
-  border: 1px solid darkgray;
-  border-radius: 50%;
 }
 
 .discover-biscuit {
