@@ -1898,12 +1898,13 @@ Innovation.prototype.aSafeguard = function(player, card, opts={}) {
     return
   }
 
+  const zone = this.getZoneByCard(card)
+
   this.mLog({
     template: '{player} safeguards {card} from {zone}',
     args: { player, card, zone },
   })
 
-  const zone = this.getZoneByCard(card)
   this.mMoveCardTo(card, safeZone)
   this.mActed(player)
   return card
