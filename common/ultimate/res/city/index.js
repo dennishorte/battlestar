@@ -119,7 +119,7 @@ const cardData = [
 const achievementData = [
   require('./achievements/Fame.js'),
   require('./achievements/Glory.js'),
-  require('./achievements/Legend.js'),
+  require('./achievements/Legendary.js'),
   require('./achievements/Repute.js'),
   require('./achievements/Victory.js'),
 ]

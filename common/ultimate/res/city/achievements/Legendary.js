@@ -1,8 +1,8 @@
 const CardBase = require(`../../CardBase.js`)
 
 function Card() {
-  this.id = 'Legend'
-  this.name = 'Legend'
+  this.id = 'Legendary'
+  this.name = 'Legendary'
   this.shortName = 'lgnd'
   this.expansion = 'city'
   this.text = 'Claim this achievement immediately if you meld a city with a {<} on a color already splayed left.'
