@@ -13,6 +13,9 @@ function Card() {
     delete biscuits['p']
     const targetCount = reduceCost ? 2 : 3
     const targetBiscuitCount = reduceCost ? 5 : 6
+
+    delete biscuits.p
+
     const numMatches = Object.values(biscuits).filter(count => count >= targetCount).length
     return numMatches >= targetBiscuitCount
   }
