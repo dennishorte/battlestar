@@ -11,8 +11,8 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `If you have more {1} in your hand than every other player, draw and score a {2}.`,
-    `Draw and reveal a {1}. If it is yellow, score all {1}s from your hand.`
+    `If you have more {1} in your hand than every opponent, draw and score a {2}.`,
+    `Draw and reveal a {1}. If it is yellow, score all {1} from your hand.`
   ]
 
   this.dogmaImpl = [
@@ -22,8 +22,7 @@ function Card() {
         .filter(card => card.getAge() === game.getEffectAge(this, 1))
         .length
       const theirs = game
-        .getPlayerAll()
-        .filter(other => other !== player)
+        .getPlayerOpponents(player)
         .map(player => game
           .getCardsByZone(player, 'hand')
           .filter(card => card.getAge() === game.getEffectAge(this, 1))
