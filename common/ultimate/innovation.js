@@ -1398,7 +1398,9 @@ Innovation.prototype.aEndorse = function(player, color, opts={}) {
     .filter(card => cities.some(city => card.getAge() <= city.getAge()))
     .map(card => card.id)
 
-  this.aChooseAndJunk(player, junkChoices)
+  this.aChooseAndJunk(player, junkChoices, {
+    title: 'Junk a card to endorse'
+  })
 
   const card = this.getTopCard(player, color)
   this.aDogmaHelper(player, card, { ...opts, endorsed: true })
