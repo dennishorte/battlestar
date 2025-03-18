@@ -503,6 +503,7 @@ Innovation.prototype.aOneEffect = function(
     demanding: [],
     leader: player,
     endorsed: false,
+    foreseen: false,
   }, opts)
 
   const repeatCount = opts.endorsed ? 2 : 1
@@ -565,6 +566,7 @@ Innovation.prototype.aOneEffect = function(
         const result = this.aCardEffect(actor, effectInfo, {
           leader: opts.leader,
           self: card,
+          foreseen: opts.foreseen,
         })
 
         if (demand || compel) {
