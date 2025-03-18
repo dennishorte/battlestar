@@ -8,30 +8,25 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `hll&`
   this.dogmaBiscuit = `l`
-  this.echo = `Draw a {1}.`
+  this.echo = `You may draw and foreshadow a {1}.`
   this.karma = []
   this.dogma = [
-    `If the {1} deck has at least one card, you may transfer its bottom card to the available achievements.`
+    `You may junk all cards in the {1} deck. If you do, achieve the highest card in the junk, if eligible.`,
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const age = game.getEffectAge(this, 1)
-      const deck = game.getZoneByDeck('base', age).cards()
-      if (deck.length > 0) {
-        const addAchievement = game.aYesNo(player, `Transfer the bottom card of the {${age}} deck to the available achievements?`)
-        if (addAchievement) {
-          const card = deck[deck.length - 1]
-          game.aTransfer(player, card, game.getZoneById('achievements'))
-        }
-      }
-      else {
-        game.mLogNoEffect()
+      const junked = game.aJunkDeck(player, 1, { optional: true })
+      if (junked) {
+        const choices = game
+          .utilHighestCards(game.getZoneById('junk').cards())
+          .filter(card => game.checkAchievementEligibility(player, card))
+        game.aChooseAndAchieve(player, choices, { count: 1 })
       }
     }
   ]
   this.echoImpl = (game, player) => {
-    game.aDraw(player, { age: game.getEffectAge(this, 1) })
+    game.aDrawAndForeshadow(player, game.getEffectAge(this, 1), { optional: true })
   }
   this.karmaImpl = []
 }

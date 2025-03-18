@@ -4,73 +4,65 @@ const t = require('../../testutil.js')
 
 describe("Chopsticks", () => {
 
-  test('dogma', () => {
+  test('dogma: not eligible', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
         yellow: ['Chopsticks'],
       },
       decks: {
-        base: {
-          1: ['Tools'],
+        echo: {
+          1: ['Bangle'],
         },
       },
-      achievements: [],
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Chopsticks')
     request = t.choose(game, request, 'yes')
+    request = t.choose(game, request, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Chopsticks'],
-        hand: ['Tools'],
+        forecast: ['Bangle'],
       },
     })
-
-    const ageOneAchievements = game
-      .getZoneById('achievements')
-      .cards()
-      .filter(card => card.getAge() === 1)
-      .length
-    expect(ageOneAchievements).toBe(1)
   })
 
-  test('dogma: do not do extra achievement', () => {
+  test('dogma: eligible', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
+        red: ['Construction'],
         yellow: ['Chopsticks'],
+        score: ['Software'],
       },
       decks: {
-        base: {
-          1: ['Tools'],
+        echo: {
+          1: ['Bangle'],
         },
       },
-      achievements: [],
+      junk: ['Fermenting'],
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Chopsticks')
-    request = t.choose(game, request, 'no')
+    request = t.choose(game, request, 'yes')
+    request = t.choose(game, request, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        red: ['Construction'],
         yellow: ['Chopsticks'],
-        hand: ['Tools'],
+        score: ['Software'],
+        forecast: ['Bangle'],
+        achievements: ['Fermenting'],
       },
     })
-
-    const ageOneAchievements = game
-      .getZoneById('achievements')
-      .cards()
-      .filter(card => card.getAge() === 1)
-      .length
-    expect(ageOneAchievements).toBe(0)
   })
 })
