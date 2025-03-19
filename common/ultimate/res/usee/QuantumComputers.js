@@ -12,7 +12,8 @@ function Card() {
   this.karma = []
   this.dogma = [
     `I demand you flip a coin! If you lose the flip, you lose!`,
-    `Flip a coin. If you win the flip, this effect is complete. If you lose the flip, return one of your secrets. If you don't, you lose. Otherwise, repeat this effect.`
+    // `Flip a coin. If you win the flip, this effect is complete. If you lose the flip, return one of your secrets. If you don't, you lose. Otherwise, repeat this effect.`
+    `Flip a coin until you win the flip. Each time you lose a flip during this effect, return a secret or lose the game.`
   ]
 
   this.dogmaImpl = [
