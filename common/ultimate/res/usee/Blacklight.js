@@ -26,15 +26,17 @@ function Card() {
       if (unsplayChoices.length > 0) {
         choices.push({
           title: 'Unsplay',
-          options: unsplayChoices,
+          choices: unsplayChoices,
           min: 0,
+          max: 1,
         })
       }
       if (splayChoices.length > 0) {
         choices.push({
           title: 'Splay up and draw',
-          options: splayChoices,
+          choices: splayChoices,
           min: 0,
+          max: 1,
         })
       }
 
