@@ -24,6 +24,7 @@ function Card() {
 
       if (achievement) {
         game.aClaimAchievement(player, achievement)
+        game.mReveal(player, achievement)
         game.aSelfExecute(player, achievement)
       }
     },
