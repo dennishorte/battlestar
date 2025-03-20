@@ -11,11 +11,16 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `No effect.`
+    `Junk an available achievement of value equal to the value of a card in your score pile.`,
   ]
 
   this.dogmaImpl = [
-    (game, player) => {}
+    (game, player) => {
+      const ages = game
+        .getCardsByZone(player, 'score')
+        .map(c => c.getAge())
+      game.aChooseAndJunkAchievement(player, ages)
+    }
   ]
   this.echoImpl = []
   this.karmaImpl = []

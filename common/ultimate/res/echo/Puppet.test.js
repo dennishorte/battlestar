@@ -11,7 +11,9 @@ describe("Puppet", () => {
         purple: ['Puppet'],
         red: ['Plumbing'],
         hand: ['Sailing', 'Enterprise'],
+        score: ['Monotheism'],
       },
+      achievements: ['Tools', 'Fermenting', 'Optics'],
     })
 
     let request
@@ -24,7 +26,9 @@ describe("Puppet", () => {
         purple: ['Puppet'],
         red: ['Plumbing'],
         hand: ['Sailing', 'Enterprise'],
+        score: ['Monotheism'],
       },
+      junk: ['Fermenting'],
     })
   })
 })
