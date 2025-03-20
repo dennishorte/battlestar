@@ -12,8 +12,9 @@ describe("Bell", () => {
         hand: ['Canning'],
       },
       decks: {
-        base: {
-          2: ['Calendar'],
+        echo: {
+          1: ['Bangle'],
+          2: ['Pagoda'],
         },
       },
     })
@@ -28,8 +29,43 @@ describe("Bell", () => {
       dennis: {
         purple: ['Bell'],
         score: ['Canning'],
-        forecast: ['Calendar'],
+        forecast: ['Bangle', 'Pagoda'],
       },
+    })
+  })
+
+  test('dogma: was foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        purple: ['Monotheism'],
+        forecast: ['Bell'],
+        hand: ['Canning', 'Code of Laws', 'The Wheel'],
+      },
+      micah: {
+        hand: ['Coal'],
+      },
+      decks: {
+        echo: {
+          1: ['Bangle'],
+          2: ['Pagoda'],
+        },
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Code of Laws')
+    request = t.choose(game, request, 'Canning')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Bell', 'Code of Laws', 'Monotheism'],
+        score: ['Canning'],
+        forecast: ['Bangle', 'Pagoda'],
+      },
+      micah: {}
     })
   })
 })
