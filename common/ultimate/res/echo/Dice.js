@@ -11,17 +11,47 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and reveal a {1}. If the card has a bonus, draw and meld a card of value equal to its bonus.`
+    `Draw and reveal an Echoes {1}. If the card has a bonus, draw and meld a card of value equal to its bonus.`,
+    `If Dice was foreseen, draw a {4}, then transfer it to the hand of an opponent with more bonus points than you.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
+      const card = game.aDraw(player, { age: game.getEffectAge(this, 1), exp: 'echo' })
+      game.mReveal(player, card)
       if (card.checkHasBonus()) {
         const bonus = card.getBonuses()[0]
         game.aDrawAndMeld(player, bonus)
       }
-    }
+    },
+
+    (game, player, { foreseen, card }) => {
+      if (foreseen) {
+        const card = game.aDraw(player, { age: game.getEffectAge(this, 4) })
+        const playerBonusPoints = game.getBonuses(player).reduce((l, r) => l + r, 0)
+        const otherBonusPoints = game
+          .getPlayerOpponents(player)
+          .map(opp => {
+            const points = game.getBonuses(opp).reduce((l, r) => l + r, 0)
+            return { opp, points }
+          })
+
+        const choices = otherBonusPoints
+          .filter(x => x.points > playerBonusPoints)
+          .map(x => x.opp)
+
+        const opp = game.aChoosePlayer(player, choices, {
+          title: 'Choose a player to transfer the drawn card to'
+        })
+
+        if (opp) {
+          game.aTransfer(player, card, game.getZoneByPlayer(opp, 'hand'))
+        }
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    },
   ]
   this.echoImpl = []
   this.karmaImpl = []
