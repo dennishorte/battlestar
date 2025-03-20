@@ -10,6 +10,7 @@ describe("Perfume", () => {
       dennis: {
         blue: ['Perfume'],
         red: ['Engineering'],
+        yellow: ['Machinery'],
         green: ['The Wheel'],
       },
       micah: {
@@ -19,8 +20,10 @@ describe("Perfume", () => {
       },
       decks: {
         base: {
-          1: ['Tools'],
-          2: ['Mathematics'],
+          1: ['Writing'],
+        },
+        echo: {
+          2: ['Toothbrush'],
         },
       }
     })
@@ -32,13 +35,15 @@ describe("Perfume", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        blue: ['Perfume', 'Tools'],
+        blue: ['Perfume', 'Writing'],
         red: ['Construction', 'Engineering'],
+        yellow: ['Machinery'],
         green: ['The Wheel'],
       },
       micah: {
         green: ['Sailing'],
-        blue: ['Mathematics', 'Translation'],
+        blue: ['Translation'],
+        yellow: ['Toothbrush'],
       },
     })
   })

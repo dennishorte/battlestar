@@ -8,7 +8,7 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `&k1h`
   this.dogmaBiscuit = `k`
-  this.echo = `Draw and tuck a {1}.`
+  this.echo = `Draw and tuck a {1}. If it has {k}, repeat this effect.`
   this.karma = []
   this.dogma = [
     `I demand you transfer a top card of different value from any top card on my board from your board to mine! If you do, draw and meld a card of equal value!`
@@ -32,7 +32,12 @@ function Card() {
     }
   ]
   this.echoImpl = (game, player) => {
-    game.aDrawAndTuck(player, game.getEffectAge(this, 1))
+    while (true) {
+      const card = game.aDrawAndTuck(player, game.getEffectAge(this, 1))
+      if (!card.checkHasBiscuit('k')) {
+        break
+      }
+    }
   }
   this.karmaImpl = []
 }
