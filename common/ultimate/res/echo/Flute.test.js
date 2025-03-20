@@ -15,11 +15,8 @@ describe("Flute", () => {
         hand: ['Plumbing', 'Tools'],
       },
       decks: {
-        base: {
-          1: ['Mysticism'],
-        },
         echo: {
-          1: ['Candles'],
+          1: ['Candles', 'Puppet'],
         }
       }
     })
@@ -36,7 +33,7 @@ describe("Flute", () => {
           cards: ['Flute', 'Code of Laws'],
           splay: 'left',
         },
-        hand: ['Sailing', 'Candles', 'Mysticism'],
+        hand: ['Sailing', 'Candles', 'Puppet'],
       },
       micah: {
         hand: ['Tools'],
