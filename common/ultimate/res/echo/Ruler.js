@@ -11,11 +11,23 @@ function Card() {
   this.echo = `Draw a {2}.`
   this.karma = []
   this.dogma = [
-    `No effect.`
+    `Draw two Echoes {1}. Foreshadow one of the drawn cards and return the other.`,
   ]
 
   this.dogmaImpl = [
-    (game, player) => {}
+    (game, player) => {
+      const cards = [
+        game.aDraw(player, { age: game.getEffectAge(this, 1), exp: 'echo' }),
+        game.aDraw(player, { age: game.getEffectAge(this, 1), exp: 'echo' }),
+      ]
+
+      const foreshadowed = game.aChooseCard(player, cards, {
+        title: 'Choose a card to foreshadow',
+      })
+
+      game.aForeshadow(player, foreshadowed)
+      game.aReturn(player, cards.filter(x => x.id !== foreshadowed.id)[0])
+    }
   ]
   this.echoImpl = (game, player) => {
     game.aDraw(player, { age: game.getEffectAge(this, 2) })
