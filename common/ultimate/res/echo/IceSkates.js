@@ -11,12 +11,23 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Return up to three cards from your hand. For each card returned, either draw and meld a {2}, or draw and foreshadow a {3}. Return your highest top card.`
+    `If Ice Skates was foreseen, junk all cards in the 1 deck and 2 deck.`,
+    `Return up to two cards from your hand. For each card returned, either draw and meld a {2}, or draw and foreshadow a {3}. Return your highest top card.`
   ]
 
   this.dogmaImpl = [
+    (game, player, { foreseen, self }) => {
+      if (foreseen) {
+        game.mLogWasForeseen(self)
+        game.aJunkDeck(player, 1)
+        game.aJunkDeck(player, 2)
+      }
+      else {
+        game.mLogNoEffect()
+      }
+    },
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 3 })
+      const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 2 })
 
       if (returned) {
         for (let i = 0; i < returned.length; i++) {
