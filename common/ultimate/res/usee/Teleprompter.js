@@ -44,6 +44,8 @@ function Card() {
           return
         }
 
+        game.mReveal(player, card)
+
         for (let i = 0; i < card.dogma.length; i++) {
           if (checkHasDemand(card.dogma[i])) {
             continue
@@ -55,6 +57,7 @@ function Card() {
             card.dogma[i],
             card.dogmaImpl[i],
           )
+          break
         }
 
         if (card.checkHasBiscuit('c')) {
