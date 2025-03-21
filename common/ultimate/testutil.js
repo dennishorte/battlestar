@@ -240,6 +240,13 @@ TestUtil.setBoard = function(game, state) {
         TestUtil.setDeckTop(game, exp, parseInt(age), cards)
       }
     }
+
+    const decksExact = state.decksExact || {}
+    for (const exp of Object.keys(decksExact)) {
+      for (const [age, cards] of Object.entries(decksExact[exp])) {
+        TestUtil.setDeckExact(game, exp, parseInt(age), cards)
+      }
+    }
   })
 }
 
@@ -483,6 +490,21 @@ TestUtil.setColor = function(game, playerName, colorName, cardNames) {
   }
   for (const card of cards) {
     card.moveTo(zone)
+  }
+}
+
+// Other cards will be sent to the junk.
+TestUtil.setDeckExact = function(game, exp, age, cardNames) {
+  const deck = game.getZoneByDeck(exp, age)
+  for (const card of deck.cards()) {
+    game.mJunk(card)
+  }
+
+  const cards = cardNames
+    .map(c => game.getCardByName(c))
+    .reverse()
+  for (const card of cards) {
+    game.mMoveCardToTop(card, deck)
   }
 }
 

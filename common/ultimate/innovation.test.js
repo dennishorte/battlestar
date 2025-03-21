@@ -501,7 +501,7 @@ describe('Innovation', () => {
       game.testSetBreakpoint('before-first-player', (game) => {
         const toExile = game.getZoneByDeck('base', 3).cardlist().slice(2)
         for (const card of toExile) {
-          game.mRemove(card)
+          game.mJunk(card)
         }
       })
 
