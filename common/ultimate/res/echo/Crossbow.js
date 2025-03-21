@@ -11,7 +11,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you transfer a card with a bonus from your hand to my score pile!`,
+    `I demand you transfer an expansion from your hand to my score pile!`,
     `Transfer a card from your hand to any other player's board.`
   ]
 
@@ -19,7 +19,7 @@ function Card() {
     (game, player, { leader }) => {
       const choices = game
         .getCardsByZone(player, 'hand')
-        .filter(card => card.checkHasBonus())
+        .filter(card => card.checkIsExpansion())
       game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(leader, 'score'))
     },
 
