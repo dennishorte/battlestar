@@ -13,7 +13,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `You may splay any one color of your cards left.`,
-    `If the {2} deck has at least one card, you may transfer its bottom card to the available achievements.`
+    `You may junk all cards in the {2} deck. If you do, achieve the highest card in the junk, if eligible.`
   ]
 
   this.dogmaImpl = [
@@ -23,12 +23,13 @@ function Card() {
 
     (game, player) => {
       const deckAge = game.getEffectAge(this, 2)
-      const deck = game.getZoneByDeck('base', deckAge).cards()
-      if (deck.length > 0) {
-        const doTransfer = game.aYesNo(player, `Transfer the bottom {${deckAge}} to the available achievements?`)
-        if (doTransfer) {
-          game.aTransfer(player, deck[0], game.getZoneById('achievements'))
-        }
+      const junked = game.aJunkDeck(player, deckAge, { optional: true })
+      if (junked) {
+        const junk = game.getZoneById('junk').cards()
+        const choices = game
+          .utilHighestCards(junk)
+          .filter(card => game.checkAchievementEligibility(player, card))
+        game.aChooseAndAchieve(player, choices, { hidden: true })
       }
     }
   ]

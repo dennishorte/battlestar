@@ -714,11 +714,8 @@ Innovation.prototype.aChooseAndAchieve = function(player, choices, opts={}) {
     { ...opts, title: 'Choose Achievement' }
   )
 
-  if (selected.length === 0) {
-    this.log.addDoNothing(player)
-  }
-  else {
-    this.aAchieveAction(player, selected[0], { ...opts, nonAction: true })
+  for (const card of selected) {
+    this.aClaimAchievement(player, { card })
   }
 }
 
