@@ -11,33 +11,30 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Tuck a card with a bonus from your hand. If you do, draw a card of value equal to that card's bonus. If the drawn card also has a bonus, you may return a card from your hand to repeat this dogma effect.`
+    `Tuck a card of value equal to a bonus on your board, if you have one.`,
+    `Tuck a card from your hand. If Watermill was foreseen, tuck all cards from the deck of value equal to the tucked card.`,
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      while (true) {
-        const choices = game
-          .getCardsByZone(player, 'hand')
-          .filter(card => card.checkHasBonus())
-        const tucked = game.aChooseAndTuck(player, choices)[0]
-        if (tucked) {
-          const drawn = game.aDraw(player, { age: tucked.getBonuses()[0] })
-          if (drawn && drawn.checkHasBonus()) {
-            const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), {
-              title: 'Return a card from hand to repeat this dogma effect?',
-              min: 0,
-              max: 1
-            })[0]
-            if (returned) {
-              continue
-            }
-          }
-        }
+      const bonuses = game.getBonuses(player)
+      const choices = game
+        .getCardsByZone(player, 'hand')
+        .filter(card => bonuses.includes(card.getAge()))
+      game.aChooseAndTuck(player, choices)
+    },
 
-        break
+    (game, player, { foreseen, self }) => {
+      const tucked = game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'))[0]
+
+      if (tucked && foreseen) {
+        game.mLogWasForeseen(self)
+        const cards = game.getZoneByDeck('base', tucked.getAge()).cards()
+
+        // The player can't look at the cards in the deck in advance, so they can't really pick an order.
+        game.aTuckMany(player, cards, { ordered: true })
       }
-    }
+    },
   ]
   this.echoImpl = []
   this.karmaImpl = []
