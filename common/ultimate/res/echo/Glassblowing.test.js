@@ -16,12 +16,13 @@ describe("Glassblowing", () => {
         echo: {
           9: ['Rock'],
         },
-      }
+      },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Glassblowing')
+    request = t.choose(game, request, 2)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -720,7 +720,7 @@ Innovation.prototype.aChooseAndAchieve = function(player, choices, opts={}) {
 }
 
 Innovation.prototype.aChooseAndJunkDeck = function(player, ages, opts={}) {
-  const age = game.aChooseAge(player, age, {
+  const age = this.aChooseAge(player, ages, {
     title: 'Choose a deck to junk',
     ...opts
   })
