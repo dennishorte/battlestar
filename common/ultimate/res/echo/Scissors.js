@@ -8,11 +8,11 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `&h2k`
   this.dogmaBiscuit = `k`
-  this.echo = `Take a bottom card from your board into your hand.`
+  this.echo = `Score your bottom yellow card.`
   this.karma = []
   this.dogma = [
     `You may choose up to two cards from your hand. For each card chosen, either meld it or score it.`,
-    `If Paper is a top card on any player's board, transfer it to your score pile.`
+    `If Paper is a top card on any player's board, score it.`
   ]
 
   this.dogmaImpl = [
@@ -53,20 +53,14 @@ function Card() {
         .filter(card => card.name === 'Paper')
 
       if (paper.length > 0) {
-        game.aTransfer(player, paper[0], game.getZoneByPlayer(player, 'score'))
+        game.aScore(player, paper[0])
       }
     },
   ]
   this.echoImpl = (game, player) => {
-    const choices = game
-      .utilColors()
-      .map(color => game.getBottomCard(player, color))
-      .filter(card => card !== undefined)
-
-    const card = game.aChooseCard(player, choices)
-
+    const card = game.getBottomCard(player, 'yellow')
     if (card) {
-      game.mMoveCardTo(card, game.getZoneByPlayer(player, 'hand'), { player })
+      game.aScore(player, card)
     }
   }
   this.karmaImpl = []

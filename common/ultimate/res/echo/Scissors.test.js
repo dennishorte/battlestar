@@ -8,57 +8,9 @@ describe("Scissors", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
-        green: ['Scissors', 'Sailing'],
-      },
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Scissors')
-    request = t.choose(game, request)
-
-    t.testIsSecondPlayer(game)
-    t.testBoard(game, {
-      dennis: {
         green: ['Scissors'],
-        hand: ['Sailing'],
-      },
-    })
-  })
-
-  test('dogma: meld or score', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
-    t.setBoard(game,  {
-      dennis: {
-        green: ['Scissors', 'Sailing'],
-        hand: ['Calendar', 'Tools'],
-      },
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Scissors')
-    request = t.choose(game, request, 'Calendar')
-    request = t.choose(game, request, 'meld')
-    request = t.choose(game, request, 'Sailing')
-    request = t.choose(game, request, 'score')
-
-    t.testIsSecondPlayer(game)
-    t.testBoard(game, {
-      dennis: {
-        green: ['Scissors'],
-        blue: ['Calendar'],
-        hand: ['Tools'],
-        score: ['Sailing'],
-      },
-    })
-  })
-
-  test('dogma: transfer paper', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
-    t.setBoard(game,  {
-      dennis: {
-        green: ['Scissors', 'Sailing'],
+        yellow: ['Canning', 'Agriculture'],
+        hand: ['Candles', 'Tools'],
       },
       micah: {
         green: ['Paper'],
@@ -68,13 +20,41 @@ describe("Scissors", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Scissors')
-    request = t.choose(game, request)
+    request = t.choose(game, request, 'Candles')
+    request = t.choose(game, request, 'score')
+    request = t.choose(game, request, 'Tools')
+    request = t.choose(game, request, 'meld')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Scissors'],
-        hand: ['Sailing'],
+        yellow: ['Canning'],
+        blue: ['Tools'],
+        score: ['Agriculture', 'Candles', 'Paper'],
+      },
+    })
+  })
+
+  test('dogma: transfer paper', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        green: ['Scissors'],
+      },
+      micah: {
+        green: ['Paper'],
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Scissors')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: ['Scissors'],
         score: ['Paper'],
       },
     })
