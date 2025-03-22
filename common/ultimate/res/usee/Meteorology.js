@@ -23,8 +23,8 @@ function Card() {
       }
       else if (card.checkHasBiscuit('c')) {
         game.aReturn(player, card)
-        game.aDraw(player, { age: game.getEffectAge(this, 2) })
-        game.aDraw(player, { age: game.getEffectAge(this, 2) })
+        game.aDraw(player, { age: game.getEffectAge(this, 3) })
+        game.aDraw(player, { age: game.getEffectAge(this, 3) })
       }
       else {
         game.aTuck(player, card)
