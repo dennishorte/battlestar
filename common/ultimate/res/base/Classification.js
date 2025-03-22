@@ -12,6 +12,8 @@ module.exports = {
     (game, player) => {
       const revealed = game.actions.chooseAndReveal(player, game.zones.byPlayer(player, 'hand').cardlist())[0]
       if (revealed) {
+        game.actions.reveal(player, revealed)
+
         // Take cards into hand
         game
           .players.opponentsOf(player)

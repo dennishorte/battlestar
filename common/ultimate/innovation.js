@@ -719,6 +719,15 @@ Innovation.prototype.aChooseAndAchieve = function(player, choices, opts={}) {
   }
 }
 
+Innovation.prototype.aChooseAndJunkDeck = function(player, ages, opts={}) {
+  const age = game.aChooseAge(player, age, {
+    title: 'Choose a deck to junk',
+    ...opts
+  })
+
+  this.aJunkDeck(player, age)
+}
+
 Innovation.prototype.aChooseByPredicate = function(player, cards, count, pred, opts={}) {
   let numRemaining = count
   let cardsRemaining = [...cards]
@@ -1063,6 +1072,7 @@ Innovation.prototype.aYouLose = function(player, card) {
   }
 
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Checkers
