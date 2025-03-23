@@ -8,6 +8,7 @@ describe("Linguistics", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
+        yellow: ['Fermenting'],
         blue: ['Linguistics'],
       },
       decks: {
@@ -25,6 +26,7 @@ describe("Linguistics", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        yellow: ['Fermenting'],
         blue: ['Linguistics'],
         hand: ['Machinery'],
       },
@@ -35,6 +37,7 @@ describe("Linguistics", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
+        yellow: ['Fermenting'],
         blue: ['Linguistics'],
         red: ['Plumbing'],
       },
@@ -54,11 +57,47 @@ describe("Linguistics", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        yellow: ['Fermenting'],
         blue: ['Linguistics'],
         red: ['Plumbing'],
         hand: ['Construction'],
         forecast: ['Gunpowder'],
       },
+    })
+  })
+
+  test('dogma: was foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        red: ['Plumbing'],
+        hand: ['Fermenting'],
+        forecast: ['Linguistics'],
+      },
+      decks: {
+        base: {
+          2: ['Construction'],
+          4: ['Gunpowder'],
+        },
+      },
+      achievements: ['Philosophy', 'Optics'],
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Fermenting')
+    request = t.choose(game, request, 'Draw and foreshadow a 4')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Fermenting'],
+        blue: ['Linguistics'],
+        red: ['Plumbing'],
+        hand: ['Construction'],
+        forecast: ['Gunpowder'],
+      },
+      junk: ['Philosophy'],
     })
   })
 })

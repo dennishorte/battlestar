@@ -12,15 +12,26 @@ function Card() {
   this.echo = `Draw a {3} OR Draw and foreshadow a {4}.`
   this.karma = []
   this.dogma = [
-    `Draw a card of value equal to a bonus on your board, if you have any.`
+    `Draw a card of value equal to a bonus on any board, if there is one. If you do, and Linguistics was foreseen, junk all available achievements of that value.`
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
-      const bonuses = util.array.distinct(game.getBonuses(player)).sort()
+    (game, player, { foreseen, self }) => {
+      const boardBonuses = game
+        .getPlayerAll()
+        .flatMap(p => game.getBonuses(p))
+      const bonuses = util.array.distinct(boardBonuses).sort()
       const age = game.aChooseAge(player, bonuses, { title: 'Choose an age to draw from' })
       if (age) {
         game.aDraw(player, { age })
+
+        if (foreseen) {
+          game.mLogWasForeseen(self)
+          const achievements = game
+            .getAvailableStandardAchievements(player)
+            .filter(x => x.getAge() === age)
+          game.aJunkMany(player, achievements, { ordered: true })
+        }
       }
     }
   ]
