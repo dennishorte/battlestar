@@ -11,22 +11,24 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `Draw and reveal a {3}. If you have a card of matching color in your hand, tuck the card from your hand and meld the drawn card. Otherwise, foreshadow the drawn card.`
+    `Draw and reveal a {3}. You may tuck another card of matching color from your hand. If you do, and Pagoda was foreseen, meld all cards of that color from all other boards.`
   ]
 
   this.dogmaImpl = [
-    (game, player) => {
+    (game, player, { foreseen, self }) => {
       const hand = game.getCardsByZone(player, 'hand')
       const card = game.aDrawAndReveal(player, game.getEffectAge(this, 3))
 
       if (card) {
         const matching = hand.filter(other => other.color === card.color)
-        if (matching.length > 0) {
-          game.aChooseAndTuck(player, matching)
-          game.aMeld(player, card)
-        }
-        else {
-          game.aForeshadow(player, card)
+        const tucked = game.aChooseAndTuck(player, matching, { min: 0, max: 1 })[0]
+
+        if (tucked && foreseen) {
+          game.mLogWasForeseen(self)
+          const toMeld = game
+            .getPlayersOther(player)
+            .flatMap(p => game.getCardsByZone(p, card.color))
+          game.aMeldMany(player, toMeld)
         }
       }
     }
