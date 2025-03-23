@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `Pantheism`  // Card names are unique in Innovation
@@ -24,11 +25,12 @@ function Card() {
         const secondCard = game.aDraw(player, { age: game.getEffectAge(this, 4) })
         game.aTuck(player, secondCard)
 
-        const colorToScore = game.aChoose(player, [firstCard.color, secondCard.color], {
+        const colorChoices = util.array.distinct([firstCard.color, secondCard.color])
+        const colorToScore = game.aChoose(player, colorChoices, {
           title: 'Choose a color to score',
         })[0]
 
-        const cardsToScore = game.getCardsByZone(player, colorToScore)
+          const cardsToScore = game.getCardsByZone(player, colorToScore)
         game.aScoreMany(player, cardsToScore)
 
         const colorToSplay = colorToScore === firstCard.color ? secondCard.color : firstCard.color
