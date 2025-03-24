@@ -154,7 +154,7 @@ Innovation.prototype.initializeZones = function() {
 
   this.initializeZonesAchievements()
   this.initializeZonesPlayers()
-  this.state.zones.junk = new Zone(this, 'junk', 'public')
+  this.state.zones.junk = new Zone(this, 'junk', 'hidden')
 
   // Set an id that can be used to quickly fetch a zone.
   this._walkZones(this.state.zones, (zone, path) => {
