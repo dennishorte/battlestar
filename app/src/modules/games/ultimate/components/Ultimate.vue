@@ -17,6 +17,7 @@
           <Biscuits />
           <Decks />
           <Achievements />
+          <CardPile :zone="game.getZoneById('junk')" />
           <WaitingPanel />
         </div>
 
@@ -45,6 +46,7 @@ import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 import Achievements from './Achievements'
 import Biscuits from './Biscuits'
 import CardNameFull from './CardNameFull'
+import CardPile from './CardPile'
 import Decks from './Decks'
 import DropdownItem from '@/components/DropdownItem'
 import GameLogInnovation from './GameLogInnovation'
@@ -61,6 +63,7 @@ export default {
   components: {
     Achievements,
     Biscuits,
+    CardPile,
     Decks,
     DropdownItem,
     GameMenu,
