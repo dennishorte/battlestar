@@ -63,7 +63,7 @@ export default {
 
   computed: {
     canView() {
-      if (this.zone.kind === 'achievements') {
+      if (this.zone.kind === 'achievements' || this.zone.kind === 'hidden') {
         return false
       }
 
