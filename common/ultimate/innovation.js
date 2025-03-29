@@ -822,6 +822,10 @@ Innovation.prototype.aChooseCards = function(player, cards, opts={}) {
   opts.title = opts.title || 'Choose Cards(s)'
   const choices = choiceMap.map(x => x.name)
 
+  if (opts.hidden) {
+    choices.sort()
+  }
+
   let output
 
   while (true) {
