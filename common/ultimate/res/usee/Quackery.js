@@ -12,7 +12,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `Choose to either score a card from your hand, or draw a {4}.`,
-    `Return exactly two cards in your hand. If you do, draw a card of value equal to the sum number of {l} and {s} on the returned cards.`
+    `Reveal and return exactly two cards in your hand. If you do, draw a card of value equal to the sum number of {l} and {s} on the returned cards.`
   ]
 
   this.dogmaImpl = [
@@ -48,7 +48,8 @@ function Card() {
         return
       }
 
-      const returned = game.aChooseAndReturn(player, hand, { count: 2 })
+      const revealed = game.aChooseAndReveal(player, hand, { count: 2, ordered: true })
+      const returned = game.aReturnMany(player, revealed)
 
       if (returned.length === 2) {
         const leafCount = returned.map(c => c.getBiscuitCount('l')).reduce((x, acc) => x + acc, 0)
