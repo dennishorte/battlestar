@@ -9,14 +9,11 @@ describe("Chaturanga", () => {
     t.setBoard(game,  {
       dennis: {
         purple: ['Chaturanga'],
-        hand: ['Plumbing', 'Tools'],
+        hand: ['Fermenting'],
       },
       decks: {
         base: {
           2: ['Calendar'],
-        },
-        echo: {
-          2: ['Scissors']
         },
       },
     })
@@ -28,9 +25,9 @@ describe("Chaturanga", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        yellow: ['Fermenting'],
         purple: ['Chaturanga'],
-        red: ['Plumbing'],
-        hand: ['Tools', 'Calendar', 'Scissors'],
+        forecast: ['Calendar'],
       },
     })
   })
@@ -40,12 +37,10 @@ describe("Chaturanga", () => {
     t.setBoard(game,  {
       dennis: {
         purple: ['Chaturanga'],
-        red: ['Plumbing'],
-        hand: ['Tools'],
       },
       decks: {
         echo: {
-          2: ['Scissors']
+          1: ['Plumbing'],
         },
       },
     })
@@ -58,9 +53,36 @@ describe("Chaturanga", () => {
     t.testBoard(game, {
       dennis: {
         purple: ['Chaturanga'],
-        red: ['Plumbing'],
-        hand: ['Tools'],
-        forecast: ['Scissors'],
+        forecast: ['Plumbing'],
+      },
+    })
+  })
+
+  test('dogma: was foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        hand: ['Fermenting'],
+        forecast: ['Chaturanga'],
+      },
+      decks: {
+        base: {
+          1: ['Plumbing'],
+          2: ['Calendar'],
+        },
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Fermenting')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Fermenting'],
+        purple: ['Chaturanga'],
+        forecast: ['Calendar', 'Plumbing'],
       },
     })
   })
