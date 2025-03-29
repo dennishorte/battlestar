@@ -11,26 +11,20 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you transfer two top cards with a {k} from your board to my score pile! If you transferred any, draw a card of value equal to the total number of {k} on those cards and transfer it to my forecast!`
+    `I demand you transfer two top cards with a {k} from your board to my score pile! If you transfered exactly one, and Katana was foreseen, junk all available standard achievements.`,
   ]
 
   this.dogmaImpl = [
-    (game, player, { leader }) => {
+    (game, player, { leader, foreseen, self }) => {
       const choices = game
         .getTopCards(player)
         .filter(card => card.checkHasBiscuit('k'))
       const transferred = game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(leader, 'score'), { count: 2 })
 
-      if (transferred && transferred.length > 0) {
-        const castleCount = transferred
-          .flatMap(card => card.biscuits.split(''))
-          .filter(biscuit => biscuit === 'k')
-          .length
-
-        const card = game.aDraw(player, { age: castleCount })
-        if (card) {
-          game.aTransfer(player, card, game.getZoneByPlayer(leader, 'forecast'))
-        }
+      if (transferred && transferred.length === 1 && foreseen) {
+        game.mLogWasForeseen(self)
+        const achievements = game.getAvailableStandardAchievements(player)
+        game.aJunkMany(player, achievements, { ordered: true })
       }
     }
   ]

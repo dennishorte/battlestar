@@ -20,11 +20,6 @@ describe("Katana", () => {
         green: ['Sailing'],
         purple: ['Mysticism'],
       },
-      decks: {
-        base: {
-          4: ['Gunpowder'],
-        },
-      },
     })
 
     let request
@@ -45,13 +40,74 @@ describe("Katana", () => {
         green: ['Comb'],
         purple: ['Bell'],
         score: ['Fermenting', 'Mysticism'],
-        forecast: ['Gunpowder'],
       },
       micah: {
         red: ['Archery'],
         blue: ['Writing'],
         green: ['Sailing'],
       },
+    })
+  })
+
+  test('dogma: was foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        yellow: ['Masonry'],
+        green: ['Comb'],
+        purple: ['Bell'],
+        hand: ['Engineering'],
+        forecast: ['Katana'],
+      },
+      micah: {
+        blue: ['Writing'],
+        green: ['Sailing'],
+        purple: ['Mysticism'],
+      },
+      achievements: [
+        "Feudalism",
+        "Fission",
+        "Lighting",
+        "Machine Tools",
+        "Mobility",
+        "Perspective",
+        "Philosophy",
+        "Pottery",
+        "Robotics",
+        "Statistics",
+      ]
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Engineering')
+    t.dumpLog(game)
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Katana', 'Engineering'],
+        yellow: ['Masonry'],
+        green: ['Comb'],
+        purple: ['Bell'],
+        score: ['Mysticism'],
+      },
+      micah: {
+        blue: ['Writing'],
+        green: ['Sailing'],
+      },
+      junk: [
+        "Feudalism",
+        "Fission",
+        "Lighting",
+        "Machine Tools",
+        "Mobility",
+        "Perspective",
+        "Philosophy",
+        "Pottery",
+        "Robotics",
+        "Statistics",
+      ]
     })
   })
 })
