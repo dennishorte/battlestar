@@ -68,7 +68,7 @@ export default {
 
       const numPlayersCondition = this.lobby.users.length >= 2
       const numPacksCondition = opts.numPacks > 0
-      const setSelectedCondition = opts.set && ['expansion', 'core', 'draft_innovation'].includes(opts.set.set_type)
+      const setSelectedCondition = opts.set && ['expansion', 'core', 'draft_innovation', 'masters'].includes(opts.set.set_type)
 
       this.lobby.valid = (
         numPlayersCondition
