@@ -26,7 +26,7 @@ function Card() {
           count: 2,
         })
 
-        game.aRevealMany(player, achievements, { ordered: true })
+        const revealed = game.aRevealMany(player, achievements, { ordered: true })
 
         const meldableAchievements = achievements.filter(card => !card.checkHasBiscuit('i') && !card.checkHasBiscuit('p'))
 
@@ -36,7 +36,8 @@ function Card() {
           game.aMeld(player, toMeld)
         }
 
-        // No need to return the achievements that weren't melded, since they were never moved.
+        const toReturn = revealed.filter(card => !toMeld || card.id !== toMeld.id)
+        game.aReturnMany(player, toReturn)
       }
     },
   ]
