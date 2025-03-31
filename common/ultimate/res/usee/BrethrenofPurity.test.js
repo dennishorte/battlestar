@@ -34,4 +34,37 @@ describe('Brethren of Purity', () => {
     })
   })
 
+  test('dogma: carries across endorse', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee', 'city'] })
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Brethren of Purity'],
+        red: ['Thebes'],
+        hand: ['Tools'],
+      },
+      decks: {
+        base: {
+          4: ['Reformation'],
+        },
+        usee: {
+          3: ['Masquerade']
+        }
+      }
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Endorse.blue')
+    request = t.choose(game, request, 4)
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Brethren of Purity'],
+        red: ['Thebes'],
+        purple: ['Reformation', 'Masquerade'],
+      },
+    })
+  })
+
 })

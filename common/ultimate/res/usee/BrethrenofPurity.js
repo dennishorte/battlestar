@@ -18,15 +18,18 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const baseAge = game.getEffectAge(this, 3)
-      let lastMeldedAgePlusOne = baseAge
+
+      if (!game.state.dogmaInfo.brethrenLastMeldedAgePlusOne) {
+        game.state.dogmaInfo.brethrenLastMeldedAgePlusOne = baseAge
+      }
 
       while (true) {
-        const choices = util.array.distinct([baseAge, lastMeldedAgePlusOne])
+        const choices = util.array.distinct([baseAge, game.state.dogmaInfo.brethrenLastMeldedAgePlusOne])
         const age = game.aChooseAge(player, choices)
         const card = game.aDrawAndMeld(player, age)
 
         if (card) {
-          lastMeldedAgePlusOne = card.getAge() + 1
+          game.state.dogmaInfo.brethrenLastMeldedAgePlusOne = card.getAge() + 1
 
           const meldedOver = game.getCardsByZone(player, card.color)[1]
           if (meldedOver && meldedOver.checkHasBiscuit('s')) {
