@@ -2,7 +2,7 @@ const db = require('../models/db.js')
 const slack = require('../util/slack.js')
 const stats = require('../util/stats.js')
 
-const { GameOverEvent, fromData } = require('battlestar-common')
+const { GameOverEvent } = require('battlestar-common')
 
 const Game = {
   stats: {}
@@ -79,19 +79,10 @@ Game.create = async function(req, res) {
 }
 
 Game.fetch = async function(req, res) {
-  const game = await db.game.findById(req.body.gameId)
-  if (!game) {
-    res.json({
-      status: 'error',
-      message: `Game not found. ID: ${req.body.gameId}`,
-    })
-  }
-  else {
-    res.json({
-      status: 'success',
-      game,
-    })
-  }
+  return res.json({
+    status: 'success',
+    game: req.game,
+  })
 }
 
 Game.fetchAll = async function(req, res) {
@@ -104,14 +95,14 @@ Game.fetchAll = async function(req, res) {
 }
 
 Game.kill = async function(req, res) {
-  await db.game.gameOver(req.body.gameId, true)
+  await db.game.gameOver(req.game, true)
   res.json({
     status: 'success',
   })
 }
 
 Game.rematch = async function(req, res) {
-  const game = await db.game.findById(req.body.gameId)
+  const game = req.game
   const lobbyId = await db.lobby.create()
   const lobby = await db.lobby.findById(lobbyId)
 
@@ -141,7 +132,7 @@ Game.rematch = async function(req, res) {
 }
 
 Game.saveFull = async function(req, res) {
-  const game = await _loadGameFromReq(req)
+  const game = req.game
 
   // Test if the gameData is safe to write to based on this request
   // If games don't have branchIds, they haven't been created in the new
@@ -190,7 +181,7 @@ Game.saveFull = async function(req, res) {
 }
 
 Game.saveResponse = async function(req, res) {
-  const game = await _loadGameFromReq(req)
+  const game = req.game
 
   if (game.killed) {
     res.json({
@@ -230,7 +221,7 @@ Game.stats.innovation = async function(req, res) {
 }
 
 Game.undo = async function(req, res) {
-  const game = await _loadGameFromReq(req)
+  const game = req.game
   for (let i = 0; i < req.body.count; i++) {
     const result = game.undo()
     if (result !== '__SUCCESS__') {
@@ -272,7 +263,7 @@ async function _testAndSave(game, res, evalFunc) {
 
   const { branchId } = await db.game.save(game)
   if (game.checkGameIsOver()) {
-    await db.game.gameOver(game._id)
+    await db.game.gameOver(game)
   }
   await _sendNotifications(game)
 
@@ -281,11 +272,6 @@ async function _testAndSave(game, res, evalFunc) {
     status: 'success',
     branchId,
   })
-}
-
-async function _loadGameFromReq(req) {
-  const gameData = await db.game.findById(req.body.gameId)
-  return fromData(gameData)
 }
 
 async function _notify(game, userId, msg, force=false) {

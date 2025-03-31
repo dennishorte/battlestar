@@ -20,7 +20,7 @@ app.use(express.static(path.join(__dirname, '../app/dist')))
 app.use(middleware.authenticate)
 app.use(bodyParser.json({ limit: "500kb" }))
 app.use(middleware.ensureVersion)
-app.use(middleware.coerceIds)
+app.use(middleware.coerceMongoIds)
 
 
 ////////////////////////////////////////////////////////////
@@ -95,14 +95,15 @@ app.post('/api/lobby/save', routes.lobby.save)
 
 // Game Routes
 app.post('/api/game/create', routes.game.create)
-app.post('/api/game/fetch', routes.game.fetch)
 app.post('/api/game/fetchAll', routes.game.fetchAll)
-app.post('/api/game/kill', routes.game.kill)
-app.post('/api/game/rematch', routes.game.rematch)
-app.post('/api/game/saveFull', routes.game.saveFull)
-app.post('/api/game/saveResponse', routes.game.saveResponse)
 app.post('/api/game/stats/innovation', routes.game.stats.innovation)
-app.post('/api/game/undo', routes.game.undo)
+
+app.post('/api/game/fetch', middleware.loadGame, routes.game.fetch)
+app.post('/api/game/kill', middleware.loadGame, routes.game.kill)
+app.post('/api/game/rematch', middleware.loadGame, routes.game.rematch)
+app.post('/api/game/saveFull', middleware.loadGame, routes.game.saveFull)
+app.post('/api/game/saveResponse', middleware.loadGame, routes.game.saveResponse)
+app.post('/api/game/undo', middleware.loadGame, routes.game.undo)
 
 // Misc Routes
 app.post('/api/appVersion', routes.misc.appVersion)

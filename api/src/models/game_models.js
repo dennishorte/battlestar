@@ -72,8 +72,8 @@ Game.findWaitingByUserId = async function(userId) {
   return await gameCollection.find({ waiting: userId })
 }
 
-Game.gameOver = async function(gameId, killed=false) {
-  return await lock.acquire(gameId, async () => {
+Game.gameOver = async function(game, killed=false) {
+  return await lock.acquire(game._id, async () => {
     const setValues = { gameOver: true }
 
     if (killed) {
@@ -81,7 +81,7 @@ Game.gameOver = async function(gameId, killed=false) {
     }
 
     await gameCollection.updateOne(
-      { _id: gameId },
+      { _id: game._id },
       { $set: setValues },
     )
 
