@@ -19,6 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "@slack/web-api": "^6.4.0",
+    "async-lock": "^1.4.1",
     "axios": "^0.21.1",
     "battlestar-common": "file:../common",
     "bcrypt": "^5.0.1",

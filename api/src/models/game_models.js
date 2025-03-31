@@ -1,12 +1,12 @@
-const { Mutex } = require('../util/mutex.js')
 const { fromData, fromLobby } = require('battlestar-common')
+const AsyncLock = require('async-lock')
 
 // Database and collection
 const databaseClient = require('../util/mongo.js').client
 const database = databaseClient.db('games')
 const gameCollection = database.collection('game')
 
-const writeMutex = new Mutex()
+const lock = new AsyncLock()
 
 const Game = {
   collection: gameCollection,
@@ -19,7 +19,7 @@ Game.all = async function() {
 }
 
 Game.create = async function(lobby) {
-  return await writeMutex.dispatch(async () => {
+  return await lock.acquire(lobby._id, async () => {
     const data = fromLobby(lobby)
     data.settings.createdTimestamp = Date.now()
 
@@ -73,7 +73,7 @@ Game.findWaitingByUserId = async function(userId) {
 }
 
 Game.gameOver = async function(gameId, killed=false) {
-  return await writeMutex.dispatch(async () => {
+  return await lock.acquire(gameId, async () => {
     const setValues = { gameOver: true }
 
     if (killed) {
@@ -90,7 +90,7 @@ Game.gameOver = async function(gameId, killed=false) {
 }
 
 Game.linkDraftToGame = async function(draftId, gameId) {
-  await writeMutex.dispatch(async () => {
+  await lock.acquire(draftId, async () => {
     const draft = this.findById(draftId)
     if (draft.linkedGames) {
       await gameCollection.updateOne(
@@ -108,7 +108,7 @@ Game.linkDraftToGame = async function(draftId, gameId) {
 }
 
 Game.linkGameToDraft = async function(gameId, draftId) {
-  await writeMutex.dispatch(async () => {
+  await lock.acquire(draftId, async () => {
     await gameCollection.updateOne(
       { _id: gameId },
       { $set: { 'settings.linkedDraftId': draftId } },
@@ -142,7 +142,7 @@ Game.save = async function(game, opts={}) {
     return await doSave(game)
   }
   else {
-    return await writeMutex.dispatch(async () => {
+    return await lock.acquire(game._id, async () => {
       return await doSave(game)
     })
   }
@@ -156,10 +156,8 @@ Game.saveSettings = async function(gameId, settings) {
 }
 
 Game.saveStats = async function(gameData) {
-  return await writeMutex.dispatch(async () => {
-    await gameCollection.updateOne(
-      { _id: gameData._id },
-      { $set: { stats: gameData.stats } },
-    )
-  })
+  return await gameCollection.updateOne(
+    { _id: gameData._id },
+    { $set: { stats: gameData.stats } },
+  )
 }

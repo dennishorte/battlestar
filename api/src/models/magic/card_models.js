@@ -1,5 +1,5 @@
 const fs = require('fs')
-const { Mutex } = require('../../util/mutex.js')
+const AsyncLock = require('async-lock')
 
 const databaseClient = require('../../util/mongo.js').client
 const database = databaseClient.db('magic')
@@ -14,7 +14,7 @@ const Card = {}
 module.exports = Card
 
 
-const versionMutex = new Mutex()
+const lock = new AsyncLock()
 
 
 Card.fetchAll = async function(source) {
@@ -117,7 +117,7 @@ Card.versions = async function() {
 
 
 async function _incrementCustomCardDatabaseVersion() {
-  await versionMutex.dispatch(async () => {
+  await lock.acquire('version:custom-db', async () => {
     const customVersion = await versionCollection.findOne({
       name: 'custom',
     })
@@ -138,7 +138,7 @@ async function _incrementCustomCardDatabaseVersion() {
 }
 
 async function _getNextCollectorNumber() {
-  return await versionMutex.dispatch(async () => {
+  return await lock.acquire('version:card-number', async () => {
     const record = await countersCollection.findOne({ name: 'custom_collector_number' })
     const value = record.value
 
