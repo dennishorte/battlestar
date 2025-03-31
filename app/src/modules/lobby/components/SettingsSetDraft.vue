@@ -91,6 +91,7 @@ export default {
         .getters['magic/cards/all']
         .filter(c => c.set === setCode)
         .filter(c => !c.type_line.includes('Basic'))
+        .filter(c => c.layout !== 'meld')
 
       const rarityPools = util.array.collect(cards, c => c.rarity)
 
