@@ -6,11 +6,20 @@ const db = require('./models/db.js')
 
 const { fromData } = require('battlestar-common')
 
+class NotFoundError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'NotFoundError';
+    this.statusCode = 404;
+  }
+}
+
 const Middleware = {
   authenticate,
   coerceMongoIds,
   ensureVersion,
-  loadGame,
+  errorHandler,
+  loadGames,
 }
 module.exports = Middleware
 
@@ -126,38 +135,52 @@ function ensureVersion(req, res, next) {
  * Middleware to load game data and attach it to the request object
  * Uses proper error handling and supports concurrency control
  */
-async function loadGame(req, res, next) {
+async function loadGames(req, res, next) {
+  if (!req.body.gameId) {
+    return next()
+  }
+
   try {
     const gameId = req.body.gameId
 
     // Check if gameId exists in request
     if (!gameId) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Game ID is required'
-      })
+      return next(new BadRequestError('Invalid game id'))
     }
 
     // Load game data from database
     const gameData = await db.game.findById(gameId)
 
     if (!gameData) {
-      return res.status(404).json({
-        status: 'error',
-        message: `Game not found. ID: ${gameId}`
-      })
+      return next(new NotFoundError(`Game not found. ID: ${gameId}`))
     }
 
     // Create game instance from data
     req.game = fromData(gameData)
 
-    next()
+    return next()
   }
   catch (error) {
     console.error('Error loading game:', error)
-    return res.status(500).json({
-      status: 'error',
-      message: 'Server error while loading game data'
-    })
+    next(new Error(`Server error while loading game. ID: ${gameId}`))
   }
+}
+
+async function errorHandler(err, req, res, next) {
+  // Custom status code based on error type
+  const status = err instanceof BadRequestError ? 400 :
+                 err instanceof AuthError ? 401 :
+                 err instanceof NotFoundError ? 404 :
+                 500
+
+  // Consistent logging
+  console.error(`${status} error:`, err)
+
+  // Consistent response format
+  res.status(status).json({
+    error: {
+      message: err.message,
+      code: err.code || 'unknown'
+    }
+  })
 }
