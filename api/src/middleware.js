@@ -6,11 +6,27 @@ const db = require('./models/db.js')
 
 const { fromData } = require('battlestar-common')
 
+class AuthError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'AuthError'
+    this.statusCode = 401
+  }
+}
+
+class BadRequestError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'BadRequestError'
+    this.statusCode = 400
+  }
+}
+
 class NotFoundError extends Error {
   constructor(message) {
-    super(message);
-    this.name = 'NotFoundError';
-    this.statusCode = 404;
+    super(message)
+    this.name = 'NotFoundError'
+    this.statusCode = 404
   }
 }
 
@@ -19,7 +35,7 @@ const Middleware = {
   coerceMongoIds,
   ensureVersion,
   errorHandler,
-  loadGames,
+  loadGameArgs,
 }
 module.exports = Middleware
 
@@ -131,40 +147,56 @@ function ensureVersion(req, res, next) {
   }
 }
 
-/**
- * Middleware to load game data and attach it to the request object
- * Uses proper error handling and supports concurrency control
- */
-async function loadGames(req, res, next) {
-  if (!req.body.gameId) {
+async function _loadGame(gameId, next) {
+  // Load item data from database
+  const gameData = await db.game.findById(gameId)
+
+  if (!gameData) {
+    return new NotFoundError(`Game not found. ID: ${gameId}`)
+  }
+  else {
+    return fromData(gameData)
+  }
+}
+
+async function _loadFromId(keyName, req, res, next) {
+  const keyNameId = `${keyName}Id`
+
+  if (!req.body[keyNameId]) {
     return next()
   }
 
   try {
-    const gameId = req.body.gameId
+    const itemId = req.body[keyNameId]
 
-    // Check if gameId exists in request
-    if (!gameId) {
-      return next(new BadRequestError('Invalid game id'))
+    // Check if itemId exists in request
+    if (!itemId) {
+      return next(new BadRequestError(`Invalid ${keyName} id: ${itemId}`))
     }
 
-    // Load game data from database
-    const gameData = await db.game.findById(gameId)
-
-    if (!gameData) {
-      return next(new NotFoundError(`Game not found. ID: ${gameId}`))
+    let item
+    if (keyName === 'game') {
+      item = await _loadGame(itemId, next)
+    }
+    else {
+      return next(new Error('Unhandled key type: ' + keyName))
     }
 
-    // Create game instance from data
-    req.game = fromData(gameData)
-
-    return next()
+    if (item instanceof Error) {
+      return next(error)
+    }
+    else {
+      req[keyName] = item
+      return next()
+    }
   }
   catch (error) {
-    console.error('Error loading game:', error)
-    next(new Error(`Server error while loading game. ID: ${gameId}`))
+    console.error(`Error loading ${keyName}:`, error)
+    next(new Error(`Server error while loading ${keyName}. ID: ${itemId}`))
   }
 }
+
+async function loadGameArgs(req, res, next) { return _loadFromId('game', req, res, next) }
 
 async function errorHandler(err, req, res, next) {
   // Custom status code based on error type
