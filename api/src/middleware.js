@@ -35,7 +35,9 @@ const Middleware = {
   coerceMongoIds,
   ensureVersion,
   errorHandler,
+
   loadGameArgs,
+  loadLobbyArgs,
 }
 module.exports = Middleware
 
@@ -178,6 +180,9 @@ async function _loadFromId(keyName, req, res, next) {
     if (keyName === 'game') {
       item = await _loadGame(itemId, next)
     }
+    else if (keyName === 'lobby') {
+      item = await db.lobby.findById(itemId)
+    }
     else {
       return next(new Error('Unhandled key type: ' + keyName))
     }
@@ -197,6 +202,7 @@ async function _loadFromId(keyName, req, res, next) {
 }
 
 async function loadGameArgs(req, res, next) { return _loadFromId('game', req, res, next) }
+async function loadLobbyArgs(req, res, next) { return _loadFromId('lobby', req, res, next) }
 
 async function errorHandler(err, req, res, next) {
   // Custom status code based on error type

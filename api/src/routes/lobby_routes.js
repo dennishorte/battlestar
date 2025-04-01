@@ -12,7 +12,7 @@ Lobby.all = async function(req, res) {
 }
 
 Lobby.create = async function(req, res) {
-  const user = await db.user.findById(req.user._id)
+  const user = req.user
 
   if (!user) {
     res.json({
@@ -59,12 +59,12 @@ Lobby.create = async function(req, res) {
 }
 
 Lobby.info = async function(req, res) {
-  const lobby = await db.lobby.findById(req.body.id)
+  const lobby = req.lobby //await db.lobby.findById(req.body.id)
 
   if (!lobby) {
     res.json({
       status: 'error',
-      message: `Lobby with id ${req.body.id} not found`,
+      message: `Lobby with id ${req.body.lobbyId} not found`,
     })
     return
   }
@@ -76,7 +76,7 @@ Lobby.info = async function(req, res) {
 }
 
 Lobby.kill = async function(req, res) {
-  await db.lobby.kill(req.body.lobbyId)
+  await db.lobby.kill(req.lobby)
   res.json({
     status: 'success',
   })

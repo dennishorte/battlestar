@@ -39,7 +39,7 @@ async function _maybeHandleMagicLinks(game, linkedDraftId) {
 }
 
 Game.create = async function(req, res) {
-  const lobby = await db.lobby.findById(req.body.lobbyId)
+  const lobby = req.lobby
 
   if (lobby.gameLaunched) {
     res.json({

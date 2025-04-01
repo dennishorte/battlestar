@@ -22,6 +22,7 @@ app.use(bodyParser.json({ limit: "500kb" }))
 app.use(middleware.ensureVersion)
 app.use(middleware.coerceMongoIds)
 app.use(middleware.loadGameArgs)
+app.use(middleware.loadLobbyArgs)
 app.use(middleware.errorHandler)
 
 

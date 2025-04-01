@@ -52,8 +52,8 @@ Lobby.gameLaunched = async function(lobbyId, gameId) {
   return await lobbyCollection.updateOne(filter, updater)
 }
 
-Lobby.kill = async function(lobbyId) {
-  const filter = { _id: lobbyId }
+Lobby.kill = async function(lobby) {
+  const filter = { _id: lobby._id }
   await lobbyCollection.deleteOne(filter)
 }
 

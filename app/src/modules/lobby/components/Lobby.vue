@@ -76,7 +76,7 @@ export default {
 
   methods: {
     async getLobbyInfo() {
-      const { lobby } = await this.$post('/api/lobby/info', { id: this.id })
+      const { lobby } = await this.$post('/api/lobby/info', { lobbyId: this.id })
       this.lobby = lobby
     },
 
