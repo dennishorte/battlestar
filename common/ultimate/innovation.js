@@ -1821,8 +1821,8 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
           }
           break
         case '|':
-          this.aJunkDeck(player, card.getAge())
-          this.aDraw(player, { age: card.getAge() + 1 })
+          this.aJunkDeck(player, card.getAge() + 1)
+          this.aDraw(player, { age: card.getAge() + 2 })
           break
         case 'x':
           this.aJunkAvailableAchievement(player, [card.getAge()])

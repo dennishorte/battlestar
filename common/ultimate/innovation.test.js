@@ -576,7 +576,7 @@ describe('Innovation', () => {
         },
         decks: {
           base: {
-            3: ['Paper']
+            4: ['Gunpowder'],
           }
         }
       })
@@ -588,17 +588,18 @@ describe('Innovation', () => {
       t.testBoard(game, {
         dennis: {
           purple: ['Luoyang', 'Monotheism'],
-          hand: ['Paper']
+          hand: ['Gunpowder']
         },
         junk: [
-          "Calendar",
-          "Canal Building",
-          "Construction",
-          "Currency",
-          "Fermenting",
-          "Mapmaking",
-          "Mathematics",
-          "Road Building",
+          "Alchemy",
+          "Compass",
+          "Education",
+          "Engineering",
+          "Machinery",
+          "Medicine",
+          "Optics",
+          "Paper",
+          "Translation",
         ]
       })
     })
