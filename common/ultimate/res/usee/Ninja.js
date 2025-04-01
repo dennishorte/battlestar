@@ -19,7 +19,7 @@ function Card() {
     (game, player, { leader }) => {
       const chosenColor = game.aChooseColor(leader)[0]
       const choices = game.getCardsByZone(player, 'hand').filter(c => c.color === chosenColor)
-      const returnedCard = game.aChooseAndReturn(player, choices)[0]
+      const returnedCard = game.aChooseAndReturn(player, choices, { reveal: true })[0]
 
       if (returnedCard) {
         const topCard = game.getTopCard(player, chosenColor)

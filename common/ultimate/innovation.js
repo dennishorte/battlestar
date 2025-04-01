@@ -960,6 +960,10 @@ function ChooseAndFactory(manyFuncName, numArgs) {
 
     const cards = this.aChooseCards(player, choices, opts)
     if (cards) {
+      if (opts.reveal) {
+        this.aRevealMany(player, cards)
+      }
+
       const actionArgs = [...args]
       actionArgs[1] = cards
       return this[manyFuncName](...actionArgs)
