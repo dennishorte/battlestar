@@ -153,17 +153,14 @@ async function _loadGame(gameId, next) {
 }
 
 const itemLoaders = {
+  draft: async (id) => await _loadGame(id),
   game: async (id) => await _loadGame(id),
   lobby: async (id) => await db.lobby.findById(id)
 }
 
 async function _loadItemWithLockById(itemType, req, res, next) {
-  function handleError(error) {
-    if (unlockFn) {
-      unlockFn()
-    }
-    return next(error)
-  }
+  ////////////////////
+  // Helper Funcs
 
   async function _initializeLock() {
     // Acquire the lock but don't release it immediately
@@ -180,6 +177,25 @@ async function _loadItemWithLockById(itemType, req, res, next) {
     })
   }
 
+  async function _loadItem() {
+    // Check if we have a loader for this item type
+    if (!itemLoaders[itemType]) {
+      throw new Error(`Unsupported item type: ${itemType}`)
+    }
+
+    // Load the item using the appropriate loader
+    const item = await itemLoaders[itemType](id)
+
+    if (!item) {
+      throw new BadRequestError(`Invalid ${itemType} id: ${id}`)
+    }
+
+    return item
+  }
+
+  ////////////////////
+  // Implementation
+
   const idField = `${itemType}Id`
   const id = req.body[idField]
 
@@ -192,27 +208,16 @@ async function _loadItemWithLockById(itemType, req, res, next) {
 
   try {
     _initializeLock()
-
-    // Check if we have a loader for this item type
-    if (!itemLoaders[itemType]) {
-      return handleError(new Error(`Unsupported item type: ${itemType}`))
-    }
-
-    // Load the item using the appropriate loader
-    const item = await itemLoaders[itemType](id)
-
-    if (!item) {
-      return handleError(new BadRequestError(`Invalid ${itemType} id: ${id}`))
-    }
-
-    // Attach item to request object
-    req[itemType] = item
-
+    req[itemType] = await _loadItem()
     return next()
   }
+
   catch (error) {
     console.error(`Error loading ${itemType}:`, error)
-    return handleError(new Error(`Server error while loading ${itemType}. ID: ${id}`))
+    if (unlockFn) {
+      unlockFn()
+    }
+    return next(error)
   }
 }
 

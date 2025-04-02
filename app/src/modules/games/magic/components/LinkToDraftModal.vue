@@ -65,7 +65,7 @@ export default {
         draftId: this.draftId,
       })
 
-      this.game.settings.linkedDraftId = draftId
+      this.game.settings.linkedDraftId = this.draftId
 
       await this.$store.dispatch('magic/game/fetchLinkedDraft')
     },

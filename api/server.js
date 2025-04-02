@@ -21,10 +21,13 @@ app.use(middleware.authenticate)
 app.use(bodyParser.json({ limit: "500kb" }))
 app.use(middleware.ensureVersion)
 
+// Auto-enrich data in request
 app.use(middleware.coerceMongoIds)
 app.use(middleware.loadDraftArgs)
 app.use(middleware.loadGameArgs)
 app.use(middleware.loadLobbyArgs)
+
+// Default error handler
 app.use(middleware.errorHandler)
 
 

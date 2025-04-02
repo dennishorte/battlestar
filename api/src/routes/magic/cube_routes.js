@@ -14,10 +14,9 @@ Cube.create = async function(req, res) {
 }
 
 Cube.fetch = async function(req, res) {
-  const cube = await db.magic.cube.findById(req.body.cubeId)
   res.json({
     status: 'success',
-    cube,
+    cube: req.cube
   })
 }
 
