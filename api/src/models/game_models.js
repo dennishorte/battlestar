@@ -89,28 +89,28 @@ Game.gameOver = async function(game, killed=false) {
   })
 }
 
-Game.linkDraftToGame = async function(draftId, gameId) {
+Game.linkDraftToGame = async function(draftId, game) {
   await lock.acquire(draftId, async () => {
     const draft = this.findById(draftId)
     if (draft.linkedGames) {
       await gameCollection.updateOne(
         { _id: draftId },
-        { $addToSet: { linkedGames: gameId } }
+        { $addToSet: { linkedGames: game._id } }
       )
     }
     else {
       await gameCollection.updateOne(
         { _id: draftId },
-        { $set: { linkedGames: [gameId] } }
+        { $set: { linkedGames: [game._id] } }
       )
     }
   })
 }
 
-Game.linkGameToDraft = async function(gameId, draftId) {
+Game.linkGameToDraft = async function(game, draftId) {
   await lock.acquire(draftId, async () => {
     await gameCollection.updateOne(
-      { _id: gameId },
+      { _id: game._id },
       { $set: { 'settings.linkedDraftId': draftId } },
     )
   })
@@ -148,9 +148,9 @@ Game.save = async function(game, opts={}) {
   }
 }
 
-Game.saveSettings = async function(gameId, settings) {
+Game.saveSettings = async function(game, settings) {
   return await gameCollection.updateOne(
-    { _id: gameId },
+    { _id: game._id },
     { $set: { settings } }
   )
 }

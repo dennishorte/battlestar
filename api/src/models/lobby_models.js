@@ -43,11 +43,11 @@ Lobby.findByUserId = async function(userId) {
   })
 }
 
-Lobby.gameLaunched = async function(lobbyId, gameId) {
-  const filter = { _id: lobbyId }
+Lobby.gameLaunched = async function(lobby, game) {
+  const filter = { _id: lobby._id }
   const updater = { $set: {
     gameLaunched: true,
-    gameId: gameId,
+    gameId: game._id,
   } }
   return await lobbyCollection.updateOne(filter, updater)
 }

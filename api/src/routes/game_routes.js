@@ -27,14 +27,14 @@ async function _maybeHandleCubeDraft(game) {
     }
 
     // Save the draft settings afterwards so the deck ids get saved.
-    await db.game.saveSettings(game._id, game.settings)
+    await db.game.saveSettings(game, game.settings)
   }
 }
 
 async function _maybeHandleMagicLinks(game, linkedDraftId) {
   if (game.settings.game === 'Magic' && linkedDraftId) {
-    await db.game.linkGameToDraft(gameId, linkedDraftId)
-    await db.game.linkDraftToGame(linkedDraftId, gameId)
+    await db.game.linkGameToDraft(game, linkedDraftId)
+    await db.game.linkDraftToGame(linkedDraftId, game)
   }
 }
 
@@ -55,7 +55,7 @@ Game.create = async function(req, res) {
     const game = await db.game.findById(gameId)
 
     // Save the game id in the lobby
-    await db.lobby.gameLaunched(lobby._id, gameId)
+    await db.lobby.gameLaunched(lobby, game)
 
     await _maybeHandleCubeDraft(game)
     await _maybeHandleMagicLinks(game, req.body.linkedDraftId)
@@ -284,7 +284,7 @@ async function _notify(game, userId, msg, force=false) {
     return
   }
   else {
-    db.user.recordNotification(userId, game._id)
+    db.user.recordNotification(userId, game)
   }
 
   const gameKind = game.settings.game

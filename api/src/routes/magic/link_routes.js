@@ -4,13 +4,12 @@ const Link = {}
 
 
 Link.create = async function(req, res, next) {
-  const { gameId, draftId } = req.body
+  const draftId = req.body.draftId
+  const game = req.game
 
-  let gameIds = []
-
-  if (gameId && draftId) {
-    await db.game.linkGameToDraft(gameId, draftId)
-    await db.game.linkDraftToGame(draftId, gameId)
+  if (game && draft) {
+    await db.game.linkGameToDraft(game, draftId)
+    await db.game.linkDraftToGame(draftId, game)
   }
   else {
     res.json({
