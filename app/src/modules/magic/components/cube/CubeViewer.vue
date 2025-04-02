@@ -429,18 +429,19 @@ export default {
     },
 
     async toggleCardEditing() {
-      const { allowEdits } = await this.$post('/api/magic/cube/toggleEdits', {
+      await this.$post('/api/magic/cube/toggleEdits', {
         cubeId: this.id,
+        editFlag: !this.cube.allowEdits
       })
-      this.cube.allowEdits = allowEdits
+      this.cube.allowEdits = !this.cube.allowEdits
     },
 
     async togglePublic() {
-      const response = await this.$post('/api/magic/cube/togglePublic', {
+      await this.$post('/api/magic/cube/togglePublic', {
         cubeId: this.id,
-        value: !this.cube.public,
+        publicFlag: !this.cube.public,
       })
-      this.cube.public = response.public
+      this.cube.public = !this.cube.public
     },
   },
 

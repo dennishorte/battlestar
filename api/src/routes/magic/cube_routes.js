@@ -14,9 +14,10 @@ Cube.create = async function(req, res) {
 }
 
 Cube.fetch = async function(req, res) {
+  const cube = await db.magic.cube.findById(req.body.cubeId)
   res.json({
     status: 'success',
-    cube: req.cube
+    cube,
   })
 }
 
@@ -36,19 +37,17 @@ Cube.save = async function(req, res) {
   })
 }
 
-Cube.toggleEdits = async function(req, res) {
-  const allowEdits = await db.magic.cube.toggleEdits(req.body.cubeId)
+Cube.setEditFlag = async function(req, res) {
+  await db.magic.cube.setEditFlag(req.body.editFlag)
   res.json({
     status: 'success',
-    allowEdits,
   })
 }
 
-Cube.togglePublic = async function(req, res) {
-  const isPublic = await db.magic.cube.togglePublic(req.body.cubeId)
+Cube.setPublicFlag = async function(req, res) {
+  await db.magic.cube.setPublicFlag(req.body.publicFlag)
   res.json({
     status: 'success',
-    public: isPublic,
   })
 }
 

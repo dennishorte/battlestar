@@ -48,10 +48,7 @@ const Cube = {
     throw new Error(`Unable to remove card. Card not found. ${card.name}`)
   },
 
-  async toggleEdits(cubeId) {
-    const cube = await Cube.findById(cubeId)
-    const newValue = !Boolean(cube.allowEdits)
-
+  async setEditFlag(cubeId, newValue) {
     await cubeCollection.updateOne(
       { _id: cubeId },
       { $set: { allowEdits: newValue } },
@@ -60,10 +57,7 @@ const Cube = {
     return newValue
   },
 
-  async togglePublic(cubeId) {
-    const cube = await Cube.findById(cubeId)
-    const newValue = !Boolean(cube.public)
-
+  async setPublicFlag(cubeId, newValue) {
     await cubeCollection.updateOne(
       { _id: cubeId },
       { $set: { public: newValue } },

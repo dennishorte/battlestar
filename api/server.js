@@ -51,8 +51,8 @@ app.post('/api/magic/cube/create', routes.magic.cube.create)
 app.post('/api/magic/cube/fetch', routes.magic.cube.fetch)
 app.post('/api/magic/cube/fetchPublic', routes.magic.cube.fetchPublic)
 app.post('/api/magic/cube/save', routes.magic.cube.save)
-app.post('/api/magic/cube/toggleEdits', routes.magic.cube.toggleEdits)
-app.post('/api/magic/cube/togglePublic', routes.magic.cube.togglePublic)
+app.post('/api/magic/cube/setEditFlag', routes.magic.cube.setEditFlag)
+app.post('/api/magic/cube/setPublicFlag', routes.magic.cube.setPublicFlag)
 
 // Deck routes
 app.post('/api/magic/deck/add_card', routes.magic.deck.addCard)
