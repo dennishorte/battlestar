@@ -30,18 +30,6 @@ class NotFoundError extends Error {
   }
 }
 
-const Middleware = {
-  authenticate,
-  coerceMongoIds,
-  ensureVersion,
-  errorHandler,
-
-  loadGameArgs,
-  loadLobbyArgs,
-}
-module.exports = Middleware
-
-
 // Configure the Bearer strategy for use by Passport.
 //
 // The Bearer strategy requires a `verify` function which receives the
@@ -161,48 +149,45 @@ async function _loadGame(gameId, next) {
   }
 }
 
-async function _loadFromId(keyName, req, res, next) {
-  const keyNameId = `${keyName}Id`
+const itemLoaders = {
+  game: async (id) => await _loadGame(id),
+  lobby: async (id) => await db.lobby.findById(id)
+}
 
-  if (!req.body[keyNameId]) {
+async function _loadItemById(itemType, req, res, next) {
+  const idField = `${itemType}Id`
+  const id = req.body[idField]
+
+  // Skip if ID is not present
+  if (!id) {
     return next()
   }
 
   try {
-    const itemId = req.body[keyNameId]
-
-    // Check if itemId exists in request
-    if (!itemId) {
-      return next(new BadRequestError(`Invalid ${keyName} id: ${itemId}`))
+    // Check if we have a loader for this item type
+    if (!itemLoaders[itemType]) {
+      return next(new Error(`Unsupported item type: ${itemType}`))
     }
 
-    let item
-    if (keyName === 'game') {
-      item = await _loadGame(itemId, next)
-    }
-    else if (keyName === 'lobby') {
-      item = await db.lobby.findById(itemId)
-    }
-    else {
-      return next(new Error('Unhandled key type: ' + keyName))
+    // Load the item using the appropriate loader
+    const item = await itemLoaders[itemType](id)
+
+    if (!item) {
+      return next(new BadRequestError(`Invalid ${itemType} id: ${id}`))
     }
 
-    if (item instanceof Error) {
-      return next(error)
-    }
-    else {
-      req[keyName] = item
-      return next()
-    }
+    // Attach item to request object
+    req[itemType] = item
+    next()
   }
   catch (error) {
-    console.error(`Error loading ${keyName}:`, error)
-    next(new Error(`Server error while loading ${keyName}. ID: ${itemId}`))
+    console.error(`Error loading ${itemType}:`, error)
+    next(new Error(`Server error while loading ${itemType}. ID: ${id}`))
   }
 }
 
-async function loadGameArgs(req, res, next) { return _loadFromId('game', req, res, next) }
-async function loadLobbyArgs(req, res, next) { return _loadFromId('lobby', req, res, next) }
+const loadGameArgs = (req, res, next) => _loadItemById('game', req, res, next)
+const loadLobbyArgs = (req, res, next) => _loadItemById('lobby', req, res, next)
 
 async function errorHandler(err, req, res, next) {
   // Custom status code based on error type
@@ -221,4 +206,14 @@ async function errorHandler(err, req, res, next) {
       code: err.code || 'unknown'
     }
   })
+}
+
+module.exports = {
+  authenticate,
+  coerceMongoIds,
+  ensureVersion,
+  errorHandler,
+
+  loadGameArgs,
+  loadLobbyArgs,
 }
