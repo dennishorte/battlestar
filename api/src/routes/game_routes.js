@@ -230,7 +230,8 @@ Game.undo = async function(req, res) {
   }
 
   const { branchId } = await db.game.save(game)
-  res.json({
+
+  return res.json({
     status: 'success',
     branchId,
   })

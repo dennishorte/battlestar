@@ -1,3 +1,4 @@
+const AsyncLock = require('async-lock')
 const { ObjectId } = require('mongodb')
 const passport = require('passport')
 const JwtStrategy = require('passport-jwt').Strategy
@@ -5,6 +6,8 @@ const ExtractJwt = require('passport-jwt').ExtractJwt
 const db = require('./models/db.js')
 
 const { fromData } = require('battlestar-common')
+
+const lock = new AsyncLock()
 
 class AuthError extends Error {
   constructor(message) {
@@ -154,7 +157,29 @@ const itemLoaders = {
   lobby: async (id) => await db.lobby.findById(id)
 }
 
-async function _loadItemById(itemType, req, res, next) {
+async function _loadItemWithLockById(itemType, req, res, next) {
+  function handleError(error) {
+    if (unlockFn) {
+      unlockFn()
+    }
+    return next(error)
+  }
+
+  async function _initializeLock() {
+    // Acquire the lock but don't release it immediately
+    const lockKey = `${itemType}:${id}`
+    unlockFn = await lock.acquire(lockKey, () => {
+      return () => {}
+    })
+    res.locals.unlock = unlockFn
+    res.on('finish', () => {
+      if (unlockFn && !res.locals.lockReleased) {
+        res.locals.lockReleased = true
+        unlockFn()
+      }
+    })
+  }
+
   const idField = `${itemType}Id`
   const id = req.body[idField]
 
@@ -163,31 +188,36 @@ async function _loadItemById(itemType, req, res, next) {
     return next()
   }
 
+  let unlockFn
+
   try {
+    _initializeLock()
+
     // Check if we have a loader for this item type
     if (!itemLoaders[itemType]) {
-      return next(new Error(`Unsupported item type: ${itemType}`))
+      return handleError(new Error(`Unsupported item type: ${itemType}`))
     }
 
     // Load the item using the appropriate loader
     const item = await itemLoaders[itemType](id)
 
     if (!item) {
-      return next(new BadRequestError(`Invalid ${itemType} id: ${id}`))
+      return handleError(new BadRequestError(`Invalid ${itemType} id: ${id}`))
     }
 
     // Attach item to request object
     req[itemType] = item
-    next()
+
+    return next()
   }
   catch (error) {
     console.error(`Error loading ${itemType}:`, error)
-    next(new Error(`Server error while loading ${itemType}. ID: ${id}`))
+    return handleError(new Error(`Server error while loading ${itemType}. ID: ${id}`))
   }
 }
 
-const loadGameArgs = (req, res, next) => _loadItemById('game', req, res, next)
-const loadLobbyArgs = (req, res, next) => _loadItemById('lobby', req, res, next)
+const loadGameArgs = (req, res, next) => _loadItemWithLockById('game', req, res, next)
+const loadLobbyArgs = (req, res, next) => _loadItemWithLockById('lobby', req, res, next)
 
 async function errorHandler(err, req, res, next) {
   // Custom status code based on error type

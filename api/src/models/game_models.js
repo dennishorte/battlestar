@@ -1,12 +1,9 @@
 const { fromData, fromLobby } = require('battlestar-common')
-const AsyncLock = require('async-lock')
 
 // Database and collection
 const databaseClient = require('../util/mongo.js').client
 const database = databaseClient.db('games')
 const gameCollection = database.collection('game')
-
-const lock = new AsyncLock()
 
 const Game = {
   collection: gameCollection,
@@ -19,24 +16,22 @@ Game.all = async function() {
 }
 
 Game.create = async function(lobby) {
-  return await lock.acquire(lobby._id, async () => {
-    const data = fromLobby(lobby)
-    data.settings.createdTimestamp = Date.now()
+  const data = fromLobby(lobby)
+  data.settings.createdTimestamp = Date.now()
 
-    // Added in order to support showing games that have recently ended on user home screens.
-    data.lastUpdated = data.settings.createdTimestamp
+  // Added in order to support showing games that have recently ended on user home screens.
+  data.lastUpdated = data.settings.createdTimestamp
 
-    const insertResult = await gameCollection.insertOne(data)
+  const insertResult = await gameCollection.insertOne(data)
 
-    // Need to actually run the game once to make sure 'waiting' field is populated.
-    const gameData = await this.findById(insertResult.insertedId)
-    const game = fromData(gameData)
-    game.run()
+  // Need to actually run the game once to make sure 'waiting' field is populated.
+  const gameData = await this.findById(insertResult.insertedId)
+  const game = fromData(gameData)
+  game.run()
 
-    await this.save(game, { noMutex: true })
+  await this.save(game, { noMutex: true })
 
-    return game._id
-  })
+  return game._id
 }
 
 Game.find = async function(filters) {
@@ -73,50 +68,44 @@ Game.findWaitingByUserId = async function(userId) {
 }
 
 Game.gameOver = async function(game, killed=false) {
-  return await lock.acquire(game._id, async () => {
-    const setValues = { gameOver: true }
+  const setValues = { gameOver: true }
 
-    if (killed) {
-      setValues.killed = true
-    }
+  if (killed) {
+    setValues.killed = true
+  }
 
-    await gameCollection.updateOne(
-      { _id: game._id },
-      { $set: setValues },
-    )
+  await gameCollection.updateOne(
+    { _id: game._id },
+    { $set: setValues },
+  )
 
-    // Hook to release scars from cube draft games.
-  })
+  // Hook to release scars from cube draft games.
 }
 
 Game.linkDraftToGame = async function(draftId, game) {
-  await lock.acquire(draftId, async () => {
-    const draft = this.findById(draftId)
-    if (draft.linkedGames) {
-      await gameCollection.updateOne(
-        { _id: draftId },
-        { $addToSet: { linkedGames: game._id } }
-      )
-    }
-    else {
-      await gameCollection.updateOne(
-        { _id: draftId },
-        { $set: { linkedGames: [game._id] } }
-      )
-    }
-  })
+  const draft = this.findById(draftId)
+  if (draft.linkedGames) {
+    await gameCollection.updateOne(
+      { _id: draftId },
+      { $addToSet: { linkedGames: game._id } }
+    )
+  }
+  else {
+    await gameCollection.updateOne(
+      { _id: draftId },
+      { $set: { linkedGames: [game._id] } }
+    )
+  }
 }
 
 Game.linkGameToDraft = async function(game, draftId) {
-  await lock.acquire(draftId, async () => {
-    await gameCollection.updateOne(
-      { _id: game._id },
-      { $set: { 'settings.linkedDraftId': draftId } },
-    )
-  })
+  await gameCollection.updateOne(
+    { _id: game._id },
+    { $set: { 'settings.linkedDraftId': draftId } },
+  )
 }
 
-async function doSave(game) {
+Game.save = async function(game, opts={}) {
   const branchId = Date.now()
 
   await gameCollection.updateOne(
@@ -135,17 +124,6 @@ async function doSave(game) {
   )
 
   return { branchId }
-}
-
-Game.save = async function(game, opts={}) {
-  if (opts.noMutex) {
-    return await doSave(game)
-  }
-  else {
-    return await lock.acquire(game._id, async () => {
-      return await doSave(game)
-    })
-  }
 }
 
 Game.saveSettings = async function(game, settings) {
