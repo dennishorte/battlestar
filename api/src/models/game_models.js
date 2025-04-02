@@ -82,26 +82,25 @@ Game.gameOver = async function(game, killed=false) {
   // Hook to release scars from cube draft games.
 }
 
-Game.linkDraftToGame = async function(draftId, game) {
-  const draft = this.findById(draftId)
+Game.linkDraftToGame = async function(draft, game) {
   if (draft.linkedGames) {
     await gameCollection.updateOne(
-      { _id: draftId },
+      { _id: draft._id },
       { $addToSet: { linkedGames: game._id } }
     )
   }
   else {
     await gameCollection.updateOne(
-      { _id: draftId },
+      { _id: draft._id },
       { $set: { linkedGames: [game._id] } }
     )
   }
 }
 
-Game.linkGameToDraft = async function(game, draftId) {
+Game.linkGameToDraft = async function(game, draft) {
   await gameCollection.updateOne(
     { _id: game._id },
-    { $set: { 'settings.linkedDraftId': draftId } },
+    { $set: { 'settings.linkedDraftId': draft._id } },
   )
 }
 

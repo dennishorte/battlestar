@@ -4,12 +4,12 @@ const Link = {}
 
 
 Link.create = async function(req, res, next) {
-  const draftId = req.body.draftId
+  const draft = req.draft
   const game = req.game
 
   if (game && draft) {
-    await db.game.linkGameToDraft(game, draftId)
-    await db.game.linkDraftToGame(draftId, game)
+    await db.game.linkGameToDraft(game, draft)
+    await db.game.linkDraftToGame(draft, game)
   }
   else {
     res.json({
@@ -43,23 +43,13 @@ Link.fetchDrafts = async function(req, res) {
 
 
 Link.fetchByDraft = async function(req, res) {
-  const { draftId } = req.body
-
-  if (!draftId) {
-    res.json({
-      status: 'error',
-      message: '`draft_id` not specified in request body',
-    })
-    return
-  }
-
-  const draft = await db.game.findById(draftId)
-  delete draft.responses
+  const draft = req.draft
+  delete draft.responses  // Not sure why it does this.
 
   const games = await db
     .game
     .collection
-    .find({ 'settings.linkedDraftId': draftId })
+    .find({ 'settings.linkedDraftId': draft._id })
     .project({ responses: 0 })
     .toArray()
 
