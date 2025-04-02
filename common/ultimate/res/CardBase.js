@@ -161,7 +161,13 @@ CardBase.prototype.getBiscuitCount = function(biscuit) {
 
 CardBase.prototype.getBiscuits = function(splay) {
   if (splay === 'top') {
-    return this.biscuits
+    if (this.biscuits.length === 4) {
+      return this.biscuits
+    }
+    else {
+      // This ensures the meld biscuits from cities are executed in the correct order.
+      return this.biscuits[0] + this.biscuits.slice(4, 6) + this.biscuits.slice(1, 4)
+    }
   }
   else if (splay === 'none') {
     return ''
