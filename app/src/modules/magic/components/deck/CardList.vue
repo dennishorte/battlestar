@@ -71,6 +71,6 @@ export default {
   max-height: 100vh;
   width: 100%;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 </style>

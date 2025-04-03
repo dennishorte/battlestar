@@ -224,7 +224,7 @@ export default {
 <style scoped>
 .deck-manager {
   max-height: 100vh;
-  overflow-x: scroll;
+  overflow-x: auto;
   overflow-y: hidden;
 }
 
@@ -253,6 +253,6 @@ export default {
 .filters-column {
   min-width: 400px;
   max-width: 30em;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 </style>

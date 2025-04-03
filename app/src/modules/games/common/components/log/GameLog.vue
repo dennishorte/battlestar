@@ -268,7 +268,7 @@ export default {
 <style scoped>
 .gamelog {
   font-size: .8rem;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .bottom-space {

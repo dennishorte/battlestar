@@ -205,7 +205,7 @@ export default {
   width: 100vw;
   height: calc(100vh - 60px);
   font-size: .8rem;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .game-column {
@@ -213,7 +213,7 @@ export default {
   min-width: 220px;
   max-width: 400px;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
   padding-bottom: 3em;
 }
 

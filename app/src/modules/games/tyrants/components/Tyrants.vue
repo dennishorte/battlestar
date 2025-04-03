@@ -293,7 +293,7 @@ export default {
   width: 100vw;
   height: calc(100vh - 60px);
   font-size: .8rem;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .game-column {
@@ -301,13 +301,13 @@ export default {
   min-width: 220px;
   max-width: 300px;
   overflow-x: wrap;
-  overflow-y: scroll;
+  overflow-y: auto;
   padding-bottom: 3em;
 }
 
 .map-column {
   height: calc(100vh - 60px);
-  overflow: scroll;
+  overflow: auto;
   padding: 0;
 }
 

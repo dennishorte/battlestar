@@ -496,7 +496,7 @@ export default {
   padding: .5em;
   height: 100%;
   width: 300px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .site-details {
@@ -508,6 +508,6 @@ export default {
 
 .viewer {
   width: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 </style>
