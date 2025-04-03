@@ -27,8 +27,9 @@ function Card() {
 
           if (achievement) {
             game.aSafeguard(player, achievement)
-            game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
           }
+
+          game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
         }
         else {
           game.aDraw(player, { age: game.getEffectAge(this, 1) })
