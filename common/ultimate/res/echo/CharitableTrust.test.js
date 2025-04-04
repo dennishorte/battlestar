@@ -15,11 +15,9 @@ describe("Charitable Trust", () => {
         hand: ['Tools'],
       },
       decks: {
-        base: {
-          4: ['Enterprise'],
-        },
         echo: {
           3: ['Homing Pigeons', 'Sunglasses'],
+          4: ['Pencil'],
         },
       },
     })
@@ -36,10 +34,10 @@ describe("Charitable Trust", () => {
     t.testBoard(game, {
       dennis: {
         green: ['Charitable Trust'],
-        hand: ['Sunglasses', 'Enterprise'],
+        hand: ['Sunglasses', 'Pencil'],
       },
       micah: {
-        green: ['Sailing'],
+        green: ['Homing Pigeons', 'Sailing'],
         hand: ['Tools']
       },
     })
@@ -53,8 +51,8 @@ describe("Charitable Trust", () => {
         score: ['Software', 'Robotics'],
       },
       decks: {
-        base: {
-          4: ['Enterprise'],
+        echo: {
+          4: ['Pencil'],
         },
       },
     })
@@ -63,14 +61,13 @@ describe("Charitable Trust", () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Charitable Trust')
     request = t.choose(game, request, 4)
-    request = t.choose(game, request, 'Enterprise')
+    request = t.choose(game, request, 'Pencil')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        purple: ['Enterprise'],
+        yellow: ['Pencil'],
         score: ['Software', 'Robotics'],
-        achievements: ['Charitable Trust'],
       },
     })
   })

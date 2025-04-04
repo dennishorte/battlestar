@@ -11,7 +11,7 @@ function Card() {
   this.echo = `Draw a {3} or {4}.`
   this.karma = []
   this.dogma = [
-    `You may meld a card from your hand that you drew due to Charitable Trust's echo effect. If you do, either return or achieve (if eligible) your top green card.`
+    `You may meld a card from your hand that you drew due to Charitable Trust's echo effect. If you meld a {3}, achieve your top green card (if eligible). If you meld a {4}, return your top green card.`
   ]
 
   this.dogmaImpl = [
@@ -27,13 +27,17 @@ function Card() {
 
       if (melded) {
         const greenCard = game.getTopCard(player, 'green')
-        if (greenCard) {
+
+        if (!greenCard) {
+          game.mLog({ template: 'no top green card' })
+        }
+        else if (melded.getAge() === game.getEffectAge(this, 3)) {
           if (game.checkAchievementEligibility(player, greenCard)) {
             game.aClaimAchievement(player, { card: greenCard })
           }
-          else {
-            game.aReturn(player, greenCard)
-          }
+        }
+        else if (melded.getAge() === game.getEffectAge(this, 4)) {
+          game.aReturn(player, greenCard)
         }
       }
     }
