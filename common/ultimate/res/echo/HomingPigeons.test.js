@@ -36,4 +36,42 @@ describe("Homing Pigeons", () => {
       }
     })
   })
+
+  test('dogma: was foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        green: ['Sailing'],
+        yellow: ['Fermenting', 'Agriculture'],
+        hand: ['The Wheel', 'Machinery', 'Paper'],
+        forecast: ['Homing Pigeons'],
+      },
+      micah: {
+        score: ['Tools', 'Calendar', 'Engineering'],
+      }
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Paper')
+    request = t.choose(game, request, 'auto')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: {
+          cards: ['Homing Pigeons', 'Paper', 'Sailing'],
+          splay: 'left'
+        },
+        yellow: {
+          cards: ['Fermenting', 'Agriculture'],
+          splay: 'left',
+        },
+        hand: ['The Wheel', 'Machinery'],
+      },
+      micah: {
+        score: ['Calendar'],
+      }
+    })
+  })
 })

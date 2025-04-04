@@ -11,8 +11,8 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `I demand you return two cards from your score pile whose values each match at least one card in my hand!`,
-    `You may splay your red or green cards left.`
+    `I demand you return two cards from your score pile whose values each match a card in my hand!`,
+    `You may splay your red or green cards left. If Homing Pigeons was foreseen, splay all your colors left.`
   ]
 
   this.dogmaImpl = [
@@ -26,8 +26,16 @@ function Card() {
       game.aChooseAndReturn(player, choices, { count: 2 })
     },
 
-    (game, player) => {
-      game.aChooseAndSplay(player, ['green', 'red'], 'left')
+    (game, player, { foreseen, self }) => {
+      if (foreseen) {
+        game.mLogWasForeseen(self)
+        for (const color of game.utilColors()) {
+          game.aSplay(player, color, 'left')
+        }
+      }
+      else {
+        game.aChooseAndSplay(player, ['green', 'red'], 'left')
+      }
     }
   ]
   this.echoImpl = []
