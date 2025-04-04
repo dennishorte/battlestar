@@ -12,11 +12,8 @@ describe("Sandpaper", () => {
         hand: ['Calendar', 'Tools', 'Sailing'],
       },
       decks: {
-        base: {
-          3: ['Machinery'],
-        },
         echo: {
-          3: ['Almanac'],
+          3: ['Almanac', 'Homing Pigeons'],
         },
       }
     })
@@ -33,7 +30,39 @@ describe("Sandpaper", () => {
       dennis: {
         yellow: ['Sandpaper'],
         blue: ['Almanac'],
-        hand: ['Calendar', 'Machinery'],
+        hand: ['Calendar', 'Homing Pigeons'],
+      },
+    })
+  })
+
+  test('dogma: was foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        forecast: ['Sandpaper'],
+        hand: ['Calendar', 'Tools', 'Sailing', 'Machinery'],
+      },
+      decks: {
+        echo: {
+          3: ['Almanac', 'Homing Pigeons'],
+        },
+      }
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Machinery')
+    request = t.choose(game, request, 'Tools', 'Sailing')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'Almanac')
+    request = t.choose(game, request, 'auto')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Sandpaper', 'Machinery'],
+        blue: ['Almanac'],
+        forecast: ['Calendar', 'Homing Pigeons'],
       },
     })
   })

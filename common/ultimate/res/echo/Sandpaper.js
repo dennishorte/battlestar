@@ -11,7 +11,9 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `You may return any number of cards from your hand. Draw that many {3}, and then meld a card from your hand.`
+    `You may return any number of cards from your hand. Draw a {3} for each card you return.`,
+    `Meld a card from your hand.`,
+    `If Sandpaper was foreseen, foreshadow all cards in your hand.`
   ]
 
   this.dogmaImpl = [
@@ -24,9 +26,18 @@ function Card() {
       for (let i = 0; i < returned.length; i++) {
         game.aDraw(player, { age: game.getEffectAge(this, 3) })
       }
+    },
 
+    (game, player) => {
       game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
-    }
+    },
+
+    (game, player, { foreseen, self }) => {
+      if (foreseen) {
+        game.mLogWasForeseen(self)
+        game.aForeshadowMany(player, game.getCardsByZone(player, 'hand'))
+      }
+    },
   ]
   this.echoImpl = []
   this.karmaImpl = []
