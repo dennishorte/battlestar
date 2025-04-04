@@ -52,7 +52,7 @@ describe(`April Fool's Day`, () => {
         purple: ['Monotheism', 'Mysticism'],
       },
       micah: {
-        score: ['Domestication'],
+        yellow: ['Domestication'],
       },
     })
   })

@@ -25,7 +25,7 @@ function Card() {
       const selectedCard = game.aChooseCard(player, choices)
 
       if (selectedCard) {
-        game.aTransfer(player, selectedCard, game.getZoneByPlayer(rightPlayer, 'score'))
+        game.aTransfer(player, selectedCard, game.getZoneByPlayer(rightPlayer, selectedCard.color))
       }
       else {
         game.aClaimAchievement(player, { name: 'Folklore' })
