@@ -20,7 +20,10 @@ describe("Kobukson", () => {
       },
       decks: {
         base: {
-          4: ['Gunpowder', 'Enterprise'],
+          4: ['Gunpowder'],
+        },
+        echo: {
+          4: ['Pencil']
         },
       },
     })
@@ -39,7 +42,63 @@ describe("Kobukson", () => {
           cards: ['Kobukson', 'Construction'],
           splay: 'left'
         },
-        purple: ['Enterprise'],
+        yellow: ['Pencil'],
+      },
+      micah: {
+        yellow: {
+          cards: ['Domestication', 'Masonry'],
+          splay: 'right'
+        },
+        green: ['Sailing'],
+        red: ['Gunpowder'],
+      },
+    })
+  })
+
+  test('dogma: was foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        red: ['Construction'],
+        hand: ['Atomic Theory'],
+        forecast: ['Kobukson'],
+      },
+      micah: {
+        yellow: {
+          cards: ['Fermenting', 'Domestication', 'Masonry'],
+          splay: 'right'
+        },
+        green: ['Sailing'],
+        red: ['Archery'],
+      },
+      decks: {
+        base: {
+          4: ['Gunpowder'],
+        },
+        echo: {
+          4: ['Pencil'],
+          5: ['Seed Drill'],
+        },
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Atomic Theory')
+    request = t.choose(game, request, 'dennis red')
+    request = t.choose(game, request, 'auto')
+
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Atomic Theory'],
+        green: ['Seed Drill'],
+        red: {
+          cards: ['Kobukson', 'Construction'],
+          splay: 'left'
+        },
+        yellow: ['Pencil'],
       },
       micah: {
         yellow: {

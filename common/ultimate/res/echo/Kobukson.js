@@ -8,41 +8,34 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `5fh&`
   this.dogmaBiscuit = `f`
-  this.echo = `Splay left one color on any player's board.`
+  this.echo = `Splay left a color on any player's board.`
   this.karma = []
   this.dogma = [
-    `I demand you return all your top cards with a {k}! Draw and tuck a {4}!`,
-    `For every two cards returned as a result of the demand, draw and tuck a {4}.`
+    `I demand you return a top card with {k} of each color on your board! Draw and tuck a {4}!`,
+    `Draw and tuck a {4}.`,
+    `If Kobukson was foreseen, draw and meld a {5}.`,
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      if (!game.state.dogmaInfo.kobukson) {
-        game.state.dogmaInfo.kobukson = 0
-      }
-
       const toReturn = game
         .getTopCards(player)
         .filter(card => card.checkHasBiscuit('k'))
       const returned = game.aReturnMany(player, toReturn)
 
-      if (returned && returned.length > 0) {
-        game.state.dogmaInfo.kobukson += returned.length
-      }
-
       game.aDrawAndTuck(player, game.getEffectAge(this, 4))
     },
 
     (game, player) => {
-      const count = Math.floor(game.state.dogmaInfo.kobukson / 2)
-      game.mLog({
-        template: `${game.state.dogmaInfo.kobukson} cards were returned due to the demand`
-      })
-
-      for (let i = 0; i < count; i++) {
-        game.aDrawAndTuck(player, game.getEffectAge(this, 4))
-      }
+      game.aDrawAndTuck(player, game.getEffectAge(this, 4))
     },
+
+    (game, player, { foreseen, self }) => {
+      if (foreseen) {
+        game.mLogWasForeseen(self)
+        game.aDrawAndMeld(player, game.getEffectAge(this, 5))
+      }
+    }
   ]
   this.echoImpl = (game, player) => {
     const choices = game
