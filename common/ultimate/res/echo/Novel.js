@@ -8,16 +8,20 @@ function Card() {
   this.expansion = `echo`
   this.biscuits = `h3c&`
   this.dogmaBiscuit = `c`
-  this.echo = `Draw a {3}.`
+  this.echo = `Return all cards from your forecast.`
   this.karma = []
   this.dogma = [
-    `Draw a {3}. You may splay your purple cards left.`,
+    `Draw a {3}.`,
+    `You may splay your purple cards left.`,
     `If all your non-purple top cards share a common icon other than {c}, claim the Supremacy achievement.`
   ]
 
   this.dogmaImpl = [
     (game, player) => {
       game.aDraw(player, { age: game.getEffectAge(this, 3) })
+    },
+
+    (game, player) => {
       game.aChooseAndSplay(player, ['purple'], 'left')
     },
 
@@ -52,7 +56,7 @@ function Card() {
     }
   ]
   this.echoImpl = (game, player) => {
-    game.aDraw(player, { age: game.getEffectAge(this, 3) })
+    game.aReturnMany(player, game.getCardsByZone(player, 'forecast'))
   }
   this.karmaImpl = []
 }

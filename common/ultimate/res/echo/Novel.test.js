@@ -9,11 +9,9 @@ describe("Novel", () => {
     t.setBoard(game,  {
       dennis: {
         purple: ['Novel', 'Code of Laws'],
+        forecast: ['Machinery', 'Reformation'],
       },
       decks: {
-        base: {
-          3: ['Engineering'],
-        },
         echo: {
           3: ['Deodorant'],
         },
@@ -23,6 +21,7 @@ describe("Novel", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Novel')
+    request = t.choose(game, request, 'auto')
     request = t.choose(game, request, 'purple')
 
     t.testIsSecondPlayer(game)
@@ -32,7 +31,7 @@ describe("Novel", () => {
           cards: ['Novel', 'Code of Laws'],
           splay: 'left'
         },
-        hand: ['Engineering', 'Deodorant'],
+        hand: ['Deodorant'],
       },
     })
   })
@@ -47,9 +46,6 @@ describe("Novel", () => {
         blue: ['Pottery'],
       },
       decks: {
-        base: {
-          3: ['Engineering'],
-        },
         echo: {
           3: ['Deodorant'],
         },
@@ -71,7 +67,7 @@ describe("Novel", () => {
         green: ['The Wheel'],
         yellow: ['Agriculture'],
         blue: ['Pottery'],
-        hand: ['Engineering', 'Deodorant'],
+        hand: ['Deodorant'],
       },
     })
   })
@@ -86,9 +82,6 @@ describe("Novel", () => {
         blue: ['Pottery'],
       },
       decks: {
-        base: {
-          3: ['Engineering'],
-        },
         echo: {
           3: ['Deodorant'],
         },
@@ -110,7 +103,7 @@ describe("Novel", () => {
         green: ['Sailing'],
         yellow: ['Agriculture'],
         blue: ['Pottery'],
-        hand: ['Engineering', 'Deodorant'],
+        hand: ['Deodorant'],
         achievements: ['Supremacy'],
       },
     })
