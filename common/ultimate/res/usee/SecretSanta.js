@@ -12,7 +12,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `I demand you meld a card from my score pile!`,
-    `Draw and score three {10}.`
+    `Draw and score three {0}.`
   ]
 
   this.dogmaImpl = [
