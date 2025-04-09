@@ -25,7 +25,7 @@ function Card() {
       const returnedCards = [firstCard]
       const color = firstCard.color
 
-      while (true) {
+      while (game.getTopCard(player, color)) {
         const card = game.aChooseAndReturn(player, [game.getTopCard(player, color)], { min: 0, max: 1 })[0]
 
         if (!card) {

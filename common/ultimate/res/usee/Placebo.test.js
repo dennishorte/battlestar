@@ -72,4 +72,32 @@ describe('Placebo', () => {
     })
   })
 
+  test('dogma: only a single card of that color', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Placebo'],
+        red: ['Gunpowder'],
+      },
+      decks: {
+        usee: {
+          7: ['Mafia'],
+        },
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Placebo')
+    request = t.choose(game, request, 'Gunpowder')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Placebo'],
+        hand: ['Mafia'],
+      },
+    })
+
+  })
 })
