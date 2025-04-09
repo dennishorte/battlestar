@@ -62,7 +62,7 @@ Game.create = async function(req, res) {
 
     // Notify players of the new game
     for (const user of lobby.users) {
-      _notify(game, user._id, 'A new game has started!')
+      _notify(game, user, 'A new game has started!')
     }
 
     res.json({
@@ -295,20 +295,20 @@ async function _notify(game, userId, msg, force=false) {
   const link = `http://${domain_host}/game/${game._id}`
   const message = `${msg} <${link}|${gameKind}: ${gameName}>`
 
-  const sendResult = slack.sendMessage(userId, message)
+  const sendResult = slack.sendMessage(user, message)
 }
 
 async function _sendNotifications(game) {
   for (const player of game.settings.players) {
     if (game.checkGameIsOver()) {
-      _notify(game, player._id, 'Game Over!', true)
+      _notify(game, player, 'Game Over!', true)
     }
 
     else if (
       game.checkPlayerHasActionWaiting(player)
       && !game.checkLastActorWas(player)
     ) {
-      _notify(game, player._id, "You're up!")
+      _notify(game, player, "You're up!")
     }
   }
 }
