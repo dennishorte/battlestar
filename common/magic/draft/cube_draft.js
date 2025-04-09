@@ -84,11 +84,6 @@ CubeDraft.prototype._mainProgram = function() {
   this.mainLoop()
 }
 
-CubeDraft.prototype._gameOver = function(event) {
-  this.mLogSetIndent(0)
-  this.mLog({ template: 'Draft Complete' })
-  return event
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
@@ -404,6 +399,15 @@ CubeDraft.prototype.getPlayerOptions = function(player) {
 
   else {
     return []
+  }
+}
+
+CubeDraft.prototype.getResultMessage = function() {
+  if (this.checkGameIsOver()) {
+    return 'Draft Complete'
+  }
+  else {
+    return 'in progress'
   }
 }
 

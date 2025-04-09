@@ -100,18 +100,6 @@ Magic.prototype._mainProgram = function() {
   this.mainLoop()
 }
 
-Magic.prototype._gameOver = function(event) {
-  this.mLogSetIndent(0)
-  this.mLog({
-    template: '{player} wins due to {reason}',
-    args: {
-      player: event.data.player,
-      reason: event.data.reason,
-    }
-  })
-  return event
-}
-
 Magic.prototype._cardMovedCallback = function({ card, sourceZone, targetZone }) {
   this.mAdjustCardVisibility(card)
   this.mMaybeClearAnnotations(card)

@@ -93,6 +93,10 @@ Game.prototype.serialize = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Input Requests / Responses
 
+Game.prototype.checkIsNewGame = function() {
+  return this.responses.length === 0
+}
+
 Game.prototype.checkGameIsOver = function() {
   return this.gameOver
 }
@@ -258,6 +262,8 @@ Game.prototype.run = function() {
       this.gameOver = true
       this.gameOverData = result.data
 
+      this.mLog({ template: this.getResultMessage() })
+
       return result
     }
     else {
@@ -383,6 +389,17 @@ Game.prototype.getMergedLog = function() {
   return output
 }
 
+Game.prototype.getResultMessage = function() {
+  if (this.checkGameIsOver()) {
+    const winnerName = game.gameOverData.player.name
+    const reason = game.gameOverData.reason
+    return `${winnerName} wins due to ${reason}`
+  }
+  else {
+    return 'in progress'
+  }
+}
+
 Game.prototype.getViewerName = function() {
   return this.viewerName
 }
@@ -462,7 +479,8 @@ Game.prototype.mLogNoEffect = function() {
 // Protected Methods
 
 Game.prototype._gameOver = function(e) {
-  throw new Error('Please implement _gameOver')
+  this.mLogSetIndent(0)
+  return event
 }
 
 Game.prototype._mainProgram = function() {
