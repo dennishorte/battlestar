@@ -1,34 +1,28 @@
 <template>
   <div class="waiting-choice">
-
-    <template v-if="request.choices === '__UNSPECIFIED__'">
+    <template v-if="request && request.choices === '__UNSPECIFIED__'">
       <div class="alert alert-info mt-3">
         <div>This is a special action: {{ request.title }}.</div>
         <div>You cannot use this selector pane for it.</div>
         <div>There should be an alternate UI for performing this action.</div>
       </div>
     </template>
-
-    <template v-else>
+    <template v-else-if="request">
       <OptionSelector
-        :selector="request"
+        :selector="processedRequest"
         :required="true"
         :owner="owner"
         @selection-changed="childChanged"
       />
-
       <div class="d-grid">
         <button @click="submitIfValid" :disabled="!isValid" class="btn btn-primary">choose</button>
       </div>
     </template>
-
   </div>
 </template>
 
-
 <script>
 import { selector } from 'battlestar-common'
-
 import OptionSelector from './OptionSelector'
 
 export default {
@@ -54,31 +48,39 @@ export default {
         title: '',
         selection: []
       },
+      processedRequest: null
     }
   },
 
   computed: {
     request() {
-      const waiting = this.game.getWaiting(this.owner)
-      this.insertSubtitles(waiting)
-      return waiting
+      return this.game.getWaiting(this.owner)
     },
-
     isValid() {
-      return selector.validate(this.request, this.selection).valid
+      return this.request && selector.validate(this.request, this.selection).valid
     },
   },
 
   watch: {
-    request() {
-      if (this.request) {
-        this.selection.title = this.request.title
+    request: {
+      immediate: true,
+      handler(newRequest) {
+        if (newRequest) {
+          // Create a deep copy to avoid modifying the original
+          this.processedRequest = JSON.parse(JSON.stringify(newRequest))
+          this.insertSubtitles(this.processedRequest)
+
+          // Reset selection
+          this.selection.title = newRequest.title
+          this.selection.selection = []
+        }
+        else {
+          this.processedRequest = null
+          this.selection.title = ''
+          this.selection.selection = []
+        }
       }
-      else {
-        this.selection.title = ''
-      }
-      this.selection.selection = []
-    },
+    }
   },
 
   methods: {
@@ -88,7 +90,6 @@ export default {
         title: this.request.title,
         selection: this.selection.selection,
       }
-
       try {
         this.game.respondToInputRequest(payload)
       }
@@ -96,15 +97,13 @@ export default {
         alert('Error!\nCheck console for details.')
         throw e
       }
-
       await this.$store.dispatch('game/save')
     },
 
-    async submitIfValid(options) {
+    async submitIfValid(options = {}) {
       if (this.isValid) {
         await this.submit()
-
-        if (options.callback) {
+        if (options && options.callback) {
           await options.callback()
         }
       }
@@ -119,33 +118,29 @@ export default {
       if (!selector) {
         return
       }
-
       if (this.ui.fn.insertSelectorSubtitles) {
         this.ui.fn.insertSelectorSubtitles(selector)
       }
-
-      for (const option of selector.choices) {
+      for (const option of selector.choices || []) {
         if (this.optionHasChildren(option)) {
           this.insertSubtitles(option)
         }
       }
     },
-
     optionHasChildren(selector) {
-      return Array.isArray(selector.choices)
+      return selector && Array.isArray(selector.choices)
     },
-  },
-
-  beforeMount() {
-    this.selection.title = this.request.title
   },
 
   mounted() {
     this.bus.on('click-choose-selected-option', this.submitIfValid)
   },
+
+  beforeUnmount() {
+    this.bus.off('click-choose-selected-option', this.submitIfValid)
+  }
 }
 </script>
-
 
 <style scoped>
 .action-title {

@@ -14,7 +14,7 @@
 
     <div class="extra-info">
       <ManaCost v-if="showManaCost" class="mana-cost" :cost="manaCost" />
-      <div v-else-if(="showPower" class="mana-cost">
+      <div v-else-if="showPower" class="mana-cost">
         {{ powerToughness }}
       </div>
     </div>

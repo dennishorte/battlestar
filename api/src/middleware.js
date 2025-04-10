@@ -45,7 +45,7 @@ passport.use(new JwtStrategy(
     secretOrKey: process.env.SECRET_KEY,
   },
   async function(tokenData, cb) {
-    const id = ObjectId(tokenData.user_id)
+    const id = new ObjectId(tokenData.user_id)
     const user = await db.user.findById(id)
 
     if (!user) { return cb(null, false) }
@@ -115,7 +115,7 @@ function coerceMongoIds(req, res, next) {
       && value.length === 24
       && /^[0-9a-f]*$/.test(value)
     ) {
-      return ObjectId(value)
+      return new ObjectId(value)
     }
     else {
       return value

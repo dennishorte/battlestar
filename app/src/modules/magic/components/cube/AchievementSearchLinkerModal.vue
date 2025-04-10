@@ -54,7 +54,12 @@ export default {
 
   props: {
     achievements: Array,
-    selectedId: null,
+  },
+
+  state: () => {
+    return {
+      selectedId: null,
+    }
   },
 
   computed: {
