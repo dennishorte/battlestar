@@ -53,17 +53,6 @@ Tyrants.prototype._mainProgram = function() {
   this.mainLoop()
 }
 
-Tyrants.prototype._gameOver = function(event) {
-  this.mLogOutdent()
-  this.mLog({
-    template: '{player} wins due to {reason}',
-    args: {
-      player: event.data.player,
-      reason: event.data.reason,
-    }
-  })
-  return event
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization

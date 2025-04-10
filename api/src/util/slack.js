@@ -1,6 +1,3 @@
-const db = require('../models/db.js')
-
-
 const { WebClient } = require('@slack/web-api')
 
 // An access token (from your Slack app or custom integration - xoxp, xoxb)
@@ -21,8 +18,7 @@ async function sendToSlackId(slackId, message) {
   return await web.chat.postMessage({ channel: slackId, text: message })
 }
 
-async function sendMessage(userId, message) {
-  const user = await db.user.findById(userId)
+async function sendMessage(user, message) {
   const slackId = user.slack
 
   if (!slackId)

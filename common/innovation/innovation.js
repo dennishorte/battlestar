@@ -63,14 +63,6 @@ Innovation.prototype._gameOver = function(event) {
     }
   }
 
-  this.mLog({
-    template: '{player} wins due to {reason}',
-    args: {
-      player: event.data.player,
-      reason: event.data.reason,
-    }
-  })
-
   return event
 }
 
