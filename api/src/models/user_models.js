@@ -40,13 +40,6 @@ User.checkPassword = async function(name, password) {
   return user
 }
 
-User.clearNotification = async function(userId) {
-  await userCollection.updateOne(
-    { _id: userId },
-    { $unset: { prevNotification: '' } }
-  )
-}
-
 User.deactivate = async function(id) {
   const filter = { _id: id }
   const updater = { $set: { deactivated: true } }
@@ -97,18 +90,6 @@ User.findByIds = async function(ids) {
 
 User.findByName = async function(name) {
   return await userCollection.findOne({ name })
-}
-
-User.getNotification = async function(userId) {
-  const user = await User.findById(userId)
-  return user ? user.prevNotification : null
-}
-
-User.recordNotification = async function(userId, gameId) {
-  await userCollection.updateOne(
-    { _id: userId },
-    { $set: { prevNotification: { gameId } } },
-  )
 }
 
 User.setTokenForUserById = async function(object_id) {

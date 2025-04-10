@@ -1,8 +1,8 @@
 const db = require('../models/db.js')
-const slack = require('../util/slack.js')
 const stats = require('../util/stats.js')
+const notificationService = require('../services/notification_service.js')
 
-const { GameOverEvent } = require('battlestar-common')
+const { GameOverEvent, fromData } = require('battlestar-common')
 
 const Game = {
   stats: {}
@@ -52,18 +52,16 @@ Game.create = async function(req, res) {
   const gameId = await db.game.create(lobby)
 
   if (gameId) {
-    const game = await db.game.findById(gameId)
+    const gameData = await db.game.findById(gameId)
+    const game = fromData(gameData)
 
     // Save the game id in the lobby
-    await db.lobby.gameLaunched(lobby, game)
+    await db.lobby.gameLaunched(lobby, gameData)
 
-    await _maybeHandleCubeDraft(game)
-    await _maybeHandleMagicLinks(game, req.body.linkedDraftId)
+    await _maybeHandleCubeDraft(gameData)
+    await _maybeHandleMagicLinks(gameData, req.body.linkedDraftId)
 
-    // Notify players of the new game
-    for (const user of lobby.users) {
-      _notify(game, user, 'A new game has started!')
-    }
+    await notificationService.sendGameNotifications(game)
 
     res.json({
       status: 'success',
@@ -176,8 +174,6 @@ Game.saveFull = async function(req, res) {
       game.run()
     })
   }
-
-  await _clearNotification(game)
 }
 
 Game.saveResponse = async function(req, res) {
@@ -194,8 +190,6 @@ Game.saveResponse = async function(req, res) {
   await _testAndSave(game, res, (game) => {
     game.respondToInputRequest(req.body.response)
   })
-
-  await _clearNotification(game)
 }
 
 Game.stats.innovation = async function(req, res) {
@@ -241,11 +235,6 @@ Game.undo = async function(req, res) {
 ////////////////////////////////////////////////////////////////////////////////
 // Helper functions
 
-async function _clearNotification(game) {
-  const playerId = game.getLastActorId()
-  await db.user.clearNotification(playerId)
-}
-
 async function _testAndSave(game, res, evalFunc) {
   // Test that the response is valid.
   let valid = false
@@ -266,49 +255,11 @@ async function _testAndSave(game, res, evalFunc) {
   if (game.checkGameIsOver()) {
     await db.game.gameOver(game)
   }
-  await _sendNotifications(game)
 
+  await notificationService.sendGameNotifications(game)
 
   res.json({
     status: 'success',
     branchId,
   })
-}
-
-async function _notify(game, userId, msg, force=false) {
-  if (process.env.NODE_ENV === 'development') {
-    return
-  }
-
-  const prevNotification = await db.user.getNotification(userId)
-  if (prevNotification && prevNotification.gameId === game._id && !force) {
-    return
-  }
-  else {
-    db.user.recordNotification(userId, game)
-  }
-
-  const gameKind = game.settings.game
-  const gameName = game.settings.name
-
-  const domain_host = process.env.DOMAIN_HOST
-  const link = `http://${domain_host}/game/${game._id}`
-  const message = `${msg} <${link}|${gameKind}: ${gameName}>`
-
-  const sendResult = slack.sendMessage(user, message)
-}
-
-async function _sendNotifications(game) {
-  for (const player of game.settings.players) {
-    if (game.checkGameIsOver()) {
-      _notify(game, player, 'Game Over!', true)
-    }
-
-    else if (
-      game.checkPlayerHasActionWaiting(player)
-      && !game.checkLastActorWas(player)
-    ) {
-      _notify(game, player, "You're up!")
-    }
-  }
 }
