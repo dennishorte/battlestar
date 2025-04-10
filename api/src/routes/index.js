@@ -1,6 +1,5 @@
 const db = require('../models/db.js')
 const path = require('path')
-const slack = require('../util/slack.js')
 
 
 module.exports = {
