@@ -7,7 +7,7 @@ function _makeGameLink(game) {
   const gameName = game.settings.name
 
   const domain_host = process.env.DOMAIN_HOST
-  const link = `http://${domain_host}/game/${game._id}`
+  const link = `<http://${domain_host}/game/${game._id}|${gameKind}: ${gameName}>`
 
   return link
 }
@@ -42,6 +42,7 @@ async function sendGameNotifications(game) {
   if (process.env.NODE_ENV !== 'production') {
     return
   }
+
 
   for (const user of game.settings.players) {
     if (game.checkIsNewGame()) {
@@ -79,7 +80,7 @@ async function sendGameNotifications(game) {
 }
 
 async function sendUserNotification(user, msg) {
-  slack.sendMessage(user._id, msg)
+  slack.sendMessage(user, msg)
 }
 
 module.exports = {
