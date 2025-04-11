@@ -11,8 +11,8 @@ export default {
 
   methods: {
     async rematch() {
-      const { redirect } = await this.$post('/api/game/rematch', { gameId: this.game._id })
-      this.$router.push(redirect)
+      const { lobbyId } = await this.$post('/api/game/rematch', { gameId: this.game._id })
+      this.$router.push(`/lobby/${lobbyId}`)
     },
   },
 }

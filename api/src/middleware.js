@@ -232,15 +232,16 @@ async function errorHandler(err, req, res, next) {
                  err instanceof NotFoundError ? 404 :
                  500
 
+  const statusType = err.message === 'Game Overwrite' ? 'game_overwrite' : 'error'
+
   // Consistent logging
   console.error(`${status} error:`, err)
 
   // Consistent response format
   res.status(status).json({
-    error: {
-      message: err.message,
-      code: err.code || 'unknown'
-    }
+    status: statusType,
+    message: err.message,
+    code: err.code || 'unknown'
   })
 }
 
