@@ -391,8 +391,8 @@ Game.prototype.getMergedLog = function() {
 
 Game.prototype.getResultMessage = function() {
   if (this.checkGameIsOver()) {
-    const winnerName = game.gameOverData.player.name
-    const reason = game.gameOverData.reason
+    const winnerName = this.gameOverData.player.name
+    const reason = this.gameOverData.reason
     return `${winnerName} wins due to ${reason}`
   }
   else {
