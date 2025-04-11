@@ -84,6 +84,13 @@ export default {
   },
 
   methods: {
+    clearSelection() {
+      this.selection = {
+        title: '',
+        selection: [],
+      }
+    },
+
     async submit(extraPayload={}) {
       const payload = {
         actor: this.owner.name,
@@ -92,6 +99,7 @@ export default {
       }
       try {
         this.game.respondToInputRequest(payload)
+        this.clearSelection()
       }
       catch (e) {
         alert('Error!\nCheck console for details.')
