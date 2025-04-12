@@ -607,7 +607,10 @@ Innovation.prototype.aOneEffect = function(
           self: card,
         })
 
-        this.state.dogmaInfo.demanding = false
+        if (demand || compel) {
+          this.state.dogmaInfo.demanding = false
+        }
+
         this.mLogOutdent()
 
         if (this.state.dogmaInfo.earlyTerminate) {
