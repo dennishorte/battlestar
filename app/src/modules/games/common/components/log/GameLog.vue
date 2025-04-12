@@ -251,10 +251,12 @@ export default {
     scrollToBottom() {
       this.$nextTick(() => {
         const elem = this.$refs.gamelog
-        elem.scrollTo({
-          top: 99999,
-          behavior: 'smooth',
-        })
+        if (elem) {
+          elem.scrollTo({
+            top: 99999,
+            behavior: 'smooth',
+          })
+        }
       })
     },
   },
