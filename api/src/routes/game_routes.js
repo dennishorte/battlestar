@@ -22,7 +22,7 @@ Game.create = async function(req, res) {
 Game.fetch = async function(req, res) {
   return res.json({
     status: 'success',
-    game: req.game,
+    game: req.game.serialize(),
   })
 }
 

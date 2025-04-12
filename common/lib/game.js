@@ -81,6 +81,7 @@ function InputRequestEvent(selectors) {
 
 Game.prototype.serialize = function() {
   return {
+    _id: this._id,
     gameId: this._id,
     settings: this.settings,
     responses: this.responses,
