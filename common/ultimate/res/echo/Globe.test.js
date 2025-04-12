@@ -4,87 +4,51 @@ const t = require('../../testutil.js')
 
 describe("Globe", () => {
 
-  test('dogma: return 0', () => {
+  test('dogma: do not return', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
         green: ['Globe', 'Sailing'],
-        hand: ['Candles', 'Tools', 'Mathematics', 'Calendar'],
+        hand: ['Candles', 'Paper', 'Mathematics', 'Agriculture'],
       },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Globe')
-    request = t.choose(game, request, 'blue')
-    request = t.choose(game, request)
+    request = t.choose(game, request, 'no')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        green: {
-          cards: ['Globe', 'Sailing'],
-          splay: 'none',
-        },
-        hand: ['Candles', 'Tools', 'Mathematics', 'Calendar'],
+        green: ['Globe', 'Sailing'],
+        hand: ['Candles', 'Paper', 'Mathematics', 'Agriculture'],
       },
     })
   })
 
-  test('dogma: return 1', () => {
+  test('dogma: return all', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
         green: ['Globe', 'Sailing'],
-        hand: ['Candles', 'Tools', 'Mathematics', 'Calendar'],
+        hand: ['Candles', 'Paper', 'Mathematics', 'Agriculture', 'Perspective'],
       },
       decks: {
-        base: {
-          6: ['Canning']
+        echo: {
+          6: ['Steamboat'],
+          7: ['Rubber'],
+          8: ['Bandage'],
         },
-      }
+      },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Globe')
-    request = t.choose(game, request, 'blue')
-    request = t.choose(game, request, 'Calendar')
-    //request = t.choose(game, request, 'auto')
-
-    t.testIsSecondPlayer(game)
-    t.testBoard(game, {
-      dennis: {
-        green: {
-          cards: ['Globe', 'Sailing'],
-          splay: 'left',
-        },
-        hand: ['Candles', 'Tools', 'Mathematics'],
-        forecast: ['Canning'],
-      },
-    })
-  })
-
-  test('dogma: return 2', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
-    t.setBoard(game,  {
-      dennis: {
-        green: ['Globe', 'Sailing'],
-        hand: ['Candles', 'Tools', 'Mathematics', 'Calendar'],
-      },
-      decks: {
-        base: {
-          6: ['Canning']
-        },
-      }
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Globe')
-    request = t.choose(game, request, 'blue')
-    request = t.choose(game, request, 'Calendar', 'Mathematics')
+    request = t.choose(game, request, 'yes')
     request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'Paper', 'Mathematics', 'Agriculture')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -93,42 +57,63 @@ describe("Globe", () => {
           cards: ['Globe', 'Sailing'],
           splay: 'right',
         },
-        hand: ['Candles', 'Tools'],
-        forecast: ['Canning'],
+        forecast: ['Bandage', 'Rubber', 'Steamboat'],
       },
     })
   })
 
-  test('dogma: return 3', () => {
+  test('dogma: return but missing colors', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
         green: ['Globe', 'Sailing'],
-        hand: ['Candles', 'Tools', 'Mathematics', 'Calendar'],
+        hand: ['Candles', 'Paper', 'Agriculture', 'Perspective'],
       },
       decks: {
-        base: {
-          6: ['Canning']
+        echo: {
+          6: ['Steamboat'],
+          7: ['Rubber'],
+          8: ['Bandage'],
         },
-      }
+      },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Globe')
-    request = t.choose(game, request, 'blue')
-    request = t.choose(game, request, 'Calendar', 'Mathematics', 'Tools')
+    request = t.choose(game, request, 'yes')
     request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        green: {
-          cards: ['Globe', 'Sailing'],
-          splay: 'up',
-        },
-        hand: ['Candles'],
-        forecast: ['Canning'],
+        green: ['Globe', 'Sailing'],
+      },
+    })
+  })
+
+  test('dogma: was foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        green: ['Sailing'],
+        hand: ['Perspective', 'Paper', 'Mathematics', 'Agriculture'],
+        forecast: ['Globe'],
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Perspective')
+    request = t.choose(game, request, 'no')
+    request = t.choose(game, request, 'Perspective')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        forecast: ['Perspective'],
+        green: ['Globe', 'Sailing'],
+        hand: ['Paper', 'Mathematics', 'Agriculture'],
       },
     })
   })

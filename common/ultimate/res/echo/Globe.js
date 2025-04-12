@@ -12,41 +12,52 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-    `You may return up to three cards from your hand of the same color. If you return one, splay any color left; two, right; three, up. If you returned at least one card, draw and foreshadow a {6}.`
+    `You may return all cards in your hand. If you return blue, green, and yellow cards, draw and foreshadow a {6}, {7}, and {8}, then splay any color on your board right.`,
+    `If Globe was foreseen, foreshadow a top card from any board.`,
   ]
 
   this.dogmaImpl = [
     (game, player) => {
-      const colorChoices = util.array.distinct(
-        game
-          .getCardsByZone(player, 'hand')
-          .map(card => card.color)
-      )
-      const colors = game.aChoose(player, colorChoices, { title: 'Choose a color of cards to return' })
+      const colorCheck = (cards) => {
+        const tests = [
+          cards.some(c => c.color === 'blue'),
+          cards.some(c => c.color === 'green'),
+          cards.some(c => c.color === 'yellow'),
+        ]
+        return tests.every(x => x)
+      }
 
-      if (colors && colors.length > 0) {
-        const color = colors[0]
-        const returnChoices = game
-          .getCardsByZone(player, 'hand')
-          .filter(card => card.color === color)
-        const returned = game.aChooseAndReturn(player, returnChoices, { min: 0, max: 3 })
-        if (returned && returned.length > 0) {
-          let direction
-          if (returned.length === 1) {
-            direction = 'left'
-          }
-          else if (returned.length === 2) {
-            direction = 'right'
-          }
-          else {
-            direction = 'up'
-          }
-          game.aChooseAndSplay(player, null, direction, { count: 1 })
+      const returnAll = game.aYesNo(player, 'Return all cards in your hand?')
+      if (returnAll) {
+        const returned = game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+        if (colorCheck(returned)) {
+          // Prove that all three colors were returned.
+          const toProve = returned.filter(x => x.color === 'yellow' || x.color === 'green' || x.color === 'blue')
+          const toReveal = game.aChooseCards(player, toProve, {
+            title: 'Choose a blue, green, and yellow card to reveal',
+            count: 3,
+            guard: (cards) => colorCheck(cards),
+          })
+          game.aRevealMany(player, toReveal, { ordered: true })
 
           game.aDrawAndForeshadow(player, game.getEffectAge(this, 6))
+          game.aDrawAndForeshadow(player, game.getEffectAge(this, 7))
+          game.aDrawAndForeshadow(player, game.getEffectAge(this, 8))
+
+          game.aChooseAndSplay(player, game.utilColors(), 'right', { count: 1 })
         }
       }
-    }
+    },
+
+    (game, player, { foreseen, self }) => {
+      if (foreseen) {
+        game.mLogWasForeseen(self)
+        const cards = game
+          .getPlayerAll()
+          .flatMap(p => game.getTopCards(p))
+        game.aChooseAndForeshadow(player, cards, { count: 1 })
+      }
+    },
   ]
   this.echoImpl = []
   this.karmaImpl = []
