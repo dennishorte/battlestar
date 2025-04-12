@@ -81,19 +81,26 @@ export default {
           count: game.undoCount,
         })
 
-        game.branchId = undoResponse.branchId
+        game.branchId = undoResponse.serializedGame.branchId
+        _ensureServerAndClientAgreeOnGameState(game.serialize(), undoResponse.serializedGame)
       }
 
       const response = await this.$post('/api/game/saveFull', game.serialize())
       game.undoCount = 0
-      game.branchId = response.branchId
+      game.branchId = response.serializedGame.branchId
+      _ensureServerAndClientAgreeOnGameState(game.serialize(), response.serializedGame)
+
       commit('setSaving', false)
     },
   },
 }
 
-function delay(milliseconds){
+function delay(milliseconds) {
   return new Promise(resolve => {
     setTimeout(resolve, milliseconds)
   })
+}
+
+function _ensureServerAndClientAgreeOnGameState(client, server) {
+  return JSON.stringify(client) === JSON.stringify(server)
 }

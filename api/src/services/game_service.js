@@ -174,5 +174,5 @@ async function _testAndSave(game, evalFunc) {
 
   await notificationService.sendGameNotifications(game)
 
-  return branchId
+  return game.serialize()
 }

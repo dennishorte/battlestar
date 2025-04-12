@@ -51,7 +51,7 @@ Game.rematch = async function(req, res) {
 }
 
 Game.saveFull = async function(req, res) {
-  const branchId = await gameService.saveFull(req.game, {
+  const serializedGame = await gameService.saveFull(req.game, {
     chat: req.body.chat,
     responses: req.body.responses,
     waiting: req.body.waiting,
@@ -62,23 +62,23 @@ Game.saveFull = async function(req, res) {
   })
   res.json({
     status: 'success',
-    branchId,
+    serializedGame,
   })
 }
 
 Game.saveResponse = async function(req, res) {
-  const branchId = await gameService.saveResponse(req.game, req.body.response)
+  const serializedGame = await gameService.saveResponse(req.game, req.body.response)
   res.json({
     status: 'success',
-    branchId,
+    serializedGame,
   })
 }
 
 Game.undo = async function(req, res) {
-  const branchId = await gameService.undo(req.game, req.body.count)
+  const serializedGame = await gameService.undo(req.game, req.body.count)
   return res.json({
     status: 'success',
-    branchId,
+    serializedGame,
   })
 }
 
