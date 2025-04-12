@@ -12,7 +12,8 @@ function Card() {
   this.karma = []
   this.dogma = [
     `Draw a {4}.`,
-    `If you have exactly one card in your hand, draw a {4}, then draw and score a {4}.`
+    `If you have exactly one card in your hand, draw a {4}, then draw and score a {4}.`,
+    `If Chintz was foreseen, transfer all cards from your hand to the available achievements.`,
   ]
 
   this.dogmaImpl = [
@@ -24,6 +25,14 @@ function Card() {
       if (game.getCardsByZone(player, 'hand').length === 1) {
         game.aDraw(player, { age: game.getEffectAge(this, 4) })
         game.aDrawAndScore(player, game.getEffectAge(this, 4))
+      }
+    },
+
+    (game, player, { foreseen, self }) => {
+      if (foreseen) {
+        game.mLogWasForeseen(self)
+        const hand = game.getCardsByZone(player, 'hand')
+        game.aTransferMany(player, hand, game.getZoneById('achievements'), { ordered: true })
       }
     },
   ]

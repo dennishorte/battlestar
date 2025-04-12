@@ -8,14 +8,12 @@ describe("Chintz", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
+        yellow: ['Perspective'],
         green: ['Chintz'],
       },
       decks: {
         base: {
-          4: ['Enterprise', 'Gunpowder'],
-        },
-        echo: {
-          4: ['Clock'],
+          4: ['Experimentation', 'Enterprise', 'Gunpowder'],
         },
       },
     })
@@ -27,8 +25,9 @@ describe("Chintz", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        yellow: ['Perspective'],
         green: ['Chintz'],
-        hand: ['Enterprise', 'Clock'],
+        hand: ['Enterprise', 'Experimentation'],
         score: ['Gunpowder'],
       },
     })
@@ -58,6 +57,35 @@ describe("Chintz", () => {
         green: ['Chintz'],
         hand: ['Tools', 'Clock'],
       },
+    })
+  })
+
+  test('dogma: was foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        forecast: ['Chintz'],
+        hand: ['Tools', 'Perspective'],
+      },
+      achievements: [],
+      decks: {
+        base: {
+          4: ['Gunpowder'],
+        },
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Perspective')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Perspective'],
+        green: ['Chintz'],
+      },
+      standardAchievements: ['Tools', 'Gunpowder'],
     })
   })
 })
