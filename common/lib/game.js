@@ -478,7 +478,7 @@ Game.prototype.mLogNoEffect = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Protected Methods
 
-Game.prototype._gameOver = function(e) {
+Game.prototype._gameOver = function(event) {
   this.mLogSetIndent(0)
   return event
 }
