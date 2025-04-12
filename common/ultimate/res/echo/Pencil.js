@@ -11,7 +11,7 @@ function Card() {
   this.echo = `Draw a {5}.`
   this.karma = []
   this.dogma = [
-    `You may return up to three cards from your hand. If you do, draw that many cards of value one higher than the highest card you returned. Foreshadow one of them, and return the rest of the drawn cards.`
+    `You may return up to three cards from your hand. If you do, draw that many cards of value one higher than the highest card you returned. Return all but one of them, and foreshadow the remaining card.`,
   ]
 
   this.dogmaImpl = [

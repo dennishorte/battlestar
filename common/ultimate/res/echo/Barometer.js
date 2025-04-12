@@ -12,7 +12,7 @@ function Card() {
   this.echo = `Transfer a {5} from your forecast to your hand.`
   this.karma = []
   this.dogma = [
-    `Draw and foreshadow a card of value two higher than a bonus on any board.`,
+    `Draw and foreshadow a card of value two higher than a bonus on any board, if there is one.`,
     `You may return all the cards in your forecast. If any were blue, claim the Destiny achievement.`
   ]
 
