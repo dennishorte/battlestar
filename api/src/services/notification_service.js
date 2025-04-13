@@ -1,89 +1,53 @@
-const db = require('../models/db.js')
-const slack = require('../util/slack.js')
+const db = require('../models/db')
+const slack = require('../util/slack')
 
+const NotificationService = {}
 
-function _makeGameLink(game) {
-  const gameKind = game.settings.game
-  const gameName = game.settings.name
-
-  const domain_host = process.env.DOMAIN_HOST
-  const link = `<http://${domain_host}/game/${game._id}|${gameKind}: ${gameName}>`
-
-  return link
-}
-
-function _userJustFinishedTurn(user, game) {
-  // The user just submitted an action AND it is no longer the user's turn.
-  return game.checkLastActorWas(user) && !game.checkPlayerHasActionWaiting(user)
-}
-
-function _isUserTurn(user, game) {
-  // The game is waiting for input from the user
-  return game.checkPlayerHasActionWaiting(user)
-}
-
-async function _sendGameOverNotification(user, game) {
-  const link = _makeGameLink(game)
-  const resultMessage = game.getResultMessage()
-  const message = `Game over! ${link}\n${resultMessage}`
-
-  await sendUserNotification(user, message)
-}
-
-async function _sendYourTurnNotification(user, game) {
-  const link = _makeGameLink(game)
-  const message = `You're up! ${link}`
-
-  await sendUserNotification(user, message)
-}
-
-async function sendGameNotifications(game) {
-  // Never send notifications in development. (It's super irritating.)
+NotificationService.sendGameNotifications = async function(game) {
+  // Skip notifications in non-production environments
   if (process.env.NODE_ENV !== 'production') {
     return
   }
 
+  const { settings } = game
+  const players = settings.players || []
+  const gameUrl = `http://${process.env.DOMAIN_HOST || 'localhost'}/game/${game._id}`
+  const gameTitle = `${settings.game}: ${settings.name}`
+  const gameLink = `<${gameUrl}|${gameTitle}>`
 
-  for (const user of game.settings.players) {
-    if (game.checkIsNewGame()) {
-      // Assume no notifications have been sent yet. Let all players know that a new game has started.
-      const link = _makeGameLink(game)
-      const message = `A new game has started! ${link}`
-      await sendUserNotification(user, message)
-    }
-    else if (game.checkGameIsOver()) {
-      // Clear the notification throttle.
-      // If something gets undone, and the game is restarted, want to make sure the user
-      // gets that notification.
-      await db.notif.clear(user, game)
+  // If the game is over, notify all players
+  if (game.checkGameIsOver()) {
+    const resultMessage = game.getResultMessage ? game.getResultMessage() : ''
+    const gameOverMessage = `Game over! ${gameLink}\n${resultMessage}`
 
-      await _sendGameOverNotification(user, game)
+    for (const player of players) {
+      // Clear any pending notifications
+      await db.notif.clear(player, game)
+      // Send game over notification
+      await slack.sendMessage(player, gameOverMessage)
     }
-    else if (_userJustFinishedTurn(user, game)) {
-      // Clear their notification block so they'll be told as soon as the other player takes their turn.
-      // The goal of this throttling is really to prevent multiple messages from a single game, like a
-      // magic draft, which can often update several times a in a few minutes.
-      await db.notif.clear(user, game)
+    return
+  }
+
+  // For ongoing games, handle player-specific notifications
+  for (const player of players) {
+    // If this player just made a move, clear their notification throttle
+    if (game.checkLastActorWas(player)) {
+      await db.notif.clear(player, game)
+      continue
     }
-    else if (_isUserTurn(user, game)) {
-      // Attempt to set the throttle for this user/game pair.
-      // If an existing throttle exists, do not send a new notification.
-      const isThrottled = await db.notif.throttleOrSet(user, game)
+
+    // If it's this player's turn, check if we should notify them
+    if (game.checkPlayerHasActionWaiting(player)) {
+      // Check if notification should be throttled (don't spam players)
+      const isThrottled = await db.notif.throttleOrSet(player, game)
       if (!isThrottled) {
-        await _sendYourTurnNotification(user, game)
+        // Send "your turn" notification
+        const turnMessage = `You're up! ${gameLink}`
+        await slack.sendMessage(player, turnMessage)
       }
-    }
-    else {
-      // Do nothing
     }
   }
 }
 
-async function sendUserNotification(user, msg) {
-  slack.sendMessage(user, msg)
-}
-
-module.exports = {
-  sendGameNotifications,
-  sendUserNotification,
-}
+module.exports = NotificationService

@@ -85,12 +85,14 @@ describe('Notification Service', () => {
       expect(db.notif.clear).toHaveBeenCalledWith(mockUser2, mockGame)
 
       expect(slack.sendMessage).toHaveBeenCalledTimes(2)
-      expect(slack.sendMessage).toHaveBeenCalledWith(
-        'user1',
+      expect(slack.sendMessage).toHaveBeenNthCalledWith(
+        1,
+        mockUser1,
         expect.stringContaining('Game over!')
       )
-      expect(slack.sendMessage).toHaveBeenCalledWith(
-        'user2',
+      expect(slack.sendMessage).toHaveBeenNthCalledWith(
+        2,
+        mockUser2,
         expect.stringContaining('Game over!')
       )
     })
@@ -108,7 +110,7 @@ describe('Notification Service', () => {
       // Verify
       expect(db.notif.clear).toHaveBeenCalledTimes(1)
       expect(db.notif.clear).toHaveBeenCalledWith(mockUser1, mockGame)
-      expect(slack.sendMessage).not.toHaveBeenCalledWith('user1', expect.anything())
+      expect(slack.sendMessage).not.toHaveBeenCalledWith(mockUser1, expect.anything())
     })
 
     it('should send "your turn" notification if it is user\'s turn and not throttled', async () => {
@@ -126,11 +128,11 @@ describe('Notification Service', () => {
       // Verify
       expect(db.notif.throttleOrSet).toHaveBeenCalledWith(mockUser1, mockGame)
       expect(slack.sendMessage).toHaveBeenCalledWith(
-        'user1',
+        mockUser1,
         expect.stringContaining('You\'re up!')
       )
       // User2 shouldn't get a notification
-      expect(slack.sendMessage).not.toHaveBeenCalledWith('user2', expect.anything())
+      expect(slack.sendMessage).not.toHaveBeenCalledWith(mockUser2, expect.anything())
     })
 
     it('should not send "your turn" notification if it is throttled', async () => {
@@ -171,12 +173,12 @@ describe('Notification Service', () => {
       // User1 should get a notification (their turn and not throttled)
       expect(db.notif.throttleOrSet).toHaveBeenCalledWith(mockUser1, mockGame)
       expect(slack.sendMessage).toHaveBeenCalledWith(
-        'user1',
+        mockUser1,
         expect.stringContaining('You\'re up!')
       )
 
       // User2 shouldn't get a notification
-      expect(slack.sendMessage).not.toHaveBeenCalledWith('user2', expect.anything())
+      expect(slack.sendMessage).not.toHaveBeenCalledWith(mockUser2, expect.anything())
     })
   })
 })
