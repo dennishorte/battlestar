@@ -1,10 +1,8 @@
-// tests/models/notificationThrottle.test.js
-
-const Notif = require('./notif_models.js');
-const mongodb = require('../util/mongo');
+const Notif = require('../../../src/models/notif_models.js');
+const mongodb = require('../../../src/util/mongo');
 
 // Mock the MongoDB module
-jest.mock('../util/mongo', () => {
+jest.mock('../../../src/util/mongo', () => {
   const deleteManySpy = jest.fn().mockResolvedValue({ deletedCount: 2 });
   const deleteOneSpy = jest.fn().mockResolvedValue({ deletedCount: 1 });
   const findOneSpy = jest.fn();
@@ -116,4 +114,4 @@ describe('Notification Throttle Model', () => {
       );
     });
   });
-});
+}); 

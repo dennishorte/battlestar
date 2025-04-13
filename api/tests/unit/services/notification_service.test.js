@@ -1,20 +1,20 @@
-const notificationService = require('./notification_service.js')
+const notificationService = require('../../../src/services/notification_service.js')
 
 // Mock dependencies
-jest.mock('../models/db', () => ({
+jest.mock('../../../src/models/db', () => ({
   notif: {
     clear: jest.fn().mockResolvedValue(),
     throttleOrSet: jest.fn()
   }
 }))
 
-jest.mock('../util/slack', () => ({
+jest.mock('../../../src/util/slack', () => ({
   sendMessage: jest.fn()
 }))
 
 // Import mocked dependencies for assertions
-const db = require('../models/db')
-const slack = require('../util/slack')
+const db = require('../../../src/models/db')
+const slack = require('../../../src/util/slack')
 
 describe('Notification Service', () => {
   // Store original environment variables
@@ -181,4 +181,4 @@ describe('Notification Service', () => {
       expect(slack.sendMessage).not.toHaveBeenCalledWith(mockUser2, expect.anything())
     })
   })
-})
+}) 
