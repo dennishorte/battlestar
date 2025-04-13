@@ -95,8 +95,6 @@ Game.rematch = async function(game) {
 }
 
 Game.saveFull = async function(game, { branchId, overwrite, chat, responses, waiting, gameOver, gameOverData }) {
-  throw new GameOverwriteError('game_overwrite')
-
   // Test if the gameData is safe to write to based on this request
   // If games don't have branchIds, they haven't been created in the new
   // system. Once old games are wrapped up, this if clause can be removed.
