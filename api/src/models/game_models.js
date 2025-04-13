@@ -106,6 +106,7 @@ Game.linkGameToDraft = async function(game, draft) {
 
 Game.save = async function(game, opts={}) {
   const branchId = Date.now()
+  game.branchId = branchId
 
   await gameCollection.updateOne(
     { _id: game._id },

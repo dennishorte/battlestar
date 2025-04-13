@@ -21,36 +21,43 @@ async function post(path, body) {
   // Insert the current app version into the request
   body.appVersion = appVersion
 
-  const response = await axios.post(path, body)
+  try {
+    const response = await axios.post(path, body)
 
-  if (response.data.status === 'success') {
-    return response.data
+    if (response.data.status === 'success') {
+      return response.data
+    }
+
+    else if (response.data.status === 'error') {
+      alert('Received error from server. See console for details.')
+      console.log(response.data)
+      throw new Error('Recieved error from server')
+    }
+
+    else {
+      alert('Unknown response status: ' + response.data.status)
+      console.log(response.data)
+      throw new Error('Invalid response from server')
+    }
   }
+  catch (e) {
+    if (e.response.data.code === 'game_overwrite') {
+      modalWrapper.pleaseReload('Your actions will overwrite the actions of another player.')
+      console.log(e.response.data)
+      throw e
+    }
 
-  else if (response.data.status === 'game_overwrite') {
-    modalWrapper.pleaseReload('Your actions will overwrite the actions of another player.')
-    console.log(response.data)
-    throw new Error('Conflicting actions')
-  }
+    else if (e.response.data.code === 'version_mismatch') {
+      modalWrapper.pleaseReload('App version out of date. Please reload this page and try again.')
+      console.log({
+        currentVersion: appVersion,
+        latestVersion: e.response.data.latestVersion,
+      })
+      throw e
+    }
 
-  else if (response.data.status === 'version_mismatch') {
-    modalWrapper.pleaseReload('App version out of date. Please reload this page and try again.')
-    console.log({
-      currentVersion: appVersion,
-      latestVersion: response.data.latestVersion,
-    })
-    throw new Error('App version out of date')
-  }
-
-  else if (response.data.status === 'error') {
-    alert('Received error from server. See console for details.')
-    console.log(response.data)
-    throw new Error('Recieved error from server')
-  }
-
-  else {
-    alert('Unknown response status: ' + response.data.status)
-    console.log(response.data)
-    throw new Error('Invalid response from server')
+    else {
+      throw e
+    }
   }
 }

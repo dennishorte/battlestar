@@ -33,6 +33,24 @@ class NotFoundError extends Error {
   }
 }
 
+class GameOverwriteError extends Error {
+  constructor(message) {
+    super(message || 'game overwrite')
+    this.name = 'GameOverwriteError'
+    this.code = 'game_overwrite'
+    this.statusCode = 409
+  }
+}
+
+class GameKilledError extends Error {
+  constructor(message) {
+    super(message || 'game killed')
+    this.name = 'GameKilledError'
+    this.code = 'game_killed'
+    this.statusCode = 409
+  }
+}
+
 // Configure the Bearer strategy for use by Passport.
 //
 // The Bearer strategy requires a `verify` function which receives the
@@ -129,8 +147,8 @@ function coerceMongoIds(req, res, next) {
 const latestVersion = require('./version.js')
 function ensureVersion(req, res, next) {
   if (!req.body.appVersion || req.body.appVersion != latestVersion) {
-    res.json({
-      status: 'version_mismatch',
+    res.status(409).json({
+      code: 'version_mismatch',
       currentVersion: req.body.appVersion,
       latestVersion,
     })
@@ -230,6 +248,8 @@ async function errorHandler(err, req, res, next) {
   const status = err instanceof BadRequestError ? 400 :
                  err instanceof AuthError ? 401 :
                  err instanceof NotFoundError ? 404 :
+                 err instanceof GameOverwriteError ? 409 :
+                 err instanceof GameKilledError ? 409 :
                  500
 
   // Consistent logging
@@ -237,10 +257,9 @@ async function errorHandler(err, req, res, next) {
 
   // Consistent response format
   res.status(status).json({
-    error: {
-      message: err.message,
-      code: err.code || 'unknown'
-    }
+    message: err.message,
+    code: err.code || 'unknown',
+    ...err.data,
   })
 }
 
@@ -253,4 +272,7 @@ module.exports = {
   loadDraftArgs,
   loadGameArgs,
   loadLobbyArgs,
+
+  GameKilledError,
+  GameOverwriteError,
 }
