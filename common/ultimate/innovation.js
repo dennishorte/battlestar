@@ -3464,13 +3464,31 @@ Innovation.prototype.formatAchievements = function(array) {
 }
 
 Innovation.prototype.getEligibleAchievements = function(player, opts={}) {
+  function _breakdown(name) {
+    const noStars = name.slice(1, -1)
+    const [exp, ageStr] = noStars.split('-')
+    const age = parseInt(ageStr)
+    return { exp, age }
+  }
+
   const formatted = this.formatAchievements(this.getEligibleAchievementsRaw(player, opts))
-  const standard = util.array.distinct(formatted).sort()
+  const standard = util.array.distinct(formatted).sort((l, r) => {
+    const lparts = _breakdown(l)
+    const rparts = _breakdown(r)
+
+    if (l.exp === r.exp) {
+      return l.age < r.age
+    }
+    else {
+      return l.exp.localeCompare(r.exp)
+    }
+  })
 
   const secrets = this
     .getCardsByZone(player, 'safe')
     .filter(card => this.checkAchievementEligibility(player, card))
     .map(card => `safe: ${card.getHiddenName()}`)
+    .sort()
 
   return [
     ...standard,
@@ -3480,12 +3498,10 @@ Innovation.prototype.getEligibleAchievements = function(player, opts={}) {
 
 Innovation.prototype._generateActionChoicesAchieve = function() {
   const player = this.getPlayerCurrent()
-  const choices = this.getEligibleAchievements(player)
-  choices.sort()
 
   return {
     title: 'Achieve',
-    choices,
+    choices: this.getEligibleAchievements(player),
     min: 0,
   }
 }
