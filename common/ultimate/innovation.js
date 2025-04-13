@@ -3480,10 +3480,12 @@ Innovation.prototype.getEligibleAchievements = function(player, opts={}) {
 
 Innovation.prototype._generateActionChoicesAchieve = function() {
   const player = this.getPlayerCurrent()
+  const choices = this.getEligibleAchievements(player)
+  choices.sort()
 
   return {
     title: 'Achieve',
-    choices: this.getEligibleAchievements(player),
+    choices,
     min: 0,
   }
 }
