@@ -1,6 +1,7 @@
 const db = require('../models/db.js')
 const notificationService = require('./notification_service.js')
 
+const { GameKilledError, GameOverwriteError } = require('../middleware.js')
 const { GameOverEvent, fromData } = require('battlestar-common')
 
 
@@ -94,17 +95,19 @@ Game.rematch = async function(game) {
 }
 
 Game.saveFull = async function(game, { branchId, overwrite, chat, responses, waiting, gameOver, gameOverData }) {
+  throw new GameOverwriteError('game_overwrite')
+
   // Test if the gameData is safe to write to based on this request
   // If games don't have branchIds, they haven't been created in the new
   // system. Once old games are wrapped up, this if clause can be removed.
   if (game.branchId && !overwrite) {
     if (!branchId || branchId !== game.branchId) {
-      throw new Error('Game Overwrite')
+      throw new GameOverwriteError('game_overwrite')
     }
   }
 
   if (game.killed) {
-    throw new Error('This game was killed')
+    throw new GameKilledError('game_killed')
   }
 
   game.chat = chat

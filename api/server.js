@@ -27,9 +27,6 @@ app.use(middleware.loadDraftArgs)
 app.use(middleware.loadGameArgs)
 app.use(middleware.loadLobbyArgs)
 
-// Default error handler
-app.use(middleware.errorHandler)
-
 
 ////////////////////////////////////////////////////////////
 // Magic Routes
@@ -133,6 +130,12 @@ app.post('/api/user/magic/decks', routes.user.magic.decks)
 app.post('/api/user/magic/files', routes.user.magic.files)
 app.post('/api/user/next', routes.user.next)
 app.post('/api/user/update', routes.user.update)
+
+
+////////////////////////////////////////
+// Default error handler
+
+app.use(middleware.errorHandler)
 
 
 ////////////////////////////////////////////////////////////
