@@ -2,7 +2,7 @@ Error.stackTraceLimit = 100
 
 require('dotenv').config({ path: '../.env' })
 
-const databaseClient = require('../src/util/mongo.js').client
+const databaseClient = require('../src/utils/mongo.js').client
 
 const db = require('../src/models/db.js')
 const stats = require('../src/util/stats.js')

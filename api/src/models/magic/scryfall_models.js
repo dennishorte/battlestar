@@ -1,6 +1,6 @@
 const fs = require('fs')
 
-const databaseClient = require('../../util/mongo.js').client
+const databaseClient = require('../../utils/mongo.js').client
 const database = databaseClient.db('magic')
 const scryfallCollection = database.collection('scryfall')
 const versionCollection = database.collection('versions')
