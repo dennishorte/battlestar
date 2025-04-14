@@ -6,11 +6,6 @@ const path = require('path')
 module.exports = {
   magic: require('./magic'),
   tyrants: require('./tyrants'),
-
-  lobby: require('./lobby_routes.js'),
-  misc: require('./misc_routes.js'),
-  snapshot: require('./snapshot_routes.js'),
-  // game and user routes have been migrated to the new router system
 }
 
 async function _createFirstUserIfNone(name, password) {
