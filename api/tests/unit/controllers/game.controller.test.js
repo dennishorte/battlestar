@@ -13,7 +13,7 @@ jest.mock('passport-jwt', () => ({
 }));
 
 // Mock stats utility
-jest.mock('../../../src/util/stats', () => ({
+jest.mock('../../../src/utils/stats', () => ({
   processInnovationStats: jest.fn().mockResolvedValue({ stats: 'test stats' })
 }));
 

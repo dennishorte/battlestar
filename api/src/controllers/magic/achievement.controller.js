@@ -1,5 +1,5 @@
 const db = require('../../models/db.js')
-const slack = require('../../util/slack.js')
+const slack = require('../../utils/slack.js')
 const { util } = require('battlestar-common')
 
 /**

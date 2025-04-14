@@ -8,13 +8,13 @@ jest.mock('../../../src/models/db', () => ({
   }
 }))
 
-jest.mock('../../../src/util/slack', () => ({
+jest.mock('../../../src/utils/slack', () => ({
   sendMessage: jest.fn()
 }))
 
 // Import mocked dependencies for assertions
 const db = require('../../../src/models/db')
-const slack = require('../../../src/util/slack')
+const slack = require('../../../src/utils/slack')
 
 describe('Notification Service', () => {
   // Store original environment variables

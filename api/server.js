@@ -48,13 +48,7 @@ app.use(middleware.errorHandler)
 const startServer = () => {
   return app.listen(port, () => {
     logger.info(`Server listening on port ${port}`)
-    
-    // Log all available routes
-    const { listRoutes } = require('./src/util/debug')
-    const routes = listRoutes(app)
-    for (const elem of routes) {
-      console.log(elem)
-    }
+ 
   })
 }
 

@@ -12,7 +12,7 @@ jest.mock('passport-jwt', () => ({
 }));
 
 // Mock the mongo utility before requiring any modules that use it
-jest.mock('../../../src/util/mongo.js', () => ({
+jest.mock('../../../src/utils/mongo.js', () => ({
   client: {
     db: jest.fn().mockReturnValue({
       collection: jest.fn().mockReturnValue({})

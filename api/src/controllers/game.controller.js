@@ -1,6 +1,6 @@
-const db = require('../models/db')
+const db = require('../models/db.js')
 const logger = require('../utils/logger')
-const stats = require('../util/stats')
+const stats = require('../utils/stats')
 const gameService = require('../services/game_service')
 const { GameOverEvent, fromData } = require('battlestar-common')
 const { NotFoundError, BadRequestError } = require('../utils/errors')

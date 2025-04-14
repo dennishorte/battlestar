@@ -17,7 +17,7 @@ jest.mock('../../../../src/models/db', () => ({
   }
 }))
 
-jest.mock('../../../../src/util/slack.js', () => ({
+jest.mock('../../../../src/utils/slack.js', () => ({
   sendToSlackId: jest.fn()
 }))
 
@@ -32,7 +32,7 @@ jest.mock('battlestar-common', () => ({
 }))
 
 const db = require('../../../../src/models/db')
-const slack = require('../../../../src/util/slack.js')
+const slack = require('../../../../src/utils/slack.js')
 
 describe('Achievement Controller', () => {
   let req, res

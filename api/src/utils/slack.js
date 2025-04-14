@@ -1,5 +1,5 @@
 const { WebClient } = require('@slack/web-api')
-const logger = require('../utils/logger')
+const logger = require('./logger')
 const db = require('../models/db.js')
 
 let client = null
