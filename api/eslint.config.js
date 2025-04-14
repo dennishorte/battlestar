@@ -88,7 +88,7 @@ module.exports = defineConfig([
   },
 
   {
-    files: ["**/*test.js", "**/*.spec.js", "**/*.mock.js"],
+    files: ["tests/**/*.js"],
     plugins: { jest },
     extends: ["jest/recommended"],
   },
