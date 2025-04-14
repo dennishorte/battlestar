@@ -32,6 +32,7 @@
     "express": "^5.1.0",
     "haikunator": "^2.1.2",
     "http-proxy-middleware": "^3.0.4",
+    "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.15.0",
     "passport": "^0.7.0",

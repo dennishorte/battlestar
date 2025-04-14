@@ -1,5 +1,6 @@
 const { ObjectId } = require('mongodb')
 const latestVersion = require('../version.js')
+const { BadRequestError } = require('../utils/errors')
 
 /*
    By coercing all ids into ObjectId, we make sure that they are all handled the same inside
@@ -74,7 +75,70 @@ function ensureVersion(req, res, next) {
   }
 }
 
+/**
+ * Middleware generator for validating request data
+ * @param {Object} schema - The Joi schema with body, params, and/or query validators
+ * @returns {Function} Express middleware
+ */
+function validate(schema) {
+  return (req, res, next) => {
+    if (!schema) {
+      return next();
+    }
+
+    const validationErrors = {};
+    let errorMessage = 'Validation error';
+
+    // Validate request body
+    if (schema.body && req.body) {
+      const { error } = schema.body.validate(req.body, { 
+        abortEarly: false,
+        allowUnknown: true // Allow properties not defined in the schema
+      });
+      if (error) {
+        const details = error.details.map(detail => detail.message);
+        validationErrors.body = details;
+        errorMessage = details.join(', ');
+      }
+    }
+
+    // Validate request params
+    if (schema.params && req.params) {
+      const { error } = schema.params.validate(req.params, { 
+        abortEarly: false,
+        allowUnknown: true // Allow properties not defined in the schema
+      });
+      if (error) {
+        const details = error.details.map(detail => detail.message);
+        validationErrors.params = details;
+        errorMessage = details.join(', ');
+      }
+    }
+
+    // Validate request query
+    if (schema.query && req.query) {
+      const { error } = schema.query.validate(req.query, { 
+        abortEarly: false,
+        allowUnknown: true // Allow properties not defined in the schema
+      });
+      if (error) {
+        const details = error.details.map(detail => detail.message);
+        validationErrors.query = details;
+        errorMessage = details.join(', ');
+      }
+    }
+
+    // Check if there are any validation errors
+    if (Object.keys(validationErrors).length > 0) {
+      return next(new BadRequestError(errorMessage, validationErrors));
+    }
+
+    return next();
+  };
+}
+
 module.exports = {
   coerceMongoIds,
-  ensureVersion
+  ensureVersion,
+  validate
 }; 
