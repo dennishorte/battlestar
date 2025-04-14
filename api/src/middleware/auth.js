@@ -14,7 +14,9 @@ passport.use(new JwtStrategy(
     const id = new ObjectId(tokenData.user_id)
     const user = await db.user.findById(id)
 
-    if (!user) { return cb(null, false) }
+    if (!user) {
+      return cb(null, false) 
+    }
     return cb(null, user)
   }
 ))

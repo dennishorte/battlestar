@@ -15,7 +15,8 @@ exports.create = async (req, res, next) => {
       status: 'success',
       gameId: game._id,
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error creating game: ${err.message}`)
     next(err)
   }
@@ -30,7 +31,8 @@ exports.fetchAll = async (req, res, next) => {
       status: 'success',
       games
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error fetching all games: ${err.message}`)
     next(err)
   }
@@ -46,7 +48,8 @@ exports.fetch = async (req, res, next) => {
       status: 'success',
       game: req.game.serialize(),
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error fetching game: ${err.message}`)
     next(err)
   }
@@ -63,7 +66,8 @@ exports.kill = async (req, res, next) => {
     res.json({
       status: 'success',
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error killing game: ${err.message}`)
     next(err)
   }
@@ -81,7 +85,8 @@ exports.rematch = async (req, res, next) => {
       status: 'success',
       lobbyId: lobby._id
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error creating rematch: ${err.message}`)
     next(err)
   }
@@ -107,7 +112,8 @@ exports.saveFull = async (req, res, next) => {
       status: 'success',
       serializedGame,
     })
-  } catch (err) {
+  }
+  catch (err) {
     if (err instanceof GameOverwriteError || err instanceof GameKilledError) {
       return res.status(409).json({
         status: 'error',
@@ -133,7 +139,8 @@ exports.saveResponse = async (req, res, next) => {
       status: 'success',
       serializedGame,
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error saving response: ${err.message}`)
     next(err)
   }
@@ -151,7 +158,8 @@ exports.undo = async (req, res, next) => {
       status: 'success',
       serializedGame,
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error undoing action: ${err.message}`)
     next(err)
   }
@@ -180,7 +188,8 @@ exports.stats = {
         status: 'success',
         data: await stats.processInnovationStats(cursor),
       })
-    } catch (err) {
+    }
+    catch (err) {
       logger.error(`Error fetching innovation stats: ${err.message}`)
       next(err)
     }

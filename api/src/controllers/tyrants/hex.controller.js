@@ -16,7 +16,8 @@ exports.getAllHexes = async (req, res, next) => {
       status: 'success',
       hexes
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error fetching all hexes: ${err.message}`)
     next(err)
   }
@@ -39,7 +40,8 @@ exports.deleteHex = async (req, res, next) => {
     res.json({
       status: 'success'
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error deleting hex: ${err.message}`)
     next(err)
   }
@@ -62,7 +64,8 @@ exports.saveHex = async (req, res, next) => {
     res.json({
       status: 'success'
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error saving hex: ${err.message}`)
     next(err)
   }

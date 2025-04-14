@@ -66,7 +66,9 @@ passport.use(new JwtStrategy(
     const id = new ObjectId(tokenData.user_id)
     const user = await db.user.findById(id)
 
-    if (!user) { return cb(null, false) }
+    if (!user) {
+      return cb(null, false) 
+    }
     return cb(null, user)
   }
 ))
@@ -247,11 +249,11 @@ const loadLobbyArgs = (req, res, next) => _loadItemWithLockById('lobby', req, re
 async function errorHandler(err, req, res, next) {
   // Custom status code based on error type
   const status = err instanceof BadRequestError ? 400 :
-                 err instanceof AuthError ? 401 :
-                 err instanceof NotFoundError ? 404 :
-                 err instanceof GameOverwriteError ? 409 :
-                 err instanceof GameKilledError ? 409 :
-                 500
+    err instanceof AuthError ? 401 :
+      err instanceof NotFoundError ? 404 :
+        err instanceof GameOverwriteError ? 409 :
+          err instanceof GameKilledError ? 409 :
+            500
 
   // Consistent logging
   console.error(`${status} error:`, err)

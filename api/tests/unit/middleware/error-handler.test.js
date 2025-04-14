@@ -120,7 +120,8 @@ describe('Error Handler Middleware', () => {
         status: 'error',
         message: 'Something went wrong'
       })
-    } finally {
+    }
+    finally {
       // Restore original NODE_ENV
       process.env.NODE_ENV = originalEnv
     }

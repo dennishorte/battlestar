@@ -11,7 +11,8 @@ exports.getAllUsers = async (req, res, next) => {
       status: 'success',
       users
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error fetching all users: ${err.message}`)
     next(err)
   }
@@ -36,10 +37,12 @@ exports.createUser = async (req, res, next) => {
         status: 'success',
         message: 'User created'
       })
-    } catch (err) {
+    }
+    catch (err) {
       return next(new BadRequestError(err.toString()))
     }
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error creating user: ${err.message}`)
     next(err)
   }
@@ -59,16 +62,19 @@ exports.deactivateUser = async (req, res, next) => {
       
       if (result.modifiedCount == 1) {
         res.json({ status: 'success' })
-      } else {
+      }
+      else {
         res.json({
           status: 'error',
           message: 'User not deactivated'
         })
       }
-    } catch {
+    }
+    catch {
       return next(new BadRequestError('Invalid user ID format'))
     }
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error deactivating user: ${err.message}`)
     next(err)
   }
@@ -91,10 +97,12 @@ exports.fetchManyUsers = async (req, res, next) => {
         status: 'success',
         users: usersArray
       })
-    } catch {
+    }
+    catch {
       return next(new BadRequestError('Invalid user ID format in array'))
     }
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error fetching users: ${err.message}`)
     next(err)
   }
@@ -117,10 +125,12 @@ exports.getUserLobbies = async (req, res, next) => {
         status: 'success',
         lobbies: lobbyArray
       })
-    } catch {
+    }
+    catch {
       return next(new BadRequestError('Invalid userId format'))
     }
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error fetching user lobbies: ${err.message}`)
     next(err)
   }
@@ -134,7 +144,8 @@ exports.getUserGames = async (req, res, next) => {
       try {
         const objectId = new ObjectId(req.body.userId)
         filters['settings.players._id'] = objectId
-      } catch {
+      }
+      catch {
         return next(new BadRequestError('Invalid userId format'))
       }
     }
@@ -143,7 +154,8 @@ exports.getUserGames = async (req, res, next) => {
       if (req.body.state === 'all') {
         // Do nothing. Get all game states.
       } 
-    } else {
+    }
+    else {
       filters.gameOver = false
     }
     
@@ -162,7 +174,8 @@ exports.getUserGames = async (req, res, next) => {
       status: 'success',
       games: gameArray
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error fetching user games: ${err.message}`)
     next(err)
   }
@@ -185,10 +198,12 @@ exports.getRecentlyFinishedGames = async (req, res, next) => {
         status: 'success',
         games: gameArray
       })
-    } catch {
+    }
+    catch {
       return next(new BadRequestError('Invalid userId format'))
     }
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error fetching recently finished games: ${err.message}`)
     next(err)
   }
@@ -218,7 +233,8 @@ exports.getNextGame = async (req, res, next) => {
         for (let i = 0; i < gameArray.length; i++) {
           if (!gameArray[gameArray.length - 1]._id.equals(req.game._id)) {
             gameArray.push(gameArray.shift())
-          } else {
+          }
+          else {
             break
           }
         }
@@ -235,10 +251,12 @@ exports.getNextGame = async (req, res, next) => {
         status: 'success',
         gameId: nextId
       })
-    } catch {
+    }
+    catch {
       return next(new BadRequestError('Invalid userId format'))
     }
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error getting next game: ${err.message}`)
     next(err)
   }
@@ -263,10 +281,12 @@ exports.updateUser = async (req, res, next) => {
         status: 'success',
         message: 'User updated'
       })
-    } catch (err) {
+    }
+    catch (err) {
       return next(new BadRequestError('Error updating user: ' + err.message))
     }
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error updating user: ${err.message}`)
     next(err)
   }
@@ -290,10 +310,12 @@ exports.magic = {
           status: 'success',
           cubes
         })
-      } catch {
+      }
+      catch {
         return next(new BadRequestError('Invalid userId format or error accessing cubes'))
       }
-    } catch (err) {
+    }
+    catch (err) {
       logger.error(`Error fetching Magic cubes: ${err.message}`)
       next(err)
     }
@@ -315,10 +337,12 @@ exports.magic = {
           status: 'success',
           decks
         })
-      } catch {
+      }
+      catch {
         return next(new BadRequestError('Invalid userId format or error accessing decks'))
       }
-    } catch (err) {
+    }
+    catch (err) {
       logger.error(`Error fetching Magic decks: ${err.message}`)
       next(err)
     }
@@ -343,10 +367,12 @@ exports.magic = {
           status: 'success',
           files
         })
-      } catch {
+      }
+      catch {
         return next(new BadRequestError('Invalid userId format or error accessing files'))
       }
-    } catch (err) {
+    }
+    catch (err) {
       logger.error(`Error fetching Magic files: ${err.message}`)
       next(err)
     }

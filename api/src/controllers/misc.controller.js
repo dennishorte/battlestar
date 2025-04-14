@@ -14,7 +14,8 @@ exports.getAppVersion = async (req, res, next) => {
       status: 'success',
       version
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error fetching app version: ${err.message}`)
     next(err)
   }

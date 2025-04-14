@@ -24,7 +24,8 @@ exports.createFile = async (req, res, next) => {
       status: 'success',
       fileId
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error creating file: ${err.message}`)
     next(err)
   }
@@ -55,7 +56,8 @@ exports.deleteFile = async (req, res, next) => {
     res.json({
       status: 'success'
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error deleting file: ${err.message}`)
     next(err)
   }
@@ -86,7 +88,8 @@ exports.duplicateFile = async (req, res, next) => {
     res.json({
       status: 'success'
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error duplicating file: ${err.message}`)
     next(err)
   }
@@ -119,7 +122,8 @@ exports.saveFile = async (req, res, next) => {
     res.json({
       status: 'success'
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error saving file: ${err.message}`)
     next(err)
   }

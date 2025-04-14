@@ -81,7 +81,14 @@ module.exports = defineConfig([
       "eol-last": ["error", "always"],
       "semi": ["error", "never"],
 
-      // Optionally add other rules here
+      "brace-style": ["error", "stroustrup", { "allowSingleLine": false }],
+      "curly": ["error", "all"],
+
+      "indent": ["error", 2, {
+        "MemberExpression": 1,
+        "SwitchCase": 1,
+      }],
+
       "no-unused-vars": "warn",
       "no-undef": "warn",
     },

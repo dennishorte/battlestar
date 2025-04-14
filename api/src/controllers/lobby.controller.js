@@ -18,7 +18,8 @@ exports.getAllLobbies = async (req, res, next) => {
       status: 'success',
       lobbies: lobbiesArray
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error fetching all lobbies: ${err.message}`)
     next(err)
   }
@@ -72,11 +73,13 @@ exports.createLobby = async (req, res, next) => {
         status: 'success',
         lobbyId
       })
-    } catch (err) {
+    }
+    catch (err) {
       logger.error(`Error processing userIds: ${err.message}`)
       return next(new BadRequestError('Invalid user ID format in array'))
     }
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error creating lobby: ${err.message}`)
     next(err)
   }
@@ -100,7 +103,8 @@ exports.getLobbyInfo = async (req, res, next) => {
       status: 'success',
       lobby
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error fetching lobby info: ${err.message}`)
     next(err)
   }
@@ -123,7 +127,8 @@ exports.killLobby = async (req, res, next) => {
     res.json({
       status: 'success'
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error killing lobby: ${err.message}`)
     next(err)
   }
@@ -146,7 +151,8 @@ exports.saveLobby = async (req, res, next) => {
     res.json({
       status: 'success'
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error saving lobby: ${err.message}`)
     next(err)
   }

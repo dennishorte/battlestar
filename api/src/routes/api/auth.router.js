@@ -74,7 +74,8 @@ router.post('/login', async (req, res) => {
         username: user.name || username
       }
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Login error: ${err.message}`)
     return res.status(401).json({
       status: 'error',

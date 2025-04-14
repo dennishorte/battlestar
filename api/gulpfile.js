@@ -44,20 +44,20 @@ function buildVueCodeTask(cb) {
 function copyVueCodeTask() {
   log('copying Vue code into the directory')
   return src(`${paths.vue_src}`)
-        .pipe(dest(`${paths.vue_dist}`))
+    .pipe(dest(`${paths.vue_dist}`))
 }
 
 function copyNodeJSCodeTask() {
   log('building and copying server code into the directory')
   return webpack_stream(webpack_config)
-        .pipe(dest(`${paths.prod_build}`))
+    .pipe(dest(`${paths.prod_build}`))
 }
 
 function zippingTask() {
   log('zipping the code ')
   return src(`${paths.prod_build}/**`)
-      .pipe(zip(`${paths.zipped_file_name}`))
-      .pipe(dest(`${paths.prod_build}`))
+    .pipe(zip(`${paths.zipped_file_name}`))
+    .pipe(dest(`${paths.prod_build}`))
 }
 
 exports.default = series(

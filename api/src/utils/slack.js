@@ -57,7 +57,8 @@ async function sendMessage(user, message) {
     })
     
     logger.debug(`Sent Slack message to ${slackId}`)
-  } catch (error) {
+  }
+  catch (error) {
     logger.error(`Failed to send Slack message: ${error.message}`)
   }
 }

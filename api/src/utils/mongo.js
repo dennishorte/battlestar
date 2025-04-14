@@ -11,7 +11,8 @@ async function connectToMongoDB() {
     
     logger.info('Connected to MongoDB')
     return client
-  } catch (error) {
+  }
+  catch (error) {
     logger.error(`MongoDB connection error: ${error.message}`)
     throw error
   }

@@ -96,7 +96,8 @@ async function _loadItemWithLockById(itemType, req, res, next) {
     req[itemType] = item
     
     next()
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error loading ${itemType}: ${err.message}`)
     next(err)
   }

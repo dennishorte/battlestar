@@ -17,7 +17,8 @@ exports.createCube = async (req, res, next) => {
       status: 'success',
       cube
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error creating cube: ${err.message}`)
     next(err)
   }
@@ -45,7 +46,8 @@ exports.getCube = async (req, res, next) => {
       status: 'success',
       cube
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error fetching cube: ${err.message}`)
     next(err)
   }
@@ -66,7 +68,8 @@ exports.getPublicCubes = async (req, res, next) => {
       status: 'success',
       cubes
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error fetching public cubes: ${err.message}`)
     next(err)
   }
@@ -93,7 +96,8 @@ exports.saveCube = async (req, res, next) => {
     res.json({
       status: 'success'
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error saving cube: ${err.message}`)
     next(err)
   }
@@ -116,7 +120,8 @@ exports.setEditFlag = async (req, res, next) => {
     res.json({
       status: 'success'
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error setting edit flag: ${err.message}`)
     next(err)
   }
@@ -139,7 +144,8 @@ exports.setPublicFlag = async (req, res, next) => {
     res.json({
       status: 'success'
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error setting public flag: ${err.message}`)
     next(err)
   }

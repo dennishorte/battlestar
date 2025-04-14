@@ -24,7 +24,8 @@ exports.createSnapshot = async (req, res, next) => {
       status: 'success',
       message: 'Snapshot created'
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error creating snapshot: ${err.message}`)
     next(err)
   }
@@ -49,7 +50,8 @@ exports.getSnapshots = async (req, res, next) => {
       status: 'success',
       snapshots: array
     })
-  } catch (err) {
+  }
+  catch (err) {
     logger.error(`Error fetching snapshots: ${err.message}`)
     next(err)
   }
