@@ -71,7 +71,7 @@ export default {
     },
 
     async fetchDrafts() {
-      const { drafts } = await this.$post('/api/magic/link/fetchDrafts', {
+      const { drafts } = await this.$post('/api/magic/link/fetch_drafts', {
         userId: this.actor._id,
       })
 

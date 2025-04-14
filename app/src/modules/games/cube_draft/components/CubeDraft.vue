@@ -297,12 +297,12 @@ export default {
 
       if (this.doingScars) {
         // Release any previously reserved scars
-        await this.$post('/api/magic/scar/releaseByUser', {
+        await this.$post('/api/magic/scar/release_by_user', {
           userId: this.actor._id,
         })
 
         // Load some scars, in case needed
-        const { scars } = await this.$post('/api/magic/scar/fetchAvailable', {
+        const { scars } = await this.$post('/api/magic/scar/fetch_available', {
           cubeId: this.game.settings.cubeId,
           userId: this.actor._id,
           count: 2,
@@ -364,7 +364,7 @@ export default {
         cardIdDict: mag.util.card.id.asDict(savedCard),
       })
 
-      await this.$post('/api/magic/scar/releaseByUser', {
+      await this.$post('/api/magic/scar/release_by_user', {
         userId: this.actor._id,
       })
 

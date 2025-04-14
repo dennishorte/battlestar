@@ -69,7 +69,7 @@ router.post('/create', gameController.create)
  *       401:
  *         description: Unauthorized
  */
-router.post('/fetchAll', gameController.fetchAll)
+router.post('/fetch_all', gameController.fetchAll)
 
 /**
  * @swagger
@@ -243,7 +243,7 @@ router.post('/rematch', gameController.rematch)
  *       409:
  *         description: Conflict (game overwrite or game killed)
  */
-router.post('/saveFull', gameController.saveFull)
+router.post('/save_full', gameController.saveFull)
 
 /**
  * @swagger
@@ -286,7 +286,7 @@ router.post('/saveFull', gameController.saveFull)
  *       404:
  *         description: Game not found
  */
-router.post('/saveResponse', gameController.saveResponse)
+router.post('/save_response', gameController.saveResponse)
 
 /**
  * @swagger

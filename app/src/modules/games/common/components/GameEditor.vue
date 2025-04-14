@@ -54,7 +54,7 @@ export default {
         overwrite: true,
       }
 
-      const response = await this.$post('/api/game/saveFull', payload)
+      const response = await this.$post('/api/game/save_full', payload)
       console.log(response)
     },
   },

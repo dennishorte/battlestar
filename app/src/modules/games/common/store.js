@@ -85,7 +85,7 @@ export default {
         _ensureServerAndClientAgreeOnGameState(game.serialize(), undoResponse.serializedGame)
       }
 
-      const response = await this.$post('/api/game/saveFull', game.serialize())
+      const response = await this.$post('/api/game/save_full', game.serialize())
       game.undoCount = 0
       game.branchId = response.serializedGame.branchId
       _ensureServerAndClientAgreeOnGameState(game.serialize(), response.serializedGame)

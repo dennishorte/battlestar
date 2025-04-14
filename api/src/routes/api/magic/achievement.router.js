@@ -7,7 +7,7 @@ const achievementController = require('../../../controllers/magic/achievement.co
  * @desc Fetch all achievements for a cube
  * @access Private
  */
-router.post('/fetch_all', achievementController.fetchAll)
+router.post('/all', achievementController.fetchAll)
 
 /**
  * @route POST /api/magic/achievement/claim
