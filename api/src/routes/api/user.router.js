@@ -1,9 +1,85 @@
 const express = require('express')
 const router = express.Router()
-const { ObjectId } = require('mongodb')
-const db = require('../../models/db')
-const { BadRequestError, NotFoundError } = require('../../utils/errors')
-const logger = require('../../utils/logger')
+const userController = require('../../controllers/user.controller')
+
+/**
+ * @swagger
+ * /user/all:
+ *   get:
+ *     summary: Get all users
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all users
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/all', userController.getAllUsers)
+
+/**
+ * @swagger
+ * /user/create:
+ *   post:
+ *     summary: Create a new user
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - password
+ *             properties:
+ *               name:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               slack:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User created successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/create', userController.createUser)
+
+/**
+ * @swagger
+ * /user/deactivate:
+ *   post:
+ *     summary: Deactivate a user
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User deactivated successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/deactivate', userController.deactivateUser)
 
 /**
  * @swagger
@@ -40,26 +116,248 @@ const logger = require('../../utils/logger')
  *       401:
  *         description: Unauthorized
  */
-router.post('/fetch_many', async (req, res, next) => {
-  try {
-    const { userIds } = req.body
-    
-    if (!userIds || !Array.isArray(userIds)) {
-      return next(new BadRequestError('userIds must be an array'))
-    }
-    
-    // For our tests, we'll keep this simple since we're just testing authentication
-    res.json([
-      {
-        _id: userIds[0],
-        name: 'Test User',
-        email: 'test@example.com'
-      }
-    ])
-  } catch (err) {
-    logger.error(`Error fetching users: ${err.message}`)
-    next(err)
-  }
-})
+router.post('/fetch_many', userController.fetchManyUsers)
+
+/**
+ * @swagger
+ * /user/lobbies:
+ *   post:
+ *     summary: Get all lobbies for a user
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: List of lobbies
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/lobbies', userController.getUserLobbies)
+
+/**
+ * @swagger
+ * /user/games:
+ *   post:
+ *     summary: Get games for a user with optional filters
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *               state:
+ *                 type: string
+ *                 enum: [all, active]
+ *               kind:
+ *                 type: string
+ *               killed:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: List of games
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/games', userController.getUserGames)
+
+/**
+ * @swagger
+ * /user/games_recently_finished:
+ *   post:
+ *     summary: Get recently finished games for a user
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: List of recently finished games
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/games_recently_finished', userController.getRecentlyFinishedGames)
+
+/**
+ * @swagger
+ * /user/next:
+ *   post:
+ *     summary: Get the next game for a user that is waiting for their turn
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Next game ID waiting for user's turn
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/next', userController.getNextGame)
+
+/**
+ * @swagger
+ * /user/update:
+ *   post:
+ *     summary: Update user information
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               slack:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/update', userController.updateUser)
+
+// Magic related endpoints
+/**
+ * @swagger
+ * /user/magic/cubes:
+ *   post:
+ *     summary: Get Magic cubes for a user
+ *     tags: [Users, Magic]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: List of Magic cubes
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/magic/cubes', userController.magic.getCubes)
+
+/**
+ * @swagger
+ * /user/magic/decks:
+ *   post:
+ *     summary: Get Magic decks for a user
+ *     tags: [Users, Magic]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: List of Magic decks
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/magic/decks', userController.magic.getDecks)
+
+/**
+ * @swagger
+ * /user/magic/files:
+ *   post:
+ *     summary: Get all Magic files (decks and cubes) for a user
+ *     tags: [Users, Magic]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: List of Magic files
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/magic/files', userController.magic.getFiles)
 
 module.exports = router 

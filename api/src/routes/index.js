@@ -1,16 +1,16 @@
 const db = require('../models/db.js')
 const path = require('path')
 
-
+// Note: These routes have been migrated to the new router system in src/routes/api
+// Only keeping this file for backward compatibility with any components that might still reference it
 module.exports = {
   magic: require('./magic'),
   tyrants: require('./tyrants'),
 
   lobby: require('./lobby_routes.js'),
   misc: require('./misc_routes.js'),
-  game: require('./game_routes.js'),
   snapshot: require('./snapshot_routes.js'),
-  user: require('./user_routes.js'),
+  // game and user routes have been migrated to the new router system
 }
 
 async function _createFirstUserIfNone(name, password) {
