@@ -23,7 +23,7 @@ router.post('/fetch', cubeController.getCube)
  * @description Get all public cubes
  * @access Public
  */
-router.get('/fetchPublic', cubeController.getPublicCubes)
+router.post('/fetchPublic', cubeController.getPublicCubes)
 
 /**
  * @route POST /api/magic/cube/save

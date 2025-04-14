@@ -1,9 +1,12 @@
 const db = require('../../models/db.js')
 
-const Link = {}
-
-
-Link.create = async function(req, res, next) {
+/**
+ * Create a link between a game and a draft
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+exports.create = async (req, res, next) => {
   const draft = req.draft
   const game = req.game
 
@@ -25,7 +28,12 @@ Link.create = async function(req, res, next) {
   })
 }
 
-Link.fetchDrafts = async function(req, res) {
+/**
+ * Fetch drafts associated with a user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.fetchDrafts = async (req, res) => {
   const cursor = await db.game.collection.find({
     'settings.game': 'CubeDraft',
     'settings.players': { $elemMatch: { _id: req.body.userId } },
@@ -41,10 +49,14 @@ Link.fetchDrafts = async function(req, res) {
   })
 }
 
-
-Link.fetchByDraft = async function(req, res) {
+/**
+ * Fetch games linked to a draft
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.fetchByDraft = async (req, res) => {
   const draft = req.draft
-  delete draft.responses  // Not sure why it does this.
+  delete draft.responses  // Removing responses from the draft object
 
   const games = await db
     .game
@@ -58,6 +70,4 @@ Link.fetchByDraft = async function(req, res) {
     games,
     draft,
   })
-}
-
-module.exports = Link
+} 

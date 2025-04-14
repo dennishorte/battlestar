@@ -1,10 +1,12 @@
 const db = require('../../models/db.js')
 const { mag } = require('battlestar-common')
 
-const Card = {}
-
-
-Card.fetchAll = async function(req, res) {
+/**
+ * Fetch all cards
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.fetchAll = async (req, res) => {
   const cardData = await db.magic.card.fetchAll(req.body.source)
 
   res.json({
@@ -13,6 +15,12 @@ Card.fetchAll = async function(req, res) {
   })
 }
 
+/**
+ * Helper function to extract card data from request
+ * @param {Object} req - Express request object
+ * @param {String} name - Name of the property to extract
+ * @returns {Object|null} Card data
+ */
 function _extractCardData(req, name) {
   if (!req.body[name]) {
     return null
@@ -22,7 +30,12 @@ function _extractCardData(req, name) {
   }
 }
 
-Card.save = async function(req, res) {
+/**
+ * Save a card
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.save = async (req, res) => {
   const card = _extractCardData(req, 'card')
   const original = _extractCardData(req, 'original')
   const { editor, comment } = req.body
@@ -99,12 +112,15 @@ Card.save = async function(req, res) {
   })
 }
 
-Card.versions = async function(req, res) {
+/**
+ * Get card versions
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.versions = async (req, res) => {
   const versions = await db.magic.card.versions()
   res.json({
     status: 'success',
     versions,
   })
-}
-
-module.exports = Card
+} 

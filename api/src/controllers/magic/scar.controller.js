@@ -2,21 +2,27 @@ const db = require('../../models/db.js')
 const AsyncLock = require('async-lock')
 const { util } = require('battlestar-common')
 
-const Scar = {}
-module.exports = Scar
-
-
+// Create a lock for scar operations to prevent race conditions
 const lock = new AsyncLock()
 
-
-Scar.apply = async function(req, res) {
+/**
+ * Apply a scar to cards
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.apply = async (req, res) => {
   await lock.acquire('scar', async () => {
     await db.magic.scar.apply(req.body.scarId, req.body.userId, req.body.cardIdDict)
     res.json({ status: 'success' })
   })
 }
 
-Scar.fetchAll = async function(req, res) {
+/**
+ * Fetch all scars for a cube
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.fetchAll = async (req, res) => {
   await lock.acquire('scar', async () => {
     const scars = await db.magic.scar.fetchByCubeId(req.body.cubeId)
     res.json({
@@ -26,7 +32,12 @@ Scar.fetchAll = async function(req, res) {
   })
 }
 
-Scar.fetchAvailable = async function(req, res) {
+/**
+ * Fetch available scars for a cube
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.fetchAvailable = async (req, res) => {
   await lock.acquire('scar', async () => {
     const scars = await db.magic.scar.fetchAvailable(req.body.cubeId)
     util.array.shuffle(scars)
@@ -44,7 +55,12 @@ Scar.fetchAvailable = async function(req, res) {
   })
 }
 
-Scar.releaseByUser = async function(req, res) {
+/**
+ * Release scars for a user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.releaseByUser = async (req, res) => {
   await lock.acquire('scar', async () => {
     db.magic.scar.releaseByUser(req.body.userId)
     res.json({
@@ -53,7 +69,12 @@ Scar.releaseByUser = async function(req, res) {
   })
 }
 
-Scar.save = async function(req, res) {
+/**
+ * Save a scar
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.save = async (req, res) => {
   await lock.acquire('scar', async () => {
     const scar = await db.magic.scar.save(req.body.scar)
 
@@ -62,4 +83,4 @@ Scar.save = async function(req, res) {
       scar,
     })
   })
-}
+} 
