@@ -1,6 +1,5 @@
 const { WebClient } = require('@slack/web-api')
 const logger = require('./logger')
-const db = require('../models/db.js')
 
 let client = null
 
@@ -14,7 +13,6 @@ const token = process.env.SLACK_BOT_TOKEN
 const web = new WebClient(token)
 
 // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
-const dennisUserId = 'U3SHZPJF5'
 const cloChannelId = 'C01AV1RGJSK'
 
 module.exports = {

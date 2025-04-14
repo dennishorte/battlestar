@@ -3,7 +3,6 @@ const passport = require('passport')
 const JwtStrategy = require('passport-jwt').Strategy
 const ExtractJwt = require('passport-jwt').ExtractJwt
 const db = require('../models/db.js')
-const { UnauthorizedError } = require('../utils/errors')
 
 // Configure the Bearer strategy for use by Passport.
 passport.use(new JwtStrategy(

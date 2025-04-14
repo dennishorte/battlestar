@@ -4,6 +4,7 @@ const { AppError } = require('../utils/errors')
 /**
  * Global error handling middleware
  */
+// eslint-disable-next-line no-unused-vars
 async function errorHandler(err, req, res, next) {
   // Log the error
   logger.error(`Error: ${err.message}`, {

@@ -158,7 +158,7 @@ function ensureVersion(req, res, next) {
   }
 }
 
-async function _loadGame(gameId, next) {
+async function _loadGame(gameId) {
   // Load item data from database
   const gameData = await db.game.findById(gameId)
 
@@ -243,6 +243,7 @@ const loadDraftArgs = (req, res, next) => _loadItemWithLockById('draft', req, re
 const loadGameArgs = (req, res, next) => _loadItemWithLockById('game', req, res, next)
 const loadLobbyArgs = (req, res, next) => _loadItemWithLockById('lobby', req, res, next)
 
+// eslint-disable-next-line no-unused-vars
 async function errorHandler(err, req, res, next) {
   // Custom status code based on error type
   const status = err instanceof BadRequestError ? 400 :

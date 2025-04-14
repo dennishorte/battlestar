@@ -2,8 +2,7 @@ const db = require('../models/db.js')
 const logger = require('../utils/logger')
 const stats = require('../utils/stats')
 const gameService = require('../services/game_service')
-const { GameOverEvent, fromData } = require('battlestar-common')
-const { NotFoundError, BadRequestError } = require('../utils/errors')
+const { NotFoundError } = require('../utils/errors')
 const { GameOverwriteError, GameKilledError } = require('../middleware/data-loader')
 
 // Game controller methods

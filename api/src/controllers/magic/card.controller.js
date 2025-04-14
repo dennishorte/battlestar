@@ -1,5 +1,4 @@
 const db = require('../../models/db.js')
-const { mag } = require('battlestar-common')
 
 /**
  * Fetch all cards

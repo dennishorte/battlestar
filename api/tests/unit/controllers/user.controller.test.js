@@ -74,7 +74,7 @@ jest.mock('mongodb', () => ({
 
 // Now we can import the controller and errors
 const userController = require('../../../src/controllers/user.controller')
-const { BadRequestError, NotFoundError } = require('../../../src/utils/errors')
+const { BadRequestError } = require('../../../src/utils/errors')
 const db = require('../../../src/models/db')
 const logger = require('../../../src/utils/logger')
 const { ObjectId } = require('mongodb')
@@ -182,6 +182,7 @@ describe('User Controller', () => {
       req.body = { id: 'user1' }
 
       // Skip the ObjectId validation in the test
+      // eslint-disable-next-line no-unused-vars
       jest.spyOn(userController, 'deactivateUser').mockImplementationOnce(async (req, res, next) => {
         res.json({ status: 'success' })
       })
@@ -214,6 +215,7 @@ describe('User Controller', () => {
       req.body = { userIds: ['user1', 'user2'] }
 
       // Skip the ObjectId validation in the test
+      // eslint-disable-next-line no-unused-vars
       jest.spyOn(userController, 'fetchManyUsers').mockImplementationOnce(async (req, res, next) => {
         res.json({
           status: 'success',
@@ -255,6 +257,7 @@ describe('User Controller', () => {
       req.body = { userId: 'user1' }
 
       // Skip the ObjectId validation in the test
+      // eslint-disable-next-line no-unused-vars
       jest.spyOn(userController, 'getUserLobbies').mockImplementationOnce(async (req, res, next) => {
         res.json({
           status: 'success',
@@ -301,6 +304,7 @@ describe('User Controller', () => {
       }
 
       // Skip the ObjectId validation in the test
+      // eslint-disable-next-line no-unused-vars
       jest.spyOn(userController, 'getUserGames').mockImplementationOnce(async (req, res, next) => {
         res.json({
           status: 'success',
@@ -347,6 +351,7 @@ describe('User Controller', () => {
       req.body = { userId: 'user1' }
 
       // Skip the ObjectId validation in the test
+      // eslint-disable-next-line no-unused-vars
       jest.spyOn(userController, 'getRecentlyFinishedGames').mockImplementationOnce(async (req, res, next) => {
         res.json({
           status: 'success',
@@ -387,6 +392,7 @@ describe('User Controller', () => {
       req.body = { userId: 'user1' }
 
       // Skip the ObjectId validation in the test
+      // eslint-disable-next-line no-unused-vars
       jest.spyOn(userController, 'getNextGame').mockImplementationOnce(async (req, res, next) => {
         res.json({
           status: 'success',

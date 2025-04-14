@@ -1,5 +1,4 @@
 const db = require('../models/db.js')
-const path = require('path')
 
 // Note: These routes have been migrated to the new router system in src/routes/api
 // Only keeping this file for backward compatibility with any components that might still reference it
@@ -12,7 +11,7 @@ module.exports = {
 async function _createFirstUserIfNone(name, password) {
   if (await db.user.isEmpty()) {
     console.log('User db is empty. Creating first user.')
-    const user = await db.user.create({
+    await db.user.create({
       name,
       password,
       slack: null,

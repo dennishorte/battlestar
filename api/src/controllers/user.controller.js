@@ -26,7 +26,7 @@ exports.createUser = async (req, res, next) => {
     }
     
     try {
-      const user = await db.user.create({
+      await db.user.create({
         name,
         password,
         slack,
@@ -65,7 +65,7 @@ exports.deactivateUser = async (req, res, next) => {
           message: 'User not deactivated'
         })
       }
-    } catch (err) {
+    } catch {
       return next(new BadRequestError('Invalid user ID format'))
     }
   } catch (err) {
@@ -91,7 +91,7 @@ exports.fetchManyUsers = async (req, res, next) => {
         status: 'success',
         users: usersArray
       })
-    } catch (err) {
+    } catch {
       return next(new BadRequestError('Invalid user ID format in array'))
     }
   } catch (err) {
@@ -117,7 +117,7 @@ exports.getUserLobbies = async (req, res, next) => {
         status: 'success',
         lobbies: lobbyArray
       })
-    } catch (err) {
+    } catch {
       return next(new BadRequestError('Invalid userId format'))
     }
   } catch (err) {
@@ -134,7 +134,7 @@ exports.getUserGames = async (req, res, next) => {
       try {
         const objectId = new ObjectId(req.body.userId)
         filters['settings.players._id'] = objectId
-      } catch (err) {
+      } catch {
         return next(new BadRequestError('Invalid userId format'))
       }
     }
@@ -185,7 +185,7 @@ exports.getRecentlyFinishedGames = async (req, res, next) => {
         status: 'success',
         games: gameArray
       })
-    } catch (err) {
+    } catch {
       return next(new BadRequestError('Invalid userId format'))
     }
   } catch (err) {
@@ -235,7 +235,7 @@ exports.getNextGame = async (req, res, next) => {
         status: 'success',
         gameId: nextId
       })
-    } catch (err) {
+    } catch {
       return next(new BadRequestError('Invalid userId format'))
     }
   } catch (err) {
@@ -290,7 +290,7 @@ exports.magic = {
           status: 'success',
           cubes
         })
-      } catch (err) {
+      } catch {
         return next(new BadRequestError('Invalid userId format or error accessing cubes'))
       }
     } catch (err) {
@@ -315,7 +315,7 @@ exports.magic = {
           status: 'success',
           decks
         })
-      } catch (err) {
+      } catch {
         return next(new BadRequestError('Invalid userId format or error accessing decks'))
       }
     } catch (err) {
@@ -343,7 +343,7 @@ exports.magic = {
           status: 'success',
           files
         })
-      } catch (err) {
+      } catch {
         return next(new BadRequestError('Invalid userId format or error accessing files'))
       }
     } catch (err) {

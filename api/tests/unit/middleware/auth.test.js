@@ -15,7 +15,6 @@ jest.mock('passport-jwt', () => ({
 // Now require the actual module
 const { authenticate } = require('../../../src/middleware/auth')
 const passport = require('passport')
-const { ObjectId } = require('mongodb')
 
 // Mock db
 jest.mock('../../../src/models/db', () => ({

@@ -154,8 +154,6 @@ Game.undo = async function(game, count) {
 
 async function _testAndSave(game, evalFunc) {
   // Test that the response is valid.
-  let valid = false
-  let message = ''
   try {
     evalFunc()
   }
@@ -168,7 +166,7 @@ async function _testAndSave(game, evalFunc) {
     }
   }
 
-  const { branchId } = await db.game.save(game)
+  await db.game.save(game)
   if (game.checkGameIsOver()) {
     await db.game.gameOver(game)
   }

@@ -1,8 +1,5 @@
 const Haikunator = require('haikunator')
 const haikunator = new Haikunator()
-const { LobbySettings } = require('battlestar-common')
-const ObjectId = require('mongodb').ObjectId
-const AsyncLock = require('async-lock')
 const databaseClient = require('../utils/mongo.js').client
 
 // Database and collection

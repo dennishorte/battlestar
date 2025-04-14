@@ -1,9 +1,8 @@
 const passport = require('passport')
 const jwt = require('jsonwebtoken')
-const { ObjectId } = require('mongodb')
-const db = require('./db.mock')
 
 // Mock authenticate method
+// eslint-disable-next-line no-unused-vars
 passport.authenticate = jest.fn((strategy, options) => {
   return (req, res, next) => {
     // Check if token is present in the Authorization header
@@ -28,7 +27,8 @@ passport.authenticate = jest.fn((strategy, options) => {
       // Set user in request object (in a real app, we'd look up the user in the database)
       req.user = { _id: userId, name: 'testuser' }
       next()
-    } catch (err) {
+    } 
+    catch {
       return res.status(401).json({
         status: 'error',
         message: 'Invalid token'

@@ -45,7 +45,7 @@ const Cube = {
       }
     }
 
-    throw new Error(`Unable to remove card. Card not found. ${card.name}`)
+    throw new Error(`Unable to remove card. Card not found. ${cardId}`)
   },
 
   async setEditFlag(cubeId, newValue) {

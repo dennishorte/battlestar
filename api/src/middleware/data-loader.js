@@ -24,7 +24,7 @@ class GameKilledError extends Error {
   }
 }
 
-async function _loadGame(gameId, next) {
+async function _loadGame(gameId) {
   // Load item data from database
   const gameData = await db.game.findById(gameId)
 
@@ -49,7 +49,7 @@ async function _loadItemWithLockById(itemType, req, res, next) {
   async function _initializeLock() {
     // Acquire the lock but don't release it immediately
     const lockKey = `${itemType}:${id}`
-    unlockFn = await lock.acquire(lockKey, () => {
+    const unlockFn = await lock.acquire(lockKey, () => {
       return () => {}
     })
     res.locals.unlock = unlockFn

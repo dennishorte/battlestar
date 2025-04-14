@@ -1,4 +1,3 @@
-const fs = require('fs')
 const AsyncLock = require('async-lock')
 
 const databaseClient = require('../../util/mongo.js').client

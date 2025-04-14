@@ -1,7 +1,5 @@
 const request = require('supertest')
 const jwt = require('jsonwebtoken')
-const { ObjectId } = require('mongodb')
-const bcrypt = require('bcrypt')
 
 // Mock the database
 jest.mock('../../src/models/db', () => require('../mocks/db.mock'))

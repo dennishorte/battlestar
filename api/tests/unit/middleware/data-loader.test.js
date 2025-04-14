@@ -1,7 +1,6 @@
 const { loadGameArgs, loadLobbyArgs, loadDraftArgs, GameOverwriteError, GameKilledError } = require('../../../src/middleware/data-loader')
 const { NotFoundError } = require('../../../src/utils/errors')
 const { ObjectId } = require('mongodb')
-const AsyncLock = require('async-lock')
 
 // Mock AsyncLock
 jest.mock('async-lock', () => {

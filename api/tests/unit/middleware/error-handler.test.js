@@ -1,5 +1,5 @@
 const errorHandler = require('../../../src/middleware/error-handler')
-const { AppError, BadRequestError, NotFoundError, InternalServerError } = require('../../../src/utils/errors')
+const { BadRequestError, NotFoundError } = require('../../../src/utils/errors')
 
 // Mock the logger
 jest.mock('../../../src/utils/logger', () => ({

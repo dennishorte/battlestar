@@ -1,6 +1,4 @@
 const { fromData, fromLobby } = require('battlestar-common')
-const { ObjectId } = require('mongodb')
-const AsyncLock = require('async-lock')
 const databaseClient = require('../utils/mongo.js').client
 
 // Database and collection
@@ -106,7 +104,7 @@ Game.linkGameToDraft = async function(game, draft) {
   )
 }
 
-Game.save = async function(game, opts={}) {
+Game.save = async function(game) {
   const branchId = Date.now()
   game.branchId = branchId
 
