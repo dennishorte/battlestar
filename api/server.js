@@ -44,17 +44,24 @@ app.use('/api', apiRoutes)
 // Default error handler
 app.use(middleware.errorHandler)
 
-////////////////////////////////////////////////////////////
-// Initialize
-app.listen(port, () => {
-  logger.info(`Server listening on port ${port}`)
-})
+// Function to start the server
+const startServer = () => {
+  return app.listen(port, () => {
+    logger.info(`Server listening on port ${port}`)
+    
+    // Log all available routes
+    const { listRoutes } = require('./src/util/debug')
+    const routes = listRoutes(app)
+    for (const elem of routes) {
+      console.log(elem)
+    }
+  })
+}
 
-const { listRoutes } = require('./src/util/debug')
-const routes = listRoutes(app)
-for (const elem of routes) {
-  console.log(elem)
+// Only start the server if this file is run directly (not required/imported)
+if (require.main === module) {
+  startServer()
 }
 
 // For testing purposes
-module.exports = app;
+module.exports = { app, startServer };

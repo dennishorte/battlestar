@@ -1,117 +1,115 @@
-const { authenticate } = require('../../../src/middleware/auth');
-const { UnauthorizedError, ForbiddenError } = require('../../../src/utils/errors');
+// Mock passport-jwt
+jest.mock('passport-jwt', () => ({
+  Strategy: jest.fn(function JwtStrategy(options, verify) {
+    // Store options and verify for testing
+    this.options = options;
+    this.verify = verify;
+    return this;
+  }),
+  ExtractJwt: {
+    fromAuthHeaderAsBearerToken: jest.fn().mockReturnValue(() => 'token')
+  }
+}));
 
-// Mock dependencies
+// Mock the mongo utility before requiring any modules that use it
+jest.mock('../../../src/util/mongo.js', () => ({
+  client: {
+    db: jest.fn().mockReturnValue({
+      collection: jest.fn().mockReturnValue({})
+    })
+  }
+}));
+
+// Mock the database before requiring any modules that use it
 jest.mock('../../../src/models/db', () => ({
   user: {
     findById: jest.fn()
   }
 }));
 
-const db = require('../../../src/models/db');
+// Mock passport
+jest.mock('passport', () => ({
+  authenticate: jest.fn().mockImplementation(() => {
+    return jest.fn((req, res, next) => next());
+  }),
+  use: jest.fn()
+}));
+
+// Set environment variables needed for tests
+process.env.SECRET_KEY = 'test-secret-key';
+
+const { authenticate } = require('../../../src/middleware/auth');
+const passport = require('passport');
 
 describe('Authenticate Middleware', () => {
   let req, res, next;
 
   beforeEach(() => {
     req = {
-      headers: {},
-      session: {}
+      path: '/api/user/fetch_many',
+      method: 'POST',
+      headers: {}
     };
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
-    };
+    res = {};
     next = jest.fn();
     jest.clearAllMocks();
   });
 
-  it('should call next() when user is authenticated with valid session', async () => {
+  it('should pass through requests to guest routes without authentication', () => {
     // Setup
-    req.session.user = {
-      _id: 'user123',
-      role: 'user'
-    };
+    req.path = '/api/guest/login';
     
-    db.user.findById.mockResolvedValueOnce({
-      _id: 'user123',
-      role: 'user',
-      active: true
-    });
-
     // Execute
-    await authenticate(req, res, next);
-
-    // Verify
-    expect(db.user.findById).toHaveBeenCalledWith('user123');
-    expect(next).toHaveBeenCalledWith();
-    expect(next).not.toHaveBeenCalledWith(expect.any(Error));
-  });
-
-  it('should throw UnauthorizedError when session has no user', async () => {
-    // Setup
-    req.session = {};
-
-    // Execute
-    await authenticate(req, res, next);
-
-    // Verify
-    expect(next).toHaveBeenCalledWith(expect.any(UnauthorizedError));
-  });
-
-  it('should throw UnauthorizedError when user not found in database', async () => {
-    // Setup
-    req.session.user = {
-      _id: 'nonexistent',
-      role: 'user'
-    };
+    authenticate(req, res, next);
     
-    db.user.findById.mockResolvedValueOnce(null);
-
-    // Execute
-    await authenticate(req, res, next);
-
     // Verify
-    expect(db.user.findById).toHaveBeenCalledWith('nonexistent');
-    expect(next).toHaveBeenCalledWith(expect.any(UnauthorizedError));
+    expect(passport.authenticate).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalled();
   });
-
-  it('should throw ForbiddenError when user is inactive', async () => {
+  
+  it('should pass through GET requests without authentication', () => {
     // Setup
-    req.session.user = {
-      _id: 'inactive123',
-      role: 'user'
-    };
+    req.method = 'GET';
     
-    db.user.findById.mockResolvedValueOnce({
-      _id: 'inactive123',
-      role: 'user',
-      active: false
-    });
-
     // Execute
-    await authenticate(req, res, next);
-
+    authenticate(req, res, next);
+    
     // Verify
-    expect(db.user.findById).toHaveBeenCalledWith('inactive123');
-    expect(next).toHaveBeenCalledWith(expect.any(ForbiddenError));
+    expect(passport.authenticate).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalled();
   });
-
-  it('should handle database errors', async () => {
-    // Setup
-    req.session.user = {
-      _id: 'user123',
-      role: 'user'
-    };
+  
+  it('should apply JWT authentication to protected routes', () => {
+    // Setup for a protected route
+    req.path = '/api/user/fetch_many';
+    req.method = 'POST';
     
-    const dbError = new Error('Database error');
-    db.user.findById.mockRejectedValueOnce(dbError);
-
+    // Mock the passport.authenticate return value
+    const mockAuthFn = jest.fn();
+    passport.authenticate.mockReturnValueOnce(mockAuthFn);
+    
     // Execute
-    await authenticate(req, res, next);
-
+    authenticate(req, res, next);
+    
     // Verify
-    expect(db.user.findById).toHaveBeenCalledWith('user123');
-    expect(next).toHaveBeenCalledWith(dbError);
+    expect(passport.authenticate).toHaveBeenCalledWith('jwt', { session: false });
+    expect(mockAuthFn).toHaveBeenCalledWith(req, res, next);
+  });
+  
+  it('should handle authentication for routes with dynamic segments', () => {
+    // Setup for a protected route with ID
+    req.path = '/api/game/12345/save';
+    req.method = 'POST';
+    
+    // Mock the passport.authenticate return value
+    const mockAuthFn = jest.fn();
+    passport.authenticate.mockReturnValueOnce(mockAuthFn);
+    
+    // Execute
+    authenticate(req, res, next);
+    
+    // Verify
+    expect(passport.authenticate).toHaveBeenCalledWith('jwt', { session: false });
+    expect(mockAuthFn).toHaveBeenCalledWith(req, res, next);
   });
 }); 
