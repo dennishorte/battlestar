@@ -1,5 +1,8 @@
 const { coerceMongoIds, ensureVersion } = require('../../../src/middleware/validation');
 const { ObjectId } = require('mongodb');
+const { validate } = require('../../../src/middleware/validation');
+const { BadRequestError } = require('../../../src/utils/errors');
+const Joi = require('joi');
 
 // Mock version module
 jest.mock('../../../src/version', () => '1.2.3');
@@ -196,5 +199,182 @@ describe('Validation Middleware', () => {
         latestVersion: '1.2.3'
       });
     });
+  });
+
+  let req, res, next;
+
+  beforeEach(() => {
+    req = {
+      body: {},
+      params: {},
+      query: {}
+    };
+    res = {};
+    next = jest.fn();
+  });
+
+  it('should call next() when validation passes for body schema', () => {
+    // Setup
+    const schema = {
+      body: Joi.object({
+        name: Joi.string().required(),
+        age: Joi.number().integer().min(0)
+      })
+    };
+    
+    req.body = {
+      name: 'John Doe',
+      age: 30
+    };
+
+    // Execute
+    validate(schema)(req, res, next);
+
+    // Verify
+    expect(next).toHaveBeenCalledWith();
+    expect(next).not.toHaveBeenCalledWith(expect.any(Error));
+  });
+
+  it('should call next() when validation passes for params schema', () => {
+    // Setup
+    const schema = {
+      params: Joi.object({
+        id: Joi.string().required()
+      })
+    };
+    
+    req.params = {
+      id: '123456'
+    };
+
+    // Execute
+    validate(schema)(req, res, next);
+
+    // Verify
+    expect(next).toHaveBeenCalledWith();
+    expect(next).not.toHaveBeenCalledWith(expect.any(Error));
+  });
+
+  it('should call next() when validation passes for query schema', () => {
+    // Setup
+    const schema = {
+      query: Joi.object({
+        page: Joi.number().integer().min(1),
+        limit: Joi.number().integer().min(1)
+      })
+    };
+    
+    req.query = {
+      page: 2,
+      limit: 10
+    };
+
+    // Execute
+    validate(schema)(req, res, next);
+
+    // Verify
+    expect(next).toHaveBeenCalledWith();
+    expect(next).not.toHaveBeenCalledWith(expect.any(Error));
+  });
+
+  it('should call next() with BadRequestError when body validation fails', () => {
+    // Setup
+    const schema = {
+      body: Joi.object({
+        name: Joi.string().required(),
+        age: Joi.number().integer().min(0).required()
+      })
+    };
+    
+    req.body = {
+      name: 'John Doe'
+      // missing required age field
+    };
+
+    // Execute
+    validate(schema)(req, res, next);
+
+    // Verify
+    expect(next).toHaveBeenCalledWith(expect.any(BadRequestError));
+    expect(next.mock.calls[0][0].message).toContain('age');
+  });
+
+  it('should call next() with BadRequestError when params validation fails', () => {
+    // Setup
+    const schema = {
+      params: Joi.object({
+        id: Joi.string().required().pattern(/^[0-9a-fA-F]{24}$/)
+      })
+    };
+    
+    req.params = {
+      id: 'not-valid-id'
+    };
+
+    // Execute
+    validate(schema)(req, res, next);
+
+    // Verify
+    expect(next).toHaveBeenCalledWith(expect.any(BadRequestError));
+    expect(next.mock.calls[0][0].message).toContain('id');
+  });
+
+  it('should call next() with BadRequestError when query validation fails', () => {
+    // Setup
+    const schema = {
+      query: Joi.object({
+        page: Joi.number().integer().min(1),
+        limit: Joi.number().integer().min(1).max(100)
+      })
+    };
+    
+    req.query = {
+      page: 1,
+      limit: 200 // exceeds max
+    };
+
+    // Execute
+    validate(schema)(req, res, next);
+
+    // Verify
+    expect(next).toHaveBeenCalledWith(expect.any(BadRequestError));
+    expect(next.mock.calls[0][0].message).toContain('limit');
+  });
+
+  it('should ignore validation for properties not defined in schema', () => {
+    // Setup
+    const schema = {
+      body: Joi.object({
+        name: Joi.string().required()
+      })
+    };
+    
+    req.body = {
+      name: 'John Doe',
+      extraField: 'should be ignored'
+    };
+
+    // Execute
+    validate(schema)(req, res, next);
+
+    // Verify
+    expect(next).toHaveBeenCalledWith();
+    expect(next).not.toHaveBeenCalledWith(expect.any(Error));
+  });
+
+  it('should do nothing if no schema is provided', () => {
+    // Setup
+    const schema = {};
+    
+    req.body = {
+      anyValue: 'should be ignored'
+    };
+
+    // Execute
+    validate(schema)(req, res, next);
+
+    // Verify
+    expect(next).toHaveBeenCalledWith();
+    expect(next).not.toHaveBeenCalledWith(expect.any(Error));
   });
 }); 

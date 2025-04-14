@@ -4,7 +4,9 @@ const path = require('path')
 // Note: These routes have been migrated to the new router system in src/routes/api
 // Only keeping this file for backward compatibility with any components that might still reference it
 module.exports = {
-  magic: require('./magic'),
+  // Magic routes have been migrated to the new router architecture
+  // Keeping references for backward compatibility
+  magic: require('./api/magic'),
 }
 
 async function _createFirstUserIfNone(name, password) {

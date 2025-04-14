@@ -9,6 +9,7 @@ const lobbyRouter = require('./lobby.router')
 const snapshotRouter = require('./snapshot.router')
 const miscRouter = require('./misc.router')
 const tyrantsRouter = require('./tyrants')
+const magicRouter = require('./magic')
 
 // Guest routes (no authentication required)
 router.use('/guest', authRouter)
@@ -20,5 +21,6 @@ router.use('/user', userRouter)
 router.use('/lobby', lobbyRouter)
 router.use('/snapshot', snapshotRouter)
 router.use('/tyrants', tyrantsRouter)
+router.use('/magic', magicRouter)
 
 module.exports = router; 
