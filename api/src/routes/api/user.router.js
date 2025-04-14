@@ -5,7 +5,7 @@ const userController = require('../../controllers/user.controller')
 /**
  * @swagger
  * /user/all:
- *   get:
+ *   post:
  *     summary: Get all users
  *     tags: [Users]
  *     security:
@@ -16,7 +16,7 @@ const userController = require('../../controllers/user.controller')
  *       401:
  *         description: Unauthorized
  */
-router.get('/all', userController.getAllUsers)
+router.post('/all', userController.getAllUsers)
 
 /**
  * @swagger
@@ -360,4 +360,4 @@ router.post('/magic/decks', userController.magic.getDecks)
  */
 router.post('/magic/files', userController.magic.getFiles)
 
-module.exports = router 
+module.exports = router

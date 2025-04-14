@@ -5,7 +5,6 @@ const path = require('path')
 // Only keeping this file for backward compatibility with any components that might still reference it
 module.exports = {
   magic: require('./magic'),
-  tyrants: require('./tyrants'),
 }
 
 async function _createFirstUserIfNone(name, password) {

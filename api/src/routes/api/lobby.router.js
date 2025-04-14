@@ -4,11 +4,11 @@ const lobbyController = require('../../controllers/lobby.controller')
 const middleware = require('../../middleware')
 
 /**
- * @route GET /api/lobby/all
+ * @route POST /api/lobby/all
  * @description Get all lobbies
  * @access Private
  */
-router.get('/all', lobbyController.getAllLobbies)
+router.post('/all', lobbyController.getAllLobbies)
 
 /**
  * @route POST /api/lobby/create
@@ -44,4 +44,4 @@ router.post('/kill', middleware.loadLobbyArgs, lobbyController.killLobby)
  */
 router.post('/save', lobbyController.saveLobby)
 
-module.exports = router 
+module.exports = router

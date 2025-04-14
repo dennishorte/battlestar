@@ -50,5 +50,11 @@ app.listen(port, () => {
   logger.info(`Server listening on port ${port}`)
 })
 
+const { listRoutes } = require('./src/util/debug')
+const routes = listRoutes(app)
+for (const elem of routes) {
+  console.log(elem)
+}
+
 // For testing purposes
 module.exports = app;

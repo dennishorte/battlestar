@@ -4,9 +4,9 @@ const miscController = require('../../controllers/misc.controller')
 
 /**
  * @route GET /api/misc/version
- * @description Get application version 
+ * @description Get application version
  * @access Public
  */
-router.get('/version', miscController.getAppVersion)
+router.post('/version', miscController.getAppVersion)
 
-module.exports = router 
+module.exports = router
