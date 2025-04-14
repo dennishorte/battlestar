@@ -21,4 +21,4 @@ module.exports = {
     await db.collection('notificationThrottle').dropIndex('gameId_1_userId_1')
     await db.collection('notificationThrottle').drop()
   }
-};
+}

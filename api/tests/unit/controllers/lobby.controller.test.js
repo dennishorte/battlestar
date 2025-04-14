@@ -4,14 +4,14 @@ jest.mock('mongodb', () => ({
     equals: jest.fn(otherId => id === otherId),
     toString: jest.fn(() => id)
   }))
-}));
+}))
 
 // Mock logger
 jest.mock('../../../src/utils/logger', () => ({
   info: jest.fn(),
   error: jest.fn(),
   debug: jest.fn()
-}));
+}))
 
 // Mock db
 jest.mock('../../../src/models/db', () => ({
@@ -38,17 +38,17 @@ jest.mock('../../../src/models/db', () => ({
       ])
     })
   }
-}));
+}))
 
 // Import after mocks are set up
-const lobbyController = require('../../../src/controllers/lobby.controller');
-const { BadRequestError, NotFoundError } = require('../../../src/utils/errors');
-const db = require('../../../src/models/db');
-const logger = require('../../../src/utils/logger');
-const { ObjectId } = require('mongodb');
+const lobbyController = require('../../../src/controllers/lobby.controller')
+const { BadRequestError, NotFoundError } = require('../../../src/utils/errors')
+const db = require('../../../src/models/db')
+const logger = require('../../../src/utils/logger')
+const { ObjectId } = require('mongodb')
 
 describe('Lobby Controller', () => {
-  let req, res, next;
+  let req, res, next
 
   beforeEach(() => {
     req = {
@@ -56,63 +56,63 @@ describe('Lobby Controller', () => {
       params: {},
       query: {},
       user: { _id: 'user1', name: 'User One' }
-    };
+    }
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn()
-    };
-    next = jest.fn();
+    }
+    next = jest.fn()
 
-    jest.clearAllMocks();
-  });
+    jest.clearAllMocks()
+  })
 
   describe('getAllLobbies', () => {
     it('should return all lobbies', async () => {
       // Execute
-      await lobbyController.getAllLobbies(req, res, next);
+      await lobbyController.getAllLobbies(req, res, next)
 
       // Verify
-      expect(db.lobby.all).toHaveBeenCalled();
+      expect(db.lobby.all).toHaveBeenCalled()
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         lobbies: expect.arrayContaining([
           expect.objectContaining({ _id: 'lobby1' }),
           expect.objectContaining({ _id: 'lobby2' })
         ])
-      });
-    });
+      })
+    })
 
     it('should handle errors properly', async () => {
       // Setup
-      const error = new Error('Database error');
+      const error = new Error('Database error')
       db.lobby.all.mockImplementationOnce(() => {
-        throw error;
-      });
+        throw error
+      })
 
       // Execute
-      await lobbyController.getAllLobbies(req, res, next);
+      await lobbyController.getAllLobbies(req, res, next)
 
       // Verify
-      expect(logger.error).toHaveBeenCalled();
-      expect(next).toHaveBeenCalledWith(error);
-    });
-  });
+      expect(logger.error).toHaveBeenCalled()
+      expect(next).toHaveBeenCalledWith(error)
+    })
+  })
 
   describe('createLobby', () => {
     it('should create a new lobby with default user', async () => {
       // Execute
-      await lobbyController.createLobby(req, res, next);
+      await lobbyController.createLobby(req, res, next)
 
       // Verify
-      expect(db.lobby.create).toHaveBeenCalled();
-      expect(db.lobby.findById).toHaveBeenCalledWith('new-lobby-id');
-      expect(db.user.findByIds).toHaveBeenCalled();
-      expect(db.lobby.save).toHaveBeenCalled();
+      expect(db.lobby.create).toHaveBeenCalled()
+      expect(db.lobby.findById).toHaveBeenCalledWith('new-lobby-id')
+      expect(db.user.findByIds).toHaveBeenCalled()
+      expect(db.lobby.save).toHaveBeenCalled()
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         lobbyId: 'new-lobby-id'
-      });
-    });
+      })
+    })
 
     it('should create a lobby with specified users, game, and options', async () => {
       // Setup
@@ -120,129 +120,129 @@ describe('Lobby Controller', () => {
         userIds: ['user1', 'user2'],
         game: 'innovation',
         options: { option1: 'value1' }
-      };
+      }
 
       // Execute
-      await lobbyController.createLobby(req, res, next);
+      await lobbyController.createLobby(req, res, next)
 
       // Verify
-      expect(ObjectId).toHaveBeenCalledTimes(2);
-      expect(db.user.findByIds).toHaveBeenCalled();
+      expect(ObjectId).toHaveBeenCalledTimes(2)
+      expect(db.user.findByIds).toHaveBeenCalled()
       expect(db.lobby.save).toHaveBeenCalledWith(expect.objectContaining({
         _id: 'new-lobby-id',
         game: 'innovation',
         options: { option1: 'value1' }
-      }));
-    });
+      }))
+    })
 
     it('should return BadRequestError if user is not provided', async () => {
       // Setup
-      req.user = null;
+      req.user = null
 
       // Execute
-      await lobbyController.createLobby(req, res, next);
+      await lobbyController.createLobby(req, res, next)
 
       // Verify
-      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError));
-      expect(db.lobby.create).not.toHaveBeenCalled();
-    });
+      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
+      expect(db.lobby.create).not.toHaveBeenCalled()
+    })
 
     it('should handle errors for invalid user IDs', async () => {
       // Setup
-      req.body = { userIds: ['invalid-id'] };
+      req.body = { userIds: ['invalid-id'] }
       ObjectId.mockImplementationOnce(() => {
-        throw new Error('Invalid ID format');
-      });
+        throw new Error('Invalid ID format')
+      })
 
       // Execute
-      await lobbyController.createLobby(req, res, next);
+      await lobbyController.createLobby(req, res, next)
 
       // Verify
-      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError));
-    });
-  });
+      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
+    })
+  })
 
   describe('getLobbyInfo', () => {
     it('should return lobby information', async () => {
       // Setup
-      req.lobby = { _id: 'lobby1', name: 'Test Lobby', users: [] };
+      req.lobby = { _id: 'lobby1', name: 'Test Lobby', users: [] }
 
       // Execute
-      await lobbyController.getLobbyInfo(req, res, next);
+      await lobbyController.getLobbyInfo(req, res, next)
 
       // Verify
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         lobby: expect.objectContaining({ _id: 'lobby1' })
-      });
-    });
+      })
+    })
 
     it('should return NotFoundError if lobby is not found', async () => {
       // Setup
-      req.lobby = null;
-      req.body = { lobbyId: 'nonexistent' };
+      req.lobby = null
+      req.body = { lobbyId: 'nonexistent' }
 
       // Execute
-      await lobbyController.getLobbyInfo(req, res, next);
+      await lobbyController.getLobbyInfo(req, res, next)
 
       // Verify
-      expect(next).toHaveBeenCalledWith(expect.any(NotFoundError));
-    });
-  });
+      expect(next).toHaveBeenCalledWith(expect.any(NotFoundError))
+    })
+  })
 
   describe('killLobby', () => {
     it('should kill a lobby', async () => {
       // Setup
-      req.lobby = { _id: 'lobby1', name: 'Test Lobby' };
+      req.lobby = { _id: 'lobby1', name: 'Test Lobby' }
 
       // Execute
-      await lobbyController.killLobby(req, res, next);
+      await lobbyController.killLobby(req, res, next)
 
       // Verify
-      expect(db.lobby.kill).toHaveBeenCalledWith(req.lobby);
+      expect(db.lobby.kill).toHaveBeenCalledWith(req.lobby)
       expect(res.json).toHaveBeenCalledWith({
         status: 'success'
-      });
-    });
+      })
+    })
 
     it('should return NotFoundError if lobby is not found', async () => {
       // Setup
-      req.lobby = null;
+      req.lobby = null
 
       // Execute
-      await lobbyController.killLobby(req, res, next);
+      await lobbyController.killLobby(req, res, next)
 
       // Verify
-      expect(next).toHaveBeenCalledWith(expect.any(NotFoundError));
-      expect(db.lobby.kill).not.toHaveBeenCalled();
-    });
-  });
+      expect(next).toHaveBeenCalledWith(expect.any(NotFoundError))
+      expect(db.lobby.kill).not.toHaveBeenCalled()
+    })
+  })
 
   describe('saveLobby', () => {
     it('should save lobby changes', async () => {
       // Setup
-      req.body = { _id: 'lobby1', name: 'Updated Lobby', users: [] };
+      req.body = { _id: 'lobby1', name: 'Updated Lobby', users: [] }
 
       // Execute
-      await lobbyController.saveLobby(req, res, next);
+      await lobbyController.saveLobby(req, res, next)
 
       // Verify
-      expect(db.lobby.save).toHaveBeenCalledWith(req.body);
+      expect(db.lobby.save).toHaveBeenCalledWith(req.body)
       expect(res.json).toHaveBeenCalledWith({
         status: 'success'
-      });
-    });
+      })
+    })
 
     it('should return BadRequestError if lobby data is invalid', async () => {
       // Setup
-      req.body = {}; // Missing _id
+      req.body = {} // Missing _id
 
       // Execute
-      await lobbyController.saveLobby(req, res, next);
+      await lobbyController.saveLobby(req, res, next)
 
       // Verify
-      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError));
-      expect(db.lobby.save).not.toHaveBeenCalled();
-    });
-  });
-}); 
+      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
+      expect(db.lobby.save).not.toHaveBeenCalled()
+    })
+  })
+}) 

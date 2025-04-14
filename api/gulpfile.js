@@ -1,11 +1,11 @@
-const { src, dest, series, parallel } = require('gulp');
-const del = require('del');
-const fs   = require('fs');
-const zip = require('gulp-zip');
-const log = require('fancy-log');
-const webpack_stream = require('webpack-stream');
-const webpack_config = require('./webpack.config.js');
-const exec = require('child_process').exec;
+const { src, dest, series, parallel } = require('gulp')
+const del = require('del')
+const fs   = require('fs')
+const zip = require('gulp-zip')
+const log = require('fancy-log')
+const webpack_stream = require('webpack-stream')
+const webpack_config = require('./webpack.config.js')
+const exec = require('child_process').exec
 
 const paths = {
   prod_build: '../prod-build',
@@ -13,38 +13,38 @@ const paths = {
   vue_src: '../app/build/**/*',
   vue_dist: '../prod-build/app/build',
   zipped_file_name: 'vue-nodejs.zip'
-};
+}
 
 function clean()  {
   log('removing the old files in the directory')
-  return del('../prod-build/**', {force:true});
+  return del('../prod-build/**', {force:true})
 }
 
 function createProdBuildFolder() {
 
-  const dir = paths.prod_build;
+  const dir = paths.prod_build
   log(`Creating the folder if not exist  ${dir}`)
   if(!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-    log('📁  folder created:', dir);
+    fs.mkdirSync(dir)
+    log('📁  folder created:', dir)
   }
 
-  return Promise.resolve('the value is ignored');
+  return Promise.resolve('the value is ignored')
 }
 
 function buildVueCodeTask(cb) {
   log('building Vue code into the directory')
   return exec('cd ../app && npm run build', function (err, stdout, stderr) {
-    log(stdout);
-    log(stderr);
-    cb(err);
+    log(stdout)
+    log(stderr)
+    cb(err)
   })
 }
 
 function copyVueCodeTask() {
   log('copying Vue code into the directory')
   return src(`${paths.vue_src}`)
-        .pipe(dest(`${paths.vue_dist}`));
+        .pipe(dest(`${paths.vue_dist}`))
 }
 
 function copyNodeJSCodeTask() {
@@ -66,4 +66,4 @@ exports.default = series(
   buildVueCodeTask,
   parallel(copyVueCodeTask, copyNodeJSCodeTask),
   zippingTask
-);
+)

@@ -23,4 +23,4 @@ router.use('/snapshot', snapshotRouter)
 router.use('/tyrants', tyrantsRouter)
 router.use('/magic', magicRouter)
 
-module.exports = router; 
+module.exports = router 

@@ -83,22 +83,22 @@ function ensureVersion(req, res, next) {
 function validate(schema) {
   return (req, res, next) => {
     if (!schema) {
-      return next();
+      return next()
     }
 
-    const validationErrors = {};
-    let errorMessage = 'Validation error';
+    const validationErrors = {}
+    let errorMessage = 'Validation error'
 
     // Validate request body
     if (schema.body && req.body) {
       const { error } = schema.body.validate(req.body, { 
         abortEarly: false,
         allowUnknown: true // Allow properties not defined in the schema
-      });
+      })
       if (error) {
-        const details = error.details.map(detail => detail.message);
-        validationErrors.body = details;
-        errorMessage = details.join(', ');
+        const details = error.details.map(detail => detail.message)
+        validationErrors.body = details
+        errorMessage = details.join(', ')
       }
     }
 
@@ -107,11 +107,11 @@ function validate(schema) {
       const { error } = schema.params.validate(req.params, { 
         abortEarly: false,
         allowUnknown: true // Allow properties not defined in the schema
-      });
+      })
       if (error) {
-        const details = error.details.map(detail => detail.message);
-        validationErrors.params = details;
-        errorMessage = details.join(', ');
+        const details = error.details.map(detail => detail.message)
+        validationErrors.params = details
+        errorMessage = details.join(', ')
       }
     }
 
@@ -120,25 +120,25 @@ function validate(schema) {
       const { error } = schema.query.validate(req.query, { 
         abortEarly: false,
         allowUnknown: true // Allow properties not defined in the schema
-      });
+      })
       if (error) {
-        const details = error.details.map(detail => detail.message);
-        validationErrors.query = details;
-        errorMessage = details.join(', ');
+        const details = error.details.map(detail => detail.message)
+        validationErrors.query = details
+        errorMessage = details.join(', ')
       }
     }
 
     // Check if there are any validation errors
     if (Object.keys(validationErrors).length > 0) {
-      return next(new BadRequestError(errorMessage, validationErrors));
+      return next(new BadRequestError(errorMessage, validationErrors))
     }
 
-    return next();
-  };
+    return next()
+  }
 }
 
 module.exports = {
   coerceMongoIds,
   ensureVersion,
   validate
-}; 
+} 

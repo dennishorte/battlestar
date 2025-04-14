@@ -26,4 +26,4 @@ module.exports = {
     await db.collection('cube').drop()
     await db.collection('counters').drop()
   }
-};
+}

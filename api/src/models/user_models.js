@@ -1,5 +1,5 @@
 const { ObjectId } = require('mongodb')
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 const databaseClient = require('../utils/mongo.js').client
@@ -59,7 +59,7 @@ User.isEmpty = async function() {
 
 User.create = async function({ name, password, slack }) {
   const existingUser = await User.findByName(name)
-  if (!!existingUser) {
+  if (existingUser) {
     throw `User with name (${name}) already exists`
   }
 

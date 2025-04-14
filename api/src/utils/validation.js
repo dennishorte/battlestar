@@ -4,11 +4,11 @@
  * @returns {boolean} True if email is valid
  */
 function validateEmail(email) {
-  if (!email) return false;
+  if (!email) return false
   
   // Regular expression for email validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
 }
 
 /**
@@ -17,18 +17,18 @@ function validateEmail(email) {
  * @returns {boolean} True if password meets requirements
  */
 function validatePassword(password) {
-  if (!password || password.length < 8) return false;
+  if (!password || password.length < 8) return false
   
   // Check for uppercase letter
-  if (!/[A-Z]/.test(password)) return false;
+  if (!/[A-Z]/.test(password)) return false
   
   // Check for lowercase letter
-  if (!/[a-z]/.test(password)) return false;
+  if (!/[a-z]/.test(password)) return false
   
   // Check for number
-  if (!/[0-9]/.test(password)) return false;
+  if (!/[0-9]/.test(password)) return false
   
-  return true;
+  return true
 }
 
 /**
@@ -39,18 +39,18 @@ function validatePassword(password) {
  */
 function validateRequiredFields(data, requiredFields) {
   if (!data || !requiredFields || !Array.isArray(requiredFields)) {
-    return false;
+    return false
   }
   
   return requiredFields.every(field => {
     return data[field] !== undefined && 
            data[field] !== null && 
-           data[field] !== '';
-  });
+           data[field] !== ''
+  })
 }
 
 module.exports = {
   validateEmail,
   validatePassword,
   validateRequiredFields
-}; 
+} 

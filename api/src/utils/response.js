@@ -9,7 +9,7 @@ function success(res, data = null, statusCode = 200) {
   res.status(statusCode).json({
     success: true,
     data
-  });
+  })
 }
 
 /**
@@ -20,15 +20,15 @@ function success(res, data = null, statusCode = 200) {
  */
 function error(res, err) {
   // Default error status code
-  let statusCode = 500;
-  let errorMessage = err;
+  let statusCode = 500
+  let errorMessage = err
   
   // Handle Error objects
   if (err instanceof Error) {
-    errorMessage = err.message;
+    errorMessage = err.message
     // Use error's status code if available
     if (err.status) {
-      statusCode = err.status;
+      statusCode = err.status
     }
   }
   
@@ -36,17 +36,17 @@ function error(res, err) {
   const responseData = {
     success: false,
     error: errorMessage
-  };
+  }
   
   // Include stack trace in development mode
   if (process.env.NODE_ENV === 'development' && err instanceof Error) {
-    responseData.stack = err.stack;
+    responseData.stack = err.stack
   }
   
-  res.status(statusCode).json(responseData);
+  res.status(statusCode).json(responseData)
 }
 
 module.exports = {
   success,
   error
-}; 
+} 

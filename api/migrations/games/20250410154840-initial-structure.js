@@ -20,4 +20,4 @@ module.exports = {
     await db.collection('lobby').drop()
     await db.collection('user').drop()
   }
-};
+}

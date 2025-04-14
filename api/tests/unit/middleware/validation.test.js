@@ -1,21 +1,21 @@
-const { coerceMongoIds, ensureVersion } = require('../../../src/middleware/validation');
-const { ObjectId } = require('mongodb');
-const { validate } = require('../../../src/middleware/validation');
-const { BadRequestError } = require('../../../src/utils/errors');
-const Joi = require('joi');
+const { coerceMongoIds, ensureVersion } = require('../../../src/middleware/validation')
+const { ObjectId } = require('mongodb')
+const { validate } = require('../../../src/middleware/validation')
+const { BadRequestError } = require('../../../src/utils/errors')
+const Joi = require('joi')
 
 // Mock version module
-jest.mock('../../../src/version', () => '1.2.3');
+jest.mock('../../../src/version', () => '1.2.3')
 
 describe('Validation Middleware', () => {
   describe('coerceMongoIds', () => {
-    let req, res, next;
+    let req, res, next
 
     beforeEach(() => {
-      req = { body: {} };
-      res = {};
-      next = jest.fn();
-    });
+      req = { body: {} }
+      res = {}
+      next = jest.fn()
+    })
 
     it('should convert string ids to ObjectId', () => {
       // Setup
@@ -26,27 +26,27 @@ describe('Validation Middleware', () => {
           lobbyId: '507f191e810c19729de860ec'
         },
         normalField: 'just a string'
-      };
+      }
       
       // Execute
-      coerceMongoIds(req, res, next);
+      coerceMongoIds(req, res, next)
       
       // Verify
-      expect(req.body.userId).toBeInstanceOf(ObjectId);
-      expect(req.body.userId.toString()).toBe('507f1f77bcf86cd799439011');
+      expect(req.body.userId).toBeInstanceOf(ObjectId)
+      expect(req.body.userId.toString()).toBe('507f1f77bcf86cd799439011')
       
-      expect(req.body.gameIds[0]).toBeInstanceOf(ObjectId);
-      expect(req.body.gameIds[0].toString()).toBe('507f191e810c19729de860ea');
-      expect(req.body.gameIds[1]).toBeInstanceOf(ObjectId);
+      expect(req.body.gameIds[0]).toBeInstanceOf(ObjectId)
+      expect(req.body.gameIds[0].toString()).toBe('507f191e810c19729de860ea')
+      expect(req.body.gameIds[1]).toBeInstanceOf(ObjectId)
       
-      expect(req.body.nested.lobbyId).toBeInstanceOf(ObjectId);
-      expect(req.body.nested.lobbyId.toString()).toBe('507f191e810c19729de860ec');
+      expect(req.body.nested.lobbyId).toBeInstanceOf(ObjectId)
+      expect(req.body.nested.lobbyId.toString()).toBe('507f191e810c19729de860ec')
       
       // Normal fields should be unchanged
-      expect(req.body.normalField).toBe('just a string');
+      expect(req.body.normalField).toBe('just a string')
       
-      expect(next).toHaveBeenCalled();
-    });
+      expect(next).toHaveBeenCalled()
+    })
     
     it('should not convert non-MongoDB-id strings', () => {
       // Setup
@@ -54,18 +54,18 @@ describe('Validation Middleware', () => {
         userId: 'not-a-mongo-id',
         someId: 'abcdefghijklmnopqrstuvwx', // 24 chars but not hex
         normal: 'value'
-      };
+      }
       
       // Execute
-      coerceMongoIds(req, res, next);
+      coerceMongoIds(req, res, next)
       
       // Verify - all should remain as strings
-      expect(req.body.userId).toBe('not-a-mongo-id');
-      expect(req.body.someId).toBe('abcdefghijklmnopqrstuvwx');
-      expect(req.body.normal).toBe('value');
+      expect(req.body.userId).toBe('not-a-mongo-id')
+      expect(req.body.someId).toBe('abcdefghijklmnopqrstuvwx')
+      expect(req.body.normal).toBe('value')
       
-      expect(next).toHaveBeenCalled();
-    });
+      expect(next).toHaveBeenCalled()
+    })
     
     it('should handle array elements that are objects', () => {
       // Setup
@@ -74,18 +74,18 @@ describe('Validation Middleware', () => {
           { itemId: '507f191e810c19729de860ea', name: 'Item 1' },
           { itemId: '507f191e810c19729de860eb', name: 'Item 2' }
         ]
-      };
+      }
       
       // Execute
-      coerceMongoIds(req, res, next);
+      coerceMongoIds(req, res, next)
       
       // Verify
-      expect(req.body.items[0].itemId).toBeInstanceOf(ObjectId);
-      expect(req.body.items[1].itemId).toBeInstanceOf(ObjectId);
-      expect(req.body.items[0].name).toBe('Item 1');
+      expect(req.body.items[0].itemId).toBeInstanceOf(ObjectId)
+      expect(req.body.items[1].itemId).toBeInstanceOf(ObjectId)
+      expect(req.body.items[0].name).toBe('Item 1')
       
-      expect(next).toHaveBeenCalled();
-    });
+      expect(next).toHaveBeenCalled()
+    })
     
     it('should handle null or undefined values', () => {
       // Setup
@@ -95,18 +95,18 @@ describe('Validation Middleware', () => {
         nested: {
           lobbyId: null
         }
-      };
+      }
       
       // Execute
-      coerceMongoIds(req, res, next);
+      coerceMongoIds(req, res, next)
       
       // Verify - all should remain null/undefined
-      expect(req.body.userId).toBeNull();
-      expect(req.body.gameId).toBeUndefined();
-      expect(req.body.nested.lobbyId).toBeNull();
+      expect(req.body.userId).toBeNull()
+      expect(req.body.gameId).toBeUndefined()
+      expect(req.body.nested.lobbyId).toBeNull()
       
-      expect(next).toHaveBeenCalled();
-    });
+      expect(next).toHaveBeenCalled()
+    })
     
     it('should handle complex nested structures', () => {
       // Setup
@@ -126,92 +126,92 @@ describe('Validation Middleware', () => {
             ]
           }
         ]
-      };
+      }
       
       // Execute
-      coerceMongoIds(req, res, next);
+      coerceMongoIds(req, res, next)
       
       // Verify
-      expect(req.body.user._id).toBeInstanceOf(ObjectId);
-      expect(req.body.user.profile.favoriteGameIds[0]).toBeInstanceOf(ObjectId);
-      expect(req.body.games[0].gameId).toBeInstanceOf(ObjectId);
-      expect(req.body.games[0].players[0].playerId).toBeInstanceOf(ObjectId);
-      expect(req.body.games[0].players[1].playerId).toBeInstanceOf(ObjectId);
+      expect(req.body.user._id).toBeInstanceOf(ObjectId)
+      expect(req.body.user.profile.favoriteGameIds[0]).toBeInstanceOf(ObjectId)
+      expect(req.body.games[0].gameId).toBeInstanceOf(ObjectId)
+      expect(req.body.games[0].players[0].playerId).toBeInstanceOf(ObjectId)
+      expect(req.body.games[0].players[1].playerId).toBeInstanceOf(ObjectId)
       
-      expect(next).toHaveBeenCalled();
-    });
-  });
+      expect(next).toHaveBeenCalled()
+    })
+  })
   
   describe('ensureVersion', () => {
-    let req, res, next;
+    let req, res, next
 
     beforeEach(() => {
-      req = { body: {} };
+      req = { body: {} }
       res = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn()
-      };
-      next = jest.fn();
-    });
+      }
+      next = jest.fn()
+    })
 
     it('should call next when version matches exactly', () => {
       // Setup
-      req.body.appVersion = '1.2.3';
+      req.body.appVersion = '1.2.3'
       
       // Execute
-      ensureVersion(req, res, next);
+      ensureVersion(req, res, next)
       
       // Verify
-      expect(next).toHaveBeenCalled();
-      expect(res.status).not.toHaveBeenCalled();
-    });
+      expect(next).toHaveBeenCalled()
+      expect(res.status).not.toHaveBeenCalled()
+    })
     
     it('should return version mismatch error when version does not match', () => {
       // Setup
-      req.body.appVersion = '1.0.0';
+      req.body.appVersion = '1.0.0'
       
       // Execute
-      ensureVersion(req, res, next);
+      ensureVersion(req, res, next)
       
       // Verify
-      expect(next).not.toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(409);
+      expect(next).not.toHaveBeenCalled()
+      expect(res.status).toHaveBeenCalledWith(409)
       expect(res.json).toHaveBeenCalledWith({
         code: 'version_mismatch',
         currentVersion: '1.0.0',
         latestVersion: '1.2.3'
-      });
-    });
+      })
+    })
     
     it('should return version mismatch error when no version is provided', () => {
       // Setup
-      req.body.appVersion = undefined;
+      req.body.appVersion = undefined
       
       // Execute
-      ensureVersion(req, res, next);
+      ensureVersion(req, res, next)
       
       // Verify
-      expect(next).not.toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(409);
+      expect(next).not.toHaveBeenCalled()
+      expect(res.status).toHaveBeenCalledWith(409)
       expect(res.json).toHaveBeenCalledWith({
         code: 'version_mismatch',
         currentVersion: undefined,
         latestVersion: '1.2.3'
-      });
-    });
-  });
+      })
+    })
+  })
 
-  let req, res, next;
+  let req, res, next
 
   beforeEach(() => {
     req = {
       body: {},
       params: {},
       query: {}
-    };
-    res = {};
-    next = jest.fn();
-  });
+    }
+    res = {}
+    next = jest.fn()
+  })
 
   it('should call next() when validation passes for body schema', () => {
     // Setup
@@ -220,20 +220,20 @@ describe('Validation Middleware', () => {
         name: Joi.string().required(),
         age: Joi.number().integer().min(0)
       })
-    };
+    }
     
     req.body = {
       name: 'John Doe',
       age: 30
-    };
+    }
 
     // Execute
-    validate(schema)(req, res, next);
+    validate(schema)(req, res, next)
 
     // Verify
-    expect(next).toHaveBeenCalledWith();
-    expect(next).not.toHaveBeenCalledWith(expect.any(Error));
-  });
+    expect(next).toHaveBeenCalledWith()
+    expect(next).not.toHaveBeenCalledWith(expect.any(Error))
+  })
 
   it('should call next() when validation passes for params schema', () => {
     // Setup
@@ -241,19 +241,19 @@ describe('Validation Middleware', () => {
       params: Joi.object({
         id: Joi.string().required()
       })
-    };
+    }
     
     req.params = {
       id: '123456'
-    };
+    }
 
     // Execute
-    validate(schema)(req, res, next);
+    validate(schema)(req, res, next)
 
     // Verify
-    expect(next).toHaveBeenCalledWith();
-    expect(next).not.toHaveBeenCalledWith(expect.any(Error));
-  });
+    expect(next).toHaveBeenCalledWith()
+    expect(next).not.toHaveBeenCalledWith(expect.any(Error))
+  })
 
   it('should call next() when validation passes for query schema', () => {
     // Setup
@@ -262,20 +262,20 @@ describe('Validation Middleware', () => {
         page: Joi.number().integer().min(1),
         limit: Joi.number().integer().min(1)
       })
-    };
+    }
     
     req.query = {
       page: 2,
       limit: 10
-    };
+    }
 
     // Execute
-    validate(schema)(req, res, next);
+    validate(schema)(req, res, next)
 
     // Verify
-    expect(next).toHaveBeenCalledWith();
-    expect(next).not.toHaveBeenCalledWith(expect.any(Error));
-  });
+    expect(next).toHaveBeenCalledWith()
+    expect(next).not.toHaveBeenCalledWith(expect.any(Error))
+  })
 
   it('should call next() with BadRequestError when body validation fails', () => {
     // Setup
@@ -284,20 +284,20 @@ describe('Validation Middleware', () => {
         name: Joi.string().required(),
         age: Joi.number().integer().min(0).required()
       })
-    };
+    }
     
     req.body = {
       name: 'John Doe'
       // missing required age field
-    };
+    }
 
     // Execute
-    validate(schema)(req, res, next);
+    validate(schema)(req, res, next)
 
     // Verify
-    expect(next).toHaveBeenCalledWith(expect.any(BadRequestError));
-    expect(next.mock.calls[0][0].message).toContain('age');
-  });
+    expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
+    expect(next.mock.calls[0][0].message).toContain('age')
+  })
 
   it('should call next() with BadRequestError when params validation fails', () => {
     // Setup
@@ -305,19 +305,19 @@ describe('Validation Middleware', () => {
       params: Joi.object({
         id: Joi.string().required().pattern(/^[0-9a-fA-F]{24}$/)
       })
-    };
+    }
     
     req.params = {
       id: 'not-valid-id'
-    };
+    }
 
     // Execute
-    validate(schema)(req, res, next);
+    validate(schema)(req, res, next)
 
     // Verify
-    expect(next).toHaveBeenCalledWith(expect.any(BadRequestError));
-    expect(next.mock.calls[0][0].message).toContain('id');
-  });
+    expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
+    expect(next.mock.calls[0][0].message).toContain('id')
+  })
 
   it('should call next() with BadRequestError when query validation fails', () => {
     // Setup
@@ -326,20 +326,20 @@ describe('Validation Middleware', () => {
         page: Joi.number().integer().min(1),
         limit: Joi.number().integer().min(1).max(100)
       })
-    };
+    }
     
     req.query = {
       page: 1,
       limit: 200 // exceeds max
-    };
+    }
 
     // Execute
-    validate(schema)(req, res, next);
+    validate(schema)(req, res, next)
 
     // Verify
-    expect(next).toHaveBeenCalledWith(expect.any(BadRequestError));
-    expect(next.mock.calls[0][0].message).toContain('limit');
-  });
+    expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
+    expect(next.mock.calls[0][0].message).toContain('limit')
+  })
 
   it('should ignore validation for properties not defined in schema', () => {
     // Setup
@@ -347,34 +347,34 @@ describe('Validation Middleware', () => {
       body: Joi.object({
         name: Joi.string().required()
       })
-    };
+    }
     
     req.body = {
       name: 'John Doe',
       extraField: 'should be ignored'
-    };
+    }
 
     // Execute
-    validate(schema)(req, res, next);
+    validate(schema)(req, res, next)
 
     // Verify
-    expect(next).toHaveBeenCalledWith();
-    expect(next).not.toHaveBeenCalledWith(expect.any(Error));
-  });
+    expect(next).toHaveBeenCalledWith()
+    expect(next).not.toHaveBeenCalledWith(expect.any(Error))
+  })
 
   it('should do nothing if no schema is provided', () => {
     // Setup
-    const schema = {};
+    const schema = {}
     
     req.body = {
       anyValue: 'should be ignored'
-    };
+    }
 
     // Execute
-    validate(schema)(req, res, next);
+    validate(schema)(req, res, next)
 
     // Verify
-    expect(next).toHaveBeenCalledWith();
-    expect(next).not.toHaveBeenCalledWith(expect.any(Error));
-  });
-}); 
+    expect(next).toHaveBeenCalledWith()
+    expect(next).not.toHaveBeenCalledWith(expect.any(Error))
+  })
+}) 

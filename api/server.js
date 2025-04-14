@@ -58,4 +58,4 @@ if (require.main === module) {
 }
 
 // For testing purposes
-module.exports = { app, startServer };
+module.exports = { app, startServer }

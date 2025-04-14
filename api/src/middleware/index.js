@@ -11,4 +11,4 @@ module.exports = {
   loadGameArgs: dataLoader.loadGameArgs,
   loadLobbyArgs: dataLoader.loadLobbyArgs,
   errorHandler
-}; 
+} 

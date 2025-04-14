@@ -1,5 +1,5 @@
-const winston = require('winston');
-const config = require('../../config');
+const winston = require('winston')
+const config = require('../../config')
 
 const logger = winston.createLogger({
   level: config.logLevel,
@@ -15,6 +15,6 @@ const logger = winston.createLogger({
       )
     })
   ]
-});
+})
 
-module.exports = logger; 
+module.exports = logger 
