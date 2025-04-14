@@ -1,8 +1,8 @@
 class AppError extends Error {
-  constructor(message, statusCode) {
+  constructor(message, statusCode = 500) {
     super(message);
     this.statusCode = statusCode;
-    this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
+    this.status = statusCode;
     this.isOperational = true;
 
     Error.captureStackTrace(this, this.constructor);
@@ -10,7 +10,7 @@ class AppError extends Error {
 }
 
 class BadRequestError extends AppError {
-  constructor(message = 'Bad request') {
+  constructor(message = 'Bad Request') {
     super(message, 400);
   }
 }
@@ -28,13 +28,19 @@ class ForbiddenError extends AppError {
 }
 
 class NotFoundError extends AppError {
-  constructor(message = 'Resource not found') {
+  constructor(message = 'Not Found') {
     super(message, 404);
   }
 }
 
+class ConflictError extends AppError {
+  constructor(message = 'Conflict') {
+    super(message, 409);
+  }
+}
+
 class InternalServerError extends AppError {
-  constructor(message = 'Internal server error') {
+  constructor(message = 'Internal Server Error') {
     super(message, 500);
   }
 }
@@ -45,5 +51,6 @@ module.exports = {
   UnauthorizedError,
   ForbiddenError,
   NotFoundError,
+  ConflictError,
   InternalServerError
 }; 
