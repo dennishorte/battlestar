@@ -8,7 +8,7 @@ module.exports = defineConfig([
     plugins: { js },
     extends: ["js/recommended"],
     rules: {
-      // Enforce no semicolons
+      "eol-last": ["error", "always"],
       "semi": ["error", "never"],
 
       // Optionally add other rules here
