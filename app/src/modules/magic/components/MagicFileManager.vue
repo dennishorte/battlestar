@@ -4,7 +4,7 @@
   <FileManager
     v-else
     :filelist="filelist"
-    :file-types="['card', 'cube', 'deck']"
+    :file-types="['cube', 'deck']"
     :file-type="defaultFileType"
     @file-creating="createFile"
     @file-deleting="deleteFile"
