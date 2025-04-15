@@ -95,7 +95,7 @@ export default {
       const draftId = this.game.settings.linkedDraftId
 
       if (draftId) {
-        const { draft, games } = await this.$post('/api/magic/link/fetchByDraft', {
+        const { draft, games } = await this.$post('/api/magic/link/fetch_by_draft', {
           draftId,
         })
 

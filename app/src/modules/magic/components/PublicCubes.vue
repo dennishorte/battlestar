@@ -23,7 +23,7 @@ export default {
   },
 
   async mounted() {
-    const { cubes } = await this.$post('/api/magic/cube/fetchPublic')
+    const { cubes } = await this.$post('/api/magic/cube/fetch_public')
     this.cubes = cubes.sort((l, r) => l.name.localeCompare(r.name))
   },
 }

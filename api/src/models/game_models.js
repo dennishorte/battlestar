@@ -1,7 +1,7 @@
 const { fromData, fromLobby } = require('battlestar-common')
+const databaseClient = require('../utils/mongo.js').client
 
 // Database and collection
-const databaseClient = require('../util/mongo.js').client
 const database = databaseClient.db('games')
 const gameCollection = database.collection('game')
 
@@ -104,7 +104,7 @@ Game.linkGameToDraft = async function(game, draft) {
   )
 }
 
-Game.save = async function(game, opts={}) {
+Game.save = async function(game) {
   const branchId = Date.now()
   game.branchId = branchId
 

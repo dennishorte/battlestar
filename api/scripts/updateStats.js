@@ -2,8 +2,7 @@ Error.stackTraceLimit = 100
 
 require('dotenv').config({ path: '../.env' })
 
-const databaseClient = require('../src/util/mongo.js').client
-const ObjectId = require('mongodb').ObjectId
+const databaseClient = require('../src/utils/mongo.js').client
 
 const db = require('../src/models/db.js')
 const stats = require('../src/util/stats.js')
@@ -71,7 +70,6 @@ async function updateInnovationStats() {
   const session = databaseClient.startSession()
   const gameCursor = await fetchInnovationGames(session)
 
-  let count = 0
   for await (const data of gameCursor) {
     if (data.stats && data.stats.error) {
       continue

@@ -41,7 +41,7 @@ export default {
 
   methods: {
     async fetchLinkedGameResults() {
-      const { games } = await this.$post('/api/magic/link/fetchByDraft', {
+      const { games } = await this.$post('/api/magic/link/fetch_by_draft', {
         draftId: this.game._id,
       })
 

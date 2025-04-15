@@ -1,5 +1,5 @@
 // Database and collection
-const databaseClient = require('../util/mongo.js').client
+const databaseClient = require('../utils/mongo.js').client
 const database = databaseClient.db('games')
 const notifCollection = database.collection('notificationThrottle')
 

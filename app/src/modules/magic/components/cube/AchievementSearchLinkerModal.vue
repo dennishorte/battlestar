@@ -88,7 +88,7 @@ export default {
 
   methods: {
     async link() {
-      await this.$post('/api/magic/achievement/linkFilters', {
+      await this.$post('/api/magic/achievement/link_filters', {
         achId: this.selectedId,
         filters: this.filters,
       })

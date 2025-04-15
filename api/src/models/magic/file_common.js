@@ -29,7 +29,7 @@ module.exports = function({ collection, createFields }) {
       })
 
       if (!insertResult.insertedId) {
-        throw new Error(`File insertion failed for user ${userId} filename ${name}`)
+        throw new Error('File insertion failed')
       }
 
       return insertResult.insertedId

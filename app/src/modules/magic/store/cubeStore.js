@@ -86,7 +86,7 @@ export default {
     },
 
     async loadScars({ state }) {
-      const { scars } = await this.$post('/api/magic/scar/fetchAll', {
+      const { scars } = await this.$post('/api/magic/scar/fetch_all', {
         cubeId: state.cube._id,
       })
       state.scars = scars
