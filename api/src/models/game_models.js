@@ -123,7 +123,7 @@ Game.save = async function(game) {
     },
   )
 
-  return { branchId }
+  return game
 }
 
 Game.saveSettings = async function(game, settings) {

@@ -148,8 +148,8 @@ Game.undo = async function(game, count) {
     }
   }
 
-  const { branchId } = await db.game.save(game)
-  return branchId
+  await db.game.save(game)
+  return game.serialize()
 }
 
 async function _testAndSave(game, evalFunc) {
