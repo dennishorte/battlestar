@@ -1,6 +1,6 @@
 const fs = require('fs')
 
-const databaseClient = require('../api/src/util/mongo.js').client
+const databaseClient = require('../api/src/utils/mongo.js').client
 const database = databaseClient.db('meta')
 const versionsCollection = database.collection('versions')
 
