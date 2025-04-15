@@ -9,7 +9,9 @@
     "dev": "nodemon ./server.js",
     "test": "jest --runInBand --config=jest.config.js",
     "test:watch": "jest --watch --config=jest.config.js",
-    "test:coverage": "jest --coverage --config=jest.config.js"
+    "test:coverage": "jest --coverage --config=jest.config.js",
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint --fix ."
   },
   "nodemonConfig": {
     "watch": [

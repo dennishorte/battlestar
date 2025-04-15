@@ -21,37 +21,61 @@ Card.fetchAll = async function(source) {
 
   const versions = await Card.versions()
 
-  if (!source || source === 'all' || source === 'custom') {
-    const customCursor = await customCollection.find({})
-    const customCards = await customCursor.toArray()
+  // Set up promises for concurrent execution
+  const promises = []
 
-    result.custom = {
-      cards: customCards,
-      version: versions.custom,
-    }
+  if (!source || source === 'all' || source === 'custom') {
+    const customPromise = customCollection.find({}).toArray()
+      .then(customCards => {
+        result.custom = {
+          cards: customCards,
+          version: versions.custom,
+        }
+      })
+    promises.push(customPromise)
   }
 
   if (!source || source === 'all' || source === 'scryfall') {
-    const scryfallCursor = await scryfallCollection.find({})
-    const scryfallCards = await scryfallCursor.toArray()
-
-    result.scryfall = {
-      cards: scryfallCards,
-      version: versions.scryfall,
-    }
+    const scryfallPromise = scryfallCollection.find({}).toArray()
+      .then(scryfallCards => {
+        result.scryfall = {
+          cards: scryfallCards,
+          version: versions.scryfall,
+        }
+      })
+    promises.push(scryfallPromise)
   }
+
+  // Wait for all database operations to complete in parallel
+  await Promise.all(promises)
 
   return result
 }
 
 Card.findById = async function(id) {
-  const maybeScryfall = await scryfallCollection.findOne({ _id: id })
-  if (maybeScryfall) {
-    return maybeScryfall
+  // Query both collections in parallel
+  const [scryfallCard, customCard] = await Promise.all([
+    scryfallCollection.findOne({ _id: id }),
+    customCollection.findOne({ _id: id })
+  ])
+  
+  // Return the first non-null result
+  return scryfallCard || customCard || null
+}
+
+Card.findByIds = async function(ids) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return []
   }
-  else {
-    return await customCollection.findOne({ _id: id })
-  }
+  
+  // Query both collections in parallel
+  const [scryfallCards, customCards] = await Promise.all([
+    scryfallCollection.find({ _id: { $in: ids } }).toArray(),
+    customCollection.find({ _id: { $in: ids } }).toArray()
+  ])
+  
+  // Combine results from both collections
+  return [...scryfallCards, ...customCards]
 }
 
 Card.insertCustom = async function(card) {
