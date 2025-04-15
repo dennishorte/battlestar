@@ -3,7 +3,6 @@ const AsyncLock = require('async-lock')
 const databaseClient = require('../../utils/mongo.js').client
 const database = databaseClient.db('magic')
 
-const countersCollection = database.collection('counters')
 const customCollection = database.collection('custom_cards')
 const scryfallCollection = database.collection('scryfall')
 const versionCollection = database.collection('versions')
@@ -15,6 +14,43 @@ module.exports = Card
 
 const lock = new AsyncLock()
 
+
+Card.create = async function(data, cube, user, comment=null) {
+  // Use a lock to ensure that multiple card creation operations don't conflict
+  return await lock.acquire('card:create', async () => {
+    delete data.set
+    delete data.collector_number
+    delete data.legal
+
+    const card = {
+      data,
+      cubeId: cube._id,
+      edits: [{
+        userId: user._id,
+        comment,
+        date: new Date(),
+        oldData: null,
+      }],
+    }
+    
+    const session = databaseClient.startSession()
+    
+    try {
+      return await session.withTransaction(async () => {
+        const result = await customCollection.insertOne(card, { session })
+        await _incrementCustomCardDatabaseVersionWithSession(session)
+        return await customCollection.findOne(
+          { _id: result.insertedId },
+          { session }
+        )
+      })
+    }
+    finally {
+      // End the session regardless of success or failure
+      await session.endSession()
+    }
+  })
+}
 
 Card.fetchAll = async function(source) {
   const result = {}
@@ -78,51 +114,51 @@ Card.findByIds = async function(ids) {
   return [...scryfallCards, ...customCards]
 }
 
-Card.insertCustom = async function(card) {
-
-  // Since this is intended to create a new card, make sure we don't insert with
-  // an existing MongoDB id.
-  if (card._id) {
-    delete card._id
-  }
-
-  // Sometimes, we copy an original card to a new cube.
-  if (card.custom_id) {
-    delete card.custom_id
-  }
-
-  card.set = 'custom'
-  card.collector_number = await _getNextCollectorNumber()
-  card.legal = ['custom']
-
-  const { insertedId } = await customCollection.insertOne(card)
-
-  // MongoDB ids are globally unique, so they make good unique identifiers for custom cards.
-  await customCollection.updateOne(
-    { _id: insertedId },
-    { $set: { custom_id: insertedId } },
-  )
-
-  await _incrementCustomCardDatabaseVersion()
-
-  return await customCollection.findOne({ _id: insertedId })
-}
-
-Card.save = async function(card) {
-  if (card._id) {
-    await customCollection.replaceOne(
-      { _id: card._id },
-      card
-    )
-    await _incrementCustomCardDatabaseVersion()
-    return card._id
-  }
-  else {
-    const insertedCard = await Card.insertCustom(card)
-    // The database increment is handled in insertCustom
-    // await _incrementCustomCardDatabaseVersion()
-    return insertedCard._id
-  }
+Card.update = async function(cardId, cardData, user, comment=null) {
+  return await lock.acquire('card:' + cardId.toString(), async () => {
+    const session = databaseClient.startSession()
+    
+    try {
+      return await session.withTransaction(async () => {
+        const updateResult = await customCollection.findOneAndUpdate(
+          { _id: cardId },
+          [
+            {
+              $set: {
+                edits: {
+                  $concatArrays: [
+                    "$edits",
+                    [{
+                      userId: user._id,
+                      comment,
+                      date: new Date(),
+                      oldData: "$data"  // References the current data value
+                    }]
+                  ]
+                },
+                data: cardData  // Set the new data
+              }
+            }
+          ],
+          { 
+            returnDocument: 'after',
+            upsert: false,
+            session
+          }
+        )
+        
+        // If update was successful, increment the version
+        if (updateResult) {
+          await _incrementCustomCardDatabaseVersionWithSession(session)
+          return updateResult
+        }
+      })
+    }
+    finally {
+      // End the session regardless of success or failure
+      await session.endSession()
+    }
+  })
 }
 
 Card.versions = async function() {
@@ -139,37 +175,26 @@ Card.versions = async function() {
 }
 
 
-async function _incrementCustomCardDatabaseVersion() {
-  await lock.acquire('version:custom-db', async () => {
-    const customVersion = await versionCollection.findOne({
-      name: 'custom',
-    })
+async function _incrementCustomCardDatabaseVersionWithSession(session) {
+  const customVersion = await versionCollection.findOne(
+    { name: 'custom' },
+    { session }
+  )
 
-    if (customVersion) {
-      await versionCollection.updateOne(
-        { name: 'custom' },
-        { $inc: { value: 1 } }
-      )
-    }
-    else {
-      await versionCollection.insertOne({
+  if (customVersion) {
+    await versionCollection.updateOne(
+      { name: 'custom' },
+      { $inc: { value: 1 } },
+      { session }
+    )
+  }
+  else {
+    await versionCollection.insertOne(
+      {
         name: 'custom',
         value: 1,
-      })
-    }
-  })
-}
-
-async function _getNextCollectorNumber() {
-  return await lock.acquire('version:card-number', async () => {
-    const record = await countersCollection.findOne({ name: 'custom_collector_number' })
-    const value = record.value
-
-    await countersCollection.updateOne(
-      { name: 'custom_collector_number' },
-      { $inc: { value: 1 } },
+      },
+      { session }
     )
-
-    return value
-  })
+  }
 }

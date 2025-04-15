@@ -10,11 +10,18 @@ const cardController = require('../../../controllers/magic/card.controller')
 router.post('/fetch_all', cardController.fetchAll)
 
 /**
- * @route POST /api/magic/card/save
- * @desc Save a card
+ * @route POST /api/magic/card/create
+ * @desc Create a new card
  * @access Private
  */
-router.post('/save', cardController.save)
+router.post('/create', cardController.create)
+
+/**
+ * @route POST /api/magic/card/update
+ * @desc Update an existing card
+ * @access Private
+ */
+router.post('/update', cardController.update)
 
 /**
  * @route POST /api/magic/card/versions

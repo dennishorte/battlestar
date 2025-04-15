@@ -1,14 +1,18 @@
 const cardController = require('../../../../src/controllers/magic/card.controller')
+const { ObjectId } = require('mongodb')
 
 // Mock dependencies
 jest.mock('../../../../src/models/db', () => ({
   magic: {
     card: {
       fetchAll: jest.fn(),
-      insertCustom: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
       findById: jest.fn(),
-      save: jest.fn(),
       versions: jest.fn()
+    },
+    cube: {
+      findById: jest.fn()
     }
   }
 }))
@@ -20,11 +24,15 @@ describe('Card Controller', () => {
 
   beforeEach(() => {
     req = {
-      body: {}
+      body: {},
+      user: { _id: new ObjectId('507f1f77bcf86cd799439011') },
+      // The cube would be loaded by data-loader middleware based on cubeId
+      cube: { _id: new ObjectId('507f1f77bcf86cd799439012'), name: 'Test Cube' }
     }
     res = {
-      json: jest.fn()
-    }
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis()
+    }  
     jest.clearAllMocks()
   })
 
@@ -47,87 +55,150 @@ describe('Card Controller', () => {
     })
   })
 
-  describe('save', () => {
+  describe('create', () => {
     it('should create a new card and return success response', async () => {
       // Setup
-      const mockCard = { name: 'New Card', type: 'Creature' }
-      req.body.card = mockCard
-      req.body.editor = 'Test User'
+      const mockCardData = { name: 'New Card', type: 'Creature' }
+      const mockCreatedCard = { 
+        _id: new ObjectId('507f1f77bcf86cd799439013'),
+        data: mockCardData,
+        cubeId: req.cube._id,
+        edits: [{ 
+          userId: req.user._id,
+          comment: 'Test comment',
+          date: expect.any(Date),
+          oldData: null
+        }]
+      }
+      
+      // Set both cardData and cubeId as they're both required for validation
+      req.body.cardData = mockCardData
+      req.body.cubeId = req.cube._id // This is what triggers data-loader to set req.cube
       req.body.comment = 'Test comment'
       
-      const mockInsertedId = '507f1f77bcf86cd799439011'
-      const mockFinalizedCard = { _id: mockInsertedId, ...mockCard }
-      
-      db.magic.card.save.mockResolvedValueOnce(mockInsertedId)
-      db.magic.card.findById.mockResolvedValueOnce(mockFinalizedCard)
+      db.magic.card.create.mockResolvedValueOnce(mockCreatedCard)
       
       // Execute
-      await cardController.save(req, res)
+      await cardController.create(req, res)
       
       // Verify
-      expect(db.magic.card.save).toHaveBeenCalled()
-      expect(db.magic.card.findById).toHaveBeenCalledWith(mockInsertedId)
+      expect(db.magic.card.create).toHaveBeenCalledWith(
+        mockCardData,
+        req.cube,
+        req.user,
+        'Test comment'
+      )
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
-        cardCreated: true,
-        cardReplaced: false,
-        finalizedCard: mockFinalizedCard
+        card: mockCreatedCard
       })
     })
 
-    it('should update an existing card by id and return success response', async () => {
+    it('should return error when cube is not found', async () => {
       // Setup
-      const mockCardId = '507f1f77bcf86cd799439011'
-      const mockCard = { _id: mockCardId, name: 'Existing Card', type: 'Creature' }
-      const mockUpdatedCard = { name: 'Updated Card', type: 'Creature' }
+      req.cube = null // dataloader would not set req.cube if cube not found
+      req.body.cardData = { name: 'New Card' }
+      req.body.cubeId = new ObjectId('507f1f77bcf86cd799439012') // Still need cubeId in body for validation
       
-      req.body.card = mockCard
-      req.body.editor = 'Test User'
+      // Execute
+      await cardController.create(req, res)
+      
+      // Verify
+      expect(res.status).toHaveBeenCalledWith(404)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'error',
+        message: 'Cube not found'
+      })
+    })
+
+    it('should return error when required fields are missing', async () => {
+      // Setup
+      req.body = { comment: 'Test comment' }
+      // cubeId is missing which would cause validation failure
+      
+      // Execute
+      await cardController.create(req, res)
+      
+      // Verify
+      expect(res.status).toHaveBeenCalledWith(400)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'error',
+        message: 'Missing required fields: cardData and cubeId are required'
+      })
+    })
+  })
+
+  describe('update', () => {
+    it('should update an existing card and return success response', async () => {
+      // Setup
+      const cardId = new ObjectId('507f1f77bcf86cd799439013')
+      const mockCardData = { name: 'Updated Card', type: 'Creature' }
+      const mockUpdatedCard = { 
+        _id: cardId,
+        data: mockCardData,
+        cubeId: req.cube._id,
+        edits: [
+          { 
+            userId: req.user._id,
+            comment: 'Update comment',
+            date: expect.any(Date),
+            oldData: { name: 'Old Card', type: 'Creature' }
+          }
+        ]
+      }
+      
+      req.body.cardId = cardId
+      req.body.cardData = mockCardData
       req.body.comment = 'Update comment'
       
-      db.magic.card.findById.mockResolvedValueOnce(mockCard)
-      db.magic.card.save.mockResolvedValueOnce(mockCardId)
-      db.magic.card.findById.mockResolvedValueOnce({ ...mockCard, ...mockUpdatedCard })
+      db.magic.card.update.mockResolvedValueOnce(mockUpdatedCard)
       
       // Execute
-      await cardController.save(req, res)
+      await cardController.update(req, res)
       
       // Verify
-      expect(db.magic.card.findById).toHaveBeenCalledWith(mockCardId)
-      expect(db.magic.card.save).toHaveBeenCalled()
+      expect(db.magic.card.update).toHaveBeenCalledWith(
+        cardId,
+        mockCardData,
+        req.user,
+        'Update comment'
+      )
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
-        cardCreated: false,
-        cardReplaced: true,
-        finalizedCard: expect.objectContaining({ _id: mockCardId })
+        card: mockUpdatedCard
       })
     })
 
-    it('should handle creating a custom card from a Scryfall card', async () => {
+    it('should return error when card is not found', async () => {
       // Setup
-      const mockOriginal = { id: 'scryfall-id', name: 'Scryfall Card' }
-      const mockCustomCard = { _id: '507f1f77bcf86cd799439011', ...mockOriginal, custom_id: 'custom-1' }
-      const mockFinalCard = { ...mockCustomCard, name: 'Custom Card' }
+      req.body.cardId = new ObjectId('507f1f77bcf86cd799439013')
+      req.body.cardData = { name: 'Updated Card' }
       
-      req.body.original = mockOriginal
-      req.body.card = { name: 'Custom Card' }
-      req.body.editor = 'Test User'
-      
-      db.magic.card.insertCustom.mockResolvedValueOnce(mockCustomCard)
-      db.magic.card.save.mockResolvedValueOnce(mockCustomCard._id)
-      db.magic.card.findById.mockResolvedValueOnce(mockFinalCard)
+      db.magic.card.update.mockResolvedValueOnce(null)
       
       // Execute
-      await cardController.save(req, res)
+      await cardController.update(req, res)
       
       // Verify
-      expect(db.magic.card.insertCustom).toHaveBeenCalledWith(mockOriginal)
-      expect(db.magic.card.save).toHaveBeenCalled()
+      expect(res.status).toHaveBeenCalledWith(404)
       expect(res.json).toHaveBeenCalledWith({
-        status: 'success',
-        cardCreated: false,
-        cardReplaced: true,
-        finalizedCard: mockFinalCard
+        status: 'error',
+        message: 'Card not found or update failed'
+      })
+    })
+
+    it('should return error when required fields are missing', async () => {
+      // Setup
+      req.body = { comment: 'Update comment' }
+      
+      // Execute
+      await cardController.update(req, res)
+      
+      // Verify
+      expect(res.status).toHaveBeenCalledWith(400)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'error',
+        message: 'Missing required fields: cardId and cardData are required'
       })
     })
   })
@@ -135,7 +206,7 @@ describe('Card Controller', () => {
   describe('versions', () => {
     it('should fetch card versions and return success response', async () => {
       // Setup
-      const mockVersions = [{ version: '1.0', count: 100 }]
+      const mockVersions = { custom: 1, scryfall: 2 }
       db.magic.card.versions.mockResolvedValueOnce(mockVersions)
       
       // Execute

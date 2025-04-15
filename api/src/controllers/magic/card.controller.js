@@ -15,100 +15,94 @@ exports.fetchAll = async (req, res) => {
 }
 
 /**
- * Helper function to extract card data from request
+ * Create a card
  * @param {Object} req - Express request object
- * @param {String} name - Name of the property to extract
- * @returns {Object|null} Card data
+ * @param {Object} res - Express response object
  */
-function _extractCardData(req, name) {
-  if (!req.body[name]) {
-    return null
+exports.create = async (req, res) => {
+  try {
+    // Validate required inputs
+    if (!req.body.cardData || !req.body.cubeId) {
+      return res.status(400).json({ 
+        status: 'error', 
+        message: 'Missing required fields: cardData and cubeId are required' 
+      })
+    }
+
+    // Get the cube
+    if (!req.cube) {
+      return res.status(404).json({ 
+        status: 'error', 
+        message: 'Cube not found' 
+      })
+    }
+
+    // Create the card
+    const createdCard = await db.magic.card.create(
+      req.body.cardData,
+      req.cube,
+      req.user,
+      req.body.comment
+    )
+
+    res.json({
+      status: 'success',
+      card: createdCard
+    })
   }
-  else {
-    return req.body[name].data ? req.body[name].data : req.body[name]
+  catch (error) {
+    console.error('Error creating card:', error)
+    res.status(500).json({
+      status: 'error',
+      message: error.message
+    })
   }
 }
 
 /**
- * Save a card
+ * Update a card
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.save = async (req, res) => {
-  const card = _extractCardData(req, 'card')
-  const original = _extractCardData(req, 'original')
-  const { editor, comment } = req.body
-
-  if (card.data) {
-    throw new Error('Card had data ' + card.name)
-  }
-
-  if (original && original.data) {
-    throw new Error('Original had data ' + original.name)
-  }
-
-  const replaceScryfallCard = original && !original.custom_id
-  let cardCreated = false
-
-  // You can't edit a Scryfall card. Create a copy of the Scryfall card and update that.
-  let toUpdate
-  if (replaceScryfallCard) {
-    toUpdate = await db.magic.card.insertCustom(original)
-  }
-
-  // Overwrite the existing custom card, in-place.
-  else if (original) {
-    toUpdate = await db.magic.card.findById(original._id)
-  }
-
-  // Overwrite the existing custom card, in-place.
-  else if (card._id) {
-    toUpdate = await db.magic.card.findById(card._id)
-  }
-
-  // If this is a new card, we're not updating anything.
-  else {
-    cardCreated = true
-
-    card.id = 'no_id_for_custom_cards'
-    if (!card.name.trim()) {
-      card.name = 'unnamed'
+exports.update = async (req, res) => {
+  try {
+    // Validate required inputs
+    if (!req.body.cardId || !req.body.cardData) {
+      return res.status(400).json({ 
+        status: 'error', 
+        message: 'Missing required fields: cardId and cardData are required' 
+      })
     }
 
-    toUpdate = card
+    // Update the card
+    const updateResult = await db.magic.card.update(
+      req.body.cardId,
+      req.body.cardData,
+      req.user,
+      req.body.comment
+    )
+
+    // Check for successful update
+    if (updateResult) {
+      res.json({
+        status: 'success',
+        card: updateResult
+      })
+    }
+    else {
+      res.status(404).json({
+        status: 'error',
+        message: 'Card not found or update failed'
+      })
+    }
   }
-
-  // Remove fields that should not be altered.
-  delete card._id
-  delete card.custom_id
-  delete card.edits
-  delete card.set
-  delete card.collector_number
-  delete card.legal
-
-  // Update the card model.
-  const toInsert = {
-    ...toUpdate,
-    ...card
+  catch (error) {
+    console.error('Error updating card:', error)
+    res.status(500).json({
+      status: 'error',
+      message: error.message
+    })
   }
-
-  // Update the edit history.
-  toInsert.edits = toInsert.edits || []
-  toInsert.edits.push({
-    editor,
-    comment: comment || 'no comment',
-    timestamp: Date.now(),
-  })
-
-  const finalId = await db.magic.card.save(toInsert)
-  const finalizedCard = await db.magic.card.findById(finalId)
-
-  res.json({
-    status: 'success',
-    cardCreated,
-    cardReplaced: !cardCreated, // The cube containing this card should be updated, probably.
-    finalizedCard,
-  })
 }
 
 /**
