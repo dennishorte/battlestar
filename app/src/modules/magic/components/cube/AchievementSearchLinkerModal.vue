@@ -56,7 +56,7 @@ export default {
     achievements: Array,
   },
 
-  state: () => {
+  data: () => {
     return {
       selectedId: null,
     }
