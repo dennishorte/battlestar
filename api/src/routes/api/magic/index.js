@@ -6,7 +6,6 @@ const cardRouter = require('./card.router')
 const deckRouter = require('./deck.router')
 const scryfallRouter = require('./scryfall.router')
 const linkRouter = require('./link.router')
-const achievementRouter = require('./achievement.router')
 
 /**
  * Magic sub-routes
@@ -17,7 +16,6 @@ router.use('/card', cardRouter)
 router.use('/deck', deckRouter)
 router.use('/scryfall', scryfallRouter)
 router.use('/link', linkRouter)
-router.use('/achievement', achievementRouter)
 
 // All magic routes have been migrated
 
