@@ -29,7 +29,7 @@ exports.create = async (req, res) => {
       })
     }
 
-    // Get the cube
+    // Ensure the cube exists
     if (!req.cube) {
       return res.status(404).json({ 
         status: 'error', 
@@ -44,6 +44,8 @@ exports.create = async (req, res) => {
       req.user,
       req.body.comment
     )
+
+    await db.magic.cube.addCard(req.cube, createdCard)
 
     res.json({
       status: 'success',

@@ -13,17 +13,17 @@ module.exports = {
     })
   }),
 
-  async addCard(cube, cardId) {
+  async addCard(cube, card) {
     await cubeCollection.updateOne(
       { _id: cube._id },
-      { $push: { cardlist: cardId } }
+      { $push: { cardlist: card._id } }
     )
   },
 
-  async removeCard(cube, cardId) {
+  async removeCard(cube, card) {
     await cubeCollection.updateOne(
       { _id: cube._id },
-      { $pull: { cardlist: cardId } }
+      { $pull: { cardlist: card._id } }
     )
   },
 
