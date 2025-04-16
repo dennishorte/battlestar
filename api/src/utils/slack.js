@@ -15,7 +15,7 @@ module.exports = {
 }
 
 async function sendToSlackId(slackId, message) {
-  return await web.chat.postMessage({ channel: slackId, text: message })
+  return await client.chat.postMessage({ channel: slackId, text: message })
 }
 
 /**
@@ -64,7 +64,7 @@ async function test() {
 *{ach.name}*
 >{ach.text}`
 
-  const res = await web.chat.postMessage({ channel: cloChannelId, text: message })
+  const res = await client.chat.postMessage({ channel: cloChannelId, text: message })
 
   // `res` contains information about the posted message
   console.log('Message sent: ', res.ts)
