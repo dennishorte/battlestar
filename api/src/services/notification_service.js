@@ -43,7 +43,7 @@ NotificationService.sendGameNotifications = async function(game) {
     // If it's this player's turn, check if we should notify them
     if (game.checkPlayerHasActionWaiting(player)) {
       // Check if notification should be throttled (don't spam players)
-      const isThrottled = false //await db.notif.throttleOrSet(player, game)
+      const isThrottled = await db.notif.throttleOrSet(player, game)
       if (!isThrottled) {
         // Send "your turn" notification
         const turnMessage = `You're up! ${gameLink}`

@@ -5,6 +5,12 @@ jest.mock('../../../src/models/db', () => ({
   notif: {
     clear: jest.fn().mockResolvedValue(),
     throttleOrSet: jest.fn()
+  },
+  user: {
+    findById: jest.fn().mockImplementation(id => {
+      // Return the user object unchanged (simulating database fetch)
+      return Promise.resolve({ _id: id })
+    })
   }
 }))
 
