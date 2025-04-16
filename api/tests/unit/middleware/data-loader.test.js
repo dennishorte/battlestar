@@ -1,4 +1,4 @@
-const { loadGameArgs, loadLobbyArgs, loadDraftArgs, GameOverwriteError, GameKilledError } = require('../../../src/middleware/loaders')
+const { loadGameArgs, loadLobbyArgs, loadDraftArgs, loadCardArgs, loadCubeArgs, loadDeckArgs, GameOverwriteError, GameKilledError } = require('../../../src/middleware/loaders')
 const { NotFoundError } = require('../../../src/utils/errors')
 const { ObjectId } = require('mongodb')
 
@@ -20,6 +20,17 @@ jest.mock('../../../src/models/db', () => ({
   },
   lobby: {
     findById: jest.fn()
+  },
+  magic: {
+    card: {
+      findById: jest.fn()
+    },
+    cube: {
+      findById: jest.fn()
+    },
+    deck: {
+      findById: jest.fn()
+    }
   }
 }))
 
@@ -149,6 +160,147 @@ describe('Data Loader Middleware', () => {
       expect(fromData).toHaveBeenCalledWith(mockDraft)
       expect(req.draft).toEqual(mockDraft)
       expect(next).toHaveBeenCalled()
+    })
+  })
+
+  describe('loadCardArgs', () => {
+    it('should load card and set it on the request object', async () => {
+      // Setup
+      const cardId = new ObjectId()
+      req.body.cardId = cardId
+      const mockCard = { _id: cardId, name: 'Test Card' }
+      db.magic.card.findById.mockResolvedValue(mockCard)
+      
+      // Execute
+      await loadCardArgs(req, res, next)
+      
+      // Verify
+      expect(db.magic.card.findById).toHaveBeenCalledWith(cardId)
+      expect(req.card).toEqual(mockCard)
+      expect(next).toHaveBeenCalled()
+      expect(res.on).toHaveBeenCalledWith('finish', expect.any(Function))
+    })
+
+    it('should call next with NotFoundError if card is not found', async () => {
+      // Setup
+      const cardId = new ObjectId()
+      req.body.cardId = cardId
+      db.magic.card.findById.mockResolvedValue(null)
+      
+      // Execute
+      await loadCardArgs(req, res, next)
+      
+      // Verify
+      expect(db.magic.card.findById).toHaveBeenCalledWith(cardId)
+      expect(next).toHaveBeenCalledWith(expect.any(NotFoundError))
+      expect(next.mock.calls[0][0].message).toContain('card not found')
+    })
+
+    it('should just call next if no cardId is provided', async () => {
+      // Setup
+      req.body.cardId = null
+      
+      // Execute
+      await loadCardArgs(req, res, next)
+      
+      // Verify
+      expect(db.magic.card.findById).not.toHaveBeenCalled()
+      expect(next).toHaveBeenCalled()
+      expect(next.mock.calls[0][0]).toBeUndefined()
+    })
+  })
+
+  describe('loadCubeArgs', () => {
+    it('should load cube and set it on the request object', async () => {
+      // Setup
+      const cubeId = new ObjectId()
+      req.body.cubeId = cubeId
+      const mockCube = { _id: cubeId, name: 'Test Cube' }
+      db.magic.cube.findById.mockResolvedValue(mockCube)
+      
+      // Execute
+      await loadCubeArgs(req, res, next)
+      
+      // Verify
+      expect(db.magic.cube.findById).toHaveBeenCalledWith(cubeId)
+      expect(req.cube).toEqual(mockCube)
+      expect(next).toHaveBeenCalled()
+      expect(res.on).toHaveBeenCalledWith('finish', expect.any(Function))
+    })
+
+    it('should call next with NotFoundError if cube is not found', async () => {
+      // Setup
+      const cubeId = new ObjectId()
+      req.body.cubeId = cubeId
+      db.magic.cube.findById.mockResolvedValue(null)
+      
+      // Execute
+      await loadCubeArgs(req, res, next)
+      
+      // Verify
+      expect(db.magic.cube.findById).toHaveBeenCalledWith(cubeId)
+      expect(next).toHaveBeenCalledWith(expect.any(NotFoundError))
+      expect(next.mock.calls[0][0].message).toContain('cube not found')
+    })
+
+    it('should just call next if no cubeId is provided', async () => {
+      // Setup
+      req.body.cubeId = null
+      
+      // Execute
+      await loadCubeArgs(req, res, next)
+      
+      // Verify
+      expect(db.magic.cube.findById).not.toHaveBeenCalled()
+      expect(next).toHaveBeenCalled()
+      expect(next.mock.calls[0][0]).toBeUndefined()
+    })
+  })
+
+  describe('loadDeckArgs', () => {
+    it('should load deck and set it on the request object', async () => {
+      // Setup
+      const deckId = new ObjectId()
+      req.body.deckId = deckId
+      const mockDeck = { _id: deckId, name: 'Test Deck' }
+      db.magic.deck.findById.mockResolvedValue(mockDeck)
+      
+      // Execute
+      await loadDeckArgs(req, res, next)
+      
+      // Verify
+      expect(db.magic.deck.findById).toHaveBeenCalledWith(deckId)
+      expect(req.deck).toEqual(mockDeck)
+      expect(next).toHaveBeenCalled()
+      expect(res.on).toHaveBeenCalledWith('finish', expect.any(Function))
+    })
+
+    it('should call next with NotFoundError if deck is not found', async () => {
+      // Setup
+      const deckId = new ObjectId()
+      req.body.deckId = deckId
+      db.magic.deck.findById.mockResolvedValue(null)
+      
+      // Execute
+      await loadDeckArgs(req, res, next)
+      
+      // Verify
+      expect(db.magic.deck.findById).toHaveBeenCalledWith(deckId)
+      expect(next).toHaveBeenCalledWith(expect.any(NotFoundError))
+      expect(next.mock.calls[0][0].message).toContain('deck not found')
+    })
+
+    it('should just call next if no deckId is provided', async () => {
+      // Setup
+      req.body.deckId = null
+      
+      // Execute
+      await loadDeckArgs(req, res, next)
+      
+      // Verify
+      expect(db.magic.deck.findById).not.toHaveBeenCalled()
+      expect(next).toHaveBeenCalled()
+      expect(next.mock.calls[0][0]).toBeUndefined()
     })
   })
 

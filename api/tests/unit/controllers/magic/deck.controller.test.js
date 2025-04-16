@@ -1,4 +1,5 @@
 const deckController = require('../../../../src/controllers/magic/deck.controller')
+const { ObjectId } = require('mongodb')
 
 // Mock dependencies
 jest.mock('../../../../src/models/db', () => ({
@@ -30,9 +31,9 @@ describe('Deck Controller', () => {
   describe('create', () => {
     it('should create a new deck and return success response with the deck', async () => {
       // Setup
-      const mockDeckId = '507f1f77bcf86cd799439011'
+      const mockDeckId = new ObjectId('507f1f77bcf86cd799439011')
       const mockDeck = { _id: mockDeckId, name: 'Test Deck', cards: [] }
-      req.body = { name: 'Test Deck', userId: '507f1f77bcf86cd799439012' }
+      req.body = { name: 'Test Deck', userId: new ObjectId('507f1f77bcf86cd799439012') }
       
       db.magic.deck.create.mockResolvedValueOnce(mockDeckId)
       db.magic.deck.findById.mockResolvedValueOnce(mockDeck)
@@ -51,19 +52,19 @@ describe('Deck Controller', () => {
   })
 
   describe('fetch', () => {
-    it('should fetch a deck by ID and return success response with the deck', async () => {
+    it('should return the deck loaded by the data loader', async () => {
       // Setup
-      const mockDeckId = '507f1f77bcf86cd799439011'
+      const mockDeckId = new ObjectId('507f1f77bcf86cd799439011')
       const mockDeck = { _id: mockDeckId, name: 'Test Deck', cards: [] }
-      req.body.deckId = mockDeckId
       
-      db.magic.deck.findById.mockResolvedValueOnce(mockDeck)
+      // Set the deck directly on the request as the data loader would
+      req.deck = mockDeck
       
       // Execute
       await deckController.fetch(req, res)
       
-      // Verify
-      expect(db.magic.deck.findById).toHaveBeenCalledWith(mockDeckId)
+      // Verify - no longer calling findById directly
+      expect(db.magic.deck.findById).not.toHaveBeenCalled()
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         deck: mockDeck
@@ -74,7 +75,7 @@ describe('Deck Controller', () => {
   describe('save', () => {
     it('should save changes to a deck and return success response', async () => {
       // Setup
-      const mockDeck = { _id: '507f1f77bcf86cd799439011', name: 'Updated Deck', cards: [] }
+      const mockDeck = { _id: new ObjectId('507f1f77bcf86cd799439011'), name: 'Updated Deck', cards: [] }
       req.body.deck = mockDeck
       
       db.magic.deck.save.mockResolvedValueOnce()
@@ -92,21 +93,41 @@ describe('Deck Controller', () => {
 
   describe('addCard', () => {
     it('should add a card to a deck and return success response', async () => {
-      // Setup
-      const mockDeckId = '507f1f77bcf86cd799439011'
-      const mockCard = { _id: '507f1f77bcf86cd799439022', name: 'Test Card' }
-      req.body.deckId = mockDeckId
-      req.body.card = mockCard
+      // Setup - data loader would populate req.deck and req.card
+      const mockDeckId = new ObjectId('507f1f77bcf86cd799439011')
+      const mockCardId = new ObjectId('507f1f77bcf86cd799439022')
+      const mockDeck = { _id: mockDeckId, name: 'Test Deck', cards: [] }
+      const mockCard = { _id: mockCardId, name: 'Test Card' }
+      
+      // Set objects directly on request as the data loader would
+      req.deck = mockDeck
+      req.card = mockCard
       
       db.magic.deck.addCard.mockResolvedValueOnce()
       
       // Execute
       await deckController.addCard(req, res)
       
-      // Verify
-      expect(db.magic.deck.addCard).toHaveBeenCalledWith(mockDeckId, mockCard)
+      // Verify - passing objects, not IDs
+      expect(db.magic.deck.addCard).toHaveBeenCalledWith(mockDeck, mockCard)
       expect(res.json).toHaveBeenCalledWith({
         status: 'success'
+      })
+    })
+
+    it('should fail if deck or card is not loaded', async () => {
+      // Setup - missing req.deck and req.card
+      res.status = jest.fn().mockReturnThis()
+      
+      // Execute
+      await deckController.addCard(req, res)
+      
+      // Verify - should not call addCard if objects not present
+      expect(db.magic.deck.addCard).not.toHaveBeenCalled()
+      expect(res.status).toHaveBeenCalledWith(400)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'error',
+        message: 'Missing required resources: deck and card must be loaded'
       })
     })
   })

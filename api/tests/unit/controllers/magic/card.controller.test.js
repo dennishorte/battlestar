@@ -12,7 +12,8 @@ jest.mock('../../../../src/models/db', () => ({
       versions: jest.fn()
     },
     cube: {
-      findById: jest.fn()
+      findById: jest.fn(),
+      addCard: jest.fn()
     }
   }
 }))
@@ -77,6 +78,7 @@ describe('Card Controller', () => {
       req.body.comment = 'Test comment'
       
       db.magic.card.create.mockResolvedValueOnce(mockCreatedCard)
+      db.magic.cube.addCard.mockResolvedValueOnce({ success: true })
       
       // Execute
       await cardController.create(req, res)
@@ -88,6 +90,7 @@ describe('Card Controller', () => {
         req.user,
         'Test comment'
       )
+      expect(db.magic.cube.addCard).toHaveBeenCalledWith(req.cube, mockCreatedCard)
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         card: mockCreatedCard
@@ -109,6 +112,48 @@ describe('Card Controller', () => {
         status: 'error',
         message: 'Cube not found'
       })
+    })
+
+    it('should handle errors from cube.addCard', async () => {
+      // Setup
+      const mockCardData = { name: 'New Card', type: 'Creature' }
+      const mockCreatedCard = { 
+        _id: new ObjectId('507f1f77bcf86cd799439013'),
+        data: mockCardData,
+        cubeId: req.cube._id,
+        edits: [{ 
+          userId: req.user._id,
+          comment: 'Test comment',
+          date: expect.any(Date),
+          oldData: null
+        }]
+      }
+      
+      req.body.cardData = mockCardData
+      req.body.cubeId = req.cube._id
+      req.body.comment = 'Test comment'
+      
+      // Mock console.error to prevent log output during test
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+      
+      const errorMessage = 'Failed to add card to cube'
+      db.magic.card.create.mockResolvedValueOnce(mockCreatedCard)
+      db.magic.cube.addCard.mockRejectedValueOnce(new Error(errorMessage))
+      
+      // Execute
+      await cardController.create(req, res)
+      
+      // Verify
+      expect(db.magic.card.create).toHaveBeenCalled()
+      expect(db.magic.cube.addCard).toHaveBeenCalledWith(req.cube, mockCreatedCard)
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'error',
+        message: errorMessage
+      })
+      
+      // Restore console.error
+      consoleErrorSpy.mockRestore()
     })
 
     it('should return error when required fields are missing', async () => {

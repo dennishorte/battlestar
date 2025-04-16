@@ -13,10 +13,10 @@ const Deck = {
     })
   }),
 
-  async addCard(deckId, card) {
-    const deck = await Deck.findById(deckId)
+  async addCard(deck, card) {
     deck.cardlist.push(card)
     await Deck.save(deck)
+    return deck
   },
 }
 module.exports = Deck

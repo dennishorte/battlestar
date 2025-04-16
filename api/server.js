@@ -31,7 +31,7 @@ app.use(middleware.loaders.loadDraftArgs)
 app.use(middleware.loaders.loadGameArgs)
 app.use(middleware.loaders.loadLobbyArgs)
 app.use(middleware.loaders.loadCubeArgs)
-
+app.use(middleware.loaders.loadDeckArgs)
 ////////////////////////////////////////////////////////////
 // API Documentation
 if (process.env.NODE_ENV !== 'production') {

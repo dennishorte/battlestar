@@ -19,10 +19,20 @@ async function _loadGame(gameId) {
 }
 
 const itemLoaders = {
+  card: async (id) => await db.magic.card.findById(id),
+  cube: async (id) => await db.magic.cube.findById(id),
+  deck: async (id) => await db.magic.deck.findById(id),
   draft: async (id) => await _loadGame(id),
   game: async (id) => await _loadGame(id),
-  lobby: async (id) => await db.lobby.findById(id)
+  lobby: async (id) => await db.lobby.findById(id),
 }
+
+const loadCardArgs = (req, res, next) => _loadItemWithLockById('card', req, res, next)
+const loadCubeArgs = (req, res, next) => _loadItemWithLockById('cube', req, res, next)
+const loadDeckArgs = (req, res, next) => _loadItemWithLockById('deck', req, res, next)
+const loadDraftArgs = (req, res, next) => _loadItemWithLockById('draft', req, res, next)
+const loadGameArgs = (req, res, next) => _loadItemWithLockById('game', req, res, next)
+const loadLobbyArgs = (req, res, next) => _loadItemWithLockById('lobby', req, res, next)
 
 async function _loadItemWithLockById(itemType, req, res, next) {
   ////////////////////
@@ -85,13 +95,10 @@ async function _loadItemWithLockById(itemType, req, res, next) {
   }
 }
 
-const loadCubeArgs = (req, res, next) => _loadItemWithLockById('cube', req, res, next)
-const loadDraftArgs = (req, res, next) => _loadItemWithLockById('draft', req, res, next)
-const loadGameArgs = (req, res, next) => _loadItemWithLockById('game', req, res, next)
-const loadLobbyArgs = (req, res, next) => _loadItemWithLockById('lobby', req, res, next)
-
 module.exports = {
+  loadCardArgs,
   loadCubeArgs,
+  loadDeckArgs,
   loadDraftArgs,
   loadGameArgs,
   loadLobbyArgs,

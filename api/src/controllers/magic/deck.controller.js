@@ -21,10 +21,9 @@ exports.create = async (req, res) => {
  * @param {Object} res - Express response object
  */
 exports.fetch = async (req, res) => {
-  const deck = await db.magic.deck.findById(req.body.deckId)
   res.json({
     status: 'success',
-    deck,
+    deck: req.deck,
   })
 }
 
@@ -46,7 +45,15 @@ exports.save = async (req, res) => {
  * @param {Object} res - Express response object
  */
 exports.addCard = async (req, res) => {
-  await db.magic.deck.addCard(req.body.deckId, req.body.card)
+  // Validate required resources were loaded by middleware
+  if (!req.deck || !req.card) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Missing required resources: deck and card must be loaded'
+    })
+  }
+
+  await db.magic.deck.addCard(req.deck, req.card)
   res.json({
     status: 'success',
   })
