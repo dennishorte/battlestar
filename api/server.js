@@ -30,6 +30,7 @@ app.use(middleware.validators.coerceMongoIds)
 app.use(middleware.loaders.loadDraftArgs)
 app.use(middleware.loaders.loadGameArgs)
 app.use(middleware.loaders.loadLobbyArgs)
+app.use(middleware.loaders.loadCubeArgs)
 
 ////////////////////////////////////////////////////////////
 // API Documentation

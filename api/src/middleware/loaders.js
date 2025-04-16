@@ -85,11 +85,13 @@ async function _loadItemWithLockById(itemType, req, res, next) {
   }
 }
 
+const loadCubeArgs = (req, res, next) => _loadItemWithLockById('cube', req, res, next)
 const loadDraftArgs = (req, res, next) => _loadItemWithLockById('draft', req, res, next)
 const loadGameArgs = (req, res, next) => _loadItemWithLockById('game', req, res, next)
 const loadLobbyArgs = (req, res, next) => _loadItemWithLockById('lobby', req, res, next)
 
 module.exports = {
+  loadCubeArgs,
   loadDraftArgs,
   loadGameArgs,
   loadLobbyArgs,
