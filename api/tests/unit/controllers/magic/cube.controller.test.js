@@ -91,13 +91,13 @@ describe('Magic Cube Controller', () => {
       // Setup
       req.body = { cubeId: 'cube1' }
       const cube = { _id: 'cube1', name: 'Test Cube', cards: [] }
-      db.magic.cube.findById.mockResolvedValueOnce(cube)
+      req.cube = cube // Add cube directly to request as middleware would
 
       // Execute
       await cubeController.getCube(req, res, next)
 
       // Verify
-      expect(db.magic.cube.findById).toHaveBeenCalledWith('cube1')
+      // No need to check db.magic.cube.findById since the implementation uses req.cube
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         cube
@@ -116,7 +116,7 @@ describe('Magic Cube Controller', () => {
     it('should return NotFoundError if cube is not found', async () => {
       // Setup
       req.body = { cubeId: 'nonexistent' }
-      db.magic.cube.findById.mockResolvedValueOnce(null)
+      req.cube = null
 
       // Execute
       await cubeController.getCube(req, res, next)
@@ -129,15 +129,19 @@ describe('Magic Cube Controller', () => {
     it('should handle errors properly', async () => {
       // Setup
       req.body = { cubeId: 'cube1' }
-      const error = new Error('Database error')
-      db.magic.cube.findById.mockRejectedValueOnce(error)
+      req.cube = { _id: 'cube1' }
+      
+      // Force an error to occur in the try block
+      res.json = jest.fn(() => {
+        throw new Error('Database error')
+      })
 
       // Execute
       await cubeController.getCube(req, res, next)
 
       // Verify
       expect(logger.error).toHaveBeenCalled()
-      expect(next).toHaveBeenCalledWith(error)
+      expect(next).toHaveBeenCalledWith(expect.any(Error))
     })
   })
 
@@ -228,13 +232,14 @@ describe('Magic Cube Controller', () => {
   describe('setEditFlag', () => {
     it('should set the edit flag', async () => {
       // Setup
-      req.body = { editFlag: { cubeId: 'cube1', value: true } }
+      req.body = { editFlag: true }
+      req.cube = { _id: 'cube1' }
 
       // Execute
       await cubeController.setEditFlag(req, res, next)
 
       // Verify
-      expect(db.magic.cube.setEditFlag).toHaveBeenCalledWith(req.body.editFlag)
+      expect(db.magic.cube.setEditFlag).toHaveBeenCalledWith('cube1', true)
       expect(res.json).toHaveBeenCalledWith({
         status: 'success'
       })
@@ -251,7 +256,8 @@ describe('Magic Cube Controller', () => {
 
     it('should handle errors properly', async () => {
       // Setup
-      req.body = { editFlag: { cubeId: 'cube1', value: true } }
+      req.body = { editFlag: true }
+      req.cube = { _id: 'cube1' }
       const error = new Error('Database error')
       db.magic.cube.setEditFlag.mockRejectedValueOnce(error)
 
@@ -268,12 +274,13 @@ describe('Magic Cube Controller', () => {
     it('should set the public flag', async () => {
       // Setup
       req.body = { publicFlag: true }
+      req.cube = { _id: 'cube1' }
 
       // Execute
       await cubeController.setPublicFlag(req, res, next)
 
       // Verify
-      expect(db.magic.cube.setPublicFlag).toHaveBeenCalledWith(true)
+      expect(db.magic.cube.setPublicFlag).toHaveBeenCalledWith('cube1', true)
       expect(res.json).toHaveBeenCalledWith({
         status: 'success'
       })
@@ -291,6 +298,7 @@ describe('Magic Cube Controller', () => {
     it('should handle errors properly', async () => {
       // Setup
       req.body = { publicFlag: true }
+      req.cube = { _id: 'cube1' }
       const error = new Error('Database error')
       db.magic.cube.setPublicFlag.mockRejectedValueOnce(error)
 

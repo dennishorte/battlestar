@@ -1,4 +1,4 @@
-const errorHandler = require('../../../src/middleware/error-handler')
+const errorHandler = require('../../../src/middleware/errors').errorHandler
 const { BadRequestError, NotFoundError } = require('../../../src/utils/errors')
 
 // Mock the logger

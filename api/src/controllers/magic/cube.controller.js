@@ -36,7 +36,7 @@ exports.getCube = async (req, res, next) => {
       return next(new BadRequestError('Cube ID is required'))
     }
     
-    const cube = await db.magic.cube.findById(req.body.cubeId)
+    const cube = req.cube
     
     if (!cube) {
       return next(new NotFoundError(`Cube with ID ${req.body.cubeId} not found`))
@@ -115,7 +115,7 @@ exports.setEditFlag = async (req, res, next) => {
       return next(new BadRequestError('Edit flag is required'))
     }
     
-    await db.magic.cube.setEditFlag(req.body.editFlag)
+    await db.magic.cube.setEditFlag(req.cube._id, req.body.editFlag)
     
     res.json({
       status: 'success'
@@ -139,7 +139,7 @@ exports.setPublicFlag = async (req, res, next) => {
       return next(new BadRequestError('Public flag is required'))
     }
     
-    await db.magic.cube.setPublicFlag(req.body.publicFlag)
+    await db.magic.cube.setPublicFlag(req.cube._id,req.body.publicFlag)
     
     res.json({
       status: 'success'

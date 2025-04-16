@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
 const lobbyController = require('../../controllers/lobby.controller')
-const middleware = require('../../middleware')
 
 /**
  * @route POST /api/lobby/all
@@ -14,9 +13,9 @@ router.post('/all', lobbyController.getAllLobbies)
  * @route POST /api/lobby/create
  * @description Create a new lobby
  * @access Private
- * @body {Array} [userIds] - Optional array of user IDs to add to the lobby (defaults to current user)
- * @body {String} [game] - Optional game type for the lobby
- * @body {Object} [options] - Optional game options for the lobby
+ * @body {String} name - Name of the lobby
+ * @body {String} game - Type of game (e.g., 'Innovation')
+ * @body {Object} settings - Game specific settings
  */
 router.post('/create', lobbyController.createLobby)
 
@@ -26,7 +25,7 @@ router.post('/create', lobbyController.createLobby)
  * @access Private
  * @middleware loadLobbyArgs - Loads the lobby into req.lobby based on req.body.lobbyId
  */
-router.post('/info', middleware.loadLobbyArgs, lobbyController.getLobbyInfo)
+router.post('/info', lobbyController.getLobbyInfo)
 
 /**
  * @route POST /api/lobby/kill
@@ -34,7 +33,7 @@ router.post('/info', middleware.loadLobbyArgs, lobbyController.getLobbyInfo)
  * @access Private
  * @middleware loadLobbyArgs - Loads the lobby into req.lobby based on req.body.lobbyId
  */
-router.post('/kill', middleware.loadLobbyArgs, lobbyController.killLobby)
+router.post('/kill', lobbyController.killLobby)
 
 /**
  * @route POST /api/lobby/save

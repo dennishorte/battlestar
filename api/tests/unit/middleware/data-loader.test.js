@@ -1,4 +1,4 @@
-const { loadGameArgs, loadLobbyArgs, loadDraftArgs, GameOverwriteError, GameKilledError } = require('../../../src/middleware/data-loader')
+const { loadGameArgs, loadLobbyArgs, loadDraftArgs, GameOverwriteError, GameKilledError } = require('../../../src/middleware/loaders')
 const { NotFoundError } = require('../../../src/utils/errors')
 const { ObjectId } = require('mongodb')
 

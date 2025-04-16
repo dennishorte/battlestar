@@ -1,7 +1,7 @@
 const db = require('../models/db.js')
 const notificationService = require('./notification_service.js')
 
-const { GameKilledError, GameOverwriteError } = require('../middleware.js')
+const { GameKilledError, GameOverwriteError } = require('../middleware/loaders')
 const { GameOverEvent, fromData } = require('battlestar-common')
 
 

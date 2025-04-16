@@ -21,15 +21,15 @@ const port = config.port || 3000
 // Middleware
 app.use(history({ index: '/' }))
 app.use(express.static(path.join(__dirname, '../app/dist')))
-app.use(middleware.authenticate)
+app.use(middleware.auth.authenticate)
 app.use(bodyParser.json({ limit: "500kb" }))
-app.use(middleware.ensureVersion)
+app.use(middleware.validators.ensureVersion)
 
 // Auto-enrich data in request
-app.use(middleware.coerceMongoIds)
-app.use(middleware.loadDraftArgs)
-app.use(middleware.loadGameArgs)
-app.use(middleware.loadLobbyArgs)
+app.use(middleware.validators.coerceMongoIds)
+app.use(middleware.loaders.loadDraftArgs)
+app.use(middleware.loaders.loadGameArgs)
+app.use(middleware.loaders.loadLobbyArgs)
 
 ////////////////////////////////////////////////////////////
 // API Documentation
@@ -42,7 +42,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.use('/api', apiRoutes)
 
 // Default error handler
-app.use(middleware.errorHandler)
+app.use(middleware.errors.errorHandler)
 
 // Function to start the server
 const startServer = () => {

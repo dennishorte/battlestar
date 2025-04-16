@@ -98,8 +98,9 @@ exports.fetchManyUsers = async (req, res, next) => {
         users: usersArray
       })
     }
-    catch {
-      return next(new BadRequestError('Invalid user ID format in array'))
+    catch (e) {
+      return next(e)
+      //return next(new BadRequestError('Invalid user ID format in array'))
     }
   }
   catch (err) {

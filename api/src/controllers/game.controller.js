@@ -3,7 +3,7 @@ const logger = require('../utils/logger')
 const stats = require('../utils/stats')
 const gameService = require('../services/game_service')
 const { NotFoundError } = require('../utils/errors')
-const { GameOverwriteError, GameKilledError } = require('../middleware/data-loader')
+const { GameOverwriteError, GameKilledError } = require('../middleware/loaders')
 
 // Game controller methods
 exports.create = async (req, res, next) => {

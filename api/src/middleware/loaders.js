@@ -1,28 +1,10 @@
 const AsyncLock = require('async-lock')
 const db = require('../models/db.js')
 const { fromData } = require('battlestar-common')
-const { NotFoundError } = require('../utils/errors')
+const { NotFoundError, GameOverwriteError, GameKilledError } = require('../utils/errors')
 const logger = require('../utils/logger')
 
 const lock = new AsyncLock()
-
-class GameOverwriteError extends Error {
-  constructor(message) {
-    super(message || 'game overwrite')
-    this.name = 'GameOverwriteError'
-    this.code = 'game_overwrite'
-    this.statusCode = 409
-  }
-}
-
-class GameKilledError extends Error {
-  constructor(message) {
-    super(message || 'game killed')
-    this.name = 'GameKilledError'
-    this.code = 'game_killed'
-    this.statusCode = 409
-  }
-}
 
 async function _loadGame(gameId) {
   // Load item data from database
