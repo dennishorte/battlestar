@@ -33,22 +33,9 @@ Card.create = async function(data, cube, user, comment=null) {
       }],
     }
     
-    const session = databaseClient.startSession()
-    
-    try {
-      return await session.withTransaction(async () => {
-        const result = await customCollection.insertOne(card, { session })
-        await _incrementCustomCardDatabaseVersionWithSession(session)
-        return await customCollection.findOne(
-          { _id: result.insertedId },
-          { session }
-        )
-      })
-    }
-    finally {
-      // End the session regardless of success or failure
-      await session.endSession()
-    }
+    const result = await customCollection.insertOne(card)
+    await _incrementCustomCardDatabaseVersion()
+    return await customCollection.findOne({ _id: result.insertedId })
   })
 }
 
@@ -116,47 +103,36 @@ Card.findByIds = async function(ids) {
 
 Card.update = async function(cardId, cardData, user, comment=null) {
   return await lock.acquire('card:' + cardId.toString(), async () => {
-    const session = databaseClient.startSession()
-    
-    try {
-      return await session.withTransaction(async () => {
-        const updateResult = await customCollection.findOneAndUpdate(
-          { _id: cardId },
-          [
-            {
-              $set: {
-                edits: {
-                  $concatArrays: [
-                    "$edits",
-                    [{
-                      userId: user._id,
-                      comment,
-                      date: new Date(),
-                      oldData: "$data"  // References the current data value
-                    }]
-                  ]
-                },
-                data: cardData  // Set the new data
-              }
-            }
-          ],
-          { 
-            returnDocument: 'after',
-            upsert: false,
-            session
+    const updateResult = await customCollection.findOneAndUpdate(
+      { _id: cardId },
+      [
+        {
+          $set: {
+            edits: {
+              $concatArrays: [
+                "$edits",
+                [{
+                  userId: user._id,
+                  comment,
+                  date: new Date(),
+                  oldData: "$data"  // References the current data value
+                }]
+              ]
+            },
+            data: cardData  // Set the new data
           }
-        )
-        
-        // If update was successful, increment the version
-        if (updateResult) {
-          await _incrementCustomCardDatabaseVersionWithSession(session)
-          return updateResult
         }
-      })
-    }
-    finally {
-      // End the session regardless of success or failure
-      await session.endSession()
+      ],
+      { 
+        returnDocument: 'after',
+        upsert: false
+      }
+    )
+    
+    // If update was successful, increment the version
+    if (updateResult) {
+      await _incrementCustomCardDatabaseVersion()
+      return updateResult
     }
   })
 }
@@ -175,17 +151,13 @@ Card.versions = async function() {
 }
 
 
-async function _incrementCustomCardDatabaseVersionWithSession(session) {
-  const customVersion = await versionCollection.findOne(
-    { name: 'custom' },
-    { session }
-  )
+async function _incrementCustomCardDatabaseVersion() {
+  const customVersion = await versionCollection.findOne({ name: 'custom' })
 
   if (customVersion) {
     await versionCollection.updateOne(
       { name: 'custom' },
-      { $inc: { value: 1 } },
-      { session }
+      { $inc: { value: 1 } }
     )
   }
   else {
@@ -193,8 +165,7 @@ async function _incrementCustomCardDatabaseVersionWithSession(session) {
       {
         name: 'custom',
         value: 1,
-      },
-      { session }
+      }
     )
   }
 }
