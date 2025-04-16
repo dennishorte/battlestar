@@ -10,8 +10,8 @@
     "test": "jest --runInBand --config=jest.config.js",
     "test:watch": "jest --watch --config=jest.config.js",
     "test:coverage": "jest --coverage --config=jest.config.js",
-    "lint": "npx eslint .",
-    "lint:fix": "npx eslint --fix ."
+    "lint": "npx eslint --max-warnings=0 .",
+    "lint:fix": "npx eslint --fix --max-warnings=0 ."
   },
   "nodemonConfig": {
     "watch": [

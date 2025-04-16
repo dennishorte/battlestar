@@ -48,7 +48,7 @@ app.use(middleware.errors.errorHandler)
 const startServer = () => {
   return app.listen(port, () => {
     logger.info(`Server listening on port ${port}`)
- 
+
   })
 }
 
