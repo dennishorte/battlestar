@@ -36,7 +36,7 @@ exports.getCube = async (req, res, next) => {
       return next(new BadRequestError('Cube ID is required'))
     }
     
-    const cube = req.cube
+    const cube = await db.magic.cube.findById(req.body.cubeId)
     
     if (!cube) {
       return next(new NotFoundError(`Cube with ID ${req.body.cubeId} not found`))
