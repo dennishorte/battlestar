@@ -10,13 +10,10 @@ export default {
     cube: null,
     cubeLoaded: false,
 
-    achievements: [],
     scars: [],
+    achievements: [],
 
     managedCard: null,
-    managedScar: null,
-    managedAchievement: null,
-    managedAchievementShowAll: false,
 
     cardFilters: [],
     filteredCards: [],
@@ -37,15 +34,6 @@ export default {
   mutations: {
     manageCard(state, card) {
       state.managedCard = card
-    },
-
-    manageScar(state, scar) {
-      state.managedScar = scar
-    },
-
-    manageAchievement(state, { achievement, showAll }) {
-      state.managedAchievement = achievement
-      state.managedAchievementShowAll = showAll
     },
   },
 
@@ -79,24 +67,7 @@ export default {
       state.cube = await dispatch('getById', { cubeId })
       state.filteredCards = state.cube.cardlist
 
-      await dispatch('loadScars')
-      await dispatch('loadAchievements')
-
       state.cubeLoaded = true
-    },
-
-    async loadScars({ state }) {
-      const { scars } = await this.$post('/api/magic/scar/fetch_all', {
-        cubeId: state.cube._id,
-      })
-      state.scars = scars
-    },
-
-    async loadAchievements({ state }) {
-      const { achievements } = await this.$post('/api/magic/achievement/all', {
-        cubeId: state.cube._id,
-      })
-      state.achievements = achievements
     },
 
     async save({ dispatch }, cube) {
