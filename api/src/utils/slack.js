@@ -1,16 +1,9 @@
 const { WebClient } = require('@slack/web-api')
 const logger = require('./logger')
 
-let client = null
-
-// Initialize Slack client if token is available
-if (process.env.SLACK_TOKEN) {
-  client = new WebClient(process.env.SLACK_TOKEN)
-}
-
 // An access token (from your Slack app or custom integration - xoxp, xoxb)
 const token = process.env.SLACK_BOT_TOKEN
-const web = new WebClient(token)
+const client = new WebClient(token)
 
 // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
 const cloChannelId = 'C01AV1RGJSK'
@@ -48,7 +41,7 @@ async function sendMessage(user, message) {
       logger.warn(`Cannot send Slack message: No Slack ID for user ${userId}`)
       return
     }
-    
+
     await client.chat.postMessage({
       channel: slackId,
       text: message,

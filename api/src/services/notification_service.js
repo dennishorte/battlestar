@@ -10,7 +10,10 @@ NotificationService.sendGameNotifications = async function(game) {
   }
 
   const { settings } = game
-  const players = settings.players || []
+
+  // Ensure we have the slack IDs for all players
+  const players = await Promise.all((settings.players || []).map(p => db.user.findById(p._id)))
+
   const gameUrl = `http://${process.env.DOMAIN_HOST || 'localhost'}/game/${game._id}`
   const gameTitle = `${settings.game}: ${settings.name}`
   const gameLink = `<${gameUrl}|${gameTitle}>`
@@ -24,7 +27,7 @@ NotificationService.sendGameNotifications = async function(game) {
       // Clear any pending notifications
       await db.notif.clear(player, game)
       // Send game over notification
-      await slack.sendMessage(player, gameOverMessage)
+      await _sendSlackMessage(player, gameOverMessage)
     }
     return
   }
@@ -40,14 +43,18 @@ NotificationService.sendGameNotifications = async function(game) {
     // If it's this player's turn, check if we should notify them
     if (game.checkPlayerHasActionWaiting(player)) {
       // Check if notification should be throttled (don't spam players)
-      const isThrottled = await db.notif.throttleOrSet(player, game)
+      const isThrottled = false //await db.notif.throttleOrSet(player, game)
       if (!isThrottled) {
         // Send "your turn" notification
         const turnMessage = `You're up! ${gameLink}`
-        await slack.sendMessage(player, turnMessage)
+        await _sendSlackMessage(player, turnMessage)
       }
     }
   }
+}
+
+async function _sendSlackMessage(player, message) {
+  await slack.sendMessage(player, message)
 }
 
 module.exports = NotificationService
