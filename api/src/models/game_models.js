@@ -78,8 +78,6 @@ Game.gameOver = async function(game, killed=false) {
     { _id: game._id },
     { $set: setValues },
   )
-
-  // Hook to release scars from cube draft games.
 }
 
 Game.linkDraftToGame = async function(draft, game) {
