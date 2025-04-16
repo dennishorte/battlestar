@@ -10,7 +10,11 @@ let db
  * Connect to the in-memory database.
  */
 async function connect() {
-  mongoServer = await MongoMemoryServer.create()
+  mongoServer = await MongoMemoryServer.create({
+    instance: {
+      port: 27018, // Using a different port to avoid conflicts
+    }
+  })
   const mongoUri = mongoServer.getUri()
   
   mongoClient = new MongoClient(mongoUri)
