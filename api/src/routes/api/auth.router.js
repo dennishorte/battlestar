@@ -44,11 +44,11 @@ const logger = require('../../utils/logger')
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body
-    
+
     logger.debug(`Attempting login for user: ${username}`)
-    
+
     const user = await db.user.checkPassword(username, password)
-    
+
     if (!user) {
       logger.info(`Login failed for user: ${username}`)
       return res.status(401).json({
@@ -74,4 +74,4 @@ router.post('/login', async (req, res) => {
   }
 })
 
-module.exports = router 
+module.exports = router

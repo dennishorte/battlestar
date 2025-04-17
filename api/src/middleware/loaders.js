@@ -69,7 +69,7 @@ async function _loadItemWithLockById(itemType, req, res, next) {
 
   ////////////////////
   // Main Logic
-  
+
   const id = req.body[itemType + 'Id']
   if (!id) {
     // No item of this type was specified, just continue
@@ -78,7 +78,7 @@ async function _loadItemWithLockById(itemType, req, res, next) {
 
   try {
     await _initializeLock()
-    
+
     const item = await _loadItem()
     if (!item) {
       return next(new NotFoundError(`${itemType} not found with id: ${id}`))
@@ -86,7 +86,7 @@ async function _loadItemWithLockById(itemType, req, res, next) {
 
     // Store the loaded item in the request object
     req[itemType] = item
-    
+
     next()
   }
   catch (err) {
@@ -104,4 +104,4 @@ module.exports = {
   loadLobbyArgs,
   GameOverwriteError,
   GameKilledError
-} 
+}

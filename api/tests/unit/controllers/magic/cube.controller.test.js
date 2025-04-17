@@ -130,7 +130,7 @@ describe('Magic Cube Controller', () => {
       // Setup
       req.body = { cubeId: 'cube1' }
       req.cube = { _id: 'cube1' }
-      
+
       // Force an error to occur in the try block
       res.json = jest.fn(() => {
         throw new Error('Database error')
@@ -310,4 +310,4 @@ describe('Magic Cube Controller', () => {
       expect(next).toHaveBeenCalledWith(error)
     })
   })
-}) 
+})

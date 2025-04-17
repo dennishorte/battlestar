@@ -8,7 +8,7 @@ const lobbies = {}
 // User model mock
 const user = {
   all: jest.fn(async () => Object.values(users)),
-  
+
   checkPassword: jest.fn(async (name, password) => {
     const user = Object.values(users).find(u => u.name === name)
     // In a real implementation, we'd compare hashed passwords
@@ -18,7 +18,7 @@ const user = {
     }
     return null
   }),
-  
+
   create: jest.fn(async (userData) => {
     const id = new ObjectId()
     const newUser = {
@@ -31,7 +31,7 @@ const user = {
     users[id] = newUser
     return newUser
   }),
-  
+
   findById: jest.fn(async (id) => {
     return users[id] || null
   }),
@@ -52,7 +52,7 @@ const user = {
   findByName: jest.fn(async (name) => {
     return Object.values(users).find(u => u.name === name) || null
   }),
-  
+
   update: jest.fn(async (userData) => {
     const user = users[userData.userId]
     if (user) {
@@ -79,11 +79,11 @@ const game = {
     games[id] = newGame
     return newGame
   }),
-  
+
   find: jest.fn(async () => ({
     toArray: async () => Object.values(games)
   })),
-  
+
   findById: jest.fn(async (id) => {
     return games[id] || null
   })
@@ -101,11 +101,11 @@ const lobby = {
     lobbies[id] = newLobby
     return newLobby
   }),
-  
+
   find: jest.fn(async () => ({
     toArray: async () => Object.values(lobbies)
   })),
-  
+
   findById: jest.fn(async (id) => {
     return lobbies[id] || null
   })
@@ -123,4 +123,4 @@ module.exports = {
   game,
   lobby,
   clearAll
-} 
+}

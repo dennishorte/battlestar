@@ -15,7 +15,7 @@ passport.use(new JwtStrategy(
     const user = await db.user.findById(id)
 
     if (!user) {
-      return cb(null, false) 
+      return cb(null, false)
     }
     return cb(null, user)
   }
@@ -36,4 +36,4 @@ function authenticate(req, res, next) {
 
 module.exports = {
   authenticate
-} 
+}

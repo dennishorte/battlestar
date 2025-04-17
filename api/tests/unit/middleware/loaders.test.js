@@ -59,7 +59,7 @@ describe('Data Loader Middleware', () => {
       })
     }
     next = jest.fn()
-    
+
     jest.clearAllMocks()
   })
 
@@ -70,10 +70,10 @@ describe('Data Loader Middleware', () => {
       req.body.gameId = gameId
       const mockGame = { _id: gameId, name: 'Test Game' }
       db.game.findById.mockResolvedValue(mockGame)
-      
+
       // Execute
       await loadGameArgs(req, res, next)
-      
+
       // Verify
       expect(db.game.findById).toHaveBeenCalledWith(gameId)
       expect(fromData).toHaveBeenCalledWith(mockGame)
@@ -87,10 +87,10 @@ describe('Data Loader Middleware', () => {
       const gameId = new ObjectId()
       req.body.gameId = gameId
       db.game.findById.mockResolvedValue(null)
-      
+
       // Execute
       await loadGameArgs(req, res, next)
-      
+
       // Verify
       expect(db.game.findById).toHaveBeenCalledWith(gameId)
       expect(next).toHaveBeenCalledWith(expect.any(NotFoundError))
@@ -100,10 +100,10 @@ describe('Data Loader Middleware', () => {
     it('should just call next if no gameId is provided', async () => {
       // Setup
       req.body.gameId = null
-      
+
       // Execute
       await loadGameArgs(req, res, next)
-      
+
       // Verify
       expect(db.game.findById).not.toHaveBeenCalled()
       expect(next).toHaveBeenCalled()
@@ -118,10 +118,10 @@ describe('Data Loader Middleware', () => {
       req.body.lobbyId = lobbyId
       const mockLobby = { _id: lobbyId, name: 'Test Lobby' }
       db.lobby.findById.mockResolvedValue(mockLobby)
-      
+
       // Execute
       await loadLobbyArgs(req, res, next)
-      
+
       // Verify
       expect(db.lobby.findById).toHaveBeenCalledWith(lobbyId)
       expect(req.lobby).toEqual(mockLobby)
@@ -133,10 +133,10 @@ describe('Data Loader Middleware', () => {
       const lobbyId = new ObjectId()
       req.body.lobbyId = lobbyId
       db.lobby.findById.mockResolvedValue(null)
-      
+
       // Execute
       await loadLobbyArgs(req, res, next)
-      
+
       // Verify
       expect(db.lobby.findById).toHaveBeenCalledWith(lobbyId)
       expect(next).toHaveBeenCalledWith(expect.any(NotFoundError))
@@ -151,10 +151,10 @@ describe('Data Loader Middleware', () => {
       req.body.draftId = draftId
       const mockDraft = { _id: draftId, name: 'Test Draft' }
       db.game.findById.mockResolvedValue(mockDraft)
-      
+
       // Execute
       await loadDraftArgs(req, res, next)
-      
+
       // Verify
       expect(db.game.findById).toHaveBeenCalledWith(draftId)
       expect(fromData).toHaveBeenCalledWith(mockDraft)
@@ -170,10 +170,10 @@ describe('Data Loader Middleware', () => {
       req.body.cardId = cardId
       const mockCard = { _id: cardId, name: 'Test Card' }
       db.magic.card.findById.mockResolvedValue(mockCard)
-      
+
       // Execute
       await loadCardArgs(req, res, next)
-      
+
       // Verify
       expect(db.magic.card.findById).toHaveBeenCalledWith(cardId)
       expect(req.card).toEqual(mockCard)
@@ -186,10 +186,10 @@ describe('Data Loader Middleware', () => {
       const cardId = new ObjectId()
       req.body.cardId = cardId
       db.magic.card.findById.mockResolvedValue(null)
-      
+
       // Execute
       await loadCardArgs(req, res, next)
-      
+
       // Verify
       expect(db.magic.card.findById).toHaveBeenCalledWith(cardId)
       expect(next).toHaveBeenCalledWith(expect.any(NotFoundError))
@@ -199,10 +199,10 @@ describe('Data Loader Middleware', () => {
     it('should just call next if no cardId is provided', async () => {
       // Setup
       req.body.cardId = null
-      
+
       // Execute
       await loadCardArgs(req, res, next)
-      
+
       // Verify
       expect(db.magic.card.findById).not.toHaveBeenCalled()
       expect(next).toHaveBeenCalled()
@@ -217,10 +217,10 @@ describe('Data Loader Middleware', () => {
       req.body.cubeId = cubeId
       const mockCube = { _id: cubeId, name: 'Test Cube' }
       db.magic.cube.findById.mockResolvedValue(mockCube)
-      
+
       // Execute
       await loadCubeArgs(req, res, next)
-      
+
       // Verify
       expect(db.magic.cube.findById).toHaveBeenCalledWith(cubeId)
       expect(req.cube).toEqual(mockCube)
@@ -233,10 +233,10 @@ describe('Data Loader Middleware', () => {
       const cubeId = new ObjectId()
       req.body.cubeId = cubeId
       db.magic.cube.findById.mockResolvedValue(null)
-      
+
       // Execute
       await loadCubeArgs(req, res, next)
-      
+
       // Verify
       expect(db.magic.cube.findById).toHaveBeenCalledWith(cubeId)
       expect(next).toHaveBeenCalledWith(expect.any(NotFoundError))
@@ -246,10 +246,10 @@ describe('Data Loader Middleware', () => {
     it('should just call next if no cubeId is provided', async () => {
       // Setup
       req.body.cubeId = null
-      
+
       // Execute
       await loadCubeArgs(req, res, next)
-      
+
       // Verify
       expect(db.magic.cube.findById).not.toHaveBeenCalled()
       expect(next).toHaveBeenCalled()
@@ -264,10 +264,10 @@ describe('Data Loader Middleware', () => {
       req.body.deckId = deckId
       const mockDeck = { _id: deckId, name: 'Test Deck' }
       db.magic.deck.findById.mockResolvedValue(mockDeck)
-      
+
       // Execute
       await loadDeckArgs(req, res, next)
-      
+
       // Verify
       expect(db.magic.deck.findById).toHaveBeenCalledWith(deckId)
       expect(req.deck).toEqual(mockDeck)
@@ -280,10 +280,10 @@ describe('Data Loader Middleware', () => {
       const deckId = new ObjectId()
       req.body.deckId = deckId
       db.magic.deck.findById.mockResolvedValue(null)
-      
+
       // Execute
       await loadDeckArgs(req, res, next)
-      
+
       // Verify
       expect(db.magic.deck.findById).toHaveBeenCalledWith(deckId)
       expect(next).toHaveBeenCalledWith(expect.any(NotFoundError))
@@ -293,10 +293,10 @@ describe('Data Loader Middleware', () => {
     it('should just call next if no deckId is provided', async () => {
       // Setup
       req.body.deckId = null
-      
+
       // Execute
       await loadDeckArgs(req, res, next)
-      
+
       // Verify
       expect(db.magic.deck.findById).not.toHaveBeenCalled()
       expect(next).toHaveBeenCalled()
@@ -331,4 +331,4 @@ describe('Data Loader Middleware', () => {
       expect(error.message).toBe('game killed')
     })
   })
-}) 
+})

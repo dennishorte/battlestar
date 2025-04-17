@@ -48,4 +48,4 @@ function setupSwagger(app) {
   })
 }
 
-module.exports = setupSwagger 
+module.exports = setupSwagger

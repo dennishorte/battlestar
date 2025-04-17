@@ -34,13 +34,13 @@ describe('Deck Controller', () => {
       const mockDeckId = new ObjectId('507f1f77bcf86cd799439011')
       const mockDeck = { _id: mockDeckId, name: 'Test Deck', cards: [] }
       req.body = { name: 'Test Deck', userId: new ObjectId('507f1f77bcf86cd799439012') }
-      
+
       db.magic.deck.create.mockResolvedValueOnce(mockDeckId)
       db.magic.deck.findById.mockResolvedValueOnce(mockDeck)
-      
+
       // Execute
       await deckController.create(req, res)
-      
+
       // Verify
       expect(db.magic.deck.create).toHaveBeenCalledWith(req.body)
       expect(db.magic.deck.findById).toHaveBeenCalledWith(mockDeckId)
@@ -56,13 +56,13 @@ describe('Deck Controller', () => {
       // Setup
       const mockDeckId = new ObjectId('507f1f77bcf86cd799439011')
       const mockDeck = { _id: mockDeckId, name: 'Test Deck', cards: [] }
-      
+
       // Set the deck directly on the request as the data loader would
       req.deck = mockDeck
-      
+
       // Execute
       await deckController.fetch(req, res)
-      
+
       // Verify - no longer calling findById directly
       expect(db.magic.deck.findById).not.toHaveBeenCalled()
       expect(res.json).toHaveBeenCalledWith({
@@ -77,12 +77,12 @@ describe('Deck Controller', () => {
       // Setup
       const mockDeck = { _id: new ObjectId('507f1f77bcf86cd799439011'), name: 'Updated Deck', cards: [] }
       req.body.deck = mockDeck
-      
+
       db.magic.deck.save.mockResolvedValueOnce()
-      
+
       // Execute
       await deckController.save(req, res)
-      
+
       // Verify
       expect(db.magic.deck.save).toHaveBeenCalledWith(mockDeck)
       expect(res.json).toHaveBeenCalledWith({
@@ -98,16 +98,16 @@ describe('Deck Controller', () => {
       const mockCardId = new ObjectId('507f1f77bcf86cd799439022')
       const mockDeck = { _id: mockDeckId, name: 'Test Deck', cards: [] }
       const mockCard = { _id: mockCardId, name: 'Test Card' }
-      
+
       // Set objects directly on request as the data loader would
       req.deck = mockDeck
       req.card = mockCard
-      
+
       db.magic.deck.addCard.mockResolvedValueOnce()
-      
+
       // Execute
       await deckController.addCard(req, res)
-      
+
       // Verify - passing objects, not IDs
       expect(db.magic.deck.addCard).toHaveBeenCalledWith(mockDeck, mockCard)
       expect(res.json).toHaveBeenCalledWith({
@@ -118,10 +118,10 @@ describe('Deck Controller', () => {
     it('should fail if deck or card is not loaded', async () => {
       // Setup - missing req.deck and req.card
       res.status = jest.fn().mockReturnThis()
-      
+
       // Execute
       await deckController.addCard(req, res)
-      
+
       // Verify - should not call addCard if objects not present
       expect(db.magic.deck.addCard).not.toHaveBeenCalled()
       expect(res.status).toHaveBeenCalledWith(400)
@@ -131,4 +131,4 @@ describe('Deck Controller', () => {
       })
     })
   })
-}) 
+})

@@ -114,4 +114,4 @@ describe('Notification Throttle Model', () => {
       )
     })
   })
-}) 
+})

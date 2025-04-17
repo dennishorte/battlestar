@@ -27,16 +27,16 @@ describe('Scryfall Controller', () => {
   describe('updateAll', () => {
     it('should update all Scryfall data and return success response', async () => {
       // Setup
-      const mockResult = { 
-        cardsAdded: 100, 
-        cardsUpdated: 50, 
-        totalTime: '10.5s' 
+      const mockResult = {
+        cardsAdded: 100,
+        cardsUpdated: 50,
+        totalTime: '10.5s'
       }
       db.magic.scryfall.updateAll.mockResolvedValueOnce(mockResult)
-      
+
       // Execute
       await scryfallController.updateAll(req, res)
-      
+
       // Verify
       expect(db.magic.scryfall.updateAll).toHaveBeenCalled()
       expect(res.json).toHaveBeenCalledWith({
@@ -46,4 +46,4 @@ describe('Scryfall Controller', () => {
       })
     })
   })
-}) 
+})

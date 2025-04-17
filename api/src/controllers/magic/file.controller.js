@@ -13,13 +13,13 @@ exports.createFile = async (req, res, next) => {
     if (!req.body.kind) {
       return next(new BadRequestError('File kind is required'))
     }
-    
+
     if (!['card', 'cube', 'deck'].includes(req.body.kind)) {
       return next(new BadRequestError(`Invalid file kind: ${req.body.kind}`))
     }
-    
+
     const fileId = await db.magic[req.body.kind].create(req.body)
-    
+
     res.json({
       status: 'success',
       fileId
@@ -42,17 +42,17 @@ exports.deleteFile = async (req, res, next) => {
     if (!req.body.kind) {
       return next(new BadRequestError('File kind is required'))
     }
-    
+
     if (!req.body.fileId) {
       return next(new BadRequestError('File ID is required'))
     }
-    
+
     if (!['card', 'cube', 'deck'].includes(req.body.kind)) {
       return next(new BadRequestError(`Invalid file kind: ${req.body.kind}`))
     }
-    
+
     await db.magic[req.body.kind].delete(req.body.fileId)
-    
+
     res.json({
       status: 'success'
     })
@@ -74,17 +74,17 @@ exports.duplicateFile = async (req, res, next) => {
     if (!req.body.kind) {
       return next(new BadRequestError('File kind is required'))
     }
-    
+
     if (!req.body.fileId) {
       return next(new BadRequestError('File ID is required'))
     }
-    
+
     if (!['card', 'cube', 'deck'].includes(req.body.kind)) {
       return next(new BadRequestError(`Invalid file kind: ${req.body.kind}`))
     }
-    
+
     await db.magic[req.body.kind].duplicate(req.body.fileId)
-    
+
     res.json({
       status: 'success'
     })
@@ -104,21 +104,21 @@ exports.duplicateFile = async (req, res, next) => {
 exports.saveFile = async (req, res, next) => {
   try {
     const file = req.body.file
-    
+
     if (!file) {
       return next(new BadRequestError('File data is required'))
     }
-    
+
     if (!file._id) {
       return next(new BadRequestError('Cannot update file with no _id field'))
     }
-    
+
     if (!['card', 'cube', 'deck'].includes(file.kind)) {
       return next(new BadRequestError(`Invalid file kind: ${file.kind}`))
     }
-    
+
     await db.magic[file.kind].save(file)
-    
+
     res.json({
       status: 'success'
     })
@@ -127,4 +127,4 @@ exports.saveFile = async (req, res, next) => {
     logger.error(`Error saving file: ${err.message}`)
     next(err)
   }
-} 
+}

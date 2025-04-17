@@ -10,7 +10,7 @@ exports.create = async (req, res, next) => {
   try {
     const lobby = req.lobby
     const game = await gameService.create(lobby, req.body.linkedDraftId)
-    
+
     return res.json({
       status: 'success',
       gameId: game._id,
@@ -26,7 +26,7 @@ exports.fetchAll = async (req, res, next) => {
   try {
     const cursor = await db.game.all()
     const games = await cursor.toArray()
-    
+
     res.json({
       status: 'success',
       games
@@ -43,7 +43,7 @@ exports.fetch = async (req, res, next) => {
     if (!req.game) {
       return next(new NotFoundError('Game not found'))
     }
-    
+
     return res.json({
       status: 'success',
       game: req.game.serialize(),
@@ -60,9 +60,9 @@ exports.kill = async (req, res, next) => {
     if (!req.game) {
       return next(new NotFoundError('Game not found'))
     }
-    
+
     await gameService.kill(req.game)
-    
+
     res.json({
       status: 'success',
     })
@@ -78,9 +78,9 @@ exports.rematch = async (req, res, next) => {
     if (!req.game) {
       return next(new NotFoundError('Game not found'))
     }
-    
+
     const lobby = await gameService.rematch(req.game)
-    
+
     res.json({
       status: 'success',
       lobbyId: lobby._id
@@ -97,7 +97,7 @@ exports.saveFull = async (req, res, next) => {
     if (!req.game) {
       return next(new NotFoundError('Game not found'))
     }
-    
+
     const serializedGame = await gameService.saveFull(req.game, {
       chat: req.body.chat,
       responses: req.body.responses,
@@ -107,7 +107,7 @@ exports.saveFull = async (req, res, next) => {
       branchId: req.body.branchId,
       overwrite: req.body.overwrite,
     })
-    
+
     res.json({
       status: 'success',
       serializedGame,
@@ -121,7 +121,7 @@ exports.saveFull = async (req, res, next) => {
         code: err.code
       })
     }
-    
+
     logger.error(`Error saving game: ${err.message}`)
     next(err)
   }
@@ -132,9 +132,9 @@ exports.saveResponse = async (req, res, next) => {
     if (!req.game) {
       return next(new NotFoundError('Game not found'))
     }
-    
+
     const serializedGame = await gameService.saveResponse(req.game, req.body.response)
-    
+
     res.json({
       status: 'success',
       serializedGame,
@@ -151,9 +151,9 @@ exports.undo = async (req, res, next) => {
     if (!req.game) {
       return next(new NotFoundError('Game not found'))
     }
-    
+
     const serializedGame = await gameService.undo(req.game, req.body.count)
-    
+
     return res.json({
       status: 'success',
       serializedGame,
@@ -183,7 +183,7 @@ exports.stats = {
           settings: 1,
         },
       )
-      
+
       res.json({
         status: 'success',
         data: await stats.processInnovationStats(cursor),
@@ -194,4 +194,4 @@ exports.stats = {
       next(err)
     }
   }
-} 
+}

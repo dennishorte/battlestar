@@ -19,4 +19,4 @@ router.use('/link', linkRouter)
 
 // All magic routes have been migrated
 
-module.exports = router 
+module.exports = router

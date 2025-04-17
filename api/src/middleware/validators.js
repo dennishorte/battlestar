@@ -91,7 +91,7 @@ function validate(schema) {
 
     // Validate request body
     if (schema.body && req.body) {
-      const { error } = schema.body.validate(req.body, { 
+      const { error } = schema.body.validate(req.body, {
         abortEarly: false,
         allowUnknown: true // Allow properties not defined in the schema
       })
@@ -104,7 +104,7 @@ function validate(schema) {
 
     // Validate request params
     if (schema.params && req.params) {
-      const { error } = schema.params.validate(req.params, { 
+      const { error } = schema.params.validate(req.params, {
         abortEarly: false,
         allowUnknown: true // Allow properties not defined in the schema
       })
@@ -117,7 +117,7 @@ function validate(schema) {
 
     // Validate request query
     if (schema.query && req.query) {
-      const { error } = schema.query.validate(req.query, { 
+      const { error } = schema.query.validate(req.query, {
         abortEarly: false,
         allowUnknown: true // Allow properties not defined in the schema
       })
@@ -141,4 +141,4 @@ module.exports = {
   coerceMongoIds,
   ensureVersion,
   validate
-} 
+}

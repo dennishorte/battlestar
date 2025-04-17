@@ -70,4 +70,4 @@ exports.fetchByDraft = async (req, res) => {
     games,
     draft,
   })
-} 
+}

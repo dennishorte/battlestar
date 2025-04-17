@@ -12,7 +12,7 @@ exports.createCube = async (req, res, next) => {
   try {
     const cubeId = await db.magic.cube.create(req.body)
     const cube = await db.magic.cube.findById(cubeId)
-    
+
     res.json({
       status: 'success',
       cube
@@ -35,13 +35,13 @@ exports.getCube = async (req, res, next) => {
     if (!req.body.cubeId) {
       return next(new BadRequestError('Cube ID is required'))
     }
-    
+
     const cube = req.cube
-    
+
     if (!cube) {
       return next(new NotFoundError(`Cube with ID ${req.body.cubeId} not found`))
     }
-    
+
     res.json({
       status: 'success',
       cube
@@ -63,7 +63,7 @@ exports.getPublicCubes = async (req, res, next) => {
   try {
     const cubesCursor = await db.magic.cube.collection.find({ public: true })
     const cubes = await cubesCursor.toArray()
-    
+
     res.json({
       status: 'success',
       cubes
@@ -86,13 +86,13 @@ exports.saveCube = async (req, res, next) => {
     if (!req.body.cube) {
       return next(new BadRequestError('Cube data is required'))
     }
-    
+
     if (!req.body.cube._id) {
       return next(new BadRequestError('Cannot update cube with no _id field'))
     }
-    
+
     await db.magic.cube.save(req.body.cube)
-    
+
     res.json({
       status: 'success'
     })
@@ -114,9 +114,9 @@ exports.setEditFlag = async (req, res, next) => {
     if (!req.body.editFlag) {
       return next(new BadRequestError('Edit flag is required'))
     }
-    
+
     await db.magic.cube.setEditFlag(req.cube._id, req.body.editFlag)
-    
+
     res.json({
       status: 'success'
     })
@@ -138,9 +138,9 @@ exports.setPublicFlag = async (req, res, next) => {
     if (req.body.publicFlag === undefined) {
       return next(new BadRequestError('Public flag is required'))
     }
-    
+
     await db.magic.cube.setPublicFlag(req.cube._id,req.body.publicFlag)
-    
+
     res.json({
       status: 'success'
     })
@@ -149,4 +149,4 @@ exports.setPublicFlag = async (req, res, next) => {
     logger.error(`Error setting public flag: ${err.message}`)
     next(err)
   }
-} 
+}

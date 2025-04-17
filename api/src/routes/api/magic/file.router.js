@@ -37,4 +37,4 @@ router.post('/duplicate', fileController.duplicateFile)
  */
 router.post('/save', fileController.saveFile)
 
-module.exports = router 
+module.exports = router

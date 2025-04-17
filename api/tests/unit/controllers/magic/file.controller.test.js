@@ -216,12 +216,12 @@ describe('Magic File Controller', () => {
   describe('saveFile', () => {
     it('should save a file with valid data', async () => {
       // Setup
-      req.body = { 
-        file: { 
-          _id: 'cube-id', 
-          kind: 'cube', 
-          name: 'Updated Cube' 
-        } 
+      req.body = {
+        file: {
+          _id: 'cube-id',
+          kind: 'cube',
+          name: 'Updated Cube'
+        }
       }
 
       // Execute
@@ -266,11 +266,11 @@ describe('Magic File Controller', () => {
 
     it('should handle errors properly', async () => {
       // Setup
-      req.body = { 
-        file: { 
-          _id: 'cube-id', 
-          kind: 'cube' 
-        } 
+      req.body = {
+        file: {
+          _id: 'cube-id',
+          kind: 'cube'
+        }
       }
       const error = new Error('Database error')
       db.magic.cube.save.mockRejectedValueOnce(error)
@@ -283,4 +283,4 @@ describe('Magic File Controller', () => {
       expect(next).toHaveBeenCalledWith(error)
     })
   })
-}) 
+})

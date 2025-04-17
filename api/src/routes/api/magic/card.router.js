@@ -30,4 +30,4 @@ router.post('/update', cardController.update)
  */
 router.post('/versions', cardController.versions)
 
-module.exports = router 
+module.exports = router

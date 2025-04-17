@@ -16,12 +16,12 @@ async function connect() {
     }
   })
   const mongoUri = mongoServer.getUri()
-  
+
   mongoClient = new MongoClient(mongoUri)
   await mongoClient.connect()
-  
+
   db = mongoClient.db('test')
-  
+
   return {
     client: mongoClient,
     db
@@ -63,7 +63,7 @@ async function createUser(userData = {}) {
     createdTimestamp: userData.createdTimestamp || Date.now(),
     ...userData
   }
-  
+
   const result = await db.collection('user').insertOne(user)
   return { ...user, _id: result.insertedId }
 }
@@ -78,7 +78,7 @@ async function createGame(gameData = {}) {
     status: gameData.status || 'active',
     ...gameData
   }
-  
+
   const result = await db.collection('game').insertOne(game)
   return { ...game, _id: result.insertedId }
 }
@@ -90,4 +90,4 @@ module.exports = {
   createUser,
   createGame,
   ObjectId
-} 
+}

@@ -20,7 +20,7 @@ async function sendToSlackId(slackId, message) {
 
 /**
  * Send a Slack message to a user
- * 
+ *
  * @param {Object|string} user - User object or user ID
  * @param {string} message - Message text to send
  * @returns {Promise<void>}
@@ -30,13 +30,13 @@ async function sendMessage(user, message) {
     logger.warn('Slack client not initialized. Message not sent.')
     return
   }
-  
+
   try {
     const userId = typeof user === 'object' ? user._id : user
-    
+
     // If we have a Slack user ID mapping, use it
     const slackId = typeof user === 'object' && user.slack ? user.slack : userId
-    
+
     if (!slackId) {
       logger.warn(`Cannot send Slack message: No Slack ID for user ${userId}`)
       return
@@ -48,7 +48,7 @@ async function sendMessage(user, message) {
       unfurl_links: false,
       unfurl_media: false
     })
-    
+
     logger.debug(`Sent Slack message to ${slackId}`)
   }
   catch (error) {

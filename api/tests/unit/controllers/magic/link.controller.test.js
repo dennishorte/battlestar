@@ -37,16 +37,16 @@ describe('Link Controller', () => {
       // Setup
       const mockDraft = { _id: '507f1f77bcf86cd799439011', name: 'Test Draft' }
       const mockGame = { _id: '507f1f77bcf86cd799439022', name: 'Test Game' }
-      
+
       req.draft = mockDraft
       req.game = mockGame
-      
+
       db.game.linkGameToDraft.mockResolvedValueOnce()
       db.game.linkDraftToGame.mockResolvedValueOnce()
-      
+
       // Execute
       await linkController.create(req, res, next)
-      
+
       // Verify
       expect(db.game.linkGameToDraft).toHaveBeenCalledWith(mockGame, mockDraft)
       expect(db.game.linkDraftToGame).toHaveBeenCalledWith(mockDraft, mockGame)
@@ -61,10 +61,10 @@ describe('Link Controller', () => {
       req.draft = null
       req.game = { _id: '507f1f77bcf86cd799439022', name: 'Test Game' }
       req.body = { gameId: '507f1f77bcf86cd799439022' }
-      
+
       // Execute
       await linkController.create(req, res, next)
-      
+
       // Verify
       expect(db.game.linkGameToDraft).not.toHaveBeenCalled()
       expect(db.game.linkDraftToGame).not.toHaveBeenCalled()
@@ -85,16 +85,16 @@ describe('Link Controller', () => {
         { _id: '507f1f77bcf86cd799439022', name: 'Draft 1' },
         { _id: '507f1f77bcf86cd799439033', name: 'Draft 2' }
       ]
-      
+
       req.body.userId = mockUserId
-      
+
       db.game.collection.find.mockReturnThis()
       db.game.collection.sort.mockReturnThis()
       db.game.collection.toArray.mockResolvedValueOnce(mockDrafts)
-      
+
       // Execute
       await linkController.fetchDrafts(req, res)
-      
+
       // Verify
       expect(db.game.collection.find).toHaveBeenCalledWith({
         'settings.game': 'CubeDraft',
@@ -114,25 +114,25 @@ describe('Link Controller', () => {
   describe('fetchByDraft', () => {
     it('should fetch games linked to a draft and return success response', async () => {
       // Setup
-      const mockDraft = { 
-        _id: '507f1f77bcf86cd799439011', 
-        name: 'Test Draft', 
+      const mockDraft = {
+        _id: '507f1f77bcf86cd799439011',
+        name: 'Test Draft',
         responses: { some: 'data' }
       }
       const mockGames = [
         { _id: '507f1f77bcf86cd799439022', name: 'Game 1' },
         { _id: '507f1f77bcf86cd799439033', name: 'Game 2' }
       ]
-      
+
       req.draft = { ...mockDraft }
-      
+
       db.game.collection.find.mockReturnThis()
       db.game.collection.project.mockReturnThis()
       db.game.collection.toArray.mockResolvedValueOnce(mockGames)
-      
+
       // Execute
       await linkController.fetchByDraft(req, res)
-      
+
       // Verify
       expect(db.game.collection.find).toHaveBeenCalledWith({
         'settings.linkedDraftId': mockDraft._id
@@ -148,4 +148,4 @@ describe('Link Controller', () => {
       expect(req.draft.responses).toBeUndefined() // The responses should be deleted
     })
   })
-}) 
+})

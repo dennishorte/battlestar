@@ -11,4 +11,4 @@ module.exports = {
     '/node_modules/',
     '/config/test.js'
   ]
-} 
+}

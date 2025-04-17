@@ -357,4 +357,4 @@ router.post('/undo', gameController.undo)
  */
 router.post('/stats/innovation', gameController.stats.innovation)
 
-module.exports = router 
+module.exports = router

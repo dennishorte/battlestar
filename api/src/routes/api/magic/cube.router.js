@@ -49,4 +49,4 @@ router.post('/set_edit_flag', cubeController.setEditFlag)
  */
 router.post('/set_public_flag', cubeController.setPublicFlag)
 
-module.exports = router 
+module.exports = router

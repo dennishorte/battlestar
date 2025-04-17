@@ -7,4 +7,4 @@ const hexRouter = require('./hex.router')
  */
 router.use('/hex', hexRouter)
 
-module.exports = router 
+module.exports = router

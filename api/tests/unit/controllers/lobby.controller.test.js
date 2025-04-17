@@ -245,4 +245,4 @@ describe('Lobby Controller', () => {
       expect(db.lobby.save).not.toHaveBeenCalled()
     })
   })
-}) 
+})

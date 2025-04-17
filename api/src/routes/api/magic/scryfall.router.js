@@ -9,4 +9,4 @@ const scryfallController = require('../../../controllers/magic/scryfall.controll
  */
 router.post('/update_all', scryfallController.updateAll)
 
-module.exports = router 
+module.exports = router

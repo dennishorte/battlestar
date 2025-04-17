@@ -89,6 +89,11 @@ module.exports = defineConfig([
         "SwitchCase": 1,
       }],
 
+      "no-trailing-spaces": ["error", {
+        "skipBlankLines": false,
+        "ignoreComments": false
+      }],
+
       "no-unused-vars": "warn",
       "no-undef": "warn",
     },

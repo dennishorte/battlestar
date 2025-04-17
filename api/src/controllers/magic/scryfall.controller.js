@@ -12,4 +12,4 @@ exports.updateAll = async (req, res) => {
     message: 'Scryfall data updated',
     ...result,
   })
-} 
+}

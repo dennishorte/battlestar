@@ -3,4 +3,4 @@ module.exports = {
   validators: require('./validators'),
   loaders: require('./loaders'),
   errors: require('./errors')
-} 
+}

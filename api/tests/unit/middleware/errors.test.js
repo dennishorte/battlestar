@@ -22,17 +22,17 @@ describe('Error Handler Middleware', () => {
       json: jest.fn()
     }
     next = jest.fn()
-    
+
     jest.clearAllMocks()
   })
 
   it('should handle AppError with appropriate status code and message', async () => {
     // Setup - create a BadRequestError (which extends AppError)
     const error = new BadRequestError('Invalid data format')
-    
+
     // Execute
     await errorHandler(error, req, res, next)
-    
+
     // Verify
     expect(logger.error).toHaveBeenCalledWith(
       `Error: ${error.message}`,
@@ -54,10 +54,10 @@ describe('Error Handler Middleware', () => {
   it('should handle NotFoundError correctly', async () => {
     // Setup
     const error = new NotFoundError('Resource not found')
-    
+
     // Execute
     await errorHandler(error, req, res, next)
-    
+
     // Verify
     expect(res.status).toHaveBeenCalledWith(404)
     expect(res.json).toHaveBeenCalledWith({
@@ -72,10 +72,10 @@ describe('Error Handler Middleware', () => {
     const error = new Error('Custom error')
     error.statusCode = 403
     error.code = 'forbidden_action'
-    
+
     // Execute
     await errorHandler(error, req, res, next)
-    
+
     // Verify
     expect(res.status).toHaveBeenCalledWith(403)
     expect(res.json).toHaveBeenCalledWith({
@@ -88,10 +88,10 @@ describe('Error Handler Middleware', () => {
   it('should return 500 for unknown errors', async () => {
     // Setup - a standard Error with no statusCode
     const error = new Error('Something broke')
-    
+
     // Execute
     await errorHandler(error, req, res, next)
-    
+
     // Verify
     expect(res.status).toHaveBeenCalledWith(500)
     expect(res.json).toHaveBeenCalledWith({
@@ -103,17 +103,17 @@ describe('Error Handler Middleware', () => {
   it('should not expose internal error details in production', async () => {
     // Store original NODE_ENV
     const originalEnv = process.env.NODE_ENV
-    
+
     try {
       // Set to production
       process.env.NODE_ENV = 'production'
-      
+
       // Setup - a standard Error with sensitive details
       const error = new Error('Database connection failed: credentials invalid')
-      
+
       // Execute
       await errorHandler(error, req, res, next)
-      
+
       // Verify - should not include the sensitive error message
       expect(res.status).toHaveBeenCalledWith(500)
       expect(res.json).toHaveBeenCalledWith({
@@ -126,4 +126,4 @@ describe('Error Handler Middleware', () => {
       process.env.NODE_ENV = originalEnv
     }
   })
-}) 
+})

@@ -23,17 +23,17 @@ exports.create = async (req, res) => {
   try {
     // Validate required inputs
     if (!req.body.cardData || !req.body.cubeId) {
-      return res.status(400).json({ 
-        status: 'error', 
-        message: 'Missing required fields: cardData and cubeId are required' 
+      return res.status(400).json({
+        status: 'error',
+        message: 'Missing required fields: cardData and cubeId are required'
       })
     }
 
     // Ensure the cube exists
     if (!req.cube) {
-      return res.status(404).json({ 
-        status: 'error', 
-        message: 'Cube not found' 
+      return res.status(404).json({
+        status: 'error',
+        message: 'Cube not found'
       })
     }
 
@@ -70,9 +70,9 @@ exports.update = async (req, res) => {
   try {
     // Validate required inputs
     if (!req.body.cardId || !req.body.cardData) {
-      return res.status(400).json({ 
-        status: 'error', 
-        message: 'Missing required fields: cardId and cardData are required' 
+      return res.status(400).json({
+        status: 'error',
+        message: 'Missing required fields: cardId and cardData are required'
       })
     }
 
@@ -118,4 +118,4 @@ exports.versions = async (req, res) => {
     status: 'success',
     versions,
   })
-} 
+}

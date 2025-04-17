@@ -25,4 +25,4 @@ router.post('/delete', hexController.deleteHex)
  */
 router.post('/save', hexController.saveHex)
 
-module.exports = router 
+module.exports = router

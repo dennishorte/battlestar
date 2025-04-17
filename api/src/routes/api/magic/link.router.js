@@ -23,4 +23,4 @@ router.post('/fetch_drafts', linkController.fetchDrafts)
  */
 router.post('/fetch_by_draft', linkController.fetchByDraft)
 
-module.exports = router 
+module.exports = router
