@@ -32,7 +32,7 @@ Scryfall.fetchAll = async function() {
   return await cursor.toArray()
 }
 
-Scryfall.updateAll = async function() {
+Scryfall.update = async function() {
   const scryfallFolder = __dirname + '/../../../scripts/card_data'
   const files = fs
     .readdirSync(scryfallFolder)

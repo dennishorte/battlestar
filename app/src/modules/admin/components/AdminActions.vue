@@ -31,6 +31,7 @@ export default {
 
       try {
         await this.$post('/api/magic/scryfall/update', {})
+        this.message = 'Scryfall data updated'
         this.status = 'success'
       }
       catch (e) {

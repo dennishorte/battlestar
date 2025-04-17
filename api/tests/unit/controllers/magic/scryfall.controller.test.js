@@ -4,7 +4,7 @@ const scryfallController = require('../../../../src/controllers/magic/scryfall.c
 jest.mock('../../../../src/models/db', () => ({
   magic: {
     scryfall: {
-      updateAll: jest.fn()
+      update: jest.fn()
     }
   }
 }))
@@ -24,7 +24,7 @@ describe('Scryfall Controller', () => {
     jest.clearAllMocks()
   })
 
-  describe('updateAll', () => {
+  describe('update', () => {
     it('should update all Scryfall data and return success response', async () => {
       // Setup
       const mockResult = {
@@ -32,13 +32,13 @@ describe('Scryfall Controller', () => {
         cardsUpdated: 50,
         totalTime: '10.5s'
       }
-      db.magic.scryfall.updateAll.mockResolvedValueOnce(mockResult)
+      db.magic.scryfall.update.mockResolvedValueOnce(mockResult)
 
       // Execute
-      await scryfallController.updateAll(req, res)
+      await scryfallController.update(req, res)
 
       // Verify
-      expect(db.magic.scryfall.updateAll).toHaveBeenCalled()
+      expect(db.magic.scryfall.update).toHaveBeenCalled()
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         message: 'Scryfall data updated',
