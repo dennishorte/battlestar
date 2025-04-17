@@ -118,7 +118,8 @@ exports.setEditFlag = async (req, res, next) => {
     await db.magic.cube.setEditFlag(req.cube._id, req.body.editFlag)
 
     res.json({
-      status: 'success'
+      status: 'success',
+      newValue: req.body.editFlag,
     })
   }
   catch (err) {
@@ -142,7 +143,8 @@ exports.setPublicFlag = async (req, res, next) => {
     await db.magic.cube.setPublicFlag(req.cube._id,req.body.publicFlag)
 
     res.json({
-      status: 'success'
+      status: 'success',
+      newValue: req.body.publicFlag,
     })
   }
   catch (err) {

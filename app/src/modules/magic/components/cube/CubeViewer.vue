@@ -1,6 +1,8 @@
 <template>
-  <MagicWrapper :also-loading="!cubeLoaded" :after-loaded="insertCardData">
-    <div class="container" v-if="!!cube">
+  <MagicWrapper :also-loading="!cubeLoaded">
+
+    <div v-if="!cubeLoaded">Cube not loaded</div>
+    <div v-else class="container">
 
       <div class="row">
         <div class="col-6">
@@ -10,53 +12,13 @@
 
       <div class="row">
         <div class="col">
-          <div class="cube-menu">
-            <button class="btn" :class="buttonClassesCards" @click="navigate('cards')">
-              cards ({{ filteredCards.length }})
-            </button>
-
-            <template v-if="!!cube.allowEdits">
-              <button class="btn" :class="buttonClassesScars" @click="navigate('scars')">
-                scars ({{ scarsUnused.length }})
-              </button>
-              <button class="btn" :class="buttonClassesAchievements" @click="navigate('achievements')">
-                achievements ({{ achievements.length }})
-              </button>
-            </template>
-
-            <button class="btn btn-secondary" @click="toggleSearch">
-              search
-              <input type="checkbox" class="form-check-input" v-model="showSearch" />
-            </button>
-
-            <Dropdown text="menu">
-              <DropdownButton @click="this.$modal('cube-update-modal').show()">add/remove cards</DropdownButton>
-              <DropdownButton @click="this.$modal('cube-add-modal').show()">add one card</DropdownButton>
-
-              <DropdownDivider />
-
-              <DropdownButton @click="createCard">create card</DropdownButton>
-              <DropdownButton @click="createScar">create scar</DropdownButton>
-
-              <DropdownDivider />
-
-              <DropdownButton @click="randomCard">random card</DropdownButton>
-
-              <template v-if="viewerIsOwner">
-                <DropdownDivider />
-                <DropdownButton @click="toggleCardEditing">
-                  toggle edits
-                  <i v-if="cube.allowEdits" class="bi-toggle-on" />
-                  <i v-else class="bi-toggle-off" />
-                </DropdownButton>
-                <DropdownButton @click="togglePublic">
-                  toggle public
-                  <i v-if="cube.public" class="bi-toggle-on" />
-                  <i v-else class="bi-toggle-off" />
-                </DropdownButton>
-              </template>
-            </Dropdown>
-          </div>
+          <CubeMenu
+            :counts="counts"
+            :cube="cube"
+            :showing="showing"
+            @navigate="navigate"
+            @toggle-search="toggleSearch"
+          />
         </div>
       </div>
 
@@ -136,7 +98,6 @@
 
 
 <script>
-import cubeUtil from '../../util/cubeUtil.js'
 import mitt from 'mitt'
 
 import { mag, util } from 'battlestar-common'
@@ -153,9 +114,7 @@ import CubeAddModal from './CubeAddModal'
 import CardFilters from '../CardFilters'
 import CubeCardModal from './CubeCardModal'
 import CubeImportModal from './CubeImportModal'
-import Dropdown from '@/components/Dropdown'
-import DropdownButton from '@/components/DropdownButton'
-import DropdownDivider from '@/components/DropdownDivider'
+import CubeMenu from './CubeMenu'
 import MagicMenu from '../MagicMenu'
 import MagicWrapper from '../MagicWrapper'
 import ScarModal from './ScarModal'
@@ -175,9 +134,7 @@ export default {
     CubeBreakdown,
     CubeCardModal,
     CubeImportModal,
-    Dropdown,
-    DropdownButton,
-    DropdownDivider,
+    CubeMenu,
     MagicMenu,
     MagicWrapper,
     ScarModal,
@@ -222,30 +179,8 @@ export default {
       managedScar: 'managedScar',
     }),
 
-    buttonClassesCards() {
-      return this.showing === 'cards' ? 'btn-primary' : 'btn-secondary'
-    },
-
-    buttonClassesScars() {
-      return this.showing === 'scars' ? 'btn-primary' : 'btn-secondary'
-    },
-
-    buttonClassesAchievements() {
-      return this.showing === 'achievements' ? 'btn-primary' : 'btn-secondary'
-    },
-
     cards() {
-      const lookupFunc = this.$store.getters['magic/cards/getLookupFunc']
-      mag.util.card.lookup.insertCardData(this.cube.cardlist, lookupFunc)
-
-      for (const card of this.cube.cardlist) {
-        if (!card.data) {
-          console.log(card)
-          throw new Error(`Unable to fetch data for some cards`)
-        }
-      }
-
-      return this.cube.cardlist
+      return this.cube.cards
     },
 
     cardEditButtonText() {
@@ -265,6 +200,14 @@ export default {
       return this.cardFilters.length > 0
     },
 
+    counts() {
+      return {
+        cards: this.filteredCards.length,
+        scars: this.scarsUnused.length,
+        achievements: this.achievements.length,
+      }
+    },
+
     scarsUnused() {
       return this.scars.filter(scar => !scar.appliedTimestamp)
     },
@@ -275,30 +218,11 @@ export default {
         .filter(scar => scar.appliedTimestamp)
         .sort((l, r) => r.appliedTimestamp - l.appliedTimestamp)
     },
-
-    viewerIsOwner() {
-      return this.cube ? this.actor._id === this.cube.userId : false
-    },
   },
 
   methods: {
     ////////////////////////////////////////////////////////////////////////////////
     // Sync methods
-
-    createCard() {
-      this.$store.commit('magic/cube/manageCard', mag.util.card.blank())
-      this.$modal('card-editor-modal').show()
-    },
-
-    createScar() {
-      const blank = {
-        _id: null,
-        cubeId: this.cube._id,
-        text: '',
-      }
-      this.$store.commit('magic/cube/manageScar', blank)
-      this.$modal('scar-modal').show()
-    },
 
     editScar(scar) {
       this.$store.commit('magic/cube/manageScar', scar)
@@ -320,8 +244,9 @@ export default {
     },
 
     randomCard() {
-      const card = util.array.select(this.cube.cardlist)
-      this.goToCard(card)
+      const card = util.array.select(this.cube.cards)
+      const link = this.$store.getters['magic/cards/cardLink'](card._id)
+      this.$router.push(link)
     },
 
     showCardModal() {
@@ -373,12 +298,6 @@ export default {
     ////////////////////////////////////////////////////////////////////////////////
     // Card pop-up methods
 
-    goToCard(cardIdDict) {
-      const data = this.$store.getters['magic/cards/getLookupFunc'](cardIdDict)
-      const link = this.$store.getters['magic/cards/cardLink'](data._id)
-      this.$router.push(link)
-    },
-
     mouseover(cardIdDict) {
       const data = this.$store.getters['magic/cards/getLookupFunc'](cardIdDict)
       this.$store.commit('magic/setMouseoverCard', data)
@@ -399,10 +318,6 @@ export default {
 
     ////////////////////////////////////////////////////////////////////////////////
     // Async Methods
-
-    async insertCardData() {
-      await this.$store.dispatch('magic/cards/insertCardData', this.cube.cardlist)
-    },
 
     async loadUsers() {
       const { users } = await this.$post('/api/user/all')
@@ -427,22 +342,6 @@ export default {
 
       window.location.reload()
     },
-
-    async toggleCardEditing() {
-      await this.$post('/api/magic/cube/toggle_edits', {
-        cubeId: this.id,
-        editFlag: !this.cube.allowEdits
-      })
-      this.cube.allowEdits = !this.cube.allowEdits
-    },
-
-    async togglePublic() {
-      await this.$post('/api/magic/cube/toggle_public', {
-        cubeId: this.id,
-        publicFlag: !this.cube.public,
-      })
-      this.cube.public = !this.cube.public
-    },
   },
 
   watch: {
@@ -465,15 +364,6 @@ export default {
 <style scoped>
 .container {
   margin-bottom: 2em;
-}
-
-.cube-menu {
-  display: flex;
-  flex-direction: row;
-}
-
-.cube-menu > .btn {
-  margin-right: .25em;
 }
 
 .scar-container {

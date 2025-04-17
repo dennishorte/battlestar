@@ -18,9 +18,21 @@ async function _loadGame(gameId) {
   }
 }
 
+async function _loadCube(cubeId) {
+  const cube = await db.magic.cube.findById(cubeId)
+
+  if (!cube) {
+    return new NotFoundError(`Cube not found. ID: ${cubeId}`)
+  }
+
+  cube.cards = await db.magic.card.findByIds(cube.cardlist)
+
+  return cube
+}
+
 const itemLoaders = {
   card: async (id) => await db.magic.card.findById(id),
-  cube: async (id) => await db.magic.cube.findById(id),
+  cube: async (id) => await _loadCube(id),
   deck: async (id) => await db.magic.deck.findById(id),
   draft: async (id) => await _loadGame(id),
   game: async (id) => await _loadGame(id),

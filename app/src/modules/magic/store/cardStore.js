@@ -9,9 +9,6 @@ export default {
     cardlist: [],
     lookup: {},
 
-    localVersions: '__NOT_READY__',
-    remoteVersions: '__NOT_READY__',
-
     cardsReady: false,
 
     // This is displayed while loading cards in MagicWrapper.vue
@@ -47,11 +44,8 @@ export default {
       state.log = []
     },
 
-    logError(state, msg) {
-      state.log.push(msg)
-    },
-
     logInfo(state, msg) {
+      console.log('info: ', msg)
       state.log.push(msg)
     },
 
@@ -67,14 +61,6 @@ export default {
       state.cardsReady = value
     },
 
-    setLocalVersions(state, versions) {
-      state.localVersions = versions
-    },
-
-    setRemoteVersions(state, versions) {
-      state.remoteVersions = versions
-    },
-
     setUpdateNeededCustom(state, value) {
       state.updateNeededCustom = value
     },
@@ -85,75 +71,66 @@ export default {
   },
 
   actions: {
-    insertCardData({ getters }, cardlist) {
-      const lookupFunc = getters['getLookupFunc']
-      mag.util.card.lookup.insertCardData(cardlist, lookupFunc)
-
-      const missingData = []
-      for (const card of cardlist) {
-        if (!card.data) {
-          missingData.push(card)
-        }
-      }
-
-      if (missingData.length > 0) {
-        console.log(missingData)
-        alert('Unable to fetch data for some cards')
-      }
-    },
-
-
     ////////////////////////////////////////////////////////////////////////////////
     // Data loading
 
-    async ensureLoaded({ commit, dispatch, state, getters }) {
-      console.log('ensureLoaded')
-      commit('clearLog')
-      commit('logInfo', 'Loading card data')
+    async ensureLoaded({ commit, state }) {
+      const post = this.$post
 
-      if (state.cardsReady) {
-        console.log('...already loaded once')
-        commit('logInfo', 'Cards were previously loaded')
-      }
-      else {
-        await dispatch('ensureLatest')
-        await dispatch('loadCards')
-      }
-    },
+      async function _loadLocalAndRemoteVersions() {
+        const remote = await post('/api/magic/card/versions')
 
-    async ensureLatest({ dispatch, state }) {
-      const localVersions = await getLocalVersions()
-      const remoteVersions = await getRemoteVersions.call(this)
-
-      const toUpdate = Object
-        .keys(remoteVersions)
-        .filter(source => remoteVersions[source] !== localVersions[source])
-
-      for (const source of toUpdate) {
-        await dispatch('updateLocalDatabase', source)
-      }
-    },
-
-    async loadCards({ commit, dispatch }) {
-      try {
-        console.log('...load cards')
-        commit('logInfo', 'Loading cards from database')
-
-        const cards = await loadCardsFromDatabase()
-
-        for (const card of cards) {
-          if (card.data) {
-            console.log(card)
-            break
-          }
+        const localVersions = {}
+        for (const key of Object.keys(remote.versions)) {
+          localVersions[key] = await getKey('version_' + key)
         }
 
-        commit('setCardList', cards)
-        commit('setCardLookup', mag.util.card.lookup.dictFactory(cards))
-        commit('setCardsReady')
+        return {
+          local: localVersions,
+          remote: remote.versions,
+        }
+      }
 
-        console.log('...card database ready')
+      async function _maybeUpdateLocalDatabase(versions) {
+        const toUpdate = Object
+          .keys(versions.remote)
+          .filter(source => versions.remote[source] !== versions.local[source])
+
+        for (const source of toUpdate) {
+          commit('logInfo', `Updating card database: ${source}. This can take several minutes.`)
+          const response = await post('/api/magic/card/all', { source })
+          await setKey('cards_' + source, response[source].cards)
+          await setKey('version_' + source, response[source].version)
+        }
+      }
+
+      async function _loadCardsFromLocalDatabase(sources) {
+        commit('logInfo', 'Loading cards from database')
+
+        const cards = await Promise.all(sources.map(async (source) => {
+          const cardData = await getKey('cards_' + source)
+          return cardData
+        }))
+
         commit('logInfo', 'Cards successfully loaded from local database')
+
+        return cards
+      }
+
+      try {
+        commit('clearLog')
+        commit('logInfo', 'Loading card data')
+
+        if (state.cardsReady) {
+          commit('logInfo', 'Cards were previously loaded')
+        }
+        else {
+          const versions = await _loadLocalAndRemoteVersions()
+          await _maybeUpdateLocalDatabase(versions)
+          const cards = await _loadCardsFromLocalDatabase(Object.keys(versions.remote))
+          commit('setCardList', cards)
+          commit('setCardsReady')
+        }
       }
       catch (err) {
         commit('logInfo', 'ERROR')
@@ -161,16 +138,9 @@ export default {
       }
     },
 
-    async reloadDatabase({ commit, dispatch }) {
+    async _reloadDatabase({ commit, dispatch }) {
       commit('setCardsReady', false)
       await dispatch('ensureLoaded')
-    },
-
-    async updateLocalDatabase({ commit, state }, source) {
-      commit('logInfo', `Updating card database: ${source}. This can take several minutes.`)
-      const { cards, version } = await getLatestCardDataFromServer.call(this, source)
-      await setKey('cards_' + source, cards)
-      await setKey('version_' + source, version)
     },
 
 
@@ -199,40 +169,8 @@ export default {
       }
 
       // In either case, update the local card database.
-      await dispatch('reloadDatabase')
-
+      await dispatch('_reloadDatabase')
       return response.card
     },
   },
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Private functions
-
-async function getLocalVersions() {
-  return {
-    custom: await getKey('version_custom'),
-    scryfall: await getKey('version_scryfall'),
-  }
-}
-
-async function getRemoteVersions() {
-  const { versions } = await this.$post('/api/magic/card/versions')
-  return versions
-}
-
-async function loadCardsFromDatabase() {
-  const custom = await getKey('cards_custom')
-  const scryfall = await getKey('cards_scryfall')
-
-  return [
-    ...(custom || []),
-    ...(scryfall || []),
-  ]
-}
-
-async function getLatestCardDataFromServer(source) {
-  const response = await this.$post('/api/magic/card/fetch_all', { source })
-  return response[source]
 }
