@@ -3,11 +3,11 @@ const router = express.Router()
 const cardController = require('../../../controllers/magic/card.controller')
 
 /**
- * @route POST /api/magic/card/fetch_all
+ * @route POST /api/magic/card/all
  * @desc Fetch all cards
  * @access Private
  */
-router.post('/fetch_all', cardController.fetchAll)
+router.post('/all', cardController.fetchAll)
 
 /**
  * @route POST /api/magic/card/create

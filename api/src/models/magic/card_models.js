@@ -24,6 +24,7 @@ Card.create = async function(data, cube, user, comment=null) {
 
     const card = {
       data,
+      source: 'custom',
       cubeId: cube._id,
       edits: [{
         userId: user._id,
@@ -32,7 +33,7 @@ Card.create = async function(data, cube, user, comment=null) {
         oldData: null,
       }],
     }
-    
+
     const result = await customCollection.insertOne(card)
     await _incrementCustomCardDatabaseVersion()
     return await customCollection.findOne({ _id: result.insertedId })
@@ -81,7 +82,7 @@ Card.findById = async function(id) {
     scryfallCollection.findOne({ _id: id }),
     customCollection.findOne({ _id: id })
   ])
-  
+
   // Return the first non-null result
   return scryfallCard || customCard || null
 }
@@ -90,13 +91,13 @@ Card.findByIds = async function(ids) {
   if (!Array.isArray(ids) || ids.length === 0) {
     return []
   }
-  
+
   // Query both collections in parallel
   const [scryfallCards, customCards] = await Promise.all([
     scryfallCollection.find({ _id: { $in: ids } }).toArray(),
     customCollection.find({ _id: { $in: ids } }).toArray()
   ])
-  
+
   // Combine results from both collections
   return [...scryfallCards, ...customCards]
 }
@@ -123,12 +124,12 @@ Card.update = async function(cardId, cardData, user, comment=null) {
           }
         }
       ],
-      { 
+      {
         returnDocument: 'after',
         upsert: false
       }
     )
-    
+
     // If update was successful, increment the version
     if (updateResult) {
       await _incrementCustomCardDatabaseVersion()
