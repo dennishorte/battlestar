@@ -13,6 +13,8 @@ export default {
     remoteVersions: '__NOT_READY__',
 
     cardsReady: false,
+
+    // This is displayed while loading cards in MagicWrapper.vue
     log: [],
   }),
 
