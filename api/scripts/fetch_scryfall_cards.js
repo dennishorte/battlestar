@@ -259,6 +259,12 @@ async function fetchFromScryfallAndClean() {
   const count = Object.keys(cards).length
   console.log(`...${count} cards after cleaning`)
 
+  console.log('...formatting for database')
+  cards = cards.map(data => ({
+    data,
+    source: 'scryfall',
+  }))
+
   console.log('...writing data to ' + outputFilename)
   fs.writeFileSync(outputFilename, JSON.stringify(cards, null, 2))
 
