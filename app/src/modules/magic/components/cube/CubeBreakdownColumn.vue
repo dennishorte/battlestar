@@ -16,7 +16,6 @@
 
 
 <script>
-import cubeUtil from '../../util/cubeUtil.js'
 import { mag, util } from 'battlestar-common'
 
 import CubeBreakdownSection from './CubeBreakdownSection'
@@ -76,6 +75,35 @@ export default {
       }
 
       else if (this.name.toLowerCase() === 'multicolor') {
+        GOLD_SORT_ORDER = [
+          'azorius',
+          'boros',
+          'dimir',
+          'golgari',
+          'gruul',
+          'izzet',
+          'orzhov',
+          'rakdos',
+          'selesnya',
+          'simic',
+          'abzan',
+          'bant',
+          'esper',
+          'grixis',
+          'jeskai',
+          'jund',
+          'mardu',
+          'naya',
+          'sultai',
+          'temur',
+          'non-red',
+          'non-green',
+          'non-white',
+          'non-blue',
+          'non-black',
+          'five-color',
+        ]
+
         const collected = util.array.collect(this.cardlist, card => {
           return mag.util.card.colorKey(mag.util.card.identity(card))
         })
@@ -83,7 +111,7 @@ export default {
         const output = Object
           .entries(collected)
           .map(([name, cards]) => ({ name: mag.util.card.COLOR_KEY_TO_NAME[name], cards }))
-          .sort((l, r) => cubeUtil.GOLD_SORT_ORDER.indexOf(l.name) - cubeUtil.GOLD_SORT_ORDER.indexOf(r.name))
+          .sort((l, r) => GOLD_SORT_ORDER.indexOf(l.name) - GOLD_SORT_ORDER.indexOf(r.name))
 
           return output
       }

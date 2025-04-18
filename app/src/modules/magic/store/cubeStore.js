@@ -1,8 +1,5 @@
 import { mag } from 'battlestar-common'
 
-import cubeUtil from '../util/cubeUtil.js'
-
-
 export default {
   namespaced: true,
 
@@ -62,12 +59,6 @@ export default {
     async deleteAchievement({ dispatch }, ach) {
       await this.$post('/api/magic/achievement/delete', { achId: ach._id })
       await dispatch('loadAchievements')
-    },
-
-    async getById(context, { cubeId }) {
-      const response = await this.$post('/api/magic/cube/fetch', { cubeId })
-      const cube = cubeUtil.deserialize(response.cube)
-      return cube
     },
 
     async loadCube({ dispatch, state }, { cubeId }) {
