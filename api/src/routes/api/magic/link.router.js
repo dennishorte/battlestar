@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const linkController = require('../../../controllers/magic/link.controller')
+const linkController = require('@controllers/magic/link.controller')
 
 /**
  * @route POST /api/magic/link/create

@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const miscController = require('../../controllers/misc.controller')
+const miscController = require('@controllers/misc.controller')
 
 /**
  * @route GET /api/misc/version

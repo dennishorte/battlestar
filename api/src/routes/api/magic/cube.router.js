@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const cubeController = require('../../../controllers/magic/cube.controller')
+const cubeController = require('@controllers/magic/cube.controller')
 
 /**
  * @route POST /api/magic/cube/create

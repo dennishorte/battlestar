@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const deckController = require('../../../controllers/magic/deck.controller')
+const deckController = require('@controllers/magic/deck.controller')
 
 /**
  * @route POST /api/magic/deck/create

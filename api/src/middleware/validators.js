@@ -1,6 +1,6 @@
+const latestVersion = require('@/version.js')
+const { BadRequestError } = require('@utils/errors')
 const { ObjectId } = require('mongodb')
-const latestVersion = require('../version.js')
-const { BadRequestError } = require('../utils/errors')
 
 /*
    By coercing all ids into ObjectId, we make sure that they are all handled the same inside

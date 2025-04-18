@@ -1,6 +1,6 @@
-const db = require('../models/db')
-const logger = require('../utils/logger')
-const { BadRequestError, NotFoundError } = require('../utils/errors')
+const db = require('@models/db')
+const logger = require('@utils/logger')
+const { BadRequestError, NotFoundError } = require('@utils/errors')
 const { ObjectId } = require('mongodb')
 
 /**

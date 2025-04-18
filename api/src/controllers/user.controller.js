@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongodb')
-const db = require('../models/db')
-const { BadRequestError, NotFoundError } = require('../utils/errors')
-const logger = require('../utils/logger')
+const db = require('@models/db')
+const { BadRequestError, NotFoundError } = require('@utils/errors')
+const logger = require('@utils/logger')
 
 // User controller methods
 exports.getAllUsers = async (req, res, next) => {

@@ -1,5 +1,5 @@
 const { fromData, fromLobby } = require('battlestar-common')
-const databaseClient = require('../utils/mongo.js').client
+const databaseClient = require('@utils/mongo.js').client
 
 // Database and collection
 const database = databaseClient.db('games')

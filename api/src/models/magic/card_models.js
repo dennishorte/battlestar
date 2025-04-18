@@ -1,6 +1,5 @@
 const AsyncLock = require('async-lock')
-
-const databaseClient = require('../../utils/mongo.js').client
+const databaseClient = require('@utils/mongo.js').client
 const database = databaseClient.db('magic')
 
 const customCollection = database.collection('custom_cards')

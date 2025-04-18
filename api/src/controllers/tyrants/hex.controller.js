@@ -1,6 +1,6 @@
-const db = require('../../models/db')
-const logger = require('../../utils/logger')
-const { BadRequestError } = require('../../utils/errors')
+const db = require('@models/db')
+const logger = require('@utils/logger')
+const { BadRequestError } = require('@utils/errors')
 
 /**
  * Get all hexes
