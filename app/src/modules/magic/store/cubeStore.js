@@ -65,7 +65,7 @@ export default {
     async loadCube({ dispatch, state }, { cubeId }) {
       state.cubeLoaded = false
       state.cube = await dispatch('getById', { cubeId })
-      state.filteredCards = state.cube.cardlist
+      state.filteredCards = state.cube.cards
 
       state.cubeLoaded = true
     },

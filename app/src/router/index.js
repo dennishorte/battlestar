@@ -3,7 +3,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/components/Home'
 import Game from '@/components/Game'
 import GameEditor from '@/modules/games/common/components/GameEditor'
-import FileManagerTest from '@/components/filemanager/FileManagerTest'
 
 import TyrantsTileEditor from '@/modules/games/tyrants/components/tileEditor/TileEditor'
 import TyrantsTest from '@/modules/games/tyrants/components/hexmap/HexMap'
@@ -36,13 +35,6 @@ const router = createRouter({
       name: 'Game Editor',
       component: GameEditor,
     },
-    {
-      path: '/filemanager',
-      name: 'File Manager Test',
-      title: 'File Manager Test',
-      component: FileManagerTest,
-    },
-
     {
       path: '/tyrants/test',
       name: 'Tyrants Test',

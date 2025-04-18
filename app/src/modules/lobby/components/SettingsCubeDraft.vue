@@ -87,14 +87,7 @@ export default {
     },
 
     async fetchCubesForUser(userId) {
-      let response
-
-      if (userId === 'public') {
-        response = await this.$post('/api/magic/cube/fetch_public')
-      }
-      else {
-        response = await this.$post('/api/user/magic/cubes', { userId })
-      }
+      const response = await this.$post('/api/magic/cube/all')
 
       this.cubes = response
         .cubes

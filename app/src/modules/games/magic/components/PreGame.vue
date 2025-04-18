@@ -58,12 +58,6 @@
             Click to shout: "I am ready!"
           </button>
         </div>
-
-        <MagicFileManager
-          class="deck-selector"
-          :filelist="deckfiles"
-          @selection-changed="selectionChanged"
-        />
       </div>
 
       <div class="content-column deck-list-column">
@@ -89,7 +83,6 @@ import DropdownDivider from '@/components/DropdownDivider'
 import DropdownButton from '@/components/DropdownButton'
 import GameLogMagic from './GameLogMagic'
 import GameMenu from '@/modules/games/common/components/GameMenu'
-import MagicFileManager from '@/modules/magic/components/MagicFileManager'
 
 export default {
   name: 'PreGame',
@@ -100,7 +93,6 @@ export default {
     DropdownButton,
     GameLogMagic,
     GameMenu,
-    MagicFileManager,
   },
 
   inject: ['actor', 'game'],
@@ -111,17 +103,9 @@ export default {
       modified: 'modified',
     }),
 
-    ...mapState('magic/file', {
-      filelist: 'filelist',
-    }),
-
     ...mapState('magic/game', {
       linkedDraft: 'linkedDraft',
     }),
-
-    deckfiles() {
-      return this.filelist.filter(file => file.kind === 'deck')
-    },
 
     ready() {
       const player = this.game.getPlayerByName(this.actor.name)
@@ -136,12 +120,6 @@ export default {
 
     goToDraft() {
       this.$router.push(`/game/${this.linkedDraft._id}`)
-    },
-
-    selectionChanged({ newValue }) {
-      if (newValue.objectType === 'file') {
-        this.$store.dispatch('magic/dm/selectDeck', newValue.file)
-      }
     },
 
     selectDeck() {
@@ -169,10 +147,6 @@ export default {
     waiting(player) {
       return this.game.checkPlayerHasActionWaiting(player)
     },
-  },
-
-  created() {
-    this.$store.dispatch('magic/file/fetchAll')
   },
 }
 </script>

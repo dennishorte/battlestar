@@ -5,12 +5,6 @@
 
         <div class="col column filters-column">
           <MagicMenu />
-          <MagicFileManager
-            class="deck-selector"
-            :filelist="deckfiles"
-            default-file-type="deck"
-            @selection-changed="selectionChanged"
-          />
           <CardFilters
             :cardlist="cardlist"
             v-model="filteredCards"
@@ -79,7 +73,6 @@ import CardImportModal from '../CardImportModal'
 import CardManagerModal from './CardManagerModal'
 import Decklist from './Decklist'
 import DropdownButton from '@/components/DropdownButton'
-import MagicFileManager from '../MagicFileManager'
 import MagicMenu from '../MagicMenu'
 import MagicWrapper from '../MagicWrapper'
 import Modal from '@/components/Modal'
@@ -94,7 +87,6 @@ export default {
     CardManagerModal,
     Decklist,
     DropdownButton,
-    MagicFileManager,
     MagicMenu,
     MagicWrapper,
     Modal,
@@ -129,14 +121,6 @@ export default {
       activeDeck: 'activeDeck',
       modified: 'modified',
     }),
-
-    ...mapState('magic/file', {
-      filelist: 'filelist',
-    }),
-
-    deckfiles() {
-      return this.filelist.filter(file => file.kind === 'deck')
-    },
   },
 
   methods: {
@@ -151,12 +135,6 @@ export default {
       }
       else {
         this.$store.dispatch('magic/dm/manageCard', card)
-      }
-    },
-
-    selectionChanged(event) {
-      if (event.newValue.objectType === 'file') {
-        this.$store.dispatch('magic/dm/selectDeck', event.newValue.file)
       }
     },
 

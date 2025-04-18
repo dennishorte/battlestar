@@ -1,5 +1,7 @@
 <template>
   <div class="cube-breakdown">
+    cube breakdown
+    {{ cardlist }}
 
     <CubeBreakdownColumn
       v-for="column in columns"
