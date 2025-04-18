@@ -115,6 +115,13 @@ Util.array.remove = function(array, elem) {
   }
 }
 
+Util.array.removeByPredicate = function(array, pred) {
+  const index = array.find(pred)
+  if (index !== -1) {
+    array.splice(index, 1)
+  }
+}
+
 Util.array.reverseIter = function*(array) {
   let i = array.length
   while (i > 0) {
