@@ -7,6 +7,8 @@ export default {
   namespaced: true,
 
   state: () => ({
+    cubes: [],
+
     cube: null,
     cubeLoaded: false,
 
@@ -51,6 +53,12 @@ export default {
       }
     },
 
+    async create({ dispatch }) {
+      const response = await this.$post('/api/magic/cube/create')
+      await dispatch('loadAllCubes')
+      return response.cubeId
+    },
+
     async deleteAchievement({ dispatch }, ach) {
       await this.$post('/api/magic/achievement/delete', { achId: ach._id })
       await dispatch('loadAchievements')
@@ -68,6 +76,11 @@ export default {
       state.filteredCards = state.cube.cards
 
       state.cubeLoaded = true
+    },
+
+    async loadAllCubes({ dispatch, state }) {
+      const response = await this.$post('/api/magic/cube/all')
+      state.cubes = response.cubes
     },
 
     async save({ dispatch }, cube) {

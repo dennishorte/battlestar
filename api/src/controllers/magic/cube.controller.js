@@ -2,6 +2,28 @@ const db = require('@models/db')
 const logger = require('@utils/logger')
 const { BadRequestError, NotFoundError } = require('@utils/errors')
 
+
+/**
+ * Get all cubes
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+exports.all = async (req, res, next) => {
+  try {
+    const cubes = await db.magic.cube.all()
+
+    res.json({
+      status: 'success',
+      cubes
+    })
+  }
+  catch (err) {
+    logger.error(`Error fetching cubes: ${err.message}`)
+    next(err)
+  }
+}
+
 /**
  * Create a new cube
  * @param {Object} req - Express request object

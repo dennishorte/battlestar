@@ -3,6 +3,11 @@ const database = databaseClient.db('magic')
 const cubeCollection = database.collection('cube')
 
 module.exports = {
+  async all() {
+    const cubes = await cubeCollection.find({}, { projection: { _id: 1, name: 1, userId: 1 } }).toArray()
+    return cubes
+  },
+
   async create(user) {
     const creationDate = new Date()
     const insertResult = await cubeCollection.insertOne({

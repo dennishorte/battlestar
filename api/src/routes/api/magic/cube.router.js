@@ -3,6 +3,13 @@ const router = express.Router()
 const cubeController = require('@controllers/magic/cube.controller')
 
 /**
+ * @route POST /api/magic/cube/all
+ * @description Get all cubes
+ * @access Private
+ */
+router.post('/all', cubeController.all)
+
+/**
  * @route POST /api/magic/cube/create
  * @description Create a new cube
  * @access Private
