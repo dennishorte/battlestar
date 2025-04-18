@@ -1,3 +1,4 @@
+require('module-alias/register')
 require('dotenv').config()
 
 const express = require('express')
@@ -6,12 +7,12 @@ const history = require('connect-history-api-fallback')
 const path = require('path')
 
 const config = require('./config')
-const middleware = require('./src/middleware')
-const logger = require('./src/utils/logger')
-const setupSwagger = require('./src/utils/swagger')
+const middleware = require('@/middleware')
+const logger = require('@utils/logger')
+const setupSwagger = require('@utils/swagger')
 
 // Import routes
-const apiRoutes = require('./src/routes/api')
+const apiRoutes = require('@routes/api')
 
 // Initialize Express app
 const app = express()
