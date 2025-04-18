@@ -108,7 +108,7 @@ Tyrants.prototype.initializePlayers = function() {
 }
 
 Tyrants.prototype.initializeMapZones = function() {
-  this.state.zones.map = util.array.toDict(
+  this.state.zones.map = Object.fromEntries(
     res
       .maps[this.settings.map]
       .map(data => [data.name, new MapZone(data)])

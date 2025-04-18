@@ -89,7 +89,6 @@ Innovation.prototype.initialize = function() {
 
 Innovation.prototype.initializeTransientState = function() {
   this.mResetDogmaInfo()
-  this.mResetMonumentCounts()
   this.mResetPeleCount()
   this.mResetDrawInfo()
   this.state.turn = 1
@@ -460,7 +459,6 @@ Innovation.prototype.endTurn = function() {
   // Reset various turn-centric state
   this.state.didEndorse = false
   this.mResetDogmaInfo()
-  this.mResetMonumentCounts()
   this.mResetPeleCount()
   this.mResetDrawInfo()
 }
@@ -2074,7 +2072,7 @@ function ManyFactory(baseFuncName, extraArgCount=0) {
     const results = []
     let auto = opts.ordered || false
     let remaining = [...cards]
-    const startZones = util.array.toDict(remaining.map(c => [c.id, c.zone]))
+    const startZones = Object.fromEntries(remaining.map(c => [c.id, c.zone]))
 
     while (remaining.length > 0) {
       // Check if any cards in 'remaining' have been acted on by some other force (karma effect).
@@ -2260,7 +2258,7 @@ Innovation.prototype.getBiscuits = function() {
   const biscuits = this
     .getPlayerAll()
     .map(player => [player.name, this.getBiscuitsByPlayer(player)])
-  return util.array.toDict(biscuits)
+  return Object.fromEntries(biscuits)
 }
 
 Innovation.prototype.getBiscuitsByPlayer = function(player) {
@@ -3020,14 +3018,6 @@ Innovation.prototype.mResetDrawInfo = function() {
     }
   }
 }
-
-Innovation.prototype.mResetMonumentCounts = function() {
-  const emptyInfo = this
-    .getPlayerAll()
-    .map(p => [p.name, { tuck: 0, score: 0 }])
-  this.state.monument = util.array.toDict(emptyInfo)
-}
-
 Innovation.prototype.mResetPeleCount = function() {
   this.state.tuckedGreenForPele = []
 }
@@ -3075,7 +3065,6 @@ Innovation.prototype.mScore = function(player, card) {
     template: '{player} scores {card}',
     args: { player, card }
   })
-  this.state.monument[player.name].score += 1
   this.mActed(player)
   return card
 }
@@ -3150,7 +3139,6 @@ Innovation.prototype.mTuck = function(player, card) {
   if (card.color === 'green') {
     util.array.pushUnique(this.state.tuckedGreenForPele, player)
   }
-  this.state.monument[player.name].tuck += 1
   this.mActed(player)
   return card
 }

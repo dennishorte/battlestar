@@ -1779,7 +1779,7 @@ function ManyFactory(baseFuncName, extraArgCount=0) {
     const results = []
     let auto = opts.ordered || false
     let remaining = [...cards]
-    const startZones = util.array.toDict(remaining.map(c => [c.id, c.zone]))
+    const startZones = Object.fromEntries(remaining.map(c => [c.id, c.zone]))
 
     while (remaining.length > 0) {
       // Check if any cards in 'remaining' have been acted on by some other force (karma effect).
@@ -1956,7 +1956,7 @@ Innovation.prototype.getBiscuits = function() {
   const biscuits = this
     .getPlayerAll()
     .map(player => [player.name, this.getBiscuitsByPlayer(player)])
-  return util.array.toDict(biscuits)
+  return Object.fromEntries(biscuits)
 }
 
 Innovation.prototype.getBiscuitsByPlayer = function(player) {
@@ -2618,7 +2618,7 @@ Innovation.prototype.mResetMonumentCounts = function() {
   const emptyInfo = this
     .getPlayerAll()
     .map(p => [p.name, { tuck: 0, score: 0 }])
-  this.state.monument = util.array.toDict(emptyInfo)
+  this.state.monument = Object.fromEntries(emptyInfo)
 }
 
 Innovation.prototype.mResetPeleCount = function() {
