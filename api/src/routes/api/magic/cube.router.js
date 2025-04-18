@@ -19,13 +19,6 @@ router.post('/create', cubeController.createCube)
 router.post('/fetch', cubeController.getCube)
 
 /**
- * @route GET /api/magic/cube/fetchPublic
- * @description Get all public cubes
- * @access Public
- */
-router.post('/fetch_public', cubeController.getPublicCubes)
-
-/**
  * @route POST /api/magic/cube/save
  * @description Save changes to a cube
  * @access Private
@@ -34,19 +27,12 @@ router.post('/fetch_public', cubeController.getPublicCubes)
 router.post('/save', cubeController.saveCube)
 
 /**
- * @route POST /api/magic/cube/setEditFlag
- * @description Set the edit flag for a cube
+ * @route POST /api/magic/cube/set_flag
+ * @description Set the a flag for a cube
  * @access Private
- * @body {Object} editFlag - Edit flag object
+ * @body {String} name - name of flag
+ * @body {Boolean} value - new flag value
  */
-router.post('/set_edit_flag', cubeController.setEditFlag)
-
-/**
- * @route POST /api/magic/cube/setPublicFlag
- * @description Set the public flag for a cube
- * @access Private
- * @body {Boolean} publicFlag - Public flag status
- */
-router.post('/set_public_flag', cubeController.setPublicFlag)
+router.post('/set_flag', cubeController.setFlag)
 
 module.exports = router

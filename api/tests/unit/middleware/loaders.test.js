@@ -23,7 +23,8 @@ jest.mock('../../../src/models/db', () => ({
   },
   magic: {
     card: {
-      findById: jest.fn()
+      findById: jest.fn(),
+      findByIds: jest.fn().mockResolvedValue([])
     },
     cube: {
       findById: jest.fn()
@@ -213,26 +214,35 @@ describe('Data Loader Middleware', () => {
   describe('loadCubeArgs', () => {
     it('should load cube and set it on the request object', async () => {
       // Setup
-      const cubeId = new ObjectId()
+      const cubeId = new ObjectId('68026d3e7dbcbab90d49ee65')
       req.body.cubeId = cubeId
-      const mockCube = { _id: cubeId, name: 'Test Cube' }
-      db.magic.cube.findById.mockResolvedValue(mockCube)
+      const mockCube = { _id: cubeId, name: 'Test Cube', cardlist: [] }
+
+      // When calling findById, return the mock cube
+      db.magic.cube.findById.mockResolvedValueOnce(mockCube)
+
+      // For card loading, return empty array
+      db.magic.card.findByIds.mockResolvedValueOnce([])
 
       // Execute
       await loadCubeArgs(req, res, next)
 
       // Verify
       expect(db.magic.cube.findById).toHaveBeenCalledWith(cubeId)
-      expect(req.cube).toEqual(mockCube)
+
+      // Expect that the cube is assigned to req.cube
+      // with cards property added by the loader
+      expect(req.cube).toEqual({...mockCube, cards: []})
+
       expect(next).toHaveBeenCalled()
       expect(res.on).toHaveBeenCalledWith('finish', expect.any(Function))
     })
 
     it('should call next with NotFoundError if cube is not found', async () => {
       // Setup
-      const cubeId = new ObjectId()
+      const cubeId = new ObjectId('68026d3e7dbcbab90d49ee66')
       req.body.cubeId = cubeId
-      db.magic.cube.findById.mockResolvedValue(null)
+      db.magic.cube.findById.mockResolvedValueOnce(null)
 
       // Execute
       await loadCubeArgs(req, res, next)
@@ -240,7 +250,7 @@ describe('Data Loader Middleware', () => {
       // Verify
       expect(db.magic.cube.findById).toHaveBeenCalledWith(cubeId)
       expect(next).toHaveBeenCalledWith(expect.any(NotFoundError))
-      expect(next.mock.calls[0][0].message).toContain('cube not found')
+      expect(next.mock.calls[0][0].message).toContain('Cube not found')
     })
 
     it('should just call next if no cubeId is provided', async () => {

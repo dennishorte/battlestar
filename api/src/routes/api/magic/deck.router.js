@@ -10,6 +10,13 @@ const deckController = require('../../../controllers/magic/deck.controller')
 router.post('/create', deckController.create)
 
 /**
+ * @route POST /api/magic/deck/duplicate
+ * @desc Duplicate a deck
+ * @access Private
+ */
+router.post('/duplicate', deckController.duplicate)
+
+/**
  * @route POST /api/magic/deck/fetch
  * @desc Fetch a deck by ID
  * @access Private
@@ -22,12 +29,5 @@ router.post('/fetch', deckController.fetch)
  * @access Private
  */
 router.post('/save', deckController.save)
-
-/**
- * @route POST /api/magic/deck/add_card
- * @desc Add a card to a deck
- * @access Private
- */
-router.post('/add_card', deckController.addCard)
 
 module.exports = router

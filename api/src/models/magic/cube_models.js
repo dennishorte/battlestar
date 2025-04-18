@@ -2,16 +2,56 @@ const databaseClient = require('../../utils/mongo.js').client
 const database = databaseClient.db('magic')
 const cubeCollection = database.collection('cube')
 
-const fileCommon = require('./file_common.js')
-
-
 module.exports = {
-  ...fileCommon({
-    collection: cubeCollection,
-    createFields: () => ({
+  async create(user) {
+    const creationDate = new Date()
+    const insertResult = await cubeCollection.insertOne({
+      name: 'New Cube',
+      userId: user._id,
       cardlist: [],
+      flags: {
+        legacy: false,
+      },
+      timestamps: {
+        created: creationDate,
+        updated: creationDate,
+      },
     })
-  }),
+
+    if (!insertResult.insertedId) {
+      throw new Error('Cube insertion failed')
+    }
+
+    return await this.findById(insertResult.insertedId)
+  },
+
+  async delete(id) {
+    return await cubeCollection.deleteOne({ _id: id })
+  },
+
+  async save(cube) {
+    return await cubeCollection.findOneAndUpdate(
+      { _id: cube._id },
+      {
+        $set: {
+          name: cube.name,
+          cardlist: cube.cardlist,
+          flags: cube.flags,
+          'timestamps.updated': new Date(),
+        },
+      },
+
+    )
+  },
+
+  async findById(id) {
+    return await cubeCollection.findOne({ _id: id })
+  },
+
+  async findByUserId(userId) {
+    const cubes = await cubeCollection.find({ userId })
+    return await cubes.toArray()
+  },
 
   async addCard(cube, card) {
     await cubeCollection.updateOne(
@@ -27,21 +67,10 @@ module.exports = {
     )
   },
 
-  async setEditFlag(cube, newValue) {
+  async setFlag(cube, name, value) {
     await cubeCollection.updateOne(
       { _id: cube._id },
-      { $set: { allowEdits: newValue } },
+      { $set: { [`flags.${name}`]: value } },
     )
-
-    return newValue
-  },
-
-  async setPublicFlag(cube, newValue) {
-    await cubeCollection.updateOne(
-      { _id: cube._id },
-      { $set: { public: newValue } },
-    )
-
-    return newValue
   },
 }

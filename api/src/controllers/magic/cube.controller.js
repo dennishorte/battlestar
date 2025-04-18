@@ -10,8 +10,7 @@ const { BadRequestError, NotFoundError } = require('../../utils/errors')
  */
 exports.createCube = async (req, res, next) => {
   try {
-    const cubeId = await db.magic.cube.create(req.body)
-    const cube = await db.magic.cube.findById(cubeId)
+    const cube = await db.magic.cube.create(req.user)
 
     res.json({
       status: 'success',
@@ -54,28 +53,6 @@ exports.getCube = async (req, res, next) => {
 }
 
 /**
- * Get all public cubes
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
- */
-exports.getPublicCubes = async (req, res, next) => {
-  try {
-    const cubesCursor = await db.magic.cube.collection.find({ public: true })
-    const cubes = await cubesCursor.toArray()
-
-    res.json({
-      status: 'success',
-      cubes
-    })
-  }
-  catch (err) {
-    logger.error(`Error fetching public cubes: ${err.message}`)
-    next(err)
-  }
-}
-
-/**
  * Save changes to a cube
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -104,51 +81,33 @@ exports.saveCube = async (req, res, next) => {
 }
 
 /**
- * Set the edit flag for a cube
+ * Set the a flag for a cube
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.setEditFlag = async (req, res, next) => {
+exports.setFlag = async (req, res, next) => {
   try {
-    if (!req.body.editFlag) {
-      return next(new BadRequestError('Edit flag is required'))
+    if (!req.body.name || !req.body.value) {
+      return next(new BadRequestError('name and value are required'))
     }
 
-    await db.magic.cube.setEditFlag(req.cube._id, req.body.editFlag)
+    if (!['legacy'].includes(req.body.name)) {
+      return next(new BadRequestError('Invalid flag name: ' + req.body.name))
+    }
+
+    if (typeof req.body.value !== 'boolean') {
+      return next(new BadRequestError('Invalid flag value: ' + req.body.value))
+    }
+
+    await db.magic.cube.setFlag(req.cube._id, req.body.name, req.body.value)
 
     res.json({
       status: 'success',
-      newValue: req.body.editFlag,
     })
   }
   catch (err) {
-    logger.error(`Error setting edit flag: ${err.message}`)
-    next(err)
-  }
-}
-
-/**
- * Set the public flag for a cube
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
- */
-exports.setPublicFlag = async (req, res, next) => {
-  try {
-    if (req.body.publicFlag === undefined) {
-      return next(new BadRequestError('Public flag is required'))
-    }
-
-    await db.magic.cube.setPublicFlag(req.cube._id,req.body.publicFlag)
-
-    res.json({
-      status: 'success',
-      newValue: req.body.publicFlag,
-    })
-  }
-  catch (err) {
-    logger.error(`Error setting public flag: ${err.message}`)
+    logger.error(`Error setting legacy flag: ${err.message}`)
     next(err)
   }
 }

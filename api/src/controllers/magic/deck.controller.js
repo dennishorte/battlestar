@@ -6,9 +6,21 @@ const db = require('../../models/db.js')
  * @param {Object} res - Express response object
  */
 exports.create = async (req, res) => {
-  const deckId = await db.magic.deck.create(req.body)
-  const deck = await db.magic.deck.findById(deckId)
+  const deck = await db.magic.deck.create(req.user)
 
+  res.json({
+    status: 'success',
+    deck,
+  })
+}
+
+/**
+ * Duplicate a deck by ID
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.duplicate = async (req, res) => {
+  const deck = await db.magic.deck.duplicate(req.user, req.deck)
   res.json({
     status: 'success',
     deck,
@@ -34,26 +46,6 @@ exports.fetch = async (req, res) => {
  */
 exports.save = async (req, res) => {
   await db.magic.deck.save(req.body.deck)
-  res.json({
-    status: 'success',
-  })
-}
-
-/**
- * Add a card to a deck
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-exports.addCard = async (req, res) => {
-  // Validate required resources were loaded by middleware
-  if (!req.deck || !req.card) {
-    return res.status(400).json({
-      status: 'error',
-      message: 'Missing required resources: deck and card must be loaded'
-    })
-  }
-
-  await db.magic.deck.addCard(req.deck, req.card)
   res.json({
     status: 'success',
   })
