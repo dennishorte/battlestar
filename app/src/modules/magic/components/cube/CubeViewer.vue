@@ -150,6 +150,8 @@ export default {
 
       showing: this.$route.params.tab || 'cards',
       showSearch: false,
+
+      filters: [],
     }
   },
 
@@ -167,12 +169,9 @@ export default {
     ...mapState('magic/cube', {
       cube: 'cube',
       cubeLoaded: 'cubeLoaded',
-      filteredCards: 'filteredCards',
 
       achievements: 'achievements',
       scars: 'scars',
-
-      cardFilters: 'cardFilters',
 
       managedAchievement: 'managedAchievement',
       managedCard: 'managedCard',
@@ -180,7 +179,7 @@ export default {
     }),
 
     cards() {
-      return this.cube.cards
+      return this.cube.cards()
     },
 
     cardEditButtonText() {
@@ -197,7 +196,7 @@ export default {
     },
 
     canLinkFilters() {
-      return this.cardFilters.length > 0
+      return this.filters.length > 0
     },
 
     counts() {
@@ -206,6 +205,10 @@ export default {
         scars: this.scarsUnused.length,
         achievements: this.achievements.length,
       }
+    },
+
+    filteredCards() {
+      return this.cube.applyFilters(this.filters)
     },
 
     scarsUnused() {
@@ -244,7 +247,7 @@ export default {
     },
 
     randomCard() {
-      const card = util.array.select(this.cube.cards)
+      const card = util.array.select(this.cube.cards())
       const link = this.$store.getters['magic/cards/cardLink'](card._id)
       this.$router.push(link)
     },
@@ -259,7 +262,7 @@ export default {
     },
 
     updateCardFilters(filters) {
-      this.$store.dispatch('magic/cube/setFilters', filters)
+      this.filters = filters
     },
 
     async showAchievementFilters(filters) {

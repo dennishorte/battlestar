@@ -46,28 +46,28 @@ export default {
 
   computed: {
     parsedUpdate() {
-      const cards = mag.util.card.parseCardlist(this.updateText)
-      const lookupFunc = this.$store.getters['magic/cards/getLookupFunc']
-      mag.util.card.lookup.insertCardData(cards, lookupFunc)
-
+      /* const cards = mag.util.card.parseCardlist(this.updateText)
+       * const lookupFunc = this.$store.getters['magic/cards/getLookupFunc']
+       * mag.util.card.lookup.insertCardData(cards, lookupFunc)
+       */
       const operations = {
         insert: [],
         remove: [],
         unknown: [],
       }
 
-      for (const card of cards) {
-        if (!card.data) {
-          operations.unknown.push(card)
-        }
-        else if (card.remove) {
-          operations.remove.push(card)
-        }
-        else {
-          operations.insert.push(card)
-        }
-      }
-
+      /* for (const card of cards) {
+       *   if (!card.data) {
+       *     operations.unknown.push(card)
+       *   }
+       *   else if (card.remove) {
+       *     operations.remove.push(card)
+       *   }
+       *   else {
+       *     operations.insert.push(card)
+       *   }
+       * }
+       */
       return operations
     },
   },

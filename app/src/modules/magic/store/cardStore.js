@@ -6,9 +6,7 @@ export default {
   namespaced: true,
 
   state: () => ({
-    cardlist: [],
-    lookup: {},
-
+    cards: null,
     cardsReady: false,
 
     // This is displayed while loading cards in MagicWrapper.vue
@@ -16,26 +14,12 @@ export default {
   }),
 
   getters: {
-    all(state) {
-      return state.cardlist
-    },
-
-    byDatabaseId(state) {
-      return (id) => state.cardlist.find(card => card._id === id)
+    cards(state) {
+      return state.cards
     },
 
     cardLink(state) {
       return (databaseId) => '/magic/card/' + databaseId
-    },
-
-    cardNames(state) {
-      return Object.keys(state.lookup).sort()
-    },
-
-    getLookupFunc(state) {
-      return (cardId, opts) => {
-        return mag.util.card.lookup.getByIdDict(cardId, state.lookup, opts)
-      }
     },
   },
 
@@ -48,32 +32,9 @@ export default {
       console.log('info: ', msg)
       state.log.push(msg)
     },
-
-    setCardList(state, cardlist) {
-      state.cardlist = cardlist
-    },
-
-    setCardLookup(state, cardLookup) {
-      state.lookup = cardLookup
-    },
-
-    setCardsReady(state, value=true) {
-      state.cardsReady = value
-    },
-
-    setUpdateNeededCustom(state, value) {
-      state.updateNeededCustom = value
-    },
-
-    setUpdateNeededScryfall(state, value) {
-      state.updateNeededScryfall = value
-    },
   },
 
   actions: {
-    ////////////////////////////////////////////////////////////////////////////////
-    // Data loading
-
     async ensureLoaded({ commit, state }) {
       const post = this.$post
 
@@ -114,7 +75,7 @@ export default {
 
         commit('logInfo', 'Cards successfully loaded from local database')
 
-        return cards
+        return cards.flat()
       }
 
       try {
@@ -128,8 +89,9 @@ export default {
           const versions = await _loadLocalAndRemoteVersions()
           await _maybeUpdateLocalDatabase(versions)
           const cards = await _loadCardsFromLocalDatabase(Object.keys(versions.remote))
-          commit('setCardList', cards)
-          commit('setCardsReady')
+          state.cardlist = cards
+          state.cards = mag.util.card.lookup.create(cards)
+          state.cardsReady = true
         }
       }
       catch (err) {
@@ -138,14 +100,11 @@ export default {
       }
     },
 
-    async _reloadDatabase({ commit, dispatch }) {
-      commit('setCardsReady', false)
-      await dispatch('ensureLoaded')
+    getByIds({ state }, cardIds) {
+      return cardIds
+        .map(id => state.cards.byId[id])
+        .map(raw => mag.util.proxy.card(raw))
     },
-
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // Card editing
 
     async save({ dispatch }, { cubeId, updated, comment }) {
       updated = updated.data ? updated.data : updated
@@ -171,6 +130,11 @@ export default {
       // In either case, update the local card database.
       await dispatch('_reloadDatabase')
       return response.card
+    },
+
+    async _reloadDatabase({ dispatch, state }) {
+      state.cardsReady = false
+      await dispatch('ensureLoaded')
     },
   },
 }

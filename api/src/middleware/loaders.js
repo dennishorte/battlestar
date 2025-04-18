@@ -25,8 +25,6 @@ async function _loadCube(cubeId) {
     return new NotFoundError(`Cube not found. ID: ${cubeId}`)
   }
 
-  cube.cards = await db.magic.card.findByIds(cube.cardlist)
-
   return cube
 }
 

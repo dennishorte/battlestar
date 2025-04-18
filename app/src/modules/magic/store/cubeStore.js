@@ -13,9 +13,6 @@ export default {
     achievements: [],
 
     managedCard: null,
-
-    cardFilters: [],
-    filteredCards: [],
   }),
 
   getters: {
@@ -63,9 +60,14 @@ export default {
 
     async loadCube({ dispatch, state }, { cubeId }) {
       state.cubeLoaded = false
-      state.cube = await dispatch('getById', { cubeId })
-      state.filteredCards = state.cube.cards
 
+      const response = await this.$post('/api/magic/cube/fetch', { cubeId })
+      const cube = mag.util.proxy.cube(response.cube)
+
+      const cards = await dispatch('magic/cards/getByIds', cube.cardlist, { root: true })
+      cube.setCards(cards)
+
+      state.cube = cube
       state.cubeLoaded = true
     },
 
@@ -77,18 +79,5 @@ export default {
     async save({ dispatch }, cube) {
       await dispatch('magic/file/save', cube.serialize(), { root: true })
     },
-
-    async setFilters({ state }, filters) {
-      state.cardFilters = filters || []
-      if (filters.length === 0) {
-        state.filteredCards = state.cube.cardlist
-      }
-      else {
-        state.filteredCards = state
-          .cube
-          .cardlist
-          .filter(card => mag.util.card.filtersMatchCard(filters, card))
-      }
-    }
   },
 }
