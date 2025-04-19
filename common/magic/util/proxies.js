@@ -30,32 +30,6 @@ function createProxy(data, methodsConstructor) {
   })
 }
 
-/* function createProxy(data, methodsConstructor) {
- *   const coreMethods = new methodsConstructor()
- *
- *   return new Proxy(data, {
- *     has(target, prop) {
- *       return prop in target || prop in coreMethods
- *     },
- *
- *     get(target, prop) {
- *       console.log('proxy get: ', target, prop)
- *
- *       if (prop === 'toPlainObject') {
- *         return function() {
- *           return { ...target }
- *         }
- *       }
- *
- *       if (prop in coreMethods && typeof coreMethods[prop] === 'function') {
- *         return coreMethods[prop].bind(target)
- *       }
- *
- *       return target[prop]
- *     }
- *   })
- * } */
-
 module.exports = {
   createProxy,
   card: (data) => createProxy(data, methods.card),
