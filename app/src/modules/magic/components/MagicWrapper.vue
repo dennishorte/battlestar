@@ -124,6 +124,7 @@ export default {
     },
 
     cardsReady(newValue) {
+      this.$emit('cards-ready')
       this.tryAfterLoaded()
     },
   },

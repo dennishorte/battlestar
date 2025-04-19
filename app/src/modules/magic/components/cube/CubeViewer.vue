@@ -1,8 +1,7 @@
 <template>
-  <MagicWrapper :also-loading="!cubeLoaded">
+  <MagicWrapper :also-loading="!cubeLoaded" @cards-ready="reload">
 
-    <div v-if="!cubeLoaded">Cube not loaded</div>
-    <div v-else class="container">
+    <div class="container">
 
       <div class="row">
         <div class="col-6">
@@ -355,7 +354,6 @@ export default {
   },
 
   async mounted() {
-    await this.reload()
     this.bus.on('card-clicked', this.showCardModal)
     this.bus.on('card-saved', this.saveCard)
     this.bus.on('achievement-show-filters', this.showAchievementFilters)

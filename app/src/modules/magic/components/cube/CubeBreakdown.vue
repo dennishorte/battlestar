@@ -1,6 +1,5 @@
 <template>
   <div class="cube-breakdown">
-    cube breakdown
     {{ cardlist }}
 
     <CubeBreakdownColumn
