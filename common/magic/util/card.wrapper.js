@@ -56,38 +56,38 @@ class CardWrapper extends Wrapper {
     return this.data.cmc
   }
   manaCost(faceIndex) {
-    return faceIndex ? this.face(faceIndex).mana_cost : this.data.mana_cost
+    return this.face(faceIndex).mana_cost
   }
   producedMana() {
     return this.data.produced_mana
   }
 
   oracleText(faceIndex) {
-    return faceIndex ? this.face(faceIndex).oracle_text : this.data.oracle_text
+    return this.face(faceIndex).oracle_text
   }
   flavorText(faceIndex) {
-    return faceIndex ? this.face(faceIndex).flavor_text : this.data.flavor_text
+    return this.face(faceIndex).flavor_text
   }
 
   power(faceIndex) {
-    return faceIndex ? this.face(faceIndex).power : this.data.power
+    return this.face(faceIndex).power
   }
   toughness(faceIndex) {
-    return faceIndex ? this.face(faceIndex).toughness : this.data.toughness
+    return this.face(faceIndex).toughness
   }
   loyalty(faceIndex) {
-    return faceIndex ? this.face(faceIndex).loyalty : this.data.loyalty
+    return this.face(faceIndex).loyalty
   }
   defense(faceIndex) {
-    return faceIndex ? this.face(faceIndex).defense : this.data.defense
+    return this.face(faceIndex).defense
   }
 
 
   artist(faceIndex) {
-    return faceIndex ? this.face(faceIndex).artist : this.data.artist
+    return this.face(faceIndex).artist
   }
   imageUri(faceIndex) {
-    return faceIndex ? this.face(faceIndex).image_uri : this.data.image_uri
+    return this.face(faceIndex).image_uri
   }
 
 
