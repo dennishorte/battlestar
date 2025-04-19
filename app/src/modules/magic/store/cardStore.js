@@ -76,7 +76,7 @@ export default {
 
         commit('logInfo', 'Cards successfully loaded from local database')
 
-        return cards.flat()
+        return cards.flat().map(c => new UICardWrapper(c))
       }
 
       try {
@@ -90,7 +90,6 @@ export default {
           const versions = await _loadLocalAndRemoteVersions()
           await _maybeUpdateLocalDatabase(versions)
           const cards = await _loadCardsFromLocalDatabase(Object.keys(versions.remote))
-          state.cardlist = cards
           state.cards = mag.util.card.lookup.create(cards)
           state.cardsReady = true
         }
@@ -102,9 +101,7 @@ export default {
     },
 
     getByIds({ state }, cardIds) {
-      return cardIds
-        .map(id => state.cards.byId[id])
-        .map(card => new UICardWrapper(card))
+      return cardIds.map(id => state.cards.byId[id])
     },
 
     async save({ dispatch }, { cubeId, updated, comment }) {

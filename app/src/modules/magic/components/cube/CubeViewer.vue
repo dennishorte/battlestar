@@ -84,7 +84,7 @@
 
     </div>
 
-    <CubeAddModal @cube-updates="updateCube" />
+    <CardSearchModal @card-selected="addOneCard" id="cube-add-modal" />
     <CubeImportModal @cube-updates="updateCube" />
     <CubeCardModal :card="managedCard" :editable="cube.allowEdits" />
     <CardEditorModal :original="managedCard" />
@@ -109,7 +109,7 @@ import AchievementSearchLinkerModal from './AchievementSearchLinkerModal'
 import Achievements from './Achievements'
 import CardEditorModal from '../CardEditorModal'
 import CubeBreakdown from './CubeBreakdown'
-import CubeAddModal from './CubeAddModal'
+import CardSearchModal from '../CardSearchModal'
 import CardFilters from '../CardFilters'
 import CubeCardModal from './CubeCardModal'
 import CubeImportModal from './CubeImportModal'
@@ -129,7 +129,7 @@ export default {
     Achievements,
     CardEditorModal,
     CardFilters,
-    CubeAddModal,
+    CardSearchModal,
     CubeBreakdown,
     CubeCardModal,
     CubeImportModal,
@@ -276,26 +276,6 @@ export default {
       this.showSearch = !this.showSearch
     },
 
-    async updateCube(update) {
-      for (const card of update.remove) {
-        this.cube.removeCard(card)
-      }
-
-      for (const card of update.insert) {
-        this.cube.addCard(card)
-      }
-
-      if (update.unknown.length) {
-        const lines = ['Unable to add unknown cards:']
-        for (const card of update.unknown) {
-          lines.push(card.name)
-        }
-        alert(lines.join('\n'))
-      }
-
-      await this.$store.dispatch('magic/cube/save', this.cube)
-    },
-
 
     ////////////////////////////////////////////////////////////////////////////////
     // Card pop-up methods
@@ -321,6 +301,10 @@ export default {
     ////////////////////////////////////////////////////////////////////////////////
     // Async Methods
 
+    async addOneCard(card, comment) {
+      await this.$store.dispatch('magic/cube/addCard', { card, comment })
+    },
+
     async loadUsers() {
       const { users } = await this.$post('/api/user/all')
       this.users = users
@@ -343,6 +327,26 @@ export default {
       })
 
       window.location.reload()
+    },
+
+    async updateCube(update) {
+      for (const card of update.remove) {
+        this.cube.removeCard(card)
+      }
+
+      for (const card of update.insert) {
+        this.cube.addCard(card)
+      }
+
+      if (update.unknown.length) {
+        const lines = ['Unable to add unknown cards:']
+        for (const card of update.unknown) {
+          lines.push(card.name)
+        }
+        alert(lines.join('\n'))
+      }
+
+      await this.$store.dispatch('magic/cube/save', this.cube)
     },
   },
 

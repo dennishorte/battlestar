@@ -2,7 +2,6 @@ const db = require('@models/db')
 const logger = require('@utils/logger')
 const { BadRequestError, NotFoundError } = require('@utils/errors')
 
-
 /**
  * Get all cubes
  * @param {Object} req - Express request object

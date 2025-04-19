@@ -2,9 +2,9 @@
   <div class="magic-card" :style="cardStyles">
     <CardFace
       v-if="card"
-      v-for="index in faceIndices"
+      v-for="index in this.card.numFaces()"
       :card="card"
-      :index="index"
+      :index="index - 1"
       :size="size"
     />
   </div>
@@ -49,10 +49,6 @@ export default {
       else {
         return { 'overflow-y': 'hidden' }
       }
-    },
-
-    faceIndices() {
-      return util.range(this.card.numFaces())
     },
   },
 }

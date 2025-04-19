@@ -7,7 +7,7 @@ class CardWrapper extends Wrapper {
   }
 
   colors(faceIndex) {
-    return faceIndex ? this.data.card_faces[faceIndex].colors : this.data.colors
+    return faceIndex ? this.face(faceIndex).colors : this.data.colors
   }
   colorIdentity(faceIndex) {
     return this.data.color_identity
@@ -20,7 +20,7 @@ class CardWrapper extends Wrapper {
   }
 
   typeLine(faceIndex) {
-    return faceIndex ? this.data.card_faces[faceIndex].type_line : this.data.type_line
+    return faceIndex ? this.face(faceIndex).type_line : this.data.type_line
   }
   supertypes(faceIndex) {
     return this.typeLine(faceIndex).toLowerCase().split(' // ')[0].split(/\s+/)
@@ -31,7 +31,7 @@ class CardWrapper extends Wrapper {
   }
 
   name(faceIndex) {
-    return faceIndex ? this.data.card_faces[faceIndex].name : this.data.name
+    return faceIndex ? this.face(faceIndex).name : this.data.name
   }
   setCode() {
     return this.data.set
@@ -56,38 +56,38 @@ class CardWrapper extends Wrapper {
     return this.data.cmc
   }
   manaCost(faceIndex) {
-    return faceIndex ? this.data.card_faces[faceIndex].mana_cost : this.data.mana_cost
+    return faceIndex ? this.face(faceIndex).mana_cost : this.data.mana_cost
   }
   producedMana() {
     return this.data.produced_mana
   }
 
   oracleText(faceIndex) {
-    return faceIndex ? this.data.card_faces[faceIndex].oracle_text : this.data.oracle_text
+    return faceIndex ? this.face(faceIndex).oracle_text : this.data.oracle_text
   }
   flavorText(faceIndex) {
-    return faceIndex ? this.data.card_faces[faceIndex].flavor_text : this.data.flavor_text
+    return faceIndex ? this.face(faceIndex).flavor_text : this.data.flavor_text
   }
 
   power(faceIndex) {
-    return faceIndex ? this.data.card_faces[faceIndex].power : this.data.power
+    return faceIndex ? this.face(faceIndex).power : this.data.power
   }
   toughness(faceIndex) {
-    return faceIndex ? this.data.card_faces[faceIndex].toughness : this.data.toughness
+    return faceIndex ? this.face(faceIndex).toughness : this.data.toughness
   }
   loyalty(faceIndex) {
-    return faceIndex ? this.data.card_faces[faceIndex].loyalty : this.data.loyalty
+    return faceIndex ? this.face(faceIndex).loyalty : this.data.loyalty
   }
   defense(faceIndex) {
-    return faceIndex ? this.data.card_faces[faceIndex].defense : this.data.defense
+    return faceIndex ? this.face(faceIndex).defense : this.data.defense
   }
 
 
   artist(faceIndex) {
-    return faceIndex ? this.data.card_faces[faceIndex].artist : this.data.artist
+    return faceIndex ? this.face(faceIndex).artist : this.data.artist
   }
   imageUri(faceIndex) {
-    return faceIndex ? this.data.card_faces[faceIndex].image_uri : this.data.image_uri
+    return faceIndex ? this.face(faceIndex).image_uri : this.data.image_uri
   }
 
 
@@ -114,8 +114,53 @@ class CardWrapper extends Wrapper {
     return false
   }
 
+  face(index) {
+    if (!this.data.card_faces) {
+      console.log(this.data)
+      throw new Error('stop 0')
+    }
+
+    if (!this.data.card_faces[index]) {
+      console.log(this.data)
+      throw new Error('stop 1', index)
+    }
+    return this.data.card_faces[index]
+  }
   numFaces() {
     return this.data.card_faces.length
+  }
+
+  same(other) {
+    const topEquals = (
+      this.name() === other.name()
+      && this.layout() === other.layout()
+      && this.typeLine() === other.typeLine()
+      && this.cmc() === other.cmc()
+      && this.numFaces() === other.numFaces()
+    )
+
+    if (!topEquals) {
+      return false
+    }
+
+    for (let i = 0; i < this.numFaces(); i++) {
+      const faceEquals = (
+        this.name(i) === other.name(i)
+        && this.oracleText(i) === other.oracleText(i)
+        && this.typeLine(i) === other.typeLine(i)
+        && this.manaCost(i) === other.manaCost(i)
+        && this.defense(i) === other.defense(i)
+        && this.loyalty(i) === other.loyalty(i)
+        && this.power(i) === other.power(i)
+        && this.toughness(i) === other.toughness(i)
+      )
+
+      if (!faceEquals) {
+        return false
+      }
+    }
+
+    return true
   }
 
   matchesFilters(filters) {

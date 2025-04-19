@@ -91,15 +91,6 @@ export default {
   },
 
   computed: {
-    face() {
-      if (this.card.card_faces) {
-        return Object.assign({}, this.card, this.card.card_faces[this.index])
-      }
-      else {
-        return this.card
-      }
-    },
-
     achievements() {
       return this.$store.getters['magic/cube/achievementsForCard'](this.card)
     },

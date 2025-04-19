@@ -34,6 +34,15 @@ export default {
   },
 
   actions: {
+    async addCard({ dispatch, state }, { card, comment }) {
+      await this.$post('/api/magic/card/create', {
+        cardData: card.data,
+        cubeId: state.cube._id,
+        comment: comment || "Added via cubeStore.addCard",
+      })
+      await dispatch('loadCube', { cubeId: state.cube._id })
+    },
+
     async claimAchievement({ commit, dispatch, state }, { achId, userId }) {
       await this.$post('/api/magic/achievement/claim', {
         achId,
@@ -77,7 +86,7 @@ export default {
     },
 
     async save({ dispatch }, cube) {
-      await dispatch('magic/file/save', cube.serialize(), { root: true })
+      throw new Error('not implemented')
     },
   },
 }

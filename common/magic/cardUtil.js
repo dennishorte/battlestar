@@ -265,32 +265,6 @@ CardUtil.parseOracleText = function(text) {
   return output
 }
 
-CardUtil.frameColor = function(card) {
-  if (card.colors.length === 1) {
-    switch (card.colors[0].toUpperCase()) {
-      case 'R': return 'red';
-      case 'W': return 'white';
-      case 'U': return 'blue';
-      case 'G': return 'green';
-      case 'B': return 'black';
-      default:
-        throw new Error('Unknown single color: ' + card.colors[0])
-    }
-  }
-
-  else if (card.colors.length > 1) {
-    return 'gold'
-  }
-
-  else if (this.isLand(card)) {
-    return 'land'
-  }
-
-  else {
-    return 'artifact'
-  }
-}
-
 CardUtil.manaSymbolFromString = function(text) {
   text = text.toLowerCase()
 
@@ -471,41 +445,4 @@ function parseCardLineName(line) {
   }
 
   return output
-}
-
-// Return true if the playable stats are the same, false otherwise.
-CardUtil.playableStatsEquals = function(a, b) {
-  const topEquals = (
-    a.name === b.name
-    && a.layout === b.layout
-    && a.type_line === b.type_line
-    && a.cmc === b.cmc
-    && a.card_faces.length === b.card_faces.length
-  )
-
-  if (!topEquals) {
-    return false
-  }
-
-  for (let i = 0; i < a.card_faces.length; i++) {
-    const af = a.card_faces[i]
-    const bf = b.card_faces[i]
-
-    const faceEquals = (
-      af.name === bf.name
-      && af.oracle_text === bf.oracle_text
-      && af.type_line === bf.type_line
-      && af.mana_cost === bf.mana_cost
-      && af.defense === bf.defense
-      && af.loyalty === bf.loyalty
-      && af.power === bf.power
-      && af.toughness === bf.toughness
-    )
-
-    if (!faceEquals) {
-      return false
-    }
-  }
-
-  return true
 }

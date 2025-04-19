@@ -1,20 +1,6 @@
 const db = require('@models/db.js')
 
 /**
- * Fetch all cards
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-exports.fetchAll = async (req, res) => {
-  const cardData = await db.magic.card.fetchAll(req.body.source)
-
-  res.json({
-    status: 'success',
-    ...cardData
-  })
-}
-
-/**
  * Create a card
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -59,6 +45,20 @@ exports.create = async (req, res) => {
       message: error.message
     })
   }
+}
+
+/**
+ * Fetch all cards
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.fetchAll = async (req, res) => {
+  const cardData = await db.magic.card.fetchAll(req.body.source)
+
+  res.json({
+    status: 'success',
+    ...cardData
+  })
 }
 
 /**
