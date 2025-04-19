@@ -1,5 +1,6 @@
 import { get as getKey, set as setKey } from 'idb-keyval'
 import { mag, util } from 'battlestar-common'
+import UICardWrapper from '@/modules/magic/util/card.wrapper'
 
 
 export default {
@@ -103,7 +104,7 @@ export default {
     getByIds({ state }, cardIds) {
       return cardIds
         .map(id => state.cards.byId[id])
-        .map(raw => mag.util.proxy.card(raw))
+        .map(card => new UICardWrapper(card))
     },
 
     async save({ dispatch }, { cubeId, updated, comment }) {

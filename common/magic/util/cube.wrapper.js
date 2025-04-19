@@ -1,8 +1,9 @@
+const Wrapper = require('./wrapper')
 const util = require('../../lib/util.js')
 
-
-class CubeMethods {
-  constructor() {
+class CubeWrapper extends Wrapper {
+  constructor(cube) {
+    super(cube)
     this.props = {
       cards: null,
     }
@@ -36,4 +37,4 @@ class CubeMethods {
   }
 }
 
-module.exports = CubeMethods
+module.exports = CubeWrapper

@@ -8,12 +8,12 @@
   >
 
     <div class="name">
-      <i class="bi bi-lightning-fill" v-if="isScarred"></i>
-      <slot name="name">{{ name }}</slot>
+      <i class="bi bi-lightning-fill" v-if="card.isScarred()"></i>
+      <slot name="name">{{ this.card.name() }}</slot>
     </div>
 
     <div class="extra-info">
-      <ManaCost v-if="showManaCost" class="mana-cost" :cost="manaCost" />
+      <ManaCost v-if="showManaCost" class="mana-cost" :cost="this.card.manaCost(0)" />
       <div v-else-if="showPower" class="mana-cost">
         {{ powerToughness }}
       </div>
@@ -25,7 +25,6 @@
 
 <script>
 import ManaCost from './ManaCost'
-import { mag } from 'battlestar-common'
 
 
 export default {
@@ -60,52 +59,33 @@ export default {
   },
 
   computed: {
-    data() {
-      if (this.card.data) {
-        return this.card.data
-      }
-      else {
-        return this.$store.getters['magic/cards/getLookupFunc'](this.card)
-      }
-    },
-
-    isScarred() {
-      return mag.util.card.isScarred(this.card)
-    },
-
-    name() {
-      return this.data ? this.data.name : this.card.name
-    },
-
-    manaCost() {
-      return this.data ? this.data.card_faces[0].mana_cost : ''
-    },
-
     powerToughness() {
-      if (this.card.morph) {
-        return '2/2'
-      }
+      return ''
 
-      const face = this.card.data.card_faces.find(face => face.name === this.card.activeFace)
-      if (face.power) {
-        return `${face.power}/${face.toughness}`
-      }
-      else {
-        return ''
-      }
+      /* if (this.card.morph) {
+       *   return '2/2'
+       * }
+
+       * const face = this.card.data.card_faces.find(face => face.name === this.card.activeFace)
+       * if (face.power) {
+       *   return `${face.power}/${face.toughness}`
+       * }
+       * else {
+       *   return ''
+       * } */
     },
   },
 
   methods: {
     mouseover() {
-      if (this.data && !this.hidePopup) {
-        this.$store.commit('magic/setMouseoverCard', this.data)
+      if (this.card && !this.hidePopup) {
+        this.$store.commit('magic/setMouseoverCard', this.card)
       }
     },
 
     mouseleave() {
-      if (this.data) {
-        this.$store.commit('magic/unsetMouseoverCard', this.data)
+      if (this.card) {
+        this.$store.commit('magic/unsetMouseoverCard', this.card)
       }
     },
 

@@ -15,8 +15,6 @@
 
 
 <script>
-import { mag } from 'battlestar-common'
-
 import CardListItem from '../CardListItem'
 import CubeBreakdownManaCostDivider from './CubeBreakdownManaCostDivider'
 
@@ -40,11 +38,8 @@ export default {
   computed: {
     sortedCardlist() {
       const sortedCards = this.cardlist.sort((l, r) => {
-        if (!l.data || !r.data) {
-          return 0
-        }
         return (
-          l.data.cmc - r.data.cmc
+          l.cmc() - r.cmc()
           || l.data.name.localeCompare(r.data.name)
         )
       })
@@ -53,7 +48,7 @@ export default {
       const output = []
 
       for (const card of sortedCards) {
-        const cmc = Math.ceil(mag.util.card.cmc(card))
+        const cmc = Math.ceil(card.cmc())
 
         if (cmc !== manaCost) {
           output.push({

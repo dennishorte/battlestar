@@ -52,12 +52,7 @@ export default {
     },
 
     faceIndices() {
-      if (this.card.card_faces) {
-        return util.range(this.card.card_faces.length)
-      }
-      else {
-        return [0]
-      }
+      return util.range(this.card.numFaces())
     },
   },
 }

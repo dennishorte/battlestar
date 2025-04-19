@@ -1,4 +1,4 @@
-import { mag } from 'battlestar-common'
+import UICubeWrapper from '@/modules/magic/util/cube.wrapper'
 
 export default {
   namespaced: true,
@@ -22,7 +22,7 @@ export default {
           .achievements
           .filter(ach => !ach.claimed)
           .filter(ach => ach.filters && ach.filters.length > 0)
-          .filter(ach => mag.util.card.filtersMatchCard(ach.filters, card))
+          .filter(ach => card.matchesFilters(ach.filters))
       }
     },
   },
@@ -62,7 +62,7 @@ export default {
       state.cubeLoaded = false
 
       const response = await this.$post('/api/magic/cube/fetch', { cubeId })
-      const cube = mag.util.proxy.cube(response.cube)
+      const cube = new UICubeWrapper(response.cube)
 
       const cards = await dispatch('magic/cards/getByIds', cube.cardlist, { root: true })
       cube.setCards(cards)

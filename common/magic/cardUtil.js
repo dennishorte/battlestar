@@ -1,7 +1,6 @@
 const util = require('../lib/util.js')
 
 const CardUtil = {
-  id: require('./cardId.js'),
   lookup: require('./cardLookup.js'),
 }
 module.exports = CardUtil
@@ -71,59 +70,6 @@ CardUtil.sortTypes = [
   'instant',
   'sorcery',
 ]
-
-CardUtil.colorKey = function(colors) {
-  return colors.map(c => c.toLowerCase()).sort().join('')
-}
-
-CardUtil.cmc = function(card) {
-  if (card.data) {
-    card = card.data
-  }
-  else {
-    return 0
-  }
-  return card.cmc
-}
-
-CardUtil.supertypes = function(card) {
-  if (card.type_line) {
-    // do nothing
-  }
-  else if (card.data) {
-    card = card.data
-  }
-  else {
-    return []
-  }
-
-  return card
-    .type_line
-    .split(' // ')
-    .map(cardType => cardType.split(CardUtil.TYPE_DIVIDER)[0].split(' '))
-    .flat()
-    .map(kind => kind.toLowerCase())
-}
-
-CardUtil.identity = function(card) {
-  if (card.data) {
-    card = card.data
-  }
-  else {
-    return []
-  }
-  return card.color_identity
-}
-
-CardUtil.colors = function(card) {
-  if (card.data) {
-    card = card.data
-  }
-  else {
-    return []
-  }
-  return card.colors
-}
 
 CardUtil.calculateManaCost = function(card) {
   const symbolRegex = /[{]([^{}]+)[}]/g
@@ -207,25 +153,6 @@ CardUtil.blank = function() {
   }
 }
 
-CardUtil.equals = function(a, b) {
-  return this.softEquals(a, b)
-}
-
-CardUtil.softEquals = function(a, b) {
-  const aName = a.name.split(' // ')[0].toLowerCase()
-  const bName = b.name.split(' // ')[0].toLowerCase()
-
-  return aName === bName
-}
-
-CardUtil.strictEquals = function(a, b) {
-  return (
-    a.name === b.name
-    && a.set == b.set
-    && a.collector_number === b.collector_number
-  )
-}
-
 CardUtil.getSortType = function(card) {
   if (card) {
     const typeline = card.card_faces[0].type_line.toLowerCase()
@@ -238,30 +165,6 @@ CardUtil.getSortType = function(card) {
   }
 
   return 'other'
-}
-
-CardUtil.isLand = function(card) {
-  if (card.data) {
-    card = card.data
-  }
-  else {
-    return false
-  }
-  return card.type_line.toLowerCase().includes('land')
-}
-
-CardUtil.isArtifact = function(card) {
-  if (card.data) {
-    card = card.data
-  }
-  else {
-    return false
-  }
-  return card.type_line.toLowerCase().includes('artifact')
-}
-
-CardUtil.isScarred = function(card) {
-  return Boolean(card.custom_id)
 }
 
 CardUtil.parseRulesLine = function(line) {

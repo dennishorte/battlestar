@@ -32,14 +32,14 @@ export default {
     },
 
     cardMouseover(card) {
-      if (card && card.data) {
-        this.$store.commit('magic/setMouseoverCard', card.data)
+      if (card) {
+        this.$store.commit('magic/setMouseoverCard', card)
       }
     },
 
     cardMouseleave(card) {
-      if (card && card.data) {
-        this.$store.commit('magic/unsetMouseoverCard', card.data)
+      if (card) {
+        this.$store.commit('magic/unsetMouseoverCard', card)
       }
     },
 

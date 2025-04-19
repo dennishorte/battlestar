@@ -301,13 +301,13 @@ export default {
     // Card pop-up methods
 
     mouseover(cardIdDict) {
-      const data = this.$store.getters['magic/cards/getLookupFunc'](cardIdDict)
-      this.$store.commit('magic/setMouseoverCard', data)
+      /* const data = this.$store.getters['magic/cards/getLookupFunc'](cardIdDict)
+       * this.$store.commit('magic/setMouseoverCard', data) */
     },
 
     mouseleave(cardIdDict) {
-      const data = this.$store.getters['magic/cards/getLookupFunc'](cardIdDict)
-      this.$store.commit('magic/unsetMouseoverCard', data)
+      /* const data = this.$store.getters['magic/cards/getLookupFunc'](cardIdDict)
+       * this.$store.commit('magic/unsetMouseoverCard', data) */
     },
 
     mousemove(event) {

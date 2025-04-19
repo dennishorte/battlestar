@@ -1,5 +1,5 @@
 <template>
-  <Modal id="card-editor-modal">
+  <Modal id="card-editor-modal" v-if="Boolean(updatedCard)">
     <template #header>
       Card Editor
       <button

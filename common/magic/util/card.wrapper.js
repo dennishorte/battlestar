@@ -1,11 +1,129 @@
-class CardMethods {
+const Wrapper = require('./wrapper')
+const cardUtil = require('../cardUtil')
+
+class CardWrapper extends Wrapper {
+  constructor(card) {
+    super(card)
+  }
+
+  colors(faceIndex) {
+    return faceIndex ? this.data.card_faces[faceIndex].colors : this.data.colors
+  }
+  colorIdentity(faceIndex) {
+    return this.data.color_identity
+  }
+  colorKey(faceIndex) {
+    return this.colors(faceIndex).map(c => c.toLowerCase()).sort().join('')
+  }
+  colorName(faceIndex) {
+    return cardUtil.COLOR_KEY_TO_NAME[this.colorKey(faceIndex)]
+  }
+
+  typeLine(faceIndex) {
+    return faceIndex ? this.data.card_faces[faceIndex].type_line : this.data.type_line
+  }
+  supertypes(faceIndex) {
+    return this.typeLine(faceIndex).toLowerCase().split(' // ')[0].split(/\s+/)
+  }
+  subtypes(faceIndex) {
+    const subtypesString = this.typeLine(faceIndex).toLowerCase().split(' // ')[1]
+    return subtypesString ? subtypesString.split(/\s+/) : []
+  }
+
+  name(faceIndex) {
+    return faceIndex ? this.data.card_faces[faceIndex].name : this.data.name
+  }
+  setCode() {
+    return this.data.set
+  }
+  collectorNumber() {
+    return this.data.collector_number
+  }
+  layout() {
+    return this.data.layout
+  }
+  rarity() {
+    return this.data.rarity
+  }
+  isDigital() {
+    return this.data.digital
+  }
+  legalities() {
+    return this.data.legal
+  }
+
+  cmc() {
+    return this.data.cmc
+  }
+  manaCost(faceIndex) {
+    return faceIndex ? this.data.card_faces[faceIndex].mana_cost : this.data.mana_cost
+  }
+  producedMana() {
+    return this.data.produced_mana
+  }
+
+  oracleText(faceIndex) {
+    return faceIndex ? this.data.card_faces[faceIndex].oracle_text : this.data.oracle_text
+  }
+  flavorText(faceIndex) {
+    return faceIndex ? this.data.card_faces[faceIndex].flavor_text : this.data.flavor_text
+  }
+
+  power(faceIndex) {
+    return faceIndex ? this.data.card_faces[faceIndex].power : this.data.power
+  }
+  toughness(faceIndex) {
+    return faceIndex ? this.data.card_faces[faceIndex].toughness : this.data.toughness
+  }
+  loyalty(faceIndex) {
+    return faceIndex ? this.data.card_faces[faceIndex].loyalty : this.data.loyalty
+  }
+  defense(faceIndex) {
+    return faceIndex ? this.data.card_faces[faceIndex].defense : this.data.defense
+  }
+
+
+  artist(faceIndex) {
+    return faceIndex ? this.data.card_faces[faceIndex].artist : this.data.artist
+  }
+  imageUri(faceIndex) {
+    return faceIndex ? this.data.card_faces[faceIndex].image_uri : this.data.image_uri
+  }
+
+
+  isArtifact(faceIndex) {
+    return this.typeLine(faceIndex).toLowerCase().includes('artifact')
+  }
+  isColorless(faceIndex) {
+    return this.colorIdentity(faceIndex).length === 0
+  }
+  isLand(faceIndex) {
+    return this.typeLine(faceIndex).toLowerCase().includes('land')
+  }
+  isMulticolor(faceIndex) {
+    return this.colorIdentity(faceIndex).length > 1
+  }
+  isSiege(faceIndex) {
+    return this.subtypes(faceIndex).includes('siege')
+  }
+
+  isLegalIn(format) {
+    return this.data.legal && this.data.legal.includes(format)
+  }
+  isScarred() {
+    return false
+  }
+
+  numFaces() {
+    return this.data.card_faces.length
+  }
+
   matchesFilters(filters) {
-    return filters.every(filter => _applyOneFilter(card, filter))
+    return filters.every(filter => _applyOneFilter(this, filter))
   }
 }
 
-module.exports = CardMethods
-
+module.exports = CardWrapper
 
 ////////////////////////////////////////////////////////////////////////////////
 // Filter Logic

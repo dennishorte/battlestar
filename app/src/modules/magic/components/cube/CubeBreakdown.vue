@@ -1,7 +1,5 @@
 <template>
   <div class="cube-breakdown">
-    {{ cardlist }}
-
     <CubeBreakdownColumn
       v-for="column in columns"
       :cardlist="column.cards"
@@ -52,17 +50,17 @@ export default {
       }
 
       const collected = util.array.collect(this.cardlist, card => {
-        if (mag.util.card.isLand(card)) {
+        if (card.isLand()) {
           return 'land'
         }
-        else if (mag.util.card.identity(card).length === 0) {
+        else if (card.isColorless()) {
           return 'colorless'
         }
-        else if (mag.util.card.identity(card).length > 1) {
+        else if (card.isMulticolor()) {
           return 'multicolor'
         }
         else {
-          return mag.util.card.colorSymbolToName(mag.util.card.identity(card)[0])
+          return mag.util.card.colorSymbolToName(card.colorIdentity()[0])
         }
       })
 

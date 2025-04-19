@@ -5,7 +5,7 @@
         <div class="card-frame">
 
           <div class="frame-header frame-foreground editable" data-edit-field="header">
-            <div class="frame-card-name">{{ face.name }}</div>
+            <div class="frame-card-name">{{ card.name(index) }}</div>
 
             <div class="frame-mana-cost">
               <ManaCost :cost="manaCost" />
@@ -20,7 +20,7 @@
           </div>
 
           <div class="frame-type-line frame-foreground editable" data-edit-field="type-line">
-            <div class="frame-card-type">{{ face.type_line }}</div>
+            <div class="frame-card-type">{{ card.typeLine(index) }}</div>
             <div class="frame-card-icon" :class="rarity">{{ setIcon }}</div>
           </div>
 
@@ -48,7 +48,7 @@
 
       <div class="artist-name editable" data-edit-field="image-url">
         <i class="ms ms-artist-nib"></i>
-        {{ face.artist }}
+        {{ card.artist(index) }}
       </div>
 
     </div> <!-- border -->
@@ -110,34 +110,30 @@ export default {
         `card-container-${this.size}px`
       ]
 
-      if (this.isScarred) {
+      if (this.card.isScarred()) {
         classes.push('scarred')
       }
 
-      const frameColor = mag.util.card.frameColor(this.face)
+      const frameColor = this.card.frameColor(this.index)
       classes.push(`${frameColor}-card`)
 
       return classes
     },
 
     flavorText() {
-      return this.face.flavor_text
+      return this.card.flavorText(this.index)
     },
 
     imageUrl() {
-      return this.face.image_uri
-    },
-
-    isScarred() {
-      return Boolean(this.card.custom_id)
+      return this.card.imageUri(this.index)
     },
 
     manaCost() {
-      return this.face.mana_cost
+      return this.card.manaCost(this.index)
     },
 
     oracleText() {
-      return this.face.oracle_text
+      return this.card.oracleText(this.index)
     },
 
     setIcon() {
@@ -145,14 +141,14 @@ export default {
     },
 
     loyalty() {
-      if (this.face.power) {
-        return `${this.face.power}/${this.face.toughness}`
+      if (this.card.power(this.index)) {
+        return `${this.card.power(this.index)}/${this.card.toughness(this.index)}`
       }
-      else if (this.face.loyalty) {
-        return this.face.loyalty
+      else if (this.card.loyalty(this.index)) {
+        return this.card.loyalty(this.index)
       }
-      else if (this.face.type_line.includes('Siege') && this.face.defense) {
-        return this.face.defense
+      else if (this.card.isSiege(this.index)) {
+        return this.card.defense(this.index)
       }
       else {
         return ''
@@ -160,7 +156,7 @@ export default {
     },
 
     rarity() {
-      return this.face.rarity
+      return this.card.rarity(this.index)
     },
   },
 }

@@ -7,7 +7,6 @@ const {
 
 const cardUtil = require('./cardUtil.js')
 const deckUtil = require('./deckUtil.js')
-const proxy = require('./util/proxies.js')
 const res = require('./data.js')
 const util = require('../lib/util.js')
 
@@ -29,7 +28,11 @@ module.exports = {
   util: {
     card: cardUtil,
     deck: deckUtil,
-    proxy,
+    wrapper: {
+      card: require('./util/card.wrapper'),
+      cube: require('./util/cube.wrapper'),
+      deck: require('./util/deck.wrapper'),
+    },
   },
 }
 

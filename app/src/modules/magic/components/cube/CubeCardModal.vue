@@ -1,5 +1,5 @@
 <template>
-  <Modal id="cube-card-modal">
+  <Modal id="cube-card-modal" v-if="Boolean(card)">
     <template #header>Cube Card Viewer</template>
 
     <Card :card="data" :size="270" />

@@ -20,7 +20,6 @@
 import { mapState } from 'vuex'
 
 import Card from './Card'
-import Modal from '@/components/Modal'
 
 
 export default {
@@ -28,7 +27,6 @@ export default {
 
   components: {
     Card,
-    Modal,
   },
 
   props: {
