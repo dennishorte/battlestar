@@ -126,11 +126,11 @@ export default {
       }
 
       // In either case, update the local card database.
-      await dispatch('_reloadDatabase')
+      await dispatch('reloadDatabase')
       return response.card
     },
 
-    async _reloadDatabase({ dispatch, state }) {
+    async reloadDatabase({ dispatch, state }) {
       state.cardsReady = false
       await dispatch('ensureLoaded')
     },

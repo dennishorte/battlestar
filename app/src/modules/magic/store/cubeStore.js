@@ -40,6 +40,7 @@ export default {
         cubeId: state.cube._id,
         comment: comment || "Added via cubeStore.addCard",
       })
+      await dispatch('magic/cards/reloadDatabase', null, { root: true })
       await dispatch('loadCube', { cubeId: state.cube._id })
     },
 

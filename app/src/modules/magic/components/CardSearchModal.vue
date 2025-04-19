@@ -1,11 +1,11 @@
 <template>
-  <Modal @ok="onOkay">
+  <Modal @ok="onOkay" ref="modalTop">
     <template #header>
       <slot name="header"></slot>
     </template>
 
     <div class="type-ahead">
-      <input class="form-control" v-model="name" placeholder="card name" />
+      <input class="form-control" v-model="name" placeholder="card name" ref="searchField" />
     </div>
 
     <div class="versions">
@@ -79,7 +79,7 @@ export default {
     },
 
     matched() {
-      const base = this.cardsByName[this.name]
+      const base = this.cardsByName[this.name.toLowerCase()]
       if (!base) {
         return []
       }
@@ -105,6 +105,12 @@ export default {
       this.selected = card
     },
   },
+
+  mounted() {
+    this.$refs.modalTop.$el.addEventListener('shown.bs.modal', () => {
+      this.$refs.searchField.focus()
+    })
+  }
 }
 </script>
 
