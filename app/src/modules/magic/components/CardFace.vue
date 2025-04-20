@@ -27,19 +27,19 @@
             </div>
           </div>
 
-          <div class="editable test" data-edit-field="image-url">
+          <div>
             <img
               class="frame-art"
               alt="card art"
               :src="imageUrl" />
           </div>
 
-          <div class="frame-type-line frame-foreground editable" data-edit-field="type-line">
+          <div class="frame-type-line frame-foreground">
             <div class="frame-card-type">{{ card.typeLine(index) }}</div>
             <div class="frame-card-icon" :class="rarity">{{ setIcon }}</div>
           </div>
 
-          <div class="frame-text-box editable" data-edit-field="text-box">
+          <div class="frame-text-box">
             <OracleText :text="oracleText" />
 
             <div class="frame-flavor-wrapper">
@@ -54,14 +54,14 @@
             </div>
           </div>
 
-          <div class="frame-pt-loyalty frame-foreground editable" data-edit-field="loyalty" v-if="loyalty">
+          <div class="frame-pt-loyalty frame-foreground" v-if="loyalty">
             {{ loyalty }}
           </div>
 
         </div> <!-- frame -->
       </div> <!-- background -->
 
-      <div class="artist-name editable" data-edit-field="image-url">
+      <div class="artist-name">
         <i class="ms ms-artist-nib"></i>
         {{ card.artist(index) }}
       </div>
