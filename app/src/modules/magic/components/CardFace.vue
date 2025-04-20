@@ -1,19 +1,29 @@
 <template>
-  <div :class="containerClasses" :data-face-index="index">
+  <div :class="containerClasses">
     <div class="card-border">
       <div class="card-background">
         <div class="card-frame">
 
-          <div class="frame-header frame-foreground editable" data-edit-field="header">
-            <EditableDiv 
-              :text="card.name(index)" 
+          <div class="frame-header frame-foreground">
+            <EditableDiv
+              :text="card.name(index)"
               customClass="frame-card-name"
               :editable="true"
               field="name"
               @update="updateCardField" />
 
             <div class="frame-mana-cost">
-              <ManaCost :cost="manaCost" />
+              <EditableDiv
+                :text="manaCost"
+                customClass="frame-mana-cost"
+                :editable="true"
+                field="mana_cost"
+                :renderComponent="true"
+                @update="updateCardField">
+                <template v-slot:default="slotProps">
+                  <ManaCost :cost="slotProps.text" />
+                </template>
+              </EditableDiv>
             </div>
           </div>
 
