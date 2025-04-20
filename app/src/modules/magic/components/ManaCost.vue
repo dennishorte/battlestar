@@ -35,5 +35,7 @@ export default {
 .mana-cost {
   overflow: hidden;
   max-height: 100%;
+  display: flex;
+  flex-wrap: nowrap;
 }
 </style>
