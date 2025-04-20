@@ -17,7 +17,7 @@
 
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 import Card from './Card'
 
@@ -41,17 +41,15 @@ export default {
     },
   },
 
-  data() {
-    return {
-      allReady: false,
-    }
-  },
-
   computed: {
     ...mapState('magic', {
       mouseoverCard: 'mouseoverCard',
       mouseoverX: 'mouseoverX',
       mouseoverY: 'mouseoverY',
+    }),
+
+    ...mapGetters('magic', {
+      allReady: 'ready',
     }),
 
     ...mapState('magic/cards', {
@@ -111,7 +109,6 @@ export default {
     tryAfterLoaded() {
       if (!this.alsoLoading && this.cardsReady) {
         this.afterLoaded()
-        this.allReady = true
       }
     },
   },
@@ -122,7 +119,6 @@ export default {
     },
 
     cardsReady(newValue) {
-      this.$emit('cards-ready')
       this.tryAfterLoaded()
     },
   },
@@ -132,7 +128,7 @@ export default {
       this.$store.commit('magic/clearMouseoverCard')
     })
 
-    this.$store.dispatch('magic/cards/ensureLoaded')
+    this.$store.dispatch('magic/loadCards')
     this.$store.dispatch('magic/loadUsers')
   },
 

@@ -20,7 +20,16 @@ export default {
     mouseoverY: 0,
 
     users: [],
+
+    loadingCards: true,
+    loadingUsers: true,
   }),
+
+  getters: {
+    ready(state) {
+      return !state.loadingCards && !state.loadingUsers
+    },
+  },
 
   mutations: {
     clearMouseoverCard(state) {
@@ -44,9 +53,17 @@ export default {
   },
 
   actions: {
+    async loadCards({ dispatch, state }) {
+      state.loadingCards = true
+      await dispatch('cards/ensureLoaded')
+      state.loadingCards = false
+    },
+
     async loadUsers({ state }) {
+      state.loadingUsers = true
       const { users } = await this.$post('/api/user/all')
       state.users = users
+      state.loadingUsers = false
     },
   },
 }

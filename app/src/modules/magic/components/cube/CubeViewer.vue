@@ -1,7 +1,7 @@
 <template>
-  <MagicWrapper :also-loading="!cubeLoaded" @cards-ready="reload">
+  <MagicWrapper>
 
-    <div class="container">
+    <div class="container" v-if="cubeLoaded">
 
       <div class="row">
         <div class="col-6">
@@ -82,16 +82,16 @@
         :users="users"
       />
 
-    </div>
 
-    <CardSearchModal @card-selected="addOneCard" id="cube-add-modal" />
-    <CubeImportModal @cube-updates="updateCube" />
-    <CubeCardModal :card="managedCard" :editable="cube.allowEdits" />
-    <CardEditorModal :original="managedCard" />
-    <ScarModal />
-    <AchievementModal />
-    <AchievementViewerModal />
-    <AchievementSearchLinkerModal :achievements="achievements" />
+      <CardSearchModal @card-selected="addOneCard" id="cube-add-modal" />
+      <CubeImportModal @cube-updates="updateCube" />
+      <CubeCardModal :card="managedCard" :editable="cube.allowEdits" />
+      <CardEditorModal :original="managedCard" />
+      <ScarModal />
+      <AchievementModal />
+      <AchievementViewerModal />
+      <AchievementSearchLinkerModal :achievements="achievements" />
+    </div>
   </MagicWrapper>
 </template>
 
@@ -100,7 +100,7 @@
 import mitt from 'mitt'
 
 import { mag, util } from 'battlestar-common'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import { nextTick } from 'vue'
 
 import AchievementModal from './AchievementModal'
@@ -165,6 +165,10 @@ export default {
   },
 
   computed: {
+    ...mapGetters('magic', {
+      rootReady: 'ready',
+    }),
+
     ...mapState('magic/cube', {
       cube: 'cube',
       cubeLoaded: 'cubeLoaded',
@@ -354,6 +358,12 @@ export default {
     async $route() {
       this.id = this.$route.params.id
       await this.reload()
+    },
+
+    rootReady(newValue) {
+      if (newValue) {
+        this.reload()
+      }
     },
   },
 
