@@ -23,6 +23,9 @@
                 <template v-slot:default="slotProps">
                   <ManaCost :cost="slotProps.text" />
                 </template>
+                <template v-slot:empty>
+                  <i class="ms ms-2x ms-ci ms-ci-5 empty-mana-indicator"></i>
+                </template>
               </EditableDiv>
             </div>
           </div>
@@ -194,5 +197,9 @@ div {
   font-size: 1.5em;
   padding: 2px 3px;
   border-radius: 50%;
+}
+
+.empty-mana-indicator {
+  opacity: 0.1;
 }
 </style>

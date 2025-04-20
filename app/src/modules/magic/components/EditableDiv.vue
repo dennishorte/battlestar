@@ -7,12 +7,15 @@
     @click="handleClick"
     @blur="onBlur"
     @input="onInput">
-    <template v-if="!isEditing && renderComponent">
+    <template v-if="!isEditing && renderComponent && !isEmpty">
       <slot :text="text"></slot>
     </template>
+    <template v-else-if="!isEditing && renderComponent && isEmpty && hasEmptySlot && editable">
+      <slot name="empty" :field="field"></slot>
+    </template>
     <template v-else-if="!renderComponent || isEditing">
-      <span v-if="isEmpty && !isEditing && editable" class="empty-placeholder">Click to edit</span>
-      <span v-else v-html="displayText"></span>
+      <span v-if="isEmpty && !isEditing && editable && !hasEmptySlot" class="empty-placeholder">{{ emptyText }}</span>
+      <span v-else>{{ displayText }}</span>
     </template>
   </div>
 </template>
@@ -41,6 +44,10 @@ export default {
     renderComponent: {
       type: Boolean,
       default: false
+    },
+    emptyText: {
+      type: String,
+      default: 'Click to edit'
     }
   },
 
@@ -58,6 +65,9 @@ export default {
   computed: {
     isEmpty() {
       return !this.text || this.text.trim() === '';
+    },
+    hasEmptySlot() {
+      return this.$slots && this.$slots.empty;
     }
   },
 
