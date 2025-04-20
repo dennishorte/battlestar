@@ -6,16 +6,14 @@
       :card="card"
       :index="index - 1"
       :size="size"
+      @update-face="updateFace"
     />
   </div>
 </template>
 
 
 <script>
-import { util } from 'battlestar-common'
-
 import CardFace from './CardFace'
-
 
 export default {
   name: 'GameCard',
@@ -51,6 +49,16 @@ export default {
       }
     },
   },
+
+  methods: {
+    updateFace({ index, field, value }) {
+      this.$emit('update-face', {
+        index,
+        field,
+        value
+      })
+    }
+  }
 }
 </script>
 

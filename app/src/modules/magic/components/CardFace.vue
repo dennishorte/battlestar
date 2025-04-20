@@ -5,7 +5,12 @@
         <div class="card-frame">
 
           <div class="frame-header frame-foreground editable" data-edit-field="header">
-            <div class="frame-card-name">{{ card.name(index) }}</div>
+            <EditableDiv 
+              :text="card.name(index)" 
+              customClass="frame-card-name"
+              :editable="true"
+              field="name"
+              @update="updateCardField" />
 
             <div class="frame-mana-cost">
               <ManaCost :cost="manaCost" />
@@ -57,10 +62,9 @@
 
 
 <script>
-import { mag } from 'battlestar-common'
-
 import ManaCost from './ManaCost'
 import OracleText from './OracleText'
+import EditableDiv from './EditableDiv'
 
 
 export default {
@@ -69,6 +73,7 @@ export default {
   components: {
     ManaCost,
     OracleText,
+    EditableDiv,
   },
 
   props: {
@@ -88,6 +93,20 @@ export default {
       type: Boolean,
       default: false,
     },
+    isEditable: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  methods: {
+    updateCardField({ field, value }) {
+      this.$emit('update-face', {
+        index: this.index,
+        field,
+        value
+      });
+    }
   },
 
   computed: {
