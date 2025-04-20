@@ -3,6 +3,8 @@
 
     <div class="container" v-if="cubeLoaded">
 
+      <CardEditor />
+
       <div class="row">
         <div class="col-6">
           <MagicMenu :title="cube.name" />
@@ -85,7 +87,6 @@
 
       <CardSearchModal @card-selected="addOneCard" id="cube-add-modal" />
       <CubeImportModal @cube-updates="updateCube" />
-      <CubeCardModal :card="managedCard" :editable="cube.allowEdits" />
       <CardEditorModal :original="managedCard" />
       <ScarModal />
       <AchievementModal />
@@ -107,11 +108,11 @@ import AchievementModal from './AchievementModal'
 import AchievementViewerModal from './AchievementViewerModal'
 import AchievementSearchLinkerModal from './AchievementSearchLinkerModal'
 import Achievements from './Achievements'
+import CardEditor from '../CardEditor'
 import CardEditorModal from '../CardEditorModal'
 import CubeBreakdown from './CubeBreakdown'
 import CardSearchModal from '../CardSearchModal'
 import CardFilters from '../CardFilters'
-import CubeCardModal from './CubeCardModal'
 import CubeImportModal from './CubeImportModal'
 import CubeMenu from './CubeMenu'
 import MagicMenu from '../MagicMenu'
@@ -127,11 +128,11 @@ export default {
     AchievementViewerModal,
     AchievementSearchLinkerModal,
     Achievements,
+    CardEditor,
     CardEditorModal,
     CardFilters,
     CardSearchModal,
     CubeBreakdown,
-    CubeCardModal,
     CubeImportModal,
     CubeMenu,
     MagicMenu,
@@ -230,6 +231,12 @@ export default {
     ////////////////////////////////////////////////////////////////////////////////
     // Sync methods
 
+    cardCloseup(card) {
+      console.log('card closeup', card.name())
+      this.bus.emit('card-editor:begin', card)
+      /* this.bus.emit('edit-card-in-modal', card) */
+    },
+
     editScar(scar) {
       this.$store.commit('magic/cube/manageScar', scar)
       this.$modal('scar-modal').show()
@@ -253,15 +260,6 @@ export default {
       const card = util.array.select(this.cube.cards())
       const link = this.$store.getters['magic/cards/cardLink'](card._id)
       this.$router.push(link)
-    },
-
-    showCardModal() {
-      if (this.cube.allowEdits) {
-        this.$modal('card-editor-modal').show()
-      }
-      else {
-        this.$modal('cube-card-modal').show()
-      }
     },
 
     updateCardFilters(filters) {
@@ -368,7 +366,7 @@ export default {
   },
 
   async mounted() {
-    this.bus.on('card-clicked', this.showCardModal)
+    this.bus.on('card-clicked', this.cardCloseup)
     this.bus.on('card-saved', this.saveCard)
     this.bus.on('achievement-show-filters', this.showAchievementFilters)
   },

@@ -1,14 +1,12 @@
 class Wrapper {
-  #originalFields
-
   constructor(obj) {
-    this.#originalFields = Object.keys(obj)
+    this._originalFields = Object.keys(obj)
     Object.assign(this, obj)
   }
 
   toJSON() {
     const output = {}
-    for (const field of this.#originalFields) {
+    for (const field of this._originalFields) {
       output[field] = this[field]
     }
     return output

@@ -166,6 +166,10 @@ class CardWrapper extends Wrapper {
   matchesFilters(filters) {
     return filters.every(filter => _applyOneFilter(this, filter))
   }
+
+  clone() {
+    return new CardWrapper(this.toJSON())
+  }
 }
 
 module.exports = CardWrapper

@@ -22,6 +22,10 @@ class UICardWrapper extends mag.util.wrapper.card {
       return this.colorName(faceIndex)
     }
   }
+
+  clone() {
+    return new UICardWrapper(this.toJSON())
+  }
 }
 
 module.exports = UICardWrapper

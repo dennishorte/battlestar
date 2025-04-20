@@ -1,8 +1,8 @@
 <template>
-  <div class="card-editor" v-if="Boolean(card)">
+  <div class="card-editor" v-if="Boolean(model)">
     <Card
       :size="270"
-      :card="card"
+      :card="editing"
       @click="editField"
       class="preview"
     />
@@ -10,9 +10,9 @@
     <div class="buttons">
       <button class="btn btn-primary" @click="addFace">Add Face</button>
 
-      <template v-if="card.card_faces.length > 1">
+      <template v-if="model.card_faces.length > 1">
         <button
-          v-for="(_, index) in card.card_faces"
+          v-for="(_, index) in model.card_faces"
           class="btn btn-warning"
           @click="removeFace(index)"
          >Remove {{ index }}</button>
@@ -23,14 +23,14 @@
       <label class="form-label">Name</label>
       <input
         class="form-control"
-        v-model="card.card_faces[faceIndex].name"
+        v-model="model.card_faces[faceIndex].name"
         @input="updateRootValues"
       />
 
       <label class="form-label">Mana Cost</label>
       <input
         class="form-control"
-        v-model="card.card_faces[faceIndex].mana_cost"
+        v-model="model.card_faces[faceIndex].mana_cost"
         @input="updateRootValues"
       />
     </template>
@@ -43,7 +43,7 @@
       <input class="form-control" v-model="subtypes" @input="updateRootValues" />
 
       <label class="form-label">Rarity</label>
-      <select class="form-select" v-model="card.card_faces[faceIndex].rarity">
+      <select class="form-select" v-model="model.card_faces[faceIndex].rarity">
         <option>common</option>
         <option>uncommon</option>
         <option>rare</option>
@@ -53,28 +53,28 @@
 
     <template v-if="fieldName === 'image-url'">
       <label class="form-label">Image Url</label>
-      <textarea class="form-control" v-model="card.card_faces[faceIndex].image_uri"></textarea>
+      <textarea class="form-control" v-model="model.card_faces[faceIndex].image_uri"></textarea>
 
       <label class="form-label">Artist</label>
-      <input class="form-control" v-model="card.card_faces[faceIndex].artist" />
+      <input class="form-control" v-model="model.card_faces[faceIndex].artist" />
     </template>
 
     <template v-if="fieldName === 'text-box'">
       <label class="form-label">Oracle Text</label>
-      <textarea class="form-control" v-model="card.card_faces[faceIndex].oracle_text"></textarea>
+      <textarea class="form-control" v-model="model.card_faces[faceIndex].oracle_text"></textarea>
 
       <label class="form-label">Flavor Text</label>
-      <textarea class="form-control" v-model="card.card_faces[faceIndex].flavor_text"></textarea>
+      <textarea class="form-control" v-model="model.card_faces[faceIndex].flavor_text"></textarea>
 
       <div class="ptl">
         <div>
           <label class="form-label">power</label>
-          <input class="form-control" v-model="card.card_faces[faceIndex].power" />
+          <input class="form-control" v-model="model.card_faces[faceIndex].power" />
         </div>
 
         <div>
           <label class="form-label">toughness</label>
-          <input class="form-control" v-model="card.card_faces[faceIndex].toughness" />
+          <input class="form-control" v-model="model.card_faces[faceIndex].toughness" />
         </div>
 
       </div>
@@ -82,12 +82,12 @@
       <div class="ptl">
         <div>
           <label class="form-label">loyalty</label>
-          <input class="form-control" v-model="card.card_faces[faceIndex].loyalty" />
+          <input class="form-control" v-model="model.card_faces[faceIndex].loyalty" />
         </div>
 
         <div>
           <label class="form-label">defense</label>
-          <input class="form-control" v-model="card.card_faces[faceIndex].defense" />
+          <input class="form-control" v-model="model.card_faces[faceIndex].defense" />
         </div>
       </div>
 
@@ -109,18 +109,14 @@ export default {
     Card,
   },
 
-  props: {
-    original: {
-      type: Object,
-      default: null,
-    },
-  },
-
   inject: ['bus'],
 
   data() {
     return {
-      card: null,
+      original: null,
+      editing: null,
+      model: null,
+
       faceIndex: 0,
       fieldName: '',
     }
@@ -158,6 +154,17 @@ export default {
   },
 
   methods: {
+    beginEditing(card) {
+      this.original = card
+      this.editing = card.clone()
+      this.model = this.editing.data
+      console.log('editing', this.editing.data)
+    },
+
+    completeEditing() {
+      this.bus.emit('card-editor:complete', this.updated)
+    },
+
     addFace() {
       this.card.card_faces.push(mag.util.card.blankFace())
       this.updateRootValues()
@@ -169,10 +176,6 @@ export default {
         this.faceIndex = this.card.card_faces.length - 1
       }
       this.updateRootValues()
-    },
-
-    originalUpdated() {
-      this.card = this.original ? util.deepcopy(this.original) : mag.util.card.blank()
     },
 
     editField(event) {
@@ -193,28 +196,8 @@ export default {
     },
   },
 
-  watch: {
-    card: {
-      handler(newValue, oldValue) {
-        // Some internal value of the card was changed, so we'll update our parent.
-        if (newValue === oldValue) {
-          this.bus.emit('card-updated', this.card)
-        }
-
-        // The original card has changed, causing this to change. Our parent is already aware of this.
-        else {
-          // Do nothing
-        }
-      },
-      deep: true,
-    },
-    original() {
-      this.originalUpdated()
-    },
-  },
-
   mounted() {
-    this.originalUpdated()
+    this.bus.on('card-editor:begin', this.beginEditing)
   },
 }
 </script>
@@ -230,22 +213,4 @@ export default {
   display: flex;
   flex-direction: row;
 }
-</style>
-
-
-<style>
-/* .editable:after {
-   content: '\A';
-   position: absolute;
-   width: 100%;
-   height: 100%;
-   top: 0;
-   left: 0;
-   background: rgba(0,200,255,0.4);
-   opacity: 0;
-   }
-
-   .editable:hover:after {
-   opacity: 1;
-   } */
 </style>

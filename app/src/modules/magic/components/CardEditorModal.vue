@@ -1,10 +1,10 @@
 <template>
-  <Modal id="card-editor-modal" v-if="Boolean(updatedCard)">
+  <Modal id="card-editor-modal">
     <template #header>
       Card Editor
       <button
         class="btn btn-outline-secondary"
-        v-if="!!data"
+        v-if="!!originalCard"
         @click="goToCardLink"
         data-bs-dismiss="modal">
         card link
@@ -13,10 +13,10 @@
 
     <slot name="before-card"></slot>
 
-    <CardEditor :original="data" @card-updated="cardUpdated" />
+    <CardEditor v-if="false" @card-updated="cardUpdated" />
 
     <template #footer>
-      <slot name="footer" :original="original" :updated="updatedCard">
+      <slot name="footer">
         <button class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
         <button class="btn btn-danger" @click="save" data-bs-dismiss="modal" :disabled="!updatedCard">save</button>
       </slot>
@@ -42,31 +42,24 @@ export default {
     Modal,
   },
 
-  props: {
-    original: Object,
-  },
-
   inject: ['bus'],
 
   data() {
     return {
-      updatedCard: null,
+      originalCard: null,
+      updated: false,
     }
   },
 
-  computed: {
-    data() {
-      return this.original ? this.original.data : null
-    },
-  },
-
   methods: {
-    cardUpdated(card) {
-      this.updatedCard = card
+    editCard(card) {
+      this.originalCard = card
+      this.updated = false
+      this.$modal('card-editor-modal').show()
     },
 
     goToCardLink() {
-      this.$router.push('/magic/card/' + this.data._id)
+      this.$router.push('/magic/card/' + this.card._id)
     },
 
     save() {
@@ -78,13 +71,8 @@ export default {
   },
 
   mounted() {
-    this.bus.on('card-updated', this.cardUpdated)
-  },
-
-  watch: {
-    original() {
-      this.updatedCard = null
-    }
+    this.bus.on('edit-card-in-modal', this.editCard)
+    this.bus.on('card-editor:updated', () => this.updated = true)
   },
 }
 </script>
