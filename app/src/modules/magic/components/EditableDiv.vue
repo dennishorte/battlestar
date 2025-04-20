@@ -59,12 +59,32 @@ export default {
     onBlur(event) {
       this.$emit('update', {
         field: this.field,
-        value: event.target.innerHTML
+        value: this.htmlToPlainText(event.target.innerHTML)
       })
     },
 
     onInput(event) {
-      this.$emit('input', event.target.innerHTML)
+      this.$emit('input', this.htmlToPlainText(event.target.innerHTML))
+    },
+
+    htmlToPlainText(html) {
+      // Create a temporary div to handle HTML conversion
+      const tempDiv = document.createElement('div')
+      tempDiv.innerHTML = html
+
+      // Replace <br> and <p> tags with newlines
+      const content = tempDiv.innerHTML
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/p><p>/gi, '\n')
+        .replace(/<[^>]*>/g, '')
+
+      // Decode HTML entities
+      return content
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
     }
   }
 }
