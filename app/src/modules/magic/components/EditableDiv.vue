@@ -2,7 +2,7 @@
   <div
     ref="editableDiv"
     class="editable-div"
-    :class="[customClass, {'is-editable': editable}]"
+    :class="[customClass, {'is-editable': editable, 'is-empty': isEmpty}]"
     :contenteditable="isEditing"
     @click="handleClick"
     @blur="onBlur"
@@ -11,7 +11,8 @@
       <slot :text="text"></slot>
     </template>
     <template v-else-if="!renderComponent || isEditing">
-      <span v-html="displayText"></span>
+      <span v-if="isEmpty && !isEditing && editable" class="empty-placeholder">Click to edit</span>
+      <span v-else v-html="displayText"></span>
     </template>
   </div>
 </template>
@@ -52,6 +53,12 @@ export default {
 
   created() {
     this.displayText = this.text || ''
+  },
+
+  computed: {
+    isEmpty() {
+      return !this.text || this.text.trim() === '';
+    }
   },
 
   watch: {
@@ -131,10 +138,49 @@ export default {
 .editable-div {
   min-height: 1em;
   cursor: text;
+  position: relative;
 }
 
 .editable-div.is-editable {
   border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+.editable-div.is-editable:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.editable-div.is-editable:before {
+  content: "✏️";
+  position: absolute;
+  opacity: 0;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  transition: opacity 0.2s ease;
+}
+
+.editable-div.is-editable:hover:before {
+  opacity: 1;
+}
+
+.editable-div.is-empty.is-editable {
+  min-width: 2em;
+  min-height: 1.2em;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.editable-div.is-empty.is-editable:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.empty-placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+  font-size: 0.9em;
 }
 
 .editable-div[contenteditable="true"] {
