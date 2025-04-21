@@ -7,16 +7,19 @@
     @click="handleClick"
     @blur="onBlur"
     @input="onInput">
-    <template v-if="!isEditing && renderComponent && !isEmpty">
+
+    <div v-show="showTextSlot">
       <slot :text="text"></slot>
-    </template>
-    <template v-else-if="!isEditing && renderComponent && isEmpty && hasEmptySlot && editable">
+    </div>
+
+    <div v-show="showEmptySlot">
       <slot name="empty" :field="field"></slot>
-    </template>
-    <template v-else-if="!renderComponent || isEditing">
-      <span v-if="isEmpty && !isEditing && editable && !hasEmptySlot" class="empty-placeholder">{{ emptyText }}</span>
-      <span v-else>{{ displayText }}</span>
-    </template>
+    </div>
+
+    <div v-show="showDisplayText">
+      <span v-show="showEmptyPlaceholder" class="empty-placeholder">{{ emptyText }}</span>
+      <span v-show="!showEmptyPlaceholder">{{ displayText }}</span>
+    </div>
   </div>
 </template>
 
@@ -64,11 +67,23 @@ export default {
 
   computed: {
     isEmpty() {
-      return !this.text || this.text.trim() === '';
+      return !this.text || this.text.trim() === ''
     },
     hasEmptySlot() {
-      return this.$slots && this.$slots.empty;
-    }
+      return this.$slots && this.$slots.empty
+    },
+    showDisplayText() {
+      return !this.renderComponent || this.isEditing
+    },
+    showEmptyPlaceholder() {
+      return !this.isEditing && this.isEmpty && !this.hasEmptySlot && this.editable
+    },
+    showEmptySlot() {
+      return !this.isEditing && this.isEmpty && this.renderComponent && this.hasEmptySlot && this.editable
+    },
+    showTextSlot() {
+      return !this.isEditing && !this.isEmpty && this.renderComponent
+    },
   },
 
   watch: {
