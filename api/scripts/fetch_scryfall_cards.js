@@ -210,8 +210,9 @@ function processSingleCard(card) {
   }
 
   return {
-    data: postfiltered[0],
+    _id: postfiltered[0]._id,
     source: 'scryfall',
+    data: postfiltered[0],
   }
 }
 
@@ -228,8 +229,9 @@ function processCards(cards) {
 
   // Format for database
   return postfilteredCards.map(data => ({
-    data,
+    _id: data._id,
     source: 'scryfall',
+    data,
   }))
 }
 

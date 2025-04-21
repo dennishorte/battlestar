@@ -5,6 +5,7 @@ const { ObjectId } = require('mongodb')
 /*
    By coercing all ids into ObjectId, we make sure that they are all handled the same inside
    the app, regardless of whether or not they came from the database or the user.
+   UUIDs will be left as strings.
  */
 function coerceMongoIds(req, res, next) {
   function _coerceIdsRecurse(obj) {
@@ -46,16 +47,23 @@ function coerceMongoIds(req, res, next) {
   }
 
   function _tryConvertToObjectId(key, value) {
-    if (
-      typeof value === 'string'
-      && value.length === 24
-      && /^[0-9a-f]*$/.test(value)
-    ) {
-      return new ObjectId(value)
-    }
-    else {
+    if (typeof value !== 'string') {
       return value
     }
+
+    // Check if it's a MongoDB ObjectId (24 hex characters)
+    if (value.length === 24 && /^[0-9a-f]{24}$/.test(value)) {
+      return new ObjectId(value)
+    }
+
+    // Check if it's a UUID (8-4-4-4-12 format)
+    if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)) {
+      // Leave UUIDs as strings
+      return value
+    }
+
+    // Return original value if it's neither
+    return value
   }
 
   _coerceIdsRecurse(req.body)
