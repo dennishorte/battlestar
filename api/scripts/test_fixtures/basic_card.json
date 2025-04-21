@@ -1,0 +1,25 @@
+{
+  "id": "card-id-123",
+  "name": "Lightning Bolt",
+  "lang": "en",
+  "mana_cost": "{R}",
+  "type_line": "Instant",
+  "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+  "legalities": {
+    "standard": "not_legal",
+    "modern": "legal",
+    "legacy": "legal",
+    "vintage": "legal",
+    "commander": "legal"
+  },
+  "image_uris": {
+    "art_crop": "https://example.com/lightning_bolt.jpg",
+    "normal": "https://example.com/lightning_bolt_normal.jpg"
+  },
+  "colors": ["R"],
+  "color_identity": ["R"],
+  "cmc": 1,
+  "rarity": "common",
+  "set": "TST",
+  "collector_number": "185"
+} 

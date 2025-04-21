@@ -384,6 +384,10 @@ Util.toTitleCase = function(str) {
     .join(' ')
 }
 
+Util.toSnakeCase = function(str) {
+  return str.toLowerCase().replace(/\W/g, '_')
+}
+
 Util.deepcopy = function(obj) {
   return JSON.parse(JSON.stringify(obj))
 }

@@ -1,0 +1,66 @@
+{
+  "data": {
+    "id": "c0ef6737-8e85-42ca-8ee6-6a34f9462de3",
+    "layout": "transform",
+    "cmc": 4,
+    "color_identity": [
+      "U"
+    ],
+    "card_faces": [
+      {
+        "name": "Invasion of Vryn",
+        "mana_cost": "{3}{U}",
+        "type_line": "Battle — Siege",
+        "oracle_text": "(As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, draw three cards, then discard a card.",
+        "colors": [
+          "U"
+        ],
+        "defense": "4",
+        "artist": "Leon Tukker",
+        "image_uri": "https://cards.scryfall.io/art_crop/front/c/0/c0ef6737-8e85-42ca-8ee6-6a34f9462de3.jpg?1739657380"
+      },
+      {
+        "name": "Overloaded Mage-Ring",
+        "mana_cost": "",
+        "type_line": "Artifact",
+        "oracle_text": "{1}, {T}, Sacrifice this artifact: Copy target spell you control. You may choose new targets for the copy. (A copy of a permanent spell becomes a token.)",
+        "colors": [
+          "U"
+        ],
+        "color_indicator": [
+          "U"
+        ],
+        "flavor_text": "\"On my signal, disable the safeguards. Let's blow these metal freaks right back to their own world!\"\n—Gav Beleren, mage-ring engineer",
+        "artist": "Leon Tukker",
+        "image_uri": "https://cards.scryfall.io/art_crop/back/c/0/c0ef6737-8e85-42ca-8ee6-6a34f9462de3.jpg?1739657380"
+      }
+    ],
+    "set": "mom",
+    "collector_number": "64",
+    "digital": false,
+    "rarity": "uncommon",
+    "name": "Invasion of Vryn // Overloaded Mage-Ring",
+    "colors": [
+      "U"
+    ],
+    "type_line": "Battle — Siege // Artifact",
+    "legal": [
+      "standard",
+      "future",
+      "historic",
+      "timeless",
+      "gladiator",
+      "pioneer",
+      "explorer",
+      "modern",
+      "legacy",
+      "vintage",
+      "commander",
+      "oathbreaker",
+      "standardbrawl",
+      "brawl",
+      "duel"
+    ]
+  },
+  "source": "scryfall"
+}

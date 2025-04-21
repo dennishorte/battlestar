@@ -2,6 +2,7 @@ const axios = require('axios')
 const fs = require('fs')
 const util = require('../../common/lib/util.js')
 const path = require('path')
+const { mag } = require('battlestar-common')
 
 
 const rootFields = [
@@ -15,13 +16,13 @@ const rootFields = [
   "set",
   "cmc",
   "digital",
+  "produced_mana",
 ]
 
 const faceFields = [
   "artist",
   "defense",
   "flavor_text",
-  "id",
   "image_uris",
   "loyalty",
   "mana_cost",
@@ -33,13 +34,11 @@ const faceFields = [
 
   "color_indicator",
   "colors",
-  "produced_mana",
 ]
 
 const combinedFields = [
   "name",
   "colors",
-  "produced_mana",
   "type_line",
 ]
 
@@ -52,16 +51,19 @@ function adjustFaces(card) {
   }
 
   // Move face fields into card_faces.
-  for (const face of card.card_faces) {
-    for (const key of faceFields) {
+  for (const key of faceFields) {
+    for (const face of card.card_faces) {
       if (card[key] && !face[key]) {
         face[key] = card[key]
       }
-
-      if (card[key]) {
-        delete card[key]
-      }
     }
+
+    delete card[key]
+  }
+
+  // Split cards need to recalculate their colors based on their actual casting cost.
+  if (card.layout === 'split') {
+    mag.util.card.updateColors(card)
   }
 
   // Remove all other fields
@@ -79,17 +81,6 @@ function adjustFaces(card) {
   for (const key of Object.keys(card)) {
     if (!rootFields.includes(key)) {
       delete card[key]
-    }
-  }
-
-  // Duplicate face fields across all faces, if needed
-  const firstFace = card.card_faces[0]
-  const otherFaces = card.card_faces.slice(1)
-  for (const face of otherFaces) {
-    for (const [key, value] of Object.entries(firstFace)) {
-      if (!(key in face)) {
-        face[key] = value
-      }
     }
   }
 
@@ -111,9 +102,6 @@ function adjustFaces(card) {
 
 function cleanImageUris(card) {
   for (const face of card.card_faces) {
-    if (!face.image_uris) {
-      console.log(card)
-    }
     face.image_uri = face.image_uris.art_crop
     delete face.image_uris
   }
@@ -135,8 +123,10 @@ function cleanScryfallCards(cards) {
 }
 
 function prefilterVersions(cards) {
-  for (let i = cards.length - 1; i >= 0; i--) {
-    const card = cards[i]
+  const filteredCards = []
+
+  for (let i = 0; i < cards.length; i++) {
+    const card = { ...cards[i] } // Clone to avoid modifying original
 
     if (
       card.layout === 'art_series'
@@ -144,12 +134,10 @@ function prefilterVersions(cards) {
       || card.layout === 'double_faced_token'
       || card.layout === 'scheme'
     ) {
-      cards.splice(i, 1)
       continue
     }
 
     if (card.lang !== 'en') {
-      cards.splice(i, 1)
       continue
     }
     else {
@@ -157,32 +145,86 @@ function prefilterVersions(cards) {
     }
 
     if (card.textless || card.full_art) {
-      cards.splice(i, 1)
       continue
     }
     else {
       delete card.textless
       delete card.full_art
     }
+
+    filteredCards.push(card)
   }
+
+  return filteredCards
 }
 
 function postfilterVersions(cards) {
-  for (let i = cards.length - 1; i >= 0; i--) {
+  const filteredCards = []
+
+  for (let i = 0; i < cards.length; i++) {
     const card = cards[i]
+    let shouldInclude = true
 
     for (const face of card.card_faces) {
       if (!face.type_line) {
-        cards.splice(i, 1)
+        shouldInclude = false
         break
       }
 
       if (face.type_line.includes('Card')) {
-        cards.splice(i, 1)
+        shouldInclude = false
         break
       }
     }
+
+    if (shouldInclude) {
+      filteredCards.push(card)
+    }
   }
+
+  return filteredCards
+}
+
+// Function to process a single card
+function processSingleCard(card) {
+  // Make a deep copy to avoid modifying the original
+  const cardCopy = JSON.parse(JSON.stringify(card))
+
+  // Run through all our processing steps
+  const prefiltered = prefilterVersions([cardCopy])
+  if (prefiltered.length === 0) {
+    return null // Card was filtered out
+  }
+
+  cleanScryfallCards(prefiltered)
+
+  const postfiltered = postfilterVersions(prefiltered)
+  if (postfiltered.length === 0) {
+    return null // Card was filtered out
+  }
+
+  return {
+    data: postfiltered[0],
+    source: 'scryfall',
+  }
+}
+
+// Function to process an array of cards
+function processCards(cards) {
+  // Pre-filter
+  const prefilteredCards = prefilterVersions(cards)
+
+  // Clean
+  cleanScryfallCards(prefilteredCards)
+
+  // Post-filter
+  const postfilteredCards = postfilterVersions(prefilteredCards)
+
+  // Format for database
+  return postfilteredCards.map(data => ({
+    data,
+    source: 'scryfall',
+  }))
 }
 
 async function fetchScryfallDefaultCards(uri) {
@@ -239,7 +281,7 @@ function getLatestCachedFile() {
   return path.join(cachedDir, latestFile)
 }
 
-async function downloadAndLoadScryfallData() {
+async function downloadAndLoadScryfallData(useCache) {
   let cachedFilename
   let outputFilename
 
@@ -284,29 +326,20 @@ async function downloadAndLoadScryfallData() {
   return { cards, outputFilename }
 }
 
-async function fetchFromScryfallAndClean() {
+async function fetchFromScryfallAndClean(useCache) {
   console.log('Fetching scryfall data' + (useCache ? ' (using latest cached file)' : ''))
-  const { cards, outputFilename } = await downloadAndLoadScryfallData()
+  const { cards, outputFilename } = await downloadAndLoadScryfallData(useCache)
 
-  console.log('...pre-filtering')
-  prefilterVersions(cards)
+  console.log('...processing cards')
+  const formattedCards = processCards(cards)
 
-  console.log('...cleaning')
-  cleanScryfallCards(cards)
-
-  console.log('...post-filtering')
-  postfilterVersions(cards)
-
-  const count = Object.keys(cards).length
-  console.log(`...${count} cards after cleaning`)
-
-  console.log('...formatting for database')
-  const formattedCards = cards.map(data => ({
-    data,
-    source: 'scryfall',
-  }))
+  const count = formattedCards.length
+  console.log(`...${count} cards after processing`)
 
   console.log('...writing data to ' + outputFilename)
+  if (!fs.existsSync('card_data')){
+    fs.mkdirSync('card_data')
+  }
   fs.writeFileSync(outputFilename, JSON.stringify(formattedCards, null, 2))
 
   console.log('...done')
@@ -316,7 +349,21 @@ async function fetchFromScryfallAndClean() {
 ////////////////////////////////////////////////////////////////////////////////
 // Main
 
-const args = process.argv.slice(2)
-const useCache = args.includes('--use-cache')
+// Only run the main function if this script is executed directly
+if (require.main === module) {
+  const args = process.argv.slice(2)
+  const useCache = args.includes('--use-cache')
 
-fetchFromScryfallAndClean()
+  fetchFromScryfallAndClean(useCache)
+}
+
+// Export the functions we want to test
+module.exports = {
+  processSingleCard,
+  processCards,
+  adjustFaces,
+  cleanImageUris,
+  cleanLegalities,
+  prefilterVersions,
+  postfilterVersions
+}

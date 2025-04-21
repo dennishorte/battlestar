@@ -1,0 +1,58 @@
+{
+  "data": {
+    "id": "18303862-4726-4136-814f-157aa7006579",
+    "layout": "split",
+    "cmc": 4,
+    "color_identity": [
+      "R",
+      "U"
+    ],
+    "card_faces": [
+      {
+        "name": "Fire",
+        "mana_cost": "{1}{R}",
+        "type_line": "Instant",
+        "oracle_text": "Fire deals 2 damage divided as you choose among one or two targets.",
+        "artist": "David Martin",
+        "colors": [
+          "R"
+        ],
+        "image_uri": "https://cards.scryfall.io/art_crop/front/1/8/18303862-4726-4136-814f-157aa7006579.jpg?1677286441"
+      },
+      {
+        "name": "Ice",
+        "mana_cost": "{1}{U}",
+        "type_line": "Instant",
+        "oracle_text": "Tap target permanent.\nDraw a card.",
+        "artist": "Franz Vohwinkel",
+        "colors": [
+          "U"
+        ],
+        "image_uri": "https://cards.scryfall.io/art_crop/front/1/8/18303862-4726-4136-814f-157aa7006579.jpg?1677286441"
+      }
+    ],
+    "set": "dmr",
+    "collector_number": "215",
+    "digital": false,
+    "rarity": "uncommon",
+    "name": "Fire // Ice",
+    "colors": [
+      "R",
+      "U"
+    ],
+    "type_line": "Instant // Instant",
+    "legal": [
+      "modern",
+      "legacy",
+      "pauper",
+      "vintage",
+      "commander",
+      "oathbreaker",
+      "paupercommander",
+      "duel",
+      "premodern",
+      "predh"
+    ]
+  },
+  "source": "scryfall"
+}
