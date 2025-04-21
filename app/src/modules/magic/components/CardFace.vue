@@ -31,22 +31,59 @@
           </div>
 
           <div>
-            <img
-              class="frame-art"
-              alt="card art"
-              :src="imageUrl" />
+            <EditableDiv
+              :text="imageUrl"
+              customClass="frame-art"
+              :editable="true"
+              field="image_uri"
+              :renderComponent="true"
+              @update="updateCardField">
+              <template v-slot:default="slotProps">
+                <img
+                  class="frame-art"
+                  alt="card art"
+                  :src="slotProps.text" />
+              </template>
+              <template v-slot:empty>
+                <div class="frame-art empty-art"></div>
+              </template>
+            </EditableDiv>
           </div>
 
           <div class="frame-type-line frame-foreground">
-            <div class="frame-card-type">{{ card.typeLine(index) }}</div>
+            <EditableDiv
+              :text="card.typeLine(index)"
+              customClass="frame-card-type"
+              :editable="true"
+              field="type_line"
+              @update="updateCardField" />
             <div class="frame-card-icon" :class="rarity">{{ setIcon }}</div>
           </div>
 
           <div class="frame-text-box">
-            <OracleText :text="oracleText" />
+            <EditableDiv
+              :text="oracleText"
+              customClass="frame-oracle-text"
+              :editable="true"
+              field="oracle_text"
+              :renderComponent="true"
+              @update="updateCardField">
+              <template v-slot:default="slotProps">
+                <OracleText :text="slotProps.text" />
+              </template>
+            </EditableDiv>
 
             <div class="frame-flavor-wrapper">
-              <p v-if="flavorText" class="frame-flavor-text">{{ flavorText }}</p>
+              <EditableDiv
+                :text="flavorText"
+                customClass="frame-flavor-text"
+                :editable="true"
+                field="flavor_text"
+                @update="updateCardField">
+                <template v-slot:empty>
+                  <span class="placeholder-text">tasty</span>
+                </template>
+              </EditableDiv>
             </div>
 
             <div class="frame-achievements-wrapper">
@@ -65,8 +102,13 @@
       </div> <!-- background -->
 
       <div class="artist-name">
-        <i class="ms ms-artist-nib"></i>
-        {{ card.artist(index) }}
+        <span class="artist-icon"><i class="ms ms-artist-nib"></i></span>
+        <EditableDiv
+          :text="card.artist(index)"
+          customClass="artist-text"
+          :editable="true"
+          field="artist"
+          @update="updateCardField" />
       </div>
 
     </div> <!-- border -->
@@ -199,7 +241,29 @@ div {
   border-radius: 50%;
 }
 
+.artist-name {
+  display: flex;
+  align-items: center;
+}
+
+.artist-icon {
+  display: inline-flex;
+  margin-right: 4px;
+}
+
 .empty-mana-indicator {
   opacity: 0.1;
+}
+
+.empty-art {
+  background-color: #ccc;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder-text {
+  /* opacity: 0.3; */
 }
 </style>
