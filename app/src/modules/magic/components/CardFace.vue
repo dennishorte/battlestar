@@ -108,13 +108,18 @@
             </EditableDiv>
           </div>
 
-          <div class="frame-power-toughness frame-foreground" v-if="defense">
+          <div class="frame-defense" v-if="defense">
             <EditableDiv
               :text="defense"
               customClass="frame-defense"
               :editable="true"
               field="defense"
-              @update="updateCardField" />
+              :renderComponent="true"
+              @update="updateCardField">
+              <template v-slot:default="slotProps">
+                <CardDefense :defense="slotProps.text" />
+              </template>
+            </EditableDiv>
           </div>
 
           <div class="frame-power-toughness frame-foreground" v-if="power || toughness">
@@ -156,6 +161,7 @@ import ManaCost from './ManaCost'
 import OracleText from './OracleText'
 import EditableDiv from './EditableDiv'
 import CardLoyalty from './CardLoyalty'
+import CardDefense from './CardDefense'
 
 
 export default {
@@ -166,6 +172,7 @@ export default {
     OracleText,
     EditableDiv,
     CardLoyalty,
+    CardDefense,
   },
 
   props: {

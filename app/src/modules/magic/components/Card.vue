@@ -238,6 +238,7 @@ $gold: #d9631b;
     .frame-mana-cost {
       font-size: $unit * 4.5;
     }
+    .frame-defense,
     .frame-loyalty{
       width: $unit * 15;
       align-self: flex-end;
