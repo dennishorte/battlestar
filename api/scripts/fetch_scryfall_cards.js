@@ -114,11 +114,17 @@ function cleanLegalities(card) {
   delete card.legalities
 }
 
+function renameIdField(card) {
+  card._id = card.id
+  delete card.id
+}
+
 function cleanScryfallCards(cards) {
   for (const card of cards) {
     adjustFaces(card)
     cleanImageUris(card)
     cleanLegalities(card)
+    renameIdField(card)
   }
 }
 
