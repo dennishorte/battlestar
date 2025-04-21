@@ -111,12 +111,23 @@ export default {
       }
     },
 
+    getCleanContent(htmlContent) {
+      // Create a temporary clone to process the content
+      const tempDiv = document.createElement('div')
+      tempDiv.innerHTML = htmlContent
+      
+      // Remove any hidden elements (those with v-show="false")
+      const hiddenElements = tempDiv.querySelectorAll('[style*="display: none"]')
+      hiddenElements.forEach(el => el.remove())
+      
+      return this.htmlToPlainText(tempDiv.innerHTML)
+    },
+
     onBlur(event) {
       if (!this.isEditing) return
 
-      // Extract content from the editable div
-      const content = this.$refs.editableDiv.innerHTML
-      const newValue = this.htmlToPlainText(content)
+      // Get clean content from the editable div
+      const newValue = this.getCleanContent(this.$refs.editableDiv.innerHTML)
 
       this.$emit('update', {
         field: this.field,
@@ -132,7 +143,7 @@ export default {
     },
 
     onInput(event) {
-      const newValue = this.htmlToPlainText(event.target.innerHTML)
+      const newValue = this.getCleanContent(event.target.innerHTML)
       this.$emit('input', newValue)
     },
 
