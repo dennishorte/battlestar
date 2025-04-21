@@ -95,7 +95,37 @@
           </div>
 
           <div class="frame-pt-loyalty frame-foreground" v-if="loyalty">
-            {{ loyalty }}
+            <EditableDiv
+              :text="loyalty"
+              customClass="frame-loyalty"
+              :editable="true"
+              field="loyalty"
+              @update="updateCardField" />
+          </div>
+
+          <div class="frame-pt-loyalty frame-foreground" v-if="defense">
+            <EditableDiv
+              :text="defense"
+              customClass="frame-defense"
+              :editable="true"
+              field="defense"
+              @update="updateCardField" />
+          </div>
+
+          <div class="frame-pt-loyalty frame-foreground" v-if="power || toughness">
+            <EditableDiv
+              :text="power"
+              customClass="frame-power"
+              :editable="true"
+              field="power"
+              @update="updateCardField" />
+            <span class="power-toughness-separator">/</span>
+            <EditableDiv
+              :text="toughness"
+              customClass="frame-toughness"
+              :editable="true"
+              field="toughness"
+              @update="updateCardField" />
           </div>
 
         </div> <!-- frame -->
@@ -205,19 +235,20 @@ export default {
       return ''
     },
 
+    defense() {
+      return this.card.defense(this.index)
+    },
+
     loyalty() {
-      if (this.card.power(this.index)) {
-        return `${this.card.power(this.index)}/${this.card.toughness(this.index)}`
-      }
-      else if (this.card.loyalty(this.index)) {
-        return this.card.loyalty(this.index)
-      }
-      else if (this.card.isSiege(this.index)) {
-        return this.card.defense(this.index)
-      }
-      else {
-        return ''
-      }
+      return this.card.loyalty(this.index)
+    },
+
+    power() {
+      return this.card.power(this.index)
+    },
+
+    toughness() {
+      return this.card.toughness(this.index)
     },
 
     rarity() {
