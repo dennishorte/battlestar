@@ -218,7 +218,7 @@ $gold: #d9631b;
       background-color: black;
     }
     .frame-header,
-    .frame-pt-loyalty,
+    .frame-power-toughness,
     .frame-type-line {
       display: flex;
       flex-direction: row;
@@ -238,7 +238,18 @@ $gold: #d9631b;
     .frame-mana-cost {
       font-size: $unit * 4.5;
     }
-    .frame-pt-loyalty {
+    .frame-loyalty{
+      width: $unit * 15;
+      align-self: flex-end;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      height: $unit * 9;
+      position: absolute;
+      bottom: 0;
+      right: $unit;
+    }
+    .frame-power-toughness {
       width: $unit * 15;
       align-self: flex-end;
       align-items: center;

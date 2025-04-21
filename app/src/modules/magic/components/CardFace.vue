@@ -94,16 +94,21 @@
             </div>
           </div>
 
-          <div class="frame-pt-loyalty frame-foreground" v-if="loyalty">
+          <div class="frame-loyalty" v-if="loyalty">
             <EditableDiv
               :text="loyalty"
               customClass="frame-loyalty"
               :editable="true"
               field="loyalty"
-              @update="updateCardField" />
+              :renderComponent="true"
+              @update="updateCardField">
+              <template v-slot:default="slotProps">
+                <CardLoyalty :loyalty="slotProps.text" />
+              </template>
+            </EditableDiv>
           </div>
 
-          <div class="frame-pt-loyalty frame-foreground" v-if="defense">
+          <div class="frame-power-toughness frame-foreground" v-if="defense">
             <EditableDiv
               :text="defense"
               customClass="frame-defense"
@@ -112,7 +117,7 @@
               @update="updateCardField" />
           </div>
 
-          <div class="frame-pt-loyalty frame-foreground" v-if="power || toughness">
+          <div class="frame-power-toughness frame-foreground" v-if="power || toughness">
             <EditableDiv
               :text="power"
               customClass="frame-power"
@@ -150,6 +155,7 @@
 import ManaCost from './ManaCost'
 import OracleText from './OracleText'
 import EditableDiv from './EditableDiv'
+import CardLoyalty from './CardLoyalty'
 
 
 export default {
@@ -159,6 +165,7 @@ export default {
     ManaCost,
     OracleText,
     EditableDiv,
+    CardLoyalty,
   },
 
   props: {
