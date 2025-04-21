@@ -74,7 +74,7 @@ export default {
       }
 
       else if (this.name.toLowerCase() === 'multicolor') {
-        GOLD_SORT_ORDER = [
+        const GOLD_SORT_ORDER = [
           'azorius',
           'boros',
           'dimir',
