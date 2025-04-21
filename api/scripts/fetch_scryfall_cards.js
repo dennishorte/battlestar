@@ -1,6 +1,7 @@
 const axios = require('axios')
 const fs = require('fs')
 const util = require('../../common/lib/util.js')
+const path = require('path')
 
 
 const rootFields = [
@@ -222,12 +223,44 @@ async function fetchScryfallDefaultDataUri() {
   return targetData.download_uri
 }
 
-async function fetchFromScryfallAndClean() {
-  console.log('Fetching latest scryfall data')
+function getLatestCachedFile() {
+  const cachedDir = 'cached'
+  if (!fs.existsSync(cachedDir)) {
+    return null
+  }
 
-  const downloadUri = await fetchScryfallDefaultDataUri()
-  const cachedFilename = 'cached/' + downloadUri.split('/').slice(-1)[0]
-  const outputFilename = 'card_data/' + downloadUri.split('/').slice(-1)[0]
+  const files = fs.readdirSync(cachedDir)
+  if (files.length === 0) {
+    return null
+  }
+
+  // Sort files alphabetically and get the last one
+  const latestFile = files.sort().pop()
+  return path.join(cachedDir, latestFile)
+}
+
+async function downloadAndLoadScryfallData() {
+  let cachedFilename
+  let outputFilename
+
+  if (useCache) {
+    cachedFilename = getLatestCachedFile()
+    if (!cachedFilename) {
+      throw new Error('No cached files found. Will download from Scryfall.')
+    }
+    else {
+      console.log(`...using latest cached file: ${cachedFilename}`)
+      // Extract the base filename for the output file
+      const baseFilename = path.basename(cachedFilename)
+      outputFilename = path.join('card_data', baseFilename)
+    }
+  }
+
+  if (!useCache) {
+    const downloadUri = await fetchScryfallDefaultDataUri()
+    cachedFilename = 'cached/' + downloadUri.split('/').slice(-1)[0]
+    outputFilename = 'card_data/' + downloadUri.split('/').slice(-1)[0]
+  }
 
   let cards
 
@@ -237,7 +270,8 @@ async function fetchFromScryfallAndClean() {
     cards = JSON.parse(cardData)
   }
   else {
-    console.log('...downloading card data from ' + downloadUri)
+    console.log('...downloading card data from Scryfall')
+    const downloadUri = await fetchScryfallDefaultDataUri()
     cards = await fetchScryfallDefaultCards(downloadUri)
 
     console.log('...writing raw data to disk: ' + cachedFilename)
@@ -246,6 +280,13 @@ async function fetchFromScryfallAndClean() {
     }
     fs.writeFileSync(cachedFilename, JSON.stringify(cards))
   }
+
+  return { cards, outputFilename }
+}
+
+async function fetchFromScryfallAndClean() {
+  console.log('Fetching scryfall data' + (useCache ? ' (using latest cached file)' : ''))
+  const { cards, outputFilename } = await downloadAndLoadScryfallData()
 
   console.log('...pre-filtering')
   prefilterVersions(cards)
@@ -260,13 +301,13 @@ async function fetchFromScryfallAndClean() {
   console.log(`...${count} cards after cleaning`)
 
   console.log('...formatting for database')
-  cards = cards.map(data => ({
+  const formattedCards = cards.map(data => ({
     data,
     source: 'scryfall',
   }))
 
   console.log('...writing data to ' + outputFilename)
-  fs.writeFileSync(outputFilename, JSON.stringify(cards, null, 2))
+  fs.writeFileSync(outputFilename, JSON.stringify(formattedCards, null, 2))
 
   console.log('...done')
 }
@@ -274,5 +315,8 @@ async function fetchFromScryfallAndClean() {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Main
+
+const args = process.argv.slice(2)
+const useCache = args.includes('--use-cache')
 
 fetchFromScryfallAndClean()
