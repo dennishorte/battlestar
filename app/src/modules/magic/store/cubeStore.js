@@ -46,25 +46,19 @@ export default {
 
     /**
      * Add and remove multiple cards from a cube in a single operation
-     * @param {Object} context - Vuex context object
-     * @param {Object} payload - Method payload
      * @param {Array<string>} payload.addIds - Array of card IDs to add
      * @param {Array<string>} payload.removeIds - Array of card IDs to remove
      * @param {string} payload.comment - Optional comment for the operations
-     * @returns {Promise<void>}
      */
     async addRemoveCards({ dispatch, state }, { addIds, removeIds, comment }) {
-      try {
-        await this.$post('/api/magic/cube/add_remove_cards', {
-          addIds,
-          removeIds,
-          cubeId: state.cube._id,
-          comment: comment || "Changes made via cubeStore.addRemoveCards",
-        })
-      } catch (error) {
-        console.error('Error in addRemoveCards:', error)
-        throw error
-      }
+      await this.$post('/api/magic/cube/add_remove_cards', {
+        addIds,
+        removeIds,
+        cubeId: state.cube._id,
+        comment: comment || "Changes made via cubeStore.addRemoveCards",
+      })
+      await dispatch('magic/cards/reloadDatabase', null, { root: true })
+      await dispatch('loadCube', { cubeId: state.cube._id })
     },
 
     async claimAchievement({ commit, dispatch, state }, { achId, userId }) {

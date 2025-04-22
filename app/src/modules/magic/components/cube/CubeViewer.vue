@@ -320,6 +320,7 @@ export default {
     // If original is passed in, the new card will replace the original.
     // Otherwise, the new card will be added to the cube with nothing removed.
     async saveCard({ card, original }) {
+      throw new Error('not implemented')
       const updatedCard = await this.$store.dispatch('magic/cards/save', {
         actor: this.actor,
         cubeId: this.cube._id,
@@ -332,23 +333,10 @@ export default {
     },
 
     async updateCube(update) {
-      for (const card of update.remove) {
-        this.cube.removeCard(card)
-      }
-
-      for (const card of update.insert) {
-        this.cube.addCard(card)
-      }
-
-      if (update.unknown.length) {
-        const lines = ['Unable to add unknown cards:']
-        for (const card of update.unknown) {
-          lines.push(card.name)
-        }
-        alert(lines.join('\n'))
-      }
-
-      await this.$store.dispatch('magic/cube/save', this.cube)
+      await this.$store.dispatch('magic/cube/addRemoveCards', {
+        addIds: update.insert.map(item => item.card._id),
+        removeIds: update.remove.map(item => item.card._id),
+      })
     },
   },
 

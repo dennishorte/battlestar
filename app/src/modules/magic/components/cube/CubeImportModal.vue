@@ -25,7 +25,7 @@
 
 
 <script>
-import { mag } from 'battlestar-common'
+import { mag, util } from 'battlestar-common'
 import { mapState } from 'vuex'
 
 import Modal from '@/components/Modal'
@@ -45,29 +45,51 @@ export default {
   },
 
   computed: {
+    ...mapState('magic/cards', {
+      cardData: 'cards',
+    }),
+
+    ...mapState('magic/cube', {
+      cube: 'cube',
+    }),
+
     parsedUpdate() {
-      /* const cards = mag.util.card.parseCardlist(this.updateText)
-       * const lookupFunc = this.$store.getters['magic/cards/getLookupFunc']
-       * mag.util.card.lookup.insertCardData(cards, lookupFunc)
-       */
+      const items = mag.util.card.parseCardlist(this.updateText)
+      for (const item of items) {
+        if (item.remove) {
+          // Try to find the item in the existing cube list.
+          const target = this.cube.cards().find(c => c.name().toLowerCase() === item.name)
+          if (target) {
+            item.card = target
+          }
+        }
+        else {
+          // Try to find the item in the list of all cards.
+          const versions = this.cardData.byName[item.name]
+          if (versions && versions.length > 0) {
+            item.card = util.array.last(versions)
+          }
+        }
+      }
+
       const operations = {
         insert: [],
         remove: [],
         unknown: [],
       }
 
-      /* for (const card of cards) {
-       *   if (!card.data) {
-       *     operations.unknown.push(card)
-       *   }
-       *   else if (card.remove) {
-       *     operations.remove.push(card)
-       *   }
-       *   else {
-       *     operations.insert.push(card)
-       *   }
-       * }
-       */
+      for (const item of items) {
+        if (!item.card) {
+          operations.unknown.push(item)
+        }
+        else if (item.remove) {
+          operations.remove.push(item)
+        }
+        else {
+          operations.insert.push(item)
+        }
+      }
+
       return operations
     },
   },

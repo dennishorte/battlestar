@@ -390,11 +390,9 @@ CardUtil.parseCardlist = function(cardlist) {
   return cards
 }
 
-function parseCardListLine(line0) {
-  const [line1, count] = parseCardLineCount(line0)
-  const data = parseCardLineName(line1)
-  data.count = count
-  return data
+function parseCardListLine(line) {
+  const [name, count] = parseCardLineCount(line)
+  return { name, count }
 }
 
 function parseCardLineCount(line) {
@@ -418,31 +416,4 @@ function parseCardLineCount(line) {
   else {
     return [line, 1]
   }
-}
-
-function parseCardLineName(line) {
-  const tokens = line.split(' ')
-  const output = {
-    name: line,
-    setCode: null,
-    collectorNumber: null,
-  }
-
-  if (tokens.length < 3) {
-    return output
-  }
-
-  const lastToken = tokens[tokens.length - 1]
-  if (!util.isDigit(lastToken.charAt(0))) {
-    return output
-  }
-
-  const penultimateToken = tokens[tokens.length - 2]
-  if (penultimateToken.slice(0, 1) === '(' && penultimateToken.slice(-1) === ')') {
-    output.name = tokens.slice(0, -2).join(' ')
-    output.setCode = penultimateToken.slice(1, -1)
-    output.collectorNumber = lastToken
-  }
-
-  return output
 }

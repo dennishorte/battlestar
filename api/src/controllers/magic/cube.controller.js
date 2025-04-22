@@ -59,7 +59,7 @@ exports.addRemoveCards = async (req, res, next) => {
       for (const card of toAdd) {
         try {
           const createdCard = await db.magic.card.create(
-            card,
+            card.data,
             req.cube,
             req.user,
             req.body.comment
