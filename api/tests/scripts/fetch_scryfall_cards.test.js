@@ -24,31 +24,31 @@ function loadFiles(cardName) {
 
 describe('Card Processing', () => {
   test('processes a basic card correctly', () => {
-    const { input, expected }  = loadFiles('Craw Wurm')
+    const { input, expected } = loadFiles('Craw Wurm')
     const result = processSingleCard(input)
     expect(result).toEqual(expected)
   })
 
   test('processes a double-faced card correctly', () => {
-    const { input, expected }  = loadFiles('Accursed Witch')
+    const { input, expected } = loadFiles('Accursed Witch')
     const result = processSingleCard(input)
     expect(result).toEqual(expected)
   })
 
   test('processes a split card correctly', () => {
-    const { input, expected }  = loadFiles('Fire Ice')
+    const { input, expected } = loadFiles('Fire Ice')
     const result = processSingleCard(input)
     expect(result).toEqual(expected)
   })
 
   test('processes dfc land/creatures correctly', () => {
-    const { input, expected }  = loadFiles('Akoum Warrior')
+    const { input, expected } = loadFiles('Akoum Warrior')
     const result = processSingleCard(input)
     expect(result).toEqual(expected)
   })
 
   test('processes sieges correctly', () => {
-    const { input, expected }  = loadFiles('Invasion of Vryn')
+    const { input, expected } = loadFiles('Invasion of Vryn')
     const result = processSingleCard(input)
     expect(result).toEqual(expected)
   })

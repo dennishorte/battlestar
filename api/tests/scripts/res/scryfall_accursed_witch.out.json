@@ -1,4 +1,6 @@
 {
+  "_id": "8093f8b0-5d50-48ca-b616-e92535a47138",
+  "source": "scryfall",
   "data": {
     "_id": "8093f8b0-5d50-48ca-b616-e92535a47138",
     "layout": "transform",
@@ -58,6 +60,5 @@
       "brawl",
       "duel"
     ]
-  },
-  "source": "scryfall"
+  }
 }
