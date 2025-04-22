@@ -6,17 +6,17 @@ class UICardWrapper extends mag.util.wrapper.card {
   }
 
   frameColor(faceIndex) {
-    if (this.isMulticolor(faceIndex)) {
-      return 'gold'
-    }
-    else if (this.isArtifact(faceIndex)) {
+    if (this.isArtifact(faceIndex)) {
       return 'artifact'
     }
     else if (this.isLand(faceIndex)) {
       return 'land'
     }
     else if (this.isColorless(faceIndex)) {
-      return 'colorless'
+      return 'artifact'
+    }
+    else if (this.isMulticolor(faceIndex)) {
+      return 'gold'
     }
     else {
       return this.colorName(faceIndex)

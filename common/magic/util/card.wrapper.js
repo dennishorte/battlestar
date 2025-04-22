@@ -7,7 +7,7 @@ class CardWrapper extends Wrapper {
   }
 
   colors(faceIndex) {
-    return faceIndex ? this.face(faceIndex).colors : this.data.colors
+    return faceIndex !== undefined ? this.face(faceIndex).colors : this.data.colors
   }
   colorIdentity(faceIndex) {
     return this.data.color_identity
@@ -20,7 +20,7 @@ class CardWrapper extends Wrapper {
   }
 
   typeLine(faceIndex) {
-    return faceIndex ? this.face(faceIndex).type_line : this.data.type_line
+    return faceIndex !== undefined ? this.face(faceIndex).type_line : this.data.type_line
   }
   supertypes(faceIndex) {
     return this.typeLine(faceIndex).toLowerCase().split(' // ')[0].split(/\s+/)
@@ -31,7 +31,7 @@ class CardWrapper extends Wrapper {
   }
 
   name(faceIndex) {
-    return faceIndex ? this.face(faceIndex).name : this.data.name
+    return faceIndex !== undefined ? this.face(faceIndex).name : this.data.name
   }
   setCode() {
     return this.data.set
@@ -95,13 +95,13 @@ class CardWrapper extends Wrapper {
     return this.typeLine(faceIndex).toLowerCase().includes('artifact')
   }
   isColorless(faceIndex) {
-    return this.colorIdentity(faceIndex).length === 0
+    return this.colors(faceIndex).length === 0
   }
   isLand(faceIndex) {
     return this.typeLine(faceIndex).toLowerCase().includes('land')
   }
   isMulticolor(faceIndex) {
-    return this.colorIdentity(faceIndex).length > 1
+    return this.colors(faceIndex).length > 1
   }
   isSiege(faceIndex) {
     return this.subtypes(faceIndex).includes('siege')
