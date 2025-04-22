@@ -39,10 +39,19 @@
               :renderComponent="true"
               @update="updateCardField">
               <template v-slot:default="slotProps">
-                <img
-                  class="frame-art"
-                  alt="card art"
-                  :src="slotProps.text" />
+                <div class="frame-art-wrapper">
+                  <img
+                    v-if="!isSplitCard"
+                    class="frame-art"
+                    alt="card art"
+                    :src="slotProps.text" />
+                  <img
+                    v-else
+                    class="frame-art split-card-art"
+                    :class="{'split-left': index === 0, 'split-right': index === 1}"
+                    alt="card art"
+                    :src="slotProps.text" />
+                </div>
               </template>
               <template v-slot:empty>
                 <div class="frame-art empty-art"></div>
@@ -226,6 +235,10 @@ export default {
       const frameColor = this.card.frameColor(this.index)
       classes.push(`${frameColor}-card`)
 
+      if (this.isSplitCard) {
+        classes.push('split-card-container')
+      }
+
       return classes
     },
 
@@ -235,6 +248,10 @@ export default {
 
     imageUrl() {
       return this.card.imageUri(this.index)
+    },
+
+    isSplitCard() {
+      return this.card.layout() === 'split'
     },
 
     manaCost() {
@@ -308,7 +325,75 @@ div {
   justify-content: center;
 }
 
+.split-empty-left, .split-empty-right {
+  position: relative;
+  overflow: hidden;
+}
+
+.split-empty-left:after, .split-empty-right:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.split-empty-left:after {
+  right: 0;
+}
+
+.split-empty-right:after {
+  left: 0;
+}
+
+.split-card-art {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  clip-path: inset(0 50% 0 0);
+}
+
+.split-left {
+  clip-path: inset(0 50% 0 0);
+}
+
+.split-right {
+  clip-path: inset(0 0 0 50%);
+}
+
 .placeholder-text {
   /* opacity: 0.3; */
+}
+
+.frame-art-wrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: 140px;
+}
+
+.frame-art {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.split-card-art.split-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  object-position: 0% center;
+  transform-origin: left center;
+}
+
+.split-card-art.split-right {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  object-position: 100% center;
+  transform-origin: right center;
 }
 </style>
