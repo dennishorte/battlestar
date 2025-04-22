@@ -8,7 +8,7 @@
             <EditableDiv
               :text="card.name(index)"
               customClass="frame-card-name"
-              :editable="true"
+              :editable="isEditable"
               field="name"
               @update="updateCardField" />
 
@@ -16,7 +16,7 @@
               <EditableDiv
                 :text="manaCost"
                 customClass="frame-mana-cost"
-                :editable="true"
+                :editable="isEditable"
                 field="mana_cost"
                 :renderComponent="true"
                 @update="updateCardField">
@@ -34,7 +34,7 @@
             <EditableDiv
               :text="imageUrl"
               customClass="frame-art"
-              :editable="true"
+              :editable="isEditable"
               field="image_uri"
               :renderComponent="true"
               @update="updateCardField">
@@ -54,7 +54,7 @@
             <EditableDiv
               :text="card.typeLine(index)"
               customClass="frame-card-type"
-              :editable="true"
+              :editable="isEditable"
               field="type_line"
               @update="updateCardField" />
             <div class="frame-card-icon" :class="rarity">{{ setIcon }}</div>
@@ -64,7 +64,7 @@
             <EditableDiv
               :text="oracleText"
               customClass="frame-oracle-text"
-              :editable="true"
+              :editable="isEditable"
               field="oracle_text"
               :renderComponent="true"
               @update="updateCardField">
@@ -77,7 +77,7 @@
               <EditableDiv
                 :text="flavorText"
                 customClass="frame-flavor-text"
-                :editable="true"
+                :editable="isEditable"
                 field="flavor_text"
                 @update="updateCardField">
                 <template v-slot:empty>
@@ -98,7 +98,7 @@
             <EditableDiv
               :text="loyalty"
               customClass="frame-loyalty"
-              :editable="true"
+              :editable="isEditable"
               field="loyalty"
               :renderComponent="true"
               @update="updateCardField">
@@ -112,7 +112,7 @@
             <EditableDiv
               :text="defense"
               customClass="frame-defense"
-              :editable="true"
+              :editable="isEditable"
               field="defense"
               :renderComponent="true"
               @update="updateCardField">
@@ -126,14 +126,14 @@
             <EditableDiv
               :text="power"
               customClass="frame-power"
-              :editable="true"
+              :editable="isEditable"
               field="power"
               @update="updateCardField" />
             <span class="power-toughness-separator">/</span>
             <EditableDiv
               :text="toughness"
               customClass="frame-toughness"
-              :editable="true"
+              :editable="isEditable"
               field="toughness"
               @update="updateCardField" />
           </div>
@@ -146,7 +146,7 @@
         <EditableDiv
           :text="card.artist(index)"
           customClass="artist-text"
-          :editable="true"
+          :editable="isEditable"
           field="artist"
           @update="updateCardField" />
       </div>

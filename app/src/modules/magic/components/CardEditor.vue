@@ -4,6 +4,7 @@
       :size="270"
       :card="editing"
       class="preview"
+      :is-editable="true"
       @update-face="updateFace"
     />
 

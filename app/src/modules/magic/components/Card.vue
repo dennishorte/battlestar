@@ -6,6 +6,7 @@
       :card="card"
       :index="index - 1"
       :size="size"
+      :is-editable="isEditable"
       @update-face="updateFace"
     />
   </div>
@@ -27,15 +28,17 @@ export default {
       type: Object,
       default: null,
     },
-
     size: {
       type: Number,
       default: 200,
     },
-
     scrollable: {
       type: Boolean,
       default: true
+    },
+    isEditable: {
+      type: Boolean,
+      default: false,
     },
   },
 
