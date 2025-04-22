@@ -9,6 +9,8 @@ const cubeController = require('@controllers/magic/cube.controller')
  */
 router.post('/all', cubeController.all)
 
+router.post('/add_remove_cards', cubeController.addRemoveCards)
+
 /**
  * @route POST /api/magic/cube/create
  * @description Create a new cube

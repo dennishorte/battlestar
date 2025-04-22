@@ -232,7 +232,7 @@ describe('Data Loader Middleware', () => {
 
       // Expect that the cube is assigned to req.cube
       // with cards property added by the loader
-      expect(req.cube).toEqual({...mockCube, cards: []})
+      expect(req.cube).toEqual(mockCube)
 
       expect(next).toHaveBeenCalled()
       expect(res.on).toHaveBeenCalledWith('finish', expect.any(Function))

@@ -14,9 +14,17 @@ module.exports = Card
 const lock = new AsyncLock()
 
 
+/**
+ * Creates a new custom card and adds it to the database
+ * @param {Object} data - The card data to create
+ * @param {Object} cube - The cube to associate the card with
+ * @param {Object} user - The user creating the card
+ * @param {string|null} comment - Optional comment for the creation action
+ * @returns {Promise<Object>} The created card document
+ */
 Card.create = async function(data, cube, user, comment=null) {
-  // Use a lock to ensure that multiple card creation operations don't conflict
-  return await lock.acquire('card:create', async () => {
+  return await lock.acquire('cube:' + cube._id.toString(), async () => {
+    // Clean up data by removing certain fields
     delete data.set
     delete data.collector_number
     delete data.legal
@@ -26,6 +34,7 @@ Card.create = async function(data, cube, user, comment=null) {
       source: 'custom',
       cubeId: cube._id,
       edits: [{
+        action: 'create',
         userId: user._id,
         comment,
         date: new Date(),
@@ -35,8 +44,57 @@ Card.create = async function(data, cube, user, comment=null) {
 
     const result = await customCollection.insertOne(card)
     await _incrementCustomCardDatabaseVersion()
-    return await customCollection.findOne({ _id: result.insertedId })
+
+    const createdCard = await customCollection.findOne({ _id: result.insertedId })
+
+    return createdCard
   })
+}
+
+/**
+ * Deactivates a card in a cube
+ * @param {Object} card - The card to deactivate
+ * @param {Object} cube - The cube the card belongs to
+ * @param {Object} user - The user performing the deactivation
+ * @param {string|null} comment - Optional comment for the deactivation action
+ * @returns {Promise<boolean>} True if the deactivation was successful
+ * @throws {Error} If the card does not belong to the specified cube
+ */
+Card.deactivate = async function(card, cube, user, comment=null) {
+  if (!card || !cube) {
+    throw new Error('Card or cube is undefined')
+  }
+
+  if (!card._id) {
+    throw new Error('Card is missing _id field')
+  }
+
+  if (cube._id.toString() !== card.cubeId.toString()) {
+    throw new Error('Card is not from the specified cube')
+  }
+
+  try {
+    await customCollection.updateOne(
+      { _id: card._id },
+      {
+        $set: { deactivated: true },
+        $push: {
+          edits: {
+            action: 'deactivate',
+            userId: user._id,
+            comment: 'deactivated: ' + (comment || ''),
+            date: new Date(),
+            oldData: null,
+          }
+        },
+      },
+    )
+    return true
+  }
+  catch (err) {
+    console.error(`Error deactivating card: ${err.message}`)
+    throw err
+  }
 }
 
 Card.fetchAll = async function(source) {
@@ -86,6 +144,11 @@ Card.findById = async function(id) {
   return scryfallCard || customCard || null
 }
 
+/**
+ * Finds multiple cards by their IDs
+ * @param {Array<string|ObjectId>} ids - Array of card IDs to find
+ * @returns {Promise<Array<Object>>} Array of card documents found
+ */
 Card.findByIds = async function(ids) {
   if (!Array.isArray(ids) || ids.length === 0) {
     return []
@@ -101,6 +164,14 @@ Card.findByIds = async function(ids) {
   return [...scryfallCards, ...customCards]
 }
 
+/**
+ * Updates an existing card in the database
+ * @param {string|ObjectId} cardId - The ID of the card to update
+ * @param {Object} cardData - The new card data
+ * @param {Object} user - The user performing the update
+ * @param {string|null} comment - Optional comment for the update action
+ * @returns {Promise<Object|null>} The updated card document or null if not found
+ */
 Card.update = async function(cardId, cardData, user, comment=null) {
   return await lock.acquire('card:' + cardId.toString(), async () => {
     const updateResult = await customCollection.findOneAndUpdate(
@@ -112,6 +183,7 @@ Card.update = async function(cardId, cardData, user, comment=null) {
               $concatArrays: [
                 "$edits",
                 [{
+                  action: 'update',
                   userId: user._id,
                   comment,
                   date: new Date(),
@@ -134,6 +206,7 @@ Card.update = async function(cardId, cardData, user, comment=null) {
       await _incrementCustomCardDatabaseVersion()
       return updateResult
     }
+    return null
   })
 }
 

@@ -65,6 +65,7 @@ describe('Card Controller', () => {
         data: mockCardData,
         cubeId: req.cube._id,
         edits: [{
+          action: 'create',
           userId: req.user._id,
           comment: 'Test comment',
           date: expect.any(Date),

@@ -21,10 +21,24 @@ jest.mock('../../../../src/models/magic/cube_models', () => ({
   setFlag: jest.fn().mockResolvedValue(true)
 }))
 
-// Mock db to use the cube models
+// Mock card models
+jest.mock('../../../../src/models/magic/card_models', () => ({
+  findByIds: jest.fn().mockImplementation(ids => {
+    return ids.map(id => ({ _id: id, name: `Card ${id}`, cubeId: 'new-cube-id' }))
+  }),
+  create: jest.fn().mockImplementation((card, cube) => Promise.resolve({
+    _id: card._id,
+    name: card.name,
+    cubeId: cube._id
+  })),
+  deactivate: jest.fn().mockResolvedValue(true)
+}))
+
+// Mock db to use the cube models and include card models
 jest.mock('../../../../src/models/db', () => ({
   magic: {
-    cube: require('../../../../src/models/magic/cube_models')
+    cube: require('../../../../src/models/magic/cube_models'),
+    card: require('../../../../src/models/magic/card_models')
   }
 }))
 
@@ -33,6 +47,7 @@ const cubeController = require('../../../../src/controllers/magic/cube.controlle
 const { BadRequestError, NotFoundError } = require('../../../../src/utils/errors')
 const logger = require('../../../../src/utils/logger')
 const cubeModels = require('../../../../src/models/magic/cube_models')
+const db = require('../../../../src/models/db')
 
 describe('Magic Cube Controller', () => {
   let req, res, next
@@ -273,6 +288,133 @@ describe('Magic Cube Controller', () => {
       // Verify
       expect(logger.error).toHaveBeenCalled()
       expect(next).toHaveBeenCalledWith(error)
+    })
+  })
+
+  describe('addRemoveCards', () => {
+    it('should add and remove cards from a cube', async () => {
+      // Setup
+      req.body = {
+        addIds: ['card1', 'card2'],
+        removeIds: ['card3', 'card4'],
+        comment: 'Test batch operation'
+      }
+      req.cube = { _id: 'new-cube-id', name: 'Test Cube' }
+      req.user = { _id: 'test-user-id' }
+
+      // Mock the cube.addCard function
+      db.magic.cube.addCard = jest.fn().mockResolvedValue(true)
+      db.magic.cube.removeCard = jest.fn().mockResolvedValue(true)
+
+      // Execute
+      await cubeController.addRemoveCards(req, res, next)
+
+      // Verify
+      expect(db.magic.card.findByIds).toHaveBeenCalledWith(['card1', 'card2'])
+      expect(db.magic.card.findByIds).toHaveBeenCalledWith(['card3', 'card4'])
+      expect(db.magic.card.create).toHaveBeenCalledTimes(2)
+      expect(db.magic.cube.addCard).toHaveBeenCalledTimes(2)
+      expect(db.magic.card.deactivate).toHaveBeenCalledTimes(2)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success',
+        addResults: expect.arrayContaining([
+          expect.objectContaining({ status: 'success' })
+        ]),
+        removeResults: expect.arrayContaining([
+          expect.objectContaining({ status: 'success' })
+        ])
+      })
+    })
+
+    it('should handle empty add/remove arrays', async () => {
+      // Setup
+      req.body = {
+        addIds: [],
+        removeIds: [],
+        comment: 'Test empty operation'
+      }
+      req.cube = { _id: 'new-cube-id', name: 'Test Cube' }
+      req.user = { _id: 'test-user-id' }
+
+      // Execute
+      await cubeController.addRemoveCards(req, res, next)
+
+      // Verify
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success',
+        addResults: [],
+        removeResults: []
+      })
+    })
+
+    it('should return 404 if cube is not found', async () => {
+      // Setup
+      req.body = {
+        addIds: ['card1'],
+        removeIds: ['card2']
+      }
+      req.cube = null // Simulate cube not found
+
+      // Execute
+      await cubeController.addRemoveCards(req, res, next)
+
+      // Verify
+      expect(res.status).toHaveBeenCalledWith(404)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'error',
+        message: 'Cube not found'
+      })
+    })
+
+    it('should return 400 if both addIds and removeIds are missing', async () => {
+      // Setup
+      req.body = { comment: 'Test invalid operation' }
+      req.cube = { _id: 'new-cube-id', name: 'Test Cube' }
+
+      // Execute
+      await cubeController.addRemoveCards(req, res, next)
+
+      // Verify
+      expect(res.status).toHaveBeenCalledWith(400)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'error',
+        message: 'Missing required fields: addIds or removeIds are required'
+      })
+    })
+
+    it('should handle errors during card addition/removal', async () => {
+      // Setup
+      req.body = {
+        addIds: ['card1', 'card2'],
+        removeIds: ['card3'],
+        comment: 'Test error handling'
+      }
+      req.cube = { _id: 'new-cube-id', name: 'Test Cube' }
+      req.user = { _id: 'test-user-id' }
+
+      // Mock failure for one card
+      db.magic.card.create.mockImplementationOnce(() => {
+        throw new Error('Failed to create card')
+      })
+      db.magic.card.deactivate.mockImplementationOnce(() => {
+        throw new Error('Failed to deactivate card')
+      })
+      db.magic.cube.addCard = jest.fn().mockResolvedValue(true)
+
+      // Execute
+      await cubeController.addRemoveCards(req, res, next)
+
+      // Verify
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success',
+        addResults: expect.arrayContaining([
+          expect.objectContaining({ status: 'error' }),
+          expect.objectContaining({ status: 'success' })
+        ]),
+        removeResults: expect.arrayContaining([
+          expect.objectContaining({ status: 'error' })
+        ])
+      })
     })
   })
 })
