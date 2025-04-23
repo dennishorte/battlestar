@@ -44,4 +44,13 @@ router.post('/save', cubeController.saveCube)
  */
 router.post('/set_flag', cubeController.setFlag)
 
+/**
+ * @route POST /api/magic/cube/update_settings
+ * @description Update cube settings
+ * @access Private
+ * @body {String} cubeId - ID of the cube to update
+ * @body {Object} settings - Settings to update (name, public, allowEdits)
+ */
+router.post('/update_settings', cubeController.updateSettings)
+
 module.exports = router

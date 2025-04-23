@@ -21,11 +21,7 @@
     <Dropdown text="menu">
       <DropdownButton @click="this.$modal('cube-update-modal').show()">add/remove cards</DropdownButton>
       <DropdownButton @click="this.$modal('cube-add-modal').show()">add one card</DropdownButton>
-
-      <DropdownDivider />
-
       <DropdownButton @click="createCard">create card</DropdownButton>
-      <DropdownButton @click="createScar">create scar</DropdownButton>
 
       <DropdownDivider />
 
@@ -33,6 +29,7 @@
 
       <template v-if="viewerIsOwner">
         <DropdownDivider />
+        <DropdownButton @click="openSettings">settings</DropdownButton>
         <DropdownButton @click="toggleFlag('legacy')">
           toggle legacy
           <i v-if="cube.flags.legacy" class="bi-toggle-on" />
@@ -58,6 +55,8 @@ export default {
     DropdownButton,
     DropdownDivider,
   },
+
+  inject: ['bus'],
 
   props: {
     counts: Object,
@@ -85,6 +84,10 @@ export default {
       }
       this.$store.commit('magic/cube/manageScar', blank)
       this.$modal('scar-modal').show()
+    },
+
+    openSettings() {
+      this.bus.emit('open-cube-settings', this.cube)
     },
 
     randomCard(card) {

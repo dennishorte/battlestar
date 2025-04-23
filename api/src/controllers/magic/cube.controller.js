@@ -232,3 +232,50 @@ exports.setFlag = async (req, res, next) => {
     next(err)
   }
 }
+
+/**
+ * Update cube settings
+ * @param {Object} req - Express request object
+ * @param {Object} req.body - Request body
+ * @param {string} req.body.cubeId - ID of the cube to update
+ * @param {Object} req.body.settings - Settings to update
+ * @param {string} req.body.settings.name - Cube name
+ * @param {boolean} req.body.settings.public - Public status
+ * @param {boolean} req.body.settings.allowEdits - Allow edits status
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+exports.updateSettings = async (req, res, next) => {
+  try {
+    if (!req.body.cubeId) {
+      return next(new BadRequestError('cubeId is required'))
+    }
+
+    if (!req.body.settings) {
+      return next(new BadRequestError('settings object is required'))
+    }
+
+    const cube = req.cube
+
+    if (!cube) {
+      return next(new NotFoundError(`Cube with ID ${req.body.cubeId} not found`))
+    }
+
+    // Update the settings
+    if (req.body.settings.name !== undefined) {
+      cube.name = req.body.settings.name
+    }
+
+    // Save the updated cube
+    await db.magic.cube.save(cube)
+
+    res.json({
+      status: 'success',
+      cube
+    })
+  }
+  catch (err) {
+    logger.error(`Error updating cube settings: ${err.message}`)
+    next(err)
+  }
+}

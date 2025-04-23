@@ -106,5 +106,13 @@ export default {
     async save({ dispatch }, cube) {
       throw new Error('not implemented')
     },
+
+    async updateSettings({ dispatch, state }, { cubeId, settings }) {
+      await this.$post('/api/magic/cube/update_settings', {
+        cubeId,
+        settings
+      })
+      await dispatch('loadCube', { cubeId })
+    },
   },
 }

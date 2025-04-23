@@ -90,6 +90,7 @@
       <AchievementModal />
       <AchievementViewerModal />
       <AchievementSearchLinkerModal :achievements="achievements" />
+      <CubeSettingsModal :cube="cube" @update-settings="updateSettings" />
     </div>
   </MagicWrapper>
 </template>
@@ -113,6 +114,7 @@ import CardSearchModal from '../CardSearchModal'
 import CardFilters from '../CardFilters'
 import CubeImportModal from './CubeImportModal'
 import CubeMenu from './CubeMenu'
+import CubeSettingsModal from './CubeSettingsModal'
 import MagicMenu from '../MagicMenu'
 import MagicWrapper from '../MagicWrapper'
 import ScarModal from './ScarModal'
@@ -133,6 +135,7 @@ export default {
     CubeBreakdown,
     CubeImportModal,
     CubeMenu,
+    CubeSettingsModal,
     MagicMenu,
     MagicWrapper,
     ScarModal,
@@ -318,6 +321,17 @@ export default {
         addIds: update.insert.map(item => item.card._id),
         removeIds: update.remove.map(item => item.card._id),
       })
+    },
+
+    async updateSettings(settings) {
+      await this.$store.dispatch('magic/cube/updateSettings', {
+        cubeId: this.id,
+        settings
+      })
+    },
+
+    openSettings() {
+      this.bus.emit('open-cube-settings', this.cube)
     },
   },
 
