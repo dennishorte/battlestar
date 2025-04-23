@@ -30,11 +30,6 @@
       <template v-if="viewerIsOwner">
         <DropdownDivider />
         <DropdownButton @click="openSettings">settings</DropdownButton>
-        <DropdownButton @click="toggleFlag('legacy')">
-          toggle legacy
-          <i v-if="cube.flags.legacy" class="bi-toggle-on" />
-          <i v-else class="bi-toggle-off" />
-        </DropdownButton>
       </template>
     </Dropdown>
   </div>
@@ -97,16 +92,6 @@ export default {
 
     navigate(tab) {
       this.$emit('navigate', tab)
-    },
-
-    async toggleFlag(name) {
-      const result = await this.$post('/api/magic/cube/set_flag', {
-        cubeId: this.cube._id,
-        name,
-        value: !this.cube.flags[name],
-      })
-      this.cube.public = result.newValue
-      await this.$store.dispatch('magic/cube/loadCube', { cubeId: this.cube._id })
     },
 
     viewerIsOwner() {

@@ -36,15 +36,6 @@ router.post('/fetch', cubeController.getCube)
 router.post('/save', cubeController.saveCube)
 
 /**
- * @route POST /api/magic/cube/set_flag
- * @description Set the a flag for a cube
- * @access Private
- * @body {String} name - name of flag
- * @body {Boolean} value - new flag value
- */
-router.post('/set_flag', cubeController.setFlag)
-
-/**
  * @route POST /api/magic/cube/update_settings
  * @description Update cube settings
  * @access Private

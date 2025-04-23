@@ -9,6 +9,11 @@
         <label for="cube-name" class="form-label">Cube Name</label>
         <input type="text" class="form-control" id="cube-name" v-model="formData.name">
       </div>
+      
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="legacy-flag" v-model="formData.legacy">
+        <label class="form-check-label" for="legacy-flag">Legacy Mode</label>
+      </div>
     </div>
     
     <template #footer>
@@ -20,7 +25,7 @@
 
 <script>
 import Modal from '@/components/Modal'
-
+import { mapState } from 'vuex'
 export default {
   name: 'CubeSettingsModal',
   
@@ -30,31 +35,33 @@ export default {
   
   inject: ['bus'],
   
-  props: {
-    cube: {
-      type: Object,
-      required: true
-    }
-  },
-  
   data() {
     return {
       formData: {
         name: '',
+        legacy: false,
       }
     }
   },
+
+  computed: {
+    ...mapState('magic/cube', ['cube']),
+  },
   
   methods: {
-    openModal(cube) {
+    openModal() {
       this.formData = {
-        name: cube.name,
+        name: this.cube.name,
+        legacy: this.cube.flags && this.cube.flags.legacy || false,
       }
       this.$modal('cube-settings-modal').show()
     },
     
     async save() {
-      this.$emit('update-settings', this.formData)
+      await this.$store.dispatch('magic/cube/updateSettings', {
+        cubeId: this.cube._id,
+        settings: this.formData,
+      })
     }
   },
   

@@ -202,46 +202,13 @@ exports.saveCube = async (req, res, next) => {
 }
 
 /**
- * Set the a flag for a cube
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
- */
-exports.setFlag = async (req, res, next) => {
-  try {
-    if (!req.body.name || typeof req.body.value !== 'boolean') {
-      return next(new BadRequestError('name and value are required'))
-    }
-
-    if (!['legacy'].includes(req.body.name)) {
-      return next(new BadRequestError('Invalid flag name: ' + req.body.name))
-    }
-
-    if (typeof req.body.value !== 'boolean') {
-      return next(new BadRequestError('Invalid flag value: ' + req.body.value))
-    }
-
-    await db.magic.cube.setFlag(req.cube, req.body.name, req.body.value)
-
-    res.json({
-      status: 'success',
-    })
-  }
-  catch (err) {
-    logger.error(`Error setting legacy flag: ${err.message}`)
-    next(err)
-  }
-}
-
-/**
  * Update cube settings
  * @param {Object} req - Express request object
  * @param {Object} req.body - Request body
  * @param {string} req.body.cubeId - ID of the cube to update
  * @param {Object} req.body.settings - Settings to update
  * @param {string} req.body.settings.name - Cube name
- * @param {boolean} req.body.settings.public - Public status
- * @param {boolean} req.body.settings.allowEdits - Allow edits status
+ * @param {boolean} req.body.settings.legacy - Legacy mode flag
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
@@ -255,15 +222,23 @@ exports.updateSettings = async (req, res, next) => {
       return next(new BadRequestError('settings object is required'))
     }
 
-    const cube = req.cube
-
-    if (!cube) {
+    if (!req.cube) {
       return next(new NotFoundError(`Cube with ID ${req.body.cubeId} not found`))
     }
+
+    const cube = req.cube
 
     // Update the settings
     if (req.body.settings.name !== undefined) {
       cube.name = req.body.settings.name
+    }
+
+    // Update legacy flag
+    if (req.body.settings.legacy !== undefined) {
+      if (!cube.flags) {
+        cube.flags = {}
+      }
+      cube.flags.legacy = req.body.settings.legacy
     }
 
     // Save the updated cube

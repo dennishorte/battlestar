@@ -17,8 +17,7 @@ jest.mock('../../../../src/models/magic/cube_models', () => ({
     name: 'Test Cube',
     cardlist: []
   }),
-  save: jest.fn().mockResolvedValue(true),
-  setFlag: jest.fn().mockResolvedValue(true)
+  save: jest.fn().mockResolvedValue(true)
 }))
 
 // Mock card models
@@ -158,20 +157,22 @@ describe('Magic Cube Controller', () => {
   describe('saveCube', () => {
     it('should save a cube', async () => {
       // Setup
-      const cube = { _id: 'cube1', name: 'Updated Cube' }
-      req.body = { cube }
+      req.body = { cube: { _id: 'cube1', name: 'Updated Cube' } }
 
       // Execute
       await cubeController.saveCube(req, res, next)
 
       // Verify
-      expect(cubeModels.save).toHaveBeenCalledWith(cube)
+      expect(cubeModels.save).toHaveBeenCalledWith({ _id: 'cube1', name: 'Updated Cube' })
       expect(res.json).toHaveBeenCalledWith({
         status: 'success'
       })
     })
 
-    it('should return BadRequestError if cube data is missing', async () => {
+    it('should return BadRequestError if cube is missing', async () => {
+      // Setup
+      req.body = {}
+
       // Execute
       await cubeController.saveCube(req, res, next)
 
@@ -200,90 +201,6 @@ describe('Magic Cube Controller', () => {
 
       // Execute
       await cubeController.saveCube(req, res, next)
-
-      // Verify
-      expect(logger.error).toHaveBeenCalled()
-      expect(next).toHaveBeenCalledWith(error)
-    })
-  })
-
-  describe('setFlag', () => {
-    it('should set a flag', async () => {
-      // Setup
-      req.body = { name: 'legacy', value: true }
-      req.cube = { _id: 'cube1' }
-
-      // Execute
-      await cubeController.setFlag(req, res, next)
-
-      // Verify
-      expect(cubeModels.setFlag).toHaveBeenCalledWith('cube1', 'legacy', true)
-      expect(res.json).toHaveBeenCalledWith({
-        status: 'success'
-      })
-    })
-
-    it('should return BadRequestError if name is missing', async () => {
-      // Setup
-      req.body = { value: true }
-      req.cube = { _id: 'cube1' }
-
-      // Execute
-      await cubeController.setFlag(req, res, next)
-
-      // Verify
-      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
-      expect(cubeModels.setFlag).not.toHaveBeenCalled()
-    })
-
-    it('should return BadRequestError if value is missing', async () => {
-      // Setup
-      req.body = { name: 'legacy' }
-      req.cube = { _id: 'cube1' }
-
-      // Execute
-      await cubeController.setFlag(req, res, next)
-
-      // Verify
-      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
-      expect(cubeModels.setFlag).not.toHaveBeenCalled()
-    })
-
-    it('should return BadRequestError if flag name is invalid', async () => {
-      // Setup
-      req.body = { name: 'invalid', value: true }
-      req.cube = { _id: 'cube1' }
-
-      // Execute
-      await cubeController.setFlag(req, res, next)
-
-      // Verify
-      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
-      expect(cubeModels.setFlag).not.toHaveBeenCalled()
-    })
-
-    it('should return BadRequestError if value is not boolean', async () => {
-      // Setup
-      req.body = { name: 'legacy', value: 'not-a-boolean' }
-      req.cube = { _id: 'cube1' }
-
-      // Execute
-      await cubeController.setFlag(req, res, next)
-
-      // Verify
-      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
-      expect(cubeModels.setFlag).not.toHaveBeenCalled()
-    })
-
-    it('should handle errors properly', async () => {
-      // Setup
-      req.body = { name: 'legacy', value: true }
-      req.cube = { _id: 'cube1' }
-      const error = new Error('Database error')
-      cubeModels.setFlag.mockRejectedValueOnce(error)
-
-      // Execute
-      await cubeController.setFlag(req, res, next)
 
       // Verify
       expect(logger.error).toHaveBeenCalled()
@@ -415,6 +332,150 @@ describe('Magic Cube Controller', () => {
           expect.objectContaining({ status: 'error' })
         ])
       })
+    })
+  })
+
+  describe('updateSettings', () => {
+    it('should update cube settings including name', async () => {
+      // Setup
+      req.body = {
+        cubeId: 'cube1',
+        settings: {
+          name: 'Updated Cube Name'
+        }
+      }
+      req.cube = { _id: 'cube1', name: 'Old Name' }
+
+      // Execute
+      await cubeController.updateSettings(req, res, next)
+
+      // Verify
+      expect(cubeModels.save).toHaveBeenCalledWith(expect.objectContaining({
+        _id: 'cube1',
+        name: 'Updated Cube Name'
+      }))
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success',
+        cube: expect.objectContaining({
+          _id: 'cube1',
+          name: 'Updated Cube Name'
+        })
+      })
+    })
+
+    it('should update cube legacy flag', async () => {
+      // Setup
+      req.body = {
+        cubeId: 'cube1',
+        settings: {
+          legacy: true
+        }
+      }
+      req.cube = { _id: 'cube1', name: 'Test Cube', flags: { legacy: false } }
+
+      // Execute
+      await cubeController.updateSettings(req, res, next)
+
+      // Verify
+      expect(cubeModels.save).toHaveBeenCalledWith(expect.objectContaining({
+        _id: 'cube1',
+        flags: { legacy: true }
+      }))
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success',
+        cube: expect.objectContaining({
+          _id: 'cube1',
+          flags: { legacy: true }
+        })
+      })
+    })
+
+    it('should create flags object if not exists when setting legacy flag', async () => {
+      // Setup
+      req.body = {
+        cubeId: 'cube1',
+        settings: {
+          legacy: true
+        }
+      }
+      req.cube = { _id: 'cube1', name: 'Test Cube' }
+
+      // Execute
+      await cubeController.updateSettings(req, res, next)
+
+      // Verify
+      expect(cubeModels.save).toHaveBeenCalledWith(expect.objectContaining({
+        _id: 'cube1',
+        flags: { legacy: true }
+      }))
+    })
+
+    it('should return BadRequestError if cubeId is missing', async () => {
+      // Setup
+      req.body = {
+        settings: {
+          name: 'Updated Cube'
+        }
+      }
+
+      // Execute
+      await cubeController.updateSettings(req, res, next)
+
+      // Verify
+      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
+      expect(cubeModels.save).not.toHaveBeenCalled()
+    })
+
+    it('should return BadRequestError if settings object is missing', async () => {
+      // Setup
+      req.body = {
+        cubeId: 'cube1'
+      }
+
+      // Execute
+      await cubeController.updateSettings(req, res, next)
+
+      // Verify
+      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
+      expect(cubeModels.save).not.toHaveBeenCalled()
+    })
+
+    it('should return NotFoundError if cube is not found', async () => {
+      // Setup
+      req.body = {
+        cubeId: 'nonexistent',
+        settings: {
+          name: 'Updated Cube'
+        }
+      }
+      req.cube = null
+
+      // Execute
+      await cubeController.updateSettings(req, res, next)
+
+      // Verify
+      expect(next).toHaveBeenCalledWith(expect.any(NotFoundError))
+      expect(cubeModels.save).not.toHaveBeenCalled()
+    })
+
+    it('should handle errors properly', async () => {
+      // Setup
+      req.body = {
+        cubeId: 'cube1',
+        settings: {
+          name: 'Updated Cube'
+        }
+      }
+      req.cube = { _id: 'cube1', name: 'Old Name' }
+      const error = new Error('Database error')
+      cubeModels.save.mockRejectedValueOnce(error)
+
+      // Execute
+      await cubeController.updateSettings(req, res, next)
+
+      // Verify
+      expect(logger.error).toHaveBeenCalled()
+      expect(next).toHaveBeenCalledWith(error)
     })
   })
 })

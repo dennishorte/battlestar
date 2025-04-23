@@ -90,7 +90,7 @@
       <AchievementModal />
       <AchievementViewerModal />
       <AchievementSearchLinkerModal :achievements="achievements" />
-      <CubeSettingsModal :cube="cube" @update-settings="updateSettings" />
+      <CubeSettingsModal />
     </div>
   </MagicWrapper>
 </template>
@@ -320,13 +320,6 @@ export default {
       await this.$store.dispatch('magic/cube/addRemoveCards', {
         addIds: update.insert.map(item => item.card._id),
         removeIds: update.remove.map(item => item.card._id),
-      })
-    },
-
-    async updateSettings(settings) {
-      await this.$store.dispatch('magic/cube/updateSettings', {
-        cubeId: this.id,
-        settings
       })
     },
 

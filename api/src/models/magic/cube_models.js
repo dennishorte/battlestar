@@ -66,30 +66,16 @@ module.exports = {
   },
 
   async removeCard(cube, card) {
-    await cubeCollection.updateOne(
-      { _id: cube._id },
-      { $pull: { cardlist: card._id } }
-    )
-  },
-
-  async setFlag(cube, name, value) {
     if (!cube || !cube._id) {
       throw new Error('Invalid cube')
     }
-
-    if (!name || typeof name !== 'string') {
-      throw new Error('Invalid flag name')
+    if (!card || !card._id) {
+      throw new Error('Invalid card')
     }
 
-    const flagKey = 'flags.' + name
     await cubeCollection.updateOne(
       { _id: cube._id },
-      {
-        $set: {
-          [flagKey]: value,
-          'timestamps.updated': new Date(),
-        }
-      },
+      { $pull: { cardlist: card._id } }
     )
   },
 }
