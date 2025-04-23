@@ -7,7 +7,6 @@
       :index="index - 1"
       :size="size"
       :is-editable="isEditable"
-      @update-face="updateFace"
     />
   </div>
 </template>
@@ -52,16 +51,6 @@ export default {
       }
     },
   },
-
-  methods: {
-    updateFace({ index, field, value }) {
-      this.$emit('update-face', {
-        index,
-        field,
-        value
-      })
-    }
-  }
 }
 </script>
 

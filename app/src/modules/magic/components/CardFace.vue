@@ -184,6 +184,8 @@ export default {
     CardDefense,
   },
 
+  inject: ['bus'],
+
   props: {
     card: {
       type: Object,
@@ -209,7 +211,7 @@ export default {
 
   methods: {
     updateCardField({ field, value }) {
-      this.$emit('update-face', {
+      this.bus.emit('card-editor:update-face', {
         index: this.index,
         field,
         value

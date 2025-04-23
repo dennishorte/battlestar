@@ -2,18 +2,13 @@
   <Modal id="card-editor-modal">
     <template #header>
       Card Editor
-      <button
-        class="btn btn-outline-secondary"
-        v-if="!!originalCard"
-        @click="goToCardLink"
-        data-bs-dismiss="modal">
-        card link
-      </button>
     </template>
 
     <slot name="before-card"></slot>
 
-    <CardEditor v-if="false" @card-updated="cardUpdated" />
+    <CardEditor @card-updated="cardUpdated" />
+
+    <slot name="after-card"></slot>
 
     <template #footer>
       <slot name="footer">
@@ -42,37 +37,39 @@ export default {
     Modal,
   },
 
-  inject: ['bus'],
+  inject: ['actor', 'bus'],
 
   data() {
     return {
-      originalCard: null,
-      updated: false,
+      updatedCard: null,
     }
   },
 
   methods: {
+    cardUpdated(card) {
+      console.log('card updated', card.name())
+      this.updatedCard = card
+    },
+
     editCard(card) {
-      this.originalCard = card
-      this.updated = false
+      this.updateCard = null
       this.$modal('card-editor-modal').show()
+      this.bus.emit('card-editor:begin', card)
     },
 
-    goToCardLink() {
-      this.$router.push('/magic/card/' + this.card._id)
-    },
-
-    save() {
-      this.bus.emit('card-saved', {
-        card: this.updatedCard,
-        original: this.original.data,
-      })
+    async save() {
+      if (this.updatedCard) {
+        await this.$store.dispatch('magic/cards/update', {
+          card: this.updatedCard,
+          comment: 'Updated in the cube editor',
+        })
+      }
     },
   },
 
   mounted() {
     this.bus.on('edit-card-in-modal', this.editCard)
-    this.bus.on('card-editor:updated', () => this.updated = true)
+    this.bus.on('card-editor:updated', this.cardUpdated)
   },
 }
 </script>

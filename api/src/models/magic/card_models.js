@@ -191,7 +191,7 @@ Card.update = async function(cardId, cardData, user, comment=null) {
                 }]
               ]
             },
-            data: cardData  // Set the new data
+            data: cardData.data  // Set the new data
           }
         }
       ],
@@ -206,7 +206,9 @@ Card.update = async function(cardId, cardData, user, comment=null) {
       await _incrementCustomCardDatabaseVersion()
       return updateResult
     }
-    return null
+    else {
+      return null
+    }
   })
 }
 

@@ -3,8 +3,6 @@
 
     <div class="container" v-if="cubeLoaded">
 
-      <CardEditor />
-
       <div class="row">
         <div class="col-6">
           <MagicMenu :title="cube.name" />
@@ -87,7 +85,7 @@
 
       <CardSearchModal @card-selected="addOneCard" id="cube-add-modal" />
       <CubeImportModal @cube-updates="updateCube" />
-      <CardEditorModal :original="managedCard" />
+      <CardEditorModal />
       <ScarModal />
       <AchievementModal />
       <AchievementViewerModal />
@@ -178,7 +176,6 @@ export default {
       scars: 'scars',
 
       managedAchievement: 'managedAchievement',
-      managedCard: 'managedCard',
       managedScar: 'managedScar',
     }),
 
@@ -232,9 +229,8 @@ export default {
     // Sync methods
 
     cardCloseup(card) {
-      console.log('card closeup', card.name())
-      this.bus.emit('card-editor:begin', card)
-      /* this.bus.emit('edit-card-in-modal', card) */
+      console.log('card clicked', card.name())
+      this.bus.emit('edit-card-in-modal', card)
     },
 
     editScar(scar) {
@@ -317,21 +313,6 @@ export default {
       await this.loadUsers()
     },
 
-    // If original is passed in, the new card will replace the original.
-    // Otherwise, the new card will be added to the cube with nothing removed.
-    async saveCard({ card, original }) {
-      throw new Error('not implemented')
-      const updatedCard = await this.$store.dispatch('magic/cards/save', {
-        actor: this.actor,
-        cubeId: this.cube._id,
-        updated: card,
-        original,
-        comment: 'Updated in the cube editor',
-      })
-
-      window.location.reload()
-    },
-
     async updateCube(update) {
       await this.$store.dispatch('magic/cube/addRemoveCards', {
         addIds: update.insert.map(item => item.card._id),
@@ -355,7 +336,6 @@ export default {
 
   async mounted() {
     this.bus.on('card-clicked', this.cardCloseup)
-    this.bus.on('card-saved', this.saveCard)
     this.bus.on('achievement-show-filters', this.showAchievementFilters)
   },
 }

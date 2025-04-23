@@ -104,30 +104,13 @@ export default {
       return cardIds.map(id => state.cards.byId[id])
     },
 
-    async save({ dispatch }, { cubeId, updated, comment }) {
-      updated = updated.data ? updated.data : updated
-
-      let response
-
-      if (updated._id) {
-        response = await this.$post('/api/magic/card/updated', {
-          cardId: updated._id,
-          cardData: updated.data,
-          comment,
-        })
-      }
-
-      else {
-        response = await this.$post('/api/magic/card/create', {
-          cardData: updated,
-          cubeId,
-          comment,
-        })
-      }
-
-      // In either case, update the local card database.
+    async update({ dispatch }, { card, comment }) {
+      await this.$post('/api/magic/card/update', {
+        cardId: card._id,
+        cardData: card.toJSON(),
+        comment,
+      })
       await dispatch('reloadDatabase')
-      return response.card
     },
 
     async reloadDatabase({ dispatch, state }) {
