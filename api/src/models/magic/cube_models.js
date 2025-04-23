@@ -73,9 +73,23 @@ module.exports = {
   },
 
   async setFlag(cube, name, value) {
+    if (!cube || !cube._id) {
+      throw new Error('Invalid cube')
+    }
+
+    if (!name || typeof name !== 'string') {
+      throw new Error('Invalid flag name')
+    }
+
+    const flagKey = 'flags.' + name
     await cubeCollection.updateOne(
       { _id: cube._id },
-      { $set: { [`flags.${name}`]: value } },
+      {
+        $set: {
+          [flagKey]: value,
+          'timestamps.updated': new Date(),
+        }
+      },
     )
   },
 }

@@ -209,7 +209,7 @@ exports.saveCube = async (req, res, next) => {
  */
 exports.setFlag = async (req, res, next) => {
   try {
-    if (!req.body.name || !req.body.value) {
+    if (!req.body.name || typeof req.body.value !== 'boolean') {
       return next(new BadRequestError('name and value are required'))
     }
 
@@ -221,7 +221,7 @@ exports.setFlag = async (req, res, next) => {
       return next(new BadRequestError('Invalid flag value: ' + req.body.value))
     }
 
-    await db.magic.cube.setFlag(req.cube._id, req.body.name, req.body.value)
+    await db.magic.cube.setFlag(req.cube, req.body.name, req.body.value)
 
     res.json({
       status: 'success',

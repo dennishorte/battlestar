@@ -33,14 +33,9 @@
 
       <template v-if="viewerIsOwner">
         <DropdownDivider />
-        <DropdownButton @click="toggleCardEditing">
-          toggle edits
-          <i v-if="cube.allowEdits" class="bi-toggle-on" />
-          <i v-else class="bi-toggle-off" />
-        </DropdownButton>
-        <DropdownButton @click="togglePublic">
-          toggle public
-          <i v-if="cube.public" class="bi-toggle-on" />
+        <DropdownButton @click="toggleFlag('legacy')">
+          toggle legacy
+          <i v-if="cube.flags.legacy" class="bi-toggle-on" />
           <i v-else class="bi-toggle-off" />
         </DropdownButton>
       </template>
@@ -53,6 +48,7 @@ import Dropdown from '@/components/Dropdown'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
 import { mag } from 'battlestar-common'
+import { mapState } from 'vuex'
 
 export default {
   name: 'CubeMenu',
@@ -100,20 +96,14 @@ export default {
       this.$emit('navigate', tab)
     },
 
-    async toggleCardEditing() {
-      const result = await this.$post('/api/magic/cube/toggle_edits', {
-        cubeId: this.id,
-        editFlag: !this.cube.allowEdits
-      })
-      this.cube.allowEdits = result.newValue
-    },
-
-    async togglePublic() {
-      const result = await this.$post('/api/magic/cube/toggle_public', {
-        cubeId: this.id,
-        publicFlag: !this.cube.public,
+    async toggleFlag(name) {
+      const result = await this.$post('/api/magic/cube/set_flag', {
+        cubeId: this.cube._id,
+        name,
+        value: !this.cube.flags[name],
       })
       this.cube.public = result.newValue
+      await this.$store.dispatch('magic/cube/loadCube', { cubeId: this.cube._id })
     },
 
     viewerIsOwner() {
