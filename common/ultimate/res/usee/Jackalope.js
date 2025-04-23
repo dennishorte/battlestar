@@ -17,9 +17,11 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      const choices = game
-        .getTopCards(player)
-        .filter(card => !card.checkHasBiscuit('i'))
+      const choices = game.utilHighestCards(
+        game
+          .getTopCards(player)
+          .filter(card => !card.checkHasBiscuit('i'))
+      )
 
       const card = game.aChooseCard(player, choices)
       if (card) {
