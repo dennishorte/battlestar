@@ -274,7 +274,7 @@ $gold: #d9631b;
 
       div {
         flex-direction: column;
-        padding: 0 $unit;
+        padding: ($unit * .2) ($unit * .5);
       }
       p {
         margin-bottom: $unit * 2;
