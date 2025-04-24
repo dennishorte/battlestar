@@ -8,6 +8,7 @@ const Deck = {
     const insertResult = await deckCollection.insertOne({
       name: 'New Deck',
       userId: user._id,
+      format: 'custom',
       cardIdsByZone: {
         main: [],
         side: [],

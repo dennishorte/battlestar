@@ -4,7 +4,7 @@
 
       <div class="col">
         <MagicMenu />
-        <SectionHeader>My Data</SectionHeader>
+        <Decks />
       </div>
 
       <div class="col">
@@ -37,6 +37,7 @@
 <script>
 import { mapState } from 'vuex'
 
+import Decks from './deck/Decks'
 import DraftList from './DraftList'
 import MagicMenu from './MagicMenu'
 import SectionHeader from '@/components/SectionHeader'
@@ -45,6 +46,7 @@ export default {
   name: 'MagicProfile',
 
   components: {
+    Decks,
     DraftList,
     MagicMenu,
     SectionHeader,
@@ -84,10 +86,4 @@ export default {
 
 
 <style scoped>
-.file-manager {
-  border: 1px solid darkgray;
-  background-color: var(--bs-light);
-  min-height: 17rem;
-  border-radius: .25em;
-}
 </style>

@@ -29,7 +29,6 @@
               <DropdownButton @click="download">export</DropdownButton>
               <DropdownButton @click="openEditModal">edit</DropdownButton>
               <DropdownButton @click="save" :disabled="!modified">save</DropdownButton>
-              <DropdownButton @click="share">share</DropdownButton>
             </template>
           </Decklist>
 
@@ -54,8 +53,6 @@
 
 
 <script>
-import { computed } from 'vue'
-import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
 import mitt from 'mitt'
@@ -71,7 +68,7 @@ import MagicWrapper from '../MagicWrapper'
 import Modal from '@/components/Modal'
 
 export default {
-  name: 'DeckManager',
+  name: 'DeckBuilder',
 
   components: {
     CardFilters,
@@ -91,11 +88,6 @@ export default {
 
       actor: this.$store.getters['auth/user'],
       filteredCards: [],
-
-      newName: '',
-      newPath: '',
-
-      importText: '',
     }
   },
 
@@ -107,33 +99,11 @@ export default {
 
   computed: {
     ...mapState('magic/cards', {
-      cardlist: 'cardlist',
-    }),
-
-    ...mapState('magic/dm', {
-      activeDeck: 'activeDeck',
-      modified: 'modified',
+      cards: 'cardLookup',
     }),
   },
 
   methods: {
-    deckEditCard(card) {
-      this.editingCard = card
-      this.$modal('card-manager-modal').show()
-    },
-
-    manageCard(card) {
-      if (card.data) {
-        this.$store.dispatch('magic/dm/manageCard', card.data)
-      }
-      else {
-        this.$store.dispatch('magic/dm/manageCard', card)
-      }
-    },
-
-    share() {
-      this.$router.push(`/magic/deck/${this.activeDeck._id}`)
-    },
 
     storeFiltersOnDeck(filters) {
       this.$store.dispatch('magic/dm/storeFiltersOnDeck', filters)
