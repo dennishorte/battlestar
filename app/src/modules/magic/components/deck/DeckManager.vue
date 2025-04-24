@@ -41,14 +41,7 @@
     </div>
 
     <CardManagerModal :cardlist="filteredCards" />
-
-    <CardImportModal modal-id="deck-import-modal" @import-card-updates="importDecklist">
-      <template #top-slot>
-        <div class="alert alert-danger">
-          Using this option will overwrite the existing cards in this deck.
-        </div>
-      </template>
-    </CardImportModal>
+    <DeckImportModal @import-card-updates="importDecklist" />
 
     <Modal id="edit-deck-modal" @ok="edit">
       <template #header>Edit Deck</template>
@@ -69,7 +62,7 @@ import mitt from 'mitt'
 
 import CardFilters from '../CardFilters'
 import CardList from './CardList'
-import CardImportModal from '../CardImportModal'
+import DeckImportModal from './DeckImportModal'
 import CardManagerModal from './CardManagerModal'
 import Decklist from './Decklist'
 import DropdownButton from '@/components/DropdownButton'
@@ -83,7 +76,7 @@ export default {
   components: {
     CardFilters,
     CardList,
-    CardImportModal,
+    DeckImportModal,
     CardManagerModal,
     Decklist,
     DropdownButton,
