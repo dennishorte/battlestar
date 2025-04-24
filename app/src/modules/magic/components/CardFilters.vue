@@ -159,7 +159,6 @@
 
         <div>
           <button class="btn btn-warning" @click="clear">clear</button>
-          <button class="btn btn-primary" @click="apply">apply</button>
           <slot name="extra-actions"></slot>
         </div>
 
@@ -197,9 +196,6 @@ export default {
   inject: ['bus'],
 
   props: {
-    cardlist: Array,
-    modelValue: Array,
-
     layoutDirection: {
       type: String,
       default: 'column'
@@ -277,11 +273,6 @@ export default {
       this.onFiltersUpdated()
     },
 
-    apply() {
-      this.$emit('update:modelValue', filterCards(this.cardlist, this.filters))
-      this.$emit('filters-applied', util.deepcopy(this.filters))
-    },
-
     clear() {
       this.filters = []
       this.$emit('update:modelValue', this.cardlist)
@@ -309,7 +300,6 @@ export default {
   },
 
   mounted() {
-    this.$emit('update:modelValue', this.cardlist)
     this.bus.on('card-filters-set', this.setFilters)
   },
 }
@@ -318,7 +308,7 @@ function filterCards(cards, filters) {
   if (filters.length === 0) {
     return cards
   }
-  return cards.filter(card => mag.util.card.filtersMatchCard(filters, card))
+  return cards.filter(card => card.matchesFilters(filters))
 }
 
 </script>

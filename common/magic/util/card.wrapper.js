@@ -56,6 +56,9 @@ class CardWrapper extends Wrapper {
     return this.data.cmc
   }
   manaCost(faceIndex) {
+    if (faceIndex === undefined) {
+      return undefined
+    }
     return this.face(faceIndex).mana_cost
   }
   producedMana() {
@@ -63,30 +66,54 @@ class CardWrapper extends Wrapper {
   }
 
   oracleText(faceIndex) {
+    if (faceIndex === undefined) {
+      return undefined
+    }
     return this.face(faceIndex).oracle_text
   }
   flavorText(faceIndex) {
+    if (faceIndex === undefined) {
+      return undefined
+    }
     return this.face(faceIndex).flavor_text
   }
 
   power(faceIndex) {
+    if (faceIndex === undefined) {
+      return undefined
+    }
     return this.face(faceIndex).power
   }
   toughness(faceIndex) {
+    if (faceIndex === undefined) {
+      return undefined
+    }
     return this.face(faceIndex).toughness
   }
   loyalty(faceIndex) {
+    if (faceIndex === undefined) {
+      return undefined
+    }
     return this.face(faceIndex).loyalty
   }
   defense(faceIndex) {
+    if (faceIndex === undefined) {
+      return undefined
+    }
     return this.face(faceIndex).defense
   }
 
 
   artist(faceIndex) {
+    if (faceIndex === undefined) {
+      return undefined
+    }
     return this.face(faceIndex).artist
   }
   imageUri(faceIndex) {
+    if (faceIndex === undefined) {
+      return undefined
+    }
     return this.face(faceIndex).image_uri
   }
 
@@ -138,7 +165,6 @@ class CardWrapper extends Wrapper {
       && this.cmc() === other.cmc()
       && this.numFaces() === other.numFaces()
     )
-
     if (!topEquals) {
       return false
     }
@@ -183,15 +209,15 @@ const fieldMapping = {
   cmc: 'cmc',
   colors: 'colors',
   defense: 'defense',
-  flavor: 'flavor_text',
-  identity: 'color_identity',
+  flavor: 'flavorText',
+  identity: 'colorIdentity',
   loyalty: 'loyalty',
   name: 'name',
   power: 'power',
   set: 'set',
-  text: 'oracle_text',
+  text: 'oracleRext',
   toughness: 'toughness',
-  type: 'type_line',
+  type: 'typeLine',
 }
 const colorNameToSymbol = {
   white: 'W',
@@ -202,14 +228,12 @@ const colorNameToSymbol = {
 }
 
 function _applyOneFilter(card, filter) {
-  return true
-
   if (filter.kind === 'legality') {
-    return 'legal' in card && card.legal.includes(filter.value)
+    return card.isLegalIn(filter.value)
   }
   else if (filter.kind === 'colors' || filter.kind === 'identity') {
     const fieldKey = fieldMapping[filter.kind]
-    const fieldValue = fieldKey in card ? card[fieldKey] : []
+    const fieldValue = filter.kind === 'colors' ? card.colors() : card.colorIdentity()
     const targetValueMatches = ['white', 'blue', 'black', 'red', 'green']
       .map(color => filter[color] ? colorNameToSymbol[color] : undefined)
       .filter(symbol => symbol !== undefined)
@@ -238,81 +262,67 @@ function _applyOneFilter(card, filter) {
       }
     }
   }
-  else if (textFields.includes(filter.kind)) {
+  else {
     const fieldKey = fieldMapping[filter.kind]
-
     const fieldValues = []
 
-    if (fieldKey in card) {
-      fieldValues.push(card[fieldKey])
+    if (card[fieldKey]()) {
+      fieldValues.push(card[fieldKey]())
     }
     else {
-      for (const face of card.card_faces) {
-        if (fieldKey in face) {
-          fieldValues.push(face[fieldKey])
+      for (let i = 0; i < card.numFaces(); i++) {
+        fieldValues.push(card[fieldKey](i))
+      }
+    }
+
+    if (textFields.includes(filter.kind)) {
+      const lowerValues = fieldValues.map(x => x.toLowerCase())
+
+      if (filter.operator === 'or') {
+        const targetValues = filter.value.map(v => v.toLowerCase())
+        return targetValues.some(v => lowerValues.includes(v))
+      }
+
+      else {
+        const fieldValue = lowerValues.join(' ')
+        const targetValue = filter.value
+
+        if (filter.operator === 'and') {
+          return fieldValue.includes(targetValue)
+        }
+        else if (filter.operator === 'not') {
+          return !fieldValue.includes(targetValue)
+        }
+        else {
+          throw new Error(`Unhandled string operator: ${filter.operator}`)
         }
       }
     }
+    else if (numberFields.includes(filter.kind)) {
+      const targetValue = parseFloat(filter.value)
+      const floatValues = fieldValues.map(val => parseFloat(val))
 
-    if (filter.operator === 'or') {
-      const fieldValue = fieldValues.map(v => v.toLowerCase())
-      const targetValues = filter.value.map(v => v.toLowerCase())
-      return targetValues.some(v => fieldValue.includes(v))
-    }
-
-    else {
-      const fieldValue = fieldValues.join(' ').toLowerCase()
-      const targetValue = filter.value.toLowerCase()
-
-      if (filter.operator === 'and') {
-        return fieldValue.includes(targetValue)
-      }
-      else if (filter.operator === 'not') {
-        return !fieldValue.includes(targetValue)
-      }
-      else {
-        throw new Error(`Unhandled string operator: ${filter.operator}`)
-      }
-    }
-  }
-  else if (numberFields.includes(filter.kind)) {
-    const fieldKey = fieldMapping[filter.kind]
-    const targetValue = parseFloat(filter.value)
-
-    let fieldValues = []
-    if (fieldKey in card) {
-      fieldValues.push(card[fieldKey])
-    }
-    else {
-      for (const face of card.card_faces) {
-        if (fieldKey in face) {
-          fieldValues.push(face[fieldKey])
+      return floatValues.some(fieldValue => {
+        if (fieldValue === -999) {
+          return false
         }
-      }
+        else if (filter.operator === '=') {
+          return fieldValue === targetValue
+        }
+        else if (filter.operator === '>=') {
+          return fieldValue >= targetValue
+        }
+        else if (filter.operator === '<=') {
+          return fieldValue <= targetValue
+        }
+        else {
+          throw new Error(`Unhandled numeric operator: ${filter.operator}`)
+        }
+      })
     }
-    fieldValues = fieldValues.map(val => parseFloat(val))
-
-
-    return fieldValues.some(fieldValue => {
-      if (fieldValue === -999) {
-        return false
-      }
-      else if (filter.operator === '=') {
-        return fieldValue === targetValue
-      }
-      else if (filter.operator === '>=') {
-        return fieldValue >= targetValue
-      }
-      else if (filter.operator === '<=') {
-        return fieldValue <= targetValue
-      }
-      else {
-        throw new Error(`Unhandled numeric operator: ${filter.operator}`)
-      }
-    })
-  }
-  else {
-    throw new Error(`Unhandled filter field: ${filter.kind}`)
+    else {
+      throw new Error(`Unhandled filter field: ${filter.kind}`)
+    }
   }
 
   return false

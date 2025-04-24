@@ -24,7 +24,6 @@
       <div v-if="showing === 'cards'">
         <CardFilters
           layout-direction="row"
-          :cardlist="cube.cardlist"
           :class="showSearch ? '' : 'd-none'"
           @filters-updated="updateCardFilters"
         >

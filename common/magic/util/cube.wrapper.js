@@ -31,10 +31,7 @@ class CubeWrapper extends Wrapper {
   }
 
   applyFilters(filters) {
-    return this.cards()
-    /* return this
-     *   .cards()
-     *   .filter(card => card.matchesFilters(filters)) */
+    return this.cards().filter(card => card.matchesFilters(filters))
   }
 }
 
