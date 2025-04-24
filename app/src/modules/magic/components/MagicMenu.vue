@@ -4,8 +4,7 @@
 
     <DropdownRouterLink to="/">game center</DropdownRouterLink>
     <DropdownDivider />
-    <DropdownRouterLink to="/magic/decks">decks</DropdownRouterLink>
-    <DropdownRouterLink to="/magic">profile</DropdownRouterLink>
+    <DropdownRouterLink to="/magic">magic</DropdownRouterLink>
     <DropdownDivider />
     <DropdownButton @click="updateDatabase">update database</DropdownButton>
   </Dropdown>

@@ -273,12 +273,6 @@ export default {
       this.onFiltersUpdated()
     },
 
-    clear() {
-      this.filters = []
-      this.$emit('update:modelValue', this.cardlist)
-      this.onFiltersUpdated()
-    },
-
     onFiltersUpdated() {
       this.$emit('filters-updated', util.deepcopy(this.filters))
     },

@@ -37,7 +37,7 @@ export default {
 
   methods: {
     click(card){
-      this.$emit('card-clicked', card)
+      this.$emit('card-clicked', { card, zone: this.name })
     },
   },
 }

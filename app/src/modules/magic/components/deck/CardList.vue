@@ -4,7 +4,6 @@
     <CardListItem
       v-for="card in searchedCards"
       :card="card"
-      @click="highlightCard(card.name)"
     />
 
     <div class="alert alert-warning">
@@ -50,13 +49,6 @@ export default {
         .filter(name => name.toLowerCase().includes(searchText))
         .slice(0,1000)
       return searchedNames
-    },
-  },
-
-  methods: {
-    highlightCard(name) {
-      const card = this.cardlist.find(c => c.name === name)
-      this.$store.dispatch('magic/dm/manageCard', card)
     },
   },
 }

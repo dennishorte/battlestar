@@ -98,10 +98,10 @@ export default {
   inject: ['actor', 'game'],
 
   computed: {
-    ...mapState('magic/dm', {
-      activeDeck: 'activeDeck',
-      modified: 'modified',
-    }),
+    // ...mapState('magic/dm', {
+    //   activeDeck: 'activeDeck',
+    //   modified: 'modified',
+    // }),
 
     ...mapState('magic/game', {
       linkedDraft: 'linkedDraft',
@@ -115,7 +115,7 @@ export default {
 
   methods: {
     cardClicked(card) {
-      this.$store.dispatch('magic/dm/clickCard', card)
+      throw new Error('Not implemented')
     },
 
     goToDraft() {

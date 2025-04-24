@@ -1,29 +1,22 @@
 <template>
-  <div class="deck-list" :class="modified ? 'modified' : ''">
+  <div class="deck-list" :class="deck.isModified() ? 'modified' : ''">
     <div class="header">
-      <Dropdown class="deck-menu" v-if="!noMenu">
+      <Dropdown class="deck-menu">
         <template #title>deck menu</template>
-
-        <!-- <DropdownButton @click="setViewType('card-type')">view: card type</DropdownButton>
-             <DropdownButton @click="setViewType('mana-cost')">view: mana cost</DropdownButton>
-             <DropdownDivider />
-        -->
 
         <DropdownButton @click="setEditMode('build')">edit mode: build</DropdownButton>
         <DropdownButton @click="setEditMode('sideboard')">edit mode: sideboard</DropdownButton>
         <DropdownDivider />
 
-
         <slot name="menu-options"></slot>
       </Dropdown>
 
       <div class="deck-name me-2">{{ deck.name }} ({{ maindeckSize }})</div>
-      <div class="edit-mode">mode: {{ editMode }}</div>
     </div>
 
     <div class="deck-sections">
       <DecklistSection
-        v-for="section in cardsBySection"
+        v-for="section in Object.entries(deck.cardIdsByZone)"
         :cards="section[1]"
         :name="section[0]"
         class="deck-section"
@@ -35,8 +28,7 @@
 
 
 <script>
-import { mag, util } from 'battlestar-common'
-import { saveAs } from 'file-saver'
+// import { saveAs } from 'file-saver'
 import { mapState } from 'vuex'
 
 import DecklistSection from './DecklistSection'
@@ -57,18 +49,6 @@ export default {
 
   props: {
     deck: Object,
-    modified: {
-      type: Boolean,
-      default: false,
-    },
-    noMenu: {
-      type: Boolean,
-      default: false,
-    },
-    defaultEditMode: {
-      type: String,
-      default: 'sideboard',
-    },
   },
 
   data() {
@@ -91,74 +71,15 @@ export default {
   },
 
   computed: {
-    ...mapState('magic/dm', {
-      editMode: 'editMode',
-    }),
-
-    cardsBySection() {
-      this.$store.dispatch('magic/cards/insertCardData', this.deck.cardlist)
-
-      const byZone = util.array.collect(this.deck.cardlist, card => card.zone)
-      const mainByType = util.array.collect(byZone.main || [], card => mag.util.card.getSortType(card.data))
-      const orderedSections = Object
-        .entries(mainByType)
-        .sort((l, r) => mag.util.card.sortTypes.indexOf(r[0]) - mag.util.card.sortTypes.indexOf(l[0]))
-      if (byZone.side) {
-        orderedSections.push(['sideboard', byZone.side])
-      }
-      if (byZone.command) {
-        orderedSections.push(['command', byZone.command])
-      }
-
-      const countedSections = orderedSections
-        .map(([sectionName, cards]) => {
-          const groups = util
-            .array
-            .collect(cards, card => mag.util.card.id.asString(card))
-          const cardsWithCounts = Object
-            .values(groups)
-            .map(group => {
-              const value = { ...group[0] }
-              value.count = group.length
-              return value
-            })
-            .sort((l, r) => {
-              if (l.data.cmc !== r.data.cmc) {
-                return l.data.cmc - r.data.cmc
-              }
-              else {
-                return l.name.localeCompare(r.name)
-              }
-            })
-          return [sectionName, cardsWithCounts]
-        })
-        .sort((l, r) => this.sortTypes.indexOf(l[0]) - this.sortTypes.indexOf(r[0]))
-
-      return countedSections
-    },
-
     maindeckSize() {
-      return this.deck.cardlist.filter(card => card.zone === 'main').length
+      return this.deck.cardIdsByZone['main'].length
     },
   },
 
   methods: {
-    cardClicked(card) {
-      this.$emit('card-clicked', card)
+    cardClicked(payload) {
+      this.$emit('card-clicked', payload)
     },
-
-    setEditMode(modeName) {
-      this.$store.commit('magic/dm/setEditMode', modeName)
-    },
-
-    setViewType(typeName) {
-      this.viewType = typeName
-      console.log(this.viewType)
-    },
-  },
-
-  mounted() {
-    this.setEditMode(this.defaultEditMode)
   },
 }
 </script>

@@ -197,10 +197,10 @@ export default {
       gameReady: 'ready',
     }),
 
-    ...mapState('magic/dm', {
-      activeDeck: 'activeDeck',
-      modified: 'modified',
-    }),
+    // ...mapState('magic/dm', {
+    //   activeDeck: 'activeDeck',
+    //   modified: 'modified',
+    // }),
 
     doingScars() {
       const player = this.game.getPlayerByName(this.actor.name)
@@ -267,25 +267,26 @@ export default {
     },
 
     async chooseCard(card) {
-      this.bus.emit('user-select-option', {
-        actor: this.actor,
-        optionName: card.id
-      })
-      await nextTick()
+      throw new Error('Not implemented')
+      // this.bus.emit('user-select-option', {
+      //   actor: this.actor,
+      //   optionName: card.id
+      // })
+      // await nextTick()
 
-      this.bus.emit('click-choose-selected-option', {
+      // this.bus.emit('click-choose-selected-option', {
 
-        // Execute this after the option is successfully submitted and saved on the server.
-        callback: async () => {
-          // Add the card to the player's deck.
-          await this.$store.dispatch('magic/dm/addCard', {
-            card: card.data,
-            zoneName: 'main',
-          })
-          await this.$store.dispatch('magic/dm/saveActiveDeck')
+      //   // Execute this after the option is successfully submitted and saved on the server.
+      //   callback: async () => {
+      //     // Add the card to the player's deck.
+      //     await this.$store.dispatch('magic/dm/addCard', {
+      //       card: card.data,
+      //       zoneName: 'main',
+      //     })
+      //     await this.$store.dispatch('magic/dm/saveActiveDeck')
 
-        }
-      })
+      //   }
+      // })
     },
 
     async fetchScars() {
@@ -317,31 +318,33 @@ export default {
     },
 
     async loadGame() {
-      await this.$store.dispatch('magic/cubeDraft/loadGame', {
-        game: this.game,
-        doFunc: this.do,
-      })
+      throw new Error('Not implemented')
+      // await this.$store.dispatch('magic/cubeDraft/loadGame', {
+      //   game: this.game,
+      //   doFunc: this.do,
+      // })
 
-      if (this.game.settings.cubeId) {
-        // Loading the cube ensures the achievements will be available to render on relevant cards.
-        await this.$store.dispatch('magic/cube/loadCube', {
-          cubeId: this.game.settings.cubeId,
-        })
-      }
+      // if (this.game.settings.cubeId) {
+      //   // Loading the cube ensures the achievements will be available to render on relevant cards.
+      //   await this.$store.dispatch('magic/cube/loadCube', {
+      //     cubeId: this.game.settings.cubeId,
+      //   })
+      // }
 
-      // Load deck
-      const player = this.game.getPlayerByName(this.actor.name)
-      const { deck } = await this.$post('/api/magic/deck/fetch', {
-        deckId: player.deckId,
-      })
+      // // Load deck
+      // const player = this.game.getPlayerByName(this.actor.name)
+      // const { deck } = await this.$post('/api/magic/deck/fetch', {
+      //   deckId: player.deckId,
+      // })
 
-      this.$store.dispatch('magic/dm/selectDeck', deck)
+      // this.$store.dispatch('magic/dm/selectDeck', deck)
 
-      await this.fetchScars()
+      // await this.fetchScars()
     },
 
     saveDeck() {
-      this.$store.dispatch('magic/dm/saveActiveDeck')
+      throw new Error('Not implemented')
+      //this.$store.dispatch('magic/dm/saveActiveDeck')
     },
 
     async scarApplied(scarIndex, updated, original) {

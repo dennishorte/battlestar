@@ -90,15 +90,19 @@ export default {
   data() {
     return {
       versionIndex: 0,
+
+      activeDeck: null,
+      card: null,
+      source: null,
     }
   },
 
   computed: {
-    ...mapState('magic/dm', {
-      activeDeck: 'activeDeck',
-      card: state => state.cardManager.card,
-      source: state => state.cardManager.source,
-    }),
+    // ...mapState('magic/dm', {
+    //   activeDeck: 'activeDeck',
+    //   card: state => state.cardManager.card,
+    //   source: state => state.cardManager.source,
+    // }),
 
     mainCount() { return this.count('main') },
     sideCount() { return this.count('side') },
@@ -119,7 +123,7 @@ export default {
   methods: {
     addCard(zoneName) {
       if (zoneName === 'cmnd') zoneName = 'command'
-      this.$store.dispatch('magic/dm/addCurrentCard', zoneName)
+      //this.$store.dispatch('magic/dm/addCurrentCard', zoneName)
     },
 
     count(zoneName) {
@@ -148,7 +152,7 @@ export default {
 
     removeCard(zoneName) {
       if (zoneName === 'cmnd') zoneName = 'command'
-      this.$store.dispatch('magic/dm/removeCurrentCard', zoneName)
+      //this.$store.dispatch('magic/dm/removeCurrentCard', zoneName)
     },
 
     setVersionIndex(index) {
@@ -173,11 +177,11 @@ export default {
 
   mounted() {
     // Whenever the card management modal is closed, clear the state regarding the managed card.
-    document
-      .getElementById('card-manager-modal')
-      .addEventListener('hidden.bs.modal', () => {
-        this.$store.dispatch('magic/dm/unmanageCard')
-      })
+    // document
+    //   .getElementById('card-manager-modal')
+    //   .addEventListener('hidden.bs.modal', () => {
+    //     this.$store.dispatch('magic/dm/unmanageCard')
+    //   })
   },
 }
 </script>

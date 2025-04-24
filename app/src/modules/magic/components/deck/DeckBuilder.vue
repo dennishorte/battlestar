@@ -5,11 +5,7 @@
 
         <div class="col column filters-column">
           <MagicMenu />
-          <CardFilters
-            :cardlist="cardlist"
-            v-model="filteredCards"
-            @filters-applied="storeFiltersOnDeck"
-          />
+          <CardFilters layout-direction="column" @filters-updated="updateCardFilters"/>
         </div>
 
         <div class="col column cards-column">
@@ -18,17 +14,14 @@
 
         <div class="col column deck-column">
           <Decklist
-            v-if="activeDeck"
-            :deck="activeDeck"
-            :modified="modified"
-            default-edit-mode="build"
-            @card-clicked="manageCard"
+            v-if="deck"
+            :deck="deck"
+            @card-clicked="cardClicked"
           >
             <template #menu-options>
               <DropdownButton @click="openImportModal">import</DropdownButton>
-              <DropdownButton @click="download">export</DropdownButton>
-              <DropdownButton @click="openEditModal">edit</DropdownButton>
-              <DropdownButton @click="save" :disabled="!modified">save</DropdownButton>
+              <DropdownButton @click="downloadDecklist">export</DropdownButton>
+              <DropdownButton @click="saveDeck" :disabled="!deck.isModified()">save</DropdownButton>
             </template>
           </Decklist>
 
@@ -42,12 +35,6 @@
     <CardManagerModal :cardlist="filteredCards" />
     <DeckImportModal @import-card-updates="importDecklist" />
 
-    <Modal id="edit-deck-modal" @ok="edit">
-      <template #header>Edit Deck</template>
-      <input class="form-control" v-model="newName" placeholder="name" />
-      <input class="form-control" v-model="newPath" placeholder="path" />
-    </Modal>
-
   </MagicWrapper>
 </template>
 
@@ -57,6 +44,8 @@ import { mapState } from 'vuex'
 
 import mitt from 'mitt'
 
+import UIDeckWrapper from '@/modules/magic/util/deck.wrapper'
+
 import CardFilters from '../CardFilters'
 import CardList from './CardList'
 import DeckImportModal from './DeckImportModal'
@@ -65,7 +54,6 @@ import Decklist from './Decklist'
 import DropdownButton from '@/components/DropdownButton'
 import MagicMenu from '../MagicMenu'
 import MagicWrapper from '../MagicWrapper'
-import Modal from '@/components/Modal'
 
 export default {
   name: 'DeckBuilder',
@@ -79,15 +67,15 @@ export default {
     DropdownButton,
     MagicMenu,
     MagicWrapper,
-    Modal,
   },
 
   data() {
     return {
       bus: mitt(),
-
       actor: this.$store.getters['auth/user'],
-      filteredCards: [],
+      
+      filters: [],
+      deck: null,
     }
   },
 
@@ -101,62 +89,51 @@ export default {
     ...mapState('magic/cards', {
       cards: 'cardLookup',
     }),
+
+    filteredCards() {
+      if (this.cards) {
+        return this.cards.array.filter(card => this.filters.every(filter => filter.test(card)))
+      }
+      else {
+        return []
+      }
+    }
   },
 
   methods: {
-
-    storeFiltersOnDeck(filters) {
-      this.$store.dispatch('magic/dm/storeFiltersOnDeck', filters)
+    cardClicked(payload) {
+      console.log('cardClicked', payload)
     },
 
-    ////////////////////////////////////////////////////////////////////////////////
-    // Menu actions
-
-    download() {
-      const data = this.deck.decklist
-      const blob = new Blob([data], { type: "text/plain;charset=utf-8" })
-      saveAs(blob, `${this.deck.name}.txt`)
+    downloadDecklist() {
+      throw new Error('Not implemented')
     },
 
-    async edit() {
-      this.activeDeck.name = this.newName.trim()
-      this.activeDeck.path = this.newPath.trim()
-      this.$store.commit('magic/dm/setDeckName', this.newName)
-      this.$store.commit('magic/dm/setDeckPath', this.newPath)
-      await this.$store.dispatch('magic/dm/saveActiveDeck')
+    importDecklist(decklist) {
+      throw new Error('Not implemented')
     },
 
-    importDecklist(update) {
-      this.$store.dispatch('magic/dm/setActiveDecklist', update.insert)
-    },
-
-    openEditModal() {
-      this.newName = this.activeDeck.name
-      this.newPath = this.activeDeck.path
-      this.$modal('edit-deck-modal').show()
+    async loadDeck() {
+      const { deck } = await this.$post('/api/magic/deck/fetch', { deckId: this.$route.params.id })
+      this.deck = new UIDeckWrapper(deck)
     },
 
     openImportModal() {
-      this.$modal('deck-import-modal').show()
+      throw new Error('Not implemented')
     },
 
-    async save() {
-      this.$store.dispatch('magic/dm/saveActiveDeck')
+    async saveDeck() {
+      await this.$post('/api/magic/deck/save', { deck: this.deck })
     },
-  },
 
-  watch: {
-    activeDeck(newDeck) {
-      if (newDeck.filters) {
-        this.bus.emit('card-filters-set', newDeck.filters)
-      }
+    updateCardFilters(filters) {
+      this.filters = filters
     },
   },
 
   mounted() {
-    if (this.activeDeck && this.activeDeck.filters) {
-      this.bus.emit('card-filters-set', this.activeDeck.filters)
-    }
+    console.log('DeckBuilder mounted')
+    this.loadDeck()
   },
 }
 </script>

@@ -1,7 +1,6 @@
 import cards from './cardStore.js'
 import cube from './cubeStore.js'
 import cubeDraft from './cubeDraftStore.js'
-import dm from './deckManagerStore.js'
 import game from './gameStore.js'
 
 export default {
@@ -10,7 +9,6 @@ export default {
     cards: cards,
     cube: cube,
     cubeDraft: cubeDraft,
-    dm: dm,
     game: game,
   },
 
