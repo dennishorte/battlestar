@@ -11,7 +11,7 @@ export default {
   name: 'CardDefense',
 
   props: {
-    defense: Number,
+    defense: [Number, String],
   },
 }
 </script>
@@ -42,4 +42,4 @@ export default {
   z-index: 2;
   font-size: 1em;
 }
-</style> 
+</style>
