@@ -1,7 +1,7 @@
 <template>
   <div class="magic-wrapper">
     <template v-if="allReady">
-      <Card v-if="!isMobile && mouseoverCard" :card="mouseoverCard" :style="mouseoverPosition" />
+      <Card v-if="!isTouchscreen && mouseoverCard" :card="mouseoverCard" :style="mouseoverPosition" />
 
       <slot></slot>
     </template>
@@ -57,8 +57,8 @@ export default {
       log: 'log',
     }),
 
-    isMobile() {
-      return window.innerWidth < window.innerHeight
+    isTouchscreen() {
+      return this.$device.isTouchScreen();
     },
 
     mouseoverPosition() {

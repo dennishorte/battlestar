@@ -24,9 +24,11 @@ app.config.unwrapInjectedRef = true
 // Global function imports
 import axiosWrapper from './util/axiosWrapper.js'
 import modalWrapper from './util/modal.js'
+import deviceDetection from './util/deviceDetection.js'
 
 app.config.globalProperties.$modal = modalWrapper.getModal
 app.config.globalProperties.$post = axiosWrapper.post
+app.config.globalProperties.$device = deviceDetection
 
 
 app.mount('#app')
