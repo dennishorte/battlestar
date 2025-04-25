@@ -53,6 +53,12 @@ describe('Card Processing', () => {
     expect(result).toEqual(expected)
   })
 
+  test('process adventures correctly', () => {
+    const { input, expected } = loadFiles('Blessed Hippogriff')
+    const result = processSingleCard(input)
+    expect(result).toEqual(expected)
+  })
+
   test('filters out non-English cards', () => {
     const input = {
       id: "card-id-789",

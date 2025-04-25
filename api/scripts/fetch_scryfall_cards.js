@@ -50,6 +50,14 @@ function adjustFaces(card) {
     card.card_faces = [{}]
   }
 
+  // For some reason, adventures put the power/toughness of the creatures in the root card
+  // and in the main face. This prevents the power/toughness from being copied into the
+  // adventure face.
+  if (card.layout === 'adventure') {
+    delete card['power']
+    delete card['toughness']
+  }
+
   // Move face fields into card_faces.
   for (const key of faceFields) {
     for (const face of card.card_faces) {
