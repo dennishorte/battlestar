@@ -1,14 +1,17 @@
 <template>
-  <input v-model="searchPrefix" class="form-control" placeholder="search" />
-  <div class="card-list">
-    <CardListItem
-      v-for="card in searchedCards.slice(0, 1000)"
-      :card="card"
-      :separateFaces="true"
-    />
+  <div>
+    <input v-model="searchPrefix" class="form-control" placeholder="search" />
+    <div class="card-list">
+      <CardListItem
+        v-for="card in searchedCards.slice(0, 1000)"
+        :card="card"
+        :separate-faces="true"
+        @click="$emit('card-clicked', card)"
+      />
 
-    <div v-if="searchedCards.length >= 1000" class="alert alert-warning">
-      For performance reasons, only 1000 cards are included in this list. Use the filters to reduce the card search space. There are currently {{ this.searchedCards.length }} cards based on the input name.
+      <div v-if="searchedCards.length >= 1000" class="alert alert-warning">
+        For performance reasons, only 1000 cards are included in this list. Use the filters to reduce the card search space. There are currently {{ this.searchedCards.length }} cards based on the input name.
+      </div>
     </div>
   </div>
 </template>
@@ -52,7 +55,29 @@ export default {
     },
 
     searchedCards() {
-      return this.searchedNames.map(name => this.cardsByName[name][0])
+      const uniqueCards = []
+
+      this.searchedNames.forEach(name => {
+        const cardsWithSameName = this.cardsByName[name]
+
+        // Filter to only unique implementations using the 'same' method
+        const uniqueImplementations = []
+
+        cardsWithSameName.forEach(card => {
+          // If we can't find a card with the same implementation, add it
+          const hasSameImplementation = uniqueImplementations.some(existingCard =>
+            card.same(existingCard)
+          )
+
+          if (!hasSameImplementation) {
+            uniqueImplementations.push(card)
+          }
+        })
+
+        uniqueCards.push(...uniqueImplementations)
+      })
+
+      return uniqueCards
     },
   },
 }
