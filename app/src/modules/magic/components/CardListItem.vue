@@ -3,12 +3,12 @@
     @mouseover="mouseover"
     @mouseleave="mouseleave"
     @mousemove="mousemove"
-    @click="onClick"
   >
     <div
       v-if="separateFaces"
       v-for="(_, faceIndex) in card.numFaces()"
       class="card-list-item"
+      @click="$emit('card-face-clicked', { card, faceIndex })"
     >
 
       <div class="name">
@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <div v-else class="card-list-item">
+    <div v-else class="card-list-item" @click="$emit('card-clicked', card)">
       <div class="name">
         <i class="bi bi-lightning-fill" v-if="card.isScarred()"></i>
         <slot name="name">{{ card.name() }}</slot>
@@ -48,11 +48,6 @@ export default {
 
   props: {
     card: Object,
-
-    onClick: {
-      type: Function,
-      default: () => {},
-    },
 
     separateFaces: {
       type: Boolean,
