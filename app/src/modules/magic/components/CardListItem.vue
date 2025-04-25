@@ -8,6 +8,7 @@
       v-if="separateFaces"
       v-for="(_, faceIndex) in card.numFaces()"
       class="card-list-item"
+      :class="faceIndex === 0 ? '' : 'alt-face'"
       @click="$emit('card-face-clicked', { card, faceIndex })"
     >
 
@@ -126,5 +127,9 @@ export default {
   padding-top: 1px;
   padding-left: 5px;
   height: 100%;
+}
+
+.alt-face {
+  color: #999;
 }
 </style>
