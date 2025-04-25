@@ -73,7 +73,7 @@ export default {
     return {
       bus: mitt(),
       actor: this.$store.getters['auth/user'],
-      
+
       filters: [],
       deck: null,
     }
@@ -87,12 +87,12 @@ export default {
 
   computed: {
     ...mapState('magic/cards', {
-      cards: 'cardLookup',
+      cardLookup: 'cards',
     }),
 
     filteredCards() {
-      if (this.cards) {
-        return this.cards.array.filter(card => this.filters.every(filter => filter.test(card)))
+      if (this.cardLookup) {
+        return this.cardLookup.array.filter(card => card.matchesFilters(this.filters))
       }
       else {
         return []
@@ -132,7 +132,6 @@ export default {
   },
 
   mounted() {
-    console.log('DeckBuilder mounted')
     this.loadDeck()
   },
 }

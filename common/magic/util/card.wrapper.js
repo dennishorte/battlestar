@@ -90,6 +90,12 @@ class CardWrapper extends Wrapper {
     }
     return this.face(faceIndex).toughness
   }
+  powerToughness(faceIndex) {
+    if (faceIndex === undefined) {
+      return undefined
+    }
+    return `${this.power(faceIndex)}/${this.toughness(faceIndex)}`
+  }
   loyalty(faceIndex) {
     if (faceIndex === undefined) {
       return undefined
@@ -143,12 +149,10 @@ class CardWrapper extends Wrapper {
 
   face(index) {
     if (!this.data.card_faces) {
-      console.log(this.data)
       throw new Error('stop 0')
     }
 
     if (!this.data.card_faces[index]) {
-      console.log(this.data)
       throw new Error('stop 1', index)
     }
     return this.data.card_faces[index]

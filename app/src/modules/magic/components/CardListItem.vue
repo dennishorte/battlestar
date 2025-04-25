@@ -1,24 +1,36 @@
 <template>
   <div
-    class="card-list-item"
     @mouseover="mouseover"
     @mouseleave="mouseleave"
     @mousemove="mousemove"
     @click="onClick"
   >
+    <div
+      v-if="separateFaces"
+      v-for="(_, faceIndex) in card.numFaces()"
+      class="card-list-item"
+    >
 
-    <div class="name">
-      <i class="bi bi-lightning-fill" v-if="card.isScarred()"></i>
-      <slot name="name">{{ this.card.name() }}</slot>
-    </div>
+      <div class="name">
+        <i class="bi bi-arrow-return-right" v-if="faceIndex !== 0"></i>
+        <i class="bi bi-lightning-fill" v-if="card.isScarred(faceIndex)"></i>
+        <slot name="name">{{ card.name(faceIndex) }}</slot>
+      </div>
 
-    <div class="extra-info">
-      <ManaCost v-if="showManaCost" class="mana-cost" :cost="this.card.manaCost(0)" />
-      <div v-else-if="showPower" class="mana-cost">
-        {{ powerToughness }}
+      <div class="extra-info">
+        <ManaCost v-if="showManaCost" class="mana-cost" :cost="card.manaCost(faceIndex)" />
+        <div v-else-if="showPower" class="mana-cost">
+          {{ card.powerToughness(faceIndex) }}
+        </div>
       </div>
     </div>
 
+    <div v-else class="card-list-item">
+      <div class="name">
+        <i class="bi bi-lightning-fill" v-if="card.isScarred()"></i>
+        <slot name="name">{{ card.name() }}</slot>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -37,14 +49,14 @@ export default {
   props: {
     card: Object,
 
-    hidePopup: {
-      type: Boolean,
-      default: false,
-    },
-
     onClick: {
       type: Function,
       default: () => {},
+    },
+
+    separateFaces: {
+      type: Boolean,
+      default: false,
     },
 
     showManaCost: {
@@ -58,27 +70,9 @@ export default {
     },
   },
 
-  computed: {
-    powerToughness() {
-      return ''
-
-      /* if (this.card.morph) {
-       *   return '2/2'
-       * }
-
-       * const face = this.card.data.card_faces.find(face => face.name === this.card.activeFace)
-       * if (face.power) {
-       *   return `${face.power}/${face.toughness}`
-       * }
-       * else {
-       *   return ''
-       * } */
-    },
-  },
-
   methods: {
     mouseover() {
-      if (this.card && !this.hidePopup) {
+      if (this.card) {
         this.$store.commit('magic/setMouseoverCard', this.card)
       }
     },
@@ -117,6 +111,19 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   max-height: 1.4em;
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.bi-arrow-return-right {
+  margin-left: 5px;
+}
+
+.extra-info {
+  flex-shrink: 0; /* Prevent the mana cost from shrinking */
+  display: flex;
+  align-items: center;
 }
 
 .mana-cost {
