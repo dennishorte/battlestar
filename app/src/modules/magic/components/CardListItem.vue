@@ -3,11 +3,12 @@
     @mouseover="mouseover"
     @mouseleave="mouseleave"
     @mousemove="mousemove"
+    class="card-list-item"
   >
     <div
       v-if="separateFaces"
       v-for="(_, faceIndex) in card.numFaces()"
-      class="card-list-item"
+      class="card-list-item-face"
       :class="faceIndex === 0 ? '' : 'alt-face'"
       @click="$emit('card-face-clicked', { card, faceIndex })"
     >
@@ -26,7 +27,7 @@
       </div>
     </div>
 
-    <div v-else class="card-list-item" @click="$emit('card-clicked', card)">
+    <div v-else class="card-list-item-face" @click="$emit('card-clicked', card)">
       <div class="name">
         <i class="bi bi-lightning-fill" v-if="card.isScarred()"></i>
         <slot name="name">{{ card.name() }}</slot>
@@ -92,15 +93,19 @@ export default {
 
 <style scoped>
 .card-list-item {
-  white-space: nowrap;
-  overflow: hidden;
-  min-height: 1.4em;
-  max-height: 1.4em;
   width: 100%;
+}
 
+.card-list-item-face {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  min-height: 1.4em;
+  max-height: 1.4em;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  align-items: center;
 }
 
 .name {
