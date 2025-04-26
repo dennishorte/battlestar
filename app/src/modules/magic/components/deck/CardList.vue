@@ -41,7 +41,29 @@ export default {
 
   computed: {
     cardsByName() {
-      return util.array.groupBy(this.cardlist, (card) => card.name())
+      const groupedCards = util.array.groupBy(this.cardlist, (card) => card.name())
+
+      // Pre-compute unique implementations for each card name
+      const uniqueImplementationsByName = {}
+
+      Object.keys(groupedCards).forEach(name => {
+        const cardsWithSameName = groupedCards[name]
+        const uniqueImplementations = []
+
+        cardsWithSameName.forEach(card => {
+          const hasSameImplementation = uniqueImplementations.some(existingCard =>
+            card.same(existingCard)
+          )
+
+          if (!hasSameImplementation) {
+            uniqueImplementations.push(card)
+          }
+        })
+
+        uniqueImplementationsByName[name] = uniqueImplementations
+      })
+
+      return uniqueImplementationsByName
     },
 
     cardNames() {
@@ -58,23 +80,7 @@ export default {
       const uniqueCards = []
 
       this.searchedNames.forEach(name => {
-        const cardsWithSameName = this.cardsByName[name]
-
-        // Filter to only unique implementations using the 'same' method
-        const uniqueImplementations = []
-
-        cardsWithSameName.forEach(card => {
-          // If we can't find a card with the same implementation, add it
-          const hasSameImplementation = uniqueImplementations.some(existingCard =>
-            card.same(existingCard)
-          )
-
-          if (!hasSameImplementation) {
-            uniqueImplementations.push(card)
-          }
-        })
-
-        uniqueCards.push(...uniqueImplementations)
+        uniqueCards.push(...this.cardsByName[name])
       })
 
       return uniqueCards
