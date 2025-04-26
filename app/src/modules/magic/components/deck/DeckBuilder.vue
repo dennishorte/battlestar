@@ -9,14 +9,14 @@
         </div>
 
         <div class="col column cards-column">
-          <CardList :cardlist="filteredCards" />
+          <CardList :cardlist="filteredCards" @card-clicked="cardlistClicked" />
         </div>
 
         <div class="col column deck-column">
           <Decklist
             v-if="deck"
             :deck="deck"
-            @card-clicked="cardClicked"
+            @card-clicked="decklistClicked"
           >
             <template #menu-options>
               <DropdownButton @click="openImportModal">import</DropdownButton>
@@ -101,8 +101,22 @@ export default {
   },
 
   methods: {
-    cardClicked(payload) {
-      console.log('cardClicked', payload)
+    cardInitializer(cardIds) {
+      const cards = cardIds.map(id => this.cardLookup.byId[id])
+      for (const card of cards) {
+        if (card === undefined) {
+          throw new Error(`Card not found: ${id}`)
+        }
+      }
+      return cards
+    },
+
+    cardlistClicked(card) {
+      this.deck.addCard(card, 'main')
+    },
+
+    decklistClicked(payload) {
+      console.log('decklistClicked', payload)
     },
 
     downloadDecklist() {
@@ -116,6 +130,8 @@ export default {
     async loadDeck() {
       const { deck } = await this.$post('/api/magic/deck/fetch', { deckId: this.$route.params.id })
       this.deck = new UIDeckWrapper(deck)
+      await this.deck.initializeCards(this.cardInitializer)
+      console.log('deck', this.deck)
     },
 
     openImportModal() {

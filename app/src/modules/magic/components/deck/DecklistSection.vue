@@ -31,7 +31,7 @@ export default {
 
   computed: {
     count() {
-      return this.cards.reduce((acc, datum) => acc + datum.count, 0)
+      return this.cards.length
     },
   },
 

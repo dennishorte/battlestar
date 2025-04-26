@@ -1,24 +1,14 @@
 <template>
   <div class="deck-list" :class="deck.isModified() ? 'modified' : ''">
     <div class="header">
-      <Dropdown class="deck-menu">
-        <template #title>deck menu</template>
-
-        <DropdownButton @click="setEditMode('build')">edit mode: build</DropdownButton>
-        <DropdownButton @click="setEditMode('sideboard')">edit mode: sideboard</DropdownButton>
-        <DropdownDivider />
-
-        <slot name="menu-options"></slot>
-      </Dropdown>
-
       <div class="deck-name me-2">{{ deck.name }} ({{ maindeckSize }})</div>
     </div>
 
     <div class="deck-sections">
       <DecklistSection
-        v-for="section in Object.entries(deck.cardIdsByZone)"
-        :cards="section[1]"
-        :name="section[0]"
+        v-for="section in deck.zones()"
+        :cards="deck.cards(section)"
+        :name="section"
         class="deck-section"
         @card-clicked="cardClicked"
       />
