@@ -32,7 +32,7 @@
 
     </div>
 
-    <CardManagerModal />
+    <CardManagerModal :deck="deck" />
     <DeckImportModal @import-card-updates="importDecklist" />
 
   </MagicWrapper>
@@ -112,7 +112,10 @@ export default {
     },
 
     decklistClicked(payload) {
-      console.log('decklistClicked', payload)
+      this.bus.emit('card-manager:begin', {
+        card: payload.card,
+        zone: payload.zone,
+      })
     },
 
     downloadDecklist() {
@@ -124,10 +127,13 @@ export default {
     },
 
     async loadDeck() {
+      if (!this.cardsReady) {
+        return
+      }
+
       const { deck } = await this.$post('/api/magic/deck/fetch', { deckId: this.$route.params.id })
       this.deck = new UIDeckWrapper(deck)
       await this.deck.initializeCards(this.cardInitializer)
-      console.log('deck', this.deck)
     },
 
     openImportModal() {
@@ -144,11 +150,13 @@ export default {
   },
 
   watch: {
-    cardsReady(newValue) {
-      if (newValue) {
-        this.loadDeck()
-      }
+    cardsReady() {
+      this.loadDeck()
     },
+  },
+
+  mounted() {
+    this.loadDeck()
   },
 }
 </script>

@@ -30,8 +30,8 @@ class DeckWrapper extends Wrapper {
 
   removeCard(card, zone) {
     const toRemove = this.cardIdsByZone[zone].findIndex(x => x._id === card._id)
-    this.cardIdsByZone[zone].slice(toRemove, 1)
-    this._cardsByZone[zone].slice(toRemove, 1)
+    this.cardIdsByZone[zone].splice(toRemove, 1)
+    this._cardsByZone[zone].splice(toRemove, 1)
     this._modified = true
   }
 
