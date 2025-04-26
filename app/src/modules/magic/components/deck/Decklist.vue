@@ -1,6 +1,7 @@
 <template>
   <div class="deck-list" :class="deck.isModified() ? 'modified' : ''">
     <div class="header">
+      <button :disabled="!deck.isModified()" class="btn btn-primary save-button" @click="saveChanges">save</button>
       <div class="deck-name me-2">{{ deck.name }} ({{ maindeckSize }})</div>
     </div>
 
@@ -70,6 +71,10 @@ export default {
     cardClicked(payload) {
       this.$emit('card-clicked', payload)
     },
+
+    async saveChanges() {
+      await this.$post('/api/magic/deck/save', { deck: this.deck.toJSON() })
+    },
   },
 }
 </script>
@@ -101,11 +106,12 @@ export default {
 
 .header {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
 }
 
-.header-buttons button {
-  margin-left: .25em;
+.save-button {
+  margin-right: .5em;
 }
 
 .modified {

@@ -88,6 +88,7 @@ export default {
   computed: {
     ...mapState('magic/cards', {
       cardLookup: 'cards',
+      cardsReady: 'cardsReady',
     }),
 
     filteredCards() {
@@ -147,8 +148,12 @@ export default {
     },
   },
 
-  mounted() {
-    this.loadDeck()
+  watch: {
+    cardsReady(newValue) {
+      if (newValue) {
+        this.loadDeck()
+      }
+    },
   },
 }
 </script>
