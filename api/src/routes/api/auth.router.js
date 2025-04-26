@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const db = require('@models/db')
 const logger = require('@utils/logger')
-const jwt = require('jsonwebtoken')
 
 /**
  * @swagger
@@ -56,7 +55,7 @@ router.post('/login', async (req, res) => {
         message: 'Invalid username or password'
       })
     }
-    
+
     logger.info(`User logged in successfully: ${username}`)
 
     // Return user info and token

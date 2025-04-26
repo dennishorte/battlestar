@@ -41,14 +41,7 @@ const user = {
       toArray: async () => ids.map(id => users[id] || null).filter(Boolean)
     }
   }),
-  
-  findByIds: jest.fn(async (ids) => {
-    const matchedUsers = ids.map(id => users[id]).filter(user => !!user)
-    return {
-      toArray: async () => matchedUsers
-    }
-  }),
-  
+
   findByName: jest.fn(async (name) => {
     return Object.values(users).find(u => u.name === name) || null
   }),
