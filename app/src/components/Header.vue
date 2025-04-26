@@ -12,7 +12,6 @@
             <DropdownRouterLink to="/data">data</DropdownRouterLink>
             <DropdownDivider></DropdownDivider>
             <DropdownRouterLink to="/magic">magic</DropdownRouterLink>
-            <DropdownRouterLink to="/magic/decks">magic deck</DropdownRouterLink>
             <DropdownDivider></DropdownDivider>
             <DropdownRouterLink to="/admin">admin</DropdownRouterLink>
             <DropdownRouterLink to="/logout">logout</DropdownRouterLink>
