@@ -31,6 +31,7 @@ export default {
 
   props: {
     cardlist: Array,
+    filters: Array,
   },
 
   data() {
@@ -83,7 +84,7 @@ export default {
         uniqueCards.push(...this.cardsByName[name])
       })
 
-      return uniqueCards
+      return uniqueCards.filter(card => card.matchesFilters(this.filters))
     },
   },
 }

@@ -9,7 +9,7 @@
         </div>
 
         <div class="col column cards-column">
-          <CardList :cardlist="filteredCards" @card-clicked="cardlistClicked" />
+          <CardList :cardlist="cardlist" :filters="filters" @card-clicked="cardlistClicked" />
         </div>
 
         <div class="col column deck-column">
@@ -32,7 +32,7 @@
 
     </div>
 
-    <CardManagerModal :cardlist="filteredCards" />
+    <CardManagerModal />
     <DeckImportModal @import-card-updates="importDecklist" />
 
   </MagicWrapper>
@@ -91,14 +91,9 @@ export default {
       cardsReady: 'cardsReady',
     }),
 
-    filteredCards() {
-      if (this.cardLookup) {
-        return this.cardLookup.array.filter(card => card.matchesFilters(this.filters))
-      }
-      else {
-        return []
-      }
-    }
+    cardlist() {
+      return this.cardLookup.array
+    },
   },
 
   methods: {
