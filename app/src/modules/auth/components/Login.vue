@@ -7,7 +7,7 @@
         <div class="row">
           <div class="form-group col-md-6">
             <label>Name</label>
-            <input type="text" class="form-control" v-model="name" name="name" id="name" placeholder="Name" />
+            <input type="text" class="form-control" v-model="username" name="name" id="name" placeholder="Name" />
           </div>
         </div>
         <div class="row">
@@ -28,14 +28,14 @@ export default {
   name: 'Login',
   data() {
     return {
-      name: '',
+      username: '',
       password: '',
     }
   },
   methods: {
     login() {
       const payload = {
-        name: this.name,
+        username: this.username,
         password: this.password,
       }
       this.$store

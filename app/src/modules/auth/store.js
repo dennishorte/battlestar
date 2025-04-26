@@ -62,11 +62,11 @@ export default {
   },
 
   actions: {
-    login({ commit }, user) {
+    login({ commit }, payload) {
       return new Promise((resolve, reject) => {
         commit('auth_request')
         axiosWrapper
-          .post('/api/guest/login', { user })
+          .post('/api/guest/login', payload)
           .then(resp => {
             const user = resp.user
             commit('auth_success', user)
