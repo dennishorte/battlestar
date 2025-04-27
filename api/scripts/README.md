@@ -1,22 +1,24 @@
-# Scryfall Card Processing Utilities
+# API Scripts
 
-This directory contains scripts for fetching and processing Magic: The Gathering card data from Scryfall.
+This directory contains various utility scripts for the API.
 
-## Main Script
+## Card Processing Scripts
 
-The `fetch_scryfall_cards.js` script is used to download the latest card data from Scryfall, process it, and save it to the `card_data` directory.
+### fetch_scryfall_cards.js
+
+Downloads the latest card data from Scryfall and processes it for use in the application.
 
 Usage:
 ```
 node fetch_scryfall_cards.js [--use-cache]
 ```
 
-Options:
-- `--use-cache`: Use the most recent downloaded data instead of re-downloading from Scryfall.
+Arguments:
+- `--use-cache`: Use the latest cached file instead of downloading from Scryfall
 
-## Card Processing Utility
+### process_card.js
 
-The `process_card.js` utility allows you to test the card processing on individual card JSON files.
+Processes a single card JSON file using the card formatting logic.
 
 Usage:
 ```
@@ -24,17 +26,23 @@ node process_card.js <input_file> [output_file]
 ```
 
 Arguments:
-- `input_file`: Path to a JSON file containing a single card object
-- `output_file`: (Optional) Path to write the processed output JSON. If not provided, output is written to stdout.
+- `input_file`: Path to JSON file containing a single card object
+- `output_file`: (Optional) Path to write the processed card JSON. If not provided, output is written to stdout.
 
-Example:
-```
-# Process a card and display the result
-node process_card.js test_fixtures/basic_card.json
+### process_custom_cards.js
 
-# Process a card and save the result to a file
-node process_card.js test_fixtures/basic_card.json output/processed_card.json
+Processes a collection of custom cards, ensuring they are formatted consistently with Scryfall cards.
+
+Usage:
 ```
+node process_custom_cards.js [input_file] [output_file]
+```
+
+Arguments:
+- `input_file`: (Optional) Path to JSON file containing custom cards. Default is './cards.json'
+- `output_file`: (Optional) Path to write the processed cards JSON. Default is './processed_cards.json'
+
+This script is useful for processing custom cards that need to be formatted in the same way as cards from Scryfall. It ensures all necessary fields are present and correctly formatted.
 
 ## Testing
 
