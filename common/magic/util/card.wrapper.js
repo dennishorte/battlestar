@@ -130,6 +130,9 @@ class CardWrapper extends Wrapper {
   isColorless(faceIndex) {
     return this.colors(faceIndex).length === 0
   }
+  isCubeCard() {
+    return this.source === 'custom'
+  }
   isLand(faceIndex) {
     return this.typeLine(faceIndex).toLowerCase().includes('land')
   }

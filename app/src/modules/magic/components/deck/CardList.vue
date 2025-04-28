@@ -2,12 +2,14 @@
   <div>
     <input v-model="searchPrefix" class="form-control" placeholder="search" />
     <div class="card-list">
-      <CardListItem
-        v-for="card in searchedCards.slice(0, 1000)"
-        :card="card"
-        :separate-faces="true"
-        @click="$emit('card-clicked', card)"
-      />
+      <div class="card-list-row" v-for="card in searchedCards.slice(0, 1000)">
+        <i class="bi bi-box" v-if="card.isCubeCard()" />
+        <CardListItem
+          :card="card"
+          :separate-faces="true"
+          @click="$emit('card-clicked', card)"
+        />
+      </div>
 
       <div v-if="searchedCards.length >= 1000" class="alert alert-warning">
         For performance reasons, only 1000 cards are included in this list. Use the filters to reduce the card search space. There are currently {{ this.searchedCards.length }} cards based on the input name.
@@ -100,5 +102,10 @@ export default {
   width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.card-list-row {
+  display: flex;
+  flex-direction: row;
 }
 </style>
