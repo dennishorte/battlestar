@@ -133,24 +133,30 @@ export default {
     },
 
     async loadCards({ commit, dispatch }) {
-      console.log('...load cards')
-      commit('logInfo', 'Loading cards from database')
+      try {
+        console.log('...load cards')
+        commit('logInfo', 'Loading cards from database')
 
-      const cards = await loadCardsFromDatabase()
+        const cards = await loadCardsFromDatabase()
 
-      for (const card of cards) {
-        if (card.data) {
-          console.log(card)
-          break
+        for (const card of cards) {
+          if (card.data) {
+            console.log(card)
+            break
+          }
         }
+
+        commit('setCardList', cards)
+        commit('setCardLookup', mag.util.card.lookup.dictFactory(cards))
+        commit('setCardsReady')
+
+        console.log('...card database ready')
+        commit('logInfo', 'Cards successfully loaded from local database')
       }
-
-      commit('setCardList', cards)
-      commit('setCardLookup', mag.util.card.lookup.dictFactory(cards))
-      commit('setCardsReady')
-
-      console.log('...card database ready')
-      commit('logInfo', 'Cards successfully loaded from local database')
+      catch (err) {
+        commit('logInfo', 'ERROR')
+        throw err
+      }
     },
 
     async reloadDatabase({ commit, dispatch }) {
@@ -248,6 +254,6 @@ async function loadCardsFromDatabase() {
 }
 
 async function getLatestCardDataFromServer(source) {
-  const response = await this.$post('/api/magic/card/all', { source })
+  const response = await this.$post('/api/magic/card/fetch_all', { source })
   return response[source]
 }
