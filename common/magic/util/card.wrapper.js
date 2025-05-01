@@ -33,8 +33,8 @@ class CardWrapper extends Wrapper {
   name(faceIndex) {
     return faceIndex !== undefined ? this.face(faceIndex).name : this.data.name
   }
-  setCode() {
-    return this.data.set
+  set() {
+    return this.data.set || 'custom'
   }
   collectorNumber() {
     return this.data.collector_number
