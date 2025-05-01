@@ -233,8 +233,10 @@ export default {
           }
         }
 
-        colors.kind = kind
-        this.filters.push(colors)
+        if (someTrue) {
+          colors.kind = kind
+          this.filters.push(colors)
+        }
       }
 
       else {
