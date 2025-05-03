@@ -280,11 +280,11 @@ Magic.prototype.aAddCounter = function(player, cardId, name, opts={}) {
 Magic.prototype.aAddCounterPlayer = function(player, targetName, counterName) {
   const target = this.getPlayerByName(targetName)
 
-  if (counterName in target.g.counters) {
+  if (counterName in target.counters) {
     throw new Error(`Counter already exists: ${counterName}`)
   }
 
-  target.g.counters[counterName] = 0
+  target.counters[counterName] = 0
 
   this.mLog({
     template: 'Counter {name} added to {player}',
@@ -470,16 +470,12 @@ Magic.prototype.aChooseAction = function(player) {
       case 'shuffle bottom'      : return this.aShuffleBottom(actor, action.zoneId, action.count)
       case 'stack effect'        : return this.aStackEffect(actor, action.cardId)
       case 'tap'                 : return this.aTap(actor, action.cardId)
-      case 'trigger'             : return this.aTrigger(actor, action.cardId)
       case 'unmorph'             : return this.aUnmorph(actor, action.cardId)
       case 'unsecret'            : return this.aUnsecret(actor, action.cardId)
       case 'untap'               : return this.aUntap(actor, action.cardId)
       case 'view all'            : return this.aViewAll(actor, action.zoneId)
       case 'view next'           : return this.aViewNext(actor, action.zoneId)
       case 'view top k'          : return this.aViewTop(actor, action.zoneId, action.count)
-
-      // Deprecated
-      case 'twiddle'             : return this.aTwiddle(actor, action.cardId)
 
       default:
         throw new Error(`Unknown action: ${action.name}`)
@@ -648,7 +644,7 @@ Magic.prototype.aMoveAll = function(player, sourceId, targetId) {
   const source = this.getZoneById(sourceId)
   const toMove = source.cards()
   for (const card of toMove) {
-    this.aMoveCard(player, card.id, targetId)
+    this.aMoveCard(player, card.g.id, targetId)
   }
 }
 
@@ -746,7 +742,7 @@ Magic.prototype.aMoveRevealed = function(player, sourceId, targetId) {
     .takeWhile(source.cards(), card => card.visibility.length === numPlayers)
 
   for (const card of toMove) {
-    this.aMoveCard(player, card.id, targetId)
+    this.aMoveCard(player, card.g.id, targetId)
   }
 }
 
@@ -950,7 +946,7 @@ Magic.prototype.aStackEffect = function(player, cardId) {
   const data = {
     zoneId: stack.id,
     count: 1,
-    name: 'effect: ' + card.name,
+    name: 'effect: ' + card.name(),
   }
 
   const token = this.aCreateToken(controller, data, { silent: true })[0]
@@ -963,30 +959,6 @@ Magic.prototype.aTap = function(player, cardId) {
     template: 'tap: {card}',
     args: { card }
   })
-}
-
-Magic.prototype.aTrigger = function(player, cardId) {
-  const card = this.getCardById(cardId)
-  const token = this.aCreateEffect(player, card)
-}
-
-Magic.prototype.aTwiddle = function(player, cardId) {
-  const card = this.getCardById(cardId)
-
-  if (card.g.tapped) {
-    card.g.tapped = false
-    this.mLog({
-      template: 'untap: {card}',
-      args: { card }
-    })
-  }
-  else {
-    card.g.tapped = true
-    this.mLog({
-      template: 'tap: {card}',
-      args: { card }
-    })
-  }
 }
 
 Magic.prototype.aUnmorph = function(player, cardId) {

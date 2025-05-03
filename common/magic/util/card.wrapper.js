@@ -18,6 +18,7 @@ class GameData {
     }
 
     this.morph = false
+    this.secret = false
     this.noUntap = false
     this.tapped = false
     this.token = false
