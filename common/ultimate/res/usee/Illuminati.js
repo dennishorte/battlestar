@@ -25,6 +25,10 @@ function Card() {
         const topCard = game.getTopCard(player, card.color)
         const safeGuarded = game.aSafeguard(player, topCard)
 
+        if (!safeGuarded) {
+          return
+        }
+
         const availableAchievements = game.getAvailableStandardAchievements(player)
         const higherAchievement = availableAchievements.find(a => a.getAge() === safeGuarded.getAge() + 1)
 
