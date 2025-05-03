@@ -19,6 +19,7 @@
         <i class="ms ms-cost ms-flashback" v-if="hasFlashback" />
         <i class="ms ms-cost ms-ability-unearth" v-if="hasUnearth" />
         <i class="ms ms-cost ms-ability-escape" v-if="hasEscape" />
+        <i class="ms ms-cost ms-flashback" v-if="hasHarmonize" />
         <i class="bi bi-bandaid ms ms-cost" v-if="hasReturnFromGrave" />
       </template>
 
@@ -193,6 +194,7 @@ export default {
     hasEternalize() { return this.hasGraveAbility('Eternalize') },
     hasFlashback() { return this.hasGraveAbility('Flashback') },
     hasJumpstart() { return this.hasGraveAbility('Jump-start') },
+    hasHarmonize() { return this.hasGraveAbility('Harmonize') },
     hasUnearth() { return this.hasGraveAbility('Unearth') },
 
     hasReturnFromGrave() {
