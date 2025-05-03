@@ -133,7 +133,7 @@ export default {
 
       const { deck } = await this.$post('/api/magic/deck/fetch', { deckId: this.$route.params.id })
       this.deck = new UIDeckWrapper(deck)
-      await this.deck.initializeCards(this.cardInitializer)
+      await this.deck.initializeCardsAsync(this.cardInitializer)
     },
 
     openImportModal() {

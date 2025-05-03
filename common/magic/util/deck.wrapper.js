@@ -1,5 +1,13 @@
 const Wrapper = require('./wrapper')
 
+function _emptyZones() {
+  return {
+    main: [],
+    side: [],
+    command: [],
+  }
+}
+
 class DeckWrapper extends Wrapper {
   constructor(deck) {
     super(deck)
@@ -8,9 +16,9 @@ class DeckWrapper extends Wrapper {
   }
 
   async initializeCardsAsync(juicer) {
-    this._cardsByZone = {}
+    this._cardsByZone = _emptyZones()
     for (const zone of Object.keys(this.cardIdsByZone)) {
-      this._cardsByZone[key] = await juicer(this.cardIdsByZone[key])
+      this._cardsByZone[zone] = await juicer(this.cardIdsByZone[zone])
     }
     return this
   }
@@ -19,7 +27,7 @@ class DeckWrapper extends Wrapper {
      A juicer takes an array of cardIds and returns an array of CardWrapper objects matching those ids.
    */
   initializeCardsSync(juicer) {
-    this._cardsByZone = {}
+    this._cardsByZone = _emptyZones()
     for (const zone of Object.keys(this.cardIdsByZone)) {
       this._cardsByZone[zone] = juicer(this.cardIdsByZone[zone])
     }
