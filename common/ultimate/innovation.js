@@ -1421,11 +1421,21 @@ Innovation.prototype.aExchangeCards = function(player, cards1, cards2, zone1, zo
     }
   })
 
+  let acted = false
+
   for (const card of cards1) {
-    this.mMoveCardTo(card, zone2, { player, quiet: true })
+    if (this.mMoveCardTo(card, zone2)) {
+      acted = true
+    }
   }
   for (const card of cards2) {
-    this.mMoveCardTo(card, zone1, { player, quiet: true })
+    if (this.mMoveCardTo(card, zone1)) {
+      acted = true
+    }
+  }
+
+  if (acted) {
+    this.mActed(player)
   }
 }
 
@@ -2917,16 +2927,14 @@ Innovation.prototype.mMoveCardTo = function(card, target, opts={}) {
   if (opts.player) {
     this.mActed(opts.player)
 
-    if (!opts.quiet) {
-      this.mLog({
-        template: '{player} moves {card} to {zone}',
-        args: {
-          player: opts.player,
-          card,
-          zone: target
-        }
-      })
-    }
+    this.mLog({
+      template: '{player} moves {card} to {zone}',
+      args: {
+        player: opts.player,
+        card,
+        zone: target
+      }
+    })
   }
 
   return card
