@@ -54,16 +54,18 @@
           <button class="btn btn-warning" @click="unselectDeck" v-if="ready">
             Click to shout: "Wait a minute!"
           </button>
-          <button class="btn btn-success" @click="selectDeck" v-else :disabled="!activeDeck">
+          <button class="btn btn-success" @click="selectDeck" v-else :disabled="!selectedDeck">
             Click to shout: "I am ready!"
           </button>
         </div>
+
+        <Decks />
       </div>
 
       <div class="content-column deck-list-column">
         <Decklist
-          v-if="activeDeck"
-          :deck="activeDeck"
+          v-if="selectedDeck"
+          :deck="selectedDeck"
           :no-menu="true"
           @card-clicked="cardClicked"
         />
@@ -78,6 +80,7 @@
 import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
+import Decks from '@/modules/magic/components/deck/Decks'
 import Decklist from '@/modules/magic/components/deck/Decklist'
 import DropdownDivider from '@/components/DropdownDivider'
 import DropdownButton from '@/components/DropdownButton'
@@ -88,6 +91,7 @@ export default {
   name: 'PreGame',
 
   components: {
+    Decks,
     Decklist,
     DropdownDivider,
     DropdownButton,
@@ -97,12 +101,13 @@ export default {
 
   inject: ['actor', 'game'],
 
-  computed: {
-    // ...mapState('magic/dm', {
-    //   activeDeck: 'activeDeck',
-    //   modified: 'modified',
-    // }),
+  data() {
+    return {
+      selectedDeck: null,
+    }
+  },
 
+  computed: {
     ...mapState('magic/game', {
       linkedDraft: 'linkedDraft',
     }),

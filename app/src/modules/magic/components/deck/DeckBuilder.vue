@@ -97,16 +97,6 @@ export default {
   },
 
   methods: {
-    cardInitializer(cardIds) {
-      const cards = cardIds.map(id => this.cardLookup.byId[id])
-      for (const card of cards) {
-        if (card === undefined) {
-          throw new Error(`Card not found: ${id}`)
-        }
-      }
-      return cards
-    },
-
     cardlistClicked(card) {
       this.deck.addCard(card, 'main')
     },
@@ -131,9 +121,7 @@ export default {
         return
       }
 
-      const { deck } = await this.$post('/api/magic/deck/fetch', { deckId: this.$route.params.id })
-      this.deck = new UIDeckWrapper(deck)
-      await this.deck.initializeCardsAsync(this.cardInitializer)
+      this.deck = await this.$store.dispatch('magic/loadDeck', this.$route.params.id)
     },
 
     openImportModal() {

@@ -19,6 +19,10 @@ export default {
       return state.cards
     },
 
+    cardsReady(state) {
+      return state.cardsReady
+    },
+
     cardLink(state) {
       return (databaseId) => '/magic/card/' + databaseId
     },
