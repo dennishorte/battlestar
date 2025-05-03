@@ -134,22 +134,28 @@ CardUtil.blankFace = function() {
 
 CardUtil.blank = function() {
   return {
-    card_faces: [this.blankFace()],
 
     id: '',
-    layout: 'normal',
-    rarity: 'common',
-    set: '',
-    collector_number: '',
-    legal: [],
+    source: 'adhoc_token',
 
-    name: '',
-    type_line: '',
+    data: {
+      id: '',
+      name: '',
+      type_line: '',
 
-    cmc: '0',
-    color_identity: [],
-    colors: [],
-    produced_mana: [],
+      layout: 'normal',
+      cmc: 0,
+      digital: false,
+      rarity: 'common',
+
+      color_identity: [],
+      colors: [],
+      produced_mana: [],
+
+      card_faces: [this.blankFace()],
+
+      legal: [],
+    }
   }
 }
 

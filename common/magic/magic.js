@@ -495,14 +495,8 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
 
   for (let i = 0; i < data.count; i++) {
     // Create fake card data
-    const card = {
-      name: data.name,
-      set: '',
-      collectorNumber: '',
-      data: cardUtil.blank(),
-    }
-
-    card.data.name = card.name
+    const card = new wrappers.card(cardUtil.blank())
+    card.data.name = data.name
     card.data.type_line = 'Token'
 
     card.data.card_faces[0].type_line = 'Token'
@@ -514,7 +508,7 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
     card.g.annotation = data.annotation
     card.g.token = true
 
-    if (data.g.morph) {
+    if (data.morph) {
       card.g.morph = true
       card.visibility = [player]
     }
@@ -524,7 +518,6 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
 
     zone.addCard(card)
     created.push(card)
-
 
     if (zone.id.endsWith('.stack')) {
       this.mLogStackPush(player, card)
@@ -605,13 +598,7 @@ Magic.prototype.aHideAll = function(player, zoneId) {
 
 Magic.prototype.aImportCard = function(player, data) {
   for (let i = 0; i < data.count; i++) {
-    const card = {
-      name: data.card.name,
-      set: data.card.set,
-      collector_number: data.card.collector_number,
-      custom_id: data.card.custom_id,
-      data: data.card,
-    }
+    const card = new wrappers.card(data.card)
 
     this.mInitializeCard(card, player)
     card.g.annotation = data.annotation

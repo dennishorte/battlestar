@@ -5,6 +5,7 @@ const {
   InputRequestEvent,
 } = require('../lib/game.js')
 
+const TestCards = require('./test_card_data.js')
 const t = require('./testutil.js')
 
 
@@ -119,7 +120,7 @@ describe('Magic Actions', () => {
       name: 'import card',
       data: {
         count: 1,
-        card: game.cardLookupFunc({ name: 'White Knight' }),
+        card: TestCards.byName['white knight'][0].toJSON(),
         isToken: true,
         zoneId: 'players.dennis.command',
       },
