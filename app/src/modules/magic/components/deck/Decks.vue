@@ -23,7 +23,7 @@
 
     <div v-else class="deck-list">
       <div v-for="deck in decks" :key="deck._id" class="deck-item">
-        <div class="deck-content" @click="viewDeck(deck._id)">
+        <div class="deck-content" @click="$emit('deck-clicked', deck._id)">
           <div class="deck-name">
             {{ deck.name }}
           </div>
@@ -63,13 +63,9 @@ export default {
   },
 
   methods: {
-    viewDeck(deckId) {
-      this.$router.push(`/magic/deck/${deckId}`)
-    },
-
     async createDeck() {
       try {
-        const { deck } = await this.$post('/api/magic/deck/create', { 
+        const { deck } = await this.$post('/api/magic/deck/create', {
           userId: this.$store.state.auth.user._id
         })
 
@@ -86,7 +82,7 @@ export default {
         const { status, decks } = await this.$post('/api/user/magic/decks', {
           userId: this.$store.state.auth.user._id
         })
-        
+
         if (status === 'success') {
           this.decks = decks
           this.error = null
@@ -138,6 +134,7 @@ export default {
 
 <style scoped>
 .decks-container {
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
 }

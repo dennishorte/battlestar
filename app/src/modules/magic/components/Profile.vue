@@ -4,7 +4,7 @@
 
       <div class="col">
         <MagicMenu />
-        <Decks />
+        <Decks @deck-clicked="viewDeck" />
       </div>
 
       <div class="col">
@@ -75,6 +75,10 @@ export default {
     async createCube() {
       const cubeId = await this.$store.dispatch('magic/cube/create')
       this.$router.push('/magic/cube/' + cubeId)
+    },
+
+    viewDeck(deckId) {
+      this.$router.push(`/magic/deck/${deckId}`)
     },
   },
 
