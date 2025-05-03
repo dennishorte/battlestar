@@ -8,8 +8,8 @@ function generateLookup(cards) {
     const lookup = {}
 
     lookup.all = cards
-    lookup.byName = util.array.groupBy(cards, (card) => card.name())
-    lookup.byId = util.array.toDict(cards.map(card => [card.data._id, card]))
+    lookup.byName = util.array.groupBy(cards, (card) => card.name().toLowerCase())
+    lookup.byId = Object.fromEntries(cards.map(card => [card.id(), card]))
 
     return lookup
 }

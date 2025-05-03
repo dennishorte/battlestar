@@ -7,12 +7,27 @@ class DeckWrapper extends Wrapper {
     this._cardsByZone = undefined
   }
 
-  async initializeCards(juicer) {
+  async initializeCardsAsync(juicer) {
     this._cardsByZone = {}
-    for (const key of Object.keys(this.cardIdsByZone)) {
-      const juiced = juicer(this.cardIdsByZone[key])
-      this._cardsByZone[key] = juiced instanceof Promise ? await juiced : juiced
+    for (const zone of Object.keys(this.cardIdsByZone)) {
+      this._cardsByZone[key] = await juicer(this.cardIdsByZone[key])
     }
+    return this
+  }
+
+  /**
+     A juicer takes an array of cardIds and returns an array of CardWrapper objects matching those ids.
+   */
+  initializeCardsSync(juicer) {
+    this._cardsByZone = {}
+    for (const zone of Object.keys(this.cardIdsByZone)) {
+      this._cardsByZone[zone] = juicer(this.cardIdsByZone[zone])
+    }
+    return this
+  }
+
+  setCardsByZone(cards) {
+    this._cardsByZone = cards
   }
 
   cards(zone) {
@@ -26,6 +41,7 @@ class DeckWrapper extends Wrapper {
     this.cardIdsByZone[zone].push(card._id)
     this._cardsByZone[zone].push(card)
     this._modified = true
+    return this
   }
 
   removeCard(card, zone) {
@@ -33,6 +49,7 @@ class DeckWrapper extends Wrapper {
     this.cardIdsByZone[zone].splice(toRemove, 1)
     this._cardsByZone[zone].splice(toRemove, 1)
     this._modified = true
+    return this
   }
 
   isModified() {
@@ -49,6 +66,21 @@ class DeckWrapper extends Wrapper {
 
   zones() {
     return Object.keys(this.cardIdsByZone)
+  }
+
+  toGameJSON() {
+    const deepcopy = (zone) => {
+      return this._cardsByZone[zone].map(card => card.toJSON())
+    }
+
+    return {
+      data: this.toJSON(),
+      cards: {
+        main: deepcopy('main'),
+        side: deepcopy('side'),
+        command: deepcopy('command'),
+      }
+    }
   }
 }
 

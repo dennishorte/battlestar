@@ -1,3 +1,6 @@
+const util = require('../../lib/util.js')
+
+
 class Wrapper {
   constructor(obj) {
     this._originalFields = Object.keys(obj)
@@ -9,7 +12,7 @@ class Wrapper {
     for (const field of this._originalFields) {
       output[field] = this[field]
     }
-    return output
+    return util.deepcopy(output)
   }
 }
 

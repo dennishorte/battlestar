@@ -1,9 +1,43 @@
 const Wrapper = require('./wrapper')
 const cardUtil = require('../cardUtil')
 
+class GameData {
+  constructor() {
+    this.id = null
+    this.owner = null
+    this.activeFace = null
+
+    this.annotation = ''
+    this.annotationEOT = ''
+
+    this.attached = []
+    this.attachedTo = null
+
+    this.counters= {
+      '+1/+1': 0,
+    }
+
+    this.morph = false
+    this.noUntap = false
+    this.tapped = false
+    this.token = false
+  }
+}
+
 class CardWrapper extends Wrapper {
   constructor(card) {
     super(card)
+    this.g = new GameData()
+
+    // Sadly, these three values are used by the base class of magic.js, game.js. Changing them would
+    // Cause problems with other games, so they will remain on the root.
+    this.zone = null
+    this.home = null
+    this.visibility = []
+  }
+
+  id() {
+    return this._id
   }
 
   colors(faceIndex) {
