@@ -184,7 +184,15 @@ export default {
     CardDefense,
   },
 
-  inject: ['bus'],
+  inject: {
+    bus: {
+      from: 'bus',
+      default: {
+        emit: () => {},
+        on: () => {},
+      },
+    },
+  },
 
   props: {
     card: {

@@ -41,6 +41,7 @@ const Deck = {
       {
         $set: {
           name: deck.name,
+          format: deck.format,
           cardIdsByZone: deck.cardIdsByZone,
           'timestamps.updated': new Date(),
         }

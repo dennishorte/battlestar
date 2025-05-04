@@ -17,6 +17,7 @@
             v-if="deck"
             :deck="deck"
             @card-clicked="decklistClicked"
+            @edit-settings="openDeckSettings"
           >
             <template #menu-options>
               <DropdownButton @click="openImportModal">import</DropdownButton>
@@ -34,6 +35,12 @@
 
     <CardManagerModal :deck="deck" />
     <DeckImportModal @import-card-updates="importDecklist" />
+    <DeckSettingsModal 
+      v-if="deck" 
+      ref="settingsModal" 
+      :deck="deck" 
+      @settings-updated="handleSettingsUpdated"
+    />
 
   </MagicWrapper>
 </template>
@@ -50,6 +57,7 @@ import CardFilters from '../CardFilters'
 import CardList from './CardList'
 import DeckImportModal from './DeckImportModal'
 import CardManagerModal from './CardManagerModal'
+import DeckSettingsModal from './DeckSettingsModal'
 import Decklist from './Decklist'
 import DropdownButton from '@/components/DropdownButton'
 import MagicMenu from '../MagicMenu'
@@ -63,6 +71,7 @@ export default {
     CardList,
     DeckImportModal,
     CardManagerModal,
+    DeckSettingsModal,
     Decklist,
     DropdownButton,
     MagicMenu,
@@ -112,6 +121,12 @@ export default {
       throw new Error('Not implemented')
     },
 
+    handleSettingsUpdated(settings) {
+      // Settings were updated in the modal directly on the deck object
+      // Mark deck as modified so it can be saved
+      this.deck.markModified()
+    },
+
     importDecklist(decklist) {
       throw new Error('Not implemented')
     },
@@ -122,6 +137,10 @@ export default {
       }
 
       this.deck = await this.$store.dispatch('magic/loadDeck', this.$route.params.id)
+    },
+
+    openDeckSettings() {
+      this.$refs.settingsModal.showModal()
     },
 
     openImportModal() {

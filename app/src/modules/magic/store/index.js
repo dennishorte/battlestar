@@ -87,5 +87,10 @@ export default {
       state.users = users
       state.loadingUsers = false
     },
+
+    async saveDeck(context, deck) {
+      await this.$post('/api/magic/deck/save', { deck: deck.toJSON() })
+      deck.markSaved()
+    },
   },
 }

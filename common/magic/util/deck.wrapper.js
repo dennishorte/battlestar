@@ -53,9 +53,26 @@ class DeckWrapper extends Wrapper {
   }
 
   removeCard(card, zone) {
-    const toRemove = this.cardIdsByZone[zone].findIndex(x => x._id === card._id)
+    const toRemove = this.cardIdsByZone[zone].findIndex(id => id === card._id)
+    if (toRemove === -1) {
+      console.log('removeCard', card, zone)
+      throw new Error('Card not found')
+    }
+
     this.cardIdsByZone[zone].splice(toRemove, 1)
     this._cardsByZone[zone].splice(toRemove, 1)
+    this._modified = true
+    return this
+  }
+
+  setName(name) {
+    this.name = name
+    this._modified = true
+    return this
+  }
+
+  setFormat(format) {
+    this.format = format
     this._modified = true
     return this
   }
@@ -74,6 +91,11 @@ class DeckWrapper extends Wrapper {
 
   zones() {
     return Object.keys(this.cardIdsByZone)
+  }
+
+  markSaved() {
+    this._modified = false
+    return this
   }
 
   toGameJSON() {
