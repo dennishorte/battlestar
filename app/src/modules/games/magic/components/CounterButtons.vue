@@ -5,7 +5,7 @@
     </div>
     <div class="btn-group">
       <button class="btn btn-sm btn-outline-warning" @click.stop="incrementCounter(-1)">-</button>
-      <button class="btn btn-sm btn-secondary">{{ card.counters[name] }}</button>
+      <button class="btn btn-sm btn-secondary">{{ card.g.counters[name] }}</button>
       <button class="btn btn-sm btn-outline-success" @click.stop="incrementCounter(1)">+</button>
     </div>
   </div>
@@ -27,7 +27,7 @@ export default {
     incrementCounter(count) {
       this.do(null, {
         name: 'adjust c-counter',
-        cardId: this.card.id,
+        cardId: this.card.g.id,
         key: this.name,
         count,
       })
