@@ -99,5 +99,5 @@ Zone.prototype.shuffleBottom = function(count, opts={}) {
 }
 
 Zone.prototype.sortCardsByName = function() {
-  this._cards.sort((l, r) => l.name.localeCompare(r.name))
+  this._cards.sort((l, r) => l.name().localeCompare(r.name()))
 }
