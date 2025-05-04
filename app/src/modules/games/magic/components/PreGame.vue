@@ -59,7 +59,7 @@
           </button>
         </div>
 
-        <Decks />
+        <Decks @deck-clicked="loadDeck" />
       </div>
 
       <div class="content-column deck-list-column">
@@ -127,6 +127,10 @@ export default {
       this.$router.push(`/game/${this.linkedDraft._id}`)
     },
 
+    async loadDeck(deckId) {
+      this.selectedDeck = await this.$store.dispatch('magic/loadDeck', deckId)
+    },
+
     selectDeck() {
       const player = this.game.getPlayerByName(this.actor.name)
       const waiting = this.game.getWaiting(player)
@@ -139,7 +143,7 @@ export default {
       this.game.respondToInputRequest({
         actor: this.actor.name,
         title: waiting.title,
-        deckData: this.activeDeck.serialize(),
+        deckData: this.selectedDeck.toGameJSON(),
       })
       this.$store.dispatch('game/save')
     },

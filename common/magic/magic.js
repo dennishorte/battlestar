@@ -1258,8 +1258,6 @@ Magic.prototype.setDeck = function(player, data) {
     args: { player },
   })
 
-  player.rawDeck = data.data
-
   const library = this.getZoneByPlayer(player, 'library')
   for (const raw of data.cards.main) {
     const card = this.mInitializeCard(raw, player)
