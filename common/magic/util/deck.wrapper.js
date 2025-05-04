@@ -1,5 +1,6 @@
 const Wrapper = require('./wrapper')
 
+
 function _emptyZones() {
   return {
     main: [],
@@ -111,6 +112,17 @@ class DeckWrapper extends Wrapper {
         command: deepcopy('command'),
       }
     }
+  }
+
+  static fromGameJSON(json, cardWrapper) {
+    const deck = new DeckWrapper(json.data)
+    const cards = {
+      main: json.cards.main.map(card => new cardWrapper(card)),
+      side: json.cards.side.map(card => new cardWrapper(card)),
+      command: json.cards.command.map(card => new cardWrapper(card)),
+    }
+    deck.setCardsByZone(cards)
+    return deck
   }
 }
 

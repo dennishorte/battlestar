@@ -87,6 +87,8 @@ import DropdownButton from '@/components/DropdownButton'
 import GameLogMagic from './GameLogMagic'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 
+import UICardWrapper from '@/modules/magic/util/card.wrapper.js'
+
 export default {
   name: 'PreGame',
 
@@ -156,6 +158,14 @@ export default {
     waiting(player) {
       return this.game.checkPlayerHasActionWaiting(player)
     },
+  },
+
+  mounted() {
+    // If the player already has selected their deck, show it.
+    const deck = this.game.getDeckByPlayer(this.actor, UICardWrapper)
+    if (deck) {
+      this.selectedDeck = deck
+    }
   },
 }
 </script>

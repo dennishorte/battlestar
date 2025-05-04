@@ -1067,6 +1067,16 @@ Magic.prototype.getCardAll = function() {
   return Object.values(this.cardsById)
 }
 
+Magic.prototype.getDeckByPlayer = function(player, cardWrapper=wrappers.card) {
+  const deckSelectAction = this.responses.find(r => r.actor === player.name && r.deckData)
+  if (deckSelectAction) {
+    return wrappers.deck.fromGameJSON(deckSelectAction.deckData, cardWrapper)
+  }
+  else {
+    return null
+  }
+}
+
 Magic.prototype.getDecksSelected = function() {
   return this.state.decksSelected
 }
