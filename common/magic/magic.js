@@ -232,6 +232,9 @@ Magic.prototype.chooseDecks = function() {
 
   const responses = this.requestInputMany(requests)
 
+  // Once both players have selected their decks, they can't go back.
+  responses.forEach(r => r.noUndo = true)
+
   for (const response of responses) {
     const player = this.getPlayerByName(response.actor)
     this.setDeck(player, response.deckData)
