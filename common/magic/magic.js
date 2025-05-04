@@ -38,6 +38,7 @@ module.exports = {
 function Magic(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
+  this.cardWrapper = wrappers.card
   this.cardsById = {}
 }
 
@@ -494,16 +495,16 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
 
   for (let i = 0; i < data.count; i++) {
     // Create fake card data
-    const card = new wrappers.card(cardUtil.blank())
-    card.data.name = data.name
-    card.data.type_line = 'Token'
+    const cardData = cardUtil.blank()
+    cardData.data.name = data.name
+    cardData.data.type_line = 'Token'
 
-    card.data.card_faces[0].type_line = 'Token'
-    card.data.card_faces[0].name = card.name
-    card.data.card_faces[0].image_uri = 'https://i.pinimg.com/736x/6e/fe/d4/6efed4b65fb7666de4b615d8b1195258.jpg'
+    cardData.data.card_faces[0].type_line = 'Token'
+    cardData.data.card_faces[0].name = data.name
+    cardData.data.card_faces[0].image_uri = 'https://i.pinimg.com/736x/6e/fe/d4/6efed4b65fb7666de4b615d8b1195258.jpg'
 
     // Insert card into game
-    this.mInitializeCard(card, owner)
+    const card = this.mInitializeCard(cardData, owner)
     card.g.annotation = data.annotation
     card.g.token = true
 
@@ -597,9 +598,7 @@ Magic.prototype.aHideAll = function(player, zoneId) {
 
 Magic.prototype.aImportCard = function(player, data) {
   for (let i = 0; i < data.count; i++) {
-    const card = new wrappers.card(data.card)
-
-    this.mInitializeCard(card, player)
+    const card = this.mInitializeCard(data.card, player)
     card.g.annotation = data.annotation
     card.g.token = data.isToken
     card.visibility = this.getPlayerAll()
@@ -1067,10 +1066,10 @@ Magic.prototype.getCardAll = function() {
   return Object.values(this.cardsById)
 }
 
-Magic.prototype.getDeckByPlayer = function(player, cardWrapper=wrappers.card) {
+Magic.prototype.getDeckByPlayer = function(player) {
   const deckSelectAction = this.responses.find(r => r.actor === player.name && r.deckData)
   if (deckSelectAction) {
-    return wrappers.deck.fromGameJSON(deckSelectAction.deckData, cardWrapper)
+    return wrappers.deck.fromGameJSON(deckSelectAction.deckData, this.cardWrapper)
   }
   else {
     return null
@@ -1194,7 +1193,7 @@ Magic.prototype.mHide = function(card) {
 }
 
 Magic.prototype.mInitializeCard = function(card, owner) {
-  card = new wrappers.card(card)
+  card = new this.cardWrapper(card)
   card.g.id = this.getNextLocalId()
   card.g.owner = owner
   card.g.activeFace = card.name(0)
