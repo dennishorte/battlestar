@@ -67,14 +67,18 @@ class DeckWrapper extends Wrapper {
   }
 
   setName(name) {
-    this.name = name
-    this._modified = true
+    if (this.name !== name) {
+      this.name = name
+      this._modified = true
+    }
     return this
   }
 
   setFormat(format) {
-    this.format = format
-    this._modified = true
+    if (this.format !== format) {
+      this.format = format
+      this._modified = true
+    }
     return this
   }
 
