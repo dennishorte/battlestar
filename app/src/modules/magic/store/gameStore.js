@@ -200,11 +200,8 @@ export default {
       }
     },
 
-    async loadGame({ commit, dispatch, rootGetters, rootState }, { doFunc, game }) {
+    async loadGame({ commit, dispatch, rootGetters, rootState }, { game }) {
       commit('setReady', false)
-      const actor = rootGetters['auth/user']
-      game.cardLookupFunc = rootGetters['magic/cards/getLookupFunc']
-      game.doFunc = doFunc
       game.run()
 
       commit('setGame', game)
