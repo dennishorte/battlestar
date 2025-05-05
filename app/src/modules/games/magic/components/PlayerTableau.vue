@@ -64,15 +64,25 @@
       </TableauZone>
 
       <TableauZone :zone="getZone('graveyard')" :show-grave-powers="true">
-        <DropdownButton @click="moveAll($event, 'graveyard')">move all</DropdownButton>
+        <template #menu>
+          <DropdownButton @click="moveAll($event, 'graveyard')">move all</DropdownButton>
+        </template>
       </TableauZone>
     </div>
 
     <div class="tableau-col" :class="extraColumnClasses">
       <TableauZone :zone="getZone('attacking')" :show-power="true" v-if="isAttacker">
+        <template #menu>
+          <DropdownButton @click="importCard('attacking')">import card</DropdownButton>
+          <DropdownButton @click="makeToken('attacking')">make token</DropdownButton>
+        </template>
       </TableauZone>
 
       <TableauZone :zone="getZone('blocking')" :show-power="true" v-if="isDefender">
+        <template #menu>
+          <DropdownButton @click="importCard('blocking')">import card</DropdownButton>
+          <DropdownButton @click="makeToken('blocking')">make token</DropdownButton>
+        </template>
       </TableauZone>
 
       <TableauZone :zone="getZone('creatures')" :show-power="true">
