@@ -662,7 +662,12 @@ Game.prototype.getPlayerByName = function(name) {
 }
 
 Game.prototype.getPlayerByOwner = function(card) {
-  return card.owner
+  if (card.g) {
+    return card.g.owner
+  }
+  else {
+    return card.owner
+  }
 }
 
 Game.prototype.getPlayerByZone = function(zone) {
@@ -750,11 +755,21 @@ Game.prototype.getPlayersStartingNext = function() {
 }
 
 Game.prototype.getZoneByCard = function(card) {
-  return this.getZoneById(card.zone)
+  if (card.g.zone) {
+    return this.getZoneById(card.g.zone)
+  }
+  else {
+    return this.getZoneById(card.zone)
+  }
 }
 
 Game.prototype.getZoneByCardHome = function(card) {
-  return this.getZoneById(card.home)
+  if (card.g.home) {
+    return this.getZoneById(card.g.home)
+  }
+  else {
+    return this.getZoneById(card.home)
+  }
 }
 
 Game.prototype.getZoneById = function(id) {
