@@ -35,7 +35,17 @@ export default {
     },
 
     displayName() {
-      return this.card ? this.card.name : this.name
+      if (this.card) {
+        if (typeof this.card.name === 'function') {
+          return this.card.name()
+        }
+        else {
+          return this.card.name
+        }
+      }
+      else {
+        return this.name
+      }
     },
 
     styles() {

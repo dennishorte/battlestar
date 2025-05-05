@@ -1345,8 +1345,8 @@ Magic.prototype._enrichLogArgs = function(msg) {
       }
       else {
         msg.args[key] = {
-          value: card.name,
-          cardId: card.id,  // Important in some UI situations.
+          value: card.name(),
+          cardId: card.g.id,  // Important in some UI situations.
           classes: ['card-name'],
         }
       }
