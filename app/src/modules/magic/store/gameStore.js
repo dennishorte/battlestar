@@ -88,7 +88,7 @@ export default {
     },
 
     setSelectedCard(state, card) {
-      state.selectedCardId = card ? card.id : null
+      state.selectedCardId = card ? card.g.id : null
     },
   },
 

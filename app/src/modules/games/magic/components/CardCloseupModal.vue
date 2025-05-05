@@ -6,15 +6,15 @@
 
     <div v-if="selectedCard" class="modal-body">
       <div class="card-holder">
-        <Card v-if="cardIsVisible" :card="selectedCard.data" :size="270" />
+        <Card v-if="cardIsVisible" :card="selectedCard" :size="270" />
       </div>
 
       <div v-if="cardIsVisible" class="labeled-input-wrapper mt-2">
         <label class="col-form-label">Active Face</label>
         <div>
           <select class="form-select" v-model.number="activeFace">
-            <option v-for="face in selectedCard.data.card_faces">
-              {{ face.name }}
+            <option v-for="index in selectedCard.numFaces()">
+              {{ selectedCard.name(index - 1) }}
             </option>
           </select>
         </div>
@@ -87,7 +87,7 @@ export default {
     },
 
     counters() {
-      return Object.entries(this.selectedCard.counters)
+      return Object.entries(this.selectedCard.g.counters)
     },
 
     selectedCard() {
@@ -110,7 +110,7 @@ export default {
       if (this.newCounter) {
         this.do(null, {
           name: 'add counter',
-          cardId: this.selectedCard.id,
+          cardId: this.selectedCard.g.id,
           key: this.newCounter,
         })
       }
@@ -130,24 +130,24 @@ export default {
     },
 
     saveChanges() {
-      if (this.selectedCard.activeFace !== this.activeFace) {
+      if (this.selectedCard.g.activeFace !== this.activeFace) {
         this.do(null, {
           name: 'active face',
-          cardId: this.selectedCard.id,
+          cardId: this.selectedCard.g.id,
           face: this.activeFace,
         })
       }
-      if (this.selectedCard.annotation !== this.annotation) {
+      if (this.selectedCard.g.annotation !== this.annotation) {
         this.do(null, {
           name: 'annotate',
-          cardId: this.selectedCard.id,
+          cardId: this.selectedCard.g.id,
           annotation: this.annotation,
         })
       }
-      if (this.selectedCard.annotationEOT !== this.annotationEOT) {
+      if (this.selectedCard.g.annotationEOT !== this.annotationEOT) {
         this.do(null, {
           name: 'annotate eot',
-          cardId: this.selectedCard.id,
+          cardId: this.selectedCard.g.id,
           annotation: this.annotationEOT,
         })
       }
