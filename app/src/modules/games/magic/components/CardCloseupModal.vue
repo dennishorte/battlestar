@@ -98,9 +98,9 @@ export default {
   watch: {
     selectedCard(newValue) {
       if (newValue) {
-        this.activeFace = newValue.activeFace
-        this.annotation = newValue.annotation
-        this.annotationEOT = newValue.annotationEOT
+        this.activeFace = newValue.g.activeFace
+        this.annotation = newValue.g.annotation
+        this.annotationEOT = newValue.g.annotationEOT
       }
     },
   },
@@ -121,10 +121,12 @@ export default {
     },
 
     debug() {
-      const copy = { ...this.selectedCard }
-      copy.owner = copy.owner.name
-      copy.data = util.deepcopy(copy.data)
-      copy.visibility = copy.visibility.map(player => player.name)
+      const copy = this.selectedCard.toJSON()
+      copy.g = { ...this.selectedCard.g }
+      copy.g.owner = this.selectedCard.g.owner.name
+      copy.visibility = this.selectedCard.visibility.map(player => player.name)
+      copy.zone = this.selectedCard.zone
+      copy.home = this.selectedCard.home
 
       console.log(copy)
     },
