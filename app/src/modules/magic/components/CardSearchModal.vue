@@ -8,6 +8,8 @@
       <input class="form-control" v-model="name" placeholder="card name" ref="searchField" />
     </div>
 
+    <slot name="middle-slot"></slot>
+
     <div class="versions">
 
       <template v-if="matched.length === 0">
@@ -47,7 +49,7 @@ import Modal from '@/components/Modal'
 
 
 export default {
-  name: 'CubeAddModal',
+  name: 'CardSearchModal',
 
   components: {
     Card,
@@ -120,6 +122,7 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  margin-top: .5em;
 }
 
 .versions-list {

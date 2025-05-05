@@ -281,6 +281,7 @@ export default {
     },
 
     importCardDo(data) {
+      data.card = data.card.toJSON()
       this.do(null, {
         name: 'import card',
         data,
