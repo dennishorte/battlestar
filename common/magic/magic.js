@@ -1239,7 +1239,7 @@ Magic.prototype.mMaybeRemoveTokens = function(card) {
   if (card.g.token && !validZones.some(id => card.zone.endsWith(id))) {
     this.mLogIndent()
 
-    if (!card.name.startsWith('effect: ')) {
+    if (!card.name().startsWith('effect: ')) {
       this.mLog({
         template: '{card} token ceases to exist',
         args: { card }
