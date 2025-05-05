@@ -273,7 +273,7 @@ export default {
 
     getHidden(card) {
       const player = this.game.getPlayerByName(this.actor.name)
-      return !card.visibility.includes(player)
+      return !card.isVisible(player)
     },
 
     hasGraveAbility(name) {

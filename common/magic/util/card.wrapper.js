@@ -184,6 +184,9 @@ class CardWrapper extends Wrapper {
   isScarred() {
     return false
   }
+  isVisible(player) {
+    return this.visibility.includes(player)
+  }
 
   face(index) {
     if (!this.data.card_faces) {
