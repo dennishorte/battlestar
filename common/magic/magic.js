@@ -38,7 +38,7 @@ module.exports = {
 function Magic(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
-  this.cardWrapper = wrappers.card
+  this.setCardWrapper(wrappers.card, 'constructor')
   this.cardsById = {}
 }
 
@@ -70,6 +70,10 @@ Magic.prototype.serialize = function() {
   base.gameOverData = this.gameOverData
 
   return base
+}
+
+Magic.prototype.setCardWrapper = function(wrapper, note) {
+  this.cardWrapper = wrapper
 }
 
 Magic.prototype._mainProgram = function() {
@@ -1192,8 +1196,8 @@ Magic.prototype.mHide = function(card) {
   }
 }
 
-Magic.prototype.mInitializeCard = function(card, owner) {
-  card = new this.cardWrapper(card)
+Magic.prototype.mInitializeCard = function(data, owner) {
+  const card = new this.cardWrapper(data)
   card.g.id = this.getNextLocalId()
   card.g.owner = owner
   card.g.activeFace = card.name(0)

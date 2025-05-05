@@ -3,6 +3,7 @@ const { mag } = require('battlestar-common')
 class UICardWrapper extends mag.util.wrapper.card {
   constructor(card) {
     super(card)
+    this.__memo = 'UICardWrapper'
   }
 
   frameColor(faceIndex) {
