@@ -29,6 +29,7 @@
         :hide-popup="hidden"
         :show-mana-cost="showManaCost"
         :show-power="showPower"
+        :separate-faces="true"
       >
         <template #name>{{ displayName }}</template>
       </CardListItem>
