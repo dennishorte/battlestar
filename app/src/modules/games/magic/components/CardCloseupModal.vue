@@ -12,9 +12,9 @@
       <div v-if="cardIsVisible" class="labeled-input-wrapper mt-2">
         <label class="col-form-label">Active Face</label>
         <div>
-          <select class="form-select" v-model.number="activeFace">
-            <option v-for="index in selectedCard.numFaces()">
-              {{ selectedCard.name(index - 1) }}
+          <select class="form-select" v-model.number="activeFaceIndex">
+            <option v-for="(_, index) in selectedCard.numFaces()" :value="index">
+              {{ selectedCard.name(index) }}
             </option>
           </select>
         </div>
@@ -69,7 +69,7 @@ export default {
 
   data() {
     return {
-      activeFace: '',
+      activeFaceIndex: 0,
       annotation: '',
       annotationEOT: '',
       newCounter: '',
@@ -98,7 +98,7 @@ export default {
   watch: {
     selectedCard(newValue) {
       if (newValue) {
-        this.activeFace = newValue.g.activeFace
+        this.activeFaceIndex = newValue.g.activeFaceIndex
         this.annotation = newValue.g.annotation
         this.annotationEOT = newValue.g.annotationEOT
       }
@@ -132,11 +132,11 @@ export default {
     },
 
     saveChanges() {
-      if (this.selectedCard.g.activeFace !== this.activeFace) {
+      if (this.selectedCard.g.activeFaceIndex !== this.activeFaceIndex) {
         this.do(null, {
           name: 'active face',
           cardId: this.selectedCard.g.id,
-          face: this.activeFace,
+          faceIndex: this.activeFaceIndex,
         })
       }
       if (this.selectedCard.g.annotation !== this.annotation) {

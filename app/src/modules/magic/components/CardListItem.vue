@@ -7,14 +7,14 @@
   >
     <div
       v-if="separateFaces"
-      v-for="(_, faceIndex) in card.numFaces()"
+      v-for="faceIndex in faceIndices"
       class="card-list-item-face"
-      :class="faceIndex === 0 ? '' : 'alt-face'"
+      :class="faceIndex === card.g.activeFaceIndex ? '' : 'alt-face'"
       @click="$emit('card-face-clicked', { card, faceIndex })"
     >
 
       <div class="name">
-        <i class="bi bi-arrow-return-right" v-if="faceIndex !== 0"></i>
+        <i class="bi bi-arrow-return-right" v-if="faceIndex !== card.g.activeFaceIndex"></i>
         <i class="bi bi-lightning-fill" v-if="card.isScarred(faceIndex)"></i>
         <slot name="name" :face-index="faceIndex">{{ card.name(faceIndex) }}</slot>
       </div>
@@ -66,6 +66,19 @@ export default {
     showPower: {
       type: Boolean,
       default: false,
+    },
+  },
+
+  computed: {
+    faceIndices() {
+      const output = []
+      output.push(this.card.g.activeFaceIndex)
+      for (let i = 0; i < this.card.numFaces(); i++) {
+        if (i !== this.card.g.activeFaceIndex) {
+          output.push(i)
+        }
+      }
+      return output
     },
   },
 

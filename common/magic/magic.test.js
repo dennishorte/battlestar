@@ -233,11 +233,11 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, {
       name: 'active face',
       cardId: game.getCardsByZone(t.dennis(game), 'library')[0].g.id,
-      face: 'back',
+      faceIndex: 1,
     })
 
     const card = game.getCardsByZone(t.dennis(game), 'library')[0]
-    expect(card.g.activeFace).toBe('back')
+    expect(card.g.activeFaceIndex).toBe(1)
   })
 
   test('add counter', () => {

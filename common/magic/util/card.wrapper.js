@@ -5,7 +5,7 @@ class GameData {
   constructor() {
     this.id = null
     this.owner = null
-    this.activeFace = null
+    this.activeFaceIndex = 0
 
     this.annotation = ''
     this.annotationEOT = ''

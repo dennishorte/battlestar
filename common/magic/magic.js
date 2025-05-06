@@ -261,13 +261,17 @@ Magic.prototype.mainLoop = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Setters, getters, actions, etc.
 
-Magic.prototype.aActiveFace = function(player, cardId, face) {
+Magic.prototype.aActiveFace = function(player, cardId, faceIndex) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
-  const prevFace = card.g.activeFace
-  card.g.activeFace = face
+  const prevFaceIndex = card.g.activeFaceIndex
+  card.g.activeFaceIndex = faceIndex
+
+  const prevFaceName = card.name(prevFaceIndex)
+  const activeFaceName = card.name(card.g.activeFaceIndex)
+
   this.mLog({
-    template: `{player} flips ${prevFace} to ${card.g.activeFace}`,
+    template: `{player} flips ${prevFaceName} to ${activeFaceName}`,
     args: { player },
   })
 }
@@ -443,7 +447,7 @@ Magic.prototype.aChooseAction = function(player) {
     const actor = action.playerName ? this.getPlayerByName(action.playerName) : player
 
     switch (action.name) {
-      case 'active face'         : return this.aActiveFace(actor, action.cardId, action.face)
+      case 'active face'         : return this.aActiveFace(actor, action.cardId, action.faceIndex)
       case 'add counter'         : return this.aAddCounter(actor, action.cardId, action.key)
       case 'add counter player'  : return this.aAddCounterPlayer(actor, action.playerName, action.key)
       case 'adjust c-counter'    : return this.aAdjustCardCounter(actor, action.cardId, action.key, action.count)
