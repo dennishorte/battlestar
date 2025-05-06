@@ -16,12 +16,12 @@
       <div class="name">
         <i class="bi bi-arrow-return-right" v-if="faceIndex !== 0"></i>
         <i class="bi bi-lightning-fill" v-if="card.isScarred(faceIndex)"></i>
-        <slot name="name">{{ card.name(faceIndex) }}</slot>
+        <slot name="name" :face-index="faceIndex">{{ card.name(faceIndex) }}</slot>
       </div>
 
       <div class="extra-info">
         <ManaCost v-if="showManaCost" class="mana-cost" :cost="card.manaCost(faceIndex)" />
-        <div v-else-if="showPower" class="mana-cost">
+        <div v-else-if="showPower && card.power(faceIndex)" class="mana-cost">
           {{ card.powerToughness(faceIndex) }}
         </div>
       </div>

@@ -29,9 +29,9 @@
         :hide-popup="hidden"
         :show-mana-cost="showManaCost"
         :show-power="showPower"
-        :separate-faces="true"
+        :separate-faces="!hidden"
       >
-        <template #name>{{ displayName }}</template>
+        <template v-slot:name="slotProps">{{ displayName(slotProps.faceIndex) }}</template>
       </CardListItem>
     </div>
 
@@ -175,10 +175,6 @@ export default {
       return zone.kind === 'public'
     },
 
-    displayName() {
-      return this.getDisplayName(this.card)
-    },
-
     extraClasses() {
       const classes = []
       if (this.hidden) classes.push('hidden')
@@ -255,21 +251,13 @@ export default {
       this.$modal('card-closeup-modal').show()
     },
 
-    getDisplayName(card) {
-      if (this.getHidden(card)) {
-        if (card.g.secret) {
-          return 'secret'
-        }
-        else if (card.g.morph) {
-          return 'morph'
-        }
-        else {
-          return 'hidden'
-        }
-      }
-      else {
-        return card.g.activeFace
-      }
+    displayName(faceIndex) {
+      return this.getDisplayName(this.card, faceIndex)
+    },
+
+    getDisplayName(card, faceIndex=null) {
+      const player = this.game.getPlayerByName(this.actor.name)
+      return card.displayName(player, faceIndex)
     },
 
     getHidden(card) {

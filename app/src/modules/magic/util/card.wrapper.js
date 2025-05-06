@@ -6,6 +6,21 @@ class UICardWrapper extends mag.util.wrapper.card {
     this.__memo = 'UICardWrapper'
   }
 
+  displayName(player, faceIndex=null) {
+    if (this.isVisible(player)) {
+      return this.name(faceIndex)
+    }
+    else if (this.g.secret) {
+      return 'secret'
+    }
+    else if (this.g.morph) {
+      return 'morph'
+    }
+    else {
+      return 'hidden'
+    }
+  }
+
   frameColor(faceIndex) {
     if (this.isArtifact(faceIndex)) {
       return 'artifact'
