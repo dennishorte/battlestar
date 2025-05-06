@@ -22,6 +22,7 @@ function Card() {
       const topGreenCards = game
         .getPlayerAll()
         .map(player => game.getTopCard(player, 'green'))
+        .filter(card => card !== undefined)
 
       if (topGreenCards.length === 0) {
         game.mLog({ template: 'No player has a top green card.' })
