@@ -1,6 +1,5 @@
 import cards from './cardStore.js'
 import cube from './cubeStore.js'
-import cubeDraft from './cubeDraftStore.js'
 import game from './gameStore.js'
 
 import UIDeckWrapper from '../util/deck.wrapper.js'
@@ -10,7 +9,6 @@ export default {
   modules: {
     cards: cards,
     cube: cube,
-    cubeDraft: cubeDraft,
     game: game,
   },
 

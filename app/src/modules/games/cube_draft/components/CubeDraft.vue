@@ -193,15 +193,6 @@ export default {
   },
 
   computed: {
-    ...mapState('magic/cubeDraft', {
-      gameReady: 'ready',
-    }),
-
-    // ...mapState('magic/dm', {
-    //   activeDeck: 'activeDeck',
-    //   modified: 'modified',
-    // }),
-
     doingScars() {
       const player = this.game.getPlayerByName(this.actor.name)
       const waiting = this.game.getWaiting(player)
