@@ -15,7 +15,7 @@
 
 
 <script>
-import { mag, util } from 'battlestar-common'
+import { util } from 'battlestar-common'
 import { v4 as uuidv4 } from 'uuid'
 
 import SetPickerModal from '@/modules/magic/components/SetPickerModal'
@@ -151,8 +151,6 @@ export default {
   },
 
   created() {
-    this.lobby.onStart = this.makePacks
-
     if (!this.lobby.options) {
       // Initialize with default options
       this.options = this.defaultOptions()

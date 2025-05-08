@@ -135,27 +135,6 @@ export default {
       this.fetchCubesForUser(this.options.cubeOwnerId)
     },
 
-    async beforeStart(lobby) {
-      await this.makePacks(lobby)
-    },
-
-    async makePacks(lobby) {
-      const cube = this.cubes.find(c => c._id === this.options.cubeId)
-      const cards = util
-        .deepcopy(cube.cardlist)
-        .map((card, index) => ({
-          id: card.name + `(${index})`,
-          name: card.name
-        }))
-      util.array.shuffle(cards)
-
-      const packs = util.array.chunk(cards, this.lobby.options.packSize)
-      const totalPacks = this.lobby.users.length * this.lobby.options.numPacks
-      lobby.packs = packs.slice(0, totalPacks)
-
-      lobby.options.cubeName = cube.name
-    },
-
     defaultOptions() {
       return {
         numPacks: 3,
@@ -168,8 +147,6 @@ export default {
   },
 
   created() {
-    this.lobby.onStart = this.beforeStart
-
     if (!this.lobby.options) {
       // Initialize with default options
       this.options = this.defaultOptions()

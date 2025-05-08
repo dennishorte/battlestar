@@ -61,8 +61,31 @@ Util.array.countBy = function(array, fn) {
   }, {})
 }
 
-Util.array.distinct = function(array) {
-  return [...new Set(array)]
+/**
+ * Returns an array of distinct elements based on the key function.
+ * If multiple elements have the same key, only the first one is kept.
+ * 
+ * @param {Array} array - The array to process
+ * @param {Function} keyFunc - Function to extract the key for comparison
+ * @returns {Array} Array with duplicate elements removed
+ */
+Util.array.distinct = function(array, keyFunc = elem => elem) {
+  if (!array || array.length === 0) {
+    return []
+  }
+  
+  const seen = new Set()
+  const result = []
+  
+  for (const item of array) {
+    const key = keyFunc(item)
+    if (!seen.has(key)) {
+      seen.add(key)
+      result.push(item)
+    }
+  }
+  
+  return result
 }
 
 Util.array.elementsEqual = function(a, b) {
