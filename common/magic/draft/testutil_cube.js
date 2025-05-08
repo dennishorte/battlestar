@@ -1,12 +1,9 @@
-const { GameOverEvent } = require('../../lib/game.js')
 const { CubeDraftFactory } = require('./cube_draft.js')
 const TestCommon = require('../../lib/test_common.js')
-const cardLookupFunc = require('../test_cardlookup.js')
-const log = require('../../lib/log.js')
-const jsUtil = require('util')
-
 
 const TestUtil = { ...TestCommon }
+module.exports = TestUtil
+
 
 TestUtil.fixture = function(options) {
   options = Object.assign({
@@ -154,7 +151,6 @@ TestUtil.fixture = function(options) {
     .map(p => p.slice(0, options.packSize))
 
   const game = CubeDraftFactory(options, 'dennis')
-  game.cardLookupFunc = cardLookupFunc
 
   game.testSetBreakpoint('initialization-complete', (game) => {
     // Set turn order
@@ -216,5 +212,3 @@ TestUtil.testVisibility = function(game, playerName, expected) {
   const yourPicks = pack.getPlayerPicks(player).map(c => c.name).sort()
   expect(yourPicks).toStrictEqual(expected.yourPicks.sort())
 }
-
-module.exports = TestUtil

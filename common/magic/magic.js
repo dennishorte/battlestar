@@ -28,6 +28,7 @@ module.exports = {
   res,
   draft: {
     cube: require('./draft/cube_draft.js'),
+    pack: require('./draft/pack.js'),
   },
   util: {
     card: cardUtil,

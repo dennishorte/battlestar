@@ -5,8 +5,9 @@ const {
   InputRequestEvent,
 } = require('../../lib/game.js')
 
-const pack = require('./pack.js')
+const { Pack } = require('./pack.js')
 const util = require('../../lib/util.js')
+
 
 module.exports = {
   GameOverEvent,
@@ -62,15 +63,6 @@ CubeDraft.prototype.serialize = function() {
   return base
 }
 
-CubeDraft.prototype.run = function() {
-  if (this.cardLookupFunc) {
-    return Game.prototype.run.call(this)
-  }
-  else {
-    // do nothing
-  }
-}
-
 CubeDraft.prototype._mainProgram = function() {
   this.initialize()
   this.mLog({ template: "Draft Begins" })
@@ -123,7 +115,7 @@ CubeDraft.prototype.initializePlayers = function() {
 }
 
 CubeDraft.prototype.initializePacks = function() {
-  this.state.packs = this.settings.packs.map(pack => new pack.Pack(this, pack))
+  this.state.packs = this.settings.packs.map(packData => new Pack(this, packData))
   this.cardsById = {}
 
   this.mLog({ template: 'Passing out packs' })
