@@ -3,11 +3,12 @@ const database = databaseClient.db('magic')
 const deckCollection = database.collection('deck')
 
 const Deck = {
-  async create(user) {
+  async create(user, opts={}) {
     const creationDate = new Date()
     const insertResult = await deckCollection.insertOne({
       name: 'New Deck',
       userId: user._id,
+      links: opts.links || {},
       format: 'custom',
       cardIdsByZone: {
         main: [],

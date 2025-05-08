@@ -1,4 +1,4 @@
-const { fromData, fromLobby } = require('battlestar-common')
+const { fromLobby } = require('battlestar-common')
 const databaseClient = require('@utils/mongo.js').client
 
 // Database and collection
@@ -24,14 +24,7 @@ Game.create = async function(lobby) {
 
   const insertResult = await gameCollection.insertOne(data)
 
-  // Need to actually run the game once to make sure 'waiting' field is populated.
-  const gameData = await this.findById(insertResult.insertedId)
-  const game = fromData(gameData)
-  game.run()
-
-  await this.save(game, { noMutex: true })
-
-  return game._id
+  return insertResult.insertedId
 }
 
 Game.find = async function(filters) {

@@ -34,7 +34,7 @@ function CubeDraftFactory(settings, viewerName) {
 
 function factoryFromLobby(lobby, db) {
   return GameFactory({
-    game: 'Cube Draft',
+    game: lobby.game,
     name: lobby.name,
     players: lobby.users,
     seed: lobby.seed,

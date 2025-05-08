@@ -3,14 +3,14 @@
     Loading...
   </div>
 
-  <CubeDraft v-else-if="gameType === 'CubeDraft'" />
+  <CubeDraft v-else-if="gameType === 'Cube Draft' || gameType === 'Set Draft'" />
   <Magic v-else-if="gameType === 'Magic'" />
   <Innovation v-else-if="gameType === 'Innovation'" />
   <Ultimate v-else-if="gameType === 'Innovation: Ultimate'" />
   <Tyrants v-else-if="gameType === 'Tyrants of the Underdark'" />
 
   <div v-else>
-    error
+    error, unknown game type: {{ gameType }}
   </div>
 
   <SavingOverlay />

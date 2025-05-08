@@ -12,21 +12,11 @@ module.exports = Game
 Game.create = async function(lobby, linkedDraftId) {
   async function _maybeHandleCubeDraft(game) {
     if (game.settings.game === 'Cube Draft' || game.settings.game === 'Set Draft') {
-      // Create decks for each user.
-      for (const player of game.settings.players) {
-        const deckId = await db.magic.deck.create({
-          userId: player._id,
-          path: '/draft_decks',
-          name: game.settings.name,
-        })
-
-        player.deckId = deckId
-      }
 
       // Create packs
       if (game.settings.game === 'Cube Draft') {
         const cube = await db.magic.cube.findById(game.settings.cubeId)
-        const cards = (await db.magic.card.findByIds(cube.cardlist))
+        const cards = await db.magic.card.findByIds(cube.cardlist)
         const wrappedCards = cards.map(c => new magic.util.wrapper.card(c))
         game.settings.packs = magic.draft.pack.makeCubePacks(wrappedCards, {
           packSize: game.settings.packSize,
@@ -34,8 +24,8 @@ Game.create = async function(lobby, linkedDraftId) {
           numPlayers: game.settings.players.length,
         })
       }
-      else if (game.settings.game === 'SetDraft') {
-        const cards = await db.magic.card.findBySet(game.settings.set)
+      else if (game.settings.game === 'Set Draft') {
+        const cards = await db.magic.card.findBySetCode(game.settings.set.code)
         const wrappedCards = cards.map(c => new magic.util.wrapper.card(c))
         game.settings.packs = magic.draft.pack.makeSetPacks(wrappedCards, {
           numPacks: game.settings.numPacks,
@@ -46,7 +36,17 @@ Game.create = async function(lobby, linkedDraftId) {
         throw new Error('Unknown game draft type: ' + game.settings.game)
       }
 
-      // Save the draft settings afterwards so the deck ids get saved.
+      // Create decks for each user.
+      for (const player of game.settings.players) {
+        await db.magic.deck.create(player, {
+          name: game.settings.name,
+          links: {
+            draftId: game._id
+          },
+        })
+      }
+
+      // Save the draft settings afterwards so the deck ids and packs get saved.
       await db.game.saveSettings(game, game.settings)
     }
   }
@@ -68,11 +68,15 @@ Game.create = async function(lobby, linkedDraftId) {
     const gameData = await db.game.findById(gameId)
     const game = fromData(gameData)
 
-    // Save the game id in the lobby
-    await db.lobby.gameLaunched(lobby, gameData)
+    await _maybeHandleCubeDraft(game)
+    await _maybeHandleMagicLinks(game, linkedDraftId)
 
-    await _maybeHandleCubeDraft(gameData)
-    await _maybeHandleMagicLinks(gameData, linkedDraftId)
+    // Running the game makes sure the waiting information is correctly populated
+    game.run()
+    await db.game.save(game)
+
+    // Save the game id in the lobby
+    await db.lobby.gameLaunched(lobby, game)
 
     await notificationService.sendGameNotifications(game)
 

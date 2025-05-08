@@ -83,63 +83,16 @@ export default {
       this.save()
     },
 
-    async makePacks(lobby) {
-      const setCode = this.lobby.options.set.code
-
-      const cards = this
-        .$store
-        .getters['magic/cards/all']
-        .filter(c => c.set === setCode)
-        .filter(c => !c.type_line.includes('Basic'))
-        .filter(c => c.layout !== 'meld')
-
-      const rarityPools = util.array.collect(cards, c => c.rarity)
-
-      const totalPacks = this.lobby.users.length * this.lobby.options.numPacks
-
-      const getCards = (rarity, count) => util.array.selectMany(rarityPools[rarity], count)
-
-      let index = 0
-      const packs = []
-      while (packs.length < totalPacks) {
-        const pack = []
-
-        // One rare or mythic card
-        // About 1 out of 7.4 rare slots have a mythic.
-        if (rarityPools['mythic'] && Math.random() < .135) {
-          getCards('mythic', 1).forEach(card => pack.push(card))
-        }
-        else {
-          getCards('rare', 1).forEach(card => pack.push(card))
-        }
-
-        getCards('uncommon', 3).forEach(card => pack.push(card))
-        getCards('common', 10).forEach(card => pack.push(card))
-
-        console.log(pack)
-
-        const simplified = pack.map(card => {
-          index += 1
-          return {
-            id: card.name + `(${index})`,
-            name: card.name,
-            set: card.set,
-            collector_number: card.collector_number,
-          }
-        })
-        packs.push(simplified)
-      }
-
-      lobby.packs = packs
-      lobby.options.packSize = packs[0].length
-    },
-
     openSetPicker() {
       this.$modal(this.setPickerModalId).show()
     },
 
     selectSet(sett) {
-      this.options.set = sett
+      this.options.set = {
+        name: sett.name,
+        code: sett.code,
+        set_type: sett.set_type,
+      }
       this.optionsChanged()
     },
 

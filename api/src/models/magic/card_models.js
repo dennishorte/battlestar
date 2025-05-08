@@ -164,7 +164,7 @@ Card.findByIds = async function(ids) {
   return [...scryfallCards, ...customCards]
 }
 
-Card.findBySet = async function(set) {
+Card.findBySetCode = async function(set) {
   set = set.toLowerCase()
   const result = await scryfallCollection.find({ 'data.set': set }).toArray()
   return result
