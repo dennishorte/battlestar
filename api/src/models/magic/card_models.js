@@ -164,6 +164,12 @@ Card.findByIds = async function(ids) {
   return [...scryfallCards, ...customCards]
 }
 
+Card.findBySet = async function(set) {
+  set = set.toLowerCase()
+  const result = await scryfallCollection.find({ 'data.set': set }).toArray()
+  return result
+}
+
 /**
  * Updates an existing card in the database
  * @param {string|ObjectId} cardId - The ID of the card to update

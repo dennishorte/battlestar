@@ -1,9 +1,9 @@
 const db = require('@models/db.js')
 const notificationService = require('@services/notification_service.js')
+const { magic } = require('battlestar-common')
 
 const { GameKilledError, GameOverwriteError } = require('@middleware/loaders')
 const { GameOverEvent, fromData } = require('battlestar-common')
-
 
 const Game = {}
 module.exports = Game
@@ -11,11 +11,7 @@ module.exports = Game
 
 Game.create = async function(lobby, linkedDraftId) {
   async function _maybeHandleCubeDraft(game) {
-    if (
-      game.settings.game === 'CubeDraft'
-      || game.settings.game === 'Cube Draft'
-      || game.settings.game === 'Set Draft'
-    ) {
+    if (game.settings.game === 'Cube Draft' || game.settings.game === 'Set Draft') {
       // Create decks for each user.
       for (const player of game.settings.players) {
         const deckId = await db.magic.deck.create({
@@ -25,6 +21,29 @@ Game.create = async function(lobby, linkedDraftId) {
         })
 
         player.deckId = deckId
+      }
+
+      // Create packs
+      if (game.settings.game === 'Cube Draft') {
+        const cube = await db.magic.cube.findById(game.settings.cubeId)
+        const cards = (await db.magic.card.findByIds(cube.cardlist))
+        const wrappedCards = cards.map(c => new magic.util.wrapper.card(c))
+        game.settings.packs = magic.draft.pack.makeCubePacks(wrappedCards, {
+          packSize: game.settings.packSize,
+          numPacks: game.settings.numPacks,
+          numPlayers: game.settings.players.length,
+        })
+      }
+      else if (game.settings.game === 'SetDraft') {
+        const cards = await db.magic.card.findBySet(game.settings.set)
+        const wrappedCards = cards.map(c => new magic.util.wrapper.card(c))
+        game.settings.packs = magic.draft.pack.makeSetPacks(wrappedCards, {
+          numPacks: game.settings.numPacks,
+          numPlayers: game.settings.players.length,
+        })
+      }
+      else {
+        throw new Error('Unknown game draft type: ' + game.settings.game)
       }
 
       // Save the draft settings afterwards so the deck ids get saved.
@@ -114,7 +133,6 @@ Game.saveFull = async function(game, { branchId, overwrite, chat, responses, wai
   // Magic doesn't run when saving because that would require loading the card
   // database, which is slow.
   if (game.settings.game === 'Magic'
-      || game.settings.game === 'CubeDraft'
       || game.settings.game === 'Cube Draft'
       || game.settings.game === 'Set Draft'
   ) {
