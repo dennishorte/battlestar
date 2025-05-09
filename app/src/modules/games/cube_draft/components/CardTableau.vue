@@ -1,7 +1,7 @@
 <template>
   <div class="card-tableau">
-    <div class="card-holder" v-for="card in cards" :key="card.id" @click="cardClicked(card)" >
-      <Card :size="220" :card="card.data" :scrollable="cardScroll" />
+    <div class="card-holder" v-for="card in cards" :key="card.g.id" @click="cardClicked(card)" >
+      <Card :size="220" :card="card" :scrollable="cardScroll" />
       <div class="card-overlay" v-if="cannotDraft(card)"></div>
     </div>
   </div>
@@ -37,33 +37,15 @@ export default {
 
   inject: ['actor', 'game'],
 
-  watch: {
-    cards(newValue) {
-      this.ensureData(newValue)
-    },
-  },
-
   methods: {
     cannotDraft(card) {
       const player = this.game.getPlayerByName(this.actor.name)
-      return card.id === player.scarredCardId
+      return card.g.id === player.scarredCardId
     },
 
     cardClicked(card) {
       this.$emit('card-clicked', card)
     },
-
-    ensureData(cards) {
-      for (const card of cards) {
-        if (!card.data) {
-          card.data = this.$store.getters['magic/cards/getLookupFunc'](card)
-        }
-      }
-    },
-  },
-
-  mounted() {
-    this.ensureData(this.cards)
   },
 }
 </script>

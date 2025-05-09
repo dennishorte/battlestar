@@ -1,6 +1,6 @@
 <template>
   <MagicWrapper :afterLoaded="loadGame">
-    <div class="alert alert-warning" v-if="!gameReady">Loading game data</div>
+    <div class="alert alert-warning" v-if="!tableauCards">Loading game data</div>
 
     <div v-else class="cube-draft">
       <div class="game-column log-column">
@@ -119,8 +119,6 @@ import { v4 as uuidv4 } from 'uuid'
 import { computed, nextTick } from 'vue'
 import { mapState } from 'vuex'
 
-import { mag } from 'battlestar-common'
-
 import AdminOptions from './AdminOptions'
 import CardCloseupModal from './CardCloseupModal'
 import CardDraftModal from './CardDraftModal'
@@ -195,6 +193,11 @@ export default {
   },
 
   computed: {
+    ...mapState('magic/cards', {
+      cardLookup: 'cards',
+      cardsReady: 'cardsReady',
+    }),
+
     doingScars() {
       const player = this.game.getPlayerByName(this.actor.name)
       const waiting = this.game.getWaiting(player)
@@ -206,14 +209,15 @@ export default {
     },
 
     tableauCards() {
-      if (!this.game) {
+      if (!this.game || !this.cardsReady) {
         return []
       }
 
       const pack = this.game.getNextPackForPlayer(this.player)
 
       if (pack) {
-        return pack.getRemainingCards()
+        const cards = pack.getRemainingCards().map(c => this.cardLookup.byId[c._id])
+        return cards
       }
 
       else {
@@ -273,43 +277,7 @@ export default {
        * }) */
     },
 
-    async fetchScars() {
-      this.scars = []
-      this.scarMessage = 'Loading scars'
-
-      // Make sure the doingScars property will be updated by now.
-      await nextTick()
-
-      if (this.doingScars) {
-        // Release any previously reserved scars
-        await this.$post('/api/magic/scar/release_by_user', {
-          userId: this.actor._id,
-        })
-
-        // Load some scars, in case needed
-        const { scars } = await this.$post('/api/magic/scar/fetch_available', {
-          cubeId: this.game.settings.cubeId,
-          userId: this.actor._id,
-          count: 2,
-          lock: true,
-        })
-
-        this.scars = scars
-        if (this.scars.length === 0) {
-          this.scarMessage = 'No scars available'
-        }
-      }
-    },
-
     async loadGame() {
-      this.game.run()
-      console.log(this.game)
-
-      // await this.$store.dispatch('magic/cubeDraft/loadGame', {
-      //   game: this.game,
-      //   doFunc: this.do,
-      // })
-
       // if (this.game.settings.cubeId) {
       //   // Loading the cube ensures the achievements will be available to render on relevant cards.
       //   await this.$store.dispatch('magic/cube/loadCube', {
@@ -325,7 +293,6 @@ export default {
 
       // this.$store.dispatch('magic/dm/selectDeck', deck)
 
-      // await this.fetchScars()
       this.gameReady = true
     },
 
@@ -335,58 +302,53 @@ export default {
     },
 
     async scarApplied(scarIndex, updated, original) {
-      if (!updated) {
-        alert('No changes where made to the card')
-        return
-      }
+      throw new Error('not implemented')
+      /* if (!updated) {
+       *   alert('No changes where made to the card')
+       *   return
+       * }
 
-      const savedCard = await this.$store.dispatch('magic/cards/save', {
-        actor: this.actor,
-        cubeId: this.game.settings.cubeId,
-        updated,
-        original,
-        comment: `Scarred in ${this.game.settings.name}.`,
-      })
+       * const savedCard = await this.$store.dispatch('magic/cards/save', {
+       *   actor: this.actor,
+       *   cubeId: this.game.settings.cubeId,
+       *   updated,
+       *   original,
+       *   comment: `Scarred in ${this.game.settings.name}.`,
+       * })
 
-      await this.$post('/api/magic/scar/apply', {
-        scarId: this.scars[scarIndex]._id,
-        userId: this.actor._id,
-        cardIdDict: mag.util.card.id.asDict(savedCard),
-      })
+       * await this.$post('/api/magic/scar/apply', {
+       *   scarId: this.scars[scarIndex]._id,
+       *   userId: this.actor._id,
+       *   cardIdDict: mag.util.card.id.asDict(savedCard),
+       * })
 
-      await this.$post('/api/magic/scar/release_by_user', {
-        userId: this.actor._id,
-      })
+       * await this.$post('/api/magic/scar/release_by_user', {
+       *   userId: this.actor._id,
+       * })
 
-      this.game.respondToInputRequest({
-        actor: this.actor.name,
-        title: 'Apply Scar',
-        selection: [{
-          scarIndex,
-          originalId: original.id,
-          newData: savedCard,
-        }]
-      })
+       * this.game.respondToInputRequest({
+       *   actor: this.actor.name,
+       *   title: 'Apply Scar',
+       *   selection: [{
+       *     scarIndex,
+       *     originalId: original.id,
+       *     newData: savedCard,
+       *   }]
+       * })
 
-      await this.save()
+       * await this.save() */
     },
 
     showDraftModal(card) {
-      if (!card.data) {
-        card.data = this.$store.getters['magic/cards/getLookupFunc'](card)
-      }
-
-      this.closeupDraftCard = card
-
-      if (this.closeupDraftCard) {
+      if (card) {
+        this.closeupDraftCard = card
         this.$modal(this.cardDraftModalId).show()
       }
     },
 
     showCardCloseup(card) {
-      this.closeupCard = card
-
-      if (this.closeupCard) {
+      if (card) {
+        this.closeupCard = card
         this.$modal(this.cardCloseupModalId).show()
       }
     },
@@ -399,13 +361,14 @@ export default {
     uiFactory() {
       const selectorOptionComponent = (option) => {
         const cardId = option.title ? option.title : option
-        const card = this.game.getCardById(cardId)
+        const internalCard = this.game.getCardById(cardId)
+        const externalCard = this.cardLookup.byId[internalCard._id]
 
-        if (card) {
+        if (externalCard) {
           return {
             component: CardListItem,
             props: {
-              card,
+              card: externalCard,
               showManaCost: true,
               onClick: () => { this.showCardCloseup(cardId) },
             },
