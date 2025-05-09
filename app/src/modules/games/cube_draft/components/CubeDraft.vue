@@ -41,7 +41,7 @@
       </div>
 
       <div class="game-column deck-column">
-        <Decklist v-if="deck" :deck="deck" @card-clicked="showCardCloseup">
+        <Decklist v-if="deck" :deck="deck" @card-clicked="showCardManager">
           <template #menu-options>
             <DropdownButton @click="saveDeck">save</DropdownButton>
             <DropdownRouterLink to="/magic/decks">deck manager</DropdownRouterLink>
@@ -67,7 +67,7 @@
     <DebugModal />
   </MagicWrapper>
 
-  <CardCloseupModal :id="cardCloseupModalId" :card="closeupCard" />
+  <CardManagerModal :deck="deck" />
   <CardDraftModal :id="cardDraftModalId" :card="closeupDraftCard" @draft-card="chooseCard" />
 
   <CardEditorModal :original="scarCard">
@@ -121,7 +121,6 @@ import { mapState } from 'vuex'
 import { magic } from 'battlestar-common'
 
 import AdminOptions from './AdminOptions'
-import CardCloseupModal from './CardCloseupModal'
 import CardDraftModal from './CardDraftModal'
 import CardTableau from './CardTableau'
 import GameLogCubeDraft from './GameLogCubeDraft'
@@ -137,6 +136,7 @@ import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
 import CardEditorModal from '@/modules/magic/components/CardEditorModal'
 import CardListItem from '@/modules/magic/components/CardListItem'
+import CardManagerModal from '@/modules/magic/components/deck/CardManagerModal'
 import Decklist from '@/modules/magic/components/deck/Decklist'
 import MagicWrapper from '@/modules/magic/components/MagicWrapper'
 
@@ -146,7 +146,7 @@ export default {
 
   components: {
     AdminOptions,
-    CardCloseupModal,
+    CardManagerModal,
     CardDraftModal,
     CardEditorModal,
     CardTableau,
@@ -166,7 +166,6 @@ export default {
     return {
       bus: mitt(),  // Used by WaitingPanel
 
-      cardCloseupModalId: 'card-closeup-modal-' + uuidv4(),
       cardDraftModalId: 'card-draft-modal-' + uuidv4(),
       fileModalId: 'file-manager-edit-modal-' + uuidv4(),
 
@@ -332,11 +331,11 @@ export default {
       }
     },
 
-    showCardCloseup(card) {
-      if (card) {
-        this.closeupCard = card
-        this.$modal(this.cardCloseupModalId).show()
-      }
+    showCardManager(payload) {
+      this.bus.emit('card-manager:begin', {
+        card: payload.card,
+        zone: payload.zone,
+      })
     },
 
     showScarModal(card) {
@@ -356,7 +355,7 @@ export default {
             props: {
               card: externalCard,
               showManaCost: true,
-              onClick: () => { this.showCardCloseup(cardId) },
+              onClick: () => { this.showCardManager(cardId) },
             },
           }
         }
