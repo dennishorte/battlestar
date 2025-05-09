@@ -793,6 +793,7 @@ Magic.prototype.aReveal = function(player, cardId) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
 
+  console.log(card)
   this.mReveal(card)
   const zone = this.getZoneByCard(card)
   this.mLog({
