@@ -35,10 +35,10 @@
 
     <CardManagerModal :deck="deck" />
     <DeckImportModal @import-card-updates="importDecklist" />
-    <DeckSettingsModal 
-      v-if="deck" 
-      ref="settingsModal" 
-      :deck="deck" 
+    <DeckSettingsModal
+      v-if="deck"
+      ref="settingsModal"
+      :deck="deck"
       @settings-updated="handleSettingsUpdated"
     />
 
@@ -90,6 +90,7 @@ export default {
 
   provide() {
     return {
+      actor: this.actor,
       bus: this.bus,
     }
   },
