@@ -39,12 +39,13 @@ Game.create = async function(lobby, linkedDraftId) {
 
       // Create decks for each user.
       for (const player of game.settings.players) {
-        await db.magic.deck.create(player, {
+        const deck = await db.magic.deck.create(player, {
           name: game.settings.name,
           links: {
             draftId: game._id
           },
         })
+        player.deckId = deck._id
       }
 
       // Save the draft settings afterwards so the deck ids and packs get saved.

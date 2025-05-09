@@ -133,8 +133,8 @@ function makeSetPacks(cards, options) {
 
   // Filter out basic lands and special layouts
   const filteredCards = cards
-    .filter(c => !c.type_line?.includes('Basic'))
-    .filter(c => c.layout !== 'meld')
+    .filter(c => !c.supertypes().includes('basic'))
+    .filter(c => c.layout() !== 'meld')
 
   // Include only one copy of each card, by name
   const uniqueCards = util.array.distinct(filteredCards, c => c.name())

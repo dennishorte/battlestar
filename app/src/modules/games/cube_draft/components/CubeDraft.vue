@@ -41,7 +41,7 @@
       </div>
 
       <div class="game-column deck-column">
-        <Decklist v-if="activeDeck" :deck="activeDeck" @card-clicked="showCardCloseup">
+        <Decklist v-if="deck" :deck="deck" @card-clicked="showCardCloseup">
           <template #menu-options>
             <DropdownButton @click="saveDeck">save</DropdownButton>
             <DropdownRouterLink to="/magic/decks">deck manager</DropdownRouterLink>
@@ -118,6 +118,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { computed, nextTick } from 'vue'
 import { mapState } from 'vuex'
+import { magic } from 'battlestar-common'
 
 import AdminOptions from './AdminOptions'
 import CardCloseupModal from './CardCloseupModal'
@@ -169,7 +170,7 @@ export default {
       cardDraftModalId: 'card-draft-modal-' + uuidv4(),
       fileModalId: 'file-manager-edit-modal-' + uuidv4(),
 
-      activeDeck: null,
+      deck: null,
       closeupCard: null,
       closeupDraftCard: null,
       scarCard: null,
@@ -285,13 +286,13 @@ export default {
       //   })
       // }
 
-      // // Load deck
-      // const player = this.game.getPlayerByName(this.actor.name)
-      // const { deck } = await this.$post('/api/magic/deck/fetch', {
-      //   deckId: player.deckId,
-      // })
-
-      // this.$store.dispatch('magic/dm/selectDeck', deck)
+      // Load deck
+      const player = this.game.getPlayerByName(this.actor.name)
+      const { deck } = await this.$post('/api/magic/deck/fetch', {
+        deckId: player.deckId,
+      })
+      this.deck = new magic.util.wrapper.deck(deck)
+      this.deck.initializeCardsSync(this.cardLookup.deckJuicer)
 
       this.gameReady = true
     },
