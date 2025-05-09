@@ -28,6 +28,10 @@ const Deck = {
     return await this.findById(insertResult.insertedId)
   },
 
+  async delete(deck) {
+    await deckCollection.deleteOne({ _id: deck._id })
+  },
+
   async duplicate(user, deck) {
     const newDeck = await this.create(user)
     deck = { ...deck }

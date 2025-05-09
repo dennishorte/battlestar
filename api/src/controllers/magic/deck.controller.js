@@ -14,6 +14,14 @@ exports.create = async (req, res) => {
   })
 }
 
+exports.delete = async (req, res) => {
+  await db.magic.deck.delete(req.deck)
+
+  res.json({
+    status: 'success'
+  })
+}
+
 /**
  * Duplicate a deck by ID
  * @param {Object} req - Express request object

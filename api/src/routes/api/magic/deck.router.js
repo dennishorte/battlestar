@@ -10,6 +10,13 @@ const deckController = require('@controllers/magic/deck.controller')
 router.post('/create', deckController.create)
 
 /**
+ * @route POST /api/magic/deck/delete
+ * @desc Delete a deck
+ * @access Private
+ */
+router.post('/delete', deckController.delete)
+
+/**
  * @route POST /api/magic/deck/duplicate
  * @desc Duplicate a deck
  * @access Private
