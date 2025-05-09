@@ -1,13 +1,15 @@
 const util = require('../lib/util.js')
 
 function create(cards) {
-  return {
+  const lookup = {
     array: cards,
     byId: util.array.toDict(cards, '_id'),
     byName: util.array.collect(cards, _allCardNames),
-
-    deckJuicer: (cardIds) => cardIds.map(id => lookup.byId[id])
   }
+
+  lookup.deckJuicer = (cardIds) => cardIds.map(id => lookup.byId[id])
+
+  return lookup
 }
 
 module.exports = {

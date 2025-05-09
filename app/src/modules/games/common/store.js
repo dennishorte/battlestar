@@ -60,16 +60,10 @@ export default {
       }
     },
 
-    async save({ commit, state }) {
+    async save({ dispatch, state }) {
+      await dispatch('_acquireLock')
+
       const game = state.game
-
-      while (state.saving) {
-        commit('setSaveQueued', true)
-        await delay(500)
-      }
-
-      commit('setSaveQueued', false)
-      commit('setSaving', true)
 
       // If the player used undo, first execute and save the undone state.
       // This is done so that, in the general case, we only ever need to save the latest action of the
@@ -90,6 +84,37 @@ export default {
       game.branchId = response.serializedGame.branchId
       _ensureServerAndClientAgreeOnGameState(game.serialize(), response.serializedGame)
 
+      await dispatch('_releaseLock')
+    },
+
+    async submitAction(context, action) {
+      await context.dispatch('_acquireLock')
+
+      const game = context.state.game
+      const response = await this.$post('/api/game/save_response', {
+        gameId: game._id,
+        response: action,
+      })
+      game.respondToInputRequest(action)
+      game.branchId = response.serializedGame.branchId
+      _ensureServerAndClientAgreeOnGameState(game.serialize(), response.serializedGame)
+
+      await context.dispatch('_releaseLock')
+    },
+
+    async _acquireLock({ commit, state }) {
+      while (state.saving) {
+        // If the user tries to submit another action before the current action completes,
+        // then show a spinner telling them to wait.
+        commit('setSaveQueued', true)
+        await delay(500)
+      }
+
+      commit('setSaveQueued', false)
+      commit('setSaving', true)
+    },
+
+    async _releaseLock({ commit }) {
       commit('setSaving', false)
     },
   },

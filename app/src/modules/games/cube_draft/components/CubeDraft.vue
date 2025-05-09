@@ -217,7 +217,14 @@ export default {
       const pack = this.game.getNextPackForPlayer(this.player)
 
       if (pack) {
-        const cards = pack.getRemainingCards().map(c => this.cardLookup.byId[c._id])
+        const cards = pack
+          .getRemainingCards()
+          .map(c => {
+            const wrapped = this.cardLookup.byId[c._id]
+            const clone = wrapped.clone()
+            clone.g.id = c.id
+            return clone
+          })
         return cards
       }
 
@@ -256,36 +263,18 @@ export default {
     },
 
     async chooseCard(card) {
-      throw new Error('not implemented')
-      /* this.bus.emit('user-select-option', {
-       *   actor: this.actor,
-       *   optionName: card.id
-       * })
-       * await nextTick()
+      await this.$store.dispatch('game/submitAction', {
+        actor: this.actor.name,
+        title: 'Draft Card',
+        selection: [card.g.id],
+      })
 
-       * this.bus.emit('click-choose-selected-option', {
-
-       *   // Execute this after the option is successfully submitted and saved on the server.
-       *   callback: async () => {
-       *     // Add the card to the player's deck.
-       *     await this.$store.dispatch('magic/dm/addCard', {
-       *       card: card.data,
-       *       zoneName: 'main',
-       *     })
-       *     await this.$store.dispatch('magic/dm/saveActiveDeck')
-
-       *   }
-       * }) */
+      // Add the card to the player's deck.
+      this.deck.addCard(card, 'main')
+      await this.$store.dispatch('magic/saveDeck', this.deck)
     },
 
     async loadGame() {
-      // if (this.game.settings.cubeId) {
-      //   // Loading the cube ensures the achievements will be available to render on relevant cards.
-      //   await this.$store.dispatch('magic/cube/loadCube', {
-      //     cubeId: this.game.settings.cubeId,
-      //   })
-      // }
-
       // Load deck
       const player = this.game.getPlayerByName(this.actor.name)
       const { deck } = await this.$post('/api/magic/deck/fetch', {
@@ -294,12 +283,8 @@ export default {
       this.deck = new magic.util.wrapper.deck(deck)
       this.deck.initializeCardsSync(this.cardLookup.deckJuicer)
 
+      // Signal that everything is ready to go
       this.gameReady = true
-    },
-
-    saveDeck() {
-      throw new Error('Not implemented')
-      //this.$store.dispatch('magic/dm/saveActiveDeck')
     },
 
     async scarApplied(scarIndex, updated, original) {
