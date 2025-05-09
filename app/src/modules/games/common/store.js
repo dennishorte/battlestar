@@ -102,5 +102,9 @@ function delay(milliseconds) {
 }
 
 function _ensureServerAndClientAgreeOnGameState(client, server) {
-  return JSON.stringify(client) === JSON.stringify(server)
+  if (JSON.stringify(client) !== JSON.stringify(server)) {
+    console.log('game states', { client, server })
+    alert('State mismatch with server. Try reloading the page.')
+    throw new Error('state mismatch')
+  }
 }
