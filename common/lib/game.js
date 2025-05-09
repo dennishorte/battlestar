@@ -755,7 +755,7 @@ Game.prototype.getPlayersStartingNext = function() {
 }
 
 Game.prototype.getZoneByCard = function(card) {
-  if (card.g.zone) {
+  if (card.g) {
     return this.getZoneById(card.g.zone)
   }
   else {
@@ -764,7 +764,7 @@ Game.prototype.getZoneByCard = function(card) {
 }
 
 Game.prototype.getZoneByCardHome = function(card) {
-  if (card.g.home) {
+  if (card.g) {
     return this.getZoneById(card.g.home)
   }
   else {
