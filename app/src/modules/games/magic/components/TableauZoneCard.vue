@@ -30,7 +30,7 @@
         :show-mana-cost="showManaCost"
         :show-power="showPower"
         :separate-faces="!hidden"
-        :can-view="canView(card)"
+        :can-view="canView"
       >
         <template v-slot:name="slotProps">{{ displayName(slotProps.faceIndex) }}</template>
       </CardListItem>

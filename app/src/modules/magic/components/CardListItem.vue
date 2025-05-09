@@ -89,7 +89,7 @@ export default {
 
   methods: {
     mouseover() {
-      if (this.card && this.canView()) {
+      if (this.card && this.canView(this.card)) {
         this.$store.commit('magic/setMouseoverCard', this.card)
       }
     },
