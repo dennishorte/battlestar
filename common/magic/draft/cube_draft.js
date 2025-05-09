@@ -21,7 +21,6 @@ module.exports = {
 function CubeDraft(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
-  this.cardLookupFunc = null
   this.cardsById = {}
 }
 

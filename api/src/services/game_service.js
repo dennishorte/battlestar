@@ -31,6 +31,7 @@ Game.create = async function(lobby, linkedDraftId) {
           numPacks: game.settings.numPacks,
           numPlayers: game.settings.players.length,
         })
+        game.settings.packSize = game.settings.packs[0].length
       }
       else {
         throw new Error('Unknown game draft type: ' + game.settings.game)

@@ -102,7 +102,7 @@ function _convertCardToPackCard(card, index) {
  */
 function makeCubePacks(cards, options) {
   const { packSize, numPacks, numPlayers } = options
-  
+
   // Prepare cards with unique IDs
   const preparedCards = util.deepcopy(cards).map((card, index) => _convertCardToPackCard(card, index))
 
@@ -112,7 +112,7 @@ function makeCubePacks(cards, options) {
   // Create packs by chunking the cards
   const packs = util.array.chunk(preparedCards, packSize)
   const totalPacks = numPlayers * numPacks
-  
+
   return packs.slice(0, totalPacks)
 }
 
@@ -125,29 +125,34 @@ function makeCubePacks(cards, options) {
  * @returns {Array} Array of packs (each pack is an array of card objects)
  */
 function makeSetPacks(cards, options) {
+  if (!cards || cards.length === 0) {
+    throw new Error('No cards provided')
+  }
+
   const { numPacks, numPlayers } = options
-  
+
   // Filter out basic lands and special layouts
   const filteredCards = cards
     .filter(c => !c.type_line?.includes('Basic'))
     .filter(c => c.layout !== 'meld')
 
   // Include only one copy of each card, by name
-  const uniqueCards = util.array.distinct(filteredCards, c => c.name)
+  const uniqueCards = util.array.distinct(filteredCards, c => c.name())
 
   // Group cards by rarity
-  const rarityPools = util.array.collect(uniqueCards, c => c.rarity)
-  
+  const rarityPools = util.array.collect(uniqueCards, c => c.rarity())
+
   // Helper function to get random cards of a specific rarity
   const getCards = (rarity, count) => util.array.selectMany(rarityPools[rarity] || [], count)
-  
+
   const totalPacks = numPlayers * numPacks
   let index = 0
   const packs = []
-  
+
+
   while (packs.length < totalPacks) {
     const pack = []
-    
+
     // One rare or mythic card (about 1 in 7.4 packs has a mythic)
     if (rarityPools['mythic'] && Math.random() < .135) {
       getCards('mythic', 1).forEach(card => pack.push(card))
@@ -155,20 +160,20 @@ function makeSetPacks(cards, options) {
     else {
       getCards('rare', 1).forEach(card => pack.push(card))
     }
-    
+
     // Add uncommons and commons
     getCards('uncommon', 3).forEach(card => pack.push(card))
     getCards('common', 10).forEach(card => pack.push(card))
-    
+
     // Prepare cards with unique IDs and extract relevant properties
     const preparedPack = pack.map(card => {
       index += 1
       return _convertCardToPackCard(card, index)
     })
-    
+
     packs.push(preparedPack)
   }
-  
+
   return packs
 }
 

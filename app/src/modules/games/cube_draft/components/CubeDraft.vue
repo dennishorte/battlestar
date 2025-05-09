@@ -40,7 +40,7 @@
         <WaitingPanel :class="waitingPanelClasses" />
       </div>
 
-      <div class="game-column deck-column" :class="modifiedClass">
+      <div class="game-column deck-column">
         <Decklist v-if="activeDeck" :deck="activeDeck" @card-clicked="showCardCloseup">
           <template #menu-options>
             <DropdownButton @click="saveDeck">save</DropdownButton>
@@ -171,6 +171,7 @@ export default {
       cardDraftModalId: 'card-draft-modal-' + uuidv4(),
       fileModalId: 'file-manager-edit-modal-' + uuidv4(),
 
+      activeDeck: null,
       closeupCard: null,
       closeupDraftCard: null,
       scarCard: null,
@@ -178,6 +179,7 @@ export default {
       scars: [],
       scarMessage: 'loading scars',
 
+      gameReady: false,
       showGameStats: false,
       showWaitingPanel: false,
     }
@@ -197,15 +199,6 @@ export default {
       const player = this.game.getPlayerByName(this.actor.name)
       const waiting = this.game.getWaiting(player)
       return waiting && waiting.title === 'Apply Scar'
-    },
-
-    modifiedClass() {
-      if (this.modified) {
-        return 'deck-modified'
-      }
-      else {
-        return undefined
-      }
     },
 
     player() {
@@ -258,26 +251,26 @@ export default {
     },
 
     async chooseCard(card) {
-      throw new Error('Not implemented')
-      // this.bus.emit('user-select-option', {
-      //   actor: this.actor,
-      //   optionName: card.id
-      // })
-      // await nextTick()
+      throw new Error('not implemented')
+      /* this.bus.emit('user-select-option', {
+       *   actor: this.actor,
+       *   optionName: card.id
+       * })
+       * await nextTick()
 
-      // this.bus.emit('click-choose-selected-option', {
+       * this.bus.emit('click-choose-selected-option', {
 
-      //   // Execute this after the option is successfully submitted and saved on the server.
-      //   callback: async () => {
-      //     // Add the card to the player's deck.
-      //     await this.$store.dispatch('magic/dm/addCard', {
-      //       card: card.data,
-      //       zoneName: 'main',
-      //     })
-      //     await this.$store.dispatch('magic/dm/saveActiveDeck')
+       *   // Execute this after the option is successfully submitted and saved on the server.
+       *   callback: async () => {
+       *     // Add the card to the player's deck.
+       *     await this.$store.dispatch('magic/dm/addCard', {
+       *       card: card.data,
+       *       zoneName: 'main',
+       *     })
+       *     await this.$store.dispatch('magic/dm/saveActiveDeck')
 
-      //   }
-      // })
+       *   }
+       * }) */
     },
 
     async fetchScars() {
@@ -309,7 +302,9 @@ export default {
     },
 
     async loadGame() {
-      throw new Error('Not implemented')
+      this.game.run()
+      console.log(this.game)
+
       // await this.$store.dispatch('magic/cubeDraft/loadGame', {
       //   game: this.game,
       //   doFunc: this.do,
@@ -331,6 +326,7 @@ export default {
       // this.$store.dispatch('magic/dm/selectDeck', deck)
 
       // await this.fetchScars()
+      this.gameReady = true
     },
 
     saveDeck() {
