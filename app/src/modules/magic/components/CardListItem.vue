@@ -48,7 +48,7 @@ export default {
     ManaCost,
   },
 
-  inject: ['actor', 'game'],
+  inject: ['actor'],
 
   props: {
     card: Object,
@@ -67,6 +67,11 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    canView: {
+      type: Function,
+      default: () => true,
+    },
   },
 
   computed: {
@@ -84,9 +89,7 @@ export default {
 
   methods: {
     mouseover() {
-      const player = this.game.getPlayerByName(this.actor.name)
-      const canView = this.card.isVisible(player)
-      if (this.card && canView) {
+      if (this.card && this.canView()) {
         this.$store.commit('magic/setMouseoverCard', this.card)
       }
     },

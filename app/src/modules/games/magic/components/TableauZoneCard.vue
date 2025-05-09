@@ -30,6 +30,7 @@
         :show-mana-cost="showManaCost"
         :show-power="showPower"
         :separate-faces="!hidden"
+        :can-view="canView(card)"
       >
         <template v-slot:name="slotProps">{{ displayName(slotProps.faceIndex) }}</template>
       </CardListItem>
@@ -239,16 +240,21 @@ export default {
       this.$store.dispatch('magic/game/unselectCard')
     },
 
+    canView(card) {
+      const player = this.game.getPlayerByName(this.actor.name)
+      return card.isVisible(player)
+    },
+
+    closeup() {
+      this.$modal('card-closeup-modal').show()
+    },
+
     detach() {
       this.do(null, {
         name: 'detach',
         cardId: this.card.g.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
-    },
-
-    closeup() {
-      this.$modal('card-closeup-modal').show()
     },
 
     displayName(faceIndex) {
@@ -261,8 +267,7 @@ export default {
     },
 
     getHidden(card) {
-      const player = this.game.getPlayerByName(this.actor.name)
-      return !card.isVisible(player)
+      return !this.canView(card)
     },
 
     hasGraveAbility(name) {
