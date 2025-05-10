@@ -492,22 +492,27 @@ Game.prototype._blankState = function(more = {}) {
   }, more)
 }
 
+// eslint-disable-next-line
 Game.prototype._responseReceived = function(response) {
   // To be overridden by child classes.
 }
 
+// eslint-disable-next-line
 Game.prototype._enrichLogArgs = function(msg) {
   // To be overridden by child classes.
 }
 
+// eslint-disable-next-line
 Game.prototype._postEnrichArgs = function(msg) {
   // To be overridden by child classes.
 }
 
+// eslint-disable-next-line
 Game.prototype._undoCalled = function() {
   // To be overridden by child classes.
 }
 
+// eslint-disable-next-line
 Game.prototype._cardMovedCallback = function(card) {
   // To be overridden by child classes.
 }
