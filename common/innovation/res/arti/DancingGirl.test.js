@@ -22,9 +22,6 @@ describe('Dancing Girl', () => {
     const request2 = t.choose(game, request1, 'Dogma.Dancing Girl')
     const request3 = t.choose(game, request2, 'Construction')
 
-    t.dumpLog(game)
-
-    //    t.testIsFirstAction(request3)
     t.testBoard(game, {
       dennis: {
         red: ['Construction'],
@@ -55,9 +52,6 @@ describe('Dancing Girl', () => {
     const request2 = t.choose(game, request1, 'Dogma.Dancing Girl')
     const request3 = t.choose(game, request2, 'Construction')
 
-    t.dumpLog(game)
-
-    //    t.testIsFirstAction(request3)
     t.testBoard(game, {
       dennis: {
         red: ['Construction'],

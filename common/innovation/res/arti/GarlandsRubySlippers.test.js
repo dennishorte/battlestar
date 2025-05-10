@@ -81,11 +81,11 @@ describe("Garland's Ruby Slippers", () => {
   })
 
   test('dogma: you win', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo', 'arti'] })
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo', 'city'] })
     t.setBoard(game,  {
       dennis: {
         artifact: ["Garland's Ruby Slippers"],
-        hand: ['Battleship Yamato'],
+        hand: ['Kiev'],
       },
     })
 

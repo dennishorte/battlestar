@@ -277,8 +277,8 @@ describe('Magic Actions', () => {
 
     // I don't know why this isn't working. The log shows it happening. If I print the player counters
     // in aAddPlayerCounter, it looks good.
-    t.dumpLog(game)
-    console.log(player.name, player.counters)
+    // t.dumpLog(game)
+    // console.log(player.name, player.counters)
     expect(player.counters.energy).toBe(0)
   })
 

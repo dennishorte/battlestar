@@ -20,10 +20,6 @@ TestGame.prototype._mainProgram = function() {
   this.main()
 }
 
-TestGame.prototype._gameOver = function(e) {
-  return 'Game Over'
-}
-
 TestGame.prototype.main = function() {
   this.state.testColor = this.requestInputSingle({
     actor: 'dennis',
@@ -44,7 +40,10 @@ TestGame.prototype.main = function() {
     }
   ])
 
-  throw new GameOverEvent('game over')
+  throw new GameOverEvent({
+    player: 'everyone',
+    reason: 'game over',
+  })
 }
 
 function TestFactory() {
