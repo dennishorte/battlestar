@@ -4,7 +4,7 @@ const t = require('../../testutil.js')
 
 describe("Kilogram of the Archives", () => {
 
-  test('dogma', () => {
+  test('dogma: with red card and hand card', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
@@ -31,7 +31,7 @@ describe("Kilogram of the Archives", () => {
     })
   })
 
-  test('dogma', () => {
+  test('dogma: with only hand card', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
@@ -49,7 +49,7 @@ describe("Kilogram of the Archives", () => {
     })
   })
 
-  test('dogma', () => {
+  test('dogma: with only red card', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {

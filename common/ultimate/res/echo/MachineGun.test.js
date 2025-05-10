@@ -36,7 +36,7 @@ describe("Machine Gun", () => {
     })
   })
 
-  test('dogma', () => {
+  test('dogma: basic effect', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
@@ -111,6 +111,45 @@ describe("Machine Gun", () => {
       micah: {
         yellow: ['Agriculture'],
         blue: ['Atomic Theory'],
+      },
+    })
+  })
+
+  test('dogma: with score cards', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        red: ['Machine Gun'],
+        blue: ['Calendar', 'Tools'],
+      },
+      micah: {
+        yellow: ['Agriculture'],
+        blue: ['Almanac', 'Atomic Theory'],
+        red: ['Candles'],
+      },
+      decks: {
+        base: {
+          7: ['Lighting'],
+        }
+      }
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Machine Gun')
+    request = t.choose(game, request, 'auto')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Machine Gun'],
+        blue: ['Tools'],
+        score: ['Almanac', 'Candles'],
+      },
+      micah: {
+        yellow: ['Agriculture'],
+        blue: ['Atomic Theory'],
+        hand: ['Lighting'],
       },
     })
   })

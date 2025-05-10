@@ -4,7 +4,7 @@ const t = require('../../testutil.js')
 
 describe('Exxon Valdez', () => {
 
-  test('dogma', () => {
+  test('dogma: game over with two players', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
@@ -27,7 +27,7 @@ describe('Exxon Valdez', () => {
     t.testGameOver(request, 'dennis', 'Exxon Valdez')
   })
 
-  test('dogma', () => {
+  test('dogma: continue with three players', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'], numPlayers: 3 })
     t.setBoard(game,  {
       dennis: {

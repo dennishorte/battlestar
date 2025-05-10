@@ -108,7 +108,29 @@ describe("Elevator", () => {
     })
   })
 
-  test('echo: top green', () => {
+  test('echo: score top green card', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        yellow: ['Elevator'],
+        green: ['Sailing', 'Navigation'],
+      },
+    })
+
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Dogma.Elevator')
+    const request3 = t.choose(game, request2, 'score top green')
+
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Elevator'],
+        green: ['Navigation'],
+        score: ['Sailing'],
+      },
+    })
+  })
+
+  test('echo: score bottom green card', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {

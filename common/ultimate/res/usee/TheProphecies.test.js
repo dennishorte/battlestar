@@ -2,7 +2,7 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 describe('The Prophecies', () => {
 
-  test('dogma', () => {
+  test('dogma: safeguard a 4', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
@@ -30,7 +30,7 @@ describe('The Prophecies', () => {
     })
   })
 
-  test('dogma', () => {
+  test('dogma: draw and reveal, hand', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
@@ -59,7 +59,7 @@ describe('The Prophecies', () => {
     })
   })
 
-  test('dogma', () => {
+  test('dogma: draw and reveal, safe', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {

@@ -2,7 +2,7 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 describe('Blacklight', () => {
 
-  test('dogma', () => {
+  test('dogma: unsplay blue', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
@@ -28,7 +28,7 @@ describe('Blacklight', () => {
     })
   })
 
-  test('dogma', () => {
+  test('dogma: splay up and draw red', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {

@@ -89,7 +89,7 @@ describe("Elevator", () => {
     })
   })
 
-  test('echo: top green', () => {
+  test('echo: score top green card', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
@@ -112,7 +112,7 @@ describe("Elevator", () => {
     })
   })
 
-  test('echo: top green', () => {
+  test('echo: score bottom green card', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {

@@ -62,7 +62,7 @@ describe('Empiricism', () => {
     })
   })
 
-  test('win', () => {
+  test('win: many blue cards', () => {
     const game = t.fixtureFirstPlayer()
     t.setBoard(game, {
       dennis: {
@@ -101,7 +101,7 @@ describe('Empiricism', () => {
     t.testGameOver(request, 'dennis', 'Empiricism')
   })
 
-  test('win', () => {
+  test('win: only two blue cards', () => {
     const game = t.fixtureFirstPlayer()
     t.setBoard(game, {
       dennis: {

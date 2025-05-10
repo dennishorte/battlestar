@@ -59,7 +59,7 @@ describe('Charter of Liberties', () => {
     })
   })
 
-  test('dogma: no cards', () => {
+  test('dogma: with cards to transfer', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
@@ -98,7 +98,7 @@ describe('Charter of Liberties', () => {
     })
   })
 
-  test('dogma', () => {
+  test('dogma: with hand card', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
