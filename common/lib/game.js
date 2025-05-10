@@ -584,7 +584,7 @@ Game.prototype._tryToAutomaticallyRespond = function(selectors) {
 // Test only methods
 
 Game.prototype.testSetBreakpoint = function(name, fn) {
-  if (this.breakpoints.hasOwnProperty(name)) {
+  if (Object.hasOwn(this.breakpoints, name)) {
     this.breakpoints[name].push(fn)
   }
   else {
@@ -776,7 +776,7 @@ Game.prototype.getZoneById = function(id) {
   const tokens = id.split('.')
   let curr = this.state.zones
   for (const token of tokens) {
-    util.assert(curr.hasOwnProperty(token), `Invalid zone id ${id} at token ${token}`)
+    util.assert(Object.hasOwn(curr, token), `Invalid zone id ${id} at token ${token}`)
     curr = curr[token]
   }
   return curr

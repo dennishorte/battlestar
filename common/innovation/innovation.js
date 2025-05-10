@@ -2006,7 +2006,7 @@ Innovation.prototype.getBonuses = function(player) {
 }
 
 Innovation.prototype.getCardByName = function(name, def) {
-  if (!this.cardData.all.byName.hasOwnProperty(name)) {
+  if (!Object.hasOwn(this.cardData.all.byName, name)) {
     if (def !== undefined) {
       return def
     }
@@ -2871,7 +2871,7 @@ Innovation.prototype.utilLowestCards = function(cards, opts={}) {
 Innovation.prototype.utilParseBiscuits = function(biscuitString) {
   const counts = this.utilEmptyBiscuits()
   for (const ch of biscuitString) {
-    if (counts.hasOwnProperty(ch)) {
+    if (Object.hasOwn(counts, ch)) {
       counts[ch] += 1
     }
   }
@@ -2881,7 +2881,7 @@ Innovation.prototype.utilParseBiscuits = function(biscuitString) {
 Innovation.prototype.utilSeparateByAge = function(cards) {
   const byAge = {}
   for (const card of cards) {
-    if (byAge.hasOwnProperty(card.age)) {
+    if (Object.hasOwn(byAge, card.age)) {
       byAge[card.age].push(card)
     }
     else {

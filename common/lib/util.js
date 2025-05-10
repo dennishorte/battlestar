@@ -115,7 +115,7 @@ Util.array.groupBy = function(array, fn) {
   const groups = {}
   for (let i = 0; i < array.length; i++) {
     const key = fn(array[i], i, array)
-    if (!groups.hasOwnProperty(key)) {
+    if (!Object.hasOwn(groups, key)) {
       groups[key] = []
     }
 

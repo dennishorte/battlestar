@@ -20,7 +20,7 @@ function Card() {
       while (true) {
         const byAge = {}
         for (const card of game.getTopCards(player)) {
-          if (!byAge.hasOwnProperty(card.age)) {
+          if (!Object.hasOwn(byAge, card.age)) {
             byAge[card.age] = [card]
           }
           else {
