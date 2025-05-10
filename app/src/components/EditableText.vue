@@ -15,7 +15,7 @@
     </template>
 
     <div v-else @click="edit" ref="slotWrapper">
-      <slot></slot>
+      <slot/>
     </div>
   </div>
 </template>

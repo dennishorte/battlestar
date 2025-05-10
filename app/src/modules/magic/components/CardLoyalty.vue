@@ -1,6 +1,6 @@
 <template>
   <div class="loyalty-container">
-    <i class="ms ms-loyalty-start loyalty-background"></i>
+    <i class="ms ms-loyalty-start loyalty-background"/>
     <span class="loyalty-number">{{ loyalty }}</span>
   </div>
 </template>

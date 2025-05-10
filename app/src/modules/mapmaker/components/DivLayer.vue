@@ -6,8 +6,7 @@
       :style="div.renderStyle"
       :id="div.id"
       class="can-select can-connect can-drag"
-    >
-    </div>
+    />
   </div>
 </template>
 

@@ -1,14 +1,14 @@
 <template>
   <div class="wrapper" :class="wrapperClasses">
     <div class="card-line">
-      <i class="bi bi-eye-fill" v-if="cardIsRevealed"></i>
-      <i class="bi bi-eye" v-else-if="cardIsViewed"></i>
-      <i class="bi bi-eye-slash-fill" v-else-if="cardIsSecret"></i>
+      <i class="bi bi-eye-fill" v-if="cardIsRevealed"/>
+      <i class="bi bi-eye" v-else-if="cardIsViewed"/>
+      <i class="bi bi-eye-slash-fill" v-else-if="cardIsSecret"/>
 
-      <i class="bi bi-browser-edge" v-if="card.g.morph"></i>
-      <i class="bi bi-bookmark-fill" v-if="card.g.token"></i>
+      <i class="bi bi-browser-edge" v-if="card.g.morph"/>
+      <i class="bi bi-bookmark-fill" v-if="card.g.token"/>
 
-      <i class="bi bi-lightning-fill" v-if="showScarIcon"></i>
+      <i class="bi bi-lightning-fill" v-if="showScarIcon"/>
 
       <template v-if="showGravePowers">
         <i class="ms ms-cost ms-ability-aftermath" v-if="hasAftermath" />
@@ -71,8 +71,8 @@
 
         <DropdownButton @click="toggleUntap">
           doesn't untap
-          <i class="bi bi-check-square" v-if="card.g.noUntap"></i>
-          <i class="bi bi-square" v-else></i>
+          <i class="bi bi-check-square" v-if="card.g.noUntap"/>
+          <i class="bi bi-square" v-else/>
         </DropdownButton>
 
       </Dropdown>
@@ -178,20 +178,42 @@ export default {
 
     extraClasses() {
       const classes = []
-      if (this.hidden) classes.push('hidden')
-      if (this.card.g.tapped) classes.push('tapped')
+      if (this.hidden) {
+        classes.push('hidden')
+      }
+      if (this.card.g.tapped) {
+        classes.push('tapped')
+      }
       return classes
     },
 
-    hasAftermath() { return this.hasGraveAbility('Aftermath') },
-    hasDisturb() { return this.hasGraveAbility('Disturb') },
-    hasEmbalm() { return this.hasGraveAbility('Embalm') },
-    hasEscape() { return this.hasGraveAbility('Escape') },
-    hasEternalize() { return this.hasGraveAbility('Eternalize') },
-    hasFlashback() { return this.hasGraveAbility('Flashback') },
-    hasJumpstart() { return this.hasGraveAbility('Jump-start') },
-    hasHarmonize() { return this.hasGraveAbility('Harmonize') },
-    hasUnearth() { return this.hasGraveAbility('Unearth') },
+    hasAftermath() {
+      return this.hasGraveAbility('Aftermath')
+    },
+    hasDisturb() {
+      return this.hasGraveAbility('Disturb')
+    },
+    hasEmbalm() {
+      return this.hasGraveAbility('Embalm')
+    },
+    hasEscape() {
+      return this.hasGraveAbility('Escape')
+    },
+    hasEternalize() {
+      return this.hasGraveAbility('Eternalize')
+    },
+    hasFlashback() {
+      return this.hasGraveAbility('Flashback')
+    },
+    hasJumpstart() {
+      return this.hasGraveAbility('Jump-start')
+    },
+    hasHarmonize() {
+      return this.hasGraveAbility('Harmonize')
+    },
+    hasUnearth() {
+      return this.hasGraveAbility('Unearth')
+    },
 
     hasReturnFromGrave() {
       return this.card.data.card_faces.some(face => {
@@ -221,7 +243,9 @@ export default {
 
     wrapperClasses() {
       const classes = []
-      if (this.highlighted) classes.push('highlighted')
+      if (this.highlighted) {
+        classes.push('highlighted')
+      }
       return classes
     },
   },

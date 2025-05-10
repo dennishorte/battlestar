@@ -10,9 +10,9 @@
 
             <DropdownRouterLink to="/lobby/create">new lobby</DropdownRouterLink>
             <DropdownRouterLink to="/data">data</DropdownRouterLink>
-            <DropdownDivider></DropdownDivider>
+            <DropdownDivider/>
             <DropdownRouterLink to="/magic">magic</DropdownRouterLink>
-            <DropdownDivider></DropdownDivider>
+            <DropdownDivider/>
             <DropdownRouterLink to="/admin">admin</DropdownRouterLink>
             <DropdownRouterLink to="/logout">logout</DropdownRouterLink>
           </Dropdown>

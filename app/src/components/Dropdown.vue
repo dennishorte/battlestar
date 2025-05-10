@@ -12,7 +12,7 @@
     </button>
 
     <ul class="dropdown-menu" :class="listClasses">
-      <slot></slot>
+      <slot/>
     </ul>
   </div>
 </template>
@@ -43,8 +43,12 @@ export default {
     buttonClasses() {
       const classes = []
 
-      if (this.size === 'sm') classes.push('btn-sm')
-      if (this.size === 'lg') classes.push('btn-lg')
+      if (this.size === 'sm') {
+        classes.push('btn-sm')
+      }
+      if (this.size === 'lg') {
+        classes.push('btn-lg')
+      }
 
       return classes
     },
@@ -52,7 +56,9 @@ export default {
     listClasses() {
       const classes = []
 
-      if (this.menuEnd) classes.push('dropdown-menu-end')
+      if (this.menuEnd) {
+        classes.push('dropdown-menu-end')
+      }
 
       return classes
     },

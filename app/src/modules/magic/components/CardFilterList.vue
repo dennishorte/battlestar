@@ -9,7 +9,7 @@
         <template v-for="color in colors">
           <span v-if="filter[color]" class="filter-display-value">
             {{ color }}
-            <i v-if="allowEdit" class="bi-x-circle" @click="remove(filter)"></i>
+            <i v-if="allowEdit" class="bi-x-circle" @click="remove(filter)"/>
           </span>
         </template>
       </div>
@@ -17,7 +17,7 @@
         <span class="filter-display-operator">{{ filter.operator }}&nbsp;</span>
         <span class="filter-display-value">
           {{ filter.value }}
-          <i v-if="allowEdit" class="bi-x-circle" @click="remove(filter)"></i>
+          <i v-if="allowEdit" class="bi-x-circle" @click="remove(filter)"/>
         </span>
       </div>
     </div>

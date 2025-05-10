@@ -1,14 +1,17 @@
 <template>
   <Modal @ok="onOkay" ref="modalTop">
     <template #header>
-      <slot name="header"></slot>
+      <slot name="header"/>
     </template>
 
     <div class="type-ahead">
-      <input class="form-control" v-model="name" placeholder="card name" ref="searchField" />
+      <input class="form-control"
+             v-model="name"
+             placeholder="card name"
+             ref="searchField" />
     </div>
 
-    <slot name="middle-slot"></slot>
+    <slot name="middle-slot"/>
 
     <div class="versions">
 

@@ -14,8 +14,8 @@
     >
 
       <div class="name">
-        <i class="bi bi-arrow-return-right" v-if="faceIndex !== card.g.activeFaceIndex"></i>
-        <i class="bi bi-lightning-fill" v-if="card.isScarred(faceIndex)"></i>
+        <i class="bi bi-arrow-return-right" v-if="faceIndex !== card.g.activeFaceIndex"/>
+        <i class="bi bi-lightning-fill" v-if="card.isScarred(faceIndex)"/>
         <slot name="name" :face-index="faceIndex">{{ card.name(faceIndex) }}</slot>
       </div>
 
@@ -29,7 +29,7 @@
 
     <div v-else class="card-list-item-face" @click="$emit('card-clicked', card)">
       <div class="name">
-        <i class="bi bi-lightning-fill" v-if="card.isScarred()"></i>
+        <i class="bi bi-lightning-fill" v-if="card.isScarred()"/>
         <slot name="name">{{ card.name() }}</slot>
       </div>
     </div>

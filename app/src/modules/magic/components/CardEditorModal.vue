@@ -4,16 +4,19 @@
       Card Editor
     </template>
 
-    <slot name="before-card"></slot>
+    <slot name="before-card"/>
 
     <CardEditor @card-updated="cardUpdated" />
 
-    <slot name="after-card"></slot>
+    <slot name="after-card"/>
 
     <template #footer>
       <slot name="footer">
         <button class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
-        <button class="btn btn-danger" @click="save" data-bs-dismiss="modal" :disabled="!updatedCard">save</button>
+        <button class="btn btn-danger"
+                @click="save"
+                data-bs-dismiss="modal"
+                :disabled="!updatedCard">save</button>
       </slot>
     </template>
   </Modal>

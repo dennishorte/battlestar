@@ -8,7 +8,7 @@
       <DropdownDivider />
       <DropdownButton @click="debug" :disabled="disabled.includes('debug')">debug</DropdownButton>
 
-      <slot></slot>
+      <slot/>
     </Dropdown>
 
     <button v-if="!disabled.includes('undo')" class="btn btn-secondary" @click="undo">undo</button>

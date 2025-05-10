@@ -1,10 +1,10 @@
 <template>
   <div class="cube-breakdown-mana-cost-divider">
-    <span class="bar"></span>
+    <span class="bar"/>
 
-    <span v-for="dot in dots" :class="dot"></span>
+    <span v-for="dot in dots" :class="dot"/>
 
-    <span class="bar"></span>
+    <span class="bar"/>
   </div>
 </template>
 

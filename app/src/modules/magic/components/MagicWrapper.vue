@@ -3,7 +3,7 @@
     <template v-if="allReady">
       <Card v-if="!isTouchscreen && mouseoverCard" :card="mouseoverCard" :style="mouseoverPosition" />
 
-      <slot></slot>
+      <slot/>
     </template>
 
     <div v-else class="alert alert-warning">
@@ -58,7 +58,7 @@ export default {
     }),
 
     isTouchscreen() {
-      return this.$device.isTouchScreen();
+      return this.$device.isTouchScreen()
     },
 
     mouseoverPosition() {

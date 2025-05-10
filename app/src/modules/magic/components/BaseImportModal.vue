@@ -4,9 +4,9 @@
       <slot name="header">Import Cards</slot>
     </template>
 
-    <slot name="top-content"></slot>
+    <slot name="top-content"/>
 
-    <textarea class="form-control" rows="15" v-model="updateText"></textarea>
+    <textarea class="form-control" rows="15" v-model="updateText"/>
 
     <div class="update-data">
       <div v-if="parsedUpdate.insert.length > 0">
@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <slot name="bottom-content"></slot>
+    <slot name="bottom-content"/>
   </Modal>
 </template>
 
@@ -84,9 +84,11 @@ const parsedUpdate = computed(() => {
   for (const item of items) {
     if (!item.card) {
       operations.unknown.push(item)
-    } else if (item.remove) {
+    }
+    else if (item.remove) {
       operations.remove.push(item)
-    } else {
+    }
+    else {
       operations.insert.push(item)
     }
   }

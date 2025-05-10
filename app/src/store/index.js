@@ -7,7 +7,9 @@ import magicStore from '@/modules/magic/store'
 import axiosWrapper from '../util/axiosWrapper.js'
 
 
-const postPlugin = (store) => { store.$post = axiosWrapper.post }
+const postPlugin = (store) => {
+  store.$post = axiosWrapper.post
+}
 
 export default createStore({
   modules: {

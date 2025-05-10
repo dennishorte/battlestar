@@ -94,8 +94,12 @@ export default {
       }
     },
 
-    x() { return this.cx },
-    y() { return this.cy },
+    x() {
+      return this.cx
+    },
+    y() {
+      return this.cy
+    },
   },
 
   methods: {

@@ -9,15 +9,18 @@
               {{ title }}
             </slot>
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" ref="closeButton"></button>
+          <button type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  ref="closeButton"/>
         </div>
 
         <div class="modal-body">
-          <slot></slot>
+          <slot/>
         </div>
 
         <div class="modal-footer">
-          <slot name="footer-pre"></slot>
+          <slot name="footer-pre"/>
 
           <slot name="footer">
             <button class="btn btn-secondary" @click="cancel" data-bs-dismiss="modal">cancel</button>
@@ -59,7 +62,7 @@ export default {
           this.$refs.closeButton.click()
         }
       }
-    });
+    })
   },
 }
 </script>

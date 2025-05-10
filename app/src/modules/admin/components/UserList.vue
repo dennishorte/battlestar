@@ -8,7 +8,7 @@
           <th>_id</th>
           <th>name</th>
           <th>slack</th>
-          <th></th>
+          <th/>
         </tr>
       </thead>
 

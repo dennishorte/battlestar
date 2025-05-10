@@ -15,7 +15,7 @@
         v-for="(_, index) in model.card_faces"
         class="btn btn-warning"
         @click="removeFace(index)"
-        >Remove {{ index }}</button>
+      >Remove {{ index }}</button>
     </div>
   </div>
 </template>

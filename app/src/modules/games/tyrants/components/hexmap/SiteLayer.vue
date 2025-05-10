@@ -1,14 +1,26 @@
 <template>
   <defs>
-    <filter id="selected" x="-100%" y="-100%" width="400%" height="400%">
+    <filter id="selected"
+            x="-100%"
+            y="-100%"
+            width="400%"
+            height="400%">
       <feFlood id="outline-color" flood-color="#a34ff7" result="base" />
-      <feMorphology result="bigger" in="SourceGraphic" operator="dilate" radius="2"/>
-      <feColorMatrix result="mask" in="bigger" type="matrix"
+      <feMorphology result="bigger"
+                    in="SourceGraphic"
+                    operator="dilate"
+                    radius="2"/>
+      <feColorMatrix result="mask"
+                     in="bigger"
+                     type="matrix"
                      values="0 0 0 0 0
                              0 0 0 0 0
                              0 0 0 0 0
                              0 0 0 1 0" />
-      <feComposite result="drop" in="base" in2="mask" operator="in" />
+      <feComposite result="drop"
+                   in="base"
+                   in2="mask"
+                   operator="in" />
       <feGaussianBlur result="blur" in="drop" stdDeviation="5" />
       <feBlend in="SourceGraphic" in2="blur" mode="normal" />
     </filter>

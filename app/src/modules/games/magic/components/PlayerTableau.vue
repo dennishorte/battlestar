@@ -154,7 +154,7 @@
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
       <div id="move-revealed-toast" class="toast" ref="moveRevealedToast">
         <div class="toast-header">
-          <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="toast"/>
         </div>
         <div class="toast-body">
           Click on a zone to move all revealed cards from the library.
@@ -401,7 +401,7 @@ export default {
 
     viewTopNDo() {
       const zoneId = `players.${this.player.name}.library`
-        this.do(this.actorPlayer, { name: 'view top k', count: this.topNCount, zoneId })
+      this.do(this.actorPlayer, { name: 'view top k', count: this.topNCount, zoneId })
     },
   }
 }

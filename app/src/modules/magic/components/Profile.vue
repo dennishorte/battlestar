@@ -15,7 +15,7 @@
         <SectionHeader>
           <div class="d-flex justify-content-between">
             <div>My Cubes</div>
-            <div @click="createCube"><i class="bi bi-plus-square"></i></div>
+            <div @click="createCube"><i class="bi bi-plus-square"/></div>
           </div>
         </SectionHeader>
         <div v-for="cube in myCubes" :key="cube._id">

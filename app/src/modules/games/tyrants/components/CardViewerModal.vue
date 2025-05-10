@@ -2,7 +2,10 @@
   <Modal id="card-viewer-modal" scrollable>
     <template #header>Card Viewer</template>
 
-    <GameCard v-if="card" :card="card" :show-cost="true" :expandedIn="true" />
+    <GameCard v-if="card"
+              :card="card"
+              :show-cost="true"
+              :expandedIn="true" />
     <template v-else>
       Card not found: {{ ui.modals.cardViewer.cardName }}
     </template>

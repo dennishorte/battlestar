@@ -1,7 +1,7 @@
 <template>
   <li>
     <router-link class="dropdown-item" :to="to">
-      <slot></slot>
+      <slot/>
     </router-link>
   </li>
 </template>

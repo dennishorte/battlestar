@@ -73,8 +73,12 @@ export default {
 
   computed: {
     ageBiscuit() {
-      if (this.biscuit === '0') return 10
-      if (this.biscuit === 'e') return 11
+      if (this.biscuit === '0') {
+        return 10
+      }
+      if (this.biscuit === 'e') {
+        return 11
+      }
       return this.biscuit
     },
 

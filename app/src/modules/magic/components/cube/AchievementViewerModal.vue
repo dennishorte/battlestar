@@ -32,7 +32,7 @@
       </template>
 
       <template v-else>
-        <hr>
+        <hr/>
         <h2 class="question">Did you really earn this?</h2>
         <div class="buttons-row">
           <button class="btn btn-success yes-no-btn" @click="unlock">yes</button>
@@ -43,7 +43,7 @@
     </template>
 
     <template #footer>
-      <div></div>
+      <div/>
     </template>
   </Modal>
 </template>

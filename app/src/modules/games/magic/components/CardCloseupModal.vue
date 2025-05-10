@@ -35,7 +35,7 @@
             <div class="d-flex flex-row">
               <input class="form-control" v-model="newCounter" placeholder="new counter name" />
               <button class="btn btn-sm btn-success" @click="addCounter">
-                <i class="bi bi-plus-lg"></i>
+                <i class="bi bi-plus-lg"/>
               </button>
             </div>
           </div>

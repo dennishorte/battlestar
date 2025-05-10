@@ -1,6 +1,5 @@
 <template>
-  <div class="saving-overlay" :class="saveQueued ? 'show' : ''">
-  </div>
+  <div class="saving-overlay" :class="saveQueued ? 'show' : ''"/>
 </template>
 
 

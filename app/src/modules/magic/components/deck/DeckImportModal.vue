@@ -20,4 +20,4 @@ const emit = defineEmits(['import-card-updates'])
 const handleUpdate = (updates) => {
   emit('import-card-updates', updates)
 }
-</script> 
+</script>

@@ -20,7 +20,7 @@
       <thead>
         <tr class="table-light">
           <th>name</th>
-          <th></th>
+          <th/>
         </tr>
       </thead>
 

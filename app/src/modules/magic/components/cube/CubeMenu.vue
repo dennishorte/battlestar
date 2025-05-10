@@ -60,9 +60,15 @@ export default {
   },
 
   computed: {
-    buttonClassesCards() { return this.showing === 'cards' ? 'btn-primary' : 'btn-secondary' },
-    buttonClassesScars() { return this.showing === 'scars' ? 'btn-primary' : 'btn-secondary' },
-    buttonClassesAchievements() { return this.showing === 'achievements' ? 'btn-primary' : 'btn-secondary' },
+    buttonClassesCards() {
+      return this.showing === 'cards' ? 'btn-primary' : 'btn-secondary'
+    },
+    buttonClassesScars() {
+      return this.showing === 'scars' ? 'btn-primary' : 'btn-secondary'
+    },
+    buttonClassesAchievements() {
+      return this.showing === 'achievements' ? 'btn-primary' : 'btn-secondary'
+    },
   },
 
   methods: {

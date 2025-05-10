@@ -1,5 +1,5 @@
 <template>
-  <component :is="processedText"></component>
+  <component :is="processedText"/>
 </template>
 
 <script>

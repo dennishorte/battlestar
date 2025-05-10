@@ -1,6 +1,6 @@
 <template>
   <div class="defense-container">
-    <i class="ms ms-defense defense-background"></i>
+    <i class="ms ms-defense defense-background"/>
     <span class="defense-number">{{ defense }}</span>
   </div>
 </template>

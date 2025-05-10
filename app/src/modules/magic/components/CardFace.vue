@@ -24,7 +24,7 @@
                   <ManaCost :cost="slotProps.text" />
                 </template>
                 <template v-slot:empty>
-                  <i class="ms ms-2x ms-ci ms-ci-5 empty-mana-indicator"></i>
+                  <i class="ms ms-2x ms-ci ms-ci-5 empty-mana-indicator"/>
                 </template>
               </EditableDiv>
             </div>
@@ -54,7 +54,7 @@
                 </div>
               </template>
               <template v-slot:empty>
-                <div class="frame-art empty-art"></div>
+                <div class="frame-art empty-art"/>
               </template>
             </EditableDiv>
           </div>
@@ -97,7 +97,7 @@
 
             <div class="frame-achievements-wrapper">
               <p v-for="ach of achievements" class="frame-achievement-desc">
-                <i class="bi bi-star-fill achievement-icon"></i>
+                <i class="bi bi-star-fill achievement-icon"/>
                 {{ ach.unlock }}
               </p>
             </div>
@@ -151,7 +151,7 @@
       </div> <!-- background -->
 
       <div class="artist-name">
-        <span class="artist-icon"><i class="ms ms-artist-nib"></i></span>
+        <span class="artist-icon"><i class="ms ms-artist-nib"/></span>
         <EditableDiv
           :text="card.artist(index)"
           customClass="artist-text"
@@ -223,7 +223,7 @@ export default {
         index: this.index,
         field,
         value
-      });
+      })
     }
   },
 

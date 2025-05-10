@@ -114,23 +114,38 @@
         <div class="colors-group">
           <div class="color-buttons">
             <div class="form-check form-check-inline">
-              <input class="btn-check" type="checkbox" id="colorwhite" ref="colorwhite" />
+              <input class="btn-check"
+                     type="checkbox"
+                     id="colorwhite"
+                     ref="colorwhite" />
               <label class="btn btn-outline-warning" for="colorwhite">white</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="btn-check" type="checkbox" id="colorblue" ref="colorblue" />
+              <input class="btn-check"
+                     type="checkbox"
+                     id="colorblue"
+                     ref="colorblue" />
               <label class="btn btn-outline-primary" for="colorblue">blue</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="btn-check" type="checkbox" id="colorblack" ref="colorblack" />
+              <input class="btn-check"
+                     type="checkbox"
+                     id="colorblack"
+                     ref="colorblack" />
               <label class="btn btn-outline-dark" for="colorblack">black</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="btn-check" type="checkbox" id="colorred" ref="colorred" />
+              <input class="btn-check"
+                     type="checkbox"
+                     id="colorred"
+                     ref="colorred" />
               <label class="btn btn-outline-danger" for="colorred">red</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="btn-check" type="checkbox" id="colorgreen" ref="colorgreen" />
+              <input class="btn-check"
+                     type="checkbox"
+                     id="colorgreen"
+                     ref="colorgreen" />
               <label class="btn btn-outline-success" for="colorgreen">green</label>
             </div>
           </div>
@@ -159,7 +174,7 @@
 
         <div>
           <button class="btn btn-warning" @click="clear">clear</button>
-          <slot name="extra-actions"></slot>
+          <slot name="extra-actions"/>
         </div>
 
         <CardFilterList :filters="filters" @remove-card-filter="remove" />

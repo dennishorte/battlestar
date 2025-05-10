@@ -16,7 +16,7 @@
       <div class="section-heading beginning-heading">
         <div>Beginning</div>
         <div @click="fastBeginning">
-          <i class="bi bi-star-fill"></i>
+          <i class="bi bi-star-fill"/>
         </div>
       </div>
       <PhaseButton name="start turn" />

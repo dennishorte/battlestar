@@ -3,9 +3,9 @@
     <slot name="header">
       <SectionHeader>
         <div class="d-flex justify-content-between">
-            <div>My Decks</div>
-            <div @click="createDeck"><i class="bi bi-plus-square"></i></div>
-          </div>
+          <div>My Decks</div>
+          <div @click="createDeck"><i class="bi bi-plus-square"/></div>
+        </div>
       </SectionHeader>
     </slot>
 

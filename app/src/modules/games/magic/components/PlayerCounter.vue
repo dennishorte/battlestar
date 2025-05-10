@@ -5,10 +5,10 @@
     </div>
 
     <div class="counter-buttons" :class="buttonClasses">
-      <i class="bi bi-dice-5-fill counter-red" @click.stop="increment(-5)"></i>
-      <i class="bi bi-dice-1-fill counter-red" @click.stop="increment( -1)"></i>
-      <i class="bi bi-dice-1-fill counter-green" @click.stop="increment(1)"></i>
-      <i class="bi bi-dice-5-fill counter-green" @click.stop="increment(5)"></i>
+      <i class="bi bi-dice-5-fill counter-red" @click.stop="increment(-5)"/>
+      <i class="bi bi-dice-1-fill counter-red" @click.stop="increment( -1)"/>
+      <i class="bi bi-dice-1-fill counter-green" @click.stop="increment(1)"/>
+      <i class="bi bi-dice-5-fill counter-green" @click.stop="increment(5)"/>
     </div>
   </div>
 </template>

@@ -1,10 +1,10 @@
 <template>
   <Modal id="error-modal" class="error-modal">
     <template #header>
-        Error
+      Error
     </template>
 
-    <div class="error-modal-body"></div>
+    <div class="error-modal-body"/>
 
     <template #footer>
       <button class="btn btn-primary" @click="reload">reload page</button>

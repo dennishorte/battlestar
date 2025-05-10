@@ -7,8 +7,7 @@
       :curve-id="point.curveId"
       :style="handleStyle(point)"
       class="curve-handle can-drag"
-    >
-    </div>
+    />
   </div>
 </template>
 

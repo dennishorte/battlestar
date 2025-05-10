@@ -1,20 +1,20 @@
 <template>
-<div class="home">
-  <Header />
+  <div class="home">
+    <Header />
 
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col games-col">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col games-col">
 
-        <MyGames />
+          <MyGames />
 
-        <MyLobbies />
+          <MyLobbies />
 
+        </div>
       </div>
     </div>
-  </div>
 
-</div>
+  </div>
 </template>
 
 <script>

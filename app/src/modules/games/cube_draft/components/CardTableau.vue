@@ -1,8 +1,11 @@
 <template>
   <div class="card-tableau">
-    <div class="card-holder" v-for="card in cards" :key="card.g.id" @click="cardClicked(card)" >
+    <div class="card-holder"
+         v-for="card in cards"
+         :key="card.g.id"
+         @click="cardClicked(card)" >
       <Card :size="220" :card="card" :scrollable="cardScroll" />
-      <div class="card-overlay" v-if="cannotDraft(card)"></div>
+      <div class="card-overlay" v-if="cannotDraft(card)"/>
     </div>
   </div>
 </template>

@@ -1,34 +1,34 @@
 <template>
-<div class='admin'>
-  <Header />
+  <div class='admin'>
+    <Header />
 
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <h2>Admin</h2>
-      </div>
-    </div>
-
-
-    <div class="row">
-      <div class="col-4">
-        <CreateUser v-on:user-created="getAllUsers" />
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h2>Admin</h2>
+        </div>
       </div>
 
-      <div class="col">
-        <AdminActions />
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col">
-        <UserList :users="users" v-on:users-updated="getAllUsers" />
+      <div class="row">
+        <div class="col-4">
+          <CreateUser v-on:user-created="getAllUsers" />
+        </div>
+
+        <div class="col">
+          <AdminActions />
+        </div>
       </div>
+
+      <div class="row">
+        <div class="col">
+          <UserList :users="users" v-on:users-updated="getAllUsers" />
+        </div>
+      </div>
+
     </div>
 
   </div>
-
-</div>
 </template>
 
 <script>

@@ -7,15 +7,21 @@
     <div class="container">
       <div class="mb-3">
         <label for="cube-name" class="form-label">Cube Name</label>
-        <input type="text" class="form-control" id="cube-name" v-model="formData.name">
+        <input type="text"
+               class="form-control"
+               id="cube-name"
+               v-model="formData.name"/>
       </div>
-      
+
       <div class="mb-3 form-check">
-        <input type="checkbox" class="form-check-input" id="legacy-flag" v-model="formData.legacy">
+        <input type="checkbox"
+               class="form-check-input"
+               id="legacy-flag"
+               v-model="formData.legacy"/>
         <label class="form-check-label" for="legacy-flag">Legacy Mode</label>
       </div>
     </div>
-    
+
     <template #footer>
       <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
       <button class="btn btn-primary" @click="save" data-bs-dismiss="modal">Save</button>
@@ -28,13 +34,13 @@ import Modal from '@/components/Modal'
 import { mapState } from 'vuex'
 export default {
   name: 'CubeSettingsModal',
-  
+
   components: {
     Modal
   },
-  
+
   inject: ['bus'],
-  
+
   data() {
     return {
       formData: {
@@ -47,7 +53,7 @@ export default {
   computed: {
     ...mapState('magic/cube', ['cube']),
   },
-  
+
   methods: {
     openModal() {
       this.formData = {
@@ -56,7 +62,7 @@ export default {
       }
       this.$modal('cube-settings-modal').show()
     },
-    
+
     async save() {
       await this.$store.dispatch('magic/cube/updateSettings', {
         cubeId: this.cube._id,
@@ -64,7 +70,7 @@ export default {
       })
     }
   },
-  
+
   mounted() {
     this.bus.on('open-cube-settings', this.openModal)
   }
@@ -72,4 +78,4 @@ export default {
 </script>
 
 <style scoped>
-</style> 
+</style>

@@ -3,7 +3,7 @@
     <table class="table table-sm">
       <thead>
         <tr>
-          <th></th>
+          <th/>
           <th v-for="player in players">
             {{ player.name }}
           </th>

@@ -3,11 +3,10 @@
     <button
       class="btn btn-light dropdown-toggle"
       data-bs-toggle="dropdown"
-    >
-    </button>
+    />
 
     <ul class="dropdown-menu dropdown-menu-end">
-      <slot></slot>
+      <slot/>
     </ul>
   </div>
 </template>

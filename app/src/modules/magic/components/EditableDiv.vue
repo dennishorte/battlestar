@@ -9,11 +9,11 @@
     @input="onInput">
 
     <div v-show="showTextSlot">
-      <slot :text="text"></slot>
+      <slot :text="text"/>
     </div>
 
     <div v-show="showEmptySlot">
-      <slot name="empty" :field="field"></slot>
+      <slot name="empty" :field="field"/>
     </div>
 
     <div v-show="showDisplayText">
@@ -115,16 +115,18 @@ export default {
       // Create a temporary clone to process the content
       const tempDiv = document.createElement('div')
       tempDiv.innerHTML = htmlContent
-      
+
       // Remove any hidden elements (those with v-show="false")
       const hiddenElements = tempDiv.querySelectorAll('[style*="display: none"]')
       hiddenElements.forEach(el => el.remove())
-      
+
       return this.htmlToPlainText(tempDiv.innerHTML)
     },
 
     onBlur(event) {
-      if (!this.isEditing) return
+      if (!this.isEditing) {
+        return
+      }
 
       // Get clean content from the editable div
       const newValue = this.getCleanContent(this.$refs.editableDiv.innerHTML)

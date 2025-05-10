@@ -1,7 +1,7 @@
 <template>
   <li>
     <button class="dropdown-item" :disabled="disabled">
-      <slot></slot>
+      <slot/>
     </button>
   </li>
 </template>

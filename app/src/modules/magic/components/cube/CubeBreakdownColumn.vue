@@ -112,12 +112,12 @@ export default {
           .map(([name, cards]) => ({ name: mag.util.card.COLOR_KEY_TO_NAME[name], cards }))
           .sort((l, r) => GOLD_SORT_ORDER.indexOf(l.name) - GOLD_SORT_ORDER.indexOf(r.name))
 
-          return output
+        return output
       }
 
-            else {
-              throw new Error('Unhandled cube classification: ' + this.name)
-            }
+      else {
+        throw new Error('Unhandled cube classification: ' + this.name)
+      }
     },
   },
 }

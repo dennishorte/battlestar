@@ -6,7 +6,7 @@
       <table class="table table-sm" :key="game._id">
         <thead>
           <tr>
-            <td></td>
+            <td/>
             <td v-for="player in game.settings.players">{{ player.name[0] }}</td>
           </tr>
         </thead>

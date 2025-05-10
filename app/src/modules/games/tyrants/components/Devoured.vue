@@ -3,7 +3,10 @@
     <span class="title">Devoured</span> ({{ count }})
 
     <div v-if="show">
-      <GameCard v-for="card in cards" :key="card.id" :card="card" :show-cost="true" />
+      <GameCard v-for="card in cards"
+                :key="card.id"
+                :card="card"
+                :show-cost="true" />
     </div>
   </div>
 </template>

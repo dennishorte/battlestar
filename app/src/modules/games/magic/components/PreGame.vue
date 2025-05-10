@@ -54,7 +54,10 @@
           <button class="btn btn-warning" @click="unselectDeck" v-if="ready">
             Click to shout: "Wait a minute!"
           </button>
-          <button class="btn btn-success" @click="selectDeck" v-else :disabled="!selectedDeck">
+          <button class="btn btn-success"
+                  @click="selectDeck"
+                  v-else
+                  :disabled="!selectedDeck">
             Click to shout: "I am ready!"
           </button>
         </div>

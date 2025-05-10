@@ -351,7 +351,9 @@ export default {
             props: {
               card: externalCard,
               showManaCost: true,
-              onClick: () => { this.showCardManager(cardId) },
+              onClick: () => {
+                this.showCardManager(cardId)
+              },
             },
           }
         }
