@@ -43,8 +43,6 @@
 
 
 <script>
-import mitt from 'mitt'
-
 import { nextTick } from 'vue'
 import { util, tyr } from 'battlestar-common'
 
@@ -96,8 +94,6 @@ export default {
 
   data() {
     return {
-      bus: mitt(),
-
       ui: {
         fn: {
           clickLocation: this.clickLocation,
@@ -117,11 +113,10 @@ export default {
     }
   },
 
-  inject: ['actor', 'game'],
+  inject: ['actor', 'bus', 'game'],
 
   provide() {
     return {
-      bus: this.bus,
       ui: this.ui,
     }
   },

@@ -63,12 +63,7 @@
       </div>
 
       <div class="content-column deck-list-column">
-        <Decklist
-          v-if="selectedDeck"
-          :deck="selectedDeck"
-          :no-menu="true"
-          @card-clicked="cardClicked"
-        />
+        <Decklist v-if="selectedDeck" :deck="selectedDeck" />
       </div>
 
     </div>

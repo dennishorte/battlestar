@@ -13,34 +13,12 @@
         </div>
 
         <div class="col column deck-column">
-          <Decklist
-            v-if="deck"
-            :deck="deck"
-            @card-clicked="decklistClicked"
-            @edit-settings="openDeckSettings"
-          >
-            <template #menu-options>
-              <DropdownButton @click="openImportModal">import</DropdownButton>
-              <DropdownButton @click="downloadDecklist">export</DropdownButton>
-              <DropdownButton @click="saveDeck" :disabled="!deck.isModified()">save</DropdownButton>
-            </template>
-          </Decklist>
-
+          <Decklist v-if="deck" :deck="deck" />
           <div v-else class="alert alert-warning">No deck selected</div>
         </div>
 
       </div>
-
     </div>
-
-    <CardManagerModal :deck="deck" />
-    <DeckImportModal @import-card-updates="importDecklist" />
-    <DeckSettingsModal
-      v-if="deck"
-      ref="settingsModal"
-      :deck="deck"
-      @settings-updated="handleSettingsUpdated"
-    />
 
   </MagicWrapper>
 </template>
@@ -55,9 +33,6 @@ import UIDeckWrapper from '@/modules/magic/util/deck.wrapper'
 
 import CardFilters from '../CardFilters'
 import CardList from './CardList'
-import DeckImportModal from './DeckImportModal'
-import CardManagerModal from './CardManagerModal'
-import DeckSettingsModal from './DeckSettingsModal'
 import Decklist from './Decklist'
 import DropdownButton from '@/components/DropdownButton'
 import MagicMenu from '../MagicMenu'
@@ -69,9 +44,6 @@ export default {
   components: {
     CardFilters,
     CardList,
-    DeckImportModal,
-    CardManagerModal,
-    DeckSettingsModal,
     Decklist,
     DropdownButton,
     MagicMenu,
@@ -111,41 +83,12 @@ export default {
       this.deck.addCard(card, 'main')
     },
 
-    decklistClicked(payload) {
-      this.bus.emit('card-manager:begin', {
-        card: payload.card,
-        zone: payload.zone,
-      })
-    },
-
-    downloadDecklist() {
-      throw new Error('Not implemented')
-    },
-
-    handleSettingsUpdated(settings) {
-      // Settings were updated in the modal directly on the deck object
-      // Mark deck as modified so it can be saved
-      this.deck.markModified()
-    },
-
-    importDecklist(decklist) {
-      throw new Error('Not implemented')
-    },
-
     async loadDeck() {
       if (!this.cardsReady) {
         return
       }
 
       this.deck = await this.$store.dispatch('magic/loadDeck', this.$route.params.id)
-    },
-
-    openDeckSettings() {
-      this.$refs.settingsModal.showModal()
-    },
-
-    openImportModal() {
-      throw new Error('Not implemented')
     },
 
     async saveDeck() {

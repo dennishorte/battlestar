@@ -36,8 +36,6 @@
 
 
 <script>
-import mitt from 'mitt'
-
 import { inn } from 'battlestar-common'
 
 import GameMenu from '@/modules/games/common/components/GameMenu'
@@ -77,17 +75,10 @@ export default {
     DebugModal,
   },
 
-  data() {
-    return {
-      bus: mitt(),
-    }
-  },
-
   inject: ['actor', 'game'],
 
   provide() {
     return {
-      bus: this.bus,
       ui: this.uiFactory(),
     }
   },

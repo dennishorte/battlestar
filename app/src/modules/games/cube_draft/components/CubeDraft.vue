@@ -113,7 +113,6 @@
 
 
 <script>
-import mitt from 'mitt'
 import { v4 as uuidv4 } from 'uuid'
 
 import { computed, nextTick } from 'vue'
@@ -164,8 +163,6 @@ export default {
 
   data() {
     return {
-      bus: mitt(),  // Used by WaitingPanel
-
       cardDraftModalId: 'card-draft-modal-' + uuidv4(),
       fileModalId: 'file-manager-edit-modal-' + uuidv4(),
 
@@ -183,11 +180,10 @@ export default {
     }
   },
 
-  inject: ['actor', 'game'],
+  inject: ['actor', 'bus', 'game'],
 
   provide() {
     return {
-      bus: this.bus,
       ui: this.uiFactory(),
     }
   },

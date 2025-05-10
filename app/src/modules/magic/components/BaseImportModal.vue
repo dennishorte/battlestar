@@ -19,7 +19,7 @@
 
       <div v-if="parsedUpdate.unknown.length > 0">
         <span class="update-data-heading">unknown cards:</span>
-        <div v-for="card in parsedUpdate.unknown" :key="card.name">
+        <div v-for="card in parsedUpdate.unknown">
           {{ card.name }}
         </div>
       </div>
@@ -57,7 +57,7 @@ const updateText = ref('')
 
 const parsedUpdate = computed(() => {
   const items = mag.util.card.parseCardlist(updateText.value)
-  
+
   for (const item of items) {
     if (item.remove && props.collection) {
       // Try to find the item in the existing collection
@@ -98,4 +98,4 @@ const handleOk = () => {
   emit('update', parsedUpdate.value)
   updateText.value = ''
 }
-</script> 
+</script>

@@ -3,7 +3,9 @@
     <div class="header">
       <button :disabled="!deck.isModified()" class="btn btn-primary save-button" @click="saveChanges">save</button>
       <Dropdown :notitle="true">
-        <DropdownButton @click="editSettings">settings</DropdownButton>
+        <DropdownButton @click="openDeckSettings">settings</DropdownButton>
+        <DropdownButton @click="openImportModal" :disabled="true">load decklist</DropdownButton>
+        <DropdownButton @click="downloadDecklist" :disabled="true">export</DropdownButton>
       </Dropdown>
       <div class="deck-name me-2">{{ deck.name }} ({{ maindeckSize }})</div>
     </div>
@@ -17,6 +19,16 @@
         @card-clicked="cardClicked"
       />
     </div>
+
+    <CardManagerModal :deck="deck" />
+    <DeckImportModal @import-card-updates="importDecklist" />
+    <DeckSettingsModal
+      v-if="deck"
+      ref="settingsModal"
+      :deck="deck"
+      @settings-updated="handleSettingsUpdated"
+    />
+
   </div>
 </template>
 
@@ -30,6 +42,10 @@ import Dropdown from '@/components/Dropdown'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
 
+import CardManagerModal from './CardManagerModal'
+import DeckImportModal from './DeckImportModal'
+import DeckSettingsModal from './DeckSettingsModal'
+
 
 export default {
   name: 'Decklist',
@@ -39,11 +55,17 @@ export default {
     Dropdown,
     DropdownButton,
     DropdownDivider,
+
+    CardManagerModal,
+    DeckImportModal,
+    DeckSettingsModal,
   },
 
   props: {
     deck: Object,
   },
+
+  inject: ['bus'],
 
   data() {
     return {
@@ -72,11 +94,36 @@ export default {
 
   methods: {
     cardClicked(payload) {
-      this.$emit('card-clicked', payload)
+      this.bus.emit('card-manager:begin', payload)
     },
 
-    editSettings() {
-      this.$emit('edit-settings', this.deck)
+    decklistClicked(payload) {
+      this.bus.emit('card-manager:begin', {
+        card: payload.card,
+        zone: payload.zone,
+      })
+    },
+
+    downloadDecklist() {
+      throw new Error('Not implemented')
+    },
+
+    handleSettingsUpdated(settings) {
+      // Settings were updated in the modal directly on the deck object
+      // Mark deck as modified so it can be saved
+      this.deck.markModified()
+    },
+
+    importDecklist(update) {
+
+    },
+
+    openDeckSettings() {
+      this.$refs.settingsModal.showModal()
+    },
+
+    openImportModal() {
+      this.$modal('deck-import-modal').show()
     },
 
     async saveChanges() {
