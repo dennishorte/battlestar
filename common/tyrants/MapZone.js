@@ -100,8 +100,6 @@ MapZone.prototype.getController = function() {
     return null
   }
 
-  const troops = this.getTroops()
-
   // Player with the most troops at the site.
   const playerMap = {}  // name: PlayerObject
   const counts = {}  // name: count

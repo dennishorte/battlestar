@@ -280,7 +280,6 @@ function _applyOneFilter(card, filter) {
     return card.isLegalIn(filter.value)
   }
   else if (filter.kind === 'colors' || filter.kind === 'identity') {
-    const fieldKey = fieldMapping[filter.kind]
     const fieldValue = filter.kind === 'colors' ? card.colors() : card.colorIdentity()
     const targetValueMatches = ['white', 'blue', 'black', 'red', 'green']
       .map(color => filter[color] ? colorNameToSymbol[color] : undefined)

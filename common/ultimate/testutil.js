@@ -1,7 +1,6 @@
 const { GameOverEvent } = require('../lib/game.js')
 const { InnovationFactory } = require('./innovation.js')
 const TestCommon = require('../lib/test_common.js')
-const log = require('../lib/log.js')
 
 
 const TestUtil = { ...TestCommon }

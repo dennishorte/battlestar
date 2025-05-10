@@ -1,10 +1,6 @@
-const { GameOverEvent } = require('../lib/game.js')
 const { MagicFactory } = require('./magic.js')
 const TestCommon = require('../lib/test_common.js')
-const CardWrapper = require('./util/card.wrapper.js')
 const DeckWrapper = require('./util/deck.wrapper.js')
-const log = require('../lib/log.js')
-const util = require('../lib/util.js')
 
 const TestCards = require('./test_card_data.js')
 
@@ -143,7 +139,7 @@ TestUtil.fixtureDecksSelected = function(options) {
   return game
 }
 
-// eslint-disable-next-line
+/* eslint-disable */
 TestUtil.setBoard = function(game, state) {
   game.testSetBreakpoint('before-first-player', (game) => {
     for (const name of ['dennis', 'micah', 'scott', 'eliya']) {
@@ -151,6 +147,7 @@ TestUtil.setBoard = function(game, state) {
     }
   })
 }
+/* eslint-enable */
 
 function blankTableau() {
   return {

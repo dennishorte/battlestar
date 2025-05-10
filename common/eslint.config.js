@@ -6,6 +6,16 @@ const js = require("@eslint/js")
 
 module.exports = defineConfig([
   {
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/test/**',
+      '**/test/**',
+      'agricola/**',
+    ],
+  },
+  {
     files: ["**/*.js"],
     plugins: { js, jest },
     extends: [

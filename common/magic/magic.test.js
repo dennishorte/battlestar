@@ -1,10 +1,5 @@
 Error.stackTraceLimit = 100
 
-const {
-  GameOverEvent,
-  InputRequestEvent,
-} = require('../lib/game.js')
-
 const TestCards = require('./test_card_data.js')
 const t = require('./testutil.js')
 const util = require('../lib/util.js')
@@ -19,7 +14,7 @@ describe('Magic', () => {
   })
 
   test('deck selection', () => {
-    const game = t.fixtureDecksSelected()
+    t.fixtureDecksSelected()
     // If no errors, decks were selected successfully.
   })
 

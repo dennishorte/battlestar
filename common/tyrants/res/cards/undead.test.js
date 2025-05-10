@@ -362,34 +362,6 @@ describe('Undead expansion', () => {
         },
       })
     })
-
-    /* test('Return one of your spies > For the rest of your turn treat the top card of the devoured deck as if it was in the market', () => {
-     *   const game = t.gameFixture({
-     *     expansions: ['drow', 'undead'],
-     *     dennis: {
-     *       hand: ['Ghost', 'House Guard'],
-     *       influence: 3,
-     *     },
-     *     devoured: ['Flesh Golem'],
-     *     'Chasmleap Bridge': {
-     *       spies: ['dennis']
-     *     },
-     *   })
-
-     *   const request1 = game.run()
-     *   const request2 = t.choose(game, request1, 'Play Card.Ghost')
-     *   const request3 = t.choose(game, request2, 'Return one of your spies > For the rest of your turn treat the top card of the devoured deck as if it was in the market')
-     *   const request4 = t.choose(game, request3, 'Chasmleap Bridge')
-     *   const request5 = t.choose(game, request4, 'Recruit.devoured: Flesh Golem')
-
-     *   t.testBoard(game, {
-     *     dennis: {
-     *       hand: ['House Guard'],
-     *       played: ['Ghost'],
-     *       discard: ['Flesh Golem'],
-     *     },
-     *   })
-     * }) */
   })
 
   describe('High Priest of Myrkul', () => {
