@@ -38,6 +38,7 @@
 
     <div
       v-for="player in orderedPlayers"
+      :key="player.name"
       class="magic-column"
     >
       <PlayerTableau :player="player" />

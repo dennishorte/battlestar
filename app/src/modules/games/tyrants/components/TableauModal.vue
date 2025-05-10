@@ -10,6 +10,7 @@
           <div class="trophies" v-if="trophyHall.length > 0">
             <div
               v-for="token in trophyHall"
+              :key="token.id"
               class="troop-space"
               :style="ui.fn.troopStyle(token)"
             />
@@ -31,7 +32,7 @@
 
         <div class="aspects">
           <div class="title">Aspects</div>
-          <div v-for="[key, value] in aspects" class="score-line">
+          <div v-for="[key, value] in aspects" :key="key" class="score-line">
             <div class="score-key">{{ key }}</div>
             <div class="score-value">{{ value }}</div>
           </div>

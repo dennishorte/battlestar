@@ -13,7 +13,7 @@
       </thead>
 
       <tbody>
-        <tr v-for="user in users">
+        <tr v-for="user in users" :key="user._id">
           <td>
             <span class="monospace">
               <span class="text-secondary">{{ user._id.substr(0, user._id.length-3) }}</span>{{ user._id.substr(-3, 3) }}

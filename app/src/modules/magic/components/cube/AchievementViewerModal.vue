@@ -18,7 +18,7 @@
 
         <div class="area">
           <h5>Sections</h5>
-          <div v-for="(section, index) of achievement.hidden" class="d-grid gap-2">
+          <div v-for="(section, index) of achievement.hidden" :key="index" class="d-grid gap-2">
             <div class="d-grid gap-2">
               <button class="btn btn-success mb-2" @click="toggle(index)">{{ section.name }}</button>
               <div v-if="toggled[index]" class="area" style="white-space: pre-wrap;">

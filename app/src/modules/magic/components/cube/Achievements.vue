@@ -7,12 +7,12 @@
     <div class="row">
       <div class="col">
         <h3>Unclaimed Achievements</h3>
-        <Achievement v-for="ach in sortedAchievements" :ach="ach" />
+        <Achievement v-for="ach in sortedAchievements" :key="ach._id" :ach="ach" />
       </div>
 
       <div class="col">
         <h3>Claimed Achievements</h3>
-        <Achievement v-for="ach in claimedAchievements" :ach="ach" />
+        <Achievement v-for="ach in claimedAchievements" :key="ach._id" :ach="ach" />
       </div>
     </div>
 

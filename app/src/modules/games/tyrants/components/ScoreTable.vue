@@ -4,15 +4,15 @@
       <thead>
         <tr>
           <th/>
-          <th v-for="player in players">
+          <th v-for="player in players" :key="player.name">
             {{ player.name }}
           </th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="key in scoreKeys">
+        <tr v-for="key in scoreKeys" :key="key">
           <td>{{ key }}</td>
-          <td v-for="player in players">
+          <td v-for="player in players" :key="player.name">
             {{ scores[player.name][key] }}
           </td>
         </tr>

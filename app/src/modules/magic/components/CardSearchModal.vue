@@ -23,6 +23,7 @@
         <div class="versions-list">
           <div
             v-for="match of matched"
+            :key="match.name()"
             class="version-text"
             @click="selectVersion(match)"
             :class="match === selected ? 'version-selected' : ''"

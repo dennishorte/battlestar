@@ -13,6 +13,7 @@
       <button
         v-if="model.card_faces.length > 1"
         v-for="(_, index) in model.card_faces"
+        :key="index"
         class="btn btn-warning"
         @click="removeFace(index)"
       >Remove {{ index }}</button>

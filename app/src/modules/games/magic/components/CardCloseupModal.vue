@@ -13,7 +13,7 @@
         <label class="col-form-label">Active Face</label>
         <div>
           <select class="form-select" v-model.number="activeFaceIndex">
-            <option v-for="(_, index) in selectedCard.numFaces()" :value="index">
+            <option v-for="(_, index) in selectedCard.numFaces()" :key="index" :value="index">
               {{ selectedCard.name(index) }}
             </option>
           </select>
@@ -27,7 +27,7 @@
         <h5>Counters</h5>
         <div class="row">
           <div class="col-6">
-            <div class="counter" v-for="[key, value] in counters">
+            <div class="counter" v-for="[key, value] in counters" :key="key">
               <CounterButtons :card="selectedCard" :name="key" />
             </div>
           </div>

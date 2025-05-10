@@ -7,13 +7,13 @@
         <thead>
           <tr>
             <td/>
-            <td v-for="player in game.settings.players">{{ player.name[0] }}</td>
+            <td v-for="player in game.settings.players" :key="player.name">{{ player.name[0] }}</td>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="player in game.settings.players">
+          <tr v-for="player in game.settings.players" :key="player.name">
             <td>{{ player.name }}</td>
-            <td v-for="player2 in game.settings.players">
+            <td v-for="player2 in game.settings.players" :key="player2.name">
               <template v-if="player === player2">x</template>
               <template v-else>
                 {{ resultString(player, player2) }}

@@ -7,7 +7,7 @@
     </template>
 
     <div v-else class="alert alert-warning">
-      <div v-for="line of log">
+      <div v-for="(line, index) of log" :key="index">
         {{ line }}
       </div>
     </div>

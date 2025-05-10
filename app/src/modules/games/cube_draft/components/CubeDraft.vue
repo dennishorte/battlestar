@@ -23,7 +23,7 @@
           </template>
 
           <template v-else>
-            <div v-for="scar in scars">
+            <div v-for="scar in scars" :key="scar.text">
               {{ scar.text }}
             </div>
 
@@ -76,7 +76,7 @@
     <template #before-card v-if="!!game">
       <div class="alert alert-warning">
         <ol>
-          <li v-for="scar in scars">{{ scar.text }}</li>
+          <li v-for="scar in scars" :key="scar.text">{{ scar.text }}</li>
         </ol>
 
         <div class="small border-top border-warning">

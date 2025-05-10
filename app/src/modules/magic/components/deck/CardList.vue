@@ -2,7 +2,7 @@
   <div>
     <input v-model="searchPrefix" class="form-control" placeholder="search" />
     <div class="card-list">
-      <div class="card-list-row" v-for="card in searchedCards.slice(0, 1000)">
+      <div class="card-list-row" v-for="card in searchedCards.slice(0, 1000)" :key="card._id">
         <i class="bi bi-box" v-if="card.isCubeCard()" />
         <CardListItem
           :card="card"

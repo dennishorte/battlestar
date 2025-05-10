@@ -28,6 +28,7 @@
 
   <Site
     v-for="site in sites"
+    :key="site.name"
     :site="site"
     :highlight="selected && site.name === selected.name"
     @mousedown="mousedown($event, site)"
@@ -35,6 +36,7 @@
 
   <Spot
     v-for="spot in spots"
+    :key="spot.name"
     :spot="spot"
     :highlight="selected && spot.name === selected.name"
     @mousedown="mousedown($event, spot)"

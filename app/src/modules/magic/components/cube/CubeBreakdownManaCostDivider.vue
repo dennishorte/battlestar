@@ -2,7 +2,7 @@
   <div class="cube-breakdown-mana-cost-divider">
     <span class="bar"/>
 
-    <span v-for="dot in dots" :class="dot"/>
+    <span v-for="(dot, index) in dots" :key="index" :class="dot"/>
 
     <span class="bar"/>
   </div>

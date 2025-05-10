@@ -2,7 +2,7 @@
   <div class="gamelog" ref="gamelog" :class="nestedClasses">
     <ChatOffCanvas :colors="chatColors" v-if="!nested" />
 
-    <template v-for="(line, index) in lines">
+    <template v-for="(line, index) in lines" :key="index">
 
       <div v-if="line.type === 'nest'">
         <GameLog :entries="line.entries" :depth="line.depth" :funcs="funcs" />

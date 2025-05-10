@@ -61,7 +61,7 @@
 
         <DropdownDivider />
 
-        <li v-for="counter in Object.keys(card.g.counters)">
+        <li v-for="counter in Object.keys(card.g.counters)" :key="counter">
           <button @click.stop="() => {}" class="dropdown-item counter-button">
             <CounterButtons @click.stop="() => {}" :card="card" :name="counter" />
           </button>

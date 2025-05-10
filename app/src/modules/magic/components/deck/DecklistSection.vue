@@ -4,7 +4,7 @@
       {{ name }} ({{ count }})
     </SectionHeader>
 
-    <div v-for="group in groupedCards" class="card-and-count">
+    <div v-for="group in groupedCards" :key="group.card._id" class="card-and-count">
       <div class="card-count">{{ group.count }}x </div>
       <CardListItem
         :card="group.card"

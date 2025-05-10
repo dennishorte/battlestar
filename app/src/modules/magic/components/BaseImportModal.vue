@@ -19,7 +19,7 @@
 
       <div v-if="parsedUpdate.unknown.length > 0">
         <span class="update-data-heading">unknown cards:</span>
-        <div v-for="card in parsedUpdate.unknown">
+        <div v-for="card in parsedUpdate.unknown" :key="card.name">
           {{ card.name }}
         </div>
       </div>

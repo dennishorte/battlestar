@@ -4,7 +4,7 @@
     <div class="section-name">{{ name }} ({{ cardlist.length }})</div>
 
     <div class="section-cards" :class="columnName">
-      <template v-for="elem in sortedCardlist">
+      <template v-for="(elem, index) in sortedCardlist" :key="index">
         <CubeBreakdownManaCostDivider v-if="elem.isDivider" :cost="elem.cost" />
         <CardListItem v-else
                       :card="elem"

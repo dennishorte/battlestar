@@ -48,7 +48,7 @@
         <div class="col">
           <h5>Avaiable Scars</h5>
 
-          <div v-for="scar in scarsUnused" class="scar-container">
+          <div v-for="scar in scarsUnused" :key="scar._id" class="scar-container">
             <div>{{ scar.text }}</div>
             <div>
               <button class="btn btn-link" @click="editScar(scar)">edit</button>
@@ -58,7 +58,7 @@
 
         <div class="col">
           <h5>Used Scars</h5>
-          <div v-for="scar in scarsUsed" class="scar-container vertical">
+          <div v-for="scar in scarsUsed" :key="scar._id" class="scar-container vertical">
             <div>{{ scar.text }}</div>
             <div class="scar-applied-info">
               <div

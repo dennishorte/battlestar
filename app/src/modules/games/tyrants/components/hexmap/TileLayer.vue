@@ -1,5 +1,8 @@
 <template>
-  <polygon v-for="hex in hexes" :points="points(hex)" class="hex-tile" />
+  <polygon v-for="hex in hexes"
+           :key="hex.name()"
+           :points="points(hex)"
+           class="hex-tile" />
 </template>
 
 

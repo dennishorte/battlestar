@@ -6,6 +6,7 @@
     <select class="form-select mb-3" v-model="selectedId">
       <option
         v-for="ach in sortedAchievements"
+        :key="ach._id"
         :value="ach._id"
       >
         {{ ach.name }}

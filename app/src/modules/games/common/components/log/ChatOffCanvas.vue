@@ -1,6 +1,7 @@
 <template>
   <OffCanvas id="chat-off-canvas">
     <div v-for="chat in chats"
+         :key="`${chat.author}-${chat.text}`"
          class="chat"
          :class="chatClasses(chat)"
          :style="styles(chat)">

@@ -48,7 +48,7 @@
         v-model="selected"
         multiple
       >
-        <option v-for="user in users" :value="user._id">{{ user.name }}</option>
+        <option v-for="user in users" :key="user._id" :value="user._id">{{ user.name }}</option>
       </select>
     </Modal>
 

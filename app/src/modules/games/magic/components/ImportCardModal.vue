@@ -4,7 +4,7 @@
 
     <template #middle-slot>
       <select class="form-select mt-2" v-model="zoneId">
-        <option v-for="zoneId in importZoneIds">{{ zoneId }}</option>
+        <option v-for="zoneId in importZoneIds" :key="zoneId">{{ zoneId }}</option>
       </select>
       <input class="form-control mt-2" v-model.number="count" placeholder="count" />
 

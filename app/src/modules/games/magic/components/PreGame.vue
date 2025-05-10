@@ -38,6 +38,7 @@
             <tbody>
               <tr
                 v-for="player in game.getPlayerAll()"
+                :key="player.name"
                 :class="waiting(player) ? 'table-warning' : 'table-success'"
               >
                 <td>{{ player.name }}</td>

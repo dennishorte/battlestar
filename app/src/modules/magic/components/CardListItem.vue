@@ -8,6 +8,7 @@
     <div
       v-if="separateFaces"
       v-for="faceIndex in faceIndices"
+      :key="faceIndex"
       class="card-list-item-face"
       :class="faceIndex === card.g.activeFaceIndex ? '' : 'alt-face'"
       @click="$emit('card-face-clicked', { card, faceIndex })"

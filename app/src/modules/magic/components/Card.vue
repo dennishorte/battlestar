@@ -3,6 +3,7 @@
     <CardFace
       v-if="card"
       v-for="index in this.card.numFaces()"
+      :key="index"
       :card="card"
       :index="index - 1"
       :size="size"

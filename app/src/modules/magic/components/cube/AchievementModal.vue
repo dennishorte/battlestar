@@ -14,7 +14,7 @@
         <input class="form-control" v-model="computedTags" />
       </div>
 
-      <div v-for="(h, index) in achievement.hidden" v-if="showAll">
+      <div v-for="(h, index) in achievement.hidden" :key="index" v-if="showAll">
         <div class="hidden-header">
           <div>Hidden Tab {{ index }}</div>
           <div>

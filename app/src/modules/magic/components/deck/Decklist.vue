@@ -13,6 +13,7 @@
     <div class="deck-sections">
       <DecklistSection
         v-for="section in deck.zones()"
+        :key="section"
         :cards="deck.cards(section)"
         :name="section"
         class="deck-section"

@@ -22,7 +22,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="game in games" :class="rowClass(game)">
+            <tr v-for="game in games" :key="game._id" :class="rowClass(game)">
               <td>
                 <button class="btn btn-link" data-bs-dismiss="modal" @click="goToGame(game)">
                   {{ game.settings.name }}

@@ -1,12 +1,12 @@
 <template>
   <div class="filter-list">
     <h5 v-if="!noHeader">filters</h5>
-    <div class="filter-added" v-for="filter in filters">
+    <div class="filter-added" v-for="(filter, index) in filters" :key="filter.kind + '-' + index">
       <div class="filter-display-kind">{{ filter.kind }}</div>
       <div v-if="filter.kind === 'colors' || filter.kind === 'identity'">
         <span v-if="filter.only" class="filter-display-operator">only&nbsp;</span>
         <span v-if="filter.or" class="filter-display-operator">or&nbsp;</span>
-        <template v-for="color in colors">
+        <template v-for="color in colors" :key="color">
           <span v-if="filter[color]" class="filter-display-value">
             {{ color }}
             <i v-if="allowEdit" class="bi-x-circle" @click="remove(filter)"/>

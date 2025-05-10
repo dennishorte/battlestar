@@ -2,6 +2,7 @@
   <div class="cube-breakdown">
     <CubeBreakdownColumn
       v-for="column in columns"
+      :key="column.name"
       :cardlist="column.cards"
       :name="column.name"
       class="breakdown-column"

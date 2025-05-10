@@ -96,7 +96,7 @@
             </div>
 
             <div class="frame-achievements-wrapper">
-              <p v-for="ach of achievements" class="frame-achievement-desc">
+              <p v-for="ach of achievements" :key="ach.unlock" class="frame-achievement-desc">
                 <i class="bi bi-star-fill achievement-icon"/>
                 {{ ach.unlock }}
               </p>

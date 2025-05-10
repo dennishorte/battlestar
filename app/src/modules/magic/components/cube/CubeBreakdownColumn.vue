@@ -5,6 +5,7 @@
 
     <CubeBreakdownSection
       v-for="section in sections"
+      :key="section.name"
       :cardlist="section.cards"
       :column-name="name"
       :name="section.name"

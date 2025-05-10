@@ -9,6 +9,7 @@
       <div v-if="ach.tags.length > 0">
         <div
           v-for="tag in ach.tags"
+          :key="tag"
           class="achievement-tag badge text-bg-primary"
         >
           {{ tag }}
