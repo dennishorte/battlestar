@@ -4,7 +4,7 @@ const t = require('../../testutil.js')
 
 describe('Medicine', () => {
 
-  test.only('dogma', () => {
+  test('dogma', () => {
     const game = t.fixtureFirstPlayer()
     t.setBoard(game, {
       dennis: {

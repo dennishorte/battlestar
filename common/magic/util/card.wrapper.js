@@ -372,6 +372,4 @@ function _applyOneFilter(card, filter) {
       throw new Error(`Unhandled filter field: ${filter.kind}`)
     }
   }
-
-  return false
 }

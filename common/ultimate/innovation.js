@@ -321,7 +321,7 @@ Innovation.prototype.artifact = function() {
     })[0]
 
     switch (action) {
-      case 'dogma':
+      case 'dogma': {
         const startingZone = artifact.zone
         this.aDogma(player, artifact, { artifact: true })
         if (startingZone === artifact.zone) {
@@ -329,6 +329,7 @@ Innovation.prototype.artifact = function() {
         }
         this.fadeFiguresCheck()
         break
+      }
       case 'return':
         this.aReturn(player, artifact)
         break
@@ -2360,7 +2361,7 @@ Innovation.prototype.getEffectAge = function(card, age) {
   if (player) {
     const karmaInfos = this.getInfoByKarmaTrigger(player, 'effect-age')
     if (karmaInfos.length === 0) {
-      age = age
+      // No karma, so use age as is
     }
     else if (karmaInfos.length > 1) {
       throw new Error('Multiple effect-age karmas not supported')

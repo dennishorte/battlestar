@@ -146,6 +146,7 @@ TestUtil.fixtureDecksSelected = function(options) {
 TestUtil.setBoard = function(game, state) {
   game.testSetBreakpoint('before-first-player', (game) => {
     for (const name of ['dennis', 'micah', 'scott', 'eliya']) {
+      // do nothing
     }
   })
 }

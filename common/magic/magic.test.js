@@ -700,6 +700,7 @@ describe('Magic Actions', () => {
         if (!orderChanged) {
           // If we've tried 3 times and the order is still the same, this is very unlikely
           // and probably indicates a problem with the shuffle function
+          // eslint-disable-next-line jest/no-conditional-expect
           expect(cardsAfterThirdShuffle).not.toEqual(originalOrder)
         }
       }

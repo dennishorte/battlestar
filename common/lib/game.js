@@ -237,12 +237,7 @@ Game.prototype.respondToInputRequest = function(response) {
   response.isUserResponse = true  // As opposed to an automated response.
   this.responses.push(response)
 
-  try {
-    return this.run()
-  }
-  catch (e) {
-    throw e
-  }
+  return this.run()
 }
 
 Game.prototype.run = function() {

@@ -49,7 +49,7 @@ function processFile(filename) {
   let line
   let linenum = 0
 
-  while (line = lineReader.next()) {
+  while ((line = lineReader.next()) !== false) {
     line = line.toString('utf-8').trim()
     if (line.length === 0) {
       if (!card.name) {

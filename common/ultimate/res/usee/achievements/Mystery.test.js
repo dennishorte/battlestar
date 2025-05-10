@@ -35,7 +35,6 @@ describe('Mystery', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
-        red: ['Flight'],
         green: ['Paper'],
         blue: ['Tools'],
         red: ['Combustion'],
@@ -52,7 +51,6 @@ describe('Mystery', () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        red: ['Flight'],
         green: ['Paper'],
         blue: ['Tools'],
         red: ['Combustion'],
