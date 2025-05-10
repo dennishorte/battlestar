@@ -61,18 +61,12 @@ CardBase.prototype.checkHasCompelExplicit = function() {
 }
 
 CardBase.prototype.checkHasDemand = function() {
-  return this
-    .dogma
-    .some(text => this.checkHasDemandExplicit() || this.checkHasCompelExplicit())
+  return this.checkHasDemandExplicit() || this.checkHasCompelExplicit()
 }
 
 CardBase.prototype.checkHasShare = function() {
-  const shareDogmaEffect = this
-    .dogma
-    .some(text => !this.checkHasDemand())
-
+  const shareDogmaEffect = !this.checkHasDemand()
   const shareEchoEffect = !!this.echo
-
   return shareDogmaEffect || shareEchoEffect
 }
 
