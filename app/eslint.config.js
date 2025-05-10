@@ -97,7 +97,8 @@ module.exports = defineConfig([
           "normal": "always",
           "component": "always"
         }
-      }]
+      }],
+      'vue/comment-directive': 'off',
     },
   },
   // Node.js config files
