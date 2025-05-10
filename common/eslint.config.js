@@ -101,6 +101,7 @@ module.exports = defineConfig([
       }],
 
       "jest/expect-expect": "off",
+      "jest/no-disabled-tests": "off",
       "jest/no-standalone-expect": "off",
     },
   },
