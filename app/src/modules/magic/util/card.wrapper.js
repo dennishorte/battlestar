@@ -1,6 +1,7 @@
-const { mag } = require('battlestar-common')
+import { magic } from 'battlestar-common'
 
-class UICardWrapper extends mag.util.wrapper.card {
+
+class UICardWrapper extends magic.util.wrapper.card {
   constructor(card) {
     super(card)
     this.__memo = 'UICardWrapper'
@@ -44,4 +45,4 @@ class UICardWrapper extends mag.util.wrapper.card {
   }
 }
 
-module.exports = UICardWrapper
+export default UICardWrapper

@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const appVersion = require('@/assets/version.js')
-const modalWrapper = require('@/util/modal.js').default
+import appVersion from '@/assets/version.js'
+import modalWrapper from '@/util/modal.js'
 
 
 export default {

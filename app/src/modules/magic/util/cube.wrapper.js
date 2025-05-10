@@ -1,9 +1,9 @@
-const { mag } = require('battlestar-common')
+import { magic } from 'battlestar-common'
 
-class UICubeWrapper extends mag.util.wrapper.cube {
+class UICubeWrapper extends magic.util.wrapper.cube {
   constructor(cube) {
     super(cube)
   }
 }
 
-module.exports = UICubeWrapper
+export default UICubeWrapper

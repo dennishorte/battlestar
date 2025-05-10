@@ -55,7 +55,12 @@ module.exports = defineConfig([
         defineProps: "readonly",
         defineEmits: "readonly",
         defineExpose: "readonly",
-        withDefaults: "readonly"
+        withDefaults: "readonly",
+        // Browser
+        alert: "readonly",
+        document: "readonly",
+        navigator: "readonly",
+        window: "readonly",
       },
     },
     rules: {

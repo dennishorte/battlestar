@@ -21,6 +21,8 @@ export default {
     Modal,
   },
 
+  emits: ['file-ready'],
+
   methods: {
     maybeLoad() {
       const reader = new FileReader()
