@@ -1,6 +1,6 @@
 <template>
   <div class="innovation-stats container">
-    <Header />
+    <GameHeader />
 
     <template v-if="!!data">
       <div class="stats-header alert alert-primary">
@@ -69,14 +69,14 @@
 <script>
 import { inn, util } from 'battlestar-common'
 
-import Header from '@/components/Header'
+import GameHeader from '@/components/GameHeader'
 
 
 export default {
   name: 'InnovationWinData',
 
   components: {
-    Header,
+    GameHeader,
   },
 
   data() {

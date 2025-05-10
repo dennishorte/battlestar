@@ -1,6 +1,6 @@
 <template>
   <div class="data">
-    <Header />
+    <GameHeader />
 
     <div class="container">
       <div class="row">
@@ -18,13 +18,13 @@
 
 
 <script>
-import Header from '../../../components/Header'
+import GameHeader from '../../../components/GameHeader'
 
 export default {
   name: 'Data',
 
   components: {
-    Header,
+    GameHeader,
   },
 }
 </script>

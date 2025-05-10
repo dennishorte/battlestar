@@ -36,7 +36,7 @@ import DropdownRouterLink from '@/components/DropdownRouterLink'
 import modalWrapper from '@/util/modal.js'
 
 export default {
-  name: 'Header',
+  name: 'GameHeader',
 
   components: {
     Dropdown,

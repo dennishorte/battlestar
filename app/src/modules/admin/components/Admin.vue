@@ -1,6 +1,6 @@
 <template>
   <div class='admin'>
-    <Header />
+    <GameHeader />
 
     <div class="container">
       <div class="row">
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import Header from '../../../../src/components/Header'
+import GameHeader from '../../../../src/components/GameHeader'
 
 import AdminActions from './AdminActions'
 import CreateUser from './CreateUser'
@@ -41,7 +41,7 @@ import UserList from './UserList'
 export default {
   name: 'Admin',
   components: {
-    Header,
+    GameHeader,
 
     AdminActions,
     CreateUser,

@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <Header />
+    <GameHeader />
 
     <div class="container">
       <div class="row justify-content-center">
@@ -18,14 +18,14 @@
 </template>
 
 <script>
-import Header from './Header'
+import GameHeader from './GameHeader'
 import MyGames from './MyGames'
 import MyLobbies from './MyLobbies'
 
 export default {
   name: 'Home',
   components: {
-    Header,
+    GameHeader,
     MyGames,
     MyLobbies,
   },
