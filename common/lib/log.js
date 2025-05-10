@@ -1,5 +1,3 @@
-const util = require('./util.js')
-
 module.exports = {
   apply,
   toString,
@@ -33,7 +31,7 @@ function templateSubstitute(template, args) {
   return tokens.map(({ substitute, token }) => {
     if (substitute) {
       if (Object.keys(args).includes(token)) {
-        const { value, kind, classes } = args[token]
+        const { value, classes } = args[token]
         return {
           classes: (classes || []).join(' '),
           value: value,

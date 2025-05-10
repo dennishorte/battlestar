@@ -39,7 +39,7 @@ function Card() {
         .utilColors()
         .filter(color => game.getCardsByZone(player, color).length === 0)
 
-      missingColors.forEach(color => {
+      missingColors.forEach(() => {
         game.aDraw(player, { age: game.getEffectAge(this, 11) })
       })
     }

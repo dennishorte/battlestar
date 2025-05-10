@@ -26,8 +26,6 @@ function Card() {
       })
       game.aRevealMany(leader, leaderHandCards, { ordered: true })
 
-      const playerHandCards = game.getCardsByZone(player, 'hand')
-
       // By the principle of "do as much as you can, the player starts scoring cards.
       const colorsToDiscard = leaderHandCards
         .map(c => c.color)

@@ -27,7 +27,7 @@ function Card() {
     },
 
     (game, player) => {
-      const colors = game.aChooseAndSplay(player, null, 'up', { count: 2 })
+      game.aChooseAndSplay(player, null, 'up', { count: 2 })
     },
   ]
   this.echoImpl = []

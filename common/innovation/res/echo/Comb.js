@@ -26,7 +26,7 @@ function Card() {
         game.aDrawAndReveal(player, game.getEffectAge(this, 1)),
       ].filter(card => card !== undefined)
 
-      const matching = cards
+      cards
         .filter(card => card.color === color)
         .forEach(card => game.mLog({
           template: '{player} keeps {card}',

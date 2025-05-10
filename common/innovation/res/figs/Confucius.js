@@ -33,8 +33,8 @@ function Card() {
         const biscuits = game.getBiscuitsByPlayer(player)
         const choices = Object
           .entries(biscuits)
-          .filter(([biscuit, count]) => count > 0)
-          .map(([biscuit, count]) => biscuit)
+          .filter(([, count]) => count > 0)
+          .map(([biscuit]) => biscuit)
           .filter(biscuit => biscuit !== 'k')
 
         const biscuit = game.requestInputSingle({

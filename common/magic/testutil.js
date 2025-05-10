@@ -143,6 +143,7 @@ TestUtil.fixtureDecksSelected = function(options) {
   return game
 }
 
+// eslint-disable-next-line
 TestUtil.setBoard = function(game, state) {
   game.testSetBreakpoint('before-first-player', (game) => {
     for (const name of ['dennis', 'micah', 'scott', 'eliya']) {

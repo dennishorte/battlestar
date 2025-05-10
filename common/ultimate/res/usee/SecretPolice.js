@@ -17,7 +17,7 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player, { leader }) => {
+    (game, player) => {
       while (true) {
         const tucked = game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'), { count: 1 })[0]
 

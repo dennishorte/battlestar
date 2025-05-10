@@ -27,7 +27,7 @@ function Card() {
       game.aChooseAndScore(player, choices)
     },
 
-    (game, player) => {
+    (game) => {
       const biscuits = Object
         .entries(game.getBiscuits())
         .map(([player, biscuits]) => ({ player, leafs: biscuits.l }))

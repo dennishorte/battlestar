@@ -35,7 +35,7 @@ function Card() {
         const isOpponentCondition = game.getPlayerOpponents(owner).includes(player)
         return isOpponentCondition && share
       },
-      func: (game, player) => {
+      func: (game) => {
         const owner = game.getPlayerByCard(this)
         const kind = game.aChoose(owner, game.getExpansionList())[0]
         game.aDraw(owner, { exp: kind, age: game.getEffectAge(this, 6) })

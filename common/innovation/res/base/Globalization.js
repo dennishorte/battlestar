@@ -35,7 +35,7 @@ function Card() {
       game.aDrawAndScore(player, game.getEffectAge(this, 6))
     },
 
-    (game, player) => {
+    (game) => {
       const biscuitCounts = Object.values(game.getBiscuits())
       const conditionMet = biscuitCounts
         .filter(({ l, f }) => l > f)

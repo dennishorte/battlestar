@@ -2,7 +2,6 @@ const {
   Game,
   GameFactory,
   GameOverEvent,
-  InputRequestEvent,
 } = require('./../lib/game.js')
 const MapZone = require('./MapZone.js')
 const Player = require('./Player.js')
@@ -875,10 +874,9 @@ Tyrants.prototype.aChooseColor = function(player) {
     return
   }
 
-  const availableColors = Object
-    .entries(res.colors)
-    .filter(([_, hex]) => !this.getPlayerAll().some(p => p.color === hex))
-    .map(([name, _]) => name)
+  const availableColors = Object.entries(res.colors)
+    .filter(([, hex]) => !this.getPlayerAll().some(p => p.color === hex))
+    .map(([name]) => name)
 
   const chosen = this.aChoose(player, availableColors, {
     title: 'Choose a player color',
@@ -1162,14 +1160,14 @@ Tyrants.prototype._collectTargets = function(player, opts={}) {
 
   const troops = baseLocations
     .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
-    .filter(([_, troop]) => troop.owner !== player)
-    .filter(([_, troop]) => opts.whiteOnly ? troop.owner === undefined : true)
-    .filter(([_, troop]) => opts.noWhite ? troop.owner !== undefined : true)
+    .filter(([, troop]) => troop.owner !== player)
+    .filter(([, troop]) => opts.whiteOnly ? troop.owner === undefined : true)
+    .filter(([, troop]) => opts.noWhite ? troop.owner !== undefined : true)
     .map(([loc, troop]) => `${loc.name}, ${troop.getOwnerName()}`)
 
   const spies = baseLocations
     .flatMap(loc => loc.getSpies().map(spy => [loc, spy]))
-    .filter(([_, spy]) => spy.owner !== player)
+    .filter(([, spy]) => spy.owner !== player)
     .map(([loc, spy]) => `${loc.name}, ${spy.getOwnerName()}`)
 
   return {
@@ -1230,7 +1228,7 @@ Tyrants.prototype.aChooseOne = function(player, choices, opts={}) {
   impl(this, player, opts)
 }
 
-Tyrants.prototype.aChooseToDiscard = function(player, opts={}) {
+Tyrants.prototype.aChooseToDiscard = function(player) {
   const opponents = this
     .getPlayerOpponents(player)
     .filter(p => this.getCardsByZone(p, 'hand').length > 3)
@@ -1387,12 +1385,8 @@ Tyrants.prototype.aDraw = function(player, opts={}) {
   return this.mMoveByIndices(deck, 0, hand, hand.cards().length)
 }
 
-Tyrants.prototype.aMove = function(player, start, end) {
-
-}
 
 Tyrants.prototype.aPlaceSpy = function(player, loc) {
-  const spy = this.getCardsByZone(player, 'spies')[0]
   this.mPlaceSpy(player, loc)
   this.mLog({
     template: '{player} places a spy at {loc}',
@@ -1638,8 +1632,8 @@ Tyrants.prototype.getAssassinateChoices = function(player, opts={}) {
   const troops = presence
     .filter(loc => opts.loc ? loc === opts.loc : true)
     .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
-    .filter(([_, troop]) => troop.owner !== player)
-    .filter(([_, troop]) => opts.whiteOnly ? troop.owner === undefined : true)
+    .filter(([, troop]) => troop.owner !== player)
+    .filter(([, troop]) => opts.whiteOnly ? troop.owner === undefined : true)
     .map(([loc, troop]) => `${loc.name}, ${troop.getOwnerName()}`)
   const choices = util.array.distinct(troops).sort()
   return choices

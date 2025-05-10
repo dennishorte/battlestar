@@ -1,5 +1,4 @@
 const CardBase = require(`../CardBase.js`)
-const { GameOverEvent } = require('../../../lib/game.js')
 
 function Card() {
   this.id = `International Prototype Metre Bar`  // Card names are unique in Innovation

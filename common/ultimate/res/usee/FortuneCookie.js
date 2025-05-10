@@ -27,7 +27,7 @@ function Card() {
       }
 
       if (exactlyEightIcon) {
-        const color = game.aChooseAndSplay(player, ['green', 'purple'], 'right')
+        game.aChooseAndSplay(player, ['green', 'purple'], 'right')
         game.aDraw(player, { age: game.getEffectAge(this, 8) })
       }
 

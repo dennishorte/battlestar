@@ -23,7 +23,7 @@ function Card() {
   this.karmaImpl = [
     {
       trigger: 'list-effects',
-      func: (game, player) => {
+      func: (game) => {
         return game
           .getPlayerAll()
           .flatMap(player => game.getDogmaTargets(player))

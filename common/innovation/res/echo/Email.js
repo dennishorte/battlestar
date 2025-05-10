@@ -1,5 +1,4 @@
 const CardBase = require(`../CardBase.js`)
-const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `Email`  // Card names are unique in Innovation

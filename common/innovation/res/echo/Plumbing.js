@@ -16,7 +16,7 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {}
+    () => {}
   ]
   this.echoImpl = (game, player) => {
     const choices = game

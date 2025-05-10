@@ -2,7 +2,6 @@ const {
   Game,
   GameFactory,
   GameOverEvent,
-  InputRequestEvent,
 } = require('../../lib/game.js')
 
 const { Pack } = require('./pack.js')
@@ -31,7 +30,7 @@ function CubeDraftFactory(settings, viewerName) {
   return new CubeDraft(data, viewerName)
 }
 
-function factoryFromLobby(lobby, db) {
+function factoryFromLobby(lobby) {
   return GameFactory({
     game: lobby.game,
     name: lobby.name,

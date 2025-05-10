@@ -43,17 +43,17 @@ class CardWrapper extends Wrapper {
     return this._id
   }
 
-  colors(faceIndex) {
-    return faceIndex !== undefined ? this.face(faceIndex).colors : this.data.colors
+  colors() {
+    return this.data.colors
   }
-  colorIdentity(faceIndex) {
+  colorIdentity() {
     return this.data.color_identity
   }
-  colorKey(faceIndex) {
-    return this.colors(faceIndex).map(c => c.toLowerCase()).sort().join('')
+  colorKey() {
+    return this.colors().map(c => c.toLowerCase()).sort().join('')
   }
-  colorName(faceIndex) {
-    return cardUtil.COLOR_KEY_TO_NAME[this.colorKey(faceIndex)]
+  colorName() {
+    return cardUtil.COLOR_KEY_TO_NAME[this.colorKey()]
   }
 
   typeLine(faceIndex) {
@@ -165,8 +165,8 @@ class CardWrapper extends Wrapper {
   isArtifact(faceIndex) {
     return this.typeLine(faceIndex).toLowerCase().includes('artifact')
   }
-  isColorless(faceIndex) {
-    return this.colors(faceIndex).length === 0
+  isColorless() {
+    return this.colors().length === 0
   }
   isCubeCard() {
     return this.source === 'custom'
@@ -174,8 +174,8 @@ class CardWrapper extends Wrapper {
   isLand(faceIndex) {
     return this.typeLine(faceIndex).toLowerCase().includes('land')
   }
-  isMulticolor(faceIndex) {
-    return this.colors(faceIndex).length > 1
+  isMulticolor() {
+    return this.colors().length > 1
   }
   isSiege(faceIndex) {
     return this.subtypes(faceIndex).includes('siege')

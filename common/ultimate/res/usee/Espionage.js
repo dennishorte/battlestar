@@ -16,7 +16,6 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      let leaderHandRevealed = false
       while (true) {
         const hand = game.getCardsByZone(player, 'hand')
 

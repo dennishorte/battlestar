@@ -2,7 +2,6 @@ const {
   Game,
   GameFactory,
   GameOverEvent,
-  InputRequestEvent,
 } = require('../lib/game.js')
 
 const cardUtil = require('./cardUtil.js')
@@ -10,7 +9,7 @@ const res = require('./data.js')
 const util = require('../lib/util.js')
 
 const Player = require('./Player.js')
-const { PlayerZone, Zone } = require('./Zone.js')
+const { PlayerZone } = require('./Zone.js')
 
 const wrappers = {
   card: require('./util/card.wrapper'),
@@ -39,7 +38,7 @@ module.exports = {
 function Magic(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
-  this.setCardWrapper(wrappers.card, 'constructor')
+  this.setCardWrapper(wrappers.card)
   this.cardsById = {}
 }
 
@@ -73,7 +72,7 @@ Magic.prototype.serialize = function() {
   return base
 }
 
-Magic.prototype.setCardWrapper = function(wrapper, note) {
+Magic.prototype.setCardWrapper = function(wrapper) {
   this.cardWrapper = wrapper
 }
 
@@ -793,7 +792,6 @@ Magic.prototype.aReveal = function(player, cardId) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
 
-  console.log(card)
   this.mReveal(card)
   const zone = this.getZoneByCard(card)
   this.mLog({
@@ -882,7 +880,7 @@ Magic.prototype.aSelectPhase = function(player, phase) {
   // Special handling for some phases
 
   if (phase === 'untap') {
-    const cards = [
+    [
       ...this.getCardsByZone(player, 'creatures'),
       ...this.getCardsByZone(player, 'battlefield'),
       ...this.getCardsByZone(player, 'land'),
@@ -961,7 +959,7 @@ Magic.prototype.aStackEffect = function(player, cardId) {
     name: 'effect: ' + card.name(),
   }
 
-  const token = this.aCreateToken(controller, data, { silent: true })[0]
+  this.aCreateToken(controller, data, { silent: true })[0]
 }
 
 Magic.prototype.aTap = function(player, cardId) {

@@ -1,6 +1,3 @@
-const util = require('../../../lib/util.js')
-
-
 const cardData = [
   {
     "name": "Eternal Flame Cultist",
@@ -334,7 +331,7 @@ const cardData = [
     "innerPoints": 6,
     "count": 1,
     "text": [
-      "Place a spy, then assassinate a troop at that spy’s site.",
+      "Place a spy, then assassinate a troop at that spy's site.",
       "Guile Focus > Place a spy"
     ],
     impl: (game, player) => {
@@ -380,7 +377,7 @@ const cardData = [
     "count": 2,
     "text": [
       "+1 influence",
-      "Return another player’s troop or spy.",
+      "Return another player's troop or spy.",
       "Ambition focus > Draw a card"
     ],
     impl: (game, player) => {

@@ -30,7 +30,7 @@ function Card() {
       trigger: 'dogma',
       karmaKind: 'would-first',
       matches: () => true,
-      func(game, player, card, age) {
+      func(game) {
         game.state.dogmaInfo.globalAgeIncrease = 1
       }
     }

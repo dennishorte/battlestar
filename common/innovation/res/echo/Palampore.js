@@ -25,8 +25,8 @@ function Card() {
         .groupBy(game.getBonuses(player), x => x)
       const choices = Object
         .entries(groups)
-        .filter(([_, bonuses]) => bonuses.length >= 2)
-        .map(([age, _]) => parseInt(age))
+        .filter(([, bonuses]) => bonuses.length >= 2)
+        .map(([age]) => parseInt(age))
         .sort()
       const age = game.aChooseAge(player, choices)
       if (age) {

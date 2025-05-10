@@ -1,6 +1,4 @@
-const jsUtil = require('util')
 const log = require('./log.js')
-
 
 const TestCommon = {}
 

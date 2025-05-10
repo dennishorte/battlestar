@@ -198,7 +198,6 @@ Game.prototype.requestInputMany = function(array) {
 
     if (resp) {
       if (resp.type === 'chat') {
-        const player = this.getPlayerByName(resp.actor)
         this.getLog().push({
           author: resp.actor,
           text: resp.text,
@@ -507,7 +506,7 @@ Game.prototype._postEnrichArgs = function(msg) {
   // To be overridden by child classes.
 }
 
-// eslint-disable-next-line
+
 Game.prototype._undoCalled = function() {
   // To be overridden by child classes.
 }
@@ -540,7 +539,6 @@ Game.prototype._reset = function() {
 
 Game.prototype._tryToAutomaticallyRespond = function(selectors) {
   for (const sel of selectors) {
-
     // This is a special key to say that there is no fixed response expected
     // so cannot automatically respond. Used in games like Magic where the
     // user input is very freeform.
@@ -555,7 +553,7 @@ Game.prototype._tryToAutomaticallyRespond = function(selectors) {
       }
     }
 
-    const { min, max } = selector.minMax(sel)
+    const { min } = selector.minMax(sel)
 
     if (min >= sel.choices.length) {
       const response = {

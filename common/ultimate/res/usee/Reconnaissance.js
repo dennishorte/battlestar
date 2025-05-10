@@ -16,7 +16,7 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player, { leader }) => {
+    (game, player) => {
       const playerHand = game.getCardsByZone(player, 'hand')
       game.aRevealMany(player, playerHand)
     },

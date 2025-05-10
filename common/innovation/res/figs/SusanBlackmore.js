@@ -52,7 +52,7 @@ function Card() {
 
     choices = choices
       .filter(({ card, kind }) => !(card === this && kind === 'inspire'))
-      .map(({ card, kind, text }) => {
+      .map(({ card, text }) => {
         return `${card.name}: ${text}`
       })
 

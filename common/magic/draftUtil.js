@@ -1,3 +1,4 @@
+const util = require('../lib/util.js')
 const DraftUtil = {}
 module.exports = DraftUtil
 

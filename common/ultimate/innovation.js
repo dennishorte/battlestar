@@ -2,7 +2,6 @@ const {
   Game,
   GameFactory,
   GameOverEvent,
-  InputRequestEvent,
 } = require('../lib/game.js')
 const res = require('./resources.js')
 const util = require('../lib/util.js')
@@ -47,21 +46,7 @@ Innovation.prototype._mainProgram = function() {
 }
 
 Innovation.prototype._gameOver = function(event) {
-  for (const player of this.getPlayerAll()) {
-    try {
-      this.state.wouldWinKarma = true
-      this.aKarma(event.data.player, 'would-win')
-    }
-    catch (e) {
-      if (e instanceof GameOverEvent) {
-        event = e
-      }
-      else {
-        throw e
-      }
-    }
-  }
-
+  // TODO (dennis): handle would-win karma effects
   return event
 }
 
@@ -164,7 +149,6 @@ Innovation.prototype.initializeZonesDecks = function() {
   zones.decks = {}
   for (const exp of SUPPORTED_EXPANSIONS) {
     zones.decks[exp] = {}
-    const data = this.cardData[exp]
     for (const [age, cards] of Object.entries(this.cardData[exp].byAge)) {
       if (!cards) {
         throw new Error(`Missing cards for ${exp}-${age}`)
@@ -188,7 +172,7 @@ Innovation.prototype.initializeZonesAchievements = function() {
   for (const age of [1,2,3,4,5,6,7,8,9,10]) {
     const ageZone = this.getZoneByDeck('base', age)
     const achZone = this.getZoneById('achievements')
-    const card = this.mMoveTopCard(ageZone, achZone)
+    this.mMoveTopCard(ageZone, achZone)
   }
 
   // Special achievements
@@ -734,7 +718,7 @@ Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
   this.aFinishChainEvent(player, card)
 }
 
-Innovation.prototype.aSuperExecute = function(player, card, opts={}) {
+Innovation.prototype.aSuperExecute = function(player, card) {
   this.aSelfExecute(player, card, { superExecute: true })
 }
 
@@ -937,11 +921,11 @@ Innovation.prototype.aChooseByPredicate = function(player, cards, count, pred, o
   return selected
 }
 
-Innovation.prototype.aChooseHighest = function(player, cards, count, opts={}) {
+Innovation.prototype.aChooseHighest = function(player, cards, count) {
   return this.aChooseByPredicate(player, cards, count, this.utilHighestCards)
 }
 
-Innovation.prototype.aChooseLowest = function(player, cards, count, opts={}) {
+Innovation.prototype.aChooseLowest = function(player, cards, count) {
   return this.aChooseByPredicate(player, cards, count, this.utilLowestCards)
 }
 
@@ -1902,7 +1886,7 @@ Innovation.prototype.aReturn = function(player, card, opts={}) {
   return this.mReturn(player, card, opts)
 }
 
-Innovation.prototype.aSafeguard = function(player, card, opts={}) {
+Innovation.prototype.aSafeguard = function(player, card) {
   const safeLimit = this.getSafeLimit(player)
   const safeZone = this.getZoneByPlayer(player, 'safe')
 
@@ -2023,7 +2007,7 @@ Innovation.prototype.aTuck = function(player, card, opts={}) {
   return tucked
 }
 
-Innovation.prototype.aUnsplay = function(player, color, opts={}) {
+Innovation.prototype.aUnsplay = function(player, color) {
   const zone = this.getZoneByPlayer(player, color)
 
   if (zone.splay === 'none') {
@@ -2459,13 +2443,8 @@ Innovation.prototype.getNumAchievementsToWin = function() {
 }
 
 Innovation.prototype.getPlayerByCard = function(card) {
-  try {
-    const zone = this.getZoneById(card.zone)
-    return this.getPlayerByZone(zone)
-  }
-  catch (e) {
-    return undefined
-  }
+  const zone = this.getZoneById(card.zone)
+  return this.getPlayerByZone(zone)
 }
 
 Innovation.prototype.getPlayerTeam = function(player) {
@@ -3291,12 +3270,12 @@ Innovation.prototype._enrichLogArgs = function(msg) {
   }
 }
 
-Innovation.prototype.utilHighestCards = function(cards, opts={}) {
+Innovation.prototype.utilHighestCards = function(cards) {
   const sorted = [...cards].sort((l, r) => r.getAge() - l.getAge())
   return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
 }
 
-Innovation.prototype.utilLowestCards = function(cards, opts={}) {
+Innovation.prototype.utilLowestCards = function(cards) {
   const sorted = [...cards].sort((l, r) => l.getAge() - r.getAge())
   return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
 }
@@ -3465,18 +3444,8 @@ Innovation.prototype.formatAchievements = function(array) {
 }
 
 Innovation.prototype.getEligibleAchievements = function(player, opts={}) {
-  function _breakdown(name) {
-    const noStars = name.slice(1, -1)
-    const [exp, ageStr] = noStars.split('-')
-    const age = parseInt(ageStr)
-    return { exp, age }
-  }
-
   const formatted = this.formatAchievements(this.getEligibleAchievementsRaw(player, opts))
   const standard = util.array.distinct(formatted).sort((l, r) => {
-    const lparts = _breakdown(l)
-    const rparts = _breakdown(r)
-
     if (l.exp === r.exp) {
       return l.age < r.age
     }
@@ -3579,7 +3548,6 @@ Innovation.prototype._generateActionChoicesDraw = function() {
 
 Innovation.prototype._generateActionChoicesEndorse = function() {
   const player = this.getPlayerCurrent()
-  const endorseColors = []
 
   const lowestHandAge = this
     .getZoneByPlayer(player, 'hand')
@@ -3742,7 +3710,7 @@ Innovation.prototype.statsFirstToMeldOfAge = function(player, card) {
   }
 }
 
-Innovation.prototype.statsRecordDogmaActions = function(player, card, opts) {
+Innovation.prototype.statsRecordDogmaActions = function(player, card) {
   if (card.name in this.stats.dogmaActions) {
     this.stats.dogmaActions[card.name] += 1
   }

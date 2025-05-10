@@ -35,7 +35,7 @@ function Card() {
     },
     {
       trigger: 'effect-age',
-      func(game, player, card, age) {
+      func() {
         return 10
       }
     }

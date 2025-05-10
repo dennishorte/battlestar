@@ -28,7 +28,7 @@ function Card() {
     },
     {
       trigger: 'list-effects',
-      func(game, player) {
+      func(game) {
         return game
           .getPlayerAll()
           .map(player => game.getTopCard(player, 'blue'))

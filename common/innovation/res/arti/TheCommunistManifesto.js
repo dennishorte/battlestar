@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const players = game.getPlayersStarting(player)
-      const cards = players.map(_ => game.aDrawAndReveal(player, game.getEffectAge(this, 7)))
+      const cards = players.map(() => game.aDrawAndReveal(player, game.getEffectAge(this, 7)))
 
       let remaining = cards
       let mine = null

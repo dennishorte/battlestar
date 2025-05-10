@@ -18,7 +18,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { self }) => {
-      const card = game.aDrawAndMeld(player, game.getEffectAge(this, 8))
+      game.aDrawAndMeld(player, game.getEffectAge(this, 8))
 
       const socialism = game
         .getTopCards(player)
