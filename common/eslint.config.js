@@ -7,9 +7,10 @@ const js = require("@eslint/js")
 module.exports = defineConfig([
   {
     files: ["**/*.js"],
-    plugins: { js },
+    plugins: { js, jest },
     extends: [
       "js/recommended",
+      "jest/recommended",
     ],
 
     languageOptions: {
@@ -96,12 +97,9 @@ module.exports = defineConfig([
 
       "no-unused-vars": "warn",
       "no-undef": "warn",
+
+      "jest/expect-expect": "off",
+      "jest/no-standalone-expect": "off",
     },
   },
-
-  {
-    files: ["tests/**/*.js"],
-    plugins: { jest },
-    extends: ["jest/recommended"],
-  },
-]) 
+])

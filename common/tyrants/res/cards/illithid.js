@@ -46,7 +46,7 @@ const cardData = [
     autoplay: true,
     text: [
       "At end of turn, promote another card played this turn.",
-//      "If an opponent causes you to discard this, you may promote it instead."
+      //      "If an opponent causes you to discard this, you may promote it instead."
       "If an opponent causes you to discard this, you may promote it instead. If you do, draw a card.",
     ],
     impl: (game, player, { card }) => {
@@ -180,7 +180,7 @@ const cardData = [
             game.aChooseAndAssassinate(player, { loc })
           })
         },
-    ])
+      ])
     }
   },
   {
@@ -547,7 +547,7 @@ const cardData = [
     innerPoints: 6,
     count: 1,
     text: [
-//      "Play a card in the market that costs 4 or less as if it was in your hand, then devour that card."
+      //      "Play a card in the market that costs 4 or less as if it was in your hand, then devour that card."
       "Play a card in the market that costs 6 or less as if it was in your hand, then devour that card."
     ],
     impl: (game, player) => {

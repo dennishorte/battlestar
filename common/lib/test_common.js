@@ -5,13 +5,19 @@ const log = require('./log.js')
 const TestCommon = {}
 
 // Basic fixture to set up a game
-TestCommon.fixture = function() { throw new Error('not implemented') }
+TestCommon.fixture = function() {
+  throw new Error('not implemented')
+}
 
 // Fixture that takes a dict object defining the desired game state
-TestCommon.gameFixture = function() { throw new Error('not implemented') }
+TestCommon.gameFixture = function() {
+  throw new Error('not implemented')
+}
 
 // Fundamental test function that checks the state of the whole game, or specified parts
-TestCommon.testBoard = function() { throw new Error('not implemented') }
+TestCommon.testBoard = function() {
+  throw new Error('not implemented')
+}
 
 
 TestCommon.dennis = function(game) {

@@ -28,7 +28,7 @@ function Card() {
               title: 'Return a card from hand to repeat this dogma effect?',
               min: 0,
               max: 1
-})[0]
+            })[0]
             if (returned) {
               continue
             }

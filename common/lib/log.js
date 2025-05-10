@@ -69,16 +69,22 @@ function templateTokenize(template) {
 
   for (let i = 0; i < template.length; i++) {
     if (template[i] == '{') {
-      if (state === 'in') throw 'Nested curly braces'
+      if (state === 'in') {
+        throw 'Nested curly braces'
+      }
       state = 'in'
 
-      if (prev == i) continue
+      if (prev == i) {
+        continue
+      }
 
       push(template.substr(prev, i-prev), false)
       prev = i
     }
     else if (template[i] == '}') {
-      if (state !== 'in') throw 'Unmatched closing curly brace'
+      if (state !== 'in') {
+        throw 'Unmatched closing curly brace'
+      }
       push(template.substr(prev+1, i-prev-1), true)
       state = 'out'
       prev = i + 1

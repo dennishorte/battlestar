@@ -11,7 +11,7 @@ describe('Philosophy', () => {
         t.setColor(game, 'dennis', 'red', ['Construction', 'Industrialization'])
       })
       let request
-    request = game.run()
+      request = game.run()
       request = t.choose(game, request, 'Dogma.Philosophy')
       t.choose(game, request, 'red')
 
@@ -25,7 +25,7 @@ describe('Philosophy', () => {
         t.setColor(game, 'dennis', 'red', ['Construction', 'Industrialization'])
       })
       let request
-    request = game.run()
+      request = game.run()
       request = t.choose(game, request, 'Dogma.Philosophy')
       t.choose(game, request)
 
@@ -41,7 +41,7 @@ describe('Philosophy', () => {
         t.setHand(game, 'dennis', ['Construction', 'Industrialization'])
       })
       let request
-    request = game.run()
+      request = game.run()
       request = t.choose(game, request, 'Dogma.Philosophy')
       t.choose(game, request, 'Industrialization')
 
@@ -55,7 +55,7 @@ describe('Philosophy', () => {
         t.setHand(game, 'dennis', ['Construction', 'Industrialization'])
       })
       let request
-    request = game.run()
+      request = game.run()
       request = t.choose(game, request, 'Dogma.Philosophy')
       t.choose(game, request)
 

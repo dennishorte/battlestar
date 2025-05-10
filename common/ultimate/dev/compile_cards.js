@@ -46,7 +46,7 @@ function processFile(filename) {
   let card = newCard()
 
   const lineReader = new readlines(filename)
-  let line;
+  let line
   let linenum = 0
 
   while (line = lineReader.next()) {

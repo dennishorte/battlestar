@@ -30,7 +30,7 @@ function Card() {
           title: 'Choose a color to score',
         })[0]
 
-          const cardsToScore = game.getCardsByZone(player, colorToScore)
+        const cardsToScore = game.getCardsByZone(player, colorToScore)
         game.aScoreMany(player, cardsToScore)
 
         const colorToSplay = colorToScore === firstCard.color ? secondCard.color : firstCard.color

@@ -1737,7 +1737,7 @@ Tyrants.prototype.getScoreBreakdown = function(player) {
       ...self.getCardsByZone(player, 'deck'),
       ...self.getCardsByZone(player, 'played'),
     ].map(card => card.points)
-     .reduce((a, b) => a + b, 0),
+      .reduce((a, b) => a + b, 0),
 
     "inner circle": self
       .getCardsByZone(player, 'innerCircle')

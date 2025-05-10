@@ -713,7 +713,7 @@ describe('Dragons Expansion Cards', () => {
         },
       })
 
-            const request1 = game.run()
+      const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Green Wyrmling')
       const request3 = t.choose(game, request2, 'Menzoberranzan')
 

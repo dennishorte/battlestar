@@ -13,7 +13,7 @@ function Card() {
   this.karma = []
   this.dogma = [
     `I demand for each card in my hand, you score a card of matching color. If you don't, and I have a card in my hand, exchange all cards in your hand with all cards in my score pile!`
-//    `I demand you score a card from your hand of matching color for each card in my hand. If you don't, and I have a card in my hand, exchange all cards in your hand with all cards in my score pile!`
+    //    `I demand you score a card from your hand of matching color for each card in my hand. If you don't, and I have a card in my hand, exchange all cards in your hand with all cards in my score pile!`
   ]
 
   this.dogmaImpl = [
@@ -61,18 +61,18 @@ function Card() {
 }
 
 function countItemsOrdered(arr) {
-  const counts = {};
-  const order = [];
+  const counts = {}
+  const order = []
 
   for (const item of arr) {
     if (counts[item] === undefined) {
-      counts[item] = 0;
-      order.push(item);
+      counts[item] = 0
+      order.push(item)
     }
-    counts[item]++;
+    counts[item]++
   }
 
-  return order.map(item => [item, counts[item]]);
+  return order.map(item => [item, counts[item]])
 }
 
 function makeColorString(remaining) {

@@ -6,7 +6,7 @@ test('Expansion', () => {
     t.setColor(game, 'dennis', 'yellow', ['Statistics', 'Masonry'])
   })
   let request
-    request = game.run()
+  request = game.run()
   request = t.choose(game, request, 'Decree.Expansion')
 
   expect(t.zone(game, 'yellow').splay).toBe('up')

@@ -40,7 +40,8 @@ function Card() {
           player,
           reason: this.name
         })
-      } else {
+      }
+      else {
         game.mLogNoEffect()
       }
     }

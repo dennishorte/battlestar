@@ -7,7 +7,7 @@ test('Trade', () => {
     t.setColor(game, 'dennis', 'purple', ['Reformation'])
   })
   let request
-    request = game.run()
+  request = game.run()
   request = t.choose(game, request, 'Decree.Trade')
 
   const ages = t.zone(game, 'forecast').cards().map(c => c.age).sort()

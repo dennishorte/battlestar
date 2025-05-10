@@ -10,7 +10,7 @@ test('War', () => {
     t.setColor(game, 'scott', 'green', ['Databases'])
   })
   let request
-    request = game.run()
+  request = game.run()
   request = t.choose(game, request, 'Decree.War')
   request = t.choose(game, request, 3)
   request = t.choose(game, request, 'auto')

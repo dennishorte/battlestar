@@ -10,7 +10,7 @@ test('Advancement', () => {
     t.setDeckTop(game, 'base', 8, ['Flight'])
   })
   let request
-    request = game.run()
+  request = game.run()
   request = t.choose(game, request, 'Decree.Advancement')
 
   expect(t.cards(game, 'hand')).toStrictEqual(['Flight'])

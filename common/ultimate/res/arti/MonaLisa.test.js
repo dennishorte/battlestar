@@ -57,7 +57,7 @@ describe("Mona Lisa", () => {
       })
 
       let request
-    request = game.run()
+      request = game.run()
       request = t.choose(game, request, 'dogma')
       request = t.choose(game, request, 1)
       request = t.choose(game, request, 'red')

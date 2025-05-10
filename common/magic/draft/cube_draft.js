@@ -306,7 +306,9 @@ CubeDraft.prototype.checkIsScarAction = function(player) {
       && !player.scarredRounds.includes(packRound)
     )
   }
-  else return false
+  else {
+    return false
+  }
 }
 
 CubeDraft.prototype.checkPlayerHasOption = function(player) {

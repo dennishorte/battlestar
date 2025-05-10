@@ -11,7 +11,7 @@ function Card() {
   this.echo = ''
   this.karma = []
   this.dogma = [
-//    "Return a card in any opponent's score pile for every color on your board with {i}",
+    //    "Return a card in any opponent's score pile for every color on your board with {i}",
     "Choose an opponent. Return a card in that player's score pile for every color on your board with {i}",
   ]
 

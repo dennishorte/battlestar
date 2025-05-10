@@ -2296,8 +2296,8 @@ Innovation.prototype.getBiscuitsByZone = function(zone) {
 
 Innovation.prototype.getBiscuitsRaw = function(card, splay) {
   return this.checkCardIsTop(card)
-       ? card.getBiscuits('top')
-       : card.getBiscuits(splay)
+    ? card.getBiscuits('top')
+    : card.getBiscuits(splay)
 }
 
 Innovation.prototype.getBonuses = function(player) {
@@ -3165,13 +3165,13 @@ Innovation.prototype.utilBiscuitNames = function() {
 
 Innovation.prototype.utilBiscuitNameToIcon = function(name) {
   switch (name) {
-    case 'castle': return 'k';
-    case 'clock': return 'i';
-    case 'coin': return 'c';
-    case 'factory': return 'f';
-    case 'leaf': return 'l';
-    case 'lightbulb': return 's';
-    case 'person': return 'p';
+    case 'castle': return 'k'
+    case 'clock': return 'i'
+    case 'coin': return 'c'
+    case 'factory': return 'f'
+    case 'leaf': return 'l'
+    case 'lightbulb': return 's'
+    case 'person': return 'p'
   }
 
   throw new Error('Unknown biscuit name: ' + name)
@@ -3189,11 +3189,11 @@ Innovation.prototype.utilColors = function() {
 
 Innovation.prototype.utilColorToDecree = function(color) {
   switch (color) {
-    case 'red': return 'War';
-    case 'yellow': return 'Expansion';
-    case 'green': return 'Trade';
-    case 'blue': return 'Advancement';
-    case 'purple': return 'Rivalry';
+    case 'red': return 'War'
+    case 'yellow': return 'Expansion'
+    case 'green': return 'Trade'
+    case 'blue': return 'Advancement'
+    case 'purple': return 'Rivalry'
     default:
       throw new Error(`Unknown color ${color}`)
   }
@@ -3295,7 +3295,7 @@ Innovation.prototype.utilHighestCards = function(cards, opts={}) {
 
 Innovation.prototype.utilLowestCards = function(cards, opts={}) {
   const sorted = [...cards].sort((l, r) => l.getAge() - r.getAge())
- return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
+  return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
 }
 
 Innovation.prototype.utilParseBiscuits = function(biscuitString) {

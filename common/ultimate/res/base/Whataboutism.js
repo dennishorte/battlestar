@@ -24,10 +24,10 @@ function Card() {
 
       let transferred = false
       for (const card of topDemands) {
-          const result = game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color));
-          if (result) {
-            transferred = true;
-          }
+        const result = game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+        if (result) {
+          transferred = true
+        }
       }
 
       if (transferred) {

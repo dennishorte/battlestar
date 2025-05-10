@@ -8,7 +8,7 @@ describe('Camouflage', () => {
       dennis: {
         red: ['Camouflage'],
         achievements: ['Monument', 'Zen'],
-     },
+      },
       decks: {
         base: {
           7: ['Lighting'],

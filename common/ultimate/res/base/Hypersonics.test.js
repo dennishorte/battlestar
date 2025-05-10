@@ -42,6 +42,6 @@ describe('Hypersonics', () => {
         score: ['Software']
       },
     })
-    })
+  })
 
 })

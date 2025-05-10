@@ -143,8 +143,8 @@ describe('Empiricism', () => {
           splay: 'up',
         },
         blue: [
-            'Atomic Theory', // 3
-            'Tools',  // 2
+          'Atomic Theory', // 3
+          'Tools',  // 2
         ],
         hand: ['Genetics'],
       },

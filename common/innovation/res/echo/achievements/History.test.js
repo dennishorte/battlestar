@@ -65,5 +65,5 @@ describe('History', () => {
     t.choose(game, game.run(), 'Meld.Stephen Hawking')
     expect(t.cards(game, 'achievements')).toStrictEqual(['History'])
   })
-  
+
 })

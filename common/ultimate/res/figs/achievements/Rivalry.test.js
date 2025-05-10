@@ -8,7 +8,7 @@ test('Rivalry', () => {
     t.setColor(game, 'scott', 'yellow', ['Shennong'])
   })
   let request
-    request = game.run()
+  request = game.run()
   request = t.choose(game, request, 'Decree.Rivalry')
   request = t.choose(game, request, 'micah')
   request = t.choose(game, request, 'Software', 'Coal', 'Mathematics')

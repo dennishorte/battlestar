@@ -27,7 +27,7 @@ function Card() {
 
     (game, player) => {
       const redCards = game.getCardsByZone(player, 'red')
-      
+
       if (redCards.length === 3 && game.checkAchievementAvailable('Monument')) {
         game.aClaimAchievement(player, { name: 'Monument' })
       }

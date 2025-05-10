@@ -13,7 +13,7 @@ describe('Specialization', () => {
         t.setHand(game, 'dennis', ['Oars'])
       })
       let request
-    request = game.run()
+      request = game.run()
       request = t.choose(game, request, 'Dogma.Specialization')
       request = t.choose(game, request, 'auto')
 
@@ -33,7 +33,7 @@ describe('Specialization', () => {
         t.setHand(game, 'dennis', [])
       })
       let request
-    request = game.run()
+      request = game.run()
       request = t.choose(game, request, 'Dogma.Specialization')
       request = t.choose(game, request, 'blue')
 

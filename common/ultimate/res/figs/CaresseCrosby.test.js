@@ -37,7 +37,7 @@ describe('Caresse Crosby', () => {
     })
   })
 
-   test('karma: you win', () => {
+  test('karma: you win', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {

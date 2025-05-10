@@ -53,7 +53,7 @@ describe("Moonlight Sonata", () => {
     t.testBoard(game, {
       dennis: {
         red: ['Archery'],
-//        achievements: ['Software'],
+        //        achievements: ['Software'],
       },
     })
   })

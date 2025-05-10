@@ -676,7 +676,7 @@ describe('Magic Actions', () => {
 
     // Test that the order has changed (This will fail one in 2^7 = 128 times without the retry)
     // Check if the order has changed
-    let orderChanged = !util.array.elementsEqual(cards, originalOrder);
+    let orderChanged = !util.array.elementsEqual(cards, originalOrder)
 
     // If order hasn't changed, try shuffling again (up to 2 more times)
     if (!orderChanged) {

@@ -51,11 +51,11 @@ CardUtil.COLOR_KEY_TO_NAME = {
 
 CardUtil.colorSymbolToName = function(symbol) {
   switch (symbol.toLowerCase()) {
-    case 'w': return 'white';
-    case 'u': return 'blue';
-    case 'b': return 'black';
-    case 'r': return 'red';
-    case 'g': return 'green';
+    case 'w': return 'white'
+    case 'u': return 'blue'
+    case 'b': return 'black'
+    case 'r': return 'red'
+    case 'g': return 'green'
     default:
       throw new Error('Invalid color symbol: ' + symbol)
   }

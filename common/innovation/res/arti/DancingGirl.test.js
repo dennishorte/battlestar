@@ -24,7 +24,7 @@ describe('Dancing Girl', () => {
 
     t.dumpLog(game)
 
-//    t.testIsFirstAction(request3)
+    //    t.testIsFirstAction(request3)
     t.testBoard(game, {
       dennis: {
         red: ['Construction'],
@@ -57,7 +57,7 @@ describe('Dancing Girl', () => {
 
     t.dumpLog(game)
 
-//    t.testIsFirstAction(request3)
+    //    t.testIsFirstAction(request3)
     t.testBoard(game, {
       dennis: {
         red: ['Construction'],

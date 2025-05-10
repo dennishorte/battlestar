@@ -57,7 +57,7 @@ const cardData = [
     "count": 3,
     "text": [
       "Choose one:",
-//      "- Place a spy.",
+      //      "- Place a spy.",
       "- Place two spies.",
       "- Return one of your spies > Recruit up to 2 cards that each cost 3 or less without paying their costs."
     ],

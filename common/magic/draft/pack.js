@@ -68,7 +68,7 @@ class Pack {
     const card = this.cards.find(c => c.id === cardId)
 
     util.assert(Boolean(card), `Card with id=${cardId} not in this pack`)
-    util.assert(!Boolean(card.picker), `Card with id=${cardId} is already picked`)
+    util.assert(!card.picker, `Card with id=${cardId} is already picked`)
 
     card.picker = player
     this.picked.push(card)

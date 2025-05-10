@@ -65,7 +65,7 @@ describe('Hedy Lamar', () => {
       })
 
       let request
-    request = game.run()
+      request = game.run()
       request = t.choose(game, request, 'Meld.Hedy Lamar')
 
       t.testBoard(game, {
@@ -105,7 +105,7 @@ describe('Hedy Lamar', () => {
       })
 
       let request
-    request = game.run()
+      request = game.run()
       request = t.choose(game, request, 'Meld.Hedy Lamar')
 
       t.testBoard(game, {

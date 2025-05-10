@@ -217,7 +217,7 @@ Game.prototype.requestInputMany = function(array) {
         __prepareInput(answer)
       }
       else {
-	throw new InputRequestEvent(unanswered)
+        throw new InputRequestEvent(unanswered)
       }
     }
   }

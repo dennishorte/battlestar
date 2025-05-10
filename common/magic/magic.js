@@ -887,8 +887,8 @@ Magic.prototype.aSelectPhase = function(player, phase) {
       ...this.getCardsByZone(player, 'battlefield'),
       ...this.getCardsByZone(player, 'land'),
     ].flat()
-     .filter(card => !card.g.noUntap)
-     .forEach(card => this.mUntap(card))
+      .filter(card => !card.g.noUntap)
+      .forEach(card => this.mUntap(card))
   }
   else if (phase === 'draw') {
     this.aDraw()

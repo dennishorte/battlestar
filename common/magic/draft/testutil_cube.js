@@ -170,7 +170,7 @@ TestUtil.choose = function(game, request, actor, option) {
     actor: selector.actor,
     title: selector.title,
     selection: [option],
-   })
+  })
 }
 
 TestUtil.testBoard = function(game, expected) {

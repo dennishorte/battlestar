@@ -29,7 +29,7 @@ describe("Papyrus of Ani", () => {
       dennis: {
         purple: ['Education'],
         score: ['Sailing'],
-     },
+      },
     })
   })
 
