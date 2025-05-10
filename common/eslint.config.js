@@ -95,8 +95,10 @@ module.exports = defineConfig([
         "ignoreComments": false
       }],
 
-      "no-unused-vars": "warn",
       "no-undef": "warn",
+      'no-unused-vars': ['warn', {
+        varsIgnorePattern: 'request'
+      }],
 
       "jest/expect-expect": "off",
       "jest/no-standalone-expect": "off",

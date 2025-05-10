@@ -25,7 +25,7 @@ function Card() {
       const card = game.aChooseCard(player, hand)
       if (card) {
         game.mReveal(player, card)
-        game.aRemove(player, card)
+        game.aJunk(player, card)
 
         const cardValue = card.getAge()
         game.mLog({

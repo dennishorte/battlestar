@@ -3,25 +3,35 @@ Error.stackTraceLimit = 100
 const t = require('../../../testutil.js')
 
 describe('Glory achievement', () => {
-  test('tucked', () => {
+  test('junked', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
     t.setBoard(game, {
       dennis: {
-        purple: ['Reformation'],
+        purple: {
+          cards: ['Escapism', 'Monotheism'],
+          splay: 'right',
+        },
         hand: ['Tokyo'],
+      },
+      decks: {
+        base: {
+          5: ['Astronomy', 'Coal', 'Measurement'],
+        },
       },
     })
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Reformation')
-    request = t.choose(game, request, 'yes')
-    request = t.choose(game, request)
+    request = t.choose(game, request, 'Dogma.Escapism')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        purple: ['Reformation', 'Tokyo'],
+        purple: {
+          cards: ['Escapism', 'Monotheism'],
+          splay: 'right',
+        },
+        hand: ['Astronomy', 'Coal', 'Measurement'],
         achievements: ['Glory'],
       }
     })

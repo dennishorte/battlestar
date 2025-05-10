@@ -69,6 +69,8 @@ Innovation.prototype._gameOver = function(event) {
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
 
+const SUPPORTED_EXPANSIONS = ['base', 'city', 'usee']
+
 Innovation.prototype.initialize = function() {
   this.mLog({ template: 'Initializing' })
   this.mLogIndent()
@@ -160,7 +162,7 @@ Innovation.prototype.initializeZones = function() {
 Innovation.prototype.initializeZonesDecks = function() {
   const zones = this.state.zones
   zones.decks = {}
-  for (const exp of ['base', 'echo', 'figs', 'city', 'arti', 'usee']) {
+  for (const exp of SUPPORTED_EXPANSIONS) {
     zones.decks[exp] = {}
     const data = this.cardData[exp]
     for (const [age, cards] of Object.entries(this.cardData[exp].byAge)) {
@@ -190,7 +192,7 @@ Innovation.prototype.initializeZonesAchievements = function() {
   }
 
   // Special achievements
-  for (const exp of ['base', 'echo', 'figs', 'city', 'arti', 'usee']) {
+  for (const exp of SUPPORTED_EXPANSIONS) {
     if (this.getExpansionList().includes(exp)) {
       for (const ach of this.cardData[exp].achievements) {
         zones.achievements._cards.push(ach)

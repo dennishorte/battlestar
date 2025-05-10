@@ -7,21 +7,31 @@ describe('Victory achievement', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
     t.setBoard(game, {
       dennis: {
-        purple: ['Reformation'],
-        hand: ['Brussels'],
+        purple: {
+          cards: ['Escapism', 'Monotheism'],
+          splay: 'right',
+        },
+        hand: ['Shanghai'],
+      },
+      decks: {
+        base: {
+          8: ["Quantum Theory", "Rocketry", "Socialism"],
+        },
       },
     })
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Reformation')
-    request = t.choose(game, request, 'yes')
-    request = t.choose(game, request)
+    request = t.choose(game, request, 'Dogma.Escapism')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        purple: ['Reformation', 'Brussels'],
+        purple: {
+          cards: ['Escapism', 'Monotheism'],
+          splay: 'right',
+        },
+        hand: ["Quantum Theory", "Rocketry", "Socialism"],
         achievements: ['Victory'],
       }
     })

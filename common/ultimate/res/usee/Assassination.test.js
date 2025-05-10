@@ -12,7 +12,7 @@ describe('Assassination', () => {
         blue: ['Writing'],
       },
       decks: {
-        base: {
+        usee: {
           1: ['Palmistry'],
         }
       }
