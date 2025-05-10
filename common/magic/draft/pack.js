@@ -104,7 +104,7 @@ function makeCubePacks(cards, options) {
   const { packSize, numPacks, numPlayers } = options
 
   // Prepare cards with unique IDs
-  const preparedCards = util.deepcopy(cards).map((card, index) => _convertCardToPackCard(card, index))
+  const preparedCards = cards.map((card, index) => _convertCardToPackCard(card, index))
 
   // Shuffle the cards
   util.array.shuffle(preparedCards)
