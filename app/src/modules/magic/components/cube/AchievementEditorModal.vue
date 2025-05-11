@@ -46,6 +46,8 @@ import { util } from 'battlestar-common'
 export default {
   name: 'AchievementEditorModal',
 
+  emits: ['achievements-updated'],
+
   props: {
     achievement: {
       type: Object,

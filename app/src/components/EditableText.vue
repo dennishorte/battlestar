@@ -25,6 +25,8 @@
 export default {
   name: 'EditableText',
 
+  emits: ['text-edited'],
+
   data() {
     return {
       isEditing: false,

@@ -103,7 +103,7 @@ export default {
       state.cubes = response.cubes
     },
 
-    async updateSettings({ dispatch, state }, { cubeId, settings }) {
+    async updateSettings({ dispatch }, { cubeId, settings }) {
       await this.$post('/api/magic/cube/update_settings', {
         cubeId,
         settings

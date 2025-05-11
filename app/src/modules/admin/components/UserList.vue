@@ -46,6 +46,8 @@ export default {
     DropdownItem,
   },
 
+  emits: ['users-updated'],
+
   props: {
     users: {
       type: Array,

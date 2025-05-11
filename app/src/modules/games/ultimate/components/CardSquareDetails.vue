@@ -15,8 +15,14 @@ export default {
   name: 'CardSquareDetails',
 
   props: {
-    name: String,
-    expansion: String,
+    name: {
+      type: String,
+      required: true
+    },
+    expansion: {
+      type: String,
+      required: true
+    },
     sizeClass: {
       type: String,
       default: 'square',

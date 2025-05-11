@@ -70,7 +70,7 @@ export default {
         const cards = cardIds.map(id => cardLookup.byId[id])
         for (const card of cards) {
           if (card === undefined) {
-            throw new Error(`Card not found: ${id}`)
+            throw new Error('Card not found')
           }
         }
         return cards

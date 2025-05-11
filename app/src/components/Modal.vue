@@ -38,6 +38,8 @@
 export default {
   name: 'Modal',
 
+  emits: ['cancel', 'ok'],
+
   props: {
     title: {
       type: String,

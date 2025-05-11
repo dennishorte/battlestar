@@ -27,7 +27,10 @@ export default {
   },
 
   props: {
-    card: Object,
+    card: {
+      type: Object,
+      required: true
+    },
   },
 
   computed: {

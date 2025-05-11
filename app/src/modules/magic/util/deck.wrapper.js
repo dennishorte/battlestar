@@ -1,9 +1,9 @@
-const { mag } = require('battlestar-common')
+import { magic } from 'battlestar-common'
 
-class UIDeckWrapper extends mag.util.wrapper.deck {
+class UIDeckWrapper extends magic.util.wrapper.deck {
   constructor(deck) {
     super(deck)
   }
 }
 
-module.exports = UIDeckWrapper
+export default UIDeckWrapper
