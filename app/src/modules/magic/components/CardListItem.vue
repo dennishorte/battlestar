@@ -5,28 +5,29 @@
     @mousemove="mousemove"
     class="card-list-item"
   >
-    <div
-      v-if="separateFaces"
-      v-for="faceIndex in faceIndices"
-      :key="faceIndex"
-      class="card-list-item-face"
-      :class="faceIndex === card.g.activeFaceIndex ? '' : 'alt-face'"
-      @click="$emit('card-face-clicked', { card, faceIndex })"
-    >
+    <template v-if="separateFaces">
+      <div
+        v-for="faceIndex in faceIndices"
+        :key="faceIndex"
+        class="card-list-item-face"
+        :class="faceIndex === card.g.activeFaceIndex ? '' : 'alt-face'"
+        @click="$emit('card-face-clicked', { card, faceIndex })"
+      >
 
-      <div class="name">
-        <i class="bi bi-arrow-return-right" v-if="faceIndex !== card.g.activeFaceIndex"/>
-        <i class="bi bi-lightning-fill" v-if="card.isScarred(faceIndex)"/>
-        <slot name="name" :face-index="faceIndex">{{ card.name(faceIndex) }}</slot>
-      </div>
+        <div class="name">
+          <i class="bi bi-arrow-return-right" v-if="faceIndex !== card.g.activeFaceIndex"/>
+          <i class="bi bi-lightning-fill" v-if="card.isScarred(faceIndex)"/>
+          <slot name="name" :face-index="faceIndex">{{ card.name(faceIndex) }}</slot>
+        </div>
 
-      <div class="extra-info">
-        <ManaCost v-if="showManaCost" class="mana-cost" :cost="card.manaCost(faceIndex)" />
-        <div v-else-if="showPower && card.power(faceIndex)" class="mana-cost">
-          {{ card.powerToughness(faceIndex) }}
+        <div class="extra-info">
+          <ManaCost v-if="showManaCost" class="mana-cost" :cost="card.manaCost(faceIndex)" />
+          <div v-else-if="showPower && card.power(faceIndex)" class="mana-cost">
+            {{ card.powerToughness(faceIndex) }}
+          </div>
         </div>
       </div>
-    </div>
+    </template>
 
     <div v-else class="card-list-item-face" @click="$emit('card-clicked', card)">
       <div class="name">

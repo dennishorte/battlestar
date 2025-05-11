@@ -10,20 +10,21 @@
 
     <div class="buttons">
       <button class="btn btn-primary" @click="addFace">Add Face</button>
-      <button
-        v-if="model.card_faces.length > 1"
-        v-for="(_, index) in model.card_faces"
-        :key="index"
-        class="btn btn-warning"
-        @click="removeFace(index)"
-      >Remove {{ index }}</button>
+      <template v-if="model.card_faces.length > 1">
+        <button
+          v-for="(_, index) in model.card_faces"
+          :key="index"
+          class="btn btn-warning"
+          @click="removeFace(index)"
+        >Remove {{ index }}</button>
+      </template>
     </div>
   </div>
 </template>
 
 
 <script>
-import { mag, util } from 'battlestar-common'
+import { magic } from 'battlestar-common'
 
 import Card from './Card.vue'
 
@@ -66,7 +67,7 @@ export default {
     },
 
     addFace() {
-      this.model.card_faces.push(mag.util.card.blankFace())
+      this.model.card_faces.push(magic.util.card.blankFace())
       this.updateRootValues()
     },
 
@@ -85,10 +86,10 @@ export default {
     },
 
     updateRootValues() {
-      this.model.cmc = mag.util.card.calculateManaCost(this.model)
+      this.model.cmc = magic.util.card.calculateManaCost(this.model)
       this.model.name = this.model.card_faces.map(face => face.name).join(' // ')
       this.model.type_line = this.model.card_faces.map(face => face.type_line).join(' // ')
-      mag.util.card.updateColors(this.model)
+      magic.util.card.updateColors(this.model)
     },
   },
 

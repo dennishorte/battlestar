@@ -32,7 +32,7 @@ export default {
   props: {
     filters: {
       type: Array,
-      default: [],
+      default: () => [],
     },
 
     allowEdit: {

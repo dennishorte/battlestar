@@ -29,9 +29,7 @@ export default {
 
   computed: {
     filters() {
-      if (this.highlight) {
-        return 'url(#selected)'
-      }
+      return this.highlight ? 'url(#selected)' : ''
     },
   },
 }

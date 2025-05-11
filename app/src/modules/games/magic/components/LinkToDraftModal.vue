@@ -13,7 +13,7 @@
 
       <select v-else class="form-select" v-model="draftId">
         <option
-          v-for="(draft, index) in drafts"
+          v-for="draft in drafts"
           :key="draft._id"
           :value="draft._id"
         >

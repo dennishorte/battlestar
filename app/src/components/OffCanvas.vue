@@ -1,5 +1,5 @@
 <template>
-  <div class="offcanvas offcanvas-start" :id="id" :class="class">
+  <div class="offcanvas offcanvas-start">
     <div class="offcanvas-header">
       <h5>
         <slot name="header"/>
@@ -17,10 +17,5 @@
 <script>
 export default {
   name: 'OffCanvas',
-
-  props: {
-    id: String,
-    class: [String, Array],
-  }
 }
 </script>

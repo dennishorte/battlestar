@@ -40,7 +40,7 @@ export default {
 
   computed: {
     sortedCardlist() {
-      const sortedCards = this.cardlist.sort((l, r) => {
+      const sortedCards = [...this.cardlist].sort((l, r) => {
         return (
           l.cmc() - r.cmc()
           || l.data.name.localeCompare(r.data.name)

@@ -33,7 +33,7 @@ export default {
   props: {
     disabled: {
       type: Array,
-      default: [],
+      default: () => [],
     },
   },
 

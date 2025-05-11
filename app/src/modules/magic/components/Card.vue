@@ -1,7 +1,6 @@
 <template>
-  <div class="magic-card" :style="cardStyles">
+  <div class="magic-card" :style="cardStyles" v-if="card">
     <CardFace
-      v-if="card"
       v-for="index in this.card.numFaces()"
       :key="index"
       :card="card"

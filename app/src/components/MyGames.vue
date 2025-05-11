@@ -20,7 +20,7 @@
       </thead>
 
       <tbody>
-        <template v-for="(game, index) in games" :key="game._id">
+        <template v-for="game in games" :key="game._id">
           <tr>
             <td>{{ gameKind(game) }}</td>
             <td>

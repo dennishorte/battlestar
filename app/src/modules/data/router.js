@@ -1,4 +1,4 @@
-import Data from './components/Data'
+import GameData from './components/GameData'
 import InnovationCards from './components/InnovationCards'
 import InnovationResults from './components/InnovationResults'
 import TyrantsCards from './components/TyrantsCards'
@@ -6,9 +6,9 @@ import TyrantsCards from './components/TyrantsCards'
 export default [
   {
     path: '/data',
-    name: 'Data',
-    title: 'Data',
-    component: Data,
+    name: 'GameData',
+    title: 'GameData',
+    component: GameData,
   },
   {
     path: '/data/innovation/cards',

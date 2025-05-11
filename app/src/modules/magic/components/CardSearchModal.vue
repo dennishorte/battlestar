@@ -95,7 +95,6 @@ export default {
           distinct.push(a)
         }
       }
-      this.selected = distinct[0]
       return distinct
     },
   },
@@ -109,6 +108,14 @@ export default {
 
     selectVersion(card) {
       this.selected = card
+    },
+  },
+
+  watch: {
+    matched(newValue) {
+      if (newValue && newValue.length > 0) {
+        this.selected = newValue[0]
+      }
     },
   },
 

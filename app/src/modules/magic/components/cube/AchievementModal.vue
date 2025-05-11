@@ -14,7 +14,7 @@
         <input class="form-control" v-model="computedTags" />
       </div>
 
-      <div v-for="(h, index) in achievement.hidden" :key="index" v-if="showAll">
+      <div v-for="(h, index) in hiddenFields" :key="index">
         <div class="hidden-header">
           <div>Hidden Tab {{ index }}</div>
           <div>
@@ -67,6 +67,15 @@ export default {
       set(newValue) {
         this.achievement.tags = newValue.split(' ')
       },
+    },
+
+    hiddenFields() {
+      if (this.showAll) {
+        return this.achievement.hidden
+      }
+      else {
+        return []
+      }
     },
   },
 

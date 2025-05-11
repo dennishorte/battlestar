@@ -21,7 +21,7 @@
 import GameHeader from '../../../components/GameHeader'
 
 export default {
-  name: 'Data',
+  name: 'GameData',
 
   components: {
     GameHeader,

@@ -6,7 +6,7 @@
     <div v-for="info in playerInfo" :key="info.player.name" class="player-info">
       <div class="name-div">{{ info.player.name }}</div>
       <div v-for="count in info.waitingPacks" :key="count" class="count-div">
-        &nbsp{{ count }}
+        &nbsp;{{ count }}
       </div>
       <div
         v-if="info.player.name !== actor.name"

@@ -22,7 +22,6 @@
 
 <script>
 import Achievement from './Achievement.vue'
-import Modal from '@/components/Modal'
 
 
 export default {
@@ -30,7 +29,6 @@ export default {
 
   components: {
     Achievement,
-    Modal,
   },
 
   inject: ['actor', 'cubeId'],
@@ -38,7 +36,7 @@ export default {
   props: {
     achievements: {
       type: Array,
-      default: [],
+      default: () => [],
     },
   },
 

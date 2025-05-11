@@ -17,15 +17,11 @@ export default {
 
   computed: {
     classes() {
-      if (this.funcs.playerClasses) {
-        return this.funcs.playerClasses(this.player)
-      }
+      return this.funcs.playerClasses ? this.funcs.playerClasses(this.player) : []
     },
 
     styles() {
-      if (this.funcs.playerStyles) {
-        return this.funcs.playerStyles(this.player)
-      }
+      return this.funcs.playerStyles ? this.funcs.playerStyles(this.player) : []
     },
 
     player() {

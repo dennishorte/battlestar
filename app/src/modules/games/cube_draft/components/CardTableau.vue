@@ -15,7 +15,6 @@
 import { util } from 'battlestar-common'
 
 import Card from '@/modules/magic/components/Card'
-import Modal from '@/components/Modal'
 
 
 export default {
@@ -23,13 +22,12 @@ export default {
 
   components: {
     Card,
-    Modal,
   },
 
   props: {
     cards: {
       type: Array,
-      default: [],
+      default: () => [],
     },
 
     cardScroll: {

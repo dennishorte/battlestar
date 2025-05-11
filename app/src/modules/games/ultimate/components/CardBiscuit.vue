@@ -58,7 +58,7 @@ export default {
 
   props: {
     biscuit: String,
-    slot: Number,
+    position: Number,
 
     classes: {
       type: Array,
@@ -89,7 +89,7 @@ export default {
         base.push('inline-image')
       }
 
-      if (this.slot === 1 && this.biscuit && 'cfikls'.indexOf(this.biscuit) !== -1) {
+      if (this.position === 1 && this.biscuit && 'cfikls'.indexOf(this.biscuit) !== -1) {
         base.push('discover-biscuit')
       }
 

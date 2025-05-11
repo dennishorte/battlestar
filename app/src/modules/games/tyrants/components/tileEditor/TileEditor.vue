@@ -90,7 +90,7 @@
 
         <TileLayer :tiles="tiles" />
         <ConnectorLayer :tiles="tiles" />
-        <SiteLayer :tiles="tiles" :selected="selectedSite" />
+        <SiteLayer :tiles="tiles" :selected-in="selectedSite" />
 
       </svg>
     </div>

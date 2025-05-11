@@ -15,15 +15,11 @@ export default {
 
   computed: {
     classes() {
-      if (this.funcs.locClasses) {
-        return this.funcs.locClasses(this.loc)
-      }
+      return this.funcs.locClasses ? this.funcs.locClasses(this.loc) : []
     },
 
     styles() {
-      if (this.funcs.locStyles) {
-        return this.funcs.locStyles(this.loc)
-      }
+      return this.funcs.locStyles ? this.funcs.locStyles(this.loc) : []
     },
 
     loc() {

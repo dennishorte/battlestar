@@ -41,7 +41,6 @@ import { mapState } from 'vuex'
 import DecklistSection from './DecklistSection'
 import Dropdown from '@/components/Dropdown'
 import DropdownButton from '@/components/DropdownButton'
-import DropdownDivider from '@/components/DropdownDivider'
 
 import CardManagerModal from './CardManagerModal'
 import DeckImportModal from './DeckImportModal'
@@ -55,7 +54,6 @@ export default {
     DecklistSection,
     Dropdown,
     DropdownButton,
-    DropdownDivider,
 
     CardManagerModal,
     DeckImportModal,

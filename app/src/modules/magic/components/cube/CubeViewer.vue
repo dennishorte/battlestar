@@ -106,7 +106,6 @@ import AchievementModal from './AchievementModal'
 import AchievementViewerModal from './AchievementViewerModal'
 import AchievementSearchLinkerModal from './AchievementSearchLinkerModal'
 import Achievements from './Achievements'
-import CardEditor from '../CardEditor'
 import CardEditorModal from '../CardEditorModal'
 import CubeBreakdown from './CubeBreakdown'
 import CardSearchModal from '../CardSearchModal'
@@ -127,7 +126,6 @@ export default {
     AchievementViewerModal,
     AchievementSearchLinkerModal,
     Achievements,
-    CardEditor,
     CardEditorModal,
     CardFilters,
     CardSearchModal,

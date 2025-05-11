@@ -34,7 +34,6 @@ import UIDeckWrapper from '@/modules/magic/util/deck.wrapper'
 import CardFilters from '../CardFilters'
 import CardList from './CardList'
 import Decklist from './Decklist'
-import DropdownButton from '@/components/DropdownButton'
 import MagicMenu from '../MagicMenu'
 import MagicWrapper from '../MagicWrapper'
 
@@ -45,7 +44,6 @@ export default {
     CardFilters,
     CardList,
     Decklist,
-    DropdownButton,
     MagicMenu,
     MagicWrapper,
   },

@@ -29,9 +29,7 @@ export default {
     },
 
     classes() {
-      if (this.funcs.cardClasses) {
-        return this.funcs.cardClasses(this.card)
-      }
+      return this.funcs.cardClasses ? this.funcs.cardClasses(this.card) : []
     },
 
     displayName() {
@@ -49,9 +47,7 @@ export default {
     },
 
     styles() {
-      if (this.funcs.cardStyles) {
-        return this.funcs.cardStyles(this.card)
-      }
+      return this.funcs.cardStyles ? this.funcs.cardStyles(this.card) : []
     },
   },
 

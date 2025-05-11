@@ -197,7 +197,7 @@ export default {
   props: {
     card: {
       type: Object,
-      default: {},
+      default: () => {},
     },
     index: {
       type: Number,

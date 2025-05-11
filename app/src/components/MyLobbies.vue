@@ -15,7 +15,7 @@
       </thead>
 
       <tbody>
-        <template v-for="(lobby, index) in lobbies" :key="lobby._id">
+        <template v-for="lobby in lobbies" :key="lobby._id">
           <tr>
             <td> {{ lobbyGame(lobby) }}</td>
             <td>

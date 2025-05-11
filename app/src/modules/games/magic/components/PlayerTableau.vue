@@ -231,15 +231,11 @@ export default {
     },
 
     extraClasses() {
-      if (this.player.name !== this.actor.name) {
-        return 'tableau-reverse'
-      }
+      return this.player.name !== this.actor.name ? 'tableau-reverse' : ''
     },
 
     extraColumnClasses() {
-      if (this.player.name !== this.actor.name) {
-        return 'tableau-col-reverse'
-      }
+      return this.player.name !== this.actor.name ? 'tableau-col-reverse' : ''
     },
 
     isCombatPhase() {

@@ -69,7 +69,7 @@ export default {
 
     funcs: {
       type: Object,
-      default: {},
+      default: () => {},
     },
 
     saveOnChat: {
@@ -231,12 +231,12 @@ export default {
 
     indentSpacers(entry) {
       return 0
-      if (this.funcs.lineIndent) {
-        return this.funcs.lineIndent(entry)
-      }
-      else {
-        return entry.indent
-      }
+      /* if (this.funcs.lineIndent) {
+       *   return this.funcs.lineIndent(entry)
+       * }
+       * else {
+       *   return entry.indent
+       * } */
     },
 
     // This is convenient when you need dynamic selection of styles that can't easily be handled

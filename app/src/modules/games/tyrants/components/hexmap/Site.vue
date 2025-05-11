@@ -42,15 +42,11 @@ export default {
 
   computed: {
     classes() {
-      if (this.site.start) {
-        return 'starting-site'
-      }
+      return this.site.start ? 'starting-site' : ''
     },
 
     filters() {
-      if (this.highlight) {
-        return 'url(#selected)'
-      }
+      return this.highlight ? 'url(#selected)' : ''
     },
 
     halfHeight() {

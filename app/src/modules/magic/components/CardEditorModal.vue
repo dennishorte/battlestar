@@ -24,18 +24,14 @@
 
 
 <script>
-import Card from './Card'
 import CardEditor from './CardEditor'
 import Modal from '@/components/Modal'
-
-import { mag, util } from 'battlestar-common'
 
 
 export default {
   name: 'CardEditorModal',
 
   components: {
-    Card,
     CardEditor,
     Modal,
   },

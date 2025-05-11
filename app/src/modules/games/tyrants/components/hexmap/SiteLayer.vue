@@ -64,7 +64,7 @@ export default {
   },
 
   props: {
-    selected: {
+    selectedIn: {
       type: Object,
       default: null,
     },
@@ -73,6 +73,7 @@ export default {
 
   data() {
     return {
+      selected: this.selectedIn,
       sites: [],
       spots: [],
     }
@@ -91,6 +92,10 @@ export default {
   },
 
   watch: {
+    selectedIn(newValue) {
+      this.selected = selectedIn
+    },
+
     tiles: {
       handler(newValue) {
         this.sites = this

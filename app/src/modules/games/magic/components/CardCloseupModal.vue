@@ -1,5 +1,5 @@
 <template>
-  <Modal id="card-closeup-modal" @ok="saveChanges" @hidden.bs.modal="clearSelection">
+  <Modal id="card-closeup-modal" @ok="saveChanges">
     <template #header>
       <div class="header-button" @click="debug">debug</div>
     </template>
@@ -27,7 +27,7 @@
         <h5>Counters</h5>
         <div class="row">
           <div class="col-6">
-            <div class="counter" v-for="[key, value] in counters" :key="key">
+            <div class="counter" v-for="[key, ] in counters" :key="key">
               <CounterButtons :card="selectedCard" :name="key" />
             </div>
           </div>
@@ -114,10 +114,6 @@ export default {
           key: this.newCounter,
         })
       }
-    },
-
-    clearSelection() {
-      this.$store.dispatch('magic/game/unselectCard')
     },
 
     debug() {
