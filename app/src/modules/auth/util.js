@@ -14,7 +14,7 @@ function canAccess(routeRecord) {
    If the user has a locally cached auth token, load it up.
  */
 function initialize() {
-  const userString = localStorage.getItem('auth.user')
+  const userString = window.localStorage.getItem('auth.user')
   try {
     const user = JSON.parse(userString)
     if (user && user.token) {

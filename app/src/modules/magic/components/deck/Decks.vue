@@ -102,7 +102,7 @@ export default {
     },
 
     confirmDelete(deckId, deckName) {
-      if (confirm(`Are you sure you want to delete "${deckName}"?`)) {
+      if (window.confirm(`Are you sure you want to delete "${deckName}"?`)) {
         this.deleteDeck(deckId)
       }
     },

@@ -35,7 +35,7 @@ export default {
         this.status = 'success'
       }
       catch (e) {
-        this.status = error
+        this.status = 'error'
         this.message = 'Check console for details'
         throw e
       }

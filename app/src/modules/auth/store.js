@@ -3,7 +3,7 @@ import axiosWrapper from '@/util/axiosWrapper.js'
 
 
 function getCachedUser() {
-  const userString = localStorage.getItem('auth.user')
+  const userString = window.localStorage.getItem('auth.user')
   if (userString) {
     try {
       return JSON.parse(userString)
@@ -18,7 +18,7 @@ function getCachedUser() {
 }
 
 function setCachedUser(user) {
-  localStorage.setItem('auth.user', JSON.stringify(user))
+  window.localStorage.setItem('auth.user', JSON.stringify(user))
 }
 
 
@@ -56,7 +56,7 @@ export default {
     logout(state) {
       state.status = ''
       state.user = {}
-      localStorage.removeItem('auth.user')
+      window.localStorage.removeItem('auth.user')
       delete axios.defaults.headers.common['Authorization']
     }
   },

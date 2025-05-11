@@ -100,7 +100,7 @@ export default {
       }
 
       if (getters.isMovingAll) {
-        dispatch('moveAll', zone)
+        dispatch('moveAll', card.zone)
         return
       }
 

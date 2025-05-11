@@ -15,6 +15,7 @@
 <script>
 export default {
   name: 'CreateUser',
+  emits: ['user-created'],
   data() {
     return {
       status: '',

@@ -26,7 +26,7 @@ export default {
 
   methods: {
     reload() {
-      location.reload()
+      window.location.reload()
     }
   },
 }
