@@ -31,8 +31,14 @@ export default {
   },
 
   props: {
-    cards: Array,
-    name: String,
+    cards: {
+      type: Array,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
   },
 
   computed: {

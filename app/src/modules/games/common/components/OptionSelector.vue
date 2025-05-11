@@ -65,8 +65,14 @@ export default {
       type: Boolean,
       default: false,
     },
-    selector: Object,
-    owner: Object,
+    selector: {
+      type: Object,
+      default: null,
+    },
+    owner: {
+      type: Object,
+      default: null,
+    },
   },
 
   data() {

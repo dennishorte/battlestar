@@ -29,7 +29,10 @@ export default {
   inject: ['game'],
 
   props: {
-    card: Object,
+    card: {
+      type: Object,
+      required: true,
+    },
   },
 
   computed: {

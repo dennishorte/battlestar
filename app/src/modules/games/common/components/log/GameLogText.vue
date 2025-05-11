@@ -15,7 +15,10 @@ export default {
   name: 'CardText',
 
   props: {
-    text: String,
+    text: {
+      type: String,
+      default: ''
+    },
   },
 
   inject: ['funcs'],

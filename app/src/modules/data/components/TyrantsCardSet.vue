@@ -23,7 +23,10 @@ export default {
   },
 
   props: {
-    expansion: String,
+    expansion: {
+      type: String,
+      default: 'base'
+    },
   },
 
   computed: {

@@ -20,7 +20,10 @@ export default {
   inject: ['ui'],
 
   props: {
-    option: [Object, String]
+    option: {
+      type: [Object, String],
+      default: ''
+    }
   },
 
   computed: {

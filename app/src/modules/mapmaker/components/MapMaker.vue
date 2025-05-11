@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid map-maker">
-    <Toolbar
+    <MapMakerToolbar
       :nodeKinds="nodeKinds"
       @tool-add="addKind"
       @tool-connect="startConnecting"
@@ -72,7 +72,7 @@ import 'prismjs/themes/prism-tomorrow.css'
 import CurveLayer from './CurveLayer'
 import DivLayer from './DivLayer'
 import HandleLayer from './HandleLayer'
-import Toolbar from './Toolbar'
+import MapMakerToolbar from './MapMakerToolbar'
 import UploadModal from './UploadModal'
 
 
@@ -189,7 +189,7 @@ export default {
     DivLayer,
     HandleLayer,
     PrismEditor,
-    Toolbar,
+    MapMakerToolbar,
     UploadModal,
   },
 
@@ -385,7 +385,7 @@ export default {
         this.elemMeta.styles = JSON.parse(this.code.css)
         this.errors.css = false
       }
-      catch (e) {
+      catch {
         this.errors.css = true
       }
     },
@@ -396,7 +396,7 @@ export default {
         this.updateCurves()
         this.errors.html = false
       }
-      catch (e) {
+      catch {
         this.errors.html = true
       }
     },
@@ -815,7 +815,7 @@ export default {
         this.drag(event)
       })
 
-      mapRender.addEventListener('mouseup', () => {
+      mapRender.addEventListener('mouseup', (event) => {
         if (this.dragging.didDrag) {
           // Do nothing special.
         }

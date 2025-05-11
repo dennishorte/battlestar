@@ -40,7 +40,10 @@ export default {
   },
 
   props: {
-    owner: Object,
+    owner: {
+      type: Object,
+      default: null,
+    },
   },
 
   data() {

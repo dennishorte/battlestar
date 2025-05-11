@@ -68,7 +68,10 @@ export default {
       type: Object,
       default: null,
     },
-    tiles: Array,
+    tiles: {
+      type: Array,
+      default: () => []
+    },
   },
 
   data() {

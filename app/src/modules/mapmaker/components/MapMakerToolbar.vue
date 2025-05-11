@@ -1,5 +1,5 @@
 <template>
-  <OffCanvas id="toolbar">
+  <OffCanvas id="map-maker-toolbar">
     <template #header>
       Toolbar
     </template>
@@ -62,14 +62,26 @@ import OffCanvas from '@/components/OffCanvas'
 
 
 export default {
-  name: 'Toolbar',
+  name: 'MapMakerToolbar',
 
   components: {
     OffCanvas,
   },
 
+  emits: [
+    'tool-add',
+    'tool-connect',
+    'tool-cut',
+    'tool-load',
+    'tool-export',
+    'tool-transform',
+  ],
+
   props: {
-    nodeKinds: Array,
+    nodeKinds: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   data() {

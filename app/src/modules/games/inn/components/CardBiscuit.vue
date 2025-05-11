@@ -75,8 +75,14 @@ export default {
   name: 'CardBiscuit',
 
   props: {
-    biscuit: String,
-    position: Number,
+    biscuit: {
+      type: String,
+      required: true,
+    },
+    position: {
+      type: Number,
+      required: true,
+    },
 
     classes: {
       type: Array,

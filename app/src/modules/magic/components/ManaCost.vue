@@ -19,7 +19,10 @@ export default {
   },
 
   props: {
-    cost: String,
+    cost: {
+      type: String,
+      default: ''
+    },
   },
 
   computed: {

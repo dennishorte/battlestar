@@ -20,7 +20,10 @@ export default {
   inject: ['game', 'funcs'],
 
   props: {
-    name: String,
+    name: {
+      type: String,
+      default: ''
+    },
   },
 
   computed: {

@@ -12,7 +12,10 @@ export default {
   name: 'DropdownRouterLink',
 
   props: {
-    to: String,
+    to: {
+      type: String,
+      default: '/'
+    },
   },
 }
 </script>

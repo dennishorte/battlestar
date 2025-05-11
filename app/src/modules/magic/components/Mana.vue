@@ -9,7 +9,10 @@ export default {
   name: 'Mana',
 
   props: {
-    m: String,
+    m: {
+      type: String,
+      default: ''
+    },
   },
 
   computed: {

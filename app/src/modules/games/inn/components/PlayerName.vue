@@ -8,7 +8,10 @@ export default {
   name: 'PlayerName',
 
   props: {
-    name: String
+    name: {
+      type: String,
+      default: 'missing-name',
+    }
   },
 }
 </script>
