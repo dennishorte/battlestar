@@ -36,7 +36,7 @@
         </div>
 
         <div class="preview">
-          <Card :card="selected" :size="160" />
+          <MagicCard :card="selected" :size="160" />
         </div>
       </template>
     </div>
@@ -47,7 +47,7 @@
 <script>
 import { mag } from 'battlestar-common'
 
-import Card from '@/modules/magic/components/Card'
+import MagicCard from '@/modules/magic/components/MagicCard'
 import ModalBase from '@/components/ModalBase'
 
 
@@ -55,7 +55,7 @@ export default {
   name: 'CardSearchModal',
 
   components: {
-    Card,
+    MagicCard,
     ModalBase,
   },
 

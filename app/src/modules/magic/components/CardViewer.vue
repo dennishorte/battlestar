@@ -1,19 +1,21 @@
 <template>
-  <MagicWrapper>
-    <Card :card="card" :size="270" />
-  </MagicWrapper>
+  <div class="card-viewer">
+    <MagicWrapper>
+      <MagicCard :card="card" :size="270" />
+    </MagicWrapper>
+  </div>
 </template>
 
 
 <script>
-import Card from './Card'
+import MagicCard from './MagicCard'
 import MagicWrapper from './MagicWrapper'
 
 export default {
   name: 'CardViewer',
 
   components: {
-    Card,
+    MagicCard,
     MagicWrapper,
   },
 

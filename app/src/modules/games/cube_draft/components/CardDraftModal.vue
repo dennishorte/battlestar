@@ -2,7 +2,7 @@
   <ModalBase id="card-draft-modal">
     <div v-if="!!card" class="modal-body">
       <div class="card-holder">
-        <Card :card="card" :size="270" />
+        <MagicCard :card="card" :size="270" />
       </div>
     </div>
 
@@ -20,7 +20,7 @@
 
 
 <script>
-import Card from '@/modules/magic/components/Card'
+import MagicCard from '@/modules/magic/components/MagicCard'
 import ModalBase from '@/components/ModalBase'
 
 
@@ -28,7 +28,7 @@ export default {
   name: 'CardDraftModal',
 
   components: {
-    Card,
+    MagicCard,
     ModalBase,
   },
 

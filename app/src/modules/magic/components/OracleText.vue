@@ -3,7 +3,7 @@
     <div v-for="(line, lineIndex) in lines" :key="lineIndex" class="rules-line">
       <template v-for="(part, partIndex) in line.parts" :key="partIndex">
         <span v-if="part.type === 'text'">{{ part.text }}</span>
-        <Mana v-else-if="part.type === 'symbol'" :m="part.text" />
+        <ManaSymbol v-else-if="part.type === 'symbol'" :m="part.text" />
         <ReminderText v-else-if="part.type === 'reminder'" :text="part.text" />
         <span class="error-text" v-else>{{ part.text }}</span>
       </template>
@@ -15,14 +15,14 @@
 <script>
 import { mag } from 'battlestar-common'
 
-import Mana from './Mana'
+import ManaSymbol from './ManaSymbol'
 import ReminderText from './ReminderText'
 
 export default {
   name: 'OracleText',
 
   components: {
-    Mana,
+    ManaSymbol,
     ReminderText,
   },
 

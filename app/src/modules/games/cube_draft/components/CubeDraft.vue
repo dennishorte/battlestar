@@ -41,12 +41,12 @@
       </div>
 
       <div class="game-column deck-column">
-        <Decklist v-if="deck" :deck="deck" @card-clicked="showCardManager">
+        <DeckList v-if="deck" :deck="deck" @card-clicked="showCardManager">
           <template #menu-options>
             <DropdownButton @click="saveDeck">save</DropdownButton>
             <DropdownRouterLink to="/magic/decks">deck manager</DropdownRouterLink>
           </template>
-        </Decklist>
+        </DeckList>
       </div>
 
       <div class="game-column info-column">
@@ -135,7 +135,7 @@ import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 import CardEditorModal from '@/modules/magic/components/CardEditorModal'
 import CardListItem from '@/modules/magic/components/CardListItem'
 import CardManagerModal from '@/modules/magic/components/deck/CardManagerModal'
-import Decklist from '@/modules/magic/components/deck/Decklist'
+import DeckList from '@/modules/magic/components/deck/DeckList'
 import MagicWrapper from '@/modules/magic/components/MagicWrapper'
 
 
@@ -149,7 +149,7 @@ export default {
     CardEditorModal,
     CardTableau,
     DebugModal,
-    Decklist,
+    DeckList,
     DropdownButton,
     DropdownRouterLink,
     GameLogCubeDraft,

@@ -13,7 +13,7 @@
         </div>
 
         <div class="col column deck-column">
-          <Decklist v-if="deck" :deck="deck" />
+          <DeckList v-if="deck" :deck="deck" />
           <div v-else class="alert alert-warning">No deck selected</div>
         </div>
 
@@ -31,7 +31,7 @@ import mitt from 'mitt'
 
 import CardFilters from '../CardFilters'
 import CardList from './CardList'
-import Decklist from './Decklist'
+import DeckList from './DeckList'
 import MagicMenu from '../MagicMenu'
 import MagicWrapper from '../MagicWrapper'
 
@@ -41,7 +41,7 @@ export default {
   components: {
     CardFilters,
     CardList,
-    Decklist,
+    DeckList,
     MagicMenu,
     MagicWrapper,
   },

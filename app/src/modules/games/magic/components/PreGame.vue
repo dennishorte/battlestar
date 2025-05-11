@@ -63,11 +63,11 @@
           </button>
         </div>
 
-        <Decks @deck-clicked="loadDeck" />
+        <PlayerDecks @deck-clicked="loadDeck" />
       </div>
 
       <div class="content-column deck-list-column">
-        <Decklist v-if="selectedDeck" :deck="selectedDeck" />
+        <DeckList v-if="selectedDeck" :deck="selectedDeck" />
       </div>
 
     </div>
@@ -78,8 +78,8 @@
 <script>
 import { mapState } from 'vuex'
 
-import Decks from '@/modules/magic/components/deck/Decks'
-import Decklist from '@/modules/magic/components/deck/Decklist'
+import PlayerDecks from '@/modules/magic/components/deck/PlayerDecks'
+import DeckList from '@/modules/magic/components/deck/DeckList'
 import DropdownDivider from '@/components/DropdownDivider'
 import DropdownButton from '@/components/DropdownButton'
 import GameLogMagic from './GameLogMagic'
@@ -91,8 +91,8 @@ export default {
   name: 'PreGame',
 
   components: {
-    Decks,
-    Decklist,
+    PlayerDecks,
+    DeckList,
     DropdownDivider,
     DropdownButton,
     GameLogMagic,

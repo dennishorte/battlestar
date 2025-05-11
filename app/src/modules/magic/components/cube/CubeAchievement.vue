@@ -53,7 +53,7 @@ import DropdownDivider from '@/components/DropdownDivider'
 
 
 export default {
-  name: 'Achievement',
+  name: 'CubeAchievement',
 
   components: {
     DropdownMenu,

@@ -6,7 +6,7 @@
 
     <div class="modal-body">
       <div v-if="card" class="container">
-        <Card :card="card" />
+        <MagicCard :card="card" />
         <div class="zone-buttons">
           <div>modify:</div>
           <button :class="mainButtonClasses" @click="setZone('main')">maindeck ({{ count('main') }})</button>
@@ -33,14 +33,14 @@
 
 
 <script>
-import Card from '../Card'
 import ModalBase from '@/components/ModalBase'
+import MagicCard from '../MagicCard'
 
 export default {
   name: 'CardManagerModal',
 
   components: {
-    Card,
+    MagicCard,
     ModalBase,
   },
 

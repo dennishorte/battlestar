@@ -2,7 +2,7 @@
   <span class="reminder-text">
     (<template v-for="(part, index) in parts" :key="part.text + '-' + index">
       <span v-if="part.type === 'text'">{{ part.text }}</span>
-      <Mana v-if="part.type === 'symbol'" :m="part.text" />
+      <ManaSymbol v-if="part.type === 'symbol'" :m="part.text" />
     </template>)
   </span>
 </template>
@@ -11,13 +11,13 @@
 <script>
 import { mag } from 'battlestar-common'
 
-import Mana from './Mana'
+import ManaSymbol from './ManaSymbol'
 
 export default {
   name: 'OracleText',
 
   components: {
-    Mana,
+    ManaSymbol,
   },
 
   props: {

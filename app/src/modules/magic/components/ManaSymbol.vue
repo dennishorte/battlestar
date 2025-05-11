@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'Mana',
+  name: 'ManaSymbol',
 
   props: {
     m: {

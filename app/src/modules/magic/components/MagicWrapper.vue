@@ -1,7 +1,7 @@
 <template>
   <div class="magic-wrapper">
     <template v-if="allReady">
-      <Card v-if="!isTouchscreen && mouseoverCard" :card="mouseoverCard" :style="mouseoverPosition" />
+      <MagicCard v-if="!isTouchscreen && mouseoverCard" :card="mouseoverCard" :style="mouseoverPosition" />
 
       <slot/>
     </template>
@@ -19,14 +19,14 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 
-import Card from './Card'
+import MagicCard from './MagicCard'
 
 
 export default {
   name: 'MagicWrapper',
 
   components: {
-    Card,
+    MagicCard,
   },
 
   props: {

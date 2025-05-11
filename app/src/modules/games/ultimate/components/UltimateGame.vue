@@ -14,9 +14,9 @@
         </div>
 
         <div class="col game-column">
-          <Biscuits />
-          <Decks />
-          <Achievements />
+          <BiscuitsInfo />
+          <DecksInfo />
+          <AchievementsZone />
           <CardPile :zone="game.getZoneById('junk')" />
           <WaitingPanel />
         </div>
@@ -39,11 +39,11 @@
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
-import Achievements from './Achievements'
-import Biscuits from './Biscuits'
+import AchievementsZone from './AchievementsZone'
+import BiscuitsInfo from './BiscuitsInfo'
 import CardNameFull from './CardNameFull'
 import CardPile from './CardPile'
-import Decks from './Decks'
+import DecksInfo from './DecksInfo'
 import DropdownItem from '@/components/DropdownItem'
 import GameLogInnovation from './GameLogInnovation'
 import PlayerTableau from './PlayerTableau'
@@ -54,13 +54,13 @@ import CardsViewerModal from './CardsViewerModal'
 import DebugModal from '@/modules/games/common/components/DebugModal'
 
 export default {
-  name: 'Ultimate',
+  name: 'UltimateGame',
 
   components: {
-    Achievements,
-    Biscuits,
+    AchievementsZone,
+    BiscuitsInfo,
     CardPile,
-    Decks,
+    DecksInfo,
     DropdownItem,
     GameMenu,
     GameLogInnovation,

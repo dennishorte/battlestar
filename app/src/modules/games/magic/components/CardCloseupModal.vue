@@ -6,7 +6,7 @@
 
     <div v-if="selectedCard" class="modal-body">
       <div class="card-holder">
-        <Card v-if="cardIsVisible" :card="selectedCard" :size="270" />
+        <MagicCard v-if="cardIsVisible" :card="selectedCard" :size="270" />
       </div>
 
       <div v-if="cardIsVisible" class="labeled-input-wrapper mt-2">
@@ -50,7 +50,7 @@
 <script>
 import { mapState } from 'vuex'
 
-import Card from '@/modules/magic/components/Card'
+import MagicCard from '@/modules/magic/components/MagicCard'
 import CounterButtons from './CounterButtons'
 import ModalBase from '@/components/ModalBase'
 
@@ -59,7 +59,7 @@ export default {
   name: 'CardCloseupModal',
 
   components: {
-    Card,
+    MagicCard,
     CounterButtons,
     ModalBase,
   },

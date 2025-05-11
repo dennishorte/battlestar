@@ -16,7 +16,7 @@
 import CardFace from './CardFace'
 
 export default {
-  name: 'Card',
+  name: 'MagicCard',
 
   components: {
     CardFace,

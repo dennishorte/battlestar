@@ -33,7 +33,7 @@ import SettingsUltimate from './SettingsUltimate'
 
 
 export default {
-  name: 'Settings',
+  name: 'LobbySettings',
 
   components: {
     SettingsCubeDraft,

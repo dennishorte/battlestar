@@ -6,7 +6,7 @@
   <CubeDraft v-else-if="gameType === 'Cube Draft' || gameType === 'Set Draft'" />
   <MtgGame v-else-if="gameType === 'Magic'" />
   <InnovationGame v-else-if="gameType === 'Innovation'" />
-  <Ultimate v-else-if="gameType === 'Innovation: Ultimate'" />
+  <UltimateGame v-else-if="gameType === 'Innovation: Ultimate'" />
   <TyrantsGame v-else-if="gameType === 'Tyrants of the Underdark'" />
 
   <div v-else>
@@ -23,7 +23,7 @@ import mitt from 'mitt'
 
 import CubeDraft from '@/modules/games/cube_draft/components/CubeDraft'
 import InnovationGame from '@/modules/games/inn/components/InnovationGame'
-import Ultimate from '@/modules/games/ultimate/components/Ultimate'
+import UltimateGame from '@/modules/games/ultimate/components/UltimateGame'
 import MtgGame from '@/modules/games/magic/components/MtgGame'
 import TyrantsGame from '@/modules/games/tyrants/components/TyrantsGame'
 
@@ -38,7 +38,7 @@ export default {
     InnovationGame,
     MtgGame,
     TyrantsGame,
-    Ultimate,
+    UltimateGame,
 
     SavingOverlay,
   },

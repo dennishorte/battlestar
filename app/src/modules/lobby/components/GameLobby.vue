@@ -45,7 +45,7 @@ import { computed } from 'vue'
 import EditableText from '@/components/EditableText'
 import GameHeader from '@/components/GameHeader'
 import LobbyPlayerList from '../components/PlayerList'
-import LobbySettings from '../components/Settings'
+import LobbySettings from '../components/LobbySettings'
 import MagicWrapper from '@/modules/magic/components/MagicWrapper'
 
 

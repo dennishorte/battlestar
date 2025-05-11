@@ -7,12 +7,12 @@
     <div class="row">
       <div class="col">
         <h3>Unclaimed Achievements</h3>
-        <Achievement v-for="ach in sortedAchievements" :key="ach._id" :ach="ach" />
+        <CubeAchievement v-for="ach in sortedAchievements" :key="ach._id" :ach="ach" />
       </div>
 
       <div class="col">
         <h3>Claimed Achievements</h3>
-        <Achievement v-for="ach in claimedAchievements" :key="ach._id" :ach="ach" />
+        <CubeAchievement v-for="ach in claimedAchievements" :key="ach._id" :ach="ach" />
       </div>
     </div>
 
@@ -21,14 +21,14 @@
 
 
 <script>
-import Achievement from './Achievement.vue'
+import CubeAchievement from './CubeAchievement.vue'
 
 
 export default {
-  name: 'Achievements',
+  name: 'CubeAchievements',
 
   components: {
-    Achievement,
+    CubeAchievement,
   },
 
   inject: ['actor', 'cubeId'],

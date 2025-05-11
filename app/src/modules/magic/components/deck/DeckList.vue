@@ -47,7 +47,7 @@ import DeckSettingsModal from './DeckSettingsModal'
 
 
 export default {
-  name: 'Decklist',
+  name: 'DeckList',
 
   components: {
     DecklistSection,

@@ -1,6 +1,6 @@
 <template>
   <div class="card-editor" v-if="Boolean(model)">
-    <Card
+    <MagicCard
       :size="270"
       :card="editing"
       class="preview"
@@ -26,14 +26,14 @@
 <script>
 import { magic } from 'battlestar-common'
 
-import Card from './Card.vue'
+import MagicCard from './MagicCard.vue'
 
 
 export default {
   name: 'CardEditor',
 
   components: {
-    Card,
+    MagicCard,
   },
 
   inject: ['bus'],

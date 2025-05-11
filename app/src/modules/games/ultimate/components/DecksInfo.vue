@@ -17,7 +17,7 @@
 
 <script>
 export default {
-  name: 'Decks',
+  name: 'DecksInfo',
 
   inject: ['game'],
 

@@ -1,6 +1,6 @@
 <template>
   <div class="mana-cost">
-    <Mana v-for="(mana, index) in symbols" :key="mana + '-' + index" :m="mana" />
+    <ManaSymbol v-for="(mana, index) in symbols" :key="mana + '-' + index" :m="mana" />
   </div>
 </template>
 
@@ -8,14 +8,14 @@
 <script>
 import { mag } from 'battlestar-common'
 
-import Mana from './Mana'
+import ManaSymbol from './ManaSymbol'
 
 
 export default {
   name: 'ManaCost',
 
   components: {
-    Mana,
+    ManaSymbol,
   },
 
   props: {

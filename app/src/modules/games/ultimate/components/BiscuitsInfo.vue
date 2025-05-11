@@ -32,7 +32,7 @@
 import CardBiscuit from './CardBiscuit'
 
 export default {
-  name: 'Biscuits',
+  name: 'BiscuitsInfo',
 
   components: {
     CardBiscuit,

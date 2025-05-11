@@ -4,7 +4,7 @@
 
       <div class="col">
         <MagicMenu />
-        <Decks @deck-clicked="viewDeck" />
+        <PlayerDecks @deck-clicked="viewDeck" />
       </div>
 
       <div class="col">
@@ -37,7 +37,7 @@
 <script>
 import { mapState } from 'vuex'
 
-import Decks from './deck/Decks'
+import PlayerDecks from './deck/PlayerDecks'
 import DraftList from './DraftList'
 import MagicMenu from './MagicMenu'
 import SectionHeader from '@/components/SectionHeader'
@@ -46,7 +46,7 @@ export default {
   name: 'MagicProfile',
 
   components: {
-    Decks,
+    PlayerDecks,
     DraftList,
     MagicMenu,
     SectionHeader,

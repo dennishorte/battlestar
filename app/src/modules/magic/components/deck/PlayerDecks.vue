@@ -46,7 +46,7 @@ import DropdownMenu from '@/components/DropdownMenu'
 import DropdownItem from '@/components/DropdownItem'
 
 export default {
-  name: 'Decks',
+  name: 'PlayerDecks',
 
   components: {
     SectionHeader,

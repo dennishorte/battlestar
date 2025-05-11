@@ -75,7 +75,7 @@
         </div>
       </div>
 
-      <Achievements
+      <CubeAchievements
         v-if="showing === 'achievements'"
         :achievements="achievements"
         :users="users"
@@ -105,7 +105,7 @@ import { nextTick } from 'vue'
 import AchievementModal from './AchievementModal'
 import AchievementViewerModal from './AchievementViewerModal'
 import AchievementSearchLinkerModal from './AchievementSearchLinkerModal'
-import Achievements from './Achievements'
+import CubeAchievements from './CubeAchievements'
 import CardEditorModal from '../CardEditorModal'
 import CubeBreakdown from './CubeBreakdown'
 import CardSearchModal from '../CardSearchModal'
@@ -125,7 +125,7 @@ export default {
     AchievementModal,
     AchievementViewerModal,
     AchievementSearchLinkerModal,
-    Achievements,
+    CubeAchievements,
     CardEditorModal,
     CardFilters,
     CardSearchModal,

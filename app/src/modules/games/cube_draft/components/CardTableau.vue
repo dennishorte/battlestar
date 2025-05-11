@@ -4,7 +4,9 @@
          v-for="card in cards"
          :key="card.g.id"
          @click="cardClicked(card)" >
-      <Card :size="220" :card="card" :scrollable="cardScroll" />
+      <div class="card-display" @click="showDraftModal = true">
+        <MagicCard :size="220" :card="card" :scrollable="cardScroll" />
+      </div>
       <div class="card-overlay" v-if="cannotDraft(card)"/>
     </div>
   </div>
@@ -12,14 +14,14 @@
 
 
 <script>
-import Card from '@/modules/magic/components/Card'
+import MagicCard from '@/modules/magic/components/MagicCard'
 
 
 export default {
   name: 'CardTableau',
 
   components: {
-    Card,
+    MagicCard,
   },
 
   emits: ['card-clicked'],

@@ -14,7 +14,7 @@
     </select>
 
     <template v-if="selectedAch">
-      <Achievement :ach="selectedAch" :hide-menu="true" class="mb-3" />
+      <CubeAchievement :ach="selectedAch" :hide-menu="true" class="mb-3" />
 
       <div>Existing Search</div>
 
@@ -39,7 +39,7 @@
 <script>
 import { mapState } from 'vuex'
 
-import Achievement from './Achievement'
+import CubeAchievement from './CubeAchievement'
 import CardFilterList from '../CardFilterList'
 import ModalBase from '@/components/ModalBase'
 
@@ -48,7 +48,7 @@ export default {
   name: 'AchievementViewerModal',
 
   components: {
-    Achievement,
+    CubeAchievement,
     CardFilterList,
     ModalBase,
   },
