@@ -45,8 +45,6 @@
 
 
 <script>
-import Vue from 'vue'
-
 import { selector, util } from 'battlestar-common'
 
 import OptionName from './OptionName'
@@ -59,6 +57,8 @@ export default {
   },
 
   inject: ['actor', 'game', 'bus'],
+
+  emits: ['selection-changed'],
 
   props: {
     required: {

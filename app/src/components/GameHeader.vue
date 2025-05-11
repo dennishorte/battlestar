@@ -33,8 +33,6 @@ import DropdownDivider from '@/components/DropdownDivider'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownRouterLink from '@/components/DropdownRouterLink'
 
-import modalWrapper from '@/util/modal.js'
-
 export default {
   name: 'GameHeader',
 

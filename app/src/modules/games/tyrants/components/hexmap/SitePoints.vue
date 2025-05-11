@@ -20,9 +20,18 @@ export default {
   name: 'SitePoints',
 
   props: {
-    cx: Number,
-    cy: Number,
-    value: Number,
+    cx: {
+      type: Number,
+      required: true
+    },
+    cy: {
+      type: Number,
+      required: true
+    },
+    value: {
+      type: Number,
+      required: true
+    },
   },
 
   data() {

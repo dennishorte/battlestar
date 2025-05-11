@@ -12,8 +12,6 @@
 
 
 <script>
-import { util } from 'battlestar-common'
-
 import Card from '@/modules/magic/components/Card'
 
 
@@ -23,6 +21,8 @@ export default {
   components: {
     Card,
   },
+
+  emits: ['card-clicked'],
 
   props: {
     cards: {

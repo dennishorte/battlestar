@@ -49,7 +49,6 @@
 
 <script>
 import { mapState } from 'vuex'
-import { util } from 'battlestar-common'
 
 import Card from '@/modules/magic/components/Card'
 import CounterButtons from './CounterButtons'

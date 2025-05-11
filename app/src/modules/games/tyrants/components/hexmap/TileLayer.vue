@@ -11,7 +11,10 @@ export default {
   name: 'TileLayer',
 
   props: {
-    tiles: Array,
+    tiles: {
+      type: Array,
+      required: true
+    },
   },
 
   computed: {

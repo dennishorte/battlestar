@@ -114,11 +114,11 @@ export default {
   },
 
   watch: {
-    alsoLoading(newValue) {
+    alsoLoading() {
       this.tryAfterLoaded()
     },
 
-    cardsReady(newValue) {
+    cardsReady() {
       this.tryAfterLoaded()
     },
   },

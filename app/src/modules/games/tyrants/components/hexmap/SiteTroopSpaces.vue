@@ -30,9 +30,18 @@ export default {
   name: 'SiteTroopSpaces',
 
   props: {
-    count: Number,
-    cx: Number,
-    cy: Number,
+    count: {
+      type: Number,
+      required: true
+    },
+    cx: {
+      type: Number,
+      required: true
+    },
+    cy: {
+      type: Number,
+      required: true
+    },
   },
 
   computed: {

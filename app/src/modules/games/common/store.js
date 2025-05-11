@@ -30,7 +30,7 @@ export default {
   },
 
   actions: {
-    async load({ commit, dispatch }, { gameId, actor }) {
+    async load({ commit }, { gameId, actor }) {
       commit('setGameReady', false)
       await nextTick()
 
@@ -41,7 +41,7 @@ export default {
       commit('setGameReady', true)
     },
 
-    async next({ commit }, { actor }) {
+    async next(_, { actor }) {
       const { gameId } = await this.$post('/api/user/next', {
         userId: actor._id,
         gameId: null,

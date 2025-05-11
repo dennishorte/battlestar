@@ -25,8 +25,14 @@ export default {
   name: 'Connector',
 
   props: {
-    id: String,
-    points: Object,
+    id: {
+      type: String,
+      required: true
+    },
+    points: {
+      type: Object,
+      required: true
+    },
 
     borderColor: {
       type: String,

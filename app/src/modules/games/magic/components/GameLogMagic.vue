@@ -27,7 +27,7 @@ export default {
       }
     },
 
-    cardClasses(card) {
+    cardClasses() {
       return 'card-name'
     },
 
@@ -50,12 +50,12 @@ export default {
       })
     },
 
-    convertCard(card) {
-      if (!card.classes.includes('card-hidden')) {
-        return `card(${card.cardId})`
+    convertCard(cardArg) {
+      if (!cardArg.classes.includes('card-hidden')) {
+        return `card(${cardArg.cardId})`
       }
       else {
-        return card.value
+        return cardArg.value
       }
     },
 

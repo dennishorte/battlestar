@@ -39,7 +39,6 @@
 
 
 <script>
-import { nextTick } from 'vue'
 import { util } from 'battlestar-common'
 
 import Modal from '@/components/Modal'

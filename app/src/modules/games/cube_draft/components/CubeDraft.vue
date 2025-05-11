@@ -115,7 +115,6 @@
 <script>
 import { v4 as uuidv4 } from 'uuid'
 
-import { computed, nextTick } from 'vue'
 import { mapState } from 'vuex'
 import { magic } from 'battlestar-common'
 
@@ -282,6 +281,7 @@ export default {
       this.gameReady = true
     },
 
+    // eslint-disable-next-line
     async scarApplied(scarIndex, updated, original) {
       throw new Error('not implemented')
       /* if (!updated) {

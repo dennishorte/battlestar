@@ -22,7 +22,10 @@ export default {
   },
 
   props: {
-    styledDivs: Array,
+    styledDivs: {
+      type: Array,
+      required: true
+    },
   },
 
   inject: ['game'],

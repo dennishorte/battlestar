@@ -76,7 +76,6 @@
 
 
 <script>
-import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
 import Decks from '@/modules/magic/components/deck/Decks'
@@ -120,7 +119,7 @@ export default {
   },
 
   methods: {
-    cardClicked(card) {
+    cardClicked() {
       throw new Error('Not implemented')
     },
 

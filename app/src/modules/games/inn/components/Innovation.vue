@@ -35,8 +35,6 @@
 
 
 <script>
-import { inn } from 'battlestar-common'
-
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 

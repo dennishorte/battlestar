@@ -95,12 +95,12 @@ export default {
   },
 
   watch: {
-    selectedIn(newValue) {
-      this.selected = selectedIn
+    selectedIn() {
+      this.selected = this.selectedIn
     },
 
     tiles: {
-      handler(newValue) {
+      handler() {
         this.sites = this
           .tiles
           .flatMap(tile => tile.sitesAbsolute().filter(x => x.kind !== 'troop-spot'))

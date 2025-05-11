@@ -169,7 +169,6 @@ export default {
 
     nestLog(entries, depth=0) {
       const output = []
-      let indent = 0
       let count = 0
 
       for (let i = 0; i < entries.length; i++) {
@@ -229,7 +228,7 @@ export default {
       this.$store.dispatch('game/save')
     },
 
-    indentSpacers(entry) {
+    indentSpacers() {
       return 0
       /* if (this.funcs.lineIndent) {
        *   return this.funcs.lineIndent(entry)

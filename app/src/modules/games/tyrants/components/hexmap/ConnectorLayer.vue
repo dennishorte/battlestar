@@ -21,7 +21,10 @@ export default {
   },
 
   props: {
-    tiles: Array,
+    tiles: {
+      type: Array,
+      required: true
+    },
   },
 
   computed: {

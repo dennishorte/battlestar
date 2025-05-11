@@ -20,7 +20,10 @@ export default {
   name: 'Spot',
 
   props: {
-    spot: Object,
+    spot: {
+      type: Object,
+      required: true
+    },
     highlight: {
       type: Boolean,
       default: false,

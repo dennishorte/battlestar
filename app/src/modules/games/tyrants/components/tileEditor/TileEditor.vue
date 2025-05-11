@@ -263,7 +263,7 @@ export default {
 
     deleteTile() {
       if (this.tile.id()) {
-        const result = this.$post('/api/tyrants/hex/delete', {
+        this.$post('/api/tyrants/hex/delete', {
           id: this.tile.id(),
         })
       }
@@ -430,7 +430,7 @@ export default {
 
     this.bus.on('site-mousedown', this.siteClicked)
 
-    viewer.addEventListener('mouseleave', (event) => {
+    viewer.addEventListener('mouseleave', () => {
 
     })
 
@@ -449,7 +449,7 @@ export default {
       }
     })
 
-    viewer.addEventListener('mouseup', (event) => {
+    viewer.addEventListener('mouseup', () => {
       this.dragging = false
     })
   },

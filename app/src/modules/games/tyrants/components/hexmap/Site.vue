@@ -33,7 +33,10 @@ export default {
   },
 
   props: {
-    site: Object,
+    site: {
+      type: Object,
+      required: true
+    },
     highlight: {
       type: Boolean,
       default: false,

@@ -43,7 +43,6 @@
 
 
 <script>
-import { nextTick } from 'vue'
 import { util, tyr } from 'battlestar-common'
 
 import maps from '../res/maps.js'
@@ -257,14 +256,17 @@ export default {
       }
     },
 
+    // eslint-disable-next-line
     waitingMouseEntered(data) {
       // console.log('mouse-entered', data)
     },
 
+    // eslint-disable-next-line
     waitingMouseExited(data) {
       // console.log('mouse-exited', data)
     },
 
+    // eslint-disable-next-line
     waitingSelectionChanged(data) {
       // console.log('selection-changed', data)
     },

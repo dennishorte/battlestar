@@ -30,7 +30,10 @@ export default {
   name: 'GameCard',
 
   props: {
-    card: Object,
+    card: {
+      type: Object,
+      required: true
+    },
     expandedIn: {
       type: Boolean,
       default: false,

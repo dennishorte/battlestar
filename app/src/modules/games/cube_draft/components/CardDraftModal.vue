@@ -20,8 +20,6 @@
 
 
 <script>
-import { util } from 'battlestar-common'
-
 import Card from '@/modules/magic/components/Card'
 import Modal from '@/components/Modal'
 
@@ -33,6 +31,8 @@ export default {
     Card,
     Modal,
   },
+
+  emits: ['draft-card'],
 
   props: {
     card: {

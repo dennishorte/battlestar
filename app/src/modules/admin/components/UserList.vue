@@ -71,7 +71,7 @@ export default {
     },
 
     edit(user) {
-      alert('not implemented')
+      alert(`Not implemented: Would edit user ${user.name}`)
     },
   },
 }

@@ -26,7 +26,10 @@ export default {
   inject: ['game', 'ui'],
 
   props: {
-    loc: Object,
+    loc: {
+      type: Object,
+      required: true
+    },
   },
 
   computed: {
