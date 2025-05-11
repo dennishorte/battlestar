@@ -36,7 +36,7 @@
 
 <script>
 export default {
-  name: 'Modal',
+  name: 'ModalBase',
 
   emits: ['cancel', 'ok'],
 

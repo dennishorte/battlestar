@@ -1,5 +1,5 @@
 <template>
-  <Modal>
+  <ModalBase>
     <template #header>
       Add Set Filter
     </template>
@@ -17,12 +17,12 @@
         pick
       </button>
     </template>
-  </Modal>
+  </ModalBase>
 </template>
 
 
 <script>
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 import SetPicker from './SetPicker'
 
 
@@ -30,7 +30,7 @@ export default {
   name: 'SetPickerModal',
 
   components: {
-    Modal,
+    ModalBase,
     SetPicker,
   },
 

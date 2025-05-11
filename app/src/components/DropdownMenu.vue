@@ -20,7 +20,7 @@
 
 <script>
 export default {
-  name: 'Dropdown',
+  name: 'DropdownMenu',
 
   props: {
     menuEnd: {

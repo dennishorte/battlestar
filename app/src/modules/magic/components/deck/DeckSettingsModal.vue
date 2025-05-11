@@ -1,5 +1,5 @@
 <template>
-  <Modal id="deck-settings-modal">
+  <ModalBase id="deck-settings-modal">
     <template #header>Deck Settings</template>
 
     <div class="settings-form">
@@ -36,17 +36,17 @@
       <button class="btn btn-secondary" @click="cancel" data-bs-dismiss="modal">Cancel</button>
       <button class="btn btn-primary" @click="saveSettings" data-bs-dismiss="modal">Save</button>
     </template>
-  </Modal>
+  </ModalBase>
 </template>
 
 <script>
-import Modal from '@/components/Modal.vue'
+import ModalBase from '@/components/ModalBase'
 
 export default {
   name: 'DeckSettingsModal',
 
   components: {
-    Modal
+    ModalBase
   },
 
   props: {

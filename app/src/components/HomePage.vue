@@ -23,7 +23,7 @@ import MyGames from './MyGames'
 import MyLobbies from './MyLobbies'
 
 export default {
-  name: 'Home',
+  name: 'HomePage',
   components: {
     GameHeader,
     MyGames,

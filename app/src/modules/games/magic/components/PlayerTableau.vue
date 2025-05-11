@@ -120,22 +120,26 @@
       </TableauZone>
     </div>
 
-    <Modal :id="`magic-die-roll-modal-${player.name}`" @ok="rollDieDo">
+    <!-- Die Roll Modal -->
+    <ModalBase :id="`magic-die-roll-modal-${player.name}`" @ok="rollDieDo">
       <template #header>Roll a Die</template>
       <input class="form-control" placeholder="number of faces" v-model.number="dieFaces" />
-    </Modal>
+    </ModalBase>
 
-    <Modal :id="`magic-shuffle-bottom-${player.name}`" @ok="shuffleBottomDo">
+    <!-- Shuffle Bottom Modal -->
+    <ModalBase :id="`magic-shuffle-bottom-${player.name}`" @ok="shuffleBottomDo">
       <template #header>Shuffle Bottom of Library</template>
       <input class="form-control" placeholder="number to shuffle" v-model.number="shuffleBottomCount" />
-    </Modal>
+    </ModalBase>
 
-    <Modal :id="`magic-top-n-modal-${player.name}`" @ok="viewTopNDo">
+    <!-- Top N Modal -->
+    <ModalBase :id="`magic-top-n-modal-${player.name}`" @ok="viewTopNDo">
       <template #header>View Top Cards of Library</template>
       <input class="form-control" placeholder="number to view" v-model.number="topNCount" />
-    </Modal>
+    </ModalBase>
 
-    <Modal :id="`make-token-modal-${player.name}`" @ok="makeTokenDo">
+    <!-- Make Token Modal -->
+    <ModalBase :id="`make-token-modal-${player.name}`" @ok="makeTokenDo">
       <template #header>Make Tokens</template>
       <input class="form-control" v-model="token.name" placeholder="name" />
       <input class="form-control mt-2" v-model="token.annotation" placeholder="annotation" />
@@ -147,7 +151,7 @@
         <input class="form-check-input" type="checkbox" v-model="token.morph" />
         <label class="form-check-label">morphed</label>
       </div>
-    </Modal>
+    </ModalBase>
 
     <ImportCardModal :id="`import-card-modal-${player.name}`" :zone-suggestion="importZoneId" @import-card="importCardDo" />
 
@@ -174,7 +178,7 @@ import { mapGetters } from 'vuex'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
 import ImportCardModal from './ImportCardModal'
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 import PlayerCounters from './PlayerCounters'
 import TableauZone from './TableauZone'
 import TableauZoneMenu from './TableauZoneMenu'
@@ -187,7 +191,7 @@ export default {
     DropdownButton,
     DropdownDivider,
     ImportCardModal,
-    Modal,
+    ModalBase,
     PlayerCounters,
     TableauZone,
     TableauZoneMenu,

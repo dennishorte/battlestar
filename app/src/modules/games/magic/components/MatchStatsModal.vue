@@ -1,6 +1,6 @@
 <template>
-  <Modal id="match-stats-modal" ref="modal">
-    <template #header>Match Stats</template>
+  <ModalBase id="match-stats-modal" ref="modal">
+    <template #header>Match Statistics</template>
 
     <template v-if="!!draft">
       <div class="alert alert-info result-container">
@@ -34,21 +34,21 @@
         </table>
       </div>
     </template>
-  </Modal>
+  </ModalBase>
 </template>
 
 
 <script>
 import { util } from 'battlestar-common'
 
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 
 export default {
   name: 'MatchStatsModal',
 
   components: {
-    Modal,
+    ModalBase,
   },
 
   inject: ['actor', 'game'],

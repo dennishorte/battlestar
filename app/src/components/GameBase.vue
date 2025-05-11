@@ -31,7 +31,7 @@ import SavingOverlay from '@/modules/games/common/components/SavingOverlay'
 
 
 export default {
-  name: 'Game',
+  name: 'GameBase',
 
   components: {
     CubeDraft,

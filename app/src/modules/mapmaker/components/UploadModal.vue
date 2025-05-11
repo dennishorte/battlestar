@@ -1,24 +1,25 @@
 <template>
-  <Modal id="upload-modal" @ok="maybeLoad">
-    <template #header>Load from file</template>
+  <ModalBase id="upload-modal" @ok="maybeLoad">
+    <template #header>Upload a File</template>
 
-    <input class="form-control"
-           type="file"
-           id="formFile"
-           ref="fileinput"/>
-  </Modal>
+    <input
+      class="form-control"
+      type="file"
+      @change="selectFile"
+    />
+  </ModalBase>
 </template>
 
 
 <script>
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 
 export default {
   name: 'UploadModal',
 
   components: {
-    Modal,
+    ModalBase,
   },
 
   emits: ['file-ready'],

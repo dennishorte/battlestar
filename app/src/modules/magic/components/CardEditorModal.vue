@@ -1,5 +1,5 @@
 <template>
-  <Modal id="card-editor-modal">
+  <ModalBase id="card-editor-modal">
     <template #header>
       Card Editor
     </template>
@@ -19,13 +19,13 @@
                 :disabled="!updatedCard">save</button>
       </slot>
     </template>
-  </Modal>
+  </ModalBase>
 </template>
 
 
 <script>
 import CardEditor from './CardEditor'
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 
 export default {
@@ -33,7 +33,7 @@ export default {
 
   components: {
     CardEditor,
-    Modal,
+    ModalBase,
   },
 
   inject: ['actor', 'bus'],

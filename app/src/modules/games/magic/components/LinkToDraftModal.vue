@@ -1,5 +1,5 @@
 <template>
-  <Modal id="link-to-draft-modal" @ok="link">
+  <ModalBase id="link-to-draft-modal" @ok="link">
     <template #header>Link to Draft</template>
 
     <div class="modal-body">
@@ -22,21 +22,21 @@
       </select>
 
     </div>
-  </Modal>
+  </ModalBase>
 </template>
 
 
 <script>
 import { mapState } from 'vuex'
 
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 
 export default {
   name: 'LinkToDraftModal',
 
   components: {
-    Modal,
+    ModalBase,
   },
 
   inject: ['actor', 'game'],

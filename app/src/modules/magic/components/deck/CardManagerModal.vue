@@ -1,45 +1,47 @@
 <template>
-  <Modal id="card-manager-modal">
+  <ModalBase id="card-manager-modal">
     <template #header v-if="card">
       {{ card.name() }}
     </template>
 
-    <div v-if="card" class="container">
-      <Card :card="card" />
-      <div class="zone-buttons">
-        <div>modify:</div>
-        <button :class="mainButtonClasses" @click="setZone('main')">maindeck ({{ count('main') }})</button>
-        <button :class="sideButtonClasses" @click="setZone('side')">sideboard ({{ count('side') }})</button>
-        <button :class="commandButtonClasses" @click="setZone('command')">command ({{ count('command') }})</button>
-      </div>
+    <div class="modal-body">
+      <div v-if="card" class="container">
+        <Card :card="card" />
+        <div class="zone-buttons">
+          <div>modify:</div>
+          <button :class="mainButtonClasses" @click="setZone('main')">maindeck ({{ count('main') }})</button>
+          <button :class="sideButtonClasses" @click="setZone('side')">sideboard ({{ count('side') }})</button>
+          <button :class="commandButtonClasses" @click="setZone('command')">command ({{ count('command') }})</button>
+        </div>
 
-      <div>
-        <button class="btn btn-success" @click="addCard">add</button>
-        <button class="btn btn-warning" @click="removeCard">remove</button>
-      </div>
+        <div>
+          <button class="btn btn-success" @click="addCard">add</button>
+          <button class="btn btn-warning" @click="removeCard">remove</button>
+        </div>
 
-      <div>
-        <div>move to:</div>
-        <button class="btn btn-secondary" :disabled="zone === 'main'" @click="moveTo('main')">maindeck</button>
-        <button class="btn btn-secondary" :disabled="zone === 'side'" @click="moveTo('side')">sideboard</button>
-        <button class="btn btn-secondary" :disabled="zone === 'command'" @click="moveTo('command')">command</button>
-      </div>
+        <div>
+          <div>move to:</div>
+          <button class="btn btn-secondary" :disabled="zone === 'main'" @click="moveTo('main')">maindeck</button>
+          <button class="btn btn-secondary" :disabled="zone === 'side'" @click="moveTo('side')">sideboard</button>
+          <button class="btn btn-secondary" :disabled="zone === 'command'" @click="moveTo('command')">command</button>
+        </div>
 
+      </div>
     </div>
-  </Modal>
+  </ModalBase>
 </template>
 
 
 <script>
 import Card from '../Card'
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 export default {
   name: 'CardManagerModal',
 
   components: {
     Card,
-    Modal,
+    ModalBase,
   },
 
   inject: ['bus'],

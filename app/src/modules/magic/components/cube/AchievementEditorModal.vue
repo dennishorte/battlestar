@@ -1,5 +1,5 @@
 <template>
-  <Modal id="achievement-editor" @ok="save">
+  <ModalBase id="achievement-editor" @ok="save">
     <template #header>Achievement Editor</template>
 
     <div class="mb-3">
@@ -35,16 +35,21 @@
     </div>
 
     <button class="btn btn-primary" @click="addHidden" v-if="showAll">add hidden tab</button>
-  </Modal>
+  </ModalBase>
 </template>
 
 
 <script>
 import { util } from 'battlestar-common'
+import ModalBase from '@/components/ModalBase'
 
 
 export default {
   name: 'AchievementEditorModal',
+
+  components: {
+    ModalBase,
+  },
 
   emits: ['achievements-updated'],
 

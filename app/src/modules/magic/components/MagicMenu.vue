@@ -1,5 +1,5 @@
 <template>
-  <Dropdown class="game-menu">
+  <DropdownMenu class="game-menu">
     <template #title>{{ title }}</template>
 
     <DropdownRouterLink to="/">game center</DropdownRouterLink>
@@ -7,13 +7,13 @@
     <DropdownRouterLink to="/magic">magic</DropdownRouterLink>
     <DropdownDivider />
     <DropdownButton @click="updateDatabase">update database</DropdownButton>
-  </Dropdown>
+  </DropdownMenu>
 
 </template>
 
 
 <script>
-import Dropdown from '@/components/Dropdown'
+import DropdownMenu from '@/components/DropdownMenu'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
 import DropdownRouterLink from '@/components/DropdownRouterLink'
@@ -22,7 +22,7 @@ export default {
   name: 'MagicMenu',
 
   components: {
-    Dropdown,
+    DropdownMenu,
     DropdownButton,
     DropdownDivider,
     DropdownRouterLink,

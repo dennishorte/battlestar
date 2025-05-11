@@ -1,5 +1,5 @@
 <template>
-  <Modal id="card-draft-modal">
+  <ModalBase id="card-draft-modal">
     <div v-if="!!card" class="modal-body">
       <div class="card-holder">
         <Card :card="card" :size="270" />
@@ -15,13 +15,13 @@
         :disabled="cannotDraft"
       >draft</button>
     </template>
-  </Modal>
+  </ModalBase>
 </template>
 
 
 <script>
 import Card from '@/modules/magic/components/Card'
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 
 export default {
@@ -29,7 +29,7 @@ export default {
 
   components: {
     Card,
-    Modal,
+    ModalBase,
   },
 
   emits: ['draft-card'],

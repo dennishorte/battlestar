@@ -11,7 +11,7 @@
 
 <script>
 export default {
-  name: 'Phase Button',
+  name: 'PhaseButton',
 
   inject: ['do', 'game'],
 

@@ -1,5 +1,5 @@
 <template>
-  <Modal id="achievement-editor" @ok="save">
+  <ModalBase id="achievement-editor" @ok="save">
     <template #header>Achievement Editor</template>
 
     <template v-if="!!achievement">
@@ -37,20 +37,20 @@
 
       <button class="btn btn-primary" @click="addHidden" v-if="showAll">add hidden tab</button>
     </template>
-  </Modal>
+  </ModalBase>
 </template>
 
 
 <script>
 import { mapState } from 'vuex'
 
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 export default {
   name: 'AchievementModal',
 
   components: {
-    Modal,
+    ModalBase,
   },
 
   computed: {

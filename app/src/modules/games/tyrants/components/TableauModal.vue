@@ -1,5 +1,5 @@
 <template>
-  <Modal id="tableau-modal" scrollable>
+  <ModalBase id="tableau-modal" scrollable>
     <template #header>{{ title }}</template>
 
     <div class="row" v-if="!!player">
@@ -63,7 +63,7 @@
       </div>
 
     </div>
-  </Modal>
+  </ModalBase>
 </template>
 
 
@@ -71,7 +71,7 @@
 import { util } from 'battlestar-common'
 
 import GameCard from './GameCard'
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 
 export default {
@@ -79,7 +79,7 @@ export default {
 
   components: {
     GameCard,
-    Modal,
+    ModalBase,
   },
 
   inject: ['actor', 'game', 'ui'],

@@ -1,5 +1,5 @@
 <template>
-  <Modal id="achievement-search-linker-modal">
+  <ModalBase id="achievement-search-linker-modal">
     <template #header>Link Search to Achievement</template>
 
     <label class="form-label">Achievement to Link</label>
@@ -32,7 +32,7 @@
       <button class="btn btn-primary" @click="link">link</button>
     </template>
 
-  </Modal>
+  </ModalBase>
 </template>
 
 
@@ -41,7 +41,7 @@ import { mapState } from 'vuex'
 
 import Achievement from './Achievement'
 import CardFilterList from '../CardFilterList'
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 
 export default {
@@ -50,7 +50,7 @@ export default {
   components: {
     Achievement,
     CardFilterList,
-    Modal,
+    ModalBase,
   },
 
   props: {

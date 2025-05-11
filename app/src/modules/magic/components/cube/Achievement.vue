@@ -18,7 +18,7 @@
     </div>
 
     <div v-if="!hideMenu">
-      <Dropdown :notitle="true">
+      <DropdownMenu :notitle="true">
 
         <template v-if="claimed">
           <DropdownButton @click="view">view</DropdownButton>
@@ -37,7 +37,7 @@
           <DropdownDivider />
           <DropdownButton @click="del">delete</DropdownButton>
         </template>
-      </Dropdown>
+      </DropdownMenu>
     </div>
   </div>
 </template>
@@ -47,7 +47,7 @@
 import { mapState } from 'vuex'
 import { util } from 'battlestar-common'
 
-import Dropdown from '@/components/Dropdown'
+import DropdownMenu from '@/components/DropdownMenu'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
 
@@ -56,7 +56,7 @@ export default {
   name: 'Achievement',
 
   components: {
-    Dropdown,
+    DropdownMenu,
     DropdownButton,
     DropdownDivider,
   },

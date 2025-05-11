@@ -22,10 +22,10 @@
           <td>{{ user.name }}</td>
           <td>{{ user.slack }}</td>
           <td>
-            <Dropdown :notitle="true">
+            <DropdownMenu :notitle="true">
               <DropdownItem><button @click="deactivate(user._id)">deactivate</button></DropdownItem>
               <DropdownItem><button @click="edit(user)">edit</button></DropdownItem>
-            </Dropdown>
+            </DropdownMenu>
           </td>
         </tr>
       </tbody>
@@ -35,14 +35,14 @@
 </template>
 
 <script>
-import Dropdown from '@/components/Dropdown'
+import DropdownMenu from '@/components/DropdownMenu'
 import DropdownItem from '@/components/DropdownItem'
 
 export default {
   name: 'UserList',
 
   components: {
-    Dropdown,
+    DropdownMenu,
     DropdownItem,
   },
 

@@ -1,5 +1,5 @@
 <template>
-  <Modal id="card-closeup-modal" @ok="saveChanges">
+  <ModalBase id="card-closeup-modal" @ok="saveChanges">
     <template #header>
       <div class="header-button" @click="debug">debug</div>
     </template>
@@ -43,7 +43,7 @@
 
       </div>
     </div>
-  </Modal>
+  </ModalBase>
 </template>
 
 
@@ -52,7 +52,7 @@ import { mapState } from 'vuex'
 
 import Card from '@/modules/magic/components/Card'
 import CounterButtons from './CounterButtons'
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 
 export default {
@@ -61,7 +61,7 @@ export default {
   components: {
     Card,
     CounterButtons,
-    Modal,
+    ModalBase,
   },
 
   inject: ['actor', 'do', 'game'],

@@ -25,9 +25,9 @@
             </td>
             <td>{{ lobbyAge(lobby.createdTimestamp) }}</td>
             <td>
-              <Dropdown :notitle="true">
+              <DropdownMenu :notitle="true">
                 <DropdownItem @click="kill(lobby._id)">kill</DropdownItem>
-              </Dropdown>
+              </DropdownMenu>
             </td>
           </tr>
         </template>
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import Dropdown from '@/components/Dropdown'
+import DropdownMenu from '@/components/DropdownMenu'
 import DropdownItem from '@/components/DropdownItem'
 
 
@@ -52,7 +52,7 @@ export default {
   },
 
   components: {
-    Dropdown,
+    DropdownMenu,
     DropdownItem,
   },
 

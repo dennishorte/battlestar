@@ -1,5 +1,5 @@
 <template>
-  <Modal id="counter-closeup-modal">
+  <ModalBase id="counter-closeup-modal">
     <template #header>Player Counters</template>
 
     <div class="modal-body">
@@ -26,12 +26,12 @@
       </div>
 
     </div>
-  </Modal>
+  </ModalBase>
 </template>
 
 
 <script>
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 import PlayerCounter from './PlayerCounter'
 
 
@@ -39,7 +39,7 @@ export default {
   name: 'CounterCloseupModal',
 
   components: {
-    Modal,
+    ModalBase,
     PlayerCounter,
   },
 

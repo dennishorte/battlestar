@@ -1,6 +1,6 @@
 <template>
   <div class="menu-wrapper">
-    <Dropdown class="game-menu">
+    <DropdownMenu class="game-menu">
       <template #title>{{ game.settings.name }}</template>
 
       <DropdownButton @click="home" :disabled="disabled.includes('home')">home</DropdownButton>
@@ -9,7 +9,7 @@
       <DropdownButton @click="debug" :disabled="disabled.includes('debug')">debug</DropdownButton>
 
       <slot/>
-    </Dropdown>
+    </DropdownMenu>
 
     <button v-if="!disabled.includes('undo')" class="btn btn-secondary" @click="undo">undo</button>
   </div>
@@ -17,7 +17,7 @@
 
 
 <script>
-import Dropdown from '@/components/Dropdown'
+import DropdownMenu from '@/components/DropdownMenu'
 import DropdownDivider from '@/components/DropdownDivider'
 import DropdownButton from '@/components/DropdownButton'
 
@@ -25,7 +25,7 @@ export default {
   name: 'GameMenu',
 
   components: {
-    Dropdown,
+    DropdownMenu,
     DropdownDivider,
     DropdownButton,
   },

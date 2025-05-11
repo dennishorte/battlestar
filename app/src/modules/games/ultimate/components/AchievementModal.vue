@@ -1,21 +1,21 @@
 <template>
-  <Modal id="achievement-modal">
+  <ModalBase id="achievement-modal">
     <template #header>{{ title }}</template>
     <CardText :text="text" />
-  </Modal>
+  </ModalBase>
 </template>
 
 
 <script>
 import CardText from './CardText'
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 export default {
   name: 'CardsViewerModal',
 
   components: {
     CardText,
-    Modal,
+    ModalBase,
   },
 
   inject: ['game'],

@@ -2,11 +2,11 @@
   <div class="deck-list" :class="deck.isModified() ? 'modified' : ''">
     <div class="header">
       <button :disabled="!deck.isModified()" class="btn btn-primary save-button" @click="saveChanges">save</button>
-      <Dropdown :notitle="true">
+      <DropdownMenu :notitle="true">
         <DropdownButton @click="openDeckSettings">settings</DropdownButton>
         <DropdownButton @click="openImportModal" :disabled="true">load decklist</DropdownButton>
         <DropdownButton @click="downloadDecklist" :disabled="true">export</DropdownButton>
-      </Dropdown>
+      </DropdownMenu>
       <div class="deck-name me-2">{{ deck.name }} ({{ maindeckSize }})</div>
     </div>
 
@@ -38,7 +38,7 @@
 // import { saveAs } from 'file-saver'
 
 import DecklistSection from './DecklistSection'
-import Dropdown from '@/components/Dropdown'
+import DropdownMenu from '@/components/DropdownMenu'
 import DropdownButton from '@/components/DropdownButton'
 
 import CardManagerModal from './CardManagerModal'
@@ -51,7 +51,7 @@ export default {
 
   components: {
     DecklistSection,
-    Dropdown,
+    DropdownMenu,
     DropdownButton,
 
     CardManagerModal,

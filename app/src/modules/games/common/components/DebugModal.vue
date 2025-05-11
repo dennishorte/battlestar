@@ -1,5 +1,5 @@
 <template>
-  <Modal id="debug-modal">
+  <ModalBase id="debug-modal">
     <template #header>debug</template>
     <div style="white-space: pre; font-family: monospace;">
       {{ gameData }}
@@ -10,18 +10,18 @@
       <button class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
       <button class="btn btn-primary" data-bs-dismiss="modal">ok</button>
     </template>
-  </Modal>
+  </ModalBase>
 </template>
 
 
 <script>
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 export default {
   name: 'DebugModal',
 
   components: {
-    Modal,
+    ModalBase,
   },
 
   inject: ['game'],

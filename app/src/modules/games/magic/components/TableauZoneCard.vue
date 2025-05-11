@@ -41,7 +41,7 @@
     </div>
 
     <div ref="menu" :class="highlighted ? '' : 'd-none'">
-      <Dropdown :notitle="true" :menu-end="true" class="menu dropdown">
+      <DropdownMenu :notitle="true" :menu-end="true" class="menu dropdown">
         <DropdownButton @click.stop="twiddle" v-if="card.g.tapped">untap</DropdownButton>
         <DropdownButton @click.stop="twiddle" v-else>tap</DropdownButton>
 
@@ -75,7 +75,7 @@
           <i class="bi bi-square" v-else/>
         </DropdownButton>
 
-      </Dropdown>
+      </DropdownMenu>
     </div>
 
   </div>
@@ -87,7 +87,7 @@ import { Dropdown as bsDropdown } from 'bootstrap'
 
 import CardListItem from '@/modules/magic/components/CardListItem'
 import CounterButtons from './CounterButtons'
-import Dropdown from '@/components/Dropdown'
+import DropdownMenu from '@/components/DropdownMenu'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
 
@@ -98,7 +98,7 @@ export default {
   components: {
     CardListItem,
     CounterButtons,
-    Dropdown,
+    DropdownMenu,
     DropdownButton,
     DropdownDivider,
   },

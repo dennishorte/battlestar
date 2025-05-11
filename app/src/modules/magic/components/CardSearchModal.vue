@@ -1,5 +1,5 @@
 <template>
-  <Modal @ok="onOkay" ref="modalTop">
+  <ModalBase @ok="onOkay" ref="modalTop">
     <template #header>
       <slot name="header"/>
     </template>
@@ -40,7 +40,7 @@
         </div>
       </template>
     </div>
-  </Modal>
+  </ModalBase>
 </template>
 
 
@@ -48,7 +48,7 @@
 import { mag } from 'battlestar-common'
 
 import Card from '@/modules/magic/components/Card'
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 
 export default {
@@ -56,7 +56,7 @@ export default {
 
   components: {
     Card,
-    Modal,
+    ModalBase,
   },
 
   emits: ['card-selected'],

@@ -1,5 +1,5 @@
 <template>
-  <Modal :id="modalId" @ok="handleOk">
+  <ModalBase :id="modalId" @ok="handleOk">
     <template #header>
       <slot name="header">Import Cards</slot>
     </template>
@@ -26,7 +26,7 @@
     </div>
 
     <slot name="bottom-content"/>
-  </Modal>
+  </ModalBase>
 </template>
 
 <script setup>
@@ -34,7 +34,7 @@ import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { mag, util } from 'battlestar-common'
 
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 const props = defineProps({
   modalId: {

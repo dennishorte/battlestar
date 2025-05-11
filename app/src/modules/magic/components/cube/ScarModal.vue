@@ -1,5 +1,5 @@
 <template>
-  <Modal id="scar-modal">
+  <ModalBase id="scar-modal">
     <template #header>Scar Creator</template>
 
     <template v-if="!!scar">
@@ -11,21 +11,21 @@
       <button class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
       <button class="btn btn-danger" @click="save" data-bs-dismiss="modal">save</button>
     </template>
-  </Modal>
+  </ModalBase>
 </template>
 
 
 <script>
 import { mapState } from 'vuex'
 
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 
 export default {
   name: 'ScarModal',
 
   components: {
-    Modal,
+    ModalBase,
   },
 
   computed: {

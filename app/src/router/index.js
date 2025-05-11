@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import Home from '@/components/Home'
-import Game from '@/components/Game'
+import HomePage from '@/components/HomePage'
+import GameBase from '@/components/GameBase'
 import GameEditor from '@/modules/games/common/components/GameEditor'
 
 import TyrantsTileEditor from '@/modules/games/tyrants/components/tileEditor/TileEditor'
@@ -23,12 +23,12 @@ const router = createRouter({
     {
       path: '/',
       name: 'Home',
-      component: Home,
+      component: HomePage,
     },
     {
       path: '/game/:id',
       name: 'game',
-      component: Game,
+      component: GameBase,
     },
     {
       path: '/game/editor/:id',

@@ -1,5 +1,5 @@
 <template>
-  <Modal id="cube-settings-modal">
+  <ModalBase id="cube-settings-modal">
     <template #header>
       Cube Settings
     </template>
@@ -26,17 +26,17 @@
       <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
       <button class="btn btn-primary" @click="save" data-bs-dismiss="modal">Save</button>
     </template>
-  </Modal>
+  </ModalBase>
 </template>
 
 <script>
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 import { mapState } from 'vuex'
 export default {
   name: 'CubeSettingsModal',
 
   components: {
-    Modal
+    ModalBase,
   },
 
   inject: ['bus'],

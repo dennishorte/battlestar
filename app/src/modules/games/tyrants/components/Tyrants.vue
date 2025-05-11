@@ -31,12 +31,12 @@
 
     <CardViewerModal />
     <DebugModal />
-    <Tableau-Modal />
+    <TableauModal />
 
-    <Modal id="tyrants-scores">
+    <ModalBase id="tyrants-scores">
       <template #header>Score Overview</template>
       <ScoreTable />
-    </Modal>
+    </ModalBase>
 
   </div>
 </template>
@@ -67,7 +67,7 @@ import CardViewerModal from './CardViewerModal'
 import DebugModal from '@/modules/games/common/components/DebugModal'
 import TableauModal from './TableauModal'
 
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 
 export default {
@@ -81,7 +81,7 @@ export default {
     GameMap,
     GameMenu,
     Market,
-    Modal,
+    ModalBase,
     Player,
     ScoreTable,
     WaitingPanel,

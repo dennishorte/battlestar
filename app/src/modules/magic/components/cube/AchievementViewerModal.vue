@@ -1,5 +1,5 @@
 <template>
-  <Modal id="achievement-viewer-modal">
+  <ModalBase id="achievement-viewer-modal">
     <template #header>Achievement Viewer</template>
 
     <template v-if="!!achievement">
@@ -45,20 +45,20 @@
     <template #footer>
       <div/>
     </template>
-  </Modal>
+  </ModalBase>
 </template>
 
 
 <script>
 import { mapState } from 'vuex'
 
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 export default {
   name: 'AchievementViewerModal',
 
   components: {
-    Modal,
+    ModalBase,
   },
 
   inject: ['actor'],

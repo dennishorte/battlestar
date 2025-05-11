@@ -1,5 +1,5 @@
 <template>
-  <Modal id="cards-viewer-modal" scrollable>
+  <ModalBase id="cards-viewer-modal" scrollable>
     <template #header>{{ title }}</template>
     <div class="card-viewer-list">
       <CardFull
@@ -9,20 +9,20 @@
         class="viewer-card"
       />
     </div>
-  </Modal>
+  </ModalBase>
 </template>
 
 
 <script>
 import CardFull from './CardFull'
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 export default {
   name: 'CardsViewerModal',
 
   components: {
     CardFull,
-    Modal,
+    ModalBase,
   },
 
   inject: ['game'],

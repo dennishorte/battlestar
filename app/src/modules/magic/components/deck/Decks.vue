@@ -30,10 +30,10 @@
           <div class="deck-format">{{ deck.format || 'Custom' }}</div>
         </div>
         <div class="deck-actions" @click.stop>
-          <Dropdown :notitle="true">
+          <DropdownMenu :notitle="true">
             <DropdownItem @click="duplicateDeck(deck._id)">Duplicate</DropdownItem>
             <DropdownItem @click="confirmDelete(deck._id, deck.name)">Delete</DropdownItem>
-          </Dropdown>
+          </DropdownMenu>
         </div>
       </div>
     </div>
@@ -42,7 +42,7 @@
 
 <script>
 import SectionHeader from '@/components/SectionHeader'
-import Dropdown from '@/components/Dropdown'
+import DropdownMenu from '@/components/DropdownMenu'
 import DropdownItem from '@/components/DropdownItem'
 
 export default {
@@ -50,7 +50,7 @@ export default {
 
   components: {
     SectionHeader,
-    Dropdown,
+    DropdownMenu,
     DropdownItem,
   },
 

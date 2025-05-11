@@ -4,7 +4,7 @@
       <div class="col">
         <div class="header">
 
-          <Dropdown class="float-start">
+          <DropdownMenu class="float-start">
             <DropdownRouterLink to="/">home</DropdownRouterLink>
             <DropdownButton @click="nextGame">next game</DropdownButton>
 
@@ -15,7 +15,7 @@
             <DropdownDivider/>
             <DropdownRouterLink to="/admin">admin</DropdownRouterLink>
             <DropdownRouterLink to="/logout">logout</DropdownRouterLink>
-          </Dropdown>
+          </DropdownMenu>
 
           <a href="/" class="link-unstyled">
             <h1>Game Center</h1>
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import Dropdown from '@/components/Dropdown'
+import DropdownMenu from '@/components/DropdownMenu'
 import DropdownDivider from '@/components/DropdownDivider'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownRouterLink from '@/components/DropdownRouterLink'
@@ -37,7 +37,7 @@ export default {
   name: 'GameHeader',
 
   components: {
-    Dropdown,
+    DropdownMenu,
     DropdownDivider,
     DropdownButton,
     DropdownRouterLink,

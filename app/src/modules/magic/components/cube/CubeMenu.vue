@@ -18,7 +18,7 @@
       <input type="checkbox" class="form-check-input" @click="$emit('toggle-search')" />
     </button>
 
-    <Dropdown text="menu">
+    <DropdownMenu text="menu">
       <DropdownButton @click="this.$modal('cube-update-modal').show()">add/remove cards</DropdownButton>
       <DropdownButton @click="this.$modal('cube-add-modal').show()">add one card</DropdownButton>
       <DropdownButton @click="createCard">create card</DropdownButton>
@@ -31,12 +31,12 @@
         <DropdownDivider />
         <DropdownButton @click="openSettings">settings</DropdownButton>
       </template>
-    </Dropdown>
+    </DropdownMenu>
   </div>
 </template>
 
 <script>
-import Dropdown from '@/components/Dropdown'
+import DropdownMenu from '@/components/DropdownMenu'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
 import { mag } from 'battlestar-common'
@@ -45,7 +45,7 @@ export default {
   name: 'CubeMenu',
 
   components: {
-    Dropdown,
+    DropdownMenu,
     DropdownButton,
     DropdownDivider,
   },

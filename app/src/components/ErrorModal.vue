@@ -1,5 +1,5 @@
 <template>
-  <Modal id="error-modal" class="error-modal">
+  <ModalBase id="error-modal" class="error-modal">
     <template #header>
       Error
     </template>
@@ -9,19 +9,19 @@
     <template #footer>
       <button class="btn btn-primary" @click="reload">reload page</button>
     </template>
-  </Modal>
+  </ModalBase>
 </template>
 
 
 <script>
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 
 export default {
   name: 'ErrorModal',
 
   components: {
-    Modal,
+    ModalBase,
   },
 
   methods: {

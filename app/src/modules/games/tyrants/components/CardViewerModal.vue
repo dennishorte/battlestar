@@ -1,5 +1,5 @@
 <template>
-  <Modal id="card-viewer-modal" scrollable>
+  <ModalBase id="card-viewer-modal" scrollable>
     <template #header>Card Viewer</template>
 
     <GameCard v-if="card"
@@ -9,7 +9,7 @@
     <template v-else>
       Card not found: {{ ui.modals.cardViewer.cardName }}
     </template>
-  </Modal>
+  </ModalBase>
 </template>
 
 
@@ -17,14 +17,14 @@
 import { tyr } from 'battlestar-common'
 
 import GameCard from './GameCard'
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 export default {
   name: 'CardViewerModal',
 
   components: {
     GameCard,
-    Modal,
+    ModalBase,
   },
 
   inject: ['ui'],

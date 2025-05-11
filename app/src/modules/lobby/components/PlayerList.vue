@@ -28,17 +28,17 @@
         <tr v-for="player in lobby.users" :key="player._id">
           <td>{{ player.name }}</td>
           <td>
-            <Dropdown size="sm" :notitle="true" class="float-end">
+            <DropdownMenu size="sm" :notitle="true" class="float-end">
               <DropdownItem>
                 <button @click="removePlayer(player._id)">remove</button>
               </DropdownItem>
-            </Dropdown>
+            </DropdownMenu>
           </td>
         </tr>
       </tbody>
     </table>
 
-    <Modal id="add-players-modal" @ok="addPlayers">
+    <ModalBase id="add-players-modal" @ok="addPlayers">
       <template #header>Add Players</template>
 
       <select
@@ -50,7 +50,7 @@
       >
         <option v-for="user in users" :key="user._id" :value="user._id">{{ user.name }}</option>
       </select>
-    </Modal>
+    </ModalBase>
 
   </div>
 </template>
@@ -59,17 +59,17 @@
 <script>
 import { util } from 'battlestar-common'
 
-import Dropdown from '@/components/Dropdown'
+import DropdownMenu from '@/components/DropdownMenu'
 import DropdownItem from '@/components/DropdownItem'
-import Modal from '@/components/Modal'
+import ModalBase from '@/components/ModalBase'
 
 export default {
   name: 'PlayerList',
 
   components: {
-    Dropdown,
+    DropdownMenu,
     DropdownItem,
-    Modal,
+    ModalBase,
   },
 
   inject: ['lobby', 'save'],
