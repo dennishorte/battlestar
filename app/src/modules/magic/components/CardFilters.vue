@@ -49,8 +49,8 @@
           <label class="col-form-label">cmc</label>
           <select class="form-select operator-select" ref="cmcop">
             <option>=</option>
-            <option>&lt=</option>
-            <option>&gt=</option>
+            <option>&lt;=</option>
+            <option>&gt;=</option>
           </select>
           <input class="form-control" ref="cmc" />
           <button class="btn btn-secondary" value="cmc" @click="add">add</button>
@@ -60,8 +60,8 @@
           <label class="col-form-label">power</label>
           <select class="form-select operator-select" ref="powerop">
             <option>=</option>
-            <option>&lt=</option>
-            <option>&gt=</option>
+            <option>&lt;=</option>
+            <option>&gt;=</option>
           </select>
           <input class="form-control" ref="power" />
           <button class="btn btn-secondary" value="power" @click="add">add</button>
@@ -71,8 +71,8 @@
           <label class="col-form-label">toughness</label>
           <select class="form-select operator-select" ref="toughnessop">
             <option>=</option>
-            <option>&lt=</option>
-            <option>&gt=</option>
+            <option>&lt;=</option>
+            <option>&gt;=</option>
           </select>
           <input class="form-control" ref="toughness" />
           <button class="btn btn-secondary" value="toughness" @click="add">add</button>
