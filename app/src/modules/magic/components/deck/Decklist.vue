@@ -36,7 +36,6 @@
 
 <script>
 // import { saveAs } from 'file-saver'
-import { mapState } from 'vuex'
 
 import DecklistSection from './DecklistSection'
 import Dropdown from '@/components/Dropdown'
@@ -61,7 +60,10 @@ export default {
   },
 
   props: {
-    deck: Object,
+    deck: {
+      type: Object,
+      required: true
+    },
   },
 
   inject: ['bus'],
@@ -107,14 +109,15 @@ export default {
       throw new Error('Not implemented')
     },
 
-    handleSettingsUpdated(settings) {
+    handleSettingsUpdated() {
       // Settings were updated in the modal directly on the deck object
       // Mark deck as modified so it can be saved
       this.deck.markModified()
     },
 
+    // eslint-disable-next-line
     importDecklist(update) {
-
+      throw new Error('Not implemented')
     },
 
     openDeckSettings() {

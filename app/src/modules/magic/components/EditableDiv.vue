@@ -54,6 +54,8 @@ export default {
     }
   },
 
+  emits: ['input', 'update'],
+
   data() {
     return {
       isEditing: false,
@@ -123,7 +125,7 @@ export default {
       return this.htmlToPlainText(tempDiv.innerHTML)
     },
 
-    onBlur(event) {
+    onBlur() {
       if (!this.isEditing) {
         return
       }

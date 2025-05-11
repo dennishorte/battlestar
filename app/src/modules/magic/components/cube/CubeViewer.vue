@@ -98,7 +98,7 @@
 <script>
 import mitt from 'mitt'
 
-import { mag, util } from 'battlestar-common'
+import { util } from 'battlestar-common'
 import { mapGetters, mapState } from 'vuex'
 import { nextTick } from 'vue'
 
@@ -243,7 +243,7 @@ export default {
       return user ? user.name : id
     },
 
-    linkFiltersToAchievement(filters) {
+    linkFiltersToAchievement() {
       this.$modal('achievement-search-linker-modal').show()
     },
 
@@ -278,11 +278,13 @@ export default {
     ////////////////////////////////////////////////////////////////////////////////
     // Card pop-up methods
 
+    // eslint-disable-next-line
     mouseover(cardIdDict) {
       /* const data = this.$store.getters['magic/cards/getLookupFunc'](cardIdDict)
        * this.$store.commit('magic/setMouseoverCard', data) */
     },
 
+    // eslint-disable-next-line
     mouseleave(cardIdDict) {
       /* const data = this.$store.getters['magic/cards/getLookupFunc'](cardIdDict)
        * this.$store.commit('magic/unsetMouseoverCard', data) */

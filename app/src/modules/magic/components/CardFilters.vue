@@ -191,8 +191,7 @@
 <script>
 import { v4 as uuidv4 } from 'uuid'
 
-import { mapState} from 'vuex'
-import { mag, util } from 'battlestar-common'
+import { util } from 'battlestar-common'
 
 import CardFilterList from './CardFilterList'
 import SectionHeader from '@/components/SectionHeader'
@@ -316,14 +315,6 @@ export default {
     this.bus.on('card-filters-set', this.setFilters)
   },
 }
-
-function filterCards(cards, filters) {
-  if (filters.length === 0) {
-    return cards
-  }
-  return cards.filter(card => card.matchesFilters(filters))
-}
-
 </script>
 
 

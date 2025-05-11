@@ -54,6 +54,8 @@ export default {
     DropdownItem,
   },
 
+  emits: ['deck-clicked'],
+
   data() {
     return {
       decks: [],

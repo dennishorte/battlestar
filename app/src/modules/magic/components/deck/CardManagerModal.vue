@@ -45,7 +45,10 @@ export default {
   inject: ['bus'],
 
   props: {
-    deck: Object,
+    deck: {
+      type: Object,
+      required: true
+    },
   },
 
   data() {

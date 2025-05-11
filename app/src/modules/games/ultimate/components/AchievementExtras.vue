@@ -18,7 +18,10 @@ export default {
   inject: ['game'],
 
   props: {
-    player: Object
+    player: {
+      type: Object,
+      required: true
+    }
   },
 
   computed: {

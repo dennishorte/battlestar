@@ -30,6 +30,8 @@ export default {
     SectionHeader,
   },
 
+  emits: ['card-clicked'],
+
   props: {
     cards: {
       type: Array,
@@ -53,7 +55,7 @@ export default {
             .array
             .groupBy(this.cards, card => card._id)
         )
-        .map(([id, cards]) => ({
+        .map(([, cards]) => ({
           count: cards.length,
           card: cards[0],
         }))

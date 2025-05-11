@@ -34,6 +34,8 @@ export default {
     SetPicker,
   },
 
+  emits: ['set-selected'],
+
   data() {
     return {
       selected: null,

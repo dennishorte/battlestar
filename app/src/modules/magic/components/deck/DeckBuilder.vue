@@ -29,8 +29,6 @@ import { mapState } from 'vuex'
 
 import mitt from 'mitt'
 
-import UIDeckWrapper from '@/modules/magic/util/deck.wrapper'
-
 import CardFilters from '../CardFilters'
 import CardList from './CardList'
 import Decklist from './Decklist'

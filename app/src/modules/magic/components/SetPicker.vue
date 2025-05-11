@@ -50,6 +50,8 @@ const setSortOrder = [
 export default {
   name: 'SetPicker',
 
+  emits: ['selection-changed'],
+
   data() {
     return {
       highlighted: null,

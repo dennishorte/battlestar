@@ -31,9 +31,17 @@ export default {
     CardListItem,
   },
 
+  emits: ['card-clicked'],
+
   props: {
-    cardlist: Array,
-    filters: Array,
+    cardlist: {
+      type: Array,
+      required: true
+    },
+    filters: {
+      type: Array,
+      required: true
+    },
   },
 
   data() {

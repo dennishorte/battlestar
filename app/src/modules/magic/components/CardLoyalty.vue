@@ -11,7 +11,10 @@ export default {
   name: 'CardLoyalty',
 
   props: {
-    loyalty: [Number, String],
+    loyalty: {
+      type: [Number, String],
+      required: true
+    },
   },
 }
 </script>

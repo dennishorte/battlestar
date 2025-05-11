@@ -46,6 +46,8 @@ export default {
     },
   },
 
+  emits: ['remove-card-filter'],
+
   data() {
     return {
       colors: ['white', 'blue', 'black', 'red', 'green'],

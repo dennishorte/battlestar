@@ -40,7 +40,6 @@ import Dropdown from '@/components/Dropdown'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
 import { mag } from 'battlestar-common'
-import { mapState } from 'vuex'
 
 export default {
   name: 'CubeMenu',
@@ -53,10 +52,21 @@ export default {
 
   inject: ['bus'],
 
+  emits: ['toggle-search', 'navigate'],
+
   props: {
-    counts: Object,
-    cube: Object,
-    showing: String,
+    counts: {
+      type: Object,
+      required: true
+    },
+    cube: {
+      type: Object,
+      required: true
+    },
+    showing: {
+      type: String,
+      required: true
+    },
   },
 
   computed: {

@@ -11,7 +11,10 @@ export default {
   name: 'CardDefense',
 
   props: {
-    defense: [Number, String],
+    defense: {
+      type: [Number, String],
+      required: true
+    },
   },
 }
 </script>
