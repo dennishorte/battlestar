@@ -50,7 +50,7 @@ import MagicWrapper from '@/modules/magic/components/MagicWrapper'
 
 
 export default {
-  name: 'Lobby',
+  name: 'GameLobby',
   components: {
     EditableText,
     GameHeader,

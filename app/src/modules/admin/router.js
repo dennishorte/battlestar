@@ -1,10 +1,10 @@
-import Admin from './components/Admin'
+import SiteAdmin from './components/SiteAdmin'
 
 export default [
   {
     path: '/admin',
-    name: 'Admin',
+    name: 'SiteAdmin',
     title: 'Admin',
-    component: Admin,
+    component: SiteAdmin,
   }
 ]

@@ -35,7 +35,7 @@
 
 <script>
 export default {
-  name: 'Login',
+  name: 'SiteLogin',
   data() {
     return {
       username: '',

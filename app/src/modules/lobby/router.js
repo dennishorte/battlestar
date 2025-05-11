@@ -1,4 +1,4 @@
-import Lobby from './components/Lobby'
+import GameLobby from './components/GameLobby'
 import lobbyUtil from './util'
 
 export default [
@@ -14,8 +14,8 @@ export default [
   },
   {
     path: '/lobby/:id',
-    name: 'Lobby',
+    name: 'GameLobby',
     title: 'Lobby',
-    component: Lobby,
+    component: GameLobby,
   },
 ]

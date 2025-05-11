@@ -11,7 +11,7 @@
 import CardPile from './CardPile'
 
 export default {
-  name: 'Achievements',
+  name: 'AchievementsZone',
 
   components: {
     CardPile,

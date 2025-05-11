@@ -47,7 +47,7 @@
 import GameCard from './GameCard'
 
 export default {
-  name: 'Player',
+  name: 'PlayerTableau',
 
   components: {
     GameCard,

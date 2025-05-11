@@ -13,13 +13,13 @@
         </div>
 
         <div class="col game-column">
-          <Devoured />
-          <Market />
+          <DevouredZone />
+          <MarketZone />
           <WaitingPanel />
         </div>
 
         <div class="col game-column">
-          <Player v-for="player in orderedPlayers" :key="player.name" :player="player" />
+          <PlayerTableau v-for="player in orderedPlayers" :key="player.name" :player="player" />
         </div>
 
         <div class="col map-column" :style="mapStyle">
@@ -54,11 +54,11 @@ import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
 // Tyrants Components
-import Devoured from './Devoured'
+import DevouredZone from './DevouredZone'
 import GameLogTyrants from './GameLogTyrants'
 import GameMap from './map/GameMap'
-import Market from './Market'
-import Player from './Player'
+import MarketZone from './MarketZone'
+import PlayerTableau from './PlayerTableau'
 import ScoreTable from './ScoreTable'
 
 
@@ -71,18 +71,18 @@ import ModalBase from '@/components/ModalBase'
 
 
 export default {
-  name: 'Tyrants',
+  name: 'TyrantsGame',
 
   components: {
-    Devoured,
+    DevouredZone,
     DropdownButton,
     DropdownDivider,
     GameLogTyrants,
     GameMap,
     GameMenu,
-    Market,
+    MarketZone,
     ModalBase,
-    Player,
+    PlayerTableau,
     ScoreTable,
     WaitingPanel,
 

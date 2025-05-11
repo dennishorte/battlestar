@@ -1,16 +1,16 @@
 import store from '@/store'
-import Login from './components/Login'
+import SiteLogin from './components/SiteLogin'
 
 export default [
   {
     path: '/login',
-    name: 'Login',
+    name: 'SiteLogin',
     title: 'Login',
-    component: Login,
+    component: SiteLogin,
   },
   {
     path: '/logout',
-    name: 'Logout',
+    name: 'SiteLogout',
     component: {
       beforeRouteEnter(to, from, next) {
         store.dispatch("auth/logout")

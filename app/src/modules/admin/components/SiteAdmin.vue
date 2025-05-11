@@ -39,7 +39,7 @@ import CreateUser from './CreateUser'
 import UserList from './UserList'
 
 export default {
-  name: 'Admin',
+  name: 'SiteAdmin',
   components: {
     GameHeader,
 

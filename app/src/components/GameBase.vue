@@ -4,10 +4,10 @@
   </div>
 
   <CubeDraft v-else-if="gameType === 'Cube Draft' || gameType === 'Set Draft'" />
-  <Magic v-else-if="gameType === 'Magic'" />
-  <Innovation v-else-if="gameType === 'Innovation'" />
+  <MtgGame v-else-if="gameType === 'Magic'" />
+  <InnovationGame v-else-if="gameType === 'Innovation'" />
   <Ultimate v-else-if="gameType === 'Innovation: Ultimate'" />
-  <Tyrants v-else-if="gameType === 'Tyrants of the Underdark'" />
+  <TyrantsGame v-else-if="gameType === 'Tyrants of the Underdark'" />
 
   <div v-else>
     error, unknown game type: {{ gameType }}
@@ -22,10 +22,10 @@ import { mapState } from 'vuex'
 import mitt from 'mitt'
 
 import CubeDraft from '@/modules/games/cube_draft/components/CubeDraft'
-import Innovation from '@/modules/games/inn/components/Innovation'
+import InnovationGame from '@/modules/games/inn/components/InnovationGame'
 import Ultimate from '@/modules/games/ultimate/components/Ultimate'
-import Magic from '@/modules/games/magic/components/Magic'
-import Tyrants from '@/modules/games/tyrants/components/Tyrants'
+import MtgGame from '@/modules/games/magic/components/MtgGame'
+import TyrantsGame from '@/modules/games/tyrants/components/TyrantsGame'
 
 import SavingOverlay from '@/modules/games/common/components/SavingOverlay'
 
@@ -35,9 +35,9 @@ export default {
 
   components: {
     CubeDraft,
-    Innovation,
-    Magic,
-    Tyrants,
+    InnovationGame,
+    MtgGame,
+    TyrantsGame,
     Ultimate,
 
     SavingOverlay,

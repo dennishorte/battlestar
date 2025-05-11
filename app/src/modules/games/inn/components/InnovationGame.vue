@@ -14,9 +14,9 @@
         </div>
 
         <div class="col game-column">
-          <Biscuits />
-          <Decks />
-          <Achievements />
+          <BiscuitsInfo />
+          <DecksInfo />
+          <AchievementsZone />
           <WaitingPanel />
         </div>
 
@@ -38,10 +38,10 @@
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
-import Achievements from './Achievements'
-import Biscuits from './Biscuits'
+import AchievementsZone from './AchievementsZone'
+import BiscuitsInfo from './BiscuitsInfo'
 import CardNameFull from './CardNameFull'
-import Decks from './Decks'
+import DecksInfo from './DecksInfo'
 import DropdownItem from '@/components/DropdownItem'
 import GameLogInnovation from './GameLogInnovation'
 import PlayerTableau from './PlayerTableau'
@@ -52,12 +52,12 @@ import CardsViewerModal from './CardsViewerModal'
 import DebugModal from '@/modules/games/common/components/DebugModal'
 
 export default {
-  name: 'Innovation',
+  name: 'InnovationGame',
 
   components: {
-    Achievements,
-    Biscuits,
-    Decks,
+    AchievementsZone,
+    BiscuitsInfo,
+    DecksInfo,
     DropdownItem,
     GameMenu,
     GameLogInnovation,
