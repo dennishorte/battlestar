@@ -54,7 +54,10 @@ export default {
   },
 
   props: {
-    achievements: Array,
+    achievements: {
+      type: Array,
+      required: true
+    },
   },
 
   data: () => {

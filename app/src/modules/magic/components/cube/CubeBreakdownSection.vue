@@ -31,9 +31,18 @@ export default {
   },
 
   props: {
-    cardlist: Array,
-    columnName: String,
-    name: String,
+    cardlist: {
+      type: Array,
+      required: true
+    },
+    columnName: {
+      type: String,
+      required: true
+    },
+    name: {
+      type: String,
+      required: true
+    },
   },
 
   inject: ['bus'],

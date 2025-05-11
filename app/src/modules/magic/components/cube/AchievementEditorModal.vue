@@ -47,7 +47,10 @@ export default {
   name: 'AchievementEditorModal',
 
   props: {
-    achievement: Object,
+    achievement: {
+      type: Object,
+      required: true
+    },
   },
 
   data() {

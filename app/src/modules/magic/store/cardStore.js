@@ -1,5 +1,5 @@
 import { get as getKey, set as setKey } from 'idb-keyval'
-import { mag, util } from 'battlestar-common'
+import { mag } from 'battlestar-common'
 import UICardWrapper from '@/modules/magic/util/card.wrapper'
 
 
@@ -23,7 +23,7 @@ export default {
       return state.cardsReady
     },
 
-    cardLink(state) {
+    cardLink() {
       return (databaseId) => '/magic/card/' + databaseId
     },
   },

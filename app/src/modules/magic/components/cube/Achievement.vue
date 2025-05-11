@@ -64,7 +64,10 @@ export default {
   inject: ['bus'],
 
   props: {
-    ach: Object,
+    ach: {
+      type: Object,
+      required: true
+    },
 
     hideMenu: {
       type: Boolean,

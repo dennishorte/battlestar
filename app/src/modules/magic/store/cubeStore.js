@@ -98,13 +98,9 @@ export default {
       state.cubeLoaded = true
     },
 
-    async loadAllCubes({ dispatch, state }) {
+    async loadAllCubes({ state }) {
       const response = await this.$post('/api/magic/cube/all')
       state.cubes = response.cubes
-    },
-
-    async save({ dispatch }, cube) {
-      throw new Error('not implemented')
     },
 
     async updateSettings({ dispatch, state }, { cubeId, settings }) {

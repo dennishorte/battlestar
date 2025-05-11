@@ -45,8 +45,14 @@ export default {
   },
 
   props: {
-    cardlist: Array,
-    name: String,
+    cardlist: {
+      type: Array,
+      required: true
+    },
+    name: {
+      type: String,
+      required: true
+    },
   },
 
   computed: {

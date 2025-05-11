@@ -26,7 +26,10 @@ export default {
   },
 
   props: {
-    cardlist: Array,
+    cardlist: {
+      type: Array,
+      required: true
+    },
   },
 
   data() {

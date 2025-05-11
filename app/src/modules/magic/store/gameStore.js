@@ -1,6 +1,3 @@
-import { mag, util } from 'battlestar-common'
-
-
 export default {
   namespaced: true,
 
@@ -200,9 +197,8 @@ export default {
       }
     },
 
-    async loadGame({ commit, dispatch, rootGetters, rootState }, { doFunc, game }) {
+    async loadGame({ commit, dispatch }, { doFunc, game }) {
       commit('setReady', false)
-      const actor = rootGetters['auth/user']
       game.doFunc = doFunc
       game.run()
 

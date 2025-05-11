@@ -14,7 +14,10 @@ export default {
   name: 'CubeBreakdownManaCostDivider',
 
   props: {
-    cost: Number,
+    cost: {
+      type: Number,
+      required: true
+    },
   },
 
   computed: {
