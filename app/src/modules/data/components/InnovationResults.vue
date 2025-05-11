@@ -67,7 +67,7 @@
 
 
 <script>
-import { inn, util } from 'battlestar-common'
+import { inn } from 'battlestar-common'
 
 import GameHeader from '@/components/GameHeader'
 

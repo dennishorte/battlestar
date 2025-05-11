@@ -17,7 +17,10 @@ export default {
   name: 'CardText',
 
   props: {
-    text: String,
+    text: {
+      type: String,
+      required: true
+    },
   },
 
   computed: {

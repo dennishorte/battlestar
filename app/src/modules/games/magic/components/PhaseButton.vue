@@ -16,7 +16,10 @@ export default {
   inject: ['do', 'game'],
 
   props: {
-    name: String,
+    name: {
+      type: String,
+      required: true
+    },
   },
 
   computed: {

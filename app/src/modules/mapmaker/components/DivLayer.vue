@@ -16,7 +16,10 @@ export default {
   name: 'DivLayer',
 
   props: {
-    styledDivs: Array,
+    styledDivs: {
+      type: Array,
+      required: true
+    },
   },
 }
 </script>

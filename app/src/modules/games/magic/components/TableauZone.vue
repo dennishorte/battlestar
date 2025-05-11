@@ -63,7 +63,10 @@ export default {
   inject: ['actor'],
 
   props: {
-    zone: Object,  // Zone from the game.
+    zone: {
+      type: Object,
+      required: true
+    },
 
     libraryView: {
       type: Boolean,

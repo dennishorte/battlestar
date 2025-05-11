@@ -45,8 +45,7 @@
 
 
 <script>
-import { mapGetters } from 'vuex'
-import { mag, util } from 'battlestar-common'
+import { mag } from 'battlestar-common'
 
 import Card from '@/modules/magic/components/Card'
 import Modal from '@/components/Modal'
@@ -60,10 +59,12 @@ export default {
     Modal,
   },
 
+  emits: ['card-selected'],
+
   props: {
     cards: {
-      Array,
-      optional: true,
+      type: Array,
+      default: () => []
     }
   },
 

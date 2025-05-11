@@ -52,7 +52,10 @@ export default {
       default: null,
     },
 
-    zone: Object,
+    zone: {
+      type: Object,
+      required: true
+    },
   },
 
   data() {

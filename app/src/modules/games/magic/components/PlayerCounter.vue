@@ -21,8 +21,14 @@ export default {
   inject: ['do'],
 
   props: {
-    player: Object,
-    name: String,
+    player: {
+      type: Object,
+      required: true
+    },
+    name: {
+      type: String,
+      required: true
+    },
     buttonSize: {
       type: String,
       default: 'normal',

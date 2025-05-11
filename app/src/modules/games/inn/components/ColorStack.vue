@@ -56,8 +56,14 @@ export default {
   inject: ['game'],
 
   props: {
-    player: Object,
-    color: String,
+    player: {
+      type: Object,
+      required: true
+    },
+    color: {
+      type: String,
+      required: true
+    },
   },
 
   computed: {

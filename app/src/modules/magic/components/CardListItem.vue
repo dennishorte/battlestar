@@ -52,8 +52,13 @@ export default {
 
   inject: ['actor'],
 
+  emits: ['card-face-clicked', 'card-clicked'],
+
   props: {
-    card: Object,
+    card: {
+      type: Object,
+      required: true
+    },
 
     separateFaces: {
       type: Boolean,

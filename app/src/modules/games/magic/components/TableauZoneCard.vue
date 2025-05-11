@@ -106,7 +106,10 @@ export default {
   inject: ['actor', 'do', 'game'],
 
   props: {
-    card: Object,
+    card: {
+      type: Object,
+      required: true
+    },
 
     showGravePowers: {
       type: Boolean,

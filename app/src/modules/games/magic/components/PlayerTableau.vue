@@ -196,7 +196,10 @@ export default {
   inject: ['actor', 'do', 'game'],
 
   props: {
-    player: Object,
+    player: {
+      type: Object,
+      required: true
+    },
   },
 
   data() {

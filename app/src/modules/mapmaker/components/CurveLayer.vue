@@ -26,9 +26,18 @@ export default {
   },
 
   props: {
-    curves: Array,
-    height: Number,
-    width: Number,
+    curves: {
+      type: Array,
+      required: true
+    },
+    height: {
+      type: Number,
+      required: true
+    },
+    width: {
+      type: Number,
+      required: true
+    },
   },
 }
 </script>

@@ -32,8 +32,13 @@ export default {
     CardSearchModal,
   },
 
+  emits: ['import-card'],
+
   props: {
-    zoneSuggestion: String,
+    zoneSuggestion: {
+      type: String,
+      required: true
+    },
   },
 
   data() {

@@ -31,8 +31,10 @@ export default {
   },
 
   props: {
-    zone: Object,  // Zone from the game.
-
+    zone: {
+      type: Object,
+      required: true
+    },
     noMenu: {
       type: Boolean,
       default: false,

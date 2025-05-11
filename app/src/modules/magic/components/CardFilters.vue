@@ -210,6 +210,8 @@ export default {
 
   inject: ['bus'],
 
+  emits: ['filters-updated'],
+
   props: {
     layoutDirection: {
       type: String,

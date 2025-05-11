@@ -19,8 +19,14 @@ export default {
   inject: ['do'],
 
   props: {
-    card: Object,
-    name: String,
+    card: {
+      type: Object,
+      required: true
+    },
+    name: {
+      type: String,
+      required: true
+    },
   },
 
   methods: {

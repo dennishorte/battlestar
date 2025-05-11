@@ -17,7 +17,10 @@ export default {
   name: 'HandleLayer',
 
   props: {
-    curveHandles: Array,
+    curveHandles: {
+      type: Array,
+      required: true
+    },
   },
 
   methods: {
