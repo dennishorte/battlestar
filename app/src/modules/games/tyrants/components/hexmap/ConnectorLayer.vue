@@ -1,5 +1,5 @@
 <template>
-  <Connector
+  <MapConnector
     v-for="conn of connections"
     :key="conn.id"
     v-bind="conn"
@@ -10,14 +10,14 @@
 
 
 <script>
-import Connector from './Connector'
+import MapConnector from './MapConnector'
 
 
 export default {
   name: 'ConnectorLayer',
 
   components: {
-    Connector,
+    MapConnector,
   },
 
   props: {

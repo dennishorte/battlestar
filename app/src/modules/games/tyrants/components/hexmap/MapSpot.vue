@@ -17,7 +17,7 @@
 
 <script>
 export default {
-  name: 'Spot',
+  name: 'MapSpot',
 
   props: {
     spot: {

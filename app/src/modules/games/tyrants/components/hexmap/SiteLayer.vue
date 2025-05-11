@@ -26,7 +26,7 @@
     </filter>
   </defs>
 
-  <Site
+  <MapSite
     v-for="site in sites"
     :key="site.name"
     :site="site"
@@ -34,7 +34,7 @@
     @mousedown="mousedown($event, site)"
   />
 
-  <Spot
+  <MapSpot
     v-for="spot in spots"
     :key="spot.name"
     :spot="spot"
@@ -45,16 +45,16 @@
 
 
 <script>
-import Site from './Site'
-import Spot from './Spot'
+import MapSite from './MapSite'
+import MapSpot from './MapSpot'
 
 
 export default {
   name: 'SiteLayer',
 
   components: {
-    Site,
-    Spot,
+    MapSite,
+    MapSpot,
   },
 
   inject: {

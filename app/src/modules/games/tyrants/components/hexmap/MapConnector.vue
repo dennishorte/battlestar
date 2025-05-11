@@ -22,7 +22,7 @@
 
 <script>
 export default {
-  name: 'Connector',
+  name: 'MapConnector',
 
   props: {
     id: {

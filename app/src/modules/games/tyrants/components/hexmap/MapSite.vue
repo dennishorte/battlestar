@@ -25,7 +25,7 @@ import SitePoints from './SitePoints'
 import SiteTroopSpaces from './SiteTroopSpaces'
 
 export default {
-  name: 'Site',
+  name: 'MapSite',
 
   components: {
     SitePoints,
