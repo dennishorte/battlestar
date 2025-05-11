@@ -16,7 +16,7 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player, { leader }) => {
+    (game, player) => {
       const melded = game.state.dogmaInfo.jet
       if (melded) {
         const toReturn = game.getTopCard(player, melded.color)

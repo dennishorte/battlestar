@@ -64,15 +64,25 @@
       </TableauZone>
 
       <TableauZone :zone="getZone('graveyard')" :show-grave-powers="true">
-        <DropdownButton @click="moveAll($event, 'graveyard')">move all</DropdownButton>
+        <template #menu>
+          <DropdownButton @click="moveAll($event, 'graveyard')">move all</DropdownButton>
+        </template>
       </TableauZone>
     </div>
 
     <div class="tableau-col" :class="extraColumnClasses">
       <TableauZone :zone="getZone('attacking')" :show-power="true" v-if="isAttacker">
+        <template #menu>
+          <DropdownButton @click="importCard('attacking')">import card</DropdownButton>
+          <DropdownButton @click="makeToken('attacking')">make token</DropdownButton>
+        </template>
       </TableauZone>
 
       <TableauZone :zone="getZone('blocking')" :show-power="true" v-if="isDefender">
+        <template #menu>
+          <DropdownButton @click="importCard('blocking')">import card</DropdownButton>
+          <DropdownButton @click="makeToken('blocking')">make token</DropdownButton>
+        </template>
       </TableauZone>
 
       <TableauZone :zone="getZone('creatures')" :show-power="true">
@@ -130,7 +140,7 @@
       <input class="form-control" v-model="token.name" placeholder="name" />
       <input class="form-control mt-2" v-model="token.annotation" placeholder="annotation" />
       <select class="form-select mt-2" v-model="token.zoneId">
-        <option v-for="zoneId in importZoneIds">{{ zoneId }}</option>
+        <option v-for="zoneId in importZoneIds" :key="zoneId">{{ zoneId }}</option>
       </select>
       <input class="form-control mt-2" v-model.number="token.count" placeholder="count" />
       <div class="form-check mt-2 bigger-font">
@@ -144,7 +154,7 @@
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
       <div id="move-revealed-toast" class="toast" ref="moveRevealedToast">
         <div class="toast-header">
-          <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="toast"/>
         </div>
         <div class="toast-body">
           Click on a zone to move all revealed cards from the library.
@@ -281,6 +291,7 @@ export default {
     },
 
     importCardDo(data) {
+      data.card = data.card.toJSON()
       this.do(null, {
         name: 'import card',
         data,
@@ -390,7 +401,7 @@ export default {
 
     viewTopNDo() {
       const zoneId = `players.${this.player.name}.library`
-        this.do(this.actorPlayer, { name: 'view top k', count: this.topNCount, zoneId })
+      this.do(this.actorPlayer, { name: 'view top k', count: this.topNCount, zoneId })
     },
   }
 }

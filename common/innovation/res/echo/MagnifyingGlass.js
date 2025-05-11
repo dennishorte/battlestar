@@ -24,8 +24,8 @@ function Card() {
 
       const choices = Object
         .entries(groups)
-        .filter(([_, cards]) => cards.length >= 3)
-        .map(([age, _]) => parseInt(age))
+        .filter(([, cards]) => cards.length >= 3)
+        .map(([age]) => parseInt(age))
         .sort()
 
       const age = game.aChooseAge(player, choices, {

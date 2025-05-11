@@ -1,25 +1,18 @@
-import { mag } from 'battlestar-common'
-
-import cubeUtil from '../util/cubeUtil.js'
-
+import UICubeWrapper from '@/modules/magic/util/cube.wrapper'
 
 export default {
   namespaced: true,
 
   state: () => ({
+    cubes: [],
+
     cube: null,
     cubeLoaded: false,
 
-    achievements: [],
     scars: [],
+    achievements: [],
 
     managedCard: null,
-    managedScar: null,
-    managedAchievement: null,
-    managedAchievementShowAll: false,
-
-    cardFilters: [],
-    filteredCards: [],
   }),
 
   getters: {
@@ -29,7 +22,7 @@ export default {
           .achievements
           .filter(ach => !ach.claimed)
           .filter(ach => ach.filters && ach.filters.length > 0)
-          .filter(ach => mag.util.card.filtersMatchCard(ach.filters, card))
+          .filter(ach => card.matchesFilters(ach.filters))
       }
     },
   },
@@ -38,18 +31,36 @@ export default {
     manageCard(state, card) {
       state.managedCard = card
     },
-
-    manageScar(state, scar) {
-      state.managedScar = scar
-    },
-
-    manageAchievement(state, { achievement, showAll }) {
-      state.managedAchievement = achievement
-      state.managedAchievementShowAll = showAll
-    },
   },
 
   actions: {
+    async addCard({ dispatch, state }, { card, comment }) {
+      await this.$post('/api/magic/card/create', {
+        cardData: card.data,
+        cubeId: state.cube._id,
+        comment: comment || "Added via cubeStore.addCard",
+      })
+      await dispatch('magic/cards/reloadDatabase', null, { root: true })
+      await dispatch('loadCube', { cubeId: state.cube._id })
+    },
+
+    /**
+     * Add and remove multiple cards from a cube in a single operation
+     * @param {Array<string>} payload.addIds - Array of card IDs to add
+     * @param {Array<string>} payload.removeIds - Array of card IDs to remove
+     * @param {string} payload.comment - Optional comment for the operations
+     */
+    async addRemoveCards({ dispatch, state }, { addIds, removeIds, comment }) {
+      await this.$post('/api/magic/cube/add_remove_cards', {
+        addIds,
+        removeIds,
+        cubeId: state.cube._id,
+        comment: comment || "Changes made via cubeStore.addRemoveCards",
+      })
+      await dispatch('magic/cards/reloadDatabase', null, { root: true })
+      await dispatch('loadCube', { cubeId: state.cube._id })
+    },
+
     async claimAchievement({ commit, dispatch, state }, { achId, userId }) {
       await this.$post('/api/magic/achievement/claim', {
         achId,
@@ -63,57 +74,45 @@ export default {
       }
     },
 
+    async create({ dispatch }) {
+      const response = await this.$post('/api/magic/cube/create')
+      await dispatch('loadAllCubes')
+      return response.cubeId
+    },
+
     async deleteAchievement({ dispatch }, ach) {
       await this.$post('/api/magic/achievement/delete', { achId: ach._id })
       await dispatch('loadAchievements')
     },
 
-    async getById(context, { cubeId }) {
-      const response = await this.$post('/api/magic/cube/fetch', { cubeId })
-      const cube = cubeUtil.deserialize(response.cube)
-      return cube
-    },
-
     async loadCube({ dispatch, state }, { cubeId }) {
       state.cubeLoaded = false
-      state.cube = await dispatch('getById', { cubeId })
-      state.filteredCards = state.cube.cardlist
 
-      await dispatch('loadScars')
-      await dispatch('loadAchievements')
+      const response = await this.$post('/api/magic/cube/fetch', { cubeId })
+      const cube = new UICubeWrapper(response.cube)
 
+      const cards = await dispatch('magic/cards/getByIds', cube.cardlist, { root: true })
+      cube.setCards(cards)
+
+      state.cube = cube
       state.cubeLoaded = true
     },
 
-    async loadScars({ state }) {
-      const { scars } = await this.$post('/api/magic/scar/fetch_all', {
-        cubeId: state.cube._id,
-      })
-      state.scars = scars
-    },
-
-    async loadAchievements({ state }) {
-      const { achievements } = await this.$post('/api/magic/achievement/all', {
-        cubeId: state.cube._id,
-      })
-      state.achievements = achievements
+    async loadAllCubes({ dispatch, state }) {
+      const response = await this.$post('/api/magic/cube/all')
+      state.cubes = response.cubes
     },
 
     async save({ dispatch }, cube) {
-      await dispatch('magic/file/save', cube.serialize(), { root: true })
+      throw new Error('not implemented')
     },
 
-    async setFilters({ state }, filters) {
-      state.cardFilters = filters || []
-      if (filters.length === 0) {
-        state.filteredCards = state.cube.cardlist
-      }
-      else {
-        state.filteredCards = state
-          .cube
-          .cardlist
-          .filter(card => mag.util.card.filtersMatchCard(filters, card))
-      }
-    }
+    async updateSettings({ dispatch, state }, { cubeId, settings }) {
+      await this.$post('/api/magic/cube/update_settings', {
+        cubeId,
+        settings
+      })
+      await dispatch('loadCube', { cubeId })
+    },
   },
 }

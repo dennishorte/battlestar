@@ -13,13 +13,13 @@
         :key="troop.id"
         class="troop-space"
         :style="ui.fn.troopStyle(troop)"
-      ></div>
+      />
 
       <div
         v-for="count in loc.getEmptySpaces()"
         :key="count"
         class="troop-space"
-      ></div>
+      />
     </div>
 
     <div class="spy-zone">
@@ -28,7 +28,7 @@
         :key="spy.id"
         class="spy troop-space"
         :style="ui.fn.troopStyle(spy)"
-      ></div>
+      />
     </div>
 
     <div class="control-marker">

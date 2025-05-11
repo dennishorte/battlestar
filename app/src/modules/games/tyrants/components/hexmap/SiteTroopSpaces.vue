@@ -2,18 +2,21 @@
   <g :x="x" :y="y">
     <circle
       v-for="x in x1Points"
+      :key="x"
       :cx="x"
       :cy="cy1"
       r="8"
       class="site-troop-space" />
     <circle
       v-for="x in x2Points"
+      :key="x"
       :cx="x"
       :cy="cy2"
       r="8"
       class="site-troop-space" />
     <circle
       v-for="x in x3Points"
+      :key="x"
       :cx="x"
       :cy="cy3"
       r="8"
@@ -94,8 +97,12 @@ export default {
       }
     },
 
-    x() { return this.cx },
-    y() { return this.cy },
+    x() {
+      return this.cx
+    },
+    y() {
+      return this.cy
+    },
   },
 
   methods: {

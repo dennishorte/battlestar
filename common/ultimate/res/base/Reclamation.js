@@ -17,33 +17,33 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const doEffect = (color) => {
-        const cards = game.getCardsByZone(player, color);
+        const cards = game.getCardsByZone(player, color)
 
         // Get the bottom three cards
-        const bottomThree = cards.slice(Math.max(0, cards.length - 3));
-        const returned = game.aReturnMany(player, bottomThree, { ordered: true });
+        const bottomThree = cards.slice(Math.max(0, cards.length - 3))
+        const returned = game.aReturnMany(player, bottomThree, { ordered: true })
 
         // Calculate sum of values
-        const totalValue = bottomThree.reduce((sum, card) => sum + card.getAge(), 0);
-        const drawValue = Math.ceil(totalValue / 2);
+        const totalValue = bottomThree.reduce((sum, card) => sum + card.getAge(), 0)
+        const drawValue = Math.ceil(totalValue / 2)
 
         game.mLog({
           template: 'Sum of returned cards is {total}, drawing and melding a {value}',
           args: { total: totalValue, value: drawValue }
-        });
+        })
 
-        const meldedCard = game.aDrawAndMeld(player, drawValue);
+        const meldedCard = game.aDrawAndMeld(player, drawValue)
         return { meldedCard, returnedCount: returned.length }
-      };
+      }
 
-      const { meldedCard, returnedCount } = doEffect('red');
+      const { meldedCard, returnedCount } = doEffect('red')
       if (meldedCard && returnedCount === 3) {
         game.mLog({
           template: '{player} repeats the effect using {color}',
           args: { player, color: meldedCard.color }
-        });
+        })
 
-        doEffect(meldedCard.color);
+        doEffect(meldedCard.color)
       }
     }
   ]

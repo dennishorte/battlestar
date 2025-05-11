@@ -33,7 +33,7 @@ describe('Authentication', () => {
           password: 'password',
           appVersion: '1.0'
         })
-      
+
       expect(response.status).toEqual(200)
       expect(response.body).toHaveProperty('status', 'success')
       expect(response.body).toHaveProperty('user')
@@ -50,7 +50,7 @@ describe('Authentication', () => {
           password: 'wrong_password',
           appVersion: '1.0'
         })
-      
+
       expect(response.status).toEqual(401)
     })
   })
@@ -59,20 +59,11 @@ describe('Authentication', () => {
     it('should allow access to protected routes with valid token', async () => {
       // Create a valid token
       const token = jwt.sign(
-        { user_id: testUser._id.toString() }, 
+        { user_id: testUser._id.toString() },
         process.env.SECRET_KEY || 'test-secret-key',
         { expiresIn: '1h' }
       )
 
-      // Mock the user find function to return our test user
-      db.user.findById.mockResolvedValueOnce(testUser)
-      
-      // Mock the findByIds function to return the test user
-      db.user.findByIds.mockReturnValueOnce({
-        toArray: jest.fn().mockResolvedValueOnce([testUser])
-      })
-      
-      // Use a simple endpoint that doesn't require complex validation
       const response = await request(app)
         .post('/api/user/fetch_many')
         .set('Authorization', `Bearer ${token}`)
@@ -80,10 +71,14 @@ describe('Authentication', () => {
           userIds: [testUser._id.toString()],  // Use string format consistently
           appVersion: '1.0'
         })
-      
-      // Expect a successful response, not just "not 401"
-      expect(response.status).not.toEqual(401)
-      expect(response.status).toBeLessThan(500) // Ensure we don't get a server error
+
+      expect(response.status).toEqual(200)
+
+      const serializedUser = {
+        ...testUser,
+        _id: testUser._id.toString(),
+      }
+      expect(response.body.users).toEqual([serializedUser])
     })
 
     it('should reject access to protected routes without token', async () => {
@@ -93,8 +88,8 @@ describe('Authentication', () => {
           userIds: [testUser._id.toString()],
           appVersion: '1.0'
         })
-      
+
       expect(response.status).toEqual(401)
     })
   })
-}) 
+})

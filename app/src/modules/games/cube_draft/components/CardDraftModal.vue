@@ -2,7 +2,7 @@
   <Modal id="card-draft-modal">
     <div v-if="!!card" class="modal-body">
       <div class="card-holder">
-        <Card :card="card.data" :size="270" />
+        <Card :card="card" :size="270" />
       </div>
     </div>
 
@@ -47,7 +47,7 @@ export default {
     cannotDraft() {
       if (this.card) {
         const player = this.game.getPlayerByName(this.actor.name)
-        return this.card.id === player.scarredCardId
+        return this.card.g.id === player.scarredCardId
       }
       else {
         return true

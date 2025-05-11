@@ -1,6 +1,9 @@
 <template>
   <div class="player-counters">
-    <PlayerCounter v-for="name in Object.keys(player.counters)" :player="player" :name="name" />
+    <PlayerCounter v-for="name in Object.keys(player.counters)"
+                   :key="name"
+                   :player="player"
+                   :name="name" />
   </div>
 </template>
 

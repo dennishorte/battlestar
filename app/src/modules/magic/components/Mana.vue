@@ -1,5 +1,5 @@
 <template>
-  <i v-if="valid" class="ms ms-cost" :class="manaClasses"></i>
+  <i v-if="valid" class="ms ms-cost" :class="manaClasses"/>
   <span v-else>{{ m }}</span>
 </template>
 

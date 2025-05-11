@@ -7,7 +7,7 @@
 
       <div class="zone-menu" v-if="!noMenu">
         <TableauZoneMenu>
-          <slot></slot>
+          <slot/>
         </TableauZoneMenu>
       </div>
     </div>

@@ -29,7 +29,7 @@ export default {
       const actorPlayer = state.game.getPlayerByName(actor.name)
 
       for (const player of state.game.getPlayersStarting(actorPlayer)) {
-        for (const name of ['battlefield', 'command', 'creatures', 'land', 'stack']) {
+        for (const name of ['attacking', 'battlefield', 'blocking', 'command', 'creatures', 'land', 'stack']) {
           ids.push(`players.${player.name}.${name}`)
         }
       }
@@ -88,7 +88,7 @@ export default {
     },
 
     setSelectedCard(state, card) {
-      state.selectedCardId = card ? card.id : null
+      state.selectedCardId = card ? card.g.id : null
     },
   },
 
@@ -119,8 +119,8 @@ export default {
         && Date.now() - state.doubleClick.time < 500  // 500 ms
       ) {
         state.game.doFunc(null, {
-          name: card.tapped ? 'untap' : 'tap',
-          cardId: card.id,
+          name: card.g.tapped ? 'untap' : 'tap',
+          cardId: card.g.id,
         })
         commit('setSelectedCard', null)
         commit('setDoubleClick', {
@@ -143,7 +143,7 @@ export default {
         commit('setSelectedCard', card)
       }
 
-      else if (state.selectedCardId === card.id) {
+      else if (state.selectedCardId === card.g.id) {
         commit('setSelectedCard', null)
       }
 
@@ -203,7 +203,6 @@ export default {
     async loadGame({ commit, dispatch, rootGetters, rootState }, { doFunc, game }) {
       commit('setReady', false)
       const actor = rootGetters['auth/user']
-      game.cardLookupFunc = rootGetters['magic/cards/getLookupFunc']
       game.doFunc = doFunc
       game.run()
 

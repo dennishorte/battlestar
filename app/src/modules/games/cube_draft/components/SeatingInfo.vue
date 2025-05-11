@@ -5,7 +5,7 @@
 
     <div v-for="info in playerInfo" :key="info.player.name" class="player-info">
       <div class="name-div">{{ info.player.name }}</div>
-      <div v-for="count in info.waitingPacks" class="count-div">
+      <div v-for="count in info.waitingPacks" :key="count" class="count-div">
         &nbsp{{ count }}
       </div>
       <div

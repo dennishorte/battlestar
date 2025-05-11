@@ -11,7 +11,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-//    `Reveal the top card of any value deck from any set. Execute the first sentence of non-demand dogma effect on the card. If you do, return the revealed card and repeat this effect using the next sentence.`
+    //    `Reveal the top card of any value deck from any set. Execute the first sentence of non-demand dogma effect on the card. If you do, return the revealed card and repeat this effect using the next sentence.`
     `Reveal the top card of any value deck from any set. Execute the first non-demand dogma effect on the card. If the revealed card has a {c}, repeat this effect with a different deck.`
   ]
 

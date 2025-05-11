@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player, { leader }) => {
       // Choose two cards
-      const cards = game.aChooseAndTransfer(
+      game.aChooseAndTransfer(
         player,
         game.getCardsByZone(player, 'hand'),
         game.getZoneByPlayer(leader, 'hand'),

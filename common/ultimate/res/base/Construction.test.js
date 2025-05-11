@@ -11,7 +11,7 @@ describe('Construction', () => {
         t.setHand(game, 'micah', handNames)
       })
       let request
-    request = game.run()
+      request = game.run()
       request = t.choose(game, request, 'Dogma.Construction')
 
       const selector = request.selectors[0]
@@ -27,7 +27,7 @@ describe('Construction', () => {
         t.setHand(game, 'micah', handNames)
       })
       let request
-    request = game.run()
+      request = game.run()
       request = t.choose(game, request, 'Dogma.Construction')
       request = t.choose(game, request, 'Experimentation', 'Statistics')
       request = t.choose(game, request, 'auto')
@@ -48,7 +48,7 @@ describe('Construction', () => {
         t.setColor(game, 'dennis', 'purple', ['Monotheism'])
       })
       let request
-    request = game.run()
+      request = game.run()
       t.choose(game, request, 'Dogma.Construction')
 
       const dennis = game.getPlayerByName('dennis')
@@ -73,7 +73,7 @@ describe('Construction', () => {
       })
 
       let request
-    request = game.run()
+      request = game.run()
       t.choose(game, request, 'Dogma.Construction')
 
       const dennis = game.getPlayerByName('dennis')
@@ -90,7 +90,7 @@ describe('Construction', () => {
         // t.setColor(game, 'dennis', 'purple', ['Monotheism'])
       })
       let request
-    request = game.run()
+      request = game.run()
       t.choose(game, request, 'Dogma.Construction')
 
       const dennis = game.getPlayerByName('dennis')

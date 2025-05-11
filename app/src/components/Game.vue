@@ -3,14 +3,14 @@
     Loading...
   </div>
 
-  <CubeDraft v-else-if="gameType === 'CubeDraft'" />
+  <CubeDraft v-else-if="gameType === 'Cube Draft' || gameType === 'Set Draft'" />
   <Magic v-else-if="gameType === 'Magic'" />
   <Innovation v-else-if="gameType === 'Innovation'" />
   <Ultimate v-else-if="gameType === 'Innovation: Ultimate'" />
   <Tyrants v-else-if="gameType === 'Tyrants of the Underdark'" />
 
   <div v-else>
-    error
+    error, unknown game type: {{ gameType }}
   </div>
 
   <SavingOverlay />
@@ -19,6 +19,7 @@
 <script>
 import { computed } from 'vue'
 import { mapState } from 'vuex'
+import mitt from 'mitt'
 
 import CubeDraft from '@/modules/games/cube_draft/components/CubeDraft'
 import Innovation from '@/modules/games/inn/components/Innovation'
@@ -46,12 +47,14 @@ export default {
     return {
       id: this.$route.params.id,
       actor: this.$store.getters['auth/user'],
+      bus: mitt(),
     }
   },
 
   provide() {
     return {
       actor: this.actor,
+      bus: this.bus,
       game: computed(() => this.game),
     }
   },

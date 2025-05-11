@@ -61,4 +61,4 @@ describe('Misc Controller', () => {
       expect(next).toHaveBeenCalledWith(error)
     })
   })
-}) 
+})

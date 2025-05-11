@@ -1,14 +1,14 @@
 <template>
   <div class="wrapper" :class="wrapperClasses">
     <div class="card-line">
-      <i class="bi bi-eye-fill" v-if="cardIsRevealed"></i>
-      <i class="bi bi-eye" v-else-if="cardIsViewed"></i>
-      <i class="bi bi-eye-slash-fill" v-else-if="cardIsSecret"></i>
+      <i class="bi bi-eye-fill" v-if="cardIsRevealed"/>
+      <i class="bi bi-eye" v-else-if="cardIsViewed"/>
+      <i class="bi bi-eye-slash-fill" v-else-if="cardIsSecret"/>
 
-      <i class="bi bi-browser-edge" v-if="card.morph"></i>
-      <i class="bi bi-bookmark-fill" v-if="card.token"></i>
+      <i class="bi bi-browser-edge" v-if="card.g.morph"/>
+      <i class="bi bi-bookmark-fill" v-if="card.g.token"/>
 
-      <i class="bi bi-lightning-fill" v-if="showScarIcon"></i>
+      <i class="bi bi-lightning-fill" v-if="showScarIcon"/>
 
       <template v-if="showGravePowers">
         <i class="ms ms-cost ms-ability-aftermath" v-if="hasAftermath" />
@@ -29,8 +29,10 @@
         :hide-popup="hidden"
         :show-mana-cost="showManaCost"
         :show-power="showPower"
+        :separate-faces="!hidden"
+        :can-view="canView"
       >
-        <template #name>{{ displayName }}</template>
+        <template v-slot:name="slotProps">{{ displayName(slotProps.faceIndex) }}</template>
       </CardListItem>
     </div>
 
@@ -40,18 +42,18 @@
 
     <div ref="menu" :class="highlighted ? '' : 'd-none'">
       <Dropdown :notitle="true" :menu-end="true" class="menu dropdown">
-        <DropdownButton @click.stop="twiddle" v-if="card.tapped">untap</DropdownButton>
+        <DropdownButton @click.stop="twiddle" v-if="card.g.tapped">untap</DropdownButton>
         <DropdownButton @click.stop="twiddle" v-else>tap</DropdownButton>
 
         <DropdownButton @click.stop="closeup">close up</DropdownButton>
 
-        <DropdownButton @click.stop="unmorph" v-if="card.morph">unmorph</DropdownButton>
+        <DropdownButton @click.stop="unmorph" v-if="card.g.morph">unmorph</DropdownButton>
         <DropdownButton @click.stop="morph" v-else>morph</DropdownButton>
 
-        <DropdownButton @click.stop="unsecret" v-if="card.secret">unsecret</DropdownButton>
+        <DropdownButton @click.stop="unsecret" v-if="card.g.secret">unsecret</DropdownButton>
         <DropdownButton @click.stop="secret" v-else>secret</DropdownButton>
 
-        <DropdownButton @click.stop="detach" v-if="card.attachedTo">detach</DropdownButton>
+        <DropdownButton @click.stop="detach" v-if="card.g.attachedTo">detach</DropdownButton>
         <DropdownButton @click.stop="attach" v-else>attach</DropdownButton>
 
         <DropdownButton @click.stop="reveal">reveal</DropdownButton>
@@ -59,7 +61,7 @@
 
         <DropdownDivider />
 
-        <li v-for="counter in Object.keys(card.counters)">
+        <li v-for="counter in Object.keys(card.g.counters)" :key="counter">
           <button @click.stop="() => {}" class="dropdown-item counter-button">
             <CounterButtons @click.stop="() => {}" :card="card" :name="counter" />
           </button>
@@ -69,8 +71,8 @@
 
         <DropdownButton @click="toggleUntap">
           doesn't untap
-          <i class="bi bi-check-square" v-if="card.noUntap"></i>
-          <i class="bi bi-square" v-else></i>
+          <i class="bi bi-check-square" v-if="card.g.noUntap"/>
+          <i class="bi bi-square" v-else/>
         </DropdownButton>
 
       </Dropdown>
@@ -88,8 +90,6 @@ import CounterButtons from './CounterButtons'
 import Dropdown from '@/components/Dropdown'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
-
-import { mag } from 'battlestar-common'
 
 
 export default {
@@ -128,34 +128,34 @@ export default {
     annotation() {
       const parts = []
 
-      for (const [key, value] of Object.entries(this.card.counters)) {
+      for (const [key, value] of Object.entries(this.card.g.counters)) {
         if (value !== 0) {
           parts.push(`${key}: ${value}`)
         }
       }
 
-      if (this.card.annotation) {
-        parts.push(this.card.annotation)
+      if (this.card.g.annotation) {
+        parts.push(this.card.g.annotation)
       }
 
-      if (this.card.attachedTo) {
-        parts.push('attached to: ' + this.getDisplayName(this.card.attachedTo))
+      if (this.card.g.attachedTo) {
+        parts.push('attached to: ' + this.getDisplayName(this.card.g.attachedTo))
       }
 
-      if (this.card.attached.length > 0) {
-        const names = this.card.attached.map(c => this.getDisplayName(c)).join(', ')
+      if (this.card.g.attached.length > 0) {
+        const names = this.card.g.attached.map(c => this.getDisplayName(c)).join(', ')
         parts.push('attached: ' + names)
       }
 
-      if (this.card.annotationEOT) {
-        parts.push('eot: ' + this.card.annotationEOT)
+      if (this.card.g.annotationEOT) {
+        parts.push('eot: ' + this.card.g.annotationEOT)
       }
 
       return parts.join(', ')
     },
 
     cardIsSecret() {
-      return this.card.secret === true
+      return this.card.g.secret === true
     },
 
     cardIsRevealed() {
@@ -176,26 +176,44 @@ export default {
       return zone.kind === 'public'
     },
 
-    displayName() {
-      return this.getDisplayName(this.card)
-    },
-
     extraClasses() {
       const classes = []
-      if (this.hidden) classes.push('hidden')
-      if (this.card.tapped) classes.push('tapped')
+      if (this.hidden) {
+        classes.push('hidden')
+      }
+      if (this.card.g.tapped) {
+        classes.push('tapped')
+      }
       return classes
     },
 
-    hasAftermath() { return this.hasGraveAbility('Aftermath') },
-    hasDisturb() { return this.hasGraveAbility('Disturb') },
-    hasEmbalm() { return this.hasGraveAbility('Embalm') },
-    hasEscape() { return this.hasGraveAbility('Escape') },
-    hasEternalize() { return this.hasGraveAbility('Eternalize') },
-    hasFlashback() { return this.hasGraveAbility('Flashback') },
-    hasJumpstart() { return this.hasGraveAbility('Jump-start') },
-    hasHarmonize() { return this.hasGraveAbility('Harmonize') },
-    hasUnearth() { return this.hasGraveAbility('Unearth') },
+    hasAftermath() {
+      return this.hasGraveAbility('Aftermath')
+    },
+    hasDisturb() {
+      return this.hasGraveAbility('Disturb')
+    },
+    hasEmbalm() {
+      return this.hasGraveAbility('Embalm')
+    },
+    hasEscape() {
+      return this.hasGraveAbility('Escape')
+    },
+    hasEternalize() {
+      return this.hasGraveAbility('Eternalize')
+    },
+    hasFlashback() {
+      return this.hasGraveAbility('Flashback')
+    },
+    hasJumpstart() {
+      return this.hasGraveAbility('Jump-start')
+    },
+    hasHarmonize() {
+      return this.hasGraveAbility('Harmonize')
+    },
+    hasUnearth() {
+      return this.hasGraveAbility('Unearth')
+    },
 
     hasReturnFromGrave() {
       return this.card.data.card_faces.some(face => {
@@ -212,11 +230,11 @@ export default {
     },
 
     highlighted() {
-      return this.$store.state.magic.game.selectedCardId === this.card.id
+      return this.$store.state.magic.game.selectedCardId === this.card.g.id
     },
 
     isScarred() {
-      return mag.util.card.isScarred(this.card.data)
+      return false
     },
 
     showScarIcon() {
@@ -225,7 +243,9 @@ export default {
 
     wrapperClasses() {
       const classes = []
-      if (this.highlighted) classes.push('highlighted')
+      if (this.highlighted) {
+        classes.push('highlighted')
+      }
       return classes
     },
   },
@@ -233,11 +253,10 @@ export default {
   methods: {
     attach() {
       const callback = (card) => {
-        console.log('callback', card.name)
         this.do(null, {
           name: 'attach',
-          cardId: this.card.id,
-          targetId: card.id
+          cardId: this.card.g.id,
+          targetId: card.g.id
         })
       }
 
@@ -245,38 +264,34 @@ export default {
       this.$store.dispatch('magic/game/unselectCard')
     },
 
-    detach() {
-      this.do(null, {
-        name: 'detach',
-        cardId: this.card.id,
-      })
-      this.$store.dispatch('magic/game/unselectCard')
+    canView(card) {
+      const player = this.game.getPlayerByName(this.actor.name)
+      return card.isVisible(player)
     },
 
     closeup() {
       this.$modal('card-closeup-modal').show()
     },
 
-    getDisplayName(card) {
-      if (this.getHidden(card)) {
-        if (card.secret) {
-          return 'secret'
-        }
-        else if (card.morph) {
-          return 'morph'
-        }
-        else {
-          return 'hidden'
-        }
-      }
-      else {
-        return card.activeFace
-      }
+    detach() {
+      this.do(null, {
+        name: 'detach',
+        cardId: this.card.g.id,
+      })
+      this.$store.dispatch('magic/game/unselectCard')
+    },
+
+    displayName(faceIndex) {
+      return this.getDisplayName(this.card, faceIndex)
+    },
+
+    getDisplayName(card, faceIndex=null) {
+      const player = this.game.getPlayerByName(this.actor.name)
+      return card.displayName(player, faceIndex)
     },
 
     getHidden(card) {
-      const player = this.game.getPlayerByName(this.actor.name)
-      return !card.visibility.includes(player)
+      return !this.canView(card)
     },
 
     hasGraveAbility(name) {
@@ -291,7 +306,7 @@ export default {
     morph() {
       this.do(null, {
         name: 'morph',
-        cardId: this.card.id,
+        cardId: this.card.g.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
     },
@@ -299,22 +314,22 @@ export default {
     secret() {
       this.do(null, {
         name: 'secret',
-        cardId: this.card.id,
+        cardId: this.card.g.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
     },
 
     twiddle() {
-      if (this.card.tapped) {
+      if (this.card.g.tapped) {
         this.do(null, {
           name: 'untap',
-          cardId: this.card.id,
+          cardId: this.card.g.id,
         })
       }
       else {
         this.do(null, {
           name: 'tap',
-          cardId: this.card.id,
+          cardId: this.card.g.id,
         })
       }
       this.$store.dispatch('magic/game/unselectCard')
@@ -323,7 +338,7 @@ export default {
     reveal() {
       this.do(null, {
         name: 'reveal',
-        cardId: this.card.id,
+        cardId: this.card.g.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
     },
@@ -331,22 +346,22 @@ export default {
     stack() {
       this.do(null, {
         name: 'stack effect',
-        cardId: this.card.id,
+        cardId: this.card.g.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
     },
 
     toggleUntap() {
       this.do(null, {
-        name: this.card.noUntap ? 'notap clear' : 'notap set',
-        cardId: this.card.id,
+        name: this.card.g.noUntap ? 'notap clear' : 'notap set',
+        cardId: this.card.g.id,
       })
     },
 
     unmorph() {
       this.do(null, {
         name: 'unmorph',
-        cardId: this.card.id,
+        cardId: this.card.g.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
     },
@@ -354,7 +369,7 @@ export default {
     unsecret() {
       this.do(null, {
         name: 'unsecret',
-        cardId: this.card.id,
+        cardId: this.card.g.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
     },

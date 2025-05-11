@@ -1,50 +1,21 @@
 <template>
-  <Modal @ok="importCardEmit">
+  <CardSearchModal @card-selected="importCardEmit">
     <template #header>Insert Card</template>
 
-    <div class="type-ahead">
-      <input class="form-control" v-model="name" placeholder="card name" @input="checkVersions" />
-    </div>
+    <template #middle-slot>
+      <select class="form-select mt-2" v-model="zoneId">
+        <option v-for="zoneId in importZoneIds" :key="zoneId">{{ zoneId }}</option>
+      </select>
+      <input class="form-control mt-2" v-model.number="count" placeholder="count" />
 
-    <select class="form-select mt-2" v-model="zoneId">
-      <option v-for="zoneId in importZoneIds">{{ zoneId }}</option>
-    </select>
-    <input class="form-control mt-2" v-model.number="count" placeholder="count" />
+      <input class="form-control mt-2" v-model="annotation" placeholder="annotation" />
 
-    <input class="form-control mt-2" v-model="annotation" placeholder="annotation" />
-
-    <div class="form-check mt-2">
-      <input class="form-check-input" type="checkbox" v-model="isToken" />
-      <label class="form-check-label">token</label>
-    </div>
-
-    <div class="versions">
-
-      <template v-if="cards.length === 0">
-        no matches
-      </template>
-
-      <template v-else>
-        <div class="versions-list">
-          <div
-            v-for="version of versions"
-            class="version-text"
-            @click="selectVersion(version)"
-            :class="version === selected ? 'version-selected' : ''"
-          >
-            {{ version.name }}
-            {{ version.card_faces[0].power }}
-            / {{ version.card_faces[0].toughness }}
-            {{ version.card_faces[0].oracle_text }}
-          </div>
-        </div>
-
-        <div class="preview">
-          <Card :card="selected" :size="160" />
-        </div>
-      </template>
-    </div>
-  </Modal>
+      <div class="form-check mt-2">
+        <input class="form-check-input" type="checkbox" v-model="isToken" />
+        <label class="form-check-label">token</label>
+      </div>
+    </template>
+  </CardSearchModal>
 </template>
 
 
@@ -52,16 +23,13 @@
 import { mapGetters } from 'vuex'
 import { mag } from 'battlestar-common'
 
-import Card from '@/modules/magic/components/Card'
-import Modal from '@/components/Modal'
-
+import CardSearchModal from '@/modules/magic/components/CardSearchModal'
 
 export default {
   name: 'ImportCardModal',
 
   components: {
-    Card,
-    Modal,
+    CardSearchModal,
   },
 
   props: {
@@ -123,9 +91,9 @@ export default {
       this.selected = card
     },
 
-    importCardEmit(card) {
+    importCardEmit(cardData) {
       this.$emit('import-card', {
-        card: this.selected,
+        card: cardData,
         annotation: this.annotation,
         count: this.count,
         zoneId: this.zoneId,

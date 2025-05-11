@@ -1,5 +1,5 @@
-const db = require('../models/db')
-const slack = require('../utils/slack')
+const db = require('@models/db')
+const slack = require('@utils/slack')
 
 const NotificationService = {}
 

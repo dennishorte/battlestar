@@ -1,8 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const jwt = require('jsonwebtoken')
-const db = require('../../models/db')
-const logger = require('../../utils/logger')
+const db = require('@models/db')
+const logger = require('@utils/logger')
 
 /**
  * @swagger
@@ -44,11 +43,11 @@ const logger = require('../../utils/logger')
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body
-    
+
     logger.debug(`Attempting login for user: ${username}`)
-    
+
     const user = await db.user.checkPassword(username, password)
-    
+
     if (!user) {
       logger.info(`Login failed for user: ${username}`)
       return res.status(401).json({
@@ -56,7 +55,7 @@ router.post('/login', async (req, res) => {
         message: 'Invalid username or password'
       })
     }
-    
+
     logger.info(`User logged in successfully: ${username}`)
 
     // Return user info and token
@@ -74,4 +73,4 @@ router.post('/login', async (req, res) => {
   }
 })
 
-module.exports = router 
+module.exports = router

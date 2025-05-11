@@ -4,12 +4,13 @@
 
     <div class="modal-body">
 
-      <div v-for="(player, index) of players" class="player-section">
+      <div v-for="(player, index) of players" :key="player.name" class="player-section">
         <h5>{{ player.name }}</h5>
 
         <div class="player-inner">
           <PlayerCounter
             v-for="name in Object.keys(player.counters)"
+            :key="name"
             :player="player"
             :name="name"
             button-size="large"

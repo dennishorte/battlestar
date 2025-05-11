@@ -15,7 +15,7 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player, { leader }) => {
+    (game, player) => {
       const effectAge = game.getEffectAge(this, 5)
 
       while (true) {

@@ -1,0 +1,49 @@
+{
+  "_id": "3875f73d-6108-488b-bd34-4cf2c23ce6b3",
+  "source": "scryfall",
+  "data": {
+    "_id": "3875f73d-6108-488b-bd34-4cf2c23ce6b3",
+    "layout": "normal",
+    "cmc": 6,
+    "color_identity": [
+      "G"
+    ],
+    "set": "m10",
+    "collector_number": "173",
+    "digital": false,
+    "rarity": "common",
+    "card_faces": [
+      {
+        "artist": "Richard Sardinha",
+        "flavor_text": "The most terrifying thing about the craw wurm is probably the horrible crashing sound it makes as it speeds through the forest. This noise is so loud it echoes through the trees and seems to come from all directions at once.",
+        "mana_cost": "{4}{G}{G}",
+        "name": "Craw Wurm",
+        "power": "6",
+        "toughness": "4",
+        "type_line": "Creature — Wurm",
+        "colors": [
+          "G"
+        ],
+        "image_uri": "https://cards.scryfall.io/art_crop/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1561976333"
+      }
+    ],
+    "name": "Craw Wurm",
+    "colors": [
+      "G"
+    ],
+    "type_line": "Creature — Wurm",
+    "legal": [
+      "modern",
+      "legacy",
+      "pauper",
+      "vintage",
+      "penny",
+      "commander",
+      "oathbreaker",
+      "paupercommander",
+      "duel",
+      "premodern",
+      "predh"
+    ]
+  }
+}

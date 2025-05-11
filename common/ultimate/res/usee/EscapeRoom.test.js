@@ -2,7 +2,7 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 describe('Escape Room', () => {
 
-  test('dogma', () => {
+  test('dogma: instant win', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
@@ -25,7 +25,7 @@ describe('Escape Room', () => {
     t.testGameOver(request, 'dennis', 'Escape Room')
   })
 
-  test('dogma', () => {
+  test('dogma: with multiple colors', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {

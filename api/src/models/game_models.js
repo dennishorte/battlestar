@@ -1,5 +1,5 @@
-const { fromData, fromLobby } = require('battlestar-common')
-const databaseClient = require('../utils/mongo.js').client
+const { fromLobby } = require('battlestar-common')
+const databaseClient = require('@utils/mongo.js').client
 
 // Database and collection
 const database = databaseClient.db('games')
@@ -24,14 +24,7 @@ Game.create = async function(lobby) {
 
   const insertResult = await gameCollection.insertOne(data)
 
-  // Need to actually run the game once to make sure 'waiting' field is populated.
-  const gameData = await this.findById(insertResult.insertedId)
-  const game = fromData(gameData)
-  game.run()
-
-  await this.save(game, { noMutex: true })
-
-  return game._id
+  return insertResult.insertedId
 }
 
 Game.find = async function(filters) {
@@ -78,8 +71,6 @@ Game.gameOver = async function(game, killed=false) {
     { _id: game._id },
     { $set: setValues },
   )
-
-  // Hook to release scars from cube draft games.
 }
 
 Game.linkDraftToGame = async function(draft, game) {

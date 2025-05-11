@@ -1,7 +1,7 @@
 <template>
   <MagicWrapper>
     <div class='lobby'>
-      <Header />
+      <GameHeader />
 
       <div class="container">
         <div class="row">
@@ -43,7 +43,7 @@
 import { computed } from 'vue'
 
 import EditableText from '@/components/EditableText'
-import Header from '@/components/Header'
+import GameHeader from '@/components/GameHeader'
 import LobbyPlayerList from '../components/PlayerList'
 import LobbySettings from '../components/Settings'
 import MagicWrapper from '@/modules/magic/components/MagicWrapper'
@@ -53,7 +53,7 @@ export default {
   name: 'Lobby',
   components: {
     EditableText,
-    Header,
+    GameHeader,
     LobbyPlayerList,
     LobbySettings,
     MagicWrapper,
@@ -85,11 +85,6 @@ export default {
     },
 
     async startGame() {
-      if (this.lobby.onStart) {
-        await this.lobby.onStart(this.lobby)
-        delete this.lobby.onStart  // Don't want to save this callback function
-      }
-
       await this.save()
       if (this.errorMessage) {
         return

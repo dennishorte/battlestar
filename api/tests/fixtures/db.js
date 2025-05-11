@@ -10,14 +10,18 @@ let db
  * Connect to the in-memory database.
  */
 async function connect() {
-  mongoServer = await MongoMemoryServer.create()
+  mongoServer = await MongoMemoryServer.create({
+    instance: {
+      port: 27018, // Using a different port to avoid conflicts
+    }
+  })
   const mongoUri = mongoServer.getUri()
-  
+
   mongoClient = new MongoClient(mongoUri)
   await mongoClient.connect()
-  
+
   db = mongoClient.db('test')
-  
+
   return {
     client: mongoClient,
     db
@@ -59,7 +63,7 @@ async function createUser(userData = {}) {
     createdTimestamp: userData.createdTimestamp || Date.now(),
     ...userData
   }
-  
+
   const result = await db.collection('user').insertOne(user)
   return { ...user, _id: result.insertedId }
 }
@@ -74,7 +78,7 @@ async function createGame(gameData = {}) {
     status: gameData.status || 'active',
     ...gameData
   }
-  
+
   const result = await db.collection('game').insertOne(game)
   return { ...game, _id: result.insertedId }
 }
@@ -86,4 +90,4 @@ module.exports = {
   createUser,
   createGame,
   ObjectId
-} 
+}

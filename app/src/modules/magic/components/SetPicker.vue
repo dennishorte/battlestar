@@ -4,6 +4,7 @@
     <div class="set-list">
       <div
         v-for="sett in searchedSets"
+        :key="sett.name"
         @click="selectSet(sett)"
         class="set-name"
         :class="sett.name === highlightedName ? 'highlighted' : ''"

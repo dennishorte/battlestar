@@ -23,6 +23,8 @@ import MagicWrapper from '@/modules/magic/components/MagicWrapper'
 import MatchStatsModal from './MatchStatsModal'
 import PreGame from './PreGame'
 
+import UICardWrapper from '@/modules/magic/util/card.wrapper'
+
 
 export default {
   name: 'Magic',
@@ -60,6 +62,7 @@ export default {
 
   methods: {
     async loadGame() {
+      this.game.setCardWrapper(UICardWrapper, 'Magic.vue')
       await this.$store.dispatch('magic/game/loadGame', {
         game: this.game,
         doFunc: this.do,

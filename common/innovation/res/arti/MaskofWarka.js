@@ -34,9 +34,9 @@ function Card() {
         const toReturn = game
           .getCardsByZone(player, 'hand')
           .filter(card => card.color === color)
-        const returned = game.aReturnMany(player, toReturn)
+        game.aReturnMany(player, toReturn)
         const toClaim = toReturn.map(card => card.getAge())
-        const available = game
+        game
           .getAvailableAchievementsRaw(player)
           .filter(card => toClaim.includes(card.getAge()))
           .forEach(card => game.aClaimAchievement(player, { card }))

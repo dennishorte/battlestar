@@ -21,4 +21,4 @@ router.use('/lobby', lobbyRouter)
 router.use('/tyrants', tyrantsRouter)
 router.use('/magic', magicRouter)
 
-module.exports = router 
+module.exports = router

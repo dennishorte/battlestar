@@ -15,7 +15,7 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player, { leader }) => {
+    (game, player) => {
       const valueMap = new Map()
 
       game.getTopCards(player).forEach(card => {

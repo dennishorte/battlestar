@@ -1,8 +1,7 @@
-const { ObjectId } = require('mongodb')
 const passport = require('passport')
-const JwtStrategy = require('passport-jwt').Strategy
-const ExtractJwt = require('passport-jwt').ExtractJwt
-const db = require('../models/db.js')
+const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt')
+const { ObjectId } = require('mongodb')
+const db = require('@models/db.js')
 
 // Configure the Bearer strategy for use by Passport.
 passport.use(new JwtStrategy(
@@ -15,7 +14,7 @@ passport.use(new JwtStrategy(
     const user = await db.user.findById(id)
 
     if (!user) {
-      return cb(null, false) 
+      return cb(null, false)
     }
     return cb(null, user)
   }
@@ -36,4 +35,4 @@ function authenticate(req, res, next) {
 
 module.exports = {
   authenticate
-} 
+}

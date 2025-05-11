@@ -39,7 +39,7 @@ function Card() {
   this.karmaImpl = []
 }
 
-  Card.prototype = Object.create(CardBase.prototype)
+Card.prototype = Object.create(CardBase.prototype)
 Object.defineProperty(Card.prototype, `constructor`, {
   value: Card,
   enumerable: false,

@@ -2,7 +2,11 @@
   <g class="tile-site" :class="classes" :filter="filters">
 
     <polygon v-if="!site.major" class="site-rect" :points="points" />
-    <circle v-if="site.major" class="site-rect" :cx="site.cx" :cy="site.cy" r="50" />
+    <circle v-if="site.major"
+            class="site-rect"
+            :cx="site.cx"
+            :cy="site.cy"
+            r="50" />
 
     <text :x="site.cx" :y="nameY" class="site-name">
       <tspan>{{ name1 }}</tspan>
@@ -86,8 +90,12 @@ export default {
       }
     },
 
-    name1() { return this.site.name.split('|')[0] },
-    name2() { return this.site.name.split('|')[1] },
+    name1() {
+      return this.site.name.split('|')[0]
+    },
+    name2() {
+      return this.site.name.split('|')[1]
+    },
 
     nameY() {
       return this.name2 ? this.site.cy - this.halfHeight + 13 : this.site.cy - this.halfHeight + 18

@@ -2,7 +2,7 @@
   <div class="biscuits">
 
     <div class="biscuits-row">
-      <div class="biscuits-box-name"></div>
+      <div class="biscuits-box-name"/>
       <div
         v-for="biscuit in ['k', 'c', 's', 'l', 'f', 'i', 'p']"
         :key="biscuit"

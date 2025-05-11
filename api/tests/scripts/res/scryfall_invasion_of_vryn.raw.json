@@ -1,0 +1,162 @@
+{
+  "object": "card",
+  "id": "c0ef6737-8e85-42ca-8ee6-6a34f9462de3",
+  "oracle_id": "73c7fdb3-4742-4d08-8658-daa4435c49b1",
+  "multiverse_ids": [
+    607088,
+    607089
+  ],
+  "mtgo_id": 109948,
+  "arena_id": 84324,
+  "tcgplayer_id": 491207,
+  "cardmarket_id": 704327,
+  "name": "Invasion of Vryn // Overloaded Mage-Ring",
+  "lang": "en",
+  "released_at": "2023-04-21",
+  "uri": "https://api.scryfall.com/cards/c0ef6737-8e85-42ca-8ee6-6a34f9462de3",
+  "scryfall_uri": "https://scryfall.com/card/mom/64/invasion-of-vryn-overloaded-mage-ring?utm_source=api",
+  "layout": "transform",
+  "highres_image": true,
+  "image_status": "highres_scan",
+  "cmc": 4,
+  "type_line": "Battle — Siege // Artifact",
+  "color_identity": [
+    "U"
+  ],
+  "keywords": [
+    "Transform"
+  ],
+  "card_faces": [
+    {
+      "object": "card_face",
+      "name": "Invasion of Vryn",
+      "mana_cost": "{3}{U}",
+      "type_line": "Battle — Siege",
+      "oracle_text": "(As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, draw three cards, then discard a card.",
+      "colors": [
+        "U"
+      ],
+      "defense": "4",
+      "artist": "Leon Tukker",
+      "artist_id": "669b8b90-758d-4f9e-b4f7-98cd6742eb97",
+      "illustration_id": "3a24583c-60e4-4298-88e6-6a875bf6b632",
+      "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/c/0/c0ef6737-8e85-42ca-8ee6-6a34f9462de3.jpg?1739657380",
+        "normal": "https://cards.scryfall.io/normal/front/c/0/c0ef6737-8e85-42ca-8ee6-6a34f9462de3.jpg?1739657380",
+        "large": "https://cards.scryfall.io/large/front/c/0/c0ef6737-8e85-42ca-8ee6-6a34f9462de3.jpg?1739657380",
+        "png": "https://cards.scryfall.io/png/front/c/0/c0ef6737-8e85-42ca-8ee6-6a34f9462de3.png?1739657380",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/c/0/c0ef6737-8e85-42ca-8ee6-6a34f9462de3.jpg?1739657380",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/c/0/c0ef6737-8e85-42ca-8ee6-6a34f9462de3.jpg?1739657380"
+      }
+    },
+    {
+      "object": "card_face",
+      "name": "Overloaded Mage-Ring",
+      "mana_cost": "",
+      "type_line": "Artifact",
+      "oracle_text": "{1}, {T}, Sacrifice this artifact: Copy target spell you control. You may choose new targets for the copy. (A copy of a permanent spell becomes a token.)",
+      "colors": [
+        "U"
+      ],
+      "color_indicator": [
+        "U"
+      ],
+      "flavor_text": "\"On my signal, disable the safeguards. Let's blow these metal freaks right back to their own world!\"\n—Gav Beleren, mage-ring engineer",
+      "artist": "Leon Tukker",
+      "artist_id": "669b8b90-758d-4f9e-b4f7-98cd6742eb97",
+      "illustration_id": "4fd001b2-7bbb-403f-9bfa-12d05530176f",
+      "image_uris": {
+        "small": "https://cards.scryfall.io/small/back/c/0/c0ef6737-8e85-42ca-8ee6-6a34f9462de3.jpg?1739657380",
+        "normal": "https://cards.scryfall.io/normal/back/c/0/c0ef6737-8e85-42ca-8ee6-6a34f9462de3.jpg?1739657380",
+        "large": "https://cards.scryfall.io/large/back/c/0/c0ef6737-8e85-42ca-8ee6-6a34f9462de3.jpg?1739657380",
+        "png": "https://cards.scryfall.io/png/back/c/0/c0ef6737-8e85-42ca-8ee6-6a34f9462de3.png?1739657380",
+        "art_crop": "https://cards.scryfall.io/art_crop/back/c/0/c0ef6737-8e85-42ca-8ee6-6a34f9462de3.jpg?1739657380",
+        "border_crop": "https://cards.scryfall.io/border_crop/back/c/0/c0ef6737-8e85-42ca-8ee6-6a34f9462de3.jpg?1739657380"
+      }
+    }
+  ],
+  "legalities": {
+    "standard": "legal",
+    "future": "legal",
+    "historic": "legal",
+    "timeless": "legal",
+    "gladiator": "legal",
+    "pioneer": "legal",
+    "explorer": "legal",
+    "modern": "legal",
+    "legacy": "legal",
+    "pauper": "not_legal",
+    "vintage": "legal",
+    "penny": "not_legal",
+    "commander": "legal",
+    "oathbreaker": "legal",
+    "standardbrawl": "legal",
+    "brawl": "legal",
+    "alchemy": "not_legal",
+    "paupercommander": "not_legal",
+    "duel": "legal",
+    "oldschool": "not_legal",
+    "premodern": "not_legal",
+    "predh": "not_legal"
+  },
+  "games": [
+    "paper",
+    "arena",
+    "mtgo"
+  ],
+  "reserved": false,
+  "game_changer": false,
+  "foil": true,
+  "nonfoil": true,
+  "finishes": [
+    "nonfoil",
+    "foil"
+  ],
+  "oversized": false,
+  "promo": false,
+  "reprint": false,
+  "variation": false,
+  "set_id": "392f7315-dc53-40a3-a2cc-5482dbd498b3",
+  "set": "mom",
+  "set_name": "March of the Machine",
+  "set_type": "expansion",
+  "set_uri": "https://api.scryfall.com/sets/392f7315-dc53-40a3-a2cc-5482dbd498b3",
+  "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amom&unique=prints",
+  "scryfall_set_uri": "https://scryfall.com/sets/mom?utm_source=api",
+  "rulings_uri": "https://api.scryfall.com/cards/c0ef6737-8e85-42ca-8ee6-6a34f9462de3/rulings",
+  "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A73c7fdb3-4742-4d08-8658-daa4435c49b1&unique=prints",
+  "collector_number": "64",
+  "digital": false,
+  "rarity": "uncommon",
+  "artist": "Leon Tukker",
+  "artist_ids": [
+    "669b8b90-758d-4f9e-b4f7-98cd6742eb97"
+  ],
+  "border_color": "black",
+  "frame": "2015",
+  "full_art": false,
+  "textless": false,
+  "booster": true,
+  "story_spotlight": false,
+  "edhrec_rank": 10598,
+  "penny_rank": 10615,
+  "prices": {
+    "usd": "0.12",
+    "usd_foil": "0.16",
+    "usd_etched": null,
+    "eur": "0.06",
+    "eur_foil": "0.20",
+    "tix": "0.03"
+  },
+  "related_uris": {
+    "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=607088&printed=false",
+    "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=infinite&u=https%3A%2F%2Finfinite.tcgplayer.com%2Fsearch%3FcontentMode%3Darticle%26game%3Dmagic%26q%3DInvasion%2Bof%2BVryn%2B%252F%252F%2BOverloaded%2BMage-Ring",
+    "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=infinite&u=https%3A%2F%2Finfinite.tcgplayer.com%2Fsearch%3FcontentMode%3Ddeck%26game%3Dmagic%26q%3DInvasion%2Bof%2BVryn%2B%252F%252F%2BOverloaded%2BMage-Ring",
+    "edhrec": "https://edhrec.com/route/?cc=Invasion+of+Vryn"
+  },
+  "purchase_uris": {
+    "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F491207%3Fpage%3D1",
+    "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Singles/March-of-the-Machine/Invasion-of-Vryn-Overloaded-Mage-Ring?referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+    "cardhoarder": "https://www.cardhoarder.com/cards/109948?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+  }
+}

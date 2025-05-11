@@ -1,6 +1,6 @@
 <template>
   <MagicWrapper :afterLoaded="loadGame">
-    <div class="alert alert-warning" v-if="!gameReady">Loading game data</div>
+    <div class="alert alert-warning" v-if="!tableauCards">Loading game data</div>
 
     <div v-else class="cube-draft">
       <div class="game-column log-column">
@@ -23,7 +23,7 @@
           </template>
 
           <template v-else>
-            <div v-for="scar in scars">
+            <div v-for="scar in scars" :key="scar.text">
               {{ scar.text }}
             </div>
 
@@ -40,8 +40,8 @@
         <WaitingPanel :class="waitingPanelClasses" />
       </div>
 
-      <div class="game-column deck-column" :class="modifiedClass">
-        <Decklist v-if="activeDeck" :deck="activeDeck" @card-clicked="showCardCloseup">
+      <div class="game-column deck-column">
+        <Decklist v-if="deck" :deck="deck" @card-clicked="showCardManager">
           <template #menu-options>
             <DropdownButton @click="saveDeck">save</DropdownButton>
             <DropdownRouterLink to="/magic/decks">deck manager</DropdownRouterLink>
@@ -67,7 +67,7 @@
     <DebugModal />
   </MagicWrapper>
 
-  <CardCloseupModal :id="cardCloseupModalId" :card="closeupCard" />
+  <CardManagerModal :deck="deck" />
   <CardDraftModal :id="cardDraftModalId" :card="closeupDraftCard" @draft-card="chooseCard" />
 
   <CardEditorModal :original="scarCard">
@@ -76,7 +76,7 @@
     <template #before-card v-if="!!game">
       <div class="alert alert-warning">
         <ol>
-          <li v-for="scar in scars">{{ scar.text }}</li>
+          <li v-for="scar in scars" :key="scar.text">{{ scar.text }}</li>
         </ol>
 
         <div class="small border-top border-warning">
@@ -113,16 +113,13 @@
 
 
 <script>
-import mitt from 'mitt'
 import { v4 as uuidv4 } from 'uuid'
 
 import { computed, nextTick } from 'vue'
 import { mapState } from 'vuex'
-
-import { mag } from 'battlestar-common'
+import { magic } from 'battlestar-common'
 
 import AdminOptions from './AdminOptions'
-import CardCloseupModal from './CardCloseupModal'
 import CardDraftModal from './CardDraftModal'
 import CardTableau from './CardTableau'
 import GameLogCubeDraft from './GameLogCubeDraft'
@@ -138,6 +135,7 @@ import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
 import CardEditorModal from '@/modules/magic/components/CardEditorModal'
 import CardListItem from '@/modules/magic/components/CardListItem'
+import CardManagerModal from '@/modules/magic/components/deck/CardManagerModal'
 import Decklist from '@/modules/magic/components/deck/Decklist'
 import MagicWrapper from '@/modules/magic/components/MagicWrapper'
 
@@ -147,7 +145,7 @@ export default {
 
   components: {
     AdminOptions,
-    CardCloseupModal,
+    CardManagerModal,
     CardDraftModal,
     CardEditorModal,
     CardTableau,
@@ -165,12 +163,10 @@ export default {
 
   data() {
     return {
-      bus: mitt(),  // Used by WaitingPanel
-
-      cardCloseupModalId: 'card-closeup-modal-' + uuidv4(),
       cardDraftModalId: 'card-draft-modal-' + uuidv4(),
       fileModalId: 'file-manager-edit-modal-' + uuidv4(),
 
+      deck: null,
       closeupCard: null,
       closeupDraftCard: null,
       scarCard: null,
@@ -178,28 +174,24 @@ export default {
       scars: [],
       scarMessage: 'loading scars',
 
+      gameReady: false,
       showGameStats: false,
       showWaitingPanel: false,
     }
   },
 
-  inject: ['actor', 'game'],
+  inject: ['actor', 'bus', 'game'],
 
   provide() {
     return {
-      bus: this.bus,
       ui: this.uiFactory(),
     }
   },
 
   computed: {
-    ...mapState('magic/cubeDraft', {
-      gameReady: 'ready',
-    }),
-
-    ...mapState('magic/dm', {
-      activeDeck: 'activeDeck',
-      modified: 'modified',
+    ...mapState('magic/cards', {
+      cardLookup: 'cards',
+      cardsReady: 'cardsReady',
     }),
 
     doingScars() {
@@ -208,28 +200,27 @@ export default {
       return waiting && waiting.title === 'Apply Scar'
     },
 
-    modifiedClass() {
-      if (this.modified) {
-        return 'deck-modified'
-      }
-      else {
-        return undefined
-      }
-    },
-
     player() {
       return this.game.getPlayerByName(this.actor.name)
     },
 
     tableauCards() {
-      if (!this.game) {
+      if (!this.game || !this.cardsReady) {
         return []
       }
 
       const pack = this.game.getNextPackForPlayer(this.player)
 
       if (pack) {
-        return pack.getRemainingCards()
+        const cards = pack
+          .getRemainingCards()
+          .map(c => {
+            const wrapped = this.cardLookup.byId[c._id]
+            const clone = wrapped.clone()
+            clone.g.id = c.id
+            return clone
+          })
+        return cards
       }
 
       else {
@@ -267,138 +258,80 @@ export default {
     },
 
     async chooseCard(card) {
-      this.bus.emit('user-select-option', {
-        actor: this.actor,
-        optionName: card.id
+      await this.$store.dispatch('game/submitAction', {
+        actor: this.actor.name,
+        title: 'Draft Card',
+        selection: [card.g.id],
       })
-      await nextTick()
 
-      this.bus.emit('click-choose-selected-option', {
-
-        // Execute this after the option is successfully submitted and saved on the server.
-        callback: async () => {
-          // Add the card to the player's deck.
-          await this.$store.dispatch('magic/dm/addCard', {
-            card: card.data,
-            zoneName: 'main',
-          })
-          await this.$store.dispatch('magic/dm/saveActiveDeck')
-
-        }
-      })
-    },
-
-    async fetchScars() {
-      this.scars = []
-      this.scarMessage = 'Loading scars'
-
-      // Make sure the doingScars property will be updated by now.
-      await nextTick()
-
-      if (this.doingScars) {
-        // Release any previously reserved scars
-        await this.$post('/api/magic/scar/release_by_user', {
-          userId: this.actor._id,
-        })
-
-        // Load some scars, in case needed
-        const { scars } = await this.$post('/api/magic/scar/fetch_available', {
-          cubeId: this.game.settings.cubeId,
-          userId: this.actor._id,
-          count: 2,
-          lock: true,
-        })
-
-        this.scars = scars
-        if (this.scars.length === 0) {
-          this.scarMessage = 'No scars available'
-        }
-      }
+      // Add the card to the player's deck.
+      this.deck.addCard(card, 'main')
+      await this.$store.dispatch('magic/saveDeck', this.deck)
     },
 
     async loadGame() {
-      await this.$store.dispatch('magic/cubeDraft/loadGame', {
-        game: this.game,
-        doFunc: this.do,
-      })
-
-      if (this.game.settings.cubeId) {
-        // Loading the cube ensures the achievements will be available to render on relevant cards.
-        await this.$store.dispatch('magic/cube/loadCube', {
-          cubeId: this.game.settings.cubeId,
-        })
-      }
-
       // Load deck
       const player = this.game.getPlayerByName(this.actor.name)
       const { deck } = await this.$post('/api/magic/deck/fetch', {
         deckId: player.deckId,
       })
+      this.deck = new magic.util.wrapper.deck(deck)
+      this.deck.initializeCardsSync(this.cardLookup.deckJuicer)
 
-      this.$store.dispatch('magic/dm/selectDeck', deck)
-
-      await this.fetchScars()
-    },
-
-    saveDeck() {
-      this.$store.dispatch('magic/dm/saveActiveDeck')
+      // Signal that everything is ready to go
+      this.gameReady = true
     },
 
     async scarApplied(scarIndex, updated, original) {
-      if (!updated) {
-        alert('No changes where made to the card')
-        return
-      }
+      throw new Error('not implemented')
+      /* if (!updated) {
+       *   alert('No changes where made to the card')
+       *   return
+       * }
 
-      const savedCard = await this.$store.dispatch('magic/cards/save', {
-        actor: this.actor,
-        cubeId: this.game.settings.cubeId,
-        updated,
-        original,
-        comment: `Scarred in ${this.game.settings.name}.`,
-      })
+       * const savedCard = await this.$store.dispatch('magic/cards/save', {
+       *   actor: this.actor,
+       *   cubeId: this.game.settings.cubeId,
+       *   updated,
+       *   original,
+       *   comment: `Scarred in ${this.game.settings.name}.`,
+       * })
 
-      await this.$post('/api/magic/scar/apply', {
-        scarId: this.scars[scarIndex]._id,
-        userId: this.actor._id,
-        cardIdDict: mag.util.card.id.asDict(savedCard),
-      })
+       * await this.$post('/api/magic/scar/apply', {
+       *   scarId: this.scars[scarIndex]._id,
+       *   userId: this.actor._id,
+       *   cardIdDict: mag.util.card.id.asDict(savedCard),
+       * })
 
-      await this.$post('/api/magic/scar/release_by_user', {
-        userId: this.actor._id,
-      })
+       * await this.$post('/api/magic/scar/release_by_user', {
+       *   userId: this.actor._id,
+       * })
 
-      this.game.respondToInputRequest({
-        actor: this.actor.name,
-        title: 'Apply Scar',
-        selection: [{
-          scarIndex,
-          originalId: original.id,
-          newData: savedCard,
-        }]
-      })
+       * this.game.respondToInputRequest({
+       *   actor: this.actor.name,
+       *   title: 'Apply Scar',
+       *   selection: [{
+       *     scarIndex,
+       *     originalId: original.id,
+       *     newData: savedCard,
+       *   }]
+       * })
 
-      await this.save()
+       * await this.save() */
     },
 
     showDraftModal(card) {
-      if (!card.data) {
-        card.data = this.$store.getters['magic/cards/getLookupFunc'](card)
-      }
-
-      this.closeupDraftCard = card
-
-      if (this.closeupDraftCard) {
+      if (card) {
+        this.closeupDraftCard = card
         this.$modal(this.cardDraftModalId).show()
       }
     },
 
-    showCardCloseup(card) {
-      this.closeupCard = card
-
-      if (this.closeupCard) {
-        this.$modal(this.cardCloseupModalId).show()
-      }
+    showCardManager(payload) {
+      this.bus.emit('card-manager:begin', {
+        card: payload.card,
+        zone: payload.zone,
+      })
     },
 
     showScarModal(card) {
@@ -409,15 +342,18 @@ export default {
     uiFactory() {
       const selectorOptionComponent = (option) => {
         const cardId = option.title ? option.title : option
-        const card = this.game.getCardById(cardId)
+        const internalCard = this.game.getCardById(cardId)
+        const externalCard = this.cardLookup.byId[internalCard._id]
 
-        if (card) {
+        if (externalCard) {
           return {
             component: CardListItem,
             props: {
-              card,
+              card: externalCard,
               showManaCost: true,
-              onClick: () => { this.showCardCloseup(cardId) },
+              onClick: () => {
+                this.showCardManager(cardId)
+              },
             },
           }
         }

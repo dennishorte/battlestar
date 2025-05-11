@@ -2,7 +2,7 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 describe('Teleprompter', () => {
 
-  test('dogma: one card only', () => {
+  test('dogma: one card only, single draw', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
@@ -33,7 +33,7 @@ describe('Teleprompter', () => {
     })
   })
 
-  test('dogma: one card only', () => {
+  test('dogma: one card only, multiple draws', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {

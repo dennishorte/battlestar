@@ -49,7 +49,9 @@ function processCardFile(inputFilePath, outputDir) {
   // Process each line
   for (const line of lines) {
     const trimmedLine = line.trim()
-    if (!trimmedLine) continue
+    if (!trimmedLine) {
+      continue
+    }
 
     // Split the line into color and name
     const parts = trimmedLine.split('|')

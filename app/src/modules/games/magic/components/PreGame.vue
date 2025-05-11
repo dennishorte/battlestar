@@ -38,6 +38,7 @@
             <tbody>
               <tr
                 v-for="player in game.getPlayerAll()"
+                :key="player.name"
                 :class="waiting(player) ? 'table-warning' : 'table-success'"
               >
                 <td>{{ player.name }}</td>
@@ -54,25 +55,19 @@
           <button class="btn btn-warning" @click="unselectDeck" v-if="ready">
             Click to shout: "Wait a minute!"
           </button>
-          <button class="btn btn-success" @click="selectDeck" v-else :disabled="!activeDeck">
+          <button class="btn btn-success"
+                  @click="selectDeck"
+                  v-else
+                  :disabled="!selectedDeck">
             Click to shout: "I am ready!"
           </button>
         </div>
 
-        <MagicFileManager
-          class="deck-selector"
-          :filelist="deckfiles"
-          @selection-changed="selectionChanged"
-        />
+        <Decks @deck-clicked="loadDeck" />
       </div>
 
       <div class="content-column deck-list-column">
-        <Decklist
-          v-if="activeDeck"
-          :deck="activeDeck"
-          :no-menu="true"
-          @card-clicked="cardClicked"
-        />
+        <Decklist v-if="selectedDeck" :deck="selectedDeck" />
       </div>
 
     </div>
@@ -84,44 +79,39 @@
 import { mag } from 'battlestar-common'
 import { mapState } from 'vuex'
 
+import Decks from '@/modules/magic/components/deck/Decks'
 import Decklist from '@/modules/magic/components/deck/Decklist'
 import DropdownDivider from '@/components/DropdownDivider'
 import DropdownButton from '@/components/DropdownButton'
 import GameLogMagic from './GameLogMagic'
 import GameMenu from '@/modules/games/common/components/GameMenu'
-import MagicFileManager from '@/modules/magic/components/MagicFileManager'
+
+import UICardWrapper from '@/modules/magic/util/card.wrapper.js'
 
 export default {
   name: 'PreGame',
 
   components: {
+    Decks,
     Decklist,
     DropdownDivider,
     DropdownButton,
     GameLogMagic,
     GameMenu,
-    MagicFileManager,
   },
 
   inject: ['actor', 'game'],
 
+  data() {
+    return {
+      selectedDeck: null,
+    }
+  },
+
   computed: {
-    ...mapState('magic/dm', {
-      activeDeck: 'activeDeck',
-      modified: 'modified',
-    }),
-
-    ...mapState('magic/file', {
-      filelist: 'filelist',
-    }),
-
     ...mapState('magic/game', {
       linkedDraft: 'linkedDraft',
     }),
-
-    deckfiles() {
-      return this.filelist.filter(file => file.kind === 'deck')
-    },
 
     ready() {
       const player = this.game.getPlayerByName(this.actor.name)
@@ -131,17 +121,15 @@ export default {
 
   methods: {
     cardClicked(card) {
-      this.$store.dispatch('magic/dm/clickCard', card)
+      throw new Error('Not implemented')
     },
 
     goToDraft() {
       this.$router.push(`/game/${this.linkedDraft._id}`)
     },
 
-    selectionChanged({ newValue }) {
-      if (newValue.objectType === 'file') {
-        this.$store.dispatch('magic/dm/selectDeck', newValue.file)
-      }
+    async loadDeck(deckId) {
+      this.selectedDeck = await this.$store.dispatch('magic/loadDeck', deckId)
     },
 
     selectDeck() {
@@ -156,7 +144,7 @@ export default {
       this.game.respondToInputRequest({
         actor: this.actor.name,
         title: waiting.title,
-        deckData: this.activeDeck.serialize(),
+        deckData: this.selectedDeck.toGameJSON(),
       })
       this.$store.dispatch('game/save')
     },
@@ -171,8 +159,12 @@ export default {
     },
   },
 
-  created() {
-    this.$store.dispatch('magic/file/fetchAll')
+  mounted() {
+    // If the player already has selected their deck, show it.
+    const deck = this.game.getDeckByPlayer(this.actor, UICardWrapper)
+    if (deck) {
+      this.selectedDeck = deck
+    }
   },
 }
 </script>

@@ -32,8 +32,12 @@ export default {
   },
 
   computed: {
-    left() { return this.cx - this.radius + 2 },
-    top() { return this.cy - this.radius + 2 },
+    left() {
+      return this.cx - this.radius + 2
+    },
+    top() {
+      return this.cy - this.radius + 2
+    },
   },
 }
 

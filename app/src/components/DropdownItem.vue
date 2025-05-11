@@ -1,6 +1,6 @@
 <template>
   <li ref="li">
-    <slot></slot>
+    <slot/>
   </li>
 </template>
 

@@ -1,9 +1,9 @@
-const db = require('../models/db.js')
-const notificationService = require('./notification_service.js')
+const db = require('@models/db.js')
+const notificationService = require('@services/notification_service.js')
+const { magic } = require('battlestar-common')
 
-const { GameKilledError, GameOverwriteError } = require('../middleware.js')
+const { GameKilledError, GameOverwriteError } = require('@middleware/loaders')
 const { GameOverEvent, fromData } = require('battlestar-common')
-
 
 const Game = {}
 module.exports = Game
@@ -11,23 +11,44 @@ module.exports = Game
 
 Game.create = async function(lobby, linkedDraftId) {
   async function _maybeHandleCubeDraft(game) {
-    if (
-      game.settings.game === 'CubeDraft'
-      || game.settings.game === 'Cube Draft'
-      || game.settings.game === 'Set Draft'
-    ) {
-      // Create decks for each user.
-      for (const player of game.settings.players) {
-        const deckId = await db.magic.deck.create({
-          userId: player._id,
-          path: '/draft_decks',
-          name: game.settings.name,
-        })
+    if (game.settings.game === 'Cube Draft' || game.settings.game === 'Set Draft') {
 
-        player.deckId = deckId
+      // Create packs
+      if (game.settings.game === 'Cube Draft') {
+        const cube = await db.magic.cube.findById(game.settings.cubeId)
+        const cards = await db.magic.card.findByIds(cube.cardlist)
+        const wrappedCards = cards.map(c => new magic.util.wrapper.card(c))
+        game.settings.packs = magic.draft.pack.makeCubePacks(wrappedCards, {
+          packSize: game.settings.packSize,
+          numPacks: game.settings.numPacks,
+          numPlayers: game.settings.players.length,
+        })
+      }
+      else if (game.settings.game === 'Set Draft') {
+        const cards = await db.magic.card.findBySetCode(game.settings.set.code)
+        const wrappedCards = cards.map(c => new magic.util.wrapper.card(c))
+        game.settings.packs = magic.draft.pack.makeSetPacks(wrappedCards, {
+          numPacks: game.settings.numPacks,
+          numPlayers: game.settings.players.length,
+        })
+        game.settings.packSize = game.settings.packs[0].length
+      }
+      else {
+        throw new Error('Unknown game draft type: ' + game.settings.game)
       }
 
-      // Save the draft settings afterwards so the deck ids get saved.
+      // Create decks for each user.
+      for (const player of game.settings.players) {
+        const deck = await db.magic.deck.create(player, {
+          name: game.settings.name,
+          links: {
+            draftId: game._id
+          },
+        })
+        player.deckId = deck._id
+      }
+
+      // Save the draft settings afterwards so the deck ids and packs get saved.
       await db.game.saveSettings(game, game.settings)
     }
   }
@@ -49,11 +70,15 @@ Game.create = async function(lobby, linkedDraftId) {
     const gameData = await db.game.findById(gameId)
     const game = fromData(gameData)
 
-    // Save the game id in the lobby
-    await db.lobby.gameLaunched(lobby, gameData)
+    await _maybeHandleCubeDraft(game)
+    await _maybeHandleMagicLinks(game, linkedDraftId)
 
-    await _maybeHandleCubeDraft(gameData)
-    await _maybeHandleMagicLinks(gameData, linkedDraftId)
+    // Running the game makes sure the waiting information is correctly populated
+    game.run()
+    await db.game.save(game)
+
+    // Save the game id in the lobby
+    await db.lobby.gameLaunched(lobby, game)
 
     await notificationService.sendGameNotifications(game)
 
@@ -114,7 +139,6 @@ Game.saveFull = async function(game, { branchId, overwrite, chat, responses, wai
   // Magic doesn't run when saving because that would require loading the card
   // database, which is slow.
   if (game.settings.game === 'Magic'
-      || game.settings.game === 'CubeDraft'
       || game.settings.game === 'Cube Draft'
       || game.settings.game === 'Set Draft'
   ) {

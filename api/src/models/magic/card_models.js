@@ -1,9 +1,7 @@
 const AsyncLock = require('async-lock')
-
-const databaseClient = require('../../utils/mongo.js').client
+const databaseClient = require('@utils/mongo.js').client
 const database = databaseClient.db('magic')
 
-const countersCollection = database.collection('counters')
 const customCollection = database.collection('custom_cards')
 const scryfallCollection = database.collection('scryfall')
 const versionCollection = database.collection('versions')
@@ -16,89 +14,208 @@ module.exports = Card
 const lock = new AsyncLock()
 
 
+/**
+ * Creates a new custom card and adds it to the database
+ * @param {Object} data - The card data to create
+ * @param {Object} cube - The cube to associate the card with
+ * @param {Object} user - The user creating the card
+ * @param {string|null} comment - Optional comment for the creation action
+ * @returns {Promise<Object>} The created card document
+ */
+Card.create = async function(data, cube, user, comment=null) {
+  return await lock.acquire('cube:' + cube._id.toString(), async () => {
+    // Clean up data by removing certain fields
+    delete data.set
+    delete data.collector_number
+    delete data.legal
+
+    const card = {
+      data,
+      source: 'custom',
+      cubeId: cube._id,
+      edits: [{
+        action: 'create',
+        userId: user._id,
+        comment,
+        date: new Date(),
+        oldData: null,
+      }],
+    }
+
+    const result = await customCollection.insertOne(card)
+    await _incrementCustomCardDatabaseVersion()
+
+    const createdCard = await customCollection.findOne({ _id: result.insertedId })
+
+    return createdCard
+  })
+}
+
+/**
+ * Deactivates a card in a cube
+ * @param {Object} card - The card to deactivate
+ * @param {Object} cube - The cube the card belongs to
+ * @param {Object} user - The user performing the deactivation
+ * @param {string|null} comment - Optional comment for the deactivation action
+ * @returns {Promise<boolean>} True if the deactivation was successful
+ * @throws {Error} If the card does not belong to the specified cube
+ */
+Card.deactivate = async function(card, cube, user, comment=null) {
+  if (!card || !cube) {
+    throw new Error('Card or cube is undefined')
+  }
+
+  if (!card._id) {
+    throw new Error('Card is missing _id field')
+  }
+
+  if (cube._id.toString() !== card.cubeId.toString()) {
+    throw new Error('Card is not from the specified cube')
+  }
+
+  try {
+    await customCollection.updateOne(
+      { _id: card._id },
+      {
+        $set: { deactivated: true },
+        $push: {
+          edits: {
+            action: 'deactivate',
+            userId: user._id,
+            comment: 'deactivated: ' + (comment || ''),
+            date: new Date(),
+            oldData: null,
+          }
+        },
+      },
+    )
+    return true
+  }
+  catch (err) {
+    console.error(`Error deactivating card: ${err.message}`)
+    throw err
+  }
+}
+
 Card.fetchAll = async function(source) {
   const result = {}
 
   const versions = await Card.versions()
 
-  if (!source || source === 'all' || source === 'custom') {
-    const customCursor = await customCollection.find({})
-    const customCards = await customCursor.toArray()
+  // Set up promises for concurrent execution
+  const promises = []
 
-    result.custom = {
-      cards: customCards,
-      version: versions.custom,
-    }
+  if (!source || source === 'all' || source === 'custom') {
+    const customPromise = customCollection.find({}).toArray()
+      .then(customCards => {
+        result.custom = {
+          cards: customCards,
+          version: versions.custom,
+        }
+      })
+    promises.push(customPromise)
   }
 
   if (!source || source === 'all' || source === 'scryfall') {
-    const scryfallCursor = await scryfallCollection.find({})
-    const scryfallCards = await scryfallCursor.toArray()
-
-    result.scryfall = {
-      cards: scryfallCards,
-      version: versions.scryfall,
-    }
+    const scryfallPromise = scryfallCollection.find({}).toArray()
+      .then(scryfallCards => {
+        result.scryfall = {
+          cards: scryfallCards,
+          version: versions.scryfall,
+        }
+      })
+    promises.push(scryfallPromise)
   }
+
+  // Wait for all database operations to complete in parallel
+  await Promise.all(promises)
 
   return result
 }
 
 Card.findById = async function(id) {
-  const maybeScryfall = await scryfallCollection.findOne({ _id: id })
-  if (maybeScryfall) {
-    return maybeScryfall
-  }
-  else {
-    return await customCollection.findOne({ _id: id })
-  }
+  // Query both collections in parallel
+  const [scryfallCard, customCard] = await Promise.all([
+    scryfallCollection.findOne({ _id: id }),
+    customCollection.findOne({ _id: id })
+  ])
+
+  // Return the first non-null result
+  return scryfallCard || customCard || null
 }
 
-Card.insertCustom = async function(card) {
-
-  // Since this is intended to create a new card, make sure we don't insert with
-  // an existing MongoDB id.
-  if (card._id) {
-    delete card._id
+/**
+ * Finds multiple cards by their IDs
+ * @param {Array<string|ObjectId>} ids - Array of card IDs to find
+ * @returns {Promise<Array<Object>>} Array of card documents found
+ */
+Card.findByIds = async function(ids) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return []
   }
 
-  // Sometimes, we copy an original card to a new cube.
-  if (card.custom_id) {
-    delete card.custom_id
-  }
+  // Query both collections in parallel
+  const [scryfallCards, customCards] = await Promise.all([
+    scryfallCollection.find({ _id: { $in: ids } }).toArray(),
+    customCollection.find({ _id: { $in: ids } }).toArray()
+  ])
 
-  card.set = 'custom'
-  card.collector_number = await _getNextCollectorNumber()
-  card.legal = ['custom']
-
-  const { insertedId } = await customCollection.insertOne(card)
-
-  // MongoDB ids are globally unique, so they make good unique identifiers for custom cards.
-  await customCollection.updateOne(
-    { _id: insertedId },
-    { $set: { custom_id: insertedId } },
-  )
-
-  await _incrementCustomCardDatabaseVersion()
-
-  return await customCollection.findOne({ _id: insertedId })
+  // Combine results from both collections
+  return [...scryfallCards, ...customCards]
 }
 
-Card.save = async function(card) {
-  if (card._id) {
-    await customCollection.replaceOne(
-      { _id: card._id },
-      card
+Card.findBySetCode = async function(set) {
+  set = set.toLowerCase()
+  const result = await scryfallCollection.find({ 'data.set': set }).toArray()
+  return result
+}
+
+/**
+ * Updates an existing card in the database
+ * @param {string|ObjectId} cardId - The ID of the card to update
+ * @param {Object} cardData - The new card data
+ * @param {Object} user - The user performing the update
+ * @param {string|null} comment - Optional comment for the update action
+ * @returns {Promise<Object|null>} The updated card document or null if not found
+ */
+Card.update = async function(cardId, cardData, user, comment=null) {
+  return await lock.acquire('card:' + cardId.toString(), async () => {
+    const updateResult = await customCollection.findOneAndUpdate(
+      { _id: cardId },
+      [
+        {
+          $set: {
+            edits: {
+              $concatArrays: [
+                "$edits",
+                [{
+                  action: 'update',
+                  userId: user._id,
+                  comment,
+                  date: new Date(),
+                  oldData: "$data"  // References the current data value
+                }]
+              ]
+            },
+            data: cardData.data  // Set the new data
+          }
+        }
+      ],
+      {
+        returnDocument: 'after',
+        upsert: false
+      }
     )
-    await _incrementCustomCardDatabaseVersion()
-    return card._id
-  }
-  else {
-    const insertedCard = await Card.insertCustom(card)
-    // The database increment is handled in insertCustom
-    // await _incrementCustomCardDatabaseVersion()
-    return insertedCard._id
-  }
+
+    // If update was successful, increment the version
+    if (updateResult) {
+      await _incrementCustomCardDatabaseVersion()
+      return updateResult
+    }
+    else {
+      return null
+    }
+  })
 }
 
 Card.versions = async function() {
@@ -116,36 +233,20 @@ Card.versions = async function() {
 
 
 async function _incrementCustomCardDatabaseVersion() {
-  await lock.acquire('version:custom-db', async () => {
-    const customVersion = await versionCollection.findOne({
-      name: 'custom',
-    })
+  const customVersion = await versionCollection.findOne({ name: 'custom' })
 
-    if (customVersion) {
-      await versionCollection.updateOne(
-        { name: 'custom' },
-        { $inc: { value: 1 } }
-      )
-    }
-    else {
-      await versionCollection.insertOne({
+  if (customVersion) {
+    await versionCollection.updateOne(
+      { name: 'custom' },
+      { $inc: { value: 1 } }
+    )
+  }
+  else {
+    await versionCollection.insertOne(
+      {
         name: 'custom',
         value: 1,
-      })
-    }
-  })
-}
-
-async function _getNextCollectorNumber() {
-  return await lock.acquire('version:card-number', async () => {
-    const record = await countersCollection.findOne({ name: 'custom_collector_number' })
-    const value = record.value
-
-    await countersCollection.updateOne(
-      { name: 'custom_collector_number' },
-      { $inc: { value: 1 } },
+      }
     )
-
-    return value
-  })
+  }
 }

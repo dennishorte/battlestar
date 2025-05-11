@@ -1,6 +1,15 @@
 const express = require('express')
 const router = express.Router()
-const cubeController = require('../../../controllers/magic/cube.controller')
+const cubeController = require('@controllers/magic/cube.controller')
+
+/**
+ * @route POST /api/magic/cube/all
+ * @description Get all cubes
+ * @access Private
+ */
+router.post('/all', cubeController.all)
+
+router.post('/add_remove_cards', cubeController.addRemoveCards)
 
 /**
  * @route POST /api/magic/cube/create
@@ -19,13 +28,6 @@ router.post('/create', cubeController.createCube)
 router.post('/fetch', cubeController.getCube)
 
 /**
- * @route GET /api/magic/cube/fetchPublic
- * @description Get all public cubes
- * @access Public
- */
-router.post('/fetch_public', cubeController.getPublicCubes)
-
-/**
  * @route POST /api/magic/cube/save
  * @description Save changes to a cube
  * @access Private
@@ -34,19 +36,12 @@ router.post('/fetch_public', cubeController.getPublicCubes)
 router.post('/save', cubeController.saveCube)
 
 /**
- * @route POST /api/magic/cube/setEditFlag
- * @description Set the edit flag for a cube
+ * @route POST /api/magic/cube/update_settings
+ * @description Update cube settings
  * @access Private
- * @body {Object} editFlag - Edit flag object
+ * @body {String} cubeId - ID of the cube to update
+ * @body {Object} settings - Settings to update (name, public, allowEdits)
  */
-router.post('/set_edit_flag', cubeController.setEditFlag)
+router.post('/update_settings', cubeController.updateSettings)
 
-/**
- * @route POST /api/magic/cube/setPublicFlag
- * @description Set the public flag for a cube
- * @access Private
- * @body {Boolean} publicFlag - Public flag status
- */
-router.post('/set_public_flag', cubeController.setPublicFlag)
-
-module.exports = router 
+module.exports = router

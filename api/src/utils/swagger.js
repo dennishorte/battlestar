@@ -1,6 +1,6 @@
 const swaggerJsdoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
-const version = require('../version')
+const version = require('@/version')
 
 const options = {
   definition: {
@@ -35,7 +35,7 @@ const options = {
       },
     ],
   },
-  apis: ['./src/routes/api/*.js', './src/controllers/*.js'],
+  apis: ['./src/routes/api/*.js', './src/routes/api/**/*.js', './src/controllers/*.js', './src/controllers/**/*.js'],
 }
 
 const specs = swaggerJsdoc(options)
@@ -48,4 +48,4 @@ function setupSwagger(app) {
   })
 }
 
-module.exports = setupSwagger 
+module.exports = setupSwagger

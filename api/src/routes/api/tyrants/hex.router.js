@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const hexController = require('../../../controllers/tyrants/hex.controller')
+const hexController = require('@controllers/tyrants/hex.controller')
 
 /**
  * @route POST /api/tyrants/hex/all
@@ -25,4 +25,4 @@ router.post('/delete', hexController.deleteHex)
  */
 router.post('/save', hexController.saveHex)
 
-module.exports = router 
+module.exports = router

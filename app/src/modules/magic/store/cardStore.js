@@ -1,42 +1,30 @@
 import { get as getKey, set as setKey } from 'idb-keyval'
 import { mag, util } from 'battlestar-common'
+import UICardWrapper from '@/modules/magic/util/card.wrapper'
 
 
 export default {
   namespaced: true,
 
   state: () => ({
-    cardlist: [],
-    lookup: {},
-
-    localVersions: '__NOT_READY__',
-    remoteVersions: '__NOT_READY__',
-
+    cards: null,
     cardsReady: false,
+
+    // This is displayed while loading cards in MagicWrapper.vue
     log: [],
   }),
 
   getters: {
-    all(state) {
-      return state.cardlist
+    cards(state) {
+      return state.cards
     },
 
-    byDatabaseId(state) {
-      return (id) => state.cardlist.find(card => card._id === id)
+    cardsReady(state) {
+      return state.cardsReady
     },
 
     cardLink(state) {
       return (databaseId) => '/magic/card/' + databaseId
-    },
-
-    cardNames(state) {
-      return Object.keys(state.lookup).sort()
-    },
-
-    getLookupFunc(state) {
-      return (cardId, opts) => {
-        return mag.util.card.lookup.getByIdDict(cardId, state.lookup, opts)
-      }
     },
   },
 
@@ -45,113 +33,70 @@ export default {
       state.log = []
     },
 
-    logError(state, msg) {
-      state.log.push(msg)
-    },
-
     logInfo(state, msg) {
+      console.log('info: ', msg)
       state.log.push(msg)
-    },
-
-    setCardList(state, cardlist) {
-      state.cardlist = cardlist
-    },
-
-    setCardLookup(state, cardLookup) {
-      state.lookup = cardLookup
-    },
-
-    setCardsReady(state, value=true) {
-      state.cardsReady = value
-    },
-
-    setLocalVersions(state, versions) {
-      state.localVersions = versions
-    },
-
-    setRemoteVersions(state, versions) {
-      state.remoteVersions = versions
-    },
-
-    setUpdateNeededCustom(state, value) {
-      state.updateNeededCustom = value
-    },
-
-    setUpdateNeededScryfall(state, value) {
-      state.updateNeededScryfall = value
     },
   },
 
   actions: {
-    insertCardData({ getters }, cardlist) {
-      const lookupFunc = getters['getLookupFunc']
-      mag.util.card.lookup.insertCardData(cardlist, lookupFunc)
+    async ensureLoaded({ commit, state }) {
+      const post = this.$post
 
-      const missingData = []
-      for (const card of cardlist) {
-        if (!card.data) {
-          missingData.push(card)
+      async function _loadLocalAndRemoteVersions() {
+        const remote = await post('/api/magic/card/versions')
+
+        const localVersions = {}
+        for (const key of Object.keys(remote.versions)) {
+          localVersions[key] = await getKey('version_' + key)
+        }
+
+        return {
+          local: localVersions,
+          remote: remote.versions,
         }
       }
 
-      if (missingData.length > 0) {
-        console.log(missingData)
-        alert('Unable to fetch data for some cards')
+      async function _maybeUpdateLocalDatabase(versions) {
+        const toUpdate = Object
+          .keys(versions.remote)
+          .filter(source => versions.remote[source] !== versions.local[source])
+
+        for (const source of toUpdate) {
+          commit('logInfo', `Updating card database: ${source}. This can take several minutes.`)
+          const response = await post('/api/magic/card/all', { source })
+          await setKey('cards_' + source, response[source].cards)
+          await setKey('version_' + source, response[source].version)
+        }
       }
-    },
 
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // Data loading
-
-    async ensureLoaded({ commit, dispatch, state, getters }) {
-      console.log('ensureLoaded')
-      commit('clearLog')
-      commit('logInfo', 'Loading card data')
-
-      if (state.cardsReady) {
-        console.log('...already loaded once')
-        commit('logInfo', 'Cards were previously loaded')
-      }
-      else {
-        await dispatch('ensureLatest')
-        await dispatch('loadCards')
-      }
-    },
-
-    async ensureLatest({ dispatch, state }) {
-      const localVersions = await getLocalVersions()
-      const remoteVersions = await getRemoteVersions.call(this)
-
-      const toUpdate = Object
-        .keys(remoteVersions)
-        .filter(source => remoteVersions[source] !== localVersions[source])
-
-      for (const source of toUpdate) {
-        await dispatch('updateLocalDatabase', source)
-      }
-    },
-
-    async loadCards({ commit, dispatch }) {
-      try {
-        console.log('...load cards')
+      async function _loadCardsFromLocalDatabase(sources) {
         commit('logInfo', 'Loading cards from database')
 
-        const cards = await loadCardsFromDatabase()
+        const cards = await Promise.all(sources.map(async (source) => {
+          const cardData = await getKey('cards_' + source)
+          return cardData
+        }))
 
-        for (const card of cards) {
-          if (card.data) {
-            console.log(card)
-            break
-          }
-        }
-
-        commit('setCardList', cards)
-        commit('setCardLookup', mag.util.card.lookup.dictFactory(cards))
-        commit('setCardsReady')
-
-        console.log('...card database ready')
         commit('logInfo', 'Cards successfully loaded from local database')
+
+        return cards.flat().map(c => new UICardWrapper(c))
+      }
+
+      try {
+        commit('clearLog')
+        commit('logInfo', 'Loading card data')
+
+        if (state.cardsReady) {
+          commit('logInfo', 'Cards were previously loaded')
+        }
+        else {
+          const versions = await _loadLocalAndRemoteVersions()
+          await _maybeUpdateLocalDatabase(versions)
+          const cards = await _loadCardsFromLocalDatabase(Object.keys(versions.remote))
+          state.cards = mag.util.card.lookup.create(cards)
+          state.cardsReady = true
+        }
       }
       catch (err) {
         commit('logInfo', 'ERROR')
@@ -159,101 +104,22 @@ export default {
       }
     },
 
-    async reloadDatabase({ commit, dispatch }) {
-      commit('setCardsReady', false)
+    getByIds({ state }, cardIds) {
+      return cardIds.map(id => state.cards.byId[id])
+    },
+
+    async update({ dispatch }, { card, comment }) {
+      await this.$post('/api/magic/card/update', {
+        cardId: card._id,
+        cardData: card.toJSON(),
+        comment,
+      })
+      await dispatch('reloadDatabase')
+    },
+
+    async reloadDatabase({ dispatch, state }) {
+      state.cardsReady = false
       await dispatch('ensureLoaded')
     },
-
-    async updateLocalDatabase({ commit, state }, source) {
-      commit('logInfo', `Updating card database: ${source}. This can take several minutes.`)
-      const { cards, version } = await getLatestCardDataFromServer.call(this, source)
-      await setKey('cards_' + source, cards)
-      await setKey('version_' + source, version)
-    },
-
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // Card editing
-
-    async save({ dispatch }, { actor, cubeId, updated, original, comment }) {
-      updated = updated.data ? updated.data : updated
-
-      let response
-
-      try {
-        response = await this.$post('/api/magic/card/save', {
-          card: updated,
-          original,
-          editor: {
-            _id: actor._id,
-            name: actor.name,
-          },
-          comment,
-        })
-      }
-      catch (e) {
-        alert('Server side error saving card')
-        throw e
-      }
-
-      if (response.status !== 'success') {
-        console.log(response.data)
-        alert('Server returned error')
-        throw new Error('Received error from server')
-      }
-
-      if (cubeId) {
-        const cube = await dispatch('magic/cube/getById', { cubeId }, { root: true })
-
-        // Need to update the cube, if the edited card was a scryfall card that was replaced
-        // with a custom card.
-        if (response.cardReplaced) {
-          cube.removeCard(original)
-          cube.addCard(response.finalizedCard)
-          await dispatch('magic/cube/save', cube, { root: true })
-        }
-
-        else if (response.cardCreated) {
-          cube.addCard(response.finalizedCard)
-          await dispatch('magic/cube/save', cube, { root: true })
-        }
-      }
-
-      // In either case, update the local card database.
-      await dispatch('reloadDatabase')
-
-      return response.finalizedCard
-    },
   },
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Private functions
-
-async function getLocalVersions() {
-  return {
-    custom: await getKey('version_custom'),
-    scryfall: await getKey('version_scryfall'),
-  }
-}
-
-async function getRemoteVersions() {
-  const { versions } = await this.$post('/api/magic/card/versions')
-  return versions
-}
-
-async function loadCardsFromDatabase() {
-  const custom = await getKey('cards_custom')
-  const scryfall = await getKey('cards_scryfall')
-
-  return [
-    ...(custom || []),
-    ...(scryfall || []),
-  ]
-}
-
-async function getLatestCardDataFromServer(source) {
-  const response = await this.$post('/api/magic/card/fetch_all', { source })
-  return response[source]
 }

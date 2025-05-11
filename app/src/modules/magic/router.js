@@ -1,7 +1,6 @@
 import CardViewer from './components/CardViewer'
 import CubeViewer from './components/cube/CubeViewer'
-import DeckManager from './components/deck/DeckManager'
-import DeckShare from './components/deck/DeckShare'
+import DeckBuilder from './components/deck/DeckBuilder'
 import Profile from'./components/Profile'
 
 
@@ -28,12 +27,6 @@ export default [
     path: '/magic/deck/:id',
     name: 'Deck Share',
     title: 'Deck Share',
-    component: DeckShare,
-  },
-  {
-    path: '/magic/decks',
-    name: 'Deck Manager',
-    title: 'Deck Manager',
-    component: DeckManager,
+    component: DeckBuilder,
   }
 ]

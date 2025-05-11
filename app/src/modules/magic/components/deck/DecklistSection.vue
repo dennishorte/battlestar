@@ -4,15 +4,21 @@
       {{ name }} ({{ count }})
     </SectionHeader>
 
-    <div v-for="card in cards" class="card-and-count">
-      <div class="card-count">{{ card.count }} </div>
-      <CardListItem :card="card" :showManaCost="true" @click="click(card)" />
+    <div v-for="group in groupedCards" :key="group.card._id" class="card-and-count">
+      <div class="card-count">{{ group.count }}x </div>
+      <CardListItem
+        :card="group.card"
+        :show-mana-cost="true"
+        :separate-faces="true"
+        @click="click(group.card)" />
     </div>
   </div>
 </template>
 
 
 <script>
+import { util } from 'battlestar-common'
+
 import CardListItem from '../CardListItem'
 import SectionHeader from '@/components/SectionHeader'
 
@@ -31,13 +37,26 @@ export default {
 
   computed: {
     count() {
-      return this.cards.reduce((acc, datum) => acc + datum.count, 0)
+      return this.cards.length
+    },
+
+    groupedCards() {
+      return Object
+        .entries(
+          util
+            .array
+            .groupBy(this.cards, card => card._id)
+        )
+        .map(([id, cards]) => ({
+          count: cards.length,
+          card: cards[0],
+        }))
     },
   },
 
   methods: {
     click(card){
-      this.$emit('card-clicked', card)
+      this.$emit('card-clicked', { card, zone: this.name })
     },
   },
 }
@@ -59,6 +78,8 @@ export default {
 .card-and-count {
   display: flex;
   flex-direction: row;
+  width: 100%;
+  align-items: top;
 }
 
 .card-count {

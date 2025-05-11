@@ -1,6 +1,9 @@
 <template>
   <div class="hex-map">
-    <svg class="game-map" width="1000" height="800" ref="gamemap">
+    <svg class="game-map"
+         width="1000"
+         height="800"
+         ref="gamemap">
 
       <TileLayer :tiles="game.tiles" />
       <ConnectorLayer :tiles="game.tiles" />

@@ -1680,7 +1680,6 @@ describe('Innovation', () => {
       const game = t.fixtureFirstPlayer()
       const request = game.run()
       t.choose(game, request, 'Draw.draw a card')
-      //t.dumpLog(game)
     })
   })
 })

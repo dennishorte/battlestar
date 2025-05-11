@@ -4,9 +4,12 @@
     <div class="section-name">{{ name }} ({{ cardlist.length }})</div>
 
     <div class="section-cards" :class="columnName">
-      <template v-for="elem in sortedCardlist">
+      <template v-for="(elem, index) in sortedCardlist" :key="index">
         <CubeBreakdownManaCostDivider v-if="elem.isDivider" :cost="elem.cost" />
-        <CardListItem v-else :card="elem" class="section-card" @click="cardClicked(elem)" />
+        <CardListItem v-else
+                      :card="elem"
+                      class="section-card"
+                      @click="cardClicked(elem)" />
       </template>
     </div>
 
@@ -15,8 +18,6 @@
 
 
 <script>
-import { mag } from 'battlestar-common'
-
 import CardListItem from '../CardListItem'
 import CubeBreakdownManaCostDivider from './CubeBreakdownManaCostDivider'
 
@@ -40,11 +41,8 @@ export default {
   computed: {
     sortedCardlist() {
       const sortedCards = this.cardlist.sort((l, r) => {
-        if (!l.data || !r.data) {
-          return 0
-        }
         return (
-          l.data.cmc - r.data.cmc
+          l.cmc() - r.cmc()
           || l.data.name.localeCompare(r.data.name)
         )
       })
@@ -53,7 +51,7 @@ export default {
       const output = []
 
       for (const card of sortedCards) {
-        const cmc = Math.ceil(mag.util.card.cmc(card))
+        const cmc = Math.ceil(card.cmc())
 
         if (cmc !== manaCost) {
           output.push({
@@ -71,8 +69,7 @@ export default {
 
   methods: {
     cardClicked(card) {
-      this.$store.commit('magic/cube/manageCard', card)
-      this.bus.emit('card-clicked')
+      this.bus.emit('card-clicked', card)
     },
   },
 }

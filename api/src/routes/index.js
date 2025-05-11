@@ -1,4 +1,4 @@
-const db = require('../models/db.js')
+const db = require('@models/db.js')
 
 // Note: These routes have been migrated to the new router system in src/routes/api
 // Only keeping this file for backward compatibility with any components that might still reference it

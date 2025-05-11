@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const deckController = require('../../../controllers/magic/deck.controller')
+const deckController = require('@controllers/magic/deck.controller')
 
 /**
  * @route POST /api/magic/deck/create
@@ -8,6 +8,20 @@ const deckController = require('../../../controllers/magic/deck.controller')
  * @access Private
  */
 router.post('/create', deckController.create)
+
+/**
+ * @route POST /api/magic/deck/delete
+ * @desc Delete a deck
+ * @access Private
+ */
+router.post('/delete', deckController.delete)
+
+/**
+ * @route POST /api/magic/deck/duplicate
+ * @desc Duplicate a deck
+ * @access Private
+ */
+router.post('/duplicate', deckController.duplicate)
 
 /**
  * @route POST /api/magic/deck/fetch
@@ -23,11 +37,4 @@ router.post('/fetch', deckController.fetch)
  */
 router.post('/save', deckController.save)
 
-/**
- * @route POST /api/magic/deck/add_card
- * @desc Add a card to a deck
- * @access Private
- */
-router.post('/add_card', deckController.addCard)
-
-module.exports = router 
+module.exports = router

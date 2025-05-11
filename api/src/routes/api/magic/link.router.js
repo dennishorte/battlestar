@@ -1,14 +1,13 @@
 const express = require('express')
 const router = express.Router()
-const linkController = require('../../../controllers/magic/link.controller')
-const { loadDraftArgs, loadGameArgs } = require('../../../middleware')
+const linkController = require('@controllers/magic/link.controller')
 
 /**
  * @route POST /api/magic/link/create
  * @desc Create a link between a game and a draft
  * @access Private
  */
-router.post('/create', loadDraftArgs, loadGameArgs, linkController.create)
+router.post('/create', linkController.create)
 
 /**
  * @route POST /api/magic/link/fetch_drafts
@@ -22,6 +21,6 @@ router.post('/fetch_drafts', linkController.fetchDrafts)
  * @desc Fetch games linked to a draft
  * @access Private
  */
-router.post('/fetch_by_draft', loadDraftArgs, linkController.fetchByDraft)
+router.post('/fetch_by_draft', linkController.fetchByDraft)
 
-module.exports = router 
+module.exports = router

@@ -1,48 +1,51 @@
 <template>
-  <div class="deck-list" :class="modified ? 'modified' : ''">
+  <div class="deck-list" :class="deck.isModified() ? 'modified' : ''">
     <div class="header">
-      <Dropdown class="deck-menu" v-if="!noMenu">
-        <template #title>deck menu</template>
-
-        <!-- <DropdownButton @click="setViewType('card-type')">view: card type</DropdownButton>
-             <DropdownButton @click="setViewType('mana-cost')">view: mana cost</DropdownButton>
-             <DropdownDivider />
-        -->
-
-        <DropdownButton @click="setEditMode('build')">edit mode: build</DropdownButton>
-        <DropdownButton @click="setEditMode('sideboard')">edit mode: sideboard</DropdownButton>
-        <DropdownDivider />
-
-
-        <slot name="menu-options"></slot>
+      <button :disabled="!deck.isModified()" class="btn btn-primary save-button" @click="saveChanges">save</button>
+      <Dropdown :notitle="true">
+        <DropdownButton @click="openDeckSettings">settings</DropdownButton>
+        <DropdownButton @click="openImportModal" :disabled="true">load decklist</DropdownButton>
+        <DropdownButton @click="downloadDecklist" :disabled="true">export</DropdownButton>
       </Dropdown>
-
       <div class="deck-name me-2">{{ deck.name }} ({{ maindeckSize }})</div>
-      <div class="edit-mode">mode: {{ editMode }}</div>
     </div>
 
     <div class="deck-sections">
       <DecklistSection
-        v-for="section in cardsBySection"
-        :cards="section[1]"
-        :name="section[0]"
+        v-for="section in deck.zones()"
+        :key="section"
+        :cards="deck.cards(section)"
+        :name="section"
         class="deck-section"
         @card-clicked="cardClicked"
       />
     </div>
+
+    <CardManagerModal :deck="deck" />
+    <DeckImportModal @import-card-updates="importDecklist" />
+    <DeckSettingsModal
+      v-if="deck"
+      ref="settingsModal"
+      :deck="deck"
+      @settings-updated="handleSettingsUpdated"
+    />
+
   </div>
 </template>
 
 
 <script>
-import { mag, util } from 'battlestar-common'
-import { saveAs } from 'file-saver'
+// import { saveAs } from 'file-saver'
 import { mapState } from 'vuex'
 
 import DecklistSection from './DecklistSection'
 import Dropdown from '@/components/Dropdown'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
+
+import CardManagerModal from './CardManagerModal'
+import DeckImportModal from './DeckImportModal'
+import DeckSettingsModal from './DeckSettingsModal'
 
 
 export default {
@@ -53,23 +56,17 @@ export default {
     Dropdown,
     DropdownButton,
     DropdownDivider,
+
+    CardManagerModal,
+    DeckImportModal,
+    DeckSettingsModal,
   },
 
   props: {
     deck: Object,
-    modified: {
-      type: Boolean,
-      default: false,
-    },
-    noMenu: {
-      type: Boolean,
-      default: false,
-    },
-    defaultEditMode: {
-      type: String,
-      default: 'sideboard',
-    },
   },
+
+  inject: ['bus'],
 
   data() {
     return {
@@ -91,74 +88,48 @@ export default {
   },
 
   computed: {
-    ...mapState('magic/dm', {
-      editMode: 'editMode',
-    }),
-
-    cardsBySection() {
-      this.$store.dispatch('magic/cards/insertCardData', this.deck.cardlist)
-
-      const byZone = util.array.collect(this.deck.cardlist, card => card.zone)
-      const mainByType = util.array.collect(byZone.main || [], card => mag.util.card.getSortType(card.data))
-      const orderedSections = Object
-        .entries(mainByType)
-        .sort((l, r) => mag.util.card.sortTypes.indexOf(r[0]) - mag.util.card.sortTypes.indexOf(l[0]))
-      if (byZone.side) {
-        orderedSections.push(['sideboard', byZone.side])
-      }
-      if (byZone.command) {
-        orderedSections.push(['command', byZone.command])
-      }
-
-      const countedSections = orderedSections
-        .map(([sectionName, cards]) => {
-          const groups = util
-            .array
-            .collect(cards, card => mag.util.card.id.asString(card))
-          const cardsWithCounts = Object
-            .values(groups)
-            .map(group => {
-              const value = { ...group[0] }
-              value.count = group.length
-              return value
-            })
-            .sort((l, r) => {
-              if (l.data.cmc !== r.data.cmc) {
-                return l.data.cmc - r.data.cmc
-              }
-              else {
-                return l.name.localeCompare(r.name)
-              }
-            })
-          return [sectionName, cardsWithCounts]
-        })
-        .sort((l, r) => this.sortTypes.indexOf(l[0]) - this.sortTypes.indexOf(r[0]))
-
-      return countedSections
-    },
-
     maindeckSize() {
-      return this.deck.cardlist.filter(card => card.zone === 'main').length
+      return this.deck.cardIdsByZone['main'].length
     },
   },
 
   methods: {
-    cardClicked(card) {
-      this.$emit('card-clicked', card)
+    cardClicked(payload) {
+      this.bus.emit('card-manager:begin', payload)
     },
 
-    setEditMode(modeName) {
-      this.$store.commit('magic/dm/setEditMode', modeName)
+    decklistClicked(payload) {
+      this.bus.emit('card-manager:begin', {
+        card: payload.card,
+        zone: payload.zone,
+      })
     },
 
-    setViewType(typeName) {
-      this.viewType = typeName
-      console.log(this.viewType)
+    downloadDecklist() {
+      throw new Error('Not implemented')
     },
-  },
 
-  mounted() {
-    this.setEditMode(this.defaultEditMode)
+    handleSettingsUpdated(settings) {
+      // Settings were updated in the modal directly on the deck object
+      // Mark deck as modified so it can be saved
+      this.deck.markModified()
+    },
+
+    importDecklist(update) {
+
+    },
+
+    openDeckSettings() {
+      this.$refs.settingsModal.showModal()
+    },
+
+    openImportModal() {
+      this.$modal('deck-import-modal').show()
+    },
+
+    async saveChanges() {
+      await this.$store.dispatch('magic/saveDeck', this.deck)
+    },
   },
 }
 </script>
@@ -175,6 +146,7 @@ export default {
 
 .deck-name {
   font-size: 1.5em;
+  margin-left: .5em;
 }
 
 .deck-section {
@@ -190,11 +162,8 @@ export default {
 
 .header {
   display: flex;
-  flex-direction: column;
-}
-
-.header-buttons button {
-  margin-left: .25em;
+  flex-direction: row;
+  align-items: center;
 }
 
 .modified {

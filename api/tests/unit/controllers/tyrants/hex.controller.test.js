@@ -151,4 +151,4 @@ describe('Tyrants Hex Controller', () => {
       expect(next).toHaveBeenCalledWith(error)
     })
   })
-}) 
+})

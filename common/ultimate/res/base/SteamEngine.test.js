@@ -4,7 +4,7 @@ const t = require('../../testutil.js')
 
 describe('Steam Engine', () => {
 
-  test('dogma', () => {
+  test('dogma: with two yellow cards', () => {
     const game = t.fixtureFirstPlayer()
     t.setBoard(game,  {
       dennis: {
@@ -31,7 +31,7 @@ describe('Steam Engine', () => {
     })
   })
 
-  test('dogma', () => {
+  test('dogma: with one yellow card', () => {
     const game = t.fixtureFirstPlayer()
     t.setBoard(game,  {
       dennis: {

@@ -3,13 +3,24 @@
   "version": "1.0.0",
   "description": "API for Game Center",
   "main": "server.js",
+  "_moduleAliases": {
+    "@": "src",
+    "@controllers": "src/controllers",
+    "@models": "src/models",
+    "@utils": "src/utils",
+    "@services": "src/services",
+    "@middleware": "src/middleware",
+    "@routes": "src/routes"
+  },
   "scripts": {
     "start": "node server.bundle.js",
     "build": "webpack",
     "dev": "nodemon ./server.js",
     "test": "jest --runInBand --config=jest.config.js",
     "test:watch": "jest --watch --config=jest.config.js",
-    "test:coverage": "jest --coverage --config=jest.config.js"
+    "test:coverage": "jest --coverage --config=jest.config.js",
+    "lint": "npx eslint --max-warnings=0 .",
+    "lint:fix": "npx eslint --fix --max-warnings=0 ."
   },
   "nodemonConfig": {
     "watch": [
@@ -34,6 +45,7 @@
     "http-proxy-middleware": "^3.0.4",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
+    "module-alias": "^2.2.3",
     "mongodb": "^6.15.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",

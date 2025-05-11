@@ -7,10 +7,7 @@ jest.mock('../../../src/models/db', () => ({
     throttleOrSet: jest.fn()
   },
   user: {
-    findById: jest.fn().mockImplementation(id => {
-      // Return the user object unchanged (simulating database fetch)
-      return Promise.resolve({ _id: id })
-    })
+    findById: jest.fn(id => Promise.resolve({ _id: id }))
   }
 }))
 
@@ -187,4 +184,4 @@ describe('Notification Service', () => {
       expect(slack.sendMessage).not.toHaveBeenCalledWith(mockUser2, expect.anything())
     })
   })
-}) 
+})

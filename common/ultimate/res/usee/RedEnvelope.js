@@ -25,7 +25,7 @@ function Card() {
       const cardCounts = util.array.countBy(handAndScore, (card) => card.getAge())
 
       const eligibleAges = Object.entries(cardCounts)
-        .filter(([age, count]) => count === 2 || count === 3)
+        .filter(([, count]) => count === 2 || count === 3)
         .map(([age]) => parseInt(age))
 
       if (eligibleAges.length === 0) {

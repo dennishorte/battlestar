@@ -49,8 +49,8 @@
           <label class="col-form-label">cmc</label>
           <select class="form-select operator-select" ref="cmcop">
             <option>=</option>
-            <option>&lt=</option>
-            <option>&gt=</option>
+            <option>&lt;=</option>
+            <option>&gt;=</option>
           </select>
           <input class="form-control" ref="cmc" />
           <button class="btn btn-secondary" value="cmc" @click="add">add</button>
@@ -60,8 +60,8 @@
           <label class="col-form-label">power</label>
           <select class="form-select operator-select" ref="powerop">
             <option>=</option>
-            <option>&lt=</option>
-            <option>&gt=</option>
+            <option>&lt;=</option>
+            <option>&gt;=</option>
           </select>
           <input class="form-control" ref="power" />
           <button class="btn btn-secondary" value="power" @click="add">add</button>
@@ -71,8 +71,8 @@
           <label class="col-form-label">toughness</label>
           <select class="form-select operator-select" ref="toughnessop">
             <option>=</option>
-            <option>&lt=</option>
-            <option>&gt=</option>
+            <option>&lt;=</option>
+            <option>&gt;=</option>
           </select>
           <input class="form-control" ref="toughness" />
           <button class="btn btn-secondary" value="toughness" @click="add">add</button>
@@ -114,23 +114,38 @@
         <div class="colors-group">
           <div class="color-buttons">
             <div class="form-check form-check-inline">
-              <input class="btn-check" type="checkbox" id="colorwhite" ref="colorwhite" />
+              <input class="btn-check"
+                     type="checkbox"
+                     id="colorwhite"
+                     ref="colorwhite" />
               <label class="btn btn-outline-warning" for="colorwhite">white</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="btn-check" type="checkbox" id="colorblue" ref="colorblue" />
+              <input class="btn-check"
+                     type="checkbox"
+                     id="colorblue"
+                     ref="colorblue" />
               <label class="btn btn-outline-primary" for="colorblue">blue</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="btn-check" type="checkbox" id="colorblack" ref="colorblack" />
+              <input class="btn-check"
+                     type="checkbox"
+                     id="colorblack"
+                     ref="colorblack" />
               <label class="btn btn-outline-dark" for="colorblack">black</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="btn-check" type="checkbox" id="colorred" ref="colorred" />
+              <input class="btn-check"
+                     type="checkbox"
+                     id="colorred"
+                     ref="colorred" />
               <label class="btn btn-outline-danger" for="colorred">red</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="btn-check" type="checkbox" id="colorgreen" ref="colorgreen" />
+              <input class="btn-check"
+                     type="checkbox"
+                     id="colorgreen"
+                     ref="colorgreen" />
               <label class="btn btn-outline-success" for="colorgreen">green</label>
             </div>
           </div>
@@ -159,8 +174,7 @@
 
         <div>
           <button class="btn btn-warning" @click="clear">clear</button>
-          <button class="btn btn-primary" @click="apply">apply</button>
-          <slot name="extra-actions"></slot>
+          <slot name="extra-actions"/>
         </div>
 
         <CardFilterList :filters="filters" @remove-card-filter="remove" />
@@ -197,9 +211,6 @@ export default {
   inject: ['bus'],
 
   props: {
-    cardlist: Array,
-    modelValue: Array,
-
     layoutDirection: {
       type: String,
       default: 'column'
@@ -237,8 +248,10 @@ export default {
           }
         }
 
-        colors.kind = kind
-        this.filters.push(colors)
+        if (someTrue) {
+          colors.kind = kind
+          this.filters.push(colors)
+        }
       }
 
       else {
@@ -277,17 +290,6 @@ export default {
       this.onFiltersUpdated()
     },
 
-    apply() {
-      this.$emit('update:modelValue', filterCards(this.cardlist, this.filters))
-      this.$emit('filters-applied', util.deepcopy(this.filters))
-    },
-
-    clear() {
-      this.filters = []
-      this.$emit('update:modelValue', this.cardlist)
-      this.onFiltersUpdated()
-    },
-
     onFiltersUpdated() {
       this.$emit('filters-updated', util.deepcopy(this.filters))
     },
@@ -309,7 +311,6 @@ export default {
   },
 
   mounted() {
-    this.$emit('update:modelValue', this.cardlist)
     this.bus.on('card-filters-set', this.setFilters)
   },
 }
@@ -318,7 +319,7 @@ function filterCards(cards, filters) {
   if (filters.length === 0) {
     return cards
   }
-  return cards.filter(card => mag.util.card.filtersMatchCard(filters, card))
+  return cards.filter(card => card.matchesFilters(filters))
 }
 
 </script>

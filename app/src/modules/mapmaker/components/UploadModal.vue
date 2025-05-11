@@ -2,7 +2,10 @@
   <Modal id="upload-modal" @ok="maybeLoad">
     <template #header>Load from file</template>
 
-    <input class="form-control" type="file" id="formFile" ref="fileinput">
+    <input class="form-control"
+           type="file"
+           id="formFile"
+           ref="fileinput"/>
   </Modal>
 </template>
 
@@ -17,6 +20,8 @@ export default {
   components: {
     Modal,
   },
+
+  emits: ['file-ready'],
 
   methods: {
     maybeLoad() {

@@ -1,0 +1,26 @@
+{
+  "id": "card-id-789",
+  "name": "Art Series: Black Lotus",
+  "lang": "en",
+  "layout": "art_series",
+  "mana_cost": "",
+  "type_line": "Card — Art Series",
+  "oracle_text": "",
+  "legalities": {
+    "standard": "not_legal",
+    "modern": "not_legal",
+    "legacy": "not_legal",
+    "vintage": "not_legal",
+    "commander": "not_legal"
+  },
+  "image_uris": {
+    "art_crop": "https://example.com/art_lotus.jpg",
+    "normal": "https://example.com/art_lotus_normal.jpg"
+  },
+  "colors": [],
+  "color_identity": [],
+  "cmc": 0,
+  "rarity": "special",
+  "set": "TST",
+  "collector_number": "A1"
+} 

@@ -46,10 +46,10 @@ function processFile(filename) {
   let card = newCard()
 
   const lineReader = new readlines(filename)
-  let line;
+  let line
   let linenum = 0
 
-  while (line = lineReader.next()) {
+  while ((line = lineReader.next()) !== false) {
     line = line.toString('utf-8').trim()
     if (line.length === 0) {
       if (!card.name) {

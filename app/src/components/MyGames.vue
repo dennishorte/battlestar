@@ -151,11 +151,17 @@ export default {
       const millis = Date.now() - timestamp
       const years = Math.floor(millis / (365 * 24 * 60 * 60 * 1000))
       const days = Math.floor(millis /  (24 * 60 * 60 * 1000))
-      if (years) return `${years} y ${days} d`
-      if (days) return `${days} d`
+      if (years) {
+        return `${years} y ${days} d`
+      }
+      if (days) {
+        return `${days} d`
+      }
 
       const hours = Math.floor(millis / (60 * 60 * 1000))
-      if (hours) return `${hours} h`
+      if (hours) {
+        return `${hours} h`
+      }
 
       const minutes = Math.floor(millis / (60 * 1000))
       return `${minutes} m`

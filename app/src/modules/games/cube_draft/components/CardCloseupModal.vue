@@ -92,16 +92,18 @@ export default {
     },
 
     removeCard() {
-      this.$store.commit('magic/dm/removeCard', this.card)
+      throw new Error('Not implemented')
+      // this.$store.commit('magic/dm/removeCard', this.card)
     },
   },
 
   methods: {
     setZone(name) {
-      this.$store.commit('magic/dm/setCardZone', {
-        card: this.card,
-        zoneName: name
-      })
+      throw new Error('Not implemented')
+      // this.$store.commit('magic/dm/setCardZone', {
+      //   card: this.card,
+      //   zoneName: name
+      // })
     },
   },
 }

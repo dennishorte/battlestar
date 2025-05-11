@@ -2,7 +2,6 @@ const {
   Game,
   GameFactory,
   GameOverEvent,
-  InputRequestEvent,
 } = require('../lib/game.js')
 const res = require('./resources.js')
 const util = require('../lib/util.js')
@@ -47,27 +46,15 @@ Innovation.prototype._mainProgram = function() {
 }
 
 Innovation.prototype._gameOver = function(event) {
-  for (const player of this.getPlayerAll()) {
-    try {
-      this.state.wouldWinKarma = true
-      this.aKarma(event.data.player, 'would-win')
-    }
-    catch (e) {
-      if (e instanceof GameOverEvent) {
-        event = e
-      }
-      else {
-        throw e
-      }
-    }
-  }
-
+  // TODO (dennis): handle would-win karma effects
   return event
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
+
+const SUPPORTED_EXPANSIONS = ['base', 'city', 'usee']
 
 Innovation.prototype.initialize = function() {
   this.mLog({ template: 'Initializing' })
@@ -89,7 +76,6 @@ Innovation.prototype.initialize = function() {
 
 Innovation.prototype.initializeTransientState = function() {
   this.mResetDogmaInfo()
-  this.mResetMonumentCounts()
   this.mResetPeleCount()
   this.mResetDrawInfo()
   this.state.turn = 1
@@ -161,9 +147,8 @@ Innovation.prototype.initializeZones = function() {
 Innovation.prototype.initializeZonesDecks = function() {
   const zones = this.state.zones
   zones.decks = {}
-  for (const exp of ['base', 'echo', 'figs', 'city', 'arti', 'usee']) {
+  for (const exp of SUPPORTED_EXPANSIONS) {
     zones.decks[exp] = {}
-    const data = this.cardData[exp]
     for (const [age, cards] of Object.entries(this.cardData[exp].byAge)) {
       if (!cards) {
         throw new Error(`Missing cards for ${exp}-${age}`)
@@ -187,11 +172,11 @@ Innovation.prototype.initializeZonesAchievements = function() {
   for (const age of [1,2,3,4,5,6,7,8,9,10]) {
     const ageZone = this.getZoneByDeck('base', age)
     const achZone = this.getZoneById('achievements')
-    const card = this.mMoveTopCard(ageZone, achZone)
+    this.mMoveTopCard(ageZone, achZone)
   }
 
   // Special achievements
-  for (const exp of ['base', 'echo', 'figs', 'city', 'arti', 'usee']) {
+  for (const exp of SUPPORTED_EXPANSIONS) {
     if (this.getExpansionList().includes(exp)) {
       for (const ach of this.cardData[exp].achievements) {
         zones.achievements._cards.push(ach)
@@ -322,7 +307,7 @@ Innovation.prototype.artifact = function() {
     })[0]
 
     switch (action) {
-      case 'dogma':
+      case 'dogma': {
         const startingZone = artifact.zone
         this.aDogma(player, artifact, { artifact: true })
         if (startingZone === artifact.zone) {
@@ -330,6 +315,7 @@ Innovation.prototype.artifact = function() {
         }
         this.fadeFiguresCheck()
         break
+      }
       case 'return':
         this.aReturn(player, artifact)
         break
@@ -460,7 +446,6 @@ Innovation.prototype.endTurn = function() {
   // Reset various turn-centric state
   this.state.didEndorse = false
   this.mResetDogmaInfo()
-  this.mResetMonumentCounts()
   this.mResetPeleCount()
   this.mResetDrawInfo()
 }
@@ -733,7 +718,7 @@ Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
   this.aFinishChainEvent(player, card)
 }
 
-Innovation.prototype.aSuperExecute = function(player, card, opts={}) {
+Innovation.prototype.aSuperExecute = function(player, card) {
   this.aSelfExecute(player, card, { superExecute: true })
 }
 
@@ -936,11 +921,11 @@ Innovation.prototype.aChooseByPredicate = function(player, cards, count, pred, o
   return selected
 }
 
-Innovation.prototype.aChooseHighest = function(player, cards, count, opts={}) {
+Innovation.prototype.aChooseHighest = function(player, cards, count) {
   return this.aChooseByPredicate(player, cards, count, this.utilHighestCards)
 }
 
-Innovation.prototype.aChooseLowest = function(player, cards, count, opts={}) {
+Innovation.prototype.aChooseLowest = function(player, cards, count) {
   return this.aChooseByPredicate(player, cards, count, this.utilLowestCards)
 }
 
@@ -1901,7 +1886,7 @@ Innovation.prototype.aReturn = function(player, card, opts={}) {
   return this.mReturn(player, card, opts)
 }
 
-Innovation.prototype.aSafeguard = function(player, card, opts={}) {
+Innovation.prototype.aSafeguard = function(player, card) {
   const safeLimit = this.getSafeLimit(player)
   const safeZone = this.getZoneByPlayer(player, 'safe')
 
@@ -2022,7 +2007,7 @@ Innovation.prototype.aTuck = function(player, card, opts={}) {
   return tucked
 }
 
-Innovation.prototype.aUnsplay = function(player, color, opts={}) {
+Innovation.prototype.aUnsplay = function(player, color) {
   const zone = this.getZoneByPlayer(player, color)
 
   if (zone.splay === 'none') {
@@ -2074,7 +2059,7 @@ function ManyFactory(baseFuncName, extraArgCount=0) {
     const results = []
     let auto = opts.ordered || false
     let remaining = [...cards]
-    const startZones = util.array.toDict(remaining.map(c => [c.id, c.zone]))
+    const startZones = Object.fromEntries(remaining.map(c => [c.id, c.zone]))
 
     while (remaining.length > 0) {
       // Check if any cards in 'remaining' have been acted on by some other force (karma effect).
@@ -2260,7 +2245,7 @@ Innovation.prototype.getBiscuits = function() {
   const biscuits = this
     .getPlayerAll()
     .map(player => [player.name, this.getBiscuitsByPlayer(player)])
-  return util.array.toDict(biscuits)
+  return Object.fromEntries(biscuits)
 }
 
 Innovation.prototype.getBiscuitsByPlayer = function(player) {
@@ -2298,8 +2283,8 @@ Innovation.prototype.getBiscuitsByZone = function(zone) {
 
 Innovation.prototype.getBiscuitsRaw = function(card, splay) {
   return this.checkCardIsTop(card)
-       ? card.getBiscuits('top')
-       : card.getBiscuits(splay)
+    ? card.getBiscuits('top')
+    : card.getBiscuits(splay)
 }
 
 Innovation.prototype.getBonuses = function(player) {
@@ -2318,7 +2303,7 @@ Innovation.prototype.getBonuses = function(player) {
 }
 
 Innovation.prototype.getCardByName = function(name, def) {
-  if (!this.cardData.all.byName.hasOwnProperty(name)) {
+  if (!Object.hasOwn(this.cardData.all.byName, name)) {
     if (def !== undefined) {
       return def
     }
@@ -2362,7 +2347,7 @@ Innovation.prototype.getEffectAge = function(card, age) {
   if (player) {
     const karmaInfos = this.getInfoByKarmaTrigger(player, 'effect-age')
     if (karmaInfos.length === 0) {
-      age = age
+      // No karma, so use age as is
     }
     else if (karmaInfos.length > 1) {
       throw new Error('Multiple effect-age karmas not supported')
@@ -2458,13 +2443,8 @@ Innovation.prototype.getNumAchievementsToWin = function() {
 }
 
 Innovation.prototype.getPlayerByCard = function(card) {
-  try {
-    const zone = this.getZoneById(card.zone)
-    return this.getPlayerByZone(zone)
-  }
-  catch (e) {
-    return undefined
-  }
+  const zone = this.getZoneById(card.zone)
+  return this.getPlayerByZone(zone)
 }
 
 Innovation.prototype.getPlayerTeam = function(player) {
@@ -3020,14 +3000,6 @@ Innovation.prototype.mResetDrawInfo = function() {
     }
   }
 }
-
-Innovation.prototype.mResetMonumentCounts = function() {
-  const emptyInfo = this
-    .getPlayerAll()
-    .map(p => [p.name, { tuck: 0, score: 0 }])
-  this.state.monument = util.array.toDict(emptyInfo)
-}
-
 Innovation.prototype.mResetPeleCount = function() {
   this.state.tuckedGreenForPele = []
 }
@@ -3075,7 +3047,6 @@ Innovation.prototype.mScore = function(player, card) {
     template: '{player} scores {card}',
     args: { player, card }
   })
-  this.state.monument[player.name].score += 1
   this.mActed(player)
   return card
 }
@@ -3150,7 +3121,6 @@ Innovation.prototype.mTuck = function(player, card) {
   if (card.color === 'green') {
     util.array.pushUnique(this.state.tuckedGreenForPele, player)
   }
-  this.state.monument[player.name].tuck += 1
   this.mActed(player)
   return card
 }
@@ -3177,13 +3147,13 @@ Innovation.prototype.utilBiscuitNames = function() {
 
 Innovation.prototype.utilBiscuitNameToIcon = function(name) {
   switch (name) {
-    case 'castle': return 'k';
-    case 'clock': return 'i';
-    case 'coin': return 'c';
-    case 'factory': return 'f';
-    case 'leaf': return 'l';
-    case 'lightbulb': return 's';
-    case 'person': return 'p';
+    case 'castle': return 'k'
+    case 'clock': return 'i'
+    case 'coin': return 'c'
+    case 'factory': return 'f'
+    case 'leaf': return 'l'
+    case 'lightbulb': return 's'
+    case 'person': return 'p'
   }
 
   throw new Error('Unknown biscuit name: ' + name)
@@ -3201,11 +3171,11 @@ Innovation.prototype.utilColors = function() {
 
 Innovation.prototype.utilColorToDecree = function(color) {
   switch (color) {
-    case 'red': return 'War';
-    case 'yellow': return 'Expansion';
-    case 'green': return 'Trade';
-    case 'blue': return 'Advancement';
-    case 'purple': return 'Rivalry';
+    case 'red': return 'War'
+    case 'yellow': return 'Expansion'
+    case 'green': return 'Trade'
+    case 'blue': return 'Advancement'
+    case 'purple': return 'Rivalry'
     default:
       throw new Error(`Unknown color ${color}`)
   }
@@ -3300,20 +3270,20 @@ Innovation.prototype._enrichLogArgs = function(msg) {
   }
 }
 
-Innovation.prototype.utilHighestCards = function(cards, opts={}) {
+Innovation.prototype.utilHighestCards = function(cards) {
   const sorted = [...cards].sort((l, r) => r.getAge() - l.getAge())
   return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
 }
 
-Innovation.prototype.utilLowestCards = function(cards, opts={}) {
+Innovation.prototype.utilLowestCards = function(cards) {
   const sorted = [...cards].sort((l, r) => l.getAge() - r.getAge())
- return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
+  return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
 }
 
 Innovation.prototype.utilParseBiscuits = function(biscuitString) {
   const counts = this.utilEmptyBiscuits()
   for (const ch of biscuitString) {
-    if (counts.hasOwnProperty(ch)) {
+    if (Object.hasOwn(counts, ch)) {
       counts[ch] += 1
     }
   }
@@ -3323,7 +3293,7 @@ Innovation.prototype.utilParseBiscuits = function(biscuitString) {
 Innovation.prototype.utilSeparateByAge = function(cards) {
   const byAge = {}
   for (const card of cards) {
-    if (byAge.hasOwnProperty(card.age)) {
+    if (Object.hasOwn(byAge, card.age)) {
       byAge[card.age].push(card)
     }
     else {
@@ -3474,18 +3444,8 @@ Innovation.prototype.formatAchievements = function(array) {
 }
 
 Innovation.prototype.getEligibleAchievements = function(player, opts={}) {
-  function _breakdown(name) {
-    const noStars = name.slice(1, -1)
-    const [exp, ageStr] = noStars.split('-')
-    const age = parseInt(ageStr)
-    return { exp, age }
-  }
-
   const formatted = this.formatAchievements(this.getEligibleAchievementsRaw(player, opts))
   const standard = util.array.distinct(formatted).sort((l, r) => {
-    const lparts = _breakdown(l)
-    const rparts = _breakdown(r)
-
     if (l.exp === r.exp) {
       return l.age < r.age
     }
@@ -3588,7 +3548,6 @@ Innovation.prototype._generateActionChoicesDraw = function() {
 
 Innovation.prototype._generateActionChoicesEndorse = function() {
   const player = this.getPlayerCurrent()
-  const endorseColors = []
 
   const lowestHandAge = this
     .getZoneByPlayer(player, 'hand')
@@ -3751,7 +3710,7 @@ Innovation.prototype.statsFirstToMeldOfAge = function(player, card) {
   }
 }
 
-Innovation.prototype.statsRecordDogmaActions = function(player, card, opts) {
+Innovation.prototype.statsRecordDogmaActions = function(player, card) {
   if (card.name in this.stats.dogmaActions) {
     this.stats.dogmaActions[card.name] += 1
   }

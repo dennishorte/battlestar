@@ -1,6 +1,7 @@
 <template>
-  <MagicWrapper :also-loading="!cubeLoaded" :after-loaded="insertCardData">
-    <div class="container" v-if="!!cube">
+  <MagicWrapper>
+
+    <div class="container" v-if="cubeLoaded">
 
       <div class="row">
         <div class="col-6">
@@ -10,60 +11,19 @@
 
       <div class="row">
         <div class="col">
-          <div class="cube-menu">
-            <button class="btn" :class="buttonClassesCards" @click="navigate('cards')">
-              cards ({{ filteredCards.length }})
-            </button>
-
-            <template v-if="!!cube.allowEdits">
-              <button class="btn" :class="buttonClassesScars" @click="navigate('scars')">
-                scars ({{ scarsUnused.length }})
-              </button>
-              <button class="btn" :class="buttonClassesAchievements" @click="navigate('achievements')">
-                achievements ({{ achievements.length }})
-              </button>
-            </template>
-
-            <button class="btn btn-secondary" @click="toggleSearch">
-              search
-              <input type="checkbox" class="form-check-input" v-model="showSearch" />
-            </button>
-
-            <Dropdown text="menu">
-              <DropdownButton @click="this.$modal('cube-update-modal').show()">add/remove cards</DropdownButton>
-              <DropdownButton @click="this.$modal('cube-add-modal').show()">add one card</DropdownButton>
-
-              <DropdownDivider />
-
-              <DropdownButton @click="createCard">create card</DropdownButton>
-              <DropdownButton @click="createScar">create scar</DropdownButton>
-
-              <DropdownDivider />
-
-              <DropdownButton @click="randomCard">random card</DropdownButton>
-
-              <template v-if="viewerIsOwner">
-                <DropdownDivider />
-                <DropdownButton @click="toggleCardEditing">
-                  toggle edits
-                  <i v-if="cube.allowEdits" class="bi-toggle-on" />
-                  <i v-else class="bi-toggle-off" />
-                </DropdownButton>
-                <DropdownButton @click="togglePublic">
-                  toggle public
-                  <i v-if="cube.public" class="bi-toggle-on" />
-                  <i v-else class="bi-toggle-off" />
-                </DropdownButton>
-              </template>
-            </Dropdown>
-          </div>
+          <CubeMenu
+            :counts="counts"
+            :cube="cube"
+            :showing="showing"
+            @navigate="navigate"
+            @toggle-search="toggleSearch"
+          />
         </div>
       </div>
 
       <div v-if="showing === 'cards'">
         <CardFilters
           layout-direction="row"
-          :cardlist="cube.cardlist"
           :class="showSearch ? '' : 'd-none'"
           @filters-updated="updateCardFilters"
         >
@@ -88,7 +48,7 @@
         <div class="col">
           <h5>Avaiable Scars</h5>
 
-          <div v-for="scar in scarsUnused" class="scar-container">
+          <div v-for="scar in scarsUnused" :key="scar._id" class="scar-container">
             <div>{{ scar.text }}</div>
             <div>
               <button class="btn btn-link" @click="editScar(scar)">edit</button>
@@ -98,7 +58,7 @@
 
         <div class="col">
           <h5>Used Scars</h5>
-          <div v-for="scar in scarsUsed" class="scar-container vertical">
+          <div v-for="scar in scarsUsed" :key="scar._id" class="scar-container vertical">
             <div>{{ scar.text }}</div>
             <div class="scar-applied-info">
               <div
@@ -121,41 +81,39 @@
         :users="users"
       />
 
-    </div>
 
-    <CubeAddModal @cube-updates="updateCube" />
-    <CubeImportModal @cube-updates="updateCube" />
-    <CubeCardModal :card="managedCard" :editable="cube.allowEdits" />
-    <CardEditorModal :original="managedCard" />
-    <ScarModal />
-    <AchievementModal />
-    <AchievementViewerModal />
-    <AchievementSearchLinkerModal :achievements="achievements" />
+      <CardSearchModal @card-selected="addOneCard" id="cube-add-modal" />
+      <CubeImportModal @cube-updates="updateCube" />
+      <CardEditorModal />
+      <ScarModal />
+      <AchievementModal />
+      <AchievementViewerModal />
+      <AchievementSearchLinkerModal :achievements="achievements" />
+      <CubeSettingsModal />
+    </div>
   </MagicWrapper>
 </template>
 
 
 <script>
-import cubeUtil from '../../util/cubeUtil.js'
 import mitt from 'mitt'
 
 import { mag, util } from 'battlestar-common'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import { nextTick } from 'vue'
 
 import AchievementModal from './AchievementModal'
 import AchievementViewerModal from './AchievementViewerModal'
 import AchievementSearchLinkerModal from './AchievementSearchLinkerModal'
 import Achievements from './Achievements'
+import CardEditor from '../CardEditor'
 import CardEditorModal from '../CardEditorModal'
 import CubeBreakdown from './CubeBreakdown'
-import CubeAddModal from './CubeAddModal'
+import CardSearchModal from '../CardSearchModal'
 import CardFilters from '../CardFilters'
-import CubeCardModal from './CubeCardModal'
 import CubeImportModal from './CubeImportModal'
-import Dropdown from '@/components/Dropdown'
-import DropdownButton from '@/components/DropdownButton'
-import DropdownDivider from '@/components/DropdownDivider'
+import CubeMenu from './CubeMenu'
+import CubeSettingsModal from './CubeSettingsModal'
 import MagicMenu from '../MagicMenu'
 import MagicWrapper from '../MagicWrapper'
 import ScarModal from './ScarModal'
@@ -169,15 +127,14 @@ export default {
     AchievementViewerModal,
     AchievementSearchLinkerModal,
     Achievements,
+    CardEditor,
     CardEditorModal,
     CardFilters,
-    CubeAddModal,
+    CardSearchModal,
     CubeBreakdown,
-    CubeCardModal,
     CubeImportModal,
-    Dropdown,
-    DropdownButton,
-    DropdownDivider,
+    CubeMenu,
+    CubeSettingsModal,
     MagicMenu,
     MagicWrapper,
     ScarModal,
@@ -193,6 +150,8 @@ export default {
 
       showing: this.$route.params.tab || 'cards',
       showSearch: false,
+
+      filters: [],
     }
   },
 
@@ -207,45 +166,23 @@ export default {
   },
 
   computed: {
+    ...mapGetters('magic', {
+      rootReady: 'ready',
+    }),
+
     ...mapState('magic/cube', {
       cube: 'cube',
       cubeLoaded: 'cubeLoaded',
-      filteredCards: 'filteredCards',
 
       achievements: 'achievements',
       scars: 'scars',
 
-      cardFilters: 'cardFilters',
-
       managedAchievement: 'managedAchievement',
-      managedCard: 'managedCard',
       managedScar: 'managedScar',
     }),
 
-    buttonClassesCards() {
-      return this.showing === 'cards' ? 'btn-primary' : 'btn-secondary'
-    },
-
-    buttonClassesScars() {
-      return this.showing === 'scars' ? 'btn-primary' : 'btn-secondary'
-    },
-
-    buttonClassesAchievements() {
-      return this.showing === 'achievements' ? 'btn-primary' : 'btn-secondary'
-    },
-
     cards() {
-      const lookupFunc = this.$store.getters['magic/cards/getLookupFunc']
-      mag.util.card.lookup.insertCardData(this.cube.cardlist, lookupFunc)
-
-      for (const card of this.cube.cardlist) {
-        if (!card.data) {
-          console.log(card)
-          throw new Error(`Unable to fetch data for some cards`)
-        }
-      }
-
-      return this.cube.cardlist
+      return this.cube.cards()
     },
 
     cardEditButtonText() {
@@ -262,7 +199,19 @@ export default {
     },
 
     canLinkFilters() {
-      return this.cardFilters.length > 0
+      return this.filters.length > 0
+    },
+
+    counts() {
+      return {
+        cards: this.filteredCards.length,
+        scars: this.scarsUnused.length,
+        achievements: this.achievements.length,
+      }
+    },
+
+    filteredCards() {
+      return this.cube.applyFilters(this.filters)
     },
 
     scarsUnused() {
@@ -275,29 +224,15 @@ export default {
         .filter(scar => scar.appliedTimestamp)
         .sort((l, r) => r.appliedTimestamp - l.appliedTimestamp)
     },
-
-    viewerIsOwner() {
-      return this.cube ? this.actor._id === this.cube.userId : false
-    },
   },
 
   methods: {
     ////////////////////////////////////////////////////////////////////////////////
     // Sync methods
 
-    createCard() {
-      this.$store.commit('magic/cube/manageCard', mag.util.card.blank())
-      this.$modal('card-editor-modal').show()
-    },
-
-    createScar() {
-      const blank = {
-        _id: null,
-        cubeId: this.cube._id,
-        text: '',
-      }
-      this.$store.commit('magic/cube/manageScar', blank)
-      this.$modal('scar-modal').show()
+    cardCloseup(card) {
+      console.log('card clicked', card.name())
+      this.bus.emit('edit-card-in-modal', card)
     },
 
     editScar(scar) {
@@ -320,21 +255,13 @@ export default {
     },
 
     randomCard() {
-      const card = util.array.select(this.cube.cardlist)
-      this.goToCard(card)
-    },
-
-    showCardModal() {
-      if (this.cube.allowEdits) {
-        this.$modal('card-editor-modal').show()
-      }
-      else {
-        this.$modal('cube-card-modal').show()
-      }
+      const card = util.array.select(this.cube.cards())
+      const link = this.$store.getters['magic/cards/cardLink'](card._id)
+      this.$router.push(link)
     },
 
     updateCardFilters(filters) {
-      this.$store.dispatch('magic/cube/setFilters', filters)
+      this.filters = filters
     },
 
     async showAchievementFilters(filters) {
@@ -349,44 +276,18 @@ export default {
       this.showSearch = !this.showSearch
     },
 
-    async updateCube(update) {
-      for (const card of update.remove) {
-        this.cube.removeCard(card)
-      }
-
-      for (const card of update.insert) {
-        this.cube.addCard(card)
-      }
-
-      if (update.unknown.length) {
-        const lines = ['Unable to add unknown cards:']
-        for (const card of update.unknown) {
-          lines.push(card.name)
-        }
-        alert(lines.join('\n'))
-      }
-
-      await this.$store.dispatch('magic/cube/save', this.cube)
-    },
-
 
     ////////////////////////////////////////////////////////////////////////////////
     // Card pop-up methods
 
-    goToCard(cardIdDict) {
-      const data = this.$store.getters['magic/cards/getLookupFunc'](cardIdDict)
-      const link = this.$store.getters['magic/cards/cardLink'](data._id)
-      this.$router.push(link)
-    },
-
     mouseover(cardIdDict) {
-      const data = this.$store.getters['magic/cards/getLookupFunc'](cardIdDict)
-      this.$store.commit('magic/setMouseoverCard', data)
+      /* const data = this.$store.getters['magic/cards/getLookupFunc'](cardIdDict)
+       * this.$store.commit('magic/setMouseoverCard', data) */
     },
 
     mouseleave(cardIdDict) {
-      const data = this.$store.getters['magic/cards/getLookupFunc'](cardIdDict)
-      this.$store.commit('magic/unsetMouseoverCard', data)
+      /* const data = this.$store.getters['magic/cards/getLookupFunc'](cardIdDict)
+       * this.$store.commit('magic/unsetMouseoverCard', data) */
     },
 
     mousemove(event) {
@@ -400,8 +301,8 @@ export default {
     ////////////////////////////////////////////////////////////////////////////////
     // Async Methods
 
-    async insertCardData() {
-      await this.$store.dispatch('magic/cards/insertCardData', this.cube.cardlist)
+    async addOneCard(card, comment) {
+      await this.$store.dispatch('magic/cube/addCard', { card, comment })
     },
 
     async loadUsers() {
@@ -414,34 +315,15 @@ export default {
       await this.loadUsers()
     },
 
-    // If original is passed in, the new card will replace the original.
-    // Otherwise, the new card will be added to the cube with nothing removed.
-    async saveCard({ card, original }) {
-      const updatedCard = await this.$store.dispatch('magic/cards/save', {
-        actor: this.actor,
-        cubeId: this.cube._id,
-        updated: card,
-        original,
-        comment: 'Updated in the cube editor',
+    async updateCube(update) {
+      await this.$store.dispatch('magic/cube/addRemoveCards', {
+        addIds: update.insert.map(item => item.card._id),
+        removeIds: update.remove.map(item => item.card._id),
       })
-
-      window.location.reload()
     },
 
-    async toggleCardEditing() {
-      await this.$post('/api/magic/cube/toggle_edits', {
-        cubeId: this.id,
-        editFlag: !this.cube.allowEdits
-      })
-      this.cube.allowEdits = !this.cube.allowEdits
-    },
-
-    async togglePublic() {
-      await this.$post('/api/magic/cube/toggle_public', {
-        cubeId: this.id,
-        publicFlag: !this.cube.public,
-      })
-      this.cube.public = !this.cube.public
+    openSettings() {
+      this.bus.emit('open-cube-settings', this.cube)
     },
   },
 
@@ -450,12 +332,16 @@ export default {
       this.id = this.$route.params.id
       await this.reload()
     },
+
+    rootReady(newValue) {
+      if (newValue) {
+        this.reload()
+      }
+    },
   },
 
   async mounted() {
-    await this.reload()
-    this.bus.on('card-clicked', this.showCardModal)
-    this.bus.on('card-saved', this.saveCard)
+    this.bus.on('card-clicked', this.cardCloseup)
     this.bus.on('achievement-show-filters', this.showAchievementFilters)
   },
 }
@@ -465,15 +351,6 @@ export default {
 <style scoped>
 .container {
   margin-bottom: 2em;
-}
-
-.cube-menu {
-  display: flex;
-  flex-direction: row;
-}
-
-.cube-menu > .btn {
-  margin-right: .25em;
 }
 
 .scar-container {

@@ -7,7 +7,7 @@ function validateEmail(email) {
   if (!email) {
     return false
   }
-  
+
   // Regular expression for email validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return emailRegex.test(email)
@@ -22,22 +22,22 @@ function validatePassword(password) {
   if (!password || password.length < 8) {
     return false
   }
-  
+
   // Check for uppercase letter
   if (!/[A-Z]/.test(password)) {
     return false
   }
-  
+
   // Check for lowercase letter
   if (!/[a-z]/.test(password)) {
     return false
   }
-  
+
   // Check for number
   if (!/[0-9]/.test(password)) {
     return false
   }
-  
+
   return true
 }
 
@@ -51,10 +51,10 @@ function validateRequiredFields(data, requiredFields) {
   if (!data || !requiredFields || !Array.isArray(requiredFields)) {
     return false
   }
-  
+
   return requiredFields.every(field => {
-    return data[field] !== undefined && 
-           data[field] !== null && 
+    return data[field] !== undefined &&
+           data[field] !== null &&
            data[field] !== ''
   })
 }
@@ -63,4 +63,4 @@ module.exports = {
   validateEmail,
   validatePassword,
   validateRequiredFields
-} 
+}

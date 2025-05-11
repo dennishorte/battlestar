@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const gameController = require('../../controllers/game.controller')
+const gameController = require('@controllers/game.controller')
 
 /**
  * @swagger
@@ -357,4 +357,4 @@ router.post('/undo', gameController.undo)
  */
 router.post('/stats/innovation', gameController.stats.innovation)
 
-module.exports = router 
+module.exports = router

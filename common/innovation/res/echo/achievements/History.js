@@ -25,11 +25,11 @@ function Card() {
     // Convert each stack to a count of echo effects
       .map(zone => zone
         .cards()
-        .flatMap(c => 
+        .flatMap(c =>
           game
             .getBiscuitsRaw(c, zone.splay)
             .match(includeHexesAsEcho(c) ? /[hm&]/g : /&/g) || []
-          )
+        )
         .length
       )
       .some(count => count >= targetCount)

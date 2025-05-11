@@ -2,13 +2,13 @@
   <div class="offcanvas offcanvas-start" :id="id" :class="class">
     <div class="offcanvas-header">
       <h5>
-        <slot name="header"></slot>
+        <slot name="header"/>
       </h5>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"/>
     </div>
 
     <div class="offcanvas-body">
-      <slot></slot>
+      <slot/>
     </div>
   </div>
 </template>

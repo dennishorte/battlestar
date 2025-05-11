@@ -2,7 +2,7 @@
   <div class="gamelog" ref="gamelog" :class="nestedClasses">
     <ChatOffCanvas :colors="chatColors" v-if="!nested" />
 
-    <template v-for="(line, index) in lines">
+    <template v-for="(line, index) in lines" :key="index">
 
       <div v-if="line.type === 'nest'">
         <GameLog :entries="line.entries" :depth="line.depth" :funcs="funcs" />
@@ -17,7 +17,7 @@
                 {{ line.text }}
               </div>
               <div class="chat-delete" @click="deleteChat(line)" v-if="line.id">
-                <i class="bi bi-x-circle"></i>
+                <i class="bi bi-x-circle"/>
               </div>
             </div>
           </div>
@@ -33,7 +33,7 @@
 
     <RematchButton v-if="rematchButtonVisible" />
 
-    <div class="bottom-space" v-if="!nested"></div>
+    <div class="bottom-space" v-if="!nested"/>
 
     <ChatInput id="chat-input-main" :save-on-chat="saveOnChat" v-if="!nested" />
   </div>

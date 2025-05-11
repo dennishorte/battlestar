@@ -16,33 +16,33 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const hand = game.getZoneByPlayer(player, 'hand').cards();
+      const hand = game.getZoneByPlayer(player, 'hand').cards()
       if (hand.length === 0) {
-        game.mLogNoEffect();
-        return;
+        game.mLogNoEffect()
+        return
       }
 
-      const card = game.aChooseCard(player, hand);
+      const card = game.aChooseCard(player, hand)
       if (card) {
-        game.mReveal(player, card);
-        game.aRemove(player, card);
+        game.mReveal(player, card)
+        game.aJunk(player, card)
 
-        const cardValue = card.getAge();
+        const cardValue = card.getAge()
         game.mLog({
           template: '{player} will return all cards of value {value} from hand',
           args: { player, value: cardValue }
-        });
+        })
 
         const toReturn = hand
           .filter(c => c.getAge() === cardValue)
           .filter(c => c.name !== card.name)
-        game.aReturnMany(player, toReturn, { ordered: true });
+        game.aReturnMany(player, toReturn, { ordered: true })
 
         for (let i = 0; i < 3; i++) {
-          game.aDraw(player, { age: cardValue });
+          game.aDraw(player, { age: cardValue })
         }
 
-        game.aSelfExecute(player, card);
+        game.aSelfExecute(player, card)
       }
     }
   ]

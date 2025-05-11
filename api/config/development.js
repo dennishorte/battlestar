@@ -8,4 +8,4 @@ module.exports = {
     expiresIn: '7d'
   },
   logLevel: 'debug'
-} 
+}

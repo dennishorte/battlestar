@@ -1,5 +1,4 @@
 const CardBase = require(`../CardBase.js`)
-const { GameOverEvent } = require('../../../lib/game.js')
 const util = require('../../../lib/util.js')
 
 

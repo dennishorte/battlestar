@@ -2,17 +2,20 @@ const {
   Game,
   GameFactory,
   GameOverEvent,
-  InputRequestEvent,
 } = require('../lib/game.js')
 
 const cardUtil = require('./cardUtil.js')
-const deckUtil = require('./deckUtil.js')
 const res = require('./data.js')
 const util = require('../lib/util.js')
 
 const Player = require('./Player.js')
-const { PlayerZone, Zone } = require('./Zone.js')
+const { PlayerZone } = require('./Zone.js')
 
+const wrappers = {
+  card: require('./util/card.wrapper'),
+  cube: require('./util/cube.wrapper'),
+  deck: require('./util/deck.wrapper'),
+}
 
 module.exports = {
   GameOverEvent,
@@ -24,17 +27,18 @@ module.exports = {
   res,
   draft: {
     cube: require('./draft/cube_draft.js'),
+    pack: require('./draft/pack.js'),
   },
   util: {
     card: cardUtil,
-    deck: deckUtil,
+    wrapper: wrappers,
   },
 }
 
 function Magic(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
-  this.cardLookupFunc = null
+  this.setCardWrapper(wrappers.card)
   this.cardsById = {}
 }
 
@@ -68,13 +72,8 @@ Magic.prototype.serialize = function() {
   return base
 }
 
-Magic.prototype.run = function() {
-  if (this.cardLookupFunc) {
-    return Game.prototype.run.call(this)
-  }
-  else {
-    // do nothing
-  }
+Magic.prototype.setCardWrapper = function(wrapper) {
+  this.cardWrapper = wrapper
 }
 
 Magic.prototype._mainProgram = function() {
@@ -126,15 +125,15 @@ Magic.prototype._cardMovedCallback = function({ card, sourceZone, targetZone }) 
 
   // Card moved to a non-tap zone
   if (!['creatures', 'battlefield', 'land', 'attacking', 'blocking'].includes(targetKind)) {
-    if (card.tapped) {
+    if (card.g.tapped) {
       this.mUntap(card)
     }
 
-    if (card.attachedTo) {
+    if (card.g.attachedTo) {
       this.mDetach(card)
     }
 
-    for (const attached of card.attached) {
+    for (const attached of card.g.attached) {
       this.mDetach(attached)
     }
   }
@@ -238,6 +237,9 @@ Magic.prototype.chooseDecks = function() {
 
   const responses = this.requestInputMany(requests)
 
+  // Once both players have selected their decks, they can't go back.
+  responses.forEach(r => r.noUndo = true)
+
   for (const response of responses) {
     const player = this.getPlayerByName(response.actor)
     this.setDeck(player, response.deckData)
@@ -259,13 +261,17 @@ Magic.prototype.mainLoop = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Setters, getters, actions, etc.
 
-Magic.prototype.aActiveFace = function(player, cardId, face) {
+Magic.prototype.aActiveFace = function(player, cardId, faceIndex) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
-  const prevFace = card.activeFace
-  card.activeFace = face
+  const prevFaceIndex = card.g.activeFaceIndex
+  card.g.activeFaceIndex = faceIndex
+
+  const prevFaceName = card.name(prevFaceIndex)
+  const activeFaceName = card.name(card.g.activeFaceIndex)
+
   this.mLog({
-    template: `{player} flips ${prevFace} to ${card.activeFace}`,
+    template: `{player} flips ${prevFaceName} to ${activeFaceName}`,
     args: { player },
   })
 }
@@ -274,8 +280,8 @@ Magic.prototype.aAddCounter = function(player, cardId, name, opts={}) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
 
-  if (!card.counters[name]) {
-    card.counters[name] = 0
+  if (!card.g.counters[name]) {
+    card.g.counters[name] = 0
 
     if (!opts.noIncrement) {
       this.aAdjustCardCounter(player, cardId, name, 1)
@@ -301,7 +307,7 @@ Magic.prototype.aAddCounterPlayer = function(player, targetName, counterName) {
 Magic.prototype.aAdjustCardCounter = function(player, cardId, name, amount) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
-  card.counters[name] += amount
+  card.g.counters[name] += amount
 
   let msg
   if (amount === 1) {
@@ -323,7 +329,7 @@ Magic.prototype.aAdjustCardCounter = function(player, cardId, name, amount) {
 Magic.prototype.aAnnotate = function(player, cardId, annotation) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
-  card.annotation = annotation
+  card.g.annotation = annotation
   this.mLog({
     template: '{player} sets annotation on {card} to {annotation}',
     args: { player, card, annotation },
@@ -333,7 +339,7 @@ Magic.prototype.aAnnotate = function(player, cardId, annotation) {
 Magic.prototype.aAnnotateEOT = function(player, cardId, annotation) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
-  card.annotationEOT = annotation
+  card.g.annotationEOT = annotation
   this.mLog({
     template: '{player} sets EOT annotation on {card} to {annotation}',
     args: { player, card, annotation },
@@ -344,7 +350,7 @@ Magic.prototype.aAttach = function(player, cardId, targetId) {
   const source = this.getCardById(cardId)
   const target = this.getCardById(targetId)
 
-  if (source.attachedTo) {
+  if (source.g.attachedTo) {
     this.mDetach(source)
   }
   this.mAttach(target, source)
@@ -366,7 +372,7 @@ Magic.prototype.aCascade = function(player, x) {
   for (i = 0; i < cards.length; i++) {
     this.aReveal(player, cards[i])
 
-    if (cards[i].data.cmc < x && !cardUtil.isLand(cards[i])) {
+    if (cards[i].cmc() < x && !cards[i].isLand()) {
       break
     }
   }
@@ -441,7 +447,7 @@ Magic.prototype.aChooseAction = function(player) {
     const actor = action.playerName ? this.getPlayerByName(action.playerName) : player
 
     switch (action.name) {
-      case 'active face'         : return this.aActiveFace(actor, action.cardId, action.face)
+      case 'active face'         : return this.aActiveFace(actor, action.cardId, action.faceIndex)
       case 'add counter'         : return this.aAddCounter(actor, action.cardId, action.key)
       case 'add counter player'  : return this.aAddCounterPlayer(actor, action.playerName, action.key)
       case 'adjust c-counter'    : return this.aAdjustCardCounter(actor, action.cardId, action.key, action.count)
@@ -476,16 +482,12 @@ Magic.prototype.aChooseAction = function(player) {
       case 'shuffle bottom'      : return this.aShuffleBottom(actor, action.zoneId, action.count)
       case 'stack effect'        : return this.aStackEffect(actor, action.cardId)
       case 'tap'                 : return this.aTap(actor, action.cardId)
-      case 'trigger'             : return this.aTrigger(actor, action.cardId)
       case 'unmorph'             : return this.aUnmorph(actor, action.cardId)
       case 'unsecret'            : return this.aUnsecret(actor, action.cardId)
       case 'untap'               : return this.aUntap(actor, action.cardId)
       case 'view all'            : return this.aViewAll(actor, action.zoneId)
       case 'view next'           : return this.aViewNext(actor, action.zoneId)
       case 'view top k'          : return this.aViewTop(actor, action.zoneId, action.count)
-
-      // Deprecated
-      case 'twiddle'             : return this.aTwiddle(actor, action.cardId)
 
       default:
         throw new Error(`Unknown action: ${action.name}`)
@@ -501,27 +503,21 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
 
   for (let i = 0; i < data.count; i++) {
     // Create fake card data
-    const card = {
-      name: data.name,
-      set: '',
-      collectorNumber: '',
-      data: cardUtil.blank(),
-    }
+    const cardData = cardUtil.blank()
+    cardData.data.name = data.name
+    cardData.data.type_line = 'Token'
 
-    card.data.name = card.name
-    card.data.type_line = 'Token'
-
-    card.data.card_faces[0].type_line = 'Token'
-    card.data.card_faces[0].name = card.name
-    card.data.card_faces[0].image_uri = 'https://i.pinimg.com/736x/6e/fe/d4/6efed4b65fb7666de4b615d8b1195258.jpg'
+    cardData.data.card_faces[0].type_line = 'Token'
+    cardData.data.card_faces[0].name = data.name
+    cardData.data.card_faces[0].image_uri = 'https://i.pinimg.com/736x/6e/fe/d4/6efed4b65fb7666de4b615d8b1195258.jpg'
 
     // Insert card into game
-    this.mInitializeCard(card, owner)
-    card.annotation = data.annotation
-    card.token = true
+    const card = this.mInitializeCard(cardData, owner)
+    card.g.annotation = data.annotation
+    card.g.token = true
 
     if (data.morph) {
-      card.morph = true
+      card.g.morph = true
       card.visibility = [player]
     }
     else {
@@ -530,7 +526,6 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
 
     zone.addCard(card)
     created.push(card)
-
 
     if (zone.id.endsWith('.stack')) {
       this.mLogStackPush(player, card)
@@ -611,17 +606,9 @@ Magic.prototype.aHideAll = function(player, zoneId) {
 
 Magic.prototype.aImportCard = function(player, data) {
   for (let i = 0; i < data.count; i++) {
-    const card = {
-      name: data.card.name,
-      set: data.card.set,
-      collector_number: data.card.collector_number,
-      custom_id: data.card.custom_id,
-      data: data.card,
-    }
-
-    this.mInitializeCard(card, player)
-    card.annotation = data.annotation
-    card.token = data.isToken
+    const card = this.mInitializeCard(data.card, player)
+    card.g.annotation = data.annotation
+    card.g.token = data.isToken
     card.visibility = this.getPlayerAll()
 
     const zone = this.getZoneById(data.zoneId)
@@ -659,7 +646,7 @@ Magic.prototype.aMorph = function(player, cardId) {
   player = player || this.getPlayerCurrent()
   const zone = this.getZoneByPlayer(player, 'stack')
   const card = this.getCardById(cardId)
-  card.morph = true
+  card.g.morph = true
   this.aMoveCard(player, cardId, zone.id, 0)
 }
 
@@ -667,7 +654,7 @@ Magic.prototype.aMoveAll = function(player, sourceId, targetId) {
   const source = this.getZoneById(sourceId)
   const toMove = source.cards()
   for (const card of toMove) {
-    this.aMoveCard(player, card.id, targetId)
+    this.aMoveCard(player, card.g.id, targetId)
   }
 }
 
@@ -765,7 +752,7 @@ Magic.prototype.aMoveRevealed = function(player, sourceId, targetId) {
     .takeWhile(source.cards(), card => card.visibility.length === numPlayers)
 
   for (const card of toMove) {
-    this.aMoveCard(player, card.id, targetId)
+    this.aMoveCard(player, card.g.id, targetId)
   }
 }
 
@@ -893,13 +880,13 @@ Magic.prototype.aSelectPhase = function(player, phase) {
   // Special handling for some phases
 
   if (phase === 'untap') {
-    const cards = [
+    [
       ...this.getCardsByZone(player, 'creatures'),
       ...this.getCardsByZone(player, 'battlefield'),
       ...this.getCardsByZone(player, 'land'),
     ].flat()
-     .filter(card => !card.noUntap)
-     .forEach(card => this.mUntap(card))
+      .filter(card => !card.g.noUntap)
+      .forEach(card => this.mUntap(card))
   }
   else if (phase === 'draw') {
     this.aDraw()
@@ -907,12 +894,12 @@ Magic.prototype.aSelectPhase = function(player, phase) {
   else if (phase === 'end') {
     this.mLogIndent()
     for (const card of this.getCardAll()) {
-      if (card.annotationEOT) {
+      if (card.g.annotationEOT) {
         this.mLog({
-          template: `{card} status ${card.annotationEOT} clears`,
+          template: `{card} status ${card.g.annotationEOT} clears`,
           args: { card }
         })
-        card.annotationEOT = ''
+        card.g.annotationEOT = ''
       }
     }
     this.mLogOutdent()
@@ -935,7 +922,7 @@ Magic.prototype.aSelectPhase = function(player, phase) {
 
 Magic.prototype.aSetNoUntap = function(player, cardId, value) {
   const card = this.getCardById(cardId)
-  card.noUntap = value
+  card.g.noUntap = value
 
   if (value) {
     this.mLog({
@@ -969,10 +956,10 @@ Magic.prototype.aStackEffect = function(player, cardId) {
   const data = {
     zoneId: stack.id,
     count: 1,
-    name: 'effect: ' + card.name,
+    name: 'effect: ' + card.name(),
   }
 
-  const token = this.aCreateToken(controller, data, { silent: true })[0]
+  this.aCreateToken(controller, data, { silent: true })[0]
 }
 
 Magic.prototype.aTap = function(player, cardId) {
@@ -984,34 +971,10 @@ Magic.prototype.aTap = function(player, cardId) {
   })
 }
 
-Magic.prototype.aTrigger = function(player, cardId) {
-  const card = this.getCardById(cardId)
-  const token = this.aCreateEffect(player, card)
-}
-
-Magic.prototype.aTwiddle = function(player, cardId) {
-  const card = this.getCardById(cardId)
-
-  if (card.tapped) {
-    card.tapped = false
-    this.mLog({
-      template: 'untap: {card}',
-      args: { card }
-    })
-  }
-  else {
-    card.tapped = true
-    this.mLog({
-      template: 'tap: {card}',
-      args: { card }
-    })
-  }
-}
-
 Magic.prototype.aUnmorph = function(player, cardId) {
   player = player || this.getPlayerCurrent()
   const card = this.getCardById(cardId)
-  card.morph = false
+  card.g.morph = false
   this.mReveal(card)
   this.mLog({
     template: '{player} unmorphs {card}',
@@ -1032,7 +995,7 @@ Magic.prototype.aUnsecret = function(player, cardId) {
 
 Magic.prototype.aUntap = function(player, cardId) {
   const card = this.getCardById(cardId)
-  card.tapped = false
+  card.g.tapped = false
   this.mLog({
     template: 'untap: {card}',
     args: { card }
@@ -1111,6 +1074,16 @@ Magic.prototype.getCardAll = function() {
   return Object.values(this.cardsById)
 }
 
+Magic.prototype.getDeckByPlayer = function(player) {
+  const deckSelectAction = this.responses.find(r => r.actor === player.name && r.deckData)
+  if (deckSelectAction) {
+    return wrappers.deck.fromGameJSON(deckSelectAction.deckData, this.cardWrapper)
+  }
+  else {
+    return null
+  }
+}
+
 Magic.prototype.getDecksSelected = function() {
   return this.state.decksSelected
 }
@@ -1144,7 +1117,7 @@ Magic.prototype.mAdjustCardVisibility = function(card) {
   if (card.secret) {
     card.visibility = []
   }
-  else if (card.morph) {
+  else if (card.g.morph) {
     card.visibility = [this.getPlayerByCardController(card)]
   }
   else if (zone.kind === 'public') {
@@ -1162,8 +1135,8 @@ Magic.prototype.mAdjustCardVisibility = function(card) {
 }
 
 Magic.prototype.mAttach = function(target, attachee) {
-  attachee.attachedTo = target
-  util.array.pushUnique(target.attached, attachee)
+  attachee.g.attachedTo = target
+  util.array.pushUnique(target.g.attached, attachee)
 
   this.mLog({
     template: '{card1} attached to {card2}',
@@ -1179,12 +1152,12 @@ Magic.prototype.mDetach = function(card) {
     template: '{card1} detached from {card2}',
     args: {
       card1: card,
-      card2: card.attachedTo,
+      card2: card.g.attachedTo,
     },
   })
 
-  util.array.remove(card.attachedTo.attached, card)
-  card.attachedTo = null
+  util.array.remove(card.g.attachedTo.g.attached, card)
+  card.g.attachedTo = null
 }
 
 Magic.prototype.mClearStack = function() {
@@ -1227,29 +1200,14 @@ Magic.prototype.mHide = function(card) {
   }
 }
 
-Magic.prototype.mInitializeCard = function(card, owner) {
-  if (!card.data) {
-    console.log(card)
-    throw new Error(`No card data for card: ` + card.name)
-  }
+Magic.prototype.mInitializeCard = function(data, owner) {
+  const card = new this.cardWrapper(data)
+  card.g.id = this.getNextLocalId()
+  card.g.owner = owner
+  card.g.activeFace = card.name(0)
 
-  card.activeFace = card.data.card_faces[0].name
-  card.annotation = ''
-  card.annotationEOT = ''
-  card.attached = []
-  card.attachedTo = null
-  card.counters = {
-    '+1/+1': 0,
-  }
-  card.id = this.getNextLocalId()
-  card.morph = false
-  card.noUntap = false
-  card.owner = owner
-  card.tapped = false
-  card.token = false
-  card.visibility = []
-
-  this.cardsById[card.id] = card
+  this.cardsById[card.g.id] = card
+  return card
 }
 
 Magic.prototype.mLogStackPush = function(player, card) {
@@ -1264,8 +1222,8 @@ Magic.prototype.mMaybeClearAnnotations = function(card) {
   const validZones = ['creatures', 'battlefield', 'land', 'attacking', 'blocking']
 
   if (!validZones.some(id => card.zone.endsWith(id))) {
-    card.annotation = ''
-    card.annotationEOT = ''
+    card.g.annotation = ''
+    card.g.annotationEOT = ''
   }
 }
 
@@ -1274,18 +1232,18 @@ Magic.prototype.mMaybeClearCounters = function(card) {
 
   if (!validZones.some(id => card.zone.endsWith(id))) {
     Object
-      .keys(card.counters)
-      .forEach(c => card.counters[c] = 0)
+      .keys(card.g.counters)
+      .forEach(c => card.g.counters[c] = 0)
   }
 }
 
 Magic.prototype.mMaybeRemoveTokens = function(card) {
   const validZones = ['creatures', 'battlefield', 'land', 'stack', 'attacking', 'blocking', 'command']
 
-  if (card.token && !validZones.some(id => card.zone.endsWith(id))) {
+  if (card.g.token && !validZones.some(id => card.zone.endsWith(id))) {
     this.mLogIndent()
 
-    if (!card.name.startsWith('effect: ')) {
+    if (!card.name().startsWith('effect: ')) {
       this.mLog({
         template: '{card} token ceases to exist',
         args: { card }
@@ -1295,7 +1253,7 @@ Magic.prototype.mMaybeRemoveTokens = function(card) {
 
     const zone = this.getZoneByCard(card)
     zone.removeCard(card)
-    card.owner = undefined
+    card.g.owner = undefined
   }
 }
 
@@ -1304,51 +1262,41 @@ Magic.prototype.mReveal = function(card) {
 }
 
 Magic.prototype.mTap = function(card) {
-  card.tapped = true
+  card.g.tapped = true
 }
 
 Magic.prototype.mUntap = function(card) {
-  card.tapped = false
+  card.g.tapped = false
 }
 
+/**
+   The expected shape of data matches the output of toGameJSON in DeckWrapper (deck.wrapper.js).
+ */
 Magic.prototype.setDeck = function(player, data) {
   this.mLog({
     template: '{player} has selected a deck',
     args: { player },
   })
 
-  player.deck = deckUtil.deserialize(util.deepcopy(data))
-  cardUtil.lookup.insertCardData(player.deck.cardlist, this.cardLookupFunc)
-  for (const card of player.deck.cardlist) {
-    this.mInitializeCard(card, player)
-  }
-
-  const zones = util.array.collect(player.deck.cardlist, card => card.zone)
-
-  if (!zones.main) {
-    throw new Error('No cards in maindeck for deck: ' + player.deck.name)
-  }
-
   const library = this.getZoneByPlayer(player, 'library')
-  for (const card of zones.main) {
+  for (const raw of data.cards.main) {
+    const card = this.mInitializeCard(raw, player)
     library.addCard(card)
   }
   library.shuffle()
 
-  if (zones.side) {
-    const sideboard = this.getZoneByPlayer(player, 'sideboard')
-    for (const card of zones.side) {
-      sideboard.addCard(card)
-      card.visibility.push(player)
-    }
+  const sideboard = this.getZoneByPlayer(player, 'sideboard')
+  for (const raw of data.cards.side) {
+    const card = this.mInitializeCard(raw, player)
+    sideboard.addCard(card)
+    card.visibility.push(player)
   }
 
-  if (zones.command) {
-    const command = this.getZoneByPlayer(player, 'command')
-    for (const card of zones.command) {
-      command.addCard(card)
-      card.visibility.push(player)
-    }
+  const command = this.getZoneByPlayer(player, 'command')
+  for (const raw of data.cards.command) {
+    const card = this.mInitializeCard(raw, player)
+    command.addCard(card)
+    card.visibility.push(player)
   }
 }
 
@@ -1395,14 +1343,14 @@ Magic.prototype._enrichLogArgs = function(msg) {
 
       if (isHidden) {
         msg.args[key] = {
-          value: card.morph ? 'a morph' : 'a card',
+          value: card.g.morph ? 'a morph' : 'a card',
           classes: ['card-hidden'],
         }
       }
       else {
         msg.args[key] = {
-          value: card.name,
-          cardId: card.id,  // Important in some UI situations.
+          value: card.name(),
+          cardId: card.g.id,  // Important in some UI situations.
           classes: ['card-name'],
         }
       }

@@ -2,7 +2,11 @@
   <div class="card-set">
     {{ expansion }}
 
-    <GameCard v-for="card in cards" :card="card" :expandedIn="true" :showCost="true" />
+    <GameCard v-for="(card, index) in cards"
+              :key="card.id || index"
+              :card="card"
+              :expandedIn="true"
+              :showCost="true" />
   </div>
 </template>
 

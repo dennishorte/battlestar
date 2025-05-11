@@ -1,4 +1,4 @@
-const databaseClient = require('../utils/mongo.js').client
+const databaseClient = require('@utils/mongo.js').client
 const database = databaseClient.db('meta')
 const versionsCollection = database.collection('versions')
 

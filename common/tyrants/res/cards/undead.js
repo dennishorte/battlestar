@@ -57,7 +57,7 @@ const cardData = [
     "count": 3,
     "text": [
       "Choose one:",
-//      "- Place a spy.",
+      //      "- Place a spy.",
       "- Place two spies.",
       "- Return one of your spies > Recruit up to 2 cards that each cost 3 or less without paying their costs."
     ],
@@ -337,7 +337,7 @@ const cardData = [
             const loc = game.aChooseLocation(player, game.getPresence(player))
             if (loc) {
               const troops = loc.getTroops().filter(troop => troop.isNeutral())
-              const chosen = game.aChoose(player, troops.map(t => 'neutral'), {
+              const chosen = game.aChoose(player, troops.map(() => 'neutral'), {
                 title: 'Choose which troops to deploy your Minotaur Skeleton against',
                 min: 0,
                 max: 3,
@@ -386,7 +386,7 @@ const cardData = [
                 const troop = game
                   .getCardsByZone(targetPlayer, 'trophyHall')
                   .find(troop => troop.isNeutral())
-                const targetLoc = game.aChooseAndDeploy(player, {
+                game.aChooseAndDeploy(player, {
                   anywhere: true,
                   troop,
                 })

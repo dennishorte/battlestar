@@ -1,38 +1,38 @@
 <template>
-<div class='admin'>
-  <Header />
+  <div class='admin'>
+    <GameHeader />
 
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <h2>Admin</h2>
-      </div>
-    </div>
-
-
-    <div class="row">
-      <div class="col-4">
-        <CreateUser v-on:user-created="getAllUsers" />
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h2>Admin</h2>
+        </div>
       </div>
 
-      <div class="col">
-        <AdminActions />
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col">
-        <UserList :users="users" v-on:users-updated="getAllUsers" />
+      <div class="row">
+        <div class="col-4">
+          <CreateUser v-on:user-created="getAllUsers" />
+        </div>
+
+        <div class="col">
+          <AdminActions />
+        </div>
       </div>
+
+      <div class="row">
+        <div class="col">
+          <UserList :users="users" v-on:users-updated="getAllUsers" />
+        </div>
+      </div>
+
     </div>
 
   </div>
-
-</div>
 </template>
 
 <script>
-import Header from '../../../../src/components/Header'
+import GameHeader from '../../../../src/components/GameHeader'
 
 import AdminActions from './AdminActions'
 import CreateUser from './CreateUser'
@@ -41,7 +41,7 @@ import UserList from './UserList'
 export default {
   name: 'Admin',
   components: {
-    Header,
+    GameHeader,
 
     AdminActions,
     CreateUser,

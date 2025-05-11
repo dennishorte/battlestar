@@ -1,0 +1,2 @@
+cd api && npm run lint && cd ..
+cd common && npm run lint && cd ..

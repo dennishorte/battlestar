@@ -1,0 +1,58 @@
+{
+  "_id": "b4590e53-ca8d-4896-a8cf-6af1e4bc456f",
+  "source": "scryfall",
+  "data": {
+    "layout": "adventure",
+    "cmc": 4,
+    "color_identity": [
+      "W"
+    ],
+    "card_faces": [
+      {
+        "name": "Blessed Hippogriff",
+        "mana_cost": "{3}{W}",
+        "type_line": "Creature — Hippogriff",
+        "oracle_text": "Flying\nWhenever this creature attacks, target attacking creature without flying gains flying until end of turn.",
+        "power": "2",
+        "toughness": "3",
+        "artist": "Leanna Crossan",
+        "colors": [
+          "W"
+        ],
+        "image_uri": "https://cards.scryfall.io/art_crop/front/b/4/b4590e53-ca8d-4896-a8cf-6af1e4bc456f.jpg?1674134940"
+      },
+      {
+        "name": "Tyr's Blessing",
+        "mana_cost": "{W}",
+        "type_line": "Instant — Adventure",
+        "oracle_text": "Target creature gains indestructible until end of turn. (Then exile this card. You may cast the creature later from exile.)",
+        "artist": "Leanna Crossan",
+        "colors": [
+          "W"
+        ],
+        "image_uri": "https://cards.scryfall.io/art_crop/front/b/4/b4590e53-ca8d-4896-a8cf-6af1e4bc456f.jpg?1674134940"
+      }
+    ],
+    "set": "clb",
+    "collector_number": "11",
+    "digital": false,
+    "rarity": "common",
+    "name": "Blessed Hippogriff // Tyr's Blessing",
+    "colors": [
+      "W"
+    ],
+    "type_line": "Creature — Hippogriff // Instant — Adventure",
+    "legal": [
+      "timeless",
+      "gladiator",
+      "legacy",
+      "pauper",
+      "vintage",
+      "commander",
+      "oathbreaker",
+      "paupercommander",
+      "duel"
+    ],
+    "_id": "b4590e53-ca8d-4896-a8cf-6af1e4bc456f"
+  }
+}

@@ -1,69 +1,82 @@
-const databaseClient = require('../../utils/mongo.js').client
+const databaseClient = require('@utils/mongo.js').client
 const database = databaseClient.db('magic')
 const cubeCollection = database.collection('cube')
 
-const fileCommon = require('./file_common.js')
+module.exports = {
+  async all() {
+    // const cubes = await cubeCollection.find({}, { projection: { _id: 1, name: 1, userId: 1 } }).toArray()
+    const cubes = await cubeCollection.find({}).toArray()
+    return cubes
+  },
 
-const { mag, util } = require('battlestar-common')
-
-
-const Cube = {
-  ...fileCommon({
-    collection: cubeCollection,
-    createFields: () => ({
+  async create(user) {
+    const creationDate = new Date()
+    const insertResult = await cubeCollection.insertOne({
+      name: 'New Cube',
+      userId: user._id,
       cardlist: [],
+      flags: {
+        legacy: false,
+      },
+      timestamps: {
+        created: creationDate,
+        updated: creationDate,
+      },
     })
-  }),
 
-  // cubeId is a mongoDB ObjectId
-  // cardId is a magic card ID dict
-  async addCard(cubeId, cardId) {
-    await cubeCollection.updateOne(
-      { _id: cubeId },
-      { $push: { cardlist: cardId } }
-    )
-  },
-
-  async removeCard(cubeId, cardId) {
-    const cube = await Cube.findById(cubeId)
-
-    // Check for an exact id match
-    for (const card of cube.cardlist) {
-      if (mag.util.card.cardIdEquals(card, cardId)) {
-        util.array.remove(card)
-        await Cube.save(cube)
-        return
-      }
+    if (!insertResult.insertedId) {
+      throw new Error('Cube insertion failed')
     }
 
-    // Check for a name only id match
-    for (const card of cube.cardlist) {
-      if (mag.util.card.cardIdEquals(card, cardId, { nameOnly: true })) {
-        util.array.remove(card)
-        await Cube.save(cube)
-        return
-      }
+    return await this.findById(insertResult.insertedId)
+  },
+
+  async delete(id) {
+    return await cubeCollection.deleteOne({ _id: id })
+  },
+
+  async save(cube) {
+    return await cubeCollection.findOneAndUpdate(
+      { _id: cube._id },
+      {
+        $set: {
+          name: cube.name,
+          cardlist: cube.cardlist,
+          flags: cube.flags,
+          'timestamps.updated': new Date(),
+        },
+      },
+
+    )
+  },
+
+  async findById(id) {
+    return await cubeCollection.findOne({ _id: id })
+  },
+
+  async findByUserId(userId) {
+    const cubes = await cubeCollection.find({ userId })
+    return await cubes.toArray()
+  },
+
+  async addCard(cube, card) {
+    await cubeCollection.updateOne(
+      { _id: cube._id },
+      { $push: { cardlist: card._id } }
+    )
+  },
+
+  async removeCard(cube, card) {
+    if (!cube || !cube._id) {
+      throw new Error('Invalid cube')
+    }
+    if (!card || !card._id) {
+      throw new Error('Invalid card')
     }
 
-    throw new Error(`Unable to remove card. Card not found. ${cardId}`)
-  },
-
-  async setEditFlag(cubeId, newValue) {
     await cubeCollection.updateOne(
-      { _id: cubeId },
-      { $set: { allowEdits: newValue } },
+      { _id: cube._id },
+      { $pull: { cardlist: card._id } }
     )
-
-    return newValue
-  },
-
-  async setPublicFlag(cubeId, newValue) {
-    await cubeCollection.updateOne(
-      { _id: cubeId },
-      { $set: { public: newValue } },
-    )
-
-    return newValue
   },
 }
-module.exports = Cube

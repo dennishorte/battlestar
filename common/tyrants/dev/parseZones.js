@@ -34,7 +34,7 @@ function parseGroups(filename) {
   const lineReader = new readlines(filename)
   let line
   let mode
-  while (line = lineReader.next()) {
+  while ((line = lineReader.next()) !== false) {
     line = line.toString('utf-8').trim()
 
     if (line === '# Routes') {

@@ -1,31 +1,45 @@
 <template>
   <div
-    class="card-list-item"
     @mouseover="mouseover"
     @mouseleave="mouseleave"
     @mousemove="mousemove"
-    @click="onClick"
+    class="card-list-item"
   >
+    <div
+      v-if="separateFaces"
+      v-for="faceIndex in faceIndices"
+      :key="faceIndex"
+      class="card-list-item-face"
+      :class="faceIndex === card.g.activeFaceIndex ? '' : 'alt-face'"
+      @click="$emit('card-face-clicked', { card, faceIndex })"
+    >
 
-    <div class="name">
-      <i class="bi bi-lightning-fill" v-if="isScarred"></i>
-      <slot name="name">{{ name }}</slot>
-    </div>
+      <div class="name">
+        <i class="bi bi-arrow-return-right" v-if="faceIndex !== card.g.activeFaceIndex"/>
+        <i class="bi bi-lightning-fill" v-if="card.isScarred(faceIndex)"/>
+        <slot name="name" :face-index="faceIndex">{{ card.name(faceIndex) }}</slot>
+      </div>
 
-    <div class="extra-info">
-      <ManaCost v-if="showManaCost" class="mana-cost" :cost="manaCost" />
-      <div v-else-if="showPower" class="mana-cost">
-        {{ powerToughness }}
+      <div class="extra-info">
+        <ManaCost v-if="showManaCost" class="mana-cost" :cost="card.manaCost(faceIndex)" />
+        <div v-else-if="showPower && card.power(faceIndex)" class="mana-cost">
+          {{ card.powerToughness(faceIndex) }}
+        </div>
       </div>
     </div>
 
+    <div v-else class="card-list-item-face" @click="$emit('card-clicked', card)">
+      <div class="name">
+        <i class="bi bi-lightning-fill" v-if="card.isScarred()"/>
+        <slot name="name">{{ card.name() }}</slot>
+      </div>
+    </div>
   </div>
 </template>
 
 
 <script>
 import ManaCost from './ManaCost'
-import { mag } from 'battlestar-common'
 
 
 export default {
@@ -35,17 +49,14 @@ export default {
     ManaCost,
   },
 
+  inject: ['actor'],
+
   props: {
     card: Object,
 
-    hidePopup: {
+    separateFaces: {
       type: Boolean,
       default: false,
-    },
-
-    onClick: {
-      type: Function,
-      default: () => {},
     },
 
     showManaCost: {
@@ -57,55 +68,36 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    canView: {
+      type: Function,
+      default: () => true,
+    },
   },
 
   computed: {
-    data() {
-      if (this.card.data) {
-        return this.card.data
+    faceIndices() {
+      const output = []
+      output.push(this.card.g.activeFaceIndex)
+      for (let i = 0; i < this.card.numFaces(); i++) {
+        if (i !== this.card.g.activeFaceIndex) {
+          output.push(i)
+        }
       }
-      else {
-        return this.$store.getters['magic/cards/getLookupFunc'](this.card)
-      }
-    },
-
-    isScarred() {
-      return mag.util.card.isScarred(this.card)
-    },
-
-    name() {
-      return this.data ? this.data.name : this.card.name
-    },
-
-    manaCost() {
-      return this.data ? this.data.card_faces[0].mana_cost : ''
-    },
-
-    powerToughness() {
-      if (this.card.morph) {
-        return '2/2'
-      }
-
-      const face = this.card.data.card_faces.find(face => face.name === this.card.activeFace)
-      if (face.power) {
-        return `${face.power}/${face.toughness}`
-      }
-      else {
-        return ''
-      }
+      return output
     },
   },
 
   methods: {
     mouseover() {
-      if (this.data && !this.hidePopup) {
-        this.$store.commit('magic/setMouseoverCard', this.data)
+      if (this.card && this.canView(this.card)) {
+        this.$store.commit('magic/setMouseoverCard', this.card)
       }
     },
 
     mouseleave() {
-      if (this.data) {
-        this.$store.commit('magic/unsetMouseoverCard', this.data)
+      if (this.card) {
+        this.$store.commit('magic/unsetMouseoverCard', this.card)
       }
     },
 
@@ -122,21 +114,38 @@ export default {
 
 <style scoped>
 .card-list-item {
-  white-space: nowrap;
-  overflow: hidden;
-  min-height: 1.4em;
-  max-height: 1.4em;
   width: 100%;
+}
 
+.card-list-item-face {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  min-height: 1.4em;
+  max-height: 1.4em;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  align-items: center;
 }
 
 .name {
   overflow: hidden;
   text-overflow: ellipsis;
   max-height: 1.4em;
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.bi-arrow-return-right {
+  margin-left: 5px;
+}
+
+.extra-info {
+  flex-shrink: 0; /* Prevent the mana cost from shrinking */
+  display: flex;
+  align-items: center;
 }
 
 .mana-cost {
@@ -144,5 +153,9 @@ export default {
   padding-top: 1px;
   padding-left: 5px;
   height: 100%;
+}
+
+.alt-face {
+  color: #999;
 }
 </style>

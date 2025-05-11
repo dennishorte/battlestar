@@ -35,7 +35,7 @@ describe("Machine Gun", () => {
     })
   })
 
-  test('dogma', () => {
+  test('dogma: with score cards', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {

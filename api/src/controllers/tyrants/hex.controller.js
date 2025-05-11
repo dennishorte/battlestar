@@ -1,6 +1,6 @@
-const db = require('../../models/db')
-const logger = require('../../utils/logger')
-const { BadRequestError } = require('../../utils/errors')
+const db = require('@models/db')
+const logger = require('@utils/logger')
+const { BadRequestError } = require('@utils/errors')
 
 /**
  * Get all hexes
@@ -11,7 +11,7 @@ const { BadRequestError } = require('../../utils/errors')
 exports.getAllHexes = async (req, res, next) => {
   try {
     const hexes = await db.tyrants.hex.fetchAll()
-    
+
     res.json({
       status: 'success',
       hexes
@@ -34,9 +34,9 @@ exports.deleteHex = async (req, res, next) => {
     if (!req.body.id) {
       return next(new BadRequestError('Hex ID is required'))
     }
-    
+
     await db.tyrants.hex.delete(req.body.id)
-    
+
     res.json({
       status: 'success'
     })
@@ -58,9 +58,9 @@ exports.saveHex = async (req, res, next) => {
     if (!req.body.hex) {
       return next(new BadRequestError('Hex data is required'))
     }
-    
+
     await db.tyrants.hex.save(req.body.hex)
-    
+
     res.json({
       status: 'success'
     })
@@ -69,4 +69,4 @@ exports.saveHex = async (req, res, next) => {
     logger.error(`Error saving hex: ${err.message}`)
     next(err)
   }
-} 
+}

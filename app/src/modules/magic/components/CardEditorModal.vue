@@ -2,23 +2,21 @@
   <Modal id="card-editor-modal">
     <template #header>
       Card Editor
-      <button
-        class="btn btn-outline-secondary"
-        v-if="!!data"
-        @click="goToCardLink"
-        data-bs-dismiss="modal">
-        card link
-      </button>
     </template>
 
-    <slot name="before-card"></slot>
+    <slot name="before-card"/>
 
-    <CardEditor :original="data" @card-updated="cardUpdated" />
+    <CardEditor @card-updated="cardUpdated" />
+
+    <slot name="after-card"/>
 
     <template #footer>
-      <slot name="footer" :original="original" :updated="updatedCard">
+      <slot name="footer">
         <button class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
-        <button class="btn btn-danger" @click="save" data-bs-dismiss="modal" :disabled="!updatedCard">save</button>
+        <button class="btn btn-danger"
+                @click="save"
+                data-bs-dismiss="modal"
+                :disabled="!updatedCard">save</button>
       </slot>
     </template>
   </Modal>
@@ -42,11 +40,7 @@ export default {
     Modal,
   },
 
-  props: {
-    original: Object,
-  },
-
-  inject: ['bus'],
+  inject: ['actor', 'bus'],
 
   data() {
     return {
@@ -54,37 +48,31 @@ export default {
     }
   },
 
-  computed: {
-    data() {
-      return this.original ? this.original.data : null
-    },
-  },
-
   methods: {
     cardUpdated(card) {
+      console.log('card updated', card.name())
       this.updatedCard = card
     },
 
-    goToCardLink() {
-      this.$router.push('/magic/card/' + this.data._id)
+    editCard(card) {
+      this.updateCard = null
+      this.$modal('card-editor-modal').show()
+      this.bus.emit('card-editor:begin', card)
     },
 
-    save() {
-      this.bus.emit('card-saved', {
-        card: this.updatedCard,
-        original: this.original.data,
-      })
+    async save() {
+      if (this.updatedCard) {
+        await this.$store.dispatch('magic/cards/update', {
+          card: this.updatedCard,
+          comment: 'Updated in the cube editor',
+        })
+      }
     },
   },
 
   mounted() {
-    this.bus.on('card-updated', this.cardUpdated)
-  },
-
-  watch: {
-    original() {
-      this.updatedCard = null
-    }
+    this.bus.on('edit-card-in-modal', this.editCard)
+    this.bus.on('card-editor:updated', this.cardUpdated)
   },
 }
 </script>

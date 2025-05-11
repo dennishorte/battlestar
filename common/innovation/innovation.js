@@ -2,7 +2,6 @@ const {
   Game,
   GameFactory,
   GameOverEvent,
-  InputRequestEvent,
 } = require('../lib/game.js')
 const res = require('./resources.js')
 const util = require('../lib/util.js')
@@ -51,7 +50,7 @@ Innovation.prototype._gameOver = function(event) {
   for (const player of this.getPlayerAll()) {
     try {
       this.state.wouldWinKarma = true
-      this.aKarma(event.data.player, 'would-win')
+      this.aKarma(player, 'would-win')
     }
     catch (e) {
       if (e instanceof GameOverEvent) {
@@ -164,7 +163,6 @@ Innovation.prototype.initializeZonesDecks = function() {
   zones.decks = {}
   for (const exp of ['base', 'echo', 'figs', 'city', 'arti']) {
     zones.decks[exp] = {}
-    const data = this.cardData[exp]
     for (const [age, cards] of Object.entries(this.cardData[exp].byAge)) {
       if (!cards) {
         throw new Error(`Missing cards for ${exp}-${age}`)
@@ -188,7 +186,7 @@ Innovation.prototype.initializeZonesAchievements = function() {
   for (const age of [1,2,3,4,5,6,7,8,9]) {
     const ageZone = this.getZoneByDeck('base', age)
     const achZone = this.getZoneById('achievements')
-    const card = this.mMoveTopCard(ageZone, achZone)
+    this.mMoveTopCard(ageZone, achZone)
   }
 
   // Special achievements
@@ -315,7 +313,7 @@ Innovation.prototype.artifact = function() {
     })[0]
 
     switch (action) {
-      case 'dogma':
+      case 'dogma': {
         const startingZone = artifact.zone
         this.aDogma(player, artifact, { artifact: true })
         if (startingZone === artifact.zone) {
@@ -323,6 +321,7 @@ Innovation.prototype.artifact = function() {
         }
         this.fadeFiguresCheck()
         break
+      }
       case 'return':
         this.aReturn(player, artifact)
         break
@@ -1269,9 +1268,6 @@ Innovation.prototype.aInspire = function(player, color, opts={}) {
 
   this.state.didInspire = true
 
-  const zone = this.getZoneByPlayer(player, color)
-  const biscuits = this.getBiscuits()
-
   const karmaKind = this.aKarma(player, 'inspire', { ...opts, color })
   if (karmaKind === 'would-instead') {
     this.mActed(player)
@@ -1740,7 +1736,7 @@ Innovation.prototype.aTuck = function(player, card, opts={}) {
   return tucked
 }
 
-Innovation.prototype.aUnsplay = function(player, zone, opts={}) {
+Innovation.prototype.aUnsplay = function(player, zone) {
   if (zone.splay === 'none') {
     this.mLog({
       template: '{zone} is already unsplayed',
@@ -1779,7 +1775,7 @@ function ManyFactory(baseFuncName, extraArgCount=0) {
     const results = []
     let auto = opts.ordered || false
     let remaining = [...cards]
-    const startZones = util.array.toDict(remaining.map(c => [c.id, c.zone]))
+    const startZones = Object.fromEntries(remaining.map(c => [c.id, c.zone]))
 
     while (remaining.length > 0) {
       // Check if any cards in 'remaining' have been acted on by some other force (karma effect).
@@ -1956,7 +1952,7 @@ Innovation.prototype.getBiscuits = function() {
   const biscuits = this
     .getPlayerAll()
     .map(player => [player.name, this.getBiscuitsByPlayer(player)])
-  return util.array.toDict(biscuits)
+  return Object.fromEntries(biscuits)
 }
 
 Innovation.prototype.getBiscuitsByPlayer = function(player) {
@@ -1986,8 +1982,8 @@ Innovation.prototype.getBiscuitsByZone = function(zone) {
 
 Innovation.prototype.getBiscuitsRaw = function(card, splay) {
   return this.checkCardIsTop(card)
-       ? card.getBiscuits('top')
-       : card.getBiscuits(splay)
+    ? card.getBiscuits('top')
+    : card.getBiscuits(splay)
 }
 
 Innovation.prototype.getBonuses = function(player) {
@@ -2006,7 +2002,7 @@ Innovation.prototype.getBonuses = function(player) {
 }
 
 Innovation.prototype.getCardByName = function(name, def) {
-  if (!this.cardData.all.byName.hasOwnProperty(name)) {
+  if (!Object.hasOwn(this.cardData.all.byName, name)) {
     if (def !== undefined) {
       return def
     }
@@ -2030,7 +2026,7 @@ Innovation.prototype.getEffectAge = function(card, age) {
   if (player) {
     const karmaInfos = this.getInfoByKarmaTrigger(player, 'effect-age')
     if (karmaInfos.length === 0) {
-      age = age
+      // No karma, so use age as is
     }
     else if (karmaInfos.length > 1) {
       throw new Error('Multiple effect-age karmas not supported')
@@ -2129,7 +2125,7 @@ Innovation.prototype.getPlayerByCard = function(card) {
     const zone = this.getZoneById(card.zone)
     return this.getPlayerByZone(zone)
   }
-  catch (e) {
+  catch {
     return undefined
   }
 }
@@ -2618,7 +2614,7 @@ Innovation.prototype.mResetMonumentCounts = function() {
   const emptyInfo = this
     .getPlayerAll()
     .map(p => [p.name, { tuck: 0, score: 0 }])
-  this.state.monument = util.array.toDict(emptyInfo)
+  this.state.monument = Object.fromEntries(emptyInfo)
 }
 
 Innovation.prototype.mResetPeleCount = function() {
@@ -2760,11 +2756,11 @@ Game.prototype.utilColors = function() {
 
 Innovation.prototype.utilColorToDecree = function(color) {
   switch (color) {
-    case 'red': return 'War';
-    case 'yellow': return 'Expansion';
-    case 'green': return 'Trade';
-    case 'blue': return 'Advancement';
-    case 'purple': return 'Rivalry';
+    case 'red': return 'War'
+    case 'yellow': return 'Expansion'
+    case 'green': return 'Trade'
+    case 'blue': return 'Advancement'
+    case 'purple': return 'Rivalry'
     default:
       throw new Error(`Unknown color ${color}`)
   }
@@ -2858,20 +2854,20 @@ Innovation.prototype._enrichLogArgs = function(msg) {
   }
 }
 
-Innovation.prototype.utilHighestCards = function(cards, opts={}) {
+Innovation.prototype.utilHighestCards = function(cards) {
   const sorted = [...cards].sort((l, r) => r.getAge() - l.getAge())
   return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
 }
 
-Innovation.prototype.utilLowestCards = function(cards, opts={}) {
+Innovation.prototype.utilLowestCards = function(cards) {
   const sorted = [...cards].sort((l, r) => l.getAge() - r.getAge())
- return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
+  return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
 }
 
 Innovation.prototype.utilParseBiscuits = function(biscuitString) {
   const counts = this.utilEmptyBiscuits()
   for (const ch of biscuitString) {
-    if (counts.hasOwnProperty(ch)) {
+    if (Object.hasOwn(counts, ch)) {
       counts[ch] += 1
     }
   }
@@ -2881,7 +2877,7 @@ Innovation.prototype.utilParseBiscuits = function(biscuitString) {
 Innovation.prototype.utilSeparateByAge = function(cards) {
   const byAge = {}
   for (const card of cards) {
-    if (byAge.hasOwnProperty(card.age)) {
+    if (Object.hasOwn(byAge, card.age)) {
       byAge[card.age].push(card)
     }
     else {
@@ -3096,7 +3092,6 @@ Innovation.prototype._generateActionChoicesDraw = function() {
 
 Innovation.prototype._generateActionChoicesEndorse = function() {
   const player = this.getPlayerCurrent()
-  const endorseColors = []
 
   const lowestHandAge = this
     .getZoneByPlayer(player, 'hand')
@@ -3171,8 +3166,8 @@ Innovation.prototype._generateActionChoicesMeld = function() {
   }
 }
 
-Innovation.prototype.getSharingAndDemanding = function(player, featuredBiscuit, biscuits, opts={}) {
-  const biscuitComparator = this._getBiscuitComparator(player, featuredBiscuit, biscuits, opts)
+Innovation.prototype.getSharingAndDemanding = function(player, featuredBiscuit, biscuits) {
+  const biscuitComparator = this._getBiscuitComparator(player, featuredBiscuit, biscuits)
 
   const sharing = this
     .getPlayerAll()
@@ -3187,7 +3182,7 @@ Innovation.prototype.getSharingAndDemanding = function(player, featuredBiscuit, 
   return { sharing, demanding }
 }
 
-Innovation.prototype._getBiscuitComparator = function(player, featuredBiscuit, biscuits, opts) {
+Innovation.prototype._getBiscuitComparator = function(player, featuredBiscuit, biscuits) {
 
   // Some karmas affect how sharing is calculated by adjusting the featured biscuit.
   const featuredBiscuitKarmas = this
@@ -3196,7 +3191,7 @@ Innovation.prototype._getBiscuitComparator = function(player, featuredBiscuit, b
 
   let adjustedBiscuit
 
-  if (opts.noBiscuitKarma || featuredBiscuitKarmas.length === 0) {
+  if (this.state.dogmaInfo.noBiscuitKarma || featuredBiscuitKarmas.length === 0) {
     adjustedBiscuit = featuredBiscuit
   }
   else if (featuredBiscuitKarmas.length === 1) {
@@ -3275,7 +3270,7 @@ Innovation.prototype.statsFirstToMeldOfAge = function(player, card) {
   }
 }
 
-Innovation.prototype.statsRecordDogmaActions = function(player, card, opts) {
+Innovation.prototype.statsRecordDogmaActions = function(player, card) {
   if (card.name in this.stats.dogmaActions) {
     this.stats.dogmaActions[card.name] += 1
   }

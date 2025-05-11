@@ -21,6 +21,12 @@ class UnauthorizedError extends AppError {
   }
 }
 
+class AuthError extends AppError {
+  constructor(message = 'Authentication Failed') {
+    super(message, 401)
+  }
+}
+
 class ForbiddenError extends AppError {
   constructor(message = 'Forbidden') {
     super(message, 403)
@@ -39,6 +45,24 @@ class ConflictError extends AppError {
   }
 }
 
+class GameOverwriteError extends Error {
+  constructor(message) {
+    super(message || 'game overwrite')
+    this.name = 'GameOverwriteError'
+    this.code = 'game_overwrite'
+    this.statusCode = 409
+  }
+}
+
+class GameKilledError extends Error {
+  constructor(message) {
+    super(message || 'game killed')
+    this.name = 'GameKilledError'
+    this.code = 'game_killed'
+    this.statusCode = 409
+  }
+}
+
 class InternalServerError extends AppError {
   constructor(message = 'Internal Server Error') {
     super(message, 500)
@@ -49,8 +73,11 @@ module.exports = {
   AppError,
   BadRequestError,
   UnauthorizedError,
+  AuthError,
   ForbiddenError,
   NotFoundError,
   ConflictError,
+  GameOverwriteError,
+  GameKilledError,
   InternalServerError
-} 
+}

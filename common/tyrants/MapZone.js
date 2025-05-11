@@ -100,8 +100,6 @@ MapZone.prototype.getController = function() {
     return null
   }
 
-  const troops = this.getTroops()
-
   // Player with the most troops at the site.
   const playerMap = {}  // name: PlayerObject
   const counts = {}  // name: count
@@ -126,19 +124,17 @@ MapZone.prototype.getTotalController = function() {
     return undefined
   }
 
-  const troops = this.getTroops()
-
   // All troop spaces must be full.
-  if (troops.length !== this.size) {
+  if (this.getTroops().length !== this.size) {
     return undefined
   }
 
   // All troops must belong to the same player.
-  if (util.array.distinct(troops.map(t => t.owner)).length !== 1) {
+  if (util.array.distinct(this.getTroops().map(t => t.owner)).length !== 1) {
     return undefined
   }
 
-  const candidate = troops[0].owner
+  const candidate = this.getTroops()[0].owner
 
   // Player is defined (not neutral)
   if (candidate === undefined) {

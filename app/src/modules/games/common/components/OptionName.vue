@@ -4,7 +4,7 @@
       v-if="!!componentAndProps"
       :is="componentAndProps.c"
       v-bind="componentAndProps.p"
-    ></component>
+    />
 
     <span v-else>
       {{ displayName }}

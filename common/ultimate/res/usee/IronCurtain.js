@@ -21,7 +21,6 @@ function Card() {
 
       const unsplayed = []
       for (const color of splays) {
-        const zone = game.getZoneByPlayer(player, color)
         unsplayed.push(game.aUnsplay(player, color))
       }
 

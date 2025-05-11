@@ -1,6 +1,6 @@
 <template>
   <div class="mana-cost">
-    <Mana v-for="mana in symbols" :m="mana" />
+    <Mana v-for="(mana, index) in symbols" :key="mana + '-' + index" :m="mana" />
   </div>
 </template>
 
@@ -35,5 +35,7 @@ export default {
 .mana-cost {
   overflow: hidden;
   max-height: 100%;
+  display: flex;
+  flex-wrap: nowrap;
 }
 </style>

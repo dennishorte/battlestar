@@ -12,6 +12,7 @@
         :selector="processedRequest"
         :required="true"
         :owner="owner"
+        :key="selection.title"
         @selection-changed="childChanged"
       />
       <div class="d-grid">
@@ -91,26 +92,22 @@ export default {
       }
     },
 
-    async submit(extraPayload={}) {
-      const payload = {
-        actor: this.owner.name,
-        title: this.request.title,
-        selection: this.selection.selection,
-      }
-      try {
-        this.game.respondToInputRequest(payload)
-        this.clearSelection()
-      }
-      catch (e) {
-        alert('Error!\nCheck console for details.')
-        throw e
-      }
-      await this.$store.dispatch('game/save')
-    },
-
     async submitIfValid(options = {}) {
       if (this.isValid) {
-        await this.submit()
+        const payload = {
+          actor: this.owner.name,
+          title: this.request.title,
+          selection: this.selection.selection,
+        }
+        try {
+          this.game.respondToInputRequest(payload)
+          this.clearSelection()
+        }
+        catch (e) {
+          alert('Error!\nCheck console for details.')
+          throw e
+        }
+        await this.$store.dispatch('game/save')
         if (options && options.callback) {
           await options.callback()
         }

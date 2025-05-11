@@ -24,7 +24,6 @@ const Games = {
   'Tyrants of the Underdark': module.exports.tyrants,
   'Set Draft': module.exports.magic.draft.cube,
   'Cube Draft': module.exports.magic.draft.cube,
-  'CubeDraft': module.exports.magic.draft.cube,
 }
 
 module.exports.fromData = function(gameData, viewerName) {

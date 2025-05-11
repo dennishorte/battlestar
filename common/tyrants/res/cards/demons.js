@@ -37,7 +37,7 @@ const cardData = [
       "- +3 influence",
       "- Assassinate a troop"
     ],
-    impl: (game, player, { card }) => {
+    impl: (game, player) => {
       game.aChooseAndDevour(player, {
         then: () => game.aChooseOne(player, [
           {
@@ -117,7 +117,6 @@ const cardData = [
               const trophies = game
                 .getCardsByZone(player, 'trophyHall')
                 .map(troop => troop.getOwnerName())
-              const distinct = util.array.distinct(trophies)
               return trophies.map(ownerName => `${player.name}: ${ownerName}`)
             })
             .sort()
@@ -309,7 +308,7 @@ const cardData = [
         {
           title: 'Return one of your spies > Draw 2 cards',
           impl: (game, player) => {
-            game.aReturnASpyAnd(player, (game, player, { loc }) => {
+            game.aReturnASpyAnd(player, (game, player) => {
               game.aDraw(player)
               game.aDraw(player)
             })
@@ -341,7 +340,7 @@ const cardData = [
         {
           title: 'Return one of your spies > +2 power, +2 influence',
           impl: (game, player) => {
-            game.aReturnASpyAnd(player, (game, player, { loc }) => {
+            game.aReturnASpyAnd(player, (game, player) => {
               player.incrementInfluence(2)
               player.incrementPower(2)
             })
@@ -360,7 +359,7 @@ const cardData = [
     "innerPoints": 5,
     "count": 2,
     "text": [
-      "Devour a card in your hand > Place a spy, then assassinate a troop at that spy’s site."
+      "Devour a card in your hand > Place a spy, then assassinate a troop at that spy's site."
     ],
     impl: (game, player) => {
       game.aChooseAndDevour(player, {
@@ -396,7 +395,7 @@ const cardData = [
         {
           title: 'Return one of your spies > +5 power',
           impl: (game, player) => {
-            game.aReturnASpyAnd(player, (game, player, { loc }) => {
+            game.aReturnASpyAnd(player, (game, player) => {
               player.incrementPower(5)
             })
           }

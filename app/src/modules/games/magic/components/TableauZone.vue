@@ -7,24 +7,31 @@
 
       <div class="zone-menu" v-if="!noMenu">
         <TableauZoneMenu>
-          <slot name="menu"></slot>
+          <slot name="menu"/>
         </TableauZoneMenu>
       </div>
     </div>
 
     <template v-if="libraryView">
-      <TableauZoneCard v-for="card in topCards" :card="card" @click.stop="cardClicked(card)" />
+      <TableauZoneCard v-for="card in topCards"
+                       :key="card.g.id"
+                       :card="card"
+                       @click.stop="cardClicked(card)" />
       <div class="library-separator">
         <div>top</div>
         <div>bottom</div>
       </div>
-      <TableauZoneCard v-for="card in bottomCards" :card="card" @click.stop="cardClicked(card)" />
-      <div class="bottom-space" @click.stop="zoneClicked('bottom')"></div>
+      <TableauZoneCard v-for="card in bottomCards"
+                       :key="card.g.id"
+                       :card="card"
+                       @click.stop="cardClicked(card)" />
+      <div class="bottom-space" @click.stop="zoneClicked('bottom')"/>
     </template>
 
     <template v-else>
       <TableauZoneCard
         v-for="card in zone.cards()"
+        :key="card.g.id"
         :card="card"
         :show-grave-powers="showGravePowers"
         :show-mana-cost="showManaCost"
@@ -32,7 +39,7 @@
         @click.stop="cardClicked(card)"
       />
 
-      <div class="bottom-space" @click.stop="zoneClicked('bottom')"></div>
+      <div class="bottom-space" @click.stop="zoneClicked('bottom')"/>
     </template>
   </div>
 </template>

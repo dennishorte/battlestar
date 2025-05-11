@@ -2,7 +2,7 @@
   <div class="waiting-panel">
 
     <ul class="nav nav-tabs" id="myTab" role="tablist">
-      <li class="nav-item" v-for="player in playersOrdered">
+      <li class="nav-item" v-for="player in playersOrdered" :key="player.name">
         <button
           class="nav-link"
           :class="isActive(player)"
@@ -19,6 +19,7 @@
     <div class="tab-content">
       <div
         v-for="player in playersOrdered"
+        :key="player.name"
         class="tab-pane fade"
         :class="isActive(player)"
         :id="`waiting-${player.name}`"

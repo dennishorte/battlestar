@@ -37,17 +37,17 @@
 
         <div class="info-label">size</div>
         <select class="form-control" v-model.number="selectedSite.size" >
-          <option v-for="num in [1,2,3,4,5,6,7,8,9]" :value="num">{{ num }}</option>
+          <option v-for="num in [1,2,3,4,5,6,7,8,9]" :key="num" :value="num">{{ num }}</option>
         </select>
 
         <div class="info-label">neutrals</div>
         <select class="form-control" v-model.number="selectedSite.neutrals" >
-          <option v-for="num in [0,1,2,3,4,5,6,7,8,9]" :value="num">{{ num }}</option>
+          <option v-for="num in [0,1,2,3,4,5,6,7,8,9]" :key="num" :value="num">{{ num }}</option>
         </select>
 
         <div class="info-label">value</div>
         <select class="form-control" v-model.number="selectedSite.value" >
-          <option v-for="num in [0,1,2,3,4,5,6,7,8,9]" :value="num">{{ num }}</option>
+          <option v-for="num in [0,1,2,3,4,5,6,7,8,9]" :key="num" :value="num">{{ num }}</option>
         </select>
 
         <div class="checkbox-wrapper">
@@ -69,7 +69,7 @@
 
         <div class="info-label">neutrals</div>
         <select class="form-control" v-model.number="selectedSite.neutrals" >
-          <option v-for="num in [0,1]" :value="num">{{ num }}</option>
+          <option v-for="num in [0,1]" :key="num" :value="num">{{ num }}</option>
         </select>
       </div>
 
@@ -78,7 +78,7 @@
       <div class="saved-tiles">
         <h6>Saved Tiles</h6>
 
-        <div v-for="tile in savedTiles" @click="loadTile(tile)">
+        <div v-for="tile in savedTiles" :key="tile.name()" @click="loadTile(tile)">
           {{ tile.name() }}
         </div>
       </div>

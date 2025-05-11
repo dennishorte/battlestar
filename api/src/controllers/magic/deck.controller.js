@@ -1,4 +1,4 @@
-const db = require('../../models/db.js')
+const db = require('@models/db.js')
 
 /**
  * Create a new deck
@@ -6,9 +6,29 @@ const db = require('../../models/db.js')
  * @param {Object} res - Express response object
  */
 exports.create = async (req, res) => {
-  const deckId = await db.magic.deck.create(req.body)
-  const deck = await db.magic.deck.findById(deckId)
+  const deck = await db.magic.deck.create(req.user)
 
+  res.json({
+    status: 'success',
+    deck,
+  })
+}
+
+exports.delete = async (req, res) => {
+  await db.magic.deck.delete(req.deck)
+
+  res.json({
+    status: 'success'
+  })
+}
+
+/**
+ * Duplicate a deck by ID
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.duplicate = async (req, res) => {
+  const deck = await db.magic.deck.duplicate(req.user, req.deck)
   res.json({
     status: 'success',
     deck,
@@ -21,10 +41,9 @@ exports.create = async (req, res) => {
  * @param {Object} res - Express response object
  */
 exports.fetch = async (req, res) => {
-  const deck = await db.magic.deck.findById(req.body.deckId)
   res.json({
     status: 'success',
-    deck,
+    deck: req.deck,
   })
 }
 
@@ -39,15 +58,3 @@ exports.save = async (req, res) => {
     status: 'success',
   })
 }
-
-/**
- * Add a card to a deck
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-exports.addCard = async (req, res) => {
-  await db.magic.deck.addCard(req.body.deckId, req.body.card)
-  res.json({
-    status: 'success',
-  })
-} 

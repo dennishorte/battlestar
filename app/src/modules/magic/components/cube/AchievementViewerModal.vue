@@ -18,7 +18,7 @@
 
         <div class="area">
           <h5>Sections</h5>
-          <div v-for="(section, index) of achievement.hidden" class="d-grid gap-2">
+          <div v-for="(section, index) of achievement.hidden" :key="index" class="d-grid gap-2">
             <div class="d-grid gap-2">
               <button class="btn btn-success mb-2" @click="toggle(index)">{{ section.name }}</button>
               <div v-if="toggled[index]" class="area" style="white-space: pre-wrap;">
@@ -32,7 +32,7 @@
       </template>
 
       <template v-else>
-        <hr>
+        <hr/>
         <h2 class="question">Did you really earn this?</h2>
         <div class="buttons-row">
           <button class="btn btn-success yes-no-btn" @click="unlock">yes</button>
@@ -43,7 +43,7 @@
     </template>
 
     <template #footer>
-      <div></div>
+      <div/>
     </template>
   </Modal>
 </template>

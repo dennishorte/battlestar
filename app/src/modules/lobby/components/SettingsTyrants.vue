@@ -30,7 +30,10 @@
     <hr />
 
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" v-model="models.menzoExtraNeutral" @change="optionsChanged" />
+      <input class="form-check-input"
+             type="checkbox"
+             v-model="models.menzoExtraNeutral"
+             @change="optionsChanged" />
       <label class="form-check-label">extra neutral in Menzoberranzan</label>
     </div>
   </div>

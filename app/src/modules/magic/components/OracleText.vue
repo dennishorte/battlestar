@@ -1,7 +1,7 @@
 <template>
   <div class="oracle-text">
-    <div v-for="line in lines" class="rules-line">
-      <template v-for="part in line.parts">
+    <div v-for="(line, lineIndex) in lines" :key="lineIndex" class="rules-line">
+      <template v-for="(part, partIndex) in line.parts" :key="partIndex">
         <span v-if="part.type === 'text'">{{ part.text }}</span>
         <Mana v-else-if="part.type === 'symbol'" :m="part.text" />
         <ReminderText v-else-if="part.type === 'reminder'" :text="part.text" />

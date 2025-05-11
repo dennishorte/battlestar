@@ -1,0 +1,167 @@
+{
+  "object": "card",
+  "id": "d8ed0335-daa6-4dbe-a94d-4d56c8cfd093",
+  "oracle_id": "afedce7b-0e18-40ad-a26a-1933fddb560d",
+  "multiverse_ids": [
+    491773,
+    491774
+  ],
+  "mtgo_id": 83239,
+  "arena_id": 73334,
+  "tcgplayer_id": 221902,
+  "cardmarket_id": 495289,
+  "name": "Akoum Warrior // Akoum Teeth",
+  "lang": "en",
+  "released_at": "2020-09-25",
+  "uri": "https://api.scryfall.com/cards/d8ed0335-daa6-4dbe-a94d-4d56c8cfd093",
+  "scryfall_uri": "https://scryfall.com/card/znr/134/akoum-warrior-akoum-teeth?utm_source=api",
+  "layout": "modal_dfc",
+  "highres_image": true,
+  "image_status": "highres_scan",
+  "cmc": 6,
+  "type_line": "Creature — Minotaur Warrior // Land",
+  "color_identity": [
+    "R"
+  ],
+  "keywords": [
+    "Trample"
+  ],
+  "produced_mana": [
+    "R"
+  ],
+  "card_faces": [
+    {
+      "object": "card_face",
+      "name": "Akoum Warrior",
+      "mana_cost": "{5}{R}",
+      "type_line": "Creature — Minotaur Warrior",
+      "oracle_text": "Trample",
+      "colors": [
+        "R"
+      ],
+      "power": "4",
+      "toughness": "5",
+      "flavor_text": "\"I'm not cruel, but I have no patience for your mistakes.\"\n—Tyrux, expedition warrior",
+      "artist": "Karl Kopinski",
+      "artist_id": "0fad2c48-a56e-4a0b-b512-224f6f238f20",
+      "illustration_id": "e6bfc67d-fd9a-4c49-9691-e9baa7b25e34",
+      "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/d/8/d8ed0335-daa6-4dbe-a94d-4d56c8cfd093.jpg?1604196854",
+        "normal": "https://cards.scryfall.io/normal/front/d/8/d8ed0335-daa6-4dbe-a94d-4d56c8cfd093.jpg?1604196854",
+        "large": "https://cards.scryfall.io/large/front/d/8/d8ed0335-daa6-4dbe-a94d-4d56c8cfd093.jpg?1604196854",
+        "png": "https://cards.scryfall.io/png/front/d/8/d8ed0335-daa6-4dbe-a94d-4d56c8cfd093.png?1604196854",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/d/8/d8ed0335-daa6-4dbe-a94d-4d56c8cfd093.jpg?1604196854",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/d/8/d8ed0335-daa6-4dbe-a94d-4d56c8cfd093.jpg?1604196854"
+      }
+    },
+    {
+      "object": "card_face",
+      "name": "Akoum Teeth",
+      "mana_cost": "",
+      "type_line": "Land",
+      "oracle_text": "This land enters tapped.\n{T}: Add {R}.",
+      "colors": [],
+      "flavor_text": "\"Rock. Lava. Gravity. They're not cruel, but they're not forgiving either.\"\n—Tyrux, expedition warrior",
+      "artist": "Karl Kopinski",
+      "artist_id": "0fad2c48-a56e-4a0b-b512-224f6f238f20",
+      "illustration_id": "92ac6ab6-c7d0-47d0-a9c7-47b7192c57c2",
+      "image_uris": {
+        "small": "https://cards.scryfall.io/small/back/d/8/d8ed0335-daa6-4dbe-a94d-4d56c8cfd093.jpg?1604196854",
+        "normal": "https://cards.scryfall.io/normal/back/d/8/d8ed0335-daa6-4dbe-a94d-4d56c8cfd093.jpg?1604196854",
+        "large": "https://cards.scryfall.io/large/back/d/8/d8ed0335-daa6-4dbe-a94d-4d56c8cfd093.jpg?1604196854",
+        "png": "https://cards.scryfall.io/png/back/d/8/d8ed0335-daa6-4dbe-a94d-4d56c8cfd093.png?1604196854",
+        "art_crop": "https://cards.scryfall.io/art_crop/back/d/8/d8ed0335-daa6-4dbe-a94d-4d56c8cfd093.jpg?1604196854",
+        "border_crop": "https://cards.scryfall.io/border_crop/back/d/8/d8ed0335-daa6-4dbe-a94d-4d56c8cfd093.jpg?1604196854"
+      }
+    }
+  ],
+  "legalities": {
+    "standard": "not_legal",
+    "future": "not_legal",
+    "historic": "legal",
+    "timeless": "legal",
+    "gladiator": "legal",
+    "pioneer": "legal",
+    "explorer": "legal",
+    "modern": "legal",
+    "legacy": "legal",
+    "pauper": "not_legal",
+    "vintage": "legal",
+    "penny": "not_legal",
+    "commander": "legal",
+    "oathbreaker": "legal",
+    "standardbrawl": "not_legal",
+    "brawl": "legal",
+    "alchemy": "not_legal",
+    "paupercommander": "not_legal",
+    "duel": "legal",
+    "oldschool": "not_legal",
+    "premodern": "not_legal",
+    "predh": "not_legal"
+  },
+  "games": [
+    "arena",
+    "paper",
+    "mtgo"
+  ],
+  "reserved": false,
+  "game_changer": false,
+  "foil": true,
+  "nonfoil": true,
+  "finishes": [
+    "nonfoil",
+    "foil"
+  ],
+  "oversized": false,
+  "promo": false,
+  "reprint": false,
+  "variation": false,
+  "set_id": "f4e01fa7-b254-42dd-849f-69b58027a8c4",
+  "set": "znr",
+  "set_name": "Zendikar Rising",
+  "set_type": "expansion",
+  "set_uri": "https://api.scryfall.com/sets/f4e01fa7-b254-42dd-849f-69b58027a8c4",
+  "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aznr&unique=prints",
+  "scryfall_set_uri": "https://scryfall.com/sets/znr?utm_source=api",
+  "rulings_uri": "https://api.scryfall.com/cards/d8ed0335-daa6-4dbe-a94d-4d56c8cfd093/rulings",
+  "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aafedce7b-0e18-40ad-a26a-1933fddb560d&unique=prints",
+  "collector_number": "134",
+  "digital": false,
+  "rarity": "uncommon",
+  "artist": "Karl Kopinski",
+  "artist_ids": [
+    "0fad2c48-a56e-4a0b-b512-224f6f238f20"
+  ],
+  "border_color": "black",
+  "frame": "2015",
+  "full_art": false,
+  "textless": false,
+  "booster": true,
+  "story_spotlight": false,
+  "edhrec_rank": 11839,
+  "penny_rank": 1824,
+  "preview": {
+    "source": "William Jensen",
+    "source_uri": "",
+    "previewed_at": "2020-09-02"
+  },
+  "prices": {
+    "usd": "0.09",
+    "usd_foil": "0.15",
+    "usd_etched": null,
+    "eur": "0.10",
+    "eur_foil": "0.19",
+    "tix": "0.03"
+  },
+  "related_uris": {
+    "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=491773&printed=false",
+    "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=infinite&u=https%3A%2F%2Finfinite.tcgplayer.com%2Fsearch%3FcontentMode%3Darticle%26game%3Dmagic%26q%3DAkoum%2BWarrior%2B%252F%252F%2BAkoum%2BTeeth",
+    "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=infinite&u=https%3A%2F%2Finfinite.tcgplayer.com%2Fsearch%3FcontentMode%3Ddeck%26game%3Dmagic%26q%3DAkoum%2BWarrior%2B%252F%252F%2BAkoum%2BTeeth",
+    "edhrec": "https://edhrec.com/route/?cc=Akoum+Warrior"
+  },
+  "purchase_uris": {
+    "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F221902%3Fpage%3D1",
+    "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Singles/Zendikar-Rising/Akoum-Warrior-Akoum-Teeth?referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+    "cardhoarder": "https://www.cardhoarder.com/cards/83239?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+  }
+}

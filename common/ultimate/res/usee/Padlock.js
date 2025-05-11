@@ -17,7 +17,7 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player, { leader }) => {
+    (game, player) => {
       const secrets = game.getCardsByZone(player, 'safe')
 
       if (secrets.length === 0) {
@@ -31,7 +31,7 @@ function Card() {
         game.state.dogmaInfo.padlockCardTransferred = true
       }
     },
-    (game, player, { leader }) => {
+    (game, player) => {
       if (!game.state.dogmaInfo.padlockCardTransferred) {
         game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'), {
           title: 'Choose up the three cards of different values',

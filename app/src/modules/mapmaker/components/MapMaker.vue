@@ -490,7 +490,7 @@ export default {
     },
 
     makeId(prefix) {
-      while (true) { // eslint-disable-line no-constant-condition
+      while (true) {
         const newId = prefix + this.nextId
         this.nextId += 1
 

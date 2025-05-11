@@ -192,7 +192,7 @@ describe('User Controller', () => {
 
       // Verify
       expect(res.json).toHaveBeenCalledWith({ status: 'success' })
-      
+
       // Restore original implementation
       userController.deactivateUser.mockRestore()
     })
@@ -234,7 +234,7 @@ describe('User Controller', () => {
         status: 'success',
         users: expect.any(Array)
       })
-      
+
       // Restore original implementation
       userController.fetchManyUsers.mockRestore()
     })
@@ -276,7 +276,7 @@ describe('User Controller', () => {
         status: 'success',
         lobbies: expect.any(Array)
       })
-      
+
       // Restore original implementation
       userController.getUserLobbies.mockRestore()
     })
@@ -296,7 +296,7 @@ describe('User Controller', () => {
   describe('getUserGames', () => {
     it('should fetch games for a user with filters', async () => {
       // Setup - mock the controller to avoid ObjectId issues
-      req.body = { 
+      req.body = {
         userId: 'user1',
         state: 'all',
         kind: 'innovation',
@@ -323,7 +323,7 @@ describe('User Controller', () => {
         status: 'success',
         games: expect.any(Array)
       })
-      
+
       // Restore original implementation
       userController.getUserGames.mockRestore()
     })
@@ -331,7 +331,7 @@ describe('User Controller', () => {
     it('should handle invalid userId format', async () => {
       // Setup
       req.body = { userId: 'invalid-id' }
-      
+
       // Mock ObjectId to throw an error
       ObjectId.mockImplementationOnce(() => {
         throw new Error('Invalid ID')
@@ -369,7 +369,7 @@ describe('User Controller', () => {
         status: 'success',
         games: expect.any(Array)
       })
-      
+
       // Restore original implementation
       userController.getRecentlyFinishedGames.mockRestore()
     })
@@ -408,7 +408,7 @@ describe('User Controller', () => {
         status: 'success',
         gameId: expect.any(String)
       })
-      
+
       // Restore original implementation
       userController.getNextGame.mockRestore()
     })
@@ -424,4 +424,4 @@ describe('User Controller', () => {
       expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
     })
   })
-}) 
+})

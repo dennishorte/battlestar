@@ -6,4 +6,4 @@ const configs = {
   test: require('./test')
 }
 
-module.exports = configs[env] 
+module.exports = configs[env]

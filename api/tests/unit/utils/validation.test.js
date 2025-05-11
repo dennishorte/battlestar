@@ -1,7 +1,7 @@
-const { 
-  validateEmail, 
-  validatePassword, 
-  validateRequiredFields 
+const {
+  validateEmail,
+  validatePassword,
+  validateRequiredFields
 } = require('../../../src/utils/validation')
 
 describe('Validation Utils', () => {
@@ -47,32 +47,32 @@ describe('Validation Utils', () => {
     it('should return true when all required fields are present', () => {
       const data = { name: 'John', email: 'john@example.com', password: 'Pass123!' }
       const requiredFields = ['name', 'email', 'password']
-      
+
       expect(validateRequiredFields(data, requiredFields)).toBe(true)
     })
 
     it('should return false when a required field is missing', () => {
       const data = { name: 'John', password: 'Pass123!' }
       const requiredFields = ['name', 'email', 'password']
-      
+
       expect(validateRequiredFields(data, requiredFields)).toBe(false)
     })
 
     it('should return false when a required field is empty', () => {
       const data = { name: 'John', email: '', password: 'Pass123!' }
       const requiredFields = ['name', 'email', 'password']
-      
+
       expect(validateRequiredFields(data, requiredFields)).toBe(false)
     })
 
     it('should return false when a required field is null or undefined', () => {
       const data = { name: 'John', email: null, password: 'Pass123!' }
       const requiredFields = ['name', 'email', 'password']
-      
+
       expect(validateRequiredFields(data, requiredFields)).toBe(false)
-      
+
       data.email = undefined
       expect(validateRequiredFields(data, requiredFields)).toBe(false)
     })
   })
-}) 
+})

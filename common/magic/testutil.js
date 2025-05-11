@@ -1,12 +1,13 @@
-const { GameOverEvent } = require('../lib/game.js')
 const { MagicFactory } = require('./magic.js')
 const TestCommon = require('../lib/test_common.js')
-const cardLookupFunc = require('./test_cardlookup.js')
-const log = require('../lib/log.js')
-const jsUtil = require('util')
+const DeckWrapper = require('./util/deck.wrapper.js')
+
+const TestCards = require('./test_card_data.js')
 
 
 const TestUtil = { ...TestCommon }
+module.exports = TestUtil
+
 
 TestUtil.fixture = function(options) {
   options = Object.assign({
@@ -37,7 +38,6 @@ TestUtil.fixture = function(options) {
   options.players = options.players.slice(0, options.numPlayers)
 
   const game = MagicFactory(options, 'dennis')
-  game.cardLookupFunc = cardLookupFunc
 
   game.testSetBreakpoint('initialization-complete', (game) => {
     // Set turn order
@@ -50,7 +50,56 @@ TestUtil.fixture = function(options) {
   return game
 }
 
-const convertNameToCard = (zone) => (name) => ({ name, zone })
+function _juiceDeck(data) {
+  for (const zone of ['main', 'side', 'command']) {
+    data.cardIdsByZone[zone] = data.cardIdsByZone[zone].map(name => {
+      return TestCards.byName[name.toLowerCase()][0].id()
+    })
+  }
+  const deck = new DeckWrapper(data)
+  deck.initializeCardsSync(cardIds => cardIds.map(id => TestCards.byId[id]))
+  return deck
+}
+
+const DennisDeck = _juiceDeck({
+  _id: 'test_deck_dennis',
+  userId: 'dennis_id',
+  name: 'test_deck_dennis',
+  format: 'custom',
+  cardIdsByZone: {
+    main: [
+      'Plains',
+      'Plains',
+      'Benalish Hero',
+      'White Knight',
+      'Advance Scout',
+      'Tithe',
+      'Holy Strength',
+    ],
+    side: [],
+    command: [],
+  },
+})
+
+const MicahDeck = _juiceDeck({
+  _id: 'test_deck_micah',
+  useId: 'micah_id',
+  name: 'test_deck_micah',
+  format: 'custom',
+  cardIdsByZone: {
+    main: [
+      'mountain',
+      'mountain',
+      'shock',
+      'lightning bolt',
+      'goblin balloon brigade',
+      'akki ember-keeper',
+      'agility',
+    ],
+    side: [],
+    command: [],
+  },
+})
 
 TestUtil.fixtureDecksSelected = function(options) {
   const game = this.fixture(options)
@@ -59,41 +108,13 @@ TestUtil.fixtureDecksSelected = function(options) {
   game.respondToInputRequest({
     actor: 'dennis',
     title: 'Choose Deck',
-    deckData: {
-      _id: 'test_deck_dennis',
-      name: 'test_deck_dennis',
-      path: '/',
-      kind: 'deck',
-      cardlist: [
-        'plains',
-        'plains',
-        'Benalish Hero',
-        'White Knight',
-        'Advance Scout',
-        'Tithe',
-        'Holy Strength',
-      ].map(convertNameToCard('main'))
-    },
+    deckData: DennisDeck.toGameJSON(),
   })
 
   game.respondToInputRequest({
     actor: 'micah',
     title: 'Choose Deck',
-    deckData: {
-      _id: 'test_deck_micah',
-      name: 'test_deck_micah',
-      path: '/',
-      kind: 'deck',
-      cardlist: [
-        'mountain',
-        'mountain',
-        'shock',
-        'lightning bolt',
-        'goblin balloon brigade',
-        'akki ember-keeper',
-        'agility',
-      ].map(convertNameToCard('main'))
-    },
+    deckData: MicahDeck.toGameJSON(),
   })
 
   if (game.settings.numPlayers >= 3) {
@@ -105,25 +126,28 @@ TestUtil.fixtureDecksSelected = function(options) {
     const deck = game.getZoneByPlayer(dennis, 'library')
     const cards = deck.cards()
     deck._cards = [
-      cards.find(c => c.name === 'White Knight'),
-      cards.find(c => c.name === 'Benalish Hero'),
-      cards.find(c => c.name === 'Advance Scout'),
-      cards.find(c => c.name === 'Tithe'),
-      cards.find(c => c.name === 'Holy Strength'),
-      cards.find(c => c.id === 2), // plains
-      cards.find(c => c.id === 3), // plains
+      cards.find(c => c.name() === 'White Knight'),
+      cards.find(c => c.name() === 'Benalish Hero'),
+      cards.find(c => c.name() === 'Advance Scout'),
+      cards.find(c => c.name() === 'Tithe'),
+      cards.find(c => c.name() === 'Holy Strength'),
+      cards.find(c => c.g.id === 2), // plains
+      cards.find(c => c.g.id === 3), // plains
     ]
   })
 
   return game
 }
 
+/* eslint-disable */
 TestUtil.setBoard = function(game, state) {
   game.testSetBreakpoint('before-first-player', (game) => {
     for (const name of ['dennis', 'micah', 'scott', 'eliya']) {
+      // do nothing
     }
   })
 }
+/* eslint-enable */
 
 function blankTableau() {
   return {
@@ -163,7 +187,7 @@ TestUtil.testBoard = function(game, state) {
     for (const key of playerZones) {
       real[player.name][key] = game
         .getCardsByZone(player, key)
-        .map(c => c.name.toLowerCase())
+        .map(c => c.name().toLowerCase())
         .sort()
     }
   }
@@ -213,5 +237,3 @@ TestUtil.do = function(game, request, action) {
     selection: [action],
   })
 }
-
-module.exports = TestUtil

@@ -1,10 +1,5 @@
 Error.stackTraceLimit = 100
 
-const {
-  GameOverEvent,
-  InputRequestEvent,
-} = require('../../../lib/game.js')
-
 const t = require('../../testutil.js')
 
 
@@ -70,7 +65,7 @@ describe('Core Cards', () => {
 
     })
 
-    test.only('promote', () => {
+    test('promote', () => {
       const game = t.gameFixture({
         dennis: {
           hand: ['Insane Outcast', 'Drow Negotiator'],

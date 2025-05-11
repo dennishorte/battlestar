@@ -1,6 +1,6 @@
-const db = require('../models/db')
-const logger = require('../utils/logger')
-const { BadRequestError, NotFoundError } = require('../utils/errors')
+const db = require('@models/db')
+const logger = require('@utils/logger')
+const { BadRequestError, NotFoundError } = require('@utils/errors')
 const { ObjectId } = require('mongodb')
 
 /**
@@ -13,7 +13,7 @@ exports.getAllLobbies = async (req, res, next) => {
   try {
     const lobbiesCursor = await db.lobby.all()
     const lobbiesArray = await lobbiesCursor.toArray()
-    
+
     res.json({
       status: 'success',
       lobbies: lobbiesArray
@@ -47,7 +47,7 @@ exports.createLobby = async (req, res, next) => {
 
     const lobby = await db.lobby.findById(lobbyId)
     const userIds = req.body.userIds || [user._id]
-    
+
     try {
       // Validate userIds are valid ObjectIds
       const objectIds = userIds.map(id => new ObjectId(id))
@@ -121,9 +121,9 @@ exports.killLobby = async (req, res, next) => {
     if (!req.lobby) {
       return next(new NotFoundError('Lobby not found'))
     }
-    
+
     await db.lobby.kill(req.lobby)
-    
+
     res.json({
       status: 'success'
     })
@@ -145,9 +145,9 @@ exports.saveLobby = async (req, res, next) => {
     if (!req.body || !req.body._id) {
       return next(new BadRequestError('Invalid lobby data'))
     }
-    
+
     await db.lobby.save(req.body)
-    
+
     res.json({
       status: 'success'
     })
@@ -156,4 +156,4 @@ exports.saveLobby = async (req, res, next) => {
     logger.error(`Error saving lobby: ${err.message}`)
     next(err)
   }
-} 
+}

@@ -59,7 +59,7 @@ function Card() {
         const available = game.getAvailableStandardAchievements(player)
 
         const max = Math.min(available.length, game.getSafeOpenings(player))
-        const toSafeguard = game.aChooseAndSafeguard(player, available, {
+        game.aChooseAndSafeguard(player, available, {
           title: 'Choose achievements to safeguard',
           min: 0,
           max,

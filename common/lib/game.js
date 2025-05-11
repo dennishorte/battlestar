@@ -198,7 +198,6 @@ Game.prototype.requestInputMany = function(array) {
 
     if (resp) {
       if (resp.type === 'chat') {
-        const player = this.getPlayerByName(resp.actor)
         this.getLog().push({
           author: resp.actor,
           text: resp.text,
@@ -217,7 +216,7 @@ Game.prototype.requestInputMany = function(array) {
         __prepareInput(answer)
       }
       else {
-	throw new InputRequestEvent(unanswered)
+        throw new InputRequestEvent(unanswered)
       }
     }
   }
@@ -237,12 +236,7 @@ Game.prototype.respondToInputRequest = function(response) {
   response.isUserResponse = true  // As opposed to an automated response.
   this.responses.push(response)
 
-  try {
-    return this.run()
-  }
-  catch (e) {
-    throw e
-  }
+  return this.run()
 }
 
 Game.prototype.run = function() {
@@ -497,22 +491,27 @@ Game.prototype._blankState = function(more = {}) {
   }, more)
 }
 
+// eslint-disable-next-line
 Game.prototype._responseReceived = function(response) {
   // To be overridden by child classes.
 }
 
+// eslint-disable-next-line
 Game.prototype._enrichLogArgs = function(msg) {
   // To be overridden by child classes.
 }
 
+// eslint-disable-next-line
 Game.prototype._postEnrichArgs = function(msg) {
   // To be overridden by child classes.
 }
+
 
 Game.prototype._undoCalled = function() {
   // To be overridden by child classes.
 }
 
+// eslint-disable-next-line
 Game.prototype._cardMovedCallback = function(card) {
   // To be overridden by child classes.
 }
@@ -540,7 +539,6 @@ Game.prototype._reset = function() {
 
 Game.prototype._tryToAutomaticallyRespond = function(selectors) {
   for (const sel of selectors) {
-
     // This is a special key to say that there is no fixed response expected
     // so cannot automatically respond. Used in games like Magic where the
     // user input is very freeform.
@@ -555,7 +553,7 @@ Game.prototype._tryToAutomaticallyRespond = function(selectors) {
       }
     }
 
-    const { min, max } = selector.minMax(sel)
+    const { min } = selector.minMax(sel)
 
     if (min >= sel.choices.length) {
       const response = {
@@ -584,7 +582,7 @@ Game.prototype._tryToAutomaticallyRespond = function(selectors) {
 // Test only methods
 
 Game.prototype.testSetBreakpoint = function(name, fn) {
-  if (this.breakpoints.hasOwnProperty(name)) {
+  if (Object.hasOwn(this.breakpoints, name)) {
     this.breakpoints[name].push(fn)
   }
   else {
@@ -662,7 +660,12 @@ Game.prototype.getPlayerByName = function(name) {
 }
 
 Game.prototype.getPlayerByOwner = function(card) {
-  return card.owner
+  if (card.g) {
+    return card.g.owner
+  }
+  else {
+    return card.owner
+  }
 }
 
 Game.prototype.getPlayerByZone = function(zone) {
@@ -750,18 +753,28 @@ Game.prototype.getPlayersStartingNext = function() {
 }
 
 Game.prototype.getZoneByCard = function(card) {
-  return this.getZoneById(card.zone)
+  if (card.g && card.g.zone) {
+    return this.getZoneById(card.g.zone)
+  }
+  else {
+    return this.getZoneById(card.zone)
+  }
 }
 
 Game.prototype.getZoneByCardHome = function(card) {
-  return this.getZoneById(card.home)
+  if (card.g && card.g.home) {
+    return this.getZoneById(card.g.home)
+  }
+  else {
+    return this.getZoneById(card.home)
+  }
 }
 
 Game.prototype.getZoneById = function(id) {
   const tokens = id.split('.')
   let curr = this.state.zones
   for (const token of tokens) {
-    util.assert(curr.hasOwnProperty(token), `Invalid zone id ${id} at token ${token}`)
+    util.assert(Object.hasOwn(curr, token), `Invalid zone id ${id} at token ${token}`)
     curr = curr[token]
   }
   return curr

@@ -21,7 +21,7 @@ function Card() {
     (game, player) => {
       game.aDrawAndScore(player, game.getEffectAge(this, 10))
     },
-    (game, player) => {
+    (game) => {
       const conditionMet  = game
         .getPlayerAll()
         .flatMap(player => game.getTopCards(player))

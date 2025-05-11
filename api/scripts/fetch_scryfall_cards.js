@@ -1,6 +1,8 @@
 const axios = require('axios')
 const fs = require('fs')
 const util = require('../../common/lib/util.js')
+const path = require('path')
+const { mag } = require('battlestar-common')
 
 
 const rootFields = [
@@ -14,13 +16,13 @@ const rootFields = [
   "set",
   "cmc",
   "digital",
+  "produced_mana",
 ]
 
 const faceFields = [
   "artist",
   "defense",
   "flavor_text",
-  "id",
   "image_uris",
   "loyalty",
   "mana_cost",
@@ -32,13 +34,11 @@ const faceFields = [
 
   "color_indicator",
   "colors",
-  "produced_mana",
 ]
 
 const combinedFields = [
   "name",
   "colors",
-  "produced_mana",
   "type_line",
 ]
 
@@ -50,17 +50,28 @@ function adjustFaces(card) {
     card.card_faces = [{}]
   }
 
+  // For some reason, adventures put the power/toughness of the creatures in the root card
+  // and in the main face. This prevents the power/toughness from being copied into the
+  // adventure face.
+  if (card.layout === 'adventure') {
+    delete card['power']
+    delete card['toughness']
+  }
+
   // Move face fields into card_faces.
-  for (const face of card.card_faces) {
-    for (const key of faceFields) {
+  for (const key of faceFields) {
+    for (const face of card.card_faces) {
       if (card[key] && !face[key]) {
         face[key] = card[key]
       }
-
-      if (card[key]) {
-        delete card[key]
-      }
     }
+
+    delete card[key]
+  }
+
+  // Split cards need to recalculate their colors based on their actual casting cost.
+  if (card.layout === 'split') {
+    mag.util.card.updateColors(card)
   }
 
   // Remove all other fields
@@ -78,17 +89,6 @@ function adjustFaces(card) {
   for (const key of Object.keys(card)) {
     if (!rootFields.includes(key)) {
       delete card[key]
-    }
-  }
-
-  // Duplicate face fields across all faces, if needed
-  const firstFace = card.card_faces[0]
-  const otherFaces = card.card_faces.slice(1)
-  for (const face of otherFaces) {
-    for (const [key, value] of Object.entries(firstFace)) {
-      if (!(key in face)) {
-        face[key] = value
-      }
     }
   }
 
@@ -110,9 +110,6 @@ function adjustFaces(card) {
 
 function cleanImageUris(card) {
   for (const face of card.card_faces) {
-    if (!face.image_uris) {
-      console.log(card)
-    }
     face.image_uri = face.image_uris.art_crop
     delete face.image_uris
   }
@@ -125,17 +122,25 @@ function cleanLegalities(card) {
   delete card.legalities
 }
 
+function renameIdField(card) {
+  card._id = card.id
+  delete card.id
+}
+
 function cleanScryfallCards(cards) {
   for (const card of cards) {
     adjustFaces(card)
     cleanImageUris(card)
     cleanLegalities(card)
+    renameIdField(card)
   }
 }
 
 function prefilterVersions(cards) {
-  for (let i = cards.length - 1; i >= 0; i--) {
-    const card = cards[i]
+  const filteredCards = []
+
+  for (let i = 0; i < cards.length; i++) {
+    const card = { ...cards[i] } // Clone to avoid modifying original
 
     if (
       card.layout === 'art_series'
@@ -143,12 +148,10 @@ function prefilterVersions(cards) {
       || card.layout === 'double_faced_token'
       || card.layout === 'scheme'
     ) {
-      cards.splice(i, 1)
       continue
     }
 
     if (card.lang !== 'en') {
-      cards.splice(i, 1)
       continue
     }
     else {
@@ -156,32 +159,88 @@ function prefilterVersions(cards) {
     }
 
     if (card.textless || card.full_art) {
-      cards.splice(i, 1)
       continue
     }
     else {
       delete card.textless
       delete card.full_art
     }
+
+    filteredCards.push(card)
   }
+
+  return filteredCards
 }
 
 function postfilterVersions(cards) {
-  for (let i = cards.length - 1; i >= 0; i--) {
+  const filteredCards = []
+
+  for (let i = 0; i < cards.length; i++) {
     const card = cards[i]
+    let shouldInclude = true
 
     for (const face of card.card_faces) {
       if (!face.type_line) {
-        cards.splice(i, 1)
+        shouldInclude = false
         break
       }
 
       if (face.type_line.includes('Card')) {
-        cards.splice(i, 1)
+        shouldInclude = false
         break
       }
     }
+
+    if (shouldInclude) {
+      filteredCards.push(card)
+    }
   }
+
+  return filteredCards
+}
+
+// Function to process a single card
+function processSingleCard(card) {
+  // Make a deep copy to avoid modifying the original
+  const cardCopy = JSON.parse(JSON.stringify(card))
+
+  // Run through all our processing steps
+  const prefiltered = prefilterVersions([cardCopy])
+  if (prefiltered.length === 0) {
+    return null // Card was filtered out
+  }
+
+  cleanScryfallCards(prefiltered)
+
+  const postfiltered = postfilterVersions(prefiltered)
+  if (postfiltered.length === 0) {
+    return null // Card was filtered out
+  }
+
+  return {
+    _id: postfiltered[0]._id,
+    source: 'scryfall',
+    data: postfiltered[0],
+  }
+}
+
+// Function to process an array of cards
+function processCards(cards) {
+  // Pre-filter
+  const prefilteredCards = prefilterVersions(cards)
+
+  // Clean
+  cleanScryfallCards(prefilteredCards)
+
+  // Post-filter
+  const postfilteredCards = postfilterVersions(prefilteredCards)
+
+  // Format for database
+  return postfilteredCards.map(data => ({
+    _id: data._id,
+    source: 'scryfall',
+    data,
+  }))
 }
 
 async function fetchScryfallDefaultCards(uri) {
@@ -222,12 +281,44 @@ async function fetchScryfallDefaultDataUri() {
   return targetData.download_uri
 }
 
-async function fetchFromScryfallAndClean() {
-  console.log('Fetching latest scryfall data')
+function getLatestCachedFile() {
+  const cachedDir = 'cached'
+  if (!fs.existsSync(cachedDir)) {
+    return null
+  }
 
-  const downloadUri = await fetchScryfallDefaultDataUri()
-  const cachedFilename = 'cached/' + downloadUri.split('/').slice(-1)[0]
-  const outputFilename = 'card_data/' + downloadUri.split('/').slice(-1)[0]
+  const files = fs.readdirSync(cachedDir)
+  if (files.length === 0) {
+    return null
+  }
+
+  // Sort files alphabetically and get the last one
+  const latestFile = files.sort().pop()
+  return path.join(cachedDir, latestFile)
+}
+
+async function downloadAndLoadScryfallData(useCache) {
+  let cachedFilename
+  let outputFilename
+
+  if (useCache) {
+    cachedFilename = getLatestCachedFile()
+    if (!cachedFilename) {
+      throw new Error('No cached files found. Will download from Scryfall.')
+    }
+    else {
+      console.log(`...using latest cached file: ${cachedFilename}`)
+      // Extract the base filename for the output file
+      const baseFilename = path.basename(cachedFilename)
+      outputFilename = path.join('card_data', baseFilename)
+    }
+  }
+
+  if (!useCache) {
+    const downloadUri = await fetchScryfallDefaultDataUri()
+    cachedFilename = 'cached/' + downloadUri.split('/').slice(-1)[0]
+    outputFilename = 'card_data/' + downloadUri.split('/').slice(-1)[0]
+  }
 
   let cards
 
@@ -237,7 +328,8 @@ async function fetchFromScryfallAndClean() {
     cards = JSON.parse(cardData)
   }
   else {
-    console.log('...downloading card data from ' + downloadUri)
+    console.log('...downloading card data from Scryfall')
+    const downloadUri = await fetchScryfallDefaultDataUri()
     cards = await fetchScryfallDefaultCards(downloadUri)
 
     console.log('...writing raw data to disk: ' + cachedFilename)
@@ -247,20 +339,24 @@ async function fetchFromScryfallAndClean() {
     fs.writeFileSync(cachedFilename, JSON.stringify(cards))
   }
 
-  console.log('...pre-filtering')
-  prefilterVersions(cards)
+  return { cards, outputFilename }
+}
 
-  console.log('...cleaning')
-  cleanScryfallCards(cards)
+async function fetchFromScryfallAndClean(useCache) {
+  console.log('Fetching scryfall data' + (useCache ? ' (using latest cached file)' : ''))
+  const { cards, outputFilename } = await downloadAndLoadScryfallData(useCache)
 
-  console.log('...post-filtering')
-  postfilterVersions(cards)
+  console.log('...processing cards')
+  const formattedCards = processCards(cards)
 
-  const count = Object.keys(cards).length
-  console.log(`...${count} cards after cleaning`)
+  const count = formattedCards.length
+  console.log(`...${count} cards after processing`)
 
   console.log('...writing data to ' + outputFilename)
-  fs.writeFileSync(outputFilename, JSON.stringify(cards, null, 2))
+  if (!fs.existsSync('card_data')){
+    fs.mkdirSync('card_data')
+  }
+  fs.writeFileSync(outputFilename, JSON.stringify(formattedCards, null, 2))
 
   console.log('...done')
 }
@@ -269,4 +365,21 @@ async function fetchFromScryfallAndClean() {
 ////////////////////////////////////////////////////////////////////////////////
 // Main
 
-fetchFromScryfallAndClean()
+// Only run the main function if this script is executed directly
+if (require.main === module) {
+  const args = process.argv.slice(2)
+  const useCache = args.includes('--use-cache')
+
+  fetchFromScryfallAndClean(useCache)
+}
+
+// Export the functions we want to test
+module.exports = {
+  processSingleCard,
+  processCards,
+  adjustFaces,
+  cleanImageUris,
+  cleanLegalities,
+  prefilterVersions,
+  postfilterVersions
+}

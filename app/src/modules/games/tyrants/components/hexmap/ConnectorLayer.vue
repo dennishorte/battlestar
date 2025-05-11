@@ -1,6 +1,7 @@
 <template>
   <Connector
     v-for="conn of connections"
+    :key="conn.id"
     v-bind="conn"
     strokeColor="white"
     :borderWidth="1"

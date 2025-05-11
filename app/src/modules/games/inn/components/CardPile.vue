@@ -19,7 +19,7 @@
         :card="card"
       />
 
-      <slot></slot>
+      <slot/>
 
     </div>
   </div>

@@ -8,7 +8,7 @@ async function connectToMongoDB() {
     const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/game-center'
     client = new MongoClient(uri)
     await client.connect()
-    
+
     logger.info('Connected to MongoDB')
     return client
   }

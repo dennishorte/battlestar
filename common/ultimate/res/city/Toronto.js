@@ -12,11 +12,7 @@ function Card() {
   this.karma = []
   this.dogma = []
 
-  this.dogmaImpl = [
-    (game, player) => {
-
-    },
-  ]
+  this.dogmaImpl = []
   this.echoImpl = []
   this.karmaImpl = []
 }

@@ -1,7 +1,6 @@
 const util = require('../lib/util.js')
 
 const CardUtil = {
-  id: require('./cardId.js'),
   lookup: require('./cardLookup.js'),
 }
 module.exports = CardUtil
@@ -52,11 +51,11 @@ CardUtil.COLOR_KEY_TO_NAME = {
 
 CardUtil.colorSymbolToName = function(symbol) {
   switch (symbol.toLowerCase()) {
-    case 'w': return 'white';
-    case 'u': return 'blue';
-    case 'b': return 'black';
-    case 'r': return 'red';
-    case 'g': return 'green';
+    case 'w': return 'white'
+    case 'u': return 'blue'
+    case 'b': return 'black'
+    case 'r': return 'red'
+    case 'g': return 'green'
     default:
       throw new Error('Invalid color symbol: ' + symbol)
   }
@@ -71,59 +70,6 @@ CardUtil.sortTypes = [
   'instant',
   'sorcery',
 ]
-
-CardUtil.colorKey = function(colors) {
-  return colors.map(c => c.toLowerCase()).sort().join('')
-}
-
-CardUtil.cmc = function(card) {
-  if (card.data) {
-    card = card.data
-  }
-  else {
-    return 0
-  }
-  return card.cmc
-}
-
-CardUtil.supertypes = function(card) {
-  if (card.type_line) {
-    // do nothing
-  }
-  else if (card.data) {
-    card = card.data
-  }
-  else {
-    return []
-  }
-
-  return card
-    .type_line
-    .split(' // ')
-    .map(cardType => cardType.split(CardUtil.TYPE_DIVIDER)[0].split(' '))
-    .flat()
-    .map(kind => kind.toLowerCase())
-}
-
-CardUtil.identity = function(card) {
-  if (card.data) {
-    card = card.data
-  }
-  else {
-    return []
-  }
-  return card.color_identity
-}
-
-CardUtil.colors = function(card) {
-  if (card.data) {
-    card = card.data
-  }
-  else {
-    return []
-  }
-  return card.colors
-}
 
 CardUtil.calculateManaCost = function(card) {
   const symbolRegex = /[{]([^{}]+)[}]/g
@@ -165,153 +111,6 @@ CardUtil.calculateManaCost = function(card) {
   }
 }
 
-const numberFields = ['cmc', 'power', 'toughness', 'loyalty', 'defense']
-const textFields = ['name', 'text', 'flavor', 'set', 'type']
-const fieldMapping = {
-  cmc: 'cmc',
-  colors: 'colors',
-  defense: 'defense',
-  flavor: 'flavor_text',
-  identity: 'color_identity',
-  loyalty: 'loyalty',
-  name: 'name',
-  power: 'power',
-  set: 'set',
-  text: 'oracle_text',
-  toughness: 'toughness',
-  type: 'type_line',
-}
-const colorNameToSymbol = {
-  white: 'W',
-  blue: 'U',
-  black: 'B',
-  red: 'R',
-  green: 'G',
-}
-
-CardUtil.filtersMatchCard = function(filters, card) {
-  return filters.every(filter => CardUtil.applyOneFilter(card, filter))
-}
-
-CardUtil.applyOneFilter = function(card, filter) {
-  if (card.data) {
-    card = card.data
-  }
-
-  if (filter.kind === 'legality') {
-    return 'legal' in card && card.legal.includes(filter.value)
-  }
-  else if (filter.kind === 'colors' || filter.kind === 'identity') {
-    const fieldKey = fieldMapping[filter.kind]
-    const fieldValue = fieldKey in card ? card[fieldKey] : []
-    const targetValueMatches = ['white', 'blue', 'black', 'red', 'green']
-      .map(color => filter[color] ? colorNameToSymbol[color] : undefined)
-      .filter(symbol => symbol !== undefined)
-      .map(symbol => fieldValue.includes(symbol))
-
-    if (filter.or) {
-      if (filter.only) {
-        return (
-          targetValueMatches.some(x => x)
-          && fieldValue.length === targetValueMatches.filter(x => x).length
-        )
-      }
-      else {
-        return targetValueMatches.some(x => x)
-      }
-    }
-    else {  // and
-      if (filter.only) {
-        return (
-          targetValueMatches.every(x => x)
-          && fieldValue.length === targetValueMatches.length
-        )
-      }
-      else {
-        return targetValueMatches.every(x => x)
-      }
-    }
-  }
-  else if (textFields.includes(filter.kind)) {
-    const fieldKey = fieldMapping[filter.kind]
-
-    const fieldValues = []
-
-    if (fieldKey in card) {
-      fieldValues.push(card[fieldKey])
-    }
-    else {
-      for (const face of card.card_faces) {
-        if (fieldKey in face) {
-          fieldValues.push(face[fieldKey])
-        }
-      }
-    }
-
-    if (filter.operator === 'or') {
-      const fieldValue = fieldValues.map(v => v.toLowerCase())
-      const targetValues = filter.value.map(v => v.toLowerCase())
-      return targetValues.some(v => fieldValue.includes(v))
-    }
-
-    else {
-      const fieldValue = fieldValues.join(' ').toLowerCase()
-      const targetValue = filter.value.toLowerCase()
-
-      if (filter.operator === 'and') {
-        return fieldValue.includes(targetValue)
-      }
-      else if (filter.operator === 'not') {
-        return !fieldValue.includes(targetValue)
-      }
-      else {
-        throw new Error(`Unhandled string operator: ${filter.operator}`)
-      }
-    }
-  }
-  else if (numberFields.includes(filter.kind)) {
-    const fieldKey = fieldMapping[filter.kind]
-    const targetValue = parseFloat(filter.value)
-
-    let fieldValues = []
-    if (fieldKey in card) {
-      fieldValues.push(card[fieldKey])
-    }
-    else {
-      for (const face of card.card_faces) {
-        if (fieldKey in face) {
-          fieldValues.push(face[fieldKey])
-        }
-      }
-    }
-    fieldValues = fieldValues.map(val => parseFloat(val))
-
-
-    return fieldValues.some(fieldValue => {
-      if (fieldValue === -999) {
-        return false
-      }
-      else if (filter.operator === '=') {
-        return fieldValue === targetValue
-      }
-      else if (filter.operator === '>=') {
-        return fieldValue >= targetValue
-      }
-      else if (filter.operator === '<=') {
-        return fieldValue <= targetValue
-      }
-      else {
-        throw new Error(`Unhandled numeric operator: ${filter.operator}`)
-      }
-    })
-  }
-  else {
-    throw new Error(`Unhandled filter field: ${filter.kind}`)
-  }
-
-  return false
-}
-
 CardUtil.blankFace = function() {
   return {
     artist: '',
@@ -335,42 +134,29 @@ CardUtil.blankFace = function() {
 
 CardUtil.blank = function() {
   return {
-    card_faces: [this.blankFace()],
 
     id: '',
-    layout: 'normal',
-    rarity: 'common',
-    set: '',
-    collector_number: '',
-    legal: [],
+    source: 'adhoc_token',
 
-    name: '',
-    type_line: '',
+    data: {
+      id: '',
+      name: '',
+      type_line: '',
 
-    cmc: '0',
-    color_identity: [],
-    colors: [],
-    produced_mana: [],
+      layout: 'normal',
+      cmc: 0,
+      digital: false,
+      rarity: 'common',
+
+      color_identity: [],
+      colors: [],
+      produced_mana: [],
+
+      card_faces: [this.blankFace()],
+
+      legal: [],
+    }
   }
-}
-
-CardUtil.equals = function(a, b) {
-  return this.softEquals(a, b)
-}
-
-CardUtil.softEquals = function(a, b) {
-  const aName = a.name.split(' // ')[0].toLowerCase()
-  const bName = b.name.split(' // ')[0].toLowerCase()
-
-  return aName === bName
-}
-
-CardUtil.strictEquals = function(a, b) {
-  return (
-    a.name === b.name
-    && a.set == b.set
-    && a.collector_number === b.collector_number
-  )
 }
 
 CardUtil.getSortType = function(card) {
@@ -385,30 +171,6 @@ CardUtil.getSortType = function(card) {
   }
 
   return 'other'
-}
-
-CardUtil.isLand = function(card) {
-  if (card.data) {
-    card = card.data
-  }
-  else {
-    return false
-  }
-  return card.type_line.toLowerCase().includes('land')
-}
-
-CardUtil.isArtifact = function(card) {
-  if (card.data) {
-    card = card.data
-  }
-  else {
-    return false
-  }
-  return card.type_line.toLowerCase().includes('artifact')
-}
-
-CardUtil.isScarred = function(card) {
-  return Boolean(card.custom_id)
 }
 
 CardUtil.parseRulesLine = function(line) {
@@ -507,32 +269,6 @@ CardUtil.parseOracleText = function(text) {
   }
 
   return output
-}
-
-CardUtil.frameColor = function(card) {
-  if (card.colors.length === 1) {
-    switch (card.colors[0].toUpperCase()) {
-      case 'R': return 'red';
-      case 'W': return 'white';
-      case 'U': return 'blue';
-      case 'G': return 'green';
-      case 'B': return 'black';
-      default:
-        throw new Error('Unknown single color: ' + card.colors[0])
-    }
-  }
-
-  else if (card.colors.length > 1) {
-    return 'gold'
-  }
-
-  else if (this.isLand(card)) {
-    return 'land'
-  }
-
-  else {
-    return 'artifact'
-  }
 }
 
 CardUtil.manaSymbolFromString = function(text) {
@@ -660,11 +396,9 @@ CardUtil.parseCardlist = function(cardlist) {
   return cards
 }
 
-function parseCardListLine(line0) {
-  const [line1, count] = parseCardLineCount(line0)
-  const data = parseCardLineName(line1)
-  data.count = count
-  return data
+function parseCardListLine(line) {
+  const [name, count] = parseCardLineCount(line)
+  return { name, count }
 }
 
 function parseCardLineCount(line) {
@@ -688,68 +422,4 @@ function parseCardLineCount(line) {
   else {
     return [line, 1]
   }
-}
-
-function parseCardLineName(line) {
-  const tokens = line.split(' ')
-  const output = {
-    name: line,
-    setCode: null,
-    collectorNumber: null,
-  }
-
-  if (tokens.length < 3) {
-    return output
-  }
-
-  const lastToken = tokens[tokens.length - 1]
-  if (!util.isDigit(lastToken.charAt(0))) {
-    return output
-  }
-
-  const penultimateToken = tokens[tokens.length - 2]
-  if (penultimateToken.slice(0, 1) === '(' && penultimateToken.slice(-1) === ')') {
-    output.name = tokens.slice(0, -2).join(' ')
-    output.setCode = penultimateToken.slice(1, -1)
-    output.collectorNumber = lastToken
-  }
-
-  return output
-}
-
-// Return true if the playable stats are the same, false otherwise.
-CardUtil.playableStatsEquals = function(a, b) {
-  const topEquals = (
-    a.name === b.name
-    && a.layout === b.layout
-    && a.type_line === b.type_line
-    && a.cmc === b.cmc
-    && a.card_faces.length === b.card_faces.length
-  )
-
-  if (!topEquals) {
-    return false
-  }
-
-  for (let i = 0; i < a.card_faces.length; i++) {
-    const af = a.card_faces[i]
-    const bf = b.card_faces[i]
-
-    const faceEquals = (
-      af.name === bf.name
-      && af.oracle_text === bf.oracle_text
-      && af.type_line === bf.type_line
-      && af.mana_cost === bf.mana_cost
-      && af.defense === bf.defense
-      && af.loyalty === bf.loyalty
-      && af.power === bf.power
-      && af.toughness === bf.toughness
-    )
-
-    if (!faceEquals) {
-      return false
-    }
-  }
-
-  return true
 }

@@ -1,5 +1,4 @@
 const CardBase = require(`../CardBase.js`)
-const { GameOverEvent } = require('../../../lib/game.js')
 
 function Card() {
   this.id = `International Prototype Metre Bar`  // Card names are unique in Innovation
@@ -13,7 +12,7 @@ function Card() {
   this.echo = ``
   this.karma = []
   this.dogma = [
-//    `Choose a value. Draw and meld a card of that value. Splay up the color of the melded card. If the number of cards of that color visible on your board is exactly equal to the card's value, you win. Otherwise, return the melded card.`
+    //    `Choose a value. Draw and meld a card of that value. Splay up the color of the melded card. If the number of cards of that color visible on your board is exactly equal to the card's value, you win. Otherwise, return the melded card.`
     `Choose a value. Draw and meld a card of that value. Splay up the color of the melded card. If the number of cards of that color visible on your board is exactly equal to the card's value, draw and score a {0}. Otherwise, return the melded card.`
   ]
 

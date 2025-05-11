@@ -2,11 +2,11 @@ const {
   Game,
   GameFactory,
   GameOverEvent,
-  InputRequestEvent,
 } = require('../../lib/game.js')
 
-const Pack = require('./pack.js')
+const { Pack } = require('./pack.js')
 const util = require('../../lib/util.js')
+
 
 module.exports = {
   GameOverEvent,
@@ -20,7 +20,6 @@ module.exports = {
 function CubeDraft(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
-  this.cardLookupFunc = null
   this.cardsById = {}
 }
 
@@ -31,9 +30,9 @@ function CubeDraftFactory(settings, viewerName) {
   return new CubeDraft(data, viewerName)
 }
 
-function factoryFromLobby(lobby, db) {
+function factoryFromLobby(lobby) {
   return GameFactory({
-    game: 'CubeDraft',
+    game: lobby.game,
     name: lobby.name,
     players: lobby.users,
     seed: lobby.seed,
@@ -60,15 +59,6 @@ CubeDraft.prototype.serialize = function() {
   base.gameOverData = this.gameOverData
 
   return base
-}
-
-CubeDraft.prototype.run = function() {
-  if (this.cardLookupFunc) {
-    return Game.prototype.run.call(this)
-  }
-  else {
-    // do nothing
-  }
 }
 
 CubeDraft.prototype._mainProgram = function() {
@@ -123,7 +113,7 @@ CubeDraft.prototype.initializePlayers = function() {
 }
 
 CubeDraft.prototype.initializePacks = function() {
-  this.state.packs = this.settings.packs.map(pack => new Pack(this, pack))
+  this.state.packs = this.settings.packs.map(packData => new Pack(this, packData))
   this.cardsById = {}
 
   this.mLog({ template: 'Passing out packs' })
@@ -315,7 +305,9 @@ CubeDraft.prototype.checkIsScarAction = function(player) {
       && !player.scarredRounds.includes(packRound)
     )
   }
-  else return false
+  else {
+    return false
+  }
 }
 
 CubeDraft.prototype.checkPlayerHasOption = function(player) {

@@ -16,7 +16,7 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player) => {}
+    () => {}
   ]
   this.echoImpl = []
   this.inspireImpl = []

@@ -146,8 +146,6 @@ describe("Hot Air Balloon", () => {
     const request2 = t.choose(game, request1, 'Dogma.Hot Air Balloon')
     const request3 = t.choose(game, request2, 'Philosophy')
 
-    t.dumpLog(game)
-
     t.testIsSecondPlayer(request3)
     t.testBoard(game, {
       dennis: {

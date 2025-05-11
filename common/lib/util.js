@@ -18,24 +18,36 @@ Util.array.chunk = function(array, size) {
   return chunks
 }
 
-Util.array.collect = function(elems, keyFunc, valueFunc) {
+/**
+ * Groups array elements by keys and collects them into an object.
+ *
+ * @param {Array} elems - The array of elements to process
+ * @param {Function} keyFunc - Function that returns a key or array of keys for each element
+ * @param {Function} [valueFunc] - Optional function to transform each element before collection
+ * @returns {Object} An object where keys are the results of keyFunc and values are arrays of
+ *                   (transformed) elements that correspond to each key
+ */
+Util.array.collect = function(elems, keyFunc, valueFunc = elem => elem) {
   const output = {}
 
+  if (!Array.isArray(elems) || elems.length === 0) {
+    return output
+  }
+
   for (const elem of elems) {
-    let keys = keyFunc(elem)
-    if (!Array.isArray(keys)) {
-      keys = [keys]
-    }
+    // Normalize keys to always be an array
+    const keys = [].concat(keyFunc(elem))
 
     for (const key of keys) {
-      const value = valueFunc ? valueFunc(elem) : elem
+      if (key === null) {
+        continue
+      }
 
-      if (key in output) {
-        output[key].push(value)
+      if (!(key in output)) {
+        output[key] = []
       }
-      else {
-        output[key] = [value]
-      }
+
+      output[key].push(valueFunc(elem))
     }
   }
 
@@ -49,8 +61,31 @@ Util.array.countBy = function(array, fn) {
   }, {})
 }
 
-Util.array.distinct = function(array) {
-  return [...new Set(array)]
+/**
+ * Returns an array of distinct elements based on the key function.
+ * If multiple elements have the same key, only the first one is kept.
+ *
+ * @param {Array} array - The array to process
+ * @param {Function} keyFunc - Function to extract the key for comparison
+ * @returns {Array} Array with duplicate elements removed
+ */
+Util.array.distinct = function(array, keyFunc = elem => elem) {
+  if (!array || array.length === 0) {
+    return []
+  }
+
+  const seen = new Set()
+  const result = []
+
+  for (const item of array) {
+    const key = keyFunc(item)
+    if (!seen.has(key)) {
+      seen.add(key)
+      result.push(item)
+    }
+  }
+
+  return result
 }
 
 Util.array.elementsEqual = function(a, b) {
@@ -80,7 +115,7 @@ Util.array.groupBy = function(array, fn) {
   const groups = {}
   for (let i = 0; i < array.length; i++) {
     const key = fn(array[i], i, array)
-    if (!groups.hasOwnProperty(key)) {
+    if (!Object.hasOwn(groups, key)) {
       groups[key] = []
     }
 
@@ -110,6 +145,13 @@ Util.array.pushUnique = function(array, value) {
 
 Util.array.remove = function(array, elem) {
   const index = array.indexOf(elem)
+  if (index !== -1) {
+    array.splice(index, 1)
+  }
+}
+
+Util.array.removeByPredicate = function(array, pred) {
+  const index = array.find(pred)
   if (index !== -1) {
     array.splice(index, 1)
   }
@@ -190,12 +232,28 @@ Util.array.takeWhile = function(array, predicate) {
   return accumulator
 }
 
-Util.array.toDict = function(array) {
-  const dict = {}
-  for (const [key, value] of array) {
-    dict[key] = value
+/**
+ * Converts an array of objects into a dictionary mapping keys to objects
+ *
+ * @param {Array} array - Array of objects to convert
+ * @param {Function|string} keyFn - Function to extract key or property name to use as key
+ * @returns {Object} Dictionary mapping keys to objects
+ */
+Util.array.toDict = function(array, keyFn) {
+  const keyFunc = typeof keyFn === 'string'
+    ? (obj) => obj[keyFn]
+    : keyFn
+
+  const result = {}
+
+  for (const item of array) {
+    const key = keyFunc(item)
+    if (key != null) {
+      result[key] = item
+    }
   }
-  return dict
+
+  return result
 }
 
 Util.array.uniqueMaxBy = function(array, pred) {
@@ -347,6 +405,10 @@ Util.toTitleCase = function(str) {
     .split()
     .map(token => token[0].toUpperCase() + token.slice(1))
     .join(' ')
+}
+
+Util.toSnakeCase = function(str) {
+  return str.toLowerCase().replace(/\W/g, '_')
 }
 
 Util.deepcopy = function(obj) {

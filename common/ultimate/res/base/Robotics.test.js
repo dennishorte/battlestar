@@ -3,7 +3,7 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 
 describe('Robotics', () => {
-  test('dogma: no matching biscuit', () => {
+  test('dogma: no matching biscuit, no green', () => {
     const game = t.fixtureFirstPlayer()
     t.setBoard(game,  {
       dennis: {
@@ -29,7 +29,7 @@ describe('Robotics', () => {
     })
   })
 
-  test('dogma: no matching biscuit', () => {
+  test('dogma: no matching biscuit, with green', () => {
     const game = t.fixtureFirstPlayer()
     t.setBoard(game,  {
       dennis: {

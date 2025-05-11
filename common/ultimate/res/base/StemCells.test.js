@@ -38,6 +38,6 @@ describe('Stem Cells', () => {
     request = t.choose(game, request, 'Dogma.Stem Cells')
     t.choose(game, request, 'no')
 
-      expect(t.cards(game, 'score')).toStrictEqual([])
-    })
+    expect(t.cards(game, 'score')).toStrictEqual([])
   })
+})

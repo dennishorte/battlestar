@@ -30,12 +30,12 @@ for (const data of baseData) {
     cards.push(card)
     byId[card.id] = card
 
-    if (!byExpansion.hasOwnProperty(card.expansion)) {
+    if (!Object.hasOwn(byExpansion, card.expansion)) {
       byExpansion[card.expansion] = []
     }
     byExpansion[card.expansion].push(card)
 
-    if (!byName.hasOwnProperty(card.name)) {
+    if (!Object.hasOwn(byName, card.name)) {
       byName[card.name] = []
     }
     byName[card.name].push(card)

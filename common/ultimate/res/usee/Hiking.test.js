@@ -30,7 +30,7 @@ describe('Hiking', () => {
     })
   })
 
-  test('dogma: has f', () => {
+  test('dogma: has f, one base card', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {
@@ -61,7 +61,7 @@ describe('Hiking', () => {
     })
   })
 
-  test('dogma: has f', () => {
+  test('dogma: has f, two base cards', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
       dennis: {

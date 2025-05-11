@@ -1,228 +1,125 @@
 <template>
   <Modal id="card-manager-modal">
     <template #header v-if="card">
-      {{ card.name }}
+      {{ card.name() }}
     </template>
 
-    <template v-if="card">
-      <div class="wrapper">
-        <div class="left-side">
-          <h5>Deck Info</h5>
-
-          <template v-if="activeDeck">
-            <CardManagerButtonGroup
-              name="main"
-              variant="primary"
-              :count="mainCount"
-              @add-card="addCard"
-              @remove-card="removeCard"
-            />
-
-            <CardManagerButtonGroup
-              name="side"
-              variant="info"
-              :count="sideCount"
-              @add-card="addCard"
-              @remove-card="removeCard"
-            />
-
-            <CardManagerButtonGroup
-              name="cmnd"
-              variant="success"
-              :count="commandCount"
-              @add-card="addCard"
-              @remove-card="removeCard"
-            />
-
-          </template>
-
-          <div v-else class="alert alert-warning">No deck selected</div>
-
-          <div>
-            <button class="btn btn-outline-warning" @click="debug">debug</button>
-          </div>
-        </div>
-
-        <div class="right-side">
-          <Card :card="activeVersion" />
-
-          <div class="versions">
-            <div
-              v-for="(card, index) in versions"
-              @click="setVersionIndex(index)"
-              class="version-indicator"
-              :class="index === versionIndex ? 'highlight-version-indicator': ''"
-            >{{ index }}</div>
-          </div>
-
-          <button @click="prevVersion" class="btn btn-sm btn-primary">&lt;</button>
-          <button @click="nextVersion" class="btn btn-sm btn-primary">&gt;</button>
-
-        </div>
+    <div v-if="card" class="container">
+      <Card :card="card" />
+      <div class="zone-buttons">
+        <div>modify:</div>
+        <button :class="mainButtonClasses" @click="setZone('main')">maindeck ({{ count('main') }})</button>
+        <button :class="sideButtonClasses" @click="setZone('side')">sideboard ({{ count('side') }})</button>
+        <button :class="commandButtonClasses" @click="setZone('command')">command ({{ count('command') }})</button>
       </div>
-    </template>
+
+      <div>
+        <button class="btn btn-success" @click="addCard">add</button>
+        <button class="btn btn-warning" @click="removeCard">remove</button>
+      </div>
+
+      <div>
+        <div>move to:</div>
+        <button class="btn btn-secondary" :disabled="zone === 'main'" @click="moveTo('main')">maindeck</button>
+        <button class="btn btn-secondary" :disabled="zone === 'side'" @click="moveTo('side')">sideboard</button>
+        <button class="btn btn-secondary" :disabled="zone === 'command'" @click="moveTo('command')">command</button>
+      </div>
+
+    </div>
   </Modal>
 </template>
 
 
 <script>
-import { mag } from 'battlestar-common'
-import { mapGetters, mapState } from 'vuex'
-
 import Card from '../Card'
-import CardManagerButtonGroup from './CardManagerButtonGroup'
 import Modal from '@/components/Modal'
-
 
 export default {
   name: 'CardManagerModal',
 
   components: {
     Card,
-    CardManagerButtonGroup,
     Modal,
   },
 
+  inject: ['bus'],
+
   props: {
-    cardlist: Array,
+    deck: Object,
   },
 
   data() {
     return {
-      versionIndex: 0,
+      card: null,
+      zone: null,
     }
   },
 
   computed: {
-    ...mapState('magic/dm', {
-      activeDeck: 'activeDeck',
-      card: state => state.cardManager.card,
-      source: state => state.cardManager.source,
-    }),
-
-    mainCount() { return this.count('main') },
-    sideCount() { return this.count('side') },
-    commandCount() { return this.count('command') },
-
-    activeVersion() {
-      return this.versions[this.versionIndex]
+    mainButtonClasses() {
+      return this.zone === 'main' ? ['btn', 'btn-primary'] : ['btn', 'btn-outline-primary']
     },
 
-    versions() {
-      return this
-        .cardlist
-        .filter(c => c.name === this.card.name)
-        .sort((l, r) => l === this.card ? -1 : 0)
+    sideButtonClasses() {
+      return this.zone === 'side' ? ['btn', 'btn-primary'] : ['btn', 'btn-outline-primary']
+    },
+
+    commandButtonClasses() {
+      return this.zone === 'command' ? ['btn', 'btn-primary'] : ['btn', 'btn-outline-primary']
     },
   },
 
   methods: {
-    addCard(zoneName) {
-      if (zoneName === 'cmnd') zoneName = 'command'
-      this.$store.dispatch('magic/dm/addCurrentCard', zoneName)
+    addCard() {
+      this.deck.addCard(this.card, this.zone)
     },
 
-    count(zoneName) {
-      if (!this.activeDeck) return 0
-      return this
-        .activeDeck
-        .cardlist
-        .filter(c => c.zone === zoneName && mag.util.card.softEquals(c, this.card))
-        .length
+    beginManagement({ card, zone }) {
+      this.card = card
+      this.zone = zone
+      this.$modal('card-manager-modal').show()
     },
 
-    debug() {
-      console.log(this.versions)
-      for (const version of this.versions) {
-        console.log(version.set, version.collector_number)
+    count(zone) {
+      return this.deck.cardIdsByZone[zone].filter(x => x === this.card._id).length
+    },
+
+    moveTo(zone) {
+      if (this.deck.cardIdsByZone[this.zone].includes(this.card._id)) {
+        this.deck.addCard(this.card, zone)
+        this.deck.removeCard(this.card, this.zone)
       }
     },
 
-    nextVersion() {
-      this.versionIndex = (this.versionIndex + 1) % this.versions.length
+    removeCard() {
+      this.deck.removeCard(this.card, this.zone)
     },
 
-    prevVersion() {
-      this.versionIndex = (this.versionIndex + this.versions.length - 1) % this.versions.length
-    },
-
-    removeCard(zoneName) {
-      if (zoneName === 'cmnd') zoneName = 'command'
-      this.$store.dispatch('magic/dm/removeCurrentCard', zoneName)
-    },
-
-    setVersionIndex(index) {
-      this.versionIndex = index
-    },
-  },
-
-  watch: {
-    card(newValue, oldValue) {
-      if (newValue && oldValue) {
-        this.versionIndex = 0
-      }
-      else if (newValue) {
-        this.versionIndex = 0
-        this.$modal('card-manager-modal').show()
-      }
-      else {
-        this.$modal('card-manager-modal').hide()
-      }
+    setZone(zone) {
+      this.zone = zone
     },
   },
 
   mounted() {
-    // Whenever the card management modal is closed, clear the state regarding the managed card.
-    document
-      .getElementById('card-manager-modal')
-      .addEventListener('hidden.bs.modal', () => {
-        this.$store.dispatch('magic/dm/unmanageCard')
-      })
+    this.bus.on('card-manager:begin', this.beginManagement)
   },
 }
 </script>
 
 
 <style scoped>
-.card-lock {
-  width: 1.8em;
-  height: 1.8em;
-  border: 1px solid black;
-  border-radius: .25em;
-  float: right;
-  text-align: center;
-}
-
-.version-indicator {
-  font-size: .6em;
-  min-width: 1.4em;
-  max-width: 1.4em;
-  min-height: 1.4em;
-  max-height: 1.4em;
-  margin-right: .25em;
-  margin-bottom: .25em;
-  text-align: center;
-}
-
-.highlight-version-indicator {
-  background-color: lightblue;
-  border-radius: 50%;
-}
-
-.right-side {
-  overflow: scroll;
-}
-
-.versions {
+.container {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  gap: .25em;
 }
 
-.wrapper {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: space-between;
+button:not(:first-of-type) {
+  margin-left: .25em;
+}
+
+.zone-buttons {
+  margin-top: .25em;
 }
 </style>

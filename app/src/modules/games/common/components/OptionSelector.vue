@@ -30,7 +30,10 @@
 
 
         <div class="nested-options" v-else>
-          <input type="checkbox" :value="index" v-model="selected" disabled />
+          <input type="checkbox"
+                 :value="index"
+                 v-model="selected"
+                 disabled />
           <OptionSelector :owner="owner" :selector="option" @selection-changed="childChanged" />
         </div>
       </div>

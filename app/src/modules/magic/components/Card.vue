@@ -2,23 +2,22 @@
   <div class="magic-card" :style="cardStyles">
     <CardFace
       v-if="card"
-      v-for="index in faceIndices"
+      v-for="index in this.card.numFaces()"
+      :key="index"
       :card="card"
-      :index="index"
+      :index="index - 1"
       :size="size"
+      :is-editable="isEditable"
     />
   </div>
 </template>
 
 
 <script>
-import { util } from 'battlestar-common'
-
 import CardFace from './CardFace'
 
-
 export default {
-  name: 'GameCard',
+  name: 'Card',
 
   components: {
     CardFace,
@@ -29,15 +28,17 @@ export default {
       type: Object,
       default: null,
     },
-
     size: {
       type: Number,
       default: 200,
     },
-
     scrollable: {
       type: Boolean,
       default: true
+    },
+    isEditable: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -48,15 +49,6 @@ export default {
       }
       else {
         return { 'overflow-y': 'hidden' }
-      }
-    },
-
-    faceIndices() {
-      if (this.card.card_faces) {
-        return util.range(this.card.card_faces.length)
-      }
-      else {
-        return [0]
       }
     },
   },
@@ -219,7 +211,7 @@ $gold: #d9631b;
       background-color: black;
     }
     .frame-header,
-    .frame-pt-loyalty,
+    .frame-power-toughness,
     .frame-type-line {
       display: flex;
       flex-direction: row;
@@ -239,7 +231,19 @@ $gold: #d9631b;
     .frame-mana-cost {
       font-size: $unit * 4.5;
     }
-    .frame-pt-loyalty {
+    .frame-defense,
+    .frame-loyalty{
+      width: $unit * 15;
+      align-self: flex-end;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      height: $unit * 9;
+      position: absolute;
+      bottom: 0;
+      right: $unit;
+    }
+    .frame-power-toughness {
       width: $unit * 15;
       align-self: flex-end;
       align-items: center;
@@ -271,7 +275,7 @@ $gold: #d9631b;
 
       div {
         flex-direction: column;
-        padding: 0 $unit;
+        padding: ($unit * .2) ($unit * .5);
       }
       p {
         margin-bottom: $unit * 2;

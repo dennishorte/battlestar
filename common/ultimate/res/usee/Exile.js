@@ -16,7 +16,7 @@ function Card() {
   ]
 
   this.dogmaImpl = [
-    (game, player, { leader }) => {
+    (game, player) => {
       const choices = game
         .getTopCards(player)
         .filter(card => !card.checkHasBiscuit('l'))
@@ -35,7 +35,7 @@ function Card() {
         }
       }
     },
-    (game, player, { leader }) => {
+    (game, player) => {
       if (game.state.dogmaInfo.exileReturnedOneCard) {
         const topCards = game
           .getPlayerAll()
