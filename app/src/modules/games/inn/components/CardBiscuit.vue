@@ -13,38 +13,62 @@
 
 
 <script>
+import biscuitBonus1 from '@/assets/img/old/biscuit-bonus-1.png'
+import biscuitBonus2 from '@/assets/img/old/biscuit-bonus-2.png'
+import biscuitBonus3 from '@/assets/img/old/biscuit-bonus-3.png'
+import biscuitBonus4 from '@/assets/img/old/biscuit-bonus-4.png'
+import biscuitBonus5 from '@/assets/img/old/biscuit-bonus-5.png'
+import biscuitBonus6 from '@/assets/img/old/biscuit-bonus-6.png'
+import biscuitBonus7 from '@/assets/img/old/biscuit-bonus-7.png'
+import biscuitBonus8 from '@/assets/img/old/biscuit-bonus-8.png'
+import biscuitBonus9 from '@/assets/img/old/biscuit-bonus-9.png'
+import biscuitBonus10 from '@/assets/img/old/biscuit-bonus-10.png'
+import biscuitBonus11 from '@/assets/img/old/biscuit-bonus-11.png'
+import biscuitBlackflag from '@/assets/img/old/biscuit-blackflag.png'
+import biscuitWhiteflag from '@/assets/img/old/biscuit-whiteflag.png'
+import biscuitPlus from '@/assets/img/old/biscuit-plus.png'
+import biscuitLeft from '@/assets/img/old/biscuit-left.png'
+import biscuitRight from '@/assets/img/old/biscuit-right.png'
+import biscuitUp from '@/assets/img/old/biscuit-up.png'
+import biscuitEcho from '@/assets/img/old/biscuit-echo.png'
+import biscuitInspire from '@/assets/img/old/biscuit-inspire.png'
+import biscuitHex from '@/assets/img/old/biscuit-hex.png'
+import biscuitHexnote from '@/assets/img/old/biscuit-hexnote.png'
+import biscuitCrown from '@/assets/img/old/biscuit-crown.png'
+import biscuitFactory from '@/assets/img/old/biscuit-factory.png'
+import biscuitClock from '@/assets/img/old/biscuit-clock.png'
+import biscuitCastle from '@/assets/img/old/biscuit-castle.png'
+import biscuitLeaf from '@/assets/img/old/biscuit-leaf.png'
+import biscuitLightbulb from '@/assets/img/old/biscuit-lightbulb.png'
+
 const imageMap = {
-  '1': require('@/assets/img/old/biscuit-bonus-1.png'),
-  '2': require('@/assets/img/old/biscuit-bonus-2.png'),
-  '3': require('@/assets/img/old/biscuit-bonus-3.png'),
-  '4': require('@/assets/img/old/biscuit-bonus-4.png'),
-  '5': require('@/assets/img/old/biscuit-bonus-5.png'),
-  '6': require('@/assets/img/old/biscuit-bonus-6.png'),
-  '7': require('@/assets/img/old/biscuit-bonus-7.png'),
-  '8': require('@/assets/img/old/biscuit-bonus-8.png'),
-  '9': require('@/assets/img/old/biscuit-bonus-9.png'),
-  'a': require('@/assets/img/old/biscuit-bonus-10.png'),
-  'b': require('@/assets/img/old/biscuit-bonus-11.png'),
-
-  ':': require('@/assets/img/old/biscuit-blackflag.png'),
-  ';': require('@/assets/img/old/biscuit-whiteflag.png'),
-  '+': require('@/assets/img/old/biscuit-plus.png'),
-  '<': require('@/assets/img/old/biscuit-left.png'),
-  '>': require('@/assets/img/old/biscuit-right.png'),
-  '^': require('@/assets/img/old/biscuit-up.png'),
-
-  '&': require('@/assets/img/old/biscuit-echo.png'),
-  '*': require('@/assets/img/old/biscuit-inspire.png'),
-
-  'h': require('@/assets/img/old/biscuit-hex.png'),
-  'm': require('@/assets/img/old/biscuit-hexnote.png'),
-
-  'c': require('@/assets/img/old/biscuit-crown.png'),
-  'f': require('@/assets/img/old/biscuit-factory.png'),
-  'i': require('@/assets/img/old/biscuit-clock.png'),
-  'k': require('@/assets/img/old/biscuit-castle.png'),
-  'l': require('@/assets/img/old/biscuit-leaf.png'),
-  's': require('@/assets/img/old/biscuit-lightbulb.png'),
+  '1': biscuitBonus1,
+  '2': biscuitBonus2,
+  '3': biscuitBonus3,
+  '4': biscuitBonus4,
+  '5': biscuitBonus5,
+  '6': biscuitBonus6,
+  '7': biscuitBonus7,
+  '8': biscuitBonus8,
+  '9': biscuitBonus9,
+  'a': biscuitBonus10,
+  'b': biscuitBonus11,
+  ':': biscuitBlackflag,
+  ';': biscuitWhiteflag,
+  '+': biscuitPlus,
+  '<': biscuitLeft,
+  '>': biscuitRight,
+  '^': biscuitUp,
+  '&': biscuitEcho,
+  '*': biscuitInspire,
+  'h': biscuitHex,
+  'm': biscuitHexnote,
+  'c': biscuitCrown,
+  'f': biscuitFactory,
+  'i': biscuitClock,
+  'k': biscuitCastle,
+  'l': biscuitLeaf,
+  's': biscuitLightbulb,
 }
 
 export default {

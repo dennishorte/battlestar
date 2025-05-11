@@ -13,44 +13,74 @@
 
 
 <script>
+import biscuitBonus1 from '@/assets/img/new/biscuit-bonus-1.png'
+import biscuitBonus2 from '@/assets/img/new/biscuit-bonus-2.png'
+import biscuitBonus3 from '@/assets/img/new/biscuit-bonus-3.png'
+import biscuitBonus4 from '@/assets/img/new/biscuit-bonus-4.png'
+import biscuitBonus5 from '@/assets/img/new/biscuit-bonus-5.png'
+import biscuitBonus6 from '@/assets/img/new/biscuit-bonus-6.png'
+import biscuitBonus7 from '@/assets/img/new/biscuit-bonus-7.png'
+import biscuitBonus8 from '@/assets/img/new/biscuit-bonus-8.png'
+import biscuitBonus9 from '@/assets/img/new/biscuit-bonus-9.png'
+import biscuitBonus10 from '@/assets/img/new/biscuit-bonus-10.png'
+import biscuitBonus11 from '@/assets/img/new/biscuit-bonus-11.png'
+import biscuitBonus12 from '@/assets/img/new/biscuit-bonus-12.png'
+import biscuitFountain from '@/assets/img/new/biscuit-fountain.png'
+import biscuitFlag from '@/assets/img/new/biscuit-flag.png'
+import biscuitPlus from '@/assets/img/new/biscuit-plus.png'
+import biscuitLeft from '@/assets/img/new/biscuit-left.png'
+import biscuitRight from '@/assets/img/new/biscuit-right.png'
+import biscuitUp from '@/assets/img/new/biscuit-up.png'
+import biscuitAslant from '@/assets/img/new/biscuit-aslant.png'
+import biscuitUplift from '@/assets/img/new/biscuit-uplift.png'
+import biscuitUnsplay from '@/assets/img/new/biscuit-unsplay.png'
+import biscuitJunk from '@/assets/img/new/biscuit-junk.png'
+import biscuitEcho from '@/assets/img/new/biscuit-echo.png'
+import biscuitHex from '@/assets/img/new/biscuit-hex.png'
+import biscuitHexnote from '@/assets/img/new/biscuit-hexnote.png'
+import biscuitCrown from '@/assets/img/new/biscuit-crown.png'
+import biscuitFactory from '@/assets/img/new/biscuit-factory.png'
+import biscuitClock from '@/assets/img/new/biscuit-clock.png'
+import biscuitCastle from '@/assets/img/new/biscuit-castle.png'
+import biscuitLeaf from '@/assets/img/new/biscuit-leaf.png'
+import biscuitLightbulb from '@/assets/img/new/biscuit-lightbulb.png'
+import biscuitPerson from '@/assets/img/new/biscuit-person.png'
+import biscuitMeat from '@/assets/img/new/biscuit-meat.png'
+
 const imageMap = {
-  '1': require('@/assets/img/new/biscuit-bonus-1.png'),
-  '2': require('@/assets/img/new/biscuit-bonus-2.png'),
-  '3': require('@/assets/img/new/biscuit-bonus-3.png'),
-  '4': require('@/assets/img/new/biscuit-bonus-4.png'),
-  '5': require('@/assets/img/new/biscuit-bonus-5.png'),
-  '6': require('@/assets/img/new/biscuit-bonus-6.png'),
-  '7': require('@/assets/img/new/biscuit-bonus-7.png'),
-  '8': require('@/assets/img/new/biscuit-bonus-8.png'),
-  '9': require('@/assets/img/new/biscuit-bonus-9.png'),
-  'a': require('@/assets/img/new/biscuit-bonus-10.png'),
-  'b': require('@/assets/img/new/biscuit-bonus-11.png'),
-  't': require('@/assets/img/new/biscuit-bonus-12.png'),
-
-  ':': require('@/assets/img/new/biscuit-fountain.png'),
-  ';': require('@/assets/img/new/biscuit-flag.png'),
-  '+': require('@/assets/img/new/biscuit-plus.png'),
-  '<': require('@/assets/img/new/biscuit-left.png'),
-  '>': require('@/assets/img/new/biscuit-right.png'),
-  '^': require('@/assets/img/new/biscuit-up.png'),
-  '/': require('@/assets/img/new/biscuit-aslant.png'),
-  '|': require('@/assets/img/new/biscuit-uplift.png'),
-  '=': require('@/assets/img/new/biscuit-unsplay.png'),
-  'x': require('@/assets/img/new/biscuit-junk.png'),
-
-  '&': require('@/assets/img/new/biscuit-echo.png'),
-
-  'h': require('@/assets/img/new/biscuit-hex.png'),
-  'm': require('@/assets/img/new/biscuit-hexnote.png'),
-
-  'c': require('@/assets/img/new/biscuit-crown.png'),
-  'f': require('@/assets/img/new/biscuit-factory.png'),
-  'i': require('@/assets/img/new/biscuit-clock.png'),
-  'k': require('@/assets/img/new/biscuit-castle.png'),
-  'l': require('@/assets/img/new/biscuit-leaf.png'),
-  's': require('@/assets/img/new/biscuit-lightbulb.png'),
-  'p': require('@/assets/img/new/biscuit-person.png'),
-  'r': require('@/assets/img/new/biscuit-meat.png'),      // r = raw meat
+  '1': biscuitBonus1,
+  '2': biscuitBonus2,
+  '3': biscuitBonus3,
+  '4': biscuitBonus4,
+  '5': biscuitBonus5,
+  '6': biscuitBonus6,
+  '7': biscuitBonus7,
+  '8': biscuitBonus8,
+  '9': biscuitBonus9,
+  'a': biscuitBonus10,
+  'b': biscuitBonus11,
+  't': biscuitBonus12,
+  ':': biscuitFountain,
+  ';': biscuitFlag,
+  '+': biscuitPlus,
+  '<': biscuitLeft,
+  '>': biscuitRight,
+  '^': biscuitUp,
+  '/': biscuitAslant,
+  '|': biscuitUplift,
+  '=': biscuitUnsplay,
+  'x': biscuitJunk,
+  '&': biscuitEcho,
+  'h': biscuitHex,
+  'm': biscuitHexnote,
+  'c': biscuitCrown,
+  'f': biscuitFactory,
+  'i': biscuitClock,
+  'k': biscuitCastle,
+  'l': biscuitLeaf,
+  's': biscuitLightbulb,
+  'p': biscuitPerson,
+  'r': biscuitMeat,
 }
 
 export default {
