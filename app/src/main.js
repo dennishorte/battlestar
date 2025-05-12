@@ -1,4 +1,6 @@
 import { createApp } from 'vue'
+import { createBootstrap } from 'bootstrap-vue-next'
+
 import App from '@/App.vue'
 import router from '@/router'
 import store from '@/store'
@@ -8,13 +10,14 @@ authUtil.initialize()
 
 // Global Styles
 import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap'
+import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import 'mana-font/css/mana.min.css'
 
 import '@/assets/css/tyrants.css'
 
 const app = createApp(App)
+app.use(createBootstrap())
 app.use(router)
 app.use(store)
 

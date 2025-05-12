@@ -1,8 +1,15 @@
+const { BootstrapVueNextResolver } = require('bootstrap-vue-next')
+
 module.exports = {
   configureWebpack: {
     resolve: {
       symlinks: false
-    }
+    },
+    plugins: [
+      require('unplugin-vue-components/webpack').default({
+        resolvers: [ BootstrapVueNextResolver() ],
+      }),
+    ],
   },
   css: {
     loaderOptions: {

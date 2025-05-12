@@ -14,8 +14,8 @@ async function main() {
   await versionsCollection.updateOne({ name: 'app' }, { $set: { value: version } })
 
   // Write the latest version into the code
-  fs.writeFileSync('./app/src/assets/version.js', 'export default ' + version)
-  fs.writeFileSync('./api/src/version.js', 'module.exports = ' + version)
+  fs.writeFileSync('./app/src/assets/version.js', 'export default ' + version + '\n')
+  fs.writeFileSync('./api/src/version.js', 'module.exports = ' + version + '\n')
 
   process.exit(0)
 }
