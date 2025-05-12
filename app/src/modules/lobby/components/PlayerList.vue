@@ -2,13 +2,13 @@
   <div class="lobby-player-list">
     <div>
       <div class="float-end">
-        <button
-          class="btn btn-outline-success btn-sm"
-          data-bs-toggle="modal"
-          data-bs-target="#add-players-modal"
+        <BButton
+          variant="outline-secondary"
+          size="sm"
+          v-b-modal.add-players-modal
         >
           +
-        </button>
+        </BButton>
       </div>
 
       <div class="section-heading">
@@ -28,18 +28,19 @@
         <tr v-for="player in lobby.users" :key="player._id">
           <td>{{ player.name }}</td>
           <td>
-            <DropdownMenu size="sm" :notitle="true" class="float-end">
-              <DropdownItem>
-                <button @click="removePlayer(player._id)">remove</button>
-              </DropdownItem>
-            </DropdownMenu>
+            <BDropdown size="sm" text="" class="float-end">
+              <BDropdownItemButton @click="removePlayer(player._id)">remove</BDropdownItemButton>
+            </BDropdown>
           </td>
         </tr>
       </tbody>
     </table>
 
-    <ModalBase id="add-players-modal" @ok="addPlayers">
-      <template #header>Add Players</template>
+    <BModal
+      id="add-players-modal"
+      title="Add Players"
+      v-model="addPlayersModalState"
+      @ok="addPlayers">
 
       <select
         id="add-players-input"
@@ -50,7 +51,7 @@
       >
         <option v-for="user in users" :key="user._id" :value="user._id">{{ user.name }}</option>
       </select>
-    </ModalBase>
+    </BModal>
 
   </div>
 </template>
@@ -59,18 +60,8 @@
 <script>
 import { util } from 'battlestar-common'
 
-import DropdownMenu from '@/components/DropdownMenu'
-import DropdownItem from '@/components/DropdownItem'
-import ModalBase from '@/components/ModalBase'
-
 export default {
   name: 'PlayerList',
-
-  components: {
-    DropdownMenu,
-    DropdownItem,
-    ModalBase,
-  },
 
   inject: ['lobby', 'save'],
 
@@ -78,6 +69,7 @@ export default {
     return {
       selected: [],  // Users currently selected in the "add users" dialog
       users: [],  // All users, for the "add users" dialog
+      addPlayersModalState: false,
     }
   },
 
