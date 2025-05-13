@@ -59,6 +59,7 @@ export default {
           count: cards.length,
           card: cards[0],
         }))
+        .sort((l, r) => l.card.cmc() - r.card.cmc())
     },
   },
 
