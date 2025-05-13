@@ -1,4 +1,4 @@
-import { fromData } from 'battlestar-common'
+import { fromData, util } from 'battlestar-common'
 import { nextTick } from 'vue'
 import router from '@/router'
 
@@ -76,7 +76,6 @@ export default {
         })
 
         game.branchId = undoResponse.serializedGame.branchId
-        _ensureServerAndClientAgreeOnGameState(game.serialize(), undoResponse.serializedGame)
       }
 
       const response = await this.$post('/api/game/save_full', game.serialize())
@@ -129,6 +128,9 @@ function delay(milliseconds) {
 function _ensureServerAndClientAgreeOnGameState(client, server) {
   if (JSON.stringify(client) !== JSON.stringify(server)) {
     console.log('game states', { client, server })
+
+    util.dict.displayDifferences(client, server)
+
     alert('State mismatch with server. Try reloading the page.')
     throw new Error('state mismatch')
   }

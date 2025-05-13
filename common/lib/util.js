@@ -288,6 +288,109 @@ Util.dict.map = function(dict, func) {
   return output
 }
 
+Util.dict.compare = function(obj1, obj2, path = '') {
+  // Initialize an array to store differences
+  const differences = []
+
+  // Get all keys from both objects
+  const allKeys = new Set([...Object.keys(obj1), ...Object.keys(obj2)])
+
+  for (const key of allKeys) {
+    const currentPath = path ? `${path}.${key}` : key
+
+    // Check if key exists in both objects
+    if (!(key in obj1)) {
+      differences.push(`Key "${currentPath}" only exists in second object with value: ${JSON.stringify(obj2[key])}`)
+      continue
+    }
+
+    if (!(key in obj2)) {
+      differences.push(`Key "${currentPath}" only exists in first object with value: ${JSON.stringify(obj1[key])}`)
+      continue
+    }
+
+    const val1 = obj1[key]
+    const val2 = obj2[key]
+
+    // Compare types
+    if (typeof val1 !== typeof val2) {
+      differences.push(`Type mismatch at "${currentPath}": ${typeof val1} vs ${typeof val2}`)
+      continue
+    }
+
+    // Handle null values
+    if (val1 === null && val2 === null) {
+      continue
+    }
+    else if (val1 === null || val2 === null) {
+      differences.push(`Value mismatch at "${currentPath}": ${JSON.stringify(val1)} vs ${JSON.stringify(val2)}`)
+      continue
+    }
+
+    // If both values are objects or arrays
+    if (typeof val1 === 'object') {
+      // Check if one is array and the other is not
+      if (Array.isArray(val1) !== Array.isArray(val2)) {
+        differences.push(`Type mismatch at "${currentPath}": ${Array.isArray(val1) ? 'array' : 'object'} vs ${Array.isArray(val2) ? 'array' : 'object'}`)
+        continue
+      }
+
+      // If both are arrays
+      if (Array.isArray(val1)) {
+        // Check array lengths
+        if (val1.length !== val2.length) {
+          differences.push(`Array length mismatch at "${currentPath}": ${val1.length} vs ${val2.length}`)
+        }
+
+        // Compare array elements
+        const maxLength = Math.max(val1.length, val2.length)
+        for (let i = 0; i < maxLength; i++) {
+          if (i >= val1.length) {
+            differences.push(`Extra element at "${currentPath}[${i}]" in second array: ${JSON.stringify(val2[i])}`)
+          }
+          else if (i >= val2.length) {
+            differences.push(`Extra element at "${currentPath}[${i}]" in first array: ${JSON.stringify(val1[i])}`)
+          }
+          else if (typeof val1[i] === 'object' && val1[i] !== null && typeof val2[i] === 'object' && val2[i] !== null) {
+            // Recursively compare objects in arrays
+            differences.push(...Util.dict.compare(val1[i], val2[i], `${currentPath}[${i}]`))
+          }
+          else if (JSON.stringify(val1[i]) !== JSON.stringify(val2[i])) {
+            differences.push(`Value mismatch at "${currentPath}[${i}]": ${JSON.stringify(val1[i])} vs ${JSON.stringify(val2[i])}`)
+          }
+        }
+      }
+      else {
+        // Recursively compare objects
+        differences.push(...Util.dict.compare(val1, val2, currentPath))
+      }
+    }
+    else if (JSON.stringify(val1) !== JSON.stringify(val2)) {
+      // For primitive values, compare stringified values
+      differences.push(`Value mismatch at "${currentPath}": ${JSON.stringify(val1)} vs ${JSON.stringify(val2)}`)
+    }
+  }
+
+  return differences
+}
+
+// Function to display differences in a readable format
+Util.dict.displayDifferences = function(obj1, obj2) {
+  const differences = Util.dict.compare(obj1, obj2)
+
+  if (differences.length === 0) {
+    console.log("Objects are identical")
+    return true
+  }
+  else {
+    console.log("Found the following differences:")
+    differences.forEach((diff, index) => {
+      console.log(`${index + 1}. ${diff}`)
+    })
+    return false
+  }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Event Functions
