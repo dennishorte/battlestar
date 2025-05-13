@@ -1,8 +1,8 @@
 const AsyncLock = require('async-lock')
-const db = require('@models/db.js')
+const db = require('#/models/db.js')
 const { fromData } = require('battlestar-common')
-const { NotFoundError, GameOverwriteError, GameKilledError } = require('@utils/errors')
-const logger = require('@utils/logger')
+const { NotFoundError, GameOverwriteError, GameKilledError } = require('#/utils/errors')
+const logger = require('#/utils/logger')
 
 const lock = new AsyncLock()
 

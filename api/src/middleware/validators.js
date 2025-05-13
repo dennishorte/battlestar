@@ -1,5 +1,5 @@
-const latestVersion = require('@/version.js')
-const { BadRequestError } = require('@utils/errors')
+const latestVersion = require('#/version.js')
+const { BadRequestError } = require('#/utils/errors')
 const { ObjectId } = require('mongodb')
 
 /*

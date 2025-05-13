@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const cardController = require('@controllers/magic/card.controller')
+const cardController = require('#/controllers/magic/card.controller')
 
 /**
  * @route POST /api/magic/card/all

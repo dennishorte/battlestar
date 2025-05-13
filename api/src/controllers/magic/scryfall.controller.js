@@ -1,4 +1,4 @@
-const db = require('@models/db.js')
+const db = require('#/models/db.js')
 
 /**
  * Update  Scryfall data

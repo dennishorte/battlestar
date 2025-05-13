@@ -1,7 +1,7 @@
 const passport = require('passport')
 const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt')
 const { ObjectId } = require('mongodb')
-const db = require('@models/db.js')
+const db = require('#/models/db.js')
 
 // Configure the Bearer strategy for use by Passport.
 passport.use(new JwtStrategy(

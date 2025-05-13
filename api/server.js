@@ -7,12 +7,12 @@ const history = require('connect-history-api-fallback')
 const path = require('path')
 
 const config = require('./config')
-const middleware = require('@/middleware')
-const logger = require('@utils/logger')
-const setupSwagger = require('@utils/swagger')
+const middleware = require('#/middleware')
+const logger = require('#/utils/logger')
+const setupSwagger = require('#/utils/swagger')
 
 // Import routes
-const apiRoutes = require('@routes/api')
+const apiRoutes = require('#/routes/api')
 
 // Initialize Express app
 const app = express()

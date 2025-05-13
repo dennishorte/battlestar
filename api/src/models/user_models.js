@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const databaseClient = require('@utils/mongo.js').client
+const databaseClient = require('#/utils/mongo.js').client
 const database = databaseClient.db('games')
 const userCollection = database.collection('user')
 

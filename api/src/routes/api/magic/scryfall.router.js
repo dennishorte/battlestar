@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const scryfallController = require('@controllers/magic/scryfall.controller')
+const scryfallController = require('#/controllers/magic/scryfall.controller')
 
 /**
  * @route POST /api/magic/scryfall/update

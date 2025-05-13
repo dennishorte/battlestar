@@ -1,6 +1,6 @@
 const Haikunator = require('haikunator')
 const haikunator = new Haikunator()
-const databaseClient = require('@utils/mongo.js').client
+const databaseClient = require('#/utils/mongo.js').client
 
 // Database and collection
 const database = databaseClient.db('games')

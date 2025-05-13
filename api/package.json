@@ -4,13 +4,7 @@
   "description": "API for Game Center",
   "main": "server.js",
   "_moduleAliases": {
-    "@": "src",
-    "@controllers": "src/controllers",
-    "@models": "src/models",
-    "@utils": "src/utils",
-    "@services": "src/services",
-    "@middleware": "src/middleware",
-    "@routes": "src/routes"
+    "#": "src"
   },
   "scripts": {
     "start": "node server.bundle.js",

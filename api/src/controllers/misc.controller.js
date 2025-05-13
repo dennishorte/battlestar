@@ -1,5 +1,5 @@
-const db = require('@models/db')
-const logger = require('@utils/logger')
+const db = require('#/models/db')
+const logger = require('#/utils/logger')
 
 /**
  * Get the application version

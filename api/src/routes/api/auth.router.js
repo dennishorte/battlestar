@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const db = require('@models/db')
-const logger = require('@utils/logger')
+const db = require('#/models/db')
+const logger = require('#/utils/logger')
 
 /**
  * @swagger
