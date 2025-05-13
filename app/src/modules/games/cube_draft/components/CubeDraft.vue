@@ -67,7 +67,6 @@
     <DebugModal />
   </MagicWrapper>
 
-  <CardManagerModal :deck="deck" />
   <CardDraftModal :id="cardDraftModalId" :card="closeupDraftCard" @draft-card="chooseCard" />
 
   <CardEditorModal :original="scarCard">
@@ -134,7 +133,6 @@ import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
 import CardEditorModal from '@/modules/magic/components/CardEditorModal'
 import CardListItem from '@/modules/magic/components/CardListItem'
-import CardManagerModal from '@/modules/magic/components/deck/CardManagerModal'
 import DeckList from '@/modules/magic/components/deck/DeckList'
 import MagicWrapper from '@/modules/magic/components/MagicWrapper'
 
@@ -144,7 +142,6 @@ export default {
 
   components: {
     AdminOptions,
-    CardManagerModal,
     CardDraftModal,
     CardEditorModal,
     CardTableau,

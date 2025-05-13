@@ -19,7 +19,7 @@
 <script>
 import { util } from 'battlestar-common'
 
-import CardListItem from '../CardListItem'
+import CardListItem from '@/modules/magic/components/CardListItem'
 import SectionHeader from '@/components/SectionHeader'
 
 export default {

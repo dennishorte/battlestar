@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import BaseImportModal from '../../components/BaseImportModal.vue'
+import BaseImportModal from '@/modules/magic/components/BaseImportModal.vue'
 
 const emit = defineEmits(['import-card-updates'])
 

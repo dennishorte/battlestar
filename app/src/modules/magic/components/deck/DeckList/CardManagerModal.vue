@@ -34,7 +34,7 @@
 
 <script>
 import ModalBase from '@/components/ModalBase'
-import MagicCard from '../MagicCard'
+import MagicCard from '@/modules/magic/components/MagicCard'
 
 export default {
   name: 'CardManagerModal',
@@ -49,7 +49,7 @@ export default {
   props: {
     deck: {
       type: Object,
-      required: true
+      default: null,
     },
   },
 
