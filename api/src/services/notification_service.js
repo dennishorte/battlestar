@@ -1,5 +1,5 @@
-import db from '#/models/db.js'
-import slack from '#/utils/slack.js'
+import db from '../models/db.js'
+import slack from '../utils/slack.js'
 
 const NotificationService = {}
 

@@ -1,4 +1,4 @@
-import db from '#/models/db.js'
+import db from '../models/db.js'
 import magicRoutes from './api/magic/index.js'
 
 // Note: These routes have been migrated to the new router system in src/routes/api

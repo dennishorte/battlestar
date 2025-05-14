@@ -4,3 +4,4 @@ import loaders from './loaders.js'
 import errors from './errors.js'
 
 export { auth, validators, loaders, errors }
+export default { auth, validators, loaders, errors }

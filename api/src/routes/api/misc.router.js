@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import * as miscController from '#/controllers/misc.controller.js'
+import * as miscController from '../../controllers/misc.controller.js'
 
 /**
  * @route GET /api/misc/version

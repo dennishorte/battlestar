@@ -1,6 +1,6 @@
-import db from '#/models/db.js'
-import logger from '#/utils/logger.js'
-import { BadRequestError } from '#/utils/errors.js'
+import db from '../../models/db.js'
+import logger from '../../utils/logger.js'
+import { BadRequestError } from '../../utils/errors.js'
 
 /**
  * Get all hexes

@@ -23,12 +23,4 @@ if (process.env.NODE_ENV !== 'test') {
   connectToMongoDB()
 }
 
-export const mongo = {
-  get client() {
-    if (!client && process.env.NODE_ENV !== 'test') {
-      throw new Error('MongoDB client not connected. Call connectToMongoDB() first.')
-    }
-    return client
-  },
-  connectToMongoDB
-}
+export { client }

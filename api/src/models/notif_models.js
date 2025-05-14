@@ -1,4 +1,4 @@
-import { client as databaseClient } from '#/utils/mongo.js'
+import { client as databaseClient } from '../utils/mongo.js'
 const database = databaseClient.db('games')
 const notifCollection = database.collection('notificationThrottle')
 

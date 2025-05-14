@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { client as databaseClient } from '#/utils/mongo.js'
+import { client as databaseClient } from '../../utils/mongo.js'
 const database = databaseClient.db('magic')
 const scryfallCollection = database.collection('scryfall')
 const versionCollection = database.collection('versions')

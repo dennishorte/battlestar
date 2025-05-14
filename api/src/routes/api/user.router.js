@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import * as userController from '#/controllers/user.controller.js'
+import * as userController from '../../controllers/user.controller.js'
 
 /**
  * @swagger
@@ -300,7 +300,7 @@ router.post('/update', userController.updateUser)
  *       401:
  *         description: Unauthorized
  */
-router.post('/magic/cubes', userController.magic.getCubes)
+router.post('/magic/cubes', userController.magic_getCubes)
 
 /**
  * @swagger
@@ -329,7 +329,7 @@ router.post('/magic/cubes', userController.magic.getCubes)
  *       401:
  *         description: Unauthorized
  */
-router.post('/magic/decks', userController.magic.getDecks)
+router.post('/magic/decks', userController.magic_getDecks)
 
 /**
  * @swagger
@@ -358,6 +358,6 @@ router.post('/magic/decks', userController.magic.getDecks)
  *       401:
  *         description: Unauthorized
  */
-router.post('/magic/files', userController.magic.getFiles)
+router.post('/magic/files', userController.magic_getFiles)
 
 export default router

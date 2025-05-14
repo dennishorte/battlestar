@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import * as gameController from '#/controllers/game.controller.js'
+import * as gameController from '../../controllers/game.controller.js'
 
 /**
  * @swagger
@@ -355,6 +355,6 @@ router.post('/undo', gameController.undo)
  *       401:
  *         description: Unauthorized
  */
-router.post('/stats/innovation', gameController.stats.innovation)
+router.post('/stats/innovation', gameController.stats_innovation)
 
 export default router

@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import * as linkController from '#/controllers/magic/link.controller.js'
+import * as linkController from '../../../controllers/magic/link.controller.js'
 
 /**
  * @route POST /api/magic/link/create

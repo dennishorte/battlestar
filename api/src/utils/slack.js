@@ -8,12 +8,6 @@ const client = new WebClient(token)
 // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
 const cloChannelId = 'C01AV1RGJSK'
 
-export {
-  sendMessage,
-  sendToSlackId,
-  test,
-}
-
 async function sendToSlackId(slackId, message) {
   return await client.chat.postMessage({ channel: slackId, text: message })
 }
@@ -70,4 +64,16 @@ async function test() {
   console.log('Message sent: ', res.ts)
 
   return res
+}
+
+export {
+  sendMessage,
+  sendToSlackId,
+  test,
+}
+
+export default {
+  sendMessage,
+  sendToSlackId,
+  test,
 }

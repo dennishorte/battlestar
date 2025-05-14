@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb'
-import db from '#/models/db.js'
-import { BadRequestError, NotFoundError } from '#/utils/errors.js'
-import logger from '#/utils/logger.js'
+import db from '../models/db.js'
+import { BadRequestError, NotFoundError } from '../utils/errors.js'
+import logger from '../utils/logger.js'
 
 // User controller methods
 export const getAllUsers = async (req, res, next) => {

@@ -1,8 +1,8 @@
-import db from '#/models/db.js'
-import notificationService from '#/services/notification_service.js'
+import db from '../models/db.js'
+import notificationService from './notification_service.js'
 import { magic } from 'battlestar-common'
 
-import { GameKilledError, GameOverwriteError } from '#/middleware/loaders.js'
+import { GameKilledError, GameOverwriteError } from '../middleware/loaders.js'
 import { GameOverEvent, fromData } from 'battlestar-common'
 
 const Game = {}

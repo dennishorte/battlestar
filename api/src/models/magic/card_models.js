@@ -1,5 +1,5 @@
 import AsyncLock from 'async-lock'
-import { client as databaseClient } from '#/utils/mongo.js'
+import { client as databaseClient } from '../../utils/mongo.js'
 const database = databaseClient.db('magic')
 
 const customCollection = database.collection('custom_cards')

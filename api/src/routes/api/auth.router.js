@@ -1,7 +1,7 @@
 import express from 'express'
 const router = express.Router()
-import db from '#/models/db.js'
-import logger from '#/utils/logger.js'
+import db from '../../models/db.js'
+import logger from '../../utils/logger.js'
 
 /**
  * @swagger

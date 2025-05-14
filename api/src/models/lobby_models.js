@@ -1,6 +1,6 @@
 import Haikunator from 'haikunator'
 const haikunator = new Haikunator()
-import { client as databaseClient } from '#/utils/mongo.js'
+import { client as databaseClient } from '../utils/mongo.js'
 
 // Database and collection
 const database = databaseClient.db('games')

@@ -1,7 +1,7 @@
 import passport from 'passport'
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
 import { ObjectId } from 'mongodb'
-import db from '#/models/db.js'
+import db from '../models/db.js'
 
 // Configure the Bearer strategy for use by Passport.
 passport.use(new JwtStrategy(

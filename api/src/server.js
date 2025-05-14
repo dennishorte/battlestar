@@ -7,13 +7,13 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 // Import local modules
-import config from '#/config'
-import middleware from '#/middleware'
-import logger from '#/utils/logger'
-import setupSwagger from '#/utils/swagger'
+import config from './config/index.js'
+import middleware from './middleware/index.js'
+import logger from './utils/logger.js'
+import setupSwagger from './utils/swagger.js'
 
 // Import routes
-import apiRoutes from '#/routes/api'
+import apiRoutes from './routes/api/index.js'
 
 // Get current directory
 const __filename = fileURLToPath(import.meta.url)

@@ -1,8 +1,8 @@
 import AsyncLock from 'async-lock'
-import db from '#/models/db.js'
+import db from '../models/db.js'
 import { fromData } from 'battlestar-common'
-import { NotFoundError, GameOverwriteError, GameKilledError } from '#/utils/errors'
-import logger from '#/utils/logger'
+import { NotFoundError, GameOverwriteError, GameKilledError } from '../utils/errors.js'
+import logger from '../utils/logger.js'
 
 const lock = new AsyncLock()
 

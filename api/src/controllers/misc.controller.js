@@ -1,5 +1,5 @@
-import db from '#/models/db.js'
-import logger from '#/utils/logger.js'
+import db from '../models/db.js'
+import logger from '../utils/logger.js'
 
 /**
  * Get the application version

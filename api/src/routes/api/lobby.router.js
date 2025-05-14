@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import * as lobbyController from '#/controllers/lobby.controller.js'
+import * as lobbyController from '../../controllers/lobby.controller.js'
 
 /**
  * @route POST /api/lobby/all

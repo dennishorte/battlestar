@@ -1,5 +1,5 @@
-import latestVersion from '#/version.js'
-import { BadRequestError } from '#/utils/errors'
+import latestVersion from '../version.js'
+import { BadRequestError } from '../utils/errors.js'
 import { ObjectId } from 'mongodb'
 
 /*

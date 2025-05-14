@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import * as deckController from '#/controllers/magic/deck.controller.js'
+import * as deckController from '../../../controllers/magic/deck.controller.js'
 
 /**
  * @route POST /api/magic/deck/create
@@ -14,7 +14,7 @@ router.post('/create', deckController.create)
  * @desc Delete a deck
  * @access Private
  */
-router.post('/delete', deckController.delete)
+router.post('/delete', deckController.deleteDeck)
 
 /**
  * @route POST /api/magic/deck/duplicate

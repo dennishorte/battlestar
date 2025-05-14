@@ -15,3 +15,13 @@ export {
   notif,
   user
 }
+
+export default {
+  magic,
+  tyrants,
+  misc,
+  lobby,
+  game,
+  notif,
+  user
+}

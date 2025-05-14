@@ -1,9 +1,9 @@
-import db from '#/models/db.js'
-import logger from '#/utils/logger.js'
-import stats from '#/utils/stats.js'
-import gameService from '#/services/game_service.js'
-import { NotFoundError } from '#/utils/errors.js'
-import { GameOverwriteError, GameKilledError } from '#/middleware/loaders.js'
+import db from '../models/db.js'
+import logger from '../utils/logger.js'
+import stats from '../utils/stats.js'
+import gameService from '../services/game_service.js'
+import { NotFoundError } from '../utils/errors.js'
+import { GameOverwriteError, GameKilledError } from '../middleware/loaders.js'
 
 // Game controller methods
 export const create = async (req, res, next) => {
