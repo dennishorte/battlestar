@@ -121,7 +121,7 @@ export default {
         output.push({
           id: this.deck.name + '|command',
           name: 'command zone',
-          cards: this.deck.cards('side'),
+          cards: this.deck.cards('command'),
         })
         return output
       }
