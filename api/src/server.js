@@ -6,7 +6,7 @@ const bodyParser = require('body-parser')
 const history = require('connect-history-api-fallback')
 const path = require('path')
 
-const config = require('./config')
+const config = require('#/config')
 const middleware = require('#/middleware')
 const logger = require('#/utils/logger')
 const setupSwagger = require('#/utils/swagger')
@@ -21,7 +21,7 @@ const port = config.port || 3000
 ////////////////////////////////////////////////////////////
 // Middleware
 app.use(history({ index: '/' }))
-app.use(express.static(path.join(__dirname, '../app/dist')))
+app.use(express.static(path.join(__dirname, '../../app/dist')))
 app.use(middleware.auth.authenticate)
 app.use(bodyParser.json({ limit: "500kb" }))
 app.use(middleware.validators.ensureVersion)

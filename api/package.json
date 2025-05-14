@@ -2,14 +2,14 @@
   "name": "api",
   "version": "1.0.0",
   "description": "API for Game Center",
-  "main": "server.js",
+  "main": "src/server.js",
   "_moduleAliases": {
     "#": "src"
   },
   "scripts": {
     "start": "node server.bundle.js",
     "build": "webpack",
-    "dev": "nodemon ./server.js",
+    "dev": "nodemon ./src/server.js",
     "test": "jest --runInBand --config=jest.config.js",
     "test:watch": "jest --watch --config=jest.config.js",
     "test:coverage": "jest --coverage --config=jest.config.js",

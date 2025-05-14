@@ -7,7 +7,7 @@ jest.mock('../../src/models/db', () => require('../mocks/db.mock'))
 // Mock passport
 jest.mock('passport', () => require('../mocks/passport.mock'))
 
-const { app } = require('../../server')
+const { app } = require('../../src/server')
 const db = require('../../src/models/db')
 
 describe('Authentication', () => {
