@@ -1,17 +1,25 @@
-const Notif = require('../../../src/models/notif_models.js')
-const mongodb = require('../../../src/utils/mongo.js')
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-// Mock the MongoDB module
-jest.mock('../../../src/utils/mongo', () => {
-  const deleteManySpy = jest.fn().mockResolvedValue({ deletedCount: 2 })
-  const deleteOneSpy = jest.fn().mockResolvedValue({ deletedCount: 1 })
-  const findOneSpy = jest.fn()
-  const updateOneSpy = jest.fn().mockResolvedValue({ modifiedCount: 1 })
+// Mock the MongoDB module - vi.mock is hoisted, so we need to define everything inside the factory function
+vi.mock('../../../src/utils/mongo.js', () => {
+  // Define the spy functions inside the mock factory
+  const deleteManySpy = vi.fn().mockResolvedValue({ deletedCount: 2 })
+  const deleteOneSpy = vi.fn().mockResolvedValue({ deletedCount: 1 })
+  const findOneSpy = vi.fn()
+  const updateOneSpy = vi.fn().mockResolvedValue({ modifiedCount: 1 })
+
+  // Create an object to store the spies for access in tests
+  const mockExports = {
+    deleteMany: deleteManySpy,
+    deleteOne: deleteOneSpy, 
+    findOne: findOneSpy,
+    updateOne: updateOneSpy
+  }
 
   return {
     client: {
-      db: jest.fn().mockReturnValue({
-        collection: jest.fn().mockReturnValue({
+      db: vi.fn().mockReturnValue({
+        collection: vi.fn().mockReturnValue({
           deleteMany: deleteManySpy,
           deleteOne: deleteOneSpy,
           findOne: findOneSpy,
@@ -19,15 +27,27 @@ jest.mock('../../../src/utils/mongo', () => {
         })
       })
     },
-    // Expose the spies for test assertions
-    __mocks__: {
-      deleteMany: deleteManySpy,
-      deleteOne: deleteOneSpy,
-      findOne: findOneSpy,
-      updateOne: updateOneSpy
+    __mocks__: mockExports,
+    // For ES modules, we need to provide a default export
+    default: {
+      client: {
+        db: vi.fn().mockReturnValue({
+          collection: vi.fn().mockReturnValue({
+            deleteMany: deleteManySpy,
+            deleteOne: deleteOneSpy,
+            findOne: findOneSpy,
+            updateOne: updateOneSpy
+          })
+        })
+      },
+      __mocks__: mockExports
     }
   }
 })
+
+// Import the modules after the mocks
+import Notif from '../../../src/models/notif_models.js'
+import * as mongodb from '../../../src/utils/mongo.js'
 
 describe('Notification Throttle Model', () => {
   const mockUser = { _id: 'user123' }
@@ -36,7 +56,7 @@ describe('Notification Throttle Model', () => {
 
   beforeEach(() => {
     // Clear all mock calls between tests
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('clean()', () => {
