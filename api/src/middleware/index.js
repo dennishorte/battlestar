@@ -1,6 +1,6 @@
 module.exports = {
-  auth: require('./auth'),
-  validators: require('./validators'),
-  loaders: require('./loaders'),
-  errors: require('./errors')
+  auth: require('./auth.js'),
+  validators: require('./validators.js'),
+  loaders: require('./loaders.js'),
+  errors: require('./errors.js')
 }

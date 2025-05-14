@@ -2,11 +2,11 @@ const express = require('express')
 const router = express.Router()
 
 // Import all route files
-const gameRouter = require('./game.router')
-const authRouter = require('./auth.router')
-const userRouter = require('./user.router')
-const lobbyRouter = require('./lobby.router')
-const miscRouter = require('./misc.router')
+const gameRouter = require('./game.router.js')
+const authRouter = require('./auth.router.js')
+const userRouter = require('./user.router.js')
+const lobbyRouter = require('./lobby.router.js')
+const miscRouter = require('./misc.router.js')
 const tyrantsRouter = require('./tyrants')
 const magicRouter = require('./magic')
 

@@ -1,5 +1,5 @@
-const Wrapper = require('./wrapper')
-const cardUtil = require('../cardUtil')
+const Wrapper = require('./wrapper.js')
+const cardUtil = require('../cardUtil.js')
 
 class GameData {
   constructor() {

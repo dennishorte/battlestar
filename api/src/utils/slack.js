@@ -1,5 +1,5 @@
 const { WebClient } = require('@slack/web-api')
-const logger = require('./logger')
+const logger = require('./logger.js')
 
 // An access token (from your Slack app or custom integration - xoxp, xoxb)
 const token = process.env.SLACK_BOT_TOKEN

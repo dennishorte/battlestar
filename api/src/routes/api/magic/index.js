@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const cubeRouter = require('./cube.router')
-const cardRouter = require('./card.router')
-const deckRouter = require('./deck.router')
-const scryfallRouter = require('./scryfall.router')
-const linkRouter = require('./link.router')
+const cubeRouter = require('./cube.router.js')
+const cardRouter = require('./card.router.js')
+const deckRouter = require('./deck.router.js')
+const scryfallRouter = require('./scryfall.router.js')
+const linkRouter = require('./link.router.js')
 
 /**
  * Magic sub-routes

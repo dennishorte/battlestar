@@ -12,9 +12,9 @@ const Player = require('./Player.js')
 const { PlayerZone } = require('./Zone.js')
 
 const wrappers = {
-  card: require('./util/card.wrapper'),
-  cube: require('./util/cube.wrapper'),
-  deck: require('./util/deck.wrapper'),
+  card: require('./util/card.wrapper.js'),
+  cube: require('./util/cube.wrapper.js'),
+  deck: require('./util/deck.wrapper.js'),
 }
 
 module.exports = {
