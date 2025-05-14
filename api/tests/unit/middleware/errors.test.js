@@ -1,12 +1,12 @@
-const errorHandler = require('../../../src/middleware/errors').errorHandler
-const { BadRequestError, NotFoundError } = require('../../../src/utils/errors')
+const errorHandler = require('../../../src/middleware/errors.js').errorHandler
+const { BadRequestError, NotFoundError } = require('../../../src/utils/errors.js')
 
 // Mock the logger
 jest.mock('../../../src/utils/logger', () => ({
   error: jest.fn()
 }))
 
-const logger = require('../../../src/utils/logger')
+const logger = require('../../../src/utils/logger.js')
 
 describe('Error Handler Middleware', () => {
   let req, res, next

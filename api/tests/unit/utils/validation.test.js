@@ -2,7 +2,7 @@ const {
   validateEmail,
   validatePassword,
   validateRequiredFields
-} = require('../../../src/utils/validation')
+} = require('../../../src/utils/validation.js')
 
 describe('Validation Utils', () => {
   describe('validateEmail', () => {

@@ -1,4 +1,4 @@
-const { coerceMongoIds, ensureVersion } = require('../../src/middleware/validators')
+const { coerceMongoIds, ensureVersion } = require('../../src/middleware/validators.js')
 const { ObjectId } = require('mongodb')
 
 // Mock the version module

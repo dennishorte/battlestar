@@ -13,9 +13,9 @@ jest.mock('../../../src/models/db', () => ({
 }))
 
 // Import after mocks are set up
-const miscController = require('../../../src/controllers/misc.controller')
-const db = require('../../../src/models/db')
-const logger = require('../../../src/utils/logger')
+const miscController = require('../../../src/controllers/misc.controller.js')
+const db = require('../../../src/models/db.js')
+const logger = require('../../../src/utils/logger.js')
 
 describe('Misc Controller', () => {
   let req, res, next

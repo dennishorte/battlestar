@@ -1,5 +1,5 @@
 const Notif = require('../../../src/models/notif_models.js')
-const mongodb = require('../../../src/utils/mongo')
+const mongodb = require('../../../src/utils/mongo.js')
 
 // Mock the MongoDB module
 jest.mock('../../../src/utils/mongo', () => {

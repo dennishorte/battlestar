@@ -1,4 +1,4 @@
-const { success, error } = require('../../../src/utils/response')
+const { success, error } = require('../../../src/utils/response.js')
 
 describe('Response Utils', () => {
   let res

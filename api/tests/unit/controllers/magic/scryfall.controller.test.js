@@ -1,4 +1,4 @@
-const scryfallController = require('../../../../src/controllers/magic/scryfall.controller')
+const scryfallController = require('../../../../src/controllers/magic/scryfall.controller.js')
 
 // Mock dependencies
 jest.mock('../../../../src/models/db', () => ({
@@ -9,7 +9,7 @@ jest.mock('../../../../src/models/db', () => ({
   }
 }))
 
-const db = require('../../../../src/models/db')
+const db = require('../../../../src/models/db.js')
 
 describe('Scryfall Controller', () => {
   let req, res

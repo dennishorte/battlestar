@@ -1,6 +1,6 @@
 describe('Test Configuration', () => {
   it('should have the correct test settings', () => {
-    const testConfig = require('../../src/config/test')
+    const testConfig = require('../../src/config/test.js')
 
     expect(testConfig.port).toBe(3001)
     expect(testConfig.logLevel).toBe('error')

@@ -6,7 +6,7 @@ const {
   ForbiddenError,
   ConflictError,
   InternalServerError
-} = require('../../../src/utils/errors')
+} = require('../../../src/utils/errors.js')
 
 describe('Error Utils', () => {
   describe('AppError', () => {

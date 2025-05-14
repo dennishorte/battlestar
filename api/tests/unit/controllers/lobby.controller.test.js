@@ -41,10 +41,10 @@ jest.mock('../../../src/models/db', () => ({
 }))
 
 // Import after mocks are set up
-const lobbyController = require('../../../src/controllers/lobby.controller')
-const { BadRequestError, NotFoundError } = require('../../../src/utils/errors')
-const db = require('../../../src/models/db')
-const logger = require('../../../src/utils/logger')
+const lobbyController = require('../../../src/controllers/lobby.controller.js')
+const { BadRequestError, NotFoundError } = require('../../../src/utils/errors.js')
+const db = require('../../../src/models/db.js')
+const logger = require('../../../src/utils/logger.js')
 const { ObjectId } = require('mongodb')
 
 describe('Lobby Controller', () => {

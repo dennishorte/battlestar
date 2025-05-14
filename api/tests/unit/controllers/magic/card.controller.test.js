@@ -1,4 +1,4 @@
-const cardController = require('../../../../src/controllers/magic/card.controller')
+const cardController = require('../../../../src/controllers/magic/card.controller.js')
 const { ObjectId } = require('mongodb')
 
 // Mock dependencies
@@ -18,7 +18,7 @@ jest.mock('../../../../src/models/db', () => ({
   }
 }))
 
-const db = require('../../../../src/models/db')
+const db = require('../../../../src/models/db.js')
 
 describe('Card Controller', () => {
   let req, res

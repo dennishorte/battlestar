@@ -1,4 +1,4 @@
-const deckController = require('../../../../src/controllers/magic/deck.controller')
+const deckController = require('../../../../src/controllers/magic/deck.controller.js')
 const { ObjectId } = require('mongodb')
 
 // Mock deck models
@@ -13,11 +13,11 @@ jest.mock('../../../../src/models/magic/deck_models', () => ({
 // Mock db to use the deck models
 jest.mock('../../../../src/models/db', () => ({
   magic: {
-    deck: require('../../../../src/models/magic/deck_models')
+    deck: require('../../../../src/models/magic/deck_models.js')
   }
 }))
 
-const deckModels = require('../../../../src/models/magic/deck_models')
+const deckModels = require('../../../../src/models/magic/deck_models.js')
 
 describe('Deck Controller', () => {
   let req, res

@@ -20,10 +20,10 @@ jest.mock('../../../../src/models/db', () => ({
 }))
 
 // Import after mocks are set up
-const hexController = require('../../../../src/controllers/tyrants/hex.controller')
-const { BadRequestError } = require('../../../../src/utils/errors')
-const db = require('../../../../src/models/db')
-const logger = require('../../../../src/utils/logger')
+const hexController = require('../../../../src/controllers/tyrants/hex.controller.js')
+const { BadRequestError } = require('../../../../src/utils/errors.js')
+const db = require('../../../../src/models/db.js')
+const logger = require('../../../../src/utils/logger.js')
 
 describe('Tyrants Hex Controller', () => {
   let req, res, next

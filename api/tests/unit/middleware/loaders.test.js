@@ -1,5 +1,5 @@
-const { loadGameArgs, loadLobbyArgs, loadDraftArgs, loadCardArgs, loadCubeArgs, loadDeckArgs, GameOverwriteError, GameKilledError } = require('../../../src/middleware/loaders')
-const { NotFoundError } = require('../../../src/utils/errors')
+const { loadGameArgs, loadLobbyArgs, loadDraftArgs, loadCardArgs, loadCubeArgs, loadDeckArgs, GameOverwriteError, GameKilledError } = require('../../../src/middleware/loaders.js')
+const { NotFoundError } = require('../../../src/utils/errors.js')
 const { ObjectId } = require('mongodb')
 
 // Mock AsyncLock
@@ -40,7 +40,7 @@ jest.mock('battlestar-common', () => ({
   fromData: jest.fn(data => data)
 }))
 
-const db = require('../../../src/models/db')
+const db = require('../../../src/models/db.js')
 const { fromData } = require('battlestar-common')
 
 describe('Data Loader Middleware', () => {

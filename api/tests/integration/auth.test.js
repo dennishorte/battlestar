@@ -2,13 +2,13 @@ const request = require('supertest')
 const jwt = require('jsonwebtoken')
 
 // Mock the database
-jest.mock('../../src/models/db', () => require('../mocks/db.mock'))
+jest.mock('../../src/models/db', () => require('../mocks/db.mock.js'))
 
 // Mock passport
-jest.mock('passport', () => require('../mocks/passport.mock'))
+jest.mock('passport', () => require('../mocks/passport.mock.js'))
 
-const { app } = require('../../src/server')
-const db = require('../../src/models/db')
+const { app } = require('../../src/server.js')
+const db = require('../../src/models/db.js')
 
 describe('Authentication', () => {
   let testUser

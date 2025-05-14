@@ -13,7 +13,7 @@ jest.mock('passport-jwt', () => ({
 }))
 
 // Now require the actual module
-const { authenticate } = require('../../../src/middleware/auth')
+const { authenticate } = require('../../../src/middleware/auth.js')
 const passport = require('passport')
 
 // Mock db

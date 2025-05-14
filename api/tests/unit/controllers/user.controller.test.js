@@ -73,10 +73,10 @@ jest.mock('mongodb', () => ({
 }))
 
 // Now we can import the controller and errors
-const userController = require('../../../src/controllers/user.controller')
-const { BadRequestError } = require('../../../src/utils/errors')
-const db = require('../../../src/models/db')
-const logger = require('../../../src/utils/logger')
+const userController = require('../../../src/controllers/user.controller.js')
+const { BadRequestError } = require('../../../src/utils/errors.js')
+const db = require('../../../src/models/db.js')
+const logger = require('../../../src/utils/logger.js')
 const { ObjectId } = require('mongodb')
 
 describe('User Controller', () => {

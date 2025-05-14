@@ -63,11 +63,11 @@ jest.mock('../../../src/models/db', () => ({
 }))
 
 // Now we can import the controller
-const gameController = require('../../../src/controllers/game.controller')
-const { NotFoundError } = require('../../../src/utils/errors')
-const gameService = require('../../../src/services/game_service')
-const db = require('../../../src/models/db')
-const logger = require('../../../src/utils/logger')
+const gameController = require('../../../src/controllers/game.controller.js')
+const { NotFoundError } = require('../../../src/utils/errors.js')
+const gameService = require('../../../src/services/game_service.js')
+const db = require('../../../src/models/db.js')
+const logger = require('../../../src/utils/logger.js')
 
 describe('Game Controller', () => {
   let req, res, next

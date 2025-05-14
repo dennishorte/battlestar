@@ -1,4 +1,4 @@
-const linkController = require('../../../../src/controllers/magic/link.controller')
+const linkController = require('../../../../src/controllers/magic/link.controller.js')
 
 // Mock dependencies
 jest.mock('../../../../src/models/db', () => ({
@@ -14,7 +14,7 @@ jest.mock('../../../../src/models/db', () => ({
   }
 }))
 
-const db = require('../../../../src/models/db')
+const db = require('../../../../src/models/db.js')
 
 describe('Link Controller', () => {
   let req, res, next

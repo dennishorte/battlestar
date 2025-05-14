@@ -36,17 +36,17 @@ jest.mock('../../../../src/models/magic/card_models', () => ({
 // Mock db to use the cube models and include card models
 jest.mock('../../../../src/models/db', () => ({
   magic: {
-    cube: require('../../../../src/models/magic/cube_models'),
-    card: require('../../../../src/models/magic/card_models')
+    cube: require('../../../../src/models/magic/cube_models.js'),
+    card: require('../../../../src/models/magic/card_models.js')
   }
 }))
 
 // Import after mocks are set up
-const cubeController = require('../../../../src/controllers/magic/cube.controller')
-const { BadRequestError, NotFoundError } = require('../../../../src/utils/errors')
-const logger = require('../../../../src/utils/logger')
-const cubeModels = require('../../../../src/models/magic/cube_models')
-const db = require('../../../../src/models/db')
+const cubeController = require('../../../../src/controllers/magic/cube.controller.js')
+const { BadRequestError, NotFoundError } = require('../../../../src/utils/errors.js')
+const logger = require('../../../../src/utils/logger.js')
+const cubeModels = require('../../../../src/models/magic/cube_models.js')
+const db = require('../../../../src/models/db.js')
 
 describe('Magic Cube Controller', () => {
   let req, res, next

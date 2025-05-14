@@ -1,4 +1,4 @@
-const { connect, closeDatabase, clearDatabase } = require('./fixtures/db')
+const { connect, closeDatabase, clearDatabase } = require('./fixtures/db.js')
 
 // Mock the version module
 jest.mock('../src/version', () => '1.0')
