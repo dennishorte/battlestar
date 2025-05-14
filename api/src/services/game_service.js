@@ -1,13 +1,11 @@
-const db = require('#/models/db.js')
-const notificationService = require('#/services/notification_service.js')
-const { magic } = require('battlestar-common')
+import db from '#/models/db.js'
+import notificationService from '#/services/notification_service.js'
+import { magic } from 'battlestar-common'
 
-const { GameKilledError, GameOverwriteError } = require('#/middleware/loaders')
-const { GameOverEvent, fromData } = require('battlestar-common')
+import { GameKilledError, GameOverwriteError } from '#/middleware/loaders.js'
+import { GameOverEvent, fromData } from 'battlestar-common'
 
 const Game = {}
-module.exports = Game
-
 
 Game.create = async function(lobby, linkedDraftId) {
   async function _maybeHandleCubeDraft(game) {
@@ -199,3 +197,5 @@ async function _testAndSave(game, evalFunc) {
 
   return game.serialize()
 }
+
+export default Game

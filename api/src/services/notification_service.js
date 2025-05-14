@@ -1,5 +1,5 @@
-const db = require('#/models/db')
-const slack = require('#/utils/slack')
+import db from '#/models/db.js'
+import slack from '#/utils/slack.js'
 
 const NotificationService = {}
 
@@ -57,4 +57,4 @@ async function _sendSlackMessage(player, message) {
   await slack.sendMessage(player, message)
 }
 
-module.exports = NotificationService
+export default NotificationService
