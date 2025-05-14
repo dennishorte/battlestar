@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const fs = require('fs')
-const path = require('path')
-const { processSingleCard } = require('./fetch_scryfall_cards.js')
+import fs from 'fs'
+import path from 'path'
+import { processSingleCard } from './fetch_scryfall_cards.js'
 
 /**
  * A utility to process custom card JSON files using the same formatting logic as Scryfall cards.

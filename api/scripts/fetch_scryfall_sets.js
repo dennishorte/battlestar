@@ -1,6 +1,5 @@
-const axios = require('axios')
-const fs = require('fs')
-
+import axios from 'axios'
+import fs from 'fs'
 
 async function fetchScryfallSets(uri) {
   const result = await axios.get(uri, {
@@ -36,6 +35,9 @@ async function fetchFromScryfallAndClean() {
   sortData(sets)
 
   console.log('...writing raw data to disk: ' + outputFilename)
+  if (!fs.existsSync('set_data')) {
+    fs.mkdirSync('set_data')
+  }
   fs.writeFileSync(outputFilename, JSON.stringify(sets, null, 2))
 
   console.log('...done')

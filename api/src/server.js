@@ -1,18 +1,23 @@
-require('module-alias/register')
-require('dotenv').config()
+// Import dependencies
+import 'dotenv/config'
+import express from 'express'
+import bodyParser from 'body-parser'
+import history from 'connect-history-api-fallback'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const express = require('express')
-const bodyParser = require('body-parser')
-const history = require('connect-history-api-fallback')
-const path = require('path')
-
-const config = require('#/config')
-const middleware = require('#/middleware')
-const logger = require('#/utils/logger')
-const setupSwagger = require('#/utils/swagger')
+// Import local modules
+import config from '#/config'
+import middleware from '#/middleware'
+import logger from '#/utils/logger'
+import setupSwagger from '#/utils/swagger'
 
 // Import routes
-const apiRoutes = require('#/routes/api')
+import apiRoutes from '#/routes/api'
+
+// Get current directory
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // Initialize Express app
 const app = express()
@@ -55,9 +60,9 @@ const startServer = () => {
 }
 
 // Only start the server if this file is run directly (not required/imported)
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   startServer()
 }
 
 // For testing purposes
-module.exports = { app, startServer }
+export { app, startServer }
