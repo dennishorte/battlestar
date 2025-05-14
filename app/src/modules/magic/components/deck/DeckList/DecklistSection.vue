@@ -59,7 +59,14 @@ export default {
           count: cards.length,
           card: cards[0],
         }))
-        .sort((l, r) => l.card.cmc() - r.card.cmc())
+        .sort((l, r) => {
+          if (l.card.cmc() === r.card.cmc()) {
+            return l.card.name().localeCompare(r.card.name())
+          }
+          else {
+            return l.card.cmc() - r.card.cmc()
+          }
+        })
     },
   },
 

@@ -6,16 +6,19 @@
         <DropdownButton @click="openDeckSettings">settings</DropdownButton>
         <DropdownButton @click="openImportModal" :disabled="true">load decklist</DropdownButton>
         <DropdownButton @click="downloadDecklist" :disabled="true">export</DropdownButton>
+        <DropdownDivider />
+        <DropdownButton @click="sort('card-type')">sort: card type</DropdownButton>
+        <DropdownButton @click="sort('mana-value')">sort: mana value</DropdownButton>
       </DropdownMenu>
       <div class="deck-name me-2">{{ deck.name }} ({{ maindeckSize }})</div>
     </div>
 
     <div class="deck-sections">
       <DecklistSection
-        v-for="section in deck.zones()"
-        :key="section"
-        :cards="deck.cards(section)"
-        :name="section"
+        v-for="section in sections"
+        :key="section.id"
+        :cards="section.cards"
+        :name="section.name"
         class="deck-section"
         @card-clicked="cardClicked"
       />
@@ -70,8 +73,8 @@ export default {
 
   data() {
     return {
+      sortStyle: 'card-type',
       sortTypes: [
-        'command',
         'creature',
         'planeswalker',
         'enchantment',
@@ -80,16 +83,59 @@ export default {
         'sorcery',
         'other',
         'land',
-        'sideboard',
       ],
-
-      viewType: 'card-type',
     }
   },
 
   computed: {
     maindeckSize() {
       return this.deck.cardIdsByZone['main'].length
+    },
+
+    sections() {
+      if (this.sortStyle === 'card-type') {
+        const output = []
+
+        const mainCards = this.deck.cards('main')
+        for (const cardType of this.sortTypes) {
+          const filter = {
+            kind: 'type',
+            value: cardType,
+            operator: 'and',
+          }
+          const cards = mainCards.filter(card => card.matchesFilters([filter]))
+          if (cards.length > 0) {
+            output.push({
+              id: this.deck.name + '|' + cardType,
+              name: cardType,
+              cards,
+            })
+          }
+        }
+
+        output.push({
+          id: this.deck.name + '|sideboard',
+          name: 'sideboard',
+          cards: this.deck.cards('side'),
+        })
+        output.push({
+          id: this.deck.name + '|command',
+          name: 'command zone',
+          cards: this.deck.cards('side'),
+        })
+        return output
+      }
+      else {
+        const output = []
+        for (const zoneName of this.deck.zones()) {
+          output.push({
+            id: this.deck.name + '|' + zoneName,
+            name: zoneName,
+            cards: this.deck.cards(zoneName),
+          })
+        }
+        return output
+      }
     },
   },
 
@@ -130,6 +176,10 @@ export default {
 
     async saveChanges() {
       await this.$store.dispatch('magic/saveDeck', this.deck)
+    },
+
+    sort(style) {
+      this.sortStyle = style
     },
   },
 }
