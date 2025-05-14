@@ -1,73 +1,98 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+
 // Mock passport first, before requiring any other modules
-jest.mock('passport', () => ({
-  authenticate: jest.fn(() => (req, res, next) => next()),
-  use: jest.fn()
-}))
+vi.mock('passport', () => {
+  return {
+    authenticate: vi.fn(() => (req, res, next) => next()),
+    use: vi.fn()
+  }
+})
 
 // Mock passport-jwt
-jest.mock('passport-jwt', () => ({
-  Strategy: jest.fn(),
-  ExtractJwt: {
-    fromAuthHeaderAsBearerToken: jest.fn()
+vi.mock('passport-jwt', () => {
+  return {
+    Strategy: vi.fn(),
+    ExtractJwt: {
+      fromAuthHeaderAsBearerToken: vi.fn()
+    }
   }
-}))
+})
 
 // Mock stats utility
-jest.mock('../../../src/utils/stats', () => ({
-  processInnovationStats: jest.fn().mockResolvedValue({ stats: 'test stats' })
-}))
+vi.mock('../../../src/utils/stats', () => {
+  return {
+    default: {
+      processInnovationStats: vi.fn().mockResolvedValue({ stats: 'test stats' })
+    }
+  }
+})
 
 // Mock gameService
-jest.mock('../../../src/services/game_service', () => ({
-  create: jest.fn().mockResolvedValue({ _id: 'new-game-id' }),
-  kill: jest.fn().mockResolvedValue({}),
-  rematch: jest.fn().mockResolvedValue({ _id: 'new-lobby-id' }),
-  saveFull: jest.fn().mockResolvedValue({ id: 'game-id', state: 'updated' }),
-  saveResponse: jest.fn().mockResolvedValue({ id: 'game-id', state: 'response-saved' }),
-  undo: jest.fn().mockResolvedValue({ id: 'game-id', state: 'undo-applied' })
-}))
+vi.mock('../../../src/services/game_service', () => {
+  return {
+    default: {
+      create: vi.fn().mockResolvedValue({ _id: 'new-game-id' }),
+      kill: vi.fn().mockResolvedValue({}),
+      rematch: vi.fn().mockResolvedValue({ _id: 'new-lobby-id' }),
+      saveFull: vi.fn().mockResolvedValue({ id: 'game-id', state: 'updated' }),
+      saveResponse: vi.fn().mockResolvedValue({ id: 'game-id', state: 'response-saved' }),
+      undo: vi.fn().mockResolvedValue({ id: 'game-id', state: 'undo-applied' })
+    }
+  }
+})
 
 // Mock battlestar-common
-jest.mock('battlestar-common', () => ({
-  GameOverEvent: jest.fn(),
-  fromData: jest.fn(data => data)
-}))
+vi.mock('battlestar-common', () => {
+  return {
+    GameOverEvent: vi.fn(),
+    fromData: vi.fn(data => data)
+  }
+})
 
 // Mock logger
-jest.mock('../../../src/utils/logger', () => ({
-  info: jest.fn(),
-  error: jest.fn(),
-  debug: jest.fn()
-}))
+vi.mock('../../../src/utils/logger', () => {
+  return {
+    default: {
+      info: vi.fn(),
+      error: vi.fn(),
+      debug: vi.fn()
+    }
+  }
+})
 
 // Mock db
-jest.mock('../../../src/models/db', () => ({
-  game: {
-    all: jest.fn().mockReturnValue({
-      toArray: jest.fn().mockResolvedValue([
-        { _id: 'game1', name: 'Test Game 1' },
-        { _id: 'game2', name: 'Test Game 2' }
-      ])
-    }),
-    find: jest.fn().mockReturnValue({
-      toArray: jest.fn().mockResolvedValue([
-        { _id: 'game1', name: 'Test Game 1' },
-        { _id: 'game2', name: 'Test Game 2' }
-      ])
-    }),
-    findById: jest.fn(),
-    create: jest.fn(),
-    save: jest.fn(),
-    gameOver: jest.fn()
+vi.mock('../../../src/models/db', () => {
+  return {
+    default: {
+      game: {
+        all: vi.fn().mockReturnValue({
+          toArray: vi.fn().mockResolvedValue([
+            { _id: 'game1', name: 'Test Game 1' },
+            { _id: 'game2', name: 'Test Game 2' }
+          ])
+        }),
+        find: vi.fn().mockReturnValue({
+          toArray: vi.fn().mockResolvedValue([
+            { _id: 'game1', name: 'Test Game 1' },
+            { _id: 'game2', name: 'Test Game 2' }
+          ])
+        }),
+        findById: vi.fn(),
+        create: vi.fn(),
+        save: vi.fn(),
+        gameOver: vi.fn()
+      }
+    }
   }
-}))
+})
 
 // Now we can import the controller
-const gameController = require('../../../src/controllers/game.controller.js')
-const { NotFoundError } = require('../../../src/utils/errors.js')
-const gameService = require('../../../src/services/game_service.js')
-const db = require('../../../src/models/db.js')
-const logger = require('../../../src/utils/logger.js')
+import * as gameController from '../../../src/controllers/game.controller.js'
+import { NotFoundError } from '../../../src/utils/errors.js'
+import gameService from '../../../src/services/game_service.js'
+import db from '../../../src/models/db.js'
+import logger from '../../../src/utils/logger.js'
+import stats from '../../../src/utils/stats.js'
 
 describe('Game Controller', () => {
   let req, res, next
@@ -76,17 +101,17 @@ describe('Game Controller', () => {
     req = {
       body: {},
       game: {
-        serialize: jest.fn().mockReturnValue({ id: 'game-id', serialized: true })
+        serialize: vi.fn().mockReturnValue({ id: 'game-id', serialized: true })
       },
       lobby: { _id: 'lobby-id', name: 'Test Lobby' }
     }
     res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn()
     }
-    next = jest.fn()
+    next = vi.fn()
 
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('create', () => {
@@ -271,13 +296,13 @@ describe('Game Controller', () => {
     })
   })
 
-  describe('stats.innovation', () => {
+  describe('stats_innovation', () => {
     it('should return innovation stats', async () => {
       // Execute
-      await gameController.stats.innovation(req, res, next)
+      await gameController.stats_innovation(req, res, next)
 
       // Verify
-      expect(db.game.find).toHaveBeenCalled()
+      expect(stats.processInnovationStats).toHaveBeenCalled()
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         data: { stats: 'test stats' }

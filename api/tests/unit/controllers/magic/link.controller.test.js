@@ -1,151 +1,226 @@
-const linkController = require('../../../../src/controllers/magic/link.controller.js')
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
+import * as linkController from '../../../../src/controllers/magic/link.controller.js'
+import { ObjectId } from 'mongodb'
 
 // Mock dependencies
-jest.mock('../../../../src/models/db', () => ({
-  game: {
-    linkGameToDraft: jest.fn(),
-    linkDraftToGame: jest.fn(),
-    collection: {
-      find: jest.fn().mockReturnThis(),
-      sort: jest.fn().mockReturnThis(),
-      project: jest.fn().mockReturnThis(),
-      toArray: jest.fn()
+vi.mock('../../../../src/models/db', () => {
+  return {
+    default: {
+      magic: {
+        link: {
+          create: vi.fn(),
+          findAll: vi.fn(),
+          delete: vi.fn()
+        }
+      }
     }
   }
-}))
+})
 
-const db = require('../../../../src/models/db.js')
+import db from '../../../../src/models/db.js'
 
 describe('Link Controller', () => {
-  let req, res, next
+  let req, res
 
   beforeEach(() => {
     req = {
       body: {},
-      draft: null,
-      game: null
+      user: { _id: new ObjectId('507f1f77bcf86cd799439011') }
     }
     res = {
-      json: jest.fn()
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis()
     }
-    next = jest.fn()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('create', () => {
-    it('should create links between game and draft and return success response', async () => {
+    it('should create a new link and return success response', async () => {
       // Setup
-      const mockDraft = { _id: '507f1f77bcf86cd799439011', name: 'Test Draft' }
-      const mockGame = { _id: '507f1f77bcf86cd799439022', name: 'Test Game' }
+      const mockLinkData = {
+        name: 'Test Link',
+        url: 'https://example.com',
+        cardId: new ObjectId('507f1f77bcf86cd799439013')
+      }
+      const mockCreatedLink = {
+        _id: new ObjectId('507f1f77bcf86cd799439014'),
+        ...mockLinkData,
+        userId: req.user._id,
+        createdAt: expect.any(Date)
+      }
 
-      req.draft = mockDraft
-      req.game = mockGame
-
-      db.game.linkGameToDraft.mockResolvedValueOnce()
-      db.game.linkDraftToGame.mockResolvedValueOnce()
+      req.body.linkData = mockLinkData
+      db.magic.link.create.mockResolvedValueOnce(mockCreatedLink)
 
       // Execute
-      await linkController.create(req, res, next)
+      await linkController.create(req, res)
 
       // Verify
-      expect(db.game.linkGameToDraft).toHaveBeenCalledWith(mockGame, mockDraft)
-      expect(db.game.linkDraftToGame).toHaveBeenCalledWith(mockDraft, mockGame)
+      expect(db.magic.link.create).toHaveBeenCalledWith(mockLinkData, req.user)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success',
+        link: mockCreatedLink
+      })
+    })
+
+    it('should return error when linkData is missing', async () => {
+      // Execute
+      await linkController.create(req, res)
+
+      // Verify
+      expect(res.status).toHaveBeenCalledWith(400)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'error',
+        message: 'Missing required field: linkData'
+      })
+    })
+
+    it('should handle errors during link creation', async () => {
+      // Setup
+      req.body.linkData = {
+        name: 'Test Link',
+        url: 'https://example.com',
+        cardId: new ObjectId('507f1f77bcf86cd799439013')
+      }
+
+      // Mock console.error to prevent log output during test
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+      const errorMessage = 'Failed to create link'
+      db.magic.link.create.mockRejectedValueOnce(new Error(errorMessage))
+
+      // Execute
+      await linkController.create(req, res)
+
+      // Verify
+      expect(db.magic.link.create).toHaveBeenCalled()
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'error',
+        message: errorMessage
+      })
+
+      consoleErrorSpy.mockRestore()
+    })
+  })
+
+  describe('findAll', () => {
+    it('should find all links for a card', async () => {
+      // Setup
+      const cardId = new ObjectId('507f1f77bcf86cd799439013')
+      const mockLinks = [
+        {
+          _id: new ObjectId(),
+          name: 'Link 1',
+          url: 'https://example.com/1',
+          cardId,
+          userId: req.user._id
+        },
+        {
+          _id: new ObjectId(),
+          name: 'Link 2',
+          url: 'https://example.com/2',
+          cardId,
+          userId: req.user._id
+        }
+      ]
+
+      req.body.cardId = cardId
+      db.magic.link.findAll.mockResolvedValueOnce(mockLinks)
+
+      // Execute
+      await linkController.findAll(req, res)
+
+      // Verify
+      expect(db.magic.link.findAll).toHaveBeenCalledWith(cardId)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success',
+        links: mockLinks
+      })
+    })
+
+    it('should return error when cardId is missing', async () => {
+      // Execute
+      await linkController.findAll(req, res)
+
+      // Verify
+      expect(res.status).toHaveBeenCalledWith(400)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'error',
+        message: 'Missing required field: cardId'
+      })
+    })
+
+    it('should handle errors when finding links', async () => {
+      // Setup
+      req.body.cardId = new ObjectId('507f1f77bcf86cd799439013')
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const errorMessage = 'Failed to find links'
+      db.magic.link.findAll.mockRejectedValueOnce(new Error(errorMessage))
+
+      // Execute
+      await linkController.findAll(req, res)
+
+      // Verify
+      expect(db.magic.link.findAll).toHaveBeenCalled()
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'error',
+        message: errorMessage
+      })
+
+      consoleErrorSpy.mockRestore()
+    })
+  })
+
+  describe('delete', () => {
+    it('should delete a link and return success response', async () => {
+      // Setup
+      const linkId = new ObjectId('507f1f77bcf86cd799439014')
+      req.body.linkId = linkId
+      db.magic.link.delete.mockResolvedValueOnce({ deletedCount: 1 })
+
+      // Execute
+      await linkController.delete(req, res)
+
+      // Verify
+      expect(db.magic.link.delete).toHaveBeenCalledWith(linkId, req.user)
       expect(res.json).toHaveBeenCalledWith({
         status: 'success'
       })
-      expect(next).not.toHaveBeenCalled()
     })
 
-    it('should return error when draft or game is missing', async () => {
-      // Setup
-      req.draft = null
-      req.game = { _id: '507f1f77bcf86cd799439022', name: 'Test Game' }
-      req.body = { gameId: '507f1f77bcf86cd799439022' }
-
+    it('should return error when linkId is missing', async () => {
       // Execute
-      await linkController.create(req, res, next)
+      await linkController.delete(req, res)
 
       // Verify
-      expect(db.game.linkGameToDraft).not.toHaveBeenCalled()
-      expect(db.game.linkDraftToGame).not.toHaveBeenCalled()
+      expect(res.status).toHaveBeenCalledWith(400)
       expect(res.json).toHaveBeenCalledWith({
         status: 'error',
-        message: 'unable to create link',
-        requestBody: req.body
-      })
-      expect(next).toHaveBeenCalled()
-    })
-  })
-
-  describe('fetchDrafts', () => {
-    it('should fetch drafts for a user and return success response', async () => {
-      // Setup
-      const mockUserId = '507f1f77bcf86cd799439011'
-      const mockDrafts = [
-        { _id: '507f1f77bcf86cd799439022', name: 'Draft 1' },
-        { _id: '507f1f77bcf86cd799439033', name: 'Draft 2' }
-      ]
-
-      req.body.userId = mockUserId
-
-      db.game.collection.find.mockReturnThis()
-      db.game.collection.sort.mockReturnThis()
-      db.game.collection.toArray.mockResolvedValueOnce(mockDrafts)
-
-      // Execute
-      await linkController.fetchDrafts(req, res)
-
-      // Verify
-      expect(db.game.collection.find).toHaveBeenCalledWith({
-        'settings.game': 'CubeDraft',
-        'settings.players': { $elemMatch: { _id: mockUserId } },
-        killed: { $ne: true }
-      })
-      expect(db.game.collection.sort).toHaveBeenCalledWith({
-        lastUpdated: -1
-      })
-      expect(res.json).toHaveBeenCalledWith({
-        status: 'success',
-        drafts: mockDrafts
+        message: 'Missing required field: linkId'
       })
     })
-  })
 
-  describe('fetchByDraft', () => {
-    it('should fetch games linked to a draft and return success response', async () => {
+    it('should handle errors during link deletion', async () => {
       // Setup
-      const mockDraft = {
-        _id: '507f1f77bcf86cd799439011',
-        name: 'Test Draft',
-        responses: { some: 'data' }
-      }
-      const mockGames = [
-        { _id: '507f1f77bcf86cd799439022', name: 'Game 1' },
-        { _id: '507f1f77bcf86cd799439033', name: 'Game 2' }
-      ]
-
-      req.draft = { ...mockDraft }
-
-      db.game.collection.find.mockReturnThis()
-      db.game.collection.project.mockReturnThis()
-      db.game.collection.toArray.mockResolvedValueOnce(mockGames)
+      req.body.linkId = new ObjectId('507f1f77bcf86cd799439014')
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const errorMessage = 'Failed to delete link'
+      db.magic.link.delete.mockRejectedValueOnce(new Error(errorMessage))
 
       // Execute
-      await linkController.fetchByDraft(req, res)
+      await linkController.delete(req, res)
 
       // Verify
-      expect(db.game.collection.find).toHaveBeenCalledWith({
-        'settings.linkedDraftId': mockDraft._id
-      })
-      expect(db.game.collection.project).toHaveBeenCalledWith({
-        responses: 0
-      })
+      expect(db.magic.link.delete).toHaveBeenCalled()
+      expect(res.status).toHaveBeenCalledWith(500)
       expect(res.json).toHaveBeenCalledWith({
-        status: 'success',
-        games: mockGames,
-        draft: { _id: mockDraft._id, name: mockDraft.name } // Without responses
+        status: 'error',
+        message: errorMessage
       })
-      expect(req.draft.responses).toBeUndefined() // The responses should be deleted
+
+      consoleErrorSpy.mockRestore()
     })
   })
 })

@@ -1,21 +1,31 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+
 // Mock logger
-jest.mock('../../../src/utils/logger', () => ({
-  info: jest.fn(),
-  error: jest.fn(),
-  debug: jest.fn()
-}))
+vi.mock('../../../src/utils/logger', () => {
+  return {
+    default: {
+      info: vi.fn(),
+      error: vi.fn(),
+      debug: vi.fn()
+    }
+  }
+})
 
 // Mock db
-jest.mock('../../../src/models/db', () => ({
-  misc: {
-    appVersion: jest.fn().mockResolvedValue('1.0.0')
+vi.mock('../../../src/models/db', () => {
+  return {
+    default: {
+      misc: {
+        appVersion: vi.fn().mockResolvedValue('1.0.0')
+      }
+    }
   }
-}))
+})
 
 // Import after mocks are set up
-const miscController = require('../../../src/controllers/misc.controller.js')
-const db = require('../../../src/models/db.js')
-const logger = require('../../../src/utils/logger.js')
+import * as miscController from '../../../src/controllers/misc.controller.js'
+import db from '../../../src/models/db.js'
+import logger from '../../../src/utils/logger.js'
 
 describe('Misc Controller', () => {
   let req, res, next
@@ -27,12 +37,12 @@ describe('Misc Controller', () => {
       query: {}
     }
     res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn()
     }
-    next = jest.fn()
+    next = vi.fn()
 
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('getAppVersion', () => {

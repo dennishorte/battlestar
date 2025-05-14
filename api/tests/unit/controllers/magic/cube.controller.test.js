@@ -1,52 +1,70 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+
 // Mock logger
-jest.mock('../../../../src/utils/logger', () => ({
-  info: jest.fn(),
-  error: jest.fn(),
-  debug: jest.fn()
-}))
+vi.mock('../../../../src/utils/logger', () => {
+  return {
+    default: {
+      info: vi.fn(),
+      error: vi.fn(),
+      debug: vi.fn()
+    }
+  }
+})
 
 // Mock cube models
-jest.mock('../../../../src/models/magic/cube_models', () => ({
-  create: jest.fn().mockResolvedValue({
-    _id: 'new-cube-id',
-    name: 'New Cube',
-    cardlist: []
-  }),
-  findById: jest.fn().mockResolvedValue({
-    _id: 'new-cube-id',
-    name: 'Test Cube',
-    cardlist: []
-  }),
-  save: jest.fn().mockResolvedValue(true)
-}))
+vi.mock('../../../../src/models/magic/cube_models', () => {
+  return {
+    default: {
+      create: vi.fn().mockResolvedValue({
+        _id: 'new-cube-id',
+        name: 'New Cube',
+        cardlist: []
+      }),
+      findById: vi.fn().mockResolvedValue({
+        _id: 'new-cube-id',
+        name: 'Test Cube',
+        cardlist: []
+      }),
+      save: vi.fn().mockResolvedValue(true)
+    }
+  }
+})
 
 // Mock card models
-jest.mock('../../../../src/models/magic/card_models', () => ({
-  findByIds: jest.fn().mockImplementation(ids => {
-    return ids.map(id => ({ _id: id, name: `Card ${id}`, cubeId: 'new-cube-id' }))
-  }),
-  create: jest.fn().mockImplementation((card, cube) => Promise.resolve({
-    _id: card._id,
-    name: card.name,
-    cubeId: cube._id
-  })),
-  deactivate: jest.fn().mockResolvedValue(true)
-}))
+vi.mock('../../../../src/models/magic/card_models', () => {
+  return {
+    default: {
+      findByIds: vi.fn().mockImplementation(ids => {
+        return ids.map(id => ({ _id: id, name: `Card ${id}`, cubeId: 'new-cube-id' }))
+      }),
+      create: vi.fn().mockImplementation((card, cube) => Promise.resolve({
+        _id: card._id,
+        name: card.name,
+        cubeId: cube._id
+      })),
+      deactivate: vi.fn().mockResolvedValue(true)
+    }
+  }
+})
 
 // Mock db to use the cube models and include card models
-jest.mock('../../../../src/models/db', () => ({
-  magic: {
-    cube: require('../../../../src/models/magic/cube_models.js'),
-    card: require('../../../../src/models/magic/card_models.js')
+vi.mock('../../../../src/models/db', () => {
+  return {
+    default: {
+      magic: {
+        cube: require('../../../../src/models/magic/cube_models.js'),
+        card: require('../../../../src/models/magic/card_models.js')
+      }
+    }
   }
-}))
+})
 
 // Import after mocks are set up
-const cubeController = require('../../../../src/controllers/magic/cube.controller.js')
-const { BadRequestError, NotFoundError } = require('../../../../src/utils/errors.js')
-const logger = require('../../../../src/utils/logger.js')
-const cubeModels = require('../../../../src/models/magic/cube_models.js')
-const db = require('../../../../src/models/db.js')
+import * as cubeController from '../../../../src/controllers/magic/cube.controller.js'
+import { BadRequestError, NotFoundError } from '../../../../src/utils/errors.js'
+import logger from '../../../../src/utils/logger.js'
+import cubeModels from '../../../../src/models/magic/cube_models.js'
+import db from '../../../../src/models/db.js'
 
 describe('Magic Cube Controller', () => {
   let req, res, next
@@ -58,12 +76,12 @@ describe('Magic Cube Controller', () => {
       user: { _id: 'test-user-id' },
     }
     res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn()
     }
-    next = jest.fn()
+    next = vi.fn()
 
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('createCube', () => {
@@ -141,7 +159,7 @@ describe('Magic Cube Controller', () => {
       req.cube = { _id: 'cube1' }
 
       // Force an error to occur in the try block
-      res.json = jest.fn(() => {
+      res.json = vi.fn(() => {
         throw new Error('Database error')
       })
 
@@ -220,8 +238,8 @@ describe('Magic Cube Controller', () => {
       req.user = { _id: 'test-user-id' }
 
       // Mock the cube.addCard function
-      db.magic.cube.addCard = jest.fn().mockResolvedValue(true)
-      db.magic.cube.removeCard = jest.fn().mockResolvedValue(true)
+      db.magic.cube.addCard = vi.fn().mockResolvedValue(true)
+      db.magic.cube.removeCard = vi.fn().mockResolvedValue(true)
 
       // Execute
       await cubeController.addRemoveCards(req, res, next)
@@ -316,7 +334,7 @@ describe('Magic Cube Controller', () => {
       db.magic.card.deactivate.mockImplementationOnce(() => {
         throw new Error('Failed to deactivate card')
       })
-      db.magic.cube.addCard = jest.fn().mockResolvedValue(true)
+      db.magic.cube.addCard = vi.fn().mockResolvedValue(true)
 
       // Execute
       await cubeController.addRemoveCards(req, res, next)

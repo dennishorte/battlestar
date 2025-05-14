@@ -1,83 +1,99 @@
+import { describe, it, expect, beforeEach, vi, spyOn } from 'vitest'
+
 // Mock passport first, before requiring any other modules
-jest.mock('passport', () => ({
-  authenticate: jest.fn(() => (req, res, next) => next()),
-  use: jest.fn()
-}))
+vi.mock('passport', () => {
+  return {
+    authenticate: vi.fn(() => (req, res, next) => next()),
+    use: vi.fn()
+  }
+})
 
 // Mock passport-jwt
-jest.mock('passport-jwt', () => ({
-  Strategy: jest.fn(),
-  ExtractJwt: {
-    fromAuthHeaderAsBearerToken: jest.fn()
+vi.mock('passport-jwt', () => {
+  return {
+    Strategy: vi.fn(),
+    ExtractJwt: {
+      fromAuthHeaderAsBearerToken: vi.fn()
+    }
   }
-}))
+})
 
 // Mock logger
-jest.mock('../../../src/utils/logger', () => ({
-  info: jest.fn(),
-  error: jest.fn(),
-  debug: jest.fn()
-}))
+vi.mock('../../../src/utils/logger', () => {
+  return {
+    default: {
+      info: vi.fn(),
+      error: vi.fn(),
+      debug: vi.fn()
+    }
+  }
+})
 
 // Mock db before requiring other modules
-jest.mock('../../../src/models/db', () => ({
-  user: {
-    all: jest.fn().mockResolvedValue([
-      { _id: 'user1', name: 'User One' },
-      { _id: 'user2', name: 'User Two' }
-    ]),
-    create: jest.fn().mockResolvedValue({ _id: 'new-user-id', name: 'New User' }),
-    deactivate: jest.fn().mockResolvedValue({ modifiedCount: 1 }),
-    findByIds: jest.fn().mockReturnValue({
-      toArray: jest.fn().mockResolvedValue([
-        { _id: 'user1', name: 'User One' },
-        { _id: 'user2', name: 'User Two' }
-      ])
-    }),
-    findById: jest.fn().mockResolvedValue({ _id: 'user1', name: 'User One' })
-  },
-  lobby: {
-    findByUserId: jest.fn().mockReturnValue({
-      toArray: jest.fn().mockResolvedValue([
-        { _id: 'lobby1', name: 'Lobby One' },
-        { _id: 'lobby2', name: 'Lobby Two' }
-      ])
-    })
-  },
-  game: {
-    find: jest.fn().mockReturnValue({
-      toArray: jest.fn().mockResolvedValue([
-        { _id: 'game1', name: 'Game One', waiting: ['User One'] },
-        { _id: 'game2', name: 'Game Two', waiting: ['User Two'] }
-      ])
-    }),
-    findByUserId: jest.fn().mockReturnValue({
-      toArray: jest.fn().mockResolvedValue([
-        { _id: 'game1', name: 'Game One', waiting: ['User One'] }
-      ])
-    }),
-    findRecentlyFinishedByUserId: jest.fn().mockReturnValue({
-      toArray: jest.fn().mockResolvedValue([
-        { _id: 'game3', name: 'Game Three', gameOver: true }
-      ])
-    })
+vi.mock('../../../src/models/db', () => {
+  return {
+    default: {
+      user: {
+        all: vi.fn().mockResolvedValue([
+          { _id: 'user1', name: 'User One' },
+          { _id: 'user2', name: 'User Two' }
+        ]),
+        create: vi.fn().mockResolvedValue({ _id: 'new-user-id', name: 'New User' }),
+        deactivate: vi.fn().mockResolvedValue({ modifiedCount: 1 }),
+        findByIds: vi.fn().mockReturnValue({
+          toArray: vi.fn().mockResolvedValue([
+            { _id: 'user1', name: 'User One' },
+            { _id: 'user2', name: 'User Two' }
+          ])
+        }),
+        findById: vi.fn().mockResolvedValue({ _id: 'user1', name: 'User One' })
+      },
+      lobby: {
+        findByUserId: vi.fn().mockReturnValue({
+          toArray: vi.fn().mockResolvedValue([
+            { _id: 'lobby1', name: 'Lobby One' },
+            { _id: 'lobby2', name: 'Lobby Two' }
+          ])
+        })
+      },
+      game: {
+        find: vi.fn().mockReturnValue({
+          toArray: vi.fn().mockResolvedValue([
+            { _id: 'game1', name: 'Game One', waiting: ['User One'] },
+            { _id: 'game2', name: 'Game Two', waiting: ['User Two'] }
+          ])
+        }),
+        findByUserId: vi.fn().mockReturnValue({
+          toArray: vi.fn().mockResolvedValue([
+            { _id: 'game1', name: 'Game One', waiting: ['User One'] }
+          ])
+        }),
+        findRecentlyFinishedByUserId: vi.fn().mockReturnValue({
+          toArray: vi.fn().mockResolvedValue([
+            { _id: 'game3', name: 'Game Three', gameOver: true }
+          ])
+        })
+      }
+    }
   }
-}))
+})
 
 // Mock MongoDB's ObjectId
-jest.mock('mongodb', () => ({
-  ObjectId: jest.fn().mockImplementation(id => ({
-    equals: jest.fn(otherId => id === otherId),
-    toString: jest.fn(() => id)
-  }))
-}))
+vi.mock('mongodb', () => {
+  return {
+    ObjectId: vi.fn().mockImplementation(id => ({
+      equals: vi.fn(otherId => id === otherId),
+      toString: vi.fn(() => id)
+    }))
+  }
+})
 
 // Now we can import the controller and errors
-const userController = require('../../../src/controllers/user.controller.js')
-const { BadRequestError } = require('../../../src/utils/errors.js')
-const db = require('../../../src/models/db.js')
-const logger = require('../../../src/utils/logger.js')
-const { ObjectId } = require('mongodb')
+import * as userController from '../../../src/controllers/user.controller.js'
+import { BadRequestError } from '../../../src/utils/errors.js'
+import db from '../../../src/models/db.js'
+import logger from '../../../src/utils/logger.js'
+import { ObjectId } from 'mongodb'
 
 describe('User Controller', () => {
   let req, res, next
@@ -89,12 +105,12 @@ describe('User Controller', () => {
       query: {}
     }
     res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn()
     }
-    next = jest.fn()
+    next = vi.fn()
 
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('getAllUsers', () => {
@@ -183,7 +199,7 @@ describe('User Controller', () => {
 
       // Skip the ObjectId validation in the test
       // eslint-disable-next-line no-unused-vars
-      jest.spyOn(userController, 'deactivateUser').mockImplementationOnce(async (req, res, next) => {
+      vi.spyOn(userController, 'deactivateUser').mockImplementationOnce(async (req, res, next) => {
         res.json({ status: 'success' })
       })
 
@@ -194,15 +210,15 @@ describe('User Controller', () => {
       expect(res.json).toHaveBeenCalledWith({ status: 'success' })
 
       // Restore original implementation
-      userController.deactivateUser.mockRestore()
+      vi.mocked(userController.deactivateUser).mockRestore()
     })
 
     it('should return BadRequestError if user ID is missing', async () => {
       // Setup
-      req.body = {} // Missing ID
+      req.body = {}
 
       // Execute
-      await userController.createUser(req, res, next)
+      await userController.deactivateUser(req, res, next)
 
       // Verify
       expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
@@ -216,7 +232,7 @@ describe('User Controller', () => {
 
       // Skip the ObjectId validation in the test
       // eslint-disable-next-line no-unused-vars
-      jest.spyOn(userController, 'fetchManyUsers').mockImplementationOnce(async (req, res, next) => {
+      vi.spyOn(userController, 'fetchManyUsers').mockImplementationOnce(async (req, res, next) => {
         res.json({
           status: 'success',
           users: [
@@ -236,7 +252,7 @@ describe('User Controller', () => {
       })
 
       // Restore original implementation
-      userController.fetchManyUsers.mockRestore()
+      vi.mocked(userController.fetchManyUsers).mockRestore()
     })
 
     it('should return BadRequestError if userIds is not an array', async () => {
@@ -258,7 +274,7 @@ describe('User Controller', () => {
 
       // Skip the ObjectId validation in the test
       // eslint-disable-next-line no-unused-vars
-      jest.spyOn(userController, 'getUserLobbies').mockImplementationOnce(async (req, res, next) => {
+      vi.spyOn(userController, 'getUserLobbies').mockImplementationOnce(async (req, res, next) => {
         res.json({
           status: 'success',
           lobbies: [
@@ -278,7 +294,7 @@ describe('User Controller', () => {
       })
 
       // Restore original implementation
-      userController.getUserLobbies.mockRestore()
+      vi.mocked(userController.getUserLobbies).mockRestore()
     })
 
     it('should return BadRequestError if userId is missing', async () => {
@@ -305,7 +321,7 @@ describe('User Controller', () => {
 
       // Skip the ObjectId validation in the test
       // eslint-disable-next-line no-unused-vars
-      jest.spyOn(userController, 'getUserGames').mockImplementationOnce(async (req, res, next) => {
+      vi.spyOn(userController, 'getUserGames').mockImplementationOnce(async (req, res, next) => {
         res.json({
           status: 'success',
           games: [
@@ -325,7 +341,7 @@ describe('User Controller', () => {
       })
 
       // Restore original implementation
-      userController.getUserGames.mockRestore()
+      vi.mocked(userController.getUserGames).mockRestore()
     })
 
     it('should handle invalid userId format', async () => {
@@ -352,7 +368,7 @@ describe('User Controller', () => {
 
       // Skip the ObjectId validation in the test
       // eslint-disable-next-line no-unused-vars
-      jest.spyOn(userController, 'getRecentlyFinishedGames').mockImplementationOnce(async (req, res, next) => {
+      vi.spyOn(userController, 'getRecentlyFinishedGames').mockImplementationOnce(async (req, res, next) => {
         res.json({
           status: 'success',
           games: [
@@ -371,7 +387,7 @@ describe('User Controller', () => {
       })
 
       // Restore original implementation
-      userController.getRecentlyFinishedGames.mockRestore()
+      vi.mocked(userController.getRecentlyFinishedGames).mockRestore()
     })
 
     it('should return BadRequestError if userId is missing', async () => {
@@ -393,7 +409,7 @@ describe('User Controller', () => {
 
       // Skip the ObjectId validation in the test
       // eslint-disable-next-line no-unused-vars
-      jest.spyOn(userController, 'getNextGame').mockImplementationOnce(async (req, res, next) => {
+      vi.spyOn(userController, 'getNextGame').mockImplementationOnce(async (req, res, next) => {
         res.json({
           status: 'success',
           gameId: 'game1'
@@ -410,7 +426,7 @@ describe('User Controller', () => {
       })
 
       // Restore original implementation
-      userController.getNextGame.mockRestore()
+      vi.mocked(userController.getNextGame).mockRestore()
     })
 
     it('should return BadRequestError if userId is missing', async () => {
