@@ -1,23 +1,32 @@
-const notificationService = require('../../../src/services/notification_service.js')
+import { describe, it, expect, beforeEach, afterAll, vi } from 'vitest'
+import notificationService from '../../../src/services/notification_service.js'
 
 // Mock dependencies
-jest.mock('../../../src/models/db', () => ({
-  notif: {
-    clear: jest.fn().mockResolvedValue(),
-    throttleOrSet: jest.fn()
-  },
-  user: {
-    findById: jest.fn(id => Promise.resolve({ _id: id }))
+vi.mock('../../../src/models/db.js', () => {
+  return {
+    default: {
+      notif: {
+        clear: vi.fn().mockResolvedValue(),
+        throttleOrSet: vi.fn()
+      },
+      user: {
+        findById: vi.fn(id => Promise.resolve({ _id: id }))
+      }
+    }
   }
-}))
+})
 
-jest.mock('../../../src/utils/slack', () => ({
-  sendMessage: jest.fn()
-}))
+vi.mock('../../../src/utils/slack.js', () => {
+  return {
+    default: {
+      sendMessage: vi.fn()
+    }
+  }
+})
 
 // Import mocked dependencies for assertions
-const db = require('../../../src/models/db.js')
-const slack = require('../../../src/utils/slack.js')
+import db from '../../../src/models/db.js'
+import slack from '../../../src/utils/slack.js'
 
 describe('Notification Service', () => {
   // Store original environment variables
@@ -36,16 +45,16 @@ describe('Notification Service', () => {
       name: 'Test Game',
       players: [mockUser1, mockUser2]
     },
-    checkIsNewGame: jest.fn().mockReturnValue(config.isNewGame || false),
-    checkGameIsOver: jest.fn().mockReturnValue(config.isGameOver || false),
-    checkLastActorWas: jest.fn(user => user._id === (config.lastActor || null)),
-    checkPlayerHasActionWaiting: jest.fn(user => config.playersWithActionWaiting?.includes(user._id) || false),
-    getResultMessage: jest.fn().mockReturnValue('Player 1 won!')
+    checkIsNewGame: vi.fn().mockReturnValue(config.isNewGame || false),
+    checkGameIsOver: vi.fn().mockReturnValue(config.isGameOver || false),
+    checkLastActorWas: vi.fn(user => user._id === (config.lastActor || null)),
+    checkPlayerHasActionWaiting: vi.fn(user => config.playersWithActionWaiting?.includes(user._id) || false),
+    getResultMessage: vi.fn().mockReturnValue('Player 1 won!')
   })
 
   beforeEach(() => {
     // Reset all mocks
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 
     // Setup environment to production by default for tests
     process.env = { ...originalEnv, NODE_ENV: 'production', DOMAIN_HOST: 'example.com' }
