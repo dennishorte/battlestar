@@ -1,5 +1,5 @@
-const AsyncLock = require('async-lock')
-const databaseClient = require('#/utils/mongo.js').client
+import AsyncLock from 'async-lock'
+import { client as databaseClient } from '#/utils/mongo.js'
 const database = databaseClient.db('magic')
 
 const customCollection = database.collection('custom_cards')
@@ -8,8 +8,6 @@ const versionCollection = database.collection('versions')
 
 
 const Card = {}
-module.exports = Card
-
 
 const lock = new AsyncLock()
 
@@ -250,3 +248,5 @@ async function _incrementCustomCardDatabaseVersion() {
     )
   }
 }
+
+export default Card

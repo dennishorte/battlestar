@@ -1,6 +1,6 @@
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const databaseClient = require('#/utils/mongo.js').client
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import { client as databaseClient } from '#/utils/mongo.js'
 const database = databaseClient.db('games')
 const userCollection = database.collection('user')
 
@@ -120,8 +120,4 @@ User.util.generateToken = function(id) {
   return jwt.sign({ user_id: id }, process.env.SECRET_KEY)
 }
 
-
-////////////////////////////////////////////////////////////
-// Exports
-
-module.exports = User
+export default User

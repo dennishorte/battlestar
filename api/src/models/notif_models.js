@@ -1,9 +1,8 @@
-const databaseClient = require('#/utils/mongo.js').client
+import { client as databaseClient } from '#/utils/mongo.js'
 const database = databaseClient.db('games')
 const notifCollection = database.collection('notificationThrottle')
 
 const Notif = {}
-module.exports = Notif
 
 const cutoff = 1000 * 60 * 60 // one hour
 
@@ -42,3 +41,5 @@ Notif.throttleOrSet = async function(user, game) {
 
   return throttle
 }
+
+export default Notif

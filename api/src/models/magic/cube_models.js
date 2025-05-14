@@ -1,8 +1,8 @@
-const databaseClient = require('#/utils/mongo.js').client
+import { client as databaseClient } from '#/utils/mongo.js'
 const database = databaseClient.db('magic')
 const cubeCollection = database.collection('cube')
 
-module.exports = {
+const Cube = {
   async all() {
     // const cubes = await cubeCollection.find({}, { projection: { _id: 1, name: 1, userId: 1 } }).toArray()
     const cubes = await cubeCollection.find({}).toArray()
@@ -80,3 +80,5 @@ module.exports = {
     )
   },
 }
+
+export default Cube

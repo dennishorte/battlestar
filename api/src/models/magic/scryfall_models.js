@@ -1,5 +1,5 @@
-const fs = require('fs')
-const databaseClient = require('#/utils/mongo.js').client
+import fs from 'fs'
+import { client as databaseClient } from '#/utils/mongo.js'
 const database = databaseClient.db('magic')
 const scryfallCollection = database.collection('scryfall')
 const versionCollection = database.collection('versions')
@@ -49,7 +49,7 @@ Scryfall.fetchAll = async function() {
 }
 
 Scryfall.update = async function() {
-  const scryfallFolder = __dirname + '/../../../scripts/card_data'
+  const scryfallFolder = new URL('../../../scripts/card_data', import.meta.url).pathname
   const files = fs
     .readdirSync(scryfallFolder)
     .filter(filename => filename.startsWith('default-cards-'))
@@ -68,4 +68,4 @@ Scryfall.update = async function() {
   }
 }
 
-module.exports = Scryfall
+export default Scryfall
