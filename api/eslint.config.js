@@ -1,6 +1,6 @@
 // eslint.config.js
 import { defineConfig } from "eslint/config"
-import jestPlugin from 'eslint-plugin-jest'
+import vitestPlugin from 'eslint-plugin-vitest'
 import js from "@eslint/js"
 
 export default defineConfig([
@@ -95,7 +95,7 @@ export default defineConfig([
 
   {
     files: ["tests/**/*.js"],
-    plugins: { jest: jestPlugin },
-    extends: ["jest/recommended"],
+    plugins: { vitest: vitestPlugin },
+    extends: ["vitest/recommended"],
   },
 ])
