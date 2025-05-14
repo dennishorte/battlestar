@@ -1,7 +1,7 @@
-const db = require('#/models/db')
-const logger = require('#/utils/logger')
-const { BadRequestError, NotFoundError } = require('#/utils/errors')
-const { ObjectId } = require('mongodb')
+import db from '#/models/db.js'
+import logger from '#/utils/logger.js'
+import { BadRequestError, NotFoundError } from '#/utils/errors.js'
+import { ObjectId } from 'mongodb'
 
 /**
  * Get all lobbies
@@ -9,7 +9,7 @@ const { ObjectId } = require('mongodb')
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.getAllLobbies = async (req, res, next) => {
+export const getAllLobbies = async (req, res, next) => {
   try {
     const lobbiesCursor = await db.lobby.all()
     const lobbiesArray = await lobbiesCursor.toArray()
@@ -31,7 +31,7 @@ exports.getAllLobbies = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.createLobby = async (req, res, next) => {
+export const createLobby = async (req, res, next) => {
   try {
     const user = req.user
 
@@ -91,7 +91,7 @@ exports.createLobby = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.getLobbyInfo = async (req, res, next) => {
+export const getLobbyInfo = async (req, res, next) => {
   try {
     const lobby = req.lobby
 
@@ -116,7 +116,7 @@ exports.getLobbyInfo = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.killLobby = async (req, res, next) => {
+export const killLobby = async (req, res, next) => {
   try {
     if (!req.lobby) {
       return next(new NotFoundError('Lobby not found'))
@@ -140,7 +140,7 @@ exports.killLobby = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.saveLobby = async (req, res, next) => {
+export const saveLobby = async (req, res, next) => {
   try {
     if (!req.body || !req.body._id) {
       return next(new BadRequestError('Invalid lobby data'))

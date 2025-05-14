@@ -1,11 +1,11 @@
-const db = require('#/models/db.js')
+import db from '#/models/db.js'
 
 /**
  * Create a card
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.create = async (req, res) => {
+export const create = async (req, res) => {
   try {
     // Validate required inputs
     if (!req.body.cardData || !req.body.cubeId) {
@@ -52,7 +52,7 @@ exports.create = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.fetchAll = async (req, res) => {
+export const fetchAll = async (req, res) => {
   const cardData = await db.magic.card.fetchAll(req.body.source)
 
   res.json({
@@ -66,7 +66,7 @@ exports.fetchAll = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.update = async (req, res) => {
+export const update = async (req, res) => {
   try {
     // Validate required inputs
     if (!req.body.cardId || !req.body.cardData) {
@@ -112,7 +112,7 @@ exports.update = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.versions = async (req, res) => {
+export const versions = async (req, res) => {
   const versions = await db.magic.card.versions()
   res.json({
     status: 'success',

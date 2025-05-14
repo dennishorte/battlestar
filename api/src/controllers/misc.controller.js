@@ -1,5 +1,5 @@
-const db = require('#/models/db')
-const logger = require('#/utils/logger')
+import db from '#/models/db.js'
+import logger from '#/utils/logger.js'
 
 /**
  * Get the application version
@@ -7,7 +7,7 @@ const logger = require('#/utils/logger')
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.getAppVersion = async (req, res, next) => {
+export const getAppVersion = async (req, res, next) => {
   try {
     const version = await db.misc.appVersion()
     res.json({

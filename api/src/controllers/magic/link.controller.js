@@ -1,4 +1,4 @@
-const db = require('#/models/db.js')
+import db from '#/models/db.js'
 
 /**
  * Create a link between a game and a draft
@@ -6,7 +6,7 @@ const db = require('#/models/db.js')
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.create = async (req, res, next) => {
+export const create = async (req, res, next) => {
   const draft = req.draft
   const game = req.game
 
@@ -33,7 +33,7 @@ exports.create = async (req, res, next) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.fetchDrafts = async (req, res) => {
+export const fetchDrafts = async (req, res) => {
   const cursor = await db.game.collection.find({
     'settings.game': 'CubeDraft',
     'settings.players': { $elemMatch: { _id: req.body.userId } },
@@ -54,7 +54,7 @@ exports.fetchDrafts = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.fetchByDraft = async (req, res) => {
+export const fetchByDraft = async (req, res) => {
   const draft = req.draft
   delete draft.responses  // Removing responses from the draft object
 

@@ -1,6 +1,6 @@
-const db = require('#/models/db')
-const logger = require('#/utils/logger')
-const { BadRequestError } = require('#/utils/errors')
+import db from '#/models/db.js'
+import logger from '#/utils/logger.js'
+import { BadRequestError } from '#/utils/errors.js'
 
 /**
  * Get all hexes
@@ -8,7 +8,7 @@ const { BadRequestError } = require('#/utils/errors')
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.getAllHexes = async (req, res, next) => {
+export const getAllHexes = async (req, res, next) => {
   try {
     const hexes = await db.tyrants.hex.fetchAll()
 
@@ -29,7 +29,7 @@ exports.getAllHexes = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.deleteHex = async (req, res, next) => {
+export const deleteHex = async (req, res, next) => {
   try {
     if (!req.body.id) {
       return next(new BadRequestError('Hex ID is required'))
@@ -53,7 +53,7 @@ exports.deleteHex = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.saveHex = async (req, res, next) => {
+export const saveHex = async (req, res, next) => {
   try {
     if (!req.body.hex) {
       return next(new BadRequestError('Hex data is required'))

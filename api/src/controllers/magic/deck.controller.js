@@ -1,11 +1,11 @@
-const db = require('#/models/db.js')
+import db from '#/models/db.js'
 
 /**
  * Create a new deck
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.create = async (req, res) => {
+export const create = async (req, res) => {
   const deck = await db.magic.deck.create(req.user)
 
   res.json({
@@ -14,7 +14,7 @@ exports.create = async (req, res) => {
   })
 }
 
-exports.delete = async (req, res) => {
+export const deleteDeck = async (req, res) => {
   await db.magic.deck.delete(req.deck)
 
   res.json({
@@ -27,7 +27,7 @@ exports.delete = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.duplicate = async (req, res) => {
+export const duplicate = async (req, res) => {
   const deck = await db.magic.deck.duplicate(req.user, req.deck)
   res.json({
     status: 'success',
@@ -40,7 +40,7 @@ exports.duplicate = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.fetch = async (req, res) => {
+export const fetch = async (req, res) => {
   res.json({
     status: 'success',
     deck: req.deck,
@@ -52,7 +52,7 @@ exports.fetch = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.save = async (req, res) => {
+export const save = async (req, res) => {
   await db.magic.deck.save(req.body.deck)
   res.json({
     status: 'success',
