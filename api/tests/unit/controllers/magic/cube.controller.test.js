@@ -1,5 +1,43 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
+// Mock the entire db module first
+vi.mock('../../../../src/models/db.js', () => {
+  return {
+    default: {
+      magic: {
+        cube: {
+          create: vi.fn().mockResolvedValue({
+            _id: 'new-cube-id',
+            name: 'New Cube',
+            cardlist: []
+          }),
+          findById: vi.fn().mockResolvedValue({
+            _id: 'new-cube-id',
+            name: 'Test Cube',
+            cardlist: []
+          }),
+          save: vi.fn().mockResolvedValue(true),
+          addCard: vi.fn().mockResolvedValue(true),
+          removeCard: vi.fn().mockResolvedValue(true)
+        },
+        card: {
+          findByIds: vi.fn().mockImplementation(ids => {
+            return ids.map(id => ({ _id: id, name: `Card ${id}`, cubeId: 'new-cube-id' }))
+          }),
+          create: vi.fn().mockImplementation((card, cube, user, comment) => Promise.resolve({
+            _id: card._id || 'new-card-id',
+            name: card.name || 'New Card',
+            cubeId: cube._id,
+            userId: user._id,
+            comment
+          })),
+          deactivate: vi.fn().mockResolvedValue(true)
+        }
+      }
+    }
+  }
+})
+
 // Mock logger
 vi.mock('../../../../src/utils/logger', () => {
   return {
@@ -11,59 +49,10 @@ vi.mock('../../../../src/utils/logger', () => {
   }
 })
 
-// Mock cube models
-vi.mock('../../../../src/models/magic/cube_models', () => {
-  return {
-    default: {
-      create: vi.fn().mockResolvedValue({
-        _id: 'new-cube-id',
-        name: 'New Cube',
-        cardlist: []
-      }),
-      findById: vi.fn().mockResolvedValue({
-        _id: 'new-cube-id',
-        name: 'Test Cube',
-        cardlist: []
-      }),
-      save: vi.fn().mockResolvedValue(true)
-    }
-  }
-})
-
-// Mock card models
-vi.mock('../../../../src/models/magic/card_models', () => {
-  return {
-    default: {
-      findByIds: vi.fn().mockImplementation(ids => {
-        return ids.map(id => ({ _id: id, name: `Card ${id}`, cubeId: 'new-cube-id' }))
-      }),
-      create: vi.fn().mockImplementation((card, cube) => Promise.resolve({
-        _id: card._id,
-        name: card.name,
-        cubeId: cube._id
-      })),
-      deactivate: vi.fn().mockResolvedValue(true)
-    }
-  }
-})
-
-// Mock db to use the cube models and include card models
-vi.mock('../../../../src/models/db', () => {
-  return {
-    default: {
-      magic: {
-        cube: require('../../../../src/models/magic/cube_models.js'),
-        card: require('../../../../src/models/magic/card_models.js')
-      }
-    }
-  }
-})
-
 // Import after mocks are set up
 import * as cubeController from '../../../../src/controllers/magic/cube.controller.js'
 import { BadRequestError, NotFoundError } from '../../../../src/utils/errors.js'
 import logger from '../../../../src/utils/logger.js'
-import cubeModels from '../../../../src/models/magic/cube_models.js'
 import db from '../../../../src/models/db.js'
 
 describe('Magic Cube Controller', () => {
@@ -90,7 +79,7 @@ describe('Magic Cube Controller', () => {
       await cubeController.createCube(req, res, next)
 
       // Verify
-      expect(cubeModels.create).toHaveBeenCalledWith(req.user)
+      expect(db.magic.cube.create).toHaveBeenCalledWith(req.user)
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         cube: expect.objectContaining({
@@ -103,7 +92,7 @@ describe('Magic Cube Controller', () => {
     it('should handle errors properly', async () => {
       // Setup
       const error = new Error('Database error')
-      cubeModels.create.mockRejectedValueOnce(error)
+      db.magic.cube.create.mockRejectedValueOnce(error)
 
       // Execute
       await cubeController.createCube(req, res, next)
@@ -181,7 +170,7 @@ describe('Magic Cube Controller', () => {
       await cubeController.saveCube(req, res, next)
 
       // Verify
-      expect(cubeModels.save).toHaveBeenCalledWith({ _id: 'cube1', name: 'Updated Cube' })
+      expect(db.magic.cube.save).toHaveBeenCalledWith({ _id: 'cube1', name: 'Updated Cube' })
       expect(res.json).toHaveBeenCalledWith({
         status: 'success'
       })
@@ -196,7 +185,7 @@ describe('Magic Cube Controller', () => {
 
       // Verify
       expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
-      expect(cubeModels.save).not.toHaveBeenCalled()
+      expect(db.magic.cube.save).not.toHaveBeenCalled()
     })
 
     it('should return BadRequestError if cube._id is missing', async () => {
@@ -208,14 +197,14 @@ describe('Magic Cube Controller', () => {
 
       // Verify
       expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
-      expect(cubeModels.save).not.toHaveBeenCalled()
+      expect(db.magic.cube.save).not.toHaveBeenCalled()
     })
 
     it('should handle errors properly', async () => {
       // Setup
       req.body = { cube: { _id: 'cube1', name: 'Updated Cube' } }
       const error = new Error('Database error')
-      cubeModels.save.mockRejectedValueOnce(error)
+      db.magic.cube.save.mockRejectedValueOnce(error)
 
       // Execute
       await cubeController.saveCube(req, res, next)
@@ -237,9 +226,18 @@ describe('Magic Cube Controller', () => {
       req.cube = { _id: 'new-cube-id', name: 'Test Cube' }
       req.user = { _id: 'test-user-id' }
 
-      // Mock the cube.addCard function
-      db.magic.cube.addCard = vi.fn().mockResolvedValue(true)
-      db.magic.cube.removeCard = vi.fn().mockResolvedValue(true)
+      // Mock successful card creation and deactivation
+      db.magic.card.create.mockResolvedValueOnce({
+        _id: 'card1',
+        name: 'Card 1',
+        cubeId: 'new-cube-id'
+      })
+      db.magic.card.create.mockResolvedValueOnce({
+        _id: 'card2',
+        name: 'Card 2',
+        cubeId: 'new-cube-id'
+      })
+      db.magic.card.deactivate.mockResolvedValue(true)
 
       // Execute
       await cubeController.addRemoveCards(req, res, next)
@@ -327,28 +325,40 @@ describe('Magic Cube Controller', () => {
       req.cube = { _id: 'new-cube-id', name: 'Test Cube' }
       req.user = { _id: 'test-user-id' }
 
-      // Mock failure for one card
-      db.magic.card.create.mockImplementationOnce(() => {
-        throw new Error('Failed to create card')
+      // Mock failure for first card creation
+      db.magic.card.create.mockRejectedValueOnce(new Error('Failed to create card'))
+      // Mock success for second card
+      db.magic.card.create.mockResolvedValueOnce({
+        _id: 'card2',
+        name: 'Card 2',
+        cubeId: 'new-cube-id'
       })
-      db.magic.card.deactivate.mockImplementationOnce(() => {
-        throw new Error('Failed to deactivate card')
-      })
-      db.magic.cube.addCard = vi.fn().mockResolvedValue(true)
+      // Mock failure for card deactivation
+      db.magic.card.deactivate.mockRejectedValueOnce(new Error('Failed to deactivate card'))
 
       // Execute
       await cubeController.addRemoveCards(req, res, next)
 
-      // Verify
+      // Verify - need to check for specific structure in the results
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
-        addResults: expect.arrayContaining([
-          expect.objectContaining({ status: 'error' }),
-          expect.objectContaining({ status: 'success' })
-        ]),
-        removeResults: expect.arrayContaining([
-          expect.objectContaining({ status: 'error' })
-        ])
+        addResults: [
+          expect.objectContaining({
+            id: 'card1',
+            status: 'error',
+            message: 'Failed to create card'
+          }),
+          expect.objectContaining({
+            status: 'success'
+          })
+        ],
+        removeResults: [
+          expect.objectContaining({
+            id: 'card3',
+            status: 'error',
+            message: 'Failed to deactivate card'
+          })
+        ]
       })
     })
   })
@@ -368,7 +378,7 @@ describe('Magic Cube Controller', () => {
       await cubeController.updateSettings(req, res, next)
 
       // Verify
-      expect(cubeModels.save).toHaveBeenCalledWith(expect.objectContaining({
+      expect(db.magic.cube.save).toHaveBeenCalledWith(expect.objectContaining({
         _id: 'cube1',
         name: 'Updated Cube Name'
       }))
@@ -395,7 +405,7 @@ describe('Magic Cube Controller', () => {
       await cubeController.updateSettings(req, res, next)
 
       // Verify
-      expect(cubeModels.save).toHaveBeenCalledWith(expect.objectContaining({
+      expect(db.magic.cube.save).toHaveBeenCalledWith(expect.objectContaining({
         _id: 'cube1',
         flags: { legacy: true }
       }))
@@ -422,7 +432,7 @@ describe('Magic Cube Controller', () => {
       await cubeController.updateSettings(req, res, next)
 
       // Verify
-      expect(cubeModels.save).toHaveBeenCalledWith(expect.objectContaining({
+      expect(db.magic.cube.save).toHaveBeenCalledWith(expect.objectContaining({
         _id: 'cube1',
         flags: { legacy: true }
       }))
@@ -441,7 +451,7 @@ describe('Magic Cube Controller', () => {
 
       // Verify
       expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
-      expect(cubeModels.save).not.toHaveBeenCalled()
+      expect(db.magic.cube.save).not.toHaveBeenCalled()
     })
 
     it('should return BadRequestError if settings object is missing', async () => {
@@ -455,7 +465,7 @@ describe('Magic Cube Controller', () => {
 
       // Verify
       expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
-      expect(cubeModels.save).not.toHaveBeenCalled()
+      expect(db.magic.cube.save).not.toHaveBeenCalled()
     })
 
     it('should return NotFoundError if cube is not found', async () => {
@@ -473,7 +483,7 @@ describe('Magic Cube Controller', () => {
 
       // Verify
       expect(next).toHaveBeenCalledWith(expect.any(NotFoundError))
-      expect(cubeModels.save).not.toHaveBeenCalled()
+      expect(db.magic.cube.save).not.toHaveBeenCalled()
     })
 
     it('should handle errors properly', async () => {
@@ -486,7 +496,7 @@ describe('Magic Cube Controller', () => {
       }
       req.cube = { _id: 'cube1', name: 'Old Name' }
       const error = new Error('Database error')
-      cubeModels.save.mockRejectedValueOnce(error)
+      db.magic.cube.save.mockRejectedValueOnce(error)
 
       // Execute
       await cubeController.updateSettings(req, res, next)

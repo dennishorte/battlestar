@@ -113,9 +113,26 @@ export const update = async (req, res) => {
  * @param {Object} res - Express response object
  */
 export const versions = async (req, res) => {
-  const versions = await db.magic.card.versions()
-  res.json({
-    status: 'success',
-    versions,
-  })
+  try {
+    // Validate required inputs
+    if (!req.body.cardId) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Missing required field: cardId'
+      })
+    }
+
+    const versions = await db.magic.card.versions(req.body.cardId)
+    res.json({
+      status: 'success',
+      versions,
+    })
+  }
+  catch (error) {
+    console.error('Error fetching card versions:', error)
+    res.status(500).json({
+      status: 'error',
+      message: error.message
+    })
+  }
 }

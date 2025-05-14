@@ -11,7 +11,7 @@ vi.mock('../../../src/utils/mongo.js', () => {
   // Create an object to store the spies for access in tests
   const mockExports = {
     deleteMany: deleteManySpy,
-    deleteOne: deleteOneSpy, 
+    deleteOne: deleteOneSpy,
     findOne: findOneSpy,
     updateOne: updateOneSpy
   }

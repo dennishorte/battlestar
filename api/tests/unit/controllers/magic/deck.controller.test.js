@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import * as deckController from '../../../../src/controllers/magic/deck.controller.js'
 import { ObjectId } from 'mongodb'
 

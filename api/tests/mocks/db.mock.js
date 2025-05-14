@@ -1,4 +1,5 @@
-const { ObjectId } = require('mongodb')
+import { ObjectId } from 'mongodb'
+import { vi } from 'vitest'
 
 // In-memory user store
 const users = {}
@@ -7,9 +8,9 @@ const lobbies = {}
 
 // User model mock
 const user = {
-  all: jest.fn(async () => Object.values(users)),
+  all: vi.fn(async () => Object.values(users)),
 
-  checkPassword: jest.fn(async (name, password) => {
+  checkPassword: vi.fn(async (name, password) => {
     const user = Object.values(users).find(u => u.name === name)
     // In a real implementation, we'd compare hashed passwords
     // For testing, just check if password is 'password'
@@ -19,7 +20,7 @@ const user = {
     return null
   }),
 
-  create: jest.fn(async (userData) => {
+  create: vi.fn(async (userData) => {
     const id = new ObjectId()
     const newUser = {
       _id: id,
@@ -32,21 +33,21 @@ const user = {
     return newUser
   }),
 
-  findById: jest.fn(async (id) => {
+  findById: vi.fn(async (id) => {
     return users[id] || null
   }),
 
-  findByIds: jest.fn(async (ids) => {
+  findByIds: vi.fn(async (ids) => {
     return {
       toArray: async () => ids.map(id => users[id] || null).filter(Boolean)
     }
   }),
 
-  findByName: jest.fn(async (name) => {
+  findByName: vi.fn(async (name) => {
     return Object.values(users).find(u => u.name === name) || null
   }),
 
-  update: jest.fn(async (userData) => {
+  update: vi.fn(async (userData) => {
     const user = users[userData.userId]
     if (user) {
       users[userData.userId] = {
@@ -62,7 +63,7 @@ const user = {
 
 // Game model mock
 const game = {
-  create: jest.fn(async (gameData) => {
+  create: vi.fn(async (gameData) => {
     const id = new ObjectId()
     const newGame = {
       _id: id,
@@ -73,18 +74,18 @@ const game = {
     return newGame
   }),
 
-  find: jest.fn(async () => ({
+  find: vi.fn(async () => ({
     toArray: async () => Object.values(games)
   })),
 
-  findById: jest.fn(async (id) => {
+  findById: vi.fn(async (id) => {
     return games[id] || null
   })
 }
 
 // Lobby model mock
 const lobby = {
-  create: jest.fn(async (lobbyData) => {
+  create: vi.fn(async (lobbyData) => {
     const id = new ObjectId()
     const newLobby = {
       _id: id,
@@ -95,11 +96,11 @@ const lobby = {
     return newLobby
   }),
 
-  find: jest.fn(async () => ({
+  find: vi.fn(async () => ({
     toArray: async () => Object.values(lobbies)
   })),
 
-  findById: jest.fn(async (id) => {
+  findById: vi.fn(async (id) => {
     return lobbies[id] || null
   })
 }
@@ -111,7 +112,7 @@ const clearAll = () => {
   Object.keys(lobbies).forEach(key => delete lobbies[key])
 }
 
-module.exports = {
+export default {
   user,
   game,
   lobby,

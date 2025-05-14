@@ -6,12 +6,85 @@ import db from '../../models/db.js'
  * @param {Object} res - Express response object
  */
 export const create = async (req, res) => {
-  const deck = await db.magic.deck.create(req.user)
+  try {
+    // Validate required inputs
+    if (!req.body.deckData) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Missing required field: deckData'
+      })
+    }
 
-  res.json({
-    status: 'success',
-    deck,
-  })
+    // Create the deck
+    const deck = await db.magic.deck.create(req.body.deckData, req.user)
+
+    res.json({
+      status: 'success',
+      deck
+    })
+  }
+  catch (error) {
+    console.error('Error creating deck:', error)
+    res.status(500).json({
+      status: 'error',
+      message: error.message
+    })
+  }
+}
+
+/**
+ * Find all decks for a user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const findAll = async (req, res) => {
+  try {
+    const decks = await db.magic.deck.findAll(req.user)
+
+    res.json({
+      status: 'success',
+      decks
+    })
+  }
+  catch (error) {
+    console.error('Error finding decks:', error)
+    res.status(500).json({
+      status: 'error',
+      message: error.message
+    })
+  }
+}
+
+/**
+ * Update a deck
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const update = async (req, res) => {
+  try {
+    // Validate required inputs
+    if (!req.body.deckId || !req.body.deckData) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Missing required fields: deckId and deckData'
+      })
+    }
+
+    // Update the deck
+    const deck = await db.magic.deck.update(req.body.deckId, req.body.deckData, req.user)
+
+    res.json({
+      status: 'success',
+      deck
+    })
+  }
+  catch (error) {
+    console.error('Error updating deck:', error)
+    res.status(500).json({
+      status: 'error',
+      message: error.message
+    })
+  }
 }
 
 export const deleteDeck = async (req, res) => {

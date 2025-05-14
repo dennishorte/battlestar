@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import * as linkController from '../../../../src/controllers/magic/link.controller.js'
 import { ObjectId } from 'mongodb'
 
@@ -181,7 +181,7 @@ describe('Link Controller', () => {
       db.magic.link.delete.mockResolvedValueOnce({ deletedCount: 1 })
 
       // Execute
-      await linkController.delete(req, res)
+      await linkController.deleteLink(req, res)
 
       // Verify
       expect(db.magic.link.delete).toHaveBeenCalledWith(linkId, req.user)
@@ -192,7 +192,7 @@ describe('Link Controller', () => {
 
     it('should return error when linkId is missing', async () => {
       // Execute
-      await linkController.delete(req, res)
+      await linkController.deleteLink(req, res)
 
       // Verify
       expect(res.status).toHaveBeenCalledWith(400)
@@ -210,7 +210,7 @@ describe('Link Controller', () => {
       db.magic.link.delete.mockRejectedValueOnce(new Error(errorMessage))
 
       // Execute
-      await linkController.delete(req, res)
+      await linkController.deleteLink(req, res)
 
       // Verify
       expect(db.magic.link.delete).toHaveBeenCalled()

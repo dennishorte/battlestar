@@ -96,6 +96,13 @@ export default defineConfig([
   {
     files: ["tests/**/*.js"],
     plugins: { vitest: vitestPlugin },
-    extends: ["vitest/recommended"],
+    languageOptions: {
+      sourceType: "module",
+      ecmaVersion: "latest",
+    },
+    rules: {
+      ...vitestPlugin.configs.recommended.rules,
+      "vitest/expect-expect": "off",
+    },
   },
 ])

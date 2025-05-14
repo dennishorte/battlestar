@@ -216,6 +216,10 @@ Card.update = async function(cardId, cardData, user, comment=null) {
   })
 }
 
+/**
+ * Get the versions of the custom and scryfall card databases
+ * @returns {Object} The versions of the custom and scryfall cards
+ */
 Card.versions = async function() {
   const versionCursor = await versionCollection.find({})
   const versionArray = await versionCursor.toArray()

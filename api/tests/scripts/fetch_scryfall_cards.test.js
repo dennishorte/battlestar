@@ -1,7 +1,9 @@
-const { processSingleCard } = require('../../scripts/fetch_scryfall_cards.js')
-const { util } = require('battlestar-common')
-const fs = require('fs')
-
+import { processSingleCard } from '../../scripts/fetch_scryfall_cards.js'
+import { util } from 'battlestar-common'
+import fs from 'fs'
+import { describe, test, expect } from 'vitest'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
 function loadFiles(cardName) {
   function loadJson(filename) {
@@ -16,6 +18,8 @@ function loadFiles(cardName) {
   }
 
   const snakeName = util.toSnakeCase(cardName)
+  const __filename = fileURLToPath(import.meta.url)
+  const __dirname = path.dirname(__filename)
   return {
     input: loadJson(`${__dirname}/res/scryfall_${snakeName}.raw.json`),
     expected: loadJson(`${__dirname}/res/scryfall_${snakeName}.out.json`),

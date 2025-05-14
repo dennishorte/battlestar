@@ -1,14 +1,26 @@
-const request = require('supertest')
-const jwt = require('jsonwebtoken')
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import request from 'supertest'
+import jwt from 'jsonwebtoken'
 
 // Mock the database
-jest.mock('../../src/models/db', () => require('../mocks/db.mock.js'))
+vi.mock('../../src/models/db.js', async () => {
+  const dbMock = await import('../mocks/db.mock.js')
+  return { default: dbMock.default }
+})
 
 // Mock passport
-jest.mock('passport', () => require('../mocks/passport.mock.js'))
+vi.mock('passport', async () => {
+  const passportMock = await import('../mocks/passport.mock.js')
+  return { default: passportMock.default }
+})
 
-const { app } = require('../../src/server.js')
-const db = require('../../src/models/db.js')
+// Mock version.js
+vi.mock('../../src/version.js', () => {
+  return { default: 1747165976913 }
+})
+
+import { app } from '../../src/server.js'
+import db from '../../src/models/db.js'
 
 describe('Authentication', () => {
   let testUser
@@ -31,7 +43,7 @@ describe('Authentication', () => {
         .send({
           username: 'testuser',
           password: 'password',
-          appVersion: '1.0'
+          appVersion: 1747165976913
         })
 
       expect(response.status).toEqual(200)
@@ -48,7 +60,7 @@ describe('Authentication', () => {
         .send({
           username: 'testuser',
           password: 'wrong_password',
-          appVersion: '1.0'
+          appVersion: 1747165976913
         })
 
       expect(response.status).toEqual(401)
@@ -69,7 +81,7 @@ describe('Authentication', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({
           userIds: [testUser._id.toString()],  // Use string format consistently
-          appVersion: '1.0'
+          appVersion: 1747165976913
         })
 
       expect(response.status).toEqual(200)
@@ -86,7 +98,7 @@ describe('Authentication', () => {
         .post('/api/user/fetch_many')
         .send({
           userIds: [testUser._id.toString()],
-          appVersion: '1.0'
+          appVersion: 1747165976913
         })
 
       expect(response.status).toEqual(401)

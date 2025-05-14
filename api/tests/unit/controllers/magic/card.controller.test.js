@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import * as cardController from '../../../../src/controllers/magic/card.controller.js'
 import { ObjectId } from 'mongodb'
 
@@ -257,7 +257,7 @@ describe('Card Controller', () => {
   describe('versions', () => {
     it('should fetch card versions and return success response', async () => {
       // Setup
-      const cardId = new ObjectId('507f1f77bcf86cd799439013')
+      const cardId = '507f1f77bcf86cd799439013'
       const mockVersions = [
         {
           date: new Date('2023-01-01'),
@@ -273,13 +273,15 @@ describe('Card Controller', () => {
 
       req.body.cardId = cardId
 
-      db.magic.card.versions.mockResolvedValueOnce(mockVersions)
+      // Mock the versions function to return the mock data
+      const versionsMock = vi.fn().mockResolvedValue(mockVersions)
+      db.magic.card.versions = versionsMock
 
       // Execute
       await cardController.versions(req, res)
 
       // Verify
-      expect(db.magic.card.versions).toHaveBeenCalledWith(cardId)
+      expect(versionsMock).toHaveBeenCalledWith(cardId)
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         versions: mockVersions
@@ -303,20 +305,22 @@ describe('Card Controller', () => {
 
     it('should handle errors when fetching versions', async () => {
       // Setup
-      const cardId = new ObjectId('507f1f77bcf86cd799439013')
+      const cardId = '507f1f77bcf86cd799439013'
       req.body.cardId = cardId
 
       // Mock console.error to prevent log output during test
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
+      // Mock the versions function to throw an error
       const errorMessage = 'Failed to fetch versions'
-      db.magic.card.versions.mockRejectedValueOnce(new Error(errorMessage))
+      const versionsMock = vi.fn().mockRejectedValue(new Error(errorMessage))
+      db.magic.card.versions = versionsMock
 
       // Execute
       await cardController.versions(req, res)
 
       // Verify
-      expect(db.magic.card.versions).toHaveBeenCalledWith(cardId)
+      expect(versionsMock).toHaveBeenCalledWith(cardId)
       expect(res.status).toHaveBeenCalledWith(500)
       expect(res.json).toHaveBeenCalledWith({
         status: 'error',

@@ -1,6 +1,6 @@
 import { errorHandler } from '../../../src/middleware/errors.js'
 import { BadRequestError, NotFoundError } from '../../../src/utils/errors.js'
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 // Mock the logger
 vi.mock('../../../src/utils/logger', () => {

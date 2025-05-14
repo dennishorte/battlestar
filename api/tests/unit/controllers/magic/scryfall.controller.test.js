@@ -1,16 +1,37 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
-import * as scryfallController from '../../../../src/controllers/magic/scryfall.controller.js'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-// Mock axios
-vi.mock('axios', () => {
+// Mock MongoDB client
+vi.mock('../../../../src/utils/mongo.js', () => {
   return {
-    default: {
-      get: vi.fn()
+    client: {
+      db: vi.fn(() => ({
+        collection: vi.fn(() => ({
+          find: vi.fn(),
+          findOne: vi.fn(),
+          insertOne: vi.fn(),
+          updateOne: vi.fn(),
+          deleteOne: vi.fn()
+        }))
+      }))
     }
   }
 })
 
-import axios from 'axios'
+// Mock DB
+vi.mock('../../../../src/models/db.js', () => {
+  return {
+    default: {
+      magic: {
+        scryfall: {
+          update: vi.fn()
+        }
+      }
+    }
+  }
+})
+
+import * as scryfallController from '../../../../src/controllers/magic/scryfall.controller.js'
+import db from '../../../../src/models/db.js'
 
 describe('Scryfall Controller', () => {
   let req, res
@@ -27,68 +48,46 @@ describe('Scryfall Controller', () => {
     vi.clearAllMocks()
   })
 
-  describe('search', () => {
-    it('should search Scryfall and return the results', async () => {
+  describe('update', () => {
+    it('should update Scryfall data and return success response', async () => {
       // Setup
-      const mockQuery = 'lightning bolt'
-      const mockScryfallResponse = {
-        data: {
-          data: [
-            { id: '1', name: 'Lightning Bolt', set: 'alpha' },
-            { id: '2', name: 'Lightning Bolt', set: 'beta' }
-          ],
-          has_more: false
-        }
+      const mockUpdateResult = {
+        cardsAdded: 100,
+        cardsUpdated: 50
       }
-      
-      req.query.q = mockQuery
-      axios.get.mockResolvedValueOnce(mockScryfallResponse)
+
+      db.magic.scryfall.update.mockResolvedValueOnce(mockUpdateResult)
 
       // Execute
-      await scryfallController.search(req, res)
+      await scryfallController.update(req, res)
 
       // Verify
-      expect(axios.get).toHaveBeenCalledWith(
-        expect.stringContaining(`https://api.scryfall.com/cards/search?q=${encodeURIComponent(mockQuery)}`)
-      )
+      expect(db.magic.scryfall.update).toHaveBeenCalled()
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
-        cards: mockScryfallResponse.data.data,
-        has_more: false
+        message: 'Scryfall data updated',
+        ...mockUpdateResult
       })
     })
 
-    it('should return error when the query is missing', async () => {
-      // Execute
-      await scryfallController.search(req, res)
-
-      // Verify
-      expect(axios.get).not.toHaveBeenCalled()
-      expect(res.status).toHaveBeenCalledWith(400)
-      expect(res.json).toHaveBeenCalledWith({
-        status: 'error',
-        message: 'Missing required query parameter: q'
-      })
-    })
-
-    it('should handle errors from the Scryfall API', async () => {
+    it('should handle errors during update', async () => {
       // Setup
-      req.query.q = 'lightning bolt'
-      const errorMessage = 'Scryfall API error'
-      axios.get.mockRejectedValueOnce(new Error(errorMessage))
+      const errorMessage = 'Failed to update Scryfall data'
 
       // Mock console.error to prevent log output during test
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
+      db.magic.scryfall.update.mockRejectedValueOnce(new Error(errorMessage))
+
       // Execute
-      await scryfallController.search(req, res)
+      await scryfallController.update(req, res)
 
       // Verify
-      expect(axios.get).toHaveBeenCalled()
+      expect(db.magic.scryfall.update).toHaveBeenCalled()
       expect(res.status).toHaveBeenCalledWith(500)
       expect(res.json).toHaveBeenCalledWith({
         status: 'error',
-        message: expect.stringContaining(errorMessage)
+        message: errorMessage
       })
 
       consoleErrorSpy.mockRestore()

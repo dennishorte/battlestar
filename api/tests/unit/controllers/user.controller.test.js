@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi, spyOn } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 // Mock passport first, before requiring any other modules
 vi.mock('passport', () => {
@@ -198,8 +198,8 @@ describe('User Controller', () => {
       req.body = { id: 'user1' }
 
       // Skip the ObjectId validation in the test
-      // eslint-disable-next-line no-unused-vars
-      vi.spyOn(userController, 'deactivateUser').mockImplementationOnce(async (req, res, next) => {
+
+      vi.spyOn(userController, 'deactivateUser').mockImplementationOnce(async (req, res) => {
         res.json({ status: 'success' })
       })
 
@@ -231,8 +231,8 @@ describe('User Controller', () => {
       req.body = { userIds: ['user1', 'user2'] }
 
       // Skip the ObjectId validation in the test
-      // eslint-disable-next-line no-unused-vars
-      vi.spyOn(userController, 'fetchManyUsers').mockImplementationOnce(async (req, res, next) => {
+
+      vi.spyOn(userController, 'fetchManyUsers').mockImplementationOnce(async (req, res) => {
         res.json({
           status: 'success',
           users: [
@@ -273,8 +273,8 @@ describe('User Controller', () => {
       req.body = { userId: 'user1' }
 
       // Skip the ObjectId validation in the test
-      // eslint-disable-next-line no-unused-vars
-      vi.spyOn(userController, 'getUserLobbies').mockImplementationOnce(async (req, res, next) => {
+
+      vi.spyOn(userController, 'getUserLobbies').mockImplementationOnce(async (req, res) => {
         res.json({
           status: 'success',
           lobbies: [
@@ -320,8 +320,8 @@ describe('User Controller', () => {
       }
 
       // Skip the ObjectId validation in the test
-      // eslint-disable-next-line no-unused-vars
-      vi.spyOn(userController, 'getUserGames').mockImplementationOnce(async (req, res, next) => {
+
+      vi.spyOn(userController, 'getUserGames').mockImplementationOnce(async (req, res) => {
         res.json({
           status: 'success',
           games: [
@@ -367,8 +367,8 @@ describe('User Controller', () => {
       req.body = { userId: 'user1' }
 
       // Skip the ObjectId validation in the test
-      // eslint-disable-next-line no-unused-vars
-      vi.spyOn(userController, 'getRecentlyFinishedGames').mockImplementationOnce(async (req, res, next) => {
+
+      vi.spyOn(userController, 'getRecentlyFinishedGames').mockImplementationOnce(async (req, res) => {
         res.json({
           status: 'success',
           games: [
@@ -408,8 +408,8 @@ describe('User Controller', () => {
       req.body = { userId: 'user1' }
 
       // Skip the ObjectId validation in the test
-      // eslint-disable-next-line no-unused-vars
-      vi.spyOn(userController, 'getNextGame').mockImplementationOnce(async (req, res, next) => {
+
+      vi.spyOn(userController, 'getNextGame').mockImplementationOnce(async (req, res) => {
         res.json({
           status: 'success',
           gameId: 'game1'
