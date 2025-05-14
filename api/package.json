@@ -2,9 +2,10 @@
   "name": "api",
   "version": "1.0.0",
   "description": "API for Game Center",
+  "type": "module",
   "main": "src/server.js",
-  "_moduleAliases": {
-    "#": "src"
+  "imports": {
+    "#/*": "./src/*"
   },
   "scripts": {
     "start": "node server.bundle.js",

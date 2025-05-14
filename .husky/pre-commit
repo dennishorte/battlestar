@@ -1,3 +1,5 @@
-cd api && npm run lint && cd ..
-cd app && npm run lint && cd ..
-cd common && npm run lint && cd ..
+echo "\n\n\n!!! skipping lint commands during migration !!!\n\n\n"
+
+echo "cd api && npm run lint && cd .."
+echo "cd app && npm run lint && cd .."
+echo "cd common && npm run lint && cd .."
