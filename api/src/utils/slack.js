@@ -1,5 +1,5 @@
-const { WebClient } = require('@slack/web-api')
-const logger = require('./logger.js')
+import { WebClient } from '@slack/web-api'
+import logger from './logger.js'
 
 // An access token (from your Slack app or custom integration - xoxp, xoxb)
 const token = process.env.SLACK_BOT_TOKEN
@@ -8,7 +8,7 @@ const client = new WebClient(token)
 // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
 const cloChannelId = 'C01AV1RGJSK'
 
-module.exports = {
+export {
   sendMessage,
   sendToSlackId,
   test,
