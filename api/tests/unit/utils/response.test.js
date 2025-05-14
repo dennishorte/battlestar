@@ -1,12 +1,13 @@
-const { success, error } = require('../../../src/utils/response.js')
+import { success, error } from '../../../src/utils/response.js'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 describe('Response Utils', () => {
   let res
 
   beforeEach(() => {
     res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockReturnThis()
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis()
     }
   })
 
