@@ -1,6 +1,6 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const linkController = require('#/controllers/magic/link.controller')
+import * as linkController from '#/controllers/magic/link.controller.js'
 
 /**
  * @route POST /api/magic/link/create
@@ -23,4 +23,4 @@ router.post('/fetch_drafts', linkController.fetchDrafts)
  */
 router.post('/fetch_by_draft', linkController.fetchByDraft)
 
-module.exports = router
+export default router

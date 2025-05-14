@@ -1,14 +1,14 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
 
 // Import all route files
-const gameRouter = require('./game.router.js')
-const authRouter = require('./auth.router.js')
-const userRouter = require('./user.router.js')
-const lobbyRouter = require('./lobby.router.js')
-const miscRouter = require('./misc.router.js')
-const tyrantsRouter = require('./tyrants')
-const magicRouter = require('./magic')
+import gameRouter from './game.router.js'
+import authRouter from './auth.router.js'
+import userRouter from './user.router.js'
+import lobbyRouter from './lobby.router.js'
+import miscRouter from './misc.router.js'
+import tyrantsRouter from './tyrants/index.js'
+import magicRouter from './magic/index.js'
 
 // Guest routes (no authentication required)
 router.use('/guest', authRouter)
@@ -21,4 +21,4 @@ router.use('/lobby', lobbyRouter)
 router.use('/tyrants', tyrantsRouter)
 router.use('/magic', magicRouter)
 
-module.exports = router
+export default router

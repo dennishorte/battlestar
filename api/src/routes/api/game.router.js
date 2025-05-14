@@ -1,6 +1,6 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const gameController = require('#/controllers/game.controller')
+import * as gameController from '#/controllers/game.controller.js'
 
 /**
  * @swagger
@@ -357,4 +357,4 @@ router.post('/undo', gameController.undo)
  */
 router.post('/stats/innovation', gameController.stats.innovation)
 
-module.exports = router
+export default router

@@ -1,10 +1,10 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const hexRouter = require('./hex.router.js')
+import hexRouter from './hex.router.js'
 
 /**
  * Tyrants sub-routes
  */
 router.use('/hex', hexRouter)
 
-module.exports = router
+export default router

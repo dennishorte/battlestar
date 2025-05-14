@@ -1,6 +1,6 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const scryfallController = require('#/controllers/magic/scryfall.controller')
+import * as scryfallController from '#/controllers/magic/scryfall.controller.js'
 
 /**
  * @route POST /api/magic/scryfall/update
@@ -9,4 +9,4 @@ const scryfallController = require('#/controllers/magic/scryfall.controller')
  */
 router.post('/update', scryfallController.update)
 
-module.exports = router
+export default router

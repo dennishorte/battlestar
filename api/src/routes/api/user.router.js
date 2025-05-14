@@ -1,6 +1,6 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const userController = require('#/controllers/user.controller')
+import * as userController from '#/controllers/user.controller.js'
 
 /**
  * @swagger
@@ -360,4 +360,4 @@ router.post('/magic/decks', userController.magic.getDecks)
  */
 router.post('/magic/files', userController.magic.getFiles)
 
-module.exports = router
+export default router

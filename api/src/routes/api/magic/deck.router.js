@@ -1,6 +1,6 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const deckController = require('#/controllers/magic/deck.controller')
+import * as deckController from '#/controllers/magic/deck.controller.js'
 
 /**
  * @route POST /api/magic/deck/create
@@ -37,4 +37,4 @@ router.post('/fetch', deckController.fetch)
  */
 router.post('/save', deckController.save)
 
-module.exports = router
+export default router

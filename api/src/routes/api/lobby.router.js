@@ -1,6 +1,6 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const lobbyController = require('#/controllers/lobby.controller')
+import * as lobbyController from '#/controllers/lobby.controller.js'
 
 /**
  * @route POST /api/lobby/all
@@ -43,4 +43,4 @@ router.post('/kill', lobbyController.killLobby)
  */
 router.post('/save', lobbyController.saveLobby)
 
-module.exports = router
+export default router

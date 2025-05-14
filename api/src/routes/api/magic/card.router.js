@@ -1,6 +1,6 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const cardController = require('#/controllers/magic/card.controller')
+import * as cardController from '#/controllers/magic/card.controller.js'
 
 /**
  * @route POST /api/magic/card/all
@@ -30,4 +30,4 @@ router.post('/update', cardController.update)
  */
 router.post('/versions', cardController.versions)
 
-module.exports = router
+export default router

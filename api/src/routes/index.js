@@ -1,11 +1,12 @@
-const db = require('#/models/db.js')
+import db from '#/models/db.js'
+import magicRoutes from './api/magic/index.js'
 
 // Note: These routes have been migrated to the new router system in src/routes/api
 // Only keeping this file for backward compatibility with any components that might still reference it
-module.exports = {
+const routes = {
   // Magic routes have been migrated to the new router architecture
   // Keeping references for backward compatibility
-  magic: require('./api/magic'),
+  magic: magicRoutes,
 }
 
 async function _createFirstUserIfNone(name, password) {
@@ -19,7 +20,7 @@ async function _createFirstUserIfNone(name, password) {
   }
 }
 
-module.exports.login = async function(req, res) {
+export async function login(req, res) {
   await _createFirstUserIfNone(req.body.user.name, req.body.user.password)
   const user = await db.user.checkPassword(req.body.user.name, req.body.user.password)
 
@@ -46,3 +47,5 @@ module.exports.login = async function(req, res) {
     })
   }
 }
+
+export default routes
