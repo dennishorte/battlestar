@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   port: 3001,
   db: {
     uri: process.env.TEST_MONGODB_URI || 'mongodb://localhost:27017/game-center-test'

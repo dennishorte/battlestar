@@ -1,9 +1,13 @@
+import developmentConfig from './development.js'
+import productionConfig from './production.js'
+import testConfig from './test.js'
+
 const env = process.env.NODE_ENV || 'development'
 
 const configs = {
-  development: require('./development'),
-  production: require('./production'),
-  test: require('./test')
+  development: developmentConfig,
+  production: productionConfig,
+  test: testConfig
 }
 
-module.exports = configs[env]
+export default configs[env]
