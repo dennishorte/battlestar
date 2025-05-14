@@ -3,6 +3,7 @@
 * Migrations are handled via the migrate-mongo package.
 * All commands should be run from the root/api folder. migrate-mongo expects the script to be run from the parent folder of 'migrations'.
 * Because there are multiple databases, each one has its own config file. This means that a config file must be specified for each command.
+* Migration files are using ESM format.
 
 Create a new migration:
 ```
