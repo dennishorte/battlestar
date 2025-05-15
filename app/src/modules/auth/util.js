@@ -2,7 +2,7 @@ import store from '@/store'
 
 
 function canAccess(routeRecord) {
-  if (routeRecord.name == 'Login') {
+  if (routeRecord.name == 'SiteLogin') {
     return true
   }
   else {

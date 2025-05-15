@@ -59,15 +59,11 @@ const router = createRouter({
 
 
 router.beforeEach((to, from, next) => {
-
-  console.log('Route attempting to access:', to.name)
-  console.log('Auth check result:', to.matched.every(authUtil.canAccess))
-
   if (to.matched.every(authUtil.canAccess)) {
     next()
   }
   else {
-    next({ name: 'Login' })
+    next({ name: 'SiteLogin' })
   }
 })
 
