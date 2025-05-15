@@ -31,11 +31,7 @@ function Card() {
       const score = game.getCardsByZone(player, 'score')
       game.aRevealMany(player, score)
 
-      const choices = score
-      if (toMeld) {
-        choices.push(toMeld)
-      }
-
+      const choices = [...score, ...hand]
       const toExecute = game.aChooseCard(leader, choices, {
         title: 'Choose a card to force opponent to self-execute',
       })
