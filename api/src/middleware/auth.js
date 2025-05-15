@@ -1,7 +1,7 @@
-const passport = require('passport')
-const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt')
-const { ObjectId } = require('mongodb')
-const db = require('@models/db.js')
+import passport from 'passport'
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
+import { ObjectId } from 'mongodb'
+import db from '../models/db.js'
 
 // Configure the Bearer strategy for use by Passport.
 passport.use(new JwtStrategy(
@@ -33,6 +33,5 @@ function authenticate(req, res, next) {
   }
 }
 
-module.exports = {
-  authenticate
-}
+export { authenticate }
+export default { authenticate }

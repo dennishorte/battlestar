@@ -1,12 +1,17 @@
-const errorHandler = require('../../../src/middleware/errors').errorHandler
-const { BadRequestError, NotFoundError } = require('../../../src/utils/errors')
+import { errorHandler } from '../../../src/middleware/errors.js'
+import { BadRequestError, NotFoundError } from '../../../src/utils/errors.js'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 // Mock the logger
-jest.mock('../../../src/utils/logger', () => ({
-  error: jest.fn()
-}))
+vi.mock('../../../src/utils/logger', () => {
+  return {
+    default: {
+      error: vi.fn()
+    }
+  }
+})
 
-const logger = require('../../../src/utils/logger')
+import logger from '../../../src/utils/logger.js'
 
 describe('Error Handler Middleware', () => {
   let req, res, next
@@ -18,12 +23,12 @@ describe('Error Handler Middleware', () => {
       body: { someData: 'test' }
     }
     res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn()
     }
-    next = jest.fn()
+    next = vi.fn()
 
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should handle AppError with appropriate status code and message', async () => {

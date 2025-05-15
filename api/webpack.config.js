@@ -1,7 +1,11 @@
-const path = require('path')
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-module.exports = {
-  entry: './server.js',
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+export default {
+  entry: './src/server.js',
   mode: 'production',
   target: 'node',
   output: {
@@ -10,13 +14,10 @@ module.exports = {
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
-      '@controllers': path.resolve(__dirname, 'src/controllers'),
-      '@models': path.resolve(__dirname, 'src/models'),
-      '@utils': path.resolve(__dirname, 'src/utils'),
-      '@services': path.resolve(__dirname, 'src/services'),
-      '@middleware': path.resolve(__dirname, 'src/middleware'),
-      '@routes': path.resolve(__dirname, 'src/routes')
+      '#': path.resolve(__dirname, 'src'),
     }
+  },
+  experiments: {
+    outputModule: true
   }
 }

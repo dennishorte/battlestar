@@ -1,8 +1,8 @@
-const AsyncLock = require('async-lock')
-const db = require('@models/db.js')
-const { fromData } = require('battlestar-common')
-const { NotFoundError, GameOverwriteError, GameKilledError } = require('@utils/errors')
-const logger = require('@utils/logger')
+import AsyncLock from 'async-lock'
+import db from '../models/db.js'
+import { fromData } from 'battlestar-common'
+import { NotFoundError, GameOverwriteError, GameKilledError } from '../utils/errors.js'
+import logger from '../utils/logger.js'
 
 const lock = new AsyncLock()
 
@@ -105,7 +105,18 @@ async function _loadItemWithLockById(itemType, req, res, next) {
   }
 }
 
-module.exports = {
+export {
+  loadCardArgs,
+  loadCubeArgs,
+  loadDeckArgs,
+  loadDraftArgs,
+  loadGameArgs,
+  loadLobbyArgs,
+  GameOverwriteError,
+  GameKilledError
+}
+
+export default {
   loadCardArgs,
   loadCubeArgs,
   loadDeckArgs,

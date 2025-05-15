@@ -1,31 +1,98 @@
-const db = require('@models/db.js')
+import db from '../../models/db.js'
 
 /**
- * Create a link between a game and a draft
+ * Create a new link
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
  */
-exports.create = async (req, res, next) => {
-  const draft = req.draft
-  const game = req.game
+export const create = async (req, res) => {
+  try {
+    // Validate required inputs
+    if (!req.body.linkData) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Missing required field: linkData'
+      })
+    }
 
-  if (game && draft) {
-    await db.game.linkGameToDraft(game, draft)
-    await db.game.linkDraftToGame(draft, game)
-  }
-  else {
+    // Create the link
+    const link = await db.magic.link.create(req.body.linkData, req.user)
+
     res.json({
-      status: 'error',
-      message: 'unable to create link',
-      requestBody: req.body,
+      status: 'success',
+      link
     })
-    return next()
   }
+  catch (error) {
+    console.error('Error creating link:', error)
+    res.status(500).json({
+      status: 'error',
+      message: error.message
+    })
+  }
+}
 
-  res.json({
-    status: 'success',
-  })
+/**
+ * Find all links for a card
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const findAll = async (req, res) => {
+  try {
+    // Validate required inputs
+    if (!req.body.cardId) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Missing required field: cardId'
+      })
+    }
+
+    // Find links
+    const links = await db.magic.link.findAll(req.body.cardId)
+
+    res.json({
+      status: 'success',
+      links
+    })
+  }
+  catch (error) {
+    console.error('Error finding links:', error)
+    res.status(500).json({
+      status: 'error',
+      message: error.message
+    })
+  }
+}
+
+/**
+ * Delete a link
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const deleteLink = async (req, res) => {
+  try {
+    // Validate required inputs
+    if (!req.body.linkId) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Missing required field: linkId'
+      })
+    }
+
+    // Delete the link
+    await db.magic.link.delete(req.body.linkId, req.user)
+
+    res.json({
+      status: 'success'
+    })
+  }
+  catch (error) {
+    console.error('Error deleting link:', error)
+    res.status(500).json({
+      status: 'error',
+      message: error.message
+    })
+  }
 }
 
 /**
@@ -33,7 +100,7 @@ exports.create = async (req, res, next) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.fetchDrafts = async (req, res) => {
+export const fetchDrafts = async (req, res) => {
   const cursor = await db.game.collection.find({
     'settings.game': 'CubeDraft',
     'settings.players': { $elemMatch: { _id: req.body.userId } },
@@ -54,7 +121,7 @@ exports.fetchDrafts = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.fetchByDraft = async (req, res) => {
+export const fetchByDraft = async (req, res) => {
   const draft = req.draft
   delete draft.responses  // Removing responses from the draft object
 

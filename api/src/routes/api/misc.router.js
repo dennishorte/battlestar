@@ -1,6 +1,6 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const miscController = require('@controllers/misc.controller')
+import * as miscController from '../../controllers/misc.controller.js'
 
 /**
  * @route GET /api/misc/version
@@ -9,4 +9,4 @@ const miscController = require('@controllers/misc.controller')
  */
 router.post('/version', miscController.getAppVersion)
 
-module.exports = router
+export default router

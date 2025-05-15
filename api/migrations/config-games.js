@@ -1,10 +1,11 @@
-require('dotenv').config('../../.env')
+import dotenv from 'dotenv'
+dotenv.config('../../.env')
 
 const DB_HOST = process.env.DB_HOST
 const DB_PORT = process.env.DB_PORT
 
 
-module.exports = {
+export default {
   mongodb: {
     url: `mongodb://${DB_HOST}:${DB_PORT}`,
     databaseName: "games",
@@ -39,5 +40,5 @@ module.exports = {
   // The value in seconds for the TTL index that will be used for the lock. Value of 0 will disable the feature.
   lockTtl: 0,
 
-  moduleSystem: "commonjs",
+  moduleSystem: "esm",
 }

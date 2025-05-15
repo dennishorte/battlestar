@@ -1,9 +1,11 @@
-const passport = require('passport')
-const jwt = require('jsonwebtoken')
+import { vi } from 'vitest'
+import jwt from 'jsonwebtoken'
+
+const passport = {}
 
 // Mock authenticate method
-// eslint-disable-next-line no-unused-vars
-passport.authenticate = jest.fn((strategy, options) => {
+
+passport.authenticate = vi.fn(() => {
   return (req, res, next) => {
     // Check if token is present in the Authorization header
     const authHeader = req.headers.authorization
@@ -37,6 +39,6 @@ passport.authenticate = jest.fn((strategy, options) => {
   }
 })
 
-passport.use = jest.fn()
+passport.use = vi.fn()
 
-module.exports = passport
+export default passport

@@ -46,7 +46,7 @@ function error(res, err) {
   res.status(statusCode).json(responseData)
 }
 
-module.exports = {
+export {
   success,
   error
 }

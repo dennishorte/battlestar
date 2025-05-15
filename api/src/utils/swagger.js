@@ -1,6 +1,6 @@
-const swaggerJsdoc = require('swagger-jsdoc')
-const swaggerUi = require('swagger-ui-express')
-const version = require('@/version')
+import swaggerJsdoc from 'swagger-jsdoc'
+import swaggerUi from 'swagger-ui-express'
+import version from '../version.js'
 
 const options = {
   definition: {
@@ -48,4 +48,4 @@ function setupSwagger(app) {
   })
 }
 
-module.exports = setupSwagger
+export default setupSwagger

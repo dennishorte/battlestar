@@ -108,6 +108,7 @@
           <DropdownButton @click="importCard('land')">import card</DropdownButton>
           <DropdownButton @click="makeToken('land')">make token</DropdownButton>
           <DropdownDivider />
+          <DropdownButton @click="tapAll($event, 'land')">tap all</DropdownButton>
           <DropdownButton @click="moveAll($event, 'land')">move all</DropdownButton>
         </template>
       </TableauZone>
@@ -171,7 +172,7 @@
 
 
 <script>
-import { Dropdown as bsDropdown, Toast } from 'bootstrap'
+import { Toast } from 'bootstrap'
 import { computed } from 'vue'
 import { mapGetters } from 'vuex'
 
@@ -380,12 +381,12 @@ export default {
       })
     },
 
-    stopPropagation(event) {
-      event.stopPropagation()
-      const dropdown = event.target.closest('.dropdown')
-      const toggle = dropdown.querySelector('.dropdown-toggle')
-      const dd = new bsDropdown(toggle)
-      dd.hide()
+    tapAll(event, zone) {
+      const zoneId = `players.${this.player.name}.${zone}`
+      this.do(this.actorPlayer, {
+        name: 'tap all',
+        zoneId,
+      })
     },
 
     viewAll() {

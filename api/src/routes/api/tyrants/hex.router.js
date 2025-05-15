@@ -1,6 +1,6 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const hexController = require('@controllers/tyrants/hex.controller')
+import * as hexController from '../../../controllers/tyrants/hex.controller.js'
 
 /**
  * @route POST /api/tyrants/hex/all
@@ -25,4 +25,4 @@ router.post('/delete', hexController.deleteHex)
  */
 router.post('/save', hexController.saveHex)
 
-module.exports = router
+export default router

@@ -1,14 +1,15 @@
-const express = require('express')
-const router = express.Router()
-const cubeRouter = require('./cube.router')
-const cardRouter = require('./card.router')
-const deckRouter = require('./deck.router')
-const scryfallRouter = require('./scryfall.router')
-const linkRouter = require('./link.router')
+import express from 'express'
+import cubeRouter from './cube.router.js'
+import cardRouter from './card.router.js'
+import deckRouter from './deck.router.js'
+import scryfallRouter from './scryfall.router.js'
+import linkRouter from './link.router.js'
 
 /**
  * Magic sub-routes
  */
+const router = express.Router()
+
 router.use('/cube', cubeRouter)
 router.use('/card', cardRouter)
 router.use('/deck', deckRouter)
@@ -17,4 +18,4 @@ router.use('/link', linkRouter)
 
 // All magic routes have been migrated
 
-module.exports = router
+export default router

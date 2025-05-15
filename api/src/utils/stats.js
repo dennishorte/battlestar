@@ -1,6 +1,4 @@
 const Stats = {}
-module.exports = Stats
-
 
 Stats.processInnovationStats = async function(cursor) {
   const output = {
@@ -73,3 +71,5 @@ Stats.processInnovationStats = async function(cursor) {
 
   return output
 }
+
+export default Stats

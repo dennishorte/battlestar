@@ -78,7 +78,7 @@ export default {
   computed: {
     cardsByName() {
       if (this.cards) {
-        return mag.util.card.lookup.generateLookup(this.cards).byName
+        return mag.util.card.lookup.create(this.cards).byName
       }
       else {
         return this.$store.getters['magic/cards/cards'].byName

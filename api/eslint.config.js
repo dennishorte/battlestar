@@ -1,10 +1,9 @@
 // eslint.config.js
-const { defineConfig } = require("eslint/config")
-const jest = require('eslint-plugin-jest')
-const js = require("@eslint/js")
+import { defineConfig } from "eslint/config"
+import vitestPlugin from 'eslint-plugin-vitest'
+import js from "@eslint/js"
 
-
-module.exports = defineConfig([
+export default defineConfig([
   {
     files: ["**/*.js"],
     plugins: { js },
@@ -13,6 +12,8 @@ module.exports = defineConfig([
     ],
 
     languageOptions: {
+      sourceType: "module",
+      ecmaVersion: "latest",
       globals: {
         // ECMAScript
         ArrayBuffer: "readonly",
@@ -67,13 +68,6 @@ module.exports = defineConfig([
         process: "readonly",
         root: "readonly",
         setImmediate: "readonly",
-
-        // Node.js commonjs specific
-        __dirname: "readonly",
-        __filename: "readonly",
-        exports: "writable",
-        module: "readonly",
-        require: "readonly",
       },
     },
 
@@ -101,7 +95,14 @@ module.exports = defineConfig([
 
   {
     files: ["tests/**/*.js"],
-    plugins: { jest },
-    extends: ["jest/recommended"],
+    plugins: { vitest: vitestPlugin },
+    languageOptions: {
+      sourceType: "module",
+      ecmaVersion: "latest",
+    },
+    rules: {
+      ...vitestPlugin.configs.recommended.rules,
+      "vitest/expect-expect": "off",
+    },
   },
 ])

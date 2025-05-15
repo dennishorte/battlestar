@@ -1,4 +1,4 @@
-const databaseClient = require('@utils/mongo.js').client
+import { client as databaseClient } from '../../utils/mongo.js'
 const database = databaseClient.db('magic')
 const deckCollection = database.collection('deck')
 
@@ -65,4 +65,4 @@ const Deck = {
   },
 }
 
-module.exports = Deck
+export default Deck

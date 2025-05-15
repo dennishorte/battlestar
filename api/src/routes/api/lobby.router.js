@@ -1,6 +1,6 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const lobbyController = require('@controllers/lobby.controller')
+import * as lobbyController from '../../controllers/lobby.controller.js'
 
 /**
  * @route POST /api/lobby/all
@@ -23,7 +23,7 @@ router.post('/create', lobbyController.createLobby)
  * @route POST /api/lobby/info
  * @description Get information about a specific lobby
  * @access Private
- * @middleware loadLobbyArgs - Loads the lobby into req.lobby based on req.body.lobbyId
+ * #/middleware loadLobbyArgs - Loads the lobby into req.lobby based on req.body.lobbyId
  */
 router.post('/info', lobbyController.getLobbyInfo)
 
@@ -31,7 +31,7 @@ router.post('/info', lobbyController.getLobbyInfo)
  * @route POST /api/lobby/kill
  * @description Delete a lobby
  * @access Private
- * @middleware loadLobbyArgs - Loads the lobby into req.lobby based on req.body.lobbyId
+ * #/middleware loadLobbyArgs - Loads the lobby into req.lobby based on req.body.lobbyId
  */
 router.post('/kill', lobbyController.killLobby)
 
@@ -43,4 +43,4 @@ router.post('/kill', lobbyController.killLobby)
  */
 router.post('/save', lobbyController.saveLobby)
 
-module.exports = router
+export default router

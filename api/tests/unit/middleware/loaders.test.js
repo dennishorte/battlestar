@@ -1,47 +1,65 @@
-const { loadGameArgs, loadLobbyArgs, loadDraftArgs, loadCardArgs, loadCubeArgs, loadDeckArgs, GameOverwriteError, GameKilledError } = require('../../../src/middleware/loaders')
-const { NotFoundError } = require('../../../src/utils/errors')
-const { ObjectId } = require('mongodb')
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import {
+  loadGameArgs,
+  loadLobbyArgs,
+  loadDraftArgs,
+  loadCardArgs,
+  loadCubeArgs,
+  loadDeckArgs,
+  GameOverwriteError,
+  GameKilledError
+} from '../../../src/middleware/loaders.js'
+import { NotFoundError } from '../../../src/utils/errors.js'
+import { ObjectId } from 'mongodb'
 
 // Mock AsyncLock
-jest.mock('async-lock', () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      acquire: jest.fn((key, fn) => {
-        return Promise.resolve(fn())
-      })
-    }
-  })
+vi.mock('async-lock', () => {
+  return {
+    default: vi.fn().mockImplementation(() => {
+      return {
+        acquire: vi.fn((key, fn) => {
+          return Promise.resolve(fn())
+        })
+      }
+    })
+  }
 })
 
 // Mock db
-jest.mock('../../../src/models/db', () => ({
-  game: {
-    findById: jest.fn()
-  },
-  lobby: {
-    findById: jest.fn()
-  },
-  magic: {
-    card: {
-      findById: jest.fn(),
-      findByIds: jest.fn().mockResolvedValue([])
-    },
-    cube: {
-      findById: jest.fn()
-    },
-    deck: {
-      findById: jest.fn()
+vi.mock('../../../src/models/db', () => {
+  return {
+    default: {
+      game: {
+        findById: vi.fn()
+      },
+      lobby: {
+        findById: vi.fn()
+      },
+      magic: {
+        card: {
+          findById: vi.fn(),
+          findByIds: vi.fn().mockResolvedValue([])
+        },
+        cube: {
+          findById: vi.fn()
+        },
+        deck: {
+          findById: vi.fn()
+        }
+      }
     }
   }
-}))
+})
 
 // Mock fromData from common
-jest.mock('battlestar-common', () => ({
-  fromData: jest.fn(data => data)
-}))
+vi.mock('battlestar-common', () => {
+  return {
+    fromData: vi.fn(data => data)
+  }
+})
 
-const db = require('../../../src/models/db')
-const { fromData } = require('battlestar-common')
+import db from '../../../src/models/db.js'
+import { fromData } from 'battlestar-common'
 
 describe('Data Loader Middleware', () => {
   let req, res, next
@@ -52,16 +70,16 @@ describe('Data Loader Middleware', () => {
     }
     res = {
       locals: {},
-      on: jest.fn((event, callback) => {
+      on: vi.fn((event, callback) => {
         if (event === 'finish') {
           // Simulate the callback being called
           callback()
         }
       })
     }
-    next = jest.fn()
+    next = vi.fn()
 
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('loadGameArgs', () => {

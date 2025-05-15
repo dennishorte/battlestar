@@ -1,10 +1,27 @@
-module.exports = {
-  magic: require('./magic'),
-  tyrants: require('./tyrants'),
+import * as magic from './magic/index.js'
+import * as tyrants from './tyrants/index.js'
+import misc from './misc_models.js'
+import lobby from './lobby_models.js'
+import game from './game_models.js'
+import notif from './notif_models.js'
+import user from './user_models.js'
 
-  misc: require('./misc_models.js'),
-  lobby: require('./lobby_models.js'),
-  game: require('./game_models.js'),
-  notif: require('./notif_models.js'),
-  user: require('./user_models.js'),
+export {
+  magic,
+  tyrants,
+  misc,
+  lobby,
+  game,
+  notif,
+  user
+}
+
+export default {
+  magic,
+  tyrants,
+  misc,
+  lobby,
+  game,
+  notif,
+  user
 }

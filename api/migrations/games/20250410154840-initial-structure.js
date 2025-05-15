@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   /**
    * @param db {import('mongodb').Db}
    * @param client {import('mongodb').MongoClient}

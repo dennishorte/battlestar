@@ -67,6 +67,17 @@
           </button>
         </li>
 
+        <li v-for="tracker in Object.keys(card.g.trackers)" :key="tracker">
+          <button @click.stop="() => {}" class="dropdown-item tracker-button">
+            <CounterButtons
+              @click.stop="() => {}"
+              :card="card"
+              :name="tracker"
+              kind="tracker"
+            />
+          </button>
+        </li>
+
         <DropdownDivider />
 
         <DropdownButton @click="toggleUntap">
@@ -132,6 +143,12 @@ export default {
       const parts = []
 
       for (const [key, value] of Object.entries(this.card.g.counters)) {
+        if (value !== 0) {
+          parts.push(`${key}: ${value}`)
+        }
+      }
+
+      for (const [key, value] of Object.entries(this.card.g.trackers)) {
         if (value !== 0) {
           parts.push(`${key}: ${value}`)
         }

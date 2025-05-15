@@ -1,29 +1,39 @@
-// Mock logger
-jest.mock('../../../../src/utils/logger', () => ({
-  info: jest.fn(),
-  error: jest.fn(),
-  debug: jest.fn()
-}))
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-// Mock db
-jest.mock('../../../../src/models/db', () => ({
-  tyrants: {
-    hex: {
-      fetchAll: jest.fn().mockResolvedValue([
-        { _id: 'hex1', name: 'Hex One', data: {} },
-        { _id: 'hex2', name: 'Hex Two', data: {} }
-      ]),
-      delete: jest.fn().mockResolvedValue(true),
-      save: jest.fn().mockResolvedValue(true)
+// Mock logger
+vi.mock('../../../../src/utils/logger', () => {
+  return {
+    default: {
+      info: vi.fn(),
+      error: vi.fn(),
+      debug: vi.fn()
     }
   }
-}))
+})
+
+// Mock db
+vi.mock('../../../../src/models/db', () => {
+  return {
+    default: {
+      tyrants: {
+        hex: {
+          fetchAll: vi.fn().mockResolvedValue([
+            { _id: 'hex1', name: 'Hex One', data: {} },
+            { _id: 'hex2', name: 'Hex Two', data: {} }
+          ]),
+          delete: vi.fn().mockResolvedValue(true),
+          save: vi.fn().mockResolvedValue(true)
+        }
+      }
+    }
+  }
+})
 
 // Import after mocks are set up
-const hexController = require('../../../../src/controllers/tyrants/hex.controller')
-const { BadRequestError } = require('../../../../src/utils/errors')
-const db = require('../../../../src/models/db')
-const logger = require('../../../../src/utils/logger')
+import * as hexController from '../../../../src/controllers/tyrants/hex.controller.js'
+import { BadRequestError } from '../../../../src/utils/errors.js'
+import db from '../../../../src/models/db.js'
+import logger from '../../../../src/utils/logger.js'
 
 describe('Tyrants Hex Controller', () => {
   let req, res, next
@@ -35,12 +45,12 @@ describe('Tyrants Hex Controller', () => {
       query: {}
     }
     res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn()
     }
-    next = jest.fn()
+    next = vi.fn()
 
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('getAllHexes', () => {

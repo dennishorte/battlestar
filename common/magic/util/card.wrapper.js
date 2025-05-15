@@ -1,5 +1,5 @@
-const Wrapper = require('./wrapper')
-const cardUtil = require('../cardUtil')
+const Wrapper = require('./wrapper.js')
+const cardUtil = require('../cardUtil.js')
 
 class GameData {
   constructor() {
@@ -13,9 +13,10 @@ class GameData {
     this.attached = []
     this.attachedTo = null
 
-    this.counters= {
+    this.counters = {
       '+1/+1': 0,
     }
+    this.trackers = {}
 
     this.morph = false
     this.secret = false

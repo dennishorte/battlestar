@@ -1,8 +1,13 @@
-const { coerceMongoIds, ensureVersion } = require('../../src/middleware/validators')
-const { ObjectId } = require('mongodb')
+import { coerceMongoIds, ensureVersion } from '../../src/middleware/validators.js'
+import { ObjectId } from 'mongodb'
+import { describe, it, expect, vi } from 'vitest'
 
 // Mock the version module
-jest.mock('../../src/version', () => '1.0.0')
+vi.mock('../../src/version', () => {
+  return {
+    default: '1.0.0'
+  }
+})
 
 describe('Middleware - Validation', () => {
   describe('coerceMongoIds', () => {
@@ -17,7 +22,7 @@ describe('Middleware - Validation', () => {
         }
       }
 
-      const next = jest.fn()
+      const next = vi.fn()
 
       coerceMongoIds(req, {}, next)
 
@@ -42,7 +47,7 @@ describe('Middleware - Validation', () => {
         }
       }
 
-      const next = jest.fn()
+      const next = vi.fn()
 
       coerceMongoIds(req, {}, next)
 
@@ -63,11 +68,11 @@ describe('Middleware - Validation', () => {
       }
 
       const res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn()
+        status: vi.fn().mockReturnThis(),
+        json: vi.fn()
       }
 
-      const next = jest.fn()
+      const next = vi.fn()
 
       ensureVersion(req, res, next)
 
@@ -83,11 +88,11 @@ describe('Middleware - Validation', () => {
       }
 
       const res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn()
+        status: vi.fn().mockReturnThis(),
+        json: vi.fn()
       }
 
-      const next = jest.fn()
+      const next = vi.fn()
 
       ensureVersion(req, res, next)
 

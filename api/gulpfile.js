@@ -1,11 +1,14 @@
-const { src, dest, series, parallel } = require('gulp')
-const del = require('del')
-const fs   = require('fs')
-const zip = require('gulp-zip')
-const log = require('fancy-log')
-const webpack_stream = require('webpack-stream')
-const webpack_config = require('./webpack.config.js')
-const exec = require('child_process').exec
+import { src, dest, series, parallel } from 'gulp'
+import { deleteAsync } from 'del'
+import fs from 'fs'
+import zip from 'gulp-zip'
+import log from 'fancy-log'
+import webpack_stream from 'webpack-stream'
+import webpack_config from './webpack.config.js'
+import { exec as execCallback } from 'child_process'
+import { promisify } from 'util'
+
+const exec = promisify(execCallback)
 
 const paths = {
   prod_build: '../prod-build',
@@ -17,7 +20,7 @@ const paths = {
 
 function clean()  {
   log('removing the old files in the directory')
-  return del('../prod-build/**', {force:true})
+  return deleteAsync('../prod-build/**', {force:true})
 }
 
 function createProdBuildFolder() {
@@ -32,13 +35,17 @@ function createProdBuildFolder() {
   return Promise.resolve('the value is ignored')
 }
 
-function buildVueCodeTask(cb) {
+async function buildVueCodeTask() {
   log('building Vue code into the directory')
-  return exec('cd ../app && npm run build', function (err, stdout, stderr) {
+  try {
+    const { stdout, stderr } = await exec('cd ../app && npm run build')
     log(stdout)
     log(stderr)
-    cb(err)
-  })
+  }
+  catch (err) {
+    log.error(err)
+    throw err
+  }
 }
 
 function copyVueCodeTask() {
@@ -60,7 +67,7 @@ function zippingTask() {
     .pipe(dest(`${paths.prod_build}`))
 }
 
-exports.default = series(
+export default series(
   clean,
   createProdBuildFolder,
   buildVueCodeTask,

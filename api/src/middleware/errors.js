@@ -1,5 +1,5 @@
-const logger = require('@utils/logger')
-const { AppError } = require('@utils/errors')
+import logger from '../utils/logger.js'
+import { AppError } from '../utils/errors.js'
 
 /**
  * Global error handling middleware
@@ -39,6 +39,5 @@ async function errorHandler(err, req, res, next) {
   })
 }
 
-module.exports = {
-  errorHandler,
-}
+export { errorHandler }
+export default { errorHandler }

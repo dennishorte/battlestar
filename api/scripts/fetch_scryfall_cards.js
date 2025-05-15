@@ -1,9 +1,7 @@
-const axios = require('axios')
-const fs = require('fs')
-const util = require('../../common/lib/util.js')
-const path = require('path')
-const { mag } = require('battlestar-common')
-
+import axios from 'axios'
+import fs from 'fs'
+import path from 'path'
+import { mag, util } from 'battlestar-common'
 
 const rootFields = [
   "id",
@@ -366,20 +364,19 @@ async function fetchFromScryfallAndClean(useCache) {
 // Main
 
 // Only run the main function if this script is executed directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   const args = process.argv.slice(2)
   const useCache = args.includes('--use-cache')
 
   fetchFromScryfallAndClean(useCache)
 }
 
-// Export the functions we want to test
-module.exports = {
+// Export the functions that are used by other files
+export {
   processSingleCard,
   processCards,
-  adjustFaces,
-  cleanImageUris,
-  cleanLegalities,
-  prefilterVersions,
-  postfilterVersions
+  fetchFromScryfallAndClean,
+  fetchScryfallDefaultDataUri,
+  fetchScryfallDefaultCards,
+  downloadAndLoadScryfallData,
 }

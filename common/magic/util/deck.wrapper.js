@@ -1,4 +1,4 @@
-const Wrapper = require('./wrapper')
+const Wrapper = require('./wrapper.js')
 
 
 function _emptyZones() {

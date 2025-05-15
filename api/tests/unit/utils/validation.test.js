@@ -1,8 +1,10 @@
-const {
+import {
   validateEmail,
   validatePassword,
   validateRequiredFields
-} = require('../../../src/utils/validation')
+} from '../../../src/utils/validation.js'
+
+import { describe, it, expect } from 'vitest'
 
 describe('Validation Utils', () => {
   describe('validateEmail', () => {

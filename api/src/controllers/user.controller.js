@@ -1,10 +1,10 @@
-const { ObjectId } = require('mongodb')
-const db = require('@models/db')
-const { BadRequestError, NotFoundError } = require('@utils/errors')
-const logger = require('@utils/logger')
+import { ObjectId } from 'mongodb'
+import db from '../models/db.js'
+import { BadRequestError, NotFoundError } from '../utils/errors.js'
+import logger from '../utils/logger.js'
 
 // User controller methods
-exports.getAllUsers = async (req, res, next) => {
+export const getAllUsers = async (req, res, next) => {
   try {
     const users = await db.user.all()
     res.json({
@@ -18,7 +18,7 @@ exports.getAllUsers = async (req, res, next) => {
   }
 }
 
-exports.createUser = async (req, res, next) => {
+export const createUser = async (req, res, next) => {
   try {
     const { name, password, slack } = req.body
 
@@ -48,7 +48,7 @@ exports.createUser = async (req, res, next) => {
   }
 }
 
-exports.deactivateUser = async (req, res, next) => {
+export const deactivateUser = async (req, res, next) => {
   try {
     const { id } = req.body
 
@@ -80,7 +80,7 @@ exports.deactivateUser = async (req, res, next) => {
   }
 }
 
-exports.fetchManyUsers = async (req, res, next) => {
+export const fetchManyUsers = async (req, res, next) => {
   try {
     const { userIds } = req.body
 
@@ -109,7 +109,7 @@ exports.fetchManyUsers = async (req, res, next) => {
   }
 }
 
-exports.getUserLobbies = async (req, res, next) => {
+export const getUserLobbies = async (req, res, next) => {
   try {
     const { userId } = req.body
 
@@ -137,7 +137,7 @@ exports.getUserLobbies = async (req, res, next) => {
   }
 }
 
-exports.getUserGames = async (req, res, next) => {
+export const getUserGames = async (req, res, next) => {
   try {
     const filters = {}
 
@@ -182,7 +182,7 @@ exports.getUserGames = async (req, res, next) => {
   }
 }
 
-exports.getRecentlyFinishedGames = async (req, res, next) => {
+export const getRecentlyFinishedGames = async (req, res, next) => {
   try {
     const { userId } = req.body
 
@@ -210,7 +210,7 @@ exports.getRecentlyFinishedGames = async (req, res, next) => {
   }
 }
 
-exports.getNextGame = async (req, res, next) => {
+export const getNextGame = async (req, res, next) => {
   try {
     const { userId } = req.body
 
@@ -263,7 +263,7 @@ exports.getNextGame = async (req, res, next) => {
   }
 }
 
-exports.updateUser = async (req, res, next) => {
+export const updateUser = async (req, res, next) => {
   try {
     const { userId, name, slack } = req.body
 
@@ -294,88 +294,86 @@ exports.updateUser = async (req, res, next) => {
 }
 
 // Magic related controllers
-exports.magic = {
-  getCubes: async (req, res, next) => {
+export const magic_getCubes = async (req, res, next) => {
+  try {
+    const { userId } = req.body
+
+    if (!userId) {
+      return next(new BadRequestError('userId is required'))
+    }
+
     try {
-      const { userId } = req.body
+      const objectId = new ObjectId(userId)
+      const cubes = await db.magic.cube.findByUserId(objectId)
 
-      if (!userId) {
-        return next(new BadRequestError('userId is required'))
-      }
-
-      try {
-        const objectId = new ObjectId(userId)
-        const cubes = await db.magic.cube.findByUserId(objectId)
-
-        res.json({
-          status: 'success',
-          cubes
-        })
-      }
-      catch {
-        return next(new BadRequestError('Invalid userId format or error accessing cubes'))
-      }
+      res.json({
+        status: 'success',
+        cubes
+      })
     }
-    catch (err) {
-      logger.error(`Error fetching Magic cubes: ${err.message}`)
-      next(err)
+    catch {
+      return next(new BadRequestError('Invalid userId format or error accessing cubes'))
     }
-  },
+  }
+  catch (err) {
+    logger.error(`Error fetching Magic cubes: ${err.message}`)
+    next(err)
+  }
+}
 
-  getDecks: async (req, res, next) => {
+export const magic_getDecks = async (req, res, next) => {
+  try {
+    const { userId } = req.body
+
+    if (!userId) {
+      return next(new BadRequestError('userId is required'))
+    }
+
     try {
-      const { userId } = req.body
+      const objectId = new ObjectId(userId)
+      const decks = await db.magic.deck.findByUserId(objectId)
 
-      if (!userId) {
-        return next(new BadRequestError('userId is required'))
-      }
-
-      try {
-        const objectId = new ObjectId(userId)
-        const decks = await db.magic.deck.findByUserId(objectId)
-
-        res.json({
-          status: 'success',
-          decks
-        })
-      }
-      catch {
-        return next(new BadRequestError('Invalid userId format or error accessing decks'))
-      }
+      res.json({
+        status: 'success',
+        decks
+      })
     }
-    catch (err) {
-      logger.error(`Error fetching Magic decks: ${err.message}`)
-      next(err)
+    catch {
+      return next(new BadRequestError('Invalid userId format or error accessing decks'))
     }
-  },
+  }
+  catch (err) {
+    logger.error(`Error fetching Magic decks: ${err.message}`)
+    next(err)
+  }
+}
 
-  getFiles: async (req, res, next) => {
+export const magic_getFiles = async (req, res, next) => {
+  try {
+    const { userId } = req.body
+
+    if (!userId) {
+      return next(new BadRequestError('userId is required'))
+    }
+
     try {
-      const { userId } = req.body
+      const objectId = new ObjectId(userId)
+      const files = [
+        await db.magic.deck.findByUserId(objectId),
+        await db.magic.cube.findByUserId(objectId)
+      ].flat()
 
-      if (!userId) {
-        return next(new BadRequestError('userId is required'))
-      }
-
-      try {
-        const objectId = new ObjectId(userId)
-        const files = [
-          await db.magic.deck.findByUserId(objectId),
-          await db.magic.cube.findByUserId(objectId)
-        ].flat()
-
-        res.json({
-          status: 'success',
-          files
-        })
-      }
-      catch {
-        return next(new BadRequestError('Invalid userId format or error accessing files'))
-      }
+      res.json({
+        status: 'success',
+        files
+      })
     }
-    catch (err) {
-      logger.error(`Error fetching Magic files: ${err.message}`)
-      next(err)
+    catch {
+      return next(new BadRequestError('Invalid userId format or error accessing files'))
     }
+  }
+  catch (err) {
+    logger.error(`Error fetching Magic files: ${err.message}`)
+    next(err)
   }
 }

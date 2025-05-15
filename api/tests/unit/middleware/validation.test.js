@@ -1,10 +1,15 @@
-const { coerceMongoIds, ensureVersion, validate } = require('../../../src/middleware/validators')
-const { ObjectId } = require('mongodb')
-const { BadRequestError } = require('../../../src/utils/errors')
-const Joi = require('joi')
+import { coerceMongoIds, ensureVersion, validate } from '../../../src/middleware/validators.js'
+import { ObjectId } from 'mongodb'
+import { BadRequestError } from '../../../src/utils/errors.js'
+import Joi from 'joi'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 // Mock version module
-jest.mock('../../../src/version', () => '1.2.3')
+vi.mock('../../../src/version', () => {
+  return {
+    default: '1.2.3'
+  }
+})
 
 describe('Validation Middleware', () => {
   describe('coerceMongoIds', () => {
@@ -13,7 +18,7 @@ describe('Validation Middleware', () => {
     beforeEach(() => {
       req = { body: {} }
       res = {}
-      next = jest.fn()
+      next = vi.fn()
     })
 
     it('should convert string ids to ObjectId', () => {
@@ -147,10 +152,10 @@ describe('Validation Middleware', () => {
     beforeEach(() => {
       req = { body: {} }
       res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn()
+        status: vi.fn().mockReturnThis(),
+        json: vi.fn()
       }
-      next = jest.fn()
+      next = vi.fn()
     })
 
     it('should call next when version matches exactly', () => {
@@ -209,7 +214,7 @@ describe('Validation Middleware', () => {
       query: {}
     }
     res = {}
-    next = jest.fn()
+    next = vi.fn()
   })
 
   it('should call next() when validation passes for body schema', () => {

@@ -81,8 +81,21 @@ export default {
 
     beginManagement({ card, zone }) {
       this.card = card
-      this.zone = zone
+      this.zone = this.convertToProperZone(zone)
       this.$modal('card-manager-modal').show()
+    },
+
+    convertToProperZone(zone) {
+      zone = zone.toLowerCase()
+      if (zone === 'side' || zone === 'sideboard') {
+        return 'side'
+      }
+      else if (zone === 'command' || zone === 'command zone') {
+        return 'command'
+      }
+      else {
+        return 'main'
+      }
     },
 
     count(zone) {

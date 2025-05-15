@@ -1,24 +1,29 @@
-const cardController = require('../../../../src/controllers/magic/card.controller')
-const { ObjectId } = require('mongodb')
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import * as cardController from '../../../../src/controllers/magic/card.controller.js'
+import { ObjectId } from 'mongodb'
 
 // Mock dependencies
-jest.mock('../../../../src/models/db', () => ({
-  magic: {
-    card: {
-      fetchAll: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      findById: jest.fn(),
-      versions: jest.fn()
-    },
-    cube: {
-      findById: jest.fn(),
-      addCard: jest.fn()
+vi.mock('../../../../src/models/db', () => {
+  return {
+    default: {
+      magic: {
+        card: {
+          fetchAll: vi.fn(),
+          create: vi.fn(),
+          update: vi.fn(),
+          findById: vi.fn(),
+          versions: vi.fn()
+        },
+        cube: {
+          findById: vi.fn(),
+          addCard: vi.fn()
+        }
+      }
     }
   }
-}))
+})
 
-const db = require('../../../../src/models/db')
+import db from '../../../../src/models/db.js'
 
 describe('Card Controller', () => {
   let req, res
@@ -31,10 +36,10 @@ describe('Card Controller', () => {
       cube: { _id: new ObjectId('507f1f77bcf86cd799439012'), name: 'Test Cube' }
     }
     res = {
-      json: jest.fn(),
-      status: jest.fn().mockReturnThis()
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis()
     }
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('fetchAll', () => {
@@ -135,7 +140,7 @@ describe('Card Controller', () => {
       req.body.comment = 'Test comment'
 
       // Mock console.error to prevent log output during test
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       const errorMessage = 'Failed to add card to cube'
       db.magic.card.create.mockResolvedValueOnce(mockCreatedCard)
@@ -252,18 +257,78 @@ describe('Card Controller', () => {
   describe('versions', () => {
     it('should fetch card versions and return success response', async () => {
       // Setup
-      const mockVersions = { custom: 1, scryfall: 2 }
-      db.magic.card.versions.mockResolvedValueOnce(mockVersions)
+      const cardId = '507f1f77bcf86cd799439013'
+      const mockVersions = [
+        {
+          date: new Date('2023-01-01'),
+          userId: req.user._id,
+          data: { name: 'Original Card', type: 'Creature' }
+        },
+        {
+          date: new Date('2023-01-02'),
+          userId: req.user._id,
+          data: { name: 'Updated Card', type: 'Creature' }
+        }
+      ]
+
+      req.body.cardId = cardId
+
+      // Mock the versions function to return the mock data
+      const versionsMock = vi.fn().mockResolvedValue(mockVersions)
+      db.magic.card.versions = versionsMock
 
       // Execute
       await cardController.versions(req, res)
 
       // Verify
-      expect(db.magic.card.versions).toHaveBeenCalled()
+      expect(versionsMock).toHaveBeenCalledWith(cardId)
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         versions: mockVersions
       })
+    })
+
+    it('should return error when cardId is missing', async () => {
+      // Setup
+      req.body = {}
+
+      // Execute
+      await cardController.versions(req, res)
+
+      // Verify
+      expect(res.status).toHaveBeenCalledWith(400)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'error',
+        message: 'Missing required field: cardId'
+      })
+    })
+
+    it('should handle errors when fetching versions', async () => {
+      // Setup
+      const cardId = '507f1f77bcf86cd799439013'
+      req.body.cardId = cardId
+
+      // Mock console.error to prevent log output during test
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+      // Mock the versions function to throw an error
+      const errorMessage = 'Failed to fetch versions'
+      const versionsMock = vi.fn().mockRejectedValue(new Error(errorMessage))
+      db.magic.card.versions = versionsMock
+
+      // Execute
+      await cardController.versions(req, res)
+
+      // Verify
+      expect(versionsMock).toHaveBeenCalledWith(cardId)
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'error',
+        message: errorMessage
+      })
+
+      // Restore console.error
+      consoleErrorSpy.mockRestore()
     })
   })
 })

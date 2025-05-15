@@ -105,3 +105,30 @@ API documentation is available at `/api-docs` when running in development mode.
 3. Write tests for your changes
 4. Ensure all tests pass
 5. Submit a pull request 
+
+## Vitest Migration
+
+This project has been migrated from Jest to Vitest for testing. Here are the key changes:
+
+### New Files
+- `vitest.config.js` - Vitest configuration (replaces `jest.config.js`)
+- `tests/vitest.setup.js` - Vitest setup file (replaces `tests/setup.js`)
+- `tests/fixtures/db.vitest.js` - ES module version of the database test helpers
+- `tests/vitest.sample.test.js` - Sample test to ensure Vitest setup works correctly
+
+### Updated Files
+- `package.json` - Updated dependencies and test scripts
+- `eslint.config.js` - Updated to use Vitest ESLint plugin
+
+### Running Tests
+- `npm test` - Run tests once
+- `npm run test:watch` - Run tests in watch mode
+- `npm run test:coverage` - Run tests with coverage report
+
+### Migration Notes
+The project now uses ES modules syntax in the test files. When writing new tests or migrating existing ones, use:
+- `import` instead of `require`
+- Named exports instead of `module.exports`
+- Vitest's mocking utilities (`vi`) instead of Jest's (`jest`)
+
+All existing tests will be migrated in a future update. 

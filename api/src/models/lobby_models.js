@@ -1,6 +1,6 @@
-const Haikunator = require('haikunator')
+import Haikunator from 'haikunator'
 const haikunator = new Haikunator()
-const databaseClient = require('@utils/mongo.js').client
+import { client as databaseClient } from '../utils/mongo.js'
 
 // Database and collection
 const database = databaseClient.db('games')
@@ -8,8 +8,6 @@ const lobbyCollection = database.collection('lobby')
 
 // Exports
 const Lobby = {}
-module.exports = Lobby
-
 
 Lobby.factory = function() {
   return {
@@ -69,3 +67,5 @@ Lobby.save = async function(lobby) {
     lobby,
   )
 }
+
+export default Lobby

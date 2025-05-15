@@ -1,7 +1,7 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const db = require('@models/db')
-const logger = require('@utils/logger')
+import db from '../../models/db.js'
+import logger from '../../utils/logger.js'
 
 /**
  * @swagger
@@ -73,4 +73,4 @@ router.post('/login', async (req, res) => {
   }
 })
 
-module.exports = router
+export default router

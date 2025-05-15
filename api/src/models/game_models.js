@@ -1,5 +1,5 @@
-const { fromLobby } = require('battlestar-common')
-const databaseClient = require('@utils/mongo.js').client
+import { fromLobby } from 'battlestar-common'
+import { client as databaseClient } from '../utils/mongo.js'
 
 // Database and collection
 const database = databaseClient.db('games')
@@ -8,8 +8,6 @@ const gameCollection = database.collection('game')
 const Game = {
   collection: gameCollection,
 }
-module.exports = Game
-
 
 Game.all = async function() {
   return await gameCollection.find({})
@@ -130,3 +128,5 @@ Game.saveStats = async function(gameData) {
     { $set: { stats: gameData.stats } },
   )
 }
+
+export default Game

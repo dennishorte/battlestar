@@ -1,6 +1,6 @@
-const db = require('@models/db')
-const logger = require('@utils/logger')
-const { BadRequestError, NotFoundError } = require('@utils/errors')
+import db from '../../models/db.js'
+import logger from '../../utils/logger.js'
+import { BadRequestError, NotFoundError } from '../../utils/errors.js'
 
 /**
  * Get all cubes
@@ -8,7 +8,7 @@ const { BadRequestError, NotFoundError } = require('@utils/errors')
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.all = async (req, res, next) => {
+export const all = async (req, res, next) => {
   try {
     const cubes = await db.magic.cube.all()
 
@@ -35,7 +35,7 @@ exports.all = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.addRemoveCards = async (req, res, next) => {
+export const addRemoveCards = async (req, res, next) => {
   try {
     // Validate required parameters
     if (!req.cube) {
@@ -129,7 +129,7 @@ exports.addRemoveCards = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.createCube = async (req, res, next) => {
+export const createCube = async (req, res, next) => {
   try {
     const cube = await db.magic.cube.create(req.user)
 
@@ -150,7 +150,7 @@ exports.createCube = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.getCube = async (req, res, next) => {
+export const getCube = async (req, res, next) => {
   try {
     if (!req.body.cubeId) {
       return next(new BadRequestError('Cube ID is required'))
@@ -179,7 +179,7 @@ exports.getCube = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.saveCube = async (req, res, next) => {
+export const saveCube = async (req, res, next) => {
   try {
     if (!req.body.cube) {
       return next(new BadRequestError('Cube data is required'))
@@ -212,7 +212,7 @@ exports.saveCube = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.updateSettings = async (req, res, next) => {
+export const updateSettings = async (req, res, next) => {
   try {
     if (!req.body.cubeId) {
       return next(new BadRequestError('cubeId is required'))

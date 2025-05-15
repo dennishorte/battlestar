@@ -12,9 +12,9 @@ const Player = require('./Player.js')
 const { PlayerZone } = require('./Zone.js')
 
 const wrappers = {
-  card: require('./util/card.wrapper'),
-  cube: require('./util/cube.wrapper'),
-  deck: require('./util/deck.wrapper'),
+  card: require('./util/card.wrapper.js'),
+  cube: require('./util/cube.wrapper.js'),
+  deck: require('./util/deck.wrapper.js'),
 }
 
 module.exports = {
@@ -289,6 +289,19 @@ Magic.prototype.aAddCounter = function(player, cardId, name, opts={}) {
   }
 }
 
+Magic.prototype.aAddTracker = function(player, cardId, name, opts={}) {
+  player = player || this.getPlayerCurrent()
+  const card = this.getCardById(cardId)
+
+  if (!card.g.trackers[name]) {
+    card.g.trackers[name] = 0
+
+    if (!opts.noIncrement) {
+      this.aAdjustCardTracker(player, cardId, name, 1)
+    }
+  }
+}
+
 Magic.prototype.aAddCounterPlayer = function(player, targetName, counterName) {
   const target = this.getPlayerByName(targetName)
 
@@ -322,6 +335,28 @@ Magic.prototype.aAdjustCardCounter = function(player, cardId, name, amount) {
 
   this.mLog({
     template: `{card} ${name} counter ${msg}`,
+    args: { card }
+  })
+}
+
+Magic.prototype.aAdjustCardTracker = function(player, cardId, name, amount) {
+  player = player || this.getPlayerCurrent()
+  const card = this.getCardById(cardId)
+  card.g.trackers[name] += amount
+
+  let msg
+  if (amount === 1) {
+    msg = 'added'
+  }
+  else if (amount === -1) {
+    msg = 'removed'
+  }
+  else {
+    msg = `adjusted by ${amount}`
+  }
+
+  this.mLog({
+    template: `{card} ${name} tracker ${msg}`,
     args: { card }
   })
 }
@@ -450,7 +485,9 @@ Magic.prototype.aChooseAction = function(player) {
       case 'active face'         : return this.aActiveFace(actor, action.cardId, action.faceIndex)
       case 'add counter'         : return this.aAddCounter(actor, action.cardId, action.key)
       case 'add counter player'  : return this.aAddCounterPlayer(actor, action.playerName, action.key)
+      case 'add tracker'         : return this.aAddTracker(actor, action.cardId, action.key)
       case 'adjust c-counter'    : return this.aAdjustCardCounter(actor, action.cardId, action.key, action.count)
+      case 'adjust c-tracker'    : return this.aAdjustCardTracker(actor, action.cardId, action.key, action.count)
       case 'adjust counter'      : return actor.incrementCounter(action.counter, action.amount)
       case 'annotate'            : return this.aAnnotate(actor, action.cardId, action.annotation)
       case 'annotate eot'        : return this.aAnnotateEOT(actor, action.cardId, action.annotation)
@@ -482,6 +519,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'shuffle bottom'      : return this.aShuffleBottom(actor, action.zoneId, action.count)
       case 'stack effect'        : return this.aStackEffect(actor, action.cardId)
       case 'tap'                 : return this.aTap(actor, action.cardId)
+      case 'tap all'             : return this.aTapAll(actor, action.zoneId)
       case 'unmorph'             : return this.aUnmorph(actor, action.cardId)
       case 'unsecret'            : return this.aUnsecret(actor, action.cardId)
       case 'untap'               : return this.aUntap(actor, action.cardId)
@@ -901,6 +939,14 @@ Magic.prototype.aSelectPhase = function(player, phase) {
         })
         card.g.annotationEOT = ''
       }
+
+      for (const tracker of Object.keys(card.g.trackers)) {
+        this.mLog({
+          template: `{card} tracker ${tracker} clears`,
+          args: { card }
+        })
+        card.g.trackers[tracker] = 0
+      }
     }
     this.mLogOutdent()
   }
@@ -969,6 +1015,13 @@ Magic.prototype.aTap = function(player, cardId) {
     template: 'tap: {card}',
     args: { card }
   })
+}
+
+Magic.prototype.aTapAll = function(player, zoneId) {
+  const cards = this.getZoneById(zoneId).cards()
+  for (const card of cards) {
+    this.aTap(player, card.g.id)
+  }
 }
 
 Magic.prototype.aUnmorph = function(player, cardId) {

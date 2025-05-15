@@ -1,4 +1,4 @@
-const {
+import {
   AppError,
   BadRequestError,
   NotFoundError,
@@ -6,7 +6,9 @@ const {
   ForbiddenError,
   ConflictError,
   InternalServerError
-} = require('../../../src/utils/errors')
+} from '../../../src/utils/errors.js'
+
+import { describe, it, expect } from 'vitest'
 
 describe('Error Utils', () => {
   describe('AppError', () => {

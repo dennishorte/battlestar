@@ -1,12 +1,12 @@
-const db = require('@models/db.js')
-const logger = require('@utils/logger')
-const stats = require('@utils/stats')
-const gameService = require('@services/game_service')
-const { NotFoundError } = require('@utils/errors')
-const { GameOverwriteError, GameKilledError } = require('@middleware/loaders')
+import db from '../models/db.js'
+import logger from '../utils/logger.js'
+import stats from '../utils/stats.js'
+import gameService from '../services/game_service.js'
+import { NotFoundError } from '../utils/errors.js'
+import { GameOverwriteError, GameKilledError } from '../middleware/loaders.js'
 
 // Game controller methods
-exports.create = async (req, res, next) => {
+export const create = async (req, res, next) => {
   try {
     const lobby = req.lobby
     const game = await gameService.create(lobby, req.body.linkedDraftId)
@@ -22,7 +22,7 @@ exports.create = async (req, res, next) => {
   }
 }
 
-exports.fetchAll = async (req, res, next) => {
+export const fetchAll = async (req, res, next) => {
   try {
     const cursor = await db.game.all()
     const games = await cursor.toArray()
@@ -38,7 +38,7 @@ exports.fetchAll = async (req, res, next) => {
   }
 }
 
-exports.fetch = async (req, res, next) => {
+export const fetch = async (req, res, next) => {
   try {
     if (!req.game) {
       return next(new NotFoundError('Game not found'))
@@ -55,7 +55,7 @@ exports.fetch = async (req, res, next) => {
   }
 }
 
-exports.kill = async (req, res, next) => {
+export const kill = async (req, res, next) => {
   try {
     if (!req.game) {
       return next(new NotFoundError('Game not found'))
@@ -73,7 +73,7 @@ exports.kill = async (req, res, next) => {
   }
 }
 
-exports.rematch = async (req, res, next) => {
+export const rematch = async (req, res, next) => {
   try {
     if (!req.game) {
       return next(new NotFoundError('Game not found'))
@@ -92,7 +92,7 @@ exports.rematch = async (req, res, next) => {
   }
 }
 
-exports.saveFull = async (req, res, next) => {
+export const saveFull = async (req, res, next) => {
   try {
     if (!req.game) {
       return next(new NotFoundError('Game not found'))
@@ -127,7 +127,7 @@ exports.saveFull = async (req, res, next) => {
   }
 }
 
-exports.saveResponse = async (req, res, next) => {
+export const saveResponse = async (req, res, next) => {
   try {
     if (!req.game) {
       return next(new NotFoundError('Game not found'))
@@ -146,7 +146,7 @@ exports.saveResponse = async (req, res, next) => {
   }
 }
 
-exports.undo = async (req, res, next) => {
+export const undo = async (req, res, next) => {
   try {
     if (!req.game) {
       return next(new NotFoundError('Game not found'))
@@ -166,32 +166,30 @@ exports.undo = async (req, res, next) => {
 }
 
 // Statistics
-exports.stats = {
-  innovation: async (req, res, next) => {
-    try {
-      const cursor = await db.game.find(
-        {
-          'settings.game': 'Innovation',
-          'settings.players.2': { $exists: false }, // Two player games only
-          'stats.error': false,
-          gameOver: true,
-          killed: false,
-        },
-        {
-          _id: 0,
-          stats: 1,
-          settings: 1,
-        },
-      )
+export const stats_innovation = async (req, res, next) => {
+  try {
+    const cursor = await db.game.find(
+      {
+        'settings.game': 'Innovation',
+        'settings.players.2': { $exists: false }, // Two player games only
+        'stats.error': false,
+        gameOver: true,
+        killed: false,
+      },
+      {
+        _id: 0,
+        stats: 1,
+        settings: 1,
+      },
+    )
 
-      res.json({
-        status: 'success',
-        data: await stats.processInnovationStats(cursor),
-      })
-    }
-    catch (err) {
-      logger.error(`Error fetching innovation stats: ${err.message}`)
-      next(err)
-    }
+    res.json({
+      status: 'success',
+      data: await stats.processInnovationStats(cursor),
+    })
+  }
+  catch (err) {
+    logger.error(`Error fetching innovation stats: ${err.message}`)
+    next(err)
   }
 }

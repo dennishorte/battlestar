@@ -1,3 +1,3 @@
-module.exports = {
-  hex: require('./hex_models.js')
-}
+import hex from './hex_models.js'
+
+export { hex }

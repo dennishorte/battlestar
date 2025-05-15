@@ -94,25 +94,39 @@ export default {
 
     sections() {
       if (this.sortStyle === 'card-type') {
-        const output = []
-
-        const mainCards = this.deck.cards('main')
-        for (const cardType of this.sortTypes) {
-          const filter = {
-            kind: 'type',
-            value: cardType,
-            operator: 'and',
-          }
-          const cards = mainCards.filter(card => card.matchesFilters([filter]))
-          if (cards.length > 0) {
-            output.push({
-              id: this.deck.name + '|' + cardType,
-              name: cardType,
-              cards,
-            })
+        const mainZones = {}
+        for (const key of this.sortTypes) {
+          mainZones[key] = {
+            id: this.deck.name + '|' + key,
+            name: key,
+            cards: [],
           }
         }
 
+        const mainCards = this.deck.cards('main')
+        for (const card of mainCards) {
+          let matched = false
+
+          for (const cardType of this.sortTypes) {
+            const filter = {
+              kind: 'type',
+              value: cardType,
+              operator: 'and',
+            }
+
+            if (card.matchesFilters([filter])) {
+              mainZones[cardType].cards.push(card)
+              matched = true
+              break
+            }
+          }
+
+          if (!matched) {
+            mainZones['other'].cards.push(card)
+          }
+        }
+
+        const output = Object.values(mainZones)
         output.push({
           id: this.deck.name + '|sideboard',
           name: 'sideboard',
@@ -123,7 +137,7 @@ export default {
           name: 'command zone',
           cards: this.deck.cards('command'),
         })
-        return output
+        return output.filter(x => x.cards.length > 0)
       }
       else {
         const output = []

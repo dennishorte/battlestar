@@ -1,4 +1,4 @@
-const databaseClient = require('@utils/mongo.js').client
+import { client as databaseClient } from '../../utils/mongo.js'
 const database = databaseClient.db('tyrants')
 const hexCollection = database.collection('hex')
 
@@ -23,4 +23,4 @@ Hex.save = async function(hex) {
   }
 }
 
-module.exports = Hex
+export default Hex

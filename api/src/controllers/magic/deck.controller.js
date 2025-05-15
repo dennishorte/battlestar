@@ -1,20 +1,93 @@
-const db = require('@models/db.js')
+import db from '../../models/db.js'
 
 /**
  * Create a new deck
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.create = async (req, res) => {
-  const deck = await db.magic.deck.create(req.user)
+export const create = async (req, res) => {
+  try {
+    // Validate required inputs
+    if (!req.body.deckData) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Missing required field: deckData'
+      })
+    }
 
-  res.json({
-    status: 'success',
-    deck,
-  })
+    // Create the deck
+    const deck = await db.magic.deck.create(req.body.deckData, req.user)
+
+    res.json({
+      status: 'success',
+      deck
+    })
+  }
+  catch (error) {
+    console.error('Error creating deck:', error)
+    res.status(500).json({
+      status: 'error',
+      message: error.message
+    })
+  }
 }
 
-exports.delete = async (req, res) => {
+/**
+ * Find all decks for a user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const findAll = async (req, res) => {
+  try {
+    const decks = await db.magic.deck.findAll(req.user)
+
+    res.json({
+      status: 'success',
+      decks
+    })
+  }
+  catch (error) {
+    console.error('Error finding decks:', error)
+    res.status(500).json({
+      status: 'error',
+      message: error.message
+    })
+  }
+}
+
+/**
+ * Update a deck
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const update = async (req, res) => {
+  try {
+    // Validate required inputs
+    if (!req.body.deckId || !req.body.deckData) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Missing required fields: deckId and deckData'
+      })
+    }
+
+    // Update the deck
+    const deck = await db.magic.deck.update(req.body.deckId, req.body.deckData, req.user)
+
+    res.json({
+      status: 'success',
+      deck
+    })
+  }
+  catch (error) {
+    console.error('Error updating deck:', error)
+    res.status(500).json({
+      status: 'error',
+      message: error.message
+    })
+  }
+}
+
+export const deleteDeck = async (req, res) => {
   await db.magic.deck.delete(req.deck)
 
   res.json({
@@ -27,7 +100,7 @@ exports.delete = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.duplicate = async (req, res) => {
+export const duplicate = async (req, res) => {
   const deck = await db.magic.deck.duplicate(req.user, req.deck)
   res.json({
     status: 'success',
@@ -40,7 +113,7 @@ exports.duplicate = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.fetch = async (req, res) => {
+export const fetch = async (req, res) => {
   res.json({
     status: 'success',
     deck: req.deck,
@@ -52,7 +125,7 @@ exports.fetch = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.save = async (req, res) => {
+export const save = async (req, res) => {
   await db.magic.deck.save(req.body.deck)
   res.json({
     status: 'success',

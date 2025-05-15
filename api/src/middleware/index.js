@@ -1,6 +1,7 @@
-module.exports = {
-  auth: require('./auth'),
-  validators: require('./validators'),
-  loaders: require('./loaders'),
-  errors: require('./errors')
-}
+import auth from './auth.js'
+import validators from './validators.js'
+import loaders from './loaders.js'
+import errors from './errors.js'
+
+export { auth, validators, loaders, errors }
+export default { auth, validators, loaders, errors }

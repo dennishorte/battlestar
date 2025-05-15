@@ -1,5 +1,5 @@
-const { MongoClient } = require('mongodb')
-const logger = require('./logger')
+import { MongoClient } from 'mongodb'
+import logger from './logger.js'
 
 let client
 
@@ -23,12 +23,4 @@ if (process.env.NODE_ENV !== 'test') {
   connectToMongoDB()
 }
 
-module.exports = {
-  get client() {
-    if (!client && process.env.NODE_ENV !== 'test') {
-      throw new Error('MongoDB client not connected. Call connectToMongoDB() first.')
-    }
-    return client
-  },
-  connectToMongoDB
-}
+export { client }

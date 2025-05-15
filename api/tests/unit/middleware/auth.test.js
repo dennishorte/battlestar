@@ -1,27 +1,39 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+
 // Mock passport first, before requiring the auth module
-jest.mock('passport', () => ({
-  authenticate: jest.fn(() => (req, res, next) => next()),
-  use: jest.fn()
-}))
+vi.mock('passport', () => {
+  return {
+    default: {
+      authenticate: vi.fn(() => (req, res, next) => next()),
+      use: vi.fn()
+    }
+  }
+})
 
 // Mock passport-jwt
-jest.mock('passport-jwt', () => ({
-  Strategy: jest.fn(),
-  ExtractJwt: {
-    fromAuthHeaderAsBearerToken: jest.fn()
+vi.mock('passport-jwt', () => {
+  return {
+    Strategy: vi.fn(),
+    ExtractJwt: {
+      fromAuthHeaderAsBearerToken: vi.fn()
+    }
   }
-}))
+})
 
-// Now require the actual module
-const { authenticate } = require('../../../src/middleware/auth')
-const passport = require('passport')
+// Now import the actual module
+import { authenticate } from '../../../src/middleware/auth.js'
+import passport from 'passport'
 
 // Mock db
-jest.mock('../../../src/models/db', () => ({
-  user: {
-    findById: jest.fn()
+vi.mock('../../../src/models/db', () => {
+  return {
+    default: {
+      user: {
+        findById: vi.fn()
+      }
+    }
   }
-}))
+})
 
 describe('Auth Middleware', () => {
   let req, res, next
@@ -33,9 +45,9 @@ describe('Auth Middleware', () => {
       headers: {}
     }
     res = {}
-    next = jest.fn()
+    next = vi.fn()
 
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('authenticate middleware', () => {

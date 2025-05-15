@@ -59,7 +59,7 @@ function validateRequiredFields(data, requiredFields) {
   })
 }
 
-module.exports = {
+export {
   validateEmail,
   validatePassword,
   validateRequiredFields

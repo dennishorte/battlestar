@@ -1,5 +1,5 @@
-const { WebClient } = require('@slack/web-api')
-const logger = require('./logger')
+import { WebClient } from '@slack/web-api'
+import logger from './logger.js'
 
 // An access token (from your Slack app or custom integration - xoxp, xoxb)
 const token = process.env.SLACK_BOT_TOKEN
@@ -7,12 +7,6 @@ const client = new WebClient(token)
 
 // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
 const cloChannelId = 'C01AV1RGJSK'
-
-module.exports = {
-  sendMessage,
-  sendToSlackId,
-  test,
-}
 
 async function sendToSlackId(slackId, message) {
   return await client.chat.postMessage({ channel: slackId, text: message })
@@ -70,4 +64,16 @@ async function test() {
   console.log('Message sent: ', res.ts)
 
   return res
+}
+
+export {
+  sendMessage,
+  sendToSlackId,
+  test,
+}
+
+export default {
+  sendMessage,
+  sendToSlackId,
+  test,
 }

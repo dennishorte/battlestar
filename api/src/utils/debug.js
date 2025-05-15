@@ -75,6 +75,6 @@ function listRoutes(app) {
   return routes
 }
 
-module.exports = {
+export {
   listRoutes,
 }

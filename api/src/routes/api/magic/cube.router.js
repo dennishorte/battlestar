@@ -1,6 +1,6 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const cubeController = require('@controllers/magic/cube.controller')
+import * as cubeController from '../../../controllers/magic/cube.controller.js'
 
 /**
  * @route POST /api/magic/cube/all
@@ -44,4 +44,4 @@ router.post('/save', cubeController.saveCube)
  */
 router.post('/update_settings', cubeController.updateSettings)
 
-module.exports = router
+export default router
