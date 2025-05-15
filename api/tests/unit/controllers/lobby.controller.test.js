@@ -1,5 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
+// Import shared mocks
+import logger from '../../mocks/logger.mock.js'
+import db from '../../mocks/db.mock.js'
+
 // Mock MongoDB ObjectId
 vi.mock('mongodb', () => {
   return {
@@ -10,53 +14,17 @@ vi.mock('mongodb', () => {
   }
 })
 
-// Mock logger
 vi.mock('../../../src/utils/logger', () => {
-  return {
-    default: {
-      info: vi.fn(),
-      error: vi.fn(),
-      debug: vi.fn()
-    }
-  }
+  return { default: logger }
 })
 
-// Mock db
 vi.mock('../../../src/models/db', () => {
-  return {
-    default: {
-      lobby: {
-        all: vi.fn().mockReturnValue({
-          toArray: vi.fn().mockResolvedValue([
-            { _id: 'lobby1', name: 'Lobby One', users: [] },
-            { _id: 'lobby2', name: 'Lobby Two', users: [] }
-          ])
-        }),
-        create: vi.fn().mockResolvedValue('new-lobby-id'),
-        findById: vi.fn().mockResolvedValue({
-          _id: 'new-lobby-id',
-          users: []
-        }),
-        save: vi.fn().mockResolvedValue(true),
-        kill: vi.fn().mockResolvedValue(true)
-      },
-      user: {
-        findByIds: vi.fn().mockReturnValue({
-          toArray: vi.fn().mockResolvedValue([
-            { _id: 'user1', name: 'User One' },
-            { _id: 'user2', name: 'User Two' }
-          ])
-        })
-      }
-    }
-  }
+  return { default: db }
 })
 
 // Import after mocks are set up
 import * as lobbyController from '../../../src/controllers/lobby.controller.js'
 import { BadRequestError, NotFoundError } from '../../../src/utils/errors.js'
-import db from '../../../src/models/db.js'
-import logger from '../../../src/utils/logger.js'
 import { ObjectId } from 'mongodb'
 
 describe('Lobby Controller', () => {

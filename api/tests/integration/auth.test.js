@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import request from 'supertest'
 import jwt from 'jsonwebtoken'
+import { ObjectId } from 'mongodb'
 
 // Mock the database
 vi.mock('../../src/models/db.js', async () => {
@@ -26,11 +27,18 @@ describe('Authentication', () => {
   let testUser
 
   beforeEach(async () => {
-    // Create a test user
+    // Create a test user with a valid ObjectId format
+    const validObjectId = new ObjectId()
     testUser = await db.user.create({
       name: 'testuser',
       email: 'test@example.com'
     })
+
+    // Override the _id with a valid ObjectId string
+    testUser._id = validObjectId.toString()
+
+    // Make sure the mock returns the test user with a valid ID
+    db.user.findById.mockResolvedValue(testUser)
   })
 
   describe('POST /api/guest/login', () => {
@@ -71,16 +79,21 @@ describe('Authentication', () => {
     it('should allow access to protected routes with valid token', async () => {
       // Create a valid token
       const token = jwt.sign(
-        { user_id: testUser._id.toString() },
+        { user_id: testUser._id },
         process.env.SECRET_KEY || 'test-secret-key',
         { expiresIn: '1h' }
       )
+
+      // Setup the findByIds mock to return our test user
+      db.user.findByIds.mockReturnValueOnce({
+        toArray: vi.fn().mockResolvedValueOnce([testUser])
+      })
 
       const response = await request(app)
         .post('/api/user/fetch_many')
         .set('Authorization', `Bearer ${token}`)
         .send({
-          userIds: [testUser._id.toString()],  // Use string format consistently
+          userIds: [testUser._id],
           appVersion: 1747165976913
         })
 
@@ -88,7 +101,7 @@ describe('Authentication', () => {
 
       const serializedUser = {
         ...testUser,
-        _id: testUser._id.toString(),
+        _id: testUser._id,
       }
       expect(response.body.users).toEqual([serializedUser])
     })
@@ -97,7 +110,7 @@ describe('Authentication', () => {
       const response = await request(app)
         .post('/api/user/fetch_many')
         .send({
-          userIds: [testUser._id.toString()],
+          userIds: [testUser._id],
           appVersion: 1747165976913
         })
 

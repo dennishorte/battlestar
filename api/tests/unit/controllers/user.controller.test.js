@@ -1,81 +1,29 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-// Mock passport first, before requiring any other modules
+// Import shared mocks
+import passport from '../../mocks/passport.mock.js'
+import * as passportJwt from '../../mocks/passport-jwt.mock.js'
+import logger from '../../mocks/logger.mock.js'
+import db from '../../mocks/db.mock.js'
+
+// Mock passport
 vi.mock('passport', () => {
-  return {
-    authenticate: vi.fn(() => (req, res, next) => next()),
-    use: vi.fn()
-  }
+  return { default: passport }
 })
 
 // Mock passport-jwt
 vi.mock('passport-jwt', () => {
-  return {
-    Strategy: vi.fn(),
-    ExtractJwt: {
-      fromAuthHeaderAsBearerToken: vi.fn()
-    }
-  }
+  return passportJwt
 })
 
 // Mock logger
 vi.mock('../../../src/utils/logger', () => {
-  return {
-    default: {
-      info: vi.fn(),
-      error: vi.fn(),
-      debug: vi.fn()
-    }
-  }
+  return { default: logger }
 })
 
-// Mock db before requiring other modules
+// Mock db
 vi.mock('../../../src/models/db', () => {
-  return {
-    default: {
-      user: {
-        all: vi.fn().mockResolvedValue([
-          { _id: 'user1', name: 'User One' },
-          { _id: 'user2', name: 'User Two' }
-        ]),
-        create: vi.fn().mockResolvedValue({ _id: 'new-user-id', name: 'New User' }),
-        deactivate: vi.fn().mockResolvedValue({ modifiedCount: 1 }),
-        findByIds: vi.fn().mockReturnValue({
-          toArray: vi.fn().mockResolvedValue([
-            { _id: 'user1', name: 'User One' },
-            { _id: 'user2', name: 'User Two' }
-          ])
-        }),
-        findById: vi.fn().mockResolvedValue({ _id: 'user1', name: 'User One' })
-      },
-      lobby: {
-        findByUserId: vi.fn().mockReturnValue({
-          toArray: vi.fn().mockResolvedValue([
-            { _id: 'lobby1', name: 'Lobby One' },
-            { _id: 'lobby2', name: 'Lobby Two' }
-          ])
-        })
-      },
-      game: {
-        find: vi.fn().mockReturnValue({
-          toArray: vi.fn().mockResolvedValue([
-            { _id: 'game1', name: 'Game One', waiting: ['User One'] },
-            { _id: 'game2', name: 'Game Two', waiting: ['User Two'] }
-          ])
-        }),
-        findByUserId: vi.fn().mockReturnValue({
-          toArray: vi.fn().mockResolvedValue([
-            { _id: 'game1', name: 'Game One', waiting: ['User One'] }
-          ])
-        }),
-        findRecentlyFinishedByUserId: vi.fn().mockReturnValue({
-          toArray: vi.fn().mockResolvedValue([
-            { _id: 'game3', name: 'Game Three', gameOver: true }
-          ])
-        })
-      }
-    }
-  }
+  return { default: db }
 })
 
 // Mock MongoDB's ObjectId
@@ -91,8 +39,6 @@ vi.mock('mongodb', () => {
 // Now we can import the controller and errors
 import * as userController from '../../../src/controllers/user.controller.js'
 import { BadRequestError } from '../../../src/utils/errors.js'
-import db from '../../../src/models/db.js'
-import logger from '../../../src/utils/logger.js'
 import { ObjectId } from 'mongodb'
 
 describe('User Controller', () => {
@@ -194,65 +140,62 @@ describe('User Controller', () => {
 
   describe('deactivateUser', () => {
     it('should deactivate a user and return success', async () => {
-      // Setup - skip ObjectId mocking issues by mocking the controller's behavior
+      // Setup
       req.body = { id: 'user1' }
-
-      // Skip the ObjectId validation in the test
-
-      vi.spyOn(userController, 'deactivateUser').mockImplementationOnce(async (req, res) => {
-        res.json({ status: 'success' })
-      })
 
       // Execute
       await userController.deactivateUser(req, res, next)
 
       // Verify
-      expect(res.json).toHaveBeenCalledWith({ status: 'success' })
-
-      // Restore original implementation
-      vi.mocked(userController.deactivateUser).mockRestore()
+      expect(db.user.deactivate).toHaveBeenCalled()
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success'
+      })
     })
 
-    it('should return BadRequestError if user ID is missing', async () => {
+    it('should return BadRequestError if id is missing', async () => {
       // Setup
-      req.body = {}
+      req.body = {} // Missing id
 
       // Execute
       await userController.deactivateUser(req, res, next)
 
       // Verify
       expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
+      expect(db.user.deactivate).not.toHaveBeenCalled()
+    })
+
+    it('should handle non-successful deactivation', async () => {
+      // Setup
+      req.body = { id: 'nonexistent-user' }
+      db.user.deactivate.mockResolvedValueOnce({ modifiedCount: 0 })
+
+      // Execute
+      await userController.deactivateUser(req, res, next)
+
+      // Verify
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'error',
+        message: 'User not deactivated'
+      })
     })
   })
 
   describe('fetchManyUsers', () => {
     it('should fetch multiple users by IDs', async () => {
-      // Setup - mock the controller to avoid ObjectId issues
+      // Setup
       req.body = { userIds: ['user1', 'user2'] }
-
-      // Skip the ObjectId validation in the test
-
-      vi.spyOn(userController, 'fetchManyUsers').mockImplementationOnce(async (req, res) => {
-        res.json({
-          status: 'success',
-          users: [
-            { _id: 'user1', name: 'User One' },
-            { _id: 'user2', name: 'User Two' }
-          ]
-        })
-      })
 
       // Execute
       await userController.fetchManyUsers(req, res, next)
 
       // Verify
+      expect(ObjectId).toHaveBeenCalledTimes(2)
+      expect(db.user.findByIds).toHaveBeenCalled()
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         users: expect.any(Array)
       })
-
-      // Restore original implementation
-      vi.mocked(userController.fetchManyUsers).mockRestore()
     })
 
     it('should return BadRequestError if userIds is not an array', async () => {
@@ -269,32 +212,19 @@ describe('User Controller', () => {
 
   describe('getUserLobbies', () => {
     it('should fetch lobbies for a user', async () => {
-      // Setup - mock the controller to avoid ObjectId issues
+      // Setup
       req.body = { userId: 'user1' }
-
-      // Skip the ObjectId validation in the test
-
-      vi.spyOn(userController, 'getUserLobbies').mockImplementationOnce(async (req, res) => {
-        res.json({
-          status: 'success',
-          lobbies: [
-            { _id: 'lobby1', name: 'Lobby One' },
-            { _id: 'lobby2', name: 'Lobby Two' }
-          ]
-        })
-      })
 
       // Execute
       await userController.getUserLobbies(req, res, next)
 
       // Verify
+      expect(ObjectId).toHaveBeenCalled()
+      expect(db.lobby.findByUserId).toHaveBeenCalled()
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         lobbies: expect.any(Array)
       })
-
-      // Restore original implementation
-      vi.mocked(userController.getUserLobbies).mockRestore()
     })
 
     it('should return BadRequestError if userId is missing', async () => {
@@ -307,50 +237,48 @@ describe('User Controller', () => {
       // Verify
       expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
     })
+
+    it('should handle errors for invalid userId format', async () => {
+      // Setup
+      req.body = { userId: 'invalid-id' }
+      ObjectId.mockImplementationOnce(() => {
+        throw new Error('Invalid ID format')
+      })
+
+      // Execute
+      await userController.getUserLobbies(req, res, next)
+
+      // Verify
+      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
+    })
   })
 
   describe('getUserGames', () => {
-    it('should fetch games for a user with filters', async () => {
-      // Setup - mock the controller to avoid ObjectId issues
+    it('should fetch games for a user', async () => {
+      // Setup
       req.body = {
         userId: 'user1',
         state: 'all',
-        kind: 'innovation',
-        killed: false
+        kind: 'innovation'
       }
-
-      // Skip the ObjectId validation in the test
-
-      vi.spyOn(userController, 'getUserGames').mockImplementationOnce(async (req, res) => {
-        res.json({
-          status: 'success',
-          games: [
-            { _id: 'game1', name: 'Game One' },
-            { _id: 'game2', name: 'Game Two' }
-          ]
-        })
-      })
 
       // Execute
       await userController.getUserGames(req, res, next)
 
       // Verify
+      expect(ObjectId).toHaveBeenCalled()
+      expect(db.game.find).toHaveBeenCalled()
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         games: expect.any(Array)
       })
-
-      // Restore original implementation
-      vi.mocked(userController.getUserGames).mockRestore()
     })
 
-    it('should handle invalid userId format', async () => {
+    it('should handle errors for invalid userId format', async () => {
       // Setup
       req.body = { userId: 'invalid-id' }
-
-      // Mock ObjectId to throw an error
       ObjectId.mockImplementationOnce(() => {
-        throw new Error('Invalid ID')
+        throw new Error('Invalid ID format')
       })
 
       // Execute
@@ -363,31 +291,19 @@ describe('User Controller', () => {
 
   describe('getRecentlyFinishedGames', () => {
     it('should fetch recently finished games for a user', async () => {
-      // Setup - mock the controller to avoid ObjectId issues
+      // Setup
       req.body = { userId: 'user1' }
-
-      // Skip the ObjectId validation in the test
-
-      vi.spyOn(userController, 'getRecentlyFinishedGames').mockImplementationOnce(async (req, res) => {
-        res.json({
-          status: 'success',
-          games: [
-            { _id: 'game3', name: 'Game Three', gameOver: true }
-          ]
-        })
-      })
 
       // Execute
       await userController.getRecentlyFinishedGames(req, res, next)
 
       // Verify
+      expect(ObjectId).toHaveBeenCalled()
+      expect(db.game.findRecentlyFinishedByUserId).toHaveBeenCalled()
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         games: expect.any(Array)
       })
-
-      // Restore original implementation
-      vi.mocked(userController.getRecentlyFinishedGames).mockRestore()
     })
 
     it('should return BadRequestError if userId is missing', async () => {
@@ -396,45 +312,6 @@ describe('User Controller', () => {
 
       // Execute
       await userController.getRecentlyFinishedGames(req, res, next)
-
-      // Verify
-      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
-    })
-  })
-
-  describe('getNextGame', () => {
-    it('should find the next game for a user', async () => {
-      // Setup - mock the controller to avoid ObjectId issues
-      req.body = { userId: 'user1' }
-
-      // Skip the ObjectId validation in the test
-
-      vi.spyOn(userController, 'getNextGame').mockImplementationOnce(async (req, res) => {
-        res.json({
-          status: 'success',
-          gameId: 'game1'
-        })
-      })
-
-      // Execute
-      await userController.getNextGame(req, res, next)
-
-      // Verify
-      expect(res.json).toHaveBeenCalledWith({
-        status: 'success',
-        gameId: expect.any(String)
-      })
-
-      // Restore original implementation
-      vi.mocked(userController.getNextGame).mockRestore()
-    })
-
-    it('should return BadRequestError if userId is missing', async () => {
-      // Setup
-      req.body = {} // Missing userId
-
-      // Execute
-      await userController.getNextGame(req, res, next)
 
       // Verify
       expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))

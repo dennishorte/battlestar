@@ -1,31 +1,21 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
+// Import shared mocks
+import logger from '../../mocks/logger.mock.js'
+import db from '../../mocks/db.mock.js'
+
 // Mock logger
 vi.mock('../../../src/utils/logger', () => {
-  return {
-    default: {
-      info: vi.fn(),
-      error: vi.fn(),
-      debug: vi.fn()
-    }
-  }
+  return { default: logger }
 })
 
 // Mock db
 vi.mock('../../../src/models/db', () => {
-  return {
-    default: {
-      misc: {
-        appVersion: vi.fn().mockResolvedValue('1.0.0')
-      }
-    }
-  }
+  return { default: db }
 })
 
 // Import after mocks are set up
 import * as miscController from '../../../src/controllers/misc.controller.js'
-import db from '../../../src/models/db.js'
-import logger from '../../../src/utils/logger.js'
 
 describe('Misc Controller', () => {
   let req, res, next

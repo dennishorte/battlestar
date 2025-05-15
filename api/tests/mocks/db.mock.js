@@ -8,7 +8,10 @@ const lobbies = {}
 
 // User model mock
 const user = {
-  all: vi.fn(async () => Object.values(users)),
+  all: vi.fn().mockResolvedValue([
+    { _id: 'user1', name: 'User One' },
+    { _id: 'user2', name: 'User Two' }
+  ]),
 
   checkPassword: vi.fn(async (name, password) => {
     const user = Object.values(users).find(u => u.name === name)
@@ -20,27 +23,15 @@ const user = {
     return null
   }),
 
-  create: vi.fn(async (userData) => {
-    const id = new ObjectId()
-    const newUser = {
-      _id: id,
-      name: userData.name,
-      passwordHash: 'hashedPassword', // Would be bcrypt.hash(password) in real implementation
-      ...userData,
-      createdTimestamp: Date.now()
-    }
-    users[id] = newUser
-    return newUser
-  }),
+  create: vi.fn().mockResolvedValue({ _id: 'new-user-id', name: 'New User' }),
 
-  findById: vi.fn(async (id) => {
-    return users[id] || null
-  }),
+  findById: vi.fn().mockResolvedValue({ _id: 'user1', name: 'User One' }),
 
-  findByIds: vi.fn(async (ids) => {
-    return {
-      toArray: async () => ids.map(id => users[id] || null).filter(Boolean)
-    }
+  findByIds: vi.fn().mockReturnValue({
+    toArray: vi.fn().mockResolvedValue([
+      { _id: 'user1', name: 'User One' },
+      { _id: 'user2', name: 'User Two' }
+    ])
   }),
 
   findByName: vi.fn(async (name) => {
@@ -58,7 +49,9 @@ const user = {
       return { modifiedCount: 1 }
     }
     return { modifiedCount: 0 }
-  })
+  }),
+
+  deactivate: vi.fn().mockResolvedValue({ modifiedCount: 1 })
 }
 
 // Game model mock
@@ -81,12 +74,27 @@ const game = {
     return newGame
   }),
 
-  find: vi.fn(async () => ({
-    toArray: async () => Object.values(games)
-  })),
+  find: vi.fn().mockReturnValue({
+    toArray: vi.fn().mockResolvedValue([
+      { _id: 'game1', name: 'Game One', waiting: ['User One'] },
+      { _id: 'game2', name: 'Game Two', waiting: ['User Two'] }
+    ])
+  }),
 
   findById: vi.fn(async (id) => {
     return games[id] || null
+  }),
+
+  findByUserId: vi.fn().mockReturnValue({
+    toArray: vi.fn().mockResolvedValue([
+      { _id: 'game1', name: 'Game One', waiting: ['User One'] }
+    ])
+  }),
+
+  findRecentlyFinishedByUserId: vi.fn().mockReturnValue({
+    toArray: vi.fn().mockResolvedValue([
+      { _id: 'game3', name: 'Game Three', gameOver: true }
+    ])
   }),
 
   save: vi.fn(),
@@ -95,24 +103,39 @@ const game = {
 
 // Lobby model mock
 const lobby = {
-  create: vi.fn(async (lobbyData) => {
-    const id = new ObjectId()
-    const newLobby = {
-      _id: id,
-      createdTimestamp: Date.now(),
-      ...lobbyData
-    }
-    lobbies[id] = newLobby
-    return newLobby
+  all: vi.fn().mockReturnValue({
+    toArray: vi.fn().mockResolvedValue([
+      { _id: 'lobby1', name: 'Lobby One', users: [] },
+      { _id: 'lobby2', name: 'Lobby Two', users: [] }
+    ])
   }),
+
+  create: vi.fn().mockResolvedValue('new-lobby-id'),
 
   find: vi.fn(async () => ({
     toArray: async () => Object.values(lobbies)
   })),
 
-  findById: vi.fn(async (id) => {
-    return lobbies[id] || null
-  })
+  findById: vi.fn().mockResolvedValue({
+    _id: 'new-lobby-id',
+    users: []
+  }),
+
+  findByUserId: vi.fn().mockReturnValue({
+    toArray: vi.fn().mockResolvedValue([
+      { _id: 'lobby1', name: 'Lobby One' },
+      { _id: 'lobby2', name: 'Lobby Two' }
+    ])
+  }),
+
+  save: vi.fn().mockResolvedValue(true),
+
+  kill: vi.fn().mockResolvedValue(true)
+}
+
+// Misc model mock
+const misc = {
+  appVersion: vi.fn().mockResolvedValue('1.0.0')
 }
 
 // Utility to clear all data
@@ -126,5 +149,6 @@ export default {
   user,
   game,
   lobby,
+  misc,
   clearAll
 }
