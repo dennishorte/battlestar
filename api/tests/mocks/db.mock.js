@@ -63,6 +63,13 @@ const user = {
 
 // Game model mock
 const game = {
+  all: vi.fn().mockReturnValue({
+    toArray: vi.fn().mockResolvedValue([
+      { _id: 'game1', name: 'Test Game 1' },
+      { _id: 'game2', name: 'Test Game 2' }
+    ])
+  }),
+
   create: vi.fn(async (gameData) => {
     const id = new ObjectId()
     const newGame = {
@@ -80,7 +87,10 @@ const game = {
 
   findById: vi.fn(async (id) => {
     return games[id] || null
-  })
+  }),
+
+  save: vi.fn(),
+  gameOver: vi.fn()
 }
 
 // Lobby model mock

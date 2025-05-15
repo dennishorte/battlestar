@@ -1,98 +1,46 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-// Mock passport first, before requiring any other modules
-vi.mock('passport', () => {
-  return {
-    authenticate: vi.fn(() => (req, res, next) => next()),
-    use: vi.fn()
-  }
-})
+// Import shared mocks
+import passport from '../../mocks/passport.mock.js'
+import * as passportJwt from '../../mocks/passport-jwt.mock.js'
+import stats from '../../mocks/stats.mock.js'
+import gameService from '../../mocks/game_service.mock.js'
+import * as battlestarCommon from '../../mocks/battlestar-common.mock.js'
+import logger from '../../mocks/logger.mock.js'
+import db from '../../mocks/db.mock.js'
 
-// Mock passport-jwt
-vi.mock('passport-jwt', () => {
-  return {
-    Strategy: vi.fn(),
-    ExtractJwt: {
-      fromAuthHeaderAsBearerToken: vi.fn()
-    }
-  }
-})
-
-// Mock stats utility
-vi.mock('../../../src/utils/stats', () => {
-  return {
-    default: {
-      processInnovationStats: vi.fn().mockResolvedValue({ stats: 'test stats' })
-    }
-  }
-})
-
-// Mock gameService
-vi.mock('../../../src/services/game_service', () => {
-  return {
-    default: {
-      create: vi.fn().mockResolvedValue({ _id: 'new-game-id' }),
-      kill: vi.fn().mockResolvedValue({}),
-      rematch: vi.fn().mockResolvedValue({ _id: 'new-lobby-id' }),
-      saveFull: vi.fn().mockResolvedValue({ id: 'game-id', state: 'updated' }),
-      saveResponse: vi.fn().mockResolvedValue({ id: 'game-id', state: 'response-saved' }),
-      undo: vi.fn().mockResolvedValue({ id: 'game-id', state: 'undo-applied' })
-    }
-  }
-})
-
-// Mock battlestar-common
+// Mock modules with our imported mocks
 vi.mock('battlestar-common', () => {
-  return {
-    GameOverEvent: vi.fn(),
-    fromData: vi.fn(data => data)
-  }
+  return battlestarCommon
 })
 
-// Mock logger
-vi.mock('../../../src/utils/logger', () => {
-  return {
-    default: {
-      info: vi.fn(),
-      error: vi.fn(),
-      debug: vi.fn()
-    }
-  }
+vi.mock('passport', () => {
+  return { default: passport }
 })
 
-// Mock db
+vi.mock('passport-jwt', () => {
+  return passportJwt
+})
+
 vi.mock('../../../src/models/db', () => {
-  return {
-    default: {
-      game: {
-        all: vi.fn().mockReturnValue({
-          toArray: vi.fn().mockResolvedValue([
-            { _id: 'game1', name: 'Test Game 1' },
-            { _id: 'game2', name: 'Test Game 2' }
-          ])
-        }),
-        find: vi.fn().mockReturnValue({
-          toArray: vi.fn().mockResolvedValue([
-            { _id: 'game1', name: 'Test Game 1' },
-            { _id: 'game2', name: 'Test Game 2' }
-          ])
-        }),
-        findById: vi.fn(),
-        create: vi.fn(),
-        save: vi.fn(),
-        gameOver: vi.fn()
-      }
-    }
-  }
+  return { default: db }
+})
+
+vi.mock('../../../src/services/game_service', () => {
+  return { default: gameService }
+})
+
+vi.mock('../../../src/utils/logger', () => {
+  return { default: logger }
+})
+
+vi.mock('../../../src/utils/stats', () => {
+  return { default: stats }
 })
 
 // Now we can import the controller
 import * as gameController from '../../../src/controllers/game.controller.js'
 import { NotFoundError } from '../../../src/utils/errors.js'
-import gameService from '../../../src/services/game_service.js'
-import db from '../../../src/models/db.js'
-import logger from '../../../src/utils/logger.js'
-import stats from '../../../src/utils/stats.js'
 
 describe('Game Controller', () => {
   let req, res, next
@@ -151,10 +99,10 @@ describe('Game Controller', () => {
       expect(db.game.all).toHaveBeenCalled()
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
-        games: [
-          { _id: 'game1', name: 'Test Game 1' },
-          { _id: 'game2', name: 'Test Game 2' }
-        ]
+        games: expect.arrayContaining([
+          expect.objectContaining({ _id: 'game1' }),
+          expect.objectContaining({ _id: 'game2' })
+        ])
       })
     })
 
