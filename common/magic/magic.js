@@ -289,6 +289,19 @@ Magic.prototype.aAddCounter = function(player, cardId, name, opts={}) {
   }
 }
 
+Magic.prototype.aAddTracker = function(player, cardId, name, opts={}) {
+  player = player || this.getPlayerCurrent()
+  const card = this.getCardById(cardId)
+
+  if (!card.g.trackers[name]) {
+    card.g.trackers[name] = 0
+
+    if (!opts.noIncrement) {
+      this.aAdjustCardTracker(player, cardId, name, 1)
+    }
+  }
+}
+
 Magic.prototype.aAddCounterPlayer = function(player, targetName, counterName) {
   const target = this.getPlayerByName(targetName)
 
@@ -322,6 +335,28 @@ Magic.prototype.aAdjustCardCounter = function(player, cardId, name, amount) {
 
   this.mLog({
     template: `{card} ${name} counter ${msg}`,
+    args: { card }
+  })
+}
+
+Magic.prototype.aAdjustCardTracker = function(player, cardId, name, amount) {
+  player = player || this.getPlayerCurrent()
+  const card = this.getCardById(cardId)
+  card.g.trackers[name] += amount
+
+  let msg
+  if (amount === 1) {
+    msg = 'added'
+  }
+  else if (amount === -1) {
+    msg = 'removed'
+  }
+  else {
+    msg = `adjusted by ${amount}`
+  }
+
+  this.mLog({
+    template: `{card} ${name} tracker ${msg}`,
     args: { card }
   })
 }
@@ -450,7 +485,9 @@ Magic.prototype.aChooseAction = function(player) {
       case 'active face'         : return this.aActiveFace(actor, action.cardId, action.faceIndex)
       case 'add counter'         : return this.aAddCounter(actor, action.cardId, action.key)
       case 'add counter player'  : return this.aAddCounterPlayer(actor, action.playerName, action.key)
+      case 'add tracker'         : return this.aAddTracker(actor, action.cardId, action.key)
       case 'adjust c-counter'    : return this.aAdjustCardCounter(actor, action.cardId, action.key, action.count)
+      case 'adjust c-tracker'    : return this.aAdjustCardTracker(actor, action.cardId, action.key, action.count)
       case 'adjust counter'      : return actor.incrementCounter(action.counter, action.amount)
       case 'annotate'            : return this.aAnnotate(actor, action.cardId, action.annotation)
       case 'annotate eot'        : return this.aAnnotateEOT(actor, action.cardId, action.annotation)
@@ -901,6 +938,14 @@ Magic.prototype.aSelectPhase = function(player, phase) {
           args: { card }
         })
         card.g.annotationEOT = ''
+      }
+
+      for (const tracker of Object.keys(card.g.trackers)) {
+        this.mLog({
+          template: `{card} tracker ${tracker} clears`,
+          args: { card }
+        })
+        card.g.trackers[tracker] = 0
       }
     }
     this.mLogOutdent()

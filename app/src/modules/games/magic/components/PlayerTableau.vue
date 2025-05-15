@@ -172,7 +172,7 @@
 
 
 <script>
-import { Dropdown as bsDropdown, Toast } from 'bootstrap'
+import { Toast } from 'bootstrap'
 import { computed } from 'vue'
 import { mapGetters } from 'vuex'
 
@@ -379,14 +379,6 @@ export default {
         zoneId,
         count: this.shuffleBottomCount,
       })
-    },
-
-    stopPropagation(event) {
-      event.stopPropagation()
-      const dropdown = event.target.closest('.dropdown')
-      const toggle = dropdown.querySelector('.dropdown-toggle')
-      const dd = new bsDropdown(toggle)
-      dd.hide()
     },
 
     tapAll(event, zone) {

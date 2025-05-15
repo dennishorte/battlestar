@@ -5,7 +5,7 @@
     </div>
     <div class="btn-group">
       <button class="btn btn-sm btn-outline-warning" @click.stop="incrementCounter(-1)">-</button>
-      <button class="btn btn-sm btn-secondary">{{ card.g.counters[name] }}</button>
+      <button class="btn btn-sm btn-secondary">{{ count }}</button>
       <button class="btn btn-sm btn-outline-success" @click.stop="incrementCounter(1)">+</button>
     </div>
   </div>
@@ -27,12 +27,30 @@ export default {
       type: String,
       required: true
     },
+    kind: {
+      type: String,
+      default: 'counter',
+    },
+  },
+
+  computed: {
+    count() {
+      if (this.kind === 'counter') {
+        return this.card.g.counters[this.name]
+      }
+      else if (this.kind === 'tracker') {
+        return this.card.g.trackers[this.name]
+      }
+      else {
+        return 'error'
+      }
+    },
   },
 
   methods: {
     incrementCounter(count) {
       this.do(null, {
-        name: 'adjust c-counter',
+        name: `adjust c-${this.kind}`,
         cardId: this.card.g.id,
         key: this.name,
         count,

@@ -13,9 +13,10 @@ class GameData {
     this.attached = []
     this.attachedTo = null
 
-    this.counters= {
+    this.counters = {
       '+1/+1': 0,
     }
+    this.trackers = {}
 
     this.morph = false
     this.secret = false

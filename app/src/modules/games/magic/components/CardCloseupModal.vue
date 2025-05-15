@@ -42,6 +42,27 @@
         </div>
 
       </div>
+
+      <div class="trackers">
+        <h5>Trackers</h5>
+        <div class="row">
+          <div class="col-6">
+            <div class="tracker" v-for="[key, ] in trackers" :key="key">
+              <CounterButtons :card="selectedCard" :name="key" kind="tracker" />
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="d-flex flex-row">
+              <input class="form-control" v-model="newTracker" placeholder="new tracker name" />
+              <button class="btn btn-sm btn-success" @click="addTracker">
+                <i class="bi bi-plus-lg"/>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
   </ModalBase>
 </template>
@@ -72,6 +93,7 @@ export default {
       annotation: '',
       annotationEOT: '',
       newCounter: '',
+      newTracker: '',
     }
   },
 
@@ -92,6 +114,10 @@ export default {
     selectedCard() {
       return this.game.getCardById(this.selectedCardId)
     },
+
+    trackers() {
+      return Object.entries(this.selectedCard.g.trackers)
+    },
   },
 
   watch: {
@@ -111,6 +137,16 @@ export default {
           name: 'add counter',
           cardId: this.selectedCard.g.id,
           key: this.newCounter,
+        })
+      }
+    },
+
+    addTracker() {
+      if (this.newTracker) {
+        this.do(null, {
+          name: 'add tracker',
+          cardId: this.selectedCard.g.id,
+          key: this.newTracker,
         })
       }
     },
@@ -166,7 +202,8 @@ h5 {
   overflow-x: scroll;
 }
 
-.counters {
+.counters,
+.trackers {
   width: 100%;
 }
 
