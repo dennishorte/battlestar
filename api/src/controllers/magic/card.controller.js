@@ -114,15 +114,7 @@ export const update = async (req, res) => {
  */
 export const versions = async (req, res) => {
   try {
-    // Validate required inputs
-    if (!req.body.cardId) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Missing required field: cardId'
-      })
-    }
-
-    const versions = await db.magic.card.versions(req.body.cardId)
+    const versions = await db.magic.card.versions()
     res.json({
       status: 'success',
       versions,
