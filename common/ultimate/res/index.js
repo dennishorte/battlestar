@@ -1,10 +1,10 @@
 const sets = {
-  base: require('./res/base'),
-  // echo: require('./res/echo'),
-  // figs: require('./res/figs'),
-  city: require('./res/city'),
-  // arti: require('./res/arti'),
-  usee: require('./res/usee'),
+  base: require('./base'),
+  // echo: require('./echo'),
+  // figs: require('./figs'),
+  city: require('./city'),
+  // arti: require('./arti'),
+  usee: require('./usee'),
   byName: {},
   generate
 }
