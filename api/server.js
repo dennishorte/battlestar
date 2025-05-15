@@ -8,12 +8,12 @@ import { fileURLToPath } from 'url'
 
 // Import local modules
 import config from './config/index.js'
-import middleware from './middleware/index.js'
-import logger from './utils/logger.js'
-import setupSwagger from './utils/swagger.js'
+import middleware from './src/middleware/index.js'
+import logger from './src/utils/logger.js'
+import setupSwagger from './src/utils/swagger.js'
 
 // Import routes
-import apiRoutes from './routes/api/index.js'
+import apiRoutes from './src/routes/api/index.js'
 
 // Get current directory
 const __filename = fileURLToPath(import.meta.url)
@@ -26,7 +26,7 @@ const port = config.port || 3000
 ////////////////////////////////////////////////////////////
 // Middleware
 app.use(history({ index: '/' }))
-app.use(express.static(path.join(__dirname, '../../app/dist')))
+app.use(express.static(path.join(__dirname, '../app/dist')))
 app.use(middleware.auth.authenticate)
 app.use(bodyParser.json({ limit: "500kb" }))
 app.use(middleware.validators.ensureVersion)

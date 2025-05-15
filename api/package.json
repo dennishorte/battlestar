@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "API for Game Center",
   "type": "module",
-  "main": "src/server.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.bundle.js",
     "build": "webpack",
-    "dev": "nodemon ./src/server.js",
+    "dev": "nodemon ./server.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",

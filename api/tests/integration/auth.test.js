@@ -20,7 +20,7 @@ vi.mock('../../src/version.js', () => {
   return { default: 1747165976913 }
 })
 
-import { app } from '../../src/server.js'
+import { app } from '../../server.js'
 import db from '../../src/models/db.js'
 
 describe('Authentication', () => {
