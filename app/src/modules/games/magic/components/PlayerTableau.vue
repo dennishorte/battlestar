@@ -108,6 +108,7 @@
           <DropdownButton @click="importCard('land')">import card</DropdownButton>
           <DropdownButton @click="makeToken('land')">make token</DropdownButton>
           <DropdownDivider />
+          <DropdownButton @click="tapAll($event, 'land')">tap all</DropdownButton>
           <DropdownButton @click="moveAll($event, 'land')">move all</DropdownButton>
         </template>
       </TableauZone>
@@ -386,6 +387,14 @@ export default {
       const toggle = dropdown.querySelector('.dropdown-toggle')
       const dd = new bsDropdown(toggle)
       dd.hide()
+    },
+
+    tapAll(event, zone) {
+      const zoneId = `players.${this.player.name}.${zone}`
+      this.do(this.actorPlayer, {
+        name: 'tap all',
+        zoneId,
+      })
     },
 
     viewAll() {

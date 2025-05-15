@@ -482,6 +482,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'shuffle bottom'      : return this.aShuffleBottom(actor, action.zoneId, action.count)
       case 'stack effect'        : return this.aStackEffect(actor, action.cardId)
       case 'tap'                 : return this.aTap(actor, action.cardId)
+      case 'tap all'             : return this.aTapAll(actor, action.zoneId)
       case 'unmorph'             : return this.aUnmorph(actor, action.cardId)
       case 'unsecret'            : return this.aUnsecret(actor, action.cardId)
       case 'untap'               : return this.aUntap(actor, action.cardId)
@@ -969,6 +970,13 @@ Magic.prototype.aTap = function(player, cardId) {
     template: 'tap: {card}',
     args: { card }
   })
+}
+
+Magic.prototype.aTapAll = function(player, zoneId) {
+  const cards = this.getZoneById(zoneId).cards()
+  for (const card of cards) {
+    this.aTap(player, card.g.id)
+  }
 }
 
 Magic.prototype.aUnmorph = function(player, cardId) {
