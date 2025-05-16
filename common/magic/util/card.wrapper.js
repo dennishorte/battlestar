@@ -95,7 +95,7 @@ class CardWrapper extends Wrapper {
     return this.data.cmc
   }
   manaCost(faceIndex) {
-    if (typeof faceindex !== 'number') {
+    if (typeof faceIndex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).mana_cost
@@ -105,44 +105,44 @@ class CardWrapper extends Wrapper {
   }
 
   oracleText(faceIndex) {
-    if (typeof faceindex !== 'number') {
+    if (typeof faceIndex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).oracle_text
   }
   flavorText(faceIndex) {
-    if (typeof faceindex !== 'number') {
+    if (typeof faceIndex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).flavor_text
   }
 
   power(faceIndex) {
-    if (typeof faceindex !== 'number') {
+    if (typeof faceIndex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).power
   }
   toughness(faceIndex) {
-    if (typeof faceindex !== 'number') {
+    if (typeof faceIndex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).toughness
   }
   powerToughness(faceIndex) {
-    if (typeof faceindex !== 'number') {
+    if (typeof faceIndex !== 'number') {
       return undefined
     }
     return `${this.power(faceIndex)}/${this.toughness(faceIndex)}`
   }
   loyalty(faceIndex) {
-    if (typeof faceindex !== 'number') {
+    if (typeof faceIndex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).loyalty
   }
   defense(faceIndex) {
-    if (typeof faceindex !== 'number') {
+    if (typeof faceIndex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).defense
@@ -150,13 +150,13 @@ class CardWrapper extends Wrapper {
 
 
   artist(faceIndex) {
-    if (typeof faceindex !== 'number') {
+    if (typeof faceIndex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).artist
   }
   imageUri(faceIndex) {
-    if (typeof faceindex !== 'number') {
+    if (typeof faceIndex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).image_uri
