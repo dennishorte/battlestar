@@ -6,7 +6,7 @@ const Deck = {
   async create(user, opts={}) {
     const creationDate = new Date()
     const insertResult = await deckCollection.insertOne({
-      name: 'New Deck',
+      name: opts.name || 'New Deck',
       userId: user._id,
       links: opts.links || {},
       format: 'custom',
