@@ -23,7 +23,7 @@ Player.prototype.getCounter = function(name) {
 Player.prototype.incrementCounter = function(name, amt) {
   this.counters[name] += amt
 
-  this.game.mLog({
+  this.game.log.add({
     template: `{player} ${name} change {count}`,
     args: { player: this, count: amt },
     classes: ['counter-change'],

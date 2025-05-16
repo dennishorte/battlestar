@@ -27,7 +27,7 @@ function Card() {
       })
 
       if (!color || color.length === 0) {
-        game.mLogDoNothing(player)
+        game.log.addDoNothing(player)
         return
       }
 

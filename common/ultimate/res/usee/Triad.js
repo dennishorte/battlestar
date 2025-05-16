@@ -24,7 +24,7 @@ function Card() {
         game.aChooseAndScore(player, hand.cards())
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ]

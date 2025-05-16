@@ -32,7 +32,7 @@ function Card() {
         game.aClaimAchievement(player, { name: 'Monument' })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ]

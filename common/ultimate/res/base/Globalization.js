@@ -32,7 +32,7 @@ function Card() {
     (game, player) => {
       game.aDrawAndMeld(player, game.getEffectAge(this, 11))
 
-      game.mLog({ template: 'Checking win condition' })
+      game.log.add({ template: 'Checking win condition' })
 
       const biscuitCounts = Object.values(game.getBiscuits())
       const conditionMet = biscuitCounts
@@ -53,7 +53,7 @@ function Card() {
         }
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ]

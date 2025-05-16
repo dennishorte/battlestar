@@ -44,7 +44,7 @@ function Card() {
         game.aClaimAchievement(player, { name: 'Wealth' })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ]

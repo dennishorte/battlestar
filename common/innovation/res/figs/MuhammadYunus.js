@@ -34,7 +34,7 @@ function Card() {
         )
 
         if (returned && returned.length > 0) {
-          game.mLog({
+          game.log.add({
             template: '{player} has the sole majority',
             args: { player: owner }
           })

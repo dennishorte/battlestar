@@ -52,7 +52,7 @@ function Card() {
 
      * (game, player, { leader }) => {
      *   if (player !== leader) {
-     *     game.mLogNoEffect()
+     *     game.log.addNoEffect()
      *     return
      *   }
 
@@ -67,7 +67,7 @@ function Card() {
      *     })
      *   }
      *   else {
-     *     game.mLogNoEffect()
+     *     game.log.addNoEffect()
      *   }
      * } */
   ]

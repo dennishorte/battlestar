@@ -31,9 +31,9 @@ function Card() {
         }
       }
 
-      game.mLog({ template: 'four biscuits: ' + biscuitCounts[4] })
-      game.mLog({ template: 'three biscuits: ' + biscuitCounts[3] })
-      game.mLog({ template: 'two biscuits: ' + biscuitCounts[2] })
+      game.log.add({ template: 'four biscuits: ' + biscuitCounts[4] })
+      game.log.add({ template: 'three biscuits: ' + biscuitCounts[3] })
+      game.log.add({ template: 'two biscuits: ' + biscuitCounts[2] })
 
       if (biscuitCounts[4] >= 4) {
         game.aDraw(player, { age: game.getEffectAge(this, 4) })
@@ -45,7 +45,7 @@ function Card() {
         game.aDraw(player, { age: game.getEffectAge(this, 2) })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ]

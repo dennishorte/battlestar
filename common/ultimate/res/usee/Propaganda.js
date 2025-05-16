@@ -27,7 +27,7 @@ function Card() {
         .filter(card => card.color === chosenColor)
 
       if (choices.length === 0) {
-        game.mLog({
+        game.log.add({
           template: '{player} does not have a {color} card to meld',
           args: { player, color: chosenColor }
         })
@@ -41,7 +41,7 @@ function Card() {
             game.aTransfer(player, cardBeneath, game.getZoneByPlayer(leader, cardBeneath.color))
           }
           else {
-            game.mLog({
+            game.log.add({
               template: 'no card beneath {card} to transfer',
               args: { card: melded }
             })

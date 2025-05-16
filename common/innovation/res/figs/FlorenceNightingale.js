@@ -42,7 +42,7 @@ function Card() {
         return thisIsMyCardCondition && thisIsNotMyEffectCondition && cardIsInMyScoreCondition
       },
       func: (game, player, { card }) => {
-        game.mLog({
+        game.log.add({
           template: '{card} is not moved',
           args: { card }
         })

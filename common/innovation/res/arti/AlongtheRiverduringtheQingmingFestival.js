@@ -28,7 +28,7 @@ function Card() {
           break
         }
         else {
-          game.mLog({
+          game.log.add({
             template: 'Card is neither yellow nor purple. Repeating effect.'
           })
           continue

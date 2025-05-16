@@ -29,7 +29,7 @@ function Card() {
         game.aRemoveMany(player, hands, { ordered: true })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     }
   ]

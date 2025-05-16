@@ -24,7 +24,7 @@ function Card() {
       const topCards = game.getTopCards(player)
       const card = game.aChooseCard(opponent, topCards)
 
-      game.mLog({
+      game.log.add({
         template: '{opponent} chooses {card} for {player} to execute',
         args: { opponent, player, card }
       })

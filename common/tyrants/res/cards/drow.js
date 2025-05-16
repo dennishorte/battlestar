@@ -441,7 +441,7 @@ const cardData = [
       "Put your deck into your discard pile. Then promote a card from your discard pile."
     ],
     impl: (game, player) => {
-      game.mLog({
+      game.log.add({
         template: '{player} moves their deck into their discard pile',
         args: { player }
       })

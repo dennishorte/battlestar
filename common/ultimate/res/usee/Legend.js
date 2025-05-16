@@ -22,7 +22,7 @@ function Card() {
       const doEffect = (card) => {
         if (!card) {
           keepGoing = false
-          game.mLog({ template: 'No top card remaining in ' + firstCard.color })
+          game.log.add({ template: 'No top card remaining in ' + firstCard.color })
           return
         }
         game.aSelfExecute(player, card)
@@ -32,12 +32,12 @@ function Card() {
           keepGoing = total < 9
 
           if (!keepGoing) {
-            game.mLog({ template: `Scored ${total} points due to Legend.` })
+            game.log.add({ template: `Scored ${total} points due to Legend.` })
           }
         }
         else {
           keepGoing = false
-          game.mLog({ template: 'Did not score the top card.' })
+          game.log.add({ template: 'Did not score the top card.' })
         }
       }
 

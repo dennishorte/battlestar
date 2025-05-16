@@ -37,7 +37,7 @@ function Card() {
 
       for (const biscuits of theirs) {
         if (mine.f >= biscuits.f || mine.c >= biscuits.c || mine.k >= biscuits.k) {
-          game.mLogNoEffect()
+          game.log.addNoEffect()
           return
         }
       }

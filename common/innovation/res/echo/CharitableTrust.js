@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       if (!game.state.dogmaInfo.charitableTrust) {
-        game.mLog({ template: "Charitable Trust's echo effect was not used." })
+        game.log.add({ template: "Charitable Trust's echo effect was not used." })
         return
       }
 

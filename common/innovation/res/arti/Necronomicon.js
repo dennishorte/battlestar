@@ -19,10 +19,10 @@ function Card() {
     (game, player) => {
       const card = game.aDrawAndReveal(player, game.getEffectAge(this, 3))
       if (card) {
-        game.mLog({ template: `Card is ${card.color}` })
+        game.log.add({ template: `Card is ${card.color}` })
 
         if (card.color === 'yellow') {
-          game.mLog({
+          game.log.add({
             template: '{player} will return all cards from hand',
             args: { player }
           })
@@ -30,7 +30,7 @@ function Card() {
         }
 
         else if (card.color === 'green') {
-          game.mLog({
+          game.log.add({
             template: '{player} will unsplay all stacks',
             args: { player }
           })
@@ -43,7 +43,7 @@ function Card() {
         }
 
         else if (card.color === 'red') {
-          game.mLog({
+          game.log.add({
             template: '{player} will return all cards from score',
             args: { player }
           })
@@ -51,7 +51,7 @@ function Card() {
         }
 
         else if (card.color === 'blue') {
-          game.mLog({
+          game.log.add({
             template: '{player} will draw a {9}',
             args: { player }
           })
@@ -59,7 +59,7 @@ function Card() {
         }
 
         else {
-          game.mLogNoEffect()
+          game.log.addNoEffect()
         }
       }
     }

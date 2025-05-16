@@ -39,7 +39,7 @@ function Card() {
         }
       }
       else {
-        game.mLog({ template: 'no special achievements available' })
+        game.log.add({ template: 'no special achievements available' })
       }
 
       if (!junked && fromJunkOptions) {
@@ -53,7 +53,7 @@ function Card() {
         }
       }
       else if (!junked) {
-        game.mLog({ template: 'no special achievements in junk' })
+        game.log.add({ template: 'no special achievements in junk' })
       }
     },
   ]

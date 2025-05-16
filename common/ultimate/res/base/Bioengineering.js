@@ -45,10 +45,10 @@ function Card() {
         })
       }
       else if (biscuits[0].leafs === biscuits[1].leafs) {
-        game.mLog({ template: 'there is a tie for fewest leafs' })
+        game.log.add({ template: 'there is a tie for fewest leafs' })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ]

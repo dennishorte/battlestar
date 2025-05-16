@@ -43,7 +43,7 @@ function Card() {
         .length
 
       if (playerOnlyColors === 0) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
       else {
         for (let i = 0; i < playerOnlyColors; i++) {

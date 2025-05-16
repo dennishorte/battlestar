@@ -34,7 +34,7 @@ function Card() {
 
       // Transfer them to leader's hand
       if (cards.length === 0) {
-        game.mLog({
+        game.log.add({
           template: '{player} transfers nothing',
           args: { player }
         })
@@ -65,7 +65,7 @@ function Card() {
         return game.aClaimAchievement(player, { name: 'Empire' })
       }
       else {
-        game.mLog({ template: 'no effect' })
+        game.log.add({ template: 'no effect' })
       }
     },
   ]

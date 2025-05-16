@@ -28,7 +28,7 @@ function Card() {
         }
 
         else {
-          game.mLog({
+          game.log.add({
             template: 'Card was purple. No effect.'
           })
         }

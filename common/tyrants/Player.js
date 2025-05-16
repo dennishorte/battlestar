@@ -17,7 +17,7 @@ Player.prototype.incrementInfluence = function(count, opts={}) {
 
   if (!opts.silent) {
     const sign = count > 0 ? '+' : '-'
-    this.game.mLog({
+    this.game.log.add({
       template: '{player} adjusts influence {initial} {sign} {increment} = {final}',
       args: {
         player: this,
@@ -35,7 +35,7 @@ Player.prototype.incrementPoints = function(count, opts={}) {
 
   if (!opts.silent) {
     const sign = count >= 0 ? '+' : '-'
-    this.game.mLog({
+    this.game.log.add({
       template: '{player} adjusts points {initial} {sign} {increment} = {final}',
       args: {
         player: this,
@@ -53,7 +53,7 @@ Player.prototype.incrementPower = function(count, opts={}) {
 
   if (!opts.silent) {
     const sign = count > 0 ? '+' : '-'
-    this.game.mLog({
+    this.game.log.add({
       template: '{player} adjusts power {initial} {sign} {increment} = {final}',
       args: {
         player: this,

@@ -44,7 +44,7 @@ function Card() {
         return game.aClaimAchievement(player, { name: 'Empire' })
       }
       else {
-        game.mLog({ template: 'no effect' })
+        game.log.add({ template: 'no effect' })
       }
     },
   ]

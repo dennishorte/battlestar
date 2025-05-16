@@ -41,7 +41,7 @@ function Card() {
         game.aTransfer(player, card, game.getZoneByPlayer(transferTo, card.color))
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     }
   ]

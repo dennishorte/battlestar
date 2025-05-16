@@ -58,11 +58,11 @@ function Card() {
 
     const selection = game.aChoose(player, choices)[0]
     if (selection && selection.length > 0) {
-      game.mLog({
+      game.log.add({
         template: '{player} choose {effect}',
         args: { player, effect: selection }
       })
-      game.mLogIndent()
+      game.log.indent()
 
       const [cardName, text] = selection.split(': ', 2)
       const card = game.getCardByName(cardName)
@@ -78,7 +78,7 @@ function Card() {
         leader: player,
       }
       game.aCardEffect(player, info, opts)
-      game.mLogOutdent()
+      game.log.outdent()
     }
   }
   this.karmaImpl = [

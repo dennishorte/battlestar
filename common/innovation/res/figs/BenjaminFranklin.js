@@ -25,7 +25,7 @@ function Card() {
 
     const card = game.aChooseCard(player, choices)
     if (card) {
-      game.mLog({
+      game.log.add({
         template: '{player} takes {card} into their hand',
         args: { player, card }
       })

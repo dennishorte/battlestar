@@ -27,7 +27,7 @@ function Card() {
       })[0]
 
       if (proceed === 'no') {
-        game.mLog({
+        game.log.add({
           template: '{player} does nothing',
           args: { player }
         })

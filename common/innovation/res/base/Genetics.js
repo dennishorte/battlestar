@@ -22,7 +22,7 @@ function Card() {
         const cards = game.getCardsByZone(player, card.color)
         const cardIndex = cards.indexOf(card)
         if (cardIndex === -1) {
-          game.mLog({
+          game.log.add({
             template: '{card} is not in its stack',
             args: { card }
           })

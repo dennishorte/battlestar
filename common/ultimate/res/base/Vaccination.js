@@ -20,7 +20,7 @@ function Card() {
       const values = game.getAgesByZone(player, 'score')
 
       if (values.length === 0) {
-        game.mLog({ template: 'no cards in score' })
+        game.log.add({ template: 'no cards in score' })
         return
       }
 
@@ -41,7 +41,7 @@ function Card() {
         game.aDrawAndMeld(player, game.getEffectAge(this, 7))
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ]

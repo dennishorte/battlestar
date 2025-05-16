@@ -56,7 +56,7 @@ const cardData = [
       {
         kind: 'discard-this',
         impl: (game, player, { card }) => {
-          game.mLog({
+          game.log.add({
             template: '{player} was forced to discard {card}, and may choose to promote it',
             args: { player, card }
           })
@@ -246,14 +246,14 @@ const cardData = [
     impl: (game, player) => {
       const card = game.aDraw(player, { silent: true })
       if (card === 'no-more-cards') {
-        game.mLog({
+        game.log.add({
           template: '{player} has no more cards in their deck or discard pile',
           args: { player }
         })
       }
       else {
         game.aPromote(player, card, { silent: true })
-        game.mLog({
+        game.log.add({
           template: '{player} promotes {card} from the top of their library',
           args: { player, card }
         })
@@ -262,14 +262,14 @@ const cardData = [
       const choices = game.getCardsByZone(player, 'innerCircle')
       const toPlay = game.aChooseCard(player, choices)
       if (toPlay) {
-        game.mLog({
+        game.log.add({
           template: '{player} choose {card} to play from their innerCircle',
           args: { player, card: toPlay }
         })
         game.mMoveCardTo(toPlay, game.getZoneByPlayer(player, 'hand'))
         game.aPlayCard(player, toPlay)
         game.mMoveCardTo(toPlay, game.getZoneByPlayer(player, 'innerCircle'))
-        game.mLog({
+        game.log.add({
           template: '{player} returns {card} to their inner circle',
           args: { player, card: toPlay }
         })
@@ -326,7 +326,7 @@ const cardData = [
       {
         kind: 'discard-this',
         impl: (game, player, { card }) => {
-          game.mLog({
+          game.log.add({
             template: '{player} was forced to discard {card}, so will draw two cards',
             args: { player, card }
           })
@@ -587,7 +587,7 @@ const cardData = [
         kind: 'discard-this',
         impl: (game, player, { card, forcedBy }) => {
           const opp = game.getPlayerByName(forcedBy)
-          game.mLog({
+          game.log.add({
             template: '{player} will draw one fewer card on their next hand refill',
             args: { player: opp }
           })

@@ -22,12 +22,12 @@ function Card() {
         const stack = game.getCardsByZone(player, color)
 
         if (stack.length === 1) {
-          game.mLog({ template: 'no card above tucked card' })
+          game.log.add({ template: 'no card above tucked card' })
         }
         else {
           const cardAbove = stack.slice(-2, -1)[0]
           if (cardAbove.getAge() === game.getEffectAge(this, 11)) {
-            game.mLog({
+            game.log.add({
               template: '{player} tucked the card just under an 11',
               args: { player },
             })
@@ -57,7 +57,7 @@ function Card() {
 
       // Repeat if needed
       while (shouldRepeat) {
-        game.mLog({
+        game.log.add({
           template: '{player} repeats the effect',
           args: { player }
         })

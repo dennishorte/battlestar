@@ -25,7 +25,7 @@ function Card() {
       const playerColors = [...new Set(playerHand.map(card => card.color))]
 
       if (playerHand.length === 0) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
         return
       }
 

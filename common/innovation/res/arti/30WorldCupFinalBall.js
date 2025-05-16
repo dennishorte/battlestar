@@ -39,7 +39,7 @@ function Card() {
 
         }
         else {
-          game.mLog({
+          game.log.add({
             template: 'No single player has the highest top card.'
           })
           break

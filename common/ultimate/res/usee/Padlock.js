@@ -21,7 +21,7 @@ function Card() {
       const secrets = game.getCardsByZone(player, 'safe')
 
       if (secrets.length === 0) {
-        game.mLog({ template: 'no secrets to transfer' })
+        game.log.add({ template: 'no secrets to transfer' })
         return
       }
 
@@ -41,7 +41,7 @@ function Card() {
         })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ]

@@ -20,7 +20,7 @@ function Card() {
       const number = game.aChoose(player, [0,1,2,3,4,5,6,7,8,9], { title: 'Choose a number' })[0]
       const color = game.aChoose(player, game.utilColors(), { title: 'Choose a color' })[0]
 
-      game.mLog({
+      game.log.add({
         template: '{player} chooses {number} {color}',
         args: { player, number, color }
       })
@@ -40,13 +40,13 @@ function Card() {
       const matches = hand.filter(card => card.color === color)
       const matchCount = matches.length === number
 
-      game.mLog({
+      game.log.add({
         template: '{player} has {count} {color}',
         args: { player, count: matches.length, color }
       })
 
       if (matchCount) {
-        game.mLog({
+        game.log.add({
           template: '{player} guessed correctly',
           args: { player }
         })
@@ -54,7 +54,7 @@ function Card() {
         game.aSplay(player, color, 'right')
       }
       else {
-        game.mLog({
+        game.log.add({
           template: '{player} did not guess correctly',
           args: { player }
         })

@@ -19,7 +19,7 @@ function Card() {
     (game, player) => {
       const decision = game.aYesNo(player, 'Exchange the highest card in your hand and score pile?')
       if (decision) {
-        game.mLog({
+        game.log.add({
           template: '{player} swaps the highest cards in their hand and score pile',
           args: { player }
         })
@@ -32,7 +32,7 @@ function Card() {
         scoreHighest.forEach(card => game.mMoveCardTo(card, hand))
       }
       else {
-        game.mLogDoNothing(player)
+        game.log.addDoNothing(player)
       }
     }
   ]

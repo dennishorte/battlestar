@@ -22,7 +22,7 @@ function Card() {
       const card3 = game.aDrawAndReveal(player, game.getEffectAge(this, 6))
 
       if (card1.color === card2.color || card2.color === card3.color || card3.color === card1.color) {
-        game.mLog({
+        game.log.add({
           template: 'Two or more of the cards had the same color'
         })
         game.aReturnMany(player, game.getCardsByZone(player, 'hand'))

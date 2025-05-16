@@ -19,7 +19,7 @@ function Card() {
     (game, player) => {
       const cards = game.getCardsByZone(player, 'hand')
       if (cards.length === 0) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
       else {
         const tuckThem = game.aYesNo(player, 'Tuck all cards from your hand?')
@@ -37,7 +37,7 @@ function Card() {
           }
         }
         else {
-          game.mLogDoNothing(player)
+          game.log.addDoNothing(player)
         }
       }
     }

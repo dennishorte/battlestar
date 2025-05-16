@@ -20,7 +20,7 @@ function Card() {
       const decision = game.aChoose(player, choices, { title: "Choose one" })[0]
 
       if (decision === choices[0]) {
-        game.mLog({
+        game.log.add({
           template: '{player} exchanges the highest cards in their hand and score pile',
           args: { player }
         })

@@ -193,7 +193,7 @@ const cardData = [
         .getLocationAll()
         .filter(loc => loc.getController() === player)
         .length
-      game.mLog({
+      game.log.add({
         template: '{player} controls {count} sites',
         args: {
           player,

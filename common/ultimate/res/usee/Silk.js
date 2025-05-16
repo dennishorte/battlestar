@@ -44,7 +44,7 @@ function Card() {
           break
         }
         else {
-          game.mLog({ template: 'Must choose only one card per color' })
+          game.log.add({ template: 'Must choose only one card per color' })
           continue
         }
       }

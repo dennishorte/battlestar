@@ -22,7 +22,7 @@ function Card() {
         const age = yellow ? yellow.getAge() + 1 : 1
         const melded = game.aDrawAndMeld(player, age)
         if (melded && melded.color === 'yellow') {
-          game.mLog({
+          game.log.add({
             template: 'Melded card was yellow. Repeating'
           })
           continue

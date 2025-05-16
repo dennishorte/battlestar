@@ -24,7 +24,7 @@ function Card() {
         else {
           const melded = game.aDrawAndMeld(player, game.getEffectAge(this, 8))
           if (melded.getAge() === 8) {
-            game.mLog({ template: 'Repeating effect' })
+            game.log.add({ template: 'Repeating effect' })
             executeEffect()
           }
         }

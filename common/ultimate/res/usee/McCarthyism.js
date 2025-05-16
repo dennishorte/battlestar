@@ -25,7 +25,7 @@ function Card() {
         .find(card => card.name === 'Socialism')
 
       if (socialism) {
-        game.mLog({
+        game.log.add({
           template: '{player} has Socialism on their board and loses the game!',
           args: { player }
         })
@@ -39,7 +39,7 @@ function Card() {
         game.aScore(player, purple)
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
 

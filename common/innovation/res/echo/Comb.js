@@ -28,7 +28,7 @@ function Card() {
 
       cards
         .filter(card => card.color === color)
-        .forEach(card => game.mLog({
+        .forEach(card => game.log.add({
           template: '{player} keeps {card}',
           args: { player, card }
         }))

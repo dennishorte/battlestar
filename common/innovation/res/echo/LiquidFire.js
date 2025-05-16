@@ -29,7 +29,7 @@ function Card() {
         }
       }
       else {
-        game.mLog({
+        game.log.add({
           template: '{player} has no bonuses',
           args: { player }
         })

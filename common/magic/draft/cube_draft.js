@@ -63,10 +63,10 @@ CubeDraft.prototype.serialize = function() {
 
 CubeDraft.prototype._mainProgram = function() {
   this.initialize()
-  this.mLog({ template: "Draft Begins" })
+  this.log.add({ template: "Draft Begins" })
 
   // Open the first pack for each player.
-  this.mLogIndent()
+  this.log.indent()
   this
     .getPlayerAll()
     .forEach(player => this.aOpenNextPack(player))
@@ -79,13 +79,13 @@ CubeDraft.prototype._mainProgram = function() {
 // Initialization
 
 CubeDraft.prototype.initialize = function() {
-  this.mLog({ template: 'Initializing' })
-  this.mLogIndent()
+  this.log.add({ template: 'Initializing' })
+  this.log.indent()
 
   this.initializePlayers()
   this.initializePacks()
 
-  this.mLogOutdent()
+  this.log.outdent()
 
   this.state.initializationComplete = true
   this._breakpoint('initialization-complete')
@@ -105,7 +105,7 @@ CubeDraft.prototype.initializePlayers = function() {
     unopenedPacks: [],
     scarredRounds: [],
   }))
-  this.mLog({ template: 'Randomizing player seating' })
+  this.log.add({ template: 'Randomizing player seating' })
   util.array.shuffle(this.state.players, this.random)
   this.state.players.forEach((player, index) => {
     player.index = index
@@ -116,18 +116,18 @@ CubeDraft.prototype.initializePacks = function() {
   this.state.packs = this.settings.packs.map(packData => new Pack(this, packData))
   this.cardsById = {}
 
-  this.mLog({ template: 'Passing out packs' })
-  this.mLogIndent()
+  this.log.add({ template: 'Passing out packs' })
+  this.log.indent()
 
   if (this.settings.cubeName !== null) {
-    this.mLog({ template: 'cube name: ' + this.settings.cubeName })
-    this.mLog({ template: 'number of packs: ' + this.settings.numPacks })
-    this.mLog({ template: 'cards per pack: ' + this.settings.packSize })
+    this.log.add({ template: 'cube name: ' + this.settings.cubeName })
+    this.log.add({ template: 'number of packs: ' + this.settings.numPacks })
+    this.log.add({ template: 'cards per pack: ' + this.settings.packSize })
   }
   else if (this.settings.set) {
-    this.mLog({ template: 'set name: ' + this.settings.set.name })
+    this.log.add({ template: 'set name: ' + this.settings.set.name })
   }
-  this.mLogOutdent()
+  this.log.outdent()
 
   let packIndex = 0
 
@@ -170,7 +170,7 @@ CubeDraft.prototype.mainLoop = function() {
         break
 
       default:
-        this.mLog({ template: `Unknown action: ${action.title}` })
+        this.log.add({ template: `Unknown action: ${action.title}` })
         break
     }
   }
@@ -182,7 +182,7 @@ CubeDraft.prototype.mainLoop = function() {
 }
 
 CubeDraft.prototype.aApplyScar = function(player, data) {
-  this.mLog({
+  this.log.add({
     template: '{player} applied a scar',
     args: { player },
   })
@@ -223,7 +223,7 @@ CubeDraft.prototype.aDraftCard = function(player, pack, cardId) {
   // Clear draft blocks caused by scarring
   player.scarredCardId = null
 
-  this.mLog({
+  this.log.add({
     template: '{player} drafted a card',
     args: { player },
   })
@@ -259,7 +259,7 @@ CubeDraft.prototype.aOpenNextPack = function(player) {
   const packNum = this.settings.numPacks - player.unopenedPacks.length
 
   if (pack) {
-    this.mLog({
+    this.log.add({
       template: '{player} opens pack {count}',
       args: { player, count: packNum }
     })

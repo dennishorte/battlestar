@@ -31,7 +31,7 @@ function Card() {
           .map(opp => game.getTopCard(opp, 'red'))
           .filter(card => card !== undefined)
         const selected = game.aChooseCard(player, choices)
-        game.mLog({
+        game.log.add({
           template: '{player} chooses {card}',
           args: {
             player,

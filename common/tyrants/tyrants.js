@@ -57,8 +57,8 @@ Tyrants.prototype._mainProgram = function() {
 // Initialization
 
 Tyrants.prototype.initialize = function() {
-  this.mLog({ template: 'Initializing' })
-  this.mLogIndent()
+  this.log.add({ template: 'Initializing' })
+  this.log.indent()
 
   this.state.reduceDraw = {}
 
@@ -70,7 +70,7 @@ Tyrants.prototype.initialize = function() {
   this.initializeStartingPlayer()
   this.initializeTransientState()
 
-  this.mLogOutdent()
+  this.log.outdent()
 
   this.state.ghostFlag = false
   this.state.initializationComplete = true
@@ -103,7 +103,7 @@ Tyrants.prototype.initializePlayers = function() {
   }
 
   util.array.shuffle(this.state.players, this.random)
-  this.mLog({ template: 'Seating shuffled' })
+  this.log.add({ template: 'Seating shuffled' })
 }
 
 Tyrants.prototype.initializeMapZones = function() {
@@ -152,8 +152,8 @@ Tyrants.prototype.initializePlayerZones = function() {
 Tyrants.prototype.initializeCards = function() {
   const expansions = this.getExpansionList()
 
-  this.mLog({ template: 'Loading expansion: ' + expansions[0] })
-  this.mLog({ template: 'Loading expansion: ' + expansions[1] })
+  this.log.add({ template: 'Loading expansion: ' + expansions[0] })
+  this.log.add({ template: 'Loading expansion: ' + expansions[1] })
 
   this.state.zones.priestess.setCards(res.cards.byName['Priestess of Lolth'])
   this.state.zones.guard.setCards(res.cards.byName['House Guard'])
@@ -169,10 +169,10 @@ Tyrants.prototype.initializeCards = function() {
   this.mShuffle(this.getZoneById('marketDeck'))
 
   // Market cards
-  this.mLog({ template: 'Adding starting market cards' })
-  this.mLogIndent()
+  this.log.add({ template: 'Adding starting market cards' })
+  this.log.indent()
   this.mRefillMarket(true)
-  this.mLogOutdent()
+  this.log.outdent()
 
   // Starter decks
   let x = 0
@@ -266,8 +266,8 @@ Tyrants.prototype.initializeTransientState = function() {
 }
 
 Tyrants.prototype.chooseInitialLocations = function() {
-  this.mLog({ template: 'Choosing starting locations' })
-  this.mLogIndent()
+  this.log.add({ template: 'Choosing starting locations' })
+  this.log.indent()
 
   for (const player of this.getPlayerAll()) {
     this.aChooseColor(player)
@@ -281,7 +281,7 @@ Tyrants.prototype.chooseInitialLocations = function() {
     this.aDeploy(player, loc)
   }
 
-  this.mLogOutdent()
+  this.log.outdent()
 }
 
 
@@ -290,8 +290,8 @@ Tyrants.prototype.chooseInitialLocations = function() {
 
 Tyrants.prototype.mainLoop = function() {
   while (true) {
-    this.mLogSetIndent(0)
-    this.mLog({
+    this.log.setIndent(0)
+    this.log.add({
       template: '{player} turn {count}',
       args: {
         player: this.getPlayerCurrent(),
@@ -300,12 +300,12 @@ Tyrants.prototype.mainLoop = function() {
       classes: ['player-turn'],
     })
 
-    this.mLogIndent()
+    this.log.indent()
 
     this.preActions()
     this.doActions()
 
-    this.mLogIndent()
+    this.log.indent()
     this.endOfTurn()
     this.cleanup()
 
@@ -323,7 +323,7 @@ Tyrants.prototype.preActions = function() {
   for (const marker of markers) {
     const loc = this.getLocationByName(marker.locName)
     player.incrementInfluence(marker.influence, { silent: true })
-    this.mLog({
+    this.log.add({
       template: '{player} gains {count} influence for control of {loc}',
       args: {
         player,
@@ -345,7 +345,7 @@ Tyrants.prototype.doActions = function() {
     })[0]
 
     if (chosenAction === 'Pass') {
-      this.mLog({
+      this.log.add({
         template: '{player} passes',
         args: { player }
       })
@@ -373,13 +373,13 @@ Tyrants.prototype.doActions = function() {
       continue
     }
     else if (name === 'Recruit') {
-      this.mLog({
+      this.log.add({
         template: '{player} recruit',
         args: { player }
       })
-      this.mLogIndent()
+      this.log.indent()
       this.aRecruit(player, arg)
-      this.mLogOutdent()
+      this.log.outdent()
       continue
     }
     else if (name === 'Use Power') {
@@ -389,26 +389,26 @@ Tyrants.prototype.doActions = function() {
       }
 
       else if (arg === 'Assassinate a Troop') {
-        this.mLog({
+        this.log.add({
           template: '{player} power: Assassinate a Troop',
           args: { player }
         })
-        this.mLogIndent()
+        this.log.indent()
         this.aChooseAndAssassinate(player)
         player.incrementPower(-3)
-        this.mLogOutdent()
+        this.log.outdent()
         continue
       }
 
       else if (arg === 'Return an Enemy Spy') {
-        this.mLog({
+        this.log.add({
           template: '{player} power: Return an Enemy Spy',
           args: { player }
         })
-        this.mLogIndent()
+        this.log.indent()
         this.aChooseAndReturn(player, { noTroops: true })
         player.incrementPower(-3)
-        this.mLogOutdent()
+        this.log.outdent()
         continue
       }
 
@@ -566,7 +566,7 @@ Tyrants.prototype._processEndOfTurnActions = function() {
   // Discard
   for (const action of this.state.endOfTurnActions) {
     if (action.action === 'discard') {
-      this.mLog({
+      this.log.add({
         template: '{player} must discard a card due to {card}',
         args: { player: action.player, card: action.source }
       })
@@ -583,7 +583,7 @@ Tyrants.prototype._processEndOfTurnActions = function() {
     }
 
     else if (action.action === 'promote-aspect') {
-      this.mLog({
+      this.log.add({
         template: '{player} may promote a card with aspect {aspect}',
         args: {
           player: action.player,
@@ -599,7 +599,7 @@ Tyrants.prototype._processEndOfTurnActions = function() {
 
     else if (action.action === 'promote-special') {
       if (action.source.name === 'High Priest of Myrkul') {
-        this.mLog({
+        this.log.add({
           template: '{player} may promote any number of undead cards',
           args: { player: action.player }
         })
@@ -629,7 +629,7 @@ Tyrants.prototype._processEndOfTurnActions = function() {
     const max = promos.length
     const min = promos.filter(p => !p.opts.optional).length
 
-    this.mLog({
+    this.log.add({
       template: '{player} may promote {max} cards',
       args: { player, max }
     })
@@ -658,7 +658,7 @@ Tyrants.prototype.endOfTurn = function() {
   for (const marker of markers) {
     if (marker.total && marker.points) {
       player.incrementPoints(marker.points, { silent: true })
-      this.mLog({
+      this.log.add({
         template: '{player} gains {count} points for total control of {loc}',
         args: {
           player,
@@ -677,7 +677,7 @@ Tyrants.prototype.cleanup = function() {
   const player = this.getPlayerCurrent()
   const playedCards = this.getCardsByZone(player, 'played')
 
-  this.mLog({
+  this.log.add({
     template: '{player} moves {count} played cards to discard pile.',
     args: {
       player,
@@ -691,7 +691,7 @@ Tyrants.prototype.cleanup = function() {
 
   const hand = this.getCardsByZone(player, 'hand')
   if (hand.length > 0) {
-    this.mLog({
+    this.log.add({
       template: '{player} discards {count} remaining cards',
       args: { player, count: hand.length }
     })
@@ -712,7 +712,7 @@ Tyrants.prototype.checkForEndGameTriggers = function() {
   // Any player has zero troops left
   for (const player of this.getPlayerAll()) {
     if (this.getCardsByZone(player, 'troops').length === 0) {
-      this.mLog({
+      this.log.add({
         template: '{player} has deployed all of their troops',
         args: { player }
       })
@@ -722,14 +722,14 @@ Tyrants.prototype.checkForEndGameTriggers = function() {
 
   // The market is depleted
   if (this.getZoneById('marketDeck').cards().length === 0) {
-    this.mLog({
+    this.log.add({
       template: 'The market is depleted'
     })
     this.state.endGameTriggered = true
   }
 
   if (this.state.endGameTriggered) {
-    this.mLog({
+    this.log.add({
       template: "The end of the game has been triggered. The game will end at the start of {player}'s next turn.",
       args: { player: this.getPlayerFirst() }
     })
@@ -766,11 +766,11 @@ Tyrants.prototype.checkForEndOfGame = function() {
 // Alt Actions
 
 Tyrants.prototype.aDeployWithPowerAt = function(player, locId=null) {
-  this.mLog({
+  this.log.add({
     template: '{player} power: Deploy a Troop',
     args: { player }
   })
-  this.mLogIndent()
+  this.log.indent()
 
   if (locId) {
     const loc = this.getLocationByName(locId)
@@ -781,7 +781,7 @@ Tyrants.prototype.aDeployWithPowerAt = function(player, locId=null) {
   }
 
   player.incrementPower(-1)
-  this.mLogOutdent()
+  this.log.outdent()
 }
 
 
@@ -800,7 +800,7 @@ Tyrants.prototype.aCascade = function(player, opts) {
       break
     }
     else {
-      this.mLog({
+      this.log.add({
         template: 'skipping {card}',
         args: { card }
       })
@@ -813,7 +813,7 @@ Tyrants.prototype.aCascade = function(player, opts) {
   }
 
   if (found) {
-    this.mLog({
+    this.log.add({
       template: '{card} found',
       args: { card: found }
     })
@@ -822,7 +822,7 @@ Tyrants.prototype.aCascade = function(player, opts) {
 
     // If the player devoured the card as part of using it, they cannot acquire it.
     if (this.getZoneByCard(found).id === 'devoured') {
-      this.mLog({
+      this.log.add({
         template: '{card} cannot be acquired because it was devoured',
         args: { card: found }
       })
@@ -830,7 +830,7 @@ Tyrants.prototype.aCascade = function(player, opts) {
     }
 
     if (this.aChooseYesNo(player, 'Acquire ' + found.name + '?')) {
-      this.mLog({
+      this.log.add({
         template: '{player} adds {card} to their deck',
         args: { player, card: found }
       })
@@ -841,7 +841,7 @@ Tyrants.prototype.aCascade = function(player, opts) {
     }
   }
   else {
-    this.mLog({ template: 'No cards found' })
+    this.log.add({ template: 'No cards found' })
   }
 }
 
@@ -930,7 +930,7 @@ Tyrants.prototype.aChooseAndDevour = function(player, opts={}) {
     }
   }
   else {
-    this.mLog({
+    this.log.add({
       template: '{player} choose not to devour a card',
       args: { player },
     })
@@ -949,7 +949,7 @@ Tyrants.prototype.aChooseAndDevourMarket = function(player, opts={}) {
     }
   }
   else {
-    this.mLog({
+    this.log.add({
       template: '{player} choose not to devour a card in the market',
       args: { player },
     })
@@ -960,7 +960,7 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
   if (opts.requireThree) {
     const cardsInHand = this.getCardsByZone(player, 'hand').length
     if (cardsInHand <= 3) {
-      this.mLog({
+      this.log.add({
         template: '{player} has only {count} cards in hand, so does not discard',
         args: { player, count: cardsInHand }
       })
@@ -968,11 +968,11 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
     }
   }
 
-  this.mLog({
+  this.log.add({
     template: '{player} must discard a card',
     args: { player }
   })
-  this.mLogIndent()
+  this.log.indent()
 
   if (!opts.title) {
     opts.title = 'Choose a card to discard'
@@ -986,7 +986,7 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
       for (const trigger of triggers) {
         if (trigger.kind === 'discard-this') {
           const result = trigger.impl(this, player, { card: chosen, forcedBy: opts.forcedBy })
-          this.mLogOutdent()
+          this.log.outdent()
           return result
         }
       }
@@ -994,23 +994,23 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
 
     // Only get to this on fall-through
     this.aDiscard(player, chosen)
-    this.mLogOutdent()
+    this.log.outdent()
     return chosen
   }
   else {
-    this.mLog({
+    this.log.add({
       template: '{player} cannot or chooses not to discard',
       args: { player }
     })
   }
 
-  this.mLogOutdent()
+  this.log.outdent()
 }
 
 Tyrants.prototype.aChooseAndSupplant = function(player, opts={}) {
   const troops = this.getCardsByZone(player, 'troops')
   if (troops.length === 0) {
-    this.mLog({
+    this.log.add({
       template: '{player} has no more troops',
       args: { player }
     })
@@ -1032,7 +1032,7 @@ Tyrants.prototype.aChooseAndDeploy = function(player, opts={}) {
   if (opts.white) {
     const white = this.getZoneById('neutrals').cards()[0]
     if (!white) {
-      this.mLog({ template: 'There are no neutral troops left in the supply' })
+      this.log.add({ template: 'There are no neutral troops left in the supply' })
       return
     }
     opts.troop = white
@@ -1041,7 +1041,7 @@ Tyrants.prototype.aChooseAndDeploy = function(player, opts={}) {
   // Ensure there are troops to be deployed
   const troops = this.getCardsByZone(player, 'troops')
   if (troops.length === 0 && !opts.troop) {
-    this.mLog({
+    this.log.add({
       template: '{player} has no more troops',
       args: { player }
     })
@@ -1075,14 +1075,14 @@ Tyrants.prototype.aChooseAndMoveTroop = function(player, opts={}) {
     const dest = this.aChooseLocation(player, destChoices)
 
     if (!dest) {
-      this.mLog({ template: 'No valid targets for moving a troop' })
+      this.log.add({ template: 'No valid targets for moving a troop' })
       return
     }
 
     util.assert(!!troop, `Invalid selection for moving a troop: ${toMove}`)
 
     this.mMoveCardTo(troop, dest)
-    this.mLog({
+    this.log.add({
       template: '{player} moves a {player2} troop from {zone1} to {zone2}',
       args: {
         player,
@@ -1097,7 +1097,7 @@ Tyrants.prototype.aChooseAndMoveTroop = function(player, opts={}) {
 Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
   // Check that the player has spies remaining to place.
   if (this.getCardsByZone(player, 'spies').length === 0) {
-    this.mLog({
+    this.log.add({
       template: '{player} has deployed all their spies',
       args: { player }
     })
@@ -1142,7 +1142,7 @@ Tyrants.prototype.aChooseAndRecruit = function(player, maxCost, opts) {
     }
   }
   else {
-    this.mLog({ template: 'Not able to recruit any cards' })
+    this.log.add({ template: 'Not able to recruit any cards' })
   }
 }
 
@@ -1221,7 +1221,7 @@ Tyrants.prototype.aChooseOne = function(player, choices, opts={}) {
   const selection = this.aChoose(player, choices.map(c => c.title))[0]
   const impl = choices.find(c => c.title === selection).impl
 
-  this.mLog({
+  this.log.add({
     template: '{player} chooses {selection}',
     args: { player, selection }
   })
@@ -1240,7 +1240,7 @@ Tyrants.prototype.aChooseToDiscard = function(player) {
     this.aChooseAndDiscard(opponent, { forced: true, forcedBy: player.name })
   }
   else {
-    this.mLog({
+    this.log.add({
       template: 'No opponents have more than three cards in hand',
     })
   }
@@ -1302,7 +1302,7 @@ Tyrants.prototype.aAutoPlayCards = function() {
 
 Tyrants.prototype.aAssassinate = function(player, loc, owner) {
   const troop = this.mAssassinate(player, loc, owner)
-  this.mLog({
+  this.log.add({
     template: '{player} assassinates {card} at {loc}',
     args: {
       player,
@@ -1315,7 +1315,7 @@ Tyrants.prototype.aAssassinate = function(player, loc, owner) {
 
 Tyrants.prototype.aDeploy = function(player, loc, opts={}) {
   const deployed = this.mDeploy(player, loc, opts)
-  this.mLog({
+  this.log.add({
     template: '{player} deploys {card} to {loc}',
     args: { player, loc, card: deployed }
   })
@@ -1324,7 +1324,7 @@ Tyrants.prototype.aDeploy = function(player, loc, opts={}) {
 Tyrants.prototype.aDevour = function(player, card, opts={}) {
   const zone = this.getZoneByCard(card)
   this.mDevour(card)
-  this.mLog({
+  this.log.add({
     template: '{player} devours {card} from {zone}',
     args: { player, card, zone },
   })
@@ -1335,25 +1335,25 @@ Tyrants.prototype.aDevour = function(player, card, opts={}) {
 }
 
 Tyrants.prototype.aDevourThisAnd = function(player, card, title, fn) {
-  this.mLog({
+  this.log.add({
     template: `{player} may activate '${title}'`,
     args: { player }
   })
-  this.mLogIndent()
+  this.log.indent()
   const doDevour = this.aChooseYesNo(player, title)
   if (doDevour) {
     this.aDevour(player, card)
     fn(this, player)
   }
   else {
-    this.mLogDoNothing(player)
+    this.log.addDoNothing(player)
   }
-  this.mLogOutdent()
+  this.log.outdent()
 }
 
 Tyrants.prototype.aDiscard = function(player, card) {
   this.mMoveCardTo(card, this.getZoneByPlayer(player, 'discard'))
-  this.mLog({
+  this.log.add({
     template: '{player} discards {card}',
     args: { player, card }
   })
@@ -1377,7 +1377,7 @@ Tyrants.prototype.aDraw = function(player, opts={}) {
   }
 
   if (!opts.silent) {
-    this.mLog({
+    this.log.add({
       template: '{player} draws a card',
       args: { player }
     })
@@ -1388,7 +1388,7 @@ Tyrants.prototype.aDraw = function(player, opts={}) {
 
 Tyrants.prototype.aPlaceSpy = function(player, loc) {
   this.mPlaceSpy(player, loc)
-  this.mLog({
+  this.log.add({
     template: '{player} places a spy at {loc}',
     args: { player, loc }
   })
@@ -1399,7 +1399,7 @@ Tyrants.prototype.aPlayCard = function(player, card) {
   util.assert(card.zone.endsWith('hand'), 'Card is not in player hand')
 
   this.mMoveCardTo(card, this.getZoneByPlayer(player, 'played'))
-  this.mLog({
+  this.log.add({
     template: '{player} plays {card}',
     args: { player, card }
   })
@@ -1416,7 +1416,7 @@ Tyrants.prototype.aPromote = function(player, card, opts={}) {
   }
 
   if (!opts.silent) {
-    this.mLog({
+    this.log.add({
       template: '{player} promotes {card}',
       args: { player, card }
     })
@@ -1436,7 +1436,7 @@ Tyrants.prototype.aPromoteTopCard = function(player) {
 
     // If not, do nothing.
     else {
-      this.mLog({
+      this.log.add({
         template: '{player} has no cards in deck or discard pile',
         args: { player }
       })
@@ -1444,10 +1444,10 @@ Tyrants.prototype.aPromoteTopCard = function(player) {
     }
   }
 
-  this.mLog({ template: 'Promoting top card of deck' })
-  this.mLogIndent()
+  this.log.add({ template: 'Promoting top card of deck' })
+  this.log.indent()
   this.aPromote(player, deck.cards()[0])
-  this.mLogOutdent()
+  this.log.outdent()
 }
 
 Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
@@ -1466,9 +1466,9 @@ Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
     card = this.getZoneById('outcast').cards()[0]
 
     if (!card) {
-      this.mLogIndent()
-      this.mLog({ template: 'No more insane outcasts remaining' })
-      this.mLogOutdent()
+      this.log.indent()
+      this.log.add({ template: 'No more insane outcasts remaining' })
+      this.log.outdent()
       return
     }
   }
@@ -1485,7 +1485,7 @@ Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
     player.incrementInfluence(-card.cost)
   }
 
-  this.mLog({
+  this.log.add({
     template: '{player} recruits {card}',
     args: { player, card }
   })
@@ -1502,7 +1502,7 @@ Tyrants.prototype.aReturnSpy = function(player, loc, owner) {
   const spy = loc.getSpies(owner, loc)[0]
   util.assert(!!spy, `No spy belonging to ${owner.name} at ${loc.name}`)
   this.mReturn(spy)
-  this.mLog({
+  this.log.add({
     template: `{player} returns {card} from {zone}`,
     args: {
       player,
@@ -1519,7 +1519,7 @@ Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
     .filter(loc => loc.getSpies(player).length > 0)
 
   if (locations.length === 0) {
-    this.mLog({
+    this.log.add({
       template: '{player} has no spies to return',
       args: { player }
     })
@@ -1531,7 +1531,7 @@ Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
   if (loc) {
     const spy = loc.getSpies(player)[0]
 
-    this.mLog({
+    this.log.add({
       template: `{player} returns {card} from {zone}`,
       args: {
         player,
@@ -1545,7 +1545,7 @@ Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
     fn(this, player, { loc })
   }
   else {
-    this.mLog({
+    this.log.add({
       template: '{player} chooses not to return a spy',
       args: { player }
     })
@@ -1555,7 +1555,7 @@ Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
 Tyrants.prototype.aReturnTroop = function(player, loc, owner) {
   const troop = loc.getTroops(owner, loc)[0]
   util.assert(!!troop, `No troop belonging to ${owner.name} at ${loc.name}`)
-  this.mLog({
+  this.log.add({
     template: `{player} returns {card} from {zone}`,
     args: {
       player,
@@ -1572,7 +1572,7 @@ Tyrants.prototype.aSupplant = function(player, loc, owner) {
 
   owner = owner ? owner : 'neutral'
 
-  this.mLog({
+  this.log.add({
     template: '{player1} supplants {player2} troop at {loc}',
     args: {
       player1: player,
@@ -1589,7 +1589,7 @@ Tyrants.prototype.aWithFocus = function(player, test, fn) {
     .length > 1
 
   if (playedAspect) {
-    this.mLog({
+    this.log.add({
       template: '{player} has already played a matching focus card',
       args: { player }
     })
@@ -1603,7 +1603,7 @@ Tyrants.prototype.aWithFocus = function(player, test, fn) {
     .length > 0
 
   if (inHandAspect) {
-    this.mLog({
+    this.log.add({
       template: '{player} has matching focus card in hand',
       args: { player },
     })
@@ -1611,7 +1611,7 @@ Tyrants.prototype.aWithFocus = function(player, test, fn) {
     return
   }
 
-  this.mLog({
+  this.log.add({
     template: 'No card matching focus card',
   })
 }
@@ -1804,7 +1804,7 @@ Tyrants.prototype.mAdjustControlMarkerOwnership = function(previous) {
       const player = this.getPlayerByName(prev.ownerName)
       const loc = this.getLocationByName(marker.locName)
 
-      this.mLog({
+      this.log.add({
         template: '{player} loses the {loc} control marker',
         args: { player, loc }
       })
@@ -1814,7 +1814,7 @@ Tyrants.prototype.mAdjustControlMarkerOwnership = function(previous) {
       const player = this.getPlayerByName(marker.ownerName)
       const loc = this.getLocationByName(marker.locName)
 
-      this.mLog({
+      this.log.add({
         template: '{player} claims the {loc} control marker',
         args: { player, loc }
       })
@@ -1828,7 +1828,7 @@ Tyrants.prototype.mAdjustControlMarkerOwnership = function(previous) {
       const player = this.getPlayerByName(marker.ownerName)
       const loc = this.getLocationByName(marker.locName)
 
-      this.mLog({
+      this.log.add({
         template: '{player} converts the {loc} control marker to total control',
         args: { player, loc }
       })
@@ -1908,9 +1908,9 @@ Tyrants.prototype.mDevour = function(card) {
 }
 
 Tyrants.prototype.mExecuteCard = function(player, card) {
-  this.mLogIndent()
+  this.log.indent()
   card.impl(this, player, { card })
-  this.mLogOutdent()
+  this.log.outdent()
 }
 
 Tyrants.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
@@ -1943,18 +1943,18 @@ Tyrants.prototype.mReshuffleDiscard = function(player) {
   util.assert(discard.cards().length > 0, 'Cannot reshuffle empty discard.')
   util.assert(deck.cards().length === 0, 'Cannot reshuffle discard when deck is not empty.')
 
-  this.mLog({
+  this.log.add({
     template: '{player} shuffles their discard into their deck',
     args: { player }
   })
-  this.mLogIndent()
-  this.mLog({
+  this.log.indent()
+  this.log.add({
     template: '{count} cards reshuffled',
     args: {
       count: discard.cards().length
     }
   })
-  this.mLogOutdent()
+  this.log.outdent()
 
   for (const card of discard.cards()) {
     this.mMoveCardTo(card, deck)
@@ -1975,17 +1975,17 @@ Tyrants.prototype.mRefillHand = function(player) {
   const deck = this.getZoneByPlayer(player, 'deck')
   const hand = this.getZoneByPlayer(player, 'hand')
 
-  this.mLog({
+  this.log.add({
     template: '{player} will refill their hand',
     args: { player }
   })
-  this.mLogIndent()
+  this.log.indent()
 
   const reduceDraw = this.state.reduceDraw[player.name]
   const numberToDraw = 5 - reduceDraw
 
   if (reduceDraw > 0) {
-    this.mLog({
+    this.log.add({
       template: '{player} will draw {count} fewer cards this round',
       args: { player, count: reduceDraw }
     })
@@ -1998,7 +1998,7 @@ Tyrants.prototype.mRefillHand = function(player) {
   )
 
   if (deck.cards().length < numberToDraw) {
-    this.mLog({
+    this.log.add({
       template: '{player} draws the remaining {count} cards from deck',
       args: {
         player,
@@ -2015,7 +2015,7 @@ Tyrants.prototype.mRefillHand = function(player) {
   }
 
   if (drawnAfterShuffle) {
-    this.mLog({
+    this.log.add({
       template: '{player} draws an additional {count} cards',
       args: {
         player,
@@ -2024,7 +2024,7 @@ Tyrants.prototype.mRefillHand = function(player) {
     })
   }
 
-  this.mLogOutdent()
+  this.log.outdent()
 }
 
 Tyrants.prototype.mRefillMarket = function(quiet=false) {
@@ -2036,12 +2036,12 @@ Tyrants.prototype.mRefillMarket = function(quiet=false) {
     const card = deck.cards()[0]
 
     if (!card) {
-      this.mLog({ template: 'The market deck is empty' })
+      this.log.add({ template: 'The market deck is empty' })
       return
     }
 
     if (!quiet) {
-      this.mLog({
+      this.log.add({
         template: '{card} added to the market',
         args: { card }
       })

@@ -21,7 +21,7 @@ function Card() {
         game.aChooseAndSplay(player, null, 'right')
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
 

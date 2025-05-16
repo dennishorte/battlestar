@@ -33,7 +33,7 @@ function Card() {
         game.aReturnMany(player, redCards, { ordered: true })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ]

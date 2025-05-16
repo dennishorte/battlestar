@@ -30,7 +30,7 @@ function Card() {
         const lowestScoreCards = game.utilLowestCards(game.getCardsByZone(player, 'score'))
 
         if (!lowestScoreCards) {
-          game.mLogDoNothing()
+          game.log.addDoNothing()
           return
         }
 

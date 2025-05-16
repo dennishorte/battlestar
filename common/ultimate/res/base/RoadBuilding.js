@@ -44,7 +44,7 @@ function Card() {
           }
         }
         else {
-          game.mLog({
+          game.log.add({
             template: '{player} chooses not to transfer cards',
             args: { player }
           })

@@ -2,6 +2,9 @@ const seedrandom = require('seedrandom')
 const selector = require('./selector.js')
 const util = require('./util.js')
 
+const { LogManager } = require('./game/LogManager.js')
+
+
 module.exports = {
   Game,
   GameFactory,
@@ -42,6 +45,8 @@ function Game(serialized_data, viewerName) {
   this.random = 'uninitialized'
 
   this.viewerName = viewerName
+
+  this.log = new LogManager()
 }
 
 function GameFactory(settings, viewerName=undefined) {
@@ -165,10 +170,7 @@ Game.prototype.requestInputAny = function(array) {
 
   if (resp) {
     if (resp.isUserResponse) {
-      this.getLog().push({
-        type: 'response-received',
-        data: resp,
-      })
+      this.log.responseReceived(resp)
     }
     return resp
   }
@@ -186,10 +188,7 @@ Game.prototype.requestInputMany = function(array) {
   const __prepareInput = (input) => {
     responses.push(input)
     if (input.isUserResponse) {
-      this.getLog().push({
-        type: 'response-received',
-        data: input,
-      })
+      this.log.responseReceived(input)
     }
   }
 
@@ -197,16 +196,7 @@ Game.prototype.requestInputMany = function(array) {
     const resp = this._getResponse()
 
     if (resp) {
-      if (resp.type === 'chat') {
-        this.getLog().push({
-          author: resp.actor,
-          text: resp.text,
-          type: 'chat'
-        })
-      }
-      else {
-        __prepareInput(resp)
-      }
+      __prepareInput(resp)
     }
     else {
       const unanswered = array.filter(request => !responses.find(r => r.actor === request.actor))
@@ -257,7 +247,7 @@ Game.prototype.run = function() {
       this.gameOver = true
       this.gameOverData = result.data
 
-      this.mLog({ template: this.getResultMessage() })
+      this.log.add({ template: this.getResultMessage() })
 
       return result
     }
@@ -300,13 +290,8 @@ Game.prototype.undo = function() {
   this.undoCount += 1
   this.run()
 
-  // Update the chat indices so that they are no bigger than the length of the log.
-  const logLength = this.getLog().length
-  for (const chat of this.chat) {
-    if (chat.position > logLength) {
-      chat.position = logLength
-    }
-  }
+  // Ensure that the chat indices are no larger than the length of the log.
+  this.log.reindexChat()
 
   return '__SUCCESS__'
 }
@@ -314,75 +299,6 @@ Game.prototype.undo = function() {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Chat and Logging
-
-Game.prototype.deleteChatById = function(id) {
-  const index = this.chat.findIndex(c => c.id === id)
-  this.chat.splice(index, 1)
-}
-
-Game.prototype.getNewChatCount = function(playerOrName) {
-  const playerName = playerOrName.name ? playerOrName.name : playerOrName
-
-  // See if any chats exist before the last response of this player.
-  // If yes, assume they are new.
-  const rlog = [...this.getMergedLog()].reverse()
-
-  let count = 0
-
-  for (const msg of rlog) {
-    if (msg.type === 'response-received' && msg.data.actor === playerName) {
-      return count
-    }
-
-    if (msg.type === 'chat' && msg.author !== playerName) {
-      count += 1
-    }
-  }
-
-  return count
-}
-
-Game.prototype.getChat = function() {
-  return this.chat
-},
-
-Game.prototype.getLog = function() {
-  return this.state.log
-}
-
-Game.prototype.getLogIndent = function() {
-  return this.state.indent
-}
-
-Game.prototype.getMergedLog = function() {
-  const log = this.getLog()
-  const chat = this.getChat()
-
-  if (chat.length === 0) {
-    return log
-  }
-
-  const output = []
-
-  let chatIndex = 0
-  let logIndex = 0
-
-  for (; logIndex < log.length; logIndex++) {
-    output.push(log[logIndex])
-
-    while (chat[chatIndex] && chat[chatIndex].position === logIndex) {
-      output.push(chat[chatIndex])
-      chatIndex += 1
-    }
-  }
-
-  while (chatIndex < chat.length) {
-    output.push(chat[chatIndex])
-    chatIndex += 1
-  }
-
-  return output
-}
 
 Game.prototype.getResultMessage = function() {
   if (this.checkGameIsOver()) {
@@ -400,82 +316,12 @@ Game.prototype.getViewerName = function() {
   return this.viewerName
 }
 
-Game.prototype.mChat = function(playerName, text) {
-  this.chat.push({
-    id: Date.now(),
-    author: playerName,
-    position: this.getLog().length,
-    text,
-    type: 'chat',
-  })
-}
-
-Game.prototype.mLog = function(msg) {
-  if (!msg.template) {
-    console.log(msg)
-    throw new Error(`Invalid log entry; no template`)
-  }
-
-  if (!msg.classes) {
-    msg.classes = []
-  }
-  if (!msg.args) {
-    msg.args = {}
-  }
-
-  this._enrichLogArgs(msg)
-
-  if (this._postEnrichArgs(msg)) {
-    return
-  }
-
-  msg.id = this.getLog().length
-  msg.indent = this.getLogIndent()
-
-  // Making a copy here makes sure that the log items are always distinct from
-  // wherever their original data came from.
-  this.getLog().push(msg)
-
-  return msg.id
-}
-
-Game.prototype.mLogIndent = function() {
-  this.state.indent += 1
-}
-
-Game.prototype.mLogSetIndent = function(count) {
-  while (this.state.indent < count) {
-    this.mLogIndent()
-  }
-  while (this.state.indent > count) {
-    this.mLogOutdent()
-  }
-}
-
-Game.prototype.mLogOutdent = function() {
-  if (this.indent === 0) {
-    throw new Error('Cannot outdent; indent is already 0.')
-  }
-  this.state.indent -= 1
-}
-
-Game.prototype.mLogDoNothing = function(player) {
-  this.mLog({
-    template: '{player} does nothing',
-    args: { player }
-  })
-}
-
-Game.prototype.mLogNoEffect = function() {
-  this.mLog({ template: 'no effect' })
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Protected Methods
 
 Game.prototype._gameOver = function(event) {
-  this.mLogSetIndent(0)
+  this.log.setIndent(0)
   return event
 }
 
@@ -485,7 +331,6 @@ Game.prototype._mainProgram = function() {
 
 Game.prototype._blankState = function(more = {}) {
   return Object.assign({
-    log: [],
     indent: 0,
     responseIndex: -1,
   }, more)
@@ -495,17 +340,6 @@ Game.prototype._blankState = function(more = {}) {
 Game.prototype._responseReceived = function(response) {
   // To be overridden by child classes.
 }
-
-// eslint-disable-next-line
-Game.prototype._enrichLogArgs = function(msg) {
-  // To be overridden by child classes.
-}
-
-// eslint-disable-next-line
-Game.prototype._postEnrichArgs = function(msg) {
-  // To be overridden by child classes.
-}
-
 
 Game.prototype._undoCalled = function() {
   // To be overridden by child classes.
@@ -535,6 +369,7 @@ Game.prototype._getResponse = function() {
 Game.prototype._reset = function() {
   this.random = seedrandom(this.settings.seed)
   this.state = this._blankState()
+  this.log.reset()
 }
 
 Game.prototype._tryToAutomaticallyRespond = function(selectors) {
@@ -597,7 +432,7 @@ Game.prototype.testSetBreakpoint = function(name, fn) {
 
 Game.prototype.aChoose = function(player, choices, opts={}) {
   if (choices.length === 0) {
-    this.mLogNoEffect()
+    this.log.addNoEffect()
     return []
   }
 
@@ -623,7 +458,7 @@ Game.prototype.aChoose = function(player, choices, opts={}) {
   }
 
   if (selected.length === 0) {
-    this.mLogDoNothing(player)
+    this.log.addDoNothing(player)
     return []
   }
   else {
@@ -816,7 +651,7 @@ Game.prototype.mMoveCardTo = function(card, zone, opts={}) {
   const index = source.cards().indexOf(card)
   const destIndex = opts.index !== undefined ? opts.index : zone.cards().length
   if (opts.verbose) {
-    this.mLog({
+    this.log.add({
       template: 'Moving {card} to {zone} at index {index}',
       args: { card, zone, index: destIndex }
     })

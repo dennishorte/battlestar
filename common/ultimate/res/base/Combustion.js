@@ -23,7 +23,7 @@ function Card() {
         .length
 
       if (count === 0) {
-        game.mLog({ template: 'No {c} in top cards' })
+        game.log.add({ template: 'No {c} in top cards' })
         return
       }
 
@@ -35,7 +35,7 @@ function Card() {
     (game, player) => {
       const red = game.getZoneByPlayer(player, 'red').cards()
       if (red.length === 0) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
       else {
         game.aReturn(player, red[red.length - 1])

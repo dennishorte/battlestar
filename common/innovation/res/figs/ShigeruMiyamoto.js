@@ -23,7 +23,7 @@ function Card() {
       game.aScore(player, card)
     }
     else {
-      game.mLog({
+      game.log.add({
         template: '{card} has a clock biscuit; do not score',
         args: { card }
       })
@@ -44,7 +44,7 @@ function Card() {
           })
         }
         else {
-          game.mLogNoEffect()
+          game.log.addNoEffect()
         }
       }
     }

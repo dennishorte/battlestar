@@ -24,7 +24,7 @@ function Card() {
           game.aReturn(player, toReturn)
         }
         else {
-          game.mLog({
+          game.log.add({
             template: '{player} has no {color} top card',
             args: {
               player,
@@ -35,7 +35,7 @@ function Card() {
       }
 
       else {
-        game.mLog({
+        game.log.add({
           template: 'No card was melded due to the echo effect.'
         })
       }

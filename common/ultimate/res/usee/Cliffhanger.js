@@ -23,7 +23,7 @@ function Card() {
 
       if (choices.length === 0) {
         const age = game.getEffectAge(this, 4)
-        game.mLog({
+        game.log.add({
           template: 'No cards of age {4} in safe; safeguarding top of {age} pile',
           args: { age }
         })
@@ -34,7 +34,7 @@ function Card() {
           game.aSafeguard(player, topCard)
         }
         else {
-          game.mLog({ template: 'No cards in the 4 deck. (This is not a draw action.)' })
+          game.log.add({ template: 'No cards in the 4 deck. (This is not a draw action.)' })
         }
         return
       }

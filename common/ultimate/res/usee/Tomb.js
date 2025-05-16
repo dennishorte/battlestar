@@ -27,7 +27,7 @@ function Card() {
         game.aSafeguard(player, choices[0])
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
 
@@ -39,7 +39,7 @@ function Card() {
         .filter(card => card.checkIsStandardAchievement())
 
       if (achievements.length === 0) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
         return
       }
 

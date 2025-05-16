@@ -300,7 +300,7 @@ const cardData = [
         }
       }
       else {
-        game.mLog({
+        game.log.add({
           template: 'The chosen site has no enemy player troops.'
         })
       }

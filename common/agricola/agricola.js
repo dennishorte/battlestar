@@ -48,7 +48,7 @@ Agricola.prototype._mainProgram = function() {
 }
 
 Agricola.prototype._gameOver = function(event) {
-  this.mLog({
+  this.log.add({
     template: '{player} wins due to {reason}',
     args: {
       player: event.data.player,
@@ -65,14 +65,14 @@ Agricola.prototype.initialize = function() {
   this.state.phase = 'initialization'
   this.state.initializationComplete = false
 
-  this.mLog({ template: 'Initializing' })
-  this.mLogIndent()
+  this.log.add({ template: 'Initializing' })
+  this.log.indent()
 
   this.initializePlayers()
   this.initializeZones()
   this.initializeCards()
 
-  this.mLogOutdent()
+  this.log.outdent()
 
   this.state.round = 0
   this.state.initializationComplete = true

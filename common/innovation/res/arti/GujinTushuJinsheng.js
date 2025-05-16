@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       if (!this.checkIsOnPlayerBoard(player)) {
-        game.mLog({
+        game.log.add({
           template: "{card} is not on {player}'s board.",
           args: { card: this, player }
         })

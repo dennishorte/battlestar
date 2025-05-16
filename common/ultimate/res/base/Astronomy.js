@@ -22,7 +22,7 @@ function Card() {
         if (card) {
           if (card.color === 'green' || card.color === 'blue') {
             game.aMeld(player, card)
-            game.mLog({ template: 'dogma effect repeats' })
+            game.log.add({ template: 'dogma effect repeats' })
           }
           else {
             break
@@ -43,7 +43,7 @@ function Card() {
         game.aClaimAchievement(player, { name: 'Universe' })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     }
   ]

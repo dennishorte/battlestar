@@ -43,7 +43,7 @@ function Card() {
           }
         }
         else {
-          game.mLog({
+          game.log.add({
             template: '{player} chooses not to swap cards',
             args: { player }
           })

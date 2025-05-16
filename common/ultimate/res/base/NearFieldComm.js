@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player, { leader }) => {
       const value = game.aChooseAge(leader)
-      game.mLog({
+      game.log.add({
         template: '{leader} chooses value {value}',
         args: { leader, value }
       })
@@ -33,7 +33,7 @@ function Card() {
     (game, player) => {
       const scoreCards = game.getCardsByZone(player, 'score')
       if (scoreCards.length === 0) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
         return
       }
 

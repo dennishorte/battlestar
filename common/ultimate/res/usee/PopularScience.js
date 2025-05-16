@@ -25,7 +25,7 @@ function Card() {
         .filter(card => card !== undefined)
 
       if (topGreenCards.length === 0) {
-        game.mLog({ template: 'No player has a top green card.' })
+        game.log.add({ template: 'No player has a top green card.' })
         return
       }
 
@@ -37,7 +37,7 @@ function Card() {
     (game, player) => {
       const topYellowCard = game.getTopCard(player, 'yellow')
       if (!topYellowCard) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
         return
       }
 

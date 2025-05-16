@@ -27,7 +27,7 @@ function Card() {
         )
       }
       else {
-        game.mLog({
+        game.log.add({
           template: '{player} chooses nothing',
           args: { player }
         })

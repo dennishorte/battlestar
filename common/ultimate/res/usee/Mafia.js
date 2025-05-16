@@ -22,7 +22,7 @@ function Card() {
       const lowestSecret = game.utilLowestCards(opponentSecrets)[0]
 
       if (!lowestSecret) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
         return
       }
 

@@ -60,7 +60,7 @@ Zone.prototype.setCards = function(cards) {
 
 Zone.prototype.shuffle = function(opts={}) {
   if (!opts.silent) {
-    this.game.mLog({
+    this.game.log.add({
       template: "{zone} shuffled",
       args: {
         player: this.owner,
@@ -80,7 +80,7 @@ Zone.prototype.shuffle = function(opts={}) {
 
 Zone.prototype.shuffleBottom = function(count, opts={}) {
   if (!opts.silent) {
-    this.game.mLog({
+    this.game.log.add({
       template: `{player}'s {zone} bottom ${count} shuffled`,
       args: { player: this.owner, zone: this },
     })

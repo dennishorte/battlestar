@@ -22,13 +22,13 @@ function Card() {
         game.aChooseAndSplay(player, null, 'up')
       }
       else {
-        game.mLog({ template: 'no effect' })
+        game.log.add({ template: 'no effect' })
       }
     },
     (game, player) => {
       const redSplay = game.getZoneByPlayer(player, 'red').splay
       if (redSplay === 'up') {
-        game.mLog({ template: 'no effect' })
+        game.log.add({ template: 'no effect' })
       }
       else {
         game.aChooseAndSplay(player, ['red'], 'up')

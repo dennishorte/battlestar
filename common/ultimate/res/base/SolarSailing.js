@@ -19,7 +19,7 @@ function Card() {
     (game, player) => {
       const card = game.aDrawAndMeld(player, game.getEffectAge(this, 11))
       if (!card) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
         return
       }
 

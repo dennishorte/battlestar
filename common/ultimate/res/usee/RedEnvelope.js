@@ -29,7 +29,7 @@ function Card() {
         .map(([age]) => parseInt(age))
 
       if (eligibleAges.length === 0) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
         return
       }
 
@@ -43,7 +43,7 @@ function Card() {
       const choices = game.getCardsByZone(player, 'hand')
 
       if (choices.length < 2) {
-        game.mLog({ template: 'not enough cards in hand' })
+        game.log.add({ template: 'not enough cards in hand' })
         return
       }
 

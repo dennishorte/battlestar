@@ -32,7 +32,7 @@ function Card() {
         leaderHand
       )
 
-      game.mLog({
+      game.log.add({
         template: '{player} steals {count} cards from {player2}',
         args: {
           player: leader,
@@ -40,7 +40,7 @@ function Card() {
           player2: player,
         }
       })
-      game.mLog({
+      game.log.add({
         template: '{player} give back {count} cards to {player2}',
         args: {
           player: leader,

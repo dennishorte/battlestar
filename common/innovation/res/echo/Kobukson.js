@@ -36,7 +36,7 @@ function Card() {
 
     (game, player) => {
       const count = Math.floor(game.state.dogmaInfo.kobukson / 2)
-      game.mLog({
+      game.log.add({
         template: `${game.state.dogmaInfo.kobukson} cards were returned due to the demand`
       })
 

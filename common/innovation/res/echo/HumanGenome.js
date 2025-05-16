@@ -48,7 +48,7 @@ function Card() {
         })
       }
       else {
-        game.mLog({
+        game.log.add({
           template: 'Score values do not match hand values.'
         })
       }

@@ -20,7 +20,7 @@ function Card() {
       while (true) {
         const card = game.aDrawAndTuck(player, game.getEffectAge(this, 3))
         if (card.biscuits.includes('c')) {
-          game.mLog({ template: 'effect repeats' })
+          game.log.add({ template: 'effect repeats' })
         }
         else {
           break

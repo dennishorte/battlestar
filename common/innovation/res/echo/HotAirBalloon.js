@@ -47,7 +47,7 @@ function Card() {
           game.aTransfer(player, cardToTransfer, game.getZoneByPlayer(owner, 'green'))
         }
         else {
-          game.mLog({
+          game.log.add({
             template: '{player} has no top green card',
             args: { player }
           })

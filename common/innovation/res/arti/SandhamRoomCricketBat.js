@@ -19,12 +19,12 @@ function Card() {
     (game, player) => {
       const card = game.aDrawAndReveal(player, game.getEffectAge(this, 6))
       if (card.color === 'red') {
-        game.mLog({ template: 'Card is red' })
+        game.log.add({ template: 'Card is red' })
         const choices = game.getAvailableAchievementsRaw(player)
         game.aChooseAndAchieve(player, choices)
       }
       else {
-        game.mLog({ template: 'Card is not red' })
+        game.log.add({ template: 'Card is not red' })
       }
     }
   ]

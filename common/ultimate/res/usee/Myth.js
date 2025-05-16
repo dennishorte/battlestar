@@ -51,7 +51,7 @@ function Card() {
         }
       }
       else {
-        game.mLog({
+        game.log.add({
           template: '{player} reveals hand to show no matching cards',
           args: { player },
         })

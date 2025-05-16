@@ -24,7 +24,7 @@ function Card() {
 
     (game, player) => {
       if (!game.checkAchievementAvailable('Supremacy')) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
         return
       }
 
@@ -34,7 +34,7 @@ function Card() {
         .map(card => card.biscuits)
 
       if (biscuits.length === 0) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
         return
       }
 
@@ -49,7 +49,7 @@ function Card() {
         }
       }
 
-      game.mLogNoEffect()
+      game.log.addNoEffect()
     }
   ]
   this.echoImpl = (game, player) => {

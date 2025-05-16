@@ -90,15 +90,15 @@ TestUtil.gameFixture = function(options) {
   const game = this.fixture(options)
 
   game.testSetBreakpoint('initialization-complete', (game) => {
-    game.mLog({ template: 'SETUP' })
-    game.mLogIndent()
+    game.log.add({ template: 'SETUP' })
+    game.log.indent()
 
     for (const player of game.getPlayerAll()) {
-      game.mLog({
+      game.log.add({
         template: '{player} setup',
         args: { player }
       })
-      game.mLogIndent()
+      game.log.indent()
 
       const playerSetup = options[player.name]
       if (playerSetup) {
@@ -106,11 +106,11 @@ TestUtil.gameFixture = function(options) {
         for (const key of ['hand', 'innerCircle', 'deck', 'discard', 'played']) {
 
           if (playerSetup[key]) {
-            game.mLog({
+            game.log.add({
               template: '{key}',
               args: { key },
             })
-            game.mLogIndent()
+            game.log.indent()
 
             const zone = game.getZoneByPlayer(player, key)
 
@@ -120,7 +120,7 @@ TestUtil.gameFixture = function(options) {
             }
 
             for (const name of playerSetup[key]) {
-              game.mLog({
+              game.log.add({
                 template: '{name}',
                 args: { name },
               })
@@ -141,7 +141,7 @@ TestUtil.gameFixture = function(options) {
               }
             }
 
-            game.mLogOutdent()
+            game.log.outdent()
           }
         }
 
@@ -169,20 +169,20 @@ TestUtil.gameFixture = function(options) {
       }
 
       else {
-        game.mLog({ template: 'no setup info' })
+        game.log.add({ template: 'no setup info' })
       }
 
-      game.mLogOutdent()
+      game.log.outdent()
     }
 
     for (const loc of game.getLocationAll()) {
       if (options[loc.name]) {
-        game.mLog({ template: loc.name })
-        game.mLogIndent()
+        game.log.add({ template: loc.name })
+        game.log.indent()
 
         const data = options[loc.name]
         if (data.troops) {
-          game.mLog({
+          game.log.add({
             template: 'Setting troops at {name} to [{troops}]',
             args: {
               name: loc.name,
@@ -193,7 +193,7 @@ TestUtil.gameFixture = function(options) {
         }
 
         if (data.spies) {
-          game.mLog({
+          game.log.add({
             template: 'Setting troops at {name} to [{spies}]',
             args: {
               name: loc.name,
@@ -203,7 +203,7 @@ TestUtil.gameFixture = function(options) {
           TestUtil.setSpies(game, loc.id, data.spies)
         }
 
-        game.mLogOutdent()
+        game.log.outdent()
       }
     }
 
@@ -217,15 +217,15 @@ TestUtil.gameFixture = function(options) {
     }
 
     if (options.marketDeck) {
-      game.mLog({ template: 'setting up market' })
-      game.mLogIndent()
+      game.log.add({ template: 'setting up market' })
+      game.log.indent()
 
       const market = game.getZoneById('marketDeck')
       const cards = market.cards()
       const toMove = []
 
       for (const name of options.marketDeck) {
-        game.mLog({ template: 'searching for: ' + name })
+        game.log.add({ template: 'searching for: ' + name })
         const card = cards.find(c => c.name === name && !toMove.includes(c))
         if (!card) {
           throw new Error('Unable to find card: ' + name)
@@ -239,12 +239,12 @@ TestUtil.gameFixture = function(options) {
       }
 
       // const topOfMarket = market.cards().slice(0, 5).map(c => c.name).join(',')
-      // game.mLog({ template: topOfMarket })
+      // game.log.add({ template: topOfMarket })
 
-      game.mLogOutdent()
+      game.log.outdent()
     }
 
-    game.mLogOutdent()
+    game.log.outdent()
   })
 
   const request1 = game.run()

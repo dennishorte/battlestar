@@ -29,7 +29,7 @@ function Card() {
         }
 
         const leaderHand = game.getCardsByZone(leader, 'hand')
-        game.mLog({
+        game.log.add({
           template: '{player} reveals their hand',
           args: { player: leader }
         })
@@ -37,7 +37,7 @@ function Card() {
 
         if (!leaderHand.some(c => c.color === revealed.color)) {
           game.mTransfer(player, revealed, game.getZoneByPlayer(leader, 'hand'))
-          game.mLog({ template: 'Repeat this effect' })
+          game.log.add({ template: 'Repeat this effect' })
         }
         else {
           break

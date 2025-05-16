@@ -71,8 +71,8 @@ TestCommon.deepLog = function(obj) {
 
 TestCommon.dumpLog = function(game) {
   const output = []
-  for (const entry of game.getLog()) {
-    if (entry === '__INDENT__' || entry === '__OUTDENT__' || entry.type === 'response-received') {
+  for (const entry of game.log.getLog()) {
+    if (entry.type === 'response-received') {
       continue
     }
     output.push(log.toString(entry))

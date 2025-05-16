@@ -39,14 +39,14 @@ function Card() {
         const didReturn = cardsReturned.length === 3
 
         if (didReturn) {
-          game.mLog({
+          game.log.add({
             template: '{player} returned a top card, hand card, and score card. Repeating the dogma effect.',
             args: { player }
           })
           continue
         }
         else {
-          game.mLog({
+          game.log.add({
             template: '{player} did not return all three required cards. Ending the dogma effect.',
             args: { player }
           })

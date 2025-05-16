@@ -20,7 +20,7 @@ function Card() {
       const red = game.getZoneByPlayer(player, 'red')
 
       if (red.cards().length < 2) {
-        game.mLog({ template: 'Red cannot be splayed' })
+        game.log.add({ template: 'Red cannot be splayed' })
         return
       }
 

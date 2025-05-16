@@ -20,21 +20,21 @@ function Card() {
     (game, player) => {
       const card = game.aDrawAndReveal(player, game.getEffectAge(this, 10))
       if (card.color === 'red') {
-        game.mLog({ template: 'The card was red. Nuclear War!' })
-        game.mLogIndent()
+        game.log.add({ template: 'The card was red. Nuclear War!' })
+        game.log.indent()
 
         const zones = ['red', 'yellow', 'green', 'blue', 'purple', 'hand', 'score']
         const toRemove = game
           .getPlayerAll()
           .flatMap(player => zones.flatMap(name => game.getCardsByZone(player, name)))
         game.aRemoveMany(player, toRemove, { ordered: true })
-        game.mLogOutdent()
+        game.log.outdent()
 
         game.state.dogmaInfo.earlyTerminate = true
         return
       }
       else {
-        game.mLog({ template: 'The card was not red.' })
+        game.log.add({ template: 'The card was not red.' })
       }
     },
 

@@ -36,7 +36,7 @@ function Card() {
         game.aClaimAchievement(player, { name: 'Zen' })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     }
   ]
