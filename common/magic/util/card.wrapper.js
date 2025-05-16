@@ -58,7 +58,7 @@ class CardWrapper extends Wrapper {
   }
 
   typeLine(faceIndex) {
-    return faceIndex !== undefined ? this.face(faceIndex).type_line : this.data.type_line
+    return (typeof faceIndex === 'number') ? this.face(faceIndex).type_line : this.data.type_line
   }
   supertypes(faceIndex) {
     const supertypesString = this.typeLine(faceIndex).toLowerCase().split(TYPELINE_SPLITTER_REGEX)[0]
@@ -70,7 +70,7 @@ class CardWrapper extends Wrapper {
   }
 
   name(faceIndex) {
-    return faceIndex !== undefined ? this.face(faceIndex).name : this.data.name
+    return (typeof faceIndex === 'number') ? this.face(faceIndex).name : this.data.name
   }
   set() {
     return this.data.set || 'custom'
@@ -95,7 +95,7 @@ class CardWrapper extends Wrapper {
     return this.data.cmc
   }
   manaCost(faceIndex) {
-    if (faceIndex === undefined) {
+    if (typeof faceindex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).mana_cost
@@ -105,44 +105,44 @@ class CardWrapper extends Wrapper {
   }
 
   oracleText(faceIndex) {
-    if (faceIndex === undefined) {
+    if (typeof faceindex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).oracle_text
   }
   flavorText(faceIndex) {
-    if (faceIndex === undefined) {
+    if (typeof faceindex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).flavor_text
   }
 
   power(faceIndex) {
-    if (faceIndex === undefined) {
+    if (typeof faceindex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).power
   }
   toughness(faceIndex) {
-    if (faceIndex === undefined) {
+    if (typeof faceindex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).toughness
   }
   powerToughness(faceIndex) {
-    if (faceIndex === undefined) {
+    if (typeof faceindex !== 'number') {
       return undefined
     }
     return `${this.power(faceIndex)}/${this.toughness(faceIndex)}`
   }
   loyalty(faceIndex) {
-    if (faceIndex === undefined) {
+    if (typeof faceindex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).loyalty
   }
   defense(faceIndex) {
-    if (faceIndex === undefined) {
+    if (typeof faceindex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).defense
@@ -150,13 +150,13 @@ class CardWrapper extends Wrapper {
 
 
   artist(faceIndex) {
-    if (faceIndex === undefined) {
+    if (typeof faceindex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).artist
   }
   imageUri(faceIndex) {
-    if (faceIndex === undefined) {
+    if (typeof faceindex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).image_uri
