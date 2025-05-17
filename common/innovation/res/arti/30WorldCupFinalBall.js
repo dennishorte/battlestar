@@ -25,7 +25,7 @@ function Card() {
       while (true) {
         const card = game.aDrawAndReveal(player, game.getEffectAge(this, 8))
         const orderedPlayers = game
-          .getPlayerAll()
+          .players.all()
           .map(player => ({ player, card: game.getTopCard(player, card.color) }))
           .filter(x => x.card !== undefined)
           .map(({ player, card }) => ({ player, age: card.getAge() }))

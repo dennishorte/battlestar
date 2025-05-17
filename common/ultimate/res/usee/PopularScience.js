@@ -20,7 +20,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const topGreenCards = game
-        .getPlayerAll()
+        .players.all()
         .map(player => game.getTopCard(player, 'green'))
         .filter(card => card !== undefined)
 

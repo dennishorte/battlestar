@@ -22,7 +22,7 @@ function Card() {
       if (cards && cards.length > 0) {
         const age = cards[0].getAge()
         const toTransfer = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game
             .getCardsByZone(player, 'score')
             .filter(card => card.getAge() === age)

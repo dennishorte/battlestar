@@ -75,7 +75,7 @@ export default {
     },
 
     isFirstPlayer() {
-      return this.game.getPlayerFirst() === this.player
+      return this.game.players.first() === this.player
     },
 
     playedCards() {

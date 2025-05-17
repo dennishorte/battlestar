@@ -16,7 +16,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const otherPlayers = game.getPlayerAll().filter(other => other.name !== player.name)
+      const otherPlayers = game.players.all().filter(other => other.name !== player.name)
       const otherPlayer = game.aChoosePlayer(player, otherPlayers)
 
       if (otherPlayer) {

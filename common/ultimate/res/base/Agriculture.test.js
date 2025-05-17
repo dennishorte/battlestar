@@ -13,7 +13,7 @@ describe('Agriculture', () => {
     request = t.choose(game, request, 'Dogma.Agriculture')
     t.choose(game, request, 'Domestication')
 
-    const dennis = game.getPlayerByName('dennis')
+    const dennis = game.players.byName('dennis')
     expect(game.getScore(dennis)).toBe(2)
   })
 
@@ -27,7 +27,7 @@ describe('Agriculture', () => {
     request = t.choose(game, request, 'Dogma.Agriculture')
     t.choose(game, request)
 
-    const dennis = game.getPlayerByName('dennis')
+    const dennis = game.players.byName('dennis')
     expect(game.getScore(dennis)).toBe(0)
   })
 })

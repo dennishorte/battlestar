@@ -19,15 +19,15 @@ function Card() {
     (game, player) => {
       const biscuits = game.getBiscuits()
       const castles = game
-        .getPlayerOpponents(player)
+        .players.opponentsOf(player)
         .map(opp => biscuits[opp.name].k)
         .sort((l, r) => l - r)
       const coins = game
-        .getPlayerOpponents(player)
+        .players.opponentsOf(player)
         .map(opp => biscuits[opp.name].c)
         .sort((l, r) => l - r)
       const lights = game
-        .getPlayerOpponents(player)
+        .players.opponentsOf(player)
         .map(opp => biscuits[opp.name].s)
         .sort((l, r) => l - r)
 

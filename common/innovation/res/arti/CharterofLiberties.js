@@ -24,7 +24,7 @@ function Card() {
         game.aSplay(player, card.color, 'left')
 
         const choices = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game
             .utilColors()
             .map(color => game.getZoneByPlayer(player, color))

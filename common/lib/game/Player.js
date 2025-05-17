@@ -23,17 +23,44 @@ class Player {
     this.incrementCounter(name, -count)
   }
 
-  incrementCounter(name, count=1) {
+  getCounter(name) {
+    return this.counters[name] || 0
+  }
+
+  incrementCounter(name, count=1, opts={}) {
+    if (!opts.silent) {
+      this.game.log.add({
+        template: "{player} '{counter}': {initial} {sign} {amount} = {final}",
+        args: {
+          player: this,
+          counter: name,
+          initial: this.counters[name],
+          sign: count >= 0 ? '+' : '-',
+          amount: Math.abs(count),
+          final: this.counters[name] + count,
+        },
+        classes: ['player-counter-change'],
+      })
+    }
+
     this.counters[name] += count
-    this.game.log.add({
-      template: '{player} counter {counter}: {amount}',
-      args: {
-        player: this,
-        counter: name,
-        amount: count,
-      },
-      classes: ['player-counter-change'],
-    })
+  }
+
+  setCounter(name, value, opts={}) {
+    if (!opts.silent) {
+      this.game.log.add({
+        template: "{player} '{counter}': set from {initial} to {final}",
+        args: {
+          player: this,
+          counter: name,
+          initial: this.counters[name],
+          final: value,
+        },
+        classes: ['player-counter-change'],
+      })
+    }
+
+    this.counters[name] = value
   }
 
   static isActive(player) {

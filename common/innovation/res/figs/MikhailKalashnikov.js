@@ -27,7 +27,7 @@ function Card() {
       matches: (game, player, { card }) => card.color === 'red',
       func: (game, player) => {
         const choices = game
-          .getPlayerOpponents(player)
+          .players.opponentsOf(player)
           .map(opp => game.getTopCard(opp, 'red'))
           .filter(card => card !== undefined)
         const selected = game.aChooseCard(player, choices)

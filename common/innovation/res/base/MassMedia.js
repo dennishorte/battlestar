@@ -27,7 +27,7 @@ function Card() {
         })
         game.log.indent()
         const toReturn = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game.getCardsByZone(player, 'score'))
           .filter(card => card.getAge() === age)
         game.aReturnMany(player, toReturn)

@@ -321,7 +321,7 @@ describe('PlayerManager', () => {
         expect(player.seatNumber).toBe(2)
       })
 
-      test('byZone() should find player by zone.id if zone.owner is not available', () => {
+      test('byZone() should find player by zone.id', () => {
         const { playerManager } = createPlayerManager(4)
 
         // Create a mock zone with an id that contains a player reference
@@ -334,23 +334,6 @@ describe('PlayerManager', () => {
         // Find the actual index of the player with name 'user3'
         const index = playerManager.all().findIndex(p => p.name === 'user3')
         expect(player).toBe(playerManager.all()[index])
-
-        // Should return undefined for zones without player references
-        const invalidZone = { id: 'global.deck' }
-        expect(playerManager.byZone(invalidZone)).toBeUndefined()
-      })
-
-      test('byZone() should find player by zone.owner, if available', () => {
-        const { playerManager } = createPlayerManager(4)
-
-        // Create a mock zone with an owner reference to a specific player
-        const selectedPlayer = playerManager.all()[2]
-        const zone = { owner: selectedPlayer }
-
-        // Should find the player by owner
-        const player = playerManager.byZone(zone)
-        expect(player).toBe(selectedPlayer)
-        expect(player.name).toBe(selectedPlayer.name)
 
         // Should return undefined for zones without player references
         const invalidZone = { id: 'global.deck' }

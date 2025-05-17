@@ -20,18 +20,21 @@ class PlayerManager {
     this._users = [...users]
 
     this._players = []
+
+    // The player who is currently supposed to take an action.
     this._currentPlayer = null
 
     this._opts = Object.assign({
       firstPlayerId: null,
       shuffleSeats: true,
+      playerClass: Player,
     }, opts)
 
     this.reset()
   }
 
   reset() {
-    this._players = this._users.map(user => new Player(this._game, user))
+    this._players = this._users.map(user => new this._opts.playerClass(this._game, user))
 
     if (this._opts.shuffleSeats) {
       util.array.shuffle(this._players, this._game.random)
@@ -100,6 +103,10 @@ class PlayerManager {
     return this.startingWith(this.current())
   }
 
+  teamOf(player) {
+    return this.all().filter(other => other.team === player.team)
+  }
+
   ////////////////////////////////////////////////////////////////////////////////
   // Get single players
 
@@ -120,19 +127,16 @@ class PlayerManager {
   }
 
   byZone(zone) {
-    if (zone.owner) {
-      return zone.owner
+    // TODO (dennis): create a concept of zone.owner that stores a player value instead of doing this
+
+    const regex = /players[.]([^.]+)[.]/
+    const match = zone.id.match(regex)
+
+    if (match) {
+      return this.byName(match[1])
     }
     else {
-      const regex = /players[.]([^.]+)[.]/
-      const match = zone.id.match(regex)
-
-      if (match) {
-        return this.byName(match[1])
-      }
-      else {
-        return undefined
-      }
+      return undefined
     }
   }
 

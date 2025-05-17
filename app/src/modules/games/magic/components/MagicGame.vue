@@ -86,8 +86,8 @@ export default {
     }),
 
     orderedPlayers() {
-      const player = this.game.getPlayerByName(this.actor.name)
-      return this.game.getPlayersStarting(player)
+      const player = this.game.players.byName(this.actor.name)
+      return this.game.players.startingWith(player)
     },
   },
 

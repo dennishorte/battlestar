@@ -41,7 +41,7 @@ function Card() {
       }
       else {
         for (const card of cards) {
-          const target = game.getZoneByPlayer(game.getPlayerCurrent(), 'hand')
+          const target = game.getZoneByPlayer(game.players.current(), 'hand')
           game.aTransfer(player, card, target)
         }
       }
@@ -55,7 +55,7 @@ function Card() {
         .getTopCards(player)
         .length === 5
       const othersHaveFive = game
-        .getPlayerAll()
+        .players.all()
         .filter(p => p !== player)
         .map(p => game.getTopCards(p).length)
         .filter(count => count === 5)

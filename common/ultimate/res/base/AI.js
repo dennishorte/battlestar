@@ -22,14 +22,14 @@ function Card() {
     },
     (game) => {
       const conditionMet  = game
-        .getPlayerAll()
+        .players.all()
         .flatMap(player => game.getTopCards(player))
         .filter(card => card.name === 'Robotics' || card.name === 'Software')
         .length === 2
 
       if (conditionMet) {
         const playerScores = game
-          .getPlayerAll()
+          .players.all()
           .map(player => ({ player, score: game.getScore(player) }))
           .sort((l, r) => l.score - r.score)
 

@@ -47,7 +47,7 @@ function Card() {
 
         // Check if player doesn't have highest score
         const playerScore = game.getScore(player)
-        const highestScore = Math.max(...game.getPlayerAll().map(p => game.getScore(p)))
+        const highestScore = Math.max(...game.players.all().map(p => game.getScore(p)))
 
         return playerScore < highestScore
       }

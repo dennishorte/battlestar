@@ -12,7 +12,7 @@ const cardData = [
     text: [
       "+2 influence"
     ],
-    impl: (game, player) => player.incrementInfluence(2)
+    impl: (game, player) => player.incrementCounter('influence', 2)
   },
   {
     name: "House Guard",
@@ -27,7 +27,7 @@ const cardData = [
     text: [
       "+2 power"
     ],
-    impl: (game, player) => player.incrementPower(2)
+    impl: (game, player) => player.incrementCounter('power', 2)
   },
   {
     name: "Insane Outcast",
@@ -66,7 +66,7 @@ const cardData = [
     text: [
       "+1 influence"
     ],
-    impl: (game, player) => player.incrementInfluence(1),
+    impl: (game, player) => player.incrementCounter('influence', 1),
   },
   {
     name: "Soldier",
@@ -81,7 +81,7 @@ const cardData = [
     text: [
       "+1 power"
     ],
-    impl: (game, player) => player.incrementPower(1),
+    impl: (game, player) => player.incrementCounter('power', 1),
   },
 ]
 

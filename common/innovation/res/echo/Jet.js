@@ -47,7 +47,7 @@ function Card() {
     }
 
     const cards = game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
-    if (player === game.getPlayerByCard(this) && cards && cards.length > 0) {
+    if (player === game.players.byOwner(this) && cards && cards.length > 0) {
       game.state.dogmaInfo.jet = cards[0]
     }
   }

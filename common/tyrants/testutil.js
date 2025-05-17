@@ -31,7 +31,10 @@ TestUtil.fixture = function(options) {
         _id: 'eliya_id',
         name: 'eliya',
       },
-    ]
+    ],
+    playerOptions: {
+      shuffleSeats: false,
+    },
   }, options)
 
   options.players = options.players.slice(0, options.numPlayers)
@@ -42,17 +45,11 @@ TestUtil.fixture = function(options) {
   const game = TyrantsFactory(options, 'dennis')
 
   game.testSetBreakpoint('initialization-complete', (game) => {
-    // Set turn order
-    game.state.players = ['dennis', 'micah', 'scott', 'eliya']
-      .slice(0, game.settings.numPlayers)
-      .map(name => game.getPlayerByName(name))
-      .filter(p => p !== undefined)
-
-    for (const player of game.getPlayerAll()) {
+    for (const player of game.players.all()) {
       const deck = game.getZoneByPlayer(player, 'deck')
       const hand = game.getZoneByPlayer(player, 'hand')
 
-      // Fill player hands with Nobles
+      // Put 5 nobles into the player hand
       for (const card of hand.cards()) {
         game.mMoveCardTo(card, deck)
       }
@@ -60,6 +57,9 @@ TestUtil.fixture = function(options) {
         const card = deck.cards().find(card => card.name === 'Noble')
         game.mMoveCardTo(card, hand)
       }
+
+      // Put the remainder of the deck into a fixed order
+      deck._cards.sort((l, r) => r.name.localeCompare(l.name))
 
       // Put cards with multiple copies into the market. This makes sure that when we put cards
       // in player hands, we aren't grabbing them from the market.
@@ -93,7 +93,7 @@ TestUtil.gameFixture = function(options) {
     game.log.add({ template: 'SETUP' })
     game.log.indent()
 
-    for (const player of game.getPlayerAll()) {
+    for (const player of game.players.all()) {
       game.log.add({
         template: '{player} setup',
         args: { player }
@@ -150,13 +150,13 @@ TestUtil.gameFixture = function(options) {
         }
 
         if ('power' in playerSetup) {
-          player.power = playerSetup.power
+          player.setCounter('power', playerSetup.power)
         }
         if ('influence' in playerSetup) {
-          player.influence = playerSetup.influence
+          player.setCounter('influence', playerSetup.influence)
         }
         if ('points' in playerSetup) {
-          player.points = playerSetup.points
+          player.setCounter('points', playerSetup.points)
         }
         if ('troops' in playerSetup) {
           // Need to keep an extra troop for initial location selection.
@@ -289,7 +289,7 @@ TestUtil.setTroops = function(game, locId, playerNames) {
         game.mMoveCardTo(tokens[0], zone)
       }
       else {
-        const player = game.getPlayerByName(playerName)
+        const player = game.players.byName(playerName)
         const tokens = game.getCardsByZone(player, 'troops')
         game.mMoveCardTo(tokens[0], zone)
       }
@@ -319,7 +319,7 @@ TestUtil.setSpies = function(game, locId, playerNames) {
     }
 
     for (const playerName of util.array.distinct(playerNames)) {
-      const player = game.getPlayerByName(playerName)
+      const player = game.players.byName(playerName)
       const tokens = game.getCardsByZone(player, 'spies')
       game.mMoveCardTo(tokens[0], zone)
     }
@@ -377,7 +377,7 @@ TestUtil.testTroops = function(game, locationName, expected) {
 
 TestUtil.testBoard = function(game, expected) {
   for (const [key, value] of Object.entries(expected)) {
-    const player = game.getPlayerByName(key)
+    const player = game.players.byName(key)
     const location = game.getLocationByName(key)
 
     if (player) {
@@ -414,7 +414,7 @@ const tableauZones = [
   'innerCircle',
 ]
 
-const numericValues = [
+const counters = [
   'influence',
   'points',
   'power',
@@ -440,8 +440,8 @@ TestUtil.testTableau = function(game, player, testState) {
     }
   }
 
-  for (const key of numericValues) {
-    actual[key] = player[key]
+  for (const key of counters) {
+    actual[key] = player.getCounter(key)
     expected[key] = testState[key] || 0
   }
 

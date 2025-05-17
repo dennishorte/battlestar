@@ -24,7 +24,7 @@ function Card() {
     })
 
     const cardsToReturn = []
-    for (const opponent of game.getPlayerOpponents(player)) {
+    for (const opponent of game.players.opponentsOf(player)) {
       for (const card of game.getTopCards(opponent)) {
         if (card.getAge() === value) {
           cardsToReturn.push(card)

@@ -103,7 +103,7 @@ export default {
     }),
 
     cardIsVisible() {
-      const player = this.game.getPlayerByName(this.actor.name)
+      const player = this.game.players.byName(this.actor.name)
       return this.game.checkCardIsVisible(player, this.selectedCard)
     },
 

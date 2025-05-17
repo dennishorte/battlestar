@@ -3,6 +3,7 @@ const selector = require('./selector.js')
 const util = require('./util.js')
 
 const { LogManager } = require('./game/LogManager.js')
+const { PlayerManager } = require('./game/PlayerManager.js')
 
 
 module.exports = {
@@ -42,11 +43,12 @@ function Game(serialized_data, viewerName) {
 
   this.gameOver = false
   this.gameOverData = null
-  this.random = 'uninitialized'
+  this.random = seedrandom(this.settings.seed)
 
   this.viewerName = viewerName
 
   this.log = new LogManager(this)
+  this.players = new PlayerManager(this, this.settings.players, this.settings.playerOptions || {})
 }
 
 function GameFactory(settings, viewerName=undefined) {
@@ -145,7 +147,7 @@ Game.prototype.getPlayerNamesWaiting = function() {
 }
 
 Game.prototype.getPlayerViewer = function() {
-  return this.getPlayerByName(this.viewerName)
+  return this.players.byName(this.viewerName)
 }
 
 Game.prototype.getWaiting = function(player) {
@@ -370,6 +372,7 @@ Game.prototype._reset = function() {
   this.random = seedrandom(this.settings.seed)
   this.state = this._blankState()
   this.log.reset()
+  this.players.reset()
 }
 
 Game.prototype._tryToAutomaticallyRespond = function(selectors) {
@@ -478,113 +481,6 @@ Game.prototype.checkSameTeam = function(p1, p2) {
 
 Game.prototype.getCardsByZone = function(player, zoneName) {
   return this.getZoneByPlayer(player, zoneName).cards()
-}
-
-Game.prototype.getPlayerAll = function() {
-  return this.state.players
-}
-
-Game.prototype.getPlayerOther = function(player) {
-  return this
-    .getPlayerAll()
-    .filter(other => other !== player)
-}
-
-Game.prototype.getPlayerByName = function(name) {
-  return this.getPlayerAll().find(p => p.name === name)
-}
-
-Game.prototype.getPlayerByOwner = function(card) {
-  if (card.g) {
-    return card.g.owner
-  }
-  else {
-    return card.owner
-  }
-}
-
-Game.prototype.getPlayerByZone = function(zone) {
-  const regex = /players[.]([^.]+)[.]/
-  const match = zone.id.match(regex)
-
-  if (match) {
-    return this.getPlayerByName(match[1])
-  }
-  else {
-    return undefined
-  }
-}
-
-Game.prototype.getPlayerCurrent = function() {
-  return this.state.currentPlayer
-}
-
-Game.prototype.getPlayerFirst = function() {
-  return this.getPlayerAll()[0]
-}
-
-Game.prototype.getPlayerFollowing = function(player) {
-  return this
-    .getPlayersEnding(player)
-    .filter(player => !player.dead)[0]
-}
-
-Game.prototype.getPlayerPreceding = function(player) {
-  return this
-    .getPlayersStarting(player)
-    .filter(player => !player.dead)
-    .slice(-1)[0]
-}
-
-Game.prototype.getPlayerLeft = function(player) {
-  return this.getPlayerNext(player)
-}
-
-Game.prototype.getPlayerNext = function() {
-  return this
-    .getPlayersEnding(this.getPlayerCurrent())
-    .filter(player => !player.dead)[0]
-}
-
-Game.prototype.getPlayerOpponents = function(player) {
-  return this
-    .getPlayerAll()
-    .filter(p => !this.checkSameTeam(p, player))
-}
-
-Game.prototype.getPlayerRight = function(player) {
-  return this.getPlayerPreceding(player)
-}
-
-Game.prototype.getPlayersEnding = function(player) {
-  const players = [...this.getPlayerAll()]
-  while (players[players.length - 1] !== player) {
-    players.push(players.shift())
-  }
-  return players
-}
-
-Game.prototype.getPlayersOther = function(player) {
-  return this.getPlayerAll().filter(p => p.name !== player.name)
-}
-
-Game.prototype.getPlayersStarting = function(player) {
-  const players = [...this.getPlayerAll()]
-  while (players[0] !== player) {
-    players.push(players.shift())
-  }
-  return players
-}
-
-// Return an array of all players, starting with the current player.
-Game.prototype.getPlayersStartingCurrent = function() {
-  return this.getPlayersStarting(this.getPlayerCurrent())
-}
-
-// Return an array of all players, starting with the player who will follow the current player.
-// Commonly used when evaluating effects
-Game.prototype.getPlayersStartingNext = function() {
-  return this.getPlayersStarting(this.getPlayerNext())
 }
 
 Game.prototype.getZoneByCard = function(card) {

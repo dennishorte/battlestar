@@ -31,8 +31,8 @@ function Card() {
       triggerAll: true,
       kind: 'would-instead',
       matches: (game, player, { card }) => {
-        const florenceOwner = game.getPlayerByCard(this)
-        const cardOwner = game.getPlayerByCard(card)
+        const florenceOwner = game.players.byOwner(this)
+        const cardOwner = game.players.byOwner(card)
 
         const thisIsMyCardCondition = florenceOwner === cardOwner
         const thisIsNotMyEffectCondition = florenceOwner !== game.state.dogmaInfo.effectLeader

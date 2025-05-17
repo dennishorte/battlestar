@@ -89,7 +89,7 @@ const cardData = [
       game.aChooseAndAssassinate(player)
       const troops = game.getCardsByZone(player, 'trophyHall').length
       const power = Math.floor(troops / 3)
-      player.incrementPower(power)
+      player.incrementCounter('power', power)
     }
   },
   {
@@ -117,8 +117,8 @@ const cardData = [
         {
           title: 'Return one of your spies > +2 power, + 2 influence',
           impl: (game, player) => game.aReturnASpyAnd(player, (game, player) => {
-            player.incrementPower(2)
-            player.incrementInfluence(2)
+            player.incrementCounter('power', 2)
+            player.incrementCounter('influence', 2)
           })
         },
       ])
@@ -140,7 +140,7 @@ const cardData = [
       const location = game.aChooseAndPlaceSpy(player)
 
       const opponents = game
-        .getPlayerOpponents(player)
+        .players.opponentsOf(player)
         .filter(p => location.getTroops().some(troop => troop.owner === p))
 
       for (const opponent of opponents) {
@@ -223,11 +223,11 @@ const cardData = [
       const targets = game.aChoose(player, troops, { min: 0, max: 3, title: 'Choose up to three troops to assassinate' })
 
       for (const target of targets) {
-        const owner = target === 'neutral' ? 'neutral' : game.getPlayerByName(target)
+        const owner = target === 'neutral' ? 'neutral' : game.players.byName(target)
         game.aAssassinate(player, loc, owner)
       }
 
-      player.incrementInfluence(targets.length)
+      player.incrementCounter('influence', targets.length)
     }
   },
   {
@@ -294,7 +294,7 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: '+2 influence',
-          impl: (game, player) => player.incrementInfluence(2),
+          impl: (game, player) => player.incrementCounter('influence', 2),
         },
         {
           title: 'Draw a card. Choose one opponent with more than 3 cards to discard a card',
@@ -355,7 +355,7 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: '+3 influence',
-          impl: (game, player) => player.incrementInfluence(3),
+          impl: (game, player) => player.incrementCounter('influence', 3),
         },
         {
           title: 'Return up to two troops or spies',
@@ -410,7 +410,7 @@ const cardData = [
       game.aChooseAndDeploy(player)
 
       const opponents = game
-        .getPlayerAll()
+        .players.all()
         .filter(p => p !== player)
       for (const opp of opponents) {
         game.aDeferDiscard(opp, card, player)
@@ -445,7 +445,7 @@ const cardData = [
             game.aReturnASpyAnd(player, (game, player) => {
               game.aDraw(player)
               game
-                .getPlayerOpponents(player)
+                .players.opponentsOf(player)
                 .forEach(opp => game.aChooseAndDiscard(opp, {
                   requireThree: true,
                   forced: true,
@@ -472,7 +472,7 @@ const cardData = [
       "At end of turn, promote another card played this turn."
     ],
     impl: (game, player, { card }) => {
-      player.incrementInfluence(2)
+      player.incrementCounter('influence', 2)
       game.aDeferPromotion(player, card)
     }
   },
@@ -520,21 +520,21 @@ const cardData = [
         {
           title: '+2 power and +1 influence',
           impl: (game, player) => {
-            player.incrementPower(2)
-            player.incrementInfluence(1)
+            player.incrementCounter('power', 2)
+            player.incrementCounter('influence', 1)
           }
         },
         {
           title: '+1 power and +2 influence',
           impl: (game, player) => {
-            player.incrementPower(1)
-            player.incrementInfluence(2)
+            player.incrementCounter('power', 1)
+            player.incrementCounter('influence', 2)
           }
         },
       ])
 
-      /* player.incrementPower(2)
-       * player.incrementInfluence(1) */
+      /* player.incrementCounter('power', 2)
+       * player.incrementCounter('influence', 1) */
     }
   },
   {
@@ -586,7 +586,7 @@ const cardData = [
       {
         kind: 'discard-this',
         impl: (game, player, { card, forcedBy }) => {
-          const opp = game.getPlayerByName(forcedBy)
+          const opp = game.players.byName(forcedBy)
           game.log.add({
             template: '{player} will draw one fewer card on their next hand refill',
             args: { player: opp }

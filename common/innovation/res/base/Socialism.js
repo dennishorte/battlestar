@@ -29,7 +29,7 @@ function Card() {
           // If you tucked a purple card...
           if (tucked.find(card => card.color === 'purple')) {
             const accumulator = []
-            for (const opp of game.getPlayerOpponents(player)) {
+            for (const opp of game.players.opponentsOf(player)) {
               const lowest = game.utilLowestCards(game.getCardsByZone(opp, 'hand'))
               accumulator.push(lowest)
             }

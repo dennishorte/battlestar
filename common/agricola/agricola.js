@@ -157,14 +157,14 @@ Agricola.prototype.initializeZones = function() {
   this.state.zones.actions.dayLaborer = new Zone(this, 'Day Laborer', 'action')
   this.state.zones.actions.meetingPlace = new Zone(this, 'Meeting Place', 'action')
 
-  if (this.getPlayerAll().length === 3) {
+  if (this.players.all().length === 3) {
     this.state.zones.actions.grove = new Zone(this, 'Grove', 'action')
     this.state.zones.actions.resourceMarket = new Zone(this, 'Resource Market', 'action')
     this.state.zones.actions.hollow = new Zone(this, 'Hollow', 'action')
     this.state.zones.actions.moreLessons = new Zone(this, 'More Lessons', 'action')
   }
 
-  if (this.getPlayerAll().length === 4) {
+  if (this.players.all().length === 4) {
     this.state.zones.actions.copse = new Zone(this, 'Copse', 'action')
     this.state.zones.actions.grove = new Zone(this, 'Grove', 'action')
     this.state.zones.actions.resourceMarket = new Zone(this, 'Resource Market', 'action')
@@ -178,7 +178,7 @@ Agricola.prototype.initializeZones = function() {
   //   and divide existing pastures with fences. Any time a player places new fences,
   //   their pasture zones will change. Players initially start with no pastures.
   this.state.zones.players = {}
-  for (const player of this.getPlayerAll()) {
+  for (const player of this.players.all()) {
     this.state.zones.players[player.name] = {
       pet: new Zone(this, 'Pet', 'pet'),
       occupations: new Zone(this, 'Occupations', 'private'),
@@ -196,7 +196,7 @@ Agricola.prototype.initializeCards = function() {
   // Shuffle and deal the minor improvements and occupations
   const occupations = util.array.shuffle(this.getAllOccupations(), this.random)
   const minorImprovements = util.array.shuffle(this.getAllMinorImprovements(), this.random)
-  for (const player of this.getPlayerAll()) {
+  for (const player of this.players.all()) {
     const occupationZone = this.getZoneByPlayer(player, 'occupations')
     const minorImprovementZone = this.getZoneByPlayer(player, 'minorImprovements')
     for (let i = 0; i < 7; i++) {

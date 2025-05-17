@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = (game, player) => {
     const choices = game
-      .getPlayerAll()
+      .players.all()
       .flatMap(player => game.getTopCards(player))
       .filter(card => card.biscuits.includes('f') || card.biscuits.includes('c'))
     game.aChooseAndScore(player, choices)
@@ -31,7 +31,7 @@ function Card() {
       matches: () => true,
       func: (game, player) => {
         const choices = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game.getTopCards(player))
           .filter(card => card.biscuits.includes('f') || card.biscuits.includes('c'))
         game.aChooseAndScore(player, choices)

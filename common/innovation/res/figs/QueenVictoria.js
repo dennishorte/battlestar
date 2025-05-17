@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = (game, player) => {
     const choices = game
-      .getPlayerAll()
+      .players.all()
       .filter(other => other !== player)
       .flatMap(player => game.getCardsByZone(player, 'score'))
       .filter(card => card.checkIsFigure())

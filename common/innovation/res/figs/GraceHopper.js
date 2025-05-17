@@ -27,7 +27,7 @@ function Card() {
       triggerAll: true,
       kind: 'would-first',
       matches: (game, player) => {
-        return player === game.getPlayerByCard(this)
+        return player === game.players.byOwner(this)
       },
       func: (game, player) => {
         const card = game.aDraw(player, { age: game.getEffectAge(this, 10) })

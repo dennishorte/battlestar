@@ -285,7 +285,7 @@ export default {
     },
 
     canView(card) {
-      const player = this.game.getPlayerByName(this.actor.name)
+      const player = this.game.players.byName(this.actor.name)
       return card.isVisible(player)
     },
 
@@ -306,7 +306,7 @@ export default {
     },
 
     getDisplayName(card, faceIndex=null) {
-      const player = this.game.getPlayerByName(this.actor.name)
+      const player = this.game.players.byName(this.actor.name)
       return card.displayName(player, faceIndex)
     },
 

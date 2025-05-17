@@ -25,7 +25,7 @@ function Card() {
 
         const zones = ['red', 'yellow', 'green', 'blue', 'purple', 'hand', 'score']
         const toRemove = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => zones.flatMap(name => game.getCardsByZone(player, name)))
         game.aRemoveMany(player, toRemove, { ordered: true })
         game.log.outdent()

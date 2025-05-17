@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const candidates = []
-      for (const other of game.getPlayerAll()) {
+      for (const other of game.players.all()) {
         if (other === player) {
           continue
         }
@@ -39,7 +39,7 @@ function Card() {
 
       const card = game.aChooseCard(player, candidates, { min: 0, max: 1 })
       if (card) {
-        const owner = game.getPlayerByCard(card)
+        const owner = game.players.byOwner(card)
         game.aClaimAchievement(player, { card })
 
         const cardToTransfer = game.getTopCard(player, 'green')

@@ -35,7 +35,7 @@ function Card() {
       trigger: 'when-meld',
       func: (game, player) => {
         const figures = game
-          .getPlayerOpponents(player)
+          .players.opponentsOf(player)
           .flatMap(player => game.getTopCards(player))
           .filter(card => card.checkIsFigure())
         game.aReturnMany(player, figures)

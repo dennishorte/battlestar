@@ -19,12 +19,12 @@ function Card() {
     (game, player, { self }) => {
       if (game.checkCardIsTop(self) && !this.zone.endsWith('.artifact')) {
         const topCards = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game.getTopCards(player))
         game.aRemoveMany(player, topCards)
 
         const hands = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game.getCardsByZone(player, 'hand'))
         game.aRemoveMany(player, hands, { ordered: true })
       }

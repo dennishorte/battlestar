@@ -29,6 +29,10 @@ TestUtil.fixture = function(options) {
       },
     ],
 
+    playerOptions: {
+      shuffleSeats: false,
+    },
+
     numPacks: 3,
     packSize: 3,
     packs: [
@@ -151,15 +155,6 @@ TestUtil.fixture = function(options) {
     .map(p => p.slice(0, options.packSize))
 
   const game = CubeDraftFactory(options, 'dennis')
-
-  game.testSetBreakpoint('initialization-complete', (game) => {
-    // Set turn order
-    game.state.players = ['dennis', 'micah', 'scott', 'eliya']
-      .slice(0, game.settings.numPlayers)
-      .map(name => game.getPlayerByName(name))
-      .filter(p => p !== undefined)
-  })
-
   return game
 }
 
@@ -174,7 +169,7 @@ TestUtil.choose = function(game, request, actor, option) {
 }
 
 TestUtil.testBoard = function(game, expected) {
-  for (const player of game.getPlayerAll()) {
+  for (const player of game.players.all()) {
     this.testPicks(game, player.name, expected[player.name].picked)
     this.testWaitingPacks(game, player.name, expected[player.name].waiting)
     this.testNextRoundPacks(game, player.name, expected[player.name].nextRound || [])
@@ -182,25 +177,25 @@ TestUtil.testBoard = function(game, expected) {
 }
 
 TestUtil.testPicks = function(game, playerName, cardNames) {
-  const player = game.getPlayerByName(playerName)
+  const player = game.players.byName(playerName)
   const picks = game.getPicksByPlayer(player).map(c => c.name)
   expect(picks).toStrictEqual(cardNames)
 }
 
 TestUtil.testWaitingPacks = function(game, playerName, packIds) {
-  const player = game.getPlayerByName(playerName)
+  const player = game.players.byName(playerName)
   const waiting = game.getWaitingPacksForPlayer(player).map(p => p.id)
   expect(packIds).toStrictEqual(waiting)
 }
 
 TestUtil.testNextRoundPacks = function(game, playerName, packIds) {
-  const player = game.getPlayerByName(playerName)
+  const player = game.players.byName(playerName)
   const waiting = player.nextRoundPacks.map(p => p.id)
   expect(packIds).toStrictEqual(waiting)
 }
 
 TestUtil.testVisibility = function(game, playerName, expected) {
-  const player = game.getPlayerByName(playerName)
+  const player = game.players.byName(playerName)
   const pack = game.getNextPackForPlayer(player)
 
   const visibleCards = pack.getKnownCards(player).map(c => c.name).sort()

@@ -11,7 +11,7 @@ function Card() {
   this.decreeImpl = (game, player) => {
     // Choose a player
     const otherPlayers = game
-      .getPlayerAll()
+      .players.all()
       .filter(p => p.name !== player.name)
       .map(p => p.name)
     const other = game.aChoosePlayer(player, otherPlayers)

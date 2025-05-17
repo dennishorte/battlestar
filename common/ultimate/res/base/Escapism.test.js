@@ -13,7 +13,7 @@ describe('Escapism', () => {
       },
       decks: {
         base: {
-          1: ['Domestication', 'Mysticism'],
+          1: ['Domestication', 'Mysticism', 'Sailing'],
         },
       },
     })

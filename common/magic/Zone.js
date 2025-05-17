@@ -31,7 +31,7 @@ Zone.prototype.cards = function() {
 }
 
 Zone.prototype.getOwner = function() {
-  return this.game.getPlayerByZone(this)
+  return this.game.players.byZone(this)
 }
 
 Zone.prototype.addCard = function(card) {

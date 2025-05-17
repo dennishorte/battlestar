@@ -35,7 +35,7 @@ function Card() {
         })
 
         const otherPlayers = game
-          .getPlayerAll()
+          .players.all()
           .filter(other => other !== player)
         let cards
         if (location === 'from scores') {

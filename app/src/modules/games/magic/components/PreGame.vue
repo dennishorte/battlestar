@@ -37,7 +37,7 @@
 
             <tbody>
               <tr
-                v-for="player in game.getPlayerAll()"
+                v-for="player in game.players.all()"
                 :key="player.name"
                 :class="waiting(player) ? 'table-warning' : 'table-success'"
               >
@@ -113,7 +113,7 @@ export default {
     }),
 
     ready() {
-      const player = this.game.getPlayerByName(this.actor.name)
+      const player = this.game.players.byName(this.actor.name)
       return !this.game.checkPlayerHasActionWaiting(player)
     },
   },
@@ -132,7 +132,7 @@ export default {
     },
 
     selectDeck() {
-      const player = this.game.getPlayerByName(this.actor.name)
+      const player = this.game.players.byName(this.actor.name)
       const waiting = this.game.getWaiting(player)
 
       if (!waiting || waiting.title !== 'Choose Deck') {

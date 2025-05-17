@@ -38,7 +38,7 @@ function Card() {
 
       game.aYouLose(player)
 
-      const livingPlayers = game.getPlayerAll().filter(player => !player.dead)
+      const livingPlayers = game.players.all().filter(player => !player.dead)
 
       if (livingPlayers.length === 1) {
         throw new GameOverEvent({

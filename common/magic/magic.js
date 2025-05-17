@@ -8,7 +8,6 @@ const cardUtil = require('./cardUtil.js')
 const res = require('./data.js')
 const util = require('../lib/util.js')
 
-const Player = require('./Player.js')
 const { PlayerZone } = require('./Zone.js')
 
 const wrappers = {
@@ -17,7 +16,8 @@ const wrappers = {
   deck: require('./util/deck.wrapper.js'),
 }
 
-const MagicLogManager = require('./MagicLogManager')
+const { MagicLogManager } = require('./MagicLogManager.js')
+const { MagicPlayerManager } = require('./MagicPlayerManager.js')
 
 
 module.exports = {
@@ -42,6 +42,7 @@ function Magic(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
   this.log = new MagicLogManager(this)
+  this.players = new MagicPlayerManager(this, this.settings.players, this.settings.playerOptions || {})
 
   this.setCardWrapper(wrappers.card)
   this.cardsById = {}
@@ -90,14 +91,14 @@ Magic.prototype._mainProgram = function() {
   this.log.add({
     template: "{player}'s turn",
     args: {
-      player: this.getPlayerCurrent(),
+      player: this.players.current(),
       classes: ['start-turn'],
     }
   })
   this.log.indent()
   this.log.add({
     template: '{player} gets priority',
-    args: { player: this.getPlayerCurrent() },
+    args: { player: this.players.current() },
     classes: ['pass-priority'],
   })
 
@@ -162,7 +163,6 @@ Magic.prototype.initialize = function() {
 
   this.initializePlayers()
   this.initializeZones()
-  this.initializeStartingPlayer()
 
   this.log.outdent()
   this.state.initializationComplete = true
@@ -170,19 +170,16 @@ Magic.prototype.initialize = function() {
 }
 
 Magic.prototype.initializePlayers = function() {
-  this.state.players = this.settings.players.map(p => new Player(this, p))
-  util.array.shuffle(this.state.players, this.random)
-  this.state.players.forEach((player, index) => {
-    player.index = index
+  this.players.all().forEach(player => {
+    player.addCounter('life', 20)
   })
-  this.log.add({ template: 'Randomizing player seating' })
 }
 
 Magic.prototype.initializeZones = function() {
   this.state.zones = {}
   this.state.zones.players = {}
 
-  for (const player of this.getPlayerAll()) {
+  for (const player of this.players.all()) {
     this.state.zones.players[player.name] = {
       // Private zones
       hand: new PlayerZone(this, player, 'hand', 'private'),
@@ -204,26 +201,6 @@ Magic.prototype.initializeZones = function() {
   }
 }
 
-Magic.prototype.initializeStartingPlayer = function() {
-  const player = this.getPlayerByName(this.settings.startingPlayerName)
-  if (player) {
-    this.log.add({
-      template: '{player} was selected to go first',
-      args: { player }
-    })
-    this.state.currentPlayer = player
-  }
-  else {
-    const randomPlayer = util.array.select(this.getPlayerAll(), this.random)
-    this.log.add({
-      template: 'Randomly selected {player} to go first',
-      args: { player: randomPlayer }
-    })
-    this.state.currentPlayer = randomPlayer
-  }
-  this.state.turnPlayer = this.state.currentPlayer
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Game Phases
@@ -233,7 +210,7 @@ Magic.prototype.chooseDecks = function() {
   this.log.indent()
 
   const requests = this
-    .getPlayerAll()
+    .players.all()
     .map(player => ({
       actor: this.utilSerializeObject(player),
       title: 'Choose Deck',
@@ -246,7 +223,7 @@ Magic.prototype.chooseDecks = function() {
   responses.forEach(r => r.noUndo = true)
 
   for (const response of responses) {
-    const player = this.getPlayerByName(response.actor)
+    const player = this.players.byName(response.actor)
     this.setDeck(player, response.deckData)
   }
 
@@ -258,7 +235,7 @@ Magic.prototype.chooseDecks = function() {
 
 Magic.prototype.mainLoop = function() {
   while (true) {
-    this.aChooseAction(this.getPlayerCurrent())
+    this.aChooseAction(this.players.current())
   }
 }
 
@@ -267,7 +244,7 @@ Magic.prototype.mainLoop = function() {
 // Setters, getters, actions, etc.
 
 Magic.prototype.aActiveFace = function(player, cardId, faceIndex) {
-  player = player || this.getPlayerCurrent()
+  player = player || this.players.current()
   const card = this.getCardById(cardId)
   const prevFaceIndex = card.g.activeFaceIndex
   card.g.activeFaceIndex = faceIndex
@@ -282,7 +259,7 @@ Magic.prototype.aActiveFace = function(player, cardId, faceIndex) {
 }
 
 Magic.prototype.aAddCounter = function(player, cardId, name, opts={}) {
-  player = player || this.getPlayerCurrent()
+  player = player || this.players.current()
   const card = this.getCardById(cardId)
 
   if (!card.g.counters[name]) {
@@ -295,7 +272,7 @@ Magic.prototype.aAddCounter = function(player, cardId, name, opts={}) {
 }
 
 Magic.prototype.aAddTracker = function(player, cardId, name, opts={}) {
-  player = player || this.getPlayerCurrent()
+  player = player || this.players.current()
   const card = this.getCardById(cardId)
 
   if (!card.g.trackers[name]) {
@@ -308,7 +285,7 @@ Magic.prototype.aAddTracker = function(player, cardId, name, opts={}) {
 }
 
 Magic.prototype.aAddCounterPlayer = function(player, targetName, counterName) {
-  const target = this.getPlayerByName(targetName)
+  const target = this.players.byName(targetName)
 
   if (counterName in target.counters) {
     throw new Error(`Counter already exists: ${counterName}`)
@@ -323,7 +300,7 @@ Magic.prototype.aAddCounterPlayer = function(player, targetName, counterName) {
 }
 
 Magic.prototype.aAdjustCardCounter = function(player, cardId, name, amount) {
-  player = player || this.getPlayerCurrent()
+  player = player || this.players.current()
   const card = this.getCardById(cardId)
   card.g.counters[name] += amount
 
@@ -345,7 +322,7 @@ Magic.prototype.aAdjustCardCounter = function(player, cardId, name, amount) {
 }
 
 Magic.prototype.aAdjustCardTracker = function(player, cardId, name, amount) {
-  player = player || this.getPlayerCurrent()
+  player = player || this.players.current()
   const card = this.getCardById(cardId)
   card.g.trackers[name] += amount
 
@@ -367,7 +344,7 @@ Magic.prototype.aAdjustCardTracker = function(player, cardId, name, amount) {
 }
 
 Magic.prototype.aAnnotate = function(player, cardId, annotation) {
-  player = player || this.getPlayerCurrent()
+  player = player || this.players.current()
   const card = this.getCardById(cardId)
   card.g.annotation = annotation
   this.log.add({
@@ -377,7 +354,7 @@ Magic.prototype.aAnnotate = function(player, cardId, annotation) {
 }
 
 Magic.prototype.aAnnotateEOT = function(player, cardId, annotation) {
-  player = player || this.getPlayerCurrent()
+  player = player || this.players.current()
   const card = this.getCardById(cardId)
   card.g.annotationEOT = annotation
   this.log.add({
@@ -456,7 +433,7 @@ Magic.prototype.aConcede = function(player) {
   player.eliminated = true
 
   // If only one team remains, then the game is over.
-  const teams = util.array.collect(this.getPlayerAll(), p => p.team)
+  const teams = util.array.collect(this.players.all(), p => p.team)
   const remaining = Object.values(teams).filter(players => players.some(p => !p.eliminated))
 
   if (remaining.length === 1) {
@@ -484,7 +461,7 @@ Magic.prototype.aChooseAction = function(player) {
   })
 
   for (const action of actions) {
-    const actor = action.playerName ? this.getPlayerByName(action.playerName) : player
+    const actor = action.playerName ? this.players.byName(action.playerName) : player
 
     switch (action.name) {
       case 'active face'         : return this.aActiveFace(actor, action.cardId, action.faceIndex)
@@ -540,7 +517,7 @@ Magic.prototype.aChooseAction = function(player) {
 
 Magic.prototype.aCreateToken = function(player, data, opts={}) {
   const zone = this.getZoneById(data.zoneId)
-  const owner = this.getPlayerByZone(zone)
+  const owner = this.players.byZone(zone)
 
   const created = []
 
@@ -564,7 +541,7 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
       card.visibility = [player]
     }
     else {
-      card.visibility = this.getPlayerAll()
+      card.visibility = this.players.all()
     }
 
     zone.addCard(card)
@@ -591,7 +568,7 @@ Magic.prototype.aDetach = function(player, cardId) {
 }
 
 Magic.prototype.aDraw = function(player, opts={}) {
-  player = player || this.getPlayerCurrent()
+  player = player || this.players.current()
   const libraryCards = this.getCardsByZone(player, 'library')
 
   if (libraryCards.length === 0) {
@@ -652,10 +629,10 @@ Magic.prototype.aImportCard = function(player, data) {
     const card = this.mInitializeCard(data.card, player)
     card.g.annotation = data.annotation
     card.g.token = data.isToken
-    card.visibility = this.getPlayerAll()
+    card.visibility = this.players.all()
 
     const zone = this.getZoneById(data.zoneId)
-    const owner = this.getPlayerByZone(zone)
+    const owner = this.players.byZone(zone)
     zone.addCard(card)
 
     // Card was moved to stack.
@@ -673,7 +650,7 @@ Magic.prototype.aImportCard = function(player, data) {
 }
 
 Magic.prototype.aSecret = function(player, cardId) {
-  player = player || this.getPlayerCurrent()
+  player = player || this.players.current()
   const card = this.getCardById(cardId)
   card.secret = true
   card.visibility = []
@@ -686,7 +663,7 @@ Magic.prototype.aSecret = function(player, cardId) {
 }
 
 Magic.prototype.aMorph = function(player, cardId) {
-  player = player || this.getPlayerCurrent()
+  player = player || this.players.current()
   const zone = this.getZoneByPlayer(player, 'stack')
   const card = this.getCardById(cardId)
   card.g.morph = true
@@ -702,7 +679,7 @@ Magic.prototype.aMoveAll = function(player, sourceId, targetId) {
 }
 
 Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
-  player = player || this.getPlayerCurrent()
+  player = player || this.players.current()
 
   const card = this.getCardById(cardId)
   const startingZone = this.getZoneByCard(card)
@@ -788,7 +765,7 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
 
 Magic.prototype.aMoveRevealed = function(player, sourceId, targetId) {
   const source = this.getZoneById(sourceId)
-  const numPlayers = this.getPlayerAll().length
+  const numPlayers = this.players.all().length
 
   const toMove = util
     .array
@@ -818,8 +795,8 @@ Magic.prototype.aMulligan = function(player) {
 }
 
 Magic.prototype.aPassPriority = function(actor, targetName) {
-  const player = targetName ? this.getPlayerByName(targetName) : this.getPlayerNext()
-  this.state.currentPlayer = player
+  const player = targetName ? this.players.byName(targetName) : this.players.next()
+  this.players.passToPlayer(player)
 
   const indent = this.log.getIndent()
   this.log.setIndent(1)
@@ -832,7 +809,7 @@ Magic.prototype.aPassPriority = function(actor, targetName) {
 }
 
 Magic.prototype.aReveal = function(player, cardId) {
-  player = player || this.getPlayerCurrent()
+  player = player || this.players.current()
   const card = this.getCardById(cardId)
 
   this.mReveal(card)
@@ -856,7 +833,7 @@ Magic.prototype.aRevealAll = function(player, zoneId) {
 Magic.prototype.aRevealNext = function(player, zoneId) {
   const zone = this.getZoneById(zoneId)
   const cards = zone.cards()
-  const nextIndex = cards.findIndex(card => card.visibility.length !== this.getPlayerAll().length)
+  const nextIndex = cards.findIndex(card => card.visibility.length !== this.players.all().length)
 
   if (nextIndex === -1) {
     this.log.add({
@@ -903,12 +880,12 @@ Magic.prototype.aSelectPhase = function(player, phase) {
     this.log.add({
       template: "{player}'s turn",
       args: {
-        player: this.getPlayerCurrent(),
+        player: this.players.current(),
         classes: ['start-turn'],
       }
     })
     this.log.indent()
-    this.state.turnPlayer = this.getPlayerCurrent()
+    this.state.turnPlayer = this.players.current()
   }
   else {
     this.log.setIndent(1)
@@ -958,7 +935,7 @@ Magic.prototype.aSelectPhase = function(player, phase) {
 
   // Move all cards out of the attackers and blockers zones
   if (!this.utilCombatPhases().includes(phase)) {
-    for (const player of this.getPlayerAll()) {
+    for (const player of this.players.all()) {
       const creaturesZone = this.getZoneByPlayer(player, 'creatures')
 
       for (const zoneName of ['attacking', 'blocking']) {
@@ -1001,7 +978,7 @@ Magic.prototype.aShuffleBottom = function(player, zoneId, count) {
 
 Magic.prototype.aStackEffect = function(player, cardId) {
   const card = this.getCardById(cardId)
-  const controller = this.getPlayerByCardController(card)
+  const controller = this.players.byController(card)
   const stack = this.getZoneByPlayer(controller, 'stack')
 
   const data = {
@@ -1030,7 +1007,7 @@ Magic.prototype.aTapAll = function(player, zoneId) {
 }
 
 Magic.prototype.aUnmorph = function(player, cardId) {
-  player = player || this.getPlayerCurrent()
+  player = player || this.players.current()
   const card = this.getCardById(cardId)
   card.g.morph = false
   this.mReveal(card)
@@ -1041,7 +1018,7 @@ Magic.prototype.aUnmorph = function(player, cardId) {
 }
 
 Magic.prototype.aUnsecret = function(player, cardId) {
-  player = player || this.getPlayerCurrent()
+  player = player || this.players.current()
   const card = this.getCardById(cardId)
   card.secret = false
   this.mAdjustCardVisibility(card)
@@ -1155,11 +1132,6 @@ Magic.prototype.getPhase = function() {
   return this.state.phase
 }
 
-Magic.prototype.getPlayerByCardController = function(card) {
-  const zone = this.getZoneByCard(card)
-  return this.getPlayerByZone(zone)
-}
-
 Magic.prototype.getPlayerTurn = function() {
   return this.state.turnPlayer
 }
@@ -1176,10 +1148,10 @@ Magic.prototype.mAdjustCardVisibility = function(card) {
     card.visibility = []
   }
   else if (card.g.morph) {
-    card.visibility = [this.getPlayerByCardController(card)]
+    card.visibility = [this.players.byController(card)]
   }
   else if (zone.kind === 'public') {
-    card.visibility = this.getPlayerAll()
+    card.visibility = this.players.all()
   }
   else if (zone.kind === 'private' && zone.owner) {
     util.array.pushUnique(card.visibility, zone.owner)
@@ -1222,7 +1194,7 @@ Magic.prototype.mClearStack = function() {
 
   const toClear = []
 
-  for (const player of this.getPlayerAll()) {
+  for (const player of this.players.all()) {
     const cards = this.getCardsByZone(player, 'stack')
     for (const card of cards) {
       toClear.push(card)
@@ -1234,7 +1206,7 @@ Magic.prototype.mClearStack = function() {
     this.log.indent()
 
     for (const card of toClear) {
-      const owner = this.getPlayerByOwner(card)
+      const owner = this.players.byOwner(card)
       const graveyard = this.getZoneByPlayer(owner, 'graveyard')
       this.mMoveCardTo(card, graveyard, { verbose: true })
     }
@@ -1308,7 +1280,7 @@ Magic.prototype.mMaybeRemoveTokens = function(card) {
 }
 
 Magic.prototype.mReveal = function(card) {
-  card.visibility = this.getPlayerAll()
+  card.visibility = this.players.all()
 }
 
 Magic.prototype.mTap = function(card) {

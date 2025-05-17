@@ -32,7 +32,7 @@ function Card() {
         .filter(card => card.age === splayedColors)
 
       if (choices.length > 0) {
-        const transferTo = game.aChoosePlayer(player, game.getPlayerAll(), {
+        const transferTo = game.aChoosePlayer(player, game.players.all(), {
           title: 'Choose a player to transfer card to'
         })
         const card = game.aChooseCard(player, choices, {

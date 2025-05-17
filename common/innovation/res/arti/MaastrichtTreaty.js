@@ -20,7 +20,7 @@ function Card() {
     (game, player) => {
       const playerCount = game.getCardsByZone(player, 'score').length
       const otherCounts = game
-        .getPlayerOpponents(player)
+        .players.opponentsOf(player)
         .map(player => game.getCardsByZone(player, 'score').length)
       const hasMost = otherCounts.every(count => count < playerCount)
       if (hasMost) {

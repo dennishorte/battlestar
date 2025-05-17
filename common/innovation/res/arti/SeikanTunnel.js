@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const zones = game
-        .getPlayerAll()
+        .players.all()
         .flatMap(player => game.utilColors().map(color => {
           return {
             player,

@@ -30,7 +30,7 @@ export default {
 
   computed: {
     players() {
-      return this.game.getPlayerAll()
+      return this.game.players.all()
     },
 
     scores() {

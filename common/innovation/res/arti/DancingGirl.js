@@ -58,7 +58,7 @@ function Card() {
 
      *   const info = game.state.dogmaInfo.dancingGirl
      *   const startingCondition = info.startingZone === `players.${player.name}.yellow`
-     *   const travelCondition = info.zones.length === game.getPlayerAll().length - 1
+     *   const travelCondition = info.zones.length === game.players.all().length - 1
 
      *   if (startingCondition && travelCondition) {
      *     throw new GameOverEvent({

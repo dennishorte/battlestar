@@ -17,8 +17,8 @@ const cardData = [
       "Each opponent recruits an Insane Outcast"
     ],
     impl: (game, player) => {
-      player.incrementPower(2)
-      for (const opp of game.getPlayerOpponents(player)) {
+      player.incrementCounter('power', 2)
+      for (const opp of game.players.opponentsOf(player)) {
         game.aRecruit(opp, 'Insane Outcast', { noCost: true })
       }
     },
@@ -42,7 +42,7 @@ const cardData = [
         then: () => game.aChooseOne(player, [
           {
             title: '+3 influence',
-            impl: (game, player) => player.incrementInfluence(3)
+            impl: (game, player) => player.incrementCounter('influence', 3)
           },
           {
             title: 'Assassinate a troop',
@@ -87,7 +87,7 @@ const cardData = [
     ],
     impl: (game, player) => {
       game.aChooseAndDevour(player, {
-        then: () => player.incrementPower(5)
+        then: () => player.incrementCounter('power', 5)
       })
     },
   },
@@ -112,7 +112,7 @@ const cardData = [
 
           // Select two troops from any trophy halls.
           const choices = game
-            .getPlayerAll()
+            .players.all()
             .flatMap(player => {
               const trophies = game
                 .getCardsByZone(player, 'trophyHall')
@@ -129,7 +129,7 @@ const cardData = [
 
           for (const selection of selected) {
             const [trophyName, ownerName] = selection.split(': ')
-            const trophyPlayer = game.getPlayerByName(trophyName)
+            const trophyPlayer = game.players.byName(trophyName)
             const troop = game
               .getCardsByZone(trophyPlayer, 'trophyHall')
               .find(c => c.getOwnerName() === ownerName)
@@ -168,7 +168,7 @@ const cardData = [
         .array
         .distinct(combined.flatMap(loc => loc.cards().map(troop => troop.getOwnerName())))
         .filter(name => name !== 'neutral')
-        .map(name => game.getPlayerByName(name))
+        .map(name => game.players.byName(name))
         .filter(p => p !== player)
 
       const opponent = game.aChoosePlayer(player, opponents)
@@ -277,7 +277,7 @@ const cardData = [
           game.aChooseAndSupplant(player, { whiteOnly: true })
           game.aChooseAndSupplant(player, { whiteOnly: true })
 
-          for (const opp of game.getPlayerOpponents(player)) {
+          for (const opp of game.players.opponentsOf(player)) {
             game.aRecruit(opp, 'Insane Outcast', { noCost: true })
             game.aRecruit(opp, 'Insane Outcast', { noCost: true })
           }
@@ -341,8 +341,8 @@ const cardData = [
           title: 'Return one of your spies > +2 power, +2 influence',
           impl: (game, player) => {
             game.aReturnASpyAnd(player, (game, player) => {
-              player.incrementInfluence(2)
-              player.incrementPower(2)
+              player.incrementCounter('influence', 2)
+              player.incrementCounter('power', 2)
             })
           }
         },
@@ -396,7 +396,7 @@ const cardData = [
           title: 'Return one of your spies > +5 power',
           impl: (game, player) => {
             game.aReturnASpyAnd(player, (game, player) => {
-              player.incrementPower(5)
+              player.incrementCounter('power', 5)
             })
           }
         },
@@ -461,8 +461,8 @@ const cardData = [
       "Choose an opponent. He or she recruits an Insane Outcast."
     ],
     impl: (game, player) => {
-      player.incrementInfluence(2)
-      const opp = game.aChoosePlayer(player, game.getPlayerOpponents(player))
+      player.incrementCounter('influence', 2)
+      const opp = game.aChoosePlayer(player, game.players.opponentsOf(player))
       if (opp) {
         game.aRecruit(opp, 'Insane Outcast', { noCost: true })
       }
@@ -483,7 +483,7 @@ const cardData = [
       "Promote the top card of your deck."
     ],
     impl: (game, player) => {
-      player.incrementInfluence(3)
+      player.incrementCounter('influence', 3)
       game.aPromoteTopCard(player)
     },
   },
@@ -519,7 +519,7 @@ const cardData = [
       "At end of turn, promote another card played this turn."
     ],
     impl: (game, player, { card }) => {
-      const opp = game.aChoosePlayer(player, game.getPlayerOpponents(player))
+      const opp = game.aChoosePlayer(player, game.players.opponentsOf(player))
       if (opp) {
         game.aRecruit(opp, 'Insane Outcast', { noCost: true })
         game.aDeferPromotion(player, card)
@@ -542,7 +542,7 @@ const cardData = [
       game.aChooseAndDevour(player, {
         zone: 'innerCircle',
         then: () => {
-          player.incrementInfluence(3)
+          player.incrementCounter('influence', 3)
           game.aDeferPromotion(player, card, { optional: true })
           game.aDeferPromotion(player, card, { optional: true })
         }

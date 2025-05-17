@@ -20,7 +20,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const choices = game
-        .getPlayerOpponents(player)
+        .players.opponentsOf(player)
         .flatMap(opp => game.getTopCards(opp))
         .filter(card => card !== undefined)
         .filter(card => card.biscuits.includes('l'))
@@ -42,7 +42,7 @@ function Card() {
 
       if (conditionMet) {
         throw new GameOverEvent({
-          player: game.getPlayerByName(biscuits[0].player),
+          player: game.players.byName(biscuits[0].player),
           reason: 'Bioengineering',
         })
       }

@@ -20,7 +20,7 @@ function Card() {
   this.inspireImpl = (game, player) => {
     let choices = []
 
-    for (const player of game.getPlayerAll()) {
+    for (const player of game.players.all()) {
       for (const color of game.utilColors()) {
         const zone = game.getZoneByPlayer(player, color)
         const cards = zone.cards()
@@ -87,7 +87,7 @@ function Card() {
       triggerAll: true,
       kind: 'would-first',
       matches: (game, player) => {
-        return player === game.getPlayerByCard(this)
+        return player === game.players.byOwner(this)
       },
       func: (game, player, { card }) => {
         game.aTransfer(player, card, game.getZoneByPlayer(player, 'score'))

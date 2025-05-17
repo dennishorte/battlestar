@@ -32,7 +32,7 @@ function Card() {
       matches: (game, player, { card }) => card.checkHasBiscuit('s') || card.checkHasBiscuit('i'),
       func: (game, player) => {
         const choices = game
-          .getPlayerOpponents(player)
+          .players.opponentsOf(player)
           .flatMap(opp => game.getTopCards(opp))
           .filter(card => !card.checkHasBiscuit('s') && !card.checkHasBiscuit('i'))
         game.aChooseAndScore(player, choices)

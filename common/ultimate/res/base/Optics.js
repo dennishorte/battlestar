@@ -32,7 +32,7 @@ function Card() {
           })
           const playerScore = game.getScore(player)
           const targets = game
-            .getPlayerOpponents(player)
+            .players.opponentsOf(player)
             .filter(other => game.getScore(other) < playerScore)
 
           if (targets.length > 0) {

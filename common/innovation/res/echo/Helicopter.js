@@ -19,13 +19,13 @@ function Card() {
     (game, player, { self }) => {
       while (true) {
         const choices = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game.getTopCards(player))
           .filter(c => c !== self)
         const card = game.aChooseCard(player, choices)
 
         if (card) {
-          const owner = game.getPlayerByCard(card)
+          const owner = game.players.byOwner(card)
           game.aTransfer(player, card, game.getZoneByPlayer(owner, 'score'))
 
           const returnChoices = game

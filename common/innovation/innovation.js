@@ -51,7 +51,7 @@ Innovation.prototype._mainProgram = function() {
 }
 
 Innovation.prototype._gameOver = function(event) {
-  for (const player of this.getPlayerAll()) {
+  for (const player of this.players.all()) {
     try {
       this.state.wouldWinKarma = true
       this.aKarma(player, 'would-win')
@@ -79,7 +79,6 @@ Innovation.prototype.initialize = function() {
 
   this.cardData = res.generate()
 
-  this.initializePlayers()
   this.initializeTeams()
   this.initializeZones()
   this.initializeStartingCards()
@@ -110,24 +109,11 @@ Innovation.prototype.initializeTransientState = function() {
   }
 }
 
-Innovation.prototype.initializePlayers = function() {
-  this.state.players = this.settings.players.map(p => ({
-    _id: p._id,
-    id: p.name,
-    name: p.name,
-    team: p.name,
-  }))
-  util.array.shuffle(this.state.players, this.random)
-  this.state.players.forEach((player, index) => {
-    player.index = index
-  })
-}
-
 Innovation.prototype.initializeTeams = function() {
-  const players = this.state.players
+  const players = this.players.all()
   let teamMod = players.length
   if (this.settings.teams) {
-    util.assert(this.getPlayerAll().length === 4, 'Teams only supported with 4 players')
+    util.assert(this.players.all().length === 4, 'Teams only supported with 4 players')
     teamMod = 2
   }
   for (let i = 0; i < players.length; i++) {
@@ -214,7 +200,7 @@ Innovation.prototype.initializeZonesPlayers = function() {
     root[name].owner = player.name
   }
 
-  for (const player of this.getPlayerAll()) {
+  for (const player of this.players.all()) {
     const root = {}
     _addPlayerZone(player, 'hand', 'private', root)
     _addPlayerZone(player, 'score', 'private', root)
@@ -236,7 +222,7 @@ Innovation.prototype.initializeZonesPlayers = function() {
 }
 
 Innovation.prototype.initializeStartingCards = function() {
-  for (const player of this.getPlayerAll()) {
+  for (const player of this.players.all()) {
     this.mDraw(player, 'base', 1, { silent: true })
 
     if (this.getExpansionList().includes('echo')) {
@@ -256,7 +242,7 @@ Innovation.prototype.firstPicks = function() {
   this.log.add({ template: 'Choosing starting cards' })
   this.log.indent()
   const requests = this
-    .getPlayerAll()
+    .players.all()
     .map(p => ({
       actor: this.utilSerializeObject(p),
       title: 'Choose First Card',
@@ -266,7 +252,7 @@ Innovation.prototype.firstPicks = function() {
   const picks = this
     .requestInputMany(requests)
     .map(resp => [
-      this.getPlayerByName(resp.actor),
+      this.players.byName(resp.actor),
       this.getCardByName(resp.selection[0])
     ])
     .sort((l, r) => l[1].name.localeCompare(r[1].name))
@@ -274,7 +260,7 @@ Innovation.prototype.firstPicks = function() {
     this.mMeld(player, card)
   }
 
-  this.state.currentPlayer = picks[0][0]
+  this.players.passToPlayer(picks[0][0])
 
   this.log.outdent()
 
@@ -289,7 +275,7 @@ Innovation.prototype.mainLoop = function() {
       template: "{player}'s turn {count}",
       classes: ['player-turn-start'],
       args: {
-        player: this.getPlayerCurrent(),
+        player: this.players.current(),
         count: this.state.round,
       }
     })
@@ -302,7 +288,7 @@ Innovation.prototype.mainLoop = function() {
 }
 
 Innovation.prototype.artifact = function() {
-  const player = this.getPlayerCurrent()
+  const player = this.players.current()
   const artifact = this.getZoneByPlayer(player, 'artifact').cards()[0]
   if (artifact) {
     this.log.add({
@@ -345,10 +331,10 @@ Innovation.prototype.artifact = function() {
 }
 
 Innovation.prototype.action = function(count) {
-  const player = this.getPlayerCurrent()
+  const player = this.players.current()
 
   // The first player (or two) only gets one action
-  const numFirstPlayers = this.getPlayerAll().length >= 4 ? 2 : 1
+  const numFirstPlayers = this.players.all().length >= 4 ? 2 : 1
   if (this.state.turn <= numFirstPlayers) {
     if (count === 1) {
       this.log.add({
@@ -410,7 +396,7 @@ Innovation.prototype.action = function(count) {
 }
 
 Innovation.prototype.fadeFiguresCheck = function() {
-  for (const player of this.getPlayerAll()) {
+  for (const player of this.players.all()) {
     const topFiguresFn = () => this
       .getTopCards(player)
       .filter(card => card.checkIsFigure())
@@ -442,12 +428,12 @@ Innovation.prototype.fadeFiguresCheck = function() {
 }
 
 Innovation.prototype.endTurn = function() {
-  const players = this.getPlayerAll()
-
   // Set next player
-  this.state.currentPlayer = this.getPlayerNext()
+  this.players.advancePlayer()
 
   // Track number of turns
+  // TODO (dennis): This will fail if a player is eliminated but the game doesn't end
+  const players = this.players.all()
   this.state.turn += 1
   this.state.round = Math.floor((this.state.turn + players.length - 1) / players.length)
 
@@ -531,7 +517,7 @@ Innovation.prototype.aOneEffect = function(
     .concat(opts.demanding)
 
   const actorsOrdered = this
-    .getPlayersEnding(player)
+    .players.endingWith(player)
     .filter(player => actors.includes(player))
 
   for (const actor of actorsOrdered) {
@@ -740,7 +726,7 @@ Innovation.prototype.aChoosePlayer = function(player, choices, opts={}) {
     return undefined
   }
   else {
-    return this.getPlayerByName(playerNames[0])
+    return this.players.byName(playerNames[0])
   }
 }
 
@@ -894,7 +880,7 @@ Innovation.prototype.aClaimAchievement = function(player, opts={}) {
 
   if (opts.isStandard && this.getExpansionList().includes('figs')) {
     const others = this
-      .getPlayersStarting(player)
+      .players.startingWith(player)
       .filter(other => !this.checkSameTeam(player, other))
 
     for (const opp of others) {
@@ -1009,7 +995,7 @@ Innovation.prototype._aDogmaHelper_logSharing = function(shareData) {
 
 Innovation.prototype._aDogmaHelper_executeEffects = function(player, card, shareData, opts) {
   // Store planned effects now, as changes to the stacks shouldn't affect them.
-  const cardOwner = this.getPlayerByCard(card)
+  const cardOwner = this.players.byOwner(card)
   const effects = [
     ...this.getVisibleEffectsByColor(cardOwner, card.color, 'echo'),
     this.getVisibleEffects(card, 'dogma')
@@ -1061,7 +1047,7 @@ Innovation.prototype._aDogmaHelper_shareBonus = function(player, card) {
 
   // Grace Hopper and Susan Blackmore have "if your opponent didn't share" karma effects
   else if (this.state.couldShare) {
-    for (const other of this.getPlayerOpponents(player)) {
+    for (const other of this.players.opponentsOf(player)) {
       this.aKarma(other, 'no-share', { card, leader: player })
     }
   }
@@ -1308,12 +1294,12 @@ Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
     if (info.impl.kind && info.impl.kind.startsWith('would')) {
       this.log.add({
         template: 'Multiple `would` karma effects would trigger, so {player} will choose one',
-        args: { player: this.getPlayerCurrent() }
+        args: { player: this.players.current() }
       })
 
       const infoChoices = infos.map(info => info.card)
       const chosenCard = this.aChooseCard(
-        this.getPlayerCurrent(),
+        this.players.current(),
         infoChoices,
         { title: 'Choose a would karma to trigger' }
       )
@@ -1917,7 +1903,7 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
     .filter(x => {
       const myCount = this.getVisibleCardsByZone(player, x.card.color)
       const otherCounts = this
-        .getPlayerAll()
+        .players.all()
         .filter(other => other !== player)
         .map(other => this.getVisibleCardsByZone(other, x.card.color))
       return otherCounts.every(count => count <= myCount)
@@ -1954,7 +1940,7 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
 
 Innovation.prototype.getBiscuits = function() {
   const biscuits = this
-    .getPlayerAll()
+    .players.all()
     .map(player => [player.name, this.getBiscuitsByPlayer(player)])
   return Object.fromEntries(biscuits)
 }
@@ -2025,7 +2011,7 @@ Innovation.prototype.getCardsByZone = function(player, zoneName) {
 
 Innovation.prototype.getEffectAge = function(card, age) {
   const cardZone = this.getZoneByCard(card)
-  const player = this.getPlayerByZone(cardZone)
+  const player = this.players.byZone(cardZone)
 
   if (player) {
     const karmaInfos = this.getInfoByKarmaTrigger(player, 'effect-age')
@@ -2059,7 +2045,7 @@ Innovation.prototype.getInfoByKarmaTrigger = function(player, trigger) {
   }
 
   const global = this
-    .getPlayerOpponents(player)
+    .players.opponentsOf(player)
     .flatMap(opp => this.getTopCards(opp))
     .flatMap(card => card.getKarmaInfo(trigger))
     .filter(info => info.impl.triggerAll)
@@ -2069,7 +2055,7 @@ Innovation.prototype.getInfoByKarmaTrigger = function(player, trigger) {
     .flatMap(card => card.getKarmaInfo(trigger))
 
   const all = [...thisPlayer, ...global]
-    .map(info => ({ ...info, owner: this.getPlayerByCard(info.card) }))
+    .map(info => ({ ...info, owner: this.players.byOwner(info.card) }))
 
   return all
 }
@@ -2118,26 +2104,10 @@ Innovation.prototype.getNonEmptyAges = function() {
 
 Innovation.prototype.getNumAchievementsToWin = function() {
   const base = 6
-  const numPlayerAdjustment = 2 - this.getPlayerAll().length
+  const numPlayerAdjustment = 2 - this.players.all().length
   const numExpansionAdjustment = this.getExpansionList().length - 1
 
   return base + numPlayerAdjustment + numExpansionAdjustment
-}
-
-Innovation.prototype.getPlayerByCard = function(card) {
-  try {
-    const zone = this.getZoneById(card.zone)
-    return this.getPlayerByZone(zone)
-  }
-  catch {
-    return undefined
-  }
-}
-
-Innovation.prototype.getPlayerTeam = function(player) {
-  return this
-    .getPlayerAll()
-    .filter(p => this.checkSameTeam(p, player))
 }
 
 Innovation.prototype.getResources = function() {
@@ -2200,7 +2170,7 @@ Innovation.prototype.getTopCards = function(player) {
 
 Innovation.prototype.getTopCardsAll = function() {
   return this
-    .getPlayerAll()
+    .players.all()
     .flatMap(player => this.getTopCards(player))
 }
 
@@ -2216,7 +2186,7 @@ Innovation.prototype.getVisibleCardsByZone = function(player, zoneName) {
 }
 
 Innovation.prototype.getVisibleEffects = function(card, kind) {
-  const player = this.getPlayerByCard(card)
+  const player = this.players.byOwner(card)
   const isTop = this.checkCardIsTop(card) || card.zone.endsWith('.artifact')
   const splay = this.getSplayByCard(card)
 
@@ -2319,7 +2289,7 @@ Innovation.prototype.getZoneByDeck = function(exp, age) {
 
 Innovation.prototype.mAchievementCheck = function() {
   const available = this.getZoneById('achievements').cards()
-  for (const player of this.getPlayersStartingCurrent()) {
+  for (const player of this.players.startingWithCurrent()) {
     const reduceCost = this.getInfoByKarmaTrigger(
       player,
       'reduce-special-achievement-requirements'
@@ -2341,7 +2311,7 @@ Innovation.prototype.mAchievementVictoryCheck = function() {
     return
   }
 
-  for (const player of this.getPlayerAll()) {
+  for (const player of this.players.all()) {
     if (this.getAchievementsByPlayer(player).total >= this.getNumAchievementsToWin()) {
       throw new GameOverEvent({
         player,
@@ -2371,7 +2341,7 @@ Innovation.prototype.mActed = function(player) {
   if (
     !this.state.dogmaInfo.demanding
     && this.state.dogmaInfo.acting === player
-    && !this.checkSameTeam(player, this.getPlayerCurrent())
+    && !this.checkSameTeam(player, this.players.current())
   ) {
     this.state.shared = true
   }
@@ -2405,7 +2375,7 @@ Innovation.prototype.mAdjustCardVisibility = function(card) {
   }
 
   else if (zone.kind === 'public') {
-    card.visibility = this.getPlayerAll().map(p => p.name)
+    card.visibility = this.players.all().map(p => p.name)
   }
 
   else if (zone.kind === 'private') {
@@ -2420,7 +2390,7 @@ Innovation.prototype.mAdjustCardVisibility = function(card) {
 Innovation.prototype.mDraw = function(player, exp, age, opts={}) {
   if (age > 10) {
     const scores = this
-      .getPlayerAll()
+      .players.all()
       .map(player => ({
         player,
         score: this.getScore(player),
@@ -2505,6 +2475,10 @@ Innovation.prototype.mMoveByIndices = function(source, sourceIndex, target, targ
   sourceCards.splice(sourceIndex, 1)
   targetCards.splice(targetIndex, 0, card)
   card.zone = target.id
+
+  const zoneOwner = this.players.byZone(target)
+  card.owner = zoneOwner ? zoneOwner : null
+
   this.mAdjustCardVisibility(card)
   return card
 }
@@ -2580,7 +2554,7 @@ Innovation.prototype.mResetDogmaInfo = function() {
 
 Innovation.prototype.mResetMonumentCounts = function() {
   const emptyInfo = this
-    .getPlayerAll()
+    .players.all()
     .map(p => [p.name, { tuck: 0, score: 0 }])
   this.state.monument = Object.fromEntries(emptyInfo)
 }
@@ -2612,7 +2586,7 @@ Innovation.prototype.mReturn = function(player, card, opts) {
 }
 
 Innovation.prototype.mReveal = function(player, card) {
-  card.visibility = this.getPlayerAll().map(p => p.name)
+  card.visibility = this.players.all().map(p => p.name)
   this.log.add({
     template: '{player} reveals {card}',
     args: { player, card }
@@ -2662,7 +2636,7 @@ Innovation.prototype.mSplay = function(player, color, direction, opts) {
 }
 
 Innovation.prototype.mSplayCheck = function() {
-  for (const player of this.getPlayerAll()) {
+  for (const player of this.players.all()) {
     for (const color of this.utilColors()) {
       const zone = this.getZoneByPlayer(player, color)
       if (zone.cards().length < 2) {
@@ -2831,7 +2805,7 @@ Innovation.prototype.utilSerializeObject = function(obj) {
 ////////////////////////////////////////////////////////////////////////////////
 // Private functions
 Innovation.prototype._getHiddenName = function(card) {
-  const owner = this.getPlayerByCard(card)
+  const owner = this.players.byOwner(card)
   if (owner) {
     return `*${card.expansion}-${card.age}* (${owner.name})`
   }
@@ -2939,7 +2913,7 @@ Innovation.prototype.getEligibleAchievements = function(player, opts={}) {
 }
 
 Innovation.prototype._generateActionChoicesAchieve = function() {
-  const player = this.getPlayerCurrent()
+  const player = this.players.current()
 
   return {
     title: 'Achieve',
@@ -2949,7 +2923,7 @@ Innovation.prototype._generateActionChoicesAchieve = function() {
 }
 
 Innovation.prototype._generateActionChoicesDecree = function() {
-  const player = this.getPlayerCurrent()
+  const player = this.players.current()
 
   const figuresInHand = this
     .getZoneByPlayer(player, 'hand')
@@ -2990,7 +2964,7 @@ Innovation.prototype.getDogmaTargets = function(player) {
 }
 
 Innovation.prototype._generateActionChoicesDogma = function() {
-  const player = this.getPlayerCurrent()
+  const player = this.players.current()
 
   const dogmaTargets = this.getTopCards(player)
 
@@ -3019,7 +2993,7 @@ Innovation.prototype._generateActionChoicesDraw = function() {
 }
 
 Innovation.prototype._generateActionChoicesEndorse = function() {
-  const player = this.getPlayerCurrent()
+  const player = this.players.current()
 
   const lowestHandAge = this
     .getZoneByPlayer(player, 'hand')
@@ -3056,7 +3030,7 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
 }
 
 Innovation.prototype._generateActionChoicesInspire = function() {
-  const player = this.getPlayerCurrent()
+  const player = this.players.current()
   const inspireColors = []
 
   if (!this.state.didInspire) {
@@ -3076,7 +3050,7 @@ Innovation.prototype._generateActionChoicesInspire = function() {
 }
 
 Innovation.prototype._generateActionChoicesMeld = function() {
-  const player = this.getPlayerCurrent()
+  const player = this.players.current()
   const cards = this
     .getZoneByPlayer(player, 'hand')
     .cards()
@@ -3098,12 +3072,12 @@ Innovation.prototype.getSharingAndDemanding = function(player, featuredBiscuit, 
   const biscuitComparator = this._getBiscuitComparator(player, featuredBiscuit, biscuits)
 
   const sharing = this
-    .getPlayerAll()
+    .players.all()
     .filter(p => p !== player)
     .filter(p => biscuitComparator(p))
 
   const demanding = this
-    .getPlayerAll()
+    .players.all()
     .filter(p => p !== player)
     .filter(p => !biscuitComparator(p))
 

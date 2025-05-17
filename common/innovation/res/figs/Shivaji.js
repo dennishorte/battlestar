@@ -31,7 +31,7 @@ function Card() {
       triggerAll: true,
       kind: 'would-instead',
       matches: (game, player, { card }) => {
-        const owner = game.getPlayerByCard(this)
+        const owner = game.players.byOwner(this)
         return player !== owner && game.checkAchievementEligibility(owner, card)
       },
       func: (game, player, { card, owner }) => {

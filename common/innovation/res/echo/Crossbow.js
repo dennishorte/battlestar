@@ -26,7 +26,7 @@ function Card() {
 
     (game, player) => {
       const otherChoices = game
-        .getPlayerAll()
+        .players.all()
         .filter(other => other !== player)
       const other = game.aChoosePlayer(player, otherChoices)
       const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'))

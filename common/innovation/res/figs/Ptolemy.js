@@ -30,7 +30,7 @@ function Card() {
       trigger: 'list-effects',
       func(game) {
         return game
-          .getPlayerAll()
+          .players.all()
           .map(player => game.getTopCard(player, 'blue'))
           .filter(card => card !== undefined)
       }

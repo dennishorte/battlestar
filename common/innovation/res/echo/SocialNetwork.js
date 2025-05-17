@@ -31,7 +31,7 @@ function Card() {
     (game, player) => {
       const mine = game.getBiscuitsByPlayer(player)
       const theirs = game
-        .getPlayerAll()
+        .players.all()
         .filter(other => other !== player)
         .map(other => game.getBiscuitsByPlayer(other))
 

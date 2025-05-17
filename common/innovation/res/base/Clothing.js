@@ -32,7 +32,7 @@ function Card() {
 
     (game, player) => {
       const opponentColors = game
-        .getPlayerOpponents(player)
+        .players.opponentsOf(player)
         .flatMap(opp => game.getTopCards(opp))
         .map(card => card.color)
 

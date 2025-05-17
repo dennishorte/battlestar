@@ -28,7 +28,10 @@ TestUtil.fixture = function(options) {
         _id: 'eliya_id',
         name: 'eliya',
       },
-    ]
+    ],
+    playerOptions: {
+      shuffleSeats: false,
+    },
   }, options)
 
   options.players = options.players.slice(0, options.numPlayers)
@@ -36,12 +39,6 @@ TestUtil.fixture = function(options) {
   const game = InnovationFactory(options, 'dennis')
 
   game.testSetBreakpoint('initialization-complete', (game) => {
-    // Set turn order
-    game.state.players = ['dennis', 'micah', 'scott', 'eliya']
-      .slice(0, game.settings.numPlayers)
-      .map(name => game.getPlayerByName(name))
-      .filter(p => p !== undefined)
-
     // Set initial cards in hand
     TestUtil.clearHands(game)
     TestUtil.setHand(game, 'dennis', ['Archery', 'Domestication'])
@@ -106,11 +103,11 @@ TestUtil.fixtureTopCard = function(cardName, options) {
   const game = TestUtil.fixtureFirstPlayer(options)
   game.testSetBreakpoint('before-first-player', (game) => {
     game
-      .getPlayerAll()
+      .players.all()
       .forEach(player => TestUtil.clearBoard(game, player.name))
 
     const card = game.getCardByName(cardName)
-    TestUtil.setColor(game, game.getPlayerCurrent().name, card.color, [cardName])
+    TestUtil.setColor(game, game.players.current().name, card.color, [cardName])
   })
   return game
 }
@@ -272,7 +269,7 @@ TestUtil.testBoard = function(game, state) {
   const expected = {}
   const real = {}
 
-  for (const player of game.getPlayerAll()) {
+  for (const player of game.players.all()) {
     const expectedBoard = _buildPlayerBoard(game, state[player.name])
     const realBoard = _blankTableau()
 
@@ -311,7 +308,7 @@ TestUtil.testBoard = function(game, state) {
 TestUtil.dumpBoard = function(game) {
   const real = {}
 
-  for (const player of game.getPlayerAll()) {
+  for (const player of game.players.all()) {
     const realBoard = _blankTableau()
 
     for (const color of game.utilColors()) {
@@ -351,7 +348,7 @@ TestUtil.testNotGameOver = function(request) {
 // Data Shortcuts
 
 TestUtil.dennis = function(game) {
-  return game.getPlayerByName('dennis')
+  return game.players.byName('dennis')
 }
 
 TestUtil.cards = function(game, zoneName, playerName='dennis') {
@@ -359,7 +356,7 @@ TestUtil.cards = function(game, zoneName, playerName='dennis') {
 }
 
 TestUtil.zone = function(game, zoneName, playerName='dennis') {
-  return game.getZoneByPlayer(game.getPlayerByName(playerName), zoneName)
+  return game.getZoneByPlayer(game.players.byName(playerName), zoneName)
 }
 
 
@@ -367,7 +364,7 @@ TestUtil.zone = function(game, zoneName, playerName='dennis') {
 // Handy functions
 
 TestUtil.clearZone = function(game, playerName, zoneName) {
-  const player = game.getPlayerByName(playerName)
+  const player = game.players.byName(playerName)
   const zone = game.getZoneByPlayer(player, zoneName)
   for (const card of zone.cards()) {
     game.mReturn(player, card, { silent: true })
@@ -375,7 +372,7 @@ TestUtil.clearZone = function(game, playerName, zoneName) {
 }
 
 TestUtil.clearBoard = function(game, playerName) {
-  const player = game.getPlayerByName(playerName)
+  const player = game.players.byName(playerName)
   for (const color of game.utilColors()) {
     const zone = game.getZoneByPlayer(player, color)
     for (const card of zone.cards()) {
@@ -385,13 +382,13 @@ TestUtil.clearBoard = function(game, playerName) {
 }
 
 TestUtil.clearBoards = function(game) {
-  for (const player of game.getPlayerAll()) {
+  for (const player of game.players.all()) {
     TestUtil.clearBoard(game, player.name)
   }
 }
 
 TestUtil.clearHand = function(game, playerName) {
-  const player = game.getPlayerByName(playerName)
+  const player = game.players.byName(playerName)
   const cards = game.getZoneByPlayer(player, 'hand').cards()
   for (const card of cards) {
     game.mMoveCardTo(card, game.getZoneById(card.home))
@@ -399,7 +396,7 @@ TestUtil.clearHand = function(game, playerName) {
 }
 
 TestUtil.clearHands = function(game) {
-  for (const player of game.getPlayerAll()) {
+  for (const player of game.players.all()) {
     TestUtil.clearHand(game, player.name)
   }
 }
@@ -413,7 +410,7 @@ TestUtil.getChoices = function(request, kind) {
 }
 
 TestUtil.setAchievements = function(game, playerName, cardNames) {
-  const player = game.getPlayerByName(playerName)
+  const player = game.players.byName(playerName)
   const zone = game.getZoneByPlayer(player, 'achievements')
   const cards = cardNames.map(name => game.getCardByName(name))
   for (const card of zone.cards()) {
@@ -440,7 +437,7 @@ TestUtil.setAvailableAchievements = function(game, cardNames) {
 }
 
 TestUtil.setColor = function(game, playerName, colorName, cardNames) {
-  const player = game.getPlayerByName(playerName)
+  const player = game.players.byName(playerName)
   const zone = game.getZoneByPlayer(player, colorName)
   const cards = cardNames.map(name => game.getCardByName(name))
   for (const card of zone.cards()) {
@@ -463,7 +460,7 @@ TestUtil.setDeckTop = function(game, exp, age, cardNames) {
 
 TestUtil.setForecast = function(game, playerName, cardNames) {
   TestUtil.clearHand(game, playerName)
-  const player = game.getPlayerByName(playerName)
+  const player = game.players.byName(playerName)
   const forecast = game.getZoneByPlayer(player, 'forecast')
   for (const name of cardNames) {
     const card = game.getCardByName(name)
@@ -473,7 +470,7 @@ TestUtil.setForecast = function(game, playerName, cardNames) {
 
 TestUtil.setHand = function(game, playerName, cardNames) {
   TestUtil.clearHand(game, playerName)
-  const player = game.getPlayerByName(playerName)
+  const player = game.players.byName(playerName)
   const hand = game.getZoneByPlayer(player, 'hand')
   for (const name of cardNames) {
     const card = game.getCardByName(name)
@@ -483,7 +480,7 @@ TestUtil.setHand = function(game, playerName, cardNames) {
 
 TestUtil.setScore = function(game, playerName, cardNames) {
   TestUtil.clearZone(game, playerName, 'score')
-  const player = game.getPlayerByName(playerName)
+  const player = game.players.byName(playerName)
   const score = game.getZoneByPlayer(player, 'score')
   for (const name of cardNames) {
     const card = game.getCardByName(name)
@@ -493,14 +490,14 @@ TestUtil.setScore = function(game, playerName, cardNames) {
 
 TestUtil.setArtifact = function(game, playerName, cardName) {
   TestUtil.clearZone(game, playerName, 'artifact')
-  const player = game.getPlayerByName(playerName)
+  const player = game.players.byName(playerName)
   const score = game.getZoneByPlayer(player, 'artifact')
   const card = game.getCardByName(cardName)
   game.mMoveCardTo(card, score)
 }
 
 TestUtil.setSplay = function(game, playerName, color, direction) {
-  const player = game.getPlayerByName(playerName)
+  const player = game.players.byName(playerName)
   const zone = game.getZoneByPlayer(player, color)
   zone.splay = direction
 }

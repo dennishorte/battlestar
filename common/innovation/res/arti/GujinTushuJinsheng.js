@@ -26,7 +26,8 @@ function Card() {
       }
 
       const choices = game
-        .getPlayerOther(player)
+        .players
+        .other(player)
         .flatMap(player => game.getTopCards(player))
       const card = game.aChooseCard(player, choices)
       if (card) {

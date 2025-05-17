@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = (game, player) => {
     const choices = game
-      .getPlayerOpponents(player)
+      .players.opponentsOf(player)
       .flatMap(opp => game.getTopCards(opp))
       .filter(card => card.checkIsFigure())
       .filter(card => card.getAge() === 1)

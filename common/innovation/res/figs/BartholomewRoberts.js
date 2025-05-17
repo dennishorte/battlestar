@@ -19,7 +19,7 @@ function Card() {
   this.echoImpl = []
   this.inspireImpl = (game, player) => {
     const choices = game
-      .getPlayerAll()
+      .players.all()
       .flatMap(p => game.getTopCards(p))
       .filter(card => card.biscuits.includes('c'))
     game.aChooseAndScore(player, choices)

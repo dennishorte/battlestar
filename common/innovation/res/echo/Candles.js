@@ -30,7 +30,7 @@ function Card() {
   this.echoImpl = (game, player) => {
     const playerScore = game.getScore(player)
     const otherScores = game
-      .getPlayerAll()
+      .players.all()
       .filter(other => other !== player)
       .map(other => game.getScore(other))
     const isLowest = otherScores.every(score => score > playerScore)

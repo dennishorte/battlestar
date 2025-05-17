@@ -42,7 +42,7 @@ class MagicLogManager extends LogManager {
       }
       else if (key.startsWith('zone')) {
         const zone = entry.args[key]
-        const owner = this._game.getPlayerByZone(zone)
+        const owner = this._game.players.byZone(zone)
 
         const value = owner ? `${owner.name}'s ${zone.name}` : zone.name
 
@@ -62,4 +62,4 @@ class MagicLogManager extends LogManager {
 }
 
 
-module.exports = MagicLogManager
+module.exports = { MagicLogManager }

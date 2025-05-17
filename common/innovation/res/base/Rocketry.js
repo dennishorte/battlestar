@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const count = Math.floor(game.getBiscuitsByPlayer(player).i / 2)
-      const opp = game.aChoosePlayer(player, game.getPlayerOpponents(player))
+      const opp = game.aChoosePlayer(player, game.players.opponentsOf(player))
       game.aChooseAndReturn(player, game.getCardsByZone(opp, 'score'), { count })
     }
   ]

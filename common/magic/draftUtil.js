@@ -10,7 +10,7 @@ DraftUtil.makePacks = function(data) {
     const cards = []
     util.array.shuffle(cards, this.random)
 
-    const players = this.getPlayerAll()
+    const players = this.players.all()
     const numPacks = data.count * players.length
 
     for (let i = 0; i < numPacks; i++) {

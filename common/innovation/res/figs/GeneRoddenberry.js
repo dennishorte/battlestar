@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = (game, player) => {
     const purples = game
-      .getPlayerAll()
+      .players.all()
       .map(player => game.getTopCard(player, 'purple'))
       .filter(card => card !== undefined)
     game.aChooseAndMeld(player, purples)
@@ -42,7 +42,7 @@ function Card() {
         else {
           game.aTuck(player, card)
           const topFigures = game
-            .getPlayerAll()
+            .players.all()
             .flatMap(player => game.getTopCards(player))
             .filter(card => card.checkIsFigure())
           game.aChooseAndReturn(player, topFigures)

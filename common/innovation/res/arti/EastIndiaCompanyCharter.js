@@ -20,7 +20,7 @@ function Card() {
       const age = game.aChooseAge(player, [1,2,3,4, /*5,*/ 6,7,8,9,10])
       const toReturn = []
       const playerCards = {}
-      for (const player of game.getPlayerAll()) {
+      for (const player of game.players.all()) {
         const cards = game
           .getCardsByZone(player, 'score')
           .filter(card => card.getAge() === age)

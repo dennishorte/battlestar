@@ -27,7 +27,7 @@ function Card() {
       matches: (game, player, { card }) => card.checkHasBiscuit('f'),
       func: (game, player) => {
         const choices = game
-          .getPlayerAll()
+          .players.all()
           .filter(other => other !== player)
           .flatMap(player => game.getTopCards(player))
           .filter(card => card.checkHasBiscuit('f'))

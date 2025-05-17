@@ -45,7 +45,7 @@ function Card() {
 
     if (!game.state.dogmaInfo.charitableTrust) {
       game.state.dogmaInfo.charitableTrust = {}
-      game.getPlayerAll().forEach(p => game.state.dogmaInfo.charitableTrust[p.name] = [])
+      game.players.all().forEach(p => game.state.dogmaInfo.charitableTrust[p.name] = [])
     }
 
     game.state.dogmaInfo.charitableTrust[player.name].push(card)

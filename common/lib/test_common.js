@@ -19,7 +19,7 @@ TestCommon.testBoard = function() {
 
 
 TestCommon.dennis = function(game) {
-  return game.getPlayerByName('dennis')
+  return game.players.byName('dennis')
 }
 
 // Select an option from the input request. (Game.requestInputMany)

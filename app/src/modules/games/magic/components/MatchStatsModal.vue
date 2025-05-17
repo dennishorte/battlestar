@@ -98,7 +98,7 @@ export default {
           draftId,
         })
 
-        const players = this.game.getPlayerAll().map(p => p.name).sort()
+        const players = this.game.players.all().map(p => p.name).sort()
 
         this.draft = draft
         this.games = games

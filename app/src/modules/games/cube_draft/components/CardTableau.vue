@@ -42,7 +42,7 @@ export default {
 
   methods: {
     cannotDraft(card) {
-      const player = this.game.getPlayerByName(this.actor.name)
+      const player = this.game.players.byName(this.actor.name)
       return card.g.id === player.scarredCardId
     },
 

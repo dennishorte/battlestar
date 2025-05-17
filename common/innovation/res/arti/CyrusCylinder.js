@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const choices = game
-        .getPlayerAll()
+        .players.all()
         .map(player => game.getTopCard(player, 'purple'))
         .filter(card => card !== undefined)
         .filter(card => card.name !== this.name)
@@ -32,14 +32,14 @@ function Card() {
 
     (game, player) => {
       const splayChoices = game
-        .getPlayerAll()
+        .players.all()
         .flatMap(player => game.utilColors().map(color => ({ player, color })))
         .map(x => `${x.player.name}-${x.color}`)
 
       const selections = game.aChoose(player, splayChoices)
       if (selections && selections.length > 0) {
         const [playerName, color] = selections[0].split('-')
-        const other = game.getPlayerByName(playerName)
+        const other = game.players.byName(playerName)
         game.aSplay(player, color, 'left', { owner: other })
       }
     }

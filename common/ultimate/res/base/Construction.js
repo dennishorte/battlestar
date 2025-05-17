@@ -34,7 +34,7 @@ function Card() {
         .getTopCards(player)
         .length === 5
       const othersHaveFive = game
-        .getPlayerAll()
+        .players.all()
         .filter(p => p !== player)
         .map(p => game.getTopCards(p).length)
         .filter(count => count === 5)

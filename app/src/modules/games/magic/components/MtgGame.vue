@@ -54,7 +54,7 @@ export default {
     },
 
     player() {
-      return this.game ? this.game.getPlayerByName(this.actor.name) : null
+      return this.game ? this.game.players.byName(this.actor.name) : null
     },
   },
 

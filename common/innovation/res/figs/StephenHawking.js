@@ -26,7 +26,7 @@ function Card() {
       triggerAll: true,
       matches: (game, player, { card }) => {
         // Only affects cards that are on the same board as Stephen Hawking.
-        return game.getPlayerByCard(this) === game.getPlayerByCard(card)
+        return game.players.byOwner(this) === game.players.byOwner(card)
       },
 
       // Note that player here is the owner of Stephen Hawking and card is a card in a stack

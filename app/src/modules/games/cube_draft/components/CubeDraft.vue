@@ -191,13 +191,13 @@ export default {
     }),
 
     doingScars() {
-      const player = this.game.getPlayerByName(this.actor.name)
+      const player = this.game.players.byName(this.actor.name)
       const waiting = this.game.getWaiting(player)
       return waiting && waiting.title === 'Apply Scar'
     },
 
     player() {
-      return this.game.getPlayerByName(this.actor.name)
+      return this.game.players.byName(this.actor.name)
     },
 
     tableauCards() {
@@ -267,7 +267,7 @@ export default {
 
     async loadGame() {
       // Load deck
-      const player = this.game.getPlayerByName(this.actor.name)
+      const player = this.game.players.byName(this.actor.name)
       const { deck } = await this.$post('/api/magic/deck/fetch', {
         deckId: player.deckId,
       })

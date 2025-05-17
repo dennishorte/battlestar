@@ -261,7 +261,7 @@ describe('Magic Actions', () => {
 
     const request1 = game.run()
 
-    const player = game.getPlayerByName('dennis')
+    const player = game.players.byName('dennis')
     expect(player.counters.energy).toBe(undefined)
 
     const request2 = t.do(game, request1, {
@@ -384,7 +384,7 @@ describe('Magic Actions', () => {
       name: 'concede',
     })
 
-    const player = game.getPlayerByName('dennis')
+    const player = game.players.byName('dennis')
     expect(player.eliminated).toBe(true)
 
     // Since it is a two player game, the other player should win
@@ -569,7 +569,7 @@ describe('Magic Actions', () => {
       target: 'micah',
     })
 
-    expect(game.state.currentPlayer.name).toBe('micah')
+    expect(game.players.current().name).toBe('micah')
   })
 
   test('reveal', () => {
@@ -583,7 +583,7 @@ describe('Magic Actions', () => {
     })
 
     const card = game.getCardsByZone(t.dennis(game), 'hand')[0]
-    expect(card.visibility).toStrictEqual(game.getPlayerAll())
+    expect(card.visibility).toStrictEqual(game.players.all())
   })
 
   test('reveal all', () => {
@@ -599,7 +599,7 @@ describe('Magic Actions', () => {
 
     const cards = game.getCardsByZone(t.dennis(game), 'hand')
     cards.forEach(card => {
-      expect(card.visibility).toStrictEqual(game.getPlayerAll())
+      expect(card.visibility).toStrictEqual(game.players.all())
     })
   })
 
@@ -783,7 +783,7 @@ describe('Magic Actions', () => {
 
     const card = game.getCardsByZone(t.dennis(game), 'stack')[0]
     expect(card.g.morph).toBe(false)
-    expect(card.visibility).toEqual(game.getPlayerAll())
+    expect(card.visibility).toEqual(game.players.all())
   })
 
   test('unsecret', () => {
@@ -808,7 +808,7 @@ describe('Magic Actions', () => {
 
     const card = game.getCardsByZone(t.dennis(game), 'creatures')[0]
     expect(card.secret).toBe(false)
-    expect(card.visibility).toEqual(game.getPlayerAll())
+    expect(card.visibility).toEqual(game.players.all())
   })
 
   test('untap', () => {
@@ -852,6 +852,6 @@ describe('Magic Actions', () => {
     })
 
     const card = game.getCardsByZone(t.dennis(game), 'creatures')[0]
-    expect(card.visibility).toContain(game.getPlayerByName('dennis'))
+    expect(card.visibility).toContain(game.players.byName('dennis'))
   })
 })

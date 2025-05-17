@@ -7,6 +7,8 @@ const {
 const { Pack } = require('./pack.js')
 const util = require('../../lib/util.js')
 
+const { CubeDraftPlayerManager } = require('./CubeDraftPlayerManager.js')
+
 
 module.exports = {
   GameOverEvent,
@@ -20,6 +22,7 @@ module.exports = {
 function CubeDraft(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
+  this.players = new CubeDraftPlayerManager(this, this.settings.players, this.settings.playerOptions || {})
   this.cardsById = {}
 }
 
@@ -68,7 +71,7 @@ CubeDraft.prototype._mainProgram = function() {
   // Open the first pack for each player.
   this.log.indent()
   this
-    .getPlayerAll()
+    .players.all()
     .forEach(player => this.aOpenNextPack(player))
 
   this.mainLoop()
@@ -82,34 +85,12 @@ CubeDraft.prototype.initialize = function() {
   this.log.add({ template: 'Initializing' })
   this.log.indent()
 
-  this.initializePlayers()
   this.initializePacks()
 
   this.log.outdent()
 
   this.state.initializationComplete = true
   this._breakpoint('initialization-complete')
-}
-
-CubeDraft.prototype.initializePlayers = function() {
-  this.state.players = this.settings.players.map(p => ({
-    _id: p._id,
-    id: p.name,
-    name: p.name,
-    deckId: p.deckId,
-    index: null,
-    draftCompelete: false,
-    picked: [],
-    waitingPacks: [],
-    nextRoundPacks: [],
-    unopenedPacks: [],
-    scarredRounds: [],
-  }))
-  this.log.add({ template: 'Randomizing player seating' })
-  util.array.shuffle(this.state.players, this.random)
-  this.state.players.forEach((player, index) => {
-    player.index = index
-  })
 }
 
 CubeDraft.prototype.initializePacks = function() {
@@ -131,7 +112,7 @@ CubeDraft.prototype.initializePacks = function() {
 
   let packIndex = 0
 
-  for (const player of this.getPlayerAll()) {
+  for (const player of this.players.all()) {
     for (let p_i = 0; p_i < this.settings.numPacks; p_i++) {
       const pack = this.state.packs[packIndex]
       pack.index = p_i
@@ -153,12 +134,11 @@ CubeDraft.prototype.initializePacks = function() {
 
 CubeDraft.prototype.mainLoop = function() {
   while (!this.checkGameComplete()) {
-    const playerOptions = this
-      .getPlayerAll()
+    const playerOptions = this.players.all()
       .filter(p => this.checkPlayerHasOption(p))
       .map(p => this.getPlayerOptions(p))
     const action = this.requestInputAny(playerOptions)
-    const player = this.getPlayerByName(action.actor)
+    const player = this.players.byName(action.actor)
 
     switch (action.title) {
       case 'Apply Scar':
@@ -239,7 +219,7 @@ CubeDraft.prototype.aDraftCard = function(player, pack, cardId) {
   }
   else {
     // Pass this pack to the next player.
-    const nextPlayer = this.getPlayerNextForPack(pack)
+    const nextPlayer = this.getNextPlayerForPack(pack)
     const nextPlayerPackIndex = this.getPackIndexForPlayer(nextPlayer)
 
     if (nextPlayerPackIndex === pack.index) {
@@ -291,7 +271,7 @@ CubeDraft.prototype.checkForWaitingPack = function(player) {
 
 CubeDraft.prototype.checkGameComplete = function() {
   return this
-    .getPlayerAll()
+    .players.all()
     .every(player => !this.getNextPackForPlayer(player))
 }
 
@@ -349,15 +329,15 @@ CubeDraft.prototype.getPackIndexForPlayer = function(player) {
   return Math.floor(player.picked.length / this.settings.packSize)
 }
 
-CubeDraft.prototype.getPlayerNextForPack = function(pack) {
+CubeDraft.prototype.getNextPlayerForPack = function(pack) {
   util.assert(Boolean(pack.waiting), 'pack does not have a waiting player')
 
   const direction = pack.index % 2
   if (direction === 0) {
-    return this.getPlayerFollowing(pack.waiting)
+    return this.players.following(pack.waiting)
   }
   else {
-    return this.getPlayerPreceding(pack.waiting)
+    return this.players.preceding(pack.waiting)
   }
 }
 

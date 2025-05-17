@@ -23,7 +23,7 @@ function Card() {
 
         // Take cards into hand
         game
-          .getPlayerOpponents(player)
+          .players.opponentsOf(player)
           .flatMap(opp => game.getZoneByPlayer(opp, 'hand').cards())
           .filter(card => card.color === revealed.color)
           .forEach(card => game.mTake(player, card))

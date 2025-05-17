@@ -46,7 +46,7 @@ export default {
   computed: {
     cannotDraft() {
       if (this.card) {
-        const player = this.game.getPlayerByName(this.actor.name)
+        const player = this.game.players.byName(this.actor.name)
         return this.card.g.id === player.scarredCardId
       }
       else {

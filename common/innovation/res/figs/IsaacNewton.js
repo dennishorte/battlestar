@@ -27,7 +27,7 @@ function Card() {
       matches: () => true,
       func: (game, player) => {
         const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
-        const targetPlayer = game.aChoosePlayer(player, game.getPlayerAll().map(p => p.name))
+        const targetPlayer = game.aChoosePlayer(player, game.players.all().map(p => p.name))
         const target = game.getZoneByPlayer(targetPlayer, card.color)
         game.aTransfer(player, card, target)
       }

@@ -25,7 +25,7 @@ function Card() {
         game.mReveal(player, card)
 
         const stolen = game
-          .getPlayerOpponents(player)
+          .players.opponentsOf(player)
           .map(opponent => game.getTopCard(opponent, card.color))
           .filter(card => card !== undefined)
 

@@ -38,7 +38,7 @@ function Card() {
     (game, player) => {
       if (game.state.dogmaInfo.exileReturnedOneCard) {
         const topCards = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game.getTopCards(player))
 
         const exileCards = topCards.filter(card => card.name === 'Exile')

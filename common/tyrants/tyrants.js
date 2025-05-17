@@ -484,7 +484,7 @@ Tyrants.prototype._generateBuyActions = function(maxCost=0, opts={}) {
     }
   }
 
-  const influence = maxCost ? maxCost : this.players.current().influence
+  const influence = maxCost ? maxCost : this.players.current().getCounter('influence')
   const filteredChoices = choices
     .filter(choice => choice.card.cost <= influence)
     .filter(choice => opts.aspect ? choice.card.aspect === opts.aspect : true)
@@ -514,7 +514,7 @@ Tyrants.prototype._generatePowerActions = function() {
   const player = this.players.current()
   const choices = []
 
-  const power = player.power
+  const power = player.getCounter('power')
   if (
     power >= 1
     && this.getCardsByZone(player, 'troops').length > 0
@@ -688,8 +688,8 @@ Tyrants.prototype.cleanup = function() {
   }
 
   // Clear remaining influence and power
-  player.power = 0
-  player.influence = 0
+  player.setCounter('power', 0)
+  player.setCounter('influence', 0)
 
   this.checkForEndGameTriggers()
 }
@@ -728,12 +728,12 @@ Tyrants.prototype.drawHand = function() {
 }
 
 Tyrants.prototype.nextPlayer = function() {
-  this.state.currentPlayer = this.players.next()
+  this.players.advancePlayer()
   this.state.turn += 1
 }
 
 Tyrants.prototype.checkForEndOfGame = function() {
-  if (this.state.endGameTriggered && this.state.currentPlayer === this.players.first()) {
+  if (this.state.endGameTriggered && this.players.current() === this.players.first()) {
 
     const scores = this
       .players.all()
@@ -1730,7 +1730,7 @@ Tyrants.prototype.getScoreBreakdown = function(player) {
       .filter(loc => loc.getTotalController() === player)
       .length * 2,
 
-    "victory points": player.points
+    "victory points": player.getCounter('points')
   }
 
   summary.total = (

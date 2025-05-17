@@ -156,7 +156,7 @@ export default {
 
     optionSelector() {
       if (this.game.state.initializationComplete) {
-        const player = this.game.getPlayerByName(this.actor.name)
+        const player = this.game.players.byName(this.actor.name)
         if (this.game.checkPlayerHasActionWaiting(player)) {
           return this.game.getWaiting(player)
         }
@@ -166,8 +166,8 @@ export default {
     },
 
     orderedPlayers() {
-      const viewingPlayer = this.game.getPlayerByName(this.actor.name)
-      return this.game.getPlayersStarting(viewingPlayer)
+      const viewingPlayer = this.game.players.byName(this.actor.name)
+      return this.game.players.startingWith(viewingPlayer)
     },
   },
 
@@ -179,7 +179,7 @@ export default {
       }
 
       // Player must have presence to place a troop
-      const player = this.game.getPlayerCurrent()
+      const player = this.game.players.current()
       if (!this.game.getPresence(player).some(l => l === loc)) {
         return false
       }
@@ -247,7 +247,7 @@ export default {
     },
 
     troopStyle(troop) {
-      const player = this.game.getPlayerByCard(troop)
+      const player = this.game.players.byOwner(troop)
       if (player) {
         return { 'background-color': player.color }
       }
