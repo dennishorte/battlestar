@@ -1,4 +1,4 @@
-import { BaseLogManager } from '../lib/game/BaseLogManager.js'
+const { BaseLogManager } = require('../lib/game/BaseLogManager.js')
 
 
 class TyrantsLogManager extends BaseLogManager {
