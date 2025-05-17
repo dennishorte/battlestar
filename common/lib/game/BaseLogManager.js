@@ -151,7 +151,7 @@ class BaseLogManager {
 
     // See if any chats exist before the last response of this player.
     // If yes, assume they are new.
-    const rlog = [...this.getMergedLog()].reverse()
+    const rlog = [...this.merged()].reverse()
 
     let count = 0
 

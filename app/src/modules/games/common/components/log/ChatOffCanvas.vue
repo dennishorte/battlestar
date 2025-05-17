@@ -45,14 +45,12 @@ export default {
 
   computed: {
     chats() {
-      return this
-        .game
-        .getMergedLog()
+      return this.game.log.merged()
         .filter(x => x.type === 'chat')
     },
 
     hasNewChat() {
-      return this.game.getNewChatCount(this.actor) > 0
+      return this.game.log.newChatsCount(this.actor) > 0
     },
   },
 
