@@ -27,10 +27,10 @@ class Response {
   }
 }
 
-class LogManager {
-  constructor(game) {
+class BaseLogManager {
+  constructor(game, chat) {
     this._game = game
-    this._chat = []
+    this._chat = chat || []
     this._log = []
     this._indent = 0
   }
@@ -84,7 +84,7 @@ class LogManager {
 
   reindexChat() {
     const maxIndex = this._log.length
-    for (const chat of this.chat) {
+    for (const chat of this._chat) {
       if (chat.position > maxIndex) {
         chat.position = maxIndex
       }
@@ -219,5 +219,5 @@ class LogManager {
 
 
 module.exports = {
-  LogManager,
+  BaseLogManager,
 }

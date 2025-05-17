@@ -1,4 +1,5 @@
-const { PlayerManager, Player } = require('./PlayerManager.js')
+const { BasePlayer } = require('./BasePlayer.js')
+const { BasePlayerManager } = require('./BasePlayerManager.js')
 const util = require('../util.js')
 
 // Need to mock util for shuffle functionality
@@ -16,13 +17,13 @@ jest.mock('../util.js', () => ({
   }
 }))
 
-describe('PlayerManager', () => {
+describe('BasePlayerManager', () => {
   // Reset mocks before each test
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  // Fixture function to create a new PlayerManager instance
+  // Fixture function to create a new BasePlayerManager instance
   function createPlayerManager(userCount = 4, options = {}) {
     // Create mock game
     const game = {
@@ -37,9 +38,9 @@ describe('PlayerManager', () => {
       name: `user${i+1}`,
     }))
 
-    // Create and return PlayerManager
+    // Create and return BasePlayerManager
     return {
-      playerManager: new PlayerManager(game, users, options),
+      playerManager: new BasePlayerManager(game, users, options),
       game,
       users
     }
@@ -55,7 +56,7 @@ describe('PlayerManager', () => {
 
       // Check players array was created
       expect(playerManager.all()).toHaveLength(4)
-      expect(playerManager.all()[0]).toBeInstanceOf(Player)
+      expect(playerManager.all()[0]).toBeInstanceOf(BasePlayer)
 
       // With default options, shuffle should be called
       expect(util.array.shuffle).toHaveBeenCalled()
@@ -185,10 +186,10 @@ describe('PlayerManager', () => {
         // Check it returns all players
         const players = playerManager.all()
         expect(players).toHaveLength(4)
-        expect(players[0]).toBeInstanceOf(Player)
-        expect(players[1]).toBeInstanceOf(Player)
-        expect(players[2]).toBeInstanceOf(Player)
-        expect(players[3]).toBeInstanceOf(Player)
+        expect(players[0]).toBeInstanceOf(BasePlayer)
+        expect(players[1]).toBeInstanceOf(BasePlayer)
+        expect(players[2]).toBeInstanceOf(BasePlayer)
+        expect(players[3]).toBeInstanceOf(BasePlayer)
       })
 
       test('startingWith() should return players in order starting with given player', () => {

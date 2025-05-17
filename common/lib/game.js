@@ -2,8 +2,8 @@ const seedrandom = require('seedrandom')
 const selector = require('./selector.js')
 const util = require('./util.js')
 
-const { LogManager } = require('./game/LogManager.js')
-const { PlayerManager } = require('./game/PlayerManager.js')
+const { BaseLogManager } = require('./game/BaseLogManager.js')
+const { BasePlayerManager } = require('./game/BasePlayerManager.js')
 
 
 module.exports = {
@@ -32,9 +32,6 @@ function Game(serialized_data, viewerName) {
   this.responses = serialized_data.responses
   this.undoCount = 0
 
-  // Chat is separate from the game history.
-  this.chat = serialized_data.chat || []
-
   // This holds a reference to the latest input request
   this.waiting = null
 
@@ -47,8 +44,8 @@ function Game(serialized_data, viewerName) {
 
   this.viewerName = viewerName
 
-  this.log = new LogManager(this)
-  this.players = new PlayerManager(this, this.settings.players, this.settings.playerOptions || {})
+  this.log = new BaseLogManager(this, serialized_data.chat)
+  this.players = new BasePlayerManager(this, this.settings.players, this.settings.playerOptions || {})
 }
 
 function GameFactory(settings, viewerName=undefined) {
@@ -93,7 +90,7 @@ Game.prototype.serialize = function() {
     settings: this.settings,
     responses: this.responses,
     branchId: this.branchId,
-    chat: this.chat,
+    chat: this.log.getChat(),
   }
 }
 

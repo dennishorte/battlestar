@@ -1,7 +1,7 @@
-const { Player } = require('../../lib/game/Player.js')
+const { BasePlayer } = require('../../lib/game/BasePlayer.js')
 
 
-class CubeDraftPlayer extends Player {
+class CubeDraftPlayer extends BasePlayer {
   constructor(game, data) {
     super(game, data)
 

@@ -1,7 +1,7 @@
-const { PlayerManager } = require('../lib/game/PlayerManager.js')
+const { BasePlayerManager } = require('../lib/game/BasePlayerManager.js')
 
 
-class MagicPlayerManager extends PlayerManager {
+class MagicPlayerManager extends BasePlayerManager {
   byController(card) {
     const zone = this._game.getZoneByCard(card)
     return this.byZone(zone)

@@ -1,4 +1,4 @@
-class Player {
+class BasePlayer {
   constructor(game, data) {
     this.game = game
 
@@ -68,4 +68,4 @@ class Player {
   }
 }
 
-module.exports = { Player }
+module.exports = { BasePlayer }

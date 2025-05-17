@@ -1,7 +1,7 @@
-const { LogManager } = require('../lib/game/LogManager.js')
+const { BaseLogManager } = require('../lib/game/BaseLogManager.js')
 
 
-class MagicLogManager extends LogManager {
+class MagicLogManager extends BaseLogManager {
   addStackPush(player, card) {
     this.add('{player} puts {card} on the stack', { player, card }, ['stack-push'])
   }

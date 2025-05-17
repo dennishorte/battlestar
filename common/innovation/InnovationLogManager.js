@@ -1,7 +1,7 @@
-import { LogManager } from '../lib/game/LogManager.js'
+import { BaseLogManager } from '../lib/game/BaseLogManager.js'
 
 
-class InnovationLogManager extends LogManager {
+class InnovationLogManager extends BaseLogManager {
   _postEnrichArgs(entry) {
     // Attempt to combine this entry with the previous entry.
 

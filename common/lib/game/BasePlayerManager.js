@@ -1,6 +1,6 @@
 const util = require('../util.js')
 
-const { Player } = require('./Player.js')
+const { BasePlayer } = require('./BasePlayer.js')
 
 
 class PlayerList extends Array {
@@ -14,7 +14,7 @@ class PlayerList extends Array {
 }
 
 
-class PlayerManager {
+class BasePlayerManager {
   constructor(game, users, opts={}) {
     this._game = game
     this._users = [...users]
@@ -27,7 +27,7 @@ class PlayerManager {
     this._opts = Object.assign({
       firstPlayerId: null,
       shuffleSeats: true,
-      playerClass: Player,
+      playerClass: BasePlayer,
     }, opts)
 
     this.reset()
@@ -170,6 +170,5 @@ class PlayerManager {
 }
 
 module.exports = {
-  Player,
-  PlayerManager,
+  BasePlayerManager,
 }

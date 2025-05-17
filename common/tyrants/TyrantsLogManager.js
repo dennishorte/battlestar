@@ -1,7 +1,7 @@
-import { LogManager } from '../lib/game/LogManager.js'
+import { BaseLogManager } from '../lib/game/BaseLogManager.js'
 
 
-class TyrantsLogManager extends LogManager {
+class TyrantsLogManager extends BaseLogManager {
   _enrichLogArgs(entry) {
     for (const key of Object.keys(entry.args)) {
       if (key === 'players') {
