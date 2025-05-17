@@ -46,7 +46,7 @@ function Game(serialized_data, viewerName) {
 
   this.viewerName = viewerName
 
-  this.log = new LogManager()
+  this.log = new LogManager(this)
 }
 
 function GameFactory(settings, viewerName=undefined) {

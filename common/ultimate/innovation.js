@@ -7,6 +7,8 @@ const res = require('./res/index.js')
 const util = require('../lib/util.js')
 const { Zone } = require('./zone.js')
 
+const { InnovationLogManager } = require('../innovation/InnovationLogManager.js')
+
 
 module.exports = {
   GameOverEvent,
@@ -20,6 +22,8 @@ module.exports = {
 
 function Innovation(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
+
+  this.log = new InnovationLogManager(this)
 }
 
 util.inherit(Game, Innovation)
@@ -1688,7 +1692,7 @@ Innovation.prototype.aJunkDeck = function(player, age, opts={}) {
 
   if (doJunk) {
     this.log.add({
-      template: '{player} junks all cards in the {age} deck',
+      template: '{player} moves all cards in {age} deck to the junk',
       args: { player, age }
     })
 

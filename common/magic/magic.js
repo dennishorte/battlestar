@@ -41,7 +41,7 @@ module.exports = {
 function Magic(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
-  this.log = new MagicLogManager()
+  this.log = new MagicLogManager(this)
 
   this.setCardWrapper(wrappers.card)
   this.cardsById = {}
@@ -1368,59 +1368,5 @@ Magic.prototype.utilSerializeObject = function(obj) {
   }
   else {
     throw new Error(`Cannot serialize element of type ${typeof obj}`)
-  }
-}
-
-Magic.prototype._enrichLogArgs = function(msg) {
-  for (const key of Object.keys(msg.args)) {
-    if (key === 'players') {
-      const players = msg.args[key]
-      msg.args[key] = {
-        value: players.map(p => p.name || p).join(', '),
-        classes: ['player-names'],
-      }
-    }
-    else if (key.startsWith('player')) {
-      const player = msg.args[key]
-      msg.args[key] = {
-        value: player.name || player,
-        classes: ['player-name']
-      }
-    }
-    else if (key.startsWith('card')) {
-      const card = msg.args[key]
-      const isHidden = !card.visibility.find(p => p.name === this.viewerName)
-
-      if (isHidden) {
-        msg.args[key] = {
-          value: card.g.morph ? 'a morph' : 'a card',
-          classes: ['card-hidden'],
-        }
-      }
-      else {
-        msg.args[key] = {
-          value: card.name(),
-          cardId: card.g.id,  // Important in some UI situations.
-          classes: ['card-name'],
-        }
-      }
-    }
-    else if (key.startsWith('zone')) {
-      const zone = msg.args[key]
-      const owner = this.getPlayerByZone(zone)
-
-      const value = owner ? `${owner.name}'s ${zone.name}` : zone.name
-
-      msg.args[key] = {
-        value,
-        classes: ['zone-name']
-      }
-    }
-    // Convert string args to a dict
-    else if (typeof msg.args[key] !== 'object') {
-      msg.args[key] = {
-        value: msg.args[key],
-      }
-    }
   }
 }

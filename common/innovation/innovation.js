@@ -7,6 +7,8 @@ const res = require('./resources.js')
 const util = require('../lib/util.js')
 const { Zone } = require('./zone.js')
 
+const { InnovationLogManager } = require('./InnovationLogManager.js')
+
 
 module.exports = {
   GameOverEvent,
@@ -21,6 +23,8 @@ module.exports = {
 
 function Innovation(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
+
+  this.log = new InnovationLogManager(this)
 }
 
 util.inherit(Game, Innovation)
@@ -2560,42 +2564,6 @@ Innovation.prototype.mMoveTopCard = function(source, target) {
   return this.mMoveByIndices(source, 0, target, target.cards().length)
 }
 
-Innovation.prototype._attemptToCombineWithPreviousEntry = function(msg) {
-  if (this.log.getLog().length === 0) {
-    return false
-  }
-
-  const prev = this.log.getLog().slice(-1)[0]
-
-  if (!prev.args) {
-    return
-  }
-
-  const combinable = ['foreshadows', 'melds', 'returns', 'tucks', 'reveals', 'scores']
-  const msgAction = msg.template.split(' ')[1]
-
-  const msgIsCombinable = combinable.includes(msgAction)
-  const prevWasDraw = (
-    prev.template === '{player} draws {card}'
-    || prev.template === '{player} draws and reveals {card}'
-  )
-
-  if (msgIsCombinable && prevWasDraw) {
-    const argsMatch = (
-      prev.args.player.value === msg.args.player.value
-      && prev.args.card.card === msg.args.card.card
-    )
-
-    if (argsMatch) {
-      prev.template = prev.template.slice(0, -6) + 'and ' + msgAction + ' {card}'
-      prev.args.card = msg.args.card
-      return true
-    }
-  }
-
-  return false
-}
-
 Innovation.prototype.mRemove = function(player, card) {
   this.mMoveCardTo(card, this.getZoneById('exile'))
   this.log.add({
@@ -2811,46 +2779,6 @@ Innovation.prototype._cardLogData = function(card) {
     value: name,
     classes,
     card,
-  }
-}
-
-Innovation.prototype._postEnrichArgs = function(msg) {
-  return this._attemptToCombineWithPreviousEntry(msg)
-}
-
-Innovation.prototype._enrichLogArgs = function(msg) {
-  for (const key of Object.keys(msg.args)) {
-    if (key === 'players') {
-      const players = msg.args[key]
-      msg.args[key] = {
-        value: players.map(p => p.name).join(', '),
-        classes: ['player-names'],
-      }
-    }
-    else if (key.startsWith('player')) {
-      const player = msg.args[key]
-      msg.args[key] = {
-        value: player.name,
-        classes: ['player-name']
-      }
-    }
-    else if (key.startsWith('card')) {
-      const card = msg.args[key]
-      msg.args[key] = this._cardLogData(card)
-    }
-    else if (key.startsWith('zone')) {
-      const zone = msg.args[key]
-      msg.args[key] = {
-        value: zone.name,
-        classes: ['zone-name']
-      }
-    }
-    // Convert string args to a dict
-    else if (typeof msg.args[key] !== 'object') {
-      msg.args[key] = {
-        value: msg.args[key],
-      }
-    }
   }
 }
 

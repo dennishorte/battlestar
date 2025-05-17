@@ -1,11 +1,7 @@
-const { LogManager } = require('../lib/game/LogManager.js')
+import { LogManager } from '../lib/game/LogManager.js'
 
 
-class MagicLogManager extends LogManager {
-  addStackPush(player, card) {
-    this.add('{player} puts {card} on the stack', { player, card }, ['stack-push'])
-  }
-
+class TyrantsLogManager extends LogManager {
   _enrichLogArgs(entry) {
     for (const key of Object.keys(entry.args)) {
       if (key === 'players') {
@@ -24,31 +20,23 @@ class MagicLogManager extends LogManager {
       }
       else if (key.startsWith('card')) {
         const card = entry.args[key]
-        const isHidden = !card.visibility.find(p => p.name === this.viewerName)
-
-        if (isHidden) {
-          entry.args[key] = {
-            value: card.g.morph ? 'a morph' : 'a card',
-            classes: ['card-hidden'],
-          }
-        }
-        else {
-          entry.args[key] = {
-            value: card.name(),
-            cardId: card.g.id,  // Important in some UI situations.
-            classes: ['card-name'],
-          }
+        entry.args[key] = {
+          value: card.id,
+          classes: ['card-id'],
         }
       }
       else if (key.startsWith('zone')) {
         const zone = entry.args[key]
-        const owner = this._game.getPlayerByZone(zone)
-
-        const value = owner ? `${owner.name}'s ${zone.name}` : zone.name
-
         entry.args[key] = {
-          value,
+          value: zone.name,
           classes: ['zone-name']
+        }
+      }
+      else if (key.startsWith('loc')) {
+        const loc = entry.args[key]
+        entry.args[key] = {
+          value: loc.name,
+          classes: ['location-name']
         }
       }
       // Convert string args to a dict
@@ -61,5 +49,4 @@ class MagicLogManager extends LogManager {
   }
 }
 
-
-module.exports = MagicLogManager
+module.exports = { TyrantsLogManager }
