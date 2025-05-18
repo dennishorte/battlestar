@@ -36,6 +36,15 @@ router.post('/fetch', cubeController.getCube)
 router.post('/save', cubeController.saveCube)
 
 /**
+ * @route POST /api/magic/cube/update_scar
+ * @description Add or update a scar in the cube scarlist
+ * @access Private
+ * @body {String} cubeId - ID of the cube to update into
+   @body {Object} scar - Scar to be added/updated
+ */
+router.post('/update_scar', cubeController.updateScar)
+
+/**
  * @route POST /api/magic/cube/update_settings
  * @description Update cube settings
  * @access Private

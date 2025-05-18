@@ -33,6 +33,25 @@ class CubeWrapper extends Wrapper {
   applyFilters(filters) {
     return this.cards().filter(card => card.matchesFilters(filters))
   }
+
+  achievements() {
+    return [...this.achievementlist]
+  }
+
+  scars() {
+    return [...this.scarlist]
+  }
+
+  upsertScar(scar) {
+    const existingIndex = this.scars().findIndex(s => s.id === scar.id)
+    if (scar.id === null || existingIndex === -1) {
+      scar.id = 'scar-' + this.scars().length
+      this.scarlist.push(scar)
+    }
+    else {
+      this.scarlist[existingIndex] = scar
+    }
+  }
 }
 
 module.exports = CubeWrapper

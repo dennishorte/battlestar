@@ -40,40 +40,11 @@
         <CubeBreakdown :cardlist="filteredCards" />
       </div>
 
-      <div v-if="showing === 'scars'" class="row">
-        <div class="mt-2">
-          <button class="btn btn-success" @click="createScar">create</button>
-        </div>
-
-        <div class="col">
-          <h5>Avaiable Scars</h5>
-
-          <div v-for="scar in scarsUnused" :key="scar._id" class="scar-container">
-            <div>{{ scar.text }}</div>
-            <div>
-              <button class="btn btn-link" @click="editScar(scar)">edit</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="col">
-          <h5>Used Scars</h5>
-          <div v-for="scar in scarsUsed" :key="scar._id" class="scar-container vertical">
-            <div>{{ scar.text }}</div>
-            <div class="scar-applied-info">
-              <div
-                @mouseover="mouseover(scar.appliedTo)"
-                @mouseleave="mouseleave(scar.appliedTo)"
-                @mousemove="mousemove"
-                @click="goToCard(scar.appliedTo)"
-              >
-                card: {{ scar.appliedTo.name }}
-              </div>
-              <div>user: {{ getUserNameById(scar.appliedBy) }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CubeScars
+        v-if="showing === 'scars'"
+        :cube="cube"
+        :users="users"
+      />
 
       <CubeAchievements
         v-if="showing === 'achievements'"
@@ -85,7 +56,6 @@
       <CardSearchModal @card-selected="addOneCard" id="cube-add-modal" />
       <CubeImportModal @cube-updates="updateCube" />
       <CardEditorModal />
-      <ScarModal />
       <AchievementModal />
       <AchievementViewerModal />
       <AchievementSearchLinkerModal :achievements="achievements" />
@@ -112,10 +82,10 @@ import CardSearchModal from '../CardSearchModal'
 import CardFilters from '../CardFilters'
 import CubeImportModal from './CubeImportModal'
 import CubeMenu from './CubeMenu'
+import CubeScars from './CubeScars'
 import CubeSettingsModal from './CubeSettingsModal'
 import MagicMenu from '../MagicMenu'
 import MagicWrapper from '../MagicWrapper'
-import ScarModal from './ScarModal'
 
 
 export default {
@@ -132,10 +102,10 @@ export default {
     CubeBreakdown,
     CubeImportModal,
     CubeMenu,
+    CubeScars,
     CubeSettingsModal,
     MagicMenu,
     MagicWrapper,
-    ScarModal,
   },
 
   data() {
@@ -236,11 +206,6 @@ export default {
     editScar(scar) {
       this.$store.commit('magic/cube/manageScar', scar)
       this.$modal('scar-modal').show()
-    },
-
-    getUserNameById(id) {
-      const user = this.users.find(u => u._id === id)
-      return user ? user.name : id
     },
 
     linkFiltersToAchievement() {
@@ -351,28 +316,5 @@ export default {
 <style scoped>
 .container {
   margin-bottom: 2em;
-}
-
-.scar-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 400px;
-  border: 1px solid #ddd;
-  padding-left: .5em;
-  margin-top: .25em;
-}
-
-.scar-container.vertical {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.scar-applied-info {
-  font-size: .8em;
-  color: #333;
-  margin-left: .5em;
 }
 </style>

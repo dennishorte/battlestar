@@ -4,7 +4,7 @@
       cards ({{ counts.cards }})
     </button>
 
-    <template v-if="!!cube.allowEdits">
+    <template v-if="cube.flags.legacy">
       <button class="btn" :class="buttonClassesScars" @click="navigate('scars')">
         scars ({{ counts.scars }})
       </button>

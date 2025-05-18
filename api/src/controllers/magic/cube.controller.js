@@ -1,6 +1,7 @@
 import db from '../../models/db.js'
 import logger from '../../utils/logger.js'
 import { BadRequestError, NotFoundError } from '../../utils/errors.js'
+import { magic } from 'battlestar-common'
 
 /**
  * Get all cubes
@@ -197,6 +198,37 @@ export const saveCube = async (req, res, next) => {
   }
   catch (err) {
     logger.error(`Error saving cube: ${err.message}`)
+    next(err)
+  }
+}
+
+export const updateScar = async(req, res, next) => {
+  try {
+    if (!req.body.cubeId) {
+      return next(new BadRequestError('cubeId is required'))
+    }
+
+    if (!req.body.scar) {
+      return next(new BadRequestError('scar object is required'))
+    }
+
+    if (!req.cube) {
+      return next(new NotFoundError(`Cube with ID ${req.body.cubeId} not found`))
+    }
+
+    const cube = new magic.util.wrapper.cube(req.cube)
+    cube.upsertScar(req.body.scar)
+
+    // Save the updated cube
+    await db.magic.cube.updateScarlist(cube)
+
+    res.json({
+      status: 'success',
+      cube: cube.toJSON(),
+    })
+  }
+  catch (err) {
+    logger.error(`Error updating scar: ${err.message}`)
     next(err)
   }
 }

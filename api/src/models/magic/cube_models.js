@@ -15,6 +15,8 @@ const Cube = {
       name: 'New Cube',
       userId: user._id,
       cardlist: [],
+      scarlist: [],
+      achievementlist: [],
       flags: {
         legacy: false,
       },
@@ -77,6 +79,13 @@ const Cube = {
     await cubeCollection.updateOne(
       { _id: cube._id },
       { $pull: { cardlist: card._id } }
+    )
+  },
+
+  async updateScarlist(cube) {
+    await cubeCollection.updateOne(
+      { _id: cube._id },
+      { $set: { scarlist: cube.scarlist } },
     )
   },
 }
