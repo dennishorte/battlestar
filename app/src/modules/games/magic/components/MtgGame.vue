@@ -60,7 +60,7 @@ export default {
 
   methods: {
     async loadGame() {
-      this.game.setCardWrapper(UICardWrapper, 'Magic.vue')
+      this.game.setCardWrapper(UICardWrapper)
       await this.$store.dispatch('magic/game/loadGame', {
         game: this.game,
         doFunc: this.do,
