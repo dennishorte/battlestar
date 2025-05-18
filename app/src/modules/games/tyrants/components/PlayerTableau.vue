@@ -13,8 +13,8 @@
         </div>
 
         <div>
-          <div>inf: {{ player.influence }}</div>
-          <div>pow: {{ player.power }}</div>
+          <div>inf: {{ player.getCounter('influence') }}</div>
+          <div>pow: {{ player.getCounter('power') }}</div>
         </div>
 
         <div>
