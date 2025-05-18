@@ -1,4 +1,4 @@
-import { fromLobby } from 'battlestar-common'
+import { fromData, fromLobby } from 'battlestar-common'
 import { client as databaseClient } from '../utils/mongo.js'
 
 // Database and collection
@@ -69,6 +69,26 @@ Game.gameOver = async function(game, killed=false) {
     { _id: game._id },
     { $set: setValues },
   )
+}
+
+Game.insert = async function(data) {
+  const game = fromData(data)
+  game.run()
+
+  delete game.settings.linkedDraftId
+  delete game.settings.links
+
+  const { insertedId } = await gameCollection.insertOne({
+    branchId: game.branchId,
+    chat: game.log.getChat(),
+    gameOver: game.gameOver,
+    gameOverData: game.gameOverData,
+    overwrite: game.overwrite,
+    responses: game.responses,
+    settings: game.settings,
+    waiting: game.waiting.selectors.map(s => s.actor),
+  })
+  return insertedId
 }
 
 Game.linkDraftToGame = async function(draft, game) {

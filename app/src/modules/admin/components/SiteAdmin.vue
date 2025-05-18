@@ -16,7 +16,7 @@
         </div>
 
         <div class="col">
-          <AdminActions />
+          <AdminActions :users="users" />
         </div>
       </div>
 

@@ -97,6 +97,10 @@ export default {
       this.$store.commit('magic/game/cancelChooseTarget')
     },
   },
+
+  mounted() {
+    window.game = this.game
+  },
 }
 </script>
 

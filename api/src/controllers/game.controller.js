@@ -22,6 +22,21 @@ export const create = async (req, res, next) => {
   }
 }
 
+export const insert = async (req, res, next) => {
+  try {
+    const gameId = await gameService.insert(req.body.data)
+
+    return res.json({
+      status: 'success',
+      gameId,
+    })
+  }
+  catch (err) {
+    logger.error(`Error creating game: ${err.message}`)
+    next(err)
+  }
+}
+
 export const fetchAll = async (req, res, next) => {
   try {
     const cursor = await db.game.all()
@@ -99,13 +114,13 @@ export const saveFull = async (req, res, next) => {
     }
 
     const serializedGame = await gameService.saveFull(req.game, {
+      branchId: req.body.branchId,
       chat: req.body.chat,
-      responses: req.body.responses,
-      waiting: req.body.waiting,
       gameOver: req.body.gameOver,
       gameOverData: req.body.gameOverData,
-      branchId: req.body.branchId,
       overwrite: req.body.overwrite,
+      responses: req.body.responses,
+      waiting: req.body.waiting,
     })
 
     res.json({

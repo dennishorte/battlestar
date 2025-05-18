@@ -87,6 +87,10 @@ Game.create = async function(lobby, linkedDraftId) {
   }
 }
 
+Game.insert = async function(data) {
+  return await db.game.insert(data)
+}
+
 Game.kill = async function(game) {
   await db.game.gameOver(game, true)
 }
