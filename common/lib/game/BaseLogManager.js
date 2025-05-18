@@ -100,6 +100,7 @@ class BaseLogManager {
     this._log = []
   }
 
+  // This allows the log to calculate and find new messages for a given player.
   responseReceived(data) {
     const resp = new Response(data)
     this._log.push(resp)
