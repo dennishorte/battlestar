@@ -3,7 +3,11 @@ const { BaseLogManager } = require('../lib/game/BaseLogManager.js')
 
 class MagicLogManager extends BaseLogManager {
   addStackPush(player, card) {
-    this.add('{player} puts {card} on the stack', { player, card }, ['stack-push'])
+    this.add({
+      template: '{player} puts {card} on the stack',
+      args: { player, card },
+      classes: ['stack-push']
+    })
   }
 
   _enrichLogArgs(entry) {
@@ -24,7 +28,7 @@ class MagicLogManager extends BaseLogManager {
       }
       else if (key.startsWith('card')) {
         const card = entry.args[key]
-        const isHidden = !card.visibility.find(p => p.name === this.viewerName)
+        const isHidden = !card.visibility.find(p => p.name === this._game.viewerName)
 
         if (isHidden) {
           entry.args[key] = {

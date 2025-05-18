@@ -39,6 +39,11 @@ class BaseLogManager {
   // Actions
 
   add(msg) {
+    if (!msg.template) {
+      console.log(msg)
+      throw new Error('Log entry missing template')
+    }
+
     const entry = new LogEntry(
       this._log.length,
       this._indent,
