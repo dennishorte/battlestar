@@ -4,6 +4,7 @@
       <button :disabled="!deck.isModified()" class="btn btn-primary save-button" @click="saveChanges">save</button>
       <DropdownMenu :notitle="true">
         <DropdownButton @click="openDeckSettings">settings</DropdownButton>
+        <DropdownButton @click="goToDeckBuilder">deck builder</DropdownButton>
         <DropdownButton @click="openImportModal" :disabled="true">load decklist</DropdownButton>
         <DropdownButton @click="downloadDecklist" :disabled="true">export</DropdownButton>
         <DropdownDivider />
@@ -167,6 +168,10 @@ export default {
 
     downloadDecklist() {
       throw new Error('Not implemented')
+    },
+
+    goToDeckBuilder() {
+      this.$router.push(`/magic/deck/${this.deck._id}`)
     },
 
     handleSettingsUpdated() {
