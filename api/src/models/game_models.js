@@ -14,7 +14,7 @@ Game.all = async function() {
 }
 
 Game.create = async function(lobby) {
-  const data = fromLobby(lobby)
+  const data = fromLobby(lobby).serialize()
   data.settings.createdTimestamp = Date.now()
 
   // Added in order to support showing games that have recently ended on user home screens.
