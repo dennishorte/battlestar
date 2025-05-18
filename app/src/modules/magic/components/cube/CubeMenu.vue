@@ -1,15 +1,15 @@
 <template>
   <div class="cube-menu">
     <button class="btn" :class="buttonClassesCards" @click="navigate('cards')">
-      cards ({{ counts.cards }})
+      cards ({{ cube.cards().length }})
     </button>
 
     <template v-if="cube.flags.legacy">
       <button class="btn" :class="buttonClassesScars" @click="navigate('scars')">
-        scars ({{ counts.scars }})
+        scars ({{ cube.scars().length }})
       </button>
       <button class="btn" :class="buttonClassesAchievements" @click="navigate('achievements')">
-        achievements ({{ counts.achievements }})
+        achievements ({{ cube.achievements().length }})
       </button>
     </template>
 
@@ -55,10 +55,6 @@ export default {
   emits: ['toggle-search', 'navigate'],
 
   props: {
-    counts: {
-      type: Object,
-      required: true
-    },
     cube: {
       type: Object,
       required: true

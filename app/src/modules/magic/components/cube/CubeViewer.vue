@@ -12,7 +12,6 @@
       <div class="row">
         <div class="col">
           <CubeMenu
-            :counts="counts"
             :cube="cube"
             :showing="showing"
             @navigate="navigate"
@@ -168,14 +167,6 @@ export default {
 
     canLinkFilters() {
       return this.filters.length > 0
-    },
-
-    counts() {
-      return {
-        cards: this.filteredCards.length,
-        scars: this.scarsUnused.length,
-        achievements: this.achievements.length,
-      }
     },
 
     filteredCards() {
