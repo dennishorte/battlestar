@@ -15,23 +15,7 @@
         class="game-column data-column"
         :class="widthClass"
       >
-        <div v-if="doingScars" class="alert alert-warning">
-          <h3>Scar Round!</h3>
-
-          <template v-if="scars.length === 0">
-            {{ scarMessage }}
-          </template>
-
-          <template v-else>
-            <div v-for="scar in scars" :key="scar.text">
-              {{ scar.text }}
-            </div>
-
-            <div class="small border-top border-warning mt-2">
-              Reloading the page will cause new scars to be chosen.
-            </div>
-          </template>
-        </div>
+        <ScarRound v-if="doingScars" />
         <CardTableau
           :cards="tableauCards"
           :cardScroll="false"
@@ -64,50 +48,9 @@
 
     </div>
 
+    <CardDraftModal :id="cardDraftModalId" :card="closeupDraftCard" @draft-card="chooseCard" />
     <DebugModal />
   </MagicWrapper>
-
-  <CardDraftModal :id="cardDraftModalId" :card="closeupDraftCard" @draft-card="chooseCard" />
-
-  <CardEditorModal :original="scarCard">
-
-    <!-- Need this v-if="!!game" to prevent errors before the game finished loading. -->
-    <template #before-card v-if="!!game">
-      <div class="alert alert-warning">
-        <ol>
-          <li v-for="scar in scars" :key="scar.text">{{ scar.text }}</li>
-        </ol>
-
-        <div class="small border-top border-warning">
-          You must manually edit the card text.
-        </div>
-      </div>
-    </template>
-
-    <template #footer="footerProps">
-      <div>
-        <button class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
-
-        <button
-          class="btn btn-danger"
-          @click="scarApplied(0, footerProps.updated, footerProps.original)"
-          data-bs-dismiss="modal"
-        >
-          manually applied 1
-        </button>
-
-        <button
-          class="btn btn-danger"
-          @click="scarApplied(1, footerProps.updated, footerProps.original)"
-          data-bs-dismiss="modal"
-        >
-          manually applied 2
-        </button>
-      </div>
-
-    </template>
-  </CardEditorModal>
-
 </template>
 
 
@@ -122,6 +65,7 @@ import CardDraftModal from './CardDraftModal'
 import CardTableau from './CardTableau'
 import GameLogCubeDraft from './GameLogCubeDraft'
 import MatchResults from './MatchResults'
+import ScarRound from './ScarRound'
 import SeatingInfo from './SeatingInfo'
 
 import DropdownButton from '@/components/DropdownButton'
@@ -131,7 +75,6 @@ import DebugModal from '@/modules/games/common/components/DebugModal'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
-import CardEditorModal from '@/modules/magic/components/CardEditorModal'
 import CardListItem from '@/modules/magic/components/CardListItem'
 import DeckList from '@/modules/magic/components/deck/DeckList'
 import MagicWrapper from '@/modules/magic/components/MagicWrapper'
@@ -143,7 +86,6 @@ export default {
   components: {
     AdminOptions,
     CardDraftModal,
-    CardEditorModal,
     CardTableau,
     DebugModal,
     DeckList,
@@ -153,6 +95,7 @@ export default {
     GameMenu,
     MagicWrapper,
     MatchResults,
+    ScarRound,
     SeatingInfo,
     WaitingPanel,
   },
@@ -160,15 +103,11 @@ export default {
   data() {
     return {
       cardDraftModalId: 'card-draft-modal-' + uuidv4(),
-      fileModalId: 'file-manager-edit-modal-' + uuidv4(),
 
       deck: null,
       closeupCard: null,
       closeupDraftCard: null,
       scarCard: null,
-
-      scars: [],
-      scarMessage: 'loading scars',
 
       gameReady: false,
       showGameStats: false,
@@ -278,45 +217,6 @@ export default {
       this.gameReady = true
     },
 
-    // eslint-disable-next-line
-    async scarApplied(scarIndex, updated, original) {
-      throw new Error('not implemented')
-      /* if (!updated) {
-       *   alert('No changes where made to the card')
-       *   return
-       * }
-
-       * const savedCard = await this.$store.dispatch('magic/cards/save', {
-       *   actor: this.actor,
-       *   cubeId: this.game.settings.cubeId,
-       *   updated,
-       *   original,
-       *   comment: `Scarred in ${this.game.settings.name}.`,
-       * })
-
-       * await this.$post('/api/magic/scar/apply', {
-       *   scarId: this.scars[scarIndex]._id,
-       *   userId: this.actor._id,
-       *   cardIdDict: mag.util.card.id.asDict(savedCard),
-       * })
-
-       * await this.$post('/api/magic/scar/release_by_user', {
-       *   userId: this.actor._id,
-       * })
-
-       * this.game.respondToInputRequest({
-       *   actor: this.actor.name,
-       *   title: 'Apply Scar',
-       *   selection: [{
-       *     scarIndex,
-       *     originalId: original.id,
-       *     newData: savedCard,
-       *   }]
-       * })
-
-       * await this.save() */
-    },
-
     showDraftModal(card) {
       if (card) {
         this.closeupDraftCard = card
@@ -329,11 +229,6 @@ export default {
         card: payload.card,
         zone: payload.zone,
       })
-    },
-
-    showScarModal(card) {
-      this.scarCard = card
-      this.$modal('card-editor-modal').show()
     },
 
     uiFactory() {
