@@ -7,16 +7,8 @@ import db from '../../models/db.js'
  */
 export const create = async (req, res) => {
   try {
-    // Validate required inputs
-    if (!req.body.deckData) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Missing required field: deckData'
-      })
-    }
-
     // Create the deck
-    const deck = await db.magic.deck.create(req.body.deckData, req.user)
+    const deck = await db.magic.deck.create(req.user, req.body.opts)
 
     res.json({
       status: 'success',
