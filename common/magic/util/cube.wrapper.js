@@ -63,6 +63,10 @@ class CubeWrapper extends Wrapper {
     this.scarlist.splice(index, 1)
   }
 
+  getScarById(id) {
+    return this.scars.find(s => s.id === id)
+  }
+
   upsertScar(scar) {
     const existingIndex = this.scars().findIndex(s => s.id === scar.id)
     if (scar.id === null || existingIndex === -1) {
