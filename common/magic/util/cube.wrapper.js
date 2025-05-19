@@ -42,6 +42,18 @@ class CubeWrapper extends Wrapper {
   ////////////////////////////////////////////////////////////////////////////////
   // Scars
 
+  static blankScar() {
+    return {
+      id: null,
+      text: '',
+      createdAt: new Date(),
+      createdBy: null,
+      appliedTo: null,
+      appliedBy: null,
+      appliedAt: null,
+    }
+  }
+
   scars() {
     return [...this.scarlist]
   }

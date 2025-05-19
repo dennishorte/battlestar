@@ -50,6 +50,7 @@
 <script setup>
 import { computed, inject, ref, toRef } from 'vue'
 import { useStore } from 'vuex'
+import { magic } from 'battlestar-common'
 
 const props = defineProps({
   cube: {
@@ -73,16 +74,8 @@ const scarsUsed = computed(() => scarlist.value.filter(s => s.appliedTo))
 const scarsUnused = computed(() => scarlist.value.filter(s => !s.appliedTo))
 
 function createScar() {
-  const blankScar = {
-    id: null,
-    text: '',
-    createdAt: new Date(),
-    createdBy: actor._id,
-    appliedTo: null,
-    appliedBy: null,
-    appliedAt: null,
-  }
-  editingScar.value = blankScar
+  editingScar.value = magic.util.wrapper.cube.blankScar()
+  editingScar.value.createdBy = actor._id
   scarModalVis.value = true
 }
 
