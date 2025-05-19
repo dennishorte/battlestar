@@ -9,19 +9,19 @@
       </SectionHeader>
     </slot>
 
-    <div v-if="loading" class="loading">
-      Loading decks...
-    </div>
-
-    <div v-else-if="error" class="error">
+    <BAlert :model-value="Boolean(error)" variant="danger">
       {{ error }}
-    </div>
+    </BAlert>
 
-    <div v-else-if="!decks.length" class="no-decks">
+    <BAlert :model-value="loading">
+      Loading decks...
+    </BAlert>
+
+    <BAlert :model-value="!loading && !decks.length" variant="warning">
       No decks found. Create your first deck to get started.
-    </div>
+    </BAlert>
 
-    <div v-else class="deck-list">
+    <div class="deck-list">
       <div v-for="deck in decks" :key="deck._id" class="deck-item">
         <div class="deck-content" @click="$emit('deck-clicked', deck._id)">
           <div class="deck-name">
@@ -139,24 +139,6 @@ export default {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-}
-
-.loading, .error, .no-decks {
-  text-align: center;
-  margin: 2rem 0;
-}
-
-.error {
-  color: #dc3545;
-  background: rgba(220, 53, 69, 0.1);
-  border-radius: 4px;
-}
-
-.no-decks {
-  color: #6c757d;
-  font-style: italic;
-  text-align: center;
-  margin: 2rem 0;
 }
 
 .deck-list {
