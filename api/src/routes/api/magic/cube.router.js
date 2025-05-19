@@ -20,6 +20,15 @@ router.post('/add_remove_cards', cubeController.addRemoveCards)
 router.post('/create', cubeController.createCube)
 
 /**
+ * @route POST /api/magic/cube/delete_scar
+ * @description Add or delete a scar in the cube scarlist
+ * @access Private
+ * @body {String} cubeId - ID of the cube to delete into
+   @body {Object} scar - Scar to be deleted
+ */
+router.post('/delete_scar', cubeController.deleteScar)
+
+/**
  * @route POST /api/magic/cube/fetch
  * @description Fetch a cube by ID
  * @access Private

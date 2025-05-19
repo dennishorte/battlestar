@@ -103,6 +103,15 @@ export default {
       state.cubes = response.cubes
     },
 
+    async deleteScar({ dispatch }, { cubeId, scar }) {
+      await this.$post('/api/magic/cube/delete_scar', {
+        cubeId,
+        scar
+      })
+      await dispatch('loadCube', { cubeId })
+
+    },
+
     async updateScar({ dispatch }, { cubeId, scar }) {
       await this.$post('/api/magic/cube/update_scar', {
         cubeId,

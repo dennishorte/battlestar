@@ -145,6 +145,37 @@ export const createCube = async (req, res, next) => {
   }
 }
 
+export const deleteScar = async(req, res, next) => {
+  try {
+    if (!req.body.cubeId) {
+      return next(new BadRequestError('cubeId is required'))
+    }
+
+    if (!req.body.scar) {
+      return next(new BadRequestError('scar object is required'))
+    }
+
+    if (!req.cube) {
+      return next(new NotFoundError(`Cube with ID ${req.body.cubeId} not found`))
+    }
+
+    const cube = new magic.util.wrapper.cube(req.cube)
+    cube.deleteScar(req.body.scar)
+
+    // Save the updated cube
+    await db.magic.cube.updateScarlist(cube)
+
+    res.json({
+      status: 'success',
+      cube: cube.toJSON(),
+    })
+  }
+  catch (err) {
+    logger.error(`Error updating scar: ${err.message}`)
+    next(err)
+  }
+}
+
 /**
  * Fetch a cube by ID
  * @param {Object} req - Express request object

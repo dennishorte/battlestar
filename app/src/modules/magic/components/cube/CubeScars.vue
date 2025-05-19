@@ -36,6 +36,12 @@
       <BFormGroup label="Scar Text" v-if="Boolean(editingScar)">
         <BFormTextarea v-model="editingScar.text" rows="8" />
       </BFormGroup>
+
+      <template #footer="{ cancel, ok }">
+        <BButton variant="danger" @click="deleteScar">Delete</BButton>
+        <BButton variant="secondary" @click="cancel()">Cancel</BButton>
+        <BButton variant="primary" @click="ok()">OK</BButton>
+      </template>
     </BModal>
   </div>
 </template>
@@ -88,6 +94,13 @@ function editScar(scar) {
 function getUserNameById(id) {
   const user = props.users.find(u => u._id === id)
   return user ? user.name : id
+}
+
+async function deleteScar() {
+  await store.dispatch('magic/cube/deleteScar', {
+    cubeId: props.cube._id,
+    scar: editingScar.value,
+  })
 }
 
 async function save() {

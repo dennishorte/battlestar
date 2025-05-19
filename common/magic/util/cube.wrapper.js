@@ -38,20 +38,38 @@ class CubeWrapper extends Wrapper {
     return [...this.achievementlist]
   }
 
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Scars
+
   scars() {
     return [...this.scarlist]
+  }
+
+  deleteScar(scar) {
+    const index = this.scars().findIndex(s => s.text === scar.text)
+    this.scarlist.splice(index, 1)
   }
 
   upsertScar(scar) {
     const existingIndex = this.scars().findIndex(s => s.id === scar.id)
     if (scar.id === null || existingIndex === -1) {
-      scar.id = 'scar-' + this.scars().length
+      scar.id = 'scar-' + _nextScarIndex(this.scars())
       this.scarlist.push(scar)
     }
     else {
       this.scarlist[existingIndex] = scar
     }
   }
+}
+
+function _nextScarIndex(scars) {
+  if (scars.length === 0) {
+    return 1
+  }
+
+  const indices = scars.map(s => s.id.substring('scar-'.length)).map(parseInt)
+  return Math.max(indices) + 1
 }
 
 module.exports = CubeWrapper
