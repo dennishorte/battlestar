@@ -242,8 +242,9 @@ export default {
       }
     },
 
-    cardUpdated(newValue) {
-      this.scarredCard = newValue
+    cardUpdated({ updated, original }) {
+      this.scarredCard = updated
+      this.scarredCard.g.id = original.g.id
     },
 
     async chooseCard(card) {
@@ -285,10 +286,14 @@ export default {
 
       const scar = this.availableScars[index]
 
+
       await this.$store.dispatch('game/submitAction', {
         actor: this.actor.name,
         title: 'Apply Scar',
-        selection: [scar.id],
+        selection: [{
+          scarId: scar.id,
+          cardId: this.scarredCard.g.id,
+        }],
       })
 
       // Update the card and the scar on the server

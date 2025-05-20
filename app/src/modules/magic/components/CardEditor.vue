@@ -81,7 +81,10 @@ export default {
     updateFace({ index, field, value }) {
       this.model.card_faces[index][field] = value
       this.updateRootValues()
-      this.bus.emit('card-editor:updated', this.editing)
+      this.bus.emit('card-editor:updated', {
+        original: this.original,
+        updated: this.editing,
+      })
     },
 
     updateRootValues() {

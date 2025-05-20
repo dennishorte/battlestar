@@ -112,6 +112,7 @@ CubeDraft.prototype.initializePacks = function() {
   this.log.outdent()
 
   let packIndex = 0
+  let cardIndex = 0
 
   for (const player of this.players.all()) {
     for (let p_i = 0; p_i < this.settings.numPacks; p_i++) {
@@ -195,7 +196,7 @@ CubeDraft.prototype.aApplyScar = function(player, data) {
   player.scarredRounds.push(packRound)
 
   // Mark the card so this player can't draft it this round
-  player.scarredCardId = data.originalId
+  player.scarredCardId = data.cardId
 }
 
 CubeDraft.prototype.aDraftCard = function(player, pack, cardId) {

@@ -5,7 +5,11 @@
          :key="card.g.id"
          @click="cardClicked(card)" >
       <div class="card-display" @click="showDraftModal = true">
-        <MagicCard :size="220" :card="card" :scrollable="cardScroll" />
+        <MagicCard
+          :size="220"
+          :card="card"
+          :scrollable="cardScroll"
+          :disabled="cannotDraft(card)" />
       </div>
       <div class="card-overlay" v-if="cannotDraft(card)"/>
     </div>
@@ -47,6 +51,9 @@ export default {
     },
 
     cardClicked(card) {
+      if (this.cannotDraft(card)) {
+        return
+      }
       this.$emit('card-clicked', card)
     },
   },

@@ -45,9 +45,8 @@ export default {
   },
 
   methods: {
-    cardUpdated(card) {
-      console.log('card updated', card.name())
-      this.updatedCard = card
+    cardUpdated({ updated }) {
+      this.updatedCard = updated
     },
 
     editCard(card) {
