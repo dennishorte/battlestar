@@ -5,7 +5,6 @@
       :card="editing"
       class="preview"
       :is-editable="true"
-      @update-face="updateFace"
     />
 
     <div class="buttons">
