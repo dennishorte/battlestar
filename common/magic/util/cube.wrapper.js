@@ -84,8 +84,8 @@ function _nextScarIndex(scars) {
     return 1
   }
 
-  const indices = scars.map(s => s.id.substring('scar-'.length)).map(parseInt)
-  return Math.max(indices) + 1
+  const indices = scars.map(s => s.id.substring('scar-'.length)).map(x => parseInt(x))
+  return Math.max(...indices) + 1
 }
 
 module.exports = CubeWrapper
