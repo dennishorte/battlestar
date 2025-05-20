@@ -27,7 +27,7 @@ function Card() {
         if (colors.length > 0) {
           choices.push({
             title: other.name,
-            options: colors,
+            choices: colors,
             min: 0
           })
         }
