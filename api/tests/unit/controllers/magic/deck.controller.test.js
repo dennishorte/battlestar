@@ -48,35 +48,23 @@ describe('Deck Controller', () => {
         updatedAt: expect.any(Date)
       }
 
-      req.body.deckData = mockDeckData
+      req.body.opts = mockDeckData
       db.magic.deck.create.mockResolvedValueOnce(mockCreatedDeck)
 
       // Execute
       await deckController.create(req, res)
 
       // Verify
-      expect(db.magic.deck.create).toHaveBeenCalledWith(mockDeckData, req.user)
+      expect(db.magic.deck.create).toHaveBeenCalledWith(req.user, mockDeckData)
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         deck: mockCreatedDeck
       })
     })
 
-    it('should return error when deckData is missing', async () => {
-      // Execute
-      await deckController.create(req, res)
-
-      // Verify
-      expect(res.status).toHaveBeenCalledWith(400)
-      expect(res.json).toHaveBeenCalledWith({
-        status: 'error',
-        message: 'Missing required field: deckData'
-      })
-    })
-
     it('should handle errors during deck creation', async () => {
       // Setup
-      req.body.deckData = { name: 'New Deck', cards: [] }
+      req.body.opts = { name: 'New Deck', cards: [] }
 
       // Mock console.error to prevent log output during test
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})

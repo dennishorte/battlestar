@@ -76,12 +76,39 @@ export const update = async (req, res) => {
       })
     }
 
+    let comment = req.body.comment
+
+    // If the edit was from scarring, mark the scar as applied
+    if (req.body.scar) {
+      if (!req.body.cardData.cubeId) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Cannot apply a scar to a card with no associated cube',
+        })
+      }
+
+      const scar = req.body.scar
+      const cube = await db.magic.cube.findById(req.body.cardData.cubeId)
+      const original = cube.scars().find(x => x.id === scar.id)
+
+      if (original) {
+        original.appliedTo = req.body.cardId
+        original.appliedBy = req.user._id
+        original.appliedAt = new Date()
+        await db.magic.cube.updateScarlist(cube)
+      }
+
+      if (!comment) {
+        comment = 'Applied scar:\n' + scar.text
+      }
+    }
+
     // Update the card
     const updateResult = await db.magic.card.update(
       req.body.cardId,
       req.body.cardData,
       req.user,
-      req.body.comment
+      comment
     )
 
     // Check for successful update

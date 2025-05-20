@@ -1,6 +1,6 @@
 import db from '../models/db.js'
 import notificationService from './notification_service.js'
-import { magic } from 'battlestar-common'
+import { magic, util } from 'battlestar-common'
 
 import { GameKilledError, GameOverwriteError } from '../middleware/loaders.js'
 import { GameOverEvent, fromData } from 'battlestar-common'
@@ -21,6 +21,18 @@ Game.create = async function(lobby, linkedDraftId) {
           numPacks: game.settings.numPacks,
           numPlayers: game.settings.players.length,
         })
+
+        const numScars = game.settings.scarRounds.length * game.settings.players.length
+        if (numScars > cube.scarlist.length) {
+          throw new Error('Insufficient scars for game')
+        }
+        if (numScars > 0) {
+          game.settings.scars = util
+            .array
+            .shuffle([...cube.scarlist])
+            .slice(0, numScars)
+            .map(scar => scar.id)
+        }
       }
       else if (game.settings.game === 'Set Draft') {
         const cards = await db.magic.card.findBySetCode(game.settings.set.code)

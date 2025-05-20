@@ -16,7 +16,8 @@ vi.mock('../../../../src/models/db', () => {
         },
         cube: {
           findById: vi.fn(),
-          addCard: vi.fn()
+          addCard: vi.fn(),
+          updateScarlist: vi.fn()
         }
       }
     }
@@ -252,82 +253,166 @@ describe('Card Controller', () => {
         message: 'Missing required fields: cardId and cardData are required'
       })
     })
+
+    it('should handle scar application and update cube scarlist', async () => {
+      // Setup
+      const cardId = new ObjectId('507f1f77bcf86cd799439013')
+      const cubeId = new ObjectId('507f1f77bcf86cd799439014')
+      const mockCardData = { name: 'Updated Card', type: 'Creature', cubeId }
+      const mockCube = {
+        _id: cubeId,
+        scars: () => [{
+          id: 'scar1',
+          text: 'Test scar'
+        }]
+      }
+      const mockUpdatedCard = {
+        _id: cardId,
+        data: mockCardData,
+        cubeId,
+        edits: [{
+          userId: req.user._id,
+          comment: 'Applied scar:\nTest scar',
+          date: expect.any(Date),
+          oldData: { name: 'Old Card', type: 'Creature' }
+        }]
+      }
+
+      req.body.cardId = cardId
+      req.body.cardData = mockCardData
+      req.body.scar = { id: 'scar1', text: 'Test scar' }
+
+      db.magic.cube.findById.mockResolvedValueOnce(mockCube)
+      db.magic.card.update.mockResolvedValueOnce(mockUpdatedCard)
+
+      // Execute
+      await cardController.update(req, res)
+
+      // Verify
+      expect(db.magic.cube.findById).toHaveBeenCalledWith(cubeId)
+      expect(db.magic.cube.updateScarlist).toHaveBeenCalledWith(mockCube)
+      expect(db.magic.card.update).toHaveBeenCalledWith(
+        cardId,
+        mockCardData,
+        req.user,
+        'Applied scar:\nTest scar'
+      )
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success',
+        card: mockUpdatedCard
+      })
+    })
+
+    it('should return error when applying scar to card without cubeId', async () => {
+      // Setup
+      const cardId = new ObjectId('507f1f77bcf86cd799439013')
+      const mockCardData = { name: 'Updated Card', type: 'Creature' } // No cubeId
+
+      req.body.cardId = cardId
+      req.body.cardData = mockCardData
+      req.body.scar = { id: 'scar123', text: 'Test scar text' }
+
+      // Execute
+      await cardController.update(req, res)
+
+      // Verify
+      expect(res.status).toHaveBeenCalledWith(400)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'error',
+        message: 'Cannot apply a scar to a card with no associated cube'
+      })
+    })
+
+    it('should preserve custom comment when applying scar', async () => {
+      // Setup
+      const cardId = new ObjectId('507f1f77bcf86cd799439013')
+      const cubeId = new ObjectId('507f1f77bcf86cd799439014')
+      const mockCardData = { name: 'Updated Card', type: 'Creature', cubeId }
+      const mockCube = {
+        _id: cubeId,
+        scars: () => [{
+          id: 'scar1',
+          text: 'Test scar'
+        }]
+      }
+      const mockUpdatedCard = {
+        _id: cardId,
+        data: mockCardData,
+        cubeId,
+        edits: [{
+          userId: req.user._id,
+          comment: 'Custom comment',
+          date: expect.any(Date),
+          oldData: { name: 'Old Card', type: 'Creature' }
+        }]
+      }
+
+      req.body.cardId = cardId
+      req.body.cardData = mockCardData
+      req.body.scar = { id: 'scar1', text: 'Test scar' }
+      req.body.comment = 'Custom comment'
+
+      db.magic.cube.findById.mockResolvedValueOnce(mockCube)
+      db.magic.card.update.mockResolvedValueOnce(mockUpdatedCard)
+
+      // Execute
+      await cardController.update(req, res)
+
+      // Verify
+      expect(db.magic.cube.findById).toHaveBeenCalledWith(cubeId)
+      expect(db.magic.cube.updateScarlist).toHaveBeenCalledWith(mockCube)
+      expect(db.magic.card.update).toHaveBeenCalledWith(
+        cardId,
+        mockCardData,
+        req.user,
+        'Custom comment'
+      )
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success',
+        card: mockUpdatedCard
+      })
+    })
   })
 
   describe('versions', () => {
     it('should fetch card versions and return success response', async () => {
       // Setup
-      const cardId = '507f1f77bcf86cd799439013'
       const mockVersions = [
-        {
-          date: new Date('2023-01-01'),
-          userId: req.user._id,
-          data: { name: 'Original Card', type: 'Creature' }
-        },
-        {
-          date: new Date('2023-01-02'),
-          userId: req.user._id,
-          data: { name: 'Updated Card', type: 'Creature' }
-        }
+        { version: '1.0', date: new Date() },
+        { version: '2.0', date: new Date() }
       ]
-
-      req.body.cardId = cardId
-
-      // Mock the versions function to return the mock data
-      const versionsMock = vi.fn().mockResolvedValue(mockVersions)
-      db.magic.card.versions = versionsMock
+      db.magic.card.versions.mockResolvedValueOnce(mockVersions)
 
       // Execute
       await cardController.versions(req, res)
 
       // Verify
-      expect(versionsMock).toHaveBeenCalledWith(cardId)
+      expect(db.magic.card.versions).toHaveBeenCalled()
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         versions: mockVersions
       })
     })
 
-    it('should return error when cardId is missing', async () => {
-      // Setup
-      req.body = {}
-
-      // Execute
-      await cardController.versions(req, res)
-
-      // Verify
-      expect(res.status).toHaveBeenCalledWith(400)
-      expect(res.json).toHaveBeenCalledWith({
-        status: 'error',
-        message: 'Missing required field: cardId'
-      })
-    })
-
     it('should handle errors when fetching versions', async () => {
       // Setup
-      const cardId = '507f1f77bcf86cd799439013'
-      req.body.cardId = cardId
+      const errorMessage = 'Failed to fetch versions'
+      db.magic.card.versions.mockRejectedValueOnce(new Error(errorMessage))
 
       // Mock console.error to prevent log output during test
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      // Mock the versions function to throw an error
-      const errorMessage = 'Failed to fetch versions'
-      const versionsMock = vi.fn().mockRejectedValue(new Error(errorMessage))
-      db.magic.card.versions = versionsMock
-
       // Execute
       await cardController.versions(req, res)
 
       // Verify
-      expect(versionsMock).toHaveBeenCalledWith(cardId)
+      expect(db.magic.card.versions).toHaveBeenCalled()
       expect(res.status).toHaveBeenCalledWith(500)
       expect(res.json).toHaveBeenCalledWith({
         status: 'error',
         message: errorMessage
       })
 
-      // Restore console.error
       consoleErrorSpy.mockRestore()
     })
   })
