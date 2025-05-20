@@ -8,6 +8,7 @@
       :size="size"
       :is-editable="isEditable"
     />
+    <div v-if="disabled" class="card-disabled-overlay"/>
   </div>
 </template>
 
@@ -36,6 +37,10 @@ export default {
       default: true
     },
     isEditable: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },
@@ -142,6 +147,17 @@ $gold: #d9631b;
   top: 0;
   left: 0;
   background-color: rgba(12, 34, 56, 0.5);
+}
+
+.card-disabled-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  border-radius: .5em;
 }
 
 @mixin card-face($size) {
