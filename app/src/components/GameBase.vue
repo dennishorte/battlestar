@@ -82,6 +82,7 @@ export default {
           actor: this.actor,
         })
       }
+      window.game = this.game
     },
 
     async nextGame() {
