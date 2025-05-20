@@ -67,6 +67,7 @@ export const fetchAll = async (req, res) => {
  * @param {Object} res - Express response object
  */
 export const update = async (req, res) => {
+  console.log('update')
   try {
     // Validate required inputs
     if (!req.body.cardId || !req.body.cardData) {
@@ -89,7 +90,7 @@ export const update = async (req, res) => {
 
       const scar = req.body.scar
       const cube = await db.magic.cube.findById(req.body.cardData.cubeId)
-      const original = cube.scars().find(x => x.id === scar.id)
+      const original = cube.scarlist.find(x => x.id === scar.id)
 
       if (original) {
         original.appliedTo = req.body.cardId

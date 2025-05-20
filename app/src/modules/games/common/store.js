@@ -89,12 +89,17 @@ export default {
     async submitAction(context, action) {
       await context.dispatch('_acquireLock')
 
+      // Run the action locally
       const game = context.state.game
+      game.respondToInputRequest(action)
+
+      // Send the action to the server
       const response = await this.$post('/api/game/save_response', {
         gameId: game._id,
         response: action,
       })
-      game.respondToInputRequest(action)
+
+      // Make sure the local and remote games agree on the game state
       game.branchId = response.serializedGame.branchId
       _ensureServerAndClientAgreeOnGameState(game.serialize(), response.serializedGame)
 

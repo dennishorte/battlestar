@@ -22,7 +22,7 @@ Game.create = async function(lobby, linkedDraftId) {
           numPlayers: game.settings.players.length,
         })
 
-        const numScars = game.settings.scarRounds.length * game.settings.players.length
+        const numScars = game.settings.scarRounds.length * game.settings.players.length * 2
         if (numScars > cube.scarlist.length) {
           throw new Error('Insufficient scars for game')
         }

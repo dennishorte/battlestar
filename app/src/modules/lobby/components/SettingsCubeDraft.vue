@@ -97,7 +97,7 @@ export default {
 
       const sufficientScarsCondition = {
         value: () => {
-          const neededScars = scarRounds.length * this.lobby.users.length
+          const neededScars = scarRounds.length * this.lobby.users.length * 2
           return selectedCube && selectedCube.scarlist.length >= neededScars
         },
         message: 'Not enough scars in the cube'

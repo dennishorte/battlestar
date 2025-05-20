@@ -47,7 +47,7 @@ function factoryFromLobby(lobby) {
     numPacks: lobby.options.numPacks,
     packs: lobby.packs,
 
-    scarRounds: (lobby.options.scarRounds || '').split(',').map(x => parseInt(x)),
+    scarRounds: (lobby.options.scarRounds || '').split(',').filter(x => x).map(x => parseInt(x)),
     scars: [],
   })
 }
@@ -96,6 +96,7 @@ CubeDraft.prototype.initialize = function() {
 
 CubeDraft.prototype.initializePacks = function() {
   this.state.packs = this.settings.packs.map(packData => new Pack(this, packData))
+  this.cardsById = {}
 
   this.log.add({ template: 'Passing out packs' })
   this.log.indent()
@@ -120,6 +121,10 @@ CubeDraft.prototype.initializePacks = function() {
       pack.id = player.name + '-' + p_i
       player.unopenedPacks.push(pack)
       packIndex += 1
+
+      for (const card of pack.cards) {
+        this.cardsById[card.id] = card
+      }
     }
   }
 }
@@ -129,11 +134,16 @@ CubeDraft.prototype.initializeScars = function() {
     return
   }
 
-  const scars = util.array.shuffle([...this.settings.scars])
+  const scars = util.array.shuffle([...this.settings.scars], this.random)
   const pairs = util.array.chunk(scars, 2)
 
   for (const pack of this.state.packs) {
     if (this.settings.scarRounds.includes(pack.index + 1)) {
+      if (pairs.length === 0) {
+        console.log(0, this.settings.scars)
+        console.log(1, pack)
+        throw new Error('Not enough scars for all packs')
+      }
       pack.scars = pairs.pop()
     }
   }
@@ -345,7 +355,7 @@ CubeDraft.prototype.getPlayerOptions = function(player) {
     return {
       actor: player.name,
       title: 'Apply Scar',
-      choices: pack.scarIds,
+      choices: pack.scars,
     }
   }
 
@@ -378,6 +388,10 @@ CubeDraft.prototype.getResultMessage = function() {
 
 CubeDraft.prototype.getWaitingPacksForPlayer = function(player) {
   return player.waitingPacks
+}
+
+CubeDraft.prototype.getCardById = function(cardId) {
+  return this.cardsById[cardId]
 }
 
 

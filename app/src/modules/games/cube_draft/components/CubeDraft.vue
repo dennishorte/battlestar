@@ -15,7 +15,7 @@
         class="game-column data-column"
         :class="widthClass"
       >
-        <ScarRound v-if="doingScars" />
+        <ScarRound v-if="doingScars" :scars="availableScars" />
         <CardTableau
           :cards="tableauCards"
           :cardScroll="false"
@@ -25,12 +25,7 @@
       </div>
 
       <div class="game-column deck-column">
-        <DeckList v-if="deck" :deck="deck" @card-clicked="showCardManager">
-          <template #menu-options>
-            <DropdownButton @click="saveDeck">save</DropdownButton>
-            <DropdownRouterLink to="/magic/decks">deck manager</DropdownRouterLink>
-          </template>
-        </DeckList>
+        <DeckList v-if="deck" :deck="deck" @card-clicked="showCardManager" />
       </div>
 
       <div class="game-column info-column">
@@ -50,6 +45,39 @@
 
     <CardDraftModal :id="cardDraftModalId" :card="closeupDraftCard" @draft-card="chooseCard" />
     <DebugModal />
+
+    <BModal v-model="scarModalVis" title="Scar Applicator">
+      <BAlert :model-value="true" v-for="(scar, index) in availableScars" :key="scar.id">
+        {{ `scar ${index+1}: ${scar.text}` }}
+      </BAlert>
+
+      <CardEditor />
+
+      <BFormTextarea rows="4" placeholder="tell us about this scar..." v-model="scarComment" />
+
+      <template #footer>
+        <BButton variant="warning" @click="scarHelpModalVis = true">help!?</BButton>
+        <BButton @click="scarApplied(0)">scar 1</BButton>
+        <BButton @click="scarApplied(1)">scar 2</BButton>
+      </template>
+
+
+      <BModal v-model="scarHelpModalVis" title="How to Scar a Card">
+        <div>To apply a scar, you just edit the card to make it match what the scar says. You can edit any part of the card by clicking on it and putting in the new values you want it to have.</div>
+
+        <div class="mt-4">When you're done, click on the button matching the scar you applied. This is important so that the scar will be marked as used and not given out again in future rounds.</div>
+
+        <BAlert :model-value="true" class="mt-4">
+          tips
+          <ul>
+            <li>It's funny to make a really broken card, but later on, when someone is playing against that card, and they're having a fun game of magic, and then suddenly lose to their opponent's uber-bomb, it's less funny.</li>
+            <li>The same scar applied to a one drop might be broken but applied to a six drop might be boring.</li>
+            <li>You don't have to apply the scar exactly as written; play around with it.</li>
+            <li>Some good flavor and a little spice go a long way.</li>
+          </ul>
+        </BAlert>
+      </BModal>
+    </BModal>
   </MagicWrapper>
 </template>
 
@@ -68,13 +96,13 @@ import MatchResults from './MatchResults'
 import ScarRound from './ScarRound'
 import SeatingInfo from './SeatingInfo'
 
-import DropdownButton from '@/components/DropdownButton'
 import DropdownRouterLink from '@/components/DropdownRouterLink'
 
 import DebugModal from '@/modules/games/common/components/DebugModal'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
+import CardEditor from '@/modules/magic/components/CardEditor'
 import CardListItem from '@/modules/magic/components/CardListItem'
 import DeckList from '@/modules/magic/components/deck/DeckList'
 import MagicWrapper from '@/modules/magic/components/MagicWrapper'
@@ -86,10 +114,10 @@ export default {
   components: {
     AdminOptions,
     CardDraftModal,
+    CardEditor,
     CardTableau,
     DebugModal,
     DeckList,
-    DropdownButton,
     DropdownRouterLink,
     GameLogCubeDraft,
     GameMenu,
@@ -107,11 +135,15 @@ export default {
       deck: null,
       closeupCard: null,
       closeupDraftCard: null,
-      scarCard: null,
+      scarredCard: null,
+      scarComment: '',
 
       gameReady: false,
       showGameStats: false,
       showWaitingPanel: false,
+
+      scarHelpModalVis: false,
+      scarModalVis: false,
     }
   },
 
@@ -128,6 +160,23 @@ export default {
       cardLookup: 'cards',
       cardsReady: 'cardsReady',
     }),
+
+    ...mapState('magic/cube', {
+      cube: 'cube',
+    }),
+
+    availableScars() {
+      if (this.cube && this.doingScars) {
+        const player = this.game.players.byName(this.actor.name)
+        const waiting = this.game.getWaiting(player)
+        return waiting
+          .choices
+          .map(scarId => this.cube.getScarById(scarId))
+      }
+      else {
+        return []
+      }
+    },
 
     doingScars() {
       const player = this.game.players.byName(this.actor.name)
@@ -185,11 +234,16 @@ export default {
   methods: {
     cardClicked(card) {
       if (this.doingScars) {
-        this.showScarModal(card)
+        this.scarModalVis = true
+        this.bus.emit('card-editor:begin', card)
       }
       else {
         this.showDraftModal(card)
       }
+    },
+
+    cardUpdated(newValue) {
+      this.scarredCard = newValue
     },
 
     async chooseCard(card) {
@@ -213,8 +267,45 @@ export default {
       this.deck = new magic.util.wrapper.deck(deck)
       this.deck.initializeCardsSync(this.cardLookup.deckJuicer)
 
+      if (this.game.settings.cubeId) {
+        await this.$store.dispatch('magic/cube/loadCube', {
+          cubeId: this.game.settings.cubeId
+        })
+      }
+
       // Signal that everything is ready to go
       this.gameReady = true
+    },
+
+    async scarApplied(index) {
+      if (!this.scarredCard) {
+        alert('No changes made to card')
+        return
+      }
+
+      const scar = this.availableScars[index]
+
+      await this.$store.dispatch('game/submitAction', {
+        actor: this.actor.name,
+        title: 'Apply Scar',
+        selection: [scar.id],
+      })
+
+      // Update the card and the scar on the server
+      let comment = this.scarComment
+      if (!comment) {
+        comment = `Applied scar: ${scar.text}`
+      }
+
+      await this.$store.dispatch('magic/cards/update', {
+        scar,
+        card: this.scarredCard,
+        comment: this.scarComment,
+      })
+
+      this.scarredCard = null
+      this.scarComment = ''
+      this.scarModalVis = false
     },
 
     showDraftModal(card) {
@@ -233,20 +324,25 @@ export default {
 
     uiFactory() {
       const selectorOptionComponent = (option) => {
-        const cardId = option.title ? option.title : option
-        const internalCard = this.game.getCardById(cardId)
-        const externalCard = this.cardLookup.byId[internalCard._id]
+        if (option.title === 'Draft Card') {
+          const cardId = option.title ? option.title : option
+          const internalCard = this.game.getCardById(cardId)
+          const externalCard = this.cardLookup.byId[internalCard._id]
 
-        if (externalCard) {
-          return {
-            component: CardListItem,
-            props: {
-              card: externalCard,
-              showManaCost: true,
-              onClick: () => {
-                this.showCardManager(cardId)
+          if (externalCard) {
+            return {
+              component: CardListItem,
+              props: {
+                card: externalCard,
+                showManaCost: true,
+                onClick: () => {
+                  this.showCardManager(cardId)
+                },
               },
-            },
+            }
+          }
+          else {
+            return undefined
           }
         }
         else {
@@ -265,6 +361,10 @@ export default {
         },
       }
     },
+  },
+
+  mounted() {
+    this.bus.on('card-editor:updated', this.cardUpdated)
   },
 }
 </script>
