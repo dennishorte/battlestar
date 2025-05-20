@@ -64,7 +64,7 @@ class CubeWrapper extends Wrapper {
   }
 
   getScarById(id) {
-    return this.scars.find(s => s.id === id)
+    return this.scars().find(s => s.id === id)
   }
 
   upsertScar(scar) {
