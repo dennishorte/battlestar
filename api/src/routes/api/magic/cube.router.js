@@ -20,6 +20,15 @@ router.post('/add_remove_cards', cubeController.addRemoveCards)
 router.post('/create', cubeController.createCube)
 
 /**
+ * @route POST /api/magic/cube/delete_achievement
+ * @description Add or delete an achievement in the cube achievement list
+ * @access Private
+ * @body {String} cubeId - ID of the cube to delete into
+   @body {Object} achievement - Achievement to be deleted
+ */
+router.post('/delete_achievement', cubeController.deleteAchievement)
+
+/**
  * @route POST /api/magic/cube/delete_scar
  * @description Add or delete a scar in the cube scarlist
  * @access Private
@@ -52,6 +61,15 @@ router.post('/save', cubeController.saveCube)
    @body {Object} scar - Scar to be added/updated
  */
 router.post('/update_scar', cubeController.updateScar)
+
+/**
+ * @route POST /api/magic/cube/update_achievement
+ * @description Add or update an achievement in the cube achievement list
+ * @access Private
+ * @body {String} cubeId - ID of the cube to update into
+   @body {Object} achievement - Achievement to be added/updated
+ */
+router.post('/update_achievement', cubeController.updateAchievement)
 
 /**
  * @route POST /api/magic/cube/update_settings

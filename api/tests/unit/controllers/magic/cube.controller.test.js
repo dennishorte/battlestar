@@ -1,6 +1,26 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import CubeWrapper from '../../../../common/magic/util/cube.wrapper.js'
 
-// Mock the entire db module first
+// Mock battlestar-common first
+vi.mock('battlestar-common', () => {
+  const mockCubeWrapper = {
+    deleteAchievement: vi.fn(),
+    upsertAchievement: vi.fn(),
+    toJSON: vi.fn().mockReturnValue({ _id: 'cube1', name: 'Test Cube', achievementlist: [] })
+  }
+
+  return {
+    magic: {
+      util: {
+        wrapper: {
+          cube: vi.fn().mockReturnValue(mockCubeWrapper)
+        }
+      }
+    }
+  }
+})
+
+// Mock the entire db module
 vi.mock('../../../../src/models/db.js', () => {
   return {
     default: {
@@ -18,7 +38,9 @@ vi.mock('../../../../src/models/db.js', () => {
           }),
           save: vi.fn().mockResolvedValue(true),
           addCard: vi.fn().mockResolvedValue(true),
-          removeCard: vi.fn().mockResolvedValue(true)
+          removeCard: vi.fn().mockResolvedValue(true),
+          updateScarlist: vi.fn().mockResolvedValue(true),
+          updateAchievementlist: vi.fn().mockResolvedValue(true)
         },
         card: {
           findByIds: vi.fn().mockImplementation(ids => {
@@ -54,6 +76,15 @@ import * as cubeController from '../../../../src/controllers/magic/cube.controll
 import { BadRequestError, NotFoundError } from '../../../../src/utils/errors.js'
 import logger from '../../../../src/utils/logger.js'
 import db from '../../../../src/models/db.js'
+
+// Fixture for creating a test cube and wrapper
+function makeTestCube() {
+  const cube = CubeWrapper.blankCube()
+  cube._id = 'cube1'
+  cube.name = 'Test Cube'
+  const wrapper = new CubeWrapper(cube)
+  return { cube, wrapper }
+}
 
 describe('Magic Cube Controller', () => {
   let req, res, next
@@ -500,6 +531,196 @@ describe('Magic Cube Controller', () => {
 
       // Execute
       await cubeController.updateSettings(req, res, next)
+
+      // Verify
+      expect(logger.error).toHaveBeenCalled()
+      expect(next).toHaveBeenCalledWith(error)
+    })
+  })
+
+  describe('deleteAchievement', () => {
+    it('should delete an achievement from a cube', async () => {
+      req.body = {
+        cubeId: 'cube1',
+        achievement: {
+          id: 'achievement-1',
+          name: 'Test Achievement'
+        }
+      }
+      // Use fixture
+      const { cube, wrapper } = makeTestCube()
+      const deleteAchievementSpy = vi.spyOn(wrapper, 'deleteAchievement')
+      req.cube = cube
+
+      // Execute
+      await cubeController.deleteAchievement(req, res, next)
+
+      // Verify
+      expect(deleteAchievementSpy).toHaveBeenCalledWith(req.body.achievement)
+      expect(db.magic.cube.updateAchievementlist).toHaveBeenCalledWith(expect.any(CubeWrapper))
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success',
+        cube: expect.objectContaining({
+          _id: 'cube1',
+          name: 'Test Cube'
+        })
+      })
+    })
+
+    it('should return BadRequestError if cubeId is missing', async () => {
+      // Setup
+      req.body = {
+        achievement: {
+          id: 'achievement-1'
+        }
+      }
+
+      // Execute
+      await cubeController.deleteAchievement(req, res, next)
+
+      // Verify
+      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
+    })
+
+    it('should return BadRequestError if achievement object is missing', async () => {
+      // Setup
+      req.body = {
+        cubeId: 'cube1'
+      }
+
+      // Execute
+      await cubeController.deleteAchievement(req, res, next)
+
+      // Verify
+      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
+    })
+
+    it('should return NotFoundError if cube is not found', async () => {
+      // Setup
+      req.body = {
+        cubeId: 'nonexistent',
+        achievement: {
+          id: 'achievement-1'
+        }
+      }
+      req.cube = null
+
+      // Execute
+      await cubeController.deleteAchievement(req, res, next)
+
+      // Verify
+      expect(next).toHaveBeenCalledWith(expect.any(NotFoundError))
+    })
+
+    it('should handle errors properly', async () => {
+      // Setup
+      req.body = {
+        cubeId: 'cube1',
+        achievement: {
+          id: 'achievement-1'
+        }
+      }
+      req.cube = { _id: 'cube1' }
+      const error = new Error('Database error')
+      db.magic.cube.updateAchievementlist.mockRejectedValueOnce(error)
+
+      // Execute
+      await cubeController.deleteAchievement(req, res, next)
+
+      // Verify
+      expect(logger.error).toHaveBeenCalled()
+      expect(next).toHaveBeenCalledWith(error)
+    })
+  })
+
+  describe('updateAchievement', () => {
+    it('should update an achievement in a cube', async () => {
+      req.body = {
+        cubeId: 'cube1',
+        achievement: {
+          id: 'achievement-1',
+          name: 'Updated Achievement'
+        }
+      }
+      // Use fixture
+      const { cube, wrapper } = makeTestCube()
+      const upsertAchievementSpy = vi.spyOn(wrapper, 'upsertAchievement')
+      req.cube = cube
+
+      // Execute
+      await cubeController.updateAchievement(req, res, next)
+
+      // Verify
+      expect(upsertAchievementSpy).toHaveBeenCalledWith(req.body.achievement)
+      expect(db.magic.cube.updateAchievementlist).toHaveBeenCalledWith(expect.any(CubeWrapper))
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success',
+        cube: expect.objectContaining({
+          _id: 'cube1',
+          name: 'Test Cube'
+        })
+      })
+    })
+
+    it('should return BadRequestError if cubeId is missing', async () => {
+      // Setup
+      req.body = {
+        achievement: {
+          id: 'achievement-1'
+        }
+      }
+
+      // Execute
+      await cubeController.updateAchievement(req, res, next)
+
+      // Verify
+      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
+    })
+
+    it('should return BadRequestError if achievement object is missing', async () => {
+      // Setup
+      req.body = {
+        cubeId: 'cube1'
+      }
+
+      // Execute
+      await cubeController.updateAchievement(req, res, next)
+
+      // Verify
+      expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
+    })
+
+    it('should return NotFoundError if cube is not found', async () => {
+      // Setup
+      req.body = {
+        cubeId: 'nonexistent',
+        achievement: {
+          id: 'achievement-1'
+        }
+      }
+      req.cube = null
+
+      // Execute
+      await cubeController.updateAchievement(req, res, next)
+
+      // Verify
+      expect(next).toHaveBeenCalledWith(expect.any(NotFoundError))
+    })
+
+    it('should handle errors properly', async () => {
+      // Setup
+      req.body = {
+        cubeId: 'cube1',
+        achievement: {
+          id: 'achievement-1'
+        }
+      }
+      req.cube = { _id: 'cube1' }
+      const error = new Error('Database error')
+      db.magic.cube.updateAchievementlist.mockRejectedValueOnce(error)
+
+      // Execute
+      await cubeController.updateAchievement(req, res, next)
 
       // Verify
       expect(logger.error).toHaveBeenCalled()

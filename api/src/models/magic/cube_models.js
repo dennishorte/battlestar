@@ -1,6 +1,9 @@
+import { magic } from 'battlestar-common'
+
 import { client as databaseClient } from '../../utils/mongo.js'
 const database = databaseClient.db('magic')
 const cubeCollection = database.collection('cube')
+
 
 const Cube = {
   async all() {
@@ -10,21 +13,11 @@ const Cube = {
   },
 
   async create(user) {
-    const creationDate = new Date()
-    const insertResult = await cubeCollection.insertOne({
-      name: 'New Cube',
-      userId: user._id,
-      cardlist: [],
-      scarlist: [],
-      achievementlist: [],
-      flags: {
-        legacy: false,
-      },
-      timestamps: {
-        created: creationDate,
-        updated: creationDate,
-      },
-    })
+    const blank = magic.util.wrapper.cube.blankCube()
+    blank.name = `${user.name}'s cube`
+    blank.userId = user._id
+
+    const insertResult = await cubeCollection.insertOne(blank)
 
     if (!insertResult.insertedId) {
       throw new Error('Cube insertion failed')
@@ -79,6 +72,13 @@ const Cube = {
     await cubeCollection.updateOne(
       { _id: cube._id },
       { $pull: { cardlist: card._id } }
+    )
+  },
+
+  async updateAchievementlist(cube) {
+    await cubeCollection.updateOne(
+      { _id: cube._id },
+      { $set: { achievementlist: cube.achievementlist } },
     )
   },
 

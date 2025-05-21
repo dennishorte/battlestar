@@ -264,6 +264,68 @@ export const updateScar = async(req, res, next) => {
   }
 }
 
+export const deleteAchievement = async(req, res, next) => {
+  try {
+    if (!req.body.cubeId) {
+      return next(new BadRequestError('cubeId is required'))
+    }
+
+    if (!req.body.achievement) {
+      return next(new BadRequestError('achievement object is required'))
+    }
+
+    if (!req.cube) {
+      return next(new NotFoundError(`Cube with ID ${req.body.cubeId} not found`))
+    }
+
+    const cube = new magic.util.wrapper.cube(req.cube)
+    cube.deleteAchievement(req.body.achievement)
+
+    // Save the updated cube
+    await db.magic.cube.updateAchievementlist(cube)
+
+    res.json({
+      status: 'success',
+      cube: cube.toJSON(),
+    })
+  }
+  catch (err) {
+    logger.error(`Error deleting achievement: ${err.message}`)
+    next(err)
+  }
+}
+
+export const updateAchievement = async(req, res, next) => {
+  try {
+    if (!req.body.cubeId) {
+      return next(new BadRequestError('cubeId is required'))
+    }
+
+    if (!req.body.achievement) {
+      return next(new BadRequestError('achievement object is required'))
+    }
+
+    if (!req.cube) {
+      return next(new NotFoundError(`Cube with ID ${req.body.cubeId} not found`))
+    }
+
+    const cube = new magic.util.wrapper.cube(req.cube)
+    cube.upsertAchievement(req.body.achievement)
+
+    // Save the updated cube
+    await db.magic.cube.updateAchievementlist(cube)
+
+    res.json({
+      status: 'success',
+      cube: cube.toJSON(),
+    })
+  }
+  catch (err) {
+    logger.error(`Error updating achievement: ${err.message}`)
+    next(err)
+  }
+}
+
 /**
  * Update cube settings
  * @param {Object} req - Express request object
