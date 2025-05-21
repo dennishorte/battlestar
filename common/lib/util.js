@@ -151,7 +151,7 @@ Util.array.remove = function(array, elem) {
 }
 
 Util.array.removeByPredicate = function(array, pred) {
-  const index = array.find(pred)
+  const index = array.findIndex(x => pred(x))
   if (index !== -1) {
     array.splice(index, 1)
   }

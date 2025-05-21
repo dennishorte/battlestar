@@ -2,6 +2,24 @@ const Wrapper = require('./wrapper.js')
 const util = require('../../lib/util.js')
 
 class CubeWrapper extends Wrapper {
+  static blankCube() {
+    const creationDate = new Date()
+    return {
+      name: 'New Cube',
+      userId: null,
+      cardlist: [],
+      scarlist: [],
+      achievementlist: [],
+      flags: {
+        legacy: false,
+      },
+      timestamps: {
+        created: creationDate,
+        updated: creationDate,
+      },
+    }
+  }
+
   constructor(cube) {
     super(cube)
     this.props = {
@@ -34,10 +52,56 @@ class CubeWrapper extends Wrapper {
     return this.cards().filter(card => card.matchesFilters(filters))
   }
 
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Achievements
+
+  static blankAchievement() {
+    return {
+      id: null,
+      name: '',
+      unlock: '',
+      hidden: '',
+      createdAt: new Date(),
+      createdBy: null,
+      claimedBy: null,
+      claimedAt: null,
+    }
+  }
+
   achievements() {
     return [...this.achievementlist]
   }
 
+  achievementsUnclaimed() {
+    return this.achievements().filter(ach => !ach.claimedAt).sort((l, r) => r.createdAt - l.createdAt)
+  }
+
+  achievementsClaimed() {
+    return this.achievements().filter(ach => ach.claimedAt).sort((l, r) => r.claimedAt - l.claimedAt)
+  }
+
+  deleteAchievement(achievement) {
+    const index = this.achievements().findIndex(s => s.id === achievement.id)
+    if (index !== -1) {
+      this.achievementlist.splice(index, 1)
+    }
+  }
+
+  getAchievementById(id) {
+    return this.achievements().find(s => s.id === id)
+  }
+
+  upsertAchievement(achievement) {
+    const existingIndex = this.achievements().findIndex(s => s.id === achievement.id)
+    if (achievement.id === null || existingIndex === -1) {
+      achievement.id = 'achievement-' + _nextAchievementIndex(this.achievements())
+      this.achievementlist.push(achievement)
+    }
+    else {
+      this.achievementlist[existingIndex] = achievement
+    }
+  }
 
   ////////////////////////////////////////////////////////////////////////////////
   // Scars
@@ -58,9 +122,19 @@ class CubeWrapper extends Wrapper {
     return [...this.scarlist]
   }
 
+  scarsUsed() {
+    return this.scars().filter(scar => scar.appliedAt).sort((l, r) => r.appliedAt - l.appliedAt)
+  }
+
+  scarsUnused() {
+    return this.scars().filter(scar => !scar.appliedAt).sort((l, r) => r.createdAt - l.createdAt)
+  }
+
   deleteScar(scar) {
     const index = this.scars().findIndex(s => s.text === scar.text)
-    this.scarlist.splice(index, 1)
+    if (index !== -1) {
+      this.scarlist.splice(index, 1)
+    }
   }
 
   getScarById(id) {
@@ -77,6 +151,14 @@ class CubeWrapper extends Wrapper {
       this.scarlist[existingIndex] = scar
     }
   }
+}
+
+function _nextAchievementIndex(achs) {
+  if (achs.length === 0) {
+    return 1
+  }
+  const indices = achs.map(s => s.id.substring('achievement-'.length)).map(x => parseInt(x))
+  return Math.max(...indices) + 1
 }
 
 function _nextScarIndex(scars) {
