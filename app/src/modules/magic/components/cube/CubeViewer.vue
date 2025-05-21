@@ -47,7 +47,7 @@
 
       <CubeAchievements
         v-if="showing === 'achievements'"
-        :achievements="achievements"
+        :cube="cube"
         :users="users"
       />
 
@@ -55,9 +55,6 @@
       <CardSearchModal @card-selected="addOneCard" id="cube-add-modal" />
       <CubeImportModal @cube-updates="updateCube" />
       <CardEditorModal />
-      <AchievementModal />
-      <AchievementViewerModal />
-      <AchievementSearchLinkerModal :achievements="achievements" />
       <CubeSettingsModal />
     </div>
   </MagicWrapper>
@@ -71,9 +68,6 @@ import { util } from 'battlestar-common'
 import { mapGetters, mapState } from 'vuex'
 import { nextTick } from 'vue'
 
-import AchievementModal from './AchievementModal'
-import AchievementViewerModal from './AchievementViewerModal'
-import AchievementSearchLinkerModal from './AchievementSearchLinkerModal'
 import CubeAchievements from './CubeAchievements'
 import CardEditorModal from '../CardEditorModal'
 import CubeBreakdown from './CubeBreakdown'
@@ -91,9 +85,6 @@ export default {
   name: 'CubeViewer',
 
   components: {
-    AchievementModal,
-    AchievementViewerModal,
-    AchievementSearchLinkerModal,
     CubeAchievements,
     CardEditorModal,
     CardFilters,
@@ -140,12 +131,6 @@ export default {
     ...mapState('magic/cube', {
       cube: 'cube',
       cubeLoaded: 'cubeLoaded',
-
-      achievements: 'achievements',
-      scars: 'scars',
-
-      managedAchievement: 'managedAchievement',
-      managedScar: 'managedScar',
     }),
 
     cards() {
@@ -171,17 +156,6 @@ export default {
 
     filteredCards() {
       return this.cube.applyFilters(this.filters)
-    },
-
-    scarsUnused() {
-      return this.scars.filter(scar => !scar.appliedTimestamp)
-    },
-
-    scarsUsed() {
-      return this
-        .scars
-        .filter(scar => scar.appliedTimestamp)
-        .sort((l, r) => r.appliedTimestamp - l.appliedTimestamp)
     },
   },
 
