@@ -67,7 +67,6 @@ export const fetchAll = async (req, res) => {
  * @param {Object} res - Express response object
  */
 export const update = async (req, res) => {
-  console.log('update')
   try {
     // Validate required inputs
     if (!req.body.cardId || !req.body.cardData) {

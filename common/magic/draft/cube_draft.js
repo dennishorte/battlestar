@@ -112,7 +112,6 @@ CubeDraft.prototype.initializePacks = function() {
   this.log.outdent()
 
   let packIndex = 0
-  let cardIndex = 0
 
   for (const player of this.players.all()) {
     for (let p_i = 0; p_i < this.settings.numPacks; p_i++) {

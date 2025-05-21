@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import * as cardController from '../../../../src/controllers/magic/card.controller.js'
 import { ObjectId } from 'mongodb'
+import { magic } from 'battlestar-common'
 
 // Mock dependencies
 vi.mock('../../../../src/models/db', () => {
@@ -259,13 +260,12 @@ describe('Card Controller', () => {
       const cardId = new ObjectId('507f1f77bcf86cd799439013')
       const cubeId = new ObjectId('507f1f77bcf86cd799439014')
       const mockCardData = { name: 'Updated Card', type: 'Creature', cubeId }
-      const mockCube = {
-        _id: cubeId,
-        scars: () => [{
-          id: 'scar1',
-          text: 'Test scar'
-        }]
-      }
+      const CubeWrapper = magic.util.wrapper.cube
+      const cube = new CubeWrapper(CubeWrapper.blankCube())
+      cube._id = cubeId
+      cube.name = 'Test Cube'
+      cube.scarlist = [{ id: 'scar1', text: 'Test scar' }]
+
       const mockUpdatedCard = {
         _id: cardId,
         data: mockCardData,
@@ -282,7 +282,7 @@ describe('Card Controller', () => {
       req.body.cardData = mockCardData
       req.body.scar = { id: 'scar1', text: 'Test scar' }
 
-      db.magic.cube.findById.mockResolvedValueOnce(mockCube)
+      db.magic.cube.findById.mockResolvedValueOnce(cube)
       db.magic.card.update.mockResolvedValueOnce(mockUpdatedCard)
 
       // Execute
@@ -290,7 +290,7 @@ describe('Card Controller', () => {
 
       // Verify
       expect(db.magic.cube.findById).toHaveBeenCalledWith(cubeId)
-      expect(db.magic.cube.updateScarlist).toHaveBeenCalledWith(mockCube)
+      expect(db.magic.cube.updateScarlist).toHaveBeenCalledWith(cube)
       expect(db.magic.card.update).toHaveBeenCalledWith(
         cardId,
         mockCardData,
@@ -328,13 +328,11 @@ describe('Card Controller', () => {
       const cardId = new ObjectId('507f1f77bcf86cd799439013')
       const cubeId = new ObjectId('507f1f77bcf86cd799439014')
       const mockCardData = { name: 'Updated Card', type: 'Creature', cubeId }
-      const mockCube = {
-        _id: cubeId,
-        scars: () => [{
-          id: 'scar1',
-          text: 'Test scar'
-        }]
-      }
+      const CubeWrapper = magic.util.wrapper.cube
+      const cube = new CubeWrapper(CubeWrapper.blankCube())
+      cube._id = cubeId
+      cube.name = 'Test Cube'
+      cube.scarlist = [{ id: 'scar1', text: 'Test scar' }]
       const mockUpdatedCard = {
         _id: cardId,
         data: mockCardData,
@@ -352,7 +350,7 @@ describe('Card Controller', () => {
       req.body.scar = { id: 'scar1', text: 'Test scar' }
       req.body.comment = 'Custom comment'
 
-      db.magic.cube.findById.mockResolvedValueOnce(mockCube)
+      db.magic.cube.findById.mockResolvedValueOnce(cube)
       db.magic.card.update.mockResolvedValueOnce(mockUpdatedCard)
 
       // Execute
@@ -360,7 +358,7 @@ describe('Card Controller', () => {
 
       // Verify
       expect(db.magic.cube.findById).toHaveBeenCalledWith(cubeId)
-      expect(db.magic.cube.updateScarlist).toHaveBeenCalledWith(mockCube)
+      expect(db.magic.cube.updateScarlist).toHaveBeenCalledWith(cube)
       expect(db.magic.card.update).toHaveBeenCalledWith(
         cardId,
         mockCardData,
