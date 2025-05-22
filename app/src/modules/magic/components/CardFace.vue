@@ -238,7 +238,7 @@ export default {
         `card-container-${this.size}px`
       ]
 
-      if (this.card.isScarred()) {
+      if (this.card.isScarred(this.index)) {
         classes.push('scarred')
       }
 

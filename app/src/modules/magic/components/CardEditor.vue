@@ -5,19 +5,19 @@
       :card="editing"
       class="preview"
       :is-editable="true"
-    />
-
-    <div class="buttons">
-      <button class="btn btn-primary" @click="addFace">Add Face</button>
-      <template v-if="model.card_faces.length > 1">
-        <button
-          v-for="(_, index) in model.card_faces"
-          :key="index"
-          class="btn btn-warning"
-          @click="removeFace(index)"
-        >Remove {{ index }}</button>
+    >
+      <template #before-face="{ face, faceIndex }">
+        <BFormCheckbox v-model="face.scarred" @change="updateFace({ index: faceIndex, field: 'scarred', value: face.scarred })">
+          scarred
+        </BFormCheckbox>
       </template>
-    </div>
+
+      <template #after-face="{ faceIndex }">
+        <BButton variant="warning" class="mt-2" @click="removeFace(faceIndex)">remove</BButton>
+      </template>
+    </MagicCard>
+
+    <button class="btn btn-primary" @click="addFace">Add Face</button>
   </div>
 </template>
 
@@ -79,6 +79,7 @@ export default {
     },
 
     updateFace({ index, field, value }) {
+      console.log('update face', index, field, value)
       this.model.card_faces[index][field] = value
       this.updateRootValues()
       this.bus.emit('card-editor:updated', {

@@ -185,8 +185,13 @@ class CardWrapper extends Wrapper {
   isLegalIn(format) {
     return this.data.legal && this.data.legal.includes(format)
   }
-  isScarred() {
-    return false
+  isScarred(faceIndex) {
+    if (faceIndex) {
+      return Boolean(this.face(faceIndex).scarred)  // Often is undefined for scryfall cards
+    }
+    else {
+      return this.data.card_faces.some(face => face.scarred)
+    }
   }
   isVisible(player) {
     return this.visibility.includes(player)

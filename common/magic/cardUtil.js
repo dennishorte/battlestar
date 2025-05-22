@@ -129,6 +129,8 @@ CardUtil.blankFace = function() {
     color_indicator: null,
     colors: [],
     produced_mana: [],
+
+    scarred: false,
   }
 }
 

@@ -1,13 +1,19 @@
 <template>
   <div class="magic-card" :style="cardStyles" v-if="card">
-    <CardFace
-      v-for="index in this.card.numFaces()"
-      :key="index"
-      :card="card"
-      :index="index - 1"
-      :size="size"
-      :is-editable="isEditable"
-    />
+
+    <div class="magic-card-face-wrapper" v-for="(_, index) in this.card.numFaces()" :key="index">
+      <slot name="before-face" :face="card.face(index)" :face-index="index" />
+
+      <CardFace
+        :card="card"
+        :index="index"
+        :size="size"
+        :is-editable="isEditable"
+      />
+
+      <slot name="after-face" />
+    </div>
+
     <div v-if="disabled" class="card-disabled-overlay"/>
   </div>
 </template>
@@ -111,6 +117,11 @@ $gold: #d9631b;
   flex-wrap: none;
   overflow: scroll;
   max-height: 25em;
+}
+
+.magic-card-face-wrapper {
+  display: flex;
+  flex-direction: column;
 }
 
 @mixin frame-colors($name, $background, $foreground, $border, $rules-background) {
