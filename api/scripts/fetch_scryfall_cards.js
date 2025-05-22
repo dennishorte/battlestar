@@ -125,12 +125,21 @@ function renameIdField(card) {
   delete card.id
 }
 
+function addColorIndicators(card) {
+  for (const face of card.card_faces) {
+    if (!face.mana_cost && face.colors.length > 0) {
+      face.color_indicator = [...face.colors]
+    }
+  }
+}
+
 function cleanScryfallCards(cards) {
   for (const card of cards) {
     adjustFaces(card)
     cleanImageUris(card)
     cleanLegalities(card)
     renameIdField(card)
+    addColorIndicators(card)
   }
 }
 

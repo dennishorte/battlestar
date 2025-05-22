@@ -1,0 +1,43 @@
+{
+  "_id": "03553980-53fa-4256-b478-c7e0e73e2b5b",
+  "source": "scryfall",
+  "data": {
+    "layout": "token",
+    "cmc": 0,
+    "color_identity": [
+      "B",
+      "W"
+    ],
+    "set": "tc15",
+    "collector_number": "23",
+    "digital": false,
+    "rarity": "common",
+    "card_faces": [
+      {
+        "artist": "Adam Paquette",
+        "name": "Spirit",
+        "oracle_text": "This creature's power and toughness are each equal to the number of experience counters you have.",
+        "power": "*",
+        "toughness": "*",
+        "type_line": "Token Enchantment Creature — Spirit",
+        "colors": [
+          "B",
+          "W"
+        ],
+        "color_indicator": [
+          "B",
+          "W"
+        ],
+        "image_uri": "https://cards.scryfall.io/art_crop/front/0/3/03553980-53fa-4256-b478-c7e0e73e2b5b.jpg?1563132220"
+      }
+    ],
+    "name": "Spirit",
+    "colors": [
+      "B",
+      "W"
+    ],
+    "type_line": "Token Enchantment Creature — Spirit",
+    "legal": [],
+    "_id": "03553980-53fa-4256-b478-c7e0e73e2b5b"
+  }
+}

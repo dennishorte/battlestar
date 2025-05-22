@@ -63,6 +63,26 @@ describe('Card Processing', () => {
     expect(result).toEqual(expected)
   })
 
+  describe('color indicators', () => {
+    test('process a token correctly', () => {
+      const { input, expected } = loadFiles('Spirit Token')
+      const result = processSingleCard(input)
+      expect(result).toEqual(expected)
+    })
+
+    test('process a double-faced card correctly', () => {
+      const { input, expected } = loadFiles('Arlin Kord')
+      const result = processSingleCard(input)
+      expect(result).toEqual(expected)
+    })
+
+    test('process a devoid card correctly', () => {
+      const { input, expected } = loadFiles('Blinding Drone')
+      const result = processSingleCard(input)
+      expect(result).toEqual(expected)
+    })
+  })
+
   test('filters out non-English cards', () => {
     const input = {
       id: "card-id-789",

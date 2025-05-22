@@ -1,0 +1,201 @@
+{
+  "object": "card",
+  "id": "e72d7c11-2165-4c72-80f3-3c1a7b4b5572",
+  "oracle_id": "6bb7d0df-7a9f-4e17-8c31-7628c4b12356",
+  "multiverse_ids": [
+    686078
+  ],
+  "mtgo_id": 135886,
+  "tcgplayer_id": 609713,
+  "cardmarket_id": 805001,
+  "name": "Arlinn Kord // Arlinn, Embraced by the Moon",
+  "lang": "en",
+  "released_at": "2025-01-24",
+  "uri": "https://api.scryfall.com/cards/e72d7c11-2165-4c72-80f3-3c1a7b4b5572",
+  "scryfall_uri": "https://scryfall.com/card/inr/230/arlinn-kord-arlinn-embraced-by-the-moon?utm_source=api",
+  "layout": "transform",
+  "highres_image": true,
+  "image_status": "highres_scan",
+  "cmc": 4,
+  "type_line": "Legendary Planeswalker — Arlinn // Legendary Planeswalker — Arlinn",
+  "color_identity": [
+    "G",
+    "R"
+  ],
+  "keywords": [
+    "Transform"
+  ],
+  "card_faces": [
+    {
+      "object": "card_face",
+      "name": "Arlinn Kord",
+      "mana_cost": "{2}{R}{G}",
+      "type_line": "Legendary Planeswalker — Arlinn",
+      "oracle_text": "+1: Until end of turn, up to one target creature gets +2/+2 and gains vigilance and haste.\n0: Create a 2/2 green Wolf creature token. Transform Arlinn Kord.",
+      "colors": [
+        "G",
+        "R"
+      ],
+      "loyalty": "3",
+      "artist": "Winona Nelson",
+      "artist_id": "e45fe8d3-75d6-42c9-a2df-e945ad81ea27",
+      "illustration_id": "b943b0d6-5e7b-46da-92df-00fd6cf173e0",
+      "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/e/7/e72d7c11-2165-4c72-80f3-3c1a7b4b5572.jpg?1736468478",
+        "normal": "https://cards.scryfall.io/normal/front/e/7/e72d7c11-2165-4c72-80f3-3c1a7b4b5572.jpg?1736468478",
+        "large": "https://cards.scryfall.io/large/front/e/7/e72d7c11-2165-4c72-80f3-3c1a7b4b5572.jpg?1736468478",
+        "png": "https://cards.scryfall.io/png/front/e/7/e72d7c11-2165-4c72-80f3-3c1a7b4b5572.png?1736468478",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/e/7/e72d7c11-2165-4c72-80f3-3c1a7b4b5572.jpg?1736468478",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/e/7/e72d7c11-2165-4c72-80f3-3c1a7b4b5572.jpg?1736468478"
+      }
+    },
+    {
+      "object": "card_face",
+      "name": "Arlinn, Embraced by the Moon",
+      "mana_cost": "",
+      "type_line": "Legendary Planeswalker — Arlinn",
+      "oracle_text": "+1: Creatures you control get +1/+1 and gain trample until end of turn.\n−1: Arlinn deals 3 damage to any target. Transform Arlinn.\n−6: You get an emblem with \"Creatures you control have haste and '{T}: This creature deals damage equal to its power to any target.'\"",
+      "colors": [
+        "G",
+        "R"
+      ],
+      "color_indicator": [
+        "G",
+        "R"
+      ],
+      "artist": "Winona Nelson",
+      "artist_id": "e45fe8d3-75d6-42c9-a2df-e945ad81ea27",
+      "illustration_id": "025bdbd1-cb24-46b5-b19c-8bee24c3f3c0",
+      "image_uris": {
+        "small": "https://cards.scryfall.io/small/back/e/7/e72d7c11-2165-4c72-80f3-3c1a7b4b5572.jpg?1736468478",
+        "normal": "https://cards.scryfall.io/normal/back/e/7/e72d7c11-2165-4c72-80f3-3c1a7b4b5572.jpg?1736468478",
+        "large": "https://cards.scryfall.io/large/back/e/7/e72d7c11-2165-4c72-80f3-3c1a7b4b5572.jpg?1736468478",
+        "png": "https://cards.scryfall.io/png/back/e/7/e72d7c11-2165-4c72-80f3-3c1a7b4b5572.png?1736468478",
+        "art_crop": "https://cards.scryfall.io/art_crop/back/e/7/e72d7c11-2165-4c72-80f3-3c1a7b4b5572.jpg?1736468478",
+        "border_crop": "https://cards.scryfall.io/border_crop/back/e/7/e72d7c11-2165-4c72-80f3-3c1a7b4b5572.jpg?1736468478"
+      }
+    }
+  ],
+  "all_parts": [
+    {
+      "object": "related_card",
+      "id": "49825631-2498-41fe-a1df-f152ec05d1a8",
+      "component": "combo_piece",
+      "name": "Arlinn Kord // Arlinn, Embraced by the Moon",
+      "type_line": "Legendary Planeswalker — Arlinn // Legendary Planeswalker — Arlinn",
+      "uri": "https://api.scryfall.com/cards/49825631-2498-41fe-a1df-f152ec05d1a8"
+    },
+    {
+      "object": "related_card",
+      "id": "89040321-0d64-4631-a80e-5bd585d6fa51",
+      "component": "combo_piece",
+      "name": "Arlinn, Embraced by the Moon Emblem",
+      "type_line": "Emblem — Arlinn",
+      "uri": "https://api.scryfall.com/cards/89040321-0d64-4631-a80e-5bd585d6fa51"
+    },
+    {
+      "object": "related_card",
+      "id": "89b89a55-3ea2-4186-b946-06831bc16169",
+      "component": "token",
+      "name": "Wolf",
+      "type_line": "Token Creature — Wolf",
+      "uri": "https://api.scryfall.com/cards/89b89a55-3ea2-4186-b946-06831bc16169"
+    },
+    {
+      "object": "related_card",
+      "id": "4825c59d-9e27-4a12-ba84-642b8540e573",
+      "component": "combo_piece",
+      "name": "Shadows Over Innistrad Checklist 2",
+      "type_line": "Card",
+      "uri": "https://api.scryfall.com/cards/4825c59d-9e27-4a12-ba84-642b8540e573"
+    }
+  ],
+  "legalities": {
+    "standard": "not_legal",
+    "future": "not_legal",
+    "historic": "legal",
+    "timeless": "legal",
+    "gladiator": "legal",
+    "pioneer": "legal",
+    "explorer": "legal",
+    "modern": "legal",
+    "legacy": "legal",
+    "pauper": "not_legal",
+    "vintage": "legal",
+    "penny": "legal",
+    "commander": "legal",
+    "oathbreaker": "legal",
+    "standardbrawl": "not_legal",
+    "brawl": "legal",
+    "alchemy": "not_legal",
+    "paupercommander": "not_legal",
+    "duel": "legal",
+    "oldschool": "not_legal",
+    "premodern": "not_legal",
+    "predh": "not_legal"
+  },
+  "games": [
+    "paper"
+  ],
+  "reserved": false,
+  "game_changer": false,
+  "foil": true,
+  "nonfoil": true,
+  "finishes": [
+    "nonfoil",
+    "foil"
+  ],
+  "oversized": false,
+  "promo": false,
+  "reprint": true,
+  "variation": false,
+  "set_id": "b9618c8c-9f31-4b42-9798-2991893c27bf",
+  "set": "inr",
+  "set_name": "Innistrad Remastered",
+  "set_type": "masters",
+  "set_uri": "https://api.scryfall.com/sets/b9618c8c-9f31-4b42-9798-2991893c27bf",
+  "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ainr&unique=prints",
+  "scryfall_set_uri": "https://scryfall.com/sets/inr?utm_source=api",
+  "rulings_uri": "https://api.scryfall.com/cards/e72d7c11-2165-4c72-80f3-3c1a7b4b5572/rulings",
+  "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A6bb7d0df-7a9f-4e17-8c31-7628c4b12356&unique=prints",
+  "collector_number": "230",
+  "digital": false,
+  "rarity": "mythic",
+  "artist": "Winona Nelson",
+  "artist_ids": [
+    "e45fe8d3-75d6-42c9-a2df-e945ad81ea27"
+  ],
+  "border_color": "black",
+  "frame": "2015",
+  "security_stamp": "oval",
+  "full_art": false,
+  "textless": false,
+  "booster": true,
+  "story_spotlight": false,
+  "edhrec_rank": 7031,
+  "penny_rank": 3114,
+  "preview": {
+    "source": "Wizards of the Coast",
+    "source_uri": "",
+    "previewed_at": "2025-01-07"
+  },
+  "prices": {
+    "usd": "0.96",
+    "usd_foil": "0.85",
+    "usd_etched": null,
+    "eur": "0.87",
+    "eur_foil": "0.84",
+    "tix": null
+  },
+  "related_uris": {
+    "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=686078&printed=false",
+    "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DArlinn%2BKord%2B%252F%252F%2BArlinn%252C%2BEmbraced%2Bby%2Bthe%2BMoon",
+    "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DArlinn%2BKord%2B%252F%252F%2BArlinn%252C%2BEmbraced%2Bby%2Bthe%2BMoon",
+    "edhrec": "https://edhrec.com/route/?cc=Arlinn+Kord"
+  },
+  "purchase_uris": {
+    "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F609713%3Fpage%3D1",
+    "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Singles/Innistrad-Remastered/Arlinn-Kord-Arlinn-Embraced-by-the-Moon?referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+    "cardhoarder": "https://www.cardhoarder.com/cards/135886?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+  }
+}
