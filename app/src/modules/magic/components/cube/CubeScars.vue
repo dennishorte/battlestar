@@ -7,7 +7,7 @@
     <div class="col">
       <h5>Avaiable Scars</h5>
 
-      <div v-for="scar in scarsUnused" :key="scar.id" class="scar-container">
+      <div v-for="scar in cube.scarsUnused()" :key="scar.id" class="scar-container">
         <div>{{ scar.text }}</div>
         <div>
           <button class="btn btn-link" @click="editScar(scar)">edit</button>
@@ -17,7 +17,7 @@
 
     <div class="col">
       <h5>Used Scars</h5>
-      <div v-for="scar in scarsUsed" :key="scar.id" class="scar-container vertical">
+      <div v-for="scar in cube.scarsUsed()" :key="scar.id" class="scar-container vertical">
         <div>{{ scar.text }}</div>
         <div class="scar-applied-info">
           <div
@@ -48,7 +48,7 @@
 
 
 <script setup>
-import { computed, inject, ref, toRef } from 'vue'
+import { inject, ref } from 'vue'
 import { useStore } from 'vuex'
 import { magic } from 'battlestar-common'
 
@@ -68,10 +68,6 @@ const store = useStore()
 
 const editingScar = ref(null)
 const scarModalVis = ref(false)
-const scarlist = toRef(props.cube.scarlist)
-
-const scarsUsed = computed(() => scarlist.value.filter(s => s.appliedTo))
-const scarsUnused = computed(() => scarlist.value.filter(s => !s.appliedTo))
 
 function createScar() {
   editingScar.value = magic.util.wrapper.cube.blankScar()

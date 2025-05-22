@@ -6,10 +6,10 @@
 
     <template v-if="cube.flags.legacy">
       <button class="btn" :class="buttonClassesScars" @click="navigate('scars')">
-        scars ({{ cube.scars().length }})
+        scars ({{ cube.scarsUnused().length }})
       </button>
       <button class="btn" :class="buttonClassesAchievements" @click="navigate('achievements')">
-        achievements ({{ cube.achievements().length }})
+        achievements ({{ cube.achievementsUnclaimed().length }})
       </button>
     </template>
 

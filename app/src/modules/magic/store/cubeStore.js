@@ -9,23 +9,8 @@ export default {
     cube: null,
     cubeLoaded: false,
 
-    scars: [],
-    achievements: [],
-
     managedCard: null,
   }),
-
-  getters: {
-    achievementsForCard(state) {
-      return (card) => {
-        return state
-          .achievements
-          .filter(ach => !ach.claimed)
-          .filter(ach => ach.filters && ach.filters.length > 0)
-          .filter(ach => card.matchesFilters(ach.filters))
-      }
-    },
-  },
 
   mutations: {
     manageCard(state, card) {
@@ -61,28 +46,10 @@ export default {
       await dispatch('loadCube', { cubeId: state.cube._id })
     },
 
-    async claimAchievement({ commit, dispatch, state }, { achId, userId }) {
-      await this.$post('/api/magic/achievement/claim', {
-        achId,
-        userId,
-      })
-      await dispatch('loadAchievements')
-
-      if (state.managedAchievement) {
-        const updated = state.achievements.find(a => a._id === achId)
-        commit('manageAchievement', { achievement: updated })
-      }
-    },
-
     async create({ dispatch }) {
       const response = await this.$post('/api/magic/cube/create')
       await dispatch('loadAllCubes')
       return response.cubeId
-    },
-
-    async deleteAchievement({ dispatch }, ach) {
-      await this.$post('/api/magic/achievement/delete', { achId: ach._id })
-      await dispatch('loadAchievements')
     },
 
     async loadCube({ dispatch, state }, { cubeId }) {
@@ -103,6 +70,38 @@ export default {
       state.cubes = response.cubes
     },
 
+    async updateSettings({ dispatch }, { cubeId, settings }) {
+      await this.$post('/api/magic/cube/update_settings', {
+        cubeId,
+        settings
+      })
+      await dispatch('loadCube', { cubeId })
+    },
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Achievements
+
+    async deleteAchievement({ dispatch }, { cubeId, achievement }) {
+      await this.$post('/api/magic/cube/delete_achievement', {
+        cubeId,
+        achievement
+      })
+      await dispatch('loadCube', { cubeId })
+
+    },
+
+    async updateAchievement({ dispatch }, { cubeId, achievement }) {
+      await this.$post('/api/magic/cube/update_achievement', {
+        cubeId,
+        achievement
+      })
+      await dispatch('loadCube', { cubeId })
+    },
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Scars
+
     async deleteScar({ dispatch }, { cubeId, scar }) {
       await this.$post('/api/magic/cube/delete_scar', {
         cubeId,
@@ -116,14 +115,6 @@ export default {
       await this.$post('/api/magic/cube/update_scar', {
         cubeId,
         scar
-      })
-      await dispatch('loadCube', { cubeId })
-    },
-
-    async updateSettings({ dispatch }, { cubeId, settings }) {
-      await this.$post('/api/magic/cube/update_settings', {
-        cubeId,
-        settings
       })
       await dispatch('loadCube', { cubeId })
     },
