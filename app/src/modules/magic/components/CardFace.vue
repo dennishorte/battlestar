@@ -229,7 +229,7 @@ export default {
 
   computed: {
     achievements() {
-      return this.$store.getters['magic/cube/achievementsForCard'](this.card)
+      return []
     },
 
     containerClasses() {
