@@ -81,6 +81,12 @@ export default {
     ////////////////////////////////////////////////////////////////////////////////
     // Achievements
 
+    async claimAchievement({ dispatch }, { cubeId, achievement, user }) {
+      achievement.claimedAt = new Date()
+      achievement.claimedBy = user._id
+      await dispatch('updateAchievement', { cubeId, achievement })
+    },
+
     async deleteAchievement({ dispatch }, { cubeId, achievement }) {
       await this.$post('/api/magic/cube/delete_achievement', {
         cubeId,

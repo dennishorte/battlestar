@@ -17,7 +17,11 @@
 
       <div class="col">
         <h3>Claimed Achievements</h3>
-        <CubeAchievement v-for="ach in cube.achievementsClaimed()" :key="ach._id" :ach="ach" />
+        <CubeAchievement
+          v-for="ach in cube.achievementsClaimed()"
+          :key="ach._id"
+          :ach="ach"
+        />
       </div>
     </div>
 

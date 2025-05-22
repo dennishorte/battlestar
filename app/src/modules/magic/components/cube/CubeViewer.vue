@@ -68,7 +68,7 @@ import { util } from 'battlestar-common'
 import { mapGetters, mapState } from 'vuex'
 import { nextTick } from 'vue'
 
-import CubeAchievements from './CubeAchievements'
+import CubeAchievements from './CubeAchievements/CubeAchievements.vue'
 import CardEditorModal from '../CardEditorModal'
 import CubeBreakdown from './CubeBreakdown'
 import CardSearchModal from '../CardSearchModal'
