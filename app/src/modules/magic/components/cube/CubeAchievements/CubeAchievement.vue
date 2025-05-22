@@ -20,7 +20,7 @@
       </template>
     </BDropdown>
 
-    <BModal title="Achievement Viewer" v-model="viewerModalVis">
+    <BModal title="Achievement Viewer" v-model="viewerModalVis" :lazy="true">
       <div class="achievement-name">{{ ach.name }}</div>
       <div>{{ ach.unlock }}</div>
       <hr />
