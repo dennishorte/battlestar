@@ -7,6 +7,10 @@
       <div class="subtext">created by: {{ username(ach.createdBy) }}</div>
       <div class="subtext">age: {{ ach.createdAt }}</div>
     </div>
+
+    <BDropdown>
+      <BDropdownItem @click="$emit('edit-achievement', ach)">edit</BDropdownItem>
+    </BDropdown>
   </div>
 </template>
 
@@ -17,6 +21,8 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'CubeAchievement',
+
+  emits: ['edit-achievement'],
 
   inject: ['bus'],
 

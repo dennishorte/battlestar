@@ -7,7 +7,12 @@
     <div class="row">
       <div class="col">
         <h3>Unclaimed Achievements</h3>
-        <CubeAchievement v-for="ach in cube.achievementsUnclaimed()" :key="ach._id" :ach="ach" />
+        <CubeAchievement
+          v-for="ach in cube.achievementsUnclaimed()"
+          :key="ach._id"
+          :ach="ach"
+          @edit-achievement="editAchievement"
+        />
       </div>
 
       <div class="col">
@@ -76,11 +81,11 @@ async function deleteAchievement() {
   })
 }
 
-/* function editAchievement(achievement) {
- *   editingAchievement.value = achievement
- *   achievementModalVis.value = true
- * }
- *  */
+function editAchievement(achievement) {
+  editingAchievement.value = achievement
+  achievementModalVis.value = true
+}
+
 async function saveAchievement() {
   if (!editingAchievement.value) {
     throw new Error('No achievement to save')
