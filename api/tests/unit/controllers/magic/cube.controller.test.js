@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import CubeWrapper from '../../../../common/magic/util/cube.wrapper.js'
+import { magic } from 'battlestar-common'
 
 // Mock battlestar-common first
 vi.mock('battlestar-common', () => {
@@ -13,7 +13,7 @@ vi.mock('battlestar-common', () => {
     magic: {
       util: {
         wrapper: {
-          cube: vi.fn().mockReturnValue(mockCubeWrapper)
+          cube: vi.fn().mockImplementation(() => mockCubeWrapper)
         }
       }
     }
@@ -76,15 +76,6 @@ import * as cubeController from '../../../../src/controllers/magic/cube.controll
 import { BadRequestError, NotFoundError } from '../../../../src/utils/errors.js'
 import logger from '../../../../src/utils/logger.js'
 import db from '../../../../src/models/db.js'
-
-// Fixture for creating a test cube and wrapper
-function makeTestCube() {
-  const cube = CubeWrapper.blankCube()
-  cube._id = 'cube1'
-  cube.name = 'Test Cube'
-  const wrapper = new CubeWrapper(cube)
-  return { cube, wrapper }
-}
 
 describe('Magic Cube Controller', () => {
   let req, res, next
@@ -547,17 +538,15 @@ describe('Magic Cube Controller', () => {
           name: 'Test Achievement'
         }
       }
-      // Use fixture
-      const { cube, wrapper } = makeTestCube()
-      const deleteAchievementSpy = vi.spyOn(wrapper, 'deleteAchievement')
-      req.cube = cube
+      req.cube = { _id: 'cube1', name: 'Test Cube' }
 
       // Execute
       await cubeController.deleteAchievement(req, res, next)
 
       // Verify
-      expect(deleteAchievementSpy).toHaveBeenCalledWith(req.body.achievement)
-      expect(db.magic.cube.updateAchievementlist).toHaveBeenCalledWith(expect.any(CubeWrapper))
+      const mockWrapper = magic.util.wrapper.cube()
+      expect(mockWrapper.deleteAchievement).toHaveBeenCalledWith(req.body.achievement)
+      expect(db.magic.cube.updateAchievementlist).toHaveBeenCalledWith(expect.any(Object))
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         cube: expect.objectContaining({
@@ -642,17 +631,15 @@ describe('Magic Cube Controller', () => {
           name: 'Updated Achievement'
         }
       }
-      // Use fixture
-      const { cube, wrapper } = makeTestCube()
-      const upsertAchievementSpy = vi.spyOn(wrapper, 'upsertAchievement')
-      req.cube = cube
+      req.cube = { _id: 'cube1', name: 'Test Cube' }
 
       // Execute
       await cubeController.updateAchievement(req, res, next)
 
       // Verify
-      expect(upsertAchievementSpy).toHaveBeenCalledWith(req.body.achievement)
-      expect(db.magic.cube.updateAchievementlist).toHaveBeenCalledWith(expect.any(CubeWrapper))
+      const mockWrapper = magic.util.wrapper.cube()
+      expect(mockWrapper.upsertAchievement).toHaveBeenCalledWith(req.body.achievement)
+      expect(db.magic.cube.updateAchievementlist).toHaveBeenCalledWith(expect.any(Object))
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         cube: expect.objectContaining({
