@@ -24,7 +24,7 @@
                   <ManaCost :cost="slotProps.text" />
                 </template>
                 <template v-slot:empty>
-                  <i class="ms ms-2x ms-ci ms-ci-5 empty-mana-indicator"/>
+                  <i class="ms ms-2x ms-ci ms-ci-5 opacity-10"/>
                 </template>
               </EditableDiv>
             </div>
@@ -60,12 +60,24 @@
           </div>
 
           <div class="frame-type-line frame-foreground">
-            <EditableDiv
-              :text="card.typeLine(index)"
-              customClass="frame-card-type"
-              :editable="isEditable"
-              field="type_line"
-              @update="updateCardField" />
+            <div class="color-indicator-and-type">
+
+              <div class="frame-color-indicator">
+                <i
+                  v-if="card.hasColorIndicator(index)"
+                  class="ms ms-ci ms-ci-5 ms-2x"
+                  :class="[`ms-ci-${card.colorIndicatorSuffix}`, isEditable ? 'ms-2x' : '']"
+                />
+                <i v-else-if="isEditable" class="ms ms-ci ms-ci-5 ms-2x opacity-10" />
+              </div>
+
+              <EditableDiv
+                :text="card.typeLine(index)"
+                customClass="frame-card-type"
+                :editable="isEditable"
+                field="type_line"
+                @update="updateCardField" />
+            </div>
             <div class="frame-card-icon" :class="rarity">{{ setIcon }}</div>
           </div>
 
@@ -184,15 +196,7 @@ export default {
     CardDefense,
   },
 
-  inject: {
-    bus: {
-      from: 'bus',
-      default: {
-        emit: () => {},
-        on: () => {},
-      },
-    },
-  },
+  emits: ['update-face'],
 
   props: {
     card: {
@@ -219,7 +223,7 @@ export default {
 
   methods: {
     updateCardField({ field, value }) {
-      this.bus.emit('card-editor:update-face', {
+      this.$emit('update-face', {
         index: this.index,
         field,
         value
@@ -323,8 +327,10 @@ div {
   margin-right: 4px;
 }
 
-.empty-mana-indicator {
-  opacity: 0.1;
+.color-indicator-and-type {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .empty-art {
@@ -333,6 +339,10 @@ div {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.opacity-10 {
+  opacity: 0.1;
 }
 
 .split-empty-left, .split-empty-right {

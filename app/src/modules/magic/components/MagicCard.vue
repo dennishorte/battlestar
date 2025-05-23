@@ -9,6 +9,7 @@
         :index="index"
         :size="size"
         :is-editable="isEditable"
+        @updateFace="$emit('update-face', $event)"
       />
 
       <slot name="after-face" />
@@ -28,6 +29,8 @@ export default {
   components: {
     CardFace,
   },
+
+  emits: ['update-face'],
 
   props: {
     card: {

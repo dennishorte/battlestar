@@ -116,6 +116,7 @@ export default {
         scar,
       })
       await dispatch('reloadDatabase')
+      await dispatch('magic/cube/reload', null, { root: true })
     },
 
     async reloadDatabase({ dispatch, state }) {

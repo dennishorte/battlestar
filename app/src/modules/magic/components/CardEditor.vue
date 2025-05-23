@@ -1,116 +1,81 @@
 <template>
-  <div class="card-editor" v-if="Boolean(model)">
-    <MagicCard
-      :size="270"
-      :card="editing"
-      class="preview"
-      :is-editable="true"
-    >
-      <template #before-face="{ face, faceIndex }">
-        <BFormCheckbox v-model="face.scarred" @change="updateFace({ index: faceIndex, field: 'scarred', value: face.scarred })">
-          scarred
-        </BFormCheckbox>
-      </template>
+  <div class="card-editor">
+    <template v-if="Boolean(cardInEdit)">
+      <MagicCard
+        :size="270"
+        :card="cardInEdit"
+        class="mb-2 w-100"
+        :is-editable="true"
+        @updateFace="updateFace"
+      >
+        <template #before-face="{ face, faceIndex }">
+          <BFormCheckbox v-model="face.scarred" @change="updateFace({ index: faceIndex, field: 'scarred', value: face.scarred })">
+            scarred
+          </BFormCheckbox>
+        </template>
 
-      <template #after-face="{ faceIndex }">
-        <BButton variant="warning" class="mt-2" @click="removeFace(faceIndex)">remove</BButton>
-      </template>
-    </MagicCard>
+        <template #after-face="{ faceIndex }">
+          <BButton variant="warning" class="mt-2" @click="removeFace(faceIndex)">remove</BButton>
+        </template>
+      </MagicCard>
 
-    <button class="btn btn-primary" @click="addFace">Add Face</button>
+      <button class="btn btn-primary" @click="addFace">Add Face</button>
+    </template>
+
+    <template v-else>
+      <BAlert variant="danger" :model-value="true">
+        Error: No card was provided
+      </BAlert>
+    </template>
   </div>
 </template>
 
 
-<script>
-import { magic } from 'battlestar-common'
+<script setup>
+import { ref, watch } from 'vue'
 
 import MagicCard from './MagicCard.vue'
 
-
-export default {
-  name: 'CardEditor',
-
-  components: {
-    MagicCard,
+const props = defineProps({
+  modelValue: {
+    type: [Object, null],
+    required: true,
   },
+})
 
-  inject: ['bus'],
+const emit = defineEmits(['update:modelValue'])
 
-  data() {
-    return {
-      original: null,
-      editing: null,
-      model: null,
+const originalCard = ref(null)
+const cardInEdit = ref(null)
 
-      faceIndex: 0,
-      fieldName: '',
-    }
-  },
+// Initialize cardInEdit when modal opens
+watch(() => props.modelValue, (newValue) => {
+  if (props.modelValue) {
+    cardInEdit.value = newValue.clone()
+    originalCard.value = newValue.clone()
+  }
+  else {
+    cardInEdit.value = null
+    originalCard.value = null
+  }
+})
 
-  computed: {
-    face() {
-      return this.model.card_faces[this.faceIndex]
-    },
-  },
+function updateFace({ index, field, value }) {
+  cardInEdit.value.face(index)[field] = value
+  emit('update:modelValue', cardInEdit.value)
+}
 
-  methods: {
-    beginEditing(card) {
-      this.original = card
-      this.editing = card.clone()
-      this.model = this.editing.data
-    },
+function addFace() {
+  cardInEdit.value.addFace()
+  emit('update:modelValue', cardInEdit.value)
+}
 
-    completeEditing() {
-      this.bus.emit('card-editor:complete', this.updated)
-    },
-
-    addFace() {
-      this.model.card_faces.push(magic.util.card.blankFace())
-      this.updateRootValues()
-    },
-
-    removeFace(index) {
-      this.model.card_faces.splice(index, 1)
-      if (this.faceIndex >= this.model.card_faces.length) {
-        this.faceIndex = this.model.card_faces.length - 1
-      }
-      this.updateRootValues()
-    },
-
-    updateFace({ index, field, value }) {
-      console.log('update face', index, field, value)
-      this.model.card_faces[index][field] = value
-      this.updateRootValues()
-      this.bus.emit('card-editor:updated', {
-        original: this.original,
-        updated: this.editing,
-      })
-    },
-
-    updateRootValues() {
-      this.model.cmc = magic.util.card.calculateManaCost(this.model)
-      this.model.name = this.model.card_faces.map(face => face.name).join(' // ')
-      this.model.type_line = this.model.card_faces.map(face => face.type_line).join(' // ')
-    },
-  },
-
-  mounted() {
-    this.bus.on('card-editor:begin', this.beginEditing)
-    this.bus.on('card-editor:update-face', this.updateFace)
-  },
+function removeFace(index) {
+  cardInEdit.value.removeFace(index)
+  emit('update:modelValue', cardInEdit.value)
 }
 </script>
 
 
 <style scoped>
-.preview {
-  margin-bottom: .5em;
-  width: 100%;
-}
-
-.ptl {
-  display: flex;
-  flex-direction: row;
-}
 </style>

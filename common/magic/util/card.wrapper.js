@@ -60,6 +60,12 @@ class CardWrapper extends Wrapper {
   colorIdentity() {
     return this.data.color_identity
   }
+  colorIndicator(faceIndex) {
+    if (faceIndex === undefined) {
+      throw new Error('faceIndex is required')
+    }
+    return this.face(faceIndex).color_indicator || []
+  }
   colorKey(faceIndex) {
     return this.colors(faceIndex).map(c => c.toLowerCase()).sort().join('')
   }
@@ -182,6 +188,9 @@ class CardWrapper extends Wrapper {
     return this.face(faceIndex).image_uri
   }
 
+  hasColorIndicator(faceIndex) {
+    return this.colorIndicator(faceIndex).length > 0
+  }
 
   isArtifact(faceIndex) {
     return this.typeLine(faceIndex).toLowerCase().includes('artifact')
@@ -272,6 +281,16 @@ class CardWrapper extends Wrapper {
 
   clone() {
     return new CardWrapper(this.toJSON())
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Card editing
+  addFace() {
+    this.data.card_faces.push(cardUtil.blankFace())
+  }
+
+  removeFace(index) {
+    this.data.card_faces.splice(index, 1)
   }
 }
 

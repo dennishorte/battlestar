@@ -70,6 +70,12 @@ export default {
       state.cubes = response.cubes
     },
 
+    async reload({ dispatch, state }) {
+      if (state.cube) {
+        await dispatch('loadCube', { cubeId: state.cube._id })
+      }
+    },
+
     async updateSettings({ dispatch }, { cubeId, settings }) {
       await this.$post('/api/magic/cube/update_settings', {
         cubeId,

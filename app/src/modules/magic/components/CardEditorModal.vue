@@ -1,75 +1,88 @@
 <template>
-  <ModalBase id="card-editor-modal">
-    <template #header>
-      Card Editor
-    </template>
-
+  <BModal title="Card Editor" v-model="modalVisible">
     <slot name="before-card"/>
 
-    <CardEditor @card-updated="cardUpdated" />
+    <CardEditor v-model="cardInEdit" />
 
     <slot name="after-card"/>
 
-    <template #footer>
+    <template #footer="{ cancel }">
       <slot name="footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
-        <button class="btn btn-danger"
-                @click="save"
-                data-bs-dismiss="modal"
-                :disabled="!updatedCard">save</button>
+        <BButton variant="secondary" @click="cancel()">cancel</BButton>
+        <BButton
+          variant="danger"
+          @click="save"
+          :disabled="!hasUpdates"
+        >save</BButton>
       </slot>
     </template>
-  </ModalBase>
+  </BModal>
 </template>
 
 
-<script>
+<script setup>
+import { computed, ref, watch } from 'vue'
+import { useStore } from 'vuex'
+import { util } from 'battlestar-common'
+
 import CardEditor from './CardEditor'
-import ModalBase from '@/components/ModalBase'
 
 
-export default {
-  name: 'CardEditorModal',
-
-  components: {
-    CardEditor,
-    ModalBase,
+const props = defineProps({
+  card: {
+    type: [Object, null],
+    required: true
   },
 
-  inject: ['actor', 'bus'],
-
-  data() {
-    return {
-      updatedCard: null,
-    }
+  // The visibility of the modal
+  // It is passed through from the parent down to the actual modal that this component contains,
+  // which is required by Bootstrap Vue Next in order to have modals as separate components.
+  modelValue: {
+    type: Boolean,
+    required: true
   },
+})
 
-  methods: {
-    cardUpdated({ updated }) {
-      this.updatedCard = updated
-    },
+const emit = defineEmits(['update:modelValue'])
+const store = useStore()
 
-    editCard(card) {
-      this.updateCard = null
-      this.$modal('card-editor-modal').show()
-      this.bus.emit('card-editor:begin', card)
-    },
+const originalCard = ref(null)
+const cardInEdit = ref(null)
 
-    async save() {
-      if (this.updatedCard) {
-        await this.$store.dispatch('magic/cards/update', {
-          card: this.updatedCard,
-          comment: 'Updated in the cube editor',
-        })
-      }
-    },
+const modalVisible = computed({
+  get() {
+    return props.modelValue
   },
+  set(value) {
+    emit('update:modelValue', value)
+  }
+})
 
-  mounted() {
-    this.bus.on('edit-card-in-modal', this.editCard)
-    this.bus.on('card-editor:updated', this.cardUpdated)
-  },
+async function save() {
+  emit('update:modelValue', false)
+
+  if (hasUpdates.value) {
+    await store.dispatch('magic/cards/update', {
+      card: cardInEdit.value,
+      comment: 'Updated in the cube card editor',
+    })
+  }
 }
+
+// Initialize cardInEdit when modal opens
+watch(() => props.modelValue, (isVisible) => {
+  if (isVisible && props.card) {
+    cardInEdit.value = props.card.clone()
+    originalCard.value = props.card.clone()
+  }
+})
+
+const hasUpdates = computed(() => {
+  if (!cardInEdit.value || !originalCard.value) {
+    return false
+  }
+  return !util.dict.strictEquals(cardInEdit.value, originalCard.value)
+})
 </script>
 
 

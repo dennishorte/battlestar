@@ -279,6 +279,10 @@ Util.array.uniqueMaxBy = function(array, pred) {
 ////////////////////////////////////////////////////////////////////////////////
 // Dict functions
 
+Util.dict.strictEquals = function(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b)
+}
+
 Util.dict.map = function(dict, func) {
   const output = {}
   for (const [key, value] of Object.entries(dict)) {

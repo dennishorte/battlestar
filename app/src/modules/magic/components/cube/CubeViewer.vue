@@ -54,7 +54,7 @@
 
       <CardSearchModal @card-selected="addOneCard" id="cube-add-modal" />
       <CubeImportModal @cube-updates="updateCube" />
-      <CardEditorModal />
+      <CardEditorModal v-model="editorVisible" :card="editorCard" />
       <CubeSettingsModal />
     </div>
   </MagicWrapper>
@@ -108,6 +108,9 @@ export default {
 
       showing: this.$route.params.tab || 'cards',
       showSearch: false,
+
+      editorCard: null,
+      editorVisible: false,
 
       filters: [],
     }
@@ -164,7 +167,8 @@ export default {
     // Sync methods
 
     cardCloseup(card) {
-      this.bus.emit('edit-card-in-modal', card)
+      this.editorCard = card
+      this.editorVisible = true
     },
 
     editScar(scar) {

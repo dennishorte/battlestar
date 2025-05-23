@@ -126,7 +126,7 @@ CardUtil.blankFace = function() {
     type_line: '',
 
     color_identity: [],
-    color_indicator: null,
+    color_indicator: [],
     colors: [],
     produced_mana: [],
 
