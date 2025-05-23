@@ -324,28 +324,6 @@ CardUtil.manaSymbolsFromString = function(string) {
   return symbols
 }
 
-CardUtil.updateColors = function(card) {
-  for (const face of card.card_faces) {
-    if (face.mana_cost) {
-      face.mana_cost = face.mana_cost.toUpperCase()
-    }
-
-    // Most cards have no color indicator; you can see it in cards like Pact of Negation.
-    if (face.color_indicator) {
-      face.colors = [...face.color_indicator]
-    }
-    else if (face.mana_cost) {
-      face.colors = ['W', 'U', 'B', 'R', 'G'].filter(letter => face.mana_cost.includes(letter))
-    }
-    else {
-      face.colors = []
-    }
-  }
-
-  card.colors = util.array.distinct(card.card_faces.flatMap(face => face.colors))
-  card.color_identity = [...card.colors]
-}
-
 CardUtil.parseCardlist = function(cardlist) {
   const cards = []
 

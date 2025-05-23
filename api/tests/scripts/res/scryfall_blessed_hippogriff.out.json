@@ -37,11 +37,6 @@
     "collector_number": "11",
     "digital": false,
     "rarity": "common",
-    "name": "Blessed Hippogriff // Tyr's Blessing",
-    "colors": [
-      "W"
-    ],
-    "type_line": "Creature — Hippogriff // Instant — Adventure",
     "legal": [
       "timeless",
       "gladiator",

@@ -92,7 +92,6 @@ export default {
       this.model.cmc = magic.util.card.calculateManaCost(this.model)
       this.model.name = this.model.card_faces.map(face => face.name).join(' // ')
       this.model.type_line = this.model.card_faces.map(face => face.type_line).join(' // ')
-      magic.util.card.updateColors(this.model)
     },
   },
 

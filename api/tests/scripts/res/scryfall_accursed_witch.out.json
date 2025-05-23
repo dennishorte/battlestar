@@ -41,11 +41,6 @@
     "collector_number": "97",
     "digital": false,
     "rarity": "uncommon",
-    "name": "Accursed Witch // Infectious Curse",
-    "colors": [
-      "B"
-    ],
-    "type_line": "Creature — Human Shaman // Enchantment — Aura Curse",
     "legal": [
       "historic",
       "timeless",

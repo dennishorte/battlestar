@@ -57,10 +57,22 @@ describe('Card Processing', () => {
     expect(result).toEqual(expected)
   })
 
-  test('process adventures correctly', () => {
-    const { input, expected } = loadFiles('Blessed Hippogriff')
-    const result = processSingleCard(input)
-    expect(result).toEqual(expected)
+  describe('adventure', () => {
+    test('process adventures correctly', () => {
+      const { input, expected } = loadFiles('Blessed Hippogriff')
+      const result = processSingleCard(input)
+      expect(result).toEqual(expected)
+    })
+
+    test('handle adventures with different color faces', () => {
+      const { input, expected } = loadFiles('Callous Sell Sword')
+      const result = processSingleCard(input)
+      expect(result).toEqual(expected)
+    })
+
+    test('also works with omens', () => {
+
+    })
   })
 
   describe('color indicators', () => {

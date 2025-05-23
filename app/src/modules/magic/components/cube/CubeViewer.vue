@@ -164,7 +164,6 @@ export default {
     // Sync methods
 
     cardCloseup(card) {
-      console.log('card clicked', card.name())
       this.bus.emit('edit-card-in-modal', card)
     },
 

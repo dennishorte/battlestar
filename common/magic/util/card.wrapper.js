@@ -1,5 +1,6 @@
 const Wrapper = require('./wrapper.js')
 const cardUtil = require('../cardUtil.js')
+const util = require('../../lib/util.js')
 
 class GameData {
   constructor() {
@@ -44,21 +45,35 @@ class CardWrapper extends Wrapper {
     return this._id
   }
 
-  colors() {
-    return this.data.colors
+  colors(faceIndex) {
+    if (typeof faceIndex === 'number') {
+      return this.face(faceIndex).colors
+    }
+    else {
+      let colors = []
+      for (const face of this.data.card_faces) {
+        colors = colors.concat(face.colors)
+      }
+      return util.array.distinct(colors).sort()
+    }
   }
   colorIdentity() {
     return this.data.color_identity
   }
-  colorKey() {
-    return this.colors().map(c => c.toLowerCase()).sort().join('')
+  colorKey(faceIndex) {
+    return this.colors(faceIndex).map(c => c.toLowerCase()).sort().join('')
   }
-  colorName() {
-    return cardUtil.COLOR_KEY_TO_NAME[this.colorKey()]
+  colorName(faceIndex) {
+    return cardUtil.COLOR_KEY_TO_NAME[this.colorKey(faceIndex)]
   }
 
   typeLine(faceIndex) {
-    return (typeof faceIndex === 'number') ? this.face(faceIndex).type_line : this.data.type_line
+    if (typeof faceIndex === 'number') {
+      return this.face(faceIndex).type_line
+    }
+    else {
+      return this.data.card_faces.map(face => face.type_line).join(' // ')
+    }
   }
   supertypes(faceIndex) {
     const supertypesString = this.typeLine(faceIndex).toLowerCase().split(TYPELINE_SPLITTER_REGEX)[0]
@@ -70,7 +85,12 @@ class CardWrapper extends Wrapper {
   }
 
   name(faceIndex) {
-    return (typeof faceIndex === 'number') ? this.face(faceIndex).name : this.data.name
+    if (typeof faceIndex === 'number') {
+      return this.face(faceIndex).name
+    }
+    else {
+      return this.data.card_faces.map(face => face.name).join(' // ')
+    }
   }
   set() {
     return this.data.set || 'custom'
@@ -175,8 +195,8 @@ class CardWrapper extends Wrapper {
   isLand(faceIndex) {
     return this.typeLine(faceIndex).toLowerCase().includes('land')
   }
-  isMulticolor() {
-    return this.colors().length > 1
+  isMulticolor(faceIndex) {
+    return this.colors(faceIndex).length > 1
   }
   isSiege(faceIndex) {
     return this.subtypes(faceIndex).includes('siege')
@@ -186,7 +206,7 @@ class CardWrapper extends Wrapper {
     return this.data.legal && this.data.legal.includes(format)
   }
   isScarred(faceIndex) {
-    if (faceIndex) {
+    if (typeof faceIndex === 'number') {
       return Boolean(this.face(faceIndex).scarred)  // Often is undefined for scryfall cards
     }
     else {

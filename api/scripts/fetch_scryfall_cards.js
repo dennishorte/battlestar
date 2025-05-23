@@ -1,7 +1,6 @@
 import axios from 'axios'
 import fs from 'fs'
 import path from 'path'
-import { mag, util } from 'battlestar-common'
 
 const rootFields = [
   "id",
@@ -34,12 +33,6 @@ const faceFields = [
   "colors",
 ]
 
-const combinedFields = [
-  "name",
-  "colors",
-  "type_line",
-]
-
 const wantedFields = [].concat(rootFields, faceFields)
 
 
@@ -67,11 +60,6 @@ function adjustFaces(card) {
     delete card[key]
   }
 
-  // Split cards need to recalculate their colors based on their actual casting cost.
-  if (card.layout === 'split') {
-    mag.util.card.updateColors(card)
-  }
-
   // Remove all other fields
   const toRemove = [...card.card_faces]
   toRemove.push(card)
@@ -88,21 +76,6 @@ function adjustFaces(card) {
     if (!rootFields.includes(key)) {
       delete card[key]
     }
-  }
-
-  // Put combined fields into the root
-  for (const field of combinedFields) {
-    if (Array.isArray(card.card_faces[0][field])) {
-      const combined = card.card_faces.map(face => face[field]).flat()
-      card[field] = util.array.distinct(combined)
-    }
-    else {
-      card[field] = card.card_faces.map(face => face[field]).join(' // ')
-    }
-  }
-
-  if (!card.name) {
-    console.log(card)
   }
 }
 
@@ -133,13 +106,41 @@ function addColorIndicators(card) {
   }
 }
 
+function sortColors(card) {
+  for (const face of card.card_faces) {
+    face.colors.sort()
+    face.color_indicator?.sort()
+  }
+
+  if (card.color_identity) {
+    card.color_identity.sort()
+  }
+
+  if (card.produced_mana) {
+    card.produced_mana?.sort()
+  }
+}
+
+function fixColors(card) {
+  // Adventure cards with the adventure part being a different color often have that face
+  // marked as the wrong color.
+  // Split cards often have both faces marked as both colors.
+  if (card.layout === 'adventure' || card.layout === 'split') {
+    for (const face of card.card_faces) {
+      face.colors = ['W', 'U', 'B', 'R', 'G'].filter(c => face.mana_cost.includes(c))
+    }
+  }
+}
+
 function cleanScryfallCards(cards) {
   for (const card of cards) {
     adjustFaces(card)
     cleanImageUris(card)
     cleanLegalities(card)
     renameIdField(card)
+    fixColors(card)
     addColorIndicators(card)
+    sortColors(card)
   }
 }
 

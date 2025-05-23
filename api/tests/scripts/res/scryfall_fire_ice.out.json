@@ -37,12 +37,6 @@
     "collector_number": "215",
     "digital": false,
     "rarity": "uncommon",
-    "name": "Fire // Ice",
-    "colors": [
-      "R",
-      "U"
-    ],
-    "type_line": "Instant // Instant",
     "legal": [
       "modern",
       "legacy",

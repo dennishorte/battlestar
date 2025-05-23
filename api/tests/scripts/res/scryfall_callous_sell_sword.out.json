@@ -1,0 +1,61 @@
+{
+  "_id": "770ee3da-d33e-466f-9a2e-ad2d08ef5012",
+  "source": "scryfall",
+  "data": {
+    "layout": "adventure",
+    "cmc": 2,
+    "color_identity": [
+      "B",
+      "R"
+    ],
+    "card_faces": [
+      {
+        "name": "Callous Sell-Sword",
+        "mana_cost": "{1}{B}",
+        "type_line": "Creature — Human Soldier",
+        "oracle_text": "This creature enters with a +1/+1 counter on it for each creature that died under your control this turn.",
+        "power": "2",
+        "toughness": "2",
+        "artist": "Valera Lutfullina",
+        "colors": [
+          "B"
+        ],
+        "image_uri": "https://cards.scryfall.io/art_crop/front/7/7/770ee3da-d33e-466f-9a2e-ad2d08ef5012.jpg?1692939554"
+      },
+      {
+        "name": "Burn Together",
+        "mana_cost": "{R}",
+        "type_line": "Sorcery — Adventure",
+        "oracle_text": "Target creature you control deals damage equal to its power to any other target. Then sacrifice it.",
+        "artist": "Valera Lutfullina",
+        "colors": [
+          "R"
+        ],
+        "image_uri": "https://cards.scryfall.io/art_crop/front/7/7/770ee3da-d33e-466f-9a2e-ad2d08ef5012.jpg?1692939554"
+      }
+    ],
+    "set": "woe",
+    "collector_number": "221",
+    "digital": false,
+    "rarity": "uncommon",
+    "legal": [
+      "standard",
+      "future",
+      "historic",
+      "timeless",
+      "gladiator",
+      "pioneer",
+      "explorer",
+      "modern",
+      "legacy",
+      "vintage",
+      "commander",
+      "oathbreaker",
+      "standardbrawl",
+      "brawl",
+      "alchemy",
+      "duel"
+    ],
+    "_id": "770ee3da-d33e-466f-9a2e-ad2d08ef5012"
+  }
+}

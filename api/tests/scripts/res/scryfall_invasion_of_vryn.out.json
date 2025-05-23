@@ -41,11 +41,6 @@
     "collector_number": "64",
     "digital": false,
     "rarity": "uncommon",
-    "name": "Invasion of Vryn // Overloaded Mage-Ring",
-    "colors": [
-      "U"
-    ],
-    "type_line": "Battle — Siege // Artifact",
     "legal": [
       "standard",
       "future",
