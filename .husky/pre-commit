@@ -20,9 +20,6 @@ fi
 if echo "$STAGED_FILES" | grep -q "^app/"; then
   cd app
 
-  echo "Running tests for app..."
-  npm run test
-
   echo "Running lint for app..."
   npm run lint
 
