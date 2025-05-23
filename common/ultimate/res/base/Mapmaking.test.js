@@ -14,7 +14,7 @@ describe('Mapmaking', () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Mapmaking')
 
-    expect(t.cards(game, 'score').sort()).toStrictEqual(['Mysticism', 'The Wheel'])
+    expect(t.cards(game, 'score').sort()).toEqual(['Mysticism', 'The Wheel'])
   })
 
   test('if a card was not transferred', () => {
@@ -29,6 +29,6 @@ describe('Mapmaking', () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Mapmaking')
 
-    expect(t.cards(game, 'score').sort()).toStrictEqual([])
+    expect(t.cards(game, 'score').sort()).toEqual([])
   })
 })

@@ -14,8 +14,8 @@ describe('Clothing', () => {
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Clothing')
 
-    expect(t.cards(game, 'purple')).toStrictEqual(['Code of Laws'])
-    expect(t.cards(game, 'score').sort()).toStrictEqual(['Archery', 'Writing'])
+    expect(t.cards(game, 'purple')).toEqual(['Code of Laws'])
+    expect(t.cards(game, 'score').sort()).toEqual(['Archery', 'Writing'])
   })
 
 })

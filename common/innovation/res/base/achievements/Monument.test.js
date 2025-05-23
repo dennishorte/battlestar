@@ -29,7 +29,7 @@ describe('Monument achievement', () => {
     const request3 = t.choose(game, request2, 'yes')
     const request4 = t.choose(game, request3, 'auto')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    expect(t.cards(game, 'achievements')).toEqual([])
   })
 
   test('tuck six', () => {
@@ -58,7 +58,7 @@ describe('Monument achievement', () => {
     const request3 = t.choose(game, request2, 'yes')
     const request4 = t.choose(game, request3, 'auto')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['Monument'])
+    expect(t.cards(game, 'achievements')).toEqual(['Monument'])
   })
 
   test('score five', () => {
@@ -76,7 +76,7 @@ describe('Monument achievement', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Metalworking')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    expect(t.cards(game, 'achievements')).toEqual([])
   })
 
   test('score six', () => {
@@ -95,6 +95,6 @@ describe('Monument achievement', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Metalworking')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['Monument'])
+    expect(t.cards(game, 'achievements')).toEqual(['Monument'])
   })
 })

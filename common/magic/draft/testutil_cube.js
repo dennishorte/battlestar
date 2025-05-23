@@ -151,6 +151,7 @@ TestUtil.fixture = function(options) {
   options.packs = options
     .packs
     .filter(p => p.testIndex < options.numPacks)
+    .filter(p => Boolean(options.players.find(player => player.name === p.owner)))
     .map(p => p.cards)
     .map(p => p.slice(0, options.packSize))
 

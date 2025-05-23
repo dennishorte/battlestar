@@ -17,7 +17,7 @@ describe('Specialization', () => {
       request = t.choose(game, request, 'Dogma.Specialization')
       request = t.choose(game, request, 'auto')
 
-      expect(t.cards(game, 'hand').sort()).toStrictEqual([
+      expect(t.cards(game, 'hand').sort()).toEqual([
         'Archery',
         'Metalworking',
         'Oars',

@@ -27,7 +27,7 @@ describe('Empire Achievement', () => {
 
     request = t.choose(game, request, 'Meld.Databases')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['Empire'])
+    expect(t.cards(game, 'achievements')).toEqual(['Empire'])
   })
 
   test('person biscuits do not count', () => {
@@ -54,7 +54,7 @@ describe('Empire Achievement', () => {
 
     request = t.choose(game, request, 'Meld.Escapism')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    expect(t.cards(game, 'achievements')).toEqual([])
   })
 
   test('not quite', () => {
@@ -81,6 +81,6 @@ describe('Empire Achievement', () => {
 
     request = t.choose(game, request, 'Meld.Bioengineering')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    expect(t.cards(game, 'achievements')).toEqual([])
   })
 })

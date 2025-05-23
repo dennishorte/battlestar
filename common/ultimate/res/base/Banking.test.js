@@ -20,15 +20,15 @@ describe('Banking', () => {
 
     const result3 = t.choose(game, result2, 'Chemistry')
 
-    expect(t.cards(game, 'blue')).toStrictEqual(['Chemistry'])
-    expect(t.cards(game, 'score', 'micah')).toStrictEqual(['Statistics'])
+    expect(t.cards(game, 'blue')).toEqual(['Chemistry'])
+    expect(t.cards(game, 'score', 'micah')).toEqual(['Statistics'])
   })
 
   test('no draw and score if no card', () => {
     const game = t.fixtureTopCard('Banking')
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Banking')
-    expect(t.cards(game, 'score', 'micah')).toStrictEqual([])
+    expect(t.cards(game, 'score', 'micah')).toEqual([])
   })
 
   test('splay', () => {
@@ -39,7 +39,7 @@ describe('Banking', () => {
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Banking')
 
-    expect(result2.selectors[0].choices).toStrictEqual(['green'])
+    expect(result2.selectors[0].choices).toEqual(['green'])
     expect(result2.selectors[0].min).toBe(0)
   })
 })

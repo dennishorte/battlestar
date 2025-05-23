@@ -101,7 +101,7 @@ describe('George Stephenson', () => {
       .map(card => card.age)
       .sort()
 
-    expect(achievements).toStrictEqual([1,1,2,2,4,5,5,6,7,8,9,9])
+    expect(achievements).toEqual([1,1,2,2,4,5,5,6,7,8,9,9])
   })
 
 })

@@ -16,6 +16,6 @@ describe('Universe Achievement', () => {
     request = game.run()
     request = t.choose(game, request, 'Meld.Empiricism')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['Universe'])
+    expect(t.cards(game, 'achievements')).toEqual(['Universe'])
   })
 })

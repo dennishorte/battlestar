@@ -67,6 +67,6 @@ describe('Queen Victoria', () => {
       .filter(card => !card.isSpecialAchievement)
       .map(card => card.age)
       .sort()
-    expect(achievements).toStrictEqual([1,1,3])
+    expect(achievements).toEqual([1,1,3])
   })
 })

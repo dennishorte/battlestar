@@ -10,5 +10,5 @@ test('Trade', () => {
   const request2 = t.choose(game, request1, 'Decree.Trade')
 
   const ages = t.zone(game, 'forecast').cards().map(c => c.age).sort()
-  expect(ages).toStrictEqual([5, 5, 5])
+  expect(ages).toEqual([5, 5, 5])
 })

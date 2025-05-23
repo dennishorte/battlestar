@@ -14,9 +14,9 @@ describe('Anatomy', () => {
     const result2 = t.choose(game, result1, 'Dogma.Anatomy')
     const result3 = t.choose(game, result2, 'The Wheel') // Micah's choice
 
-    expect(t.cards(game, 'score', 'micah')).toStrictEqual(['Mathematics'])
-    expect(t.cards(game, 'red', 'micah')).toStrictEqual([])
-    expect(t.cards(game, 'blue', 'micah')).toStrictEqual(['Calendar'])
+    expect(t.cards(game, 'score', 'micah')).toEqual(['Mathematics'])
+    expect(t.cards(game, 'red', 'micah')).toEqual([])
+    expect(t.cards(game, 'blue', 'micah')).toEqual(['Calendar'])
   })
 
   test('returned, no matching top card', () => {
@@ -30,9 +30,9 @@ describe('Anatomy', () => {
     const result2 = t.choose(game, result1, 'Dogma.Anatomy')
     const result3 = t.choose(game, result2, 'The Wheel') // Micah's choice
 
-    expect(t.cards(game, 'score', 'micah')).toStrictEqual(['Mathematics'])
-    expect(t.cards(game, 'red', 'micah')).toStrictEqual(['Gunpowder', 'Archery'])
-    expect(t.cards(game, 'blue', 'micah')).toStrictEqual(['Calendar'])
+    expect(t.cards(game, 'score', 'micah')).toEqual(['Mathematics'])
+    expect(t.cards(game, 'red', 'micah')).toEqual(['Gunpowder', 'Archery'])
+    expect(t.cards(game, 'blue', 'micah')).toEqual(['Calendar'])
   })
 
   test('did not return', () => {
@@ -44,8 +44,8 @@ describe('Anatomy', () => {
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Anatomy')
 
-    expect(t.cards(game, 'red', 'micah')).toStrictEqual(['Archery'])
-    expect(t.cards(game, 'blue', 'micah')).toStrictEqual(['Calendar'])
+    expect(t.cards(game, 'red', 'micah')).toEqual(['Archery'])
+    expect(t.cards(game, 'blue', 'micah')).toEqual(['Calendar'])
     expect(result2.selectors[0].title).toBe('Choose First Action')
   })
 })

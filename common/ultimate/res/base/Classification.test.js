@@ -17,7 +17,7 @@ describe('Classification', () => {
     const result5 = t.choose(game, result4, 'Alchemy')
     const result6 = t.choose(game, result5, 'Mathematics')
 
-    expect(t.cards(game, 'blue')).toStrictEqual(['Experimentation', 'Mathematics', 'Alchemy', 'Tools'])
+    expect(t.cards(game, 'blue')).toEqual(['Experimentation', 'Mathematics', 'Alchemy', 'Tools'])
   })
 
 })

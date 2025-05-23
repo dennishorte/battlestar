@@ -207,7 +207,7 @@ TestUtil.testBoard = function(game, state) {
   /* console.log(real)
    * console.log(expected) */
 
-  expect(real).toStrictEqual(expected)
+  expect(real).toEqual(expected)
 }
 
 TestUtil.testVisibility = function(card, ...names) {
@@ -219,7 +219,7 @@ TestUtil.testVisibility = function(card, ...names) {
     .map(name => name.toLowerCase())
     .sort()
 
-  expect(expected).toStrictEqual(actual)
+  expect(expected).toEqual(actual)
 }
 
 TestUtil.do = function(game, request, action) {

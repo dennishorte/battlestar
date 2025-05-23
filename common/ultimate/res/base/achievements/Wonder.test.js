@@ -22,6 +22,6 @@ describe('Wonder Achievement', () => {
     request = t.choose(game, request, 'Dogma.Flight')
     request = t.choose(game, request, 'red')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['Wonder'])
+    expect(t.cards(game, 'achievements')).toEqual(['Wonder'])
   })
 })

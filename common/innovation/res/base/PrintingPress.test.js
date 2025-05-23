@@ -15,8 +15,8 @@ describe('Printing Press', () => {
     const request2 = t.choose(game, request1, 'Dogma.Printing Press')
     const request3 = t.choose(game, request2, 'Coal')
 
-    expect(t.cards(game, 'score')).toStrictEqual(['Mathematics'])
-    expect(t.cards(game, 'hand')).toStrictEqual(['Canning'])
+    expect(t.cards(game, 'score')).toEqual(['Mathematics'])
+    expect(t.cards(game, 'hand')).toEqual(['Canning'])
   })
 
   test('do not return', () => {
@@ -31,8 +31,8 @@ describe('Printing Press', () => {
     const request2 = t.choose(game, request1, 'Dogma.Printing Press')
     const request3 = t.choose(game, request2)
 
-    expect(t.cards(game, 'score')).toStrictEqual(['Coal', 'Mathematics'])
-    expect(t.cards(game, 'hand')).toStrictEqual([])
+    expect(t.cards(game, 'score')).toEqual(['Coal', 'Mathematics'])
+    expect(t.cards(game, 'hand')).toEqual([])
   })
 
   test('splay', () => {

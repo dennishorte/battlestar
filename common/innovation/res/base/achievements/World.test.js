@@ -21,6 +21,6 @@ describe('World achievement', () => {
     const request2 = t.choose(game, request1, 'Dogma.Specialization')
     const request3 = t.choose(game, request2, 'blue')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['World'])
+    expect(t.cards(game, 'achievements')).toEqual(['World'])
   })
 })

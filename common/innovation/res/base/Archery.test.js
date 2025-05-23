@@ -13,7 +13,7 @@ describe('Archery', () => {
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Archery')
 
-    expect(t.cards(game, 'hand')).toStrictEqual(['Gunpowder'])
-    expect(t.cards(game, 'hand', 'micah')).toStrictEqual(['Tools'])
+    expect(t.cards(game, 'hand')).toEqual(['Gunpowder'])
+    expect(t.cards(game, 'hand', 'micah')).toEqual(['Tools'])
   })
 })

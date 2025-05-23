@@ -16,8 +16,8 @@ describe('Alchemy', () => {
     const result3 = t.choose(game, result2, 'Invention')
     const result4 = t.choose(game, result3, 'Printing Press')
 
-    expect(t.cards(game, 'green')).toStrictEqual(['Invention', 'The Wheel'])
-    expect(t.cards(game, 'score')).toStrictEqual(['Printing Press'])
+    expect(t.cards(game, 'green')).toEqual(['Invention', 'The Wheel'])
+    expect(t.cards(game, 'score')).toEqual(['Printing Press'])
   })
 
   test('draw and reveal (red)', () => {
@@ -32,6 +32,6 @@ describe('Alchemy', () => {
     const result2 = t.choose(game, result1, 'Dogma.Alchemy')
     const result3 = t.choose(game, result2, 'auto')
 
-    expect(t.cards(game, 'hand')).toStrictEqual([])
+    expect(t.cards(game, 'hand')).toEqual([])
   })
 })

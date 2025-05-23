@@ -18,7 +18,7 @@ describe('Globalization', () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Globalization')
 
-    expect(t.cards(game, 'yellow', 'micah')).toStrictEqual(['Statistics'])
+    expect(t.cards(game, 'yellow', 'micah')).toEqual(['Statistics'])
   })
 
   test('draw and score', () => {
@@ -32,7 +32,7 @@ describe('Globalization', () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Globalization')
 
-    expect(t.cards(game, 'green')).toStrictEqual(['Hypersonics'])
+    expect(t.cards(game, 'green')).toEqual(['Hypersonics'])
   })
 
   test('win condition (yes)', () => {

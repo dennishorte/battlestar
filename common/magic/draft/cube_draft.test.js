@@ -354,7 +354,7 @@ describe('CubeDraft', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'dennis', { originalId: 'agility', scarId: 'scar-1' })
+      const request2 = t.choose(game, request1, 'dennis', { cardId: 'agility', scarId: 'scar-1' })
 
       // Check that dennis has applied a scar
       const dennis = game.players.byName('dennis')
@@ -374,7 +374,7 @@ describe('CubeDraft', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'dennis', { originalId: 'agility', scarId: 'scar-1' })
+      const request2 = t.choose(game, request1, 'dennis', { cardId: 'agility', scarId: 'scar-1' })
 
       // Get the scarred card ID
       const dennis = game.players.byName('dennis')

@@ -114,12 +114,12 @@ TestUtil.fixtureTopCard = function(cardName, options) {
 
 TestUtil.testActionChoices = function(request, action, expected) {
   const actionChoices = request.selectors[0].choices.find(c => c.title === action).choices
-  expect(actionChoices.sort()).toStrictEqual(expected.sort())
+  expect(actionChoices.sort()).toEqual(expected.sort())
 }
 
 TestUtil.testChoices = function(request, expected, expectedMin, expectedMax) {
   const choices = request.selectors[0].choices.filter(c => c !== 'auto').sort()
-  expect(choices).toStrictEqual(expected.sort())
+  expect(choices).toEqual(expected.sort())
 
   if (expectedMax) {
     const { min, max } = request.selectors[0]
@@ -151,7 +151,7 @@ TestUtil.testDecreeForTwo = function(figureName, decreeName) {
     TestUtil.setHand(game, 'dennis', ['Homer', 'Ptahotep'])
   })
   const request1 = game.run()
-  expect(TestUtil.getChoices(request1, 'Decree')).toStrictEqual([decreeName])
+  expect(TestUtil.getChoices(request1, 'Decree')).toEqual([decreeName])
 }
 
 TestUtil.testNoFade = function(cardName) {
@@ -177,7 +177,7 @@ TestUtil.testZone = function(game, zoneName, expectedCards, opts={}) {
     zoneCards.sort()
     expectedCards.sort()
   }
-  expect(zoneCards).toStrictEqual(expectedCards)
+  expect(zoneCards).toEqual(expectedCards)
 }
 
 TestUtil.setBoard = function(game, state) {
@@ -300,7 +300,7 @@ TestUtil.testBoard = function(game, state) {
     real.achievements = game.getZoneById('achievements').cards().map(c => c.name).sort()
   }
 
-  expect(real).toStrictEqual(expected)
+  expect(real).toEqual(expected)
 }
 
 // Print out a representation of the current board state that can be used

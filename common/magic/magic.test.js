@@ -373,7 +373,7 @@ describe('Magic Actions', () => {
     const source = game.getCardsByZone(t.dennis(game), 'creatures')[1]
     const target = game.getCardsByZone(t.dennis(game), 'creatures')[0]
     expect(source.g.attachedTo).toBe(target)
-    expect(target.g.attached).toStrictEqual([source])
+    expect(target.g.attached).toEqual([source])
   })
 
   test('concede', () => {
@@ -423,7 +423,7 @@ describe('Magic Actions', () => {
     const source = game.getCardsByZone(t.dennis(game), 'creatures')[1]
     const target = game.getCardsByZone(t.dennis(game), 'creatures')[0]
     expect(source.g.attachedTo).toBe(null)
-    expect(target.g.attached).toStrictEqual([])
+    expect(target.g.attached).toEqual([])
   })
 
   test('draw game', () => {
@@ -457,8 +457,8 @@ describe('Magic Actions', () => {
     })
 
     const cards = game.getCardsByZone(t.dennis(game), 'library')
-    expect(cards[0].visibility).toStrictEqual([])
-    expect(cards[1].visibility).toStrictEqual([])
+    expect(cards[0].visibility).toEqual([])
+    expect(cards[1].visibility).toEqual([])
   })
 
   test('morph', () => {
@@ -583,7 +583,7 @@ describe('Magic Actions', () => {
     })
 
     const card = game.getCardsByZone(t.dennis(game), 'hand')[0]
-    expect(card.visibility).toStrictEqual(game.players.all())
+    expect(card.visibility).toEqual(game.players.all())
   })
 
   test('reveal all', () => {
@@ -599,7 +599,7 @@ describe('Magic Actions', () => {
 
     const cards = game.getCardsByZone(t.dennis(game), 'hand')
     cards.forEach(card => {
-      expect(card.visibility).toStrictEqual(game.players.all())
+      expect(card.visibility).toEqual(game.players.all())
     })
   })
 

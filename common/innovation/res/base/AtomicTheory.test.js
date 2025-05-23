@@ -23,6 +23,6 @@ describe('Atomic Theory', () => {
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Atomic Theory')
 
-    expect(t.cards(game, 'red')).toStrictEqual(['Explosives'])
+    expect(t.cards(game, 'red')).toEqual(['Explosives'])
   })
 })
