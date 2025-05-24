@@ -7,11 +7,11 @@ STAGED_FILES=$(git diff --cached --name-only)
 if echo "$STAGED_FILES" | grep -q "^api/"; then
   cd api
 
-  echo "Running tests for api..."
-  npm run test
-
   echo "Running lint for api..."
   npm run lint
+
+  echo "Running tests for api..."
+  npm run test
 
   cd ..
 fi
@@ -30,11 +30,11 @@ fi
 if echo "$STAGED_FILES" | grep -q "^common/"; then
   cd common
 
-  echo "Running tests for common..."
-  npm run test
-
   echo "Running lint for common..."
   npm run lint
+
+  echo "Running tests for common..."
+  npm run test
 
   cd ..
 fi
