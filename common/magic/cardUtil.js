@@ -281,7 +281,7 @@ CardUtil.manaSymbolFromString = function(text) {
   }
 
   if (text == '1/2') {
-    return 'ms-1-2'
+    return 'ms-half'
   }
   else {
     text = text.replace('/', '').toLowerCase().trim()
@@ -322,6 +322,199 @@ CardUtil.manaSymbolsFromString = function(string) {
   }
 
   return symbols
+}
+
+// What is the sort order?
+// First, X Y Z, then amount of colorless.
+// Colored symbols are sorted wubrg, treated as a cirle, with the start symbol chosen to minimize the
+// distance around the circle traveled to cover all of the symbols.
+// So, gw is preferred over wg, and ur over ru.
+CardUtil.sortManaArray = function(manaArray) {
+  if (!Array.isArray(manaArray) || manaArray.length === 0) {
+    return manaArray
+  }
+
+  // Helper function to extract first color from complex symbols
+  function getFirstColor(symbol) {
+    const colorOrder = 'wubrg'
+    for (let char of symbol.toLowerCase()) {
+      if (colorOrder.includes(char)) {
+        return char
+      }
+    }
+    return null
+  }
+
+  // Helper function to categorize mana symbols
+  function categorizeMana(symbol) {
+    const str = symbol.toString().toLowerCase()
+
+    if (['x', 'y', 'z'].includes(str)) {
+      return { type: 'variable', symbol: str, sortKey: str }
+    }
+
+    if (/^\d+$/.test(str)) {
+      return { type: 'colorless', symbol: str, sortKey: parseInt(str) }
+    }
+
+    const firstColor = getFirstColor(str)
+    if (firstColor) {
+      return { type: 'colored', symbol: str, color: firstColor, sortKey: str }
+    }
+
+    // Fallback for unknown symbols
+    return { type: 'unknown', symbol: str, sortKey: str }
+  }
+
+  // Categorize all mana symbols
+  const categorized = manaArray.map(categorizeMana)
+
+  // Separate by type
+  const variables = categorized.filter(m => m.type === 'variable')
+  const colorless = categorized.filter(m => m.type === 'colorless')
+  const colored = categorized.filter(m => m.type === 'colored')
+  const unknown = categorized.filter(m => m.type === 'unknown')
+
+  // Sort variables (x, y, z)
+  variables.sort((a, b) => a.sortKey.localeCompare(b.sortKey))
+
+  // Sort colorless by numeric value
+  colorless.sort((a, b) => a.sortKey - b.sortKey)
+
+  // Sort unknown alphabetically
+  unknown.sort((a, b) => a.sortKey.localeCompare(b.sortKey))
+
+  // Optimize colored mana ordering
+  function optimizeColorOrder(coloredMana) {
+    if (coloredMana.length <= 1) {
+      return coloredMana
+    }
+
+    const colors = 'wubrg'
+    const uniqueColors = [...new Set(coloredMana.map(m => m.color))]
+
+    if (uniqueColors.length === 1) {
+      // All same color, maintain original relative order
+      return coloredMana
+    }
+
+    // Special case: if all 5 colors are present, always start with W
+    if (uniqueColors.length === 5) {
+      const bestOrder = ['w', 'u', 'b', 'r', 'g']
+
+      // Group mana by color and sort within groups
+      const colorGroups = {}
+      coloredMana.forEach(mana => {
+        if (!colorGroups[mana.color]) {
+          colorGroups[mana.color] = []
+        }
+        colorGroups[mana.color].push(mana)
+      })
+
+      // Sort within each color group to maintain stability
+      Object.values(colorGroups).forEach(group => {
+        group.sort((a, b) => manaArray.indexOf(a.symbol) - manaArray.indexOf(b.symbol))
+      })
+
+      // Combine in WUBRG order
+      const result = []
+      bestOrder.forEach(color => {
+        if (colorGroups[color]) {
+          result.push(...colorGroups[color])
+        }
+      })
+
+      return result
+    }
+
+    // Find optimal starting color to minimize total distance
+    let bestOrder = null
+    let bestScore = Infinity // For tie-breaking
+
+    // Try starting from each unique color
+    for (const startColor of uniqueColors) {
+      const order = [startColor]
+      const remaining = uniqueColors.filter(c => c !== startColor)
+      let totalDistance = 0
+      let currentColor = startColor
+      let wrapArounds = 0 // Count how many times we wrap around the circle
+
+      // Greedily add nearest remaining colors
+      while (remaining.length > 0) {
+        let nearestColor = null
+        let nearestDistance = Infinity
+
+        for (const color of remaining) {
+          const currentIndex = colors.indexOf(currentColor)
+          const colorIndex = colors.indexOf(color)
+
+          // Distance going clockwise around the circle
+          const distance = (colorIndex - currentIndex + 5) % 5
+
+          if (distance < nearestDistance ||
+              (distance === nearestDistance &&
+               colors.indexOf(color) < colors.indexOf(nearestColor))) {
+            nearestDistance = distance
+            nearestColor = color
+          }
+        }
+
+        // Check if this step wraps around (goes from a later color to an earlier one)
+        const currentIndex = colors.indexOf(currentColor)
+        const nextIndex = colors.indexOf(nearestColor)
+        if (nextIndex < currentIndex) {
+          wrapArounds++
+        }
+
+        order.push(nearestColor)
+        totalDistance += nearestDistance
+        currentColor = nearestColor
+        remaining.splice(remaining.indexOf(nearestColor), 1)
+      }
+
+      // Scoring: prefer lower distance, then fewer wrap-arounds, then starting with W
+      const score = totalDistance * 100 + wrapArounds * 10 + (startColor === 'w' ? 0 : 1)
+
+      if (score < bestScore) {
+        bestScore = score
+        bestOrder = order
+      }
+    }
+
+    // Group mana by color and sort within groups
+    const colorGroups = {}
+    coloredMana.forEach(mana => {
+      if (!colorGroups[mana.color]) {
+        colorGroups[mana.color] = []
+      }
+      colorGroups[mana.color].push(mana)
+    })
+
+    // Sort within each color group to maintain stability
+    Object.values(colorGroups).forEach(group => {
+      group.sort((a, b) => manaArray.indexOf(a.symbol) - manaArray.indexOf(b.symbol))
+    })
+
+    // Combine in optimal order
+    const result = []
+    bestOrder.forEach(color => {
+      result.push(...colorGroups[color])
+    })
+
+    return result
+  }
+
+  const optimizedColored = optimizeColorOrder(colored)
+
+  // Combine all categories in order: variables, colorless, colored, unknown
+  const result = [
+    ...variables,
+    ...colorless,
+    ...optimizedColored,
+    ...unknown
+  ].map(m => m.symbol)
+
+  return result
 }
 
 CardUtil.parseCardlist = function(cardlist) {
