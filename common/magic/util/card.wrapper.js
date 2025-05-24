@@ -45,32 +45,41 @@ class CardWrapper extends Wrapper {
     return this._id
   }
 
-  colors(faceIndex) {
+  _getColorProp(name, faceIndex) {
     if (typeof faceIndex === 'number') {
-      return this.face(faceIndex).colors
+      return this.face(faceIndex)[name] || []
     }
     else {
       let colors = []
       for (const face of this.data.card_faces) {
-        colors = colors.concat(face.colors)
+        colors = colors.concat(face[name] || [])
       }
       return util.array.distinct(colors).sort()
     }
   }
-  colorIdentity() {
-    return this.data.color_identity
+
+  colors(faceIndex) {
+    return this._getColorProp('colors', faceIndex)
+  }
+  colorIdentity(faceIndex) {
+    return util.array.distinct([
+      ...this.colors(faceIndex),
+      ...this.manaProduced(faceIndex),
+      ...this.colorIndicator(faceIndex),
+    ]).sort()
   }
   colorIndicator(faceIndex) {
-    if (faceIndex === undefined) {
-      throw new Error('faceIndex is required')
-    }
-    return this.face(faceIndex).color_indicator || []
+    return this._getColorProp('color_indicator', faceIndex)
   }
   colorKey(faceIndex) {
     return this.colors(faceIndex).map(c => c.toLowerCase()).sort().join('')
   }
   colorName(faceIndex) {
     return cardUtil.COLOR_KEY_TO_NAME[this.colorKey(faceIndex)]
+  }
+
+  manaProduced(faceIndex) {
+    return this._getColorProp('mana_produced', faceIndex)
   }
 
   typeLine(faceIndex) {
