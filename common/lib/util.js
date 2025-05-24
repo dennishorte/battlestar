@@ -463,6 +463,10 @@ Util.isDigit = function(str) {
   return str.length === 1 && /[0-9]/.test(str)
 }
 
+Util.isDigits = function(str) {
+  return /^[0-9]+$/.test(str)
+}
+
 Util.range = function(...args) {
   let start, end, step
 
