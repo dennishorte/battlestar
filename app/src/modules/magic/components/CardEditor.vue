@@ -6,6 +6,7 @@
         :card="cardInEdit"
         class="mb-2 w-100"
         :is-editable="true"
+        :max-height="props.maxHeight"
         @update-face="updateFace"
       >
         <template #before-face="{ face, faceIndex }">
@@ -41,6 +42,11 @@ const props = defineProps({
   modelValue: {
     type: [Object, null],
     required: true,
+  },
+
+  maxHeight: {
+    type: Boolean,
+    default: false,
   },
 })
 

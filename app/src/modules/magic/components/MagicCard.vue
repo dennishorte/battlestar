@@ -54,6 +54,10 @@ export default {
       type: Number,
       default: 200,
     },
+    maxHeight: {
+      type: Boolean,
+      default: true,
+    },
     scrollable: {
       type: Boolean,
       default: true
@@ -77,12 +81,16 @@ export default {
 
   computed: {
     cardStyles() {
-      if (this.scrollable) {
-        return {}
+      const styles = {
+        'overflow-x': 'scroll',
       }
-      else {
-        return { 'overflow-y': 'hidden' }
+
+      if (this.maxHeight) {
+        styles['max-height'] = '25em'
+        styles['overflow-y'] = this.scrollable ? 'scroll' : 'hidden'
       }
+
+      return styles
     },
   },
 
@@ -172,8 +180,6 @@ $gold: #d9631b;
   display: flex;
   flex-direction: row;
   flex-wrap: none;
-  overflow: scroll;
-  max-height: 25em;
 }
 
 .magic-card-face-wrapper {
