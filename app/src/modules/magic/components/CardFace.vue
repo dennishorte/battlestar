@@ -12,21 +12,15 @@
               field="name"
               @update="updateCardField" />
 
-            <div class="frame-mana-cost">
-              <EditableDiv
-                :text="manaCost"
-                customClass="frame-mana-cost"
-                :editable="isEditable"
-                field="mana_cost"
-                :renderComponent="true"
-                @update="updateCardField">
-                <template v-slot:default="slotProps">
-                  <ManaCost :cost="slotProps.text" />
-                </template>
-                <template v-slot:empty>
-                  <i class="ms ms-2x ms-ci ms-ci-5 opacity-10"/>
-                </template>
-              </EditableDiv>
+            <div class="frame-mana-cost" @click="showColorPicker">
+              <ManaCost
+                v-if="manaCost.length > 0"
+                :cost="manaCost"
+              />
+              <i
+                v-else-if="isEditable"
+                class="ms ms-2x ms-ci ms-ci-5 opacity-10"
+              />
             </div>
           </div>
 
@@ -62,12 +56,22 @@
           <div class="frame-type-line frame-foreground">
             <div class="color-indicator-and-type">
 
-              <div class="frame-color-indicator">
+              <div class="frame-color-indicator" @click="showColorPicker">
+
+                <!-- ms-2x makes it easier for users to click when editing -->
                 <i
                   v-if="card.hasColorIndicator(index)"
                   class="ms ms-ci ms-ci-5 ms-2x"
-                  :class="[`ms-ci-${card.colorIndicatorSuffix}`, isEditable ? 'ms-2x' : '']"
+                  :class="[
+                    `ms-ci-${card.colorIndicatorSuffix}`,
+                    isEditable ? 'ms-2x' : '',
+                  ]"
                 />
+
+                <!--
+                     If there is no color indicator, show a generic all-color indicator when editing
+                     so users can click on it to open the color picker.
+                -->
                 <i v-else-if="isEditable" class="ms ms-ci ms-ci-5 ms-2x opacity-10" />
               </div>
 
@@ -196,7 +200,7 @@ export default {
     CardDefense,
   },
 
-  emits: ['update-face'],
+  emits: ['show-color-picker', 'update-face'],
 
   props: {
     card: {
@@ -219,16 +223,6 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-
-  methods: {
-    updateCardField({ field, value }) {
-      this.$emit('update-face', {
-        index: this.index,
-        field,
-        value
-      })
-    }
   },
 
   computed: {
@@ -298,6 +292,20 @@ export default {
 
     rarity() {
       return this.card.rarity(this.index)
+    },
+  },
+
+  methods: {
+    showColorPicker() {
+      this.$emit('show-color-picker', this.index)
+    },
+
+    updateCardField({ field, value }) {
+      this.$emit('update-face', {
+        index: this.index,
+        field,
+        value
+      })
     },
   },
 }

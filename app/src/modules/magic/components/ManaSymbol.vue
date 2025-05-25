@@ -36,6 +36,6 @@ export default {
 
 <style scoped>
 i {
-  margin-left: 0!important;  /* This seems to fix a weird margin problem with mana font */
+  margin-left: 0!important;  /* This overrides bootstrap margin start classes (eg. ms-1) */
 }
 </style>

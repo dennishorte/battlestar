@@ -6,7 +6,7 @@
         :card="cardInEdit"
         class="mb-2 w-100"
         :is-editable="true"
-        @updateFace="updateFace"
+        @update-face="updateFace"
       >
         <template #before-face="{ face, faceIndex }">
           <BFormCheckbox v-model="face.scarred" @change="updateFace({ index: faceIndex, field: 'scarred', value: face.scarred })">
@@ -27,6 +27,7 @@
         Error: No card was provided
       </BAlert>
     </template>
+
   </div>
 </template>
 
@@ -47,6 +48,7 @@ const emit = defineEmits(['update:modelValue'])
 
 const originalCard = ref(null)
 const cardInEdit = ref(null)
+
 
 // Initialize cardInEdit when modal opens
 watch(() => props.modelValue, (newValue) => {

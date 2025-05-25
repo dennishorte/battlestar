@@ -510,6 +510,15 @@ Util.toKebabCase = function(str) {
   return str.toLowerCase().replace(/\W/g, '-')
 }
 
+Util.toPlainCase = function(str) {
+  return str
+    .replace(/([a-z])([A-Z])/g, '$1 $2')   // Handle camelCase and PascalCase: insert space before uppercase letters
+    .replace(/[_-]/g, ' ')                 // Replace underscores and hyphens with spaces
+    .toLowerCase()                         // Convert to lowercase
+    .replace(/\s+/g, ' ')                  // Clean up multiple spaces
+    .trim()
+}
+
 Util.toTitleCase = function(str) {
   return str
     .toLowerCase()

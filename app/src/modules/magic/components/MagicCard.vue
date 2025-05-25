@@ -10,10 +10,19 @@
         :size="size"
         :is-editable="isEditable"
         @updateFace="$emit('update-face', $event)"
+        @show-color-picker="showColorPicker"
       />
 
       <slot name="after-face" />
     </div>
+
+    <ColorPickerModal
+      :card="card"
+      :face-index="colorPickerFaceIndex"
+      :lazy="true"
+      v-model="colorPickerVisible"
+      @colors-updated="colorsUpdated"
+    />
 
     <div v-if="disabled" class="card-disabled-overlay"/>
   </div>
@@ -21,13 +30,17 @@
 
 
 <script>
+import { util } from 'battlestar-common'
+
 import CardFace from './CardFace'
+import ColorPickerModal from './ColorPickerModal'
 
 export default {
   name: 'MagicCard',
 
   components: {
     CardFace,
+    ColorPickerModal,
   },
 
   emits: ['update-face'],
@@ -55,6 +68,13 @@ export default {
     },
   },
 
+  data() {
+    return {
+      colorPickerFaceIndex: 0,
+      colorPickerVisible: false,
+    }
+  },
+
   computed: {
     cardStyles() {
       if (this.scrollable) {
@@ -63,6 +83,27 @@ export default {
       else {
         return { 'overflow-y': 'hidden' }
       }
+    },
+  },
+
+  methods: {
+    colorsUpdated({ faceIndex, colorFields }) {
+      // Check if each field actually changes and emit events if they did.
+      for (const [field, value] of Object.entries(colorFields)) {
+        const original = this.card[field](faceIndex)
+        if (!util.array.elementsEqual(original, value)) {
+          this.$emit('update-face', {
+            index: faceIndex,
+            field: util.toSnakeCase(util.toPlainCase(field)),
+            value,
+          })
+        }
+      }
+    },
+
+    showColorPicker(faceIndex) {
+      this.colorPickerFaceIndex = faceIndex
+      this.colorPickerVisible = true
     },
   },
 }

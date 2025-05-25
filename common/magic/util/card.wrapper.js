@@ -51,7 +51,7 @@ class CardWrapper extends Wrapper {
     }
     else {
       let colors = []
-      for (const face of this.data.card_faces) {
+      for (const face of this.faces()) {
         colors = colors.concat(face[name] || [])
       }
       return util.array.distinct(colors).sort()
@@ -59,11 +59,22 @@ class CardWrapper extends Wrapper {
   }
 
   colors(faceIndex) {
-    return this._getColorProp('colors', faceIndex)
+    if (/\bdevoid\b/i.test(this.oracleText(faceIndex).toLowerCase())) {
+      return []
+    }
+    else if (this.colorIndicator(faceIndex).length > 0) {
+      return this.colorIndicator(faceIndex)
+    }
+    else {
+      return this.colorsInCastingCost(faceIndex)
+    }
+  }
+  colorsInCastingCost(faceIndex) {
+    return ['w', 'u', 'b', 'r', 'g'].filter(c => this.manaCost(faceIndex).toLowerCase().includes(c))
   }
   colorIdentity(faceIndex) {
     return util.array.distinct([
-      ...this.colors(faceIndex),
+      ...this.colorsInCastingCost(faceIndex),
       ...this.manaProduced(faceIndex),
       ...this.colorIndicator(faceIndex),
     ]).sort()
@@ -87,7 +98,7 @@ class CardWrapper extends Wrapper {
       return this.face(faceIndex).type_line
     }
     else {
-      return this.data.card_faces.map(face => face.type_line).join(' // ')
+      return this.faces().map(face => face.type_line).join(' // ')
     }
   }
   supertypes(faceIndex) {
@@ -104,7 +115,7 @@ class CardWrapper extends Wrapper {
       return this.face(faceIndex).name
     }
     else {
-      return this.data.card_faces.map(face => face.name).join(' // ')
+      return this.faces().map(face => face.name).join(' // ')
     }
   }
   set() {
@@ -130,26 +141,32 @@ class CardWrapper extends Wrapper {
     return this.data.cmc
   }
   manaCost(faceIndex) {
-    if (typeof faceIndex !== 'number') {
-      return undefined
+    if (typeof faceIndex === 'number') {
+      return this.face(faceIndex).mana_cost || ''
     }
-    return this.face(faceIndex).mana_cost
+    else {
+      return this.faces().map(face => face.mana_cost || '').join(' // ')
+    }
   }
-  producedMana() {
-    return this.data.produced_mana
+  producedMana(faceIndex) {
+    return this._getColorProp('produced_mana', faceIndex)
   }
 
   oracleText(faceIndex) {
-    if (typeof faceIndex !== 'number') {
-      return undefined
+    if (typeof faceIndex === 'number') {
+      return this.face(faceIndex).oracle_text
     }
-    return this.face(faceIndex).oracle_text
+    else {
+      return this.faces().map(face => face.oracle_text).join('\n//\n')
+    }
   }
   flavorText(faceIndex) {
-    if (typeof faceIndex !== 'number') {
-      return undefined
+    if (typeof faceIndex === 'number') {
+      return this.face(faceIndex).flavor_text
     }
-    return this.face(faceIndex).flavor_text
+    else {
+      return this.faces().map(face => face.flavor_text).join('\n//\n')
+    }
   }
 
   power(faceIndex) {
@@ -228,7 +245,7 @@ class CardWrapper extends Wrapper {
       return Boolean(this.face(faceIndex).scarred)  // Often is undefined for scryfall cards
     }
     else {
-      return this.data.card_faces.some(face => face.scarred)
+      return this.faces().some(face => face.scarred)
     }
   }
   isVisible(player) {
@@ -236,17 +253,20 @@ class CardWrapper extends Wrapper {
   }
 
   face(index) {
-    if (!this.data.card_faces) {
+    if (!this.faces()) {
       throw new Error('stop 0')
     }
 
-    if (!this.data.card_faces[index]) {
+    if (!this.faces()[index]) {
       throw new Error('stop 1', index)
     }
-    return this.data.card_faces[index]
+    return this.faces()[index]
+  }
+  faces() {
+    return this.data.card_faces
   }
   numFaces() {
-    return this.data.card_faces.length
+    return this.faces().length
   }
 
   same(other) {
@@ -295,11 +315,11 @@ class CardWrapper extends Wrapper {
   ////////////////////////////////////////////////////////////////////////////////
   // Card editing
   addFace() {
-    this.data.card_faces.push(cardUtil.blankFace())
+    this.faces().push(cardUtil.blankFace())
   }
 
   removeFace(index) {
-    this.data.card_faces.splice(index, 1)
+    this.faces().splice(index, 1)
   }
 }
 
