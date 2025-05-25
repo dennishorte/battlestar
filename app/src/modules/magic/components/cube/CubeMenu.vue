@@ -23,13 +23,9 @@
       <DropdownButton @click="this.$modal('cube-add-modal').show()">add one card</DropdownButton>
       <DropdownButton @click="createCard">create card</DropdownButton>
 
-      <DropdownDivider />
-
-      <DropdownButton @click="randomCard">random card</DropdownButton>
-
       <template v-if="viewerIsOwner">
         <DropdownDivider />
-        <DropdownButton @click="openSettings">settings</DropdownButton>
+        <DropdownButton @click="$emit('open-settings')">settings</DropdownButton>
       </template>
     </DropdownMenu>
   </div>
@@ -52,7 +48,7 @@ export default {
 
   inject: ['bus'],
 
-  emits: ['toggle-search', 'navigate'],
+  emits: ['toggle-search', 'navigate', 'open-settings'],
 
   props: {
     cube: {
@@ -91,15 +87,6 @@ export default {
       }
       this.$store.commit('magic/cube/manageScar', blank)
       this.$modal('scar-modal').show()
-    },
-
-    openSettings() {
-      this.bus.emit('open-cube-settings', this.cube)
-    },
-
-    randomCard(card) {
-      const link = this.$store.getters['magic/cards/cardLink'](card._id)
-      this.$router.push(link)
     },
 
     navigate(tab) {

@@ -6,10 +6,12 @@
     <div class="section-cards" :class="columnName">
       <template v-for="(elem, index) in sortedCardlist" :key="index">
         <CubeBreakdownManaCostDivider v-if="elem.isDivider" :cost="elem.cost" />
-        <CardListItem v-else
-                      :card="elem"
-                      class="section-card"
-                      @click="cardClicked(elem)" />
+        <CardListItem
+          v-else
+          :card="elem"
+          class="section-card"
+          @click="cardClicked(elem)"
+        />
       </template>
     </div>
 

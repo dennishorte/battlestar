@@ -333,6 +333,7 @@ export const updateAchievement = async(req, res, next) => {
  * @param {string} req.body.cubeId - ID of the cube to update
  * @param {Object} req.body.settings - Settings to update
  * @param {string} req.body.settings.name - Cube name
+ * @param {boolean} req.body.settings.editable - Cards can be edited
  * @param {boolean} req.body.settings.legacy - Legacy mode flag
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
@@ -356,6 +357,14 @@ export const updateSettings = async (req, res, next) => {
     // Update the settings
     if (req.body.settings.name !== undefined) {
       cube.name = req.body.settings.name
+    }
+
+    // Update editable flag
+    if (req.body.settings.editable !== undefined) {
+      if (!cube.flags) {
+        cube.flags = {}
+      }
+      cube.flags.editable = req.body.settings.editable
     }
 
     // Update legacy flag

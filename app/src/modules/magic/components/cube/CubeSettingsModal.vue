@@ -1,80 +1,71 @@
 <template>
-  <ModalBase id="cube-settings-modal">
-    <template #header>
-      Cube Settings
-    </template>
-
-    <div class="container">
-      <div class="mb-3">
-        <label for="cube-name" class="form-label">Cube Name</label>
-        <input type="text"
-               class="form-control"
-               id="cube-name"
-               v-model="formData.name"/>
-      </div>
-
-      <div class="mb-3 form-check">
-        <input type="checkbox"
-               class="form-check-input"
-               id="legacy-flag"
-               v-model="formData.legacy"/>
-        <label class="form-check-label" for="legacy-flag">Legacy Mode</label>
-      </div>
+  <BModal v-model="modalVisible" @ok="save" title="Cube Settings">
+    <div class="mb-3">
+      <label for="cube-name">Cube Name</label>
+      <BFormInput v-model="formData.name" type="text">Cube Name</BFormInput>
     </div>
 
-    <template #footer>
-      <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-      <button class="btn btn-primary" @click="save" data-bs-dismiss="modal">Save</button>
-    </template>
-  </ModalBase>
+    <BFormCheckbox v-model="formData.editable">Editable</BFormCheckbox>
+    <BFormCheckbox v-model="formData.legacy">Legacy Mode</BFormCheckbox>
+  </BModal>
 </template>
 
-<script>
-import ModalBase from '@/components/ModalBase'
-import { mapState } from 'vuex'
-export default {
-  name: 'CubeSettingsModal',
+<script setup>
+import { computed, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 
-  components: {
-    ModalBase,
+const props = defineProps({
+  cube: {
+    type: Object,
+    required: true,
   },
 
-  inject: ['bus'],
-
-  data() {
-    return {
-      formData: {
-        name: '',
-        legacy: false,
-      }
-    }
+  // The visibility of the modal
+  // It is passed through from the parent down to the actual modal that this component contains,
+  // which is required by Bootstrap Vue Next in order to have modals as separate components.
+  modelValue: {
+    type: Boolean,
+    required: true
   },
+})
 
-  computed: {
-    ...mapState('magic/cube', ['cube']),
-  },
+const formData = ref({
+  name: props.cube.name,
+  editable: props.cube.flags.editable || false,
+  legacy: props.cube.flags.legacy || false,
+})
 
-  methods: {
-    openModal() {
-      this.formData = {
-        name: this.cube.name,
-        legacy: this.cube.flags && this.cube.flags.legacy || false,
-      }
-      this.$modal('cube-settings-modal').show()
-    },
+const store = useStore()
 
-    async save() {
-      await this.$store.dispatch('magic/cube/updateSettings', {
-        cubeId: this.cube._id,
-        settings: this.formData,
-      })
-    }
-  },
-
-  mounted() {
-    this.bus.on('open-cube-settings', this.openModal)
-  }
+async function save() {
+  await store.dispatch('magic/cube/updateSettings', {
+    cubeId: props.cube._id,
+    settings: formData.value,
+  })
 }
+
+// Track the visibility of the modal via a parent-level v-model directive.
+const emit = defineEmits(['update:modelValue'])
+const modalVisible = computed({
+  get() {
+    return props.modelValue
+  },
+  set(value) {
+    emit('update:modelValue', value)
+  }
+})
+
+watch(() => formData.value.legacy, (newValue) => {
+  if (newValue) {
+    formData.value.editable = true
+  }
+})
+
+watch(() => formData.value.editable, (newValue) => {
+  if (!newValue) {
+    formData.value.legacy = false
+  }
+})
 </script>
 
 <style scoped>

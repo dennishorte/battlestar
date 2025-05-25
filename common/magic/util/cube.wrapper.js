@@ -11,6 +11,7 @@ class CubeWrapper extends Wrapper {
       scarlist: [],
       achievementlist: [],
       flags: {
+        editable: false,
         legacy: false,
       },
       timestamps: {

@@ -16,6 +16,7 @@
             :showing="showing"
             @navigate="navigate"
             @toggle-search="toggleSearch"
+            @open-settings="settingsVisible = true"
           />
         </div>
       </div>
@@ -55,7 +56,7 @@
       <CardSearchModal @card-selected="addOneCard" id="cube-add-modal" />
       <CubeImportModal @cube-updates="updateCube" />
       <CardEditorModal v-model="editorVisible" :card="editorCard" />
-      <CubeSettingsModal />
+      <CubeSettingsModal v-model="settingsVisible" :cube="cube" />
     </div>
   </MagicWrapper>
 </template>
@@ -112,6 +113,8 @@ export default {
       editorCard: null,
       editorVisible: false,
 
+      settingsVisible: false,
+
       filters: [],
     }
   },
@@ -138,19 +141,6 @@ export default {
 
     cards() {
       return this.cube.cards()
-    },
-
-    cardEditButtonText() {
-      if (this.cube.allowEdits) {
-        return 'Disable Card Editing'
-      }
-      else {
-        return 'Enable Card Editing'
-      }
-    },
-
-    cardPublicButtonText() {
-      return this.cube.public ? 'Remove from Public' : 'Set as Public'
     },
 
     canLinkFilters() {
@@ -253,10 +243,6 @@ export default {
         addIds: update.insert.map(item => item.card._id),
         removeIds: update.remove.map(item => item.card._id),
       })
-    },
-
-    openSettings() {
-      this.bus.emit('open-cube-settings', this.cube)
     },
   },
 
