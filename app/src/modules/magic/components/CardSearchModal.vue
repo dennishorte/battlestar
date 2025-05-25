@@ -63,8 +63,8 @@ export default {
 
   props: {
     cards: {
-      type: Array,
-      default: () => []
+      type: [Array, null],
+      default: null,
     }
   },
 
