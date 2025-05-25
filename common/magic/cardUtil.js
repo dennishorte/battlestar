@@ -125,9 +125,7 @@ CardUtil.blankFace = function() {
     toughness: '',
     type_line: '',
 
-    color_identity: [],
     color_indicator: [],
-    colors: [],
     produced_mana: [],
 
     scarred: false,
@@ -142,17 +140,10 @@ CardUtil.blank = function() {
 
     data: {
       id: '',
-      name: '',
-      type_line: '',
 
       layout: 'normal',
-      cmc: 0,
       digital: false,
       rarity: 'common',
-
-      color_identity: [],
-      colors: [],
-      produced_mana: [],
 
       card_faces: [this.blankFace()],
 
@@ -312,8 +303,41 @@ CardUtil.manaSymbolsFromString = function(string) {
 }
 
 CardUtil.extractSymbolsFromText = function(string) {
-  const matches = string.match(/\{([^}]*)\}/g)
-  return matches ? matches.map(x => x.slice(1, -1)) : []
+  const matches = string.match(/\{([^{}]+)\}/g)
+  if (!matches) {
+    return []
+  }
+
+  return matches
+    .map(x => x.slice(1, -1))
+    .filter(symbol => symbol.trim().length > 0 )
+}
+
+// Mana cost string should be in the format {2}{U}.
+// This function is case insenstive.
+// Split mana symbols can include or exclude the slash. eg. {G/U} or {gu} are fine.
+// Extra symbols are ignored, so you can pass in multiple mana costs with a divider to
+// get the total. eg. {3}{R} // {R/G}
+CardUtil.manaCostFromCastingCost = function(string) {
+  const symbols = CardUtil.extractSymbolsFromText(string.toLowerCase())
+  let total = 0
+
+  for (const symbol of symbols) {
+    if (['x', 'y', 'z'].includes(symbol)) {
+      total += 0
+    }
+    else if (util.isDigits(symbol)) {
+      total += parseInt(symbol)
+    }
+    else if (symbol[0] === '2') {
+      total += 2
+    }
+    else {
+      total += 1
+    }
+  }
+
+  return total
 }
 
 // What is the sort order?
