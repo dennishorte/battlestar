@@ -5,18 +5,12 @@
     "_id": "d8ed0335-daa6-4dbe-a94d-4d56c8cfd093",
     "layout": "modal_dfc",
     "cmc": 6,
-    "color_identity": [
-      "R"
-    ],
     "card_faces": [
       {
         "name": "Akoum Warrior",
         "mana_cost": "{5}{R}",
         "type_line": "Creature — Minotaur Warrior",
         "oracle_text": "Trample",
-        "colors": [
-          "R"
-        ],
         "power": "4",
         "toughness": "5",
         "flavor_text": "\"I'm not cruel, but I have no patience for your mistakes.\"\n—Tyrux, expedition warrior",
@@ -28,9 +22,11 @@
         "mana_cost": "",
         "type_line": "Land",
         "oracle_text": "This land enters tapped.\n{T}: Add {R}.",
-        "colors": [],
         "flavor_text": "\"Rock. Lava. Gravity. They're not cruel, but they're not forgiving either.\"\n—Tyrux, expedition warrior",
         "artist": "Karl Kopinski",
+        "produced_mana": [
+          "R"
+        ],
         "image_uri": "https://cards.scryfall.io/art_crop/back/d/8/d8ed0335-daa6-4dbe-a94d-4d56c8cfd093.jpg?1604196854"
       }
     ],
@@ -38,9 +34,6 @@
     "collector_number": "134",
     "digital": false,
     "rarity": "uncommon",
-    "produced_mana": [
-      "R"
-    ],
     "legal": [
       "historic",
       "timeless",

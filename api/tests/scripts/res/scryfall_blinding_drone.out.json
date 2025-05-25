@@ -4,9 +4,6 @@
   "data": {
     "layout": "normal",
     "cmc": 2,
-    "color_identity": [
-      "U"
-    ],
     "set": "ogw",
     "collector_number": "41",
     "digital": false,
@@ -21,7 +18,6 @@
         "power": "1",
         "toughness": "3",
         "type_line": "Creature — Eldrazi Drone",
-        "colors": [],
         "image_uri": "https://cards.scryfall.io/art_crop/front/4/e/4eb60957-0811-40c3-a92b-cce3e6a94745.jpg?1562910930"
       }
     ],

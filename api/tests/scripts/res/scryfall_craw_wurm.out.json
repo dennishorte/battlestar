@@ -5,9 +5,6 @@
     "_id": "3875f73d-6108-488b-bd34-4cf2c23ce6b3",
     "layout": "normal",
     "cmc": 6,
-    "color_identity": [
-      "G"
-    ],
     "set": "m10",
     "collector_number": "173",
     "digital": false,
@@ -21,9 +18,6 @@
         "power": "6",
         "toughness": "4",
         "type_line": "Creature — Wurm",
-        "colors": [
-          "G"
-        ],
         "image_uri": "https://cards.scryfall.io/art_crop/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1561976333"
       }
     ],

@@ -4,10 +4,6 @@
   "data": {
     "layout": "adventure",
     "cmc": 2,
-    "color_identity": [
-      "B",
-      "R"
-    ],
     "card_faces": [
       {
         "name": "Callous Sell-Sword",
@@ -17,9 +13,6 @@
         "power": "2",
         "toughness": "2",
         "artist": "Valera Lutfullina",
-        "colors": [
-          "B"
-        ],
         "image_uri": "https://cards.scryfall.io/art_crop/front/7/7/770ee3da-d33e-466f-9a2e-ad2d08ef5012.jpg?1692939554"
       },
       {
@@ -28,9 +21,6 @@
         "type_line": "Sorcery — Adventure",
         "oracle_text": "Target creature you control deals damage equal to its power to any other target. Then sacrifice it.",
         "artist": "Valera Lutfullina",
-        "colors": [
-          "R"
-        ],
         "image_uri": "https://cards.scryfall.io/art_crop/front/7/7/770ee3da-d33e-466f-9a2e-ad2d08ef5012.jpg?1692939554"
       }
     ],

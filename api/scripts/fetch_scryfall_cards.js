@@ -2,18 +2,18 @@ import axios from 'axios'
 import fs from 'fs'
 import path from 'path'
 
+import { magic } from 'battlestar-common'
+
 const rootFields = [
   "id",
   "card_faces",
   "collector_number",
-  "color_identity",
   "legalities",
   "layout",
   "rarity",
   "set",
   "cmc",
   "digital",
-  "produced_mana",
 ]
 
 const faceFields = [
@@ -30,13 +30,13 @@ const faceFields = [
   "type_line",
 
   "color_indicator",
-  "colors",
+  "produced_mana",
 ]
 
 const wantedFields = [].concat(rootFields, faceFields)
 
 
-function adjustFaces(card) {
+function createFaces(card) {
   if (!card.card_faces) {
     card.card_faces = [{}]
   }
@@ -49,6 +49,9 @@ function adjustFaces(card) {
     delete card['toughness']
   }
 
+  // Handle colors
+
+
   // Move face fields into card_faces.
   for (const key of faceFields) {
     for (const face of card.card_faces) {
@@ -59,7 +62,41 @@ function adjustFaces(card) {
 
     delete card[key]
   }
+}
 
+// Most cards have color and color identity that matches the casting cost, but there are many exceptions.
+function fixColors(card) {
+  for (const face of card.card_faces) {
+    // Double-faced cards have color indicators on their flip sides, but tokens have colors values.
+    if (!face.mana_cost) {
+      if (face.color_indicator) {
+        // All good. Do nothing.
+      }
+      else if (card.colors && card.colors.length > 0) {
+        face.color_indicator = card.colors
+      }
+    }
+  }
+
+  // Produced mana is generally at the root of cards, even if they have multiple faces.
+  // If a card has two faces, we need to figure out which mana goes with which face.
+  if (card.card_faces.length > 0) {
+    for (const face of card.card_faces) {
+      if ('produced_mana' in face) {
+        const colorSymbolsInOracleText = magic.util.card.extractSymbolsFromText(face.oracle_text).join('')
+        const producedMana = face.produced_mana.filter(c => colorSymbolsInOracleText.includes(c))
+        if (producedMana.length) {
+          face.produced_mana = producedMana
+        }
+        else {
+          delete face.produced_mana
+        }
+      }
+    }
+  }
+}
+
+function cleanFields(card) {
   // Remove all other fields
   const toRemove = [...card.card_faces]
   toRemove.push(card)
@@ -98,48 +135,21 @@ function renameIdField(card) {
   delete card.id
 }
 
-function addColorIndicators(card) {
-  for (const face of card.card_faces) {
-    if (!face.mana_cost && face.colors.length > 0) {
-      face.color_indicator = [...face.colors]
-    }
-  }
-}
-
 function sortColors(card) {
   for (const face of card.card_faces) {
-    face.colors.sort()
     face.color_indicator?.sort()
-  }
-
-  if (card.color_identity) {
-    card.color_identity.sort()
-  }
-
-  if (card.produced_mana) {
-    card.produced_mana?.sort()
-  }
-}
-
-function fixColors(card) {
-  // Adventure cards with the adventure part being a different color often have that face
-  // marked as the wrong color.
-  // Split cards often have both faces marked as both colors.
-  if (card.layout === 'adventure' || card.layout === 'split') {
-    for (const face of card.card_faces) {
-      face.colors = ['W', 'U', 'B', 'R', 'G'].filter(c => face.mana_cost.includes(c))
-    }
+    face.produced_mana?.sort()
   }
 }
 
 function cleanScryfallCards(cards) {
   for (const card of cards) {
-    adjustFaces(card)
+    createFaces(card)
+    fixColors(card)
+    cleanFields(card)
     cleanImageUris(card)
     cleanLegalities(card)
     renameIdField(card)
-    fixColors(card)
-    addColorIndicators(card)
     sortColors(card)
   }
 }

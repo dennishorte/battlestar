@@ -4,20 +4,12 @@
   "data": {
     "layout": "transform",
     "cmc": 4,
-    "color_identity": [
-      "G",
-      "R"
-    ],
     "card_faces": [
       {
         "name": "Arlinn Kord",
         "mana_cost": "{2}{R}{G}",
         "type_line": "Legendary Planeswalker — Arlinn",
         "oracle_text": "+1: Until end of turn, up to one target creature gets +2/+2 and gains vigilance and haste.\n0: Create a 2/2 green Wolf creature token. Transform Arlinn Kord.",
-        "colors": [
-          "G",
-          "R"
-        ],
         "loyalty": "3",
         "artist": "Winona Nelson",
         "image_uri": "https://cards.scryfall.io/art_crop/front/e/7/e72d7c11-2165-4c72-80f3-3c1a7b4b5572.jpg?1736468478"
@@ -27,10 +19,6 @@
         "mana_cost": "",
         "type_line": "Legendary Planeswalker — Arlinn",
         "oracle_text": "+1: Creatures you control get +1/+1 and gain trample until end of turn.\n−1: Arlinn deals 3 damage to any target. Transform Arlinn.\n−6: You get an emblem with \"Creatures you control have haste and '{T}: This creature deals damage equal to its power to any target.'\"",
-        "colors": [
-          "G",
-          "R"
-        ],
         "color_indicator": [
           "G",
           "R"

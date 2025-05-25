@@ -45,10 +45,18 @@ describe('Card Processing', () => {
     expect(result).toEqual(expected)
   })
 
-  test('processes dfc land/creatures correctly', () => {
-    const { input, expected } = loadFiles('Akoum Warrior')
-    const result = processSingleCard(input)
-    expect(result).toEqual(expected)
+  describe('double faced cards', () => {
+    test('processes dfc land/creatures correctly', () => {
+      const { input, expected } = loadFiles('Akoum Warrior')
+      const result = processSingleCard(input)
+      expect(result).toEqual(expected)
+    })
+
+    test('dfc land/land', () => {
+      const { input, expected } = loadFiles('Branchloft Pathway')
+      const result = processSingleCard(input)
+      expect(result).toEqual(expected)
+    })
   })
 
   test('processes sieges correctly', () => {

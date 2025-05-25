@@ -4,10 +4,6 @@
   "data": {
     "layout": "token",
     "cmc": 0,
-    "color_identity": [
-      "B",
-      "W"
-    ],
     "set": "tc15",
     "collector_number": "23",
     "digital": false,
@@ -20,10 +16,6 @@
         "power": "*",
         "toughness": "*",
         "type_line": "Token Enchantment Creature — Spirit",
-        "colors": [
-          "B",
-          "W"
-        ],
         "color_indicator": [
           "B",
           "W"
