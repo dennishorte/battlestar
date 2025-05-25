@@ -2,7 +2,7 @@
   <BModal title="Card Editor" v-model="modalVisible">
     <slot name="before-card"/>
 
-    <CardEditor v-model="cardInEdit" />
+    <CardEditor v-model="cardInEdit" :editable="props.editable" />
 
     <slot name="after-card"/>
 
@@ -32,6 +32,11 @@ const props = defineProps({
   card: {
     type: [Object, null],
     required: true
+  },
+
+  editable: {
+    type: Boolean,
+    default: true,
   },
 
   // The visibility of the modal

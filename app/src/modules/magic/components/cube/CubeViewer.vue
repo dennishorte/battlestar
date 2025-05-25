@@ -55,7 +55,7 @@
 
       <CardSearchModal @card-selected="addOneCard" id="cube-add-modal" />
       <CubeImportModal @cube-updates="updateCube" />
-      <CardEditorModal v-model="editorVisible" :card="editorCard" />
+      <CardEditorModal v-model="editorVisible" :card="editorCard" :editable="cube.flags.editable" />
       <CubeSettingsModal v-model="settingsVisible" :cube="cube" />
     </div>
   </MagicWrapper>

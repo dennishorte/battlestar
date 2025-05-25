@@ -54,7 +54,7 @@ export default {
       type: Number,
       default: 200,
     },
-    maxHeight: {
+    limitHeight: {
       type: Boolean,
       default: true,
     },
@@ -85,7 +85,7 @@ export default {
         'overflow-x': 'scroll',
       }
 
-      if (this.maxHeight) {
+      if (this.limitHeight) {
         styles['max-height'] = '25em'
         styles['overflow-y'] = this.scrollable ? 'scroll' : 'hidden'
       }

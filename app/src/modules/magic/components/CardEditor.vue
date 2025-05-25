@@ -1,26 +1,28 @@
 <template>
   <div class="card-editor">
     <template v-if="Boolean(cardInEdit)">
+      <BAlert :model-value="!props.editable" variant="warning">Read-Only</BAlert>
+
       <MagicCard
         :size="270"
         :card="cardInEdit"
         class="mb-2 w-100"
-        :is-editable="true"
-        :max-height="props.maxHeight"
+        :is-editable="props.editable"
+        :limit-height="props.limitHeight"
         @update-face="updateFace"
       >
-        <template #before-face="{ face, faceIndex }">
+        <template #before-face="{ face, faceIndex }" v-if="props.editable">
           <BFormCheckbox v-model="face.scarred" @change="updateFace({ index: faceIndex, field: 'scarred', value: face.scarred })">
             scarred
           </BFormCheckbox>
         </template>
 
-        <template #after-face="{ faceIndex }">
+        <template #after-face="{ faceIndex }" v-if="props.editable">
           <BButton variant="warning" class="mt-2" @click="removeFace(faceIndex)">remove</BButton>
         </template>
       </MagicCard>
 
-      <button class="btn btn-primary" @click="addFace">Add Face</button>
+      <button v-if="props.editable" class="btn btn-primary" @click="addFace">Add Face</button>
     </template>
 
     <template v-else>
@@ -44,9 +46,14 @@ const props = defineProps({
     required: true,
   },
 
-  maxHeight: {
+  limitHeight: {
     type: Boolean,
     default: false,
+  },
+
+  editable: {
+    type: Boolean,
+    default: true,
   },
 })
 
