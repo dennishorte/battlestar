@@ -3,7 +3,6 @@
   "source": "scryfall",
   "data": {
     "layout": "adventure",
-    "cmc": 2,
     "card_faces": [
       {
         "name": "Callous Sell-Sword",

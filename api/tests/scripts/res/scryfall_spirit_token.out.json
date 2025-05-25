@@ -3,7 +3,6 @@
   "source": "scryfall",
   "data": {
     "layout": "token",
-    "cmc": 0,
     "set": "tc15",
     "collector_number": "23",
     "digital": false,

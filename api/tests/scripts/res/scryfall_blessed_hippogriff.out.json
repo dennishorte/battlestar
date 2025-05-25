@@ -3,7 +3,6 @@
   "source": "scryfall",
   "data": {
     "layout": "adventure",
-    "cmc": 4,
     "card_faces": [
       {
         "name": "Blessed Hippogriff",

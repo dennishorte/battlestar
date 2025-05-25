@@ -12,7 +12,6 @@ const rootFields = [
   "layout",
   "rarity",
   "set",
-  "cmc",
   "digital",
 ]
 

@@ -3,7 +3,6 @@
   "source": "scryfall",
   "data": {
     "layout": "modal_dfc",
-    "cmc": 0,
     "card_faces": [
       {
         "name": "Branchloft Pathway",

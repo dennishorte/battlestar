@@ -3,7 +3,6 @@
   "source": "scryfall",
   "data": {
     "layout": "transform",
-    "cmc": 4,
     "card_faces": [
       {
         "name": "Arlinn Kord",
