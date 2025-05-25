@@ -306,22 +306,14 @@ CardUtil.manaSymbolFromString = function(text) {
 }
 
 CardUtil.manaSymbolsFromString = function(string) {
-  string = string.toLowerCase()
+  return CardUtil
+    .extractSymbolsFromText(string.toLowerCase())
+    .map(symbol => CardUtil.manaSymbolFromString(symbol))
+}
 
-  var curr = ''
-  let symbols = []
-
-  for (var i = 0; i < string.length; i++) {
-    let ch = string.charAt(i)
-    curr += ch
-
-    if (ch == '}') {
-      symbols.push(this.manaSymbolFromString(curr))
-      curr = ''
-    }
-  }
-
-  return symbols
+CardUtil.extractSymbolsFromText = function(string) {
+  const matches = string.match(/\{([^}]*)\}/g)
+  return matches ? matches.map(x => x.slice(1, -1)) : []
 }
 
 // What is the sort order?

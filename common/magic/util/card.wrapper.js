@@ -69,14 +69,21 @@ class CardWrapper extends Wrapper {
       return this.colorsInCastingCost(faceIndex)
     }
   }
-  colorsInCastingCost(faceIndex) {
-    return ['w', 'u', 'b', 'r', 'g'].filter(c => this.manaCost(faceIndex).toLowerCase().includes(c))
+  colorsInManaCost(faceIndex) {
+    const manaCost = this.manaCost(faceIndex).toLowerCase()
+    return ['w', 'u', 'b', 'r', 'g'].filter(c => manaCost.includes(c))
+  }
+  colorsInOracleText(faceIndex) {
+    const text = this.oracleText(faceIndex).toLowerCase()
+    const symbols = cardUtil.extractSymbolsFromText(text).join('')
+    return ['w', 'u', 'b', 'r', 'g'].filter(c => symbols.includes(c))
   }
   colorIdentity(faceIndex) {
     return util.array.distinct([
-      ...this.colorsInCastingCost(faceIndex),
       ...this.manaProduced(faceIndex),
       ...this.colorIndicator(faceIndex),
+      ...this.colorsInManaCost(faceIndex),
+      ...this.colorsInOracleText(faceIndex),
     ]).sort()
   }
   colorIndicator(faceIndex) {
