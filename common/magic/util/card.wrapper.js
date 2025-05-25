@@ -145,7 +145,15 @@ class CardWrapper extends Wrapper {
   }
 
   cmc() {
-    return this.data.cmc
+    return this.manaValue()
+  }
+  manaValue() {
+    if (this.layout() === 'split') {
+      return cardUtil.manaCostFromCastingCost(this.manaCost())
+    }
+    else {
+      return cardUtil.manaCostFromCastingCost(this.manaCost(0))
+    }
   }
   manaCost(faceIndex) {
     if (typeof faceIndex === 'number') {
