@@ -16,10 +16,10 @@
       <span>Mana Produced</span>
       <div class="mana-selectors">
         <ManaSymbol
-          v-for="color in manaProducedColors"
+          v-for="color in producedManaColors"
           :key="`mana-${props.card.name(faceIndex)}-${color}`"
           :m="color"
-          :class="manaProduced.includes(color) ? 'selected' : ''"
+          :class="producedMana.includes(color) ? 'selected' : ''"
           @click="toggleManaProduced(color)"
         />
       </div>
@@ -100,18 +100,18 @@ const manaSelectors = {
   manaCostTwoColor: ['wu', 'ub', 'br', 'rg', 'gw', 'wb', 'ur', 'bg', 'rw', 'gu'],
   manaCostTwoColorPhyrexian: ['wup', 'ubp', 'brp', 'rgp', 'gwp', 'wbp', 'urp', 'bgp', 'rwp', 'gup'],
 }
-const manaProducedColors = ['c', 'w', 'u', 'b', 'r', 'g']
+const producedManaColors = ['c', 'w', 'u', 'b', 'r', 'g']
 const colorIndicatorColors = ['w', 'u', 'b', 'r', 'g']
 
 // Trackers for the various color picking options
 // Automatically populated with the current values of the cardface being edited using watchers.
-const manaProduced = ref([])
+const producedMana = ref([])
 const colorIndicator = ref([])
 const manaCost = ref([])
 
 // Used to highlight the colorIdentity of the card.
 const colorIdentity = computed(() => util.array.distinct([
-  ...manaProduced.value,
+  ...producedMana.value,
   ...colorIndicator.value,
   ...extractColorsFromManaCost(manaCost.value)
 ]).sort())
@@ -186,11 +186,11 @@ function toggleColorIndicator(color) {
 
 // Used for adjusting the mana produced
 function toggleManaProduced(color) {
-  if (manaProduced.value.includes(color)) {
-    util.array.remove(manaProduced.value, color)
+  if (producedMana.value.includes(color)) {
+    util.array.remove(producedMana.value, color)
   }
   else {
-    manaProduced.value.push(color)
+    producedMana.value.push(color)
   }
 }
 
@@ -203,7 +203,7 @@ function saveColors() {
   emit('colors-updated', {
     faceIndex: props.faceIndex,
     colorFields: {
-      manaProduced: manaProduced.value,
+      producedMana: producedMana.value,
       colorIndicator: colorIndicator.value,
       manaCost: manaCost.value.map(s => '{' + s + '}').join(''),
     },
@@ -234,7 +234,7 @@ function updateMana() {
   }
 
   if (props.card) {
-    manaProduced.value = getColorProps('manaProduced')
+    producedMana.value = getColorProps('producedMana')
     colorIndicator.value = getColorProps('colorIndicator')
     manaCost.value = getManaCostSymbols()
   }

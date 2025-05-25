@@ -66,7 +66,7 @@ class CardWrapper extends Wrapper {
       return this.colorIndicator(faceIndex)
     }
     else {
-      return this.colorsInCastingCost(faceIndex)
+      return this.colorsInManaCost(faceIndex)
     }
   }
   colorsInManaCost(faceIndex) {
@@ -80,7 +80,7 @@ class CardWrapper extends Wrapper {
   }
   colorIdentity(faceIndex) {
     return util.array.distinct([
-      ...this.manaProduced(faceIndex),
+      ...this.producedMana(faceIndex),
       ...this.colorIndicator(faceIndex),
       ...this.colorsInManaCost(faceIndex),
       ...this.colorsInOracleText(faceIndex),
@@ -96,8 +96,8 @@ class CardWrapper extends Wrapper {
     return cardUtil.COLOR_KEY_TO_NAME[this.colorKey(faceIndex)]
   }
 
-  manaProduced(faceIndex) {
-    return this._getColorProp('mana_produced', faceIndex)
+  producedMana(faceIndex) {
+    return this._getColorProp('produced_mana', faceIndex)
   }
 
   typeLine(faceIndex) {
@@ -155,16 +155,13 @@ class CardWrapper extends Wrapper {
       return this.faces().map(face => face.mana_cost || '').join(' // ')
     }
   }
-  producedMana(faceIndex) {
-    return this._getColorProp('produced_mana', faceIndex)
-  }
 
   oracleText(faceIndex) {
     if (typeof faceIndex === 'number') {
-      return this.face(faceIndex).oracle_text
+      return this.face(faceIndex).oracle_text || ''
     }
     else {
-      return this.faces().map(face => face.oracle_text).join('\n//\n')
+      return this.faces().map(face => face.oracle_text || '').join('\n//\n')
     }
   }
   flavorText(faceIndex) {

@@ -91,7 +91,20 @@ export default {
       // Check if each field actually changes and emit events if they did.
       for (const [field, value] of Object.entries(colorFields)) {
         const original = this.card[field](faceIndex)
-        if (!util.array.elementsEqual(original, value)) {
+
+        let equality
+
+        if (typeof original === 'string') {
+          equality = original === value
+        }
+        else if (Array.isArray(original)) {
+          equality = util.array.elementsEqual(original, value)
+        }
+        else {
+          throw new Error('Unexpected type: ' + (typeof original))
+        }
+
+        if (!equality) {
           this.$emit('update-face', {
             index: faceIndex,
             field: util.toSnakeCase(util.toPlainCase(field)),
