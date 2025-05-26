@@ -59,9 +59,9 @@
                 <!-- ms-2x makes it easier for users to click when editing -->
                 <i
                   v-if="card.hasColorIndicator(index)"
-                  class="ms ms-ci ms-ci-5 ms-2x"
+                  class="ms ms-ci"
                   :class="[
-                    `ms-ci-${card.colorIndicatorSuffix}`,
+                    ...card.colorIndicatorClasses(),
                     isEditable ? 'ms-2x' : '',
                   ]"
                 />

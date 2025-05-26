@@ -7,24 +7,26 @@ class UICardWrapper extends magic.util.wrapper.card {
     this.__memo = 'UICardWrapper'
   }
 
-  colorIndicatorSuffix(faceIndex) {
-    const colors = this
+  colorIndicatorClasses(faceIndex) {
+    const unsortedColors = this
       .colorIndicator(faceIndex)
       .map(c => c.toLowerCase())
+
+    const colors = magic.util.card.sortManaArray(unsortedColors)
 
     if (colors.length === 0) {
       return null
     }
 
     if (colors.length === 1) {
-      return colors[0]
+      return ['ms-ci-' + colors[0], 'ms-ci-1']
     }
 
     if (colors.length === 2) {
       const pairs = ['wu', 'wb', 'ub', 'ur', 'bg', 'br', 'rw', 'rg', 'gu', 'gw']
-      for (const pair in pairs) {
+      for (const pair of pairs) {
         if (_testColorsIncluded(colors, pair)) {
-          return pair
+          return ['ms-ci-' + pair, 'ms-ci-2']
         }
       }
       throw new Error('No pair matches the color indicator: ' + colors)
@@ -32,9 +34,9 @@ class UICardWrapper extends magic.util.wrapper.card {
 
     if (colors.length === 3) {
       const triplets = ['wug', 'ubw', 'bru', 'rgb', 'gwr', 'wbg', 'urw', 'bgu', 'rwb', 'gur']
-      for (const triplet in triplets) {
+      for (const triplet of triplets) {
         if (_testColorsIncluded(colors, triplet)) {
-          return triplet
+          return ['ms-ci-' + triplet, 'ms-ci-3']
         }
       }
       throw new Error('No triplet matches the color indicator: ' + colors)
@@ -42,16 +44,16 @@ class UICardWrapper extends magic.util.wrapper.card {
 
     if (colors.length === 4) {
       const quads = ['ubrg', 'brgw', 'rgwu', 'gwub', 'wubr']
-      for (const quad in quads) {
+      for (const quad of quads) {
         if (_testColorsIncluded(colors, quad)) {
-          return quad
+          return ['ms-ci-' + quad, 'ms-ci-4']
         }
       }
       throw new Error('No quad matches the color indicator: ' + colors)
     }
 
     if (colors.length === 5) {
-      return '5'
+      return ['ms-ci-5']
     }
   }
 
