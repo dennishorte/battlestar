@@ -1,6 +1,6 @@
 const { MagicFactory } = require('./magic.js')
 const TestCommon = require('../lib/test_common.js')
-const DeckWrapper = require('./util/deck.wrapper.js')
+const DeckWrapper = require('./util/DeckWrapper.js')
 
 const TestCards = require('./test_card_data.js')
 

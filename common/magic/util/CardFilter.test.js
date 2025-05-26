@@ -1,5 +1,5 @@
 const CardFilter = require('./CardFilter.js')
-const CardWrapper = require('./card.wrapper.js')
+const CardWrapper = require('./CardWrapper.js')
 const fs = require('fs')
 const path = require('path')
 

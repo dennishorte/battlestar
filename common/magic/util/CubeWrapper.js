@@ -1,4 +1,4 @@
-const Wrapper = require('./wrapper.js')
+const Wrapper = require('./Wrapper.js')
 const util = require('../../lib/util.js')
 
 class CubeWrapper extends Wrapper {

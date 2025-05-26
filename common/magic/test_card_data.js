@@ -1,4 +1,4 @@
-const CardWrapper = require('./util/card.wrapper.js')
+const CardWrapper = require('./util/CardWrapper.js')
 const lookup = require('./cardLookup.js')
 
 const whiteCards = [

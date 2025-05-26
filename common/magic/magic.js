@@ -11,9 +11,9 @@ const util = require('../lib/util.js')
 const { PlayerZone } = require('./Zone.js')
 
 const wrappers = {
-  card: require('./util/card.wrapper.js'),
-  cube: require('./util/cube.wrapper.js'),
-  deck: require('./util/deck.wrapper.js'),
+  card: require('./util/CardWrapper.js'),
+  cube: require('./util/CubeWrapper.js'),
+  deck: require('./util/DeckWrapper.js'),
 }
 
 const { MagicLogManager } = require('./MagicLogManager.js')
