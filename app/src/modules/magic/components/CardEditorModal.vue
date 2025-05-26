@@ -75,10 +75,10 @@ async function save() {
 }
 
 // Initialize cardInEdit when modal opens
-watch(() => props.modelValue, (isVisible) => {
-  if (isVisible && props.card) {
-    cardInEdit.value = props.card.clone()
-    originalCard.value = props.card.clone()
+watch(() => props.card, (newValue) => {
+  if (newValue) {
+    cardInEdit.value = newValue.clone()
+    originalCard.value = newValue.clone()
   }
 })
 

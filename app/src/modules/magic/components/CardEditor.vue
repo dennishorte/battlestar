@@ -62,9 +62,15 @@ const emit = defineEmits(['update:modelValue'])
 const originalCard = ref(null)
 const cardInEdit = ref(null)
 
+let ignoreUpdate = false
 
 // Initialize cardInEdit when modal opens
 watch(() => props.modelValue, (newValue) => {
+  if (ignoreUpdate) {
+    ignoreUpdate = false
+    return
+  }
+
   if (props.modelValue) {
     cardInEdit.value = newValue.clone()
     originalCard.value = newValue.clone()
@@ -76,6 +82,7 @@ watch(() => props.modelValue, (newValue) => {
 })
 
 function updateFace({ index, field, value }) {
+  ignoreUpdate = true
   cardInEdit.value.face(index)[field] = value
   emit('update:modelValue', cardInEdit.value)
 }
