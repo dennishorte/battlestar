@@ -11,7 +11,7 @@
  * @param {Object} previousData - The previous card data (from oldData in edit)
  * @returns {Object} Structured change information
  */
-export function calculateCardChanges(currentData, previousData) {
+function calculateCardChanges(currentData, previousData) {
   if (!previousData) {
     // This is a new card creation
     return {
@@ -323,7 +323,7 @@ function generateChangeSummary(changes, facesAdded, facesRemoved, fieldsChanged)
  * @param {Object} originalData - The original card data from creation
  * @returns {Object} Changes from original version
  */
-export function calculateChangesFromOriginal(currentData, originalData) {
+function calculateChangesFromOriginal(currentData, originalData) {
   if (!originalData) {
     return {
       type: 'no_original',
@@ -351,7 +351,7 @@ export function calculateChangesFromOriginal(currentData, originalData) {
  * @param {Array} edits - The edits array from the card document
  * @returns {Object|null} The original card data or null if not found
  */
-export function extractOriginalData(edits) {
+function extractOriginalData(edits) {
   if (!edits || edits.length === 0) {
     return null
   }
@@ -370,4 +370,10 @@ export function extractOriginalData(edits) {
     .sort((a, b) => new Date(a.date) - new Date(b.date))[0]
 
   return oldestUpdate ? oldestUpdate.oldData : null
+}
+
+module.exports = {
+  calculateCardChanges,
+  calculateChangesFromOriginal,
+  extractOriginalData,
 }
