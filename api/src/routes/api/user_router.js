@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import * as userController from '../../controllers/user.controller.js'
+import * as userController from '../../controllers/user_controller.js'
 
 /**
  * @swagger

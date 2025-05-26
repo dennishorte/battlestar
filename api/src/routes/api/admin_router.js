@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import { insert as insertGame } from '../../controllers/game.controller.js'
+import { insert as insertGame } from '../../controllers/game_controller.js'
 
 /**
  * Middleware to check user name

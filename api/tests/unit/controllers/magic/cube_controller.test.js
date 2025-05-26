@@ -72,7 +72,7 @@ vi.mock('../../../../src/utils/logger', () => {
 })
 
 // Import after mocks are set up
-import * as cubeController from '../../../../src/controllers/magic/cube.controller.js'
+import * as cubeController from '../../../../src/controllers/magic/cube_controller.js'
 import { BadRequestError, NotFoundError } from '../../../../src/utils/errors.js'
 import logger from '../../../../src/utils/logger.js'
 import db from '../../../../src/models/db.js'

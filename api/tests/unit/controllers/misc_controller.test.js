@@ -15,7 +15,7 @@ vi.mock('../../../src/models/db', () => {
 })
 
 // Import after mocks are set up
-import * as miscController from '../../../src/controllers/misc.controller.js'
+import * as miscController from '../../../src/controllers/misc_controller.js'
 
 describe('Misc Controller', () => {
   let req, res, next

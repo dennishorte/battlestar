@@ -30,7 +30,7 @@ vi.mock('../../../../src/models/db', () => {
 })
 
 // Import after mocks are set up
-import * as hexController from '../../../../src/controllers/tyrants/hex.controller.js'
+import * as hexController from '../../../../src/controllers/tyrants/hex_controller.js'
 import { BadRequestError } from '../../../../src/utils/errors.js'
 import db from '../../../../src/models/db.js'
 import logger from '../../../../src/utils/logger.js'

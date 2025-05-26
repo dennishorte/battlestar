@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import * as deckController from '../../../controllers/magic/deck.controller.js'
+import * as deckController from '../../../controllers/magic/deck_controller.js'
 
 /**
  * @route POST /api/magic/deck/create

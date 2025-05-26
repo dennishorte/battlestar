@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import * as linkController from '../../../../src/controllers/magic/link.controller.js'
+import * as linkController from '../../../../src/controllers/magic/link_controller.js'
 import { ObjectId } from 'mongodb'
 
 // Mock dependencies

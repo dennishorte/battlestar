@@ -23,7 +23,7 @@ vi.mock('../../../src/models/db', () => {
 })
 
 // Import after mocks are set up
-import * as lobbyController from '../../../src/controllers/lobby.controller.js'
+import * as lobbyController from '../../../src/controllers/lobby_controller.js'
 import { BadRequestError, NotFoundError } from '../../../src/utils/errors.js'
 import { ObjectId } from 'mongodb'
 

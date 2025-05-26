@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import * as gameController from '../../controllers/game.controller.js'
+import * as gameController from '../../controllers/game_controller.js'
 
 /**
  * @swagger

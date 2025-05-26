@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import * as cardController from '../../../controllers/magic/card.controller.js'
+import * as cardController from '../../../controllers/magic/card_controller.js'
 
 /**
  * @route POST /api/magic/card/all

@@ -39,7 +39,7 @@ vi.mock('../../../src/utils/stats', () => {
 })
 
 // Now we can import the controller
-import * as gameController from '../../../src/controllers/game.controller.js'
+import * as gameController from '../../../src/controllers/game_controller.js'
 import { NotFoundError } from '../../../src/utils/errors.js'
 
 describe('Game Controller', () => {

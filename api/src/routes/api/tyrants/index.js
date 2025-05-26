@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import hexRouter from './hex.router.js'
+import hexRouter from './hex_router.js'
 
 /**
  * Tyrants sub-routes

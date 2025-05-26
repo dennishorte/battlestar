@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import * as hexController from '../../../controllers/tyrants/hex.controller.js'
+import * as hexController from '../../../controllers/tyrants/hex_controller.js'
 
 /**
  * @route POST /api/tyrants/hex/all

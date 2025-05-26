@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import * as cardController from '../../../../src/controllers/magic/card.controller.js'
+import * as cardController from '../../../../src/controllers/magic/card_controller.js'
 import { ObjectId } from 'mongodb'
 import { magic } from 'battlestar-common'
 

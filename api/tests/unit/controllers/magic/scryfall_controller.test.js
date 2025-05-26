@@ -30,7 +30,7 @@ vi.mock('../../../../src/models/db.js', () => {
   }
 })
 
-import * as scryfallController from '../../../../src/controllers/magic/scryfall.controller.js'
+import * as scryfallController from '../../../../src/controllers/magic/scryfall_controller.js'
 import db from '../../../../src/models/db.js'
 
 describe('Scryfall Controller', () => {

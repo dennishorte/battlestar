@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import * as cubeController from '../../../controllers/magic/cube.controller.js'
+import * as cubeController from '../../../controllers/magic/cube_controller.js'
 
 /**
  * @route POST /api/magic/cube/all

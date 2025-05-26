@@ -37,7 +37,7 @@ vi.mock('mongodb', () => {
 })
 
 // Now we can import the controller and errors
-import * as userController from '../../../src/controllers/user.controller.js'
+import * as userController from '../../../src/controllers/user_controller.js'
 import { BadRequestError } from '../../../src/utils/errors.js'
 import { ObjectId } from 'mongodb'
 
