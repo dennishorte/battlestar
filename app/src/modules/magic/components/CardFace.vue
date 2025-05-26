@@ -14,8 +14,8 @@
 
             <div class="frame-mana-cost" @click="showColorPicker">
               <ManaCost
-                v-if="manaCost.length > 0"
-                :cost="manaCost"
+                v-if="card.manaCost(index).length > 0"
+                :cost="card.manaCost(index)"
               />
               <i
                 v-else-if="isEditable"
@@ -26,7 +26,7 @@
 
           <div>
             <EditableDiv
-              :text="imageUrl"
+              :text="card.imageUri(index)"
               :custom-classes="['frame-art']"
               :editable="isEditable"
               field="image_uri"
@@ -63,7 +63,7 @@
                   v-if="card.hasColorIndicator(index)"
                   class="ms ms-ci"
                   :class="[
-                    ...card.colorIndicatorClasses(),
+                    ...card.colorIndicatorClasses(index),
                     isEditable ? 'ms-2x' : '',
                   ]"
                 />
@@ -82,12 +82,12 @@
                 field="type_line"
                 @update="updateCardField" />
             </div>
-            <div class="frame-card-icon" :class="rarity">{{ setIcon }}</div>
+            <div class="frame-card-icon" :class="card.rarity(index)">{{ '' }}</div>
           </div>
 
           <div class="frame-text-box">
             <EditableDiv
-              :text="oracleText"
+              :text="card.oracleText(index)"
               :custom-classes="['frame-oracle-text']"
               :editable="isEditable"
               field="oracle_text"
@@ -100,7 +100,7 @@
 
             <div class="frame-flavor-wrapper">
               <EditableDiv
-                :text="flavorText"
+                :text="card.flavorText(index)"
                 :custom-classes="['frame-flavor-text']"
                 :editable="isEditable"
                 field="flavor_text"
@@ -119,9 +119,9 @@
             </div>
           </div>
 
-          <div class="frame-loyalty" v-if="loyalty">
+          <div class="frame-loyalty" v-if="card.isPlaneswalker(index)">
             <EditableDiv
-              :text="loyalty"
+              :text="card.loyalty(index)"
               :custom-classes="['frame-loyalty']"
               :editable="isEditable"
               field="loyalty"
@@ -133,9 +133,9 @@
             </EditableDiv>
           </div>
 
-          <div class="frame-defense" v-if="defense">
+          <div class="frame-defense" v-if="card.isSiege(index)">
             <EditableDiv
-              :text="defense"
+              :text="card.defense(index)"
               :custom-classes="['frame-defense']"
               :editable="isEditable"
               field="defense"
@@ -147,16 +147,16 @@
             </EditableDiv>
           </div>
 
-          <div class="frame-power-toughness frame-foreground" v-if="power || toughness">
+          <div class="frame-power-toughness frame-foreground" v-if="card.isCreature(index)">
             <EditableDiv
-              :text="power"
+              :text="card.power(index)"
               :custom-classes="['frame-power']"
               :editable="isEditable"
               field="power"
               @update="updateCardField" />
             <span class="power-toughness-separator">/</span>
             <EditableDiv
-              :text="toughness"
+              :text="card.toughness(index)"
               :custom-classes="['frame-toughness']"
               :editable="isEditable"
               field="toughness"
@@ -250,48 +250,8 @@ export default {
       return classes
     },
 
-    flavorText() {
-      return this.card.flavorText(this.index)
-    },
-
-    imageUrl() {
-      return this.card.imageUri(this.index)
-    },
-
     isSplitCard() {
       return this.card.layout() === 'split'
-    },
-
-    manaCost() {
-      return this.card.manaCost(this.index)
-    },
-
-    oracleText() {
-      return this.card.oracleText(this.index)
-    },
-
-    setIcon() {
-      return ''
-    },
-
-    defense() {
-      return this.card.defense(this.index)
-    },
-
-    loyalty() {
-      return this.card.loyalty(this.index)
-    },
-
-    power() {
-      return this.card.power(this.index)
-    },
-
-    toughness() {
-      return this.card.toughness(this.index)
-    },
-
-    rarity() {
-      return this.card.rarity(this.index)
     },
   },
 

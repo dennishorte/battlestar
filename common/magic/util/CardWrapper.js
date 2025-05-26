@@ -234,10 +234,13 @@ class CardWrapper extends Wrapper {
   }
 
   isArtifact(faceIndex) {
-    return this.typeLine(faceIndex).toLowerCase().includes('artifact')
+    return this.supertypes(faceIndex).includes('artifact')
   }
-  isColorless() {
-    return this.colors().length === 0
+  isCreature(faceIndex) {
+    return this.supertypes(faceIndex).includes('creature')
+  }
+  isColorless(faceIndex) {
+    return this.colors(faceIndex).length === 0
   }
   isCubeCard() {
     return this.source === 'custom'
@@ -250,6 +253,9 @@ class CardWrapper extends Wrapper {
   }
   isSiege(faceIndex) {
     return this.subtypes(faceIndex).includes('siege')
+  }
+  isPlaneswalker(faceIndex) {
+    return this.supertypes(faceIndex).includes('planeswalker')
   }
 
   isLegalIn(format) {
