@@ -2,7 +2,7 @@
   <div
     ref="editableDiv"
     class="editable-div"
-    :class="{'is-editable': editable, 'is-empty': isEmpty}"
+    :class="[customClass, {'is-editable': editable, 'is-empty': isEmpty}]"
     :contenteditable="isEditing"
     @click="handleClick"
     @blur="onBlur"
@@ -29,6 +29,10 @@ export default {
 
   props: {
     text: {
+      type: String,
+      default: ''
+    },
+    customClass: {
       type: String,
       default: ''
     },

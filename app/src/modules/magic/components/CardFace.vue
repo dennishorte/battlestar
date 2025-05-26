@@ -7,6 +7,7 @@
           <div class="frame-header frame-foreground">
             <EditableDiv
               :text="card.name(index)"
+              customClass="frame-card-name"
               :editable="isEditable"
               field="name"
               @update="updateCardField" />
@@ -26,6 +27,7 @@
           <div>
             <EditableDiv
               :text="imageUrl"
+              customClass="frame-art"
               :editable="isEditable"
               field="image_uri"
               :renderComponent="true"
@@ -75,6 +77,7 @@
 
               <EditableDiv
                 :text="card.typeLine(index)"
+                customClass="frame-card-type"
                 :editable="isEditable"
                 field="type_line"
                 @update="updateCardField" />
@@ -85,6 +88,7 @@
           <div class="frame-text-box">
             <EditableDiv
               :text="oracleText"
+              customClass="frame-oracle-text"
               :editable="isEditable"
               field="oracle_text"
               :renderComponent="true"
@@ -97,6 +101,7 @@
             <div class="frame-flavor-wrapper">
               <EditableDiv
                 :text="flavorText"
+                customClass="frame-flavor-text"
                 :editable="isEditable"
                 field="flavor_text"
                 @update="updateCardField">
@@ -117,6 +122,7 @@
           <div class="frame-loyalty" v-if="loyalty">
             <EditableDiv
               :text="loyalty"
+              customClass="frame-loyalty"
               :editable="isEditable"
               field="loyalty"
               :renderComponent="true"
@@ -130,6 +136,7 @@
           <div class="frame-defense" v-if="defense">
             <EditableDiv
               :text="defense"
+              customClass="frame-defense"
               :editable="isEditable"
               field="defense"
               :renderComponent="true"
@@ -143,12 +150,14 @@
           <div class="frame-power-toughness frame-foreground" v-if="power || toughness">
             <EditableDiv
               :text="power"
+              customClass="frame-power"
               :editable="isEditable"
               field="power"
               @update="updateCardField" />
             <span class="power-toughness-separator">/</span>
             <EditableDiv
               :text="toughness"
+              customClass="frame-toughness"
               :editable="isEditable"
               field="toughness"
               @update="updateCardField" />
@@ -161,6 +170,7 @@
         <span class="artist-icon"><i class="ms ms-artist-nib"/></span>
         <EditableDiv
           :text="card.artist(index)"
+          customClass="artist-text"
           :editable="isEditable"
           field="artist"
           @update="updateCardField" />
