@@ -2,7 +2,7 @@
   <div
     ref="editableDiv"
     class="editable-div"
-    :class="[customClass, {'is-editable': editable, 'is-empty': isEmpty}]"
+    :class="[...customClasses, {'is-editable': editable, 'is-empty': isEmpty}]"
     :contenteditable="isEditing"
     @click="handleClick"
     @blur="onBlur"
@@ -32,9 +32,9 @@ export default {
       type: String,
       default: ''
     },
-    customClass: {
-      type: String,
-      default: ''
+    customClasses: {
+      type: Array,
+      default: () => []
     },
     editable: {
       type: Boolean,
