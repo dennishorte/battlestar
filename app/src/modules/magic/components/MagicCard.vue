@@ -407,4 +407,59 @@ $gold: #d9631b;
 @include card-face(200px);
 @include card-face(220px);
 @include card-face(270px);
+
+.scar-tape {
+  /* Core styling */
+  background: linear-gradient(135deg, #f5f2e8 0%, #e8e0cc 50%, #ddd4b8 100%);
+  color: #333;
+  padding: 2px 6px;
+  margin: -1px -3px;
+  display: inline-block;
+  position: relative;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+
+  /* Tape-like edges */
+  border-radius: 2px;
+  border: 1px solid #ccc;
+
+  /* Shadow for depth */
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.2),
+    0 1px 3px rgba(0,0,0,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+
+  /* Transform for slight rotation */
+  transform: rotate(-1deg);
+  transition: transform 0.2s ease;
+}
+
+.scar-tape:hover {
+  transform: rotate(-0.5deg) scale(1.02);
+}
+
+/* Add torn edges effect */
+.scar-tape::before,
+.scar-tape::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(0,0,0,0.1) 20%,
+    transparent 40%,
+    rgba(0,0,0,0.1) 60%,
+    transparent 80%,
+    rgba(0,0,0,0.1) 100%);
+}
+
+.scar-tape::before {
+  left: -1px;
+}
+
+.scar-tape::after {
+  right: -1px;
+}
 </style>
