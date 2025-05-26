@@ -2,7 +2,7 @@ import {
   calculateCardChanges,
   calculateChangesFromOriginal,
   extractOriginalData
-} from './card_diff.js'
+} from './cardDiff.js'
 
 describe('Card Diff Utilities', () => {
   describe('calculateCardChanges', () => {

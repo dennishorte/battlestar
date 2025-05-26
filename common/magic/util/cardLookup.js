@@ -1,4 +1,4 @@
-const util = require('../lib/util.js')
+const util = require('../../lib/util.js')
 
 function create(cards) {
   const lookup = {

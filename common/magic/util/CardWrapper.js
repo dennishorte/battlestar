@@ -1,6 +1,6 @@
 const Wrapper = require('./Wrapper.js')
 const CardFilter = require('./CardFilter.js')
-const cardUtil = require('../cardUtil.js')
+const cardUtil = require('./cardUtil.js')
 const util = require('../../lib/util.js')
 
 class GameData {

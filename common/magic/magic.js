@@ -4,7 +4,7 @@ const {
   GameOverEvent,
 } = require('../lib/game.js')
 
-const cardUtil = require('./cardUtil.js')
+const cardUtil = require('./util/cardUtil.js')
 const res = require('./data.js')
 const util = require('../lib/util.js')
 
