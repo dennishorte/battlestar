@@ -98,18 +98,7 @@
               </template>
             </EditableDiv>
 
-            <div class="frame-flavor-wrapper">
-              <EditableDiv
-                :text="card.flavorText(index)"
-                :custom-classes="['frame-flavor-text']"
-                :editable="isEditable"
-                field="flavor_text"
-                @update="updateCardField">
-                <template v-slot:empty>
-                  <span class="placeholder-text">tasty</span>
-                </template>
-              </EditableDiv>
-            </div>
+            <CardFlavorText :face="face" @value-updated="updateCardField" />
 
             <div class="frame-achievements-wrapper">
               <p v-for="ach of achievements" :key="ach.unlock" class="frame-achievement-desc">
@@ -141,6 +130,7 @@ import CardLoyalty from './CardLoyalty'
 import CardDefense from './CardDefense'
 import CardPowerToughness from './CardPowerToughness'
 import CardArtist from './CardArtist'
+import CardFlavorText from './CardFlavorText'
 
 
 export default {
@@ -154,6 +144,7 @@ export default {
     CardDefense,
     CardPowerToughness,
     CardArtist,
+    CardFlavorText,
   },
 
   emits: ['show-color-picker', 'update-face'],

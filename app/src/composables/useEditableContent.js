@@ -16,7 +16,8 @@ export function useEditableContent(initialValue = '', options = {}) {
   const isEmpty = computed(() => !value.value || value.value.trim() === '')
 
   const showEmptyPlaceholder = computed(() =>
-    !isEditing.value && isEmpty.value && editable
+    false
+    //    !isEditing.value && isEmpty.value && editable
   )
 
   const startEditing = async () => {
