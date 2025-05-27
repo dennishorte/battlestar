@@ -59,47 +59,6 @@ CardUtil.colorSymbolToName = function(symbol) {
   }
 }
 
-CardUtil.blankFace = function() {
-  return {
-    artist: '',
-    defense: '',
-    flavor_text: '',
-    image_uri: '',
-    loyalty: '',
-    mana_cost: '',
-    name: '',
-    oracle_text: '',
-    power: '',
-    toughness: '',
-    type_line: '',
-
-    color_indicator: [],
-    produced_mana: [],
-
-    scarred: false,
-  }
-}
-
-CardUtil.blank = function() {
-  return {
-
-    id: '',
-    source: 'adhoc_token',
-
-    data: {
-      id: '',
-
-      layout: 'normal',
-      digital: false,
-      rarity: 'common',
-
-      card_faces: [this.blankFace()],
-
-      legal: [],
-    }
-  }
-}
-
 CardUtil.parseRulesLine = function(line) {
   const output = {
 

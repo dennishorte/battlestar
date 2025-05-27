@@ -21,7 +21,6 @@
     <DropdownMenu text="menu">
       <DropdownButton @click="this.$modal('cube-update-modal').show()">add/remove cards</DropdownButton>
       <DropdownButton @click="this.$modal('cube-add-modal').show()">add one card</DropdownButton>
-      <DropdownButton @click="createCard">create card</DropdownButton>
 
       <template v-if="viewerIsOwner">
         <DropdownDivider />
@@ -35,7 +34,6 @@
 import DropdownMenu from '@/components/DropdownMenu'
 import DropdownButton from '@/components/DropdownButton'
 import DropdownDivider from '@/components/DropdownDivider'
-import { mag } from 'battlestar-common'
 
 export default {
   name: 'CubeMenu',
@@ -74,21 +72,6 @@ export default {
   },
 
   methods: {
-    createCard() {
-      this.$store.commit('magic/cube/manageCard', mag.util.card.blank())
-      this.$modal('card-editor-modal').show()
-    },
-
-    createScar() {
-      const blank = {
-        _id: null,
-        cubeId: this.cube._id,
-        text: '',
-      }
-      this.$store.commit('magic/cube/manageScar', blank)
-      this.$modal('scar-modal').show()
-    },
-
     navigate(tab) {
       this.$emit('navigate', tab)
     },

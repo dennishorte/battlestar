@@ -42,6 +42,44 @@ class CardWrapper extends Wrapper {
     this.visibility = []
   }
 
+  static blankFace() {
+    return {
+      artist: '',
+      defense: '',
+      flavor_text: '',
+      image_uri: '',
+      loyalty: '',
+      mana_cost: '',
+      name: '',
+      oracle_text: '',
+      power: '',
+      toughness: '',
+      type_line: '',
+
+      color_indicator: [],
+      produced_mana: [],
+
+      scarred: false,
+    }
+  }
+
+  static blankCard() {
+    return {
+      id: '',
+      source: 'adhoc_token',
+
+      data: {
+        id: '',
+        layout: 'normal',
+        digital: false,
+        rarity: 'common',
+        legal: [],
+
+        card_faces: [CardWrapper.blankFace()],
+      }
+    }
+  }
+
   id() {
     return this._id
   }

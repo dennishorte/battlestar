@@ -4,7 +4,6 @@ const {
   GameOverEvent,
 } = require('../lib/game.js')
 
-const cardUtil = require('./util/cardUtil.js')
 const res = require('./data.js')
 const util = require('../lib/util.js')
 
@@ -33,7 +32,7 @@ module.exports = {
     pack: require('./draft/pack.js'),
   },
   util: {
-    card: cardUtil,
+    card: require('./util/cardUtil.js'),
     wrapper: wrappers,
   },
 }
@@ -523,7 +522,7 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
 
   for (let i = 0; i < data.count; i++) {
     // Create fake card data
-    const cardData = cardUtil.blank()
+    const cardData = wrappers.card.blankCard()
     cardData.data.name = data.name
     cardData.data.type_line = 'Token'
 

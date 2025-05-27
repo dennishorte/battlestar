@@ -8,15 +8,7 @@ export default {
 
     cube: null,
     cubeLoaded: false,
-
-    managedCard: null,
   }),
-
-  mutations: {
-    manageCard(state, card) {
-      state.managedCard = card
-    },
-  },
 
   actions: {
     async addCard({ dispatch, state }, { card, comment }) {
