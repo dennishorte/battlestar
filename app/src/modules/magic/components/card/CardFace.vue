@@ -119,18 +119,9 @@
             </div>
           </div>
 
-          <!-- The loyalty > 0 check covers flip walkers who don't have loyalty on their second side. -->
-          <div class="frame-loyalty" v-if="card.isPlaneswalker(index) && card.loyalty(index) > 0">
-            <CardLoyalty :face="face" @value-updated="updateCardField" />
-          </div>
-
-          <div class="frame-defense" v-if="card.isSiege(index)">
-            <CardDefense :face="face" @value-updated="updateCardField" />
-          </div>
-
-          <div class="frame-power-toughness frame-foreground" v-if="card.isCreature(index)">
-            <CardPowerToughness :face="face" @value-updated="updateCardField" />
-          </div>
+          <CardLoyalty :face="face" @value-updated="updateCardField" />
+          <CardDefense :face="face" @value-updated="updateCardField" />
+          <CardPowerToughness :face="face" @value-updated="updateCardField" />
 
         </div> <!-- frame -->
       </div> <!-- background -->

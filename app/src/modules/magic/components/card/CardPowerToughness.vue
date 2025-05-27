@@ -1,8 +1,10 @@
 <template>
-  <div class="power-toughness-container">
-    <EditableContent v-bind="powerEditor" class="frame-power" />
-    <span class="power-toughness-separator">/</span>
-    <EditableContent v-bind="toughnessEditor" class="frame-toughness" />
+  <div class="frame-power-toughness frame-foreground" v-if="isCreature">
+    <div class="power-toughness-container">
+      <EditableContent v-bind="powerEditor" class="frame-power" />
+      <span class="power-toughness-separator">/</span>
+      <EditableContent v-bind="toughnessEditor" class="frame-toughness" />
+    </div>
   </div>
 </template>
 
@@ -22,6 +24,7 @@ const emit = defineEmits(['value-updated'])
 
 const power = computed(() => props.face.power)
 const toughness = computed(() => props.face.toughness)
+const isCreature = computed(() => props.face.type_line.toLowerCase().includes('creature'))
 
 const powerEditor = useEditableContent(power.value, {
   onUpdate: (value) => emit('value-updated', { field: 'power', value }),

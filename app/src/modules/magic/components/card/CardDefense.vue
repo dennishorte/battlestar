@@ -1,7 +1,9 @@
 <template>
-  <div class="defense-container">
-    <i class="ms ms-defense defense-background"/>
-    <EditableContent v-bind="defenseEditor" class="defense-number" />
+  <div class="frame-defense" v-if="isSiege">
+    <div class="defense-container">
+      <i class="ms ms-defense defense-background"/>
+      <EditableContent v-bind="defenseEditor" class="defense-number" />
+    </div>
   </div>
 </template>
 
@@ -21,6 +23,7 @@ const props = defineProps({
 const emit = defineEmits(['value-updated'])
 
 const defense = computed(() => props.face.defense)
+const isSiege = computed(() => props.face.type_line.toLowerCase().includes('siege'))
 
 const defenseEditor = useEditableContent(defense.value, {
   onUpdate: (value) => emit('value-updated', { field: 'defense', value }),
