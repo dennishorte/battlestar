@@ -11,12 +11,6 @@
         :limit-height="props.limitHeight"
         @update-face="updateFace"
       >
-        <template #before-face="{ face, faceIndex }" v-if="props.editable">
-          <BFormCheckbox v-model="face.scarred" @change="updateFace({ index: faceIndex, field: 'scarred', value: face.scarred })">
-            scarred
-          </BFormCheckbox>
-        </template>
-
         <template #after-face="{ faceIndex }" v-if="props.editable">
           <BButton variant="warning" class="mt-2" @click="removeFace(faceIndex)">remove</BButton>
         </template>
