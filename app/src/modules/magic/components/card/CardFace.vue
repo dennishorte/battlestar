@@ -135,15 +135,7 @@
         </div> <!-- frame -->
       </div> <!-- background -->
 
-      <div class="artist-name">
-        <span class="artist-icon"><i class="ms ms-artist-nib"/></span>
-        <EditableDiv
-          :text="card.artist(index)"
-          :custom-classes="['artist-text']"
-          :editable="isEditable"
-          field="artist"
-          @update="updateCardField" />
-      </div>
+      <CardArtist :face="face" @value-updated="updateCardField" />
 
     </div> <!-- border -->
   </div> <!-- container -->
@@ -157,6 +149,7 @@ import EditableDiv from './EditableDiv'
 import CardLoyalty from './CardLoyalty'
 import CardDefense from './CardDefense'
 import CardPowerToughness from './CardPowerToughness'
+import CardArtist from './CardArtist'
 
 
 export default {
@@ -169,6 +162,7 @@ export default {
     CardLoyalty,
     CardDefense,
     CardPowerToughness,
+    CardArtist,
   },
 
   emits: ['show-color-picker', 'update-face'],
@@ -258,16 +252,6 @@ div {
   font-size: 1.5em;
   padding: 2px 3px;
   border-radius: 50%;
-}
-
-.artist-name {
-  display: flex;
-  align-items: center;
-}
-
-.artist-icon {
-  display: inline-flex;
-  margin-right: 4px;
 }
 
 .color-indicator-and-type {
