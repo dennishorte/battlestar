@@ -18,7 +18,7 @@
 
 
 <script>
-import MagicCard from '@/modules/magic/components/MagicCard'
+import MagicCard from '@/modules/magic/components/card/MagicCard.vue'
 
 
 export default {

@@ -8,7 +8,7 @@
 <script>
 import { mag } from 'battlestar-common'
 
-import ManaSymbol from './ManaSymbol'
+import ManaSymbol from './ManaSymbol.vue'
 
 
 export default {

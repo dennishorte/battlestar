@@ -8,8 +8,8 @@
 
 
 <script>
-import MagicCard from './MagicCard'
-import MagicWrapper from './MagicWrapper'
+import MagicCard from '@/modules/magic/components/card/MagicCard.vue'
+import MagicWrapper from '@/modules/magic/components/MagicWrapper.vue'
 
 export default {
   name: 'CardViewer',

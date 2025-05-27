@@ -38,7 +38,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 
-import MagicCard from './MagicCard.vue'
+import MagicCard from '@/modules/magic/components/card/MagicCard.vue'
 
 const props = defineProps({
   modelValue: {

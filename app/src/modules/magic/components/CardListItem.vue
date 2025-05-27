@@ -40,7 +40,7 @@
 
 
 <script>
-import ManaCost from './ManaCost'
+import ManaCost from './card/ManaCost.vue'
 
 
 export default {

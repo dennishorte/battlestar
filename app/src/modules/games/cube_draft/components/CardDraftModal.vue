@@ -20,8 +20,8 @@
 
 
 <script>
-import MagicCard from '@/modules/magic/components/MagicCard'
-import ModalBase from '@/components/ModalBase'
+import MagicCard from '@/modules/magic/components/card/MagicCard.vue'
+import ModalBase from '@/components/ModalBase.vue'
 
 
 export default {

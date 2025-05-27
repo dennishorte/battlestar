@@ -15,8 +15,8 @@
 <script>
 import { mag } from 'battlestar-common'
 
-import ManaSymbol from './ManaSymbol'
-import ReminderText from './ReminderText'
+import ManaSymbol from './ManaSymbol.vue'
+import ReminderText from './ReminderText.vue'
 
 export default {
   name: 'OracleText',
