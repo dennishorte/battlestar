@@ -8,6 +8,12 @@ export default {
   post,
 }
 
+export function useHttp() {
+  return {
+    post,
+  }
+}
+
 
 async function post(path, body) {
   if (body === undefined) {

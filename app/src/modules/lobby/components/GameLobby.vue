@@ -6,7 +6,7 @@
       <div class="row">
         <div class="col">
           <h2>
-            <EditableText @text-edited="updateName">{{ this.lobby.name }}</EditableText>
+            <EditableText @text-edited="updateName">{{ lobby.name }}</EditableText>
           </h2>
         </div>
       </div>
@@ -37,80 +37,71 @@
   </div>
 </template>
 
-<script>
-import { computed } from 'vue'
 
-import EditableText from '@/components/EditableText'
-import GameHeader from '@/components/GameHeader'
-import LobbyPlayerList from '../components/PlayerList'
-import LobbySettings from '../components/LobbySettings'
+<script setup>
+import { ref, computed, provide, onMounted } from 'vue'
+import { useRoute, useRouter, onBeforeRouteUpdate } from 'vue-router'
 
+import { useHttp } from '@/util/axiosWrapper.js'
 
-export default {
-  name: 'GameLobby',
-  components: {
-    EditableText,
-    GameHeader,
-    LobbyPlayerList,
-    LobbySettings,
-  },
+import EditableText from '@/components/EditableText.vue'
+import GameHeader from '@/components/GameHeader.vue'
+import LobbyPlayerList from './PlayerList.vue'
+import LobbySettings from './LobbySettings.vue'
 
-  data() {
-    return {
-      id: this.$route.params.id,
-      lobby: {},
-      errorMessage: '',
-    }
-  },
+const http = useHttp()
+const route = useRoute()
+const router = useRouter()
 
-  provide() {
-    return {
-      lobby: computed(() => (this.lobby)),
-      save: this.save
-    }
-  },
+// Reactive data
+const id = ref(route.params.id)
+const lobby = ref({})
+const errorMessage = ref('')
 
-  methods: {
-    async getLobbyInfo() {
-      const { lobby } = await this.$post('/api/lobby/info', { lobbyId: this.id })
-      this.lobby = lobby
-    },
-
-    async save() {
-      await this.$post('/api/lobby/save', this.lobby)
-    },
-
-    async startGame() {
-      await this.save()
-      if (this.errorMessage) {
-        return
-      }
-
-      const { gameId } = await this.$post('/api/game/create', {
-        lobbyId: this.lobby._id,
-      })
-      this.$router.push('/game/' + gameId)
-    },
-
-    async updateName({ to }) {
-      const cleaned = to.trim()
-      if (cleaned.length > 0) {
-        this.lobby.name = to
-        await this.save()
-      }
-    },
-  },
-
-  async beforeRouteUpdate(to, from, next) {
-    // This ensures that if a new lobby is loaded without navigating from another
-    // view that the lobby data is updated.
-    this.id = to.params.id
-    await this.getLobbyInfo()
-    next()
-  },
-
-  async mounted() {
-    await this.getLobbyInfo()
-  },
+// Methods
+const getLobbyInfo = async () => {
+  const { lobby: lobbyData } = await http.post('/api/lobby/info', { lobbyId: id.value })
+  lobby.value = lobbyData
 }
+
+const save = async () => {
+  await http.post('/api/lobby/save', lobby.value)
+}
+
+const startGame = async () => {
+  await save()
+  if (errorMessage.value) {
+    return
+  }
+  const { gameId } = await http.post('/api/game/create', {
+    lobbyId: lobby.value._id,
+  })
+  router.push('/game/' + gameId)
+}
+
+const updateName = async ({ to }) => {
+  const cleaned = to.trim()
+  if (cleaned.length > 0) {
+    lobby.value.name = to
+    await save()
+  }
+}
+
+// Provide values to child components
+provide('lobby', computed(() => lobby.value))
+provide('save', save)
+
+// Route guard equivalent
+onBeforeRouteUpdate(async (to, from, next) => {
+  // This ensures that if a new lobby is loaded without navigating from another
+  // view that the lobby data is updated.
+  id.value = to.params.id
+  await getLobbyInfo()
+  next()
+})
+
+// Lifecycle
+onMounted(async () => {
+  await getLobbyInfo()
+})
 </script>
