@@ -5,12 +5,7 @@
         <div class="card-frame">
 
           <div class="frame-header frame-foreground">
-            <EditableDiv
-              :text="card.name(index)"
-              :custom-classes="['frame-card-name']"
-              :editable="isEditable"
-              field="name"
-              @update="updateCardField" />
+            <CardName :face="face" @value-updated="updateCardField" />
 
             <div class="frame-mana-cost" @click="showColorPicker">
               <ManaCost
@@ -24,34 +19,11 @@
             </div>
           </div>
 
-          <div>
-            <EditableDiv
-              :text="card.imageUri(index)"
-              :custom-classes="['frame-art']"
-              :editable="isEditable"
-              field="image_uri"
-              :renderComponent="true"
-              @update="updateCardField">
-              <template v-slot:default="slotProps">
-                <div class="frame-art-wrapper">
-                  <img
-                    v-if="!isSplitCard"
-                    class="frame-art"
-                    alt="card art"
-                    :src="slotProps.text" />
-                  <img
-                    v-else
-                    class="frame-art split-card-art"
-                    :class="{'split-left': index === 0, 'split-right': index === 1}"
-                    alt="card art"
-                    :src="slotProps.text" />
-                </div>
-              </template>
-              <template v-slot:empty>
-                <div class="frame-art empty-art"/>
-              </template>
-            </EditableDiv>
-          </div>
+          <CardArt
+            :face="face"
+            :isSplitCard="isSplitCard"
+            :index="index"
+            @value-updated="updateCardField" />
 
           <div class="frame-type-line frame-foreground">
             <div class="color-indicator-and-type">
@@ -131,6 +103,8 @@ import CardDefense from './CardDefense'
 import CardPowerToughness from './CardPowerToughness'
 import CardArtist from './CardArtist'
 import CardFlavorText from './CardFlavorText'
+import CardName from './CardName'
+import CardArt from './CardArt'
 
 
 export default {
@@ -145,6 +119,8 @@ export default {
     CardPowerToughness,
     CardArtist,
     CardFlavorText,
+    CardName,
+    CardArt,
   },
 
   emits: ['show-color-picker', 'update-face'],
@@ -242,14 +218,6 @@ div {
   align-items: center;
 }
 
-.empty-art {
-  background-color: #ccc;
-  min-height: 140px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .opacity-10 {
   opacity: 0.1;
 }
@@ -274,55 +242,5 @@ div {
 
 .split-empty-right:after {
   left: 0;
-}
-
-.split-card-art {
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  clip-path: inset(0 50% 0 0);
-}
-
-.split-left {
-  clip-path: inset(0 50% 0 0);
-}
-
-.split-right {
-  clip-path: inset(0 0 0 50%);
-}
-
-.placeholder-text {
-  /* opacity: 0.3; */
-}
-
-.frame-art-wrapper {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  min-height: 140px;
-}
-
-.frame-art {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.split-card-art.split-left {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 200%;
-  object-position: 0% center;
-  transform-origin: left center;
-}
-
-.split-card-art.split-right {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 200%;
-  object-position: 100% center;
-  transform-origin: right center;
 }
 </style>
