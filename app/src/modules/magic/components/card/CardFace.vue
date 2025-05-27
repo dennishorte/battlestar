@@ -119,18 +119,9 @@
             </div>
           </div>
 
-          <div class="frame-loyalty" v-if="card.isPlaneswalker(index)">
-            <EditableDiv
-              :text="card.loyalty(index)"
-              :custom-classes="['frame-loyalty']"
-              :editable="isEditable"
-              field="loyalty"
-              :renderComponent="true"
-              @update="updateCardField">
-              <template v-slot:default="slotProps">
-                <CardLoyalty :loyalty="slotProps.text" />
-              </template>
-            </EditableDiv>
+          <!-- The loyalty > 0 check covers flip walkers who don't have loyalty on their second side. -->
+          <div class="frame-loyalty" v-if="card.isPlaneswalker(index) && card.loyalty(index) > 0">
+            <CardLoyalty :face="face" @value-updated="updateCardField" />
           </div>
 
           <div class="frame-defense" v-if="card.isSiege(index)">
@@ -248,6 +239,10 @@ export default {
       }
 
       return classes
+    },
+
+    face() {
+      return this.card.face(this.index)
     },
 
     isSplitCard() {

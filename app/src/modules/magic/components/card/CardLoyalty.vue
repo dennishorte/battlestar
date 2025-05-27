@@ -1,22 +1,29 @@
 <template>
   <div class="loyalty-container">
     <i class="ms ms-loyalty-start loyalty-background"/>
-    <span class="loyalty-number">{{ loyalty }}</span>
+    <EditableContent v-bind="loyaltyEditor" class="loyalty-number" />
   </div>
 </template>
 
 
-<script>
-export default {
-  name: 'CardLoyalty',
+<script setup>
+import { computed } from 'vue'
+import { useEditableContent } from '@/composables/useEditableContent.js'
 
-  props: {
-    loyalty: {
-      type: [Number, String],
-      required: true
-    },
+const props = defineProps({
+  face: {
+    type: Object,
+    required: true,
   },
-}
+})
+
+const emit = defineEmits(['value-updated'])
+
+const loyalty = computed(() => props.face.loyalty)
+
+const loyaltyEditor = useEditableContent(loyalty.value, {
+  onUpdate: (value) => emit('value-updated', { field: 'loyalty', value }),
+})
 </script>
 
 
