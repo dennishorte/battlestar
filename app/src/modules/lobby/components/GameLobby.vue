@@ -6,7 +6,7 @@
       <div class="row">
         <div class="col">
           <h2>
-            <EditableText @text-edited="updateName">{{ lobby.name }}</EditableText>
+            <EditableContent v-bind="titleEditor" />
           </h2>
         </div>
       </div>
@@ -42,9 +42,10 @@
 import { ref, computed, provide, onMounted } from 'vue'
 import { useRoute, useRouter, onBeforeRouteUpdate } from 'vue-router'
 
+import { useEditableContent } from '@/composables/useEditableContent.js'
 import { useHttp } from '@/util/axiosWrapper.js'
 
-import EditableText from '@/components/EditableText.vue'
+import EditableContent from '@/components/EditableContent.vue'
 import GameHeader from '@/components/GameHeader.vue'
 import LobbyPlayerList from './PlayerList.vue'
 import LobbySettings from './LobbySettings.vue'
@@ -58,10 +59,20 @@ const id = ref(route.params.id)
 const lobby = ref({})
 const errorMessage = ref('')
 
+// EditableContent
+const titleEditor = useEditableContent('lobby name', {
+  allowEmpty: false,
+  onUpdate: async (value) => {
+    lobby.value.name = value
+    await save()
+  },
+})
+
 // Methods
 const getLobbyInfo = async () => {
   const { lobby: lobbyData } = await http.post('/api/lobby/info', { lobbyId: id.value })
   lobby.value = lobbyData
+  titleEditor.setValue(lobbyData.name)
 }
 
 const save = async () => {
@@ -77,14 +88,6 @@ const startGame = async () => {
     lobbyId: lobby.value._id,
   })
   router.push('/game/' + gameId)
-}
-
-const updateName = async ({ to }) => {
-  const cleaned = to.trim()
-  if (cleaned.length > 0) {
-    lobby.value.name = to
-    await save()
-  }
 }
 
 // Provide values to child components
