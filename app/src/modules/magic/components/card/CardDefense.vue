@@ -1,22 +1,30 @@
 <template>
   <div class="defense-container">
     <i class="ms ms-defense defense-background"/>
-    <span class="defense-number">{{ defense }}</span>
+    <EditableContent v-bind="defenseEditor" class="defense-number" />
   </div>
 </template>
 
 
-<script>
-export default {
-  name: 'CardDefense',
+<script setup>
+import { computed } from 'vue'
+import { useEditableContent } from '@/composables/useEditableContent.js'
+import EditableContent from '@/components/EditableContent.vue'
 
-  props: {
-    defense: {
-      type: [Number, String],
-      required: true
-    },
+const props = defineProps({
+  face: {
+    type: Object,
+    required: true,
   },
-}
+})
+
+const emit = defineEmits(['value-updated'])
+
+const defense = computed(() => props.face.defense)
+
+const defenseEditor = useEditableContent(defense.value, {
+  onUpdate: (value) => emit('value-updated', { field: 'defense', value }),
+})
 </script>
 
 

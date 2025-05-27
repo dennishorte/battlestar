@@ -125,17 +125,7 @@
           </div>
 
           <div class="frame-defense" v-if="card.isSiege(index)">
-            <EditableDiv
-              :text="card.defense(index)"
-              :custom-classes="['frame-defense']"
-              :editable="isEditable"
-              field="defense"
-              :renderComponent="true"
-              @update="updateCardField">
-              <template v-slot:default="slotProps">
-                <CardDefense :defense="slotProps.text" />
-              </template>
-            </EditableDiv>
+            <CardDefense :face="face" @value-updated="updateCardField" />
           </div>
 
           <div class="frame-power-toughness frame-foreground" v-if="card.isCreature(index)">
