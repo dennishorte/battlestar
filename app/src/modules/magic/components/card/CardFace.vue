@@ -129,19 +129,7 @@
           </div>
 
           <div class="frame-power-toughness frame-foreground" v-if="card.isCreature(index)">
-            <EditableDiv
-              :text="card.power(index)"
-              :custom-classes="['frame-power']"
-              :editable="isEditable"
-              field="power"
-              @update="updateCardField" />
-            <span class="power-toughness-separator">/</span>
-            <EditableDiv
-              :text="card.toughness(index)"
-              :custom-classes="['frame-toughness']"
-              :editable="isEditable"
-              field="toughness"
-              @update="updateCardField" />
+            <CardPowerToughness :face="face" @value-updated="updateCardField" />
           </div>
 
         </div> <!-- frame -->
@@ -168,6 +156,7 @@ import OracleText from './OracleText'
 import EditableDiv from './EditableDiv'
 import CardLoyalty from './CardLoyalty'
 import CardDefense from './CardDefense'
+import CardPowerToughness from './CardPowerToughness'
 
 
 export default {
@@ -179,6 +168,7 @@ export default {
     EditableDiv,
     CardLoyalty,
     CardDefense,
+    CardPowerToughness,
   },
 
   emits: ['show-color-picker', 'update-face'],
