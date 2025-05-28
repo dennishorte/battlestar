@@ -17,6 +17,8 @@
             @navigate="navigate"
             @toggle-search="toggleSearch"
             @open-settings="settingsVisible = true"
+            @add-remove-cards="this.$modal('cube-update-modal').show()"
+            @add-one-card="this.$modal('cube-add-modal').show()"
           />
         </div>
       </div>

@@ -19,8 +19,8 @@
     </button>
 
     <BDropdown text="menu">
-      <BDropdownItem @click="this.$modal('cube-update-modal').show()">add/remove cards</BDropdownItem>
-      <BDropdownItem @click="this.$modal('cube-add-modal').show()">add one card</BDropdownItem>
+      <BDropdownItem @click="$emit('add-remove-cards')">add/remove cards</BDropdownItem>
+      <BDropdownItem @click="$emit('add-one-card')">add one card</BDropdownItem>
 
       <template v-if="viewerIsOwner">
         <DropdownDivider />
@@ -34,9 +34,13 @@
 export default {
   name: 'CubeMenu',
 
-  inject: ['bus'],
-
-  emits: ['toggle-search', 'navigate', 'open-settings'],
+  emits: [
+    'toggle-search',
+    'navigate',
+    'open-settings',
+    'add-remove-cards',
+    'add-one-card',
+  ],
 
   props: {
     cube: {
