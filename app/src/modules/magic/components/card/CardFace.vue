@@ -47,12 +47,7 @@
                 <i v-else-if="isEditable" class="ms ms-ci ms-ci-5 ms-2x opacity-10" />
               </div>
 
-              <EditableDiv
-                :text="card.typeLine(index)"
-                :custom-classes="['frame-card-type']"
-                :editable="isEditable"
-                field="type_line"
-                @update="updateCardField" />
+              <CardTypeLine :face="face" @value-updated="updateCardField" />
             </div>
             <div class="frame-card-icon" :class="card.rarity(index)">{{ '' }}</div>
           </div>
@@ -105,6 +100,7 @@ import CardArtist from './CardArtist'
 import CardFlavorText from './CardFlavorText'
 import CardName from './CardName'
 import CardArt from './CardArt'
+import CardTypeLine from './CardTypeLine'
 
 
 export default {
@@ -121,6 +117,7 @@ export default {
     CardFlavorText,
     CardName,
     CardArt,
+    CardTypeLine,
   },
 
   emits: ['show-color-picker', 'update-face'],

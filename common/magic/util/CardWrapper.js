@@ -28,7 +28,6 @@ class GameData {
   }
 }
 
-const TYPELINE_SPLITTER_REGEX = /\s*[—-—–]\s*/
 
 class CardWrapper extends Wrapper {
   constructor(card) {
@@ -41,6 +40,9 @@ class CardWrapper extends Wrapper {
     this.home = null
     this.visibility = []
   }
+
+  static TYPELINE_DASH = '—'
+  static TYPELINE_SPLITTER_REGEX = /[\u002d\u2013\u2014]/
 
   static blankFace() {
     return {
@@ -150,11 +152,19 @@ class CardWrapper extends Wrapper {
     }
   }
   supertypes(faceIndex) {
-    const supertypesString = this.typeLine(faceIndex).toLowerCase().split(TYPELINE_SPLITTER_REGEX)[0]
+    const supertypesString = this
+      .typeLine(faceIndex)
+      .toLowerCase()
+      .split(CardWrapper.TYPELINE_SPLITTER_REGEX)[0]
+      .trim()
     return supertypesString ? supertypesString.split(/\s+/) : []
   }
   subtypes(faceIndex) {
-    const subtypesString = this.typeLine(faceIndex).toLowerCase().split(TYPELINE_SPLITTER_REGEX)[1]
+    const subtypesString = this
+      .typeLine(faceIndex)
+      .toLowerCase()
+      .split(CardWrapper.TYPELINE_SPLITTER_REGEX)[1]
+      .trim()
     return subtypesString ? subtypesString.split(/\s+/) : []
   }
 
