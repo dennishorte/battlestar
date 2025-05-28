@@ -15,65 +15,52 @@
 
     <button class="btn btn-secondary" @click="toggleSearch">
       search
-      <input type="checkbox" class="form-check-input" @click="$emit('toggle-search')" />
+      <input type="checkbox" class="form-check-input" @click="emit('toggle-search')" />
     </button>
 
     <BDropdown text="menu">
-      <BDropdownItem @click="$emit('add-remove-cards')">add/remove cards</BDropdownItem>
-      <BDropdownItem @click="$emit('add-one-card')">add one card</BDropdownItem>
+      <BDropdownItem @click="emit('add-remove-cards')">add/remove cards</BDropdownItem>
+      <BDropdownItem @click="emit('add-one-card')">add one card</BDropdownItem>
 
       <template v-if="viewerIsOwner">
-        <DropdownDivider />
-        <BDropdownItem @click="$emit('open-settings')">settings</BDropdownItem>
+        <BDropdownDivider />
+        <BDropdownItem @click="emit('open-settings')">settings</BDropdownItem>
       </template>
     </BDropdown>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'CubeMenu',
+<script setup>
+import { computed, inject } from 'vue'
 
-  emits: [
-    'toggle-search',
-    'navigate',
-    'open-settings',
-    'add-remove-cards',
-    'add-one-card',
-  ],
-
-  props: {
-    cube: {
-      type: Object,
-      required: true
-    },
-    showing: {
-      type: String,
-      required: true
-    },
+const props = defineProps({
+  cube: {
+    type: Object,
+    required: true
   },
-
-  computed: {
-    buttonClassesCards() {
-      return this.showing === 'cards' ? 'btn-primary' : 'btn-secondary'
-    },
-    buttonClassesScars() {
-      return this.showing === 'scars' ? 'btn-primary' : 'btn-secondary'
-    },
-    buttonClassesAchievements() {
-      return this.showing === 'achievements' ? 'btn-primary' : 'btn-secondary'
-    },
+  showing: {
+    type: String,
+    required: true
   },
+})
 
-  methods: {
-    navigate(tab) {
-      this.$emit('navigate', tab)
-    },
+const emit = defineEmits([
+  'toggle-search',
+  'navigate',
+  'open-settings',
+  'add-remove-cards',
+  'add-one-card',
+])
 
-    viewerIsOwner() {
-      return this.cube ? this.actor._id === this.cube.userId : false
-    },
-  },
+const actor = inject('actor')
+
+const buttonClassesCards = computed(() => props.showing === 'cards' ? 'btn-primary' : 'btn-secondary')
+const buttonClassesScars = computed(() => props.showing === 'scars' ? 'btn-primary' : 'btn-secondary')
+const buttonClassesAchievements = computed(() => props.showing === 'achievements' ? 'btn-primary' : 'btn-secondary')
+const viewerIsOwner = computed(() => props.cube ? actor._id === props.cube.userId : false)
+
+function navigate(tab) {
+  emit('navigate', tab)
 }
 </script>
 
