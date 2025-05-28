@@ -2,14 +2,14 @@
   <div class="frame-defense" v-if="isSiege">
     <div class="defense-container">
       <i class="ms ms-defense defense-background"/>
-      <EditableContent v-bind="defenseEditor" class="defense-number" />
+      <EditableContent v-bind="editor" class="defense-number" />
     </div>
   </div>
 </template>
 
 
 <script setup>
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useEditableContent } from '@/composables/useEditableContent.js'
 import EditableContent from '@/components/EditableContent.vue'
 
@@ -25,9 +25,11 @@ const emit = defineEmits(['value-updated'])
 const defense = computed(() => props.face.defense)
 const isSiege = computed(() => props.face.type_line.toLowerCase().includes('siege'))
 
-const defenseEditor = useEditableContent(defense.value, {
+const editor = useEditableContent(defense.value, {
   onUpdate: (value) => emit('value-updated', { field: 'defense', value }),
 })
+
+watch(defense, (newValue) => editor.setValue(newValue))
 </script>
 
 

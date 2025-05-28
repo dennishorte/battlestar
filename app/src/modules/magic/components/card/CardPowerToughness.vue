@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useEditableContent } from '@/composables/useEditableContent.js'
 import EditableContent from '@/components/EditableContent.vue'
 
@@ -33,6 +33,9 @@ const powerEditor = useEditableContent(power.value, {
 const toughnessEditor = useEditableContent(toughness.value, {
   onUpdate: (value) => emit('value-updated', { field: 'toughness', value }),
 })
+
+watch(power, (newValue) => powerEditor.setValue(newValue))
+watch(toughness, (newValue) => toughnessEditor.setValue(newValue))
 </script>
 
 <style scoped>

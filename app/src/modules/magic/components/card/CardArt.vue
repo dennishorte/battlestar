@@ -23,13 +23,13 @@
       v-if="showEditor"
       class="art-url-editor"
       @click.stop>
-      <EditableContent v-bind="artEditor" class="frame-art-url" />
+      <EditableContent v-bind="editor" class="frame-art-url" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useEditableContent } from '@/composables/useEditableContent.js'
 import EditableContent from '@/components/EditableContent.vue'
 
@@ -53,7 +53,7 @@ const emit = defineEmits(['value-updated'])
 const showEditor = ref(false)
 const imageUri = computed(() => props.face.image_uri)
 
-const artEditor = useEditableContent(imageUri.value, {
+const editor = useEditableContent(imageUri.value, {
   onUpdate: (value) => {
     emit('value-updated', { field: 'image_uri', value })
     hideEditor()
@@ -66,7 +66,7 @@ const toggleEditor = () => {
   if (showEditor.value) {
     // Small delay to ensure the editor is rendered before focusing
     setTimeout(() => {
-      artEditor.startEditing()
+      editor.startEditing()
     }, 50)
   }
 }
@@ -74,6 +74,8 @@ const toggleEditor = () => {
 const hideEditor = () => {
   showEditor.value = false
 }
+
+watch(imageUri, (newValue) => editor.setValue(newValue))
 </script>
 
 <style scoped>
