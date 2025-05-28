@@ -1,6 +1,10 @@
 <template>
   <div class="frame-flavor-wrapper">
-    <EditableContent v-bind="editor" class="frame-flavor-text" />
+    <EditableContent
+      v-bind="editor"
+      class="frame-flavor-text"
+      style="white-space: pre-line;"
+    />
   </div>
 </template>
 
@@ -21,6 +25,7 @@ const emit = defineEmits(['value-updated'])
 const flavorText = computed(() => props.face.flavor_text)
 
 const editor = useEditableContent(flavorText.value, {
+  multiline: true,
   onUpdate: (value) => emit('value-updated', { field: 'flavor_text', value }),
 })
 

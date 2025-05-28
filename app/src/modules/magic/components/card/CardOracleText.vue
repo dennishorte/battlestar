@@ -4,7 +4,7 @@
     <EditableContent
       v-if="isEditingValue || props.text.length === 0"
       v-bind="editor"
-      style="white-space: pre-line;"
+      style="white-space: pre-line; width: 100%;"
     />
 
     <!-- Show parsed oracle text when not editing and text exists -->
