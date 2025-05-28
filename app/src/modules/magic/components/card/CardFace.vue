@@ -17,26 +17,11 @@
 
           <div class="frame-type-line frame-foreground">
             <div class="color-indicator-and-type">
-
-              <div class="frame-color-indicator" @click="showColorPicker">
-
-                <!-- ms-2x makes it easier for users to click when editing -->
-                <i
-                  v-if="card.hasColorIndicator(index)"
-                  class="ms ms-ci"
-                  :class="[
-                    ...card.colorIndicatorClasses(index),
-                    isEditable ? 'ms-2x' : '',
-                  ]"
-                />
-
-                <!--
-                     If there is no color indicator, show a generic all-color indicator when editing
-                     so users can click on it to open the color picker.
-                -->
-                <i v-else-if="isEditable" class="ms ms-ci ms-ci-5 ms-2x opacity-10" />
-              </div>
-
+              <CardColorIndicator
+                :card="card"
+                :index="index"
+                :isEditable="isEditable"
+                @show-color-picker="show-color-picker" />
               <CardTypeLine :face="face" @value-updated="updateCardField" />
             </div>
             <div class="frame-card-icon" :class="card.rarity(index)">{{ '' }}</div>
@@ -82,6 +67,7 @@
 <script>
 import CardArt from './CardArt.vue'
 import CardArtist from './CardArtist.vue'
+import CardColorIndicator from './CardColorIndicator.vue'
 import CardDefense from './CardDefense.vue'
 import CardFlavorText from './CardFlavorText.vue'
 import CardLoyalty from './CardLoyalty.vue'
@@ -99,6 +85,7 @@ export default {
   components: {
     CardArt,
     CardArtist,
+    CardColorIndicator,
     CardDefense,
     CardFlavorText,
     CardLoyalty,
