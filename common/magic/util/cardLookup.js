@@ -21,14 +21,10 @@ module.exports = {
 // Helper functions
 
 function _allCardNames(card) {
-  if (!card.data || !card.data.name) {
-    console.log('card has no name: ', card)
-  }
+  const names = [card.name()]
 
-  const names = [card.data.name]
-
-  if (card.card_faces) {
-    for (const face of card.card_faces) {
+  if (card.numFaces() > 0) {
+    for (const face of card.faces()) {
       names.push(face.name)
     }
   }
