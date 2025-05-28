@@ -6,17 +6,7 @@
 
           <div class="frame-header frame-foreground">
             <CardName :face="face" @value-updated="updateCardField" />
-
-            <div class="frame-mana-cost" @click="showColorPicker">
-              <ManaCost
-                v-if="card.manaCost(index).length > 0"
-                :cost="card.manaCost(index)"
-              />
-              <i
-                v-else-if="isEditable"
-                class="ms ms-2x ms-ci ms-ci-5 opacity-10"
-              />
-            </div>
+            <CardManaCost :card="card" :index="index" @show-color-picker="showColorPicker" />
           </div>
 
           <CardArt
@@ -90,7 +80,7 @@
 
 
 <script>
-import ManaCost from './ManaCost'
+import CardManaCost from './CardManaCost'
 import OracleText from './OracleText'
 import EditableDiv from './EditableDiv'
 import CardLoyalty from './CardLoyalty'
@@ -107,7 +97,7 @@ export default {
   name: 'CardFace',
 
   components: {
-    ManaCost,
+    CardManaCost,
     OracleText,
     EditableDiv,
     CardLoyalty,
