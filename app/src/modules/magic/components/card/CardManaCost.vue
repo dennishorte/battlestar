@@ -32,3 +32,10 @@ const props = defineProps({
 
 const emit = defineEmits(['show-color-picker'])
 </script>
+
+
+<style scoped>
+.opacity-10 {
+  opacity: 0.1;
+}
+</style>

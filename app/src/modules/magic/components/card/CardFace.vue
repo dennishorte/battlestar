@@ -191,8 +191,4 @@ div {
   flex-direction: row;
   align-items: center;
 }
-
-.opacity-10 {
-  opacity: 0.1;
-}
 </style>
