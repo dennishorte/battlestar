@@ -28,17 +28,7 @@
           </div>
 
           <div class="frame-text-box">
-            <EditableDiv
-              :text="card.oracleText(index)"
-              :custom-classes="['frame-oracle-text']"
-              :editable="isEditable"
-              field="oracle_text"
-              :renderComponent="true"
-              @update="updateCardField">
-              <template v-slot:default="slotProps">
-                <OracleText :text="slotProps.text" />
-              </template>
-            </EditableDiv>
+            <CardOracleText :text="card.oracleText(index)" @value-updated="updateCardField" />
 
             <CardFlavorText :face="face" @value-updated="updateCardField" />
 
@@ -73,10 +63,9 @@ import CardFlavorText from './CardFlavorText.vue'
 import CardLoyalty from './CardLoyalty.vue'
 import CardManaCost from './CardManaCost.vue'
 import CardName from './CardName.vue'
+import CardOracleText from './CardOracleText.vue'
 import CardPowerToughness from './CardPowerToughness.vue'
 import CardTypeLine from './CardTypeLine.vue'
-import EditableDiv from './EditableDiv.vue'
-import OracleText from './OracleText.vue'
 
 
 export default {
@@ -91,10 +80,9 @@ export default {
     CardLoyalty,
     CardManaCost,
     CardName,
+    CardOracleText,
     CardPowerToughness,
     CardTypeLine,
-    EditableDiv,
-    OracleText,
   },
 
   emits: ['show-color-picker', 'update-face'],

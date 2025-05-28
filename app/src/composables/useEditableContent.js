@@ -7,6 +7,7 @@ export function useEditableContent(initialValue = '', options = {}) {
     emptyText = 'Click to edit',
     editable = true,
     allowEmpty = true,
+    multiline = false,
   } = options
 
   const isEditing = ref(false)
@@ -63,7 +64,7 @@ export function useEditableContent(initialValue = '', options = {}) {
   }
 
   const handleKeydown = (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === 'Enter' && !event.shiftKey && !multiline) {
       event.preventDefault()
       editableRef.value?.blur()
     }

@@ -14,7 +14,7 @@ import { mag } from 'battlestar-common'
 import ManaSymbol from './ManaSymbol.vue'
 
 export default {
-  name: 'OracleText',
+  name: 'ReminderText',
 
   components: {
     ManaSymbol,
