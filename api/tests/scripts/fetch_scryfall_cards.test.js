@@ -171,7 +171,8 @@ describe('Card Processing', () => {
       colors: ["B"],
       cmc: 2,
       rarity: "common",
-      set: "TST"
+      set: "TST",
+      collector_number: "1"
     }
 
     const result = processSingleCard(input)

@@ -41,7 +41,7 @@ export default {
     async create({ dispatch }) {
       const response = await this.$post('/api/magic/cube/create')
       await dispatch('loadAllCubes')
-      return response.cubeId
+      return response.cube
     },
 
     async loadCube({ dispatch, state }, { cubeId }) {

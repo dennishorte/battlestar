@@ -1,6 +1,7 @@
 import axios from 'axios'
 import fs from 'fs'
 import path from 'path'
+import md5 from 'js-md5'
 
 import { magic } from 'battlestar-common'
 
@@ -141,6 +142,40 @@ function sortColors(card) {
   }
 }
 
+// Based on actual problems, it seems like Scryfall ids are not a constant.
+// Instead, generate unique ids for each card based on a hash of their uniquely identifying data.
+// The requirements of the id are mostly that even if the card is changed in some way by a an update
+// to the magic rules (eg. card types, oracle text), the id wil remain the same so that decks that
+// access the card by id will still be able to fetch their cards.
+const generatedIds = {}
+function generateId(card) {
+  const elements = [
+    card.card_faces.map(face => face.name).join(' // '),
+    card.set,
+    card.collector_number,
+  ]
+
+  if (elements.some(e => !e)) {
+    console.log('================================================================================')
+    console.log('empty value in hash elements')
+    console.log(card)
+    throw 'empty value in hash elements'
+  }
+
+  const hash = md5(elements.join(''))
+
+  if (hash in generatedIds) {
+    console.log('================================================================================')
+    console.log('hash conflict')
+    console.log(card)
+    console.log(generatedIds[hash])
+    throw 'hash conflict'
+  }
+
+  generatedIds[hash] = card
+  card._id = 'scryfall-md5-' + hash
+}
+
 function cleanScryfallCards(cards) {
   for (const card of cards) {
     createFaces(card)
@@ -150,6 +185,7 @@ function cleanScryfallCards(cards) {
     cleanLegalities(card)
     renameIdField(card)
     sortColors(card)
+    generateId(card)
   }
 }
 

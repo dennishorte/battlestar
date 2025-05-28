@@ -8,7 +8,7 @@ const versionCollection = database.collection('versions')
 const Scryfall = {}  // This will be the exported module
 
 async function insertCardsIntoDatabase(cards, version) {
-  // Ensure all cards have a properly formatted UUID as _id
+  // Ensure all cards have a properly formatted id as _id
   for (const card of cards) {
     // Validate that _id exists and is a string
     if (!card._id || typeof card._id !== 'string') {
@@ -16,13 +16,11 @@ async function insertCardsIntoDatabase(cards, version) {
       throw new Error('Card missing _id or _id is not a string')
     }
 
-    // Convert to lowercase and validate UUID format
-    const id = card._id.toLowerCase()
-    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
-    if (!uuidPattern.test(id)) {
-      throw new Error(`Invalid UUID format for card ${card.name}: ${id}`)
+    // Convert to lowercase and validate format
+    const md5Pattern = /^scryfall-md5-[0-9a-f]{32}$/
+    if (!md5Pattern.test(card._id)) {
+      throw new Error(`Invalid MD5 format for card ${card.name}: ${card._id}`)
     }
-    card._id = id
   }
 
   await scryfallCollection.deleteMany({})  // Remove old data
