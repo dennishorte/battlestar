@@ -18,31 +18,21 @@
       <input type="checkbox" class="form-check-input" @click="$emit('toggle-search')" />
     </button>
 
-    <DropdownMenu text="menu">
-      <DropdownButton @click="this.$modal('cube-update-modal').show()">add/remove cards</DropdownButton>
-      <DropdownButton @click="this.$modal('cube-add-modal').show()">add one card</DropdownButton>
+    <BDropdown text="menu">
+      <BDropdownItem @click="this.$modal('cube-update-modal').show()">add/remove cards</BDropdownItem>
+      <BDropdownItem @click="this.$modal('cube-add-modal').show()">add one card</BDropdownItem>
 
       <template v-if="viewerIsOwner">
         <DropdownDivider />
-        <DropdownButton @click="$emit('open-settings')">settings</DropdownButton>
+        <BDropdownItem @click="$emit('open-settings')">settings</BDropdownItem>
       </template>
-    </DropdownMenu>
+    </BDropdown>
   </div>
 </template>
 
 <script>
-import DropdownMenu from '@/components/DropdownMenu'
-import DropdownButton from '@/components/DropdownButton'
-import DropdownDivider from '@/components/DropdownDivider'
-
 export default {
   name: 'CubeMenu',
-
-  components: {
-    DropdownMenu,
-    DropdownButton,
-    DropdownDivider,
-  },
 
   inject: ['bus'],
 
