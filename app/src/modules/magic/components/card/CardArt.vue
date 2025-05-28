@@ -34,13 +34,9 @@ import { useEditableContent } from '@/composables/useEditableContent.js'
 import EditableContent from '@/components/EditableContent.vue'
 
 const props = defineProps({
-  face: {
+  card: {
     type: Object,
     required: true,
-  },
-  isSplitCard: {
-    type: Boolean,
-    default: false,
   },
   index: {
     type: Number,
@@ -51,7 +47,8 @@ const props = defineProps({
 const emit = defineEmits(['value-updated'])
 
 const showEditor = ref(false)
-const imageUri = computed(() => props.face.image_uri)
+const imageUri = computed(() => props.card.imageUri(props.index))
+const isSplitCard = computed(() => props.card.layout() === 'split')
 
 const editor = useEditableContent(imageUri.value, {
   onUpdate: (value) => {

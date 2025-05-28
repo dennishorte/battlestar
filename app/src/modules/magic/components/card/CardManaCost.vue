@@ -24,6 +24,10 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  isEditable: {
+    type: Boolean,
+    required: true,
+  },
 })
 
 const emit = defineEmits(['show-color-picker'])

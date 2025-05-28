@@ -6,14 +6,14 @@
 
           <div class="frame-header frame-foreground">
             <CardName :face="face" @value-updated="updateCardField" />
-            <CardManaCost :card="card" :index="index" @show-color-picker="showColorPicker" />
+            <CardManaCost
+              :card="card"
+              :index="index"
+              :isEditable="isEditable"
+              @show-color-picker="showColorPicker" />
           </div>
 
-          <CardArt
-            :face="face"
-            :isSplitCard="isSplitCard"
-            :index="index"
-            @value-updated="updateCardField" />
+          <CardArt :card="card" :index="index" @value-updated="updateCardField" />
 
           <div class="frame-type-line frame-foreground">
             <div class="color-indicator-and-type">
@@ -207,27 +207,5 @@ div {
 
 .opacity-10 {
   opacity: 0.1;
-}
-
-.split-empty-left, .split-empty-right {
-  position: relative;
-  overflow: hidden;
-}
-
-.split-empty-left:after, .split-empty-right:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 50%;
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-.split-empty-left:after {
-  right: 0;
-}
-
-.split-empty-right:after {
-  left: 0;
 }
 </style>
