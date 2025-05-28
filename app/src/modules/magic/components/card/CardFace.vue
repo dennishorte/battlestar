@@ -80,34 +80,34 @@
 
 
 <script>
-import CardManaCost from './CardManaCost'
-import OracleText from './OracleText'
-import EditableDiv from './EditableDiv'
-import CardLoyalty from './CardLoyalty'
-import CardDefense from './CardDefense'
-import CardPowerToughness from './CardPowerToughness'
-import CardArtist from './CardArtist'
-import CardFlavorText from './CardFlavorText'
-import CardName from './CardName'
-import CardArt from './CardArt'
-import CardTypeLine from './CardTypeLine'
+import CardArt from './CardArt.vue'
+import CardArtist from './CardArtist.vue'
+import CardDefense from './CardDefense.vue'
+import CardFlavorText from './CardFlavorText.vue'
+import CardLoyalty from './CardLoyalty.vue'
+import CardManaCost from './CardManaCost.vue'
+import CardName from './CardName.vue'
+import CardPowerToughness from './CardPowerToughness.vue'
+import CardTypeLine from './CardTypeLine.vue'
+import EditableDiv from './EditableDiv.vue'
+import OracleText from './OracleText.vue'
 
 
 export default {
   name: 'CardFace',
 
   components: {
-    CardManaCost,
-    OracleText,
-    EditableDiv,
-    CardLoyalty,
-    CardDefense,
-    CardPowerToughness,
-    CardArtist,
-    CardFlavorText,
-    CardName,
     CardArt,
+    CardArtist,
+    CardDefense,
+    CardFlavorText,
+    CardLoyalty,
+    CardManaCost,
+    CardName,
+    CardPowerToughness,
     CardTypeLine,
+    EditableDiv,
+    OracleText,
   },
 
   emits: ['show-color-picker', 'update-face'],
