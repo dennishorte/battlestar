@@ -216,6 +216,10 @@ class CardWrapper extends Wrapper {
   }
 
   oracleText(faceIndex) {
+    return this.oracleTextCardName(faceIndex).replaceAll('CARD_NAME', this.name(faceIndex))
+  }
+
+  oracleTextCardName(faceIndex) {
     if (typeof faceIndex === 'number') {
       return this.face(faceIndex).oracle_text || ''
     }
@@ -223,6 +227,7 @@ class CardWrapper extends Wrapper {
       return this.faces().map(face => face.oracle_text || '').join('\n//\n')
     }
   }
+
   flavorText(faceIndex) {
     if (typeof faceIndex === 'number') {
       return this.face(faceIndex).flavor_text

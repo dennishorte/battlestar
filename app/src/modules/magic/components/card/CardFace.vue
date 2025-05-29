@@ -28,8 +28,7 @@
           </div>
 
           <div class="frame-text-box">
-            <CardOracleText :text="card.oracleText(index)" @value-updated="updateCardField" />
-
+            <CardOracleText :card="card" :index="index" @value-updated="updateCardField" />
             <CardFlavorText :face="face" @value-updated="updateCardField" />
 
             <div class="frame-achievements-wrapper">

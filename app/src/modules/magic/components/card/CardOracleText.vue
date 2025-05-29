@@ -2,7 +2,7 @@
   <div class="card-oracle-text">
     <!-- Show EditableContent when editing or when text is empty -->
     <EditableContent
-      v-if="isEditingValue || props.text.length === 0"
+      v-if="isEditingValue || text.length === 0"
       v-bind="editor"
       style="white-space: pre-line; width: 100%;"
     />
@@ -37,25 +37,31 @@ import ManaSymbol from './ManaSymbol.vue'
 import ReminderText from './ReminderText.vue'
 
 const props = defineProps({
-  text: {
-    type: String,
+  card: {
+    type: Object,
+    required: true
+  },
+  index: {
+    type: Number,
     required: true
   },
 })
 
 const emit = defineEmits(['value-updated'])
 
-const editor = useEditableContent(props.text, {
+const rawText = computed(() => props.card.oracleTextCardName(props.index))
+const text = computed(() => props.card.oracleText(props.index))
+const lines = computed(() => mag.util.card.parseOracleText(text.value))
+
+const editor = useEditableContent(rawText.value, {
   multiline: true,
   onUpdate: (value) => emit('value-updated', { field: 'oracle_text', value }),
 })
 
-const lines = computed(() => mag.util.card.parseOracleText(props.text))
-
 // Create a computed property to properly access the reactive isEditing value
 const isEditingValue = computed(() => editor.isEditing.value)
 
-watch(() => props.text, (newValue) => editor.setValue(newValue))
+watch(() => text.value, (newValue) => editor.setValue(newValue))
 </script>
 
 
