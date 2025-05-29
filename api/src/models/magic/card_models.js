@@ -27,6 +27,14 @@ Card.create = async function(data, cube, user, comment=null) {
     delete data.collector_number
     delete data.legal
 
+    // Replace instances of the card name in oracle text with 'CARD_NAME'.
+    // This makes it much easier to deal with changes to the card name later on.
+    for (const face of data.card_faces) {
+      if (face.oracle_text) {
+        face.oracle_text = face.oracle_text.replaceAll(face.name, 'CARD_NAME')
+      }
+    }
+
     const card = {
       data,
       source: 'custom',
