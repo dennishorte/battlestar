@@ -57,7 +57,8 @@
           </div>
 
           <CardLoyalty
-            :face="face"
+            :card="card"
+            :index="index"
             :isEditable="isEditable"
             @value-updated="updateCardField" />
           <CardDefense

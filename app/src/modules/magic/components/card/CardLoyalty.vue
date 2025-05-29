@@ -3,19 +3,25 @@
   <div class="frame-loyalty" v-if="isPlaneswalker && loyalty > 0">
     <div class="loyalty-container">
       <i class="ms ms-loyalty-start loyalty-background"/>
-      <EditableContent v-bind="editor" class="loyalty-number" />
+      <ScarrableContent v-bind="scarrable" class="loyalty-number" />
     </div>
   </div>
 </template>
 
 
 <script setup>
-import { computed, watch } from 'vue'
-import { useEditableContent } from '@/composables/useEditableContent.js'
+import { computed } from 'vue'
+import { useScarrableContent } from '../../composables/card/useScarrableContent.js'
+
+import ScarrableContent from './ScarrableContent.vue'
 
 const props = defineProps({
-  face: {
+  card: {
     type: Object,
+    required: true,
+  },
+  index: {
+    type: Number,
     required: true,
   },
   isEditable: {
@@ -26,15 +32,13 @@ const props = defineProps({
 
 const emit = defineEmits(['value-updated'])
 
-const isPlaneswalker = computed(() => props.face.type_line.toLowerCase().includes('planeswalker'))
-const loyalty = computed(() => props.face.loyalty)
+const isPlaneswalker = computed(() => props.card.isPlaneswalker(props.index))
+const loyalty = computed(() => props.card.loyalty(props.index))
 
-const editor = useEditableContent(loyalty.value, {
+const scarrable = useScarrableContent(props.card, props.index, 'loyalty', emit, {
+  emit,
   editable: props.isEditable,
-  onUpdate: (value) => emit('value-updated', { field: 'loyalty', value }),
 })
-
-watch(loyalty, (newValue) => editor.setValue(newValue))
 </script>
 
 
