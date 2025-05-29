@@ -349,6 +349,7 @@ $gold: #d9631b;
       max-height: $unit * 70 - 2px;
       border-left: 1px solid;
       border-right: 1px solid;
+      margin-left: $unit * 1.3;
     }
     .frame-text-box {
       font-size: $unit * 5;

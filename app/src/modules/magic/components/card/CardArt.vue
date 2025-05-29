@@ -79,7 +79,6 @@ watch(imageUri, (newValue) => editor.setValue(newValue))
 .card-art-container {
   position: relative;
   width: 100%;
-  min-height: 140px;
   cursor: pointer;
 }
 
@@ -87,7 +86,6 @@ watch(imageUri, (newValue) => editor.setValue(newValue))
   position: relative;
   overflow: hidden;
   width: 100%;
-  min-height: 140px;
 }
 
 .frame-art {
