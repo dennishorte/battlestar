@@ -1,5 +1,5 @@
 <template>
-  <EditableContent v-bind="editor" class="frame-card-type" />
+  <EditableContent v-bind="editor" class="frame-card-type" style="width: 100%;" />
 </template>
 
 <script setup>

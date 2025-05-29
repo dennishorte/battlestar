@@ -64,13 +64,30 @@ const modalVisible = computed({
 })
 
 async function save() {
+  // Hide this modal
   emit('update:modelValue', false)
 
-  if (hasUpdates.value) {
+  // Handle the new card case.
+  if (!originalCard.value.name()) {
+    // Only add new cards if the have something written in the name field.
+    if (!cardInEdit.value.name()) {
+      console.log('no name')
+      return
+    }
+
+    await store.dispatch('magic/cube/addCard', {
+      card: cardInEdit.value,
+      comment: 'original card',
+    })
+    return
+  }
+
+  else if (hasUpdates.value) {
     await store.dispatch('magic/cards/update', {
       card: cardInEdit.value,
       comment: 'Updated in the cube card editor',
     })
+    return
   }
 }
 

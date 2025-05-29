@@ -21,6 +21,7 @@
     <BDropdown text="menu">
       <BDropdownItem @click="emit('add-remove-cards')">add/remove cards</BDropdownItem>
       <BDropdownItem @click="emit('add-one-card')">add one card</BDropdownItem>
+      <BDropdownItem v-if="cube.flags.editable" @click="emit('create-card')">create card</BDropdownItem>
 
       <template v-if="viewerIsOwner">
         <BDropdownDivider />
@@ -50,6 +51,7 @@ const emit = defineEmits([
   'open-settings',
   'add-remove-cards',
   'add-one-card',
+  'create-card',
 ])
 
 const actor = inject('actor')

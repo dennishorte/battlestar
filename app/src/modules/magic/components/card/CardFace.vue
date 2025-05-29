@@ -16,7 +16,7 @@
           <CardArt :card="card" :index="index" @value-updated="updateCardField" />
 
           <div class="frame-type-line frame-foreground">
-            <div class="color-indicator-and-type">
+            <div class="color-indicator-and-type" style="width: 100%;">
               <CardColorIndicator
                 :card="card"
                 :index="index"

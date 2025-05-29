@@ -19,6 +19,7 @@
             @open-settings="settingsVisible = true"
             @add-remove-cards="this.$modal('cube-update-modal').show()"
             @add-one-card="this.$modal('cube-add-modal').show()"
+            @create-card="createCard"
           />
         </div>
       </div>
@@ -67,9 +68,11 @@
 <script>
 import mitt from 'mitt'
 
-import { util } from 'battlestar-common'
+import { magic } from 'battlestar-common'
 import { mapGetters, mapState } from 'vuex'
 import { nextTick } from 'vue'
+
+import UICardWrapper from '@/modules/magic/util/card.wrapper.js'
 
 import CubeAchievements from './CubeAchievements/CubeAchievements.vue'
 import CardEditorModal from '../CardEditorModal'
@@ -163,6 +166,12 @@ export default {
       this.editorVisible = true
     },
 
+    createCard() {
+      const data = magic.util.wrapper.card.blankCard()
+      this.editorCard = new UICardWrapper(data)
+      this.editorVisible = true
+    },
+
     editScar(scar) {
       this.$store.commit('magic/cube/manageScar', scar)
       this.$modal('scar-modal').show()
@@ -175,12 +184,6 @@ export default {
     navigate(target) {
       this.$router.push(`/magic/cube/${this.id}/${target}`)
       this.showing = target
-    },
-
-    randomCard() {
-      const card = util.array.select(this.cube.cards())
-      const link = this.$store.getters['magic/cards/cardLink'](card._id)
-      this.$router.push(link)
     },
 
     updateCardFilters(filters) {
