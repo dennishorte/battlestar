@@ -1,15 +1,19 @@
 <template>
-  <EditableContent v-bind="editor" class="frame-card-name" style="width: 100%;" />
+  <ScarrableContent v-bind="scarrable" class="frame-card-name" />
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
-import { useEditableContent } from '@/composables/useEditableContent.js'
-import EditableContent from '@/components/EditableContent.vue'
+import { useScarrableContent } from '../../composables/card/useScarrableContent.js'
+
+import ScarrableContent from './ScarrableContent.vue'
 
 const props = defineProps({
-  face: {
+  card: {
     type: Object,
+    required: true,
+  },
+  index: {
+    type: Number,
     required: true,
   },
   isEditable: {
@@ -20,12 +24,10 @@ const props = defineProps({
 
 const emit = defineEmits(['value-updated'])
 
-const name = computed(() => props.face.name)
-
-const editor = useEditableContent(name.value, {
-  editable: props.isEditable,
-  onUpdate: (value) => emit('value-updated', { field: 'name', value }),
+const scarrable = useScarrableContent(props.card, props.index, 'name', emit, {
+  emit,
+  editable: false,
+  // editable: props.isEditable,
+  oldVersions: ['The Wandennis'],
 })
-
-watch(name, (newValue) => editor.setValue(newValue))
 </script>

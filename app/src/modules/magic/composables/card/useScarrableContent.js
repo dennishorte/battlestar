@@ -10,6 +10,8 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
 
   const fieldValue = computed(() => card.face(faceIndex)[field] || '')
   const scarred = computed(() => oldVersions.length > 0)
+  const showFullWidth = computed(() => fieldValue.value.length === 0 && editable && !scarred.value)
+
   const showOriginalText = ref(false)
 
   const editor = useEditableContent(fieldValue.value, {
@@ -38,6 +40,7 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
   return {
     scarred,
     editor,
+    showFullWidth,
     showingOriginalText: showOriginalText,
 
     cardChanged,

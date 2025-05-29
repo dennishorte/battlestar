@@ -4,6 +4,7 @@
     :class="{
       'scar-tape': scarred,
       'original-text': showingOriginalText,
+      'full-width': showFullWidth,
     }"
     @click="handleClick"
   />
@@ -23,6 +24,10 @@ const props = defineProps({
     type: [Boolean, Object], // Accept both Boolean and Ref<Boolean>
     required: true,
   },
+  showFullWidth: {
+    type: [Boolean, Object], // Accept both Boolean and Ref<Boolean>
+    required: true,
+  },
   showingOriginalText: {
     type: [Boolean, Object], // Accept both Boolean and Ref<Boolean>
     required: true,
@@ -35,6 +40,7 @@ const props = defineProps({
 })
 
 const scarred = computed(() => unref(props.scarred))
+const showFullWidth = computed(() => unref(props.showFullWidth))
 const showingOriginalText = computed(() => unref(props.showingOriginalText))
 </script>
 
