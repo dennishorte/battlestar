@@ -39,7 +39,7 @@ const scarrable = useScarrableContent(props.card, props.index, 'loyalty', emit, 
   emit,
   editable: false,
   // editable: props.isEditable,
-  scars: ['3'],
+  oldVersions: ['3'],
 })
 </script>
 

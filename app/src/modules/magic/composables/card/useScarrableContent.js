@@ -5,12 +5,12 @@ import { useEditableContent } from '@/composables/useEditableContent.js'
 export function useScarrableContent(card, faceIndex, field, emit, options) {
   const {
     editable = false,
-    scars = [],
+    oldVersions = [],
   } = options
 
   const fieldValue = computed(() => card.face(faceIndex)[field] || '')
-  const scarred = computed(() => scars.length > 0)
-  const toggleScars = ref(false)
+  const scarred = computed(() => oldVersions.length > 0)
+  const showOriginalText = ref(false)
 
   const editor = useEditableContent(fieldValue.value, {
     onUpdate: (value) => emit('value-updated', { field, value }),
@@ -18,12 +18,12 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
   })
 
   watch(fieldValue, (newValue) => editor.setValue(newValue))
-  watch(toggleScars, (showOriginal) => {
-    const newValue = showOriginal ? scars[0] : fieldValue.value
+  watch(showOriginalText, (showOriginal) => {
+    const newValue = showOriginal ? oldVersions[0] : fieldValue.value
     editor.setValue(newValue)
   })
 
-  function cardChanged(/*card, index, scars*/) {
+  function cardChanged(/*card, index, oldVersions*/) {
     console.log('cardChanged')
   }
 
@@ -31,13 +31,14 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
     // Toggle between the original text and the scarred text.
     if (!editable && scarred) {
       event.stopPropagation()
-      toggleScars.value = !toggleScars.value
+      showOriginalText.value = !showOriginalText.value
     }
   }
 
   return {
     scarred,
     editor,
+    showingOriginalText: showOriginalText,
 
     cardChanged,
     handleClick,

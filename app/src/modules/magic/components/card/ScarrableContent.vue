@@ -3,6 +3,7 @@
     v-bind="editor"
     :class="{
       'scar-tape': scarred,
+      'original-text': showingOriginalText,
     }"
     @click="handleClick"
   />
@@ -22,6 +23,10 @@ const props = defineProps({
     type: [Boolean, Object], // Accept both Boolean and Ref<Boolean>
     required: true,
   },
+  showingOriginalText: {
+    type: [Boolean, Object], // Accept both Boolean and Ref<Boolean>
+    required: true,
+  },
 
   handleClick: {
     type: Function,
@@ -30,4 +35,15 @@ const props = defineProps({
 })
 
 const scarred = computed(() => unref(props.scarred))
+const showingOriginalText = computed(() => unref(props.showingOriginalText))
 </script>
+
+
+<style scoped>
+.original-text {
+  position: relative;
+  font-weight: normal;
+  text-decoration: line-through;
+  text-decoration-style: double;
+}
+</style>
