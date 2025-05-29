@@ -1,8 +1,8 @@
 <template>
   <div class="frame-mana-cost" @click="emit('show-color-picker')">
     <ManaCost
-      v-if="props.card.manaCost(props.index).length > 0"
-      :cost="props.card.manaCost(props.index)"
+      v-if="card.manaCost(index).length > 0"
+      :cost="card.manaCost(index)"
     />
     <i
       v-else-if="isEditable"
@@ -15,7 +15,7 @@
 <script setup>
 import ManaCost from './ManaCost.vue'
 
-const props = defineProps({
+defineProps({
   card: {
     type: Object,
     required: true,
@@ -26,7 +26,7 @@ const props = defineProps({
   },
   isEditable: {
     type: Boolean,
-    required: true,
+    default: false,
   },
 })
 

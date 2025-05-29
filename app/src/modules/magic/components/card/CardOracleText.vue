@@ -8,7 +8,7 @@
     />
 
     <!-- Show parsed oracle text when not editing and text exists -->
-    <div v-else class="oracle-text-display" @click="editor.startEditing">
+    <div v-else class="oracle-text-display" @click="beginEditing">
       <div
         v-for="(line, lineIndex) in lines"
         :key="lineIndex"
@@ -45,6 +45,10 @@ const props = defineProps({
     type: Number,
     required: true
   },
+  isEditable: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['value-updated'])
@@ -62,6 +66,12 @@ const editor = useEditableContent(rawText.value, {
 const isEditingValue = computed(() => editor.isEditing.value)
 
 watch(() => text.value, (newValue) => editor.setValue(newValue))
+
+function beginEditing() {
+  if (props.isEditable) {
+    editor.startEditing()
+  }
+}
 </script>
 
 

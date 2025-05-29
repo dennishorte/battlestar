@@ -42,6 +42,10 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  isEditable: {
+    type: Boolean,
+    default: false
+  },
 })
 
 const emit = defineEmits(['value-updated'])
@@ -59,6 +63,10 @@ const editor = useEditableContent(imageUri.value, {
 })
 
 const toggleEditor = () => {
+  if (!props.isEditable) {
+    return
+  }
+
   showEditor.value = !showEditor.value
   if (showEditor.value) {
     // Small delay to ensure the editor is rendered before focusing

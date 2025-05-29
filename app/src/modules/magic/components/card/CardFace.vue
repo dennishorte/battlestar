@@ -5,7 +5,10 @@
         <div class="card-frame">
 
           <div class="frame-header frame-foreground">
-            <CardName :face="face" @value-updated="updateCardField" />
+            <CardName
+              :face="face"
+              :isEditable="isEditable"
+              @value-updated="updateCardField" />
             <CardManaCost
               :card="card"
               :index="index"
@@ -13,7 +16,11 @@
               @show-color-picker="showColorPicker" />
           </div>
 
-          <CardArt :card="card" :index="index" @value-updated="updateCardField" />
+          <CardArt
+            :card="card"
+            :index="index"
+            :isEditable="isEditable"
+            @value-updated="updateCardField" />
 
           <div class="frame-type-line frame-foreground">
             <div class="color-indicator-and-type" style="width: 100%;">
@@ -22,14 +29,24 @@
                 :index="index"
                 :isEditable="isEditable"
                 @show-color-picker="show-color-picker" />
-              <CardTypeLine :face="face" @value-updated="updateCardField" />
+              <CardTypeLine
+                :face="face"
+                :isEditable="isEditable"
+                @value-updated="updateCardField" />
             </div>
             <div class="frame-card-icon" :class="card.rarity(index)">{{ '' }}</div>
           </div>
 
           <div class="frame-text-box">
-            <CardOracleText :card="card" :index="index" @value-updated="updateCardField" />
-            <CardFlavorText :face="face" @value-updated="updateCardField" />
+            <CardOracleText
+              :card="card"
+              :index="index"
+              :isEditable="isEditable"
+              @value-updated="updateCardField" />
+            <CardFlavorText
+              :face="face"
+              :isEditable="isEditable"
+              @value-updated="updateCardField" />
 
             <div class="frame-achievements-wrapper">
               <p v-for="ach of achievements" :key="ach.unlock" class="frame-achievement-desc">
@@ -39,14 +56,26 @@
             </div>
           </div>
 
-          <CardLoyalty :face="face" @value-updated="updateCardField" />
-          <CardDefense :face="face" @value-updated="updateCardField" />
-          <CardPowerToughness :face="face" @value-updated="updateCardField" />
+          <CardLoyalty
+            :face="face"
+            :isEditable="isEditable"
+            @value-updated="updateCardField" />
+          <CardDefense
+            :face="face"
+            :isEditable="isEditable"
+            @value-updated="updateCardField" />
+          <CardPowerToughness
+            :face="face"
+            :isEditable="isEditable"
+            @value-updated="updateCardField" />
 
         </div> <!-- frame -->
       </div> <!-- background -->
 
-      <CardArtist :face="face" @value-updated="updateCardField" />
+      <CardArtist
+        :face="face"
+        :isEditable="isEditable"
+        @value-updated="updateCardField" />
 
     </div> <!-- border -->
   </div> <!-- container -->

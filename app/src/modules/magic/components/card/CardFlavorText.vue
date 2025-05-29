@@ -18,6 +18,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  isEditable: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['value-updated'])
@@ -25,6 +29,7 @@ const emit = defineEmits(['value-updated'])
 const flavorText = computed(() => props.face.flavor_text)
 
 const editor = useEditableContent(flavorText.value, {
+  editable: props.isEditable,
   multiline: true,
   onUpdate: (value) => emit('value-updated', { field: 'flavor_text', value }),
 })

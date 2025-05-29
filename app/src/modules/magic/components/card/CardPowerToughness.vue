@@ -18,6 +18,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  isEditable: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['value-updated'])
@@ -27,10 +31,12 @@ const toughness = computed(() => props.face.toughness)
 const isCreature = computed(() => props.face.type_line.toLowerCase().includes('creature'))
 
 const powerEditor = useEditableContent(power.value, {
+  editable: props.isEditable,
   onUpdate: (value) => emit('value-updated', { field: 'power', value }),
 })
 
 const toughnessEditor = useEditableContent(toughness.value, {
+  editable: props.isEditable,
   onUpdate: (value) => emit('value-updated', { field: 'toughness', value }),
 })
 

@@ -13,6 +13,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  isEditable: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['value-updated'])
@@ -27,6 +31,7 @@ const editor = useEditableContent(typeLine.value, {
     const correctedDash = value.replace(DASH_REGEX, DASH)
     emit('value-updated', { field: 'type_line', value: correctedDash })
   },
+  editable: props.isEditable,
 })
 
 watch(typeLine, (newValue) => editor.setValue(newValue))

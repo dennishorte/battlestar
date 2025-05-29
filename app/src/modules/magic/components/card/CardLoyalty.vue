@@ -18,6 +18,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  isEditable: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['value-updated'])
@@ -26,6 +30,7 @@ const isPlaneswalker = computed(() => props.face.type_line.toLowerCase().include
 const loyalty = computed(() => props.face.loyalty)
 
 const editor = useEditableContent(loyalty.value, {
+  editable: props.isEditable,
   onUpdate: (value) => emit('value-updated', { field: 'loyalty', value }),
 })
 
