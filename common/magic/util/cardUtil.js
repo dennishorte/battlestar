@@ -113,7 +113,6 @@ CardUtil.parseRulesLine = function(line) {
       if (part.type !== 'symbol') {
         throw new Error('text parse error: unmatched close curly')
       }
-      part.text = this.manaSymbolFromString(part.text)
       close()
     }
 
@@ -152,42 +151,8 @@ CardUtil.parseOracleText = function(text) {
   return output
 }
 
-CardUtil.manaSymbolFromString = function(text) {
-  text = text.toLowerCase()
-
-  if (text.charAt(0) === '{' && text.charAt(text.length-1) === '}') {
-    text = text.substr(1, text.length-2)
-  }
-
-  if (text == '1/2') {
-    return 'ms-half'
-  }
-  else {
-    text = text.replace('/', '').toLowerCase().trim()
-
-    if (text == 't') {
-      return 'tap'
-    }
-    else if (text == 'q') {
-      return 'untap'
-    }
-    else if (text == 'inf') {
-      return 'infinity'
-    }
-    else {
-      if (['uw', 'wg', 'gr', 'rb', 'bu', 'w2', 'u2', 'b2', 'r2', 'g2'].indexOf(text) >= 0) {
-        text = util.stringReverse(text)
-      }
-
-      return text
-    }
-  }
-}
-
 CardUtil.manaSymbolsFromString = function(string) {
-  return CardUtil
-    .extractSymbolsFromText(string.toLowerCase())
-    .map(symbol => CardUtil.manaSymbolFromString(symbol))
+  return CardUtil.extractSymbolsFromText(string.toLowerCase())
 }
 
 CardUtil.extractSymbolsFromText = function(string) {

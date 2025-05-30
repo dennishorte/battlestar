@@ -18,7 +18,7 @@ export default {
   computed: {
     manaClasses() {
       if (this.valid) {
-        const lower = this.m.toLowerCase()
+        const lower = this.convertToManaFontSymbol(this.m.toLowerCase())
         return `ms-${lower}`
       }
       else {
@@ -28,6 +28,34 @@ export default {
 
     valid() {
       return Boolean(this.m)
+    },
+  },
+
+  methods: {
+    convertToManaFontSymbol(text) {
+      if (text == '1/2') {
+        return 'half'
+      }
+      else {
+        text = text.replace('/', '').toLowerCase().trim()
+
+        if (text == 't') {
+          return 'tap'
+        }
+        else if (text == 'q') {
+          return 'untap'
+        }
+        else if (text == 'inf') {
+          return 'infinity'
+        }
+        else {
+          if (['uw', 'wg', 'gr', 'rb', 'bu', 'w2', 'u2', 'b2', 'r2', 'g2'].indexOf(text) >= 0) {
+            text = util.stringReverse(text)
+          }
+
+          return text
+        }
+      }
     },
   },
 }
