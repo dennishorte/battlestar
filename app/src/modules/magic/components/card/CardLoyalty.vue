@@ -37,8 +37,7 @@ const loyalty = computed(() => props.card.loyalty(props.index))
 
 const scarrable = useScarrableContent(props.card, props.index, 'loyalty', emit, {
   emit,
-  editable: false,
-  // editable: props.isEditable,
+  editable: props.isEditable,
   oldVersions: ['3'],
 })
 </script>

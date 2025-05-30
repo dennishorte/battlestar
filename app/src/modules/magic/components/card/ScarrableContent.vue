@@ -1,13 +1,26 @@
 <template>
-  <EditableContent
-    v-bind="editor"
-    :class="{
-      'scar-tape': scarred,
-      'original-text': showingOriginalText,
-      'full-width': showFullWidth,
-    }"
-    @click="handleClick"
-  />
+  <div @click="handleClick">
+    <EditableContent
+      v-if="isEditingValue || fieldValue.length === 0"
+      v-bind="editor"
+      :class="{
+        'full-width': showFullWidth,
+      }"
+    />
+
+    <div v-else>
+      <span
+        v-for="part in scarredParts"
+        :key="part.value"
+        :class="{
+          'original-text': part.added && showingOriginalText,
+          'scar-tape': part.added,
+        }"
+      >
+        {{ part.value }}
+      </span>
+    </div>
+  </div>
 </template>
 
 
@@ -20,8 +33,12 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  scarred: {
-    type: [Boolean, Object], // Accept both Boolean and Ref<Boolean>
+  fieldValue: {
+    type: [String, Object], // Accept both String and Ref<Boolean>
+    required: true,
+  },
+  scarredParts: {
+    type: [Array, Object], // Accept both Array and Ref<Array>
     required: true,
   },
   showFullWidth: {
@@ -39,9 +56,11 @@ const props = defineProps({
   },
 })
 
-const scarred = computed(() => unref(props.scarred))
+const fieldValue = computed(() => unref(props.fieldValue))
 const showFullWidth = computed(() => unref(props.showFullWidth))
 const showingOriginalText = computed(() => unref(props.showingOriginalText))
+const scarredParts = computed(() => unref(props.scarredParts))
+const isEditingValue = computed(() => props.editor.isEditing.value)
 </script>
 
 

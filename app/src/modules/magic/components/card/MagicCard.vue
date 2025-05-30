@@ -414,7 +414,7 @@ $gold: #d9631b;
   background: linear-gradient(135deg, #f5f2e8 0%, #e8e0cc 50%, #ddd4b8 100%);
   color: #333!important;
   padding: 2px 6px;
-  margin: -1px -3px;
+  margin: -5px -3px;
   display: inline-block;
   position: relative;
   font-weight: bold;

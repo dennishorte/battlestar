@@ -1,5 +1,6 @@
 import { computed, ref, watch } from 'vue'
 import { useEditableContent } from '@/composables/useEditableContent.js'
+import { diffWords } from 'diff'
 
 
 export function useScarrableContent(card, faceIndex, field, emit, options) {
@@ -11,6 +12,19 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
   const fieldValue = computed(() => card.face(faceIndex)[field] || '')
   const scarred = computed(() => oldVersions.length > 0)
   const showFullWidth = computed(() => fieldValue.value.length === 0 && editable && !scarred.value)
+
+  const scarredParts = computed(() => {
+    if (oldVersions.length === 0) {
+      return [{
+        value: fieldValue.value,
+        added: false,
+        removed: false,
+      }]
+    }
+
+    const diff = diffWords(oldVersions[0], fieldValue.value)
+    return diff.filter(x => x.added || !x.removed)
+  })
 
   const showOriginalText = ref(false)
 
@@ -31,14 +45,18 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
 
   function handleClick(event) {
     // Toggle between the original text and the scarred text.
-    if (!editable && scarred) {
+    if (!editable && scarred.value) {
       event.stopPropagation()
       showOriginalText.value = !showOriginalText.value
+    }
+    else {
+      editor.startEditing()
     }
   }
 
   return {
-    scarred,
+    fieldValue,
+    scarredParts,
     editor,
     showFullWidth,
     showingOriginalText: showOriginalText,
