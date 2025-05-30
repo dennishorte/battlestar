@@ -102,6 +102,7 @@ export function useEditableContent(initialValue = '', options = {}) {
     isEmpty,
     showEmptyPlaceholder,
     editableRef,
+    multiline,
 
     // Methods
     startEditing,

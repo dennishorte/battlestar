@@ -5,20 +5,24 @@
       v-bind="editor"
       :class="{
         'full-width': showFullWidth,
+        'multiline': editor.multiline,
       }"
     />
 
     <div v-else>
-      <span
-        v-for="part in scarredParts"
-        :key="part.value"
-        :class="{
-          'original-text': part.added && showingOriginalText,
-          'scar-tape': part.added,
-        }"
-      >
-        {{ part.value }}
-      </span>
+      <slot>
+        <span
+          v-for="part in scarredParts"
+          :key="part.value"
+          :class="{
+            'original-text': part.added && showingOriginalText,
+            'scar-tape': part.added,
+            'narrow-tape': narrowTape,
+          }"
+        >
+          {{ part.value }}
+        </span>
+      </slot>
     </div>
   </div>
 </template>
@@ -70,6 +74,11 @@ const isEditingValue = computed(() => props.editor.isEditing.value)
 
 
 <style scoped>
+.multiline {
+  white-space: pre-line;
+  width: 100%;
+}
+
 .original-text {
   position: relative;
   font-weight: normal;
