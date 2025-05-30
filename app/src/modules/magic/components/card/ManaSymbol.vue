@@ -5,6 +5,8 @@
 
 
 <script>
+import { util } from 'battlestar-common'
+
 export default {
   name: 'ManaSymbol',
 
