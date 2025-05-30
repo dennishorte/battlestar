@@ -41,6 +41,10 @@ const props = defineProps({
     type: [Array, Object], // Accept both Array and Ref<Array>
     required: true,
   },
+  narrowTape: {
+    type: [Boolean, Object], // Accept both Boolean and Ref<Boolean>
+    required: true,
+  },
   showFullWidth: {
     type: [Boolean, Object], // Accept both Boolean and Ref<Boolean>
     required: true,
@@ -57,6 +61,7 @@ const props = defineProps({
 })
 
 const fieldValue = computed(() => unref(props.fieldValue))
+const narrowTape = computed(() => unref(props.narrowTape))
 const showFullWidth = computed(() => unref(props.showFullWidth))
 const showingOriginalText = computed(() => unref(props.showingOriginalText))
 const scarredParts = computed(() => unref(props.scarredParts))

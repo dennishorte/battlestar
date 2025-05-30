@@ -435,6 +435,11 @@ $gold: #d9631b;
   transition: transform 0.2s ease;
 }
 
+.narrow-tape {
+  padding: 0 2px;
+  margin: -1px -1px;
+}
+
 .scar-tape:hover {
   transform: rotate(-0.5deg) scale(1.02);
 }

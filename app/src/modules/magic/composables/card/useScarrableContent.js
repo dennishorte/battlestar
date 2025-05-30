@@ -6,6 +6,7 @@ import { diffWords } from 'diff'
 export function useScarrableContent(card, faceIndex, field, emit, options) {
   const {
     editable = false,
+    narrowTape = false,
     oldVersions = [],
   } = options
 
@@ -58,6 +59,7 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
     fieldValue,
     scarredParts,
     editor,
+    narrowTape,
     showFullWidth,
     showingOriginalText: showOriginalText,
 

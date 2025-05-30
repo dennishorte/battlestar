@@ -22,8 +22,6 @@ export function useEditableContent(initialValue = '', options = {}) {
   )
 
   const startEditing = async () => {
-    console.log(8)
-
     if (!editable || isEditing.value) {
       return
     }
