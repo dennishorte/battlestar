@@ -193,6 +193,79 @@ CardUtil.manaCostFromCastingCost = function(string) {
   return total
 }
 
+// Text segmenter that segments text into words, punctuation, and whitespace.
+// Consecutive icons are considered a single "word".
+// eg. {UP}{T} is a single word token.
+CardUtil.segmentText = function(text) {
+  const tokens = []
+  let i = 0
+
+  while (i < text.length) {
+    const char = text[i]
+
+    // Handle curly brace groups (including continuous runs)
+    if (char === '{') {
+      let token = ''
+      let braceCount = 0
+      let j = i
+
+      // Continue while we have opening braces or we're inside brace groups
+      while (j < text.length) {
+        const currentChar = text[j]
+        token += currentChar
+
+        if (currentChar === '{') {
+          braceCount++
+        }
+        else if (currentChar === '}') {
+          braceCount--
+          // If we've closed all braces, check if there's another opening brace immediately after
+          if (braceCount === 0) {
+            if (j + 1 < text.length && text[j + 1] === '{') {
+              // Continue to include the next brace group
+              j++
+              continue
+            }
+            else {
+              // We're done with this continuous run of brace groups
+              break
+            }
+          }
+        }
+        j++
+      }
+
+      tokens.push(token)
+      i = j + 1
+    }
+    // Handle whitespace
+    else if (/\s/.test(char)) {
+      let whitespace = ''
+      while (i < text.length && /\s/.test(text[i])) {
+        whitespace += text[i]
+        i++
+      }
+      tokens.push(whitespace)
+    }
+    // Handle punctuation
+    else if (/[^\w\s]/.test(char)) {
+      tokens.push(char)
+      i++
+    }
+    // Handle words
+    else {
+      let word = ''
+      while (i < text.length && /\w/.test(text[i])) {
+        word += text[i]
+        i++
+      }
+      tokens.push(word)
+    }
+  }
+
+  return tokens
+}
+
 // What is the sort order?
 // First, X Y Z, then amount of colorless.
 // Colored symbols are sorted wubrg, treated as a cirle, with the start symbol chosen to minimize the

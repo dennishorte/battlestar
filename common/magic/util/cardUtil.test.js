@@ -517,3 +517,263 @@ describe('CardUtil.sortManaArray', () => {
     })
   })
 })
+
+describe('CardUtil.segmentText', () => {
+  // Basic functionality
+  describe('Basic text segmentation', () => {
+    test('empty string', () => {
+      expect(CardUtil.segmentText('')).toEqual([])
+    })
+
+    test('single word', () => {
+      expect(CardUtil.segmentText('hello')).toEqual(['hello'])
+    })
+
+    test('multiple words', () => {
+      expect(CardUtil.segmentText('hello world')).toEqual(['hello', ' ', 'world'])
+    })
+
+    test('words with punctuation', () => {
+      expect(CardUtil.segmentText('hello, world!')).toEqual(['hello', ',', ' ', 'world', '!'])
+    })
+
+    test('multiple spaces', () => {
+      expect(CardUtil.segmentText('hello   world')).toEqual(['hello', '   ', 'world'])
+    })
+
+    test('tabs and newlines', () => {
+      expect(CardUtil.segmentText('hello\tworld\ntest')).toEqual(['hello', '\t', 'world', '\n', 'test'])
+    })
+  })
+
+  // Single mana symbols
+  describe('Single mana symbols', () => {
+    test('basic mana symbols', () => {
+      expect(CardUtil.segmentText('{W}')).toEqual(['{W}'])
+      expect(CardUtil.segmentText('{U}')).toEqual(['{U}'])
+      expect(CardUtil.segmentText('{B}')).toEqual(['{B}'])
+      expect(CardUtil.segmentText('{R}')).toEqual(['{R}'])
+      expect(CardUtil.segmentText('{G}')).toEqual(['{G}'])
+    })
+
+    test('numeric mana symbols', () => {
+      expect(CardUtil.segmentText('{1}')).toEqual(['{1}'])
+      expect(CardUtil.segmentText('{2}')).toEqual(['{2}'])
+      expect(CardUtil.segmentText('{10}')).toEqual(['{10}'])
+    })
+
+    test('variable mana symbols', () => {
+      expect(CardUtil.segmentText('{X}')).toEqual(['{X}'])
+      expect(CardUtil.segmentText('{Y}')).toEqual(['{Y}'])
+      expect(CardUtil.segmentText('{Z}')).toEqual(['{Z}'])
+    })
+
+    test('special symbols', () => {
+      expect(CardUtil.segmentText('{T}')).toEqual(['{T}'])
+      expect(CardUtil.segmentText('{Q}')).toEqual(['{Q}'])
+      expect(CardUtil.segmentText('{S}')).toEqual(['{S}'])
+    })
+
+    test('hybrid symbols', () => {
+      expect(CardUtil.segmentText('{W/U}')).toEqual(['{W/U}'])
+      expect(CardUtil.segmentText('{2/R}')).toEqual(['{2/R}'])
+      expect(CardUtil.segmentText('{G/P}')).toEqual(['{G/P}'])
+    })
+  })
+
+  // Consecutive mana symbols (key feature)
+  describe('Consecutive mana symbols', () => {
+    test('two consecutive symbols', () => {
+      expect(CardUtil.segmentText('{W}{U}')).toEqual(['{W}{U}'])
+      expect(CardUtil.segmentText('{2}{R}')).toEqual(['{2}{R}'])
+      expect(CardUtil.segmentText('{T}{Q}')).toEqual(['{T}{Q}'])
+    })
+
+    test('three consecutive symbols', () => {
+      expect(CardUtil.segmentText('{3}{W}{W}')).toEqual(['{3}{W}{W}'])
+      expect(CardUtil.segmentText('{X}{R}{G}')).toEqual(['{X}{R}{G}'])
+    })
+
+    test('many consecutive symbols', () => {
+      expect(CardUtil.segmentText('{W}{U}{B}{R}{G}')).toEqual(['{W}{U}{B}{R}{G}'])
+      expect(CardUtil.segmentText('{1}{2}{3}{4}{5}')).toEqual(['{1}{2}{3}{4}{5}'])
+    })
+
+    test('mixed symbol types consecutive', () => {
+      expect(CardUtil.segmentText('{2}{W/U}{T}')).toEqual(['{2}{W/U}{T}'])
+      expect(CardUtil.segmentText('{X}{G/P}{Q}')).toEqual(['{X}{G/P}{Q}'])
+    })
+  })
+
+  // Symbols with text
+  describe('Symbols mixed with text', () => {
+    test('symbol at beginning', () => {
+      expect(CardUtil.segmentText('{T}: Add one mana')).toEqual(['{T}', ':', ' ', 'Add', ' ', 'one', ' ', 'mana'])
+    })
+
+    test('symbol at end', () => {
+      expect(CardUtil.segmentText('Pay {2}')).toEqual(['Pay', ' ', '{2}'])
+    })
+
+    test('symbol in middle', () => {
+      expect(CardUtil.segmentText('Pay {2} to activate')).toEqual(['Pay', ' ', '{2}', ' ', 'to', ' ', 'activate'])
+    })
+
+    test('multiple symbols with text', () => {
+      expect(CardUtil.segmentText('Pay {2}{W}: Draw a card')).toEqual(['Pay', ' ', '{2}{W}', ':', ' ', 'Draw', ' ', 'a', ' ', 'card'])
+    })
+
+    test('symbols separated by text', () => {
+      expect(CardUtil.segmentText('{T} or {2}')).toEqual(['{T}', ' ', 'or', ' ', '{2}'])
+      expect(CardUtil.segmentText('{W} and {U}')).toEqual(['{W}', ' ', 'and', ' ', '{U}'])
+    })
+
+    test('symbols with punctuation', () => {
+      expect(CardUtil.segmentText('{T}, {2}: Effect')).toEqual(['{T}', ',', ' ', '{2}', ':', ' ', 'Effect'])
+      expect(CardUtil.segmentText('({W}{U})')).toEqual(['(', '{W}{U}', ')'])
+    })
+  })
+
+  // Real Magic card text examples
+  describe('Real Magic card examples', () => {
+    test('basic land ability', () => {
+      expect(CardUtil.segmentText('{T}: Add {W}.')).toEqual(['{T}', ':', ' ', 'Add', ' ', '{W}', '.'])
+    })
+
+    test('creature ability', () => {
+      expect(CardUtil.segmentText('{2}{W}, {T}: Destroy target artifact.')).toEqual(['{2}{W}', ',', ' ', '{T}', ':', ' ', 'Destroy', ' ', 'target', ' ', 'artifact', '.'])
+    })
+
+    test('flashback cost', () => {
+      expect(CardUtil.segmentText('Flashback {5}{U}')).toEqual(['Flashback', ' ', '{5}{U}'])
+    })
+
+    test('kicker ability', () => {
+      expect(CardUtil.segmentText('Kicker {2}{W} (You may pay an additional {2}{W} as you cast this spell.)')).toEqual([
+        'Kicker', ' ', '{2}{W}', ' ', '(', 'You', ' ', 'may', ' ', 'pay', ' ', 'an', ' ', 'additional', ' ', '{2}{W}', ' ', 'as', ' ', 'you', ' ', 'cast', ' ', 'this', ' ', 'spell', '.', ')'
+      ])
+    })
+
+    test('split card', () => {
+      expect(CardUtil.segmentText('Fire {1}{R} // Ice {1}{U}')).toEqual([
+        'Fire', ' ', '{1}{R}', ' ', '/', '/', ' ', 'Ice', ' ', '{1}{U}'
+      ])
+    })
+
+    test('planeswalker ability', () => {
+      expect(CardUtil.segmentText('+1: Add {R}{R}.')).toEqual(['+', '1', ':', ' ', 'Add', ' ', '{R}{R}', '.'])
+    })
+  })
+
+  // Edge cases and malformed input
+  describe('Edge cases', () => {
+    test('unmatched opening brace', () => {
+      expect(CardUtil.segmentText('Pay {2 to win')).toEqual(['Pay', ' ', '{2 to win'])
+    })
+
+    test('unmatched closing brace', () => {
+      expect(CardUtil.segmentText('Pay 2} to win')).toEqual(['Pay', ' ', '2', '}', ' ', 'to', ' ', 'win'])
+    })
+
+    test('empty braces', () => {
+      expect(CardUtil.segmentText('{}')).toEqual(['{}'])
+      expect(CardUtil.segmentText('Pay {} cost')).toEqual(['Pay', ' ', '{}', ' ', 'cost'])
+    })
+
+    test('nested braces', () => {
+      expect(CardUtil.segmentText('{W{U}R}')).toEqual(['{W{U}R}'])
+      expect(CardUtil.segmentText('{{W}}')).toEqual(['{{W}}'])
+    })
+
+    test('braces with whitespace', () => {
+      expect(CardUtil.segmentText('{ }')).toEqual(['{ }'])
+      expect(CardUtil.segmentText('{  W  }')).toEqual(['{  W  }'])
+    })
+
+    test('consecutive symbols with spaces between', () => {
+      expect(CardUtil.segmentText('{W} {U}')).toEqual(['{W}', ' ', '{U}'])
+      expect(CardUtil.segmentText('{2} {W} {U}')).toEqual(['{2}', ' ', '{W}', ' ', '{U}'])
+    })
+
+    test('symbols interrupted by other characters', () => {
+      expect(CardUtil.segmentText('{W}+{U}')).toEqual(['{W}', '+', '{U}'])
+      expect(CardUtil.segmentText('{2}-{W}')).toEqual(['{2}', '-', '{W}'])
+    })
+  })
+
+  // Special characters and unicode
+  describe('Special characters', () => {
+    test('numbers and letters mixed', () => {
+      expect(CardUtil.segmentText('Cost: 2WU')).toEqual(['Cost', ':', ' ', '2WU'])
+      expect(CardUtil.segmentText('ABC123')).toEqual(['ABC123'])
+    })
+
+    test('various punctuation', () => {
+      expect(CardUtil.segmentText('!@#$%^&*()')).toEqual(['!', '@', '#', '$', '%', '^', '&', '*', '(', ')'])
+    })
+
+    test('mixed alphanumeric and punctuation', () => {
+      expect(CardUtil.segmentText('test-case_123')).toEqual(['test', '-', 'case_123'])
+      expect(CardUtil.segmentText('version2.0')).toEqual(['version2', '.', '0'])
+    })
+
+    test('underscores in words', () => {
+      expect(CardUtil.segmentText('test_word')).toEqual(['test_word'])
+      expect(CardUtil.segmentText('_leading')).toEqual(['_leading'])
+      expect(CardUtil.segmentText('trailing_')).toEqual(['trailing_'])
+    })
+  })
+
+  // Performance and boundary cases
+  describe('Boundary cases', () => {
+    test('very long consecutive symbols', () => {
+      const longSymbols = '{W}'.repeat(10)
+      expect(CardUtil.segmentText(longSymbols)).toEqual([longSymbols])
+    })
+
+    test('very long text', () => {
+      const longText = 'word '.repeat(10).trim()
+      const expected = []
+      for (let i = 0; i < 9; i++) {
+        expected.push('word', ' ')
+      }
+      expected.push('word')
+      expect(CardUtil.segmentText(longText)).toEqual(expected)
+    })
+
+    test('alternating symbols and text', () => {
+      expect(CardUtil.segmentText('{W}a{U}b{B}c')).toEqual(['{W}', 'a', '{U}', 'b', '{B}', 'c'])
+    })
+
+    test('only whitespace', () => {
+      expect(CardUtil.segmentText('   ')).toEqual(['   '])
+      expect(CardUtil.segmentText('\t\n ')).toEqual(['\t\n '])
+    })
+
+    test('only punctuation', () => {
+      expect(CardUtil.segmentText('...')).toEqual(['.', '.', '.'])
+      expect(CardUtil.segmentText('!!!')).toEqual(['!', '!', '!'])
+    })
+  })
+
+  // Complex real-world scenarios
+  describe('Complex scenarios', () => {
+    test('ability with multiple costs and effects', () => {
+      expect(CardUtil.segmentText('{X}{R}, {T}, Sacrifice a creature: Deal X damage to any target.')).toEqual([
+        '{X}{R}', ',', ' ', '{T}', ',', ' ', 'Sacrifice', ' ', 'a', ' ', 'creature', ':', ' ', 'Deal', ' ', 'X', ' ', 'damage', ' ', 'to', ' ', 'any', ' ', 'target', '.'
+      ])
+    })
+
+    test('reminder text with symbols', () => {
+      expect(CardUtil.segmentText('Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature\'s color.)')).toEqual([
+        'Convoke', ' ', '(', 'Your', ' ', 'creatures', ' ', 'can', ' ', 'help', ' ', 'cast', ' ', 'this', ' ', 'spell', '.', ' ', 'Each', ' ', 'creature', ' ', 'you', ' ', 'tap', ' ', 'while', ' ', 'casting', ' ', 'this', ' ', 'spell', ' ', 'pays', ' ', 'for', ' ', '{1}', ' ', 'or', ' ', 'one', ' ', 'mana', ' ', 'of', ' ', 'that', ' ', 'creature', "'", 's', ' ', 'color', '.', ')'
+      ])
+    })
+
+    test('multiple abilities separated by newlines', () => {
+      expect(CardUtil.segmentText('{T}: Add {W}.\n{2}{W}, {T}: Draw a card.')).toEqual([
+        '{T}', ':', ' ', 'Add', ' ', '{W}', '.', '\n', '{2}{W}', ',', ' ', '{T}', ':', ' ', 'Draw', ' ', 'a', ' ', 'card', '.'
+      ])
+    })
+  })
+})
