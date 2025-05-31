@@ -236,31 +236,31 @@ export default {
 
 .color-biscuit-coin {
   /* color: #f1df83; */
-  background-color: #a47b37;
+  background-color: #EA8C51;
 }
 
 .color-biscuit-lightbulb {
   /* color: #eee; */
-  background-color: #6a214b;
+  background-color: #E3627C;
 }
 
 .color-biscuit-leaf {
   /* color: #9fcdbf; */
-  background-color: #295d46;
+  background-color: #2A6A1F;
 }
 
 .color-biscuit-factory {
   /* color: #d04e48; */
-  background-color: #6e1b14;
+  background-color: #EF9832;
 }
 
 .color-biscuit-clock {
   /* color: #317ead; */
-  background-color: #055386;
+  background-color: #98A2C0;
 }
 
 .color-biscuit-person {
-  background-color: #AFEEEE;
+  background-color: #005F71;
 }
 
 .red {

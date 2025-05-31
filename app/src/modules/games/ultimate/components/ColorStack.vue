@@ -34,6 +34,9 @@
         <div class="biscuit-count-square color-biscuit-clock">
           {{ biscuits.i }}
         </div>
+        <div class="biscuit-count-square color-biscuit-person">
+          {{ biscuits.p }}
+        </div>
       </div>
     </div>
 
