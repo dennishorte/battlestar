@@ -29,7 +29,7 @@
                 :card="card"
                 :index="index"
                 :isEditable="isEditable"
-                @show-color-picker="show-color-picker" />
+                @show-color-picker="showColorPicker" />
               <CardTypeLine
                 :card="card"
                 :index="index"
