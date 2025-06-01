@@ -26,6 +26,6 @@ const emit = defineEmits(['value-updated'])
 
 const scarrable = useScarrableContent(props.card, props.index, 'name', emit, {
   editable: props.isEditable,
-  oldVersions: ['The Wandennis'],
+  oldVersions: [],
 })
 </script>

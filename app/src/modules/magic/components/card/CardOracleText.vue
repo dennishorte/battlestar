@@ -42,7 +42,7 @@ const emit = defineEmits(['value-updated'])
 
 const scarrable = useScarrableContent(props.card, props.index, 'oracle_text', emit, {
   multiline: true,
-  oldVersions: ['{T}: Add {C}.\n{1}{G}, {T}: Put target non-creature card from your graveyard on top of your library.'],
+  oldVersions: [],
 })
 
 const scarredParts = computed(() => splitPartsWithNewlines(scarrable.scarredParts.value))

@@ -1,16 +1,19 @@
 <template>
-  <EditableContent v-bind="editor" class="frame-card-type" style="width: 100%;" />
+  <ScarrableContent v-bind="scarrable" class="frame-card-type" style="width: 100%;" />
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
 import { magic } from 'battlestar-common'
-import { useEditableContent } from '@/composables/useEditableContent.js'
-import EditableContent from '@/components/EditableContent.vue'
+import { useScarrableContent } from '../../composables/card/useScarrableContent.js'
+import ScarrableContent from './ScarrableContent.vue'
 
 const props = defineProps({
-  face: {
+  card: {
     type: Object,
+    required: true,
+  },
+  index: {
+    type: Number,
     required: true,
   },
   isEditable: {
@@ -21,18 +24,15 @@ const props = defineProps({
 
 const emit = defineEmits(['value-updated'])
 
-const typeLine = computed(() => props.face.type_line)
-
 const DASH = magic.util.wrapper.card.TYPELINE_DASH
 const DASH_REGEX = magic.util.wrapper.card.TYPELINE_SPLITTER_REGEX
 
-const editor = useEditableContent(typeLine.value, {
+const scarrable = useScarrableContent(props.card, props.index, 'type_line', emit, {
+  editable: props.isEditable,
+  oldVersions: [],
   onUpdate: (value) => {
     const correctedDash = value.replace(DASH_REGEX, DASH)
     emit('value-updated', { field: 'type_line', value: correctedDash })
   },
-  editable: props.isEditable,
 })
-
-watch(typeLine, (newValue) => editor.setValue(newValue))
 </script>

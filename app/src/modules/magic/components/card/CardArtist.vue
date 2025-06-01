@@ -1,18 +1,21 @@
 <template>
   <div class="artist-name">
     <span class="artist-icon"><i class="ms ms-artist-nib"/></span>
-    <EditableContent v-bind="editor" class="artist-text" />
+    <ScarrableContent v-bind="scarrable" class="artist-text" />
   </div>
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
-import { useEditableContent } from '@/composables/useEditableContent.js'
-import EditableContent from '@/components/EditableContent.vue'
+import { useScarrableContent } from '../../composables/card/useScarrableContent.js'
+import ScarrableContent from './ScarrableContent.vue'
 
 const props = defineProps({
-  face: {
+  card: {
     type: Object,
+    required: true,
+  },
+  index: {
+    type: Number,
     required: true,
   },
   isEditable: {
@@ -23,14 +26,10 @@ const props = defineProps({
 
 const emit = defineEmits(['value-updated'])
 
-const artist = computed(() => props.face.artist)
-
-const editor = useEditableContent(artist.value, {
+const scarrable = useScarrableContent(props.card, props.index, 'artist', emit, {
   editable: props.isEditable,
-  onUpdate: (value) => emit('value-updated', { field: 'artist', value }),
+  oldVersions: [],
 })
-
-watch(artist, (newValue) => editor.setValue(newValue))
 </script>
 
 <style scoped>

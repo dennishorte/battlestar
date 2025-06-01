@@ -31,7 +31,8 @@
                 :isEditable="isEditable"
                 @show-color-picker="show-color-picker" />
               <CardTypeLine
-                :face="face"
+                :card="card"
+                :index="index"
                 :isEditable="isEditable"
                 @value-updated="updateCardField" />
             </div>
@@ -45,7 +46,8 @@
               :isEditable="isEditable"
               @value-updated="updateCardField" />
             <CardFlavorText
-              :face="face"
+              :card="card"
+              :index="index"
               :isEditable="isEditable"
               @value-updated="updateCardField" />
 
@@ -63,11 +65,13 @@
             :isEditable="isEditable"
             @value-updated="updateCardField" />
           <CardDefense
-            :face="face"
+            :card="card"
+            :index="index"
             :isEditable="isEditable"
             @value-updated="updateCardField" />
           <CardPowerToughness
-            :face="face"
+            :card="card"
+            :index="index"
             :isEditable="isEditable"
             @value-updated="updateCardField" />
 
@@ -75,7 +79,8 @@
       </div> <!-- background -->
 
       <CardArtist
-        :face="face"
+        :card="card"
+        :index="index"
         :isEditable="isEditable"
         @value-updated="updateCardField" />
 

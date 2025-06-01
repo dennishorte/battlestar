@@ -1,7 +1,7 @@
 <template>
   <div class="frame-flavor-wrapper">
-    <EditableContent
-      v-bind="editor"
+    <ScarrableContent
+      v-bind="scarrable"
       class="frame-flavor-text"
       style="white-space: pre-line;"
     />
@@ -9,13 +9,16 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
-import { useEditableContent } from '@/composables/useEditableContent.js'
-import EditableContent from '@/components/EditableContent.vue'
+import { useScarrableContent } from '../../composables/card/useScarrableContent.js'
+import ScarrableContent from './ScarrableContent.vue'
 
 const props = defineProps({
-  face: {
+  card: {
     type: Object,
+    required: true,
+  },
+  index: {
+    type: Number,
     required: true,
   },
   isEditable: {
@@ -26,13 +29,9 @@ const props = defineProps({
 
 const emit = defineEmits(['value-updated'])
 
-const flavorText = computed(() => props.face.flavor_text)
-
-const editor = useEditableContent(flavorText.value, {
+const scarrable = useScarrableContent(props.card, props.index, 'flavor_text', emit, {
   editable: props.isEditable,
   multiline: true,
-  onUpdate: (value) => emit('value-updated', { field: 'flavor_text', value }),
+  oldVersions: [],
 })
-
-watch(flavorText, (newValue) => editor.setValue(newValue))
 </script>

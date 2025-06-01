@@ -2,20 +2,24 @@
   <div class="frame-defense" v-if="isSiege">
     <div class="defense-container">
       <i class="ms ms-defense defense-background"/>
-      <EditableContent v-bind="editor" class="defense-number" />
+      <ScarrableContent v-bind="scarrable" class="defense-number" />
     </div>
   </div>
 </template>
 
 
 <script setup>
-import { computed, watch } from 'vue'
-import { useEditableContent } from '@/composables/useEditableContent.js'
-import EditableContent from '@/components/EditableContent.vue'
+import { computed } from 'vue'
+import { useScarrableContent } from '../../composables/card/useScarrableContent.js'
+import ScarrableContent from './ScarrableContent.vue'
 
 const props = defineProps({
-  face: {
+  card: {
     type: Object,
+    required: true,
+  },
+  index: {
+    type: Number,
     required: true,
   },
   isEditable: {
@@ -26,15 +30,12 @@ const props = defineProps({
 
 const emit = defineEmits(['value-updated'])
 
-const defense = computed(() => props.face.defense)
-const isSiege = computed(() => props.face.type_line.toLowerCase().includes('siege'))
+const isSiege = computed(() => props.card.face(props.index).type_line.toLowerCase().includes('siege'))
 
-const editor = useEditableContent(defense.value, {
+const scarrable = useScarrableContent(props.card, props.index, 'defense', emit, {
   editable: props.isEditable,
-  onUpdate: (value) => emit('value-updated', { field: 'defense', value }),
+  oldVersions: [],
 })
-
-watch(defense, (newValue) => editor.setValue(newValue))
 </script>
 
 
