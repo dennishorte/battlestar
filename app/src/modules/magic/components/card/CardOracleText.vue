@@ -17,7 +17,7 @@
 
 
 <script setup>
-import { computed } from 'vue'
+import { computed, toRef } from 'vue'
 
 import { useScarrableContent } from '../../composables/card/useScarrableContent.js'
 import ScarrableContent from './ScarrableContent.vue'
@@ -40,7 +40,7 @@ const props = defineProps({
 
 const emit = defineEmits(['value-updated'])
 
-const scarrable = useScarrableContent(props.card, props.index, 'oracle_text', emit, {
+const scarrable = useScarrableContent(toRef(props, 'card'), props.index, 'oracle_text', emit, {
   multiline: true,
   oldVersions: [],
 })

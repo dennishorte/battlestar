@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, toRef } from 'vue'
 import { useScarrableContent } from '../../composables/card/useScarrableContent.js'
 import ScarrableContent from './ScarrableContent.vue'
 
@@ -32,12 +32,12 @@ const emit = defineEmits(['value-updated'])
 
 const isCreature = computed(() => props.card.isCreature(props.index))
 
-const powerScarrable = useScarrableContent(props.card, props.index, 'power', emit, {
+const powerScarrable = useScarrableContent(toRef(props, 'card'), props.index, 'power', emit, {
   editable: props.isEditable,
   oldVersions: [],
 })
 
-const toughnessScarrable = useScarrableContent(props.card, props.index, 'toughness', emit, {
+const toughnessScarrable = useScarrableContent(toRef(props, 'card'), props.index, 'toughness', emit, {
   editable: props.isEditable,
   oldVersions: [],
 })

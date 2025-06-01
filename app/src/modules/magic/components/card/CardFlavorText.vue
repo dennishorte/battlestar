@@ -9,6 +9,7 @@
 </template>
 
 <script setup>
+import { toRef } from 'vue'
 import { useScarrableContent } from '../../composables/card/useScarrableContent.js'
 import ScarrableContent from './ScarrableContent.vue'
 
@@ -29,7 +30,7 @@ const props = defineProps({
 
 const emit = defineEmits(['value-updated'])
 
-const scarrable = useScarrableContent(props.card, props.index, 'flavor_text', emit, {
+const scarrable = useScarrableContent(toRef(props, 'card'), props.index, 'flavor_text', emit, {
   editable: props.isEditable,
   multiline: true,
   oldVersions: [],

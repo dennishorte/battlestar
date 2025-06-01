@@ -8,6 +8,7 @@
 <script setup>
 import { useScarrableContent } from '../../composables/card/useScarrableContent.js'
 import ScarrableContent from './ScarrableContent.vue'
+import { toRef } from 'vue'
 
 const props = defineProps({
   card: {
@@ -26,7 +27,7 @@ const props = defineProps({
 
 const emit = defineEmits(['value-updated'])
 
-const scarrable = useScarrableContent(props.card, props.index, 'artist', emit, {
+const scarrable = useScarrableContent(toRef(props, 'card'), props.index, 'artist', emit, {
   editable: props.isEditable,
   oldVersions: [],
 })

@@ -11,7 +11,7 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
     oldVersions = [],
   } = options
 
-  const fieldValue = computed(() => card.face(faceIndex)[field] || '')
+  const fieldValue = computed(() => card.value.face(faceIndex)[field] || '')
   const scarred = computed(() => oldVersions.length > 0)
   const showFullWidth = computed(() => fieldValue.value.length === 0 && editable && !scarred.value)
 
@@ -39,6 +39,14 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
   watch(showOriginalText, (showOriginal) => {
     const newValue = showOriginal ? oldVersions[0] : fieldValue.value
     editor.setValue(newValue)
+  })
+
+  // Reset state when card reference changes to prevent state bleeding between cards
+  watch(() => card.value, (newCard, oldCard) => {
+    if (newCard !== oldCard) {
+      showOriginalText.value = false
+      editor.setValue(fieldValue.value)
+    }
   })
 
   function cardChanged(/*card, index, oldVersions*/) {

@@ -9,7 +9,7 @@
 
 
 <script setup>
-import { computed } from 'vue'
+import { computed, toRef } from 'vue'
 import { useScarrableContent } from '../../composables/card/useScarrableContent.js'
 import ScarrableContent from './ScarrableContent.vue'
 
@@ -32,7 +32,7 @@ const emit = defineEmits(['value-updated'])
 
 const isSiege = computed(() => props.card.face(props.index).type_line.toLowerCase().includes('siege'))
 
-const scarrable = useScarrableContent(props.card, props.index, 'defense', emit, {
+const scarrable = useScarrableContent(toRef(props, 'card'), props.index, 'defense', emit, {
   editable: props.isEditable,
   oldVersions: [],
 })
