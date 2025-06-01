@@ -417,7 +417,6 @@ $gold: #d9631b;
   margin: -5px -3px;
   display: inline-block;
   position: relative;
-  font-weight: bold;
   letter-spacing: 0.5px;
 
   /* Tape-like edges */

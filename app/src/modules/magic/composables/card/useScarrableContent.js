@@ -1,6 +1,7 @@
 import { computed, ref, watch } from 'vue'
 import { useEditableContent } from '@/composables/useEditableContent.js'
 import { diffWords } from 'diff'
+import { magic } from 'battlestar-common'
 
 
 export function useScarrableContent(card, faceIndex, field, emit, options) {
@@ -23,7 +24,7 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
       }]
     }
 
-    const diff = diffWords(oldVersions[0], fieldValue.value)
+    const diff = diffWords(oldVersions[0], fieldValue.value, { intlSegmenter: intlSegmenterShapedObject })
     return diff.filter(x => x.added || !x.removed)
   })
 
@@ -66,4 +67,17 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
     cardChanged,
     handleClick,
   }
+}
+
+const intlSegmenterShapedObject = {
+  resolvedOptions() {
+    return {
+      granularity: 'word',
+    }
+  },
+
+  segment(text) {
+    const tokens = magic.util.card.segmentText(text)
+    return tokens.map(t => ({ segment: t }))
+  },
 }

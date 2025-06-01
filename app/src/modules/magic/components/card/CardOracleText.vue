@@ -1,40 +1,27 @@
 <template>
   <div class="card-oracle-text">
-    <!-- Show EditableContent when editing or when text is empty -->
-    <EditableContent
-      v-if="isEditingValue || text.length === 0"
-      v-bind="editor"
-      style="white-space: pre-line; width: 100%;"
-    />
-
-    <!-- Show parsed oracle text when not editing and text exists -->
-    <div v-else class="oracle-text-display" @click="beginEditing">
-      <div
-        v-for="(line, lineIndex) in lines"
-        :key="lineIndex"
-        class="rules-line"
+    <ScarrableContent v-bind="scarrable">
+      <span
+        v-for="part of scarredParts"
+        :key="part.value"
+        :class="{
+          'scar-tape': part.added,
+          'narrow-tape': part.added,
+        }"
       >
-        <template v-for="(part, partIndex) in line.parts" :key="partIndex">
-          <span v-if="part.type === 'text'">{{ part.text }}</span>
-          <ManaSymbol v-else-if="part.type === 'symbol'" :m="part.text" />
-          <ReminderText v-else-if="part.type === 'reminder'" :text="part.text" />
-          <span class="error-text" v-else>{{ part.text }}</span>
-        </template>
-      </div>
-    </div>
+        <ParsedOracleText :text="part.value" />
+      </span>
+    </ScarrableContent>
   </div>
 </template>
 
 
 <script setup>
-import { computed, watch } from 'vue'
-import { mag } from 'battlestar-common'
+import { computed } from 'vue'
 
-import { useEditableContent } from '@/composables/useEditableContent.js'
-import EditableContent from '@/components/EditableContent.vue'
-
-import ManaSymbol from './ManaSymbol.vue'
-import ReminderText from './ReminderText.vue'
+import { useScarrableContent } from '../../composables/card/useScarrableContent.js'
+import ScarrableContent from './ScarrableContent.vue'
+import ParsedOracleText from './ParsedOracleText.vue'
 
 const props = defineProps({
   card: {
@@ -45,7 +32,7 @@ const props = defineProps({
     type: Number,
     required: true
   },
-  isEditable: {
+  isScarrable: {
     type: Boolean,
     default: false,
   },
@@ -53,24 +40,46 @@ const props = defineProps({
 
 const emit = defineEmits(['value-updated'])
 
-const rawText = computed(() => props.card.oracleTextCardName(props.index))
-const text = computed(() => props.card.oracleText(props.index))
-const lines = computed(() => mag.util.card.parseOracleText(text.value))
-
-const editor = useEditableContent(rawText.value, {
+const scarrable = useScarrableContent(props.card, props.index, 'oracle_text', emit, {
   multiline: true,
-  onUpdate: (value) => emit('value-updated', { field: 'oracle_text', value }),
+  oldVersions: ['{T}: Add {C}.\n{1}{G}, {T}: Put target non-creature card from your graveyard on top of your library.'],
 })
 
-// Create a computed property to properly access the reactive isEditing value
-const isEditingValue = computed(() => editor.isEditing.value)
+const scarredParts = computed(() => splitPartsWithNewlines(scarrable.scarredParts.value))
 
-watch(() => text.value, (newValue) => editor.setValue(newValue))
+function splitPartsWithNewlines(parts) {
+  const result = []
 
-function beginEditing() {
-  if (props.isEditable) {
-    editor.startEditing()
+  for (const part of parts) {
+    if (part.value.includes('\n')) {
+      // Split on newlines
+      const segments = part.value.split('\n')
+
+      for (let i = 0; i < segments.length; i++) {
+        // Only add non-empty segments
+        if (segments[i].length > 0) {
+          result.push({
+            added: part.added,
+            value: segments[i]
+          })
+        }
+
+        // Add newline separator after each segment except the last one
+        if (i < segments.length - 1) {
+          result.push({
+            added: false,
+            value: '\n'
+          })
+        }
+      }
+    }
+    else {
+      // No newlines, keep as-is
+      result.push(part)
+    }
   }
+
+  return result
 }
 </script>
 
