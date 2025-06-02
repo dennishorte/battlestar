@@ -28,7 +28,7 @@ function Card() {
       }
 
       if (red) {
-        game.mLog({
+        game.log.add({
           template: '{player} drew a red card. Returning all cards in hand.',
           args: { player }
         })

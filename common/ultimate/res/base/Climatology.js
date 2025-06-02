@@ -23,7 +23,7 @@ function Card() {
       const iconName = game.aChoose(leader, validIcons, { title: 'Choose an icon' })[0]
       const icon = game.utilBiscuitNameToIcon(iconName)
 
-      game.mLog({
+      game.log.add({
         template: '{leader} chooses {icon}',
         args: { leader, icon }
       })

@@ -20,7 +20,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const choices = game
-        .getPlayerAll()
+        .players.all()
         .filter(other => other !== player)
         .flatMap(other => game.utilColors().map(color => ({ color, splay: game.getZoneByPlayer(other, color).splay })))
         .filter(x => game.getZoneByPlayer(player, x.color) !== x.splay)

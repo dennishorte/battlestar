@@ -19,7 +19,7 @@ describe('A.I.', () => {
       }],
     })
 
-    expect(t.cards(game, 'score')).toStrictEqual(['Globalization'])
+    expect(t.cards(game, 'score')).toEqual(['Globalization'])
   })
 
   test('win condition', () => {

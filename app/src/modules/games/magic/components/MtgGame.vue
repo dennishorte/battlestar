@@ -54,13 +54,13 @@ export default {
     },
 
     player() {
-      return this.game ? this.game.getPlayerByName(this.actor.name) : null
+      return this.game ? this.game.players.byName(this.actor.name) : null
     },
   },
 
   methods: {
     async loadGame() {
-      this.game.setCardWrapper(UICardWrapper, 'Magic.vue')
+      this.game.setCardWrapper(UICardWrapper)
       await this.$store.dispatch('magic/game/loadGame', {
         game: this.game,
         doFunc: this.do,

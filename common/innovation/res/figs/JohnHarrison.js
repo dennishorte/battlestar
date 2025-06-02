@@ -31,12 +31,12 @@ function Card() {
       triggerAll: true,
       kind: 'would-first',
       matches: (game, player, { share }) => {
-        const owner = game.getPlayerByCard(this)
-        const isOpponentCondition = game.getPlayerOpponents(owner).includes(player)
+        const owner = game.players.byOwner(this)
+        const isOpponentCondition = game.players.opponentsOf(owner).includes(player)
         return isOpponentCondition && share
       },
       func: (game) => {
-        const owner = game.getPlayerByCard(this)
+        const owner = game.players.byOwner(this)
         const kind = game.aChoose(owner, game.getExpansionList())[0]
         game.aDraw(owner, { exp: kind, age: game.getEffectAge(this, 6) })
       }

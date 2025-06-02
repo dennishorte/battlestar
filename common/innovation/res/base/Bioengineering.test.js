@@ -14,11 +14,11 @@ describe('Bioengineering', () => {
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Bioengineering')
 
-    expect(result2.selectors[0].choices.sort()).toStrictEqual(['Agriculture', 'Sailing'])
+    expect(result2.selectors[0].choices.sort()).toEqual(['Agriculture', 'Sailing'])
 
     const result3 = t.choose(game, result2, 'Sailing')
 
-    expect(t.cards(game, 'score')).toStrictEqual(['Sailing'])
+    expect(t.cards(game, 'score')).toEqual(['Sailing'])
   })
 
   test('win condition yes', () => {

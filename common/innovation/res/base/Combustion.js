@@ -21,7 +21,7 @@ function Card() {
       const biscuits = game.getBiscuits()
       const count = Math.floor(biscuits[leader.name].c / 4)
 
-      game.mLog({
+      game.log.add({
         template: '{player} has {biscuits} {c} biscuits; transfer {count} cards',
         args: {
           player: leader,
@@ -38,7 +38,7 @@ function Card() {
     (game, player) => {
       const red = game.getZoneByPlayer(player, 'red').cards()
       if (red.length === 0) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
       else {
         game.aReturn(player, red[red.length - 1])

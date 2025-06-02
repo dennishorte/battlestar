@@ -13,7 +13,7 @@ describe('History', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Meld.Barometer')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['History'])
+    expect(t.cards(game, 'achievements')).toEqual(['History'])
   })
 
   test('three effects in one color', () => {
@@ -26,7 +26,7 @@ describe('History', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Meld.Barometer')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    expect(t.cards(game, 'achievements')).toEqual([])
   })
 
   test('four effects spread across two colors', () => {
@@ -39,7 +39,7 @@ describe('History', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Meld.Toilet')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    expect(t.cards(game, 'achievements')).toEqual([])
   })
 
   test('Hawking w/3 turtles', () => {
@@ -51,7 +51,7 @@ describe('History', () => {
     })
 
     t.choose(game, game.run(), 'Meld.Stephen Hawking')
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    expect(t.cards(game, 'achievements')).toEqual([])
   })
 
   test('Hawking w/4 turtles', () => {
@@ -63,7 +63,7 @@ describe('History', () => {
     })
 
     t.choose(game, game.run(), 'Meld.Stephen Hawking')
-    expect(t.cards(game, 'achievements')).toStrictEqual(['History'])
+    expect(t.cards(game, 'achievements')).toEqual(['History'])
   })
 
 })

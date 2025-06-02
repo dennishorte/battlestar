@@ -19,7 +19,7 @@ function Card() {
     (game, player) => {
       const hand = game.getZoneByPlayer(player, 'hand')
       if (hand.cards().length === 0) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
         return
       }
 
@@ -29,7 +29,7 @@ function Card() {
         game.aScoreMany(player, hand.cards())
       }
       else {
-        game.mLogDoNothing(player)
+        game.log.addDoNothing(player)
       }
     },
   ]

@@ -36,7 +36,7 @@ function Card() {
           .filter(v => game.checkAgeZeroInPlay() ? v >= 0 : v >= 1)
 
         if (options.length === 0) {
-          game.mLog({ template: 'Player has reached the minimum age' })
+          game.log.add({ template: 'Player has reached the minimum age' })
           break
         }
 

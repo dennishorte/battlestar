@@ -24,18 +24,18 @@ function Card() {
       const distinct = util.array.distinct(choices).sort()
       const age = game.aChooseAge(player, distinct)
       if (age) {
-        game.mLog({
+        game.log.add({
           template: '{player} chooses {age}',
           args: { player, age }
         })
         const location = game.aChoose(player, ['from scores', 'from hands'])[0]
-        game.mLog({
+        game.log.add({
           template: '{player} chooses {location}',
           args: { player, location }
         })
 
         const otherPlayers = game
-          .getPlayerAll()
+          .players.all()
           .filter(other => other !== player)
         let cards
         if (location === 'from scores') {
@@ -56,7 +56,7 @@ function Card() {
   this.echoImpl = (game, player) => {
     const green = game.getCardsByZone(player, 'green')
     if (green.length === 0) {
-      game.mLogNoEffect()
+      game.log.addNoEffect()
     }
     else if (green.length === 1) {
       game.aScore(player, green[0])

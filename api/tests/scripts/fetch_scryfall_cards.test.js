@@ -45,10 +45,18 @@ describe('Card Processing', () => {
     expect(result).toEqual(expected)
   })
 
-  test('processes dfc land/creatures correctly', () => {
-    const { input, expected } = loadFiles('Akoum Warrior')
-    const result = processSingleCard(input)
-    expect(result).toEqual(expected)
+  describe('double faced cards', () => {
+    test('processes dfc land/creatures correctly', () => {
+      const { input, expected } = loadFiles('Akoum Warrior')
+      const result = processSingleCard(input)
+      expect(result).toEqual(expected)
+    })
+
+    test('dfc land/land', () => {
+      const { input, expected } = loadFiles('Branchloft Pathway')
+      const result = processSingleCard(input)
+      expect(result).toEqual(expected)
+    })
   })
 
   test('processes sieges correctly', () => {
@@ -57,10 +65,42 @@ describe('Card Processing', () => {
     expect(result).toEqual(expected)
   })
 
-  test('process adventures correctly', () => {
-    const { input, expected } = loadFiles('Blessed Hippogriff')
-    const result = processSingleCard(input)
-    expect(result).toEqual(expected)
+  describe('adventure', () => {
+    test('process adventures correctly', () => {
+      const { input, expected } = loadFiles('Blessed Hippogriff')
+      const result = processSingleCard(input)
+      expect(result).toEqual(expected)
+    })
+
+    test('handle adventures with different color faces', () => {
+      const { input, expected } = loadFiles('Callous Sell Sword')
+      const result = processSingleCard(input)
+      expect(result).toEqual(expected)
+    })
+
+    test('also works with omens', () => {
+
+    })
+  })
+
+  describe('color indicators', () => {
+    test('process a token correctly', () => {
+      const { input, expected } = loadFiles('Spirit Token')
+      const result = processSingleCard(input)
+      expect(result).toEqual(expected)
+    })
+
+    test('process a double-faced card correctly', () => {
+      const { input, expected } = loadFiles('Arlin Kord')
+      const result = processSingleCard(input)
+      expect(result).toEqual(expected)
+    })
+
+    test('process a devoid card correctly', () => {
+      const { input, expected } = loadFiles('Blinding Drone')
+      const result = processSingleCard(input)
+      expect(result).toEqual(expected)
+    })
   })
 
   test('filters out non-English cards', () => {
@@ -131,7 +171,8 @@ describe('Card Processing', () => {
       colors: ["B"],
       cmc: 2,
       rarity: "common",
-      set: "TST"
+      set: "TST",
+      collector_number: "1"
     }
 
     const result = processSingleCard(input)

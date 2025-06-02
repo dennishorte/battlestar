@@ -42,7 +42,7 @@ TestUtil.fixture = function(options) {
     // Set turn order
     game.state.players = ['dennis', 'micah', 'scott', 'eliya']
       .slice(0, game.settings.numPlayers)
-      .map(name => game.getPlayerByName(name))
+      .map(name => game.players.byName(name))
       .filter(p => p !== undefined)
   })
 

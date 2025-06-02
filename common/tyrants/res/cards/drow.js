@@ -17,7 +17,7 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: '+2 power',
-          impl: (game, player) => player.incrementPower(2),
+          impl: (game, player) => player.incrementCounter('power', 2),
         },
         {
           title: 'Assassinate a troop',
@@ -39,7 +39,7 @@ const cardData = [
     text: [
       "+3 power"
     ],
-    impl: (game, player) => player.incrementPower(3),
+    impl: (game, player) => player.incrementCounter('power', 3),
   },
   {
     name: "Doppelganger",
@@ -90,7 +90,7 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: '+2 influence',
-          impl: (game, player) => player.incrementInfluence(2),
+          impl: (game, player) => player.incrementCounter('influence', 2),
         },
         {
           title: 'Assassinate a troop',
@@ -271,11 +271,11 @@ const cardData = [
       if (loc) {
         const players = loc
           .getTroops()
-          .map(troop => game.getPlayerByCard(troop))
+          .map(troop => game.players.byOwner(troop))
           .filter(other => other !== undefined)
           .filter(other => other !== player)
         if (players.length > 0) {
-          player.incrementPower(1)
+          player.incrementCounter('power', 1)
         }
       }
     },
@@ -337,7 +337,7 @@ const cardData = [
         {
           title: "Return one of your spies > +4 power",
           impl: (game, player) => game.aReturnASpyAnd(player, (game, player) => {
-            player.incrementPower(4)
+            player.incrementCounter('power', 4)
           })
         },
       ])
@@ -361,7 +361,7 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: '+2 influence',
-          impl: (game, player) => player.incrementInfluence(2),
+          impl: (game, player) => player.incrementCounter('influence', 2),
         },
         {
           title: "At end of turn, promote another card played this turn",
@@ -404,7 +404,7 @@ const cardData = [
     ],
     impl: (game, player, { card }) => {
       if (game.getCardsByZone(player, 'innerCircle').length >= 4) {
-        player.incrementInfluence(3)
+        player.incrementCounter('influence', 3)
       }
       game.aDeferPromotion(player, card)
     }
@@ -441,7 +441,7 @@ const cardData = [
       "Put your deck into your discard pile. Then promote a card from your discard pile."
     ],
     impl: (game, player) => {
-      game.mLog({
+      game.log.add({
         template: '{player} moves their deck into their discard pile',
         args: { player }
       })

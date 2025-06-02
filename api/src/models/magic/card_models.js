@@ -1,5 +1,8 @@
 import AsyncLock from 'async-lock'
+
+import { magic } from 'battlestar-common'
 import { client as databaseClient } from '../../utils/mongo.js'
+
 const database = databaseClient.db('magic')
 
 const customCollection = database.collection('custom_cards')
@@ -27,16 +30,26 @@ Card.create = async function(data, cube, user, comment=null) {
     delete data.collector_number
     delete data.legal
 
+    // Replace instances of the card name in oracle text with 'CARD_NAME'.
+    // This makes it much easier to deal with changes to the card name later on.
+    for (const face of data.card_faces) {
+      if (face.oracle_text) {
+        face.oracle_text = face.oracle_text.replaceAll(face.name, 'CARD_NAME')
+      }
+    }
+
+    const change = magic.util.card.diff.calculateCardChanges(data, null)
+
     const card = {
       data,
       source: 'custom',
       cubeId: cube._id,
-      edits: [{
-        action: 'create',
+
+      changes: [{
+        ...change,
+        date: new Date(),
         userId: user._id,
         comment,
-        date: new Date(),
-        oldData: null,
       }],
     }
 
@@ -178,27 +191,24 @@ Card.findBySetCode = async function(set) {
  */
 Card.update = async function(cardId, cardData, user, comment=null) {
   return await lock.acquire('card:' + cardId.toString(), async () => {
+    // Store the updated field information on the card.
+    const prev = await Card.findById(cardId)
+    const diff = magic.util.card.diff.calculateCardChanges(cardData.data, prev.data)
+    cardData.changes.push({
+      ...diff,
+      date: new Date(),
+      userId: user._id,
+      comment,
+    })
+
     const updateResult = await customCollection.findOneAndUpdate(
       { _id: cardId },
-      [
-        {
-          $set: {
-            edits: {
-              $concatArrays: [
-                "$edits",
-                [{
-                  action: 'update',
-                  userId: user._id,
-                  comment,
-                  date: new Date(),
-                  oldData: "$data"  // References the current data value
-                }]
-              ]
-            },
-            data: cardData.data  // Set the new data
-          }
+      {
+        $set: {
+          data: cardData.data,
+          changes: cardData.changes,
         }
-      ],
+      },
       {
         returnDocument: 'after',
         upsert: false

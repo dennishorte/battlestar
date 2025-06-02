@@ -20,7 +20,7 @@ describe('Wealth', () => {
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Meld.Pencil')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['Wealth'])
+    expect(t.cards(game, 'achievements')).toEqual(['Wealth'])
   })
 
   test('seven visible bonuses', () => {
@@ -39,6 +39,6 @@ describe('Wealth', () => {
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Meld.Pencil')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    expect(t.cards(game, 'achievements')).toEqual([])
   })
 })

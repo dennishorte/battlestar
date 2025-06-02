@@ -20,7 +20,7 @@ function Card() {
       const color = game.aChoose(player, game.utilColors(), { title: 'Choose a Color' })[0]
       const revealedBy = []
 
-      for (const plyr of game.getPlayersStarting(player)) {
+      for (const plyr of game.players.startingWith(player)) {
         const toReveal = game
           .getCardsByZone(plyr, 'hand')
           .filter(card => card.color === color)

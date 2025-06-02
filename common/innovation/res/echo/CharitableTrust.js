@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       if (!game.state.dogmaInfo.charitableTrust) {
-        game.mLog({ template: "Charitable Trust's echo effect was not used." })
+        game.log.add({ template: "Charitable Trust's echo effect was not used." })
         return
       }
 
@@ -45,7 +45,7 @@ function Card() {
 
     if (!game.state.dogmaInfo.charitableTrust) {
       game.state.dogmaInfo.charitableTrust = {}
-      game.getPlayerAll().forEach(p => game.state.dogmaInfo.charitableTrust[p.name] = [])
+      game.players.all().forEach(p => game.state.dogmaInfo.charitableTrust[p.name] = [])
     }
 
     game.state.dogmaInfo.charitableTrust[player.name].push(card)

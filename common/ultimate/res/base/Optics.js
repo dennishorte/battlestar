@@ -19,20 +19,20 @@ function Card() {
       const card = game.aDrawAndMeld(player, game.getEffectAge(this, 3))
       if (card) {
         if (card.checkHasBiscuit('c')) {
-          game.mLog({
+          game.log.add({
             template: '{card} has a {c} biscuit',
             args: { card }
           })
           game.aDrawAndScore(player, game.getEffectAge(this, 4))
         }
         else {
-          game.mLog({
+          game.log.add({
             template: '{card} does not have a {c} biscuit',
             args: { card }
           })
           const playerScore = game.getScore(player)
           const targets = game
-            .getPlayerOpponents(player)
+            .players.opponentsOf(player)
             .filter(other => game.getScore(other) < playerScore)
 
           if (targets.length > 0) {

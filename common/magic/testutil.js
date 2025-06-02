@@ -1,6 +1,6 @@
 const { MagicFactory } = require('./magic.js')
 const TestCommon = require('../lib/test_common.js')
-const DeckWrapper = require('./util/deck.wrapper.js')
+const DeckWrapper = require('./util/DeckWrapper.js')
 
 const TestCards = require('./test_card_data.js')
 
@@ -32,21 +32,15 @@ TestUtil.fixture = function(options) {
         _id: 'eliya_id',
         name: 'eliya',
       },
-    ]
+    ],
+    playerOptions: {
+      shuffleSeats: false,
+    },
   }, options)
 
   options.players = options.players.slice(0, options.numPlayers)
 
   const game = MagicFactory(options, 'dennis')
-
-  game.testSetBreakpoint('initialization-complete', (game) => {
-    // Set turn order
-    game.state.players = ['dennis', 'micah', 'scott', 'eliya']
-      .slice(0, game.settings.numPlayers)
-      .map(name => game.getPlayerByName(name))
-      .filter(p => p !== undefined)
-  })
-
   return game
 }
 
@@ -122,7 +116,7 @@ TestUtil.fixtureDecksSelected = function(options) {
   }
 
   game.testSetBreakpoint('decks-selected', (game) => {
-    const dennis = game.getPlayerByName('dennis')
+    const dennis = game.players.byName('dennis')
     const deck = game.getZoneByPlayer(dennis, 'library')
     const cards = deck.cards()
     deck._cards = [
@@ -179,7 +173,7 @@ TestUtil.testBoard = function(game, state) {
   const real = {}
 
   // Fill in base values for everything to be tested.
-  for (const player of game.getPlayerAll()) {
+  for (const player of game.players.all()) {
     expected[player.name] = blankTableau()
     real[player.name] = {}
     real[player.name].life = player.getCounter('life')
@@ -194,7 +188,7 @@ TestUtil.testBoard = function(game, state) {
 
   // Update the expected values from the input state.
   for (const [key, value] of Object.entries(state)) {
-    const player = game.getPlayerByName(key)
+    const player = game.players.byName(key)
     if (player) {
       for (const [zone, content] of Object.entries(value)) {
         if (zone === 'life') {
@@ -213,7 +207,7 @@ TestUtil.testBoard = function(game, state) {
   /* console.log(real)
    * console.log(expected) */
 
-  expect(real).toStrictEqual(expected)
+  expect(real).toEqual(expected)
 }
 
 TestUtil.testVisibility = function(card, ...names) {
@@ -225,7 +219,7 @@ TestUtil.testVisibility = function(card, ...names) {
     .map(name => name.toLowerCase())
     .sort()
 
-  expect(expected).toStrictEqual(actual)
+  expect(expected).toEqual(actual)
 }
 
 TestUtil.do = function(game, request, action) {

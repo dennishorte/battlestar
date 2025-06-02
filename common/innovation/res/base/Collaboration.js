@@ -42,7 +42,7 @@ function Card() {
         })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ]

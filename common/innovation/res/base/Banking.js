@@ -30,7 +30,7 @@ function Card() {
         game.aDrawAndScore(player, game.getEffectAge(this, 5))
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
 

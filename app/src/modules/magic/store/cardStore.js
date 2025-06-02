@@ -108,13 +108,15 @@ export default {
       return cardIds.map(id => state.cards.byId[id])
     },
 
-    async update({ dispatch }, { card, comment }) {
+    async update({ dispatch }, { card, comment, scar }) {
       await this.$post('/api/magic/card/update', {
         cardId: card._id,
         cardData: card.toJSON(),
         comment,
+        scar,
       })
       await dispatch('reloadDatabase')
+      await dispatch('magic/cube/reload', null, { root: true })
     },
 
     async reloadDatabase({ dispatch, state }) {

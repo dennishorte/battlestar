@@ -30,7 +30,7 @@ function Card() {
             game.aDraw(player, { age: game.getEffectAge(this, 1) })
           }
           else {
-            game.mLog({ template: 'no card was transferred' })
+            game.log.add({ template: 'no card was transferred' })
           }
         }
       }

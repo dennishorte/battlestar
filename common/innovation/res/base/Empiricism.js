@@ -20,7 +20,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const colors = game.aChoose(player, game.utilColors(), { count: 2, title: 'Choose Two Colors' })
-      game.mLog({
+      game.log.add({
         template: '{player} chooses {color1} and {color2}',
         args: {
           player,
@@ -45,7 +45,7 @@ function Card() {
         })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     }
   ]

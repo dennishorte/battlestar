@@ -27,7 +27,7 @@ function Card() {
           .filter(other => other.getAge() === card.age)
 
         if (matchingAges.length === 0) {
-          game.mLog({
+          game.log.add({
             template: "Card age does not match any of {player}'s top cards",
             args: { player: leader }
           })

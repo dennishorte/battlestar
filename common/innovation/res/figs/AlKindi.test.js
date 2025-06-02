@@ -11,7 +11,7 @@ describe('Al-Kindi', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Inspire.purple')
     const request3 = t.choose(game, request2, 'Writing')
-    expect(t.cards(game, 'score')).toStrictEqual(['Writing'])
+    expect(t.cards(game, 'score')).toEqual(['Writing'])
   })
 
   test('karma', () => {
@@ -28,6 +28,6 @@ describe('Al-Kindi', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Writing')
 
-    expect(t.cards(game, 'hand').sort()).toStrictEqual(['Invention', 'Monotheism', 'Perspective', 'Yi Sun-Sin'])
+    expect(t.cards(game, 'hand').sort()).toEqual(['Invention', 'Monotheism', 'Perspective', 'Yi Sun-Sin'])
   })
 })

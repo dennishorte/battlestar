@@ -31,13 +31,13 @@ function Card() {
     (game, player) => {
       const mine = game.getBiscuitsByPlayer(player)
       const theirs = game
-        .getPlayerAll()
+        .players.all()
         .filter(other => other !== player)
         .map(other => game.getBiscuitsByPlayer(other))
 
       for (const biscuits of theirs) {
         if (mine.f >= biscuits.f || mine.c >= biscuits.c || mine.k >= biscuits.k) {
-          game.mLogNoEffect()
+          game.log.addNoEffect()
           return
         }
       }

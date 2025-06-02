@@ -20,8 +20,8 @@ describe('Combustion', () => {
     const result3 = t.choose(game, result2, 'Tools', 'Calendar')
     const result4 = t.choose(game, result3, 'auto')
 
-    expect(t.cards(game, 'score').sort()).toStrictEqual(['Calendar', 'Tools'])
-    expect(t.cards(game, 'score', 'micah')).toStrictEqual(['Mathematics'])
+    expect(t.cards(game, 'score').sort()).toEqual(['Calendar', 'Tools'])
+    expect(t.cards(game, 'score', 'micah')).toEqual(['Mathematics'])
   })
 
   test('return', () => {
@@ -37,7 +37,7 @@ describe('Combustion', () => {
     const result3 = t.choose(game, result2, 'Tools', 'Calendar')
     const result4 = t.choose(game, result3, 'auto')
 
-    expect(t.cards(game, 'red')).toStrictEqual(['Combustion'])
+    expect(t.cards(game, 'red')).toEqual(['Combustion'])
     expect(game.getCardByName('Construction').zone).toBe('decks.base.2')
   })
 })

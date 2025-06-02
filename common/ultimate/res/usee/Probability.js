@@ -34,7 +34,7 @@ function Card() {
 
       const numberOfBiscuits = Object.values(drawnBiscuits).filter(x => x > 0).length
 
-      game.mLog({ template: `The revealed cards had ${numberOfBiscuits} biscuit types total.` })
+      game.log.add({ template: `The revealed cards had ${numberOfBiscuits} biscuit types total.` })
 
       if (numberOfBiscuits === 2) {
         game.aDrawAndScore(player, game.getEffectAge(this, 6))

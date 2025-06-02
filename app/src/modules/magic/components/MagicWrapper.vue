@@ -19,7 +19,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 
-import MagicCard from './MagicCard'
+import MagicCard from './card/MagicCard.vue'
 
 
 export default {

@@ -11,6 +11,15 @@
 
     <label class="form-label">Cards per Pack</label>
     <input class="form-control" v-model.number="options.packSize" @input="optionsChanged" />
+
+    <label class="form-label">Scar Rounds</label>
+    <input class="form-control" v-model="options.scarRounds" @input="optionsChanged" />
+
+    <BAlert :model-value="warnings.length > 0" variant="danger">
+      <div v-for="warning in warnings" :key="warning">
+        {{ warning }}
+      </div>
+    </BAlert>
   </div>
 </template>
 
@@ -30,6 +39,7 @@ export default {
 
       cubes: [],
       users: [],
+      warnings: [],
     }
   },
 
@@ -55,24 +65,60 @@ export default {
     // Called by both optionsChanged, and a watcher on users in the lobby.
     updateValid() {
       const opts = this.lobby.options
-
-      const numPlayersCondition = this.lobby.users.length >= 2
-      const numPacksCondition = opts.numPacks > 0
-      const packSizeCondition = opts.packSize > 0
-      const cubeSelectedCondition = Boolean(opts.cubeId)
-
-      const neededCards = this.lobby.users.length * opts.numPacks * opts.packSize
       const selectedCube = this.cubes.find(c => c._id === opts.cubeId)
-      const availableCards = selectedCube ? selectedCube.cardlist.length : 0
-      const sufficientCardsCondition = neededCards <= availableCards
+      const scarRounds = _parseScarRounds(opts.scarRounds)
 
-      this.lobby.valid = (
-        numPlayersCondition
-        && numPacksCondition
-        && packSizeCondition
-        && cubeSelectedCondition
-        && sufficientCardsCondition
-      )
+      const numPlayersCondition = {
+        value: () => this.lobby.users.length >= 2,
+        message: 'At least two players are required',
+      }
+      const numPacksCondition = {
+        value: () => opts.numPacks > 0,
+        message: 'Packs must be greater than zero',
+      }
+      const packSizeCondition = {
+        value: () => opts.packSize > 0,
+        message: 'Pack size must be greater than zero',
+      }
+      const cubeSelectedCondition = {
+        value: () => Boolean(opts.cubeId),
+        message: 'A cube must be selected',
+      }
+
+
+      const sufficientCardsCondition = {
+        value: () => {
+          const neededCards = this.lobby.users.length * opts.numPacks * opts.packSize
+          const availableCards = selectedCube ? selectedCube.cardlist.length : 0
+          return neededCards <= availableCards
+        },
+        message: 'Not enough cards in the cube'
+      }
+
+      const sufficientScarsCondition = {
+        value: () => {
+          const neededScars = scarRounds.length * this.lobby.users.length * 2
+          return selectedCube && selectedCube.scarlist.length >= neededScars
+        },
+        message: 'Not enough scars in the cube'
+      }
+      const scarRoundsCondition = {
+        value: () => _validateScarRounds(scarRounds, opts.numPacks),
+        message: 'Invalid scar rounds',
+      }
+
+      const conditions = [
+        numPlayersCondition,
+        numPacksCondition,
+        packSizeCondition,
+        cubeSelectedCondition,
+        scarRoundsCondition,
+        sufficientScarsCondition,
+        sufficientCardsCondition,
+      ]
+
+      this.lobby.valid = conditions.every(c => c.value())
+      this.warnings = conditions.filter(c => !c.value()).map(c => c.message)
     },
 
     optionsChanged() {
@@ -105,5 +151,34 @@ export default {
       this.fetchCubes()
     }
   },
+}
+
+function _parseScarRounds(str) {
+  if (!str) {
+    return []
+  }
+
+  str = str.trim()
+  if (str.length === 0) {
+    return []
+  }
+
+  return str.split(',').filter(t => t.trim().length > 0).map(x => parseInt(x))
+}
+
+function _validateScarRounds(rounds, numPacks) {
+  for (const round of rounds) {
+    if (Number.isNaN(round)) {
+      return false
+    }
+    if (round <= 0) {
+      return false
+    }
+    if (round > numPacks) {
+      return false
+    }
+  }
+
+  return true
 }
 </script>

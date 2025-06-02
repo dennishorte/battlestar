@@ -23,7 +23,7 @@ describe('Stem Cells', () => {
     const request3 = t.choose(game, request2, 'yes')
     const request4 = t.choose(game, request3, 'auto')
 
-    expect(t.cards(game, 'score').sort()).toStrictEqual(['Experimentation', 'Reformation'])
+    expect(t.cards(game, 'score').sort()).toEqual(['Experimentation', 'Reformation'])
   })
 
   test('cards in hand, no', () => {
@@ -35,6 +35,6 @@ describe('Stem Cells', () => {
     const request2 = t.choose(game, request1, 'Dogma.Stem Cells')
     t.choose(game, request2, 'no')
 
-    expect(t.cards(game, 'score')).toStrictEqual([])
+    expect(t.cards(game, 'score')).toEqual([])
   })
 })

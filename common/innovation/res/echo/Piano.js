@@ -31,7 +31,7 @@ function Card() {
         }
 
         else {
-          game.mLog({
+          game.log.add({
             template: '{player} top cards do not have all different values',
             args: { player }
           })
@@ -39,7 +39,7 @@ function Card() {
       }
 
       else {
-        game.mLog({
+        game.log.add({
           template: '{player} does not have five top cards',
           args: { player }
         })
@@ -48,7 +48,7 @@ function Card() {
   ]
   this.echoImpl = (game, player) => {
     const ages = game
-      .getPlayerAll()
+      .players.all()
       .flatMap(player => game.getCardsByZone(player, 'hand'))
       .map(card => card.getAge())
       .sort()

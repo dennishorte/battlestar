@@ -30,7 +30,7 @@ function Card() {
 
     (game, player) => {
       const topGreenCards = game
-        .getPlayerAll()
+        .players.all()
         .map(p => game.getTopCard(p, 'green'))
         .filter(card => Boolean(card))
 

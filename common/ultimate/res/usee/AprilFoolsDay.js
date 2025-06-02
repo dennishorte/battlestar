@@ -19,7 +19,7 @@ function Card() {
     (game, player) => {
       const handCards = game.getZoneByPlayer(player, 'hand').cards()
       const scoreCards = game.getZoneByPlayer(player, 'score').cards()
-      const rightPlayer = game.getPlayerRight(player)
+      const rightPlayer = game.players.rightOf(player)
 
       const choices = [...handCards, ...scoreCards]
       const selectedCard = game.aChooseCard(player, choices)

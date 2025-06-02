@@ -23,9 +23,9 @@ export default {
       const ids = []
 
       const actor = rootGetters['auth/user']
-      const actorPlayer = state.game.getPlayerByName(actor.name)
+      const actorPlayer = state.game.players.byName(actor.name)
 
-      for (const player of state.game.getPlayersStarting(actorPlayer)) {
+      for (const player of state.game.players.startingWith(actorPlayer)) {
         for (const name of ['attacking', 'battlefield', 'blocking', 'command', 'creatures', 'land', 'stack']) {
           ids.push(`players.${player.name}.${name}`)
         }

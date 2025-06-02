@@ -13,14 +13,14 @@ describe('fixture', () => {
     game.run()
 
     const dennis = game
-      .getZoneByPlayer(game.getPlayerByName('dennis'), 'hand')
+      .getZoneByPlayer(game.players.byName('dennis'), 'hand')
       .cards()
       .map(c => c.name)
       .sort()
     expect(dennis).toStrictEqual(['Archery', 'Domestication'])
 
     const micah = game
-      .getZoneByPlayer(game.getPlayerByName('micah'), 'hand')
+      .getZoneByPlayer(game.players.byName('micah'), 'hand')
       .cards()
       .map(c => c.name)
       .sort()
@@ -33,7 +33,7 @@ describe('fixture', () => {
       t.setColor(game, 'dennis', 'red', ['Gunpowder', 'Industrialization'])
     })
     game.run()
-    const dennis = game.getPlayerByName('dennis')
+    const dennis = game.players.byName('dennis')
 
     const redCardNames = game.getZoneByPlayer(dennis, 'red').cards().map(c => c.name).sort()
     expect(redCardNames).toStrictEqual(['Gunpowder', 'Industrialization'])
@@ -80,13 +80,13 @@ describe('Innovation', () => {
       })
 
       const dennisRed = game
-        .getZoneByPlayer(game.getPlayerByName('dennis'), 'red')
+        .getZoneByPlayer(game.players.byName('dennis'), 'red')
         .cards()
         .map(c => c.name)
       expect(dennisRed).toStrictEqual(['Archery'])
 
       const micahPurple = game
-        .getZoneByPlayer(game.getPlayerByName('micah'), 'purple')
+        .getZoneByPlayer(game.players.byName('micah'), 'purple')
         .cards()
         .map(c => c.name)
       expect(micahPurple).toStrictEqual(['Code of Laws'])
@@ -106,7 +106,7 @@ describe('Innovation', () => {
         selection: ['Archery'],
       })
 
-      expect(game.getPlayerCurrent().name).toBe('dennis')
+      expect(game.players.current().name).toBe('dennis')
     })
 
     test('player closest to start of alphabet goes first (test b)', () => {
@@ -123,7 +123,7 @@ describe('Innovation', () => {
         selection: ['Domestication'],
       })
 
-      expect(game.getPlayerCurrent().name).toBe('micah')
+      expect(game.players.current().name).toBe('micah')
     })
   })
 
@@ -852,11 +852,11 @@ describe('Innovation', () => {
         const request = game.run()
         t.choose(game, request, 'Dogma.Writing')
 
-        const dennis = game.getPlayerByName('dennis')
+        const dennis = game.players.byName('dennis')
         const dennisHandAges = game.getZoneByPlayer(dennis, 'hand').cards().map(c => c.age).sort()
         expect(dennisHandAges).toStrictEqual([1, 2])
 
-        const micah = game.getPlayerByName('micah')
+        const micah = game.players.byName('micah')
         const micahHandAges = game.getZoneByPlayer(micah, 'hand').cards().map(c => c.age).sort()
         expect(micahHandAges).toStrictEqual([2])
       })
@@ -871,11 +871,11 @@ describe('Innovation', () => {
         const request = game.run()
         t.choose(game, request, 'Dogma.Writing')
 
-        const dennis = game.getPlayerByName('dennis')
+        const dennis = game.players.byName('dennis')
         const dennisHandAges = game.getZoneByPlayer(dennis, 'hand').cards().map(c => c.age).sort()
         expect(dennisHandAges).toStrictEqual([2])
 
-        const micah = game.getPlayerByName('micah')
+        const micah = game.players.byName('micah')
         const micahHandAges = game.getZoneByPlayer(micah, 'hand').cards().map(c => c.age).sort()
         expect(micahHandAges).toStrictEqual([])
       })
@@ -911,7 +911,7 @@ describe('Innovation', () => {
       test('player draws a card based on top card age (test 1)', () => {
         const game = t.fixtureFirstPlayer()
         const request = game.run()
-        const dennis = game.getPlayerByName('dennis')
+        const dennis = game.players.byName('dennis')
 
         expect(game.getZoneByPlayer(dennis, 'hand').cards().length).toBe(0)
 
@@ -929,7 +929,7 @@ describe('Innovation', () => {
         })
 
         const request = game.run()
-        const dennis = game.getPlayerByName('dennis')
+        const dennis = game.players.byName('dennis')
 
         t.choose(game, request, 'Draw.draw a card')
 
@@ -954,7 +954,7 @@ describe('Innovation', () => {
 
         game.run()
         const trigger = () => {
-          game.mDraw(game.getPlayerByName('dennis'), 'base', 11)
+          game.mDraw(game.players.byName('dennis'), 'base', 11)
         }
         expect(trigger).toThrow(GameOverEvent)
       })

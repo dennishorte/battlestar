@@ -30,7 +30,7 @@ function Card() {
 
         // If some karma prevents them from returning it, no effect.
         if (!returned) {
-          game.mLog({ template: 'Card was not returned' })
+          game.log.add({ template: 'Card was not returned' })
           break
         }
 
@@ -58,7 +58,7 @@ function Card() {
           break
         }
         else {
-          game.mLog({ template: 'Neither card has a biscuit matching the returned card' })
+          game.log.add({ template: 'Neither card has a biscuit matching the returned card' })
           game.aReturn(player, five)
           game.aReturn(player, six)
         }

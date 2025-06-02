@@ -26,7 +26,7 @@ function Card() {
       if (returned.length === 2) {
         const card = game.aDrawAndReveal(player, game.getEffectAge(this, 10))
         if (cardsDrawn.find(c => c.color === card.color)) {
-          game.mLog({
+          game.log.add({
             template: '{player} keeps the card',
             args: { player }
           })

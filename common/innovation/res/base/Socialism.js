@@ -19,7 +19,7 @@ function Card() {
     (game, player) => {
       const cards = game.getCardsByZone(player, 'hand')
       if (cards.length === 0) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
       else {
         const tuckThem = game.aYesNo(player, 'Tuck all cards from your hand?')
@@ -29,7 +29,7 @@ function Card() {
           // If you tucked a purple card...
           if (tucked.find(card => card.color === 'purple')) {
             const accumulator = []
-            for (const opp of game.getPlayerOpponents(player)) {
+            for (const opp of game.players.opponentsOf(player)) {
               const lowest = game.utilLowestCards(game.getCardsByZone(opp, 'hand'))
               accumulator.push(lowest)
             }
@@ -37,7 +37,7 @@ function Card() {
           }
         }
         else {
-          game.mLogDoNothing(player)
+          game.log.addDoNothing(player)
         }
       }
     }

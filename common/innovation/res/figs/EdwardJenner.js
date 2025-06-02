@@ -26,7 +26,7 @@ function Card() {
       triggerAll: true,
       kind: 'would-instead',
       matches: (game, player) => {
-        return player === game.getPlayerByCard(this)
+        return player === game.players.byOwner(this)
       },
       func: (game, player) => {
         game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'))

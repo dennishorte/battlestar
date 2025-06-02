@@ -4,6 +4,7 @@ module.exports = {
 
 
 function Zone(game, name, kind) {
+  this.id = name
   this.game = game
   this.name = name
   this.kind = kind
@@ -34,7 +35,7 @@ Zone.prototype.cards = function() {
 }
 
 Zone.prototype.player = function() {
-  return this.game.getPlayerByZone(this)
+  return this.game.players.byZone(this)
 }
 
 Zone.prototype.setCards = function(cards) {

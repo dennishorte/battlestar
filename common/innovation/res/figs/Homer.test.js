@@ -12,7 +12,7 @@ describe('Homer', () => {
     })
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Inspire.purple')
-    expect(t.cards(game, 'blue')).toStrictEqual(['Tools', 'Mathematics'])
+    expect(t.cards(game, 'blue')).toEqual(['Tools', 'Mathematics'])
   })
 
   test('karma: remove', () => {
@@ -23,10 +23,10 @@ describe('Homer', () => {
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Decree.Trade')
 
-    expect(t.cards(game, 'red')).toStrictEqual(['Yi Sun-Sin'])
-    expect(t.cards(game, 'yellow')).toStrictEqual(['Ximen Bao'])
-    expect(t.cards(game, 'green')).toStrictEqual(['Ptolemy'])
-    expect(t.cards(game, 'blue')).toStrictEqual(['Daedalus'])
+    expect(t.cards(game, 'red')).toEqual(['Yi Sun-Sin'])
+    expect(t.cards(game, 'yellow')).toEqual(['Ximen Bao'])
+    expect(t.cards(game, 'green')).toEqual(['Ptolemy'])
+    expect(t.cards(game, 'blue')).toEqual(['Daedalus'])
   })
 
   test('karma: return', () => {
@@ -40,8 +40,8 @@ describe('Homer', () => {
     const result2 = t.choose(game, result1, 'Dogma.Agriculture')
     const result3 = t.choose(game, result2, 'Fu Xi')
 
-    expect(t.cards(game, 'green')).toStrictEqual(['Fu Xi'])
-    expect(t.cards(game, 'blue')).toStrictEqual([])
+    expect(t.cards(game, 'green')).toEqual(['Fu Xi'])
+    expect(t.cards(game, 'blue')).toEqual([])
   })
 
   test('karma: return from score does not trigger', () => {
@@ -55,8 +55,8 @@ describe('Homer', () => {
     const result2 = t.choose(game, result1, 'Dogma.Printing Press')
     const result3 = t.choose(game, result2, 'Fu Xi')
 
-    expect(t.cards(game, 'green')).toStrictEqual([])
-    expect(t.cards(game, 'score')).toStrictEqual([])
+    expect(t.cards(game, 'green')).toEqual([])
+    expect(t.cards(game, 'score')).toEqual([])
     const FuXi = game.getCardByName('Fu Xi')
     expect(FuXi.zone).toBe('decks.figs.1')
   })

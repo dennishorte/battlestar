@@ -15,8 +15,8 @@ describe('City States', () => {
     const result2 = t.choose(game, result1, 'Dogma.City States')
     const result3 = t.choose(game, result2, 'Archery')
 
-    expect(t.cards(game, 'red')).toStrictEqual(['Archery'])
-    expect(t.cards(game, 'hand', 'micah')).toStrictEqual(['Tools'])
+    expect(t.cards(game, 'red')).toEqual(['Archery'])
+    expect(t.cards(game, 'hand', 'micah')).toEqual(['Tools'])
   })
 
   test('not enough castles', () => {

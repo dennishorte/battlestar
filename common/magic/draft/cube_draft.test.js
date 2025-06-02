@@ -308,4 +308,127 @@ describe('CubeDraft', () => {
     })
 
   })
+
+  describe('scarring', () => {
+    test('scar rounds are initialized correctly', () => {
+      const game = t.fixture({
+        scarRounds: [1, 3], // Round 2 has no scars
+        scars: [
+          { id: 'scar-1', text: 'Test scar 1' },
+          { id: 'scar-2', text: 'Test scar 2' },
+          { id: 'scar-3', text: 'Test scar 3' },
+          { id: 'scar-4', text: 'Test scar 4' },
+          { id: 'scar-5', text: 'Test scar 5' },
+          { id: 'scar-6', text: 'Test scar 6' },
+          { id: 'scar-7', text: 'Test scar 7' },
+          { id: 'scar-8', text: 'Test scar 8' },
+        ],
+      })
+
+      const request1 = game.run()
+
+      // Check that packs in scar rounds have scars assigned
+      for (const pack of game.state.packs) {
+        if (pack.index === 0 || pack.index === 2) { // Rounds 1 and 3 have scars
+          // eslint-disable-next-line jest/no-conditional-expect
+          expect(pack.scars).toBeDefined()
+          // eslint-disable-next-line jest/no-conditional-expect
+          expect(pack.scars.length).toBe(2)
+        }
+        else { // Round 2 has no scars
+          // eslint-disable-next-line jest/no-conditional-expect
+          expect(pack.scars).toBeUndefined()
+        }
+      }
+    })
+
+    test('player can apply scar to a card in their pack', () => {
+      const game = t.fixture({
+        scarRounds: [1],
+        scars: [
+          { id: 'scar-1', text: 'Test scar 1' },
+          { id: 'scar-2', text: 'Test scar 2' },
+          { id: 'scar-3', text: 'Test scar 3' },
+          { id: 'scar-4', text: 'Test scar 4' },
+        ],
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'dennis', { cardId: 'agility', scarId: 'scar-1' })
+
+      // Check that dennis has applied a scar
+      const dennis = game.players.byName('dennis')
+      expect(dennis.scarredRounds).toContain(1)
+      expect(dennis.scarredCardId).toBe('agility')
+    })
+
+    test('player cannot draft a card they have scarred', () => {
+      const game = t.fixture({
+        scarRounds: [1],
+        scars: [
+          { id: 'scar-1', text: 'Test scar 1' },
+          { id: 'scar-2', text: 'Test scar 2' },
+          { id: 'scar-3', text: 'Test scar 3' },
+          { id: 'scar-4', text: 'Test scar 4' },
+        ],
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'dennis', { cardId: 'agility', scarId: 'scar-1' })
+
+      // Get the scarred card ID
+      const dennis = game.players.byName('dennis')
+      const scarredCardId = dennis.scarredCardId
+
+      // Try to draft the scarred card
+      expect(() => {
+        t.choose(game, request2, 'dennis', scarredCardId)
+      }).toThrow('Player tried to draft the card they scarred')
+    })
+
+    test('after playing a scar, the player then gets a draft action', () => {
+      const game = t.fixture({
+        scarRounds: [1],
+        scars: [
+          { id: 'scar-1', text: 'Test scar 1' },
+          { id: 'scar-2', text: 'Test scar 2' },
+          { id: 'scar-3', text: 'Test scar 3' },
+          { id: 'scar-4', text: 'Test scar 4' },
+        ],
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'dennis', 'scar-1')
+
+      // After applying the scar, dennis should get a draft action
+      const draftAction = request2.selectors.find(s => s.actor === 'dennis' && s.title === 'Draft Card')
+      expect(draftAction).toBeDefined()
+
+      // The draft action should not include the scarred card
+      const dennis = game.players.byName('dennis')
+      expect(draftAction.choices).not.toContain(dennis.scarredCardId)
+    })
+
+    test('scar rounds are tracked per player', () => {
+      const game = t.fixture({
+        scarRounds: [1],
+        scars: [
+          { id: 'scar-1', text: 'Test scar 1' },
+          { id: 'scar-2', text: 'Test scar 2' },
+          { id: 'scar-3', text: 'Test scar 3' },
+          { id: 'scar-4', text: 'Test scar 4' },
+        ],
+      })
+
+      const request1 = game.run()
+      const request2 = t.choose(game, request1, 'dennis', 'scar-1')
+
+      // Check that only dennis has applied a scar
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+
+      expect(dennis.scarredRounds).toContain(1)
+      expect(micah.scarredRounds).not.toContain(1)
+    })
+  })
 })

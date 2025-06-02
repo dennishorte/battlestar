@@ -28,7 +28,7 @@ export default {
     },
 
     player() {
-      return this.game.getPlayerByName(this.name)
+      return this.game.players.byName(this.name)
     },
   },
 }

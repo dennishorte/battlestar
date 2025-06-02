@@ -74,7 +74,7 @@ export default {
         return true
       }
 
-      const owner = this.game.getPlayerByZone(this.zone)
+      const owner = this.game.players.byZone(this.zone)
       return owner && owner.name === this.actor.name
     },
 

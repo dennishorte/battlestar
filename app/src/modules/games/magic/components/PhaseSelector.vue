@@ -69,7 +69,7 @@ export default {
 
   computed: {
     player() {
-      return this.game.getPlayerByName(this.actor.name)
+      return this.game.players.byName(this.actor.name)
     },
   },
 

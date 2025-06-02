@@ -20,7 +20,7 @@ function Card() {
     (game, player, { leader }) => {
       const leaderHandCards = game.getCardsByZone(leader, 'hand')
 
-      game.mLog({
+      game.log.add({
         template: '{player} reveals their hand to show how many of which color they have',
         args: { player: leader }
       })
@@ -33,7 +33,7 @@ function Card() {
 
       while (colorsToDiscard.length > 0) {
         const colorString = makeColorString(colorsToDiscard)
-        game.mLog({ template: 'remaining to discard are ' + colorString })
+        game.log.add({ template: 'remaining to discard are ' + colorString })
 
         const validCards = game
           .getCardsByZone(player, 'hand')

@@ -19,7 +19,7 @@ TestCommon.testBoard = function() {
 
 
 TestCommon.dennis = function(game) {
-  return game.getPlayerByName('dennis')
+  return game.players.byName('dennis')
 }
 
 // Select an option from the input request. (Game.requestInputMany)
@@ -71,8 +71,8 @@ TestCommon.deepLog = function(obj) {
 
 TestCommon.dumpLog = function(game) {
   const output = []
-  for (const entry of game.getLog()) {
-    if (entry === '__INDENT__' || entry === '__OUTDENT__' || entry.type === 'response-received') {
+  for (const entry of game.log.getLog()) {
+    if (entry.type === 'response-received') {
       continue
     }
     output.push(log.toString(entry))

@@ -13,8 +13,8 @@ describe('Canal Building', () => {
     const result2 = t.choose(game, result1, 'Dogma.Canal Building')
     const result3 = t.choose(game, result2, 'Exchange highest cards between hand and score pile')
 
-    expect(t.cards(game, 'score').sort()).toStrictEqual(['Colonialism', 'Industrialization'])
-    expect(t.cards(game, 'hand').sort()).toStrictEqual(['Chemistry', 'Steam Engine', 'Tools'])
+    expect(t.cards(game, 'score').sort()).toEqual(['Colonialism', 'Industrialization'])
+    expect(t.cards(game, 'hand').sort()).toEqual(['Chemistry', 'Steam Engine', 'Tools'])
   })
 
   test('junk deck', () => {

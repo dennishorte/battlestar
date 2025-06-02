@@ -1,20 +1,19 @@
 import axios from 'axios'
 import fs from 'fs'
 import path from 'path'
-import { mag, util } from 'battlestar-common'
+import md5 from 'js-md5'
+
+import { magic } from 'battlestar-common'
 
 const rootFields = [
   "id",
   "card_faces",
   "collector_number",
-  "color_identity",
   "legalities",
   "layout",
   "rarity",
   "set",
-  "cmc",
   "digital",
-  "produced_mana",
 ]
 
 const faceFields = [
@@ -31,19 +30,13 @@ const faceFields = [
   "type_line",
 
   "color_indicator",
-  "colors",
-]
-
-const combinedFields = [
-  "name",
-  "colors",
-  "type_line",
+  "produced_mana",
 ]
 
 const wantedFields = [].concat(rootFields, faceFields)
 
 
-function adjustFaces(card) {
+function createFaces(card) {
   if (!card.card_faces) {
     card.card_faces = [{}]
   }
@@ -56,6 +49,9 @@ function adjustFaces(card) {
     delete card['toughness']
   }
 
+  // Handle colors
+
+
   // Move face fields into card_faces.
   for (const key of faceFields) {
     for (const face of card.card_faces) {
@@ -66,12 +62,41 @@ function adjustFaces(card) {
 
     delete card[key]
   }
+}
 
-  // Split cards need to recalculate their colors based on their actual casting cost.
-  if (card.layout === 'split') {
-    mag.util.card.updateColors(card)
+// Most cards have color and color identity that matches the casting cost, but there are many exceptions.
+function fixColors(card) {
+  for (const face of card.card_faces) {
+    // Double-faced cards have color indicators on their flip sides, but tokens have colors values.
+    if (!face.mana_cost) {
+      if (face.color_indicator) {
+        // All good. Do nothing.
+      }
+      else if (card.colors && card.colors.length > 0) {
+        face.color_indicator = card.colors
+      }
+    }
   }
 
+  // Produced mana is generally at the root of cards, even if they have multiple faces.
+  // If a card has two faces, we need to figure out which mana goes with which face.
+  if (card.card_faces.length > 0) {
+    for (const face of card.card_faces) {
+      if ('produced_mana' in face) {
+        const colorSymbolsInOracleText = magic.util.card.extractSymbolsFromText(face.oracle_text).join('')
+        const producedMana = face.produced_mana.filter(c => colorSymbolsInOracleText.includes(c))
+        if (producedMana.length) {
+          face.produced_mana = producedMana
+        }
+        else {
+          delete face.produced_mana
+        }
+      }
+    }
+  }
+}
+
+function cleanFields(card) {
   // Remove all other fields
   const toRemove = [...card.card_faces]
   toRemove.push(card)
@@ -88,21 +113,6 @@ function adjustFaces(card) {
     if (!rootFields.includes(key)) {
       delete card[key]
     }
-  }
-
-  // Put combined fields into the root
-  for (const field of combinedFields) {
-    if (Array.isArray(card.card_faces[0][field])) {
-      const combined = card.card_faces.map(face => face[field]).flat()
-      card[field] = util.array.distinct(combined)
-    }
-    else {
-      card[field] = card.card_faces.map(face => face[field]).join(' // ')
-    }
-  }
-
-  if (!card.name) {
-    console.log(card)
   }
 }
 
@@ -125,12 +135,57 @@ function renameIdField(card) {
   delete card.id
 }
 
+function sortColors(card) {
+  for (const face of card.card_faces) {
+    face.color_indicator?.sort()
+    face.produced_mana?.sort()
+  }
+}
+
+// Based on actual problems, it seems like Scryfall ids are not a constant.
+// Instead, generate unique ids for each card based on a hash of their uniquely identifying data.
+// The requirements of the id are mostly that even if the card is changed in some way by a an update
+// to the magic rules (eg. card types, oracle text), the id wil remain the same so that decks that
+// access the card by id will still be able to fetch their cards.
+const generatedIds = {}
+function generateId(card) {
+  const elements = [
+    card.card_faces.map(face => face.name).join(' // '),
+    card.set,
+    card.collector_number,
+  ]
+
+  if (elements.some(e => !e)) {
+    console.log('================================================================================')
+    console.log('empty value in hash elements')
+    console.log(card)
+    throw 'empty value in hash elements'
+  }
+
+  const hash = md5(elements.join(''))
+
+  if (hash in generatedIds) {
+    console.log('================================================================================')
+    console.log('hash conflict')
+    console.log(card)
+    console.log(generatedIds[hash])
+    throw 'hash conflict'
+  }
+
+  generatedIds[hash] = card
+  card._id = 'scryfall-md5-' + hash
+}
+
 function cleanScryfallCards(cards) {
   for (const card of cards) {
-    adjustFaces(card)
+    createFaces(card)
+    fixColors(card)
+    cleanFields(card)
     cleanImageUris(card)
     cleanLegalities(card)
     renameIdField(card)
+    sortColors(card)
+    generateId(card)
   }
 }
 

@@ -12,7 +12,7 @@ describe('Bangle', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Bangle')
 
-    expect(t.cards(game, 'red')).toStrictEqual(['Bangle', 'Archery'])
-    expect(t.cards(game, 'forecast')).toStrictEqual(['Toothbrush'])
+    expect(t.cards(game, 'red')).toEqual(['Bangle', 'Archery'])
+    expect(t.cards(game, 'forecast')).toEqual(['Toothbrush'])
   })
 })

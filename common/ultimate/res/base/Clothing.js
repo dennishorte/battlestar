@@ -31,7 +31,7 @@ function Card() {
 
     (game, player) => {
       const opponentColors = game
-        .getPlayerOpponents(player)
+        .players.opponentsOf(player)
         .flatMap(opp => game.getTopCards(opp))
         .map(card => card.color)
 
@@ -42,7 +42,7 @@ function Card() {
         .length
 
       if (playerOnlyColors === 0) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
       else {
         for (let i = 0; i < playerOnlyColors; i++) {

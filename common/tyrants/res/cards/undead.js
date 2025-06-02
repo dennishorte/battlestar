@@ -20,7 +20,7 @@ const cardData = [
         .getSpies()
         .filter(spy => spy.owner !== player)
       if (enemySpies.length > 0) {
-        player.incrementPower(3)
+        player.incrementCounter('power', 3)
       }
     },
   },
@@ -38,7 +38,7 @@ const cardData = [
       "Devour a card in the market. Instead of replacing it with the top card from the market deck, replace it with this card."
     ],
     impl: (game, player, { card }) => {
-      player.incrementPower(3)
+      player.incrementCounter('power', 3)
 
       const marketCards = game.getZoneById('market').cards()
       const toDevour = game.aChooseCard(player, marketCards)
@@ -100,7 +100,7 @@ const cardData = [
         {
           title: '+2 influence',
           impl: (game, player) => {
-            player.incrementInfluence(2)
+            player.incrementCounter('influence', 2)
           }
         },
         {
@@ -136,7 +136,7 @@ const cardData = [
         .filter(card => card.getOwnerName() !== 'neutral')
         .length
 
-      player.incrementPoints(Math.floor(playerTroops / 5))
+      player.incrementCounter('points', Math.floor(playerTroops / 5))
     },
   },
   {
@@ -153,7 +153,7 @@ const cardData = [
       "Devour this card > Assassinate a troop."
     ],
     impl: (game, player, { card }) => {
-      player.incrementPower(2)
+      player.incrementCounter('power', 2)
       game.aDevourThisAnd(
         player,
         card,
@@ -300,7 +300,7 @@ const cardData = [
         }
       }
       else {
-        game.mLog({
+        game.log.add({
           template: 'The chosen site has no enemy player troops.'
         })
       }
@@ -376,7 +376,7 @@ const cardData = [
             title: 'Take a white troop from any trophy hall and deploy it anywhere on the board',
             impl: () => {
               const players = game
-                .getPlayerAll()
+                .players.all()
                 .filter(p => game
                   .getCardsByZone(p, 'trophyHall')
                   .some(troop => troop.isNeutral())
@@ -416,7 +416,7 @@ const cardData = [
         {
           title: '+3 influence',
           impl: () => {
-            player.incrementInfluence(3)
+            player.incrementCounter('influence', 3)
           }
         },
         {
@@ -493,7 +493,7 @@ const cardData = [
       "Assassinate a white troop."
     ],
     impl: (game, player) => {
-      player.incrementPower(1)
+      player.incrementCounter('power', 1)
       game.aChooseAndAssassinate(player, { whiteOnly: true })
     },
   },
@@ -558,7 +558,7 @@ const cardData = [
       "Return another player's troop or spy."
     ],
     impl: (game, player) => {
-      player.incrementInfluence(1)
+      player.incrementCounter('influence', 1)
       game.aChooseAndReturn(player, { noWhite: true })
     },
   },
@@ -589,7 +589,7 @@ const cardData = [
           impl: () => {
             game.aChooseAndPromote(player, game.getCardsByZone(player, 'discard'))
             const innerCircle = game.getCardsByZone(player, 'innerCircle').length
-            player.incrementPoints(Math.floor(innerCircle / 3))
+            player.incrementCounter('points', Math.floor(innerCircle / 3))
           }
         },
       ])
@@ -614,7 +614,7 @@ const cardData = [
         {
           title: '+2 power',
           impl: () => {
-            player.incrementPower(2)
+            player.incrementCounter('power', 2)
           }
         },
         {

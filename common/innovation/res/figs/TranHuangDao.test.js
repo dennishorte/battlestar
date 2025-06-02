@@ -53,7 +53,7 @@ describe('Tran Huang Dao', () => {
 
     const request1 = game.run()
 
-    expect(game.getBiscuitsByPlayer(t.dennis(game))).toStrictEqual({
+    expect(game.getBiscuitsByPlayer(t.dennis(game))).toEqual({
       c: 3,
       f: 0,
       i: 0,

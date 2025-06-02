@@ -12,9 +12,9 @@ describe('Astronomy', () => {
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Astronomy')
 
-    expect(t.cards(game, 'blue')).toStrictEqual(['Atomic Theory'])
-    expect(t.cards(game, 'green')).toStrictEqual(['Classification'])
-    expect(t.cards(game, 'hand')).toStrictEqual(['Industrialization'])
+    expect(t.cards(game, 'blue')).toEqual(['Atomic Theory'])
+    expect(t.cards(game, 'green')).toEqual(['Classification'])
+    expect(t.cards(game, 'hand')).toEqual(['Industrialization'])
   })
 
   test('win condition, yes', () => {
@@ -26,7 +26,7 @@ describe('Astronomy', () => {
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Astronomy')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['Universe'])
+    expect(t.cards(game, 'achievements')).toEqual(['Universe'])
   })
 
   test('win condition, no', () => {
@@ -39,6 +39,6 @@ describe('Astronomy', () => {
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Astronomy')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    expect(t.cards(game, 'achievements')).toEqual([])
   })
 })

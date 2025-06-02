@@ -18,7 +18,7 @@ function Card() {
     (game, player) => {
       const hand = game.getZoneByPlayer(player, 'hand').cards()
       if (hand.length === 0) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
         return
       }
 
@@ -28,7 +28,7 @@ function Card() {
         game.aJunk(player, card)
 
         const cardValue = card.getAge()
-        game.mLog({
+        game.log.add({
           template: '{player} will return all cards of value {value} from hand',
           args: { player, value: cardValue }
         })

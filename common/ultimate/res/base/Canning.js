@@ -28,7 +28,7 @@ function Card() {
         game.aScoreMany(player, toReturn)
       }
       else {
-        game.mLogDoNothing(player)
+        game.log.addDoNothing(player)
       }
     },
 

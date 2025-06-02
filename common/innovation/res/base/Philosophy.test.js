@@ -43,7 +43,7 @@ describe('Philosophy', () => {
       t.choose(game, request2, 'Industrialization')
 
       const score = game.getZoneByPlayer(t.dennis(game), 'score').cards().map(c => c.name)
-      expect(score).toStrictEqual(['Industrialization'])
+      expect(score).toEqual(['Industrialization'])
     })
 
     test('do not return a card', () => {
@@ -56,7 +56,7 @@ describe('Philosophy', () => {
       t.choose(game, request2)
 
       const score = game.getZoneByPlayer(t.dennis(game), 'score').cards().map(c => c.name)
-      expect(score).toStrictEqual([])
+      expect(score).toEqual([])
     })
   })
 })

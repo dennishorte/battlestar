@@ -33,7 +33,7 @@ function Card() {
           game.aRemove(player, card)
         }
         else {
-          game.mLog({
+          game.log.add({
             template: "{card} is no longer a top card on {player}'s board",
             args: { card, player }
           })

@@ -29,7 +29,7 @@ function Card() {
         game.aCardEffects(player, card, 'dogma')
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     }
   ]

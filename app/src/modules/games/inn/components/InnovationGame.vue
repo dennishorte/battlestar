@@ -80,10 +80,10 @@ export default {
 
   computed: {
     players() {
-      return this.game.getPlayersStarting(this.viewer)
+      return this.game.players.startingWith(this.viewer)
     },
     viewer() {
-      return this.game.getPlayerByName(this.actor.name)
+      return this.game.players.byName(this.actor.name)
     },
   },
 
@@ -97,7 +97,7 @@ export default {
 
       const insertSelectorSubtitles = (selector) => {
         if (selector.title === 'Dogma') {
-          const player = this.game.getPlayerByName(this.actor.name)
+          const player = this.game.players.byName(this.actor.name)
           const updated = []
           for (const option of selector.choices) {
             const cardName = option.title || option
@@ -131,7 +131,7 @@ export default {
         }
 
         else if (selector.title === 'Free Artifact Action') {
-          const player = this.game.getPlayerCurrent()
+          const player = this.game.players.current()
           const card = this.game.getCardsByZone(player, 'artifact')[0]
           const effects = this.game.getVisibleEffectsByColor(player, card.color, 'echo')
           if (effects.length > 0) {

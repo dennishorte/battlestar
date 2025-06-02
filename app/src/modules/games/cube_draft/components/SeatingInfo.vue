@@ -29,7 +29,7 @@ export default {
     playerInfo() {
       return this
         .game
-        .getPlayerAll()
+        .players.all()
         .map(player => {
           const waitingPacks = []
           for (let i = 0; i < this.game.settings.numPacks; i++) {

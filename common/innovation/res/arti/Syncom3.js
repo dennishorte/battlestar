@@ -30,7 +30,7 @@ function Card() {
 
       const colors = drawn.map(card => card.color)
       const colorCount = util.array.distinct(colors).length
-      game.mLog({ template: `Player drew ${colorCount} colors`})
+      game.log.add({ template: `Player drew ${colorCount} colors`})
       if (colorCount === 5) {
         throw new GameOverEvent({
           player,

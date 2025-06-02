@@ -23,7 +23,7 @@ function Card() {
         .filter(color => game.getCardsByZone(player, color).length > 0)
 
       const color = game.aChoose(player, colors, 'Choose a Color')[0]
-      game.mLog({
+      game.log.add({
         template: '{player} choose {color}',
         args: { player, color }
       })
@@ -40,7 +40,7 @@ function Card() {
         )
 
         if (card === 'auto') {
-          game.mLog({
+          game.log.add({
             template: '{player} leaves the rest in their current order',
             args: { player }
           })
@@ -52,7 +52,7 @@ function Card() {
           zone, position
         )
 
-        game.mLog({
+        game.log.add({
           template: `{player} moves {card} to ${posString}`,
           args: { player, card }
         })

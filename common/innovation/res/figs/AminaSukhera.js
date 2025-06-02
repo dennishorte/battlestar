@@ -20,7 +20,7 @@ function Card() {
   this.echoImpl = []
   this.inspireImpl = (game, player) => {
     const cards = game
-      .getPlayerAll()
+      .players.all()
       .map(p => game.getZoneByPlayer(p, 'purple').cards().slice(-1)[0])
       .filter(card => card !== undefined)
     game.aScoreMany(player, cards)
@@ -29,7 +29,7 @@ function Card() {
     {
       trigger: 'when-meld',
       func(game, player) {
-        for (const opp of game.getPlayerOpponents(player)) {
+        for (const opp of game.players.opponentsOf(player)) {
           const topFigures = game
             .getTopCards(opp)
             .filter(card => card.checkIsFigure())

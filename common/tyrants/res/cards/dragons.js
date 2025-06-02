@@ -16,11 +16,11 @@ const cardData = [
     impl: (game, player) => game.aChooseOne(player, [
       {
         title: '+2 power',
-        impl: (game, player) => player.incrementPower(2),
+        impl: (game, player) => player.incrementCounter('power', 2),
       },
       {
         title: '+2 influence',
-        impl: (game, player) => player.incrementInfluence(2),
+        impl: (game, player) => player.incrementCounter('influence', 2),
       },
     ])
   },
@@ -39,8 +39,8 @@ const cardData = [
       "+2 influence"
     ],
     impl: (game, player) => {
-      player.incrementPower(2)
-      player.incrementInfluence(2)
+      player.incrementCounter('power', 2)
+      player.incrementCounter('influence', 2)
     }
   },
   {
@@ -64,7 +64,7 @@ const cardData = [
         .length
 
       if (playerTroops >= 5) {
-        player.incrementPower(2)
+        player.incrementCounter('power', 2)
       }
     }
   },
@@ -81,7 +81,7 @@ const cardData = [
     text: [
       "+5 power"
     ],
-    impl: (game, player) => player.incrementPower(5),
+    impl: (game, player) => player.incrementCounter('power', 5),
   },
   {
     name: "Red Dragon",
@@ -106,7 +106,7 @@ const cardData = [
         .filter(loc => loc.getTotalController() === player)
         .length
 
-      player.incrementPoints(totalControl)
+      player.incrementCounter('points', totalControl)
     }
   },
   {
@@ -167,7 +167,7 @@ const cardData = [
       "Assassinate a white troop."
     ],
     impl: (game, player) => {
-      player.incrementInfluence(1)
+      player.incrementCounter('influence', 1)
       game.aChooseAndAssassinate(player, { whiteOnly: true })
     }
   },
@@ -193,14 +193,14 @@ const cardData = [
         .getLocationAll()
         .filter(loc => loc.getController() === player)
         .length
-      game.mLog({
+      game.log.add({
         template: '{player} controls {count} sites',
         args: {
           player,
           count: controlledSites
         }
       })
-      player.incrementPoints(Math.floor(controlledSites / 2))
+      player.incrementCounter('points', Math.floor(controlledSites / 2))
     }
   },
   {
@@ -223,7 +223,7 @@ const cardData = [
         .getCardsByZone(player, 'trophyHall')
         .filter(card => card.name === 'neutral')
         .length
-      player.incrementPoints(Math.floor(whiteTrophies / 3))
+      player.incrementCounter('points', Math.floor(whiteTrophies / 3))
     }
   },
   {
@@ -248,7 +248,7 @@ const cardData = [
       {
         title: 'Return one of your spies > +3 influence',
         impl: (game, player) => game.aReturnASpyAnd(player, (game, player) => {
-          player.incrementInfluence(3)
+          player.incrementCounter('influence', 3)
         })
       }
     ])
@@ -275,7 +275,7 @@ const cardData = [
       {
         title: 'Return one of your spies > +4 power',
         impl: (game, player) => game.aReturnASpyAnd(player, (game, player) => {
-          player.incrementPower(4)
+          player.incrementCounter('power', 4)
         })
       }
     ])
@@ -299,10 +299,10 @@ const cardData = [
         const anotherPlayer = loc
           .getTroops()
           .filter(troop => troop.owner !== undefined)
-          .filter(troop => game.getPlayerByCard(troop) !== player)
+          .filter(troop => game.players.byOwner(troop) !== player)
           .length > 0
         if (anotherPlayer) {
-          player.incrementInfluence(2)
+          player.incrementCounter('influence', 2)
         }
       }
     }
@@ -354,7 +354,7 @@ const cardData = [
         title: "Return one of your spies > Supplant a troop at that spy's site, then gain 1 VP for each site control marker you have",
         impl: (game, player) => game.aReturnASpyAnd(player, (game, player, { loc }) => {
           game.aChooseAndSupplant(player, { loc })
-          player.incrementPoints(game.getControlMarkers(player).length)
+          player.incrementCounter('points', game.getControlMarkers(player).length)
         })
       }
     ])
@@ -373,7 +373,7 @@ const cardData = [
       "You may devour up to three cards in the market."
     ],
     impl: (game, player) => {
-      player.incrementInfluence(2)
+      player.incrementCounter('influence', 2)
       game.aChooseAndDevourMarket(player, { max: 3 })
     }
   },
@@ -410,7 +410,7 @@ const cardData = [
       "At end of turn, promote another card played this turn."
     ],
     impl: (game, player, { card }) => {
-      player.incrementInfluence(1)
+      player.incrementCounter('influence', 1)
       game.aDeferPromotion(player, card)
     }
   },
@@ -428,7 +428,7 @@ const cardData = [
       "Return another player's troop or spy."
     ],
     impl: (game, player) => {
-      player.incrementInfluence(3)
+      player.incrementCounter('influence', 3)
       game.aChooseAndReturn(player, { noWhite: true })
     }
   },
@@ -450,7 +450,7 @@ const cardData = [
       game.aDeferPromotion(player, card, { optional: true })
       game.aDeferSpecial(player, card, (game, player) => {
         const innerCircle = game.getCardsByZone(player, 'innerCircle').length
-        player.incrementPoints(Math.floor(innerCircle / 3))
+        player.incrementCounter('points', Math.floor(innerCircle / 3))
       })
     }
   }

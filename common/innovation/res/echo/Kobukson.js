@@ -36,7 +36,7 @@ function Card() {
 
     (game, player) => {
       const count = Math.floor(game.state.dogmaInfo.kobukson / 2)
-      game.mLog({
+      game.log.add({
         template: `${game.state.dogmaInfo.kobukson} cards were returned due to the demand`
       })
 
@@ -47,14 +47,14 @@ function Card() {
   ]
   this.echoImpl = (game, player) => {
     const choices = game
-      .getPlayerAll()
+      .players.all()
       .flatMap(player => game.utilColors().map(color => ({ player, color })))
       .map(x => `${x.player.name} ${x.color}`)
 
     const toSplayLeft = game.aChoose(player, choices, { title: 'Choose a stack to splay left' })
     if (toSplayLeft && toSplayLeft.length > 0) {
       const [playerName, color] = toSplayLeft[0].split(' ')
-      const target = game.getPlayerByName(playerName)
+      const target = game.players.byName(playerName)
       game.aSplay(player, color, 'left', { owner: target })
     }
   }

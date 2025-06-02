@@ -41,7 +41,7 @@ function Card() {
       game.aDrawAndScore(player, game.getEffectAge(this, 7))
     }
     else {
-      game.mLogNoEffect()
+      game.log.addNoEffect()
     }
   }
   this.inspireImpl = []

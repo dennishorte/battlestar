@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       if (!this.checkIsOnPlayerBoard(player)) {
-        game.mLog({
+        game.log.add({
           template: "{card} is not on {player}'s board.",
           args: { card: this, player }
         })
@@ -26,7 +26,8 @@ function Card() {
       }
 
       const choices = game
-        .getPlayerOther(player)
+        .players
+        .other(player)
         .flatMap(player => game.getTopCards(player))
       const card = game.aChooseCard(player, choices)
       if (card) {

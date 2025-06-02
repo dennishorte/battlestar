@@ -33,8 +33,8 @@
 
 
 <script>
-import ModalBase from '@/components/ModalBase'
-import MagicCard from '@/modules/magic/components/MagicCard'
+import ModalBase from '@/components/ModalBase.vue'
+import MagicCard from '@/modules/magic/components/card/MagicCard.vue'
 
 export default {
   name: 'CardManagerModal',

@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = (game, player) => {
     const choices = game
-      .getPlayerAll()
+      .players.all()
       .filter(other => other !== player)
       .flatMap(player => game.getCardsByZone(player, 'score'))
       .filter(card => card.checkIsFigure())
@@ -44,13 +44,13 @@ function Card() {
           const deckCards = game.getZoneByDeck('base', age).cards()
           const card = deckCards[deckCards.length - 1]
           game.mMoveCardTo(card, game.getZoneById('achievements'))
-          game.mLog({
+          game.log.add({
             template: '{player} moves {card} to the available achievements',
             args: { player, card }
           })
         }
         else {
-          game.mLogNoEffect()
+          game.log.addNoEffect()
         }
       }
     }

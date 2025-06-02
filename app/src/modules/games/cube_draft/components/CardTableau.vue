@@ -5,7 +5,11 @@
          :key="card.g.id"
          @click="cardClicked(card)" >
       <div class="card-display" @click="showDraftModal = true">
-        <MagicCard :size="220" :card="card" :scrollable="cardScroll" />
+        <MagicCard
+          :size="220"
+          :card="card"
+          :scrollable="cardScroll"
+          :disabled="cannotDraft(card)" />
       </div>
       <div class="card-overlay" v-if="cannotDraft(card)"/>
     </div>
@@ -14,7 +18,7 @@
 
 
 <script>
-import MagicCard from '@/modules/magic/components/MagicCard'
+import MagicCard from '@/modules/magic/components/card/MagicCard.vue'
 
 
 export default {
@@ -42,11 +46,14 @@ export default {
 
   methods: {
     cannotDraft(card) {
-      const player = this.game.getPlayerByName(this.actor.name)
+      const player = this.game.players.byName(this.actor.name)
       return card.g.id === player.scarredCardId
     },
 
     cardClicked(card) {
+      if (this.cannotDraft(card)) {
+        return
+      }
       this.$emit('card-clicked', card)
     },
   },

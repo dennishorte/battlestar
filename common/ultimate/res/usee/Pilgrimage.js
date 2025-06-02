@@ -33,7 +33,7 @@ function Card() {
           game.aSafeguard(player, availableAchievements[0])
         }
         else {
-          game.mLogNoEffect()
+          game.log.addNoEffect()
         }
 
         value++

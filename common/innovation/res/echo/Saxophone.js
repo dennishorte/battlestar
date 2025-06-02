@@ -25,7 +25,7 @@ function Card() {
     (game, player) => {
       let count = 0
 
-      for (const player of game.getPlayerAll()) {
+      for (const player of game.players.all()) {
         for (const color of game.utilColors()) {
           const zone = game.getZoneByPlayer(player, color)
           const cards = zone.cards()

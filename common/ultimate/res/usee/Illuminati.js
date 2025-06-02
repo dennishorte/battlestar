@@ -36,7 +36,7 @@ function Card() {
           game.aSafeguard(player, higherAchievement)
         }
         else {
-          game.mLog({
+          game.log.add({
             template: 'No available achievement of value {age} to safeguard',
             args: { age: card.getAge() + 1 }
           })

@@ -1,6 +1,7 @@
 {
   "name": "battlestar-common",
   "version": "0.0.1",
+  "type": "commonjs",
   "main": "main.js",
   "dependencies": {
     "seedrandom": "^3.0.5"

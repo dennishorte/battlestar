@@ -12,7 +12,7 @@ describe('Calendar', () => {
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Calendar')
 
-    expect(t.cards(game, 'hand')).toStrictEqual(['Gunpowder', 'Paper'])
+    expect(t.cards(game, 'hand')).toEqual(['Gunpowder', 'Paper'])
   })
 
   test('have less', () => {
@@ -23,6 +23,6 @@ describe('Calendar', () => {
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Calendar')
 
-    expect(t.cards(game, 'hand')).toStrictEqual(['Printing Press'])
+    expect(t.cards(game, 'hand')).toEqual(['Printing Press'])
   })
 })

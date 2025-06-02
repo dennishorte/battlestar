@@ -27,7 +27,7 @@ function Card() {
     (game, player, { self }) => {
       while (true) {
         if (game.aFlipCoin(player)) {
-          game.mLog({
+          game.log.add({
             template: '{player} wins the coin flip and the effect ends.',
             args: { player },
           })
@@ -40,7 +40,7 @@ function Card() {
         })
 
         if (returned.length === 0) {
-          game.mLog({
+          game.log.add({
             template: '{player} has no secrets to return and loses the game!',
             args: { player },
           })

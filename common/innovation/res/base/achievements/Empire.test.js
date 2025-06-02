@@ -26,7 +26,7 @@ describe('Empire Achievement', () => {
 
     const request2 = t.choose(game, request1, 'Meld.Databases')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['Empire'])
+    expect(t.cards(game, 'achievements')).toEqual(['Empire'])
   })
 
   test('not quite', () => {
@@ -52,6 +52,6 @@ describe('Empire Achievement', () => {
 
     const request2 = t.choose(game, request1, 'Meld.Bioengineering')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    expect(t.cards(game, 'achievements')).toEqual([])
   })
 })

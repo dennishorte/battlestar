@@ -22,7 +22,7 @@ function Card() {
     (game, player) => {
       game.aDrawAndMeld(player, game.getEffectAge(this, 9))
       const card = game.aDrawAndMeld(player, game.getEffectAge(this, 9))
-      game.mLog({
+      game.log.add({
         template: '{player} will execute {card}',
         args: { player, card }
       })

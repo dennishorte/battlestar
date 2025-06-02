@@ -34,7 +34,7 @@ function Card() {
         .sort()
 
       if (validValues.length === 0) {
-        game.mLog({
+        game.log.add({
           template: '{player} has no valid pairs of cards to return',
           args: { player }
         })

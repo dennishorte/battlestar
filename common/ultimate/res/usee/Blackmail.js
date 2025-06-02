@@ -36,7 +36,7 @@ function Card() {
         title: 'Choose a card to force opponent to self-execute',
       })
       if (toExecute) {
-        game.mLog({ template: `Replacing 'may' with 'must' is almost certainly buggy. Tell Dennis what goes wrong.` })
+        game.log.add({ template: `Replacing 'may' with 'must' is almost certainly buggy. Tell Dennis what goes wrong.` })
         game.state.dogmaInfo.mayIsMust = true
         game.aSelfExecute(player, toExecute)
         game.state.dogmaInfo.mayIsMust = false

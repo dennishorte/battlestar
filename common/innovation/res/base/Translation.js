@@ -20,7 +20,7 @@ function Card() {
     (game, player) => {
       const cards = game.getCardsByZone(player, 'score')
       if (cards.length === 0) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
       else {
         const doIt = game.aYesNo(player, 'Meld all cards in your score pile?')
@@ -28,7 +28,7 @@ function Card() {
           game.aMeldMany(player, game.getCardsByZone(player, 'score'))
         }
         else {
-          game.mLogDoNothing(player)
+          game.log.addDoNothing(player)
         }
       }
     },

@@ -13,14 +13,14 @@ describe('Michaelangelo', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Inspire.yellow')
     const request3 = t.choose(game, request2, 'Al-Kindi')
-    expect(t.cards(game, 'score').sort()).toStrictEqual([
+    expect(t.cards(game, 'score').sort()).toEqual([
       'Al-Kindi',
       'Construction',
       'Enterprise',
       'Sailing',
       'Tools',
     ])
-    expect(t.cards(game, 'hand').sort()).toStrictEqual(['Enterprise', 'Sailing'])
+    expect(t.cards(game, 'hand').sort()).toEqual(['Enterprise', 'Sailing'])
   })
 
   test('karma', () => {
@@ -31,7 +31,7 @@ describe('Michaelangelo', () => {
     })
     const request1 = game.run()
 
-    expect(t.cards(game, 'score').sort()).toStrictEqual([
+    expect(t.cards(game, 'score').sort()).toEqual([
       'Al-Kindi',
       'Construction',
       'Sailing',

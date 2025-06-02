@@ -16,7 +16,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const opponent = game.aChoosePlayer(player, game.getPlayerOpponents(player))
+      const opponent = game.aChoosePlayer(player, game.players.opponentsOf(player))
 
       game.aDrawAndMeld(player, game.getEffectAge(this, 10))
       game.aDrawAndMeld(player, game.getEffectAge(this, 10))
@@ -24,7 +24,7 @@ function Card() {
       const topCards = game.getTopCards(player)
       const card = game.aChooseCard(opponent, topCards)
 
-      game.mLog({
+      game.log.add({
         template: '{opponent} chooses {card} for {player} to execute',
         args: { opponent, player, card }
       })

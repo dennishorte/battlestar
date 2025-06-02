@@ -43,6 +43,6 @@ describe('Zhang Heng', () => {
 
     const request1 = game.run()
 
-    expect(game.getBonuses(t.dennis(game))).toStrictEqual([10, 4, 2])
+    expect(game.getBonuses(t.dennis(game))).toEqual([10, 4, 2])
   })
 })

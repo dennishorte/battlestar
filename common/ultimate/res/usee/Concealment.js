@@ -28,7 +28,7 @@ function Card() {
         game.aSafeguard(player, bottomPurpleCard)
       }
       else {
-        game.mLog({
+        game.log.add({
           template: '{player} has no bottom purple card',
           args: { player }
         })

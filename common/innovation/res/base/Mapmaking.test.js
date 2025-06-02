@@ -13,7 +13,7 @@ describe('Mapmaking', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Mapmaking')
 
-    expect(t.cards(game, 'score').sort()).toStrictEqual(['Mysticism', 'The Wheel'])
+    expect(t.cards(game, 'score').sort()).toEqual(['Mysticism', 'The Wheel'])
   })
 
   test('if a card was not transferred', () => {
@@ -27,6 +27,6 @@ describe('Mapmaking', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Mapmaking')
 
-    expect(t.cards(game, 'score').sort()).toStrictEqual([])
+    expect(t.cards(game, 'score').sort()).toEqual([])
   })
 })

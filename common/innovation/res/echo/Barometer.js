@@ -20,7 +20,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const bonuses = game
-        .getPlayerAll()
+        .players.all()
         .flatMap(player => game.getBonuses(player))
         .map(bonus => bonus + 2)
         .sort((l, r) => l - r)

@@ -40,7 +40,7 @@ function Card() {
           game.getZoneById('junk'),
         )
 
-        game.mLog({
+        game.log.add({
           template: '{player} exchanges their score with the valued cards in junk',
           args: { player },
         })

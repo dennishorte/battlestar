@@ -41,7 +41,7 @@ function Card() {
           }
         }
         else {
-          game.mLogDoNothing(player)
+          game.log.addDoNothing(player)
           break
         }
       }
@@ -49,7 +49,7 @@ function Card() {
 
     (game, player) => {
       const paper = game
-        .getPlayerAll()
+        .players.all()
         .flatMap(player => game.getTopCards(player))
         .filter(card => card.name === 'Paper')
 

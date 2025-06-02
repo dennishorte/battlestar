@@ -48,7 +48,7 @@ export default {
   computed: {
     playersOrdered() {
       if (this.game.state.initializationComplete) {
-        return this.game.getPlayersStarting(this.game.getPlayerByName(this.actor.name))
+        return this.game.players.startingWith(this.game.players.byName(this.actor.name))
       }
       else {
         return []

@@ -1,119 +1,68 @@
 <template>
   <div class="cube-menu">
     <button class="btn" :class="buttonClassesCards" @click="navigate('cards')">
-      cards ({{ counts.cards }})
+      cards ({{ cube.cards().length }})
     </button>
 
-    <template v-if="!!cube.allowEdits">
+    <template v-if="cube.flags.legacy">
       <button class="btn" :class="buttonClassesScars" @click="navigate('scars')">
-        scars ({{ counts.scars }})
+        scars ({{ cube.scarsUnused().length }})
       </button>
       <button class="btn" :class="buttonClassesAchievements" @click="navigate('achievements')">
-        achievements ({{ counts.achievements }})
+        achievements ({{ cube.achievementsUnclaimed().length }})
       </button>
     </template>
 
     <button class="btn btn-secondary" @click="toggleSearch">
       search
-      <input type="checkbox" class="form-check-input" @click="$emit('toggle-search')" />
+      <input type="checkbox" class="form-check-input" @click="emit('toggle-search')" />
     </button>
 
-    <DropdownMenu text="menu">
-      <DropdownButton @click="this.$modal('cube-update-modal').show()">add/remove cards</DropdownButton>
-      <DropdownButton @click="this.$modal('cube-add-modal').show()">add one card</DropdownButton>
-      <DropdownButton @click="createCard">create card</DropdownButton>
-
-      <DropdownDivider />
-
-      <DropdownButton @click="randomCard">random card</DropdownButton>
+    <BDropdown text="menu">
+      <BDropdownItem @click="emit('add-remove-cards')">add/remove cards</BDropdownItem>
+      <BDropdownItem @click="emit('add-one-card')">add one card</BDropdownItem>
+      <BDropdownItem v-if="cube.flags.editable" @click="emit('create-card')">create card</BDropdownItem>
 
       <template v-if="viewerIsOwner">
-        <DropdownDivider />
-        <DropdownButton @click="openSettings">settings</DropdownButton>
+        <BDropdownDivider />
+        <BDropdownItem @click="emit('open-settings')">settings</BDropdownItem>
       </template>
-    </DropdownMenu>
+    </BDropdown>
   </div>
 </template>
 
-<script>
-import DropdownMenu from '@/components/DropdownMenu'
-import DropdownButton from '@/components/DropdownButton'
-import DropdownDivider from '@/components/DropdownDivider'
-import { mag } from 'battlestar-common'
+<script setup>
+import { computed, inject } from 'vue'
 
-export default {
-  name: 'CubeMenu',
-
-  components: {
-    DropdownMenu,
-    DropdownButton,
-    DropdownDivider,
+const props = defineProps({
+  cube: {
+    type: Object,
+    required: true
   },
-
-  inject: ['bus'],
-
-  emits: ['toggle-search', 'navigate'],
-
-  props: {
-    counts: {
-      type: Object,
-      required: true
-    },
-    cube: {
-      type: Object,
-      required: true
-    },
-    showing: {
-      type: String,
-      required: true
-    },
+  showing: {
+    type: String,
+    required: true
   },
+})
 
-  computed: {
-    buttonClassesCards() {
-      return this.showing === 'cards' ? 'btn-primary' : 'btn-secondary'
-    },
-    buttonClassesScars() {
-      return this.showing === 'scars' ? 'btn-primary' : 'btn-secondary'
-    },
-    buttonClassesAchievements() {
-      return this.showing === 'achievements' ? 'btn-primary' : 'btn-secondary'
-    },
-  },
+const emit = defineEmits([
+  'toggle-search',
+  'navigate',
+  'open-settings',
+  'add-remove-cards',
+  'add-one-card',
+  'create-card',
+])
 
-  methods: {
-    createCard() {
-      this.$store.commit('magic/cube/manageCard', mag.util.card.blank())
-      this.$modal('card-editor-modal').show()
-    },
+const actor = inject('actor')
 
-    createScar() {
-      const blank = {
-        _id: null,
-        cubeId: this.cube._id,
-        text: '',
-      }
-      this.$store.commit('magic/cube/manageScar', blank)
-      this.$modal('scar-modal').show()
-    },
+const buttonClassesCards = computed(() => props.showing === 'cards' ? 'btn-primary' : 'btn-secondary')
+const buttonClassesScars = computed(() => props.showing === 'scars' ? 'btn-primary' : 'btn-secondary')
+const buttonClassesAchievements = computed(() => props.showing === 'achievements' ? 'btn-primary' : 'btn-secondary')
+const viewerIsOwner = computed(() => props.cube ? actor._id === props.cube.userId : false)
 
-    openSettings() {
-      this.bus.emit('open-cube-settings', this.cube)
-    },
-
-    randomCard(card) {
-      const link = this.$store.getters['magic/cards/cardLink'](card._id)
-      this.$router.push(link)
-    },
-
-    navigate(tab) {
-      this.$emit('navigate', tab)
-    },
-
-    viewerIsOwner() {
-      return this.cube ? this.actor._id === this.cube.userId : false
-    },
-  },
+function navigate(tab) {
+  emit('navigate', tab)
 }
 </script>
 

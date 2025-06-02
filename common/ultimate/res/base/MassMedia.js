@@ -20,17 +20,17 @@ function Card() {
       const cards = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
       if (cards && cards.length > 0) {
         const age = game.aChooseAge(player)
-        game.mLog({
+        game.log.add({
           template: '{player} chooses age {age}',
           args: { player, age }
         })
-        game.mLogIndent()
+        game.log.indent()
         const toReturn = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game.getCardsByZone(player, 'score'))
           .filter(card => card.getAge() === age)
         game.aReturnMany(player, toReturn)
-        game.mLogOutdent()
+        game.log.outdent()
       }
     },
 

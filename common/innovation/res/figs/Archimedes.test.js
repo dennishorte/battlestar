@@ -10,7 +10,7 @@ describe('Archimedes', () => {
     })
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Archimedes')
-    expect(t.cards(game, 'hand').sort()).toStrictEqual(['Machinery'])
+    expect(t.cards(game, 'hand').sort()).toEqual(['Machinery'])
   })
 
   test('karma: decree', () => {
@@ -26,7 +26,7 @@ describe('Archimedes', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.The Wheel')
 
-    expect(t.cards(game, 'hand').sort()).toStrictEqual(['Calendar', 'Construction'])
+    expect(t.cards(game, 'hand').sort()).toEqual(['Calendar', 'Construction'])
   })
 
   test('karma: effect age only triggers at start of action', () => {

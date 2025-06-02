@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       if (!game.state.dogmaInfo.dentures) {
-        game.mLog({
+        game.log.add({
           template: "No cards scored with Dentures's echo effect"
         })
         return
@@ -30,13 +30,13 @@ function Card() {
       while (true) {
         if (card) {
           const cards = game.getCardsByZone(player, card.color)
-          game.mLog({
+          game.log.add({
             template: '{player} will try to score {color}',
             args: { player, color: card.color }
           })
 
           if (cards.length === 1) {
-            game.mLog({
+            game.log.add({
               template: '{player} has no non-bottom {color} cards',
               args: { player, color: card.color }
             })
@@ -52,7 +52,7 @@ function Card() {
           break
         }
         else {
-          game.mLogNoEffect()
+          game.log.addNoEffect()
           break
         }
       }

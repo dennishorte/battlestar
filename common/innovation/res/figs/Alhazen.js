@@ -19,7 +19,7 @@ function Card() {
   this.echoImpl = [
     (game, player) => {
       const topCardsWithCastles = game
-        .getPlayerAll()
+        .players.all()
         .flatMap(p => game.getTopCards(p))
         .filter(card => card.biscuits.includes('k'))
 

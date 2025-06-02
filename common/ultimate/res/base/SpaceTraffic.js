@@ -22,12 +22,12 @@ function Card() {
         const stack = game.getCardsByZone(player, color)
 
         if (stack.length === 1) {
-          game.mLog({ template: 'no card above tucked card' })
+          game.log.add({ template: 'no card above tucked card' })
         }
         else {
           const cardAbove = stack.slice(-2, -1)[0]
           if (cardAbove.getAge() === game.getEffectAge(this, 11)) {
-            game.mLog({
+            game.log.add({
               template: '{player} tucked the card just under an 11',
               args: { player },
             })
@@ -47,7 +47,7 @@ function Card() {
 
         // Check if player doesn't have highest score
         const playerScore = game.getScore(player)
-        const highestScore = Math.max(...game.getPlayerAll().map(p => game.getScore(p)))
+        const highestScore = Math.max(...game.players.all().map(p => game.getScore(p)))
 
         return playerScore < highestScore
       }
@@ -57,7 +57,7 @@ function Card() {
 
       // Repeat if needed
       while (shouldRepeat) {
-        game.mLog({
+        game.log.add({
           template: '{player} repeats the effect',
           args: { player }
         })

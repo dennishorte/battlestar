@@ -30,7 +30,7 @@ function Card() {
         if (scored && scored.length >= 2) {
           const total = scored[0].getAge() + scored[1].getAge()
           if (total >= 11) {
-            game.mLog({ template: 'Total age was not less than 11' })
+            game.log.add({ template: 'Total age was not less than 11' })
             break
           }
           else {
@@ -45,7 +45,7 @@ function Card() {
           }
         }
         else {
-          game.mLog({ template: 'Did not return two cards' })
+          game.log.add({ template: 'Did not return two cards' })
           break
         }
       }

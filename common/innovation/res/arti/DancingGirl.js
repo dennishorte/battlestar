@@ -52,13 +52,13 @@ function Card() {
 
      * (game, player, { leader }) => {
      *   if (player !== leader) {
-     *     game.mLogNoEffect()
+     *     game.log.addNoEffect()
      *     return
      *   }
 
      *   const info = game.state.dogmaInfo.dancingGirl
      *   const startingCondition = info.startingZone === `players.${player.name}.yellow`
-     *   const travelCondition = info.zones.length === game.getPlayerAll().length - 1
+     *   const travelCondition = info.zones.length === game.players.all().length - 1
 
      *   if (startingCondition && travelCondition) {
      *     throw new GameOverEvent({
@@ -67,7 +67,7 @@ function Card() {
      *     })
      *   }
      *   else {
-     *     game.mLogNoEffect()
+     *     game.log.addNoEffect()
      *   }
      * } */
   ]

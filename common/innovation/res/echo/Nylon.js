@@ -29,7 +29,7 @@ function Card() {
         }
 
         if (tucked.some(card => card.color === 'green')) {
-          game.mLog({
+          game.log.add({
             template: '{player} tucked at least one green card; repeating.',
             args: { player }
           })

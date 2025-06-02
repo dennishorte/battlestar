@@ -22,7 +22,7 @@ function Card() {
       const lowestSecret = game.utilLowestCards(opponentSecrets)[0]
 
       if (!lowestSecret) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
         return
       }
 
@@ -31,7 +31,7 @@ function Card() {
 
     (game, player) => {
       const players = game
-        .getPlayerAll(player)
+        .players.all(player)
         .filter(p => game.getCardsByZone(p, 'score').length > 0)
         .map(p => p.name)
 
@@ -40,7 +40,7 @@ function Card() {
       })[0]
 
       if (targetName) {
-        const target = game.getPlayerByName(targetName)
+        const target = game.players.byName(targetName)
 
         const card = game.aChooseCards(player, game.getCardsByZone(target, 'score'), {
           title: 'Choose a card to tuck',

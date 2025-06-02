@@ -1,0 +1,37 @@
+{
+  "_id": "scryfall-md5-f0713502d90b7163f0241b5759643075",
+  "source": "scryfall",
+  "data": {
+    "layout": "normal",
+    "set": "ogw",
+    "collector_number": "41",
+    "digital": false,
+    "rarity": "common",
+    "card_faces": [
+      {
+        "artist": "Lake Hurwitz",
+        "flavor_text": "\"Zendikar's true gods have risen. Whether in reverence or agony, all the world will kneel.\"\n—Ayli, high priest of the Eternal Pilgrims",
+        "mana_cost": "{1}{U}",
+        "name": "Blinding Drone",
+        "oracle_text": "Devoid (This card has no color.)\n{C}, {T}: Tap target creature. ({C} represents colorless mana.)",
+        "power": "1",
+        "toughness": "3",
+        "type_line": "Creature — Eldrazi Drone",
+        "image_uri": "https://cards.scryfall.io/art_crop/front/4/e/4eb60957-0811-40c3-a92b-cce3e6a94745.jpg?1562910930"
+      }
+    ],
+    "legal": [
+      "pioneer",
+      "modern",
+      "legacy",
+      "pauper",
+      "vintage",
+      "penny",
+      "commander",
+      "oathbreaker",
+      "paupercommander",
+      "duel"
+    ],
+    "_id": "scryfall-md5-f0713502d90b7163f0241b5759643075"
+  }
+}

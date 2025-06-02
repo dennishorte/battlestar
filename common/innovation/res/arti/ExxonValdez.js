@@ -31,14 +31,14 @@ function Card() {
 
       game.aRemoveMany(player, toRemove)
 
-      game.mLog({
+      game.log.add({
         template: '{player} exiles all of their cards',
         args: { player }
       })
 
       game.aYouLose(player)
 
-      const livingPlayers = game.getPlayerAll().filter(player => !player.dead)
+      const livingPlayers = game.players.all().filter(player => !player.dead)
 
       if (livingPlayers.length === 1) {
         throw new GameOverEvent({

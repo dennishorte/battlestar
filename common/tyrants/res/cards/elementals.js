@@ -15,7 +15,7 @@ const cardData = [
     impl: (game, player) => {
       game.aChooseAndAssassinate(player)
       game.aWithFocusAspect(player, 'malice', () => {
-        player.incrementPower(2)
+        player.incrementCounter('power', 2)
       })
     },
   },
@@ -38,11 +38,11 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: '+2 power',
-          impl: (game, player) => player.incrementPower(2),
+          impl: (game, player) => player.incrementCounter('power', 2),
         },
         {
           title: '+2 influence',
-          impl: (game, player) => player.incrementInfluence(2),
+          impl: (game, player) => player.incrementCounter('influence', 2),
         },
       ])
       game.aWithFocusAspect(player, 'malice', () => {
@@ -65,7 +65,7 @@ const cardData = [
       "At end of turn, promote an Obedience card played this turn"
     ],
     impl: (game, player, { card }) => {
-      player.incrementPower(2)
+      player.incrementCounter('power', 2)
       game.aDeferPromotionAspect(player, card, 'obedience')
     }
   },
@@ -102,9 +102,9 @@ const cardData = [
       "Malice Focus > +2 power"
     ],
     impl: (game, player) => {
-      player.incrementPower(4)
+      player.incrementCounter('power', 4)
       game.aWithFocusAspect(player, 'malice', () => {
-        player.incrementPower(2)
+        player.incrementCounter('power', 2)
       })
     }
   },
@@ -272,14 +272,14 @@ const cardData = [
           title: 'Return one of your spies > +3 influence',
           impl: () => {
             game.aReturnASpyAnd(player, () => {
-              player.incrementInfluence(3)
+              player.incrementCounter('influence', 3)
             })
           }
         },
       ])
 
       game.aWithFocusAspect(player, 'guile', () => {
-        player.incrementPower(1)
+        player.incrementCounter('power', 1)
       })
     }
   },
@@ -316,7 +316,7 @@ const cardData = [
       "Recruit a Guile card that costs 4 or less without paying its cost."
     ],
     impl: (game, player) => {
-      player.incrementPower(1)
+      player.incrementCounter('power', 1)
       game.aChooseAndPlaceSpy(player)
       game.aChooseAndRecruit(player, 4, { aspect: 'guile' })
     }
@@ -362,7 +362,7 @@ const cardData = [
     impl: (game, player, { card }) => {
       game.aDeferPromotion(player, card)
       game.aWithFocusAspect(player, 'ambition', () => {
-        player.incrementInfluence(2)
+        player.incrementCounter('influence', 2)
       })
     }
   },
@@ -381,7 +381,7 @@ const cardData = [
       "Ambition focus > Draw a card"
     ],
     impl: (game, player) => {
-      player.incrementInfluence(1)
+      player.incrementCounter('influence', 1)
       game.aChooseAndReturn(player, { noWhite: true })
       game.aWithFocusAspect(player, 'ambition', () => {
         game.aDraw(player)
@@ -403,7 +403,7 @@ const cardData = [
       "At end of turn, promote another card played this turn"
     ],
     impl: (game, player, { card }) => {
-      player.incrementInfluence(2)
+      player.incrementCounter('influence', 2)
       game.aDeferPromotion(player, card)
     }
   },
@@ -441,7 +441,7 @@ const cardData = [
       "Ambition Focus > At end of turn, promote another card played this turn."
     ],
     impl: (game, player, { card }) => {
-      player.incrementInfluence(2)
+      player.incrementCounter('influence', 2)
       game.aDeferPromotion(player, card)
       game.aWithFocusAspect(player, 'ambition', () => {
         game.aDeferPromotion(player, card)

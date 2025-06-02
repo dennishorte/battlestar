@@ -49,7 +49,7 @@ function Card() {
       if (secret) {
         game.mReveal(player, secret)
 
-        if (game.getPlayerCurrent() === player) {
+        if (game.players.current() === player) {
           game.aSuperExecute(player, secret)
         }
       }

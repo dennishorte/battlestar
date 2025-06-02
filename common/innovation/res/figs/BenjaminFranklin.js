@@ -19,13 +19,13 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = (game, player) => {
     const choices = game
-      .getPlayerAll()
+      .players.all()
       .flatMap(p => game.getTopCards(p))
       .filter(card => card.checkIsFigure())
 
     const card = game.aChooseCard(player, choices)
     if (card) {
-      game.mLog({
+      game.log.add({
         template: '{player} takes {card} into their hand',
         args: { player, card }
       })

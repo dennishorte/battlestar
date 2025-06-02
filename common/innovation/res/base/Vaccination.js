@@ -31,7 +31,7 @@ function Card() {
         game.aDrawAndMeld(player, game.getEffectAge(this, 7))
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ]

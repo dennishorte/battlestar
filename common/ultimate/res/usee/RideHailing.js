@@ -21,7 +21,7 @@ function Card() {
     },
     (game, player) => {
       const choices = game
-        .getPlayersOther(player)
+        .players.other(player)
         .flatMap(opp => game.getTopCards(opp))
         .filter(card => card.color !== 'yellow' && card.checkHasBiscuit('i'))
 

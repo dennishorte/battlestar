@@ -33,7 +33,7 @@ function Card() {
       const card = game.aChooseCard(player, choices)
 
       if (card) {
-        const playerOnLeft = game.getPlayerFollowing(player)
+        const playerOnLeft = game.players.following(player)
         game.aTransfer(player, card, game.getZoneByPlayer(playerOnLeft, 'hand'))
       }
     }

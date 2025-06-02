@@ -20,8 +20,8 @@
 
 
 <script>
-import MagicCard from '@/modules/magic/components/MagicCard'
-import ModalBase from '@/components/ModalBase'
+import MagicCard from '@/modules/magic/components/card/MagicCard.vue'
+import ModalBase from '@/components/ModalBase.vue'
 
 
 export default {
@@ -46,7 +46,7 @@ export default {
   computed: {
     cannotDraft() {
       if (this.card) {
-        const player = this.game.getPlayerByName(this.actor.name)
+        const player = this.game.players.byName(this.actor.name)
         return this.card.g.id === player.scarredCardId
       }
       else {

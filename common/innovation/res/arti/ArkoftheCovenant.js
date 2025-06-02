@@ -22,7 +22,7 @@ function Card() {
         const color = cards[0].color
 
         const toTransfer = game
-          .getPlayerAll()
+          .players.all()
           .filter(player => game.getTopCards(player).every(card => !card.checkIsArtifact()))
           .flatMap(player => game.getCardsByZone(player, color))
 
@@ -34,7 +34,7 @@ function Card() {
         game.aTransfer(player, ark, game.getZoneByPlayer(player, 'hand'))
       }
       else {
-        game.mLog({
+        game.log.add({
           template: 'Ark of the Covenant is not a top card',
         })
       }

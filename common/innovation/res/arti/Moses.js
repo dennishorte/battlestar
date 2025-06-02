@@ -26,7 +26,7 @@ function Card() {
 
     (game, player) => {
       const choices = game
-        .getPlayerAll()
+        .players.all()
         .flatMap(player => game.getTopCards(player))
         .filter(card => card.checkHasBiscuit('c'))
       game.aChooseAndScore(player, choices)

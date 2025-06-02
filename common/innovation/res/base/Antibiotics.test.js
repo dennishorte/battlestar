@@ -12,7 +12,7 @@ describe('Antibiotics', () => {
     const result2 = t.choose(game, result1, 'Dogma.Antibiotics')
     const result3 = t.choose(game, result2)
 
-    expect(t.cards(game, 'hand', 'dennis').sort()).toStrictEqual(['Archery', 'Calendar', 'Mathematics'])
+    expect(t.cards(game, 'hand', 'dennis').sort()).toEqual(['Archery', 'Calendar', 'Mathematics'])
   })
 
   test('returned one', () => {
@@ -28,7 +28,7 @@ describe('Antibiotics', () => {
     const result2 = t.choose(game, result1, 'Dogma.Antibiotics')
     const result3 = t.choose(game, result2, 'Archery')
 
-    expect(t.cards(game, 'hand', 'dennis').sort()).toStrictEqual([
+    expect(t.cards(game, 'hand', 'dennis').sort()).toEqual([
       'Calendar',
       'Mass Media',
       'Mathematics',
@@ -52,7 +52,7 @@ describe('Antibiotics', () => {
     const result3 = t.choose(game, result2, 'Archery', 'Calendar', 'Mathematics')
     const result4 = t.choose(game, result3, 'auto')
 
-    expect(t.cards(game, 'hand', 'dennis').sort()).toStrictEqual([
+    expect(t.cards(game, 'hand', 'dennis').sort()).toEqual([
       'Empiricism',
       'Mass Media',
       'Quantum Theory',

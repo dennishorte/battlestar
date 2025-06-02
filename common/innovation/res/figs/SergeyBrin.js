@@ -25,7 +25,7 @@ function Card() {
       trigger: 'list-effects',
       func: (game) => {
         return game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game.getDogmaTargets(player))
       }
     }

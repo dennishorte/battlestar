@@ -17,7 +17,7 @@ describe('Globalization', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Globalization')
 
-    expect(t.cards(game, 'yellow', 'micah')).toStrictEqual(['Statistics'])
+    expect(t.cards(game, 'yellow', 'micah')).toEqual(['Statistics'])
   })
 
   test('draw and score', () => {
@@ -30,7 +30,7 @@ describe('Globalization', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Globalization')
 
-    expect(t.cards(game, 'score')).toStrictEqual(['Atomic Theory'])
+    expect(t.cards(game, 'score')).toEqual(['Atomic Theory'])
   })
 
   test('win condition (yes)', () => {

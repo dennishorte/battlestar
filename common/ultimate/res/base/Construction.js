@@ -34,7 +34,7 @@ function Card() {
         .getTopCards(player)
         .length === 5
       const othersHaveFive = game
-        .getPlayerAll()
+        .players.all()
         .filter(p => p !== player)
         .map(p => game.getTopCards(p).length)
         .filter(count => count === 5)
@@ -44,7 +44,7 @@ function Card() {
         return game.aClaimAchievement(player, { name: 'Empire' })
       }
       else {
-        game.mLog({ template: 'no effect' })
+        game.log.add({ template: 'no effect' })
       }
     },
   ]

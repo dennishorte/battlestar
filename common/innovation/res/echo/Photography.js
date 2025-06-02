@@ -24,7 +24,7 @@ function Card() {
 
     (game, player) => {
       if (!game.checkAchievementAvailable('History')) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
 
       const targetCount = 3
@@ -45,7 +45,7 @@ function Card() {
         game.aClaimAchievement(player, { name: 'History' })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ]

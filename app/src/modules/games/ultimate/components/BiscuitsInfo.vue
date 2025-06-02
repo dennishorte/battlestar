@@ -58,8 +58,8 @@ export default {
     },
 
     players() {
-      const viewer = this.game.getPlayerByName(this.actor.name)
-      return this.game.getPlayersStarting(viewer)
+      const viewer = this.game.players.byName(this.actor.name)
+      return this.game.players.startingWith(viewer)
     },
   },
 }

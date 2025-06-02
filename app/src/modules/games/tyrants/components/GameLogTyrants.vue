@@ -45,7 +45,7 @@ export default {
       if (card) {
         const nameBits = card.name.split('-')
         if (nameBits.length > 1 && (nameBits[0] === 'troop' || nameBits[0] === 'spy')) {
-          return this.game.getPlayerByName(nameBits[1])
+          return this.game.players.byName(nameBits[1])
         }
       }
     },
@@ -53,7 +53,7 @@ export default {
     chatColors() {
       const output = {}
 
-      for (const player of this.game.getPlayerAll()) {
+      for (const player of this.game.players.all()) {
         output[player.name] = player.color
       }
 
@@ -92,7 +92,7 @@ export default {
     lineStyles(line) {
       if (line.classes && line.classes.includes('player-turn')) {
         const playerName = line.args.player.value
-        const player = this.game.getPlayerByName(playerName)
+        const player = this.game.players.byName(playerName)
         return {
           'background-color': player.color,
         }

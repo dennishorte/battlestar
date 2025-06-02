@@ -23,7 +23,7 @@ function Card() {
       const scored = game.aScoreMany(player, topSplayedCards)
 
       if (scored.length < 3) {
-        game.mLog({
+        game.log.add({
           template: '{player} scored fewer than three cards and loses the game!',
           args: { player }
         })

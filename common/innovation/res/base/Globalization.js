@@ -43,7 +43,7 @@ function Card() {
 
       if (conditionMet) {
         const playersByScore = game
-          .getPlayerAll()
+          .players.all()
           .map(p => ({ player: p, score: game.getScore(p) }))
           .sort((l, r) => r.score - l.score)
 
@@ -55,7 +55,7 @@ function Card() {
         }
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ]

@@ -20,7 +20,7 @@ function Card() {
         .getCardsByZone(player, 'hand')
         .filter(card => card.checkHasBiscuit('c'))
       if (choices.length === 0) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
 
       const target = game.getZoneByPlayer(leader, 'score')
@@ -46,7 +46,7 @@ function Card() {
         game.aDraw(player, { age: game.getEffectAge(this, 1) })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     }
   ]

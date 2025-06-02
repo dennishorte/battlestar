@@ -44,7 +44,7 @@ function Card() {
       const hand = game.getCardsByZone(player, 'hand')
 
       if (hand.length < 2) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
         return
       }
 

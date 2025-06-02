@@ -19,7 +19,7 @@ function Card() {
   this.dogmaImpl = []
   this.echoImpl = (game, player) => {
     const choices = game
-      .getPlayerAll()
+      .players.all()
       .filter(other => other !== player)
       .flatMap(player => game.getCardsByZone(player, 'score'))
     game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'score'), { hidden: true })
@@ -36,7 +36,7 @@ function Card() {
       matches: () => true,
       func: (game, player, { card }) => {
         const cards = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game.getTopCards(player))
           .filter(other => other.color === card.color)
         game.aScoreMany(player, cards)

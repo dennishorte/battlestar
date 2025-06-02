@@ -1,0 +1,52 @@
+{
+  "_id": "scryfall-md5-1f4e8dc7bcb748d361554bb17fb7ef04",
+  "source": "scryfall",
+  "data": {
+    "layout": "modal_dfc",
+    "card_faces": [
+      {
+        "name": "Branchloft Pathway",
+        "mana_cost": "",
+        "type_line": "Land",
+        "oracle_text": "{T}: Add {G}.",
+        "flavor_text": "\"Not for the bumble-footed nor wobble-stomached.\"\n—Kreq of Sunder Bay",
+        "artist": "Titus Lunter",
+        "produced_mana": [
+          "G"
+        ],
+        "image_uri": "https://cards.scryfall.io/art_crop/front/0/5/0511e232-2a72-40f5-a400-4f7ebc442d17.jpg?1669839380"
+      },
+      {
+        "name": "Boulderloft Pathway",
+        "mana_cost": "",
+        "type_line": "Land",
+        "oracle_text": "{T}: Add {W}.",
+        "flavor_text": "\"The path is stable. It's the gusts all around it that are a bit 'whoosh—oops—bye.'\"\n—Kreq of Sunder Bay",
+        "artist": "Titus Lunter",
+        "produced_mana": [
+          "W"
+        ],
+        "image_uri": "https://cards.scryfall.io/art_crop/back/0/5/0511e232-2a72-40f5-a400-4f7ebc442d17.jpg?1669839380"
+      }
+    ],
+    "set": "znr",
+    "collector_number": "258",
+    "digital": false,
+    "rarity": "rare",
+    "legal": [
+      "historic",
+      "timeless",
+      "gladiator",
+      "pioneer",
+      "explorer",
+      "modern",
+      "legacy",
+      "vintage",
+      "commander",
+      "oathbreaker",
+      "brawl",
+      "duel"
+    ],
+    "_id": "scryfall-md5-1f4e8dc7bcb748d361554bb17fb7ef04"
+  }
+}

@@ -17,7 +17,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const opponent = game.aChoosePlayer(player, game.getPlayerOpponents(player))
+      const opponent = game.aChoosePlayer(player, game.players.opponentsOf(player))
       const age = game.aChooseAge(player)
 
       const choices = game

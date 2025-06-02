@@ -23,7 +23,7 @@ function Card() {
         .filter(card => card.getAge() === game.getEffectAge(this, 1))
         .length
       const theirs = game
-        .getPlayerAll()
+        .players.all()
         .filter(other => other !== player)
         .map(player => game
           .getCardsByZone(player, 'hand')
@@ -35,7 +35,7 @@ function Card() {
         game.aDrawAndScore(player, game.getEffectAge(this, 2))
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
 

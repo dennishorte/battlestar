@@ -20,7 +20,7 @@ function Card() {
   this.inspireImpl = (game, player) => {
     let choices = []
 
-    for (const player of game.getPlayerAll()) {
+    for (const player of game.players.all()) {
       for (const color of game.utilColors()) {
         const zone = game.getZoneByPlayer(player, color)
         const cards = zone.cards()
@@ -58,11 +58,11 @@ function Card() {
 
     const selection = game.aChoose(player, choices)[0]
     if (selection && selection.length > 0) {
-      game.mLog({
+      game.log.add({
         template: '{player} choose {effect}',
         args: { player, effect: selection }
       })
-      game.mLogIndent()
+      game.log.indent()
 
       const [cardName, text] = selection.split(': ', 2)
       const card = game.getCardByName(cardName)
@@ -78,7 +78,7 @@ function Card() {
         leader: player,
       }
       game.aCardEffect(player, info, opts)
-      game.mLogOutdent()
+      game.log.outdent()
     }
   }
   this.karmaImpl = [
@@ -87,7 +87,7 @@ function Card() {
       triggerAll: true,
       kind: 'would-first',
       matches: (game, player) => {
-        return player === game.getPlayerByCard(this)
+        return player === game.players.byOwner(this)
       },
       func: (game, player, { card }) => {
         game.aTransfer(player, card, game.getZoneByPlayer(player, 'score'))

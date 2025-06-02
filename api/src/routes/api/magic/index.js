@@ -1,9 +1,9 @@
 import express from 'express'
-import cubeRouter from './cube.router.js'
-import cardRouter from './card.router.js'
-import deckRouter from './deck.router.js'
-import scryfallRouter from './scryfall.router.js'
-import linkRouter from './link.router.js'
+import cubeRouter from './cube_router.js'
+import cardRouter from './card_router.js'
+import deckRouter from './deck_router.js'
+import scryfallRouter from './scryfall_router.js'
+import linkRouter from './link_router.js'
 
 /**
  * Magic sub-routes

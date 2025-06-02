@@ -22,7 +22,7 @@ describe('Heritage', () => {
     const request2 = t.choose(game, request1, 'Dogma.Specialization')
     const request3 = t.choose(game, request2, 'blue')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['Heritage'])
+    expect(t.cards(game, 'achievements')).toEqual(['Heritage'])
   })
 
   test('eight hexes total, but different colors', () => {
@@ -44,7 +44,7 @@ describe('Heritage', () => {
     const request2 = t.choose(game, request1, 'Dogma.Specialization')
     const request3 = t.choose(game, request2, 'blue')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    expect(t.cards(game, 'achievements')).toEqual([])
   })
 
   test('seven hexes in one color', () => {
@@ -65,6 +65,6 @@ describe('Heritage', () => {
     const request2 = t.choose(game, request1, 'Dogma.Specialization')
     const request3 = t.choose(game, request2, 'blue')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    expect(t.cards(game, 'achievements')).toEqual([])
   })
 })

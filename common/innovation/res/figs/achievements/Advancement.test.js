@@ -12,5 +12,5 @@ test('Advancement', () => {
   const request1 = game.run()
   const request2 = t.choose(game, request1, 'Decree.Advancement')
 
-  expect(t.cards(game, 'hand')).toStrictEqual(['Flight'])
+  expect(t.cards(game, 'hand')).toEqual(['Flight'])
 })

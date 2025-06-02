@@ -24,7 +24,7 @@ function Card() {
 
         // Choose an opponent to swap with
         const choices = game
-          .getPlayerAll()
+          .players.all()
           .filter(other => other !== player)
         const title = 'Choose a player to transfer your top red card to'
         const opp = game.aChoosePlayer(player, choices, { title, min: 0, max: 1 })
@@ -44,7 +44,7 @@ function Card() {
           }
         }
         else {
-          game.mLog({
+          game.log.add({
             template: '{player} chooses not to transfer cards',
             args: { player }
           })

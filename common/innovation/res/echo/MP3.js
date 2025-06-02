@@ -29,7 +29,7 @@ function Card() {
             game.aChooseAndAchieve(player, choices)
           }
           else {
-            game.mLog({ template: 'No eligible achievements' })
+            game.log.add({ template: 'No eligible achievements' })
             break
           }
         }

@@ -19,7 +19,7 @@ describe('Destiny', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Bangle')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['Destiny'])
+    expect(t.cards(game, 'achievements')).toEqual(['Destiny'])
   })
 
   test('not gained on sixth card', () => {
@@ -37,6 +37,6 @@ describe('Destiny', () => {
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'Dogma.Bangle')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    expect(t.cards(game, 'achievements')).toEqual([])
   })
 })

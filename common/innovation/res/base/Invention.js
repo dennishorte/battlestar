@@ -39,7 +39,7 @@ function Card() {
         game.aClaimAchievement(player, { name: 'Wonder' })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     }
   ]

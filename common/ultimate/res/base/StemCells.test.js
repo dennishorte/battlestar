@@ -25,7 +25,7 @@ describe('Stem Cells', () => {
     request = t.choose(game, request, 'yes')
     request = t.choose(game, request, 'auto')
 
-    expect(t.cards(game, 'score').sort()).toStrictEqual(['Experimentation', 'Reformation'])
+    expect(t.cards(game, 'score').sort()).toEqual(['Experimentation', 'Reformation'])
   })
 
   test('cards in hand, no', () => {
@@ -38,6 +38,6 @@ describe('Stem Cells', () => {
     request = t.choose(game, request, 'Dogma.Stem Cells')
     t.choose(game, request, 'no')
 
-    expect(t.cards(game, 'score')).toStrictEqual([])
+    expect(t.cards(game, 'score')).toEqual([])
   })
 })

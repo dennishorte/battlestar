@@ -73,8 +73,8 @@ export default {
 
   methods: {
     async createCube() {
-      const cubeId = await this.$store.dispatch('magic/cube/create')
-      this.$router.push('/magic/cube/' + cubeId)
+      const cube = await this.$store.dispatch('magic/cube/create')
+      this.$router.push('/magic/cube/' + cube._id)
     },
 
     viewDeck(deckId) {

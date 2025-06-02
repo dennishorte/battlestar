@@ -50,6 +50,7 @@ describe('El Dorado', () => {
           "Measurement",
           "Physics",
           "Societies",
+          "Statistics",
           "Steam Engine",
           "The Pirate Code",
         ],

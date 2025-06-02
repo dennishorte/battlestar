@@ -27,14 +27,14 @@ function Card() {
       triggerAll: true,
       matches: (game, player, { owner, self }) => {
         return (
-          player !== game.getPlayerByCard(self)
-          && owner === game.getPlayerByCard(self)
+          player !== game.players.byOwner(self)
+          && owner === game.players.byOwner(self)
         )
       },
       func: (game, player, { owner, self }) => {
         player = owner
         const topFigures = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game.getTopCards(player))
           .filter(card => card.checkIsFigure())
           .filter(card => card !== self)
@@ -42,11 +42,11 @@ function Card() {
 
         const score = game.getScore(player)
         const others = game
-          .getPlayerOpponents(player)
+          .players.opponentsOf(player)
           .map(other => game.getScore(other))
         const mostPointsCondition = others.every(otherScore => otherScore < score)
         if (mostPointsCondition) {
-          game.mLog({
+          game.log.add({
             template: '{player} now has the most points',
             args: { player }
           })
@@ -56,7 +56,7 @@ function Card() {
           })
         }
         else {
-          game.mLog({
+          game.log.add({
             template: '{player} still does not have the most points',
             args: { player }
           })

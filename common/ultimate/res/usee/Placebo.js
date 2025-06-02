@@ -43,7 +43,7 @@ function Card() {
         .reduce((acc, c) => c.getAge() === 7 ? acc + 1 : acc, 0)
 
       if (numSevensReturned === 1) {
-        game.mLog({
+        game.log.add({
           template: '{player} returned exactly one card of value 7',
           args: { player }
         })

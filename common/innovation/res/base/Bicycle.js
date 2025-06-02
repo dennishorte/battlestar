@@ -19,7 +19,7 @@ function Card() {
     (game, player) => {
       const decision = game.aYesNo(player, 'Exchange your hand and score pile?')
       if (decision) {
-        game.mLog({
+        game.log.add({
           template: '{player} swaps all cards in hand and score pile',
           args: { player }
         })
@@ -35,7 +35,7 @@ function Card() {
         game.mActed(player)
       }
       else {
-        game.mLogDoNothing(player)
+        game.log.addDoNothing(player)
       }
     }
   ]

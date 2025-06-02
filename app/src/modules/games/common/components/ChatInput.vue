@@ -46,7 +46,7 @@ export default {
 
   computed: {
     newChatCount() {
-      return this.game.getNewChatCount(this.actor)
+      return this.game.log.newChatsCount(this.actor)
     },
   },
 

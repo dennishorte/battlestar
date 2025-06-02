@@ -31,7 +31,7 @@ function Card() {
 
         const key = `${exp}-${age}`
         if (used.includes(key)) {
-          game.mLog({ template: 'You have already chosen that deck.' })
+          game.log.add({ template: 'You have already chosen that deck.' })
           continue
         }
 
@@ -40,7 +40,7 @@ function Card() {
         // Reveal the top card of the chosen deck
         const card = game.getZoneByDeck(exp, age).cards()[0]
         if (!card) {
-          game.mLogNoEffect()
+          game.log.addNoEffect()
           return
         }
 

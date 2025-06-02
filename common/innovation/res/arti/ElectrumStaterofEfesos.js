@@ -20,14 +20,14 @@ function Card() {
       while (true) {
         const card = game.aDrawAndReveal(player, game.getEffectAge(this, 3))
         if (game.getTopCard(player, card.color)) {
-          game.mLog({
+          game.log.add({
             template: '{player} already has a top card of matching color',
             args: { player }
           })
           break
         }
         else {
-          game.mLog({
+          game.log.add({
             template: '{player} has no top cards of matching color',
             args: { player }
           })

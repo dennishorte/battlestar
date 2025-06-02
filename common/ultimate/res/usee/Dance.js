@@ -23,7 +23,7 @@ function Card() {
       const card = game.aChooseCard(player, choices)
       if (card) {
         const otherPlayers = game
-          .getPlayerOpponents(player)
+          .players.opponentsOf(player)
 
         const targetPlayer = game.aChoosePlayer(player, otherPlayers)
         game.aTransfer(player, card, game.getZoneByPlayer(targetPlayer, card.color))

@@ -25,7 +25,7 @@ function Card() {
         )
       }
       else {
-        game.mLogDoNothing(player)
+        game.log.addDoNothing(player)
       }
     }
   ]

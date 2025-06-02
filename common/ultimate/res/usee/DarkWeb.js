@@ -19,7 +19,7 @@ function Card() {
     (game, player) => {
       const choices = []
 
-      for (const other of game.getPlayersStarting(player)) {
+      for (const other of game.players.startingWith(player)) {
         const colors = game
           .utilColors()
           .filter(color => game.getZoneByPlayer(other, color).splay !== 'none')
@@ -39,7 +39,7 @@ function Card() {
 
       if (selected) {
         const otherName = selected.title
-        const other = game.getPlayerByName(otherName)
+        const other = game.players.byName(otherName)
         const color = selected.selection[0]
 
         game.aUnsplay(other, color)

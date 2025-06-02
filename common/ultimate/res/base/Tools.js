@@ -27,11 +27,11 @@ function Card() {
           }
         }
         else {
-          game.mLogDoNothing(player)
+          game.log.addDoNothing(player)
         }
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
 

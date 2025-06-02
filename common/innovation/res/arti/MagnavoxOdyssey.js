@@ -28,7 +28,7 @@ function Card() {
         })
       }
       else {
-        game.mLog({ template: 'Colors do not match' })
+        game.log.add({ template: 'Colors do not match' })
       }
     }
   ]

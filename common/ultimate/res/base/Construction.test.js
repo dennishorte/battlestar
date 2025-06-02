@@ -17,7 +17,7 @@ describe('Construction', () => {
       const selector = request.selectors[0]
       expect(selector.actor).toBe('micah')
       expect(selector.count).toBe(2)
-      expect(selector.choices.sort()).toStrictEqual(handNames)
+      expect(selector.choices.sort()).toEqual(handNames)
     })
 
     test('draw a 2', () => {
@@ -32,9 +32,9 @@ describe('Construction', () => {
       request = t.choose(game, request, 'Experimentation', 'Statistics')
       request = t.choose(game, request, 'auto')
 
-      const micah = game.getPlayerByName('micah')
+      const micah = game.players.byName('micah')
       const micahHandAges = game.getZoneByPlayer(micah, 'hand').cards().map(c => c.age).sort()
-      expect(micahHandAges).toStrictEqual([2, 4])
+      expect(micahHandAges).toEqual([2, 4])
     })
   })
 
@@ -51,9 +51,9 @@ describe('Construction', () => {
       request = game.run()
       t.choose(game, request, 'Dogma.Construction')
 
-      const dennis = game.getPlayerByName('dennis')
+      const dennis = game.players.byName('dennis')
       const dennisAchievements = game.getZoneByPlayer(dennis, 'achievements').cards().map(c => c.name)
-      expect(dennisAchievements).toStrictEqual(['Empire'])
+      expect(dennisAchievements).toEqual(['Empire'])
     })
 
     test('someone else has 5 top cards', () => {
@@ -76,9 +76,9 @@ describe('Construction', () => {
       request = game.run()
       t.choose(game, request, 'Dogma.Construction')
 
-      const dennis = game.getPlayerByName('dennis')
+      const dennis = game.players.byName('dennis')
       const dennisAchievements = game.getZoneByPlayer(dennis, 'achievements').cards().map(c => c.name)
-      expect(dennisAchievements).toStrictEqual([])
+      expect(dennisAchievements).toEqual([])
     })
 
     test('do not have 5 top cards', () => {
@@ -93,9 +93,9 @@ describe('Construction', () => {
       request = game.run()
       t.choose(game, request, 'Dogma.Construction')
 
-      const dennis = game.getPlayerByName('dennis')
+      const dennis = game.players.byName('dennis')
       const dennisAchievements = game.getZoneByPlayer(dennis, 'achievements').cards().map(c => c.name)
-      expect(dennisAchievements).toStrictEqual([])
+      expect(dennisAchievements).toEqual([])
     })
   })
 })

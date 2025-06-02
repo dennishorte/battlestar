@@ -36,7 +36,7 @@ function Card() {
       }
 
       if (!exactlySevenIcon && !exactlyEightIcon && !exactlyNineIcon) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ]

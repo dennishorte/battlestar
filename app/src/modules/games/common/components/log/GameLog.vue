@@ -106,7 +106,7 @@ export default {
         return this.entries
       }
       else {
-        const output = this.nestLog(this.game.getMergedLog()).output
+        const output = this.nestLog(this.game.log.merged()).output
         return output
       }
     },

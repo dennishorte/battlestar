@@ -1,22 +1,15 @@
 {
-  "_id": "8093f8b0-5d50-48ca-b616-e92535a47138",
+  "_id": "scryfall-md5-06c3418c1be538975acbb22d9416d5bf",
   "source": "scryfall",
   "data": {
-    "_id": "8093f8b0-5d50-48ca-b616-e92535a47138",
+    "_id": "scryfall-md5-06c3418c1be538975acbb22d9416d5bf",
     "layout": "transform",
-    "cmc": 4,
-    "color_identity": [
-      "B"
-    ],
     "card_faces": [
       {
         "name": "Accursed Witch",
         "mana_cost": "{3}{B}",
         "type_line": "Creature — Human Shaman",
         "oracle_text": "Spells your opponents cast that target this creature cost {1} less to cast.\nWhen this creature dies, return it to the battlefield transformed under your control attached to target opponent.",
-        "colors": [
-          "B"
-        ],
         "power": "4",
         "toughness": "2",
         "artist": "Wesley Burt",
@@ -27,9 +20,6 @@
         "mana_cost": "",
         "type_line": "Enchantment — Aura Curse",
         "oracle_text": "Enchant player\nSpells you cast that target enchanted player cost {1} less to cast.\nAt the beginning of enchanted player's upkeep, that player loses 1 life and you gain 1 life.",
-        "colors": [
-          "B"
-        ],
         "color_indicator": [
           "B"
         ],
@@ -41,11 +31,6 @@
     "collector_number": "97",
     "digital": false,
     "rarity": "uncommon",
-    "name": "Accursed Witch // Infectious Curse",
-    "colors": [
-      "B"
-    ],
-    "type_line": "Creature — Human Shaman // Enchantment — Aura Curse",
     "legal": [
       "historic",
       "timeless",

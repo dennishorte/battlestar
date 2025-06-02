@@ -26,7 +26,7 @@ function Card() {
       }
 
       if (safeguarded && melded) {
-        if (game.getPlayerCurrent().name === player.name) {
+        if (game.players.current().name === player.name) {
           game.aSuperExecute(player, melded)
         }
         else {

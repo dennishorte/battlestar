@@ -18,14 +18,14 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const age = game.aChooseAge(player)
-      game.mLog({
+      game.log.add({
         template: '{player} choose age {age}',
         args: { player, age }
       })
       const card = game.aDraw(player, { age })
       if (card) {
         game.mMoveCardToTop(card, game.getZoneByCardHome(card))
-        game.mLog({
+        game.log.add({
           template: '{player} puts {card} on back on top of deck',
           args: { player, card }
         })
@@ -34,7 +34,7 @@ function Card() {
       const choices = game.getTopCards(player)
       const toExecute = game.aChooseCard(player, choices)
       if (toExecute) {
-        game.mLog({
+        game.log.add({
           template: '{player} executes {card}',
           args: {
             player,

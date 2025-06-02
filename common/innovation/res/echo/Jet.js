@@ -24,7 +24,7 @@ function Card() {
           game.aReturn(player, toReturn)
         }
         else {
-          game.mLog({
+          game.log.add({
             template: '{player} has no {color} top card',
             args: {
               player,
@@ -35,7 +35,7 @@ function Card() {
       }
 
       else {
-        game.mLog({
+        game.log.add({
           template: 'No card was melded due to the echo effect.'
         })
       }
@@ -47,7 +47,7 @@ function Card() {
     }
 
     const cards = game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
-    if (player === game.getPlayerByCard(this) && cards && cards.length > 0) {
+    if (player === game.players.byOwner(this) && cards && cards.length > 0) {
       game.state.dogmaInfo.jet = cards[0]
     }
   }

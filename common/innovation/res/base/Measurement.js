@@ -28,7 +28,7 @@ function Card() {
         game.aDraw(player, { age: game.getCardsByZone(player, card.color).length })
       }
       else {
-        game.mLogDoNothing(player)
+        game.log.addDoNothing(player)
       }
     }
   ]

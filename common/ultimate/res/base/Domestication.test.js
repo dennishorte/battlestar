@@ -40,8 +40,8 @@ describe('Domestication', () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Domestication')
 
-    const dennis = game.getPlayerByName('dennis')
+    const dennis = game.players.byName('dennis')
     const dennisHand = game.getZoneByPlayer(dennis, 'hand').cards().map(c => c.age).sort()
-    expect(dennisHand).toStrictEqual([1])
+    expect(dennisHand).toEqual([1])
   })
 })

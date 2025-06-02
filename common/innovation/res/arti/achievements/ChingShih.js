@@ -32,7 +32,7 @@ function Card() {
       },
       func(game, player) {
         const choices = game
-          .getPlayerOpponents(player)
+          .players.opponentsOf(player)
           .flatMap(opp => game
             .getCardsByZone(opp, 'achievements')
             .map(ach => ({ opp, ach }))
@@ -57,7 +57,7 @@ function Card() {
 
           let card
           if (cardToken.startsWith('age ')) {
-            const target = game.getPlayerByName(playerName)
+            const target = game.players.byName(playerName)
             const age = parseInt(cardToken.split(' ')[1])
             card = game
               .getCardsByZone(target, 'achievements')
@@ -78,7 +78,7 @@ function Card() {
       matches: (game, player, { card }) => !card.checkIsFigure(),
       func: (game, player, { card }) => {
         const choices = game
-          .getPlayerOpponents(player)
+          .players.opponentsOf(player)
           .filter(opp => game.getCardsByZone(opp, 'score').find(c => c.getAge() === card.getAge()))
 
         const opp = game.aChoosePlayer(player, choices, { title: 'Choose a player to steal a score card from.' })

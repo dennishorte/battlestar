@@ -31,7 +31,7 @@ function Card() {
     (game, player) => {
       const mine = game.getAchievementsByPlayer(player).total
       const others = game
-        .getPlayerOpponents(player)
+        .players.opponentsOf(player)
         .map(player => game.getAchievementsByPlayer(player).total)
 
       if (others.every(count => count < mine)) {
@@ -41,7 +41,7 @@ function Card() {
         })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     }
   ]

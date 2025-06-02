@@ -22,7 +22,7 @@ function Card() {
     const card2 = game.aDrawAndReveal(player, game.getEffectAge(this, 9))
 
     if (card1.color === 'purple' || card2.color === 'purple') {
-      game.mLog({
+      game.log.add({
         template: '{player} drew a purple card',
         args: { player }
       })
@@ -35,7 +35,7 @@ function Card() {
       trigger: 'when-meld',
       func: (game, player) => {
         const figures = game
-          .getPlayerOpponents(player)
+          .players.opponentsOf(player)
           .flatMap(player => game.getTopCards(player))
           .filter(card => card.checkIsFigure())
         game.aReturnMany(player, figures)

@@ -30,7 +30,7 @@ function Card() {
       trigger: 'extra-achievements',
       func: (game, player) => {
         const othersSplayedColors = game
-          .getPlayerAll()
+          .players.all()
           .filter(other => other !== player)
           .flatMap(other => {
             return game

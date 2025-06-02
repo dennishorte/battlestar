@@ -25,7 +25,7 @@ function Card() {
         .length
 
       if (count === 0) {
-        game.mLog({ template: 'no splayed colors' })
+        game.log.add({ template: 'no splayed colors' })
         return
       }
 
@@ -36,7 +36,7 @@ function Card() {
       })[0]
 
       if (proceed === 'no') {
-        game.mLog({
+        game.log.add({
           template: '{player} does nothing',
           args: { player }
         })

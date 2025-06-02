@@ -26,7 +26,7 @@ function Card() {
         .forEach(zone => game.aSplay(player, zone.color, 'up'))
 
       const toReturn = game
-        .getPlayerAll()
+        .players.all()
         .flatMap(player => game.getCardsByZone(player, 'score'))
         .filter(card => card.getAge() === age)
 

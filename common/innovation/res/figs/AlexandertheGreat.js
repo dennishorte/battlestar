@@ -29,7 +29,7 @@ function Card() {
       trigger: 'when-meld',
       func(game, player) {
         const topFigures = game
-          .getPlayerOpponents(player)
+          .players.opponentsOf(player)
           .flatMap(opp => game.getTopCards(opp))
           .filter(card => card.checkIsFigure())
           .filter(card => card.getAge() === 1 || card.getAge() === 2)

@@ -27,7 +27,7 @@ function Card() {
         const totalValue = bottomThree.reduce((sum, card) => sum + card.getAge(), 0)
         const drawValue = Math.ceil(totalValue / 2)
 
-        game.mLog({
+        game.log.add({
           template: 'Sum of returned cards is {total}, drawing and melding a {value}',
           args: { total: totalValue, value: drawValue }
         })
@@ -38,7 +38,7 @@ function Card() {
 
       const { meldedCard, returnedCount } = doEffect('red')
       if (meldedCard && returnedCount === 3) {
-        game.mLog({
+        game.log.add({
           template: '{player} repeats the effect using {color}',
           args: { player, color: meldedCard.color }
         })

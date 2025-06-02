@@ -151,7 +151,7 @@ Util.array.remove = function(array, elem) {
 }
 
 Util.array.removeByPredicate = function(array, pred) {
-  const index = array.find(pred)
+  const index = array.findIndex(x => pred(x))
   if (index !== -1) {
     array.splice(index, 1)
   }
@@ -278,6 +278,10 @@ Util.array.uniqueMaxBy = function(array, pred) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Dict functions
+
+Util.dict.strictEquals = function(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b)
+}
 
 Util.dict.map = function(dict, func) {
   const output = {}
@@ -459,6 +463,10 @@ Util.isDigit = function(str) {
   return str.length === 1 && /[0-9]/.test(str)
 }
 
+Util.isDigits = function(str) {
+  return /^[0-9]+$/.test(str)
+}
+
 Util.range = function(...args) {
   let start, end, step
 
@@ -500,6 +508,15 @@ Util.toCapsCase = function(str) {
 
 Util.toKebabCase = function(str) {
   return str.toLowerCase().replace(/\W/g, '-')
+}
+
+Util.toPlainCase = function(str) {
+  return str
+    .replace(/([a-z])([A-Z])/g, '$1 $2')   // Handle camelCase and PascalCase: insert space before uppercase letters
+    .replace(/[_-]/g, ' ')                 // Replace underscores and hyphens with spaces
+    .toLowerCase()                         // Convert to lowercase
+    .replace(/\s+/g, ' ')                  // Clean up multiple spaces
+    .trim()
 }
 
 Util.toTitleCase = function(str) {

@@ -15,7 +15,7 @@ function Card() {
       choices: [1,2,3,4,5,6,7,8,9,10]
     })[0]
 
-    game.mLog({
+    game.log.add({
       template: '{player} chooses {age}',
       args: {
         player,
@@ -24,7 +24,7 @@ function Card() {
     })
 
     const cardsToReturn = []
-    for (const opponent of game.getPlayerOpponents(player)) {
+    for (const opponent of game.players.opponentsOf(player)) {
       for (const card of game.getTopCards(opponent)) {
         if (card.getAge() === value) {
           cardsToReturn.push(card)
