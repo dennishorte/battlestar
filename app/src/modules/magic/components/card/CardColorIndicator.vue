@@ -1,5 +1,11 @@
 <template>
-  <div class="frame-color-indicator" @click="emit('show-color-picker')">
+  <div
+    class="frame-color-indicator"
+    :class="{
+      'scar-tape': oldVersions.length > 0,
+    }"
+    @click="emit('show-color-picker')"
+  >
 
     <!-- ms-2x makes it easier for users to click when editing -->
     <i
@@ -21,6 +27,8 @@
 
 
 <script setup>
+import { ref } from 'vue'
+
 const props = defineProps({
   card: {
     type: Object,
@@ -37,6 +45,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['show-color-picker'])
+const oldVersions = ref([])
 </script>
 
 

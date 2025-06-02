@@ -1,5 +1,11 @@
 <template>
-  <div class="frame-mana-cost" @click="emit('show-color-picker')">
+  <div
+    class="frame-mana-cost"
+    :class="{
+      'scar-tape': oldVersions.length > 0,
+    }"
+    @click="emit('show-color-picker')"
+  >
     <ManaCost
       v-if="card.manaCost(index).length > 0"
       :cost="card.manaCost(index)"
@@ -13,6 +19,7 @@
 
 
 <script setup>
+import { ref } from 'vue'
 import ManaCost from './ManaCost.vue'
 
 defineProps({
@@ -31,6 +38,7 @@ defineProps({
 })
 
 const emit = defineEmits(['show-color-picker'])
+const oldVersions = ref([])
 </script>
 
 
