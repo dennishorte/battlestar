@@ -2941,7 +2941,7 @@ Innovation.prototype._attemptToCombineWithPreviousEntry = function(msg) {
     return
   }
 
-  const combinable = ['foreshadows', 'melds', 'returns', 'tucks', 'reveals', 'scores']
+  const combinable = ['foreshadows', 'melds', 'returns', 'tucks', 'reveals', 'scores', 'safeguards']
   const msgAction = msg.template.split(' ')[1]
 
   const msgIsCombinable = combinable.includes(msgAction)

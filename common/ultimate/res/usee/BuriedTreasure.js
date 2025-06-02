@@ -30,7 +30,7 @@ function Card() {
         game.aDrawAndSafeguard(player, value)
 
         const availableStandard = game.getAvailableStandardAchievements(player)
-        game.aChooseAndScore(player, availableStandard, { count: 3 })
+        game.aChooseAndScore(player, availableStandard, { count: 3, hidden: true })
       }
     },
   ]
