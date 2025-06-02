@@ -343,11 +343,25 @@ class CardWrapper extends Wrapper {
     return this.faces().length
   }
 
+  ////////////////////////////////////////////////////////////////////////////////
+  // Scars
+
+  oldVersions(faceIndex, fieldName) {
+    return this
+      .changes
+      .flatMap(x => x.changes)
+      .filter(x => x.type === 'face_field' && x.faceIndex === faceIndex && x.field === fieldName)
+      .map(x => x.oldValue)
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Utility
+
+  // Tests if the game-related attributes of two cards are the same.
+  // Ignores attributes like artist, which don't affect game play.
   same(other) {
     const topEquals = (
-      this.name() === other.name()
-      && this.layout() === other.layout()
-      && this.typeLine() === other.typeLine()
+      this.layout() === other.layout()
       && this.cmc() === other.cmc()
       && this.numFaces() === other.numFaces()
     )

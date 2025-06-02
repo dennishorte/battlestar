@@ -33,6 +33,5 @@ const emit = defineEmits(['value-updated'])
 const scarrable = useScarrableContent(toRef(props, 'card'), props.index, 'flavor_text', emit, {
   editable: props.isEditable,
   multiline: true,
-  oldVersions: [],
 })
 </script>

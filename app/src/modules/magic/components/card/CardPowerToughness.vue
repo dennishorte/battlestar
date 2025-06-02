@@ -34,12 +34,10 @@ const isCreature = computed(() => props.card.isCreature(props.index))
 
 const powerScarrable = useScarrableContent(toRef(props, 'card'), props.index, 'power', emit, {
   editable: props.isEditable,
-  oldVersions: [],
 })
 
 const toughnessScarrable = useScarrableContent(toRef(props, 'card'), props.index, 'toughness', emit, {
   editable: props.isEditable,
-  oldVersions: [],
 })
 </script>
 

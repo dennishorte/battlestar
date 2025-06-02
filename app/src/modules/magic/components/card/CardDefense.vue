@@ -34,7 +34,6 @@ const isSiege = computed(() => props.card.face(props.index).type_line.toLowerCas
 
 const scarrable = useScarrableContent(toRef(props, 'card'), props.index, 'defense', emit, {
   editable: props.isEditable,
-  oldVersions: [],
 })
 </script>
 

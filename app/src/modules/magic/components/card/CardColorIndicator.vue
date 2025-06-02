@@ -27,7 +27,7 @@
 
 
 <script setup>
-import { ref } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   card: {
@@ -45,7 +45,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['show-color-picker'])
-const oldVersions = ref([])
+const oldVersions = computed(() => props.card.oldVersions(props.index, 'color_indicator'))
 </script>
 
 

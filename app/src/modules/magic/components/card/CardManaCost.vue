@@ -19,10 +19,10 @@
 
 
 <script setup>
-import { ref } from 'vue'
+import { computed } from 'vue'
 import ManaCost from './ManaCost.vue'
 
-defineProps({
+const props = defineProps({
   card: {
     type: Object,
     required: true,
@@ -38,7 +38,7 @@ defineProps({
 })
 
 const emit = defineEmits(['show-color-picker'])
-const oldVersions = ref([])
+const oldVersions = computed(() => props.card.oldVersions(props.index, 'mana_cost'))
 </script>
 
 

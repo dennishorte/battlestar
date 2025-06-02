@@ -8,15 +8,15 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
   const {
     editable = false,
     narrowTape = false,
-    oldVersions = [],
   } = options
 
+  const oldVersions = computed(() => card.value.oldVersions(faceIndex, field))
   const fieldValue = computed(() => card.value.face(faceIndex)[field] || '')
-  const scarred = computed(() => oldVersions.length > 0)
+  const scarred = computed(() => oldVersions.value.length > 0)
   const showFullWidth = computed(() => fieldValue.value.length === 0 && editable && !scarred.value)
 
   const scarredParts = computed(() => {
-    if (oldVersions.length === 0) {
+    if (oldVersions.value.length === 0) {
       return [{
         value: fieldValue.value,
         added: false,
@@ -24,7 +24,7 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
       }]
     }
 
-    const diff = diffWords(oldVersions[0], fieldValue.value, { intlSegmenter: intlSegmenterShapedObject })
+    const diff = diffWords(oldVersions.value[0], fieldValue.value, { intlSegmenter: intlSegmenterShapedObject })
     return diff.filter(x => x.added || !x.removed)
   })
 
@@ -37,12 +37,13 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
 
   watch(fieldValue, (newValue) => editor.setValue(newValue))
   watch(showOriginalText, (showOriginal) => {
-    const newValue = showOriginal ? oldVersions[0] : fieldValue.value
+    const newValue = showOriginal ? oldVersions.value[0] : fieldValue.value
     editor.setValue(newValue)
   })
 
   // Reset state when card reference changes to prevent state bleeding between cards
   watch(() => card.value, (newCard, oldCard) => {
+    console.log(oldVersions.value)
     if (newCard !== oldCard) {
       showOriginalText.value = false
       editor.setValue(fieldValue.value)

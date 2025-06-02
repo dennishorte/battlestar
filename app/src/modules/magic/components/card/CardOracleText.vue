@@ -42,7 +42,6 @@ const emit = defineEmits(['value-updated'])
 
 const scarrable = useScarrableContent(toRef(props, 'card'), props.index, 'oracle_text', emit, {
   multiline: true,
-  oldVersions: [],
 })
 
 const scarredParts = computed(() => splitPartsWithNewlines(scarrable.scarredParts.value))

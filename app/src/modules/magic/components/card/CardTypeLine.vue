@@ -30,7 +30,6 @@ const DASH_REGEX = magic.util.wrapper.card.TYPELINE_SPLITTER_REGEX
 
 const scarrable = useScarrableContent(toRef(props, 'card'), props.index, 'type_line', emit, {
   editable: props.isEditable,
-  oldVersions: [],
   onUpdate: (value) => {
     const correctedDash = value.replace(DASH_REGEX, DASH)
     emit('value-updated', { field: 'type_line', value: correctedDash })

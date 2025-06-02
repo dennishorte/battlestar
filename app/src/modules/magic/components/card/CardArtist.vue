@@ -29,7 +29,6 @@ const emit = defineEmits(['value-updated'])
 
 const scarrable = useScarrableContent(toRef(props, 'card'), props.index, 'artist', emit, {
   editable: props.isEditable,
-  oldVersions: [],
 })
 </script>
 
