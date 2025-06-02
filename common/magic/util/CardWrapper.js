@@ -347,6 +347,10 @@ class CardWrapper extends Wrapper {
   // Scars
 
   oldVersions(faceIndex, fieldName) {
+    if (!this.changes) {
+      return []
+    }
+
     return this
       .changes
       .flatMap(x => x.changes)
