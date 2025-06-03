@@ -125,7 +125,7 @@ Game.save = async function(game) {
         gameOver: game.gameOver,
         gameOverData: game.gameOverData,
         lastUpdated: Date.now(),
-        chat: game.chat,
+        chat: game.log.getChat(),
         responses: game.responses,
         waiting: game.getPlayerNamesWaiting(),
       }

@@ -110,6 +110,10 @@ class BaseLogManager {
     this._indent = value <= 0 ? 0 : value
   }
 
+  setChat(chat) {
+    this._chat = chat
+  }
+
   ////////////////////////////////////////////////////////////////////////////////
   // Getters
 

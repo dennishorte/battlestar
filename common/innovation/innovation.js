@@ -24,7 +24,7 @@ module.exports = {
 function Innovation(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
-  this.log = new InnovationLogManager(this)
+  this.log = new InnovationLogManager(this, serialized_data.chat)
 }
 
 util.inherit(Game, Innovation)

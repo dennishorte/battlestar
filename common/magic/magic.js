@@ -40,7 +40,7 @@ module.exports = {
 function Magic(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
-  this.log = new MagicLogManager(this)
+  this.log = new MagicLogManager(this, serialized_data.chat)
   this.players = new MagicPlayerManager(this, this.settings.players, this.settings.playerOptions || {})
 
   this.setCardWrapper(wrappers.card)

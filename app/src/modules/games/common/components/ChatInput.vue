@@ -52,7 +52,7 @@ export default {
 
   methods: {
     async sendChat() {
-      this.game.mChat(this.actor.name, this.text)
+      this.game.log.chat(this.actor.name, this.text)
       if (this.saveOnChat) {
         await this.$store.dispatch('game/save')
       }
