@@ -38,9 +38,6 @@ describe('Collaboration', () => {
     const result2 = t.choose(game, result1, 'Dogma.Collaboration')
     const result3 = t.choose(game, result2, 'Computers')
 
-    expect(result3.data).toEqual(expect.objectContaining({
-      player: expect.objectContaining({ name: 'dennis' }),
-      reason: 'Collaboration'
-    }))
+    t.testGameOver(result3, 'dennis', 'Collaboration')
   })
 })

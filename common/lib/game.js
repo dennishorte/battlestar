@@ -245,6 +245,9 @@ Game.prototype.run = function() {
 
       this.gameOver = true
       this.gameOverData = result.data
+      if (result.data.player && result.data.player.name) {
+        this.gameOverData.player = this.gameOverData.player.name
+      }
 
       this.log.add({ template: this.getResultMessage() })
 

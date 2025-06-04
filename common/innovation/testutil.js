@@ -335,7 +335,7 @@ TestUtil.dumpBoard = function(game) {
 
 TestUtil.testGameOver = function(request, playerName, reason) {
   expect(request).toEqual(expect.any(GameOverEvent))
-  expect(request.data.player.name).toBe(playerName)
+  expect(request.data.player).toBe(playerName)
   expect(request.data.reason).toBe(reason)
 }
 

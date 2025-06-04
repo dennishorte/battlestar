@@ -40,11 +40,6 @@ describe('A.I.', () => {
       }],
     })
 
-    expect(request).toEqual(expect.objectContaining({
-      data: expect.objectContaining({
-        player: expect.objectContaining({ name: 'micah' }),
-        reason: 'A.I.'
-      })
-    }))
+    t.testGameOver(request, 'micah', 'A.I.')
   })
 })

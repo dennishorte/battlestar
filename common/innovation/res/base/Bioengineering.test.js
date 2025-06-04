@@ -31,12 +31,7 @@ describe('Bioengineering', () => {
     const result2 = t.choose(game, result1, 'Dogma.Bioengineering')
 
     expect(result2).toEqual(expect.any(GameOverEvent))
-    expect(result2).toEqual(expect.objectContaining({
-      data: expect.objectContaining({
-        player: expect.objectContaining({ name: 'dennis' }),
-        reason: 'Bioengineering'
-      })
-    }))
+    t.testGameOver(result2, 'dennis', 'Bioengineering')
   })
 
   test('win condition tied', () => {
