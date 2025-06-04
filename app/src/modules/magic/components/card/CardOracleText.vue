@@ -32,7 +32,7 @@ const props = defineProps({
     type: Number,
     required: true
   },
-  isScarrable: {
+  isEditable: {
     type: Boolean,
     default: false,
   },
@@ -41,6 +41,7 @@ const props = defineProps({
 const emit = defineEmits(['value-updated'])
 
 const scarrable = useScarrableContent(toRef(props, 'card'), props.index, 'oracle_text', emit, {
+  editable: props.isEditable,
   multiline: true,
 })
 
