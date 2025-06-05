@@ -40,7 +40,15 @@ const props = defineProps({
 
 const emit = defineEmits(['value-updated'])
 
-const scarrable = useScarrableContent(toRef(props, 'card'), props.index, 'oracle_text', emit, {
+const fieldAccessors = () => {
+  return {
+    name: 'oracle_text',
+    getDisplay: (card, faceIndex) => card.oracleText(faceIndex),
+    getEditable: (card, faceIndex) => card.oracleTextCardName(faceIndex),
+  }
+}
+
+const scarrable = useScarrableContent(toRef(props, 'card'), props.index, fieldAccessors(), emit, {
   editable: props.isEditable,
   multiline: true,
 })

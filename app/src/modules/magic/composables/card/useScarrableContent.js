@@ -4,55 +4,91 @@ import { diffWords } from 'diff'
 import { magic } from 'battlestar-common'
 
 
+function _unpackField(f) {
+  if (typeof f === 'object') {
+    return {
+      name: f.name || '',
+      getDisplay: (card, faceIndex) => f.getDisplay(card, faceIndex) || '',
+      getEditable: (card, faceIndex) => f.getEditable(card, faceIndex) || '',
+    }
+  }
+  else if (typeof f === 'string') {
+    return {
+      name: f,
+      getDisplay: (card, faceIndex) => card.face(faceIndex)[f] || '',
+      getEditable: (card, faceIndex) => card.face(faceIndex)[f] || '',
+    }
+  }
+  else {
+    throw new Error('Unhandle field type: ' + (typeof f))
+  }
+}
+
+
 export function useScarrableContent(card, faceIndex, field, emit, options) {
   const {
+    // Determine if the text content can be edited.
     editable = false,
-    narrowTape = false,
   } = options
 
-  const oldVersions = computed(() => card.value.oldVersions(faceIndex, field))
-  const fieldValue = computed(() => card.value.face(faceIndex)[field] || '')
-  const scarred = computed(() => oldVersions.value.length > 0)
-  const showFullWidth = computed(() => fieldValue.value.length === 0 && editable && !scarred.value)
+  const f = _unpackField(field)
 
+  // Flag to track if the display text or original text should be displayed at the moment.
+  // Players should be able to view the original text in order to more clearly understand what has changed.
+  const showOriginalText = ref(false)
+
+  // The text to display when not editing the text.
+  const displayText = computed(() => f.getDisplay(card.value, faceIndex))
+
+  // The text to display when editing the text.
+  // In most cases, this is the same as display text, but sometimes, such as with oracle text CARD_NAME,
+  // we want to differentiate to make editing more manageable.
+  const editableText = computed(() => f.getEditable(card.value, faceIndex))
+
+  // The text as it was on the card before any edits took place.
+  // If there have been no edits, this is the same as display text.
+  const originalText = computed(() => card.value.oldVersions(faceIndex, f.name)[0] || displayText.value)
+
+  // True if the text for this field has been edited.
+  const scarred = computed(() => originalText.value !== displayText.value)
+
+  // If true, the div containing this text will be extended to maximum width.
+  // This is helpful when the div is empty, making it hard to click on it.
+  const showFullWidth = computed(() => displayText.value.length === 0 && editable && !scarred.value)
+
+  // Break the text down into sections based on the changes that have been made so the scars can be
+  // highlighted in the display. Uses a word-level diff algorithm to separate the scarred parts.
   const scarredParts = computed(() => {
-    if (oldVersions.value.length === 0) {
+    if (scarred.value === false) {
       return [{
-        value: fieldValue.value,
-        added: false,
-        removed: false,
+        value: displayText.value,
+        scarred: false,
       }]
     }
 
-    const diff = diffWords(oldVersions.value[0], fieldValue.value, { intlSegmenter: intlSegmenterShapedObject })
-    return diff.filter(x => x.added || !x.removed)
+    const diff = diffWords(originalText.value, displayText.value, { intlSegmenter: intlSegmenterShapedObject })
+    return diff
+      .filter(x => x.added || !x.removed)
+      .map(x => ({
+        value: x.value,
+        scarred: x.added,
+      }))
   })
 
-  const showOriginalText = ref(false)
-
-  const editor = useEditableContent(fieldValue.value, {
+  const editor = useEditableContent(editableText.value, {
     onUpdate: (value) => emit('value-updated', { field, value }),
     ...options
   })
 
-  watch(fieldValue, (newValue) => editor.setValue(newValue))
-  watch(showOriginalText, (showOriginal) => {
-    const newValue = showOriginal ? oldVersions.value[0] : fieldValue.value
-    editor.setValue(newValue)
-  })
+  watch(editableText, (newValue) => editor.setValue(newValue))
 
   // Reset state when card reference changes to prevent state bleeding between cards
   watch(() => card.value, (newCard, oldCard) => {
-    console.log(oldVersions.value)
     if (newCard !== oldCard) {
       showOriginalText.value = false
-      editor.setValue(fieldValue.value)
+      // editor.setValue(editableText.value)
     }
   })
-
-  function cardChanged(/*card, index, oldVersions*/) {
-    console.log('cardChanged')
-  }
 
   function handleClick(event) {
     // Toggle between the original text and the scarred text.
@@ -66,14 +102,11 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
   }
 
   return {
-    fieldValue,
     scarredParts,
     editor,
-    narrowTape,
     showFullWidth,
     showingOriginalText: showOriginalText,
 
-    cardChanged,
     handleClick,
   }
 }

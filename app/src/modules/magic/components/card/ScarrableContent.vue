@@ -1,7 +1,7 @@
 <template>
   <div @click="handleClick">
     <EditableContent
-      v-if="isEditingValue || fieldValue.length === 0"
+      v-if="isEditingValue"
       v-bind="editor"
       :class="{
         'full-width': showFullWidth,
@@ -15,9 +15,8 @@
           v-for="part in scarredParts"
           :key="part.value"
           :class="{
-            'original-text': part.added && showingOriginalText,
-            'scar-tape': part.added,
-            'narrow-tape': narrowTape,
+            'original-text': part.scarred && showingOriginalText,
+            'scar-tape': part.scarred,
           }"
         >
           {{ part.value }}
@@ -37,16 +36,8 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  fieldValue: {
-    type: [String, Object], // Accept both String and Ref<Boolean>
-    required: true,
-  },
   scarredParts: {
     type: [Array, Object], // Accept both Array and Ref<Array>
-    required: true,
-  },
-  narrowTape: {
-    type: [Boolean, Object], // Accept both Boolean and Ref<Boolean>
     required: true,
   },
   showFullWidth: {
@@ -64,8 +55,6 @@ const props = defineProps({
   },
 })
 
-const fieldValue = computed(() => unref(props.fieldValue))
-const narrowTape = computed(() => unref(props.narrowTape))
 const showFullWidth = computed(() => unref(props.showFullWidth))
 const showingOriginalText = computed(() => unref(props.showingOriginalText))
 const scarredParts = computed(() => unref(props.scarredParts))
