@@ -8,7 +8,7 @@ function Card() {
   this.age = 1
   this.expansion = `usee`
   this.biscuits = `hckk`
-  this.dogmaBiscuit = `c`
+  this.dogmaBiscuit = `k`
   this.echo = ``
   this.karma = []
   this.dogma = [
