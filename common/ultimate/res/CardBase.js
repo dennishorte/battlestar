@@ -239,6 +239,16 @@ CardBase.prototype.getKarmaInfo = function(trigger) {
   return matches
 }
 
+CardBase.prototype.getHiddenName = function(game=null) {
+  const owner = game?.players.byOwner(this)
+  if (owner) {
+    return `*${this.expansion}-${this.age}* (${owner.name})`
+  }
+  else {
+    return `*${this.expansion}-${this.age}*`
+  }
+}
+
 CardBase.prototype.getImpl = function(kind) {
   if (kind.startsWith('karma')) {
     kind = kind.substr(6)

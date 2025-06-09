@@ -28,11 +28,12 @@ class Response {
 }
 
 class BaseLogManager {
-  constructor(game, chat) {
+  constructor(game, chat, viewerName) {
     this._game = game
     this._chat = chat || []
     this._log = []
     this._indent = 0
+    this._viewerName = viewerName
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -182,6 +183,13 @@ class BaseLogManager {
   ////////////////////////////////////////////////////////////////////////////////
   // protected members
 
+  _enrichLogCardArg(card) {
+    return {
+      value: card.id,
+      classes: ['card-id'],
+    }
+  }
+
   _enrichLogArgs(entry) {
     for (const key of Object.keys(entry.args)) {
       if (key === 'players') {
@@ -200,10 +208,7 @@ class BaseLogManager {
       }
       else if (key.startsWith('card')) {
         const card = entry.args[key]
-        entry.args[key] = {
-          value: card.id,
-          classes: ['card-id'],
-        }
+        entry.args[key] = this._enrichLogCardArg(card)
       }
       else if (key.startsWith('zone')) {
         const zone = entry.args[key]

@@ -24,7 +24,7 @@ module.exports = {
 function Innovation(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
-  this.log = new InnovationLogManager(this, serialized_data.chat)
+  this.log = new InnovationLogManager(this, serialized_data.chat, viewerName)
 }
 
 util.inherit(Game, Innovation)
@@ -671,7 +671,7 @@ Innovation.prototype.aChooseCards = function(player, cards, opts={}) {
     }
 
     if (opts.hidden) {
-      return { name: this._getHiddenName(card), card }
+      return { name: card.getHiddenName(this), card }
     }
     else {
       return { name: card.id, card }
@@ -2728,34 +2728,6 @@ Innovation.prototype.utilEmptyBiscuits = function() {
   }
 }
 
-Innovation.prototype._cardLogData = function(card) {
-  let name
-  if (card.isSpecialAchievement) {
-    name = card.name
-  }
-  else {
-    const hiddenName = this._getHiddenName(card)
-    name = card.visibility.includes(this.viewerName) ? card.name : hiddenName
-  }
-
-  const classes = ['card']
-  if (card.getAge()) {
-    classes.push(`card-age-${card.visibleAge || card.getAge()}`)
-  }
-  if (card.expansion) {
-    classes.push(`card-exp-${card.expansion}`)
-  }
-  if (name === 'hidden') {
-    classes.push('card-hidden')
-  }
-
-  return {
-    value: name,
-    classes,
-    card,
-  }
-}
-
 Innovation.prototype.utilHighestCards = function(cards) {
   const sorted = [...cards].sort((l, r) => r.getAge() - l.getAge())
   return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
@@ -2804,15 +2776,6 @@ Innovation.prototype.utilSerializeObject = function(obj) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private functions
-Innovation.prototype._getHiddenName = function(card) {
-  const owner = this.players.byOwner(card)
-  if (owner) {
-    return `*${card.expansion}-${card.age}* (${owner.name})`
-  }
-  else {
-    return `*${card.expansion}-${card.age}*`
-  }
-}
 
 Innovation.prototype._adjustedDrawDeck = function(age, exp) {
   if (age > 10) {

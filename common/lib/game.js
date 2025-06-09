@@ -44,7 +44,7 @@ function Game(serialized_data, viewerName) {
 
   this.viewerName = viewerName
 
-  this.log = new BaseLogManager(this, serialized_data.chat)
+  this.log = new BaseLogManager(this, serialized_data.chat, viewerName)
   this.players = new BasePlayerManager(this, this.settings.players, this.settings.playerOptions || {})
 }
 

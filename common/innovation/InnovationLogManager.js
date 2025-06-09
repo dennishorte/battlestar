@@ -2,6 +2,33 @@ const { BaseLogManager } = require('../lib/game/BaseLogManager.js')
 
 
 class InnovationLogManager extends BaseLogManager {
+  _enrichLogCardArg(card) {
+    let name
+    if (card.isSpecialAchievement || card.isDecree) {
+      name = card.name
+    }
+    else {
+      name = card.visibility.includes(this._viewerName) ? card.name : card.getHiddenName(this._name)
+    }
+
+    const classes = ['card']
+    if (card.getAge()) {
+      classes.push(`card-age-${card.visibleAge || card.getAge()}`)
+    }
+    if (card.expansion) {
+      classes.push(`card-exp-${card.expansion}`)
+    }
+    if (name === 'hidden') {
+      classes.push('card-hidden')
+    }
+
+    return {
+      value: name,
+      classes,
+      card,
+    }
+  }
+
   _postEnrichArgs(entry) {
     // Attempt to combine this entry with the previous entry.
 
