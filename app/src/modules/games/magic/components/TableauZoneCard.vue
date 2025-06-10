@@ -1,28 +1,6 @@
 <template>
   <div class="wrapper" :class="wrapperClasses">
     <div class="card-line">
-      <i class="bi bi-eye-fill" v-if="cardIsRevealed"/>
-      <i class="bi bi-eye" v-else-if="cardIsViewed"/>
-      <i class="bi bi-eye-slash-fill" v-else-if="cardIsSecret"/>
-
-      <i class="bi bi-browser-edge" v-if="card.g.morph"/>
-      <i class="bi bi-bookmark-fill" v-if="card.g.token"/>
-
-      <i class="bi bi-lightning-fill" v-if="showScarIcon"/>
-
-      <template v-if="showGravePowers">
-        <i class="ms ms-cost ms-ability-aftermath" v-if="hasAftermath" />
-        <i class="ms ms-cost ms-ability-disturb" v-if="hasDisturb" />
-        <i class="ms ms-cost ms-ability-embalm" v-if="hasEmbalm" />
-        <i class="ms ms-cost ms-ability-eternalize" v-if="hasEternalize" />
-        <i class="ms ms-cost ms-ability-jumpstart" v-if="hasJumpstart" />
-        <i class="ms ms-cost ms-flashback" v-if="hasFlashback" />
-        <i class="ms ms-cost ms-ability-unearth" v-if="hasUnearth" />
-        <i class="ms ms-cost ms-ability-escape" v-if="hasEscape" />
-        <i class="ms ms-cost ms-flashback" v-if="hasHarmonize" />
-        <i class="bi bi-bandaid ms ms-cost" v-if="hasReturnFromGrave" />
-      </template>
-
       <CardListItem
         :card="card"
         :class="extraClasses"
@@ -32,6 +10,30 @@
         :separate-faces="!hidden"
         :can-view="canView"
       >
+        <template v-slot:icons>
+          <i class="bi bi-eye-fill" v-if="cardIsRevealed"/>
+          <i class="bi bi-eye" v-else-if="cardIsViewed"/>
+          <i class="bi bi-eye-slash-fill" v-else-if="cardIsSecret"/>
+
+          <i class="bi bi-browser-edge" v-if="card.g.morph"/>
+          <i class="bi bi-bookmark-fill" v-if="card.g.token"/>
+
+          <i class="bi bi-lightning-fill" v-if="showScarIcon"/>
+
+          <template v-if="showGravePowers">
+            <i class="ms ms-cost ms-ability-aftermath" v-if="hasAftermath" />
+            <i class="ms ms-cost ms-ability-disturb" v-if="hasDisturb" />
+            <i class="ms ms-cost ms-ability-embalm" v-if="hasEmbalm" />
+            <i class="ms ms-cost ms-ability-eternalize" v-if="hasEternalize" />
+            <i class="ms ms-cost ms-ability-jumpstart" v-if="hasJumpstart" />
+            <i class="ms ms-cost ms-flashback" v-if="hasFlashback" />
+            <i class="ms ms-cost ms-ability-unearth" v-if="hasUnearth" />
+            <i class="ms ms-cost ms-ability-escape" v-if="hasEscape" />
+            <i class="ms ms-cost ms-flashback" v-if="hasHarmonize" />
+            <i class="bi bi-bandaid ms ms-cost" v-if="hasReturnFromGrave" />
+          </template>
+        </template>
+
         <template v-slot:name="slotProps">{{ displayName(slotProps.faceIndex) }}</template>
       </CardListItem>
     </div>

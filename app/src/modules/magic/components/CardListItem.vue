@@ -17,6 +17,7 @@
         <div class="name">
           <i class="bi bi-arrow-return-right" v-if="faceIndex !== card.g.activeFaceIndex"/>
           <i class="bi bi-lightning-fill" v-if="card.isScarred(faceIndex)"/>
+          <slot name="icons" />
           <slot name="name" :face-index="faceIndex">{{ card.name(faceIndex) }}</slot>
         </div>
 
