@@ -25,7 +25,7 @@ function Card() {
         const otherPlayers = game
           .players.opponentsOf(player)
 
-        const targetPlayer = game.aChoosePlayer(player, otherPlayers)
+        const targetPlayer = game.actions.choosePlayer(player, otherPlayers)
         game.aTransfer(player, card, game.getZoneByPlayer(targetPlayer, card.color))
 
         const topCastleCards = game

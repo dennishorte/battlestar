@@ -171,7 +171,7 @@ const cardData = [
         .map(name => game.players.byName(name))
         .filter(p => p !== player)
 
-      const opponent = game.aChoosePlayer(player, opponents)
+      const opponent = game.actions.choosePlayer(player, opponents)
       if (opponent) {
         game.aRecruit(opponent, 'Insane Outcast', { noCost: true })
       }
@@ -462,7 +462,7 @@ const cardData = [
     ],
     impl: (game, player) => {
       player.incrementCounter('influence', 2)
-      const opp = game.aChoosePlayer(player, game.players.opponentsOf(player))
+      const opp = game.actions.choosePlayer(player, game.players.opponentsOf(player))
       if (opp) {
         game.aRecruit(opp, 'Insane Outcast', { noCost: true })
       }
@@ -519,7 +519,7 @@ const cardData = [
       "At end of turn, promote another card played this turn."
     ],
     impl: (game, player, { card }) => {
-      const opp = game.aChoosePlayer(player, game.players.opponentsOf(player))
+      const opp = game.actions.choosePlayer(player, game.players.opponentsOf(player))
       if (opp) {
         game.aRecruit(opp, 'Insane Outcast', { noCost: true })
         game.aDeferPromotion(player, card)

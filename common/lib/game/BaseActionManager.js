@@ -57,6 +57,15 @@ class BaseActionManager {
     })
   }
 
+  choosePlayer(player, choices, opts={}) {
+    const playerNames = this.choose(
+      player,
+      choices.map(player => player.name),
+      { ...opts, title: 'Choose Player' },
+    )
+    return choices.find(p => p.name === playerNames[0])
+  }
+
   chooseYesNo(player, title) {
     const choice = this.choose(player, ['yes', 'no'], { title })
     return choice[0] === 'yes'

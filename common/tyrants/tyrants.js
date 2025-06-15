@@ -848,12 +848,6 @@ Tyrants.prototype.aChooseColor = function(player) {
   player.color = res.colors[chosen]
 }
 
-Tyrants.prototype.aChoosePlayer = function(player, choices, opts={}) {
-  const names = choices.map(p => p.name)
-  const chosen = this.actions.choose(player, names, opts)
-  return choices.find(p => p.name === chosen[0])
-}
-
 Tyrants.prototype.aChooseLocation = function(player, locations, opts={}) {
   const choices = locations
     .map(loc => loc.name)

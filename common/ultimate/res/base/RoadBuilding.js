@@ -27,7 +27,7 @@ function Card() {
           .players.all()
           .filter(other => other !== player)
         const title = 'Choose a player to transfer your top red card to'
-        const opp = game.aChoosePlayer(player, choices, { title, min: 0, max: 1 })
+        const opp = game.actions.choosePlayer(player, choices, { title, min: 0, max: 1 })
 
         // If you chose to swap, do it.
         if (opp) {

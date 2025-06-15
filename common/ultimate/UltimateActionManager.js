@@ -6,6 +6,14 @@ class UltimateActionManager extends BaseActionManager {
     super(game)
   }
 
+  choose(player, choices, opts={}) {
+    if (this.game.state.dogmaInfo.mayIsMust) {
+      opts.min = Math.max(1, opts.min || 1)
+    }
+
+    return super.choose(player, choices, opts)
+  }
+
   chooseCard(player, cards, opts={}) {
     // TODO: convert this to just call chooseCards
 

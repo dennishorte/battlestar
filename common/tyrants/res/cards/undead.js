@@ -280,7 +280,7 @@ const cardData = [
       const otherPlayersDistinct = util.array.distinct(otherPlayers)
 
       if (otherPlayersDistinct.length > 0) {
-        const targetPlayer = game.aChoosePlayer(player, otherPlayersDistinct, {
+        const targetPlayer = game.actions.choosePlayer(player, otherPlayersDistinct, {
           title: 'Choose a player whose dead you will raise'
         })
 
@@ -381,7 +381,7 @@ const cardData = [
                   .getCardsByZone(p, 'trophyHall')
                   .some(troop => troop.isNeutral())
                 )
-              const targetPlayer = game.aChoosePlayer(player, players)
+              const targetPlayer = game.actions.choosePlayer(player, players)
               if (targetPlayer) {
                 const troop = game
                   .getCardsByZone(targetPlayer, 'trophyHall')

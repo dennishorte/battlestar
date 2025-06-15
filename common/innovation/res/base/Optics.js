@@ -37,7 +37,7 @@ function Card() {
             .filter(other => game.getScore(other) < playerScore)
 
           if (targets.length > 0) {
-            const targetPlayer = game.aChoosePlayer(player, targets)
+            const targetPlayer = game.actions.choosePlayer(player, targets)
             game.aChooseAndTransfer(
               player,
               game.getCardsByZone(player, 'score'),

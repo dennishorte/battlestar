@@ -625,30 +625,6 @@ Innovation.prototype.aChooseAge = function(player, ages, opts={}) {
   }
 }
 
-Innovation.prototype.aChoosePlayer = function(player, choices, opts={}) {
-  if (choices.length === 0) {
-    this.log.addNoEffect()
-    return undefined
-  }
-
-  if (choices[0].name) {
-    choices = choices.map(player => player.name)
-  }
-
-  const playerNames = this.actions.choose(
-    player,
-    choices,
-    { ...opts, title: 'Choose Player' }
-  )
-  if (playerNames.length === 0) {
-    this.log.addDoNothing(player)
-    return undefined
-  }
-  else {
-    return this.players.byName(playerNames[0])
-  }
-}
-
 Innovation.prototype.aChooseAndAchieve = function(player, choices, opts={}) {
   if (choices.length === 0) {
     this.log.addNoEffect()

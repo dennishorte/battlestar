@@ -28,7 +28,7 @@ function Card() {
 
       const otherCard = cards.filter(other => other !== card)[0]
       if (otherCard) {
-        const opponent = game.aChoosePlayer(player, game.players.opponentsOf(player))
+        const opponent = game.actions.choosePlayer(player, game.players.opponentsOf(player))
         game.aTransfer(player, otherCard, game.getZoneByPlayer(opponent, otherCard.color))
       }
     }

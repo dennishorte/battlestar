@@ -24,7 +24,7 @@ function Card() {
         .filter(x => x > 0)
         .length
 
-      const opp = game.aChoosePlayer(player, game.players.opponentsOf(player))
+      const opp = game.actions.choosePlayer(player, game.players.opponentsOf(player))
       game.aChooseAndReturn(player, game.getCardsByZone(opp, 'score'), { count })
     }
   ]

@@ -17,7 +17,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const otherPlayers = game.players.all().filter(other => other.name !== player.name)
-      const otherPlayer = game.aChoosePlayer(player, otherPlayers)
+      const otherPlayer = game.actions.choosePlayer(player, otherPlayers)
 
       if (otherPlayer) {
         const cardInHand = game.actions.chooseCard(otherPlayer, game.getZoneByPlayer(otherPlayer, 'hand').cards())
