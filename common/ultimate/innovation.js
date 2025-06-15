@@ -1483,24 +1483,6 @@ Innovation.prototype.aDigArtifact = function(player, age) {
   }
 }
 
-Innovation.prototype.aFlipCoin = function(player) {
-  const value = this.random() < .5 ? 'heads' : 'tails'
-  const choice = this.actions.choose(player, ['heads', 'tails'], {
-    title: 'Call it...'
-  })[0]
-
-  this.log.add({
-    template: '{player} calls {choice}',
-    args: { player, choice },
-  })
-
-  this.log.add({
-    template: '...and the flip comes up: ' + value
-  })
-
-  return value === choice
-}
-
 Innovation.prototype._checkCanSeizeRelic = function(card) {
   // A relic can be seized from the achievements pile or from another player's achievements.
   return card.zone.includes('achievement')

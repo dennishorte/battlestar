@@ -18,7 +18,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { self }) => {
-      const lose = !game.aFlipCoin(player)
+      const lose = !game.actions.flipCoin(player)
       if (lose) {
         game.aYouLose(player, self)
       }
@@ -26,7 +26,7 @@ function Card() {
 
     (game, player, { self }) => {
       while (true) {
-        if (game.aFlipCoin(player)) {
+        if (game.actions.flipCoin(player)) {
           game.log.add({
             template: '{player} wins the coin flip and the effect ends.',
             args: { player },

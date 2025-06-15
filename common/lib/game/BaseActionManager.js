@@ -70,6 +70,24 @@ class BaseActionManager {
     const choice = this.choose(player, ['yes', 'no'], { title })
     return choice[0] === 'yes'
   }
+
+  flipCoin(player) {
+    const choice = this.choose(player, ['heads', 'tails'], {
+      title: 'Call it...'
+    })[0]
+    const value = this.game.random() < .5 ? 'heads' : 'tails'
+
+    this.log.add({
+      template: '{player} calls {choice}',
+      args: { player, choice },
+    })
+
+    this.log.add({
+      template: '...and the flip comes up: ' + value
+    })
+
+    return value === choice
+  }
 }
 
 module.exports = {
