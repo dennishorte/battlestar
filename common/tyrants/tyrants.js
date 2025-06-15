@@ -816,7 +816,7 @@ Tyrants.prototype.aCascade = function(player, opts) {
       return
     }
 
-    if (this.aChooseYesNo(player, 'Acquire ' + found.name + '?')) {
+    if (this.actions.chooseYesNo(player, 'Acquire ' + found.name + '?')) {
       this.log.add({
         template: '{player} adds {card} to their deck',
         args: { player, card: found }
@@ -834,7 +834,7 @@ Tyrants.prototype.aCascade = function(player, opts) {
 
 Tyrants.prototype.aChooseCard = function(player, choices, opts={}) {
   const choiceNames = util.array.distinct(choices.map(c => c.name)).sort()
-  const selection = this.aChoose(player, choiceNames, opts)
+  const selection = this.actions.choose(player, choiceNames, opts)
   if (selection.length > 0) {
     return choices.find(c => c.name === selection[0])
   }
@@ -845,7 +845,7 @@ Tyrants.prototype.aChooseCard = function(player, choices, opts={}) {
 
 Tyrants.prototype.aChooseCards = function(player, choices, opts={}) {
   const choiceNames = choices.map(c => c.name).sort()
-  const selection = this.aChoose(player, choiceNames, opts)
+  const selection = this.actions.choose(player, choiceNames, opts)
   const used = []
 
   return selection.map(s => {
@@ -865,7 +865,7 @@ Tyrants.prototype.aChooseColor = function(player) {
     .filter(([, hex]) => !this.players.all().some(p => p.color === hex))
     .map(([name]) => name)
 
-  const chosen = this.aChoose(player, availableColors, {
+  const chosen = this.actions.choose(player, availableColors, {
     title: 'Choose a player color',
   })
   player.color = res.colors[chosen]
@@ -873,7 +873,7 @@ Tyrants.prototype.aChooseColor = function(player) {
 
 Tyrants.prototype.aChoosePlayer = function(player, choices, opts={}) {
   const names = choices.map(p => p.name)
-  const chosen = this.aChoose(player, names, opts)
+  const chosen = this.actions.choose(player, names, opts)
   return choices.find(p => p.name === chosen[0])
 }
 
@@ -886,7 +886,7 @@ Tyrants.prototype.aChooseLocation = function(player, locations, opts={}) {
     opts.title = 'Choose a location'
   }
 
-  const selection = this.aChoose(player, choices, opts)
+  const selection = this.actions.choose(player, choices, opts)
   if (selection.length > 0) {
     return locations.find(loc => loc.name === selection[0])
   }
@@ -894,7 +894,7 @@ Tyrants.prototype.aChooseLocation = function(player, locations, opts={}) {
 
 Tyrants.prototype.aChooseAndAssassinate = function(player, opts={}) {
   const choices = this.getAssassinateChoices(player, opts)
-  const selection = this.aChoose(player, choices)
+  const selection = this.actions.choose(player, choices)
   if (selection.length > 0) {
     const [locName, ownerName] = selection[0].split(', ')
     const loc = this.getLocationByName(locName)
@@ -1005,7 +1005,7 @@ Tyrants.prototype.aChooseAndSupplant = function(player, opts={}) {
   }
 
   const choices = this._collectTargets(player, opts).troops
-  const selection = this.aChoose(player, choices)
+  const selection = this.actions.choose(player, choices)
   if (selection.length > 0) {
     const [locName, ownerName] = selection[0].split(', ')
     const loc = this.getLocationByName(locName)
@@ -1047,7 +1047,7 @@ Tyrants.prototype.aChooseAndDeploy = function(player, opts={}) {
 // Only supports moving troops.
 Tyrants.prototype.aChooseAndMoveTroop = function(player, opts={}) {
   const choices = this._collectTargets(player, opts).troops
-  const toMove = this.aChoose(player, choices, { title: "Choose a troop to move" })[0]
+  const toMove = this.actions.choose(player, choices, { title: "Choose a troop to move" })[0]
   if (toMove) {
     const [locName, ownerName] = toMove.split(', ')
     const source = this.getLocationByName(locName)
@@ -1109,7 +1109,7 @@ Tyrants.prototype.aChooseAndPromote = function(player, cardsToChoose, opts={}) {
     .map(c => c.name)
     .sort()
 
-  const choices = this.aChoose(player, choiceNames, { ...opts, title: 'Choose cards to promote' })
+  const choices = this.actions.choose(player, choiceNames, { ...opts, title: 'Choose cards to promote' })
 
   const done = []
   for (const choice of choices) {
@@ -1123,7 +1123,7 @@ Tyrants.prototype.aChooseAndRecruit = function(player, maxCost, opts) {
   const choices = this._generateBuyActions(maxCost, opts)
 
   if (choices) {
-    const cardNames = this.aChoose(player, choices.choices, { ...opts, title: 'Choose cards to recruit' })
+    const cardNames = this.actions.choose(player, choices.choices, { ...opts, title: 'Choose cards to recruit' })
     for (const name of cardNames) {
       this.aRecruit(player, name, { noCost: true })
     }
@@ -1184,7 +1184,7 @@ Tyrants.prototype.aChooseAndReturn = function(player, opts={}) {
     })
   }
 
-  const selection = this.aChoose(player, choices, { title: 'Choose a token to return' })
+  const selection = this.actions.choose(player, choices, { title: 'Choose a token to return' })
 
   if (selection.length > 0) {
     const kind = selection[0].title
@@ -1205,7 +1205,7 @@ Tyrants.prototype.aChooseAndReturn = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseOne = function(player, choices, opts={}) {
-  const selection = this.aChoose(player, choices.map(c => c.title))[0]
+  const selection = this.actions.choose(player, choices.map(c => c.title))[0]
   const impl = choices.find(c => c.title === selection).impl
 
   this.log.add({
@@ -1221,7 +1221,7 @@ Tyrants.prototype.aChooseToDiscard = function(player) {
     .filter(p => this.getCardsByZone(p, 'hand').length > 3)
     .map(p => p.name)
 
-  const choice = this.aChoose(player, opponents, { title: 'Choose an opponent to discard' })
+  const choice = this.actions.choose(player, opponents, { title: 'Choose an opponent to discard' })
   if (choice.length > 0) {
     const opponent = this.players.byName(choice[0])
     this.aChooseAndDiscard(opponent, { forced: true, forcedBy: player.name })
@@ -1327,7 +1327,7 @@ Tyrants.prototype.aDevourThisAnd = function(player, card, title, fn) {
     args: { player }
   })
   this.log.indent()
-  const doDevour = this.aChooseYesNo(player, title)
+  const doDevour = this.actions.chooseYesNo(player, title)
   if (doDevour) {
     this.aDevour(player, card)
     fn(this, player)

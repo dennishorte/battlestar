@@ -23,7 +23,7 @@ function Card() {
         game.log.addNoEffect()
       }
       else {
-        const doIt = game.aYesNo(player, 'Meld all cards in your score pile?')
+        const doIt = game.actions.chooseYesNo(player, 'Meld all cards in your score pile?')
         if (doIt) {
           game.aMeldMany(player, game.getCardsByZone(player, 'score'))
         }

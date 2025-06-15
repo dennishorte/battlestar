@@ -26,7 +26,7 @@ function Card() {
         max: 1
       })
       if (card) {
-        const action = game.aChoose(player, ['score', 'safeguard'], {
+        const action = game.actions.choose(player, ['score', 'safeguard'], {
           title: 'Choose an action'
         })[0]
         if (action === 'score') {

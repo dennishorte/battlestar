@@ -32,7 +32,7 @@ function Card() {
       }
     },
     (game, player) => {
-      const selected = game.aChoose(player, ['yellow', 'purple'], {
+      const selected = game.actions.choose(player, ['yellow', 'purple'], {
         title: 'Choose a color to splay right',
       })[0]
 

@@ -36,7 +36,7 @@ function Card() {
         .flatMap(player => game.utilColors().map(color => ({ player, color })))
         .map(x => `${x.player.name}-${x.color}`)
 
-      const selections = game.aChoose(player, splayChoices)
+      const selections = game.actions.choose(player, splayChoices)
       if (selections && selections.length > 0) {
         const [playerName, color] = selections[0].split('-')
         const other = game.players.byName(playerName)

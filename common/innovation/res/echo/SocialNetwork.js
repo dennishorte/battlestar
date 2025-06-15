@@ -19,7 +19,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      const biscuit = game.aChoose(player, ['{k}', '{c}', '{s}', '{l}', '{f}', '{i}'], {
+      const biscuit = game.actions.choose(player, ['{k}', '{c}', '{s}', '{l}', '{f}', '{i}'], {
         title: 'Choose a biscuit',
       })[0][1]
       const toTransfer = game

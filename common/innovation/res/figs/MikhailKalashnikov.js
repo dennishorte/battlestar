@@ -39,7 +39,7 @@ function Card() {
           }
         })
 
-        const action = game.aChoose(player, ['transfer it', 'execute it'])[0]
+        const action = game.actions.choose(player, ['transfer it', 'execute it'])[0]
 
         if (action === 'transfer it') {
           game.aTransfer(player, selected, game.getZoneByPlayer(player, 'score'))

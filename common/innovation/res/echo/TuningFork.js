@@ -39,7 +39,7 @@ function Card() {
           break
         }
 
-        const repeat = game.aYesNo(player, 'Repeat this dogma effect?')
+        const repeat = game.actions.chooseYesNo(player, 'Repeat this dogma effect?')
         if (repeat) {
           continue
         }
@@ -50,7 +50,7 @@ function Card() {
     }
   ]
   this.echoImpl = (game, player) => {
-    const exp = game.aChoose(player, game.getExpansionList(), { title: 'Choose the type of deck' })[0]
+    const exp = game.actions.choose(player, game.getExpansionList(), { title: 'Choose the type of deck' })[0]
     const ages = [1,2,3,4,5,6,7,8,9,10]
       .filter(age => game.getZoneByDeck(exp, age).cards().length > 0)
     const age = game.aChooseAge(player, ages)

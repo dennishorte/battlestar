@@ -51,7 +51,7 @@ function Card() {
       .flatMap(player => game.utilColors().map(color => ({ player, color })))
       .map(x => `${x.player.name} ${x.color}`)
 
-    const toSplayLeft = game.aChoose(player, choices, { title: 'Choose a stack to splay left' })
+    const toSplayLeft = game.actions.choose(player, choices, { title: 'Choose a stack to splay left' })
     if (toSplayLeft && toSplayLeft.length > 0) {
       const [playerName, color] = toSplayLeft[0].split(' ')
       const target = game.players.byName(playerName)

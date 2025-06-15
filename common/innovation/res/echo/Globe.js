@@ -23,7 +23,7 @@ function Card() {
           .getCardsByZone(player, 'hand')
           .map(card => card.color)
       )
-      const colors = game.aChoose(player, colorChoices, { title: 'Choose a color of cards to return' })
+      const colors = game.actions.choose(player, colorChoices, { title: 'Choose a color of cards to return' })
 
       if (colors && colors.length > 0) {
         const color = colors[0]

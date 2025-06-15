@@ -26,7 +26,7 @@ function Card() {
 
       while (true) {
         // Prompt player to choose an age (value) deck
-        const exp = game.aChoose(player, game.getExpansionList())[0]
+        const exp = game.actions.choose(player, game.getExpansionList())[0]
         const age = game.aChooseAge(player)
 
         const key = `${exp}-${age}`

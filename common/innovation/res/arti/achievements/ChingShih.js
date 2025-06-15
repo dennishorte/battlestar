@@ -48,7 +48,7 @@ function Card() {
             return `${opp.name}, ${achString}`
           })
 
-        const toTransfer = game.aChoose(player, choices, { title: 'Choose an Achievement' })
+        const toTransfer = game.actions.choose(player, choices, { title: 'Choose an Achievement' })
         if (toTransfer && toTransfer.length > 0) {
           const tokens = toTransfer[0].split(', ')
           const playerName = tokens[0]

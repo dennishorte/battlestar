@@ -16,7 +16,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const selection = game.aChoose(player, ['Draw and Score and Return', 'Draw a Higher Card'])[0]
+      const selection = game.actions.choose(player, ['Draw and Score and Return', 'Draw a Higher Card'])[0]
       game.log.add({
         template: '{player} chooses {option}',
         args: { player, option: selection }

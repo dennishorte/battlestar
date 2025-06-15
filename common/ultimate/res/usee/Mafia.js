@@ -35,7 +35,7 @@ function Card() {
         .filter(p => game.getCardsByZone(p, 'score').length > 0)
         .map(p => p.name)
 
-      const targetName = game.aChoose(player, players, {
+      const targetName = game.actions.choose(player, players, {
         title: 'Choose a player to tuck from'
       })[0]
 

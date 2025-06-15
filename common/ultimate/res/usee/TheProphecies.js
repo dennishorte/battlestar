@@ -33,7 +33,7 @@ function Card() {
         })
       }
 
-      const selected = game.aChoose(player, choices)[0]
+      const selected = game.actions.choose(player, choices)[0]
 
       if (selected === drawOption) {
         game.aDrawAndSafeguard(player, drawAge)

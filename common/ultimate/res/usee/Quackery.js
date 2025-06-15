@@ -30,7 +30,7 @@ function Card() {
         })
       }
 
-      const selected = game.aChoose(player, choices, { title: 'Choose an option:' })[0]
+      const selected = game.actions.choose(player, choices, { title: 'Choose an option:' })[0]
 
       if (selected === 'Draw a 4') {
         game.aDraw(player, { age: game.getEffectAge(this, 4) })

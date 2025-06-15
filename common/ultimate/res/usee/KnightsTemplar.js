@@ -21,7 +21,7 @@ function Card() {
         .utilColors()
         .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
 
-      const color = game.aChoose(player, splayedColors)[0]
+      const color = game.actions.choose(player, splayedColors)[0]
       if (color) {
         const unsplayed = game.aUnsplay(player, color)
         if (unsplayed) {

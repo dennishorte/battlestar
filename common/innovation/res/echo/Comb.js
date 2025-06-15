@@ -17,7 +17,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const color = game.aChoose(player, game.utilColors(), { title: 'Choose a Color' })[0]
+      const color = game.actions.choose(player, game.utilColors(), { title: 'Choose a Color' })[0]
       const cards = [
         game.aDrawAndReveal(player, game.getEffectAge(this, 1)),
         game.aDrawAndReveal(player, game.getEffectAge(this, 1)),

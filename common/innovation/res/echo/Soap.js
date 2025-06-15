@@ -17,7 +17,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const color = game.aChoose(player, game.utilColors())[0]
+      const color = game.actions.choose(player, game.utilColors())[0]
       const choices = game
         .getCardsByZone(player, 'hand')
         .filter(card => card.color === color)

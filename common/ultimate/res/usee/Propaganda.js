@@ -17,7 +17,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      const chosenColor = game.aChoose(leader, game.utilColors(), {
+      const chosenColor = game.actions.choose(leader, game.utilColors(), {
         title: 'Choose a color',
         count: 1,
       })[0]

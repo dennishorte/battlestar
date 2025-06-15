@@ -18,7 +18,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const decision = game.aYesNo(player, 'Draw and tuck a {6}?')
+      const decision = game.actions.chooseYesNo(player, 'Draw and tuck a {6}?')
       if (decision) {
         game.aDrawAndTuck(player, game.getEffectAge(this, 6))
 

@@ -33,7 +33,7 @@ function Card() {
         }
       }
 
-      const selected = game.aChoose(player, choices, {
+      const selected = game.actions.choose(player, choices, {
         title: 'Choose a color to unsplay',
       })[0]
 
@@ -52,7 +52,7 @@ function Card() {
         'Achieve secrets'
       ]
 
-      const choice = game.aChoose(player, choices)[0]
+      const choice = game.actions.choose(player, choices)[0]
 
       if (choice === choices[0]) {
         // Safeguard achievements

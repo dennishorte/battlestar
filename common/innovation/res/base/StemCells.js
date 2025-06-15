@@ -23,7 +23,7 @@ function Card() {
         return
       }
 
-      const scoreAll = game.aYesNo(player, 'Score all cards from your hand?')
+      const scoreAll = game.actions.chooseYesNo(player, 'Score all cards from your hand?')
 
       if (scoreAll) {
         game.aScoreMany(player, hand.cards())

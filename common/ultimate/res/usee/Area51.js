@@ -25,7 +25,7 @@ function Card() {
         'Draw a ' + game.getEffectAge(this, 11),
         'Safeguard a standard achievement',
       ]
-      const choice = game.aChoose(player, choices)[0]
+      const choice = game.actions.choose(player, choices)[0]
 
       if (choice === choices[0]) {
         game.aDraw(player, { age: game.getEffectAge(this, 11) })

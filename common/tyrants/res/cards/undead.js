@@ -287,7 +287,7 @@ const cardData = [
         if (targetPlayer) {
           const troopZone = game.getZoneByPlayer(targetPlayer, 'trophyHall')
           const choices = troopZone.cards().map(troop => troop.getOwnerName()).sort()
-          const selections = game.aChoose(player, choices, {
+          const selections = game.actions.choose(player, choices, {
             title: 'Choose up to 2 troops to reanimate',
             min: 0,
             max: 2,
@@ -337,7 +337,7 @@ const cardData = [
             const loc = game.aChooseLocation(player, game.getPresence(player))
             if (loc) {
               const troops = loc.getTroops().filter(troop => troop.isNeutral())
-              const chosen = game.aChoose(player, troops.map(() => 'neutral'), {
+              const chosen = game.actions.choose(player, troops.map(() => 'neutral'), {
                 title: 'Choose which troops to deploy your Minotaur Skeleton against',
                 min: 0,
                 max: 3,
@@ -447,7 +447,7 @@ const cardData = [
               })
             }
 
-            const selection = game.aChoose(player, choices, { title: 'Choose a card to promote' })[0]
+            const selection = game.actions.choose(player, choices, { title: 'Choose a card to promote' })[0]
 
             if (selection.title === 'this card') {
               game.aPromote(player, card)
@@ -535,7 +535,7 @@ const cardData = [
       game.aChooseAndDeploy(player)
       game.aChooseAndDeploy(player)
 
-      const doDevour = game.aChooseYesNo(player, 'Devour Skeletal Horde to deploy 3 more troops?')
+      const doDevour = game.actions.chooseYesNo(player, 'Devour Skeletal Horde to deploy 3 more troops?')
       if (doDevour) {
         game.aDevour(player, card)
         game.aChooseAndDeploy(player)
@@ -651,7 +651,7 @@ const cardData = [
       const loc = game.aChooseAndPlaceSpy(player)
 
       if (loc) {
-        const doDevour = game.aChooseYesNo(player, `Devour this wraith to assassinate a troop at ${loc.name}`)
+        const doDevour = game.actions.chooseYesNo(player, `Devour this wraith to assassinate a troop at ${loc.name}`)
         if (doDevour) {
           game.aDevour(player, card)
           game.aChooseAndAssassinate(player, { loc })

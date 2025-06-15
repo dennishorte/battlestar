@@ -2,8 +2,11 @@ const seedrandom = require('seedrandom')
 const selector = require('./selector.js')
 const util = require('./util.js')
 
+const { BaseActionManager } = require('./game/BaseActionManager.js')
+const { BaseCardManager } = require('./game/BaseCardManager.js')
 const { BaseLogManager } = require('./game/BaseLogManager.js')
 const { BasePlayerManager } = require('./game/BasePlayerManager.js')
+const { BaseZoneManager } = require('./game/BaseZoneManager.js')
 
 
 module.exports = {
@@ -44,8 +47,12 @@ function Game(serialized_data, viewerName) {
 
   this.viewerName = viewerName
 
+  // Add log first so that when the later managers are loaded, they can initialize the log internally.
   this.log = new BaseLogManager(this, serialized_data.chat, viewerName)
+  this.actions = new BaseActionManager(this)
+  this.cards = new BaseCardManager(this)
   this.players = new BasePlayerManager(this, this.settings.players, this.settings.playerOptions || {})
+  this.zones = new BaseZoneManager(this)
 }
 
 function GameFactory(settings, viewerName=undefined) {
@@ -432,48 +439,6 @@ Game.prototype.testSetBreakpoint = function(name, fn) {
 ////////////////////////////////////////////////////////////////////////////////
 // Standard game methods
 
-
-Game.prototype.aChoose = function(player, choices, opts={}) {
-  if (choices.length === 0) {
-    this.log.addNoEffect()
-    return []
-  }
-
-  let title = opts.title || 'Choose'
-  if (opts.min === 0) {
-    title = '(optional) ' + title
-  }
-
-  const chooseSelector = {
-    actor: player.name,
-    title,
-    choices: choices,
-    ...opts
-  }
-
-  const selected = this.requestInputSingle(chooseSelector)
-
-  // Validate counts
-  const { min, max } = selector.minMax(chooseSelector)
-
-  if (selected.length < min || selected.length > max) {
-    throw new Error('Invalid number of options selected')
-  }
-
-  if (selected.length === 0) {
-    this.log.addDoNothing(player)
-    return []
-  }
-  else {
-    return selected
-  }
-
-}
-
-Game.prototype.aChooseYesNo = function(player, title) {
-  const choice = this.aChoose(player, ['yes', 'no'], { title })
-  return choice[0] === 'yes'
-}
 
 Game.prototype.checkSameTeam = function(p1, p2) {
   return p1.team === p2.team

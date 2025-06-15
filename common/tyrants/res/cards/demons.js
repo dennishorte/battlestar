@@ -121,7 +121,7 @@ const cardData = [
             })
             .sort()
 
-          const selected = game.aChoose(player, choices, {
+          const selected = game.actions.choose(player, choices, {
             title: `Choose up to two trophies to deploy`,
             min: 0,
             max: 2,

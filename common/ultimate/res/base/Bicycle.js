@@ -16,7 +16,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const decision = game.aYesNo(player, 'Exchange your hand and score pile?')
+      const decision = game.actions.chooseYesNo(player, 'Exchange your hand and score pile?')
       if (decision) {
         game.aExchangeZones(
           player,

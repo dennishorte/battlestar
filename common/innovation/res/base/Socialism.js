@@ -22,7 +22,7 @@ function Card() {
         game.log.addNoEffect()
       }
       else {
-        const tuckThem = game.aYesNo(player, 'Tuck all cards from your hand?')
+        const tuckThem = game.actions.chooseYesNo(player, 'Tuck all cards from your hand?')
         if (tuckThem) {
           const tucked = game.aTuckMany(player, cards)
 

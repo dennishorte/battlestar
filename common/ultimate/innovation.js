@@ -728,7 +728,7 @@ Innovation.prototype.aChooseAge = function(player, ages, opts={}) {
     ages = [...ages]
   }
 
-  const selected = this.aChoose(player, ages, { ...opts, title: 'Choose Age' })
+  const selected = this.actions.choose(player, ages, { ...opts, title: 'Choose Age' })
   if (selected) {
     return selected[0]
   }
@@ -744,7 +744,7 @@ Innovation.prototype.aChooseCard = function(player, cards, opts={}) {
     opts.title = 'Choose a Card'
   }
 
-  const cardNames = this.aChoose(
+  const cardNames = this.actions.choose(
     player,
     cards.map(c => c.id || c).sort(),
     opts
@@ -799,7 +799,7 @@ Innovation.prototype.aChooseCards = function(player, cards, opts={}) {
   let output
 
   while (true) {
-    const cardNames = this.aChoose(
+    const cardNames = this.actions.choose(
       player,
       choices,
       opts
@@ -835,7 +835,7 @@ Innovation.prototype.aChooseCards = function(player, cards, opts={}) {
 }
 
 Innovation.prototype.aChooseColor = function(player, opts={}) {
-  return this.aChoose(player, this.utilColors(), {
+  return this.actions.choose(player, this.utilColors(), {
     title: 'Choose a color',
     ...opts
   })
@@ -851,7 +851,7 @@ Innovation.prototype.aChoosePlayer = function(player, choices, opts={}) {
     choices = choices.map(player => player.name)
   }
 
-  const playerNames = this.aChoose(
+  const playerNames = this.actions.choose(
     player,
     choices,
     { ...opts, title: 'Choose Player' }
@@ -874,7 +874,7 @@ Innovation.prototype.aChooseAndAchieve = function(player, choices, opts={}) {
     choices = this.formatAchievements(choices)
   }
 
-  const selected = this.aChoose(
+  const selected = this.actions.choose(
     player,
     choices,
     { ...opts, title: 'Choose Achievement' }
@@ -954,7 +954,7 @@ Innovation.prototype.aChooseAndTransfer = ChooseAndFactory('aTransferMany', 3)
 Innovation.prototype.aChooseAndTuck = ChooseAndFactory('aTuckMany', 2)
 
 Innovation.prototype.aChooseAndUnsplay = function(player, choices, opts={}) {
-  const colors = this.aChoose(player, choices, {
+  const colors = this.actions.choose(player, choices, {
     title: 'Choose a color',
     ...opts
   })
@@ -984,7 +984,7 @@ Innovation.prototype.aChooseAndSplay = function(player, choices, direction, opts
     opts.max = 1
   }
 
-  const colors = this.aChoose(
+  const colors = this.actions.choose(
     player,
     choices,
     { ...opts, title: `Choose a color to splay ${direction}` }
@@ -1616,7 +1616,7 @@ Innovation.prototype.aDigArtifact = function(player, age) {
 
 Innovation.prototype.aFlipCoin = function(player) {
   const value = this.random() < .5 ? 'heads' : 'tails'
-  const choice = this.aChoose(player, ['heads', 'tails'], {
+  const choice = this.actions.choose(player, ['heads', 'tails'], {
     title: 'Call it...'
   })[0]
 
@@ -1673,7 +1673,7 @@ Innovation.prototype.aJunkDeck = function(player, age, opts={}) {
 
   let doJunk = true
   if (opts.optional) {
-    doJunk = this.aChooseYesNo(player, `Junk the ${age} deck?`)
+    doJunk = this.actions.chooseYesNo(player, `Junk the ${age} deck?`)
   }
 
   if (doJunk) {
@@ -1705,7 +1705,7 @@ Innovation.prototype.aSeizeRelic = function(player, card) {
         'do not seize',
       ]
 
-  const choice = this.aChoose(player, relicSeizeOptions, {
+  const choice = this.actions.choose(player, relicSeizeOptions, {
     title: `How would you like to seize ${card.name}`
   })[0]
 
@@ -2014,10 +2014,6 @@ Innovation.prototype.aUnsplay = function(player, color) {
     zone.splay = 'none'
     return color
   }
-}
-
-Innovation.prototype.aYesNo = function(player, title) {
-  return this.aChooseYesNo(player, title)
 }
 
 Innovation.prototype.aYouLose = function(player, card) {

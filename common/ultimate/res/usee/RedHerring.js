@@ -26,7 +26,7 @@ function Card() {
 
       const choices = ['left', 'right', 'up'].filter(x => x !== red.splay)
 
-      const direction = game.aChoose(player, choices, {
+      const direction = game.actions.choose(player, choices, {
         title: 'Choose a direction to splay red',
       })[0]
       game.aSplay(player, 'red', direction)

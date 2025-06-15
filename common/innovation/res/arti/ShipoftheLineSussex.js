@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       if (game.getCardsByZone(player, 'score').length === 0) {
-        const colors = game.aChoose(player, game.utilColors(), { title: 'Choose a Color' })
+        const colors = game.actions.choose(player, game.utilColors(), { title: 'Choose a Color' })
         const color = colors[0]
         game.aScoreMany(player, game.getCardsByZone(player, color))
       }

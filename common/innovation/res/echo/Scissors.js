@@ -30,7 +30,7 @@ function Card() {
         })
 
         if (card) {
-          const meldOrScore = game.aChoose(player, ['meld', 'score'], {
+          const meldOrScore = game.actions.choose(player, ['meld', 'score'], {
             title: `Meld or score ${card.name}`
           })[0]
           if (meldOrScore === 'meld') {

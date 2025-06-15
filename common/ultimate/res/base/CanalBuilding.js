@@ -17,7 +17,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const choices = ["Exchange highest cards between hand and score pile", "Junk all cards in the 3 deck"]
-      const decision = game.aChoose(player, choices, { title: "Choose one" })[0]
+      const decision = game.actions.choose(player, choices, { title: "Choose one" })[0]
 
       if (decision === choices[0]) {
         game.log.add({

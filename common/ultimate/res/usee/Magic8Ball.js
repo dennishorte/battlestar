@@ -23,7 +23,7 @@ function Card() {
           'Safeguard two available standard achievements'
         ]
 
-        const choice = game.aChoose(player, options)[0]
+        const choice = game.actions.choose(player, options)[0]
 
         game.log.add({
           template: '{player} chooses: ' + choice,

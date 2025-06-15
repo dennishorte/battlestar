@@ -20,7 +20,7 @@ function Card() {
       const validIcons = game
         .utilBiscuitNames()
         .filter(b => b !== 'leaf')
-      const iconName = game.aChoose(leader, validIcons, { title: 'Choose an icon' })[0]
+      const iconName = game.actions.choose(leader, validIcons, { title: 'Choose an icon' })[0]
       const icon = game.utilBiscuitNameToIcon(iconName)
 
       game.log.add({

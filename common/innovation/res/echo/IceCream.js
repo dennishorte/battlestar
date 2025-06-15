@@ -22,7 +22,7 @@ function Card() {
     },
 
     (game, player) => {
-      const addAchievement = game.aYesNo(player, 'Transfer a card to the available achievements?')
+      const addAchievement = game.actions.chooseYesNo(player, 'Transfer a card to the available achievements?')
 
       if (addAchievement) {
         const age = game.aChooseAge(player, [

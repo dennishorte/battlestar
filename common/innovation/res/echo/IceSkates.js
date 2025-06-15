@@ -21,7 +21,7 @@ function Card() {
 
       if (returned) {
         for (let i = 0; i < returned.length; i++) {
-          const choice = game.aChoose(player, [
+          const choice = game.actions.choose(player, [
             'draw and meld a {2}',
             'draw and foreshadow a {3}',
           ])[0]

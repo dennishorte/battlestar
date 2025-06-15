@@ -27,7 +27,7 @@ function Card() {
         .map(x => `${x.color} ${x.splay}`)
       const distinct = util.array.distinct(choices).sort()
 
-      const choice = game.aChoose(player, distinct, { min: 0, max: 1 })[0]
+      const choice = game.actions.choose(player, distinct, { min: 0, max: 1 })[0]
       if (choice) {
         const [color, direction] = choice.split(' ')
         game.aSplay(player, color, direction)

@@ -17,7 +17,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const colors = game.aChoose(player, game.utilColors(), { count: 3 })
+      const colors = game.actions.choose(player, game.utilColors(), { count: 3 })
       const card = game.aDrawAndReveal(player, game.getEffectAge(this, 8))
 
       if (colors.includes(card.color)) {

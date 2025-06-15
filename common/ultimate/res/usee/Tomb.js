@@ -44,7 +44,7 @@ function Card() {
       }
 
       const lowestAchievement = game.utilLowestCards(achievements)[0]
-      const transfer = game.aYesNo(player, `Transfer an achievement of value ${lowestAchievement.getAge()} to your hand?`)
+      const transfer = game.actions.chooseYesNo(player, `Transfer an achievement of value ${lowestAchievement.getAge()} to your hand?`)
 
       if (transfer) {
         game.aTransfer(player, lowestAchievement, game.getZoneByPlayer(player, 'hand'))

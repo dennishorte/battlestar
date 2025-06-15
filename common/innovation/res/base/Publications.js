@@ -22,7 +22,7 @@ function Card() {
         .utilColors()
         .filter(color => game.getCardsByZone(player, color).length > 0)
 
-      const color = game.aChoose(player, colors, 'Choose a Color')[0]
+      const color = game.actions.choose(player, colors, 'Choose a Color')[0]
       game.log.add({
         template: '{player} choose {color}',
         args: { player, color }

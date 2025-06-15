@@ -45,7 +45,7 @@ function Card() {
         })
       }
 
-      const selected = game.aChoose(player, choices, { title: 'Choose one:' })[0]
+      const selected = game.actions.choose(player, choices, { title: 'Choose one:' })[0]
 
       if (selected.title === 'Splay left and self-execute') {
         const color = selected.selection[0]

@@ -22,7 +22,7 @@ function Card() {
         'Transfer all your secrets to your hand',
         'Transfer all cards in your hand to the available achievements'
       ]
-      const choice = game.aChoose(player, choices)[0]
+      const choice = game.actions.choose(player, choices)[0]
 
       if (choice === choices[0]) {
         const achievements = game.getAvailableStandardAchievements(player)

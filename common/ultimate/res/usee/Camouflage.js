@@ -55,7 +55,7 @@ function Card() {
         options.push('Score secrets')
       }
 
-      const choice = game.aChoose(player, options, { title: 'Choose an action' })[0]
+      const choice = game.actions.choose(player, options, { title: 'Choose an action' })[0]
 
       if (choice === 'Junk and safeguard') {
         const cards = game.aChooseCards(player, junkOptions, {

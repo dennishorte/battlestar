@@ -27,7 +27,7 @@ function Card() {
         })
       }
       else {
-        const doScoreYellow = game.aYesNo(player, 'Score your bottom yellow card?')
+        const doScoreYellow = game.actions.chooseYesNo(player, 'Score your bottom yellow card?')
         if (doScoreYellow) {
           game.aScore(player, yellowCards[yellowCards.length - 1])
         }
@@ -41,7 +41,7 @@ function Card() {
 
       // You may draw and tuck a 1.
       const age = game.getEffectAge(this, 1)
-      const doDrawAndTuck = game.aYesNo(player, `Draw and tuck a {${age}}?`)
+      const doDrawAndTuck = game.actions.chooseYesNo(player, `Draw and tuck a {${age}}?`)
       if (doDrawAndTuck) {
         game.aDrawAndTuck(player, age)
       }

@@ -56,7 +56,7 @@ function Card() {
         return `${card.name}: ${text}`
       })
 
-    const selection = game.aChoose(player, choices)[0]
+    const selection = game.actions.choose(player, choices)[0]
     if (selection && selection.length > 0) {
       game.log.add({
         template: '{player} choose {effect}',

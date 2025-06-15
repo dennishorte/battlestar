@@ -17,7 +17,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const decision = game.aYesNo(player, 'Exchange the highest card in your hand and score pile?')
+      const decision = game.actions.chooseYesNo(player, 'Exchange the highest card in your hand and score pile?')
       if (decision) {
         game.log.add({
           template: '{player} swaps the highest cards in their hand and score pile',

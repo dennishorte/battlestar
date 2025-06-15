@@ -27,7 +27,7 @@ function Card() {
 
     (game, player) => {
       const validColors = game.getTopCards(player).map(c => c.color)
-      const color = game.aChoose(player, validColors, {
+      const color = game.actions.choose(player, validColors, {
         title: 'Choose a color to score, twice',
         min: 0,
         max: 1,

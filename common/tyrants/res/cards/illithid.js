@@ -60,7 +60,7 @@ const cardData = [
             template: '{player} was forced to discard {card}, and may choose to promote it',
             args: { player, card }
           })
-          const promote = game.aChooseYesNo(player, 'Promote Ambassador instead of discarding?')
+          const promote = game.actions.chooseYesNo(player, 'Promote Ambassador instead of discarding?')
           if (promote) {
             game.aPromote(player, card)
             game.aDraw(player)
@@ -220,7 +220,7 @@ const cardData = [
         .getTroops()
         .filter(troop => troop.owner !== player)
         .map(troop => troop.getOwnerName())
-      const targets = game.aChoose(player, troops, { min: 0, max: 3, title: 'Choose up to three troops to assassinate' })
+      const targets = game.actions.choose(player, troops, { min: 0, max: 3, title: 'Choose up to three troops to assassinate' })
 
       for (const target of targets) {
         const owner = target === 'neutral' ? 'neutral' : game.players.byName(target)

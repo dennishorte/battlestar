@@ -17,7 +17,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const returnCard = game.aYesNo(player, 'Return the highest card from your score pile?')
+      const returnCard = game.actions.chooseYesNo(player, 'Return the highest card from your score pile?')
       if (returnCard) {
         const highestCards = game.utilHighestCards(game.getCardsByZone(player, 'score'))
         const cards = game.aChooseAndReturn(player, highestCards)

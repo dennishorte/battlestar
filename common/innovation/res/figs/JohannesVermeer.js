@@ -30,7 +30,7 @@ function Card() {
           .getAvailableAchievementsRaw(player)
           .filter(card => card.getAge() === age + 1)
         const formatted = game.formatAchievements(choices)
-        const selected = game.aChoose(player, formatted, { title: 'Choose Achievement' })
+        const selected = game.actions.choose(player, formatted, { title: 'Choose Achievement' })
         if (selected && selected.length > 0) {
           game.aAchieveAction(player, selected[0], { nonAction: true })
         }

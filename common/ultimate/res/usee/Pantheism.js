@@ -26,7 +26,7 @@ function Card() {
         game.aTuck(player, secondCard)
 
         const colorChoices = util.array.distinct([firstCard.color, secondCard.color])
-        const colorToScore = game.aChoose(player, colorChoices, {
+        const colorToScore = game.actions.choose(player, colorChoices, {
           title: 'Choose a color to score',
         })[0]
 

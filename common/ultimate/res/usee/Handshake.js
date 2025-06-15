@@ -27,7 +27,7 @@ function Card() {
         .getCardsByZone(player, 'hand')
         .map(c => c.color)
       const uniqueColors = util.array.distinct(handColors).sort()
-      const chosenColors = game.aChoose(player, uniqueColors, { count: 2 })
+      const chosenColors = game.actions.choose(player, uniqueColors, { count: 2 })
 
       // Transfer all cards of chosen colors from player's hand to leader's hand
       const playerHand = game.getZoneByPlayer(player, 'hand')

@@ -32,7 +32,7 @@ function Card() {
           .cards()
           .filter(card => !card.isSpecialAchievement)
         const formatted = game.formatAchievements(choices)
-        const selected = game.aChoose(player, formatted)[0]
+        const selected = game.actions.choose(player, formatted)[0]
         if (selected) {
           game.aAchieveAction(player, selected, { nonAction: true })
         }

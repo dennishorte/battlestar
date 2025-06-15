@@ -617,7 +617,7 @@ Innovation.prototype.aChooseAge = function(player, ages, opts={}) {
     ages = [...ages]
   }
 
-  const selected = this.aChoose(player, ages, { ...opts, title: 'Choose Age' })
+  const selected = this.actions.choose(player, ages, { ...opts, title: 'Choose Age' })
   if (selected) {
     return selected[0]
   }
@@ -633,7 +633,7 @@ Innovation.prototype.aChooseCard = function(player, cards, opts={}) {
     opts.title = 'Choose a Card'
   }
 
-  const cardNames = this.aChoose(
+  const cardNames = this.actions.choose(
     player,
     cards.map(c => c.id || c).sort(),
     opts
@@ -680,7 +680,7 @@ Innovation.prototype.aChooseCards = function(player, cards, opts={}) {
 
   opts.title = opts.title || 'Choose Cards(s)'
   const choices = choiceMap.map(x => x.name)
-  const cardNames = this.aChoose(
+  const cardNames = this.actions.choose(
     player,
     choices,
     opts
@@ -716,7 +716,7 @@ Innovation.prototype.aChoosePlayer = function(player, choices, opts={}) {
     choices = choices.map(player => player.name)
   }
 
-  const playerNames = this.aChoose(
+  const playerNames = this.actions.choose(
     player,
     choices,
     { ...opts, title: 'Choose Player' }
@@ -739,7 +739,7 @@ Innovation.prototype.aChooseAndAchieve = function(player, choices, opts={}) {
     choices = this.formatAchievements(choices)
   }
 
-  const selected = this.aChoose(
+  const selected = this.actions.choose(
     player,
     choices,
     { ...opts, title: 'Choose Achievement' }
@@ -833,7 +833,7 @@ Innovation.prototype.aChooseAndSplay = function(player, choices, direction, opts
     opts.max = 1
   }
 
-  const colors = this.aChoose(
+  const colors = this.actions.choose(
     player,
     choices,
     { ...opts, title: `Choose a color to splay ${direction}` }
@@ -1486,7 +1486,7 @@ Innovation.prototype.aSeizeRelic = function(player, card) {
         'do not seize',
       ]
 
-  const choice = this.aChoose(player, relicSeizeOptions, {
+  const choice = this.actions.choose(player, relicSeizeOptions, {
     title: `How would you like to seize ${card.name}`
   })[0]
 
@@ -1604,7 +1604,7 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
       const cards = this.aChooseAndMeld(player, choices, { min: 0, max: 1 })
       if (cards && cards.length > 0) {
         const melded = cards[0]
-        const doDogma = this.aYesNo(player, `Activate ${melded.name}?`)
+        const doDogma = this.actions.chooseYesNo(player, `Activate ${melded.name}?`)
         if (doDogma) {
           this.aDogma(player, melded)
         }
@@ -1740,10 +1740,6 @@ Innovation.prototype.aUnsplay = function(player, zone) {
     })
     zone.splay = 'none'
   }
-}
-
-Innovation.prototype.aYesNo = function(player, title) {
-  return this.aChooseYesNo(player, title)
 }
 
 Innovation.prototype.aYouLose = function(player) {

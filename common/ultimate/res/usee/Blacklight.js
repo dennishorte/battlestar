@@ -40,7 +40,7 @@ function Card() {
         })
       }
 
-      const choice = game.aChoose(player, choices)[0]
+      const choice = game.actions.choose(player, choices)[0]
 
       if (choice.title === 'Unsplay') {
         game.aUnsplay(player, choice.selection[0])

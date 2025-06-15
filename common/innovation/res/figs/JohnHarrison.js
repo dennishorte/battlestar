@@ -37,7 +37,7 @@ function Card() {
       },
       func: (game) => {
         const owner = game.players.byOwner(this)
-        const kind = game.aChoose(owner, game.getExpansionList())[0]
+        const kind = game.actions.choose(owner, game.getExpansionList())[0]
         game.aDraw(owner, { exp: kind, age: game.getEffectAge(this, 6) })
       }
     }

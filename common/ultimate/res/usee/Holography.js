@@ -16,7 +16,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const color = game.aChoose(player, ['red', 'blue', 'green'], {
+      const color = game.actions.choose(player, ['red', 'blue', 'green'], {
         title: 'Choose a color to score and splay'
       })[0]
 

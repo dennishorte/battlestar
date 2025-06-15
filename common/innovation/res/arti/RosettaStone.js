@@ -17,7 +17,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const exp = game.aChoose(player, game.getExpansionList(), { title: 'Choose a card type' })
+      const exp = game.actions.choose(player, game.getExpansionList(), { title: 'Choose a card type' })
       const cards = [
         game.aDraw(player, { age: game.getEffectAge(this, 2), exp }),
         game.aDraw(player, { age: game.getEffectAge(this, 2), exp }),

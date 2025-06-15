@@ -17,7 +17,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const options = ['Draw and junk', 'Exchange']
-      const choice = game.aChoose(player, options, {
+      const choice = game.actions.choose(player, options, {
         title: 'Choose an option'
       })[0]
 

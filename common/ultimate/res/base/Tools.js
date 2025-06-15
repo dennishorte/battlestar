@@ -19,7 +19,7 @@ function Card() {
     (game, player) => {
       const cards = game.getCardsByZone(player, 'hand')
       if (cards.length >= 3) {
-        const doIt = game.aYesNo(player, 'Return three cards to draw and meld a {3}?')
+        const doIt = game.actions.chooseYesNo(player, 'Return three cards to draw and meld a {3}?')
         if (doIt) {
           const returned = game.aChooseAndReturn(player, cards, { count: 3 })
           if (returned.length === 3) {

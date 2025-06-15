@@ -30,7 +30,7 @@ function Card() {
       `Draw a ${game.getEffectAge(this, 3)}`,
       `Draw and foreshadow a ${game.getEffectAge(this, 4)}`,
     ]
-    const choice = game.aChoose(player, choices)[0]
+    const choice = game.actions.choose(player, choices)[0]
 
     if (choice.includes('foreshadow')) {
       game.aDrawAndForeshadow(player, game.getEffectAge(this, 4))

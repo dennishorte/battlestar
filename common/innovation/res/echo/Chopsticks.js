@@ -20,7 +20,7 @@ function Card() {
       const age = game.getEffectAge(this, 1)
       const deck = game.getZoneByDeck('base', age).cards()
       if (deck.length > 0) {
-        const addAchievement = game.aYesNo(player, `Transfer the bottom card of the {${age}} deck to the available achievements?`)
+        const addAchievement = game.actions.chooseYesNo(player, `Transfer the bottom card of the {${age}} deck to the available achievements?`)
         if (addAchievement) {
           const card = deck[deck.length - 1]
           game.aTransfer(player, card, game.getZoneById('achievements'))

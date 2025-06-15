@@ -17,7 +17,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const autoReturn = game.aYesNo(player, 'Auto return cards?')
+      const autoReturn = game.actions.chooseYesNo(player, 'Auto return cards?')
       const scoreZone = game.getZoneByPlayer(player, 'score')
 
       if (autoReturn) {

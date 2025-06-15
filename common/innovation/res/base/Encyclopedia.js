@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const highest = game.utilHighestCards(game.getCardsByZone(player, 'score'))
-      const doIt = game.aYesNo(player, 'Meld all the highest cards in your score pile?')
+      const doIt = game.actions.chooseYesNo(player, 'Meld all the highest cards in your score pile?')
 
       if (doIt) {
         game.aMeldMany(player, highest)
