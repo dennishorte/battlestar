@@ -88,6 +88,20 @@ class BaseActionManager {
 
     return value === choice
   }
+
+  rollDie(player, faces) {
+    const result = Math.floor(this.game.random() * faces) + 1
+
+    const extra = faces === 2
+      ? (result === 1 ? ' (heads)' : ' (tails)')
+      : ''
+
+    this.log.add({
+      template: `{player} rolled ${result} on a d${faces}${extra}`,
+      args: { player },
+      classes: ['die-roll'],
+    })
+  }
 }
 
 module.exports = {

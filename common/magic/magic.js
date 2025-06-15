@@ -493,7 +493,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'reveal'              : return this.aReveal(actor, action.cardId)
       case 'reveal all'          : return this.aRevealAll(actor, action.zoneId)
       case 'reveal next'         : return this.aRevealNext(actor, action.zoneId)
-      case 'roll die'            : return this.aRollDie(actor, action.faces)
+      case 'roll die'            : return this.actions.rollDie(actor, action.faces)
       case 'secret'              : return this.aSecret(actor, action.cardId)
       case 'select phase'        : return this.aSelectPhase(actor, action.phase)
       case 'shuffle'             : return this.aShuffle(actor, action.zoneId)
@@ -847,26 +847,6 @@ Magic.prototype.aRevealNext = function(player, zoneId) {
   this.log.add({
     template: `{player} reveals the next card in {zone} (top+${nextIndex}): {card}`,
     args: { player, zone, card }
-  })
-}
-
-Magic.prototype.aRollDie = function(player, faces) {
-  const result = Math.floor(this.random() * faces) + 1
-
-  let extra = ''
-  if (faces === 2) {
-    if (result === 1) {
-      extra = ' (heads)'
-    }
-    else {
-      extra = ' (tails)'
-    }
-  }
-
-  this.log.add({
-    template: `{player} rolled ${result} on a d${faces}${extra}`,
-    args: { player },
-    classes: ['die-roll'],
   })
 }
 
