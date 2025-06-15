@@ -30,6 +30,7 @@ function Card() {
           title: 'Splay left and self-execute',
           choices: unsplayed,
           min: 0,
+          max: 1,
         })
       }
 
@@ -40,6 +41,7 @@ function Card() {
           title: 'Meld and splay right',
           choices: handCards.map(c => c.name),
           min: 0,
+          max: 1,
         })
       }
 
