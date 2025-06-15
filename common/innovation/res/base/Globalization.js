@@ -24,7 +24,7 @@ function Card() {
         .getTopCards(player)
         .filter(c => c.checkBiscuitIsVisible('l', 'top'))
         .map(c => c.id)
-      const card = game.aChooseCard(player, choices)
+      const card = game.actions.chooseCard(player, choices)
 
       if (card) {
         game.aReturn(player, card)

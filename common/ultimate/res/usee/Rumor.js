@@ -30,7 +30,7 @@ function Card() {
 
     (game, player) => {
       const choices = game.getCardsByZone(player, 'hand')
-      const card = game.aChooseCard(player, choices)
+      const card = game.actions.chooseCard(player, choices)
 
       if (card) {
         const playerOnLeft = game.players.following(player)

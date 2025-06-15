@@ -41,7 +41,7 @@ function Card() {
       const highest = Math.max(...scoreCards.map(card => card.getAge()))
       const highestCards = scoreCards.filter(card => card.getAge() === highest)
 
-      const card = game.aChooseCard(player, highestCards)
+      const card = game.actions.chooseCard(player, highestCards)
       if (card) {
         game.mReveal(player, card)
         game.aSelfExecute(player, card)

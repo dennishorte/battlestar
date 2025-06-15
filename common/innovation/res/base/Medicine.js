@@ -20,8 +20,8 @@ function Card() {
       const highest = game.utilHighestCards(game.getCardsByZone(player, 'score'))
       const lowest = game.utilLowestCards(game.getCardsByZone(leader, 'score'))
 
-      const highestCards = game.aChooseCards(player, highest)
-      const lowestCards = game.aChooseCards(player, lowest)
+      const highestCards = game.actions.chooseCards(player, highest)
+      const lowestCards = game.actions.chooseCards(player, lowest)
 
       if (highestCards && highestCards.length > 0) {
         game.mMoveCardTo(highestCards[0], game.getZoneByPlayer(leader, 'score'), { player })

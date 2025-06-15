@@ -23,7 +23,7 @@ function Card() {
       const choices = game
         .getTopCards(player)
         .filter(card => !leaderAges.includes(card.getAge()))
-      const card = game.aChooseCard(player, choices, { title: 'Choose a card to transfer' })
+      const card = game.actions.chooseCard(player, choices, { title: 'Choose a card to transfer' })
       if (card) {
         const transferred = game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
         if (transferred) {

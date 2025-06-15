@@ -42,6 +42,22 @@ class BaseActionManager {
     }
   }
 
+  chooseCard(player, choices, opts={}) {
+    return this.chooseCards(player, choices, opts)[0]
+  }
+
+  chooseCards(player, choices, opts={}) {
+    const choiceNames = choices.map(c => c.name).sort()
+    const selection = this.choose(player, choiceNames, opts)
+    const used = []
+
+    return selection.map(s => {
+      const card = choices.find(c => c.name === s && !used.includes(c))
+      used.push(card)
+      return card
+    })
+  }
+
   chooseYesNo(player, title) {
     const choice = this.choose(player, ['yes', 'no'], { title })
     return choice[0] === 'yes'

@@ -17,7 +17,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'), {
+      const card = game.actions.chooseCard(player, game.getCardsByZone(player, 'hand'), {
         min: 0,
         max: 1,
       })

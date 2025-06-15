@@ -42,7 +42,7 @@ function Card() {
       }
 
       const topNonPurple = game.getTopCards(player).filter(c => c.color !== 'purple')
-      const firstCard = game.aChooseCard(player, topNonPurple)
+      const firstCard = game.actions.chooseCard(player, topNonPurple)
 
       doEffect(firstCard)
 

@@ -23,7 +23,7 @@ function Card() {
           .filter(card => !card.checkHasBiscuit('i'))
       )
 
-      const card = game.aChooseCard(player, choices)
+      const card = game.actions.chooseCard(player, choices)
       if (card) {
         const transferred = game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
         if (transferred) {

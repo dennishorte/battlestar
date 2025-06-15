@@ -19,7 +19,7 @@ function Card() {
       // Reveal opponent's hand
       const hand = game.getCardsByZone(player, 'hand')
       game.aRevealMany(player, hand)
-      const toMeld = game.aChooseCard(leader, hand, {
+      const toMeld = game.actions.chooseCard(leader, hand, {
         title: 'Choose a card for your opponent to meld',
       })
 
@@ -32,7 +32,7 @@ function Card() {
       game.aRevealMany(player, score)
 
       const choices = [...score, ...hand]
-      const toExecute = game.aChooseCard(leader, choices, {
+      const toExecute = game.actions.chooseCard(leader, choices, {
         title: 'Choose a card to force opponent to self-execute',
       })
       if (toExecute) {

@@ -25,7 +25,7 @@ function Card() {
         return
       }
 
-      const secret = game.aChooseCards(player, secrets, { hidden: true })[0]
+      const secret = game.actions.chooseCards(player, secrets, { hidden: true })[0]
       const transferred = game.aTransfer(player, secret, game.getZoneById('achievements'))
       if (transferred) {
         game.state.dogmaInfo.padlockCardTransferred = true

@@ -22,7 +22,7 @@ function Card() {
           .players.all()
           .flatMap(player => game.getTopCards(player))
           .filter(c => c !== self)
-        const card = game.aChooseCard(player, choices)
+        const card = game.actions.chooseCard(player, choices)
 
         if (card) {
           const owner = game.players.byOwner(card)
@@ -32,7 +32,7 @@ function Card() {
             .getCardsByZone(player, 'hand')
             .filter(c => card.checkSharesBiscuit(c))
 
-          const toReturn = game.aChooseCard(player, returnChoices, { min: 0, max: 1 })
+          const toReturn = game.actions.chooseCard(player, returnChoices, { min: 0, max: 1 })
           if (toReturn) {
             game.aReturn(player, toReturn)
             continue

@@ -20,7 +20,7 @@ function Card() {
 
       if (safeguarded && safeguarded.length > 0) {
         const availableAchievements = game.getAvailableStandardAchievements(player)
-        const achievements = game.aChooseCards(player, availableAchievements, {
+        const achievements = game.actions.chooseCards(player, availableAchievements, {
           title: 'Choose two available achievements to reveal',
           hidden: true,
           count: 2,
@@ -30,7 +30,7 @@ function Card() {
 
         const meldableAchievements = achievements.filter(card => !card.checkHasBiscuit('i') && !card.checkHasBiscuit('p'))
 
-        const toMeld = game.aChooseCard(player, meldableAchievements, { min: 0, max: 1 })
+        const toMeld = game.actions.chooseCard(player, meldableAchievements, { min: 0, max: 1 })
 
         if (toMeld) {
           game.aMeld(player, toMeld)

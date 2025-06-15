@@ -28,7 +28,7 @@ function Card() {
           .getTopCards(player)
           .filter(card => card.checkHasBiscuit('f'))
       )
-      const card = game.aChooseCard(player, cards, { title: 'Choose a top card to transfer' })
+      const card = game.actions.chooseCard(player, cards, { title: 'Choose a top card to transfer' })
       if (card) {
         game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
       }

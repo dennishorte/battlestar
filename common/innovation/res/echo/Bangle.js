@@ -28,7 +28,7 @@ function Card() {
         .filter(card => card.color === 'red')
         .map(c => c.id)
 
-      const card = game.aChooseCard(player, redCards)
+      const card = game.actions.chooseCard(player, redCards)
 
       if (card) {
         game.aTuck(player, card)

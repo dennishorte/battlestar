@@ -686,6 +686,7 @@ describe('Illithids expansion', () => {
       const request4 = t.choose(game, request3, 'ched-halls b')
       const request5 = t.choose(game, request4, 'ched-llace a')
       const request6 = t.choose(game, request5, 'ched-llace b')
+      const request7 = t.choose(game, request6, 'House Guard')
 
       t.testBoard(game, {
         dennis: {

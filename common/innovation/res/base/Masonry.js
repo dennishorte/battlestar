@@ -21,7 +21,7 @@ function Card() {
       const choices = game
         .getCardsByZone(player, 'hand')
         .filter(card => card.checkHasBiscuit('k'))
-      const cards = game.aChooseCards(player, choices, { min: 0, max: choices.length })
+      const cards = game.actions.chooseCards(player, choices, { min: 0, max: choices.length })
       if (cards) {
         const melded = game.aMeldMany(player, cards)
 

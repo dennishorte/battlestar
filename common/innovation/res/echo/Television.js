@@ -23,7 +23,7 @@ function Card() {
       const choices = game
         .getCardsByZone(opponent, 'score')
         .filter(card => card.getAge() === age)
-      const transferred = game.aChooseCard(player, choices)
+      const transferred = game.actions.chooseCard(player, choices)
       if (transferred) {
         game.aTransfer(player, transferred, game.getZoneByPlayer(opponent, transferred.color))
 

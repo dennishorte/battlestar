@@ -23,7 +23,7 @@ function Card() {
           break
         }
 
-        const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'), {
+        const card = game.actions.chooseCard(player, game.getCardsByZone(player, 'hand'), {
           title: `Choose a card to score or meld (${i + 1} of 2)`,
           min: 0,
           max: 1
@@ -64,7 +64,7 @@ function Card() {
       .map(color => game.getBottomCard(player, color))
       .filter(card => card !== undefined)
 
-    const card = game.aChooseCard(player, choices)
+    const card = game.actions.chooseCard(player, choices)
 
     if (card) {
       game.mMoveCardTo(card, game.getZoneByPlayer(player, 'hand'), { player })

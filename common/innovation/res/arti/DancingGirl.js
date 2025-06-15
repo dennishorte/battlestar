@@ -30,7 +30,7 @@ function Card() {
         .filter(card => card.getAge() == age)
 
       while (toTransfer.length > 0) {
-        const card = game.aChooseCard(player, toTransfer, {
+        const card = game.actions.chooseCard(player, toTransfer, {
           title: `Choose a card to transfer to ${leader.name}`,
         })
 

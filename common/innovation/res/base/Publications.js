@@ -33,7 +33,7 @@ function Card() {
       let position = 0
       while (true) {
         const posString = position === 0 ? 'top' : 'top+' + position
-        const card = game.aChooseCard(
+        const card = game.actions.chooseCard(
           player,
           remaining.concat(['auto']),
           { title: `Choose the card you want at ${posString} at the end of this action.` },

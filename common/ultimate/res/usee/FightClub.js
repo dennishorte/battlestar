@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player, { leader }) => {
       const choices = game.getCardsByZone(player, 'safe')
-      const secret = game.aChooseCard(player, choices)
+      const secret = game.actions.chooseCard(player, choices)
 
       if (secret) {
         game.aTransfer(player, secret, game.getZoneByPlayer(leader, 'achievements'))

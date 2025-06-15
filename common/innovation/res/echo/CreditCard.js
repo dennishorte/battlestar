@@ -21,7 +21,7 @@ function Card() {
       const choices = game
         .getTopCards(player)
         .filter(card => card.color !== 'green')
-      const card = game.aChooseCard(player, choices, {
+      const card = game.actions.chooseCard(player, choices, {
         min: 0,
         max: 1,
         title: 'You may take a card into your hand.'

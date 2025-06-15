@@ -22,7 +22,7 @@ function Card() {
       const rightPlayer = game.players.rightOf(player)
 
       const choices = [...handCards, ...scoreCards]
-      const selectedCard = game.aChooseCard(player, choices)
+      const selectedCard = game.actions.chooseCard(player, choices)
 
       if (selectedCard) {
         game.aTransfer(player, selectedCard, game.getZoneByPlayer(rightPlayer, selectedCard.color))

@@ -32,7 +32,7 @@ function Card() {
       }
 
       const choices = game.getTopCards(player)
-      const toExecute = game.aChooseCard(player, choices)
+      const toExecute = game.actions.chooseCard(player, choices)
       if (toExecute) {
         game.log.add({
           template: '{player} executes {card}',

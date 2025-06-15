@@ -31,7 +31,7 @@ function Card() {
         game.mReveal(player, card)
       }
 
-      const card = game.aChooseCard(leader, cards)
+      const card = game.actions.chooseCard(leader, cards)
       game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
     }
   ]

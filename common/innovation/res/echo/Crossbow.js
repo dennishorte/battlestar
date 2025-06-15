@@ -29,7 +29,7 @@ function Card() {
         .players.all()
         .filter(other => other !== player)
       const other = game.aChoosePlayer(player, otherChoices)
-      const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'))
+      const card = game.actions.chooseCard(player, game.getCardsByZone(player, 'hand'))
       if (card) {
         game.aTransfer(player, card, game.getZoneByPlayer(other, card.color))
       }

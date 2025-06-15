@@ -17,7 +17,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const revealed = game.aChooseCard(player, game.getZoneByPlayer(player, 'hand').cards())
+      const revealed = game.actions.chooseCard(player, game.getZoneByPlayer(player, 'hand').cards())
       if (revealed) {
         game
           .mReveal(player, revealed)

@@ -24,7 +24,7 @@ function Card() {
         .filter(card => card.color !== 'green')
         .filter(card => card.biscuits.includes('f'))
 
-      const card = game.aChooseCard(player, choices)
+      const card = game.actions.chooseCard(player, choices)
       if (card) {
         game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
         game.aDrawAndScore(player, game.getEffectAge(this, 5))

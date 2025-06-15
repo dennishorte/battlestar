@@ -22,7 +22,7 @@ function Card() {
         .getTopCards(player)
         .filter(card => card.color !== 'red')
         .filter(card => card.checkHasBiscuit('l') || card.checkHasBiscuit('f'))
-      const card = game.aChooseCard(player, choices, { title: 'Choose a card to transfer' })
+      const card = game.actions.chooseCard(player, choices, { title: 'Choose a card to transfer' })
       if (card) {
         const transferred = game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
         if (transferred) {

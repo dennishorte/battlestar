@@ -17,7 +17,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      const card = game.aChooseCard(player, game.getTopCards(player))
+      const card = game.actions.chooseCard(player, game.getTopCards(player))
       if (card) {
         game.aTransferMany(
           player,

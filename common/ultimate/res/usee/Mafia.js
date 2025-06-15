@@ -42,7 +42,7 @@ function Card() {
       if (targetName) {
         const target = game.players.byName(targetName)
 
-        const card = game.aChooseCards(player, game.getCardsByZone(target, 'score'), {
+        const card = game.actions.chooseCards(player, game.getCardsByZone(target, 'score'), {
           title: 'Choose a card to tuck',
           hidden: targetName !== player.name
         })[0]

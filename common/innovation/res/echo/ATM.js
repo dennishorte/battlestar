@@ -35,7 +35,7 @@ function Card() {
         .array
         .takeWhile(topCoins, card => card.getAge() === topCoins[0].getAge())
 
-      const card = game.aChooseCard(player, highest)
+      const card = game.actions.chooseCard(player, highest)
       if (card) {
         game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
       }

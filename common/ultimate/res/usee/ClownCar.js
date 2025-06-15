@@ -19,7 +19,7 @@ function Card() {
       let canRepeat = true
       while (canRepeat) {
         const scoreCards = game.getCardsByZone(leader, 'score')
-        const card = game.aChooseCards(leader, scoreCards, { hidden: true })[0]
+        const card = game.actions.chooseCards(leader, scoreCards, { hidden: true })[0]
         if (card) {
           game.aMeld(player, card)
           canRepeat = !card.checkHasBiscuit('c')

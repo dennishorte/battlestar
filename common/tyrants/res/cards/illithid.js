@@ -260,7 +260,7 @@ const cardData = [
       }
 
       const choices = game.getCardsByZone(player, 'innerCircle')
-      const toPlay = game.aChooseCard(player, choices)
+      const toPlay = game.actions.chooseCard(player, choices)
       if (toPlay) {
         game.log.add({
           template: '{player} choose {card} to play from their innerCircle',
@@ -555,7 +555,7 @@ const cardData = [
         .getZoneById('market')
         .cards()
         .filter(card => card.cost <= 6)
-      const card = game.aChooseCard(player, choices)
+      const card = game.actions.chooseCard(player, choices)
       if (card) {
         game.mMoveCardTo(card, game.getZoneByPlayer(player, 'hand'))
         game.aPlayCard(player, card)

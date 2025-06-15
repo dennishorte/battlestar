@@ -832,29 +832,6 @@ Tyrants.prototype.aCascade = function(player, opts) {
   }
 }
 
-Tyrants.prototype.aChooseCard = function(player, choices, opts={}) {
-  const choiceNames = util.array.distinct(choices.map(c => c.name)).sort()
-  const selection = this.actions.choose(player, choiceNames, opts)
-  if (selection.length > 0) {
-    return choices.find(c => c.name === selection[0])
-  }
-  else {
-    return undefined
-  }
-}
-
-Tyrants.prototype.aChooseCards = function(player, choices, opts={}) {
-  const choiceNames = choices.map(c => c.name).sort()
-  const selection = this.actions.choose(player, choiceNames, opts)
-  const used = []
-
-  return selection.map(s => {
-    const card = choices.find(c => c.name === s && !used.includes(c))
-    used.push(card)
-    return card
-  })
-}
-
 Tyrants.prototype.aChooseColor = function(player) {
   // This option exists so that games in progress when color selection is introduced don't break
   if (!this.settings.chooseColors) {
@@ -905,7 +882,7 @@ Tyrants.prototype.aChooseAndAssassinate = function(player, opts={}) {
 
 Tyrants.prototype.aChooseAndDevour = function(player, opts={}) {
   const zoneName = opts.zone ? opts.zone : 'hand'
-  const chosen = this.aChooseCard(player, this.getCardsByZone(player, zoneName), {
+  const chosen = this.actions.chooseCard(player, this.getCardsByZone(player, zoneName), {
     min: 0,
     max: 1,
     title: `Devour a card from your ${zoneName}?`,
@@ -925,7 +902,7 @@ Tyrants.prototype.aChooseAndDevour = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndDevourMarket = function(player, opts={}) {
-  const chosen = this.aChooseCards(player, this.getZoneById('market').cards(), {
+  const chosen = this.actions.chooseCards(player, this.getZoneById('market').cards(), {
     min: 0,
     max: opts.max || 1,
     title: 'Choose cards to devour from the market',
@@ -965,7 +942,7 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
     opts.title = 'Choose a card to discard'
   }
 
-  const chosen = this.aChooseCard(player, this.getCardsByZone(player, 'hand'), opts)
+  const chosen = this.actions.chooseCard(player, this.getCardsByZone(player, 'hand'), opts)
   if (chosen) {
     // Some cards have triggers if an opponent causes you to discard.
     if (opts.forced) {

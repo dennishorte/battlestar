@@ -23,7 +23,7 @@ function Card() {
         game.aDraw(player, { age: game.getEffectAge(this, 2), exp }),
       ].filter(card => card !== undefined)
 
-      const card = game.aChooseCard(player, cards, { title: 'Choose a card to meld' })
+      const card = game.actions.chooseCard(player, cards, { title: 'Choose a card to meld' })
       game.aMeld(player, card)
 
       const otherCard = cards.filter(other => other !== card)[0]

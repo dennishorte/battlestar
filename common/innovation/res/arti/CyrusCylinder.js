@@ -24,7 +24,7 @@ function Card() {
         .filter(card => card !== undefined)
         .filter(card => card.name !== this.name)
 
-      const card = game.aChooseCard(player, choices)
+      const card = game.actions.chooseCard(player, choices)
       if (card) {
         game.aCardEffects(player, card, 'dogma')
       }

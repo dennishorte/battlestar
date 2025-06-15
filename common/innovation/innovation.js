@@ -8,6 +8,7 @@ const util = require('../lib/util.js')
 const { Zone } = require('./zone.js')
 
 const { InnovationLogManager } = require('./InnovationLogManager.js')
+const { UltimateActionManager } = require('../ultimate/UltimateActionManager.js')
 
 
 module.exports = {
@@ -25,6 +26,7 @@ function Innovation(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
   this.log = new InnovationLogManager(this, serialized_data.chat, viewerName)
+  this.actions = new UltimateActionManager(this)
 }
 
 util.inherit(Game, Innovation)
@@ -418,7 +420,7 @@ Innovation.prototype.fadeFiguresCheck = function() {
           break
         }
 
-        const toFade = this.aChooseCard(player, topFiguresFn())
+        const toFade = this.actions.chooseCard(player, topFiguresFn())
         this.aScore(player, toFade)
       }
 
@@ -623,89 +625,6 @@ Innovation.prototype.aChooseAge = function(player, ages, opts={}) {
   }
 }
 
-Innovation.prototype.aChooseCard = function(player, cards, opts={}) {
-  if (cards.length === 0) {
-    this.log.addNoEffect()
-    return undefined
-  }
-
-  if (!opts.title) {
-    opts.title = 'Choose a Card'
-  }
-
-  const cardNames = this.actions.choose(
-    player,
-    cards.map(c => c.id || c).sort(),
-    opts
-  )
-
-  if (cardNames.length === 0) {
-    this.log.addDoNothing(player)
-    return undefined
-  }
-  else if (cardNames[0] === 'auto') {
-    return 'auto'
-  }
-  else {
-    return this.getCardByName(cardNames[0])
-  }
-}
-
-Innovation.prototype.aChooseCards = function(player, cards, opts={}) {
-  if (cards.length === 0) {
-    this.log.addNoEffect()
-    return undefined
-  }
-
-  if (opts.count === 0 || opts.max === 0) {
-    return []
-  }
-
-  if (opts.lowest) {
-    cards = this.utilLowestCards(cards)
-  }
-
-  const choiceMap = cards.map(card => {
-    if (!card.id) {
-      card = this.getCardByName(card)
-    }
-
-    if (opts.hidden) {
-      return { name: card.getHiddenName(this), card }
-    }
-    else {
-      return { name: card.id, card }
-    }
-  })
-
-  opts.title = opts.title || 'Choose Cards(s)'
-  const choices = choiceMap.map(x => x.name)
-  const cardNames = this.actions.choose(
-    player,
-    choices,
-    opts
-  )
-
-  if (cardNames.length === 0) {
-    this.log.addDoNothing(player)
-    return undefined
-  }
-
-  // Card names were hidden. Convert back to arbitrary matching cards.
-  else if (cardNames[0].startsWith('*')) {
-    const output = []
-    for (const name of cardNames) {
-      const mapping = choiceMap.find(m => m.name === name && !output.includes(m.card))
-      output.push(mapping.card)
-    }
-    return output
-  }
-
-  else {
-    return cardNames.map(name => this.getCardByName(name))
-  }
-}
-
 Innovation.prototype.aChoosePlayer = function(player, choices, opts={}) {
   if (choices.length === 0) {
     this.log.addNoEffect()
@@ -767,7 +686,7 @@ Innovation.prototype.aChooseByPredicate = function(player, cards, count, pred) {
       numRemaining -= choices.length
     }
     else {
-      const chosen = this.aChooseCards(player, choices, { count: numRemaining })
+      const chosen = this.actions.chooseCards(player, choices, { count: numRemaining })
       selected = selected.concat(chosen)
       numRemaining -= chosen.length
     }
@@ -793,7 +712,7 @@ function ChooseAndFactory(manyFuncName, numArgs) {
     const titleVerb = manyFuncName.slice(1, -4).toLowerCase()
     opts.title = opts.title || `Choose card(s) to ${titleVerb}`
 
-    const cards = this.aChooseCards(player, choices, opts)
+    const cards = this.actions.chooseCards(player, choices, opts)
     if (cards) {
       const actionArgs = [...args]
       actionArgs[1] = cards
@@ -1298,7 +1217,7 @@ Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
       })
 
       const infoChoices = infos.map(info => info.card)
-      const chosenCard = this.aChooseCard(
+      const chosenCard = this.actions.chooseCard(
         this.players.current(),
         infoChoices,
         { title: 'Choose a would karma to trigger' }
@@ -1775,7 +1694,7 @@ function ManyFactory(baseFuncName, extraArgCount=0) {
         next = remaining[0]
       }
       else {
-        next = this.aChooseCard(
+        next = this.actions.chooseCard(
           player,
           remaining.concat(['auto']),
           { title: `Choose a card to ${verb} next.` },

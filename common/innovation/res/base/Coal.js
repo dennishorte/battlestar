@@ -27,7 +27,7 @@ function Card() {
     },
 
     (game, player) => {
-      const card = game.aChooseCard(player, game.getTopCards(player), { min: 0, max: 1 })
+      const card = game.actions.chooseCard(player, game.getTopCards(player), { min: 0, max: 1 })
       if (card) {
         for (let i = 0; i < 2; i++) {
           const toScore = game.getZoneByPlayer(player, card.color).cards()[0]

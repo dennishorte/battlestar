@@ -20,7 +20,7 @@ function Card() {
       const otherPlayer = game.aChoosePlayer(player, otherPlayers)
 
       if (otherPlayer) {
-        const cardInHand = game.aChooseCard(otherPlayer, game.getZoneByPlayer(otherPlayer, 'hand').cards())
+        const cardInHand = game.actions.chooseCard(otherPlayer, game.getZoneByPlayer(otherPlayer, 'hand').cards())
 
         if (cardInHand) {
           game.aTransfer(otherPlayer, cardInHand, game.getZoneByPlayer(player, cardInHand.color))

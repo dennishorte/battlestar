@@ -41,7 +41,7 @@ const cardData = [
       player.incrementCounter('power', 3)
 
       const marketCards = game.getZoneById('market').cards()
-      const toDevour = game.aChooseCard(player, marketCards)
+      const toDevour = game.actions.chooseCard(player, marketCards)
       game.aDevour(player, toDevour, { noRefill: true })
       game.mMoveCardTo(card, game.getZoneById('market'), { destIndex: 0, verbose: true })
     },
@@ -192,7 +192,7 @@ const cardData = [
           impl: () => {
             game.aReturnASpyAnd(player, () => {
               const discard = game.getCardsByZone(player, 'discard')
-              const card = game.aChooseCard(player, discard, {
+              const card = game.actions.chooseCard(player, discard, {
                 title: 'Choose a card to devour',
                 min: 0,
               })
@@ -620,7 +620,7 @@ const cardData = [
         {
           title: 'Devour a card in your hand > Supplant a troop',
           impl: () => {
-            const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'), {
+            const card = game.actions.chooseCard(player, game.getCardsByZone(player, 'hand'), {
               title: 'Choose a card to feed to your wight',
               min: 0,
               max: 1,

@@ -29,7 +29,7 @@ function Card() {
             .getCardsByZone(player, 'safe')
             .filter(c => c.getAge() === age)
 
-          const secret = game.aChooseCards(player, secretOptions, {
+          const secret = game.actions.chooseCards(player, secretOptions, {
             title: 'Choose a secret to achieve',
             hidden: true,
           })[0]
@@ -38,7 +38,7 @@ function Card() {
             game.aClaimAchievement(player, secret)
           }
 
-          const standard = game.aChooseCards(player, game.getAvailableStandardAchievements(player), {
+          const standard = game.actions.chooseCards(player, game.getAvailableStandardAchievements(player), {
             title: 'Choose a standard achievement to safeguard',
             hidden: true
           })[0]

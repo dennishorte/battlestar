@@ -34,7 +34,7 @@ function Card() {
         const choices = game
           .getCardsByZone(player, 'score')
           .filter(other => other.getAge() === card.getAge())
-        const selected = game.aChooseCard(player, choices)
+        const selected = game.actions.chooseCard(player, choices)
         if (selected) {
           game.aClaimAchievement(player, { card: selected })
         }

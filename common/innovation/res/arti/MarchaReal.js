@@ -17,7 +17,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const cards = game.aChooseCards(player, game.getCardsByZone(player, 'hand'), { count: 2 })
+      const cards = game.actions.chooseCards(player, game.getCardsByZone(player, 'hand'), { count: 2 })
 
       if (cards && cards.length > 0) {
         game.aRevealMany(player, cards, { ordered: true })

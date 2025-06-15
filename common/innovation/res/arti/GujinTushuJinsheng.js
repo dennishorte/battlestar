@@ -29,7 +29,7 @@ function Card() {
         .players
         .other(player)
         .flatMap(player => game.getTopCards(player))
-      const card = game.aChooseCard(player, choices)
+      const card = game.actions.chooseCard(player, choices)
       if (card) {
         game.aExecuteAsIf(player, card)
       }

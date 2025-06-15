@@ -17,7 +17,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const toPlace = game.aChooseCard(player, game.getCardsByZone(player, 'forecast'), {
+      const toPlace = game.actions.chooseCard(player, game.getCardsByZone(player, 'forecast'), {
         title: 'Place a card from your forecast on top of its deck?',
         min: 0,
         max: 1

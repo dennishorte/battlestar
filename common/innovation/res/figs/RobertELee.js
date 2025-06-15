@@ -21,7 +21,7 @@ function Card() {
     const cardChoices = game
       .getTopCardsAll()
       .filter(card => card.checkHasBiscuit('l'))
-    const card = game.aChooseCard(player, cardChoices)
+    const card = game.actions.chooseCard(player, cardChoices)
 
     if (card) {
       const targetPlayer = game.aChoosePlayer(player, game.players.all())

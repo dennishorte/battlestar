@@ -32,7 +32,7 @@ function Card() {
           )
           .filter(zone => !zone.cards().includes(card))
           .map(zone => zone.cards()[0])
-        const choice = game.aChooseCard(player, choices)
+        const choice = game.actions.chooseCard(player, choices)
         if (choice) {
           game.aCardEffects(player, choice, 'dogma')
         }

@@ -38,7 +38,7 @@ function Card() {
           toScore.push(cards[0])
         }
         else {
-          const card = game.aChooseCard(player, cards, { title: `Choose a card to score of age ${age}` })
+          const card = game.actions.chooseCard(player, cards, { title: `Choose a card to score of age ${age}` })
           toScore.push(card)
         }
       }

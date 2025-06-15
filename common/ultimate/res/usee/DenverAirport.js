@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const secrets = game.getCardsByZone(player, 'safe')
-      const card = game.aChooseCards(player, secrets, {
+      const card = game.actions.chooseCards(player, secrets, {
         title: 'Choose a card to achieve',
         hidden: true,
         min: 0,

@@ -21,7 +21,7 @@ function Card() {
         const topCards = game.getTopCards(player)
         const handCards = game.getCardsByZone(player, 'hand')
 
-        const topCardChosen = game.aChooseCards(player, topCards, { min: 0, max: 1 })[0]
+        const topCardChosen = game.actions.chooseCards(player, topCards, { min: 0, max: 1 })[0]
         let topCardReturned
         if (topCardChosen) {
           topCardReturned = game.mMoveCardToTop(topCardChosen, game.getZoneByCardHome(topCardChosen), { player })

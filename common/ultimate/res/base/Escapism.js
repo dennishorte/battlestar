@@ -22,7 +22,7 @@ function Card() {
         return
       }
 
-      const card = game.aChooseCard(player, hand)
+      const card = game.actions.chooseCard(player, hand)
       if (card) {
         game.mReveal(player, card)
         game.aJunk(player, card)

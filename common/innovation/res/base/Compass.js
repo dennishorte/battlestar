@@ -21,7 +21,7 @@ function Card() {
         .getTopCards(player)
         .filter(card => card.color !== 'green')
         .filter(card => card.checkHasBiscuit('l'))
-      const card = game.aChooseCard(player, leafChoices)
+      const card = game.actions.chooseCard(player, leafChoices)
       if (card) {
         game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
       }
@@ -29,7 +29,7 @@ function Card() {
       const nonLeafChoices = game
         .getTopCards(leader)
         .filter(card => !card.checkHasBiscuit('l'))
-      const card2 = game.aChooseCard(player, nonLeafChoices)
+      const card2 = game.actions.chooseCard(player, nonLeafChoices)
       if (card2) {
         game.aTransfer(player, card2, game.getZoneByPlayer(player, card2.color))
       }

@@ -32,7 +32,7 @@ function Card() {
       }
       else {
         const available = game.getAvailableStandardAchievements(player)
-        const achievement = game.aChooseCards(player, available, { hidden: true })[0]
+        const achievement = game.actions.chooseCards(player, available, { hidden: true })[0]
 
         if (achievement) {
           game.aSafeguard(player, achievement)
@@ -41,7 +41,7 @@ function Card() {
     },
     (game, player) => {
       const secrets = game.getCardsByZone(player, 'safe')
-      const secret = game.aChooseCards(player, secrets, {
+      const secret = game.actions.chooseCards(player, secrets, {
         title: 'Choose a secret to reveal and execute',
         hidden: true,
       })[0]

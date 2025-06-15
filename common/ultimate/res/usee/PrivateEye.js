@@ -21,7 +21,7 @@ function Card() {
       const hand = game.getCardsByZone(player, 'hand')
       game.aRevealMany(player, hand, { ordered: true })
 
-      const card = game.aChooseCard(leader, hand)
+      const card = game.actions.chooseCard(leader, hand)
       if (card) {
         game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
         game.aDraw(player, { age: game.getEffectAge(this, 7) })

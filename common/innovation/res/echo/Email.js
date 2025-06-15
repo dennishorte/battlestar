@@ -24,7 +24,7 @@ function Card() {
       const choices = game
         .utilLowestCards(game.getTopCards(player))
         .filter(card => card.color !== 'green')
-      const card = game.aChooseCard(player, choices)
+      const card = game.actions.chooseCard(player, choices)
       if (card) {
         game.aCardEffects(player, card, 'dogma')
       }

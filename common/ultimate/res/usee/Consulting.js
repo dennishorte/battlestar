@@ -22,7 +22,7 @@ function Card() {
       game.aDrawAndMeld(player, game.getEffectAge(this, 10))
 
       const topCards = game.getTopCards(player)
-      const card = game.aChooseCard(opponent, topCards)
+      const card = game.actions.chooseCard(opponent, topCards)
 
       game.log.add({
         template: '{opponent} chooses {card} for {player} to execute',

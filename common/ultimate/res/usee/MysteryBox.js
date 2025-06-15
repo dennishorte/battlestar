@@ -17,7 +17,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const choices = game.getAvailableStandardAchievements(player)
-      const achievement = game.aChooseCards(player, choices, {
+      const achievement = game.actions.chooseCards(player, choices, {
         title: 'Choose a standard achievement to claim',
         hidden: true,
       })[0]

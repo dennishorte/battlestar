@@ -44,7 +44,7 @@ function Card() {
       game.aDraw(player, { age: game.getEffectAge(this, 9) }),
     ].filter(card => card !== undefined)
 
-    const toReturn = game.aChooseCard(player, cards, { title: 'Choose a card to return' })
+    const toReturn = game.actions.chooseCard(player, cards, { title: 'Choose a card to return' })
 
     if (toReturn) {
       game.aReturn(player, toReturn)

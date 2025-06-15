@@ -20,7 +20,7 @@ function Card() {
         .getTopCards(player)
         .filter(card => card.checkHasBiscuit('k'))
 
-      const card = game.aChooseCard(player, choices)
+      const card = game.actions.chooseCard(player, choices)
       if (card) {
         const otherPlayers = game
           .players.opponentsOf(player)
@@ -34,7 +34,7 @@ function Card() {
 
         const meldChoices = game.utilLowestCards(topCastleCards)
 
-        const meldCard = game.aChooseCard(player, meldChoices, {
+        const meldCard = game.actions.chooseCard(player, meldChoices, {
           title: 'Choose card to meld',
         })
 

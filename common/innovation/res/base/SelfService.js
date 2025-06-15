@@ -22,7 +22,7 @@ function Card() {
       const choices = game
         .getTopCards(player)
         .filter(card => card !== self)
-      const card = game.aChooseCard(player, choices)
+      const card = game.actions.chooseCard(player, choices)
       if (card) {
         game.aCardEffects(player, card, 'dogma')
       }

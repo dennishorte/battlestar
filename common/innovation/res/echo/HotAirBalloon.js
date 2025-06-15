@@ -37,7 +37,7 @@ function Card() {
           .forEach(card => candidates.push(card))
       }
 
-      const card = game.aChooseCard(player, candidates, { min: 0, max: 1 })
+      const card = game.actions.chooseCard(player, candidates, { min: 0, max: 1 })
       if (card) {
         const owner = game.players.byOwner(card)
         game.aClaimAchievement(player, { card })

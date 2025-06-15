@@ -22,7 +22,7 @@ function Card() {
       const card1 = game.aDrawAndReveal(player, game.getEffectAge(this, 9) )
       const card2 = game.aDrawAndReveal(player, game.getEffectAge(this, 9) )
 
-      const chosen = game.aChooseCard(leader, [card1, card2])
+      const chosen = game.actions.chooseCard(leader, [card1, card2])
       const other = chosen === card1 ? card2 : card1
 
       game.aTransfer(player, chosen, game.getZoneByPlayer(leader, chosen.color))

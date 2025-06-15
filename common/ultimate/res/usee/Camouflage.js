@@ -58,7 +58,7 @@ function Card() {
       const choice = game.actions.choose(player, options, { title: 'Choose an action' })[0]
 
       if (choice === 'Junk and safeguard') {
-        const cards = game.aChooseCards(player, junkOptions, {
+        const cards = game.actions.chooseCards(player, junkOptions, {
           count: 2,
           guard: (cards) => cards.every(c => c.getAge() === cards[0].getAge())
         })
@@ -66,7 +66,7 @@ function Card() {
         game.aSafeguardMany(player, cards)
       }
       else if (choice === 'Score secrets') {
-        const cards = game.aChooseCards(player, scoreOptions, {
+        const cards = game.actions.chooseCards(player, scoreOptions, {
           count: 2,
           guard: (cards) => cards.every(c => c.getAge() === cards[0].getAge())
         })

@@ -69,7 +69,7 @@ function Card() {
       else if (choice === choices[1]) {
         // Achieve secrets
         const secrets = game.getCardsByZone(player, 'safe')
-        const toAchieve = game.aChooseCards(player, secrets, {
+        const toAchieve = game.actions.chooseCards(player, secrets, {
           title: 'Choose secrets to achieve',
           min: 0,
           max: secrets.length,

@@ -18,7 +18,7 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       while (true) {
-        const card = game.aChooseCard(player, game.getCardsByZone(player, 'score'))
+        const card = game.actions.chooseCard(player, game.getCardsByZone(player, 'score'))
 
         // Does nothing if player can't return a card from score.
         if (!card) {
@@ -53,7 +53,7 @@ function Card() {
 
         // The player can choose which card to reveal if both share a biscuit.
         if (choices.length > 0) {
-          const card = game.aChooseCard(player, choices)
+          const card = game.actions.chooseCard(player, choices)
           game.mReveal(player, card)
           break
         }

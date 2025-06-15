@@ -20,7 +20,7 @@ function Card() {
         .getCardsByZone(player, 'achievements')
         .filter(card => card.checkIsStandardAchievement())
 
-      const card = game.aChooseCards(player, choices, {
+      const card = game.actions.chooseCards(player, choices, {
         title: 'Choose a standard achievement to transfer',
         hidden: true
       })[0]

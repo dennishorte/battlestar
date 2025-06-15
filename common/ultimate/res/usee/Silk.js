@@ -33,7 +33,7 @@ function Card() {
       while (true) {
         const choiceColors = util.array.distinct(choices.map(c => c.color))
 
-        const toScore = game.aChooseCards(player, choices, {
+        const toScore = game.actions.chooseCards(player, choices, {
           title: 'You may score a card from your hand of each color on your board.',
           min: 0,
           max: choiceColors.length,

@@ -37,7 +37,7 @@ function Card() {
 
     (game, player) => {
       const topCards = game.getTopCards(player)
-      const card = game.aChooseCard(player, topCards)
+      const card = game.actions.chooseCard(player, topCards)
       if (card) {
         game.aReturn(player, card)
 

@@ -35,7 +35,7 @@ function Card() {
         const transferTo = game.aChoosePlayer(player, game.players.all(), {
           title: 'Choose a player to transfer card to'
         })
-        const card = game.aChooseCard(player, choices, {
+        const card = game.actions.chooseCard(player, choices, {
           title: 'Choose a card to transfer'
         })
         game.aTransfer(player, card, game.getZoneByPlayer(transferTo, card.color))

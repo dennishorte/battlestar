@@ -32,7 +32,7 @@ function Card() {
           break
         }
 
-        const card = game.aChooseCard(player, choices, { title: 'Choose a card to meld' })
+        const card = game.actions.chooseCard(player, choices, { title: 'Choose a card to meld' })
         meldedColors.push(card.color)
         game.aMeld(player, card)
       }

@@ -22,7 +22,7 @@ function Card() {
       game.aRevealMany(player, cards)
 
       const choices = cards.map(c => c.id)
-      const card = game.aChooseCard(leader, choices)
+      const card = game.actions.chooseCard(leader, choices)
 
       if (card) {
         const returned = game.aReturn(player, card)
