@@ -14,12 +14,11 @@ class BaseActionManager {
 
     let title = opts.title || 'Choose'
     if (opts.min === 0) {
-      title = '(optional) ' + title
+      opts.title = '(optional) ' + title
     }
 
     const chooseSelector = {
       actor: player.name,
-      title,
       choices: choices,
       ...opts
     }
