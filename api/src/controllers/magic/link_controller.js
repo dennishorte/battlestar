@@ -132,9 +132,11 @@ export const fetchByDraft = async (req, res) => {
     .project({ responses: 0 })
     .toArray()
 
+  console.log(draft)
+
   res.json({
     status: 'success',
     games,
-    draft,
+    draft: draft.serialize(),
   })
 }

@@ -20,10 +20,7 @@
           cube
         </DropdownRouterLink>
 
-        <DropdownButton
-          data-bs-toggle="modal"
-          data-bs-target="#match-stats-modal"
-        >
+        <DropdownButton @click="matchStatsModalVis = true">
           match stats
         </DropdownButton>
 
@@ -47,6 +44,10 @@
 
   <CardCloseupModal />
   <CounterCloseupModal />
+
+  <BModal v-model="matchStatsModalVis" title="Match Stats">
+    <MatchStats />
+  </BModal>
 </template>
 
 
@@ -60,6 +61,7 @@ import DropdownButton from '@/components/DropdownButton'
 import DropdownRouterLink from '@/components/DropdownRouterLink'
 import GameLogMagic from './GameLogMagic'
 import GameMenu from '@/modules/games/common/components/GameMenu'
+import MatchStats from './MatchStats'
 import PhaseSelector from './PhaseSelector'
 import PlayerTableau from './PlayerTableau'
 
@@ -74,11 +76,18 @@ export default {
     DropdownRouterLink,
     GameLogMagic,
     GameMenu,
+    MatchStats,
     PhaseSelector,
     PlayerTableau,
   },
 
   inject: ['game', 'actor'],
+
+  data() {
+    return {
+      matchStatsModalVis: false,
+    }
+  },
 
   computed: {
     ...mapState('magic/game', {

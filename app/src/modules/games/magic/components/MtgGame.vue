@@ -6,7 +6,6 @@
 
     <DebugModal />
     <LinkToDraftModal />
-    <MatchStatsModal />
   </MagicWrapper>
 </template>
 
@@ -18,7 +17,6 @@ import DebugModal from '@/modules/games/common/components/DebugModal'
 import LinkToDraftModal from './LinkToDraftModal'
 import MagicGame from './MagicGame'
 import MagicWrapper from '@/modules/magic/components/MagicWrapper'
-import MatchStatsModal from './MatchStatsModal'
 import PreGame from './PreGame'
 
 import UICardWrapper from '@/modules/magic/util/card.wrapper'
@@ -32,7 +30,6 @@ export default {
     LinkToDraftModal,
     MagicGame,
     MagicWrapper,
-    MatchStatsModal,
     PreGame,
   },
 

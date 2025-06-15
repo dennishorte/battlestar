@@ -1,55 +1,42 @@
 <template>
-  <ModalBase id="match-stats-modal" ref="modal">
-    <template #header>Match Statistics</template>
+  <div class="alert alert-info result-container" v-if="!!draft">
+    <div>
+      <button class="btn btn-link" @click="goToGame(draft)">{{ draft.settings.name }}</button>
+    </div>
 
-    <template v-if="!!draft">
-      <div class="alert alert-info result-container">
-        <div>
-          <button class="btn btn-link" data-bs-dismiss="modal" @click="goToGame(draft)">{{ draft.settings.name }}</button>
-        </div>
+    <div>
+      {{ resultString }}
+    </div>
+  </div>
 
-        <div>
-          {{ resultString }}
-        </div>
-      </div>
-
-      <div>
-        <table class="table table-small align-middle">
-          <thead>
-            <tr class="table-secondary">
-              <th>game name</th>
-              <th>winner</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="game in games" :key="game._id" :class="rowClass(game)">
-              <td>
-                <button class="btn btn-link" data-bs-dismiss="modal" @click="goToGame(game)">
-                  {{ game.settings.name }}
-                </button>
-              </td>
-              <td>{{ gameWinner(game) }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </template>
-  </ModalBase>
+  <div>
+    <table class="table table-small align-middle">
+      <thead>
+        <tr class="table-secondary">
+          <th>game name</th>
+          <th>winner</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="game in games" :key="game._id" :class="rowClass(game)">
+          <td>
+            <button class="btn btn-link" data-bs-dismiss="modal" @click="goToGame(game)">
+              {{ game.settings.name }}
+            </button>
+          </td>
+          <td>{{ gameWinner(game) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 
 <script>
 import { util } from 'battlestar-common'
 
-import ModalBase from '@/components/ModalBase'
-
-
 export default {
   name: 'MatchStatsModal',
-
-  components: {
-    ModalBase,
-  },
 
   inject: ['actor', 'game'],
 
@@ -127,10 +114,7 @@ export default {
   },
 
   mounted() {
-    const modalElem = this.$refs.modal.$el
-    modalElem.addEventListener('show.bs.modal', () => {
-      this.loadData()
-    })
+    this.loadData()
   },
 }
 </script>
