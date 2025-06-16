@@ -252,6 +252,7 @@ export default {
         actor: this.actor.name,
         title: 'Draft Card',
         selection: [card.g.id],
+        ignoreBranch: true,
       })
 
       // Add the card to the player's deck.

@@ -101,7 +101,10 @@ export default {
 
       // Make sure the local and remote games agree on the game state
       game.branchId = response.serializedGame.branchId
-      _ensureServerAndClientAgreeOnGameState(game.serialize(), response.serializedGame)
+
+      if (!action.ignoreBranch) {
+        _ensureServerAndClientAgreeOnGameState(game.serialize(), response.serializedGame)
+      }
 
       await context.dispatch('_releaseLock')
     },
