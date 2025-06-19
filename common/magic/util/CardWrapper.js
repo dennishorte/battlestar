@@ -310,6 +310,9 @@ class CardWrapper extends Wrapper {
   isPlaneswalker(faceIndex) {
     return this.supertypes(faceIndex).includes('planeswalker')
   }
+  isVehicle(faceIndex) {
+    return this.subtypes(faceIndex).includes('vehicle')
+  }
 
   isLegalIn(format) {
     return this.data.legal && this.data.legal.includes(format)

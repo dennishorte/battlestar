@@ -1,5 +1,5 @@
 <template>
-  <div class="frame-power-toughness frame-foreground" v-if="isCreature">
+  <div class="frame-power-toughness frame-foreground" v-if="isCreature || isVehicle">
     <div class="power-toughness-container">
       <ScarrableContent v-bind="powerScarrable" class="frame-power" />
       <span class="power-toughness-separator">/</span>
@@ -31,6 +31,7 @@ const props = defineProps({
 const emit = defineEmits(['value-updated'])
 
 const isCreature = computed(() => props.card.isCreature(props.index))
+const isVehicle = computed(() => props.card.isVehicle(props.index))
 
 const powerScarrable = useScarrableContent(toRef(props, 'card'), props.index, 'power', emit, {
   editable: props.isEditable,
