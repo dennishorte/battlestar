@@ -156,7 +156,7 @@ class CardWrapper extends Wrapper {
       .typeLine(faceIndex)
       .toLowerCase()
       .split(CardWrapper.TYPELINE_SPLITTER_REGEX)[0]
-      .trim()
+      ?.trim()
     return supertypesString ? supertypesString.split(/\s+/) : []
   }
   subtypes(faceIndex) {
@@ -164,7 +164,7 @@ class CardWrapper extends Wrapper {
       .typeLine(faceIndex)
       .toLowerCase()
       .split(CardWrapper.TYPELINE_SPLITTER_REGEX)[1]
-      .trim()
+      ?.trim()
     return subtypesString ? subtypesString.split(/\s+/) : []
   }
 
