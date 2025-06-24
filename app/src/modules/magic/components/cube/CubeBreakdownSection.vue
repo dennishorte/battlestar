@@ -54,7 +54,7 @@ export default {
       const sortedCards = [...this.cardlist].sort((l, r) => {
         return (
           l.cmc() - r.cmc()
-          || l.data.name.localeCompare(r.data.name)
+          || l.name().localeCompare(r.name())
         )
       })
 
