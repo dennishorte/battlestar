@@ -1,5 +1,5 @@
 <template>
-  <div @click="handleClick">
+  <div @click="handleClick" class="scarrable-content" :class="isEmpty ? 'empty-text' : ''">
     <EditableContent
       v-if="isEditingValue"
       v-bind="editor"
@@ -36,6 +36,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  isEmpty: {
+    type: Boolean,
+    required: true,
+  },
   scarredParts: {
     type: [Array, Object], // Accept both Array and Ref<Array>
     required: true,
@@ -63,6 +67,17 @@ const isEditingValue = computed(() => props.editor.isEditing.value)
 
 
 <style scoped>
+.scarrable-content {
+  min-height: 1em;
+  width: 100%;
+}
+
+.empty-text {
+  background-color: rgba(255, 200, 0, .3);
+  border: 1px dotted gray;
+  padding: 0 .5em;
+}
+
 .multiline {
   white-space: pre-line;
   width: 100%;

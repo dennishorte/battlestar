@@ -56,6 +56,8 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
   // This is helpful when the div is empty, making it hard to click on it.
   const showFullWidth = computed(() => displayText.value.length === 0 && editable && !scarred.value)
 
+  const isEmpty = computed(() => displayText.value.trim().length === 0)
+
   // Break the text down into sections based on the changes that have been made so the scars can be
   // highlighted in the display. Uses a word-level diff algorithm to separate the scarred parts.
   const scarredParts = computed(() => {
@@ -102,6 +104,7 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
   }
 
   return {
+    isEmpty,
     scarredParts,
     editor,
     showFullWidth,
