@@ -3,6 +3,7 @@ const { UltimateAchievement } = require('../UltimateAchievement.js')
 
 // Import here to make migration to ES imports easier.
 const baseSet = require('./base')
+const echoSet = require('./echo')
 const citySet = require('./city')
 const useeSet = require('./usee')
 
@@ -11,6 +12,7 @@ const ALL_AGES = [1,2,3,4,5,6,7,8,9,10,11]
 
 const sets = {
   base: baseSet,
+  echo: echoSet,
   city: citySet,
   usee: useeSet,
 }
@@ -54,7 +56,6 @@ function factory(game) {
   for (const exp of ALL_EXPANSIONS) {
     const { cardData, achievementData } = sets[exp]
     const data = generateCardInstances(game, cardData, achievementData)
-
     output[exp] = data
     for (const [name, card] of Object.entries(data.byName)) {
       output.all.byName[name] = card

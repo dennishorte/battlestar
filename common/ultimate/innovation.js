@@ -72,7 +72,7 @@ Innovation.prototype._gameOver = function(event) {
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
 
-const SUPPORTED_EXPANSIONS = ['base', 'city', 'usee']
+const SUPPORTED_EXPANSIONS = ['base', 'echo', 'city', 'usee']
 
 Innovation.prototype.initialize = function() {
   this.log.add({ template: 'Initializing' })
