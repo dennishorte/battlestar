@@ -2,12 +2,13 @@ const seedrandom = require('seedrandom')
 const selector = require('./selector.js')
 const util = require('./util.js')
 
-const { BaseActionManager } = require('./game/BaseActionManager.js')
-const { BaseCardManager } = require('./game/BaseCardManager.js')
-const { BaseLogManager } = require('./game/BaseLogManager.js')
-const { BasePlayerManager } = require('./game/BasePlayerManager.js')
-const { BaseZoneManager } = require('./game/BaseZoneManager.js')
-
+const {
+  BaseActionManager,
+  BaseCardManager,
+  BaseLogManager,
+  BasePlayerManager,
+  BaseZoneManager,
+} = require('./game/index.js')
 
 module.exports = {
   Game,

@@ -1,4 +1,4 @@
-const { BaseActionManager } = require('../lib/game/BaseActionManager.js')
+const { BaseActionManager } = require('../lib/game/index.js')
 
 
 class UltimateActionManager extends BaseActionManager {
