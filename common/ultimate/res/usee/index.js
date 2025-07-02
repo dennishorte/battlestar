@@ -48,7 +48,7 @@ const cardData = [
   require('./Cabal.js'),
   require('./Probability.js'),
   require('./WitchTrial.js'),
-  require('./BuriedTreasure.js'),
+//  require('./BuriedTreasure.js'),
   require('./Pantheism.js'),
   require('./Chartreuse.js'),
   require('./SecretHistory.js'),
@@ -116,6 +116,9 @@ const cardData = [
   require('./Metaverse.js')
 ]
 
+const { UltimateCard } = require('../../UltimateCard.js')
+cardData.push(new UltimateCard(require('./BuriedTreasure.js')))
+
 
 const achievementData = [
   require('./achievements/Anonymity.js'),
@@ -126,7 +129,14 @@ const achievementData = [
 ]
 
 function generateCardInstances() {
-  const cards = cardData.map(f => new f())
+  const cards = cardData.map(f => {
+    if (f instanceof UltimateCard) {
+      return f
+    }
+    else {
+      return new f()
+    }
+  })
   const achievements = achievementData.map(f => new f())
 
   const byName = {}
