@@ -1,25 +1,19 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Consulting`  // Card names are unique in Innovation
-  this.name = `Consulting`
-  this.color = `blue`
-  this.age = 9
-  this.expansion = `usee`
-  this.biscuits = `hffc`
-  this.dogmaBiscuit = `f`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Consulting`,
+  color: `blue`,
+  age: 9,
+  expansion: `usee`,
+  biscuits: `hffc`,
+  dogmaBiscuit: `f`,
+  dogma: [
     `Choose an opponent. Draw and meld two {10}. Super-execute the top card on your board of that player's choice.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const opponent = game.actions.choosePlayer(player, game.players.opponentsOf(player))
 
-      game.aDrawAndMeld(player, game.getEffectAge(this, 10))
-      game.aDrawAndMeld(player, game.getEffectAge(this, 10))
+      game.aDrawAndMeld(player, game.getEffectAge(self, 10))
+      game.aDrawAndMeld(player, game.getEffectAge(self, 10))
 
       const topCards = game.getTopCards(player)
       const card = game.actions.chooseCard(opponent, topCards)
@@ -31,16 +25,5 @@ function Card() {
 
       game.aSuperExecute(player, card)
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

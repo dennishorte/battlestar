@@ -1,30 +1,24 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Meteorology`  // Card names are unique in Innovation
-  this.name = `Meteorology`
-  this.color = `blue`
-  this.age = 2
-  this.expansion = `usee`
-  this.biscuits = `sslh`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Meteorology`,
+  color: `blue`,
+  age: 2,
+  expansion: `usee`,
+  biscuits: `sslh`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `Draw and reveal a {3}. If it has {l}, score it. Otherwise, if it has {c}, return it and draw two {3}. Otherwise, tuck it.`,
     `If you have no {k}, claim the Zen achievement.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 3))
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
+      const card = game.aDrawAndReveal(player, game.getEffectAge(self, 3))
       if (card.checkHasBiscuit('l')) {
         game.aScore(player, card)
       }
       else if (card.checkHasBiscuit('c')) {
         game.aReturn(player, card)
-        game.aDraw(player, { age: game.getEffectAge(this, 3) })
-        game.aDraw(player, { age: game.getEffectAge(this, 3) })
+        game.aDraw(player, { age: game.getEffectAge(self, 3) })
+        game.aDraw(player, { age: game.getEffectAge(self, 3) })
       }
       else {
         game.aTuck(player, card)
@@ -39,16 +33,5 @@ function Card() {
         game.log.addNoEffect()
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

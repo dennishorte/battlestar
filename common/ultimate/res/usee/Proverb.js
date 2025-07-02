@@ -1,22 +1,16 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Proverb`  // Card names are unique in Innovation
-  this.name = `Proverb`
-  this.color = `blue`
-  this.age = 1
-  this.expansion = `usee`
-  this.biscuits = `hckk`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Proverb`,
+  color: `blue`,
+  age: 1,
+  expansion: `usee`,
+  biscuits: `hckk`,
+  dogmaBiscuit: `k`,
+  dogma: [
     `Draw, reveal, and return a {1}. If the color of the returned card is yellow or purple, safeguard an available achievement of value equal to a card in your hand, then return all cards from your hand. Otherwise, draw two {1}.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
+      const card = game.aDrawAndReveal(player, game.getEffectAge(self, 1))
       const returned = game.aReturn(player, card)
 
       if (returned) {
@@ -32,21 +26,10 @@ function Card() {
           game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
         }
         else {
-          game.aDraw(player, { age: game.getEffectAge(this, 1) })
-          game.aDraw(player, { age: game.getEffectAge(this, 1) })
+          game.aDraw(player, { age: game.getEffectAge(self, 1) })
+          game.aDraw(player, { age: game.getEffectAge(self, 1) })
         }
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

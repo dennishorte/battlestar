@@ -1,21 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Teleprompter`  // Card names are unique in Innovation
-  this.name = `Teleprompter`
-  this.color = `green`
-  this.age = 9
-  this.expansion = `usee` // corrected expansion
-  this.biscuits = `liih`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Teleprompter`,
+  color: `green`,
+  age: 9,
+  expansion: `usee`,
+  biscuits: `liih`,
+  dogmaBiscuit: `i`,
+  dogma: [
     //    `Reveal the top card of any value deck from any set. Execute the first sentence of non-demand dogma effect on the card. If you do, return the revealed card and repeat this effect using the next sentence.`
     `Reveal the top card of any value deck from any set. Execute the first non-demand dogma effect on the card. If the revealed card has a {c}, repeat this effect with a different deck.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const checkHasDemand = (text) => {
         const lower = text.toLowerCase()
@@ -68,16 +62,5 @@ function Card() {
         }
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

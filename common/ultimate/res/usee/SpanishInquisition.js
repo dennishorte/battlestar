@@ -1,21 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Spanish Inquisition`  // Card names are unique in Innovation
-  this.name = `Spanish Inquisition`
-  this.color = `red`
-  this.age = 4
-  this.expansion = `usee`
-  this.biscuits = `shss`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Spanish Inquisition`,
+  color: `red`,
+  age: 4,
+  expansion: `usee`,
+  biscuits: `shss`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `I demand you return all but the highest cards from your hand and all but the highest cards from your score pile!`,
     `If Spanish Inquisition is a top card on your board, return all red cards from your board.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const hand = game.getZoneByPlayer(player, 'hand')
       const handHighest = game.utilHighestCards(hand.cards())
@@ -36,16 +30,5 @@ function Card() {
         game.log.addNoEffect()
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

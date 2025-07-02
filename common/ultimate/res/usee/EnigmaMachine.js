@@ -1,21 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Enigma Machine`  // Card names are unique in Innovation
-  this.name = `Enigma Machine`
-  this.color = `red`
-  this.age = 8
-  this.expansion = `usee`
-  this.biscuits = `iihi`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Enigma Machine`,
+  color: `red`,
+  age: 8,
+  expansion: `usee`,
+  biscuits: `iihi`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `Choose to either safeguard all available standard achievements, transfer all your secrets to your hand, or transfer all cards in your hand to the available achievements.`,
     `Choose a color you have splayed left and splay it up.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const choices = [
         'Safeguard all available standard achievements',
@@ -43,16 +37,5 @@ function Card() {
       })
       game.aChooseAndSplay(player, colors, 'up', { count: 1 })
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

@@ -1,21 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Propaganda`
-  this.name = `Propaganda`
-  this.color = `purple`
-  this.age = 2
-  this.expansion = `usee`
-  this.biscuits = `chkk`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Propaganda`,
+  color: `purple`,
+  age: 2,
+  expansion: `usee`,
+  biscuits: `chkk`,
+  dogmaBiscuit: `k`,
+  dogma: [
     `I demand you meld a card of the color of my choice from your hand! If you do, transfer the card beneath it to my board!`,
     `Meld a card from your hand.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { leader }) => {
       const chosenColor = game.actions.choose(leader, game.utilColors(), {
         title: 'Choose a color',
@@ -53,16 +47,5 @@ function Card() {
     (game, player) => {
       game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

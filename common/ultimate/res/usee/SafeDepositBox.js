@@ -1,29 +1,23 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Safe Deposit Box`  // Card names are unique in Innovation
-  this.name = `Safe Deposit Box`
-  this.color = `red`
-  this.age = 7
-  this.expansion = `usee`
-  this.biscuits = `hcic`
-  this.dogmaBiscuit = `c`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Safe Deposit Box`,
+  color: `red`,
+  age: 7,
+  expansion: `usee`,
+  biscuits: `hcic`,
+  dogmaBiscuit: `c`,
+  dogma: [
     `You may choose to either draw and junk two {7}, or exchange all cards in your score pile with all valued cards in the junk.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const options = ['Draw and junk', 'Exchange']
       const choice = game.actions.choose(player, options, {
         title: 'Choose an option'
       })[0]
 
       if (choice === 'Draw and junk') {
-        game.aDrawAndJunk(player, game.getEffectAge(this, 7))
-        game.aDrawAndJunk(player, game.getEffectAge(this, 7))
+        game.aDrawAndJunk(player, game.getEffectAge(self, 7))
+        game.aDrawAndJunk(player, game.getEffectAge(self, 7))
       }
       else if (choice === 'Exchange') {
         const scoreCards = game.getCardsByZone(player, 'score')
@@ -46,16 +40,5 @@ function Card() {
         })
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

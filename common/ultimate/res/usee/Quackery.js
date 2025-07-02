@@ -1,24 +1,18 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Quackery`  // Card names are unique in Innovation
-  this.name = `Quackery`
-  this.color = `blue`
-  this.age = 4
-  this.expansion = `usee`
-  this.biscuits = `hsfs`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Quackery`,
+  color: `blue`,
+  age: 4,
+  expansion: `usee`,
+  biscuits: `hsfs`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `Choose to either score a card from your hand, or draw a {4}.`,
     `Reveal and return exactly two cards in your hand. If you do, draw a card of value equal to the sum number of {l} and {s} on the returned cards.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const choices = [
-        'Draw a ' + game.getEffectAge(this, 4),
+        'Draw a ' + game.getEffectAge(self, 4),
       ]
 
       const hand = game.getCardsByZone(player, 'hand').map(c => c.name)
@@ -33,7 +27,7 @@ function Card() {
       const selected = game.actions.choose(player, choices, { title: 'Choose an option:' })[0]
 
       if (selected === 'Draw a 4') {
-        game.aDraw(player, { age: game.getEffectAge(this, 4) })
+        game.aDraw(player, { age: game.getEffectAge(self, 4) })
       }
       else {
         const card = game.getCardByName(selected.selection[0])
@@ -59,16 +53,5 @@ function Card() {
         game.aDraw(player, { age: drawAge })
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

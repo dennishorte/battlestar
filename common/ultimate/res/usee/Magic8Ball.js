@@ -1,25 +1,19 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Magic 8-Ball`  // Card names are unique in Innovation
-  this.name = `Magic 8-Ball`
-  this.color = `yellow`
-  this.age = 9
-  this.expansion = `usee`
-  this.biscuits = `hlll`
-  this.dogmaBiscuit = `l`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Magic 8-Ball`,
+  color: `yellow`,
+  age: 9,
+  expansion: `usee`,
+  biscuits: `hlll`,
+  dogmaBiscuit: `l`,
+  dogma: [
     `Choose whether you wish to draw two {0}, draw and score two {8}, or safeguard two available standard achievements. Draw and tuck an {8}. If it has {s}, do as you wish. If it is red or purple, repeat this effect.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const doEffect = () => {
         const options = [
-          'Draw two ' + game.getEffectAge(this, 10),
-          'Draw and score two ' + game.getEffectAge(this, 8),
+          'Draw two ' + game.getEffectAge(self, 10),
+          'Draw and score two ' + game.getEffectAge(self, 8),
           'Safeguard two available standard achievements'
         ]
 
@@ -30,17 +24,17 @@ function Card() {
           args: { player }
         })
 
-        const tucked = game.aDrawAndTuck(player, game.getEffectAge(this, 8))
+        const tucked = game.aDrawAndTuck(player, game.getEffectAge(self, 8))
 
         if (tucked.checkHasBiscuit('s')) {
           switch (choice) {
             case options[0]:
-              game.aDraw(player, { age: game.getEffectAge(this, 10) })
-              game.aDraw(player, { age: game.getEffectAge(this, 10) })
+              game.aDraw(player, { age: game.getEffectAge(self, 10) })
+              game.aDraw(player, { age: game.getEffectAge(self, 10) })
               break
             case options[1]:
-              game.aDrawAndScore(player, game.getEffectAge(this, 8))
-              game.aDrawAndScore(player, game.getEffectAge(this, 8))
+              game.aDrawAndScore(player, game.getEffectAge(self, 8))
+              game.aDrawAndScore(player, game.getEffectAge(self, 8))
               break
             case options[2]:
               game.aChooseAndSafeguard(player, game.getAvailableStandardAchievements(player), {
@@ -63,16 +57,5 @@ function Card() {
       }
 
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

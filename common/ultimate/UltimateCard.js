@@ -8,7 +8,7 @@ class UltimateCard {
       name: '',
       color: '',
       age: 1,
-      visibleAge: 1,
+      visibleAge: null,
       expansion: '',
       biscuits: '',
       dogmaBiscuit: '',

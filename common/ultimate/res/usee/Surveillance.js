@@ -1,23 +1,18 @@
-const CardBase = require(`../CardBase.js`)
 const { GameOverEvent } = require('../../../lib/game.js')
 
-function Card() {
-  this.id = `Surveillance`
-  this.name = `Surveillance`
-  this.color = `yellow`
-  this.age = 9
-  this.expansion = `usee`
-  this.biscuits = `siih`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Surveillance`,
+  color: `yellow`,
+  age: 9,
+  expansion: `usee`,
+  biscuits: `siih`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `I demand you reveal your hand! If each color present in my hand is present in yours, and vice versa, and your hand is not empty, I win!`,
     `Draw a {0}.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player, { leader }) => {
+  ],
+  dogmaImpl: [
+    (game, player, { leader, self }) => {
       const leaderHand = game.getCardsByZone(leader, 'hand')
       const leaderColors = [...new Set(leaderHand.map(card => card.color))]
 
@@ -37,24 +32,13 @@ function Card() {
           playerColors.every(color => leaderColors.includes(color))) {
         throw new GameOverEvent({
           player: leader,
-          reason: this.name
+          reason: self.name
         })
       }
     },
 
-    (game, player) => {
-      game.aDraw(player, { age: game.getEffectAge(this, 10) })
+    (game, player, { self }) => {
+      game.aDraw(player, { age: game.getEffectAge(self, 10) })
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

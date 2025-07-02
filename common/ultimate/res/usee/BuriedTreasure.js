@@ -5,11 +5,9 @@ module.exports = {
   expansion: `usee`,
   biscuits: `cchc`,
   dogmaBiscuit: `c`,
-
   dogma: [
     `Choose an odd value. Transfer all cards of that value from all score piles to the available achievements. If you transfer at least four cards, draw and safeguard a card of that value, and score three available standard achievements.`
   ],
-
   dogmaImpl: [
     (game, player) => {
       const oddValues = game.utilAges().filter(x => x % 2 === 1)

@@ -1,22 +1,16 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Password`  // Card names are unique in Innovation
-  this.name = `Password`
-  this.color = `red`
-  this.age = 2
-  this.expansion = `usee` // verified against image
-  this.biscuits = `hckk`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Password`,
+  color: `red`,
+  age: 2,
+  expansion: `usee`,
+  biscuits: `hckk`,
+  dogmaBiscuit: `k`,
+  dogma: [
     `Draw and reveal a {2}. You may safeguard another card from your hand of the color of the drawn card. If you do, score the drawn card. Otherwise, return all cards from your hand except the drawn card.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
-      const drawnCard = game.aDrawAndReveal(player, game.getEffectAge(this, 2))
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
+      const drawnCard = game.aDrawAndReveal(player, game.getEffectAge(self, 2))
 
       const otherHandCards = game
         .getCardsByZone(player, 'hand')
@@ -36,16 +30,5 @@ function Card() {
         game.aReturnMany(player, otherHandCards)
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

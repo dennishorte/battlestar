@@ -1,21 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Exile`  // Card names are unique in Innovation
-  this.name = `Exile`
-  this.color = `yellow`
-  this.age = 2
-  this.expansion = `usee`
-  this.biscuits = `lhlk`
-  this.dogmaBiscuit = `l`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Exile`,
+  color: `yellow`,
+  age: 2,
+  expansion: `usee`,
+  biscuits: `lhlk`,
+  dogmaBiscuit: `l`,
+  dogma: [
     `I demand you return a top card without {l} from your board! Return all cards of the returned card's value from your score pile!`,
     `If exactly one card was returned due to the demand, return Exile if it is a top card on any board and draw a {3}.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const choices = game
         .getTopCards(player)
@@ -35,7 +29,7 @@ function Card() {
         }
       }
     },
-    (game, player) => {
+    (game, player, { self }) => {
       if (game.state.dogmaInfo.exileReturnedOneCard) {
         const topCards = game
           .players.all()
@@ -44,20 +38,9 @@ function Card() {
         const exileCards = topCards.filter(card => card.name === 'Exile')
         if (exileCards.length > 0) {
           game.aReturn(player, exileCards[0])
-          game.aDraw(player, { age: game.getEffectAge(this, 3) })
+          game.aDraw(player, { age: game.getEffectAge(self, 3) })
         }
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

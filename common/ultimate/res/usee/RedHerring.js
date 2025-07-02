@@ -1,21 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Red Herring`  // Card names are unique in Innovation
-  this.name = `Red Herring`
-  this.color = `red`
-  this.age = 6
-  this.expansion = `usee`
-  this.biscuits = `chcc`
-  this.dogmaBiscuit = `c`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Red Herring`,
+  color: `red`,
+  age: 6,
+  expansion: `usee`,
+  biscuits: `chcc`,
+  dogmaBiscuit: `c`,
+  dogma: [
     `Splay your red cards left, right, or up.`,
     `Draw and tuck a {6}. If the color on your board of the card you tuck is splayed in the same direction as your red cards, splay that color up. Otherwise, unsplay that color.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const red = game.getZoneByPlayer(player, 'red')
 
@@ -31,8 +25,8 @@ function Card() {
       })[0]
       game.aSplay(player, 'red', direction)
     },
-    (game, player) => {
-      const card = game.aDrawAndTuck(player, game.getEffectAge(this, 6))
+    (game, player, { self }) => {
+      const card = game.aDrawAndTuck(player, game.getEffectAge(self, 6))
       if (card) {
         const redSplay = game.getZoneByPlayer(player, 'red').splay
         const cardSplay = game.getZoneByPlayer(player, card.color).splay
@@ -44,17 +38,5 @@ function Card() {
         }
       }
     }
-  ]
-
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

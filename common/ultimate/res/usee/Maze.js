@@ -1,22 +1,37 @@
-const CardBase = require(`../CardBase.js`)
 const util = require('../../../lib/util.js')
 
-function Card() {
-  this.id = `Maze`  // Card names are unique in Innovation
-  this.name = `Maze`
-  this.color = `red`
-  this.age = 1
-  this.expansion = `usee`
-  this.biscuits = `kkhk`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+function countItemsOrdered(arr) {
+  const counts = {}
+  const order = []
+
+  for (const item of arr) {
+    if (counts[item] === undefined) {
+      counts[item] = 0
+      order.push(item)
+    }
+    counts[item]++
+  }
+
+  return order.map(item => [item, counts[item]])
+}
+
+function makeColorString(remaining) {
+  const counts = countItemsOrdered(remaining)
+  return counts.map(([color, count]) => `${color}:${count}`).join(', ')
+}
+
+module.exports = {
+  name: `Maze`,
+  color: `red`,
+  age: 1,
+  expansion: `usee`,
+  biscuits: `kkhk`,
+  dogmaBiscuit: `k`,
+  dogma: [
     `I demand for each card in my hand, you score a card of matching color. If you don't, and I have a card in my hand, exchange all cards in your hand with all cards in my score pile!`
     //    `I demand you score a card from your hand of matching color for each card in my hand. If you don't, and I have a card in my hand, exchange all cards in your hand with all cards in my score pile!`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { leader }) => {
       const leaderHandCards = game.getCardsByZone(leader, 'hand')
 
@@ -53,36 +68,5 @@ function Card() {
         game.aExchangeZones(player, game.getZoneByPlayer(player, 'hand'), game.getZoneByPlayer(leader, 'score'))
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-function countItemsOrdered(arr) {
-  const counts = {}
-  const order = []
-
-  for (const item of arr) {
-    if (counts[item] === undefined) {
-      counts[item] = 0
-      order.push(item)
-    }
-    counts[item]++
-  }
-
-  return order.map(item => [item, counts[item]])
-}
-
-function makeColorString(remaining) {
-  const counts = countItemsOrdered(remaining)
-  return counts.map(([color, count]) => `${color}:${count}`).join(', ')
-}
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

@@ -1,20 +1,14 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Espionage`
-  this.name = `Espionage`
-  this.color = `blue`
-  this.age = 1
-  this.expansion = `usee`
-  this.biscuits = `khkk`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Espionage`,
+  color: `blue`,
+  age: 1,
+  expansion: `usee`,
+  biscuits: `khkk`,
+  dogmaBiscuit: `k`,
+  dogma: [
     `I demand you reveal a card in your hand. If you do, and I have no card in my hand of the same color, transfer it to my hand, then repeat this effect!`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { leader }) => {
       while (true) {
         const hand = game.getCardsByZone(player, 'hand')
@@ -44,16 +38,5 @@ function Card() {
         }
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

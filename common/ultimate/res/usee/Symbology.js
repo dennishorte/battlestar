@@ -1,21 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Symbology`  // Card names are unique in Innovation
-  this.name = `Symbology`
-  this.color = `purple`
-  this.age = 1
-  this.expansion = `usee`
-  this.biscuits = `sshk`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Symbology`,
+  color: `purple`,
+  age: 1,
+  expansion: `usee`,
+  biscuits: `sshk`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `If you have at least four each of at least four biscuit on your board, draw a {4}. Otherwise, if you have three of three biscuits, draw a {3}. Otherwise, if you have two of two biscuits, draw a {2}.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const biscuits = game.getBiscuits()[player.name]
       const biscuitCounts = [0, 0, 0, 0, 0]
 
@@ -36,28 +30,17 @@ function Card() {
       game.log.add({ template: 'two biscuits: ' + biscuitCounts[2] })
 
       if (biscuitCounts[4] >= 4) {
-        game.aDraw(player, { age: game.getEffectAge(this, 4) })
+        game.aDraw(player, { age: game.getEffectAge(self, 4) })
       }
       else if (biscuitCounts[3] >= 3) {
-        game.aDraw(player, { age: game.getEffectAge(this, 3) })
+        game.aDraw(player, { age: game.getEffectAge(self, 3) })
       }
       else if (biscuitCounts[2] >= 2) {
-        game.aDraw(player, { age: game.getEffectAge(this, 2) })
+        game.aDraw(player, { age: game.getEffectAge(self, 2) })
       }
       else {
         game.log.addNoEffect()
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

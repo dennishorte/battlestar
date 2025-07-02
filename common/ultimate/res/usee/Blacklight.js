@@ -1,21 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Blacklight`
-  this.name = `Blacklight`
-  this.color = `blue`
-  this.age = 8
-  this.expansion = `usee`
-  this.biscuits = `hfff`
-  this.dogmaBiscuit = `f`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Blacklight`,
+  color: `blue`,
+  age: 8,
+  expansion: `usee`,
+  biscuits: `hfff`,
+  dogmaBiscuit: `f`,
+  dogma: [
     `Choose to either unsplay one color of your cards, or splay up an unsplayed color on your board and draw a {9}.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const unsplayChoices = ['yellow', 'red', 'blue', 'green', 'purple']
         .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
 
@@ -47,22 +41,11 @@ function Card() {
       }
       else if (choice.title === 'Splay up and draw') {
         game.aSplay(player, choice.selection[0], 'up')
-        game.aDraw(player, { age: game.getEffectAge(this, 9) })
+        game.aDraw(player, { age: game.getEffectAge(self, 9) })
       }
       else {
         throw new Error('Invalid option: ' + choice)
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

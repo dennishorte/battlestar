@@ -1,34 +1,28 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Area 51`  // Card names are unique in Innovation
-  this.name = `Area 51`
-  this.color = `green`
-  this.age = 9
-  this.expansion = `usee`
-  this.biscuits = `shss`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Area 51`,
+  color: `green`,
+  age: 9,
+  expansion: `usee`,
+  biscuits: `shss`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `You may splay your green cards up.`,
     `Choose to either draw a {e}, or safeguard an available standard achievement.`,
     `Reveal one of your secrets, and super-execute it if it is your turn.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       game.aChooseAndSplay(player, ['green'], 'up')
     },
-    (game, player) => {
+    (game, player, { self }) => {
       const choices = [
-        'Draw a ' + game.getEffectAge(this, 11),
+        'Draw a ' + game.getEffectAge(self, 11),
         'Safeguard a standard achievement',
       ]
       const choice = game.actions.choose(player, choices)[0]
 
       if (choice === choices[0]) {
-        game.aDraw(player, { age: game.getEffectAge(this, 11) })
+        game.aDraw(player, { age: game.getEffectAge(self, 11) })
       }
       else {
         const available = game.getAvailableStandardAchievements(player)
@@ -54,16 +48,5 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

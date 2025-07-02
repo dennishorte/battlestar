@@ -1,43 +1,26 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Subway`  // Card names are unique in Innovation
-  this.name = `Subway`
-  this.color = `yellow`
-  this.age = 7
-  this.expansion = `usee`
-  this.biscuits = `liih`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Subway`,
+  color: `yellow`,
+  age: 7,
+  expansion: `usee`,
+  biscuits: `liih`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `Draw and tuck a {7}. If you have at least seven visible cards on your board of the color of the tucked card, draw a {9}. Otherwise, junk all cards on your board of that color, and draw an {8}.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
-      const card = game.aDrawAndTuck(player, game.getEffectAge(this, 7))
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
+      const card = game.aDrawAndTuck(player, game.getEffectAge(self, 7))
 
       const visibleCards = game.getVisibleCardsByZone(player, card.color)
 
       if (visibleCards >= 7) {
-        game.aDraw(player, { age: game.getEffectAge(this, 9) })
+        game.aDraw(player, { age: game.getEffectAge(self, 9) })
       }
       else {
         game.aJunkMany(player, game.getCardsByZone(player, card.color), { ordered: true })
-        game.aDraw(player, { age: game.getEffectAge(this, 8) })
+        game.aDraw(player, { age: game.getEffectAge(self, 8) })
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card
