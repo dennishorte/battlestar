@@ -1,25 +1,21 @@
-const CardBase = require(`../CardBase.js`)
 const { GameOverEvent } = require('../../../lib/game.js')
 
-function Card() {
-  this.id = `Collaboration`  // Card names are unique in Innovation
-  this.name = `Collaboration`
-  this.color = `green`
-  this.age = 9
-  this.expansion = `base`
-  this.biscuits = `hcic`
-  this.dogmaBiscuit = `c`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+
+module.exports = {
+  name: `Collaboration`,
+  color: `green`,
+  age: 9,
+  expansion: `base`,
+  biscuits: `hcic`,
+  dogmaBiscuit: `c`,
+  dogma: [
     `I demand you draw two {9} and reveal them! Transfer the card of my choice to my board, and meld the other!`,
     `If you have ten or more green cards on your board, you win.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player, { leader }) => {
-      const card1 = game.aDrawAndReveal(player, game.getEffectAge(this, 9) )
-      const card2 = game.aDrawAndReveal(player, game.getEffectAge(this, 9) )
+  ],
+  dogmaImpl: [
+    (game, player, { leader, self }) => {
+      const card1 = game.aDrawAndReveal(player, game.getEffectAge(self, 9) )
+      const card2 = game.aDrawAndReveal(player, game.getEffectAge(self, 9) )
 
       const chosen = game.actions.chooseCard(leader, [card1, card2])
       const other = chosen === card1 ? card2 : card1
@@ -44,16 +40,5 @@ function Card() {
         game.log.addNoEffect()
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

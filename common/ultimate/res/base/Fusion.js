@@ -1,20 +1,14 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Fusion`  // Card names are unique in Innovation
-  this.name = `Fusion`
-  this.color = `red`
-  this.age = 11
-  this.expansion = `base`
-  this.biscuits = `iiih`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Fusion`,
+  color: `red`,
+  age: 11,
+  expansion: `base`,
+  biscuits: `iiih`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `Score a top card of value 11 on your board. If you do, choose a value one or two lower than the scored card, then repeat this dogma effect using the chosen value.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const executeEffect = (value) => {
         const choices = game
@@ -45,16 +39,5 @@ function Card() {
         })
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

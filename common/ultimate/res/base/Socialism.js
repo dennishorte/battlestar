@@ -1,21 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Socialism`  // Card names are unique in Innovation
-  this.name = `Socialism`
-  this.color = `purple`
-  this.age = 8
-  this.expansion = `base`
-  this.biscuits = `lhll`
-  this.dogmaBiscuit = `l`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Socialism`,
+  color: `purple`,
+  age: 8,
+  expansion: `base`,
+  biscuits: `lhll`,
+  dogmaBiscuit: `l`,
+  dogma: [
     `You may tuck a top card from your board. If you do, tuck all cards from your hand.`,
     `You may junk an available achievement of value 8, 9, or 10.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const topCards = game.getTopCards(player)
       const card = game.actions.chooseCard(player, topCards, {
@@ -32,16 +26,5 @@ function Card() {
     (game, player) => {
       game.aJunkAvailableAchievement(player, [8, 9, 10], { min: 0 })
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

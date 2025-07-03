@@ -1,19 +1,14 @@
-const CardBase = require(`../CardBase.js`)
-function Card() {
-  this.id = `Code of Laws`  // Card names are unique in Innovation
-  this.name = `Code of Laws`
-  this.color = `purple`
-  this.age = 1
-  this.expansion = `base`
-  this.biscuits = `hccl`
-  this.dogmaBiscuit = `c`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Code of Laws`,
+  color: `purple`,
+  age: 1,
+  expansion: `base`,
+  biscuits: `hccl`,
+  dogmaBiscuit: `c`,
+  dogma: [
     `You may tuck a card from your hand of the same color as any card on your board. If you do, you may splay that color of your cards left.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const boardColors = game
         .getTopCards(player)
@@ -31,16 +26,5 @@ function Card() {
         game.aChooseAndSplay(player, [color], 'left')
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

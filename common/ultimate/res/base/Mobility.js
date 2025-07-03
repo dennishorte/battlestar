@@ -1,21 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Mobility`  // Card names are unique in Innovation
-  this.name = `Mobility`
-  this.color = `red`
-  this.age = 8
-  this.expansion = `base`
-  this.biscuits = `hfif`
-  this.dogmaBiscuit = `f`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Mobility`,
+  color: `red`,
+  age: 8,
+  expansion: `base`,
+  biscuits: `hfif`,
+  dogmaBiscuit: `f`,
+  dogma: [
     `I demand you transfer your two highest non-red top cards without {f} of different colors from your board to my score pile! If you transfer any, draw an {8}!`
-  ]
-
-  this.dogmaImpl = [
-    (game, player, { leader }) => {
+  ],
+  dogmaImpl: [
+    (game, player, { leader, self }) => {
       let transferred = false
       const destination = game.getZoneByPlayer(leader, 'score')
       const choices = game
@@ -46,19 +40,8 @@ function Card() {
       }
 
       if (transferred) {
-        game.aDraw(player, { age: game.getEffectAge(this, 8) })
+        game.aDraw(player, { age: game.getEffectAge(self, 8) })
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

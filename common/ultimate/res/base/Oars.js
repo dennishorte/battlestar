@@ -1,21 +1,16 @@
-const CardBase = require(`../CardBase.js`)
-function Card() {
-  this.id = `Oars`  // Card names are unique in Innovation
-  this.name = `Oars`
-  this.color = `red`
-  this.age = 1
-  this.expansion = `base`
-  this.biscuits = `kchk`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Oars`,
+  color: `red`,
+  age: 1,
+  expansion: `base`,
+  biscuits: `kchk`,
+  dogmaBiscuit: `k`,
+  dogma: [
     `I demand you transfer a card with {c} from your hand to my score pile! If you do, draw a {1}, and repeat this effect!`,
     `If no cards were transferred due to this demand, draw a {1}.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player, { leader }) => {
+  ],
+  dogmaImpl: [
+    (game, player, { leader, self }) => {
       const choices = game
         .getCardsByZone(player, 'hand')
         .filter(card => card.checkHasBiscuit('c'))
@@ -32,7 +27,7 @@ function Card() {
           const transferred = game.aChooseAndTransfer(player, choices, target)
           if (transferred && transferred.length > 0) {
             game.state.dogmaInfo.oarsCardTransferred = true
-            game.aDraw(player, { age: game.getEffectAge(this, 1) })
+            game.aDraw(player, { age: game.getEffectAge(self, 1) })
             continue
           }
         }
@@ -41,24 +36,13 @@ function Card() {
       }
     },
 
-    (game, player) => {
+    (game, player, { self }) => {
       if (!game.state.dogmaInfo.oarsCardTransferred) {
-        game.aDraw(player, { age: game.getEffectAge(this, 1) })
+        game.aDraw(player, { age: game.getEffectAge(self, 1) })
       }
       else {
         game.log.addNoEffect()
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

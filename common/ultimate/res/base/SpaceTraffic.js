@@ -1,23 +1,17 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Space Traffic`  // Card names are unique in Innovation
-  this.name = `Space Traffic`
-  this.color = `green`
-  this.age = 11
-  this.expansion = `base`
-  this.biscuits = `ccih`
-  this.dogmaBiscuit = `c`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Space Traffic`,
+  color: `green`,
+  age: 11,
+  expansion: `base`,
+  biscuits: `ccih`,
+  dogmaBiscuit: `c`,
+  dogma: [
     `Draw and tuck an {e}. If you tuck directly under an {e}, you lose. Otherwise, score all but your top five cards of the color of the tucked card, splay that color aslant, and if you do not have the highest score, repeat this effect.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { self }) => {
       const executeEffect = () => {
-        const card = game.aDrawAndTuck(player, game.getEffectAge(this, 11))
+        const card = game.aDrawAndTuck(player, game.getEffectAge(self, 11))
         const color = card.color
         const stack = game.getCardsByZone(player, color)
 
@@ -26,7 +20,7 @@ function Card() {
         }
         else {
           const cardAbove = stack.slice(-2, -1)[0]
-          if (cardAbove.getAge() === game.getEffectAge(this, 11)) {
+          if (cardAbove.getAge() === game.getEffectAge(self, 11)) {
             game.log.add({
               template: '{player} tucked the card just under an 11',
               args: { player },
@@ -65,16 +59,5 @@ function Card() {
         shouldRepeat = executeEffect()
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

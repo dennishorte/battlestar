@@ -1,24 +1,18 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Industrialization`  // Card names are unique in Innovation
-  this.name = `Industrialization`
-  this.color = `red`
-  this.age = 6
-  this.expansion = `base`
-  this.biscuits = `cffh`
-  this.dogmaBiscuit = `f`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Industrialization`,
+  color: `red`,
+  age: 6,
+  expansion: `base`,
+  biscuits: `cffh`,
+  dogmaBiscuit: `f`,
+  dogma: [
     `Draw and tuck three {6}. Then, if you are the single player with the most {i}, return your top red card.`,
     `You may splay your red or purple cards right.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       for (let i = 0; i < 3; i++) {
-        game.aDrawAndTuck(player, game.getEffectAge(this, 6))
+        game.aDrawAndTuck(player, game.getEffectAge(self, 6))
       }
 
       const playerWithMost = game.getUniquePlayerWithMostBiscuits('i')
@@ -32,16 +26,5 @@ function Card() {
     (game, player) => {
       game.aChooseAndSplay(player, ['red', 'purple'], 'right')
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card
