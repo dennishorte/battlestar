@@ -1,7 +1,7 @@
 //const { BaseCard } = require('../lib/game/index.js')
 const util = require('../lib/util.js')
 
-class UltimateCard {
+class UltimateAgeCard {
   constructor(data) {
     Object.assign(this, {
       version: 2,
@@ -276,5 +276,5 @@ class UltimateCard {
 }
 
 module.exports = {
-  UltimateCard,
+  UltimateAgeCard,
 }
