@@ -6,6 +6,10 @@ class UltimateBaseCard {
     this.visibility = []
     this.home = null
   }
+
+  checkIsStandardAchievement() {
+    return !this.isSpecialAchievement && !this.isDecree
+  }
 }
 
 module.exports = {

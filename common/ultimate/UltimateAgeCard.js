@@ -1,8 +1,10 @@
-//const { BaseCard } = require('../lib/game/index.js')
+const { UltimateBaseCard } = require('./UltimateBaseCard.js')
 const util = require('../lib/util.js')
 
-class UltimateAgeCard {
+class UltimateAgeCard extends UltimateBaseCard {
   constructor(data) {
+    super(data.name)
+
     Object.assign(this, {
       version: 2,
       name: '',
@@ -20,12 +22,6 @@ class UltimateAgeCard {
       karmaImpl: [],
       ...data,
     })
-
-    this.id = this.name
-    this.owner = null
-    this.zone = null
-    this.visibility = []
-    this.home = null
   }
 
   checkBiscuitIsVisible(biscuit, splay) {
@@ -111,10 +107,6 @@ class UltimateAgeCard {
     const match = this.zone.match(re)
 
     return match && (!player || match[1] === player.name)
-  }
-
-  checkIsStandardAchievement() {
-    return !this.isSpecialAchievement && !this.isDecree
   }
 
   checkHasEcho() {

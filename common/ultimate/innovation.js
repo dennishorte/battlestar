@@ -65,7 +65,7 @@ Innovation.prototype.initialize = function() {
   this.log.add({ template: 'Initializing' })
   this.log.indent()
 
-  this.cardData = res.generate()
+  this.cardData = res.factory()
 
   this.initializeTeams()
   this.initializeZones()
@@ -2139,14 +2139,9 @@ Innovation.prototype.getBonuses = function(player) {
     .sort((l, r) => r - l)
 }
 
-Innovation.prototype.getCardByName = function(name, def) {
+Innovation.prototype.getCardByName = function(name) {
   if (!Object.hasOwn(this.cardData.all.byName, name)) {
-    if (def !== undefined) {
-      return def
-    }
-    else {
-      throw new Error(`Unknown card: ${name}`)
-    }
+    throw new Error(`Unknown card: ${name}`)
   }
   else {
     return this.cardData.all.byName[name]

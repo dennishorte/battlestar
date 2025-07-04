@@ -1,43 +1,60 @@
+const { UltimateAgeCard } = require('../UltimateAgeCard.js')
+//const { UltimateAchievement } = require('../UltimateAchievement.js')
+
+// Import here to make migration to ES imports easier.
+const baseSet = require('./base')
+const citySet = require('./city')
+const useeSet = require('./usee')
+
+const ALL_EXPANSIONS = ['base', 'city', 'usee']
+
 const sets = {
-  base: require('./base'),
-  // echo: require('./echo'),
-  // figs: require('./figs'),
-  city: require('./city'),
-  // arti: require('./arti'),
-  usee: require('./usee'),
-  byName: {},
-  generate
+  base: baseSet,
+  city: citySet,
+  usee: useeSet,
 }
 
-for (const exp of ['base', 'city', 'usee']) {
-  const data = sets[exp].generateCardInstances()
-  for (const card of data.cards) {
-    sets.byName[card.name] = card
+function generateCardInstances(cardData, achievementData) {
+  const cards = cardData.map(data => new UltimateAgeCard(data))
+  const achievements = achievementData.map(f => new f())
+
+  const byName = {}
+  for (const card of cards) {
+    byName[card.name] = card
+  }
+  for (const card of achievements) {
+    byName[card.name] = card
   }
 
-  if (exp === 'arti') {
-    for (const card of data.achievements) {
-      sets.byName[card.name] = card
-    }
+  const byAge = {}
+  for (const i of [1,2,3,4,5,6,7,8,9,10,11]) {
+    byAge[i] = []
+  }
+  for (const card of cards) {
+    byAge[card.age].push(card)
+  }
+
+  return {
+    achievements,
+    cards,
+    byName,
+    byAge,
   }
 }
 
 
-function generate() {
+function factory() {
   const output = {
-    base: sets.base.generateCardInstances(),
-    // echo: sets.echo.generateCardInstances(),
-    // figs: sets.figs.generateCardInstances(),
-    city: sets.city.generateCardInstances(),
-    // arti: sets.arti.generateCardInstances(),
-    usee: sets.usee.generateCardInstances(),
     all: {
-      byName: {},
-    }
+      byName: {}
+    },
   }
 
-  for (const exp of ['base', 'city', 'usee']) {
-    const data = output[exp]
+  for (const exp of ALL_EXPANSIONS) {
+    const { cardData, achievementData } = sets[exp]
+    const data = generateCardInstances(cardData, achievementData)
+
+    output[exp] = data
     for (const [name, card] of Object.entries(data.byName)) {
       output.all.byName[name] = card
     }
@@ -46,4 +63,7 @@ function generate() {
   return output
 }
 
-module.exports = sets
+module.exports = {
+  factory,
+  ALL_EXPANSIONS,
+}
