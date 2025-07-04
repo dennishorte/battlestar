@@ -12,7 +12,7 @@ class InnovationLogManager extends BaseLogManager {
     }
 
     const classes = ['card']
-    if (card.getAge()) {
+    if (!card.isSpecialAchievement && card.getAge()) {
       classes.push(`card-age-${card.visibleAge || card.getAge()}`)
     }
     if (card.expansion) {

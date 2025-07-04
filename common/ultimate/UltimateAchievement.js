@@ -15,6 +15,8 @@ class UltimateAchievement extends UltimateBaseCard {
       isDecree: false,
       // eslint-disable-next-line no-unused-vars
       checkPlayerIsEligible: (game, player, reduceCost) => false,
+
+      ...data
     })
   }
 }

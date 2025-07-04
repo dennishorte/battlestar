@@ -1,5 +1,5 @@
 const { UltimateAgeCard } = require('../UltimateAgeCard.js')
-//const { UltimateAchievement } = require('../UltimateAchievement.js')
+const { UltimateAchievement } = require('../UltimateAchievement.js')
 
 // Import here to make migration to ES imports easier.
 const baseSet = require('./base')
@@ -7,6 +7,7 @@ const citySet = require('./city')
 const useeSet = require('./usee')
 
 const ALL_EXPANSIONS = ['base', 'city', 'usee']
+const ALL_AGES = [1,2,3,4,5,6,7,8,9,10,11]
 
 const sets = {
   base: baseSet,
@@ -16,7 +17,14 @@ const sets = {
 
 function generateCardInstances(cardData, achievementData) {
   const cards = cardData.map(data => new UltimateAgeCard(data))
-  const achievements = achievementData.map(f => new f())
+  const achievements = achievementData.map(data => {
+    if (typeof data === 'function') {
+      return new data()
+    }
+    else {
+      return new UltimateAchievement(data)
+    }
+  })
 
   const byName = {}
   for (const card of cards) {
@@ -27,7 +35,7 @@ function generateCardInstances(cardData, achievementData) {
   }
 
   const byAge = {}
-  for (const i of [1,2,3,4,5,6,7,8,9,10,11]) {
+  for (const i of ALL_AGES) {
     byAge[i] = []
   }
   for (const card of cards) {
@@ -65,5 +73,6 @@ function factory() {
 
 module.exports = {
   factory,
+  ALL_AGES,
   ALL_EXPANSIONS,
 }
