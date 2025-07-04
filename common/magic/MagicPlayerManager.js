@@ -1,4 +1,4 @@
-const { BasePlayerManager } = require('../lib/game')
+const { BasePlayerManager } = require('../lib/game/index.js')
 
 
 class MagicPlayerManager extends BasePlayerManager {

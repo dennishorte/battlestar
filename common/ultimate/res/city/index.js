@@ -124,8 +124,10 @@ const achievementData = [
   require('./achievements/Victory.js'),
 ]
 
+const { UltimateCard } = require('../../UltimateCard.js')
+
 function generateCardInstances() {
-  const cards = cardData.map(f => new f())
+  const cards = cardData.map(data => new UltimateCard(data))
   const achievements = achievementData.map(f => new f())
 
   const byName = {}

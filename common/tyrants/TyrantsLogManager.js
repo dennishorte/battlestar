@@ -1,4 +1,4 @@
-const { BaseLogManager } = require('../lib/game')
+const { BaseLogManager } = require('../lib/game/index.js')
 
 
 class TyrantsLogManager extends BaseLogManager {
