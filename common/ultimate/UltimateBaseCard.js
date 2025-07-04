@@ -10,6 +10,10 @@ class UltimateBaseCard {
   checkIsStandardAchievement() {
     return !this.isSpecialAchievement && !this.isDecree
   }
+
+  getAge() {
+    return this.age
+  }
 }
 
 module.exports = {

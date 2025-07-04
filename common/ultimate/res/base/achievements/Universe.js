@@ -1,14 +1,11 @@
-const CardBase = require(`../../CardBase.js`)
-
-function Card() {
-  this.id = 'Universe'
-  this.name = 'Universe'
-  this.shortName = 'univ'
-  this.expansion = 'base'
-  this.text = 'Have five top cards of value 8+.'
-  this.alt = 'Astronmy'
-  this.isSpecialAchievement = true
-  this.checkPlayerIsEligible = function(game, player, reduceCost) {
+module.exports = {
+  name: 'Universe',
+  shortName: 'univ',
+  expansion: 'base',
+  text: 'Have five top cards of value 8+.',
+  alt: 'Astronmy',
+  isSpecialAchievement: true,
+  checkPlayerIsEligible: function(game, player, reduceCost) {
     const targetAge = reduceCost ? 7 : 8
     const targetCount = reduceCost ? 4 : 5
 
@@ -19,14 +16,5 @@ function Card() {
       .length
 
     return matchCount >= targetCount
-  }
+  },
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

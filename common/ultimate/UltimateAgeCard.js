@@ -145,7 +145,6 @@ class UltimateAgeCard extends UltimateBaseCard {
     return false
   }
 
-  // Battleship Yamato has age 8 everywhere except when on a player's board, when it is 11.
   getAge() {
     return this.checkIsOnPlayerBoard() ? (this.visibleAge || this.age) : this.age
   }

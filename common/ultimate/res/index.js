@@ -17,14 +17,7 @@ const sets = {
 
 function generateCardInstances(cardData, achievementData) {
   const cards = cardData.map(data => new UltimateAgeCard(data))
-  const achievements = achievementData.map(data => {
-    if (typeof data === 'function') {
-      return new data()
-    }
-    else {
-      return new UltimateAchievement(data)
-    }
-  })
+  const achievements = achievementData.map(data => new UltimateAchievement(data))
 
   const byName = {}
   for (const card of cards) {

@@ -1,14 +1,11 @@
-const CardBase = require(`../../CardBase.js`)
-
-function Card() {
-  this.id = 'Wonder'
-  this.name = 'Wonder'
-  this.shortName = 'wond'
-  this.expansion = 'base'
-  this.text = 'Have five colors splayed either right, up, or aslant.'
-  this.alt = 'Invention'
-  this.isSpecialAchievement = true
-  this.checkPlayerIsEligible = function(game, player, reduceCost) {
+module.exports = {
+  name: 'Wonder',
+  shortName: 'wond',
+  expansion: 'base',
+  text: 'Have five colors splayed either right, up, or aslant.',
+  alt: 'Invention',
+  isSpecialAchievement: true,
+  checkPlayerIsEligible: function(game, player, reduceCost) {
     const numColors = reduceCost ? 4 : 5
     const splays = game
       .utilColors()
@@ -19,14 +16,5 @@ function Card() {
       .length
 
     return directionMatch >= numColors
-  }
+  },
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card
