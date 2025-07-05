@@ -1,8 +1,16 @@
-const util = require('../util.js')
+const { BaseZone } = require('./BaseZone.js')
 
 class BaseZoneManager {
   constructor(game) {
+    this._zoneConstructor = BaseZone
     this._game = game
+    this._zones = {}
+  }
+
+  create(...args) {
+    const zone = new this._zoneConstructor(...args)
+    this.register(zone)
+    return zone
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -13,13 +21,14 @@ class BaseZoneManager {
   }
 
   byId(id) {
-    const tokens = id.split('.')
-    let curr = this.state.zones
-    for (const token of tokens) {
-      util.assert(Object.hasOwn(curr, token), `Invalid zone id ${id} at token ${token}`)
-      curr = curr[token]
+    return this.zones[id]
+  }
+
+  register(zone) {
+    if (Object.hasOwn(this._zones, zone.id)) {
+      throw new Error('Duplicate zone id: ' + zone.id)
     }
-    return curr
+    this._zones[zone.id] = zone
   }
 }
 

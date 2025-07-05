@@ -1,19 +1,22 @@
 const util = require('../util.js')
 
+const ZONE_KIND = {
+  public: 'public',
+  private: 'private',
+  hidden: 'hidden'
+}
+
 
 class BaseZone {
-  constructor(game, name, kind) {
+  constructor(game, id, name, kind, owner=null) {
     this.game = game
 
-    /**
-     * Index 0 = top of the deck
-     */
-    this._cards = []
-
-    this._id = name
+    this._id = id
     this._name = name
     this._kind = kind
-    this._owner = undefined
+    this._owner = owner
+
+    this.reset()
   }
 
   cards() {
@@ -22,6 +25,24 @@ class BaseZone {
 
   owner() {
     return this._owner
+  }
+
+  initializeCards(cards) {
+    if (this._initialized) {
+      throw new Error('Zone already initialized')
+    }
+
+    this._initialized = true
+    this._cards = [...cards]
+    for (const card of this._cards) {
+      card.setHome(this)
+      this._updateCardVisibility(card)
+    }
+  }
+
+  reset() {
+    this._cards = []
+    this._initialized = false
   }
 
   /**
@@ -37,6 +58,12 @@ class BaseZone {
     else {
       this._cards.push(card)
     }
+
+    this._updateCardVisibility(card)
+  }
+
+  peek(index=0) {
+    return this._cards.at(index)
   }
 
   remove(card) {
@@ -51,7 +78,7 @@ class BaseZone {
   // Misc
 
   random() {
-    return util.array.select(this._cards)
+    return util.array.select(this._cards, this.game.random)
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -95,7 +122,7 @@ class BaseZone {
   }
 
   sortByName() {
-    this.sort((l, r) => l.name().localeCompare(r.name()))
+    this.sort((l, r) => l.name.localeCompare(r.name))
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -142,8 +169,30 @@ class BaseZone {
     const card = util.array.select(this._cards, this.game.random)
     card.show(player)
   }
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Protected
+  _updateCardVisibility(card) {
+    switch (this._kind) {
+      case ZONE_KIND.public:
+        card.reveal()
+        break
+
+      case ZONE_KIND.private:
+        card.show(this.owner())
+        break
+
+      case ZONE_KIND.hidden:
+        card.hide()
+        break
+
+      default:
+        throw new Error('Unknown zone kind: ' + this._kind)
+    }
+  }
 }
 
 module.exports = {
-  BaseZone
+  BaseZone,
+  ZONE_KIND,
 }
