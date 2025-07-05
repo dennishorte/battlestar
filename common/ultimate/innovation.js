@@ -5,9 +5,9 @@ const {
 } = require('../lib/game.js')
 const res = require('./res/index.js')
 const util = require('../lib/util.js')
-const { Zone } = require('../innovation/zone.js')
+const { Zone } = require('./zone.js')
 
-const { InnovationLogManager } = require('../innovation/InnovationLogManager.js')
+const { UltimateLogManager } = require('./UltimateLogManager.js')
 const { UltimateActionManager } = require('./UltimateActionManager.js')
 const { UltimateCardManager } = require('./UltimateCardManager.js')
 
@@ -24,7 +24,7 @@ module.exports = {
 function Innovation(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
-  this.log = new InnovationLogManager(this, serialized_data.chat, viewerName)
+  this.log = new UltimateLogManager(this, serialized_data.chat, viewerName)
   this.actions = new UltimateActionManager(this)
   this.cards = new UltimateCardManager(this)
 }
