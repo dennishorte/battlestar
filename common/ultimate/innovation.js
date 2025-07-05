@@ -9,6 +9,7 @@ const { Zone } = require('../innovation/zone.js')
 
 const { InnovationLogManager } = require('../innovation/InnovationLogManager.js')
 const { UltimateActionManager } = require('./UltimateActionManager.js')
+const { UltimateCardManager } = require('./UltimateCardManager.js')
 
 module.exports = {
   GameOverEvent,
@@ -25,6 +26,7 @@ function Innovation(serialized_data, viewerName) {
 
   this.log = new InnovationLogManager(this, serialized_data.chat, viewerName)
   this.actions = new UltimateActionManager(this)
+  this.cards = new UltimateCardManager(this)
 }
 
 util.inherit(Game, Innovation)
@@ -65,8 +67,7 @@ Innovation.prototype.initialize = function() {
   this.log.add({ template: 'Initializing' })
   this.log.indent()
 
-  this.cardData = res.factory(this)
-
+  this.initializeCards()
   this.initializeTeams()
   this.initializeZones()
   this.initializeStartingCards()
@@ -76,6 +77,14 @@ Innovation.prototype.initialize = function() {
 
   this.state.initializationComplete = true
   this._breakpoint('initialization-complete')
+}
+
+Innovation.prototype.initializeCards = function() {
+  const cardData = res.factory(this)
+
+  for (const exp of res.ALL_EXPANSIONS) {
+    this.cards.registerExpansion(exp, cardData[exp])
+  }
 }
 
 Innovation.prototype.initializeTransientState = function() {
@@ -140,7 +149,7 @@ Innovation.prototype.initializeZonesDecks = function() {
   zones.decks = {}
   for (const exp of SUPPORTED_EXPANSIONS) {
     zones.decks[exp] = {}
-    for (const [age, cards] of Object.entries(this.cardData[exp].byAge)) {
+    for (const [age, cards] of Object.entries(this.cards.byExp(exp).byAge)) {
       if (!cards) {
         throw new Error(`Missing cards for ${exp}-${age}`)
       }
@@ -169,7 +178,7 @@ Innovation.prototype.initializeZonesAchievements = function() {
   // Special achievements
   for (const exp of SUPPORTED_EXPANSIONS) {
     if (this.getExpansionList().includes(exp)) {
-      for (const ach of this.cardData[exp].achievements) {
+      for (const ach of this.cards.byExp(exp).achievements) {
         zones.achievements._cards.push(ach)
         ach.home = 'achievements'
       }
@@ -1470,16 +1479,6 @@ Innovation.prototype.aDigArtifact = function(player, age) {
   const card = this.aDraw(player, { age, exp: 'arti' })
   if (card) {
     this.mMoveCardTo(card, this.getZoneByPlayer(player, 'artifact'), { player })
-
-    for (const ach of this.cardData['arti'].achievements) {
-      if (ach.getAge() !== card.getAge()) {
-        continue
-      }
-
-      if (this._checkCanSeizeRelic(ach)) {
-        this.aSeizeRelic(player, ach)
-      }
-    }
   }
 }
 
@@ -2140,12 +2139,7 @@ Innovation.prototype.getBonuses = function(player) {
 }
 
 Innovation.prototype.getCardByName = function(name) {
-  if (!Object.hasOwn(this.cardData.all.byName, name)) {
-    throw new Error(`Unknown card: ${name}`)
-  }
-  else {
-    return this.cardData.all.byName[name]
-  }
+  return this.cards.byId(name)
 }
 
 Innovation.prototype.getAgesByZone = function(player, zoneName) {
@@ -2272,10 +2266,6 @@ Innovation.prototype.getNumAchievementsToWin = function() {
   const numExpansionAdjustment = this.getExpansionList().length - 1
 
   return base + numPlayerAdjustment + numExpansionAdjustment
-}
-
-Innovation.prototype.getResources = function() {
-  return this.cardData
 }
 
 Innovation.prototype.getScore = function(player, opts={}) {

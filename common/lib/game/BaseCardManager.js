@@ -1,7 +1,7 @@
 class BaseCardManager {
   constructor(game) {
-    this._game = game
-    this._cards = {}
+    this.game = game
+    this.reset()
   }
 
   register(card) {
@@ -12,7 +12,14 @@ class BaseCardManager {
   }
 
   byId(id) {
+    if (!Object.hasOwn(this._cards, id)) {
+      throw new Error('Unknown card: ' + id)
+    }
     return this._cards[id]
+  }
+
+  reset() {
+    this._cards = {}
   }
 }
 

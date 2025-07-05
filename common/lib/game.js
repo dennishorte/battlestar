@@ -381,6 +381,7 @@ Game.prototype._reset = function() {
   this.state = this._blankState()
   this.log.reset()
   this.players.reset()
+  this.cards.reset()
 }
 
 Game.prototype._tryToAutomaticallyRespond = function(selectors) {
