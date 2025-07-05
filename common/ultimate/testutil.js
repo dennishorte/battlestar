@@ -61,7 +61,7 @@ TestUtil.fixture = function(options) {
         'Zen',
       ]
       for (const name of unseenAchievementNames) {
-        game.mRemove(game.getCardByName(name))
+        game.mRemove(game.cards.byId(name))
       }
     }
   })
@@ -121,7 +121,7 @@ TestUtil.fixtureTopCard = function(cardName, options) {
       .players.all()
       .forEach(player => TestUtil.clearBoard(game, player.name))
 
-    const card = game.getCardByName(cardName)
+    const card = game.cards.byId(cardName)
     TestUtil.setColor(game, game.players.current().name, card.color, [cardName])
   })
   return game
@@ -182,7 +182,7 @@ TestUtil.testNoFade = function(cardName) {
     TestUtil.setColor(game, 'dennis', 'purple', ['Al-Kindi'])
     TestUtil.setColor(game, 'dennis', 'green', ['Adam Smith'])
 
-    const targetCard = game.getCardByName(cardName)
+    const targetCard = game.cards.byId(cardName)
     TestUtil.setColor(game, 'dennis', targetCard.color, [targetCard.id])
   })
 
@@ -440,7 +440,7 @@ TestUtil.getChoices = function(request, kind) {
 TestUtil.setAchievements = function(game, playerName, cardNames) {
   const player = game.players.byName(playerName)
   const zone = game.getZoneByPlayer(player, 'achievements')
-  const cards = cardNames.map(name => game.getCardByName(name))
+  const cards = cardNames.map(name => game.cards.byId(name))
   for (const card of zone.cards()) {
     game.mReturn(player, card, { silent: true })
   }
@@ -450,7 +450,7 @@ TestUtil.setAchievements = function(game, playerName, cardNames) {
 }
 
 TestUtil.setAvailableAchievements = function(game, cardNames) {
-  const cards = cardNames.map(name => game.getCardByName(name))
+  const cards = cardNames.map(name => game.cards.byId(name))
   const zone = game.getZoneById('achievements')
 
   for (const card of zone.cards()) {
@@ -465,7 +465,7 @@ TestUtil.setAvailableAchievements = function(game, cardNames) {
 }
 
 TestUtil.setJunk = function(game, cardNames) {
-  const cards = cardNames.map(name => game.getCardByName(name))
+  const cards = cardNames.map(name => game.cards.byId(name))
   const zone = game.getZoneById('junk')
 
   for (const card of cards) {
@@ -476,7 +476,7 @@ TestUtil.setJunk = function(game, cardNames) {
 TestUtil.setColor = function(game, playerName, colorName, cardNames) {
   const player = game.players.byName(playerName)
   const zone = game.getZoneByPlayer(player, colorName)
-  const cards = cardNames.map(name => game.getCardByName(name))
+  const cards = cardNames.map(name => game.cards.byId(name))
   for (const card of zone.cards()) {
     game.mReturn(player, card, { silent: true })
   }
@@ -488,7 +488,7 @@ TestUtil.setColor = function(game, playerName, colorName, cardNames) {
 TestUtil.setDeckTop = function(game, exp, age, cardNames) {
   const deck = game.getZoneByDeck(exp, age)
   const cards = cardNames
-    .map(c => game.getCardByName(c))
+    .map(c => game.cards.byId(c))
     .reverse()
   for (const card of cards) {
     game.mMoveCardToTop(card, deck)
@@ -500,7 +500,7 @@ TestUtil.setPlayerZone = function(game, playerName, zoneName, cardNames) {
   const player = game.players.byName(playerName)
   const zone = game.getZoneByPlayer(player, zoneName)
   for (const name of cardNames) {
-    const card = game.getCardByName(name)
+    const card = game.cards.byId(name)
     game.mMoveCardTo(card, zone)
   }
 }

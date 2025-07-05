@@ -50,7 +50,7 @@ module.exports = {
         }
       }
       else if (selected.title === 'Meld and splay right') {
-        const card = game.getCardByName(selected.selection[0])
+        const card = game.cards.byId(selected.selection[0])
         game.aMeld(player, card)
         game.aSplay(player, card.color, 'right')
       }

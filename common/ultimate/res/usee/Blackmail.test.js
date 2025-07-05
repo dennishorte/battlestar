@@ -1,5 +1,7 @@
 Error.stackTraceLimit = 100
+
 const t = require('../../testutil.js')
+
 describe('Blackmail', () => {
 
   test('dogma', () => {
@@ -25,8 +27,6 @@ describe('Blackmail', () => {
     request = t.choose(game, request, 'auto')
     request = t.choose(game, request, 'Mathematics')
     request = t.choose(game, request, 'Agriculture')
-    request = t.choose(game, request, 'Tools')
-
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

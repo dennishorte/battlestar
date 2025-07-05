@@ -10,21 +10,13 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cardsInHand = game.getZoneByPlayer(player, 'hand').cards().map(c => c.name)
-      const returned = game.requestInputSingle({
-        actor: player.name,
-        title: 'Choose a Card',
-        choices: cardsInHand,
-        min: 0,
-        max: 1,
-      })
+      const cardsInHand = game.getCardsByZone(player, 'hand')
+      const returned = game.aChooseAndReturn(player, cardsInHand, { min: 0, max: 1 })
 
       if (returned.length > 0) {
-        const card = game.getCardByName(returned[0])
-        const returnedCard = game.aReturn(player, card)
-        if (returnedCard) {
-          game.aDrawAndScore(player, card.getAge() + 1)
-        }
+        const card = returned[0]
+        game.aReturn(player, card)
+        game.aDrawAndScore(player, card.getAge() + 1)
       }
     },
   ],

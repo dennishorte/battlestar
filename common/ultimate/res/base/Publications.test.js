@@ -45,7 +45,7 @@ describe('Publications', () => {
     let request
     request = game.run()
 
-    expect(game.getCardByName('Monument').zone).toEqual('junk')
+    expect(game.cards.byId('Monument').zone).toEqual('junk')
 
     request = t.choose(game, request, 'Dogma.Publications')
     request = t.choose(game, request, 'blue')
@@ -64,6 +64,6 @@ describe('Publications', () => {
       junk: [],
     })
 
-    expect(game.getCardByName('Monument').zone).toEqual('achievements')
+    expect(game.cards.byId('Monument').zone).toEqual('achievements')
   })
 })

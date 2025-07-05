@@ -30,7 +30,7 @@ module.exports = {
         game.aDraw(player, { age: game.getEffectAge(self, 4) })
       }
       else {
-        const card = game.getCardByName(selected.selection[0])
+        const card = game.cards.byId(selected.selection[0])
         game.aScore(player, card)
       }
     },

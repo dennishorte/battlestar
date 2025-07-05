@@ -42,7 +42,7 @@ class UltimateActionManager extends BaseActionManager {
       return 'auto'
     }
     else {
-      return this.game.getCardByName(cardNames[0])
+      return this.game.cards.byId(cardNames[0])
     }
   }
 
@@ -58,7 +58,7 @@ class UltimateActionManager extends BaseActionManager {
 
     const choiceMap = cards.map(card => {
       if (!card.id) {
-        card = this.game.getCardByName(card)
+        card = this.game.cards.byId(card)
       }
 
       if (opts.hidden) {
@@ -99,7 +99,7 @@ class UltimateActionManager extends BaseActionManager {
         }
       }
       else {
-        output = cardNames.map(name => this.game.getCardByName(name))
+        output = cardNames.map(name => this.game.cards.byId(name))
       }
 
       if (opts.guard && !opts.guard(output)) {

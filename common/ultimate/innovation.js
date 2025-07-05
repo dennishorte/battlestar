@@ -251,7 +251,7 @@ Innovation.prototype.firstPicks = function() {
     .requestInputMany(requests)
     .map(resp => [
       this.players.byName(resp.actor),
-      this.getCardByName(resp.selection[0])
+      this.cards.byId(resp.selection[0])
     ])
     .sort((l, r) => l[1].name.localeCompare(r[1].name))
   for (const [player, card] of picks) {
@@ -379,7 +379,7 @@ Innovation.prototype.action = function(count) {
     this.aDecree(player, arg)
   }
   else if (name === 'Dogma') {
-    const card = this.getCardByName(arg)
+    const card = this.cards.byId(arg)
     this.aDogma(player, card)
   }
   else if (name === 'Draw') {
@@ -389,7 +389,7 @@ Innovation.prototype.action = function(count) {
     this.aEndorse(player, arg)
   }
   else if (name === 'Meld') {
-    const card = this.getCardByName(arg)
+    const card = this.cards.byId(arg)
     this.aMeld(player, card, { asAction: true })
   }
   else {
@@ -476,7 +476,7 @@ Innovation.prototype.aAchieveAction = function(player, arg, opts={}) {
     this.aClaimAchievement(player, { expansion, age, isStandard })
   }
   else {
-    const card = this.getCardByName(arg)
+    const card = this.cards.byId(arg)
     this.aClaimAchievement(player, { card })
   }
 }
@@ -886,7 +886,7 @@ Innovation.prototype.aClaimAchievement = function(player, opts={}) {
     card = opts.card
   }
   else if (opts.name) {
-    card = this.getCardByName(opts.name)
+    card = this.cards.byId(opts.name)
   }
   else if (opts.age) {
     card = this
@@ -922,7 +922,7 @@ Innovation.prototype.aClaimAchievement = function(player, opts={}) {
 }
 
 Innovation.prototype.aDecree = function(player, name) {
-  const card = this.getCardByName(name)
+  const card = this.cards.byId(name)
   const hand = this.getZoneByPlayer(player, 'hand')
 
   this.log.add({
@@ -1446,7 +1446,7 @@ Innovation.prototype._checkCityMeldAchievements = function(player, card) {
   if (
     card.checkHasBiscuit('<')
     && this.getZoneByPlayer(player, card.color).splay === 'left'
-    && this.getCardByName('Tradition').zone === 'achievements'
+    && this.cards.byId('Tradition').zone === 'achievements'
   ) {
     this.aClaimAchievement(player, { name: 'Tradition' })
   }
@@ -1454,7 +1454,7 @@ Innovation.prototype._checkCityMeldAchievements = function(player, card) {
   if (
     card.checkHasBiscuit('>')
     && this.getZoneByPlayer(player, card.color).splay === 'right'
-    && this.getCardByName('Repute').zone === 'achievements'
+    && this.cards.byId('Repute').zone === 'achievements'
   ) {
     this.aClaimAchievement(player, { name: 'Repute' })
   }
@@ -1462,7 +1462,7 @@ Innovation.prototype._checkCityMeldAchievements = function(player, card) {
   if (
     card.checkHasBiscuit('^')
     && this.getZoneByPlayer(player, card.color).splay === 'up'
-    && this.getCardByName('Fame').zone === 'achievements'
+    && this.cards.byId('Fame').zone === 'achievements'
   ) {
     this.aClaimAchievement(player, { name: 'Fame' })
   }
@@ -1823,14 +1823,14 @@ Innovation.prototype.aTransfer = function(player, card, target, opts={}) {
 Innovation.prototype._checkCityJunkAchievements = function(player, card) {
   if (
     card.checkHasBiscuit(';')
-    && this.getCardByName('Glory').zone === 'achievements'
+    && this.cards.byId('Glory').zone === 'achievements'
   ) {
     this.aClaimAchievement(player, { name: 'Glory' })
   }
 
   if (
     card.checkHasBiscuit(':')
-    && this.getCardByName('Victory').zone === 'achievements'
+    && this.cards.byId('Victory').zone === 'achievements'
   ) {
     this.aClaimAchievement(player, { name: 'Victory' })
   }
@@ -2136,10 +2136,6 @@ Innovation.prototype.getBonuses = function(player) {
   return bonuses
     .concat(karmaBonuses)
     .sort((l, r) => r - l)
-}
-
-Innovation.prototype.getCardByName = function(name) {
-  return this.cards.byId(name)
 }
 
 Innovation.prototype.getAgesByZone = function(player, zoneName) {
