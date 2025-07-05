@@ -15,9 +15,9 @@ const sets = {
   usee: useeSet,
 }
 
-function generateCardInstances(cardData, achievementData) {
-  const cards = cardData.map(data => new UltimateAgeCard(data))
-  const achievements = achievementData.map(data => new UltimateAchievement(data))
+function generateCardInstances(game, cardData, achievementData) {
+  const cards = cardData.map(data => new UltimateAgeCard(game, data))
+  const achievements = achievementData.map(data => new UltimateAchievement(game, data))
 
   const byName = {}
   for (const card of cards) {
@@ -44,7 +44,7 @@ function generateCardInstances(cardData, achievementData) {
 }
 
 
-function factory() {
+function factory(game) {
   const output = {
     all: {
       byName: {}
@@ -53,7 +53,7 @@ function factory() {
 
   for (const exp of ALL_EXPANSIONS) {
     const { cardData, achievementData } = sets[exp]
-    const data = generateCardInstances(cardData, achievementData)
+    const data = generateCardInstances(game, cardData, achievementData)
 
     output[exp] = data
     for (const [name, card] of Object.entries(data.byName)) {

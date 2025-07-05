@@ -1,8 +1,8 @@
 const { UltimateBaseCard } = require('./UltimateBaseCard.js')
 
 class UltimateAchievement extends UltimateBaseCard {
-  constructor(data) {
-    super(data.name)
+  constructor(game, data) {
+    super(game, data)
 
     Object.assign(this, {
       version: 2,

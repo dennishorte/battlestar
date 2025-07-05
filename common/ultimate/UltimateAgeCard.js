@@ -2,8 +2,8 @@ const { UltimateBaseCard } = require('./UltimateBaseCard.js')
 const util = require('../lib/util.js')
 
 class UltimateAgeCard extends UltimateBaseCard {
-  constructor(data) {
-    super(data.name)
+  constructor(game, data) {
+    super(game, data)
 
     Object.assign(this, {
       version: 2,

@@ -65,7 +65,7 @@ Innovation.prototype.initialize = function() {
   this.log.add({ template: 'Initializing' })
   this.log.indent()
 
-  this.cardData = res.factory()
+  this.cardData = res.factory(this)
 
   this.initializeTeams()
   this.initializeZones()

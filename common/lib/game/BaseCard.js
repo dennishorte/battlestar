@@ -2,8 +2,8 @@ const util = require('../util.js')
 
 class BaseCard {
   constructor(game, data) {
-    this._game = game
-    this._data = data
+    this.game = game
+    this.data = data
 
     this.id = data.id || null
     this.owner = null
@@ -29,7 +29,7 @@ class BaseCard {
   }
 
   reveal() {
-    this.visibility = this._game.players.all()
+    this.visibility = this.game.players.all()
   }
 
   revealed() {
