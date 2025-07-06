@@ -5,11 +5,11 @@ const {
 } = require('../lib/game.js')
 const res = require('./res/index.js')
 const util = require('../lib/util.js')
-const { Zone } = require('./zone.js')
 
 const { UltimateLogManager } = require('./UltimateLogManager.js')
 const { UltimateActionManager } = require('./UltimateActionManager.js')
 const { UltimateCardManager } = require('./UltimateCardManager.js')
+const { UltimateZone } = require('./UltimateZone.js')
 
 module.exports = {
   GameOverEvent,
@@ -132,7 +132,7 @@ Innovation.prototype.initializeZones = function() {
 
   this.initializeZonesAchievements()
   this.initializeZonesPlayers()
-  this.state.zones.junk = new Zone(this, 'junk', 'hidden')
+  this.state.zones.junk = new UltimateZone(this, 'junk', 'hidden')
 
   // Set an id that can be used to quickly fetch a zone.
   this._walkZones(this.state.zones, (zone, path) => {
@@ -157,7 +157,7 @@ Innovation.prototype.initializeZonesDecks = function() {
         throw new Error(`Cards for ${exp}-${age} is of type ${typeof cards}`)
       }
       util.array.shuffle(cards, this.random)
-      zones.decks[exp][age] = new Zone(this, `decks.${exp}.${age}`, 'deck')
+      zones.decks[exp][age] = new UltimateZone(this, `decks.${exp}.${age}`, 'deck')
       zones.decks[exp][age].setCards(cards)
     }
   }
@@ -166,7 +166,7 @@ Innovation.prototype.initializeZonesDecks = function() {
 Innovation.prototype.initializeZonesAchievements = function() {
   const zones = this.state.zones
 
-  zones.achievements = new Zone(this, 'achievements', 'achievements')
+  zones.achievements = new UltimateZone(this, 'achievements', 'achievements')
 
   // Standard achievements
   for (const age of [1,2,3,4,5,6,7,8,9,10]) {
@@ -192,7 +192,7 @@ Innovation.prototype.initializeZonesPlayers = function() {
   zones.players = {}
 
   function _addPlayerZone(player, name, kind, root) {
-    root[name] = new Zone(self, `players.${player.name}.${name}`, kind)
+    root[name] = new UltimateZone(self, `players.${player.name}.${name}`, kind)
     root[name].owner = player.name
   }
 
