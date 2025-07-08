@@ -10,6 +10,7 @@ const { UltimateLogManager } = require('./UltimateLogManager.js')
 const { UltimateActionManager } = require('./UltimateActionManager.js')
 const { UltimateCardManager } = require('./UltimateCardManager.js')
 const { UltimateZone } = require('./UltimateZone.js')
+const { UltimateZoneManager } = require('./UltimateZoneManager.js')
 
 module.exports = {
   GameOverEvent,
@@ -27,6 +28,7 @@ function Innovation(serialized_data, viewerName) {
   this.log = new UltimateLogManager(this, serialized_data.chat, viewerName)
   this.actions = new UltimateActionManager(this)
   this.cards = new UltimateCardManager(this)
+  this.zones = new UltimateZoneManager(this)
 }
 
 util.inherit(Game, Innovation)
@@ -119,36 +121,14 @@ Innovation.prototype.initializeTeams = function() {
 }
 
 Innovation.prototype.initializeZones = function() {
-  this.state.zones = {}
   this.initializeZonesDecks()
-
-  // Set the home zone of all cards before moving them around.
-  this._walkZones(this.state.zones, (zone, path) => {
-    zone.id = path.join('.')
-    for (const card of zone.cards()) {
-      card.home = zone.id
-    }
-  })
-
   this.initializeZonesAchievements()
   this.initializeZonesPlayers()
-  this.state.zones.junk = new UltimateZone(this, 'junk', 'hidden')
-
-  // Set an id that can be used to quickly fetch a zone.
-  this._walkZones(this.state.zones, (zone, path) => {
-    zone.id = path.join('.')
-    for (const card of zone.cards()) {
-      card.zone = zone.id
-      card.visibility = []
-    }
-  })
+  this.zones.register(new UltimateZone(this, 'junk', 'junk', 'hidden'))
 }
 
 Innovation.prototype.initializeZonesDecks = function() {
-  const zones = this.state.zones
-  zones.decks = {}
   for (const exp of SUPPORTED_EXPANSIONS) {
-    zones.decks[exp] = {}
     for (const [age, cards] of Object.entries(this.cards.byExp(exp).byAge)) {
       if (!cards) {
         throw new Error(`Missing cards for ${exp}-${age}`)
@@ -156,65 +136,68 @@ Innovation.prototype.initializeZonesDecks = function() {
       else if (!Array.isArray(cards)) {
         throw new Error(`Cards for ${exp}-${age} is of type ${typeof cards}`)
       }
-      util.array.shuffle(cards, this.random)
-      zones.decks[exp][age] = new UltimateZone(this, `decks.${exp}.${age}`, 'deck')
-      zones.decks[exp][age].setCards(cards)
+
+      const id = `decks.${exp}.${age}`
+      const zone = new UltimateZone(this, id, id, 'hidden')
+      zone.initializeCards(cards)
+      zone.shuffle()
+      this.zones.register(zone)
     }
   }
 }
 
 Innovation.prototype.initializeZonesAchievements = function() {
-  const zones = this.state.zones
-
-  zones.achievements = new UltimateZone(this, 'achievements', 'achievements')
-
-  // Standard achievements
-  for (const age of [1,2,3,4,5,6,7,8,9,10]) {
-    const ageZone = this.getZoneByDeck('base', age)
-    const achZone = this.getZoneById('achievements')
-    this.mMoveTopCard(ageZone, achZone)
-  }
+  const achZone = new UltimateZone(this, 'achievements', 'achievements', 'hidden')
+  this.zones.register(achZone)
 
   // Special achievements
+  const specialAchievements = []
   for (const exp of SUPPORTED_EXPANSIONS) {
     if (this.getExpansionList().includes(exp)) {
       for (const ach of this.cards.byExp(exp).achievements) {
-        zones.achievements._cards.push(ach)
-        ach.home = 'achievements'
+        specialAchievements.push(ach)
       }
     }
+  }
+  achZone.initializeCards(specialAchievements)
+
+  // Standard achievements
+  // These are just moved to the achievements zone because their home will remain as their original
+  // decks. If, for some reason, they are 'returned', they will go back to their decks, not to the
+  // achievements.
+  for (const age of [1,2,3,4,5,6,7,8,9,10]) {
+    const ageZone = this.zones.byDeck('base', age)
+    ageZone.peek().moveTo(achZone)
   }
 }
 
 Innovation.prototype.initializeZonesPlayers = function() {
   const self = this
-  const zones = this.state.zones
-  zones.players = {}
 
-  function _addPlayerZone(player, name, kind, root) {
-    root[name] = new UltimateZone(self, `players.${player.name}.${name}`, kind)
-    root[name].owner = player.name
+  const _addPlayerZone = function(player, name, kind) {
+    const id = `players.${player.name}.${name}`
+    const zone = new UltimateZone(self, id, id, kind, player)
+    self.zones.register(zone)
   }
 
   for (const player of this.players.all()) {
-    const root = {}
-    _addPlayerZone(player, 'hand', 'private', root)
-    _addPlayerZone(player, 'score', 'private', root)
-    _addPlayerZone(player, 'forecast', 'private', root)
-    _addPlayerZone(player, 'achievements', 'achievements', root)
-    _addPlayerZone(player, 'red', 'public', root)
-    _addPlayerZone(player, 'blue', 'public', root)
-    _addPlayerZone(player, 'green', 'public', root)
-    _addPlayerZone(player, 'yellow', 'public', root)
-    _addPlayerZone(player, 'purple', 'public', root)
-    _addPlayerZone(player, 'artifact', 'public', root)
-    _addPlayerZone(player, 'museum', 'public', root)
-    _addPlayerZone(player, 'safe', 'hidden', root)
-    zones.players[player.name] = root
+    _addPlayerZone(player, 'hand', 'private')
+    _addPlayerZone(player, 'score', 'private')
+    _addPlayerZone(player, 'forecast', 'private')
+    _addPlayerZone(player, 'achievements', 'hidden')
+    _addPlayerZone(player, 'red', 'public')
+    _addPlayerZone(player, 'blue', 'public')
+    _addPlayerZone(player, 'green', 'public')
+    _addPlayerZone(player, 'yellow', 'public')
+    _addPlayerZone(player, 'purple', 'public')
+    _addPlayerZone(player, 'artifact', 'public')
+    _addPlayerZone(player, 'museum', 'public')
+    _addPlayerZone(player, 'safe', 'hidden')
 
     for (const color of this.utilColors()) {
-      root[color].color = color
-      root[color].splay = 'none'
+      const zone = this.zones.byPlayer(player, color)
+      zone.color = color
+      zone.splay = 'none'
     }
   }
 }
@@ -934,11 +917,11 @@ Innovation.prototype.aDecree = function(player, name) {
   this.aRemoveMany(player, hand.cards(), { ordered: true })
 
   let doImpl = false
-  if (card.zone === 'achievements') {
+  if (card.zone.id === 'achievements') {
     this.aClaimAchievement(player, { card })
     doImpl = true
   }
-  else if (card.zone === `players.${player.name}.achievements`) {
+  else if (card.zone.id === `players.${player.name}.achievements`) {
     doImpl = true
   }
   else {
@@ -1446,7 +1429,7 @@ Innovation.prototype._checkCityMeldAchievements = function(player, card) {
   if (
     card.checkHasBiscuit('<')
     && this.getZoneByPlayer(player, card.color).splay === 'left'
-    && this.cards.byId('Tradition').zone === 'achievements'
+    && this.cards.byId('Tradition').zone.id === 'achievements'
   ) {
     this.aClaimAchievement(player, { name: 'Tradition' })
   }
@@ -1454,7 +1437,7 @@ Innovation.prototype._checkCityMeldAchievements = function(player, card) {
   if (
     card.checkHasBiscuit('>')
     && this.getZoneByPlayer(player, card.color).splay === 'right'
-    && this.cards.byId('Repute').zone === 'achievements'
+    && this.cards.byId('Repute').zone.id === 'achievements'
   ) {
     this.aClaimAchievement(player, { name: 'Repute' })
   }
@@ -1462,7 +1445,7 @@ Innovation.prototype._checkCityMeldAchievements = function(player, card) {
   if (
     card.checkHasBiscuit('^')
     && this.getZoneByPlayer(player, card.color).splay === 'up'
-    && this.cards.byId('Fame').zone === 'achievements'
+    && this.cards.byId('Fame').zone.id === 'achievements'
   ) {
     this.aClaimAchievement(player, { name: 'Fame' })
   }
@@ -1823,14 +1806,14 @@ Innovation.prototype.aTransfer = function(player, card, target, opts={}) {
 Innovation.prototype._checkCityJunkAchievements = function(player, card) {
   if (
     card.checkHasBiscuit(';')
-    && this.cards.byId('Glory').zone === 'achievements'
+    && this.cards.byId('Glory').zone.id === 'achievements'
   ) {
     this.aClaimAchievement(player, { name: 'Glory' })
   }
 
   if (
     card.checkHasBiscuit(':')
-    && this.cards.byId('Victory').zone === 'achievements'
+    && this.cards.byId('Victory').zone.id === 'achievements'
   ) {
     this.aClaimAchievement(player, { name: 'Victory' })
   }
@@ -1965,7 +1948,7 @@ Innovation.prototype.checkAgeZeroInPlay = function() {
 
 Innovation.prototype.checkCardIsTop = function(card) {
   const re = /^players.[^.]*.(yellow|red|green|blue|purple)$/i
-  const isOnBoard = card.zone.match(re) !== null
+  const isOnBoard = card.zone.id.match(re) !== null
   const isTop = this.getZoneByCard(card).cards()[0] === card
   return isOnBoard && isTop
 }
@@ -2365,7 +2348,7 @@ Innovation.prototype.getVisibleCardsByZone = function(player, zoneName) {
 
 Innovation.prototype.getVisibleEffects = function(card, kind, opts={}) {
   const player = opts.selfExecutor || this.players.byOwner(card)
-  const isTop = this.checkCardIsTop(card) || card.zone.endsWith('.artifact')
+  const isTop = this.checkCardIsTop(card) || card.zone.id.endsWith('.artifact')
   const splay = this.getSplayByCard(card)
 
   if (kind === 'dogma') {
@@ -2448,7 +2431,8 @@ Innovation.prototype.getVisibleEffectsByColor = function(player, color, kind) {
 }
 
 Innovation.prototype.getZoneByDeck = function(exp, age) {
-  return this.state.zones.decks[exp][age]
+  // TODO: deprecate
+  return this.zones.byDeck(exp, age)
 }
 
 Innovation.prototype.getColorZonesByPlayer = function(player) {
@@ -2504,7 +2488,7 @@ Innovation.prototype.mAchievementCheck = function() {
     ).length > 0
     for (const card of available) {
       if (
-        this.getZoneByCard(card).name === 'achievements'
+        this.getZoneByCard(card).name() === 'achievements'
         && card.checkPlayerIsEligible
         && card.checkPlayerIsEligible(this, player, reduceCost)
       ) {
@@ -2531,7 +2515,7 @@ Innovation.prototype.mAchievementVictoryCheck = function() {
 
 Innovation.prototype.mAchieve = function(player, card) {
   const target = this.getZoneByPlayer(player, 'achievements')
-  const source = this.getZoneById(card.zone)
+  const source = card.zone
   this.log.add({
     template: '{player} achieves {card} from {zone}',
     args: { player, card, zone: source }
@@ -2568,31 +2552,22 @@ Innovation.prototype.mAdjustCardVisibility = function(card) {
   }
 
   const zone = this.getZoneByCard(card)
+  const kind = zone.kind()
 
-  // Achievements are always face down.
-  if (zone.kind === 'achievements') {
-    card.visibility = []
-  }
-
-  // Forget everything about a card if it is returned.
-  else if (zone.kind === 'deck') {
-    card.visibility = []
-  }
-
-  else if (zone.kind === 'public') {
+  if (kind === 'public') {
     card.visibility = this.players.all().map(p => p.name)
   }
 
-  else if (zone.kind === 'private') {
-    util.array.pushUnique(card.visibility, zone.owner)
+  else if (kind === 'private') {
+    util.array.pushUnique(card.visibility, zone.owner.name)
   }
 
-  else if (zone.kind === 'hidden') {
+  else if (kind === 'hidden') {
     card.visibility = []
   }
 
   else {
-    throw new Error(`Unknown zone kind ${zone.kind} for zone ${zone.id}`)
+    throw new Error(`Unknown zone kind ${kind} for zone ${zone.id}`)
   }
 }
 
@@ -2694,7 +2669,7 @@ Innovation.prototype.mMoveByIndices = function(source, sourceIndex, target, targ
   const card = sourceCards[sourceIndex]
   sourceCards.splice(sourceIndex, 1)
   targetCards.splice(targetIndex, 0, card)
-  card.zone = target.id
+  card.zone = target
 
   const zoneOwner = this.players.byZone(target)
   card.owner = zoneOwner ? zoneOwner : null
@@ -2706,7 +2681,7 @@ Innovation.prototype.mMoveByIndices = function(source, sourceIndex, target, targ
 Innovation.prototype.mMoveCardTo = function(card, target, opts={}) {
   const source = this.getZoneByCard(card)
   const sourceIndex = source.cards().findIndex(c => c === card)
-  const targetIndex = target.cards().length
+  const targetIndex = opts.index === undefined ? target.cards().length : opts.index
 
   if (source === target && sourceIndex === targetIndex) {
     // Card is already in the target zone.
@@ -2735,23 +2710,6 @@ Innovation.prototype.mMoveCardsTo = function(player, cards, target) {
   for (const card of cards) {
     this.mMoveCardTo(card, target, { player })
   }
-}
-
-Innovation.prototype.mMoveCardToTop = function(card, target, opts={}) {
-  const source = this.getZoneByCard(card)
-  const sourceIndex = source.cards().findIndex(c => c === card)
-
-  if (opts.player) {
-    this.log.add({
-      template: '{player} moves {card} to the top of its deck',
-      args: {
-        player: opts.player,
-        card,
-      }
-    })
-  }
-
-  return this.mMoveByIndices(source, sourceIndex, target, 0)
 }
 
 Innovation.prototype.mMoveTopCard = function(source, target) {
@@ -2817,8 +2775,8 @@ Innovation.prototype.mResetPeleCount = function() {
 
 Innovation.prototype.mReturn = function(player, card, opts) {
   opts = opts || {}
-  const source = this.getZoneByCard(card)
-  const target = this.getZoneByCardHome(card)
+  const source = card.zone
+  const target = card.home
   const sourceIndex = source.cards().indexOf(card)
   const targetIndex = target.cards().length
 
@@ -2913,7 +2871,7 @@ Innovation.prototype.mTake = function(player, card) {
 }
 
 Innovation.prototype.mTransfer = function(player, card, target) {
-  this.mMoveCardToTop(card, target)
+  this.mMoveCardTo(card, target, { index: 0 })
   this.log.add({
     template: '{player} transfers {card} to {zone}',
     args: { player, card, zone: target }
@@ -3167,7 +3125,7 @@ Innovation.prototype.getEligibleAchievementsRaw = function(player, opts={}) {
 Innovation.prototype.formatAchievements = function(array) {
   return array
     .map(ach => {
-      if (ach.zone === 'achievements') {
+      if (ach.zone.id === 'achievements') {
         return ach.getHiddenName()
       }
       else {

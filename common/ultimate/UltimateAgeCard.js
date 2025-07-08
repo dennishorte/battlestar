@@ -104,7 +104,7 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
 
     const re = /^players.([^.]+).(yellow|red|green|blue|purple)$/i
-    const match = this.zone.match(re)
+    const match = this.zone.id.match(re)
 
     return match && (!player || match[1] === player.name)
   }

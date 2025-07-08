@@ -9,9 +9,9 @@ const ZONE_KIND = {
 
 class BaseZone {
   constructor(game, id, name, kind, owner=null) {
+    this.id = id
     this.game = game
 
-    this._id = id
     this._name = name
     this._kind = kind
     this._owner = owner
@@ -21,6 +21,14 @@ class BaseZone {
 
   cards() {
     return [...this._cards]
+  }
+
+  kind() {
+    return this._kind
+  }
+
+  name() {
+    return this._name
   }
 
   owner() {
@@ -36,6 +44,7 @@ class BaseZone {
     this._cards = [...cards]
     for (const card of this._cards) {
       card.setHome(this)
+      card.setZone(this)
       this._updateCardVisibility(card)
     }
   }
@@ -69,7 +78,7 @@ class BaseZone {
   remove(card) {
     const index = this._cards.indexOf(card)
     if (index === -1) {
-      throw new Error(`Card (${card.id}) not found in zone (${this._id})`)
+      throw new Error(`Card (${card.id}) not found in zone (${this.id})`)
     }
     this._cards.splice(index, 1)
   }

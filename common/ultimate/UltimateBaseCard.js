@@ -4,9 +4,8 @@ class UltimateBaseCard extends BaseCard {
   constructor(game, data) {
     super(game, data)
 
+    // Card names are unique in Innovation, so we'll use them for the card IDs.
     this.id = data.name
-    this.owner = null
-    this.home = null
   }
 
   checkIsStandardAchievement() {

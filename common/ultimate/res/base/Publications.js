@@ -17,7 +17,8 @@ module.exports = {
     (game, player) => {
       const toJunkOptions = game.getAvailableSpecialAchievements()
       const fromJunkOptions = game
-        .getZoneById('junk')
+        .zones
+        .byId('junk')
         .cards()
         .filter(c => c.isSpecialAchievement)
 
@@ -43,7 +44,11 @@ module.exports = {
         })
         if (fromJunk) {
           junked = true
-          game.mMoveCardTo(fromJunk, game.getZoneById('achievements'), { player })
+          game.mMoveCardTo(fromJunk, game.zones.byId('achievements'))
+          game.log.add({
+            template: '{player} moves {card} from the junk to the available achievements',
+            args: { player, card: fromJunk },
+          })
         }
       }
       else if (!junked) {

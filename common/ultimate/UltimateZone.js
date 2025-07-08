@@ -1,18 +1,16 @@
-class UltimateZone {
-  constructor(game, name, kind) {
-    this.id = name
-    this.game = game
-    this.name = name
-    this.kind = kind
+const { BaseZone } = require('../lib/game/index.js')
+
+class UltimateZone extends BaseZone {
+  constructor(game, id, name, kind, owner=null) {
+    super(game, id, name, kind, owner)
+
     this.color = undefined
-    this.owner = undefined
     this.splay = undefined
-    this._cards = []
   }
 
   cards() {
     for (const zoneName of ['hand', 'forecast', 'score']) {
-      if (this.name.endsWith('.' + zoneName)) {
+      if (this.name().endsWith('.' + zoneName)) {
         const karmaInfos = this.game.getInfoByKarmaTrigger(this.player(), `list-${zoneName}`)
         if (karmaInfos.length === 1) {
           return karmaInfos[0].impl.func(this.game, this.player())

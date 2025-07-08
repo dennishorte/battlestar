@@ -127,17 +127,8 @@ class BasePlayerManager {
   }
 
   byZone(zone) {
-    // TODO (dennis): create a concept of zone.owner that stores a player value instead of doing this
-
-    const regex = /players[.]([^.]+)[.]/
-    const match = zone.id.match(regex)
-
-    if (match) {
-      return this.byName(match[1])
-    }
-    else {
-      return undefined
-    }
+    // TODO: deprecate this, since the player can be taken straight off the zone
+    return zone.owner()
   }
 
   current() {

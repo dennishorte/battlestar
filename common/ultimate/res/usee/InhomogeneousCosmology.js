@@ -16,14 +16,17 @@ module.exports = {
         const handCards = game.getCardsByZone(player, 'hand')
 
         const topCardChosen = game.actions.chooseCards(player, topCards, { min: 0, max: 1 })[0]
-        let topCardReturned
         if (topCardChosen) {
-          topCardReturned = game.mMoveCardToTop(topCardChosen, game.getZoneByCardHome(topCardChosen), { player })
+          game.log.add({
+            template: '{player} puts {card} on top of its deck',
+            args: { player, card: topCardChosen }
+          })
+          game.mMoveCardTo(topCardChosen, topCardChosen.home, 0)
         }
 
         const handCardMelded = game.aChooseAndMeld(player, handCards, { min: 0, max: 1 })[0]
 
-        if (!topCardReturned && !handCardMelded) {
+        if (!topCardChosen && !handCardMelded) {
           break
         }
       }

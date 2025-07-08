@@ -13,6 +13,17 @@ class BaseZoneManager {
     return zone
   }
 
+  register(zone) {
+    if (Object.hasOwn(this._zones, zone.id)) {
+      throw new Error('Duplicate zone id: ' + zone.id)
+    }
+    this._zones[zone.id] = zone
+  }
+
+  reset() {
+    this._zones = {}
+  }
+
   ////////////////////////////////////////////////////////////////////////////////
   // Getters
 
@@ -21,14 +32,12 @@ class BaseZoneManager {
   }
 
   byId(id) {
-    return this.zones[id]
+    return this._zones[id]
   }
 
-  register(zone) {
-    if (Object.hasOwn(this._zones, zone.id)) {
-      throw new Error('Duplicate zone id: ' + zone.id)
-    }
-    this._zones[zone.id] = zone
+  byPlayer(player, zoneName) {
+    const id = `players.${player.name}.${zoneName}`
+    return this.byId(id)
   }
 }
 

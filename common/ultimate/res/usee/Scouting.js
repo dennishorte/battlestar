@@ -26,7 +26,11 @@ module.exports = {
           })
         }
         else {
-          game.mMoveCardToTop(card, game.getZoneByCardHome(card), { player })
+          game.mMoveCardTo(card, card.home, { index: 0 })
+          game.log.add({
+            template: '{player} puts {card} back on top of its deck',
+            args: { player, card }
+          })
         }
       }
     },

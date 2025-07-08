@@ -382,6 +382,7 @@ Game.prototype._reset = function() {
   this.log.reset()
   this.players.reset()
   this.cards.reset()
+  this.zones.reset()
 }
 
 Game.prototype._tryToAutomaticallyRespond = function(selectors) {
@@ -455,7 +456,7 @@ Game.prototype.getZoneByCard = function(card) {
     return this.getZoneById(card.g.zone)
   }
   else {
-    return this.getZoneById(card.zone)
+    return card.zone
   }
 }
 
@@ -469,23 +470,12 @@ Game.prototype.getZoneByCardHome = function(card) {
 }
 
 Game.prototype.getZoneById = function(id) {
-  const tokens = id.split('.')
-  let curr = this.state.zones
-  for (const token of tokens) {
-    util.assert(Object.hasOwn(curr, token), `Invalid zone id ${id} at token ${token}`)
-    curr = curr[token]
-  }
-  return curr
+  return this.zones.byId(id)
 }
 
 Game.prototype.getZoneByPlayer = function(player, name) {
-  const zone = this.state.zones.players[player.name][name]
-
-  if (!zone) {
-    throw new Error('Invalid player zone name: ' + name)
-  }
-
-  return zone
+  // TODO: deprecate
+  return this.zones.byPlayer(player, name)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -499,7 +489,7 @@ Game.prototype.mMoveByIndices = function(source, sourceIndex, target, targetInde
   const card = sourceCards[sourceIndex]
   sourceCards.splice(sourceIndex, 1)
   targetCards.splice(targetIndex, 0, card)
-  card.zone = target.id
+  card.zone = target
 
   this._cardMovedCallback({
     card,
